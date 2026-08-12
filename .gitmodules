@@ -1,0 +1,3 @@
+[submodule "cosmos-framework"]
+	path = cosmos-framework
+	url = https://ghfast.top/github.com/wxwy/cosmos-framework.git
