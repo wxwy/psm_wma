@@ -61,18 +61,22 @@ sound2llm / llm2sound
 
 `action_gen=True` 时要求 `vision_gen=True`，说明 Action generation 被设计为 world/visual generation 体系的一部分，而非 action-only standalone model。
 
-## 3.2 `sequence_packing/types.py` / `modality.py` / `sequence.py`
+## 3.2 `sequence_packing` 实际 import / runtime 路径
 
-静态确认：
-- `SequencePlan.has_vision/has_action/has_sound`；
-- `condition_frame_indexes_*`；
-- `ModalityData.sequence_indexes`；
-- `mse_loss_indexes`；
-- `condition_mask`；
-- `noisy_frame_indexes`；
-- Action `domain_id/raw_action_dim`。
+当前固定 submodule commit `5d6dedc7...` 的 package-level 入口为：
 
-因此“一次 forward 输出什么”由数据/plan 显式定义，不是模型根据输入自动 router。
+```text
+sequence_packing/__init__.py
+├── ModalityData        ← modality.py
+├── PackedSequence      ← sequence.py
+├── SequencePlan        ← sequence.py
+├── build_sequence_plans_from_data_batch ← sequence.py
+└── pack_input_sequence ← packers.py
+```
+
+仓库中同时存在 `types.py` 的较旧/兼容定义；**不得因为文件名相似就默认修改 `types.py` 会影响运行路径**。任何 R07 Memory 扩展必须从实际调用点沿 import 链确认唯一生效对象，并同时审计 `packers.py`、`sequence.py`、`modality.py`、mRoPE/attention/runtime 相关代码。
+
+静态确认仍包括 `SequencePlan.has_vision/has_action/has_sound`、`condition_frame_indexes_*`、`ModalityData.sequence_indexes`、`mse_loss_indexes`、`condition_mask`、`noisy_frame_indexes` 以及 Action `domain_id/raw_action_dim`。因此“一次 forward 输出什么”由数据/plan 显式定义，不是模型根据输入自动 router。
 
 ## 3.3 Reasoner
 

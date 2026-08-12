@@ -60,7 +60,7 @@
 | PSM→World/Action | 尽可能用**同一 Readout**同时供 future/world 与 action | **目标路线** | 系统价值强，MemoryVAM/MemoryVLA++证明共享记忆进入 world/action 可行 | 先 Memory→Action，再接 WM |
 | Future inference | **不要求测试时生成未来视频，但 WM-derived hidden/world state 必须继续进入 action path** | **硬边界** | Fast-WAM、MobileWAM、SelfWAM 支持去掉 future generation；但 PSM-WMA 不能退化成普通 VLA + 训练期 auxiliary loss | diagnostic-only future decode |
 | Memory 主监督 | action loss + action-conditioned future latent/feature；depth/geometry 为轻辅助 | **推荐** | Memory 必须被任务梯度塑造，避免独立“建图模块” | action-only + probe |
-| Intervention | Local: Zero/Shuffle/Stale/Truncated；Goal: Zero/Shuffle；Regional Wrong-region 延后 | **必须** | 防止强 backbone 绕过 Memory，并区分 Local/Goal 职责 | 无 |
+| Intervention | Local: Zero/Shuffle/Stale/Truncated；Global: Zero/Shuffle/Wrong-view/Stale/Top-K truncation；`absent` 与 `present+zero` 分离 | **必须** | 防止强 backbone 绕过 Memory，并区分 Temporal Local / Spatial Global 职责 | 无 |
 | Stage-1 诊断 | LIBERO/已有稳定策略 + LIBERO-Mem + RoboMME | **推荐** | 低成本证明 Memory 真使用 | RMBench / RoboMemArena |
 | Stage-2 主环境 | RoboCasa365 | **推荐** | 365 tasks、2,500+ scenes、2,200+ h demos、分帧 subtask 标注 | RoboCasa 原版子集 |
 | Goal Memory 诊断 | LIBERO-Mem / RoboMME / RoboMemArena（条件） | **辅助** | 当前重点验证长期任务历史与 goal-conditioned recall，不做 region-revisit | 普通 longer-history control |
@@ -77,7 +77,7 @@
 | 决策 | 审查结论 | 证据与边界 |
 |---|---|---|
 | Local recurrent latent | **保留主路线** | μVLA 用少量 learnable recurrent memory tokens 在部分可观测操作上显著提升；ReMem-VLA 用双层 recurrent queries 获得短/长程能力。与此同时，两者都提示“简单 recurrence”存在任务结构与 TBPTT 边界，因此它适合作为 **Local PSM**，不能直接扩张成 Global PSM。[62][63] |
-| Goal Memory（LIBERO/RoboCasa） | **提升为当前主线** | 当前两类环境无需区域化即可验证长期历史、任务进度、out-of-view recall 与 Memory→World/Action；优先用一份 goal-conditioned fixed-budget memory，避免提前引入 place recognition / writer / reader。 |
+| Spatial Global Memory（LIBERO/RoboCasa） | **提升为当前主线** | 当前不要求 Region/Place 层级化，但可以验证全 episode 历史按空间/视角/时间重组后的关键证据检索，以及 Global→World/Action 的独立收益；Goal Memory 降为 task-progress gap 明确时才启用的 Target。 |
 | Regional Global PSM（BEHAVIOR） | **保留为未来方向，但不在当前阶段冻结实现** | Mirage、Mem-World、SERF、HoloAgent、RetrieveVGGT 等仍提供有效技术储备；真正到多房间/大空间任务时再根据 BEHAVIOR 数据与导航定位条件重新决定 place/region 表示、Writer/Reader 和 stale 策略。 |
 | Training-time future + fast inference | **保留，但增加硬约束** | Fast-WAM、MobileWAM、SelfWAM 支持推理时不生成未来视频；但本项目必须确保 action 在推理时仍消费 **world-model-trained / PSM-conditioned hidden representation**。若把 World branch 全部拿掉，仅剩普通 VLA + auxiliary future loss，则不满足 PSM-WMA 项目定义。[34][38][40] |
 
@@ -183,7 +183,7 @@ Mind-VLA、Spatial-Forcing 等说明空间表示增强能改善 action，但这�
 
 ## 3.1 选型问题不是“哪个模型分数最高”
 
-PSM-WMA 的研究变量是 Persistent Spatial / Goal Memory，而不是重新发明 Action Head 或从零训练世界模型。因此主工程路线必须尽量减少与 Memory 无关的结构变量，并满足：
+PSM-WMA 的研究变量是 Temporal Local Memory + Spatial Global Memory，以及二者如何作为独立可选条件进入统一 World/Action 主干，而不是重新发明 Action Head 或从零训练世界模型。因此主工程路线必须尽量减少与 Memory 无关的结构变量，并满足：
 
 1. world representation 必须真实进入 action path；
 2. 能同时表达“已知 condition”和“待生成 target”，便于 Forward Dynamics / Policy / Inverse Dynamics 统一；
@@ -1482,9 +1482,10 @@ Dataset episode
 → update Memory
 
 事件触发：
-Local/Goal summary + observation + goal
+observation + goal + compact memory metadata/summary
 → Cosmos3 Reasoner
-→ structured subgoal/verifier
+→ structured MemoryRequest / subgoal / verifier
+→ Local/Global routing & retrieval
 → feed next Generator query
 ```
 

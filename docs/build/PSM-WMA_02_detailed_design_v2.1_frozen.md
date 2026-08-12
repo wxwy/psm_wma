@@ -851,10 +851,13 @@ cosmos-framework/
 │   │   ├── mot/                       # upstream Cosmos3
 │   │   └── psm/
 │   │       ├── observation_adapter.py
+│   │       ├── temporal_alignment.py
 │   │       ├── action_interval_encoder.py
 │   │       ├── local_memory.py
-│   │       ├── goal_memory.py
-│   │       ├── condition_adapter.py
+│   │       ├── local_memory_adapter.py
+│   │       ├── global_spatial_store.py
+│   │       ├── global_retrieval.py
+│   │       ├── global_spatial_adapter.py
 │   │       └── reasoner_readout.py
 │   ├── data/generator/action/datasets/
 │   │   ├── ... upstream ...
@@ -885,18 +888,32 @@ cosmos-framework/
 ```yaml
 psm:
   enabled: false
-  internal_dim: 1024
-  local_tokens: 16
-  goal_tokens: 8
-  read_tokens: 2
-  condition_zero_init: true
-  history_steps: TBD
-  tbptt_steps: TBD
+
+  local:
+    enabled: false
+    optional: true
+    internal_dim: TBD
+    token_budget: TBD
+    history_steps: TBD
+    tbptt_steps: TBD
+    condition_zero_init: true
+
+  global:
+    enabled: false
+    optional: true
+    token_budget: TBD
+    retrieval_topk: TBD
+    condition_zero_init: true
+
+  modality_dropout:
+    local: TBD
+    global: TBD
 
 reasoner:
   enabled: false
   trigger_mode: event
   structured_output: true
+  controls_memory_presence: false  # Planner/Agent phase only
 
 depth:
   source: none          # none | ovda | simulator
@@ -929,14 +946,15 @@ action:
 日志必须能还原：
 
 ```text
-obs/source index
+obs/source index + multi-sensor timestamp alignment
 executed action range
-Local update
-Goal update/reset
-PSM packed indexes
+Local update/read + detach/TBPTT boundary
+Global store write + retrieval top-k + source/provenance
+Local/Global modality presence (absent vs present+zero)
+Local/Global packed indexes
 SequencePlan clean/noisy indexes
 action/future outputs
-Reasoner trigger/result
+Reasoner trigger/MemoryRequest/result
 ```
 
 ---

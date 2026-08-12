@@ -255,6 +255,10 @@ Cosmos3-Edge-Policy-DROID
 ## 目的
 在不实现真实 Memory 算法前，用 dummy Local / Global tensors 验证 Cosmos3 能把二者作为独立、可选、always-clean modality。
 
+## 运行路径前置核对
+
+先记录当前 submodule commit，并从真实调用点确认 `sequence_packing` import/runtime 链。对当前固定 commit `5d6dedc7...`，package-level export 为 `__init__.py → packers.py / sequence.py / modality.py`；仓库中并存的 `types.py` 不得未经 import 追踪就作为修改目标。R07 实现前必须输出实际 class/function 的 `__module__`、源码路径与 import trace，并把 `packers.py`、position/mRoPE、attention mask 与 FSDP graph 一并纳入 smoke。
+
 ## 最小对象
 
 ```text

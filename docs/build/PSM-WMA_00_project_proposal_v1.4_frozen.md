@@ -18,7 +18,7 @@
 
 1. 纳入 MemoryVAM、Mem-World、SOMA、HoloAgent-0、MemoryVLA++、DiM-WAM、When Memory Lies 等 2026 年最近邻，用于校准项目差异边界；这些工作首先作为**可复用证据与工程参考**，而不是换题触发器；
 2. 明确 PSM-WMA 按**企业研发型系统项目**管理：系统落地与工程完整性是 Hard Requirement，1–2 个方法增量是 Target，论文/专利级独立新颖性是 Stretch；
-3. 新增 12 周基线周期作为单人执行规划建议；其硬承诺覆盖 Local Memory、Goal Memory、PSM→World/Action、RoboCasa365 downstream 收益与最小 Agent vertical slice；**Regional Global PSM / Region-Place Memory 不进入 LIBERO/RoboCasa 12 周硬交付，仅在进入 BEHAVIOR-1K / 真正多房间 mobile manipulation 后重新专项设计。**
+3. 新增 12 周基线周期作为单人执行规划建议；其硬承诺覆盖 Temporal Local Memory、Spatial Global Memory、PSM→World/Action、RoboCasa365 downstream 收益与最小 Agent vertical slice；**Region/Place 层级化 Regional Global PSM 不进入 LIBERO/RoboCasa 12 周硬交付，仅在进入 BEHAVIOR-1K / 真正多房间 mobile manipulation 后重新专项设计。**
 
 v3.2.2 中将 Persistent Spatial Memory 定位为“项目主要创新”；在本立项书中，该表述统一解释为**项目主要自研与差异化技术主线**，不等同于“文献首次提出”。
 
@@ -58,7 +58,7 @@ Planner / Agent thin slice
 
 Local / Global 都必须支持 optional presence：没有被 Planner 请求时不应强制补零占位；有请求时通过各自独立的 modality adapter 进入后续 World/Action 主路径。
 
-系统必须支持 Memory 写入/更新、task-conditioned 读取、intervention、World/Action coupling、执行监控与失败恢复接口。项目成功首先看 **能否做成并产生执行收益**：形成稳定 closed-loop、可量化指标、可复现实验、10 分钟级演示和可复用工程资产；其次争取在 recurrent persistent state、Local/Goal 分工、shared Memory→World/Action conditioning 或模型内部持续状态接入机制中形成 1–2 个方法增量。论文级独立新颖性不作为立项成功的必要条件。
+系统必须支持 Memory 写入/更新、task-conditioned 读取、intervention、World/Action coupling、执行监控与失败恢复接口。项目成功首先看 **能否做成并产生执行收益**：形成稳定 closed-loop、可量化指标、可复现实验、10 分钟级演示和可复用工程资产；其次争取在 recurrent persistent state、Local/Global 分工、independent optional Memory→World/Action conditioning 或模型内部持续状态接入机制中形成 1–2 个方法增量。论文级独立新颖性不作为立项成功的必要条件。
 
 12 周基线周期的 Must-have 调整为：Local Memory 的真实使用与可归因闭环、一个可运行的 Spatial Global Memory prototype 及其检索/注入闭环、action-conditioned world representation、RoboCasa365 downstream 收益，以及一条最小 Planner/Agent vertical slice。**Region/Place 层级化 Regional Global PSM 仍不属于 12 周 Must-have。** Goal Memory 作为可选 Target，不与 Local/Global 主线同时引入。关键训练实验总量 ≤20 组；若 Memory 连续干预不能证明真实使用，则优先回退更简单 history / key-view / Hybrid Memory，而不是提前增加 Region/Agent 复杂度。
 
@@ -133,11 +133,11 @@ Memory 系统负责存储、更新、压缩、检索和转成模型可消费的�
 
 当前更实际的研究抓手是：
 
-1. **Local persistent world state**：固定容量、递归更新、task-agnostic；
-2. **Goal-conditioned long-history state**：与 Local 分责，保存当前任务真正需要的历史/进度；
-3. **Shared Memory → World / Action interface**：同一 persistent state 真正进入 action-conditioned world representation 与在线 action；
-4. **Memory injection topology**：先验证低风险 shared conditioning，再评估是否需要更深的模型内部持续状态接入；
-5. **可归因系统闭环**：通过 Local/Goal intervention、future/action 与 closed-loop 结果证明真实作用。
+1. **Temporal Local persistent state**：固定/受控容量地压缩近期时间对齐的多源经历，学习内容提取、更新与读取；
+2. **Spatial Global persistent state**：把全 episode 历史按空间位置、相机轨迹、视角、时间与语义结构化，并按需检索关键空间证据；
+3. **Independent optional modality interfaces**：Local / Global 分别适配到统一 World/Action 主干，允许按需存在或缺失；
+4. **Shared Memory → World / Action interface**：两类 Memory 都必须真实影响 action-conditioned world representation 与在线 action；
+5. **可归因系统闭环**：通过 Local/Global intervention、future/action sensitivity 与 closed-loop 结果证明真实作用。
 
 Regional Global PSM / Place Memory 仍是未来可能的方法空间，但只在 BEHAVIOR 阶段重新评审。
 
@@ -148,9 +148,9 @@ Regional Global PSM / Place Memory 仍是未来可能的方法空间，但只在
 ```text
 Continuous Observation
         ↓
-Local Memory
+Temporal Local Memory (optional)
         +
-Goal Memory
+Spatial Global Memory (optional)
         ↓
 Action-conditioned World State
         ↓
@@ -158,10 +158,10 @@ Action Policy
         ↓
 Agent Monitor / Retry
         ↓
-New Observation → Memory Update
+New Observation → Local update / Global store update
 ```
 
-如果该闭环能够在 LIBERO / RoboCasa365 上稳定运行，并通过干预证明 Local Memory、Goal Memory、WAM 与 Agent 各自提供可重复收益，就已经构成有价值的企业研发成果。
+如果该闭环能够在 LIBERO / RoboCasa365 上稳定运行，并通过干预证明 Temporal Local Memory、Spatial Global Memory、WAM 与 Agent 各自提供可重复收益，就已经构成有价值的企业研发成果。
 
 BEHAVIOR 阶段如出现真实跨区域需求，再增加：
 
@@ -291,7 +291,7 @@ PSM-WMA 按企业研发项目而非纯论文项目管理，价值优先级冻结
 - 研究 Local 与 Global 的职责分离、互补与 optional presence；
 - 研究 Local / Global 分别通过独立模态适配器进入 World / Action 的共享主干；
 - 研究 action-conditioned future supervision 是否能塑造 action-facing world state；
-- 建立 Local/Goal intervention 与 no-regression / memory-dependent benchmark 体系；
+- 建立 Local/Global intervention 与 no-regression / memory-dependent benchmark 体系；
 - 保留 Regional Global PSM 的未来接口，但当前不设计 Region/Writer/Reader。
 
 ## 3.3 工程目标
@@ -542,10 +542,10 @@ Region/Place hierarchy 不占当前实验预算。
 
 关键训练实验总量 ≤20 组。立项阶段只冻结预算与优先级，不预分配具体 E 编号；完整实验矩阵由 `02_detailed_design.md` 冻结。预算按四个层级使用：
 
-1. **Baseline / Local Memory / Intervention**：先证明“会记、会更新、会用”；
-2. **RoboCasa365 Local + WAM**：验证 memory-conditioned world/action 是否形成执行收益；
-3. **Goal Memory**：验证 goal-relevant long history / task progress 与 Local 的互补；
-4. **Agent / BEHAVIOR / Regional / Continual**：只在前序 Go 条件满足后使用剩余预算。
+1. **Baseline / Temporal Local / Intervention**：先证明 learned temporal state“会压缩、会更新、会用”；
+2. **Spatial Global / Retrieval / Intervention**：验证结构化空间历史与关键视角检索是否形成额外 world/action 收益；
+3. **RoboCasa365 Local/Global + WAM**：验证双模态 memory-conditioned world/action 的 downstream 执行价值；
+4. **Planner/Agent / Goal Memory Target / BEHAVIOR Regional / Continual**：只在前序 Go 条件满足后使用剩余预算。
 
 不得为了补结果无限增加组合实验，也不得让条件触发阶段反向挤占 Must-have 的复跑与消融预算。
 
@@ -972,18 +972,20 @@ PSM-WMA 建议作为 **企业研发型完整系统项目** 推进。最新研究
 
 ```text
 LIBERO:
-Local Memory
+Temporal Local Memory
+→ Spatial Global Memory
+→ Local/Global matched attribution
 
         ↓
 
 RoboCasa365:
-Local Memory
+Temporal Local + Spatial Global
 + action-conditioned World/Action
-+ Goal Memory
 
         ↓
 
-Agent thin slice
+Planner/Agent thin slice
+(+ Goal Memory only if task-progress gap is proven)
 ```
 
 **Region/Place 划分与 Regional Global PSM 不属于当前阶段。** 只有进入 BEHAVIOR-1K / 真正多房间 mobile manipulation 后，才根据实际任务需求重新调研和设计 Place/Region、Spatial Address、Writer/Reader、revisit/stale。
