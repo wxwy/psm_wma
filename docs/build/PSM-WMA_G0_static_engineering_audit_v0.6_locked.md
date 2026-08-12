@@ -167,6 +167,7 @@ Global 强备选：利用 Cosmos3 已有 control-style multi-vision path，将 s
 - official LIBERO Action recipe 使用 Power EMA；R04/R05 admission smoke 关闭，R06 baseline 默认先开启以减少 recipe drift；
 - vision VAE 可做 offline cache，但必须先验证 official temporal clip encode 与 cache latent parity，不能默认逐帧独立 encode 等价；
 - oVDA 作为 Global geometry source 时同样必须保存 RGB/depth/pose source-index/timestamp 对齐。
+- RoboTTT（arXiv:2607.15275）作为 **Temporal Local Memory 第一优先候选机制**，但不是 G0 Foundation 依赖，也未冻结为最终 backend。它提供 fast-weight recurrent state + TTT-KVB + TBPTT 的长上下文证据；项目首选把它封装为独立 Local temporal compressor/readout，而不是首期修改 Cosmos3 shared MoT。简单 `recurrent_latent` backend 必须保留为工程 baseline。
 
 # 7. Runtime 前不得硬冻结的项
 
@@ -174,7 +175,7 @@ Global 强备选：利用 Cosmos3 已有 control-style multi-vision path，将 s
 - Edge→LIBERO config 最小差分；
 - DROID policy checkpoint 中 shared generator 与 action projection 的权重变化范围；
 - new LIBERO domain slot 是否 fresh init / partial reuse；
-- `K_local/K_goal/K_psm`；
+- `K_local/K_global` 以及 Local backend（`recurrent_latent` vs `ttt_fast_weight`）；
 - PSM mRoPE/position implementation；
 - shared generator 解冻范围；
 - RoboCasa exact action/state schema；
@@ -193,7 +194,7 @@ R01 official Edge-Policy-DROID smoke
 → R06 closed-loop baseline
 → R07 Local/Global optional-modality packing/attention
 → R08 temporal multi-sensor/history alignment
-→ R09 Local fwd/bwd/intervention
+→ R09 Local backend A/B fwd/bwd/intervention + backend freeze
 → R10 RoboCasa domain
 → R11 Planner/Reasoner MemoryRequest
 → R12 oVDA/VAE cache parity

@@ -330,35 +330,81 @@ A/B/C/D 全部 finite；attention leakage assertion=0；optional-modality contra
 ## PASS
 LIBERO sampled anchors 全通过；输出 `R08_temporal_multisensor_alignment.json`.
 
-# 9. G0-R09 Local PSM Forward/Backward + Intervention Smoke
+# 9. G0-R09 Local PSM Backend Selection / Forward-Backward Smoke
 
-链路：
+> **前置硬条件**：R06 Edge-Policy-LIBERO closed-loop baseline PASS。R06 之前不允许通过 TTT 或任何 Local Memory 改造“救 baseline”。
+
+共享链路：
 
 ```text
 history main/wrist RGB + depth + pose + state + executed action
 → Temporal Alignment
-→ LocalEvidenceEncoder / learned compression
+→ LocalEvidenceEncoder
+→ temporal compressor backend
 → Local state/readout
 → local_memory2llm
 → Cosmos3 PackedSequence
 → native vision/action loss
 ```
 
-## 检查
-- M_local `[B,K_local,D_local]`；
-- Z_local `[B,K_local_read,2048]`；
+## R09-A — `recurrent_latent` baseline
+
+```text
+aligned E_t
+→ recurrent query / gated latent compressor
+→ M_t / K_local tokens
+```
+
+目标是得到最简单、fixed-budget 的 learned Local baseline，作为“有 learned temporal memory”对照。
+
+## R09-B — `ttt_fast_weight` primary candidate
+
+参考 RoboTTT（arXiv:2607.15275）的原则，但保持 PSM-WMA Local optional-modality 接口：
+
+```text
+aligned E_t
+→ per-step summary/register tokens
+→ TTT-KVB fast-weight state W_t
+→ Local readout
+→ K_local tokens
+```
+
+首期 TTT 作为独立 Local temporal compressor，不直接插入 Cosmos3 shared MoT。训练允许 segment 内梯度，segment 边界携带但 detach fast-weight state；推理持续更新 fast weights。
+
+## 两个 backend 都必须检查
+- M_local / backend state / Z_local shape 可追踪；
 - all finite；
 - Local evidence/write/read/adapter grads nonzero；
-- recurrent state detach/TBPTT 边界可打印；
-- frozen groups grad zero；
+- state detach/TBPTT 边界可打印；
+- episode reset 正确；
+- vectorized / multi-env state 无串扰；
+- frozen Cosmos groups grad zero；
 - Normal/Zero/Shuffle/Stale/Truncated 全能 forward；
 - intervention 保持 token/index/SequencePlan shape；
-- action output 有可测 sensitivity（不要求短 smoke 统计显著）。
+- **future world 与 action output** 都记录 sensitivity；
+- 记录 peak VRAM、step latency、state bytes、save/load/reset 成本。
+
+TTT 额外检查：
+- fast weights 在同 episode 内实际发生有限更新；
+- segment boundary 后数值 state 连续、autograd graph 已 detach；
+- 新 episode从规定的 W0/reset state 开始；
+- fast weights 不误入模型慢权重 checkpoint/optimizer state 的生命周期；
+- FSDP 多 rank 下 fast-state ownership/shape 一致。
+
+## Backend Freeze Rule
+R09 smoke 不以短跑 SR 决定胜负。先要求两者工程正确，再比较：
+1. future/action sensitivity；
+2. 训练稳定性；
+3. 长状态保持能力；
+4. VRAM/latency；
+5. batching/reset/FSDP 复杂度。
+
+`ttt_fast_weight` 是第一优先候选，但只有综合收益明确时才冻结；否则使用 `recurrent_latent` baseline 进入 E002。
 
 ## PASS
-可连续跑 100 steps，无 leakage/NaN；intervention contract 全通。
+至少 `recurrent_latent` 连续 100 steps 无 leakage/NaN 且 intervention contract 全通；`ttt_fast_weight` 若进入正式候选，必须通过同等 contract + TTT 专项 state assertions。最终输出 backend decision。
 
-输出：`R09_local_psm_smoke.json`。
+输出：`R09_local_backend_selection_smoke.json`。
 
 ---
 
@@ -538,7 +584,7 @@ LIBERO query/execution cadence
 Edge→LIBERO trainable parameter groups
 new domain initialization strategy
 K_local / K_global and readout budgets
-Local multi-sensor alignment / history TBPTT-detach policy
+Local multi-sensor alignment / selected backend / history TBPTT-detach or TTT fast-weight policy
 Local/Global packed positions / attention mask
 Global store representation / retrieval top-k / provenance
 RoboCasa exact D_action/D_state

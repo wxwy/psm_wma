@@ -378,11 +378,32 @@ M_local_t ∈ R[B,K_local,D_local]
 
 ## 5.2 Write / compression
 
-第一候选仍可用 recurrent query / gated cross-attention，但 v2.1 不把具体 recurrence 公式硬冻结。硬约束是：
+Local 的具体 temporal compressor **尚未冻结**。当前保留两个实现族，其中 TTT fast-weight 路线为第一优先候选、简单 recurrent latent/fixed-token 路线为 baseline candidate：
+
+```text
+Backend A — recurrent_latent (baseline)
+aligned evidence E_t
+→ recurrent query / gated compressor
+→ persistent latent state M_t
+→ compact Local tokens
+
+Backend B — ttt_fast_weight (primary candidate)
+aligned evidence E_t
+→ per-step summary/register tokens
+→ TTT-KVB fast-weight update W_{t-1} → W_t
+→ Local readout
+→ compact Local tokens
+```
+
+RoboTTT（arXiv:2607.15275）证明 fast weights 可以作为固定大小 recurrent state，在训练/推理时持续更新，并通过 TBPTT 在 segment 边界携带但 detach state，把训练上下文扩展到 8K timesteps。PSM-WMA **不直接冻结 RoboTTT 原版主干内插结构**：首选把 TTT 做成独立 `LocalMemoryEncoder/TemporalCompressor`，输出 Local optional-modality tokens，再经 `local_memory2llm` 接入 Cosmos3。这样不改变 R07 的 modality contract，也避免首期侵入 Cosmos3 shared MoT。
+
+硬约束：
 - evidence encoder / write / compression / readout 可被 `L_vision + L_action` 优化；
 - 不要求 gradient 穿过完整 episode；
-- R08/R09 比较 truncated BPTT、detached recurrent state、必要时 stable/EMA update，优先保证长时持久状态与训练稳定性；
-- inference persistent state 可持续更新，不因训练截断而限制实际持续时长。
+- recurrent/fast-weight state 必须支持 episode reset、并行 env 隔离、segment detach 与 checkpoint/runtime state 明确分离；
+- R08 先解决多源时间对齐；R09-A/B 分别 smoke `recurrent_latent` 与 `ttt_fast_weight`，比较 future/action sensitivity、训练稳定性、显存、延迟与 state-management 成本后再冻结正式 Local backend；
+- inference persistent state 可持续更新，不因训练截断而限制实际持续时长；
+- R06 Edge-LIBERO baseline 未 PASS 前，不实现/优化 TTT Local。
 
 ## 5.3 Readout / adapter
 
@@ -892,10 +913,13 @@ psm:
   local:
     enabled: false
     optional: true
+    backend: TBD              # recurrent_latent | ttt_fast_weight; R09 后冻结
     internal_dim: TBD
     token_budget: TBD
     history_steps: TBD
     tbptt_steps: TBD
+    ttt_inner_update: TBD     # only for ttt_fast_weight
+    ttt_segment_steps: TBD    # only for ttt_fast_weight
     condition_zero_init: true
 
   global:
@@ -1044,7 +1068,7 @@ Planner 能通过稳定 `MemoryRequest` 决定 Local/Global presence/query；Rea
 | R06 | LIBERO closed-loop baseline | PSM 准入 |
 | R07 | Local/Global optional modality packing/attention dummy smoke | new modality contract |
 | R08 | temporal multi-sensor alignment/history replay | Local causality |
-| R09 | Local fwd/bwd/intervention | E002 准入 |
+| R09 | Local backend A/B fwd/bwd/intervention + state-management profile | E002 backend 冻结与准入 |
 | R10 | RoboCasa schema/domain | E008 准入 |
 | R11 | Planner/Reasoner MemoryRequest smoke | E013/E014 准入 |
 | R12 | oVDA + VAE/cache profile/parity | Global source / throughput |
@@ -1064,7 +1088,7 @@ R04–R05。
 R06 + E001。
 
 ## W4：Temporal Local modality
-R07–R09 + E002 smoke。
+R07–R08 后执行 R09-A recurrent-latent baseline 与 R09-B TTT fast-weight candidate smoke，冻结 Local backend 后再做 E002 smoke。
 
 ## W5：Local formal attribution
 E002–E004。

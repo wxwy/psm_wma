@@ -30,6 +30,8 @@ v3.2.2 中将 Persistent Spatial Memory 定位为“项目主要创新”；在�
 
 > **2026-08-12 Planner Interface Override**：Local / Global Memory 均定义为**可选信息模态**，与视觉、动作等模态一样按需存在或缺失。当前 Memory 阶段可用训练协议人工控制模态 presence / dropout；后续由更高层 Planner / Reasoner 决定是否请求 Local、是否请求 Global、检索什么以及 token budget，从而为 Agent 留出原生接口。Goal Memory 保留为后续可选 goal-conditioned 扩展，但不再是 Spatial Global Memory 的替代物，也不阻断 Local→Global 主线。
 
+> **2026-08-12 Local Mechanism Candidate Addendum**：RoboTTT（arXiv:2607.15275）提升为 **Temporal Local Memory 的第一优先候选机制**，但**不冻结为最终实现**。其价值在于用持续在线更新的 fast-weight recurrent state 压缩长时 visuomotor history，并以 TBPTT 保持长状态链、短梯度链；这与本项目 Local 的 persistent temporal state 目标高度一致。当前同时保留一个更简单的 recurrent latent / fixed-token compressor 作为 baseline candidate。最终选择必须在 `Cosmos3-Edge-Policy-DROID → LIBERO` 的 R06 closed-loop baseline PASS 后，通过 Local 专项 smoke 比较 future/action sensitivity、训练稳定性、状态 reset/并行环境隔离、显存与延迟后再冻结。首选集成方式是**独立 LocalMemoryEncoder/TTT compressor → Local modality tokens → Cosmos3**，而不是首期直接把 TTT layer 植入 Cosmos3 主干。
+
 v3.2.2 已冻结的 Normal / Zero / Shuffle / Stale / Truncated 五类 Memory Intervention 继续作为基础干预框架。v1.4 起分别扩展为 Local-Zero/Shuffle/Stale/Truncated 与 Global-Zero/Shuffle/Wrong-view/Stale/Top-K-truncation；其中 `modality absent` 必须与 `present + zero content` 区分。Region/Place 层级相关的 Wrong-region retrieval 仍推迟到 BEHAVIOR 阶段。
 
 ## 执行摘要

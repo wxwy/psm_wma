@@ -17,6 +17,7 @@
 ## 修订记录
 
 - **v1.7（2026-08-12）**：在 v1.6 Cosmos-native 路线基础上完成 Memory Injection / Representation 专项收敛。当前主 PSM 拆为两个独立可选模态：Temporal Local Memory（时间对齐的 RGB/视觉、depth、pose、robot state、可选 wrist RGB、executed action 经学习式压缩形成）与 Spatial Global Memory（历史视觉/几何/pose/trajectory/time 经过空间结构化重组与 retrieval，提取关键 patch/key-view/feature）。两者分别使用独立 mapper / modality embedding 接入 Cosmos3 shared MoT；第一版均作为 clean condition，无 decoder、无 memory reconstruction loss。新增 Planner-facing optional-modality interface；评审 Native Memory Modality、Global→Vision Control、zero-gated residual/ControlNet-lite、KV MemoryState 四种注入范式，Native Memory Modality 为当前第一候选，Global→Vision Control 为强备选，Full ControlNet 不优先。补充 LaMem-VLA、ReMem-VLA、μVLA、SERF、VistaVLA、MosaicMem、ControlNet、OminiControl 证据链。
+- **v1.7 Local Candidate Addendum（2026-08-12）**：新增 RoboTTT（arXiv:2607.15275）作为 Temporal Local Memory 的第一优先候选机制。RoboTTT 将 fast weights 作为 recurrent state，在训练与推理时通过 TTT-KVB 更新，并用 sequence action forcing + TBPTT 把训练上下文扩展到 8K timesteps（官方约 5 分钟）；这直接支持“固定/受控状态容量 + 长状态链 + 短梯度链”的 Local 方向。但 RoboTTT 原版把 TTT layer 集成进 VLA policy，本项目首选改造成独立 Local temporal compressor/readout，再通过 Local optional modality 接入 Cosmos3。**该选择仍是 Candidate，不是 Frozen**；simple recurrent latent/fixed-token compressor 保留为 baseline，R06 PASS 后再通过 R09-A/B 工程 smoke 决策。
 
 - **v1.6（2026-08-11）**：按“先比较、后选型”原则重做 World-Action/Reasoner 路线评审；将 Cosmos3 从条件候选提升为主工程路线，代码母体改为 NVIDIA `cosmos-framework`，基础 checkpoint 采用 `Cosmos3-Edge-Policy-DROID`；StarVLA/LayerwiseFM 降为历史 baseline / fallback 参考。明确 Reasoner 与 Generator 是同一 checkpoint 的两条 inference pathway，PSM 第一版作为 clean persistent conditioning modality 接入 Generator，并通过 compact readout 接入 Reasoner。
 
@@ -618,7 +619,29 @@ main RGB / visual feature
 - 跨长 episode 的 recurrent state 不默认做全程 BPTT。μVLA 显式比较 cross-step gradient 与 detached EMA；ReMem-VLA / μVLA 都说明 recurrence 需要受控训练边界，因此项目把 detached state / truncated BPTT / stable update 作为待 Runtime 冻结项，而不是先写死某一种公式；
 - Local 重点回答“刚才发生了什么、当前状态如何演化到这里”。
 
-LaMem-VLA 将短/长期历史重构成 latent memory tokens 并与当前多模态 token 组成同一连续 embedding sequence，支持“memory native latent”方向；ReMem-VLA 与 μVLA 则为 recurrent learned memory 提供直接证据。[69][70][71]
+LaMem-VLA 将短/长期历史重构成 latent memory tokens 并与当前多模态 token 组成同一连续 embedding sequence，支持“memory native latent”方向；ReMem-VLA 与 μVLA 为 recurrent learned memory 提供直接证据。[69][70][71]
+
+RoboTTT 进一步提供了更强的长上下文工程证据：它把一个小模型的 **fast weights** 作为 recurrent state，在每个输入 token 到来时用 TTT-KVB 自监督 key-value binding loss 做在线梯度更新；状态大小不随历史长度线性增长。训练时使用 sequence action forcing 与 TBPTT，在 segment 边界携带但 detach fast-weight state，从而形成“长状态链、短梯度链”。官方报告训练到 8K timesteps（约 5 分钟 @ 30 Hz），并在真实机器人上完成 5 分钟、10-stage assembly。[76]
+
+对 PSM-WMA 的直接启发不是“照搬 RoboTTT 主干改造”，而是把 Temporal Local 的候选实现收敛为两类：
+
+```text
+A. Recurrent Latent / Fixed-token Baseline
+aligned multimodal evidence
+→ recurrent query/gated compressor
+→ K_local tokens
+→ Local modality
+
+B. TTT Fast-weight Local (Primary Candidate)
+aligned multimodal evidence
+→ per-step summary tokens
+→ TTT fast-weight recurrent state W_t
+→ Local readout
+→ K_local tokens
+→ Local modality
+```
+
+B 当前优先级更高，但只有在 R06 Edge-LIBERO baseline PASS 后，比较 future/action sensitivity、训练稳定性、fast-weight reset/并行环境隔离、FSDP/episode batching、显存与延迟，才允许冻结。首期不把 TTT layer 直接插入 Cosmos3 28 层主干，以避免把 Local 研究变量与 backbone surgery 绑定。
 
 ## 6.2 Spatial Global Memory：explicit / semi-explicit persistent spatial state
 
@@ -1664,3 +1687,4 @@ PSM-WMA 的研究核心不再是“Memory 应注入 backbone 还是 Action Head�
 [73] Yu et al., **MosaicMem: Hybrid Spatial Memory for Controllable Video World Models**, arXiv:2603.17117. https://arxiv.org/abs/2603.17117  
 [74] Zhang et al., **Adding Conditional Control to Text-to-Image Diffusion Models (ControlNet)**, arXiv:2302.05543. https://arxiv.org/abs/2302.05543  
 [75] Tan et al., **OminiControl: Minimal and Universal Control for Diffusion Transformer**, arXiv:2411.15098. https://arxiv.org/abs/2411.15098  
+[76] Jiang et al., **RoboTTT: Context Scaling for Robot Policies**, arXiv:2607.15275. NVIDIA project: https://research.nvidia.com/labs/gear/robottt/ ; paper: https://arxiv.org/abs/2607.15275  
