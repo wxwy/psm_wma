@@ -1,0 +1,13 @@
+# Kimi 操作日志
+
+记录 Kimi Code 在本项目中的操作，时间均为本地时间（UTC+8）。
+
+## 2026-08-12
+
+- 12:05 回答咨询：说明 `k3` 与 `k3-256k` 模型 ID 的区别（依据 Kimi Code 官方文档）。
+- 12:30 开始下载 HuggingFace 模型 `nvidia/Cosmos3-Edge-Policy-DROID` 至 `/gemini/code/models/Cosmos3-Edge-Policy-DROID`；期间解决环境问题（代理缺少 socksio、hf-mirror 镜像与 xet 下载异常，改为直连 huggingface.co 并禁用 xet），后台下载进行中。
+- 14:25 应要求将 `cosmos-framework/` 以 submodule 方式（指向 `wxwy/cosmos-framework`，提交 `5d6dedc`）纳入本项目，创建 `.gitmodules`。
+- 14:40 完成本项目首次提交 `24da238`（Initial commit: add build docs and cosmos-framework submodule），包含 `.gitmodules`、`docs/build/` 下 5 个文档；配置仓库级 git 身份（MangoGo）与 ghfast.top 凭据助手。
+- 14:50 推送 `main` 分支至 `origin`（wxwy/psm_wma），并设置上游跟踪。
+- 14:57 创建本操作日志文件 `docs/build/log/kimi_operation.log`。
+- 16:08 Cosmos3-Edge-Policy-DROID 模型下载完成（34 个文件，共约 8.6G），已清理中断任务残留的 2.7G 临时文件。
