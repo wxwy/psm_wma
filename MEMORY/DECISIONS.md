@@ -34,3 +34,20 @@
 - 状态：生效
 - 决策：执行代码、测试、训练、推理或评测前，Agent 必须向用户展示目的、完整启动命令、工作目录、关键环境变量、资源与外网需求、输入、产物路径和结果判据。只读文件检查和文本检索可简化说明。
 - 原因：用户需要清楚掌握每次运行正在验证什么、使用什么资源、会生成什么，以及如何判定结果。
+
+## D006 Edge-Policy-DROID -> LIBERO warm-start 原则
+
+- 日期：2026-08-13
+- 状态：生效
+- 决策：
+  1. Edge->LIBERO 不直接复制 `action_policy_libero_nano.py`，也不把 `Cosmos3-Nano-Policy-DROID` 当作官方 LIBERO 起点。官方 Nano LIBERO recipe 从 bare `Cosmos3-Nano` 开始。
+  2. 复用官方 Nano LIBERO 的 dataset/action/eval contract：20 Hz、`agentview+wrist` concat、10D `frame_wise_relative` rot6d、`quantile_rot`、chunk 16，以及 gripper / 图像朝向 / normalization parity。
+  3. Edge LIBERO experiment config 以 `EDGE_MODEL_CONFIG` 为模型基线，再叠加 LIBERO-specific 设置；不得只替换 Nano recipe 的 checkpoint 路径。
+  4. 默认保留 `Cosmos3-Edge-Policy-DROID` 的 shared Generator / world-action coupling。R03/R04 再实证决定 `action2llm`、`llm2action`、`action_modality_embed` 与 embodiment domain 在 LIBERO 10D action space 下的继承、新 domain 或部分重初始化策略。
+  5. R02 采用 metadata/config/index-first：先比较 Nano LIBERO recipe、`NANO_MODEL_CONFIG`、`EDGE_MODEL_CONFIG`、Edge-Policy-DROID config/index 和官方 policy-posttraining 资料；bare Edge 权重 diff 降为 conditional，不作为硬前置。只有关键未决问题会改变 R04 初始化策略时，才按需下载 bare Edge 必要 transformer shard。
+  6. `Cosmos3-Nano-Policy-DROID` 完整权重不作为当前依赖，也不做 Nano-Policy-DROID vs Edge-Policy-DROID 的逐 tensor 数值比较。
+- 事实边界：
+  - 官方公开 Nano DROID recipe 是 Generator-side Full SFT，不是 action-head-only；公开 trainable selector 包括 `moe_gen`、`time_embedder`、`vae2llm`、`llm2vae`、`action2llm`、`llm2action`、`action_modality_embed`。
+  - 结合 Cosmos3 policy post-training 论文、官方 cookbook 与 Nano recipe，可高置信推断 Edge-Policy-DROID 也经历了大规模 Generator-side policy specialization；但 NVIDIA 未公开该发布 checkpoint 的 exact `keys_to_select`，不得将 Nano selector 写成 Edge 官方事实。
+  - 将公开 Nano selector 映射到 Edge 参数结构得到的约 1.423B trainable / 约 35.6% of 4B 是项目 derived estimate，不是 NVIDIA 官方 Edge 数字。
+- 原因：把“LIBERO-specific contract”“Nano-specific model config”“DROID-specific specialization”拆开，既最大化利用 Policy-DROID 已学到的 world-action coupling，又避免为不影响初始化策略的问题额外下载模型权重或引入无意义的跨架构 tensor diff。
