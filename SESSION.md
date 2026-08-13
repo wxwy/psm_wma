@@ -50,11 +50,10 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - 文档治理发现：提交直接修改 `frozen/locked` 文件但未升级版本或增加对应修订记录。
 - 一致性残留：技术调研第 10 章仍写“Local/Goal persistent state”；Static Audit 仍保留 `K_local/K_goal/K_psm` 旧字段。
 - 已确认工作目录：`/gemini/code/psm_wma`。
-- 提交：未提交。
+- DOC-R01 主提交：`dde7621`。
 
 ## 下一交接
 
-1. 新建版本化 R01-R06 Runbook，不继续扩写现有 Runtime Plan 摘要。
-2. 修复两处残留旧口径，并用新版本/修订记录处理 `frozen/locked` 文档治理问题。
-3. 由未参与 Runbook 编写的 Agent 对照 `AGENTS.md` 逐项复审。
-4. 审查通过后认领 R01；在已挂载 GPU 的云端容器中核验 Python/uv 环境和 checkpoint 完整性，再执行官方 smoke。
+1. 认领 `G0-R01`，按已批准 Runbook 执行 Phase A 预检和 GPU smoke。
+2. R01 生成规范 Gate JSON 并 PASS 后，再进入 R02/R03。
+3. 后续分别新建版本化 R02-R06 Runbook，不扩写 frozen/locked 文档。
