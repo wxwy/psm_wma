@@ -10,11 +10,12 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 
 - 正式设计主线为 Temporal Local Memory 与 Spatial Global Memory 两个独立 optional clean modalities。
 - 项目以 `cosmos-framework` 为工程母体；优先新增项目模块，只对 `SequencePlan`、`PackedSequence`、packer 和 Generator adapter 等必要扩展点做集中最小修改。
-- 根仓库以当前 `main` HEAD 为准；本次交接修改基于 `5084057`，`cosmos-framework` 子模块为 `5d6dedc7bac4e8ec4d2b6fb002655bff68e5e5f0`。
+- 根仓库以当前 `main` HEAD 为准；`cosmos-framework` 子模块为 `5d6dedc7bac4e8ec4d2b6fb002655bff68e5e5f0`。
 - `docs/build/log/kimi_operation.log` 是 Kimi 的执行日志，已确认纳入版本控制；其他 Agent 只追加自己的真实操作，不覆盖已有记录。
 - 已拉取另一 Agent 的文档一致性修改。该交付修改了 5 份现有正式文档，但没有新增或完善可执行的 R01-R06 Runbook。
 - Kimi 记录 `/gemini/code/models/Cosmos3-Edge-Policy-DROID` 已于 2026-08-12 16:08 下载完成；R01 执行前仍需按权重索引核验文件完整性。当前处于未挂载 GPU 的云端 Docker，未使用 GPU 资源时 `nvidia-smi` 不显示显卡，属于正常调度状态；正式 R01 需在已分配 GPU 的容器中执行。`cosmos-framework/.venv` 不存在，仍需确认项目既有 Python/uv 运行方式。
 - 所有 Agent 执行代码、测试、训练、推理或评测前，必须先向用户展示目的、完整命令、工作目录、环境变量、资源/外网需求、输入、产物和判据。
+- arXiv:2608.11246 已纳入后续 W10/W11 Agent Harness 高优先级参考，详细记录见 `docs/build/PSM-WMA_Agent_Harness_reference_addendum_v0.1.md` 与 `MEMORY/DECISIONS.md` D007；该参考不改变当前 G0/R01-R09 执行顺序。
 
 ### Edge-Policy-DROID -> LIBERO 新确认
 
@@ -41,6 +42,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - 完成 `COLLAB-BOOTSTRAP`，建立根目录协作协议、会话状态、任务队列和长期决策文件。
 - 拉取并审查 `c428d46`、`42c6a13`；Local/Global 配置、代码结构和 runtime import 核对方向正确。
 - 确认 Nano LIBERO official recipe 与 Nano/Edge model config 的边界，并收敛 Edge-Policy-DROID -> LIBERO warm-start 原则；详见 `MEMORY/DECISIONS.md` D006。
+- 新增 arXiv:2608.11246 Agent Harness 参考增补并登记 D007；其作用域限定为 W10/W11，不提前影响 G0 或 Memory Gate。
 
 ## 验证记录
 
@@ -48,6 +50,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - 文档治理发现：提交直接修改 `frozen/locked` 文件但未升级版本或增加对应修订记录。
 - 一致性残留：技术调研第 10 章仍写“Local/Goal persistent state”；Static Audit 仍保留 `K_local/K_goal/K_psm` 旧字段。
 - Edge->LIBERO warm-start 事实分级已明确：官方事实、项目高置信推断、derived estimate、待 R03/R04 实证项分开记录。
+- arXiv:2608.11246 当前仅按后续 Agent 参考记录；W10/W11 启动前要求重新核验一手论文/代码，不把当前概括当作冻结实现事实。
 - 已确认工作目录：`/gemini/code/psm_wma`。
 
 ## 下一交接
@@ -57,3 +60,4 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 3. R03 明确产出 `action2llm` / `llm2action` / `action_modality_embed` / domain 的 inherit-vs-reinit 决策与运行时证据。
 4. 修复两处残留旧口径，并用新版本/修订记录处理 `frozen/locked` 文档治理问题。
 5. R04 仅在 R02/R03 contract 明确后执行 Edge-Policy-DROID x LIBERO forward/loss smoke。
+6. W10/W11 启动时读取 `PSM-WMA_Agent_Harness_reference_addendum_v0.1.md`，复核 arXiv:2608.11246 后再决定 scene/context 与 execution-evaluation 接口是否进入实现。
