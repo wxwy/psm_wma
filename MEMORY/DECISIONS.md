@@ -51,3 +51,17 @@
   - 结合 Cosmos3 policy post-training 论文、官方 cookbook 与 Nano recipe，可高置信推断 Edge-Policy-DROID 也经历了大规模 Generator-side policy specialization；但 NVIDIA 未公开该发布 checkpoint 的 exact `keys_to_select`，不得将 Nano selector 写成 Edge 官方事实。
   - 将公开 Nano selector 映射到 Edge 参数结构得到的约 1.423B trainable / 约 35.6% of 4B 是项目 derived estimate，不是 NVIDIA 官方 Edge 数字。
 - 原因：把“LIBERO-specific contract”“Nano-specific model config”“DROID-specific specialization”拆开，既最大化利用 Policy-DROID 已学到的 world-action coupling，又避免为不影响初始化策略的问题额外下载模型权重或引入无意义的跨架构 tensor diff。
+
+## D007 arXiv:2608.11246 作为后续 Agent Harness 参考
+
+- 日期：2026-08-13
+- 状态：生效
+- 决策：将 arXiv:2608.11246 纳入 W10/W11 的高优先级 Agent / Planner / Harness 参考，但不作为 G0、R01-R09、Local Memory、Spatial Global Memory 或 Edge->LIBERO baseline 的前置依赖。
+- 参考重点：
+  1. 用 harness 把现有 memory、world-action policy、skills/tools 与 verifier 组织成闭环，而不是新增一套替代 Cosmos3 的 Agent 主体；
+  2. Spatial Global Memory 可以额外生成 Agent-readable 的结构化 scene/object/place/status 摘要，但 scene graph 只作为 Planner context，不替代连续 Global Spatial Memory；
+  3. 执行反馈采用结构化 `success / continue / failure(reason)` 或 exit-code-style interface，服务 replan / retry / re-observe / re-query memory；不得把这些状态扩展成手写任务 FSM。
+- 适用实验：W10 Planner dynamic modality routing / E013；W11 Cosmos Reasoner Agent thin slice / E014 / failure recovery。
+- 事实边界：当前仅把论文作为后续设计参考。W10/W11 启动前必须重新核验 arXiv 一手页面、项目页/代码（若开放）及具体接口，当前讨论中的 scene/context/evaluation 概括不得直接当成冻结实现事实。
+- 详细记录：`docs/build/PSM-WMA_Agent_Harness_reference_addendum_v0.1.md`。
+- 原因：该方向与“Memory + World-Action Model 为主体，Agent 只做薄层 orchestration”的项目边界兼容，并可为动态 MemoryRequest、执行验证和失败恢复提供更系统的 harness 设计参考。
