@@ -3,8 +3,8 @@
   "gate": "G0-R03",
   "status": "PASS",
   "provenance": {
-    "audit_timestamp_utc": "2026-08-14T06:11:22.689730+00:00",
-    "repo_commit": "46498ba7615509241085ce49a56885e089deaabb",
+    "audit_timestamp_utc": "2026-08-14T06:13:31.571042+00:00",
+    "repo_commit": "ee88c294a6c410e9bbc1527c1a41fab31bcd7b95",
     "cosmos_commit": "59653c588b647a0a5a58adde8d9e8bde9721607a",
     "script_path": "tools/g0/audit_r03_action_contract.py",
     "script_sha256": "cf40f2c641c7e9c215d2af92d7cf31d0c14922513f0a895516d205f89e4e9689",
