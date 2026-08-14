@@ -80,9 +80,10 @@
 - 决策：
   1. DROID/RoboLab 零样本策略测试与 G0 smoke 一律使用 `Cosmos3-Edge-Policy-DROID`（完整 HF 推理包，含 VAE、vision encoder、tokenizer、scheduler 与 `droid_lerobot` 策略配置）。
   2. 原版 `Cosmos3-Edge`（本地仅 `transformer/` 权重，约 6.3GB）只作为基础模型、训练起点或权重差异基准；不得假定它已具备可用的 DROID 控制策略。
-  3. R03/R04 设计时必须考虑 Policy-DROID 相对 base Edge 多出的 28 个 `k_norm_und_for_gen` 参数，不能按"两库参数名完全一致"处理。
+  3. R03/R04 设计时注意：Policy-DROID 的 `use_und_k_norm_for_gen=true` 会在生成路径激活 28 个 `k_norm_und_for_gen` 参数；加载该 checkpoint 必须走 `cosmos_framework.inference.model._diffusers_weight_map` 的兼容入口（`inference2/_model_io.py` 尚未同步该兼容）。
 - 事实边界：
-  - Kimi safetensors header 级复核（2026-08-14）：base 549 个张量、Policy-DROID 577 个；共同 549 个张量 0 个 shape 不匹配；仅 4 个 `time_embedder` 张量由 BF16 保存为 FP32（Transformer 约多 9.4MB，非新增层）；`action_proj_in` / `action_proj_out` / `action_modality_embed` 两边结构均存在。
+  - 规范键集（Kimi 复核 2026-08-14，经 R02 索引审计确认）：base 与 Policy-DROID 的 Transformer 规范键集完全相同，同为 549 个（均含 28 个 `layers.N.self_attn.k_norm_und_for_gen.weight`）；共同张量 0 shape 不匹配；仅 4 个 `time_embedder` 张量由 BF16 保存为 FP32（约多 9.4MB，非新增层）；`action_proj_in` / `action_proj_out` / `action_modality_embed` 两边结构均存在。
+  - Policy-DROID 的物理差异不在参数集合，而在打包方式：多一个 overlay 文件 `transformer/cosmos_framework_model.safetensors`，以模型内部名（`model.net.language_model...`）重复存储同样 28 个 K-Norm 张量；其根索引含 56 个 K-Norm 条目，其中 28 个 `layers.layers.` 旧别名为指向不存在键的陈旧条目，依赖加载端兼容逻辑剔除。
   - Codex 分层抽样数值对比（2026-08-13，非全量扫描）：`action_modality_embed`、`action_proj_in/out`、`moe_gen` 生成塔权重已训练改写；`embed_tokens` 与普通 `input_layernorm`/`norm` 未变。该覆盖结论为抽样证据，全量数值 diff 留待 R02/R03 正式 audit 复核。
-  - Codex 原始结论中"两库参数名完全一致、无新增参数名"经复核不准确，以本条 header 级事实为准。
-- 原因：Policy-DROID 是 DROID 策略专项微调后的完整发布包，与 base Edge 的职责不同；明确分工避免把基础权重误当策略 checkpoint，也避免 R03/R04 忽略生成路径新增的 K-norm 参数。
+  - 修订（2026-08-14）：本条早先版本称"base 完全没有 `k_norm_und_for_gen`，Policy-DROID 新增 28 个参数"，经 R02 审计复核该说法不准确——base 的扩散 shard 同样含 28 个规范 K-Norm 键，Policy-DROID 多出的仅是 overlay 重复存储与陈旧索引别名。以本修订为准。
+- 原因：Policy-DROID 是 DROID 策略专项微调后的完整发布包，与 base Edge 的职责不同；明确分工避免把基础权重误当策略 checkpoint；同时明确该 checkpoint 的根索引缺陷与唯一受支持的加载入口，防止 R03/R04 误用未兼容的 inference2 路径。

@@ -2,6 +2,25 @@
   "schema_version": "1.0",
   "gate": "G0-R02",
   "status": "PASS",
+  "provenance": {
+    "audit_timestamp_utc": "2026-08-14T05:05:46.111231+00:00",
+    "repo_commit": "baa046ff5f46e1ce8e85a08b8dcc797f0b752e65",
+    "cosmos_commit": "ad9158ea35b9c8a76c2c3c00c553141d65fbeea3",
+    "script_path": "tools/g0/audit_r02_checkpoints.py",
+    "script_sha256": "8c734639b36cecc64073e05ca831b81ead62c3d45da3d9c0cfdb751808ee8cf9",
+    "command": [
+      "/root/venvs/psm_wma/bin/python",
+      "tools/g0/audit_r02_checkpoints.py",
+      "--checkpoint",
+      "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
+      "--output",
+      "artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json"
+    ],
+    "run_config": {
+      "checkpoint": "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
+      "output": "artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json"
+    }
+  },
   "checkpoint": "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
   "audit_scope": "metadata/config/index-only; no full tensor value diff",
   "facts": {
@@ -26,19 +45,29 @@
         "indexed_key_count": 431,
         "header_key_count": 431,
         "missing_indexed_key_count": 0,
-        "extra_header_key_count": 0
+        "extra_header_key_count": 0,
+        "extra_header_keys": []
       },
       "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": {
         "indexed_key_count": 118,
         "header_key_count": 118,
         "missing_indexed_key_count": 0,
-        "extra_header_key_count": 0
+        "extra_header_key_count": 0,
+        "extra_header_keys": []
       },
       "vision_encoder/model.safetensors": {
         "indexed_key_count": 437,
         "header_key_count": 443,
         "missing_indexed_key_count": 0,
-        "extra_header_key_count": 6
+        "extra_header_key_count": 6,
+        "extra_header_keys": [
+          "model.projector.linear_fc1.bias",
+          "model.projector.linear_fc1.weight",
+          "model.projector.linear_fc2.bias",
+          "model.projector.linear_fc2.weight",
+          "model.projector.norm.bias",
+          "model.projector.norm.weight"
+        ]
       }
     },
     "effective_missing_indexed_key_count": 0,
@@ -72,12 +101,30 @@
       "policy.domain_name=droid_lerobot"
     ],
     "libero_contract": {
-      "fps": 20,
-      "action_chunk_size": 16,
-      "action_space": "frame_wise_relative",
-      "rotation_representation": "6d",
-      "action_normalization": "quantile_rot",
-      "views": "agentview+wrist concat_view"
+      "fps": {
+        "value": 20,
+        "evidence": "action_policy_libero_nano.py:202"
+      },
+      "action_chunk_size": {
+        "value": 16,
+        "evidence": "action_policy_libero_nano.py:203"
+      },
+      "action_space": {
+        "value": "frame_wise_relative",
+        "evidence": "action_policy_libero_nano.py:207"
+      },
+      "rotation_representation": {
+        "value": "6d",
+        "evidence": "action_policy_libero_nano.py:208"
+      },
+      "action_normalization": {
+        "value": "quantile_rot",
+        "evidence": "action_policy_libero_nano.py:210"
+      },
+      "views": {
+        "value": "agentview+wrist concat_view",
+        "evidence": "action_policy_libero_nano.py:204-206"
+      }
     }
   },
   "blockers": [],

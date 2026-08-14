@@ -1,6 +1,6 @@
 # PSM-WMA G0-R02 Checkpoint Audit Runbook v0.1
 
-状态：`draft`
+状态：`reviewed`
 
 ## 目的
 
@@ -27,7 +27,7 @@
 
 输入为 checkpoint 根目录下的 `config.json`、`checkpoint.json`、`model.safetensors.index.json` 及索引引用的 safetensors header。脚本不读取完整张量值。
 
-输出 JSON 的关键字段为：`gate`、`status`、`facts`、`warm_start_decision`、`blockers`。
+输出 JSON 的关键字段为：`gate`、`status`、`provenance`、`facts`、`warm_start_decision`、`blockers`。`provenance` 必须记录 UTC 时间、根仓库与 Cosmos commit、脚本路径与 SHA-256、完整 argv 和 run_config。
 
 ## 断言和判据
 
@@ -54,4 +54,4 @@
 
 - 机器可读产物：`artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json`
 - 回填：`SESSION.md`、`TODO.md`
-- R02 进入 `REVIEW` 前必须关闭全部 blocker，并补做真实 checkpoint load smoke。
+- R02 进入 `REVIEW` 前必须关闭全部 blocker，并补做真实 checkpoint load smoke，或显式引用 G0-R01 使用同一受支持入口完成的实际 checkpoint 加载与 finite Policy 推理证据。

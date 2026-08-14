@@ -4,10 +4,18 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import subprocess
+import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 from safetensors import safe_open
+
+
+def git_commit(path: Path) -> str:
+    return subprocess.check_output(["git", "-C", str(path), "rev-parse", "HEAD"], text=True).strip()
 
 
 def parse_args() -> argparse.Namespace:
@@ -19,6 +27,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    root = Path(__file__).resolve().parents[2]
+    script_path = Path(__file__).resolve()
     checkpoint = args.checkpoint.resolve()
     index_path = checkpoint / "model.safetensors.index.json"
     config_path = checkpoint / "config.json"
@@ -54,6 +64,7 @@ def main() -> int:
             "header_key_count": len(header_keys),
             "missing_indexed_key_count": len(missing),
             "extra_header_key_count": len(extra),
+            "extra_header_keys": extra,
         }
         if missing:
             missing_indexed_keys[relative_path] = missing
@@ -73,6 +84,18 @@ def main() -> int:
         "schema_version": "1.0",
         "gate": "G0-R02",
         "status": status,
+        "provenance": {
+            "audit_timestamp_utc": datetime.now(timezone.utc).isoformat(),
+            "repo_commit": git_commit(root),
+            "cosmos_commit": git_commit(root / "cosmos-framework"),
+            "script_path": str(script_path.relative_to(root)),
+            "script_sha256": hashlib.sha256(script_path.read_bytes()).hexdigest(),
+            "command": [sys.executable, *sys.argv],
+            "run_config": {
+                "checkpoint": str(checkpoint),
+                "output": str(args.output),
+            },
+        },
         "checkpoint": str(checkpoint),
         "audit_scope": "metadata/config/index-only; no full tensor value diff",
         "facts": {
@@ -114,12 +137,18 @@ def main() -> int:
                 "policy.domain_name=droid_lerobot",
             ],
             "libero_contract": {
-                "fps": 20,
-                "action_chunk_size": 16,
-                "action_space": "frame_wise_relative",
-                "rotation_representation": "6d",
-                "action_normalization": "quantile_rot",
-                "views": "agentview+wrist concat_view",
+                "fps": {"value": 20, "evidence": "action_policy_libero_nano.py:202"},
+                "action_chunk_size": {"value": 16, "evidence": "action_policy_libero_nano.py:203"},
+                "action_space": {
+                    "value": "frame_wise_relative",
+                    "evidence": "action_policy_libero_nano.py:207",
+                },
+                "rotation_representation": {"value": "6d", "evidence": "action_policy_libero_nano.py:208"},
+                "action_normalization": {
+                    "value": "quantile_rot",
+                    "evidence": "action_policy_libero_nano.py:210",
+                },
+                "views": {"value": "agentview+wrist concat_view", "evidence": "action_policy_libero_nano.py:204-206"},
             },
         },
         "blockers": (
