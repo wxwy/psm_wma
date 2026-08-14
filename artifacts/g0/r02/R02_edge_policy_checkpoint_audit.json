@@ -3,8 +3,8 @@
   "gate": "G0-R02",
   "status": "PASS",
   "provenance": {
-    "audit_timestamp_utc": "2026-08-14T05:05:46.111231+00:00",
-    "repo_commit": "baa046ff5f46e1ce8e85a08b8dcc797f0b752e65",
+    "audit_timestamp_utc": "2026-08-14T05:07:35.007661+00:00",
+    "repo_commit": "49c0c4799a390f561e6983b00a53f7433b81a3bf",
     "cosmos_commit": "ad9158ea35b9c8a76c2c3c00c553141d65fbeea3",
     "script_path": "tools/g0/audit_r02_checkpoints.py",
     "script_sha256": "8c734639b36cecc64073e05ca831b81ead62c3d45da3d9c0cfdb751808ee8cf9",
