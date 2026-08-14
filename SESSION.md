@@ -39,7 +39,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | DOC-R02 | Codex | DONE | `docs/build/PSM-WMA_G0_R02_checkpoint_audit_runbook_v0.1.md` | Kimi 独立审查 APPROVE；MEDIUM-1 与 LOW-1/2/3/4 已关闭，Runbook 状态 `reviewed` |
 | G0-R02 | Codex | DONE | `tools/g0/audit_r02_checkpoints.py`、`artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json` | metadata/config/index audit PASS；provenance 完整，warm-start 边界已冻结 |
 | DOC-R03 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R03_action_contract_runbook_v0.1.md` | 独立版本化 Runbook；不与 R02 混入同一提交 |
-| G0-R03 | Codex | IN_PROGRESS | `tools/g0/audit_r03_action_contract.py`、`artifacts/g0/r03/R03_action_contract.json` | 运行时核验 LIBERO action/domain/shape/mask/trainable scope，不修改 Cosmos 核心 |
+| G0-R03 | Codex | IN_PROGRESS | `tools/g0/audit_r03_action_contract.py`、`artifacts/g0/r03/R03_action_contract.json`、`cosmos-framework/cosmos_framework/data/generator/action/datasets/base_dataset.py`、`cosmos-framework/cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py` 及定向测试 | 运行时核验 LIBERO action/domain/shape/mask/trainable scope；最小兼容本地 LeRobot JSONL/per-episode schema |
 | DOC-R04-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R03 混入同一提交 |
 
 ## 最近完成
