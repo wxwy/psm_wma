@@ -1,0 +1,3 @@
+cmd: /gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py --sft-toml=examples/toml/sft_config/action_policy_libero_edge_r04.toml
+args_cfg_path: examples/toml/sft_config/action_policy_libero_edge_r04.toml
+args_override: []

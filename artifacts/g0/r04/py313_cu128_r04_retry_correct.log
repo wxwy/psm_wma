@@ -1,0 +1,176 @@
+[W815 00:58:14.338168233 socket.cpp:207] [c10d] The hostname of the client socket cannot be retrieved. err=-3
+2026-08-15 00:58:29.152 | DEBUG    | cosmos_framework.utils.config:_load_py_config:578 - get_config_module: took 9.71ms
+2026-08-15 00:58:42.853 | DEBUG    | cosmos_framework.utils.config:_load_py_config:583 - importlib.import_module: took 13700.98ms
+2026-08-15 00:58:43.267 | DEBUG    | cosmos_framework.utils.config:_load_py_config:588 - override: took 413.40ms
+2026-08-15 00:58:43.267 | DEBUG    | cosmos_framework.utils.config:load_config:567 - total time to load config: 14184.96ms
+[08-15 00:58:43|INFO|cosmos_framework/utils/training_telemetry/telemetry.py:63:wrapper] Heimdall telemetry is disabled, if using Heimdall,consider setting ENABLE_TELEMETRY=true to enable it
+[08-15 00:58:50|CRITICAL|cosmos_framework/utils/distributed.py:60:init] [RANK 0] Initialized distributed training with local rank 0 using nccl with timeout 1800
+[08-15 00:58:50|INFO|cosmos_framework/utils/distributed.py:72:init] Training with 1 GPUs.
+[08-15 00:58:50|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 6.75 s
+[08-15 00:58:50|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 0.00 s
+Config is saved using pickle at /gemini/code/psm_wma/artifacts/g0/r04/py313_cu128_r04_retry/psm_wma/g0_r04/edge_libero_forward_loss/config.pkl.
+Config is saved using omegaconf at /gemini/code/psm_wma/artifacts/g0/r04/py313_cu128_r04_retry/psm_wma/g0_r04/edge_libero_forward_loss/config.yaml.
+/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[rank0]:[W815 00:58:50.731279158 ProcessGroupNCCL.cpp:5138] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()
+[08-15 00:58:52|INFO|cosmos_framework/utils/misc.py:124:print_environ_variables] Environment variable HF_HOME: /gemini/code/.persist/.cache/huggingface
+[08-15 00:58:52|INFO|cosmos_framework/utils/misc.py:124:print_environ_variables] Environment variable IMAGINAIRE_OUTPUT_ROOT: /gemini/code/psm_wma/artifacts/g0/r04/py313_cu128_r04_retry
+[08-15 00:58:52|INFO|cosmos_framework/utils/misc.py:138:set_random_seed] Using random seed 42.
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback skip_nan_step: {'max_consecutive_nan': 100, '_target_': <class 'cosmos_framework.callbacks.skip_nan_step.SkipNaNStep'>}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback grad_clip: {'clip_norm': 1.0, 'force_finite': True, 'track_per_modality': True, '_target_': <class 'cosmos_framework.callbacks.grad_clip.GradClip'>}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback low_precision: {'update_iter': 1, 'config': None, 'trainer': None, '_target_': <class 'cosmos_framework.utils.callback.LowPrecisionCallback'>}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback heart_beat: {'step_size': 1, 'update_interval_in_minute': 20, 'save_s3': False, 'every_n': 200, '_target_': <class 'cosmos_framework.callbacks.heart_beat.HeartBeat'>}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback device_monitor: {'every_n': 200, 'step_size': 1, 'save_s3': False, 'upload_every_n_mul': 5, 'log_memory_detail': True, '_target_': <class 'cosmos_framework.callbacks.device_monitor.DeviceMonitor'>}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback termination_signal_checkpoint: {'min_save_fraction': 0.3333333333333333, '_target_': <class 'cosmos_framework.callbacks.termination_signal_checkpoint.TerminationSignalCheckpoint'>}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback dataloader_speed is missing the '_target_' field. 
+ SKip {'every_n': 100, 'save_s3': False, 'step_size': 1}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback iter_speed is missing the '_target_' field. 
+ SKip {'every_n': 1, 'hit_thres': 50, 'save_s3': False, 'save_s3_every_log_n': 500}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback manual_gc is missing the '_target_' field. 
+ SKip {'every_n': 5, 'gc_level': 1, 'warm_up': 1}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback param_count is missing the '_target_' field. 
+ SKip {'save_s3': False}
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback training_stats is missing the '_target_' field. 
+ SKip {'log_freq': 100}
+[08-15 00:58:53|WARNING|cosmos_framework/utils/launch.py:86:log_reproducible_setup] S3 credentials not found. Skipping easy_io S3 setup.
+[08-15 00:58:53|WARNING|cosmos_framework/utils/launch.py:88:log_reproducible_setup] Job path: psm_wma/g0_r04/edge_libero_forward_loss
+[08-15 00:58:53|CRITICAL|cosmos_framework/utils/launch.py:93:log_reproducible_setup] Job local path: /gemini/code/psm_wma/artifacts/g0/r04/py313_cu128_r04_retry/psm_wma/g0_r04/edge_libero_forward_loss
+[08-15 00:58:53|INFO|cosmos_framework/model/generator/omni_mot_model.py:106:__init__] OmniMoTModel: config {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth', 'chunk_duration': 93, 'keep_decoder_cache': False, 'use_streaming_encode': False, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8, '768': 8}, 'encode_exact_durations': [17, 61, 73], 'spatial_compression_factor': 16, 'temporal_compression_factor': 4, 'temporal_window': None, 'encode_bucket_multiple': None, 'causal': True, '_target_': <class 'cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16.Wan2pt2VAEInterface'>}, 'load_vision_tokenizer': True, 'net': None, 'ema': {'enabled': False, 'rate': 0.1, 'iteration_shift': 0}, 'parallelism': {'data_parallel_shard_degree': -1, 'data_parallel_replicate_degree': 1, 'context_parallel_shard_degree': 1, 'cfg_parallel_shard_degree': 1, 'enable_inference_mode': False, 'fsdp_master_dtype': 'float32'}, 'attention_io_layout': 'sequence_sharded', 'compile': {'enabled': False, 'compiled_region': 'language', 'compile_dynamic': True, 'use_cuda_graphs': False, 'ar_post_saturation_mode': 'default', 'max_autotune_pointwise': False, 'coordinate_descent_tuning': False}, 'quantization': {'method': None, 'fp8_granularity': 'per_row', 'include_regex': [], 'exclude_regex': [], 'modelopt_fp8_checkpoint_path': None, 'modelopt_fp8_target_fqns': []}, 'activation_checkpointing': {'mode': 'selective', 'save_ops_regex': ['fmha'], 'preserve_rng_state': True, 'determinism_check': 'default'}, 'precision': 'bfloat16', 'lora_enabled': False, 'lora_rank': 16, 'lora_alpha': 32, 'lora_target_modules': 'q_proj_moe_gen,k_proj_moe_gen,v_proj_moe_gen,o_proj_moe_gen', 'rectified_flow_training_config': {'shift': {'256': 3, '480': 5, '720': 10}, 'shift_image': None, 'use_dynamic_shift': False, 'train_time_image_distribution': 'logitnormal', 'train_time_video_distribution': 'waver', 'train_time_action_distribution': 'logitnormal', 'train_time_sound_distribution': 'logitnormal', 'train_time_weight': 'uniform', 'loss_scale': 10.0, 'image_loss_scale': None, 'sound_loss_scale': 2.0, 'use_discrete_rf': False, 'action_loss_weight': 10.0, 'independent_action_schedule': False, 'shift_action': None, 'independent_sound_schedule': False, 'shift_sound': None, 'normalize_loss_by_active': False, 'sample_level_loss_averaging': False}, 'rectified_flow_inference_config': {'scheduler_type': 'unipc', 'num_train_timesteps': 1000, 'shift': 1, 'use_dynamic_shifting': False}, 'fixed_step_sampler_config': None, 'vlm_config': {'model_name': 'nvidia/Cosmos3-Edge-Reasoner', 'safetensors_path': '', 'pretrained_weights': {'enabled': False, 'backbone_path': 's3://bucket/cosmos3/pretrained/huggingface/nvidia/Cosmos3-Edge-Reasoner-590c1c0/', 'credentials_path': '', 'enable_gcs_patch_in_boto3': True, 'checkpoint_format': None}, 'model_instance': {'config': {'base_config': {'json_file': 'cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/configs/Nemotron-2B-Dense-VL.json', '_target_': <bound method _MoTConfigBase.from_json_file of <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLMoTConfig'>>}, 'freeze_und': False, 'layer_module': 'MoTDecoderLayer', 'qk_norm_for_text': False, 'use_und_k_norm_for_gen': True, 'include_visual': None, 'tie_word_embeddings': True, '_target_': <function create_vlm_config at 0x7f274f170ae0>}, '_target_': <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLTextForCausalLM'>}, 'tokenizer': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7f26e27fb880>, 'tokenizer_type': '/gemini/code/models/Cosmos3-Edge-Policy-DROID'}, 'layer_module': None, 'qk_norm': False, 'tie_word_embeddings': False, 'use_system_prompt': False}, 'diffusion_expert_config': {'timestep_range': 1.0, 'load_weights_from_pretrained': False, 'enable_vision_modality_embeddings': False, 'patch_spatial': 2, 'max_vae_latent_side_after_patchify': 20, 'enable_fps_modulation': True, 'base_fps': 24, 'sound_base_temporal_compression_factor': None, 'vision_temporal_position_mode': 'latent_index', 'unified_3d_mrope_reset_spatial_ids': True, 'unified_3d_mrope_temporal_modality_margin': 15000}, 'input_video_key': 'video', 'input_image_key': 'images', 'input_caption_key': 'ai_caption', 'state_ch': 48, 'state_t': 300, 'latent_downsample_factor': 16, 'resolution': '480', 'max_num_tokens_after_packing': 45056, 'joint_attn_implementation': 'two_way', 'flex_attention': {'enabled': False, 'backend': 'auto', 'mask': {'noisy_attention_scope': 'all_views'}}, 'natten_parameter_list': None, 'video_temporal_causal': False, 'causal_training_strategy': 'none', 'lbl': {'method': 'local', 'coeff_und': None, 'coeff_gen': None}, 'vision_gen': True, 'action_gen': True, 'max_action_dim': 64, 'num_embodiment_domains': 32, 'sound_gen': False, 'sound_tokenizer': None, 'sound_dim': None, 'sound_latent_fps': 25, 'enable_input_bias': True, 'log_enc_time_every_n': 100, 'exclude_reasoner_weights_from_checkpoint': False}
+[08-15 00:58:53|WARNING|cosmos_framework/model/generator/omni_mot_model.py:132:set_precision] OmniMoTModel: precision torch.bfloat16
+This processor does not use the `size` parameter. It will be ignored.
+[08-15 00:58:54|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[08-15 01:00:19|INFO|cosmos_framework/model/generator/tokenizers/wan2pt2_vae_4x16x16.py:1050:_video_vae] loading /gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+[08-15 01:00:19|INFO|cosmos_framework/utils/distributed.py:444:sync_model_states] Synchronizing model states from rank 0 to all ranks in process group [0].
+[08-15 01:00:19|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_tokenizers: 85.67 s
+[08-15 01:00:19|INFO|cosmos_framework/utils/generator/parallelism.py:107:_validate] dp_shard auto-inferred to world_size = 1
+[08-15 01:00:19|INFO|cosmos_framework/utils/generator/parallelism.py:121:_validate] dp_replicate is set to -1, will be automatically determined based on world_size 1 // dp_shard 1.
+[08-15 01:00:19|INFO|cosmos_framework/utils/generator/parallelism.py:126:_validate] dp_replicate is set to 1.
+`torch_dtype` is deprecated! Use `dtype` instead!
+[08-15 01:00:19|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on meta to cuda and broadcast model states: 0.40 s
+[08-15 01:00:19|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on Creating PyTorch model and ema if enabled: 0.69 s
+[08-15 01:00:19|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_model: 0.69 s
+[08-15 01:00:19|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_model: 86.37 s
+[08-15 01:00:19|INFO|cosmos_framework/data/generator/joint_dataloader.py:1040:__init__] [RANK 0] RankPartitionedDataLoader: world_size: 1 and rank: 0
+[08-15 01:00:19|INFO|cosmos_framework/data/generator/joint_dataloader.py:1095:__init__] [RANK 0] RankPartitionedDataLoader allocation (1 GPUs):
+  libero (ratio 1): ranks 0-0 (1 GPUs) | expected 100.00%, actual 100.00%
+[08-15 01:00:20|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[08-15 01:00:49|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:176:__init__] Loaded LIBERO dataset root=/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot split='train' camera_mode='concat_view' fps=20.0 kept_episodes=375/379 valid_indices=94250
+[08-15 01:00:49|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_data_loader: 29.88 s
+2026-08-15 01:00:49.869 | ERROR    | __main__:<module>:299 - An error has been caught in function '<module>', process 'MainProcess' (1118560), thread 'MainThread' (139820519209920):
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+> File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+    launch(config, args)
+    │      │       └ Namespace(sft_toml='examples/toml/sft_config/action_policy_libero_edge_r04.toml', opts=['--', 'dataloader_train.dataloader.nu...
+    │      └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+    └ <function launch at 0x7f27f81d3e20>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+    return func(config, *args, **kwargs)
+           │    │        │       └ {}
+           │    │        └ (Namespace(sft_toml='examples/toml/sft_config/action_policy_libero_edge_r04.toml', opts=['--', 'dataloader_train.dataloader.n...
+           │    └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+           └ <function launch at 0x7f27f81d1080>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 217, in launch
+    dataloader_train = instantiate(config.dataloader_train)
+                       │           │      └ {'max_sequence_length': None, 'max_samples_per_batch': 128, 'sound_latent_fps': 0, 'audio_sample_rate': 48000, 'dataset_name'...
+                       │           └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+                       └ <function instantiate at 0x7f28009c4fe0>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/instantiate.py", line 78, in instantiate
+    cfg = {k: instantiate(v) for k, v in cfg.items()}
+              │                          │   └ <function DictConfig.items at 0x7f2800993380>
+              │                          └ {'max_sequence_length': None, 'max_samples_per_batch': 128, 'sound_latent_fps': 0, 'audio_sample_rate': 48000, 'dataset_name'...
+              └ <function instantiate at 0x7f28009c4fe0>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/instantiate.py", line 103, in instantiate
+    return cls(*args, **instantiate_kwargs)
+           │    │       └ {'batch_size': 1, 'in_order': False, 'num_workers': 0, 'persistent_workers': False, 'pin_memory': True, 'prefetch_factor': 4,...
+           │    └ ()
+           └ <class 'cosmos_framework.data.generator.joint_dataloader.RankPartitionedDataLoader'>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 1116, in __init__
+    self.dataloader = torch.utils.data.DataLoader(dataset, **merged_kwargs)
+    │                 │     │     │    │          │          └ {'batch_size': 1, 'in_order': False, 'num_workers': 0, 'persistent_workers': False, 'pin_memory': True, 'prefetch_factor': 4,...
+    │                 │     │     │    │          └ <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionIterableShuffleDataset object at 0x7f26dc267770>
+    │                 │     │     │    └ <class 'torch.utils.data.dataloader.DataLoader'>
+    │                 │     │     └ <module 'torch.utils.data' from '/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/data/__init__.py'>
+    │                 │     └ <module 'torch.utils' from '/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/__init__.py'>
+    │                 └ <module 'torch' from '/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/__init__.py'>
+    └ <cosmos_framework.data.generator.joint_dataloader.RankPartitionedDataLoader object at 0x7f26dc266ba0>
+
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/data/dataloader.py", line 281, in __init__
+    raise ValueError(
+
+ValueError: prefetch_factor option could only be specified in multiprocessing.let num_workers > 0 to enable multiprocessing, otherwise set prefetch_factor to None.
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank0]:   File "<frozen runpy>", line 88, in _run_code
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+[rank0]:     launch(config, args)
+[rank0]:     ~~~~~~^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/loguru/_logger.py", line 1297, in catch_wrapper
+[rank0]:     return function(*args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+[rank0]:     return func(config, *args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 217, in launch
+[rank0]:     dataloader_train = instantiate(config.dataloader_train)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/instantiate.py", line 78, in instantiate
+[rank0]:     cfg = {k: instantiate(v) for k, v in cfg.items()}
+[rank0]:               ~~~~~~~~~~~^^^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/instantiate.py", line 103, in instantiate
+[rank0]:     return cls(*args, **instantiate_kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 1116, in __init__
+[rank0]:     self.dataloader = torch.utils.data.DataLoader(dataset, **merged_kwargs)
+[rank0]:                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/data/dataloader.py", line 281, in __init__
+[rank0]:     raise ValueError(
+[rank0]:     ...<2 lines>...
+[rank0]:     )
+[rank0]: ValueError: prefetch_factor option could only be specified in multiprocessing.let num_workers > 0 to enable multiprocessing, otherwise set prefetch_factor to None.
+[rank0]:[W815 01:00:51.081356759 ProcessGroupNCCL.cpp:1553] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+E0815 01:00:54.688000 1116671 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 1118560) of binary: /root/venvs/psm_wma_py313_cu128/bin/python
+Traceback (most recent call last):
+  File "/root/venvs/psm_wma_py313_cu128/bin/torchrun", line 10, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+    ~~~^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+    ~~~~~~~~~~~~~~~
+        config=config,
+        ~~~~~~~~~~~~~~
+        entrypoint=cmd,
+        ~~~~~~~~~~~~~~~
+    )(*cmd_args)
+    ~^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+    ...<2 lines>...
+    )
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+cosmos_framework.scripts.train FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-08-15_01:00:54
+  host      : gjob-dev-743413149755863040-taskrole1-0
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 1118560)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

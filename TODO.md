@@ -14,7 +14,7 @@
 | G0-R01 | DONE | Codex | REVIEW-R01 DONE；环境和 checkpoint 就绪 | Gate JSON PASS；用户批准 RoboLab 基础设施豁免，Reasoner/Policy/World smoke 与独立复核完成 |
 | G0-R02 | DONE | Codex | G0-R01 PASS | metadata/config/index audit JSON PASS；有效索引 0 缺失、provenance 完整，warm-start 与 LIBERO 数据契约已冻结并通过独立审查 |
 | G0-R03 | DONE | Codex | G0-R01 PASS | 真实 LIBERO 7→10→64 action pipeline、domain 5/8、shape/mask、projection smoke、参数拆分与 stats provenance 已落盘并通过独立审查 |
-| G0-R04 | IN_PROGRESS | Codex | G0-R02、G0-R03 完成 | 基于已确认的 Edge LIBERO config 与 warm-start contract，Edge-Policy-DROID x LIBERO forward/loss finite，最小差分和异常信息可复现 |
+| G0-R04 | BLOCKED | Codex | G0-R02、G0-R03 完成；需多卡 FSDP 或更大主机内存 | Edge-Policy-DROID x LIBERO 的 DCP、forward/loss/backward 已 finite；optimizer step 在当前单卡主机连续两次 SIGKILL，待资源变更后完成 20–50 steps |
 | G0-R05 | TODO | 待认领 | G0-R04 PASS；完成本地 action 分位数与内置 stats q01/q99 的分布 sanity check | LIBERO tiny-overfit 达到 Runbook 阈值并保存曲线与 checkpoint 信息；normalization stats 与本地 v2.1 数据匹配性有明确结论 |
 | G0-R06 | TODO | 待认领 | G0-R05 PASS | LIBERO closed-loop baseline 可重复且 SR > 0 |
 | G0-R07-R09 | BLOCKED | 待认领 | G0-R06 PASS | Local/Global packing 与 Local Memory Gate 分别满足 Runtime Plan |

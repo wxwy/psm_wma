@@ -1,0 +1,90 @@
+2026-08-15 00:34:22.558 | DEBUG    | cosmos_framework.utils.config:_load_py_config:578 - get_config_module: took 2.02ms
+2026-08-15 00:34:35.970 | DEBUG    | cosmos_framework.utils.config:_load_py_config:583 - importlib.import_module: took 13411.79ms
+2026-08-15 00:34:36.675 | DEBUG    | cosmos_framework.utils.config:_load_py_config:588 - override: took 704.69ms
+2026-08-15 00:34:36.675 | DEBUG    | cosmos_framework.utils.config:load_config:567 - total time to load config: 14170.27ms
+[08-15 00:34:36|INFO|cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py:63:wrapper] Heimdall telemetry is disabled, if using Heimdall,consider setting ENABLE_TELEMETRY=true to enable it
+[08-15 00:34:37|INFO|cosmos-framework/cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 0.58 s
+2026-08-15 00:34:37.259 | ERROR    | __main__:<module>:299 - An error has been caught in function '<module>', process 'MainProcess' (1023449), thread 'MainThread' (139944735513536):
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+> File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+    launch(config, args)
+    │      │       └ Namespace(sft_toml='cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_r04.toml', opts=[], dryrun=False, att...
+    │      └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+    └ <function launch at 0x7f44dfe30c20>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+    return func(config, *args, **kwargs)
+           │    │        │       └ {}
+           │    │        └ (Namespace(sft_toml='cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_r04.toml', opts=[], dryrun=False, at...
+           │    └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+           └ <function launch at 0x7f44dffd5260>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 187, in launch
+    distributed.init()
+    │           └ <function init at 0x7f44ec8a3100>
+    └ <module 'cosmos_framework.utils.distributed' from '/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/distributed.py'>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/distributed.py", line 59, in init
+    dist.init_process_group(backend=backend, init_method="env://", timeout=timeout_timedelta)
+    │    │                          │                                      └ datetime.timedelta(seconds=1800)
+    │    │                          └ 'nccl'
+    │    └ <function init_process_group at 0x7f45a7763060>
+    └ <module 'torch.distributed' from '/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/__init__.py'>
+
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+    return func(*args, **kwargs)
+           │     │       └ {'backend': 'nccl', 'init_method': 'env://', 'timeout': datetime.timedelta(seconds=1800)}
+           │     └ ()
+           └ <function init_process_group at 0x7f45a7762fc0>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/c10d_logger.py", line 97, in wrapper
+    func_return = func(*args, **kwargs)
+                  │     │       └ {'backend': 'nccl', 'init_method': 'env://', 'timeout': datetime.timedelta(seconds=1800)}
+                  │     └ ()
+                  └ <function init_process_group at 0x7f45a7762f20>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/distributed_c10d.py", line 1806, in init_process_group
+    store, rank, world_size = next(rendezvous_iterator)
+    │      │                       └ <generator object _env_rendezvous_handler at 0x7f44dfde1000>
+    │      └ -1
+    └ None
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/rendezvous.py", line 270, in _env_rendezvous_handler
+    rank = int(_get_env_or_raise("RANK"))
+               └ <function _env_rendezvous_handler.<locals>._get_env_or_raise at 0x7f456f1cbec0>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/rendezvous.py", line 255, in _get_env_or_raise
+    raise _env_error(env_var)
+          │          └ 'RANK'
+          └ <function _env_rendezvous_handler.<locals>._env_error at 0x7f456f1e8180>
+
+ValueError: Error initializing torch.distributed using env:// rendezvous: environment variable RANK expected, but not set
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+    launch(config, args)
+    ~~~~~~^^^^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/loguru/_logger.py", line 1297, in catch_wrapper
+    return function(*args, **kwargs)
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+    return func(config, *args, **kwargs)
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 187, in launch
+    distributed.init()
+    ~~~~~~~~~~~~~~~~^^
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/distributed.py", line 59, in init
+    dist.init_process_group(backend=backend, init_method="env://", timeout=timeout_timedelta)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/c10d_logger.py", line 83, in wrapper
+    return func(*args, **kwargs)
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/c10d_logger.py", line 97, in wrapper
+    func_return = func(*args, **kwargs)
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/distributed_c10d.py", line 1806, in init_process_group
+    store, rank, world_size = next(rendezvous_iterator)
+                              ~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/rendezvous.py", line 270, in _env_rendezvous_handler
+    rank = int(_get_env_or_raise("RANK"))
+               ~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/rendezvous.py", line 255, in _get_env_or_raise
+    raise _env_error(env_var)
+ValueError: Error initializing torch.distributed using env:// rendezvous: environment variable RANK expected, but not set

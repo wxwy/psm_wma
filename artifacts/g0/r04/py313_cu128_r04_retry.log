@@ -1,0 +1,140 @@
+2026-08-15 00:55:41.173 | DEBUG    | cosmos_framework.utils.config:_load_py_config:578 - get_config_module: took 14.95ms
+2026-08-15 00:56:17.813 | DEBUG    | cosmos_framework.utils.config:_load_py_config:583 - importlib.import_module: took 36639.12ms
+Traceback (most recent call last):
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/hydra/_internal/config_loader_impl.py", line 390, in _apply_overrides_to_config
+    OmegaConf.update(cfg, key, value, merge=True)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/omegaconf.py", line 741, in update
+    root.__setattr__(last_key, value)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/dictconfig.py", line 337, in __setattr__
+    raise e
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/dictconfig.py", line 334, in __setattr__
+    self.__set_impl(key, value)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/dictconfig.py", line 318, in __set_impl
+    self._set_item_impl(key, value)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/basecontainer.py", line 549, in _set_item_impl
+    self._validate_set(key, value)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/dictconfig.py", line 180, in _validate_set
+    target = self._get_node(key) if key is not None else self
+             ~~~~~~~~~~~~~~^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/dictconfig.py", line 475, in _get_node
+    self._validate_get(key)
+    ~~~~~~~~~~~~~~~~~~^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/dictconfig.py", line 164, in _validate_get
+    self._format_and_raise(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        key=key, value=value, cause=ConfigAttributeError(msg)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/base.py", line 231, in _format_and_raise
+    format_and_raise(
+    ~~~~~~~~~~~~~~~~^
+        node=self,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        type_override=type_override,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/_utils.py", line 899, in format_and_raise
+    _raise(ex, cause)
+    ~~~~~~^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/omegaconf/_utils.py", line 797, in _raise
+    raise ex.with_traceback(sys.exc_info()[2])  # set env var OC_CAUSE=1 for full trace
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+omegaconf.errors.ConfigAttributeError: Key 'num_workers' is not in struct
+    full_key: dataloader_train.num_workers
+    object_type=dict
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 282, in <module>
+    config = load_experiment_from_toml(args.sft_toml, extra_overrides=args.opts)
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/configs/toml_config/sft_config.py", line 771, in load_experiment_from_toml
+    config = load_config(base_config_path, overrides)
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/config.py", line 552, in load_config
+    config = _load_py_config(config_path, opts, validate=False)
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/config.py", line 586, in _load_py_config
+    config = override(config, opts)
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/config_helper.py", line 92, in override
+    config_omegaconf = compose(config_name="config", overrides=overrides)
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/hydra/compose.py", line 38, in compose
+    cfg = gh.hydra.compose_config(
+        config_name=config_name,
+    ...<3 lines>...
+        with_log_configuration=False,
+    )
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/hydra/_internal/hydra.py", line 594, in compose_config
+    cfg = self.config_loader.load_configuration(
+        config_name=config_name,
+    ...<3 lines>...
+        validate_sweep_overrides=validate_sweep_overrides,
+    )
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/hydra/_internal/config_loader_impl.py", line 142, in load_configuration
+    return self._load_configuration_impl(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        config_name=config_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        validate_sweep_overrides=validate_sweep_overrides,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/hydra/_internal/config_loader_impl.py", line 276, in _load_configuration_impl
+    ConfigLoaderImpl._apply_overrides_to_config(config_overrides, cfg)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/hydra/_internal/config_loader_impl.py", line 392, in _apply_overrides_to_config
+    raise ConfigCompositionException(
+    ...<2 lines>...
+    ) from ex
+hydra.errors.ConfigCompositionException: Could not override 'dataloader_train.num_workers'.
+To append to your config use +dataloader_train.num_workers=0
+E0815 00:56:20.374000 1101985 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 1106580) of binary: /root/venvs/psm_wma_py313_cu128/bin/python
+Traceback (most recent call last):
+  File "/root/venvs/psm_wma_py313_cu128/bin/torchrun", line 10, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+    ~~~^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+    ~~~~~~~~~~~~~~~
+        config=config,
+        ~~~~~~~~~~~~~~
+        entrypoint=cmd,
+        ~~~~~~~~~~~~~~~
+    )(*cmd_args)
+    ~^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+    ...<2 lines>...
+    )
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+cosmos_framework.scripts.train FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-08-15_00:56:20
+  host      : gjob-dev-743413149755863040-taskrole1-0
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 1106580)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
