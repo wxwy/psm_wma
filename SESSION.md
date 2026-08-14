@@ -1,6 +1,6 @@
 # 当前协作状态
 
-更新时间：2026-08-13
+更新时间：2026-08-14
 
 ## 当前阶段
 
@@ -36,8 +36,8 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 |---|---|---|---|---|
 | DOC-R01 | Codex | DONE | `docs/build/PSM-WMA_G0_R01_implementation_runbook_v0.1.md`、`tools/g0/collect_r01_gate_json.py` | Kimi 二轮复审 APPROVE，已关闭全部审查项 |
 | G0-R01 | Codex | DONE | `artifacts/g0/r01/`、`tools/g0/`、`cosmos-framework` 最小 guardrail 开关 | Gate JSON `PASS`；用户批准 RoboLab 基础设施豁免，已放通 R02/R03 |
-| DOC-R02 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R02_checkpoint_audit_runbook_v0.1.md` | 独立版本化 Runbook；遵循 D006 metadata-first 与 D009 事实分级 |
-| G0-R02 | Codex | IN_PROGRESS | `tools/g0/audit_r02_checkpoints.py`、`artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json` | 本地两套 Transformer 已齐，执行 config/index 与分组数值 audit |
+| DOC-R02 | Codex | REVIEW | `docs/build/PSM-WMA_G0_R02_checkpoint_audit_runbook_v0.1.md` | Runbook 已补齐前置资产、命令、Schema、断言、判据、失败分流和回填字段，待独立审查 |
+| G0-R02 | Codex | REVIEW | `tools/g0/audit_r02_checkpoints.py`、`artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json` | metadata/config/index audit PASS；warm-start 边界已冻结，待独立审查 |
 | DOC-R03-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R02 混入同一提交 |
 
 ## 最近完成
@@ -53,6 +53,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - Kimi `REVIEW-R01` 二轮结论 `APPROVE`；追加 LOW N1/N2 已修复为独立请求数不足标签和可配置 port/seed/num_steps provenance，N3 通过定向暂存排除 `__pycache__`。
 - 确认 Nano LIBERO official recipe 与 Nano/Edge model config 的边界，并收敛 Edge-Policy-DROID -> LIBERO warm-start 原则；详见 `MEMORY/DECISIONS.md` D006。
 - 新增 arXiv:2608.11246 Agent Harness 参考增补并登记 D007；其作用域限定为 W10/W11，不提前影响 G0 或 Memory Gate。
+- 完成 G0-R02 metadata/config/index audit：复用支持入口对旧 Edge 导出 K-Norm 根索引的既有兼容逻辑，冻结 Edge-Policy-DROID -> LIBERO warm-start 与数据契约边界。
 
 ## 验证记录
 
@@ -76,14 +77,14 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - arXiv:2608.11246 当前仅按后续 Agent 参考记录；W10/W11 启动前要求重新核验一手论文/代码，不把当前概括当作冻结实现事实。
 - 已确认工作目录：`/gemini/code/psm_wma`。
 - DOC-R01 主提交：`dde7621`。
-- Edge vs Edge-Policy-DROID 对比（Codex 结构+分层抽样，2026-08-13；Kimi header 级复核，2026-08-14）：复核确认 base 549 张量 / Policy-DROID 577 张量，共同张量 0 shape 不匹配，仅 4 个 `time_embedder` 张量 BF16→FP32（约 +9.4MB），`action_proj_in/out`、`action_modality_embed` 两边都有；**纠正 Codex 原结论**：Policy-DROID 多出 28 个 `self_attn.k_norm_und_for_gen.weight`（每层 1 个，BF16，shape `(128,)`），参数名并非完全一致。Codex 抽样数值结论（`moe_gen`/action 模块已改写、`embed_tokens`/普通 norm 未变）为分层抽样证据，未做全量数值 diff，留待 R02/R03 正式 audit 复核；完整逐张量扫描因 CPU 效率过低被 Codex 中止。
+- Edge vs Edge-Policy-DROID 对比（Codex 结构+分层抽样，2026-08-13；Kimi header 级复核，2026-08-14；R02 索引复核，2026-08-14）：base Transformer 为 549 个规范键；Policy-DROID 原始根索引含 56 个 K-Norm 条目（28 个错误旧别名 + 28 个 overlay 条目），项目支持入口会全部移除并从 transformer 子索引补回 28 个规范 K-Norm，最终有效 Transformer 键集同为 549。共同张量 0 shape 不匹配，仅 4 个 `time_embedder` 张量 BF16→FP32（约 +9.4MB），`action_proj_in/out`、`action_modality_embed` 两边都有。Codex 数值变化结论（`moe_gen`/action 模块已改写、`embed_tokens`/普通 norm 未变）仍为分层抽样证据，未宣称全量数值 diff。
+- G0-R02 验证 PASS：审计产物 `status=PASS`，原始根索引 1014 键、支持入口有效索引 986 键、有效缺失 0；原始 K-Norm 56 = 错误旧别名 28 + overlay 28，合并 transformer 子索引后规范 K-Norm 28。`py_compile`、JSON 关键断言和 `git diff --check` 均通过；Policy 实际加载/推理证据复用 G0-R01。限制：`cosmos_framework.inference.model` 已兼容该旧导出，`inference2/_model_io.py` 尚未同步，当前不得用后者加载此 checkpoint。
 
 ## 下一交接
 
-1. 认领 `G0-R02` 或 `G0-R03`；G0-R01 已按显式 RoboLab 基础设施豁免转 DONE。
-2. R02/R03 保持独立 Gate 和提交边界，不把 RoboLab 未执行误记为任务成功。
-3. R02 按 D006 先做 metadata/config/index audit，不把 bare Edge 全权重下载设为硬前置。
-4. R03 明确产出 `action2llm` / `llm2action` / `action_modality_embed` / domain 的 inherit-vs-reinit 决策与运行时证据。
-5. R04 仅在 R02/R03 contract 明确后执行 Edge-Policy-DROID x LIBERO forward/loss smoke。
-6. 后续分别新建版本化 R02-R06 Runbook，不扩写 frozen/locked 文档；同时修复两处残留旧口径，并用新版本/修订记录处理 `frozen/locked` 文档治理问题。
-7. W10/W11 启动时读取 `PSM-WMA_Agent_Harness_reference_addendum_v0.1.md`，复核 arXiv:2608.11246 后再决定 scene/context 与 execution-evaluation 接口是否进入实现。
+1. 独立审查 G0-R02 Runbook、脚本与 JSON；通过后将 DOC-R02/G0-R02 转 DONE。
+2. 认领 G0-R03；R02/R03 保持独立 Gate 和提交边界，不把 RoboLab 未执行误记为任务成功。
+3. R03 明确产出 `action2llm` / `llm2action` / `action_modality_embed` / domain 的 inherit-vs-reinit 决策与运行时证据。
+4. R04 仅在 R02/R03 contract 明确后执行 Edge-Policy-DROID x LIBERO forward/loss smoke。
+5. 后续分别新建版本化 R03-R06 Runbook，不扩写 frozen/locked 文档；同时修复两处残留旧口径，并用新版本/修订记录处理 `frozen/locked` 文档治理问题。
+6. W10/W11 启动时读取 `PSM-WMA_Agent_Harness_reference_addendum_v0.1.md`，复核 arXiv:2608.11246 后再决定 scene/context 与 execution-evaluation 接口是否进入实现。

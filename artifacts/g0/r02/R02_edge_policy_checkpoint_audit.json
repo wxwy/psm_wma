@@ -1,0 +1,88 @@
+{
+  "schema_version": "1.0",
+  "gate": "G0-R02",
+  "status": "PASS",
+  "checkpoint": "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
+  "audit_scope": "metadata/config/index-only; no full tensor value diff",
+  "facts": {
+    "raw_root_index_key_count": 1014,
+    "raw_root_k_norm_key_count": 56,
+    "raw_root_stale_k_norm_key_count": 28,
+    "raw_root_stale_k_norm_key_sample": [
+      "layers.layers.0.self_attn.k_norm_und_for_gen.weight",
+      "layers.layers.1.self_attn.k_norm_und_for_gen.weight",
+      "layers.layers.10.self_attn.k_norm_und_for_gen.weight"
+    ],
+    "raw_root_overlay_k_norm_key_count": 28,
+    "raw_root_overlay_k_norm_key_sample": [
+      "model.net.language_model.model.layers.0.self_attn.k_norm_und_for_gen.weight",
+      "model.net.language_model.model.layers.1.self_attn.k_norm_und_for_gen.weight",
+      "model.net.language_model.model.layers.10.self_attn.k_norm_und_for_gen.weight"
+    ],
+    "effective_index_key_count": 986,
+    "effective_k_norm_key_count": 28,
+    "effective_files": {
+      "transformer/diffusion_pytorch_model-00001-of-00002.safetensors": {
+        "indexed_key_count": 431,
+        "header_key_count": 431,
+        "missing_indexed_key_count": 0,
+        "extra_header_key_count": 0
+      },
+      "transformer/diffusion_pytorch_model-00002-of-00002.safetensors": {
+        "indexed_key_count": 118,
+        "header_key_count": 118,
+        "missing_indexed_key_count": 0,
+        "extra_header_key_count": 0
+      },
+      "vision_encoder/model.safetensors": {
+        "indexed_key_count": 437,
+        "header_key_count": 443,
+        "missing_indexed_key_count": 0,
+        "extra_header_key_count": 6
+      }
+    },
+    "effective_missing_indexed_key_count": 0,
+    "model": {
+      "action_gen": true,
+      "max_action_dim": 64,
+      "num_embodiment_domains": 32,
+      "use_und_k_norm_for_gen": true
+    },
+    "droid_policy": {
+      "action_chunk_size": 32,
+      "conditioning_fps": 15.0,
+      "domain_name": "droid_lerobot"
+    }
+  },
+  "warm_start_decision": {
+    "base_model_config": "EDGE_MODEL_CONFIG",
+    "inherit": [
+      "moe_gen",
+      "time_embedder",
+      "vae2llm",
+      "llm2vae",
+      "action2llm",
+      "llm2action",
+      "action_modality_embed",
+      "language_model.*.k_norm_und_for_gen"
+    ],
+    "do_not_reuse_as_libero_contract": [
+      "policy.action_chunk_size=32",
+      "policy.conditioning_fps=15",
+      "policy.domain_name=droid_lerobot"
+    ],
+    "libero_contract": {
+      "fps": 20,
+      "action_chunk_size": 16,
+      "action_space": "frame_wise_relative",
+      "rotation_representation": "6d",
+      "action_normalization": "quantile_rot",
+      "views": "agentview+wrist concat_view"
+    }
+  },
+  "blockers": [],
+  "limitations": [
+    "cosmos_framework.inference.model 已兼容旧导出的陈旧 K-Norm 根索引；inference2/_model_io.py 尚未同步，当前不得作为该 checkpoint 的加载入口",
+    "本 Gate 不重复全量张量数值 diff；既有数值变化结论仍按分层抽样证据处理"
+  ]
+}
