@@ -1,0 +1,30 @@
+# PSM-WMA 兼容环境快照：Python 3.11、CUDA 12.8、PyTorch 2.7。
+# 该快照已停止维护，仅用于复现 2026-08-14 的环境诊断。
+# 在仓库根目录执行：
+#   uv pip install --no-sources --python /root/venvs/psm_wma/bin/python \
+#     -r environment_snapshots/py311_torch27_cu128/requirements.txt
+#
+# 上游 cosmos-framework 的 "cu128" 依赖组面向 PyTorch 2.10，不得装入本环境。
+# TorchCodec 0.5 是兼容 PyTorch 2.7 的最新版本线。Transformer Engine、
+# FlashAttention、NATTEN 和 TorchAO 暂无匹配的 torch27 wheel，因此有意省略。
+
+--extra-index-url https://download.pytorch.org/whl/cu128
+
+-e ./cosmos-framework[train]
+
+# `--no-sources` 禁用 pyproject.toml 的 Git source 映射；以下本地源码快照
+# 用于规避本机已经出现过的 Git TLS 中断。
+../packages/lerobot-1a4316c6845330bc552fb982dbc44bdb4f66f2f1.tar.gz
+../packages/Megatron-LM-de56227b26ba56de885897361272513697de7dc6.tar.gz
+
+torch==2.7.0+cu128
+torchvision==0.22.0
+torchcodec==0.5.0+cu128
+triton==3.3.0
+numpy==2.2.6
+scipy==1.17.1
+nvidia-cudnn-frontend
+backports-tarfile
+overrides>=5.0
+tifffile>=2022.8.12
+nvidia-ml-py==13.610.43
