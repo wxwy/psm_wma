@@ -1,0 +1,72 @@
+{
+  "gate": "G0-R01",
+  "repo_commit": "2e6fc13cabe90bbd429421b643a9d0019c8484f1",
+  "cosmos_commit": "103c5d1687d290b050e4890f48ff7a38b12742ef",
+  "checkpoint_path": "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
+  "checkpoint_index_complete": true,
+  "gpu": [
+    {
+      "index": "0",
+      "name": "B1.gpu.large",
+      "memory_total_mb": "24258",
+      "driver_version": "470.57.02"
+    }
+  ],
+  "dtype": "bfloat16",
+  "env": {
+    "python": "3.13.13",
+    "torch": "2.10.0+cu130",
+    "cudnn": 91501,
+    "ld_library_path": "/root/venvs/psm_wma/lib/python3.13/site-packages/nvidia/cudnn/lib:/root/venvs/psm_wma/lib/python3.13/site-packages/torch/lib:/root/venvs/psm_wma/lib/python3.13/site-packages/nvidia/cu13/lib:/usr/lib/x86_64-linux-gnu"
+  },
+  "run_config": {
+    "seed": 0,
+    "port": 8000,
+    "domain_name": "droid_lerobot",
+    "action_chunk_size": 32,
+    "action_dim": 8,
+    "conditioning_fps": 15.0,
+    "num_steps": 4
+  },
+  "reasoner": {
+    "finite": true,
+    "warmup_latency_ms": [
+      14591.425895690918,
+      14435.222625732422
+    ],
+    "steady_latency_ms": [
+      13229.122400283813,
+      13377.554416656494,
+      13402.615070343018,
+      13228.776454925537,
+      13377.186298370361,
+      13402.241468429565
+    ]
+  },
+  "policy": {
+    "shape": [
+      32,
+      8
+    ],
+    "finite": true,
+    "latency_ms_requests": [
+      5961.423818953335,
+      6002.9002642259
+    ],
+    "num_timed_requests": 2
+  },
+  "world": {
+    "shape": [
+      33,
+      528,
+      640,
+      3
+    ],
+    "finite": true
+  },
+  "peak_vram_gb": 13.69140625,
+  "status": "PASS",
+  "blocker": null,
+  "exception": null,
+  "missing_evidence": []
+}

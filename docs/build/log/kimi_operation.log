@@ -11,3 +11,4 @@
 - 14:50 推送 `main` 分支至 `origin`（wxwy/psm_wma），并设置上游跟踪。
 - 14:57 创建本操作日志文件 `docs/build/log/kimi_operation.log`。
 - 16:08 Cosmos3-Edge-Policy-DROID 模型下载完成（34 个文件，共约 8.6G），已清理中断任务残留的 2.7G 临时文件。
+[2026-08-12 21:57] 检查并关闭后台 codex 进程：ps/pgrep 全盘检索无任何 codex/openai 相关进程，无需终止；tmux 会话 fq（代理）保留未动。

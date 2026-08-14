@@ -1,0 +1,8 @@
+OK transformer/cosmos_framework_model.safetensors 11032 bytes
+OK transformer/diffusion_pytorch_model-00001-of-00002.safetensors 5000041944 bytes
+OK transformer/diffusion_pytorch_model-00002-of-00002.safetensors 1748779008 bytes
+OK vision_encoder/model.safetensors 978739880 bytes
+2e6fc13cabe90bbd429421b643a9d0019c8484f1
+103c5d1687d290b050e4890f48ff7a38b12742ef
+uv 0.11.14 (x86_64-unknown-linux-gnu)
+{'torch': '2.10.0+cu130', 'cuda': True, 'cudnn': 91501, 'gpu': 'B1.gpu.large'}

@@ -49,6 +49,16 @@ def _environment() -> tuple[dict[str, Any], list[dict[str, str]]]:
         fields = [value.strip() for value in row.split(",")]
         if len(fields) == 4:
             gpu.append(dict(zip(("index", "name", "memory_total_mb", "driver_version"), fields, strict=True)))
+    if not gpu and torch.cuda.is_available():
+        properties = torch.cuda.get_device_properties(0)
+        gpu.append(
+            {
+                "index": "0",
+                "name": properties.name,
+                "memory_total_mb": f"{properties.total_memory / 1024**2:.0f}",
+                "driver_version": "unavailable",
+            }
+        )
     return env, gpu
 
 

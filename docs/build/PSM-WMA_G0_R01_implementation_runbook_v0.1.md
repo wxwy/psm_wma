@@ -120,10 +120,15 @@ cd /gemini/code/psm_wma/cosmos-framework
 source /root/venvs/psm_wma/bin/activate
 export LD_LIBRARY_PATH=/root/venvs/psm_wma/lib/python3.13/site-packages/nvidia/cudnn/lib:/root/venvs/psm_wma/lib/python3.13/site-packages/torch/lib:/root/venvs/psm_wma/lib/python3.13/site-packages/nvidia/cu13/lib:/usr/lib/x86_64-linux-gnu
 mkdir -p ../artifacts/g0/r01/reasoner
-nvidia-smi --query-compute-apps=used_memory --format=csv,noheader,nounits \
-  --loop-ms=500 > ../artifacts/g0/r01/reasoner_vram.csv &
+python ../tools/g0/sample_cuda_memory.py \
+  --output ../artifacts/g0/r01/reasoner_vram.csv --interval-ms 500 &
 vram_sampler_pid=$!
 trap 'kill "$vram_sampler_pid" 2>/dev/null || true' EXIT
+for _ in {1..100}; do
+  [[ -e ../artifacts/g0/r01/reasoner_vram.csv ]] && break
+  sleep 0.1
+done
+test -e ../artifacts/g0/r01/reasoner_vram.csv
 
 python -m cosmos_framework.scripts.inference \
   --parallelism-preset=latency \
@@ -155,10 +160,15 @@ cd /gemini/code/psm_wma/cosmos-framework
 source /root/venvs/psm_wma/bin/activate
 export LD_LIBRARY_PATH=/root/venvs/psm_wma/lib/python3.13/site-packages/nvidia/cudnn/lib:/root/venvs/psm_wma/lib/python3.13/site-packages/torch/lib:/root/venvs/psm_wma/lib/python3.13/site-packages/nvidia/cu13/lib:/usr/lib/x86_64-linux-gnu
 mkdir -p ../artifacts/g0/r01/policy_server
-nvidia-smi --query-compute-apps=used_memory --format=csv,noheader,nounits \
-  --loop-ms=500 > ../artifacts/g0/r01/policy_vram.csv &
+python ../tools/g0/sample_cuda_memory.py \
+  --output ../artifacts/g0/r01/policy_vram.csv --interval-ms 500 &
 vram_sampler_pid=$!
 trap 'kill "$vram_sampler_pid" 2>/dev/null || true' EXIT
+for _ in {1..100}; do
+  [[ -e ../artifacts/g0/r01/policy_vram.csv ]] && break
+  sleep 0.1
+done
+test -e ../artifacts/g0/r01/policy_vram.csv
 
 python -m cosmos_framework.scripts.action_policy_server_robolab \
   --checkpoint-path /gemini/code/models/Cosmos3-Edge-Policy-DROID \
@@ -172,6 +182,7 @@ python -m cosmos_framework.scripts.action_policy_server_robolab \
   --seed 0 \
   --deterministic-seed \
   --decode-video \
+  --no-guardrails \
   --output-dir ../artifacts/g0/r01/policy_server \
   2>&1 | tee ../artifacts/g0/r01/policy_server.log
 ```

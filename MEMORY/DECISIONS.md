@@ -65,3 +65,10 @@
 - 事实边界：当前仅把论文作为后续设计参考。W10/W11 启动前必须重新核验 arXiv 一手页面、项目页/代码（若开放）及具体接口，当前讨论中的 scene/context/evaluation 概括不得直接当成冻结实现事实。
 - 详细记录：`docs/build/PSM-WMA_Agent_Harness_reference_addendum_v0.1.md`。
 - 原因：该方向与“Memory + World-Action Model 为主体，Agent 只做薄层 orchestration”的项目边界兼容，并可为动态 MemoryRequest、执行验证和失败恢复提供更系统的 harness 设计参考。
+
+## D008 模型与数据资产入口
+
+- 日期：2026-08-13
+- 状态：生效
+- 决策：Agent 优先从根目录 `pretrained_models/`、`datasets/` 和 `simulators/` 查找模型、数据与仿真环境；这些目录只保存指向外部实际存储位置的软链接及说明文件，不复制或提交大文件。
+- 原因：统一项目内资产发现入口，同时保持大模型与数据的实际存储位置可配置。
