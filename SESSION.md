@@ -38,8 +38,8 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | G0-R01 | Codex | DONE | `artifacts/g0/r01/`、`tools/g0/`、`cosmos-framework` 最小 guardrail 开关 | Gate JSON `PASS`；用户批准 RoboLab 基础设施豁免，已放通 R02/R03 |
 | DOC-R02 | Codex | DONE | `docs/build/PSM-WMA_G0_R02_checkpoint_audit_runbook_v0.1.md` | Kimi 独立审查 APPROVE；MEDIUM-1 与 LOW-1/2/3/4 已关闭，Runbook 状态 `reviewed` |
 | G0-R02 | Codex | DONE | `tools/g0/audit_r02_checkpoints.py`、`artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json` | metadata/config/index audit PASS；provenance 完整，warm-start 边界已冻结 |
-| DOC-R03 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R03_action_contract_runbook_v0.1.md` | 独立版本化 Runbook；不与 R02 混入同一提交 |
-| G0-R03 | Codex | IN_PROGRESS | `tools/g0/audit_r03_action_contract.py`、`artifacts/g0/r03/R03_action_contract.json`、`cosmos-framework/cosmos_framework/data/generator/action/datasets/base_dataset.py`、`cosmos-framework/cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py` 及定向测试 | 运行时核验 LIBERO action/domain/shape/mask/trainable scope；最小兼容本地 LeRobot JSONL/per-episode schema |
+| DOC-R03 | Codex | REVIEW | `docs/build/PSM-WMA_G0_R03_action_contract_runbook_v0.1.md` | 独立 Runbook 已覆盖命令、输入输出、断言、判据、warm-start 和失败分流，待独立审查 |
+| G0-R03 | Codex | REVIEW | `tools/g0/audit_r03_action_contract.py`、`artifacts/g0/r03/R03_action_contract.json`、`cosmos-framework/cosmos_framework/data/generator/action/datasets/base_dataset.py`、`cosmos-framework/cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py` | 真实 LIBERO runtime contract 与 header-based trainable scope PASS，待独立审查 |
 | DOC-R04-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R03 混入同一提交 |
 
 ## 最近完成
@@ -85,6 +85,9 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - G0-R02 审查收尾复测 PASS：JSON 增加 UTC 时间、repo/cosmos commit、脚本 SHA-256、argv/run_config；LIBERO 契约逐项带官方 recipe 行号；vision encoder 6 个未索引 projector header 键完整列名。`py_compile`、provenance/契约/extra-key JSON 断言与 `git diff --check` 通过。
 - G0-R03 本地 LIBERO schema 兼容：现有 20Hz 数据使用 `tasks.jsonl` / `episodes.jsonl` / `episode_*.parquet`，与 loader 原先只接受的 parquet metadata / `file-*.parquet` 布局不一致；`cosmos-framework@59653c5` 增加原格式优先、JSONL/per-episode fallback，并给 `video_path.format` 补 `episode_index`，未改变 action/video 语义。
 - G0-R03 真实 LIBERO SFT 样本 PASS：本地 `libero_10_no_noops_1.0.0_lerobot` 加载 379 episodes、95,405 个有效窗口；样本 video `[3,17,192,320]` uint8，action `[16,64]`、`action_raw` `[16,10]`，`raw_action_dim=10`、`domain_id=5`、20Hz、finite、WAM `SequencePlan`。TorchCodec 需在启动命令中把环境内现有 `nvidia/cudnn/lib` 与 `nvidia/cu13/lib` 加入 `LD_LIBRARY_PATH`；无需下载或修改系统配置。
+- G0-R03 正式审计 PASS：真实 action 链为 parquet `[16,7]` → rot6d `[16,10]` → `quantile_rot` `[16,10]` → model `[16,64]`；DomainAwareLinear shape smoke 为 64→2048→64 且 finite。按 Policy-DROID header 与官方 selector 实算 trainable `1,423,379,648`，占有效 Transformer `3,782,306,736` 的 37.63%（约 1.423B；若以产品档位 4B 为分母约 35.6%）。
+- R03 warm-start 冻结：LIBERO 使用独立 domain 5，DROID 为 domain 8；继承 shared Generator/time/vision adapters 与 `action_modality_embed`，保留其他 domain 权重，仅重初始化并更新 action projection 的 domain 5 行。R04 必须验证 optimizer step 前后其他 domain 行不变，避免 AdamW weight decay 漂移。
+- R03 已知语义限制：LIBERO dataset 已完成 `quantile_rot` 后，通用 transform 将该 10D 张量保存为 `action_raw`；训练输入没有重复归一化，但字段名并非 parquet 原始 7D，R04 前需决定修正文档还是接口。
 
 ## 下一交接
 

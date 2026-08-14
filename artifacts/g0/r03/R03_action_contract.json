@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "gate": "G0-R03",
+  "status": "PASS",
+  "provenance": {
+    "audit_timestamp_utc": "2026-08-14T06:11:22.689730+00:00",
+    "repo_commit": "46498ba7615509241085ce49a56885e089deaabb",
+    "cosmos_commit": "59653c588b647a0a5a58adde8d9e8bde9721607a",
+    "script_path": "tools/g0/audit_r03_action_contract.py",
+    "script_sha256": "cf40f2c641c7e9c215d2af92d7cf31d0c14922513f0a895516d205f89e4e9689",
+    "command": [
+      "/root/venvs/psm_wma/bin/python",
+      "tools/g0/audit_r03_action_contract.py",
+      "--dataset",
+      "/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot",
+      "--checkpoint",
+      "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
+      "--output",
+      "artifacts/g0/r03/R03_action_contract.json"
+    ],
+    "run_config": {
+      "dataset": "/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot",
+      "checkpoint": "/gemini/code/models/Cosmos3-Edge-Policy-DROID"
+    }
+  },
+  "runtime_contract": {
+    "dataset_length": 95405,
+    "raw_parquet_action_shape": [
+      16,
+      7
+    ],
+    "converted_action_shape": [
+      16,
+      10
+    ],
+    "normalized_action_shape": [
+      16,
+      10
+    ],
+    "model_action_shape": [
+      16,
+      64
+    ],
+    "video_shape": [
+      3,
+      17,
+      192,
+      320
+    ],
+    "video_dtype": "torch.uint8",
+    "raw_action_dim": 10,
+    "domain_name": "libero",
+    "domain_id": 5,
+    "droid_domain_id": 8,
+    "conditioning_fps": 20,
+    "viewpoint": "concat_view",
+    "mode": "wam",
+    "sequence_plan_type": "SequencePlan",
+    "finite": true,
+    "normalization_trace": "parquet 7D -> rot6d 10D -> quantile_rot 10D -> zero-pad 64D",
+    "action_raw_semantics": "当前字段实际保存已 quantile_rot 归一化、未 padding 的 10D；并非 parquet 原始 7D"
+  },
+  "projection_smoke": {
+    "input_shape": [
+      16,
+      64
+    ],
+    "encoded_shape": [
+      16,
+      2048
+    ],
+    "decoded_shape": [
+      16,
+      64
+    ],
+    "hidden_size": 2048,
+    "max_action_dim": 64,
+    "num_embodiment_domains": 32,
+    "finite": true
+  },
+  "trainable_scope": {
+    "selectors": [
+      "moe_gen",
+      "time_embedder",
+      "vae2llm",
+      "llm2vae",
+      "action2llm",
+      "llm2action",
+      "action_modality_embed"
+    ],
+    "effective_transformer_parameter_count": 3782306736,
+    "selected_parameter_count": 1423379648,
+    "selected_fraction": 0.3763258105040162,
+    "selected_groups": {
+      "moe_gen": 1409410048,
+      "time_embedder": 4722688,
+      "vae2llm": 395264,
+      "llm2vae": 393408,
+      "action2llm": 4259840,
+      "llm2action": 4196352,
+      "action_modality_embed": 2048
+    },
+    "evidence": "action_policy_libero_nano.py:83-97; optimizer uses substring selection"
+  },
+  "warm_start_decision": {
+    "inherit": [
+      "shared Generator/moe_gen",
+      "time_embedder",
+      "vae2llm",
+      "llm2vae",
+      "action_modality_embed"
+    ],
+    "domain_projection": "保留全部 DROID 权重，但 LIBERO 使用独立 domain_id=5；仅重初始化并更新 action2llm/llm2action 的 domain 5 行",
+    "optimizer_constraint": "R04 必须验证行级更新保护；仅靠 domain_id 的零梯度不足以阻止 AdamW weight decay 改写其他 domain 行",
+    "do_not_reuse": "DROID domain_id=8、15Hz、chunk32、joint/gripper contract"
+  },
+  "simulation_contract": {
+    "image_transform": "closed_loop_eval.py:382-400：可选 rotate_180 后再 flipud",
+    "gripper_mapping": "closed_loop_eval.py:507-533：zero_one/pm_one/pm_one_flip 显式映射",
+    "framewise_to_env": "closed_loop_eval.py:580-602：rot6d 解码为 rotvec，输出 7D simulator delta"
+  },
+  "failures": [],
+  "limitations": [
+    "DomainAwareLinear smoke 使用真实 Edge 维度但随机权重；checkpoint 数值 forward 属 G0-R04",
+    "action_raw 字段命名与 LIBERO 当前实际语义不一致；训练输入未重复归一化，R04 前需决定是否修正文档或数据接口",
+    "官方 substring selector 选择整个 action embedding；domain 5 之外的行需在 R04 验证 optimizer step 前后不变"
+  ]
+}
