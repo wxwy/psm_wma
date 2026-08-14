@@ -36,7 +36,9 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 |---|---|---|---|---|
 | DOC-R01 | Codex | DONE | `docs/build/PSM-WMA_G0_R01_implementation_runbook_v0.1.md`、`tools/g0/collect_r01_gate_json.py` | Kimi 二轮复审 APPROVE，已关闭全部审查项 |
 | G0-R01 | Codex | DONE | `artifacts/g0/r01/`、`tools/g0/`、`cosmos-framework` 最小 guardrail 开关 | Gate JSON `PASS`；用户批准 RoboLab 基础设施豁免，已放通 R02/R03 |
-| DOC-R02-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | R01 文档通过审查后逐 Gate 推进；R02/R03 必须遵循 D006 |
+| DOC-R02 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R02_checkpoint_audit_runbook_v0.1.md` | 独立版本化 Runbook；遵循 D006 metadata-first 与 D009 事实分级 |
+| G0-R02 | Codex | IN_PROGRESS | `tools/g0/audit_r02_checkpoints.py`、`artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json` | 本地两套 Transformer 已齐，执行 config/index 与分组数值 audit |
+| DOC-R03-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R02 混入同一提交 |
 
 ## 最近完成
 
