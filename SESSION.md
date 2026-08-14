@@ -38,7 +38,9 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | G0-R01 | Codex | DONE | `artifacts/g0/r01/`、`tools/g0/`、`cosmos-framework` 最小 guardrail 开关 | Gate JSON `PASS`；用户批准 RoboLab 基础设施豁免，已放通 R02/R03 |
 | DOC-R02 | Codex | REVIEW | `docs/build/PSM-WMA_G0_R02_checkpoint_audit_runbook_v0.1.md` | Runbook 已补齐前置资产、命令、Schema、断言、判据、失败分流和回填字段，待独立审查 |
 | G0-R02 | Codex | REVIEW | `tools/g0/audit_r02_checkpoints.py`、`artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json` | metadata/config/index audit PASS；warm-start 边界已冻结，待独立审查 |
-| DOC-R03-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R02 混入同一提交 |
+| DOC-R03 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R03_action_contract_runbook_v0.1.md` | 独立版本化 Runbook；不与 R02 混入同一提交 |
+| G0-R03 | Codex | IN_PROGRESS | `tools/g0/audit_r03_action_contract.py`、`artifacts/g0/r03/R03_action_contract.json` | 运行时核验 LIBERO action/domain/shape/mask/trainable scope，不修改 Cosmos 核心 |
+| DOC-R04-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R03 混入同一提交 |
 
 ## 最近完成
 
@@ -83,7 +85,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 ## 下一交接
 
 1. 独立审查 G0-R02 Runbook、脚本与 JSON；通过后将 DOC-R02/G0-R02 转 DONE。
-2. 认领 G0-R03；R02/R03 保持独立 Gate 和提交边界，不把 RoboLab 未执行误记为任务成功。
+2. 执行 G0-R03；R02/R03 保持独立 Gate 和提交边界，不把 RoboLab 未执行误记为任务成功。
 3. R03 明确产出 `action2llm` / `llm2action` / `action_modality_embed` / domain 的 inherit-vs-reinit 决策与运行时证据。
 4. R04 仅在 R02/R03 contract 明确后执行 Edge-Policy-DROID x LIBERO forward/loss smoke。
 5. 后续分别新建版本化 R03-R06 Runbook，不扩写 frozen/locked 文档；同时修复两处残留旧口径，并用新版本/修订记录处理 `frozen/locked` 文档治理问题。
