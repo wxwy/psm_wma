@@ -72,3 +72,17 @@
 - 状态：生效
 - 决策：Agent 优先从根目录 `pretrained_models/`、`datasets/` 和 `simulators/` 查找模型、数据与仿真环境；这些目录只保存指向外部实际存储位置的软链接及说明文件，不复制或提交大文件。
 - 原因：统一项目内资产发现入口，同时保持大模型与数据的实际存储位置可配置。
+
+## D009 Edge 与 Edge-Policy-DROID 的用途分工
+
+- 日期：2026-08-14
+- 状态：生效
+- 决策：
+  1. DROID/RoboLab 零样本策略测试与 G0 smoke 一律使用 `Cosmos3-Edge-Policy-DROID`（完整 HF 推理包，含 VAE、vision encoder、tokenizer、scheduler 与 `droid_lerobot` 策略配置）。
+  2. 原版 `Cosmos3-Edge`（本地仅 `transformer/` 权重，约 6.3GB）只作为基础模型、训练起点或权重差异基准；不得假定它已具备可用的 DROID 控制策略。
+  3. R03/R04 设计时必须考虑 Policy-DROID 相对 base Edge 多出的 28 个 `k_norm_und_for_gen` 参数，不能按"两库参数名完全一致"处理。
+- 事实边界：
+  - Kimi safetensors header 级复核（2026-08-14）：base 549 个张量、Policy-DROID 577 个；共同 549 个张量 0 个 shape 不匹配；仅 4 个 `time_embedder` 张量由 BF16 保存为 FP32（Transformer 约多 9.4MB，非新增层）；`action_proj_in` / `action_proj_out` / `action_modality_embed` 两边结构均存在。
+  - Codex 分层抽样数值对比（2026-08-13，非全量扫描）：`action_modality_embed`、`action_proj_in/out`、`moe_gen` 生成塔权重已训练改写；`embed_tokens` 与普通 `input_layernorm`/`norm` 未变。该覆盖结论为抽样证据，全量数值 diff 留待 R02/R03 正式 audit 复核。
+  - Codex 原始结论中"两库参数名完全一致、无新增参数名"经复核不准确，以本条 header 级事实为准。
+- 原因：Policy-DROID 是 DROID 策略专项微调后的完整发布包，与 base Edge 的职责不同；明确分工避免把基础权重误当策略 checkpoint，也避免 R03/R04 忽略生成路径新增的 K-norm 参数。
