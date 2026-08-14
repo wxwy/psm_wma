@@ -191,6 +191,15 @@ server 硬编码默认值与当前 checkpoint `checkpoint.json` 的 policy 块�
 
 ### 7.2 RoboLab client 请求
 
+> **2026-08-14 执行 override**：本次 R01 实际使用
+> `tools/g0/run_r01_policy_client.py` 作为最小协议客户端，完成 1 次 warmup 和
+> 2 次 timed request，并直接核验响应中的 action/world 数组。RoboLab
+> `BananaInBowlTask` 曾按本节命令启动，但当前 Orion 虚拟 GPU 无法向 Isaac Sim
+> 提供 CUDA/Vulkan/PhysX 一致的图形设备，属于基础设施限制。经用户明确批准，
+> R01 按“官方 checkpoint 原生 Reasoner、Policy action、shared Generator/world
+> smoke”放通，RoboLab 闭环不作为本 Gate 的阻断条件；该 override 不得外推为
+> RoboLab 任务成功，也不替代后续 LIBERO R06 closed-loop 验证。
+
 此命令在已准备好的 RoboLab 客户端容器中执行，会连接 Policy server。RoboLab 资产获取属于外网操作，必须事先确认。
 
 ```bash
@@ -227,7 +236,10 @@ PASS：
 - `--decode-video` 返回的 world rollout 非空且 finite；
 - warmup 和 steady latency、peak VRAM 有数值记录。
 
-若 server 能生成 action 但 RoboLab 环境未准备好，状态为 `BLOCKED_CLIENT_ASSET`，不能宣称 Policy PASS。
+默认情况下，若 server 能生成 action 但 RoboLab 环境未准备好，状态为
+`BLOCKED_CLIENT_ASSET`，不能宣称 Policy PASS。仅本次有上述显式 override：最小客户端
+证据满足 action/world/latency/VRAM 合同时允许 R01 PASS，但结论必须标注“RoboLab
+闭环未验证”。
 
 ## 8. Gate JSON 汇总
 

@@ -69,3 +69,16 @@ Runbook §10 的四项 PASS 条件（checkpoint、Reasoner、Policy、shared Gen
 ## 5. 结论
 
 G0-R01 的 PASS 有完整、一致、机器可判定的证据支撑，复核 **APPROVE**。MEDIUM-1/2 关闭（提交代码 + Runbook 补记客户端替代 + 重跑 collect 刷新 commit）后，G0-R01 可正式转 DONE，随后解锁 R02/R03。
+
+## 6. 2026-08-14 收尾记录
+
+- MEDIUM-1：已关闭。Runbook §7.2 已记录实际使用
+  `tools/g0/run_r01_policy_client.py`，并记录用户批准的 RoboLab 基础设施豁免。
+- MEDIUM-2：证据生成工具及原始产物已提交于 `6ea7c9d`；Gate JSON 将于本次状态
+  收尾提交后重新汇总，刷新 `repo_commit` provenance。
+- RoboLab `BananaInBowlTask` 未通过：Isaac Sim 在 Orion 虚拟 GPU 上报
+  `No device could be created`、`CUDA being in bad state`。本次放通不将其记为
+  PASS，也不宣称获得 RoboLab closed-loop 结果。
+- 用户决策：R01 作为官方 checkpoint 原生能力 smoke 直接放通；后续以可在当前
+  服务器运行的 LIBERO/MuJoCo EGL 路线继续 R02-R06，R06 closed-loop 仍是 Memory
+  实验前的硬门槛。
