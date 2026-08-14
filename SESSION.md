@@ -40,7 +40,9 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | G0-R02 | Codex | DONE | `tools/g0/audit_r02_checkpoints.py`、`artifacts/g0/r02/R02_edge_policy_checkpoint_audit.json` | metadata/config/index audit PASS；provenance 完整，warm-start 边界已冻结 |
 | DOC-R03 | Codex | DONE | `docs/build/PSM-WMA_G0_R03_action_contract_runbook_v0.1.md` | Kimi 独立审查 APPROVE；2 MEDIUM + 3 LOW 已关闭或按范围转交，Runbook 状态 `reviewed` |
 | G0-R03 | Codex | DONE | `tools/g0/audit_r03_action_contract.py`、`artifacts/g0/r03/R03_action_contract.json`、`cosmos-framework@3b4a929` | 真实 LIBERO runtime contract、参数拆分与 stats provenance PASS，并通过独立审查 |
-| DOC-R04-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R03 混入同一提交 |
+| DOC-R04 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R04_forward_loss_runbook_v0.1.md` | 独立版本化 Runbook；不与 R03 混入同一提交 |
+| G0-R04 | Codex | IN_PROGRESS | Edge LIBERO experiment/config 与定向测试、`tools/g0/run_r04_forward_loss.py`、`artifacts/g0/r04/R04_edge_libero_forward_loss.json` | Policy-DROID × LIBERO 单 batch forward/loss/backward；PSM/Memory/EMA 关闭 |
+| DOC-R05-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R04 混入同一提交 |
 
 ## 最近完成
 
