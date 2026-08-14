@@ -74,8 +74,9 @@ G0-R01 的 PASS 有完整、一致、机器可判定的证据支撑，复核 **A
 
 - MEDIUM-1：已关闭。Runbook §7.2 已记录实际使用
   `tools/g0/run_r01_policy_client.py`，并记录用户批准的 RoboLab 基础设施豁免。
-- MEDIUM-2：证据生成工具及原始产物已提交于 `6ea7c9d`；Gate JSON 将于本次状态
-  收尾提交后重新汇总，刷新 `repo_commit` provenance。
+- MEDIUM-2：已关闭。证据生成工具及原始产物已提交于 `6ea7c9d`；Gate JSON 已在
+  状态收尾提交 `3f63265` 后重新汇总，记录 `repo_commit=3f63265...`、
+  `cosmos_commit=ad9158e...`，状态为 `PASS` 且 blocker/exception 为空。
 - RoboLab `BananaInBowlTask` 未通过：Isaac Sim 在 Orion 虚拟 GPU 上报
   `No device could be created`、`CUDA being in bad state`。本次放通不将其记为
   PASS，也不宣称获得 RoboLab closed-loop 结果。

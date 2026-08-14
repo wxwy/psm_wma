@@ -4,7 +4,7 @@
 - **日期**：2026-08-13
 - **上游**：`PSM-WMA_G0_runtime_execution_plan_v0.6_aligned.md`
 - **目标 checkpoint**：`nvidia/Cosmos3-Edge-Policy-DROID`
-**固定框架提交**：`cosmos-framework@103c5d1687d290b050e4890f48ff7a38b12742ef`
+**固定框架提交**：`cosmos-framework@ad9158ea35b9c8a76c2c3c00c553141d65fbeea3`
 
 ## 1. 范围
 
@@ -95,7 +95,7 @@ missing=0
 ```bash
 cd /gemini/code/psm_wma
 test "$(git -C cosmos-framework rev-parse HEAD)" = \
-  103c5d1687d290b050e4890f48ff7a38b12742ef
+  ad9158ea35b9c8a76c2c3c00c553141d65fbeea3
 git rev-parse HEAD | tee -a artifacts/g0/r01/preflight.log
 git -C cosmos-framework rev-parse HEAD | tee -a artifacts/g0/r01/preflight.log
 uv --version

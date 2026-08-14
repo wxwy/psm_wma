@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 
-EXPECTED_COSMOS_COMMIT = "103c5d1687d290b050e4890f48ff7a38b12742ef"
+EXPECTED_COSMOS_COMMIT = "ad9158ea35b9c8a76c2c3c00c553141d65fbeea3"
 EXPECTED_ACTION_SHAPE = [32, 8]
 
 

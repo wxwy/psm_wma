@@ -1,14 +1,14 @@
 {
   "gate": "G0-R01",
-  "repo_commit": "2e6fc13cabe90bbd429421b643a9d0019c8484f1",
-  "cosmos_commit": "103c5d1687d290b050e4890f48ff7a38b12742ef",
+  "repo_commit": "3f63265a50110c7d5379338c046141de6b7d1aa9",
+  "cosmos_commit": "ad9158ea35b9c8a76c2c3c00c553141d65fbeea3",
   "checkpoint_path": "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
   "checkpoint_index_complete": true,
   "gpu": [
     {
       "index": "0",
-      "name": "B1.gpu.large",
-      "memory_total_mb": "24258",
+      "name": "B4.gpu.large",
+      "memory_total_mb": "24555",
       "driver_version": "470.57.02"
     }
   ],
@@ -17,7 +17,7 @@
     "python": "3.13.13",
     "torch": "2.10.0+cu130",
     "cudnn": 91501,
-    "ld_library_path": "/root/venvs/psm_wma/lib/python3.13/site-packages/nvidia/cudnn/lib:/root/venvs/psm_wma/lib/python3.13/site-packages/torch/lib:/root/venvs/psm_wma/lib/python3.13/site-packages/nvidia/cu13/lib:/usr/lib/x86_64-linux-gnu"
+    "ld_library_path": ""
   },
   "run_config": {
     "seed": 0,
