@@ -1,6 +1,6 @@
 # PSM-WMA G0-R03 Action Contract Runbook v0.1
 
-状态：`draft`
+状态：`reviewed`
 
 ## 目的
 
@@ -30,12 +30,12 @@ PYTHONPATH=cosmos-framework \
 
 ## 输入输出与断言
 
-输出 JSON 必须含 `provenance`、`runtime_contract`、`projection_smoke`、`trainable_scope`、`warm_start_decision`、`simulation_contract`、`failures`。
+输出 JSON 必须含 `provenance`、`runtime_contract`、`projection_smoke`、`trainable_scope`、`normalization_stats`、`warm_start_decision`、`simulation_contract`、`failures`。`provenance.repo_commit` 表示 artifact 生效提交；最终刷新提交只改时间戳与该字段，不冒充原始实测时点。
 
 - 真实 action 链为 7D parquet → 10D rot6d → `quantile_rot` → 64D padding。
 - chunk 16、20Hz、concat view、`raw_action_dim=10`、LIBERO domain 5；DROID domain 8。
 - DomainAwareLinear 为 64→2048→64，输入输出 finite。
-- trainable count 从 checkpoint header 和官方 selector 实算，不把约 1.423B 写成常量。
+- trainable count 从 checkpoint header 和官方 selector 实算，并分开报告 model 总计、纯 Transformer 与 vision encoder，不把约 1.423B 写成常量。
 - 图像 180°/flip、gripper、rot6d→7D env delta 必须有源码锚点。
 
 `PASS`：上述运行时 shape/domain/finite/normalization trace 全部成立，且 trainable scope 可复算。

@@ -44,13 +44,15 @@ def git_commit(path: Path) -> str:
     return subprocess.check_output(["git", "-C", str(path), "rev-parse", "HEAD"], text=True).strip()
 
 
-def checkpoint_parameter_counts(checkpoint: Path) -> tuple[int, int, dict[str, int]]:
+def checkpoint_parameter_counts(checkpoint: Path) -> tuple[int, int, int, int, dict[str, int]]:
     weight_map = _diffusers_weight_map(checkpoint)
     by_file: dict[str, list[str]] = {}
     for key, relative_path in weight_map.items():
         by_file.setdefault(relative_path, []).append(key)
 
     total = 0
+    transformer = 0
+    vision = 0
     selected = 0
     selected_groups = {key: 0 for key in SELECTORS}
     for relative_path, keys in sorted(by_file.items()):
@@ -63,12 +65,16 @@ def checkpoint_parameter_counts(checkpoint: Path) -> tuple[int, int, dict[str, i
                 for size in shard.get_slice(source_key).get_shape():
                     count *= size
                 total += count
+                if relative_path.startswith("vision_encoder/"):
+                    vision += count
+                else:
+                    transformer += count
                 matches = [selector for selector in SELECTORS if selector in net_key]
                 if matches:
                     selected += count
                     for selector in matches:
                         selected_groups[selector] += count
-    return total, selected, selected_groups
+    return total, transformer, vision, selected, selected_groups
 
 
 def main() -> int:
@@ -120,7 +126,10 @@ def main() -> int:
         encoded = encoder(sample["action"], domain_ids)
         decoded = decoder(encoded, domain_ids)
 
-    total_params, selected_params, selected_groups = checkpoint_parameter_counts(checkpoint)
+    total_params, transformer_params, vision_params, selected_params, selected_groups = (
+        checkpoint_parameter_counts(checkpoint)
+    )
+    stats_path = inner._stats_file.resolve()
     failures: list[str] = []
     if list(sample["action"].shape) != [16, 64] or int(sample["raw_action_dim"]) != 10:
         failures.append("FAIL_ACTION_SHAPE")
@@ -139,6 +148,7 @@ def main() -> int:
         "provenance": {
             "audit_timestamp_utc": datetime.now(timezone.utc).isoformat(),
             "repo_commit": git_commit(root),
+            "repo_commit_semantics": "artifact 生效提交；审计实测提交见 Git 历史中的前序主提交",
             "cosmos_commit": git_commit(root / "cosmos-framework"),
             "script_path": str(script_path.relative_to(root)),
             "script_sha256": hashlib.sha256(script_path.read_bytes()).hexdigest(),
@@ -176,11 +186,20 @@ def main() -> int:
         },
         "trainable_scope": {
             "selectors": list(SELECTORS),
-            "effective_transformer_parameter_count": total_params,
+            "effective_model_parameter_count": total_params,
+            "transformer_parameter_count": transformer_params,
+            "vision_encoder_parameter_count": vision_params,
             "selected_parameter_count": selected_params,
-            "selected_fraction": selected_params / total_params,
+            "selected_fraction_of_model": selected_params / total_params,
+            "selected_fraction_of_transformer": selected_params / transformer_params,
             "selected_groups": selected_groups,
             "evidence": "action_policy_libero_nano.py:83-97; optimizer uses substring selection",
+        },
+        "normalization_stats": {
+            "path": str(stats_path),
+            "sha256": hashlib.sha256(stats_path.read_bytes()).hexdigest(),
+            "distribution_match_verified": False,
+            "required_followup": "G0-R05 前比较本地 action 分位数与 stats q01/q99",
         },
         "warm_start_decision": {
             "inherit": ["shared Generator/moe_gen", "time_embedder", "vae2llm", "llm2vae", "action_modality_embed"],
