@@ -15,6 +15,7 @@ import torch
 
 from cosmos_framework.data.generator.action.datasets.libero_lerobot_dataset import LIBEROLeRobotDataset
 from cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16 import Wan2pt2VAEInterface
+from cosmos_framework.model.generator.omni_mot_model import OmniMoTModel
 
 
 def _encode_episode(
@@ -37,6 +38,77 @@ def _encode_episode(
     if not torch.isfinite(latent).all():
         raise FloatingPointError("Cosmos latent contains NaN/Inf")
     return latent.cpu()
+
+
+class _VisionEncoderAdapter:
+    """Minimal adapter so the builder calls the exact OmniMoTModel helpers."""
+
+    def __init__(self, tokenizer: Wan2pt2VAEInterface, device: torch.device) -> None:
+        self.tokenizer_vision_gen = tokenizer
+        self.tensor_kwargs_fp32 = {"device": device, "dtype": torch.float32}
+
+    def encode(self, state: torch.Tensor) -> torch.Tensor:
+        return self.tokenizer_vision_gen.encode(state)
+
+    _normalize_uint8_vision_item = OmniMoTModel._normalize_uint8_vision_item
+
+
+def _encode_window(video_uint8: torch.Tensor, encoder: _VisionEncoderAdapter, *, device: torch.device) -> torch.Tensor:
+    """Encode one independent 17-frame window via OmniMoTModel's camera-major path."""
+    if video_uint8.ndim != 4 or video_uint8.shape[1] != 17 or video_uint8.dtype != torch.uint8:
+        raise ValueError(f"Expected uint8 [C,17,H,W], got {tuple(video_uint8.shape)} {video_uint8.dtype}")
+    # LIBERO concat_view is the spatially concatenated camera image.  The online
+    # per-camera contract presents two 17-frame views camera-major; preserve the
+    # exact spatial tensor and invoke the production helper without reimplementing it.
+    camera_major = torch.cat([video_uint8, video_uint8], dim=1)
+    latent = OmniMoTModel._encode_vision_item(
+        encoder, camera_major.unsqueeze(0).to(device), num_views=2, frames_per_view=17
+    )
+    return latent.squeeze(0).permute(1, 0, 2, 3).cpu()
+
+
+def _build_windowed(args: argparse.Namespace, dataset: LIBEROLeRobotDataset, tokenizer: Wan2pt2VAEInterface, device: torch.device) -> None:
+    """Build a new, window-keyed store; never writes the legacy R12 directory."""
+    if args.output_root.exists() and any(args.output_root.iterdir()):
+        raise FileExistsError(f"Refusing to overwrite existing cache: {args.output_root}")
+    args.output_root.mkdir(parents=True, exist_ok=False)
+    episodes_dir = args.output_root / "episodes"
+    episodes_dir.mkdir()
+    revision = _code_revision()
+    encoder = _VisionEncoderAdapter(tokenizer, device)
+    rows: list[dict[str, object]] = []
+    episode_ids = [int(v) for v in dataset._ep_vals]
+    if args.task_index is not None:
+        episode_ids = [episode for episode in episode_ids if int(dataset._row_task[np.flatnonzero(dataset._row_episode == episode)[0]]) == args.task_index]
+    if args.episode_limit is not None:
+        episode_ids = episode_ids[: args.episode_limit]
+    for episode_index in episode_ids:
+        row_indices = np.flatnonzero(dataset._row_episode == episode_index)
+        timestamps = [float(dataset._row_timestamp[i]) for i in row_indices]
+        video = dataset._load_video(dataset._episodes[episode_index], timestamps)
+        video_uint8 = torch.round(video * 255.0).clamp(0, 255).to(torch.uint8).permute(1, 0, 2, 3).contiguous()
+        instructions = _episode_instructions(dataset, episode_index)
+        windows: dict[str, dict[str, object]] = {}
+        for start in range(max(0, video_uint8.shape[1] - 16)):
+            latent = _encode_window(video_uint8[:, start : start + 17], encoder, device=device)
+            windows[str(start)] = {
+                "latent": latent.to(torch.float16),
+                "source_frame_indices": torch.cat([torch.arange(start, start + 17, 4, dtype=torch.long)] * 2),
+                "global_row_indices": torch.from_numpy(np.asarray(row_indices[start : start + 17 : 4], dtype=np.int64)).repeat(2),
+            }
+        metadata = {
+            "episode_index": episode_index, "source_video_frames": int(video_uint8.shape[1]),
+            "window_frames": 17, "image_size": args.image_size,
+            "encoder": "Wan2pt2VAEInterface.encode independent window",
+            "normalization": "uint8 / 127.5 - 1.0", "input_layout": "[C,T,H,W]",
+            "latent_layout": "[T_latent,C_latent,H_latent,W_latent]",
+            "camera_layout": "camera-major two views", "num_views": 2, "frames_per_view": 17,
+            "temporal_compression_factor": 4,
+            "vae_path": str(args.vae_path), "script_revision": revision, "task_index": args.task_index,
+        }
+        _write_atomic({"windows": windows, "language": {"instruction": instructions[0], "instructions": instructions}, "metadata": metadata}, episodes_dir / f"episode_{episode_index:06d}.pt")
+        rows.append({"episode_index": episode_index, "episode_path": str(episodes_dir / f"episode_{episode_index:06d}.pt"), "window_count": len(windows), "image_size": args.image_size})
+    (args.output_root / "dataset_manifest.json").write_text(json.dumps({"schema_version": "r06_window_v1", "source_dataset": str(args.dataset_root), "image_size": args.image_size, "vae_path": str(args.vae_path), "script_revision": revision, "task_index": args.task_index, "episode_count": len(rows), "window_count": sum(int(row["window_count"]) for row in rows), "episodes": rows}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def _episode_instructions(dataset: LIBEROLeRobotDataset, episode_index: int) -> list[str]:
@@ -71,6 +143,8 @@ def main() -> None:
     parser.add_argument("--image-size", type=int, default=256)
     parser.add_argument("--episode-limit", type=int, default=None)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument("--windowed", action="store_true", help="Build independent 17-frame windows in a new store")
+    parser.add_argument("--task-index", type=int, default=None)
     args = parser.parse_args()
 
     if not torch.cuda.is_available() and args.device.startswith("cuda"):
@@ -85,8 +159,11 @@ def main() -> None:
         image_size=args.image_size,
         action_normalization=None,
     )
-    tokenizer = Wan2pt2VAEInterface(vae_path=str(args.vae_path))
+    tokenizer = Wan2pt2VAEInterface(vae_path=str(args.vae_path), encode_exact_durations=[17])
     tokenizer.model.model.to(device)
+    if args.windowed:
+        _build_windowed(args, dataset, tokenizer, device)
+        return
     episode_ids = [int(v) for v in dataset._ep_vals]
     if args.episode_limit is not None:
         episode_ids = episode_ids[: args.episode_limit]
