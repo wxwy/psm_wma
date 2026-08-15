@@ -18,6 +18,7 @@
 | G0-R05 | TODO | 待认领 | G0-R04 PASS；完成本地 action 分位数与内置 stats q01/q99 的分布 sanity check | LIBERO tiny-overfit 达到 Runbook 阈值并保存曲线与 checkpoint 信息；normalization stats 与本地 v2.1 数据匹配性有明确结论 |
 | G0-R06 | TODO | 待认领 | G0-R05 PASS | LIBERO closed-loop baseline 可重复且 SR > 0 |
 | G0-R07-R09 | BLOCKED | 待认领 | G0-R06 PASS | Local/Global packing 与 Local Memory Gate 分别满足 Runtime Plan |
+| G0-R12-CACHE | REVIEW | Codex | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 离线编码工具复用 Cosmos 归一化、逐视角 clip encode 和 camera-major latent 拼接；真实 RGB smoke 产出 finite latent 与 metadata |
 
 ## 新增任务规则
 

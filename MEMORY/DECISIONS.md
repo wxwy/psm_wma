@@ -87,3 +87,10 @@
   - Codex 分层抽样数值对比（2026-08-13，非全量扫描）：`action_modality_embed`、`action_proj_in/out`、`moe_gen` 生成塔权重已训练改写；`embed_tokens` 与普通 `input_layernorm`/`norm` 未变。该覆盖结论为抽样证据，全量数值 diff 留待 R02/R03 正式 audit 复核。
   - 修订（2026-08-14）：本条早先版本称"base 完全没有 `k_norm_und_for_gen`，Policy-DROID 新增 28 个参数"，经 R02 审计复核该说法不准确——base 的扩散 shard 同样含 28 个规范 K-Norm 键，Policy-DROID 多出的仅是 overlay 重复存储与陈旧索引别名。以本修订为准。
 - 原因：Policy-DROID 是 DROID 策略专项微调后的完整发布包，与 base Edge 的职责不同；明确分工避免把基础权重误当策略 checkpoint；同时明确该 checkpoint 的根索引缺陷与唯一受支持的加载入口，防止 R03/R04 误用未兼容的 inference2 路径。
+
+## D010 RGB 离线编码必须对齐 Cosmos
+
+- 日期：2026-08-15
+- 状态：生效
+- 决策：RGB 离线缓存复用 `OmniMoTModel._encode_vision_item` 的契约：每个 camera clip 独立切分，uint8 按 `x / 127.5 - 1.0` 归一化，调用同一 `tokenizer_vision_gen.encode()`，再按 camera-major 在 temporal 轴拼接。禁止逐 RGB 帧独立 VAE encode，也不得把 StarVLA/UMT5 的 latent 直接当作 Cosmos latent。
+- 原因：Wan VAE 是 causal temporal tokenizer；离线缓存必须与在线 temporal compression、视角顺序和 latent shape 一致，才能避免训练/推理语义漂移。
