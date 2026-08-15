@@ -1,0 +1,21 @@
+{
+  "gate": "G0-R04",
+  "variant": "adamw_nonfused_20step",
+  "status": "PASS",
+  "steps_completed": 20,
+  "all_loss_finite": true,
+  "all_grad_finite": true,
+  "loss_first": 16.496944427490234,
+  "loss_last": 13.653999328613281,
+  "loss_min": 13.263916015625,
+  "loss_max": 16.496944427490234,
+  "grad_norm_post_clip_max": 1.0049792411516094,
+  "gpu_step_peak_mib_max": 34270.6,
+  "rss_kb_max": 19954976,
+  "optimizer_type": "AdamW",
+  "fused": false,
+  "domain_row_guard": "PASS",
+  "checkpoint": "artifacts/g0/r04/adamw_nonfused_20step/psm_wma/g0_r04/edge_libero_forward_loss/checkpoints/iter_000000020",
+  "exceptions": 0,
+  "blockers": []
+}

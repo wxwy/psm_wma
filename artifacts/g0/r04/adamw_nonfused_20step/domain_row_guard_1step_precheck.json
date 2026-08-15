@@ -1,0 +1,48 @@
+{
+  "source": "/gemini/code/models/Cosmos3-Edge-Policy-DROID-dcp/model",
+  "updated": "artifacts/g0/r04/adamw_single_step_retry2/psm_wma/g0_r04/edge_libero_forward_loss/checkpoints/iter_000000001/model",
+  "domain": 5,
+  "keys": {
+    "net.action2llm.fc.weight": {
+      "shape": [
+        32,
+        131072
+      ],
+      "frozen_rows_max_abs_diff": 0.0,
+      "frozen_rows_bitwise_unchanged": true,
+      "domain_row_max_abs_diff": 0.00030517578125,
+      "domain_row_updated": true
+    },
+    "net.action2llm.bias.weight": {
+      "shape": [
+        32,
+        2048
+      ],
+      "frozen_rows_max_abs_diff": 0.0,
+      "frozen_rows_bitwise_unchanged": true,
+      "domain_row_max_abs_diff": 0.00025177001953125,
+      "domain_row_updated": true
+    },
+    "net.llm2action.fc.weight": {
+      "shape": [
+        32,
+        131072
+      ],
+      "frozen_rows_max_abs_diff": 0.0,
+      "frozen_rows_bitwise_unchanged": true,
+      "domain_row_max_abs_diff": 0.000274658203125,
+      "domain_row_updated": true
+    },
+    "net.llm2action.bias.weight": {
+      "shape": [
+        32,
+        64
+      ],
+      "frozen_rows_max_abs_diff": 0.0,
+      "frozen_rows_bitwise_unchanged": true,
+      "domain_row_max_abs_diff": 0.00025177001953125,
+      "domain_row_updated": true
+    }
+  },
+  "pass": true
+}
