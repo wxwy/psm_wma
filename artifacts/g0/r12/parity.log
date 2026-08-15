@@ -1,0 +1,2 @@
+[08-15 09:58:43|INFO|cosmos-framework/cosmos_framework/model/generator/tokenizers/wan2pt2_vae_4x16x16.py:1050:_video_vae] loading /gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+{'cache_shape': [48, 5, 12, 24], 'direct_shape': [48, 5, 12, 24], 'max_abs': 0.0, 'same': True, 'finite': True}

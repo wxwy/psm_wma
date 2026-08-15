@@ -1,0 +1,3 @@
+PWD: /gemini/code/psm_wma/cosmos-framework
+job_local_path: /gemini/code/psm_wma/artifacts/g0/r04/adamw_nonfused_20step/psm_wma/g0_r04/edge_libero_forward_loss
+s3: s3:///psm_wma/g0_r04/edge_libero_forward_loss/

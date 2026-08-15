@@ -1,0 +1,35 @@
+cmd: /gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py --deterministic
+  --sft-toml=examples/toml/sft_config/action_policy_libero_edge_r05.toml -- optimizer.optimizer_type=AdamW
+  optimizer.fused=false checkpoint.load_path=/gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100
+  checkpoint.load_training_state=true checkpoint.strict_resume=true trainer.run_validation_on_start=true
+  trainer.max_iter=100 dataloader_train.max_samples_per_batch=1 trainer.grad_accum_iter=32
+  dataloader_train.dataloader.num_workers=0 dataloader_train.dataloader.persistent_workers=false
+  dataloader_train.dataloader.prefetch_factor=null dataloader_val.dataloader.num_workers=0
+  dataloader_val.dataloader.persistent_workers=false dataloader_val.dataloader.prefetch_factor=null
+  +trainer.callbacks.r05_metrics._target_=tools.g0.r05_tiny_overfit_metrics.R05TinyOverfitMetricsCallback
+  +trainer.callbacks.r05_metrics.output_path=/gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload2/step_metrics.jsonl
+  +trainer.callbacks.r05_metrics.validation_output_path=/gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload2/held_out_metrics.jsonl
+  +trainer.callbacks.r05_metrics.optimizer_type=AdamW +trainer.callbacks.r05_metrics.fused=false
+args_cfg_path: examples/toml/sft_config/action_policy_libero_edge_r05.toml
+args_override:
+- --
+- optimizer.optimizer_type=AdamW
+- optimizer.fused=false
+- checkpoint.load_path=/gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100
+- checkpoint.load_training_state=true
+- checkpoint.strict_resume=true
+- trainer.run_validation_on_start=true
+- trainer.max_iter=100
+- dataloader_train.max_samples_per_batch=1
+- trainer.grad_accum_iter=32
+- dataloader_train.dataloader.num_workers=0
+- dataloader_train.dataloader.persistent_workers=false
+- dataloader_train.dataloader.prefetch_factor=null
+- dataloader_val.dataloader.num_workers=0
+- dataloader_val.dataloader.persistent_workers=false
+- dataloader_val.dataloader.prefetch_factor=null
+- +trainer.callbacks.r05_metrics._target_=tools.g0.r05_tiny_overfit_metrics.R05TinyOverfitMetricsCallback
+- +trainer.callbacks.r05_metrics.output_path=/gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload2/step_metrics.jsonl
+- +trainer.callbacks.r05_metrics.validation_output_path=/gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload2/held_out_metrics.jsonl
+- +trainer.callbacks.r05_metrics.optimizer_type=AdamW
+- +trainer.callbacks.r05_metrics.fused=false

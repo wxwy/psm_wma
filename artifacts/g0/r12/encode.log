@@ -1,0 +1,2 @@
+[08-15 09:57:31|INFO|cosmos-framework/cosmos_framework/model/generator/tokenizers/wan2pt2_vae_4x16x16.py:1050:_video_vae] loading /gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+{"encoder": "cosmos_omnimot._encode_vision_item", "frames_per_view": 17, "input_shape": [3, 17, 192, 384], "latent_shape": [48, 5, 12, 24], "layout": "camera-major concatenation on temporal axis", "normalization": "uint8 / 127.5 - 1.0", "num_views": 1, "spatial_compression_factor": 16, "temporal_compression_factor": 4, "vae_path": "/gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth"}

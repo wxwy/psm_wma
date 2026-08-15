@@ -1,0 +1,11 @@
+# PSM-WMA 仓库忽略策略(G0 监督者 P4,2026-08-15 Kimi 补建)
+# 原则:Gate 机器可判证据(JSON/JSONL/报告/小日志)入库;大体积中间产物忽略。
+
+__pycache__/
+*.pyc
+
+# DCP 训练 checkpoint(单个 ~12GB)
+artifacts/**/checkpoints/
+
+# 预览视频
+artifacts/**/*.mp4

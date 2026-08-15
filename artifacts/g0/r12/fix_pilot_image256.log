@@ -1,0 +1,4 @@
+[08-15 11:31:31|INFO|cosmos-framework/cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:176:__init__] Loaded LIBERO dataset root=/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot split='full' camera_mode='concat_view' fps=20.0 kept_episodes=379/379 valid_indices=95405
+[08-15 11:33:01|INFO|cosmos-framework/cosmos_framework/model/generator/tokenizers/wan2pt2_vae_4x16x16.py:1050:_video_vae] loading /gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+[1/1] episode=0 video=(3, 214, 256, 512) latent=(48, 55, 16, 32) elapsed=7.4s
+{"output_root": "/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot_cosmos_latent", "episodes_written": 1}

@@ -1,0 +1,620 @@
+2026-08-15 19:25:45.297 | INFO     | __main__:_setup_deterministic_env_and_backends:77 - Deterministic mode enabled.
+2026-08-15 19:25:45.382 | DEBUG    | cosmos_framework.utils.config:_load_py_config:578 - get_config_module: took 19.51ms
+| 2026-08-15 19:25:49,064 | [[ natten.context ]] [ WARNING ]: Attempted to enable KV parallelism in FNA, which is non-deterministic, but PyTorch's deterministic flag has been enabled. Ignoring...
+2026-08-15 19:25:59.538 | DEBUG    | cosmos_framework.utils.config:_load_py_config:583 - importlib.import_module: took 14155.77ms
+2026-08-15 19:25:59.971 | DEBUG    | cosmos_framework.utils.config:_load_py_config:588 - override: took 432.30ms
+2026-08-15 19:25:59.971 | DEBUG    | cosmos_framework.utils.config:load_config:567 - total time to load config: 14658.30ms
+[08-15 19:25:59|INFO|cosmos_framework/utils/training_telemetry/telemetry.py:63:wrapper] Heimdall telemetry is disabled, if using Heimdall,consider setting ENABLE_TELEMETRY=true to enable it
+[08-15 19:26:11|CRITICAL|cosmos_framework/utils/distributed.py:60:init] [RANK 0] Initialized distributed training with local rank 0 using nccl with timeout 1800
+[08-15 19:26:11|INFO|cosmos_framework/utils/distributed.py:72:init] Training with 1 GPUs.
+[08-15 19:26:11|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 11.50 s
+2026-08-15 19:26:11.474 | INFO     | __main__:_apply_deterministic_config_overrides:174 - --deterministic: applied 0 dataloader override(s), 0 compile.enabled override(s); trainer.seed=42
+[08-15 19:26:11|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 0.00 s
+Config is saved using pickle at /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload/psm_wma/g0_r05/edge_libero_tiny_overfit/config.pkl.
+Config is saved using omegaconf at /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload/psm_wma/g0_r05/edge_libero_tiny_overfit/config.yaml.
+/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[rank0]:[W815 19:26:12.812798860 ProcessGroupNCCL.cpp:5138] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()
+[08-15 19:26:14|INFO|cosmos_framework/utils/misc.py:124:print_environ_variables] Environment variable HF_HOME: /gemini/code/.persist/.cache/huggingface
+[08-15 19:26:14|INFO|cosmos_framework/utils/misc.py:124:print_environ_variables] Environment variable IMAGINAIRE_OUTPUT_ROOT: /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload
+[08-15 19:26:14|INFO|cosmos_framework/utils/misc.py:138:set_random_seed] Using random seed 42.
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback skip_nan_step: {'max_consecutive_nan': 100, '_target_': <class 'cosmos_framework.callbacks.skip_nan_step.SkipNaNStep'>}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback grad_clip: {'clip_norm': 1.0, 'force_finite': True, 'track_per_modality': True, '_target_': <class 'cosmos_framework.callbacks.grad_clip.GradClip'>}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback low_precision: {'update_iter': 1, 'config': None, 'trainer': None, '_target_': <class 'cosmos_framework.utils.callback.LowPrecisionCallback'>}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback heart_beat: {'step_size': 1, 'update_interval_in_minute': 20, 'save_s3': False, 'every_n': 200, '_target_': <class 'cosmos_framework.callbacks.heart_beat.HeartBeat'>}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback device_monitor: {'every_n': 200, 'step_size': 1, 'save_s3': False, 'upload_every_n_mul': 5, 'log_memory_detail': True, '_target_': <class 'cosmos_framework.callbacks.device_monitor.DeviceMonitor'>}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback termination_signal_checkpoint: {'min_save_fraction': 0.3333333333333333, '_target_': <class 'cosmos_framework.callbacks.termination_signal_checkpoint.TerminationSignalCheckpoint'>}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback dataloader_speed is missing the '_target_' field. 
+ SKip {'every_n': 100, 'save_s3': False, 'step_size': 1}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback iter_speed is missing the '_target_' field. 
+ SKip {'every_n': 1, 'hit_thres': 50, 'save_s3': False, 'save_s3_every_log_n': 500}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback manual_gc is missing the '_target_' field. 
+ SKip {'every_n': 5, 'gc_level': 1, 'warm_up': 1}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback param_count is missing the '_target_' field. 
+ SKip {'save_s3': False}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback training_stats is missing the '_target_' field. 
+ SKip {'log_freq': 100}
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback r05_metrics: {'_target_': 'tools.g0.r05_tiny_overfit_metrics.R05TinyOverfitMetricsCallback', 'output_path': '/gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload/step_metrics.jsonl', 'validation_output_path': '/gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload/held_out_metrics.jsonl', 'optimizer_type': 'AdamW', 'fused': False}
+[08-15 19:26:14|WARNING|cosmos_framework/utils/launch.py:86:log_reproducible_setup] S3 credentials not found. Skipping easy_io S3 setup.
+[08-15 19:26:14|WARNING|cosmos_framework/utils/launch.py:88:log_reproducible_setup] Job path: psm_wma/g0_r05/edge_libero_tiny_overfit
+[08-15 19:26:14|CRITICAL|cosmos_framework/utils/launch.py:93:log_reproducible_setup] Job local path: /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload/psm_wma/g0_r05/edge_libero_tiny_overfit
+[08-15 19:26:15|INFO|cosmos_framework/model/generator/omni_mot_model.py:134:__init__] OmniMoTModel: config {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth', 'chunk_duration': 93, 'keep_decoder_cache': False, 'use_streaming_encode': False, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8, '768': 8}, 'encode_exact_durations': [17, 61, 73], 'spatial_compression_factor': 16, 'temporal_compression_factor': 4, 'temporal_window': None, 'encode_bucket_multiple': None, 'causal': True, '_target_': <class 'cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16.Wan2pt2VAEInterface'>}, 'load_vision_tokenizer': True, 'net': None, 'ema': {'enabled': False, 'rate': 0.1, 'iteration_shift': 0}, 'parallelism': {'data_parallel_shard_degree': -1, 'data_parallel_replicate_degree': 1, 'context_parallel_shard_degree': 1, 'cfg_parallel_shard_degree': 1, 'enable_inference_mode': False, 'fsdp_master_dtype': 'float32'}, 'attention_io_layout': 'sequence_sharded', 'compile': {'enabled': False, 'compiled_region': 'language', 'compile_dynamic': True, 'use_cuda_graphs': False, 'ar_post_saturation_mode': 'default', 'max_autotune_pointwise': False, 'coordinate_descent_tuning': False}, 'quantization': {'method': None, 'fp8_granularity': 'per_row', 'include_regex': [], 'exclude_regex': [], 'modelopt_fp8_checkpoint_path': None, 'modelopt_fp8_target_fqns': []}, 'activation_checkpointing': {'mode': 'selective', 'save_ops_regex': ['fmha'], 'preserve_rng_state': True, 'determinism_check': 'default'}, 'precision': 'bfloat16', 'lora_enabled': False, 'lora_rank': 16, 'lora_alpha': 32, 'lora_target_modules': 'q_proj_moe_gen,k_proj_moe_gen,v_proj_moe_gen,o_proj_moe_gen', 'rectified_flow_training_config': {'shift': {'256': 3, '480': 5, '720': 10}, 'shift_image': None, 'use_dynamic_shift': False, 'train_time_image_distribution': 'logitnormal', 'train_time_video_distribution': 'waver', 'train_time_action_distribution': 'logitnormal', 'train_time_sound_distribution': 'logitnormal', 'train_time_weight': 'uniform', 'loss_scale': 10.0, 'image_loss_scale': None, 'sound_loss_scale': 2.0, 'use_discrete_rf': False, 'action_loss_weight': 10.0, 'independent_action_schedule': False, 'shift_action': None, 'independent_sound_schedule': False, 'shift_sound': None, 'normalize_loss_by_active': False, 'sample_level_loss_averaging': False}, 'rectified_flow_inference_config': {'scheduler_type': 'unipc', 'num_train_timesteps': 1000, 'shift': 1, 'use_dynamic_shifting': False}, 'fixed_step_sampler_config': None, 'vlm_config': {'model_name': 'nvidia/Cosmos3-Edge-Reasoner', 'safetensors_path': '', 'pretrained_weights': {'enabled': False, 'backbone_path': 's3://bucket/cosmos3/pretrained/huggingface/nvidia/Cosmos3-Edge-Reasoner-590c1c0/', 'credentials_path': '', 'enable_gcs_patch_in_boto3': True, 'checkpoint_format': None}, 'model_instance': {'config': {'base_config': {'json_file': 'cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/configs/Nemotron-2B-Dense-VL.json', '_target_': <bound method _MoTConfigBase.from_json_file of <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLMoTConfig'>>}, 'freeze_und': False, 'layer_module': 'MoTDecoderLayer', 'qk_norm_for_text': False, 'use_und_k_norm_for_gen': True, 'include_visual': None, 'tie_word_embeddings': True, '_target_': <function create_vlm_config at 0x7faa4f020f40>}, '_target_': <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLTextForCausalLM'>}, 'tokenizer': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7fa9e2693ce0>, 'tokenizer_type': '/gemini/code/models/Cosmos3-Edge-Policy-DROID'}, 'layer_module': None, 'qk_norm': False, 'tie_word_embeddings': False, 'use_system_prompt': False}, 'diffusion_expert_config': {'timestep_range': 1.0, 'load_weights_from_pretrained': False, 'enable_vision_modality_embeddings': False, 'patch_spatial': 2, 'max_vae_latent_side_after_patchify': 20, 'enable_fps_modulation': True, 'base_fps': 24, 'sound_base_temporal_compression_factor': None, 'vision_temporal_position_mode': 'latent_index', 'unified_3d_mrope_reset_spatial_ids': True, 'unified_3d_mrope_temporal_modality_margin': 15000}, 'input_video_key': 'video', 'input_image_key': 'images', 'input_caption_key': 'ai_caption', 'state_ch': 48, 'state_t': 300, 'latent_downsample_factor': 16, 'resolution': '480', 'max_num_tokens_after_packing': 45056, 'joint_attn_implementation': 'two_way', 'flex_attention': {'enabled': False, 'backend': 'auto', 'mask': {'noisy_attention_scope': 'all_views'}}, 'natten_parameter_list': None, 'video_temporal_causal': False, 'causal_training_strategy': 'none', 'lbl': {'method': 'local', 'coeff_und': None, 'coeff_gen': None}, 'vision_gen': True, 'action_gen': True, 'max_action_dim': 64, 'num_embodiment_domains': 32, 'sound_gen': False, 'sound_tokenizer': None, 'sound_dim': None, 'sound_latent_fps': 25, 'enable_input_bias': True, 'log_enc_time_every_n': 100, 'exclude_reasoner_weights_from_checkpoint': False}
+[08-15 19:26:15|WARNING|cosmos_framework/model/generator/omni_mot_model.py:160:set_precision] OmniMoTModel: precision torch.bfloat16
+This processor does not use the `size` parameter. It will be ignored.
+[08-15 19:26:16|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[08-15 19:28:42|INFO|cosmos_framework/model/generator/tokenizers/wan2pt2_vae_4x16x16.py:1050:_video_vae] loading /gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+[08-15 19:28:42|INFO|cosmos_framework/utils/distributed.py:444:sync_model_states] Synchronizing model states from rank 0 to all ranks in process group [0].
+[08-15 19:28:43|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_tokenizers: 148.01 s
+[08-15 19:28:43|INFO|cosmos_framework/utils/generator/parallelism.py:107:_validate] dp_shard auto-inferred to world_size = 1
+[08-15 19:28:43|INFO|cosmos_framework/utils/generator/parallelism.py:121:_validate] dp_replicate is set to -1, will be automatically determined based on world_size 1 // dp_shard 1.
+[08-15 19:28:43|INFO|cosmos_framework/utils/generator/parallelism.py:126:_validate] dp_replicate is set to 1.
+`torch_dtype` is deprecated! Use `dtype` instead!
+[08-15 19:28:43|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on meta to cuda and broadcast model states: 0.30 s
+[08-15 19:28:43|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on Creating PyTorch model and ema if enabled: 0.60 s
+[08-15 19:28:43|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_model: 0.60 s
+[08-15 19:28:43|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_model: 148.61 s
+[08-15 19:28:43|INFO|cosmos_framework/data/generator/joint_dataloader.py:1040:__init__] [RANK 0] RankPartitionedDataLoader: world_size: 1 and rank: 0
+[08-15 19:28:43|INFO|cosmos_framework/data/generator/joint_dataloader.py:1095:__init__] [RANK 0] RankPartitionedDataLoader allocation (1 GPUs):
+  libero (ratio 1): ranks 0-0 (1 GPUs) | expected 100.00%, actual 100.00%
+[08-15 19:28:45|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[08-15 19:29:12|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:176:__init__] Loaded LIBERO dataset root=/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot split='full' camera_mode='concat_view' fps=20.0 kept_episodes=379/379 valid_indices=95405
+[08-15 19:29:12|INFO|cosmos_framework/data/generator/joint_dataloader.py:427:__init__] JointDataLoader: 1 streams
+  action_libero: ratio=1 (100.0%)
+[08-15 19:29:18|INFO|cosmos_framework/data/generator/joint_dataloader.py:529:_prewarm_dataloader] [RANK 0] Pre-warm: dataloader 'action_libero' ready — 1 samples buffered in 5.2s
+[08-15 19:29:18|INFO|cosmos_framework/data/generator/joint_dataloader.py:573:_prewarm_dataloaders] Pre-warm: waiting at barrier for all ranks …
+[08-15 19:29:18|INFO|cosmos_framework/data/generator/joint_dataloader.py:575:_prewarm_dataloaders] Pre-warm: all ranks ready
+[08-15 19:29:18|INFO|cosmos_framework/data/generator/joint_dataloader.py:1040:__init__] [RANK 0] RankPartitionedDataLoader: world_size: 1 and rank: 0
+[08-15 19:29:18|INFO|cosmos_framework/data/generator/joint_dataloader.py:1095:__init__] [RANK 0] RankPartitionedDataLoader allocation (1 GPUs):
+  libero (ratio 1): ranks 0-0 (1 GPUs) | expected 100.00%, actual 100.00%
+[08-15 19:29:18|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[08-15 19:29:24|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:176:__init__] Loaded LIBERO dataset root=/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot split='full' camera_mode='concat_view' fps=20.0 kept_episodes=379/379 valid_indices=95405
+[08-15 19:29:24|INFO|cosmos_framework/data/generator/joint_dataloader.py:427:__init__] JointDataLoader: 1 streams
+  action_libero: ratio=1 (100.0%)
+[08-15 19:29:26|INFO|cosmos_framework/data/generator/joint_dataloader.py:529:_prewarm_dataloader] [RANK 0] Pre-warm: dataloader 'action_libero' ready — 1 samples buffered in 1.7s
+[08-15 19:29:26|INFO|cosmos_framework/data/generator/joint_dataloader.py:573:_prewarm_dataloaders] Pre-warm: waiting at barrier for all ranks …
+[08-15 19:29:26|INFO|cosmos_framework/data/generator/joint_dataloader.py:575:_prewarm_dataloaders] Pre-warm: all ranks ready
+[08-15 19:29:26|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_data_loader: 42.57 s
+[08-15 19:29:26|INFO|cosmos_framework/utils/generator/optimizer.py:247:_build_params_with_metadata] Total tensors: 549, trainable tensors: 549, selected tensors: 294
+[08-15 19:29:26|INFO|cosmos_framework/utils/generator/optimizer.py:432:__init__] Building optimizer for mesh 'default'
+[08-15 19:29:26|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=5e-05, WD=True): 289 tensors, 1,414,921,408 elements
+[08-15 19:29:26|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=0.00025, WD=False): 4 tensors, 8,456,192 elements
+[08-15 19:29:26|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=0.00025, WD=True): 1 tensors, 2,048 elements
+[08-15 19:29:26|INFO|cosmos_framework/utils/generator/optimizer.py:440:__init__] Created 1 optimizers
+[08-15 19:29:26|INFO|cosmos_framework/utils/generator/optimizer.py:623:__init__] Created 1 schedulers
+[08-15 19:29:26|CRITICAL|cosmos_framework/checkpoint/dcp.py:789:load] Resuming ckpt /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100 (warm-start, local) with keys: ['dataloader', 'model', 'optim', 'scheduler', 'trainer']
+[08-15 19:29:26|CRITICAL|cosmos_framework/checkpoint/dcp.py:801:load] Start loading checkpoint from /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100/dataloader
+[08-15 19:29:26|INFO|cosmos_framework/checkpoint/dcp.py:918:load] [RANK 0] Checkpoint /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100/dataloader does not exist, skip loading dataloader.
+[08-15 19:29:26|CRITICAL|cosmos_framework/checkpoint/dcp.py:801:load] Start loading checkpoint from /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100/model
+[08-15 19:29:26|INFO|cosmos_framework/checkpoint/dcp.py:358:__init__] Skipping loading of keys that match the following patterns: ['net_ema.']
+[08-15 19:29:26|INFO|cosmos_framework/checkpoint/dcp.py:827:load] - Loading the model...
+/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+  return func(*args, **kwargs)
+[08-15 19:29:26|INFO|cosmos_framework/checkpoint/dcp.py:433:_skip_keys_if_found] [RANK 0] [DCP-LOAD-SKIP-KEYS] kept_keys=549 dropped_keys=0
+[08-15 19:29:26|INFO|cosmos_framework/checkpoint/dcp.py:408:_drop_non_reader_items] [RANK 0] [DCP-LOAD-DEDUP] kept_read_items=549 dropped_read_items=0
+[08-15 19:36:04|CRITICAL|cosmos_framework/checkpoint/dcp.py:801:load] Start loading checkpoint from /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100/optim
+[08-15 19:36:04|INFO|cosmos_framework/checkpoint/dcp.py:358:__init__] Skipping loading of keys that match the following patterns: ['net_ema.']
+[08-15 19:36:04|INFO|cosmos_framework/checkpoint/dcp.py:863:load] - Loading the optimizer...
+[08-15 19:36:04|INFO|cosmos_framework/checkpoint/dcp.py:433:_skip_keys_if_found] [RANK 0] [DCP-LOAD-SKIP-KEYS] kept_keys=4410 dropped_keys=0
+[08-15 19:36:04|INFO|cosmos_framework/checkpoint/dcp.py:408:_drop_non_reader_items] [RANK 0] [DCP-LOAD-DEDUP] kept_read_items=4410 dropped_read_items=0
+[08-15 19:41:22|CRITICAL|cosmos_framework/checkpoint/dcp.py:801:load] Start loading checkpoint from /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100/scheduler
+[08-15 19:41:22|INFO|cosmos_framework/checkpoint/dcp.py:878:load] - Loading the scheduler...
+[08-15 19:41:22|CRITICAL|cosmos_framework/checkpoint/dcp.py:801:load] Start loading checkpoint from /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100/trainer
+[08-15 19:41:22|INFO|cosmos_framework/checkpoint/dcp.py:889:load] - Loading the trainer...
+[08-15 19:41:23|INFO|cosmos_framework/checkpoint/dcp.py:946:load] Loaded checkpoint from /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100 (warm-start, local) in iteration 100
+[08-15 19:41:23|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on checkpoint loading: 717.01 s
+[08-15 19:41:23|CRITICAL|cosmos_framework/trainer/__init__.py:272:train] Distributed parallelism mode: fsdp
+[08-15 19:41:23|INFO|cosmos_framework/trainer/__init__.py:280:train] Starting training...
+[08-15 19:41:23|INFO|cosmos_framework/callbacks/device_monitor.py:102:on_train_start] DeviceMonitor callback: local_dir: /gemini/code/psm_wma/artifacts/g0/r05/tiny_overfit_reload/psm_wma/g0_r05/edge_libero_tiny_overfit/DeviceMonitor
+[08-15 19:41:23|INFO|cosmos_framework/callbacks/termination_signal_checkpoint.py:186:_install_termination_signal_handlers] [TerminationSignalCheckpoint] Installed SIGTERM handler.
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 2 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 3 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 4 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 5 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 6 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 7 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 8 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 9 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 10 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 11 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 12 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 13 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 14 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 15 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 16 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 17 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 18 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 19 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 20 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 21 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 22 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 23 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 24 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 25 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 26 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 27 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 28 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 29 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 30 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 31 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 32 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 33 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 34 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 35 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 36 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 37 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 38 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 39 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 40 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 41 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 42 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 43 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 44 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 45 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 46 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 47 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 48 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 49 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 50 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 51 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 52 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 53 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 54 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 55 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 56 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 57 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 58 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 59 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 60 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 61 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 62 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 63 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 64 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 65 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 66 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 67 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 68 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 69 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 70 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 71 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 72 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 73 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 74 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 75 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 76 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 77 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 78 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 79 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 80 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 81 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 82 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 83 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 84 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 85 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 86 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 87 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 88 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 89 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 90 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 91 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 92 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 93 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 94 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 95 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 96 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 97 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 98 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 99 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 100 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 101 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 102 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 103 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 104 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 105 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 106 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 107 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 108 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 109 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 110 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 111 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 112 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 113 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 114 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 115 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 116 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 117 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 118 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 119 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 120 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 121 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 122 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 123 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 124 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 125 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 126 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 127 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 128 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 129 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 130 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 131 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 132 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 133 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 134 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 135 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 136 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 137 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 138 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 139 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 140 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 141 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 142 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 143 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 144 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 145 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 146 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 147 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 148 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 149 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 150 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 151 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 152 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 153 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 154 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 155 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 156 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 157 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 158 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 159 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 160 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 161 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 162 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 163 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 164 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 165 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 166 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 167 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 168 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 169 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 170 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 171 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 172 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 173 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 174 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 175 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 176 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 177 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 178 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 179 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 180 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 181 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 182 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 183 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 184 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 185 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 186 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 187 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 188 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 189 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 190 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 191 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 192 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 193 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 194 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 195 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 196 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 197 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 198 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 199 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 200 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 201 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 202 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 203 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 204 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 205 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 206 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 207 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 208 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 209 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 210 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 211 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 212 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 213 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 214 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 215 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 216 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 217 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 218 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 219 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 220 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 221 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 222 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 223 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 224 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 225 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 226 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 227 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 228 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 229 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 230 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 231 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 232 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 233 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 234 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 235 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 236 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 237 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 238 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 239 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 240 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 241 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 242 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 243 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 244 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 245 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 246 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 247 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 248 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 249 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 250 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 251 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 252 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 253 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 254 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 255 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py:745: UserWarning: Length of IterableDataset <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionFixedSubsetCycleDataset object at 0x7fa9d0359090> was reported to be 1(when accessing len(dataloader)), but 256 samples have been fetched. 
+  batch = next(self.dataloaders[index_id])
+[08-15 19:44:52|INFO|cosmos_framework/utils/misc.py:138:set_random_seed] Using random seed 42.
+[08-15 19:44:52|SUCCESS|cosmos_framework/trainer/__init__.py:379:train] Done with training.

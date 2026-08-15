@@ -1,0 +1,12 @@
+cmd: /gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py --sft-toml=examples/toml/sft_config/action_policy_libero_edge_r04.toml
+  -- optimizer.optimizer_type=AdamW optimizer.fused=false trainer.max_iter=1 dataloader_train.dataloader.num_workers=0
+  dataloader_train.dataloader.persistent_workers=false dataloader_train.dataloader.prefetch_factor=null
+args_cfg_path: examples/toml/sft_config/action_policy_libero_edge_r04.toml
+args_override:
+- --
+- optimizer.optimizer_type=AdamW
+- optimizer.fused=false
+- trainer.max_iter=1
+- dataloader_train.dataloader.num_workers=0
+- dataloader_train.dataloader.persistent_workers=false
+- dataloader_train.dataloader.prefetch_factor=null
