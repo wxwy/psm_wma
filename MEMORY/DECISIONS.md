@@ -94,3 +94,14 @@
 - 状态：生效
 - 决策：RGB 离线缓存复用 `OmniMoTModel._encode_vision_item` 的契约：每个 camera clip 独立切分，uint8 按 `x / 127.5 - 1.0` 归一化，调用同一 `tokenizer_vision_gen.encode()`，再按 camera-major 在 temporal 轴拼接。禁止逐 RGB 帧独立 VAE encode，也不得把 StarVLA/UMT5 的 latent 直接当作 Cosmos latent。
 - 原因：Wan VAE 是 causal temporal tokenizer；离线缓存必须与在线 temporal compression、视角顺序和 latent shape 一致，才能避免训练/推理语义漂移。
+
+## D011 多卡 DCP 恢复前必须处理 CPU optimizer 叶子
+
+- 日期：2026-08-15
+- 状态：生效
+- 决策：
+  1. `cosmos_framework/checkpoint/dcp.py::_broadcast_tensor_leaf` 的普通 tensor 分支直接调用默认进程组 `dist.broadcast`；当进程组为 NCCL 且叶子是非 capturable AdamW 的 CPU `step` 标量时，会报 `No backend type associated with device type cpu`。
+  2. `8421e41` 的 `world_size == 1` 短路只解决单卡 R05；多卡根因仍然存在，记为 MEDIUM-3，不得把单卡 PASS 解读为多卡 reload 已支持。
+  3. R06 或任何正式多卡训练/reload 启动前，必须在不改变 dedup reader 选举和 DTensor mesh 语义的前提下修复；候选方案为 CPU 叶子使用 Gloo 辅助进程组，或经证明无精度/内存风险的临时 CUDA 搬运广播。
+- 验收：至少 2 rank 的真实 AdamW checkpoint save/reload 在 NCCL 环境 PASS；CPU `step`、非 tensor `param_groups` 和 CUDA/DTensor 叶子全部恢复一致；补充多 rank 定向单测，且现有单 rank 路径不回归。
+- 原因：G0-R05 Phase C 首次恢复带 optimizer 状态的 checkpoint 时暴露了 CPU tensor 与 NCCL backend 不匹配；单卡无操作短路不能代替多卡正确性修复。
