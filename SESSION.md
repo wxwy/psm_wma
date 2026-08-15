@@ -43,7 +43,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | DOC-R04 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R04_forward_loss_runbook_v0.1.md` | 独立版本化 Runbook；不与 R03 混入同一提交 |
 | G0-R04 | Codex/Kimi | DONE | `tools/g0/r04_step_metrics.py`、`tools/g0/verify_domain_rows.py`、`artifacts/g0/r04/adamw_nonfused_20step/` | 非 fused AdamW 连续 20 步 PASS；机器可读 loss/资源/domain 行保护证据和末次 checkpoint 完整 |
 | DOC-R05 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R05_tiny_overfit_runbook_v0.1.md` | 先关闭 action stats 分布前置项，再冻结 tiny-overfit 命令、Schema 和判据 |
-| G0-R05 | Codex | IN_PROGRESS | `tools/g0/audit_r05_action_stats.py`、R05 定向指标/验收工具与 `artifacts/g0/r05/` | 代码由 Codex 实现，Kimi 独立审查和执行，Codex 最终验收 |
+| G0-R05 | Codex | IN_PROGRESS | `cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`、R05 定向测试/验收工具与 `artifacts/g0/r05/` | Phase B 100 步训练已完成；Codex 修复 HIGH-1 validation 空桩，Kimi 复审后从 Phase C 续跑，无需重训 |
 | DOC-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R05 混入同一提交 |
 
 ## 最近完成
@@ -135,7 +135,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - 独立核验：抽查 12 个 episode 的 latent 全部 finite；379 个 episode 全部满足 `latent_frames = 1 + ceil((video_frames - 1) / 4)`；日志 `artifacts/g0/r12/full_dataset_cosmos_image256.log`。编码进程两次被外部 SIGSTOP，均 SIGCONT 无损恢复并正常退出。
 - 验证结果：真实 LIBERO RGB `[3,17,192,384]` → latent `[48,5,12,24]`，finite；工具路径与 Cosmos 直接 batch 路径 `max_abs=0.0`、shape 完全一致。Kimi 审查发现并已修复 image_size 默认值、manifest 续跑丢失、非原子写入、uint8 rounding、provenance 和完整 instruction 保存。修复后用 `--image-size 256` 完成 1 个 episode：原始 `[3,214,256,512]`，按 Cosmos `4n+1` 规则补到 217 帧，得到 `[55,48,16,32]` FP16 latent，源帧映射 `[55]`，原文指令已保存；产物位于 `/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot_cosmos_latent/episodes/episode_000000.pt`。`py_compile` 与 `git diff --check` PASS；全量 379/379 已完成并由 Kimi 核验。
 
-### G0-R05（实现完成，待 Kimi 审查/执行）
+### G0-R05（Phase B 完成，HIGH-1 修复待 Kimi 复审）
 
 - stats 前置审计：扫描本地 379 个 parquet、101,469 帧，按 Cosmos axis-angle→rot6d 路径比较内置 `global_raw` q01/q99；10D 全 finite，最大 `[-1,1]` 外尾比例 `0.0306892 < 0.10`，`artifacts/g0/r05/R05_action_stats_sanity.json` 为 PASS。
 - 新增确定性 tiny subset：训练 flat index `[0,1,2,3]` 循环，held-out index `4`；索引实测五个窗口均为 episode 0/task 0，互不重叠且不随机 shuffle。
@@ -143,3 +143,6 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - 新增 `action_policy_libero_edge_tiny_overfit` 与 R05 TOML；100 steps、EMA off、AdamW `fused=false` 由命令 override，checkpoint `iter_000000100`。
 - 轻量验证：所有新增/修改 Python `py_compile` PASS；固定 subset 循环、x0 MAE 公式、TOML 生效配置和 `git diff --check` PASS。pytest 未执行，原因是当前 py313/cu128 环境未安装 pytest；已保留对应单测供 Kimi 审查环境执行。
 - Runbook：`docs/build/PSM-WMA_G0_R05_tiny_overfit_runbook_v0.1.md`，包含 stats、100-step、reload consistency、Gate collector 的完整命令和判据。
+- Phase B 实行：100/100 步 loss/grad 全 finite、趋势阈值全部达标，`iter_000000100` 四件 checkpoint 完整；步后 held-out 验证暴露 `OmniMoTModel.validation_step` 空桩，Kimi 标记 HIGH-1 / REQUEST_CHANGES。
+- HIGH-1 修复：`cosmos-framework@fbe85a0` 在既有 `@torch.no_grad()` 下复用 `training_step` 的完整前向/损失路径，返回 trainer 要求的 `(output_batch, total_loss)`；未新增损失实现或改动训练语义。
+- 修复验证：`py_compile`、dummy 返回值透传/无梯度断言、`git diff --check` 全部 PASS；真实 GPU reload 未由 Codex 重复执行，交 Kimi 复审后从 Phase C 续跑。
