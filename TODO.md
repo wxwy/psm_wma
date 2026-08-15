@@ -14,7 +14,7 @@
 | G0-R01 | DONE | Codex | REVIEW-R01 DONE；环境和 checkpoint 就绪 | Gate JSON PASS；用户批准 RoboLab 基础设施豁免，Reasoner/Policy/World smoke 与独立复核完成 |
 | G0-R02 | DONE | Codex | G0-R01 PASS | metadata/config/index audit JSON PASS；有效索引 0 缺失、provenance 完整，warm-start 与 LIBERO 数据契约已冻结并通过独立审查 |
 | G0-R03 | DONE | Codex | G0-R01 PASS | 真实 LIBERO 7→10→64 action pipeline、domain 5/8、shape/mask、projection smoke、参数拆分与 stats provenance 已落盘并通过独立审查 |
-| G0-R04 | BLOCKED | Codex | G0-R02、G0-R03 完成；需多卡 FSDP 或更大主机内存 | Edge-Policy-DROID x LIBERO 的 DCP、forward/loss/backward 已 finite；optimizer step 在当前单卡主机连续两次 SIGKILL，待资源变更后完成 20–50 steps |
+| G0-R04 | DONE | Codex/Kimi | G0-R02、G0-R03 完成；40GB GPU 与非 fused AdamW 路径可用 | 连续 20 步 PASS：loss/grad 全 finite、domain 行保护 PASS、末次 checkpoint 四件齐全、无 OOM/SIGKILL；机器可读 Gate JSON 已落盘 |
 | G0-R04-ADAMW | DONE | Codex/Kimi | G0-R04 单步诊断；框架当前硬编码拒绝 `fused=False` | 标准 Adam/AdamW 的非 fused 优化器路径已通过单步验证和 Kimi 独立 APPROVE；FusedAdam 行为不变 |
 | G0-R05 | TODO | 待认领 | G0-R04 PASS；完成本地 action 分位数与内置 stats q01/q99 的分布 sanity check | LIBERO tiny-overfit 达到 Runbook 阈值并保存曲线与 checkpoint 信息；normalization stats 与本地 v2.1 数据匹配性有明确结论 |
 | G0-R06 | TODO | 待认领 | G0-R05 PASS | LIBERO closed-loop baseline 可重复且 SR > 0 |

@@ -41,7 +41,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | DOC-R03 | Codex | DONE | `docs/build/PSM-WMA_G0_R03_action_contract_runbook_v0.1.md` | Kimi 独立审查 APPROVE；2 MEDIUM + 3 LOW 已关闭或按范围转交，Runbook 状态 `reviewed` |
 | G0-R03 | Codex | DONE | `tools/g0/audit_r03_action_contract.py`、`artifacts/g0/r03/R03_action_contract.json`、`cosmos-framework@3b4a929` | 真实 LIBERO runtime contract、参数拆分与 stats provenance PASS，并通过独立审查 |
 | DOC-R04 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R04_forward_loss_runbook_v0.1.md` | 独立版本化 Runbook；不与 R03 混入同一提交 |
-| G0-R04 | Codex | IN_PROGRESS | Edge LIBERO experiment/config 与定向测试、`tools/g0/run_r04_forward_loss.py`、`artifacts/g0/r04/R04_edge_libero_forward_loss.json` | Policy-DROID × LIBERO 单 batch forward/loss/backward；PSM/Memory/EMA 关闭 |
+| G0-R04 | Codex/Kimi | DONE | `tools/g0/r04_step_metrics.py`、`tools/g0/verify_domain_rows.py`、`artifacts/g0/r04/adamw_nonfused_20step/` | 非 fused AdamW 连续 20 步 PASS；机器可读 loss/资源/domain 行保护证据和末次 checkpoint 完整 |
 | DOC-R05-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R04 混入同一提交 |
 
 ## 最近完成
@@ -104,11 +104,18 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 
 ## 下一交接
 
-1. 执行 G0-R04 单步训练，记录 forward/loss/backward、显存与异常；通过后扩到连续 20–50 steps。
+1. G0-R04 已完成：非 fused AdamW 连续 20 步 PASS；后续若扩展训练，优先接入 R12 latent 缓存或启用 `num_workers>=2`，避免 CPU 视频解码瓶颈。
 2. R04 执行器必须在 DCP load 后重初始化 domain 5 行，并验证 optimizer step 前后其他 domain 行不变；`action_raw` 当前按“已归一化的原始维度 action”记录，不在 R04 改公共接口。
 3. 后续分别新建版本化 R04-R06 Runbook，不扩写 frozen/locked 文档；同时修复两处残留旧口径，并用新版本/修订记录处理 `frozen/locked` 文档治理问题。
 4. G0-R05 启动前完成本地 action 分位数与内置 stats q01/q99 的分布 sanity check。
 5. W10/W11 启动时读取 `PSM-WMA_Agent_Harness_reference_addendum_v0.1.md`，复核 arXiv:2608.11246 后再决定 scene/context 与 execution-evaluation 接口是否进入实现。
+
+### G0-R04 正式验收（2026-08-15，Kimi 执行，Codex 验收）
+
+- 产物：`artifacts/g0/r04/adamw_nonfused_20step/{step_metrics.jsonl,domain_row_guard.json,R04_gate.json,train_20step.log}`；终审报告 `docs/build/PSM-WMA_REVIEW-G0-R04_final_nonfused_2026-08-15.md`。
+- Codex 复核：`R04_gate.status=PASS`、20 行 metrics 且 iteration 1–20 连续、loss/grad 全 finite、`domain_row_guard.pass=true`、冻结行 bitwise diff=0、domain 5 均更新、末次 checkpoint `iter_000000020` 的 model/optim/scheduler/trainer 四目录齐全；两个新增工具 `py_compile` 通过。
+- 数值：loss `16.4969→13.6540`，grad norm（clip 后）最大 `1.00498`；GPU 分配峰值 `34270.6 MiB`，RSS 峰值 `19,954,976 KB`，无 OOM/SIGKILL。
+- 结论：G0-R04 正式 Gate `PASS`，任务状态 `DONE`。后续扩展建议使用 R12 latent 缓存或 `num_workers>=2`，当前瓶颈为 CPU 视频解码。
 ### G0-R04-ADAMW（单步完成，Kimi APPROVE）
 
 - 最小修改：`cosmos-framework/cosmos_framework/utils/generator/optimizer.py` 仅对标准 `Adam`/`AdamW` 允许 `fused=False`；`FusedAdam`、Muon/Dion2 等 fused-only 路径仍拒绝非 fused。
