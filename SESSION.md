@@ -43,7 +43,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | DOC-R04 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R04_forward_loss_runbook_v0.1.md` | 独立版本化 Runbook；不与 R03 混入同一提交 |
 | G0-R04 | Codex/Kimi | DONE | `tools/g0/r04_step_metrics.py`、`tools/g0/verify_domain_rows.py`、`artifacts/g0/r04/adamw_nonfused_20step/` | 非 fused AdamW 连续 20 步 PASS；机器可读 loss/资源/domain 行保护证据和末次 checkpoint 完整 |
 | DOC-R05 | Codex | IN_PROGRESS | `docs/build/PSM-WMA_G0_R05_tiny_overfit_runbook_v0.1.md` | 先关闭 action stats 分布前置项，再冻结 tiny-overfit 命令、Schema 和判据 |
-| G0-R05 | Codex | IN_PROGRESS | `cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`、R05 定向测试/验收工具与 `artifacts/g0/r05/` | Phase B 100 步训练已完成；Codex 修复 HIGH-1 validation 空桩，Kimi 复审后从 Phase C 续跑，无需重训 |
+| G0-R05 | Codex | IN_PROGRESS | `cosmos-framework/cosmos_framework/checkpoint/dcp.py`、R05 定向测试/验收工具与 `artifacts/g0/r05/` | HIGH-1 已复审 APPROVE；Codex 修复 HIGH-2 单进程 DCP 恢复多余广播，Kimi 复审后从 Phase C 续跑 |
 | DOC-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R05 混入同一提交 |
 
 ## 最近完成
@@ -146,3 +146,6 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - Phase B 实行：100/100 步 loss/grad 全 finite、趋势阈值全部达标，`iter_000000100` 四件 checkpoint 完整；步后 held-out 验证暴露 `OmniMoTModel.validation_step` 空桩，Kimi 标记 HIGH-1 / REQUEST_CHANGES。
 - HIGH-1 修复：`cosmos-framework@fbe85a0` 在既有 `@torch.no_grad()` 下复用 `training_step` 的完整前向/损失路径，返回 trainer 要求的 `(output_batch, total_loss)`；未新增损失实现或改动训练语义。
 - 修复验证：`py_compile`、dummy 返回值透传/无梯度断言、`git diff --check` 全部 PASS；真实 GPU reload 未由 Codex 重复执行，交 Kimi 复审后从 Phase C 续跑。
+- HIGH-1 复审：Kimi 结论 APPROVE；Phase C 首次 reload 已成功读取 model 549 keys / optimizer 4410 keys，但暴露 HIGH-2：单进程 NCCL 对非 capturable AdamW 的 CPU `step` 标量做多余 broadcast 而崩溃。
+- HIGH-2 修复：`cosmos-framework@8421e41` 在 `_broadcast_state_dict` 入口对 `world_size == 1` 直接返回；单 rank 是所有叶子唯一 reader，DCP 已读全状态，因此无需任何补全广播，多卡分支未改动。
+- HIGH-2 定向验证：`py_compile` PASS；mock world size 1 且将 tensor/object broadcast 设为调用即失败，含 CPU AdamW `step` 的嵌套状态原样保留且零 collective；`git diff --check` PASS。真实 checkpoint reload 交 Kimi 复审后续跑。

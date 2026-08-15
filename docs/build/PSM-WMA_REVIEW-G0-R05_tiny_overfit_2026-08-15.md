@@ -89,6 +89,17 @@ PASS：status=PASS 且 max_outside_normalized_unit_rate<0.10；FAIL：停止，�
 - **HIGH-1（REQUEST_CHANGES)**:`omni_mot_model.py:3518` `validation_step` 为桩，与 R05 Gate 的 held-out 判据及 `r05_tiny_overfit_metrics.py:97` 的 `on_validation_step_end` 回调不兼容——回调依赖 `validation_step` 返回 `(output_batch, loss)`，桩返回 None 直接导致 Phase B 末段与 Phase C(reload `run_validation_on_start=true`）必然崩溃。1352b12 只改了 trainer 的 resume-validation 触发条件，没有实现模型侧 validation_step。**Gate 的 held-out 与 reload-consistency 两项当前无法产出，Phase C/D 暂停，待 Codex 修复后从 reload 阶段重跑（训练 100 步与 checkpoint 有效，不需重训）**。建议最小修复：实现 no-grad 的 validation_step（复用 training forward 路径，返回 losses_dict 与 total_loss)，或经 Codex 评估后改回调/validate 流程。
 - LOW-2：执行中两次遭遇外部 SIGSTOP(`State=T`),`kill -CONT` 无损恢复；FUSE 网络盘逐样本解码是吞吐瓶颈，worker 数 >2 反而更慢（带宽争用）。
 
+### HIGH-1 修复复审(fbe85a0 + 51958e4,2026-08-15 晚)
+
+**APPROVE**。`validation_step`(`omni_mot_model.py:3518-3522`）加 `@torch.no_grad()` 并委托 `training_step`：返回合同 `(output_batch, loss)` 与 `trainer/__init__.py:488` 解包及 `r05_tiny_overfit_metrics.py:97-118` 回调键一致；`training_step` 体（`omni_mot_model.py:1078-1312`）无 backward/optimizer/参数写入，no_grad 下安全；model.eval() 与 ema_scope 由 trainer validate 负责；单卡无 CP 风险。另核实 deterministic 噪声与训练历史无关：sigma(`rectified_flow.py:150-154`）与 epsilon(`omni_mot_model.py:1856-1860`）均按 `(iteration*65536+rank[+32768])` 播种，因此 reload 在 iteration=100 的 held-out 计算与 Phase B 末段内存内验证数学上等价（权重相同：checkpoint 先于 validate 保存）。
+
+### Phase C 第一次执行(2026-08-15 19:02,失败，现场保留在 reload.log)
+
+- 命令：Runbook §6 原样 + Phase B 已批准 deviation(`dataloader_train.max_samples_per_batch=1 trainer.grad_accum_iter=32`),nohup 后台，日志 `tiny_overfit_reload/reload.log`。
+- model 549 keys、optim 4410 keys 读取成功，checkpoint 加载耗时 757s；随后在 optimizer 状态广播阶段崩溃。
+- **HIGH-2（REQUEST_CHANGES，阻塞 Phase C)**:`checkpoint/dcp.py:872` optimizer 分支调用 `_broadcast_state_dict` → `_broadcast_tensor_leaf`(`dcp.py:518`)`dist.broadcast(value, src=0)` 对 **CPU 标量张量**（非 capturable AdamW 的 `state['step']`，正是该函数 docstring 点名的场景）走 NCCL 进程组，抛 `RuntimeError: No backend type associated with device type cpu`(`distributed_c10d.py:2907`)。单卡 world_size=1 时 broadcast 语义上是 no-op。该缺陷为 cosmos 既有代码（不属 1352b12/fbe85a0)，此前未被触发是因为 R04 等只加载 HF 转换的 base DCP（无 optimizer 状态）;R05 Phase C 是首个 reload 训练态 checkpoint 的路径。建议最小修复（由 Codex 定）：world_size==1 时在 `_broadcast_state_dict` 直接返回，或 CPU 叶子经 gloo/临时 CUDA 张量广播。
+- 现场：`reload.log` 完整保留；无残留训练进程；`held_out_metrics.jsonl` 未产出；Phase B 的 100 步指标与 checkpoint 不受影响。
+
 ### Phase C / D
 
-未执行，阻塞于 HIGH-1。
+阻塞于 HIGH-2，待 Codex 修复后重跑 Phase C。另注：因 HIGH-1 导致 Phase B 的 in-memory `held_out_metrics.jsonl` 永久丢失，Phase D 的 `--held-out` 将以 reload 产物替代并在报告中记 deviation——依据是上述 iteration 播种的确定性等价论证；criterion 6 将改为两次独立 reload 间比对（验证 reload 确定性 + checkpoint 完整性），而非 train-memory vs reload。
