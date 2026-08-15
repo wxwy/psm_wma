@@ -16,6 +16,8 @@ def main() -> int:
     evidence = json.loads(args.evidence.read_text())
     passed = (
         str(evidence.get("status", "")).upper() == "PASS"
+        and set(evidence.get("coverage_start_mod_4", [])) == {0, 1, 2, 3}
+        and all(int(row.get("start_frame", 0)) > 0 for row in evidence.get("windows", []))
         and float(evidence.get("latent_max_abs_diff", float("inf"))) <= args.atol
         and float(evidence.get("loss_max_abs_diff", float("inf"))) <= args.atol
     )
