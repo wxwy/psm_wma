@@ -1,0 +1,161 @@
+{
+  "schema_version": "1.0",
+  "gate": "G0-R05-STATS",
+  "status": "PASS",
+  "failures": [],
+  "provenance": {
+    "timestamp_utc": "2026-08-15T06:36:05.843244+00:00",
+    "repo_commit": "b08ebf77e603df8b1e11d966c5016a901ad7bffe",
+    "cosmos_commit": "c8e65d621a575c1a80078b3d75178465f1f2e029",
+    "script_path": "tools/g0/audit_r05_action_stats.py",
+    "script_sha256": "5c4065c65b726d087624b92a5b757b51e04cf50dc9f5ce21dc967f7b1da38d51",
+    "command": [
+      "/root/venvs/psm_wma_py313_cu128/bin/python",
+      "tools/g0/audit_r05_action_stats.py",
+      "--dataset",
+      "/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot",
+      "--stats",
+      "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/normalizer_stats/libero_native_frame_wise_relative_rot6d.json",
+      "--output",
+      "/gemini/code/psm_wma/artifacts/g0/r05/R05_action_stats_sanity.json"
+    ],
+    "dataset": "/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot",
+    "stats_path": "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/normalizer_stats/libero_native_frame_wise_relative_rot6d.json",
+    "stats_sha256": "bf20cb010fad4ee5754ad83dafab0fce509fc99594d75a3a151d07cf81c905ac"
+  },
+  "input": {
+    "num_frames": 101469,
+    "action_dim": 10,
+    "parquet_file_count": 379,
+    "conversion": "parquet 7D axis-angle -> Cosmos rot6d 10D",
+    "stats_block": "global_raw"
+  },
+  "thresholds": {
+    "max_tail_rate": 0.1,
+    "intervals_must_overlap": true
+  },
+  "distribution": {
+    "local_q01": [
+      -0.6348214149475098,
+      -0.7741071581840515,
+      -0.7633928656578064,
+      0.9414207935333252,
+      -0.26860442757606506,
+      -0.1619088351726532,
+      -0.3189188838005066,
+      0.9421579241752625,
+      -0.09713209420442581,
+      0.0
+    ],
+    "local_q99": [
+      0.7714285850524902,
+      0.8464285731315613,
+      0.9375,
+      1.0,
+      0.31897032260894775,
+      0.14793652296066284,
+      0.272500216960907,
+      1.0,
+      0.13334503769874573,
+      1.0
+    ],
+    "bundled_q01": [
+      -0.723214,
+      -0.808929,
+      -0.9375,
+      0.934955,
+      -0.223431,
+      -0.189878,
+      -0.334735,
+      0.938516,
+      -0.107736,
+      0.0
+    ],
+    "bundled_q99": [
+      0.9375,
+      0.870536,
+      0.9375,
+      1.0,
+      0.331,
+      0.163153,
+      0.226216,
+      1.0,
+      0.127158,
+      1.0
+    ],
+    "q01_abs_delta": [
+      0.08839258505249026,
+      0.034821841815948495,
+      0.1741071343421936,
+      0.006465793533325215,
+      0.04517342757606507,
+      0.027969164827346793,
+      0.015816116199493413,
+      0.0036419241752624343,
+      0.010603905795574187,
+      0.0
+    ],
+    "q99_abs_delta": [
+      0.16607141494750977,
+      0.024107426868438697,
+      0.0,
+      0.0,
+      0.012029677391052263,
+      0.01521647703933715,
+      0.04628421696090698,
+      0.0,
+      0.006187037698745734,
+      0.0
+    ],
+    "below_bundled_q01_rate": [
+      0.004878337226147888,
+      0.005883570351535937,
+      0.0,
+      0.00680010643644857,
+      0.022046142171500655,
+      0.004365865436734372,
+      0.008189693403896756,
+      0.008140417270299303,
+      0.006809961663168061,
+      0.0
+    ],
+    "above_bundled_q99_rate": [
+      0.0,
+      0.004356010210014882,
+      0.0,
+      0.0,
+      0.008643033832993328,
+      0.006248213740157093,
+      0.022312233292926902,
+      0.0,
+      0.011747430249632892,
+      0.0
+    ],
+    "outside_normalized_unit_rate": [
+      0.004878337226147888,
+      0.010239580561550818,
+      0.0,
+      0.00680010643644857,
+      0.030689176004493984,
+      0.010614079176891465,
+      0.03050192669682366,
+      0.008140417270299303,
+      0.018557391912800952,
+      0.0
+    ],
+    "max_outside_normalized_unit_rate": 0.030689176004493984,
+    "intervals_overlap": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "finite": true
+  }
+}
