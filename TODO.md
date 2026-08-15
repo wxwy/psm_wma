@@ -19,7 +19,8 @@
 | G0-R04-ADAMW | DONE | Codex/Kimi | G0-R04 单步诊断；框架当前硬编码拒绝 `fused=False` | 标准 Adam/AdamW 的非 fused 优化器路径已通过单步验证和 Kimi 独立 APPROVE；FusedAdam 行为不变 |
 | G0-R05 | DONE | Codex/Kimi | G0-R04 PASS | Gate JSON `PASS`；100/100 步、两次 reload 逐位一致、checkpoint 四件齐全；HIGH-1/2 复审 APPROVE |
 | DCP-MULTIRANK-RELOAD | TODO | 待认领 | R06 或任何正式多卡训练启动前；不阻塞单卡 R05 | CPU optimizer 叶子在 NCCL 多 rank DCP reload 中可正确广播；至少 2 rank 恢复真实 AdamW 状态与定向单测 PASS |
-| G0-R06 | REVIEW | Kimi | G0-R05 PASS | 端到端闭环链路 PASS 且逐位可复现，但 Gate `FAIL_SR_ZERO`(zero-shot SR=0/3)；验收条件 SR>0 未满足，待用户决策 baseline；报告 `docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md` |
+| G0-R06 | REVIEW | Kimi | G0-R05 PASS | zero-shot 诊断已封存：Gate `FAIL_SR_ZERO`(SR=0/3，逐位可复现），证据 `artifacts/g0/r06/R06_libero_closed_loop.json` 不得修改；报告 `docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md` |
+| G0-R06-SFT | IN_PROGRESS | Kimi/Codex | 用户已决策正式 LIBERO SFT baseline；G0-R06 zero-shot 诊断完成 | 从 Edge-Policy-DROID 正式 SFT(train split)，独立 seed 闭环评测 SR>0 且可复现；禁止用 R05 tiny-overfit/R04 20步/zero-shot 冒充；新 Gate JSON 与报告须区分 zero-shot 与 SFT baseline |
 | G0-R07-R09 | BLOCKED | 待认领 | G0-R06 PASS | Local/Global packing 与 Local Memory Gate 分别满足 Runtime Plan |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 
