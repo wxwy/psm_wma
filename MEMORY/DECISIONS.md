@@ -105,3 +105,11 @@
   3. R06 或任何正式多卡训练/reload 启动前，必须在不改变 dedup reader 选举和 DTensor mesh 语义的前提下修复；候选方案为 CPU 叶子使用 Gloo 辅助进程组，或经证明无精度/内存风险的临时 CUDA 搬运广播。
 - 验收：至少 2 rank 的真实 AdamW checkpoint save/reload 在 NCCL 环境 PASS；CPU `step`、非 tensor `param_groups` 和 CUDA/DTensor 叶子全部恢复一致；补充多 rank 定向单测，且现有单 rank 路径不回归。
 - 原因：G0-R05 Phase C 首次恢复带 optimizer 状态的 checkpoint 时暴露了 CPU tensor 与 NCCL backend 不匹配；单卡无操作短路不能代替多卡正确性修复。
+
+## D012 Gate 静态审查必须附最小 GPU smoke
+
+- 日期：2026-08-15
+- 状态：生效
+- 决策：后续 R Gate 的代码审查在批准长任务前，必须先跑一次最小 GPU smoke（几步训练 + 一次 validation + 一次 checkpoint reload），覆盖改动实际触发的运行路径；仅通过静态代码路径审查不得直接 APPROVE 长训练/评测任务。
+- 原因：G0-R05 的 HIGH-1（`validation_step` 桩导致 held-out 崩溃）在静态审查 APPROVE 后、Phase B 第 100 步末段才暴露——trainer 触发条件与模型侧实现的接口失配只有端到端运行才能发现。监督者 P6 提出，Kimi 已采纳为审查惯例。
+- 参考：`docs/build/PSM-WMA_OVERSEER_COLLAB_Codex_Kimi_2026-08-15.md`、`docs/build/PSM-WMA_REVIEW-G0-R05_tiny_overfit_2026-08-15.md`(HIGH-1/HIGH-2)。
