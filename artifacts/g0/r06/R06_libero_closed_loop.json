@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0",
+  "gate": "G0-R06",
+  "status": "FAIL",
+  "failures": ["FAIL_SR_ZERO"],
+  "error_classification": {
+    "code": "FAIL_SR_ZERO",
+    "meaning": "链路全绿（实时渲染观测→policy server→action→env.step 无错误、动作全 finite、520 步满 rollout、确定性可复现），但 zero-shot baseline SR=0。属模型能力结论，非工程失败。",
+    "qualitative_evidence": "eval_task0/gifs/task_000/episode_000.gif：机械臂全程悬停移动，未抓取/放置任何物体，basket 为空。"
+  },
+  "checks": {
+    "env_import": true,
+    "render_smoke": true,
+    "server_health": true,
+    "actions_finite": true,
+    "episodes_completed": true,
+    "sr_positive": false,
+    "reproducibility": true
+  },
+  "check_details": {
+    "actions_finite": {
+      "env_executed_actions": "3 episodes x 520 steps x 7D，全部 finite，abs_max≈2.72",
+      "raw_model_output": "(16, 10) 全 finite，经独立 /predict smoke 验证（39.1s 含编译）；server 日志 193 次请求全部 action_steps=16 无错误",
+      "runbook_deviation": "Runbook v0.1 §7.3 写“每条 action len==10”，实际 per-episode 日志记录的是 env 执行的 7D action（rot6d→euler 转换后）；raw 10D 由 smoke 与 server 日志佐证。建议 v0.2 澄清两级断言。"
+    },
+    "reproducibility": "同 seed 0 重跑 eval_task0_repeat：3 episodes x 520 steps x 7D 与首次运行逐位一致（max_abs_diff=0.0），强于 §7.5 仅比首 chunk 的要求。",
+    "server_log": "0 Traceback / 0 ERROR / 0 OOM；eval 双侧日志 0 EGL/MuJoCo 错误。",
+    "blocked_history": "首轮 3 episode steps=0 为 server 端 triton libcuda.so.1 缺失（BLOCKED 类），归档于 eval_task0_failed_triton/，修复 TRITON_LIBCUDA_PATH 后通过，不计入本次 Gate 判定。"
+  },
+  "sr": {
+    "per_task": {"libero_10_task_0": {"episodes": 3, "successes": 0, "success_rate": 0.0, "steps": [520, 520, 520]}},
+    "overall": 0.0,
+    "repeat_run_overall": 0.0
+  },
+  "latency_ms_per_predict_chunk16": {
+    "n_requests": 193,
+    "min": 1526,
+    "median_steady_state": 1714,
+    "max_first_with_compile": 39056
+  },
+  "run_config": {
+    "task_suite": "libero_10",
+    "task_ids": [0],
+    "task_description": "put both the alphabet soup and the tomato sauce in the basket",
+    "num_trials_per_task": 3,
+    "seed": 0,
+    "camera": "agentview",
+    "image_size": 256,
+    "env_image_size": 256,
+    "action_horizon": 16,
+    "action_dim": 10,
+    "action_space": "frame_wise_relative",
+    "rotation_space": "6d",
+    "gripper_mode": "zero_one",
+    "warmup_steps": 10,
+    "max_steps": 520,
+    "initial_states_path": "DEFAULT",
+    "num_envs": 1,
+    "domain_name": "libero",
+    "baseline_type": "zero_shot_original_checkpoint"
+  },
+  "resources": {
+    "gpu": "A100 40GB (Orion vGPU)",
+    "gpu_memory_observed_mib": 9544,
+    "wall_time_eval_s": [84.6, 82.1, 82.1],
+    "wall_time_repeat_s": [90.9, null, null]
+  },
+  "provenance": {
+    "root_repo_commit": "a9a5822bf6afc1def2df4ceae75528ecb24bd91a",
+    "cosmos_framework_commit": "05e058618d74e891e013d352d7aca88404071fc3",
+    "checkpoint_path": "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
+    "checkpoint_type": "original HF config.json direct-load (zero-shot baseline, domain_id=5 libero untrained)",
+    "action_stats_path": "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/normalizer_stats/libero_native_frame_wise_relative_rot6d.json",
+    "sim_python": "/gemini/code/RLinf/.venv/bin/python (py3.11, torch 2.6.0+cu124, mujoco 3.8.1, robosuite 1.4.1, libero 0.1.0 editable)",
+    "server_python": "/root/venvs/psm_wma_py313_cu128/bin/python (py3.13, torch 2.10.0+cu128)",
+    "libero_assets": "/gemini/code/RLinf/.venv/libero/libero/libero (via /root/.libero/config.yaml)",
+    "server_env_fix": "TRITON_LIBCUDA_PATH=/opt/orion/orion_runtime/gpu/cuda",
+    "render_backend": "EGL (MUJOCO_GL=egl, LD_LIBRARY_PATH=/opt/orion/orion_runtime/gpu/opengl)",
+    "timestamps": {
+      "eval_run1": "2026-08-15T22:21:48+08:00 ~ 22:26+08:00",
+      "eval_repeat": "2026-08-15T22:29+08:00 ~ 22:33:54+08:00"
+    },
+    "argv_eval": "closed_loop_eval.py --server_url http://localhost:8001 --task_suite libero_10 --task_ids 0 --num_trials_per_task 3 --seed 0 --camera agentview --image_size 256 --env_image_size 256 --action_horizon 16 --action_dim 10 --action_space frame_wise_relative --rotation_space 6d --gripper_mode zero_one --warmup_steps 10 --initial_states_path DEFAULT --num_envs 1 --save_gifs --gif_fps 20"
+  },
+  "artifacts": {
+    "summary_run1": "artifacts/g0/r06/eval_task0/summary.json",
+    "summary_repeat": "artifacts/g0/r06/eval_task0_repeat/summary.json",
+    "actions": "artifacts/g0/r06/eval_task0/actions/task_000/episode_{000..002}.json (+ repeat)",
+    "gifs": "artifacts/g0/r06/eval_task0/gifs/task_000/ (+ repeat)",
+    "logs": ["artifacts/g0/r06/policy_server.log", "artifacts/g0/r06/eval_task0.log", "artifacts/g0/r06/eval_task0_repeat.log"],
+    "blocked_evidence": "artifacts/g0/r06/eval_task0_failed_triton/"
+  }
+}

@@ -44,7 +44,8 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | G0-R04 | Codex/Kimi | DONE | `tools/g0/r04_step_metrics.py`、`tools/g0/verify_domain_rows.py`、`artifacts/g0/r04/adamw_nonfused_20step/` | 非 fused AdamW 连续 20 步 PASS；机器可读 loss/资源/domain 行保护证据和末次 checkpoint 完整 |
 | DOC-R05 | Codex | DONE | `docs/build/PSM-WMA_G0_R05_tiny_overfit_runbook_v0.1.md` | 已经独立审查与实执验收，状态 `reviewed` |
 | G0-R05 | Codex/Kimi | DONE | `artifacts/g0/r05/R05_libero_tiny_overfit.json`、R05 审查报告 | Gate `PASS`；100 步训练、两次 reload、checkpoint 完整性和独立验收全部通过 |
-| DOC-R06 | 待认领 | TODO | 后续版本化 Gate Runbook | 不与 R05 混入同一提交 |
+| DOC-R06 | Kimi | REVIEW | `docs/build/PSM-WMA_G0_R06_closed_loop_baseline_runbook_v0.1.md` | 已创建并经实执验证；两处偏差（RLinf venv、TRITON_LIBCUDA_PATH）待升 v0.2 |
+| G0-R06 | Kimi | REVIEW | `artifacts/g0/r06/`、`docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md` | Gate `FAIL_SR_ZERO`：链路全绿、逐位可复现，但 zero-shot SR=0/3；待用户决策 baseline |
 
 ## 最近完成
 
@@ -153,3 +154,11 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - Phase C 两次独立 reload 均恢复 iteration 100，held-out 四项逐位一致，`max_abs_diff=0.0`；Codex 独立解析 Gate/JSONL 并核对 DCP metadata/shard，结论 PASS。
 - 已记录 deviation：实跑使用 `max_samples_per_batch=1` / `grad_accum_iter=32`；Phase B held-out 因 HIGH-1 未产出，Gate 以两次 iteration-100 确定性 reload 做一致性比对。
 - 非阻塞遗留 MEDIUM-3 已转 `DCP-MULTIRANK-RELOAD` 并写入 `MEMORY/DECISIONS.md` D011：正式多卡 reload 前必须修复 CPU optimizer 叶子与 NCCL backend 不匹配。
+
+### G0-R06（Gate FAIL_SR_ZERO，2026-08-15，Kimi 执行）
+
+- 端到端闭环链路验证 PASS：RLinf venv(py3.11, mujoco 3.8.1, robosuite 1.4.1, libero 0.1.0 editable)+ EGL 离屏渲染；policy server(py313/cu128）直载 Edge-Policy-DROID 原始 HF checkpoint,domain_name="libero"(domain 5),10D frame_wise_relative rot6d,chunk 16。
+- 两处环境修复已记录：`.r06_sim_pkgs` wheel 版 libero 遮蔽 editable 且缺 assets（已改名禁用，`/root/.libero/config.yaml` 指向 RLinf 资产）;server 端 triton `libcuda.so.1` 缺失，用 `TRITON_LIBCUDA_PATH=/opt/orion/orion_runtime/gpu/cuda` 修复（首轮 BLOCKED 证据归档 `artifacts/g0/r06/eval_task0_failed_triton/`)。
+- 正式结果：libero_10 task 0 × 3 episodes，全部 520 步满 rollout、error=null、action 全 finite(3×520×7D)，但 SR=0/3；同 seed 0 重跑逐位一致（max_abs_diff=0.0)。server 193 次 /predict 稳态中位 1714ms/chunk,GPU 观测 9544 MiB。GIF 目视：机械臂悬停移动，未抓取任何物体。
+- Gate JSON `artifacts/g0/r06/R06_libero_closed_loop.json`:status=FAIL,failures=[FAIL_SR_ZERO]；报告 `docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md`。
+- 判读：zero-shot baseline 在 domain 5 未经 LIBERO 训练的发布 checkpoint 上不成立；SR>0 需用户重新决策 baseline（正式 LIBERO SFT checkpoint)。
