@@ -1,0 +1,131 @@
+{
+  "schema_version": "1.0",
+  "gate": "G0-R05",
+  "status": "PASS",
+  "failures": [],
+  "provenance": {
+    "timestamp_utc": "2026-08-15T12:01:41.538247+00:00",
+    "repo_commit": "7727fb2dda55f943f4867bef7e50e5d9c2f7cf1f",
+    "cosmos_commit": "8421e4129f4902e36f67e73d7885c65bce8da8a6",
+    "script_path": "tools/g0/collect_r05_gate.py",
+    "script_sha256": "4b2e781cc465e1c5c4144d7ee70cf450576052aff2e59c776ebed4b057429ba3",
+    "command": [
+      "/root/venvs/psm_wma_py313_cu128/bin/python",
+      "tools/g0/collect_r05_gate.py",
+      "--stats",
+      "artifacts/g0/r05/R05_action_stats_sanity.json",
+      "--metrics",
+      "artifacts/g0/r05/tiny_overfit_100step/step_metrics.jsonl",
+      "--held-out",
+      "artifacts/g0/r05/tiny_overfit_reload/held_out_metrics.jsonl",
+      "--reload-held-out",
+      "artifacts/g0/r05/tiny_overfit_reload2/held_out_metrics.jsonl",
+      "--checkpoint",
+      "artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100",
+      "--output",
+      "artifacts/g0/r05/R05_libero_tiny_overfit.json"
+    ]
+  },
+  "run": {
+    "steps_expected": 100,
+    "steps_observed": 100,
+    "optimizer_type": "AdamW",
+    "fused": false,
+    "all_finite": true,
+    "gpu_step_peak_mib_max": 16653.5,
+    "rss_kb_max": 12896336
+  },
+  "trends": {
+    "total_loss": {
+      "first_median": 12.738072872161865,
+      "last_median": 8.985086441040039,
+      "ratio": 0.7053725105212967
+    },
+    "action_flow_loss": {
+      "first_median": 1.1617993712425232,
+      "last_median": 0.8657057881355286,
+      "ratio": 0.7451422419084907
+    },
+    "action_x0_reconstruction_mae": {
+      "first_median": 0.7073067128658295,
+      "last_median": 0.519879937171936,
+      "ratio": 0.7350134357774053
+    },
+    "vision_flow_loss": {
+      "first_median": 0.11219388246536255,
+      "last_median": 0.03192853555083275,
+      "ratio": 0.28458356952474656
+    }
+  },
+  "held_out": {
+    "iteration": 100,
+    "total_loss": 9.221893310546875,
+    "total_loss_finite": true,
+    "action_flow_loss": 0.8594789505004883,
+    "action_flow_loss_finite": true,
+    "action_x0_reconstruction_mae": 0.5336493253707886,
+    "action_x0_reconstruction_mae_finite": true,
+    "vision_flow_loss": 0.06271037459373474,
+    "vision_flow_loss_finite": true,
+    "timestamp": "2026-08-15T19:43:25+0800",
+    "optimizer_type": "AdamW",
+    "fused": false
+  },
+  "reload_held_out": {
+    "iteration": 100,
+    "total_loss": 9.221893310546875,
+    "total_loss_finite": true,
+    "action_flow_loss": 0.8594789505004883,
+    "action_flow_loss_finite": true,
+    "action_x0_reconstruction_mae": 0.5336493253707886,
+    "action_x0_reconstruction_mae_finite": true,
+    "vision_flow_loss": 0.06271037459373474,
+    "vision_flow_loss_finite": true,
+    "timestamp": "2026-08-15T20:00:08+0800",
+    "optimizer_type": "AdamW",
+    "fused": false
+  },
+  "reload_comparison": {
+    "total_loss": {
+      "in_memory": 9.221893310546875,
+      "reloaded": 9.221893310546875,
+      "matches": true
+    },
+    "action_flow_loss": {
+      "in_memory": 0.8594789505004883,
+      "reloaded": 0.8594789505004883,
+      "matches": true
+    },
+    "action_x0_reconstruction_mae": {
+      "in_memory": 0.5336493253707886,
+      "reloaded": 0.5336493253707886,
+      "matches": true
+    },
+    "vision_flow_loss": {
+      "in_memory": 0.06271037459373474,
+      "reloaded": 0.06271037459373474,
+      "matches": true
+    }
+  },
+  "checkpoint": {
+    "path": "artifacts/g0/r05/tiny_overfit_100step/psm_wma/g0_r05/edge_libero_tiny_overfit/checkpoints/iter_000000100",
+    "parts": {
+      "model": true,
+      "optim": true,
+      "scheduler": true,
+      "trainer": true
+    }
+  },
+  "stats_sanity": {
+    "path": "artifacts/g0/r05/R05_action_stats_sanity.json",
+    "status": "PASS",
+    "max_outside_normalized_unit_rate": 0.030689176004493984
+  },
+  "thresholds": {
+    "trend_window": 10,
+    "max_train_loss_ratio": 0.8,
+    "max_vision_loss_ratio": 1.1,
+    "reload_rtol": 1e-05,
+    "reload_atol": 1e-06
+  }
+}

@@ -1,6 +1,6 @@
 # PSM-WMA G0-R05 LIBERO Tiny Overfit Runbook v0.1
 
-- 状态：`draft`
+- 状态：`reviewed`
 - 日期：2026-08-15
 - 前置：G0-R04 `PASS`；R01-R04 期间 PSM/Memory/EMA 均关闭
 

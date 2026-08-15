@@ -100,6 +100,29 @@ PASS：status=PASS 且 max_outside_normalized_unit_rate<0.10；FAIL：停止，�
 - **HIGH-2（REQUEST_CHANGES，阻塞 Phase C)**:`checkpoint/dcp.py:872` optimizer 分支调用 `_broadcast_state_dict` → `_broadcast_tensor_leaf`(`dcp.py:518`)`dist.broadcast(value, src=0)` 对 **CPU 标量张量**（非 capturable AdamW 的 `state['step']`，正是该函数 docstring 点名的场景）走 NCCL 进程组，抛 `RuntimeError: No backend type associated with device type cpu`(`distributed_c10d.py:2907`)。单卡 world_size=1 时 broadcast 语义上是 no-op。该缺陷为 cosmos 既有代码（不属 1352b12/fbe85a0)，此前未被触发是因为 R04 等只加载 HF 转换的 base DCP（无 optimizer 状态）;R05 Phase C 是首个 reload 训练态 checkpoint 的路径。建议最小修复（由 Codex 定）：world_size==1 时在 `_broadcast_state_dict` 直接返回，或 CPU 叶子经 gloo/临时 CUDA 张量广播。
 - 现场：`reload.log` 完整保留；无残留训练进程；`held_out_metrics.jsonl` 未产出；Phase B 的 100 步指标与 checkpoint 不受影响。
 
-### Phase C / D
+### HIGH-2 修复复审(8421e41 + acca976,2026-08-15 晚)
 
-阻塞于 HIGH-2，待 Codex 修复后重跑 Phase C。另注：因 HIGH-1 导致 Phase B 的 in-memory `held_out_metrics.jsonl` 永久丢失，Phase D 的 `--held-out` 将以 reload 产物替代并在报告中记 deviation——依据是上述 iteration 播种的确定性等价论证；criterion 6 将改为两次独立 reload 间比对（验证 reload 确定性 + checkpoint 完整性），而非 train-memory vs reload。
+**APPROVE（仅限单卡 Gate 范围）**。`_broadcast_state_dict` 入口新增 `dist.get_world_size()==1` 直接返回（`dcp.py:545-546`)：单 rank 是所有叶子的唯一 reader，失败日志实证 dedup 后 dropped=0(model 549/549、optim 4410/4410),broadcast 无数据可填，跳过语义安全；多卡分支未改。
+
+- **MEDIUM-3（多卡遗留，不阻塞 R05，正式多卡训练前必须修）**：根因（CPU 叶子张量走 NCCL broadcast）在多卡路径依然存在。后续正式训练上多卡时，reload 带 optimizer 状态的 checkpoint 会在同一位置（`dcp.py:518`）崩溃。最小修复方向：CPU 叶子经 gloo 副进程组广播，或临时 `.cuda()` 广播后移回；并用 ≥2 rank 的 CPU 单测覆盖。建议 Codex 在 R06/正式训练启动前处理并记入 MEMORY/DECISIONS.md。
+
+### Phase C 重跑（8421e41 之后，2026-08-15 晚，两次独立 reload 均成功）
+
+- reload#1(`tiny_overfit_reload/`,pid 3639437):19:35 启动，19:45 `Done with training`，零错误。checkpoint 加载 ~10 分钟（网络盘），恢复 iteration=100，未新增训练步。`held_out_metrics.jsonl`:total 9.221893310546875 / action 0.8594789505004883 / action_x0 0.5336493253707886 / vision 0.06271037459373474，全部 finite。
+- reload#2(`tiny_overfit_reload2/`,pid 3710572):19:46 启动，20:00 完成，零错误。四项指标与 reload#1 **逐位相同**(diff=0.0)，远严于 rtol=1e-5/atol=1e-6。
+- 失败现场保留：`tiny_overfit_reload/reload_attempt1_failed.log`。
+
+### Phase D Gate 汇总（2026-08-15 20:01)
+
+- 命令按 Runbook §7,`--held-out` 用 reload#1 产物、`--reload-held-out` 用 reload#2 产物（deviation 见下）。
+- **Gate JSON:`artifacts/g0/r05/R05_libero_tiny_overfit.json`,status=PASS,failures=[]**。七条判据：stats PASS(0.0307<0.10);100/100 连续全 finite;total/action/action_x0 ratio 0.705/0.745/0.735 均 ≤0.80;vision ratio 0.285 ≤1.10;held-out 四项 finite;reload 比对四项全 matches;checkpoint model/optim/scheduler/trainer 四件齐全，无 OOM/SIGKILL。GPU 峰值 16653.5 MiB,RSS 峰值 12.3GB。
+- provenance:cosmos=8421e41，脚本 sha256 与命令行完整记录。
+
+### Deviation 汇总（最终）
+
+1. `grad_accum_iter=1→32`、`max_samples_per_batch=1`(Phase B 提速，用户拍板）;Gate 趋势判据不受影响。
+2. Phase B 末段 held-out 因 HIGH-1 崩溃未产出，`--held-out` 以 reload#1 替代；依据：sigma/epsilon 均按 `(iteration*65536+rank)` 播种（`rectified_flow.py:150-154`、`omni_mot_model.py:1856-1860`),checkpoint 先于 validate 保存，reload 在 iteration=100 的计算与原内存内验证数学等价。criterion 6 实际验证的是两次独立 reload 一致性（bit 级相同），而非 train-memory vs reload。
+
+## 最终结论
+
+**G0-R05 PASS(APPROVE)**。代码修复（fbe85a0 validation_step、8421e41 单卡广播跳过）复审均通过；执行链路 Phase A→D 全部完成，Gate JSON 机器可判。遗留 MEDIUM-3（多卡 DCP 广播 CPU 张量）不阻塞 R05，但列为正式多卡训练前必须修复项。建议 Runbook 由 draft 升为 reviewed。
