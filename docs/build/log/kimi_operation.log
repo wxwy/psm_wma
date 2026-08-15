@@ -12,3 +12,10 @@
 - 14:57 创建本操作日志文件 `docs/build/log/kimi_operation.log`。
 - 16:08 Cosmos3-Edge-Policy-DROID 模型下载完成（34 个文件，共约 8.6G），已清理中断任务残留的 2.7G 临时文件。
 [2026-08-12 21:57] 检查并关闭后台 codex 进程：ps/pgrep 全盘检索无任何 codex/openai 相关进程，无需终止；tmux 会话 fq（代理）保留未动。
+
+[2026-08-15] G0-R01 独立只读审查(REVIEW-R01):对照固定基线(根 cbdf544/cosmos 103c5d1)核验 Runbook v0.1,检查三条验证路径、checkpoint 适配、action 断言、venv/LD_LIBRARY_PATH、产物 Schema;结论与发现落盘 docs/build/(REQUEST_CHANGES 后由 Codex 修复并实跑,Gate 最终 PASS)。
+[2026-08-15] Edge 自带 Diffusers VAE 与 Wan2.2_VAE.pth 替代性核查:只读比对 config/state dict key/转换脚本,确认当前原生加载路径不兼容、不可简单改名;结论供 VAE 资产决策(最终保留官方 Wan2.2_VAE.pth)。
+[2026-08-15] G0-R12 LIBERO latent 编码:审查 a5633ea(REQUEST_CHANGES:image_size 默认、断点续跑 manifest 合并等),复审 8c9b443 APPROVE;监督全量编码 379/379 完成,产物 /gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot_cosmos_latent。
+[2026-08-15] G0-R04-ADAMW 独立审查:optimizer.py 最小修改(仅标准 Adam/AdamW 允许 fused=False)APPROVE;核验单步 retry2 日志(DCP load/forward/backward/grad clip/step/checkpoint,GPU 40192/40488 MiB,RSS ~16.5GB),报告落盘 PSM-WMA_REVIEW-G0-R04_adamw_nonfused_review_2026-08-15.md。
+[2026-08-15] G0-R04 正式验收执行:非 fused AdamW 20 步连续训练(c8e65d6),逐步 JSONL(loss/grad/finite/资源)+ domain 5 action projection 行保护验证(domain 0-4/6-31 diff=0.0),产物 artifacts/g0/r04/adamw_nonfused_20step/,终审报告 PSM-WMA_REVIEW-G0-R04_final_nonfused_2026-08-15.md,结论 PASS。
+[2026-08-15] G0-R05 tiny-overfit:第一阶段只读审查 d4479e9+1352b12 APPROVE;执行 Phase A(stats PASS)→ Phase B(100 步,bs=1/ga=32 为用户批准的 deviation,趋势 ratio 全达标,GPU 峰值 16.7GB);暴露并推动修复 HIGH-1(validation_step 桩,fbe85a0)与 HIGH-2(DCP 单进程广播 CPU 张量,8421e41),两次修复均只读复审 APPROVE;Phase C 两次独立 reload(held-out 四项逐位一致)→ Phase D collect_r05_gate.py,artifacts/g0/r05/R05_libero_tiny_overfit.json status=PASS;审查+执行报告 PSM-WMA_REVIEW-G0-R05_tiny_overfit_2026-08-15.md 全程回填;遗留 MEDIUM-3(多卡 DCP 广播)转 D011/DCP-MULTIRANK-RELOAD 跟踪。R05 经 Codex 终审后关闭(3f7af3a)。
