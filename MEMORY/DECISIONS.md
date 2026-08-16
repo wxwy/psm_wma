@@ -113,3 +113,18 @@
 - 决策：后续 R Gate 的代码审查在批准长任务前，必须先跑一次最小 GPU smoke（几步训练 + 一次 validation + 一次 checkpoint reload），覆盖改动实际触发的运行路径；仅通过静态代码路径审查不得直接 APPROVE 长训练/评测任务。
 - 原因：G0-R05 的 HIGH-1（`validation_step` 桩导致 held-out 崩溃）在静态审查 APPROVE 后、Phase B 第 100 步末段才暴露——trainer 触发条件与模型侧实现的接口失配只有端到端运行才能发现。监督者 P6 提出，Kimi 已采纳为审查惯例。
 - 参考：`docs/build/PSM-WMA_OVERSEER_COLLAB_Codex_Kimi_2026-08-15.md`、`docs/build/PSM-WMA_REVIEW-G0-R05_tiny_overfit_2026-08-15.md`(HIGH-1/HIGH-2)。
+
+## D013 Policy 与 Memory 的 RGB 表征解耦
+
+- 日期：2026-08-16
+- 状态：生效
+- 决策：
+  1. 当前 Policy/WAM 主路径保持 Cosmos-native temporal sample contract；LIBERO 继续以原生 17-frame clip 做 Wan2.2 VAE temporal encode，并允许将 exact-window 结果离线缓存。离线化本身不构成改成 MoWA-style whole-episode latent 的理由。
+  2. Memory 从 episode 开头按因果历史积累。对于 anchor `t`，Memory 只读取 `f0...f(t-1)` 及对应已执行 action/state/depth/pose 等证据；Memory update cadence 可与 action chunk 的 policy re-query cadence 解耦。
+  3. Temporal Local Memory 的视觉表征暂不冻结，保留历史 Cosmos prime `z0`、MoWA-style continuous Wan regular latent、以及独立 RGB/Depth/State/Action evidence encoder 等候选。只有 Local 调研与 R08/R09 给出证据后，才决定是否需要 continuous Wan latent。
+  4. Spatial Global Memory 默认不绑定 Wan2.2 latent；主候选仍为 RGB semantic feature + depth/geometry + pose/trajectory + xyz/region + timestamp/confidence 的 persistent spatial store。Wan latent 仅作为 feature 候选之一。
+  5. 若 Local 最终选择 continuous Wan regular latent，新增独立的 episode-level memory latent cache；默认不以该 cache 替换 Policy 的 native current-condition cache。把 regular `z_k` 进一步接入 Policy 必须作为独立架构实验验证。
+  6. `cosmos-framework/docs_zh/psm_wma/REGULAR_EPISODE_LATENT_OVERFIT.md` 从“当前优先规划”降级为候选实验记录，不再作为 PSM-WMA 项目级规划的权威入口。项目级架构/规划统一放在根仓库 `docs/build/` 与本文件；`cosmos-framework` 子模块只保留与具体代码实现直接相关的局部说明与测试文档。
+- 与既有决策关系：D010 对 **Policy native offline cache** 继续生效；D013 明确 D010 不自动约束未来 Memory encoder/cache 的表征选择。
+- 详细记录：`docs/build/PSM-WMA_RGB_representation_and_memory_encoding_plan_v0.1.md`。
+- 原因：在 Memory 方案尚未冻结前提前把 Policy 从 native prime condition 改成 whole-episode regular latent，会同时引入不必要的 representation distribution shift 和实验变量；解耦后可以先保住 Cosmos baseline，再分别用实验决定 Local 的时间表征与 Global 的空间表征。
