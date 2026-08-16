@@ -23,6 +23,7 @@
 | G0-R06-SFT | IN_PROGRESS | Kimi/Codex | 用户已决策正式 LIBERO SFT baseline；G0-R06 zero-shot 诊断完成 | 从 Edge-Policy-DROID 正式 SFT(train split)，独立 seed 闭环评测 SR>0 且可复现；禁止用 R05 tiny-overfit/R04 20步/zero-shot 冒充；新 Gate JSON 与报告须区分 zero-shot 与 SFT baseline |
 | G0-R07-R09 | BLOCKED | 待认领 | G0-R06 PASS | Local/Global packing 与 Local Memory Gate 分别满足 Runtime Plan |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
+| DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D013，并将 regular-episode latent 从当前主线降级为候选实验 |
 
 ## 新增任务规则
 
