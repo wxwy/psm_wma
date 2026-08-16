@@ -113,3 +113,14 @@
 - 决策：后续 R Gate 的代码审查在批准长任务前，必须先跑一次最小 GPU smoke（几步训练 + 一次 validation + 一次 checkpoint reload），覆盖改动实际触发的运行路径；仅通过静态代码路径审查不得直接 APPROVE 长训练/评测任务。
 - 原因：G0-R05 的 HIGH-1（`validation_step` 桩导致 held-out 崩溃）在静态审查 APPROVE 后、Phase B 第 100 步末段才暴露——trainer 触发条件与模型侧实现的接口失配只有端到端运行才能发现。监督者 P6 提出，Kimi 已采纳为审查惯例。
 - 参考：`docs/build/PSM-WMA_OVERSEER_COLLAB_Codex_Kimi_2026-08-15.md`、`docs/build/PSM-WMA_REVIEW-G0-R05_tiny_overfit_2026-08-15.md`(HIGH-1/HIGH-2)。
+
+## D013 RGB/Memory 编码主线 = Cosmos-native exact-window cache
+
+- 日期：2026-08-16
+- 状态：生效
+- 决策：
+  1. Policy/WAM 本地 RGB 编码主线为 Cosmos-native exact-window offline latent cache：每个 17 帧窗口按在线路径(单 vision item concat_view [3,17,256,512] → uint8/127.5-1 → `Wan2pt2VAEInterface.encode`)独立离线编码,cache format `exact_window_v1`,按 `(episode, start_frame)` 精确取用。规范见 `docs/build/PSM-WMA_RGB_representation_and_memory_encoding_plan_v0.1.md`。
+  2. `cosmos-framework/docs_zh/psm_wma/REGULAR_EPISODE_LATENT_OVERFIT.md` 降级为历史候选实验记录,不是当前主线;项目级规划不再写入 `cosmos-framework/docs_zh/psm_wma/`。
+  3. G0-R12 的整段 episode 因果编码 cache 被 supersede(parity 实测 FAIL:整段因果 ≠ 窗口独立);其 artifact 保留为 R12 证据,不覆盖、不沿用。
+  4. Memory representation 未冻结;不得因未来 Local Memory 可能使用 continuous Wan latent 而提前修改 Policy 的 native visual distribution。
+- 原因：cache 必须与训练/推理的窗口独立编码契约逐位一致(因果 VAE 上下文敏感性已由 parity 探针实证);exact-window 是构造上保持原生训练分布的唯一零风险路径。

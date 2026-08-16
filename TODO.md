@@ -20,7 +20,7 @@
 | G0-R05 | DONE | Codex/Kimi | G0-R04 PASS | Gate JSON `PASS`；100/100 步、两次 reload 逐位一致、checkpoint 四件齐全；HIGH-1/2 复审 APPROVE |
 | DCP-MULTIRANK-RELOAD | TODO | 待认领 | R06 或任何正式多卡训练启动前；不阻塞单卡 R05 | CPU optimizer 叶子在 NCCL 多 rank DCP reload 中可正确广播；至少 2 rank 恢复真实 AdamW 状态与定向单测 PASS |
 | G0-R06 | REVIEW | Kimi | G0-R05 PASS | zero-shot 诊断已封存：Gate `FAIL_SR_ZERO`(SR=0/3，逐位可复现），证据 `artifacts/g0/r06/R06_libero_closed_loop.json` 不得修改；报告 `docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md` |
-| G0-R06-SFT | IN_PROGRESS | Kimi/Codex | 用户已决策正式 LIBERO SFT baseline；G0-R06 zero-shot 诊断完成 | 从 Edge-Policy-DROID 正式 SFT(train split)，独立 seed 闭环评测 SR>0 且可复现；禁止用 R05 tiny-overfit/R04 20步/zero-shot 冒充；新 Gate JSON 与报告须区分 zero-shot 与 SFT baseline |
+| G0-R06-SFT | IN_PROGRESS | Kimi(审查/执行)/Codex(代码) | 用户已决策正式 LIBERO SFT baseline；G0-R06 zero-shot 诊断完成；**2026-08-16 口径切换**：以冻结文档 `cosmos-framework/docs_zh/psm_wma/REGULAR_EPISODE_LATENT_OVERFIT.md` 为准(Kimi 已 APPROVE) | 主线 = regular episode causal latent(z0 保存不作 condition,condition=z_k k≥1,4 对齐 endpoint,两真相机各自因果编码 camera-major [10,C,H,W]);按 §13 顺序:reader+测试 → builder+parity → aligned sampler → 16样本 overfit(Gate A/B/C) → 闭环 oracle SR>0;exact-window 修复(f7fe84c/19e0bd3 的 REQUEST_CHANGES)暂停,仅作回退路径;闭环仍为独立 seed 多 episode SR>0 且可复现,新 Gate JSON 与 zero-shot 区分 |
 | G0-R07-R09 | BLOCKED | 待认领 | G0-R06 PASS | Local/Global packing 与 Local Memory Gate 分别满足 Runtime Plan |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 

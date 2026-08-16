@@ -163,3 +163,27 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - Gate JSON `artifacts/g0/r06/R06_libero_closed_loop.json`:status=FAIL,failures=[FAIL_SR_ZERO]；报告 `docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md`。
 - 判读：zero-shot baseline 在 domain 5 未经 LIBERO 训练的发布 checkpoint 上不成立；SR>0 需用户重新决策 baseline（正式 LIBERO SFT checkpoint)。
 - 用户决策（2026-08-15 晚）:R06 改为正式 LIBERO SFT baseline（新任务 G0-R06-SFT);zero-shot SR=0 作为诊断记录保留，其 Gate 证据 `R06_libero_closed_loop.json` 与 `eval_task0*/` 不得修改；SFT baseline 另出新 Gate JSON/报告，与 zero-shot 明确区分。
+
+### G0-R06-SFT 探针(2026-08-16 凌晨,Kimi 执行)
+
+- Probe 1(5 步显存,在线 VAE)PASS:5/5 步,GPU 步峰值 33.1 GiB,RSS 8.6 GB,稳态 75-130 s/step,loss 15.6→13.7 正常。
+- Probe 2(latent parity)FAIL:latent max_abs_diff=4.625;连 start%4==0 对齐窗口 diff 仍有 1.79,证明 R12 整段因果编码切片≠17 帧独立窗口编码。cache 不启用,正式训练走在线 VAE。
+- 正式 500 步训练预计 10-18 小时,待用户授权后启动。产物:`artifacts/g0/r06/sft_baseline/{probe,parity}/`,详见 `docs/build/PSM-WMA_REVIEW-G0-R06-SFT_code_review_2026-08-16.md`。
+
+### 文件认领(2026-08-16,Kimi)
+
+Kimi 正在编辑：`tools/g0/build_cosmos_libero_latent_dataset.py`、`cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`(仅 cache 注入 dtype)、`docs/build/PSM-WMA_RGB_representation_and_memory_encoding_plan_v0.1.md`(新增)、`MEMORY/DECISIONS.md`、`SESSION.md`、`TODO.md`。其他 Agent 不得并行编辑这些文件。
+
+### G0-R06-SFT 口径切换(2026-08-16 下午,Kimi 第一技术审查者)
+
+- 探针结论:Probe1 显存 PASS(在线 VAE,33.1GiB/75-130s每步);Probe2 parity FAIL,R12 整段因果编码≠17帧窗口独立编码(diff 4.625,对齐窗口仍1.79)。
+- 契约核查:mowa 主线也是整段因果(其推理用流式 encoder 自洽);Cosmos LIBERO 在线/推理是单 vision item concat_view [3,17,256,512]→5 latent,从不启用 per-camera 路径。Codex 的 f7fe84c/19e0bd3 双视角复制版对新旧契约都不成立,REQUEST_CHANGES 后**暂停**(降级为回退路径)。
+- 新方向:冻结文档 `cosmos-framework/docs_zh/psm_wma/REGULAR_EPISODE_LATENT_OVERFIT.md`(8fb48a9/69f2260),Kimi 评审 APPROVE,风险点=视觉 token 网格变化、闭环 oracle O(t) 成本、Codex 周额度 9%。
+- 当前:Codex 按 §13 第 1 步实现 regular_episode_latent reader + 单测,Kimi 待复审。
+
+### exact-window cache 阶梯验证(2026-08-16 晚,Kimi 执行)
+
+- 方向确认:主线 = Cosmos-native exact-window offline cache(plan v0.1 + D013);REGULAR_EPISODE 降级历史候选;Codex regular_episode 工作已停止并清理。
+- 代码修复(Kimi,未提交):builder 补 uint8→[-1,1] 归一化;cache 注入保持 fp32;parity 改独立在线参照;latent_cache 缺 episode 文件回退在线;schema_version=exact_window_v1。
+- 阶梯1 parity:diff=0.0 逐位一致(5 窗口覆盖 start%4 全类);阶梯2 单 episode 构建 198 窗口 97.5MB;阶梯3 对齐 198/198 全对;阶梯4 cached forward 3步 PASS(iter1 与在线逐位一致,iter2/3 ~3e-5 漂移记 LOW);阶梯5 多 worker loader PASS(RSS 1.5GB)。
+- 产物:`/gemini/code/data/libero/exact_window_v1_smoke/`、`artifacts/g0/r06/exact_window_v1/`。

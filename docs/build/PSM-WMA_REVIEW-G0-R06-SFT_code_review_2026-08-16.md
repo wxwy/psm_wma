@@ -77,3 +77,46 @@
 
 1. 5 步显存探针（在线路径，51200 tokens,ga=1);
 2. parity 探针（GPU，约 5 窗口 VAE 编码，1-2 分钟）产出 parity 证据 JSON。
+
+## 探针启动记录（2026-08-16,Kimi 执行；root 14271aa / cosmos adbffd6)
+
+### Probe 1:5 步显存/step-time 探针（在线 VAE 路径）
+
+- 目的：确认 `max_num_tokens_after_packing=51200`（约 19 样本/pack）在 A100 40GB 不 OOM，测 step 时间；不作任何训练结论。
+- cwd：`/gemini/code/psm_wma/cosmos-framework`
+- 环境变量：`PYTHONPATH=/gemini/code/psm_wma/cosmos-framework:/gemini/code/psm_wma`；`LIBERO_ROOT=/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot`;`BASE_CHECKPOINT_PATH=/gemini/code/models/Cosmos3-Edge-Policy-DROID-dcp`;`EDGE_POLICY_CHECKPOINT=/gemini/code/models/Cosmos3-Edge-Policy-DROID`;`WAN_VAE_PATH=/gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth`;`IMAGINAIRE_OUTPUT_ROOT=/gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/probe`;`LIBERO_LATENT_CACHE_PARITY=''`（空 → cache 禁用 → 在线路径，测显存上界）
+- 命令：`torchrun --nproc_per_node=1 -m cosmos_framework.scripts.train --sft-toml=examples/toml/sft_config/action_policy_libero_edge_r06_probe.toml -- optimizer.optimizer_type=AdamW optimizer.fused=false checkpoint.save_iter=1000 dataloader_train.dataloader.num_workers=0 dataloader_train.dataloader.persistent_workers=false dataloader_train.dataloader.prefetch_factor=null +trainer.callbacks.r04_step_metrics._target_=tools.g0.r04_step_metrics.StepMetricsCallback +trainer.callbacks.r04_step_metrics.output_path=<probe>/step_metrics.jsonl +trainer.callbacks.r04_step_metrics.optimizer_type=AdamW +trainer.callbacks.r04_step_metrics.fused=false`(save_iter=1000 跳过 checkpoint 保存）
+- 输入：Edge-Policy-DROID-dcp、Wan2.2_VAE.pth、LIBERO task0 子集（37 episodes/8982 窗口）;GPU A100 40GB 独占；无外网
+- 产物：`artifacts/g0/r06/sft_baseline/probe/{probe.log,step_metrics.jsonl}`
+- 预计：init ~2min + DCP load ~4min + 5 步 × ~3min ≈ 20-25 min
+- PASS:5/5 步完成、无 OOM/SIGKILL、GPU 峰值 ≤38912 MiB（暴露 40488 留余量）、RSS ≤25GB;FAIL_OOM → 回退 45056 重探；其他异常 → BLOCKED 并记录
+
+### Probe 2:latent cache parity 探针（Probe 1 完成后，GPU 顺序执行）
+
+- 目的：实测 cache 切片 vs 在线窗口编码的数值差异，产出 parity 证据；FAIL 则保持在线 VAE,不得启用 cache。
+- cwd:`/gemini/code/psm_wma`；环境变量：`PYTHONPATH=/gemini/code/psm_wma/cosmos-framework`
+- 命令：`/root/venvs/psm_wma_py313_cu128/bin/python tools/g0/generate_r06_latent_cache_parity.py --dataset-root <LIBERO_ROOT> --cache-root <LATENT_CACHE> --vae-path <WAN_VAE> --output artifacts/g0/r06/sft_baseline/parity/r06_latent_parity.json --episode-index 0 --device cuda`,随后 `check_r06_latent_cache_parity.py` 校验证据
+- 产物：`artifacts/g0/r06/sft_baseline/parity/r06_latent_parity.json`
+- PASS：证据 status=PASS 且 coverage {0,1,2,3} 且 diff ≤1e-5;FAIL:如实记录,cache 不启用
+
+## 探针执行结果(2026-08-16 01:4x-02:0x,Kimi 执行)
+
+### Probe 1:5 步显存/step-time 探针 — PASS
+
+- 5/5 步完成,`Done with training.`,无 OOM/NaN/Inf;loss 15.595→13.657 单调下降,grad 全 finite(294 tensors)。
+- GPU 步峰值 33777.5-34188.5 MiB(≤38912 上限 ✓);进程 RSS 峰值约 8.6 GB(≤25 GB ✓)。
+- 步耗时:iter1≈85s(含编译预热),iter2≈129s,iter3≈98s,iter4≈82s,iter5≈75s;稳态约 75-130 s/step。
+- 数据路径确认:env `LIBERO_LATENT_CACHE_PARITY=''`(空)→ `R12CosmosLatentCache._parity_passed` 返回 False / `latent_cache_root` 空 → cache 未挂接,**在线 VAE 路径**(设计上即显存上界)。
+- 产物:`artifacts/g0/r06/sft_baseline/probe/{probe.log,step_metrics.jsonl,psm_wma/...}`。
+
+### Probe 2:latent cache parity 探针 — FAIL(cache 不启用)
+
+- `artifacts/g0/r06/sft_baseline/parity/r06_latent_parity.json`:status=FAIL,coverage {0,1,2,3} 齐全。
+- 全窗口 latent max_abs_diff=4.625,loss proxy diff=0.085。
+- 关键证据:start_frame=4(start%4==0,semantic_shift=0)的对齐窗口 latent diff 仍有 1.79 → R12 整段 episode 因果编码切片与 17 帧独立窗口编码数值不等价,非单纯 start%4 对齐问题。
+- `check_r06_latent_cache_parity.py` 校验输出 "R06 latent parity FAIL: keep online VAE path enabled",exit=1。
+- 结论:正式 500 步训练**必须走在线 VAE 路径**,不得启用 latent cache;按 Probe 1 稳态步耗时估算 500 步约 10-18 小时。
+
+### 下一步
+
+- 等用户授权后启动正式 500 步训练(在线 VAE,task0-only,ga=1,lr 5e-5,save_iter=100 阶梯评测)。严禁提前启动。

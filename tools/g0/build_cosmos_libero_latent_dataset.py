@@ -57,12 +57,13 @@ def _encode_window(video_uint8: torch.Tensor, encoder: _VisionEncoderAdapter, *,
     """Encode one independent 17-frame window via OmniMoTModel's camera-major path."""
     if video_uint8.ndim != 4 or video_uint8.shape[1] != 17 or video_uint8.dtype != torch.uint8:
         raise ValueError(f"Expected uint8 [C,17,H,W], got {tuple(video_uint8.shape)} {video_uint8.dtype}")
-    # LIBERO concat_view is the spatially concatenated camera image.  The online
-    # per-camera contract presents two 17-frame views camera-major; preserve the
-    # exact spatial tensor and invoke the production helper without reimplementing it.
-    camera_major = torch.cat([video_uint8, video_uint8], dim=1)
+    # Match the current LIBERO online path: one spatially concatenated concat_view
+    # item, one VAE encode, with no per-camera metadata in the data batch.
+    # The num_views=1 branch of _encode_vision_item does not normalize; the online
+    # path normalizes uint8 -> [-1,1] via _normalize_video_databatch_inplace first.
+    normalized = encoder._normalize_uint8_vision_item(video_uint8.unsqueeze(0).to(device))
     latent = OmniMoTModel._encode_vision_item(
-        encoder, camera_major.unsqueeze(0).to(device), num_views=2, frames_per_view=17
+        encoder, normalized, num_views=1, frames_per_view=None
     )
     return latent.squeeze(0).permute(1, 0, 2, 3).cpu()
 
@@ -92,9 +93,9 @@ def _build_windowed(args: argparse.Namespace, dataset: LIBEROLeRobotDataset, tok
         for start in range(max(0, video_uint8.shape[1] - 16)):
             latent = _encode_window(video_uint8[:, start : start + 17], encoder, device=device)
             windows[str(start)] = {
-                "latent": latent.to(torch.float16),
-                "source_frame_indices": torch.cat([torch.arange(start, start + 17, 4, dtype=torch.long)] * 2),
-                "global_row_indices": torch.from_numpy(np.asarray(row_indices[start : start + 17 : 4], dtype=np.int64)).repeat(2),
+                "latent": latent.float(),
+                "source_frame_indices": torch.arange(start, start + 17, 4, dtype=torch.long),
+                "global_row_indices": torch.from_numpy(np.asarray(row_indices[start : start + 17 : 4], dtype=np.int64)),
             }
         metadata = {
             "episode_index": episode_index, "source_video_frames": int(video_uint8.shape[1]),
@@ -102,13 +103,13 @@ def _build_windowed(args: argparse.Namespace, dataset: LIBEROLeRobotDataset, tok
             "encoder": "Wan2pt2VAEInterface.encode independent window",
             "normalization": "uint8 / 127.5 - 1.0", "input_layout": "[C,T,H,W]",
             "latent_layout": "[T_latent,C_latent,H_latent,W_latent]",
-            "camera_layout": "camera-major two views", "num_views": 2, "frames_per_view": 17,
+            "camera_layout": "concat_view spatial-left-right", "num_views": 1, "frames_per_view": 17,
             "temporal_compression_factor": 4,
             "vae_path": str(args.vae_path), "script_revision": revision, "task_index": args.task_index,
         }
         _write_atomic({"windows": windows, "language": {"instruction": instructions[0], "instructions": instructions}, "metadata": metadata}, episodes_dir / f"episode_{episode_index:06d}.pt")
         rows.append({"episode_index": episode_index, "episode_path": str(episodes_dir / f"episode_{episode_index:06d}.pt"), "window_count": len(windows), "image_size": args.image_size})
-    (args.output_root / "dataset_manifest.json").write_text(json.dumps({"schema_version": "r06_window_v1", "source_dataset": str(args.dataset_root), "image_size": args.image_size, "vae_path": str(args.vae_path), "script_revision": revision, "task_index": args.task_index, "episode_count": len(rows), "window_count": sum(int(row["window_count"]) for row in rows), "episodes": rows}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (args.output_root / "dataset_manifest.json").write_text(json.dumps({"schema_version": "exact_window_v1", "source_dataset": str(args.dataset_root), "image_size": args.image_size, "vae_path": str(args.vae_path), "script_revision": revision, "task_index": args.task_index, "episode_count": len(rows), "window_count": sum(int(row["window_count"]) for row in rows), "episodes": rows}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def _episode_instructions(dataset: LIBEROLeRobotDataset, episode_index: int) -> list[str]:

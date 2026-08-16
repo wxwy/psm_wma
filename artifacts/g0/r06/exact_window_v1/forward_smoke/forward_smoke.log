@@ -1,0 +1,264 @@
+2026-08-16 20:15:10.040 | DEBUG    | cosmos_framework.utils.config:_load_py_config:578 - get_config_module: took 22.50ms
+2026-08-16 20:15:27.378 | DEBUG    | cosmos_framework.utils.config:_load_py_config:583 - importlib.import_module: took 17338.37ms
+2026-08-16 20:15:27.869 | DEBUG    | cosmos_framework.utils.config:_load_py_config:588 - override: took 489.22ms
+2026-08-16 20:15:27.869 | DEBUG    | cosmos_framework.utils.config:load_config:567 - total time to load config: 17901.31ms
+[08-16 20:15:27|INFO|cosmos_framework/utils/training_telemetry/telemetry.py:63:wrapper] Heimdall telemetry is disabled, if using Heimdall,consider setting ENABLE_TELEMETRY=true to enable it
+[08-16 20:15:28|CRITICAL|cosmos_framework/utils/distributed.py:60:init] [RANK 0] Initialized distributed training with local rank 0 using nccl with timeout 1800
+[08-16 20:15:28|INFO|cosmos_framework/utils/distributed.py:72:init] Training with 1 GPUs.
+[08-16 20:15:28|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 1.06 s
+[08-16 20:15:28|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 0.00 s
+Config is saved using pickle at /gemini/code/psm_wma/artifacts/g0/r06/exact_window_v1/forward_smoke/psm_wma/g0_r06_sft_probe/edge_libero_task0_probe/config.pkl.
+Config is saved using omegaconf at /gemini/code/psm_wma/artifacts/g0/r06/exact_window_v1/forward_smoke/psm_wma/g0_r06_sft_probe/edge_libero_task0_probe/config.yaml.
+/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[rank0]:[W816 20:15:30.480160178 ProcessGroupNCCL.cpp:5138] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()
+[08-16 20:15:32|INFO|cosmos_framework/utils/misc.py:124:print_environ_variables] Environment variable HF_HOME: /gemini/code/.persist/.cache/huggingface
+[08-16 20:15:32|INFO|cosmos_framework/utils/misc.py:124:print_environ_variables] Environment variable IMAGINAIRE_OUTPUT_ROOT: /gemini/code/psm_wma/artifacts/g0/r06/exact_window_v1/forward_smoke
+[08-16 20:15:32|INFO|cosmos_framework/utils/misc.py:138:set_random_seed] Using random seed 42.
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback skip_nan_step: {'max_consecutive_nan': 100, '_target_': <class 'cosmos_framework.callbacks.skip_nan_step.SkipNaNStep'>}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback grad_clip: {'clip_norm': 1.0, 'force_finite': True, 'track_per_modality': True, '_target_': <class 'cosmos_framework.callbacks.grad_clip.GradClip'>}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback low_precision: {'update_iter': 1, 'config': None, 'trainer': None, '_target_': <class 'cosmos_framework.utils.callback.LowPrecisionCallback'>}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback heart_beat: {'step_size': 1, 'update_interval_in_minute': 20, 'save_s3': False, 'every_n': 200, '_target_': <class 'cosmos_framework.callbacks.heart_beat.HeartBeat'>}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback device_monitor: {'every_n': 200, 'step_size': 1, 'save_s3': False, 'upload_every_n_mul': 5, 'log_memory_detail': True, '_target_': <class 'cosmos_framework.callbacks.device_monitor.DeviceMonitor'>}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback termination_signal_checkpoint: {'min_save_fraction': 0.3333333333333333, '_target_': <class 'cosmos_framework.callbacks.termination_signal_checkpoint.TerminationSignalCheckpoint'>}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback dataloader_speed is missing the '_target_' field. 
+ SKip {'every_n': 100, 'save_s3': False, 'step_size': 1}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback iter_speed is missing the '_target_' field. 
+ SKip {'every_n': 1, 'hit_thres': 50, 'save_s3': False, 'save_s3_every_log_n': 500}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback manual_gc is missing the '_target_' field. 
+ SKip {'every_n': 5, 'gc_level': 1, 'warm_up': 1}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback param_count is missing the '_target_' field. 
+ SKip {'save_s3': False}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback training_stats is missing the '_target_' field. 
+ SKip {'log_freq': 100}
+[08-16 20:15:32|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback r04_step_metrics: {'_target_': 'tools.g0.r04_step_metrics.StepMetricsCallback', 'output_path': '/gemini/code/psm_wma/artifacts/g0/r06/exact_window_v1/forward_smoke/step_metrics.jsonl', 'optimizer_type': 'AdamW', 'fused': False}
+[08-16 20:15:33|WARNING|cosmos_framework/utils/launch.py:86:log_reproducible_setup] S3 credentials not found. Skipping easy_io S3 setup.
+[08-16 20:15:33|WARNING|cosmos_framework/utils/launch.py:88:log_reproducible_setup] Job path: psm_wma/g0_r06_sft_probe/edge_libero_task0_probe
+[08-16 20:15:33|CRITICAL|cosmos_framework/utils/launch.py:93:log_reproducible_setup] Job local path: /gemini/code/psm_wma/artifacts/g0/r06/exact_window_v1/forward_smoke/psm_wma/g0_r06_sft_probe/edge_libero_task0_probe
+[08-16 20:15:33|INFO|cosmos_framework/model/generator/omni_mot_model.py:134:__init__] OmniMoTModel: config {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth', 'chunk_duration': 93, 'keep_decoder_cache': False, 'use_streaming_encode': False, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8, '768': 8}, 'encode_exact_durations': [17, 61, 73], 'spatial_compression_factor': 16, 'temporal_compression_factor': 4, 'temporal_window': None, 'encode_bucket_multiple': None, 'causal': True, '_target_': <class 'cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16.Wan2pt2VAEInterface'>}, 'load_vision_tokenizer': True, 'net': None, 'ema': {'enabled': False, 'rate': 0.1, 'iteration_shift': 0}, 'parallelism': {'data_parallel_shard_degree': 8, 'data_parallel_replicate_degree': 1, 'context_parallel_shard_degree': 1, 'cfg_parallel_shard_degree': 1, 'enable_inference_mode': False, 'fsdp_master_dtype': 'float32'}, 'attention_io_layout': 'sequence_sharded', 'compile': {'enabled': False, 'compiled_region': 'language', 'compile_dynamic': True, 'use_cuda_graphs': False, 'ar_post_saturation_mode': 'default', 'max_autotune_pointwise': False, 'coordinate_descent_tuning': False}, 'quantization': {'method': None, 'fp8_granularity': 'per_row', 'include_regex': [], 'exclude_regex': [], 'modelopt_fp8_checkpoint_path': None, 'modelopt_fp8_target_fqns': []}, 'activation_checkpointing': {'mode': 'selective', 'save_ops_regex': ['fmha'], 'preserve_rng_state': True, 'determinism_check': 'default'}, 'precision': 'bfloat16', 'lora_enabled': False, 'lora_rank': 16, 'lora_alpha': 32, 'lora_target_modules': 'q_proj_moe_gen,k_proj_moe_gen,v_proj_moe_gen,o_proj_moe_gen', 'rectified_flow_training_config': {'shift': {'256': 3, '480': 5, '720': 10}, 'shift_image': None, 'use_dynamic_shift': False, 'train_time_image_distribution': 'logitnormal', 'train_time_video_distribution': 'waver', 'train_time_action_distribution': 'logitnormal', 'train_time_sound_distribution': 'logitnormal', 'train_time_weight': 'uniform', 'loss_scale': 10.0, 'image_loss_scale': None, 'sound_loss_scale': 2.0, 'use_discrete_rf': False, 'action_loss_weight': 10.0, 'independent_action_schedule': False, 'shift_action': None, 'independent_sound_schedule': False, 'shift_sound': None, 'normalize_loss_by_active': False, 'sample_level_loss_averaging': False}, 'rectified_flow_inference_config': {'scheduler_type': 'unipc', 'num_train_timesteps': 1000, 'shift': 1, 'use_dynamic_shifting': False}, 'fixed_step_sampler_config': None, 'vlm_config': {'model_name': 'nvidia/Cosmos3-Edge-Reasoner', 'safetensors_path': '', 'pretrained_weights': {'enabled': False, 'backbone_path': 's3://bucket/cosmos3/pretrained/huggingface/nvidia/Cosmos3-Edge-Reasoner-590c1c0/', 'credentials_path': '', 'enable_gcs_patch_in_boto3': True, 'checkpoint_format': None}, 'model_instance': {'config': {'base_config': {'json_file': 'cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/configs/Nemotron-2B-Dense-VL.json', '_target_': <bound method _MoTConfigBase.from_json_file of <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLMoTConfig'>>}, 'freeze_und': False, 'layer_module': 'MoTDecoderLayer', 'qk_norm_for_text': False, 'use_und_k_norm_for_gen': True, 'include_visual': None, 'tie_word_embeddings': True, '_target_': <function create_vlm_config at 0x7f5a1442ce00>}, '_target_': <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLTextForCausalLM'>}, 'tokenizer': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7f59a7aafba0>, 'tokenizer_type': '/gemini/code/models/Cosmos3-Edge-Policy-DROID'}, 'layer_module': None, 'qk_norm': False, 'tie_word_embeddings': False, 'use_system_prompt': False}, 'diffusion_expert_config': {'timestep_range': 1.0, 'load_weights_from_pretrained': False, 'enable_vision_modality_embeddings': False, 'patch_spatial': 2, 'max_vae_latent_side_after_patchify': 20, 'enable_fps_modulation': True, 'base_fps': 24, 'sound_base_temporal_compression_factor': None, 'vision_temporal_position_mode': 'latent_index', 'unified_3d_mrope_reset_spatial_ids': True, 'unified_3d_mrope_temporal_modality_margin': 15000}, 'input_video_key': 'video', 'input_image_key': 'images', 'input_caption_key': 'ai_caption', 'state_ch': 48, 'state_t': 300, 'latent_downsample_factor': 16, 'resolution': '480', 'max_num_tokens_after_packing': 51200, 'joint_attn_implementation': 'two_way', 'flex_attention': {'enabled': False, 'backend': 'auto', 'mask': {'noisy_attention_scope': 'all_views'}}, 'natten_parameter_list': None, 'video_temporal_causal': False, 'causal_training_strategy': 'none', 'lbl': {'method': 'local', 'coeff_und': None, 'coeff_gen': None}, 'vision_gen': True, 'action_gen': True, 'max_action_dim': 64, 'num_embodiment_domains': 32, 'sound_gen': False, 'sound_tokenizer': None, 'sound_dim': None, 'sound_latent_fps': 25, 'enable_input_bias': True, 'log_enc_time_every_n': 100, 'exclude_reasoner_weights_from_checkpoint': False}
+[08-16 20:15:33|WARNING|cosmos_framework/model/generator/omni_mot_model.py:160:set_precision] OmniMoTModel: precision torch.bfloat16
+This processor does not use the `size` parameter. It will be ignored.
+[08-16 20:15:34|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[08-16 20:16:35|INFO|cosmos_framework/model/generator/tokenizers/wan2pt2_vae_4x16x16.py:1050:_video_vae] loading /gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+[08-16 20:16:35|INFO|cosmos_framework/utils/distributed.py:444:sync_model_states] Synchronizing model states from rank 0 to all ranks in process group [0].
+[08-16 20:16:35|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_tokenizers: 61.85 s
+[08-16 20:16:35|WARNING|cosmos_framework/utils/generator/parallelism.py:113:_validate] dp_shard (8) > world_size (1); clamping dp_shard to world_size.
+[08-16 20:16:35|INFO|cosmos_framework/utils/generator/parallelism.py:121:_validate] dp_replicate is set to -1, will be automatically determined based on world_size 1 // dp_shard 1.
+[08-16 20:16:35|INFO|cosmos_framework/utils/generator/parallelism.py:126:_validate] dp_replicate is set to 1.
+`torch_dtype` is deprecated! Use `dtype` instead!
+[08-16 20:16:35|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on meta to cuda and broadcast model states: 0.29 s
+[08-16 20:16:35|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on Creating PyTorch model and ema if enabled: 0.63 s
+[08-16 20:16:35|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_model: 0.63 s
+[08-16 20:16:35|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_model: 62.49 s
+[08-16 20:16:35|INFO|cosmos_framework/data/generator/joint_dataloader.py:1040:__init__] [RANK 0] RankPartitionedDataLoader: world_size: 1 and rank: 0
+[08-16 20:16:35|INFO|cosmos_framework/data/generator/joint_dataloader.py:1095:__init__] [RANK 0] RankPartitionedDataLoader allocation (1 GPUs):
+  libero (ratio 1): ranks 0-0 (1 GPUs) | expected 100.00%, actual 100.00%
+[08-16 20:16:36|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[08-16 20:16:54|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:187:__init__] Loaded LIBERO dataset root=/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot split='train' camera_mode='concat_view' fps=20.0 kept_episodes=37/38 valid_indices=8982
+[08-16 20:16:54|INFO|cosmos_framework/data/generator/joint_dataloader.py:427:__init__] JointDataLoader: 1 streams
+  action_libero: ratio=1 (100.0%)
+[08-16 20:16:54|WARNING|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:288:__getitem__] LIBERO: sample idx=2908 failed to load (FileNotFoundError: R12 latent cache episode not found: 129); resampling
+[08-16 20:16:54|WARNING|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:288:__getitem__] LIBERO: sample idx=1824 failed to load (FileNotFoundError: R12 latent cache episode not found: 105); resampling
+[08-16 20:16:54|WARNING|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:288:__getitem__] LIBERO: sample idx=409 failed to load (FileNotFoundError: R12 latent cache episode not found: 18); resampling
+[08-16 20:16:54|WARNING|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:288:__getitem__] LIBERO: sample idx=4506 failed to load (FileNotFoundError: R12 latent cache episode not found: 211); resampling
+[08-16 20:16:54|WARNING|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:288:__getitem__] LIBERO: sample idx=4012 failed to load (FileNotFoundError: R12 latent cache episode not found: 190); resampling
+[08-16 20:16:54|WARNING|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:288:__getitem__] LIBERO: sample idx=3657 failed to load (FileNotFoundError: R12 latent cache episode not found: 170); resampling
+[08-16 20:16:54|WARNING|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:288:__getitem__] LIBERO: sample idx=2286 failed to load (FileNotFoundError: R12 latent cache episode not found: 114); resampling
+[08-16 20:16:54|WARNING|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:288:__getitem__] LIBERO: sample idx=1679 failed to load (FileNotFoundError: R12 latent cache episode not found: 88); resampling
+[08-16 20:16:54|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_data_loader: 18.38 s
+2026-08-16 20:16:54.175 | ERROR    | __main__:<module>:299 - An error has been caught in function '<module>', process 'MainProcess' (3228551), thread 'MainThread' (140038575003520):
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+> File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+    launch(config, args)
+    │      │       └ Namespace(sft_toml='examples/toml/sft_config/action_policy_libero_edge_r06_probe.toml', opts=['--', 'optimizer.optimizer_type...
+    │      └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+    └ <function launch at 0x7f5abd2d8c20>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+    return func(config, *args, **kwargs)
+           │    │        │       └ {}
+           │    │        └ (Namespace(sft_toml='examples/toml/sft_config/action_policy_libero_edge_r06_probe.toml', opts=['--', 'optimizer.optimizer_typ...
+           │    └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+           └ <function launch at 0x7f5abd475260>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 217, in launch
+    dataloader_train = instantiate(config.dataloader_train)
+                       │           │      └ {'max_sequence_length': None, 'max_samples_per_batch': 128, 'sound_latent_fps': 0, 'audio_sample_rate': 48000, 'dataset_name'...
+                       │           └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+                       └ <function instantiate at 0x7f5ac5cbd1c0>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/instantiate.py", line 103, in instantiate
+    return cls(*args, **instantiate_kwargs)
+           │    │       └ {'max_sequence_length': None, 'max_samples_per_batch': 128, 'sound_latent_fps': 0, 'audio_sample_rate': 48000, 'dataset_name'...
+           │    └ ()
+           └ <class 'cosmos_framework.data.generator.joint_dataloader.PackingDataLoader'>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 1170, in __init__
+    super().__init__(
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 441, in __init__
+    self._initialize_child_iterators_once()
+    │    └ <function JointDataLoader._initialize_child_iterators_once at 0x7f59a4bfe660>
+    └ <cosmos_framework.data.generator.joint_dataloader.PackingDataLoader object at 0x7f59a110ae40>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 456, in _initialize_child_iterators_once
+    self._prewarm_dataloaders()
+    │    └ <function JointDataLoader._prewarm_dataloaders at 0x7f59a4bfe980>
+    └ <cosmos_framework.data.generator.joint_dataloader.PackingDataLoader object at 0x7f59a110ae40>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 556, in _prewarm_dataloaders
+    self._prewarm_dataloader(index, name, dl_iter)
+    │    │                   │      │     └ <torch.utils.data.dataloader._SingleProcessDataLoaderIter object at 0x7f59a0188440>
+    │    │                   │      └ 'action_libero'
+    │    │                   └ 0
+    │    └ <function JointDataLoader._prewarm_dataloader at 0x7f59a4bfe8e0>
+    └ <cosmos_framework.data.generator.joint_dataloader.PackingDataLoader object at 0x7f59a110ae40>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 497, in _prewarm_dataloader
+    batch = next(dl_iter)
+                 └ <torch.utils.data.dataloader._SingleProcessDataLoaderIter object at 0x7f59a0188440>
+
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/data/dataloader.py", line 741, in __next__
+    data = self._next_data()
+           │    └ <function _SingleProcessDataLoaderIter._next_data at 0x7f5b808fce00>
+           └ <torch.utils.data.dataloader._SingleProcessDataLoaderIter object at 0x7f59a0188440>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/data/dataloader.py", line 801, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           │    │                │     └ [None]
+           │    │                └ <function _IterableDatasetFetcher.fetch at 0x7f5b80a94720>
+           │    └ <torch.utils.data._utils.fetch._IterableDatasetFetcher object at 0x7f59a0188590>
+           └ <torch.utils.data.dataloader._SingleProcessDataLoaderIter object at 0x7f59a0188440>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/data/_utils/fetch.py", line 35, in fetch
+    data.append(next(self.dataset_iter))
+    │    │           │    └ <generator object ActionIterableShuffleDataset.__iter__ at 0x7f59a01886d0>
+    │    │           └ <torch.utils.data._utils.fetch._IterableDatasetFetcher object at 0x7f59a0188590>
+    │    └ <method 'append' of 'list' objects>
+    └ []
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/action_sft_dataset.py", line 116, in __iter__
+    yield self._dataset[idx]
+          │    │        └ 2908
+          │    └ <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionLatentCacheDataset object at 0x7f59a110be00>
+          └ <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionIterableShuffleDataset object at 0x7f59a0188050>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/action_sft_dataset.py", line 60, in __getitem__
+    sample = self._dataset[idx]
+             │    │        └ 2908
+             │    └ <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionSFTDataset object at 0x7f59a110bcb0>
+             └ <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionLatentCacheDataset object at 0x7f59a110be00>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/action_sft_dataset.py", line 42, in __getitem__
+    return self._transform(self._dataset[idx], self._resolution)
+           │    │          │    │        │     │    └ None
+           │    │          │    │        │     └ <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionSFTDataset object at 0x7f59a110bcb0>
+           │    │          │    │        └ 2908
+           │    │          │    └ <cosmos_framework.data.generator.action.datasets.libero_lerobot_dataset.LIBEROLeRobotDataset object at 0x7f59a110af90>
+           │    │          └ <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionSFTDataset object at 0x7f59a110bcb0>
+           │    └ <cosmos_framework.data.generator.action.transforms.ActionTransformPipeline object at 0x7f59a110b620>
+           └ <cosmos_framework.data.generator.action.datasets.action_sft_dataset.ActionSFTDataset object at 0x7f59a110bcb0>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py", line 291, in __getitem__
+    raise RuntimeError(f"LIBERO: failed to load a sample after 8 resamples; last error: {last_err}")
+                                                                                         └ FileNotFoundError('R12 latent cache episode not found: 88')
+
+RuntimeError: LIBERO: failed to load a sample after 8 resamples; last error: R12 latent cache episode not found: 88
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank0]:   File "<frozen runpy>", line 88, in _run_code
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+[rank0]:     launch(config, args)
+[rank0]:     ~~~~~~^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/loguru/_logger.py", line 1297, in catch_wrapper
+[rank0]:     return function(*args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+[rank0]:     return func(config, *args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 217, in launch
+[rank0]:     dataloader_train = instantiate(config.dataloader_train)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/instantiate.py", line 103, in instantiate
+[rank0]:     return cls(*args, **instantiate_kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 1170, in __init__
+[rank0]:     super().__init__(
+[rank0]:     ~~~~~~~~~~~~~~~~^
+[rank0]:         dataloaders=wrapped,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^
+[rank0]:     ...<9 lines>...
+[rank0]:         uniae_pad_frames=uniae_pad_frames,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 441, in __init__
+[rank0]:     self._initialize_child_iterators_once()
+[rank0]:     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 456, in _initialize_child_iterators_once
+[rank0]:     self._prewarm_dataloaders()
+[rank0]:     ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 556, in _prewarm_dataloaders
+[rank0]:     self._prewarm_dataloader(index, name, dl_iter)
+[rank0]:     ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/joint_dataloader.py", line 497, in _prewarm_dataloader
+[rank0]:     batch = next(dl_iter)
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/data/dataloader.py", line 741, in __next__
+[rank0]:     data = self._next_data()
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/data/dataloader.py", line 801, in _next_data
+[rank0]:     data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/data/_utils/fetch.py", line 35, in fetch
+[rank0]:     data.append(next(self.dataset_iter))
+[rank0]:                 ~~~~^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/action_sft_dataset.py", line 116, in __iter__
+[rank0]:     yield self._dataset[idx]
+[rank0]:           ~~~~~~~~~~~~~^^^^^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/action_sft_dataset.py", line 60, in __getitem__
+[rank0]:     sample = self._dataset[idx]
+[rank0]:              ~~~~~~~~~~~~~^^^^^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/action_sft_dataset.py", line 42, in __getitem__
+[rank0]:     return self._transform(self._dataset[idx], self._resolution)
+[rank0]:                            ~~~~~~~~~~~~~^^^^^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py", line 291, in __getitem__
+[rank0]:     raise RuntimeError(f"LIBERO: failed to load a sample after 8 resamples; last error: {last_err}")
+[rank0]: RuntimeError: LIBERO: failed to load a sample after 8 resamples; last error: R12 latent cache episode not found: 88
+[rank0]:[W816 20:16:55.976602948 ProcessGroupNCCL.cpp:1553] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+E0816 20:16:58.210000 3228481 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 3228551) of binary: /root/venvs/psm_wma_py313_cu128/bin/python
+Traceback (most recent call last):
+  File "/root/venvs/psm_wma_py313_cu128/bin/torchrun", line 10, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+    ~~~^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+    ~~~~~~~~~~~~~~~
+        config=config,
+        ~~~~~~~~~~~~~~
+        entrypoint=cmd,
+        ~~~~~~~~~~~~~~~
+    )(*cmd_args)
+    ~^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+    ...<2 lines>...
+    )
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+cosmos_framework.scripts.train FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-08-16_20:16:58
+  host      : gjob-dev-743413149755863040-taskrole1-0
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 3228551)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

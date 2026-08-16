@@ -17,8 +17,21 @@ import numpy as np
 import torch
 
 from cosmos_framework.data.generator.action.datasets.libero_lerobot_dataset import LIBEROLeRobotDataset
-from tools.g0.build_cosmos_libero_latent_dataset import _VisionEncoderAdapter, _encode_window
 from cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16 import Wan2pt2VAEInterface
+
+
+def _online_reference(video_uint8: torch.Tensor, tokenizer: Wan2pt2VAEInterface, device: torch.device) -> torch.Tensor:
+    """Independent online-path reference: literal uint8/127.5-1 + tokenizer.encode.
+
+    Deliberately does NOT call the builder's ``_encode_window`` so the parity
+    check compares the cache artifact against a separately written replication
+    of the training-time online path ([C,T,H,W] uint8 -> fp32 [-1,1] -> encode).
+    Returns [T_latent, C, H, W] fp32 on CPU, matching the cache layout.
+    """
+    pixels = video_uint8.to(device=device, dtype=torch.float32).div_(127.5).sub_(1.0)
+    with torch.inference_mode():
+        latent = tokenizer.encode(pixels.unsqueeze(0)).squeeze(0).float()
+    return latent.permute(1, 0, 2, 3).cpu()
 
 
 def main() -> int:
@@ -37,7 +50,6 @@ def main() -> int:
     )
     tokenizer = Wan2pt2VAEInterface(vae_path=str(args.vae_path), encode_exact_durations=[17])
     tokenizer.model.model.to(device)
-    encoder = _VisionEncoderAdapter(tokenizer, device)
     episode = dataset._episodes[args.episode_index]
     row_indices = np.flatnonzero(dataset._row_episode == args.episode_index)
     cache_item = torch.load(
@@ -49,7 +61,9 @@ def main() -> int:
     for start in (1, 2, 3, 4, 5):
         timestamps = [float(dataset._row_timestamp[i]) for i in row_indices[start : start + 17]]
         video = dataset._load_video(episode, timestamps)
-        online = _encode_window(torch.round(video * 255).clamp(0, 255).to(torch.uint8).permute(1, 0, 2, 3), encoder, device)
+        online = _online_reference(
+            torch.round(video * 255).clamp(0, 255).to(torch.uint8).permute(1, 0, 2, 3), tokenizer, device
+        )
         aligned = start
         cache_window = cached_windows[str(start)]["latent"].float()
         latent_diff = float((cache_window - online).abs().max())
