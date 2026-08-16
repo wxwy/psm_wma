@@ -196,5 +196,5 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - LOW-1:REGULAR_EPISODE_LATENT_OVERFIT.md 加 SUPERSEDED BY D013 横幅;LOW-2:外层 ActionLatentCacheDataset 跳过重复查询。
 - 启动方式记录:torchrun 直启脚本路径会被 `cosmos_framework/scripts/hydra.py` 遮蔽 hydra 包,必须 `-m cosmos_framework.scripts.train`。
 - 提交:cosmos-framework `3e44d15`,根仓 `efed1ff`(未 push)。
-- 方案A(用户已授权):libero_10 task0 全量 exact-window 编码后台运行中,产物 `/gemini/code/data/libero/exact_window_v1_libero10_task0/`,日志 `artifacts/g0/r06/exact_window_v1/full_task0_build.log`;完成后核验 manifest 窗口数并 parity 抽查。
+- 方案A(用户已授权):libero_10 task0 全量 exact-window 编码后台运行中,产物 `/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot_cosmos_exact_window_v1/`(命名约定 `<源数据集名>_cosmos_exact_window_v1`,task/stride 进 manifest 不进目录名;训练侧经 `LIBERO_LATENT_CACHE_ROOT` 引用,不硬编码),日志 `artifacts/g0/r06/exact_window_v1/full_task0_build.log`;完成后核验 manifest 窗口数并 parity 抽查,验证通过后删除 smoke3。
 - 文件认领解除:本轮 Kimi 编辑文件均已提交,无持锁文件。
