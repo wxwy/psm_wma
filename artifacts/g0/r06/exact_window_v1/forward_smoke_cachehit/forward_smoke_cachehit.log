@@ -1,0 +1,57 @@
+Traceback (most recent call last):
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 282, in <module>
+    config = load_experiment_from_toml(args.sft_toml, extra_overrides=args.opts)
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/configs/toml_config/sft_config.py", line 771, in load_experiment_from_toml
+    config = load_config(base_config_path, overrides)
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/config.py", line 552, in load_config
+    config = _load_py_config(config_path, opts, validate=False)
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/config.py", line 573, in _load_py_config
+    from cosmos_framework.utils.config_helper import get_config_module, override
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/config_helper.py", line 16, in <module>
+    from hydra import compose, initialize
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/hydra.py", line 8, in <module>
+    from hydra.core.hydra_config import HydraConfig
+ModuleNotFoundError: No module named 'hydra.core'; 'hydra' is not a package
+E0816 21:36:59.813000 3234604 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 3234676) of binary: /root/venvs/psm_wma_py313_cu128/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+    ~~~~^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+    ~~~^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+    ~~~~~~~~~~~~~~~
+        config=config,
+        ~~~~~~~~~~~~~~
+        entrypoint=cmd,
+        ~~~~~~~~~~~~~~~
+    )(*cmd_args)
+    ~^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+    ...<2 lines>...
+    )
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+cosmos_framework/scripts/train.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-08-16_21:36:59
+  host      : gjob-dev-743413149755863040-taskrole1-0
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 3234676)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

@@ -1,0 +1,23 @@
+cmd: /gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py --sft-toml=examples/toml/sft_config/action_policy_libero_edge_r06_probe.toml
+  -- optimizer.optimizer_type=AdamW optimizer.fused=false checkpoint.save_iter=1000
+  trainer.max_iter=3 dataloader_train.dataloader.num_workers=0 dataloader_train.dataloader.persistent_workers=false
+  dataloader_train.dataloader.prefetch_factor=null dataloader_train.dataloader.datasets.libero.dataset.tiny_overfit_num_samples=16
+  dataloader_train.dataloader.datasets.libero.dataset.iterable_shuffle=false +trainer.callbacks.r04_step_metrics._target_=tools.g0.r04_step_metrics.StepMetricsCallback
+  +trainer.callbacks.r04_step_metrics.output_path=/gemini/code/psm_wma/artifacts/g0/r06/exact_window_v1/forward_smoke_cachehit/step_metrics.jsonl
+  +trainer.callbacks.r04_step_metrics.optimizer_type=AdamW +trainer.callbacks.r04_step_metrics.fused=false
+args_cfg_path: examples/toml/sft_config/action_policy_libero_edge_r06_probe.toml
+args_override:
+- --
+- optimizer.optimizer_type=AdamW
+- optimizer.fused=false
+- checkpoint.save_iter=1000
+- trainer.max_iter=3
+- dataloader_train.dataloader.num_workers=0
+- dataloader_train.dataloader.persistent_workers=false
+- dataloader_train.dataloader.prefetch_factor=null
+- dataloader_train.dataloader.datasets.libero.dataset.tiny_overfit_num_samples=16
+- dataloader_train.dataloader.datasets.libero.dataset.iterable_shuffle=false
+- +trainer.callbacks.r04_step_metrics._target_=tools.g0.r04_step_metrics.StepMetricsCallback
+- +trainer.callbacks.r04_step_metrics.output_path=/gemini/code/psm_wma/artifacts/g0/r06/exact_window_v1/forward_smoke_cachehit/step_metrics.jsonl
+- +trainer.callbacks.r04_step_metrics.optimizer_type=AdamW
+- +trainer.callbacks.r04_step_metrics.fused=false

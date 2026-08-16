@@ -87,7 +87,8 @@ def _build_windowed(args: argparse.Namespace, dataset: LIBEROLeRobotDataset, tok
         row_indices = np.flatnonzero(dataset._row_episode == episode_index)
         timestamps = [float(dataset._row_timestamp[i]) for i in row_indices]
         video = dataset._load_video(dataset._episodes[episode_index], timestamps)
-        video_uint8 = torch.round(video * 255.0).clamp(0, 255).to(torch.uint8).permute(1, 0, 2, 3).contiguous()
+        # Match the online contract in base_dataset.py exactly: truncate, no rounding.
+        video_uint8 = (video * 255.0).clamp(0.0, 255.0).to(torch.uint8).permute(1, 0, 2, 3).contiguous()
         instructions = _episode_instructions(dataset, episode_index)
         windows: dict[str, dict[str, object]] = {}
         for start in range(max(0, video_uint8.shape[1] - 16)):

@@ -62,7 +62,7 @@ def main() -> int:
         timestamps = [float(dataset._row_timestamp[i]) for i in row_indices[start : start + 17]]
         video = dataset._load_video(episode, timestamps)
         online = _online_reference(
-            torch.round(video * 255).clamp(0, 255).to(torch.uint8).permute(1, 0, 2, 3), tokenizer, device
+            (video * 255.0).clamp(0.0, 255.0).to(torch.uint8).permute(1, 0, 2, 3), tokenizer, device
         )
         aligned = start
         cache_window = cached_windows[str(start)]["latent"].float()

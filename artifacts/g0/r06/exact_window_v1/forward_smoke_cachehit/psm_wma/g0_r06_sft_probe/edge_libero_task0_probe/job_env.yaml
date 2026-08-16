@@ -1,0 +1,3 @@
+PWD: /gemini/code/psm_wma/cosmos-framework
+job_local_path: /gemini/code/psm_wma/artifacts/g0/r06/exact_window_v1/forward_smoke_cachehit/psm_wma/g0_r06_sft_probe/edge_libero_task0_probe
+s3: s3:///psm_wma/g0_r06_sft_probe/edge_libero_task0_probe/
