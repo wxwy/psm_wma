@@ -1,6 +1,6 @@
 # 当前协作状态
 
-更新时间：2026-08-15
+更新时间：2026-08-16
 
 ## 当前阶段
 
@@ -172,7 +172,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 
 ### 文件认领(2026-08-16,Kimi)
 
-Kimi 正在编辑：`tools/g0/build_cosmos_libero_latent_dataset.py`、`cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`(仅 cache 注入 dtype)、`docs/build/PSM-WMA_RGB_representation_and_memory_encoding_plan_v0.1.md`(新增)、`MEMORY/DECISIONS.md`、`SESSION.md`、`TODO.md`。其他 Agent 不得并行编辑这些文件。
+已全部提交并解除认领(根仓 `efed1ff`、cosmos `3e44d15`)。历史认领文件：`tools/g0/build_cosmos_libero_latent_dataset.py`、`cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`(仅 cache 注入 dtype)、`docs/build/PSM-WMA_RGB_representation_and_memory_encoding_plan_v0.1.md`(新增)、`MEMORY/DECISIONS.md`、`SESSION.md`、`TODO.md`。
 
 ### G0-R06-SFT 口径切换(2026-08-16 下午,Kimi 第一技术审查者)
 
@@ -187,3 +187,14 @@ Kimi 正在编辑：`tools/g0/build_cosmos_libero_latent_dataset.py`、`cosmos-f
 - 代码修复(Kimi,未提交):builder 补 uint8→[-1,1] 归一化;cache 注入保持 fp32;parity 改独立在线参照;latent_cache 缺 episode 文件回退在线;schema_version=exact_window_v1。
 - 阶梯1 parity:diff=0.0 逐位一致(5 窗口覆盖 start%4 全类);阶梯2 单 episode 构建 198 窗口 97.5MB;阶梯3 对齐 198/198 全对;阶梯4 cached forward 3步 PASS(iter1 与在线逐位一致,iter2/3 ~3e-5 漂移记 LOW);阶梯5 多 worker loader PASS(RSS 1.5GB)。
 - 产物:`/gemini/code/data/libero/exact_window_v1_smoke/`、`artifacts/g0/r06/exact_window_v1/`。
+
+### DS/Codex 第二审查跟进与阶梯4b(2026-08-16 深夜,Kimi 执行)
+
+- DS 第二审查 APPROVE,附 MEDIUM-1/2、LOW-1/2;Codex 对修复 diff 复审 APPROVE。
+- MEDIUM-1:builder 与 parity 参照从 `torch.round` 改为截断,逐位对齐在线 `base_dataset.py:214`;smoke cache 重建(705 窗口)后 parity ep0/ep18 重跑 diff=0.0。
+- MEDIUM-2:阶梯4 表述更正为"混合 batch 全批在线回退的重现";补阶梯4b 全批 cache 命中 forward(tiny_overfit_num_samples=16):16/16 命中、3/3 finite、~50s/步(在线 ~120s),PASS。
+- LOW-1:REGULAR_EPISODE_LATENT_OVERFIT.md 加 SUPERSEDED BY D013 横幅;LOW-2:外层 ActionLatentCacheDataset 跳过重复查询。
+- 启动方式记录:torchrun 直启脚本路径会被 `cosmos_framework/scripts/hydra.py` 遮蔽 hydra 包,必须 `-m cosmos_framework.scripts.train`。
+- 提交:cosmos-framework `3e44d15`,根仓 `efed1ff`(未 push)。
+- 方案A(用户已授权):libero_10 task0 全量 exact-window 编码后台运行中,产物 `/gemini/code/data/libero/exact_window_v1_libero10_task0/`,日志 `artifacts/g0/r06/exact_window_v1/full_task0_build.log`;完成后核验 manifest 窗口数并 parity 抽查。
+- 文件认领解除:本轮 Kimi 编辑文件均已提交,无持锁文件。

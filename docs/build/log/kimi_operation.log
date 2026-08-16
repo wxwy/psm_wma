@@ -28,3 +28,4 @@
 - 2026-08-16 R06-SFT 探针:Probe1 显存 PASS(在线VAE,33.1GiB/75-130s每步);Probe2 parity FAIL(diff 4.625,对齐窗口仍 1.79),cache 不启用,正式训练走在线 VAE;已回填审查报告/SESSION,已通知 Codex(tmux cx);未提交。
 - 2026-08-16 R06-SFT 口径切换:APPROVE 冻结文档 REGULAR_EPISODE_LATENT_OVERFIT;暂停 exact-window 修复;下发 Codex 实现 regular_episode reader+单测;TODO/SESSION 已回填;未提交。
 - 2026-08-16 exact-window cache:修复归一化/fp32/parity独立参照/缺窗回退;阶梯1-5 全 PASS(parity diff=0.0,forward iter1 与在线逐位一致);阶梯6 多episode smoke 进行中;未提交。
+2026-08-16 21:2x-21:5x | DS MEDIUM-1 截断修复(builder+parity 参照对齐 base_dataset.py:214);重建 smoke3 cache(705 窗口);parity ep0/ep18 重跑 diff=0.0 PASS;Codex 复审 APPROVE;LOW-1 SUPERSEDED 横幅、LOW-2 外层去重查询修复;阶梯4b cache-hit forward(torchrun -m 启动,16/16 命中,3/3 finite,~50s/步)PASS;提交 cosmos 3e44d15 / 根仓 efed1ff;启动方案A libero_10 task0 全量编码(nohup 后台,full_task0_build.log)。
