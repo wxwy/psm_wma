@@ -198,3 +198,10 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - 提交:cosmos-framework `3e44d15`,根仓 `efed1ff`(未 push)。
 - 方案A(已完成):libero_10 task0 全量 exact-window 编码完成,产物 `/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot_cosmos_exact_window_v1/`(命名约定 `<源数据集名>_cosmos_exact_window_v1`;38 ep / 9199 窗口 / 4.3GiB fp32,script_revision=a9c5a90);Kimi 核验 PASS,DS(Claude 监督)开箱检查 PASS(与 smoke3 ep0 逐位一致 198/198);smoke3 已按约定删除;训练侧经 `LIBERO_LATENT_CACHE_ROOT` 引用,不硬编码。下一步:500 步正式 SFT 待用户授权启动。
 - 文件认领解除:本轮 Kimi 编辑文件均已提交,无持锁文件。
+
+### G0-R06-SFT 训练/评测任务错位发现与 iter300 闭环(2026-08-17 上午,Kimi 执行)
+
+- **任务错位(重要偏差)**:训练侧 `task_index=0` 是 LeRobot `tasks.jsonl` 顺序(马克杯/盘子:"put the white mug on the left plate and put the yellow and white mug on the right plate");仿真侧 `--task_ids 0` 是 LIBERO benchmark map 顺序(soup+sauce→basket, LIVING_ROOM_SCENE2)。证据:`/gemini/code/RLinf/.venv/libero/libero/libero/benchmark/libero_suite_task_map.py:38` 的 libero_10 列表第 5 项(index **4**)才是马克杯任务。**之前 zero-shot R06 评测(FAIL_SR_ZERO)与 iter300 首测测的都是模型未训过的 soup 任务;zero-shot 的 SR=0 结论受此偏差影响,但其"发布 checkpoint 在 LIBERO domain 5 无零样本能力"的定性不变。**
+- iter300 对齐重测(task_ids 4,3 episode,seed 0):**SR=0/3**;3 episode 均 520 步满 rollout、error=null、action 全 finite(520×7D);GIF 目视机械臂有目的性移动、逼近目标马克杯区域,但未完成抓取/放置。判读:链路正确、任务对齐后行为明显改善(对比 soup 任务的盘旋),iter300(~8.5 epoch)欠训练,非错位或管线问题。产物 `artifacts/g0/r06/eval_task4_iter300_sft/`;错配首测留档 `eval_task0_iter300_sft/`。
+- 1000 步正式训练已恢复(tmux r06sft,same-job 从 iter 301 续训,最新完整 checkpoint iter_000000300);计划到 1000 步后用 `--task_ids 4` 复测,中途可在 400/500 checkpoint 加测。
+- 评测口径冻结:后续所有 R06-SFT 闭环评测必须使用 `--task_ids 4`(与训练 task_index 0 对齐),并在报告中注明该映射证据。

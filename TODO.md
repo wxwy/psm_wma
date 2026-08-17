@@ -19,8 +19,8 @@
 | G0-R04-ADAMW | DONE | Codex/Kimi | G0-R04 单步诊断；框架当前硬编码拒绝 `fused=False` | 标准 Adam/AdamW 的非 fused 优化器路径已通过单步验证和 Kimi 独立 APPROVE；FusedAdam 行为不变 |
 | G0-R05 | DONE | Codex/Kimi | G0-R04 PASS | Gate JSON `PASS`；100/100 步、两次 reload 逐位一致、checkpoint 四件齐全；HIGH-1/2 复审 APPROVE |
 | DCP-MULTIRANK-RELOAD | TODO | 待认领 | R06 或任何正式多卡训练启动前；不阻塞单卡 R05 | CPU optimizer 叶子在 NCCL 多 rank DCP reload 中可正确广播；至少 2 rank 恢复真实 AdamW 状态与定向单测 PASS |
-| G0-R06 | REVIEW | Kimi | G0-R05 PASS | zero-shot 诊断已封存：Gate `FAIL_SR_ZERO`(SR=0/3，逐位可复现），证据 `artifacts/g0/r06/R06_libero_closed_loop.json` 不得修改；报告 `docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md` |
-| G0-R06-SFT | IN_PROGRESS | Kimi(审查/执行)/Codex(代码) | 用户已决策正式 LIBERO SFT baseline；G0-R06 zero-shot 诊断完成；主线 = Cosmos-native exact-window offline latent cache(D013 + plan v0.1) | 阶梯1-6 + DS/Codex 二轮审查全 PASS;方案A task0 全量 cache 已建成并经 DS 开箱 PASS(`/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot_cosmos_exact_window_v1/`,38 ep/9199 窗/4.3GiB);下一步:500 步正式 SFT(待用户授权启动)→ 独立 seed 闭环多 episode SR>0 且可复现,新 Gate JSON 与 zero-shot 区分 |
+| G0-R06 | REVIEW | Kimi | G0-R05 PASS | zero-shot 诊断已封存：Gate `FAIL_SR_ZERO`(SR=0/3，逐位可复现），证据 `artifacts/g0/r06/R06_libero_closed_loop.json` 不得修改；报告 `docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md`；**注意偏差：该评测用的仿真 task_ids 0(soup) 并非后续 SFT 训练的马克杯任务(仿真 task_ids 4)，定性结论不变但 SR 数值受任务错配影响** |
+| G0-R06-SFT | IN_PROGRESS | Kimi(审查/执行)/Codex(代码) | 用户已决策正式 LIBERO SFT baseline；G0-R06 zero-shot 诊断完成；主线 = Cosmos-native exact-window offline latent cache(D013 + plan v0.1) | 阶梯1-6 + DS/Codex 二轮审查全 PASS;方案A task0 全量 cache 已建成并经 DS 开箱 PASS;1000 步正式 SFT 进行中(128 pack×ga2,tmux r06sft,自动续训,iter300 checkpoint 已产出);**已发现并记录训练/评测任务错位:数据集 task_index 0(马克杯)=仿真 task_ids 4,评测口径冻结为 --task_ids 4**;iter300 对齐重测 SR=0/3(链路全通、行为有目的性,判为欠训练);验收:1000 步完成后独立 seed 闭环多 episode SR>0 且可复现,新 Gate JSON 与 zero-shot 区分 |
 | G0-R07-R09 | BLOCKED | 待认领 | G0-R06 PASS | Local/Global packing 与 Local Memory Gate 分别满足 Runtime Plan |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 
