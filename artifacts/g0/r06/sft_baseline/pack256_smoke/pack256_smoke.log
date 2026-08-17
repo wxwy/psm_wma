@@ -1,0 +1,562 @@
+2026-08-16 23:28:20.096 | DEBUG    | cosmos_framework.utils.config:_load_py_config:578 - get_config_module: took 13.96ms
+2026-08-16 23:28:39.177 | DEBUG    | cosmos_framework.utils.config:_load_py_config:583 - importlib.import_module: took 19079.99ms
+2026-08-16 23:28:39.589 | DEBUG    | cosmos_framework.utils.config:_load_py_config:588 - override: took 411.53ms
+2026-08-16 23:28:39.589 | DEBUG    | cosmos_framework.utils.config:load_config:567 - total time to load config: 19569.52ms
+[08-16 23:28:39|INFO|cosmos_framework/utils/training_telemetry/telemetry.py:63:wrapper] Heimdall telemetry is disabled, if using Heimdall,consider setting ENABLE_TELEMETRY=true to enable it
+[08-16 23:28:41|CRITICAL|cosmos_framework/utils/distributed.py:60:init] [RANK 0] Initialized distributed training with local rank 0 using nccl with timeout 1800
+[08-16 23:28:41|INFO|cosmos_framework/utils/distributed.py:72:init] Training with 1 GPUs.
+[08-16 23:28:41|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 1.45 s
+[08-16 23:28:41|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 0.00 s
+Config is saved using pickle at /gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/pack256_smoke/psm_wma/g0_r06_sft/edge_libero_task0_sft/config.pkl.
+Config is saved using omegaconf at /gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/pack256_smoke/psm_wma/g0_r06_sft/edge_libero_task0_sft/config.yaml.
+/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[rank0]:[W816 23:28:42.436593890 ProcessGroupNCCL.cpp:5138] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()
+[08-16 23:28:44|INFO|cosmos_framework/utils/misc.py:124:print_environ_variables] Environment variable HF_HOME: /gemini/code/.persist/.cache/huggingface
+[08-16 23:28:44|INFO|cosmos_framework/utils/misc.py:124:print_environ_variables] Environment variable IMAGINAIRE_OUTPUT_ROOT: /gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/pack256_smoke
+[08-16 23:28:44|INFO|cosmos_framework/utils/misc.py:138:set_random_seed] Using random seed 42.
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback skip_nan_step: {'max_consecutive_nan': 100, '_target_': <class 'cosmos_framework.callbacks.skip_nan_step.SkipNaNStep'>}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback grad_clip: {'clip_norm': 1.0, 'force_finite': True, 'track_per_modality': True, '_target_': <class 'cosmos_framework.callbacks.grad_clip.GradClip'>}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback low_precision: {'update_iter': 1, 'config': None, 'trainer': None, '_target_': <class 'cosmos_framework.utils.callback.LowPrecisionCallback'>}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback heart_beat: {'step_size': 1, 'update_interval_in_minute': 20, 'save_s3': False, 'every_n': 200, '_target_': <class 'cosmos_framework.callbacks.heart_beat.HeartBeat'>}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback device_monitor: {'every_n': 200, 'step_size': 1, 'save_s3': False, 'upload_every_n_mul': 5, 'log_memory_detail': True, '_target_': <class 'cosmos_framework.callbacks.device_monitor.DeviceMonitor'>}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback termination_signal_checkpoint: {'min_save_fraction': 0.3333333333333333, '_target_': <class 'cosmos_framework.callbacks.termination_signal_checkpoint.TerminationSignalCheckpoint'>}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback dataloader_speed is missing the '_target_' field. 
+ SKip {'every_n': 100, 'save_s3': False, 'step_size': 1}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback iter_speed is missing the '_target_' field. 
+ SKip {'every_n': 1, 'hit_thres': 50, 'save_s3': False, 'save_s3_every_log_n': 500}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback manual_gc is missing the '_target_' field. 
+ SKip {'every_n': 5, 'gc_level': 1, 'warm_up': 1}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback param_count is missing the '_target_' field. 
+ SKip {'save_s3': False}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback training_stats is missing the '_target_' field. 
+ SKip {'log_freq': 100}
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback r04_step_metrics: {'_target_': 'tools.g0.r04_step_metrics.StepMetricsCallback', 'output_path': '/gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/pack256_smoke/step_metrics.jsonl', 'optimizer_type': 'AdamW', 'fused': False}
+[08-16 23:28:44|WARNING|cosmos_framework/utils/launch.py:86:log_reproducible_setup] S3 credentials not found. Skipping easy_io S3 setup.
+[08-16 23:28:44|WARNING|cosmos_framework/utils/launch.py:88:log_reproducible_setup] Job path: psm_wma/g0_r06_sft/edge_libero_task0_sft
+[08-16 23:28:44|CRITICAL|cosmos_framework/utils/launch.py:93:log_reproducible_setup] Job local path: /gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/pack256_smoke/psm_wma/g0_r06_sft/edge_libero_task0_sft
+[08-16 23:28:45|INFO|cosmos_framework/model/generator/omni_mot_model.py:134:__init__] OmniMoTModel: config {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth', 'chunk_duration': 93, 'keep_decoder_cache': False, 'use_streaming_encode': False, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8, '768': 8}, 'encode_exact_durations': [17, 61, 73], 'spatial_compression_factor': 16, 'temporal_compression_factor': 4, 'temporal_window': None, 'encode_bucket_multiple': None, 'causal': True, '_target_': <class 'cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16.Wan2pt2VAEInterface'>}, 'load_vision_tokenizer': True, 'net': None, 'ema': {'enabled': False, 'rate': 0.1, 'iteration_shift': 0}, 'parallelism': {'data_parallel_shard_degree': -1, 'data_parallel_replicate_degree': 1, 'context_parallel_shard_degree': 1, 'cfg_parallel_shard_degree': 1, 'enable_inference_mode': False, 'fsdp_master_dtype': 'float32'}, 'attention_io_layout': 'sequence_sharded', 'compile': {'enabled': False, 'compiled_region': 'language', 'compile_dynamic': True, 'use_cuda_graphs': False, 'ar_post_saturation_mode': 'default', 'max_autotune_pointwise': False, 'coordinate_descent_tuning': False}, 'quantization': {'method': None, 'fp8_granularity': 'per_row', 'include_regex': [], 'exclude_regex': [], 'modelopt_fp8_checkpoint_path': None, 'modelopt_fp8_target_fqns': []}, 'activation_checkpointing': {'mode': 'selective', 'save_ops_regex': ['fmha'], 'preserve_rng_state': True, 'determinism_check': 'default'}, 'precision': 'bfloat16', 'lora_enabled': False, 'lora_rank': 16, 'lora_alpha': 32, 'lora_target_modules': 'q_proj_moe_gen,k_proj_moe_gen,v_proj_moe_gen,o_proj_moe_gen', 'rectified_flow_training_config': {'shift': {'256': 3, '480': 5, '720': 10}, 'shift_image': None, 'use_dynamic_shift': False, 'train_time_image_distribution': 'logitnormal', 'train_time_video_distribution': 'waver', 'train_time_action_distribution': 'logitnormal', 'train_time_sound_distribution': 'logitnormal', 'train_time_weight': 'uniform', 'loss_scale': 10.0, 'image_loss_scale': None, 'sound_loss_scale': 2.0, 'use_discrete_rf': False, 'action_loss_weight': 10.0, 'independent_action_schedule': False, 'shift_action': None, 'independent_sound_schedule': False, 'shift_sound': None, 'normalize_loss_by_active': False, 'sample_level_loss_averaging': False}, 'rectified_flow_inference_config': {'scheduler_type': 'unipc', 'num_train_timesteps': 1000, 'shift': 1, 'use_dynamic_shifting': False}, 'fixed_step_sampler_config': None, 'vlm_config': {'model_name': 'nvidia/Cosmos3-Edge-Reasoner', 'safetensors_path': '', 'pretrained_weights': {'enabled': False, 'backbone_path': 's3://bucket/cosmos3/pretrained/huggingface/nvidia/Cosmos3-Edge-Reasoner-590c1c0/', 'credentials_path': '', 'enable_gcs_patch_in_boto3': True, 'checkpoint_format': None}, 'model_instance': {'config': {'base_config': {'json_file': 'cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/configs/Nemotron-2B-Dense-VL.json', '_target_': <bound method _MoTConfigBase.from_json_file of <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLMoTConfig'>>}, 'freeze_und': False, 'layer_module': 'MoTDecoderLayer', 'qk_norm_for_text': False, 'use_und_k_norm_for_gen': True, 'include_visual': None, 'tie_word_embeddings': True, '_target_': <function create_vlm_config at 0x7f0e8a87ce00>}, '_target_': <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLTextForCausalLM'>}, 'tokenizer': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7f0e1defbba0>, 'tokenizer_type': '/gemini/code/models/Cosmos3-Edge-Policy-DROID'}, 'layer_module': None, 'qk_norm': False, 'tie_word_embeddings': False, 'use_system_prompt': False}, 'diffusion_expert_config': {'timestep_range': 1.0, 'load_weights_from_pretrained': False, 'enable_vision_modality_embeddings': False, 'patch_spatial': 2, 'max_vae_latent_side_after_patchify': 20, 'enable_fps_modulation': True, 'base_fps': 24, 'sound_base_temporal_compression_factor': None, 'vision_temporal_position_mode': 'latent_index', 'unified_3d_mrope_reset_spatial_ids': True, 'unified_3d_mrope_temporal_modality_margin': 15000}, 'input_video_key': 'video', 'input_image_key': 'images', 'input_caption_key': 'ai_caption', 'state_ch': 48, 'state_t': 300, 'latent_downsample_factor': 16, 'resolution': '480', 'max_num_tokens_after_packing': 51200, 'joint_attn_implementation': 'two_way', 'flex_attention': {'enabled': False, 'backend': 'auto', 'mask': {'noisy_attention_scope': 'all_views'}}, 'natten_parameter_list': None, 'video_temporal_causal': False, 'causal_training_strategy': 'none', 'lbl': {'method': 'local', 'coeff_und': None, 'coeff_gen': None}, 'vision_gen': True, 'action_gen': True, 'max_action_dim': 64, 'num_embodiment_domains': 32, 'sound_gen': False, 'sound_tokenizer': None, 'sound_dim': None, 'sound_latent_fps': 25, 'enable_input_bias': True, 'log_enc_time_every_n': 100, 'exclude_reasoner_weights_from_checkpoint': False}
+[08-16 23:28:45|WARNING|cosmos_framework/model/generator/omni_mot_model.py:160:set_precision] OmniMoTModel: precision torch.bfloat16
+This processor does not use the `size` parameter. It will be ignored.
+[08-16 23:28:46|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[08-16 23:30:04|INFO|cosmos_framework/model/generator/tokenizers/wan2pt2_vae_4x16x16.py:1050:_video_vae] loading /gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth
+[08-16 23:30:04|INFO|cosmos_framework/utils/distributed.py:444:sync_model_states] Synchronizing model states from rank 0 to all ranks in process group [0].
+[08-16 23:30:04|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_tokenizers: 79.22 s
+[08-16 23:30:04|INFO|cosmos_framework/utils/generator/parallelism.py:107:_validate] dp_shard auto-inferred to world_size = 1
+[08-16 23:30:04|INFO|cosmos_framework/utils/generator/parallelism.py:121:_validate] dp_replicate is set to -1, will be automatically determined based on world_size 1 // dp_shard 1.
+[08-16 23:30:04|INFO|cosmos_framework/utils/generator/parallelism.py:126:_validate] dp_replicate is set to 1.
+`torch_dtype` is deprecated! Use `dtype` instead!
+[08-16 23:30:04|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on meta to cuda and broadcast model states: 0.24 s
+[08-16 23:30:04|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on Creating PyTorch model and ema if enabled: 0.54 s
+[08-16 23:30:04|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_model: 0.54 s
+[08-16 23:30:04|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_model: 79.76 s
+[08-16 23:30:04|INFO|cosmos_framework/data/generator/joint_dataloader.py:1040:__init__] [RANK 0] RankPartitionedDataLoader: world_size: 1 and rank: 0
+[08-16 23:30:04|INFO|cosmos_framework/data/generator/joint_dataloader.py:1095:__init__] [RANK 0] RankPartitionedDataLoader allocation (1 GPUs):
+  libero (ratio 1): ranks 0-0 (1 GPUs) | expected 100.00%, actual 100.00%
+[08-16 23:30:05|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[08-16 23:30:27|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:187:__init__] Loaded LIBERO dataset root=/gemini/code/data/libero/libero_10_no_noops_1.0.0_lerobot split='train' camera_mode='concat_view' fps=20.0 kept_episodes=37/38 valid_indices=8982
+[08-16 23:30:27|INFO|cosmos_framework/data/generator/joint_dataloader.py:427:__init__] JointDataLoader: 1 streams
+  action_libero: ratio=1 (100.0%)
+[08-16 23:30:28|INFO|cosmos_framework/data/generator/joint_dataloader.py:529:_prewarm_dataloader] [RANK 0] Pre-warm: dataloader 'action_libero' ready — 1 samples buffered in 1.3s
+[08-16 23:30:28|INFO|cosmos_framework/data/generator/joint_dataloader.py:573:_prewarm_dataloaders] Pre-warm: waiting at barrier for all ranks …
+[08-16 23:30:28|INFO|cosmos_framework/data/generator/joint_dataloader.py:575:_prewarm_dataloaders] Pre-warm: all ranks ready
+[08-16 23:30:28|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_data_loader: 23.61 s
+[08-16 23:30:28|INFO|cosmos_framework/utils/generator/optimizer.py:247:_build_params_with_metadata] Total tensors: 549, trainable tensors: 549, selected tensors: 294
+[08-16 23:30:28|INFO|cosmos_framework/utils/generator/optimizer.py:432:__init__] Building optimizer for mesh 'default'
+[08-16 23:30:28|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=5e-05, WD=True): 289 tensors, 1,414,921,408 elements
+[08-16 23:30:28|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=0.00025, WD=False): 4 tensors, 8,456,192 elements
+[08-16 23:30:28|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=0.00025, WD=True): 1 tensors, 2,048 elements
+[08-16 23:30:28|INFO|cosmos_framework/utils/generator/optimizer.py:440:__init__] Created 1 optimizers
+[08-16 23:30:28|INFO|cosmos_framework/utils/generator/optimizer.py:623:__init__] Created 1 schedulers
+[08-16 23:30:28|CRITICAL|cosmos_framework/checkpoint/dcp.py:789:load] Resuming ckpt /gemini/code/models/Cosmos3-Edge-Policy-DROID-dcp (warm-start, local) with keys: ['model']
+[08-16 23:30:28|CRITICAL|cosmos_framework/checkpoint/dcp.py:801:load] Start loading checkpoint from /gemini/code/models/Cosmos3-Edge-Policy-DROID-dcp/model
+[08-16 23:30:28|INFO|cosmos_framework/checkpoint/dcp.py:358:__init__] Skipping loading of keys that match the following patterns: ['net_ema.']
+[08-16 23:30:28|INFO|cosmos_framework/checkpoint/dcp.py:827:load] - Loading the model...
+/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+  return func(*args, **kwargs)
+[08-16 23:30:28|INFO|cosmos_framework/checkpoint/dcp.py:433:_skip_keys_if_found] [RANK 0] [DCP-LOAD-SKIP-KEYS] kept_keys=549 dropped_keys=0
+[08-16 23:30:28|INFO|cosmos_framework/checkpoint/dcp.py:408:_drop_non_reader_items] [RANK 0] [DCP-LOAD-DEDUP] kept_read_items=549 dropped_read_items=0
+[08-16 23:32:51|INFO|cosmos_framework/checkpoint/dcp.py:946:load] Loaded checkpoint from /gemini/code/models/Cosmos3-Edge-Policy-DROID-dcp (warm-start, local) in iteration 0
+[08-16 23:32:51|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on checkpoint loading: 142.51 s
+[08-16 23:32:51|CRITICAL|cosmos_framework/trainer/__init__.py:272:train] Distributed parallelism mode: fsdp
+[08-16 23:32:51|INFO|cosmos_framework/trainer/__init__.py:280:train] Starting training...
+[08-16 23:32:51|INFO|cosmos_framework/callbacks/device_monitor.py:102:on_train_start] DeviceMonitor callback: local_dir: /gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/pack256_smoke/psm_wma/g0_r06_sft/edge_libero_task0_sft/DeviceMonitor
+[08-16 23:32:51|INFO|cosmos_framework/callbacks/termination_signal_checkpoint.py:186:_install_termination_signal_handlers] [TerminationSignalCheckpoint] Installed SIGTERM handler.
+2026-08-16 23:34:20.679 | ERROR    | __main__:<module>:299 - An error has been caught in function '<module>', process 'MainProcess' (3239891), thread 'MainThread' (139714136881024):
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+> File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+    launch(config, args)
+    │      │       └ Namespace(sft_toml='examples/toml/sft_config/action_policy_libero_edge_r06.toml', opts=['--', 'optimizer.optimizer_type=AdamW...
+    │      └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+    └ <function launch at 0x7f0f2f6e8c20>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+    return func(config, *args, **kwargs)
+           │    │        │       └ {}
+           │    │        └ (Namespace(sft_toml='examples/toml/sft_config/action_policy_libero_edge_r06.toml', opts=['--', 'optimizer.optimizer_type=Adam...
+           │    └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/gemini...
+           └ <function launch at 0x7f0f2f889260>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 221, in launch
+    trainer.train(
+    │       └ <function ImaginaireTrainer.train at 0x7f0f2f86cc20>
+    └ <cosmos_framework.trainer.ImaginaireTrainer object at 0x7f0f2f69d550>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 344, in train
+    output_batch, loss, grad_accum_iter = self.training_step(
+                                          │    └ <function ImaginaireTrainer.training_step at 0x7f0f2f86ccc0>
+                                          └ <cosmos_framework.trainer.ImaginaireTrainer object at 0x7f0f2f69d550>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 424, in training_step
+    output_batch, loss = model_ddp.training_step(data, iteration)
+                         │         │             │     └ 0
+                         │         │             └ {'vision_latent_cache_enabled': [tensor([True], device='cuda:0'), tensor([True], device='cuda:0'), tensor([True], device='cud...
+                         │         └ <function OmniMoTModel.training_step at 0x7f0e1de05620>
+                         └ OmniMoTModel(
+                             (net): Cosmos3VFMNetwork(
+                               (language_model): Nemotron3DenseVLTextForCausalLM(
+                                 (model): Nemotron3Dens...
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 1269, in training_step
+    out_net = self.denoise(
+              │    └ <function OmniMoTModel.denoise at 0x7f0e1de07600>
+              └ OmniMoTModel(
+                  (net): Cosmos3VFMNetwork(
+                    (language_model): Nemotron3DenseVLTextForCausalLM(
+                      (model): Nemotron3Dens...
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 4741, in denoise
+    out_net = net(
+              └ Cosmos3VFMNetwork(
+                  (language_model): Nemotron3DenseVLTextForCausalLM(
+                    (model): Nemotron3DenseVLTextModel(
+                      (embed_...
+
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'packed_seq': PackedSequence(sample_lens=[285, 431, 431, 431, 285, 431, 431, 431, 431, 431, 431, 431, 431, 431, 285, 431, 43...
+           │    │           └ ()
+           │    └ <function Module._call_impl at 0x7f0ff6dbe8e0>
+           └ Cosmos3VFMNetwork(
+               (language_model): Nemotron3DenseVLTextForCausalLM(
+                 (model): Nemotron3DenseVLTextModel(
+                   (embed_...
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'packed_seq': PackedSequence(sample_lens=[285, 431, 431, 431, 285, 431, 431, 431, 431, 431, 431, 431, 431, 431, 285, 431, 43...
+           │             └ ()
+           └ <bound method Cosmos3VFMNetwork.forward of Cosmos3VFMNetwork(
+               (language_model): Nemotron3DenseVLTextForCausalLM(
+                 (model...
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py", line 1184, in forward
+    packed_outputs, lbl_metadata = self.language_model(
+                                   └ Cosmos3VFMNetwork(
+                                       (language_model): Nemotron3DenseVLTextForCausalLM(
+                                         (model): Nemotron3DenseVLTextModel(
+                                           (embed_...
+
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'attention_mask': <cosmos_framework.model.generator.mot.attention.SplitInfo object at 0x7f0e180b6510>, 'position_ids': tenso...
+           │    │           └ ({'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+           │    │                       3587,   4018,  ...
+           │    └ <function Module._call_impl at 0x7f0ff6dbe8e0>
+           └ Nemotron3DenseVLTextForCausalLM(
+               (model): Nemotron3DenseVLTextModel(
+                 (embed_tokens): Embedding(131072, 2048, padding_id...
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'attention_mask': <cosmos_framework.model.generator.mot.attention.SplitInfo object at 0x7f0e180b6510>, 'position_ids': tenso...
+           │             └ ({'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+           │                         3587,   4018,  ...
+           └ <bound method Nemotron3DenseVLTextForCausalLM.forward of Nemotron3DenseVLTextForCausalLM(
+               (model): Nemotron3DenseVLTextMode...
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 2571, in forward
+    return self.model(
+           └ Nemotron3DenseVLTextForCausalLM(
+               (model): Nemotron3DenseVLTextModel(
+                 (embed_tokens): Embedding(131072, 2048, padding_id...
+
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'pack': {'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+           │    │           │                   3587,  ...
+           │    │           └ ()
+           │    └ <function Module._call_impl at 0x7f0ff6dbe8e0>
+           └ Nemotron3DenseVLTextModel(
+               (embed_tokens): Embedding(131072, 2048, padding_idx=0)
+               (layers): ModuleList(
+                 (0-27): 28 x ...
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'pack': {'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+           │             │                   3587,  ...
+           │             └ ()
+           └ <bound method Nemotron3DenseVLTextModel.forward of Nemotron3DenseVLTextModel(
+               (embed_tokens): Embedding(131072, 2048, paddi...
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1506, in forward
+    return _impl_forward(self, *args, **kwargs)
+           │             │      │       └ {'pack': {'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+           │             │      │                   3587,  ...
+           │             │      └ ()
+           │             └ Nemotron3DenseVLTextModel(
+           │                 (embed_tokens): Embedding(131072, 2048, padding_idx=0)
+           │                 (layers): ModuleList(
+           │                   (0-27): 28 x ...
+           └ <function _impl_forward at 0x7f0e1df9a700>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1029, in _impl_forward
+    hidden_states, lbl_metadata_dict, kv_to_store = decoder_layer(
+    │              │                                └ CheckpointWrapper(
+    │              │                                    (_checkpoint_wrapped_module): MoTDecoderLayer(
+    │              │                                      (self_attn): PackedAttentionMoT(
+    │              │                                        (q_proj): Line...
+    │              └ {}
+    └ {'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+                3587,   4018,   ...
+
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'natten_metadata': None, 'memory_value': None, 'gen_only': False}
+           │    │           └ ({'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+           │    │                       3587,   4018,  ...
+           │    └ <function Module._call_impl at 0x7f0ff6dbe8e0>
+           └ CheckpointWrapper(
+               (_checkpoint_wrapped_module): MoTDecoderLayer(
+                 (self_attn): PackedAttentionMoT(
+                   (q_proj): Line...
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'natten_metadata': None, 'memory_value': None, 'gen_only': False}
+           │             └ ({'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+           │                         3587,   4018,  ...
+           └ <bound method CheckpointWrapper.forward of CheckpointWrapper(
+               (_checkpoint_wrapped_module): MoTDecoderLayer(
+                 (self_attn...
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/algorithms/_checkpoint/checkpoint_wrapper.py", line 168, in forward
+    return self.checkpoint_fn(  # type: ignore[misc]
+           │    └ functools.partial(<function checkpoint at 0x7f0ff59d93a0>, use_reentrant=False, context_fn=<function _apply_selective_ac.<loc...
+           └ CheckpointWrapper(
+               (_checkpoint_wrapped_module): MoTDecoderLayer(
+                 (self_attn): PackedAttentionMoT(
+                   (q_proj): Line...
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/_compile.py", line 54, in inner
+    return disable_fn(*args, **kwargs)
+           │           │       └ {'use_reentrant': False, 'context_fn': <function _apply_selective_ac.<locals>.<lambda> at 0x7f0e1a47a7a0>, 'preserve_rng_stat...
+           │           └ (MoTDecoderLayer(
+           │               (self_attn): PackedAttentionMoT(
+           │                 (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
+           │               ...
+           └ <function DisableContext.__call__.<locals>._fn at 0x7f0e187574c0>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/_dynamo/eval_frame.py", line 1181, in _fn
+    return fn(*args, **kwargs)
+           │   │       └ {'use_reentrant': False, 'context_fn': <function _apply_selective_ac.<locals>.<lambda> at 0x7f0e1a47a7a0>, 'preserve_rng_stat...
+           │   └ (MoTDecoderLayer(
+           │       (self_attn): PackedAttentionMoT(
+           │         (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
+           │       ...
+           └ <function checkpoint at 0x7f0ff59d9300>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/checkpoint.py", line 512, in checkpoint
+    ret = function(*args, **kwargs)
+          │         │       └ {'natten_metadata': None, 'memory_value': None, 'gen_only': False}
+          │         └ ({'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+          │                     3587,   4018,  ...
+          └ MoTDecoderLayer(
+              (self_attn): PackedAttentionMoT(
+                (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
+               ...
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'natten_metadata': None, 'memory_value': None, 'gen_only': False}
+           │    │           └ ({'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+           │    │                       3587,   4018,  ...
+           │    └ <function Module._call_impl at 0x7f0ff6dbe8e0>
+           └ MoTDecoderLayer(
+               (self_attn): PackedAttentionMoT(
+                 (q_proj): Linear(in_features=2048, out_features=2048, bias=False)
+                ...
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'natten_metadata': None, 'memory_value': None, 'gen_only': False}
+           │             └ ({'sample_offsets': tensor([     0,    285,    716,   1147,   1578,   1863,   2294,   2725,   3156,
+           │                         3587,   4018,  ...
+           └ <bound method MoTDecoderLayer.forward of MoTDecoderLayer(
+               (self_attn): PackedAttentionMoT(
+                 (q_proj): Linear(in_features...
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1322, in forward
+    mlp_out_gen, lbl_metadata_gen = _run_mlp(
+                                    └ <function _run_mlp at 0x7f0e1df9a7a0>
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1093, in _run_mlp
+    output_tensor = mlp(input)
+                    │   └ tensor([[ 0.1250, -0.0149,  0.0261,  ...,  0.0442,  0.1123,  0.1992],
+                    │             [ 0.0014, -0.0325,  0.0226,  ...,  0.0225,  0.1...
+                    └ Nemotron3DenseVLMLP(
+                        (up_proj): Linear(in_features=2048, out_features=9216, bias=False)
+                        (down_proj): Linear(in_features=9...
+
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {}
+           │    │           └ (tensor([[ 0.1250, -0.0149,  0.0261,  ...,  0.0442,  0.1123,  0.1992],
+           │    │                     [ 0.0014, -0.0325,  0.0226,  ...,  0.0225,  0....
+           │    └ <function Module._call_impl at 0x7f0ff6dbe8e0>
+           └ Nemotron3DenseVLMLP(
+               (up_proj): Linear(in_features=2048, out_features=9216, bias=False)
+               (down_proj): Linear(in_features=9...
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {}
+           │             └ (tensor([[ 0.1250, -0.0149,  0.0261,  ...,  0.0442,  0.1123,  0.1992],
+           │                       [ 0.0014, -0.0325,  0.0226,  ...,  0.0225,  0....
+           └ <bound method Nemotron3DenseVLMLP.forward of Nemotron3DenseVLMLP(
+               (up_proj): Linear(in_features=2048, out_features=9216, bi...
+
+  File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/nemotron_3_dense_vl.py", line 80, in forward
+    return self.down_proj(self.act_fn(self.up_proj(x)))
+           │              │           │            └ tensor([[ 0.1250, -0.0149,  0.0261,  ...,  0.0442,  0.1123,  0.1992],
+           │              │           │                      [ 0.0014, -0.0325,  0.0226,  ...,  0.0225,  0.1...
+           │              │           └ Nemotron3DenseVLMLP(
+           │              │               (up_proj): Linear(in_features=2048, out_features=9216, bias=False)
+           │              │               (down_proj): Linear(in_features=9...
+           │              └ Nemotron3DenseVLMLP(
+           │                  (up_proj): Linear(in_features=2048, out_features=9216, bias=False)
+           │                  (down_proj): Linear(in_features=9...
+           └ Nemotron3DenseVLMLP(
+               (up_proj): Linear(in_features=2048, out_features=9216, bias=False)
+               (down_proj): Linear(in_features=9...
+
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {}
+           │    │           └ (tensor([[-0.0166, -0.0708, -0.0415,  ...,  0.1348, -0.1123, -0.2676],
+           │    │                     [-0.0991, -0.1387,  0.0104,  ...,  0.1465, -0....
+           │    └ <function Module._call_impl at 0x7f0ff6dbe8e0>
+           └ ReLUSquaredActivation()
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {}
+           │             └ (tensor([[-0.0166, -0.0708, -0.0415,  ...,  0.1348, -0.1123, -0.2676],
+           │                       [-0.0991, -0.1387,  0.0104,  ...,  0.1465, -0....
+           └ <bound method ReLUSquaredActivation.forward of ReLUSquaredActivation()>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/transformers/activations.py", line 209, in forward
+    squared = torch.square(relu_applied)
+              │     │      └ tensor([[0.0000, 0.0000, 0.0000,  ..., 0.1348, 0.0000, 0.0000],
+              │     │                [0.0000, 0.0000, 0.0104,  ..., 0.1465, 0.0000, 0.0000...
+              │     └ <built-in method square of type object at 0x7f10edce49e0>
+              └ <module 'torch' from '/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/__init__.py'>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/checkpoint.py", line 1347, in __torch_dispatch__
+    out = func(*args, **kwargs)
+          │     │       └ {}
+          │     └ (tensor([[0.0000, 0.0000, 0.0000,  ..., 0.1348, 0.0000, 0.0000],
+          │               [0.0000, 0.0000, 0.0104,  ..., 0.1465, 0.0000, 0.000...
+          └ <OpOverload(op='aten.pow', overload='Tensor_Scalar')>
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/_ops.py", line 819, in __call__
+    return self._op(*args, **kwargs)
+           │    │    │       └ {}
+           │    │    └ (tensor([[0.0000, 0.0000, 0.0000,  ..., 0.1348, 0.0000, 0.0000],
+           │    │              [0.0000, 0.0000, 0.0104,  ..., 0.1465, 0.0000, 0.000...
+           │    └ <built-in method  of pybind11_builtins.pybind11_detail_function_record_v1_system_libstdcpp_gxx_abi_1xxx_use_cxx11_abi_1 objec...
+           └ <OpOverload(op='aten.pow', overload='Tensor_Scalar')>
+
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.17 GiB. GPU 0 has a total capacity of 39.17 GiB of which 618.80 MiB is free. Including non-PyTorch memory, this process has 38.56 GiB memory in use. Of the allocated memory 37.18 GiB is allocated by PyTorch, and 631.50 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank0]:   File "<frozen runpy>", line 88, in _run_code
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+[rank0]:     launch(config, args)
+[rank0]:     ~~~~~~^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/loguru/_logger.py", line 1297, in catch_wrapper
+[rank0]:     return function(*args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+[rank0]:     return func(config, *args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py", line 221, in launch
+[rank0]:     trainer.train(
+[rank0]:     ~~~~~~~~~~~~~^
+[rank0]:         model,
+[rank0]:         ^^^^^^
+[rank0]:         dataloader_train,
+[rank0]:         ^^^^^^^^^^^^^^^^^
+[rank0]:         dataloader_val,
+[rank0]:         ^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 344, in train
+[rank0]:     output_batch, loss, grad_accum_iter = self.training_step(
+[rank0]:                                           ~~~~~~~~~~~~~~~~~~^
+[rank0]:         model_ddp,
+[rank0]:         ^^^^^^^^^^
+[rank0]:     ...<5 lines>...
+[rank0]:         grad_accum_iter=grad_accum_iter,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 424, in training_step
+[rank0]:     output_batch, loss = model_ddp.training_step(data, iteration)
+[rank0]:                          ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 1269, in training_step
+[rank0]:     out_net = self.denoise(
+[rank0]:         data_batch_packed=packed_sequence,
+[rank0]:         memory=memory,
+[rank0]:     )
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 4741, in denoise
+[rank0]:     out_net = net(
+[rank0]:         packed_seq=data_batch_packed,
+[rank0]:         memory=memory,
+[rank0]:         video_temporal_causal=video_temporal_causal,
+[rank0]:     )
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py", line 1184, in forward
+[rank0]:     packed_outputs, lbl_metadata = self.language_model(
+[rank0]:                                    ~~~~~~~~~~~~~~~~~~~^
+[rank0]:         input_pack,
+[rank0]:         ^^^^^^^^^^^
+[rank0]:     ...<3 lines>...
+[rank0]:         memory=memory,
+[rank0]:         ^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 2571, in forward
+[rank0]:     return self.model(
+[rank0]:            ~~~~~~~~~~^
+[rank0]:         pack=pack,
+[rank0]:         ^^^^^^^^^^
+[rank0]:     ...<3 lines>...
+[rank0]:         memory=memory,
+[rank0]:         ^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1506, in forward
+[rank0]:     return _impl_forward(self, *args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1029, in _impl_forward
+[rank0]:     hidden_states, lbl_metadata_dict, kv_to_store = decoder_layer(
+[rank0]:                                                     ~~~~~~~~~~~~~^
+[rank0]:         hidden_states,
+[rank0]:         ^^^^^^^^^^^^^^
+[rank0]:     ...<4 lines>...
+[rank0]:         gen_only=memory_gen_only,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/algorithms/_checkpoint/checkpoint_wrapper.py", line 168, in forward
+[rank0]:     return self.checkpoint_fn(  # type: ignore[misc]
+[rank0]:            ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:         self._checkpoint_wrapped_module, *args, **kwargs
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/_compile.py", line 54, in inner
+[rank0]:     return disable_fn(*args, **kwargs)
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/_dynamo/eval_frame.py", line 1181, in _fn
+[rank0]:     return fn(*args, **kwargs)
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/checkpoint.py", line 512, in checkpoint
+[rank0]:     ret = function(*args, **kwargs)
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1322, in forward
+[rank0]:     mlp_out_gen, lbl_metadata_gen = _run_mlp(
+[rank0]:                                     ~~~~~~~~^
+[rank0]:         self.mlp_moe_gen,
+[rank0]:         ^^^^^^^^^^^^^^^^^
+[rank0]:     ...<3 lines>...
+[rank0]:         num_samples=gen_num_samples,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/unified_mot.py", line 1093, in _run_mlp
+[rank0]:     output_tensor = mlp(input)
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/gemini/code/psm_wma/cosmos-framework/cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/nemotron_3_dense_vl.py", line 80, in forward
+[rank0]:     return self.down_proj(self.act_fn(self.up_proj(x)))
+[rank0]:                           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/transformers/activations.py", line 209, in forward
+[rank0]:     squared = torch.square(relu_applied)
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/utils/checkpoint.py", line 1347, in __torch_dispatch__
+[rank0]:     out = func(*args, **kwargs)
+[rank0]:   File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/_ops.py", line 819, in __call__
+[rank0]:     return self._op(*args, **kwargs)
+[rank0]:            ~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]: torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.17 GiB. GPU 0 has a total capacity of 39.17 GiB of which 618.80 MiB is free. Including non-PyTorch memory, this process has 38.56 GiB memory in use. Of the allocated memory 37.18 GiB is allocated by PyTorch, and 631.50 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[rank0]:[W816 23:35:37.513295514 ProcessGroupNCCL.cpp:1553] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+E0816 23:35:40.013000 3239819 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 3239891) of binary: /root/venvs/psm_wma_py313_cu128/bin/python
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 995, in <module>
+    main()
+    ~~~~^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+    ~~~^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+    ~~~~~~~~~~~~~~~
+        config=config,
+        ~~~~~~~~~~~~~~
+        entrypoint=cmd,
+        ~~~~~~~~~~~~~~~
+    )(*cmd_args)
+    ~^^^^^^^^^^^
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/venvs/psm_wma_py313_cu128/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+    ...<2 lines>...
+    )
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+cosmos_framework.scripts.train FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-08-16_23:35:40
+  host      : gjob-dev-743413149755863040-taskrole1-0
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 3239891)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

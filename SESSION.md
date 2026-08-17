@@ -1,6 +1,6 @@
 # 当前协作状态
 
-更新时间：2026-08-16
+更新时间：2026-08-17
 
 ## 当前阶段
 
@@ -205,3 +205,11 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - iter300 对齐重测(task_ids 4,3 episode,seed 0):**SR=0/3**;3 episode 均 520 步满 rollout、error=null、action 全 finite(520×7D);GIF 目视机械臂有目的性移动、逼近目标马克杯区域,但未完成抓取/放置。判读:链路正确、任务对齐后行为明显改善(对比 soup 任务的盘旋),iter300(~8.5 epoch)欠训练,非错位或管线问题。产物 `artifacts/g0/r06/eval_task4_iter300_sft/`;错配首测留档 `eval_task0_iter300_sft/`。
 - 1000 步正式训练已恢复(tmux r06sft,same-job 从 iter 301 续训,最新完整 checkpoint iter_000000300);计划到 1000 步后用 `--task_ids 4` 复测,中途可在 400/500 checkpoint 加测。
 - 评测口径冻结:后续所有 R06-SFT 闭环评测必须使用 `--task_ids 4`(与训练 task_index 0 对齐),并在报告中注明该映射证据。
+
+### G0-R06-SFT iter500/600 评测、OOM 与视觉输入错位修正(2026-08-17 下午,Kimi 执行)
+
+- iter500 闭环评测(task_ids 4×3,seed 0):SR=0/3,链路全通、action finite;与 iter300 同 seed 行为类别一致(悬停不抓取)。zero-shot 原版 DROID 对照:SR=0/3,行为=远离桌面大幅游荡(mean|a|=0.82 vs SFT 0.24),证实 SFT 有效拉向任务。产物 `eval_task4_iter500_sft/`、`eval_task4_zeroshot_droid/`。
+- 14:28 训练遭 memcg 32GB OOM SIGKILL(dmesg 实锤:shmem-rss 10.5GB + checkpoint 写网络盘 page cache 叠加);按用户条件删除 iter100-400(释放 48GB,保留 500/600);加 sync 守护每 180s flush 脏页。
+- **视觉输入错位(重要修正)**:此前全部闭环评测(zero-shot/iter300/iter500)用 `--camera agentview` 单视角 256×256,而训练是 `camera_mode: concat_view`(agentview|wrist 横拼 256×512,latent [5,48,16,32])。iter600 起评测口径改为 `--camera agentview,wrist` 双视角对齐。
+- iter600 双视角评测:**SR=0/3**,3 episode 均 520 步满 rollout、error=null、action finite(mean|a|=0.207);但对比 MP4 目视:机械臂已**抓取并举起**红色花纹马克杯、悬停于目标区上方,失败模式从"悬停不抓取"转为"放置精度不足"。判读:输入错位非全部根因,继续训练至 1000 步合理;iter1000 仍 SR=0 则转契约排查(open-loop 专家动作回放)。产物 `eval_task4_iter600_sft/`(含 comparisons 对比 MP4)。
+- 评测后以 4 workers × prefetch_factor 1 从 iter_000000600 same-job 续训(tmux r06sft):实测 48s/步≈2×2 速度,RSS 仅 3.4GB(较 4×2 的 13GB 大降,memcg 安全);resume 从 trainer 保存态 iteration 603 起,loss/grad 连续正常,GPU 36.9GB/100%。

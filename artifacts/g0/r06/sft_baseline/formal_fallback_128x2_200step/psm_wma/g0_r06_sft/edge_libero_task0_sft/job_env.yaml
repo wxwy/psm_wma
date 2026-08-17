@@ -1,0 +1,3 @@
+PWD: /gemini/code/psm_wma/cosmos-framework
+job_local_path: /gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/formal_fallback_128x2_200step/psm_wma/g0_r06_sft/edge_libero_task0_sft
+s3: s3:///psm_wma/g0_r06_sft/edge_libero_task0_sft/

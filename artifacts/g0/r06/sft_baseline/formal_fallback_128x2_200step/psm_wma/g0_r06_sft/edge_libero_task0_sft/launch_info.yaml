@@ -1,0 +1,22 @@
+cmd: /gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py --sft-toml=examples/toml/sft_config/action_policy_libero_edge_r06.toml
+  -- optimizer.optimizer_type=AdamW optimizer.fused=false trainer.max_iter=200 trainer.grad_accum_iter=2
+  dataloader_train.max_samples_per_batch=128 dataloader_train.dataloader.num_workers=0
+  dataloader_train.dataloader.persistent_workers=false dataloader_train.dataloader.prefetch_factor=null
+  +trainer.callbacks.r04_step_metrics._target_=tools.g0.r04_step_metrics.StepMetricsCallback
+  +trainer.callbacks.r04_step_metrics.output_path=/gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/formal_fallback_128x2_200step/step_metrics.jsonl
+  +trainer.callbacks.r04_step_metrics.optimizer_type=AdamW +trainer.callbacks.r04_step_metrics.fused=false
+args_cfg_path: examples/toml/sft_config/action_policy_libero_edge_r06.toml
+args_override:
+- --
+- optimizer.optimizer_type=AdamW
+- optimizer.fused=false
+- trainer.max_iter=200
+- trainer.grad_accum_iter=2
+- dataloader_train.max_samples_per_batch=128
+- dataloader_train.dataloader.num_workers=0
+- dataloader_train.dataloader.persistent_workers=false
+- dataloader_train.dataloader.prefetch_factor=null
+- +trainer.callbacks.r04_step_metrics._target_=tools.g0.r04_step_metrics.StepMetricsCallback
+- +trainer.callbacks.r04_step_metrics.output_path=/gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/formal_fallback_128x2_200step/step_metrics.jsonl
+- +trainer.callbacks.r04_step_metrics.optimizer_type=AdamW
+- +trainer.callbacks.r04_step_metrics.fused=false

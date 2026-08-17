@@ -9,3 +9,8 @@ artifacts/**/checkpoints/
 
 # 预览视频
 artifacts/**/*.mp4
+
+# 仿真支持包与 GIF 预览
+.r06_sim_pkgs/
+artifacts/**/*.gif
+artifacts/**/train.log
