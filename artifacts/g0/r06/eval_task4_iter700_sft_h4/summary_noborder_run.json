@@ -1,0 +1,45 @@
+{
+  "task_suite": "libero_10",
+  "total_episodes": 3,
+  "total_successes": 0,
+  "overall_success_rate": 0.0,
+  "num_trials_per_task": 3,
+  "selected_task_ids": [
+    4
+  ],
+  "action_space": "frame_wise_relative",
+  "rotation_space": "6d",
+  "action_dim": 10,
+  "task_results": [
+    {
+      "task_id": 4,
+      "task_description": "put the white mug on the left plate and put the yellow and white mug on the right plate",
+      "episodes": 3,
+      "successes": 0,
+      "success_rate": 0.0,
+      "episode_results": [
+        {
+          "episode": 0,
+          "success": false,
+          "steps": 520,
+          "error": null,
+          "elapsed_s": 366.516
+        },
+        {
+          "episode": 1,
+          "success": false,
+          "steps": 520,
+          "error": null,
+          "elapsed_s": 363.64
+        },
+        {
+          "episode": 2,
+          "success": false,
+          "steps": 520,
+          "error": null,
+          "elapsed_s": 359.672
+        }
+      ]
+    }
+  ]
+}
