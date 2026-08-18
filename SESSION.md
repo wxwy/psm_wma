@@ -1,6 +1,6 @@
 # 当前协作状态
 
-更新时间：2026-08-17
+更新时间：2026-08-18
 
 ## 当前阶段
 
@@ -10,13 +10,51 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 
 - 正式设计主线为 Temporal Local Memory 与 Spatial Global Memory 两个独立 optional clean modalities。
 - 项目以 `cosmos-framework` 为工程母体；优先新增项目模块，只对 `SequencePlan`、`PackedSequence`、packer 和 Generator adapter 等必要扩展点做集中最小修改。
-- 根仓库以当前 `main` HEAD 为准；`cosmos-framework` 子模块已快进同步 NVIDIA `upstream/main` 至 `103c5d1687d290b050e4890f48ff7a38b12742ef`；本地子模块相对 fork `origin/main` 超前 5 个提交，尚未 push。
+- 双仓库分支基线已切换，当前为「父仓库 `V2` + 子模块 `v2`（官方代码）」组合，详见下文「双仓库分支基线（2026-08-18）」；原 fork 研究线保留为「父仓库 `main` + 子模块 `main`」。
 - `docs/build/log/kimi_operation.log` 是 Kimi 的执行日志，已确认纳入版本控制；其他 Agent 只追加自己的真实操作，不覆盖已有记录。
 - 已拉取另一 Agent 的文档一致性修改。该交付修改了 5 份现有正式文档，但没有新增或完善可执行的 R01-R06 Runbook。
 - Kimi 记录 `/gemini/code/models/Cosmos3-Edge-Policy-DROID` 已于 2026-08-12 16:08 下载完成；Codex 已按权重索引完成完整性预检，全部引用文件存在且非空。
 - 项目 Python 环境已安装到 `/root/venvs/psm_wma`（Python 3.13.13）；大包优先从 `/gemini/code/packages/` 本地安装，Megatron-LM 与 lerobot 使用本地源码快照 override，已规避 Git TLS 中断。当前 GPU 已可见，CUDA 最小张量运算通过。
 - 所有 Agent 执行代码、测试、训练、推理或评测前，必须先向用户展示目的、完整命令、工作目录、环境变量、资源/外网需求、输入、产物和判据。
 - arXiv:2608.11246 已纳入后续 W10/W11 Agent Harness 高优先级参考，详细记录见 `docs/build/PSM-WMA_Agent_Harness_reference_addendum_v0.1.md` 与 `MEMORY/DECISIONS.md` D007；该参考不改变当前 G0/R01-R09 执行顺序。
+
+### 双仓库分支基线（2026-08-18）
+
+为「保持与 fork 官方代码一致」新建 `v2` 分支并切换，两个仓库当前状态如下。
+
+**psm_wma（根仓库，`/disk/rl/psm_wma`）**
+- `origin` → `https://github.com/wxwy/psm_wma.git`
+- 分支：`main` 与 `V2` 均在 `5a7bfd3`（`main` 跟踪 `origin/main`）
+- 当前检出：`V2`（由 `git branch V2` 创建，未切换当前分支的历史已并入本次切换）
+- 树内 `cosmos-framework` 子模块指针：`927e147`（与 `main` 相同）
+- ⚠️ `927e147` 当前**无法从任何远程取回**（fork 上已无此 ref/对象），无法把子模块工作区恢复到该 commit。
+
+**cosmos-framework（子模块，`/disk/rl/psm_wma/cosmos-framework`）**
+- `origin` → `https://ghfast.top/github.com/wxwy/cosmos-framework.git`（fork）
+- `upstream` → `https://ghfast.top/github.com/NVIDIA/cosmos-framework.git`（官方，2026-08-18 新增，与 fork 同走 ghfast.top）
+- 分支：
+  - `main` = `69f2260`，跟踪 `origin/main`（fork 研究线：regular episode latent plan 等）
+  - `v2` = `326b399`，跟踪 `upstream/main`（官方 NVIDIA 代码，创建自官方 main）
+- 当前检出：`v2`（`326b399` "Add guidance interval to RoboLab policy server (#202)"）
+- 同步官方更新：`git checkout v2 && git pull upstream main`
+
+**组合与后续操作**
+- 官方基线 = 父 `V2` + 子模块 `v2`（当前）；fork 研究线 = 父 `main` + 子模块 `main`。
+- 父仓库 `git status` 会显示 `M cosmos-framework`：父树记录 `927e147`，子模块工作区为 `326b399`（官方 v2），差异是预期现象，非误改。
+- 若要把父 `V2` 的 gitlink 固定到官方 `326b399`：`git add cosmos-framework && git commit`（需用户确认，勿自动提交）。
+- 子模块 `v2` 尚未 push 到 fork `origin`。
+
+### 本机执行环境（2026-08-18，新机 `/disk/rl/psm_wma`）
+
+与旧机器（`/root/venvs/psm_wma`、`/gemini/code/models`）不同，本机为全新环境，2026-08-18 已就绪：
+
+- 环境：uv 0.12.5 + Python 3.13.7，`cosmos-framework/.venv`（uv sync `--extra train --group=cu130-train`，395 包）→ torch 2.10.0+cu130，A100-SXM4-80GB，CUDA 13.0，`cosmos_framework` 导入 OK。
+- 视频解码依赖 torchcodec：运行前需 `export LD_LIBRARY_PATH=<venv>/lib/python3.13/site-packages/nvidia/cu13/lib:$LD_LIBRARY_PATH`（否则报 `libnppicc.so.13` 缺失）。
+- 数据：`/disk/data/libero.zip`（1.86G，LeRobot v2.1 布局，`stats_gr00t.json`）**无法被官方 v2 代码读取**（官方要求 v3.0 布局：`data/chunk-*/file-*.parquet` + `meta/episodes/chunk-*/*.parquet` + `meta/tasks.parquet`）。已改下官方 `nvidia/LIBERO_LeRobot_v3/libero_10`（602M，内容与 libero.zip 相同：379 集/101469 帧/20FPS/7D action）→ 官方 `LIBEROLeRobotDataset` 验证通过（`action (16,10)` rot6d + quantile_rot，视频 256×512 concat，9.1s 加载 375/379 集）。`LIBERO_ROOT=/disk/data/LIBERO_LeRobot_v3/libero_10`。
+- action 语义实证：存储 action 即逐帧 delta（命令空间），`state_delta ≈ action × 0.012`（sim 内部 action_scale），gripper 绝对 0/1；**无需绝对→差分转换**，官方 `_build_frame_wise_action` 仅重编码旋转（axis-angle→rot6d）。
+- 存储：`/disk/data` 在 30G overlay（余 ~8G）；`/disk/rl` 挂载 `/bitahub-member`（750T，余 124T）；`/localdisk-tmp` 全新 100G nvme（0 使用）。**权重勿放 `/disk/data`，放 `/disk/rl/psm_wma/.../examples/checkpoints/` 或 `/localdisk-tmp`。**
+- 权重缺口：本机**无任何模型权重**（旧机器 `/gemini/code/models` 有 Cosmos3-Edge 6.3G / Edge-Policy-DROID 8.6G）。HF 可直连：Edge-Policy-DROID 9.17G、Cosmos3-Nano 34.99G 均可下。
+- 官方 v2 LIBERO SFT 仅支持 Nano（`action_policy_libero_nano.py`，HSDP 2×8）；Edge 仅 `edge_model_config.py` 无 LIBERO 动作配置——Edge→LIBERO 需自建配置（SESSION 底部 D006 已预告）。
 
 ### Edge-Policy-DROID -> LIBERO 新确认
 
@@ -233,3 +271,17 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - 决策：**暂不恢复训练**；等待 DS 对 E4 结果做进一步判读，共同完成问题定位后再决定是否继续训练/调整 LR/schedule/改配置。
 - 产物：`artifacts/g0/r06/gradient_flow_probe/result.json`
 - 交接文件：`docs/build/PSM-WMA_HANDOFF_R06_E4_gradient_flow_probe_2026-08-17.md`。
+
+### 新机环境准备：Edge-Policy-DROID → DCP 转换（VAE 本地化，2026-08-18）
+
+- 任务：简化 SFT 方案。不预编码训练数据，用原始官方 cosmos 代码 + 原始 libero 数据 + 在线 VAE + 在线 action transform。基座 = 本地 `/disk/rl/models/Cosmos3-Edge-Policy-DROID`（9.2G，Edge 官方 HF 包）。
+- 关键障碍：DCP 转换时 `Wan2pt2VAEInterface` 经 `download_checkpoint_v2`（checkpoint_db.py:461）把 `vae_path="pretrained/tokenizers/video/wan2pt2/Wan2.2_VAE.pth"` 解析进 registry → 走 HF 下载 `Wan-AI/Wan2.2-TI2V-5B/Wan2.2_VAE.pth`。本机 HF 受限（socksio/hf_transfer 缺失），且用户要求不下载、直接用已有的。
+- 已有的 VAE 只有 Edge 包里的 diffusers 布局 `vae/diffusion_pytorch_model.safetensors`（AutoencoderKLWan，`encoder.conv_in`/`down_blocks.*`/`norm_out`/`conv_out`… 196 keys），而原生 `WanVAE_` 要 Wan-native 布局（顶层 `conv1/conv2`=quant/post_quant，`encoder.conv1`/`downsamples.*`/`head`…，同为 196 keys，与 diffusers 0% 键名重叠）。
+- 解决：`tools/g0/convert_vae_diffusers_to_native.py` 纯键重映射（不做权重转换、不下载）。规则全按阶段位置对应（encoder 4 downsample 14/18/18/12、decoder 4 upsample 22/22/22/20、mid 17），末级无 downsampler/upsampler 用存在性守卫跳过。校验：映射与 native 键集双向全等 + 全部 196 shape 一致 + `load_state_dict(strict)` 0 missing / 0 unexpected。
+- 产物：`examples/checkpoints/wan22_vae/Wan2.2_VAE.pth`（1.4G，196 keys）——恰为官方 launcher 默认 `WAN_VAE_PATH`（`_sft_launcher_common.sh:52`），后续训练直接可用。
+- 转换用相对路径短路：临时在 repo 根建 `pretrained/tokenizers/video/wan2pt2/Wan2.2_VAE.pth` 软链（4 级上溯到上面产物），`download_checkpoint_v2` 的 `os.path.exists` 分支直接返回本地路径，完全绕过 registry/HF。转换后已 `rm -rf pretrained` 清理。
+- DCP 产物：`examples/checkpoints/Cosmos3-Edge-Policy-DROID-dcp/`（6.3G，2 分片 `__0_0.distcp`/`__0_1.distcp` + config.json + .metadata + checkpoint.json），`convert_model_to_dcp.py` exit 0。
+- 关于「为什么旧机器 codex 没遇到 VAE 布局问题」的核查（fork main vs v2 完全一致）：
+  - `edge_model_config.py` 两分支同为 `bucket_name=""`（L128）+ `vae_path="pretrained/tokenizers/video/wan2pt2/Wan2.2_VAE.pth"`（L137）；launcher 默认 `WAN_VAE_PATH=examples/checkpoints/wan22_vae/Wan2.2_VAE.pth` 也一致。
+  - 旧机器 `/gemini/code/models/Wan2.2-TI2V-5B/` 有原生 Wan2.2_VAE.pth，R01-R06 的编码/训练/转换全部命中本地文件；Edge 包里的 diffusers VAE 只在 fork main 的 inference 侧（`inference/common/checkpoints.py` AVAE shim 只针对 **audio** VAE，与 Wan 视频 VAE 无关）被消费。原生 cosmos 代码从不读 Edge 包的视频 VAE → 布局不一致从未暴露。
+  - 本机无原生文件且禁止下载，唯一来源是 Edge diffusers VAE，故需转原生布局。转换产物落在 launcher 默认路径，与旧机器走的是同一条代码路径。
