@@ -1,0 +1,14 @@
+{
+  "latent_shape": [
+    5,
+    48,
+    16,
+    32
+  ],
+  "slot0_real_vs_staticrepeat_maxdiff": 0.0,
+  "slot0_real_vs_frames1to16_swapped_maxdiff": 0.0,
+  "slot0_frame0_swapped_maxdiff": 2.9296875,
+  "slot1_real_vs_staticrepeat_maxdiff": 4.375,
+  "slot1_frames1to16_swapped_maxdiff": 5.390625,
+  "slot1_frame0_swapped_maxdiff": 3.099609375
+}

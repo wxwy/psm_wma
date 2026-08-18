@@ -1,0 +1,1 @@
+{"iteration": 1, "seed": 1, "media_key": "video", "real_action_x0_mae": 0.31455180048942566, "black_action_x0_mae": 0.2768279016017914, "delta_action_x0_mae": 0.03772389888763428, "real_fm_loss_action": 0.3582402765750885, "black_fm_loss_action": 0.2782788872718811, "sigma_action": null}

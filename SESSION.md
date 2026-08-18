@@ -46,6 +46,7 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | G0-R05 | Codex/Kimi | DONE | `artifacts/g0/r05/R05_libero_tiny_overfit.json`、R05 审查报告 | Gate `PASS`；100 步训练、两次 reload、checkpoint 完整性和独立验收全部通过 |
 | DOC-R06 | Kimi | REVIEW | `docs/build/PSM-WMA_G0_R06_closed_loop_baseline_runbook_v0.1.md` | 已创建并经实执验证；两处偏差（RLinf venv、TRITON_LIBCUDA_PATH）待升 v0.2 |
 | G0-R06 | Kimi | REVIEW | `artifacts/g0/r06/`、`docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md` | Gate `FAIL_SR_ZERO`：链路全绿、逐位可复现，但 zero-shot SR=0/3；待用户决策 baseline |
+| G0-R06-SFT-E4 | Kimi | DONE | `artifacts/g0/r06/gradient_flow_probe/probe.py` | E4 PASS：vae2llm/early moe_gen action/vision grad ratio 1.6-2.3，信号能回流，非结构性阻断；产物 `result.json`；恢复训练至 1000 步后复测 |
 
 ## 最近完成
 
@@ -214,3 +215,21 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - iter600 双视角评测:**SR=0/3**,3 episode 均 520 步满 rollout、error=null、action finite(mean|a|=0.207);初判"抓取+举起"经用户质疑后**复核更正**:iter600 vs iter500 执行动作 mean|diff| 仅 0.062-0.073、前 60 步逐维均值几乎一致,同帧抽图(200/450 步)两臂姿态相同——均为**悬停在红色花纹马克杯上方未抓取**,双视角对齐后行为无显著变化;且红杯不在任务指令内(指令=白杯→左盘、黄白杯→右盘),疑似 fixation 错误目标。判读:输入错位与训练量均非已证实根因;iter1000 复测若仍 SR=0 立即转契约排查(open-loop 专家动作回放+目标对象核验),不再加步数。产物 `eval_task4_iter600_sft/`(含 comparisons 对比 MP4)。
 - 评测后以 4 workers × prefetch_factor 1 从 iter_000000600 same-job 续训(tmux r06sft):实测 48s/步≈2×2 速度,RSS 仅 3.4GB(较 4×2 的 13GB 大降,memcg 安全);resume 从 trainer 保存态 iteration 603 起,loss/grad 连续正常,GPU 36.9GB/100%。
 - iter700 horizon=4 诊断(用户假设:只执行前4步):**SR=0/3,与 horizon=16 相同且复跑一致,开环漂移非主因,坐实策略内容问题**;动作 finite,mean|a|=0.157。产物 `eval_task4_iter700_sft_h4/`(384 个逐窗口 17 帧预测 MP4,双编号 win+step,采集时渲染 GT=蓝框/PD=红框)。评测后从 iter700 续训(21:09)。结论更新:horizon、视觉视角均已排除,iter1000 复测仍 0 则转 open-loop 专家回放契约排查。
+
+### G0-R06-SFT E4 梯度流探针交接(2026-08-17,Kimi)
+
+- 训练已暂停在 iter811(前次完整 checkpoint iter800)。
+- E2 teacher-forced 探针结论：真实视觉 vs 黑帧 action 单步去噪 MAE 几乎无差异(0.3146 vs 0.2768)，排除推理采样问题，指向训练侧 vision→action 信号未学会。
+- DS 提议 E4「双分支梯度流探针」：分别 backward action-only 和 vision-only loss，比较 action2llm / vae2llm / early moe_gen 的 grad norm 比值。
+- 自行实现 `artifacts/g0/r06/gradient_flow_probe/probe.py`；已修复 CheckpointOverrides 字符串路径和 `action_processing_record` collate 问题。
+- 最新运行(PID 3933871,日志 `run2.log`)失败于 `pack_text_tokens`：`shifted_text_ids` 是 `int` 而非 `list`，根因为 `_load_and_tokenize_text_data` 期望 `text_token_ids` 为 `[[tensor]]`，而 `custom_collate_fn([item])` 只给出 `[tensor]`，嵌套层级少一层。
+- 修复方案：把 `_collate_one` 改为用 `torch.utils.data.DataLoader` 取 batch，并手动把 `text_token_ids/video/action/action_raw` 从 `list[Tensor]` 重包为 `list[list[Tensor]]`，完全复现训练 JointDataLoader 输出格式。
+- 运行结果（iter800 checkpoint，单 sample，teacher-forced）：
+  - action_loss=0.699，vision_loss=0.131
+  - action-only 总 grad norm=10.74，vision-only=5.31
+  - action2llm 阳性对照非零（0.58），llm2action 非零（2.27）
+  - **vae2llm ratio=1.61，layers.0/1/2 *moe_gen ratio=2.29/2.25/1.77，layers.0 全层 ratio=2.23**
+- 判读：按 DS 矩阵，ratio ~1 → **信号能回流到视觉编码层与早期 gen tower，非结构性阻断**；问题指向优化/先验/loss 曲面。
+- 决策：**暂不恢复训练**；等待 DS 对 E4 结果做进一步判读，共同完成问题定位后再决定是否继续训练/调整 LR/schedule/改配置。
+- 产物：`artifacts/g0/r06/gradient_flow_probe/result.json`
+- 交接文件：`docs/build/PSM-WMA_HANDOFF_R06_E4_gradient_flow_probe_2026-08-17.md`。

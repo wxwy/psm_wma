@@ -1,0 +1,17 @@
+cmd: /gemini/code/psm_wma/cosmos-framework/cosmos_framework/scripts/train.py --sft-toml=examples/toml/sft_config/action_policy_libero_edge_r06.toml
+  -- optimizer.lr=0.0 trainer.max_iter=801 trainer.grad_accum_iter=1 dataloader_train.max_samples_per_batch=1
+  dataloader_train.dataloader.num_workers=0 dataloader_train.dataloader.persistent_workers=false
+  dataloader_train.dataloader.prefetch_factor=null +trainer.callbacks.teacher_probe._target_=artifacts.g0.r06.teacher_forced_probe.teacher_forced_probe_callback.TeacherForcedProbeCallback
+  +trainer.callbacks.teacher_probe.output_path=/gemini/code/psm_wma/artifacts/g0/r06/teacher_forced_probe/e2_probe.jsonl
+args_cfg_path: examples/toml/sft_config/action_policy_libero_edge_r06.toml
+args_override:
+- --
+- optimizer.lr=0.0
+- trainer.max_iter=801
+- trainer.grad_accum_iter=1
+- dataloader_train.max_samples_per_batch=1
+- dataloader_train.dataloader.num_workers=0
+- dataloader_train.dataloader.persistent_workers=false
+- dataloader_train.dataloader.prefetch_factor=null
+- +trainer.callbacks.teacher_probe._target_=artifacts.g0.r06.teacher_forced_probe.teacher_forced_probe_callback.TeacherForcedProbeCallback
+- +trainer.callbacks.teacher_probe.output_path=/gemini/code/psm_wma/artifacts/g0/r06/teacher_forced_probe/e2_probe.jsonl

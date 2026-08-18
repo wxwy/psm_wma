@@ -1,0 +1,91 @@
+{
+  "checkpoint": "/gemini/code/psm_wma/artifacts/g0/r06/sft_baseline/formal_128x2_1000step/psm_wma/g0_r06_sft/edge_libero_task0_sft/checkpoints/iter_000000800/model",
+  "episode": "episode_000000",
+  "instruction": "put the white mug on the left plate and put the yellow and white mug on the right plate",
+  "num_queries": 50,
+  "stride": 4,
+  "input_construction": "single real frame -> server repeats x17 (wam condition_frame_indexes_vision=[0])",
+  "per_dim": {
+    "dx": {
+      "mae_first_step": 0.5102097265515476,
+      "corr_first_step": 0.047917764906798804,
+      "expert_std": 0.17347260016531327,
+      "pred_std": 0.08106633493851646
+    },
+    "dy": {
+      "mae_first_step": 0.39757328283041715,
+      "corr_first_step": -0.11478787160231237,
+      "expert_std": 0.41468161351489125,
+      "pred_std": 0.09204403628434188
+    },
+    "dz": {
+      "mae_first_step": 0.44775739083066585,
+      "corr_first_step": 0.02969912689047285,
+      "expert_std": 0.3181412265535558,
+      "pred_std": 0.04497393486805867
+    },
+    "drx": {
+      "mae_first_step": 0.030406702655204145,
+      "corr_first_step": -0.45800099210398226,
+      "expert_std": 0.03582844324003457,
+      "pred_std": 0.007570397284094297
+    },
+    "dry": {
+      "mae_first_step": 0.08105705764081016,
+      "corr_first_step": 0.24267324972815646,
+      "expert_std": 0.03703700278998523,
+      "pred_std": 0.01036138747745666
+    },
+    "drz": {
+      "mae_first_step": 0.052415257438410114,
+      "corr_first_step": 0.13559818509320676,
+      "expert_std": 0.03833588226380699,
+      "pred_std": 0.007036799367585906
+    },
+    "gripper": {
+      "mae_first_step": 0.5118075090646744,
+      "corr_first_step": -0.4020411881591335,
+      "expert_std": 0.49839743177508455,
+      "pred_std": 0.03830235291741142
+    }
+  },
+  "gripper_first_step_acc": 0.48,
+  "gripper_acc_by_horizon": [
+    0.48,
+    0.48,
+    0.44,
+    0.46,
+    0.46,
+    0.5,
+    0.48,
+    0.48,
+    0.5,
+    0.52,
+    0.5,
+    0.52,
+    0.44,
+    0.46,
+    0.5,
+    0.52
+  ],
+  "err_by_horizon_mean": [
+    0.2902,
+    0.2486,
+    0.204,
+    0.2418,
+    0.3209,
+    0.2713,
+    0.2553,
+    0.2709,
+    0.3197,
+    0.2595,
+    0.3023,
+    0.3236,
+    0.2857,
+    0.2293,
+    0.418,
+    0.2488
+  ],
+  "expert_speed_mean": 0.5014386817530241,
+  "pred_first_step_speed_mean": 0.6891368618589452
+}

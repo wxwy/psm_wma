@@ -1,0 +1,91 @@
+{
+  "checkpoint": "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
+  "episode": "episode_000000",
+  "instruction": "put the white mug on the left plate and put the yellow and white mug on the right plate",
+  "num_queries": 50,
+  "stride": 4,
+  "input_construction": "single real frame -> server repeats x17 (wam condition_frame_indexes_vision=[0])",
+  "per_dim": {
+    "dx": {
+      "mae_first_step": 1.6026224844250827,
+      "corr_first_step": 0.022664124515706218,
+      "expert_std": 0.17347260016531327,
+      "pred_std": 0.007325116586323368
+    },
+    "dy": {
+      "mae_first_step": 0.4316267276927829,
+      "corr_first_step": -0.22488372955699026,
+      "expert_std": 0.41468161351489125,
+      "pred_std": 0.003891805966466807
+    },
+    "dz": {
+      "mae_first_step": 0.9665157843567431,
+      "corr_first_step": 0.06996173380486195,
+      "expert_std": 0.3181412265535558,
+      "pred_std": 0.005796227577856205
+    },
+    "drx": {
+      "mae_first_step": 2.6685672806739893,
+      "corr_first_step": -0.16523239878132165,
+      "expert_std": 0.03582844324003457,
+      "pred_std": 0.006294507207286464
+    },
+    "dry": {
+      "mae_first_step": 1.2376963437932784,
+      "corr_first_step": 0.22224430794648134,
+      "expert_std": 0.03703700278998523,
+      "pred_std": 0.0021374378482826467
+    },
+    "drz": {
+      "mae_first_step": 0.4249096001863116,
+      "corr_first_step": 0.05742270598037355,
+      "expert_std": 0.03833588226380699,
+      "pred_std": 0.00340210594065321
+    },
+    "gripper": {
+      "mae_first_step": 0.4831981790065765,
+      "corr_first_step": -0.05944087058689323,
+      "expert_std": 0.49839743177508455,
+      "pred_std": 0.0012747330190724026
+    }
+  },
+  "gripper_first_step_acc": 0.54,
+  "gripper_acc_by_horizon": [
+    0.54,
+    0.48,
+    0.46,
+    0.46,
+    0.52,
+    0.5,
+    0.48,
+    0.48,
+    0.5,
+    0.52,
+    0.5,
+    0.48,
+    0.5,
+    0.52,
+    0.5,
+    0.52
+  ],
+  "err_by_horizon_mean": [
+    1.1164,
+    0.7652,
+    0.6954,
+    0.8437,
+    1.0249,
+    0.853,
+    1.1572,
+    0.5732,
+    0.8778,
+    0.8347,
+    0.8591,
+    0.8547,
+    1.0955,
+    0.3816,
+    1.281,
+    0.3871
+  ],
+  "expert_speed_mean": 0.5014386817530241,
+  "pred_first_step_speed_mean": 1.9005604831841354
+}

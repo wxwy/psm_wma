@@ -1,0 +1,49 @@
+{
+  "action_loss": 0.69917231798172,
+  "vision_loss": 0.13070297241210938,
+  "grad_action": {
+    "action2llm": 0.581633399831398,
+    "llm2action": 2.2660691483648367,
+    "vae2llm": 3.1044553782730917,
+    "layers\\.0\\..*moe_gen": 0.6603315070676925,
+    "layers\\.1\\..*moe_gen": 0.9450285367975404,
+    "layers\\.2\\..*moe_gen": 0.7637269592525844,
+    "layers\\.0\\.": 4.312724100162382
+  },
+  "grad_vision": {
+    "action2llm": 0.07435035331250267,
+    "llm2action": 0.0,
+    "vae2llm": 1.9337130779475442,
+    "layers\\.0\\..*moe_gen": 0.2887540698951562,
+    "layers\\.1\\..*moe_gen": 0.4191434607671368,
+    "layers\\.2\\..*moe_gen": 0.43161931210488114,
+    "layers\\.0\\.": 1.9363869147514938
+  },
+  "counts_action": {
+    "action2llm": 2,
+    "llm2action": 2,
+    "vae2llm": 2,
+    "layers\\.0\\..*moe_gen": 10,
+    "layers\\.1\\..*moe_gen": 10,
+    "layers\\.2\\..*moe_gen": 10,
+    "layers\\.0\\.": 19
+  },
+  "counts_vision": {
+    "action2llm": 2,
+    "llm2action": 0,
+    "vae2llm": 2,
+    "layers\\.0\\..*moe_gen": 10,
+    "layers\\.1\\..*moe_gen": 10,
+    "layers\\.2\\..*moe_gen": 10,
+    "layers\\.0\\.": 19
+  },
+  "ratios": {
+    "action2llm": 7.822873381471761,
+    "llm2action": null,
+    "vae2llm": 1.6054374424401066,
+    "layers\\.0\\..*moe_gen": 2.286830129554373,
+    "layers\\.1\\..*moe_gen": 2.2546660636620763,
+    "layers\\.2\\..*moe_gen": 1.7694457542414204,
+    "layers\\.0\\.": 2.227201633778782
+  }
+}

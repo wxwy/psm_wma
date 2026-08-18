@@ -1,0 +1,51 @@
+[replay] server: /gemini/code/models/Cosmos3-Edge-Policy-DROID
+[replay] 0/50 t=0
+[replay] 10/50 t=40
+[replay] 20/50 t=80
+[replay] 30/50 t=120
+[replay] 40/50 t=160
+{
+  "checkpoint": "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
+  "episode": "episode_000000",
+  "instruction": "put the white mug on the left plate and put the yellow and white mug on the right plate",
+  "num_queries": 50,
+  "stride": 4,
+  "input_construction": "single real frame -> server repeats x17 (wam condition_frame_indexes_vision=[0])",
+  "per_dim": {
+    "dx": {
+      "mae_first_step": 1.6026224844250827,
+      "corr_first_step": 0.022664124515706218,
+      "expert_std": 0.17347260016531327,
+      "pred_std": 0.007325116586323368
+    },
+    "dy": {
+      "mae_first_step": 0.4316267276927829,
+      "corr_first_step": -0.22488372955699026,
+      "expert_std": 0.41468161351489125,
+      "pred_std": 0.003891805966466807
+    },
+    "dz": {
+      "mae_first_step": 0.9665157843567431,
+      "corr_first_step": 0.06996173380486195,
+      "expert_std": 0.3181412265535558,
+      "pred_std": 0.005796227577856205
+    },
+    "drx": {
+      "mae_first_step": 2.6685672806739893,
+      "corr_first_step": -0.16523239878132165,
+      "expert_std": 0.03582844324003457,
+      "pred_std": 0.006294507207286464
+    },
+    "dry": {
+      "mae_first_step": 1.2376963437932784,
+      "corr_first_step": 0.22224430794648134,
+      "expert_std": 0.03703700278998523,
+      "pred_std": 0.0021374378482826467
+    },
+    "drz": {
+      "mae_first_step": 0.4249096001863116,
+      "corr_first_step": 0.05742270598037355,
+      "expert_std": 0.03833588226380699,
+      "pred_std": 0.00340210594065321
+   
+[replay] wrote artifacts/g0/r06/open_loop_zeroshot/curves.png
