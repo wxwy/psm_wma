@@ -124,3 +124,18 @@
   3. G0-R12 的整段 episode 因果编码 cache 被 supersede(parity 实测 FAIL:整段因果 ≠ 窗口独立);其 artifact 保留为 R12 证据,不覆盖、不沿用。
   4. Memory representation 未冻结;不得因未来 Local Memory 可能使用 continuous Wan latent 而提前修改 Policy 的 native visual distribution。
 - 原因：cache 必须与训练/推理的窗口独立编码契约逐位一致(因果 VAE 上下文敏感性已由 parity 探针实证);exact-window 是构造上保持原生训练分布的唯一零风险路径。
+
+## D014 Policy 与 Memory 的 RGB 表征解耦
+
+- 日期：2026-08-16
+- 状态：生效
+- 决策：
+  1. 当前 Policy/WAM 主路径保持 Cosmos-native temporal sample contract；LIBERO 继续以原生 17-frame clip 做 Wan2.2 VAE temporal encode，并允许将 exact-window 结果离线缓存。离线化本身不构成改成 MoWA-style whole-episode latent 的理由。
+  2. Memory 从 episode 开头按因果历史积累。对于 anchor `t`，Memory 只读取 `f0...f(t-1)` 及对应已执行 action/state/depth/pose 等证据；Memory update cadence 可与 action chunk 的 policy re-query cadence 解耦。
+  3. Temporal Local Memory 的视觉表征暂不冻结，保留历史 Cosmos prime `z0`、MoWA-style continuous Wan regular latent、以及独立 RGB/Depth/State/Action evidence encoder 等候选。只有 Local 调研与 R08/R09 给出证据后，才决定是否需要 continuous Wan latent。
+  4. Spatial Global Memory 默认不绑定 Wan2.2 latent；主候选仍为 RGB semantic feature + depth/geometry + pose/trajectory + xyz/region + timestamp/confidence 的 persistent spatial store。Wan latent 仅作为 feature 候选之一。
+  5. 若 Local 最终选择 continuous Wan regular latent，新增独立的 episode-level memory latent cache；默认不以该 cache 替换 Policy 的 native current-condition cache。把 regular `z_k` 进一步接入 Policy 必须作为独立架构实验验证。
+  6. `cosmos-framework/docs_zh/psm_wma/REGULAR_EPISODE_LATENT_OVERFIT.md` 从“当前优先规划”降级为候选实验记录，不再作为 PSM-WMA 项目级规划的权威入口。项目级架构/规划统一放在根仓库 `docs/build/` 与本文件；`cosmos-framework` 子模块只保留与具体代码实现直接相关的局部说明与测试文档。
+- 与既有决策关系：D010 对 **Policy native offline cache** 继续生效；D013 明确 Policy 的 exact-window cache 主线，D014 明确 D010/D013 不自动约束未来 Memory encoder/cache 的表征选择。
+- 详细记录：`docs/build/PSM-WMA_RGB_representation_and_memory_encoding_plan_v0.1.md`。
+- 原因：在 Memory 方案尚未冻结前提前把 Policy 从 native prime condition 改成 whole-episode regular latent，会同时引入不必要的 representation distribution shift 和实验变量；解耦后可以先保住 Cosmos baseline，再分别用实验决定 Local 的时间表征与 Global 的空间表征。
