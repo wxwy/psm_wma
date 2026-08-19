@@ -139,3 +139,26 @@
 - 与既有决策关系：D010 对 **Policy native offline cache** 继续生效；D013 明确 Policy 的 exact-window cache 主线，D014 明确 D010/D013 不自动约束未来 Memory encoder/cache 的表征选择。
 - 详细记录：`docs/build/PSM-WMA_RGB_representation_and_memory_encoding_plan_v0.1.md`。
 - 原因：在 Memory 方案尚未冻结前提前把 Policy 从 native prime condition 改成 whole-episode regular latent，会同时引入不必要的 representation distribution shift 和实验变量；解耦后可以先保住 Cosmos baseline，再分别用实验决定 Local 的时间表征与 Global 的空间表征。
+
+## D015 LIBERO 数据布局与 cosmos-framework fork 差异
+
+- 日期：2026-08-18
+- 状态：生效
+- 决策：
+  1. 本机 LIBERO 数据四套 `libero_{10,goal,object,spatial}_no_noops_1.0.0_lerobot` 均为 20 FPS、LeRobot v2.1 布局（`data/chunk-*/episode_*.parquet` + `meta/episodes.jsonl` + `meta/tasks.jsonl`），是 20 FPS 转换版，与内置 quantile_rot 统计口径一致（内置统计按 20 FPS 转换计算，见 `libero_lerobot_dataset.py:17-21` 注释）。
+  2. 本地 `cosmos-framework` 是 wxwy fork（upstream=NVIDIA/cosmos-framework）。官方原生支持 libero v3 布局；本地提交 `59653c5 fix: support per-episode LeRobot LIBERO layout` 在其上叠加 v2.1 布局 fallback（2 文件 ~30 行，纯增量，先试 v3 再 fallback v2.1）。
+  3. 跨机迁移时，若对方恢复官方源码（无 59653c5），无法读 v2.1 数据；需 cherry-pick 59653c5 或改用 `nvidia/LIBERO_LeRobot_v3`（内容与 v2.1 完全一致：379 集/101469 帧/20 FPS/7D action）。
+  4. `action_normalization` 一律 `quantile_rot` + `action_space=frame_wise_relative` + `rotation_space=6d` + `action_stats_path=null`（用内置统计）。
+- 原因：FPS 与数据布局错配会让逐帧 action delta 归一化错误（10 FPS delta 跨 2× wall-clock 运动），且 fork 差异会导致两机训练/评测行为不一致。
+
+## D016 diffusion_expert load_weights_from_pretrained 的语义（warm-start 下为 no-op）
+
+- 日期：2026-08-18
+- 状态：生效
+- 决策：
+  1. `diffusion_expert_config.load_weights_from_pretrained` 唯一使用点是 `omni_mot_model.py:436-438`，控制的是 fresh-init 时的 `init_moe()`（把 und-tower 权重复制给 moe_gen，见 `unified_mot.py:2194`），**不是**「从 checkpoint 加载 diffusion expert 权重」。
+  2. warm-start（`checkpoint.load_path` 非空，即 `has_load_path=True`）下，`has_checkpoint = has_resumable_checkpoint or has_load_path = True`，故 `load_pretrained_diffusion_weights = flag and not has_checkpoint` 恒为 False，`init_moe()` 不执行。因此 `load_weights_from_pretrained=False` 在 warm-start 场景是 no-op（冗余），moe_gen **不是随机初始化**，而是从 load_path（DROID DCP）加载（`omni_mot_model.py:376-380` 注释：generation pathway was already populated from load_path）。
+  3. DROID DCP **含** moe_gen：R02 audit `warm_start_decision.inherit` 明确列出 `moe_gen`/`time_embedder`/`vae2llm`/`llm2vae`/`action2llm`/`llm2action`/`action_modality_embed`/`language_model.*.k_norm_und_for_gen` 从 DROID DCP 继承。DROID 是 Generator-side Full SFT，训过 diffusion expert。
+  4. 因此正式 action-only baseline 的起点不是「diffusion expert 随机初始化从零学」，diffusion expert 已有 DROID 预训练。真正靠 LIBERO SFT 从零学的只有 action head 的 domain 5（LIBERO 域）embedding 行（warmstart config 注释：LIBERO owns domain 5，DROID domain 8 保留）。
+- 事实边界：`load_weights_from_pretrained=False` 是 R04 admission-smoke 继承的 defensive 设置，仅在 fresh-init（无 load_path）才产生效果（那时 =False 会让 moe_gen 随机初始化而非从 und-tower 复制；=True 则执行 `init_moe()` 从 und-tower 复制）。
+- 原因：误判这个 flag 会把「diffusion expert 能力不足」误当作 vision 坍缩的候选根因；实际上 diffusion expert 是 DROID 预训练，坍缩根因在 LIBERO SFT 的目标捷径（静态未来 posterior collapse），与已确认的「静态未来捷径是唯一根因」结论一致。

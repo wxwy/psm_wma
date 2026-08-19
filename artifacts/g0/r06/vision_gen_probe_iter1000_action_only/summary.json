@@ -1,0 +1,12 @@
+{
+  "real_lib": {
+    "n_frames": 17,
+    "adj_mae_mean": 3.7971482276916504,
+    "adj_mae_median": 1.8273875713348389,
+    "adj_mae_p90": 5.998873710632324,
+    "gen_mae_median": 1.7042999267578125,
+    "f0_f1_mae": 27.947805404663086,
+    "action_rows": 16,
+    "mp4": "/gemini/code/psm_wma/artifacts/g0/r06/vision_gen_probe_iter1000_action_only/real_lib.mp4"
+  }
+}

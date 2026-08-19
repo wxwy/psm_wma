@@ -1,0 +1,42 @@
+{
+  "text_lib_gray": {
+    "n_frames": 17,
+    "adj_mae_mean": 2.4148166179656982,
+    "adj_mae_median": 2.067316770553589,
+    "adj_mae_p90": 4.786476135253906,
+    "gen_mae_median": 1.5654855966567993,
+    "f0_f1_mae": 3.8053741455078125,
+    "mp4": "/gemini/code/psm_wma/artifacts/g0/r06/vision_gen_probe_zeroshot/text_lib_gray.mp4",
+    "action_rows": 16
+  },
+  "text_droid0_gray": {
+    "n_frames": 17,
+    "adj_mae_mean": 1.8595482110977173,
+    "adj_mae_median": 1.5899913311004639,
+    "adj_mae_p90": 3.4189071655273438,
+    "gen_mae_median": 1.1059671640396118,
+    "f0_f1_mae": 2.2298481464385986,
+    "mp4": "/gemini/code/psm_wma/artifacts/g0/r06/vision_gen_probe_zeroshot/text_droid0_gray.mp4",
+    "action_rows": 16
+  },
+  "text_droid1_gray": {
+    "n_frames": 17,
+    "adj_mae_mean": 2.2503714561462402,
+    "adj_mae_median": 1.4580637216567993,
+    "adj_mae_p90": 4.055996894836426,
+    "gen_mae_median": 1.1834818124771118,
+    "f0_f1_mae": 3.9280803203582764,
+    "mp4": "/gemini/code/psm_wma/artifacts/g0/r06/vision_gen_probe_zeroshot/text_droid1_gray.mp4",
+    "action_rows": 16
+  },
+  "real_lib": {
+    "n_frames": 17,
+    "adj_mae_mean": 2.9371886253356934,
+    "adj_mae_median": 2.894378662109375,
+    "adj_mae_p90": 4.541079521179199,
+    "gen_mae_median": 3.138117551803589,
+    "f0_f1_mae": 2.1601054668426514,
+    "mp4": "/gemini/code/psm_wma/artifacts/g0/r06/vision_gen_probe_zeroshot/real_lib.mp4",
+    "action_rows": 16
+  }
+}

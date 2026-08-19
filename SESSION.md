@@ -46,7 +46,8 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 | G0-R05 | Codex/Kimi | DONE | `artifacts/g0/r05/R05_libero_tiny_overfit.json`、R05 审查报告 | Gate `PASS`；100 步训练、两次 reload、checkpoint 完整性和独立验收全部通过 |
 | DOC-R06 | Kimi | REVIEW | `docs/build/PSM-WMA_G0_R06_closed_loop_baseline_runbook_v0.1.md` | 已创建并经实执验证；两处偏差（RLinf venv、TRITON_LIBCUDA_PATH）待升 v0.2 |
 | G0-R06 | Kimi | REVIEW | `artifacts/g0/r06/`、`docs/build/PSM-WMA_REVIEW-G0-R06_closed_loop_2026-08-15.md` | Gate `FAIL_SR_ZERO`：链路全绿、逐位可复现，但 zero-shot SR=0/3；待用户决策 baseline |
-| G0-R06-SFT-E4 | Kimi | DONE | `artifacts/g0/r06/gradient_flow_probe/probe.py` | E4 PASS：vae2llm/early moe_gen action/vision grad ratio 1.6-2.3，信号能回流，非结构性阻断；产物 `result.json`；恢复训练至 1000 步后复测 |
+| G0-R06-SFT-E4 | Kimi | DONE | `artifacts/g0/r06/gradient_flow_probe/probe.py` | E4 v2 方向探针完成：compile 禁用、latent cache、8 sample、两次 seed-fixed forward；vae2llm cosine 均值 0.065，early moe_gen cosine -0.079~0.018，action/vision 梯度在共享层方向几乎正交；判读为“部分冲突→方向冲突”，需改训练配置；产物 `result_v2.json` |
+| G0-R06-SFT-COLLAPSE | Kimi/DS | DONE | `docs/build/PSM-WMA_VISION_COLLAPSE_*_2026-08-18.md`、`artifacts/g0/r06/action_only_probe/` | DS 三个实验 + Kimi 复核定位「静态未来」坍缩捷径；action-only tiny-overfit PASS：action_flow_loss 1.359→0.078(↓94.3%)、action_x0_mae 0.676→0.135(↓80%)、held-out(index4)=0.080、total_loss=action×10 全程成立 → 坍缩是唯一根因；D015 复核通过 |
 
 ## 最近完成
 
@@ -233,3 +234,63 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - 决策：**暂不恢复训练**；等待 DS 对 E4 结果做进一步判读，共同完成问题定位后再决定是否继续训练/调整 LR/schedule/改配置。
 - 产物：`artifacts/g0/r06/gradient_flow_probe/result.json`
 - 交接文件：`docs/build/PSM-WMA_HANDOFF_R06_E4_gradient_flow_probe_2026-08-17.md`。
+
+### G0-R06-SFT vision 坍缩诊断（2026-08-18，DS/Claude 执行，待 Kimi 复核）
+
+- 触发：用户观察「预测的 16 帧就是重复输入帧」→「画面一直不变，action 才一样；要么模型坍缩，要么训练数据编码 z0/z1-4 差别不大」。
+- 三个新实验（产物均已落盘）：
+  - 实验 1 zero-shot 画面生成：`Cosmos3-Edge-Policy-DROID` 原始 checkpoint，纯灰帧+文本也能生成运动（gen_median 1.1~1.6，与真实 rollout ~1.6 同量级；real_lib=3.138）。**排除「模型固有坍缩」**。产物 `artifacts/g0/r06/vision_gen_probe_zeroshot/`，脚本 `tools/g0/r06_vision_gen_probe.py`。
+  - 实验 2 latent cache z0..z4 相邻差异：38 ep/9199 窗口，z0-z1 MAE=0.373（=latent std 0.776 的 48%），z0-z4=0.504，复制占比 0.00%。**排除「训练数据编码压平 z1-4」**。产物 `artifacts/g0/r06/latent_cache_z_probe_summary.json`，脚本 `tools/g0/r06_latent_cache_z_probe.py`。
+  - 实验 3 训练 loss 曲线：iter1=13.86→iter50=5.0→iter100=2.3→iter100~811 平台 1.4~2.1；配 E4 v2 分项（iter800 vision_loss 0.19 ≪ action_loss 0.57）与 R05（vision 降 3.5× > action 降 1.3×）。**坐实「训练过程坍缩」**。
+- 结论：**坍缩发生在 SFT 训练这一步**，机制是 vision flow-matching 的「静态未来」捷径（posterior collapse）——LIBERO 帧间动作幅度小，模型学「未来≈复制条件 z0」快速压低 vision_flow_loss，生成塔 z1-4 坍缩 ⇒ action velocity head 只能输出恒定动作。
+- 与 E4 v2 衔接：E4 v2 的「正交」结论不变（排除了梯度冲突），本次补全「目标层面坍缩捷径」这一 E4 v2 未覆盖的维度。
+- 待确认张力（E2）：E2 teacher-forced「real≈black」需确认喂的是 cache latent（运动本就 ~0.3，掩盖差异）还是在线编码 latent——决定是否还有 action head 自身的第二根因。
+- 下一步建议：先复查 E2 输入，再跑 action-only tiny-overfit（移除 vision loss），验证「无坍缩捷径时 action 能否脱离平台」。
+- 交接文件：`docs/build/PSM-WMA_VISION_COLLAPSE_DS_DIAGNOSIS_2026-08-18.md`。
+
+### G0-R06-SFT action-only tiny-overfit 启动（2026-08-18，DS 执行）
+
+- 背景：Kimi 复核同意「训练坍缩/静态未来捷径」诊断，双方一致下一步跑 action-only tiny-overfit（关 vision loss）验证唯一根因。Kimi 额度 403 用尽，用户授权 DS 启动。
+- **Kimi 原版 TOML 两处 bug，DS 修正**（dry-run 复现确认）：
+  1. `[model.config.rectified_flow_training_config]` 段违反 TOML schema（`ModelConfig extra="forbid"`）→ pydantic `ValidationError: model.config Extra inputs are not permitted`；`loss_scale`/`action_loss_weight` 不属于 TOML schema，只能走 CLI override。
+  2. `experiment="action_policy_libero_edge_action_only_probe"` 未在 Hydra ConfigStore 注册 → compose 失败。
+- 修正（最小改动）：`experiment` → `action_policy_libero_edge_tiny_overfit`（复用 R05 4 样本：train index 0-3 / held-out index 4 / 在线编码），`loss_scale=0.0` 由 CLI `model.config.rectified_flow_training_config.loss_scale=0.0` 传入；`action_loss_weight` 走 tiny_overfit 默认 10.0；`vision_gen` 前向路径保留（weight=0 而非关闭 vision_gen）。
+- 起点：原始 `Cosmos3-Edge-Policy-DROID-dcp`（与 R05 joint tiny-overfit 同起点，唯一变量 = vision loss 开关）。
+- 训练：后台 torchrun 单卡 `CUDA_VISIBLE_DEVICES=0`，100 步，cycle_lengths=[100] warmup=[0]，非 fused AdamW。产物 `artifacts/g0/r06/action_only_probe/{train.log,step_metrics.jsonl,held_out_metrics.jsonl}` + checkpoint `iter_000000100`。
+- 判据：PASS = 100/100 finite 且 action_flow_loss/action_x0_reconstruction_mae 从初值显著下降；FAIL = 平台/NaN；BLOCKED = 环境/资源/加载错误。
+- 结果出来后 DS 复核判读，回写本文件并告知 Kimi（`docs/build/INBOX_DS.md`）。
+
+### G0-R06-SFT action-only 结果：PASS（2026-08-18，DS 判读）
+
+- **PASS**：100/100 步 finite，无 NaN/失败，checkpoint 四件齐全。action_flow_loss 1.359→0.078（↓94.3%），action_x0_mae 0.676→0.135（↓80.0%），held-out(index4) action_flow_loss=0.080（与训练集一致，泛化正常）。
+- 决定性证据：① `total_loss = action_flow_loss × 10` 全程成立（`loss_scale=0.0` 生效，反向只含 action）；② 对比 R05 joint（同起点原始 DCP、同 4 样本、唯一变量 = vision loss 开关）action 仅 ↓17%，本次 action-only ↓94%。
+- **结论：vision flow-matching「静态未来」坍缩捷径是 action 学不动的唯一根因**。移除 vision loss 后 action 立即快速学习。
+- 产物：`artifacts/g0/r06/action_only_probe/{train.log,step_metrics.jsonl,held_out_metrics.jsonl}` + checkpoint `iter_000000100`。
+- 下一步：Kimi 复核判读，双方一致后定长期方案（action-only 或改 vision 目标），期间不恢复 joint loss 训练。
+
+### G0-R06-SFT 数据集版本与 fork 差异确认（2026-08-18，DS 调查）
+
+- **10 FPS vs 20 FPS 归一化匹配**（回应另一机 DS 疑问）：本机四套 `libero_{10,goal,object,spatial}_no_noops_1.0.0_lerobot` 均为 fps=20、codebase_version=v2.1（即 20 FPS 转换版，非社区版 `lerobot/libero_*` 的 10 FPS）。内置 `libero_native_frame_wise_relative_rot6d.json` 的 quantile_rot 统计按 20 FPS 转换计算（`libero_lerobot_dataset.py:17-21` 注释明示），二者口径一致，无版本错配。`action_normalization` 保持 `quantile_rot` + `action_space=frame_wise_relative` + `rotation_space=6d` + `action_stats_path=null`（=R05/R06 现用配置），无需改动。
+- **fork 差异（重要，两机行为一致性风险）**：本地 `cosmos-framework` 是 wxwy fork（upstream=NVIDIA/cosmos-framework）。官方原生支持 libero **v3 布局**（`data/chunk-*/file-*.parquet` + `meta/episodes/chunk-*/file-*.parquet` + `meta/tasks.parquet`）；本地在官方之上叠加提交 `59653c5 fix: support per-episode LeRobot LIBERO layout`（作者 MangoGo，2026-08-14），加了 **v2.1 布局 fallback**（`data/chunk-*/episode_*.parquet` + `meta/episodes.jsonl` + `meta/tasks.jsonl` + video_path 模板加 `episode_index`）。改动 2 文件 ~30 行、纯增量（先试 v3 再 fallback v2.1），不影响官方 v3 路径。
+- 本机数据实测为 **v2.1 布局**（episodes.jsonl / tasks.jsonl / episode_*.parquet 均在），走 fallback 分支。
+- **对新机含义**：新机恢复官方源码（无 59653c5）只能读 v3 布局；要读本机 v2.1 数据需 cherry-pick `59653c5` 或改用 `nvidia/LIBERO_LeRobot_v3` 数据（内容与 v2.1 一致：379 集/101469 帧/20 FPS/7D action）。两条路择一，否则两机行为不一致。
+
+### G0-R06-SFT action-only iter1000 完整评测（2026-08-19，DS 判读）
+
+- **训练完成**：1000 步（=28.5 epoch），action_flow_loss 1.326→0.186（↓86%），action_x0_mae 0.675→0.199（↓70%），vision_flow_loss 0.044→0.343（自由漂移未爆炸）。产物 `artifacts/g0/r06/action_only_formal_128x2_1000step/`。
+- **闭环 SR = 0/3**：3 ep 全 520 步满 rollout，`error=null`，`success=False`，与 joint iter300-700 一致。产物 `eval_task4_iter1000_action_only/`。
+- **闭环动作退化**：3 ep 动作两两 corr=0.999、MAD=0.0067（观察完全不敏感）；grip 每步抖动（500/520）；pos 单步位移 1.49（超界）。→「失控抖动 + 恒定快速平移」。
+- **open-loop（喂 GT 帧）corr≈0、pred_std→0**：三组对比（zeroshot / iter800 joint / iter1000 action-only）corr 全≈0，pred_std 全远小于 expert_std（0.017-0.081 vs 0.17-0.41）；训练只把恒定动作幅值从 zeroshot 超快 1.90 调到接近专家均值 0.68。→ **action head 从未学会「观察→动作」条件化**。产物 `open_loop_iter1000_action_only/`。
+- **世界预测 gen_mae_median=1.704（健康）**：喂真实帧未来预测未坍缩（vs joint iter700 ~0.65 坍缩、zeroshot real_lib 3.138）。→ **vision 生成未被 action loss 带崩**。产物 `vision_gen_probe_iter1000_action_only/`。
+- **核心结论（推翻之前因果链）**：vision 静态未来坍缩捷径**不是** action 学不动的唯一根因。移除 vision loss 后 action loss 虽收敛、vision 生成也健康，但 action head 仍输出「无条件恒定动作」，闭环 SR 仍 0。**真正问题 = action head 没学会条件化映射**（结合 D016「只有 action head 的 domain 5 从零学」）。
+- **根因方向（待 Kimi 复核）**：① action head 从零训练 + 37 ep 数据量不足；② flow-matching 的 marginal 捷径（小数据最优解=输出均值动作）；③ 观察信息未有效流入 action 决策（slot 注入/cross-attention 结构性阻断）。
+- **下一步**：转查 action head 观察注入路径 + 数据量方案，待 Kimi 复核后再定。详见 `docs/build/INBOX_DS.md` 2026-08-19 条目。
+
+### G0-R06-SFT 根因定位：latent cache 编码契约不一致（2026-08-19，DS 对比 fork main vs v2）
+
+- **用户转折性输入**：新机器用官方 cosmos 源码（fork 的 v2 分支）+ v3 数据单任务 overfit 成功，判断「大概率是训练数据编码问题」。DS 对比本机 fork main vs v2 分支，定位根因。
+- **对比结论**：main 相对 v2 的唯一实质性数据编码差异 = **latent cache**（其余 diff 是 import 路径 rename + v2.1 布局 fallback）。
+- **根因**：cache builder 编码**跳过**了训练在线路径的 transform resize + reflection-pad。concat_view 256×512 → 在线 `reflection_pad_to_target` resize 到 160×320 + pad 到 192×320 → VAE 编码 `[5,48,12,20]`；而 cache 直接编码 256×512 → `[5,48,16,32]`。两者 latent 尺寸与视觉内容根本不同。
+- **关键代码**：`transforms.py:145` scaling=0.625（命中 `VIDEO_RES_SIZE_INFO["256"]["16,9"]=(320,192)`）；`build_cosmos_libero_latent_dataset.py:56-68` `_encode_window` 直接编码 256×512 无 transform；parity 脚本 `generate_r06_latent_cache_parity.py` 的 `_online_reference` 也是直接 `tokenizer.encode`，从未覆盖 resize/pad（=此前「parity 盲区」落点）。
+- **为何解释所有现象**：训练 loss 收敛（cache 自洽）；闭环 SR=0/open-loop corr≈0（推理走在线，vision 与训练 cache 内容不同 → 条件化失效）；vision gen 健康 gen_mae=1.704（推理吃正确在线 latent，印证「vision 没坏，坏在训练输入编码」）；v2 成功（纯在线，训练/推理一致）。
+- **修复方向**：cache builder 模拟完整在线路径（resize 160×320 + pad 192×320 后编码存 `[5,48,12,20]`），或弃用 latent cache 改纯在线与 v2 对齐。详见 `docs/build/INBOX_DS.md` 2026-08-19 条目，待 Kimi 复核。

@@ -1,0 +1,337 @@
+{
+  "num_samples": 8,
+  "patterns": [
+    "action2llm",
+    "llm2action",
+    "vae2llm",
+    "layers\\.0\\..*moe_gen",
+    "layers\\.1\\..*moe_gen",
+    "layers\\.2\\..*moe_gen",
+    "layers\\.0\\."
+  ],
+  "per_sample": [
+    {
+      "sample_idx": 0,
+      "action_loss": 0.5544864535331726,
+      "vision_loss": 0.15179802477359772,
+      "action_norm_total": 6.2869391441345215,
+      "vision_norm_total": 0.7349899411201477,
+      "sigma_match": null,
+      "norms_action": {
+        "action2llm": 0.75,
+        "llm2action": 2.671875,
+        "vae2llm": 2.09375,
+        "layers\\.0\\..*moe_gen": 0.87109375,
+        "layers\\.1\\..*moe_gen": 0.8515625,
+        "layers\\.2\\..*moe_gen": 0.94921875,
+        "layers\\.0\\.": 5.0
+      },
+      "norms_vision": {
+        "action2llm": 0.01080322265625,
+        "llm2action": 0.0,
+        "vae2llm": 0.4375,
+        "layers\\.0\\..*moe_gen": 0.06884765625,
+        "layers\\.1\\..*moe_gen": 0.10107421875,
+        "layers\\.2\\..*moe_gen": 0.11767578125,
+        "layers\\.0\\.": 0.56640625
+      },
+      "cosine": {
+        "action2llm": -0.1658446043729782,
+        "llm2action": NaN,
+        "vae2llm": -0.05852941423654556,
+        "layers\\.0\\..*moe_gen": -0.08154948800802231,
+        "layers\\.1\\..*moe_gen": -0.18444344401359558,
+        "layers\\.2\\..*moe_gen": -0.19451221823692322,
+        "layers\\.0\\.": -0.034715984016656876
+      }
+    },
+    {
+      "sample_idx": 1,
+      "action_loss": 0.5685996413230896,
+      "vision_loss": 0.16796116530895233,
+      "action_norm_total": 6.641093730926514,
+      "vision_norm_total": 0.8922913074493408,
+      "sigma_match": null,
+      "norms_action": {
+        "action2llm": 0.765625,
+        "llm2action": 2.71875,
+        "vae2llm": 2.40625,
+        "layers\\.0\\..*moe_gen": 0.91796875,
+        "layers\\.1\\..*moe_gen": 0.8984375,
+        "layers\\.2\\..*moe_gen": 1.0078125,
+        "layers\\.0\\.": 5.25
+      },
+      "norms_vision": {
+        "action2llm": 0.01422119140625,
+        "llm2action": 0.0,
+        "vae2llm": 0.609375,
+        "layers\\.0\\..*moe_gen": 0.08544921875,
+        "layers\\.1\\..*moe_gen": 0.130859375,
+        "layers\\.2\\..*moe_gen": 0.13671875,
+        "layers\\.0\\.": 0.6171875
+      },
+      "cosine": {
+        "action2llm": -0.20942358672618866,
+        "llm2action": NaN,
+        "vae2llm": -0.2656361758708954,
+        "layers\\.0\\..*moe_gen": -0.15340694785118103,
+        "layers\\.1\\..*moe_gen": -0.25049081444740295,
+        "layers\\.2\\..*moe_gen": -0.24566128849983215,
+        "layers\\.0\\.": -0.12720654904842377
+      }
+    },
+    {
+      "sample_idx": 2,
+      "action_loss": 0.5642945170402527,
+      "vision_loss": 0.16726839542388916,
+      "action_norm_total": 6.973956108093262,
+      "vision_norm_total": 1.7193790674209595,
+      "sigma_match": null,
+      "norms_action": {
+        "action2llm": 0.78125,
+        "llm2action": 2.71875,
+        "vae2llm": 3.046875,
+        "layers\\.0\\..*moe_gen": 0.93359375,
+        "layers\\.1\\..*moe_gen": 0.96484375,
+        "layers\\.2\\..*moe_gen": 1.109375,
+        "layers\\.0\\.": 5.3125
+      },
+      "norms_vision": {
+        "action2llm": 0.0211181640625,
+        "llm2action": 0.0,
+        "vae2llm": 1.234375,
+        "layers\\.0\\..*moe_gen": 0.1455078125,
+        "layers\\.1\\..*moe_gen": 0.263671875,
+        "layers\\.2\\..*moe_gen": 0.306640625,
+        "layers\\.0\\.": 1.1171875
+      },
+      "cosine": {
+        "action2llm": 0.19830374419689178,
+        "llm2action": NaN,
+        "vae2llm": 0.5444176197052002,
+        "layers\\.0\\..*moe_gen": 0.08400829881429672,
+        "layers\\.1\\..*moe_gen": 0.06849782913923264,
+        "layers\\.2\\..*moe_gen": 0.2630172073841095,
+        "layers\\.0\\.": 0.2076619267463684
+      }
+    },
+    {
+      "sample_idx": 3,
+      "action_loss": 0.572995662689209,
+      "vision_loss": 0.18366435170173645,
+      "action_norm_total": 6.535127639770508,
+      "vision_norm_total": 1.3246591091156006,
+      "sigma_match": null,
+      "norms_action": {
+        "action2llm": 0.76171875,
+        "llm2action": 2.734375,
+        "vae2llm": 2.1875,
+        "layers\\.0\\..*moe_gen": 0.91015625,
+        "layers\\.1\\..*moe_gen": 0.9140625,
+        "layers\\.2\\..*moe_gen": 0.9921875,
+        "layers\\.0\\.": 5.21875
+      },
+      "norms_vision": {
+        "action2llm": 0.0191650390625,
+        "llm2action": 0.0,
+        "vae2llm": 0.84375,
+        "layers\\.0\\..*moe_gen": 0.134765625,
+        "layers\\.1\\..*moe_gen": 0.1767578125,
+        "layers\\.2\\..*moe_gen": 0.1953125,
+        "layers\\.0\\.": 0.9765625
+      },
+      "cosine": {
+        "action2llm": -0.07191149145364761,
+        "llm2action": NaN,
+        "vae2llm": -0.12047760933637619,
+        "layers\\.0\\..*moe_gen": -0.07538701593875885,
+        "layers\\.1\\..*moe_gen": -0.2018374651670456,
+        "layers\\.2\\..*moe_gen": -0.14233365654945374,
+        "layers\\.0\\.": 0.07192468643188477
+      }
+    },
+    {
+      "sample_idx": 4,
+      "action_loss": 0.5698575377464294,
+      "vision_loss": 0.19439753890037537,
+      "action_norm_total": 6.744318962097168,
+      "vision_norm_total": 1.449985384941101,
+      "sigma_match": null,
+      "norms_action": {
+        "action2llm": 0.78515625,
+        "llm2action": 2.796875,
+        "vae2llm": 2.046875,
+        "layers\\.0\\..*moe_gen": 0.91796875,
+        "layers\\.1\\..*moe_gen": 0.921875,
+        "layers\\.2\\..*moe_gen": 0.98828125,
+        "layers\\.0\\.": 5.5
+      },
+      "norms_vision": {
+        "action2llm": 0.019775390625,
+        "llm2action": 0.0,
+        "vae2llm": 0.88671875,
+        "layers\\.0\\..*moe_gen": 0.1435546875,
+        "layers\\.1\\..*moe_gen": 0.2001953125,
+        "layers\\.2\\..*moe_gen": 0.2275390625,
+        "layers\\.0\\.": 1.09375
+      },
+      "cosine": {
+        "action2llm": -0.0033181544858962297,
+        "llm2action": NaN,
+        "vae2llm": 0.041666097939014435,
+        "layers\\.0\\..*moe_gen": 0.02561498060822487,
+        "layers\\.1\\..*moe_gen": -0.11487557739019394,
+        "layers\\.2\\..*moe_gen": 0.013858715072274208,
+        "layers\\.0\\.": 0.16854700446128845
+      }
+    },
+    {
+      "sample_idx": 5,
+      "action_loss": 0.5756566524505615,
+      "vision_loss": 0.2154475450515747,
+      "action_norm_total": 6.864337921142578,
+      "vision_norm_total": 1.8027338981628418,
+      "sigma_match": null,
+      "norms_action": {
+        "action2llm": 0.80078125,
+        "llm2action": 2.84375,
+        "vae2llm": 2.015625,
+        "layers\\.0\\..*moe_gen": 0.94921875,
+        "layers\\.1\\..*moe_gen": 0.91015625,
+        "layers\\.2\\..*moe_gen": 0.984375,
+        "layers\\.0\\.": 5.625
+      },
+      "norms_vision": {
+        "action2llm": 0.02734375,
+        "llm2action": 0.0,
+        "vae2llm": 1.171875,
+        "layers\\.0\\..*moe_gen": 0.1630859375,
+        "layers\\.1\\..*moe_gen": 0.33984375,
+        "layers\\.2\\..*moe_gen": 0.275390625,
+        "layers\\.0\\.": 1.2890625
+      },
+      "cosine": {
+        "action2llm": 0.030149787664413452,
+        "llm2action": NaN,
+        "vae2llm": 0.09962888807058334,
+        "layers\\.0\\..*moe_gen": 0.0836866945028305,
+        "layers\\.1\\..*moe_gen": -0.03373603895306587,
+        "layers\\.2\\..*moe_gen": 0.052973341196775436,
+        "layers\\.0\\.": 0.1636398732662201
+      }
+    },
+    {
+      "sample_idx": 6,
+      "action_loss": 0.5761460661888123,
+      "vision_loss": 0.21419356763362885,
+      "action_norm_total": 7.428250312805176,
+      "vision_norm_total": 1.6581227779388428,
+      "sigma_match": null,
+      "norms_action": {
+        "action2llm": 0.8203125,
+        "llm2action": 2.921875,
+        "vae2llm": 2.1875,
+        "layers\\.0\\..*moe_gen": 0.98828125,
+        "layers\\.1\\..*moe_gen": 0.9765625,
+        "layers\\.2\\..*moe_gen": 1.0625,
+        "layers\\.0\\.": 6.1875
+      },
+      "norms_vision": {
+        "action2llm": 0.0262451171875,
+        "llm2action": 0.0,
+        "vae2llm": 0.9765625,
+        "layers\\.0\\..*moe_gen": 0.1533203125,
+        "layers\\.1\\..*moe_gen": 0.26171875,
+        "layers\\.2\\..*moe_gen": 0.2578125,
+        "layers\\.0\\.": 1.28125
+      },
+      "cosine": {
+        "action2llm": 0.09217601269483566,
+        "llm2action": NaN,
+        "vae2llm": 0.2108864188194275,
+        "layers\\.0\\..*moe_gen": 0.1730525940656662,
+        "layers\\.1\\..*moe_gen": 0.05585150048136711,
+        "layers\\.2\\..*moe_gen": 0.1626409888267517,
+        "layers\\.0\\.": 0.26694053411483765
+      }
+    },
+    {
+      "sample_idx": 7,
+      "action_loss": 0.5719200968742371,
+      "vision_loss": 0.22331728041172028,
+      "action_norm_total": 7.137034893035889,
+      "vision_norm_total": 2.1708099842071533,
+      "sigma_match": null,
+      "norms_action": {
+        "action2llm": 0.8046875,
+        "llm2action": 2.875,
+        "vae2llm": 2.09375,
+        "layers\\.0\\..*moe_gen": 0.96484375,
+        "layers\\.1\\..*moe_gen": 0.9296875,
+        "layers\\.2\\..*moe_gen": 1.0,
+        "layers\\.0\\.": 5.90625
+      },
+      "norms_vision": {
+        "action2llm": 0.040771484375,
+        "llm2action": 0.0,
+        "vae2llm": 1.3359375,
+        "layers\\.0\\..*moe_gen": 0.2255859375,
+        "layers\\.1\\..*moe_gen": 0.37890625,
+        "layers\\.2\\..*moe_gen": 0.341796875,
+        "layers\\.0\\.": 1.6171875
+      },
+      "cosine": {
+        "action2llm": 0.05139109492301941,
+        "llm2action": NaN,
+        "vae2llm": 0.06924326717853546,
+        "layers\\.0\\..*moe_gen": 0.09087647497653961,
+        "layers\\.1\\..*moe_gen": 0.026261094957590103,
+        "layers\\.2\\..*moe_gen": 0.10685662925243378,
+        "layers\\.0\\.": 0.21865366399288177
+      }
+    }
+  ],
+  "aggregated": {
+    "action_loss_mean": 0.5692445784807205,
+    "vision_loss_mean": 0.18975598365068436,
+    "action_norm_total_mean": 6.826382339000702,
+    "vision_norm_total_mean": 1.4691214337944984,
+    "norms_action_mean": {
+      "action2llm": 0.78369140625,
+      "llm2action": 2.78515625,
+      "vae2llm": 2.259765625,
+      "layers\\.0\\..*moe_gen": 0.931640625,
+      "layers\\.1\\..*moe_gen": 0.9208984375,
+      "layers\\.2\\..*moe_gen": 1.01171875,
+      "layers\\.0\\.": 5.5
+    },
+    "norms_vision_mean": {
+      "action2llm": 0.022430419921875,
+      "llm2action": 0.0,
+      "vae2llm": 0.93701171875,
+      "layers\\.0\\..*moe_gen": 0.1400146484375,
+      "layers\\.1\\..*moe_gen": 0.23162841796875,
+      "layers\\.2\\..*moe_gen": 0.23236083984375,
+      "layers\\.0\\.": 1.06982421875
+    },
+    "cosine_mean": {
+      "action2llm": -0.0098096496949438,
+      "llm2action": NaN,
+      "vae2llm": 0.06514988653361797,
+      "layers\\.0\\..*moe_gen": 0.018361948896199465,
+      "layers\\.1\\..*moe_gen": -0.07934661442413926,
+      "layers\\.2\\..*moe_gen": 0.00210496480576694,
+      "layers\\.0\\.": 0.11693064449355006
+    },
+    "ratios_mean": {
+      "action2llm": 39.9977300196167,
+      "llm2action": NaN,
+      "vae2llm": 2.7038750954307176,
+      "layers\\.0\\..*moe_gen": 7.437862904693867,
+      "layers\\.1\\..*moe_gen": 4.698664111444337,
+      "layers\\.2\\..*moe_gen": 4.887549392418071,
+      "layers\\.0\\.": 5.663351259249944
+    }
+  },
+  "note": "compile disabled; latent cache enabled; single forward per sample with retain_graph=True; cosine computed per-pattern."
+}

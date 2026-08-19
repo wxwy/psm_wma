@@ -41,8 +41,8 @@ SEED_FOR_DETERMINISTIC_FORWARD = 123456
 
 from omegaconf import OmegaConf
 from cosmos_framework.inference.common.args import ConfigFileType
-from cosmos_framework.scripts.action_policy_server_libero import ActionModelService, ActionServerArgs
-from cosmos_framework.inference.common.args import CheckpointOverrides
+from cosmos_framework.inference.args import OmniSetupOverrides
+from cosmos_framework.inference.inference import OmniInference
 
 PARITY_PATH = "/gemini/code/psm_wma/artifacts/g0/r06/exact_window_v1/smoke_parity.json"
 NUM_SAMPLES = 8
@@ -187,23 +187,24 @@ def main() -> int:
     probe_cfg = _make_compile_disabled_config(cfg)
     log(f"[E4] Using compile-disabled config: {probe_cfg}")
 
-    args = ActionServerArgs(
-        checkpoint=CheckpointOverrides(
-            checkpoint_path=str(ckpt),
-            config_file=str(probe_cfg),
-            config_file_type=ConfigFileType.YAML,
-        ),
+    overrides = OmniSetupOverrides(
+        checkpoint_path=str(ckpt),
+        config_file=str(probe_cfg),
+        config_file_type=ConfigFileType.YAML,
         output_dir=out_dir / "server_runtime",
         sampler="unipc",
-        seed=0,
-        guidance=1.0,
-        num_steps=30,
-        fps=20,
+        use_torch_compile=False,
+        use_cuda_graphs=False,
+        compile_dynamic=False,
+        compiled_region="all",
     )
+    setup_args = overrides.build_setup()
+    log(f"[E4] Setup args compile: enabled={setup_args.use_torch_compile}, "
+        f"region={setup_args.compiled_region}, dynamic={setup_args.compile_dynamic}")
 
-    log("[E4] Loading model via ActionModelService (compile disabled)...")
-    service = ActionModelService(args)
-    model = service.model
+    log("[E4] Loading model via OmniInference (compile disabled)...")
+    pipe = OmniInference.create(setup_args)
+    model = pipe.model
     model.train()
     compile_enabled = getattr(getattr(model.config, "compile", None), "enabled", True)
     log(f"[E4] Model loaded. compile.enabled={compile_enabled}")
@@ -266,7 +267,7 @@ def main() -> int:
         per_sample.append(sample_result)
         log(f"[E4] sample {sample_idx}: a_loss={sample_result['action_loss']:.4f} v_loss={sample_result['vision_loss']:.4f} "
             f"cos(vae2llm)={sample_result['cosine']['vae2llm']:.4f} "
-            f"cos(moe0)={sample_result['cosine'][r'layers\\.0\\..*moe_gen']:.4f}")
+            f"cos(moe0)={sample_result['cosine'][PATTERNS[3]]:.4f}")
 
     # Aggregate across samples.
     def _mean(values: list[float]) -> float:
@@ -302,7 +303,7 @@ def main() -> int:
         "patterns": PATTERNS,
         "per_sample": per_sample,
         "aggregated": aggregated,
-        "note": "compile disabled; latent cache enabled; single forward per sample with retain_graph=True; cosine computed per-pattern.",
+        "note": "compile disabled; latent cache enabled; two seed-fixed forwards per sample (action-loss backward then vision-loss backward) with cosine computed per-pattern; sigma_match null because output_batch lacks sigmas_action/vision fields.",
     }
     (out_dir / "result_v2.json").write_text(json.dumps(result, indent=2))
     log("[E4] Result written to " + str(out_dir / "result_v2.json"))
