@@ -2,6 +2,10 @@
 
 更新时间：2026-08-18
 
+## 当前最小步骤
+
+- `BUG-R06-PRED-MP4`（Codex，REVIEW）：已确认 `results/libero_closed_loop_iter100/.../mp4_pred` 的 prediction JSON 每次返回 17 帧，而 MP4 仅 1 帧；根因是双视角输入帧为 512×256、模型预测帧尺寸不同，OpenCV 对后续尺寸不匹配帧静默拒写。已在 `cosmos-framework/cosmos_framework/simulation/libero/closed_loop_eval.py` 的预测视频导出循环中，将尺寸不同的预测帧双线性缩放到输入帧尺寸后再写入。`.venv/bin/python` 临时导出验证 PASS：512×256 MP4 共 17 帧；`py_compile`、`git diff --check` PASS。`uv run` 未执行，因已有 `pyproject.toml` 的 `[tool.uv.audit]` 字段不被当前 uv 识别。当前子模块含来源不明的既有未提交修改，且本修复与其处于同一代码块，未提交；待独立审查。
+
 ## 当前阶段
 
 G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Policy-DROID -> LIBERO` 无 Memory baseline；R06 PASS 前不进入 Memory 算法实验。
@@ -285,7 +289,11 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
   - `edge_model_config.py` 两分支同为 `bucket_name=""`（L128）+ `vae_path="pretrained/tokenizers/video/wan2pt2/Wan2.2_VAE.pth"`（L137）；launcher 默认 `WAN_VAE_PATH=examples/checkpoints/wan22_vae/Wan2.2_VAE.pth` 也一致。
   - 旧机器 `/gemini/code/models/Wan2.2-TI2V-5B/` 有原生 Wan2.2_VAE.pth，R01-R06 的编码/训练/转换全部命中本地文件；Edge 包里的 diffusers VAE 只在 fork main 的 inference 侧（`inference/common/checkpoints.py` AVAE shim 只针对 **audio** VAE，与 Wan 视频 VAE 无关）被消费。原生 cosmos 代码从不读 Edge 包的视频 VAE → 布局不一致从未暴露。
   - 本机无原生文件且禁止下载，唯一来源是 Edge diffusers VAE，故需转原生布局。转换产物落在 launcher 默认路径，与旧机器走的是同一条代码路径。
-                                                                                                                                                                                                                                                                        ��位一致**：老 v2.1 与新 v3.0 的 libero_10 同 episode action/state `np.array_equal` 全等（ep0/10/378，max|Δ|=0），同为 379 episodes / 101,469 帧 / 10 tasks / fps 20；本质同一份 LIBERO 数据。
+
+### LIBERO 数据源核查：v2.1 vs v3.0 内容同源但布局不同，框架只认 v3.0（2026-08-18）
+
+- 背景：`datasets/libero` 软链原指向老 `/disk/data/LEROBOT_LIBERO_DATA`（v2.1，四套），发现问题后核查两数据源。
+- **数据内容逐位一致**：老 v2.1 与新 v3.0 的 libero_10 同 episode action/state `np.array_equal` 全等（ep0/10/378，max|Δ|=0），同为 379 episodes / 101,469 帧 / 10 tasks / fps 20；本质同一份 LIBERO 数据。
 - **封装布局不同**：老 v2.1 = `meta/tasks.jsonl` + 每 episode 一个 parquet/mp4；新 v3.0（gr00t 风格）= `meta/tasks.parquet` + `meta/episodes/` + 分块 `file-*.parquet`/`file-*.mp4`。
 - **当前框架 loader（v2/326b399）只支持 v3.0 布局**：`base_dataset.py:73` 读 `meta/tasks.parquet`、`_episodes` 读 `meta/episodes/chunk-*/file-*.parquet`、`libero_lerobot_dataset.py:146` 帧索引 glob `data/chunk-*/file-*.parquet`；老 v2.1 实例化报 `FileNotFoundError: meta/tasks.parquet`。注释明示同时兼容 v2.x/v3.0 的 task 列形态（v2.x 在 "task" 列、v3.0 在 DataFrame index），但文件布局仅 v3.0。
 - 动作表示：两份 parquet 的 7D action 均为逐帧增量 `[dpos(3), drot_axisangle(3), gripper(1)]`（**不是 rot6d**）；loader 在线把 axis-angle 转 rot6d → 10D `[pos(3), rot6d(6), gripper(1)]`（`_build_frame_wise_action` + `libero_pose_utils`），归一化用内置 `libero_native_frame_wise_relative_rot6d.json`。v3 实测：`video (3,17,256,512) uint8` + `action (16,10)` 完整样本通过（含视频解码）。
