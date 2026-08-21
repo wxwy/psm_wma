@@ -1,0 +1,14 @@
+{
+  "episode_index": 1,
+  "start_frame": 255,
+  "shape": [
+    3,
+    17,
+    192,
+    320
+  ],
+  "pixel_max_abs_diff": 0.0,
+  "pixel_mean_abs_diff": 0.0,
+  "latent_max_abs_diff": 0.0,
+  "latent_mean_abs_diff": 0.0
+}

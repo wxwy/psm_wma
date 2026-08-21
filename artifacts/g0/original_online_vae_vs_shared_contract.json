@@ -1,0 +1,552 @@
+{
+  "schema_version": "original_online_vae_vs_shared_contract_v1",
+  "suite": "libero_spatial",
+  "episode_index": 0,
+  "sample_count": 20,
+  "atol": 1e-06,
+  "max_legacy_vs_shared": 0.0,
+  "max_legacy_vs_cache": 0.0,
+  "status": "PASS",
+  "samples": [
+    {
+      "start_frame": 0,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 1,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 2,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 3,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 4,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 5,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 6,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 7,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 8,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 9,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 10,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 11,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 12,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 13,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 14,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 15,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 16,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 17,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 18,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    },
+    {
+      "start_frame": 19,
+      "legacy_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "shared_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "cache_shape": [
+        1,
+        48,
+        5,
+        12,
+        20
+      ],
+      "legacy_vs_shared_max_abs_diff": 0.0,
+      "legacy_vs_cache_max_abs_diff": 0.0,
+      "finite": true
+    }
+  ]
+}

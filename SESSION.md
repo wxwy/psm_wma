@@ -1,8 +1,24 @@
 # 当前协作状态
 
-更新时间：2026-08-18
+更新时间：2026-08-21
 
 ## 当前最小步骤
+
+- `FIX-CACHE-PARITY-RUNTIME-INSTRUMENT`（Codex/Kimi，REVIEW）：B-control 证明两次 online 首步逐位一致，而 online/cache 首步 loss 分别为 `15.709939/15.734109`，差异为真实训练在线 VAE 与 cache 的稳定信号。已仅修改 `cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`：显式 verify 样本上从同一 raw uint8 分别计算 shared guard、训练在线等价路由和 cache，写入 `artifacts/g0/latent_cache_route_probe/` 的结构化 JSON（dtype/range/SHA256/三对 diff）；不改变 cache-only 默认路径或 fallback 行为。`cosmos-framework/.venv/bin/python -m py_compile cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`、`git diff --check` PASS；待 Kimi 独立审查与最小 GPU 取证。未提交。
+
+- `DIAGNOSE-CACHE-VAE-RUNTIME-CONTEXT`（Codex/Kimi，REVIEW）：1495 份训练 route probe 已证明 shared guard 与训练在线等价路由逐位一致，二者相对 cache 均差 `0.03125-0.0625`；spatial episode 0/start 0..19 亦复现，且 builder 对 start 0/1 的 raw uint8 SHA256 与训练逐位相同。已新增 `tools/g0/diagnose_vae_runtime_context.py`，在彼此隔离的子进程扫描 CUDA TF32、cuDNN deterministic/benchmark、`torch.use_deterministic_algorithms` 和 `CUBLAS_WORKSPACE_CONFIG`，以 cache 与可选训练 latent 为参照写 JSON；不修改模型、cache 或默认训练路径。`py_compile`、CLI help、`git diff --check` PASS；当前 route JSON 未保存训练 latent 张量，GPU 运行时需提供单个 b latent 给 `--online-latent` 以判定精确匹配 profile。未提交。
+
+- `FIX-CACHE-CUDNN-BENCHMARK`（Codex/Kimi，DONE）：runtime context 扫描的 `cudnn_benchmark` profile 精确复现训练相对 cache 的 `max=0.03125/mean≈0.00172`，其余五个 profile 相对 cache 均为零；根因是框架默认 `CuDNNConfig.benchmark=True`，而训练 recipe 未覆盖。正式 `examples/toml/sft_config/action_policy_libero_edge_all.toml` 已增加 `[trainer.cudnn] benchmark=false`，并在 `configs/toml_config/sft_config.py` 增加默认保持 `benchmark=True` 的 SFT `CuDNNConfig` 与 `TrainerConfig.cudnn` 字段，使后续不带 `--deterministic` 的训练也与离线 builder 对齐；不重建 cache。`py_compile`、`git diff --check`、SFT pydantic schema 和最终 Hydra composed config 的 `trainer.cudnn.benchmark is False` 断言 PASS；Kimi 独立复审 APPROVE，训练内 1628 个 verify 样本逐位零 mismatch。未提交。
+
+- `BUILD-LATENT-CACHE-4SUITE`（Codex/Kimi，DONE）：`/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/` 四 suite 全量完成——Kimi 重启为 4×5 shard 并行（`tools/g0/launch_parallel_cache_build.sh`）并用 `merge_latent_cache_shards.py` 合并 manifest：432/454/428/379 episodes、246,377 窗口、54GB，契约（bf16 compute_dtype、exact_durations、chunk）齐全。未提交。
+
+- `CACHE-TRAIN-EQUIVALENCE-TOOLS`（Codex/Kimi，DONE）：Kimi 已实跑 `cache_only_forward_smoke.py` PASS：`artifacts/g0/cache_only_forward_smoke.json` 的 3 步 forward 中 `_load_video`、TorchCodec decode、VAE interface encode、WanVAE encode 均为 0，耗时 9.49s；cwd 修复已验证有效。B 的 online/cache 首步 loss 工具不构成 latent 等价证据：固定 `--deterministic` 已令两侧 `cudnn.benchmark=False`，且 cache manifest 枚举与在线 iterable dataloader 不保证首 batch 键/顺序一致，观测到的 0.024 loss 差异不能归因 VAE。该限制已写入工具 docstring；权威等价证据为训练内 1628 样本三路逐位 0 的 `FIX-CACHE-CUDNN-BENCHMARK`。`py_compile`、`git diff --check` PASS。未提交。
+
+- `FIX-CACHE-PARITY-VAE-CONTRACT`（Codex/Kimi，DONE）：新增 `cosmos_framework/model/generator/vision_vae.py`，作为唯一的 `uint8 RGB -> fp32[-1,1] -> VAE -> fp32 latent` 入口；模型 runtime guard、exact-window builder、probe、parity 均复用。训练 recipe 同样从该模块取得 exact-duration/chunk 配置。cache 模式默认 `LIBERO_LATENT_CACHE_VERIFY_RATIO=0.0`，dataloader 直接输出 latent，只有显式抽检才运行 VAE。manifest 新增并强校验 `vae_encode_contract`，不兼容/旧 cache 必须新建输出根重建。已通过共享入口内存测试、`py_compile` 和 `git diff --check`。2026-08-21 发现 `.venv` 内 CUDA 13 库未进入动态链接路径；为测试进程设置项目级 `LD_LIBRARY_PATH` 后，重建 `libero_spatial` episode 0（94 窗口）成功。20 窗口 GPU 证据：原始 `OmniMoTModel._normalize_uint8_vision_item -> _encode_vision_item` vs 公共入口 `max_abs_diff=0.0`，原始在线 vs 新 cache 亦为 `0.0`；`artifacts/g0/original_online_vae_vs_shared_contract.json` 与 `probe_vs_cache_parity_shared_contract.json` 均 PASS。Kimi 复审 APPROVE。未提交。
+
+- `IMPLEMENT-ONLINE-VAE-LATENT-CACHE`（Codex，REVIEW）：Kimi 二次复审 `APPROVE`，HIGH/MEDIUM 均关闭；LOW-1 evidence 改为固定项目根 `artifacts/g0/latent_cache_mismatch/`，LOW-2 旧非窗口 R12 builder 分支已发 `FutureWarning` 禁止误用。`py_compile`、`diff --check`、layout/manifest reader PASS。GPU smoke 尚未运行：GPU 0 当前 `sft_4in1` 100%/54GiB 占用，避免冲突；待训练空闲后执行 cache 训练 3–5 步及在线路径 loss/shape 对照。未提交。
+
+- `BUG-LIBERO-SAMPLE-STRIDE`（Codex，DONE）：用户确认改用 exact-window latent cache；训练采样保持 stride=1，不修改 `sample_stride` 实现。未提交。
 
 - `BUG-R06-PRED-MP4`（Codex，REVIEW）：已确认 `results/libero_closed_loop_iter100/.../mp4_pred` 的 prediction JSON 每次返回 17 帧，而 MP4 仅 1 帧；根因是双视角输入帧为 512×256、模型预测帧尺寸不同，OpenCV 对后续尺寸不匹配帧静默拒写。已在 `cosmos-framework/cosmos_framework/simulation/libero/closed_loop_eval.py` 的预测视频导出循环中，将尺寸不同的预测帧双线性缩放到输入帧尺寸后再写入。`.venv/bin/python` 临时导出验证 PASS：512×256 MP4 共 17 帧；`py_compile`、`git diff --check` PASS。`uv run` 未执行，因已有 `pyproject.toml` 的 `[tool.uv.audit]` 字段不被当前 uv 识别。当前子模块含来源不明的既有未提交修改，且本修复与其处于同一代码块，未提交；待独立审查。
 
@@ -298,3 +314,181 @@ G0 Foundation。先完善并执行 R01-R06，建立可复现的 `Cosmos3-Edge-Po
 - **当前框架 loader（v2/326b399）只支持 v3.0 布局**：`base_dataset.py:73` 读 `meta/tasks.parquet`、`_episodes` 读 `meta/episodes/chunk-*/file-*.parquet`、`libero_lerobot_dataset.py:146` 帧索引 glob `data/chunk-*/file-*.parquet`；老 v2.1 实例化报 `FileNotFoundError: meta/tasks.parquet`。注释明示同时兼容 v2.x/v3.0 的 task 列形态（v2.x 在 "task" 列、v3.0 在 DataFrame index），但文件布局仅 v3.0。
 - 动作表示：两份 parquet 的 7D action 均为逐帧增量 `[dpos(3), drot_axisangle(3), gripper(1)]`（**不是 rot6d**）；loader 在线把 axis-angle 转 rot6d → 10D `[pos(3), rot6d(6), gripper(1)]`（`_build_frame_wise_action` + `libero_pose_utils`），归一化用内置 `libero_native_frame_wise_relative_rot6d.json`。v3 实测：`video (3,17,256,512) uint8` + `action (16,10)` 完整样本通过（含视频解码）。
 - 处置：`datasets/libero` 软链 → `/disk/data/LIBERO_LeRobot_v3/libero_10`（实测经软链加载 375/379 episodes / 94250 窗口 OK）；README 已同步。v3 目前仅 libero_10 一套，缺 object/spatial/goal（老 v2.1 目录四套留作同源备查）。
+
+
+### G0-R06-SFT 最新状态（2026-08-20，Kimi 复核）
+
+- **训练已切换为 4-suite 联合 SFT** (`action_policy_libero_edge_all`)，不再使用 exact-window offline cache 单任务路线。当前在 `tmux sft_4in1` 中运行，从 `iter_000000275` resume，已跑到 **iter 290**（日志最新 12:40:56）。
+- **首次非零闭环 SR**：iter 250 对 4 个 suite 的固定任务评测，`libero_spatial` task 0（black bowl → plate）**1/3 = 33.3%**；`libero_object`、`libero_goal`、`libero_10` 仍为 0。产物 `cosmos-framework/results/libero_closed_loop_4in1/iter_000000250/`。
+- **iter 275 曾崩溃**，resume 后 num_workers 从 36 降到 30，速度从 ~144 s/iter 降至 ~170 s/iter，目前稳定。
+- **loss 未记录问题（ds 反馈）**：根因是 `action_policy_libero_edge_all`/`action_policy_libero_edge_warmstart` 为避免 W&B 初始化而移除了 `basic` callback group，导致 `train/loss` 及子 loss 未写入日志。已新增 `StdoutLossLogger` callback 并接入这两个实验配置；`py_compile`、config smoke、functional smoke 均 PASS。
+- **当前未提交改动**：
+  - `cosmos_framework/callbacks/stdout_loss_logger.py`（新增）
+  - `cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_libero_edge_all.py`
+  - `cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_libero_edge_warmstart.py`
+  - 4 个 launch 脚本中的 `LIBERO_ROOT` 路径从 `/disk/data/...` 改为 `/disk/rl/...`（环境路径调整）
+- **生效前提**：代码修改对正在运行的训练进程不生效，需 stop 当前 `sft_4in1` 并重新 resume 才能从后续迭代开始记录 loss。iter 0–290 的 loss 已无法恢复。
+- **下一步**：待用户决定是否立即 restart/resume；若继续跑到 iter 300 checkpoint 再重启，可保留当前进度并减少中断。
+
+- **BUG-4IN1-LOSS-LOG 修复验证（2026-08-20）**：13:18 从 iter_000000300 resume 后，`StdoutLossLogger` 已生效。首次 loss 日志（iter 301）：`iteration=301 | train/loss=1.731282 | flow_matching_loss_vision=0.108888 | flow_matching_loss_action=0.064241`。后续每 iter 都会记录 total/vision/action loss。相关代码修改尚未提交。
+
+- **num_workers 恢复为 36（2026-08-20）**：用户要求将 dataloader workers 从 30 调回 36（prefetch_factor 保持 3），并重新从 iter_000000300 resume。实测 iter 301→302 耗时约 168s，与崩溃前速度接近；loss 记录正常：`iteration=301 | train/loss=1.653492 | ...`、`iteration=302 | train/loss=1.620743 | ...`。训练继续运行。
+
+- **在线 VAE 探针设计文档已提交 Codex 审查（2026-08-20）**：文档位于 `docs/build/PSM-WMA_REVIEW-online_vae_probe_design_2026-08-20.md`，TODO 中新增 `REVIEW-ONLINE-VAE-PROBE` 任务，状态 `REVIEW`，负责人 Codex。待 Codex 批准后再进入实现。
+
+---
+
+## 🔔 Handoff to Codex
+
+@Codex：请审查 `docs/build/PSM-WMA_REVIEW-online_vae_probe_design_2026-08-20.md`（在线 VAE 探针设计方案）。对应 TODO 任务 `REVIEW-ONLINE-VAE-PROBE` 已分配给你，状态 `REVIEW`。
+
+审查重点：
+1. Hook 点 `OmniMoTModel._encode_vision_item` 是否是在线路径的正确黄金基准；
+2. callback 包装方式是否优雅、是否应避免 core model 修改；
+3. 采样策略（200 样本、覆盖 `start_frame % 4`）是否足够；
+4. 对比指标 `max_abs_diff < 1e-4` 是否严格；
+5. 集成后的运行时校验开关设计是否合理。
+
+请按项目审查惯例给出 `APPROVE` / `REQUEST_CHANGES` / `REJECT` 结论，并附 `file:line` 级意见。审查通过后我会进入实现。
+
+- **Codex 审查通过 online VAE probe / latent cache 设计（2026-08-20）**：Codex 通过 tmux 回传确认，结论 APPROVE。关键决议：采用方案 A（dataloader 输出 `video_latent` `[5,48,16,32]`，模型检测到后跳过 `_normalize_video_databatch_inplace` + `_encode_vision_item`）；`source_frame_indices` 改名为 `window_frame_indices`（完整 17 帧），5 个 latent 锚点另存 `latent_source_frame_indices`；probe 在 batch-start 捕获归一化前 uint8；离线构建验收 `max_abs_diff<=1e-6`，runtime guard `verify_ratio=0.01`、阈值 `<=1e-5`；失配单样本 fallback 并写结构化证据到 `artifacts/g0/latent_cache_mismatch/`。当前状态：设计冻结，等待用户授权进入实现。
+
+### Kimi 对 IMPLEMENT-ONLINE-VAE-LATENT-CACHE 二次审查（2026-08-20）
+
+- **结论**：`REQUEST_CHANGES`。当前实现不能启用真实 cache 训练；修复前禁止切换 `sft_4in1` 到 cache 路径。
+- **审查产物**：`artifacts/g0/REVIEW_IMPLEMENT_ONLINE_VAE_LATENT_CACHE_2026-08-20.md`。
+- **关键缺陷**：
+  - **HIGH-1**：`libero_lerobot_dataset.py:356` cache-hit 占位视频形状为 `[T,C,H,W]`，与在线路径 `[C,T,H,W]` 不一致，会导致 `_get_temporal_positions_vision` 读取错误的 `num_pixel_frames`。
+  - **HIGH-2**：`omni_mot_model.py:3891-3897` 消费 cache latent 时只 `unsqueeze(0)`，未把 dataset 输出的 `[5,48,16,32]` permute 成在线路径的 `[1,48,5,16,32]`，会直接抛 `ValueError`。
+  - **HIGH-3**：runtime guard / 单样本 online fallback / 结构化失配证据完全未实现，与设计决议不符。
+  - **MEDIUM-1**：`cosmos-framework/tools/g0/verify_latent_cache_parity.py` 与 `build_cosmos_libero_latent_dataset.py` 不存在（目录仅 `.gitkeep`）。
+  - **MEDIUM-2**：manifest 未显式包含 `suite`，且未校验 `chunk_length/camera_mode/sample_stride/fps`。
+  - **MEDIUM-3**：`online_vae_probe.py` 在 cache 命中时因 `video` 已被替换为零占位，无法捕获真实 uint8 做 parity。
+- **当前训练**：`tmux sft_4in1` 仍在跑在线 VAE，未受工作区改动影响；cache 路径因上述缺陷尚不可启用。
+- **下一步**：Codex 修复 HIGH/MEDIUM 后，Kimi 复审并跑最小 GPU smoke（cache 训练 3-5 步，与在线路径比对 loss/shape）。
+
+### Kimi 对 IMPLEMENT-ONLINE-VAE-LATENT-CACHE 二次复审（2026-08-20）
+
+- **结论**：`APPROVE`，附 2 项 LOW。
+- **已确认修复**：
+  - HIGH-1 系 Kimi 首轮误判：`_build_result()` 会把输入 `[T,C,H,W]` permute 成 `[C,T,H,W]`，Codex 保留 `[T,C,H,W]` 占位并加注释，定向合同 PASS；Kimi 关闭该审查项。
+  - HIGH-2：`omni_mot_model.py:3893-3897` 对 cache `[5,48,16,32]` 做 `permute(1,0,2,3).unsqueeze(0)` 得到 `[1,48,5,16,32]`，与在线路径一致。
+  - HIGH-3：dataset 新增 `latent_cache_verify_ratio`（recipe 默认 0.01），抽样样本保留真实 RGB；model 在线 encode、比较 shape/dtype/finite/max_abs_diff<=1e-5；失配单样本 fallback 并写 JSON 到 `artifacts/g0/latent_cache_mismatch/rank_xx`。
+  - MEDIUM-1：builder / parity 工具位于项目根 `tools/g0/`（非子模块 `cosmos-framework/tools/g0`），文件存在且 `py_compile` PASS。
+  - MEDIUM-2：manifest 写入并校验 `suite/chunk_length/camera_mode/sample_stride/fps/latent_shape`。
+  - MEDIUM-3：`online_vae_probe.py` 仅采集 `verify_cached_latent=True` 的真实 RGB 样本。
+- **LOW-1**：mismatch evidence 路径 `Path("artifacts/g0/latent_cache_mismatch")` 相对 cwd；训练从 `cosmos-framework/` 启动，证据会落在 `cosmos-framework/artifacts/g0/...`，建议改为项目根 `artifacts/g0/...`。
+- **LOW-2**：builder 非 `--windowed` 分支仍沿用旧 R12 schema 且无 `schema_version`，建议显式 deprecated/移除或加警告，避免误用于 exact-window recipe。
+- **静态检查**：`py_compile` 与 `git diff --check` 均 PASS。
+- **下一步**：可安排不与 `sft_4in1` 冲突的最小 GPU smoke（cache 训练 3-5 步，与在线路径比对 loss/shape）。
+
+### Kimi 确认 Codex 关闭 LOW-1/2（2026-08-20）
+
+- LOW-1 已关闭：`omni_mot_model.py:3925-3926` 使用 `Path(__file__).resolve().parents[4] / "artifacts/g0/latent_cache_mismatch"`，固定到项目根。
+- LOW-2 已关闭：`tools/g0/build_cosmos_libero_latent_dataset.py:184-189` 对非 `--windowed` 分支发出 `FutureWarning`，明确禁止用于 exact_window_v1 cache 训练。
+- `py_compile` / `git diff --check` 复测 PASS。
+- GPU 0 当前被 `tmux sft_4in1` 占用（100%/54GiB），GPU smoke 待训练空闲后再执行。
+
+### 4-suite exact-window latent cache 构建启动（2026-08-20）
+
+- **任务**：后台串行构建 `libero_spatial`、`libero_object`、`libero_goal`、`libero_10` 的 exact_window_v1 latent cache。
+- **后台任务 ID**：`bash-3fiaxclu`（已因 tiny-subset smoke 被 Kimi 中断，后续会重启）
+- **工作目录**：`/disk/rl/psm_wma/cosmos-framework`
+- **环境**：`.venv` (Python 3.13.7 + torch 2.10.0+cu130)
+- **命令**：`.venv/bin/python ../tools/g0/build_cosmos_libero_latent_dataset.py --dataset-root /disk/rl/data/LIBERO_LeRobot_v3/<suite> --output-root /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_v1/<suite> --vae-path examples/checkpoints/wan22_vae/Wan2.2_VAE.pth --windowed --suite <suite> --device cuda:0`
+- **资源**：cuda:0 剩余 27GB VRAM，预计峰值 2-4GB，不与 `sft_4in1` 冲突。
+- **日志**：`/disk/rl/psm_wma/artifacts/g0/cache_build_*.log`
+- **产物**：`/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_v1/<suite>/{dataset_manifest.json,episodes/episode_*.pt}`
+- **状态**：因用户要求 immediate tiny-subset smoke 而暂停；已完成 `libero_spatial` 104/432 episodes。
+
+### tiny subset cache 与 GPU smoke 启动（2026-08-20）
+
+- **动作**：Kimi 中断 `sft_4in1` 训练进程（原已跑到 iter 375 checkpoint，但进程仍在 GPU 100% 运行），释放整卡。
+- **tiny cache**：已为 4 suite 各建 2 episodes，位于 `/disk/rl/data/LIBERO_4suites_exact_window_v1_smoke/<suite>/`。
+- **后台任务 ID**：`bash-h6g6k2g2`
+- **内容**：
+  1. cache smoke：从 iter 375 resume，启用 tiny cache，临时输出 `/disk/rl/psm_wma/outputs/smoke_cache`，跑 3 步到 iter 378。
+  2. online smoke：从 iter 375 resume，不启用 cache，临时输出 `/disk/rl/psm_wma/outputs/smoke_online`，跑 3 步到 iter 378。
+- **日志**：`/disk/rl/psm_wma/artifacts/g0/smoke_cache.log`、`smoke_online.log`
+- **判据**：两次均完成、loss finite、cache/online loss 差距可接受。
+
+### G0-R06-SFT exact-window cache parity 验证（2026-08-20，Kimi 执行）
+
+- 停止训练 smoke 与训练 probe（均因 `max_episodes=2` + IterableDataset + 36 workers 导致 DataLoader 狂取样本不推进）。
+- 新增 `LIBERO_MAX_EPISODES` 环境变量支持（`cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py`、`action_sft_dataset.py`、`action_policy_libero_edge_all.py`），用于 future smoke 对齐 tiny cache 与 dataset 选择。
+- 用轻量脚本 `tools/g0/save_online_vae_probe_from_cache.py` 直接对 cache 窗口走训练同一条 `_encode_vision_item` 路径编码，生成 probe 格式产物。
+- **产物**：`artifacts/g0/online_vae_probe/rank_00/sample_000000..000019/{raw_uint8.pt, online_latent.pt, meta.json}`。
+- **对比**：`artifacts/g0/probe_vs_cache_parity.json` 对比 online latent 与 tiny cache `libero_spatial/episode_000000.pt` 同窗口。
+- **结果**：`status=PASS`，20 个窗口（start=0..19，覆盖 `start%4` 全类），`max_abs_diff=0.0`，shape/dtype/finite 全部一致。
+- 结论：tiny cache 与 online VAE 输出逐位一致，可重启全量 4-suite cache 构建。未提交。
+
+### BUILD-LATENT-CACHE-4SUITE 全量构建重启（2026-08-20）
+
+- 已清理此前 `libero_spatial` 104/432 的部分输出。
+- 4 个 suite 并行构建，全部使用 `--windowed` exact_window_v1 schema。
+- 资源：单卡 A100-80GB + 13 CPU cores，4 个 builder 进程共享 cuda:0。
+- 输出：`/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_v1/<suite>/`
+- 日志：`artifacts/g0/cache_build_<suite>.log`
+- 后台任务：`bash-d30rxw98`。
+
+### BUILD-LATENT-CACHE-4SUITE 增加 resume 能力（2026-08-20）
+
+- 用户要求保留之前进度、具备 resume 能力；此前 `libero_spatial` 104/432 部分输出已被清理，无法恢复。
+- 已修改 `tools/g0/build_cosmos_libero_latent_dataset.py` 的 `_build_windowed`：
+  - 允许已存在输出目录；
+  - 读取现有 `dataset_manifest.json`，跳过已有且格式正确的 `episode_*.pt`；
+  - 缺失 episode 重新编码；
+  - 结束后再写完整 manifest。
+- `py_compile` PASS。
+- 4-suite 并行构建已重启（任务 `bash-76m7upd3`），从头开始，但后续中断可安全 resume。
+
+### Codex 审查问题修复（2026-08-20）
+
+Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
+
+1. **HIGH**：runtime guard shape mismatch 根因是 verify 路径把 float32 placeholder 直接喂给 `_normalize_uint8_vision_item`。修复：在 `omni_mot_model.py` verify 块内用 `*255+round+uint8` 从 float32 像素重建 uint8，再走 `_normalize_uint8_vision_item` + `_encode_vision_item`。
+2. **MEDIUM-1**：evidence JSON 中 shape mismatch 时 `max_abs_diff`/`mean_abs_diff` 改为 `null`，不再写 `Infinity`。
+3. **MEDIUM-2**：evidence 增加 `cache_shape`、`online_shape`、`cache_dtype`、`online_dtype`。
+4. **MEDIUM-3**：`libero_lerobot_dataset.py` 与 `omni_mot_model.py` 在 `.float()` 前断言 cache latent dtype 必须为 `float32`。
+5. **LOW**：`LIBERO_MAX_EPISODES` 在 dataset 与 config 两处校验必须为正整数。
+
+`py_compile` PASS。正在运行 `verify_ratio=1.0` 的真实 cache 训练 1 步（任务 `bash-tv96xd16`），验证零 mismatch。
+
+### BUILD-LATENT-CACHE-4SUITE 暂停（2026-08-20）
+
+- 为优先跑 `verify_ratio=1.0` 的真实 cache 训练验证，已暂停全量 4-suite cache 构建（任务 `bash-76m7upd3`）。
+- builder 已支持 resume，验证通过后可随时重启。
+
+### verify_ratio=1 训练验证切换 num_workers=0（2026-08-20）
+
+- 首次 `verify_ratio=1.0` cache 训练（36 workers）在 "Starting training..." 后 90 秒无进展，判断为 `max_episodes=2` + IterableDataset + 36 workers 同样的 DataLoader hang。
+- 新增 `LIBERO_NUM_WORKERS` 环境变量支持，切换为 `LIBERO_NUM_WORKERS=0`。
+- 已重启验证（任务 `bash-il15rrvr`）。
+
+### verify_ratio=1 训练验证剩余 diff 根因定位与修复（2026-08-20）
+
+- 验证结果：shape/dtype 均匹配，但 `max_abs_diff≈0.11`，远超 1e-5 阈值，持续 fallback。
+- 根因：`tools/g0/build_cosmos_libero_latent_dataset.py` 先把 `_load_video` 的 float [0,1] 视频 permute 后喂给 `VideoResize`（在 float 域做 bicubic resize），再转 uint8；而训练路径 `_build_result()` 先 `(video*255).clamp().to(uint8)`，然后 `ActionTransformPipeline.video_resize` 才在 uint8 域做 resize。两个域的 bicubic 结果不同，导致 latent 有 0.11 级 diff。
+- 修复：cache builder 改为先按 `_build_result()` 的方式转 uint8 并 permute，再调用 `VideoResize(resolution=None)`，与在线训练路径逐位对齐。
+- 已修改：`tools/g0/build_cosmos_libero_latent_dataset.py:119-125`。
+- 下一步：重建 tiny cache，重跑 `verify_ratio=1.0` 训练验证，确认零 mismatch 后再恢复 BUILD-LATENT-CACHE-4SUITE。
+
+### verify_ratio=1 训练验证第二轮：pixel 一致但 VAE diff 仍在（2026-08-20）
+
+- 验证结果：uint8 pixel 逐位一致（`pixel_max_abs_diff=0.0`），但 latent `max_abs_diff≈0.03-0.05`，2048 个样本全部 fallback。
+- 根因：`tools/g0/build_cosmos_libero_latent_dataset.py` 创建 `Wan2pt2VAEInterface` 时传了 `encode_exact_durations=[17]`；在线训练路径使用默认配置（未设置该参数）。这导致 VAE 对 T=17 输入的内部 chunking 不同：exact 模式直接分 4 个 4 帧 chunk；默认模式先 pad 到 21 帧再分 5 个 chunk，最后 trim 回 5 个 latent 帧。因果卷积的浮点累加顺序不同，产生 ~3e-2 级 latent diff。
+- 证据：`tools/g0/diagnose_vae_exact_duration.py` 对同一段 uint8 用 exact vs default 编码，`max_abs_diff=0.03125`。
+- 修复：cache builder 去掉 `encode_exact_durations=[17]`，与在线训练路径使用完全一致的默认 VAE 配置。
+- 已修改：`tools/g0/build_cosmos_libero_latent_dataset.py:231`。
+- 下一步：再次重建 tiny cache，重跑 `verify_ratio=1.0` 训练验证。
+
+### exact-window latent cache 全量构建 + 数值等价闭环（2026-08-21，Kimi/Codex）
+
+- **全量 cache**：4×5 shard 并行构建（`tools/g0/launch_parallel_cache_build.sh`，单卡 GPU 为瓶颈 ~10 ep/min），`merge_latent_cache_shards.py` 合并。产物 `/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/{libero_spatial,libero_object,libero_goal,libero_10}`：432/454/428/379 episodes、246,377 窗口、54GB，manifest 契约齐全。
+- **根因定案**：训练 recipe 默认 `cudnn.benchmark=True`（`utils/config.py:248`，`trainer/__init__.py:156` 应用），cudnn autotune 选的 bf16 卷积算法与 builder 进程不同 → latent 偏 0.03。证据链：训练内三路 instrument 1495 样本 a-b 全 0（guard 路由无罪）、builder/训练像素 SHA256 逐位一致（输入无罪）、`diagnose_vae_runtime_context.py` 六 profile 中仅 cudnn_benchmark 复现 0.03125/0.00172（`artifacts/g0/vae_runtime_context_ep0_start0.json`）。
+- **修复**：recipe TOML 显式 `[trainer.cudnn] benchmark=false`（`action_policy_libero_edge_all.toml:53-55` + `sft_config.py` CuDNNConfig schema），Kimi 端到端断言 composed config PASS。不重建 cache。
+- **验收**：A-nobench（verify_ratio=1.0 真实训练）1628 样本 guard/真在线/cache 三方逐位为 0，零 mismatch（`artifacts/g0/latent_cache_route_probe/rank_00/`）；C cache-only forward 四项 decode/encode 计数全 0（`artifacts/g0/cache_only_forward_smoke.json`）；cache-only 3 步训练 smoke loss finite。
+- **B 工具判据失效记录**：`compare_online_cache_first_loss.py` 固定 `--deterministic`，双侧本就 benchmark=False；0.024 loss diff 为两种 dataloader 模式首 batch 组成差异，不是 latent 差异。latent 等价以训练内 guard 为权威判据。
+- **过程产物**：8-20 旧 mismatch 证据归档 `artifacts/g0/latent_cache_mismatch_archive_20260820_v6/`；B-control（online 重跑逐位一致）证明训练在 deterministic 配置下完全可复现。
+- **未提交**：cosmos-framework 工作区改动（vision_vae.py、omni_mot_model.py guard/instrument、dataset cache reader、stdout_loss_logger、TOML/schema、启动脚本）与 tools/g0/ 工具均未 commit，待用户决定。
+- **下一步**：正式 4in1 SFT 可启用 `LIBERO_LATENT_CACHE_ROOT`（省在线 VAE 编码）；建议保留小比例 `LIBERO_LATENT_CACHE_VERIFY_RATIO`（如 0.01）做在线抽检。

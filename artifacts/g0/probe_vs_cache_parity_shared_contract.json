@@ -1,0 +1,182 @@
+{
+  "schema_version": "online_vae_probe_parity_v1",
+  "probe_root": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract",
+  "atol": 1e-06,
+  "vae_compute_dtype": "torch.bfloat16",
+  "encode_exact_durations": [
+    17,
+    61,
+    73
+  ],
+  "encode_chunk_frames": {
+    "256": 68,
+    "480": 24,
+    "720": 8,
+    "768": 8
+  },
+  "sample_count": 20,
+  "max_abs_diff": 0.0,
+  "status": "PASS",
+  "samples": [
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000000",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000001",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000002",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000003",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000004",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000005",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000006",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000007",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000008",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000009",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000010",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000011",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000012",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000013",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000014",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000015",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000016",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000017",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000018",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    },
+    {
+      "sample": "/disk/rl/psm_wma/artifacts/g0/online_vae_probe_shared_contract/rank_00/sample_000019",
+      "shape_match": true,
+      "dtype_match": true,
+      "finite": true,
+      "max_abs_diff": 0.0,
+      "pass": true
+    }
+  ]
+}

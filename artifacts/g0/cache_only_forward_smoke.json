@@ -1,0 +1,11 @@
+{
+  "schema_version": "cache_only_forward_smoke_v1",
+  "steps": 3,
+  "max_episodes": 2,
+  "dataset_load_video_calls": 0,
+  "torchcodec_decode_calls": 0,
+  "vae_interface_encode_calls": 0,
+  "wan_vae_encode_calls": 0,
+  "elapsed_s": 9.49,
+  "status": "PASS"
+}

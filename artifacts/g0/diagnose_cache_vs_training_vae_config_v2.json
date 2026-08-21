@@ -1,0 +1,19 @@
+{
+  "episode_index": 1,
+  "start_frame": 255,
+  "cache_shape": [
+    5,
+    48,
+    12,
+    20
+  ],
+  "train_shape": [
+    5,
+    48,
+    12,
+    20
+  ],
+  "shape_match": true,
+  "max_abs_diff": 0.0,
+  "mean_abs_diff": 0.0
+}
