@@ -4,6 +4,8 @@
 
 ## 当前最小步骤
 
+- `OBSERVE-TRAIN-STEP-TIMING`（Codex/Kimi，DONE）：按用户要求仅增加下次 resume 生效的观测，绝不触碰运行中的 `tmux sft_4in1`，也不实现异步 prefetch。`trainer/__init__.py` 新增 `OptimizerStepTiming`，以 `time.monotonic()` 在主循环 `_fetch_data_batch` 前后记录主进程 dataloader wait，在每个 micro-batch `training_step` 前后记录 forward/backward/optimizer 的 host wall time；optimizer step 聚合总秒数、per-microbatch mean、other、step wall 与 wait/compute 占比。`StdoutLossLogger` 在 rank 0 输出 `perf/dataloader_wait_s`、`perf/model_compute_s`、mean/other/wall/pct/microbatches 的机器可解析 `key=value` 字段。无 CUDA synchronize、无 collectives、无数值路径修改。`.venv/bin/python -m py_compile`、双仓 `git diff --check` PASS；Kimi 审查 APPROVE。LOW：不做 CUDA synchronize，故这是 host wall-time 近似值，足以观测 dataloader wait 是否趋近零。未提交。
+
 - `COMMIT-PUSH-EXACT-WINDOW-LATENT-CACHE`（Codex，BLOCKED）：本次 exact-window latent cache 已提交：子模块 `v2` 为 `dcd733b`（`feat: add exact-window LIBERO latent cache`），根仓库 `V2` 为 `23b6d7e`（`feat: add verified LIBERO latent-cache pipeline`）。静态验收 `py_compile` 与双仓 `git diff --check` PASS；未纳入训练输出、MP4/latent probe 张量和大量日志。推送先执行子模块 `git push origin v2`，被 `https://ghfast.top` 远端拒绝认证（`could not read Username`）阻断；为避免根仓库指向远端不存在的子模块提交，根仓库推送未执行。待用户提供该远端可写认证或 SSH push URL 后继续。 
 
 - `FIX-CACHE-PARITY-RUNTIME-INSTRUMENT`（Codex/Kimi，REVIEW）：B-control 证明两次 online 首步逐位一致，而 online/cache 首步 loss 分别为 `15.709939/15.734109`，差异为真实训练在线 VAE 与 cache 的稳定信号。已仅修改 `cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`：显式 verify 样本上从同一 raw uint8 分别计算 shared guard、训练在线等价路由和 cache，写入 `artifacts/g0/latent_cache_route_probe/` 的结构化 JSON（dtype/range/SHA256/三对 diff）；不改变 cache-only 默认路径或 fallback 行为。`cosmos-framework/.venv/bin/python -m py_compile cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`、`git diff --check` PASS；待 Kimi 独立审查与最小 GPU 取证。未提交。
