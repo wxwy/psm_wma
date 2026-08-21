@@ -4,6 +4,8 @@
 
 ## 当前最小步骤
 
+- `COMMIT-PUSH-EXACT-WINDOW-LATENT-CACHE`（Codex，BLOCKED）：本次 exact-window latent cache 已提交：子模块 `v2` 为 `dcd733b`（`feat: add exact-window LIBERO latent cache`），根仓库 `V2` 为 `23b6d7e`（`feat: add verified LIBERO latent-cache pipeline`）。静态验收 `py_compile` 与双仓 `git diff --check` PASS；未纳入训练输出、MP4/latent probe 张量和大量日志。推送先执行子模块 `git push origin v2`，被 `https://ghfast.top` 远端拒绝认证（`could not read Username`）阻断；为避免根仓库指向远端不存在的子模块提交，根仓库推送未执行。待用户提供该远端可写认证或 SSH push URL 后继续。 
+
 - `FIX-CACHE-PARITY-RUNTIME-INSTRUMENT`（Codex/Kimi，REVIEW）：B-control 证明两次 online 首步逐位一致，而 online/cache 首步 loss 分别为 `15.709939/15.734109`，差异为真实训练在线 VAE 与 cache 的稳定信号。已仅修改 `cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`：显式 verify 样本上从同一 raw uint8 分别计算 shared guard、训练在线等价路由和 cache，写入 `artifacts/g0/latent_cache_route_probe/` 的结构化 JSON（dtype/range/SHA256/三对 diff）；不改变 cache-only 默认路径或 fallback 行为。`cosmos-framework/.venv/bin/python -m py_compile cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py`、`git diff --check` PASS；待 Kimi 独立审查与最小 GPU 取证。未提交。
 
 - `DIAGNOSE-CACHE-VAE-RUNTIME-CONTEXT`（Codex/Kimi，REVIEW）：1495 份训练 route probe 已证明 shared guard 与训练在线等价路由逐位一致，二者相对 cache 均差 `0.03125-0.0625`；spatial episode 0/start 0..19 亦复现，且 builder 对 start 0/1 的 raw uint8 SHA256 与训练逐位相同。已新增 `tools/g0/diagnose_vae_runtime_context.py`，在彼此隔离的子进程扫描 CUDA TF32、cuDNN deterministic/benchmark、`torch.use_deterministic_algorithms` 和 `CUBLAS_WORKSPACE_CONFIG`，以 cache 与可选训练 latent 为参照写 JSON；不修改模型、cache 或默认训练路径。`py_compile`、CLI help、`git diff --check` PASS；当前 route JSON 未保存训练 latent 张量，GPU 运行时需提供单个 b latent 给 `--online-latent` 以判定精确匹配 profile。未提交。
