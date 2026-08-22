@@ -1,0 +1,43 @@
+{
+  "standalone_keys": 196,
+  "dcp_total_keys": 549,
+  "dcp_vae_related_keys": 4,
+  "dcp_vae_key_sample": [
+    "net.vae2llm.weight",
+    "net.vae2llm.bias",
+    "net.llm2vae.weight",
+    "net.llm2vae.bias"
+  ],
+  "standalone_key_sample": [
+    "conv1.weight",
+    "conv1.bias",
+    "conv2.weight",
+    "conv2.bias",
+    "encoder.conv1.weight",
+    "encoder.conv1.bias",
+    "encoder.head.0.gamma",
+    "encoder.head.2.weight",
+    "encoder.head.2.bias",
+    "decoder.conv1.weight",
+    "decoder.conv1.bias",
+    "decoder.head.0.gamma",
+    "decoder.head.2.weight",
+    "decoder.head.2.bias",
+    "encoder.middle.0.residual.0.gamma",
+    "encoder.middle.0.residual.2.bias",
+    "encoder.middle.0.residual.2.weight",
+    "encoder.middle.0.residual.3.gamma",
+    "encoder.middle.0.residual.6.bias",
+    "encoder.middle.0.residual.6.weight",
+    "encoder.middle.1.norm.gamma",
+    "encoder.middle.1.proj.bias",
+    "encoder.middle.1.proj.weight",
+    "encoder.middle.1.to_qkv.bias",
+    "encoder.middle.1.to_qkv.weight",
+    "encoder.middle.2.residual.0.gamma",
+    "encoder.middle.2.residual.2.bias",
+    "encoder.middle.2.residual.2.weight",
+    "encoder.middle.2.residual.3.gamma",
+    "encoder.middle.2.residual.6.bias"
+  ]
+}

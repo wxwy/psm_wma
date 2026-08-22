@@ -1,0 +1,32 @@
+{
+  "episode_index": 0,
+  "start_frame": 0,
+  "cache_shape": [
+    3,
+    17,
+    192,
+    320
+  ],
+  "train_shape": [
+    3,
+    17,
+    192,
+    320
+  ],
+  "cache_image_size": [
+    192.0,
+    320.0,
+    160.0,
+    320.0
+  ],
+  "train_image_size": [
+    192.0,
+    320.0,
+    160.0,
+    320.0
+  ],
+  "shape_match": true,
+  "dtype_match": true,
+  "pixel_max_abs_diff": 0.0,
+  "pixel_mean_abs_diff": 0.0
+}

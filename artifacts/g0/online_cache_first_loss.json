@@ -1,0 +1,35 @@
+{
+  "schema_version": "online_cache_first_loss_v1",
+  "status": "FAIL",
+  "seed": 42,
+  "iteration": 0,
+  "max_episodes": 1,
+  "num_workers": 0,
+  "deterministic_launch": true,
+  "atol": 1e-06,
+  "online": {
+    "returncode": 0,
+    "metrics": {
+      "loss": 15.709939,
+      "vision": 0.220415,
+      "action": 1.350579,
+      "iteration": 1.0
+    },
+    "log": "/disk/rl/psm_wma/outputs/online_cache_first_loss/online.log"
+  },
+  "cache": {
+    "returncode": 0,
+    "metrics": {
+      "loss": 15.734109,
+      "vision": 0.222729,
+      "action": 1.350682,
+      "iteration": 1.0
+    },
+    "log": "/disk/rl/psm_wma/outputs/online_cache_first_loss/cache.log"
+  },
+  "abs_diff": {
+    "loss": 0.024169999999999803,
+    "vision": 0.0023140000000000105,
+    "action": 0.00010299999999996423
+  }
+}

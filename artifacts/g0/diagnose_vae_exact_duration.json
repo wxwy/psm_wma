@@ -1,0 +1,19 @@
+{
+  "shape_match": true,
+  "exact_shape": [
+    1,
+    48,
+    5,
+    16,
+    32
+  ],
+  "default_shape": [
+    1,
+    48,
+    5,
+    16,
+    32
+  ],
+  "max_abs_diff": 0.03125,
+  "mean_abs_diff": 0.0010303521994501352
+}
