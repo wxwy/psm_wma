@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import subprocess
 import time
 import warnings
@@ -14,13 +13,13 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from exact_window_cache import VisionEncoderAdapter, encode_window, to_training_uint8, window_indices, write_atomic
 from cosmos_framework.data.generator.action.datasets.libero_lerobot_dataset import LIBEROLeRobotDataset
 from cosmos_framework.data.generator.action.utils.transforms import VideoResize
 from cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16 import Wan2pt2VAEInterface
 from cosmos_framework.model.generator.vision_vae import (
     LIBERO_EXACT_WINDOW_ENCODE_CHUNK_FRAMES,
     LIBERO_EXACT_WINDOW_ENCODE_EXACT_DURATIONS,
-    encode_uint8_vision_item,
 )
 
 
@@ -44,24 +43,6 @@ def _encode_episode(
     if not torch.isfinite(latent).all():
         raise FloatingPointError("Cosmos latent contains NaN/Inf")
     return latent.cpu()
-
-
-class _VisionEncoderAdapter:
-    """Minimal adapter so the builder calls the exact OmniMoTModel helpers."""
-
-    def __init__(self, tokenizer: Wan2pt2VAEInterface, device: torch.device) -> None:
-        self.tokenizer_vision_gen = tokenizer
-        self.tensor_kwargs_fp32 = {"device": device, "dtype": torch.float32}
-
-    def encode(self, state: torch.Tensor) -> torch.Tensor:
-        return self.tokenizer_vision_gen.encode(state)
-
-def _encode_window(video_uint8: torch.Tensor, encoder: _VisionEncoderAdapter, *, device: torch.device) -> torch.Tensor:
-    """Encode one independent 17-frame window via the shared uint8 VAE entry."""
-    if video_uint8.ndim != 4 or video_uint8.shape[1] != 17 or video_uint8.dtype != torch.uint8:
-        raise ValueError(f"Expected uint8 [C,17,H,W], got {tuple(video_uint8.shape)} {video_uint8.dtype}")
-    latent = encode_uint8_vision_item(encoder, video_uint8.unsqueeze(0).to(device))
-    return latent.squeeze(0).permute(1, 0, 2, 3).cpu()
 
 
 def _build_windowed(args: argparse.Namespace, dataset: LIBEROLeRobotDataset, tokenizer: Wan2pt2VAEInterface, device: torch.device) -> None:
@@ -95,7 +76,7 @@ def _build_windowed(args: argparse.Namespace, dataset: LIBEROLeRobotDataset, tok
     args.output_root.mkdir(parents=True, exist_ok=True)
     episodes_dir.mkdir(exist_ok=True)
     revision = _code_revision()
-    encoder = _VisionEncoderAdapter(tokenizer, device)
+    encoder = VisionEncoderAdapter(tokenizer, device)
     video_resize = VideoResize(pad_keys=["video"], keep_aspect_ratio=True)
     rows_by_episode: dict[int, dict[str, object]] = dict(existing_rows)
     episode_ids = [int(v) for v in dataset._ep_vals]
@@ -131,7 +112,7 @@ def _build_windowed(args: argparse.Namespace, dataset: LIBEROLeRobotDataset, tok
         # applies VideoResize on the uint8 tensor.  We must apply VideoResize after
         # uint8 conversion, otherwise bicubic resize operates on float [0,1] and the
         # result differs from the online path.
-        video_uint8 = (video * 255.0).clamp(0.0, 255.0).to(torch.uint8).permute(1, 0, 2, 3).contiguous()
+        video_uint8 = to_training_uint8(video)
         resized = video_resize({"video": video_uint8}, resolution=None)
         video_uint8 = resized["video"]
         image_size = resized["image_size"]  # [target_h, target_w, orig_h_resized, orig_w_resized]
@@ -139,13 +120,13 @@ def _build_windowed(args: argparse.Namespace, dataset: LIBEROLeRobotDataset, tok
         windows: dict[str, dict[str, object]] = {}
         latent_shape: list[int] | None = None
         for start in range(max(0, video_uint8.shape[1] - 16)):
-            latent = _encode_window(video_uint8[:, start : start + 17], encoder, device=device)
+            latent = encode_window(video_uint8[:, start : start + 17], encoder, device=device)
             if latent_shape is None:
                 latent_shape = list(latent.shape)
             windows[str(start)] = {
                 "latent": latent.float(),
-                "window_frame_indices": torch.arange(start, start + 17, dtype=torch.long),
-                "latent_source_frame_indices": torch.arange(start, start + 17, 4, dtype=torch.long),
+                "window_frame_indices": window_indices(start)[0],
+                "latent_source_frame_indices": window_indices(start)[1],
                 "global_row_indices": torch.from_numpy(np.asarray(row_indices[start : start + 17], dtype=np.int64)),
             }
         metadata = {
@@ -161,7 +142,7 @@ def _build_windowed(args: argparse.Namespace, dataset: LIBEROLeRobotDataset, tok
             "temporal_compression_factor": 4,
             "vae_path": str(args.vae_path), "script_revision": revision, "task_index": args.task_index,
         }
-        _write_atomic(
+        write_atomic(
             {
                 "format": "exact_window_v1",
                 "episode_index": episode_index,
@@ -210,12 +191,6 @@ def _code_revision() -> str:
         return subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True).strip()
     except (OSError, subprocess.CalledProcessError):
         return "unknown"
-
-
-def _write_atomic(payload: dict[str, object], output_path: Path) -> None:
-    temporary_path = output_path.with_suffix(output_path.suffix + ".tmp")
-    torch.save(payload, temporary_path)
-    os.replace(temporary_path, output_path)
 
 
 def main() -> None:
@@ -343,7 +318,7 @@ def main() -> None:
                 "language": {"instruction": instructions[0], "instructions": instructions},
                 "metadata": metadata,
             }
-        _write_atomic(payload, output_path)
+        write_atomic(payload, output_path)
         manifest_rows_by_episode[episode_index] = {
                 "episode_index": episode_index,
                 "episode_path": str(output_path),

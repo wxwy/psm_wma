@@ -54,6 +54,8 @@ def main() -> None:
     encoder = _VisionEncoderAdapter(tokenizer, device)
     rows: list[dict[str, object]] = []
     for sample_dir in sorted(args.probe_root.glob("rank_*/sample_*")):
+        meta_path = sample_dir / "meta.json"
+        meta = json.loads(meta_path.read_text(encoding="utf-8")) if meta_path.is_file() else {}
         raw_uint8 = torch.load(sample_dir / "raw_uint8.pt", map_location="cpu", weights_only=True)
         online_latent = torch.load(sample_dir / "online_latent.pt", map_location="cpu", weights_only=True).float()
         with torch.inference_mode():
@@ -65,6 +67,12 @@ def main() -> None:
         rows.append(
             {
                 "sample": str(sample_dir),
+                "cache_key": {
+                    "suite": meta.get("suite"),
+                    "task_id": meta.get("task_id"),
+                    "episode_index": meta.get("episode_index"),
+                    "start_frame": meta.get("start_frame"),
+                },
                 "shape_match": shape_match,
                 "dtype_match": dtype_match,
                 "finite": finite,
