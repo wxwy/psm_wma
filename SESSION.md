@@ -1,8 +1,12 @@
 # 当前协作状态
 
-更新时间：2026-08-21
+更新时间：2026-08-23
 
 ## 当前最小步骤
+
+- `EVAL-LIBERO-4IN1-ACCEPTANCE-PLAN`（Kimi，TODO）：用户要求对已有 ckpt 做正式验收仿真，参数固定为 denoise=30、单 episode 上限 700 步、4 suite 每任务 10 trials。已核实每 suite 10 个任务（`meta/tasks.parquet`），即每 ckpt 400 episodes；现有 200 倍数 ckpt 共 10 个（200…2000），全量 4000 episodes，串行约 470 小时不可行。已向用户提出收缩选项（A：只测 1200/1600/2000；B：每 suite 5 任务全 10 ckpt）并说明训练期间并发受 GPU 53GiB/内存 113G 限制，等用户拍板 ckpt 范围、任务数与启动时机后再发 Codex 对齐脚本参数。未执行、未提交代码。
+
+- 运行状态快照（2026-08-23 15:30）：训练 `tmux sft_4in1` iter ~2094/5000（loss≈1.20，~88s/步）；内存 113G/128.8G 正常；`eval_4in1` watcher 已停（用户明确不重启，200 倍数点无自动评测）；iter_000002000 上传 HF `MangoGoes/Cosmos3-edge-generation-libero4in1` 改在 `tmux hf_upload` 中运行（hf_transfer 多线程，带宽瓶颈 ~1MB/s，18.1GB 约 37% 起，日志 `artifacts/g0/hf_upload_iter2000.log`）；`plot_sft_loss.py` LR x 轴范围 2000→5000 以对齐实际 max_iter。
 
 - `CLEANUP-20260822`（Codex/Kimi，DONE）：用户要求清理无用脚本/测试结果，先只读盘点并与 Kimi 对齐；双方确认当前 `sft_4in1`/`eval_4in1` 活跃，绝不碰子模块 `outputs/train`、`results/libero_closed_loop_4in1/iter_*`、checkpoint 或 tracked Gate 证据。已将根仓 14 个结束的临时 cache smoke/verify/first-loss 输出、旧 `artifacts/g0/online_vae_probe/`、指定 builder/smoke/verify 非追踪日志移至可恢复的同盘 `/disk/rl/psm_wma/.trash/20260822_cleanup/{outputs,artifacts_g0}/`；未永久删除。移动前后 `/disk/rl` `df` 均为 750T/611T used/140T avail（同盘移动不释放空间），trash 为 136G、根 `outputs/` 为 4KB、保留 `artifacts/g0/` 为 162MB。保留 `online_vae_probe_shared_contract/`、`latent_cache_route_probe/`、`latent_cache_mismatch_archive_20260820_v6/`、所有 tracked artifacts 与全部脚本；purge 时机由用户决定。未提交。
 

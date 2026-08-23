@@ -41,6 +41,7 @@
 | GPU-SMOKE-LATENT-CACHE | DONE | Kimi | tiny cache 可用；用户同意用直接 parity 替代训练 smoke | 用 `save_online_vae_probe_from_cache.py` + `verify_latent_cache_parity.py` 完成 cache vs online VAE 直接对比；`artifacts/g0/probe_vs_cache_parity.json` status=PASS，max_abs_diff=0.0；原训练 smoke 因 `max_episodes=2`+IterableDataset+36 workers 不兼容取消 |
 | IMPLEMENT-ROBOCASA-OFFLINE-VAE-CACHE | TODO | Codex/Kimi | 用户决定暂缓 cache，需要时再启动；代码实现与静态验收已完成 | 代码复审两轮收敛（REQUEST_CHANGES→APPROVE，遗留 1 个非阻塞 nit：builder :98 死代码残留旧 shape）；未跑 GPU；启动时需依次完成：LIBERO tiny helper 回归 0-diff、RoboCasa tiny parity（单进程限资源、水位准入）、用户授权后 full build；build 期间须停 eval watcher |
 | REVIEW-CACHE-IMPLEMENTATION | TODO | Codex | IMPLEMENT-ONLINE-VAE-LATENT-CACHE 实现与 parity 证据就绪 | Codex 独立审查 exact-window cache 实现、parity 证据与新增 `max_episodes` 支持；按项目审查惯例给出 APPROVE/REQUEST_CHANGES/REJECT 并附 file:line 级意见 |
+| EVAL-LIBERO-4IN1-ACCEPTANCE | TODO | Kimi/Codex | 用户拍板 ckpt 范围/任务数/启动时机后，与 Codex 对齐脚本参数 | 4 suite × 每任务 10 trials，denoise=30、上限 700 步；每 ckpt 400 episodes；SR 结果落盘并与历史 200 倍数点对比；训练期间并发受 GPU/内存水位限制，不得诱发训练 OOM |
 | G0-R07-R09 | BLOCKED | 待认领 | G0-R06 PASS | Local/Global packing 与 Local Memory Gate 分别满足 Runtime Plan |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |

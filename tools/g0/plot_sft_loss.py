@@ -53,7 +53,7 @@ def lr_multiplier(n: int) -> float:
     return F_MAX * (CYCLE - n) / (CYCLE - WARM_UP)
 
 
-lr_x = list(range(0, 2001))
+lr_x = list(range(0, 5001))
 lr_base = [BASE_LR * lr_multiplier(n) for n in lr_x]
 lr_adapter = [BASE_LR * ADAPTER_MULT * lr_multiplier(n) for n in lr_x]
 
