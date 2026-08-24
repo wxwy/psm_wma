@@ -4,6 +4,8 @@
 
 ## 当前最小步骤
 
+- `EVAL-LIBERO-4IN1-ACCEPTANCE`（Codex，REVIEW，task #15）：已新增 `cosmos-framework/examples/eval_libero_4in1_acceptance_4090.sh`，固定 14 个 checkpoint 倒序、每 checkpoint 1 server+最多 6 个 task worker、suite 顺序 spatial/object/goal/libero_10、每 task 10 trial、`MEM_GATE=50G`。并发 worker 各自写 `tasks/task_XXX/summary.json`，仅 10 个任务均匹配 suite/task/trial/action contract 时才原子合并 `suite/summary.json`；仅四个 canonical summary 齐全才写 `.done`。复用既有 server/client launcher，因此保持 MP4 success/fail 后缀；端口已有服务时拒绝误接。`bash -n`、子模块 `git diff --check`、合成 10-task 汇总（episodes/successes/contract）均 PASS；未启动 GPU/server/tmux/仿真。默认结果根为 `results/libero_closed_loop_4in1_acceptance_4090`，task #16 冒烟须指定独立 `..._smoke` 根，避免 1-trial summary 污染正式续跑。待独立审查后由 Kimi 在 `mm` 启动 task #16：iter2800/spatial、1 trial×10 task。未提交。
+
 - `EVAL-LIBERO-4IN1-ACCEPTANCE-PLAN`（Kimi，TODO）：用户要求对已有 ckpt 做正式验收仿真，参数固定为 denoise=30、单 episode 上限 700 步、4 suite 每任务 10 trials。已核实每 suite 10 个任务（`meta/tasks.parquet`），即每 ckpt 400 episodes；现有 200 倍数 ckpt 共 10 个（200…2000），全量 4000 episodes，串行约 470 小时不可行。已向用户提出收缩选项（A：只测 1200/1600/2000；B：每 suite 5 任务全 10 ckpt）并说明训练期间并发受 GPU 53GiB/内存 113G 限制，等用户拍板 ckpt 范围、任务数与启动时机后再发 Codex 对齐脚本参数。未执行、未提交代码。
 
 - 运行状态快照（2026-08-23 15:30）：训练 `tmux sft_4in1` iter ~2094/5000（loss≈1.20，~88s/步）；内存 113G/128.8G 正常；`eval_4in1` watcher 已停（用户明确不重启，200 倍数点无自动评测）；iter_000002000 上传 HF `MangoGoes/Cosmos3-edge-generation-libero4in1` 改在 `tmux hf_upload` 中运行（hf_transfer 多线程，带宽瓶颈 ~1MB/s，18.1GB 约 37% 起，日志 `artifacts/g0/hf_upload_iter2000.log`）；`plot_sft_loss.py` LR x 轴范围 2000→5000 以对齐实际 max_iter。
