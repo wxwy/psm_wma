@@ -1,0 +1,36 @@
+{
+  "iteration": 0,
+  "cache_index": 109,
+  "cache_shape": [
+    1,
+    48,
+    5,
+    12,
+    20
+  ],
+  "online_shape": [
+    1,
+    48,
+    5,
+    12,
+    20
+  ],
+  "cache_dtype": "torch.float32",
+  "online_dtype": "torch.float32",
+  "shape_match": true,
+  "dtype_match": true,
+  "finite": true,
+  "max_abs_diff": 0.03125,
+  "mean_abs_diff": 0.0017235754057765007,
+  "threshold": 1e-05,
+  "episode_index": [
+    1
+  ],
+  "start_frame": [
+    53
+  ],
+  "task_index": [
+    7
+  ],
+  "dataset_name": "libero_object"
+}

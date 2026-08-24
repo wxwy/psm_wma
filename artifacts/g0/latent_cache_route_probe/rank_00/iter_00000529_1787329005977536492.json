@@ -1,0 +1,79 @@
+{
+  "schema_version": "latent_cache_route_probe_v1",
+  "iteration": 529,
+  "cache_index": 29,
+  "raw_uint8": {
+    "shape": [
+      1,
+      3,
+      17,
+      192,
+      320
+    ],
+    "dtype": "torch.uint8",
+    "min": 0,
+    "max": 253,
+    "sha256": "1d6cd975b914478aa3d76e8b38611874daa849c8a599f3757cba024a7d6621f9"
+  },
+  "shared_guard": {
+    "shape": [
+      1,
+      48,
+      5,
+      12,
+      20
+    ],
+    "dtype": "torch.float32"
+  },
+  "training_online_route": {
+    "shape": [
+      1,
+      48,
+      5,
+      12,
+      20
+    ],
+    "dtype": "torch.float32"
+  },
+  "cache": {
+    "shape": [
+      1,
+      48,
+      5,
+      12,
+      20
+    ],
+    "dtype": "torch.float32"
+  },
+  "shared_guard_vs_training_online_route": {
+    "shape_match": true,
+    "dtype_match": true,
+    "finite": true,
+    "max_abs_diff": 0.0,
+    "mean_abs_diff": 0.0
+  },
+  "shared_guard_vs_cache": {
+    "shape_match": true,
+    "dtype_match": true,
+    "finite": true,
+    "max_abs_diff": 0.0,
+    "mean_abs_diff": 0.0
+  },
+  "training_online_route_vs_cache": {
+    "shape_match": true,
+    "dtype_match": true,
+    "finite": true,
+    "max_abs_diff": 0.0,
+    "mean_abs_diff": 0.0
+  },
+  "episode_index": [
+    365
+  ],
+  "start_frame": [
+    17
+  ],
+  "task_index": [
+    2
+  ],
+  "dataset_name": "libero_spatial"
+}

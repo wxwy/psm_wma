@@ -1,0 +1,79 @@
+{
+  "schema_version": "latent_cache_route_probe_v1",
+  "iteration": 1373,
+  "cache_index": 101,
+  "raw_uint8": {
+    "shape": [
+      1,
+      3,
+      17,
+      192,
+      320
+    ],
+    "dtype": "torch.uint8",
+    "min": 0,
+    "max": 255,
+    "sha256": "3448b32915097ff4acc32e1db973781cde1d012fbaf2bc535069a64a6ab2ff8e"
+  },
+  "shared_guard": {
+    "shape": [
+      1,
+      48,
+      5,
+      12,
+      20
+    ],
+    "dtype": "torch.float32"
+  },
+  "training_online_route": {
+    "shape": [
+      1,
+      48,
+      5,
+      12,
+      20
+    ],
+    "dtype": "torch.float32"
+  },
+  "cache": {
+    "shape": [
+      1,
+      48,
+      5,
+      12,
+      20
+    ],
+    "dtype": "torch.float32"
+  },
+  "shared_guard_vs_training_online_route": {
+    "shape_match": true,
+    "dtype_match": true,
+    "finite": true,
+    "max_abs_diff": 0.0,
+    "mean_abs_diff": 0.0
+  },
+  "shared_guard_vs_cache": {
+    "shape_match": true,
+    "dtype_match": true,
+    "finite": true,
+    "max_abs_diff": 0.0,
+    "mean_abs_diff": 0.0
+  },
+  "training_online_route_vs_cache": {
+    "shape_match": true,
+    "dtype_match": true,
+    "finite": true,
+    "max_abs_diff": 0.0,
+    "mean_abs_diff": 0.0
+  },
+  "episode_index": [
+    382
+  ],
+  "start_frame": [
+    62
+  ],
+  "task_index": [
+    5
+  ],
+  "dataset_name": "libero_goal"
+}

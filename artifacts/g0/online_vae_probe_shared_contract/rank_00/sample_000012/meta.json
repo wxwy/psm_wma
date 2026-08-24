@@ -1,0 +1,36 @@
+{
+  "iteration": 0,
+  "episode_index": 0,
+  "start_frame": 12,
+  "task_index": 0,
+  "dataset_name": "libero_spatial",
+  "num_views": 1,
+  "frames_per_view": null,
+  "raw_shape": [
+    3,
+    17,
+    192,
+    320
+  ],
+  "raw_dtype": "torch.uint8",
+  "latent_shape": [
+    1,
+    48,
+    5,
+    12,
+    20
+  ],
+  "latent_dtype": "torch.float32",
+  "vae_compute_dtype": "torch.bfloat16",
+  "encode_exact_durations": [
+    17,
+    61,
+    73
+  ],
+  "encode_chunk_frames": {
+    "256": 68,
+    "480": 24,
+    "720": 8,
+    "768": 8
+  }
+}

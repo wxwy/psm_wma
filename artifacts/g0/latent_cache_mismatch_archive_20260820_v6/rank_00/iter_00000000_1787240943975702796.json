@@ -1,0 +1,36 @@
+{
+  "iteration": 0,
+  "cache_index": 68,
+  "cache_shape": [
+    1,
+    48,
+    5,
+    12,
+    20
+  ],
+  "online_shape": [
+    1,
+    48,
+    5,
+    12,
+    20
+  ],
+  "cache_dtype": "torch.float32",
+  "online_dtype": "torch.float32",
+  "shape_match": true,
+  "dtype_match": true,
+  "finite": true,
+  "max_abs_diff": 0.046875,
+  "mean_abs_diff": 0.0016479674959555268,
+  "threshold": 1e-05,
+  "episode_index": [
+    1
+  ],
+  "start_frame": [
+    101
+  ],
+  "task_index": [
+    1
+  ],
+  "dataset_name": "libero_spatial"
+}
