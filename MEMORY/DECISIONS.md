@@ -139,3 +139,16 @@
 - 与既有决策关系：D010 对 **Policy native offline cache** 继续生效；D013 明确 Policy 的 exact-window cache 主线，D014 明确 D010/D013 不自动约束未来 Memory encoder/cache 的表征选择。
 - 详细记录：`docs/build/PSM-WMA_RGB_representation_and_memory_encoding_plan_v0.1.md`。
 - 原因：在 Memory 方案尚未冻结前提前把 Policy 从 native prime condition 改成 whole-episode regular latent，会同时引入不必要的 representation distribution shift 和实验变量；解耦后可以先保住 Cosmos baseline，再分别用实验决定 Local 的时间表征与 Global 的空间表征。
+
+## D015 Local Memory 实现准入与设计冻结边界
+
+- 日期：2026-08-25
+- 状态：生效
+- 决策：
+  1. Temporal Local Memory 与 Spatial Global Memory 必须作为独立 optional clean modality 实现、训练和评测；不得先拼接二者的 evidence/token 再复用同一 encoder 或 adapter。
+  2. 当前详细设计已冻结 Local 的输入 schema、因果边界、输出适配器和 state-management 硬约束，但未冻结可直接实现的 temporal compressor 算法或超参数。
+  3. 在已证明 no-Memory baseline 有效后，Local 主线依次执行 R07（Local optional-modality contract/dummy smoke）、R08（causal history replay/alignment）和 R09（`recurrent_latent` 与 `ttt_fast_weight` 的最小对比 smoke）；R09 后才冻结正式 Local backend 并进入 no-memory vs +Local matched experiment。
+  4. R07 为共享基础设施时可保留 Global 的空接口/独立 dummy coverage，但不得以此启动 Global store、retrieval 或联合 Local+Global 算法实验；Global 主线在 Local 阶段结论稳定后单独启动。
+- 未冻结项：Local visual evidence representation、`K_local`、history/token budget、internal dim、TBPTT segment、TTT update rule 与 checkpoint/runtime state schema；不得在实现前把它们写成项目既定事实。
+- 依据：`docs/build/PSM-WMA_02_detailed_design_v2.1_frozen.md` 第 3–5 章和第 20 章，以及 `docs/build/PSM-WMA_G0_runtime_execution_plan_v0.6_aligned.md` R07–R09。
+- 原因：先通过可验证的接口、因果数据合同和 backend A/B 对比冻结变量，才能将后续收益归因于 Local Memory，避免与 Global 或未验证的视觉表征发生耦合。

@@ -45,6 +45,8 @@
 | G0-R07-R09 | BLOCKED | 待认领 | G0-R06 PASS | Local/Global packing 与 Local Memory Gate 分别满足 Runtime Plan |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |
+| D015-LOCAL-MEMORY-GATE | DONE | Codex | D013/D014 已生效，Runtime Plan R07-R09 已对齐 | MEMORY/DECISIONS.md 新增 D015：Local/Global 必须为独立 optional clean modality；R07-R09 顺序与冻结边界；未冻结项不得在实现前写成既定事实 |
+| DATA-DOWNLOAD-TMUX | IN_PROGRESS | Codex | 用户要求 2026-08-26 早数据 ready；本沙箱到 huggingface.co 出网被掐 | `tmux hf_download_libero` 拉 `nvidia/LIBERO_LeRobot_v3`、`tmux hf_download_latent` 拉 `MangoGoes/libero4in1_wan2.2vae_latent_cosmos_style`，仅清 SOCKS5 保留 HTTP_PROXY 走 CONNECT 隧道；Claude 不前台测速 |
 
 ## 新增任务规则
 

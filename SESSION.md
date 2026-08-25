@@ -1,6 +1,14 @@
 # 当前协作状态
 
-更新时间：2026-08-23
+更新时间：2026-08-26
+
+## 2026-08-25~26 数据下载会话(sandbox,Codex)
+
+- 用户授权"明早要见到数据 ready",但本沙箱到 `huggingface.co` 出网被掐死:直连 curl 测速 611 B/s、`hf-mirror.com` 480 B/s、HF XET 协议 0.05 MB/s、HF 默认 HTTP 30 秒字节零增长;SSH 到 bita 第一次测试单大文件 SFTP 1.99 MB/s(4.3GB ETA 36 min)看似可行,但 8 路并发 SSH 触发 bita `MaxSessions` 限流,后续单 SSH 连接也被拒,放弃 scp 路径。
+- 创建 `/gemini/code/system_monitor.sh`(CgroupV1 适配版,与 bita `/disk/rl/system_monitor.sh` 口径一致但读取 `/sys/fs/cgroup/cpu,cpuacct,memory,cpuset` + sda 块设备 + SeaweedFS 14PB 挂载)。
+- 下载切换到 tmux 后台脱离 Claude 管道:`tmux hf_download_libero` 拉 `nvidia/LIBERO_LeRobot_v3`(83 文件 → `/gemini/code/datasets/nvidia_LIBERO_LeRobot_v3`)、`tmux hf_download_latent` 拉 `MangoGoes/libero4in1_wan2.2vae_latent_cosmos_style`(→ `/gemini/code/datasets/MangoGoes_libero4in1_wan2.2vae_latent_cosmos_style`);命令仅 `env -u all_proxy -u ALL_PROXY` 保留 HTTP/HTTPS_PROXY 走 CONNECT 隧道,日志 `/tmp/hf_dl/libero_v3.log` / `latent.log`,不再前台测速或写监控脚本。
+- 用户 SSH 端 `tmux attach -t hf_download_libero|hf_download_latent` 实时看进度。Claude 仅在阶段切换或异常时汇报,不占管道。
+- 推送策略确认:父仓 V2 `79b1c54` = origin/V2 `79b1c54`,子模块 v2 `5b61762` = origin/v2 `5b61762`,**已完全同步无需 push**;本次 commit 同步 SESSION.md/TODO.md/MEMORY/DECISIONS.md D015 是为记录今晚会话。
 
 ## 当前最小步骤
 
