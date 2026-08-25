@@ -152,3 +152,10 @@
 - 未冻结项：Local visual evidence representation、`K_local`、history/token budget、internal dim、TBPTT segment、TTT update rule 与 checkpoint/runtime state schema；不得在实现前把它们写成项目既定事实。
 - 依据：`docs/build/PSM-WMA_02_detailed_design_v2.1_frozen.md` 第 3–5 章和第 20 章，以及 `docs/build/PSM-WMA_G0_runtime_execution_plan_v0.6_aligned.md` R07–R09。
 - 原因：先通过可验证的接口、因果数据合同和 backend A/B 对比冻结变量，才能将后续收益归因于 Local Memory，避免与 Global 或未验证的视觉表征发生耦合。
+
+## D016 双仓库提交与推送顺序
+
+- 日期：2026-08-26
+- 状态：生效
+- 决策：只要 `cosmos-framework` 子模块存在代码、脚本、配置或文档更新，必须先在子模块 `v2` 分支创建独立提交并推送到子模块远端；随后根仓仅提交更新后的 Gitlink 及对应根仓范围文件，并推送根仓 `V2` 分支。不得将子模块源码修改与根仓修改混入同一 Git 提交。
+- 原因：子模块提交必须先在远端可访问，根仓 Gitlink 才不会指向远端不存在的对象；独立提交也保持两仓审查、回滚和归因边界清晰。
