@@ -11,14 +11,14 @@
     {
       "symbol": "PackedSequence / SequencePlan / pack_input_sequence",
       "public_entry": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/__init__.py:6-19",
-      "runtime_definition": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/sequence.py:32-142（PackedSequenceBuilder）、549-597（通用 span）、781-863（finalize）、867-1089（PackedSequence/SequencePlan）；packers.py:76",
+      "runtime_definition": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/sequence.py:33-866（PackedSequenceBuilder）、549-597（通用 span）、781-863（finalize）、867-1089（PackedSequence/SequencePlan）；packers.py:76",
       "consumer": "cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:80-85"
     },
     {
       "symbol": "遗留 packing class / dataset-side helper",
       "legacy_definition": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/types.py:18-71（ModalityData）、75-300（PackedSequence）、304 起（SequencePlan）",
       "legacy_consumer": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/modalities.py:14 直接导入 types.py；cosmos_framework/data/generator/local_datasets/sft_dataset.py:28 导入 modalities.add_special_tokens",
-      "disposition": "R07 不得假定所有 dataset 都走 sequence.py 主链。实现前必须以实际 R07 dataset import trace 确认其使用同一 SequencePlan/PackedSequence 合约；不得静默修改或删除遗留链路。"
+      "disposition": "R07 不得假定所有 dataset 都走 sequence.py 主链。实现前必须以实际 R07 dataset import trace 确认其使用同一 SequencePlan/PackedSequence 合约；不得静默修改或删除遗留链路。add_special_tokens 在 modality.py:191 与 modalities.py:81 双定义；R07 若新增 special token，必须同步两处或以独立变更显式合并两文件。"
     },
     {
       "symbol": "GenerationDataClean",
@@ -95,6 +95,12 @@
       "guard": "旧 types.py/modalities.py 链路可绕过 sequence.py 新合约",
       "evidence": "cosmos_framework/data/generator/sequence_packing/types.py:18-75、304；modalities.py:14；local_datasets/sft_dataset.py:28",
       "required_disposition": "R07 实现前对目标 LIBERO dataset 做 import trace；只扩展实际执行路径，并将未迁移旧链路列为兼容性范围外或单独任务。"
+    },
+    {
+      "severity": "MEDIUM",
+      "guard": "add_special_tokens 在主/旧 helper 双定义",
+      "evidence": "cosmos_framework/data/generator/sequence_packing/modality.py:191；modalities.py:81；local_datasets/sft_dataset.py:28",
+      "required_disposition": "R07 若新增 special token，必须同步两处定义，或在独立兼容性变更中显式合并 helper；不得只修改运行时主链。"
     }
   ],
   "next_step": "完成 canonical R06 baseline 后，先以本审计的文件边界实施 R07 B dummy，并用 A/B/C/D 最小 GPU smoke 验收；不并入 R08/R09。"
