@@ -45,6 +45,7 @@
 | G0-R07-SOURCE-AUDIT | DONE | Codex | 详细设计 v0.1、Runtime Plan v0.6 与官方 v2 代码基线 | 二轮独立复核 APPROVE；D017 已解除 R06 canonical blocker，审计产物已补 native mRoPE/checkpoint parity Gate |
 | G0-R07-IMPLEMENTATION | IN_PROGRESS | Codex | G0-R06 DONE、G0-R07-SOURCE-AUDIT DONE、D017 | 仅实现 Local dummy clean modality；A/B/C/D、native mRoPE parity、iter2800 load/no-memory parity/save-reload 最小 smoke PASS；不实施 R08/R09 |
 | G0-R07-PRE-IMPLEMENT-REVIEW | DONE | mm2 | D017 与 source audit 完成 | `APPROVE_TO_IMPLEMENT`；D017、mRoPE parity、checkpoint/no-memory parity、Edge-4in1 scope、legacy/Flex 范围通过；LOW 措辞已回填 |
+| G0-R07-STEP1-REVIEW | DONE | mm2 | 子模块 `0b48dae`、根仓 `799dc91` | APPROVE：Local dummy 注入、optional collate、默认关闭无回归与 serialization 兼容通过；`SequencePlan.as_dict()` 未被业务调用为 LOW，不阻塞 |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |
 | D015-LOCAL-MEMORY-GATE | DONE | Codex | D013/D014 已生效，Runtime Plan R07-R09 已对齐 | MEMORY/DECISIONS.md 新增 D015：Local/Global 必须为独立 optional clean modality；R07-R09 顺序与冻结边界；未冻结项不得在实现前写成既定事实 |

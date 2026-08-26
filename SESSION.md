@@ -18,6 +18,8 @@
 
   - 第 1 步已完成：子模块 `0b48dae` 加入 `SequencePlan.has_local_memory`、`ActionTransformPipeline` 的默认关闭 local dummy payload、LIBERO dataset 参数透传和 `joint_dataloader` optional list/sparse collate；`py_compile` 与子模块 `git diff --check` PASS。未接 packing/network，默认关闭不会改变 baseline；下一步接 `GenerationDataClean`、packer 和 adapter。子模块已推送；根仓 Gitlink 待提交。
 
+  - 独立审查：`mm2` 对子模块 `0b48dae` / 根仓 `799dc91` 结论 APPROVE。默认关闭、shape/dtype、plan 标记、LIBERO 参数透传、mixed-None collate、序列化兼容与 baseline 无回归均通过；LOW：`SequencePlan.as_dict()` 当前未被业务入口调用，下一次触摸 `sequence.py` 时决定保留或删除，不阻塞 Step 2。
+
 - `G0-R07-PRE-IMPLEMENT-REVIEW`（mm2，DONE）：对 `f238295` 只读复核结论 `APPROVE_TO_IMPLEMENT`。D017、mRoPE parity、iter2800 checkpoint/no-memory parity、Edge-4in1 trainable scope、legacy/Flex 范围均 PASS；两项 LOW 审计措辞已回填：Edge-4in1 无 `keys_to_select`、整 backbone 训练；Flex 默认 `enabled=false` 的继承证据已补齐。未改子模块、未运行代码。
 
 - `EVAL-LIBERO-4IN1-ACCEPTANCE`（Codex，REVIEW，task #15）：已新增 `cosmos-framework/examples/eval_libero_4in1_acceptance_4090.sh`，固定 14 个 checkpoint 倒序、每 checkpoint 1 server+最多 6 个 task worker、suite 顺序 spatial/object/goal/libero_10、每 task 10 trial、`MEM_GATE=50G`。并发 worker 各自写 `tasks/task_XXX/summary.json`，仅 10 个任务均匹配 suite/task/trial/action contract 时才原子合并 `suite/summary.json`；仅四个 canonical summary 齐全才写 `.done`。复用既有 server/client launcher，因此保持 MP4 success/fail 后缀；端口已有服务时拒绝误接。`bash -n`、子模块 `git diff --check`、合成 10-task 汇总（episodes/successes/contract）均 PASS；未启动 GPU/server/tmux/仿真。默认结果根为 `results/libero_closed_loop_4in1_acceptance_4090`，task #16 冒烟须指定独立 `..._smoke` 根，避免 1-trial summary 污染正式续跑。待独立审查后由 Kimi 在 `mm` 启动 task #16：iter2800/spatial、1 trial×10 task。未提交。
