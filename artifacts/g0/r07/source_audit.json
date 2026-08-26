@@ -35,7 +35,7 @@
         "cosmos_framework/data/generator/sequence_packing/sequence.py",
         "cosmos_framework/data/generator/action/utils/transforms.py"
       ],
-      "finding": "需新增独立 local_memory payload 与 SequencePlan.has_local_memory；新模态必须由 dataset 生成 plan（sequence.py:1113）。不得复用 vision/action 字段。另有 types.py/modalities.py 旧链路，R07 数据集必须显式验证不会绕过新合约。"
+      "finding": "R07 dummy 必须走真实 Edge-4in1 runtime：config-controlled LocalDummyTransform 写 data_dict['local_memory']=[K_local,D_local] 并将 data_dict['sequence_plan'].has_local_memory=True，随后经 GenerationDataClean.x0_tokens_local_memory 到 PackedSequence。不得只在 unit test 人工造 Local，也不得在 OmniMoTModel 内部隐式生成。新模态必须由 dataset/transform 生成 plan（sequence.py:1113），不得复用 vision/action 字段。"
     },
     {
       "area": "packing / attention / mRoPE",
@@ -76,7 +76,7 @@
       "severity": "HIGH",
       "guard": "Local presence 不得改变 native Vision/Action mRoPE position IDs",
       "evidence": "cosmos_framework/data/generator/sequence_packing/packers.py:232-236、442-484；mrope.py:41-72",
-      "required_disposition": "R07 A(no Local) 与 B(dummy Local) 在同一文本/vision/action 输入下，必须断言 Vision/Action 的 packed sequence_indexes 与 position_ids 逐位一致；Local 使用独立 fixed position strategy，且不推进 native vision temporal cursor。"
+      "required_disposition": "旧模型与新模型 A(no Local) 必须断言 native global sequence_indexes、position_ids、output/loss 一致。A 与 B(dummy Local) 必须断言 Vision/Action token 数量、内部顺序、noise/loss/condition contract 不变，并按各自 modality indexes 比较 position_ids：A.position_ids[:, A.modality.sequence_indexes] == B.position_ids[:, B.modality.sequence_indexes]。B 的 global indexes 允许且应当相对 A 平移 K_local；Local 使用独立 fixed position strategy，且不推进 native vision temporal cursor。"
     },
     {
       "severity": "HIGH",
