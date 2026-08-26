@@ -4,8 +4,8 @@
   "status": "PASS_WITH_IMPLEMENTATION_BLOCKERS",
   "scope": "只读源码审计；未修改 cosmos-framework，未执行项目代码、训练、推理或评测。",
   "baseline_dependency": {
-    "status": "BLOCKED",
-    "reason": "TODO.md:45 仍要求 canonical G0-R06 PASS 后才可开始 R07 实现。"
+    "status": "UNBLOCKED",
+    "reason": "用户于 2026-08-26 明确 override：iter_000002800 冻结为 R06 No-Memory baseline，取消 canonical 400-episode 准入；见 MEMORY/DECISIONS.md D017。"
   },
   "import_trace": [
     {
@@ -18,7 +18,7 @@
       "symbol": "遗留 packing class / dataset-side helper",
       "legacy_definition": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/types.py:18-71（ModalityData）、75-300（PackedSequence）、304 起（SequencePlan）",
       "legacy_consumer": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/modalities.py:14 直接导入 types.py；cosmos_framework/data/generator/local_datasets/sft_dataset.py:28 导入 modalities.add_special_tokens",
-      "disposition": "R07 不得假定所有 dataset 都走 sequence.py 主链。实现前必须以实际 R07 dataset import trace 确认其使用同一 SequencePlan/PackedSequence 合约；不得静默修改或删除遗留链路。add_special_tokens 在 modality.py:191 与 modalities.py:81 双定义；R07 若新增 special token，必须同步两处或以独立变更显式合并两文件。"
+      "disposition": "当前 LIBERO action path 经 action/utils/transforms.py:702-709 的 build_sequence_plan_from_mode 走 package export 的 sequence.py 合约。types.py/modalities.py 与 local_datasets/sft_dataset.py 为 compatibility out-of-scope：R07 不重构或统一两套 packing。add_special_tokens 在 modality.py:191 与 modalities.py:81 双定义，但 R07 不新增 Local special text token，因此不触碰这两处 helper。"
     },
     {
       "symbol": "GenerationDataClean",
@@ -44,7 +44,7 @@
         "cosmos_framework/data/generator/sequence_packing/sequence.py",
         "cosmos_framework/data/generator/sequence_packing/mrope.py"
       ],
-      "finding": "Local 应作为文本之后、vision/action 之前的独立 clean span，并计入同一 full generation split；应新增 local_split_len，并在 packers.py:519 的 combined_split_len 中计入。packers.py:509-520 负责 EOV 与 finalize，不是独立的 full-split 定义。可复用通用 _append_modality_span（sequence.py:549-597）和 text-style mRoPE helper（mrope.py:41-72），但需要专用 Local wrapper，不能伪装成 text 或 vision。"
+      "finding": "Local 应作为文本之后、vision/action 之前的独立 clean span，并计入同一 full generation split；应新增 local_split_len，并在 packers.py:519 的 combined_split_len 中计入。packers.py:509-520 负责 EOV 与 finalize，不是独立的 full-split 定义。Local wrapper 可生成独立、固定且可测试的 position IDs，但不得推进或改变 vision_start_temporal_offset：有/无 Local 时 native Vision/Action position_ids 必须逐位相同。不得伪装成 text 或 vision。"
     },
     {
       "area": "网络 adapter",
@@ -63,7 +63,7 @@
         "cosmos_framework/data/generator/sequence_packing/temporal_causal.py",
         "cosmos_framework/model/generator/vision_vae.py"
       ],
-      "finding": "不把 Local 加入 _add_noise_to_input（omni_mot_model.py:1784-1985）、_replace_clean_with_noised（1987-2002）、_compute_flow_matching_loss（1293 起）或 _compute_losses（1410-1557），也不写入 losses_dict。新 adapter 在建网、LoRA 前、FSDP 前注册（220-317），并须显式加入 optimizer.keys_to_select；action_policy_libero_nano.py:83-97 仅为 selector pattern 参考，不直接修改。所有 GenerationDataClean 重建/切片与 checkpoint payload 都必须传播 Local。R07 normal path 不扩展 temporal_causal.py；R08 复用历史 prime z0 前须审计 vision_vae.py 的公共编码契约。"
+      "finding": "不把 Local 加入 _add_noise_to_input（omni_mot_model.py:1784-1985）、_replace_clean_with_noised（1987-2002）、_compute_flow_matching_loss（1293 起）或 _compute_losses（1410-1557），也不写入 losses_dict。新 adapter 在建网、LoRA 前、FSDP 前注册，并仅在实际 Edge-4in1 selector 上新增 Local 参数，保持现有 backbone trainable scope 不变；action_policy_libero_nano.py:83-97 仅为 selector pattern 参考，不直接修改。iter2800 load 时原参数必须完整恢复，新增 Local 参数须显式新初始化；R07 必测无 Local 的 checkpoint functional parity 与新增参数 save/reload。所有 GenerationDataClean 重建/切片与 checkpoint payload 都必须传播 Local。R07 normal path 不扩展 temporal_causal.py；R08 复用历史 prime z0 前须审计 vision_vae.py 的公共编码契约。"
     }
   ],
   "r07_contract": {
@@ -74,9 +74,9 @@
   "blockers_and_guards": [
     {
       "severity": "HIGH",
-      "guard": "Multiview FlexAttention 仅支持 vision-only batch",
-      "evidence": "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:1096-1136",
-      "required_disposition": "R07 WAM+Local 配置必须显式禁用该路径或新增 fail-fast 断言；不得静默扩展其 block mask。"
+      "guard": "Local presence 不得改变 native Vision/Action mRoPE position IDs",
+      "evidence": "cosmos_framework/data/generator/sequence_packing/packers.py:232-236、442-484；mrope.py:41-72",
+      "required_disposition": "R07 A(no Local) 与 B(dummy Local) 在同一文本/vision/action 输入下，必须断言 Vision/Action 的 packed sequence_indexes 与 position_ids 逐位一致；Local 使用独立 fixed position strategy，且不推进 native vision temporal cursor。"
     },
     {
       "severity": "HIGH",
@@ -91,17 +91,29 @@
       "required_disposition": "R07 仅为 dummy Local 固定一个明确、可测试的位置策略；R08 才将其与历史时间线对齐，禁止自行假定负时间坐标。"
     },
     {
-      "severity": "MEDIUM",
-      "guard": "旧 types.py/modalities.py 链路可绕过 sequence.py 新合约",
+      "severity": "LOW",
+      "guard": "旧 types.py/modalities.py 链路属于 compatibility out-of-scope",
       "evidence": "cosmos_framework/data/generator/sequence_packing/types.py:18-75、304；modalities.py:14；local_datasets/sft_dataset.py:28",
-      "required_disposition": "R07 实现前对目标 LIBERO dataset 做 import trace；只扩展实际执行路径，并将未迁移旧链路列为兼容性范围外或单独任务。"
+      "required_disposition": "LIBERO action path 已由 action/utils/transforms.py:702-709 确认走 sequence.py；R07 不修改旧链路，除非后续目标 dataset 的 import trace 证明其需要。"
     },
     {
-      "severity": "MEDIUM",
+      "severity": "LOW",
       "guard": "add_special_tokens 在主/旧 helper 双定义",
       "evidence": "cosmos_framework/data/generator/sequence_packing/modality.py:191；modalities.py:81；local_datasets/sft_dataset.py:28",
-      "required_disposition": "R07 若新增 special token，必须同步两处定义，或在独立兼容性变更中显式合并 helper；不得只修改运行时主链。"
+      "required_disposition": "R07 不新增 Local special text token，利用独立 local_memory_modality_embed 标识类型；因此不触碰双定义 helper。"
+    },
+    {
+      "severity": "LOW",
+      "guard": "Multiview FlexAttention 是既有 LIBERO WAM action batch 不支持的配置路径",
+      "evidence": "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:1096-1136；configs/base/experiment/sft/models/edge_model_config.py:44；configs/base/defaults/model_config.py:224",
+      "required_disposition": "R07 config/smoke 显式断言 flex_attention.enabled=false；不扩展 block mask 或 attention 实现。"
+    },
+    {
+      "severity": "HIGH",
+      "guard": "iter2800 checkpoint compatibility 与 No-Memory functional parity",
+      "evidence": "cosmos_framework/model/generator/omni_mot_model.py:220-330、943-989；cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:195-217",
+      "required_disposition": "R07 必须验证：新增 Local 参数仅新初始化且 load 不因缺键失败；has_local_memory=false 时旧/新模型在同 seed、同 batch 下 native indexes、action/future outputs 与 loss 在约定容差内一致；save/reload 后 Local 参数逐位恢复。若采用 function-preserving zero-init，记录具体零初始化层，并将 Normal/Zero/Shuffle sensitivity 放在 1-10 个最小 optimizer steps 后判定。"
     }
   ],
-  "next_step": "完成 canonical R06 baseline 后，先以本审计的文件边界实施 R07 B dummy，并用 A/B/C/D 最小 GPU smoke 验收；不并入 R08/R09。"
+  "next_step": "R07 已由冻结 iter_000002800 R06 baseline 解锁。先以本审计的文件边界实施 R07 B dummy，并用 A/B/C/D、native mRoPE parity、iter2800 load/no-memory parity/save-reload 最小 smoke 验收；不并入 R08/R09。"
 }

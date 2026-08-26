@@ -12,7 +12,9 @@
 
 ## 当前最小步骤
 
-- `G0-R07-SOURCE-AUDIT`（Codex，DONE）：二轮独立复核 APPROVE。审计已将 `PackedSequenceBuilder` 范围固定为 `sequence.py:33-866`，并记录 `add_special_tokens` 在 `modality.py:191` 与 `modalities.py:81` 双定义的 MEDIUM guard；R07 若新增 special token 必须同步两处或在独立兼容性变更中合并 helper。结论为 Local 独立 clean modality，禁止进入 noising、decoder、MSE/flow loss；实施前还须对 LIBERO dataset 做旧 `types.py/modalities.py` 链路 import trace；FlexAttention vision-only 与 R08 z0 suffix-invariance 都是 HIGH guard。未改 `cosmos-framework`、未执行项目代码。**R07 实现仍 BLOCKED，直至 canonical G0-R06 baseline PASS。**根仓仅提交本 JSON、SESSION、TODO；提交哈希见 Git HEAD。
+- `G0-R06/R07 override`（用户，DONE）：D017 生效：`iter_000002800` 冻结为 R06 No-Memory baseline，取消 canonical 400-episode acceptance，R07 UNBLOCKED；13-ckpt sweep 仅作趋势 evidence。未改 frozen 文档或历史 zero-shot FAIL 证据。
+
+- `G0-R07-IMPLEMENTATION`（Codex，IN_PROGRESS）：预计修改子模块 `data_and_condition.py`、`sequence.py`、`packers.py`、`omni_mot_model.py`、`cosmos3_vfm_network.py`、实际 Edge-4in1 config/test；只实现 dummy Local clean modality。硬 Gate：有/无 Local native Vision/Action mRoPE IDs 不变，iter2800 load、新参数 init、no-memory functional parity、save/reload；A/B/C/D。Local 不进 noising/decoder/loss，不做 R08/R09；FlexAttention 仅 config guard disabled，旧 types/modalities 为 compatibility out-of-scope。
 
 - `EVAL-LIBERO-4IN1-ACCEPTANCE`（Codex，REVIEW，task #15）：已新增 `cosmos-framework/examples/eval_libero_4in1_acceptance_4090.sh`，固定 14 个 checkpoint 倒序、每 checkpoint 1 server+最多 6 个 task worker、suite 顺序 spatial/object/goal/libero_10、每 task 10 trial、`MEM_GATE=50G`。并发 worker 各自写 `tasks/task_XXX/summary.json`，仅 10 个任务均匹配 suite/task/trial/action contract 时才原子合并 `suite/summary.json`；仅四个 canonical summary 齐全才写 `.done`。复用既有 server/client launcher，因此保持 MP4 success/fail 后缀；端口已有服务时拒绝误接。`bash -n`、子模块 `git diff --check`、合成 10-task 汇总（episodes/successes/contract）均 PASS；未启动 GPU/server/tmux/仿真。默认结果根为 `results/libero_closed_loop_4in1_acceptance_4090`，task #16 冒烟须指定独立 `..._smoke` 根，避免 1-trial summary 污染正式续跑。待独立审查后由 Kimi 在 `mm` 启动 task #16：iter2800/spatial、1 trial×10 task。未提交。
 

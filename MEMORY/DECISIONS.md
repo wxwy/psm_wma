@@ -159,3 +159,11 @@
 - 状态：生效
 - 决策：只要 `cosmos-framework` 子模块存在代码、脚本、配置或文档更新，必须先在子模块 `v2` 分支创建独立提交并推送到子模块远端；随后根仓仅提交更新后的 Gitlink 及对应根仓范围文件，并推送根仓 `V2` 分支。不得将子模块源码修改与根仓修改混入同一 Git 提交。
 - 原因：子模块提交必须先在远端可访问，根仓 Gitlink 才不会指向远端不存在的对象；独立提交也保持两仓审查、回滚和归因边界清晰。
+
+## D017 R06 baseline 冻结与 R07 解锁 override
+
+- 日期：2026-08-26
+- 状态：生效（用户明确 override）
+- 决策：`iter_000002800` 立即冻结为 R06 No-Memory baseline，G0-R06 记为 DONE；取消 `ACCEPT-CANONICAL-R06-BASELINE` 的额外 400-episode 准入要求。13-ckpt 1-trial sweep 保留为训练趋势证据，不再阻塞 Local。R07 implementation 自此 UNBLOCKED，仍严格按 R07 → R08 → R09 Gate 顺序，禁止提前实施 R08/R09。
+- 覆盖范围：本条覆盖 D003/D015 中“R06 PASS 后才实现 R07”的准入判定以及 SESSION/TODO 中 canonical-400-episode 口径；不篡改历史 R06 zero-shot FAIL 证据或 frozen 文档。
+- 原因：用户确认现有 `iter_000002800` 四 suite no-Memory 结果足以作为后续 matched +Local 对照；继续等待 canonical acceptance 只增加无关阻塞。
