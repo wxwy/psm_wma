@@ -11,8 +11,14 @@
     {
       "symbol": "PackedSequence / SequencePlan / pack_input_sequence",
       "public_entry": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/__init__.py:6-19",
-      "runtime_definition": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/sequence.py:867-1089；packers.py:76",
+      "runtime_definition": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/sequence.py:32-142（PackedSequenceBuilder）、549-597（通用 span）、781-863（finalize）、867-1089（PackedSequence/SequencePlan）；packers.py:76",
       "consumer": "cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:80-85"
+    },
+    {
+      "symbol": "遗留 packing class / dataset-side helper",
+      "legacy_definition": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/types.py:18-71（ModalityData）、75-300（PackedSequence）、304 起（SequencePlan）",
+      "legacy_consumer": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/modalities.py:14 直接导入 types.py；cosmos_framework/data/generator/local_datasets/sft_dataset.py:28 导入 modalities.add_special_tokens",
+      "disposition": "R07 不得假定所有 dataset 都走 sequence.py 主链。实现前必须以实际 R07 dataset import trace 确认其使用同一 SequencePlan/PackedSequence 合约；不得静默修改或删除遗留链路。"
     },
     {
       "symbol": "GenerationDataClean",
@@ -29,7 +35,7 @@
         "cosmos_framework/data/generator/sequence_packing/sequence.py",
         "cosmos_framework/data/generator/action/utils/transforms.py"
       ],
-      "finding": "需新增独立 local_memory payload 与 SequencePlan.has_local_memory；新模态必须由 dataset 生成 plan（sequence.py:1113）。不得复用 vision/action 字段。"
+      "finding": "需新增独立 local_memory payload 与 SequencePlan.has_local_memory；新模态必须由 dataset 生成 plan（sequence.py:1113）。不得复用 vision/action 字段。另有 types.py/modalities.py 旧链路，R07 数据集必须显式验证不会绕过新合约。"
     },
     {
       "area": "packing / attention / mRoPE",
@@ -38,7 +44,7 @@
         "cosmos_framework/data/generator/sequence_packing/sequence.py",
         "cosmos_framework/data/generator/sequence_packing/mrope.py"
       ],
-      "finding": "Local 应作为文本之后、vision/action 之前的独立 clean span，并计入同一 full generation split；现有 full split 的边界在 packers.py:509-520。可复用通用 _append_modality_span（sequence.py:549-597）和 text-style mRoPE helper（mrope.py:41-72），但需要专用 Local wrapper，不能伪装成 text 或 vision。"
+      "finding": "Local 应作为文本之后、vision/action 之前的独立 clean span，并计入同一 full generation split；应新增 local_split_len，并在 packers.py:519 的 combined_split_len 中计入。packers.py:509-520 负责 EOV 与 finalize，不是独立的 full-split 定义。可复用通用 _append_modality_span（sequence.py:549-597）和 text-style mRoPE helper（mrope.py:41-72），但需要专用 Local wrapper，不能伪装成 text 或 vision。"
     },
     {
       "area": "网络 adapter",
@@ -46,16 +52,18 @@
         "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
         "cosmos_framework/model/generator/omni_mot_model.py"
       ],
-      "finding": "新增 local_memory2llm 与 local_memory_modality_embed、专用 clean encoder，并在 forward 的 all_gen_indexes 中纳入 Local（cosmos3_vfm_network.py:995-1029）。Local 不应经过 vision patchify、timestep embed、decoder 或 MSE loss。"
+      "finding": "新增 local_memory2llm 与 local_memory_modality_embed、专用 clean encoder，并在 forward 的 all_gen_indexes 中纳入 Local（cosmos3_vfm_network.py:995-1029）。all_gen_indexes 是 GEN stream 的 vision/action/sound 位置集合，text 单独走 packed_seq.text_indexes；Local 应进入前者作为 packed condition，但不应经过 vision patchify、timestep embed、decoder 或 MSE loss。"
     },
     {
       "area": "训练与分布式",
       "files": [
         "cosmos_framework/model/generator/omni_mot_model.py",
         "cosmos_framework/model/generator/mot/parallelize_vfm_network.py",
-        "cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_libero_nano.py"
+        "cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_libero_nano.py",
+        "cosmos_framework/data/generator/sequence_packing/temporal_causal.py",
+        "cosmos_framework/model/generator/vision_vae.py"
       ],
-      "finding": "不把 Local 加入 _add_noise_to_input（omni_mot_model.py:1784-1985）、_replace_clean_with_noised（1987-2002）或 _compute_losses；新 adapter 在建网、LoRA 前、FSDP 前注册（220-317），并须显式加入 optimizer.keys_to_select。所有 GenerationDataClean 重建/切片与 checkpoint payload 都必须传播 Local。"
+      "finding": "不把 Local 加入 _add_noise_to_input（omni_mot_model.py:1784-1985）、_replace_clean_with_noised（1987-2002）、_compute_flow_matching_loss（1293 起）或 _compute_losses（1410-1557），也不写入 losses_dict。新 adapter 在建网、LoRA 前、FSDP 前注册（220-317），并须显式加入 optimizer.keys_to_select；action_policy_libero_nano.py:83-97 仅为 selector pattern 参考，不直接修改。所有 GenerationDataClean 重建/切片与 checkpoint payload 都必须传播 Local。R07 normal path 不扩展 temporal_causal.py；R08 复用历史 prime z0 前须审计 vision_vae.py 的公共编码契约。"
     }
   ],
   "r07_contract": {
@@ -81,6 +89,12 @@
       "guard": "时间位置语义尚未冻结",
       "evidence": "cosmos_framework/data/generator/sequence_packing/mrope.py:41-72",
       "required_disposition": "R07 仅为 dummy Local 固定一个明确、可测试的位置策略；R08 才将其与历史时间线对齐，禁止自行假定负时间坐标。"
+    },
+    {
+      "severity": "MEDIUM",
+      "guard": "旧 types.py/modalities.py 链路可绕过 sequence.py 新合约",
+      "evidence": "cosmos_framework/data/generator/sequence_packing/types.py:18-75、304；modalities.py:14；local_datasets/sft_dataset.py:28",
+      "required_disposition": "R07 实现前对目标 LIBERO dataset 做 import trace；只扩展实际执行路径，并将未迁移旧链路列为兼容性范围外或单独任务。"
     }
   ],
   "next_step": "完成 canonical R06 baseline 后，先以本审计的文件边界实施 R07 B dummy，并用 A/B/C/D 最小 GPU smoke 验收；不并入 R08/R09。"

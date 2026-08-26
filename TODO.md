@@ -42,7 +42,7 @@
 | IMPLEMENT-ROBOCASA-OFFLINE-VAE-CACHE | TODO | Codex/Kimi | 用户决定暂缓 cache，需要时再启动；代码实现与静态验收已完成 | 代码复审两轮收敛（REQUEST_CHANGES→APPROVE，遗留 1 个非阻塞 nit：builder :98 死代码残留旧 shape）；未跑 GPU；启动时需依次完成：LIBERO tiny helper 回归 0-diff、RoboCasa tiny parity（单进程限资源、水位准入）、用户授权后 full build；build 期间须停 eval watcher |
 | REVIEW-CACHE-IMPLEMENTATION | TODO | Codex | IMPLEMENT-ONLINE-VAE-LATENT-CACHE 实现与 parity 证据就绪 | Codex 独立审查 exact-window cache 实现、parity 证据与新增 `max_episodes` 支持；按项目审查惯例给出 APPROVE/REQUEST_CHANGES/REJECT 并附 file:line 级意见 |
 | EVAL-LIBERO-4IN1-ACCEPTANCE | REVIEW | Codex | task #15 driver 已实现，等待独立审查 | 新增 4090 driver：14 ckpt 倒序、单 server + 6 worker、4 suite × 10 task × 10 trial、MEM_GATE=50G、task 独占输出后原子汇总 suite summary，4 summary 后才写 .done；`bash -n`、diff-check 与合成 10-task 汇总 PASS；审查后由 Kimi 启动 task #16 的 iter2800/spatial 1 trial/task smoke |
-| G0-R07-SOURCE-AUDIT | REVIEW | Codex | 详细设计 v0.1、Runtime Plan v0.6 与官方 v2 代码基线 | 已完成只读 import trace / 最小 patch 边界 / 风险审计，产物 `artifacts/g0/r07/source_audit.json`；不改子模块代码、不运行项目代码；待独立审阅后保留为 R07 实现输入，R07 实现仍以前置 G0-R06 PASS 为 BLOCKED |
+| G0-R07-SOURCE-AUDIT | REVIEW | Codex | 详细设计 v0.1、Runtime Plan v0.6 与官方 v2 代码基线 | 首轮独立审查 REQUEST_CHANGES 后已补齐 `types.py/modalities.py` 旧链路、builder/span 入口、full split、loss、temporal-causal 与 vision_vae 边界；产物 `artifacts/g0/r07/source_audit.json` 待复核。不改子模块代码、不运行项目代码；R07 实现仍以前置 G0-R06 PASS 为 BLOCKED |
 | G0-R07-R09 | BLOCKED | 待认领 | G0-R06 PASS | Local/Global packing 与 Local Memory Gate 分别满足 Runtime Plan |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |
