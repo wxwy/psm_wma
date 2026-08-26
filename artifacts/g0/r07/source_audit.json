@@ -1,0 +1,87 @@
+{
+  "gate": "G0-R07",
+  "step": "source_audit",
+  "status": "PASS_WITH_IMPLEMENTATION_BLOCKERS",
+  "scope": "只读源码审计；未修改 cosmos-framework，未执行项目代码、训练、推理或评测。",
+  "baseline_dependency": {
+    "status": "BLOCKED",
+    "reason": "TODO.md:45 仍要求 canonical G0-R06 PASS 后才可开始 R07 实现。"
+  },
+  "import_trace": [
+    {
+      "symbol": "PackedSequence / SequencePlan / pack_input_sequence",
+      "public_entry": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/__init__.py:6-19",
+      "runtime_definition": "cosmos-framework/cosmos_framework/data/generator/sequence_packing/sequence.py:867-1089；packers.py:76",
+      "consumer": "cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:80-85"
+    },
+    {
+      "symbol": "GenerationDataClean",
+      "definition": "cosmos-framework/cosmos_framework/model/generator/utils/data_and_condition.py:15-59",
+      "construction": "cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:4104-4122",
+      "checkpoint_payload": "cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py:943-989"
+    }
+  ],
+  "required_minimal_boundaries": [
+    {
+      "area": "数据与计划",
+      "files": [
+        "cosmos_framework/model/generator/utils/data_and_condition.py",
+        "cosmos_framework/data/generator/sequence_packing/sequence.py",
+        "cosmos_framework/data/generator/action/utils/transforms.py"
+      ],
+      "finding": "需新增独立 local_memory payload 与 SequencePlan.has_local_memory；新模态必须由 dataset 生成 plan（sequence.py:1113）。不得复用 vision/action 字段。"
+    },
+    {
+      "area": "packing / attention / mRoPE",
+      "files": [
+        "cosmos_framework/data/generator/sequence_packing/packers.py",
+        "cosmos_framework/data/generator/sequence_packing/sequence.py",
+        "cosmos_framework/data/generator/sequence_packing/mrope.py"
+      ],
+      "finding": "Local 应作为文本之后、vision/action 之前的独立 clean span，并计入同一 full generation split；现有 full split 的边界在 packers.py:509-520。可复用通用 _append_modality_span（sequence.py:549-597）和 text-style mRoPE helper（mrope.py:41-72），但需要专用 Local wrapper，不能伪装成 text 或 vision。"
+    },
+    {
+      "area": "网络 adapter",
+      "files": [
+        "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+        "cosmos_framework/model/generator/omni_mot_model.py"
+      ],
+      "finding": "新增 local_memory2llm 与 local_memory_modality_embed、专用 clean encoder，并在 forward 的 all_gen_indexes 中纳入 Local（cosmos3_vfm_network.py:995-1029）。Local 不应经过 vision patchify、timestep embed、decoder 或 MSE loss。"
+    },
+    {
+      "area": "训练与分布式",
+      "files": [
+        "cosmos_framework/model/generator/omni_mot_model.py",
+        "cosmos_framework/model/generator/mot/parallelize_vfm_network.py",
+        "cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_libero_nano.py"
+      ],
+      "finding": "不把 Local 加入 _add_noise_to_input（omni_mot_model.py:1784-1985）、_replace_clean_with_noised（1987-2002）或 _compute_losses；新 adapter 在建网、LoRA 前、FSDP 前注册（220-317），并须显式加入 optimizer.keys_to_select。所有 GenerationDataClean 重建/切片与 checkpoint payload 都必须传播 Local。"
+    }
+  ],
+  "r07_contract": {
+    "required_cases": ["A_absent", "B_normal_dummy", "C_zero", "D_shuffle"],
+    "clean_semantics": ["无 timesteps", "无 mse_loss_indexes", "无 noise", "无 decoder", "无 Local MSE/flow loss"],
+    "preserved_native_paths": ["vision", "action", "sound"]
+  },
+  "blockers_and_guards": [
+    {
+      "severity": "HIGH",
+      "guard": "Multiview FlexAttention 仅支持 vision-only batch",
+      "evidence": "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:1096-1136",
+      "required_disposition": "R07 WAM+Local 配置必须显式禁用该路径或新增 fail-fast 断言；不得静默扩展其 block mask。"
+    },
+    {
+      "severity": "HIGH",
+      "guard": "R08 z0 future-suffix invariance 尚未通过",
+      "evidence": "docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.1.md:254-271",
+      "required_disposition": "R07 dummy 不接历史 z0；R08 先完成 suffix-invariance，再决定是否可用 exact-window cache z0。"
+    },
+    {
+      "severity": "MEDIUM",
+      "guard": "时间位置语义尚未冻结",
+      "evidence": "cosmos_framework/data/generator/sequence_packing/mrope.py:41-72",
+      "required_disposition": "R07 仅为 dummy Local 固定一个明确、可测试的位置策略；R08 才将其与历史时间线对齐，禁止自行假定负时间坐标。"
+    }
+  ],
+  "next_step": "完成 canonical R06 baseline 后，先以本审计的文件边界实施 R07 B dummy，并用 A/B/C/D 最小 GPU smoke 验收；不并入 R08/R09。"
+}
