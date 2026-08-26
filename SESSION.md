@@ -521,7 +521,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 ### 13 ckpt 1-trial smoke 评测 + 跨结果治本（2026-08-25/26，Kimi 执行）
 
-- **目标**：把 13 个 ckpt × 4 suite 1-trial smoke 跑完，对比 iter_2800 (10-trial 验收真值) 找趋势；8 个父目录按角色标注防再查错 SR。
+- **目标**：把 13 个 ckpt × 4 suite 1-trial smoke 跑完，**仅**用作 checkpoint selection / 趋势筛选，**不**作为最终 R06 canonical baseline；8 个父目录按角色标注防再查错 SR；R06 口径由 runtime plan v0.6 §6 + 用户 2026-08-26 纠偏决定（见下"canonical R06 baseline 口径冻结"段）。
 - **driver**：`cosmos-framework/examples/eval_libero_4in1_acceptance_4090.sh`（task #15，4090 24G，5 worker/suite，跨 suite 并发，stop_server/start_server 三重保险：trap+port probe+CHECKPOINT_PATH 显式 export）。
 - **进度**（2026-08-26 15:51 快照）：**5/13 已 .done**，剩余 7 个 iter (1600/1400/1200/1000/800/600/400/200) 串行。
   - iter_000002400：spatial 1.0 / object 1.0 / goal 0.5 / libero_10 0.4 → 4in1-avg **0.725**
@@ -529,12 +529,39 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
   - iter_000002000：1.0 / 0.6 / 0.7 / 0.8 → **0.775**
   - iter_000001800：1.0 / 0.7 / 0.8 / 0.2 → **0.675**
   - iter_000002600：1.0 / 0.9 / 0.8 / 0.4 → **0.775**
-- **iter_2800 10-trial g=1.0 真值**（验收 MP4 后缀）：spatial **0.96** / object **0.99** / goal **0.76** / libero_10 **0.58** → **0.82**（仍是 best ckpt）。
-- **1-trial 局限**：spatial 全 100%（撞天花板）、libero_10 波动 0.2–0.8（stdev≈50%）；趋势区间 0.7–0.78 与 iter_2800 的 0.82 相符，无显著衰减。
+- **iter_2800 验收数据定位（历史证据 / 能力证据，**非** canonical baseline）**：10-trial `libero_closed_loop_4in1_acceptance_4090` g=1.0 按 MP4 后缀：spatial **0.96** / object **0.99** / goal **0.76** / libero_10 **0.58** → 4-suite mean **0.82**。**这套是 closed-loop capability 已成立的历史证据**，因为 spatial summary.json 0.48 是脏数据（已按 MP4 后缀修正为 0.96）；object/goal/libero_10 summary.json 可信。**不**作为 R06 canonical baseline 来源——该整套旧目录有 success aggregation bug 历史，且 trial 数 / 任务对齐均不是为后续 +Local matched baseline contract 设计的。
+- **1-trial 局限**：spatial 全 100%（撞天花板）、libero_10 波动 0.2–0.8（stdev≈50%）；趋势区间 0.7–0.78 仅供 ckpt 选择参考。
 - **完成时间预估**：剩 7 iter × 1h ≈ 22:30 完成；完成后 driver 自动触发 libero_90 cache build (#31) → HF upload (#32)。
-- **MEMORY/ 索引**：`eval-result-directory-roles.md`（8 个父目录角色全景表）、`mp4-suffix-is-truth.md`（MP4 后缀是真值全局规则）、`iter2800-spatial-sr-dirty-data.md`（acceptance_4090/iter_2800 spatial 0.48 是脏数据，真值 0.96）。
 - **server 加载 ckpt 三重保险已验证**：stop_server→start_server 时显式 `CHECKPOINT_PATH=$ckpt` 传入 launch 脚本；启动前 `curl localhost:8000/` 探活（旧进程未退则拒绝启动）；driver 任何路径退出 `trap stop_server EXIT INT TERM`；逐 iter server log 第一行 `loading model: ... checkpoint_path='.../iter_*/model'` 与 ps 启动时间双确认。
 - **iter_2800 spatial 0.48 → 0.96 真相**：worker_task_001.log 显示 ep1-8 `success=False steps=0 elapsed=522s`，但 task_001/mp4/ 下 episode_000-009 全是 `_success.mp4` —— MP4 文件后缀是仿真环境 success 信号直接写入，summary.json success 字段在合并时被污染。**bug 只影响 spatial suite**，object/goal/libero_10 summary.json 与 MP4 后缀一致。
 - **HF README 2B → 3B/3.4B 修正**（commit 0088c7ba）：基于 DCP metadata 实算 `language_model.model 3.087B + lm_head 0.268B + 小模块 ~14M = 3.37B`，bf16 存储 6.74GB ≈ DCP shard 6.28GB；改为 `Nemotron-3 3B reasoner` + 表格注明 `3B backbone + lm_head ≈ 3.4B total`。
 - **MEMORY/ 6 个新文件已建**：cache-5suite-merge-build、cache-builder-script-location、eval-result-directory-roles、idea-input-robot-state-to-policy、iter2800-spatial-sr-dirty-data、mp4-suffix-is-truth（type=project/reference 混合，frontmatter 风格；用于项目级长期事实/索引/治本）。
-- **治本约束（强制）**：查 SR 必须先看 8 个 results 父目录之一 + 参数（guidance/trials/steps）；spatial 真值必须按 MP4 后缀重算，不信 summary.json success；server 加载新 ckpt 必须验证 ps 启动时间 + log checkpoint_path + 端口探活三件套。
+
+### canonical R06 baseline 口径冻结（2026-08-26，用户纠偏）
+
+- **R06 真实目的**：不是为每个 suite 调到最高 SR，而是冻结一个**统一、单一、可复现**的 no-memory baseline，作为后续所有 +Local 实验的**唯一 matched 对照**。见 runtime plan v0.6 §6。
+- **canonical baseline 协议（冻结）**：
+  - 单一 checkpoint（按 13-ckpt sweep + 已有稳定性证据选定）
+  - `guidance=1.0`（**不**用 suite-specific CFG）
+  - `denoise steps=30`，`max_episode_steps=700`
+  - 同一 prediction/execution/query cadence
+  - 4 suites × 10 tasks × 10 trials = 400 episodes
+  - no memory / no agent / no RL
+  - 其余训练/推理配置保持一致
+- **三类证据严格区分**（**不**混用、**不**互相替代）：
+  1. **historical evidence**：`acceptance_4090`、`acceptance`、`libero_closed_loop_4in1`、`iter100`、`steps12` —— 用于证明 closed-loop capability 已成立，**不**作 baseline
+  2. **CFG sensitivity diagnostic**：`spatial_cfg_4090` (g=1.5/2.0/2.5) + `cfg_4090/g2_0` —— 用于研究 guidance 对 SR 的影响，**不**作 baseline（suite-specific inference tuning 会破坏 matched baseline contract）
+  3. **checkpoint screening**：`smoke_v1` 13 ckpt × 1 trial —— 选 ckpt 用，**不**作 baseline
+  4. **canonical R06 baseline**：待 13-ckpt sweep 完成后做一次 clean 400-episode acceptance；`summary.json == MP4 _success/_fail 后缀 == task-level episode success` 三者一致；冻结 checkpoint / config / eval contract 后 R06 → DONE
+- **R06 当前状态（2026-08-26 纠偏后）**：
+  - closed-loop capability = **PASS**（3 个 suite 已有非零 SR，链路全通；iter_2800 历史验收 4-suite mean ≈ 0.82 是 capability 证据）
+  - canonical baseline freeze = **TODO**（待 clean 400-episode acceptance）
+  - **不**提前把 G0-R06 标记 DONE；不进入 R07-R09 实质 Memory 实验
+- **MEMORY/eval-result-directory-roles.md 已重写"治本约束"**：取消"spatial 用 spatial_cfg_4090 / goal 用 cfg_4090/g2_0"的旧写法，明确三类证据不能拼成 baseline。
+
+### 治本约束（强制）
+
+- 查 SR 必须先看 8 个 results 父目录之一 + 参数（guidance/trials/steps），且先判定角色类别（historical / diagnostic / screening / canonical）。
+- spatial 真值必须按 MP4 后缀重算，**不**信 acceptance_4090 的 summary.json success 字段。
+- server 加载新 ckpt 必须验证 ps 启动时间 + log checkpoint_path + 端口探活三件套。
+- **canonical R06 baseline 必须**由 clean 400-episode acceptance 冻结，**不**用 suite-specific CFG、**不**用 1-trial sweep、**不**用历史 evidence 目录。
