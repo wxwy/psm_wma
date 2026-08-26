@@ -14,7 +14,9 @@
 
 - `G0-R06/R07 override`（用户，DONE）：D017 生效：`iter_000002800` 冻结为 R06 No-Memory baseline，取消 canonical 400-episode acceptance，R07 UNBLOCKED；13-ckpt sweep 仅作趋势 evidence。未改 frozen 文档或历史 zero-shot FAIL 证据。
 
-- `G0-R07-IMPLEMENTATION`（Codex，IN_PROGRESS）：预计修改子模块 `data_and_condition.py`、`sequence.py`、`packers.py`、`action/utils/transforms.py`（config-controlled `LocalDummyTransform` 注入 `local_memory` 与 `SequencePlan.has_local_memory`）、`omni_mot_model.py`、`cosmos3_vfm_network.py`、实际 Edge-4in1 config/test；只实现 dummy Local clean modality。A/B 比较 Vision/Action mRoPE 时按各自 modality indexes 取位置；B 的 global indexes 预期平移 `K_local`，不得误断言相等。Local 不进 noising/decoder/loss，不做 R08/R09；Flex disabled，legacy out-of-scope。
+- `G0-R07-IMPLEMENTATION`（Codex，IN_PROGRESS）：预计修改子模块 `data_and_condition.py`、`sequence.py`、`packers.py`、`joint_dataloader.py`（`local_memory` optional collate）、`action/utils/transforms.py`（config-controlled `LocalDummyTransform` 注入 `local_memory` 与 `SequencePlan.has_local_memory`）、`omni_mot_model.py`、`cosmos3_vfm_network.py`、实际 Edge-4in1 config/test；只实现 dummy Local clean modality。A/B 比较 Vision/Action mRoPE 时按各自 modality indexes 取位置；多样本 global index 仅验证符合 packing offset，不硬编码统一 `+K_local`。Local 不进 noising/decoder/loss，不做 R08/R09；Flex disabled，legacy out-of-scope。
+
+  - 第 1 步已完成：子模块 `0b48dae` 加入 `SequencePlan.has_local_memory`、`ActionTransformPipeline` 的默认关闭 local dummy payload、LIBERO dataset 参数透传和 `joint_dataloader` optional list/sparse collate；`py_compile` 与子模块 `git diff --check` PASS。未接 packing/network，默认关闭不会改变 baseline；下一步接 `GenerationDataClean`、packer 和 adapter。子模块已推送；根仓 Gitlink 待提交。
 
 - `G0-R07-PRE-IMPLEMENT-REVIEW`（mm2，DONE）：对 `f238295` 只读复核结论 `APPROVE_TO_IMPLEMENT`。D017、mRoPE parity、iter2800 checkpoint/no-memory parity、Edge-4in1 trainable scope、legacy/Flex 范围均 PASS；两项 LOW 审计措辞已回填：Edge-4in1 无 `keys_to_select`、整 backbone 训练；Flex 默认 `enabled=false` 的继承证据已补齐。未改子模块、未运行代码。
 
