@@ -63,7 +63,7 @@
         "cosmos_framework/data/generator/sequence_packing/temporal_causal.py",
         "cosmos_framework/model/generator/vision_vae.py"
       ],
-      "finding": "不把 Local 加入 _add_noise_to_input（omni_mot_model.py:1784-1985）、_replace_clean_with_noised（1987-2002）、_compute_flow_matching_loss（1293 起）或 _compute_losses（1410-1557），也不写入 losses_dict。新 adapter 在建网、LoRA 前、FSDP 前注册，并仅在实际 Edge-4in1 selector 上新增 Local 参数，保持现有 backbone trainable scope 不变；action_policy_libero_nano.py:83-97 仅为 selector pattern 参考，不直接修改。iter2800 load 时原参数必须完整恢复，新增 Local 参数须显式新初始化；R07 必测无 Local 的 checkpoint functional parity 与新增参数 save/reload。所有 GenerationDataClean 重建/切片与 checkpoint payload 都必须传播 Local。R07 normal path 不扩展 temporal_causal.py；R08 复用历史 prime z0 前须审计 vision_vae.py 的公共编码契约。"
+      "finding": "不把 Local 加入 _add_noise_to_input（omni_mot_model.py:1784-1985）、_replace_clean_with_noised（1987-2002）、_compute_flow_matching_loss（1293 起）或 _compute_losses（1410-1557），也不写入 losses_dict。新 adapter 在建网、LoRA 前、FSDP 前注册。Edge-4in1 当前未设 keys_to_select、整 backbone 训练；Local 仅作为额外 trainable 参数加入该现有全集，不引入 selector 或 backbone scope 变化。action_policy_libero_nano.py:83-97 仅为 selector pattern 参考，不直接修改。iter2800 load 时原参数必须完整恢复，新增 Local 参数须显式新初始化；R07 必测无 Local 的 checkpoint functional parity 与新增参数 save/reload。所有 GenerationDataClean 重建/切片与 checkpoint payload 都必须传播 Local。R07 normal path 不扩展 temporal_causal.py；R08 复用历史 prime z0 前须审计 vision_vae.py 的公共编码契约。"
     }
   ],
   "r07_contract": {
@@ -105,7 +105,7 @@
     {
       "severity": "LOW",
       "guard": "Multiview FlexAttention 是既有 LIBERO WAM action batch 不支持的配置路径",
-      "evidence": "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:1096-1136；configs/base/experiment/sft/models/edge_model_config.py:44；configs/base/defaults/model_config.py:224",
+      "evidence": "cosmos_framework/model/generator/mot/cosmos3_vfm_network.py:1096-1136；configs/base/experiment/sft/models/edge_model_config.py（全文未 override flex_attention）；configs/base/defaults/model_config.py:224；configs/base/defaults/flex_attention.py:64",
       "required_disposition": "R07 config/smoke 显式断言 flex_attention.enabled=false；不扩展 block mask 或 attention 实现。"
     },
     {
