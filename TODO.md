@@ -47,6 +47,11 @@
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |
 | D015-LOCAL-MEMORY-GATE | DONE | Codex | D013/D014 已生效，Runtime Plan R07-R09 已对齐 | MEMORY/DECISIONS.md 新增 D015：Local/Global 必须为独立 optional clean modality；R07-R09 顺序与冻结边界；未冻结项不得在实现前写成既定事实 |
 | DATA-DOWNLOAD-TMUX | IN_PROGRESS | Codex | 用户要求 2026-08-26 早数据 ready；本沙箱到 huggingface.co 出网被掐 | `tmux hf_download_libero` 拉 `nvidia/LIBERO_LeRobot_v3`、`tmux hf_download_latent` 拉 `MangoGoes/libero4in1_wan2.2vae_latent_cosmos_style`，仅清 SOCKS5 保留 HTTP_PROXY 走 CONNECT 隧道；Claude 不前台测速 |
+| ACCEPT-13CKPT-SMOKE | IN_PROGRESS | Kimi | EVAL-LIBERO-4IN1-ACCEPTANCE driver 已就绪 | 13 ckpt × 4 suite 1-trial smoke：5/13 已完成（iter_2600/2400/2200/2000/1800 4in1-avg = 0.775/0.725/0.775/0.775/0.675），剩 7 iter 串行至 22:30；与 iter_2800 (10-trial 真值 0.82) 趋势相符，无显著衰减 |
+| FIX-EDGE-3B-PARAM-COUNT | DONE | Kimi | 用户质疑 README 描述与 DCP shard 体积不符 | HF README `MangoGoes/Cosmos3-edge-generation-libero4in1` 改 `2B` → `3B reasoner` + Architecture 表注明 `3B backbone + lm_head ≈ 3.4B total`；commit 0088c7ba 已推送；DCP metadata 实算 3.087B + 0.268B + 14M = 3.37B，bf16 6.74GB ≈ DCP 6.28GB |
+| ROOT-CAUSE-ITER2800-SPATIAL | DONE | Kimi | 用户两次质疑 acceptance_4090/iter_2800 spatial 0.48 是错的 | 按 MP4 _success/_fail 后缀重算 → **0.96**（95/99）；bug 仅影响 spatial suite，object/goal/libero_10 summary.json 可信；MEMORY/mp4-suffix-is-truth.md + iter2800-spatial-sr-dirty-data.md 已固化 |
+| VERIFY-SERVER-LOADS-NEW-CKPT | DONE | Kimi | 用户要求确认 server 切 ckpt 正确性 | 6 个 server log 全部 `checkpoint_path=iter_*/model` 与 ps 启动时间、端口探活、driver trap+stop_server 三重保险对得上；不留残留 |
+| ROOT-CAUSE-EVAL-DIR-ROLES | DONE | Kimi | 多次查 SR 数据错位 | MEMORY/eval-result-directory-roles.md 固化 8 个父目录的角色/参数/启动时间全景表 + 查 SR 强制流程（先父目录 → 再参数 → 再判定可靠性）|
 
 ## 新增任务规则
 

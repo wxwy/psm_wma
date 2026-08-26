@@ -518,3 +518,23 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - **过程产物**：8-20 旧 mismatch 证据归档 `artifacts/g0/latent_cache_mismatch_archive_20260820_v6/`；B-control（online 重跑逐位一致）证明训练在 deterministic 配置下完全可复现。
 - **未提交**：cosmos-framework 工作区改动（vision_vae.py、omni_mot_model.py guard/instrument、dataset cache reader、stdout_loss_logger、TOML/schema、启动脚本）与 tools/g0/ 工具均未 commit，待用户决定。
 - **下一步**：正式 4in1 SFT 可启用 `LIBERO_LATENT_CACHE_ROOT`（省在线 VAE 编码）；建议保留小比例 `LIBERO_LATENT_CACHE_VERIFY_RATIO`（如 0.01）做在线抽检。
+
+### 13 ckpt 1-trial smoke 评测 + 跨结果治本（2026-08-25/26，Kimi 执行）
+
+- **目标**：把 13 个 ckpt × 4 suite 1-trial smoke 跑完，对比 iter_2800 (10-trial 验收真值) 找趋势；8 个父目录按角色标注防再查错 SR。
+- **driver**：`cosmos-framework/examples/eval_libero_4in1_acceptance_4090.sh`（task #15，4090 24G，5 worker/suite，跨 suite 并发，stop_server/start_server 三重保险：trap+port probe+CHECKPOINT_PATH 显式 export）。
+- **进度**（2026-08-26 15:51 快照）：**5/13 已 .done**，剩余 7 个 iter (1600/1400/1200/1000/800/600/400/200) 串行。
+  - iter_000002400：spatial 1.0 / object 1.0 / goal 0.5 / libero_10 0.4 → 4in1-avg **0.725**
+  - iter_000002200：1.0 / 0.8 / 0.9 / 0.4 → **0.775**
+  - iter_000002000：1.0 / 0.6 / 0.7 / 0.8 → **0.775**
+  - iter_000001800：1.0 / 0.7 / 0.8 / 0.2 → **0.675**
+  - iter_000002600：1.0 / 0.9 / 0.8 / 0.4 → **0.775**
+- **iter_2800 10-trial g=1.0 真值**（验收 MP4 后缀）：spatial **0.96** / object **0.99** / goal **0.76** / libero_10 **0.58** → **0.82**（仍是 best ckpt）。
+- **1-trial 局限**：spatial 全 100%（撞天花板）、libero_10 波动 0.2–0.8（stdev≈50%）；趋势区间 0.7–0.78 与 iter_2800 的 0.82 相符，无显著衰减。
+- **完成时间预估**：剩 7 iter × 1h ≈ 22:30 完成；完成后 driver 自动触发 libero_90 cache build (#31) → HF upload (#32)。
+- **MEMORY/ 索引**：`eval-result-directory-roles.md`（8 个父目录角色全景表）、`mp4-suffix-is-truth.md`（MP4 后缀是真值全局规则）、`iter2800-spatial-sr-dirty-data.md`（acceptance_4090/iter_2800 spatial 0.48 是脏数据，真值 0.96）。
+- **server 加载 ckpt 三重保险已验证**：stop_server→start_server 时显式 `CHECKPOINT_PATH=$ckpt` 传入 launch 脚本；启动前 `curl localhost:8000/` 探活（旧进程未退则拒绝启动）；driver 任何路径退出 `trap stop_server EXIT INT TERM`；逐 iter server log 第一行 `loading model: ... checkpoint_path='.../iter_*/model'` 与 ps 启动时间双确认。
+- **iter_2800 spatial 0.48 → 0.96 真相**：worker_task_001.log 显示 ep1-8 `success=False steps=0 elapsed=522s`，但 task_001/mp4/ 下 episode_000-009 全是 `_success.mp4` —— MP4 文件后缀是仿真环境 success 信号直接写入，summary.json success 字段在合并时被污染。**bug 只影响 spatial suite**，object/goal/libero_10 summary.json 与 MP4 后缀一致。
+- **HF README 2B → 3B/3.4B 修正**（commit 0088c7ba）：基于 DCP metadata 实算 `language_model.model 3.087B + lm_head 0.268B + 小模块 ~14M = 3.37B`，bf16 存储 6.74GB ≈ DCP shard 6.28GB；改为 `Nemotron-3 3B reasoner` + 表格注明 `3B backbone + lm_head ≈ 3.4B total`。
+- **MEMORY/ 6 个新文件已建**：cache-5suite-merge-build、cache-builder-script-location、eval-result-directory-roles、idea-input-robot-state-to-policy、iter2800-spatial-sr-dirty-data、mp4-suffix-is-truth（type=project/reference 混合，frontmatter 风格；用于项目级长期事实/索引/治本）。
+- **治本约束（强制）**：查 SR 必须先看 8 个 results 父目录之一 + 参数（guidance/trials/steps）；spatial 真值必须按 MP4 后缀重算，不信 summary.json success；server 加载新 ckpt 必须验证 ps 启动时间 + log checkpoint_path + 端口探活三件套。
