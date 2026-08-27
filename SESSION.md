@@ -20,6 +20,8 @@
 
   - Step 2 propagation 修复完成，ChatGPT 复审 APPROVE：ChatGPT 复核发现 `_get_velocity()` 的 `gen_data_for_packing` 重建与 `_slice_gen_data_clean()` 未传播 `x0_tokens_local_memory`。已仅修改 `omni_mot_model.py` 与既有 CPU test：重建直接保留 Local；slicing 对全 present 直接切片，对 mixed optional 则基于显式 `sequence_plans` 的 `has_local_memory` 映射选择 dense Local payload，缺映射时 fail-fast。5 项定向 CPU pytest、`py_compile`、`git diff --check` 均 PASS，ChatGPT 复审 APPROVE。未运行 GPU/checkpoint smoke，也不进入 R08/R09；下一步先盘点 iter2800 checkpoint 与既有 smoke 工具，再执行 load/no-memory parity、save/reload 与小步 sensitivity。
 
+  - R07 runtime 首次单卡尝试（未通过完整 Gate）：系统盘副本 `/opt/Cosmos3-edge-generation-libero4in1/iter_000002800` 在 Local-enabled 新模型上成功 model-only warm-start（53.87s）；真实第 1 步 forward/backward 完成且 finite：`loss=0.854476`、vision=`0.069275`、action=`0.016173`、video global grad norm=`2.59375`。训练打印 `Done with training.` 后进程收到 `SIGKILL`，torchrun 退出码失败，疑似容器/宿主内存压力；未证实，不能判 R07 runtime PASS。未完成 No-Memory parity、Local 专项 grad、save/reload、3-10 步 sensitivity；用户决定换机器后再继续。临时 `artifacts/g0/r07/runtime_smoke/` 含日志/config/pickle，未提交。
+
   - 独立审查：`mm2` 对子模块 `0b48dae` / 根仓 `799dc91` 结论 APPROVE。默认关闭、shape/dtype、plan 标记、LIBERO 参数透传、mixed-None collate、序列化兼容与 baseline 无回归均通过；LOW：`SequencePlan.as_dict()` 当前未被业务入口调用，下一次触摸 `sequence.py` 时决定保留或删除，不阻塞 Step 2。
 
 - `G0-R07-PRE-IMPLEMENT-REVIEW`（mm2，DONE）：对 `f238295` 只读复核结论 `APPROVE_TO_IMPLEMENT`。D017、mRoPE parity、iter2800 checkpoint/no-memory parity、Edge-4in1 trainable scope、legacy/Flex 范围均 PASS；两项 LOW 审计措辞已回填：Edge-4in1 无 `keys_to_select`、整 backbone 训练；Flex 默认 `enabled=false` 的继承证据已补齐。未改子模块、未运行代码。
