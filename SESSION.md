@@ -36,6 +36,7 @@
     - 实现/CPU 验证：sidecar 仅由 `PSM_R07_PARITY_TENSOR_OUTPUT` 显式开启，`r07_parity_capture_test.py` 4 passed；`compare_r07_sensitivity.py` synthetic Normal/Zero/Shuffle fixture PASS，`compare_r07_no_memory_parity.py` 已加 schema/field-presence fail-fast 后对原始 old/new JSON 仍 PASS；`py_compile` 与双仓 `git diff --check` PASS。待提交后由 mm 与 Kimi 同时独立审查，未启动 GPU。
     - 审查：mm 与 Kimi 均 APPROVE；Kimi 报告 `docs/build/PSM-WMA_REVIEW-R07-Gate-C-prep_2026-08-27.md`。比较器已同步对三模 invariant 加 key-presence fail-fast；GPU 结果须检查 `shuffle_present_local_count >= 2`。
     - GPU Gate C 已完成，待独立结果复核：Normal-only 5 个 optimizer update 后保存唯一 CKPT_5；三次独立重载该 checkpoint 的 Normal/Zero/Shuffle capture 均完成，临时 checkpoint 已删除。`artifacts/g0/r07/runtime_smoke/sensitivity.json` 为 PASS：14 项输入/packing/mRoPE 不变量 exact，shuffle present Local=128；Normal→Zero Vision/Action relative L2=0.010973/0.004952，Normal→Shuffle=0.009699/0.003958。mm 与 Kimi 已收到复核请求；不进入 R08/R09。
+    - 结果独立复核：mm 结论 APPROVE；Kimi 结论 APPROVE（`docs/build/PSM-WMA_REVIEW-R07-Gate-C-runtime_2026-08-27.md`），无 BLOCKER/HIGH。Kimi 要求在 Gate C 正式 DONE 前补两项 MEDIUM：保留三模 raw sidecar 或记录 SHA256，及回填 provenance（commit、CKPT、命令/环境、数据/cache 路径）。用户要求本轮仅记录，未修复、未删除 `sensitivity_ckpt5/`、未启动任何新运行；R08/R09 仍禁止。
 
   - 独立审查：`mm2` 对子模块 `0b48dae` / 根仓 `799dc91` 结论 APPROVE。默认关闭、shape/dtype、plan 标记、LIBERO 参数透传、mixed-None collate、序列化兼容与 baseline 无回归均通过；LOW：`SequencePlan.as_dict()` 当前未被业务入口调用，下一次触摸 `sequence.py` 时决定保留或删除，不阻塞 Step 2。
 
