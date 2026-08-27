@@ -3,6 +3,10 @@
   "status": "PASS",
   "old_path": "/opt/r07-smoke/parity_deterministic_old.json",
   "new_path": "/opt/r07-smoke/parity_deterministic_new.json",
+  "old_schema": "r07_no_memory_parity_v1",
+  "new_schema": "r07_no_memory_parity_v1",
+  "schema_pass": true,
+  "field_presence_pass": true,
   "layers": {
     "input": {
       "x0_vision": true,
@@ -47,6 +51,11 @@
     "preds_action": true,
     "split_lens": true,
     "attn_modes": true
+  },
+  "loss_presence": {
+    "loss": true,
+    "flow_matching_loss_vision": true,
+    "flow_matching_loss_action": true
   },
   "loss_diffs": {
     "loss": 0.0,

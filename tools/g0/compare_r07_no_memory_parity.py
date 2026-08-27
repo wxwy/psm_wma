@@ -30,6 +30,7 @@ FUNCTIONAL_SUMMARY_KEYS = (
 )
 STRUCTURE_KEYS = ("split_lens", "attn_modes")
 LOSS_KEYS = ("loss", "flow_matching_loss_vision", "flow_matching_loss_action")
+EXPECTED_SCHEMA_VERSION = "r07_no_memory_parity_v1"
 
 
 def load_document(path: Path) -> dict:
@@ -49,10 +50,16 @@ def main() -> None:
     new = load_document(args.new)
     exact: dict[str, bool] = {}
     for key in INPUT_SUMMARY_KEYS + STRUCTURE_SUMMARY_KEYS + FUNCTIONAL_SUMMARY_KEYS + STRUCTURE_KEYS:
-        exact[key] = old.get(key) == new.get(key)
-    loss_diffs = {key: abs(float(old[key]) - float(new[key])) for key in LOSS_KEYS}
-    losses_pass = all(value <= args.loss_tolerance for value in loss_diffs.values())
-    status = "PASS" if all(exact.values()) and losses_pass else "FAIL"
+        exact[key] = key in old and key in new and old[key] == new[key]
+    loss_presence = {key: key in old and key in new for key in LOSS_KEYS}
+    loss_diffs = {
+        key: abs(float(old[key]) - float(new[key])) if loss_presence[key] else None
+        for key in LOSS_KEYS
+    }
+    losses_pass = all(value is not None and value <= args.loss_tolerance for value in loss_diffs.values())
+    schema_pass = old.get("schema_version") == new.get("schema_version") == EXPECTED_SCHEMA_VERSION
+    field_presence_pass = all(exact.values()) and all(loss_presence.values())
+    status = "PASS" if schema_pass and field_presence_pass and losses_pass else "FAIL"
     layers = {
         "input": {key: exact[key] for key in INPUT_SUMMARY_KEYS},
         "structure": {
@@ -68,8 +75,13 @@ def main() -> None:
         "status": status,
         "old_path": str(args.old),
         "new_path": str(args.new),
+        "old_schema": old.get("schema_version"),
+        "new_schema": new.get("schema_version"),
+        "schema_pass": schema_pass,
+        "field_presence_pass": field_presence_pass,
         "layers": layers,
         "exact_fields": exact,
+        "loss_presence": loss_presence,
         "loss_diffs": loss_diffs,
         "loss_tolerance": args.loss_tolerance,
     }
