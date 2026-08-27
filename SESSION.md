@@ -18,7 +18,7 @@
 
   - 第 1 步已完成：子模块 `0b48dae` 加入 `SequencePlan.has_local_memory`、`ActionTransformPipeline` 的默认关闭 local dummy payload、LIBERO dataset 参数透传和 `joint_dataloader` optional list/sparse collate；`py_compile` 与子模块 `git diff --check` PASS。未接 packing/network，默认关闭不会改变 baseline；下一步接 `GenerationDataClean`、packer 和 adapter。子模块已推送；根仓 Gitlink 已更新至 `0b48dae`。
 
-  - Step 2 propagation 修复完成，待 ChatGPT 复核：ChatGPT 复核发现 `_get_velocity()` 的 `gen_data_for_packing` 重建与 `_slice_gen_data_clean()` 未传播 `x0_tokens_local_memory`。已仅修改 `omni_mot_model.py` 与既有 CPU test：重建直接保留 Local；slicing 对全 present 直接切片，对 mixed optional 则基于显式 `sequence_plans` 的 `has_local_memory` 映射选择 dense Local payload，缺映射时 fail-fast。5 项定向 CPU pytest、`py_compile`、`git diff --check` 均 PASS。未运行 GPU/checkpoint smoke，也不进入 R08/R09；ChatGPT APPROVE 后才执行 iter2800 load/no-memory parity、save/reload 与小步 sensitivity。
+  - Step 2 propagation 修复完成，ChatGPT 复审 APPROVE：ChatGPT 复核发现 `_get_velocity()` 的 `gen_data_for_packing` 重建与 `_slice_gen_data_clean()` 未传播 `x0_tokens_local_memory`。已仅修改 `omni_mot_model.py` 与既有 CPU test：重建直接保留 Local；slicing 对全 present 直接切片，对 mixed optional 则基于显式 `sequence_plans` 的 `has_local_memory` 映射选择 dense Local payload，缺映射时 fail-fast。5 项定向 CPU pytest、`py_compile`、`git diff --check` 均 PASS，ChatGPT 复审 APPROVE。未运行 GPU/checkpoint smoke，也不进入 R08/R09；下一步先盘点 iter2800 checkpoint 与既有 smoke 工具，再执行 load/no-memory parity、save/reload 与小步 sensitivity。
 
   - 独立审查：`mm2` 对子模块 `0b48dae` / 根仓 `799dc91` 结论 APPROVE。默认关闭、shape/dtype、plan 标记、LIBERO 参数透传、mixed-None collate、序列化兼容与 baseline 无回归均通过；LOW：`SequencePlan.as_dict()` 当前未被业务入口调用，下一次触摸 `sequence.py` 时决定保留或删除，不阻塞 Step 2。
 
