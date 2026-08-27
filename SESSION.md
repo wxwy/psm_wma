@@ -1,6 +1,6 @@
 # 当前协作状态
 
-更新时间：2026-08-26
+更新时间：2026-08-27
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
@@ -21,6 +21,8 @@
   - Step 2 propagation 修复完成，ChatGPT 复审 APPROVE：ChatGPT 复核发现 `_get_velocity()` 的 `gen_data_for_packing` 重建与 `_slice_gen_data_clean()` 未传播 `x0_tokens_local_memory`。已仅修改 `omni_mot_model.py` 与既有 CPU test：重建直接保留 Local；slicing 对全 present 直接切片，对 mixed optional 则基于显式 `sequence_plans` 的 `has_local_memory` 映射选择 dense Local payload，缺映射时 fail-fast。5 项定向 CPU pytest、`py_compile`、`git diff --check` 均 PASS，ChatGPT 复审 APPROVE。未运行 GPU/checkpoint smoke，也不进入 R08/R09；下一步先盘点 iter2800 checkpoint 与既有 smoke 工具，再执行 load/no-memory parity、save/reload 与小步 sensitivity。
 
   - R07 runtime 首次单卡尝试（未通过完整 Gate）：系统盘副本 `/opt/Cosmos3-edge-generation-libero4in1/iter_000002800` 在 Local-enabled 新模型上成功 model-only warm-start（53.87s）；真实第 1 步 forward/backward 完成且 finite：`loss=0.854476`、vision=`0.069275`、action=`0.016173`、video global grad norm=`2.59375`。训练打印 `Done with training.` 后进程收到 `SIGKILL`，torchrun 退出码失败，疑似容器/宿主内存压力；未证实，不能判 R07 runtime PASS。未完成 No-Memory parity、Local 专项 grad、save/reload、3-10 步 sensitivity；用户决定换机器后再继续。临时 `artifacts/g0/r07/runtime_smoke/` 含日志/config/pickle，未提交。
+
+  - R07 runtime 新机器系统盘复跑（进行中）：80 GiB GPU、64 GiB RAM 上，`/opt/Cosmos3-edge-generation-libero4in1/iter_000002800` 在 `PSM_LOCAL_DUMMY_ENABLED=1` 下 warm-start 成功；DCP 保留旧 549 个张量、新增 3 个 Local 张量新初始化。真实单步完成：`loss=0.854476`、vision=`0.069275`、action=`0.016173`、global grad norm=`2.60938`，无 NaN/OOM；`/opt/r07-smoke/local_80g_rerun/.../iter_000000001` 已于 88.11s 保存。该 checkpoint 再次从系统盘 DCP warm-start 成功（552 tensors，3.73s），随后为避免写入第二份临时模型主动终止。LIBERO 四 suite 均配置 exact-window latent cache，`latent_cache_verify_ratio=0.0`；不发生在线视频 VAE 编码。尚缺 Local 专项梯度、Local-disabled 数值/输出 parity 与 3--10 step Normal/Zero/Shuffle sensitivity；不进入 R08/R09。所有 runtime checkpoint 仅保留 `/opt/r07-smoke/`，不提交、不复制网络盘。
 
   - 独立审查：`mm2` 对子模块 `0b48dae` / 根仓 `799dc91` 结论 APPROVE。默认关闭、shape/dtype、plan 标记、LIBERO 参数透传、mixed-None collate、序列化兼容与 baseline 无回归均通过；LOW：`SequencePlan.as_dict()` 当前未被业务入口调用，下一次触摸 `sequence.py` 时决定保留或删除，不阻塞 Step 2。
 
