@@ -28,6 +28,8 @@
 
   - R07 runtime intervention 第 1 步完成：子模块 `af06827` 已推送。`LocalDummyTransform` 增加 `normal|zero|shuffle` mode；`zero` 为严格全零，`shuffle` 由 `IterativeJointDataLoader` 在 packed batch 内循环置换 present Local payload，plan/shape/None 占位不变；Edge recipe 通过 `PSM_LOCAL_DUMMY_MODE` 数据侧透传，默认 `normal`。三项定向 CPU pytest、5 文件 `py_compile`、`git diff --check` PASS；未运行 GPU。下一步新增真实跨 commit runtime runner。
 
+  - R07 runtime optimizer Gate：ChatGPT 定位并经源码实证 Edge-4in1 深拷贝 Nano 的非空 `keys_to_select`，原先漏选 `local_memory2llm` 与 `local_memory_modality_embed`，导致三项 Local 参数冻结、真实 1-step checkpoint 仍全零。子模块 `55a9109` 仅在 Local 启用时向既有 allowlist 追加这两项，原生 7 项不变；CPU 配置合同 PASS。修复后同一 iter2800 的真实 Normal 1-step checkpoint 中 weight 65,536 个、bias/embed 各 2,048 个元素均为有限非零（`max_abs=5.002220859751105e-11`），证明 Local optimizer/update path PASS。临时 checkpoint 已删除；待 No-Memory old-vs-new parity 与 fixed-weight Normal/Zero/Shuffle sensitivity，仍不进入 R08/R09。
+
   - 独立审查：`mm2` 对子模块 `0b48dae` / 根仓 `799dc91` 结论 APPROVE。默认关闭、shape/dtype、plan 标记、LIBERO 参数透传、mixed-None collate、序列化兼容与 baseline 无回归均通过；LOW：`SequencePlan.as_dict()` 当前未被业务入口调用，下一次触摸 `sequence.py` 时决定保留或删除，不阻塞 Step 2。
 
 - `G0-R07-PRE-IMPLEMENT-REVIEW`（mm2，DONE）：对 `f238295` 只读复核结论 `APPROVE_TO_IMPLEMENT`。D017、mRoPE parity、iter2800 checkpoint/no-memory parity、Edge-4in1 trainable scope、legacy/Flex 范围均 PASS；两项 LOW 审计措辞已回填：Edge-4in1 无 `keys_to_select`、整 backbone 训练；Flex 默认 `enabled=false` 的继承证据已补齐。未改子模块、未运行代码。
