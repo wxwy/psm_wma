@@ -1,0 +1,3 @@
+[2026-08-25 18:55:34] 通用 CFG 重测启动：ckpt=2800, suites=[libero_spatial], guidance_list=[1.0], trials=10, workers=10
+[2026-08-25 18:55:34]   输出目录: results/libero_closed_loop_4in1_cfg_4090
+[2026-08-25 18:55:34] === g1_0 开始：ckpt=iter_000002800, guidance=1.0 ===

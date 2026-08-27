@@ -1,0 +1,16 @@
+[2026-08-25 19:46:47] 水位检查：ckpt=iter_000002800 guidance=2.0 suite=libero_goal task=0 trials=10
+[2026-08-25 19:46:47]   输出: results/libero_closed_loop_4in1_cfg_4090/g2_0/libero_goal/tasks/task_000
+[2026-08-25 19:46:47]   ckpt OK: /disk/rl/psm_wma/cosmos-framework/outputs/train/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000002800 (17G)
+[2026-08-25 19:46:47] 启动 server...
+[2026-08-25 19:46:47]   server pid=3891808 log=outputs/train/logs/action_server_water_iter_000002800_g2.0.log
+[2026-08-25 19:48:23]   server 就绪 (用时 95s)
+[2026-08-25 19:48:23] 启动 client: libero_goal task=0 trials=10
+[2026-08-25 21:32:56]   client 退出 rc=0 用时 6273s (1h44m33s)
+
+========== 水位检查结果 ==========
+task_0 SR = 10.0% (1/10)
+用时      = 6273s (104min)
+基线 SR   = 0.0% (iter_2800 g1.0 真跑子集)
+提升      = 10.0pp
+判定      = ✗ CFG 无明显收益 (<15%)，建议回退或扩展更多 guidance
+[2026-08-25 21:32:56]   停止 server (pid=3891808)

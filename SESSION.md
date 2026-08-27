@@ -599,3 +599,23 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - spatial 真值必须按 MP4 后缀重算，**不**信 acceptance_4090 的 summary.json success 字段。
 - server 加载新 ckpt 必须验证 ps 启动时间 + log checkpoint_path + 端口探活三件套。
 - **canonical R06 baseline 必须**由 clean 400-episode acceptance 冻结，**不**用 suite-specific CFG、**不**用 1-trial sweep、**不**用历史 evidence 目录。
+
+### 双仓库 commit/push 完成（2026-08-27）
+
+- 用户原话："提交 推送"
+- **子模块 cosmos-framework**：`7826483`（v2 ahead 1）已 push 成功
+  - commit: `feat(examples): driver auto-post-smoke hook + launch script 防御性变量`
+  - 改：3 files（driver + server launch + eval launch）
+- **主仓库 psm_wma**：`d77a9fb`（V2 ahead 2）已 push 成功
+  - `8036d75`: `feat(tools/g0): auto_post_smoke + libero_90 build + 13ckpt summary`
+  - `d77a9fb`: `chore(submodule): bump cosmos-framework 7826483 driver hook + launch 变量`
+- **rebase 流程**：
+  1. 子模块 rebase origin/v2（19 R07 commits → fast-forward 到 af06827 → pick 9c9ddb1 重放成 7826483）
+  2. 主仓库 rebase origin/V2（19 R07 commits + 2 my commits），submodule pointer conflict 由 9c9ddb1→7826483 手动 resolve
+  3. amend 修正 message（9c9ddb1 已 rebase 替代为 7826483）
+  4. push 后 `git rev-list --left-right --count HEAD...origin/V2` 必须 0/0
+- **踩坑**（已写入 MEMORY）：
+  - amend 误带 Codex 无关文件 → `git reset HEAD -- <files>` 撤
+  - 子模块 rebase 后旧 hash 不可达 → 主仓库 submodule pointer 需手动 resolve
+  - commit message 含 hash 与实际不一致 → amend 修正
+- 见 `MEMORY/cross-repo-rebase-submodule-pointer.md`

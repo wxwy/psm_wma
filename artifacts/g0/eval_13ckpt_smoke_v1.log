@@ -1,0 +1,665 @@
+[2026-08-26 09:21:15] 启动 13 ckpt × 1 trial 冒烟 driver
+  RESULTS_ROOT=results/libero_closed_loop_4in1_acceptance_4090_smoke_v1
+  CKPT_ITERS=2600 2400 2200 2000 1800 1600 1400 1200 1000 800 600 400 200
+  NUM_TRIALS=1 N_WORKERS=20
+  总 episodes = 13 × 4 × 10 × 1 = 520
+
+[2026-08-26 09:21:15]   SAVE_GIFS= SAVE_PRED_MP4=（unset=关；--save_mp4 硬编码保留）
+[2026-08-26 09:21:15]   GUIDANCE=1.0（>1.0 = 启用 CFG）
+[2026-08-26 09:21:15] 4090 acceptance 启动：ckpt 倒序=[2600 2400 2200 2000 1800 1600 1400 1200 1000 800 600 400 200]；suite 顺序=[libero_spatial libero_object libero_goal libero_10]；MEM_GATE=50G；总 worker=20（每 suite 5，4 suite 跨并发）
+[2026-08-26 09:21:15] === iter_000002600 已完整验收，跳过 ===
+[2026-08-26 09:21:15] === iter_000002400 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-26 09:24:00]   server iter_000002400 就绪 (pid=713240)
+[2026-08-26 09:24:00]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 09:24:00]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 09:24:00]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 09:24:00]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 09:24:00]      启动 task 0
+[2026-08-26 09:24:00]      启动 task 0
+[2026-08-26 09:24:00]      启动 task 0
+[2026-08-26 09:24:00]      启动 task 0
+[2026-08-26 09:24:00]      启动 task 1
+[2026-08-26 09:24:00]      启动 task 1
+[2026-08-26 09:24:00]      启动 task 1
+[2026-08-26 09:24:00]      启动 task 1
+[2026-08-26 09:24:00]      启动 task 2
+[2026-08-26 09:24:00]      启动 task 2
+[2026-08-26 09:24:00]      启动 task 2
+[2026-08-26 09:24:00]      启动 task 2
+[2026-08-26 09:24:00]      启动 task 3
+[2026-08-26 09:24:00]      启动 task 3
+[2026-08-26 09:24:00]      启动 task 3
+[2026-08-26 09:24:00]      启动 task 3
+[2026-08-26 09:24:00]      启动 task 4
+[2026-08-26 09:24:00]      启动 task 4
+[2026-08-26 09:24:00]      启动 task 4
+[2026-08-26 09:24:00]      启动 task 4
+[2026-08-26 09:38:32]   内存水位超 50G，等待 60s 后再 启动 libero_spatial task 5 worker
+[2026-08-26 09:39:32]   内存水位超 50G，等待 60s 后再 启动 libero_spatial task 5 worker
+[2026-08-26 09:40:33]      启动 task 5
+[2026-08-26 09:45:08]      启动 task 6
+[2026-08-26 09:45:08]      启动 task 7
+[2026-08-26 09:45:11]      启动 task 8
+[2026-08-26 09:45:11]      启动 task 9
+[2026-08-26 09:59:48]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002400/libero_spatial/summary.json
+[2026-08-26 10:00:40]      启动 task 5
+[2026-08-26 10:00:40]      启动 task 6
+[2026-08-26 10:00:40]      启动 task 7
+[2026-08-26 10:07:05]      启动 task 8
+[2026-08-26 10:07:05]      启动 task 9
+[2026-08-26 10:07:42]      启动 task 5
+[2026-08-26 10:15:56]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002400/libero_object/summary.json
+[2026-08-26 10:19:23]      启动 task 5
+[2026-08-26 10:19:23]      启动 task 6
+[2026-08-26 10:19:23]      启动 task 7
+[2026-08-26 10:19:23]      启动 task 8
+[2026-08-26 10:19:27]      启动 task 6
+[2026-08-26 10:19:27]      启动 task 7
+[2026-08-26 10:19:27]      启动 task 8
+[2026-08-26 10:19:28]      启动 task 9
+[2026-08-26 10:19:32]      启动 task 9
+[2026-08-26 10:55:08]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002400/libero_10/summary.json
+[2026-08-26 10:55:18]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002400/libero_goal/summary.json
+[2026-08-26 10:55:18]   停止 action server (pid=713240)
+[2026-08-26 10:55:19] === iter_000002400 全部 4 suite 验收完成 ===
+[2026-08-26 10:55:19] === iter_000002200 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-26 10:56:42]   server iter_000002200 就绪 (pid=1056253)
+[2026-08-26 10:56:42]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 10:56:42]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 10:56:42]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 10:56:42]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 10:56:43]      启动 task 0
+[2026-08-26 10:56:43]      启动 task 0
+[2026-08-26 10:56:43]      启动 task 0
+[2026-08-26 10:56:43]      启动 task 0
+[2026-08-26 10:56:43]      启动 task 1
+[2026-08-26 10:56:43]      启动 task 1
+[2026-08-26 10:56:43]      启动 task 1
+[2026-08-26 10:56:43]      启动 task 1
+[2026-08-26 10:56:43]      启动 task 2
+[2026-08-26 10:56:43]      启动 task 2
+[2026-08-26 10:56:43]      启动 task 2
+[2026-08-26 10:56:43]      启动 task 2
+[2026-08-26 10:56:43]      启动 task 3
+[2026-08-26 10:56:43]      启动 task 3
+[2026-08-26 10:56:43]      启动 task 3
+[2026-08-26 10:56:43]      启动 task 3
+[2026-08-26 10:56:44]      启动 task 4
+[2026-08-26 10:56:44]      启动 task 4
+[2026-08-26 10:56:44]      启动 task 4
+[2026-08-26 10:56:44]      启动 task 4
+[2026-08-26 11:17:40]      启动 task 5
+[2026-08-26 11:17:40]      启动 task 6
+[2026-08-26 11:17:40]      启动 task 7
+[2026-08-26 11:17:40]      启动 task 8
+[2026-08-26 11:17:40]      启动 task 9
+[2026-08-26 11:17:57]      启动 task 5
+[2026-08-26 11:17:58]      启动 task 6
+[2026-08-26 11:17:58]      启动 task 7
+[2026-08-26 11:37:22]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002200/libero_spatial/summary.json
+[2026-08-26 11:38:26]      启动 task 5
+[2026-08-26 11:51:55]      启动 task 8
+[2026-08-26 11:51:56]      启动 task 9
+[2026-08-26 11:52:03]      启动 task 6
+[2026-08-26 11:52:03]      启动 task 7
+[2026-08-26 11:52:03]      启动 task 8
+[2026-08-26 11:52:03]      启动 task 9
+[2026-08-26 11:52:07]      启动 task 5
+[2026-08-26 11:52:07]      启动 task 6
+[2026-08-26 11:52:08]      启动 task 7
+[2026-08-26 11:52:08]      启动 task 8
+[2026-08-26 11:52:08]      启动 task 9
+[2026-08-26 12:06:35]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002200/libero_object/summary.json
+[2026-08-26 12:14:09]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002200/libero_goal/summary.json
+[2026-08-26 12:22:55]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002200/libero_10/summary.json
+[2026-08-26 12:22:55]   停止 action server (pid=1056253)
+[2026-08-26 12:22:56] === iter_000002200 全部 4 suite 验收完成 ===
+[2026-08-26 12:22:56] === iter_000002000 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-26 12:25:45]   server iter_000002000 就绪 (pid=1384375)
+[2026-08-26 12:25:45]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 12:25:45]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 12:25:45]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 12:25:46]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 12:25:46]      启动 task 0
+[2026-08-26 12:25:46]      启动 task 0
+[2026-08-26 12:25:46]      启动 task 0
+[2026-08-26 12:25:46]      启动 task 0
+[2026-08-26 12:25:46]      启动 task 1
+[2026-08-26 12:25:46]      启动 task 1
+[2026-08-26 12:25:46]      启动 task 1
+[2026-08-26 12:25:46]      启动 task 1
+[2026-08-26 12:25:46]      启动 task 2
+[2026-08-26 12:25:46]      启动 task 2
+[2026-08-26 12:25:46]      启动 task 2
+[2026-08-26 12:25:46]      启动 task 2
+[2026-08-26 12:25:46]      启动 task 3
+[2026-08-26 12:25:46]      启动 task 3
+[2026-08-26 12:25:46]      启动 task 3
+[2026-08-26 12:25:46]      启动 task 3
+[2026-08-26 12:25:46]      启动 task 4
+[2026-08-26 12:25:46]      启动 task 4
+[2026-08-26 12:25:46]      启动 task 4
+[2026-08-26 12:25:46]      启动 task 4
+[2026-08-26 12:37:03]      启动 task 5
+[2026-08-26 12:44:05]      启动 task 6
+[2026-08-26 12:44:05]      启动 task 7
+[2026-08-26 12:44:05]      启动 task 8
+[2026-08-26 12:44:46]      启动 task 5
+[2026-08-26 12:44:46]      启动 task 6
+[2026-08-26 12:44:46]      启动 task 7
+[2026-08-26 12:44:58]      启动 task 9
+[2026-08-26 12:46:13]      启动 task 5
+[2026-08-26 12:58:58]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002000/libero_spatial/summary.json
+[2026-08-26 13:02:14]      启动 task 5
+[2026-08-26 13:14:50]      启动 task 6
+[2026-08-26 13:14:50]      启动 task 7
+[2026-08-26 13:14:50]      启动 task 8
+[2026-08-26 13:14:50]      启动 task 9
+[2026-08-26 13:14:59]      启动 task 6
+[2026-08-26 13:14:59]      启动 task 7
+[2026-08-26 13:14:59]      启动 task 8
+[2026-08-26 13:14:59]      启动 task 9
+[2026-08-26 13:15:05]      启动 task 8
+[2026-08-26 13:15:05]      启动 task 9
+[2026-08-26 13:47:48]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002000/libero_object/summary.json
+[2026-08-26 13:47:52]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002000/libero_10/summary.json
+[2026-08-26 13:47:55]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000002000/libero_goal/summary.json
+[2026-08-26 13:47:55]   停止 action server (pid=1384375)
+[2026-08-26 13:47:56] === iter_000002000 全部 4 suite 验收完成 ===
+[2026-08-26 13:47:56] === iter_000001800 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-26 13:49:04]   server iter_000001800 就绪 (pid=1707979)
+[2026-08-26 13:49:04]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 13:49:04]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 13:49:04]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 13:49:04]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 13:49:04]      启动 task 0
+[2026-08-26 13:49:04]      启动 task 0
+[2026-08-26 13:49:04]      启动 task 0
+[2026-08-26 13:49:04]      启动 task 0
+[2026-08-26 13:49:04]      启动 task 1
+[2026-08-26 13:49:04]      启动 task 1
+[2026-08-26 13:49:04]      启动 task 1
+[2026-08-26 13:49:04]      启动 task 1
+[2026-08-26 13:49:04]      启动 task 2
+[2026-08-26 13:49:04]      启动 task 2
+[2026-08-26 13:49:04]      启动 task 2
+[2026-08-26 13:49:04]      启动 task 2
+[2026-08-26 13:49:04]      启动 task 3
+[2026-08-26 13:49:04]      启动 task 3
+[2026-08-26 13:49:04]      启动 task 3
+[2026-08-26 13:49:04]      启动 task 3
+[2026-08-26 13:49:05]      启动 task 4
+[2026-08-26 13:49:05]      启动 task 4
+[2026-08-26 13:49:05]      启动 task 4
+[2026-08-26 13:49:05]      启动 task 4
+[2026-08-26 14:01:20]      启动 task 5
+[2026-08-26 14:07:09]      启动 task 6
+[2026-08-26 14:07:09]      启动 task 7
+[2026-08-26 14:07:09]      启动 task 8
+[2026-08-26 14:09:49]      启动 task 9
+[2026-08-26 14:10:02]      启动 task 5
+[2026-08-26 14:17:25]      启动 task 6
+[2026-08-26 14:17:25]      启动 task 7
+[2026-08-26 14:23:24]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001800/libero_spatial/summary.json
+[2026-08-26 14:43:52]      启动 task 8
+[2026-08-26 14:43:52]      启动 task 9
+[2026-08-26 14:44:07]      启动 task 5
+[2026-08-26 14:44:07]      启动 task 6
+[2026-08-26 14:44:07]      启动 task 7
+[2026-08-26 14:44:07]      启动 task 8
+[2026-08-26 14:44:07]      启动 task 9
+[2026-08-26 14:44:11]      启动 task 5
+[2026-08-26 14:44:11]      启动 task 6
+[2026-08-26 14:44:11]      启动 task 7
+[2026-08-26 14:44:12]      启动 task 8
+[2026-08-26 14:44:12]      启动 task 9
+[2026-08-26 15:23:16]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001800/libero_object/summary.json
+[2026-08-26 15:23:19]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001800/libero_goal/summary.json
+[2026-08-26 15:23:29]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001800/libero_10/summary.json
+[2026-08-26 15:23:29]   停止 action server (pid=1707979)
+[2026-08-26 15:23:30] === iter_000001800 全部 4 suite 验收完成 ===
+[2026-08-26 15:23:30] === iter_000001600 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-26 15:25:52]   server iter_000001600 就绪 (pid=2068772)
+[2026-08-26 15:25:52]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 15:25:52]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 15:25:52]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 15:25:52]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 15:25:52]      启动 task 0
+[2026-08-26 15:25:52]      启动 task 0
+[2026-08-26 15:25:52]      启动 task 0
+[2026-08-26 15:25:52]      启动 task 0
+[2026-08-26 15:25:52]      启动 task 1
+[2026-08-26 15:25:52]      启动 task 1
+[2026-08-26 15:25:52]      启动 task 1
+[2026-08-26 15:25:52]      启动 task 1
+[2026-08-26 15:25:52]      启动 task 2
+[2026-08-26 15:25:52]      启动 task 2
+[2026-08-26 15:25:52]      启动 task 2
+[2026-08-26 15:25:52]      启动 task 2
+[2026-08-26 15:25:52]      启动 task 3
+[2026-08-26 15:25:52]      启动 task 3
+[2026-08-26 15:25:52]      启动 task 3
+[2026-08-26 15:25:52]      启动 task 3
+[2026-08-26 15:25:52]      启动 task 4
+[2026-08-26 15:25:52]      启动 task 4
+[2026-08-26 15:25:52]      启动 task 4
+[2026-08-26 15:25:52]      启动 task 4
+[2026-08-26 15:38:51]      启动 task 5
+[2026-08-26 15:45:38]      启动 task 6
+[2026-08-26 15:45:38]      启动 task 7
+[2026-08-26 15:49:46]      启动 task 5
+[2026-08-26 15:54:18]      启动 task 8
+[2026-08-26 15:54:18]      启动 task 9
+[2026-08-26 16:07:51]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001600/libero_spatial/summary.json
+[2026-08-26 16:30:35]      启动 task 6
+[2026-08-26 16:30:35]      启动 task 7
+[2026-08-26 16:30:35]      启动 task 8
+[2026-08-26 16:30:36]      启动 task 9
+[2026-08-26 16:30:58]      启动 task 5
+[2026-08-26 16:30:58]      启动 task 6
+[2026-08-26 16:30:58]      启动 task 7
+[2026-08-26 16:30:59]      启动 task 8
+[2026-08-26 16:30:59]      启动 task 9
+[2026-08-26 16:31:03]      启动 task 5
+[2026-08-26 16:31:03]      启动 task 6
+[2026-08-26 16:31:04]      启动 task 7
+[2026-08-26 16:31:04]      启动 task 8
+[2026-08-26 16:31:04]      启动 task 9
+[2026-08-26 17:25:30]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001600/libero_object/summary.json
+[2026-08-26 17:25:50]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001600/libero_10/summary.json
+[2026-08-26 17:25:59]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001600/libero_goal/summary.json
+[2026-08-26 17:25:59]   停止 action server (pid=2068772)
+[2026-08-26 17:26:00] === iter_000001600 全部 4 suite 验收完成 ===
+[2026-08-26 17:26:00] === iter_000001400 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-26 17:28:27]   server iter_000001400 就绪 (pid=2642894)
+[2026-08-26 17:28:27]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 17:28:27]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 17:28:27]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 17:28:27]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 17:28:27]      启动 task 0
+[2026-08-26 17:28:27]      启动 task 0
+[2026-08-26 17:28:27]      启动 task 0
+[2026-08-26 17:28:27]      启动 task 0
+[2026-08-26 17:28:28]      启动 task 1
+[2026-08-26 17:28:28]      启动 task 1
+[2026-08-26 17:28:28]      启动 task 1
+[2026-08-26 17:28:28]      启动 task 1
+[2026-08-26 17:28:28]      启动 task 2
+[2026-08-26 17:28:28]      启动 task 2
+[2026-08-26 17:28:28]      启动 task 2
+[2026-08-26 17:28:28]      启动 task 2
+[2026-08-26 17:28:28]      启动 task 3
+[2026-08-26 17:28:28]      启动 task 3
+[2026-08-26 17:28:28]      启动 task 3
+[2026-08-26 17:28:28]      启动 task 3
+[2026-08-26 17:28:28]      启动 task 4
+[2026-08-26 17:28:28]      启动 task 4
+[2026-08-26 17:28:28]      启动 task 4
+[2026-08-26 17:28:28]      启动 task 4
+[2026-08-26 17:51:11]      启动 task 5
+[2026-08-26 17:51:11]      启动 task 6
+[2026-08-26 17:51:11]      启动 task 7
+[2026-08-26 17:51:11]      启动 task 8
+[2026-08-26 17:51:11]      启动 task 9
+[2026-08-26 18:13:05]      启动 task 5
+[2026-08-26 18:27:53]      启动 task 6
+[2026-08-26 18:27:53]      启动 task 7
+[2026-08-26 18:27:53]      启动 task 8
+[2026-08-26 18:27:53]      启动 task 9
+[2026-08-26 18:28:01]      启动 task 5
+[2026-08-26 18:28:01]      启动 task 6
+[2026-08-26 18:28:02]      启动 task 7
+[2026-08-26 18:28:02]      启动 task 8
+[2026-08-26 18:28:02]      启动 task 9
+[2026-08-26 18:28:07]      启动 task 5
+[2026-08-26 18:28:07]      启动 task 6
+[2026-08-26 18:28:07]      启动 task 7
+[2026-08-26 18:28:07]      启动 task 8
+[2026-08-26 18:28:07]      启动 task 9
+[2026-08-26 18:43:54]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001400/libero_spatial/summary.json
+[2026-08-26 18:47:21]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001400/libero_object/summary.json
+[2026-08-26 19:09:16]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001400/libero_10/summary.json
+[2026-08-26 19:09:23]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001400/libero_goal/summary.json
+[2026-08-26 19:09:23]   停止 action server (pid=2642894)
+[2026-08-26 19:09:24] === iter_000001400 全部 4 suite 验收完成 ===
+[2026-08-26 19:09:24] === iter_000001200 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-26 19:12:15]   server iter_000001200 就绪 (pid=3085797)
+[2026-08-26 19:12:15]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 19:12:15]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 19:12:15]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 19:12:15]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 19:12:15]      启动 task 0
+[2026-08-26 19:12:15]      启动 task 0
+[2026-08-26 19:12:15]      启动 task 0
+[2026-08-26 19:12:15]      启动 task 0
+[2026-08-26 19:12:15]      启动 task 1
+[2026-08-26 19:12:15]      启动 task 1
+[2026-08-26 19:12:15]      启动 task 1
+[2026-08-26 19:12:15]      启动 task 1
+[2026-08-26 19:12:15]      启动 task 2
+[2026-08-26 19:12:15]      启动 task 2
+[2026-08-26 19:12:15]      启动 task 2
+[2026-08-26 19:12:15]      启动 task 2
+[2026-08-26 19:12:15]      启动 task 3
+[2026-08-26 19:12:15]      启动 task 3
+[2026-08-26 19:12:15]      启动 task 3
+[2026-08-26 19:12:15]      启动 task 3
+[2026-08-26 19:12:15]      启动 task 4
+[2026-08-26 19:12:15]      启动 task 4
+[2026-08-26 19:12:15]      启动 task 4
+[2026-08-26 19:12:15]      启动 task 4
+[2026-08-26 19:26:37]      启动 task 5
+[2026-08-26 19:34:04]      启动 task 5
+[2026-08-26 19:34:05]      启动 task 6
+[2026-08-26 19:34:05]      启动 task 7
+[2026-08-26 19:41:33]      启动 task 6
+[2026-08-26 19:41:33]      启动 task 7
+[2026-08-26 19:41:34]      启动 task 8
+[2026-08-26 19:41:34]      启动 task 9
+[2026-08-26 19:56:30]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001200/libero_spatial/summary.json
+[2026-08-26 20:10:07]      启动 task 8
+[2026-08-26 20:10:07]      启动 task 9
+[2026-08-26 20:10:11]      启动 task 5
+[2026-08-26 20:10:11]      启动 task 6
+[2026-08-26 20:10:11]      启动 task 7
+[2026-08-26 20:10:11]      启动 task 8
+[2026-08-26 20:10:15]      启动 task 5
+[2026-08-26 20:10:19]      启动 task 6
+[2026-08-26 20:10:19]      启动 task 7
+[2026-08-26 20:10:19]      启动 task 8
+[2026-08-26 20:10:20]      启动 task 9
+[2026-08-26 20:10:36]      启动 task 9
+[2026-08-26 20:53:55]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001200/libero_object/summary.json
+[2026-08-26 20:54:12]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001200/libero_10/summary.json
+[2026-08-26 20:54:16]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001200/libero_goal/summary.json
+[2026-08-26 20:54:16]   停止 action server (pid=3085797)
+[2026-08-26 20:54:16] === iter_000001200 全部 4 suite 验收完成 ===
+[2026-08-26 20:54:16] === iter_000001000 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-26 20:57:01]   server iter_000001000 就绪 (pid=3478453)
+[2026-08-26 20:57:01]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 20:57:01]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 20:57:01]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 20:57:01]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 20:57:01]      启动 task 0
+[2026-08-26 20:57:01]      启动 task 0
+[2026-08-26 20:57:01]      启动 task 0
+[2026-08-26 20:57:01]      启动 task 0
+[2026-08-26 20:57:01]      启动 task 1
+[2026-08-26 20:57:01]      启动 task 1
+[2026-08-26 20:57:01]      启动 task 1
+[2026-08-26 20:57:01]      启动 task 1
+[2026-08-26 20:57:01]      启动 task 2
+[2026-08-26 20:57:01]      启动 task 2
+[2026-08-26 20:57:01]      启动 task 2
+[2026-08-26 20:57:01]      启动 task 2
+[2026-08-26 20:57:01]      启动 task 3
+[2026-08-26 20:57:01]      启动 task 3
+[2026-08-26 20:57:01]      启动 task 3
+[2026-08-26 20:57:01]      启动 task 3
+[2026-08-26 20:57:01]      启动 task 4
+[2026-08-26 20:57:01]      启动 task 4
+[2026-08-26 20:57:01]      启动 task 4
+[2026-08-26 20:57:01]      启动 task 4
+[2026-08-26 21:15:28]      启动 task 5
+[2026-08-26 21:15:28]      启动 task 6
+[2026-08-26 21:15:28]      启动 task 7
+[2026-08-26 21:18:20]      启动 task 8
+[2026-08-26 21:20:03]      启动 task 9
+[2026-08-26 21:20:55]      启动 task 5
+[2026-08-26 21:38:57]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001000/libero_spatial/summary.json
+[2026-08-26 21:50:44]      启动 task 6
+[2026-08-26 21:50:44]      启动 task 7
+[2026-08-26 21:50:44]      启动 task 8
+[2026-08-26 21:50:44]      启动 task 9
+[2026-08-26 21:50:52]      启动 task 5
+[2026-08-26 21:50:58]      启动 task 6
+[2026-08-26 21:50:58]      启动 task 7
+[2026-08-26 21:50:58]      启动 task 8
+[2026-08-26 21:50:59]      启动 task 9
+[2026-08-26 21:51:03]      启动 task 5
+[2026-08-26 21:51:03]      启动 task 6
+[2026-08-26 21:51:03]      启动 task 7
+[2026-08-26 21:51:03]      启动 task 8
+[2026-08-26 21:51:03]      启动 task 9
+[2026-08-26 22:38:37]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001000/libero_object/summary.json
+[2026-08-26 22:39:16]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001000/libero_10/summary.json
+[2026-08-26 22:39:26]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000001000/libero_goal/summary.json
+[2026-08-26 22:39:26]   停止 action server (pid=3478453)
+[2026-08-26 22:39:27] === iter_000001000 全部 4 suite 验收完成 ===
+[2026-08-26 22:39:28] === iter_000000800 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-26 22:42:08]   server iter_000000800 就绪 (pid=3868531)
+[2026-08-26 22:42:08]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 22:42:08]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 22:42:08]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 22:42:08]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-26 22:42:08]      启动 task 0
+[2026-08-26 22:42:08]      启动 task 0
+[2026-08-26 22:42:08]      启动 task 0
+[2026-08-26 22:42:08]      启动 task 0
+[2026-08-26 22:42:08]      启动 task 1
+[2026-08-26 22:42:08]      启动 task 1
+[2026-08-26 22:42:08]      启动 task 1
+[2026-08-26 22:42:08]      启动 task 1
+[2026-08-26 22:42:08]      启动 task 2
+[2026-08-26 22:42:08]      启动 task 2
+[2026-08-26 22:42:08]      启动 task 2
+[2026-08-26 22:42:08]      启动 task 2
+[2026-08-26 22:42:08]      启动 task 3
+[2026-08-26 22:42:08]      启动 task 3
+[2026-08-26 22:42:08]      启动 task 3
+[2026-08-26 22:42:08]      启动 task 3
+[2026-08-26 22:42:08]      启动 task 4
+[2026-08-26 22:42:08]      启动 task 4
+[2026-08-26 22:42:08]      启动 task 4
+[2026-08-26 22:42:09]      启动 task 4
+[2026-08-26 23:39:40]      启动 task 5
+[2026-08-26 23:39:41]      启动 task 6
+[2026-08-26 23:39:41]      启动 task 7
+[2026-08-26 23:39:41]      启动 task 8
+[2026-08-26 23:39:41]      启动 task 9
+[2026-08-26 23:39:58]      启动 task 5
+[2026-08-26 23:39:58]      启动 task 6
+[2026-08-26 23:39:58]      启动 task 7
+[2026-08-26 23:39:58]      启动 task 8
+[2026-08-26 23:39:58]      启动 task 9
+[2026-08-26 23:40:03]      启动 task 5
+[2026-08-26 23:40:03]      启动 task 6
+[2026-08-26 23:40:04]      启动 task 7
+[2026-08-26 23:40:04]      启动 task 8
+[2026-08-26 23:40:04]      启动 task 9
+[2026-08-26 23:40:14]      启动 task 5
+[2026-08-26 23:40:14]      启动 task 6
+[2026-08-26 23:40:14]      启动 task 7
+[2026-08-26 23:40:14]      启动 task 8
+[2026-08-26 23:40:15]      启动 task 9
+[2026-08-27 00:53:35]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000800/libero_object/summary.json
+[2026-08-27 00:54:01]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000800/libero_10/summary.json
+[2026-08-27 00:54:11]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000800/libero_goal/summary.json
+[2026-08-27 00:54:25]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000800/libero_spatial/summary.json
+[2026-08-27 00:54:25]   停止 action server (pid=3868531)
+[2026-08-27 00:54:27] === iter_000000800 全部 4 suite 验收完成 ===
+[2026-08-27 00:54:27] === iter_000000600 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-27 00:56:39]   server iter_000000600 就绪 (pid=173920)
+[2026-08-27 00:56:39]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 00:56:39]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 00:56:39]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 00:56:39]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 00:56:39]      启动 task 0
+[2026-08-27 00:56:39]      启动 task 0
+[2026-08-27 00:56:39]      启动 task 0
+[2026-08-27 00:56:39]      启动 task 0
+[2026-08-27 00:56:39]      启动 task 1
+[2026-08-27 00:56:39]      启动 task 1
+[2026-08-27 00:56:39]      启动 task 1
+[2026-08-27 00:56:39]      启动 task 1
+[2026-08-27 00:56:39]      启动 task 2
+[2026-08-27 00:56:39]      启动 task 2
+[2026-08-27 00:56:39]      启动 task 2
+[2026-08-27 00:56:39]      启动 task 2
+[2026-08-27 00:56:39]      启动 task 3
+[2026-08-27 00:56:39]      启动 task 3
+[2026-08-27 00:56:39]      启动 task 3
+[2026-08-27 00:56:39]      启动 task 3
+[2026-08-27 00:56:39]      启动 task 4
+[2026-08-27 00:56:39]      启动 task 4
+[2026-08-27 00:56:39]      启动 task 4
+[2026-08-27 00:56:39]      启动 task 4
+[2026-08-27 01:50:50]      启动 task 5
+[2026-08-27 01:50:50]      启动 task 6
+[2026-08-27 01:50:56]      启动 task 7
+[2026-08-27 01:50:56]      启动 task 8
+[2026-08-27 01:50:56]      启动 task 9
+[2026-08-27 01:51:10]      启动 task 5
+[2026-08-27 01:51:10]      启动 task 6
+[2026-08-27 01:51:10]      启动 task 7
+[2026-08-27 01:51:10]      启动 task 8
+[2026-08-27 01:51:11]      启动 task 9
+[2026-08-27 01:51:17]      启动 task 5
+[2026-08-27 01:51:17]      启动 task 6
+[2026-08-27 01:51:17]      启动 task 7
+[2026-08-27 01:51:17]      启动 task 8
+[2026-08-27 01:51:17]      启动 task 9
+[2026-08-27 01:51:23]      启动 task 5
+[2026-08-27 01:51:23]      启动 task 6
+[2026-08-27 01:51:23]      启动 task 7
+[2026-08-27 01:51:23]      启动 task 8
+[2026-08-27 01:51:24]      启动 task 9
+[2026-08-27 02:08:21]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000600/libero_spatial/summary.json
+[2026-08-27 02:47:50]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000600/libero_object/summary.json
+[2026-08-27 02:48:05]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000600/libero_10/summary.json
+[2026-08-27 02:48:15]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000600/libero_goal/summary.json
+[2026-08-27 02:48:15]   停止 action server (pid=173920)
+[2026-08-27 02:48:16] === iter_000000600 全部 4 suite 验收完成 ===
+[2026-08-27 02:48:16] === iter_000000400 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-27 02:49:32]   server iter_000000400 就绪 (pid=407604)
+[2026-08-27 02:49:32]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 02:49:32]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 02:49:32]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 02:49:32]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 02:49:32]      启动 task 0
+[2026-08-27 02:49:32]      启动 task 0
+[2026-08-27 02:49:32]      启动 task 0
+[2026-08-27 02:49:32]      启动 task 0
+[2026-08-27 02:49:32]      启动 task 1
+[2026-08-27 02:49:32]      启动 task 1
+[2026-08-27 02:49:32]      启动 task 1
+[2026-08-27 02:49:32]      启动 task 1
+[2026-08-27 02:49:32]      启动 task 2
+[2026-08-27 02:49:32]      启动 task 2
+[2026-08-27 02:49:32]      启动 task 2
+[2026-08-27 02:49:32]      启动 task 2
+[2026-08-27 02:49:32]      启动 task 3
+[2026-08-27 02:49:32]      启动 task 3
+[2026-08-27 02:49:32]      启动 task 3
+[2026-08-27 02:49:32]      启动 task 3
+[2026-08-27 02:49:33]      启动 task 4
+[2026-08-27 02:49:33]      启动 task 4
+[2026-08-27 02:49:33]      启动 task 4
+[2026-08-27 02:49:33]      启动 task 4
+[2026-08-27 03:03:10]   内存水位超 50G，等待 60s 后再 启动 libero_spatial task 5 worker
+[2026-08-27 03:04:10]   内存水位超 50G，等待 60s 后再 启动 libero_spatial task 5 worker
+[2026-08-27 03:05:10]      启动 task 5
+[2026-08-27 03:10:51]      启动 task 5
+[2026-08-27 03:56:43]      启动 task 6
+[2026-08-27 03:56:53]      启动 task 7
+[2026-08-27 03:56:53]      启动 task 8
+[2026-08-27 03:56:53]      启动 task 9
+[2026-08-27 03:56:58]      启动 task 5
+[2026-08-27 03:57:10]      启动 task 5
+[2026-08-27 03:57:17]      启动 task 6
+[2026-08-27 03:57:17]      启动 task 7
+[2026-08-27 03:57:17]      启动 task 8
+[2026-08-27 03:57:18]      启动 task 9
+[2026-08-27 03:57:21]      启动 task 6
+[2026-08-27 03:57:21]      启动 task 7
+[2026-08-27 03:57:21]      启动 task 8
+[2026-08-27 03:57:22]      启动 task 9
+[2026-08-27 03:57:30]      启动 task 6
+[2026-08-27 03:57:30]      启动 task 7
+[2026-08-27 03:57:30]      启动 task 8
+[2026-08-27 03:57:30]      启动 task 9
+[2026-08-27 04:52:17]   -> libero_object 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000400/libero_object/summary.json
+[2026-08-27 04:52:46]   -> libero_10 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000400/libero_10/summary.json
+[2026-08-27 04:52:52]   -> libero_goal 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000400/libero_goal/summary.json
+[2026-08-27 04:52:59]   -> libero_spatial 完成：results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/iter_000000400/libero_spatial/summary.json
+[2026-08-27 04:52:59]   停止 action server (pid=407604)
+[2026-08-27 04:53:01] === iter_000000400 全部 4 suite 验收完成 ===
+[2026-08-27 04:53:01] === iter_000000200 开始：steps=30, max_steps=700, trials=1, total_workers=20 (每 suite 5，跨 suite 并发) ===
+[2026-08-27 04:55:26]   server iter_000000200 就绪 (pid=607448)
+[2026-08-27 04:55:26]   -> libero_spatial：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 04:55:26]   -> libero_object：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 04:55:26]   -> libero_goal：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 04:55:26]   -> libero_10：10 task × 1 trials，最多 5 个 worker
+[2026-08-27 04:55:26]      启动 task 0
+[2026-08-27 04:55:26]      启动 task 0
+[2026-08-27 04:55:26]      启动 task 0
+[2026-08-27 04:55:26]      启动 task 0
+[2026-08-27 04:55:26]      启动 task 1
+[2026-08-27 04:55:26]      启动 task 1
+[2026-08-27 04:55:26]      启动 task 1
+[2026-08-27 04:55:26]      启动 task 1
+[2026-08-27 04:55:27]      启动 task 2
+[2026-08-27 04:55:27]      启动 task 2
+[2026-08-27 04:55:27]      启动 task 2
+[2026-08-27 04:55:27]      启动 task 2
+[2026-08-27 04:55:27]      启动 task 3
+[2026-08-27 04:55:27]      启动 task 3
+[2026-08-27 04:55:27]      启动 task 3
+[2026-08-27 04:55:27]      启动 task 3
+[2026-08-27 04:55:27]      启动 task 4
+[2026-08-27 04:55:27]      启动 task 4
+[2026-08-27 04:55:27]      启动 task 4
+[2026-08-27 04:55:27]      启动 task 4
+[2026-08-27 05:31:36]      启动 task 5
+[2026-08-27 05:31:36]      启动 task 5
+[2026-08-27 05:31:36]      启动 task 5
+[2026-08-27 05:31:37]      启动 task 5
+[2026-08-27 05:31:37]      启动 task 6
+[2026-08-27 05:31:37]      启动 task 6
+[2026-08-27 05:31:37]      启动 task 6
+[2026-08-27 05:31:37]      启动 task 6
+[2026-08-27 05:31:37]      启动 task 7
+[2026-08-27 05:31:37]      启动 task 7
+[2026-08-27 05:31:37]      启动 task 7
+[2026-08-27 05:31:37]      启动 task 7
+[2026-08-27 05:31:37]      启动 task 8
+[2026-08-27 05:31:37]      启动 task 8
+[2026-08-27 05:31:37]      启动 task 8
+[2026-08-27 05:31:37]      启动 task 8
+[2026-08-27 05:31:37]      启动 task 9
+[2026-08-27 05:31:37]      启动 task 9
+[2026-08-27 05:31:37]      启动 task 9
+[2026-08-27 05:31:37]      启动 task 9
+[2026-08-27 05:32:59]      !! worker pid=668798 失败
+[2026-08-27 05:32:59]      !! worker pid=668835 失败
+[2026-08-27 05:32:59]      !! worker pid=668859 失败
+[2026-08-27 05:32:59]      !! worker pid=668887 失败
+[2026-08-27 05:32:59]      !! worker pid=668914 失败
+[2026-08-27 05:32:59]   !! libero_object 存在失败 worker，不汇总 summary
+[2026-08-27 05:32:59]      !! worker pid=668787 失败
+[2026-08-27 05:32:59]      !! worker pid=668825 失败
+[2026-08-27 05:32:59]      !! worker pid=668863 失败
+[2026-08-27 05:32:59]      !! worker pid=668902 失败
+[2026-08-27 05:32:59]      !! worker pid=668925 失败
+[2026-08-27 05:32:59]   !! libero_goal 存在失败 worker，不汇总 summary
+[2026-08-27 05:32:59]      !! worker pid=668806 失败
+[2026-08-27 05:32:59]      !! worker pid=668824 失败
+[2026-08-27 05:32:59]      !! worker pid=668858 失败
+[2026-08-27 05:32:59]      !! worker pid=668891 失败
+[2026-08-27 05:32:59]      !! worker pid=668918 失败
+[2026-08-27 05:32:59]   !! libero_10 存在失败 worker，不汇总 summary
+[2026-08-27 05:32:59]      !! worker pid=668786 失败
+[2026-08-27 05:32:59]      !! worker pid=668830 失败
+[2026-08-27 05:32:59]      !! worker pid=668862 失败
+[2026-08-27 05:32:59]      !! worker pid=668886 失败
+[2026-08-27 05:32:59]      !! worker pid=668928 失败
+[2026-08-27 05:32:59]   !! libero_spatial 存在失败 worker，不汇总 summary
+examples/eval_libero_4in1_acceptance_4090.sh: line 270: 607448 Killed                  CHECKPOINT_PATH="$ckpt" NUM_STEPS="$NUM_STEPS" GUIDANCE="$GUIDANCE" bash examples/launch_action_server_libero_edge_all.sh > "$server_log" 2>&1
+[2026-08-27 05:32:59]   !! suite pid=607814 异常退出（其余 suite 可能仍在跑）
+[2026-08-27 05:32:59]   !! suite pid=607815 异常退出（其余 suite 可能仍在跑）
+[2026-08-27 05:32:59]   !! suite pid=607816 异常退出（其余 suite 可能仍在跑）
+[2026-08-27 05:32:59]   !! suite pid=607817 异常退出（其余 suite 可能仍在跑）
+[2026-08-27 05:32:59] === iter_000000200 未完成全部 4 suite；不写 .done ===
+examples/eval_libero_4in1_acceptance_4090.sh: error reading input file: No such file or directory
+
+[2026-08-27 05:32:59] driver 退出 rc=2
