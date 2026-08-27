@@ -1,5 +1,13 @@
 # R07 Runtime Audit Log
 
+> **SUPERSEDED（2026-08-27）**：本文件中关于 FSDP flat-handle / parameter-gradient
+> probe 的诊断不再是 active recommendation。根因已实证为 Edge-4in1 继承 Nano 的
+> `keys_to_select` 时漏选两组 Local 参数；子模块 `55a9109` 已仅追加
+> `local_memory2llm` 与 `local_memory_modality_embed`。修复后的真实 optimizer step
+> checkpoint 中三项 Local 参数均由严格零初始化更新为有限非零，parameter-update 证据
+> 覆盖此前 `grad present=false` 的推断。后续 Gate 仅为 No-Memory parity 与同一训练后
+> checkpoint 的 fixed-weight Normal/Zero/Shuffle sensitivity。
+
 > 跨子仓视角的 R07 Local Memory 接入运行时审计。子仓代码改动归
 > `cosmos-framework/cosmos_framework/`;本文件记录每次只读复核的状态、
 > 关键产物路径、未关闭的 Gate 与最小修复建议。

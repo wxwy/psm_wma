@@ -32,7 +32,7 @@
 
   - 独立审查：`mm2` 对子模块 `0b48dae` / 根仓 `799dc91` 结论 APPROVE。默认关闭、shape/dtype、plan 标记、LIBERO 参数透传、mixed-None collate、序列化兼容与 baseline 无回归均通过；LOW：`SequencePlan.as_dict()` 当前未被业务入口调用，下一次触摸 `sequence.py` 时决定保留或删除，不阻塞 Step 2。
 
-- `G0-R07-PRE-IMPLEMENT-REVIEW`（mm2，DONE）：对 `f238295` 只读复核结论 `APPROVE_TO_IMPLEMENT`。D017、mRoPE parity、iter2800 checkpoint/no-memory parity、Edge-4in1 trainable scope、legacy/Flex 范围均 PASS；两项 LOW 审计措辞已回填：Edge-4in1 无 `keys_to_select`、整 backbone 训练；Flex 默认 `enabled=false` 的继承证据已补齐。未改子模块、未运行代码。
+- `G0-R07-PRE-IMPLEMENT-REVIEW`（mm2，DONE）：对 `f238295` 只读复核结论 `APPROVE_TO_IMPLEMENT`。后续 runtime 实证已纠正其中 Edge-4in1「无 `keys_to_select`、整 backbone 训练」的旧判断：实际继承 Nano 非空 allowlist，遗漏 Local selector 已由 `55a9109` 修复；其余 D017、mRoPE、checkpoint、legacy/Flex 范围结论保持。Flex 默认 `enabled=false` 的继承证据已补齐。
 
 - `EVAL-LIBERO-4IN1-ACCEPTANCE / PLAN`（SUPERSEDED BY D017，DO NOT EXECUTE）：driver 仅保留历史工具；禁止启动 canonical acceptance、iter2800/spatial smoke 或任何对应 GPU job。13-ckpt sweep 仅作趋势 evidence。
 
