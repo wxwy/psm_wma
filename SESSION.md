@@ -24,6 +24,10 @@
 
   - R07 runtime 新机器系统盘复跑（进行中）：80 GiB GPU、64 GiB RAM 上，`/opt/Cosmos3-edge-generation-libero4in1/iter_000002800` 在 `PSM_LOCAL_DUMMY_ENABLED=1` 下 warm-start 成功；DCP 保留旧 549 个张量、新增 3 个 Local 张量新初始化。真实单步完成：`loss=0.854476`、vision=`0.069275`、action=`0.016173`、global grad norm=`2.60938`，无 NaN/OOM；`/opt/r07-smoke/local_80g_rerun/.../iter_000000001` 已于 88.11s 保存。该 checkpoint 再次从系统盘 DCP warm-start 成功（552 tensors，3.73s），随后为避免写入第二份临时模型主动终止。LIBERO 四 suite 均配置 exact-window latent cache，`latent_cache_verify_ratio=0.0`；不发生在线视频 VAE 编码。尚缺 Local 专项梯度、Local-disabled 数值/输出 parity 与 3--10 step Normal/Zero/Shuffle sensitivity；不进入 R08/R09。所有 runtime checkpoint 仅保留 `/opt/r07-smoke/`，不提交、不复制网络盘。
 
+  - R07 runtime 收口实现（Codex，IN_PROGRESS）：预计仅改 `action/utils/transforms.py`、`action_sft_dataset.py`、`joint_dataloader.py`、Edge-4in1 config 及对应 CPU tests，并新增 `tools/g0` 的真实模型 Gate runner。runner 使用临时 worktree `cosmos-framework@5b61762` 作为 R06 old reference、当前 `c4557da` 作为 Local-capable reference，复用同一 cached LIBERO batch，写小型 JSON；不新建第二份 checkpoint。Zero dummy 必为严格全零，Shuffle 必在 collated batch 内仅置换 Local payload、绝不改变 plan/shape，也绝不在 model forward 内造数据。修改后先 CPU test/静态验证，再单卡 GPU Gate，最后交 mm 复审。
+
+  - R07 runtime intervention 第 1 步完成：子模块 `af06827` 已推送。`LocalDummyTransform` 增加 `normal|zero|shuffle` mode；`zero` 为严格全零，`shuffle` 由 `IterativeJointDataLoader` 在 packed batch 内循环置换 present Local payload，plan/shape/None 占位不变；Edge recipe 通过 `PSM_LOCAL_DUMMY_MODE` 数据侧透传，默认 `normal`。三项定向 CPU pytest、5 文件 `py_compile`、`git diff --check` PASS；未运行 GPU。下一步新增真实跨 commit runtime runner。
+
   - 独立审查：`mm2` 对子模块 `0b48dae` / 根仓 `799dc91` 结论 APPROVE。默认关闭、shape/dtype、plan 标记、LIBERO 参数透传、mixed-None collate、序列化兼容与 baseline 无回归均通过；LOW：`SequencePlan.as_dict()` 当前未被业务入口调用，下一次触摸 `sequence.py` 时决定保留或删除，不阻塞 Step 2。
 
 - `G0-R07-PRE-IMPLEMENT-REVIEW`（mm2，DONE）：对 `f238295` 只读复核结论 `APPROVE_TO_IMPLEMENT`。D017、mRoPE parity、iter2800 checkpoint/no-memory parity、Edge-4in1 trainable scope、legacy/Flex 范围均 PASS；两项 LOW 审计措辞已回填：Edge-4in1 无 `keys_to_select`、整 backbone 训练；Flex 默认 `enabled=false` 的继承证据已补齐。未改子模块、未运行代码。
