@@ -30,6 +30,8 @@
 
   - R07 runtime optimizer Gate：ChatGPT 定位并经源码实证 Edge-4in1 深拷贝 Nano 的非空 `keys_to_select`，原先漏选 `local_memory2llm` 与 `local_memory_modality_embed`，导致三项 Local 参数冻结、真实 1-step checkpoint 仍全零。子模块 `55a9109` 仅在 Local 启用时向既有 allowlist 追加这两项，原生 7 项不变；CPU 配置合同 PASS。修复后同一 iter2800 的真实 Normal 1-step checkpoint 中 weight 65,536 个、bias/embed 各 2,048 个元素均为有限非零（`max_abs=5.002220859751105e-11`），证明 Local optimizer/update path PASS。临时 checkpoint 已删除；待 No-Memory old-vs-new parity 与 fixed-weight Normal/Zero/Shuffle sensitivity，仍不进入 R08/R09。
 
+  - R07 No-Memory 输出级 parity（Codex，DONE）：在单卡 80 GiB GPU 上以 old `5b61762`（仅临时 capture-only instrumentation）与 Local-capable `62d77b8` 分别运行同一 `iter_000002800`、exact-window latent cache、`PSM_LOCAL_DUMMY_ENABLED=0`、`PYTHONHASHSEED=0`、`CUBLAS_WORKSPACE_CONFIG=:4096:8` 和 `--deterministic` 的一训练步。`artifacts/g0/r07/runtime_smoke/no_memory_parity.json` 为 `PASS`：8 项输入、6 项 packing/mRoPE 结构、Vision/Action prediction SHA256 均逐位相同，三项 loss 差均为 `0.0`（old/new 均 total=`1.3236993551254272`、vision=`0.10770943015813828`、action=`0.0246605072170496`）。两侧自动生成的 `iter_000000001` 临时 checkpoint 均已删除，保留 JSON/日志；这是 Local disabled 的 STRONG PASS。下一步仅为同一训练后 checkpoint 的 Normal/Zero/Shuffle sensitivity，仍不进入 R08/R09。
+
   - 独立审查：`mm2` 对子模块 `0b48dae` / 根仓 `799dc91` 结论 APPROVE。默认关闭、shape/dtype、plan 标记、LIBERO 参数透传、mixed-None collate、序列化兼容与 baseline 无回归均通过；LOW：`SequencePlan.as_dict()` 当前未被业务入口调用，下一次触摸 `sequence.py` 时决定保留或删除，不阻塞 Step 2。
 
 - `G0-R07-PRE-IMPLEMENT-REVIEW`（mm2，DONE）：对 `f238295` 只读复核结论 `APPROVE_TO_IMPLEMENT`。后续 runtime 实证已纠正其中 Edge-4in1「无 `keys_to_select`、整 backbone 训练」的旧判断：实际继承 Nano 非空 allowlist，遗漏 Local selector 已由 `55a9109` 修复；其余 D017、mRoPE、checkpoint、legacy/Flex 范围结论保持。Flex 默认 `enabled=false` 的继承证据已补齐。

@@ -1,0 +1,57 @@
+{
+  "schema_version": "r07_no_memory_parity_comparison_v1",
+  "status": "PASS",
+  "old_path": "/opt/r07-smoke/parity_deterministic_old.json",
+  "new_path": "/opt/r07-smoke/parity_deterministic_new.json",
+  "layers": {
+    "input": {
+      "x0_vision": true,
+      "xt_vision": true,
+      "sigma_vision_schedule": true,
+      "sigma_vision_effective": true,
+      "x0_action": true,
+      "xt_action": true,
+      "sigma_action_effective": true,
+      "text_ids": true
+    },
+    "structure": {
+      "text_indexes": true,
+      "vision_indexes": true,
+      "action_indexes": true,
+      "position_ids": true,
+      "split_lens": true,
+      "attn_modes": true
+    },
+    "functional": {
+      "summaries": {
+        "preds_vision": true,
+        "preds_action": true
+      },
+      "losses_pass": true
+    }
+  },
+  "exact_fields": {
+    "x0_vision": true,
+    "xt_vision": true,
+    "sigma_vision_schedule": true,
+    "sigma_vision_effective": true,
+    "x0_action": true,
+    "xt_action": true,
+    "sigma_action_effective": true,
+    "text_ids": true,
+    "text_indexes": true,
+    "vision_indexes": true,
+    "action_indexes": true,
+    "position_ids": true,
+    "preds_vision": true,
+    "preds_action": true,
+    "split_lens": true,
+    "attn_modes": true
+  },
+  "loss_diffs": {
+    "loss": 0.0,
+    "flow_matching_loss_vision": 0.0,
+    "flow_matching_loss_action": 0.0
+  },
+  "loss_tolerance": 0.0001
+}
