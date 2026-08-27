@@ -1,0 +1,130 @@
+{
+  "iter_000000200": {
+    "_4in1_avg": 0.025,
+    "iter": 200,
+    "libero_10": 0.0,
+    "libero_goal": 0.0,
+    "libero_object": 0.0,
+    "libero_spatial": 0.1,
+    "present": true
+  },
+  "iter_000000400": {
+    "_4in1_avg": 0.425,
+    "iter": 400,
+    "libero_10": 0.0,
+    "libero_goal": 0.4,
+    "libero_object": 0.6,
+    "libero_spatial": 0.7,
+    "present": true
+  },
+  "iter_000000600": {
+    "_4in1_avg": 0.5,
+    "iter": 600,
+    "libero_10": 0.0,
+    "libero_goal": 0.6,
+    "libero_object": 0.5,
+    "libero_spatial": 0.9,
+    "present": true
+  },
+  "iter_000000800": {
+    "_4in1_avg": 0.425,
+    "iter": 800,
+    "libero_10": 0.1,
+    "libero_goal": 0.5,
+    "libero_object": 0.6,
+    "libero_spatial": 0.5,
+    "present": true
+  },
+  "iter_000001000": {
+    "_4in1_avg": 0.6,
+    "iter": 1000,
+    "libero_10": 0.0,
+    "libero_goal": 0.6,
+    "libero_object": 0.8,
+    "libero_spatial": 1.0,
+    "present": true
+  },
+  "iter_000001200": {
+    "_4in1_avg": 0.65,
+    "iter": 1200,
+    "libero_10": 0.3,
+    "libero_goal": 0.6,
+    "libero_object": 0.7,
+    "libero_spatial": 1.0,
+    "present": true
+  },
+  "iter_000001400": {
+    "_4in1_avg": 0.6,
+    "iter": 1400,
+    "libero_10": 0.1,
+    "libero_goal": 0.6,
+    "libero_object": 0.8,
+    "libero_spatial": 0.9,
+    "present": true
+  },
+  "iter_000001600": {
+    "_4in1_avg": 0.5,
+    "iter": 1600,
+    "libero_10": 0.1,
+    "libero_goal": 0.5,
+    "libero_object": 0.4,
+    "libero_spatial": 1.0,
+    "present": true
+  },
+  "iter_000001800": {
+    "_4in1_avg": 0.675,
+    "iter": 1800,
+    "libero_10": 0.2,
+    "libero_goal": 0.8,
+    "libero_object": 0.7,
+    "libero_spatial": 1.0,
+    "present": true
+  },
+  "iter_000002000": {
+    "_4in1_avg": 0.775,
+    "iter": 2000,
+    "libero_10": 0.8,
+    "libero_goal": 0.7,
+    "libero_object": 0.6,
+    "libero_spatial": 1.0,
+    "present": true
+  },
+  "iter_000002200": {
+    "_4in1_avg": 0.775,
+    "iter": 2200,
+    "libero_10": 0.4,
+    "libero_goal": 0.9,
+    "libero_object": 0.8,
+    "libero_spatial": 1.0,
+    "present": true
+  },
+  "iter_000002400": {
+    "_4in1_avg": 0.725,
+    "iter": 2400,
+    "libero_10": 0.4,
+    "libero_goal": 0.5,
+    "libero_object": 1.0,
+    "libero_spatial": 1.0,
+    "present": true
+  },
+  "iter_000002600": {
+    "_4in1_avg": 0.775,
+    "iter": 2600,
+    "libero_10": 0.4,
+    "libero_goal": 0.8,
+    "libero_object": 0.9,
+    "libero_spatial": 1.0,
+    "present": true
+  },
+  "iter_000002800": {
+    "_4in1_avg": 0.8225,
+    "_source": "libero_closed_loop_4in1_acceptance_4090\uff0c\u6309 MP4 _success/_fail \u540e\u7f00",
+    "iter": 2800,
+    "label": "iter_2800 (10-trial acceptance)",
+    "libero_10": 0.58,
+    "libero_goal": 0.76,
+    "libero_object": 0.99,
+    "libero_spatial": 0.96,
+    "trials": 10
+  }
+}

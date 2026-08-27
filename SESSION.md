@@ -579,6 +579,20 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
   - **不**提前把 G0-R06 标记 DONE；不进入 R07-R09 实质 Memory 实验
 - **MEMORY/eval-result-directory-roles.md 已重写"治本约束"**：取消"spatial 用 spatial_cfg_4090 / goal 用 cfg_4090/g2_0"的旧写法，明确三类证据不能拼成 baseline。
 
+### smoke 跑完后自动触发（2026-08-27 用户要求）
+
+- 用户原话："smoke 跑完后的计划要自动触发"
+- 实现：driver 末尾追加 `auto-post-smoke hook`，调用 `tools/g0/auto_post_smoke.sh`
+- `tools/g0/auto_post_smoke.sh` 依次：
+  1. 校验 13 个 smoke .done 全部存在（否则 abort exit 2）
+  2. 汇总 SR 趋势 → `artifacts/g0/13ckpt_smoke_summary.{json,md}`（PHASE=summary 单跑已验证）
+  3. 触发 `tools/g0/launch_parallel_cache_build_libero_90.sh`（5 shard 串行等）
+  4. 打印 #32 / #21 待办提示（**不自动**：HF upload 待仓库拍板，R06 canonical 待用户授权）
+- 幂等：`artifacts/g0/.post_smoke_done.lock` + 子 sentinel `.libero_90_cache_build_done`
+- **本次 driver 实例**（pid=713227, 14h30m+）已跑完，新加 hook 对本次不生效；
+  用户跑 `bash tools/g0/auto_post_smoke.sh` 即可触发本次后续计划
+- **未来 driver 重跑**：自动走 hook（`AUTO_POST_SMOKE_HOOK=0` 可关）
+
 ### 治本约束（强制）
 
 - 查 SR 必须先看 8 个 results 父目录之一 + 参数（guidance/trials/steps），且先判定角色类别（historical / diagnostic / screening / canonical）。
