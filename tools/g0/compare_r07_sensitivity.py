@@ -99,7 +99,10 @@ def main() -> None:
     schema_pass = all(summary.get("schema_version") == "r07_no_memory_parity_v1" for summary in summaries.values())
     tensor_schema_pass = all(tensor.get("schema_version") == "r07_sensitivity_tensors_v1" for tensor in tensors.values())
     invariant_exact = {
-        key: summaries["normal"].get(key) == summaries["zero"].get(key) == summaries["shuffle"].get(key)
+        key: (
+            all(key in summary for summary in summaries.values())
+            and summaries["normal"][key] == summaries["zero"][key] == summaries["shuffle"][key]
+        )
         for key in INVARIANT_KEYS
     }
     pairs = {"normal_vs_zero": "zero", "normal_vs_shuffle": "shuffle"}
