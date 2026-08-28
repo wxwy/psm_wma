@@ -109,3 +109,46 @@ The real R08 hard causality/leakage checks should focus on history construction:
 - no DataLoader cross-sample contamination.
 
 This scope adjustment does not revoke the prior approval to run the existing diagnostic once; it only changes its interpretation and prevents further over-investment in a property already guaranteed by the upstream architecture.
+
+
+---
+
+## 2026-08-28 — R08 Wan z0 sanity runtime review @ e7fb1ec
+
+**Verdict: APPROVE_TO_CLOSE_SANITY_CHECK**
+
+Result:
+- `artifacts/g0/r08/gate0_z0_suffix_invariance.json`
+- `PASS_STRICT_BITWISE`
+- 128/128 A-vs-B z0 bitwise identical
+- 128/128 A-repeat bitwise identical
+- all `max_abs = 0`
+- all tensors finite
+- every A/B first-frame fingerprint identical
+- every suffix fingerprint different
+- minimum changed suffix pixels: 2,166,741
+- minimum suffix max pixel delta: 218
+- 4 suites × 4 remainder classes × 8 anchors, with 8 unique tasks/episodes per class
+
+Provenance note:
+- runtime root commit is `5ff9327`, not `8778b7e`;
+- verified diagnostic script blob is identical at both commits:
+  `6ab4487e5151e7082a50d9417a56c0b40a773ec0`;
+- intermediate commits only changed ChatGPT review/inbox docs, so reviewed code == executed code.
+
+Sidecar:
+- local raw sidecar SHA256 recorded as
+  `154f18cd8de9e0a065ef9c766649550b6e456723a3a72b708a3dfb22b9d96e5f`;
+- keep it until mm2/Kimi runtime review also closes.
+
+Interpretation:
+- This closes the one-time **Wan z0 Causal Contract Sanity Check** on the ChatGPT side.
+- Do not add more z0 causality experiments.
+- The next real R08 hard checks are history alignment/leakage: strict `j<t`, executed-action boundary, no target/predicted-action leakage, same episode, timestamp alignment, episode boundary, mask/padding, and no DataLoader cross-sample contamination.
+
+Next:
+- wait for mm2/Kimi runtime review closure;
+- then mark the old Gate-0 item DONE/closed as sanity check and proceed directly to R08 Step 2 causal history dataset/alignment.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Gate0_runtime_e7fb1ec.md`
