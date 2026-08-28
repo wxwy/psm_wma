@@ -49,6 +49,14 @@ def main() -> None:
     source_rows = full["history_global_row_indices"][mask].numpy()
     expected_raw = dataset._build_frame_wise_action(dataset._row_action[source_rows])
     expected_normalized = normalize_action(expected_raw, dataset.action_normalization, dataset._load_norm_stats())
+    expected_visual = torch.stack(
+        [
+            torch.nn.functional.adaptive_avg_pool2d(
+                dataset._load_cached_latent(int(dataset._ep_vals[0]), frame)[0].unsqueeze(0), output_size=(1, 2)
+            ).flatten()
+            for frame in full["history_frame_indices"].tolist()
+        ]
+    )
     transformed = ActionTransformPipeline(tokenizer_config=None, max_action_dim=64)(full.copy(), resolution="256")
 
     checks = {
@@ -61,6 +69,7 @@ def main() -> None:
         "state_row_parity": bool(
             torch.allclose(full["history_state_raw"], torch.from_numpy(dataset._row_state[source_rows]).float())
         ),
+        "z0_visual_summary_parity": bool(torch.allclose(full["history_visual_summary"], expected_visual)),
         "native_action_unchanged": transformed["action_raw"].shape[0] == full["action"].shape[0]
         and bool(torch.allclose(transformed["action_raw"], full["action"])),
         "native_history_action_absent": "history_action" not in transformed,

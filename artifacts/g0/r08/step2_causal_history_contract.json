@@ -10,7 +10,8 @@
     "raw_action_parity": true,
     "sequence_plan_has_no_action_prefix": true,
     "state_row_parity": true,
-    "strictly_prior_rows": true
+    "strictly_prior_rows": true,
+    "z0_visual_summary_parity": true
   },
   "dataset_root": "/gemini/code/datasets/nvidia_LIBERO_LeRobot_v3/libero_10",
   "gate": "G0-R08-STEP2-CAUSAL-HISTORY-CONTRACT",
@@ -55,8 +56,8 @@
     }
   },
   "latent_cache_root": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style/libero_10",
-  "root_commit": "1e98e452a440a8d6d0f9978c362ca9d2e1a11f3e",
+  "root_commit": "90fc40ed20cb10e7d5eaa1f433df2622321e96dd",
   "schema_version": 1,
   "status": "PASS",
-  "submodule_commit": "31983c57057498c210efde4c7c57b392f997d235"
+  "submodule_commit": "a0f26dc7ee67068ca543d6fde7b008fc3fd60036"
 }
