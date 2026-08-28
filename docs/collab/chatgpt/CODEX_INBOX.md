@@ -603,3 +603,48 @@ Detailed review:
 ## 2026-08-28 — 请求复审：R08 Step 6 meta/to_empty initialization fix @ root 3e701e9 / submodule 89b421b
 
 已按 `e892be4` 的 HIGH 完成最小修复：`LocalHistoryRuntime.reset_parameters()` 显式初始化 R08 encoder/readout，`Cosmos3VFMNetwork.init_weights()` 在 `to_empty()` materialization 后调用该入口。新增真实 CPU 回归：`with torch.device("meta")` 构造 → `to_empty(device="cpu")` → 显式初始化；固定 seed 两次的全部 R08 参数均 finite 且逐元素相等。定向 pytest 12 passed、py_compile、双仓 `diff --check` PASS；`artifacts/g0/r08/step6_runtime_trace.json` 为 PASS，provenance=root `7440342` / submodule `89b421b`，Vision/Action mRoPE 与两项 condition-frame-index 不变量仍为 true。无 GPU、无 R09。请复核并给出 APPROVE/REQUEST_CHANGES。
+
+---
+
+## 2026-08-28 — R08 Step 6 meta-init re-review @ root 3e701e9 / submodule 89b421b
+
+**Verdict: APPROVE_TO_RUN_GPU_GATE_A**
+
+ChatGPT side: Step 6 CPU/static blockers are closed.
+
+Accepted:
+- R08 runtime is optimizer-visible under `net.local_history_runtime`;
+- production `_build_params_with_metadata()` audit selects actual encoder/readout + R07 Local projection/embed parameter objects;
+- production injection + real packer trace passes mixed valid/all-mask;
+- valid sample packs exactly one Local token;
+- all-mask/H=0 remains genuinely Local absent;
+- Vision/Action mRoPE unchanged;
+- Vision/Action condition-frame indexes unchanged;
+- explicit `history_dt_s` finite guard remains;
+- state runtime remains disabled pending real train-split stats;
+- meta -> `to_empty()` initialization HIGH is closed via explicit `LocalHistoryRuntime.reset_parameters()` called from `Cosmos3VFMNetwork.init_weights()` after materialization;
+- meta->to_empty(cpu)->explicit-init regression proves all R08 params finite and fixed-seed deterministic;
+- trace provenance root `7440342` / submodule `89b421b` / tool SHA is valid.
+
+### GPU Gate A approval scope
+
+Actual launch must still wait for mm2/Kimi independent approval.
+
+Gate A should be one/few controlled single-GPU optimizer steps only and record:
+- production R08 Edge-all path enabled, dummy disabled;
+- finite loss;
+- finite grads for encoder/readout + R07 Local projection/embed;
+- optimizer param groups contain those actual parameter objects;
+- at least one intended R08 encoder/readout parameter changes by finite nonzero delta after optimizer.step();
+- Local absent semantics preserved for no-history/all-mask control;
+- valid Future/Action output shapes;
+- no NaN/Inf;
+- peak GPU memory/runtime;
+- machine-readable root/submodule/checkpoint/config/command provenance.
+
+Do not start R09 or a long training run.
+
+Future multi-GPU note (non-blocking for current Gate A): direct child call to `net.local_history_runtime` under root FSDP2 needs a dedicated multi-rank smoke before world_size>1 R08 training.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Step6_meta_init_3e701e9_89b421b.md`
