@@ -14,6 +14,7 @@ from collections import defaultdict
 from datetime import UTC, datetime
 import hashlib
 import json
+import os
 from pathlib import Path
 import socket
 import subprocess
@@ -33,6 +34,7 @@ from exact_window_cache import WINDOW_FRAMES, VisionEncoderAdapter, encode_windo
 
 
 SUITES = ("libero_spatial", "libero_object", "libero_goal", "libero_10")
+CANONICAL_ATOL = 1e-6
 
 
 def _git_commit(root: Path) -> str:
@@ -65,6 +67,38 @@ def _summary(a: torch.Tensor, b: torch.Tensor) -> dict[str, object]:
     }
 
 
+def _pixel_fingerprints(a: torch.Tensor, b: torch.Tensor) -> dict[str, object]:
+    suffix_a = a[:, 1:]
+    suffix_b = b[:, 1:]
+    changed = suffix_a.ne(suffix_b)
+    return {
+        "first_frame_sha256_a": _tensor_sha256(a[:, :1]),
+        "first_frame_sha256_b": _tensor_sha256(b[:, :1]),
+        "suffix_sha256_a": _tensor_sha256(suffix_a),
+        "suffix_sha256_b": _tensor_sha256(suffix_b),
+        "suffix_changed_pixel_count": int(changed.sum()),
+        "suffix_max_abs_pixel_diff": int((suffix_a.to(torch.int16) - suffix_b.to(torch.int16)).abs().max()),
+    }
+
+
+def _configure_determinism() -> dict[str, object]:
+    required_cublas = ":4096:8"
+    if os.environ.get("CUBLAS_WORKSPACE_CONFIG") != required_cublas:
+        raise RuntimeError(
+            "R08 Gate-0 requires CUBLAS_WORKSPACE_CONFIG=:4096:8 before Python starts; "
+            f"got {os.environ.get('CUBLAS_WORKSPACE_CONFIG')!r}"
+        )
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = True
+    torch.use_deterministic_algorithms(True)
+    return {
+        "cublas_workspace_config": required_cublas,
+        "cudnn_benchmark": torch.backends.cudnn.benchmark,
+        "cudnn_deterministic": torch.backends.cudnn.deterministic,
+        "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+    }
+
+
 def _episode_rows(dataset: LIBEROLeRobotDataset, episode_index: int) -> np.ndarray:
     rows = np.flatnonzero(dataset._row_episode == episode_index)
     if rows.size < WINDOW_FRAMES:
@@ -72,8 +106,10 @@ def _episode_rows(dataset: LIBEROLeRobotDataset, episode_index: int) -> np.ndarr
     return rows
 
 
-def _select_anchors(dataset: LIBEROLeRobotDataset, anchors_per_mod: int) -> list[dict[str, int]]:
-    """每 suite 每个 start % 4 选足 anchors，优先分散 episode/task。"""
+def _select_anchors(
+    dataset: LIBEROLeRobotDataset, anchors_per_mod: int
+) -> tuple[list[dict[str, int]], list[dict[str, int]]]:
+    """每 suite / remainder 同时满足 task 与 episode 的可审计覆盖。"""
     candidates: dict[int, list[dict[str, int]]] = defaultdict(list)
     for episode_index in (int(value) for value in dataset._ep_vals):
         rows = _episode_rows(dataset, episode_index)
@@ -85,21 +121,52 @@ def _select_anchors(dataset: LIBEROLeRobotDataset, anchors_per_mod: int) -> list
             )
 
     selected: list[dict[str, int]] = []
+    coverage: list[dict[str, int]] = []
     for remainder in range(4):
-        by_episode: dict[int, list[dict[str, int]]] = defaultdict(list)
+        by_task_episode: dict[int, dict[int, list[dict[str, int]]]] = defaultdict(lambda: defaultdict(list))
         for candidate in candidates[remainder]:
-            by_episode[candidate["episode_index"]].append(candidate)
+            by_task_episode[candidate["task_index"]][candidate["episode_index"]].append(candidate)
         chosen: list[dict[str, int]] = []
-        for episode_index in sorted(by_episode):
+        used_episodes: set[int] = set()
+        for task_index in sorted(by_task_episode):
             if len(chosen) == anchors_per_mod:
                 break
-            chosen.append(by_episode[episode_index][0])
+            for episode_index in sorted(by_task_episode[task_index]):
+                if episode_index not in used_episodes:
+                    chosen.append(by_task_episode[task_index][episode_index][0])
+                    used_episodes.add(episode_index)
+                    break
+        for task_index in sorted(by_task_episode):
+            for episode_index in sorted(by_task_episode[task_index]):
+                if len(chosen) == anchors_per_mod:
+                    break
+                if episode_index not in used_episodes:
+                    chosen.append(by_task_episode[task_index][episode_index][0])
+                    used_episodes.add(episode_index)
+            if len(chosen) == anchors_per_mod:
+                break
         if len(chosen) != anchors_per_mod:
             raise RuntimeError(
                 f"Cannot select {anchors_per_mod} anchors for start_frame % 4 == {remainder}; got {len(chosen)}"
             )
+        required_tasks = min(anchors_per_mod, len(by_task_episode))
+        unique_tasks = len({candidate["task_index"] for candidate in chosen})
+        if unique_tasks < required_tasks:
+            raise RuntimeError(
+                f"Insufficient task diversity for start_frame % 4 == {remainder}: "
+                f"got {unique_tasks}, require {required_tasks}"
+            )
+        coverage.append(
+            {
+                "start_frame_mod4": remainder,
+                "anchor_count": len(chosen),
+                "unique_episode_count": len({candidate["episode_index"] for candidate in chosen}),
+                "unique_task_count": unique_tasks,
+                "required_unique_task_count": required_tasks,
+            }
+        )
         selected.extend(chosen)
-    return selected
+    return selected, coverage
 
 
 def _different_suffix_start(frame_count: int, anchor_start: int) -> int:
@@ -141,12 +208,12 @@ def _run_suite(
     tokenizer: Wan2pt2VAEInterface,
     device: torch.device,
     anchors_per_mod: int,
-) -> tuple[list[dict[str, object]], list[dict[str, torch.Tensor]]]:
+) -> tuple[list[dict[str, object]], list[dict[str, torch.Tensor]], list[dict[str, int]]]:
     dataset = LIBEROLeRobotDataset(
         root=str(dataset_root), split="full", fps=20, chunk_length=16, camera_mode="concat_view", image_size=256,
         action_normalization=None,
     )
-    anchors = _select_anchors(dataset, anchors_per_mod)
+    anchors, coverage = _select_anchors(dataset, anchors_per_mod)
     resize = VideoResize(pad_keys=["video"], keep_aspect_ratio=True)
     encoder = VisionEncoderAdapter(tokenizer, device)
     videos: dict[int, torch.Tensor] = {}
@@ -159,9 +226,15 @@ def _run_suite(
             video_uint8 = _load_episode_video(dataset, episode_index, resize)
             videos[episode_index] = video_uint8
         a, b, alternate_start = _make_pair(video_uint8, anchor["start_frame"])
-        z0_a = encode_window(a, encoder, device=device)[0]
-        z0_b = encode_window(b, encoder, device=device)[0]
+        with torch.inference_mode():
+            z0_a = encode_window(a, encoder, device=device)[0]
+            z0_a_repeat = encode_window(a, encoder, device=device)[0]
+            z0_b = encode_window(b, encoder, device=device)[0]
+        z0_a = z0_a.detach().cpu().contiguous()
+        z0_a_repeat = z0_a_repeat.detach().cpu().contiguous()
+        z0_b = z0_b.detach().cpu().contiguous()
         metrics = _summary(z0_a, z0_b)
+        repeat_metrics = _summary(z0_a, z0_a_repeat)
         record = {
             "suite": dataset_root.name,
             "ordinal": ordinal,
@@ -169,16 +242,18 @@ def _run_suite(
             "alternate_suffix_start_frame": alternate_start,
             "first_frame_bitwise_equal": True,
             "suffix_pixel_bitwise_different": True,
+            "input_fingerprints": _pixel_fingerprints(a, b),
             "z0": metrics,
+            "repeat_control": repeat_metrics,
         }
         records.append(record)
-        sidecar.append({"z0_a": z0_a, "z0_b": z0_b})
+        sidecar.append({"z0_a": z0_a, "z0_a_repeat": z0_a_repeat, "z0_b": z0_b})
         print(
             f"[{dataset_root.name}] {ordinal + 1}/{len(anchors)} ep={episode_index} "
             f"start={anchor['start_frame']} max_abs={metrics['max_abs']:.3e}",
             flush=True,
         )
-    return records, sidecar
+    return records, sidecar, coverage
 
 
 def main() -> None:
@@ -189,7 +264,6 @@ def main() -> None:
     parser.add_argument("--sidecar", type=Path, default=None, help="默认与 --output 同名 .pt；独立审查前不得删除")
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--anchors-per-mod", type=int, default=4)
-    parser.add_argument("--atol", type=float, default=1e-6)
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()
     if args.anchors_per_mod < 4:
@@ -198,6 +272,7 @@ def main() -> None:
         raise RuntimeError("CUDA is required for the Wan z0 suffix-invariance diagnostic")
 
     root = Path(__file__).resolve().parents[2]
+    deterministic_settings = _configure_determinism()
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     device = torch.device(args.device)
@@ -209,12 +284,23 @@ def main() -> None:
     tokenizer.model.model.to(device).eval()
     all_records: list[dict[str, object]] = []
     all_sidecar: list[dict[str, torch.Tensor]] = []
+    coverage_by_suite: dict[str, list[dict[str, int]]] = {}
     for suite in SUITES:
-        records, sidecar = _run_suite(args.dataset_root / suite, tokenizer, device, args.anchors_per_mod)
+        records, sidecar, coverage = _run_suite(args.dataset_root / suite, tokenizer, device, args.anchors_per_mod)
         all_records.extend(records)
         all_sidecar.extend(sidecar)
+        coverage_by_suite[suite] = coverage
 
-    status = "PASS" if all(float(record["z0"]["max_abs"]) <= args.atol for record in all_records) else "FAIL"
+    suffix_within_atol = all(float(record["z0"]["max_abs"]) <= CANONICAL_ATOL for record in all_records)
+    repeat_within_atol = all(float(record["repeat_control"]["max_abs"]) <= CANONICAL_ATOL for record in all_records)
+    all_suffix_bitwise = all(bool(record["z0"]["bitwise_equal"]) for record in all_records)
+    all_repeat_bitwise = all(bool(record["repeat_control"]["bitwise_equal"]) for record in all_records)
+    if suffix_within_atol and repeat_within_atol and all_suffix_bitwise and all_repeat_bitwise:
+        status = "PASS_STRICT_BITWISE"
+    elif suffix_within_atol and repeat_within_atol:
+        status = "PASS_TOLERANCE_ATOL_1E-6"
+    else:
+        status = "FAIL"
     sidecar_path = args.sidecar or args.output.with_suffix(".pt")
     sidecar_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"schema_version": "r08_z0_suffix_invariance_sidecar_v1", "pairs": all_sidecar}, sidecar_path)
@@ -223,9 +309,14 @@ def main() -> None:
         "schema_version": "r08_z0_suffix_invariance_v1",
         "status": status,
         "scope": "Gate-0 diagnostic only; no cache latent read, history/model mutation, training, or R09 backend",
-        "atol": args.atol,
+        "canonical_atol": CANONICAL_ATOL,
         "anchor_count": len(all_records),
-        "coverage": {"suites": list(SUITES), "start_frame_mod4": [0, 1, 2, 3], "anchors_per_suite_mod": args.anchors_per_mod},
+        "coverage": {
+            "suites": list(SUITES),
+            "start_frame_mod4": [0, 1, 2, 3],
+            "anchors_per_suite_mod": args.anchors_per_mod,
+            "by_suite": coverage_by_suite,
+        },
         "vae_contract": {
             "input": "concat_view -> to_training_uint8 -> VideoResize(resolution=None) -> Wan2pt2VAEInterface.encode",
             "window_frames": WINDOW_FRAMES,
@@ -244,6 +335,7 @@ def main() -> None:
             "argv": sys.argv,
             "seed": args.seed,
             "device": str(device),
+            "determinism": deterministic_settings,
             "generated_at_utc": datetime.now(UTC).isoformat(),
             "hostname": socket.gethostname(),
         },
@@ -251,7 +343,7 @@ def main() -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     print(json.dumps({"status": status, "anchor_count": len(all_records), "output": str(args.output)}, ensure_ascii=False))
-    if status != "PASS":
+    if status == "FAIL":
         raise SystemExit(1)
 
 
