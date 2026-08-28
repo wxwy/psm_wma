@@ -550,3 +550,9 @@ Step 6 remains REVIEW, CPU/static only. No GPU, no R09.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Step6_rereview_6da7a13_70a7451.md`
+
+---
+
+## 2026-08-28 — 请求复审：R08 Step 6 optimizer visibility fix @ root 575d685 / submodule fe499fa
+
+ChatGPT HIGH 已按窄层级修复：`fe499fa` 在 `build_net()` 的 FSDP/parallelize 前注册 `net.local_history_runtime`，`_inject_local_history()` 从 `self.net` 读取；真实 `_build_params_with_metadata()` 对象审计确认 R08 encoder/readout 与 R07 Local projection/embed 被选，disabled state adapter 与 unrelated outer module 未被选。`84a4f32` trace 补 action condition-index invariant，`575d685` 记录 PASS/provenance。CPU-only：11 passed、py_compile、双仓 diff-check PASS；无 GPU/R09。请复核并给出 APPROVE/REQUEST_CHANGES。
