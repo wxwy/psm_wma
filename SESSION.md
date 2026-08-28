@@ -12,6 +12,10 @@
 
 ## 当前最小步骤
 
+- R07 最终审核结论（ChatGPT，APPROVE）：root 13af0e3 已正式关闭 G0-R07-RUNTIME-SMOKE；No-Memory exact parity、Local optimizer/update、fixed-weight Normal/Zero/Shuffle Future+Action sensitivity 均成立。raw sidecar 缺失已在 provenance 中诚实记录，不推翻 Gate；后续 R08/R09 Gate 必须在独立 review 完成前保留 raw sidecar 或文件级 SHA。
+
+- R08 设计补充已冻结：开始任何 R08 代码前，Codex 必须先阅读 docs/build/PSM-WMA_R08_Causal_Local_Evidence_Stream_Implementation_Supplement_v0.1.md。新口径为 R08=Causal Local Evidence Stream（真实 history source/alignment/per-step evidence + stateless smoke readout），R09=Persistent Temporal Local Memory（A recurrent latent；B RoboTTT-style TTT fast weights）。R08 第一硬 Gate 是 Wan exact-window z0 suffix-invariance；Gate 未通过前禁止把 z0 当 causal historical feature。当前 LIBERO loader 尚未读取数据集已有的 observation.state 8D，必须先做 source audit 再接入。R08 不得实现 GRU/TTT/Global/Agent/RL。
+
 - `G0-R06/R07 override`（用户，DONE）：D017 生效：`iter_000002800` 冻结为 R06 No-Memory baseline，取消 canonical 400-episode acceptance，R07 UNBLOCKED；13-ckpt sweep 仅作趋势 evidence。未改 frozen 文档或历史 zero-shot FAIL 证据。
 
 - `G0-R07-IMPLEMENTATION`（Codex，IN_PROGRESS）：预计修改子模块 `data_and_condition.py`、`sequence.py`、`packers.py`、`joint_dataloader.py`（`local_memory` optional collate）、`action/utils/transforms.py`（config-controlled `LocalDummyTransform` 注入 `local_memory` 与 `SequencePlan.has_local_memory`）、`omni_mot_model.py`、`cosmos3_vfm_network.py`、实际 Edge-4in1 config/test；只实现 dummy Local clean modality。A/B 比较 Vision/Action mRoPE 时按各自 modality indexes 取位置；多样本 global index 仅验证符合 packing offset，不硬编码统一 `+K_local`。Local 不进 noising/decoder/loss，不做 R08/R09；Flex disabled，legacy out-of-scope。
