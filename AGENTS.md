@@ -6,14 +6,16 @@
 
 1. `AGENTS.md`
 2. `SESSION.md`
-3. `TODO.md`
-4. `MEMORY/DECISIONS.md`
-5. 当前任务涉及的 `docs/build/` 文档
-6. 进入 `cosmos-framework/` 后再读取其目录内的 `AGENTS.md`
+3. `docs/collab/chatgpt/CODEX_INBOX.md`（读取最底部最新条目；若有详细 review，按条目链接继续读）
+4. `TODO.md`
+5. `MEMORY/DECISIONS.md`
+6. 当前任务涉及的 `docs/build/` 文档
+7. 进入 `cosmos-framework/` 后再读取其目录内的 `AGENTS.md`
 
 ## 文档职责
 
 - `docs/build/`：版本化的正式方案、详细设计、Gate Runbook 和核验报告。已标记 `frozen` 或 `locked` 的文件不得静默改写，变更必须新建版本或显式记录 override。
+- `docs/collab/chatgpt/CODEX_INBOX.md`：ChatGPT → Codex/Agent 的 append-only 审核与交接入口；开始或继续当前任务前必须读取最底部最新条目。重大审核详情位于 `docs/collab/chatgpt/reviews/`。
 - `SESSION.md`：当前阶段的短期状态和 Agent 交接入口，只保留最新事实。
 - `TODO.md`：唯一的待办队列。任务必须有 ID、状态、前置条件、负责人和验收条件。
 - `MEMORY/DECISIONS.md`：跨会话长期有效的工程决策及依据，不记录临时过程。
