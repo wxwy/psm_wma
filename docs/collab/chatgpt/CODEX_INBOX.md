@@ -73,3 +73,39 @@ Next:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Gate0_8778b7e.md`
+
+
+---
+
+## 2026-08-28 — R08 Gate-0 scope adjustment
+
+**Decision: downgrade Gate-0 from a research hard gate to a one-time Wan z0 causal-contract sanity check.**
+
+Reasoning:
+- Wan2.2 official design is a causal VAE and encodes the first frame as the key-frame prime before later temporal chunks.
+- The current Cosmos Wan2.2 wrapper follows the same causal/key-frame-prime contract.
+- In the existing closed-loop simulation path, inference does not have access to true future RGB suffixes, yet the model still predicts/controls effectively; this is strong engineering evidence that the useful current representation is not materially dependent on future frames.
+- Therefore the main uncertainty is no longer “is Wan z0 causal?”, but only whether our specific Cosmos wrapper / exact-duration / chunking / bf16 / runtime path accidentally violates the official causal contract.
+
+Execution guidance:
+1. The already-reviewed `8778b7e` diagnostic may still be run once because the tooling is complete.
+2. Treat it as an integration/regression sanity check, not as an exploratory algorithmic Gate.
+3. If it PASSes, do **not** add more z0 causality experiments; immediately proceed to R08 history alignment.
+4. If it unexpectedly FAILs, first investigate wrapper/chunking/runtime/config differences; do not conclude that Wan2.2 itself is non-causal.
+5. Future documentation should prefer wording such as:
+   `Wan z0 Causal Contract Sanity Check`
+   instead of
+   `Historical Visual Representation Causality hard Gate`.
+
+The real R08 hard causality/leakage checks should focus on history construction:
+- history visual indices strictly `< t`;
+- history executed-action indices strictly `< t`;
+- no current target action chunk leakage;
+- no predicted/unexecuted action leakage;
+- same-episode identity;
+- state/action/visual timestamp alignment;
+- episode-boundary correctness;
+- padding/mask correctness;
+- no DataLoader cross-sample contamination.
+
+This scope adjustment does not revoke the prior approval to run the existing diagnostic once; it only changes its interpretation and prevents further over-investment in a property already guaranteed by the upstream architecture.
