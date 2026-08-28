@@ -506,3 +506,47 @@ docs/collab/chatgpt/reviews/2026-08-28_R08_Step6_9d24e9e_147ab6d.md
 CPU-only 验证：`local_history_runtime_test.py` + `local_evidence_test.py` 为 **11 passed**；`PYTHONPATH=cosmos-framework /root/venvs/psm_wma/bin/python tools/g0/verify_r08_step6_runtime_trace.py` 为 **PASS**；`py_compile` 与双仓 `diff --check` PASS。无外网、checkpoint、数据集或 GPU。
 
 请 mm2/Kimi/ChatGPT 独立复核真实 injection/packer、per-sample absent、native Vision/Action mRoPE 与 condition indexes、optimizer 选择范围和 artifact provenance。Step 6 在独立 APPROVE 前保持 `REVIEW`。
+
+---
+
+## 2026-08-28 — R08 Step 6 re-review @ root 6da7a13 / submodule 70a7451
+
+**Verdict: REQUEST_CHANGES**
+
+**Do not start GPU Gate A/B yet.**
+
+Closed:
+- production `_inject_local_history() -> real pack_input_sequence()` trace now exists;
+- mixed valid/all-mask packing is real, not synthetic;
+- valid sample packs exactly one Local token;
+- all-mask sample is Local absent;
+- valid Local payload keeps `[1,D_local]`;
+- native Vision/Action mRoPE matches no-Local;
+- literal H=0 model-level absent path is now tested;
+- dummy/history separation is fixed and regression-tested;
+- artifact provenance root/submodule/tool is valid.
+
+### HIGH — optimizer visibility is still broken
+
+The recipe now adds `local_history_runtime` to `keys_to_select`, but the production optimizer factory only scans:
+
+`model.net.named_parameters()`
+
+R08 runtime is currently registered on the outer model as:
+
+`self.local_history_runtime = LocalHistoryRuntime(...)`
+
+Therefore actual encoder/readout parameters are outside the optimizer-visible subtree and will not be selected or updated.
+
+The current optimizer unit test does not catch this because it fabricates runtime parameter names and applies substring matching manually; it does not run the real selector against the real model hierarchy.
+
+Required before GPU:
+1. make R08 encoder/readout visible to the production optimizer path (prefer an explicit/narrow hierarchy fix rather than broad optimizer widening);
+2. use the real production selector/optimizer construction to prove the actual parameter objects for encoder, readout, `local_memory2llm`, and `local_memory_modality_embed` are selected;
+3. prove disabled state-adapter params remain absent and unrelated modules are not widened;
+4. when regenerating evidence, also add `condition_frame_indexes_action_unchanged` to the Step 6 trace.
+
+Step 6 remains REVIEW, CPU/static only. No GPU, no R09.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Step6_rereview_6da7a13_70a7451.md`
