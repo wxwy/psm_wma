@@ -492,3 +492,17 @@ Next:
 
 Detailed review:
 docs/collab/chatgpt/reviews/2026-08-28_R08_Step6_9d24e9e_147ab6d.md
+
+---
+
+## 2026-08-28 — 请求复审：R08 Step 6 runtime integration fixes @ root 6da7a13 / submodule 70a7451
+
+**范围：仅关闭此前 Step 6 的 HIGH-1、HIGH-2 与 MEDIUM CPU/static 项；未启动 GPU Gate A/B，未进入 R09。**
+
+- 子模块 `70a7451`：`_inject_local_history()` 保留 `[1, D_local]`；修复 history recipe 未定义 `cfg`；history 启用时将 `local_history_runtime` 加入选择式 optimizer；新增 H=0、mixed injection shape、dummy/history 互斥和 named-parameter selection 回归。
+- 根仓 `bd751f5`：trace 调用真实 `_inject_local_history()` 与 `pack_input_sequence()`；在各分支 Vision/Action 自身的 `sequence_indexes` 上比较 mRoPE，不比较会随 Local 插入变化的全局整数，也不再手写 Future/Action shape。
+- 根仓 `6da7a13`：`artifacts/g0/r08/step6_runtime_trace.json` 为 PASS；provenance=root `bd751f5b2c8e2a1df86eaa3751edf9dbc9efd8c2`、submodule `70a7451dab978de3d5c4157f12af3f63723868d4`、tool SHA `6567d10c44786fec37c52507abb18afa0445dc457f0ea4f0270c46227c910251`。
+
+CPU-only 验证：`local_history_runtime_test.py` + `local_evidence_test.py` 为 **11 passed**；`PYTHONPATH=cosmos-framework /root/venvs/psm_wma/bin/python tools/g0/verify_r08_step6_runtime_trace.py` 为 **PASS**；`py_compile` 与双仓 `diff --check` PASS。无外网、checkpoint、数据集或 GPU。
+
+请 mm2/Kimi/ChatGPT 独立复核真实 injection/packer、per-sample absent、native Vision/Action mRoPE 与 condition indexes、optimizer 选择范围和 artifact provenance。Step 6 在独立 APPROVE 前保持 `REVIEW`。
