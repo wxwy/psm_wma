@@ -264,3 +264,58 @@ No GPU. Do not start LocalEvidenceEncoder/readout/model/R09.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Step2_fix_90fc40e_a0f26dc.md`
+
+
+---
+
+## 2026-08-28 — R08 Step 3 alignment/leakage review @ root 43d9924 / submodule c479a08
+
+**Verdict: APPROVE_TO_ADVANCE_STEP4**
+
+Artifact:
+- `artifacts/g0/r08/step3_alignment_leakage.json`
+- `status=PASS`
+- 17/17 checks PASS
+
+Accepted coverage:
+- true `local_history_horizon=0` disabled contract;
+- H=16 t=0 all-padding;
+- H=16 t=3 partial;
+- H=16 t=16 full;
+- H=1 immediate history retained in permanent tests;
+- history max source row = t-1;
+- history/current target source sets disjoint;
+- same-episode identity;
+- exact timestamp/dt parity;
+- raw/normalized action parity;
+- state-row parity;
+- independent cache z0 → pool(1,2) visual-summary parity;
+- padding inertness/sentinels;
+- native Action + SequencePlan isolation.
+
+Provenance is accepted:
+- runtime root = `3f0ca0d`;
+- runtime submodule = `c479a08`;
+- root `3f0ca0d` Gitlink already points exactly to `c479a08`;
+- verifier blob is identical at runtime root and final `43d9924`;
+- later commits only add/refresh artifact/status docs.
+
+Next allowed work:
+- **Step 4 LocalEvidenceEncoder only**
+- CPU/static implementation, then stop at REVIEW.
+
+Step 4 scope:
+- stateless per-step evidence encoder only;
+- keep visual/state/action/age-dt source adapters separable;
+- preserve history_mask semantics;
+- resolve state normalization before raw state becomes a trainable input;
+- no readout yet;
+- no Cosmos/native packing wiring;
+- no GRU/recurrent state;
+- no TTT;
+- no Global;
+- no GPU;
+- no R09.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Step3_43d9924_c479a08.md`
