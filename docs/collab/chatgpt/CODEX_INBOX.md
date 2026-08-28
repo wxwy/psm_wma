@@ -42,3 +42,34 @@ Next:
 - new commit SHA
 - re-review by ChatGPT/mm/Kimi
 - GPU Gate-0 only after approval
+
+
+---
+
+## 2026-08-28 — R08 Gate-0 diagnostic re-review @ 8778b7e
+
+**Verdict: APPROVE_TO_RUN_GATE0_GPU**
+
+Target:
+- root: `8778b7e3d0504040dd12b1eddaa9fabe32b69759`
+- submodule: unchanged `10bc41085de448d60d2f71b342c03a4cfcca9ee1`
+
+Previous blockers are closed:
+1. VAE encode now uses `torch.inference_mode()`; retained z0 tensors are detached CPU tensors.
+2. Deterministic runtime is enforced and recorded; same-input repeat control is present.
+3. Anchor selection now has explicit task/episode stratification and machine-readable coverage.
+4. Canonical threshold is frozen at `1e-6`; unrestricted `--atol` is removed.
+5. Input first-frame/suffix fingerprints and changed-pixel evidence are persisted.
+
+Important runtime interpretation:
+- `PASS_STRICT_BITWISE` is a strong causal PASS candidate.
+- `PASS_TOLERANCE_ATOL_1E-6` does **not** close Gate-0 by status string alone; independent review must verify there is no stable/systematic suffix-dependent nonzero signal.
+- `FAIL` must follow the R08 supplement fallback route; exact-window z0 must not be used as causal historical evidence.
+
+Next:
+- Codex may run the **Gate-0 GPU diagnostic only**, after the normal D005 launch disclosure.
+- Preserve JSON + raw z0 sidecar through independent runtime review.
+- Do not start R08 Step 2/history/model/R09 before runtime Gate-0 review closes.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Gate0_8778b7e.md`
