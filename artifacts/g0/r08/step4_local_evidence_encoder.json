@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "all_trainable_params_have_finite_grad": true,
+    "masked_output_exact_zero": true,
+    "output_finite": true,
+    "output_shape": true,
+    "state_requires_explicit_train_split_stats": true,
+    "stateless_no_recurrent_modules": true
+  },
+  "gate": "G0-R08-STEP4-LOCAL-EVIDENCE-ENCODER",
+  "output": {
+    "sha256": "e6bfed9ad61212b20c29b6681c9ec148ad90b73c7cd9ab806ffc54582baea799",
+    "shape": [
+      2,
+      4,
+      32
+    ]
+  },
+  "root_commit": "ca57b9b4d5143305f191da3422a88a762f072de6",
+  "schema_version": 1,
+  "state_adapter_contract": "history_state is rejected unless explicit state_mean/state_std are provided.",
+  "state_runtime_status": "DISABLED_PENDING_TRAIN_SPLIT_STATS",
+  "status": "PASS",
+  "submodule_commit": "846d9175d2b90619dbcab8567e559fcb6f9c68ab"
+}
