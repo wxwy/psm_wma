@@ -319,3 +319,56 @@ Step 4 scope:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Step3_43d9924_c479a08.md`
+
+
+---
+
+## 2026-08-28 — R08 Step 4 LocalEvidenceEncoder review @ root 49ed506 / submodule 846d917
+
+**Verdict: APPROVE_TO_ADVANCE_STEP5**
+
+Accepted:
+- stateless per-step encoder only;
+- separate visual/action/age/dt/state adapters;
+- no temporal mixing / recurrence / TTT / readout / Cosmos wiring;
+- LayerNorm output is hard-masked to exact zero at invalid history positions;
+- masked evidence perturbations do not affect valid outputs;
+- CPU forward/backward shows finite output and finite grads for all trainable params;
+- state input is rejected unless explicit state_mean/state_std are provided;
+- current state runtime remains `DISABLED_PENDING_TRAIN_SPLIT_STATS`, so raw state cannot silently enter a trainable path.
+
+Artifact:
+- `artifacts/g0/r08/step4_local_evidence_encoder.json`
+- 6/6 PASS
+- runtime root `ca57b9b`
+- runtime submodule `846d917`
+- runtime root Gitlink already points to `846d917`
+- later root commit `49ed506` only adds status/artifact; no implementation drift.
+
+Non-blocking robustness notes:
+- add explicit finite check for `history_dt_s` before official runtime wiring;
+- when real state stats are generated, reject negative std and floor only zero/tiny non-negative std.
+
+Next allowed work:
+- **Step 5 Stateless LocalReplayReadout only**
+- CPU/static implementation, then stop at REVIEW.
+
+Step 5 frozen profile:
+- input `E_hist [B,H,D_e]` + `history_mask`;
+- `masked_mean + latest_valid`;
+- concat;
+- small MLP;
+- output one temporary Local token `[B,1,D_local_input]`.
+
+Step 5 constraints:
+- stateless;
+- all-mask/H=0 must have defined inert/absent behavior, no NaN;
+- no GRU/LSTM/recurrent state;
+- no TTT;
+- no Transformer temporal model;
+- no Cosmos/native packing wiring yet;
+- no GPU;
+- no Global/R09.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Step4_49ed506_846d917.md`
