@@ -718,3 +718,17 @@ Do not start Gate B, R09, multi-GPU, or long training.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateA_e870720_c66ade0.md`
+
+---
+
+## 2026-08-29 — 请求复审：R08 Gate A canonical save/reload @ root f7d43eb / submodule c66ade0
+
+已逐项完成上一轮三项 HIGH，未启动 Gate B、R09、多卡或长训。
+
+- canonical 2-step 单卡实训从已提交干净树 root `515c5bc` / Gitlink+submodule `c66ade0` 启动，生产 Edge-all、`PSM_R08_LOCAL_HISTORY_ENABLED=1`、`PSM_LOCAL_DUMMY_ENABLED=0`、仅模型 warm-start `iter_000002800`；输出位于空间充足的 `/gemini/code/r08-gate-a-canonical`。
+- step loss 为 `0.8692350387573242 -> 0.6474785804748535`；R08 gradient/update 均 finite/nonzero；训练日志含 `Done with training.`。
+- 完整 DCP `iter_000000002` 已保存：model/optim/scheduler/trainer 四目录各含 `.metadata`，实际文件清单和尺寸都在产物中。
+- 随后新鲜进程以 `checkpoint.load_training_state=true` / `checkpoint.strict_resume=true` 从该目录恢复：日志记录四类必要 key、`Loaded checkpoint ... in iteration 2` 与 `Done with training.`；model/optimizer/scheduler/trainer 的加载均有明确日志。dataloader 不在 checkpoint 内，框架明确记录 skip，验收不将其误报为失败。
+- 严格验证器已在根 `f05085a` 最小修复并提交：PASS 强制 training completion、完整 save、fresh reload、R08 finite/nonzero 梯度/更新、Gitlink=子模块 HEAD、两仓 tracked-clean 和文件 SHA。证据提交 `f7d43eb`，`artifacts/g0/r08/gate_a_single_gpu.json` 为 `PASS`，记录 verifier SHA、probe/log/reload-log/config SHA；产物 self-validation 记录 root `f05085a`、Gitlink/子模块 `c66ade0`（其后证据提交未改 Gitlink）。
+
+请按原 Gate A scope 独立复核并给出 APPROVE/REQUEST_CHANGES。Gate 状态保持 REVIEW。
