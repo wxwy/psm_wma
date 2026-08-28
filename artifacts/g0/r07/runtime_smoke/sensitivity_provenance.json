@@ -87,8 +87,34 @@
   },
   "execution_reproducibility": {
     "exact_command_retained_in_tracked_artifact": false,
-    "exact_command_status": "TO_BE_RECOVERED_BY_CODEX_FROM_ORIGINAL_MACHINE_LOG_OR_SHELL_HISTORY; DO_NOT_INVENT",
-    "checkpoint_integrity_status": "TO_BE_MEASURED_BY_CODEX_ON_RETAINED sensitivity_ckpt5/iter_000000005",
-    "closure_note": "These are evidence-hygiene follow-ups and do not change the already-approved R07 Gate result."
+    "exact_command_recoverable": false,
+    "exact_command_status": "UNRECOVERABLE_FROM_RETAINED_ORIGINAL_EVIDENCE; NOT_RECONSTRUCTED",
+    "command_recovery_sources_checked": [
+      "/root/.zsh_history",
+      "/root/.bash_history",
+      "/opt/r07-smoke retained files and logs",
+      "artifacts/g0/r07/runtime_smoke retained logs",
+      "currently retained tmux pane histories",
+      "/gemini/code/.persist/.claude/projects/-gemini-code-psm-wma runner transcript"
+    ],
+    "command_recovery_result": "The retained runner transcript confirms the completed Normal/Zero/Shuffle artifacts and watchdog timeline, but no exact Gate C launch command was retained. No command was reconstructed from current configuration or memory.",
+    "checkpoint_integrity_status": "PASS",
+    "checkpoint_integrity": {
+      "measured_path": "/gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005",
+      "total_size_bytes": 18132791947,
+      "file_count": 8,
+      "calculation_command": "sha256sum /gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005/model/__0_0.distcp /gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005/model/.metadata /gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005/optim/__0_0.distcp /gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005/optim/.metadata /gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005/scheduler/__0_0.distcp /gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005/scheduler/.metadata /gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005/trainer/__0_0.distcp /gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005/trainer/.metadata",
+      "files": {
+        "model/__0_0.distcp": {"size_bytes": 6740323816, "sha256": "f0a951fbdabbaa017922fbe55417f15a244a23ba070eb95b699fd32b36550ad2"},
+        "model/.metadata": {"size_bytes": 172196, "sha256": "2d9b8e5aa38577316a96cf2985f29eb65b67a1aab368ef3ad1be840721462e53"},
+        "optim/__0_0.distcp": {"size_bytes": 11391434153, "sha256": "31fa7f23d01a9757acd5d7f4fae9b0685e19a67659ef9d8447bd175ebb857a8f"},
+        "optim/.metadata": {"size_bytes": 819024, "sha256": "cdcc434da628a87ddc2203228389ddf4ba78458995a6b652ab3138e881da2767"},
+        "scheduler/__0_0.distcp": {"size_bytes": 14506, "sha256": "84f62e507561d5aa40a300366c3894b0e0b316896126b571736dd0c802d07dff"},
+        "scheduler/.metadata": {"size_bytes": 2104, "sha256": "9d3b5dc5d314816644d06ce7f9b36a841744eac63aa5ce21f5b9da9fe9682419"},
+        "trainer/__0_0.distcp": {"size_bytes": 23971, "sha256": "a82128a2d91dadaa45665b7459b8ca13af05026763dbdedd9a33decd67498cd0"},
+        "trainer/.metadata": {"size_bytes": 2177, "sha256": "1dfb237912cfe11e84a3f44dc725fe2fb3023d3cb15cae401969002bf701c0e2"}
+      }
+    },
+    "closure_note": "The exact launch command is honestly unavailable; retained checkpoint integrity is now measured. These evidence-hygiene facts do not change the already-approved R07 Gate result."
   }
 }
