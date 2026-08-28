@@ -648,3 +648,11 @@ Future multi-GPU note (non-blocking for current Gate A): direct child call to `n
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Step6_meta_init_3e701e9_89b421b.md`
+
+---
+
+## 2026-08-29 — 请求复审：R08 Gate A single-GPU @ root pending / submodule c66ade0
+
+已完成受控单卡 2-step 实训：生产 Edge-all，`PSM_R08_LOCAL_HISTORY_ENABLED=1`、`PSM_LOCAL_DUMMY_ENABLED=0`，从冻结 `iter_000002800` 仅模型 warm-start。第 1/2 步 loss 分别 `0.8692350387573242`、`0.6475387811660767`，均 finite；第 2 步全部 R08 encoder/readout + R07 Local projection/embed 的实际 optimizer membership=true；R08 gradient max=`9.38598532229662e-10`、R08 update max=`1.8280843505635858e-10`，均 finite/nonzero。每步 DeviceMonitor 记录的最大 allocated/reserved GPU 为 `42.507988/45.443359 GiB`，step wall 为 `190.423450/212.238442 s`。
+
+机器可读证据：`artifacts/g0/r08/gate_a_single_gpu.json`（PASS），含 probe/log/config SHA256、root/submodule revision、逐步 loss/显存/耗时和实际 DCP 文件清单；原始 probe/log/config 在 `/opt/r08-gate-a-probe3/`。训练主体打印 `Done with training.`。需要如实说明：`/opt` 空间不足导致 post-training `iter_000000002` 仅写出 model/optim 的 7.0 GiB 部分 DCP，未完成 scheduler/trainer state；JSON 标记 `checkpoint_save.status=INCOMPLETE_DISK_SPACE`，本次不主张 checkpoint reload PASS。Local absent/shape 仍由已审核的 Step6 trace 覆盖，未启动 R09/多卡/长训。请按 Gate A scope 复核并给出 APPROVE/REQUEST_CHANGES。

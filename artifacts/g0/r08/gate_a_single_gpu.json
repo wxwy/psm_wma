@@ -1,0 +1,68 @@
+{
+  "schema_version": "r08_gate_a_single_gpu_v1",
+  "status": "PASS",
+  "training_completed": true,
+  "checkpoint_save": {
+    "complete": false,
+    "status": "INCOMPLETE_DISK_SPACE",
+    "path": "/opt/r08-gate-a-probe3/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+    "files": [
+      [
+        "model/.metadata",
+        175827
+      ],
+      [
+        "model/__0_0.distcp",
+        6740714045
+      ],
+      [
+        "optim/__0_0.distcp",
+        731992064
+      ]
+    ]
+  },
+  "steps": [
+    {
+      "iteration": 1,
+      "loss": 0.8692350387573242
+    },
+    {
+      "iteration": 2,
+      "loss": 0.6475387811660767
+    }
+  ],
+  "all_optimizer_membership": true,
+  "r08_grad_finite": true,
+  "r08_grad_max_abs": 9.38598532229662e-10,
+  "r08_update_finite": true,
+  "r08_update_max_abs": 1.8280843505635858e-10,
+  "loss_finite": true,
+  "peak_gpu_mem_gb": [
+    26.712416,
+    42.507988
+  ],
+  "peak_gpu_mem_reserved_gb": [
+    29.021484,
+    45.443359
+  ],
+  "step_wall_seconds": [
+    190.42345,
+    212.238442
+  ],
+  "provenance": {
+    "root_revision": "8fd6ba92cb28d63fd76590ea1d4f1aded96395b9",
+    "submodule_revision": "c66ade049bfd5895da16bee01068f73a7fd423e2",
+    "probe": {
+      "path": "/opt/r08-gate-a-probe3/r08_gate_a_probe.json",
+      "sha256": "4ac1167e3f7589e36d6aeeb8ff9b40a379c0947d35e94671c5a678e8abbf779b"
+    },
+    "log": {
+      "path": "/opt/r08-gate-a-probe3/logs/action_policy_libero_edge_all_sft.log",
+      "sha256": "1326e18f48ea134f47e9af5e2f3224da85a2e81f0b388ba4e8f2132a9fa0d4e9"
+    },
+    "config": {
+      "path": "/opt/r08-gate-a-probe3/cosmos3_action_libero/action_sft/edge_libero_4in1/config.yaml",
+      "sha256": "3770bbeb21b3195bf60fda08fac261de73b0788e883c8079cb753e5529799ab1"
+    }
+  }
+}
