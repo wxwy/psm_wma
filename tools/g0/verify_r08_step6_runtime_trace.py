@@ -61,7 +61,8 @@ def main() -> None:
     model = object.__new__(omni_mot_model.OmniMoTModel)
     torch.nn.Module.__init__(model)
     model.config = type("Config", (), {"local_history_horizon": 2, "local_history_state_enabled": False})()
-    model.local_history_runtime = _runtime()
+    model.net = torch.nn.Module()
+    model.net.local_history_runtime = _runtime()
     mask = torch.tensor([[True, False], [False, False]])
     data_batch = {
         "history_visual_summary": torch.randn(2, 2, 4),
@@ -116,6 +117,8 @@ def main() -> None:
             "action_mrope_unchanged": action_mrope_equal,
             "condition_frame_indexes_vision_unchanged": [plan.condition_frame_indexes_vision for plan in plans]
             == [plan.condition_frame_indexes_vision for plan in no_local_plans],
+            "condition_frame_indexes_action_unchanged": [plan.condition_frame_indexes_action for plan in plans]
+            == [plan.condition_frame_indexes_action for plan in no_local_plans],
             "state_disabled": True,
         },
     }
