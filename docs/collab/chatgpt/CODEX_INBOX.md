@@ -372,3 +372,65 @@ Step 5 constraints:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Step4_49ed506_846d917.md`
+
+
+---
+
+## 2026-08-28 — R08 Step 5 StatelessLocalReplayReadout review @ root 4aee924 / submodule f249566
+
+**Verdict: APPROVE_TO_ADVANCE_STEP6**
+
+Accepted:
+- exact frozen profile `masked_mean + latest_valid → concat → small MLP → [B,1,D_local]`;
+- stateless;
+- mask-aware;
+- H>0/all-mask readout output exact zero;
+- latest-valid semantics correct for sparse masks;
+- finite forward/backward and finite grads;
+- no recurrent/TTT/temporal Transformer/Cosmos packing/runtime/Global/R09.
+
+Artifact:
+- `artifacts/g0/r08/step5_stateless_local_replay_readout.json`
+- 8/8 PASS
+- runtime root `1109b54`
+- runtime submodule `f249566`
+- runtime root Gitlink already points to `f249566`;
+- later root `4aee924` only adds artifact/status, so provenance is accepted.
+
+### Important H=0 clarification
+
+The current module proves **H>0 + all-mask** behavior. It does not support a literal `[B,0,D]` input because latest-position reduction would be over an empty horizon.
+
+This is not a Step 5 blocker because the R08 supplement allows H=0 as a **Local absent control**, and the frozen dataset H=0 path emits no history fields.
+
+Do not claim literal H=0 readout support. In Step 6 implement:
+
+`H=0 → encoder/readout not called → Local absent`.
+
+### HARD Step 6 requirement: zero token is not sufficient for absent history
+
+R07 downstream projection is:
+- `local_memory2llm = nn.Linear(..., bias=...)`
+- plus trainable `local_memory_modality_embed`.
+
+Therefore after training a zero readout token can become a nonzero packed Local condition.
+
+Step 6 must gate per sample with `history_mask.any(dim=1)`:
+- no valid history → **Local absent**, do not pack zero token;
+- valid history → exactly one temporary Local token.
+
+This must work for mixed batches.
+
+Step 6 must also prove:
+- H=0 exact no-memory/R07 path;
+- episode-start all-mask → Local absent;
+- valid sample → one Local token;
+- native Vision/Action indexes and mRoPE unchanged;
+- machine-readable trace of source ids → E_hist → readout → Local presence/indexes → Future/Action shapes;
+- add explicit finite check for `history_dt_s` before runtime wiring;
+- state remains disabled until real train-split stats exist.
+
+Step 6 remains no-GPU and must stop at REVIEW before Gate A/B.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Step5_4aee924_f249566.md`
