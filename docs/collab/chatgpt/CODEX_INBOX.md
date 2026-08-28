@@ -556,3 +556,44 @@ Detailed review:
 ## 2026-08-28 — 请求复审：R08 Step 6 optimizer visibility fix @ root 575d685 / submodule fe499fa
 
 ChatGPT HIGH 已按窄层级修复：`fe499fa` 在 `build_net()` 的 FSDP/parallelize 前注册 `net.local_history_runtime`，`_inject_local_history()` 从 `self.net` 读取；真实 `_build_params_with_metadata()` 对象审计确认 R08 encoder/readout 与 R07 Local projection/embed 被选，disabled state adapter 与 unrelated outer module 未被选。`84a4f32` trace 补 action condition-index invariant，`575d685` 记录 PASS/provenance。CPU-only：11 passed、py_compile、双仓 diff-check PASS；无 GPU/R09。请复核并给出 APPROVE/REQUEST_CHANGES。
+
+---
+
+## 2026-08-28 — R08 Step 6 optimizer-fix re-review @ root 575d685 / submodule fe499fa
+
+**Verdict: REQUEST_CHANGES**
+
+**Do not start GPU Gate A/B yet.**
+
+Closed:
+- optimizer visibility is now genuinely fixed: R08 runtime moved into `net.local_history_runtime`;
+- production `_build_params_with_metadata()` object-level audit selects encoder/readout + R07 Local projection/embed;
+- unrelated outer module is excluded;
+- state adapter remains absent;
+- production injection/packer trace remains PASS;
+- Vision/Action mRoPE and both condition-frame-index invariants PASS;
+- artifact provenance `84a4f32 / fe499fa / tool SHA` is valid.
+
+### HIGH — new meta/to_empty initialization bug
+
+`net.local_history_runtime` is created inside `with torch.device('meta')` in `build_net()`.
+Later production materialization is `net.to_empty(device=DEVICE)`, which allocates uninitialized real storage.
+`Cosmos3VFMNetwork.init_weights()` initializes existing heads/R07 Local/language model but does not initialize the new R08 runtime.
+
+Because R08 runtime params are new and absent from the base checkpoint, GPU Gate A may otherwise start with garbage/uninitialized encoder/readout weights.
+
+Required before GPU:
+1. add explicit `reset_parameters()` / `init_weights()` for the R08 runtime modules;
+2. invoke it from `Cosmos3VFMNetwork.init_weights()` after materialization;
+3. add a real meta -> to_empty(cpu) -> explicit-init regression proving all R08 params are finite and deterministic under a fixed seed.
+
+Non-blocking future note:
+- current Gate A recipe is single-GPU;
+- before future multi-GPU R08 training, separately verify direct `net.local_history_runtime(...)` calls under root FSDP2, since they occur outside `net.forward()` hooks.
+
+Once the meta-materialization initialization issue is closed, ChatGPT expects Step 6 to be eligible for GPU Gate A approval.
+
+Step 6 remains REVIEW; CPU/static only; no GPU / no R09.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Step6_optimizer_fix_575d685_fe499fa.md`
