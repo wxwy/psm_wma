@@ -656,3 +656,65 @@ Detailed review:
 已完成受控单卡 2-step 实训：生产 Edge-all，`PSM_R08_LOCAL_HISTORY_ENABLED=1`、`PSM_LOCAL_DUMMY_ENABLED=0`，从冻结 `iter_000002800` 仅模型 warm-start。第 1/2 步 loss 分别 `0.8692350387573242`、`0.6475387811660767`，均 finite；第 2 步全部 R08 encoder/readout + R07 Local projection/embed 的实际 optimizer membership=true；R08 gradient max=`9.38598532229662e-10`、R08 update max=`1.8280843505635858e-10`，均 finite/nonzero。每步 DeviceMonitor 记录的最大 allocated/reserved GPU 为 `42.507988/45.443359 GiB`，step wall 为 `190.423450/212.238442 s`。
 
 机器可读证据：`artifacts/g0/r08/gate_a_single_gpu.json`（PASS），含 probe/log/config SHA256、root/submodule revision、逐步 loss/显存/耗时和实际 DCP 文件清单；原始 probe/log/config 在 `/opt/r08-gate-a-probe3/`。训练主体打印 `Done with training.`。需要如实说明：`/opt` 空间不足导致 post-training `iter_000000002` 仅写出 model/optim 的 7.0 GiB 部分 DCP，未完成 scheduler/trainer state；JSON 标记 `checkpoint_save.status=INCOMPLETE_DISK_SPACE`，本次不主张 checkpoint reload PASS。Local absent/shape 仍由已审核的 Step6 trace 覆盖，未启动 R09/多卡/长训。请按 Gate A scope 复核并给出 APPROVE/REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R08 Gate A single-GPU review @ root e870720 / submodule c66ade0
+
+**Verdict: REQUEST_CHANGES**
+
+Current run proves real GPU trainability, but Gate A cannot close yet.
+
+Accepted development evidence:
+- production Edge-all ran 2 real optimizer steps with history=on, dummy=off;
+- loss `0.869235 -> 0.647539`, both finite;
+- actual optimizer membership true for R08/R07 Local targets;
+- step-2 R08 grad max `9.385985e-10`, finite/nonzero;
+- step-2 R08 update max `1.828084e-10`, finite/nonzero;
+- training body reached `Done with training.`;
+- peak allocated/reserved about `42.508/45.443 GiB`.
+
+### HIGH-1 — frozen Gate A requires save/reload PASS
+
+R08 supplement §17 / Step 7 explicitly requires `save/reload PASS`.
+Submitted artifact says checkpoint save is incomplete because `/opt` ran out of space and no reload PASS is claimed.
+Therefore Gate A cannot close.
+
+Required: free/use sufficient checkpoint storage, rerun the same controlled 2-step single-GPU smoke, complete checkpoint save, then reload in a fresh process and verify restore.
+
+### HIGH-2 — Gate verifier incorrectly allows PASS without save/reload
+
+`tools/g0/verify_r08_gate_a.py` currently marks PASS from optimizer membership + finite loss + finite/nonzero R08 grad/update only.
+It does not include `training_completed`, checkpoint completeness, or reload.
+
+Fix the verifier so PASS requires all frozen hard conditions, including complete save and reload.
+
+### HIGH-3 — submitted root/submodule provenance mismatch
+
+Artifact reports root `8fd6ba9` + submodule `c66ade0`, but committed root `8fd6ba9` Gitlink actually points to `18dc394`.
+`18dc394 -> c66ade0` only changes Gate-A instrumentation/tests/device-monitor, so the observed trainability remains useful development evidence, but canonical Gate provenance is not clean.
+
+For rerun:
+- commit exact submodule Gitlink before launch;
+- launch from exact committed root;
+- verifier should read/verify actual root HEAD, submodule HEAD, Gitlink equality, and clean git status instead of trusting manual SHA args.
+
+### Scope
+
+Do not add extra GPU experiments.
+Existing Step 6 evidence already covers Local absent/mRoPE/packing.
+Gate B owns Normal/Zero/Shuffle Future+Action sensitivity.
+
+Next:
+1. fix Gate-A verifier/pass criteria + self-validating provenance;
+2. ensure checkpoint disk headroom;
+3. commit exact root/submodule/tool;
+4. rerun controlled 2-step single-GPU Gate A;
+5. complete save + fresh-process reload;
+6. regenerate artifact;
+7. stop at REVIEW for mm/Kimi/ChatGPT.
+
+Do not start Gate B, R09, multi-GPU, or long training.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateA_e870720_c66ade0.md`
