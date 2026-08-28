@@ -152,3 +152,58 @@ Next:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Gate0_runtime_e7fb1ec.md`
+
+
+---
+
+## 2026-08-28 — R08 Step 2 causal-history contract review @ root 94a95c6 / submodule 31983c5
+
+**Verdict: REQUEST_CHANGES**
+
+Scope is otherwise good and remains CPU/data-contract only, but one HIGH integration bug blocks Step 2 closure.
+
+### HIGH — `history_action` collides with existing native Action semantics
+
+New R08 dataset output uses normalized historical evidence key:
+
+`libero_lerobot_dataset.py:518 -> "history_action"`
+
+But existing `ActionTransformPipeline` already treats `history_action` as a reserved native Action-conditioning field:
+
+`transforms.py:746-760`
+
+It pops the field, prepends all H rows to the native Action stream, changes `action_length` / `num_history_actions` / `SequencePlan`, and then sends the modified tensor through `ActionProcessor`.
+
+Therefore H>0 R08 history currently does **not** remain Local-only and violates the frozen R08/R07 boundary.
+
+Required:
+1. do not change the existing native `history_action` feature;
+2. rename R08 normalized evidence to a Local-specific key such as `local_history_action`;
+3. future LocalEvidenceEncoder must consume that Local-specific key;
+4. add a transform-level CPU regression proving H>0 R08 history leaves native current Action length/content and SequencePlan unchanged.
+
+### MEDIUM — permanent Step 2 tests are missing from the commit
+
+`31983c5` contains only dataset/factory code changes, no committed tests. Add focused CPU tests covering at least:
+- H=0 disabled;
+- H=16 at anchor t=0: all padding/no cross-episode;
+- H=16 t=3 partial;
+- H=16 t>=16 full;
+- H=1 immediate history;
+- action conversion/normalization parity;
+- last historical action source t-1 vs first current target t;
+- same-episode state/action/visual alignment;
+- mask/padding correctness;
+- transform-level proof that R08 history does not enter native Action/SequencePlan.
+
+No GPU is needed.
+
+Next:
+- keep Step 2 in REVIEW;
+- CPU/static-only fix;
+- push new submodule SHA + root Gitlink;
+- re-review by mm2/Kimi/ChatGPT;
+- do not proceed to LocalEvidenceEncoder/readout/model/R09/GPU.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Step2_94a95c6_31983c5.md`
