@@ -108,8 +108,8 @@ def main() -> None:
         "sequence_plan_has_no_action_prefix": transformed["sequence_plan"].condition_frame_indexes_action == [],
     }
     result = {
-        "schema_version": 1,
-        "gate": "G0-R08-STEP2-CAUSAL-HISTORY-CONTRACT",
+        "schema_version": 2,
+        "gate": "G0-R08-STEP3-ALIGNMENT-LEAKAGE",
         "status": "PASS" if all(checks.values()) else "FAIL",
         "dataset_root": str(args.dataset_root),
         "latent_cache_root": str(args.latent_cache_root),
