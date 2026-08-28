@@ -14,11 +14,17 @@
     "retained_as_untracked_temporary_artifact": true
   },
   "capture_contract": {
-    "modes": ["normal", "zero", "shuffle"],
+    "modes": [
+      "normal",
+      "zero",
+      "shuffle"
+    ],
     "independent_processes": true,
     "each_reloaded_trained_checkpoint": true,
     "capture_optimizer_updates": 1,
-    "only_intervention_variable": "local_memory payload"
+    "only_intervention_variable": "local_memory payload",
+    "captured_tensors_are_pre_optimizer_update": true,
+    "capture_optimizer_updates_note": "Each capture process may perform one optimizer update after the forward, but the saved sidecar tensors come from the pre-update forward output_batch; Normal/Zero/Shuffle comparison therefore uses the same reloaded fixed weights."
   },
   "determinism": {
     "pythonhashseed": "0",
@@ -30,7 +36,7 @@
     "dataset": "LIBERO-4in1",
     "latent_source": "exact-window Wan2.2 VAE latent cache",
     "latent_cache_root": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style",
-    "latent_cache_verify_ratio": 0.0,
+    "latent_cache_verify_ratio": 0,
     "libero_root": "/gemini/code/datasets/nvidia_LIBERO_LeRobot_v3"
   },
   "local_dummy": {
@@ -38,7 +44,11 @@
     "tokens": 1,
     "dimension": 32,
     "training_mode": "normal",
-    "capture_modes": ["normal", "zero", "shuffle"]
+    "capture_modes": [
+      "normal",
+      "zero",
+      "shuffle"
+    ]
   },
   "resources": {
     "world_size": 1,
@@ -64,9 +74,21 @@
     "local_payload_changed": true,
     "future_and_action_outputs_changed": true,
     "observed_relative_l2": {
-      "normal_vs_zero": {"future_vision": 0.010973003810002732, "action": 0.004952371334852292},
-      "normal_vs_shuffle": {"future_vision": 0.009698672171670768, "action": 0.0039578357939483435}
+      "normal_vs_zero": {
+        "future_vision": 0.010973003810002732,
+        "action": 0.004952371334852292
+      },
+      "normal_vs_shuffle": {
+        "future_vision": 0.009698672171670768,
+        "action": 0.0039578357939483435
+      }
     },
     "interpretation": "The observed deterministic fixed-weight differences are materially above numerical noise. This proves Local channel usability, not meaningful historical-memory quality."
+  },
+  "execution_reproducibility": {
+    "exact_command_retained_in_tracked_artifact": false,
+    "exact_command_status": "TO_BE_RECOVERED_BY_CODEX_FROM_ORIGINAL_MACHINE_LOG_OR_SHELL_HISTORY; DO_NOT_INVENT",
+    "checkpoint_integrity_status": "TO_BE_MEASURED_BY_CODEX_ON_RETAINED sensitivity_ckpt5/iter_000000005",
+    "closure_note": "These are evidence-hygiene follow-ups and do not change the already-approved R07 Gate result."
   }
 }
