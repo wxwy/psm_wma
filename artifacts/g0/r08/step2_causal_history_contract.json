@@ -3,10 +3,15 @@
     "h0_all_padding": true,
     "h16_all_valid": true,
     "h3_left_padded": true,
+    "history_dt_exact": true,
+    "history_rows_same_episode": true,
+    "history_target_rows_disjoint": true,
+    "horizon_zero_has_no_history_fields": true,
     "local_evidence_survives_transform": true,
     "native_action_unchanged": true,
     "native_history_action_absent": true,
     "normalized_action_parity": true,
+    "padding_inert": true,
     "raw_action_parity": true,
     "sequence_plan_has_no_action_prefix": true,
     "state_row_parity": true,
@@ -56,8 +61,8 @@
     }
   },
   "latent_cache_root": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style/libero_10",
-  "root_commit": "90fc40ed20cb10e7d5eaa1f433df2622321e96dd",
+  "root_commit": "bc14b88f612a91e0deb50fac679b0f59ca25dc27",
   "schema_version": 1,
   "status": "PASS",
-  "submodule_commit": "a0f26dc7ee67068ca543d6fde7b008fc3fd60036"
+  "submodule_commit": "c479a0845d114b064ca1e2e8639ee670e11563bf"
 }
