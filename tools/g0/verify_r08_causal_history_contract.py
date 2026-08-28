@@ -45,8 +45,13 @@ def main() -> None:
     start = dataset._build_item(0)
     partial = dataset._build_item(3)
     full = dataset._build_item(16)
+    disabled = LIBEROLeRobotDataset(
+        root=str(args.dataset_root), latent_cache_root=str(args.latent_cache_root), split="full"
+    )._build_item(0)
     mask = full["history_mask"]
     source_rows = full["history_global_row_indices"][mask].numpy()
+    anchor_row = int(source_rows[-1]) + 1
+    current_target_rows = set(range(anchor_row, anchor_row + dataset._chunk_length))
     expected_raw = dataset._build_frame_wise_action(dataset._row_action[source_rows])
     expected_normalized = normalize_action(expected_raw, dataset.action_normalization, dataset._load_norm_stats())
     expected_visual = torch.stack(
@@ -58,18 +63,44 @@ def main() -> None:
         ]
     )
     transformed = ActionTransformPipeline(tokenizer_config=None, max_action_dim=64)(full.copy(), resolution="256")
+    partial_padding = ~partial["history_mask"]
+    padded_evidence_keys = (
+        "history_visual_summary",
+        "history_state_raw",
+        "local_history_action_raw",
+        "local_history_action",
+        "history_age_steps",
+        "history_dt_s",
+    )
 
     checks = {
         "h0_all_padding": not bool(start["history_mask"].any()),
+        "horizon_zero_has_no_history_fields": not any(
+            key.startswith("local_history_") or key.startswith("history_") for key in disabled
+        ),
         "h3_left_padded": partial["history_mask"].tolist() == [False] * 13 + [True] * 3,
         "h16_all_valid": bool(mask.all()),
         "strictly_prior_rows": int(full["history_global_row_indices"][-1]) + 1 == int(dataset._ep_starts[0]) + 16,
+        "history_target_rows_disjoint": int(source_rows.max()) == anchor_row - 1
+        and set(source_rows).isdisjoint(current_target_rows),
+        "history_rows_same_episode": bool((dataset._row_episode[source_rows] == dataset._row_episode[anchor_row]).all()),
+        "history_dt_exact": bool(
+            torch.allclose(
+                full["history_dt_s"].squeeze(-1),
+                torch.from_numpy(dataset._row_timestamp[anchor_row] - dataset._row_timestamp[source_rows]).float(),
+            )
+        ),
         "raw_action_parity": bool(torch.allclose(full["local_history_action_raw"], expected_raw)),
         "normalized_action_parity": bool(torch.allclose(full["local_history_action"], expected_normalized)),
         "state_row_parity": bool(
             torch.allclose(full["history_state_raw"], torch.from_numpy(dataset._row_state[source_rows]).float())
         ),
         "z0_visual_summary_parity": bool(torch.allclose(full["history_visual_summary"], expected_visual)),
+        "padding_inert": all(torch.count_nonzero(partial[key][partial_padding]) == 0 for key in padded_evidence_keys)
+        and torch.equal(partial["history_frame_indices"][partial_padding], torch.full((13,), -1, dtype=torch.long))
+        and torch.equal(
+            partial["history_global_row_indices"][partial_padding], torch.full((13,), -1, dtype=torch.long)
+        ),
         "native_action_unchanged": transformed["action_raw"].shape[0] == full["action"].shape[0]
         and bool(torch.allclose(transformed["action_raw"], full["action"])),
         "native_history_action_absent": "history_action" not in transformed,
