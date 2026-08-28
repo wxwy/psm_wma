@@ -45,7 +45,7 @@
    - Future vision / action 输出对 Local 干预有非零 sensitivity。
 2. raw sidecar 的缺失是因为先前临时清理，**无法恢复**；provenance 没有隐瞒，而是明确记录原路径、缺失原因和替代证据（`sensitivity.json` 中的 comparator-derived SHA256）。
 3. 训练后的 checkpoint `sensitivity_ckpt5/iter_000000005` 仍保留在 artifact 目录，提供了重新运行 sensitivity 的物质基础。
-4. `compare_r07_sensitivity.py:41-55` 的 SHA256 计算基于 tensor 原始字节，与 raw sidecar 文件级 SHA256 在逻辑上等价；只要重新加载同一 checkpoint 和同一份 sidecar，可复现相同 SHA。
+4. `compare_r07_sensitivity.py:41-55` 的 SHA256 计算基于 tensor 原始字节，保留的是关键 tensor 的**内容级 fingerprint**。它与 `torch.save(.pt)` 生成的 raw sidecar **文件级 SHA256 并不等价**，因为 `.pt` 还包含序列化 metadata；当前只能用内容级 fingerprint 作为替代证据，raw sidecar 文件级 fingerprint 已不可恢复。
 5. 本次 closure 未引入新代码、未修改 Local 实现、未重跑 GPU，没有改变 Gate C 结果本身。
 
 因此，缺失 raw sidecar 属于**已记录且可接受的 evidence limitation**，不构成对 DONE 的阻塞。
@@ -149,3 +149,15 @@ ls -d /gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter
 建议 Codex 在获得本审查结论后：
 1. 将 `TODO.md:51` 的 `G0-R07-RUNTIME-SMOKE` 状态从 `REVIEW` 更新为 `DONE`。
 2. 可选：在 `sensitivity_provenance.json` 中补充 LOW-1/2/3 的三项字段，然后做一次只追加 provenance 的小提交。
+
+---
+
+## 9. Post-review correction（ChatGPT，2026-08-28）
+
+本报告原 §3 第 4 点曾把 tensor 内容级 SHA256 与 raw `.pt` sidecar 文件级 SHA256 描述为“逻辑上等价”。该表述不严谨，现已修正：前者只验证关键 tensor 原始内容，后者还包含序列化容器/metadata。此修正不改变 Gate C PASS / R07 DONE 结论。
+
+另外，后续 evidence hygiene 仍需 Codex 在原运行机无 GPU 补齐：
+1. 从真实日志或 shell history 回填 Gate C 精确启动命令/runner，禁止根据记忆重构；
+2. 对保留的 sensitivity_ckpt5/iter_000000005 记录总大小，并对关键 checkpoint 文件或 manifest 计算 SHA256。
+
+这两项仅补可复现性，不要求重跑 GPU，也不阻塞 R08 Step 0/Step 1 的只读审计与 Gate-0 diagnostic。
