@@ -1,77 +1,72 @@
 {
   "schema_version": "r08_step6_runtime_trace_v1",
   "status": "PASS",
-  "source_ids": [
-    [
-      0,
-      1
-    ],
-    [],
-    [
-      0,
-      1,
-      2,
-      3
-    ]
-  ],
+  "provenance": {
+    "root_commit": "bd751f5b2c8e2a1df86eaa3751edf9dbc9efd8c2",
+    "submodule_commit": "70a7451dab978de3d5c4157f12af3f63723868d4",
+    "tool_sha256": "6567d10c44786fec37c52507abb18afa0445dc457f0ea4f0270c46227c910251",
+    "hostname": "gjob-dev-748492614731132928-taskrole1-0",
+    "utc_time": "2026-08-28T11:49:30.436312+00:00",
+    "python": "system"
+  },
   "history_mask": [
     [
       true,
-      true,
-      false,
       false
     ],
     [
       false,
-      false,
-      false,
       false
-    ],
-    [
-      true,
-      true,
-      true,
-      true
     ]
-  ],
-  "evidence_shape": [
-    3,
-    4,
-    8
-  ],
-  "readout_shape": [
-    3,
-    1,
-    5
   ],
   "local_present": [
     true,
-    false,
-    true
+    false
   ],
   "local_indexes": [
+    4
+  ],
+  "local_token_shapes": [
     [
-      0
+      1,
+      5
     ],
-    [],
-    [
-      0
-    ]
+    null
   ],
-  "future_shape": [
-    3,
-    5
+  "vision_sequence_indexes": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27
   ],
-  "action_shape": [
-    3,
-    16,
-    10
+  "action_sequence_indexes": [
+    13,
+    14,
+    15,
+    28,
+    29,
+    30
   ],
   "assertions": {
     "mixed_batch_gating": true,
     "one_token_for_valid": true,
-    "absent_not_packed": true,
-    "finite": true,
+    "all_mask_absent": true,
+    "local_payload_shape": true,
+    "vision_mrope_unchanged": true,
+    "action_mrope_unchanged": true,
+    "condition_frame_indexes_vision_unchanged": true,
     "state_disabled": true
   }
 }
