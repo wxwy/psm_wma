@@ -1,25 +1,54 @@
 {
-  "schema_version": "r08_gate_a_single_gpu_v1",
+  "schema_version": "r08_gate_a_single_gpu_v2",
   "status": "PASS",
   "training_completed": true,
   "checkpoint_save": {
-    "complete": false,
-    "status": "INCOMPLETE_DISK_SPACE",
-    "path": "/opt/r08-gate-a-probe3/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+    "complete": true,
+    "status": "COMPLETE",
+    "path": "/gemini/code/r08-gate-a-canonical/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
     "files": [
       [
         "model/.metadata",
-        175827
+        175838
       ],
       [
         "model/__0_0.distcp",
         6740714045
       ],
       [
+        "optim/.metadata",
+        851119
+      ],
+      [
         "optim/__0_0.distcp",
-        731992064
+        11393081142
+      ],
+      [
+        "scheduler/.metadata",
+        2103
+      ],
+      [
+        "scheduler/__0_0.distcp",
+        14506
+      ],
+      [
+        "trainer/.metadata",
+        2176
+      ],
+      [
+        "trainer/__0_0.distcp",
+        23971
       ]
     ]
+  },
+  "checkpoint_reload": {
+    "pass": true,
+    "source_checkpoint": "/gemini/code/r08-gate-a-canonical/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+    "completed_steps": 2,
+    "model_restored": true,
+    "optimizer_restored": true,
+    "scheduler_trainer_state_restored": true,
+    "fresh_process_completed": true
   },
   "steps": [
     {
@@ -28,14 +57,14 @@
     },
     {
       "iteration": 2,
-      "loss": 0.6475387811660767
+      "loss": 0.6474785804748535
     }
   ],
   "all_optimizer_membership": true,
   "r08_grad_finite": true,
-  "r08_grad_max_abs": 9.38598532229662e-10,
+  "r08_grad_max_abs": 9.458744898438454e-10,
   "r08_update_finite": true,
-  "r08_update_max_abs": 1.8280843505635858e-10,
+  "r08_update_max_abs": 1.8917489796876907e-10,
   "loss_finite": true,
   "peak_gpu_mem_gb": [
     26.712416,
@@ -43,26 +72,38 @@
   ],
   "peak_gpu_mem_reserved_gb": [
     29.021484,
-    45.443359
+    45.441406
   ],
   "step_wall_seconds": [
-    190.42345,
-    212.238442
+    411.161175,
+    366.413832
   ],
   "provenance": {
-    "root_revision": "8fd6ba92cb28d63fd76590ea1d4f1aded96395b9",
+    "root_revision": "f05085a24784c36fd7e22092ec1839120a04d0cd",
     "submodule_revision": "c66ade049bfd5895da16bee01068f73a7fd423e2",
+    "gitlink_revision": "c66ade049bfd5895da16bee01068f73a7fd423e2",
+    "root_clean_tracked": true,
+    "submodule_clean_tracked": true,
+    "valid": true,
+    "verifier": {
+      "path": "/gemini/code/psm_wma/tools/g0/verify_r08_gate_a.py",
+      "sha256": "ade0a44d6151580f228555cd03395604a1d3f1103f6fb4908cc0208dee9993c6"
+    },
     "probe": {
-      "path": "/opt/r08-gate-a-probe3/r08_gate_a_probe.json",
-      "sha256": "4ac1167e3f7589e36d6aeeb8ff9b40a379c0947d35e94671c5a678e8abbf779b"
+      "path": "/gemini/code/r08-gate-a-canonical/r08_gate_a_probe.json",
+      "sha256": "9b9428e29622a4b3d8c9167d73459f955fff2cea64f99969c027fdf4ad92a679"
     },
     "log": {
-      "path": "/opt/r08-gate-a-probe3/logs/action_policy_libero_edge_all_sft.log",
-      "sha256": "1326e18f48ea134f47e9af5e2f3224da85a2e81f0b388ba4e8f2132a9fa0d4e9"
+      "path": "/gemini/code/r08-gate-a-canonical/logs/action_policy_libero_edge_all_sft.log",
+      "sha256": "adbbbb18478a91ac7f45719b5e5c3ab0e407006f3eda93152d23632658877c12"
+    },
+    "reload_log": {
+      "path": "/gemini/code/r08-gate-a-canonical-reload/logs/action_policy_libero_edge_all_sft.log",
+      "sha256": "5443ca021ea26563759e28514001102c1c9ce614ef0ecce8a9545c68c702bf00"
     },
     "config": {
-      "path": "/opt/r08-gate-a-probe3/cosmos3_action_libero/action_sft/edge_libero_4in1/config.yaml",
-      "sha256": "3770bbeb21b3195bf60fda08fac261de73b0788e883c8079cb753e5529799ab1"
+      "path": "/gemini/code/r08-gate-a-canonical/cosmos3_action_libero/action_sft/edge_libero_4in1/config.yaml",
+      "sha256": "381d3ab705d640a90afae1a0c3d80263f0b311ae8c9a0419a792a1d3772f832c"
     }
   }
 }
