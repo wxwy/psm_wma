@@ -18,6 +18,8 @@
 
 - R07 provenance hygiene（Codex，DONE，无 GPU）：未能从真实 shell history、原始 `/opt/r07-smoke`/根 artifact 日志、现存 tmux pane 或 runner transcript 恢复 Gate C 精确启动命令，已在 `sensitivity_provenance.json` 诚实标记 `exact_command_recoverable=false`，未从当前配置或记忆重构。保留的 `sensitivity_ckpt5/iter_000000005` 实测完整：8 个 DCP 文件、18,132,791,947 B，model/optim/scheduler/trainer 与 metadata 的 SHA256 已回填。该 hygiene 不改变 R07 PASS；R08 GPU Gate 前置现已满足。
 
+- R08 Step 0（Codex，DONE，只读）：`tools/g0/audit_r08_source.py` 已生成含 provenance 的 `artifacts/g0/r08/source_audit.json`。四 suite 的 `observation.state` 都是 float32 `[8]` 且有限；loader 当前仅读取 index/episode/task/timestamp/action，未读 state；state metadata 原样保留、未推断 8D 物理语义。target action 为 anchor `t` 的 `[t,t+16)`，R08 history 只能取 `j<t`。cache 为 `exact_window_v1`、17 frames、anchors `[0,4,8,12,16]`、latent `[5,48,12,20]` float32；concat 256×512 snap 至 192×320 pre-VAE canvas。mm APPROVE_TO_CLOSE、Kimi closure APPROVE，3 项审计 MEDIUM 已关闭。下一步仅可进入 R08 Gate-0 z0 suffix-invariance diagnostic；未修改模型/数据合同，未跑 GPU。
+
 - `G0-R06/R07 override`（用户，DONE）：D017 生效：`iter_000002800` 冻结为 R06 No-Memory baseline，取消 canonical 400-episode acceptance，R07 UNBLOCKED；13-ckpt sweep 仅作趋势 evidence。未改 frozen 文档或历史 zero-shot FAIL 证据。
 
 - `G0-R07-IMPLEMENTATION`（Codex，IN_PROGRESS）：预计修改子模块 `data_and_condition.py`、`sequence.py`、`packers.py`、`joint_dataloader.py`（`local_memory` optional collate）、`action/utils/transforms.py`（config-controlled `LocalDummyTransform` 注入 `local_memory` 与 `SequencePlan.has_local_memory`）、`omni_mot_model.py`、`cosmos3_vfm_network.py`、实际 Edge-4in1 config/test；只实现 dummy Local clean modality。A/B 比较 Vision/Action mRoPE 时按各自 modality indexes 取位置；多样本 global index 仅验证符合 packing offset，不硬编码统一 `+K_local`。Local 不进 noising/decoder/loss，不做 R08/R09；Flex disabled，legacy out-of-scope。

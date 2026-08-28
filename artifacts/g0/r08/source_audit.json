@@ -1,0 +1,609 @@
+{
+  "action_conversion": "raw 7D axis-angle action -> existing _build_frame_wise_action -> 10D rot6d action",
+  "gate_decision": "state schema/alignment is audit-PASS; state semantics remain unspecified and must not be inferred before R08 integration",
+  "loader_current_columns": [
+    "index",
+    "episode_index",
+    "task_index",
+    "timestamp",
+    "action"
+  ],
+  "loader_does_not_currently_read_observation_state": true,
+  "loader_source": "cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py",
+  "provenance": {
+    "argv": [
+      "tools/g0/audit_r08_source.py",
+      "--dataset-root",
+      "/gemini/code/datasets/nvidia_LIBERO_LeRobot_v3",
+      "--cache-root",
+      "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style",
+      "--output",
+      "artifacts/g0/r08/source_audit.json"
+    ],
+    "cache_root": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style",
+    "dataset_root": "/gemini/code/datasets/nvidia_LIBERO_LeRobot_v3",
+    "generated_at_utc": "2026-08-28T02:05:51.157825+00:00",
+    "hostname": "gjob-dev-748333384023764992-taskrole1-0",
+    "root_commit": "d13f7b26f05001b443410d6c3450233a420a6675",
+    "submodule_commit": "10bc41085de448d60d2f71b342c03a4cfcca9ee1"
+  },
+  "schema_version": "r08_source_audit_v1",
+  "scope": "CPU-only source audit; no model/data-contract modification",
+  "source_evidence": {
+    "action_conversion": "libero_lerobot_dataset.py:438-446",
+    "cache_manifest_validation": "libero_lerobot_dataset.py:280-329",
+    "cache_window_validation": "libero_lerobot_dataset.py:331-377",
+    "concat_view": "libero_lerobot_dataset.py:448-465",
+    "current_concat_and_vae_canvas": "cosmos-framework/docs/action_policy_libero_posttrain.md:50-53",
+    "loader_parquet_read": "libero_lerobot_dataset.py:162-169",
+    "sample_target_action_and_extras": "libero_lerobot_dataset.py:393-436",
+    "vae_exact_duration_constants": "cosmos_framework/model/generator/vision_vae.py:12-13"
+  },
+  "status": "PASS",
+  "suites": [
+    {
+      "exact_window_cache": {
+        "current_concat_and_vae_canvas": {
+          "concat_layout": "third-person left + wrist right; 256x256 + 256x256 -> 256x512",
+          "evidence": "cosmos-framework/docs/action_policy_libero_posttrain.md:50-53",
+          "pre_vae_model_canvas": [
+            192,
+            320
+          ]
+        },
+        "latent_shape": [
+          5,
+          48,
+          12,
+          20
+        ],
+        "manifest_path": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style/libero_spatial/dataset_manifest.json",
+        "manifest_sha256": "4d2afe8c379a842da79089950b927547c3c09b8020e391812616e16139eb3ee3",
+        "sample_latent_dtype": "torch.float32",
+        "sample_latent_shape": [
+          5,
+          48,
+          12,
+          20
+        ],
+        "sample_latent_source_frame_indices": [
+          0,
+          4,
+          8,
+          12,
+          16
+        ],
+        "sample_window_frame_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "schema_version": "exact_window_v1",
+        "vae_encode_contract": {
+          "compute_dtype": "torch.bfloat16",
+          "encode_chunk_frames": {
+            "256": 68,
+            "480": 24,
+            "720": 8,
+            "768": 8
+          },
+          "encode_exact_durations": [
+            17,
+            61,
+            73
+          ]
+        }
+      },
+      "info_features_state": {
+        "dtype": "float32",
+        "fps": 20,
+        "names": {
+          "motors": [
+            "x",
+            "y",
+            "z",
+            "axis_angle1",
+            "axis_angle2",
+            "axis_angle3",
+            "gripper",
+            "gripper"
+          ]
+        },
+        "shape": [
+          8
+        ]
+      },
+      "parquet_columns": [
+        "index",
+        "episode_index",
+        "task_index",
+        "timestamp",
+        "action",
+        "observation.state"
+      ],
+      "parquet_files": 1,
+      "row_count": 52970,
+      "state": {
+        "common_index_is_strictly_increasing": true,
+        "dtype": "float32",
+        "feature_metadata": {
+          "dtype": "float32",
+          "fps": 20,
+          "names": {
+            "motors": [
+              "x",
+              "y",
+              "z",
+              "axis_angle1",
+              "axis_angle2",
+              "axis_angle3",
+              "gripper",
+              "gripper"
+            ]
+          },
+          "shape": [
+            8
+          ]
+        },
+        "finite": true,
+        "row_alignment_method": "state/index/episode_index/timestamp are read from each same parquet table and reordered with the same stable global-index permutation",
+        "row_count_matches_parquet_rows": true,
+        "semantic_status": "Only the dataset feature metadata is recorded. The duplicate gripper label means this audit does not infer a formal eight-dimension physical-state mapping.",
+        "shapes": [
+          [
+            8
+          ]
+        ]
+      },
+      "suite": "libero_spatial",
+      "timeline": {
+        "causal_history_action_rows": "for anchor t, only raw action rows j<t are eligible; a_t and later are forbidden",
+        "episode_nondecreasing": true,
+        "index_strictly_increasing": true,
+        "loader_target_action_rows": "anchor t -> raw action rows [t, t+16), converted by _build_frame_wise_action",
+        "raw_action_shape": [
+          7
+        ],
+        "timestamp_strictly_increasing_within_episode": true,
+        "transition_semantics_evidence": "The current loader names this action_space frame_wise_relative and consumes the stored rows directly. The parquet schema itself has no separate transition-id field; R08 must retain the conservative j<t boundary."
+      }
+    },
+    {
+      "exact_window_cache": {
+        "current_concat_and_vae_canvas": {
+          "concat_layout": "third-person left + wrist right; 256x256 + 256x256 -> 256x512",
+          "evidence": "cosmos-framework/docs/action_policy_libero_posttrain.md:50-53",
+          "pre_vae_model_canvas": [
+            192,
+            320
+          ]
+        },
+        "latent_shape": [
+          5,
+          48,
+          12,
+          20
+        ],
+        "manifest_path": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style/libero_object/dataset_manifest.json",
+        "manifest_sha256": "5a3756713ec6f1e00f5d00f4923dfa6846978e6ea3899372c03e1361f837aa64",
+        "sample_latent_dtype": "torch.float32",
+        "sample_latent_shape": [
+          5,
+          48,
+          12,
+          20
+        ],
+        "sample_latent_source_frame_indices": [
+          0,
+          4,
+          8,
+          12,
+          16
+        ],
+        "sample_window_frame_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "schema_version": "exact_window_v1",
+        "vae_encode_contract": {
+          "compute_dtype": "torch.bfloat16",
+          "encode_chunk_frames": {
+            "256": 68,
+            "480": 24,
+            "720": 8,
+            "768": 8
+          },
+          "encode_exact_durations": [
+            17,
+            61,
+            73
+          ]
+        }
+      },
+      "info_features_state": {
+        "dtype": "float32",
+        "fps": 20,
+        "names": {
+          "motors": [
+            "x",
+            "y",
+            "z",
+            "axis_angle1",
+            "axis_angle2",
+            "axis_angle3",
+            "gripper",
+            "gripper"
+          ]
+        },
+        "shape": [
+          8
+        ]
+      },
+      "parquet_columns": [
+        "index",
+        "episode_index",
+        "task_index",
+        "timestamp",
+        "action",
+        "observation.state"
+      ],
+      "parquet_files": 2,
+      "row_count": 66984,
+      "state": {
+        "common_index_is_strictly_increasing": true,
+        "dtype": "float32",
+        "feature_metadata": {
+          "dtype": "float32",
+          "fps": 20,
+          "names": {
+            "motors": [
+              "x",
+              "y",
+              "z",
+              "axis_angle1",
+              "axis_angle2",
+              "axis_angle3",
+              "gripper",
+              "gripper"
+            ]
+          },
+          "shape": [
+            8
+          ]
+        },
+        "finite": true,
+        "row_alignment_method": "state/index/episode_index/timestamp are read from each same parquet table and reordered with the same stable global-index permutation",
+        "row_count_matches_parquet_rows": true,
+        "semantic_status": "Only the dataset feature metadata is recorded. The duplicate gripper label means this audit does not infer a formal eight-dimension physical-state mapping.",
+        "shapes": [
+          [
+            8
+          ]
+        ]
+      },
+      "suite": "libero_object",
+      "timeline": {
+        "causal_history_action_rows": "for anchor t, only raw action rows j<t are eligible; a_t and later are forbidden",
+        "episode_nondecreasing": true,
+        "index_strictly_increasing": true,
+        "loader_target_action_rows": "anchor t -> raw action rows [t, t+16), converted by _build_frame_wise_action",
+        "raw_action_shape": [
+          7
+        ],
+        "timestamp_strictly_increasing_within_episode": true,
+        "transition_semantics_evidence": "The current loader names this action_space frame_wise_relative and consumes the stored rows directly. The parquet schema itself has no separate transition-id field; R08 must retain the conservative j<t boundary."
+      }
+    },
+    {
+      "exact_window_cache": {
+        "current_concat_and_vae_canvas": {
+          "concat_layout": "third-person left + wrist right; 256x256 + 256x256 -> 256x512",
+          "evidence": "cosmos-framework/docs/action_policy_libero_posttrain.md:50-53",
+          "pre_vae_model_canvas": [
+            192,
+            320
+          ]
+        },
+        "latent_shape": [
+          5,
+          48,
+          12,
+          20
+        ],
+        "manifest_path": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style/libero_goal/dataset_manifest.json",
+        "manifest_sha256": "0a327c4c9856e59068f19bd6c2a2052b33c7f3a7a2ae318ee8ea7862c00489d9",
+        "sample_latent_dtype": "torch.float32",
+        "sample_latent_shape": [
+          5,
+          48,
+          12,
+          20
+        ],
+        "sample_latent_source_frame_indices": [
+          0,
+          4,
+          8,
+          12,
+          16
+        ],
+        "sample_window_frame_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "schema_version": "exact_window_v1",
+        "vae_encode_contract": {
+          "compute_dtype": "torch.bfloat16",
+          "encode_chunk_frames": {
+            "256": 68,
+            "480": 24,
+            "720": 8,
+            "768": 8
+          },
+          "encode_exact_durations": [
+            17,
+            61,
+            73
+          ]
+        }
+      },
+      "info_features_state": {
+        "dtype": "float32",
+        "fps": 20,
+        "names": {
+          "motors": [
+            "x",
+            "y",
+            "z",
+            "axis_angle1",
+            "axis_angle2",
+            "axis_angle3",
+            "gripper",
+            "gripper"
+          ]
+        },
+        "shape": [
+          8
+        ]
+      },
+      "parquet_columns": [
+        "index",
+        "episode_index",
+        "task_index",
+        "timestamp",
+        "action",
+        "observation.state"
+      ],
+      "parquet_files": 1,
+      "row_count": 52042,
+      "state": {
+        "common_index_is_strictly_increasing": true,
+        "dtype": "float32",
+        "feature_metadata": {
+          "dtype": "float32",
+          "fps": 20,
+          "names": {
+            "motors": [
+              "x",
+              "y",
+              "z",
+              "axis_angle1",
+              "axis_angle2",
+              "axis_angle3",
+              "gripper",
+              "gripper"
+            ]
+          },
+          "shape": [
+            8
+          ]
+        },
+        "finite": true,
+        "row_alignment_method": "state/index/episode_index/timestamp are read from each same parquet table and reordered with the same stable global-index permutation",
+        "row_count_matches_parquet_rows": true,
+        "semantic_status": "Only the dataset feature metadata is recorded. The duplicate gripper label means this audit does not infer a formal eight-dimension physical-state mapping.",
+        "shapes": [
+          [
+            8
+          ]
+        ]
+      },
+      "suite": "libero_goal",
+      "timeline": {
+        "causal_history_action_rows": "for anchor t, only raw action rows j<t are eligible; a_t and later are forbidden",
+        "episode_nondecreasing": true,
+        "index_strictly_increasing": true,
+        "loader_target_action_rows": "anchor t -> raw action rows [t, t+16), converted by _build_frame_wise_action",
+        "raw_action_shape": [
+          7
+        ],
+        "timestamp_strictly_increasing_within_episode": true,
+        "transition_semantics_evidence": "The current loader names this action_space frame_wise_relative and consumes the stored rows directly. The parquet schema itself has no separate transition-id field; R08 must retain the conservative j<t boundary."
+      }
+    },
+    {
+      "exact_window_cache": {
+        "current_concat_and_vae_canvas": {
+          "concat_layout": "third-person left + wrist right; 256x256 + 256x256 -> 256x512",
+          "evidence": "cosmos-framework/docs/action_policy_libero_posttrain.md:50-53",
+          "pre_vae_model_canvas": [
+            192,
+            320
+          ]
+        },
+        "latent_shape": [
+          5,
+          48,
+          12,
+          20
+        ],
+        "manifest_path": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style/libero_10/dataset_manifest.json",
+        "manifest_sha256": "a1627d26ed3670dfba9d21527317020f553b6c31f03766e58717f84f753f3319",
+        "sample_latent_dtype": "torch.float32",
+        "sample_latent_shape": [
+          5,
+          48,
+          12,
+          20
+        ],
+        "sample_latent_source_frame_indices": [
+          0,
+          4,
+          8,
+          12,
+          16
+        ],
+        "sample_window_frame_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "schema_version": "exact_window_v1",
+        "vae_encode_contract": {
+          "compute_dtype": "torch.bfloat16",
+          "encode_chunk_frames": {
+            "256": 68,
+            "480": 24,
+            "720": 8,
+            "768": 8
+          },
+          "encode_exact_durations": [
+            17,
+            61,
+            73
+          ]
+        }
+      },
+      "info_features_state": {
+        "dtype": "float32",
+        "fps": 20,
+        "names": {
+          "motors": [
+            "x",
+            "y",
+            "z",
+            "axis_angle1",
+            "axis_angle2",
+            "axis_angle3",
+            "gripper",
+            "gripper"
+          ]
+        },
+        "shape": [
+          8
+        ]
+      },
+      "parquet_columns": [
+        "index",
+        "episode_index",
+        "task_index",
+        "timestamp",
+        "action",
+        "observation.state"
+      ],
+      "parquet_files": 2,
+      "row_count": 101469,
+      "state": {
+        "common_index_is_strictly_increasing": true,
+        "dtype": "float32",
+        "feature_metadata": {
+          "dtype": "float32",
+          "fps": 20,
+          "names": {
+            "motors": [
+              "x",
+              "y",
+              "z",
+              "axis_angle1",
+              "axis_angle2",
+              "axis_angle3",
+              "gripper",
+              "gripper"
+            ]
+          },
+          "shape": [
+            8
+          ]
+        },
+        "finite": true,
+        "row_alignment_method": "state/index/episode_index/timestamp are read from each same parquet table and reordered with the same stable global-index permutation",
+        "row_count_matches_parquet_rows": true,
+        "semantic_status": "Only the dataset feature metadata is recorded. The duplicate gripper label means this audit does not infer a formal eight-dimension physical-state mapping.",
+        "shapes": [
+          [
+            8
+          ]
+        ]
+      },
+      "suite": "libero_10",
+      "timeline": {
+        "causal_history_action_rows": "for anchor t, only raw action rows j<t are eligible; a_t and later are forbidden",
+        "episode_nondecreasing": true,
+        "index_strictly_increasing": true,
+        "loader_target_action_rows": "anchor t -> raw action rows [t, t+16), converted by _build_frame_wise_action",
+        "raw_action_shape": [
+          7
+        ],
+        "timestamp_strictly_increasing_within_episode": true,
+        "transition_semantics_evidence": "The current loader names this action_space frame_wise_relative and consumes the stored rows directly. The parquet schema itself has no separate transition-id field; R08 must retain the conservative j<t boundary."
+      }
+    }
+  ]
+}
