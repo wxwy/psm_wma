@@ -1,0 +1,62 @@
+{
+  "checks": {
+    "h0_all_padding": true,
+    "h16_all_valid": true,
+    "h3_left_padded": true,
+    "local_evidence_survives_transform": true,
+    "native_action_unchanged": true,
+    "native_history_action_absent": true,
+    "normalized_action_parity": true,
+    "raw_action_parity": true,
+    "sequence_plan_has_no_action_prefix": true,
+    "state_row_parity": true,
+    "strictly_prior_rows": true
+  },
+  "dataset_root": "/gemini/code/datasets/nvidia_LIBERO_LeRobot_v3/libero_10",
+  "gate": "G0-R08-STEP2-CAUSAL-HISTORY-CONTRACT",
+  "h16": {
+    "history_frame_indices": {
+      "dtype": "torch.int64",
+      "sha256": "f23d672bb9b341f9afa8498423b75deb80e726145969391d4b9392464c2298ee",
+      "shape": [
+        16
+      ]
+    },
+    "history_mask": {
+      "dtype": "torch.bool",
+      "sha256": "cc8cd41cef907c4d216069122c4b89936211361f9050a717a1e37ad1862e952f",
+      "shape": [
+        16
+      ]
+    },
+    "local_history_action": {
+      "dtype": "torch.float32",
+      "sha256": "ce49b329e93ae7fc45edaa565fd343caed0782d35f18b50c886c4547f809b5d0",
+      "shape": [
+        16,
+        10
+      ]
+    },
+    "state_raw": {
+      "dtype": "torch.float32",
+      "sha256": "cbae6828ce2bb85c9fc4b8d42a4ab8cc2c6b310f2b36d436d91e4bd2c50f397b",
+      "shape": [
+        16,
+        8
+      ]
+    },
+    "visual_summary": {
+      "dtype": "torch.float32",
+      "sha256": "6516eb2c80fd6ed47429fc8cdbcb38d26faa3134a2dba9111ad2fa18b044f489",
+      "shape": [
+        16,
+        96
+      ]
+    }
+  },
+  "latent_cache_root": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style/libero_10",
+  "root_commit": "1e98e452a440a8d6d0f9978c362ca9d2e1a11f3e",
+  "schema_version": 1,
+  "status": "PASS",
+  "submodule_commit": "31983c57057498c210efde4c7c57b392f997d235"
+}
