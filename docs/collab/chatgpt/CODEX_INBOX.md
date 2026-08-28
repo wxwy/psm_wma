@@ -207,3 +207,60 @@ Next:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Step2_94a95c6_31983c5.md`
+
+
+---
+
+## 2026-08-28 — R08 Step 2 fix re-review @ root 90fc40e / submodule a0f26dc
+
+**Verdict: APPROVE_TO_ADVANCE_STEP3**
+
+The prior HIGH blocker is closed:
+- R08 executed-action evidence now uses `local_history_action_raw` / `local_history_action`;
+- existing native `history_action` semantics are untouched;
+- committed transform regression proves Local history does not alter native current Action length/content or SequencePlan.
+
+Permanent CPU tests now cover:
+- H=16 t=0 all-padding;
+- H=16 t=3 partial;
+- H=16 t=16 full;
+- H=1 immediate history;
+- raw/normalized action parity;
+- state row parity;
+- transform isolation.
+
+No new Step 2 code blocker found.
+
+### Important scope ruling
+
+Do **not** widen Step 2 to Edge recipe/runtime wiring.
+
+The R08 supplement §23 explicitly separates:
+- Step 2: causal history dataset contract, CPU only;
+- Step 3: alignment tests;
+- Step 4/5: encoder/readout;
+- later: runtime/GPU.
+
+Therefore the currently missing official recipe exposure of `local_history_horizon` is **not** a Step 2 blocker. Add it later before the first official H>0 runtime path.
+
+### Step 3 required checks
+
+Next allowed work is **Step 3 CPU alignment tests only**. Before Step 3 closes, explicitly add/record:
+
+1. true `local_history_horizon=0` disabled contract (current t=0/H=16 test is not H=0);
+2. source boundary: history max row = t-1, current target first row = t, sets disjoint;
+3. same-episode assertion for all valid history rows;
+4. exact timestamp/dt parity;
+5. visual source parity: cache episode/start j → z0 → pool(1,2) equals history_visual_summary[j];
+6. padding inertness across all evidence tensors.
+
+### Provenance
+
+Current `step2_causal_history_contract.json` was generated while HEAD still reported root `1e98e45` / submodule `31983c5`, although the working tree already contained the fix. Treat it as development evidence only.
+
+During Step 3, rerun the verifier after checkout of the final committed root/submodule SHAs and regenerate the artifact so provenance matches reviewed code.
+
+No GPU. Do not start LocalEvidenceEncoder/readout/model/R09.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-28_R08_Step2_fix_90fc40e_a0f26dc.md`
