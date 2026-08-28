@@ -26,7 +26,9 @@
 
 - R08 Step 3 alignment/leakage（Codex，DONE，无 GPU）：三方复审均通过（ChatGPT `APPROVE_TO_ADVANCE_STEP4`、mm2 `APPROVE`、Kimi `APPROVE_TO_ADVANCE`）。`artifacts/g0/r08/step3_alignment_leakage.json` 为 17/17 PASS，provenance 为 root `3f0ca0d` / submodule `c479a08`；审查已验证之后仅 result/status 文档变动。history/current target 集合不相交、same episode、精确 dt、padding inertness、H=0 default-off 均关闭。
 
-- R08 Step 4 LocalEvidenceEncoder（Codex，REVIEW，无 GPU）：子模块 `846d917` 新增 stateless per-step encoder，visual/action/age/dt/state adapters 分离，LayerNorm 后 mask 强制零化；不含 readout/Cosmos/packing/runtime/recurrent/TTT/Global。`artifacts/g0/r08/step4_local_evidence_encoder.json` 为 6/6 PASS（root `ca57b9b`/submodule `846d917`）：shape/finite/mask exact zero/全部参数有限 grad/stateless 均通过。state adapter 仅接受显式 `state_mean/state_std` buffer；训练 split stats 尚未产出，故 state runtime status=`DISABLED_PENDING_TRAIN_SPLIT_STATS`，raw state 未进入任何运行路径。待三方审查。
+- R08 Step 4 LocalEvidenceEncoder（Codex，DONE，无 GPU）：ChatGPT/mm2/Kimi 三方通过；stateless encoder 的 visual/action/age/dt/state adapters 分离、mask exact-zero、finite grad 与 state stats fail-fast 均关闭。state runtime 仍为 `DISABLED_PENDING_TRAIN_SPLIT_STATS`，raw state 未进入任何运行路径。LOW（dt finite、未来 stats negative-std reject）在官方 runtime wiring 前处理。
+
+- R08 Step 5 Stateless LocalReplayReadout（Codex，REVIEW，无 GPU）：子模块 `f249566` 新增 stateless `masked_mean + latest_valid → MLP → [B,1,D_local]` readout；all-mask/H=0 在 MLP 后强制 exact zero，不含 recurrent/TTT/temporal Transformer/Cosmos packing/runtime。`artifacts/g0/r08/step5_stateless_local_replay_readout.json` 为 8/8 PASS（root `1109b54`/submodule `f249566`）：mean/latest、valid flags、all-mask inert、finite/grad/stateless 均通过。待三方审查；禁止 Step 6 runtime/GPU/R09。
 
 - `G0-R06/R07 override`（用户，DONE）：D017 生效：`iter_000002800` 冻结为 R06 No-Memory baseline，取消 canonical 400-episode acceptance，R07 UNBLOCKED；13-ckpt sweep 仅作趋势 evidence。未改 frozen 文档或历史 zero-shot FAIL 证据。
 

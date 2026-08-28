@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "all_mask_exact_zero": true,
+    "all_trainable_params_have_finite_grad": true,
+    "latest_valid_exact": true,
+    "masked_mean_exact": true,
+    "output_finite": true,
+    "output_shape": true,
+    "stateless_no_recurrent_modules": true,
+    "valid_flags": true
+  },
+  "gate": "G0-R08-STEP5-STATELESS-LOCAL-REPLAY-READOUT",
+  "output": {
+    "sha256": "3861d2f26594630d58ddd131a6f4250f31352ce34006c6a3027cd923fd437bdb",
+    "shape": [
+      3,
+      1,
+      32
+    ]
+  },
+  "root_commit": "1109b54e5a852db4928a3280aaba93ab17e20fe1",
+  "schema_version": 1,
+  "status": "PASS",
+  "submodule_commit": "f249566a9e5368050f5f72ac0c649ca154695d7d"
+}
