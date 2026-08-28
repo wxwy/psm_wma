@@ -2,11 +2,11 @@
   "schema_version": "r08_step6_runtime_trace_v1",
   "status": "PASS",
   "provenance": {
-    "root_commit": "bd751f5b2c8e2a1df86eaa3751edf9dbc9efd8c2",
-    "submodule_commit": "70a7451dab978de3d5c4157f12af3f63723868d4",
-    "tool_sha256": "6567d10c44786fec37c52507abb18afa0445dc457f0ea4f0270c46227c910251",
+    "root_commit": "84a4f32abaa35841725a33c4b40f588bde410167",
+    "submodule_commit": "fe499fa1308f2151dd67a7f943cf6386229ea38c",
+    "tool_sha256": "ec60e5549bb4706145da1bd9c45abd49fe869e10d577acbea9e57a46ac531186",
     "hostname": "gjob-dev-748492614731132928-taskrole1-0",
-    "utc_time": "2026-08-28T11:49:30.436312+00:00",
+    "utc_time": "2026-08-28T12:16:46.505689+00:00",
     "python": "system"
   },
   "history_mask": [
@@ -67,6 +67,7 @@
     "vision_mrope_unchanged": true,
     "action_mrope_unchanged": true,
     "condition_frame_indexes_vision_unchanged": true,
+    "condition_frame_indexes_action_unchanged": true,
     "state_disabled": true
   }
 }
