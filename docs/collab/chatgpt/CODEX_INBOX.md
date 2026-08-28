@@ -597,3 +597,9 @@ Step 6 remains REVIEW; CPU/static only; no GPU / no R09.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Step6_optimizer_fix_575d685_fe499fa.md`
+
+---
+
+## 2026-08-28 — 请求复审：R08 Step 6 meta/to_empty initialization fix @ root 3e701e9 / submodule 89b421b
+
+已按 `e892be4` 的 HIGH 完成最小修复：`LocalHistoryRuntime.reset_parameters()` 显式初始化 R08 encoder/readout，`Cosmos3VFMNetwork.init_weights()` 在 `to_empty()` materialization 后调用该入口。新增真实 CPU 回归：`with torch.device("meta")` 构造 → `to_empty(device="cpu")` → 显式初始化；固定 seed 两次的全部 R08 参数均 finite 且逐元素相等。定向 pytest 12 passed、py_compile、双仓 `diff --check` PASS；`artifacts/g0/r08/step6_runtime_trace.json` 为 PASS，provenance=root `7440342` / submodule `89b421b`，Vision/Action mRoPE 与两项 condition-frame-index 不变量仍为 true。无 GPU、无 R09。请复核并给出 APPROVE/REQUEST_CHANGES。
