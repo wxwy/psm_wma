@@ -1,0 +1,72 @@
+{
+  "schema_version": "r07_fixed_weight_sensitivity_provenance_v1",
+  "result_artifact": "artifacts/g0/r07/runtime_smoke/sensitivity.json",
+  "result_status": "PASS",
+  "root_commit_at_gate_code": "ef6993b",
+  "root_commit_at_result_record": "916b309",
+  "submodule_commit": "10bc41085de448d60d2f71b342c03a4cfcca9ee1",
+  "baseline_checkpoint": "/opt/Cosmos3-edge-generation-libero4in1/iter_000002800",
+  "trained_checkpoint": {
+    "path_at_execution": "/gemini/code/psm_wma/artifacts/g0/r07/runtime_smoke/sensitivity_ckpt5/iter_000000005",
+    "source": "Normal Local only, five optimizer updates from iter_000002800",
+    "fixed_weight_for_captures": true,
+    "deleted_after_gate": false,
+    "retained_as_untracked_temporary_artifact": true
+  },
+  "capture_contract": {
+    "modes": ["normal", "zero", "shuffle"],
+    "independent_processes": true,
+    "each_reloaded_trained_checkpoint": true,
+    "capture_optimizer_updates": 1,
+    "only_intervention_variable": "local_memory payload"
+  },
+  "determinism": {
+    "pythonhashseed": "0",
+    "cublas_workspace_config": ":4096:8",
+    "trainer_deterministic": true,
+    "seed": 42
+  },
+  "data": {
+    "dataset": "LIBERO-4in1",
+    "latent_source": "exact-window Wan2.2 VAE latent cache",
+    "latent_cache_root": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style",
+    "latent_cache_verify_ratio": 0.0,
+    "libero_root": "/gemini/code/datasets/nvidia_LIBERO_LeRobot_v3"
+  },
+  "local_dummy": {
+    "enabled": true,
+    "tokens": 1,
+    "dimension": 32,
+    "training_mode": "normal",
+    "capture_modes": ["normal", "zero", "shuffle"]
+  },
+  "resources": {
+    "world_size": 1,
+    "gpu_memory_gib": 80,
+    "grad_accum_iter": 16,
+    "microbatch_samples": 128,
+    "effective_batch_samples": 2048
+  },
+  "raw_sidecars": {
+    "retained": false,
+    "paths_at_execution": [
+      "/opt/r07-smoke/sensitivity_capture_normal.json",
+      "/opt/r07-smoke/sensitivity_capture_normal.pt",
+      "/opt/r07-smoke/sensitivity_capture_zero.json",
+      "/opt/r07-smoke/sensitivity_capture_zero.pt",
+      "/opt/r07-smoke/sensitivity_capture_shuffle.json",
+      "/opt/r07-smoke/sensitivity_capture_shuffle.pt"
+    ],
+    "cleanup_note": "Raw sidecars were deleted during temporary smoke cleanup before provenance closure. Their comparator-derived tensor SHA256 values remain in sensitivity.json; raw sidecar file SHA256 values are unavailable without rerunning the gate."
+  },
+  "acceptance": {
+    "all_non_local_invariants_exact": true,
+    "local_payload_changed": true,
+    "future_and_action_outputs_changed": true,
+    "observed_relative_l2": {
+      "normal_vs_zero": {"future_vision": 0.010973003810002732, "action": 0.004952371334852292},
+      "normal_vs_shuffle": {"future_vision": 0.009698672171670768, "action": 0.0039578357939483435}
+    },
+    "interpretation": "The observed deterministic fixed-weight differences are materially above numerical noise. This proves Local channel usability, not meaningful historical-memory quality."
+  }
+}
