@@ -2,11 +2,11 @@
   "schema_version": "r08_step6_runtime_trace_v1",
   "status": "PASS",
   "provenance": {
-    "root_commit": "84a4f32abaa35841725a33c4b40f588bde410167",
-    "submodule_commit": "fe499fa1308f2151dd67a7f943cf6386229ea38c",
+    "root_commit": "7440342c920d9ab7965d3fe33c860e49f9ff2eb8",
+    "submodule_commit": "89b421b72b49fa794ed3d9f0ef4bed68f4714970",
     "tool_sha256": "ec60e5549bb4706145da1bd9c45abd49fe869e10d577acbea9e57a46ac531186",
     "hostname": "gjob-dev-748492614731132928-taskrole1-0",
-    "utc_time": "2026-08-28T12:16:46.505689+00:00",
+    "utc_time": "2026-08-28T12:33:27.543775+00:00",
     "python": "system"
   },
   "history_mask": [
