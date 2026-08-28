@@ -434,3 +434,61 @@ Step 6 remains no-GPU and must stop at REVIEW before Gate A/B.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-28_R08_Step5_4aee924_f249566.md`
+
+---
+
+## 2026-08-28 — R08 Step 6 runtime integration review @ root 9d24e9e / submodule 147ab6d
+
+**Verdict: REQUEST_CHANGES**
+
+**Do not start GPU Gate A/B yet.**
+
+Accepted/fixed:
+- R08 history no longer implicitly enables R07 dummy.
+- local_history_horizon=0 now has an explicit Local-absent branch.
+- per-sample history_mask.any() gating is correct; all-mask uses local_memory=None.
+- history_dt_s finite guard is present.
+- state runtime remains disabled pending real train-split stats.
+- trace generator script is now committed.
+
+### HIGH-1 — current Step 6 trace is synthetic
+
+tools/g0/verify_r08_step6_runtime_trace.py only runs LocalHistoryRuntime.
+It manually constructs source_ids, local_indexes, future_shape and action_shape.
+It does not call OmniMoTModel._inject_local_history(), the real sequence packer, the real Local packer, or inspect real Vision/Action packed mRoPE.
+
+Required:
+- run production history injection on a mixed valid/all-mask batch;
+- run the real packer;
+- record actual Local sequence_indexes;
+- compare native Vision/Action mRoPE values against matched no-Local packing;
+- assert native condition_frame_indexes_vision/action unchanged;
+- valid sample packs exactly one Local token; all-mask sample packs none.
+
+Do not compare raw global packed index integers as the invariant: those may shift when Local is inserted. Compare mRoPE values gathered at each branch's own Vision/Action indexes.
+Do not hard-code Future/Action shapes in the CPU artifact; defer those to GPU Gate A unless real outputs are actually run.
+
+### HIGH-2 — selective optimizer allowlist misses the R08 trainable modules
+
+Current recipe adds only local_memory2llm and local_memory_modality_embed for Local.
+It does not add local_history_runtime.encoder.* / local_history_runtime.readout.*.
+
+Required:
+- add a selection pattern such as local_history_runtime when R08 history is enabled;
+- add a CPU/static named-parameter audit proving encoder/readout + R07 Local projection are selected and no unrelated parameter set is widened.
+
+### MEDIUM — remaining regressions/evidence
+
+1. Current test named H0 is actually H=1 + all-mask. Add a true model-level local_history_horizon=0 + no history fields -> _inject_local_history -> Local absent test.
+2. Add config regression: history=1/dummy=0 -> dummy disabled; history=1/dummy=1 -> fail fast.
+3. Regenerate step6_runtime_trace.json on final committed root/submodule and include root SHA, submodule SHA and tool SHA.
+
+Next:
+- Step 6 stays REVIEW.
+- CPU/static-only fixes.
+- new submodule/root SHAs.
+- mm2/Kimi/ChatGPT re-review.
+- no GPU / no R09.
+
+Detailed review:
+docs/collab/chatgpt/reviews/2026-08-28_R08_Step6_9d24e9e_147ab6d.md
