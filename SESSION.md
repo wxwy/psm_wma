@@ -22,7 +22,7 @@
 
 - R08 Gate-0 Wan z0 causal-contract sanity check（Codex，DONE）：三方 runtime review 均关闭（ChatGPT `APPROVE_TO_CLOSE_SANITY_CHECK`、mm2/Kimi `APPROVE_TO_CLOSE`）。单卡 `cuda:0` 的 128 anchor（四 suite × remainder 四类 × 8；每 anchor A/A-repeat/B 三次 Wan bf16 exact-window encode）结果为 `PASS_STRICT_BITWISE`：128/128 A-vs-B 与 A-repeat 均 bitwise、全部 `max_abs=0`，输入 suffix 均真实改变，coverage/确定性记录完整。第一次仅 torchcodec 动态库环境失败、未进 encode；attempt2 使用 venv cu13 lib 成功。raw sidecar `.pt` 85 MiB，SHA256=`154f18cd8de9e0a065ef9c766649550b6e456723a3a72b708a3dfb22b9d96e5f`，审查报告要求继续本地保留、不提交/不删除。按 ChatGPT `5188a5a`，这是一次 wrapper causal-contract sanity check，后续不再扩展 z0 实验。
 
-- R08 Step 2 causal-history data contract（Codex，IN_PROGRESS，无 GPU）：预计修改子模块 `libero_lerobot_dataset.py` 与对应 CPU tests，必要时根仓记录 artifact；仅提供 anchor `t` 的同 episode、严格 `j<t` 历史 frame/action/state raw evidence、left padding 与 mask。必须复用当前 action conversion/normalization 入口，不读 target action `[t,t+16)`，不接 LocalEvidenceEncoder/readout/model/R09。先完成代码/CPU tests并交三方审核。
+- R08 Step 2 causal-history data contract（Codex，REVIEW，无 GPU）：子模块 `31983c5` 已推送：仅在 `LIBEROLeRobotDataset` 和 factory 加入默认关闭的 `local_history_horizon`。H>0 时从同一 episode 的严格 `j<t` rows 构造 left-padded `history_*`：frame/global-row trace、mask、cache-z0 fixed `[96]` visual summary、state raw `[8]`、复用 `_build_frame_wise_action` + `normalize_action` 的 raw/normalized action `[10]`、age/dt；H=0 不产生字段。CPU 已验证 H=0、t=3 的 partial 和 t=16 的 full H=16 合同、normalizer parity、cache summary；`py_compile`/`diff --check` PASS。未接 LocalEvidenceEncoder/readout/model/R09，未运行 GPU；等待 mm2/Kimi/ChatGPT 独立代码审查。
 
 - `G0-R06/R07 override`（用户，DONE）：D017 生效：`iter_000002800` 冻结为 R06 No-Memory baseline，取消 canonical 400-episode acceptance，R07 UNBLOCKED；13-ckpt sweep 仅作趋势 evidence。未改 frozen 文档或历史 zero-shot FAIL 证据。
 
