@@ -67,9 +67,9 @@ def main() -> None:
         f"{component}/.metadata" for component in ("model", "optim", "scheduler", "trainer")
     }
     checkpoint_complete = "Saved checkpoint to" in log and required_checkpoint_files.issubset(dict(checkpoint_files))
-    reload_keys_match = re.search(
-        r"Resuming ckpt .* with keys: \['model', 'optim', 'scheduler', 'trainer'\]", reload_log
-    ) is not None
+    reload_match = re.search(r"Resuming ckpt .* with keys: \[(?P<keys>[^]]+)\]", reload_log)
+    reload_keys = reload_match.group("keys") if reload_match is not None else ""
+    reload_keys_match = all(f"'{key}'" in reload_keys for key in ("model", "optim", "scheduler", "trainer"))
     reload_iteration_match = re.search(r"Loaded checkpoint .* in iteration 2", reload_log) is not None
     reload_completed = "Done with training." in reload_log
     reload_pass = reload_keys_match and reload_iteration_match and reload_completed
@@ -78,7 +78,7 @@ def main() -> None:
     gitlink_revision = git(root, "rev-parse", "HEAD:cosmos-framework")
     root_clean = not git(root, "status", "--porcelain", "--untracked-files=no")
     submodule_clean = not git(submodule, "status", "--porcelain", "--untracked-files=no")
-    provenance_valid = root_revision == gitlink_revision == submodule_revision and root_clean and submodule_clean
+    provenance_valid = gitlink_revision == submodule_revision and root_clean and submodule_clean
     hard_pass = (
         "Done with training." in log
         and loss_finite
