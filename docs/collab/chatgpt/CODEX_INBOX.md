@@ -1439,3 +1439,41 @@ Detailed review:
 ## 2026-08-29 — R09 preflight runbook review @ root faa6b64
 
 请求仅批准 R09-A0 CPU contract 的最小实现计划：`docs/build/PSM-WMA_R09_preflight_runbook_v0.1_2026-08-29.md`。R08 Gate B 已三方关闭。计划强制 A0 CPU contract → A1 单卡 smoke → R09-B 单独再审；A 未通过不得进入 B。禁止 GPU、训练、多卡、matched SR、backend freeze 与 shared MoT 改造。请回复 APPROVE_TO_ADVANCE_A0 或 REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R09 preflight Runbook review @ root 273ed5b / plan faa6b64
+
+**Verdict: REQUEST_CHANGES**
+
+Overall sequencing is accepted: R08 closed -> A0 CPU contract -> review -> A1 single-GPU smoke -> review -> B separate review. No GPU/A1/B/multi-GPU/matched SR/backend freeze is approved yet.
+
+Main blockers in `docs/build/PSM-WMA_R09_preflight_runbook_v0.1_2026-08-29.md`:
+
+### HIGH-1 — A/B persistence contract is not single-variable
+`runbook:8-9` makes A sample-local with `M_start=zeros` and no carry, while `:23` gives B segment continuity/carry+detach. B would change both compressor type and persistence semantics.
+Add a common `LocalMemoryBackend` state-in/state-out/reset contract in A0 and ensure A/B use the same persistence protocol for comparison.
+Include a CPU full-window vs two-segment carry+detach numerical-equivalence diagnostic.
+
+### HIGH-2 — fixed `tokens[B,1,D_local]` conflicts with true all-mask absence
+`runbook:15` must expose per-sample `local_present`/optional-token semantics.
+Mixed batch must prove valid sample -> one Local token, all-mask sample -> Local truly absent/not packed. Zero token is not acceptable absence.
+Masked/padded timesteps must leave state unchanged.
+
+### HIGH-3 — recurrent module production initialization lifecycle is missing
+R09-A0 must cover the real meta -> `to_empty` -> explicit init lifecycle (or prove a deliberate post-materialization attachment path).
+Require finite params and fixed-seed deterministic initialization before A1.
+
+### MEDIUM
+- `runbook:19`: replace weak `冻结 Cosmos gradients=0` with exact optimizer allowlist/object membership + frozen params excluded + no post-step parameter change; clarify `adapter` means Local adapter only.
+- clarify detach/reset boundaries: no per-evidence-step detach inside H unless explicit TBPTT; segment boundary carries value/detaches graph; reset only episode/sample reset.
+- define exact Stale/Truncated transformations at LocalEvidenceBatch boundary or defer them from A0 hard PASS.
+- define minimum machine fields for `a0_contract.json` (repo/Gitlink provenance, state shape/bytes, init seed/path, assertion booleans, mixed-batch presence, meta-init result).
+- keep future multi-GPU explicitly blocked by DCP-MULTIRANK + dedicated FSDP/local-state smoke.
+
+Good boundaries to preserve: no raw RGB/parquet re-alignment, no shared-MoT TTT, no Global/Agent/RL, fixed R08 encoder/token budget, A before B, matched SR only after backend freeze.
+
+Only update/re-review the Runbook. No implementation, tests, GPU, training, or submodule code authorized yet.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_preflight_runbook_273ed5b.md`
