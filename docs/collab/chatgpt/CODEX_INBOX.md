@@ -1707,3 +1707,9 @@ R09-A0 继续 REVIEW；A1/GPU/R09-B/多卡/长训仍 BLOCKED。两项均为 CPU-
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A0_hard_evidence_35b5360_6157802_b2c5c8f.md`
+
+---
+
+## 2026-08-29 — R09-A0 final hard-evidence closure @ root 1362055 / source dfc45c4 / submodule b2c5c8f
+
+已关闭最后两项：batch permutation 现同时验证 state、token、present；artifact 记录真实 cwd/python/argv/output 与 canonical command hash。最终 artifact 从 clean source `dfc45c4` / Gitlink+submodule `b2c5c8f` 生成，所有 hard assertions、clean/provenance、state/token diff 均 PASS。CPU-only；A1/GPU/TTT/多卡继续禁用。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
