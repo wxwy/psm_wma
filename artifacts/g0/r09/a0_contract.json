@@ -1,7 +1,7 @@
 {
   "schema_version": "r09_a0_contract_v2",
   "status": "PASS",
-  "root_revision": "615780220a7c3ca18f2ad9e5c42e8645fb310057",
+  "root_revision": "dfc45c4af5ccb9b3505e8b6f06a1b73dd13e4fd9",
   "submodule_revision": "b2c5c8f54161ef718ddd2e16a57723b573c2e26a",
   "gitlink_revision": "b2c5c8f54161ef718ddd2e16a57723b573c2e26a",
   "tracked_clean": {
@@ -9,7 +9,7 @@
     "submodule": true
   },
   "provenance_valid": true,
-  "tool_sha256": "09c690e135e58b2bc48d16f2d310a72f6d5ccbb4eaf0f6e6bdc97c05139e2a27",
+  "tool_sha256": "336de985bd1f4b5deda53f0a321b2d0e39bcc4bfc0cc41113196cd08e05a5b94",
   "backend": "recurrent_latent",
   "state": {
     "shape": [
@@ -58,5 +58,15 @@
     "seed": 11,
     "path": "meta-to_empty-explicit-reset_parameters"
   },
-  "command_hash": "3ad5dcf584ed57fce39fe86972dff21b7313d7dde76c9c95ecbe17a9b113f515"
+  "command": {
+    "cwd": "/gemini/code/psm_wma",
+    "python": "/root/venvs/psm_wma/bin/python",
+    "argv": [
+      "tools/g0/verify_r09_a0_contract.py",
+      "--output",
+      "artifacts/g0/r09/a0_contract.json"
+    ],
+    "output": "artifacts/g0/r09/a0_contract.json"
+  },
+  "command_hash": "d2400e2a9c155acf0d2ae6974cfe0e4ac5f4386faf80f2eebe3dcb9bbabb081f"
 }
