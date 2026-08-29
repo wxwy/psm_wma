@@ -1886,3 +1886,25 @@ R09-B/多卡/长训/matched SR/backend freeze 继续 BLOCKED。
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A1_final_probe_9d3bc3b_5c13493.md`
+
+---
+
+## 2026-08-29 — R09-A1 last pre-run evidence fixes @ root d91ee0c / submodule c0287e2
+
+**Verdict: APPROVE_TO_RUN_CORRECTED_A1**
+
+最终 3 个 pre-run blocker 已关闭：
+- `segment_detach_value_exact` 已记录并进入 hard PASS，segment contract 同时证明 value continuity + graph detach；
+- verifier 从 `training_root_revision` 独立 `git ls-tree` 推导 Gitlink，并 hard require `derived_gitlink == training_gitlink == training_submodule`；D005 command sidecar 强制 source-match 并 SHA256 绑定；
+- full-run CUDA peak hard gate 要求 allocated>0、reserved>0、device 非空。
+
+同时已确认 direct optimizer object-set equality、16-tensor corrected allowlist、selected grad present/finite、encoder/backend/Local-adapter group nonzero grad、strict clean + verifier Gitlink hard gate 均保留。
+
+现在批准修正后的 **R09-A1 单 A100 bounded 100 optimizer-step smoke**：Gate-A canonical warm-start，`PSM_R09_A1_ENABLED=1`，启用 `PSM_R09_A1_PROBE_OUTPUT`，启动前保存完整 D005 command/cwd/env/GPU/world_size/network/input/output/source provenance。训练必须来自 committed clean source，且 R09 model/config/probe 代码与已审 `d91ee0c / c0287e2` 一致；记录实际 launch root/submodule/Gitlink。
+
+跑完必须停在 REVIEW。A1 closure 还需 final fixed-weight Normal/Zero/Shuffle Future+Action sensitivity 与非-history invariants；这项不阻塞本次 100-step 运行，但阻塞 A1 DONE。
+
+继续禁止 R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL。任何 model/dataflow/allowlist 改动都使本批准失效，需重新送审。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A1_pre_run_approval_d91ee0c_c0287e2.md`
