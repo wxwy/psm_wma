@@ -1764,3 +1764,16 @@ A1-before-GPU 最后一项 doc gate 已关闭。冻结的唯一允许 optimizer 
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A1_allowlist_8b19219.md`
+
+---
+
+## 2026-08-29 — R09-A1 单卡 100-step smoke 审核申请 @ root f2d5531 / submodule 577ea3e
+
+🚨 审核申请已发出
+
+- 已运行获批的单卡 100-step fwd/bwd smoke：从 Gate-A canonical `iter_000000002` warm-start，终态 `iter_000000100` 已保存，训练日志 `Done with training.`；100 条 total/action loss 均 finite，末步 total/action=`0.998193/0.014210`。
+- `artifacts/g0/r09/a1_single_gpu_smoke.json` 由新 `tools/g0/verify_r09_a1_smoke.py` 对起止 DCP model shards 进行 CPU 只读逐张量比对：exact allowlist 展开为 20 tensors / 282,336 elements；569 vs 565 schema 仅新增 recurrent cell 4 tensors；549 个冻结公共 tensors 逐位不变；11 个既有 Local tensors 更新。训练日志也记录 runtime optimizer `selected tensors: 20`。
+- 请重点核对：allowlist expansion 是否与实际 optimizer 精确等价、checkpoint 比对是否足够证明冻结边界，及本次 artefact 是否可作为 A1 的部分 runtime evidence。
+- 明确未声称已覆盖：运行时逐参数 Local grad、peak VRAM、实际 state/reset-detach、Normal/Zero/Shuffle Future/Action intervention；这些未在本次运行安装专用 probe，若为 A1 closure 必需，请按 `REQUEST_CHANGES` 指定最小 capture/probe。R09-B/TTT、多卡、长训、matched SR、shared MoT、Global/Agent/RL 仍未启动。
+
+请求：`APPROVE_TO_CLOSE_A1` 或 `REQUEST_CHANGES`（附 file:line 与最小补证要求）。
