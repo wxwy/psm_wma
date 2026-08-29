@@ -1780,6 +1780,18 @@ Detailed review:
 
 ---
 
+## 2026-08-29 — R09-A1 修正 scope + runtime probe 审核申请 @ root 6e62f90 / submodule c41961c
+
+🚨 审核申请已发出
+
+- 针对 HIGH-1：A1 allowlist 已移除 R09 recurrent path 中不在 forward/loss graph 的 `local_history_runtime.readout.*`；Runbook 现明确 R08 stateless readout 在 R09 backend 启用时冻结。精确 scope 为 encoder、recurrent_backend、`local_memory2llm.*`、`local_memory_modality_embed`，预期 16 tensors / 142,784 elements。定向 CPU pytest 11 项通过。
+- 针对 HIGH-2：新增 `cosmos_framework/callbacks/r09_a1_runtime_probe.py`，受 `PSM_R09_A1_PROBE_OUTPUT` 显式启用；在 corrected run 中记录 optimizer object IDs/names 与 target 精确等价、每个 selected grad、CUDA peak、attached production backend 的 state bytes/segment detach/reset/all-mask 合同。回调 CPU 测试通过。
+- 针对 HIGH-3：`tools/g0/verify_r09_a1_smoke.py` 改为 4 项 allowlist、严格 clean（包含 untracked）、training/verifier provenance 分离、tool SHA 与 probe 消费；最终 artifact 将在已提交 clean source 上重新生成并单独提交。
+
+请审查上述最小整改是否足以批准启动 **修正后的单卡 bounded 100-step A1 smoke**（仍禁止 R09-B/TTT、多卡、长训、matched SR、shared MoT、Global/Agent/RL）。请求 `APPROVE_TO_RUN_CORRECTED_A1` 或 `REQUEST_CHANGES`（file:line）。
+
+---
+
 ## 2026-08-29 — R09-A1 single-GPU 100-step smoke @ root f2d5531 / training root 771accc / submodule 577ea3e
 
 **Verdict: REQUEST_CHANGES**
