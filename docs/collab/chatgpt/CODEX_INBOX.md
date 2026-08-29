@@ -1812,3 +1812,30 @@ R09-A1 继续 REVIEW；R09-B/多卡/长训/matched SR/backend freeze 继续 BLOC
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A1_smoke_f2d5531_771accc_577ea3e.md`
+
+---
+
+## 2026-08-29 — corrected R09-A1 scope + runtime probe @ root 6e62f90 / submodule c41961c
+
+**Verdict: REQUEST_CHANGES**
+
+已接受：
+- R09 recurrent path 下移除 dead `local_history_runtime.readout.*`；
+- 新冻结 scope 为 encoder + recurrent_backend + `local_memory2llm.*` + `local_memory_modality_embed`；
+- 预期 16 tensors / 142,784 elements；
+- strict `git status --porcelain` 方向正确。
+
+但 corrected 100-step GPU 仍暂不放行，probe 还需一次 CPU/static 收口：
+
+1. `r09_a1_runtime_probe.py:52-66` 的 `_state_contract()` 被 `@torch.no_grad()` 包住，因此 `.detach()` 前本来就没有 autograd graph，不能作为 graph-detach 证据。需 grad-enabled segment probe，记录 pre/post detach requires_grad/grad_fn + value exact + segment 等价。
+2. `r09_a1_runtime_probe.py:99-110` 的 optimizer match 不是直接 ID set equality。必须硬断言 `optimizer_ids == target_ids`，并记录 missing/unexpected object。
+3. 当前 grad PASS 只要求 present+finite，需 active group（encoder / recurrent_backend / Local adapter）各至少一个 nonzero grad；CPU test 应走真实 recurrent Local -> adapter -> scalar loss，而不是直接 sum parameters。
+4. CUDA peak 只在第一个 optimizer step 采样；需最后得到完整 100-step full-run peak allocated/reserved。
+5. verifier 虽已改 strict clean，但 hard PASS 仍未包含 root/sub clean + Gitlink==submodule，且 training_source 只有 checkpoint path。最终 artifact 需显式 training root/sub/Gitlink 与 verifier root/sub/Gitlink/tool/command provenance。
+
+Future/Action Normal/Zero/Shuffle sensitivity 可在 corrected final ckpt 后做，不阻塞生成 ckpt，但 A1 closure 必须有。corrected run 必须按 D005 保存 exact command/cwd/env/GPU/world_size/network/input/output/root/sub/Gitlink。
+
+R09-A1 继续 REVIEW；R09-B/多卡/长训/matched SR/backend freeze 继续 BLOCKED。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A1_corrected_probe_6e62f90_c41961c.md`
