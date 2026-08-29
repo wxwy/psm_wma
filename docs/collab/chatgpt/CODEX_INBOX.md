@@ -1303,3 +1303,42 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_history_mask_hotfix_1efcc1f_fd140ff.md`
+
+
+---
+
+## 2026-08-29 — R08 Gate B batch-packing mask lifecycle hotfix review @ root 2ad910a / submodule 860f532
+
+**Verdict: APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY**
+
+本轮 hotfix 通过。
+
+核查结论：
+- runtime 确认 history 注入后 `data_batch` 会经过 typed/payload repacking，因此前一版把审计副本留在原 dict 中并不可靠；
+- `860f532` 现在在 `_inject_local_history()` 中把实际 `_stack(...).bool()` 后、真正送入 Local runtime 的 effective mask 存入当前模型实例的临时审计槽位；
+- 同一次 `training_step` 结束时把该值放进 `output_batch["r07_parity_history_mask"]`；
+- Gate-B 当前是单卡、单步、每 mode 独立进程的 capture-only 路径，未发现 stale/microbatch 交叉读取风险；
+- 当前 V2 tree 已确认 Gitlink == `860f5328b5b9fa41103497abaad7985a6c0333ae`；
+- 未改 Normal/Zero/Shuffle 干预、mask 内容、模型、checkpoint、optimizer、canonical verifier、packing/attention。
+
+批准立即：
+1. Normal
+2. Zero
+3. Shuffle
+
+继续严格保持：
+- pinned reviewed Gate-A checkpoint；
+- same batch/current sample/noise/masks/non-history config；
+- only history intervention changes；
+- forward/capture only；
+- no backward；
+- no optimizer step；
+- no long training；
+- no multi-GPU；
+- no Gate C；
+- no R09。
+
+三次有效 capture 完成后运行 strict Gate-B verifier，并提交 final artifact + JSON/PT/provenance/log/config hashes 做 runtime review。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_batch_packing_mask_hotfix_2ad910a_860f532.md`
