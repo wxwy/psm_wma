@@ -1679,3 +1679,9 @@ R09-A0 继续 REVIEW；A1/GPU/R09-B/多卡/长训仍 BLOCKED。
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A0_complete_reset_aa3bfbd_1fddced_6bf59c2.md`
+
+---
+
+## 2026-08-29 — R09-A0 hard-evidence closure @ root 35b5360 / source 6157802 / submodule b2c5c8f
+
+新增 reset-state→all-masked replay hard regression，selected sample 必须 `present=false` 且 token absent；clean/provenance 已纳入 verifier PASS。最终 artifact 从 clean source `6157802` / Gitlink+submodule `b2c5c8f` 生成，双仓 clean、8 项 assertions、state/token diff 均 PASS。CPU-only；A1/GPU/TTT/多卡继续禁用。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
