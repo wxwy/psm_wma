@@ -1628,3 +1628,28 @@ Detailed review:
 ## 2026-08-29 — R09-A0 clean-source closure review @ root 91139e4 / submodule 67b6f88
 
 显式 persistent `initialized` state 已替代 latent 数值推断；全 mask 后仍 carry presence，reset 仅清 selected state。最终 artifact 从 clean source root `2961e8d` / Gitlink+submodule `67b6f88` 重算：tracked-clean、provenance、所有实际 A0 断言均 true，state/token diff=0。CPU-only；A1/GPU/TTT/多卡继续禁用。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R09-A0 clean-source closure @ root 91139e4 / source 2961e8d / submodule 67b6f88
+
+**Verdict: REQUEST_CHANGES**
+
+本轮已确认两个重要闭环：
+- presence 已从 latent 数值推断改为显式 `(latent, initialized)` persistent state；
+- clean-source 两阶段证据流程成立：source root `2961e8d` / Gitlink+submodule `67b6f88`，artifact 后续单独提交于 `91139e4`，artifact 记录 root/submodule clean=true。
+
+但仍有一个硬 blocker：**selected reset 只清 latent，没有清 initialized/presence**。当前 `reset_mask()` 仍只接受 Tensor；测试/verifier 也是 `latent, initialized = state` 后仅 reset latent。这样 done 样本 reset 后若下一段全 masked，`initialized=true` 仍会让 `present=true`，造成 episode leakage。
+
+必须改为 reset 完整 backend state（或等价）：selected sample 的 latent->0 且 initialized->false；非 selected 的 latent+initialized 原样保持。新增 hard regression：pre-reset selected latent 非零且 initialized=true；reset 后全 masked replay 仍 present=false。
+
+另外继续收紧：
+- clean/provenance 纳入 verifier hard PASS；
+- batch permutation 检查 state/token/present；
+- normal-path backend params/state/tokens finite 纳入 hard PASS；
+- command provenance 改为真实 cwd/python/argv/output 的记录或 canonical hash。
+
+R09-A0 继续 REVIEW；A1/GPU/R09-B/多卡/长训仍 BLOCKED。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A0_clean_source_91139e4_2961e8d_67b6f88.md`
