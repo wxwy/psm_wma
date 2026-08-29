@@ -1602,3 +1602,23 @@ R09-A0 继续 REVIEW；A1/GPU/R09-B/多卡/长训仍 BLOCKED。
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A0_self_validating_4c7c090_c763475.md`
+
+---
+
+## 2026-08-29 — R09-A0 presence + clean-source re-review @ root 66fc70f / submodule 52e0573
+
+**Verdict: REQUEST_CHANGES**
+
+本轮已关闭一部分上次 presence bug：segment-2 全 masked 时，只要 carried latent 非零就不会自动丢 presence；子模块也加入了对应 regression。source root `931c397` 的 Gitlink 与 submodule `52e0573` 一致。
+
+但仍有两个硬 blocker：
+
+1. **presence 仍由 latent 数值推断**：当前 `present = mask.any(...) | state.ne(0).any(...)`。这不等价于“自上次 reset 起已经建立过 Local memory”。presence 必须作为显式 persistent state bit/metadata carry；valid evidence 置 true，masked segment 保持，selected reset 仅对 done 样本清 state+presence。不能依赖 latent 是否恰好非零。
+2. **clean-source 仍未成立且未纳入 PASS**：artifact 明确记录 `tracked_clean.root=false`；verifier 在写 artifact 前就调用 `clean(root)`，所以这是运行前已 dirty。并且 `passed` 仍不包含 root/sub clean、Gitlink==submodule、provenance_valid，因此 dirty source 仍可 PASS。需 commit 最终 backend+verifier 后，从真正 clean source 运行，再单独 commit artifact。
+
+另外继续收紧：batch permutation 检查 state/token/present 三者；normal-path params/state/tokens finite 纳入 hard PASS；command provenance 必须基于实际 argv/cwd/python/output，而不是常量字符串 hash。
+
+R09-A0 继续 REVIEW；A1/GPU/R09-B/多卡/长训仍 BLOCKED。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A0_presence_clean_66fc70f_52e0573.md`
