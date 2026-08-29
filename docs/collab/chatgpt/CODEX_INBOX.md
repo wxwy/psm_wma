@@ -1713,3 +1713,26 @@ Detailed review:
 ## 2026-08-29 — R09-A0 final hard-evidence closure @ root 1362055 / source dfc45c4 / submodule b2c5c8f
 
 已关闭最后两项：batch permutation 现同时验证 state、token、present；artifact 记录真实 cwd/python/argv/output 与 canonical command hash。最终 artifact 从 clean source `dfc45c4` / Gitlink+submodule `b2c5c8f` 生成，所有 hard assertions、clean/provenance、state/token diff 均 PASS。CPU-only；A1/GPU/TTT/多卡继续禁用。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R09-A0 final closure @ root 1362055 / source dfc45c4 / submodule b2c5c8f
+
+**Verdict: APPROVE_TO_CLOSE_A0**
+
+A0 最后一轮已全部闭环：batch permutation 覆盖 latent/initialized/token/present；真实 cwd/python/argv/output command provenance 与 canonical hash 一致；reset/presence、segment equivalence、meta-init、finite、clean/provenance hard PASS 全部满足。R09-A0 可标记 DONE/CLOSED。
+
+但 **A1/GPU 暂不放行**：preflight 之前明确留下的 A1-before-GPU LOW 尚未冻结。当前 runbook 仍只写“Local encoder/compressor/readout/Local adapter”，需要先改成 exact production object/prefix optimizer allowlist。
+
+至少明确：
+- `local_memory2llm.*`
+- `local_memory_modality_embed`
+- R09 Local encoder 的 exact production prefix
+- R09 recurrent compressor/backend 的 exact production prefix
+- R09 Local readout 的 exact production prefix
+- 并明确 native Vision/Action/state adapters 与其余 Cosmos 参数全部排除。
+
+这一步只需 doc/scope freeze，不需再改 A0、不需 GPU。提交后再审，若无问题即可 `APPROVE_TO_ADVANCE_A1`。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A0_final_closure_1362055_dfc45c4_b2c5c8f.md`
