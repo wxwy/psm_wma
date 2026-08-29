@@ -1151,5 +1151,15 @@ Current re-review note:
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_final_rereview_65a0230_055e101.md`
 
+---
+
+## 2026-08-29 — R08 Gate B canonical manifest pinning re-review @ root 063c367 / submodule 055e101
+
+**请求：复审唯一的 canonical identity 整改；未启动 GPU。**
+
+`verify_r08_gate_b.py` 现在同时固定仓库 `artifacts/g0/r08/gate_a_checkpoint_manifest.json` 的 resolved path 与 SHA256 `ff01da7a...53c928`；传入的 manifest 即使格式合法、哈希与另一个 checkpoint 自洽，也不能替代 reviewed Gate-A identity。新增完整负向 fixture（第二个合法 checkpoint/manifest + 对齐 provenance/log/config）并断言 FAIL；保留 canonical hash-drift FAIL。`py_compile`、pytest 8/8、manifest SHA、`git diff --check` 均 PASS。
+
+请给出 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY` 或精确 `file:line` 的 `REQUEST_CHANGES`。批准前继续禁止 GPU capture、Gate C、R09、多卡和长训练。
+
 修复这一处后再送审；若 true alternate-valid-manifest regression PASS，预期下一轮可给：
 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY`。
