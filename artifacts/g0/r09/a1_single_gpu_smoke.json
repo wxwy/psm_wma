@@ -1,0 +1,112 @@
+{
+  "allowlist": [
+    "local_history_runtime.encoder",
+    "local_history_runtime.recurrent_backend",
+    "local_history_runtime.readout",
+    "local_memory2llm",
+    "local_memory_modality_embed"
+  ],
+  "checkpoint": {
+    "added_names": [
+      "net.local_history_runtime.recurrent_backend.cell.bias_hh",
+      "net.local_history_runtime.recurrent_backend.cell.bias_ih",
+      "net.local_history_runtime.recurrent_backend.cell.weight_hh",
+      "net.local_history_runtime.recurrent_backend.cell.weight_ih"
+    ],
+    "final": "/gemini/code/r09-a1/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000100",
+    "final_tensor_count": 569,
+    "frozen_common_digest": "69c565d225ac00b4bd801e085b946b902d4e1ae77779599a9f99aaa2ff7ada52",
+    "frozen_common_tensor_count": 549,
+    "initial": "/gemini/code/r08-gate-a-canonical/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+    "initial_tensor_count": 565,
+    "removed_names": []
+  },
+  "checks": {
+    "all_frozen_common_tensors_bitwise_unchanged": true,
+    "all_logged_losses_finite": true,
+    "at_least_one_preexisting_selected_tensor_changed": true,
+    "checkpoint_schema_matches_except_recurrent_backend": true,
+    "exact_allowlist_yields_20_tensors": true,
+    "exact_allowlist_yields_282336_elements": true,
+    "training_completed_100_steps": true
+  },
+  "command": {
+    "argv": [
+      "../tools/g0/verify_r09_a1_smoke.py",
+      "--root",
+      "/gemini/code/psm_wma",
+      "--initial-checkpoint",
+      "/gemini/code/r08-gate-a-canonical/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+      "--final-checkpoint",
+      "/gemini/code/r09-a1/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000100",
+      "--log",
+      "/gemini/code/r09-a1/logs/action_policy_libero_edge_all_sft.log",
+      "--output",
+      "/gemini/code/psm_wma/artifacts/g0/r09/a1_single_gpu_smoke.json"
+    ],
+    "cwd": "/gemini/code/psm_wma/cosmos-framework",
+    "python": "/root/venvs/psm_wma/bin/python"
+  },
+  "command_hash": "176934f9adcfe8fe7101ae5ebf2db49b9864f1c0738aadfa2ea2a8da167bdcc1",
+  "root_revision": "771acccd0fb4058a896e225a4d6cda38f2c55e2d",
+  "schema_version": "r09_a1_smoke_v1",
+  "selected": {
+    "changed_preexisting_names": [
+      "net.local_history_runtime.encoder.action_proj.bias",
+      "net.local_history_runtime.encoder.action_proj.weight",
+      "net.local_history_runtime.encoder.age_embedding.weight",
+      "net.local_history_runtime.encoder.dt_proj.bias",
+      "net.local_history_runtime.encoder.dt_proj.weight",
+      "net.local_history_runtime.encoder.norm.bias",
+      "net.local_history_runtime.encoder.visual_proj.bias",
+      "net.local_history_runtime.encoder.visual_proj.weight",
+      "net.local_memory2llm.bias",
+      "net.local_memory2llm.weight",
+      "net.local_memory_modality_embed"
+    ],
+    "element_count": 282336,
+    "names": [
+      "net.local_history_runtime.encoder.action_proj.bias",
+      "net.local_history_runtime.encoder.action_proj.weight",
+      "net.local_history_runtime.encoder.age_embedding.weight",
+      "net.local_history_runtime.encoder.dt_proj.bias",
+      "net.local_history_runtime.encoder.dt_proj.weight",
+      "net.local_history_runtime.encoder.norm.bias",
+      "net.local_history_runtime.encoder.norm.weight",
+      "net.local_history_runtime.encoder.visual_proj.bias",
+      "net.local_history_runtime.encoder.visual_proj.weight",
+      "net.local_history_runtime.readout.mlp.0.bias",
+      "net.local_history_runtime.readout.mlp.0.weight",
+      "net.local_history_runtime.readout.mlp.2.bias",
+      "net.local_history_runtime.readout.mlp.2.weight",
+      "net.local_history_runtime.recurrent_backend.cell.bias_hh",
+      "net.local_history_runtime.recurrent_backend.cell.bias_ih",
+      "net.local_history_runtime.recurrent_backend.cell.weight_hh",
+      "net.local_history_runtime.recurrent_backend.cell.weight_ih",
+      "net.local_memory2llm.bias",
+      "net.local_memory2llm.weight",
+      "net.local_memory_modality_embed"
+    ],
+    "tensor_count": 20
+  },
+  "status": "PASS",
+  "submodule_revision": "577ea3ea311755d661590ffc9be2b68a02c1b479",
+  "tracked_clean": {
+    "root": true,
+    "submodule": true
+  },
+  "training": {
+    "completed": true,
+    "finite_action_loss": true,
+    "finite_loss": true,
+    "iterations_logged": 100,
+    "last_action_loss": 0.01421,
+    "last_iteration": 100,
+    "last_loss": 0.998193,
+    "step_wall_seconds": {
+      "count": 100,
+      "max": 83.83952,
+      "min": 10.454752
+    }
+  }
+}

@@ -669,3 +669,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 已认领：`G0-R09-RUNBOOK-PREFLIGHT`。目标是形成可独立审核的最小分轮 runbook；只读核查现有合同、测试和资产，不修改 Cosmos runtime、不运行项目代码。
 - 已产出 `docs/build/PSM-WMA_R09_preflight_runbook_v0.1_2026-08-29.md`，状态 REVIEW；A0/A1/B 分轮，待审核后才实施。
 - ChatGPT/MM/Kimi 均 `APPROVE_TO_ADVANCE_A0`；预计修改 `cosmos-framework/cosmos_framework/model/generator/mot/local_evidence.py` 及其 CPU tests，并新增 A0 verifier/artifact。禁止 GPU、A1、TTT、多卡与 backend freeze。
+
+### R09-A1 单卡 100-step smoke（2026-08-29，REVIEW）
+
+- 目的/Gate：在三方批准的精确 Local allowlist 内，运行一次单卡 100-step fwd/bwd smoke；禁止 R09-B/TTT、多卡、长训和 shared Cosmos 改造。
+- 运行：`root=771accc`、`submodule=577ea3e`，从 Gate-A canonical `iter_000000002` warm-start，`PSM_R09_A1_ENABLED=1`，A100-80GB 单卡；训练正常完成 `iteration=100`，终态 checkpoint 为 `/gemini/code/r09-a1/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000100`，日志最终为 `Done with training.`。
+- 证据：新增 `tools/g0/verify_r09_a1_smoke.py` 只读加载起止 DCP model shards 并输出 `artifacts/g0/r09/a1_single_gpu_smoke.json`。JSON PASS：精确 20 个 selected tensors / 282,336 elements；569 vs 565 tensor schema 仅新增 recurrent cell 4 张量；549 个冻结公共张量逐位不变；11 个既有 Local 张量改变；100 条 loss/action-loss 全有限。最终 loss=`0.998193`、action loss=`0.014210`，host step wall min/max=`10.454752/83.839520` 秒。
+- 已执行：`py_compile verifier`、DCP 离线双 checkpoint 逐张量比较、JSON parse、`git diff --check` 均 PASS。未执行：A1 run 中未安装专用 runtime probe，故 state/reset-detach、逐参数 Local grad、GPU peak VRAM 与 Normal/Zero/Shuffle Future/Action intervention 不应由本 JSON 声称已验证；作为本轮独立审核的显式关注项。提交：未提交。
