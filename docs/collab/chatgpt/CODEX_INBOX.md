@@ -1955,3 +1955,22 @@ A1 sensitivity PASS：15 项 invariant exact；Zero/Shuffle Local payload 变化
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A1_final_sensitivity_e256cfb.md`
+
+---
+
+## 2026-08-29 — R09-A1 final closure @ 9a79bcf
+
+**Verdict: APPROVE_TO_CLOSE_A1**
+
+corrected 100-step smoke 与 final fixed-weight Normal/Zero/Shuffle sensitivity 的 canonical V2 evidence 已完整提交并独立复核通过。
+
+100-step smoke：100/100 完成；loss/action finite；corrected allowlist 精确 16 tensors / 142,784 elements；optimizer object set exact；无 unexpected optimizer；selected grad 全 present/finite，encoder/recurrent_backend/Local adapter 三组均 nonzero；553 个 frozen common tensors bitwise unchanged；state contract、segment value/token/state exact、graph detach、partial reset/all-mask、D005/provenance、clean/Gitlink hard gates 全 PASS；CUDA peak allocated/reserved=27,153,490,944 / 29,941,039,104 bytes。
+
+final sensitivity：15/15 non-history invariants exact。Normal→Zero Future/Action relative L2 = 0.012276 / 0.007808；Normal→Shuffle = 0.010906 / 0.006412，均非零。三模式 provenance 同 root `e256cfb`、submodule/Gitlink `c0287e2`、同 corrected `iter_000000100`、capture_only=true；日志独立证明三次均加载同一 checkpoint。
+
+`1aee109 -> e256cfb` 以及 `e256cfb -> 9a79bcf` 均未引入 model/dataflow/optimizer/submodule 改动，后者仅提交 canonical artifacts 与文档。因此 ChatGPT 侧 R09-A1 可关闭。
+
+但按 R09 runbook，R09-B 仍须等待 A1 其余独立 reviewer 一并关闭；本 verdict 单独不授权 R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A1_final_closure_9a79bcf.md`
