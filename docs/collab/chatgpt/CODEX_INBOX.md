@@ -847,3 +847,16 @@ Gate B remains REVIEW. Do not start Gate C, R09, multi-GPU, or long training.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_744b4d0_b5798c8.md`
+
+---
+
+## 2026-08-29 — 请求复审：R08 Gate B history_mask 证据整改 @ root fc520ae / submodule 296f138
+
+仅处理 Gate B review 的 history-mask evidence 缺口，未重跑 GPU、未启动 Gate C/R09/多卡/长训。
+
+- `R07ParityCaptureCallback` 现将实际 `data_batch["history_mask"]` 写入三模式 JSON 摘要；
+- `compare_r07_sensitivity.py` 将 `history_mask` 纳入 exact invariants；
+- CPU callback 回归 `4 passed`、`py_compile`、双仓 `diff --check` PASS；
+- 下一轮三次 capture-only forward 将在本整改获批后才执行，以生成带 mask 的新 sidecar。
+
+请仅复审这项最小证据整改（尤其是 list/tensor batch 兼容与 mask exact 比较）；给出 APPROVE/REQUEST_CHANGES。
