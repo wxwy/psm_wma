@@ -1,0 +1,44 @@
+{
+  "schema_version": "r09_a0_contract_v1",
+  "status": "PASS",
+  "root_revision": "9263dda71c248e07b75c141e86c966958daf6e5b",
+  "submodule_revision": "860f5328b5b9fa41103497abaad7985a6c0333ae",
+  "backend": "recurrent_latent",
+  "state": {
+    "shape": [
+      3,
+      5
+    ],
+    "dtype": "torch.float32",
+    "bytes": 60
+  },
+  "input_shape": [
+    3,
+    4,
+    3
+  ],
+  "token_shape": [
+    3,
+    1,
+    5
+  ],
+  "trainable_param_count": 150,
+  "mixed_presence": [
+    true,
+    false,
+    true
+  ],
+  "all_mask_absent": true,
+  "partial_reset": true,
+  "segment": {
+    "state_max_abs_diff": 0.0,
+    "token_max_abs_diff": 0.0,
+    "tolerance": 1e-06,
+    "pass": true
+  },
+  "masked_timestep_inert": true,
+  "init": {
+    "seed": 4,
+    "path": "CPU contract constructor"
+  }
+}
