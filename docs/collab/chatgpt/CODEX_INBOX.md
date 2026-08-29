@@ -1742,3 +1742,25 @@ Detailed review:
 ## 2026-08-29 — R09-A1 optimizer scope freeze review @ root 8b19219
 
 A0 已关闭。本轮仅冻结 A1 optimizer allowlist：`net.local_history_runtime.encoder.*`、`recurrent_backend.*`、`readout.*`、`local_memory2llm.*`、`local_memory_modality_embed`；native Vision/Action/state adapters、shared Cosmos 与其余参数全部排除。未实现、未启动 GPU。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R09-A1 exact optimizer allowlist freeze @ root 8b19219
+
+**Verdict: APPROVE_TO_ADVANCE_A1**
+
+A1-before-GPU 最后一项 doc gate 已关闭。冻结的唯一允许 optimizer object/prefix：
+- `net.local_history_runtime.encoder.*`
+- `net.local_history_runtime.recurrent_backend.*`
+- `net.local_history_runtime.readout.*`
+- `net.local_memory2llm.*`
+- `net.local_memory_modality_embed`
+
+并明确排除 native Vision/Action/state adapters、shared Cosmos 及所有其他参数。独立核对现有 production 结构：`local_history_runtime.encoder/readout`、`local_memory2llm`、`local_memory_modality_embed` 均与当前 wiring 一致；`recurrent_backend` 已由 runbook 冻结为 A1 接入时的唯一 production 名称。
+
+现在批准 **R09-A1 单卡 100-step fwd/bwd smoke**。GPU 仅限这一 bounded smoke。A1 必须输出实际展开的 trainable param-name list，并证明 optimizer params 与 allowlist expansion 精确集合相等；冻结参数 step 前后不变；记录 finite loss/Local grads/VRAM/latency/state bytes/segment reset-detach/nonzero future-action sensitivity。
+
+仍禁止 R09-B/TTT、shared MoT 改造、多卡、长训、matched SR、backend freeze、Global/Agent/RL。A1 完成后停在 REVIEW。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A1_allowlist_8b19219.md`
