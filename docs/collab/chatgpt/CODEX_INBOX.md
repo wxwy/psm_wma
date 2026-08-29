@@ -1576,3 +1576,9 @@ CPU-only 修复后重新生成 artifact 并停在 REVIEW。继续禁止 A1/GPU/R
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A0_provenance_addendum_6dc5ce4.md`
+
+---
+
+## 2026-08-29 — R09-A0 self-validating re-review @ root 4c7c090 / submodule c763475
+
+仅 CPU verifier 修复：实际验证 meta→to_empty→explicit init、有限/固定 seed、有效样本 partial-reset、masked timestep inert、batch permutation、carried-value exact、独立 state/token segment diff；artifact 记录 Gitlink、双仓 clean、provenance、tool/command hash 与参数前缀。`a0_contract.json` PASS，未进入 A1/GPU/TTT/多卡。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
