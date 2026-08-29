@@ -898,3 +898,15 @@ Gate B remains REVIEW. No Gate C / R09 / multi-GPU / long training.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_mask_patch_fc520ae_296f138.md`
+
+---
+
+## 2026-08-29 — 请求复审：R08 Gate B provenance capture 整改 @ root c036cf9 / submodule f90f9d4
+
+仅实现审查要求的启动 provenance 与 nested history-mask list 归一化；未重跑 GPU、未启动 Gate C/R09。
+
+- 新增默认关闭的 `R08GateBProvenanceCallback`：在 capture 进程 `on_train_start` 记录 root/submodule/Gitlink、history mode、capture-only 与 checkpoint path；
+- R07 parity capture 的 history-mask 摘要现在兼容 Tensor、`list[Tensor]`、`list[list[Tensor]]`，非法项 fail-fast；
+- CPU callback 回归 `5 passed`、`py_compile`、双仓 `diff --check` PASS。
+
+请审查此整改轮；若 APPROVE，我将只重跑 Normal/Zero/Shuffle 三次 capture-only forward，用新 mask/provenance sidecar 生成 R08 专用严格 artifact。
