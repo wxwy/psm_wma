@@ -663,3 +663,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 三方结论：ChatGPT `APPROVE_TO_CLOSE_GATE_B`（云端 `545f2d3`，详见 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_runtime_closure_6aa928e.md`），MM、Kimi 均 `APPROVE_TO_CLOSE`。
 - 当前实现精度（Gate B sensitivity，非 SR）：Normal→Zero Local/Future/Action relative L2 = `0.964265/0.010838/0.005582`；Normal→Shuffle = `0.173354/0.010713/0.005696`；15/15 non-history invariants exact。
 - 状态：`G0-R08-GATE-B-HISTORY-SENSITIVITY=DONE`。下一步仅做 R09-A/B 的 runbook、范围和前置资产核查；不得静默启动 GPU、训练、多卡或 R09 实现。
+
+### R09 preflight（2026-08-29，进行中）
+
+- 已认领：`G0-R09-RUNBOOK-PREFLIGHT`。目标是形成可独立审核的最小分轮 runbook；只读核查现有合同、测试和资产，不修改 Cosmos runtime、不运行项目代码。
