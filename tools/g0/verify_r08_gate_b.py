@@ -15,6 +15,8 @@ CAPTURE_SCHEMA = "r07_no_memory_parity_v1"
 TENSOR_SCHEMA = "r07_sensitivity_tensors_v1"
 PROVENANCE_SCHEMA = "r08_gate_b_capture_provenance_v1"
 MANIFEST_SCHEMA = "r08_gate_a_checkpoint_manifest_v1"
+CANONICAL_MANIFEST_PATH = Path(__file__).resolve().parents[2] / "artifacts/g0/r08/gate_a_checkpoint_manifest.json"
+CANONICAL_MANIFEST_SHA256 = "ff01da7a7c0f28504b54de94505c8b605f90a1c98093a982af5cee0aab53c928"
 
 
 def sha(path: Path) -> str:
@@ -27,7 +29,8 @@ def sha(path: Path) -> str:
 
 def checkpoint_identity(manifest_path: Path) -> tuple[dict, bool]:
     manifest = load_json(manifest_path)
-    valid = isinstance(manifest, dict) and manifest.get("schema_version") == MANIFEST_SCHEMA
+    canonical_manifest_valid = manifest_path.resolve() == CANONICAL_MANIFEST_PATH.resolve() and sha(manifest_path) == CANONICAL_MANIFEST_SHA256
+    valid = canonical_manifest_valid and isinstance(manifest, dict) and manifest.get("schema_version") == MANIFEST_SCHEMA
     checkpoint_path = Path(manifest.get("checkpoint_path", "")) if valid else Path()
     files = manifest.get("files", {}) if valid else {}
     required = {"model/.metadata", "model/__0_0.distcp"}
@@ -36,7 +39,7 @@ def checkpoint_identity(manifest_path: Path) -> tuple[dict, bool]:
         candidate = checkpoint_path / relative
         valid = valid and isinstance(expected, dict) and candidate.is_file()
         valid = valid and candidate.stat().st_size == expected.get("size_bytes") and sha(candidate) == expected.get("sha256")
-    return {"manifest_path": str(manifest_path), "manifest_sha256": sha(manifest_path), "checkpoint_path": str(checkpoint_path), "file_count": len(files) if isinstance(files, dict) else 0, "checkpoint_identity_valid": bool(valid)}, bool(valid)
+    return {"manifest_path": str(manifest_path), "manifest_sha256": sha(manifest_path), "canonical_manifest_valid": canonical_manifest_valid, "checkpoint_path": str(checkpoint_path), "file_count": len(files) if isinstance(files, dict) else 0, "checkpoint_identity_valid": bool(valid)}, bool(valid)
 
 
 def finite_response(metric: dict) -> bool:
