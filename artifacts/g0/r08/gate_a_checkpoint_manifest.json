@@ -1,0 +1,38 @@
+{
+  "schema_version": "r08_gate_a_checkpoint_manifest_v1",
+  "checkpoint_path": "/gemini/code/r08-gate-a-canonical/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+  "files": {
+    "model/.metadata": {
+      "size_bytes": 175838,
+      "sha256": "834c1e9b30915a206968ad581d82352cfbd94ae25ac1933b659c90758ef8aa36"
+    },
+    "model/__0_0.distcp": {
+      "size_bytes": 6740714045,
+      "sha256": "bc51882ab4d728366f4dbfdab614c77a19bca1c52ec5a20f0467d765778ca6f3"
+    },
+    "optim/.metadata": {
+      "size_bytes": 851119,
+      "sha256": "855e235c126763ddf8755feb2af78f67dacf189defba5a019e4dcb969b53571c"
+    },
+    "optim/__0_0.distcp": {
+      "size_bytes": 11393081142,
+      "sha256": "7ca86d5aa1150ed83800ea2b7ac95ee5cae21ab5720679f7b8bd90cbc23473c6"
+    },
+    "scheduler/.metadata": {
+      "size_bytes": 2103,
+      "sha256": "80cd6d4346c48f20e7ce0827d2fb008bc96fe485dbffaf71caced05770ed9591"
+    },
+    "scheduler/__0_0.distcp": {
+      "size_bytes": 14506,
+      "sha256": "470630c4d83fb5693bbfca137d0da24765a6fc1652b4fc6c16997da8f89d3a1d"
+    },
+    "trainer/.metadata": {
+      "size_bytes": 2176,
+      "sha256": "765edd8f26c41bbbc7fcc659aeae8c72dd5ae102323efd42c0eae7ccf92e1efd"
+    },
+    "trainer/__0_0.distcp": {
+      "size_bytes": 23971,
+      "sha256": "ec3ef9aadfcd1dcdd71f27be37fa6bed7bc8a21dfca625190c77b1756f5d07ca"
+    }
+  }
+}
