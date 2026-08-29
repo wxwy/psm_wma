@@ -1777,3 +1777,26 @@ Detailed review:
 - 明确未声称已覆盖：运行时逐参数 Local grad、peak VRAM、实际 state/reset-detach、Normal/Zero/Shuffle Future/Action intervention；这些未在本次运行安装专用 probe，若为 A1 closure 必需，请按 `REQUEST_CHANGES` 指定最小 capture/probe。R09-B/TTT、多卡、长训、matched SR、shared MoT、Global/Agent/RL 仍未启动。
 
 请求：`APPROVE_TO_CLOSE_A1` 或 `REQUEST_CHANGES`（附 file:line 与最小补证要求）。
+
+---
+
+## 2026-08-29 — R09-A1 single-GPU 100-step smoke @ root f2d5531 / training root 771accc / submodule 577ea3e
+
+**Verdict: REQUEST_CHANGES**
+
+现有 100-step 结果保留为有效 partial evidence：训练到 iteration 100、100 条 total/action loss finite；config allowlist 与 optimizer substring 选择规则一致；checkpoint schema 仅新增 recurrent 4 tensors；549 个冻结公共 tensors 逐位不变；11 个既有 Local tensors 更新；training root `771accc` 的 Gitlink=submodule `577ea3e`。
+
+但 A1 不能关闭，核心有 3 点：
+
+1. **readout 是 dead optimizer member**：`local_evidence.py:244-249` 在 recurrent_backend 非空时直接 `recurrent_backend.replay(...)`，完全绕过 `self.readout`，但 A1 config `action_policy_libero_edge_all.py:188-195` 仍把 `local_history_runtime.readout` 放进 optimizer。artifact 也显示 4 个 readout tensors 被 selected 但 100 steps 后无一更新。推荐最小方案：R09 A/B 明确采用 `encoder -> backend -> D_local token`，将 R08 `StatelessLocalReplayReadout` 在 R09 下冻结/移出 optimizer；若坚持共享 active readout，则需重新设计并真正接入。scope 改后 final A1 smoke 需按新冻结范围重跑。
+
+2. **runtime closure evidence 缺失**：当前未记录 Local grad、peak VRAM、actual state bytes、production backend 的 segment carry/detach/reset、Normal/Zero/Shuffle Future/Action sensitivity。最小补证：final corrected 100-step run 内直接枚举实际 optimizer param object IDs/names，backward 后记录每个 selected grad present/finite/max_abs，记录 CUDA peak allocated/reserved；另用加载后的 `net.local_history_runtime.recurrent_backend` 做小型 segment/reset probe；final ckpt 上固定 batch/noise/masks 做 Normal/Zero/Shuffle 三次 forward，要求 Future 与 Action 均有非零 sensitivity。
+
+3. **artifact verifier provenance 不是 clean-source**：`a1_single_gpu_smoke.json` 记 `root_revision=771accc`，但 verifier 首次提交在后续 `f2d5531`；且 verifier `clean()` 使用 `--untracked-files=no`，所以未提交 verifier/artifact 仍可显示 root clean=true。需先 commit final verifier/probe，再从 clean source 对保存的 checkpoints/log 只读重算，artifact 分开记录 training source 与 verifier source/Gitlink/clean/tool_sha/command hash，再单独 commit artifact。仅此 provenance 修复不需重跑旧训练。
+
+另补 D005：final corrected A1 run 记录完整 training command/cwd/env/GPU/world_size/network/input/output/PASS。旧 run 若 exact command 不可恢复就如实标不可恢复，不猜。
+
+R09-A1 继续 REVIEW；R09-B/多卡/长训/matched SR/backend freeze 继续 BLOCKED。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A1_smoke_f2d5531_771accc_577ea3e.md`
