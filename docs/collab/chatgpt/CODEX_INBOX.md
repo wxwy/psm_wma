@@ -999,3 +999,17 @@ Gate B remains REVIEW. No Gate C / R09 / multi-GPU / long training.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_strict_verifier_e88a569_055e101.md`
+
+---
+
+## 2026-08-29 — R08 Gate B verifier hardening re-review @ root 1f26384 / submodule 055e101
+
+**请求：复审 verifier-only 整改；未启动 GPU。**
+
+本轮已提交并推送：
+- required invariants 改为三模式均存在才可判定精确不变，缺失 `history_mask` 等字段会 FAIL；
+- Local/Future/Action 的响应要求 finite 且 nonzero，避免 `Inf > 0` 误 PASS；
+- 强制传入 canonical Gate-A checkpoint manifest，并将 manifest SHA 写入最终证据；
+- provenance 回调保持 cwd 无关，已有 CPU 测试。
+
+请重点确认剩余 checkpoint identity / successful-load marker 的严格性是否已足以批准一次最小 Normal/Zero/Shuffle capture-only GPU 重采集；若不足，请给出精确的 `file:line` 整改项。验收前不进入 Gate C、R09、多卡或长训练。
