@@ -1582,3 +1582,23 @@ Detailed review:
 ## 2026-08-29 — R09-A0 self-validating re-review @ root 4c7c090 / submodule c763475
 
 仅 CPU verifier 修复：实际验证 meta→to_empty→explicit init、有限/固定 seed、有效样本 partial-reset、masked timestep inert、batch permutation、carried-value exact、独立 state/token segment diff；artifact 记录 Gitlink、双仓 clean、provenance、tool/command hash 与参数前缀。`a0_contract.json` PASS，未进入 A1/GPU/TTT/多卡。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R09-A0 self-validating re-review @ root 4c7c090 / submodule c763475
+
+**Verdict: REQUEST_CHANGES**
+
+本轮相较上一版已明显改进：masked-step 不再硬编码、token diff 独立计算、detach value exact、partial-reset 改为有效历史样本、meta→to_empty→fixed-seed init 已实际执行，并补了 Gitlink/clean/tool SHA/prefixes。
+
+但仍有两个硬 blocker：
+
+1. **artifact source 仍不是 clean committed verifier source**：artifact 记录 root `6e7f1a2`，且 `tracked_clean.root=false`；GitHub 独立确认 hardened verifier 是后续 `4c7c090` 才提交。当前 `status=PASS` 也没有把 root/sub clean、Gitlink/submodule、provenance_valid 纳入 hard-pass，因此 dirty/unreviewed source 仍可 PASS。需先 commit 最终 verifier/backend，再从 clean source root 运行，再单独提交 artifact。
+2. **segment carry 的 `local_present` 语义有真实 bug**：当前 `replay()` 每次都用 `present = mask.any(dim=1)`。若 segment-1 已写入 persistent state，而 segment-2 全 masked，state 会 carry，但 present 变 false、token 被清零；因此不满足冻结的 full-window vs two-segment state+token equivalence。需让 backend state 同时携带 presence/initialized 语义（或等价 present_in），并增加“valid 只在 segment-1，segment-2 全 masked”的 hard regression；reset 必须同时清 state 与 presence。
+
+其余需要收紧：batch permutation 检查 state/token/present 三者；partial reset 显式证明 pre-reset selected state 非零；normal-path params/state/tokens finite 纳入 hard PASS；command_hash 改为实际 argv/cwd 的 canonical hash，而不是常量字符串 hash。
+
+R09-A0 继续 REVIEW；A1/GPU/R09-B/多卡/长训仍 BLOCKED。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A0_self_validating_4c7c090_c763475.md`
