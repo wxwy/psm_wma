@@ -1920,3 +1920,26 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A1_pre_run_approval_d91ee0c_c0287e2.md`
+
+---
+
+## 2026-08-29 — R09-A1 final-checkpoint sensitivity capture @ e256cfb
+
+**Verdict: APPROVE_TO_RUN_A1_FINAL_SENSITIVITY**
+
+已独立核对：
+- corrected training source `32e3bce/c0287e2` 与已批准实现边界等价；`d91ee0c -> 32e3bce` 只有 Inbox 文档变化。
+- proposed sensitivity source `1aee109/c0287e2` 也只增加 ChatGPT review/Inbox 文档，没有 model/dataflow/allowlist/submodule 变化。
+- `PSM_R08_GATE_B_CAPTURE_ONLY=1` 在 trainer 中于 forward 后、backward 前直接 return，因此 3 次 capture 不执行 backward/optimizer/scheduler update，满足 fixed-weight。
+- `compare_r07_sensitivity.py` 会硬检查 15 项 non-history invariants、Local payload intervention，并要求 `preds_vision` 与 `preds_action` 对 Normal→Zero/Shuffle 都有非零响应。
+
+批准仅执行三次独立单卡 capture：Normal / Zero / Shuffle。每次都必须重新加载同一 corrected final `iter_000000100/model`，相同 source/submodule/Gitlink、config、seed、data/cache、batch ordering、noise/masks；唯一允许变化是 `PSM_R08_HISTORY_MODE`。`trainer.max_iter=1`、`PSM_R08_GATE_B_CAPTURE_ONLY=1`，不同模式使用独立 capture/provenance 输出路径。
+
+A1 sensitivity PASS：15 项 invariant exact；Zero/Shuffle Local payload 变化；Normal→Zero 与 Normal→Shuffle 的 Future(`preds_vision`) 和 Action(`preds_action`) L2 diff 均 >0；三模式 same checkpoint/source，capture_only=true。
+
+注意：这只是批准 capture，不是关闭 A1。最终 `APPROVE_TO_CLOSE_A1` 前必须把 corrected 100-step clean-source verifier artifact、D005 provenance、三模式 capture/sensitivity machine-readable artifact 与 exact root/submodule/Gitlink 提交到 V2。当前 `/gemini/code/.../a1_single_gpu_smoke_corrected.json` 仍是隔离目录本地证据，不能单独作为最终 canonical closure。
+
+继续禁止 R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL。capture 完成后停在 REVIEW。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A1_final_sensitivity_e256cfb.md`
