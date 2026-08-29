@@ -17,6 +17,8 @@ PROVENANCE_SCHEMA = "r08_gate_b_capture_provenance_v1"
 MANIFEST_SCHEMA = "r08_gate_a_checkpoint_manifest_v1"
 CANONICAL_MANIFEST_PATH = Path(__file__).resolve().parents[2] / "artifacts/g0/r08/gate_a_checkpoint_manifest.json"
 CANONICAL_MANIFEST_SHA256 = "ff01da7a7c0f28504b54de94505c8b605f90a1c98093a982af5cee0aab53c928"
+EXPECTED_ROOT_REVISIONS = {"2ad910aab2060a720e607fb826a4c4cf9db673f2"}
+EXPECTED_SUBMODULE_REVISION = "860f5328b5b9fa41103497abaad7985a6c0333ae"
 
 
 def sha(path: Path) -> str:
@@ -62,6 +64,8 @@ def verified_result(a: argparse.Namespace) -> dict:
     provenance_schema_valid = all(x.get("schema_version") == PROVENANCE_SCHEMA for x in prov.values())
     expected_modes = all(prov[m].get("history_mode") == m and prov[m].get("capture_only") is True for m in modes)
     same_runtime = len({(x.get("root_revision"), x.get("submodule_revision"), x.get("gitlink_revision"), x.get("checkpoint_path")) for x in prov.values()}) == 1
+    runtime = {m: {k: prov[m].get(k) for k in ("root_revision", "submodule_revision", "gitlink_revision")} for m in modes}
+    expected_runtime_valid = all(x.get("root_revision") in EXPECTED_ROOT_REVISIONS and x.get("submodule_revision") == EXPECTED_SUBMODULE_REVISION and x.get("gitlink_revision") == EXPECTED_SUBMODULE_REVISION for x in prov.values())
     valid_git = all(x.get("gitlink_revision") == x.get("submodule_revision") and x.get("root_clean_tracked") is True and x.get("submodule_clean_tracked") is True for x in prov.values())
     manifest_checkpoint_path = all(x.get("checkpoint_path") == checkpoint_path for x in prov.values())
     loaded = all(re.search(re.escape(f"Loaded checkpoint from {checkpoint_path}") + r"(?: \([^)]*\))? in iteration " + str(a.expected_iteration) + r"(?:\n|$)", getattr(a, f"{m}_log").read_text()) for m in modes)
@@ -70,9 +74,9 @@ def verified_result(a: argparse.Namespace) -> dict:
     invariant = {k: all(k in summaries[m] for m in modes) and summaries["normal"][k] == summaries["zero"][k] == summaries["shuffle"][k] for k in INVARIANT_KEYS}
     metrics = {f"normal_vs_{m}": {k: difference(tensors["normal"][k], tensors[m][k]) for k in ("local_memory", "preds_vision", "preds_action")} for m in ("zero", "shuffle")}
     response = all(finite_response(metrics[pair][field]) for pair in metrics for field in ("local_memory", "preds_vision", "preds_action"))
-    status = "PASS" if all((capture_schema_valid, tensor_schema_valid, provenance_schema_valid, expected_modes, same_runtime, valid_git, manifest_checkpoint_path, checkpoint_identity_valid, loaded, resumed, model_only, all(invariant.values()), response)) else "FAIL"
+    status = "PASS" if all((capture_schema_valid, tensor_schema_valid, provenance_schema_valid, expected_modes, same_runtime, expected_runtime_valid, valid_git, manifest_checkpoint_path, checkpoint_identity_valid, loaded, resumed, model_only, all(invariant.values()), response)) else "FAIL"
     files = {m: {k: {"path": str(getattr(a, f"{m}_{k}")), "sha256": sha(getattr(a, f"{m}_{k}"))} for k in ("json", "pt", "provenance", "log", "config")} for m in modes}
-    return {"schema_version": "r08_gate_b_history_sensitivity_v1", "status": status, "capture_schema_valid": capture_schema_valid, "tensor_schema_valid": tensor_schema_valid, "provenance_schema_valid": provenance_schema_valid, "expected_modes": expected_modes, "same_runtime": same_runtime, "valid_git": valid_git, "manifest_checkpoint_path": manifest_checkpoint_path, "actual_checkpoint_loaded": loaded, "actual_checkpoint_resumed": resumed, "model_only_warm_start": model_only, "expected_iteration": a.expected_iteration, "checkpoint_identity": identity, "invariant_exact": invariant, "response": response, "metrics": metrics, "files": files, "verifier_sha256": sha(Path(__file__))}
+    return {"schema_version": "r08_gate_b_history_sensitivity_v1", "status": status, "capture_schema_valid": capture_schema_valid, "tensor_schema_valid": tensor_schema_valid, "provenance_schema_valid": provenance_schema_valid, "expected_modes": expected_modes, "same_runtime": same_runtime, "runtime": runtime, "expected_runtime_valid": expected_runtime_valid, "valid_git": valid_git, "manifest_checkpoint_path": manifest_checkpoint_path, "actual_checkpoint_loaded": loaded, "actual_checkpoint_resumed": resumed, "model_only_warm_start": model_only, "expected_iteration": a.expected_iteration, "checkpoint_identity": identity, "invariant_exact": invariant, "response": response, "metrics": metrics, "files": files, "verifier_sha256": sha(Path(__file__))}
 
 
 def main() -> None:

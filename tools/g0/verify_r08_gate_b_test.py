@@ -27,6 +27,8 @@ def fixture(tmp_path: Path) -> argparse.Namespace:
     manifest.write_text(json.dumps({"schema_version": VERIFY.MANIFEST_SCHEMA, "checkpoint_path": str(checkpoint), "files": {str(path.relative_to(checkpoint)): {"size_bytes": path.stat().st_size, "sha256": file_sha(path)} for path in checkpoint.rglob("*") if path.is_file()}}))
     VERIFY.CANONICAL_MANIFEST_PATH = manifest.resolve()
     VERIFY.CANONICAL_MANIFEST_SHA256 = file_sha(manifest)
+    VERIFY.EXPECTED_ROOT_REVISIONS = {"a"}
+    VERIFY.EXPECTED_SUBMODULE_REVISION = "b"
     values = {"normal": 1.0, "zero": 2.0, "shuffle": 3.0}
     fields = ("local_memory", "preds_vision", "preds_action")
     paths = {"checkpoint_manifest": manifest, "expected_iteration": 0}
@@ -109,6 +111,18 @@ def test_well_formed_noncanonical_manifest_fails(tmp_path: Path) -> None:
     args.checkpoint_manifest = alternative_manifest
     result = VERIFY.verified_result(args)
     assert result["checkpoint_identity"]["canonical_manifest_valid"] is False
+    assert result["status"] == "FAIL"
+
+
+def test_same_clean_alternate_runtime_fails(tmp_path: Path) -> None:
+    args = fixture(tmp_path)
+    for mode in ("normal", "zero", "shuffle"):
+        provenance = json.loads(getattr(args, f"{mode}_provenance").read_text())
+        provenance.update(root_revision="alternate", submodule_revision="alternate", gitlink_revision="alternate")
+        getattr(args, f"{mode}_provenance").write_text(json.dumps(provenance))
+    result = VERIFY.verified_result(args)
+    assert result["same_runtime"] is True
+    assert result["expected_runtime_valid"] is False
     assert result["status"] == "FAIL"
 
 
