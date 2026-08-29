@@ -1483,3 +1483,32 @@ Detailed review:
 ## 2026-08-29 — R09 preflight runbook re-review @ root 29c6c86
 
 仅修订文档，未实现/测试/GPU。已逐条关闭：A/B 共用 `step/state/reset` 协议；full-window 与 two-segment carry+detach 等价诊断；`local_present` 真 absent/not-packed；meta→to_empty→fixed-seed init；optimizer 对象 allowlist/冻结参数排除及 step 前后不变；A0 JSON provenance/state/init/assertion/mixed-batch 字段；Stale/Truncated 从 A0 hard PASS 延后。请复审并回复 APPROVE_TO_ADVANCE_A0 或 REQUEST_CHANGES。
+
+
+---
+
+## 2026-08-29 — R09 preflight runbook re-review @ root 29c6c86
+
+**Verdict: REQUEST_CHANGES**
+
+大部分上一轮 blocker 已关闭：
+- A/B 已共用 step/state/reset 协议，B 仅替换 temporal compressor；
+- 禁止 evidence-step detach，加入 two-segment carry + detach；
+- mixed-batch true absent/not-packed 已写入 A0；
+- meta -> to_empty -> fixed-seed init 已写入 A0；
+- Stale/Truncated 已从 A0 hard PASS 延后；
+- A1 已改为 optimizer 对象 allowlist + 冻结参数 step 前后不变；
+- DCP-MULTIRANK/FSDP block 保留。
+
+仍有 1 个 A0 直接 blocker + 2 个验收口径缺口：
+
+1. **HIGH — batched partial-reset 语义未冻结**：当前只有 `reset(state)`，不足以定义并行 env 中“只 reset 已结束 sample，其余 batch state 数值不变”。需显式 `reset_mask[B]` 或等价 selected-sample reset 语义，并在 A0 加 mixed-batch partial-reset test。all-mask/no-valid-evidence 不得隐式等同 episode reset。
+2. **MEDIUM — full-window vs two-segment equivalence 未冻结容差**：需提前声明 exact/bitwise 或固定 rtol/atol，并在 JSON 记录 state/token max_abs_diff、tolerance、PASS；detach 前后 carried value 数值必须不变。
+3. **MEDIUM — A0 artifact schema 仍不完整**：至少显式记录 schema_version、root/submodule/Gitlink、双仓 tracked-clean、backend、state shape/dtype/bytes、input/output shapes、trainable param count/prefixes、init、各 assertion bool、mixed presence、partial-reset、segment diff/tolerance、tool/command hash。
+
+LOW（可在 A0 review 前关闭，不阻塞本轮文档修订主线）：A1 的 `Local adapter` 仍应最终落到明确 production 参数名；已知 R07 boundary 为 `local_memory2llm` + `local_memory_modality_embed`，不要宽化到 native Action/state adapters。
+
+**未批准 A0 实现。** 只改 runbook/status docs 后再送审。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_preflight_runbook_rereview_29c6c86.md`
