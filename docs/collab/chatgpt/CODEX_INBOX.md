@@ -1259,3 +1259,41 @@ Hotfix 确认正确且范围最小。
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_callback_hotfix_8fa6ed9_465cfcd.md`
+
+
+---
+
+## 2026-08-29 — R08 Gate B history-mask capture hotfix review @ root 1efcc1f / submodule fd140ff
+
+**Verdict: APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY**
+
+本轮 history-mask lifecycle hotfix 通过。
+
+核查结论：
+- `history_mask` 在 `_inject_local_history()` 内完成 stack/bool 归一化；
+- 新增 `r07_parity_history_mask` 保存的正是实际传给 `local_history_runtime` 的 effective mask；
+- `training_step` 将该审计值显式放入 `output_batch`；
+- callback 改为从 `output_batch["r07_parity_history_mask"]` 读取，不再依赖训练结束时已经可能被消费的原始 `data_batch["history_mask"]`；
+- Normal/Zero/Shuffle 仍只改变 history payload，mask 本身保持不变，可继续作为 exact invariant；
+- 未改模型、权重、checkpoint、optimizer、canonical verifier、packing/attention 或干预语义。
+
+批准立即从 **Normal** 重启，然后：
+1. Zero
+2. Shuffle
+
+继续严格保持：
+- pinned reviewed Gate-A checkpoint；
+- same batch/current sample/noise/masks/non-history config；
+- only history intervention changes；
+- forward/capture only；
+- no backward；
+- no optimizer step；
+- no long training；
+- no multi-GPU；
+- no Gate C；
+- no R09。
+
+三次 capture 完成后运行 strict Gate-B verifier，并提交 final artifact + raw JSON/PT/provenance/log/config hashes 做 runtime review。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_history_mask_hotfix_1efcc1f_fd140ff.md`
