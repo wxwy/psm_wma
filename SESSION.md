@@ -667,3 +667,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### R09 preflight（2026-08-29，进行中）
 
 - 已认领：`G0-R09-RUNBOOK-PREFLIGHT`。目标是形成可独立审核的最小分轮 runbook；只读核查现有合同、测试和资产，不修改 Cosmos runtime、不运行项目代码。
+- 已产出 `docs/build/PSM-WMA_R09_preflight_runbook_v0.1_2026-08-29.md`，状态 REVIEW；A0/A1/B 分轮，待审核后才实施。
