@@ -31,7 +31,7 @@ def main() -> None:
     mask = torch.tensor([[True, True, True, True], [False, False, False, False], [True, False, True, False]])
     tokens, state, present = backend.replay(evidence, mask)
     latent, initialized = state
-    reset = backend.reset_mask(latent, torch.tensor([False, False, True]))
+    reset = backend.reset_mask(state, torch.tensor([False, False, True]))
     _, first, _ = backend.replay(evidence[:, :2], mask[:, :2])
     _, second, _ = backend.replay(evidence[:, 2:], mask[:, 2:], (first[0].detach(), first[1]))
     state_diff = float((second[0] - latent).abs().max().detach())
@@ -56,7 +56,7 @@ def main() -> None:
     init_ok = all(torch.isfinite(p).all() and torch.equal(p, q) for p, q in zip(values, repeat.parameters(), strict=True))
     root = Path(__file__).resolve().parents[2]
     gitlink = subprocess.check_output(["git", "-C", str(root), "ls-tree", "HEAD", "cosmos-framework"], text=True).split()[2]
-    checks = {"all_mask_absent": bool(not present[1] and torch.count_nonzero(tokens[1]) == 0), "partial_reset": bool(torch.equal(reset[[0, 1]], latent[[0, 1]]) and torch.count_nonzero(latent[2]) > 0 and torch.count_nonzero(reset[2]) == 0), "masked_timestep_inert": masked_inert, "batch_permutation_isolation": permutation, "carried_value_exact": carried_exact, "meta_init": init_ok, "finite": bool(torch.isfinite(latent).all() and torch.isfinite(tokens).all())}
+    checks = {"all_mask_absent": bool(not present[1] and torch.count_nonzero(tokens[1]) == 0), "partial_reset": bool(torch.equal(reset[0][[0, 1]], latent[[0, 1]]) and torch.count_nonzero(latent[2]) > 0 and torch.count_nonzero(reset[0][2]) == 0 and not reset[1][2]), "masked_timestep_inert": masked_inert, "batch_permutation_isolation": permutation, "carried_value_exact": carried_exact, "meta_init": init_ok, "finite": bool(torch.isfinite(latent).all() and torch.isfinite(tokens).all())}
     state = latent
     passed = all(checks.values()) and state_diff <= 1e-6 and token_diff <= 1e-6
     result = {"schema_version":"r09_a0_contract_v2","status":"PASS" if passed else "FAIL","root_revision":revision(root),"submodule_revision":revision(root / "cosmos-framework"),"gitlink_revision":gitlink,"tracked_clean":{"root":clean(root),"submodule":clean(root / "cosmos-framework")},"provenance_valid":revision(root / "cosmos-framework")==gitlink,"tool_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),"backend":"recurrent_latent","state":{"shape":list(state.shape),"dtype":str(state.dtype),"bytes":state.numel()*state.element_size()},"input_shape":list(evidence.shape),"token_shape":list(tokens.shape),"trainable_param_count":sum(p.numel() for p in backend.parameters()),"trainable_prefixes":["cell"],"mixed_presence":present.tolist(),"assertions":checks,"segment":{"state_max_abs_diff":state_diff,"token_max_abs_diff":token_diff,"tolerance":1e-6,"pass":state_diff<=1e-6 and token_diff<=1e-6},"init":{"seed":11,"path":"meta-to_empty-explicit-reset_parameters"},"command_hash":hashlib.sha256("verify_r09_a0_contract".encode()).hexdigest()}
