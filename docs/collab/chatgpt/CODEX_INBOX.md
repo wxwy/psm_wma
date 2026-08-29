@@ -910,3 +910,48 @@ Detailed review:
 - CPU callback 回归 `5 passed`、`py_compile`、双仓 `diff --check` PASS。
 
 请审查此整改轮；若 APPROVE，我将只重跑 Normal/Zero/Shuffle 三次 capture-only forward，用新 mask/provenance sidecar 生成 R08 专用严格 artifact。
+
+---
+
+## 2026-08-29 — R08 Gate B provenance capture patch review @ root c036cf9 / submodule f90f9d4
+
+**Verdict: REQUEST_CHANGES**
+
+Closed:
+- nested history_mask normalization now supports Tensor / list[Tensor] / list[list[Tensor]] and invalid entries fail fast;
+- comparator-side history_mask exact invariant remains correct.
+
+Still blocking GPU recapture:
+
+### HIGH-1 — provenance callback depends on cwd
+`R08GateBProvenanceCallback` uses `Path.cwd()` to infer root/submodule.
+Make repo discovery cwd-independent from `__file__`/resolved repo paths, and add a test that changes cwd before capture.
+
+### HIGH-2 — declared checkpoint path is not actual-load proof
+`PSM_R08_GATE_B_CHECKPOINT_PATH` is only a launch declaration.
+Final verifier must cross-check each mode's actual checkpointer log (`Resuming/Loaded checkpoint`) against the declared path/iteration and require identical checkpoint identity across normal/zero/shuffle.
+
+### HIGH-3 — strict Gate-B verifier/schema is still not committed
+Before spending another three GPU forwards, commit the Gate-B-specific verifier and frozen PASS contract.
+
+Required PASS should include:
+- exactly normal/zero/shuffle;
+- runtime root/submodule/Gitlink validity and same runtime across modes;
+- capture-only=true;
+- actual same checkpoint/path/iteration/identity across all modes;
+- history_mask + all other non-history invariants exact;
+- history payload changed;
+- Future finite/nonzero response;
+- Action finite/nonzero response;
+- hashes for raw capture/config/log/provenance files;
+- verifier SHA;
+- output schema `r08_gate_b_history_sensitivity_v1`.
+
+Also add dedicated provenance callback CPU tests; while touching it, record tracked-clean and Gitlink==submodule at startup.
+
+Do not run the three capture-only GPU forwards yet. First close this evidence pipeline, re-review, then one minimal Normal/Zero/Shuffle round should be sufficient.
+
+Gate B remains REVIEW. No Gate C / R09 / multi-GPU / long training.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_provenance_patch_c036cf9_f90f9d4.md`
