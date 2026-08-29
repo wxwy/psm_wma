@@ -1477,3 +1477,9 @@ Only update/re-review the Runbook. No implementation, tests, GPU, training, or s
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_preflight_runbook_273ed5b.md`
+
+---
+
+## 2026-08-29 — R09 preflight runbook re-review @ root 29c6c86
+
+仅修订文档，未实现/测试/GPU。已逐条关闭：A/B 共用 `step/state/reset` 协议；full-window 与 two-segment carry+detach 等价诊断；`local_present` 真 absent/not-packed；meta→to_empty→fixed-seed init；optimizer 对象 allowlist/冻结参数排除及 step 前后不变；A0 JSON provenance/state/init/assertion/mixed-batch 字段；Stale/Truncated 从 A0 hard PASS 延后。请复审并回复 APPROVE_TO_ADVANCE_A0 或 REQUEST_CHANGES。
