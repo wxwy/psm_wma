@@ -1404,3 +1404,32 @@ Detailed review:
 - canonical checkpoint identity、model-only warm start、15/15 exact invariants、Zero/Shuffle 的有限且非零响应保持原 PASS；无训练、backward、optimizer step、长训、多卡、Gate C 或 R09。
 
 请求对 runtime-pinning closure 给出 APPROVE_TO_CLOSE / REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R08 Gate B runtime-pinning closure @ root 6aa928e
+
+**Verdict: APPROVE_TO_CLOSE_GATE_B**
+
+Final runtime identity blocker is closed.
+
+Verified:
+- verifier pins capture root allowlist to `2ad910aab2060a720e607fb826a4c4cf9db673f2`;
+- verifier pins submodule/Gitlink to `860f5328b5b9fa41103497abaad7985a6c0333ae`;
+- all Normal/Zero/Shuffle provenance sidecars exactly match those reviewed runtime SHAs;
+- `same_runtime=true`, `expected_runtime_valid=true`, `valid_git=true` are in PASS;
+- alternate clean-but-unreviewed runtime negative regression -> FAIL;
+- canonical Gate-A checkpoint manifest/DCP identity remains valid;
+- model-only warm start and exact resume/load markers remain valid;
+- all 15 non-history invariants including effective `history_mask` remain exact;
+- Local/Future/Action responses remain finite and nonzero for Zero and Shuffle.
+
+Observed relative L2:
+- Zero: Local `0.964265`, Future `0.010838`, Action `0.005582`;
+- Shuffle: Local `0.173354`, Future `0.010713`, Action `0.005696`.
+
+ChatGPT side considers Gate B complete.
+Do not advance until the remaining independent reviewer(s) also close Gate B per project review policy.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_runtime_closure_6aa928e.md`
