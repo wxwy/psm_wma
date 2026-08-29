@@ -1831,6 +1831,18 @@ Detailed review:
 
 ---
 
+## 2026-08-29 — R09-A1 closure 审核申请 @ root e256cfb / submodule c0287e2
+
+🚨 审核申请已发出
+
+- canonical machine-readable evidence 已归档至 `artifacts/g0/r09/a1_corrected/`：corrected 100-step clean-source verifier、runtime probe、D005 sidecar、Normal/Zero/Shuffle capture JSON/PT/provenance/log 及 `final_sensitivity.json`。
+- smoke verifier PASS：100/100 finite、末步 total/action=`0.997723/0.014089`、16 tensors/142,784 elements、冻结 common tensors bitwise unchanged、optimizer exact set、selected gradients、state detach/reset、VRAM peak allocated/reserved=`27153490944/29941039104`、training Gitlink 独立推导+D005 sidecar 均通过。
+- 三模式 capture 均为 source root `e256cfb`、submodule/Gitlink `c0287e2`、tracked clean、same final `iter_000000100`、capture_only=true。`final_sensitivity.json` PASS：15/15 non-history invariants exact；Normal→Zero Future/Action relative L2=`0.012276/0.007808`，Normal→Shuffle=`0.010906/0.006412`，两种干预及 Local payload 均非零。
+
+请对照 A1 closure 条件给出 `APPROVE_TO_CLOSE_A1` 或 `REQUEST_CHANGES`（附 file:line）。R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL 仍禁止。
+
+---
+
 ## 2026-08-29 — R09-A1 single-GPU 100-step smoke @ root f2d5531 / training root 771accc / submodule 577ea3e
 
 **Verdict: REQUEST_CHANGES**

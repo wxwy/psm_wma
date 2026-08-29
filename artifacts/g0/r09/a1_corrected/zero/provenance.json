@@ -1,0 +1,11 @@
+{
+  "schema_version": "r08_gate_b_capture_provenance_v1",
+  "root_revision": "e256cfb273197357769a58a201ec1a27d385687a",
+  "submodule_revision": "c0287e215f265134cb8b8d947de7eb398f0246cf",
+  "gitlink_revision": "c0287e215f265134cb8b8d947de7eb398f0246cf",
+  "root_clean_tracked": true,
+  "submodule_clean_tracked": true,
+  "history_mode": "zero",
+  "capture_only": true,
+  "checkpoint_path": "/gemini/code/r09-a1-corrected/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000100"
+}

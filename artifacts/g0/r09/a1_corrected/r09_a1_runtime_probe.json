@@ -1,0 +1,162 @@
+{
+  "full_run_cuda_peak": {
+    "allocated_bytes": 27153490944,
+    "device": "P2.gpu.large",
+    "reserved_bytes": 29941039104
+  },
+  "last_iteration": 100,
+  "representative_step": {
+    "active_group_has_nonzero_grad": {
+      "encoder": true,
+      "local_adapter": true,
+      "recurrent_backend": true
+    },
+    "gradients": {
+      "local_history_runtime.encoder.action_proj.bias": {
+        "finite": true,
+        "max_abs": 1.909211277961731e-07,
+        "present": true
+      },
+      "local_history_runtime.encoder.action_proj.weight": {
+        "finite": true,
+        "max_abs": 1.0058283805847168e-06,
+        "present": true
+      },
+      "local_history_runtime.encoder.age_embedding.weight": {
+        "finite": true,
+        "max_abs": 1.0756775736808777e-07,
+        "present": true
+      },
+      "local_history_runtime.encoder.dt_proj.bias": {
+        "finite": true,
+        "max_abs": 1.909211277961731e-07,
+        "present": true
+      },
+      "local_history_runtime.encoder.dt_proj.weight": {
+        "finite": true,
+        "max_abs": 2.6542693376541138e-08,
+        "present": true
+      },
+      "local_history_runtime.encoder.norm.bias": {
+        "finite": true,
+        "max_abs": 2.4586915969848633e-07,
+        "present": true
+      },
+      "local_history_runtime.encoder.norm.weight": {
+        "finite": true,
+        "max_abs": 3.203749656677246e-07,
+        "present": true
+      },
+      "local_history_runtime.encoder.visual_proj.bias": {
+        "finite": true,
+        "max_abs": 1.909211277961731e-07,
+        "present": true
+      },
+      "local_history_runtime.encoder.visual_proj.weight": {
+        "finite": true,
+        "max_abs": 1.5739351511001587e-07,
+        "present": true
+      },
+      "local_history_runtime.recurrent_backend.cell.bias_hh": {
+        "finite": true,
+        "max_abs": 2.980232238769531e-07,
+        "present": true
+      },
+      "local_history_runtime.recurrent_backend.cell.bias_ih": {
+        "finite": true,
+        "max_abs": 3.632158041000366e-07,
+        "present": true
+      },
+      "local_history_runtime.recurrent_backend.cell.weight_hh": {
+        "finite": true,
+        "max_abs": 4.0046870708465576e-07,
+        "present": true
+      },
+      "local_history_runtime.recurrent_backend.cell.weight_ih": {
+        "finite": true,
+        "max_abs": 1.1920928955078125e-06,
+        "present": true
+      },
+      "local_memory2llm.bias": {
+        "finite": true,
+        "max_abs": 0.06640625,
+        "present": true
+      },
+      "local_memory2llm.weight": {
+        "finite": true,
+        "max_abs": 0.06982421875,
+        "present": true
+      },
+      "local_memory_modality_embed": {
+        "finite": true,
+        "max_abs": 0.06640625,
+        "present": true
+      }
+    },
+    "iteration": 0,
+    "missing_optimizer_names": [],
+    "optimizer_matches_targets": true,
+    "optimizer_names": [
+      "local_history_runtime.encoder.action_proj.bias",
+      "local_history_runtime.encoder.action_proj.weight",
+      "local_history_runtime.encoder.age_embedding.weight",
+      "local_history_runtime.encoder.dt_proj.bias",
+      "local_history_runtime.encoder.dt_proj.weight",
+      "local_history_runtime.encoder.norm.bias",
+      "local_history_runtime.encoder.norm.weight",
+      "local_history_runtime.encoder.visual_proj.bias",
+      "local_history_runtime.encoder.visual_proj.weight",
+      "local_history_runtime.recurrent_backend.cell.bias_hh",
+      "local_history_runtime.recurrent_backend.cell.bias_ih",
+      "local_history_runtime.recurrent_backend.cell.weight_hh",
+      "local_history_runtime.recurrent_backend.cell.weight_ih",
+      "local_memory2llm.bias",
+      "local_memory2llm.weight",
+      "local_memory_modality_embed"
+    ],
+    "unexpected_optimizer_names": []
+  },
+  "schema_version": "r09_a1_runtime_probe_v1",
+  "state_contract": {
+    "bytes": 130,
+    "dtype": "torch.bfloat16",
+    "reset_all_mask_selected_absent": true,
+    "reset_all_mask_selected_token_zero": true,
+    "reset_selected_initialized_false": true,
+    "reset_selected_latent_zero": true,
+    "reset_unselected_initialized_exact": true,
+    "reset_unselected_latent_exact": true,
+    "segment_detach_value_exact": true,
+    "segment_present_equal": true,
+    "segment_state_after_detach_has_grad_fn": false,
+    "segment_state_after_detach_requires_grad": false,
+    "segment_state_before_detach_has_grad_fn": true,
+    "segment_state_before_detach_requires_grad": true,
+    "segment_state_max_abs_diff": 0.0,
+    "segment_token_max_abs_diff": 0.0,
+    "shape": [
+      2,
+      32
+    ]
+  },
+  "target_element_count": 142784,
+  "target_names": [
+    "local_history_runtime.encoder.action_proj.bias",
+    "local_history_runtime.encoder.action_proj.weight",
+    "local_history_runtime.encoder.age_embedding.weight",
+    "local_history_runtime.encoder.dt_proj.bias",
+    "local_history_runtime.encoder.dt_proj.weight",
+    "local_history_runtime.encoder.norm.bias",
+    "local_history_runtime.encoder.norm.weight",
+    "local_history_runtime.encoder.visual_proj.bias",
+    "local_history_runtime.encoder.visual_proj.weight",
+    "local_history_runtime.recurrent_backend.cell.bias_hh",
+    "local_history_runtime.recurrent_backend.cell.bias_ih",
+    "local_history_runtime.recurrent_backend.cell.weight_hh",
+    "local_history_runtime.recurrent_backend.cell.weight_ih",
+    "local_memory2llm.bias",
+    "local_memory2llm.weight",
+    "local_memory_modality_embed"
+  ],
+  "target_tensor_count": 16
+}

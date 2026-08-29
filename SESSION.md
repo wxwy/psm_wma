@@ -690,3 +690,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 运行与证据：`/gemini/code/r09-a1-corrected/`；100/100 完成并 `Done with training.`，末步 total/action=`0.997723/0.014089`。runtime probe：optimizer exact match，encoder/recurrent_backend/Local adapter 三组 nonzero grad，state bytes=130、segment value/token/state exact、graph detach 与 reset/all-mask 合同均 PASS，full-run CUDA peak allocated/reserved=`27153490944/29941039104` bytes。
 - clean-source verifier：隔离 clone root/submodule/Gitlink=`32e3bce9`/`c0287e2`/`c0287e2` strict clean；`/gemini/code/r09-a1-corrected/artifacts/a1_single_gpu_smoke_corrected.json`=PASS，16 tensors/142,784 elements、冻结公共 tensors bitwise unchanged、100 条 loss/action loss finite、D005 sidecar SHA 绑定且 training Gitlink 独立推导一致。
 - 下一步：仅申请 final checkpoint 的 fixed-weight Normal/Zero/Shuffle sensitivity capture（每模式独立 model-only 1-step；复用既有 `PSM_R08_HISTORY_MODE`、`R07ParityCaptureCallback`、non-history invariants）；未获批不得启动。R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL 继续禁止。
+
+### R09-A1 final checkpoint sensitivity（2026-08-29，REVIEW）
+
+- 审批与执行：ChatGPT `APPROVE_TO_RUN_A1_FINAL_SENSITIVITY` 后，Normal/Zero/Shuffle 各从 corrected `iter_000000100` 独立 model-only warm-start、`trainer.max_iter=1`、single GPU、`PSM_R08_GATE_B_CAPTURE_ONLY=1`；唯一变量为 `PSM_R08_HISTORY_MODE`。三次均由日志证明实际 load 同一 checkpoint、capture-only 后 `Done with training.`，不执行 backward/optimizer update。
+- 归档：`artifacts/g0/r09/a1_corrected/` 保存 corrected smoke verifier、runtime probe、D005 sidecar、三模式 JSON/PT/provenance/log 与 `final_sensitivity.json`。三模式 provenance 均为 root `e256cfb`、submodule/Gitlink `c0287e2`、strict tracked clean、same checkpoint、capture_only=true。
+- 结果：smoke PASS；sensitivity PASS、15/15 non-history invariants exact。Normal→Zero Local/Future/Action relative L2=`1.158648/0.012276/0.007808`；Normal→Shuffle=`0.121691/0.010906/0.006412`。Future/Action 两种干预均非零。
+- 当前：待独立 `APPROVE_TO_CLOSE_A1`；未批准前不得启动 R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL。提交：待本轮 artifact 与 closure request commit。

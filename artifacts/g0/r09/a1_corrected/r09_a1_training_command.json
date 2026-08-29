@@ -1,0 +1,41 @@
+{
+  "schema_version": "r09_a1_training_d005_v1",
+  "purpose": "R09-A1 corrected single-GPU bounded 100 optimizer-step smoke",
+  "gate": "G0-R09-A1-SINGLE-GPU-SMOKE",
+  "source": {
+    "root_revision": "32e3bce9cf9815816f6fdb8cabc29f2effac7c5d",
+    "submodule_revision": "c0287e215f265134cb8b8d947de7eb398f0246cf",
+    "gitlink_revision": "c0287e215f265134cb8b8d947de7eb398f0246cf"
+  },
+  "cwd": "/gemini/code/psm_wma/cosmos-framework",
+  "network": false,
+  "world_size": 1,
+  "gpu": "single A100-80GB required",
+  "input": {
+    "checkpoint": "/gemini/code/r08-gate-a-canonical/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+    "edge_policy_checkpoint": "/gemini/code/models/Cosmos3-Edge-Policy-DROID",
+    "libero_root": "/gemini/code/datasets/nvidia_LIBERO_LeRobot_v3",
+    "latent_cache_root": "/gemini/code/datasets/libero4in1_wan2.2vae_latent_cosmos_style",
+    "wan_vae": "/gemini/code/models/Wan2.2-TI2V-5B/Wan2.2_VAE.pth"
+  },
+  "output": {
+    "root": "/gemini/code/r09-a1-corrected",
+    "log": "/gemini/code/r09-a1-corrected/logs/action_policy_libero_edge_all_sft.log",
+    "checkpoint": "/gemini/code/r09-a1-corrected/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000100",
+    "runtime_probe": "/gemini/code/r09-a1-corrected/artifacts/r09_a1_runtime_probe.json"
+  },
+  "environment": {
+    "PSM_R08_LOCAL_HISTORY_ENABLED": "1",
+    "PSM_R08_LOCAL_HISTORY_HORIZON": "16",
+    "PSM_R09_A1_ENABLED": "1",
+    "PSM_R09_A1_PROBE_OUTPUT": "/gemini/code/r09-a1-corrected/artifacts/r09_a1_runtime_probe.json",
+    "LIBERO_NUM_WORKERS": "0",
+    "LIBERO_LATENT_CACHE_VERIFY_RATIO": "0",
+    "DISABLE_AUTO_RESUME": "1",
+    "trainer.max_iter": "100",
+    "trainer.grad_accum_iter": "1",
+    "trainer.logging_iter": "1"
+  },
+  "pass": "100 steps complete; finite losses; probe optimizer/gradient/state/VRAM hard gates pass; checkpoint schema and frozen-tensor verifier checks pass.",
+  "fail_or_blocked": "No CUDA device, any non-finite loss, missing probe, optimizer/scope mismatch, zero/absent selected gradients, VRAM hard gate failure, or training exit failure."
+}
