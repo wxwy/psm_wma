@@ -1088,3 +1088,18 @@ Previous detailed technical review remains authoritative:
 
 Current re-review note:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_rereview_1e3d3f7.md`
+
+---
+
+## 2026-08-29 — R08 Gate B final verifier-only re-review @ root 65a0230 / submodule 055e101
+
+**请求：复审本轮 CPU-only verifier/manifest 整改；未启动 GPU。**
+
+本轮逐项落实上次 blocker：
+- 三个 capture JSON、PT 与 provenance schema 都是硬 PASS 条件；
+- `artifacts/g0/r08/gate_a_checkpoint_manifest.json` 为 retained canonical Gate-A `iter_000000002` 的 8 个 DCP 文件真实 size/SHA256 manifest；verifier 解析 schema、复算每个文件并要求三份 provenance path 一致；
+- 加载日志必须同时命中精确 `Resuming ckpt <canonical>` 和 `Loaded checkpoint from <canonical> ... in iteration 0`，配置必须明确 `load_training_state=false` 与 canonical `load_path`；
+- Local/Future/Action 的 l2 nonzero+finite、max_abs finite、relative（存在时）finite；
+- `tools/g0/verify_r08_gate_b_test.py`：canonical PASS、缺失 history_mask、三类错误 schema、Inf、任意 manifest、hash 漂移、错误 path/成功加载标记均覆盖，pytest 7/7 PASS；`py_compile`/`git diff --check` PASS。
+
+请给出 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY` 或精确 `file:line` 的 `REQUEST_CHANGES`。若批准，仅运行固定 checkpoint 的 Normal/Zero/Shuffle 三个 capture-only 前向；继续禁止 Gate C、R09、多卡、长训练。
