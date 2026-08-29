@@ -1212,3 +1212,40 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_canonical_pinning_063c367_055e101.md`
+
+
+---
+
+## 2026-08-29 — R08 Gate B provenance callback hotfix review @ root 8fa6ed9 / submodule 465cfcd
+
+**Verdict: APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY**
+
+Hotfix 确认正确且范围最小。
+
+框架基类实际合同为：
+`on_train_start(self, model, iteration: int = 0)`
+
+此前 provenance callback 只接收 `model`，因此首次 Normal 在 warm-start 后、第一前向前因 `iteration=0` 关键字退出，根因成立。
+
+子模块 `465cfcd` 仅将 callback 改为接收 `**kwargs`，定向测试使用真实 `iteration=0` 调用；未改变 provenance payload、canonical manifest/verifier、模型、算法、checkpoint、capture-only 或 optimizer 语义。
+
+批准从 **Normal** 重新开始，然后依次：
+1. Zero
+2. Shuffle
+
+继续保持原 Gate-B 条件：
+- pinned reviewed Gate-A checkpoint；
+- same batch/current sample/noise/masks/non-history config；
+- only history intervention changes；
+- forward/capture only；
+- no backward；
+- no optimizer step；
+- no long training；
+- no multi-GPU；
+- no Gate C；
+- no R09。
+
+三次完成后运行 strict Gate-B verifier，并提交最终 artifact + raw sidecar hashes 做 runtime review。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_callback_hotfix_8fa6ed9_465cfcd.md`
