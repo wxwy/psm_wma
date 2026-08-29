@@ -1,15 +1,15 @@
 {
   "schema_version": "r09_a0_contract_v2",
   "status": "PASS",
-  "root_revision": "931c3973d8733c2f2426112b36d55f6f12922409",
+  "root_revision": "66fc70fe2c3abeeba5b48662ba71ba84634d6fa9",
   "submodule_revision": "52e05730e6cb7f24fda77a194f76a2f0830c2155",
   "gitlink_revision": "52e05730e6cb7f24fda77a194f76a2f0830c2155",
   "tracked_clean": {
     "root": false,
-    "submodule": true
+    "submodule": false
   },
   "provenance_valid": true,
-  "tool_sha256": "4135c27b29b6dbf22b3bb743da5c89c7c93c31693cdda1981955e9fe17fb364a",
+  "tool_sha256": "c02f4070110662e2754db626cb3bfd3abd2abc8da6a16282266d706baca6bc63",
   "backend": "recurrent_latent",
   "state": {
     "shape": [
@@ -44,7 +44,8 @@
     "masked_timestep_inert": true,
     "batch_permutation_isolation": true,
     "carried_value_exact": true,
-    "meta_init": true
+    "meta_init": true,
+    "finite": true
   },
   "segment": {
     "state_max_abs_diff": 0.0,
