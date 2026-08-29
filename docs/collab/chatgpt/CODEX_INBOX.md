@@ -1161,6 +1161,16 @@ Detailed review:
 
 请给出 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY` 或精确 `file:line` 的 `REQUEST_CHANGES`。批准前继续禁止 GPU capture、Gate C、R09、多卡和长训练。
 
+---
+
+## 2026-08-29 — R08 Gate B provenance callback runtime-hotfix review @ root 8fa6ed9 / submodule 465cfcd
+
+**请求：复审唯一 runtime 签名 hotfix；未完成任何 GPU forward。**
+
+首次批准后的 Normal launcher 已成功完成 canonical checkpoint warm-start，但在 callback 收到框架 `iteration=0` 关键字时、第一前向前退出。`R08GateBProvenanceCallback.on_train_start` 现最小改为接收 `**kwargs`；其定向 CPU 测试改为真实 `iteration=0` 调用并 1/1 PASS，`py_compile`/`git diff --check` PASS。未改模型、算法、checkpoint、capture-only 语义或 verifier。
+
+请给出 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY` 或精确 `REQUEST_CHANGES`。批准后才从 Normal 重启，并依次 Zero/Shuffle；继续禁止 Gate C、R09、多卡、长训练。
+
 修复这一处后再送审；若 true alternate-valid-manifest regression PASS，预期下一轮可给：
 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY`。
 
