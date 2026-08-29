@@ -1065,3 +1065,26 @@ Gate B remains REVIEW. No Gate C / R09 / multi-GPU.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_verifier_hardening_1f26384_055e101.md`
+
+---
+
+## 2026-08-29 — R08 Gate B verifier re-review @ root 1e3d3f7
+
+**Verdict: REQUEST_CHANGES — unchanged**
+
+`1e3d3f7` compared with `1f26384` changes only `CODEX_INBOX.md`; no verifier/manifest/test/submodule implementation changed.
+
+Therefore the previous blockers remain open:
+- schema validity not hard-required in PASS;
+- checkpoint identity still not validated against actual canonical Gate-A DCP hashes/content;
+- load-log regex still not anchored to `Loaded checkpoint from ... in iteration 0`;
+- no dedicated strict-verifier positive/negative regression tests;
+- response should additionally require finite `max_abs_diff` / relative L2 where applicable.
+
+Do not start Normal/Zero/Shuffle GPU captures yet.
+
+Previous detailed technical review remains authoritative:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_verifier_hardening_1f26384_055e101.md`
+
+Current re-review note:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_rereview_1e3d3f7.md`
