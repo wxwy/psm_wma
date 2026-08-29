@@ -860,3 +860,41 @@ Detailed review:
 - 下一轮三次 capture-only forward 将在本整改获批后才执行，以生成带 mask 的新 sidecar。
 
 请仅复审这项最小证据整改（尤其是 list/tensor batch 兼容与 mask exact 比较）；给出 APPROVE/REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R08 Gate B history_mask evidence patch review @ root fc520ae / submodule 296f138
+
+**Verdict: REQUEST_CHANGES**
+
+Narrow patch direction is correct:
+- capture actual `data_batch["history_mask"]`;
+- add `history_mask` to exact invariants.
+
+But `R07ParityCaptureCallback._tensor_or_list_summary()` currently handles only Tensor or `list[Tensor]`.
+The production R08 `_stack()` contract also supports nested `list[list[Tensor]]` by unwrapping `item[0]` before concatenation.
+Current capture helper would pass an inner list to `_tensor_summary()` and fail on `.detach()`.
+
+Required CPU/static fix:
+- mirror production normalization: Tensor -> summarize; list -> unwrap inner singleton lists, validate tensors, summarize;
+- tests for Tensor, `list[Tensor]`, `list[list[Tensor]]`, and invalid list entry.
+
+Comparator-side `history_mask` exact invariant is accepted.
+
+IMPORTANT: previous Gate B same-checkpoint/runtime provenance HIGH is still OPEN.
+This patch does not prove Normal/Zero/Shuffle loaded the exact same fixed Gate-A checkpoint.
+
+Do not run the next three GPU captures with only the mask fix.
+Before recapture, also add Gate-B-specific runtime provenance so one minimal forward-only round closes both gaps:
+- root/submodule/Gitlink;
+- history mode;
+- capture-only flag;
+- exact checkpoint load path/iteration;
+- same-checkpoint proof;
+- config + raw sidecar hashes;
+- strict `r08_gate_b_history_sensitivity_v1` PASS logic.
+
+Gate B remains REVIEW. No Gate C / R09 / multi-GPU / long training.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_mask_patch_fc520ae_296f138.md`
