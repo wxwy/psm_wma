@@ -1543,3 +1543,9 @@ LOW 留到 A0 review 前关闭：A1 的 `Local adapter` 必须替换成精确 pr
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_preflight_runbook_second_rereview_3be7b26.md`
+
+---
+
+## 2026-08-29 — R09-A0 CPU contract review @ root ce1ce00 / submodule c763475
+
+R09-A0 已完成：最小 recurrent backend、`reset_mask`、mixed true absence、partial reset、segment carry+detach 等价与 CPU artifact。`artifacts/g0/r09/a0_contract.json` PASS（state/token diff=0，tolerance=1e-6），定向 pytest 5/5 PASS。未使用 GPU，未进入 A1/TTT/多卡。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
