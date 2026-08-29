@@ -34,6 +34,10 @@ def _clean(path: Path) -> bool:
     ).strip()
 
 
+def _gitlink(path: Path) -> str:
+    return subprocess.check_output(["git", "-C", str(path), "ls-tree", "HEAD", "cosmos-framework"], text=True).split()[2]
+
+
 def _load_model(checkpoint: Path) -> tuple[dict[str, torch.Tensor], dict[str, TensorStorageMetadata]]:
     reader = FileSystemReader(checkpoint / "model")
     metadata = reader.read_metadata()
@@ -87,6 +91,9 @@ def main() -> None:
     parser.add_argument("--final-checkpoint", type=Path, required=True)
     parser.add_argument("--log", type=Path, required=True)
     parser.add_argument("--probe", type=Path, required=True)
+    parser.add_argument("--training-root-revision", required=True)
+    parser.add_argument("--training-submodule-revision", required=True)
+    parser.add_argument("--training-gitlink-revision", required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
@@ -109,6 +116,10 @@ def main() -> None:
         "net.local_history_runtime.recurrent_backend.cell.bias_hh",
     }
     training = _training_summary(args.log)
+    verifier_submodule = _revision(args.root / "cosmos-framework")
+    verifier_gitlink = _gitlink(args.root)
+    root_clean = _clean(args.root)
+    submodule_clean = _clean(args.root / "cosmos-framework")
     checks = {
         "checkpoint_schema_matches_except_recurrent_backend": not removed and set(added) == expected_added,
         "exact_allowlist_yields_16_tensors": len(selected_names) == 16,
@@ -122,6 +133,20 @@ def main() -> None:
         "runtime_selected_gradients_present_and_finite": all(
             item["present"] and item["finite"] for item in probe["representative_step"]["gradients"].values()
         ),
+        "runtime_active_groups_have_nonzero_grad": all(
+            probe["representative_step"]["active_group_has_nonzero_grad"].values()
+        ),
+        "runtime_optimizer_object_sets_equal": not probe["representative_step"]["missing_optimizer_names"]
+        and not probe["representative_step"]["unexpected_optimizer_names"],
+        "state_graph_detached": probe["state_contract"]["segment_state_before_detach_requires_grad"]
+        and probe["state_contract"]["segment_state_before_detach_has_grad_fn"]
+        and not probe["state_contract"]["segment_state_after_detach_requires_grad"]
+        and not probe["state_contract"]["segment_state_after_detach_has_grad_fn"],
+        "full_run_cuda_peak_recorded": "allocated_bytes" in probe["full_run_cuda_peak"]
+        and "reserved_bytes" in probe["full_run_cuda_peak"],
+        "verifier_root_clean": root_clean,
+        "verifier_submodule_clean": submodule_clean,
+        "verifier_gitlink_matches_submodule": verifier_gitlink == verifier_submodule,
         "state_contract_passes": all(
             value
             for key, value in probe["state_contract"].items()
@@ -132,11 +157,18 @@ def main() -> None:
     result = {
         "schema_version": "r09_a1_smoke_v1",
         "status": "PASS" if all(checks.values()) else "FAIL",
-        "training_source": {"initial_checkpoint": str(args.initial_checkpoint), "final_checkpoint": str(args.final_checkpoint)},
+        "training_source": {
+            "root_revision": args.training_root_revision,
+            "submodule_revision": args.training_submodule_revision,
+            "gitlink_revision": args.training_gitlink_revision,
+            "initial_checkpoint": str(args.initial_checkpoint),
+            "final_checkpoint": str(args.final_checkpoint),
+        },
         "verifier_source": {
             "root_revision": _revision(args.root),
-            "submodule_revision": _revision(args.root / "cosmos-framework"),
-            "tracked_clean": {"root": _clean(args.root), "submodule": _clean(args.root / "cosmos-framework")},
+            "submodule_revision": verifier_submodule,
+            "gitlink_revision": verifier_gitlink,
+            "tracked_clean": {"root": root_clean, "submodule": submodule_clean},
             "tool_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         },
         "allowlist": list(ALLOWLIST),
