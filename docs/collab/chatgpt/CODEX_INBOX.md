@@ -1653,3 +1653,9 @@ R09-A0 继续 REVIEW；A1/GPU/R09-B/多卡/长训仍 BLOCKED。
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A0_clean_source_91139e4_2961e8d_67b6f88.md`
+
+---
+
+## 2026-08-29 — R09-A0 complete-reset clean closure @ root aa3bfbd / source 1fddced / submodule 6bf59c2
+
+selected reset 已同时清 latent 与 explicit initialized；新增回归覆盖 reset 后全 mask 必须 absent。最终 artifact 从 clean source `1fddced` / Gitlink+submodule `6bf59c2` 重算：tracked-clean/provenance true、所有实际 A0 assertions true、state/token diff=0。CPU-only；A1/GPU/TTT/多卡继续禁用。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
