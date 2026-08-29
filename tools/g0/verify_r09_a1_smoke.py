@@ -19,7 +19,6 @@ from torch.distributed.checkpoint.metadata import TensorStorageMetadata
 ALLOWLIST = (
     "local_history_runtime.encoder",
     "local_history_runtime.recurrent_backend",
-    "local_history_runtime.readout",
     "local_memory2llm",
     "local_memory_modality_embed",
 )
@@ -31,7 +30,7 @@ def _revision(path: Path) -> str:
 
 def _clean(path: Path) -> bool:
     return not subprocess.check_output(
-        ["git", "-C", str(path), "status", "--porcelain", "--untracked-files=no"], text=True
+        ["git", "-C", str(path), "status", "--porcelain"], text=True
     ).strip()
 
 
@@ -87,9 +86,11 @@ def main() -> None:
     parser.add_argument("--initial-checkpoint", type=Path, required=True)
     parser.add_argument("--final-checkpoint", type=Path, required=True)
     parser.add_argument("--log", type=Path, required=True)
+    parser.add_argument("--probe", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
+    probe = json.loads(args.probe.read_text())
     initial, initial_meta = _load_model(args.initial_checkpoint)
     final, final_meta = _load_model(args.final_checkpoint)
     initial_names, final_names = set(initial), set(final)
@@ -110,19 +111,34 @@ def main() -> None:
     training = _training_summary(args.log)
     checks = {
         "checkpoint_schema_matches_except_recurrent_backend": not removed and set(added) == expected_added,
-        "exact_allowlist_yields_20_tensors": len(selected_names) == 20,
-        "exact_allowlist_yields_282336_elements": selected_elements == 282336,
+        "exact_allowlist_yields_16_tensors": len(selected_names) == 16,
+        "exact_allowlist_yields_142784_elements": selected_elements == 142784,
         "all_frozen_common_tensors_bitwise_unchanged": unchanged_frozen,
         "at_least_one_preexisting_selected_tensor_changed": bool(changed_selected),
         "training_completed_100_steps": training["completed"] and training["last_iteration"] == 100,
         "all_logged_losses_finite": bool(training["finite_loss"] and training["finite_action_loss"]),
+        "runtime_optimizer_matches_allowlist": bool(probe["representative_step"]["optimizer_matches_targets"]),
+        "runtime_optimizer_has_no_unexpected_parameters": not probe["representative_step"]["unexpected_optimizer_names"],
+        "runtime_selected_gradients_present_and_finite": all(
+            item["present"] and item["finite"] for item in probe["representative_step"]["gradients"].values()
+        ),
+        "state_contract_passes": all(
+            value
+            for key, value in probe["state_contract"].items()
+            if key.startswith("reset_") or key == "segment_present_equal"
+        ) and probe["state_contract"]["segment_token_max_abs_diff"] <= 1e-6
+        and probe["state_contract"]["segment_state_max_abs_diff"] <= 1e-6,
     }
     result = {
         "schema_version": "r09_a1_smoke_v1",
         "status": "PASS" if all(checks.values()) else "FAIL",
-        "root_revision": _revision(args.root),
-        "submodule_revision": _revision(args.root / "cosmos-framework"),
-        "tracked_clean": {"root": _clean(args.root), "submodule": _clean(args.root / "cosmos-framework")},
+        "training_source": {"initial_checkpoint": str(args.initial_checkpoint), "final_checkpoint": str(args.final_checkpoint)},
+        "verifier_source": {
+            "root_revision": _revision(args.root),
+            "submodule_revision": _revision(args.root / "cosmos-framework"),
+            "tracked_clean": {"root": _clean(args.root), "submodule": _clean(args.root / "cosmos-framework")},
+            "tool_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        },
         "allowlist": list(ALLOWLIST),
         "selected": {
             "names": selected_names,
@@ -143,6 +159,7 @@ def main() -> None:
             ).hexdigest(),
         },
         "training": training,
+        "runtime_probe": probe,
         "checks": checks,
         "command": {
             "argv": [str(value) for value in __import__("sys").argv],
