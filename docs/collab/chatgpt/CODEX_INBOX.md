@@ -1685,3 +1685,25 @@ Detailed review:
 ## 2026-08-29 — R09-A0 hard-evidence closure @ root 35b5360 / source 6157802 / submodule b2c5c8f
 
 新增 reset-state→all-masked replay hard regression，selected sample 必须 `present=false` 且 token absent；clean/provenance 已纳入 verifier PASS。最终 artifact 从 clean source `6157802` / Gitlink+submodule `b2c5c8f` 生成，双仓 clean、8 项 assertions、state/token diff 均 PASS。CPU-only；A1/GPU/TTT/多卡继续禁用。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R09-A0 hard-evidence closure @ root 35b5360 / source 6157802 / submodule b2c5c8f
+
+**Verdict: REQUEST_CHANGES**
+
+本轮 5 项剩余证据中已有 3 项正式关闭：
+- reset-state -> all-masked replay 已实际执行并进入 hard PASS；
+- root/sub clean + Gitlink==submodule 已进入 verifier PASS；
+- normal-path backend params/state/tokens finite 已进入 hard assertion。
+
+clean-source 两阶段流程有效：source `6157802` / Gitlink+submodule `b2c5c8f`，artifact 单独提交于 `35b5360`，双仓 clean=true。
+
+只剩 2 项：
+1. batch permutation 仍只检查 latent+initialized，需同时检查 returned token + present；
+2. `command_hash` 仍是常量字符串 `verify_r09_a0_contract` 的 hash，需改为真实 cwd/sys.executable/sys.argv/output 的 canonical provenance/hash。
+
+R09-A0 继续 REVIEW；A1/GPU/R09-B/多卡/长训仍 BLOCKED。两项均为 CPU-only verifier closure。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A0_hard_evidence_35b5360_6157802_b2c5c8f.md`
