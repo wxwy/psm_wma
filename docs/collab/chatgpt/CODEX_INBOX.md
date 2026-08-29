@@ -955,3 +955,47 @@ Gate B remains REVIEW. No Gate C / R09 / multi-GPU / long training.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_provenance_patch_c036cf9_f90f9d4.md`
+
+---
+
+## 2026-08-29 — R08 Gate B strict verifier review @ root e88a569 / submodule 055e101
+
+**Verdict: REQUEST_CHANGES**
+
+Closed:
+- provenance callback is now cwd-independent in production code;
+- nested history_mask normalization remains fixed;
+- Gate-B-specific verifier and `r08_gate_b_history_sensitivity_v1` schema now exist before GPU capture.
+
+Still blocking GPU recapture:
+
+### HIGH-1 — missing invariants can false-PASS
+`verify_r08_gate_b.py` uses `.get()` equality. If a required key (including `history_mask`) is missing from all three summaries, `None == None == None` yields true.
+Require key presence in all modes + exact equality, and make JSON/PT/provenance schema validity a hard PASS condition.
+
+### HIGH-2 — nonzero response is not required to be finite
+Current PASS only checks `l2_diff > 0`; `inf > 0` passes.
+Require finite + nonzero Local/Future/Action l2 and finite max_abs (and relative L2 when defined). Add NaN/Inf FAIL tests.
+
+### HIGH-3 — same checkpoint path is not checkpoint identity
+Current verifier proves same declared path + log path, but not checkpoint contents.
+Bind Gate B to the approved canonical Gate-A checkpoint manifest/hashes and require `checkpoint_identity_valid=true`.
+Post-run CPU verification can hash/compare the retained checkpoint once; no need to hash the large DCP inside each GPU process.
+
+### HIGH-4 — checkpoint load regex is too loose
+Current regex can match any line containing path + `in iteration 0`.
+Match the actual framework completion marker `Loaded checkpoint from <source> in iteration 0` (and preferably the Resuming marker), and make model-only warm-start/expected iteration semantics explicit.
+
+Before recapture add verifier tests for:
+- missing history_mask -> FAIL;
+- wrong schema -> FAIL;
+- Inf/NaN Future/Action response -> FAIL;
+- wrong checkpoint identity/path -> FAIL;
+- missing/wrong successful-load marker -> FAIL.
+
+Do not run Normal/Zero/Shuffle GPU captures yet. Once these verifier-only issues close, ChatGPT expects to approve one minimal three-forward capture round.
+
+Gate B remains REVIEW. No Gate C / R09 / multi-GPU / long training.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_strict_verifier_e88a569_055e101.md`
