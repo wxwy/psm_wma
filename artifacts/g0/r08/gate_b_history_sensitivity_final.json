@@ -1,0 +1,164 @@
+{
+  "schema_version": "r08_gate_b_history_sensitivity_v1",
+  "status": "PASS",
+  "capture_schema_valid": true,
+  "tensor_schema_valid": true,
+  "provenance_schema_valid": true,
+  "expected_modes": true,
+  "same_runtime": true,
+  "valid_git": true,
+  "manifest_checkpoint_path": true,
+  "actual_checkpoint_loaded": true,
+  "actual_checkpoint_resumed": true,
+  "model_only_warm_start": true,
+  "expected_iteration": 0,
+  "checkpoint_identity": {
+    "manifest_path": "artifacts/g0/r08/gate_a_checkpoint_manifest.json",
+    "manifest_sha256": "ff01da7a7c0f28504b54de94505c8b605f90a1c98093a982af5cee0aab53c928",
+    "canonical_manifest_valid": true,
+    "checkpoint_path": "/gemini/code/r08-gate-a-canonical/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+    "file_count": 8,
+    "checkpoint_identity_valid": true
+  },
+  "invariant_exact": {
+    "x0_vision": true,
+    "xt_vision": true,
+    "sigma_vision_schedule": true,
+    "sigma_vision_effective": true,
+    "x0_action": true,
+    "xt_action": true,
+    "sigma_action_effective": true,
+    "text_ids": true,
+    "text_indexes": true,
+    "vision_indexes": true,
+    "action_indexes": true,
+    "split_lens": true,
+    "attn_modes": true,
+    "position_ids": true,
+    "history_mask": true
+  },
+  "response": true,
+  "metrics": {
+    "normal_vs_zero": {
+      "local_memory": {
+        "sha256_reference": "eef93684bfac01ccd9d0e28a817b57855f6669a1987ee09ef8e4a221113576ab",
+        "sha256_candidate": "056e724a738af412c4b2af7f1fcd2682e96dfe763acc3858e3fcb95d829cacf8",
+        "changed_items": 126,
+        "max_abs_diff": 0.5341796875,
+        "l2_diff": 12.353943968572796,
+        "relative_l2_diff": 0.9642652776184742
+      },
+      "preds_vision": {
+        "sha256_reference": "ca7e103e72edfb635d177bce34685e5a19e378f1ae593bb31651895cc56dc0d0",
+        "sha256_candidate": "41412d9d018b5a9bf2b2a22b2e591d2ee9eec5689625a4b13b45eece408641c4",
+        "changed_items": 126,
+        "max_abs_diff": 0.5234375,
+        "l2_diff": 30.590041211459933,
+        "relative_l2_diff": 0.010837569996237889
+      },
+      "preds_action": {
+        "sha256_reference": "006e237288b1439281b77b0afb59f44ec9f3a7ba0ad555440b3895b32303ed80",
+        "sha256_candidate": "5692aa2d5859a3197a62ee93fb1d65bd395e075688fc72c0bc683ee45c4d0868",
+        "changed_items": 126,
+        "max_abs_diff": 0.234375,
+        "l2_diff": 0.9236779075700784,
+        "relative_l2_diff": 0.0055821739667297355
+      }
+    },
+    "normal_vs_shuffle": {
+      "local_memory": {
+        "sha256_reference": "eef93684bfac01ccd9d0e28a817b57855f6669a1987ee09ef8e4a221113576ab",
+        "sha256_candidate": "6163dd197ef39ec8ef36a16f45368a6293c7be30300af38e8511c7e1fecd4d73",
+        "changed_items": 126,
+        "max_abs_diff": 0.5341796875,
+        "l2_diff": 2.2209721938320968,
+        "relative_l2_diff": 0.1733540620320484
+      },
+      "preds_vision": {
+        "sha256_reference": "ca7e103e72edfb635d177bce34685e5a19e378f1ae593bb31651895cc56dc0d0",
+        "sha256_candidate": "40c7f35d6dc1d4d4a4bb5dcbcc59a8998b04659b648b58550829d3f16177af06",
+        "changed_items": 126,
+        "max_abs_diff": 0.234375,
+        "l2_diff": 30.23979090401349,
+        "relative_l2_diff": 0.010713481826597482
+      },
+      "preds_action": {
+        "sha256_reference": "006e237288b1439281b77b0afb59f44ec9f3a7ba0ad555440b3895b32303ed80",
+        "sha256_candidate": "03a5864b49f595f662de12c03b6c1e57addd8e418e25cefc79faa7e56b0b8f1f",
+        "changed_items": 126,
+        "max_abs_diff": 0.234375,
+        "l2_diff": 0.9424948751696183,
+        "relative_l2_diff": 0.0056958928137499885
+      }
+    }
+  },
+  "files": {
+    "normal": {
+      "json": {
+        "path": "/gemini/code/r08-gate-b-final/normal.json",
+        "sha256": "3e764018ea89b91d5a24032196ed4414558b48608c6c77eaf76b8b6e2e892f57"
+      },
+      "pt": {
+        "path": "/gemini/code/r08-gate-b-final/normal.pt",
+        "sha256": "89bd2830e3a5433acbc59b86b146b586b3284b1d2ee02cb2a5f5b788b8e32b70"
+      },
+      "provenance": {
+        "path": "/gemini/code/r08-gate-b-final/normal.provenance.json",
+        "sha256": "64af702e3357781c94b486f6e98855ed715afb38a9b6e91937e287648c8f7f4f"
+      },
+      "log": {
+        "path": "/gemini/code/r08-gate-b-final/normal/logs/action_policy_libero_edge_all_sft.log",
+        "sha256": "8f544a377e2a15118f342103929ab68f4767959d0dcc3930863a437f489a0b22"
+      },
+      "config": {
+        "path": "/gemini/code/r08-gate-b-final/normal/cosmos3_action_libero/action_sft/edge_libero_4in1/config.yaml",
+        "sha256": "39d118fdc3b44336526c0cb8812b983d8644e8351e906fb408882d6399608bea"
+      }
+    },
+    "zero": {
+      "json": {
+        "path": "/gemini/code/r08-gate-b-final/zero.json",
+        "sha256": "332915925886e9d18ff2b68869fe4b51ead70fabeb139cd3beef406d6da35efc"
+      },
+      "pt": {
+        "path": "/gemini/code/r08-gate-b-final/zero.pt",
+        "sha256": "c73ca7d0ae2b47425d8dcb683ccc9071a701ab2e3a06acb4f3d40225d70c985c"
+      },
+      "provenance": {
+        "path": "/gemini/code/r08-gate-b-final/zero.provenance.json",
+        "sha256": "ab75706e8bb20bc79fc8315e9dd76a7ee83a7dc26204c20b7c9fe71214db0da5"
+      },
+      "log": {
+        "path": "/gemini/code/r08-gate-b-final/zero/logs/action_policy_libero_edge_all_sft.log",
+        "sha256": "cd18753f8b6c81b47a3cadcd4ce223e850a726cd519acaf09863a681879fbaa9"
+      },
+      "config": {
+        "path": "/gemini/code/r08-gate-b-final/zero/cosmos3_action_libero/action_sft/edge_libero_4in1/config.yaml",
+        "sha256": "29b6f9518128825fa9f7efb6fccebc82cbc87061f86885f4b5b0db27cf350df1"
+      }
+    },
+    "shuffle": {
+      "json": {
+        "path": "/gemini/code/r08-gate-b-final/shuffle.json",
+        "sha256": "7d696615cc4936151c5f0e842223834c7d29d7ebd33e9d984ec15fd5e5bbe933"
+      },
+      "pt": {
+        "path": "/gemini/code/r08-gate-b-final/shuffle.pt",
+        "sha256": "ccf60bc2077462f98c2630eb866d1920a74270a6ed46e2d5dae05f4c22a0250e"
+      },
+      "provenance": {
+        "path": "/gemini/code/r08-gate-b-final/shuffle.provenance.json",
+        "sha256": "5f45cc44fdd93e34239ce6f8c6489d9c481b6c5ae7bffa34794069ff5d1673f8"
+      },
+      "log": {
+        "path": "/gemini/code/r08-gate-b-final/shuffle/logs/action_policy_libero_edge_all_sft.log",
+        "sha256": "14a4681e5aea61f3f6808e0d57dd21e153cdd9843823e13e9f9b24247610d998"
+      },
+      "config": {
+        "path": "/gemini/code/r08-gate-b-final/shuffle/cosmos3_action_libero/action_sft/edge_libero_4in1/config.yaml",
+        "sha256": "40db24f620595576392e5ff0821051388cba44be0a709b9872095ab6ea103784"
+      }
+    }
+  },
+  "verifier_sha256": "2efc22ff01c4c1a60d46110977bf6b36f7e665378f71348b17f031abdc6dba92"
+}
