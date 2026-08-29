@@ -18,7 +18,7 @@ def revision(path: Path) -> str:
 
 
 def clean(path: Path) -> bool:
-    return not subprocess.check_output(["git", "-C", str(path), "status", "--porcelain"], text=True).strip()
+    return not subprocess.check_output(["git", "-C", str(path), "status", "--porcelain", "--untracked-files=no"], text=True).strip()
 
 
 def main() -> None:
@@ -30,18 +30,19 @@ def main() -> None:
     evidence = torch.randn(3, 4, 3)
     mask = torch.tensor([[True, True, True, True], [False, False, False, False], [True, False, True, False]])
     tokens, state, present = backend.replay(evidence, mask)
-    reset = backend.reset_mask(state, torch.tensor([False, False, True]))
+    latent, initialized = state
+    reset = backend.reset_mask(latent, torch.tensor([False, False, True]))
     _, first, _ = backend.replay(evidence[:, :2], mask[:, :2])
-    _, second, _ = backend.replay(evidence[:, 2:], mask[:, 2:], first.detach())
-    state_diff = float((second - state).abs().max().detach())
-    token_diff = float((second[:, None] - tokens).abs().max().detach())
-    carried_exact = bool(torch.equal(first.detach(), first))
+    _, second, _ = backend.replay(evidence[:, 2:], mask[:, 2:], (first[0].detach(), first[1]))
+    state_diff = float((second[0] - latent).abs().max().detach())
+    token_diff = float((second[0][:, None] - tokens).abs().max().detach())
+    carried_exact = bool(torch.equal(first[0].detach(), first[0]))
     masked = evidence.clone(); masked[:, 1] = 1e6
     masked_state = backend.replay(masked, mask)[1]
-    masked_inert = bool(torch.equal(masked_state[mask[:, 1] == 0], state[mask[:, 1] == 0]))
+    masked_inert = bool(torch.equal(masked_state[0][mask[:, 1] == 0], latent[mask[:, 1] == 0]))
     order = torch.tensor([2, 0, 1])
     permuted = backend.replay(evidence[order], mask[order])[1]
-    permutation = bool(torch.allclose(permuted, state[order], rtol=0, atol=1e-6))
+    permutation = bool(torch.allclose(permuted[0], latent[order], rtol=0, atol=1e-6) and torch.equal(permuted[1], initialized[order]))
     torch.manual_seed(11)
     with torch.device("meta"):
         meta = RecurrentLocalMemoryBackend(evidence_dim=3, local_dim=5)
@@ -55,7 +56,8 @@ def main() -> None:
     init_ok = all(torch.isfinite(p).all() and torch.equal(p, q) for p, q in zip(values, repeat.parameters(), strict=True))
     root = Path(__file__).resolve().parents[2]
     gitlink = subprocess.check_output(["git", "-C", str(root), "ls-tree", "HEAD", "cosmos-framework"], text=True).split()[2]
-    checks = {"all_mask_absent": bool(not present[1] and torch.count_nonzero(tokens[1]) == 0), "partial_reset": bool(torch.equal(reset[[0, 1]], state[[0, 1]]) and torch.count_nonzero(reset[2]) == 0), "masked_timestep_inert": masked_inert, "batch_permutation_isolation": permutation, "carried_value_exact": carried_exact, "meta_init": init_ok}
+    checks = {"all_mask_absent": bool(not present[1] and torch.count_nonzero(tokens[1]) == 0), "partial_reset": bool(torch.equal(reset[[0, 1]], latent[[0, 1]]) and torch.count_nonzero(latent[2]) > 0 and torch.count_nonzero(reset[2]) == 0), "masked_timestep_inert": masked_inert, "batch_permutation_isolation": permutation, "carried_value_exact": carried_exact, "meta_init": init_ok, "finite": bool(torch.isfinite(latent).all() and torch.isfinite(tokens).all())}
+    state = latent
     passed = all(checks.values()) and state_diff <= 1e-6 and token_diff <= 1e-6
     result = {"schema_version":"r09_a0_contract_v2","status":"PASS" if passed else "FAIL","root_revision":revision(root),"submodule_revision":revision(root / "cosmos-framework"),"gitlink_revision":gitlink,"tracked_clean":{"root":clean(root),"submodule":clean(root / "cosmos-framework")},"provenance_valid":revision(root / "cosmos-framework")==gitlink,"tool_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),"backend":"recurrent_latent","state":{"shape":list(state.shape),"dtype":str(state.dtype),"bytes":state.numel()*state.element_size()},"input_shape":list(evidence.shape),"token_shape":list(tokens.shape),"trainable_param_count":sum(p.numel() for p in backend.parameters()),"trainable_prefixes":["cell"],"mixed_presence":present.tolist(),"assertions":checks,"segment":{"state_max_abs_diff":state_diff,"token_max_abs_diff":token_diff,"tolerance":1e-6,"pass":state_diff<=1e-6 and token_diff<=1e-6},"init":{"seed":11,"path":"meta-to_empty-explicit-reset_parameters"},"command_hash":hashlib.sha256("verify_r09_a0_contract".encode()).hexdigest()}
     args.output.parent.mkdir(parents=True, exist_ok=True)
