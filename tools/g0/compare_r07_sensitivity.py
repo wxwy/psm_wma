@@ -26,6 +26,7 @@ INVARIANT_KEYS = (
     "split_lens",
     "attn_modes",
     "position_ids",
+    "history_mask",
 )
 
 
