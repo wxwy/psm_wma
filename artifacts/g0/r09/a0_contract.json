@@ -1,8 +1,8 @@
 {
   "schema_version": "r09_a0_contract_v1",
   "status": "PASS",
-  "root_revision": "9263dda71c248e07b75c141e86c966958daf6e5b",
-  "submodule_revision": "860f5328b5b9fa41103497abaad7985a6c0333ae",
+  "root_revision": "8a5c488724fc555e64bbdbb2217b8a31f7bbf3f4",
+  "submodule_revision": "c763475c733740be6ef5914e3234375c01771a80",
   "backend": "recurrent_latent",
   "state": {
     "shape": [
