@@ -1342,3 +1342,9 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_batch_packing_mask_hotfix_2ad910a_860f532.md`
+
+---
+
+## 2026-08-29 — R08 Gate B runtime evidence review @ root 9795ea7 / submodule 860f532
+
+三模 capture-only 与 strict verifier 均 PASS：`artifacts/g0/r08/gate_b_history_sensitivity_final.json` 记录 15/15 invariants exact，Normal→Zero Vision/Action relative L2=1.0838%/0.5582%，Normal→Shuffle=1.0713%/0.5696%，canonical checkpoint identity、model-only warm-start、schema 与 raw hashes 全通过。请求 runtime closure review。
