@@ -1512,3 +1512,34 @@ LOW（可在 A0 review 前关闭，不阻塞本轮文档修订主线）：A1 的
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_preflight_runbook_rereview_29c6c86.md`
+
+
+---
+
+## 2026-08-29 — R09 preflight runbook second re-review @ root 3be7b26
+
+**Verdict: APPROVE_TO_ADVANCE_A0**
+
+本轮关闭了上次全部 A0 文档 blocker：
+- A/B 共用 state protocol；
+- selected-sample `reset_mask(state, done[B])` 已冻结，仅 done 样本归零，其余逐元素不变；
+- all-mask/no-valid-evidence 不得隐式 reset；
+- mixed-batch partial-reset 纳入 A0；
+- full-window vs two-segment carry+detach 阈值固定为 state/token `max_abs_diff <= 1e-6`，detach 前后 carried value exact；
+- true absent/not-packed、masked timestep inert、batch isolation 保持；
+- meta -> to_empty -> fixed-seed init 纳入 A0；
+- `a0_contract.json` 最小 schema 已冻结：schema/root/submodule/Gitlink/clean/backend/state shape-dtype-bytes/input-output shapes/trainable count-prefixes/init/assertions/mixed presence/partial reset/segment diff+tolerance/tool-command hash；
+- Stale/Truncated 延后，不作为 A0 hard PASS。
+
+### 现在仅批准 A0 CPU contract
+
+允许：最小 recurrent backend、state/reset、mixed-batch presence/absence、partial reset、segment equivalence、meta-init regression、CPU/static tests/verifier、`artifacts/g0/r09/a0_contract.json`。
+
+禁止：GPU、A1 100-step smoke、R09-B TTT、shared MoT 改造、多卡、matched SR、backend freeze、长训、Global/Agent/RL。
+
+A0 完成后必须停在 REVIEW，提交 exact root/submodule SHA、A0 diff、CPU test、artifact/provenance 后再审。
+
+LOW 留到 A0 review 前关闭：A1 的 `Local adapter` 必须替换成精确 production 参数名；至少明确 `local_memory2llm`、`local_memory_modality_embed`，以及计划训练的 R09 encoder/compressor/readout prefixes。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_preflight_runbook_second_rereview_3be7b26.md`
