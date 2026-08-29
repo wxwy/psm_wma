@@ -1013,3 +1013,55 @@ Detailed review:
 - provenance 回调保持 cwd 无关，已有 CPU 测试。
 
 请重点确认剩余 checkpoint identity / successful-load marker 的严格性是否已足以批准一次最小 Normal/Zero/Shuffle capture-only GPU 重采集；若不足，请给出精确的 `file:line` 整改项。验收前不进入 Gate C、R09、多卡或长训练。
+
+---
+
+## 2026-08-29 — R08 Gate B verifier hardening review @ root 1f26384 / submodule 055e101
+
+**Verdict: REQUEST_CHANGES**
+
+Closed:
+- required invariant key presence is now enforced;
+- `l2_diff` must now be finite and nonzero;
+- cwd-independent provenance remains accepted.
+
+Still blocking GPU capture:
+
+### HIGH-1 — schema checks missing from PASS
+Require exact capture/PT/provenance schema versions for all three modes and include them in PASS.
+
+### HIGH-2 — checkpoint manifest is not actually validated
+`--checkpoint-manifest` currently only checks that an arbitrary file exists and hashes that file itself.
+It does not parse a manifest or verify any checkpoint DCP hash/path/content.
+
+Create a real canonical Gate-A checkpoint manifest (CPU-only) with checkpoint path + actual model `.metadata` / DCP SHA256 (prefer full checkpoint manifest), then require:
+- three provenance checkpoint paths == manifest path;
+- actual retained checkpoint files exist;
+- recomputed hashes/sizes match manifest;
+- `checkpoint_identity_valid=true` in PASS.
+
+Current Gate-A artifact has checkpoint names/sizes but not DCP SHA hashes, so it is not itself sufficient as this manifest.
+
+### HIGH-3 — actual load regex remains too loose
+Still matches `<path> .* in iteration 0` anywhere in log.
+Require the real framework success marker `Loaded checkpoint from ... in iteration 0` for the canonical source (prefer also `Resuming ckpt ...`).
+Make expected iteration/model-only warm-start semantics explicit.
+
+### HIGH-4 — strict verifier regression tests still absent
+Add tests for:
+- missing history_mask -> FAIL;
+- wrong schemas -> FAIL;
+- NaN/Inf response -> FAIL;
+- arbitrary/wrong manifest -> FAIL;
+- changed checkpoint hash/path -> FAIL;
+- missing/wrong successful-load marker -> FAIL;
+- canonical valid fixture -> PASS.
+
+Also require finite `max_abs_diff` (and relative L2 when applicable), not just finite L2.
+
+Do not run Normal/Zero/Shuffle GPU captures yet. One final CPU/static verifier-hardening round should be enough; no model/algorithm changes are needed.
+
+Gate B remains REVIEW. No Gate C / R09 / multi-GPU.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_verifier_hardening_1f26384_055e101.md`
