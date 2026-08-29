@@ -1736,3 +1736,9 @@ A0 最后一轮已全部闭环：batch permutation 覆盖 latent/initialized/tok
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A0_final_closure_1362055_dfc45c4_b2c5c8f.md`
+
+---
+
+## 2026-08-29 — R09-A1 optimizer scope freeze review @ root 8b19219
+
+A0 已关闭。本轮仅冻结 A1 optimizer allowlist：`net.local_history_runtime.encoder.*`、`recurrent_backend.*`、`readout.*`、`local_memory2llm.*`、`local_memory_modality_embed`；native Vision/Action/state adapters、shared Cosmos 与其余参数全部排除。未实现、未启动 GPU。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
