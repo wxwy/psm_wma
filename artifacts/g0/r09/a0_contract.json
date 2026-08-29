@@ -1,15 +1,15 @@
 {
   "schema_version": "r09_a0_contract_v2",
   "status": "PASS",
-  "root_revision": "2961e8d3939d5fc327cda51207249a3f8cb03cdb",
-  "submodule_revision": "67b6f88e5a6f01bd7a8aff4e528de559a28757cf",
-  "gitlink_revision": "67b6f88e5a6f01bd7a8aff4e528de559a28757cf",
+  "root_revision": "1fddcedc80d1e999719dfec15485c12ff304c67b",
+  "submodule_revision": "6bf59c27bfad72de13ef9b856e5786181b019a41",
+  "gitlink_revision": "6bf59c27bfad72de13ef9b856e5786181b019a41",
   "tracked_clean": {
     "root": true,
     "submodule": true
   },
   "provenance_valid": true,
-  "tool_sha256": "c02f4070110662e2754db626cb3bfd3abd2abc8da6a16282266d706baca6bc63",
+  "tool_sha256": "f1c92145224cf112bae480c9033fa44f5f84a3564cd8529099647987b95f38f8",
   "backend": "recurrent_latent",
   "state": {
     "shape": [
