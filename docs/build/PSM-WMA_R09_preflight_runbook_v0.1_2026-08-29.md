@@ -22,7 +22,7 @@
 
 ## R09-B：TTT fast-weight（A 通过后另审）
 
-仅替换 A 的 temporal compressor，保持上述 state protocol、schema、token budget、batch、checkpoint、loss 与 trainable scope 完全相同。额外断言：fast state 每 episode实际有限更新；segment 边界数值连续而 autograd graph detach；reset 正确；fast state 不进入 slow-weight optimizer/checkpoint。不得把 RoboTTT 原结构插入 shared MoT。
+仅替换 A 的 temporal compressor，保持上述 state protocol、schema、token budget、batch、checkpoint、loss 与 trainable scope 完全相同。额外断言：fast state 每 episode 实际有限更新；segment 边界数值连续而 autograd graph detach；reset 正确；fast state 不进入 slow-weight optimizer/checkpoint。不得把 RoboTTT 原结构插入 shared MoT。
 
 ## 审核/推进
 
