@@ -1819,6 +1819,18 @@ Detailed review:
 
 ---
 
+## 2026-08-29 — R09-A1 final-checkpoint sensitivity capture 审核申请 @ root 1aee109 / submodule c0287e2
+
+🚨 审核申请已发出
+
+- 已批准的 corrected 单卡 run 已完成：100/100、末步 total/action=`0.997723/0.014089`；clean-source verifier `a1_single_gpu_smoke_corrected.json` 为 PASS，16 tensors/142,784 elements、冻结公共 tensors bitwise unchanged、runtime optimizer/grad/state/VRAM/D005 hard gates 均通过。
+- A1 closure 剩 final checkpoint 的 fixed-weight Normal/Zero/Shuffle Future+Action sensitivity 和非-history invariants。拟不改任何模型/数据流/allowlist，复用已有 `PSM_R08_HISTORY_MODE` 在 `omni_mot_model.py:978-988` 的干预，及 `R07ParityCaptureCallback`/`compare_r07_sensitivity.py` 的原有 summary/tensor/invariant schema。
+- 每种 mode 从本次 final `iter_000000100` 独立 model-only warm-start、单卡、`trainer.max_iter=1`、固定相同 seed/config/data/caches，启用 `PSM_R08_GATE_B_CAPTURE_ONLY=1`，只保存一次 forward 输出；随后只读比较 Normal→Zero/Shuffle 的 Future/Action 非零响应、Local payload 变化与 15 项 non-history invariant exact。无训练扩展、多卡、TTT 或评测。
+
+请审批这 3 次 bounded capture：`APPROVE_TO_RUN_A1_FINAL_SENSITIVITY` 或 `REQUEST_CHANGES`（附 file:line）。R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL 继续禁止。
+
+---
+
 ## 2026-08-29 — R09-A1 single-GPU 100-step smoke @ root f2d5531 / training root 771accc / submodule 577ea3e
 
 **Verdict: REQUEST_CHANGES**

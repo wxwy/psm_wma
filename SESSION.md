@@ -683,3 +683,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 预计修改：`cosmos-framework/cosmos_framework/callbacks/r09_a1_runtime_probe.py`、`cosmos-framework/cosmos_framework/callbacks/r09_a1_runtime_probe_test.py`、`tools/g0/verify_r09_a1_smoke.py`、`TODO.md`、`SESSION.md`；未提交。
 - 实际修改：probe 新增 `segment_detach_value_exact`；verifier 从 training root revision 独立 `git ls-tree` 推导 Gitlink，要求其与传入 Gitlink/submodule revision 三者一致，并强制关联 D005 command sidecar；CUDA hard gate 改为 allocated/reserved 均大于零且 device 非空。
 - 验证：`PYTHONPATH=. /root/venvs/psm_wma/bin/python -m pytest -q cosmos_framework/callbacks/r09_a1_runtime_probe_test.py cosmos_framework/model/generator/mot/local_history_runtime_test.py` → `14 passed`；`py_compile`、`git diff --check` PASS。未用 GPU、未访问外网。下一步：双仓提交并送独立复审；GPU 训练仍需 `APPROVE_TO_RUN_CORRECTED_A1` 后才启动。
+
+### R09-A1 corrected 单卡 smoke（2026-08-29，REVIEW）
+
+- 批准与来源：ChatGPT `APPROVE_TO_RUN_CORRECTED_A1`；训练 source root/submodule/Gitlink=`32e3bce9`/`c0287e2`/`c0287e2`，从 Gate-A canonical `iter_000000002` model-only warm-start；单 `P2.gpu.large` 80GB、world size 1、未访问外网。
+- 运行与证据：`/gemini/code/r09-a1-corrected/`；100/100 完成并 `Done with training.`，末步 total/action=`0.997723/0.014089`。runtime probe：optimizer exact match，encoder/recurrent_backend/Local adapter 三组 nonzero grad，state bytes=130、segment value/token/state exact、graph detach 与 reset/all-mask 合同均 PASS，full-run CUDA peak allocated/reserved=`27153490944/29941039104` bytes。
+- clean-source verifier：隔离 clone root/submodule/Gitlink=`32e3bce9`/`c0287e2`/`c0287e2` strict clean；`/gemini/code/r09-a1-corrected/artifacts/a1_single_gpu_smoke_corrected.json`=PASS，16 tensors/142,784 elements、冻结公共 tensors bitwise unchanged、100 条 loss/action loss finite、D005 sidecar SHA 绑定且 training Gitlink 独立推导一致。
+- 下一步：仅申请 final checkpoint 的 fixed-weight Normal/Zero/Shuffle sensitivity capture（每模式独立 model-only 1-step；复用既有 `PSM_R08_HISTORY_MODE`、`R07ParityCaptureCallback`、non-history invariants）；未获批不得启动。R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL 继续禁止。
