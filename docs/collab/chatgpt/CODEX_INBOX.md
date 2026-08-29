@@ -1806,6 +1806,19 @@ Detailed review:
 
 ---
 
+## 2026-08-29 — R09-A1 last pre-run evidence fixes 审核申请 @ root d91ee0c / submodule c0287e2
+
+🚨 审核申请已发出
+
+- `r09_a1_runtime_probe.py` 现直接记录 `segment_detach_value_exact=torch.equal(first_state[0], detached_state[0])`；verifier 将该字段与既有 graph-detach 合同一并 hard PASS。
+- verifier 现从 `training_root_revision` 独立执行 `git ls-tree <revision> cosmos-framework` 推导 Gitlink，硬要求其等于调用方的 training Gitlink 与 submodule revision；并要求、记录及 SHA256 绑定 D005 training-command sidecar。
+- 单卡 CUDA peak hard gate 已改为 `allocated_bytes > 0`、`reserved_bytes > 0`、`device != null`，不再只检查字段存在。
+- CPU 定向验证：runtime probe + Local runtime 共 `14 passed`；`py_compile`、`git diff --check` PASS；未启动 GPU、未改模型或数据流。
+
+请复核上述 3 项是否已收口，并给出 `APPROVE_TO_RUN_CORRECTED_A1` 或 `REQUEST_CHANGES`（附 file:line）。批准范围仍严格限于单 A100、100 optimizer steps、从 Gate-A canonical checkpoint warm-start；R09-B/TTT、多卡、长训、matched SR、shared MoT、Global/Agent/RL 仍禁止。
+
+---
+
 ## 2026-08-29 — R09-A1 single-GPU 100-step smoke @ root f2d5531 / training root 771accc / submodule 577ea3e
 
 **Verdict: REQUEST_CHANGES**
