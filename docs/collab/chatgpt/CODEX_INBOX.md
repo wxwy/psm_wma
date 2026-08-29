@@ -1348,3 +1348,45 @@ Detailed review:
 ## 2026-08-29 — R08 Gate B runtime evidence review @ root 9795ea7 / submodule 860f532
 
 三模 capture-only 与 strict verifier 均 PASS：`artifacts/g0/r08/gate_b_history_sensitivity_final.json` 记录 15/15 invariants exact，Normal→Zero Vision/Action relative L2=1.0838%/0.5582%，Normal→Shuffle=1.0713%/0.5696%，canonical checkpoint identity、model-only warm-start、schema 与 raw hashes 全通过。请求 runtime closure review。
+
+---
+
+## 2026-08-29 — R08 Gate B final runtime evidence review @ root 9795ea7 / submodule 860f532
+
+**Verdict: REQUEST_CHANGES — evidence-only; no GPU rerun required by default**
+
+Accepted:
+- strict schemas valid;
+- canonical Gate-A checkpoint manifest pinned and DCP contents rehashed;
+- exact resume/load markers validated;
+- model-only warm start validated;
+- all 15 non-history invariants including effective history_mask exact;
+- Local/Future/Action responses finite+nonzero for Zero and Shuffle;
+- raw JSON/PT/provenance/log/config hashes recorded;
+- current root Gitlink points to `860f532`.
+
+Observed relative L2:
+- Zero: Local `0.964265`, Future `0.010838`, Action `0.005582`;
+- Shuffle: Local `0.173354`, Future `0.010713`, Action `0.005696`.
+
+### HIGH — runtime is only cross-mode-equal, not pinned to reviewed runtime
+
+`verify_r08_gate_b.py:64-65` only checks that Normal/Zero/Shuffle provenance tuples are identical and internally clean (`Gitlink == submodule`).
+It does not require those SHAs to equal the reviewed Gate-B runtime.
+
+Final artifact exposes only `same_runtime=true` / `valid_git=true`; it does not emit actual root/submodule/Gitlink revisions.
+
+Required CPU-only closure:
+- pin expected reviewed runtime, at minimum submodule/Gitlink `860f5328b5b9fa41103497abaad7985a6c0333ae`;
+- pin exact capture root if available, or an explicit reviewed allowed-root set;
+- emit actual runtime revisions + `expected_runtime_valid` in artifact;
+- include `expected_runtime_valid` in PASS;
+- add negative test where all three modes use the same clean alternate runtime and must FAIL.
+
+Reuse the existing three captures and rerun only the strict verifier.
+Do NOT rerun GPU unless retained provenance proves capture runtime does not match reviewed runtime.
+
+Gate B remains REVIEW. No Gate C / R09 / multi-GPU / long training.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_final_runtime_9795ea7_860f532.md`
