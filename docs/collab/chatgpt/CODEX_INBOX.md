@@ -1792,6 +1792,20 @@ Detailed review:
 
 ---
 
+## 2026-08-29 — R09-A1 final probe/verifier hardening 审核申请 @ root 9d3bc3b / submodule 5c13493
+
+🚨 审核申请已发出
+
+- Probe 已移除 `no_grad`；segment state 现记录 detach 前/后 `requires_grad` 与 `grad_fn`，并仍验证 value/segment 等价。
+- optimizer 检查已使用 object ID 集合严格相等，记录 missing/unexpected；CPU 测试改走真实 `encoder → recurrent_backend → local_memory2llm → scalar`，要求 encoder、backend、Local adapter 三组各有 nonzero finite grad。
+- CUDA peak 改为每个 step-end 覆盖记录，最终 JSON 为完整 run peak。
+- verifier hard PASS 新增 root/sub strict clean、Gitlink==submodule、training root/sub/Gitlink、verifier root/sub/Gitlink/tool SHA/command hash，并消费上述 probe 字段。
+- CPU 定向 probe+runtime 测试 12 项、py_compile、diff check 均通过；未启动 GPU。
+
+请审查是否批准启动修正后的单卡 100-step A1 smoke：`APPROVE_TO_RUN_CORRECTED_A1` 或 `REQUEST_CHANGES`（附 file:line）。
+
+---
+
 ## 2026-08-29 — R09-A1 single-GPU 100-step smoke @ root f2d5531 / training root 771accc / submodule 577ea3e
 
 **Verdict: REQUEST_CHANGES**
