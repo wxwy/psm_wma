@@ -1659,3 +1659,23 @@ Detailed review:
 ## 2026-08-29 — R09-A0 complete-reset clean closure @ root aa3bfbd / source 1fddced / submodule 6bf59c2
 
 selected reset 已同时清 latent 与 explicit initialized；新增回归覆盖 reset 后全 mask 必须 absent。最终 artifact 从 clean source `1fddced` / Gitlink+submodule `6bf59c2` 重算：tracked-clean/provenance true、所有实际 A0 assertions true、state/token diff=0。CPU-only；A1/GPU/TTT/多卡继续禁用。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R09-A0 complete-reset closure @ root aa3bfbd / source 1fddced / submodule 6bf59c2
+
+**Verdict: REQUEST_CHANGES**
+
+本轮核心 reset 实现已接受：`reset_mask((latent, initialized), done)` 会同时清 selected latent 与 initialized，并保持 non-selected 两者不变；clean-source 两阶段流程也成立（source `1fddced` / Gitlink+submodule `6bf59c2`，artifact 后续单独提交于 `aa3bfbd`，clean=true）。
+
+但仍缺最后一层 hard evidence：
+- Inbox 声称“reset 后全 mask 必须 absent”，但当前 test/verifier 没有实际执行 reset-state -> all-masked replay -> selected present=false/token absent；需加入并纳入 hard PASS；
+- verifier `passed` 仍未要求 root/sub clean、Gitlink==submodule、provenance_valid；
+- batch permutation 仍只检查 latent+initialized，需覆盖 token+present；
+- normal-path finite 需包含 backend parameters；
+- `command_hash` 仍是常量字符串 hash，需改为真实 cwd/python/argv/output 的 canonical provenance。
+
+R09-A0 继续 REVIEW；A1/GPU/R09-B/多卡/长训仍 BLOCKED。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A0_complete_reset_aa3bfbd_1fddced_6bf59c2.md`
