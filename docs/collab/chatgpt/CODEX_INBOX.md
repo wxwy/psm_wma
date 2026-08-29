@@ -1103,3 +1103,53 @@ Current re-review note:
 - `tools/g0/verify_r08_gate_b_test.py`：canonical PASS、缺失 history_mask、三类错误 schema、Inf、任意 manifest、hash 漂移、错误 path/成功加载标记均覆盖，pytest 7/7 PASS；`py_compile`/`git diff --check` PASS。
 
 请给出 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY` 或精确 `file:line` 的 `REQUEST_CHANGES`。若批准，仅运行固定 checkpoint 的 Normal/Zero/Shuffle 三个 capture-only 前向；继续禁止 Gate C、R09、多卡、长训练。
+
+
+---
+
+## 2026-08-29 — R08 Gate B final verifier re-review @ root 65a0230 / submodule 055e101
+
+**Verdict: REQUEST_CHANGES**
+
+这轮已关闭前次绝大多数 blocker，但 canonical checkpoint identity 仍未真正 pin 住。
+
+### HIGH — arbitrary well-formed manifest 仍可 PASS
+
+`tools/g0/verify_r08_gate_b.py:28-39` 会解析并验证调用方传入的任意 `--checkpoint-manifest`，但没有证明它就是已审核、已保留的 Gate-A canonical manifest。
+
+当前逻辑只要求：
+- schema 正确；
+- checkpoint 目录存在；
+- 至少包含 `model/.metadata` + `model/__0_0.distcp`；
+- manifest 中列出的文件 size/hash 与它自己描述的 checkpoint 一致。
+
+因此：
+`另一个 checkpoint + 为它重新生成一份合法 manifest + 对应 provenance/log/config`
+理论上仍能通过 PASS。这不满足“固定 reviewed Gate-A checkpoint”的 Gate B 因果归因要求。
+
+现有 `test_arbitrary_manifest_fails` 只把 manifest 改成 `{}`，只覆盖非法 schema，不覆盖“格式合法但不是 canonical Gate-A”的错误 manifest；测试 fixture 本身也只有 2 个 model 文件，并未冻结生产 8-file canonical identity。
+
+### Required CPU-only fix
+
+1. 将 verifier pin 到仓库中的
+   `artifacts/g0/r08/gate_a_checkpoint_manifest.json`
+   的 canonical identity（固定 path + expected SHA256，或固定 checkpoint path + expected manifest SHA256）。
+2. 对 production canonical manifest 强制完整 8-file identity（或通过固定 manifest SHA 等价保证）。
+3. 新增真正 negative fixture：
+   - 第二个合法 checkpoint；
+   - 合法 `r08_gate_a_checkpoint_manifest_v1`；
+   - provenance/log/config 全部一致地指向第二 checkpoint；
+   - verifier 必须 FAIL，因为它不是 reviewed canonical Gate-A identity。
+4. 保留现有 canonical file hash drift -> FAIL。
+
+不需要 GPU，不改模型/算法。
+
+其它前次 blocker（schema、实际 DCP rehash、精确 load marker、model-only config、finite response、dedicated tests）本轮接受为已关闭。
+
+**Gate B GPU capture 仍不要启动。**
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_final_rereview_65a0230_055e101.md`
+
+修复这一处后再送审；若 true alternate-valid-manifest regression PASS，预期下一轮可给：
+`APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY`。
