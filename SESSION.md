@@ -676,3 +676,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 运行：`root=771accc`、`submodule=577ea3e`，从 Gate-A canonical `iter_000000002` warm-start，`PSM_R09_A1_ENABLED=1`，A100-80GB 单卡；训练正常完成 `iteration=100`，终态 checkpoint 为 `/gemini/code/r09-a1/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000100`，日志最终为 `Done with training.`。
 - 证据：新增 `tools/g0/verify_r09_a1_smoke.py` 只读加载起止 DCP model shards 并输出 `artifacts/g0/r09/a1_single_gpu_smoke.json`。JSON PASS：精确 20 个 selected tensors / 282,336 elements；569 vs 565 tensor schema 仅新增 recurrent cell 4 张量；549 个冻结公共张量逐位不变；11 个既有 Local 张量改变；100 条 loss/action-loss 全有限。最终 loss=`0.998193`、action loss=`0.014210`，host step wall min/max=`10.454752/83.839520` 秒。
 - 已执行：`py_compile verifier`、DCP 离线双 checkpoint 逐张量比较、JSON parse、`git diff --check` 均 PASS。未执行：A1 run 中未安装专用 runtime probe，故 state/reset-detach、逐参数 Local grad、GPU peak VRAM 与 Normal/Zero/Shuffle Future/Action intervention 不应由本 JSON 声称已验证；作为本轮独立审核的显式关注项。提交：未提交。
+
+### R09-A1 pre-run 最终静态收口（2026-08-29，IN_PROGRESS）
+
+- 目的/Gate：处理 ChatGPT `2026-08-29_R09_A1_final_probe_9d3bc3b_5c13493.md` 的 3 项 pre-run 要求；复用 runtime probe 与只读 verifier，不修改模型或数据流。
+- 预计修改：`cosmos-framework/cosmos_framework/callbacks/r09_a1_runtime_probe.py`、`cosmos-framework/cosmos_framework/callbacks/r09_a1_runtime_probe_test.py`、`tools/g0/verify_r09_a1_smoke.py`、`TODO.md`、`SESSION.md`；未提交。
+- 实际修改：probe 新增 `segment_detach_value_exact`；verifier 从 training root revision 独立 `git ls-tree` 推导 Gitlink，要求其与传入 Gitlink/submodule revision 三者一致，并强制关联 D005 command sidecar；CUDA hard gate 改为 allocated/reserved 均大于零且 device 非空。
+- 验证：`PYTHONPATH=. /root/venvs/psm_wma/bin/python -m pytest -q cosmos_framework/callbacks/r09_a1_runtime_probe_test.py cosmos_framework/model/generator/mot/local_history_runtime_test.py` → `14 passed`；`py_compile`、`git diff --check` PASS。未用 GPU、未访问外网。下一步：双仓提交并送独立复审；GPU 训练仍需 `APPROVE_TO_RUN_CORRECTED_A1` 后才启动。

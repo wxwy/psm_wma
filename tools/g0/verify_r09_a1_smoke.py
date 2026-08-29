@@ -34,8 +34,10 @@ def _clean(path: Path) -> bool:
     ).strip()
 
 
-def _gitlink(path: Path) -> str:
-    return subprocess.check_output(["git", "-C", str(path), "ls-tree", "HEAD", "cosmos-framework"], text=True).split()[2]
+def _gitlink(path: Path, revision: str = "HEAD") -> str:
+    return subprocess.check_output(
+        ["git", "-C", str(path), "ls-tree", revision, "cosmos-framework"], text=True
+    ).split()[2]
 
 
 def _load_model(checkpoint: Path) -> tuple[dict[str, torch.Tensor], dict[str, TensorStorageMetadata]]:
@@ -94,10 +96,12 @@ def main() -> None:
     parser.add_argument("--training-root-revision", required=True)
     parser.add_argument("--training-submodule-revision", required=True)
     parser.add_argument("--training-gitlink-revision", required=True)
+    parser.add_argument("--training-command-sidecar", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
 
     probe = json.loads(args.probe.read_text())
+    training_command_sidecar = json.loads(args.training_command_sidecar.read_text())
     initial, initial_meta = _load_model(args.initial_checkpoint)
     final, final_meta = _load_model(args.final_checkpoint)
     initial_names, final_names = set(initial), set(final)
@@ -116,6 +120,7 @@ def main() -> None:
         "net.local_history_runtime.recurrent_backend.cell.bias_hh",
     }
     training = _training_summary(args.log)
+    derived_training_gitlink = _gitlink(args.root, args.training_root_revision)
     verifier_submodule = _revision(args.root / "cosmos-framework")
     verifier_gitlink = _gitlink(args.root)
     root_clean = _clean(args.root)
@@ -142,8 +147,16 @@ def main() -> None:
         and probe["state_contract"]["segment_state_before_detach_has_grad_fn"]
         and not probe["state_contract"]["segment_state_after_detach_requires_grad"]
         and not probe["state_contract"]["segment_state_after_detach_has_grad_fn"],
-        "full_run_cuda_peak_recorded": "allocated_bytes" in probe["full_run_cuda_peak"]
-        and "reserved_bytes" in probe["full_run_cuda_peak"],
+        "state_detach_value_exact": bool(probe["state_contract"]["segment_detach_value_exact"]),
+        "full_run_cuda_peak_recorded": probe["full_run_cuda_peak"]["allocated_bytes"] > 0
+        and probe["full_run_cuda_peak"]["reserved_bytes"] > 0
+        and probe["full_run_cuda_peak"]["device"] is not None,
+        "training_source_gitlink_consistent": derived_training_gitlink == args.training_gitlink_revision
+        == args.training_submodule_revision,
+        "training_command_sidecar_matches_source": training_command_sidecar["source"]["root_revision"]
+        == args.training_root_revision
+        and training_command_sidecar["source"]["submodule_revision"] == args.training_submodule_revision
+        and training_command_sidecar["source"]["gitlink_revision"] == args.training_gitlink_revision,
         "verifier_root_clean": root_clean,
         "verifier_submodule_clean": submodule_clean,
         "verifier_gitlink_matches_submodule": verifier_gitlink == verifier_submodule,
@@ -161,6 +174,9 @@ def main() -> None:
             "root_revision": args.training_root_revision,
             "submodule_revision": args.training_submodule_revision,
             "gitlink_revision": args.training_gitlink_revision,
+            "derived_gitlink_revision": derived_training_gitlink,
+            "command_sidecar": str(args.training_command_sidecar),
+            "command_sidecar_sha256": hashlib.sha256(args.training_command_sidecar.read_bytes()).hexdigest(),
             "initial_checkpoint": str(args.initial_checkpoint),
             "final_checkpoint": str(args.final_checkpoint),
         },
