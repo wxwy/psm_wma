@@ -1853,3 +1853,23 @@ R09-A1 继续 REVIEW；R09-B/多卡/长训/matched SR/backend freeze 继续 BLOC
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A1_corrected_probe_6e62f90_c41961c.md`
+
+---
+
+## 2026-08-29 — R09-A1 final probe/verifier @ root 9d3bc3b / submodule 5c13493
+
+**Verdict: REQUEST_CHANGES**
+
+上一轮 5 项大部分已关闭：graph-enabled segment replay、pre/post detach grad 状态、direct optimizer object-set equality、group nonzero-grad、真实 Local-path CPU regression、full-run CUDA peak 刷新、strict clean + verifier Gitlink hard gate 均已接受。
+
+只剩 3 个很小的 pre-run 收口：
+1. 还缺 `detach_value_exact`：必须直接证明 `first_state[0]` 与 `detached_state[0]` 数值逐元素 exact，并进入 hard PASS。合同是 value continuous AND graph detached。
+2. training provenance 目前仍是 CLI 传入字符串，verifier 没独立验证。需从 `training_root_revision` 用 `git ls-tree <rev> cosmos-framework` 推导 Gitlink，并 hard require `derived_gitlink == training_gitlink_revision == training_submodule_revision`；同时 training_source 关联 D005 command sidecar/记录。
+3. 单卡 A1 的 VRAM hard gate 不应只检查 key 存在；要求 allocated>0、reserved>0、device 非空。
+
+无模型/数据流修改要求。以上 CPU/static 修完后，预期可直接 `APPROVE_TO_RUN_CORRECTED_A1`，仍仅限 bounded 单 A100 100-step smoke。
+
+R09-B/多卡/长训/matched SR/backend freeze 继续 BLOCKED。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A1_final_probe_9d3bc3b_5c13493.md`
