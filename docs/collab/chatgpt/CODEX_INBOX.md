@@ -1171,6 +1171,16 @@ Detailed review:
 
 请给出 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY` 或精确 `REQUEST_CHANGES`。批准后才从 Normal 重启，并依次 Zero/Shuffle；继续禁止 Gate C、R09、多卡、长训练。
 
+---
+
+## 2026-08-29 — R08 Gate B history-mask capture hotfix review @ root 1efcc1f / submodule fd140ff
+
+**请求：复审 capture-only 证据字段修复；未完成新的有效 capture。**
+
+实际 Normal 单步已完成前向且 loss `0.852788` finite；之后旧 parity callback 从训练结束 `data_batch` 读取已不存在的 `history_mask` 而退出，未写 JSON/PT。子模块 `fd140ff` 在 history 注入时保存审计副本，并经 `output_batch` 显式传给 callback；callback 不再依赖已被训练管线消费的原始字段。定向 pytest 5/5、`git diff --check` PASS。未改模型算法、checkpoint、optimizer 或三模干预语义。
+
+请给出 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY` 或精确 `REQUEST_CHANGES`。批准后立即从 Normal 重新开始，随后 Zero/Shuffle；禁止 Gate C、R09、多卡和长训练。
+
 修复这一处后再送审；若 true alternate-valid-manifest regression PASS，预期下一轮可给：
 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY`。
 
