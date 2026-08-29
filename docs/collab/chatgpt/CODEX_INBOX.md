@@ -784,3 +784,66 @@ LOW for later provenance: have the runtime probe itself write root/submodule/Git
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateA_canonical_f7d43eb_c66ade0.md`
+
+---
+
+## 2026-08-29 — R08 Gate B real-history sensitivity review @ root 744b4d0 / submodule b5798c8
+
+**Verdict: REQUEST_CHANGES**
+
+Numerical sensitivity itself is credible and should be retained:
+- 14 non-history invariants exact;
+- Normal→Zero and Normal→Shuffle both change real R08 Local payload;
+- Future/Vision output responds finite/nonzero;
+- Action output responds finite/nonzero;
+- Gate B intervention is on real history visual/action/age/dt fields, not R07 dummy Local;
+- `history_mask` stays unchanged;
+- capture-only returns after forward, before backward/optimizer step.
+
+Observed relative L2:
+- Zero: Local `0.9643`, Future `0.01084`, Action `0.00558`;
+- Shuffle: Local `0.17335`, Future `0.01071`, Action `0.00570`.
+
+### HIGH — same fixed checkpoint is not machine-verified
+
+`artifacts/g0/r08/gate_b_history_sensitivity.json` reuses the R07 comparator/schema and contains no checkpoint/runtime provenance.
+`tools/g0/compare_r07_sensitivity.py` verifies invariants and output deltas but does not prove the Normal/Zero/Shuffle processes loaded the same checkpoint/weights.
+
+Gate B causal attribution requires:
+`same fixed weights + same non-history inputs/noise + only history changes -> Future/Action response`.
+
+Current artifact proves the latter two parts strongly, but not same fixed weights.
+
+### Required closure — evidence first, no GPU rerun by default
+
+Raw JSON/PT sidecars are reported retained under `/gemini/code/r08-gate-b/`.
+First build a Gate-B-specific strict provenance/verifier from retained capture logs/configs/checkpoint evidence.
+
+For each normal/zero/shuffle process verify and record:
+- root HEAD;
+- submodule HEAD;
+- root Gitlink and Gitlink==submodule HEAD;
+- history mode;
+- `PSM_R08_GATE_B_CAPTURE_ONLY=1`;
+- exact checkpoint load path and loaded iteration marker;
+- identical checkpoint identity across all three captures;
+- checkpoint manifest/hash;
+- config SHA;
+- capture JSON/PT SHA;
+- comparator/verifier SHA.
+
+PASS must require same checkpoint + capture-only/fixed-weight execution + expected modes + exact non-history invariants + changed history + finite/nonzero Future and Action response + valid provenance.
+
+Prefer new schema `r08_gate_b_history_sensitivity_v1` rather than an R07 schema.
+
+CPU-only improvement while touching tests:
+- verify Zero/Shuffle on all active history fields: visual/action/age/dt;
+- assert the same shuffle permutation is applied to all four;
+- assert `history_mask` is bitwise unchanged.
+
+Only rerun the three forward captures if retained logs cannot establish identical checkpoint/runtime provenance.
+
+Gate B remains REVIEW. Do not start Gate C, R09, multi-GPU, or long training.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_744b4d0_b5798c8.md`
