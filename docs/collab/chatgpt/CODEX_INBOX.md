@@ -1181,6 +1181,12 @@ Detailed review:
 
 请给出 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY` 或精确 `REQUEST_CHANGES`。批准后立即从 Normal 重新开始，随后 Zero/Shuffle；禁止 Gate C、R09、多卡和长训练。
 
+---
+
+## 2026-08-29 — R08 Gate B batch-packing mask lifecycle hotfix @ root 6e9b6ce / submodule 860f532
+
+实际前向确认 `data_batch` 在注入与 `training_step` 间重打包，故将 effective history mask 存入模型当前-step审计槽位后输出；R07 capture pytest 5/5、py_compile、diff-check PASS。请求 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY`，批准后重启三模 capture-only。
+
 修复这一处后再送审；若 true alternate-valid-manifest regression PASS，预期下一轮可给：
 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY`。
 
