@@ -6,6 +6,24 @@
   "provenance_schema_valid": true,
   "expected_modes": true,
   "same_runtime": true,
+  "runtime": {
+    "normal": {
+      "root_revision": "2ad910aab2060a720e607fb826a4c4cf9db673f2",
+      "submodule_revision": "860f5328b5b9fa41103497abaad7985a6c0333ae",
+      "gitlink_revision": "860f5328b5b9fa41103497abaad7985a6c0333ae"
+    },
+    "zero": {
+      "root_revision": "2ad910aab2060a720e607fb826a4c4cf9db673f2",
+      "submodule_revision": "860f5328b5b9fa41103497abaad7985a6c0333ae",
+      "gitlink_revision": "860f5328b5b9fa41103497abaad7985a6c0333ae"
+    },
+    "shuffle": {
+      "root_revision": "2ad910aab2060a720e607fb826a4c4cf9db673f2",
+      "submodule_revision": "860f5328b5b9fa41103497abaad7985a6c0333ae",
+      "gitlink_revision": "860f5328b5b9fa41103497abaad7985a6c0333ae"
+    }
+  },
+  "expected_runtime_valid": true,
   "valid_git": true,
   "manifest_checkpoint_path": true,
   "actual_checkpoint_loaded": true,
@@ -160,5 +178,5 @@
       }
     }
   },
-  "verifier_sha256": "2efc22ff01c4c1a60d46110977bf6b36f7e665378f71348b17f031abdc6dba92"
+  "verifier_sha256": "4e43630e6eb29dd5599dc8d9e0294fc839a413da8eccaedee51adf8a80721d8f"
 }

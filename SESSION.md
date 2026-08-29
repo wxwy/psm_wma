@@ -650,3 +650,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
   - 子模块 rebase 后旧 hash 不可达 → 主仓库 submodule pointer 需手动 resolve
   - commit message 含 hash 与实际不一致 → amend 修正
 - 见 `MEMORY/cross-repo-rebase-submodule-pointer.md`
+
+### R08 Gate B runtime pinning CPU closure（2026-08-29）
+
+- 目的：关闭 ChatGPT 对 Gate B “三模式同 runtime 但未固定至已审 runtime”的 HIGH 证据缺口；未启动 GPU。
+- 修改：`verify_r08_gate_b.py` 固定 capture root 允许集 `2ad910a...` 与 Gitlink/submodule `860f532...`，在最终 JSON 输出实际三模式 revisions 与 `expected_runtime_valid`，并将其纳入 PASS；新增三模式同 clean alternate runtime 必须 FAIL 的负例。
+- 验证：pytest `9 passed`；复用已有 Normal/Zero/Shuffle raw JSON/PT/provenance/log/config 做 strict verifier 重验。checkpoint 全量哈希读取远端 DCP 用时约 13 分钟，最终 `artifacts/g0/r08/gate_b_history_sensitivity_final.json` 为 `PASS`、`expected_runtime_valid=true`、`same_runtime=true`、`valid_git=true`。
+- 当前：Gate B 保持 `REVIEW`，待 ChatGPT、MM、Kimi runtime closure review；禁止 GPU、长训、多卡、Gate C、R09。提交：待本轮 artifact、状态与审核请求提交。
