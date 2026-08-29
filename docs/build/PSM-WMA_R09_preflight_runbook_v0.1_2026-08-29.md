@@ -18,7 +18,7 @@
 
 ## R09-A1：单卡 fwd/bwd smoke（待审核后）
 
-固定 Gate-A canonical checkpoint、同一批次和 R08 history schema；只训练 Local encoder/compressor/readout/Local adapter。optimizer 必须以对象成员精确 allowlist 构建；冻结参数排除在 optimizer 外，step 前后逐参数证明未变化。记录 100 optimizer steps 的 finite loss、Local gradients、peak VRAM、step latency、state bytes 与 segment detach/reset。FAIL：任何 NaN、跨 episode/batch 泄漏、冻结参数进入 optimizer 或变化、干预改变 packing/index，或无 nonzero future/action sensitivity。产物：`R09_local_backend_selection_smoke.json`。多卡仍由 DCP-MULTIRANK 与独立 FSDP/local-state smoke 阻塞。
+固定 Gate-A canonical checkpoint、同一批次和 R08 history schema。A1 实施时唯一允许 optimizer object/prefix 为 `net.local_history_runtime.encoder.*`、`net.local_history_runtime.recurrent_backend.*`、`net.local_history_runtime.readout.*`、`net.local_memory2llm.*`、`net.local_memory_modality_embed`；其中 `recurrent_backend` 是 A0 backend 接入 runtime 后的精确 production 名称。native Vision/Action/state adapters、shared Cosmos 参数及其他所有参数均排除。optimizer 必须以对象成员精确 allowlist 构建；冻结参数排除在 optimizer 外，step 前后逐参数证明未变化。记录 100 optimizer steps 的 finite loss、Local gradients、peak VRAM、step latency、state bytes 与 segment detach/reset。FAIL：任何 NaN、跨 episode/batch 泄漏、冻结参数进入 optimizer 或变化、干预改变 packing/index，或无 nonzero future/action sensitivity。产物：`R09_local_backend_selection_smoke.json`。多卡仍由 DCP-MULTIRANK 与独立 FSDP/local-state smoke 阻塞。
 
 ## R09-B：TTT fast-weight（A 通过后另审）
 
