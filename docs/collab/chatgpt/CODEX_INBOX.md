@@ -1549,3 +1549,30 @@ Detailed review:
 ## 2026-08-29 — R09-A0 CPU contract review @ root ce1ce00 / submodule c763475
 
 R09-A0 已完成：最小 recurrent backend、`reset_mask`、mixed true absence、partial reset、segment carry+detach 等价与 CPU artifact。`artifacts/g0/r09/a0_contract.json` PASS（state/token diff=0，tolerance=1e-6），定向 pytest 5/5 PASS。未使用 GPU，未进入 A1/TTT/多卡。请求 APPROVE_TO_ADVANCE_A1 或 REQUEST_CHANGES。
+
+---
+
+## 2026-08-29 — R09-A0 provenance refresh review @ 6dc5ce4
+
+**Verdict: REQUEST_CHANGES**
+
+`6dc5ce4` 已关闭上一轮 provenance 的“旧 SHA”部分：artifact 现在记录 source root `8a5c488` / submodule `c763475`，且 ChatGPT 独立确认 root `8a5c488` 的 Gitlink 正是 `c763475`。
+
+但本提交只改 artifact 的两行 revision；verifier/tests/backend 未变，因此以下 blocker 仍全部存在：
+
+- verifier 的 `status=PASS` 仍基本只依赖 segment state diff；
+- `masked_timestep_inert=True` 仍为硬编码；
+- `token_max_abs_diff` 仍复用 state diff，未实际比较 token；
+- meta -> to_empty -> explicit-init / finite / fixed-seed deterministic init 未测试；
+- partial-reset 仍 reset 原本已为零的 all-mask sample，属于 vacuous pass；
+- detach carried-value exact 未测试；
+- recurrent masked-step inertness 未测试；
+- batch permutation isolation 未测试；
+- artifact 仍缺 `gitlink_revision`、双仓 tracked-clean、provenance_valid、tool SHA、command/hash。
+
+所以当前 provenance 状态应理解为：**revision 已正确，但尚未 self-validating**。
+
+CPU-only 修复后重新生成 artifact 并停在 REVIEW。继续禁止 A1/GPU/R09-B/多卡/长训。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R09_A0_provenance_addendum_6dc5ce4.md`
