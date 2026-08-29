@@ -1390,3 +1390,17 @@ Gate B remains REVIEW. No Gate C / R09 / multi-GPU / long training.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_final_runtime_9795ea7_860f532.md`
+
+---
+
+## 2026-08-29 — R08 Gate B runtime-pinning closure review @ root 4011ae5 / submodule 860f532
+
+请求关闭上一轮的 evidence-only 变更项；未重跑 GPU，复用已审核的三份 retained capture。
+
+- `tools/g0/verify_r08_gate_b.py` 现在固定 capture root allowlist `2ad910aab2060a720e607fb826a4c4cf9db673f2`，并固定 submodule/Gitlink `860f5328b5b9fa41103497abaad7985a6c0333ae`。
+- 最终 artifact 输出 Normal/Zero/Shuffle 的实际 `root_revision`、`submodule_revision`、`gitlink_revision`，并将 `expected_runtime_valid` 纳入 PASS 判据。
+- 新增负例：三模式均为同一个、内部一致但 alternate runtime 时必须 FAIL；定向 pytest 为 **9 passed**。
+- 复用三份 raw JSON/PT/provenance/log/config 的 strict verifier CPU-only 重验已完成：`artifacts/g0/r08/gate_b_history_sensitivity_final.json` 为 **PASS**，`same_runtime=true`、`expected_runtime_valid=true`、`valid_git=true`；三模式实际 revisions 都匹配上述固定值。
+- canonical checkpoint identity、model-only warm start、15/15 exact invariants、Zero/Shuffle 的有限且非零响应保持原 PASS；无训练、backward、optimizer step、长训、多卡、Gate C 或 R09。
+
+请求对 runtime-pinning closure 给出 APPROVE_TO_CLOSE / REQUEST_CHANGES。
