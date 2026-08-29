@@ -1,8 +1,15 @@
 {
-  "schema_version": "r09_a0_contract_v1",
+  "schema_version": "r09_a0_contract_v2",
   "status": "PASS",
-  "root_revision": "8a5c488724fc555e64bbdbb2217b8a31f7bbf3f4",
+  "root_revision": "6e7f1a2ce23f52e90d528f52d9ce725fc45b5724",
   "submodule_revision": "c763475c733740be6ef5914e3234375c01771a80",
+  "gitlink_revision": "c763475c733740be6ef5914e3234375c01771a80",
+  "tracked_clean": {
+    "root": false,
+    "submodule": true
+  },
+  "provenance_valid": true,
+  "tool_sha256": "4135c27b29b6dbf22b3bb743da5c89c7c93c31693cdda1981955e9fe17fb364a",
   "backend": "recurrent_latent",
   "state": {
     "shape": [
@@ -23,22 +30,31 @@
     5
   ],
   "trainable_param_count": 150,
+  "trainable_prefixes": [
+    "cell"
+  ],
   "mixed_presence": [
     true,
     false,
     true
   ],
-  "all_mask_absent": true,
-  "partial_reset": true,
+  "assertions": {
+    "all_mask_absent": true,
+    "partial_reset": true,
+    "masked_timestep_inert": true,
+    "batch_permutation_isolation": true,
+    "carried_value_exact": true,
+    "meta_init": true
+  },
   "segment": {
     "state_max_abs_diff": 0.0,
     "token_max_abs_diff": 0.0,
     "tolerance": 1e-06,
     "pass": true
   },
-  "masked_timestep_inert": true,
   "init": {
-    "seed": 4,
-    "path": "CPU contract constructor"
-  }
+    "seed": 11,
+    "path": "meta-to_empty-explicit-reset_parameters"
+  },
+  "command_hash": "3ad5dcf584ed57fce39fe86972dff21b7313d7dde76c9c95ecbe17a9b113f515"
 }
