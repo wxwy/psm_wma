@@ -1163,3 +1163,42 @@ Detailed review:
 
 修复这一处后再送审；若 true alternate-valid-manifest regression PASS，预期下一轮可给：
 `APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY`。
+
+
+---
+
+## 2026-08-29 — R08 Gate B canonical manifest pinning review @ root 063c367 / submodule 055e101
+
+**Verdict: APPROVE_TO_RUN_GATE_B_CAPTURE_ONLY**
+
+唯一剩余的 canonical identity blocker 已关闭。
+
+已核：
+- verifier 固定仓内 `artifacts/g0/r08/gate_a_checkpoint_manifest.json` 的 resolved path；
+- 固定 SHA256 = `ff01da7a7c0f28504b54de94505c8b605f90a1c98093a982af5cee0aab53c928`；
+- ChatGPT 独立复算当前 committed manifest SHA256，与常量完全一致；
+- fixed manifest SHA 等价锁住完整 8-file Gate-A DCP manifest 内容；
+- verifier 仍逐文件复算 size/SHA256；
+- 新增第二个合法 checkpoint + 合法 manifest + 一致 provenance/log/config 的 full-chain negative fixture，并要求 FAIL；
+- 之前已关闭的 schema/invariant/load-marker/model-only/finite-response/provenance checks 保持不变。
+
+批准范围仅限三次 fixed-weight forward/capture：
+1. Normal
+2. Zero
+3. Shuffle
+
+继续要求：
+- pinned reviewed Gate-A checkpoint；
+- same batch/current sample/noise/masks/non-history config；
+- 只改变 history intervention；
+- no backward；
+- no optimizer step；
+- no long training；
+- no multi-GPU；
+- no Gate C；
+- no R09。
+
+三次 capture 后运行 strict `verify_r08_gate_b.py`，提交 Gate-B artifact + raw sidecar hashes 再做 runtime review。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_canonical_pinning_063c367_055e101.md`
