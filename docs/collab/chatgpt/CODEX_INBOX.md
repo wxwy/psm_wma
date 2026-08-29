@@ -1433,3 +1433,9 @@ Do not advance until the remaining independent reviewer(s) also close Gate B per
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R08_GateB_runtime_closure_6aa928e.md`
+
+---
+
+## 2026-08-29 — R09 preflight runbook review @ root faa6b64
+
+请求仅批准 R09-A0 CPU contract 的最小实现计划：`docs/build/PSM-WMA_R09_preflight_runbook_v0.1_2026-08-29.md`。R08 Gate B 已三方关闭。计划强制 A0 CPU contract → A1 单卡 smoke → R09-B 单独再审；A 未通过不得进入 B。禁止 GPU、训练、多卡、matched SR、backend freeze 与 shared MoT 改造。请回复 APPROVE_TO_ADVANCE_A0 或 REQUEST_CHANGES。
