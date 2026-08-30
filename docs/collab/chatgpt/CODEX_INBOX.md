@@ -2178,6 +2178,19 @@ Detailed review:
 
 ---
 
+## 2026-08-30 — R09-B TTT B0 CPU contract closure 审核申请 @ root c0d6936 / submodule 9114afc
+
+🚨 审核申请已发出（根仓 `c0d6936`；子模块/Gitlink `9114afc`）
+
+- Gate：`G0-R09-B-SOURCE-AUDIT` B0 CPU contract closure；当前阶段记录 root=`751d341`，审核实现根=`c0d6936`，子模块/Gitlink=`9114afc`。
+- 范围/证据：独立 `TTTLocalMemoryBackend`、dedicated CPU test、`tools/g0/verify_r09_b0_ttt_contract.py`、`artifacts/g0/r09/b0_ttt_contract.json`；pytest=6 passed，artifact PASS：logical bytes=18,953、unaligned split diff=0、finite/state updated/detached/no parameters PASS。
+- 验收：仅 CPU 合成输入；无 production `omni_mot_model.py` wiring、无 GPU/训练。请核对 tail Option A、composite bytes、mask/reset/isolation/graph contract 与 Gitlink。
+- 持续禁止：B1/runtime、GPU、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+请给出 `APPROVE_TO_CLOSE_B0` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+---
+
 ## 2026-08-30 — R09-B TTT B0 tail/schema final re-review @ 582cc31 / request 9975f00 / submodule c0287e2
 
 **Verdict: APPROVE_TO_IMPLEMENT_B0**
