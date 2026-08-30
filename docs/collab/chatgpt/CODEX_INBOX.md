@@ -2213,3 +2213,24 @@ CPU PASS 必须包括 deterministic/finite、`floor(N/4)` update count、N<4 零
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_source_audit_final_582cc31.md`
+
+---
+
+## 2026-08-30 — R09-B TTT B0 CPU contract closure review @ c0d6936 / submodule 9114afc
+
+**Verdict: REQUEST_CHANGES**
+
+ChatGPT 独立审核发现 4 项 blocker：
+1. **submodule Gitlink 不可远端解析**：root `c0d6936` 指向 `9114afcf6d0da83884c7a2e5f2c61c86c4292f51`，但 `wxwy/cosmos-framework` 当前无法解析该完整 SHA。fresh clone / independent reviewer 无法取得 B0 backend/test。先 push exact submodule commit，再重提。
+2. **verifier/artifact schema 严重不完整**：`tools/g0/verify_r09_b0_ttt_contract.py:27-34` 只验证 finite/state-updated/present/final-token-detached/named-parameters/state-only split/bytes/tool-sha；缺 frozen v0.2 要求的 root/sub/Gitlink+clean provenance、8 个 candidate、deterministic、mask/padding/all-mask、batch/cross-sample、partial/full reset、boundary、detach_value_exact、optimizer/checkpoint exclusion、segment state/token/tolerance、完整 command provenance。当前 artifact 不能据此宣告 closure PASS。
+3. **tail/update-count 与 token split exact 未测**：必须覆盖 `N_valid=1,2,3,5,6,7`、`update_count=floor(N/4)`、N<4 zero-W/zero-token + present=true。当前 verifier 只跑 7-valid + all-mask；虽计算 `split_token`，却没有与 full token 比较，只比较 state。必须 hard-gate unaligned state/token/present exact。
+4. **state shape 是人工写入而非实际验证**：`_member(value, shape)` 把 caller 常量 shape 写进 artifact；需从 tensor 实际 `value.shape[1:]` 派生并与 frozen schema hard-assert。
+
+已接受：根仓可见 diff 未新增 production runtime/config/training wiring；logical payload 18,953 B/sample 算术正确。
+
+修复后从 pushed clean root/submodule 对重新生成 canonical artifact，再申请 `APPROVE_TO_CLOSE_B0`。
+
+继续 BLOCKED：B1/runtime、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B0_CPU_contract_c0d6936_9114afc.md`
