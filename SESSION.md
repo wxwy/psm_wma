@@ -716,3 +716,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - MM、Kimi 均 `REQUEST_CHANGES`，未获 B0 实施批准。Kimi：v0.1 §1“B0 设计冻结 + CPU contract 实现”与 §3 关键参数全部 `[TBD/GATE]` 矛盾；采用其选项 B，仅冻结设计框架，具体 TTT 参数在 B0 source audit/实施申请中逐项经三方批准。MM：补充 cross-sample 与 segment-boundary isolation，澄清 backend 外接符号/optimizer allowlist，不预设不存在的测试文件路径。
 - 实际修改：已新建 v0.2 runbook；RoboTTT 仅作为 per-sample fast-weight、inner update 与 segment/TBPTT 的算法参考，不引入第三方代码/依赖或 shared MoT 结构。下一步：完成 v0.2 文档校验并重新三路送审；不实现 TTT、不运行 CPU/GPU。对应提交：未提交。
+
+### R09-B v0.2 远端复审整改（2026-08-30，REVIEW）
+
+- 目的/Gate：`G0-R09-B-RUNBOOK-PREFLIGHT`；处理 ChatGPT 对远端 content `2c424c67` 的 `REQUEST_CHANGES`，仅修订 runbook/schema，不运行项目代码。
+- 根因与修改：将 `segment_steps` 定义为单一 sample/window 的 causal evidence 轴 `H` 上的 replay segment，保持 `state_start=zeros`、允许 tail，删除与 `inner_steps` 的错误耦合及跨 outer forward 歧义；将 allowlist 写为 backend-agnostic `local_history_runtime.recurrent_backend.*`，例外需在 source audit 枚举 exact names/counts；补齐 deterministic、mask/padding、batch permutation、partial/full reset、segment 等价差值/阈值、boundary、named_parameters 及 clean/Gitlink/tool/command provenance 的机器可读字段。
+- 验证与限制：`git diff --check` 与 runbook JSON schema 语法解析均 PASS；不执行 CPU contract、TTT、runtime、GPU、训练或评测。修复后以实际 root/submodule/Gitlink 重新发三路审核；提交：未提交。
