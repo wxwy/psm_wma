@@ -2325,3 +2325,15 @@ ChatGPT 独立复核确认上一轮 3 个 closure blocker 已全部关闭：
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_CPU_contract_second_rereview_f4ca0fc_ee1b78d.md`
+
+---
+
+## 2026-08-30 — R09-B1 TTT runtime preflight implementation request @ root 4107993 / submodule ee1b78d
+
+- Gate：`G0-R09-B1-RUNTIME-PREFLIGHT`。B0 已由 ChatGPT/MM/Kimi `APPROVE_TO_CLOSE_B0`；本轮仅请求 B1-S 静态 production wiring、定向 CPU coverage、TTT 专用 runtime probe/verifier 的最小实现权限。
+- 审核对象：`docs/build/PSM-WMA_R09_B1_TTT_runtime_preflight_runbook_v0.1_2026-08-30.md`；根仓内容提交=`4107993`；子模块/Gitlink=`ee1b78d`，本轮不修改子模块。
+- 关键差异：B0 TTT 是 parameter-free、五成员 fast state、全量 detach。A1 的 GRU `.cell`、16 tensors/142,784 elements、encoder nonzero gradient 与四个新增 GRU tensor 都不能作为 B1 判据。B1 必须从实际 runtime/DCP 派生 optimizer membership、梯度事实和 schema，同时 hard-gate fast state不注册/不优化/不序列化。
+- 不变量：默认 recurrent 路径不变；Gate-A model-only warm-start、LIBERO 4-suite data/cache、batch、loss、precision、Normal/Zero/Shuffle capture、fixed-weight non-history invariants 复用。TTT state 每次 outer forward fresh，不跨 batch/worker/episode/sample。
+- 明确禁止：本申请不授权 GPU、A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL；B1-G GPU smoke须在 B1-S 三方通过后单独申请 `APPROVE_TO_RUN_B1_SMOKE`。
+
+请给出 `APPROVE_TO_IMPLEMENT_B1` 或 `REQUEST_CHANGES`，附 `file:line` 意见。
