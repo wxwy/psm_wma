@@ -2462,3 +2462,33 @@ Detailed review:
 - 仍禁止：任何 B1-S runtime/config code 在本请求批准前；eval/inference/closed-loop、GPU/B1-G、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
 
 请给出 `APPROVE_TO_IMPLEMENT_B1` 或 `REQUEST_CHANGES`，附 `file:line` 意见。
+
+
+---
+
+## 2026-08-31 — R09-B1 TTT runtime preflight contract rereview @ root 4d48c95 / HEAD ecbe34d
+
+**Verdict: APPROVE_TO_IMPLEMENT_B1**
+
+上一轮 3 个 blocker 已关闭：
+
+1. grad-mode/inference 选择 **training-only**：normal grad 可执行；`no_grad` / `inference_mode` 必须在任何 fast-state mutation 前 fail-fast；eval/inference/closed-loop 另建 Gate。
+2. exact selector 已冻结：`local_history_backend=recurrent|ttt_fast_weight`，default recurrent；env=`PSM_R09_B1_TTT_ENABLED=0|1`；与 `PSM_R09_A1_ENABLED=1`、非空 `PSM_R09_A1_PROBE_OUTPUT` fail-fast 互斥；B1 exact optimizer keys 为 encoder、`local_memory2llm`、`local_memory_modality_embed` 三项。
+3. B1-S 已冻结独立 verifier/artifact：`tools/g0/verify_r09_b1_static_contract.py` + `artifacts/g0/r09/b1/static_contract.json`，并以 clean/Gitlink/selector/A1 互斥/B0 dimensions/fresh-state/zero backend params+state_dict/exact optimizer/grad-mode/detach/command+tool provenance 为 hard gates。
+
+本批准只授权 **B1-S**：
+- 最小 selector/runtime 构造接线；
+- training-only fail-fast guard；
+- 定向 CPU tests；
+- B1-S verifier + canonical static artifact。
+
+实施时额外 hard requirement：
+- no-grad/inference fail-fast 后传入 state 必须 externally exact unchanged；
+- `gradient_facts` 仅记录事实，不得复用 A1 “所有 active groups nonzero”逻辑；encoder 不要求 TTT-path nonzero grad；
+- default recurrent 路径 exact preserved；
+- 不得运行 GPU，不得覆盖 B0/A1 artifact。
+
+继续 BLOCKED：B1-G GPU、eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_contract_rereview_4d48c95.md`
