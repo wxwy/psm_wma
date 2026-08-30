@@ -752,10 +752,16 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - rereview 整改完成：子模块 `ee1b78d` 对 partial reset 同时断言所有 done 样本清零、所有 non-done 样本逐成员保持；根仓 `a9b7443` 将实际五成员与 frozen expected schema（name/shape/dtype/bytes）exact hard-gate，并按 R09-A0 口径写入 canonical command hash。两仓已推送；`--require-clean` 生成的 `artifacts/g0/r09/b0_ttt_contract.json` 为 PASS，root=`a9b7443`、submodule/gitlink=`ee1b78d`、schema/hash/partial-reset 均 true。artifact 提交待落下；随后重新三方 closure 审核。提交：未提交。
 
-- B0 closure（DONE）：ChatGPT review `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_CPU_contract_second_rereview_f4ca0fc_ee1b78d.md`、MM、Kimi 均 `APPROVE_TO_CLOSE_B0`；ChatGPT 覆盖最新审核申请 root=`685ca9a`，并确认无 production runtime/config/GPU scope creep。正式 canonical artifact 的初始生成在 commit=`f4ca0fc`（provenance root=`a9b7443`/submodule=`ee1b78d` clean pair）；Kimi 审查复跑得到的同契约 artifact 已作为根仓 `4e85ba8` 提交并推送。未提交的 Kimi review report 仍保留工作区，未覆盖或提交。B1/runtime/GPU/多卡/长训等仍 BLOCKED，必须新建独立 Gate。
+- B0 closure（技术 DONE；post-closure provenance REVIEW）：ChatGPT review `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_CPU_contract_second_rereview_f4ca0fc_ee1b78d.md`、MM、Kimi 均 `APPROVE_TO_CLOSE_B0`，技术结论不撤销。按 ChatGPT post-closure review `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_postclosure_provenance_4e85ba8.md` 的 Option B，唯一 canonical artifact 明确提升为根仓 commit=`4e85ba8` 的 `artifacts/g0/r09/b0_ttt_contract.json`，其 recorded clean root=`685ca9a`、submodule/Gitlink=`ee1b78d`；这是同一技术实现的 provenance refresh，不是新 B0 Gate。旧 commit=`f4ca0fc`/root=`a9b7443` 仅为历史初始生成，不再称 canonical。未提交的 Kimi review report 保留工作区、未覆盖或提交。此口径待三方 provenance hygiene 复审；在关闭前 B1/runtime/GPU/多卡/长训等继续 BLOCKED。
 
-### R09-B1 runtime preflight（2026-08-30，IN_PROGRESS）
+### R09-B1 runtime preflight（2026-08-30，BLOCKED）
 
 - 目的/Gate：`G0-R09-B1-RUNTIME-PREFLIGHT`；B0 三方关闭后，只准备 production wiring 与 A1-style bounded smoke 的独立实施申请，不修改 Cosmos runtime/config，不执行 CPU/GPU、训练或评测。
 - 已核验差异：B0 `TTTLocalMemoryBackend` 是无慢参数、全量 detached 的五成员 fast state（`local_evidence.py:202-250`）；生产构造仍固定注入 GRU（`omni_mot_model.py:302-313`）。因此 A1 probe 的 `.cell`、16-tensor/142,784-element、encoder nonzero-gradient 断言不能直接移植；B1 必须重新冻结实际 optimizer membership、允许/禁止梯度和 checkpoint schema，同时保持 Gate-A warm-start、data/cache、loss、batch 和 Normal/Zero/Shuffle 固定。
-- 预计修改：仅新增 `docs/build/PSM-WMA_R09_B1_TTT_runtime_preflight_runbook_v0.1_2026-08-30.md`，并更新 `TODO.md`、`SESSION.md`；随后静态检查并三路申请 `APPROVE_TO_IMPLEMENT_B1`。持续禁止 runtime/config 改动、GPU、单卡 smoke、多卡、长训、matched SR、backend freeze、Global/Agent/RL。提交：未提交。
+- 产物：`docs/build/PSM-WMA_R09_B1_TTT_runtime_preflight_runbook_v0.1_2026-08-30.md` 已在 root=`4107993` 提交。阻塞：先完成 ChatGPT 提出的 B0 canonical artifact provenance 口径统一与三方复审；在此之前不发送 B1 审核申请。持续禁止 runtime/config 改动、GPU、单卡 smoke、多卡、长训、matched SR、backend freeze、Global/Agent/RL。提交：未提交。
+
+### R09-B0 post-closure provenance hygiene（2026-08-30，IN_PROGRESS）
+
+- 目的：处理 ChatGPT 对 `4e85ba8` 的 `REQUEST_CHANGES`，不修改 B0 backend、CPU test、verifier 或 artifact，不运行项目代码。
+- 选择：采用 review Option B。已将 TODO/SESSION 从“`f4ca0fc`/`a9b7443` 是唯一 canonical、rerun 未提交”改为唯一 canonical=`4e85ba8` artifact，recorded root=`685ca9a`、submodule/Gitlink=`ee1b78d`；旧 pair仅作历史 initial-generation provenance。
+- 下一步：静态 diff-check、提交推送后，append Inbox 并经 MM/Kimi tmux 发起 provenance-only 复审；未获三方通过前 B1 保持 BLOCKED。提交：未提交。
