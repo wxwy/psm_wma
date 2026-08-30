@@ -734,4 +734,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 目的/Gate：`G0-R09-B-SOURCE-AUDIT`；复用并只读核验 `local_evidence.py:156-249`、`omni_mot_model.py:302-313,945-1002`、A1 optimizer `action_policy_libero_edge_all.py:189-195` 与现有 Local tests。
 - 产物：新增 `docs/build/PSM-WMA_R09_B_TTT_source_audit_v0.1_2026-08-30.md`，提出零新增 slow parameter 的 per-sample `W[B,32,256]` bf16 fast-weight、per-sample SGD、causal-prefix stop-gradient readout target、`inner_steps=1`、`segment_steps=4`、每 sample 16,384-byte 上限、`tolerance=0.0`；并冻结实现/测试锚点、state/reset/isolation 断言及 A/B matched 影响。
-- 验证与限制：`git diff --check` PASS、8 个 candidate 和 `APPROVE_TO_IMPLEMENT_B0` 请求字段均存在；未运行 Python/pytest/CPU contract/GPU，未修改 Cosmos 子模块。下一步：提交、push，append ChatGPT Inbox，并用 MM/Kimi `send-keys -l` + 独立 Enter 发送后按分钟三路监控。提交：未提交。
+- 验证与限制：`git diff --check` PASS、8 个 candidate 和 `APPROVE_TO_IMPLEMENT_B0` 请求字段均存在；未运行 Python/pytest/CPU contract/GPU，未修改 Cosmos 子模块。审核对象提交=`02788a1`、Inbox 申请提交/远端=`36df13f`、submodule/Gitlink=`c0287e2`；申请已用 `send-keys -l` + 独立 Enter 发送至 `mm:0.0`、`kimi:0.0` 并 capture-pane 回读，MM 进入处理、Kimi 已接收。三路按分钟监控，当前 REVIEW。提交：未提交。
