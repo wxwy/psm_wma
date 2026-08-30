@@ -18,6 +18,13 @@ from cosmos_framework.model.generator.mot.local_evidence import TTTLocalMemoryBa
 ROOT = Path(__file__).resolve().parents[2]
 SUBMODULE = ROOT / "cosmos-framework"
 BYTES_LIMIT = 18_953  # source_audit_v0.1 §2.2: approved five-member logical payload.
+EXPECTED_STATE_MEMBERS = {
+    "W": {"shape_per_sample": [32, 256], "dtype": "bfloat16", "bytes_per_sample": 16_384},
+    "pending_evidence": {"shape_per_sample": [4, 256], "dtype": "bfloat16", "bytes_per_sample": 2_048},
+    "last_evidence": {"shape_per_sample": [256], "dtype": "bfloat16", "bytes_per_sample": 512},
+    "initialized": {"shape_per_sample": [], "dtype": "bool", "bytes_per_sample": 1},
+    "segment_progress": {"shape_per_sample": [], "dtype": "int64", "bytes_per_sample": 8},
+}
 
 
 def _git(*args: str, cwd: Path = ROOT) -> str:
@@ -106,7 +113,8 @@ def main() -> None:
     changed[1] = -1e6
     isolated_token, isolated_state, _ = backend.replay(changed, mask)
     continued_token, continued_state, continued_present = backend.replay(torch.zeros(3, 2, 256), torch.zeros(3, 2, dtype=torch.bool), state)
-    partial_state = backend.reset_mask(state, torch.tensor([False, True, False]))
+    partial_done = torch.tensor([False, True, False])
+    partial_state = backend.reset_mask(state, partial_done)
     full_state = backend.reset_mask(state, torch.ones(3, dtype=torch.bool))
     boundary_token, boundary_state, boundary_present = backend.replay(torch.zeros(3, 2, 256), torch.zeros(3, 2, dtype=torch.bool))
     tail_cases, tail_pass = _tail_checks(backend)
@@ -127,7 +135,10 @@ def main() -> None:
         "all_mask_continuation": torch.equal(continued_token, token) and _state_equal(continued_state, state) and torch.equal(continued_present, present),
         "batch_permutation_isolation": torch.equal(perm_token[inverse], token) and _state_equal(tuple(value[inverse] for value in perm_state), state) and torch.equal(perm_present[inverse], present),
         "cross_sample_isolation": torch.equal(isolated_token[0], token[0]) and all(torch.equal(value[0], reference[0]) for value, reference in zip(isolated_state, state, strict=True)),
-        "partial_reset": all(torch.equal(value[0], reference[0]) for value, reference in zip(partial_state, state, strict=True)) and all(torch.count_nonzero(value[1]) == 0 for value in partial_state),
+        "partial_reset": all(
+            torch.equal(value[~partial_done], reference[~partial_done]) and torch.count_nonzero(value[partial_done]) == 0
+            for value, reference in zip(partial_state, state, strict=True)
+        ),
         "full_reset": all(torch.count_nonzero(value) == 0 for value in full_state),
         "boundary_isolation": not bool(boundary_present.any()) and torch.count_nonzero(boundary_token) == 0,
         "boundary_state_zero_or_reinitialized": all(torch.count_nonzero(value) == 0 for value in boundary_state),
@@ -151,13 +162,16 @@ def main() -> None:
         "submodule_clean": submodule_clean,
         "gitlink_matches_submodule": gitlink_revision == submodule_revision,
         "candidate": {"fast_weight_parametrization": "per_sample_W_bfloat16_[32,256]", "update_rule": "SGD_lr_0.1", "inner_objective": "MSE(W@e,stopgrad(e[:32]))", "inner_steps": 1, "segment_steps": 4, "fast_state_dtype": "bfloat16", "fast_state_bytes_limit": BYTES_LIMIT, "slow_learned_parameters": 0},
-        "state": {"members": members, "logical_bytes_per_sample": logical, "fast_state_parameter_count": len(list(backend.named_parameters())), "bytes_limit": BYTES_LIMIT, "bytes_limit_pass": logical == BYTES_LIMIT},
+        "state": {"schema_expected": EXPECTED_STATE_MEMBERS, "members": members, "schema_pass": members == EXPECTED_STATE_MEMBERS, "logical_bytes_per_sample": logical, "fast_state_parameter_count": len(list(backend.named_parameters())), "bytes_limit": BYTES_LIMIT, "bytes_limit_pass": logical == BYTES_LIMIT},
         "tail_cases": tail_cases,
         "checks": checks,
         "segment": {"state_max_abs_diff": segment_state_max_abs, "token_max_abs_diff": segment_token_max_abs, "present_equal": torch.equal(present, split_present), "tolerance": 0.0, "pass": segment_state_max_abs == 0.0 and segment_token_max_abs == 0.0 and torch.equal(present, split_present)},
         "command": {"argv": sys.argv, "cwd": str(Path.cwd()), "python": sys.executable, "output": str(args.output), "tool_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},
     }
-    required = [payload["state"]["bytes_limit_pass"], payload["segment"]["pass"], *checks.values()]
+    payload["command"]["canonical_command_hash"] = hashlib.sha256(
+        json.dumps({key: value for key, value in payload["command"].items() if key != "tool_sha256"}, sort_keys=True).encode()
+    ).hexdigest()
+    required = [payload["state"]["schema_pass"], payload["state"]["bytes_limit_pass"], payload["segment"]["pass"], *checks.values()]
     payload["status"] = "PASS" if all(required) else "FAIL"
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(payload, indent=2) + "\n")
