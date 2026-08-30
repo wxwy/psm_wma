@@ -2027,3 +2027,14 @@ Detailed review:
 - 明确禁止：runtime wiring、GPU、A1-style smoke、多卡、长训、matched SR、backend freeze、shared MoT/RoboTTT、Global/Agent/RL。
 
 请给出 `APPROVE_TO_IMPLEMENT_B0` 或 `REQUEST_CHANGES`，并附具体 update rule/inner objective 的允许边界与 `file:line` 意见。
+
+---
+
+## 2026-08-30 — R09-B TTT B0 preflight v0.2 复审申请 @ root 8de9750 / submodule c0287e2
+
+🚨 审核申请已发出（根仓 `8de9750`；子模块/Gitlink `c0287e2`）
+
+- 审核对象：`docs/build/PSM-WMA_R09_B_TTT_preflight_runbook_v0.2_2026-08-30.md`；v0.1 保留为历史版本。
+- 已关闭 MM/Kimi 首轮意见：B0 仅冻结设计框架；补全 8 个 candidate 回填字段；默认零新增 slow parameter、若例外仅复用 A1 allowlist/recurrent_backend 外接符号；定义 segment/inner 语义；新增 cross-sample 与 boundary isolation；测试路径由获批 source audit 冻结。
+- RoboTTT 仅作 fast-weight/inner-update/TBPTT 算法参考；不引入第三方实现、依赖或 shared MoT 结构。
+- 请求 verdict：`APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT` 或 `REQUEST_CHANGES`。本轮不请求实现；继续禁止 TTT 代码、runtime、GPU、多卡、长训、matched SR、backend freeze、Global/Agent/RL。
