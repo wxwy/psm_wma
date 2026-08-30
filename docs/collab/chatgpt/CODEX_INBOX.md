@@ -2402,3 +2402,17 @@ Gate：
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_provenance_hygiene_rereview_4204408.md`
+
+---
+
+## 2026-08-30 — R09-B1 TTT runtime preflight implementation request @ root 5005e4f / submodule ee1b78d
+
+🚨 审核申请已发出（根仓 `5005e4f`；子模块/Gitlink `ee1b78d`）
+
+- Gate：`G0-R09-B1-RUNTIME-PREFLIGHT`。前置 B0 technical closure 与 post-closure provenance hygiene 均已由 ChatGPT/MM/Kimi 通过；唯一 canonical B0 artifact=`4e85ba8`，recorded root=`685ca9a`、submodule/Gitlink=`ee1b78d`。
+- 审核对象：`docs/build/PSM-WMA_R09_B1_TTT_runtime_preflight_runbook_v0.1_2026-08-30.md`。请求仅限 B1-S：默认关闭的 TTT selector、Local runtime 最小接线/类型适配、定向 CPU coverage、TTT 专用 runtime probe/verifier；不修改数据/VAE/cache、shared MoT、packing、mRoPE、native losses 或接口。
+- 关键 B1 合同：B0 TTT 是 parameter-free 且全量 detach。不得照搬 A1 的 GRU `.cell`、16 tensors/142,784 elements、encoder nonzero-gradient、四个新增 GRU tensor。必须从实际 runtime/DCP 机器可读派生 optimizer membership、gradient summary、checkpoint schema；hard-gate fast state不注册/不优化/不序列化、每个 outer forward fresh state。
+- 固定不变量：默认 recurrent 路径逐项不变；未来 B1-G 复用 Gate-A model-only warm-start、LIBERO 4-suite data/cache、batch、loss、precision、Normal/Zero/Shuffle 与 fixed-weight non-history invariants。
+- 明确禁止：本申请不授权 GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。B1-G 仍需 B1-S 通过后另行申请 `APPROVE_TO_RUN_B1_SMOKE`。
+
+请给出 `APPROVE_TO_IMPLEMENT_B1` 或 `REQUEST_CHANGES`，附 `file:line` 意见。
