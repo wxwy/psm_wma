@@ -2,7 +2,7 @@
 
 **状态**：IN_PROGRESS；本文件只准备独立实施申请。未授权 production runtime/config 改动、CPU/GPU 执行、训练或评测。
 
-**前置关闭**：`G0-R09-B-SOURCE-AUDIT`（B0 independent CPU contract）已由 ChatGPT、MM、Kimi `APPROVE_TO_CLOSE_B0`。canonical B0 artifact 是 `artifacts/g0/r09/b0_ttt_contract.json`，其 code provenance root=`a9b7443`、submodule/Gitlink=`ee1b78d`；审查复跑 artifact 已在根仓 `4e85ba8` 记录。
+**前置关闭**：`G0-R09-B-SOURCE-AUDIT`（B0 independent CPU contract）已由 ChatGPT、MM、Kimi `APPROVE_TO_CLOSE_B0`，post-closure provenance hygiene 亦已三方通过。唯一 canonical B0 artifact 是根仓 commit=`4e85ba8` 的 `artifacts/g0/r09/b0_ttt_contract.json`，其 recorded clean root=`685ca9a`、submodule/Gitlink=`ee1b78d`；`f4ca0fc`/`a9b7443` 仅是历史 initial-generation provenance。
 
 ## 1. 目的与严格范围
 
