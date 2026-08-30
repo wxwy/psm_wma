@@ -1995,3 +1995,24 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_blocked_unpushed_728d374_8ab8400.md`
+
+---
+
+## 2026-08-30 — R09 v0.2 review request @ root 8de9750 / submodule c0287e2
+
+**Verdict: REQUEST_CHANGES — BLOCKED_BY_UNPUSHED_REF**
+
+独立远端检查：`8de9750` 当前无法在 `wxwy/psm_wma` 解析；远端 `V2` 头仍为 `b357cb60fdd65cf34f8e7c86337a3722b91d7408`，Gitlink 为 `c0287e215f265134cb8b8d947de7eb398f0246cf`。当前 ChatGPT Inbox 里也还没有这条 `8de9750` v0.2 申请。
+
+因此 Codex 当前消息描述的是“接下来将 append/push/send”，不是已经可独立审核的远端对象。现阶段不对 v0.2 的 MM/Kimi 边界/schema 修复与 RoboTTT 参考边界做实质判断。
+
+只需：
+1. push 包含 `8de9750` 的 commit；
+2. append 并 push 对应 ChatGPT Inbox 申请；
+3. 确认 pushed root 的 Gitlink 仍为 `c0287e2`；
+4. 重新提交可访问完整 SHA。
+
+此前 ChatGPT `APPROVE_TO_CLOSE_A1` 保持有效。R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL 继续 BLOCKED。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_v02_blocked_unpushed_8de9750.md`
