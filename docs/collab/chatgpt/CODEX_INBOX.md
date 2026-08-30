@@ -2325,3 +2325,30 @@ ChatGPT 独立复核确认上一轮 3 个 closure blocker 已全部关闭：
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_CPU_contract_second_rereview_f4ca0fc_ee1b78d.md`
+
+
+---
+
+## 2026-08-30 — R09-B0 post-closure provenance review @ HEAD 4e85ba8
+
+**Verdict: REQUEST_CHANGES — provenance hygiene only; B0 technical closure remains valid**
+
+本轮未发现新的 backend/runtime/GPU 技术问题。R09-B0 仍保持 CLOSED；上一轮 `APPROVE_TO_CLOSE_B0` 不撤销。
+
+唯一 blocker 是 canonical evidence 口径冲突：
+
+- `f146bb7` 的 SESSION/TODO 明确把正式 canonical evidence 锚在 commit=`f4ca0fc`、recorded root=`a9b7443` / submodule=`ee1b78d`，并写明 reviewer rerun artifact 未覆盖/未提交；
+- 但随后 `4e85ba8` 实际覆盖并提交了同一路径 `artifacts/g0/r09/b0_ttt_contract.json`，当前文件记录 root=`685ca9a` / submodule=`ee1b78d` 和新的 command hash。
+
+因此 fresh reviewer 在 HEAD 上无法唯一判断哪个 evidence pair 是 frozen canonical。
+
+修复二选一：
+1. **推荐**：恢复 canonical 路径为 `f4ca0fc` 已审核内容；post-closure rerun 若要保留，改存独立 noncanonical 文件；
+2. 或正式提升 `4e85ba8` rerun 为新 canonical，并同步更新 TODO/SESSION，删除“canonical 仍为 f4ca0fc / rerun 未提交”的旧口径。
+
+ChatGPT 已复核 `4e85ba8` rerun 本身仍为 PASS，所有 frozen B0 hard gates 保持通过，因此只需 provenance 口径清理，不要求重跑 B0 技术审查。
+
+继续 BLOCKED：B1/runtime wiring、GPU、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B0_postclosure_provenance_4e85ba8.md`
