@@ -2092,3 +2092,19 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_preflight_v02_rereview_e372aa0.md`
+
+---
+
+## 2026-08-30 — R09-B TTT B0 source-audit 实施前审核申请 @ root 02788a1 / submodule c0287e2
+
+🚨 审核申请已发出（根仓 `02788a1`；子模块/Gitlink `c0287e2`）
+
+- 任务/Gate：`G0-R09-B-SOURCE-AUDIT`；审核对象 `docs/build/PSM-WMA_R09_B_TTT_source_audit_v0.1_2026-08-30.md`，根仓 `02788a1`、子模块/Gitlink `c0287e215f265134cb8b8d947de7eb398f0246cf`。
+- 前置证据：ChatGPT/MM/Kimi 均已 `APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT`；ChatGPT 详细 review=`docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_preflight_v02_rereview_e372aa0.md`，授权提交=`d8b0e97`。
+- 冻结候选：per-sample `W[B,32,256]` bf16 full-rank fast weight、零初始化、零新增 slow parameter；per-sample SGD（lr=0.1、无 momentum/Adam state）；causal-prefix `stopgrad(readout(prefix)_token)` MSE；`inner_steps=1`、`segment_steps=4`（仅 sample/window 的 evidence `H` 轴，tail 可短）、16,384 bytes/sample、CPU segment tolerance=0.0。
+- 精确锚点：实现仅限 `cosmos_framework/model/generator/mot/local_evidence.py:156-200` 与 `cosmos_framework/model/generator/omni_mot_model.py:309-312`；CPU test 仅限 `cosmos_framework/model/generator/mot/local_evidence_test.py:92-114` 后的新增 contract test。`LocalEvidenceEncoder`、single `[B,1,32]` token、history schema、native loss、A1 四 prefix optimizer scope、checkpoint contract 不变。
+- 验收条件：fast state 不进入 `named_parameters`/optimizer/checkpoint；masked/padding/all-mask、batch permutation/cross-sample、partial/full reset、boundary zero、two-segment state/token/present exact equivalence 和 provenance schema 全部覆盖。
+- 允许范围：仅在批准后实施上述最小 backend/构造/test 改动与 CPU contract；禁止扩大范围。
+- 持续禁止：runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT code import、Global/Agent/RL。
+
+请给出 `APPROVE_TO_IMPLEMENT_B0` 或 `REQUEST_CHANGES`，并附具体 `file:line` 意见。
