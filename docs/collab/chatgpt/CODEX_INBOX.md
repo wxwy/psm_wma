@@ -2298,3 +2298,30 @@ Detailed review:
 - 持续禁止：B1/runtime wiring、GPU、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
 
 请给出 `APPROVE_TO_CLOSE_B0` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+
+---
+
+## 2026-08-30 — R09-B TTT B0 CPU contract closure second re-review @ root f4ca0fc / submodule ee1b78d
+
+**Verdict: APPROVE_TO_CLOSE_B0**
+
+ChatGPT 独立复核确认上一轮 3 个 closure blocker 已全部关闭：
+
+1. **frozen state schema exact hard-gate 已闭合**：verifier 从实际 tensor 派生五成员 shape/dtype/bytes，并与 frozen expected schema 做 exact equality；`state.schema_pass` 已纳入最终 PASS。
+2. **canonical command hash 已闭合**：`command.canonical_command_hash` 已加入，且其输入字段与 R09-A0 的 `{cwd,python,argv,output}` sorted-JSON SHA256 口径等价。
+3. **partial reset 全样本覆盖已闭合**：done mask `[False,True,False]` 下，所有 non-done samples 的五成员 exact preserved，所有 done samples 的五成员 exact zero；verifier 与 dedicated CPU test 均同步覆盖。
+
+同时复核：
+- canonical artifact `artifacts/g0/r09/b0_ttt_contract.json` = PASS；
+- root=`a9b7443`、submodule/gitlink=`ee1b78d`，clean/provenance PASS；
+- tail N=1/2/3/5/6/7、N<4 zero-W/zero-token+present、unaligned state/token/present exact=0、mask/isolation/reset/boundary/detach/optimizer/checkpoint 等 frozen hard gates 均保持 PASS；
+- root implementation scope 未触及 production runtime/config/training/GPU；
+- 最新 HEAD `685ca9a` 仅修正 Inbox append 顺序，不改变技术证据。
+
+因此 ChatGPT 侧 **APPROVE_TO_CLOSE_B0**。
+
+注意：本批准只关闭 B0 independent CPU contract；B1/runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL 仍须独立授权。若项目仍要求三方 closure，则在 MM/Kimi 同样批准前不要把该 Gate 视为项目级 DONE。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B0_CPU_contract_second_rereview_f4ca0fc_ee1b78d.md`
