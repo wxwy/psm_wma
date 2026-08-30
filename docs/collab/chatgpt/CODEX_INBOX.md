@@ -2248,3 +2248,25 @@ Detailed review:
 - 持续禁止：B1/runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
 
 请给出 `APPROVE_TO_CLOSE_B0` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+
+---
+
+## 2026-08-30 — R09-B TTT B0 CPU contract closure re-review @ root 1e1f051 / submodule cc848c3
+
+**Verdict: REQUEST_CHANGES**
+
+本轮已关闭上一轮大部分 blocker：`cc848c3` 已远端可解析且 Gitlink exact；tail N=1/2/3/5/6/7 与 `floor(N/4)` 已 hard-check；N<4 zero-W/zero-token + present=true；unaligned state/token/present exact=0；大部分 provenance/check schema 已补齐；无 production runtime/GPU 越界。
+
+仍有 3 项 closure blocker：
+
+1. **actual state schema 未 hard-gate**：`tools/g0/verify_r09_b0_ttt_contract.py:38-48,153-160` 虽已从实际 tensor 派生 shape/dtype/bytes，但只 hard-gate total bytes，没有将实际五成员 schema 与 frozen `[32,256]/[4,256]/[256]/[]/[] + bfloat16/bool/int64` 做逐项 exact comparison。因此 same-numel/same-byte 的错误 shape/dtype 仍可能 PASS。增加 `state.schema_pass` 并纳入最终 PASS。
+2. **缺 frozen `canonical_command_hash`**：runbook v0.2 `:55` 要求 command argv/cwd/python/output/**canonical_command_hash**/tool_sha；当前 verifier `:158` 和 artifact 缺该字段。按既有 canonical-command 口径补齐。
+3. **partial reset coverage 不完整**：done mask `[False,True,False]` 时 verifier `:130` 只证明 sample0 preserved + sample1 reset，没有证明 sample2 也 preserved。对全部 done/non-done sample 逐成员 exact 断言；dedicated CPU test 同步补齐。
+
+无需重做 backend/TTT objective/SGD/tail Option A。修以上 verifier/test 小项，从新的 pushed-clean root/submodule pair 重新生成 canonical artifact 后再申请 `APPROVE_TO_CLOSE_B0`。
+
+继续 BLOCKED：B1/runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B0_CPU_contract_rereview_1e1f051_cc848c3.md`
