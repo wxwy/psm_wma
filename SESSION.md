@@ -723,3 +723,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 根因与修改：将 `segment_steps` 定义为单一 sample/window 的 causal evidence 轴 `H` 上的 replay segment，保持 `state_start=zeros`、允许 tail，删除与 `inner_steps` 的错误耦合及跨 outer forward 歧义；将 allowlist 写为 backend-agnostic `local_history_runtime.recurrent_backend.*`，例外需在 source audit 枚举 exact names/counts；补齐 deterministic、mask/padding、batch permutation、partial/full reset、segment 等价差值/阈值、boundary、named_parameters 及 clean/Gitlink/tool/command provenance 的机器可读字段。
 - 验证与限制：`git diff --check` 与 runbook JSON schema 语法解析均 PASS；不执行 CPU contract、TTT、runtime、GPU、训练或评测。整改 root=`e372aa0`、submodule/Gitlink=`c0287e2`，ChatGPT Inbox 申请提交=`3b26bca` 已推送；同文已用 `send-keys -l` + 独立 Enter 发至 `mm:0.0`、`kimi:0.0` 并 capture-pane 回读，MM 进入处理、Kimi 已接收。三路按分钟轮询；提交：未提交。
 - 审核进展：MM、Kimi 均已对整改对象给出 `APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT`；MM 的 tolerance/slow-parameter exception/boundary-init 建议均为后续 source audit 的非阻塞项。ChatGPT 尚未对整改申请给出新 verdict，Gate 保持 `REVIEW`，不得进入 source audit。提交：未提交。
+
+### R09-B preflight closure 与 B0 source audit（2026-08-30，IN_PROGRESS）
+
+- closure：ChatGPT 已在远端 review=`1f9d2ef`、Inbox authorization=`d8b0e97` 对整改 root=`e372aa0`、submodule/Gitlink=`c0287e2` 给出 `APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT`；MM、Kimi 同一 verdict。`G0-R09-B-RUNBOOK-PREFLIGHT` 因此 DONE。
+- 当前任务：认领 `G0-R09-B-SOURCE-AUDIT`，预计新增 source-audit 文档并更新 `TODO.md`、`SESSION.md`；只读检查 `cosmos-framework` 的现有 Local evidence/compressor/optimizer 入口，冻结 8 个 candidate、exact symbols/test locations、tolerance、state shape/bytes 及 A/B matched 影响。
+- 强制边界：仍禁止 TTT backend 代码、CPU contract 执行、runtime wiring、GPU/训练、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT import、Global/Agent/RL。source audit 完成后必须另发三方 `APPROVE_TO_IMPLEMENT_B0` 审核。提交：未提交。
