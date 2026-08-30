@@ -40,7 +40,11 @@ def _recipe(*, b1: bool, a1: bool = False, probe: bool = False):
             os.environ.pop("PSM_R09_A1_PROBE_OUTPUT", None)
         from cosmos_framework.configs.base.experiment.action.posttrain_config import action_policy_libero_edge_all as recipe
 
-        return importlib.reload(recipe)
+        recipe = importlib.reload(recipe)
+        return (
+            recipe._action_policy_libero_edge_model_config(),
+            recipe.action_policy_libero_edge_all["optimizer"]["keys_to_select"],
+        )
     finally:
         for name, value in previous.items():
             if value is None:
@@ -85,12 +89,12 @@ def main() -> None:
             else:
                 inference_mode_fail_fast = True
     state_unchanged = all(torch.equal(value, expected) for value, expected in zip(state, state_reference, strict=True))
-    default_recipe = _recipe(b1=False)
-    ttt_recipe = _recipe(b1=True)
+    default_cfg, _ = _recipe(b1=False)
+    ttt_cfg, ttt_optimizer_keys = _recipe(b1=True)
     a1_excluded = True
     for a1, probe in ((True, False), (False, True)):
         try:
-            _recipe(b1=True, a1=a1, probe=probe)._action_policy_libero_edge_model_config()
+            _recipe(b1=True, a1=a1, probe=probe)
             a1_excluded = False
         except ValueError:
             pass
@@ -100,18 +104,18 @@ def main() -> None:
         "root_clean": root_clean,
         "submodule_clean": submodule_clean,
         "gitlink_matches_submodule": gitlink == submodule_revision,
-        "selector_default_recurrent": OmniMoTModelConfig().local_history_backend == "recurrent" and default_recipe._action_policy_libero_edge_model_config()["local_history_backend"] == "recurrent",
-        "selector_ttt_opt_in": ttt_recipe._action_policy_libero_edge_model_config()["local_history_backend"] == "ttt_fast_weight",
+        "selector_default_recurrent": OmniMoTModelConfig().local_history_backend == "recurrent" and default_cfg["local_history_backend"] == "recurrent",
+        "selector_ttt_opt_in": ttt_cfg["local_history_backend"] == "ttt_fast_weight",
         "a1_mutual_exclusion": a1_excluded,
         "b0_dimensions": (backend.evidence_dim, backend.local_dim, backend.segment_steps) == (256, 32, 4),
         "backend_zero_parameters": not list(backend.named_parameters()),
         "backend_empty_state_dict": not backend.state_dict(),
         "fresh_state_per_forward": torch.equal(token, repeat_token) and all(torch.equal(a, b) for a, b in zip(state, repeat_state, strict=True)),
-        "normal_grad_pass": not token.requires_grad and torch.isfinite(token).all(),
+        "normal_grad_pass": not token.requires_grad and bool(torch.isfinite(token).all()),
         "no_grad_fail_fast": no_grad_fail_fast and state_unchanged,
         "inference_mode_fail_fast": inference_mode_fail_fast and state_unchanged,
         "outer_graph_detached": not token.requires_grad and all(not value.requires_grad for value in state),
-        "exact_optimizer_keys": ttt_recipe.action_policy_libero_edge_all["optimizer"]["keys_to_select"] == EXACT_OPTIMIZER_KEYS,
+        "exact_optimizer_keys": ttt_optimizer_keys == EXACT_OPTIMIZER_KEYS,
     }
     status = all(checks.values()) and (not args.require_clean or (root_clean and submodule_clean and gitlink == submodule_revision))
     result = {
