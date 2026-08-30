@@ -702,4 +702,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 目的/Gate：`G0-R09-A1-SINGLE-GPU-SMOKE` closure；预计修改 `AGENTS.md`、`SESSION.md`、`TODO.md`，将审核申请的 ChatGPT Inbox + MM/Kimi tmux 双发送、提交号标记和分钟轮询固化为项目规则。
 - 当前申请锚点：根仓 `9a79bcf`，子模块/Gitlink `c0287e2`，证据 `artifacts/g0/r09/a1_corrected/`。ChatGPT Inbox 申请已存在；2026-08-30 已向 `tmux mm:0.0` 与 `tmux kimi:0.0` 分别补发 Enter 并回读确认：MM=`Determining…`，Kimi 已提交消息且为 `thinking`。每分钟轮询三路 verdict；A1 保持 REVIEW，禁止推进 R09-B。
-- 实际修改：`AGENTS.md` 增加审核申请三路发送、单独 Enter 回读确认、提交号标记和分钟轮询强制规则；`SESSION.md`、`TODO.md` 回填本次申请。验证：`git diff --check` PASS；提交：待创建根仓文档提交。
+- 实际修改：`AGENTS.md` 增加审核申请三路发送、单独 Enter 回读确认、提交号标记和分钟轮询强制规则；`SESSION.md`、`TODO.md` 回填本次申请。验证：`git diff --check` PASS；根仓规则提交：`b2deca7`（未推送）。
