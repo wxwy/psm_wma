@@ -2128,3 +2128,18 @@ MM/Kimi 的 `APPROVE_TO_IMPLEMENT_B0` 已知悉，但 ChatGPT 独立审计发现
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_source_audit_02788a1.md`
+
+---
+
+## 2026-08-30 — R09-B TTT B0 source-audit 五项整改复审申请 @ root 65ff180 / submodule c0287e2
+
+🚨 审核申请已发出（根仓 `65ff180`；子模块/Gitlink `c0287e2`）
+
+- 任务/Gate：`G0-R09-B-SOURCE-AUDIT`；审核对象 `docs/build/PSM-WMA_R09_B_TTT_source_audit_v0.1_2026-08-30.md`，根仓 `65ff180`、子模块/Gitlink `c0287e215f265134cb8b8d947de7eb398f0246cf`。
+- 对应 review：`docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_source_audit_02788a1.md` 的 HIGH-1 至 HIGH-5；本轮只有 source-audit/TODO/SESSION 文档，未改 Cosmos、未运行 TTT/CPU/GPU。
+- 五项闭合：(1) B0 只实现独立 `TTTLocalMemoryBackend` 与 CPU test，明确不改 `omni_mot_model.py`，production wiring 留 B1；(2) inner objective 改为 backend-local、parameter-free `MSE(W@e, stopgrad(e[:32]))`；(3) 精确冻结每 4 valid timestep 的 mean-over-positions/mean-over-32-dims loss、同一 pre-update W、一次 SGD、zero-valid 与 fp32/bf16 cast；(4) 冻结 `create_graph=False`、update/cache/token 全量 detach，native loss 不经 adaptation 回传 history；(5) state 扩展为 W/pending/last/initialized/progress，18,953 bytes/sample，支持未对齐 two-segment exact equivalence。
+- 验收条件：无 production wiring、无不可达 teacher、数学/图边界可直接实现、state 保留 present/reset/call-boundary-independent replay；测试覆盖 fast_state_updated、segment_present_equal、mask/padding/all-mask、isolation、partial/full reset、boundary、未对齐 split、named_parameters/optimizer/checkpoint exclusion 与 machine-readable artifact/verifier。
+- 允许范围：批准后仅改 `cosmos_framework/model/generator/mot/local_evidence.py:156-200` 与 `local_evidence_test.py:92-114` 后的独立 CPU contract test；不改任何 production wiring。
+- 持续禁止：`omni_mot_model.py` runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT code import、Global/Agent/RL。
+
+请给出 `APPROVE_TO_IMPLEMENT_B0` 或 `REQUEST_CHANGES`，并附 `file:line` 意见。
