@@ -1,6 +1,22 @@
 {
-  "schema_version": "r09_b0_ttt_contract_v2",
+  "schema_version": "r09_b0_ttt_contract_v3",
   "status": "PASS",
+  "root_revision": "9186e55c9e27df7544cf93985e63576027c083f5",
+  "submodule_revision": "cc848c333941f373e7e86d37e3ff500f9329c209",
+  "gitlink_revision": "cc848c333941f373e7e86d37e3ff500f9329c209",
+  "root_clean": true,
+  "submodule_clean": true,
+  "gitlink_matches_submodule": true,
+  "candidate": {
+    "fast_weight_parametrization": "per_sample_W_bfloat16_[32,256]",
+    "update_rule": "SGD_lr_0.1",
+    "inner_objective": "MSE(W@e,stopgrad(e[:32]))",
+    "inner_steps": 1,
+    "segment_steps": 4,
+    "fast_state_dtype": "bfloat16",
+    "fast_state_bytes_limit": 18953,
+    "slow_learned_parameters": 0
+  },
   "state": {
     "members": {
       "W": {
@@ -42,16 +58,90 @@
     "bytes_limit": 18953,
     "bytes_limit_pass": true
   },
+  "tail_cases": {
+    "1": {
+      "expected_update_count": 0,
+      "observed_update_count": 0,
+      "terminal_progress": 1,
+      "present": true,
+      "pass": true
+    },
+    "2": {
+      "expected_update_count": 0,
+      "observed_update_count": 0,
+      "terminal_progress": 2,
+      "present": true,
+      "pass": true
+    },
+    "3": {
+      "expected_update_count": 0,
+      "observed_update_count": 0,
+      "terminal_progress": 3,
+      "present": true,
+      "pass": true
+    },
+    "5": {
+      "expected_update_count": 1,
+      "observed_update_count": 1,
+      "terminal_progress": 1,
+      "present": true,
+      "pass": true
+    },
+    "6": {
+      "expected_update_count": 1,
+      "observed_update_count": 1,
+      "terminal_progress": 2,
+      "present": true,
+      "pass": true
+    },
+    "7": {
+      "expected_update_count": 1,
+      "observed_update_count": 1,
+      "terminal_progress": 3,
+      "present": true,
+      "pass": true
+    }
+  },
   "checks": {
+    "deterministic": true,
     "finite": true,
     "fast_state_updated": true,
+    "masked_timestep_inert": true,
+    "padding_inert": true,
+    "all_mask_absent": true,
+    "all_mask_continuation": true,
+    "batch_permutation_isolation": true,
+    "cross_sample_isolation": true,
+    "partial_reset": true,
+    "full_reset": true,
+    "boundary_isolation": true,
+    "boundary_state_zero_or_reinitialized": true,
     "segment_present_equal": true,
+    "detach_value_exact": true,
     "graph_detached": true,
     "named_parameters_excluded": true,
-    "two_segment_max_abs_diff": 0.0,
-    "two_segment_pass": true
+    "optimizer_excluded": true,
+    "checkpoint_excluded": true,
+    "tail_update_counts": true,
+    "provenance_pass": true
+  },
+  "segment": {
+    "state_max_abs_diff": 0.0,
+    "token_max_abs_diff": 0.0,
+    "present_equal": true,
+    "tolerance": 0.0,
+    "pass": true
   },
   "command": {
-    "tool_sha256": "7e2599251b0d8437d2ab071d9b17d58a26ca389359cd70f297a7712bfa37dc8e"
+    "argv": [
+      "tools/g0/verify_r09_b0_ttt_contract.py",
+      "--require-clean",
+      "--output",
+      "artifacts/g0/r09/b0_ttt_contract.json"
+    ],
+    "cwd": "/disk/rl/psm_wma",
+    "python": "/disk/rl/psm_wma/cosmos-framework/.venv/bin/python",
+    "output": "artifacts/g0/r09/b0_ttt_contract.json",
+    "tool_sha256": "eb674dd82c9ec6e526aa3e544b087fec1f0fa6e91b06810c09c168a42b4a00a0"
   }
 }
