@@ -754,11 +754,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - B0 closure（技术 DONE；post-closure provenance REVIEW）：ChatGPT review `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_CPU_contract_second_rereview_f4ca0fc_ee1b78d.md`、MM、Kimi 均 `APPROVE_TO_CLOSE_B0`，技术结论不撤销。按 ChatGPT post-closure review `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_postclosure_provenance_4e85ba8.md` 的 Option B，唯一 canonical artifact 明确提升为根仓 commit=`4e85ba8` 的 `artifacts/g0/r09/b0_ttt_contract.json`，其 recorded clean root=`685ca9a`、submodule/Gitlink=`ee1b78d`；这是同一技术实现的 provenance refresh，不是新 B0 Gate。旧 commit=`f4ca0fc`/root=`a9b7443` 仅为历史初始生成，不再称 canonical。未提交的 Kimi review report 保留工作区、未覆盖或提交。此口径待三方 provenance hygiene 复审；在关闭前 B1/runtime/GPU/多卡/长训等继续 BLOCKED。
 
-### R09-B1 runtime preflight（2026-08-30，IN_PROGRESS）
+### R09-B1 runtime preflight（2026-08-31，REVIEW）
 
 - 目的/Gate：`G0-R09-B1-RUNTIME-PREFLIGHT`；B0 三方关闭后，只准备 production wiring 与 A1-style bounded smoke 的独立实施申请，不修改 Cosmos runtime/config，不执行 CPU/GPU、训练或评测。
 - 已核验差异：B0 `TTTLocalMemoryBackend` 是无慢参数、全量 detached 的五成员 fast state（`local_evidence.py:202-250`）；生产构造仍固定注入 GRU（`omni_mot_model.py:302-313`）。因此 A1 probe 的 `.cell`、16-tensor/142,784-element、encoder nonzero-gradient 断言不能直接移植；B1 必须重新冻结实际 optimizer membership、允许/禁止梯度和 checkpoint schema，同时保持 Gate-A warm-start、data/cache、loss、batch 和 Normal/Zero/Shuffle 固定。
-- 产物：`docs/build/PSM-WMA_R09_B1_TTT_runtime_preflight_runbook_v0.1_2026-08-30.md` 已在 root=`4107993` 提交。B0 provenance hygiene 已获 ChatGPT/MM/Kimi `APPROVE_PROVENANCE_HYGIENE`；按 ChatGPT `bbfe614` review 修正 runbook 前置为唯一 canonical=`4e85ba8` artifact、recorded root=`685ca9a`、submodule/Gitlink=`ee1b78d`。下一步：静态检查、提交并重新三路申请 `APPROVE_TO_IMPLEMENT_B1`。持续禁止 runtime/config 改动、GPU、单卡 smoke、多卡、长训、matched SR、backend freeze、Global/Agent/RL。提交：未提交。
+- 产物：`docs/build/PSM-WMA_R09_B1_TTT_runtime_preflight_runbook_v0.1_2026-08-30.md` 已在 root=`4107993` 提交。B0 provenance hygiene 已获 ChatGPT/MM/Kimi `APPROVE_PROVENANCE_HYGIENE`；按 ChatGPT `bbfe614` review 修正 runbook 前置为唯一 canonical=`4e85ba8` artifact、recorded root=`685ca9a`、submodule/Gitlink=`ee1b78d`。
+- ChatGPT B1 preflight `REQUEST_CHANGES`（review=`e4b982c`）：B0 closure 不重开，但 B1-S 不得实施，直到冻结 outer grad-mode、exact selector/A1 mutual exclusion/optimizer 和独立 static artifact。选择 training-only：normal grad 可执行；no-grad/inference-mode 必须在 state mutation 前 fail-fast、不得用于 eval/inference/closed-loop；后者另开 Gate。冻结 selector=`local_history_backend: recurrent|ttt_fast_weight`、env=`PSM_R09_B1_TTT_ENABLED=0|1`、与 `PSM_R09_A1_ENABLED`/`PSM_R09_A1_PROBE_OUTPUT` 互斥，B1 optimizer 三条 exact keys，并新增 B1-S `artifacts/g0/r09/b1/static_contract.json` + verifier 合同。MM/Kimi 的 B1-S APPROVE 已知，但以 ChatGPT REQUEST_CHANGES 为准。下一步：静态检查、提交后重新三路申请；持续禁止 runtime/config 改动、GPU、单卡 smoke、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL。提交：未提交。
 
 ### R09-B0 post-closure provenance hygiene（2026-08-30，DONE）
 
