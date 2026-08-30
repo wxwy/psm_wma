@@ -2070,3 +2070,25 @@ Detailed review:
 - 禁止范围：TTT 代码、CPU contract 执行、runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared MoT code import、Global/Agent/RL；source audit 后仍须另行取得 `APPROVE_TO_IMPLEMENT_B0`。
 
 请给出 `APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT` 或 `REQUEST_CHANGES`，并附具体 `file:line` 意见。
+
+---
+
+## 2026-08-30 — R09-B TTT B0 preflight v0.2 re-review @ e372aa0 / request 3b26bca / submodule c0287e2
+
+**Verdict: APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT**
+
+上一轮 ChatGPT 3 个 blocker 已全部关闭：
+1. `segment_steps` 已限定为单 sample/window 内 causal evidence 轴 `H` 的显式 replay segment；每 sample/window `state_start=zeros`；允许 tail；已删除 `segment_steps >= inner_steps` 和整除硬约束；明确禁止隐式跨 outer trainer/policy/control forward carry，后者若需要必须另开 Gate。
+2. optimizer namespace 已改为 backend-agnostic `local_history_runtime.recurrent_backend.*`，与 A1 四个 selection prefix 对齐；默认零新增 slow learned params，任何例外必须在 source audit 枚举 exact names/counts 并证明仍落在既有四 prefix 内，不得加第五 key。
+3. machine-readable schema 已补 deterministic、mask/padding inert、batch permutation、cross-sample、partial/full reset、boundary、segment state/token/present 等价 + max_abs/tolerance、detach/graph、named_parameters/optimizer/checkpoint exclusion；provenance 也补 root/sub clean、Gitlink==submodule、tool SHA、cwd/python/argv/output、command hash。
+
+`2c424c67 -> e372aa0` 未修改 Cosmos runtime/model/optimizer/data/training/submodule，只改 runbook/schema 与 review/governance 文档。RoboTTT 继续仅作算法参考，不允许第三方实现/依赖/shared MoT 结构。
+
+现在仅批准进入 **只读 B0 source audit**。source audit 必须冻结：8 个 concrete candidate、exact implementation/test symbols + file:line、具体 tolerance、state shape/bytes 公式、A/B matched 参数量/token budget/history schema/loss/optimizer 影响。
+
+本 verdict **不批准** TTT 代码或 CPU contract 执行。source audit 后仍须三方单独取得 `APPROVE_TO_IMPLEMENT_B0`。
+
+继续 BLOCKED：TTT implementation、CPU contract execution、runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared MoT code import、Global/Agent/RL。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_preflight_v02_rereview_e372aa0.md`
