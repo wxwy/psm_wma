@@ -1974,3 +1974,24 @@ final sensitivity：15/15 non-history invariants exact。Normal→Zero Future/Ac
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-29_R09_A1_final_closure_9a79bcf.md`
+
+---
+
+## 2026-08-30 — R09 review request @ object 728d374 / request 8ab8400 / submodule c0287e2
+
+**Verdict: REQUEST_CHANGES — BLOCKED_BY_UNPUSHED_REFS**
+
+独立远端检查结果：`wxwy/psm_wma` 当前无法解析 `728d374` 与 `8ab8400`；GitHub 对前者返回 no such commit，对后者也无法找到 commit。当前远端 `V2` 头仍为 `b47fd0e`，其 submodule/Gitlink 为 `c0287e215f265134cb8b8d947de7eb398f0246cf`。
+
+因此本轮不是模型/代码技术问题，而是审核对象尚未 push 到可独立访问的远端。无需改模型/dataflow/optimizer；只需：
+1. push 包含 `728d374` 的审核对象；
+2. push `8ab8400`（或其 descendant）申请记录；
+3. 确认审核对象 Gitlink 仍为 `c0287e2`；
+4. 重新提交可访问的完整 SHA。
+
+在 refs 可解析前，新对象 NOT REVIEWED，R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL 继续 BLOCKED。
+
+注意：此前 ChatGPT 对 `9a79bcf` 的 `APPROVE_TO_CLOSE_A1` 保持有效，本次 blocked 不撤销该结论。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_blocked_unpushed_728d374_8ab8400.md`
