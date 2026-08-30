@@ -1,0 +1,57 @@
+{
+  "schema_version": "r09_b0_ttt_contract_v2",
+  "status": "PASS",
+  "state": {
+    "members": {
+      "W": {
+        "shape_per_sample": [
+          32,
+          256
+        ],
+        "dtype": "bfloat16",
+        "bytes_per_sample": 16384
+      },
+      "pending_evidence": {
+        "shape_per_sample": [
+          4,
+          256
+        ],
+        "dtype": "bfloat16",
+        "bytes_per_sample": 2048
+      },
+      "last_evidence": {
+        "shape_per_sample": [
+          256
+        ],
+        "dtype": "bfloat16",
+        "bytes_per_sample": 512
+      },
+      "initialized": {
+        "shape_per_sample": [],
+        "dtype": "bool",
+        "bytes_per_sample": 1
+      },
+      "segment_progress": {
+        "shape_per_sample": [],
+        "dtype": "int64",
+        "bytes_per_sample": 8
+      }
+    },
+    "logical_bytes_per_sample": 18953,
+    "fast_state_parameter_count": 0,
+    "bytes_limit": 18953,
+    "bytes_limit_pass": true
+  },
+  "checks": {
+    "finite": true,
+    "fast_state_updated": true,
+    "segment_present_equal": true,
+    "graph_detached": true,
+    "named_parameters_excluded": true,
+    "two_segment_max_abs_diff": 0.0,
+    "two_segment_pass": true
+  },
+  "command": {
+    "tool_sha256": "7e2599251b0d8437d2ab071d9b17d58a26ca389359cd70f297a7712bfa37dc8e"
+  }
+}
