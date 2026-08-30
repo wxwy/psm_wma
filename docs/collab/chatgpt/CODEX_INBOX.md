@@ -2016,3 +2016,14 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_v02_blocked_unpushed_8de9750.md`
+## 2026-08-30 — R09-B TTT B0 preflight 审核申请 @ root 728d374 / submodule c0287e2
+
+🚨 审核申请已发出（根仓 `728d374`；子模块/Gitlink `c0287e2`）
+
+- 审核对象：`docs/build/PSM-WMA_R09_B_TTT_preflight_runbook_v0.1_2026-08-30.md`。
+- 前置：R09-A1 已由 ChatGPT/MM/Kimi 三方 `APPROVE_TO_CLOSE_A1`；A1 canonical evidence root=`9a79bcf`、submodule/Gitlink=`c0287e2`。
+- 请求范围：仅批准 B0 的独立 CPU contract 实现。TTT 只能替换 temporal compressor，必须保持 A1 history schema、evidence encoder、Local token budget、adapter、native losses、optimizer scope 与 checkpoint contract；fast state 不得进入 slow optimizer/checkpoint。
+- 必须先冻结：fast-weight 参数化、inner update rule、inner objective、inner steps、segment steps、state dtype/bytes，均不得静默默认。
+- 明确禁止：runtime wiring、GPU、A1-style smoke、多卡、长训、matched SR、backend freeze、shared MoT/RoboTTT、Global/Agent/RL。
+
+请给出 `APPROVE_TO_IMPLEMENT_B0` 或 `REQUEST_CHANGES`，并附具体 update rule/inner objective 的允许边界与 `file:line` 意见。
