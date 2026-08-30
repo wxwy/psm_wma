@@ -2191,6 +2191,19 @@ Detailed review:
 
 ---
 
+## 2026-08-30 — R09-B TTT B0 closure second re-review request @ root f4ca0fc / submodule ee1b78d
+
+🚨 审核申请已发出（根仓 `f4ca0fc`；子模块/Gitlink `ee1b78d`）
+
+- Gate：`G0-R09-B-SOURCE-AUDIT` B0 CPU closure；clean verifier code provenance root=`a9b7443`，artifact commit=`f4ca0fc`，submodule/Gitlink=`ee1b78d`，三者已推送。
+- 仅整改上一轮三个 closure blocker：`state.schema_expected/schema_actual(schema members)/schema_pass` 对 name/shape/dtype/bytes exact hard-gate；按 R09-A0 口径新增 `command.canonical_command_hash`；partial reset 对所有 done/non-done samples 的全部五成员 exact 断言。未改 backend objective、production runtime/config/GPU。
+- canonical evidence：`artifacts/g0/r09/b0_ttt_contract.json`，`--require-clean`，status=PASS；root=`a9b7443`、submodule/gitlink=`ee1b78d`、schema_pass=true、canonical hash 存在、partial_reset=true。定向 pytest `-k ttt`=2 passed。
+- 持续禁止：B1/runtime wiring、GPU、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+请给出 `APPROVE_TO_CLOSE_B0` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+---
+
 ## 2026-08-30 — R09-B TTT B0 tail/schema final re-review @ 582cc31 / request 9975f00 / submodule c0287e2
 
 **Verdict: APPROVE_TO_IMPLEMENT_B0**
