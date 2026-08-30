@@ -704,3 +704,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 申请锚点：根仓 `9a79bcf`，子模块/Gitlink `c0287e2`，证据 `artifacts/g0/r09/a1_corrected/`。申请已送达 ChatGPT Inbox、`tmux mm:0.0`、`tmux kimi:0.0`；MM、Kimi 均 `APPROVE_TO_CLOSE_A1`，ChatGPT 在远端 `a20ddce`（review）与 `b47fd0e`（Inbox closure）给出同一 verdict。三方均批准，A1 关闭。
 - 实际修改：`AGENTS.md` 增加审核申请三路发送、单独 Enter 回读确认、提交号标记和分钟轮询强制规则；`SESSION.md`、`TODO.md` 回填申请与 closure。验证：`git diff --check` 待本轮执行；根仓规则提交：rebase 后 `389e282`、`52f550d`、`8f4f16a`，未推送。
 - 下一步：仅可准备 R09-B 的独立 runbook/范围/资产核查和三路审核申请；禁止实施 TTT、GPU、多卡、长训、matched SR 或 backend freeze。
+
+### R09-B runbook preflight（2026-08-30，IN_PROGRESS）
+
+- 目的/Gate：`G0-R09-B-RUNBOOK-PREFLIGHT`；在 A1 三方关闭后，仅对 TTT fast-weight 的实施前置范围、接口与资产做只读核查。
+- 实际修改：新增 `docs/build/PSM-WMA_R09_B_TTT_preflight_runbook_v0.1_2026-08-30.md`，将 TTT update rule/inner objective/segment 等未冻结项列为三方审核前置；不修改 Cosmos runtime 或训练配置，不运行项目代码。
+- 前置：A1 closure 根仓 `30c571e`（ChatGPT `a20ddce`/`b47fd0e`、MM/Kimi `APPROVE_TO_CLOSE_A1`）；R09-B 仍未获实施批准。
+- 验证：待执行 `git diff --check`；下一步：提交 runbook 后发出三路 `APPROVE_TO_IMPLEMENT_B0` 审核申请。未提交。
