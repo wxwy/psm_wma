@@ -729,3 +729,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - closure：ChatGPT 已在远端 review=`1f9d2ef`、Inbox authorization=`d8b0e97` 对整改 root=`e372aa0`、submodule/Gitlink=`c0287e2` 给出 `APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT`；MM、Kimi 同一 verdict。`G0-R09-B-RUNBOOK-PREFLIGHT` 因此 DONE。
 - 当前任务：认领 `G0-R09-B-SOURCE-AUDIT`，预计新增 source-audit 文档并更新 `TODO.md`、`SESSION.md`；只读检查 `cosmos-framework` 的现有 Local evidence/compressor/optimizer 入口，冻结 8 个 candidate、exact symbols/test locations、tolerance、state shape/bytes 及 A/B matched 影响。
 - 强制边界：仍禁止 TTT backend 代码、CPU contract 执行、runtime wiring、GPU/训练、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT import、Global/Agent/RL。source audit 完成后必须另发三方 `APPROVE_TO_IMPLEMENT_B0` 审核。提交：未提交。
+
+### R09-B B0 source audit（2026-08-30，REVIEW）
+
+- 目的/Gate：`G0-R09-B-SOURCE-AUDIT`；复用并只读核验 `local_evidence.py:156-249`、`omni_mot_model.py:302-313,945-1002`、A1 optimizer `action_policy_libero_edge_all.py:189-195` 与现有 Local tests。
+- 产物：新增 `docs/build/PSM-WMA_R09_B_TTT_source_audit_v0.1_2026-08-30.md`，提出零新增 slow parameter 的 per-sample `W[B,32,256]` bf16 fast-weight、per-sample SGD、causal-prefix stop-gradient readout target、`inner_steps=1`、`segment_steps=4`、每 sample 16,384-byte 上限、`tolerance=0.0`；并冻结实现/测试锚点、state/reset/isolation 断言及 A/B matched 影响。
+- 验证与限制：`git diff --check` PASS、8 个 candidate 和 `APPROVE_TO_IMPLEMENT_B0` 请求字段均存在；未运行 Python/pytest/CPU contract/GPU，未修改 Cosmos 子模块。下一步：提交、push，append ChatGPT Inbox，并用 MM/Kimi `send-keys -l` + 独立 Enter 发送后按分钟三路监控。提交：未提交。
