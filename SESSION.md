@@ -697,3 +697,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 归档：`artifacts/g0/r09/a1_corrected/` 保存 corrected smoke verifier、runtime probe、D005 sidecar、三模式 JSON/PT/provenance/log 与 `final_sensitivity.json`。三模式 provenance 均为 root `e256cfb`、submodule/Gitlink `c0287e2`、strict tracked clean、same checkpoint、capture_only=true。
 - 结果：smoke PASS；sensitivity PASS、15/15 non-history invariants exact。Normal→Zero Local/Future/Action relative L2=`1.158648/0.012276/0.007808`；Normal→Shuffle=`0.121691/0.010906/0.006412`。Future/Action 两种干预均非零。
 - 当前：待独立 `APPROVE_TO_CLOSE_A1`；未批准前不得启动 R09-B/TTT、多卡、长训、matched SR、backend freeze、shared MoT、Global/Agent/RL。提交：待本轮 artifact 与 closure request commit。
+
+### R09-A1 closure 审核发送与监控（2026-08-30，IN_PROGRESS）
+
+- 目的/Gate：`G0-R09-A1-SINGLE-GPU-SMOKE` closure；预计修改 `AGENTS.md`、`SESSION.md`、`TODO.md`，将审核申请的 ChatGPT Inbox + MM/Kimi tmux 双发送、提交号标记和分钟轮询固化为项目规则。
+- 当前申请锚点：根仓 `9a79bcf`，子模块/Gitlink `c0287e2`，证据 `artifacts/g0/r09/a1_corrected/`。ChatGPT Inbox 申请已存在；2026-08-30 已向 `tmux mm:0.0` 与 `tmux kimi:0.0` 分别补发 Enter 并回读确认：MM=`Determining…`，Kimi 已提交消息且为 `thinking`。每分钟轮询三路 verdict；A1 保持 REVIEW，禁止推进 R09-B。
+- 实际修改：`AGENTS.md` 增加审核申请三路发送、单独 Enter 回读确认、提交号标记和分钟轮询强制规则；`SESSION.md`、`TODO.md` 回填本次申请。验证：`git diff --check` PASS；提交：待创建根仓文档提交。

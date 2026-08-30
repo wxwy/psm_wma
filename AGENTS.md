@@ -72,3 +72,11 @@
 - 后台代码、训练、推理、评测和审核等待必须由 Codex 原生每分钟轮询；不得将 tmux 会话本身作为监控机制。
 - 每完成一个最小步骤必须输出路线进度；每次审核请求发出后立即启动一分钟一次的审核回复监控。
 - 每次发起审核申请时，必须在用户可见消息中使用醒目的 `🚨 审核申请已发出` 标识，便于用户及时提醒 GPT。
+
+### 审核申请发送与回复监控（强制）
+
+1. 申请必须先 append 到 `docs/collab/chatgpt/CODEX_INBOX.md`，并写清任务/Gate、根仓提交号、子模块提交号与 Gitlink、证据路径、验收条件、允许/禁止范围，以及明确的 verdict 请求。
+2. 同一申请必须主动发送到 MM 和 Kimi 的指定 `tmux` pane。发送时先用 `tmux send-keys -l` 写入完整文本，再单独执行 `tmux send-keys Enter`；不得把“文本已显示在输入框”当作“已发送”。随后必须 `tmux capture-pane` 回读，确认申请已提交且会话进入处理或已回复状态。
+3. 用户可见的申请标记固定为 `🚨 审核申请已发出（根仓 <hash>；子模块/Gitlink <hash>）`，两个提交号不得省略。
+4. 申请发出后，每分钟由 Codex 原生轮询三路：ChatGPT Inbox/`reviews/`、MM pane、Kimi pane；每次轮询记录申请是否送达、是否开始处理、最终 verdict 与 `file:line` 意见。不得仅依赖 tmux 自行运行或只检查其中一路。
+5. 审核等待期间任务状态保持 `REVIEW`，禁止越过该 Gate。收到全部所需审核结论后，先处理 `REQUEST_CHANGES`；全部批准后才更新 `SESSION.md`、`TODO.md` 并提交。若会话不存在、发送失败或未提交，立即重发并在 `SESSION.md` 记录，不能声称申请已发出。
