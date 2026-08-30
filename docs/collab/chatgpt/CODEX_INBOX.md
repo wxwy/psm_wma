@@ -2143,3 +2143,22 @@ Detailed review:
 - 持续禁止：`omni_mot_model.py` runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT code import、Global/Agent/RL。
 
 请给出 `APPROVE_TO_IMPLEMENT_B0` 或 `REQUEST_CHANGES`，并附 `file:line` 意见。
+
+---
+
+## 2026-08-30 — R09-B TTT B0 source-audit five-fix re-review @ 65ff180 / request 9fd9b70 / submodule c0287e2
+
+**Verdict: REQUEST_CHANGES**
+
+上一轮 5 个 blocker 已实质关闭：B0 runtime scope 已收回到独立 backend+CPU test；teacher 改成 backend-local parameter-free；segment SGD 数学/dtype/reduction 已冻结；`create_graph=False`/detach/outer-loss 图边界已冻结；state 已扩成 W/pending/last/initialized/progress 并支持未对齐 split。`18,953 B/sample` 的逻辑 tensor payload 算术正确。
+
+仍有 2 个实施前合同缺口：
+1. **final short-tail 语义未冻结**：`source_audit:22` 说 tail 可短于4，但 `:31,41` 又规定只有 progress==4 才 update、call boundary 不 finalize；而 B0 又禁止跨 outer forward carry。于是 sample/window 末尾 1–3 个 valid remainder 到底永不更新，还是应该在 logical end 做一次短段 update，目前不明确。必须二选一：A) 明确 remainder 永不 update，测试 N_valid=1,2,3,5,6,7 且 update_count=floor(N/4)；或 B) 增加 backend-local `finalize(state)` / `replay(..., final=True)`，只在逻辑 window 结束时对 1–3 pending 做一次 update，并证明 arbitrary split + one finalize 与 full replay + finalize exact 等价。普通 replay call boundary 绝不能隐式 finalize。
+2. **machine-readable schema 无法表达复合 mixed-dtype state**：preflight 仍是单一 `state.shape/dtype/bytes`，但当前 state 有 bf16 W/pending/last + bool initialized + int64 progress。实施前必须冻结 composite `state.members`（或等价结构），逐成员记录 shape_per_sample/dtype/bytes_per_sample，并由 verifier 独立计算 `numel*element_size`、总 logical_bytes_per_sample、fast_state_parameter_count=0、bytes_limit_pass。当前五成员总逻辑 payload=18,953 B/sample。若 tail finalization 改 state，公式同步更新。
+
+非阻塞提醒：fully detached token 会让未来 B1 runtime 的 native vision/action loss 无法经 TTT adaptation 回到 `LocalEvidenceEncoder`；这不阻塞独立 B0 CPU backend，但 B1 必须重新审 active optimizer membership/gradients，不能只看 prefix 名称相同。
+
+当前仍禁止 TTT implementation / CPU contract execution。只需修上述 2 项 source-audit 合同；前 5 项整改继续接受。修完后预期可 `APPROVE_TO_IMPLEMENT_B0`，范围仍仅 independent backend + dedicated CPU test + machine-readable artifact/verifier；production `omni_mot_model.py` wiring 留 B1。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_source_audit_rereview_65ff180.md`
