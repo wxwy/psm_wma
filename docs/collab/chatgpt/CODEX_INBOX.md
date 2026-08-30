@@ -2234,3 +2234,17 @@ ChatGPT 独立审核发现 4 项 blocker：
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_CPU_contract_c0d6936_9114afc.md`
+
+---
+
+## 2026-08-30 — R09-B TTT B0 CPU contract closure re-review request @ root 1e1f051 / submodule cc848c3
+
+🚨 审核申请已发出（根仓 `1e1f051`；子模块/Gitlink `cc848c3`）
+
+- Gate：`G0-R09-B-SOURCE-AUDIT` B0 CPU closure；根仓 `1e1f051`，实现/verifier code provenance root=`9186e55`，子模块/Gitlink=`cc848c3`；两仓 exact SHA 已推送至 `origin/V2` 与 `origin/v2`。
+- 整改范围：仅独立 `TTTLocalMemoryBackend`、其 CPU test、`tools/g0/verify_r09_b0_ttt_contract.py` 与 `artifacts/g0/r09/b0_ttt_contract.json`。没有改动 `omni_mot_model.py`、生产 runtime/config、GPU、训练或多卡路径。
+- canonical evidence：`artifacts/g0/r09/b0_ttt_contract.json`（schema v3）以 `--require-clean` 生成，记录 root=`9186e55`、submodule/gitlink=`cc848c3`、tracked-clean 三项 true。CPU pytest `-k ttt` 为 2 passed。
+- 请核对已关闭的 blocker：逐成员实际 tensor shape/dtype/bytes 与 18,953B；N=1/2/3/5/6/7 的 `floor(N/4)`（N<4 zero-W/zero-token/present）；mask/padding/all-mask continuation；batch permutation/cross-sample；partial/full reset；boundary；unaligned two-segment state/token/present exact=0；detach、named-parameters/optimizer/checkpoint exclusion；完整 command/provenance。
+- 持续禁止：B1/runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+请给出 `APPROVE_TO_CLOSE_B0` 或 `REQUEST_CHANGES`，附 `file:line`。
