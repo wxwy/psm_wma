@@ -711,3 +711,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 实际修改：新增 `docs/build/PSM-WMA_R09_B_TTT_preflight_runbook_v0.1_2026-08-30.md`，将 TTT update rule/inner objective/segment 等未冻结项列为三方审核前置；不修改 Cosmos runtime 或训练配置，不运行项目代码。
 - 前置：A1 closure 根仓 `30c571e`（ChatGPT `a20ddce`/`b47fd0e`、MM/Kimi `APPROVE_TO_CLOSE_A1`）；R09-B 仍未获实施批准。
 - 验证：`git diff --check` PASS；runbook 提交=`728d374`，ChatGPT Inbox 申请提交=`8ab8400`。申请已送达 `tmux mm:0.0`（`Brewing…`）与 `tmux kimi:0.0`（已提交、thinking）；每分钟轮询三路 `APPROVE_TO_IMPLEMENT_B0`/`REQUEST_CHANGES`。未提交本次发送记录。
+
+### R09-B preflight 首轮审核（2026-08-30，REVIEW）
+
+- MM、Kimi 均 `REQUEST_CHANGES`，未获 B0 实施批准。Kimi：v0.1 §1“B0 设计冻结 + CPU contract 实现”与 §3 关键参数全部 `[TBD/GATE]` 矛盾；采用其选项 B，仅冻结设计框架，具体 TTT 参数在 B0 source audit/实施申请中逐项经三方批准。MM：补充 cross-sample 与 segment-boundary isolation，澄清 backend 外接符号/optimizer allowlist，不预设不存在的测试文件路径。
+- 实际修改：已新建 v0.2 runbook；RoboTTT 仅作为 per-sample fast-weight、inner update 与 segment/TBPTT 的算法参考，不引入第三方代码/依赖或 shared MoT 结构。下一步：完成 v0.2 文档校验并重新三路送审；不实现 TTT、不运行 CPU/GPU。对应提交：未提交。
