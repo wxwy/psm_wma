@@ -2162,3 +2162,16 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_source_audit_rereview_65ff180.md`
+
+---
+
+## 2026-08-30 — R09-B TTT B0 tail/schema 整改复审申请 @ root 582cc31 / submodule c0287e2
+
+🚨 审核申请已发出（根仓 `582cc31`；子模块/Gitlink `c0287e2`）
+
+- 任务/Gate：`G0-R09-B-SOURCE-AUDIT`；审核对象 `docs/build/PSM-WMA_R09_B_TTT_source_audit_v0.1_2026-08-30.md`，根仓 `582cc31`、Gitlink `c0287e2`。
+- 对应 ChatGPT review `a59edd2`/`4a80de4`：前五项保持关闭，仅整改 tail 与 composite schema。
+- 冻结：Option A；终端 1--3 valid pending remainder 永不更新 W，但更新 last_evidence/present/token，update_count=`floor(N_valid/4)`，覆盖 N=1,2,3,5,6,7；普通 replay 边界不 finalize。artifact 在 `state.members` 逐项记录 W/pending/last/initialized/progress 的 shape/dtype/bytes，logical total/limit=18,953，verifier 独立计算 `numel*element_size`。
+- 允许范围不变：获批后仅 independent backend、dedicated CPU contract、artifact/verifier；禁止 production wiring/GPU/多卡/长训等。
+
+请给出 `APPROVE_TO_IMPLEMENT_B0` 或 `REQUEST_CHANGES`，附 `file:line`。
