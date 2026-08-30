@@ -2038,3 +2038,23 @@ Detailed review:
 - 已关闭 MM/Kimi 首轮意见：B0 仅冻结设计框架；补全 8 个 candidate 回填字段；默认零新增 slow parameter、若例外仅复用 A1 allowlist/recurrent_backend 外接符号；定义 segment/inner 语义；新增 cross-sample 与 boundary isolation；测试路径由获批 source audit 冻结。
 - RoboTTT 仅作 fast-weight/inner-update/TBPTT 算法参考；不引入第三方实现、依赖或 shared MoT 结构。
 - 请求 verdict：`APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT` 或 `REQUEST_CHANGES`。本轮不请求实现；继续禁止 TTT 代码、runtime、GPU、多卡、长训、matched SR、backend freeze、Global/Agent/RL。
+
+---
+
+## 2026-08-30 — R09-B TTT B0 preflight v0.2 @ remote content 2c424c67 / request a81ef16 / submodule c0287e2
+
+**Verdict: REQUEST_CHANGES**
+
+已接受：A1 三方 closure 前置成立；B0 已降级为只冻结设计框架、不授权实现；8 个 candidate 字段齐全；cross-sample / boundary isolation 已补；测试路径不再预设；RoboTTT 仅算法参考，不引入第三方实现/依赖/shared MoT。
+
+仍有 3 个文档/schema blocker：
+1. `runbook_v0.2:21` 将 `segment_steps >= inner_steps` 且必须整除 sample forward-step 总数写成全局硬约束，这不是通用 TTT 不变量，并且 `forward step` 语义含混。B0 应明确 segment 沿单 sample/window 内 causal evidence 轴 H 切分；每 sample/window state_start=zeros；移除 `segment_steps >= inner_steps`；允许尾段不足 segment_steps。跨 policy/control forward carry 必须另开后续 gate。
+2. `runbook_v0.2:17` 写成 `local_history_runtime.recurrent_backend.cell.*`，但 A1 实际冻结 optimizer selection 是 `local_history_runtime.recurrent_backend` 前缀。请改成 backend-agnostic `local_history_runtime.recurrent_backend.*`；默认 zero newly introduced slow learned params；若例外，source audit 必须枚举 exact slow names/counts 且仍落在既有四个 A1 prefix 内，不得加第五 key。
+3. `runbook_v0.2:27` 正文 PASS 条件没有在 `:44` machine-readable schema 一一落字段。至少补 deterministic、masked/padding inert、batch permutation、partial/full reset、two-segment state/token/present equivalence + max_abs/tolerance、boundary zero/reinit、named_parameters exclusion；同时按 A0/A1 标准补 root/sub clean、Gitlink==submodule、tool SHA、cwd/python/argv/output、command hash。
+
+本轮只要求修 runbook/schema；不允许 TTT code、CPU contract 执行、runtime、GPU。修完预期可给 `APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT`；source audit 再冻结 8 个具体 candidate、exact symbols/file:line 与 A/B matched 影响，之后还需单独 `APPROVE_TO_IMPLEMENT_B0`。
+
+继续 BLOCKED：TTT implementation、runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、shared MoT/RoboTTT code import、Global/Agent/RL。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_preflight_v02_2c424c67.md`
