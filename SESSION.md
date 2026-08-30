@@ -721,4 +721,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 目的/Gate：`G0-R09-B-RUNBOOK-PREFLIGHT`；处理 ChatGPT 对远端 content `2c424c67` 的 `REQUEST_CHANGES`，仅修订 runbook/schema，不运行项目代码。
 - 根因与修改：将 `segment_steps` 定义为单一 sample/window 的 causal evidence 轴 `H` 上的 replay segment，保持 `state_start=zeros`、允许 tail，删除与 `inner_steps` 的错误耦合及跨 outer forward 歧义；将 allowlist 写为 backend-agnostic `local_history_runtime.recurrent_backend.*`，例外需在 source audit 枚举 exact names/counts；补齐 deterministic、mask/padding、batch permutation、partial/full reset、segment 等价差值/阈值、boundary、named_parameters 及 clean/Gitlink/tool/command provenance 的机器可读字段。
-- 验证与限制：`git diff --check` 与 runbook JSON schema 语法解析均 PASS；不执行 CPU contract、TTT、runtime、GPU、训练或评测。修复后以实际 root/submodule/Gitlink 重新发三路审核；提交：未提交。
+- 验证与限制：`git diff --check` 与 runbook JSON schema 语法解析均 PASS；不执行 CPU contract、TTT、runtime、GPU、训练或评测。整改 root=`e372aa0`、submodule/Gitlink=`c0287e2`，ChatGPT Inbox 申请提交=`3b26bca` 已推送；同文已用 `send-keys -l` + 独立 Enter 发至 `mm:0.0`、`kimi:0.0` 并 capture-pane 回读，MM 进入处理、Kimi 已接收。三路按分钟轮询；提交：未提交。
