@@ -2416,3 +2416,35 @@ Detailed review:
 - 明确禁止：本申请不授权 GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。B1-G 仍需 B1-S 通过后另行申请 `APPROVE_TO_RUN_B1_SMOKE`。
 
 请给出 `APPROVE_TO_IMPLEMENT_B1` 或 `REQUEST_CHANGES`，附 `file:line` 意见。
+
+
+---
+
+## 2026-08-30 — R09-B1 TTT runtime preflight review @ HEAD 6ff6b1c
+
+**Verdict: REQUEST_CHANGES**
+
+B0 canonical provenance 已正确同步，且本轮没有夹带 runtime/GPU 实现；但 B1 preflight 仍有 3 个实施前 blocker：
+
+1. **HIGH — outer grad-mode / inference contract 未冻结**  
+   当前 `TTTLocalMemoryBackend.replay` 在 `local_evidence.py:243-246` 依赖 `torch.autograd.grad`。若 production/eval 外层处于 `torch.no_grad()` 或 `torch.inference_mode()`，仅 `requires_grad_(True)` 不能恢复图记录，inner update 会失败。runbook 目前称 production runtime，却没定义这一合同，也没授权对应最小 backend grad-context 修复。实施前必须二选一：  
+   - 推荐：冻结 production-safe inner-grad context，并用 CPU hard gate 覆盖 normal-grad / outer no_grad / 实际 inference context，同时保持 outer graph fully detached；  
+   - 或明确 B1 暂只授权 training runtime，eval/inference 另建 Gate。
+
+2. **MEDIUM — selector / A1 互斥 / optimizer exact contract 不够具体**  
+   runbook 只说“B1 opt-in selector”，未冻结 exact field/env、legal values/default、`local_history_enabled` 前置、与 `PSM_R09_A1_ENABLED` / A1 GRU probe 的 fail-fast 互斥，也未明确 B1 optimizer 到底保留当前四 key 还是变成三个 exact key。当前 A1 recipe `action_policy_libero_edge_all.py:189-195` 是四 key，A1 probe 又直接访问 `backend.cell`，若 stale A1 flag/probe 与 TTT 同开会失效。请冻结 exact selector 和 exact B1 optimizer keys，并把“backend optimizer/DCP state 为空”表述与整个 optimizer 非空区分开。
+
+3. **MEDIUM — B1-S 缺独立 machine-readable closure artifact**  
+   B1-S 是 GPU 前独立三方 Gate，但 runbook 目前没有冻结专用 static/CPU artifact + verifier。请在实施前定义，例如 `artifacts/g0/r09/b1/static_contract.json` + verifier，并 hard-gate root/sub/Gitlink clean、default recurrent、TTT opt-in、state fresh、backend zero params/state_dict、exact optimizer matches、A1 flag/probe mutual exclusion、gradient facts、HIGH-1 grad-mode contract、command/tool SHA、PASS/FAIL。
+
+非阻塞：当前 GPU replay 里的 `.tolist()` / Python row loop / CUDA scalar branch 有同步风险，B1-G 记录 step wall/update count 即可，暂不在本 Gate 做性能重写。
+
+因此：
+- B0 technical/provenance = CLOSED
+- B1 preflight = REVIEW / REQUEST_CHANGES
+- B1-S implementation = BLOCKED
+- B1-G GPU = BLOCKED
+- multi-GPU/long training/matched SR/backend freeze/shared-MoT/Global/Agent/RL = BLOCKED
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B1_runtime_preflight_6ff6b1c.md`
