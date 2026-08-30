@@ -2448,3 +2448,17 @@ B0 canonical provenance 已正确同步，且本轮没有夹带 runtime/GPU 实�
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B1_runtime_preflight_6ff6b1c.md`
+
+---
+
+## 2026-08-31 — R09-B1 TTT runtime preflight re-review request @ root 4d48c95 / submodule ee1b78d
+
+🚨 审核申请已发出（根仓 `4d48c95`；子模块/Gitlink `ee1b78d`）
+
+- 范围：仅处理 ChatGPT B1 preflight review 的 HIGH-1、MEDIUM-1/2；未修改子模块/runtime/config、未执行 CPU/GPU/训练/评测。
+- HIGH-1 选择 training-only contract：B1 不授权 eval/inference/closed-loop。TTT 在 normal training grad-mode 执行；outer `no_grad` 与 `inference_mode` 必须 mutation 前 fail-fast、state/token 不变，outer graph 仍 detach；相应最小 guard 与 CPU hard gate仅在 B1-S 获批后实现。
+- MEDIUM-1 exact selector：冻结 `local_history_backend: recurrent|ttt_fast_weight`（default recurrent）和 `PSM_R09_B1_TTT_ENABLED=0|1`（default 0）；TTT 要求 `local_history_enabled=true`，并与 `PSM_R09_A1_ENABLED=1`、非空 `PSM_R09_A1_PROBE_OUTPUT` fail-fast 互斥。B1 exact optimizer keys 是三项：encoder、`local_memory2llm`、`local_memory_modality_embed`；backend-specific optimizer/DCP state为空不等于全局 optimizer/DCP为空。
+- MEDIUM-2：冻结 B1-S canonical `artifacts/g0/r09/b1/static_contract.json` 和 `tools/g0/verify_r09_b1_static_contract.py`；schema hard-gate clean/Gitlink、selector default/opt-in、A1 互斥、B0 dimensions、fresh state、zero parameter/empty state_dict、three-key optimizer、grad-mode、detach、command/tool SHA。
+- 仍禁止：任何 B1-S runtime/config code 在本请求批准前；eval/inference/closed-loop、GPU/B1-G、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+请给出 `APPROVE_TO_IMPLEMENT_B1` 或 `REQUEST_CHANGES`，附 `file:line` 意见。
