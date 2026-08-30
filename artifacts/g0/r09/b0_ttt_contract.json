@@ -1,7 +1,7 @@
 {
   "schema_version": "r09_b0_ttt_contract_v3",
   "status": "PASS",
-  "root_revision": "a9b74434e6badfc33e5e817a4390318843b29c3d",
+  "root_revision": "685ca9a78ca3421dc01d3cb7e8c440ef02615db7",
   "submodule_revision": "ee1b78d532bad99ab29bcc1891c8e374eb960297",
   "gitlink_revision": "ee1b78d532bad99ab29bcc1891c8e374eb960297",
   "root_clean": true,
@@ -171,14 +171,14 @@
   "command": {
     "argv": [
       "tools/g0/verify_r09_b0_ttt_contract.py",
-      "--require-clean",
       "--output",
-      "artifacts/g0/r09/b0_ttt_contract.json"
+      "artifacts/g0/r09/b0_ttt_contract.json",
+      "--require-clean"
     ],
     "cwd": "/disk/rl/psm_wma",
     "python": "/disk/rl/psm_wma/cosmos-framework/.venv/bin/python",
     "output": "artifacts/g0/r09/b0_ttt_contract.json",
     "tool_sha256": "a79886520a059b1a2d726368dd4143505dbf65bde480a158b2854f9f8ec29011",
-    "canonical_command_hash": "fbeb884e84b163995a207027693d7619b05a5bfccec9a982c6c8d0057b3574f9"
+    "canonical_command_hash": "3e694ee4d1741b84bcdefa32da32505a27df5a0bb15af6eac7cff29fe60ca51a"
   }
 }
