@@ -2492,3 +2492,58 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_contract_rereview_4d48c95.md`
+
+
+---
+
+## 2026-08-31 — R09-B1 B1-S implementation review @ root fdd5a7a / submodule 0381335
+
+**Verdict: REQUEST_CHANGES**
+
+B1-S runtime wiring 本身基本符合授权：default recurrent、B1 opt-in TTT、A1 flag/probe 互斥、training-only no-grad/inference fail-fast、无 GPU/scope creep。问题集中在 canonical verifier，当前不能作为可信 closure hard gate。
+
+### HIGH-1 — `_recipe()` 的 shared module + `importlib.reload()` 污染 selector/optimizer evidence
+
+`tools/g0/verify_r09_b1_static_contract.py:29,88-104,114`：
+
+- `default_recipe` / `ttt_recipe` 实际引用同一个 module object；
+- 后续 `importlib.reload()` 会原地改写前一个引用；
+- `_recipe()` 返回前已恢复 env，因此 `:104` 再调用 config function 时不再处于 B1 env；
+- A1 negative-case reload 还可能在 module 全局配置初始化阶段抛错，留下 partial reload state，再污染 `:114` 的 optimizer key 读取。
+
+请改为 **独立 subprocess per env case**，或在 env context 内提取/deep-copy immutable dict snapshot；不要把 live module object 作为不同 env case 的证据。
+
+### HIGH-2 — actual optimizer/gradient evidence 未测量
+
+当前 verifier 只检查三个 `keys_to_select` 字符串；`backend_specific_state_empty=True` 是常量，`gradient_facts` 也只有设计声明，没有：
+
+- actual matched parameter names
+- selected optimizer parameter names
+- backend matched names=[]
+- actual backend-specific optimizer state
+- gradient present/finite/nonzero facts
+
+请用实际 B1 keys + 与训练同源的 parameter-selection helper 派生实际 names/IDs，并做 CPU representative backward，机器可读记录各组 gradient facts。encoder TTT-path 可 absent/zero，不得复用 A1 “all groups nonzero”。
+
+### MEDIUM — canonical artifact 尚未提交
+
+当前远端还没有 `artifacts/g0/r09/b1/static_contract.json`。这可以是实现中间提交，但不能关闭 B1-S，也不能申请 B1-G。
+
+修完 verifier 后，从 pushed-clean exact root/submodule 生成 canonical artifact，提交/push 后再发 closure review。
+
+Accepted：
+- `local_evidence.py:232-233` training-only guard 在 state mutation 前 fail-fast；
+- selector/A1 mutual exclusion/default-off wiring；
+- runtime wiring无需回退；
+- 无 GPU / eval/inference / multi-GPU / long-train / shared-MoT / Global/Agent/RL scope creep。
+
+Gate：
+- B0 = CLOSED
+- B1 preflight = APPROVED
+- B1-S = REVIEW / REQUEST_CHANGES
+- B1-G GPU = BLOCKED
+- eval/inference/closed-loop = BLOCKED
+- multi-GPU/long training/matched SR/backend freeze/shared-MoT/Global/Agent/RL = BLOCKED
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_implementation_fdd5a7a_0381335.md`
