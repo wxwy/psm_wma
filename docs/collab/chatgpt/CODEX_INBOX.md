@@ -2359,3 +2359,16 @@ Detailed review:
 
 - `G0-R09-B1-RUNTIME-PREFLIGHT` 的 runbook 已完成，但 GPT 的 B0 post-closure provenance review 正在要求先统一 canonical evidence 口径；本条不请求 B1 实现 verdict，也不会发送给 MM/Kimi。
 - 待修复后将重新发起独立 B1-S 审核；持续禁止 production runtime/config、GPU、训练、评测、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+---
+
+## 2026-08-30 — R09-B0 post-closure provenance hygiene re-review request @ root 4204408 / submodule ee1b78d
+
+🚨 审核申请已发出（根仓 `4204408`；子模块/Gitlink `ee1b78d`）
+
+- 范围：仅处理 `docs/collab/chatgpt/reviews/2026-08-30_R09_B0_postclosure_provenance_4e85ba8.md` 的 MEDIUM-1；未修改 B0 backend、CPU test、verifier、artifact、production runtime/config 或 GPU 路径。
+- 选择并落实 review Option B：`TODO.md` 与 `SESSION.md` 现唯一声明 canonical artifact 为根仓 commit=`4e85ba8` 的 `artifacts/g0/r09/b0_ttt_contract.json`，其 recorded clean root=`685ca9a`、submodule/Gitlink=`ee1b78d`。`f4ca0fc`/`a9b7443` 仅为历史 initial-generation provenance，不再称 current canonical。
+- 技术边界：这是同一已关闭 B0 CPU contract 的 provenance refresh；artifact 仍为 `status=PASS`、schema v3、五成员 exact、tail/mask/reset/boundary/detach/optimizer/checkpoint/unaligned split hard gates均已通过。B1/runtime/GPU 等仍 BLOCKED。
+- 验收：当前 canonical path、TODO、SESSION 三者只有同一个 artifact commit 与 recorded root/submodule/Gitlink 口径；不要求重跑 B0 技术验证。
+
+请给出 `APPROVE_PROVENANCE_HYGIENE` 或 `REQUEST_CHANGES`，附 `file:line` 意见。
