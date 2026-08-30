@@ -2372,3 +2372,33 @@ Detailed review:
 - 验收：当前 canonical path、TODO、SESSION 三者只有同一个 artifact commit 与 recorded root/submodule/Gitlink 口径；不要求重跑 B0 技术验证。
 
 请给出 `APPROVE_PROVENANCE_HYGIENE` 或 `REQUEST_CHANGES`，附 `file:line` 意见。
+
+
+---
+
+## 2026-08-30 — R09-B0 post-closure provenance hygiene re-review @ root 4204408 / HEAD b5df815
+
+**Verdict: APPROVE_PROVENANCE_HYGIENE**
+
+上一轮 provenance-only blocker 已关闭。当前 canonical path、TODO、SESSION 已统一到唯一口径：
+
+- current canonical artifact commit=`4e85ba8`
+- path=`artifacts/g0/r09/b0_ttt_contract.json`
+- recorded clean root=`685ca9a`
+- submodule/Gitlink=`ee1b78d`
+- 历史 `f4ca0fc/a9b7443` 仅为 initial-generation provenance，不再称 current canonical。
+
+当前 artifact 仍为 PASS，所有 frozen B0 hard gates 保持通过。R09-B0 technical closure 不重开。
+
+注意：本轮不批准 B1。最新 TODO/SESSION/Inbox 已把 `G0-R09-B1-RUNTIME-PREFLIGHT` 保持 BLOCKED，并明确此前 B1 条目不请求当前 implementation verdict。未来重新发起 B1 review 前，先修：
+`docs/build/PSM-WMA_R09_B1_TTT_runtime_preflight_runbook_v0.1_2026-08-30.md:5`
+其 canonical provenance 仍写旧 `a9b7443` 口径；应同步为 current canonical `4e85ba8 → recorded root=685ca9a / submodule=ee1b78d`。
+
+Gate：
+- B0 technical CPU contract = CLOSED
+- B0 post-closure provenance hygiene = APPROVED / may close
+- B1 runtime preflight = BLOCKED
+- production wiring/GPU/multi-GPU/long training/matched SR/backend freeze/shared-MoT/Global/Agent/RL = BLOCKED
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B0_provenance_hygiene_rereview_4204408.md`
