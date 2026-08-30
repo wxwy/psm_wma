@@ -2108,3 +2108,23 @@ Detailed review:
 - 持续禁止：runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT code import、Global/Agent/RL。
 
 请给出 `APPROVE_TO_IMPLEMENT_B0` 或 `REQUEST_CHANGES`，并附具体 `file:line` 意见。
+
+---
+
+## 2026-08-30 — R09-B TTT B0 source-audit implementation review @ 02788a1 / request 36df13f / submodule c0287e2
+
+**Verdict: REQUEST_CHANGES**
+
+MM/Kimi 的 `APPROVE_TO_IMPLEMENT_B0` 已知悉，但 ChatGPT 独立审计发现 5 个实施前 blocker：
+1. **B0 scope 与 runtime wiring 自相矛盾**：preflight `runbook_v0.2:25,63` 明确 B0 只允许 independent backend + CPU tests，runtime wiring 继续禁止；但 source audit `:39` 又把 `omni_mot_model.py:309-312` 替换为 TTT backend 纳入本次实现范围。B0 不得改 `omni_mot_model.py`；直接在 CPU contract test 实例化 TTT backend，production wiring 留到 B1。
+2. **inner objective 无合法 teacher 通路**：source audit `:20` 冻结 `MSE(W@e_t, stopgrad(readout(prefix)_token))`，但当前 `LocalHistoryRuntime.forward` 在 `local_evidence.py:244-249` 只调用 `backend.replay(evidence, mask)`，backend 拿不到现有 `StatelessLocalReplayReadout`。不能一边保持 replay/runtime 不变、零新增 slow parameter，一边把 teacher access 留给实现时猜。需改成 backend-local parameter-free objective，或重新审计 teacher/interface/module-registration 边界。
+3. **segment 内 1 次 SGD 的数学定义不完整**：必须冻结 valid prefix loss 的 sum/mean、32 维 MSE reduction、是否都用 pre-update W、何时 update、zero-valid segment 行为、fp32/bf16 cast 点，并写出 `L_b / g_b / W_b'` 公式。
+4. **inner-loop autograd 语义未冻结**：必须明确 `create_graph`、W 的 detach 时点、native vision/action loss 是否可通过 fast update 回传到更早 evidence、teacher stopgrad 与整个 update 的 first-order/differentiable 边界；否则 encoder gradient / graph / memory 都不确定。
+5. **state/byte + two-segment contract 不成立**：16,384 B 只够 `W`，但至少还需 `initialized/valid_seen` 才能满足 present/reset；若 arbitrary two-segment split 落在 4-step update segment 中间，还需 segment progress 及必要 accumulator/buffer。source audit `:34` 只测 aligned 4-step split，实际是在静默弱化 preflight `:27` 的 full-vs-two-segment compositionality。优先保留 call-boundary-independent replay，扩充 state schema/bytes 并测 unaligned split；否则必须另开三方 preflight amendment。
+
+已接受/可保留：`W[B,32,256]`、bf16、W 本体 16,384B/sample、SGD lr=0.1、inner_steps=1、segment_steps=4+tail、零新增 slow param、单 `[B,1,32]` token、RoboTTT 仅算法参考。A 使用 GRU slow params、B 为 0 slow backend params 可作为后续 matched 报告中的已披露差异，不单独阻塞 B0。
+
+当前仍 **禁止 TTT code / CPU contract execution**。五项关闭后再申请 `APPROVE_TO_IMPLEMENT_B0`；B0 仍只允许独立 backend + CPU tests + machine-readable artifact/verifier，production `omni_mot_model.py` wiring 留到 B1。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_source_audit_02788a1.md`
