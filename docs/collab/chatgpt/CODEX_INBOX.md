@@ -2547,3 +2547,46 @@ Gate：
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_implementation_fdd5a7a_0381335.md`
+
+
+---
+
+## 2026-08-31 — R09-B1 B1-S verifier rereview @ root d0ddc51
+
+**Verdict: REQUEST_CHANGES**
+
+上一轮 module/reload 污染已关闭：recipe snapshot 现在每个 env case 都用独立 subprocess，default/B1/A1-conflict/probe-conflict 不再共享 live module state。
+
+当前剩余问题：
+
+1. **HIGH — gradient proof 绕过 LocalEvidenceEncoder**  
+   verifier 在 `tools/g0/verify_r09_b1_static_contract.py:111` 直接调用 `local_history_runtime.recurrent_backend.replay(evidence, mask)`，然后对 projection/embed backward。这样 encoder 根本没参与 forward，所以 encoder 无梯度不能证明 production path 的 `encoder → TTT detach → local_memory2llm` 回传被正确截断。  
+   必须改成走真实 `LocalHistoryRuntime.forward(...)`，让 encoder 参与，再 hard-gate：encoder grad None/zero、projection/embed grad present+finite+nonzero、backend zero params/matches、outer graph detached。
+
+2. **MEDIUM — matched names / gradient facts 只写 JSON，没有进入 PASS hard gate**  
+   当前 `status=all(checks.values())` 只要求“存在一些 selected params”，并不会因为某个 exact key 零匹配、projection/embed grad 缺失/NaN/zero、或 encoder 意外出现非零 grad 而 FAIL。  
+   请 hard-gate：
+   - 三个 exact key 各自非空匹配；
+   - selected names = 三组匹配名并集；
+   - backend matched names=[]；
+   - encoder detach expectation；
+   - local_memory2llm 与 modality embed grad present/finite/nonzero；
+   - 所有 present grad finite。
+
+3. **MEDIUM — canonical artifact 仍未提交**  
+   远端仍无 `artifacts/g0/r09/b1/static_contract.json`。修完 verifier 后，从 pushed-clean exact root/submodule 运行 `--require-clean`，提交 canonical artifact，再发 B1-S closure review。
+
+Accepted：
+- B1-S runtime wiring `0381335` 保留；
+- default recurrent / opt-in TTT / A1 mutual exclusion / training-only fail-fast 均继续通过；
+- 不要求 runtime rollback。
+
+Gate：
+- B0 = CLOSED
+- B1 preflight = APPROVED
+- B1-S runtime wiring = ACCEPTED
+- B1-S verifier/closure = REQUEST_CHANGES
+- B1-G GPU / eval-inference / multi-GPU / long training / matched SR / backend freeze / shared-MoT / Global / Agent / RL = BLOCKED
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_verifier_rereview_d0ddc51.md`
