@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import importlib
 import json
 import os
 import subprocess
@@ -13,6 +12,7 @@ import sys
 from pathlib import Path
 
 import torch
+from torch import nn
 
 
 EXACT_OPTIMIZER_KEYS = [
@@ -26,31 +26,26 @@ def _git(root: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
 
 
-def _recipe(*, b1: bool, a1: bool = False, probe: bool = False):
-    names = ("PSM_R08_LOCAL_HISTORY_ENABLED", "PSM_LOCAL_DUMMY_ENABLED", "PSM_R09_B1_TTT_ENABLED", "PSM_R09_A1_ENABLED", "PSM_R09_A1_PROBE_OUTPUT")
-    previous = {name: os.environ.get(name) for name in names}
-    try:
-        os.environ["PSM_R08_LOCAL_HISTORY_ENABLED"] = "1"
-        os.environ["PSM_LOCAL_DUMMY_ENABLED"] = "0"
-        os.environ["PSM_R09_B1_TTT_ENABLED"] = "1" if b1 else "0"
-        os.environ["PSM_R09_A1_ENABLED"] = "1" if a1 else "0"
-        if probe:
-            os.environ["PSM_R09_A1_PROBE_OUTPUT"] = "/tmp/r09_a1_probe.json"
-        else:
-            os.environ.pop("PSM_R09_A1_PROBE_OUTPUT", None)
-        from cosmos_framework.configs.base.experiment.action.posttrain_config import action_policy_libero_edge_all as recipe
-
-        recipe = importlib.reload(recipe)
-        return (
-            recipe._action_policy_libero_edge_model_config(),
-            recipe.action_policy_libero_edge_all["optimizer"]["keys_to_select"],
-        )
-    finally:
-        for name, value in previous.items():
-            if value is None:
-                os.environ.pop(name, None)
-            else:
-                os.environ[name] = value
+def _recipe_snapshot(root: Path, *, b1: bool, a1: bool = False, probe: bool = False) -> dict[str, object]:
+    code = """import json
+from cosmos_framework.configs.base.experiment.action.posttrain_config import action_policy_libero_edge_all as recipe
+print(json.dumps({'backend': recipe.action_policy_libero_edge_all['model']['config']['local_history_backend'], 'optimizer_keys': list(recipe.action_policy_libero_edge_all['optimizer']['keys_to_select'])}))
+"""
+    env = os.environ | {
+        "PYTHONPATH": str(root / "cosmos-framework"),
+        "PSM_R08_LOCAL_HISTORY_ENABLED": "1",
+        "PSM_LOCAL_DUMMY_ENABLED": "0",
+        "PSM_R09_B1_TTT_ENABLED": "1" if b1 else "0",
+        "PSM_R09_A1_ENABLED": "1" if a1 else "0",
+    }
+    if probe:
+        env["PSM_R09_A1_PROBE_OUTPUT"] = "/tmp/r09_a1_probe.json"
+    else:
+        env.pop("PSM_R09_A1_PROBE_OUTPUT", None)
+    completed = subprocess.run([sys.executable, "-c", code], env=env, text=True, capture_output=True, check=False)
+    if completed.returncode:
+        return {"failed": True, "stderr": completed.stderr}
+    return json.loads(completed.stdout)
 
 
 def main() -> None:
@@ -62,7 +57,13 @@ def main() -> None:
     root = args.root.resolve()
     sys.path.insert(0, str(root / "cosmos-framework"))
     from cosmos_framework.configs.base.defaults.model_config import OmniMoTModelConfig
-    from cosmos_framework.model.generator.mot.local_evidence import TTTLocalMemoryBackend
+    from cosmos_framework.model.generator.mot.local_evidence import (
+        LocalEvidenceEncoder,
+        LocalHistoryRuntime,
+        StatelessLocalReplayReadout,
+        TTTLocalMemoryBackend,
+    )
+    from cosmos_framework.utils.generator.optimizer import _build_params_with_metadata
 
     root_clean = not _git(root, "status", "--porcelain", "--untracked-files=no")
     submodule = root / "cosmos-framework"
@@ -89,23 +90,46 @@ def main() -> None:
             else:
                 inference_mode_fail_fast = True
     state_unchanged = all(torch.equal(value, expected) for value, expected in zip(state, state_reference, strict=True))
-    default_cfg, _ = _recipe(b1=False)
-    ttt_cfg, ttt_optimizer_keys = _recipe(b1=True)
-    a1_excluded = True
-    for a1, probe in ((True, False), (False, True)):
-        try:
-            _recipe(b1=True, a1=a1, probe=probe)
-            a1_excluded = False
-        except ValueError:
-            pass
+    default_snapshot = _recipe_snapshot(root, b1=False)
+    ttt_snapshot = _recipe_snapshot(root, b1=True)
+    a1_excluded = bool(_recipe_snapshot(root, b1=True, a1=True).get("failed")) and bool(
+        _recipe_snapshot(root, b1=True, probe=True).get("failed")
+    )
+    model = nn.Module()
+    model.net = nn.Module()
+    model.net.local_history_runtime = LocalHistoryRuntime(
+        LocalEvidenceEncoder(evidence_dim=256, visual_dim=96),
+        StatelessLocalReplayReadout(evidence_dim=256, local_dim=32),
+        TTTLocalMemoryBackend(evidence_dim=256, local_dim=32),
+    )
+    model.net.local_memory2llm = nn.Linear(32, 8).to(dtype=torch.bfloat16)
+    model.net.local_memory_modality_embed = nn.Parameter(torch.zeros(8, dtype=torch.bfloat16))
+    selected = _build_params_with_metadata(model, EXACT_OPTIMIZER_KEYS, {}, 1.0, False)
+    selected_ids = {id(parameter) for parameter, _ in selected}
+    selected_names = {name: parameter for name, parameter in model.net.named_parameters() if id(parameter) in selected_ids}
+    optimizer = torch.optim.SGD([parameter for parameter, _ in selected], lr=0.1)
+    token_for_grad, _, _ = model.net.local_history_runtime.recurrent_backend.replay(evidence, mask)
+    (model.net.local_memory2llm(token_for_grad).sum() + model.net.local_memory_modality_embed.sum()).backward()
+    prefix_matches = {key: sorted(name for name in selected_names if key in name) for key in EXACT_OPTIMIZER_KEYS}
+    gradient_facts = {
+        key: {
+            "present": any(selected_names[name].grad is not None for name in names),
+            "finite": all(selected_names[name].grad is None or bool(torch.isfinite(selected_names[name].grad).all()) for name in names),
+            "nonzero": any(selected_names[name].grad is not None and bool(torch.count_nonzero(selected_names[name].grad)) for name in names),
+        }
+        for key, names in prefix_matches.items()
+    }
+    backend_names = [name for name in selected_names if "local_history_runtime.recurrent_backend" in name]
+    backend_parameter_ids = {id(parameter) for parameter in model.net.local_history_runtime.recurrent_backend.parameters()}
+    backend_specific_state_empty = not any(id(parameter) in backend_parameter_ids for parameter in optimizer.state)
     command = {"argv": sys.argv, "cwd": str(Path.cwd()), "python": sys.executable, "output": str(args.output)}
     command_hash = hashlib.sha256(json.dumps(command, sort_keys=True).encode()).hexdigest()
     checks = {
         "root_clean": root_clean,
         "submodule_clean": submodule_clean,
         "gitlink_matches_submodule": gitlink == submodule_revision,
-        "selector_default_recurrent": OmniMoTModelConfig().local_history_backend == "recurrent" and default_cfg["local_history_backend"] == "recurrent",
-        "selector_ttt_opt_in": ttt_cfg["local_history_backend"] == "ttt_fast_weight",
+        "selector_default_recurrent": OmniMoTModelConfig().local_history_backend == "recurrent" and default_snapshot.get("backend") == "recurrent",
+        "selector_ttt_opt_in": ttt_snapshot.get("backend") == "ttt_fast_weight",
         "a1_mutual_exclusion": a1_excluded,
         "b0_dimensions": (backend.evidence_dim, backend.local_dim, backend.segment_steps) == (256, 32, 4),
         "backend_zero_parameters": not list(backend.named_parameters()),
@@ -115,7 +139,10 @@ def main() -> None:
         "no_grad_fail_fast": no_grad_fail_fast and state_unchanged,
         "inference_mode_fail_fast": inference_mode_fail_fast and state_unchanged,
         "outer_graph_detached": not token.requires_grad and all(not value.requires_grad for value in state),
-        "exact_optimizer_keys": ttt_optimizer_keys == EXACT_OPTIMIZER_KEYS,
+        "exact_optimizer_keys": ttt_snapshot.get("optimizer_keys") == EXACT_OPTIMIZER_KEYS,
+        "backend_matches_empty": not backend_names,
+        "selected_parameter_names_present": bool(selected_names),
+        "backend_specific_state_empty": backend_specific_state_empty,
     }
     status = all(checks.values()) and (not args.require_clean or (root_clean and submodule_clean and gitlink == submodule_revision))
     result = {
@@ -124,7 +151,8 @@ def main() -> None:
         "source": {"root_revision": _git(root, "rev-parse", "HEAD"), "submodule_revision": submodule_revision, "gitlink_revision": gitlink, "root_clean": root_clean, "submodule_clean": submodule_clean},
         "selector": {"field": "local_history_backend", "legal_values": ["recurrent", "ttt_fast_weight"], "default": "recurrent", "opt_in_env": "PSM_R09_B1_TTT_ENABLED"},
         "backend": {"parameter_count": 0, "state_dict_empty": True, "fresh_state_per_forward": checks["fresh_state_per_forward"], "no_grad_fail_fast": checks["no_grad_fail_fast"], "inference_mode_fail_fast": checks["inference_mode_fail_fast"], "normal_grad_pass": checks["normal_grad_pass"], "outer_graph_detached": checks["outer_graph_detached"]},
-        "optimizer": {"exact_keys": EXACT_OPTIMIZER_KEYS, "backend_specific_state_empty": True, "gradient_facts": {"ttt_token_requires_grad": bool(token.requires_grad), "encoder_ttt_path_nonzero_grad_required": False}},
+        "optimizer": {"exact_keys": EXACT_OPTIMIZER_KEYS, "matched_parameter_names": prefix_matches, "selected_parameter_names": sorted(selected_names), "backend_matched_names": backend_names, "backend_specific_state_empty": backend_specific_state_empty, "gradient_facts": gradient_facts | {"encoder_ttt_path_nonzero_grad_required": False}},
+        "recipe_snapshots": {"default": default_snapshot, "ttt": ttt_snapshot},
         "checks": checks,
         "command": {**command, "canonical_command_hash": command_hash, "tool_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},
     }
