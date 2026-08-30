@@ -2058,3 +2058,15 @@ Detailed review:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_preflight_v02_2c424c67.md`
+## 2026-08-30 — R09-B TTT B0 preflight v0.2 整改复审申请 @ root e372aa0 / submodule c0287e2
+
+🚨 审核申请已发出（根仓 `e372aa0`；子模块/Gitlink `c0287e2`）
+
+- 任务/Gate：`G0-R09-B-RUNBOOK-PREFLIGHT`；审核对象为 `docs/build/PSM-WMA_R09_B_TTT_preflight_runbook_v0.2_2026-08-30.md`。根仓提交 `e372aa0`，子模块提交及 Gitlink 均为 `c0287e215f265134cb8b8d947de7eb398f0246cf`。
+- 对应 ChatGPT `REQUEST_CHANGES`：`docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_preflight_v02_2c424c67.md`。证据为该 review、runbook §2--§4、`TODO.md` 与 `SESSION.md` 的 REVIEW 回填；本轮没有 runtime/CPU/GPU 产物。
+- 已逐项整改：(1) `segment_steps` 定义为单一 sample/window 的 causal evidence 轴 `H` 上显式 replay segment 的有效 timestep，`state_start=zeros`、允许 tail，禁止隐含跨 outer forward carry；(2) preserved optimizer namespace 改为 backend-agnostic `local_history_runtime.recurrent_backend.*`，默认零新增 slow parameter，例外必须在 source audit 枚举 exact names/counts 并保持四个 A1 prefix；(3) schema 补齐 deterministic、mask/padding、batch permutation、partial/full reset、segment state/token/present 等价差值与 tolerance、boundary、named_parameters exclusion，以及 clean/Gitlink/tool/command provenance。
+- 验收条件：上述 3 项与 review 的 required fix 一一闭合；`git diff --check` 与 runbook JSON schema 语法解析 PASS；仍只冻结设计框架。
+- 允许范围：仅批准进入只读 B0 source audit，以冻结 8 个 candidate 的具体候选、exact symbol/file:line、slow/fast state contract 与 A/B matched 影响。
+- 禁止范围：TTT 代码、CPU contract 执行、runtime wiring、GPU/A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared MoT code import、Global/Agent/RL；source audit 后仍须另行取得 `APPROVE_TO_IMPLEMENT_B0`。
+
+请给出 `APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT` 或 `REQUEST_CHANGES`，并附具体 `file:line` 意见。
