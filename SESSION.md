@@ -710,4 +710,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 目的/Gate：`G0-R09-B-RUNBOOK-PREFLIGHT`；在 A1 三方关闭后，仅对 TTT fast-weight 的实施前置范围、接口与资产做只读核查。
 - 实际修改：新增 `docs/build/PSM-WMA_R09_B_TTT_preflight_runbook_v0.1_2026-08-30.md`，将 TTT update rule/inner objective/segment 等未冻结项列为三方审核前置；不修改 Cosmos runtime 或训练配置，不运行项目代码。
 - 前置：A1 closure 根仓 `30c571e`（ChatGPT `a20ddce`/`b47fd0e`、MM/Kimi `APPROVE_TO_CLOSE_A1`）；R09-B 仍未获实施批准。
-- 验证：待执行 `git diff --check`；下一步：提交 runbook 后发出三路 `APPROVE_TO_IMPLEMENT_B0` 审核申请。未提交。
+- 验证：`git diff --check` PASS；runbook 提交=`728d374`，ChatGPT Inbox 申请提交=`8ab8400`。申请已送达 `tmux mm:0.0`（`Brewing…`）与 `tmux kimi:0.0`（已提交、thinking）；每分钟轮询三路 `APPROVE_TO_IMPLEMENT_B0`/`REQUEST_CHANGES`。未提交本次发送记录。
