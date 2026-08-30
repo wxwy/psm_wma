@@ -1,6 +1,6 @@
 # 当前协作状态
 
-更新时间：2026-08-27
+更新时间：2026-08-30
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
@@ -739,3 +739,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT 实施前复审：远端 review=`9c928ae`、Inbox=`d210c3e` 为 `REQUEST_CHANGES`。五项 blocker 是 B0 误含 production wiring、不可达 teacher、segment SGD 定义不足、inner-loop graph 未冻结、W-only state 不能维持 present/未对齐 two-segment。仅修订 source-audit 文档：改为 backend-local parameter-free target、精确 first-order math/dtype/detach、完整可续接 state/18,953-byte 公式和 B1 wiring 边界；继续禁止编码与 CPU contract。提交：未提交。
 - ChatGPT 五项整改复审：远端 review=`a59edd2`、Inbox=`4a80de4` 继续 `REQUEST_CHANGES`，但前五项已关闭。仅剩终端 short remainder 语义与 composite mixed-dtype artifact schema：选择 Option A，`N_valid mod 4` 的 1--3 pending terminal remainder 永不更新，update count=`floor(N_valid/4)`；冻结五成员逐项 shape/dtype/bytes 与 logical total=18,953。继续禁止编码与 CPU contract。提交：未提交。
 - B0 CPU contract：三方 `APPROVE_TO_IMPLEMENT_B0` 后，仅新增子模块 `9114afc` 的独立 `TTTLocalMemoryBackend` 和 CPU test；根仓 `c0d6936` 新增 verifier/artifact。`pytest local_evidence_test.py -q`=6 passed；`artifacts/g0/r09/b0_ttt_contract.json`=PASS，logical bytes=18,953、unaligned two-segment diff=0、state updated/finite/detached/no named parameters 均 PASS。当前必须 closure REVIEW，B1/runtime/GPU 继续禁止。
+
+### R09-B B0 closure 整改（2026-08-30，IN_PROGRESS）
+
+- 目的/Gate：处理 ChatGPT 对 root=`c0d6936` / submodule=`9114afc` 的 B0 CPU closure `REQUEST_CHANGES`。Codex 是唯一作者；Kimi/MM 只做独立审查，不并行编辑 backend、定向测试、verifier 或 canonical artifact。
+- 预计修改：`cosmos-framework/.../mot/local_evidence.py`、`local_evidence_test.py`、`tools/g0/verify_r09_b0_ttt_contract.py`、`artifacts/g0/r09/b0_ttt_contract.json`，以及本交接/任务记录。范围限于独立 CPU backend 合约；不改 `omni_mot_model.py`、配置、训练入口或 GPU 路径。
+- 必须关闭：远端可解析且 clean 的根/子模块/Gitlink provenance；N=1/2/3/5/6/7 与 `floor(N/4)`；N<4 的 zero-W/zero-token/present；未对齐 two-segment state/token/present exact；由实际 tensor 派生的 mixed-dtype member shapes；mask/padding/all-mask、batch/cross-sample、partial/full reset、boundary、detach、optimizer/checkpoint 排除的 hard gates。完成后仅能进入三方 closure REVIEW，B1/runtime/GPU 仍禁止。
