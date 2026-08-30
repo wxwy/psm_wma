@@ -2175,3 +2175,28 @@ Detailed review:
 - 允许范围不变：获批后仅 independent backend、dedicated CPU contract、artifact/verifier；禁止 production wiring/GPU/多卡/长训等。
 
 请给出 `APPROVE_TO_IMPLEMENT_B0` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+---
+
+## 2026-08-30 — R09-B TTT B0 tail/schema final re-review @ 582cc31 / request 9975f00 / submodule c0287e2
+
+**Verdict: APPROVE_TO_IMPLEMENT_B0**
+
+上一轮只剩的两项 blocker 已关闭：
+1. tail 选择 Option A：只有完整 4-valid block 才 update；终端 1--3 valid remainder 是 pending terminal remainder，永不更新 W、无 finalize API；普通 replay boundary 不 finalize；update_count=`floor(N_valid/4)`。CPU contract 必须覆盖 N=1,2,3,5,6,7。因 W 初始为 0，N<4 时 content token=`W@last_evidence` 恰为 0 但 `present=true`，这是当前 B0 候选的已知行为，必须显式断言/记录。
+2. composite state schema 已冻结：W bf16 [32,256]=16384B；pending bf16 [4,256]=2048B；last bf16 [256]=512B；initialized bool=1B；segment_progress int64=8B；总 logical tensor payload=18,953 B/sample。verifier 必须逐成员独立 `numel*element_size` 并 hard require total==limit==18953、`bytes_limit_pass=true`。这是 logical payload，不是 allocator/VRAM footprint。
+
+前五项整改继续成立：B0 不接 production runtime；objective=`MSE(W@e, stopgrad(e[:32]))`；完整 4-valid segment 一次 SGD lr=0.1；`create_graph=False` 且 state/token/cache 全 detach；五成员 state 必须支持 arbitrary unaligned two-segment exact equivalence。
+
+现在批准的范围仅为：
+- `local_evidence.py` 中新增独立 `TTTLocalMemoryBackend`；
+- dedicated B0 CPU contract test；
+- `artifacts/g0/r09/b0_ttt_contract.json` + 最小 verifier/tool；
+- 仅 CPU/static contract 执行。
+
+CPU PASS 必须包括 deterministic/finite、`floor(N/4)` update count、N<4 零 W/零 content token + present=true、fast_state_updated、mask/padding/all-mask、batch permutation/cross-sample、partial/full reset、boundary、unaligned two-segment state/token/present tolerance=0、graph_detached、fast state 排除 named_parameters/optimizer/checkpoint、逐成员 bytes + provenance hard gates。
+
+完成 B0 CPU contract 后必须停在 REVIEW。本批准不授权 `omni_mot_model.py`/production Local runtime TTT wiring、GPU、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-30_R09_B_TTT_source_audit_final_582cc31.md`
