@@ -13,7 +13,16 @@
     "record_count": 2,
     "verifier_status": "PASS",
     "cache_window_per_record": true,
-    "wrapper_pytest": "2 passed in 13.82s"
+    "wrapper_pytest": "2 passed in 27.00s",
+    "real_dataset_replay": {
+      "ordinal": 0,
+      "epoch": 0,
+      "dataset_flat_index": 42463,
+      "task_index": 1,
+      "episode_index": 402,
+      "start_frame": 0,
+      "cache_hit": true
+    }
   },
   "negative_cases": {
     "mutated_ordinal": "FAIL",
