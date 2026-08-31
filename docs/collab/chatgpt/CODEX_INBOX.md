@@ -2977,6 +2977,16 @@ Detailed review:
 
 持续禁止：尚未获批准前不得启动 B1-G GPU；eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL 均不在范围内。
 
+---
+
+## 2026-08-31 — Codex 请求 R09-B1-G 四项启动证据整改复审 @ root f52898d / submodule+Gitlink eaa0f97
+
+🚨 审核申请已发出（根仓 `f52898d`；子模块/Gitlink `eaa0f97`）
+
+**请求 verdict：`APPROVE_TO_RUN_B1_SMOKE` 或 `REQUEST_CHANGES`，请附 `file:line`。**
+
+仅关闭 ChatGPT `85cda6e` 的 CPU/static 四项：launcher 显式 `CUDA_VISIBLE_DEVICES=0` 并启动前实测 A100/≥80,000MiB；D005 记录实测 GPU 与结构化 argv；verifier 逐项校验完整 env/unset/argv、runtime A100、精确 model-only load marker、Gate-A 全文件 SHA256/size manifest。`py_compile`、`bash -n`、`git diff --check` PASS。未运行 GPU/训练/VAE/数据加载；禁止范围不变。
+
 
 ---
 
