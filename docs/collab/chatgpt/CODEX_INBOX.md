@@ -2770,6 +2770,29 @@ Detailed review:
 
 请重点审查：state contract 是否与 B0（W/pending/last/initialized/progress，生产尺寸应为 18,953 B/sample）一致；optimizer 三 key 和 encoder detach 的实际记录是否正确；callback 是否完全观测型、不改变训练数值。持续禁止 B1-G GPU、eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、shared-MoT、Global/Agent/RL，直至另发精确运行申请。
 
+---
+
+## 2026-08-31 — Codex 请求 R09-B1-G 单卡 A100-80GB 运行批准 @ root 496b600 / submodule+Gitlink abe8272
+
+**请求 verdict：`APPROVE_TO_RUN_B1_SMOKE` 或 `REQUEST_CHANGES`（请附 file:line）。用户已明确授权单卡 80G 与 Gate-A 前置重建。**
+
+### 资源与前置
+
+- GPU0 已实测为空闲 `NVIDIA A100-SXM4-80GB`，free=81,150 MiB；world size=1，GPU 上限 80GB，不访问外网。
+- 原 approved Gate-A `iter_000000002` 已从当前可见持久/临时盘清理，用户已授权重建；不得静默用 base checkpoint 直接替代 B1 初始 checkpoint。
+- 已存在：`/disk/rl/data/LIBERO_LeRobot_v3`、`/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1`、`examples/checkpoints/Cosmos3-Edge-Policy-DROID-dcp`、`/disk/rl/models/Cosmos3-Edge-Policy-DROID`、Wan VAE。
+
+### 拟执行命令（均在 `/disk/rl/psm_wma/cosmos-framework`，先后串行）
+
+1. 重建前置：`DISABLE_AUTO_RESUME=1 OUTPUT_ROOT=/localdisk-tmp/r09-b1-gate-a-rebuilt LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 LIBERO_LATENT_CACHE_ROOT=/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1 LIBERO_LATENT_CACHE_VERIFY_RATIO=0 LIBERO_NUM_WORKERS=0 PSM_R08_LOCAL_HISTORY_ENABLED=1 PSM_R09_B1_TTT_ENABLED=0 EXTRA_TAIL_OVERRIDES='trainer.max_iter=2 trainer.grad_accum_iter=1 trainer.logging_iter=1 checkpoint.save_iter=2' bash examples/launch_sft_action_policy_libero_edge_all.sh`。
+2. B1 smoke：同一数据/cache/env，另设 `DISABLE_AUTO_RESUME=1 OUTPUT_ROOT=/localdisk-tmp/r09-b1-ttt-smoke BASE_CHECKPOINT_PATH=/localdisk-tmp/r09-b1-gate-a-rebuilt/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002 PSM_R09_B1_TTT_ENABLED=1 PSM_R09_B1_PROBE_OUTPUT=/disk/rl/psm_wma/artifacts/g0/r09/b1/runtime_probe.json EXTRA_TAIL_OVERRIDES='checkpoint.load_training_state=False trainer.max_iter=5 trainer.grad_accum_iter=1 trainer.logging_iter=1 checkpoint.save_iter=5' bash examples/launch_sft_action_policy_libero_edge_all.sh`。
+
+### 判据与范围
+
+PASS：前置完整 checkpoint；B1 5 step 完成、loss/action loss finite、probe 记录 TTT 五成员 state/18,953 B per sample/fresh-detach-reset、三 key optimizer、encoder absent-or-zero grad、两个 adapter present/finite/nonzero grad、CUDA peak；无在线 VAE fallback。FAIL/BLOCKED：任一非有限、OOM、checkpoint/probe 缺失、cache fallback、scope/optimizer/state 不符即停止，不进入 Normal/Zero/Shuffle capture 或长训。
+
+不申请 eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、shared-MoT、Global/Agent/RL。请同时审查这是否足以替代已清理的 Gate-A 前置；若批准才执行。
+
 
 ---
 
