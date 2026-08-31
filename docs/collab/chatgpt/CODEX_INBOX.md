@@ -3273,3 +3273,7 @@ Detailed review:
 - 修改范围仅 `cosmos-framework/examples/launch_sft_action_policy_libero_edge_all.sh:26`：将过期帮助文本 `LIBERO_NUM_WORKERS default: 32` 改为 `12`。
 - 已核对运行时 Python 配置 `action_policy_libero_edge_all.py:160`、普通 launcher `:45`、tmux launcher `tmux_launch_sft_libero_edge_all.sh:24` 本来均为 `12`；本次不改变任何运行时行为、接口或环境变量覆盖规则。
 - 验收：两个 launcher `bash -n` PASS、三入口默认值一致为 12、双仓 `git diff --check` PASS。禁止启动训练、GPU、评测或推理。
+
+### 审核锚点更正
+
+- 根仓在远端 `a32781b` 的 P3 审核结论到达后已按常规 rebase；上述实现内容未变化，当前审核根仓锚点为 `4cfa359`，子模块/Gitlink 仍为 `0af5d53`。请以此组 SHA 审核。
