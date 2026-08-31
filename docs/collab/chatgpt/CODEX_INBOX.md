@@ -3125,3 +3125,14 @@ Detailed review:
 - Kimi：`APPROVE_TO_CLOSE_B2_P0_BLOCKED`，复核 collector/verifier、artifact、selected config/资产/Gitlink 与五项硬阻塞边界。
 - MM：`APPROVE_TO_CLOSE_B2_P0_BLOCKED`，复核 provenance、root-only 范围、verifier 语义与后续五项解除顺序。
 - 结论：P0 关闭为 `BLOCKED`，不授权 B2-T。后续拆为独立 B2-P1..P5 任务；当前仅可开始 P1 window-ID manifest 的方案审核。
+
+---
+
+## 2026-08-31 — R09-B2 P1 window-ID manifest 方案审核请求
+
+- 任务：`G0-R09-B2-P1-STREAM-MANIFEST`。请求 verdict：`APPROVE_TO_IMPLEMENT_B2_P1` 或 `REQUEST_CHANGES`，请附 `file:line`。
+- 审核对象：根仓 `350b83d3cc4f28253d7b823c6e528fa1870e1d47`；子模块/Gitlink `eaa0f979974579939bc680ff683cf016bafdbce8`（本轮无子模块改动）。
+- 文档：`docs/build/PSM-WMA_R09_B2_P1_stream_manifest_design_v0.1_2026-08-31.md`。方案将 future B2 stream 冻结为全局 JSONL `(ordinal, optimizer_update, microbatch, sample_in_microbatch, suite, task_id, episode_index, start_frame, dataset_flat_index)`，并绑定 source/cache/config SHA。
+- 强制点：B2 专用路径固定 world_size=1 与 num_workers=0；manifest-aware wrapper 按 flat index 取样后逐项验证五元组，禁止随机重采样；observed JSONL 必须逐 ordinal 对照 requested，resume 仅按 manifest offset。
+- 允许范围：若批准，仅实现 root manifest builder/verifier 与最小 submodule manifest-aware dataset wrapper/定向 CPU tests；不加载模型、不执行 optimizer update、GPU training、eval/inference/closed-loop、SR、多卡、长训、backend freeze。
+- 不解决的 blocker：P2 non-mutating capture、P3 actual optimizer inventory、P4 exact D005/budget、P5 full config diff 均仍独立 TODO；B2-T 继续未授权。
