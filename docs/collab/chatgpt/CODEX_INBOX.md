@@ -3295,3 +3295,14 @@ Detailed review:
 - 文档：`docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.3_2026-09-01.md`。针对 MM 的 v0.2 `REQUEST_CHANGES`，只新增计划级 fail-closed 条款：模型构造前强制 `HF_HUB_OFFLINE=1`、`TRANSFORMERS_OFFLINE=1`、`HUGGINGFACE_HUB_CACHE=<EDGE_POLICY_CHECKPOINT>`；预断言四个现存本地文件 `tokenizer.json`、`tokenizer_config.json`、`chat_template.jinja`、`special_tokens_map.json`；并要求 artifact 记录和 verifier 逐项 hard-gate。
 - 例外明确缩为生产 processor/tokenizer **配置**的本地只读构造，仍禁止 dataloader、VAE、tokenizer/model 权重、数据、base checkpoint、网络、remote code、monkeypatch/synthetic fallback。v0.1 的 P3 optimizer/state/DCP/TTT、24GiB 及二次运行审批合同不变。
 - 本次仅请求批准根仓 collector/verifier/tests 的静态实现；不授权 GPU 运行、B2-T、P4/P5、训练、评测、推理、checkpoint save/load。
+
+---
+
+## 2026-09-01 — R09-B2 P3 local processor hard-gate 实现审核请求
+
+请求 verdict：`APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `a67ed43`；子模块/Gitlink `0af5d53`。
+- 改动：collector 在任何 token/GPU 分支前仅只读记录 canonical Edge 路径、六个 production processor/tokenizer 配置文件 SHA256、离线 env contract；verifier 对路径、环境、资产集合 fail-closed，并使合法、未获运行 token 的 `BLOCKED` artifact 验证为 `BLOCKED/record_valid=true`，不把未执行 backend inventory 误报为 FAIL。`PASS` 的 optimizer/state/DCP/TTT hard gate 未放宽。
+- 证据：`py_compile`、无 token collector→verifier、`git diff --check` PASS；临时 `/tmp/r09_b2_p3_gpu_static*.json` 未提交。未导入模型、未运行 GPU/网络/权重/VAE/dataloader/数据/base checkpoint。
+- 本次只请求继续 root-side 静态实现；不授权 GPU 运行、模型构造、forward/backward/step、DCP save/load、B2-T、P4/P5、训练/评测/推理。
