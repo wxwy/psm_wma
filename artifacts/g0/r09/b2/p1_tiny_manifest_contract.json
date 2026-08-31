@@ -1,6 +1,6 @@
 {
   "schema_version": "r09_b2_p1_tiny_manifest_contract_v1",
-  "status": "PASS_WITH_FULL_BUDGET_BLOCKED",
+  "status": "PARTIAL_PASS_SUPERSEDED_REPEAT_SEMANTICS",
   "source": {
     "root_revision": "b71cfce",
     "submodule_revision": "13c854c",
@@ -17,21 +17,10 @@
   },
   "negative_cases": {
     "mutated_ordinal": "FAIL",
-    "full_budget_duplicate_preflight": "FAIL"
-  },
-  "full_budget_blocker": {
-    "optimizer_updates": 100,
-    "grad_accum": 16,
-    "max_samples_per_batch": 128,
-    "required_windows_per_suite": 51200,
-    "available_windows": {
-      "libero_spatial": 45641,
-      "libero_goal": 44669
-    },
-    "maximum_nonrepeating_max_samples_per_batch": 111,
-    "reason": "The current frozen budget repeats window identities; builder rejects it before cache-window enumeration."
+    "mutated_suite_with_rehashed_records": "FAIL"
   },
   "limitations": [
+    "The earlier full-budget repeat rejection was superseded: baseline repeats windows across epochs by design; epoch is now explicit in records.",
     "This is CPU-only manifest evidence, not B2-T training evidence.",
     "P2-P5 remain blocked and unimplemented."
   ]

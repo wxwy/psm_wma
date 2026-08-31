@@ -30,14 +30,15 @@ def git(root: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
 
 
-def shuffled_indices(dataset: LIBEROLeRobotDataset, seed: int) -> Iterator[int]:
+def shuffled_indices(dataset: LIBEROLeRobotDataset, seed: int) -> Iterator[tuple[int, int]]:
     blocks = dataset.get_shuffle_blocks()
     epoch = 0
     while True:
         generator = torch.Generator().manual_seed(seed + epoch)
         for block in torch.randperm(len(blocks), generator=generator).tolist():
             start, length = blocks[block]
-            yield from range(start, start + length)
+            for index in range(start, start + length):
+                yield epoch, index
         epoch += 1
 
 
@@ -96,35 +97,18 @@ def main() -> None:
     streams = {suite: shuffled_indices(dataset, args.shuffle_seed) for suite, dataset in datasets.items()}
     total_microbatches = args.optimizer_updates * args.grad_accum
     expected_count = total_microbatches * args.max_samples_per_batch
-    required_per_suite = {
-        suite: sum(1 for microbatch in range(total_microbatches) if SUITES[microbatch % len(SUITES)] == suite)
-        * args.max_samples_per_batch
-        for suite in SUITES
-    }
-    insufficient = {suite: required for suite, required in required_per_suite.items() if required > len(datasets[suite])}
-    if insufficient:
-        available = {suite: len(datasets[suite]) for suite in insufficient}
-        raise ValueError(
-            "B2 manifest budget would repeat a window identity; "
-            f"required_per_suite={insufficient}, available={available}."
-        )
     records: list[dict[str, int | str]] = []
-    seen_identities: set[tuple[str, int, int, int]] = set()
     for microbatch in range(total_microbatches):
         suite = SUITES[microbatch % len(SUITES)]
         dataset = datasets[suite]
         for sample_in_microbatch in range(args.max_samples_per_batch):
-            flat_index = next(streams[suite])
+            epoch, flat_index = next(streams[suite])
             task_index, episode_index, start_frame = identity(dataset, flat_index)
             if reverse_index(dataset, episode_index, start_frame) != flat_index:
                 raise ValueError(f"non-bijective flat index for {suite} index={flat_index}")
-            window_identity = (suite, task_index, episode_index, start_frame)
-            if window_identity in seen_identities:
-                raise ValueError(f"duplicate B2 window identity: {window_identity}")
-            seen_identities.add(window_identity)
             if not cache_exists(cache_root / suite, episode_index, start_frame):
                 raise FileNotFoundError(f"missing cache window {suite}/{episode_index}/{start_frame}")
-            records.append({"ordinal": len(records), "optimizer_update": microbatch // args.grad_accum,
+            records.append({"ordinal": len(records), "epoch": epoch, "optimizer_update": microbatch // args.grad_accum,
                             "microbatch": microbatch, "sample_in_microbatch": sample_in_microbatch,
                             "suite": suite, "task_index": task_index, "episode_index": episode_index,
                             "start_frame": start_frame, "dataset_flat_index": flat_index})

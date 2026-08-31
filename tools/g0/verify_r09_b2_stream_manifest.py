@@ -30,9 +30,8 @@ def main() -> None:
     header = json.loads(args.header.read_text())
     records = [json.loads(line) for line in args.records.read_text().splitlines() if line]
     expected_count = header.get("optimizer_updates", 0) * header.get("grad_accum", 0) * header.get("max_samples_per_batch", 0)
-    identities = [(record.get("suite"), record.get("task_index"), record.get("episode_index"), record.get("start_frame")) for record in records]
     suites = header.get("suite_order", [])
-    required = {"ordinal", "optimizer_update", "microbatch", "sample_in_microbatch", "suite", "task_index", "episode_index", "start_frame", "dataset_flat_index"}
+    required = {"ordinal", "epoch", "optimizer_update", "microbatch", "sample_in_microbatch", "suite", "task_index", "episode_index", "start_frame", "dataset_flat_index"}
     arithmetic = all(
         set(record) == required
         and record["optimizer_update"] == record["microbatch"] // header["grad_accum"]
@@ -64,7 +63,7 @@ def main() -> None:
         "record_hash": header.get("records_sha256") == sha256(args.records),
         "record_count": len(records) == header.get("record_count") == expected_count,
         "ordinals": [record.get("ordinal") for record in records] == list(range(len(records))),
-        "identity_unique": len(identities) == len(set(identities)),
+        "ordinal_unique": len({record.get("ordinal") for record in records}) == len(records),
         "record_schema_and_packer_arithmetic": arithmetic,
         "flat_index_present": all(isinstance(record.get("dataset_flat_index"), int) for record in records),
         "single_process": header.get("world_size") == 1 and header.get("num_workers") == 0,

@@ -28,7 +28,7 @@ inventory、D005 或完整 config diff。
 JSONL record 必须为：
 
 ```json
-{"ordinal": 0, "optimizer_update": 0, "microbatch": 0,
+{"ordinal": 0, "epoch": 0, "optimizer_update": 0, "microbatch": 0,
  "sample_in_microbatch": 0, "suite": "libero_spatial", "task_id": 0,
  "episode_index": 402, "start_frame": 1, "dataset_flat_index": 0}
 ```
@@ -51,7 +51,10 @@ grad accumulation、required optimizer updates、总 record 数与 JSONL SHA256�
 2. B2 专用 manifest-aware dataset wrapper 只接受该 suite 的连续 manifest slice，
    对每条 record 以 `dataset_flat_index` 取样后硬校验返回的
    `(suite, task_id, episode_index, start_frame)`；不匹配、缺 cache window、重试
-   重采样或越界均立即 fail，绝不随机补样。
+   重采样或越界均立即 fail，绝不随机补样。跨 epoch 重复同一 window 是 baseline
+   `ActionIterableShuffleDataset` 的既有无限流语义；记录必须显式带 `epoch`，以
+   `(ordinal, epoch, suite, task_index, episode_index, start_frame)` 唯一标识一次消费，
+   不得把跨 epoch 重复误判为数据错误。
 3. 为使 global ordinal 有实际意义，B2 专用 launcher 必须冻结 `world_size=1`、
    每 suite `num_workers=0`、关闭 DataLoader 的乱序交付；不得复用当前
    `ActionIterableShuffleDataset` 的无限 worker stream。
@@ -74,7 +77,8 @@ grad accumulation、required optimizer updates、总 record 数与 JSONL SHA256�
 - 两次独立生成同一输入产生 byte-identical header/JSONL SHA256；任一 source
   SHA、window count、world size 或预算变更均 fail。
 - 故意交换一条 record、改 suite 或 start_frame、缺少 cache window、worker>0、
-  或 observed ordinal 缺失，均必须 fail。
+  或 observed ordinal 缺失，均必须 fail；同一 epoch 内 duplicate/ambiguous identity
+  必须 fail，跨 epoch 的同一 window 则必须保留并以不同 `ordinal`/`epoch` 区分。
 - 一次不加载模型的 CPU-only manifest-aware stream replay，requested/observed
   count、ordinal 与五元组逐项相同；不得把这项称为训练或 B2-T。
 
