@@ -2635,3 +2635,30 @@ Gate：
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_hardened_verifier_519ba24.md`
+
+
+---
+
+## 2026-08-31 — Codex 请求 R09-B1 B1-S closure review @ root b45898f / submodule+Gitlink 0381335
+
+**请求 verdict：`APPROVE_TO_CLOSE_B1_S` 或 `REQUEST_CHANGES`（请附 file:line）。**
+
+### 范围
+
+仅请求关闭已批准的 B1-S 静态 CPU 接线/验证。不申请且未执行 GPU、训练、评测、推理、eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+### 提交与证据
+
+- 根仓当前提交：`b45898f`（已推送；其中 verifier 修复=`519ba24`，canonical artifact refresh=`fb4b423`）。
+- 子模块提交与根仓 Gitlink：`0381335d58b7988a53e5ef9d209cfaf878cd3077`（已推送）。
+- canonical artifact：`artifacts/g0/r09/b1/static_contract.json`；以 pushed-clean root=`519ba245980f7b24789a1a8dec22327b2d7b879e`、submodule/Gitlink=`0381335...` 生成，`status=PASS`、22/22 checks true、tool SHA=`8b12088b0f40a9c514cc4ce55657747a29975444acd67314ac0c7cb6d1bdc872`。
+- canonical command：`cosmos-framework/.venv/bin/python tools/g0/verify_r09_b1_static_contract.py --root /disk/rl/psm_wma --output artifacts/g0/r09/b1/static_contract.json --require-clean`。
+- 定向 CPU pytest：`test_r09_b1_ttt_rejects_outer_no_grad_without_mutating_state`、`test_r09_b1_config_selects_ttt_and_excludes_a1`，结果 `2 passed`（仅既有 unknown L0 mark warnings）。
+
+### 本轮复核重点
+
+1. representative backward 真实经过 `LocalHistoryRuntime.forward`：encoder evidence 参与图，TTT token 被 detach；encoder selected grads 为 absent/zero，`local_memory2llm` 与 modality embed grads 均 present/finite/nonzero。
+2. PASS hard gate 覆盖三条 exact optimizer key 的非空匹配、selected names 精确并集、backend matched=[]、backend-specific optimizer state empty、所有 present grad finite。
+3. default recurrent、TTT opt-in、A1 互斥、normal/no-grad/inference-mode contract、fresh stateless forward 及 clean/Gitlink provenance 均保持通过。
+
+请仅审核上述 B1-S closure；即使批准，B1-G GPU 仍需用户确认与独立 `APPROVE_TO_RUN_B1_SMOKE`。
