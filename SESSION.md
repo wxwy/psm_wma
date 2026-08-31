@@ -12,7 +12,7 @@
 
 ## 当前最小步骤
 
-- R09-B1-G batch2 bounded-profile rework（2026-08-31，IN_PROGRESS）：GPT `bcc9e9d`、Kimi、MM 均 `APPROVE_B1_BATCH2_PROFILE_REWORK`，仅授权根仓实现，不授权 GPU。已完成的 batch1 实跑保留：Gate-A 2/2 finite 与完整 DCP；B1 首个 `start=0` 全 history-absent，Local-only optimizer 无梯度而正确失败。当前最小修改限定 root launcher/D005/verifier 与一个训练前 dataloader evidence 工具：Gate-A 固定 sample=1、B1 固定 sample=2，均 accum=1；从同一 TOML/环境/overrides 实例化 `dataloader_train`，在 B1 启动前写首个 packed batch 的有效 `history_mask`/可用 window key 证据，缺少任何有效 Local history 即阻止 B1。D005 升 v3 并逐 phase 绑定 argv/profile/history evidence；verifier 分别硬校验 1/2 profile 和 runtime/evidence。禁止修改子模块模型/回调/正式 recipe，禁止 GPU/训练。预计修改：`tools/g0/launch_r09_b1_smoke.sh`、`tools/g0/write_r09_b1_d005.py`、`tools/g0/verify_r09_b1_smoke.py`、新增 root `tools/g0/verify_r09_b1_first_batch_history.py`、`TODO.md`、`SESSION.md`。未提交。
+- 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 已按 bounded/noncanonical 范围关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。`ACCEPT-13CKPT-SMOKE` 由 Kimi 执行，Codex 不修改其文件或启动评测。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 
   - 实现与 CPU 预检：Gate-A profile=`smoke_batch1_gate_a`/1/1，B1 profile=`smoke_batch2_b1`/2/1；D005 schema v3 逐 phase 拒绝 profile 错配，并绑定 B1 history JSON 的 SHA/source。cache-only、workers=0 的同 TOML/同 B1 overrides 预检实测首个 packed batch 为 `episode_index=402,start_frame=0`（history absent）与 `402,1`（history valid=1），`effective_local_history_sample_count=1`、PASS；临时 JSON=`/tmp/r09_b1_first_batch_history_7.json`，不作为正式 artifact。静态 `bash -n`、三工具 `py_compile`、`git diff --check` PASS；临时 D005 v3 contract PASS。预检初次缺 `WAN_VAE_PATH`、随后缺 `EDGE_POLICY_CHECKPOINT`，均为正式 wrapper 默认导出的环境，已在专用预检命令显式复用；未进入模型/训练/VAE，GPU 峰值仅 4 MiB。下一步：重新申请三方 `APPROVE_TO_RUN_B1_BATCH2_PROFILE`。提交=`56cf960`。
 
@@ -22,7 +22,7 @@
 
   - batch2 GPU smoke closure（2026-08-31，DONE）：ChatGPT review=`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_G_runtime_closure_07b5430_eaa0f97.md`、Kimi 与 MM 均明确 `APPROVE_TO_CLOSE_B1_G`。关闭范围仅为 bounded/noncanonical B1 runtime/checkpoint 合同；不将它升级为正式规模训练、吞吐、收敛、SR、eval/inference 或部署证据。后续正式训练、多卡、长训、matched SR、backend freeze、Global/Agent/RL 仍需单独 Gate、方案与三方批准。提交：未提交。
 
-- R09-B1-G 失败根因诊断（2026-08-31，IN_PROGRESS）：已获批准的 launcher PATH 修复后，Gate-A-compatible rebuild 成功完成四 suite cache-only prewarm、模型 model-only warm-start，并打印 `Starting training...`；在未完成首个 optimizer step 前，进程被先 SIGTERM、后 SIGKILL。运行配置为 `dataloader_train.max_samples_per_batch=128`、`trainer.grad_accum_iter=16`、workers=0；预热仅每流 1 样本。日志、D005 与临时输出均保留，未生成 checkpoint/B1 证据。当前只做限时 CPU 首批构造测量，确定是否为大规模 packer 构造而非 VAE/模型/回调阻塞；未修改 Cosmos 代码、未重试 GPU。预计若需缩小 smoke microbatch/accum，必须先将其定义为 bounded noncanonical smoke profile 并重新获得 ChatGPT/MM/Kimi 批准。提交：未提交。
+- R09-B1-G 失败根因诊断（2026-08-31，历史 DONE）：原 `max_samples_per_batch=128`/`grad_accum_iter=16` 尝试在首个 optimizer step 前被 SIGTERM/SIGKILL；CPU 测量排除 dataloader/cache 卡死。其后经独立 profile 审核，以 Gate-A=1、B1=2、accum=1 的 bounded profile 成功完成并关闭，详见本节 B1 closure 记录。
 
   - 实测补充：失败现场已解析 `config.pkl` 的 dataloader 初始化/四流 prewarm 为 `8.039s`，首个 128-sample packed batch 为 `4.151s`；故 `next(dataloader)`、MP4、VAE/cache 不是停滞根因。日志与 B1 runtime probe 都仅在 optimizer step 后输出，而正式配置每 step=`128×16=2048` samples，`model.compile.enabled=false`。已申请三方审核独立受限 smoke profile（每微批 1 sample、`grad_accum_iter=1`），申请锚点根=`e0ef815`、submodule/Gitlink=`eaa0f97`；Inbox 已 append、Kimi/MM tmux 已单独 Enter/capture 确认送达。未获三方 `APPROVE_SMOKE_PROFILE_REWORK` 前禁止编码或重跑 GPU。提交：未提交。
 
@@ -30,7 +30,7 @@
 
   - bounded smoke 实跑：三方批准后，Gate-A replacement batch1/accum1 的 2/2 steps finite，`iter_000000002` 完整 DCP 保存。B1 batch1/accum1 从该 DCP model-only warm-start 后，在首次 backward 失败：`RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn`。根因：B1 optimizer 仅含 Local 三组参数，而确定性首个 iterable window 为 `start=0`、causal Local history 全 absent，故 loss 与所有可训练参数断开；非基础设施/NaN/OOM。B1 无 checkpoint/probe/verifier；GPU 已释放。保留 Gate-A DCP、B1/Gate-A D005 和日志，禁止重跑。最小后续仅提议 Gate-A 保持 batch1、B1 改 batch2 以纳入连续 `start=1` 的有效 history，需重新三方审批。提交：未提交。
 
-- R09-B1-G 启动证据整改（2026-08-31，IN_PROGRESS）：已全量 `git fetch --all --prune` 并合并 ChatGPT 远端审查 `03c7b27`；正式 verdict 仍为 `REQUEST_CHANGES`，Kimi/MM 的先前同意不能替代。仅处理根仓启动契约与验收器：新增/收紧 hermetic 两阶段 launcher（同一 `env -u` 命令写入并执行 D005）、D005 补全 Gate-A/B1 精确输出 checkpoint，`verify_r09_b1_smoke.py` 同时消费两侧 provenance 并硬校验 source/Gitlink、命令/hash、GPU/cache/路径/step、Gate-A 2-step/DCP/no-fallback 和 B1 exact handoff。预计改动 `tools/g0/write_r09_b1_d005.py`、`tools/g0/verify_r09_b1_smoke.py`、B1 专用 launcher、`TODO.md`、`SESSION.md`；不改子模块模型算法，不运行 GPU。完成静态验证、提交推送后重新三方审核。提交：未提交。
+- R09-B1-G 启动证据整改（2026-08-31，历史 DONE）：hermetic 两阶段 launcher、D005 与 verifier 已在最终 bounded smoke 中使用；对应 runtime source=`9dbd3ca`、证据=`07b5430`，最终 closure 已获三方批准。
 
 - R07 最终审核结论（ChatGPT，APPROVE）：root 13af0e3 已正式关闭 G0-R07-RUNTIME-SMOKE；No-Memory exact parity、Local optimizer/update、fixed-weight Normal/Zero/Shuffle Future+Action sensitivity 均成立。raw sidecar 缺失已在 provenance 中诚实记录，不推翻 Gate；后续 R08/R09 Gate 必须在独立 review 完成前保留 raw sidecar 或文件级 SHA。
 
