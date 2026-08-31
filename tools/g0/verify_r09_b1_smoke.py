@@ -23,6 +23,13 @@ REMOVED_GRU = {
     "net.local_history_runtime.recurrent_backend.cell.bias_ih",
     "net.local_history_runtime.recurrent_backend.cell.bias_hh",
 }
+STATE_SCHEMA = {
+    "W": {"shape_per_sample": [32, 256], "dtype": "bfloat16", "bytes_per_sample": 16384},
+    "pending_evidence": {"shape_per_sample": [4, 256], "dtype": "bfloat16", "bytes_per_sample": 2048},
+    "last_evidence": {"shape_per_sample": [256], "dtype": "bfloat16", "bytes_per_sample": 512},
+    "initialized": {"shape_per_sample": [], "dtype": "bool", "bytes_per_sample": 1},
+    "segment_progress": {"shape_per_sample": [], "dtype": "int64", "bytes_per_sample": 8},
+}
 
 
 def _load(path: Path) -> dict[str, torch.Tensor]:
@@ -61,11 +68,13 @@ def main() -> None:
     parser.add_argument("--final-checkpoint", type=Path, required=True)
     parser.add_argument("--log", type=Path, required=True)
     parser.add_argument("--probe", type=Path, required=True)
+    parser.add_argument("--training-sidecar", type=Path, required=True)
     parser.add_argument("--expected-steps", type=int, default=5)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     initial, final = _load(args.initial_checkpoint), _load(args.final_checkpoint)
     probe = json.loads(args.probe.read_text())
+    sidecar = json.loads(args.training_sidecar.read_text())
     added, removed = set(final) - set(initial), set(initial) - set(final)
     frozen = [name for name in set(initial) & set(final) if not _selected(name)]
     step = probe["representative_step"]
@@ -83,9 +92,10 @@ def main() -> None:
             for name in ("local_memory2llm", "local_memory_modality_embed")
             for item in groups[name]
         ),
-        "ttt_state_schema": [member["name"] for member in state["members"]] == ["W", "pending", "last", "initialized", "progress"] and state["bytes_per_sample"] == 18953,
-        "ttt_state_fresh_segment_reset_detached": state["segment_token_max_abs_diff"] == 0.0 and all(state["segment_members_exact"]) and state["fresh_token_exact"] and all(state["fresh_members_exact"]) and all(state["members_detached"]) and all(state["reset_selected_members_zero"]) and state["reset_selected_initialized_false"] and state["reset_selected_progress_zero"] and all(state["reset_unselected_members_exact"]) and state["reset_all_mask_selected_absent"] and state["reset_all_mask_selected_token_zero"],
+        "ttt_state_schema": state["members"] == STATE_SCHEMA and state["bytes_per_sample"] == 18953,
+        "ttt_state_fresh_segment_reset_detached": state["segment_token_max_abs_diff"] == 0.0 and state["segment_present_equal"] and all(state["segment_members_exact"]) and state["fresh_token_exact"] and state["fresh_present_equal"] and all(state["fresh_members_exact"]) and state["token_detached"] and all(state["members_detached"]) and all(state["reset_selected_members_zero"]) and state["reset_selected_initialized_false"] and state["reset_selected_progress_zero"] and all(state["reset_unselected_members_exact"]) and state["reset_all_mask_selected_absent"] and state["reset_all_mask_selected_token_zero"] and all(state["reset_all_mask_members_detached"]),
         "cuda_peak_recorded": probe["full_run_cuda_peak"]["allocated_bytes"] > 0 and probe["full_run_cuda_peak"]["reserved_bytes"] > 0 and probe["full_run_cuda_peak"]["device"] is not None,
+        "d005_binds_cache_only_training": sidecar["network"] is False and sidecar["world_size"] == 1 and sidecar["environment"]["LIBERO_LATENT_CACHE_VERIFY_RATIO"] == "0" and sidecar["environment"]["LIBERO_LATENT_CACHE_ROOT"] and sidecar["output"]["probe"] == str(args.probe),
         "verifier_root_clean": _clean(args.root),
         "verifier_submodule_clean": _clean(args.root / "cosmos-framework"),
     }
@@ -96,6 +106,7 @@ def main() -> None:
         "allowlist": list(ALLOWLIST),
         "checkpoint": {"initial": str(args.initial_checkpoint), "final": str(args.final_checkpoint), "added": sorted(added), "removed": sorted(removed), "frozen_common_count": len(frozen)},
         "runtime_probe": probe,
+        "training_sidecar": {"path": str(args.training_sidecar), "sha256": hashlib.sha256(args.training_sidecar.read_bytes()).hexdigest(), "source": sidecar["source"]},
         "command": {"argv": __import__("sys").argv, "tool_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
