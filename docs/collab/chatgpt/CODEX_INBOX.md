@@ -3251,3 +3251,14 @@ Detailed review:
 - 已固化 GPT GPU-PASS 前置：verifier 内置且校验唯一 recurrent prefix；selector exclusions 必为空；真实 optimizer state 与 DCP persistent keys 必须可读、反向映射且排除 TTT 五成员。
 - 资源/停止：单卡，显存上限 24GiB；越过 I/O/训练行为、显存超限或 schema 无法只读取得则立即 BLOCKED。当前请求只允许实现，运行必须另行请求 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE`。
 - 不授权 B2-T、P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训或 backend freeze。
+
+---
+
+## 2026-09-01 — R09-B2 P3 GPU-only tokenizer exception v0.2 审核请求
+
+请求 verdict：`APPROVE_LOCAL_PROCESSOR_EXCEPTION` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `8c71a94`；子模块/Gitlink `fe13304`。
+- 文档：`docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.2_2026-09-01.md`。源审计表明 `OmniMoTModel` 无条件构造 VLM processor；例外仅允许 recipe 实际的 `EDGE_POLICY_CHECKPOINT` 本地目录只读 processor/tokenizer 配置构造。
+- hard boundary：本地目录不存在、走 `BaseVLMProcessor` 非目录下载路径、任何网络/权重/VAE/数据/base-checkpoint 访问均立即 BLOCKED；禁止 monkeypatch/synthetic processor。GPU 运行仍未获批准。
+- 不授权 B2-T、P4/P5、训练、评测、推理、checkpoint save/load 或任何 GPU 运行。
