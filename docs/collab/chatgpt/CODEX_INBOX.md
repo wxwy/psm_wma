@@ -3154,3 +3154,11 @@ Detailed review:
 请求 verdict：`APPROVE_TO_IMPLEMENT_B2_P2` 或 `REQUEST_CHANGES`，附 `file:line`。
 
 审核对象：根仓 `ef1e122`，子模块/Gitlink `e424e24`。方案：`docs/build/PSM-WMA_R09_B2_P2_nonmutating_capture_design_v0.1_2026-08-31.md`。P2 仅定义 clone-only Normal/Zero/Shuffle observer：不得推进 dataloader/RNG/runtime，不得写模型/optimizer/scheduler；before/after hash 必须 fail-closed。允许范围仅 callback、CPU tests、root verifier/artifact；禁止模型/GPU/训练/B2-T/P3-P5/eval/inference。
+
+---
+
+## 2026-08-31 — R09-B2 P2 plan resubmission
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_B2_P2` 或 `REQUEST_CHANGES`，附 `file:line`。审核对象：根仓 `b804855`，子模块/Gitlink `e424e24`。
+
+已关闭 GPT 三项设计 blocker：禁止 canonical model/runtime 二次 forward；capture 在 `finally` 精确恢复 CPU/CUDA RNG；cursor 只使用已消费 batch 的 P1 immutable ordinal metadata。新增完整 backend runtime state、model buffer 与 mutation/exception/unsupported-payload 负例合同。仍只请求 P2 callback+CPU tests+verifier/artifact 实现，禁止模型/GPU/训练/B2-T/P3-P5。
