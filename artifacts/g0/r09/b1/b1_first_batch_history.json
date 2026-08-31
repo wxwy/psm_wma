@@ -1,0 +1,38 @@
+{
+  "effective_local_history_sample_count": 1,
+  "overrides": [
+    "trainer.max_iter=5",
+    "trainer.logging_iter=1",
+    "checkpoint.save_iter=5",
+    "checkpoint.load_training_state=False",
+    "dataloader_train.max_samples_per_batch=2",
+    "trainer.grad_accum_iter=1"
+  ],
+  "profile": {
+    "dataloader_train.max_samples_per_batch": 2,
+    "trainer.grad_accum_iter": 1
+  },
+  "samples": [
+    {
+      "episode_index": 402,
+      "history_present": false,
+      "history_valid_steps": 0,
+      "sample_index": 0,
+      "start_frame": 0
+    },
+    {
+      "episode_index": 402,
+      "history_present": true,
+      "history_valid_steps": 1,
+      "sample_index": 1,
+      "start_frame": 1
+    }
+  ],
+  "schema_version": "r09_b1_first_batch_history_v1",
+  "source": {
+    "gitlink_revision": "eaa0f979974579939bc680ff683cf016bafdbce8",
+    "root_revision": "9dbd3ca8f07130c67bfe04c3cb380c20c561218a",
+    "submodule_revision": "eaa0f979974579939bc680ff683cf016bafdbce8"
+  },
+  "status": "PASS"
+}

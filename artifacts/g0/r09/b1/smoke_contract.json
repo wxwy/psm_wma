@@ -1,0 +1,401 @@
+{
+  "allowlist": [
+    "local_history_runtime.encoder",
+    "local_memory2llm",
+    "local_memory_modality_embed"
+  ],
+  "checkpoint": {
+    "added": [],
+    "final": "/localdisk-tmp/r09-b1-gpu-smoke/b1_ttt/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000005",
+    "frozen_common_count": 553,
+    "gate_a_manifest": {
+      "model/.metadata": {
+        "sha256": "7c3dd2eade013d6f2cf8f50ae8e21f7042c4ad7831cb6bad4ddfe04320e92165",
+        "size_bytes": 177041
+      },
+      "model/__0_0.distcp": {
+        "sha256": "7d6797248d440b65e948e334645cad53d0d3cae1e5850a783e5dc70d16dc9ad1",
+        "size_bytes": 6740776033
+      },
+      "optim/.metadata": {
+        "sha256": "bdfe84ba44aa517689b101067a27e894907d189a42ce0c374e361fcda4e9833d",
+        "size_bytes": 849310
+      },
+      "optim/__0_0.distcp": {
+        "sha256": "81b7665a8cb71a34fe37b0185299fa070ecf6acea4501a4b8f03cbc1ca23b652",
+        "size_bytes": 11391033810
+      },
+      "scheduler/.metadata": {
+        "sha256": "5295d7620bdce80c3abc6148fba4a45b6fc6f41a1c6d4b80e0a203a52573d7e0",
+        "size_bytes": 2116
+      },
+      "scheduler/__0_0.distcp": {
+        "sha256": "470630c4d83fb5693bbfca137d0da24765a6fc1652b4fc6c16997da8f89d3a1d",
+        "size_bytes": 14506
+      },
+      "trainer/.metadata": {
+        "sha256": "baf99269053bf330f4829c2864b567d1d1ecfb3f144737315f3292e816bf7ae6",
+        "size_bytes": 2189
+      },
+      "trainer/__0_0.distcp": {
+        "sha256": "0e43f919381547e43ea8f66708d969be1af20e07332692b89bd9f553a77cdc42",
+        "size_bytes": 23971
+      }
+    },
+    "initial": "/localdisk-tmp/r09-b1-gpu-smoke/gate_a_rebuilt/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+    "removed": [
+      "net.local_history_runtime.recurrent_backend.cell.bias_hh",
+      "net.local_history_runtime.recurrent_backend.cell.bias_ih",
+      "net.local_history_runtime.recurrent_backend.cell.weight_hh",
+      "net.local_history_runtime.recurrent_backend.cell.weight_ih"
+    ]
+  },
+  "checks": {
+    "adapter_gradient_groups_present_finite_nonzero": true,
+    "approved_single_a100_80gb_bound_and_recorded": true,
+    "b1_first_packed_batch_has_effective_local_history": true,
+    "b1_model_only_loads_exact_rebuilt_checkpoint": true,
+    "bounded_noncanonical_smoke_profile": true,
+    "cache_only_no_online_vae_fallback_both_phases": true,
+    "checkpoint_schema_only_removes_gru": true,
+    "cuda_peak_recorded": true,
+    "d005_binds_cache_only_training": true,
+    "encoder_ttt_gradient_absent_or_zero": true,
+    "frozen_common_tensors_bitwise_unchanged": true,
+    "gate_a_rebuilt_warm_start_complete": true,
+    "optimizer_exact_three_key_membership": true,
+    "training_losses_finite": true,
+    "ttt_state_fresh_segment_reset_detached": true,
+    "ttt_state_schema": true,
+    "two_phase_d005_provenance_chain": true,
+    "verifier_root_clean": true,
+    "verifier_submodule_clean": true
+  },
+  "command": {
+    "argv": [
+      "tools/g0/verify_r09_b1_smoke.py",
+      "--root",
+      "/disk/rl/psm_wma",
+      "--initial-checkpoint",
+      "/localdisk-tmp/r09-b1-gpu-smoke/gate_a_rebuilt/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000002",
+      "--final-checkpoint",
+      "/localdisk-tmp/r09-b1-gpu-smoke/b1_ttt/cosmos3_action_libero/action_sft/edge_libero_4in1/checkpoints/iter_000000005",
+      "--gate-a-log",
+      "/localdisk-tmp/r09-b1-gpu-smoke/gate_a_rebuilt/logs/action_policy_libero_edge_all_sft.log",
+      "--log",
+      "/localdisk-tmp/r09-b1-gpu-smoke/b1_ttt/logs/action_policy_libero_edge_all_sft.log",
+      "--probe",
+      "artifacts/g0/r09/b1/runtime_probe.json",
+      "--gate-a-sidecar",
+      "artifacts/g0/r09/b1/gate_a_rebuild_d005.json",
+      "--training-sidecar",
+      "artifacts/g0/r09/b1/b1_smoke_d005.json",
+      "--expected-root-revision",
+      "9dbd3ca8f07130c67bfe04c3cb380c20c561218a",
+      "--expected-submodule-revision",
+      "eaa0f979974579939bc680ff683cf016bafdbce8",
+      "--expected-gitlink-revision",
+      "eaa0f979974579939bc680ff683cf016bafdbce8",
+      "--output",
+      "artifacts/g0/r09/b1/smoke_contract.json"
+    ],
+    "tool_sha256": "0a6396e4be93247a633bae67499f7126eb12e54091160bb910cd72cdfb220a98"
+  },
+  "gate_a_sidecar": {
+    "path": "artifacts/g0/r09/b1/gate_a_rebuild_d005.json",
+    "sha256": "22623f89d8b31eab92737bc280553421f76e2b92ac6d77394ddbfe3f351a646e",
+    "source": {
+      "gitlink_revision": "eaa0f979974579939bc680ff683cf016bafdbce8",
+      "root_revision": "9dbd3ca8f07130c67bfe04c3cb380c20c561218a",
+      "submodule_revision": "eaa0f979974579939bc680ff683cf016bafdbce8"
+    }
+  },
+  "runtime_probe": {
+    "full_run_cuda_peak": {
+      "allocated_bytes": 8501718528,
+      "device": "NVIDIA A100-SXM4-80GB",
+      "reserved_bytes": 8556380160
+    },
+    "last_iteration": 5,
+    "representative_step": {
+      "gradient_groups": {
+        "encoder": [
+          {
+            "finite": null,
+            "max_abs": null,
+            "present": false
+          },
+          {
+            "finite": null,
+            "max_abs": null,
+            "present": false
+          },
+          {
+            "finite": null,
+            "max_abs": null,
+            "present": false
+          },
+          {
+            "finite": null,
+            "max_abs": null,
+            "present": false
+          },
+          {
+            "finite": null,
+            "max_abs": null,
+            "present": false
+          },
+          {
+            "finite": null,
+            "max_abs": null,
+            "present": false
+          },
+          {
+            "finite": null,
+            "max_abs": null,
+            "present": false
+          },
+          {
+            "finite": null,
+            "max_abs": null,
+            "present": false
+          },
+          {
+            "finite": null,
+            "max_abs": null,
+            "present": false
+          }
+        ],
+        "local_memory2llm": [
+          {
+            "finite": true,
+            "max_abs": 0.0,
+            "present": true
+          },
+          {
+            "finite": true,
+            "max_abs": 0.158203125,
+            "present": true
+          }
+        ],
+        "local_memory_modality_embed": [
+          {
+            "finite": true,
+            "max_abs": 0.158203125,
+            "present": true
+          }
+        ]
+      },
+      "gradients": {
+        "local_history_runtime.encoder.action_proj.bias": {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        "local_history_runtime.encoder.action_proj.weight": {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        "local_history_runtime.encoder.age_embedding.weight": {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        "local_history_runtime.encoder.dt_proj.bias": {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        "local_history_runtime.encoder.dt_proj.weight": {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        "local_history_runtime.encoder.norm.bias": {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        "local_history_runtime.encoder.norm.weight": {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        "local_history_runtime.encoder.visual_proj.bias": {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        "local_history_runtime.encoder.visual_proj.weight": {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        "local_memory2llm.bias": {
+          "finite": true,
+          "max_abs": 0.158203125,
+          "present": true
+        },
+        "local_memory2llm.weight": {
+          "finite": true,
+          "max_abs": 0.0,
+          "present": true
+        },
+        "local_memory_modality_embed": {
+          "finite": true,
+          "max_abs": 0.158203125,
+          "present": true
+        }
+      },
+      "iteration": 0,
+      "missing_optimizer_names": [],
+      "optimizer_matches_targets": true,
+      "optimizer_names": [
+        "local_history_runtime.encoder.action_proj.bias",
+        "local_history_runtime.encoder.action_proj.weight",
+        "local_history_runtime.encoder.age_embedding.weight",
+        "local_history_runtime.encoder.dt_proj.bias",
+        "local_history_runtime.encoder.dt_proj.weight",
+        "local_history_runtime.encoder.norm.bias",
+        "local_history_runtime.encoder.norm.weight",
+        "local_history_runtime.encoder.visual_proj.bias",
+        "local_history_runtime.encoder.visual_proj.weight",
+        "local_memory2llm.bias",
+        "local_memory2llm.weight",
+        "local_memory_modality_embed"
+      ],
+      "unexpected_optimizer_names": []
+    },
+    "schema_version": "r09_b1_runtime_probe_v1",
+    "state_contract": {
+      "bytes_per_sample": 18953,
+      "fresh_members_exact": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "fresh_present_equal": true,
+      "fresh_token_exact": true,
+      "members": {
+        "W": {
+          "bytes_per_sample": 16384,
+          "dtype": "bfloat16",
+          "shape_per_sample": [
+            32,
+            256
+          ]
+        },
+        "initialized": {
+          "bytes_per_sample": 1,
+          "dtype": "bool",
+          "shape_per_sample": []
+        },
+        "last_evidence": {
+          "bytes_per_sample": 512,
+          "dtype": "bfloat16",
+          "shape_per_sample": [
+            256
+          ]
+        },
+        "pending_evidence": {
+          "bytes_per_sample": 2048,
+          "dtype": "bfloat16",
+          "shape_per_sample": [
+            4,
+            256
+          ]
+        },
+        "segment_progress": {
+          "bytes_per_sample": 8,
+          "dtype": "int64",
+          "shape_per_sample": []
+        }
+      },
+      "members_detached": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reset_all_mask_members_detached": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "reset_all_mask_selected_absent": true,
+      "reset_all_mask_selected_token_zero": true,
+      "reset_selected_initialized_false": true,
+      "reset_selected_members_zero": [
+        true,
+        true,
+        true
+      ],
+      "reset_selected_progress_zero": true,
+      "reset_unselected_members_exact": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "segment_members_exact": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "segment_present_equal": true,
+      "segment_token_max_abs_diff": 0.0,
+      "token_detached": true
+    },
+    "target_names": [
+      "local_history_runtime.encoder.action_proj.bias",
+      "local_history_runtime.encoder.action_proj.weight",
+      "local_history_runtime.encoder.age_embedding.weight",
+      "local_history_runtime.encoder.dt_proj.bias",
+      "local_history_runtime.encoder.dt_proj.weight",
+      "local_history_runtime.encoder.norm.bias",
+      "local_history_runtime.encoder.norm.weight",
+      "local_history_runtime.encoder.visual_proj.bias",
+      "local_history_runtime.encoder.visual_proj.weight",
+      "local_memory2llm.bias",
+      "local_memory2llm.weight",
+      "local_memory_modality_embed"
+    ]
+  },
+  "schema_version": "r09_b1_smoke_v1",
+  "smoke_profiles": {
+    "b1_smoke": {
+      "bounded_noncanonical": true,
+      "dataloader_train.max_samples_per_batch": 2,
+      "name": "smoke_batch2_b1",
+      "trainer.grad_accum_iter": 1
+    },
+    "gate_a_rebuild": {
+      "bounded_noncanonical": true,
+      "dataloader_train.max_samples_per_batch": 1,
+      "name": "smoke_batch1_gate_a",
+      "trainer.grad_accum_iter": 1
+    }
+  },
+  "status": "PASS",
+  "training_sidecar": {
+    "path": "artifacts/g0/r09/b1/b1_smoke_d005.json",
+    "sha256": "c3c48700eae6879d9815e1b2072ca68de8cb73151ea0d1693717967032d28db3",
+    "source": {
+      "gitlink_revision": "eaa0f979974579939bc680ff683cf016bafdbce8",
+      "root_revision": "9dbd3ca8f07130c67bfe04c3cb380c20c561218a",
+      "submodule_revision": "eaa0f979974579939bc680ff683cf016bafdbce8"
+    }
+  },
+  "warnings": [
+    "PASS \u4ec5\u8868\u793a bounded smoke profile \u7684 runtime/checkpoint \u5408\u540c\uff1b\u4e0d\u662f canonical Gate-A\u3001\u6b63\u5f0f\u89c4\u6a21\u8bad\u7ec3\u3001\u541e\u5410\u3001\u6536\u655b\u6216 SR \u8bc1\u636e\u3002"
+  ]
+}

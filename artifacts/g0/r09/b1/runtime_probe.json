@@ -1,0 +1,260 @@
+{
+  "full_run_cuda_peak": {
+    "allocated_bytes": 8501718528,
+    "device": "NVIDIA A100-SXM4-80GB",
+    "reserved_bytes": 8556380160
+  },
+  "last_iteration": 5,
+  "representative_step": {
+    "gradient_groups": {
+      "encoder": [
+        {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        },
+        {
+          "finite": null,
+          "max_abs": null,
+          "present": false
+        }
+      ],
+      "local_memory2llm": [
+        {
+          "finite": true,
+          "max_abs": 0.0,
+          "present": true
+        },
+        {
+          "finite": true,
+          "max_abs": 0.158203125,
+          "present": true
+        }
+      ],
+      "local_memory_modality_embed": [
+        {
+          "finite": true,
+          "max_abs": 0.158203125,
+          "present": true
+        }
+      ]
+    },
+    "gradients": {
+      "local_history_runtime.encoder.action_proj.bias": {
+        "finite": null,
+        "max_abs": null,
+        "present": false
+      },
+      "local_history_runtime.encoder.action_proj.weight": {
+        "finite": null,
+        "max_abs": null,
+        "present": false
+      },
+      "local_history_runtime.encoder.age_embedding.weight": {
+        "finite": null,
+        "max_abs": null,
+        "present": false
+      },
+      "local_history_runtime.encoder.dt_proj.bias": {
+        "finite": null,
+        "max_abs": null,
+        "present": false
+      },
+      "local_history_runtime.encoder.dt_proj.weight": {
+        "finite": null,
+        "max_abs": null,
+        "present": false
+      },
+      "local_history_runtime.encoder.norm.bias": {
+        "finite": null,
+        "max_abs": null,
+        "present": false
+      },
+      "local_history_runtime.encoder.norm.weight": {
+        "finite": null,
+        "max_abs": null,
+        "present": false
+      },
+      "local_history_runtime.encoder.visual_proj.bias": {
+        "finite": null,
+        "max_abs": null,
+        "present": false
+      },
+      "local_history_runtime.encoder.visual_proj.weight": {
+        "finite": null,
+        "max_abs": null,
+        "present": false
+      },
+      "local_memory2llm.bias": {
+        "finite": true,
+        "max_abs": 0.158203125,
+        "present": true
+      },
+      "local_memory2llm.weight": {
+        "finite": true,
+        "max_abs": 0.0,
+        "present": true
+      },
+      "local_memory_modality_embed": {
+        "finite": true,
+        "max_abs": 0.158203125,
+        "present": true
+      }
+    },
+    "iteration": 0,
+    "missing_optimizer_names": [],
+    "optimizer_matches_targets": true,
+    "optimizer_names": [
+      "local_history_runtime.encoder.action_proj.bias",
+      "local_history_runtime.encoder.action_proj.weight",
+      "local_history_runtime.encoder.age_embedding.weight",
+      "local_history_runtime.encoder.dt_proj.bias",
+      "local_history_runtime.encoder.dt_proj.weight",
+      "local_history_runtime.encoder.norm.bias",
+      "local_history_runtime.encoder.norm.weight",
+      "local_history_runtime.encoder.visual_proj.bias",
+      "local_history_runtime.encoder.visual_proj.weight",
+      "local_memory2llm.bias",
+      "local_memory2llm.weight",
+      "local_memory_modality_embed"
+    ],
+    "unexpected_optimizer_names": []
+  },
+  "schema_version": "r09_b1_runtime_probe_v1",
+  "state_contract": {
+    "bytes_per_sample": 18953,
+    "fresh_members_exact": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "fresh_present_equal": true,
+    "fresh_token_exact": true,
+    "members": {
+      "W": {
+        "bytes_per_sample": 16384,
+        "dtype": "bfloat16",
+        "shape_per_sample": [
+          32,
+          256
+        ]
+      },
+      "initialized": {
+        "bytes_per_sample": 1,
+        "dtype": "bool",
+        "shape_per_sample": []
+      },
+      "last_evidence": {
+        "bytes_per_sample": 512,
+        "dtype": "bfloat16",
+        "shape_per_sample": [
+          256
+        ]
+      },
+      "pending_evidence": {
+        "bytes_per_sample": 2048,
+        "dtype": "bfloat16",
+        "shape_per_sample": [
+          4,
+          256
+        ]
+      },
+      "segment_progress": {
+        "bytes_per_sample": 8,
+        "dtype": "int64",
+        "shape_per_sample": []
+      }
+    },
+    "members_detached": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "reset_all_mask_members_detached": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "reset_all_mask_selected_absent": true,
+    "reset_all_mask_selected_token_zero": true,
+    "reset_selected_initialized_false": true,
+    "reset_selected_members_zero": [
+      true,
+      true,
+      true
+    ],
+    "reset_selected_progress_zero": true,
+    "reset_unselected_members_exact": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "segment_members_exact": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "segment_present_equal": true,
+    "segment_token_max_abs_diff": 0.0,
+    "token_detached": true
+  },
+  "target_names": [
+    "local_history_runtime.encoder.action_proj.bias",
+    "local_history_runtime.encoder.action_proj.weight",
+    "local_history_runtime.encoder.age_embedding.weight",
+    "local_history_runtime.encoder.dt_proj.bias",
+    "local_history_runtime.encoder.dt_proj.weight",
+    "local_history_runtime.encoder.norm.bias",
+    "local_history_runtime.encoder.norm.weight",
+    "local_history_runtime.encoder.visual_proj.bias",
+    "local_history_runtime.encoder.visual_proj.weight",
+    "local_memory2llm.bias",
+    "local_memory2llm.weight",
+    "local_memory_modality_embed"
+  ]
+}
