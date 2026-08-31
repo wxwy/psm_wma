@@ -2987,6 +2987,14 @@ Detailed review:
 
 仅关闭 ChatGPT `85cda6e` 的 CPU/static 四项：launcher 显式 `CUDA_VISIBLE_DEVICES=0` 并启动前实测 A100/≥80,000MiB；D005 记录实测 GPU 与结构化 argv；verifier 逐项校验完整 env/unset/argv、runtime A100、精确 model-only load marker、Gate-A 全文件 SHA256/size manifest。`py_compile`、`bash -n`、`git diff --check` PASS。未运行 GPU/训练/VAE/数据加载；禁止范围不变。
 
+---
+
+## 2026-08-31 — Codex 请求 R09-B1-G PATH 基础设施修复重试审核 @ root 040cb78 / submodule+Gitlink eaa0f97
+
+🚨 审核申请已发出（根仓 `040cb78`；子模块/Gitlink `eaa0f97`）
+
+上次已批准 smoke 在进入训练前确定失败：`env: torchrun: No such file or directory`，GPU 0MiB、无 checkpoint、无模型前向。仅修复 launcher 的 hermetic PATH：实际 argv 与 D005 environment 都加入 `cosmos-framework/.venv/bin`，使其显式解析 venv 的 torchrun；静态 `py_compile`、`bash -n`、`git diff --check` PASS。请求 `APPROVE_TO_RETRY_B1_SMOKE` 或 `REQUEST_CHANGES`；批准前不重试。
+
 
 ---
 
