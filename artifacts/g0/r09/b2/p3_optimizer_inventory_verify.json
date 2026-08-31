@@ -2,23 +2,33 @@
   "backend_checks": {
     "recurrent": {
       "dcp_inspected": false,
+      "dcp_ttt_excluded": true,
       "group_metadata": true,
       "group_parameter_metadata": true,
       "groups_reverse_map": true,
       "groups_unique": true,
+      "materialized_state_reverse_map": true,
       "selected_equals_groups": true,
+      "selector_equals_optimizer": true,
+      "state_eligibility": true,
       "ttt_dynamic_excluded": true,
-      "unique_model_names": true
+      "unique_model_names": true,
+      "unmaterialized_state_empty": true
     },
     "ttt_fast_weight": {
       "dcp_inspected": false,
+      "dcp_ttt_excluded": true,
       "group_metadata": true,
       "group_parameter_metadata": true,
       "groups_reverse_map": true,
       "groups_unique": true,
+      "materialized_state_reverse_map": true,
       "selected_equals_groups": true,
+      "selector_equals_optimizer": true,
+      "state_eligibility": true,
       "ttt_dynamic_excluded": true,
-      "unique_model_names": true
+      "unique_model_names": true,
+      "unmaterialized_state_empty": true
     }
   },
   "checks": {
@@ -26,6 +36,12 @@
     "no_execution": true,
     "provenance": true,
     "schema": true
+  },
+  "matched_diff_checks": {
+    "allowed_optimizer": true,
+    "allowed_resolved_selector": true,
+    "declared_optimizer": true,
+    "declared_resolved_selector": true
   },
   "record_valid": true,
   "status": "BLOCKED"

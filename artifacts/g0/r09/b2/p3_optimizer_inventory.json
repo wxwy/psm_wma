@@ -33,21 +33,30 @@
       }
     }
   },
+  "matched_diff": {
+    "allowed_backend_specific_prefixes": [
+      "local_history_runtime.recurrent_backend."
+    ],
+    "recurrent_only_optimizer": [],
+    "recurrent_only_resolved_selector": [],
+    "ttt_only_optimizer": [],
+    "ttt_only_resolved_selector": []
+  },
   "recurrent": {
     "reason": "RuntimeError: No CUDA GPUs are available",
     "status": "BLOCKED"
   },
   "schema_version": "r09_b2_optimizer_inventory_v1",
   "source": {
-    "collector_sha256": "774d0b28bab451ab41ac883ef218312a12fa2ac01dac324455a04c2787da7f1e",
+    "collector_sha256": "78cd82409e0a9e0773b22d9b06b0016f1de27dee01b5e4231f84c7324277f129",
     "gitlink_revision": "fe133043e4afe5f79e586af42b849c44fcf46757",
     "model_source_sha256": "93058e93dbc477e751a684dc08c0b096be329ea4be1c87ce2ddeedbc9e71d5ee",
     "optimizer_source_sha256": "ff7371677b63e008ac1e9efc8df02a1628b029655f8e83b3a2b8713aaf83ecdf",
     "recipe_sha256": "bdc53c800fda7aa20a0ec67fe4446b5559d106944a75aab7dfbafce6567cd046",
-    "root_revision": "abacb25c9785ad09d083866ffb2eb5f9c06ed6dd",
+    "root_revision": "a5cc7c6550cc92f40ede3838f70498966b0725fa",
     "sft_config_source_sha256": "2d49e89b8ce80f62add5a9b8895cd690fb994a1f93cc020cecc46fd59ac6f0be",
     "submodule_revision": "fe133043e4afe5f79e586af42b849c44fcf46757",
-    "verifier_sha256": "a7f2b5f15569858bbc42fff0f5f5caf4c41e107349ab34e33f8dd5f42a476817"
+    "verifier_sha256": "467cb63afb3402d3e1a59fd9f37270b8e9b0d23f77f57c3b55a96672f7494f77"
   },
   "status": "BLOCKED",
   "ttt_fast_weight": {
