@@ -3232,3 +3232,10 @@ Detailed review:
 - 已关闭 GPT 第二轮 HIGH：verifier 从 `selected_by_resolved_selector` 重算 stable-name 集合，要求等于实际 optimizer 集合（仅允许显式 `selector_optimizer_exclusions`）；artifact 写入并重算 `matched_diff`，两侧差异只能匹配 `local_history_runtime.recurrent_backend.`；optimizer state eligibility 必须等于实际 group，未 materialized 时 entries 必须为空，materialized entries 必须反向映射；DCP inspected 时 persistent keys 必须明确且排除五个 TTT runtime 成员。
 - 证据：`artifacts/g0/r09/b2/p3_optimizer_inventory.json` 与 verifier 均为 `BLOCKED`（而非 PASS），`record_valid=true` 仅指阻塞记录完整。实际 fused optimizer 在无 CUDA 的已批准范围内无法构造；GPU=0、无权重/checkpoint、无 forward/backward/step。
 - 范围不变：仅决定 P3 BLOCKED 闭环或另立 GPU-only inventory Gate；不授权 B2-T、P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训或 backend freeze。
+
+### Closure verdict recorded
+
+- ChatGPT：`APPROVE_TO_CLOSE_B2_P3_BLOCKED`，详见 `docs/collab/chatgpt/reviews/2026-09-01_R09_B2_P3_second_hardened_closure_829c331_fe13304.md`。
+- Kimi：`APPROVE_TO_CLOSE_B2_P3_BLOCKED`；独立复核 selector/optimizer、cross-backend、state/DCP/TTT exclusion hard gates 与 BLOCKED evidence。
+- MM：`APPROVE_TO_CLOSE_B2_P3_BLOCKED`；确认真实 FusedAdam 在 CPU/meta-safe 无 CUDA 下无法完成 inventory。
+- 结论：P3 CPU/meta attempt 关闭为 `BLOCKED`，不解除 P0 optimizer-membership blocker。GPU-only P3 必须新建方案并三方审核；B2-T、P4/P5、训练、评测、推理等仍未授权。
