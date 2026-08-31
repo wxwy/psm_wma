@@ -16,7 +16,7 @@
 
 - `G0-R09-B2-P3-OPTIMIZER-INVENTORY`（2026-09-01，BLOCKED）：GPT closure=`docs/collab/chatgpt/reviews/2026-09-01_R09_B2_P3_second_hardened_closure_829c331_fe13304.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P3_BLOCKED`。`a5cc7c6`/`8dbb0c7` 已冻结 selector/optimizer、cross-backend matched diff、state/DCP/TTT exclusion 合同；CPU/meta attempt 的真实 FusedAdam 因无 CUDA BLOCKED，GPU=0。此 closure 不解除 P0 actual optimizer-membership blocker，也不授权 GPU、B2-T/P4/P5、训练/评测/推理。下一步仅可起草独立 GPU-only P3 Gate 方案并经三方审核。
 
-- `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，IN_PROGRESS）：仅新增 `docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.1_2026-09-01.md`；方案把 GPT closure 的三项 future-PASS HIGH 固定为 verifier policy，定义 GPU-only read-only construction/state-schema 范围与显存/行为停止条件。未实现、未运行 GPU；待三方方案审核。
+- `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，REVIEW）：仅新增 `docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.1_2026-09-01.md`；方案把 GPT closure 的三项 future-PASS HIGH 固定为 verifier policy，定义 GPU-only read-only construction/state-schema 范围与显存/行为停止条件。未实现、未运行 GPU；已申请三方方案审核。
 
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 

@@ -3239,3 +3239,15 @@ Detailed review:
 - Kimi：`APPROVE_TO_CLOSE_B2_P3_BLOCKED`；独立复核 selector/optimizer、cross-backend、state/DCP/TTT exclusion hard gates 与 BLOCKED evidence。
 - MM：`APPROVE_TO_CLOSE_B2_P3_BLOCKED`；确认真实 FusedAdam 在 CPU/meta-safe 无 CUDA 下无法完成 inventory。
 - 结论：P3 CPU/meta attempt 关闭为 `BLOCKED`，不解除 P0 optimizer-membership blocker。GPU-only P3 必须新建方案并三方审核；B2-T、P4/P5、训练、评测、推理等仍未授权。
+
+---
+
+## 2026-09-01 — R09-B2 P3 GPU-only inventory Gate 方案审核请求
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `c755477`；子模块/Gitlink `fe13304`（本轮未改子模块）。
+- 方案：`docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.1_2026-09-01.md`。仅定义单卡、无 batch、无分布式、只读 model/optimizer/state schema/DCP-compatible schema 的未来 Gate；禁止权重/checkpoint/VAE/tokenizer/data 加载、forward/backward/step、save/load 与训练 callback。
+- 已固化 GPT GPU-PASS 前置：verifier 内置且校验唯一 recurrent prefix；selector exclusions 必为空；真实 optimizer state 与 DCP persistent keys 必须可读、反向映射且排除 TTT 五成员。
+- 资源/停止：单卡，显存上限 24GiB；越过 I/O/训练行为、显存超限或 schema 无法只读取得则立即 BLOCKED。当前请求只允许实现，运行必须另行请求 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE`。
+- 不授权 B2-T、P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训或 backend freeze。

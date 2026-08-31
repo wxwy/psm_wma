@@ -68,7 +68,7 @@
 | G0-R09-B2-P1-STREAM-MANIFEST | DONE | Codex | GPT/Kimi/MM 均 APPROVE_TO_CLOSE_B2_P1 | CPU-only 可强制消费、可逐 ordinal 比对的 `(ordinal,suite,task_index,episode_index,start_frame)` stream manifest 已关闭；P2-P5 与 B2-T 仍须独立方案、实现和三方审核。 |
 | G0-R09-B2-P2-NONMUTATING-CAPTURE | DONE | Codex | GPT/Kimi/MM 均 `APPROVE_TO_CLOSE_B2_P2` | CPU-only callback isolation contract 已关闭：真实 callback 入口对 parameters/buffers/optimizer/scheduler/batch/recurrent/冻结 TTT 五成员 before/after fail-closed；CPU/CUDA RNG 与 ordinal/epoch/microbatch 均纳入合同。evidence=`artifacts/g0/r09/b2/p2_nonmutating_capture_cpu.json`（v3 PASS）。不授权 P3-P5、B2-T、模型/训练/GPU。 |
 | G0-R09-B2-P3-OPTIMIZER-INVENTORY | BLOCKED | Codex | GPT=`d320d8d`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P3_BLOCKED` | CPU/meta-only attempt 已诚实关闭：真实 FusedAdam 在无 CUDA 下无法构造；证据 `8dbb0c7` 的 JSON/verifier 均为 BLOCKED。P0 actual optimizer-membership blocker 未解除；GPU-only P3 需新建方案、三方审核后才可执行。 |
-| G0-R09-B2-P3-GPU-ONLY-PLAN | IN_PROGRESS | Codex | P3 CPU/meta BLOCKED closure；仅允许方案/审核 | 冻结 GPU-only 实际 optimizer/state/DCP read-only inventory 的执行面、固定 verifier policy、资源/停止条件；不运行 GPU，待三方 `APPROVE_TO_RUN` 后才可执行。 |
+| G0-R09-B2-P3-GPU-ONLY-PLAN | REVIEW | Codex | P3 CPU/meta BLOCKED closure；等待三方方案审核 | 冻结 GPU-only 实际 optimizer/state/DCP read-only inventory 的执行面、固定 verifier policy、资源/停止条件；不运行 GPU，待先获 `APPROVE_TO_IMPLEMENT_GPU_ONLY_P3_GATE`，实现和运行仍分开审批。 |
 | G0-R09-B2-P4-LAUNCH-D005 | TODO | Codex | P1-P3 的合同字段冻结 | 冻结单卡 exact argv、sanitized environment、world size、100 optimizer updates、D005 路径；先审核，不启动训练。 |
 | G0-R09-B2-P5-FULL-CONFIG-DIFF | TODO | Codex | P4 schema 明确 | 导出完整 resolved config 的结构化 machine diff，并拒绝允许范围外差异；先审核。 |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
