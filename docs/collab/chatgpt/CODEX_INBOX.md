@@ -3105,3 +3105,16 @@ Detailed review:
 - 验收与失败分流：计划明确定义 D005、cache-only/no-fallback、state/optimizer/DCP、Normal/Zero/Shuffle training capture、100-step finite/stability、资源记录与 FAIL 条件；任意 OOM/NaN/SIGTERM/缺证据不自动重跑。
 - 允许范围：本申请若批准，最多允许新增 P0 的只读资产/配置审计与 JSON verifier；不改模型、不运行 CPU/GPU 训练、评测或推理。
 - 禁止范围：matched training、任何 GPU、多卡、长训、SR、eval/inference/closed-loop、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL 均不授权。
+
+---
+
+## 2026-08-31 — R09-B2 P0 只读预检 BLOCKED 收口审核请求
+
+🚨 审核申请已发出（根仓 `0c62e5d1681323489bd74b6b6490dde5803cd8bf`；子模块/Gitlink `eaa0f979974579939bc680ff683cf016bafdbce8`）
+
+- 任务/Gate：`G0-R09-B2-MATCHED-PREFLIGHT` 的 P0 只读资产/config/budget audit。请求 verdict：`APPROVE_TO_CLOSE_B2_P0_BLOCKED` 或 `REQUEST_CHANGES`，请附 `file:line`。
+- 审核范围：根仓新增 `tools/g0/collect_r09_b2_preflight.py`、`tools/g0/verify_r09_b2_preflight.py`、两份 JSON 与 P0 runbook/status；未改子模块、模型或训练入口。
+- 证据：`artifacts/g0/r09/b2/matched_training_preflight_p0.json` 状态为 **`BLOCKED`**；`matched_training_preflight_p0_verifier.json` 为 `PASS`，其语义仅为“阻塞记录诚实、结构完整”，绝不表示 B2-T 或任何训练获准。
+- 已实测事实：本地 DCP/Edge/Wan 资产存在，四 suite cache manifest 均 SHA256 绑定；A100-80GB 空闲、128 CPU、约 900GB 可用内存。两侧 selected config 的共同值为 bf16、trainer seed=42、microbatch=128、grad accumulation=16、max_iter=5000；selected-field diff 仅 `local_history_backend` 与 `keys_to_select`，TTT 三 selector 精确匹配 B1 合同。
+- P0 明确保留的五项硬阻塞：完整 resolved-config machine diff、可强制消费的有序 window-ID manifest、non-mutating Normal/Zero/Shuffle capture、实际 parameter/optimizer-state membership、冻结 exact argv/sanitized env/world size/100 optimizer-update D005。
+- 允许范围：仅审核本 `BLOCKED` P0 结论与后续需另立实现范围；不授权 CPU/GPU training、模型加载/forward、评测、推理、closed-loop、SR、多卡、长训、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
