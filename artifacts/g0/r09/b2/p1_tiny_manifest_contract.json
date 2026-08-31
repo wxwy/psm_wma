@@ -2,10 +2,10 @@
   "schema_version": "r09_b2_p1_tiny_manifest_contract_v1",
   "status": "PASS_CPU_MANIFEST_REPLAY_PENDING_REVIEW",
   "source": {
-    "root_revision": "1f4890b",
-    "submodule_revision": "db086ea",
-    "gitlink_revision": "db086ea",
-    "working_tree_dirty": true
+    "root_revision": "c2285bf",
+    "submodule_revision": "e424e24",
+    "gitlink_revision": "e424e24",
+    "working_tree_dirty": false
   },
   "tiny_cpu_build": {
     "optimizer_updates": 1,
@@ -22,7 +22,8 @@
       "video_latent": true
     },
     "verifier_checks": 14,
-    "manifest_output": "/tmp/r09_b2_p1_tiny_suites_v3"
+    "manifest_output": "/tmp/r09_b2_p1_tiny_suites_v5",
+    "requested_observed_replay": "PASS: 4/4 exact ordered identities"
   },
   "negative_cases": {
     "swapped_or_missing_or_duplicate_ordinal": "FAIL",
