@@ -14,6 +14,8 @@
 
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 
+- G0-R09-B2-MATCHED-PREFLIGHT（2026-08-31，IN_PROGRESS）：用户将后续执行交由 Codex，Kimi 转为独立审核。预计新增 `docs/build/PSM-WMA_R09_B2_matched_training_preflight_runbook_v0.1_2026-08-31.md`，只读复用 Runtime Plan R09、A1/B1 bounded evidence 与现有 launcher/D005/verifier；冻结 recurrent-vs-TTT 的可比训练前置、停止条件、machine-readable 证据与禁止范围。不改 `cosmos-framework`，不运行 CPU/GPU、训练、评测或推理。提交：未提交。
+
 - ACCEPT-13CKPT-SMOKE 交接收口（2026-08-31，DONE）：用户指定后续由 Codex 执行、Kimi 仅独立审核。Kimi 确认筛选已完成且汇总在 tracked commit=`105465c`；Codex 只读复核结果根 `cosmos-framework/results/libero_closed_loop_4in1_acceptance_4090_smoke_v1/` 为 13 个 iter、13 个 `.done`、每 iter 四份 suite `summary.json`。筛选结论仅作趋势：iter2600/2200/2000 的单 trial 4in1 average 并列 0.775；iter2800 的 10-trial 0.823 仍是 D017 frozen baseline。历史 driver log 曾有一次 iter200 worker 失败，但 10:58 后结果目录已完整 `.done`；不掩盖该历史，最终以目录完整性和 tracked 汇总为依据。后续 Top-N 3-trial 复测须新建任务、用户授权和三方审核；当前不启动任何 eval/GPU。
 
   - 实现与 CPU 预检：Gate-A profile=`smoke_batch1_gate_a`/1/1，B1 profile=`smoke_batch2_b1`/2/1；D005 schema v3 逐 phase 拒绝 profile 错配，并绑定 B1 history JSON 的 SHA/source。cache-only、workers=0 的同 TOML/同 B1 overrides 预检实测首个 packed batch 为 `episode_index=402,start_frame=0`（history absent）与 `402,1`（history valid=1），`effective_local_history_sample_count=1`、PASS；临时 JSON=`/tmp/r09_b1_first_batch_history_7.json`，不作为正式 artifact。静态 `bash -n`、三工具 `py_compile`、`git diff --check` PASS；临时 D005 v3 contract PASS。预检初次缺 `WAN_VAE_PATH`、随后缺 `EDGE_POLICY_CHECKPOINT`，均为正式 wrapper 默认导出的环境，已在专用预检命令显式复用；未进入模型/训练/VAE，GPU 峰值仅 4 MiB。下一步：重新申请三方 `APPROVE_TO_RUN_B1_BATCH2_PROFILE`。提交=`56cf960`。
