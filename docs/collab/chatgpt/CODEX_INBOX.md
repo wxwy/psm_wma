@@ -2662,3 +2662,7 @@ Detailed review:
 3. default recurrent、TTT opt-in、A1 互斥、normal/no-grad/inference-mode contract、fresh stateless forward 及 clean/Gitlink provenance 均保持通过。
 
 请仅审核上述 B1-S closure；即使批准，B1-G GPU 仍需用户确认与独立 `APPROVE_TO_RUN_B1_SMOKE`。
+
+### 2026-08-31 更正
+
+上述 canonical artifact 的实际检查数为 **23/23**（不是 22/22）；`jq '.checks | length' artifacts/g0/r09/b1/static_contract.json` 可复核。MM、Kimi 已分别独立复核，Kimi 的独立 `--require-clean` 复跑也为 PASS；本更正不改变 verifier、artifact、范围或审批请求。
