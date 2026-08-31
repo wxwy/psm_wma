@@ -1,0 +1,38 @@
+{
+  "schema_version": "r09_b2_p1_tiny_manifest_contract_v1",
+  "status": "PASS_WITH_FULL_BUDGET_BLOCKED",
+  "source": {
+    "root_revision": "b71cfce",
+    "submodule_revision": "13c854c",
+    "gitlink_revision": "eaa0f97"
+  },
+  "tiny_cpu_build": {
+    "optimizer_updates": 1,
+    "grad_accum": 1,
+    "max_samples_per_batch": 2,
+    "record_count": 2,
+    "verifier_status": "PASS",
+    "cache_window_per_record": true,
+    "wrapper_pytest": "2 passed in 13.82s"
+  },
+  "negative_cases": {
+    "mutated_ordinal": "FAIL",
+    "full_budget_duplicate_preflight": "FAIL"
+  },
+  "full_budget_blocker": {
+    "optimizer_updates": 100,
+    "grad_accum": 16,
+    "max_samples_per_batch": 128,
+    "required_windows_per_suite": 51200,
+    "available_windows": {
+      "libero_spatial": 45641,
+      "libero_goal": 44669
+    },
+    "maximum_nonrepeating_max_samples_per_batch": 111,
+    "reason": "The current frozen budget repeats window identities; builder rejects it before cache-window enumeration."
+  },
+  "limitations": [
+    "This is CPU-only manifest evidence, not B2-T training evidence.",
+    "P2-P5 remain blocked and unimplemented."
+  ]
+}
