@@ -2590,3 +2590,48 @@ Gate：
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_verifier_rereview_d0ddc51.md`
+
+
+---
+
+## 2026-08-31 — R09-B1 B1-S hardened verifier review @ root 519ba24
+
+**Verdict: REQUEST_CHANGES — stale canonical artifact only**
+
+本轮 verifier 代码已关闭上一轮两个技术 blocker：
+
+1. representative backward 现在真实经过 `LocalHistoryRuntime.forward(...)`，encoder 先参与图，再由 TTT detach；hard-gate `evidence.requires_grad=True`、TTT token detached、encoder grad absent/zero、projection/embed grad present+finite+nonzero。
+2. optimizer/gradient facts 已进入 `status=PASS` hard gate：exact key 非空匹配、selected names 精确并集、backend 空匹配、encoder detach、projection/embed grad、all-present-grad finite。
+
+因此：
+- B1-S runtime wiring `0381335` = ACCEPTED
+- current verifier code `519ba24` = ACCEPTED
+
+唯一剩余 blocker 是 canonical artifact stale：
+
+当前 HEAD 下 `artifacts/g0/r09/b1/static_contract.json` 仍记录：
+- root_revision=`d0ddc51`
+- old 18-check 内容（仍含 `selected_parameter_names_present`）
+- 缺当前 verifier 新增的 optimizer/gradient hard gates
+- old tool SHA
+
+所以该 `status=PASS` 不能证明当前 `519ba24` verifier 已通过。
+
+只需：
+1. 从 pushed-clean exact current root/submodule 运行当前 verifier + `--require-clean`；
+2. 重建 `artifacts/g0/r09/b1/static_contract.json`；
+3. 确认 artifact root=实际 verifier source root、submodule/Gitlink=`0381335`、新增 hard gates 全 true、tool SHA 对应当前 verifier、status=PASS；
+4. 提交/push artifact 后再申请 B1-S closure。
+
+无需改 runtime，也不得运行 GPU。
+
+Gate：
+- B0 = CLOSED
+- B1 preflight = APPROVED
+- B1-S runtime wiring = ACCEPTED
+- B1-S verifier = ACCEPTED
+- B1-S canonical evidence = STALE / REQUEST_CHANGES
+- B1-G GPU / eval-inference / multi-GPU / long training / matched SR / backend freeze / shared-MoT / Global / Agent / RL = BLOCKED
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_hardened_verifier_519ba24.md`
