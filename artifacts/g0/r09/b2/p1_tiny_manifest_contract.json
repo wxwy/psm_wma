@@ -17,7 +17,10 @@
   },
   "negative_cases": {
     "mutated_ordinal": "FAIL",
-    "mutated_suite_with_rehashed_records": "FAIL"
+    "mutated_suite_with_rehashed_records": "FAIL",
+    "mutated_task_index_with_rehashed_records": "FAIL",
+    "mutated_dataset_flat_index_with_rehashed_records": "FAIL",
+    "world_size_or_worker_mismatch": "FAIL"
   },
   "limitations": [
     "The earlier full-budget repeat rejection was superseded: baseline repeats windows across epochs by design; epoch is now explicit in records.",

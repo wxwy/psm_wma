@@ -11,6 +11,9 @@ from pathlib import Path
 
 import torch
 
+from build_r09_b2_stream_manifest import SUITES, identity, reverse_index
+from cosmos_framework.data.generator.action.datasets.libero_lerobot_dataset import LIBEROLeRobotDataset
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -26,6 +29,7 @@ def main() -> None:
     parser.add_argument("--records", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--cache-root", type=Path)
+    parser.add_argument("--libero-root", type=Path)
     args = parser.parse_args()
     header = json.loads(args.header.read_text())
     records = [json.loads(line) for line in args.records.read_text().splitlines() if line]
@@ -58,6 +62,19 @@ def main() -> None:
             if not isinstance(item.get("windows", {}).get(str(record["start_frame"])), dict):
                 cache_ok = False
                 break
+    index_ok = True
+    if args.libero_root is not None:
+        datasets = {
+            suite: LIBEROLeRobotDataset(root=str(args.libero_root / suite), fps=20, chunk_length=16, image_size=256,
+                                        camera_mode="concat_view", split="train", val_ratio=0.01, seed=0)
+            for suite in SUITES
+        }
+        for record in records:
+            dataset = datasets[record["suite"]]
+            expected = (record["task_index"], record["episode_index"], record["start_frame"])
+            if identity(dataset, record["dataset_flat_index"]) != expected or reverse_index(dataset, *expected[1:]) != record["dataset_flat_index"]:
+                index_ok = False
+                break
     checks = {
         "schema": header.get("schema_version") == "r09_b2_stream_manifest_v1",
         "record_hash": header.get("records_sha256") == sha256(args.records),
@@ -70,6 +87,7 @@ def main() -> None:
         "source_complete": set(header.get("source", {})) == {"root_revision", "submodule_revision", "gitlink_revision"},
         "provenance_complete": {"builder_sha256", "dataset_source_sha256", "wrapper_source_sha256", "cache_manifests"} <= set(header.get("files", {})),
         "cache_window_per_record": cache_ok,
+        "flat_index_bijective": index_ok,
     }
     result = {"schema_version": "r09_b2_stream_manifest_verifier_v1", "status": "PASS" if all(checks.values()) else "FAIL",
               "checks": checks, "header": str(args.header), "records": str(args.records)}
