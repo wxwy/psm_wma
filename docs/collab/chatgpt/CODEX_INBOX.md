@@ -3086,3 +3086,10 @@ Detailed review:
 - verifier 修正：三项原 FAIL 均为 false-negative，已最小修正：(1) checkpoint-load regex 的括号转义；(2) adapter 的“每 group 至少一个 finite/nonzero”而非错误的“每个 tensor 均 nonzero”；(3) 同一 probe 的绝对/相对路径以 `Path.resolve()` 比较。修正后仅重放 CPU verifier，不重跑 GPU。
 - 验收请求：核对两阶段 model-only 交接、cache-only 无 fallback、首个 B1 packed batch 有有效 Local history、TTT selected optimizer/grad/state、checkpoint GRU-only schema 差、冻结共同张量 bitwise、loss finite、D005 provenance 与 A100 bound；确认该 bounded noncanonical smoke 不是正式训练/收敛/SR 证据。
 - 禁止范围：本申请不授权 GPU 重跑、正式规模训练、多卡、matched SR、eval/inference/closed-loop、backend freeze、Global/Agent/RL，且不修改 `cosmos-framework`。
+
+### Closure verdict recorded
+
+- ChatGPT：`APPROVE_TO_CLOSE_B1_G`，详见 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_G_runtime_closure_07b5430_eaa0f97.md`。
+- Kimi：`APPROVE_TO_CLOSE_B1_G`，独立复核 static checks、D005、checkpoint/log、runtime probe 与 19/19 contract。
+- MM：`APPROVE_TO_CLOSE_B1_G`，独立复核 provenance、artifact、verifier false-negative 修正与持续禁止范围。
+- 结论：仅关闭 bounded/noncanonical `G0-R09-B1-SINGLE-GPU-SMOKE`；不授权任何后续 GPU、正式训练、多卡、长训、matched SR、eval/inference/closed-loop、backend freeze、Global/Agent/RL。
