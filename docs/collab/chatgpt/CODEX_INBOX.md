@@ -3262,3 +3262,14 @@ Detailed review:
 - 文档：`docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.2_2026-09-01.md`。源审计表明 `OmniMoTModel` 无条件构造 VLM processor；例外仅允许 recipe 实际的 `EDGE_POLICY_CHECKPOINT` 本地目录只读 processor/tokenizer 配置构造。
 - hard boundary：本地目录不存在、走 `BaseVLMProcessor` 非目录下载路径、任何网络/权重/VAE/数据/base-checkpoint 访问均立即 BLOCKED；禁止 monkeypatch/synthetic processor。GPU 运行仍未获批准。
 - 不授权 B2-T、P4/P5、训练、评测、推理、checkpoint save/load 或任何 GPU 运行。
+
+---
+
+## 2026-09-01 — LIBERO launcher worker 默认值说明修正审核请求
+
+请求 verdict：`APPROVE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `24725f1`；子模块/Gitlink `0af5d53`。
+- 修改范围仅 `cosmos-framework/examples/launch_sft_action_policy_libero_edge_all.sh:26`：将过期帮助文本 `LIBERO_NUM_WORKERS default: 32` 改为 `12`。
+- 已核对运行时 Python 配置 `action_policy_libero_edge_all.py:160`、普通 launcher `:45`、tmux launcher `tmux_launch_sft_libero_edge_all.sh:24` 本来均为 `12`；本次不改变任何运行时行为、接口或环境变量覆盖规则。
+- 验收：两个 launcher `bash -n` PASS、三入口默认值一致为 12、双仓 `git diff --check` PASS。禁止启动训练、GPU、评测或推理。
