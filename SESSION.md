@@ -12,6 +12,8 @@
 
 ## 当前最小步骤
 
+- `FIX-LIBERO-WORKER-DEFAULT-12`（2026-09-01，REVIEW）：用户将 LIBERO 默认 dataloader worker 固定为 12。Python 配置、tmux 入口已为 12；已将 `cosmos-framework/examples/launch_sft_action_policy_libero_edge_all.sh` 顶部过期“32”修正为“12”。`bash -n`、三入口一致性检索、双仓 `git diff --check` PASS；不启动训练，待独立审核后提交关闭。
+
 - `G0-R09-B2-P2-NONMUTATING-CAPTURE`（2026-09-01，DONE）：GPT review=`docs/collab/chatgpt/reviews/2026-08-31_R09_B2_P2_isolation_closure_1a7fd9d_1a45fab.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P2`。子模块/Gitlink=`1a45fab`，根仓代码/Gitlink=`d8455a6`，CPU evidence=`1a7fd9d` 的 `artifacts/g0/r09/b2/p2_nonmutating_capture_cpu.json`（v3 PASS）。唯一 callback entrypoint 在 finally 比对 parameters/buffers/optimizer/scheduler/batch/recurrent/冻结 TTT 五成员和 CPU/CUDA RNG，强制 immutable ordinal/epoch/microbatch；Kimi 独立复跑 callback 15 项 + manifest wrapper 5 项 PASS。此 closure 仅为 CPU isolation contract，未接 live runtime snapshot_provider；P3-P5、B2-T、模型/训练/GPU/eval/inference/closed-loop 仍需独立 Gate。
 
 - `G0-R09-B2-P3-OPTIMIZER-INVENTORY`（2026-09-01，BLOCKED）：GPT closure=`docs/collab/chatgpt/reviews/2026-09-01_R09_B2_P3_second_hardened_closure_829c331_fe13304.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P3_BLOCKED`。`a5cc7c6`/`8dbb0c7` 已冻结 selector/optimizer、cross-backend matched diff、state/DCP/TTT exclusion 合同；CPU/meta attempt 的真实 FusedAdam 因无 CUDA BLOCKED，GPU=0。此 closure 不解除 P0 actual optimizer-membership blocker，也不授权 GPU、B2-T/P4/P5、训练/评测/推理。下一步仅可起草独立 GPU-only P3 Gate 方案并经三方审核。
