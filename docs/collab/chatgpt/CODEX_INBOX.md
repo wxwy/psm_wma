@@ -3187,3 +3187,13 @@ Detailed review:
 - Kimi：`APPROVE_TO_CLOSE_B2_P2`，独立复跑 callback 15 项、P1 wrapper 5 项与 v3 verifier，核对 SHA/Gitlink 一致。
 - MM：`APPROVE_TO_CLOSE_B2_P2`，独立核对真实 callback fail-closed、冻结 TTT schema、RNG/microbatch 与 v3 artifact。
 - 结论：P2 仅以 CPU-only non-mutating capture/isolation contract 关闭；P3-P5、B2-T、GPU/runtime capture、模型/训练/eval/inference/closed-loop 均未授权。
+
+---
+
+## 2026-09-01 — R09-B2 P3 optimizer inventory 方案审核请求
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_B2_P3` 或 `REQUEST_CHANGES`，附 `file:line`。审核对象：根仓 `ddd0ed6bc2acfc9a1052eb82681a5ca6f2e23def`，子模块/Gitlink `1a45fab50bf22ca454eceb77d70cd94fb4c66f44`。
+
+文档：`docs/build/PSM-WMA_R09_B2_P3_optimizer_inventory_design_v0.1_2026-09-01.md`。P3 只读导出 recurrent 与 ttt_fast_weight 的实际 model parameter、optimizer param-group、optimizer-state 与 DCP-state membership；所有 optimizer object 必须反向映射到实际 model parameter，TTT B0 五成员不得进入 parameter/optimizer/DCP persistent state。完整构造若不能满足 CPU/meta-safe、无权重/无 checkpoint/无 forward-backward-step 的限制，唯一合法结果为 `BLOCKED`，禁止 synthetic fallback PASS。
+
+允许范围：获批后仅 collector/verifier、CPU/meta-safe 定向 tests 和 artifact。禁止模型/checkpoint/VAE/tokenizer/data 加载、GPU、forward/backward/optimizer step、训练、B2-T、P4/P5、eval/inference/closed-loop/SR/backend freeze。
