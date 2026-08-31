@@ -2662,3 +2662,47 @@ Detailed review:
 3. default recurrent、TTT opt-in、A1 互斥、normal/no-grad/inference-mode contract、fresh stateless forward 及 clean/Gitlink provenance 均保持通过。
 
 请仅审核上述 B1-S closure；即使批准，B1-G GPU 仍需用户确认与独立 `APPROVE_TO_RUN_B1_SMOKE`。
+
+
+---
+
+## 2026-08-31 — R09-B1 B1-S static closure review @ root b45898f / verifier root 519ba24 / submodule 0381335
+
+**Verdict: APPROVE_TO_CLOSE_B1_S**
+
+ChatGPT 独立复核确认最终 B1-S closure 证据闭合：
+
+- runtime wiring / selector / training-only guard：submodule `0381335`
+- final verifier source root：`519ba24`
+- canonical artifact commit：`fb4b423`
+- artifact：`artifacts/g0/r09/b1/static_contract.json`
+- recorded clean root=`519ba24`
+- submodule/Gitlink=`0381335`
+- status=PASS，22/22 checks=true
+- tool SHA=`8b12088b0f40a9c514cc4ce55657747a29975444acd67314ac0c7cb6d1bdc872`
+
+关键确认：
+1. default recurrent 路径保持原构造，TTT 仅显式 B1 opt-in；
+2. no-grad / inference-mode 在任何 fast-state mutation 前 fail-fast，supplied state exact unchanged；当前严格为 training-only；
+3. exact optimizer keys=encoder / local_memory2llm / local_memory_modality_embed，实际 matched names 非空且 selected union exact，TTT backend matched=[] / zero params / empty state_dict；
+4. representative backward 真实经过 `LocalHistoryRuntime.forward`：encoder evidence 进入图、TTT token detach，encoder grads absent/zero，projection/embed grads present+finite+nonzero，all present grads finite；
+5. canonical artifact 已刷新，不再是 stale d0ddc51 中间产物；
+6. 未发现 GPU、eval/inference、multi-GPU、long-train、matched SR、shared-MoT、Global/Agent/RL scope creep。
+
+非阻塞清理：
+- `local_evidence.py:203` 仍有 “B0 CPU-only / not wired into production” 旧 docstring；
+- `local_evidence.py:258` 参数类型仍是 `RecurrentLocalMemoryBackend | None`，应后续改成 union/Protocol 以覆盖 TTT；
+- B1 optimizer 当前选中 encoder，但 frozen TTT detach 使 Local TTT path 不给 encoder 梯度。保持 B1-G 变量不变；在 long training/backend freeze 前再决定是否从 allowlist 删除 encoder。
+
+本批准只关闭 B1-S。继续 BLOCKED：
+- B1-G GPU smoke（需独立 request + approval）
+- eval/inference/closed-loop（独立 Gate）
+- multi-GPU
+- long training
+- matched SR
+- backend freeze
+- RoboTTT/shared-MoT
+- Global/Agent/RL
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_closure_519ba24_0381335.md`
