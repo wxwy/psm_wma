@@ -3146,3 +3146,11 @@ Detailed review:
 请求 verdict：`APPROVE_TO_CLOSE_B2_P1` 或 `REQUEST_CHANGES`，附 `file:line`。本次仅 CPU manifest；禁止 B2-T、GPU、模型/VAE/optimizer、训练、评测和推理。
 
 整改：wrapper 显式绑定 suite；verifier 强制 root/libero/cache 审计并验证 builder/verifier/dataset/wrapper/recipe/info/parquet SHA；真实 getter/wrapper 的 requested→observed 4/4 七字段有序回放 PASS。证据：`artifacts/g0/r09/b2/p1_tiny_manifest_contract.json`，原件 `/tmp/r09_b2_p1_tiny_suites_v5/{header,verify,replay}.json`。11 类负例均 FAIL。请核验 P1，不授权 P2-P5 或 B2-T。
+
+---
+
+## 2026-08-31 — R09-B2 P2 non-mutating capture plan review
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_B2_P2` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+审核对象：根仓 `ef1e122`，子模块/Gitlink `e424e24`。方案：`docs/build/PSM-WMA_R09_B2_P2_nonmutating_capture_design_v0.1_2026-08-31.md`。P2 仅定义 clone-only Normal/Zero/Shuffle observer：不得推进 dataloader/RNG/runtime，不得写模型/optimizer/scheduler；before/after hash 必须 fail-closed。允许范围仅 callback、CPU tests、root verifier/artifact；禁止模型/GPU/训练/B2-T/P3-P5/eval/inference。
