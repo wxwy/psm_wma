@@ -5,6 +5,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 FRAMEWORK="$ROOT/cosmos-framework"
 PYTHON="$FRAMEWORK/.venv/bin/python"
+VENV_BIN="$FRAMEWORK/.venv/bin"
 : "${LIBERO_ROOT:=/disk/rl/data/LIBERO_LeRobot_v3}"
 : "${LIBERO_LATENT_CACHE_ROOT:=/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1}"
 : "${R09_B1_WORK_ROOT:=/localdisk-tmp/r09-b1-gpu-smoke}"
@@ -36,7 +37,7 @@ run_phase() {
     local name
     for name in "${UNSET_ENV[@]}"; do command+=(-u "$name"); done
     command+=(
-        "CUDA_VISIBLE_DEVICES=0"
+        "PATH=$VENV_BIN:$PATH" "CUDA_VISIBLE_DEVICES=0"
         "NPROC_PER_NODE=1" "PSM_R08_LOCAL_HISTORY_ENABLED=1" "PSM_R08_LOCAL_HISTORY_HORIZON=16"
         "PSM_LOCAL_DUMMY_ENABLED=0" "PSM_LOCAL_DUMMY_DIM=32" "PSM_LOCAL_DUMMY_MODE=normal"
         "PSM_R08_HISTORY_MODE=normal" "PSM_R09_A1_ENABLED=0" "PSM_R08_GATE_B_CAPTURE_ONLY=0"
@@ -54,7 +55,7 @@ run_phase() {
         --root "$ROOT" --phase "$phase" --output "$sidecar" --command "$resolved_command" --command-argv-json "$command_argv_json" \
         --checkpoint "$input_checkpoint" --libero-root "$LIBERO_ROOT" --cache-root "$LIBERO_LATENT_CACHE_ROOT" \
         --run-root "$output_root" --log "$log_file" --output-checkpoint "$output_checkpoint" \
-        --probe "$probe" --expected-steps "$expected_steps" --gpu-name "$GPU_NAME" --gpu-total-memory-mib "$GPU_TOTAL_MEMORY_MIB"
+        --probe "$probe" --expected-steps "$expected_steps" --gpu-name "$GPU_NAME" --gpu-total-memory-mib "$GPU_TOTAL_MEMORY_MIB" --path "$VENV_BIN:$PATH"
     printf 'R09_B1_RESOLVED_COMMAND phase=%s: %s\n' "$phase" "$resolved_command"
     if [[ "${DRY_RUN:-0}" == "1" ]]; then return; fi
     (cd "$FRAMEWORK" && "${command[@]}")

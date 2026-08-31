@@ -31,6 +31,7 @@ def main() -> None:
     parser.add_argument("--expected-steps", type=int, required=True)
     parser.add_argument("--gpu-name", required=True)
     parser.add_argument("--gpu-total-memory-mib", type=int, required=True)
+    parser.add_argument("--path", required=True)
     args = parser.parse_args()
     command_argv = json.loads(args.command_argv_json)
     if not isinstance(command_argv, list) or not all(isinstance(item, str) for item in command_argv):
@@ -38,7 +39,7 @@ def main() -> None:
     root = args.root.resolve()
     submodule = root / "cosmos-framework"
     environment = {
-        "CUDA_VISIBLE_DEVICES": "0", "NPROC_PER_NODE": "1", "PSM_R08_LOCAL_HISTORY_ENABLED": "1", "PSM_R08_LOCAL_HISTORY_HORIZON": "16",
+        "PATH": args.path, "CUDA_VISIBLE_DEVICES": "0", "NPROC_PER_NODE": "1", "PSM_R08_LOCAL_HISTORY_ENABLED": "1", "PSM_R08_LOCAL_HISTORY_HORIZON": "16",
         "PSM_LOCAL_DUMMY_ENABLED": "0", "PSM_LOCAL_DUMMY_DIM": "32", "PSM_LOCAL_DUMMY_MODE": "normal",
         "PSM_R08_HISTORY_MODE": "normal", "PSM_R09_A1_ENABLED": "0", "PSM_R08_GATE_B_CAPTURE_ONLY": "0",
         "LIBERO_LATENT_CACHE_ROOT": args.cache_root, "LIBERO_LATENT_CACHE_VERIFY_RATIO": "0", "LIBERO_NUM_WORKERS": "0",
