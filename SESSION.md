@@ -16,6 +16,8 @@
 
 - `G0-R09-B2-P3-OPTIMIZER-INVENTORY`（2026-09-01，BLOCKED）：GPT closure=`docs/collab/chatgpt/reviews/2026-09-01_R09_B2_P3_second_hardened_closure_829c331_fe13304.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P3_BLOCKED`。`a5cc7c6`/`8dbb0c7` 已冻结 selector/optimizer、cross-backend matched diff、state/DCP/TTT exclusion 合同；CPU/meta attempt 的真实 FusedAdam 因无 CUDA BLOCKED，GPU=0。此 closure 不解除 P0 actual optimizer-membership blocker，也不授权 GPU、B2-T/P4/P5、训练/评测/推理。下一步仅可起草独立 GPU-only P3 Gate 方案并经三方审核。
 
+- `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，IN_PROGRESS）：仅新增 `docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.1_2026-09-01.md`；方案把 GPT closure 的三项 future-PASS HIGH 固定为 verifier policy，定义 GPU-only read-only construction/state-schema 范围与显存/行为停止条件。未实现、未运行 GPU；待三方方案审核。
+
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 
 - G0-R09-B2-MATCHED-PREFLIGHT（2026-08-31，BLOCKED）：GPT review=`docs/collab/chatgpt/reviews/2026-08-31_R09_B2_P0_blocked_closure_0c62e5d_eaa0f97.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P0_BLOCKED`。P0 只读采集器/验收器：`tools/g0/collect_r09_b2_preflight.py`、`tools/g0/verify_r09_b2_preflight.py`，结果为 `artifacts/g0/r09/b2/matched_training_preflight_p0.json`=`BLOCKED`、verifier=`PASS`（仅验证阻塞记录诚实完整）。两侧 selected config 除 backend/selector 外一致：bf16、seed=42、batch=128、accum=16、max_iter=5000；本地 A100-80GB/128 CPU/约900GB 可用内存及 localdisk 模型路径均已记录。五项硬阻塞为强制 window-ID manifest、non-mutating capture、实际 parameter/optimizer-state membership、精确 D005/100-update/world-size 预算、完整 resolved-config diff。未加载模型/数据批次，未运行训练、评测或推理，未改 `cosmos-framework`。B2-T 继续禁止。
