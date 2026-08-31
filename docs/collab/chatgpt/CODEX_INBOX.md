@@ -3029,3 +3029,21 @@ Detailed review:
 提议的最小后续改动（尚未编码、未运行 GPU）：仅为 B1-G launcher/D005/verifier 新增并 hard-gate 独立 **smoke profile**：`dataloader_train.max_samples_per_batch=1`、`trainer.grad_accum_iter=1`，Gate-A rebuild `max_iter=2`、B1 `max_iter=5` 保持。模型/checkpoint、单 A100-80G、四 suite exact-window cache、workers=0、`verify_ratio=0`、Local-history、Normal history mode、B1 selector 和全部 env sanitation 不变。D005 记录该 profile，verifier 将其作为精确 argv 条件。该 profile 仅验证 B1 runtime/checkpoint 连接与 finite/gradient/no-online-VAE；不再称为正式规模或历史 Gate-A，也不替代任何正式训练结论。
 
 允许范围：仅 root launcher/D005/verifier/文档与状态记录；禁止改子模块算法、正式 recipe、训练、eval/inference、多卡、长训、matched SR、backend freeze、Global/Agent/RL。请先审核方案；未获 ChatGPT/MM/Kimi 三方批准前不编码、不重跑 GPU。
+
+---
+
+## 2026-08-31 — Codex 请求 R09-B1 bounded smoke profile 最终运行审批 @ root 34695a3 / submodule+Gitlink eaa0f97
+
+🚨 审核申请已发出（根仓 `34695a3`；子模块/Gitlink `eaa0f97`）
+
+**请求 verdict：`APPROVE_TO_RUN_SMOKE_PROFILE` 或 `REQUEST_CHANGES`，请附 `file:line`。**
+
+方案三方 `APPROVE_SMOKE_PROFILE_REWORK` 后的 root-only 实现：
+
+- `tools/g0/launch_r09_b1_smoke.sh` 两阶段实际 `EXTRA_TAIL_OVERRIDES` 精确注入 `dataloader_train.max_samples_per_batch=1`、`trainer.grad_accum_iter=1`；Gate-A-compatible replacement warm-start 仍 2 steps，B1 仍 5 steps。
+- `write_r09_b1_d005.py` schema v2 强制/记录 `smoke_batch1`、bounded/noncanonical profile、启动 Unix 时间与 dmesg 采集结果，并拒绝缺失/重复 profile argv。
+- `verify_r09_b1_smoke.py` 从 structured `command_argv` 和两份 D005 双重 hard-gate profile、2/5 steps、diagnostics 与原有全部 provenance/cache-only/no-fallback/DCP/TTT state/gradient 条件；PASS JSON 显式 warning 此为非 canonical、非正式规模证据。
+
+静态证据：`bash -n tools/g0/launch_r09_b1_smoke.sh`、`python3 -m py_compile tools/g0/write_r09_b1_d005.py tools/g0/verify_r09_b1_smoke.py`、临时 D005 `smoke_batch1` 字段/argv 断言、`git diff --check` 均 PASS。未运行 GPU、训练、数据加载、VAE、eval 或推理。
+
+获批后唯一允许命令：在 `/disk/rl/psm_wma` 执行 `bash tools/g0/launch_r09_b1_smoke.sh`；单 A100-80GB、同四-suite exact-window cache、workers=0、无外网。PASS：Gate-A 2 step 与 B1 5 step 均 finite、DCP 完整、cache-only/no fallback、TTT/runtime/verifier 全 PASS。FAIL：任意 NaN/OOM/SIGTERM/SIGKILL/缺 artifact/验证 FAIL 立即停止并保留日志和 sidecar，不重试或扩大范围。
