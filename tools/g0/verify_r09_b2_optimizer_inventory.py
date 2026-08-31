@@ -15,7 +15,9 @@ def inventory_checks(record: dict[str, object]) -> dict[str, bool]:
     names = [row.get("name") for row in rows]
     selected = {row.get("name") for row in rows if row.get("selected_by_optimizer")}
     groups = inventory.get("optimizer_param_groups", [])
-    grouped = [name for group in groups for name in group.get("parameter_names", [])]
+    entries = [entry for group in groups for entry in group.get("parameters", [])]
+    grouped = [entry.get("name") for entry in entries]
+    rows_by_name = {row.get("name"): row for row in rows}
     ttt_names = {"W", "pending_evidence", "last_evidence", "initialized", "segment_progress"}
     dcp = inventory.get("dcp_state", {})
     return {
@@ -23,6 +25,11 @@ def inventory_checks(record: dict[str, object]) -> dict[str, bool]:
         "groups_reverse_map": all(name in set(names) for name in grouped),
         "groups_unique": len(grouped) == len(set(grouped)),
         "selected_equals_groups": selected == set(grouped),
+        "group_parameter_metadata": all(
+            rows_by_name.get(entry.get("name"), {}).get("numel") == entry.get("numel")
+            and rows_by_name.get(entry.get("name"), {}).get("dtype") == entry.get("dtype")
+            for entry in entries
+        ),
         "group_metadata": all("lr" in group and "weight_decay" in group for group in groups),
         "ttt_dynamic_excluded": not any(name.split(".")[-1] in ttt_names for name in names + [row.get("name", "") for row in inventory.get("named_buffers", [])]),
         "dcp_inspected": dcp.get("inspected") is True,

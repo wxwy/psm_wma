@@ -105,9 +105,9 @@ def worker(root: Path, toml: Path, ttt_enabled: bool, wan_vae_path: str, edge_ch
                 name = parameter_names.get(id(parameter))
                 if name is None:
                     raise RuntimeError("optimizer parameter is absent from model.net.named_parameters")
-                names.append(name)
+                names.append({"name": name, "numel": parameter.numel(), "dtype": str(parameter.dtype).removeprefix("torch.")})
                 optimizer_parameters.add(id(parameter))
-            groups.append({"optimizer_index": optimizer_index, "group_index": group_index, "parameter_names": sorted(names), "lr": group["lr"], "weight_decay": group.get("weight_decay")})
+            groups.append({"optimizer_index": optimizer_index, "group_index": group_index, "parameters": sorted(names, key=lambda item: item["name"]), "lr": group["lr"], "weight_decay": group.get("weight_decay")})
     selected = set(name for name, parameter in all_parameters.items() if id(parameter) in optimizer_parameters)
     model_rows = [{"name": name, "trainable": parameter.requires_grad, "numel": parameter.numel(), "dtype": str(parameter.dtype).removeprefix("torch."), "selected_by_resolved_selector": selector_matches[name], "selected_by_optimizer": name in selected} for name, parameter in sorted(all_parameters.items())]
     buffers = [{"name": name, "numel": value.numel(), "dtype": str(value.dtype).removeprefix("torch.")} for name, value in model.net.named_buffers()]
@@ -115,7 +115,7 @@ def worker(root: Path, toml: Path, ttt_enabled: bool, wan_vae_path: str, edge_ch
     forbidden = [row["name"] for row in model_rows + buffers if row["name"].split(".")[-1] in ttt_keys]
     if forbidden:
         raise RuntimeError(f"TTT dynamic state unexpectedly registered persistently: {forbidden}")
-    return {"status": "BLOCKED", "reason": "DCP schema membership is not inspected by the approved no-save/no-load P3 path", "inventory": {"model_parameters": model_rows, "named_buffers": buffers, "optimizer_param_groups": groups, "optimizer_state": {"not_materialized": True, "index_semantics": "in_process_parameter_object_identity; persisted_by_stable_parameter_name", "entries": []}, "dcp_state": {"inspected": False, "reason": "P3 does not invoke DCP save/load APIs"}, "selector": {"backend": config.model.config.local_history_backend, "keys_to_select": keys_to_select}}}
+    return {"status": "BLOCKED", "reason": "DCP schema membership is not inspected by the approved no-save/no-load P3 path", "inventory": {"model_parameters": model_rows, "named_buffers": buffers, "optimizer_param_groups": groups, "optimizer_state": {"not_materialized": True, "index_semantics": "in_process_parameter_object_identity; persisted_by_stable_parameter_name", "eligible_parameter_names": sorted(selected), "entries": []}, "dcp_state": {"inspected": False, "reason": "P3 does not invoke DCP save/load APIs"}, "selector": {"backend": config.model.config.local_history_backend, "keys_to_select": keys_to_select}}}
 
 
 def main() -> None:
