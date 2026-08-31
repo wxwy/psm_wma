@@ -3047,3 +3047,13 @@ Detailed review:
 静态证据：`bash -n tools/g0/launch_r09_b1_smoke.sh`、`python3 -m py_compile tools/g0/write_r09_b1_d005.py tools/g0/verify_r09_b1_smoke.py`、临时 D005 `smoke_batch1` 字段/argv 断言、`git diff --check` 均 PASS。未运行 GPU、训练、数据加载、VAE、eval 或推理。
 
 获批后唯一允许命令：在 `/disk/rl/psm_wma` 执行 `bash tools/g0/launch_r09_b1_smoke.sh`；单 A100-80GB、同四-suite exact-window cache、workers=0、无外网。PASS：Gate-A 2 step 与 B1 5 step 均 finite、DCP 完整、cache-only/no fallback、TTT/runtime/verifier 全 PASS。FAIL：任意 NaN/OOM/SIGTERM/SIGKILL/缺 artifact/验证 FAIL 立即停止并保留日志和 sidecar，不重试或扩大范围。
+
+---
+
+## 2026-08-31 — Codex 请求 R09-B1 bounded profile failure 修订方案审核 @ root fab9ab4 / submodule+Gitlink eaa0f97
+
+**请求 verdict：`APPROVE_B1_BATCH2_PROFILE_REWORK` 或 `REQUEST_CHANGES`，请附 `file:line`。勿授权 GPU。**
+
+已批准 bounded run 的事实：Gate-A batch1/accum1 2/2 finite，完整 `iter_000000002` 已保存；B1 从该 checkpoint model-only warm-start 后首次 backward 报 `element 0 of tensors does not require grad`，无 B1 checkpoint/probe/verifier，GPU 已释放、日志/D005/DCP 保留。
+
+根因：B1 optimizer 只选择 Local 三组参数；batch1 的确定性首窗口为 episode `start=0`，causal history 全 absent，loss 因而不依赖任何可训练 Local 参数。提议仅将 **B1 phase** `dataloader_train.max_samples_per_batch` 由 1 改为 2，保留 Gate-A batch1、两阶段 `grad_accum_iter=1`、2/5 steps、其余模型/cache/env/TTT/provenance 不变；连续第二窗口 `start=1` 有有效 Local history。实现将使 D005/verifier 支持 phase-specific profile 并 hard-gate Gate-A=1、B1=2。禁止子模块/正式 recipe/GPU，待三方方案批准。
