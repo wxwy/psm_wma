@@ -1,0 +1,150 @@
+{
+  "backend": {
+    "fresh_state_per_forward": true,
+    "inference_mode_fail_fast": true,
+    "no_grad_fail_fast": true,
+    "normal_grad_pass": true,
+    "outer_graph_detached": true,
+    "parameter_count": 0,
+    "state_dict_empty": true
+  },
+  "checks": {
+    "a1_mutual_exclusion": true,
+    "b0_dimensions": true,
+    "backend_empty_state_dict": true,
+    "backend_matches_empty": true,
+    "backend_specific_state_empty": true,
+    "backend_zero_parameters": true,
+    "exact_optimizer_keys": true,
+    "fresh_state_per_forward": true,
+    "gitlink_matches_submodule": true,
+    "inference_mode_fail_fast": true,
+    "no_grad_fail_fast": true,
+    "normal_grad_pass": true,
+    "outer_graph_detached": true,
+    "root_clean": true,
+    "selected_parameter_names_present": true,
+    "selector_default_recurrent": true,
+    "selector_ttt_opt_in": true,
+    "submodule_clean": true
+  },
+  "command": {
+    "argv": [
+      "tools/g0/verify_r09_b1_static_contract.py",
+      "--root",
+      "/disk/rl/psm_wma",
+      "--output",
+      "artifacts/g0/r09/b1/static_contract.json",
+      "--require-clean"
+    ],
+    "canonical_command_hash": "e96b06f19ad5000e5b2651e1e925ede1e20d899a536e256ef5ab06e96403c69e",
+    "cwd": "/disk/rl/psm_wma",
+    "output": "artifacts/g0/r09/b1/static_contract.json",
+    "python": "/disk/rl/psm_wma/cosmos-framework/.venv/bin/python",
+    "tool_sha256": "d8c408e8ea9075062466af468e74092e6fb39e486e8df36c77f1186f142acb67"
+  },
+  "optimizer": {
+    "backend_matched_names": [],
+    "backend_specific_state_empty": true,
+    "exact_keys": [
+      "local_history_runtime.encoder",
+      "local_memory2llm",
+      "local_memory_modality_embed"
+    ],
+    "gradient_facts": {
+      "encoder_ttt_path_nonzero_grad_required": false,
+      "local_history_runtime.encoder": {
+        "finite": true,
+        "nonzero": false,
+        "present": false
+      },
+      "local_memory2llm": {
+        "finite": true,
+        "nonzero": true,
+        "present": true
+      },
+      "local_memory_modality_embed": {
+        "finite": true,
+        "nonzero": true,
+        "present": true
+      }
+    },
+    "matched_parameter_names": {
+      "local_history_runtime.encoder": [
+        "local_history_runtime.encoder.action_proj.bias",
+        "local_history_runtime.encoder.action_proj.weight",
+        "local_history_runtime.encoder.age_embedding.weight",
+        "local_history_runtime.encoder.dt_proj.bias",
+        "local_history_runtime.encoder.dt_proj.weight",
+        "local_history_runtime.encoder.norm.bias",
+        "local_history_runtime.encoder.norm.weight",
+        "local_history_runtime.encoder.visual_proj.bias",
+        "local_history_runtime.encoder.visual_proj.weight"
+      ],
+      "local_memory2llm": [
+        "local_memory2llm.bias",
+        "local_memory2llm.weight"
+      ],
+      "local_memory_modality_embed": [
+        "local_memory_modality_embed"
+      ]
+    },
+    "selected_parameter_names": [
+      "local_history_runtime.encoder.action_proj.bias",
+      "local_history_runtime.encoder.action_proj.weight",
+      "local_history_runtime.encoder.age_embedding.weight",
+      "local_history_runtime.encoder.dt_proj.bias",
+      "local_history_runtime.encoder.dt_proj.weight",
+      "local_history_runtime.encoder.norm.bias",
+      "local_history_runtime.encoder.norm.weight",
+      "local_history_runtime.encoder.visual_proj.bias",
+      "local_history_runtime.encoder.visual_proj.weight",
+      "local_memory2llm.bias",
+      "local_memory2llm.weight",
+      "local_memory_modality_embed"
+    ]
+  },
+  "recipe_snapshots": {
+    "default": {
+      "backend": "recurrent",
+      "optimizer_keys": [
+        "moe_gen",
+        "time_embedder",
+        "vae2llm",
+        "llm2vae",
+        "action2llm",
+        "llm2action",
+        "action_modality_embed",
+        "local_memory2llm",
+        "local_memory_modality_embed",
+        "local_history_runtime"
+      ]
+    },
+    "ttt": {
+      "backend": "ttt_fast_weight",
+      "optimizer_keys": [
+        "local_history_runtime.encoder",
+        "local_memory2llm",
+        "local_memory_modality_embed"
+      ]
+    }
+  },
+  "schema_version": "r09_b1_static_contract_v1",
+  "selector": {
+    "default": "recurrent",
+    "field": "local_history_backend",
+    "legal_values": [
+      "recurrent",
+      "ttt_fast_weight"
+    ],
+    "opt_in_env": "PSM_R09_B1_TTT_ENABLED"
+  },
+  "source": {
+    "gitlink_revision": "0381335d58b7988a53e5ef9d209cfaf878cd3077",
+    "root_clean": true,
+    "root_revision": "d0ddc5181ececeba7db452739d19ae7de53ef235",
+    "submodule_clean": true,
+    "submodule_revision": "0381335d58b7988a53e5ef9d209cfaf878cd3077"
+  },
+  "status": "PASS"
+}
