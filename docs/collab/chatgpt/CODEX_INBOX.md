@@ -2861,3 +2861,96 @@ B1-G GPU、eval/inference/closed-loop、多卡、长训、matched SR、backend f
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_latest_head_confirmation_fa927c2.md`
+
+
+---
+
+## 2026-08-31 — R09-B1-G instrumentation + GPU smoke review @ root 63d279d / submodule abe8272
+
+**Verdict: REQUEST_CHANGES**
+
+B1-S 保持 CLOSED；Gate-A 重建方案本身可保留，但当前 B1-G instrumentation 与精确 GPU 运行申请尚不能批准。
+
+### 1. HIGH — runtime probe / smoke verifier 没有按 B0 exact state schema 记录与 hard-gate
+
+B0 frozen names/schema 是：
+- W [32,256] bfloat16 16384 B/sample
+- pending_evidence [4,256] bfloat16 2048
+- last_evidence [256] bfloat16 512
+- initialized [] bool 1
+- segment_progress [] int64 8
+
+当前 probe 用的是 `W/pending/last/initialized/progress`，记录 full-batch `shape` 与 full-batch `bytes`，dtype 也是 `torch.bfloat16` 口径；smoke verifier 又只核总 bytes=18953。必须改成与 B0 一样的 `shape_per_sample/dtype/bytes_per_sample` exact schema，并 hard-gate exact equality。
+
+同时把已有但当前未进入 PASS 的：
+- segment_present_equal
+- fresh_present_equal
+- token_detached
+- reset_all_mask_members_detached
+纳入 hard gate。
+
+### 2. HIGH — GPU 命令不 hermetic，唯一变量假设不成立
+
+当前命令没有显式清理多项会改变 recipe/runtime 的 ambient env。至少冻结/清理：
+
+`NPROC_PER_NODE=1`
+`PSM_R08_LOCAL_HISTORY_ENABLED=1`
+`PSM_R08_LOCAL_HISTORY_HORIZON=16`
+`PSM_LOCAL_DUMMY_ENABLED=0`
+`PSM_LOCAL_DUMMY_DIM=32`
+`PSM_LOCAL_DUMMY_MODE=normal`
+`PSM_R08_HISTORY_MODE=normal`
+`PSM_R09_A1_ENABLED=0`
+`PSM_R09_A1_PROBE_OUTPUT` unset
+`PSM_R08_GATE_B_CAPTURE_ONLY=0`
+`LIBERO_MAX_EPISODES` unset
+以及无关 R07/R08 probe/capture/ONLINE_VAE probe env。
+
+Gate-A rebuild：B1=0，B1 probe unset。
+B1 smoke：B1=1，并设置 exact B1 probe path。
+
+否则 stale A1/history/shuffle/capture env 可改变 optimizer、history、checkpoint callback 或数据范围。
+
+### 3. HIGH — runbook 强制的 D005 没有进入执行序列，smoke verifier 也没绑定训练 provenance
+
+需在运行前冻结 Gate-A rebuild + B1 smoke 两阶段 D005 sidecar，至少包含：
+- exact command
+- cwd
+- root/submodule/Gitlink
+- base/rebuilt checkpoint
+- LIBERO data/cache
+- GPU/world size/resource cap
+- output/log/probe/checkpoint
+- network=off
+- expected steps
+
+`verify_r09_b1_smoke.py` 必须消费/绑定 sidecar，hard-gate source/Gitlink、command hash、checkpoint/cache/GPU/output 等；当前仅检查 verifier-time tracked clean 不够。
+
+### 4. MEDIUM — no-online-VAE-fallback 尚未 machine-readable hard-gate
+
+GPU request 明确要求无 online VAE fallback，但 verifier 当前只解析 loss。请绑定 cache env / verify ratio=0，并检查 log/config 不出现 fallback。
+
+### 5. MEDIUM — Gate-A rebuild 可作为替代 warm-start，但需最小 precondition evidence
+
+无需重开 R08；但在 B1 smoke 使用前至少证明：
+- 2/2 finite
+- iter2 DCP complete
+- exact rebuilt path/source/env
+- no online VAE fallback
+- B1 model-only load 成功
+
+应称 `Gate-A-compatible rebuilt warm-start`，不要称历史 canonical Gate-A。
+
+Accepted：
+- B1-S CLOSED
+- new smoke verifier 的 DCP schema / frozen-common bitwise / finite-loss / gradient / CUDA 检查方向正确
+- B1-G probe 基本为观测型，无模型状态持久化
+- Gate-A rebuild concept accepted
+
+当前：
+- B1-G instrumentation = REVIEW / REQUEST_CHANGES
+- B1-G GPU = BLOCKED
+- eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、shared-MoT、Global/Agent/RL = BLOCKED
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_G_probe_gpu_request_63d279d_abe8272.md`
