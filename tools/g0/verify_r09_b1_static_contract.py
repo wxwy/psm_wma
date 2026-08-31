@@ -104,12 +104,29 @@ def main() -> None:
     )
     model.net.local_memory2llm = nn.Linear(32, 8).to(dtype=torch.bfloat16)
     model.net.local_memory_modality_embed = nn.Parameter(torch.zeros(8, dtype=torch.bfloat16))
+    all_net_parameters = dict(model.net.named_parameters())
+    expected_prefix_matches = {
+        key: sorted(name for name in all_net_parameters if key in name) for key in EXACT_OPTIMIZER_KEYS
+    }
     selected = _build_params_with_metadata(model, EXACT_OPTIMIZER_KEYS, {}, 1.0, False)
     selected_ids = {id(parameter) for parameter, _ in selected}
     selected_names = {name: parameter for name, parameter in model.net.named_parameters() if id(parameter) in selected_ids}
     optimizer = torch.optim.SGD([parameter for parameter, _ in selected], lr=0.1)
-    token_for_grad, _, _ = model.net.local_history_runtime.recurrent_backend.replay(evidence, mask)
-    (model.net.local_memory2llm(token_for_grad).sum() + model.net.local_memory_modality_embed.sum()).backward()
+    history_visual_summary = torch.randn(2, 5, 96)
+    local_history_action = torch.randn(2, 5, 10)
+    history_age_steps = torch.arange(5).expand(2, -1)
+    history_dt_s = torch.full((2, 5, 1), 0.1)
+    token_for_grad, present_for_grad, evidence_for_grad = model.net.local_history_runtime(
+        history_visual_summary=history_visual_summary,
+        local_history_action=local_history_action,
+        history_age_steps=history_age_steps,
+        history_dt_s=history_dt_s,
+        history_mask=mask,
+    )
+    (
+        model.net.local_memory2llm(token_for_grad).float().sum()
+        + model.net.local_memory_modality_embed.float().sum()
+    ).backward()
     prefix_matches = {key: sorted(name for name in selected_names if key in name) for key in EXACT_OPTIMIZER_KEYS}
     gradient_facts = {
         key: {
@@ -122,6 +139,15 @@ def main() -> None:
     backend_names = [name for name in selected_names if "local_history_runtime.recurrent_backend" in name]
     backend_parameter_ids = {id(parameter) for parameter in model.net.local_history_runtime.recurrent_backend.parameters()}
     backend_specific_state_empty = not any(id(parameter) in backend_parameter_ids for parameter in optimizer.state)
+    expected_selected_names = {name for names in expected_prefix_matches.values() for name in names}
+    encoder_grad_detached = not gradient_facts["local_history_runtime.encoder"]["present"] or not gradient_facts[
+        "local_history_runtime.encoder"
+    ]["nonzero"]
+    projection_grad_valid = all(gradient_facts["local_memory2llm"].values())
+    modality_embed_grad_valid = all(gradient_facts["local_memory_modality_embed"].values())
+    all_present_gradients_finite = all(
+        facts["finite"] for facts in gradient_facts.values() if facts["present"]
+    )
     command = {"argv": sys.argv, "cwd": str(Path.cwd()), "python": sys.executable, "output": str(args.output)}
     command_hash = hashlib.sha256(json.dumps(command, sort_keys=True).encode()).hexdigest()
     checks = {
@@ -138,11 +164,20 @@ def main() -> None:
         "normal_grad_pass": not token.requires_grad and bool(torch.isfinite(token).all()),
         "no_grad_fail_fast": no_grad_fail_fast and state_unchanged,
         "inference_mode_fail_fast": inference_mode_fail_fast and state_unchanged,
-        "outer_graph_detached": not token.requires_grad and all(not value.requires_grad for value in state),
+        "outer_graph_detached": not token.requires_grad
+        and all(not value.requires_grad for value in state)
+        and not token_for_grad.requires_grad
+        and bool(present_for_grad.all())
+        and evidence_for_grad.requires_grad,
         "exact_optimizer_keys": ttt_snapshot.get("optimizer_keys") == EXACT_OPTIMIZER_KEYS,
         "backend_matches_empty": not backend_names,
-        "selected_parameter_names_present": bool(selected_names),
+        "optimizer_match_sets_nonempty": all(expected_prefix_matches.values()),
+        "selected_parameter_names_exact_union": set(selected_names) == expected_selected_names,
         "backend_specific_state_empty": backend_specific_state_empty,
+        "encoder_ttt_gradient_detached": encoder_grad_detached,
+        "projection_gradient_present_finite_nonzero": projection_grad_valid,
+        "modality_embed_gradient_present_finite_nonzero": modality_embed_grad_valid,
+        "all_present_gradients_finite": all_present_gradients_finite,
     }
     status = all(checks.values()) and (not args.require_clean or (root_clean and submodule_clean and gitlink == submodule_revision))
     result = {
@@ -151,7 +186,7 @@ def main() -> None:
         "source": {"root_revision": _git(root, "rev-parse", "HEAD"), "submodule_revision": submodule_revision, "gitlink_revision": gitlink, "root_clean": root_clean, "submodule_clean": submodule_clean},
         "selector": {"field": "local_history_backend", "legal_values": ["recurrent", "ttt_fast_weight"], "default": "recurrent", "opt_in_env": "PSM_R09_B1_TTT_ENABLED"},
         "backend": {"parameter_count": 0, "state_dict_empty": True, "fresh_state_per_forward": checks["fresh_state_per_forward"], "no_grad_fail_fast": checks["no_grad_fail_fast"], "inference_mode_fail_fast": checks["inference_mode_fail_fast"], "normal_grad_pass": checks["normal_grad_pass"], "outer_graph_detached": checks["outer_graph_detached"]},
-        "optimizer": {"exact_keys": EXACT_OPTIMIZER_KEYS, "matched_parameter_names": prefix_matches, "selected_parameter_names": sorted(selected_names), "backend_matched_names": backend_names, "backend_specific_state_empty": backend_specific_state_empty, "gradient_facts": gradient_facts | {"encoder_ttt_path_nonzero_grad_required": False}},
+        "optimizer": {"exact_keys": EXACT_OPTIMIZER_KEYS, "expected_matched_parameter_names": expected_prefix_matches, "matched_parameter_names": prefix_matches, "selected_parameter_names": sorted(selected_names), "backend_matched_names": backend_names, "backend_specific_state_empty": backend_specific_state_empty, "gradient_facts": gradient_facts | {"encoder_ttt_path_nonzero_grad_required": False}},
         "recipe_snapshots": {"default": default_snapshot, "ttt": ttt_snapshot},
         "checks": checks,
         "command": {**command, "canonical_command_hash": command_hash, "tool_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},
