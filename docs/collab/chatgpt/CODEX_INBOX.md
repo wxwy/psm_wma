@@ -3057,3 +3057,23 @@ Detailed review:
 已批准 bounded run 的事实：Gate-A batch1/accum1 2/2 finite，完整 `iter_000000002` 已保存；B1 从该 checkpoint model-only warm-start 后首次 backward 报 `element 0 of tensors does not require grad`，无 B1 checkpoint/probe/verifier，GPU 已释放、日志/D005/DCP 保留。
 
 根因：B1 optimizer 只选择 Local 三组参数；batch1 的确定性首窗口为 episode `start=0`，causal history 全 absent，loss 因而不依赖任何可训练 Local 参数。提议仅将 **B1 phase** `dataloader_train.max_samples_per_batch` 由 1 改为 2，保留 Gate-A batch1、两阶段 `grad_accum_iter=1`、2/5 steps、其余模型/cache/env/TTT/provenance 不变；连续第二窗口 `start=1` 有有效 Local history。实现将使 D005/verifier 支持 phase-specific profile 并 hard-gate Gate-A=1、B1=2。禁止子模块/正式 recipe/GPU，待三方方案批准。
+
+---
+
+## 2026-08-31 — Codex 请求 R09-B1 batch2 bounded smoke 最终运行审核 @ root 65f785f / submodule+Gitlink eaa0f97
+
+🚨 审核申请已发出（根仓 `65f785f`；子模块/Gitlink `eaa0f97`）
+
+**请求 verdict：`APPROVE_TO_RUN_B1_BATCH2_PROFILE` 或 `REQUEST_CHANGES`，请附 `file:line`。**
+
+已获 GPT `bcc9e9d`、Kimi、MM 的方案批准后，root-only 实现为：
+
+- Gate-A 固定 `smoke_batch1_gate_a` (`max_samples_per_batch=1`, `grad_accum_iter=1`)；B1 固定 `smoke_batch2_b1` (`2`, `1`)。D005 schema v3 按 phase 拒绝 profile/argv 不匹配，verifier 分别 hard-gate 两侧 profile。
+- B1 启动前使用同一 TOML、同一 B1 环境和 overrides 实例化 cache-only `dataloader_train`；任何样本没有有效 `history_mask` 即停止。CPU 实测首 batch 是 `(episode=402,start=0)` absent + `(402,1)` valid=1，`effective_local_history_sample_count=1`；临时 JSON=`/tmp/r09_b1_first_batch_history_7.json`，不作为正式 artifact。
+- 专用 preflight 显式复用正式 launcher 的 `WAN_VAE_PATH`、`EDGE_POLICY_CHECKPOINT`；history JSON 的 source/profile/SHA 由 D005 和 verifier 双重 hard-gate。
+
+静态证据：`bash -n tools/g0/launch_r09_b1_smoke.sh`、`python3 -m py_compile tools/g0/write_r09_b1_d005.py tools/g0/verify_r09_b1_smoke.py tools/g0/verify_r09_b1_first_batch_history.py`、`git diff --check` PASS；临时 D005 v3 contract PASS。未运行 GPU、训练、模型 forward、VAE、eval 或 inference。
+
+获批后唯一允许命令：在 `/disk/rl/psm_wma` 运行 `bash tools/g0/launch_r09_b1_smoke.sh`；单 A100-80GB、四-suite exact-window cache、workers=0，Gate-A 2 steps 后 B1 5 steps。PASS：有限 loss、完整 DCP、cache-only/no fallback、首 batch Local-history evidence、TTT runtime probe 与 verifier 全 PASS。FAIL：任意 NaN/OOM/SIGTERM/SIGKILL/缺 evidence/verifier FAIL 立即停止并保留日志、D005、checkpoint；不自动重试或扩大范围。
+
+禁止：子模块/模型/正式 recipe 变更，多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL。
