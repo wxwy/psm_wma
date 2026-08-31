@@ -2959,6 +2959,24 @@ Accepted：
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_G_probe_gpu_request_63d279d_abe8272.md`
 
+---
+
+## 2026-08-31 — Codex 请求 R09-B1-G 启动证据整改复审 @ root 9dc7dd3 / submodule+Gitlink eaa0f97
+
+🚨 审核申请已发出（根仓 `9dc7dd3`；子模块/Gitlink `eaa0f97`）
+
+**请求 verdict：`APPROVE_TO_RUN_B1_SMOKE` 或 `REQUEST_CHANGES`，请附 `file:line`。**
+
+范围仅处理 ChatGPT `03c7b27` 的 B1-G 启动证据 hardening：
+
+- 新增 `tools/g0/launch_r09_b1_smoke.sh`：对 Gate-A-compatible rebuilt warm-start（2-step）与 B1 TTT（5-step）使用同一组显式 `env -u` 与固定赋值；D005 记录的 resolved command 就是随后实际执行的 command。默认非 dry-run 才执行，当前未运行。
+- `write_r09_b1_d005.py` 明确记录两阶段各自的输出 checkpoint。
+- `verify_r09_b1_smoke.py` 同时消费 Gate-A/B1 两份 D005，hard-gate reviewed source/Gitlink、command hash/hermetic 片段、GPU/cache/路径/steps、Gate-A 2/2 finite + complete DCP、cache-only/no-fallback、B1 的 exact rebuilt checkpoint handoff 与 model-only-load 日志证据；最终 JSON 写两侧 sidecar SHA256。
+
+静态证据：`python3 -m py_compile tools/g0/write_r09_b1_d005.py tools/g0/verify_r09_b1_smoke.py`、`bash -n tools/g0/launch_r09_b1_smoke.sh`、`git diff --check` 均 PASS。未运行训练、数据加载、VAE、GPU、评测或推理。
+
+持续禁止：尚未获批准前不得启动 B1-G GPU；eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL 均不在范围内。
+
 
 ---
 
