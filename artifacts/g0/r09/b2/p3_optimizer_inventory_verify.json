@@ -1,10 +1,32 @@
 {
+  "backend_checks": {
+    "recurrent": {
+      "dcp_inspected": false,
+      "group_metadata": true,
+      "group_parameter_metadata": true,
+      "groups_reverse_map": true,
+      "groups_unique": true,
+      "selected_equals_groups": true,
+      "ttt_dynamic_excluded": true,
+      "unique_model_names": true
+    },
+    "ttt_fast_weight": {
+      "dcp_inspected": false,
+      "group_metadata": true,
+      "group_parameter_metadata": true,
+      "groups_reverse_map": true,
+      "groups_unique": true,
+      "selected_equals_groups": true,
+      "ttt_dynamic_excluded": true,
+      "unique_model_names": true
+    }
+  },
   "checks": {
     "backend_records": true,
     "no_execution": true,
     "provenance": true,
     "schema": true
   },
-  "inventory_status": "BLOCKED",
-  "status": "PASS"
+  "record_valid": true,
+  "status": "BLOCKED"
 }
