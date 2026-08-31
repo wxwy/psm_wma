@@ -34,8 +34,9 @@ R09-B2 的唯一目的，是在同一训练数据和同一训练预算下比较 
 2. 两侧完整 resolved config diff，且 diff 只能落在 backend selector 与允许的 optimizer membership；
 3. 当前单卡/多卡可用 GPU、CPU RAM、水位和与其他作业的互斥状态；
 4. 两侧 launcher 的精确 argv、sanitized environment、D005 output/log/checkpoint 路径；
-5. 训练-only 限制：TTT 不得进入 `no_grad`、inference、closed-loop 或 evaluation；
-6. 100 optimizer steps 是 Runtime Plan v0.6 的最低连续稳定性阈值。实际 microbatch/world-size/时限须基于 P0 预算冻结，不能沿用 B1 的 2/5-step bounded profile。
+5. **数据流 identity**：生成并冻结一个有序 `(ordinal, suite, task_id, episode_index, start_frame)` window-ID manifest 与 SHA256；未来两侧运行必须消费同一 manifest，最终 verifier 比较其 hash、count 和每个 ordinal。仅相同 seed/config 不足以通过。
+6. **non-mutating capture**：Normal/Zero/Shuffle 只能从独立恢复的 checkpoint/RNG/dataloader cursor/Local state进行，或在严格 cloned input/state 上执行；capture 不得写 optimizer、模型参数、runtime state、全局 RNG 或 canonical train cursor。实现必须选择一种方案并产生可验证的 before/after hash。
+7. **optimizer-step 语义**：100 是完成的 optimizer update 数；P0 必须同时写明 global batch、microbatch、world size、grad accumulation 和每 step 样本数。实际 microbatch/world-size/时限须基于 P0 预算冻结，不能沿用 B1 的 2/5-step bounded profile。
 
 P0 PASS 只表示方案可审，不代表授权实现或训练。
 
@@ -65,6 +66,7 @@ PASS 必须同时满足：
 
 - 两侧达到相同冻结 step budget，连续 100 steps 无 NaN/Inf/OOM/SIGTERM/SIGKILL；
 - D005 与 resolved-config diff 证明仅存在允许差异；
+- window-ID manifest、每侧消费 manifest hash/count/ordinal 都逐项一致，且 capture 的 before/after model/optimizer/RNG/cursor/runtime hashes 不变；
 - cache-only，无 online-VAE fallback；
 - Local history Normal/Zero/Shuffle 的训练期 capture 满足 non-history invariants exact，并记录 future world 与 action sensitivity；
 - recurrent state 与 TTT five-member state 都通过各自 reset/isolation/detach 合同；
