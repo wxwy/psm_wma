@@ -3209,3 +3209,15 @@ Detailed review:
 - 事实：先前 DCP 被误作 `EDGE_POLICY_CHECKPOINT`，在 `AutoConfig` 处因缺 `model_type` 被正确拒绝；改为完整 Edge 包后，两后端均实际越过模型类型解析并到达真实 recipe optimizer 创建。该创建要求 CUDA，在 P3 已批准的 `CUDA_VISIBLE_DEVICES=''`、meta-only 限制下，两端均为 `RuntimeError: No CUDA GPUs are available`。
 - 已核验：无权重加载、无 checkpoint load、无 forward/backward、无 optimizer/scheduler step、GPU 0 MiB；verifier 的 schema/provenance/no_execution/backend_records 全为 true。禁止 synthetic optimizer、替代 selector 或阈值放宽。
 - 允许结论范围：仅关闭 P3 为诚实 `BLOCKED`，或另立且明确授权的 GPU-only P3 inventory Gate；不授权 B2-T、P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训、backend freeze、Global/Agent/RL。
+
+---
+
+## 2026-09-01 — R09-B2 P3 implementation整改复审请求
+
+请求 verdict：`APPROVE_TO_CLOSE_B2_P3_BLOCKED`、`APPROVE_GPU_ONLY_P3_INVENTORY_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `72cbf93`（实现 `abacb25`/`ceccab4`）；子模块/Gitlink `fe13304`。
+- 已关闭 GPT HIGH：缺失任一显式资产时 collector 先写 artifact 为 `BLOCKED`，不再抛出 `FileNotFoundError`；`dcp_state.inspected=false` 时 backend/P3 永不为 PASS；verifier 仅在 artifact 为 PASS 且完整 membership/DCP hard gate 都成立时返回 PASS，BLOCKED artifact 返回 `status=BLOCKED, record_valid=true`，不再以结构 PASS 误导。
+- membership 字段/检查：resolved selector 与实际 optimizer membership 分离；group 逐参数记录 stable name/numel/dtype/lr/weight_decay；PASS 强制唯一 model name、optimizer reverse map、重复拒绝、selected=groups、metadata 一致、TTT 五成员排除、DCP inspected。
+- 证据：`artifacts/g0/r09/b2/p3_optimizer_inventory.json` 与 verifier 均记录 `BLOCKED`，原因是同一实际 recipe 的 fused optimizer 在 `CUDA_VISIBLE_DEVICES=''` 下要求 CUDA；无权重/checkpoint、GPU=0、无 forward/backward/step。不得 synthetic fallback。
+- 范围不变：仅决定 P3 阻塞闭环或另立 GPU-only inventory Gate；不授权 B2-T、P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训或 backend freeze。
