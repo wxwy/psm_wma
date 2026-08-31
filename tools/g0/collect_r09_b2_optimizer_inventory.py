@@ -45,6 +45,27 @@ def write_result(path: Path, result: dict[str, object]) -> None:
     path.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
 
 
+def selected_names(record: dict[str, object], key: str) -> list[str]:
+    inventory = record.get("inventory", {})
+    return sorted(
+        row["name"]
+        for row in inventory.get("model_parameters", [])
+        if row.get(key)
+    )
+
+
+def matched_diff(backends: dict[str, dict[str, object]]) -> dict[str, object]:
+    recurrent = backends.get("recurrent", {})
+    ttt = backends.get("ttt_fast_weight", {})
+    return {
+        "allowed_backend_specific_prefixes": ["local_history_runtime.recurrent_backend."],
+        "recurrent_only_resolved_selector": sorted(set(selected_names(recurrent, "selected_by_resolved_selector")) - set(selected_names(ttt, "selected_by_resolved_selector"))),
+        "ttt_only_resolved_selector": sorted(set(selected_names(ttt, "selected_by_resolved_selector")) - set(selected_names(recurrent, "selected_by_resolved_selector"))),
+        "recurrent_only_optimizer": sorted(set(selected_names(recurrent, "selected_by_optimizer")) - set(selected_names(ttt, "selected_by_optimizer"))),
+        "ttt_only_optimizer": sorted(set(selected_names(ttt, "selected_by_optimizer")) - set(selected_names(recurrent, "selected_by_optimizer"))),
+    }
+
+
 def worker(root: Path, toml: Path, ttt_enabled: bool, wan_vae_path: str, edge_checkpoint_path: str, base_checkpoint_path: str, libero_root: str) -> dict[str, object]:
     """Run only in the isolated no-CUDA worker process."""
     import torch
@@ -138,6 +159,7 @@ def main() -> None:
         result.update({"status": "BLOCKED", "reason": f"missing required assets: {', '.join(missing)}"})
         for name in ("recurrent", "ttt_fast_weight"):
             result[name] = {"status": "BLOCKED", "reason": result["reason"]}
+        result["matched_diff"] = matched_diff({name: result[name] for name in ("recurrent", "ttt_fast_weight")})
         write_result(args.output, result)
         print(json.dumps({"status": result["status"]}))
         return
@@ -149,7 +171,9 @@ def main() -> None:
             result[name] = {"status": "BLOCKED", "reason": summarize_failure(completed.stderr, completed.stdout)}
         else:
             result[name] = json.loads(completed.stdout.splitlines()[-1])
-    result["status"] = "PASS" if all(result[name]["status"] == "PASS" for name in ("recurrent", "ttt_fast_weight")) else "BLOCKED"
+    backends = {name: result[name] for name in ("recurrent", "ttt_fast_weight")}
+    result["matched_diff"] = matched_diff(backends)
+    result["status"] = "PASS" if all(result[name]["status"] == "PASS" for name in backends) else "BLOCKED"
     write_result(args.output, result)
     print(json.dumps({"status": result["status"]}))
 
