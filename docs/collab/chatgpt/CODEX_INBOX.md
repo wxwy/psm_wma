@@ -3180,3 +3180,10 @@ Detailed review:
 已关闭上一轮三项 blocker：`R09B2NonMutatingCaptureCallback` 只经 `capture_with_isolation` 入口执行 before/after snapshot 并 fail-closed；TTT 严格采用冻结五成员 `W/pending_evidence/last_evidence/initialized/segment_progress` 并拒绝缺失/额外成员；snapshot 记录 CPU/CUDA RNG，callback 强制消费 immutable ordinal/epoch/microbatch。P1 wrapper 同步写入 microbatch。CPU artifact `artifacts/g0/r09/b2/p2_nonmutating_capture_cpu.json`=PASS，v3 verifier `/tmp/r09_b2_p2_verifier_v3.json`=PASS，七类刻意 mutation 均由实际 callback entrypoint 拒绝，且 artifact 记录 root/submodule/Gitlink/collector/verifier/callback SHA。定向 pytest=callback 15 项、manifest wrapper 5 项；`py_compile`、双仓 diff-check PASS。
 
 允许范围仍仅 P2 CPU-only callback/tests/verifier/artifact；禁止模型/VAE/optimizer 加载、GPU、训练、B2-T、P3-P5、eval/inference/closed-loop。
+
+### Closure verdict recorded
+
+- ChatGPT：`APPROVE_TO_CLOSE_B2_P2`，详见 `docs/collab/chatgpt/reviews/2026-08-31_R09_B2_P2_isolation_closure_1a7fd9d_1a45fab.md`。
+- Kimi：`APPROVE_TO_CLOSE_B2_P2`，独立复跑 callback 15 项、P1 wrapper 5 项与 v3 verifier，核对 SHA/Gitlink 一致。
+- MM：`APPROVE_TO_CLOSE_B2_P2`，独立核对真实 callback fail-closed、冻结 TTT schema、RNG/microbatch 与 v3 artifact。
+- 结论：P2 仅以 CPU-only non-mutating capture/isolation contract 关闭；P3-P5、B2-T、GPU/runtime capture、模型/训练/eval/inference/closed-loop 均未授权。
