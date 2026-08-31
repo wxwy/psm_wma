@@ -1,39 +1,40 @@
 {
   "schema_version": "r09_b2_p1_tiny_manifest_contract_v1",
-  "status": "PARTIAL_PASS_SUPERSEDED_REPEAT_SEMANTICS",
+  "status": "PASS_CPU_MANIFEST_REPLAY_PENDING_REVIEW",
   "source": {
-    "root_revision": "b71cfce",
-    "submodule_revision": "13c854c",
-    "gitlink_revision": "eaa0f97"
+    "root_revision": "1f4890b",
+    "submodule_revision": "db086ea",
+    "gitlink_revision": "db086ea",
+    "working_tree_dirty": true
   },
   "tiny_cpu_build": {
     "optimizer_updates": 1,
-    "grad_accum": 1,
-    "max_samples_per_batch": 2,
-    "record_count": 2,
+    "grad_accum": 4,
+    "max_samples_per_batch": 1,
+    "record_count": 4,
     "verifier_status": "PASS",
     "cache_window_per_record": true,
-    "wrapper_pytest": "2 passed in 27.00s",
+    "wrapper_pytest": "4 passed in 34.32s",
     "real_dataset_replay": {
-      "ordinal": 0,
-      "epoch": 0,
-      "dataset_flat_index": 42463,
-      "task_index": 1,
-      "episode_index": 402,
-      "start_frame": 0,
-      "cache_hit": true
-    }
+      "all_suites": true,
+      "global_ordinals": [0, 1, 2, 3],
+      "cache_hit": true,
+      "video_latent": true
+    },
+    "verifier_checks": 14,
+    "manifest_output": "/tmp/r09_b2_p1_tiny_suites_v3"
   },
   "negative_cases": {
-    "mutated_ordinal": "FAIL",
-    "mutated_suite_with_rehashed_records": "FAIL",
-    "mutated_task_index_with_rehashed_records": "FAIL",
-    "mutated_dataset_flat_index_with_rehashed_records": "FAIL",
-    "world_size_or_worker_mismatch": "FAIL"
+    "swapped_or_missing_or_duplicate_ordinal": "FAIL",
+    "mutated_suite_task_episode_start_or_flat_index": "FAIL",
+    "missing_cache_window": "FAIL",
+    "source_hash": "FAIL",
+    "world_size_or_worker_mismatch": "FAIL",
+    "record_count_mismatch": "FAIL"
   },
   "limitations": [
     "The earlier full-budget repeat rejection was superseded: baseline repeats windows across epochs by design; epoch is now explicit in records.",
-    "This is CPU-only manifest evidence, not B2-T training evidence.",
+    "This is CPU-only manifest evidence, not B2-T training evidence; config composition was stopped because importing it initialized CUDA.",
     "P2-P5 remain blocked and unimplemented."
   ]
 }

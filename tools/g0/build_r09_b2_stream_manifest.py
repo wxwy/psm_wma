@@ -118,6 +118,16 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     records_path = args.output_dir / "records.jsonl"
     records_path.write_text("".join(json.dumps(record, sort_keys=True) + "\n" for record in records), encoding="utf-8")
+    suite_records_dir = args.output_dir / "suites"
+    suite_records_dir.mkdir(exist_ok=True)
+    suite_record_sha256 = {}
+    for suite in SUITES:
+        suite_path = suite_records_dir / f"{suite}.jsonl"
+        suite_path.write_text(
+            "".join(json.dumps(record, sort_keys=True) + "\n" for record in records if record["suite"] == suite),
+            encoding="utf-8",
+        )
+        suite_record_sha256[suite] = sha256(suite_path)
     header = {"schema_version": "r09_b2_stream_manifest_v1", "record_count": len(records),
               "records_sha256": sha256(records_path), "suite_order": list(SUITES), "shuffle_seed": args.shuffle_seed,
               "world_size": 1, "num_workers": 0, "optimizer_updates": args.optimizer_updates,
@@ -126,9 +136,13 @@ def main() -> None:
                          "submodule_revision": git(root / "cosmos-framework", "rev-parse", "HEAD"),
                          "gitlink_revision": git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2]},
               "files": {"builder_sha256": sha256(Path(__file__).resolve()),
+                        "verifier_sha256": sha256(Path(__file__).with_name("verify_r09_b2_stream_manifest.py")),
                         "dataset_source_sha256": sha256(root / "cosmos-framework/cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py"),
                         "wrapper_source_sha256": sha256(root / "cosmos-framework/cosmos_framework/data/generator/action/datasets/action_sft_dataset.py"),
-                        "cache_manifests": {suite: sha256(cache_root / suite / "dataset_manifest.json") for suite in SUITES}}}
+                        "recipe_toml_sha256": sha256(root / "cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml"),
+                        "dataset_info_sha256": {suite: sha256(libero_root / suite / "meta/info.json") for suite in SUITES},
+                        "cache_manifests": {suite: sha256(cache_root / suite / "dataset_manifest.json") for suite in SUITES},
+                        "suite_record_sha256": suite_record_sha256}}
     (args.output_dir / "header.json").write_text(json.dumps(header, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(json.dumps({"status": "PASS", "record_count": len(records), "records_sha256": header["records_sha256"]}))
 

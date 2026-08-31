@@ -30,11 +30,13 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--cache-root", type=Path)
     parser.add_argument("--libero-root", type=Path)
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     args = parser.parse_args()
     header = json.loads(args.header.read_text())
     records = [json.loads(line) for line in args.records.read_text().splitlines() if line]
     expected_count = header.get("optimizer_updates", 0) * header.get("grad_accum", 0) * header.get("max_samples_per_batch", 0)
     suites = header.get("suite_order", [])
+    root = args.root.resolve()
     required = {"ordinal", "epoch", "optimizer_update", "microbatch", "sample_in_microbatch", "suite", "task_index", "episode_index", "start_frame", "dataset_flat_index"}
     arithmetic = all(
         set(record) == required
@@ -62,6 +64,35 @@ def main() -> None:
             if not isinstance(item.get("windows", {}).get(str(record["start_frame"])), dict):
                 cache_ok = False
                 break
+    suite_records_ok = True
+    suite_hashes = header.get("files", {}).get("suite_record_sha256", {})
+    suite_records_dir = args.records.parent / "suites"
+    suite_records: list[dict] = []
+    for suite in suites:
+        path = suite_records_dir / f"{suite}.jsonl"
+        if not path.is_file() or suite_hashes.get(suite) != sha256(path):
+            suite_records_ok = False
+            break
+        suite_records.extend(json.loads(line) for line in path.read_text().splitlines() if line)
+    if suite_records_ok:
+        suite_records_ok = (
+            all(record.get("suite") in suites for record in suite_records)
+            and sorted(suite_records, key=lambda record: record["ordinal"]) == records
+        )
+    files = header.get("files", {})
+    source_hashes_ok = {
+        "builder_sha256": sha256(Path(__file__).with_name("build_r09_b2_stream_manifest.py")),
+        "verifier_sha256": sha256(Path(__file__).resolve()),
+        "dataset_source_sha256": sha256(root / "cosmos-framework/cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py"),
+        "wrapper_source_sha256": sha256(root / "cosmos-framework/cosmos_framework/data/generator/action/datasets/action_sft_dataset.py"),
+        "recipe_toml_sha256": sha256(root / "cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml"),
+    }
+    source_hashes_ok = all(files.get(key) == value for key, value in source_hashes_ok.items())
+    if args.libero_root is not None:
+        source_hashes_ok = source_hashes_ok and all(
+            files.get("dataset_info_sha256", {}).get(suite) == sha256(args.libero_root / suite / "meta/info.json")
+            for suite in suites
+        )
     index_ok = True
     if args.libero_root is not None:
         datasets = {
@@ -85,7 +116,9 @@ def main() -> None:
         "flat_index_present": all(isinstance(record.get("dataset_flat_index"), int) for record in records),
         "single_process": header.get("world_size") == 1 and header.get("num_workers") == 0,
         "source_complete": set(header.get("source", {})) == {"root_revision", "submodule_revision", "gitlink_revision"},
-        "provenance_complete": {"builder_sha256", "dataset_source_sha256", "wrapper_source_sha256", "cache_manifests"} <= set(header.get("files", {})),
+        "provenance_complete": {"builder_sha256", "verifier_sha256", "dataset_source_sha256", "wrapper_source_sha256", "recipe_toml_sha256", "dataset_info_sha256", "cache_manifests", "suite_record_sha256"} <= set(files),
+        "source_hashes_match": source_hashes_ok,
+        "suite_record_partition": suite_records_ok,
         "cache_window_per_record": cache_ok,
         "flat_index_bijective": index_ok,
     }
