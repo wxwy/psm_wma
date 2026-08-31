@@ -20,7 +20,7 @@
 
   - P1 设计草案：`docs/build/PSM-WMA_R09_B2_P1_stream_manifest_design_v0.1_2026-08-31.md`。基于现有 flat idx→window、episode-block shuffle 与单卡 suite round-robin 的源码审计，要求 future B2 专用路径以全局 `(ordinal, suite, task_id, episode_index, start_frame)` JSONL 强制取样；冻结 world_size=1/num_workers=0，逐项 observed replay 比对，禁止随机重采样。仅文档，未提交。
 
-  - P1 已进入 REVIEW：子模块 manifest wrapper 保留全局 ordinal（各 suite 不再错误要求从零连续）、拒绝 worker>0 并逐条核验 `task_index/episode_index/start_frame`；配方仅在 `PSM_R09_B2_STREAM_MANIFEST_ROOT` 显式设置时选择子清单、强制 workers=0 与有序 delivery。root builder 输出全局和四 suite 子清单，verifier 复算 builder/verifier/dataset/wrapper/recipe/info SHA，逐条 cache 与 flat-index 双向映射。CPU 证据：四 suite 一条实际 cache-only replay、14 项正向 verifier PASS、pytest 4 passed；11 类篡改均 FAIL。未加载模型/VAE/optimizer，未运行训练；一次 config compose 因 CUDA 初始化被主动停止。待提交后三方 closure 审核。
+  - P1 已 DONE：GPT review=`docs/collab/chatgpt/reviews/2026-08-31_R09_B2_P1_closure_4f687fc_e424e24.md`，Kimi/MM 均 `APPROVE_TO_CLOSE_B2_P1`。固定实现根=`c2285bf`、子模块/Gitlink=`e424e24`；evidence=`artifacts/g0/r09/b2/p1_tiny_manifest_contract.json`，四 suite CPU requested→observed replay 4/4 exact、verifier 14/14 PASS、篡改负例均 FAIL。只关闭 stream identity；P2-P5、B2-T、GPU、模型/VAE/optimizer、训练/eval/inference 继续禁止。
 
   - 方案已三方批准：ChatGPT review=`docs/collab/chatgpt/reviews/2026-08-31_R09_B2_P0_plan_95aa016_eaa0f97.md`、Kimi、MM 均 `APPROVE_TO_PLAN_B2_P0`。仅授权 root 新增 P0 只读资产/config/budget 审计与 JSON verifier；必须 hard-gate exact data-stream identity、non-mutating intervention capture、optimizer-step 语义、explicit parameter/optimizer-state membership 和具体资源 provenance。预计新增 `tools/g0/collect_r09_b2_preflight.py`、`tools/g0/verify_r09_b2_preflight.py`、`artifacts/g0/r09/b2/matched_training_preflight_p0.json`；不运行训练/评测/推理或改子模块。提交：未提交。
 
