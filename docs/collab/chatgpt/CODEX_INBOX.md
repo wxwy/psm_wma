@@ -3197,3 +3197,15 @@ Detailed review:
 文档：`docs/build/PSM-WMA_R09_B2_P3_optimizer_inventory_design_v0.1_2026-09-01.md`。P3 只读导出 recurrent 与 ttt_fast_weight 的实际 model parameter、optimizer param-group、optimizer-state 与 DCP-state membership；所有 optimizer object 必须反向映射到实际 model parameter，TTT B0 五成员不得进入 parameter/optimizer/DCP persistent state。完整构造若不能满足 CPU/meta-safe、无权重/无 checkpoint/无 forward-backward-step 的限制，唯一合法结果为 `BLOCKED`，禁止 synthetic fallback PASS。
 
 允许范围：获批后仅 collector/verifier、CPU/meta-safe 定向 tests 和 artifact。禁止模型/checkpoint/VAE/tokenizer/data 加载、GPU、forward/backward/optimizer step、训练、B2-T、P4/P5、eval/inference/closed-loop/SR/backend freeze。
+
+---
+
+## 2026-09-01 — R09-B2 P3 optimizer inventory BLOCKED closure 审核请求
+
+请求 verdict：`APPROVE_TO_CLOSE_B2_P3_BLOCKED`、`APPROVE_GPU_ONLY_P3_INVENTORY_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `e79d9fa8a6413a6ce799b1f08ae842eb1555ef69`（collector 实现=`87453e7e0d7e537c1f43f8bbb9f96058821d923e`）；子模块/Gitlink `fe133043e4afe5f79e586af42b849c44fcf46757`。
+- 证据：`artifacts/g0/r09/b2/p3_optimizer_inventory.json`（`BLOCKED`）与 `artifacts/g0/r09/b2/p3_optimizer_inventory_verify.json`（结构 `PASS`）。完整 Edge tokenizer/inference 包、Wan VAE 与 DCP 均为本地路径；Edge 包复制后逐文件 SHA-256 清单与源一致。
+- 事实：先前 DCP 被误作 `EDGE_POLICY_CHECKPOINT`，在 `AutoConfig` 处因缺 `model_type` 被正确拒绝；改为完整 Edge 包后，两后端均实际越过模型类型解析并到达真实 recipe optimizer 创建。该创建要求 CUDA，在 P3 已批准的 `CUDA_VISIBLE_DEVICES=''`、meta-only 限制下，两端均为 `RuntimeError: No CUDA GPUs are available`。
+- 已核验：无权重加载、无 checkpoint load、无 forward/backward、无 optimizer/scheduler step、GPU 0 MiB；verifier 的 schema/provenance/no_execution/backend_records 全为 true。禁止 synthetic optimizer、替代 selector 或阈值放宽。
+- 允许结论范围：仅关闭 P3 为诚实 `BLOCKED`，或另立且明确授权的 GPU-only P3 inventory Gate；不授权 B2-T、P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训、backend freeze、Global/Agent/RL。
