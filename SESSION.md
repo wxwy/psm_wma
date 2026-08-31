@@ -14,7 +14,11 @@
 
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 
-- G0-R09-B2-MATCHED-PREFLIGHT（2026-08-31，REVIEW）：用户将后续执行交由 Codex，Kimi 转为独立审核。P0 只读采集器/验收器已新增：`tools/g0/collect_r09_b2_preflight.py`、`tools/g0/verify_r09_b2_preflight.py`，结果为 `artifacts/g0/r09/b2/matched_training_preflight_p0.json`=`BLOCKED`、verifier=`PASS`（仅验证阻塞记录诚实完整）。两侧 selected config 除 backend/selector 外一致：bf16、seed=42、batch=128、accum=16、max_iter=5000；本地 A100-80GB/128 CPU/约900GB 可用内存及 localdisk 模型路径均已记录。硬阻塞为强制 window-ID manifest、non-mutating capture、实际 parameter/optimizer-state membership、精确 D005/100-update/world-size 预算、完整 resolved-config diff。未加载模型/数据批次，未运行训练、评测或推理，未改 `cosmos-framework`。下一步：提交三方审核，仅请求确认 `BLOCKED` 收口与后续独立实现范围；禁止 B2-T。提交：未提交。
+- G0-R09-B2-MATCHED-PREFLIGHT（2026-08-31，BLOCKED）：GPT review=`docs/collab/chatgpt/reviews/2026-08-31_R09_B2_P0_blocked_closure_0c62e5d_eaa0f97.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P0_BLOCKED`。P0 只读采集器/验收器：`tools/g0/collect_r09_b2_preflight.py`、`tools/g0/verify_r09_b2_preflight.py`，结果为 `artifacts/g0/r09/b2/matched_training_preflight_p0.json`=`BLOCKED`、verifier=`PASS`（仅验证阻塞记录诚实完整）。两侧 selected config 除 backend/selector 外一致：bf16、seed=42、batch=128、accum=16、max_iter=5000；本地 A100-80GB/128 CPU/约900GB 可用内存及 localdisk 模型路径均已记录。五项硬阻塞为强制 window-ID manifest、non-mutating capture、实际 parameter/optimizer-state membership、精确 D005/100-update/world-size 预算、完整 resolved-config diff。未加载模型/数据批次，未运行训练、评测或推理，未改 `cosmos-framework`。B2-T 继续禁止。
+
+  - 后续已拆为 B2-P1..P5；当前仅认领 P1 stream-manifest 的方案/静态设计，不改子模块、不加载模型、不运行训练。P1 方案经三方审核后才可实现；P2-P5 维持 TODO。提交：未提交。
+
+  - P1 设计草案：`docs/build/PSM-WMA_R09_B2_P1_stream_manifest_design_v0.1_2026-08-31.md`。基于现有 flat idx→window、episode-block shuffle 与单卡 suite round-robin 的源码审计，要求 future B2 专用路径以全局 `(ordinal, suite, task_id, episode_index, start_frame)` JSONL 强制取样；冻结 world_size=1/num_workers=0，逐项 observed replay 比对，禁止随机重采样。仅文档，未提交。
 
   - 方案已三方批准：ChatGPT review=`docs/collab/chatgpt/reviews/2026-08-31_R09_B2_P0_plan_95aa016_eaa0f97.md`、Kimi、MM 均 `APPROVE_TO_PLAN_B2_P0`。仅授权 root 新增 P0 只读资产/config/budget 审计与 JSON verifier；必须 hard-gate exact data-stream identity、non-mutating intervention capture、optimizer-step 语义、explicit parameter/optimizer-state membership 和具体资源 provenance。预计新增 `tools/g0/collect_r09_b2_preflight.py`、`tools/g0/verify_r09_b2_preflight.py`、`artifacts/g0/r09/b2/matched_training_preflight_p0.json`；不运行训练/评测/推理或改子模块。提交：未提交。
 

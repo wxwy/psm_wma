@@ -3118,3 +3118,10 @@ Detailed review:
 - 已实测事实：本地 DCP/Edge/Wan 资产存在，四 suite cache manifest 均 SHA256 绑定；A100-80GB 空闲、128 CPU、约 900GB 可用内存。两侧 selected config 的共同值为 bf16、trainer seed=42、microbatch=128、grad accumulation=16、max_iter=5000；selected-field diff 仅 `local_history_backend` 与 `keys_to_select`，TTT 三 selector 精确匹配 B1 合同。
 - P0 明确保留的五项硬阻塞：完整 resolved-config machine diff、可强制消费的有序 window-ID manifest、non-mutating Normal/Zero/Shuffle capture、实际 parameter/optimizer-state membership、冻结 exact argv/sanitized env/world size/100 optimizer-update D005。
 - 允许范围：仅审核本 `BLOCKED` P0 结论与后续需另立实现范围；不授权 CPU/GPU training、模型加载/forward、评测、推理、closed-loop、SR、多卡、长训、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+### Closure verdict recorded
+
+- ChatGPT：`APPROVE_TO_CLOSE_B2_P0_BLOCKED`，详见 `docs/collab/chatgpt/reviews/2026-08-31_R09_B2_P0_blocked_closure_0c62e5d_eaa0f97.md`。
+- Kimi：`APPROVE_TO_CLOSE_B2_P0_BLOCKED`，复核 collector/verifier、artifact、selected config/资产/Gitlink 与五项硬阻塞边界。
+- MM：`APPROVE_TO_CLOSE_B2_P0_BLOCKED`，复核 provenance、root-only 范围、verifier 语义与后续五项解除顺序。
+- 结论：P0 关闭为 `BLOCKED`，不授权 B2-T。后续拆为独立 B2-P1..P5 任务；当前仅可开始 P1 window-ID manifest 的方案审核。
