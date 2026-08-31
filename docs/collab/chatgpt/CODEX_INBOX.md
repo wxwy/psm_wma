@@ -2754,6 +2754,22 @@ Detailed review:
 
 上述 canonical artifact 的实际检查数为 **23/23**（不是 22/22）；`jq '.checks | length' artifacts/g0/r09/b1/static_contract.json` 可复核。MM、Kimi 已分别独立复核，Kimi 的独立 `--require-clean` 复跑也为 PASS；本更正不改变 verifier、artifact、范围或审批请求。
 
+---
+
+## 2026-08-31 — Codex 请求 R09-B1-G TTT runtime probe 静态审查 @ root 2937a4b / submodule+Gitlink abe8272
+
+**请求 verdict：`APPROVE_B1_G_INSTRUMENTATION` 或 `REQUEST_CHANGES`（请附 file:line）。本申请不是 GPU 运行申请。**
+
+用户已授权单卡 80G，但 B1-G 仍须三方审批精确命令；当前环境没有 `nvidia-smi`，且未发现 Gate-A `iter_000000002` model-only warm-start checkpoint，因此未启动 GPU、训练、评测或推理。
+
+本轮最小改动（submodule `abe8272`，已推送）：
+
+- 新增 `callbacks/r09_b1_runtime_probe.py`，仅在 `PSM_R09_B1_PROBE_OUTPUT` 存在且 `PSM_R09_B1_TTT_ENABLED=1` 时注册；记录 TTT 五成员 state 形状/dtype/bytes、split/fresh/reset/detach、实际 optimizer membership、encoder 无 TTT 回传、两项 Local adapter 梯度和 CUDA peak，不保存 fast state。
+- recipe 对 probe env 作 fail-fast，避免错误附着到 recurrent/default 路径。
+- 新增 `r09_b1_runtime_probe_test.py`；CPU `py_compile` + 三条定向 pytest 为 `3 passed`（仅既有 unknown L0 mark warnings）。
+
+请重点审查：state contract 是否与 B0（W/pending/last/initialized/progress，生产尺寸应为 18,953 B/sample）一致；optimizer 三 key 和 encoder detach 的实际记录是否正确；callback 是否完全观测型、不改变训练数值。持续禁止 B1-G GPU、eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、shared-MoT、Global/Agent/RL，直至另发精确运行申请。
+
 
 ---
 
