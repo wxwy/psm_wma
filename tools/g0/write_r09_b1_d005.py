@@ -7,11 +7,22 @@ import argparse
 import hashlib
 import json
 import subprocess
+import time
 from pathlib import Path
 
 
 def _git(path: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(path), *args], text=True).strip()
+
+
+def _profile_overrides_exact(command_argv: list[str], max_samples: int, grad_accum: int) -> bool:
+    prefix = "EXTRA_TAIL_OVERRIDES="
+    values = [item.removeprefix(prefix).split() for item in command_argv if item.startswith(prefix)]
+    expected = (
+        f"dataloader_train.max_samples_per_batch={max_samples}",
+        f"trainer.grad_accum_iter={grad_accum}",
+    )
+    return len(values) == 1 and all(values[0].count(item) == 1 for item in expected)
 
 
 def main() -> None:
@@ -32,12 +43,23 @@ def main() -> None:
     parser.add_argument("--gpu-name", required=True)
     parser.add_argument("--gpu-total-memory-mib", type=int, required=True)
     parser.add_argument("--path", required=True)
+    parser.add_argument("--profile", required=True)
+    parser.add_argument("--profile-max-samples", type=int, required=True)
+    parser.add_argument("--profile-grad-accum", type=int, required=True)
     args = parser.parse_args()
     command_argv = json.loads(args.command_argv_json)
     if not isinstance(command_argv, list) or not all(isinstance(item, str) for item in command_argv):
         raise ValueError("--command-argv-json must be a JSON string array.")
     root = args.root.resolve()
     submodule = root / "cosmos-framework"
+    if args.profile != "smoke_batch1" or args.profile_max_samples != 1 or args.profile_grad_accum != 1:
+        raise ValueError("R09-B1 bounded smoke requires profile=smoke_batch1, max_samples=1, grad_accum=1.")
+    if not _profile_overrides_exact(command_argv, args.profile_max_samples, args.profile_grad_accum):
+        raise ValueError("--command-argv-json must contain the bounded smoke profile overrides exactly once.")
+    dmesg = subprocess.run(
+        ["dmesg", "--color=never"], text=True, capture_output=True, check=False
+    )
+    dmesg_tail = dmesg.stdout.splitlines()[-40:] if dmesg.returncode == 0 else []
     environment = {
         "PATH": args.path, "CUDA_VISIBLE_DEVICES": "0", "NPROC_PER_NODE": "1", "PSM_R08_LOCAL_HISTORY_ENABLED": "1", "PSM_R08_LOCAL_HISTORY_HORIZON": "16",
         "PSM_LOCAL_DUMMY_ENABLED": "0", "PSM_LOCAL_DUMMY_DIM": "32", "PSM_LOCAL_DUMMY_MODE": "normal",
@@ -51,7 +73,7 @@ def main() -> None:
         "ONLINE_VAE_PROBE_OUTPUT", "LIBERO_MAX_EPISODES",
     ]
     payload = {
-        "schema_version": "r09_b1_d005_v1", "phase": args.phase, "network": False, "world_size": 1,
+        "schema_version": "r09_b1_d005_v2", "phase": args.phase, "network": False, "world_size": 1,
         "source": {"root_revision": _git(root, "rev-parse", "HEAD"), "submodule_revision": _git(submodule, "rev-parse", "HEAD"), "gitlink_revision": _git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2]},
         "cwd": str(root / "cosmos-framework"), "gpu": {"index": 0, "name": args.gpu_name, "total_memory_mib": args.gpu_total_memory_mib, "cap": "A100-80GB"}, "environment": environment, "unset_environment": unset_environment,
         "input": {"checkpoint": args.checkpoint, "libero_root": args.libero_root, "cache_root": args.cache_root},
@@ -62,6 +84,18 @@ def main() -> None:
             "probe": args.probe,
         },
         "expected_steps": args.expected_steps,
+        "smoke_profile": {
+            "name": args.profile,
+            "bounded_noncanonical": True,
+            "dataloader_train.max_samples_per_batch": args.profile_max_samples,
+            "trainer.grad_accum_iter": args.profile_grad_accum,
+        },
+        "launch_diagnostics": {
+            "started_unix": time.time(),
+            "dmesg_returncode": dmesg.returncode,
+            "dmesg_tail": dmesg_tail,
+            "dmesg_stderr": dmesg.stderr.strip(),
+        },
         "command": args.command,
         "command_argv": command_argv,
     }

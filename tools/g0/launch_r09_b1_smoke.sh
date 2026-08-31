@@ -19,6 +19,9 @@ B1_LOG="$B1_ROOT/logs/action_policy_libero_edge_all_sft.log"
 GATE_A_SIDECAR="$ARTIFACT_ROOT/gate_a_rebuild_d005.json"
 B1_SIDECAR="$ARTIFACT_ROOT/b1_smoke_d005.json"
 B1_PROBE="$ARTIFACT_ROOT/runtime_probe.json"
+SMOKE_PROFILE="smoke_batch1"
+SMOKE_PROFILE_MAX_SAMPLES=1
+SMOKE_PROFILE_GRAD_ACCUM=1
 GPU_NAME="$(/usr/bin/nvidia-smi --query-gpu=name --format=csv,noheader | /usr/bin/head -n 1)"
 GPU_TOTAL_MEMORY_MIB="$(/usr/bin/nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | /usr/bin/head -n 1 | /usr/bin/tr -d ' ')"
 [[ "$GPU_NAME" == *"A100"* && "$GPU_TOTAL_MEMORY_MIB" -ge 80000 ]] || { echo "需要 A100-80GB，实际为 $GPU_NAME / ${GPU_TOTAL_MEMORY_MIB}MiB" >&2; exit 1; }
@@ -32,7 +35,7 @@ readonly -a UNSET_ENV=(
 run_phase() {
     local phase="$1" input_checkpoint="$2" output_root="$3" output_checkpoint="$4"
     local log_file="$5" sidecar="$6" expected_steps="$7" b1_enabled="$8" probe="$9"
-    local overrides="trainer.max_iter=${expected_steps} trainer.logging_iter=1 checkpoint.save_iter=${expected_steps} checkpoint.load_training_state=False"
+    local overrides="trainer.max_iter=${expected_steps} trainer.logging_iter=1 checkpoint.save_iter=${expected_steps} checkpoint.load_training_state=False dataloader_train.max_samples_per_batch=${SMOKE_PROFILE_MAX_SAMPLES} trainer.grad_accum_iter=${SMOKE_PROFILE_GRAD_ACCUM}"
     local -a command=(env)
     local name
     for name in "${UNSET_ENV[@]}"; do command+=(-u "$name"); done
@@ -55,7 +58,8 @@ run_phase() {
         --root "$ROOT" --phase "$phase" --output "$sidecar" --command "$resolved_command" --command-argv-json "$command_argv_json" \
         --checkpoint "$input_checkpoint" --libero-root "$LIBERO_ROOT" --cache-root "$LIBERO_LATENT_CACHE_ROOT" \
         --run-root "$output_root" --log "$log_file" --output-checkpoint "$output_checkpoint" \
-        --probe "$probe" --expected-steps "$expected_steps" --gpu-name "$GPU_NAME" --gpu-total-memory-mib "$GPU_TOTAL_MEMORY_MIB" --path "$VENV_BIN:$PATH"
+        --probe "$probe" --expected-steps "$expected_steps" --gpu-name "$GPU_NAME" --gpu-total-memory-mib "$GPU_TOTAL_MEMORY_MIB" --path "$VENV_BIN:$PATH" \
+        --profile "$SMOKE_PROFILE" --profile-max-samples "$SMOKE_PROFILE_MAX_SAMPLES" --profile-grad-accum "$SMOKE_PROFILE_GRAD_ACCUM"
     printf 'R09_B1_RESOLVED_COMMAND phase=%s: %s\n' "$phase" "$resolved_command"
     if [[ "${DRY_RUN:-0}" == "1" ]]; then return; fi
     (cd "$FRAMEWORK" && "${command[@]}")
