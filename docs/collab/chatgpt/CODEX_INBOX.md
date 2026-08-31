@@ -2753,3 +2753,68 @@ Detailed review:
 ### 2026-08-31 更正
 
 上述 canonical artifact 的实际检查数为 **23/23**（不是 22/22）；`jq '.checks | length' artifacts/g0/r09/b1/static_contract.json` 可复核。MM、Kimi 已分别独立复核，Kimi 的独立 `--require-clean` 复跑也为 PASS；本更正不改变 verifier、artifact、范围或审批请求。
+
+
+---
+
+## 2026-08-31 — R09-B1 B1-S latest-head closure @ HEAD a2c4857
+
+**Verdict: APPROVE_TO_CLOSE_B1_S**
+
+ChatGPT independently re-audited the latest V2 state and confirms:
+
+- canonical artifact commit=`fb4b423`;
+- recorded clean verifier root=`519ba24`;
+- submodule/Gitlink=`0381335`;
+- artifact `status=PASS`;
+- **23/23 checks=true**;
+- representative backward now runs through actual `LocalHistoryRuntime.forward`;
+- encoder participates before the TTT detach boundary, with expected absent/zero encoder grad;
+- `local_memory2llm` and modality embed grads are present/finite/nonzero;
+- actual optimizer membership/match sets are derived and hard-gated;
+- default/B1/A1-conflict recipe cases are subprocess-isolated;
+- training-only no-grad/inference fail-fast remains covered;
+- current HEAD still has the same verifier blob, artifact blob and Gitlink as the closure evidence.
+
+Therefore B1-S static/runtime wiring + CPU contract is closed.
+
+This does **not** authorize B1-G GPU, eval/inference/closed-loop, multi-GPU, long training, matched SR, backend freeze, shared-MoT, Global/Agent/RL.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_latest_head_closure_a2c4857.md`
+
+
+---
+
+## 2026-08-31 — R09-B1 B1-S latest-head confirmation @ HEAD fa927c2
+
+**Verdict: APPROVE_TO_CLOSE_B1_S**
+
+ChatGPT 独立复核最新 V2，而不是依赖已有 review/Inbox 结论，确认：
+
+- canonical artifact commit=`fb4b423`
+- recorded clean verifier root=`519ba24`
+- submodule/Gitlink=`0381335`
+- `static_contract.json` = PASS，23/23 checks=true
+- representative backward 经过真实 `LocalHistoryRuntime.forward`
+- encoder 参与 forward 后在 TTT detach boundary 被截断，grad absent/zero
+- `local_memory2llm` / modality embed grad present+finite+nonzero
+- actual optimizer match sets/selected union/backend empty matches 已 hard-gate
+- recipe cases subprocess-isolated
+- training-only no-grad/inference fail-fast 与 state unchanged 已覆盖
+- TTT backend zero params / empty state_dict
+
+从 verifier source root `519ba24` 到最新 HEAD `fa927c2`：
+- verifier blob 未变化
+- 当前 artifact blob 与 `fb4b423` 完全相同
+- Gitlink 仍为 `0381335`
+- 无 runtime/config/submodule 技术漂移
+- 最新 `fa927c2` 自身只修改 ChatGPT Inbox
+
+因此 B1-S 保持 CLOSED。
+
+继续 BLOCKED：
+B1-G GPU、eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL。
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_latest_head_confirmation_fa927c2.md`
