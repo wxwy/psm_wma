@@ -1,0 +1,16 @@
+{
+  "schema_version": "r09_b2_nonmutating_capture_cpu_v1",
+  "status": "PASS",
+  "checks": {
+    "normal_clone": true,
+    "zero_clone": true,
+    "shuffle_clone": true,
+    "rng_exception_restored": true,
+    "snapshot_mutation_detected": true,
+    "canonical_model_untouched": true
+  },
+  "limitations": [
+    "CPU-only helper contract; no model, runtime capture, optimizer, training, or GPU was executed.",
+    "P3-P5 and B2-T remain unauthorized."
+  ]
+}

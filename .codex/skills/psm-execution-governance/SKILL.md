@@ -14,6 +14,7 @@ description: 管理 PSM-WMA 的审核申请、三方批准门、执行者边界�
 - 只有 ChatGPT Inbox 最新有效 verdict、Kimi、MM 针对同一实现 SHA 都批准，才可启动对应执行。
 - 任一 `REQUEST_CHANGES`、SHA 不一致或未回复均不得执行；先处理意见并重新审核。
 - 审核申请后每 30 秒轮询 Inbox/远端、Kimi pane、MM pane；记录送达、处理、verdict 与 file:line。
+- 每次向用户显示审核申请时，首行固定为：`Awaiting review — 🚨 审核申请已发出（根仓 <hash>；子模块/Gitlink <hash>）`；不得省略 `Awaiting review`。
 
 ## 角色边界
 
