@@ -22,7 +22,7 @@
 
 - `G0-R09-B2-P3-GPU-ONLY-TOKENIZER-EXCEPTION`（2026-09-01，DONE）：v0.3 经 GPT/Kimi/MM 均 `APPROVE_LOCAL_PROCESSOR_EXCEPTION`。唯一例外为 recipe 实际的本地 Edge processor/tokenizer 配置只读构造；实现必须验证离线环境、六个本地配置文件、canonical path、无 package 写入及无远程解析。GPU 运行仍需独立 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE`。
 
-  - 静态实现第一步：collector 在运行 token 前只读记录 canonical Edge 路径、六个 processor/tokenizer 配置文件的 SHA256 和离线 env contract；verifier 对合法未执行 `BLOCKED` artifact 单独验证，绝不要求缺席的 backend inventory，也绝不降低 `PASS` backend/state/DCP 合同。`py_compile`、无 token static collector→verifier、`git diff --check` PASS；产物仅 `/tmp/r09_b2_p3_gpu_static*.json`，未运行 GPU/模型/网络，未提交。
+  - 静态实现第一步：collector 在运行 token 前只读记录 canonical Edge 路径、六个 processor/tokenizer 配置文件的 SHA256 和离线 env contract；verifier 对合法未执行或资产缺失的 `BLOCKED` artifact 单独验证，绝不要求缺席的 backend inventory，也绝不降低 `PASS` backend/state/DCP 合同。Kimi 首轮指出缺资产被误报 FAIL，已改为 BLOCKED；`py_compile`、有效路径/无 token 与不存在路径两条 static collector→verifier、`git diff --check` PASS；产物仅 `/tmp/p3_*_blocked*.json`，未运行 GPU/模型/网络，未提交。
 
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 

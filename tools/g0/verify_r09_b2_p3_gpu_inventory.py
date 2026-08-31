@@ -12,7 +12,7 @@ ALLOWED_RECURRENT_ONLY_PREFIXES = ("local_history_runtime.recurrent_backend.",)
 TTT_RUNTIME_NAMES = {"W", "pending_evidence", "last_evidence", "initialized", "segment_progress"}
 NO_EXECUTION_FIELDS = (
     "weights_loaded", "checkpoint_loaded", "forward_executed", "backward_executed",
-    "optimizer_step_executed", "scheduler_step_executed", "checkpoint_saved", "checkpoint_loaded",
+    "optimizer_step_executed", "scheduler_step_executed", "checkpoint_saved",
 )
 REQUIRED_PROCESSOR_ASSETS = {
     "tokenizer.json",
@@ -95,8 +95,13 @@ def verify(artifact: dict[str, object]) -> dict[str, object]:
     backend = {name: backend_checks(record) for name, record in backends.items()} if pass_claimed else {}
     diff = diff_checks(artifact) if pass_claimed and all(name in artifact for name in backends) else {}
     pass_ready = all(checks.values()) and all(all(item.values()) for item in backend.values()) and all(diff.values())
-    status = "PASS" if pass_claimed and pass_ready else "BLOCKED" if artifact.get("status") == "BLOCKED" and all(checks.values()) else "FAIL"
-    return {"status": status, "record_valid": pass_ready if pass_claimed else all(checks.values()), "checks": checks, "backend_checks": backend, "matched_diff_checks": diff}
+    blocked_checks = {
+        key: value
+        for key, value in checks.items()
+        if key not in {"local_processor_path", "local_processor_assets"}
+    }
+    status = "PASS" if pass_claimed and pass_ready else "BLOCKED" if artifact.get("status") == "BLOCKED" and all(blocked_checks.values()) else "FAIL"
+    return {"status": status, "record_valid": pass_ready if pass_claimed else all(blocked_checks.values()), "checks": checks, "backend_checks": backend, "matched_diff_checks": diff}
 
 
 def main() -> None:
