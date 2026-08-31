@@ -14,11 +14,12 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     artifact = json.loads(args.artifact.read_text())
-    required = {"normal_clone", "zero_clone", "shuffle_clone", "rng_exception_restored", "snapshot_mutation_detected", "canonical_model_untouched"}
+    required = {"parameters", "buffers", "optimizer", "scheduler", "batch_metadata", "recurrent_state", "ttt_state"}
+    mutations = artifact.get("mutation_checks", {})
     checks = {
-        "schema": artifact.get("schema_version") == "r09_b2_nonmutating_capture_cpu_v1",
-        "required_cases": required <= set(artifact.get("checks", {})),
-        "all_cases": all(artifact.get("checks", {}).get(key) is True for key in required),
+        "schema": artifact.get("schema_version") == "r09_b2_nonmutating_capture_cpu_v2",
+        "required_cases": required <= set(mutations),
+        "all_cases": all(mutations.get(key, {}).get("rejected") and mutations[key].get("before") != mutations[key].get("after") for key in required),
     }
     result = {"status": "PASS" if all(checks.values()) else "FAIL", "checks": checks}
     args.output.parent.mkdir(parents=True, exist_ok=True)
