@@ -3170,3 +3170,13 @@ Detailed review:
 请求 verdict：`APPROVE_TO_CLOSE_B2_P2` 或 `REQUEST_CHANGES`，附 `file:line`。审核对象：根仓 `5fdb00b`，子模块/Gitlink `113ec27`。
 
 实现范围仅 `r09_b2_capture` 纯 helper/callback、5 项 CPU tests、root verifier/artifact。证据：`artifacts/g0/r09/b2/p2_nonmutating_capture_cpu.json` 和 `/tmp/r09_b2_p2_verifier.json` 均 PASS；pytest=5/5、py_compile、双仓 diff-check PASS。callback 不访问 canonical model/runtime，不注册 recipe。禁止模型/VAE/optimizer 加载、GPU、训练、B2-T、P3-P5、eval/inference。
+
+---
+
+## 2026-08-31 — R09-B2 P2 closure resubmission (isolation wiring)
+
+请求 verdict：`APPROVE_TO_CLOSE_B2_P2` 或 `REQUEST_CHANGES`，附 `file:line`。审核对象：根仓 `1a7fd9dff06bca7333be8c3ef392df6af27ff24a`，子模块/Gitlink `1a45fab50bf22ca454eceb77d70cd94fb4c66f44`。
+
+已关闭上一轮三项 blocker：`R09B2NonMutatingCaptureCallback` 只经 `capture_with_isolation` 入口执行 before/after snapshot 并 fail-closed；TTT 严格采用冻结五成员 `W/pending_evidence/last_evidence/initialized/segment_progress` 并拒绝缺失/额外成员；snapshot 记录 CPU/CUDA RNG，callback 强制消费 immutable ordinal/epoch/microbatch。P1 wrapper 同步写入 microbatch。CPU artifact `artifacts/g0/r09/b2/p2_nonmutating_capture_cpu.json`=PASS，v3 verifier `/tmp/r09_b2_p2_verifier_v3.json`=PASS，七类刻意 mutation 均由实际 callback entrypoint 拒绝，且 artifact 记录 root/submodule/Gitlink/collector/verifier/callback SHA。定向 pytest=callback 15 项、manifest wrapper 5 项；`py_compile`、双仓 diff-check PASS。
+
+允许范围仍仅 P2 CPU-only callback/tests/verifier/artifact；禁止模型/VAE/optimizer 加载、GPU、训练、B2-T、P3-P5、eval/inference/closed-loop。
