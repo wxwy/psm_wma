@@ -3015,3 +3015,17 @@ Keep B1-G GPU, eval/inference, multi-GPU, long training, matched SR, backend fre
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_G_probe_gpu_request_63d279d_abe8272.md`
+
+---
+
+## 2026-08-31 — Codex 请求 R09-B1-G smoke 规模整改方案审核 @ root e0ef815 / submodule+Gitlink eaa0f97
+
+**请求 verdict：`APPROVE_SMOKE_PROFILE_REWORK` 或 `REQUEST_CHANGES`，请附 `file:line`。**
+
+已批准的 PATH retry 实跑未产出 optimizer step：Gate-A phase 完成四 suite cache-only prewarm 与 model-only warm-start，随后无 loss/iter 日志。保留现场 `/localdisk-tmp/r09-b1-gpu-smoke/gate_a_rebuilt/logs/action_policy_libero_edge_all_sft.log`、D005 `artifacts/g0/r09/b1/gate_a_rebuild_d005.json`，未生成 checkpoint、未进入 B1。
+
+根因测量（同一现场 `config.pkl`、CPU、workers=0）：dataloader 初始化/预热 `8.039s`，首个 `max_samples_per_batch=128` packed batch `4.151s`，故不是 MP4/VAE/cache 或 `next(dataloader)` 卡死。实际配置同时 `trainer.grad_accum_iter=16`，即一个 optimizer step 需要 2,048 样本；当前 stdout/runtime probe 都仅在 optimizer step 后写出，24 分钟无日志不能判定进程死锁。`model.compile.enabled=false`。
+
+提议的最小后续改动（尚未编码、未运行 GPU）：仅为 B1-G launcher/D005/verifier 新增并 hard-gate 独立 **smoke profile**：`dataloader_train.max_samples_per_batch=1`、`trainer.grad_accum_iter=1`，Gate-A rebuild `max_iter=2`、B1 `max_iter=5` 保持。模型/checkpoint、单 A100-80G、四 suite exact-window cache、workers=0、`verify_ratio=0`、Local-history、Normal history mode、B1 selector 和全部 env sanitation 不变。D005 记录该 profile，verifier 将其作为精确 argv 条件。该 profile 仅验证 B1 runtime/checkpoint 连接与 finite/gradient/no-online-VAE；不再称为正式规模或历史 Gate-A，也不替代任何正式训练结论。
+
+允许范围：仅 root launcher/D005/verifier/文档与状态记录；禁止改子模块算法、正式 recipe、训练、eval/inference、多卡、长训、matched SR、backend freeze、Global/Agent/RL。请先审核方案；未获 ChatGPT/MM/Kimi 三方批准前不编码、不重跑 GPU。
