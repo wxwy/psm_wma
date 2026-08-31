@@ -146,11 +146,23 @@ def _b1_first_batch_history(sidecar: dict[str, object]) -> bool:
     if not isinstance(evidence, dict) or evidence.get("status") != "PASS":
         return False
     path = Path(str(evidence.get("path", "")))
+    try:
+        payload = json.loads(path.read_text())
+    except (OSError, json.JSONDecodeError):
+        return False
+    expected_source = sidecar.get("source")
     return (
         path.is_file()
         and evidence.get("sha256") == _sha256(path)
         and isinstance(evidence.get("effective_local_history_sample_count"), int)
         and evidence["effective_local_history_sample_count"] >= 1
+        and evidence.get("source") == expected_source
+        and payload.get("status") == "PASS"
+        and payload.get("source") == expected_source
+        and payload.get("profile") == {
+            "dataloader_train.max_samples_per_batch": 2,
+            "trainer.grad_accum_iter": 1,
+        }
     )
 
 

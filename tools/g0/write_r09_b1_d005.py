@@ -70,13 +70,22 @@ def main() -> None:
         if not evidence_path.is_file():
             raise ValueError("B1 requires an existing first-batch Local-history evidence JSON.")
         evidence = json.loads(evidence_path.read_text())
-        if evidence.get("status") != "PASS" or evidence.get("effective_local_history_sample_count", 0) < 1:
+        expected_history_profile = {
+            "dataloader_train.max_samples_per_batch": args.profile_max_samples,
+            "trainer.grad_accum_iter": args.profile_grad_accum,
+        }
+        if (
+            evidence.get("status") != "PASS"
+            or evidence.get("effective_local_history_sample_count", 0) < 1
+            or evidence.get("profile") != expected_history_profile
+        ):
             raise ValueError("B1 first-batch Local-history evidence must be PASS with an effective Local sample.")
         history_evidence = {
             "path": str(evidence_path),
             "sha256": hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
             "status": evidence["status"],
             "effective_local_history_sample_count": evidence["effective_local_history_sample_count"],
+            "source": evidence.get("source"),
         }
     elif args.history_evidence:
         raise ValueError("Gate-A must not carry B1 Local-history evidence.")

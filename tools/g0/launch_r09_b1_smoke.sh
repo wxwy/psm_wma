@@ -9,6 +9,7 @@ VENV_BIN="$FRAMEWORK/.venv/bin"
 : "${LIBERO_ROOT:=/disk/rl/data/LIBERO_LeRobot_v3}"
 : "${LIBERO_LATENT_CACHE_ROOT:=/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1}"
 : "${WAN_VAE_PATH:=$FRAMEWORK/examples/checkpoints/wan22_vae/Wan2.2_VAE.pth}"
+: "${EDGE_POLICY_CHECKPOINT:=/disk/rl/models/Cosmos3-Edge-Policy-DROID}"
 : "${R09_B1_WORK_ROOT:=/localdisk-tmp/r09-b1-gpu-smoke}"
 ARTIFACT_ROOT="$ROOT/artifacts/g0/r09/b1"
 GATE_A_ROOT="$R09_B1_WORK_ROOT/gate_a_rebuilt"
@@ -82,7 +83,7 @@ write_b1_history_evidence() {
         "LIBERO_ROOT=$LIBERO_ROOT" "LIBERO_LATENT_CACHE_ROOT=$LIBERO_LATENT_CACHE_ROOT"
         "LIBERO_LATENT_CACHE_VERIFY_RATIO=0" "LIBERO_NUM_WORKERS=0" "LIBERO_PREFETCH_FACTOR=4"
         "PSM_R09_B1_TTT_ENABLED=1" "PSM_R09_B1_PROBE_OUTPUT=$B1_PROBE"
-        "BASE_CHECKPOINT_PATH=$GATE_A_CHECKPOINT" "WAN_VAE_PATH=$WAN_VAE_PATH" "OUTPUT_ROOT=$B1_ROOT" "DISABLE_AUTO_RESUME=1"
+        "BASE_CHECKPOINT_PATH=$GATE_A_CHECKPOINT" "WAN_VAE_PATH=$WAN_VAE_PATH" "EDGE_POLICY_CHECKPOINT=$EDGE_POLICY_CHECKPOINT" "OUTPUT_ROOT=$B1_ROOT" "DISABLE_AUTO_RESUME=1"
         "EXTRA_TAIL_OVERRIDES=$overrides"
     )
     "${command[@]}" "$PYTHON" "$ROOT/tools/g0/verify_r09_b1_first_batch_history.py" \

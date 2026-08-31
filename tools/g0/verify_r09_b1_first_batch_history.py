@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -41,6 +42,10 @@ def _scalar_values(value: Any, count: int) -> list[int | None]:
     return [None] * count
 
 
+def _git(path: Path, *args: str) -> str:
+    return subprocess.check_output(["git", "-C", str(path), *args], text=True).strip()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, required=True)
@@ -73,8 +78,14 @@ def main() -> None:
     result = {
         "schema_version": "r09_b1_first_batch_history_v1",
         "status": "PASS" if any(present) else "FAIL",
+        "source": {
+            "root_revision": _git(root, "rev-parse", "HEAD"),
+            "submodule_revision": _git(framework, "rev-parse", "HEAD"),
+            "gitlink_revision": _git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2],
+        },
         "profile": {"dataloader_train.max_samples_per_batch": expected_count, "trainer.grad_accum_iter": 1},
         "effective_local_history_sample_count": sum(present),
+        "overrides": overrides,
         "samples": [
             {
                 "sample_index": index,
