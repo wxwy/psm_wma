@@ -18,9 +18,11 @@
 
 - `G0-R09-B2-P3-OPTIMIZER-INVENTORY`（2026-09-01，BLOCKED）：GPT closure=`docs/collab/chatgpt/reviews/2026-09-01_R09_B2_P3_second_hardened_closure_829c331_fe13304.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P3_BLOCKED`。`a5cc7c6`/`8dbb0c7` 已冻结 selector/optimizer、cross-backend matched diff、state/DCP/TTT exclusion 合同；CPU/meta attempt 的真实 FusedAdam 因无 CUDA BLOCKED，GPU=0。此 closure 不解除 P0 actual optimizer-membership blocker，也不授权 GPU、B2-T/P4/P5、训练/评测/推理。下一步仅可起草独立 GPU-only P3 Gate 方案并经三方审核。
 
-- `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，REVIEW）：仅新增 `docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.1_2026-09-01.md`；方案把 GPT closure 的三项 future-PASS HIGH 固定为 verifier policy，定义 GPU-only read-only construction/state-schema 范围与显存/行为停止条件。未实现、未运行 GPU；已申请三方方案审核。
+- `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，IN_PROGRESS）：GPT/Kimi/MM 均 `APPROVE_LOCAL_PROCESSOR_EXCEPTION`；v0.3=`docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.3_2026-09-01.md` 已冻结本地 processor 例外、离线环境、asset 预断言与 verifier hard-gate。当前仅实现根仓 `tools/g0/collect_r09_b2_p3_gpu_inventory.py`、`tools/g0/verify_r09_b2_p3_gpu_inventory.py` 及静态测试；禁止 GPU 运行、模型构造、权重/VAE/dataloader/数据/base checkpoint 访问。
 
-- `G0-R09-B2-P3-GPU-ONLY-TOKENIZER-EXCEPTION`（2026-09-01，REVIEW）：源码确认 `OmniMoTModel` 无条件构造 VLM processor；Kimi 与 GPT 已批准本地 Edge processor/tokenizer 只读例外，MM 要求补强。v0.3 计划新增强制 `HF_HUB_OFFLINE=1`/`TRANSFORMERS_OFFLINE=1`/本地 cache 环境、四个 tokenizer 文件预断言及 verifier hard-gate；网络/权重/VAE/dataloader/数据/base checkpoint 任一访问即 BLOCKED。未运行 GPU，待三方复审。
+- `G0-R09-B2-P3-GPU-ONLY-TOKENIZER-EXCEPTION`（2026-09-01，DONE）：v0.3 经 GPT/Kimi/MM 均 `APPROVE_LOCAL_PROCESSOR_EXCEPTION`。唯一例外为 recipe 实际的本地 Edge processor/tokenizer 配置只读构造；实现必须验证离线环境、六个本地配置文件、canonical path、无 package 写入及无远程解析。GPU 运行仍需独立 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE`。
+
+  - 静态实现第一步：collector 在运行 token 前只读记录 canonical Edge 路径、六个 processor/tokenizer 配置文件的 SHA256 和离线 env contract；verifier 对合法未执行 `BLOCKED` artifact 单独验证，绝不要求缺席的 backend inventory，也绝不降低 `PASS` backend/state/DCP 合同。`py_compile`、无 token static collector→verifier、`git diff --check` PASS；产物仅 `/tmp/r09_b2_p3_gpu_static*.json`，未运行 GPU/模型/网络，未提交。
 
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 

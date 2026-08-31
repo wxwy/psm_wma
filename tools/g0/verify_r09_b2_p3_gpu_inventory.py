@@ -14,6 +14,14 @@ NO_EXECUTION_FIELDS = (
     "weights_loaded", "checkpoint_loaded", "forward_executed", "backward_executed",
     "optimizer_step_executed", "scheduler_step_executed", "checkpoint_saved", "checkpoint_loaded",
 )
+REQUIRED_PROCESSOR_ASSETS = {
+    "tokenizer.json",
+    "tokenizer_config.json",
+    "chat_template.jinja",
+    "special_tokens_map.json",
+    "preprocessor_config.json",
+    "video_preprocessor_config.json",
+}
 
 
 def _selected(inventory: dict[str, object], field: str) -> set[str]:
@@ -69,19 +77,26 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
 
 def verify(artifact: dict[str, object]) -> dict[str, object]:
     execution = artifact.get("execution", {})
+    processor = artifact.get("local_processor", {})
+    assets = processor.get("required_assets", {})
+    offline = processor.get("offline_environment", {})
     backends = {name: artifact.get(name, {}) for name in ("recurrent", "ttt_fast_weight")}
+    pass_claimed = artifact.get("status") == "PASS"
     checks = {
         "schema": artifact.get("schema_version") == "r09_b2_p3_gpu_inventory_v1",
         "single_process": execution.get("world_size") == 1 and execution.get("distributed_initialized") is False,
         "no_execution": all(execution.get(key) is False for key in NO_EXECUTION_FIELDS),
         "peak_under_limit": execution.get("peak_allocated_bytes", 1 << 60) <= 24 * 1024**3 and execution.get("peak_reserved_bytes", 1 << 60) <= 24 * 1024**3,
-        "backend_status": all(record.get("status") in {"PASS", "BLOCKED"} for record in backends.values()),
+        "backend_status": (all(record.get("status") in {"PASS", "BLOCKED"} for record in backends.values()) if pass_claimed else True),
+        "local_processor_path": processor.get("is_local_directory") is True and bool(processor.get("canonical_path")),
+        "offline_environment": offline.get("HF_HUB_OFFLINE") == "1" and offline.get("TRANSFORMERS_OFFLINE") == "1" and offline.get("HUGGINGFACE_HUB_CACHE") == processor.get("canonical_path"),
+        "local_processor_assets": set(assets) == REQUIRED_PROCESSOR_ASSETS and all(asset.get("exists") is True and asset.get("sha256") for asset in assets.values()),
     }
-    backend = {name: backend_checks(record) for name, record in backends.items()}
-    diff = diff_checks(artifact) if all(name in artifact for name in backends) else {"artifact_backends_present": False}
+    backend = {name: backend_checks(record) for name, record in backends.items()} if pass_claimed else {}
+    diff = diff_checks(artifact) if pass_claimed and all(name in artifact for name in backends) else {}
     pass_ready = all(checks.values()) and all(all(item.values()) for item in backend.values()) and all(diff.values())
-    status = "PASS" if artifact.get("status") == "PASS" and pass_ready else "BLOCKED" if artifact.get("status") == "BLOCKED" and all(checks.values()) else "FAIL"
-    return {"status": status, "record_valid": pass_ready if artifact.get("status") == "PASS" else all(checks.values()), "checks": checks, "backend_checks": backend, "matched_diff_checks": diff}
+    status = "PASS" if pass_claimed and pass_ready else "BLOCKED" if artifact.get("status") == "BLOCKED" and all(checks.values()) else "FAIL"
+    return {"status": status, "record_valid": pass_ready if pass_claimed else all(checks.values()), "checks": checks, "backend_checks": backend, "matched_diff_checks": diff}
 
 
 def main() -> None:
