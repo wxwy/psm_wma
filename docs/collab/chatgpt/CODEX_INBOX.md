@@ -3162,3 +3162,11 @@ Detailed review:
 请求 verdict：`APPROVE_TO_IMPLEMENT_B2_P2` 或 `REQUEST_CHANGES`，附 `file:line`。审核对象：根仓 `b804855`，子模块/Gitlink `e424e24`。
 
 已关闭 GPT 三项设计 blocker：禁止 canonical model/runtime 二次 forward；capture 在 `finally` 精确恢复 CPU/CUDA RNG；cursor 只使用已消费 batch 的 P1 immutable ordinal metadata。新增完整 backend runtime state、model buffer 与 mutation/exception/unsupported-payload 负例合同。仍只请求 P2 callback+CPU tests+verifier/artifact 实现，禁止模型/GPU/训练/B2-T/P3-P5。
+
+---
+
+## 2026-08-31 — R09-B2 P2 closure review
+
+请求 verdict：`APPROVE_TO_CLOSE_B2_P2` 或 `REQUEST_CHANGES`，附 `file:line`。审核对象：根仓 `5fdb00b`，子模块/Gitlink `113ec27`。
+
+实现范围仅 `r09_b2_capture` 纯 helper/callback、5 项 CPU tests、root verifier/artifact。证据：`artifacts/g0/r09/b2/p2_nonmutating_capture_cpu.json` 和 `/tmp/r09_b2_p2_verifier.json` 均 PASS；pytest=5/5、py_compile、双仓 diff-check PASS。callback 不访问 canonical model/runtime，不注册 recipe。禁止模型/VAE/optimizer 加载、GPU、训练、B2-T、P3-P5、eval/inference。
