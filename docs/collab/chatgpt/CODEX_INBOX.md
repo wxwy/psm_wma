@@ -3093,3 +3093,15 @@ Detailed review:
 - Kimi：`APPROVE_TO_CLOSE_B1_G`，独立复核 static checks、D005、checkpoint/log、runtime probe 与 19/19 contract。
 - MM：`APPROVE_TO_CLOSE_B1_G`，独立复核 provenance、artifact、verifier false-negative 修正与持续禁止范围。
 - 结论：仅关闭 bounded/noncanonical `G0-R09-B1-SINGLE-GPU-SMOKE`；不授权任何后续 GPU、正式训练、多卡、长训、matched SR、eval/inference/closed-loop、backend freeze、Global/Agent/RL。
+
+---
+
+## 2026-08-31 — R09-B2 matched-training P0 preflight plan review request
+
+- 任务/Gate：`G0-R09-B2-MATCHED-PREFLIGHT`。请求 verdict：`APPROVE_TO_PLAN_B2_P0` / `REQUEST_CHANGES`。
+- 审核对象：根仓 `95aa0167973a55c03598a55035dcdd34e62a4757`（已推送 `origin/V2`）；子模块/Gitlink `eaa0f979974579939bc680ff683cf016bafdbce8`（无本轮子模块改动）。
+- 文档：`docs/build/PSM-WMA_R09_B2_matched_training_preflight_runbook_v0.1_2026-08-31.md`。它仅冻结 recurrent 与 TTT 的 matched-training preflight：同一 base checkpoint/data/cache/seed/precision/optimizer schedule/resource class；唯一允许差异为 backend selector 与其不可避免的 exact optimizer membership。
+- 关键限制：B1 是 training-only，故本 Gate 不含 closed-loop/SR/inference。P0 只读输出必须记录 resolved config diff、D005 命令/环境、资产 SHA、资源水位与 100-step 最低连续稳定性阈值；未冻结 P0 命令前不得训练。未来两侧运行必须相同 step budget、分别从同一 base model-only warm-start 开始，不得从 B1 5-step checkpoint 互相 warm-start。
+- 验收与失败分流：计划明确定义 D005、cache-only/no-fallback、state/optimizer/DCP、Normal/Zero/Shuffle training capture、100-step finite/stability、资源记录与 FAIL 条件；任意 OOM/NaN/SIGTERM/缺证据不自动重跑。
+- 允许范围：本申请若批准，最多允许新增 P0 的只读资产/配置审计与 JSON verifier；不改模型、不运行 CPU/GPU 训练、评测或推理。
+- 禁止范围：matched training、任何 GPU、多卡、长训、SR、eval/inference/closed-loop、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL 均不授权。
