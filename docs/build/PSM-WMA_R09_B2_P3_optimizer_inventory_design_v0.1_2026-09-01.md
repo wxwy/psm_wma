@@ -25,10 +25,10 @@ P3 的唯一输入 provenance 为 root/submodule/Gitlink、recipe SHA、collecto
 
 | 层 | 必填字段 | PASS/FAIL 语义 |
 | --- | --- | --- |
-| `model_parameters` | `name`、`trainable`、`numel`、`dtype`、`selected_by_recipe` | 记录实际 Local 相关参数；同名但不同 object-id 立即 FAIL。 |
+| `model_parameters` | `name`、`trainable`、`numel`、`dtype`、`selected_by_recipe` | 记录完整实际 selector 影响范围与单独 Local/backend 子集；`selected_by_recipe` 由 resolved `keys_to_select` 和 weight-decay skip 规则共同记录，不得只凭 prefix；同名但不同 object-id 立即 FAIL。 |
 | `optimizer_param_groups` | `group_index`、`parameter_names`、每项 `numel`、`lr`、`weight_decay` | 每个 optimizer parameter 必须反向映射到唯一 model parameter；重复或遗漏 FAIL。 |
-| `optimizer_state` | `parameter_name`、`state_keys`、每 state tensor 的 shape/dtype/numel | 初始 state 与任何后续 materialization 明确分开。P3 不执行 step，若实际初始 state 为空，必须如实写空并标记 `not_materialized`，不得声称训练后状态为空。 |
-| `dcp_state` | state-dict key、所属层、参数/optimizer state 映射 | 只允许读取可由未训练对象导出的 schema；若 DCP API 会保存或触发设备/权重加载，则记录 `BLOCKED`。 |
+| `optimizer_state` | `parameter_name`、`state_keys`、每 state tensor 的 shape/dtype/numel、索引语义 | 初始 state 与任何后续 materialization 明确分开。P3 不执行 step，若实际初始 state 为空，必须如实写空并标记 `not_materialized`，不得声称训练后状态为空；artifact 明确其进程内由 parameter object identity 索引、跨运行由稳定名称关联。 |
+| `dcp_state` | state-dict key、所属层、参数/optimizer state 映射 | `model.state_dict()`/`optimizer.state_dict()` 的未训练 schema 读取可接受；若 trainer DCP API 会保存、加载、触发设备 materialization 或权重加载，则记录 `BLOCKED`。 |
 
 共同 hard gate：同一名称的 `numel`/dtype 在 model、optimizer 与 DCP 三层一致；任何 optimizer 参数不在 model 或任何 selected trainable model 参数未在 optimizer 时 FAIL。
 
@@ -59,7 +59,7 @@ TTT 三条预期 selector（`local_history_runtime.encoder`、`local_memory2llm`
 }
 ```
 
-verifier 必须拒绝：缺 provenance、任何 synthetic fallback、设备非 CPU/meta、weights/forward/backward/step 已执行、TTT 五成员作为 parameter/optimizer/DCP persistent key、不可反向映射的 optimizer object、重复 parameter、未解释的两侧差异、或把 `not_materialized` optimizer state 误写为训练后结论。
+verifier 必须拒绝：缺 provenance、任何 synthetic fallback、设备非 CPU/meta、weights/forward/backward/step 已执行、TTT 五成员作为 parameter/optimizer/DCP persistent key、不可反向映射的 optimizer object、重复 parameter、未解释的两侧差异、或把 `not_materialized` optimizer state 误写为训练后结论。它还必须分别列出 `named_parameters`、`named_buffers` 与动态 TTT state；未来若五成员注册为 buffer，不能误报为 parameter 或 dynamic state。
 
 ## 6. 方案审核请求与禁止范围
 
