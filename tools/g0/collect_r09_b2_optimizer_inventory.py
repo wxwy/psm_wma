@@ -24,7 +24,16 @@ def git(root: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
 
 
-def worker(root: Path, toml: Path, ttt_enabled: bool, wan_vae_path: str, edge_checkpoint_path: str) -> dict[str, object]:
+def summarize_failure(stderr: str, stdout: str) -> str:
+    """保留最相关的异常行，避免长的上游诊断掩盖根因。"""
+    details = stderr or stdout
+    for line in reversed(details.splitlines()):
+        if any(marker in line for marker in ("Error:", "Exception:", "ImportError:")):
+            return line.strip()
+    return details[-2000:]
+
+
+def worker(root: Path, toml: Path, ttt_enabled: bool, wan_vae_path: str, edge_checkpoint_path: str, base_checkpoint_path: str, libero_root: str) -> dict[str, object]:
     """Run only in the isolated no-CUDA worker process."""
     import torch
 
@@ -40,6 +49,8 @@ def worker(root: Path, toml: Path, ttt_enabled: bool, wan_vae_path: str, edge_ch
         "PSM_R09_B1_TTT_ENABLED": "1" if ttt_enabled else "0",
         "WAN_VAE_PATH": wan_vae_path,
         "EDGE_POLICY_CHECKPOINT": edge_checkpoint_path,
+        "BASE_CHECKPOINT_PATH": base_checkpoint_path,
+        "LIBERO_ROOT": libero_root,
     }
     os.environ.update(env)
     config = load_experiment_from_toml(toml)
@@ -80,21 +91,23 @@ def main() -> None:
     parser.add_argument("--toml", type=Path, required=True)
     parser.add_argument("--wan-vae-path", type=Path, required=True)
     parser.add_argument("--edge-checkpoint-path", type=Path, required=True)
+    parser.add_argument("--base-checkpoint-path", type=Path, required=True)
+    parser.add_argument("--libero-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     root, toml = args.root.resolve(), args.toml.resolve()
-    for path in (args.wan_vae_path, args.edge_checkpoint_path):
+    for path in (args.wan_vae_path, args.edge_checkpoint_path, args.base_checkpoint_path, args.libero_root):
         if not path.exists():
             raise FileNotFoundError(path)
     framework = root / "cosmos-framework"
-    source = {"root_revision": git(root, "rev-parse", "HEAD"), "submodule_revision": git(framework, "rev-parse", "HEAD"), "gitlink_revision": git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2], "recipe_sha256": sha256(toml), "collector_sha256": sha256(Path(__file__).resolve()), "verifier_sha256": sha256(Path(__file__).with_name("verify_r09_b2_optimizer_inventory.py")), "optimizer_source_sha256": sha256(framework / "cosmos_framework/utils/generator/optimizer.py")}
-    result: dict[str, object] = {"schema_version": "r09_b2_optimizer_inventory_v1", "source": source, "input": {"wan_vae_path": str(args.wan_vae_path), "edge_checkpoint_path": str(args.edge_checkpoint_path)}, "execution": {"device": "meta", "weights_loaded": False, "checkpoint_loaded": False, "forward_executed": False, "backward_executed": False, "optimizer_step_executed": False, "scheduler_step_executed": False, "cuda_visible_devices": ""}}
+    source = {"root_revision": git(root, "rev-parse", "HEAD"), "submodule_revision": git(framework, "rev-parse", "HEAD"), "gitlink_revision": git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2], "recipe_sha256": sha256(toml), "collector_sha256": sha256(Path(__file__).resolve()), "verifier_sha256": sha256(Path(__file__).with_name("verify_r09_b2_optimizer_inventory.py")), "optimizer_source_sha256": sha256(framework / "cosmos_framework/utils/generator/optimizer.py"), "sft_config_source_sha256": sha256(framework / "cosmos_framework/configs/toml_config/sft_config.py"), "model_source_sha256": sha256(framework / "cosmos_framework/model/generator/omni_mot_model.py")}
+    result: dict[str, object] = {"schema_version": "r09_b2_optimizer_inventory_v1", "source": source, "input": {"wan_vae_path": str(args.wan_vae_path), "edge_checkpoint_path": str(args.edge_checkpoint_path), "base_checkpoint_path": str(args.base_checkpoint_path), "libero_root": str(args.libero_root)}, "execution": {"device": "meta", "weights_loaded": False, "checkpoint_loaded": False, "forward_executed": False, "backward_executed": False, "optimizer_step_executed": False, "scheduler_step_executed": False, "cuda_visible_devices": ""}}
     env = os.environ | {"PYTHONPATH": str(framework), "CUDA_VISIBLE_DEVICES": ""}
     for name, enabled in (("recurrent", False), ("ttt_fast_weight", True)):
-        code = "from pathlib import Path; import json,sys; from tools.g0.collect_r09_b2_optimizer_inventory import worker; print(json.dumps(worker(Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3] == '1', sys.argv[4], sys.argv[5]), sort_keys=True))"
-        completed = subprocess.run([sys.executable, "-c", code, str(root), str(toml), "1" if enabled else "0", str(args.wan_vae_path), str(args.edge_checkpoint_path)], env=env, cwd=root, text=True, capture_output=True)
+        code = "from pathlib import Path; import json,sys; from tools.g0.collect_r09_b2_optimizer_inventory import worker; print(json.dumps(worker(Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3] == '1', sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7]), sort_keys=True))"
+        completed = subprocess.run([sys.executable, "-c", code, str(root), str(toml), "1" if enabled else "0", str(args.wan_vae_path), str(args.edge_checkpoint_path), str(args.base_checkpoint_path), str(args.libero_root)], env=env, cwd=root, text=True, capture_output=True)
         if completed.returncode:
-            result[name] = {"status": "BLOCKED", "reason": completed.stderr[-2000:] or completed.stdout[-2000:]}
+            result[name] = {"status": "BLOCKED", "reason": summarize_failure(completed.stderr, completed.stdout)}
         else:
             result[name] = {"status": "PASS", "inventory": json.loads(completed.stdout.splitlines()[-1])}
     result["status"] = "PASS" if all(result[name]["status"] == "PASS" for name in ("recurrent", "ttt_fast_weight")) else "BLOCKED"
