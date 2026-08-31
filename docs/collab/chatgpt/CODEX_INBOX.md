@@ -3221,3 +3221,14 @@ Detailed review:
 - membership 字段/检查：resolved selector 与实际 optimizer membership 分离；group 逐参数记录 stable name/numel/dtype/lr/weight_decay；PASS 强制唯一 model name、optimizer reverse map、重复拒绝、selected=groups、metadata 一致、TTT 五成员排除、DCP inspected。
 - 证据：`artifacts/g0/r09/b2/p3_optimizer_inventory.json` 与 verifier 均记录 `BLOCKED`，原因是同一实际 recipe 的 fused optimizer 在 `CUDA_VISIBLE_DEVICES=''` 下要求 CUDA；无权重/checkpoint、GPU=0、无 forward/backward/step。不得 synthetic fallback。
 - 范围不变：仅决定 P3 阻塞闭环或另立 GPU-only inventory Gate；不授权 B2-T、P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训或 backend freeze。
+
+---
+
+## 2026-09-01 — R09-B2 P3 second hardened整改复审请求
+
+请求 verdict：`APPROVE_TO_CLOSE_B2_P3_BLOCKED`、`APPROVE_GPU_ONLY_P3_INVENTORY_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `8dbb0c7`（实现 `a5cc7c6`）；子模块/Gitlink `fe13304`。
+- 已关闭 GPT 第二轮 HIGH：verifier 从 `selected_by_resolved_selector` 重算 stable-name 集合，要求等于实际 optimizer 集合（仅允许显式 `selector_optimizer_exclusions`）；artifact 写入并重算 `matched_diff`，两侧差异只能匹配 `local_history_runtime.recurrent_backend.`；optimizer state eligibility 必须等于实际 group，未 materialized 时 entries 必须为空，materialized entries 必须反向映射；DCP inspected 时 persistent keys 必须明确且排除五个 TTT runtime 成员。
+- 证据：`artifacts/g0/r09/b2/p3_optimizer_inventory.json` 与 verifier 均为 `BLOCKED`（而非 PASS），`record_valid=true` 仅指阻塞记录完整。实际 fused optimizer 在无 CUDA 的已批准范围内无法构造；GPU=0、无权重/checkpoint、无 forward/backward/step。
+- 范围不变：仅决定 P3 BLOCKED 闭环或另立 GPU-only inventory Gate；不授权 B2-T、P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训或 backend freeze。
