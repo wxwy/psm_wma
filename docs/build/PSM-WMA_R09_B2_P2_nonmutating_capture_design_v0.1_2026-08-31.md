@@ -13,8 +13,8 @@
 3. capture 进入时保存 CPU/CUDA RNG states，并在 `finally` 无条件恢复；异常也必须先恢复 RNG 再写 FAIL。扰动只作用于 clone，不写回原 batch/state。
 4. cursor 证据只取已消费 batch 的 P1 immutable `b2_stream_ordinal`、epoch、microbatch metadata；禁止检查、clone、推进、回绕或查询 live dataloader iterator。TTT 覆盖冻结五成员 state；recurrent 覆盖完整 recurrent state representation。
 5. capture 前后分别记录并比较：模型 parameters **及 buffers**、optimizer state、scheduler state、CPU/CUDA RNG states、batch ordinal metadata、完整 Local runtime state SHA。任一变化即 FAIL。
-4. 输出为 JSON + 可选 detached CPU tensor sidecar；每条带 root/submodule/Gitlink、manifest ordinal、mode、输入/输出 hash 和 before/after hash。
-5. verifier 要求三模式的 non-history input/packing/mRoPE 字段逐位一致；只允许 Local payload 改变，并记录 future/action sensitivity。
+6. 输出为 JSON + 可选 detached CPU tensor sidecar；每条带 root/submodule/Gitlink、manifest ordinal、mode、输入/输出 hash 和 before/after hash。
+7. verifier 要求三模式的 non-history input/packing/mRoPE 字段逐位一致；只允许 Local payload 改变，并记录 future/action sensitivity。
 
 ## 实现面与验收
 
