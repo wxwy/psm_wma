@@ -2954,3 +2954,24 @@ Accepted：
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_G_probe_gpu_request_63d279d_abe8272.md`
+
+
+---
+
+## 2026-08-31 — R09-B1-G GPU smoke review @ root 63d279d / submodule abe8272
+
+**Verdict: REQUEST_CHANGES**
+
+B1-S remains CLOSED. B1-G GPU is **NOT APPROVED**.
+
+Blockers:
+1. runtime TTT state schema must exact-match frozen B0 per-member name/shape_per_sample/dtype/bytes_per_sample; total 18,953 B alone is insufficient;
+2. both GPU commands must explicitly sanitize/freeze all run-affecting PSM/LIBERO env so B1 opt-in is the only intended variable;
+3. D005 must bind actual training root/submodule/Gitlink, exact two-phase commands, checkpoints, data/cache, GPU/resource/network and output paths, and the smoke verifier must consume/hard-gate it;
+4. no-online-VAE-fallback must be machine-readable PASS criteria;
+5. rebuilt recurrent iter2 may be used only as an explicitly labeled Gate-A-compatible replacement warm-start with its own finite/checkpoint/provenance evidence, not as the historical canonical Gate-A.
+
+Keep B1-G GPU, eval/inference, multi-GPU, long training, matched SR, backend freeze, shared-MoT, Global/Agent/RL BLOCKED.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_G_probe_gpu_request_63d279d_abe8272.md`
