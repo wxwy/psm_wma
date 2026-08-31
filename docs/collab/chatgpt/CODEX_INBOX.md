@@ -3136,3 +3136,13 @@ Detailed review:
 - 强制点：B2 专用路径固定 world_size=1 与 num_workers=0；manifest-aware wrapper 按 flat index 取样后逐项验证五元组，禁止随机重采样；observed JSONL 必须逐 ordinal 对照 requested，resume 仅按 manifest offset。
 - 允许范围：若批准，仅实现 root manifest builder/verifier 与最小 submodule manifest-aware dataset wrapper/定向 CPU tests；不加载模型、不执行 optimizer update、GPU training、eval/inference/closed-loop、SR、多卡、长训、backend freeze。
 - 不解决的 blocker：P2 non-mutating capture、P3 actual optimizer inventory、P4 exact D005/budget、P5 full config diff 均仍独立 TODO；B2-T 继续未授权。
+
+---
+
+## 2026-08-31 — R09-B2 P1 closure resubmission
+
+🚨 审核申请已发出（根仓 `4f687fc`；子模块/Gitlink `e424e24`）
+
+请求 verdict：`APPROVE_TO_CLOSE_B2_P1` 或 `REQUEST_CHANGES`，附 `file:line`。本次仅 CPU manifest；禁止 B2-T、GPU、模型/VAE/optimizer、训练、评测和推理。
+
+整改：wrapper 显式绑定 suite；verifier 强制 root/libero/cache 审计并验证 builder/verifier/dataset/wrapper/recipe/info/parquet SHA；真实 getter/wrapper 的 requested→observed 4/4 七字段有序回放 PASS。证据：`artifacts/g0/r09/b2/p1_tiny_manifest_contract.json`，原件 `/tmp/r09_b2_p1_tiny_suites_v5/{header,verify,replay}.json`。11 类负例均 FAIL。请核验 P1，不授权 P2-P5 或 B2-T。
