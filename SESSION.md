@@ -12,6 +12,8 @@
 
 ## 当前最小步骤
 
+- `G0-R09-B2-P2-NONMUTATING-CAPTURE`（2026-08-31，REVIEW）：针对 GPT 对 `842acdb`/`0d7c8b8` 的 `REQUEST_CHANGES`，子模块 `1a45fab` 将唯一 capture 入口接入 callback 的 before/after `IsolationSnapshot` 检查；快照含 parameters、buffers、optimizer、scheduler、batch metadata、完整 recurrent state、冻结 TTT 五成员 `W/pending_evidence/last_evidence/initialized/segment_progress`、CPU/CUDA RNG。callback 只接收显式 `snapshot_provider`，不读取或 forward canonical model/runtime；P1 wrapper 同步暴露 `b2_stream_microbatch`。根仓代码/Gitlink=`d8455a6`，CPU artifact 将在证据提交后重送三方 closure；定向 pytest（callback 15 项、manifest wrapper 5 项）、`py_compile`、diff-check 与 v3 collector/verifier 均 PASS。未加载模型、数据或 GPU；P3-P5、B2-T、训练/eval/inference/closed-loop 继续禁止。
+
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 
 - G0-R09-B2-MATCHED-PREFLIGHT（2026-08-31，BLOCKED）：GPT review=`docs/collab/chatgpt/reviews/2026-08-31_R09_B2_P0_blocked_closure_0c62e5d_eaa0f97.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P0_BLOCKED`。P0 只读采集器/验收器：`tools/g0/collect_r09_b2_preflight.py`、`tools/g0/verify_r09_b2_preflight.py`，结果为 `artifacts/g0/r09/b2/matched_training_preflight_p0.json`=`BLOCKED`、verifier=`PASS`（仅验证阻塞记录诚实完整）。两侧 selected config 除 backend/selector 外一致：bf16、seed=42、batch=128、accum=16、max_iter=5000；本地 A100-80GB/128 CPU/约900GB 可用内存及 localdisk 模型路径均已记录。五项硬阻塞为强制 window-ID manifest、non-mutating capture、实际 parameter/optimizer-state membership、精确 D005/100-update/world-size 预算、完整 resolved-config diff。未加载模型/数据批次，未运行训练、评测或推理，未改 `cosmos-framework`。B2-T 继续禁止。

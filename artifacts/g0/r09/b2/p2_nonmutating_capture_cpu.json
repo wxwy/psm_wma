@@ -1,41 +1,49 @@
 {
   "mutation_checks": {
     "batch_metadata": {
-      "after": "40afb73368db4b742a56323e8b0d7754419c2a630feec265836c6bbb0a5144e1",
-      "before": "09eb162db40f1a9caa6d49ee02f1fc01a138a3258867179a26d42c43aabb0c92",
+      "callback_entrypoint": true,
+      "error": "non-mutating capture changed protected state: ['batch_metadata']",
       "rejected": true
     },
     "buffers": {
-      "after": "f5734374effa7e705325ae358d43a8cf67a4fc9e1cec04988162731b06eee521",
-      "before": "cdee0f8e67bc7c10226e4decb327eeb3234bac52f745c7a278b702e4c80bdccb",
+      "callback_entrypoint": true,
+      "error": "non-mutating capture changed protected state: ['buffers']",
       "rejected": true
     },
     "optimizer": {
-      "after": "72cb1f5a929029facc5b7d12145e4a30e8849c4ca1e8d13c515220ad0e1699c6",
-      "before": "46f37efb83f3685cffb9f388de1eae999c6bc380ef394e17582621c46586c786",
+      "callback_entrypoint": true,
+      "error": "non-mutating capture changed protected state: ['optimizer']",
       "rejected": true
     },
     "parameters": {
-      "after": "c42fcac9981aa09d3e6014a18a723a0b474bc091a87ca43a0451200689a0a608",
-      "before": "27dbb557af56290ceec9d2312b5342f1526fcf33a2cc7d5262dbf095917787ba",
+      "callback_entrypoint": true,
+      "error": "non-mutating capture changed protected state: ['parameters']",
       "rejected": true
     },
     "recurrent_state": {
-      "after": "aff6a1128bf2d2329ee3c90985b21ac5ddbb559b43fea9e4b0c5e6389826a44a",
-      "before": "1706f8dcc7a39d7c36e0d7c40174512797ccef72c3bcd03d7d7e607abd77f137",
+      "callback_entrypoint": true,
+      "error": "non-mutating capture changed protected state: ['recurrent_state']",
       "rejected": true
     },
     "scheduler": {
-      "after": "21d3ab4faa2f0889a6f409251ccb244e0fb8266e836c6b603257c67f3d82316f",
-      "before": "7014ea4e8e846e37750f8cbc897cd9bc31fe794f04f7cb5624d67c9a3f4e7913",
+      "callback_entrypoint": true,
+      "error": "non-mutating capture changed protected state: ['scheduler']",
       "rejected": true
     },
     "ttt_state": {
-      "after": "dca8ce4646ceded711b652ba5040ccee902df281fbf343fd9cebe93abfa59145",
-      "before": "2d7dfc7e889e24e474345ff995f96b718fe151bd9c107b7671d4bec1bc08de38",
+      "callback_entrypoint": true,
+      "error": "non-mutating capture changed protected state: ['ttt_state']",
       "rejected": true
     }
   },
-  "schema_version": "r09_b2_nonmutating_capture_cpu_v2",
+  "schema_version": "r09_b2_nonmutating_capture_cpu_v3",
+  "source": {
+    "capture_source_sha256": "9b2324b05db86ddd7013ef322b725a98cca9bd4a8748ad562e36f570bca8d416",
+    "collector_sha256": "96875c20c22e6e85918855750b2b3935eb0bca89d38ac8eed3fb038b6b1747c3",
+    "gitlink_revision": "1a45fab50bf22ca454eceb77d70cd94fb4c66f44",
+    "root_revision": "d8455a61d293bb3d84a60877c73044637e07ddb7",
+    "submodule_revision": "1a45fab50bf22ca454eceb77d70cd94fb4c66f44",
+    "verifier_sha256": "c96498e777ea41c2ef350e69f0234215ef8cd9c8cd51425578afe46a9fa5969d"
+  },
   "status": "PASS"
 }
