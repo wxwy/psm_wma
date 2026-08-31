@@ -12,6 +12,8 @@
 
 ## 当前最小步骤
 
+- R09-B1-G 启动证据整改（2026-08-31，IN_PROGRESS）：已全量 `git fetch --all --prune` 并合并 ChatGPT 远端审查 `03c7b27`；正式 verdict 仍为 `REQUEST_CHANGES`，Kimi/MM 的先前同意不能替代。仅处理根仓启动契约与验收器：新增/收紧 hermetic 两阶段 launcher（同一 `env -u` 命令写入并执行 D005）、D005 补全 Gate-A/B1 精确输出 checkpoint，`verify_r09_b1_smoke.py` 同时消费两侧 provenance 并硬校验 source/Gitlink、命令/hash、GPU/cache/路径/step、Gate-A 2-step/DCP/no-fallback 和 B1 exact handoff。预计改动 `tools/g0/write_r09_b1_d005.py`、`tools/g0/verify_r09_b1_smoke.py`、B1 专用 launcher、`TODO.md`、`SESSION.md`；不改子模块模型算法，不运行 GPU。完成静态验证、提交推送后重新三方审核。提交：未提交。
+
 - R07 最终审核结论（ChatGPT，APPROVE）：root 13af0e3 已正式关闭 G0-R07-RUNTIME-SMOKE；No-Memory exact parity、Local optimizer/update、fixed-weight Normal/Zero/Shuffle Future+Action sensitivity 均成立。raw sidecar 缺失已在 provenance 中诚实记录，不推翻 Gate；后续 R08/R09 Gate 必须在独立 review 完成前保留 raw sidecar 或文件级 SHA。
 
 - R08 设计补充已冻结：开始任何 R08 代码前，Codex 必须先阅读 docs/build/PSM-WMA_R08_Causal_Local_Evidence_Stream_Implementation_Supplement_v0.1.md。新口径为 R08=Causal Local Evidence Stream（真实 history source/alignment/per-step evidence + stateless smoke readout），R09=Persistent Temporal Local Memory（A recurrent latent；B RoboTTT-style TTT fast weights）。R08 第一硬 Gate 是 Wan exact-window z0 suffix-invariance；Gate 未通过前禁止把 z0 当 causal historical feature。当前 LIBERO loader 尚未读取数据集已有的 observation.state 8D，必须先做 source audit 再接入。R08 不得实现 GRU/TTT/Global/Agent/RL。

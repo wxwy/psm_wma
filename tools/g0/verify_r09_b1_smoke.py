@@ -61,19 +61,46 @@ def _finite_loss(log: Path, expected_steps: int) -> tuple[bool, bool]:
     )
 
 
+def _complete_dcp(path: Path) -> bool:
+    return all((path / name / ".metadata").is_file() for name in ("model", "optim", "scheduler", "trainer"))
+
+
+def _sidecar_matches_command(sidecar: dict[str, object]) -> bool:
+    command = sidecar.get("command")
+    if not isinstance(command, str):
+        return False
+    if sidecar.get("command_sha256") != hashlib.sha256(command.encode()).hexdigest():
+        return False
+    required = ("env", "-u", "NPROC_PER_NODE=1", "LIBERO_LATENT_CACHE_VERIFY_RATIO=0", "LIBERO_NUM_WORKERS=0", "DISABLE_AUTO_RESUME=1")
+    return all(item in command for item in required)
+
+
+def _cache_only_no_fallback(log: Path, sidecar: dict[str, object]) -> bool:
+    environment = sidecar["environment"]
+    text = log.read_text(errors="replace").lower()
+    forbidden = ("online vae fallback", "latent_cache_mismatch", "fallback to online")
+    return environment["LIBERO_LATENT_CACHE_VERIFY_RATIO"] == "0" and bool(environment["LIBERO_LATENT_CACHE_ROOT"]) and not any(item in text for item in forbidden)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--initial-checkpoint", type=Path, required=True)
     parser.add_argument("--final-checkpoint", type=Path, required=True)
     parser.add_argument("--log", type=Path, required=True)
+    parser.add_argument("--gate-a-log", type=Path, required=True)
     parser.add_argument("--probe", type=Path, required=True)
+    parser.add_argument("--gate-a-sidecar", type=Path, required=True)
     parser.add_argument("--training-sidecar", type=Path, required=True)
+    parser.add_argument("--expected-root-revision", required=True)
+    parser.add_argument("--expected-submodule-revision", required=True)
+    parser.add_argument("--expected-gitlink-revision", required=True)
     parser.add_argument("--expected-steps", type=int, default=5)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     initial, final = _load(args.initial_checkpoint), _load(args.final_checkpoint)
     probe = json.loads(args.probe.read_text())
+    gate_a_sidecar = json.loads(args.gate_a_sidecar.read_text())
     sidecar = json.loads(args.training_sidecar.read_text())
     added, removed = set(final) - set(initial), set(initial) - set(final)
     frozen = [name for name in set(initial) & set(final) if not _selected(name)]
@@ -81,6 +108,18 @@ def main() -> None:
     groups = step["gradient_groups"]
     state = probe["state_contract"]
     total_finite, action_finite = _finite_loss(args.log, args.expected_steps)
+    gate_a_total_finite, gate_a_action_finite = _finite_loss(args.gate_a_log, 2)
+    expected_source = {
+        "root_revision": args.expected_root_revision,
+        "submodule_revision": args.expected_submodule_revision,
+        "gitlink_revision": args.expected_gitlink_revision,
+    }
+    gate_a_output = gate_a_sidecar["output"]
+    b1_output = sidecar["output"]
+    source_chain = all(
+        item["source"] == expected_source and item["source"]["gitlink_revision"] == item["source"]["submodule_revision"]
+        for item in (gate_a_sidecar, sidecar)
+    )
     checks = {
         "training_losses_finite": total_finite and action_finite,
         "checkpoint_schema_only_removes_gru": not added and removed == REMOVED_GRU,
@@ -95,6 +134,10 @@ def main() -> None:
         "ttt_state_schema": state["members"] == STATE_SCHEMA and state["bytes_per_sample"] == 18953,
         "ttt_state_fresh_segment_reset_detached": state["segment_token_max_abs_diff"] == 0.0 and state["segment_present_equal"] and all(state["segment_members_exact"]) and state["fresh_token_exact"] and state["fresh_present_equal"] and all(state["fresh_members_exact"]) and state["token_detached"] and all(state["members_detached"]) and all(state["reset_selected_members_zero"]) and state["reset_selected_initialized_false"] and state["reset_selected_progress_zero"] and all(state["reset_unselected_members_exact"]) and state["reset_all_mask_selected_absent"] and state["reset_all_mask_selected_token_zero"] and all(state["reset_all_mask_members_detached"]),
         "cuda_peak_recorded": probe["full_run_cuda_peak"]["allocated_bytes"] > 0 and probe["full_run_cuda_peak"]["reserved_bytes"] > 0 and probe["full_run_cuda_peak"]["device"] is not None,
+        "gate_a_rebuilt_warm_start_complete": gate_a_sidecar["phase"] == "gate_a_rebuild" and gate_a_sidecar["expected_steps"] == 2 and gate_a_total_finite and gate_a_action_finite and gate_a_output["checkpoint"] == str(args.initial_checkpoint) and gate_a_output["log"] == str(args.gate_a_log) and _complete_dcp(args.initial_checkpoint),
+        "two_phase_d005_provenance_chain": source_chain and _sidecar_matches_command(gate_a_sidecar) and _sidecar_matches_command(sidecar) and sidecar["phase"] == "b1_smoke" and sidecar["expected_steps"] == args.expected_steps and sidecar["input"]["checkpoint"] == str(args.initial_checkpoint) and b1_output["checkpoint"] == str(args.final_checkpoint) and b1_output["log"] == str(args.log) and b1_output["probe"] == str(args.probe) and gate_a_sidecar["input"]["libero_root"] == sidecar["input"]["libero_root"] and gate_a_sidecar["input"]["cache_root"] == sidecar["input"]["cache_root"],
+        "cache_only_no_online_vae_fallback_both_phases": _cache_only_no_fallback(args.gate_a_log, gate_a_sidecar) and _cache_only_no_fallback(args.log, sidecar),
+        "b1_model_only_loads_exact_rebuilt_checkpoint": str(args.initial_checkpoint) in args.log.read_text(errors="replace"),
         "d005_binds_cache_only_training": sidecar["phase"] == "b1_smoke" and sidecar["network"] is False and sidecar["world_size"] == 1 and sidecar["environment"]["NPROC_PER_NODE"] == "1" and sidecar["environment"]["PSM_R09_B1_TTT_ENABLED"] == "1" and sidecar["environment"]["PSM_R08_HISTORY_MODE"] == "normal" and sidecar["environment"]["LIBERO_LATENT_CACHE_VERIFY_RATIO"] == "0" and sidecar["environment"]["LIBERO_LATENT_CACHE_ROOT"] and sidecar["input"]["checkpoint"] == str(args.initial_checkpoint) and sidecar["output"]["probe"] == str(args.probe),
         "verifier_root_clean": _clean(args.root),
         "verifier_submodule_clean": _clean(args.root / "cosmos-framework"),
@@ -106,6 +149,7 @@ def main() -> None:
         "allowlist": list(ALLOWLIST),
         "checkpoint": {"initial": str(args.initial_checkpoint), "final": str(args.final_checkpoint), "added": sorted(added), "removed": sorted(removed), "frozen_common_count": len(frozen)},
         "runtime_probe": probe,
+        "gate_a_sidecar": {"path": str(args.gate_a_sidecar), "sha256": hashlib.sha256(args.gate_a_sidecar.read_bytes()).hexdigest(), "source": gate_a_sidecar["source"]},
         "training_sidecar": {"path": str(args.training_sidecar), "sha256": hashlib.sha256(args.training_sidecar.read_bytes()).hexdigest(), "source": sidecar["source"]},
         "command": {"argv": __import__("sys").argv, "tool_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest()},
     }

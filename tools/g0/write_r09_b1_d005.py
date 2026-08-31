@@ -25,6 +25,7 @@ def main() -> None:
     parser.add_argument("--cache-root", required=True)
     parser.add_argument("--run-root", required=True)
     parser.add_argument("--log", required=True)
+    parser.add_argument("--output-checkpoint", required=True)
     parser.add_argument("--probe", default="")
     parser.add_argument("--expected-steps", type=int, required=True)
     args = parser.parse_args()
@@ -47,7 +48,13 @@ def main() -> None:
         "source": {"root_revision": _git(root, "rev-parse", "HEAD"), "submodule_revision": _git(submodule, "rev-parse", "HEAD"), "gitlink_revision": _git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2]},
         "cwd": str(root / "cosmos-framework"), "gpu": {"index": 0, "cap": "A100-80GB"}, "environment": environment, "unset_environment": unset_environment,
         "input": {"checkpoint": args.checkpoint, "libero_root": args.libero_root, "cache_root": args.cache_root},
-        "output": {"root": args.run_root, "log": args.log, "probe": args.probe}, "expected_steps": args.expected_steps,
+        "output": {
+            "root": args.run_root,
+            "log": args.log,
+            "checkpoint": args.output_checkpoint,
+            "probe": args.probe,
+        },
+        "expected_steps": args.expected_steps,
         "command": args.command,
     }
     payload["command_sha256"] = hashlib.sha256(args.command.encode()).hexdigest()
