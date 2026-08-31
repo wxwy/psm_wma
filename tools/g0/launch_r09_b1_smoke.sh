@@ -18,6 +18,9 @@ B1_LOG="$B1_ROOT/logs/action_policy_libero_edge_all_sft.log"
 GATE_A_SIDECAR="$ARTIFACT_ROOT/gate_a_rebuild_d005.json"
 B1_SIDECAR="$ARTIFACT_ROOT/b1_smoke_d005.json"
 B1_PROBE="$ARTIFACT_ROOT/runtime_probe.json"
+GPU_NAME="$(/usr/bin/nvidia-smi --query-gpu=name --format=csv,noheader | /usr/bin/head -n 1)"
+GPU_TOTAL_MEMORY_MIB="$(/usr/bin/nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | /usr/bin/head -n 1 | /usr/bin/tr -d ' ')"
+[[ "$GPU_NAME" == *"A100"* && "$GPU_TOTAL_MEMORY_MIB" -ge 80000 ]] || { echo "需要 A100-80GB，实际为 $GPU_NAME / ${GPU_TOTAL_MEMORY_MIB}MiB" >&2; exit 1; }
 
 readonly -a UNSET_ENV=(
     PSM_R09_A1_PROBE_OUTPUT PSM_R07_RUNTIME_PROBE_OUTPUT PSM_R07_PARITY_OUTPUT
@@ -33,6 +36,7 @@ run_phase() {
     local name
     for name in "${UNSET_ENV[@]}"; do command+=(-u "$name"); done
     command+=(
+        "CUDA_VISIBLE_DEVICES=0"
         "NPROC_PER_NODE=1" "PSM_R08_LOCAL_HISTORY_ENABLED=1" "PSM_R08_LOCAL_HISTORY_HORIZON=16"
         "PSM_LOCAL_DUMMY_ENABLED=0" "PSM_LOCAL_DUMMY_DIM=32" "PSM_LOCAL_DUMMY_MODE=normal"
         "PSM_R08_HISTORY_MODE=normal" "PSM_R09_A1_ENABLED=0" "PSM_R08_GATE_B_CAPTURE_ONLY=0"
@@ -44,11 +48,13 @@ run_phase() {
     )
     local resolved_command
     printf -v resolved_command '%q ' "${command[@]}"
+    local command_argv_json
+    command_argv_json="$("$PYTHON" -c 'import json, sys; print(json.dumps(sys.argv[1:]))' "${command[@]}")"
     "$PYTHON" "$ROOT/tools/g0/write_r09_b1_d005.py" \
-        --root "$ROOT" --phase "$phase" --output "$sidecar" --command "$resolved_command" \
+        --root "$ROOT" --phase "$phase" --output "$sidecar" --command "$resolved_command" --command-argv-json "$command_argv_json" \
         --checkpoint "$input_checkpoint" --libero-root "$LIBERO_ROOT" --cache-root "$LIBERO_LATENT_CACHE_ROOT" \
         --run-root "$output_root" --log "$log_file" --output-checkpoint "$output_checkpoint" \
-        --probe "$probe" --expected-steps "$expected_steps"
+        --probe "$probe" --expected-steps "$expected_steps" --gpu-name "$GPU_NAME" --gpu-total-memory-mib "$GPU_TOTAL_MEMORY_MIB"
     printf 'R09_B1_RESOLVED_COMMAND phase=%s: %s\n' "$phase" "$resolved_command"
     if [[ "${DRY_RUN:-0}" == "1" ]]; then return; fi
     (cd "$FRAMEWORK" && "${command[@]}")
