@@ -3277,3 +3277,10 @@ Detailed review:
 ### 审核锚点更正
 
 - 根仓在远端 `a32781b` 的 P3 审核结论到达后已按常规 rebase；上述实现内容未变化，当前审核根仓锚点为 `4cfa359`，子模块/Gitlink 仍为 `0af5d53`。请以此组 SHA 审核。
+
+### Closure verdict recorded
+
+- ChatGPT：`APPROVE`，详见 `docs/collab/chatgpt/reviews/2026-09-01_LIBERO_worker_default_4cfa359_0af5d53.md`。
+- Kimi：`APPROVE`；核对 Python、普通 launcher 与 tmux launcher 的三个默认值均为 12。
+- MM：`APPROVE`；确认仅帮助文本变动，不改变运行时行为或任何 R09 Gate。
+- 结论：`FIX-LIBERO-WORKER-DEFAULT-12` 关闭；不授权训练、GPU、评测、推理或其他 Gate。
