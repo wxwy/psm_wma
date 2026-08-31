@@ -2793,6 +2793,10 @@ PASS：前置完整 checkpoint；B1 5 step 完成、loss/action loss finite、pr
 
 不申请 eval/inference/closed-loop、多卡、长训、matched SR、backend freeze、shared-MoT、Global/Agent/RL。请同时审查这是否足以替代已清理的 Gate-A 前置；若批准才执行。
 
+### 2026-08-31 verifier 补充 @ root 012f0ac
+
+Kimi 指出的“probe 必须由 verifier 消费”已关闭：新增 `tools/g0/verify_r09_b1_smoke.py`（py_compile/diff-check PASS）。它只读加载重建 Gate-A 与 B1 终态 DCP、日志和 probe，将以下设为 `status=PASS` 硬门：仅移除四个 GRU tensor 的 schema、所有非 allowlist 公共 tensor bitwise 不变、5-step total/action finite、exact 三 key optimizer、encoder absent-or-zero grad、两 adapter present/finite/nonzero、五成员 18,953 B/sample、fresh/split/reset/detach、CUDA peak 和两仓 tracked clean。请以 root=`012f0ac`、submodule/Gitlink=`abe8272` 给最终 `APPROVE_TO_RUN_B1_SMOKE` 或 `REQUEST_CHANGES`。
+
 
 ---
 
