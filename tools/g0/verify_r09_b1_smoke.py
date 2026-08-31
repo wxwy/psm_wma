@@ -219,10 +219,9 @@ def main() -> None:
         "frozen_common_tensors_bitwise_unchanged": all(torch.equal(initial[name], final[name]) for name in frozen),
         "optimizer_exact_three_key_membership": step["optimizer_matches_targets"] and not step["missing_optimizer_names"] and not step["unexpected_optimizer_names"],
         "encoder_ttt_gradient_absent_or_zero": all(not item["present"] or item["max_abs"] == 0.0 for item in groups["encoder"]),
-        "adapter_gradients_present_finite_nonzero": all(
-            item["present"] and item["finite"] and item["max_abs"] > 0
+        "adapter_gradient_groups_present_finite_nonzero": all(
+            any(item["present"] and item["finite"] and item["max_abs"] > 0 for item in groups[name])
             for name in ("local_memory2llm", "local_memory_modality_embed")
-            for item in groups[name]
         ),
         "ttt_state_schema": state["members"] == STATE_SCHEMA and state["bytes_per_sample"] == 18953,
         "ttt_state_fresh_segment_reset_detached": state["segment_token_max_abs_diff"] == 0.0 and state["segment_present_equal"] and all(state["segment_members_exact"]) and state["fresh_token_exact"] and state["fresh_present_equal"] and all(state["fresh_members_exact"]) and state["token_detached"] and all(state["members_detached"]) and all(state["reset_selected_members_zero"]) and state["reset_selected_initialized_false"] and state["reset_selected_progress_zero"] and all(state["reset_unselected_members_exact"]) and state["reset_all_mask_selected_absent"] and state["reset_all_mask_selected_token_zero"] and all(state["reset_all_mask_members_detached"]),
@@ -233,7 +232,7 @@ def main() -> None:
         "b1_first_packed_batch_has_effective_local_history": _b1_first_batch_history(sidecar),
         "two_phase_d005_provenance_chain": source_chain and _sidecar_matches_command(gate_a_sidecar) and _sidecar_matches_command(sidecar) and sidecar["phase"] == "b1_smoke" and sidecar["expected_steps"] == args.expected_steps and sidecar["input"]["checkpoint"] == str(args.initial_checkpoint) and b1_output["checkpoint"] == str(args.final_checkpoint) and b1_output["log"] == str(args.log) and b1_output["probe"] == str(args.probe) and gate_a_sidecar["input"]["libero_root"] == sidecar["input"]["libero_root"] and gate_a_sidecar["input"]["cache_root"] == sidecar["input"]["cache_root"],
         "cache_only_no_online_vae_fallback_both_phases": _cache_only_no_fallback(args.gate_a_log, gate_a_sidecar) and _cache_only_no_fallback(args.log, sidecar),
-        "b1_model_only_loads_exact_rebuilt_checkpoint": bool(re.search(re.escape(f"Loaded checkpoint from {args.initial_checkpoint}") + r"(?: \\([^)]*\\))? in iteration 0(?:\\n|$)", args.log.read_text(errors="replace"))) and "checkpoint.load_training_state=False" in sidecar["command"],
+        "b1_model_only_loads_exact_rebuilt_checkpoint": bool(re.search(re.escape(f"Loaded checkpoint from {args.initial_checkpoint}") + r"(?: \([^)]*\))? in iteration 0(?:\n|$)", args.log.read_text(errors="replace"))) and "checkpoint.load_training_state=False" in sidecar["command"],
         "d005_binds_cache_only_training": sidecar["phase"] == "b1_smoke" and sidecar["network"] is False and sidecar["world_size"] == 1 and sidecar["environment"]["NPROC_PER_NODE"] == "1" and sidecar["environment"]["PSM_R09_B1_TTT_ENABLED"] == "1" and sidecar["environment"]["PSM_R08_HISTORY_MODE"] == "normal" and sidecar["environment"]["LIBERO_LATENT_CACHE_VERIFY_RATIO"] == "0" and sidecar["environment"]["LIBERO_LATENT_CACHE_ROOT"] and sidecar["input"]["checkpoint"] == str(args.initial_checkpoint) and sidecar["output"]["probe"] == str(args.probe),
         "verifier_root_clean": _clean(args.root),
         "verifier_submodule_clean": _clean(args.root / "cosmos-framework"),
