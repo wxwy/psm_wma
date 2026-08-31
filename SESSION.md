@@ -1,6 +1,6 @@
 # 当前协作状态
 
-更新时间：2026-08-30
+更新时间：2026-08-31
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
@@ -11,6 +11,8 @@
 - 推送策略确认:父仓 V2 `79b1c54` = origin/V2 `79b1c54`,子模块 v2 `5b61762` = origin/v2 `5b61762`,**已完全同步无需 push**;本次 commit 同步 SESSION.md/TODO.md/MEMORY/DECISIONS.md D015 是为记录今晚会话。
 
 ## 当前最小步骤
+
+- R09-B1-G batch2 bounded-profile rework（2026-08-31，IN_PROGRESS）：GPT `bcc9e9d`、Kimi、MM 均 `APPROVE_B1_BATCH2_PROFILE_REWORK`，仅授权根仓实现，不授权 GPU。已完成的 batch1 实跑保留：Gate-A 2/2 finite 与完整 DCP；B1 首个 `start=0` 全 history-absent，Local-only optimizer 无梯度而正确失败。当前最小修改限定 root launcher/D005/verifier 与一个训练前 dataloader evidence 工具：Gate-A 固定 sample=1、B1 固定 sample=2，均 accum=1；从同一 TOML/环境/overrides 实例化 `dataloader_train`，在 B1 启动前写首个 packed batch 的有效 `history_mask`/可用 window key 证据，缺少任何有效 Local history 即阻止 B1。D005 升 v3 并逐 phase 绑定 argv/profile/history evidence；verifier 分别硬校验 1/2 profile 和 runtime/evidence。禁止修改子模块模型/回调/正式 recipe，禁止 GPU/训练。预计修改：`tools/g0/launch_r09_b1_smoke.sh`、`tools/g0/write_r09_b1_d005.py`、`tools/g0/verify_r09_b1_smoke.py`、新增 root `tools/g0/verify_r09_b1_first_batch_history.py`、`TODO.md`、`SESSION.md`。未提交。
 
 - R09-B1-G 失败根因诊断（2026-08-31，IN_PROGRESS）：已获批准的 launcher PATH 修复后，Gate-A-compatible rebuild 成功完成四 suite cache-only prewarm、模型 model-only warm-start，并打印 `Starting training...`；在未完成首个 optimizer step 前，进程被先 SIGTERM、后 SIGKILL。运行配置为 `dataloader_train.max_samples_per_batch=128`、`trainer.grad_accum_iter=16`、workers=0；预热仅每流 1 样本。日志、D005 与临时输出均保留，未生成 checkpoint/B1 证据。当前只做限时 CPU 首批构造测量，确定是否为大规模 packer 构造而非 VAE/模型/回调阻塞；未修改 Cosmos 代码、未重试 GPU。预计若需缩小 smoke microbatch/accum，必须先将其定义为 bounded noncanonical smoke profile 并重新获得 ChatGPT/MM/Kimi 批准。提交：未提交。
 

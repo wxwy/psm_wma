@@ -30,16 +30,20 @@ STATE_SCHEMA = {
     "initialized": {"shape_per_sample": [], "dtype": "bool", "bytes_per_sample": 1},
     "segment_progress": {"shape_per_sample": [], "dtype": "int64", "bytes_per_sample": 8},
 }
-SMOKE_PROFILE = {
-    "name": "smoke_batch1",
-    "bounded_noncanonical": True,
-    "dataloader_train.max_samples_per_batch": 1,
-    "trainer.grad_accum_iter": 1,
+SMOKE_PROFILES = {
+    "gate_a_rebuild": {
+        "name": "smoke_batch1_gate_a",
+        "bounded_noncanonical": True,
+        "dataloader_train.max_samples_per_batch": 1,
+        "trainer.grad_accum_iter": 1,
+    },
+    "b1_smoke": {
+        "name": "smoke_batch2_b1",
+        "bounded_noncanonical": True,
+        "dataloader_train.max_samples_per_batch": 2,
+        "trainer.grad_accum_iter": 1,
+    },
 }
-SMOKE_PROFILE_OVERRIDES = (
-    "dataloader_train.max_samples_per_batch=1",
-    "trainer.grad_accum_iter=1",
-)
 
 
 def _load(path: Path) -> dict[str, torch.Tensor]:
@@ -110,23 +114,43 @@ def _sidecar_matches_command(sidecar: dict[str, object]) -> bool:
         for item in argv
         if item.startswith("EXTRA_TAIL_OVERRIDES=")
     ]
+    profile = SMOKE_PROFILES.get(sidecar.get("phase"))
+    if profile is None:
+        return False
+    overrides = (
+        f"dataloader_train.max_samples_per_batch={profile['dataloader_train.max_samples_per_batch']}",
+        f"trainer.grad_accum_iter={profile['trainer.grad_accum_iter']}",
+    )
     return (
         all(assignments.count(f"{key}={value}") == 1 for key, value in env.items())
         and "DISABLE_AUTO_RESUME=1" in argv
         and len(override_values) == 1
-        and all(override_values[0].count(item) == 1 for item in SMOKE_PROFILE_OVERRIDES)
+        and all(override_values[0].count(item) == 1 for item in overrides)
     )
 
 
 def _bounded_smoke_profile(sidecar: dict[str, object], expected_steps: int) -> bool:
     diagnostics = sidecar.get("launch_diagnostics")
     return (
-        sidecar.get("smoke_profile") == SMOKE_PROFILE
+        sidecar.get("smoke_profile") == SMOKE_PROFILES.get(sidecar.get("phase"))
         and sidecar.get("expected_steps") == expected_steps
         and isinstance(diagnostics, dict)
         and isinstance(diagnostics.get("started_unix"), float)
         and isinstance(diagnostics.get("dmesg_returncode"), int)
         and isinstance(diagnostics.get("dmesg_tail"), list)
+    )
+
+
+def _b1_first_batch_history(sidecar: dict[str, object]) -> bool:
+    evidence = sidecar.get("b1_first_batch_history")
+    if not isinstance(evidence, dict) or evidence.get("status") != "PASS":
+        return False
+    path = Path(str(evidence.get("path", "")))
+    return (
+        path.is_file()
+        and evidence.get("sha256") == _sha256(path)
+        and isinstance(evidence.get("effective_local_history_sample_count"), int)
+        and evidence["effective_local_history_sample_count"] >= 1
     )
 
 
@@ -194,6 +218,7 @@ def main() -> None:
         "approved_single_a100_80gb_bound_and_recorded": gpu_chain and "A100" in probe["full_run_cuda_peak"]["device"],
         "gate_a_rebuilt_warm_start_complete": gate_a_sidecar["phase"] == "gate_a_rebuild" and gate_a_sidecar["expected_steps"] == 2 and gate_a_total_finite and gate_a_action_finite and gate_a_output["checkpoint"] == str(args.initial_checkpoint) and gate_a_output["log"] == str(args.gate_a_log) and _complete_dcp(args.initial_checkpoint) and bool(gate_a_manifest),
         "bounded_noncanonical_smoke_profile": _bounded_smoke_profile(gate_a_sidecar, 2) and _bounded_smoke_profile(sidecar, args.expected_steps),
+        "b1_first_packed_batch_has_effective_local_history": _b1_first_batch_history(sidecar),
         "two_phase_d005_provenance_chain": source_chain and _sidecar_matches_command(gate_a_sidecar) and _sidecar_matches_command(sidecar) and sidecar["phase"] == "b1_smoke" and sidecar["expected_steps"] == args.expected_steps and sidecar["input"]["checkpoint"] == str(args.initial_checkpoint) and b1_output["checkpoint"] == str(args.final_checkpoint) and b1_output["log"] == str(args.log) and b1_output["probe"] == str(args.probe) and gate_a_sidecar["input"]["libero_root"] == sidecar["input"]["libero_root"] and gate_a_sidecar["input"]["cache_root"] == sidecar["input"]["cache_root"],
         "cache_only_no_online_vae_fallback_both_phases": _cache_only_no_fallback(args.gate_a_log, gate_a_sidecar) and _cache_only_no_fallback(args.log, sidecar),
         "b1_model_only_loads_exact_rebuilt_checkpoint": bool(re.search(re.escape(f"Loaded checkpoint from {args.initial_checkpoint}") + r"(?: \\([^)]*\\))? in iteration 0(?:\\n|$)", args.log.read_text(errors="replace"))) and "checkpoint.load_training_state=False" in sidecar["command"],
@@ -208,7 +233,7 @@ def main() -> None:
         "warnings": [
             "PASS 仅表示 bounded smoke profile 的 runtime/checkpoint 合同；不是 canonical Gate-A、正式规模训练、吞吐、收敛或 SR 证据。"
         ],
-        "smoke_profile": SMOKE_PROFILE,
+        "smoke_profiles": SMOKE_PROFILES,
         "allowlist": list(ALLOWLIST),
         "checkpoint": {"initial": str(args.initial_checkpoint), "final": str(args.final_checkpoint), "added": sorted(added), "removed": sorted(removed), "frozen_common_count": len(frozen), "gate_a_manifest": gate_a_manifest},
         "runtime_probe": probe,
