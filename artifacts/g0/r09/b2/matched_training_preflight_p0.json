@@ -1,0 +1,186 @@
+{
+  "assets": {
+    "base_checkpoint": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID-dcp",
+    "cache_manifest_sha256": {
+      "libero_10": "a1627d26ed3670dfba9d21527317020f553b6c31f03766e58717f84f753f3319",
+      "libero_goal": "0a327c4c9856e59068f19bd6c2a2052b33c7f3a7a2ae318ee8ea7862c00489d9",
+      "libero_object": "5a3756713ec6f1e00f5d00f4923dfa6846978e6ea3899372c03e1361f837aa64",
+      "libero_spatial": "4d2afe8c379a842da79089950b927547c3c09b8020e391812616e16139eb3ee3"
+    },
+    "cache_root": "/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1",
+    "libero_root": "/disk/rl/data/LIBERO_LeRobot_v3",
+    "toml": {
+      "path": "/disk/rl/psm_wma/cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml",
+      "sha256": "bdc53c800fda7aa20a0ec67fe4446b5559d106944a75aab7dfbafce6567cd046"
+    }
+  },
+  "blockers": [
+    "\u5f53\u524d dataset \u6ca1\u6709\u53ef\u5f3a\u5236\u6d88\u8d39\u7684 window-ID manifest\u3002",
+    "\u5f53\u524d\u6ca1\u6709 non-mutating Normal/Zero/Shuffle capture \u5b9e\u73b0\u3002",
+    "\u5f53\u524d\u6ca1\u6709\u5b9e\u9645 parameter/optimizer-state membership \u6e05\u5355\u3002",
+    "\u5f53\u524d\u6ca1\u6709\u51bb\u7ed3 exact argv\u3001sanitized environment\u3001world size \u548c 100 optimizer-update \u9884\u7b97\u7684 D005\u3002",
+    "\u5f53\u524d\u4ec5\u6bd4\u8f83\u5173\u952e selected config \u5b57\u6bb5\uff0c\u5c1a\u65e0\u5b8c\u6574 resolved-config machine diff\u3002"
+  ],
+  "capture_contract": {
+    "before_after_hashes_required": [
+      "model",
+      "optimizer",
+      "rng",
+      "dataloader_cursor",
+      "local_runtime_state"
+    ],
+    "mode": null,
+    "non_mutating_implementation_present": false
+  },
+  "checks": {
+    "backend_selectors_exact": true,
+    "base_checkpoint_exists": true,
+    "capture_non_mutating_implementation_present": false,
+    "complete_resolved_config_diff_present": false,
+    "exact_launch_budget_frozen": false,
+    "gitlink_matches_submodule": true,
+    "libero_root_exists": true,
+    "optimizer_membership_explicit": false,
+    "same_microbatch_and_accumulation": true,
+    "same_step_budget": true,
+    "selected_field_diff_allowed_only": true,
+    "stream_manifest_enforceable": false,
+    "ttt_optimizer_keys_exact": true
+  },
+  "launch_contract": {
+    "derived_samples_per_optimizer_update": null,
+    "exact_argv_present": false,
+    "optimizer_updates_required": 100,
+    "sanitized_environment_present": false,
+    "world_size": null
+  },
+  "optimizer_contract": {
+    "actual_parameter_membership_present": false,
+    "required_fields": [
+      "name",
+      "trainable",
+      "numel",
+      "optimizer_state_membership"
+    ]
+  },
+  "recurrent": {
+    "compile_enabled": false,
+    "ema_enabled": false,
+    "grad_accum_iter": 16,
+    "joint_seed": null,
+    "keys_to_select": [
+      "moe_gen",
+      "time_embedder",
+      "vae2llm",
+      "llm2vae",
+      "action2llm",
+      "llm2action",
+      "action_modality_embed",
+      "local_memory2llm",
+      "local_memory_modality_embed",
+      "local_history_runtime"
+    ],
+    "local_history_backend": "recurrent",
+    "local_history_horizon": 16,
+    "local_memory_dim": 32,
+    "max_iter": 5000,
+    "max_samples_per_batch": 128,
+    "precision": "bfloat16",
+    "trainer_seed": 42
+  },
+  "resolved_config_contract": {
+    "complete_resolved_config_diff_present": false,
+    "selected_field_diff_allowed_only": true,
+    "selected_fields": [
+      "compile_enabled",
+      "ema_enabled",
+      "grad_accum_iter",
+      "joint_seed",
+      "keys_to_select",
+      "local_history_backend",
+      "local_history_horizon",
+      "local_memory_dim",
+      "max_iter",
+      "max_samples_per_batch",
+      "precision",
+      "trainer_seed"
+    ]
+  },
+  "resolved_differences": {
+    "keys_to_select": {
+      "recurrent": [
+        "moe_gen",
+        "time_embedder",
+        "vae2llm",
+        "llm2vae",
+        "action2llm",
+        "llm2action",
+        "action_modality_embed",
+        "local_memory2llm",
+        "local_memory_modality_embed",
+        "local_history_runtime"
+      ],
+      "ttt_fast_weight": [
+        "local_history_runtime.encoder",
+        "local_memory2llm",
+        "local_memory_modality_embed"
+      ]
+    },
+    "local_history_backend": {
+      "recurrent": "recurrent",
+      "ttt_fast_weight": "ttt_fast_weight"
+    }
+  },
+  "resource": {
+    "cpu_count": 128,
+    "gpu": {
+      "csv": [
+        "0, NVIDIA A100-SXM4-80GB, 81920, 0"
+      ],
+      "returncode": 0
+    },
+    "memory": {
+      "MemAvailable": "963666556 kB",
+      "MemTotal": "1056435344 kB",
+      "SwapFree": "0 kB",
+      "SwapTotal": "0 kB"
+    }
+  },
+  "schema_version": "r09_b2_matched_training_preflight_p0_v1",
+  "source": {
+    "gitlink_revision": "eaa0f979974579939bc680ff683cf016bafdbce8",
+    "root_revision": "091c4d58daf7473f26b7a3213830ac55a7b818f7",
+    "submodule_revision": "eaa0f979974579939bc680ff683cf016bafdbce8"
+  },
+  "status": "BLOCKED",
+  "stream_contract": {
+    "enforceable_by_current_dataset": false,
+    "manifest_path": null,
+    "required_fields": [
+      "ordinal",
+      "suite",
+      "task_id",
+      "episode_index",
+      "start_frame"
+    ],
+    "sha256": null
+  },
+  "ttt_fast_weight": {
+    "compile_enabled": false,
+    "ema_enabled": false,
+    "grad_accum_iter": 16,
+    "joint_seed": null,
+    "keys_to_select": [
+      "local_history_runtime.encoder",
+      "local_memory2llm",
+      "local_memory_modality_embed"
+    ],
+    "local_history_backend": "ttt_fast_weight",
+    "local_history_horizon": 16,
+    "local_memory_dim": 32,
+    "max_iter": 5000,
+    "max_samples_per_batch": 128,
+    "precision": "bfloat16",
+    "trainer_seed": 42
+  }
+}

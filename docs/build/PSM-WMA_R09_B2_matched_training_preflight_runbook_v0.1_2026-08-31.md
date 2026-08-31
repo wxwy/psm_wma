@@ -1,6 +1,6 @@
 # R09-B2 Matched Training Preflight Runbook v0.1
 
-**状态**：DRAFT；仅用于三方方案审核。不得据此启动训练、GPU、评测、推理或修改 `cosmos-framework`。  
+**状态**：P0 只读审计已完成，结论 `BLOCKED`，待三方复核；不得据此启动训练、GPU、评测、推理或修改 `cosmos-framework`。
 **前置事实**：R09-A1 recurrent bounded smoke 与 R09-B1 TTT bounded smoke 均已关闭；二者都只是 runtime 合同证据，不是收敛、吞吐、SR 或 backend selection 证据。
 
 ## 1. 目的与边界
@@ -39,6 +39,31 @@ R09-B2 的唯一目的，是在同一训练数据和同一训练预算下比较 
 7. **optimizer-step 语义**：100 是完成的 optimizer update 数；P0 必须同时写明 global batch、microbatch、world size、grad accumulation 和每 step 样本数。实际 microbatch/world-size/时限须基于 P0 预算冻结，不能沿用 B1 的 2/5-step bounded profile。
 
 P0 PASS 只表示方案可审，不代表授权实现或训练。
+
+### P0 实测结果（2026-08-31）
+
+只读采集器 `tools/g0/collect_r09_b2_preflight.py` 已在单张空闲
+`NVIDIA A100-SXM4-80GB` 上完成配置与资产审计，未加载模型、数据批次或
+GPU 计算。机器可读结果为
+`artifacts/g0/r09/b2/matched_training_preflight_p0.json`，其状态必须为
+`BLOCKED`；配套完整性验收器
+`artifacts/g0/r09/b2/matched_training_preflight_p0_verifier.json` 为 `PASS`，
+只表示阻塞项记录完整，不表示 B2-T 获准。
+
+已确认的 selected 配置事实：两侧均为 bf16、trainer seed=42、
+microbatch=128、grad accumulation=16、max_iter=5000；selected-field diff
+仅有 `local_history_backend` 与 `keys_to_select`，TTT selector 精确为 B1
+冻结的三项。资产使用本地 DCP、Edge tokenizer 与 Wan VAE 副本，四个
+exact-window cache manifest 均已 SHA256 绑定。
+
+以下五项仍是硬阻塞，必须作为独立实现/审核范围处理后重做 P0，不得以本
+结果启动 B2-T：
+
+1. 可强制消费的有序 window-ID manifest；
+2. Normal/Zero/Shuffle 的 non-mutating capture；
+3. 实际 parameter/optimizer-state membership 清单；
+4. 含 world size、100 optimizer updates 与净化环境的精确 launcher/D005；
+5. 完整 resolved-config 的 machine-readable diff（当前仅比较 selected fields）。
 
 ### B2-T：matched training（需独立运行批准）
 
