@@ -1,0 +1,39 @@
+{
+  "execution": {
+    "backward_executed": false,
+    "checkpoint_loaded": false,
+    "cuda_visible_devices": "",
+    "device": "meta",
+    "forward_executed": false,
+    "optimizer_step_executed": false,
+    "scheduler_step_executed": false,
+    "weights_loaded": false
+  },
+  "input": {
+    "base_checkpoint_path": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID-dcp",
+    "edge_checkpoint_path": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID",
+    "libero_root": "/disk/rl/data/LIBERO_LeRobot_v3",
+    "wan_vae_path": "/localdisk-tmp/models/wan22_vae/Wan2.2_VAE.pth"
+  },
+  "recurrent": {
+    "reason": "RuntimeError: No CUDA GPUs are available",
+    "status": "BLOCKED"
+  },
+  "schema_version": "r09_b2_optimizer_inventory_v1",
+  "source": {
+    "collector_sha256": "530fec0ae7a8dc077e27745240e6dcc390d4fc1c91a72b85412048fd033ff42b",
+    "gitlink_revision": "fe133043e4afe5f79e586af42b849c44fcf46757",
+    "model_source_sha256": "93058e93dbc477e751a684dc08c0b096be329ea4be1c87ce2ddeedbc9e71d5ee",
+    "optimizer_source_sha256": "ff7371677b63e008ac1e9efc8df02a1628b029655f8e83b3a2b8713aaf83ecdf",
+    "recipe_sha256": "bdc53c800fda7aa20a0ec67fe4446b5559d106944a75aab7dfbafce6567cd046",
+    "root_revision": "87453e7e0d7e537c1f43f8bbb9f96058821d923e",
+    "sft_config_source_sha256": "2d49e89b8ce80f62add5a9b8895cd690fb994a1f93cc020cecc46fd59ac6f0be",
+    "submodule_revision": "fe133043e4afe5f79e586af42b849c44fcf46757",
+    "verifier_sha256": "d8b24ba72e2bccdf307c50a6b34a18e9e6b298e7c15942a7afe0599d23767892"
+  },
+  "status": "BLOCKED",
+  "ttt_fast_weight": {
+    "reason": "RuntimeError: No CUDA GPUs are available",
+    "status": "BLOCKED"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "checks": {
+    "backend_records": true,
+    "no_execution": true,
+    "provenance": true,
+    "schema": true
+  },
+  "inventory_status": "BLOCKED",
+  "status": "PASS"
+}
