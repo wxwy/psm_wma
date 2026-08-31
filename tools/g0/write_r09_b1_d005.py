@@ -37,10 +37,15 @@ def main() -> None:
         "LIBERO_LATENT_CACHE_ROOT": args.cache_root, "LIBERO_LATENT_CACHE_VERIFY_RATIO": "0", "LIBERO_NUM_WORKERS": "0",
         "PSM_R09_B1_TTT_ENABLED": "1" if args.phase == "b1_smoke" else "0", "PSM_R09_B1_PROBE_OUTPUT": args.probe,
     }
+    unset_environment = [
+        "PSM_R09_A1_PROBE_OUTPUT", "PSM_R07_RUNTIME_PROBE_OUTPUT", "PSM_R07_PARITY_OUTPUT",
+        "PSM_R07_PARITY_TENSOR_OUTPUT", "PSM_R08_GATE_A_PROBE_OUTPUT", "PSM_R08_GATE_B_PROVENANCE_OUTPUT",
+        "ONLINE_VAE_PROBE_OUTPUT", "LIBERO_MAX_EPISODES",
+    ]
     payload = {
         "schema_version": "r09_b1_d005_v1", "phase": args.phase, "network": False, "world_size": 1,
         "source": {"root_revision": _git(root, "rev-parse", "HEAD"), "submodule_revision": _git(submodule, "rev-parse", "HEAD"), "gitlink_revision": _git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2]},
-        "cwd": str(root / "cosmos-framework"), "gpu": {"index": 0, "cap": "A100-80GB"}, "environment": environment,
+        "cwd": str(root / "cosmos-framework"), "gpu": {"index": 0, "cap": "A100-80GB"}, "environment": environment, "unset_environment": unset_environment,
         "input": {"checkpoint": args.checkpoint, "libero_root": args.libero_root, "cache_root": args.cache_root},
         "output": {"root": args.run_root, "log": args.log, "probe": args.probe}, "expected_steps": args.expected_steps,
         "command": args.command,
