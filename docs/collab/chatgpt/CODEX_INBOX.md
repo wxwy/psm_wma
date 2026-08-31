@@ -2706,3 +2706,46 @@ ChatGPT 独立复核确认最终 B1-S closure 证据闭合：
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_closure_519ba24_0381335.md`
+
+
+---
+
+## 2026-08-31 — R09-B1 B1-S static closure review @ HEAD f66f005
+
+**Verdict: APPROVE_TO_CLOSE_B1_S**
+
+上一轮 B1-S verifier 的剩余 blocker 已全部关闭。
+
+独立复核确认：
+
+- hardened verifier source = `519ba24`
+- runtime submodule/Gitlink = `0381335`
+- canonical artifact commit = `fb4b423`
+- `artifacts/g0/r09/b1/static_contract.json` recorded clean root=`519ba24`、submodule/Gitlink=`0381335`
+- `status=PASS`
+- 22/22 current hard gates true
+- tool SHA=`8b12088b0f40a9c514cc4ce55657747a29975444acd67314ac0c7cb6d1bdc872`
+- artifact 提交后到 closure request `f66f005` 只有 review/Inbox/bookkeeping，没有 verifier/runtime/submodule/artifact 技术变化。
+
+关键 closure：
+
+1. representative backward 已真实经过 `LocalHistoryRuntime.forward`：encoder evidence 参与图，TTT token detach；encoder selected grads absent/zero，`local_memory2llm` 与 modality embed grads present/finite/nonzero。
+2. exact optimizer key 匹配名、selected exact union、backend matched=[]、backend-specific optimizer state empty、encoder detach、projection/embed gradient facts、all-present finite 均已进入 `status=PASS` hard gate。
+3. recipe snapshots 已独立 subprocess 隔离；default recurrent、B1 opt-in、A1 flag/probe mutual exclusion 均 PASS。
+4. canonical artifact 已刷新到当前 hardened verifier source，不再 stale。
+
+因此 ChatGPT 侧 **APPROVE_TO_CLOSE_B1_S**。
+
+仅关闭 B1-S static/runtime-wiring + CPU contract。继续 BLOCKED：
+
+- B1-G GPU smoke（必须另发请求，并有用户明确 GPU 命令批准）
+- eval/inference/closed-loop
+- multi-GPU
+- long training
+- matched SR
+- backend freeze
+- RoboTTT/shared-MoT
+- Global / Agent / RL
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-08-31_R09_B1_static_closure_f66f005.md`
