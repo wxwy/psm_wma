@@ -2797,6 +2797,10 @@ PASS：前置完整 checkpoint；B1 5 step 完成、loss/action loss finite、pr
 
 Kimi 指出的“probe 必须由 verifier 消费”已关闭：新增 `tools/g0/verify_r09_b1_smoke.py`（py_compile/diff-check PASS）。它只读加载重建 Gate-A 与 B1 终态 DCP、日志和 probe，将以下设为 `status=PASS` 硬门：仅移除四个 GRU tensor 的 schema、所有非 allowlist 公共 tensor bitwise 不变、5-step total/action finite、exact 三 key optimizer、encoder absent-or-zero grad、两 adapter present/finite/nonzero、五成员 18,953 B/sample、fresh/split/reset/detach、CUDA peak 和两仓 tracked clean。请以 root=`012f0ac`、submodule/Gitlink=`abe8272` 给最终 `APPROVE_TO_RUN_B1_SMOKE` 或 `REQUEST_CHANGES`。
 
+### 2026-08-31 GPT GPU-review 整改 @ root 15225c5 / submodule+Gitlink eaa0f97
+
+已关闭五项 blocker：probe/verifier 逐成员 exact B0 schema；`write_r09_b1_d005.py` 在运行前写 command hash/source/Gitlink/cache/checkpoint/GPU/output/network/steps，并记录 A1/R07/R08/online-VAE/LIBERO_MAX_EPISODES 的 unset 清单；verifier 硬绑定 b1_smoke sidecar 的 phase、single-rank、TTT/env/history=normal/cache ratio=0、checkpoint 与 probe；重建 checkpoint 仅称 Gate-A-compatible rebuilt warm-start。CPU py_compile 与 probe test PASS。请复审并给 `APPROVE_TO_RUN_B1_SMOKE` 或 `REQUEST_CHANGES`；未批准不启动 GPU。
+
 
 ---
 
