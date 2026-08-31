@@ -3077,3 +3077,12 @@ Detailed review:
 获批后唯一允许命令：在 `/disk/rl/psm_wma` 运行 `bash tools/g0/launch_r09_b1_smoke.sh`；单 A100-80GB、四-suite exact-window cache、workers=0，Gate-A 2 steps 后 B1 5 steps。PASS：有限 loss、完整 DCP、cache-only/no fallback、首 batch Local-history evidence、TTT runtime probe 与 verifier 全 PASS。FAIL：任意 NaN/OOM/SIGTERM/SIGKILL/缺 evidence/verifier FAIL 立即停止并保留日志、D005、checkpoint；不自动重试或扩大范围。
 
 禁止：子模块/模型/正式 recipe 变更，多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL。
+## 2026-08-31 — R09-B1-G bounded batch2 smoke closure review request
+
+- 任务/Gate：`G0-R09-B1-SINGLE-GPU-SMOKE` closure。请求 verdict：`APPROVE_TO_CLOSE_B1_G` / `REQUEST_CHANGES`。
+- 审核提交：根仓 `07b54302ecee7725964ec4ef97410ecf5f8db307`（已推送 `origin/V2`）；子模块/Gitlink `eaa0f979974579939bc680ff683cf016bafdbce8`（已推送）。实际 GPU 运行的源根为 `9dbd3ca8f07130c67bfe04c3cb380c20c561218a`，两阶段 D005 sidecar 均精确记录该源与子模块/Gitlink；运行后 verifier 修复与最终证据在 `7204d20`、`07b5430`。
+- 运行范围：已获三方 `APPROVE_TO_RUN_B1_BATCH2_PROFILE` 后仅执行一次 `tools/g0/launch_r09_b1_smoke.sh`；Gate-A profile 为 batch=1/accum=1、2 steps，B1 profile 为 batch=2/accum=1、5 steps，单张 A100 80GB，cache-only，网络关闭。未重试。
+- 证据：`artifacts/g0/r09/b1/gate_a_rebuild_d005.json`、`b1_smoke_d005.json`、`b1_first_batch_history.json`、`runtime_probe.json`、`smoke_contract.json`。最终 contract 为 PASS，19/19 checks true；Gate-A losses=`18.811033,17.932665`，B1 losses=`17.975386,15.754356,17.088230,14.520623,16.162872`。本地 DCP/log 输入位于 `/localdisk-tmp/r09-b1-gpu-smoke/`，final DCP=`.../b1_ttt/.../iter_000000005`。
+- verifier 修正：三项原 FAIL 均为 false-negative，已最小修正：(1) checkpoint-load regex 的括号转义；(2) adapter 的“每 group 至少一个 finite/nonzero”而非错误的“每个 tensor 均 nonzero”；(3) 同一 probe 的绝对/相对路径以 `Path.resolve()` 比较。修正后仅重放 CPU verifier，不重跑 GPU。
+- 验收请求：核对两阶段 model-only 交接、cache-only 无 fallback、首个 B1 packed batch 有有效 Local history、TTT selected optimizer/grad/state、checkpoint GRU-only schema 差、冻结共同张量 bitwise、loss finite、D005 provenance 与 A100 bound；确认该 bounded noncanonical smoke 不是正式训练/收敛/SR 证据。
+- 禁止范围：本申请不授权 GPU 重跑、正式规模训练、多卡、matched SR、eval/inference/closed-loop、backend freeze、Global/Agent/RL，且不修改 `cosmos-framework`。
