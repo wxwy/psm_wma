@@ -66,7 +66,7 @@
 | G0-R09-B1-SINGLE-GPU-SMOKE | DONE | Codex | ChatGPT/Kimi/MM 均 `APPROVE_TO_CLOSE_B1_G` | bounded/noncanonical runtime smoke 已关闭：runtime 源根=`9dbd3ca`、子模块/Gitlink=`eaa0f97`，最终证据根=`07b5430`，`artifacts/g0/r09/b1/smoke_contract.json` 19/19 PASS。不得将其解释为正式训练、收敛、SR 或部署证据。 |
 | G0-R09-B2-MATCHED-PREFLIGHT | BLOCKED | Codex | GPT/Kimi/MM 均 `APPROVE_TO_CLOSE_B2_P0_BLOCKED` | P0 artifact 为诚实 `BLOCKED`，verifier `PASS` 仅表示阻塞记录完整；B2-T 未授权。需先解除完整 config diff、window-ID manifest、non-mutating capture、实际 optimizer membership、exact D005/100-update 预算五项阻塞。 |
 | G0-R09-B2-P1-STREAM-MANIFEST | DONE | Codex | GPT/Kimi/MM 均 APPROVE_TO_CLOSE_B2_P1 | CPU-only 可强制消费、可逐 ordinal 比对的 `(ordinal,suite,task_index,episode_index,start_frame)` stream manifest 已关闭；P2-P5 与 B2-T 仍须独立方案、实现和三方审核。 |
-| G0-R09-B2-P2-NONMUTATING-CAPTURE | TODO | Codex | P1 方案获批且实现完成 | 单独实现/验证 Normal/Zero/Shuffle capture 不改变 model/optimizer/RNG/dataloader cursor/runtime state；先审核。 |
+| G0-R09-B2-P2-NONMUTATING-CAPTURE | IN_PROGRESS | Codex | P1 已三方关闭；当前仅方案/静态审计 | 定义并审核 Normal/Zero/Shuffle capture 的 clone/hash 合同；实现前必须三方批准，禁止模型/训练/GPU。 |
 | G0-R09-B2-P3-OPTIMIZER-INVENTORY | TODO | Codex | P1/P2 可审计方案明确 | 只读实例化导出两 backend 的实际 parameter/optimizer-state membership（name/trainable/numel/state）；先审核。 |
 | G0-R09-B2-P4-LAUNCH-D005 | TODO | Codex | P1-P3 的合同字段冻结 | 冻结单卡 exact argv、sanitized environment、world size、100 optimizer updates、D005 路径；先审核，不启动训练。 |
 | G0-R09-B2-P5-FULL-CONFIG-DIFF | TODO | Codex | P4 schema 明确 | 导出完整 resolved config 的结构化 machine diff，并拒绝允许范围外差异；先审核。 |
