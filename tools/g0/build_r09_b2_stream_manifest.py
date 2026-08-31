@@ -26,6 +26,14 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def parquet_index_sha256(root: Path) -> str:
+    digest = hashlib.sha256()
+    for path in sorted((root / "data").glob("chunk-*/file-*.parquet")):
+        digest.update(str(path.relative_to(root)).encode())
+        digest.update(sha256(path).encode())
+    return digest.hexdigest()
+
+
 def git(root: Path, *args: str) -> str:
     return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
 
@@ -141,6 +149,7 @@ def main() -> None:
                         "wrapper_source_sha256": sha256(root / "cosmos-framework/cosmos_framework/data/generator/action/datasets/action_sft_dataset.py"),
                         "recipe_toml_sha256": sha256(root / "cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml"),
                         "dataset_info_sha256": {suite: sha256(libero_root / suite / "meta/info.json") for suite in SUITES},
+                        "dataset_parquet_index_sha256": {suite: parquet_index_sha256(libero_root / suite) for suite in SUITES},
                         "cache_manifests": {suite: sha256(cache_root / suite / "dataset_manifest.json") for suite in SUITES},
                         "suite_record_sha256": suite_record_sha256}}
     (args.output_dir / "header.json").write_text(json.dumps(header, indent=2, sort_keys=True) + "\n", encoding="utf-8")

@@ -11,7 +11,7 @@ from pathlib import Path
 
 import torch
 
-from build_r09_b2_stream_manifest import SUITES, identity, reverse_index
+from build_r09_b2_stream_manifest import SUITES, identity, parquet_index_sha256, reverse_index
 from cosmos_framework.data.generator.action.datasets.libero_lerobot_dataset import LIBEROLeRobotDataset
 
 
@@ -28,9 +28,9 @@ def main() -> None:
     parser.add_argument("--header", type=Path, required=True)
     parser.add_argument("--records", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--cache-root", type=Path)
-    parser.add_argument("--libero-root", type=Path)
-    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
+    parser.add_argument("--cache-root", type=Path, required=True)
+    parser.add_argument("--libero-root", type=Path, required=True)
+    parser.add_argument("--root", type=Path, required=True)
     args = parser.parse_args()
     header = json.loads(args.header.read_text())
     records = [json.loads(line) for line in args.records.read_text().splitlines() if line]
@@ -88,24 +88,23 @@ def main() -> None:
         "recipe_toml_sha256": sha256(root / "cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml"),
     }
     source_hashes_ok = all(files.get(key) == value for key, value in source_hashes_ok.items())
-    if args.libero_root is not None:
-        source_hashes_ok = source_hashes_ok and all(
-            files.get("dataset_info_sha256", {}).get(suite) == sha256(args.libero_root / suite / "meta/info.json")
-            for suite in suites
-        )
+    source_hashes_ok = source_hashes_ok and all(
+        files.get("dataset_info_sha256", {}).get(suite) == sha256(args.libero_root / suite / "meta/info.json")
+        and files.get("dataset_parquet_index_sha256", {}).get(suite) == parquet_index_sha256(args.libero_root / suite)
+        for suite in suites
+    )
     index_ok = True
-    if args.libero_root is not None:
-        datasets = {
-            suite: LIBEROLeRobotDataset(root=str(args.libero_root / suite), fps=20, chunk_length=16, image_size=256,
-                                        camera_mode="concat_view", split="train", val_ratio=0.01, seed=0)
-            for suite in SUITES
-        }
-        for record in records:
-            dataset = datasets[record["suite"]]
-            expected = (record["task_index"], record["episode_index"], record["start_frame"])
-            if identity(dataset, record["dataset_flat_index"]) != expected or reverse_index(dataset, *expected[1:]) != record["dataset_flat_index"]:
-                index_ok = False
-                break
+    datasets = {
+        suite: LIBEROLeRobotDataset(root=str(args.libero_root / suite), fps=20, chunk_length=16, image_size=256,
+                                    camera_mode="concat_view", split="train", val_ratio=0.01, seed=0)
+        for suite in SUITES
+    }
+    for record in records:
+        dataset = datasets[record["suite"]]
+        expected = (record["task_index"], record["episode_index"], record["start_frame"])
+        if identity(dataset, record["dataset_flat_index"]) != expected or reverse_index(dataset, *expected[1:]) != record["dataset_flat_index"]:
+            index_ok = False
+            break
     checks = {
         "schema": header.get("schema_version") == "r09_b2_stream_manifest_v1",
         "record_hash": header.get("records_sha256") == sha256(args.records),
@@ -116,7 +115,7 @@ def main() -> None:
         "flat_index_present": all(isinstance(record.get("dataset_flat_index"), int) for record in records),
         "single_process": header.get("world_size") == 1 and header.get("num_workers") == 0,
         "source_complete": set(header.get("source", {})) == {"root_revision", "submodule_revision", "gitlink_revision"},
-        "provenance_complete": {"builder_sha256", "verifier_sha256", "dataset_source_sha256", "wrapper_source_sha256", "recipe_toml_sha256", "dataset_info_sha256", "cache_manifests", "suite_record_sha256"} <= set(files),
+        "provenance_complete": {"builder_sha256", "verifier_sha256", "dataset_source_sha256", "wrapper_source_sha256", "recipe_toml_sha256", "dataset_info_sha256", "dataset_parquet_index_sha256", "cache_manifests", "suite_record_sha256"} <= set(files),
         "source_hashes_match": source_hashes_ok,
         "suite_record_partition": suite_records_ok,
         "cache_window_per_record": cache_ok,
