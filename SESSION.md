@@ -20,7 +20,7 @@
 
 - `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，REVIEW）：仅新增 `docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_plan_v0.1_2026-09-01.md`；方案把 GPT closure 的三项 future-PASS HIGH 固定为 verifier policy，定义 GPU-only read-only construction/state-schema 范围与显存/行为停止条件。未实现、未运行 GPU；已申请三方方案审核。
 
-- `G0-R09-B2-P3-GPU-ONLY-TOKENIZER-EXCEPTION`（2026-09-01，REVIEW）：源码确认 `OmniMoTModel` 无条件构造 VLM processor；Kimi 裁定仅可允许 recipe 实际的本地 Edge processor/tokenizer 只读构造，网络/权重/VAE/数据/base checkpoint 任一访问即 BLOCKED。v0.2 方案待 GPT/MM 确认；未运行 GPU。
+- `G0-R09-B2-P3-GPU-ONLY-TOKENIZER-EXCEPTION`（2026-09-01，REVIEW）：源码确认 `OmniMoTModel` 无条件构造 VLM processor；Kimi 与 GPT 已批准本地 Edge processor/tokenizer 只读例外，MM 要求补强。v0.3 计划新增强制 `HF_HUB_OFFLINE=1`/`TRANSFORMERS_OFFLINE=1`/本地 cache 环境、四个 tokenizer 文件预断言及 verifier hard-gate；网络/权重/VAE/dataloader/数据/base checkpoint 任一访问即 BLOCKED。未运行 GPU，待三方复审。
 
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 
