@@ -3306,3 +3306,8 @@ Detailed review:
 - 改动：collector 在任何 token/GPU 分支前仅只读记录 canonical Edge 路径、六个 production processor/tokenizer 配置文件 SHA256、离线 env contract；verifier 对路径、环境、资产集合 fail-closed，并使合法、未获运行 token 的 `BLOCKED` artifact 验证为 `BLOCKED/record_valid=true`，不把未执行 backend inventory 误报为 FAIL。`PASS` 的 optimizer/state/DCP/TTT hard gate 未放宽。
 - 证据：`py_compile`、无 token collector→verifier、`git diff --check` PASS；临时 `/tmp/r09_b2_p3_gpu_static*.json` 未提交。未导入模型、未运行 GPU/网络/权重/VAE/dataloader/数据/base checkpoint。
 - 本次只请求继续 root-side 静态实现；不授权 GPU 运行、模型构造、forward/backward/step、DCP save/load、B2-T、P4/P5、训练/评测/推理。
+
+### Kimi 整改复审
+
+- 当前根仓审核锚点：`4c95942`（子模块/Gitlink 仍 `0af5d53`）。关闭 Kimi 指出的合法 `BLOCKED` 语义缺陷：local path/asset 为假时，collector 的资产缺失 `BLOCKED` 由 verifier 保持为 `BLOCKED/record_valid=true`；仅 `PASS` 仍强制该两项为真。移除重复 `checkpoint_loaded` 字段。
+- 复现：有效本地路径/无 token、`/nonexistent` 路径两种 static collector→verifier 均 `BLOCKED/record_valid=true`；`py_compile`、`git diff --check` PASS。请求同一 verdict 复审；禁止 GPU。
