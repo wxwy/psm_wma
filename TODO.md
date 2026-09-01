@@ -73,7 +73,7 @@
 | FIX-LIBERO-WORKER-DEFAULT-12 | DONE | Codex | GPT/Kimi/MM 均 APPROVE | 三入口均明确默认 12；仅修正 launcher 帮助文本。`bash -n`、双仓 diff-check PASS；GPT review=`2026-09-01_LIBERO_worker_default_4cfa359_0af5d53.md`，Kimi/MM 独立复核均 APPROVE；未启动训练/GPU。 |
 | G0-R09-B2-P4-LAUNCH-D005 | DONE | Codex | ChatGPT/Kimi/MM 均 `APPROVE_TO_CLOSE_P4_STATIC_D005` | clean source=`ddb4e0e`/Gitlink=`21d064f` 的 recurrent/TTT v2 `FROZEN_NOT_EXECUTED` 与 pair verifier PASS 已提交；仅关闭 P4 static D005，不授权 P5/B2-T/训练/GPU。 |
 | G0-R09-B2-P1-PRODUCTION-MANIFEST | DONE | Codex | ChatGPT/Kimi/MM 均 APPROVE_TO_BIND_P1_PRODUCTION_MANIFEST | clean worktree source=`4177e83`/Gitlink=`21d064f` 生成并提交 204,800 条固定身份，P1 verifier 14/14 PASS、GPU=0；只作为 P4 输入前置。 |
-| G0-R09-B2-P5-FULL-CONFIG-DIFF | IN_PROGRESS | Codex | 唯一获批 static export 已 fail-closed；child Python 3.13 注入 `LC_CTYPE=C.UTF-8` 触发环境精确匹配保护 | 最小修复须把该确定性 startup locale 显式纳入 D005 child effective environment、重算 frozen request SHA、CPU static tests 后重新三方审核；此前不得重跑 export 或启动 GPU/训练。 |
+| G0-R09-B2-P5-FULL-CONFIG-DIFF | REVIEW | Codex | 唯一获批 static export 已 fail-closed；实现 `3a7fc5c` 显式冻结 Python child `LC_CTYPE=C.UTF-8` 并更新 child digest | clean worktree 静态验收 7/7 PASS；待 GPT/Kimi/MM 对该最小整改 `APPROVE_TO_REQUEST_P5_STATIC_EXPORT`，随后才可新建 frozen exporter root 并另行申请一次执行；此前不得重跑/GPU/训练。 |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |
 | D015-LOCAL-MEMORY-GATE | DONE | Codex | D013/D014 已生效，Runtime Plan R07-R09 已对齐 | MEMORY/DECISIONS.md 新增 D015：Local/Global 必须为独立 optional clean modality；R07-R09 顺序与冻结边界；未冻结项不得在实现前写成既定事实 |
