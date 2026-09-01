@@ -3811,3 +3811,12 @@ Detailed review:
 - HIGH-2/3：每侧 `_bound()` 现严格检查完整 command（argv/cwd/interpreter/TOML/ordered overrides）、environment（set/unset/inherit/effective）、world/budget、P1/P3 binding、derived job path、P4 digest、P3 path/SHA/PASS digest、production source 与 complete selector/backend 值；P3 identity 不再仅 cross-compare。
 - HIGH-4：recurrent/TTT 的 `resolved_config.model.config.local_history_backend`、`optimizer.keys_to_select` 在 diff 前逐侧精确匹配 verifier-owned contract；路径白名单不再承担正确性判断。
 - 纯 CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=2/2 PASS；`git diff --check` PASS。未执行 `load_experiment_from_toml`、config export、CUDA/torchrun/GPU/训练。即使批准，本 verdict 仅允许下一步另行申请静态 export 执行授权。
+
+### Awaiting review — R09-B2 P5 Kimi remediation
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `31e0d9014e8b0663c8da7c2aedd1a4a27763b4bc`（处理 Kimi 对 `53a481d` 的 REQUEST_CHANGES）；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- `_child()` 在 `load_experiment_from_toml` 返回后精确断言 `config.model.config.local_history_backend` 与 D005 backend 一致，compose/override 漂移即 FAIL。
+- 永久 fixture 新增两份 envelope 的 `p3_verifier_sha256` 同时伪造为相同假值仍必须 FAIL，证明其绑定的是 verifier-owned frozen digest，而非仅 pair equality。
+- `py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=2/2 PASS；`git diff --check` PASS。未执行真实 compose/export/GPU/训练；本申请仍只请求未来 static-export 执行审核资格。
