@@ -376,19 +376,16 @@ def validate_loader_request(payload: Mapping[str, Any]) -> tuple[Mapping[str, An
 
 
 def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path) -> dict[str, dict[str, Any]]:
-    """Parent-only D005 gate; later approved execution consumes only these requests."""
-    from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
-    from tools.g0.verify_r09_b2_p5_full_config_diff import _evidence_records
+    """Reject the retired P4-v2 admission path before any future child can spawn.
 
-    root = validate_production_root(recurrent, ttt, production_root)
-    evidence, record_sha256, p4_verification_sha256 = _evidence_records(evidence_root.resolve())
-    if recurrent != evidence["recurrent"] or ttt != evidence["ttt_fast_weight"]:
-        raise ValueError("parent D005 records differ from frozen evidence_root records")
-    requests = {"recurrent": build_child_request(recurrent, production_root=root, backend="recurrent", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_record_sha256=record_sha256["recurrent"], p4_verification_sha256=p4_verification_sha256),
-                "ttt_fast_weight": build_child_request(ttt, production_root=root, backend="ttt_fast_weight", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_record_sha256=record_sha256["ttt_fast_weight"], p4_verification_sha256=p4_verification_sha256)}
-    for request in requests.values():
-        validate_child_request(request)
-    return requests
+    The v0.8 execution request adapter is deliberately not allowed to infer
+    fields from the caller's historical D005 records.  It must be constructed
+    only after `load_p4_v4_preflight()` has independently verified the future
+    P4-v4 evidence; until that adapter is implemented this is a hard stop.
+    """
+    del recurrent, ttt, production_root
+    load_p4_v4_preflight(evidence_root)
+    raise RuntimeError("P5 v4 preflight request adapter is required; historical P4-v2 admission is retired")
 
 
 def bound_exporter_source(exporter_root: Path) -> tuple[dict[str, Any], Any]:

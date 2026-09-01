@@ -63,6 +63,12 @@ class P5Test(unittest.TestCase):
                 load_p4_v4_preflight(root)
         with self.assertRaises(ValueError):
             p5_effective_environment({"effective_environment": {"set": {}, "unset": [], "inherit_allowlist": [], "sha256": "x"}}, {"effective_environment": {"set": {}, "unset": [], "inherit_allowlist": [], "sha256": "x"}})
+
+    def test_parent_cannot_reactivate_historical_p4_v2_admission(self):
+        with tempfile.TemporaryDirectory() as temp:
+            with patch("tools.g0.export_r09_b2_p5_resolved_config.load_p4_v4_preflight", return_value={}):
+                with self.assertRaisesRegex(RuntimeError, "historical P4-v2 admission is retired"):
+                    build_pair_requests({}, {}, production_root=Path(temp), evidence_root=Path(temp))
     def _exporter_worktree(self, root: Path, temporary: Path) -> Path:
         exporter = temporary / "exporter"
         subprocess.run(["git", "-C", str(root), "worktree", "add", "--detach", str(exporter), "HEAD"], check=True, stdout=subprocess.DEVNULL)

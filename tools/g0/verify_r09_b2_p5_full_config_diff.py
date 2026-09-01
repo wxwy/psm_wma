@@ -10,7 +10,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from tools.g0.export_r09_b2_p5_resolved_config import PYTHON_CHILD_LOCALE, SCHEMA
+from tools.g0.export_r09_b2_p5_resolved_config import PYTHON_CHILD_LOCALE, SCHEMA, load_p4_v4_preflight
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256, _load_frozen_inputs, _p3_contract, sha256_json
 
 P4_DIR = Path("artifacts/g0/r09/b2/p4_launch_d005")
@@ -187,6 +187,10 @@ def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], evidence_r
         root = evidence_root.resolve(); exporter_root = exporter_root.resolve()
         if root == exporter_root or root.is_relative_to(exporter_root) or exporter_root.is_relative_to(root):
             raise ValueError("evidence_root and exporter_root must be distinct non-overlapping canonical directories")
+        # P4-v4 is the sole execution handoff.  Historical v2 evidence remains
+        # inspectable below only while the envelope migration is completed; it
+        # can never make a pair pass without independently verified v4 files.
+        load_p4_v4_preflight(root)
         records, contracts, record_sha256, p4_verification_sha256 = _expected(root)
         exporter_source = _exporter_source(exporter_root)
     except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
