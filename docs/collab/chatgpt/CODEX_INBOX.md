@@ -3485,3 +3485,12 @@ Detailed review:
 - 整改：`_run_backend_workers()` 新增 `OSError` catch。child exec 无法启动时写 `status=BLOCKED`、`reason`、`launch_error`、`backend_output_path`，立即返回到顶层写 aggregate/D005；绝不启动 TTT。该修复只处理 parent launch 失败证据，不改变 runbook 的 GPU、路径、令牌、24 GiB 或禁止范围。
 - 永久回归新增 `test_backend_orchestration_stops_after_launch_error`，mock `PermissionError` 精确断言一条 child launch、recurrent BLOCKED、TTT 缺席；全套为 10/10 PASS。`py_compile`、根仓/子模块 diff-check PASS；测试后首次 D005 仍在、aggregate/backend JSON 仍缺、GPU=0MiB。
 - 请求仅重新授权同一 runbook 的一次新尝试；不得自动重试/换卡/改参数/加 `--worker-backend`。仍禁止网络、数据/VAE/checkpoint I/O、forward/backward/step、B2-T/P4/P5、训练/评测/推理等。
+
+### GPT/Kimi child interpreter argv 整改复审
+
+请求 verdict：`APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `ac8314aedaa9b415643c44bd13d1abbc26379e3b`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 处理 ChatGPT=`501687a`/Kimi HIGH：新增 `_worker_command_argv()`，parent 的实际/D005 `command_argv` 固定为 `[sys.executable, absolute_collector_script, *original_args]`；child 因而不依赖 collector `.py` executable bit。保留先前 `OSError` BLOCKED aggregate/fail-stop 处理，不 chmod 脚本。
+- 永久回归 `test_nonexecutable_collector_script_launches_through_interpreter` 创建 mode `0644` 临时脚本，断言 argv 前两项为解释器与绝对脚本路径，并真实以解释器执行成功；launch-error、nonzero、zero-exit BLOCKED、PASS order 回归仍在。全套 11/11 PASS；`py_compile`、双仓 diff-check PASS；GPU=0MiB。
+- 首次 D005 保留，首次尝试仍为 terminal，未被重写；本次只申请经修正 argv 的一次新运行授权。runbook 其它路径、单卡、24 GiB、令牌和禁止范围完全不变；禁止自动重试、换卡、改参数、加 `--worker-backend`、网络/数据/VAE/checkpoint I/O/forward/backward/step 及 B2-T/P4/P5/训练评测推理。
