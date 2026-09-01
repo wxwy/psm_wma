@@ -121,9 +121,29 @@ def sanitized_environment(contract: Mapping[str, Any], parent: Mapping[str, str]
     return result
 
 
+def build_child_request(record: Mapping[str, Any], *, root: Path, backend: str) -> dict[str, Any]:
+    """Bind one child request to its verified D005; the child never accepts loose inputs."""
+    if record.get("backend") != backend:
+        raise ValueError("D005 backend does not match requested export")
+    toml, overrides = parse_d005_command(record)
+    command, environment = record["command"], record["environment"]
+    cwd = Path(command["cwd"]).resolve()
+    interpreter = Path(command["interpreter"]["realpath"]).resolve()
+    if cwd != (root / "cosmos-framework").resolve() or not interpreter.is_absolute():
+        raise ValueError("D005 cwd/interpreter is not canonical for this root")
+    return {"backend": backend, "root": str(root.resolve()), "toml": toml, "overrides": overrides,
+            "cwd": str(cwd), "interpreter": {"realpath": str(interpreter), "sha256": command["interpreter"]["sha256"]},
+            "environment": {"contract": environment, "effective": sanitized_environment(environment, os.environ)},
+            "d005_sha256": record["d005_sha256"], "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
+
+
 def _child(request: Path, output: Path) -> None:
     """Approved later only: compose one backend without launch/validate/instantiate."""
     payload = json.loads(request.read_text())
+    if Path.cwd().resolve() != Path(payload["cwd"]).resolve() or Path(sys.executable).resolve() != Path(payload["interpreter"]["realpath"]).resolve():
+        raise RuntimeError("P5 child cwd/interpreter differs from D005-bound request")
+    if dict(os.environ) != payload["environment"]["effective"]:
+        raise RuntimeError("P5 child environment differs from D005-bound request")
     if any(name.startswith("cosmos_framework.configs.base.experiment") for name in sys.modules):
         raise RuntimeError("experiment was imported before P5 child compose")
     try:
@@ -142,11 +162,11 @@ def _child(request: Path, output: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--child-request", type=Path)
-    parser.add_argument("--child-output", type=Path)
+    parser.add_argument("--child-request", type=Path, help=argparse.SUPPRESS)
+    parser.add_argument("--child-output", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.child_request is None or args.child_output is None:
-        raise SystemExit("real P5 export is intentionally not exposed by this implementation-only CLI")
+        raise SystemExit("real P5 parent export is intentionally withheld pending a separate execution approval")
     _child(args.child_request, args.child_output)
 
 

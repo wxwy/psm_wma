@@ -9,6 +9,9 @@ from pathlib import Path
 from typing import Any
 
 from tools.g0.export_r09_b2_p5_resolved_config import SCHEMA
+from tools.g0.verify_r09_b2_p4_d005 import _load_frozen_inputs, _p3_contract, sha256_json
+
+P4_DIR = Path("artifacts/g0/r09/b2/p4_launch_d005")
 
 
 def _pointer(token: str) -> str:
@@ -53,6 +56,7 @@ def _p3_checks(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], contracts: 
 
 def _allowed(path: str, left: Any, right: Any, contracts: Mapping[str, Any]) -> bool:
     fixed = {
+        "/provenance/inputs/p4_record_sha256",
         "/effective_launch/environment/set/IMAGINAIRE_OUTPUT_ROOT",
         "/effective_launch/environment/effective/IMAGINAIRE_OUTPUT_ROOT",
         "/effective_launch/derived_job_path_local",
@@ -79,10 +83,37 @@ def _allowed(path: str, left: Any, right: Any, contracts: Mapping[str, Any]) -> 
     return False
 
 
-def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], contracts: Mapping[str, Any]) -> dict[str, Any]:
+def _expected(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+    p1, p3 = _load_frozen_inputs(root)
+    records = {backend: json.loads((root / P4_DIR / f"{backend}.json").read_text()) for backend in ("recurrent", "ttt_fast_weight")}
+    contracts = {backend: _p3_contract(p3, backend) for backend in records}
+    return records, contracts
+
+
+def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any]) -> bool:
+    try:
+        required = {"schema_version", "backend", "provenance", "effective_launch", "resolved_config"}
+        if set(envelope) != required or envelope["provenance"]["production_source"] != record["source"]:
+            return False
+        launch = envelope["effective_launch"]
+        return (launch["command"]["argv"] == record["command"]["argv"] and launch["command"]["cwd"] == record["command"]["cwd"]
+                and launch["environment"]["set"] == record["environment"]["set"] and launch["budget"] == record["budget"]
+                and launch["p1_p3_d005_bindings"]["p3_inventory"] == record["inputs"]["p3_inventory"]
+                and envelope["provenance"]["inputs"]["p4_record_sha256"] == sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}))
+    except (KeyError, TypeError):
+        return False
+
+
+def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], root: Path) -> dict[str, Any]:
+    try:
+        records, contracts = _expected(root.resolve())
+    except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
+        return {"schema_version": SCHEMA + "_verifier", "status": "FAIL", "error": str(exc), "checks": {}}
     checks = {
         "schema": all(item.get("schema_version") == SCHEMA for item in (recurrent, ttt)),
         "backend": recurrent.get("backend") == "recurrent" and ttt.get("backend") == "ttt_fast_weight",
+        "recurrent_bound": _bound(recurrent, records["recurrent"]),
+        "ttt_bound": _bound(ttt, records["ttt_fast_weight"]),
         "p3_common_and_contract": _p3_checks(recurrent, ttt, contracts),
     }
     differences = diff_paths(recurrent, ttt)
@@ -92,9 +123,9 @@ def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], contracts:
 
 def main() -> None:
     import argparse
-    parser = argparse.ArgumentParser(); parser.add_argument("--recurrent", type=Path, required=True); parser.add_argument("--ttt", type=Path, required=True); parser.add_argument("--contracts", type=Path, required=True); parser.add_argument("--output", type=Path, required=True)
+    parser = argparse.ArgumentParser(); parser.add_argument("--root", type=Path, required=True); parser.add_argument("--recurrent", type=Path, required=True); parser.add_argument("--ttt", type=Path, required=True); parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = verify_pair(json.loads(args.recurrent.read_text()), json.loads(args.ttt.read_text()), json.loads(args.contracts.read_text()))
+    result = verify_pair(json.loads(args.recurrent.read_text()), json.loads(args.ttt.read_text()), args.root)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     print(result["status"])
 
