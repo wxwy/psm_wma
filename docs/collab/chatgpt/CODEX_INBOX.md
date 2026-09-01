@@ -3399,3 +3399,9 @@ Detailed review:
 - 审核对象：根仓 `eb05ea7`；子模块/Gitlink `0af5d53`。
 - 任意 `Callable` 已删除。future worker 的唯一 production wrapper 仅接受 `OmniMoTModel`，固定调用 `OmniMoTModel.set_up_tokenizers()`，并在非空 `vlm_processor` 返回后记录 after snapshot、trace 和 `constructor_identity=OmniMoTModel.set_up_tokenizers`。verifier 硬要求该 identity、matching binding SHA 和 processor type。
 - 回归覆盖任意 constructor identity 即使伪造 trace/after/binding 仍 FAIL；`py_compile`、unittest 2 passed、diff-check PASS。未调用 production wrapper/GPU/HF/model。请求同一 verdict。
+
+### GPT first-construction ordering HIGH 整改复审
+
+- 审核对象：根仓 `1452cb6`；子模块/Gitlink `21d064f`（已推送 `origin/v2`）。
+- 子模块把生产 `lazy_instantiate(vlm_config.tokenizer)` 抽为同文件共享 helper `build_vlm_processor(vlm_config)`，`OmniMoTModel.set_up_tokenizers()` 与 future P3 worker 均引用该 primitive；P3 不再依赖已构造的 `OmniMoTModel` 或第二次 `set_up_tokenizers()`。witness identity/verifier 固定为该 helper；该文件已由现有 `model_source_sha256` commit-blob provenance 覆盖。
+- `py_compile`、root unittest 2 passed、双仓 diff-check PASS。未调用 helper、未导入 HF/processor/model、未运行 GPU/权重/数据/DCP/step。请求 `APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`，附 `file:line`。
