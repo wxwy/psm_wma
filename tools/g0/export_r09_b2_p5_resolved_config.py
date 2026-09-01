@@ -173,7 +173,11 @@ def _validate_request_identity(request: Mapping[str, Any], outcome: Mapping[str,
             or not isinstance(interpreter, Mapping) or set(interpreter) != {"lexical_launcher", "base_executable", "stdlib", "lib_dynload", "identity_sha256"}
             or not _self_sha(interpreter, "identity_sha256")
             or not isinstance(loader, Mapping) or set(loader) != {"argv", "request_token_index", "loader_literal_sha256", "bootstrap_git_blob_sha256", "bootstrap_current_sha256"}
-            or not isinstance(loader["argv"], list) or not all(isinstance(item, str) for item in loader["argv"])
+            or not isinstance(loader["argv"], list) or len(loader["argv"]) < 5 or loader["argv"][1:5] != ["-I", "-S", "-B", "-c"]
+            or not all(isinstance(item, str) for item in loader["argv"])
+            or any(item.endswith("export_r09_b2_p5_resolved_config.py") for item in loader["argv"])
+            or not isinstance(loader["request_token_index"], int) or loader["request_token_index"] < 0
+            or not all(isinstance(loader[key], str) and len(loader[key]) == 64 for key in ("loader_literal_sha256", "bootstrap_git_blob_sha256", "bootstrap_current_sha256"))
             or any(request[key] != outcome[key] for key in ("production_source", "request_defaults", "interpreter", "loader_argv", "effective_environment", "native_loader_environment", "payload_manifest", "producer"))):
         raise ValueError("P4-v4 request/result identity schema differs")
     _validate_tool_identity(producer, source_root)
