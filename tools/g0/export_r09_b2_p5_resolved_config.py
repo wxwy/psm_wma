@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import argparse
 import hashlib
 import dataclasses
 import enum
@@ -17,6 +16,13 @@ import uuid
 from collections.abc import Mapping
 from typing import Any
 
+from tools.g0.r09_b2_interpreter_provenance import (
+    ProvenanceError,
+    is_verified_loader_argv,
+    sha256_file,
+    verified_loader_argv,
+)
+
 
 SCHEMA = "r09_b2_p5_full_config_diff_v2"
 FROZEN_OVERRIDES = ("trainer.max_iter=100", "trainer.save_zero_checkpoint=true")
@@ -27,6 +33,9 @@ FROZEN_CHILD_REQUEST_SHA256 = {
     "ttt_fast_weight": "9c56140f1c3570c142f9bc219ef82e7880cde4fdc51082e375f796a4c4360bee",
 }
 CHILD_REQUEST_KEYS = {"backend", "root", "toml", "overrides", "command_argv", "cwd", "interpreter", "environment", "d005_sha256", "p4_record_sha256", "p4_verification_sha256", "p3_verifier_sha256", "source", "budget", "inputs", "outputs"}
+LOADER_REQUEST_SCHEMA = "r09_b2_p5_verified_loader_request_v1"
+LOADER_REQUEST_KEYS = {"schema_version", "child_request", "child_request_sha256", "child_output"}
+BOOTSTRAP_RELATIVE = "tools/g0/export_r09_b2_p5_resolved_config.py"
 
 
 class CanonicalizationError(ValueError):
@@ -219,6 +228,32 @@ def validate_child_request(payload: Mapping[str, Any]) -> Mapping[str, Any]:
     return payload
 
 
+def build_loader_request(child_request: Mapping[str, Any], child_output: Path) -> dict[str, Any]:
+    """Wrap one D005-bound compose request for the verified lexical loader."""
+    payload = dict(validate_child_request(child_request))
+    output = child_output.resolve()
+    if not output.is_absolute() or output.exists() or not output.parent.is_dir():
+        raise ValueError("P5 verified-loader output must be a fresh file in an existing directory")
+    return {"schema_version": LOADER_REQUEST_SCHEMA, "child_request": payload,
+            "child_request_sha256": sha256_json(payload), "child_output": str(output)}
+
+
+def validate_loader_request(payload: Mapping[str, Any]) -> tuple[Mapping[str, Any], Path]:
+    """Accept only one SHA-bound P5 request delivered by the verified loader."""
+    if set(payload) != LOADER_REQUEST_KEYS or payload.get("schema_version") != LOADER_REQUEST_SCHEMA:
+        raise ValueError("P5 verified-loader request schema is malformed")
+    child_request = payload.get("child_request")
+    child_sha256 = payload.get("child_request_sha256")
+    output = payload.get("child_output")
+    if (not isinstance(child_request, Mapping) or not isinstance(child_sha256, str)
+            or sha256_json(child_request) != child_sha256 or not isinstance(output, str)):
+        raise ValueError("P5 verified-loader request binding differs from its child request")
+    output_path = Path(output)
+    if not output_path.is_absolute() or output_path.resolve() != output_path or output_path.exists() or not output_path.parent.is_dir():
+        raise ValueError("P5 verified-loader output is not a fresh canonical path")
+    return validate_child_request(child_request), output_path
+
+
 def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path) -> dict[str, dict[str, Any]]:
     """Parent-only D005 gate; later approved execution consumes only these requests."""
     from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
@@ -278,12 +313,21 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
     attempt_dir.mkdir(parents=True, exist_ok=False)
     try:
         exporter_source, verify_pair = bound_exporter_source(exporter_root)
-        exporter_script = exporter_root / "tools/g0/export_r09_b2_p5_resolved_config.py"
         envelopes: dict[str, Any] = {}
         for backend, request in requests.items():
             request_path, tree_path = attempt_dir / f"{backend}.request.json", attempt_dir / f"{backend}.tree.json"
-            request_path.write_bytes(canonical_bytes(request))
-            subprocess.run([request["interpreter"]["path"], str(exporter_script), "--child-request", str(request_path), "--child-output", str(tree_path)], cwd=request["cwd"], env=request["environment"]["effective"], check=True)
+            loader_request = build_loader_request(request, tree_path)
+            request_path.write_bytes(canonical_bytes(loader_request))
+            try:
+                argv = verified_loader_argv(
+                    request["interpreter"], request_path, sha256_file(request_path), exporter_root,
+                    BOOTSTRAP_RELATIVE, sha256_file(exporter_root / BOOTSTRAP_RELATIVE),
+                )
+            except (OSError, ProvenanceError) as exc:
+                raise RuntimeError("P5 child must use the verified lexical loader") from exc
+            if not is_verified_loader_argv(argv):
+                raise RuntimeError("P5 child launcher differs from the verified lexical-loader grammar")
+            subprocess.run(argv, cwd=request["cwd"], env=request["environment"]["effective"], check=True)
             envelopes[backend] = assemble_envelope(request, json.loads(tree_path.read_text()), exporter_source=exporter_source)
         result = verify_pair(envelopes["recurrent"], envelopes["ttt_fast_weight"], evidence_root, exporter_root)
         if result["status"] != "PASS":
@@ -298,9 +342,9 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
         raise
 
 
-def _child(request: Path, output: Path) -> None:
+def _child_payload(payload: Mapping[str, Any], output: Path) -> None:
     """Approved later only: compose one backend without launch/validate/instantiate."""
-    payload = validate_child_request(json.loads(request.read_text()))
+    payload = validate_child_request(payload)
     if Path.cwd().resolve() != Path(payload["cwd"]).resolve() or Path(os.path.abspath(sys.executable)) != Path(payload["interpreter"]["path"]):
         raise RuntimeError("P5 child cwd/interpreter differs from D005-bound request")
     if dict(os.environ) != payload["environment"]["effective"]:
@@ -323,15 +367,17 @@ def _child(request: Path, output: Path) -> None:
     output.write_bytes(canonical_bytes(canonicalize(config.to_dict())))
 
 
+def _verified_bootstrap(payload: Mapping[str, Any]) -> None:
+    """The frozen loader is the only admitted P5 child entrypoint."""
+    child_request, output = validate_loader_request(payload)
+    _child_payload(child_request, output)
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--child-request", type=Path, help=argparse.SUPPRESS)
-    parser.add_argument("--child-output", type=Path, help=argparse.SUPPRESS)
-    args = parser.parse_args()
-    if args.child_request is None or args.child_output is None:
-        raise SystemExit("real P5 parent export is intentionally withheld pending a separate execution approval")
-    _child(args.child_request, args.child_output)
+    raise SystemExit("direct P5 exporter-script execution is permanently rejected; use the verified lexical loader")
 
 
-if __name__ == "__main__":
+if __name__ == "__psm_verified_bootstrap__":
+    _verified_bootstrap(PSM_REQUEST)
+elif __name__ == "__main__":
     main()

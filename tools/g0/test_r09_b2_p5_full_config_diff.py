@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import json
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, PYTHON_CHILD_LOCALE, bound_exporter_source, build_pair_requests, canonicalize, parse_d005_command, run_parent_export, sanitized_environment, validate_production_root, validate_root_isolation
+from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, PYTHON_CHILD_LOCALE, _verified_bootstrap, bound_exporter_source, build_loader_request, build_pair_requests, canonicalize, parse_d005_command, run_parent_export, sanitized_environment, validate_loader_request, validate_production_root, validate_root_isolation
 from tools.g0.verify_r09_b2_p5_full_config_diff import P4_RECORD_SHA256, _expected, _expected_effective_environment, _exporter_source, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
 
@@ -113,34 +114,61 @@ class P5Test(unittest.TestCase):
             with self.assertRaises(ValueError):
                 bound_exporter_source(exporter)
             output = temporary / "canonical-output"
-            request = {"interpreter": {"path": "/bin/false", "realpath": "/bin/false"}, "cwd": str(root), "environment": {"effective": {}}, "backend": "recurrent"}
+            request = {"interpreter": {"path": "/bin/false"}, "cwd": str(root), "environment": {"effective": {}}, "backend": "recurrent"}
             with (patch("tools.g0.export_r09_b2_p5_resolved_config.build_pair_requests", return_value={"recurrent": request}),
                   patch("tools.g0.export_r09_b2_p5_resolved_config.bound_exporter_source", return_value=({}, lambda *_: {"status": "PASS"})),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.build_loader_request", return_value={"loader": "request"}),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.sha256_file", return_value="0" * 64),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.verified_loader_argv", return_value=["/bin/false", "-I", "-S", "-B", "-c", "verified-loader"] ) as loader,
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.is_verified_loader_argv", return_value=True),
                   patch("tools.g0.export_r09_b2_p5_resolved_config.subprocess.run", side_effect=subprocess.CalledProcessError(7, "child"))):
                 with self.assertRaises(subprocess.CalledProcessError):
                     run_parent_export({}, {}, production_root=Path("/disk/rl/psm_wma_p4_d005_retry"), evidence_root=root, exporter_root=exporter, output_dir=output)
+            self.assertEqual(loader.call_args.args[0], request["interpreter"])
+            self.assertTrue(loader.call_args.args[1].is_absolute())
+            self.assertEqual(loader.call_args.args[2], "0" * 64)
+            self.assertEqual(loader.call_args.args[3], exporter)
+            self.assertEqual(loader.call_args.args[4], "tools/g0/export_r09_b2_p5_resolved_config.py")
+            self.assertEqual(loader.call_args.args[5], "0" * 64)
+            self.assertNotIn(str(exporter / "tools/g0/export_r09_b2_p5_resolved_config.py"), loader.call_args.args)
             attempts = list(temporary.glob(".canonical-output.attempt-*"))
             self.assertEqual(len(attempts), 1)
             self.assertEqual(json.loads((attempts[0] / "failure.json").read_text())["status"], "FAIL")
             self.assertFalse(output.exists())
 
-    def test_child_bootstrap_reaches_precompose_guard_under_d005_env(self):
-        root = Path(__file__).resolve().parents[2]; records, _, _, _ = _expected(root); record = records["recurrent"]
+    def test_direct_exporter_script_is_permanently_rejected(self):
+        root = Path(__file__).resolve().parents[2]
         with tempfile.TemporaryDirectory() as temp:
-            request = {"cwd": record["command"]["cwd"], "interpreter": {"realpath": "/bin/false"}, "environment": {"effective": record["environment"]["set"]}}
-            path = Path(temp) / "request.json"; path.write_text(json.dumps(request))
-            result = subprocess.run([record["command"]["interpreter"]["realpath"], str(root / "tools/g0/export_r09_b2_p5_resolved_config.py"), "--child-request", str(path), "--child-output", str(Path(temp) / "tree.json")], cwd=record["command"]["cwd"], env=record["environment"]["set"], text=True, capture_output=True, check=False)
+            result = subprocess.run([sys.executable, "-c", "import runpy,sys;sys.path.insert(0,sys.argv[1]);runpy.run_path(sys.argv[2],run_name='__main__')", str(root), str(root / "tools/g0/export_r09_b2_p5_resolved_config.py")], text=True, capture_output=True, check=False)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("request schema/backend is not verifier-owned", result.stderr)
+            self.assertIn("direct P5 exporter-script execution is permanently rejected", result.stderr)
 
-    def test_arbitrary_consistent_child_request_is_rejected_before_compose(self):
-        root = Path(__file__).resolve().parents[2]; records, _, _, _ = _expected(root); record = records["recurrent"]
-        requests = build_pair_requests(records["recurrent"], records["ttt_fast_weight"], production_root=Path("/disk/rl/psm_wma_p4_d005_retry"), evidence_root=root)
-        forged = json.loads(json.dumps(requests["recurrent"])); forged["toml"] = "examples/toml/attacker.toml"
-        forged["command_argv"] = ["--sft-toml=examples/toml/attacker.toml" if token.startswith("--sft-toml=") else token for token in forged["command_argv"]]
+    def test_parent_rejects_non_loader_child_argv_before_spawn(self):
+        root = Path(__file__).resolve().parents[2]
         with tempfile.TemporaryDirectory() as temp:
-            path, output = Path(temp) / "forged.json", Path(temp) / "tree.json"; path.write_text(json.dumps(forged))
-            result = subprocess.run([record["command"]["interpreter"]["realpath"], str(root / "tools/g0/export_r09_b2_p5_resolved_config.py"), "--child-request", str(path), "--child-output", str(output)], cwd=record["command"]["cwd"], env=record["environment"]["set"], text=True, capture_output=True, check=False)
-            self.assertNotEqual(result.returncode, 0)
-            self.assertIn("not a frozen D005-bound identity", result.stderr)
-            self.assertFalse(output.exists())
+            temporary = Path(temp); exporter = self._exporter_worktree(root, temporary)
+            request = {"interpreter": {"path": "/bin/false"}, "cwd": str(root), "environment": {"effective": {}}, "backend": "recurrent"}
+            with (patch("tools.g0.export_r09_b2_p5_resolved_config.build_pair_requests", return_value={"recurrent": request}),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.bound_exporter_source", return_value=({}, lambda *_: {"status": "PASS"})),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.build_loader_request", return_value={"loader": "request"}),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.sha256_file", return_value="0" * 64),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.verified_loader_argv", return_value=["/bin/false", "exporter.py"]),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.is_verified_loader_argv", return_value=False),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.subprocess.run") as run):
+                with self.assertRaisesRegex(RuntimeError, "verified lexical-loader grammar"):
+                    run_parent_export({}, {}, production_root=Path("/disk/rl/psm_wma_p4_d005_retry"), evidence_root=root, exporter_root=exporter, output_dir=temporary / "canonical-output")
+            run.assert_not_called()
+
+    def test_verified_loader_request_binding_rejects_mutation_before_compose(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "tree.json"
+            child_request = {"backend": "recurrent", "opaque": "P4-bound"}
+            with patch("tools.g0.export_r09_b2_p5_resolved_config.validate_child_request", side_effect=lambda value: value):
+                loader_request = build_loader_request(child_request, output)
+                self.assertEqual(validate_loader_request(loader_request)[1], output.resolve())
+                forged = json.loads(json.dumps(loader_request)); forged["child_request"]["opaque"] = "attacker"
+                with self.assertRaises(ValueError):
+                    validate_loader_request(forged)
+                with self.assertRaises(ValueError):
+                    _verified_bootstrap(forged)
+                self.assertFalse(output.exists())
