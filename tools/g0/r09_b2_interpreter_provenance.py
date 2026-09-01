@@ -9,6 +9,8 @@ from __future__ import annotations
 import ast
 import hashlib
 import os
+import struct
+import subprocess
 from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
@@ -29,6 +31,31 @@ FORBIDDEN_DYNAMIC_NAMES = {
 FORBIDDEN_DYNAMIC_FQNS = FORBIDDEN_DYNAMIC_NAMES | {f"builtins.{name}" for name in FORBIDDEN_DYNAMIC_NAMES}
 ELF_DYNAMIC_LOADER_SYMBOLS = {"dlopen", "dlmopen"}
 ELF_FORBIDDEN_LOADER_SYMBOLS = {"dlsym"}
+PT_LOAD = 1
+PT_DYNAMIC = 2
+PT_INTERP = 3
+DT_NULL = 0
+DT_NEEDED = 1
+DT_STRTAB = 5
+DT_STRSZ = 10
+DT_RPATH = 15
+DT_RUNPATH = 29
+LOADER_FLAGS = ("-I", "-S", "-B", "-c")
+# This source is passed with ``python -c``.  It deliberately opens no root
+# Python file before checking the out-of-band request and bootstrap digests.
+FROZEN_STDLIB_LOADER = """import hashlib,json,pathlib,subprocess,sys
+request_path=pathlib.Path(sys.argv[1]); expected_request_sha=sys.argv[2]
+root=pathlib.Path(sys.argv[3]); relative=sys.argv[4]; expected_bootstrap_sha=sys.argv[5]
+bootstrap_path=root / relative
+if pathlib.Path(relative).is_absolute() or not bootstrap_path.resolve().is_relative_to(root.resolve()): raise SystemExit('bootstrap path escape')
+request_bytes=request_path.read_bytes()
+if hashlib.sha256(request_bytes).hexdigest()!=expected_request_sha: raise SystemExit('request sha mismatch')
+blob=subprocess.check_output(['git','-C',str(root),'show','HEAD:'+relative])
+current=bootstrap_path.read_bytes()
+if hashlib.sha256(blob).hexdigest()!=expected_bootstrap_sha or current!=blob: raise SystemExit('bootstrap sha mismatch')
+namespace={'__name__':'__psm_verified_bootstrap__','__file__':str(bootstrap_path),'PSM_REQUEST':json.loads(request_bytes)}
+exec(compile(blob,str(bootstrap_path),'exec'),namespace,namespace)
+"""
 
 
 class ProvenanceError(ValueError):
@@ -41,6 +68,127 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def full_git_clean(root: Path) -> bool:
+    """Require tracked and untracked cleanliness for every VCS source."""
+    completed = subprocess.run(
+        ["git", "-C", str(root.resolve()), "status", "--porcelain=v1", "--untracked-files=all"],
+        check=False,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        text=True,
+    )
+    return completed.returncode == 0 and completed.stdout == ""
+
+
+def verified_bootstrap_bytes(root: Path, bootstrap_relative_path: str, expected_sha256: str) -> bytes:
+    """Bind bootstrap Git bytes and current file bytes before the loader runs."""
+    if not isinstance(expected_sha256, str) or len(expected_sha256) != 64:
+        raise ProvenanceError("bootstrap digest is malformed")
+    root = root.resolve()
+    path = (root / bootstrap_relative_path).resolve()
+    if not path.is_relative_to(root) or not path.is_file():
+        raise ProvenanceError("bootstrap path is outside the verified root")
+    try:
+        blob = subprocess.check_output(["git", "-C", str(root), "show", f"HEAD:{bootstrap_relative_path}"], stderr=subprocess.DEVNULL)
+    except subprocess.CalledProcessError as exc:
+        raise ProvenanceError("bootstrap is not a Git blob at HEAD") from exc
+    if sha256_file(path) != expected_sha256 or hashlib.sha256(blob).hexdigest() != expected_sha256 or path.read_bytes() != blob:
+        raise ProvenanceError("bootstrap Git blob/current bytes digest mismatch")
+    return blob
+
+
+def verified_loader_argv(interpreter: Mapping[str, str], request_path: Path, request_sha256: str, root: Path, bootstrap_relative_path: str, bootstrap_sha256: str) -> list[str]:
+    """Construct the only admitted direct Python process grammar."""
+    if set(interpreter) != {"path", "sha256", "realpath", "realpath_sha256"}:
+        raise ProvenanceError("lexical interpreter record is malformed")
+    launcher = Path(interpreter["path"])
+    if lexical_interpreter(launcher) != dict(interpreter):
+        raise ProvenanceError("lexical interpreter bytes drifted")
+    request = request_path.resolve()
+    if not request.is_absolute() or not isinstance(request_sha256, str) or len(request_sha256) != 64:
+        raise ProvenanceError("request binding is malformed")
+    verified_bootstrap_bytes(root, bootstrap_relative_path, bootstrap_sha256)
+    return [str(launcher), *LOADER_FLAGS, FROZEN_STDLIB_LOADER, str(request), request_sha256,
+            str(root.resolve()), bootstrap_relative_path, bootstrap_sha256]
+
+
+def is_verified_loader_argv(argv: object) -> bool:
+    """Reject direct module/script launchers and accept only frozen loader grammar."""
+    return (isinstance(argv, list) and len(argv) == 11 and all(isinstance(item, str) for item in argv)
+            and tuple(argv[1:5]) == LOADER_FLAGS and argv[5] == FROZEN_STDLIB_LOADER
+            and Path(argv[6]).is_absolute() and Path(argv[8]).is_absolute()
+            and not Path(argv[9]).is_absolute() and all(len(argv[index]) == 64 for index in (7, 10)))
+
+
+def parse_elf_dynamic_bytes(path: Path) -> dict[str, object]:
+    """Derive interpreter, DT_NEEDED and RPATH/RUNPATH from real ELF bytes."""
+    canonical = path.resolve()
+    data = canonical.read_bytes()
+    if len(data) < 16 or data[:4] != b"\x7fELF" or data[5] not in (1, 2):
+        raise ProvenanceError("payload is not a supported ELF object")
+    elf_class, endian = data[4], "<" if data[5] == 1 else ">"
+    if elf_class == 2:
+        header_format, ph_format, dynamic_format = f"{endian}HHIQQQIHHHHHH", f"{endian}IIQQQQQQ", f"{endian}qQ"
+    elif elf_class == 1:
+        header_format, ph_format, dynamic_format = f"{endian}HHIIIIIHHHHHH", f"{endian}IIIIIIII", f"{endian}iI"
+    else:
+        raise ProvenanceError("ELF class is unsupported")
+    header_size, ph_size, dynamic_size = struct.calcsize(header_format), struct.calcsize(ph_format), struct.calcsize(dynamic_format)
+    if len(data) < 16 + header_size:
+        raise ProvenanceError("ELF header is truncated")
+    header = struct.unpack_from(header_format, data, 16)
+    phoff, phentsize, phnum = header[4], header[8], header[9]
+    if phentsize != ph_size or phoff + phentsize * phnum > len(data):
+        raise ProvenanceError("ELF program header table is malformed")
+    loads: list[tuple[int, int, int]] = []
+    dynamic_offset = dynamic_length = None
+    interpreter: str | None = None
+    for index in range(phnum):
+        fields = struct.unpack_from(ph_format, data, phoff + index * phentsize)
+        kind, offset, virtual, file_size = (fields[0], fields[2], fields[3], fields[5]) if elf_class == 2 else (fields[0], fields[1], fields[2], fields[4])
+        if offset + file_size > len(data):
+            raise ProvenanceError("ELF segment exceeds payload bytes")
+        if kind == PT_LOAD:
+            loads.append((virtual, offset, file_size))
+        elif kind == PT_DYNAMIC:
+            dynamic_offset, dynamic_length = offset, file_size
+        elif kind == PT_INTERP:
+            raw = data[offset : offset + file_size]
+            if not raw.endswith(b"\0"):
+                raise ProvenanceError("ELF interpreter is not nul-terminated")
+            interpreter = raw[:-1].decode("utf-8")
+    if dynamic_offset is None or dynamic_length is None or dynamic_length % dynamic_size:
+        raise ProvenanceError("ELF dynamic table is absent or malformed")
+    dynamic: dict[int, list[int]] = {}
+    for offset in range(dynamic_offset, dynamic_offset + dynamic_length, dynamic_size):
+        tag, value = struct.unpack_from(dynamic_format, data, offset)
+        if tag == DT_NULL:
+            break
+        dynamic.setdefault(tag, []).append(value)
+    if len(dynamic.get(DT_STRTAB, [])) != 1 or len(dynamic.get(DT_STRSZ, [])) != 1:
+        raise ProvenanceError("ELF dynamic string table is ambiguous")
+    string_virtual, string_size = dynamic[DT_STRTAB][0], dynamic[DT_STRSZ][0]
+    string_offset = next((file_offset + string_virtual - virtual for virtual, file_offset, length in loads if virtual <= string_virtual < virtual + length), None)
+    if string_offset is None or string_offset + string_size > len(data):
+        raise ProvenanceError("ELF dynamic string table is outside payload bytes")
+    strings = data[string_offset : string_offset + string_size]
+    def string_at(index: int) -> str:
+        if index < 0 or index >= len(strings):
+            raise ProvenanceError("ELF dynamic string offset is invalid")
+        end = strings.find(b"\0", index)
+        if end < 0:
+            raise ProvenanceError("ELF dynamic string is unterminated")
+        return strings[index:end].decode("utf-8")
+    return {
+        "canonical_path": str(canonical),
+        "sha256": hashlib.sha256(data).hexdigest(),
+        "pt_interp": interpreter,
+        "dt_needed": [string_at(value) for value in dynamic.get(DT_NEEDED, [])],
+        "rpath": [string_at(value) for value in dynamic.get(DT_RPATH, [])],
+        "runpath": [string_at(value) for value in dynamic.get(DT_RUNPATH, [])],
+    }
 
 
 def _span_sha256(source: bytes, node: ast.AST) -> str:
@@ -203,19 +351,30 @@ def analyse_wrapper_contract(staging_root: Path, approved_payloads: Iterable[str
         except (SyntaxError, UnicodeDecodeError) as exc:
             raise ProvenanceError("cannot parse wrapper-contract source") from exc
     wrappers: dict[str, tuple[str, bytes, ast.FunctionDef, int, str]] = {}
+    wrapper_nodes: set[ast.Call] = set()
     for relative, (source, tree) in trees.items():
         aliases = _imports(tree)
         module = relative[:-3].replace("/", ".")
+        local_classes = {node.name for node in tree.body if isinstance(node, ast.ClassDef)}
+        local_functions = {node.name for node in tree.body if isinstance(node, ast.FunctionDef)}
+        definitions: list[tuple[ast.FunctionDef, str]] = []
         for node in tree.body:
-            if not isinstance(node, ast.FunctionDef) or node.decorator_list or node.args.vararg or node.args.kwarg or node.args.kwonlyargs or node.args.defaults or len(node.args.args) != 1:
+            if isinstance(node, ast.FunctionDef):
+                definitions.append((node, f"{module}.{node.name}"))
+            elif isinstance(node, ast.ClassDef):
+                definitions.extend((method, f"{module}.{node.name}.{method.name}") for method in node.body if isinstance(method, ast.FunctionDef))
+        for node, fqn in definitions:
+            if node.decorator_list or node.args.vararg or node.args.kwarg or node.args.kwonlyargs or node.args.defaults or len(node.args.args) != 1:
                 continue
             calls = [item.value for item in node.body if isinstance(item, ast.Expr) and isinstance(item.value, ast.Call)]
             if len(calls) != 1 or len(node.body) != 1:
                 continue
             call = calls[0]
             callee = _resolve_fqn(call.func, aliases)
-            if isinstance(call.func, ast.Name) and callee == call.func.id:
-                callee = f"{module}.{callee}"
+            if callee is not None:
+                head, *tail = callee.split(".")
+                if head in local_classes or head in local_functions:
+                    callee = ".".join((module, head, *tail))
             if callee is None or len(call.args) != 1:
                 continue
             if not isinstance(call.args[0], ast.Name):
@@ -223,8 +382,8 @@ def analyse_wrapper_contract(staging_root: Path, approved_payloads: Iterable[str
             names = [arg.arg for arg in node.args.args]
             if call.args[0].id not in names:
                 continue
-            fqn = f"{module}.{node.name}"
             wrappers[fqn] = (relative, source, node, names.index(call.args[0].id), callee)
+            wrapper_nodes.add(call)
     def expand(name: str, seen: set[str]) -> tuple[str, str]:
         if name in seen:
             raise ProvenanceError("wrapper call graph contains a cycle")
@@ -233,29 +392,54 @@ def analyse_wrapper_contract(staging_root: Path, approved_payloads: Iterable[str
         if name not in wrappers:
             raise ProvenanceError("wrapper calls an unadmitted native-load target")
         return (*expand(wrappers[name][4], seen | {name}),)
+    for relative, (source, tree) in trees.items():
+        aliases = _imports(tree)
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            fqn = _resolve_fqn(node.func, aliases)
+            if fqn in PYTHON_NATIVE_APIS and node not in wrapper_nodes:
+                parents = {child: parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
+                if any(isinstance(parent, ast.FunctionDef) for parent in _ancestor_nodes(parents.get(node), parents)):
+                    raise ProvenanceError("native-load call inside a function must be an admitted one-parameter wrapper")
     definitions = [{"wrapper_fqn": name, "defining_source_relative_path": relative, "definition_span_sha256": _span_sha256(source, node), "parameter_index": str(index), "callee_fqn": callee, "effect_kind": expand(name, set())[1]} for name, (relative, source, node, index, callee) in wrappers.items()]
     invocations: list[dict[str, str]] = []
     for relative, (source, tree) in trees.items():
         aliases, module = _imports(tree), relative[:-3].replace("/", ".")
+        local_classes = {node.name for node in tree.body if isinstance(node, ast.ClassDef)}
+        local_functions = {node.name for node in tree.body if isinstance(node, ast.FunctionDef)}
         parents = {child: parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
         for node in ast.walk(tree):
-            parent = parents.get(node)
-            inside_definition = False
-            while parent is not None:
-                if isinstance(parent, ast.FunctionDef):
-                    inside_definition = True; break
-                parent = parents.get(parent)
-            if not isinstance(node, ast.Call) or inside_definition:
+            if not isinstance(node, ast.Call) or node in wrapper_nodes:
                 continue
             name = _resolve_fqn(node.func, aliases)
-            if isinstance(node.func, ast.Name) and name == node.func.id:
-                name = f"{module}.{name}"
+            if name is not None:
+                head, *tail = name.split(".")
+                if head in local_classes or head in local_functions:
+                    name = ".".join((module, head, *tail))
             if name not in wrappers:
                 continue
             if len(node.args) != 1:
                 raise ProvenanceError("wrapper invocation arity differs from frozen definition")
             target = _literal_path(node.args[0]); final, _ = expand(name, set())
             invocations.append({"invocation_source_relative_path": relative, "invocation_span_sha256": _span_sha256(source, node), "wrapper_chain": name, "final_fqn": final, "target_rule": "literal", "canonical_target": target, "sha256": hashlib.sha256(target.encode()).hexdigest()})
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.Name, ast.Attribute)):
+                continue
+            resolved = _resolve_fqn(node, aliases)
+            if resolved is None:
+                continue
+            head, *tail = resolved.split(".")
+            if head in local_classes or head in local_functions:
+                resolved = ".".join((module, head, *tail))
+            if resolved not in set(PYTHON_NATIVE_APIS) | set(wrappers):
+                continue
+            parent = parents.get(node)
+            if isinstance(parent, ast.Call) and parent.func is node:
+                continue
+            if isinstance(parent, (ast.Import, ast.ImportFrom)):
+                continue
+            raise ProvenanceError("native-load callable/wrapper may not escape through alias, container, callback, return, decorator, or reflection")
     return sorted(definitions, key=lambda row: tuple(row.values())), sorted(invocations, key=lambda row: tuple(row.values()))
 
 

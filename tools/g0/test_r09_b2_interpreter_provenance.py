@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
+import subprocess
 
 from tools.g0.r09_b2_interpreter_provenance import (
     ProvenanceError,
@@ -14,7 +16,12 @@ from tools.g0.r09_b2_interpreter_provenance import (
     analyse_python_contract,
     verify_native_load_contract,
     exact_allowlist,
+    full_git_clean,
+    is_verified_loader_argv,
     lexical_interpreter,
+    parse_elf_dynamic_bytes,
+    verified_bootstrap_bytes,
+    verified_loader_argv,
 )
 
 
@@ -81,6 +88,41 @@ class InterpreterProvenanceTest(unittest.TestCase):
             self.assertEqual(len(definitions), 2)
             self.assertEqual(invocations[0]["final_fqn"], "ctypes.CDLL")
 
+    def test_class_method_wrapper_chain_is_complete(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._python(
+                root,
+                "torch/classes.py",
+                "import torch\n"
+                "class _Ops:\n"
+                "    def load_library(path):\n"
+                "        torch.ops.load_library(path)\n"
+                "class _Classes:\n"
+                "    def load_library(path):\n"
+                "        _Ops.load_library(path)\n"
+                "_Classes.load_library('fixed.so')\n",
+            )
+            definitions, invocations = analyse_wrapper_contract(root, ["torch/classes.py"])
+            self.assertEqual([row["wrapper_fqn"] for row in definitions], [
+                "torch.classes._Classes.load_library", "torch.classes._Ops.load_library",
+            ])
+            self.assertEqual(invocations[0]["final_fqn"], "torch.ops.load_library")
+
+    def test_wrapper_escape_forms_fail_closed(self) -> None:
+        cases = (
+            "import ctypes\nloader = ctypes.CDLL\n",
+            "import ctypes\ndef load(path):\n    return ctypes.CDLL\n",
+            "import ctypes\ndef load(path):\n    callback = ctypes.CDLL\n",
+            "import ctypes\n@ctypes.CDLL\ndef load(path):\n    pass\n",
+        )
+        for source in cases:
+            with self.subTest(source=source), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                self._python(root, "x.py", source)
+                with self.assertRaises(ProvenanceError):
+                    analyse_wrapper_contract(root, ["x.py"])
+
     def test_combined_contract_uses_only_runtime_load_events(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -127,6 +169,50 @@ class InterpreterProvenanceTest(unittest.TestCase):
             self.assertEqual(record["path"], str(launcher))
             self.assertEqual(record["realpath"], str(target))
             self.assertNotEqual(record["path"], record["realpath"])
+
+    def test_verified_loader_grammar_and_bootstrap_binding(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            bootstrap = root / "tools/g0/bootstrap.py"
+            bootstrap.parent.mkdir(parents=True)
+            bootstrap.write_text("PASS = True\n")
+            subprocess.run(["git", "-C", str(root), "add", "tools/g0/bootstrap.py"], check=True)
+            subprocess.run(["git", "-C", str(root), "-c", "user.name=test", "-c", "user.email=test@example.invalid", "commit", "-qm", "bootstrap"], check=True)
+            request = root / "request.json"
+            request.write_text("{}\n")
+            launcher = root / "python"
+            launcher.symlink_to("/bin/true")
+            interpreter = lexical_interpreter(launcher)
+            bootstrap_digest = hashlib.sha256(bootstrap.read_bytes()).hexdigest()
+            request_digest = hashlib.sha256(request.read_bytes()).hexdigest()
+            bootstrap_sha = verified_bootstrap_bytes(root, "tools/g0/bootstrap.py", bootstrap_digest)
+            self.assertEqual(bootstrap_sha, bootstrap.read_bytes())
+            argv = verified_loader_argv(interpreter, request, request_digest, root, "tools/g0/bootstrap.py", bootstrap_digest)
+            self.assertTrue(is_verified_loader_argv(argv))
+            self.assertFalse(is_verified_loader_argv([interpreter["path"], "-m", "bootstrap"]))
+            bootstrap.write_text("PASS = False\n")
+            with self.assertRaises(ProvenanceError):
+                verified_bootstrap_bytes(root, "tools/g0/bootstrap.py", hashlib.sha256(b"PASS = True\n").hexdigest())
+
+    def test_full_clean_rejects_untracked_shadow(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            subprocess.run(["git", "init", "-q", str(root)], check=True)
+            (root / "tracked.py").write_text("pass\n")
+            subprocess.run(["git", "-C", str(root), "add", "tracked.py"], check=True)
+            subprocess.run(["git", "-C", str(root), "-c", "user.name=test", "-c", "user.email=test@example.invalid", "commit", "-qm", "tracked"], check=True)
+            self.assertTrue(full_git_clean(root))
+            (root / "shadow.py").write_text("pass\n")
+            self.assertFalse(full_git_clean(root))
+
+    def test_real_elf_dynamic_metadata_is_bytes_derived(self) -> None:
+        metadata = parse_elf_dynamic_bytes(Path("/bin/true"))
+        self.assertEqual(metadata["canonical_path"], str(Path("/bin/true").resolve()))
+        self.assertEqual(len(metadata["sha256"]), 64)
+        self.assertIsInstance(metadata["dt_needed"], list)
+        self.assertIsInstance(metadata["rpath"], list)
+        self.assertIsInstance(metadata["runpath"], list)
 
 
 if __name__ == "__main__":
