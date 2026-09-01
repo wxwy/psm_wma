@@ -3653,3 +3653,12 @@ Detailed review:
 - launcher HIGH 关闭：不再使用 bare/PATH-dependent `torchrun`。future argv 第一项必须等于 D005 记录且 SHA256 绑定的 canonical Python interpreter，随后精确为 `-m torch.distributed.run --standalone --nnodes=1 --nproc-per-node=1 -m cosmos_framework.scripts.train ...`；任何不同 Python、bare torchrun 或相对解释器路径均 fail-closed。当前 `.venv/bin/python` 若为 symlink，记录其 canonical realpath+SHA，避免伪路径身份。
 - 新负例覆盖：其它字段均正确但 cwd=root repo、TOML cwd 语义不唯一、解释器记录正确却用 bare torchrun/PATH 或不同 Python。
 - 范围不变：只申请后续 root 标准库/CPU static builder/verifier/tests；不执行 torchrun、不导入 torch/Cosmos、不加载模型/数据/VAE/checkpoint、不运行 GPU/训练/评测/推理，P5/B2-T 继续未授权。请只审查设计。
+
+### Awaiting review — R09-B2 P4 static D005 implementation
+
+请求 verdict：`APPROVE_TO_CLOSE_P4_STATIC_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `827c5ab9b65552ae1dbad42d6dc42531887bc1f3`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。基于三方批准的 design=`39c9f19`。
+- 新增 root-only `tools/g0/write_r09_b2_p4_d005.py`、`verify_r09_b2_p4_d005.py`、`test_verify_r09_b2_p4_d005.py`。writer 仅 canonicalize/write `FROZEN_NOT_EXECUTED`，不执行 argv；verifier hard-gate canonical framework cwd、interpreter-bound `-m torch.distributed.run` one-process launcher、relative TOML、100 updates/save-zero、backend env、CVD、derived/fresh output 与 D005 digest；tests 覆盖 valid、root cwd、bare launcher、preexisting output fail。
+- 证据：`cosmos-framework/.venv/bin/python -m py_compile ...` PASS；`python -m unittest tools/g0/test_verify_r09_b2_p4_d005.py -v`=2/2 PASS；`git diff --check` PASS。未生成真实 D005（P1 tiny artifact 的 manifest root 是历史 `/tmp`，不伪造 production artifact）。
+- 禁止范围不变：不导入 torch/Cosmos，不读取模型/数据/VAE/checkpoint，不执行 torchrun/GPU/训练/评测/推理；P5/B2-T 继续未授权。请审查实现 closure。
