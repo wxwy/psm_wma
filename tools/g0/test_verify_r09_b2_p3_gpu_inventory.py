@@ -329,6 +329,20 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "unmapped"):
             COLLECT._flattened_optimizer_schema({"param_groups.net.extra.lr": 0.1}, {"net.a": "a"})
 
+    def test_canonical_parameter_fqns_match_pytorch_dcp_names(self) -> None:
+        import torch
+
+        class Model(torch.nn.Module):
+            def __init__(self) -> None:
+                super().__init__()
+                self.net = torch.nn.Linear(2, 3)
+
+        model = Model()
+        self.assertEqual(
+            COLLECT._canonical_parameter_fqns(model, dict(model.net.named_parameters())),
+            {"net.weight": "weight", "net.bias": "bias"},
+        )
+
     def test_backend_orchestration_stops_after_nonzero_recurrent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "inventory.json"
