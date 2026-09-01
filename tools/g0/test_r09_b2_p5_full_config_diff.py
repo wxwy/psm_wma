@@ -67,7 +67,7 @@ class P5Test(unittest.TestCase):
             interpreter = {**interpreter_core, "identity_sha256": sha256_json(interpreter_core)}
             producer_core = {"root_revision": "root", "tool_path": "tool", "git_blob_sha256": "blob", "current_sha256": "current"}
             producer = {**producer_core, "sha256": sha256_json(producer_core)}
-            request = {"schema_version": "v4", "backend": backend, "production_source": source_record, "p4_run": {"identity": identity(run, "run_root"), "run_token": token}, "p4_staging": {"identity": identity(staging, "staging_root"), "relative_path": f"import_staging/{token}", "payload_import_roots": [{"relative_root": ".", "subtree_manifest_sha256": manifest["sha256"]}], "runtime_sys_path": [str(staging)]}, "request_defaults": defaults, "interpreter": interpreter, "loader_argv": {"argv": ["/bin/python", "-I"], "request_token_index": 0, "loader_literal_sha256": "loader", "bootstrap_git_blob_sha256": "blob", "bootstrap_current_sha256": "current"}, "effective_environment": environment, "native_loader_environment": native, "payload_manifest": manifest, "producer": producer}
+            request = {"schema_version": "v4", "backend": backend, "production_source": source_record, "p4_run": {"identity": identity(run, "run_root"), "run_token": token, "roster_sha256": roster["sha256"]}, "p4_staging": {"identity": identity(staging, "staging_root"), "relative_path": f"import_staging/{token}", "readonly": True, "manifest_sha256": manifest["sha256"], "payload_import_roots": [{"relative_root": ".", "subtree_manifest_sha256": manifest["sha256"]}], "runtime_sys_path": [str(staging)]}, "request_defaults": defaults, "interpreter": interpreter, "loader_argv": {"argv": ["/bin/python", "-I"], "request_token_index": 0, "loader_literal_sha256": "loader", "bootstrap_git_blob_sha256": "blob", "bootstrap_current_sha256": "current"}, "effective_environment": environment, "native_loader_environment": native, "payload_manifest": manifest, "producer": producer}
             request_sha = sha256_json(request)
             outcome = {**request, "status": "PASS", "request_sha256": request_sha, "native_closure": [], "pre_p5_run_root_roster": roster}
             outcome_sha = sha256_json(outcome)
@@ -111,6 +111,14 @@ class P5Test(unittest.TestCase):
             evidence = Path(temp); self._v4_preflight(evidence)
             request = evidence / P4_V4_PREFLIGHT_RELATIVE / "recurrent" / "request.json"
             forged = json.loads(request.read_text()); forged["backend"] = "ttt_fast_weight"; request.write_bytes(canonical_bytes(forged))
+            with self.assertRaises(ValueError):
+                load_p4_v4_preflight(evidence)
+
+    def test_v4_roster_rejects_unlisted_path(self):
+        with tempfile.TemporaryDirectory() as temp:
+            evidence = Path(temp); self._v4_preflight(evidence)
+            run = evidence / "run"; run.chmod(0o755)
+            (run / "unexpected").write_text("forbidden\n")
             with self.assertRaises(ValueError):
                 load_p4_v4_preflight(evidence)
 

@@ -152,13 +152,25 @@ def _validate_roster(run_root: Path, staging_root: Path, token: str, roster: obj
     entries = roster["entries"]
     if not isinstance(entries, list) or not all(isinstance(item, Mapping) and set(item) == {"path", "type", "mode", "sha256"} for item in entries):
         raise ValueError("P4-v4 run-root roster entries are malformed")
-    expected_files = {item["path"] for item in manifest["entries"] if isinstance(item, Mapping) and item.get("type") == "regular"}
+    manifest_entries = manifest["entries"]
+    if (not isinstance(manifest_entries, list)
+            or manifest_entries != sorted(manifest_entries, key=lambda item: item.get("path", ""))
+            or not all(isinstance(item, Mapping) and set(item) == {"path", "type", "sha256"}
+                           and item["type"] == "regular" and isinstance(item["path"], str)
+                           and not Path(item["path"]).is_absolute() and ".." not in Path(item["path"]).parts
+                           and isinstance(item["sha256"], str) and len(item["sha256"]) == 64
+                           for item in manifest_entries)):
+        raise ValueError("P4-v4 payload manifest entries are malformed")
+    expected_files = {item["path"] for item in manifest_entries}
     expected = {"import_staging", f"import_staging/{token}", "preflight.json"} | expected_files
     observed = {item["path"] for item in entries}
     if observed != expected or any(not isinstance(path, str) or path.startswith("/") or ".." in Path(path).parts for path in observed):
         raise ValueError("P4-v4 run-root roster path set differs")
     if staging_root != run_root / "import_staging" / token:
         raise ValueError("P4-v4 staging root differs from run-root token path")
+    actual = {path.relative_to(run_root).as_posix() for path in run_root.rglob("*")}
+    if actual != observed:
+        raise ValueError("P4-v4 run-root contains a roster-unlisted path")
     for item in entries:
         path = run_root / item["path"]
         mode = 0o555 if item["type"] == "directory" else 0o444
@@ -228,13 +240,17 @@ def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
         source_root = _validate_source(request["production_source"])
         run_root = _path_identity(request["p4_run"].get("identity") if isinstance(request["p4_run"], Mapping) else None, kind="run_root")
         staging = request["p4_staging"]
-        if not isinstance(staging, Mapping):
+        if not isinstance(staging, Mapping) or set(staging) != {
+            "identity", "relative_path", "readonly", "manifest_sha256", "payload_import_roots", "runtime_sys_path",
+        }:
             raise ValueError("P4-v4 staging is malformed")
         staging_root = _path_identity(staging.get("identity"), kind="staging_root")
         token = request["p4_run"].get("run_token") if isinstance(request["p4_run"], Mapping) else None
-        if not isinstance(token, str) or request["p4_run"] != outcome["p4_run"] or request["p4_staging"] != outcome["p4_staging"]:
+        if (not isinstance(token, str) or set(request["p4_run"]) != {"identity", "run_token", "roster_sha256"}
+                or request["p4_run"] != outcome["p4_run"] or request["p4_staging"] != outcome["p4_staging"]):
             raise ValueError("P4-v4 run/staging result binding differs")
-        if not (source_root / "cosmos-framework").is_dir() or staging.get("relative_path") != f"import_staging/{token}":
+        if (not (source_root / "cosmos-framework").is_dir() or staging.get("relative_path") != f"import_staging/{token}"
+                or staging.get("readonly") is not True or staging.get("manifest_sha256") != request["payload_manifest"]["sha256"]):
             raise ValueError("P4-v4 child cwd or staging relative path differs")
         roots, runtime = staging.get("payload_import_roots"), staging.get("runtime_sys_path")
         if (not isinstance(roots, list) or not roots or not all(isinstance(item, Mapping) and set(item) == {"relative_root", "subtree_manifest_sha256"} for item in roots)
@@ -242,6 +258,8 @@ def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
                 or any(not isinstance(item["relative_root"], str) or not (staging_root / item["relative_root"]).is_dir() or (staging_root / item["relative_root"]).is_symlink() for item in roots)):
             raise ValueError("P4-v4 staging runtime sys.path differs from its import roots")
         _validate_roster(run_root, staging_root, token, outcome["pre_p5_run_root_roster"], request["payload_manifest"])
+        if request["p4_run"]["roster_sha256"] != outcome["pre_p5_run_root_roster"]["sha256"]:
+            raise ValueError("P4-v4 run-root roster SHA differs")
         result[backend] = {"request": request, "result": outcome, "verification": verification}
     for backend in P4_V4_BACKENDS:
         p5_effective_environment(result["recurrent"]["request"], result["ttt_fast_weight"]["request"], backend=backend)
