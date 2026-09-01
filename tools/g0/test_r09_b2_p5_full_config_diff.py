@@ -21,7 +21,16 @@ def target_b() -> None: pass
 
 class P5Test(unittest.TestCase):
     def _v4_preflight(self, root: Path) -> None:
-        source = root / "source"; (source / "cosmos-framework").mkdir(parents=True)
+        source = root / "source"; source.mkdir()
+        framework = source / "cosmos-framework"; framework.mkdir()
+        for repository in (source, framework):
+            subprocess.run(["git", "-C", str(repository), "init", "-q"], check=True)
+            subprocess.run(["git", "-C", str(repository), "config", "user.email", "p5@example.invalid"], check=True)
+            subprocess.run(["git", "-C", str(repository), "config", "user.name", "P5 fixture"], check=True)
+        (framework / "module.py").write_text("x = 1\n")
+        subprocess.run(["git", "-C", str(framework), "add", "module.py"], check=True); subprocess.run(["git", "-C", str(framework), "commit", "-qm", "fixture"], check=True)
+        (source / "recipe.toml").write_text("x = 1\n")
+        subprocess.run(["git", "-C", str(source), "add", "recipe.toml", "cosmos-framework"], check=True); subprocess.run(["git", "-C", str(source), "commit", "-qm", "fixture"], check=True)
         run = root / "run"; run.mkdir(); token = "token"
         staging = run / "import_staging" / token; staging.mkdir(parents=True)
         payload = staging / "payload.py"; payload.write_text("x = 1\n"); payload.chmod(0o444)
@@ -30,6 +39,7 @@ class P5Test(unittest.TestCase):
         def identity(path: Path, kind: str) -> dict[str, str]:
             value = {"root": str(path), "resolved_root": str(path), "kind": kind}
             return {**value, "identity_sha256": sha256_json(value)}
+        source_record = {"identity": identity(source, "git_source"), "revision": subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD"], text=True).strip(), "gitlink": subprocess.check_output(["git", "-C", str(source), "ls-tree", "HEAD", "cosmos-framework"], text=True).split()[2], "submodule_revision": subprocess.check_output(["git", "-C", str(framework), "rev-parse", "HEAD"], text=True).strip(), "toml": {"path": "recipe.toml", "git_blob_sha256": subprocess.check_output(["git", "-C", str(source), "rev-parse", "HEAD:recipe.toml"], text=True).strip(), "current_sha256": __import__("hashlib").sha256((source / "recipe.toml").read_bytes()).hexdigest()}}
         manifest_entries = [{"path": f"import_staging/{token}/payload.py", "type": "regular", "sha256": __import__("hashlib").sha256(payload.read_bytes()).hexdigest()}]
         manifest_core = {"entries": manifest_entries}; manifest = {**manifest_core, "sha256": sha256_json(manifest_core)}
         roster_entries = [
@@ -45,7 +55,7 @@ class P5Test(unittest.TestCase):
             environment = {**environment_core, "sha256": sha256_json(environment_core)}
             native_core = {"set": {}, "unset": list(P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
             native = {**native_core, "sha256": sha256_json(native_core)}
-            request = {"schema_version": "v4", "backend": backend, "production_source": {"identity": identity(source, "git_source")}, "p4_run": {"identity": identity(run, "run_root"), "run_token": token}, "p4_staging": {"identity": identity(staging, "staging_root"), "relative_path": f"import_staging/{token}", "payload_import_roots": [{"relative_root": ".", "subtree_manifest_sha256": manifest["sha256"]}], "runtime_sys_path": [str(staging)]}, "request_defaults": {}, "interpreter": {}, "loader_argv": {}, "effective_environment": environment, "native_loader_environment": native, "payload_manifest": manifest, "producer": {}}
+            request = {"schema_version": "v4", "backend": backend, "production_source": source_record, "p4_run": {"identity": identity(run, "run_root"), "run_token": token}, "p4_staging": {"identity": identity(staging, "staging_root"), "relative_path": f"import_staging/{token}", "payload_import_roots": [{"relative_root": ".", "subtree_manifest_sha256": manifest["sha256"]}], "runtime_sys_path": [str(staging)]}, "request_defaults": {}, "interpreter": {}, "loader_argv": {}, "effective_environment": environment, "native_loader_environment": native, "payload_manifest": manifest, "producer": {}}
             request_bytes = canonical_bytes(request); request_sha = sha256_json(request)
             outcome = {**request, "status": "PASS", "request_sha256": request_sha, "native_closure": [], "pre_p5_run_root_roster": roster}
             outcome_bytes = canonical_bytes(outcome); outcome_sha = sha256_json(outcome)

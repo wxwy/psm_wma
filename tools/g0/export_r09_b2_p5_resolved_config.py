@@ -91,6 +91,37 @@ def _path_identity(value: object, *, kind: str) -> Path:
     return path
 
 
+def _git_output(root: Path, *args: str) -> str:
+    return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
+
+
+def _validate_source(source: object) -> Path:
+    if not isinstance(source, Mapping) or set(source) != {"identity", "revision", "gitlink", "submodule_revision", "toml"}:
+        raise ValueError("P4-v4 production source schema is malformed")
+    root = _path_identity(source["identity"], kind="git_source")
+    framework = root / "cosmos-framework"
+    toml = source["toml"]
+    if (not framework.is_dir() or not isinstance(toml, Mapping)
+            or set(toml) != {"path", "git_blob_sha256", "current_sha256"}
+            or not all(isinstance(toml[key], str) for key in toml)):
+        raise ValueError("P4-v4 production TOML schema is malformed")
+    relative = Path(toml["path"])
+    if relative.is_absolute() or ".." in relative.parts or (root / relative).is_symlink():
+        raise ValueError("P4-v4 production TOML path escapes source root")
+    try:
+        revision = _git_output(root, "rev-parse", "HEAD")
+        gitlink = _git_output(root, "ls-tree", "HEAD", "cosmos-framework").split()[2]
+        submodule_revision = _git_output(framework, "rev-parse", "HEAD")
+        blob = _git_output(root, "rev-parse", f"HEAD:{relative.as_posix()}")
+    except (subprocess.CalledProcessError, IndexError) as exc:
+        raise ValueError("P4-v4 production Git identity is unreadable") from exc
+    current = hashlib.sha256((root / relative).read_bytes()).hexdigest()
+    if (source["revision"] != revision or source["gitlink"] != gitlink or source["submodule_revision"] != submodule_revision
+            or toml["git_blob_sha256"] != blob or toml["current_sha256"] != current):
+        raise ValueError("P4-v4 production source Git/current binding differs")
+    return root
+
+
 def _validate_roster(run_root: Path, staging_root: Path, token: str, roster: object, manifest: object) -> None:
     if not isinstance(roster, Mapping) or set(roster) != {"entries", "sha256"} or not _self_sha(roster, "sha256"):
         raise ValueError("P4-v4 run-root roster schema or SHA differs")
@@ -157,10 +188,7 @@ def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
                 or outcome.get("request_sha256") != request_sha or verification.get("request_sha256") != request_sha
                 or verification.get("result_sha256") != outcome_sha):
             raise ValueError("P4-v4 preflight schema, backend, status, or SHA chain differs")
-        source = request["production_source"]
-        if not isinstance(source, Mapping):
-            raise ValueError("P4-v4 production source is malformed")
-        source_root = _path_identity(source.get("identity"), kind="git_source")
+        source_root = _validate_source(request["production_source"])
         run_root = _path_identity(request["p4_run"].get("identity") if isinstance(request["p4_run"], Mapping) else None, kind="run_root")
         staging = request["p4_staging"]
         if not isinstance(staging, Mapping):
