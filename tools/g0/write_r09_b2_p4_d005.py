@@ -38,14 +38,16 @@ def finalize(record: dict[str, object]) -> dict[str, object]:
     return result
 
 
-def write_record(record: dict[str, object], output: Path, *, root: Path, p1: dict[str, object], p3: dict[str, object], peer: dict[str, object]) -> None:
+def write_record(record: dict[str, object], output: Path, *, root: Path, peer: dict[str, object]) -> None:
     """Write only a pair-verified non-executable record; no runtime imports or execution."""
     if record.get("status") != "FROZEN_NOT_EXECUTED" or record.get("command", {}).get("executable") is not False:
         raise ValueError("P4 D005 must be FROZEN_NOT_EXECUTED and non-executable")
     from tools.g0.verify_r09_b2_p4_d005 import verify_pair
 
     backend = record.get("backend")
-    result = verify_pair(record if backend == "recurrent" else peer, record if backend == "ttt_fast_weight" else peer, root.resolve(), p1, p3)
+    if backend not in {"recurrent", "ttt_fast_weight"}:
+        raise ValueError(f"unknown P4 backend: {backend}")
+    result = verify_pair(record if backend == "recurrent" else peer, record if backend == "ttt_fast_weight" else peer, root.resolve())
     if result["status"] != "PASS":
         raise ValueError("refusing to write a D005 record that fails the complete static pair contract")
     output = output.resolve()
@@ -67,11 +69,9 @@ def main() -> None:
     parser.add_argument("--record", type=Path, required=True, help="prebuilt non-executable JSON input")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--root", type=Path, required=True)
-    parser.add_argument("--p1", type=Path, required=True)
-    parser.add_argument("--p3", type=Path, required=True)
     parser.add_argument("--peer", type=Path, required=True)
     args = parser.parse_args()
-    write_record(json.loads(args.record.read_text()), args.output, root=args.root, p1=json.loads(args.p1.read_text()), p3=json.loads(args.p3.read_text()), peer=json.loads(args.peer.read_text()))
+    write_record(json.loads(args.record.read_text()), args.output, root=args.root, peer=json.loads(args.peer.read_text()))
 
 
 if __name__ == "__main__":

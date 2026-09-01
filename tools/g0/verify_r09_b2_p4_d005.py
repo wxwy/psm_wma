@@ -6,12 +6,31 @@ from __future__ import annotations
 import hashlib
 import json
 import subprocess
+import tomllib
 from pathlib import Path
 
-from tools.g0.write_r09_b2_p4_d005 import SCHEMA, TOML_RELATIVE, derive_job_path, membership_sha256, sha256_json
+from tools.g0.write_r09_b2_p4_d005 import SCHEMA, TOML_RELATIVE, derive_job_path, sha256_json
+from tools.g0.verify_r09_b2_p3_gpu_inventory import (
+    EXPECTED_RECURRENT_SELECTOR_KEYS,
+    EXPECTED_TTT_SELECTOR_KEYS,
+)
 
 
 RANK_ENV = {"RANK", "WORLD_SIZE", "LOCAL_RANK", "MASTER_ADDR", "MASTER_PORT"}
+P1_HEADER_RELATIVE = "artifacts/g0/r09/b2/p1_production_manifest_100x16x128/header.json"
+P3_ARTIFACT_RELATIVE = "artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory.json"
+P3_VERIFIER_RELATIVE = "artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory_verifier_selector_review.json"
+P1_HEADER_SHA256 = "e49ade9dd63f537db89a3efc9174b0da55b2511ce58db195b002674df88ab5e1"
+P3_ARTIFACT_SHA256 = "5dd5253cabaa5efa54f3ddc8891f632e3b05e515bf91c8055108e037f69b684d"
+P3_VERIFIER_SHA256 = "e9700cd63e9626ce88969b2d21682c186af7dfe0c7489f88795de1301d5b64f8"
+PRODUCTION_BUDGET = {"world_size": 1, "micro_batch_size": 128, "grad_accum_steps": 16, "global_batch_size": 2048, "samples_per_update": 2048, "optimizer_updates": 100}
+PRODUCTION_P1 = {"record_count": 204800, "world_size": 1, "num_workers": 0, "optimizer_updates": 100, "grad_accum": 16, "max_samples_per_batch": 128}
+SANITIZED_ENV = {
+    "PSM_LOCAL_DUMMY_ENABLED", "PSM_LOCAL_DUMMY_MODE", "PSM_R09_A1_ENABLED", "PSM_R09_A1_PROBE_OUTPUT",
+    "PSM_R08_LOCAL_HISTORY_HORIZON", "PSM_R08_GATE_B_CAPTURE_ONLY", "LIBERO_MAX_EPISODES",
+    "LIBERO_PREFETCH_FACTOR", "ONLINE_VAE_PROBE_OUTPUT", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY",
+    "http_proxy", "https_proxy", "all_proxy", "NO_PROXY", "no_proxy",
+}
 REQUIRED_ENV = {
     "PSM_R08_LOCAL_HISTORY_ENABLED": "1", "PSM_R09_B2_STREAM_MANIFEST_ROOT": None,
     "LIBERO_LATENT_CACHE_ROOT": None, "LIBERO_LATENT_CACHE_VERIFY_RATIO": "0",
@@ -69,8 +88,36 @@ def _source_ok(source: object, root: Path) -> bool:
 
 
 def _p3_contract(p3: dict[str, object], backend: str) -> dict[str, object]:
-    inventory = p3[backend]["inventory"]
-    return {"selector_keys": inventory["selector"]["keys_to_select"], "optimizer_membership_sha256": membership_sha256(p3, backend)}
+    inventory = p3.get(backend, {}).get("inventory")
+    if not isinstance(inventory, dict) or not isinstance(inventory.get("model_parameters"), list):
+        raise ValueError("frozen P3 inventory is malformed")
+    expected = EXPECTED_TTT_SELECTOR_KEYS if backend == "ttt_fast_weight" else EXPECTED_RECURRENT_SELECTOR_KEYS
+    rows = inventory["model_parameters"]
+    if not all(isinstance(row, dict) and isinstance(row.get("name"), str) for row in rows):
+        raise ValueError("frozen P3 parameter rows are malformed")
+    expected_selected = sorted(row["name"] for row in rows if any(key in row["name"] for key in expected))
+    actual_selected = sorted(row["name"] for row in rows if row.get("selected_by_optimizer") is True)
+    actual_resolved = sorted(row["name"] for row in rows if row.get("selected_by_resolved_selector") is True)
+    selector = inventory["selector"]
+    if (selector != {"backend": backend, "keys_to_select": list(expected)}
+            or actual_selected != expected_selected or actual_resolved != expected_selected):
+        raise ValueError("P3 selector, resolved selector, or optimizer membership differs from verifier-owned contract")
+    return {"selector_keys": list(expected), "optimizer_membership_sha256": sha256_json(expected_selected)}
+
+
+def _load_frozen_inputs(root: Path) -> tuple[dict[str, object], dict[str, object]]:
+    p1_path = root / P1_HEADER_RELATIVE
+    p3_path = root / P3_ARTIFACT_RELATIVE
+    p3_verifier_path = root / P3_VERIFIER_RELATIVE
+    if (not p1_path.is_file() or not p3_path.is_file() or not p3_verifier_path.is_file()
+            or _sha256_file(p1_path) != P1_HEADER_SHA256
+            or _sha256_file(p3_path) != P3_ARTIFACT_SHA256
+            or _sha256_file(p3_verifier_path) != P3_VERIFIER_SHA256):
+        raise ValueError("frozen P1/P3 evidence digest mismatch")
+    p1, p3, p3_verifier = json.loads(p1_path.read_text()), json.loads(p3_path.read_text()), json.loads(p3_verifier_path.read_text())
+    if {key: p1.get(key) for key in PRODUCTION_P1} != PRODUCTION_P1 or p3_verifier.get("status") != "PASS" or not p3_verifier.get("record_valid"):
+        raise ValueError("frozen P1/P3 evidence contract mismatch")
+    return p1, p3
 
 
 def _argv_ok(record: dict[str, object], framework: Path) -> bool:
@@ -97,7 +144,7 @@ def _env_ok(record: dict[str, object], backend: str, root: Path) -> bool:
     for key, value in REQUIRED_ENV.items():
         if (value is not None and values.get(key) != value) or (value is None and not isinstance(values.get(key), str)):
             return False
-    bare = {"set": values, "unset": sorted(RANK_ENV), "inherit_allowlist": []}
+    bare = {"set": values, "unset": sorted(RANK_ENV | SANITIZED_ENV), "inherit_allowlist": []}
     output_root = Path(values["IMAGINAIRE_OUTPUT_ROOT"])
     return env.get("unset") == bare["unset"] and env.get("inherit_allowlist") == [] and env.get("sha256") == sha256_json(bare) and output_root.is_absolute() and str(output_root.resolve()) == values["IMAGINAIRE_OUTPUT_ROOT"] and any(output_root.is_relative_to(base) for base in _allowed_roots(root))
 
@@ -110,27 +157,37 @@ def _inputs_ok(record: dict[str, object], root: Path, p1: dict[str, object], p3:
     if not isinstance(p1_binding, dict) or not isinstance(p3_binding, dict) or not isinstance(assets, dict):
         return False
     required_assets = {"base_checkpoint", "edge_processor", "wan_vae", "libero_root", "stream_manifest", "latent_cache", "interpreter"}
-    p1_ok = isinstance(p1.get("schema_version"), str) and p1.get("status", "").startswith("PASS") and isinstance(p1.get("tiny_cpu_build", {}).get("record_count"), int)
-    return p1_ok and p1_binding == {"sha256": sha256_json(p1), "record_count": p1["tiny_cpu_build"]["record_count"]} and p3_binding == {"sha256": sha256_json(p3), "backend_contract": _p3_contract(p3, backend)} and set(assets) == required_assets and all(_asset_ok(asset, root) for asset in assets.values())
+    p1_ok = {key: p1.get(key) for key in PRODUCTION_P1} == PRODUCTION_P1
+    return (p1_ok
+            and p1_binding == {"path": P1_HEADER_RELATIVE, "sha256": P1_HEADER_SHA256,
+                               "records_sha256": p1["records_sha256"], "record_count": PRODUCTION_P1["record_count"]}
+            and p3_binding == {"path": P3_ARTIFACT_RELATIVE, "sha256": P3_ARTIFACT_SHA256,
+                               "backend_contract": _p3_contract(p3, backend)}
+            and set(assets) == required_assets and all(_asset_ok(asset, root) for asset in assets.values()))
 
 
-def _env_assets_bound(record: dict[str, object]) -> bool:
+def _env_assets_bound(record: dict[str, object], root: Path) -> bool:
     env, assets = record["environment"]["set"], record["inputs"]["external_assets"]
     mapping = {"BASE_CHECKPOINT_PATH": "base_checkpoint", "EDGE_POLICY_CHECKPOINT": "edge_processor", "WAN_VAE_PATH": "wan_vae", "LIBERO_ROOT": "libero_root", "PSM_R09_B2_STREAM_MANIFEST_ROOT": "stream_manifest", "LIBERO_LATENT_CACHE_ROOT": "latent_cache"}
     try:
-        return all(env[key] == assets[name]["realpath"] for key, name in mapping.items()) and env["PYTHONPATH"] == str(Path(assets["interpreter"]["realpath"]).parents[2])
+        return (all(env[key] == assets[name]["realpath"] for key, name in mapping.items())
+                and env["PYTHONPATH"] == str(Path(assets["interpreter"]["realpath"]).parents[2])
+                and env["PSM_R09_B2_STREAM_MANIFEST_ROOT"] == str((root / P1_HEADER_RELATIVE).parent.resolve()))
     except (KeyError, TypeError):
         return False
 
 
-def _output_ok(record: dict[str, object], root: Path) -> bool:
+def _output_ok(record: dict[str, object], root: Path, job_identity: dict[str, str]) -> bool:
     outputs, env = record.get("outputs", {}), record.get("environment", {})
     if not isinstance(outputs, dict) or not isinstance(env, dict):
         return False
-    expected = Path(derive_job_path(env["set"]["IMAGINAIRE_OUTPUT_ROOT"], outputs.get("job_identity", {}))).resolve()
+    expected = Path(derive_job_path(env["set"]["IMAGINAIRE_OUTPUT_ROOT"], job_identity)).resolve()
     required = {"job_identity", "run_root", "checkpoint_step0", "checkpoint_step100", "stdout_log", "capture_dir", "fresh"}
     expected_children = {"checkpoint_step0": expected / "checkpoints/iter_000000000", "checkpoint_step100": expected / "checkpoints/iter_000000100", "stdout_log": expected / "stdout.log", "capture_dir": expected / "capture"}
-    if not any(expected.is_relative_to(base) for base in _allowed_roots(root)) or set(outputs) != required or outputs.get("run_root") != str(expected) or outputs.get("fresh") is not True or any(outputs[key] != str(value) for key, value in expected_children.items()):
+    if (not any(expected.is_relative_to(base) for base in _allowed_roots(root)) or set(outputs) != required
+            or outputs.get("job_identity") != job_identity or outputs.get("run_root") != str(expected)
+            or outputs.get("fresh") is not True
+            or any(outputs[key] != str(value) for key, value in expected_children.items())):
         return False
     try:
         tracked = subprocess.run(["git", "-C", str(root), "ls-files", "--error-unmatch", str(expected.relative_to(root.resolve()))], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
@@ -142,23 +199,43 @@ def _output_ok(record: dict[str, object], root: Path) -> bool:
 def _budget_ok(record: dict[str, object]) -> bool:
     budget = record.get("budget", {})
     required = {"world_size", "micro_batch_size", "grad_accum_steps", "global_batch_size", "samples_per_update", "optimizer_updates"}
-    return isinstance(budget, dict) and set(budget) == required and budget["world_size"] == 1 and budget["optimizer_updates"] == 100 and budget["global_batch_size"] == budget["micro_batch_size"] * budget["grad_accum_steps"] * budget["world_size"] and budget["samples_per_update"] == budget["global_batch_size"]
+    return isinstance(budget, dict) and set(budget) == required and budget == PRODUCTION_BUDGET
+
+
+def _recipe_contract(root: Path) -> dict[str, str] | None:
+    try:
+        with (root / "cosmos-framework" / TOML_RELATIVE).open("rb") as handle:
+            recipe = tomllib.load(handle)
+        identity = {key: recipe["job"][key] for key in ("project", "group", "name")}
+        if not all(isinstance(value, str) and value for value in identity.values()):
+            return None
+        return identity if recipe["trainer"]["grad_accum_iter"] == PRODUCTION_BUDGET["grad_accum_steps"] else None
+    except (FileNotFoundError, KeyError, tomllib.TOMLDecodeError):
+        return None
 
 
 def _check(record: dict[str, object], root: Path, p1: dict[str, object], p3: dict[str, object], backend: str) -> dict[str, bool]:
     command = record.get("command", {})
     framework = (root / "cosmos-framework").resolve()
+    job_identity = _recipe_contract(root)
     return {
-        "schema": record.get("schema_version") == SCHEMA and record.get("status") == "FROZEN_NOT_EXECUTED", "non_executable": command.get("executable") is False,
+        "schema": record.get("schema_version") == SCHEMA and record.get("status") == "FROZEN_NOT_EXECUTED" and record.get("backend") == backend, "non_executable": command.get("executable") is False,
         "source": _source_ok(record.get("source"), root), "cwd": command.get("cwd") == str(framework), "argv": _argv_ok(record, framework),
-        "environment": _env_ok(record, backend, root), "inputs": _inputs_ok(record, root, p1, p3, backend), "env_assets_bound": _env_assets_bound(record) if isinstance(record.get("inputs"), dict) and isinstance(record.get("environment"), dict) else False, "outputs": _output_ok(record, root), "budget": _budget_ok(record),
+        "environment": _env_ok(record, backend, root), "inputs": _inputs_ok(record, root, p1, p3, backend), "env_assets_bound": _env_assets_bound(record, root) if isinstance(record.get("inputs"), dict) and isinstance(record.get("environment"), dict) else False, "outputs": job_identity is not None and _output_ok(record, root, job_identity), "budget": _budget_ok(record),
         "command_digest": command.get("sha256") == sha256_json({key: value for key, value in command.items() if key != "sha256"}),
         "record_digest": record.get("d005_sha256") == sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}),
     }
 
 
-def verify_pair(recurrent: dict[str, object], ttt: dict[str, object], root: Path, p1: dict[str, object], p3: dict[str, object]) -> dict[str, object]:
-    checks = {"recurrent": _check(recurrent, root, p1, p3, "recurrent"), "ttt_fast_weight": _check(ttt, root, p1, p3, "ttt_fast_weight")}
+def verify_pair(recurrent: dict[str, object], ttt: dict[str, object], root: Path) -> dict[str, object]:
+    try:
+        p1, p3 = _load_frozen_inputs(root)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        return {"schema_version": "r09_b2_p4_d005_verifier_v2", "status": "FAIL", "error": str(exc), "checks": {}}
+    try:
+        checks = {"recurrent": _check(recurrent, root, p1, p3, "recurrent"), "ttt_fast_weight": _check(ttt, root, p1, p3, "ttt_fast_weight")}
+    except (KeyError, TypeError, ValueError) as exc:
+        return {"schema_version": "r09_b2_p4_d005_verifier_v2", "status": "FAIL", "error": str(exc), "checks": {}}
     checks["matched"] = {
         "source": recurrent.get("source") == ttt.get("source"),
         "budget": recurrent.get("budget") == ttt.get("budget"),
@@ -173,9 +250,9 @@ def verify_pair(recurrent: dict[str, object], ttt: dict[str, object], root: Path
 
 def main() -> None:
     import argparse
-    parser = argparse.ArgumentParser(); parser.add_argument("--root", type=Path, required=True); parser.add_argument("--p1", type=Path, required=True); parser.add_argument("--p3", type=Path, required=True); parser.add_argument("--recurrent", type=Path, required=True); parser.add_argument("--ttt", type=Path, required=True); parser.add_argument("--output", type=Path, required=True)
+    parser = argparse.ArgumentParser(); parser.add_argument("--root", type=Path, required=True); parser.add_argument("--recurrent", type=Path, required=True); parser.add_argument("--ttt", type=Path, required=True); parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = verify_pair(json.loads(args.recurrent.read_text()), json.loads(args.ttt.read_text()), args.root.resolve(), json.loads(args.p1.read_text()), json.loads(args.p3.read_text()))
+    result = verify_pair(json.loads(args.recurrent.read_text()), json.loads(args.ttt.read_text()), args.root.resolve())
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n"); print(result["status"])
 
 

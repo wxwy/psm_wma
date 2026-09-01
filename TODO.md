@@ -71,7 +71,7 @@
 | G0-R09-B2-P3-GPU-ONLY-PLAN | DONE | Codex | GPT/Kimi/MM 均 `APPROVE_TO_REQUEST_GPU_P3_RUN` | 静态 collector/verifier 与 6 项回归已完成；ChatGPT review=`2026-09-01_R09_B2_P3_flattened_value_grammar_f0845a5_c9058b6.md`。不授权 GPU 执行。 |
 | G0-R09-B2-P3-GPU-ONLY-RUN | DONE | Codex | ChatGPT/MM/Kimi 均 `APPROVE_TO_CLOSE_B2_P3_GPU_ONLY` | attempt-6 双 worker PASS、单卡 offline/no-execution 与 28 GiB cap 均通过；verifier 以冻结 selector 从每行实际 parameter name 重算 membership，artifact selector/optimizer/group/DCP 均逐项一致。collection root=`269540e` clean worktree 复核 PASS，未重跑 GPU。仅关闭 P3；P4/P5/B2-T、训练/评测/推理仍须独立 Gate。 |
 | FIX-LIBERO-WORKER-DEFAULT-12 | DONE | Codex | GPT/Kimi/MM 均 APPROVE | 三入口均明确默认 12；仅修正 launcher 帮助文本。`bash -n`、双仓 diff-check PASS；GPT review=`2026-09-01_LIBERO_worker_default_4cfa359_0af5d53.md`，Kimi/MM 独立复核均 APPROVE；未启动训练/GPU。 |
-| G0-R09-B2-P4-LAUNCH-D005 | REVIEW | Codex | P1-P3 已 DONE；P4 静态实现整改后待三方复审 | verifier 独立绑定 Git/Gitlink、P1/P3、资产路径散列、冻结 argv、离线环境、输出新鲜度和 batch 公式；只申请静态 builder/verifier，不启动训练、不改子模块。 |
+| G0-R09-B2-P4-LAUNCH-D005 | IN_PROGRESS | Codex | P1 production manifest 已 DONE；P3 已 DONE | 修复 verifier-owned P3 attempt-6/selector、production P1 204800、TOML job identity/budget、环境净化及真实 D005 schema；只做静态 CPU 验收，不启动训练、不改子模块。 |
 | G0-R09-B2-P1-PRODUCTION-MANIFEST | DONE | Codex | ChatGPT/Kimi/MM 均 APPROVE_TO_BIND_P1_PRODUCTION_MANIFEST | clean worktree source=`4177e83`/Gitlink=`21d064f` 生成并提交 204,800 条固定身份，P1 verifier 14/14 PASS、GPU=0；只作为 P4 输入前置。 |
 | G0-R09-B2-P5-FULL-CONFIG-DIFF | TODO | Codex | P4 schema 明确 | 导出完整 resolved config 的结构化 machine diff，并拒绝允许范围外差异；先审核。 |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
