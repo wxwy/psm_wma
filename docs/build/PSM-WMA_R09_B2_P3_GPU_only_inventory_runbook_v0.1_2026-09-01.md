@@ -47,6 +47,8 @@ LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
 
 顶层 collector 只按固定顺序派生两个独立子进程：`recurrent` 与 `ttt_fast_weight`。任一子进程非零、未写合法 JSON 或 JSON `status!=PASS` 时，父进程先写 aggregate/D005 和已获得的 stdout/stderr/partial JSON，再立即返回；后续 backend 不会启动。它们的 JSON 分别写为 `p3_gpu_inventory_recurrent.json` 与 `p3_gpu_inventory_ttt_fast_weight.json`；顶层 aggregate 与 D005 写入上述路径。不得追加 `--worker-backend`，不得重试、改参数或更换 GPU。
 
+每个 isolated worker 在 production model config 解析前仅内部切换到 `root/cosmos-framework`，使 recipe 的相对 model JSON 路径与常规框架启动语义一致；TOML、环境路径和 D005 仍为命令中冻结的绝对/根目录记录。
+
 ## 判据与失败分流
 
 PASS 要求：两个 worker 均 `PASS`；GPU/world-size/offline processor/source/D005 provenance 全部匹配；生产 optimizer group、model DCP、optimizer DCP 的 stable-name membership 一致；TTT five-member state 不持久化；cross-backend diff 只含 verifier allowlist 的 recurrent-only 参数。

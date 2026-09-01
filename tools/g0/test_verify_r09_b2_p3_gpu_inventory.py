@@ -371,6 +371,17 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             completed = subprocess.run(command, text=True, capture_output=True, check=True)
             self.assertEqual(completed.stdout, "worker launched\n")
 
+    def test_worker_uses_framework_cwd_for_production_relative_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            framework = root / "cosmos-framework"
+            framework.mkdir()
+            with mock.patch.object(COLLECT.os, "chdir") as chdir:
+                self.assertEqual(COLLECT._set_worker_production_cwd(root), framework)
+            chdir.assert_called_once_with(framework)
+        with self.assertRaisesRegex(RuntimeError, "framework directory is missing"):
+            COLLECT._set_worker_production_cwd(Path("/missing/p3-framework-root"))
+
     def test_backend_orchestration_stops_after_zero_exit_blocked_record(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "inventory.json"

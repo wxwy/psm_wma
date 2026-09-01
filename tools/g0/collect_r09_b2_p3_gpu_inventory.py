@@ -256,6 +256,7 @@ def _worker_inventory(
         if peak > max_peak_gib * 1024**3:
             raise RuntimeError(f"P3 exceeded {max_peak_gib} GiB after {phase}: {peak} bytes")
 
+    _set_worker_production_cwd(root)
     config = load_experiment_from_toml(toml)
     vlm_config = config.model.config.vlm_config
     processor = prepare_isolated_worker(edge_checkpoint_path, vlm_config)
@@ -512,6 +513,15 @@ def _run_backend_workers(
 def _worker_command_argv(script_path: Path, arguments: list[str]) -> list[str]:
     """以当前 Python 解释器启动 worker，不能依赖 collector 脚本的 executable bit。"""
     return [sys.executable, str(script_path.resolve()), *arguments]
+
+
+def _set_worker_production_cwd(root: Path) -> Path:
+    """生产 recipe 的相对 model-config 路径必须从 framework 根解析。"""
+    framework = root / "cosmos-framework"
+    if not framework.is_dir():
+        raise RuntimeError(f"P3 production framework directory is missing: {framework}")
+    os.chdir(framework)
+    return framework
 
 
 def main() -> None:
