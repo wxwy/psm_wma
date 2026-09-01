@@ -92,7 +92,24 @@ def canonicalize(value: Any, seen: set[int] | None = None) -> Any:
 
 
 def parse_d005_command(record: Mapping[str, Any]) -> tuple[str, list[str]]:
-    """Derive, never recreate, the production TOML and exact trailing overrides."""
+    """Derive, never recreate, the production TOML and exact trailing overrides.
+
+    P4 v4 freezes these as request defaults because its D005 no longer admits a
+    direct Python/module argv.  The legacy branch remains parser-only so old,
+    already-closed evidence can still be inspected; it is not an executable
+    launch admission path.
+    """
+    template = record.get("interpreter_provenance_template")
+    if isinstance(template, Mapping):
+        defaults = template.get("request_defaults")
+        if not isinstance(defaults, Mapping):
+            raise ValueError("P4 v4 request defaults are malformed")
+        toml, overrides = defaults.get("toml"), defaults.get("overrides")
+        if not isinstance(toml, str) or not isinstance(overrides, list) or not all(isinstance(item, str) for item in overrides):
+            raise ValueError("P4 v4 request defaults are malformed")
+        if tuple(overrides) != FROZEN_OVERRIDES:
+            raise ValueError("P4 v4 request defaults must be the frozen ordered 100-update pair")
+        return toml, list(overrides)
     command = record.get("command")
     if not isinstance(command, Mapping) or command.get("executable") is not False:
         raise ValueError("P5 requires a non-executable P4 D005 command")

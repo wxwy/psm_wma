@@ -80,6 +80,10 @@ class P5Test(unittest.TestCase):
         self.assertEqual(parse_d005_command(record), ("r.toml", ["trainer.max_iter=100", "trainer.save_zero_checkpoint=true"]))
         record["command"]["argv"].reverse()
         with self.assertRaises(ValueError): parse_d005_command(record)
+        static = {"interpreter_provenance_template": {"request_defaults": {"toml": "r.toml", "overrides": ["trainer.max_iter=100", "trainer.save_zero_checkpoint=true"]}}}
+        self.assertEqual(parse_d005_command(static), ("r.toml", ["trainer.max_iter=100", "trainer.save_zero_checkpoint=true"]))
+        static["interpreter_provenance_template"]["request_defaults"]["overrides"] = ["trainer.max_iter=5000"]
+        with self.assertRaises(ValueError): parse_d005_command(static)
         self.assertEqual(sanitized_environment({"set": {"B": "2"}, "unset": ["X"], "inherit_allowlist": ["A"]}, {"A": "1", "X": "x", "LEAK": "z"}), {"A": "1", "B": "2", **PYTHON_CHILD_LOCALE})
         with self.assertRaises(ValueError):
             sanitized_environment({"set": {}, "unset": ["LC_CTYPE"], "inherit_allowlist": []}, {})
