@@ -4102,3 +4102,13 @@ print(json.dumps(result, sort_keys=True))
 - HIGH-2：完整 closure 强制分为 first-party editable（Gitlink tracked tree+惰性 editable pth）、registry wheel（lock wheel SHA→RECORD→installed payload）、Git/VCS（lock URL+commit→clean checkout tree→installed payload）。site-packages `.pth` 采用精确 roster/raw SHA，在 `-I -S` 下证明 inert；额外 pth/customize/system-site 都 FAIL。
 - MEDIUM：初始 getpath 精确为唯一且必须不存在的 `<base>/lib/python313.zip` candidate、stdlib、lib-dynload；不泛化允许 zip，bootstrap 后删除该 candidate，再以固定四项 runtime path 工作。
 - 允许范围：若批准仅允许 root P4/P5 tooling+标准库 CPU tests。仍禁止 venv 修改/P4 record 重冻/P5 export或compose/GPU/torchrun/模型数据训练评测推理/B2-T。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v0.4
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请只整改 ChatGPT v0.3 review `2026-09-01_R09_B2_P4_interpreter_provenance_design_v03_5e513e7_a5f546f.md` 的 HIGH/MEDIUM；不申请实现之外的任何运行。
+
+- 审核对象：根仓 design commit=`55d95262356c4b54770d84aeb8bdcb4d52df739d`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；新增文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v0.4_2026-09-01.md`。
+- HIGH-1：P4 D005 不再 direct normal-site `-m torch.distributed.run`，改为 lexical Python `-I -S` 的 root-owned bootstrap；bootstrap 在任何项目/三方 import 前校验 provenance，再原样 `runpy` 调用冻结 training argv。P5 同模型，不存在“P5 安全、实际训练不安全”的分叉。
+- HIGH-2：bootstrap 从所有已验证 registry/editable/VCS payload 物化 fresh run-local staging tree，拒绝 pyc/pycache/pth/customize/symlink/额外文件，runtime sys.path 只含 base stdlib/dynload+staging source/site-packages，并设 `PYTHONDONTWRITEBYTECODE=1`。
+- MEDIUM：production/submodule/VCS checkout 明确定义为 tracked+untracked 全空，且所有 source tree/staging 均 exact manifest；新增 untracked shadow/pyc/staging 篡改永久负例。
+- 允许范围：若批准仅允许新增 root bootstrap 及 P4/P5 verifier/exporter/CPU tests；禁止 P4 record 重冻、P5 export/compose、GPU/torchrun、模型数据训练评测推理/B2-T。
