@@ -3439,3 +3439,15 @@ Detailed review:
 - MM 证据补齐：本轮 `py_compile` stdout 为空且 exit=0；完整 `unittest -v` 为 6/6 PASS；`git diff --check 0d3af2e~1..0d3af2e`、当前根仓和子模块均 exit=0；`git status --short tools/g0/` 仅三项已跟踪修改（提交前），`git ls-files --others --exclude-standard tools/g0/` 与临时 `p3_*test_d005.json` 查找均为空，所有 fixture 在 `finally` 清理。
 - 本轮未运行 GPU、worker、processor/model/VAE、checkpoint/data/DCP I/O，未执行 forward/backward/optimizer/scheduler step。仍仅请求静态实现 closure；GPU run 必须另行三方批准。
 - 禁止范围保持：B2-T/P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训、backend freeze、Global/Agent/RL。
+
+---
+
+## 2026-09-01 — R09-B2 P3 flattened optimizer-DCP value grammar 整改复审请求
+
+请求 verdict：`APPROVE_TO_REQUEST_GPU_P3_RUN` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `c9058b60fd226e1b930aa0b3b7d2e4805cff8f03`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 处理 GPT HIGH：保留已批准的 flattened key ownership parser；`state.*` 继续严格限制为 production flattened state 的 tensor/int/float。`param_groups.*` 改按 production metadata canonicalize：支持 finite scalar、bool、None、string、tensor metadata、tuple/list 的递归 JSON-safe `items`，其余类型 fail-closed。
+- verifier 的 shared optimizer-DCP schema metadata 比较新增 `items`，因此 `betas=(0.9,0.95)` 既可被记录，也参与 recurrent/TTT 一致性硬门。
+- 证据：`test_state_schema_helpers_preserve_names_and_tensor_metadata` 现包含真实 grammar 的 `param_groups.net.a.betas=(0.9,0.95)`，精确断言 canonical schema；全套 6/6 unittest PASS，py_compile、根仓/子模块 diff-check PASS，tools/g0 与临时 D005 fixture 均无残留。
+- 本轮仅静态代码/测试，未运行 GPU、worker、processor/model/VAE、checkpoint/data/DCP I/O，未执行 forward/backward/optimizer/scheduler step。仍须三方批准后才可另行申请 GPU run；禁止范围不变。
