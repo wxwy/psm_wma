@@ -3526,3 +3526,16 @@ Detailed review:
 - 回归：新增永久测试绑定 attempt-3 的精确峰值，断言 collector/verifier cap 相同且实测峰值低于 cap；`py_compile` PASS，`python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 14/14 PASS，`git diff --check` PASS。
 - 允许范围仍严格不变：仅两个独立 backend 的 production processor/model/optimizer 与 `ModelWrapper.state_dict()`/`OptimizersContainer.state_dict()` schema inventory；单 `CUDA_VISIBLE_DEVICES=0`、`WORLD_SIZE=1`、离线、本地 processor，`load_vision_tokenizer=false`。禁止网络/远端 tokenizer、数据/VAE/weights/checkpoint I/O、forward/backward/optimizer/scheduler step、手工 worker、自动重试/换卡、多卡、B2-T/P4/P5、训练/评测/推理/closed-loop/Global/Agent/RL。
 - 请求仅授权 attempt-4 的一次 frozen command；任一非零、`BLOCKED`/`FAIL`、超过 28 GiB、非单卡或任何禁止行为立即终止、保留证据且不自动重跑。
+
+---
+
+## 2026-09-01 — R09-B2 P3 canonical FQN / attempt-5 整改审核申请
+
+请求 verdict：`APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `0539fca076c94573c108a94d7f2cc79941b5728b`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。attempt-4 terminal evidence=`085a7bb`。
+- 根因：attempt-4 未超 28 GiB，但真实 production flattened key `param_groups.net.language_model.model.layers.0.input_layernorm_moe_gen.weight.betas` 不能由 raw `model.net.named_parameters()` name 手工拼 `net.` 得到，collector 正确 fail-closed，TTT 未启动。
+- 最小整改：collector 复用 PyTorch DCP 同一 `state_dict._get_fqns(model, full_name)`，按 parameter identity 建 canonical-FQN→raw-stable-name 映射；多 FQN、非 `net.`、duplicate、覆盖不全全部 fail-closed。model DCP membership 和 optimizer schema 均用该 canonical FQN；schema 新增 `owner_fqn`，verifier 把它纳入 identity 和 flat-key exact check，避免 cross-backend 漂移被隐藏。
+- fresh path：runbook 唯一命令改为 `artifacts/g0/r09/b2/p3_gpu_inventory_attempt5/`，历史 attempt-1..4 不覆盖。cap 仍固定 28 GiB，所有禁止范围不变。
+- 静态证据：`py_compile` PASS；`cosmos-framework/.venv/bin/python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 14/14 PASS；`git diff --check` PASS。未运行 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。
+- 请求仅授权一次 attempt-5 frozen run；任一非零/BLOCKED/FAIL、超 28 GiB、非单卡或禁止操作立即终止、留证据且不自动重跑。
