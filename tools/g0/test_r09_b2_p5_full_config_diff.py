@@ -127,8 +127,10 @@ class P5Test(unittest.TestCase):
         root = Path(__file__).resolve().parents[2]; records, _, _, _ = _expected(root); record = records["recurrent"]
         requests = build_pair_requests(records["recurrent"], records["ttt_fast_weight"], production_root=Path("/disk/rl/psm_wma_p4_d005_retry"), evidence_root=root)
         forged = json.loads(json.dumps(requests["recurrent"])); forged["toml"] = "examples/toml/attacker.toml"
+        forged["command_argv"] = ["--sft-toml=examples/toml/attacker.toml" if token.startswith("--sft-toml=") else token for token in forged["command_argv"]]
         with tempfile.TemporaryDirectory() as temp:
-            path = Path(temp) / "forged.json"; path.write_text(json.dumps(forged))
-            result = subprocess.run([record["command"]["interpreter"]["realpath"], str(root / "tools/g0/export_r09_b2_p5_resolved_config.py"), "--child-request", str(path), "--child-output", str(Path(temp) / "tree.json")], cwd=record["command"]["cwd"], env=record["environment"]["set"], text=True, capture_output=True, check=False)
+            path, output = Path(temp) / "forged.json", Path(temp) / "tree.json"; path.write_text(json.dumps(forged))
+            result = subprocess.run([record["command"]["interpreter"]["realpath"], str(root / "tools/g0/export_r09_b2_p5_resolved_config.py"), "--child-request", str(path), "--child-output", str(output)], cwd=record["command"]["cwd"], env=record["environment"]["set"], text=True, capture_output=True, check=False)
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("not a frozen D005-bound identity", result.stderr)
+            self.assertFalse(output.exists())
