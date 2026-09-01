@@ -3996,3 +3996,13 @@ print(json.dumps(result, sort_keys=True))
 - 修改：`tools/g0/export_r09_b2_p5_resolved_config.py` 新增固定 `PYTHON_CHILD_LOCALE={"LC_CTYPE":"C.UTF-8"}`；`sanitized_environment()` 在 D005 set/inherit 后显式 `setdefault` 该键，若 D005 要求 unset 则 `ValueError`。因此 parent 传入的环境与 Python child 实际环境逐键相同，而任意其他新增/修改环境键仍然 fail-closed。两条 D005-bound request digest 重算为 recurrent=`0871417b9e8898b7be2ab4215a88ee1546ec6019592fa084c3d96009747318ad`、ttt=`9c56140f1c3570c142f9bc219ef82e7880cde4fdc51082e375f796a4c4360bee`。
 - 回归：`tools/g0/test_r09_b2_p5_full_config_diff.py` 覆盖默认明确注入 locale 及 D005 unset `LC_CTYPE` 仍 fail-closed。独立 clean worktree `/disk/rl/psm_wma_p5_test_3a7fc5c`：`python -m py_compile ...` PASS，`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=7/7 PASS，`git diff --check`、根/子模块 clean PASS；未调用 compose/CUDA/GPU/torchrun/模型/数据/训练。
 - 禁止范围：本申请不授权新 export、重试、CUDA/GPU、torchrun、模型/dataloader/optimizer/checkpoint 构造、weights/data/MP4、训练、评测、推理、P5 closure 或 B2-T。若批准，仍必须以新 exporter revision/new digest/new output path 另行申请一次性 `APPROVE_TO_RUN_P5_STATIC_EXPORT`。
+
+### Awaiting review — R09-B2 P5 verifier child-locale grammar remediation
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请只处理 ChatGPT review `2026-09-01_R09_B2_P5_child_locale_4356416_3a7fc5c.md` 的 HIGH/MEDIUM；不申请再次执行。
+
+- 审核对象：根仓 implementation=`9f30ef5054e11f58c60ec54d587924a1d0f2a2a4`（基于 exporter locale commit `3a7fc5c`），子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 修复：`tools/g0/verify_r09_b2_p5_full_config_diff.py` 从 exporter import 单一事实源 `PYTHON_CHILD_LOCALE`，新增 `_expected_effective_environment(record)`，并在 `_bound()` 精确要求 `environment.effective == record.environment.set + {LC_CTYPE:C.UTF-8}`。`environment.set`/`unset`/`inherit_allowlist` 仍逐字段精确绑定 P4 record；没有 subset/superset 放宽。
+- fixture：`tools/g0/test_r09_b2_p5_full_config_diff.py` 正例改用同一 verifier helper，要求 locale shape 的 `verify_pair(...)=PASS`；新增 effective `UNEXPECTED=1` 与 `LC_CTYPE=C` 两条独立 FAIL 断言。
+- 证据：独立 clean worktree `/disk/rl/psm_wma_p5_test_9f30ef5`：`python -m py_compile tools/g0/export_r09_b2_p5_resolved_config.py tools/g0/verify_r09_b2_p5_full_config_diff.py tools/g0/test_r09_b2_p5_full_config_diff.py` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=7/7 PASS；`git diff --check`、根/子模块 tracked+untracked clean PASS。未调用 compose/CUDA/GPU/torchrun/模型/数据/训练。
+- 禁止范围：不授权新 export/retry、compose、CUDA/GPU、torchrun、模型/dataloader/optimizer/checkpoint 构造、weights/data/MP4、训练、评测、推理、P5 closure 或 B2-T。若批准，仍须以新 exporter revision、新输出路径和完整 frozen command 另行申请一次性执行授权。
