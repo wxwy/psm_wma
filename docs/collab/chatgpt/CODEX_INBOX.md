@@ -3612,3 +3612,14 @@ Detailed review:
 - 回归：`py_compile` PASS；unittest 20/20 PASS；保持 frozen selector lists 不变、但一致伪造 TTT `local_history_runtime.encoder.visual_proj.weight` 为未选择，两个 new membership checks 均 false、verifier FAIL；`git diff --check` PASS。
 - 证据：不重跑 GPU。clean collection-root=`269540e`/Gitlink=`21d064f` worktree 对同一 attempt-6 evidence 用新版 verifier 复验，`artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory_verifier_selector_review.json`=PASS、record_valid=true、全部 provenance/diff checks=true，recurrent/TTT `selector_membership_exact=true`、`optimizer_membership_exact=true`，GPU=0 MiB。
 - 范围继续禁止 P4/P5/B2-T、训练、评测、推理、closed-loop、多卡、长训、backend freeze、Global/Agent/RL；请求仅关闭 P3 GPU-only optimizer inventory Gate。
+
+### Awaiting review — R09-B2 P4 static launch-D005 design
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_STATIC_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `81ce77ea31cd66611580ac369fe96f490967c58e`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。设计文件：`docs/build/PSM-WMA_R09_B2_P4_launch_d005_design_v0.1_2026-09-01.md`。
+- 前置：P1/P2/P3 均已三方关闭；P3 closure request=`2daa461`、implementation=`6a60b92`、ChatGPT approval=`42a4b53`。P5 完整 resolved-config diff 尚未实现，B2-T 未获授权。
+- 申请范围：只允许新增 root `tools/g0` 的标准库/CPU D005 builder、fail-closed verifier 与定向测试，并生成静态 `FROZEN_NOT_EXECUTED` JSON。禁止改 `cosmos-framework`、导入 torch/Cosmos、加载模型/数据/VAE/checkpoint、调用 `torchrun`、GPU、训练、评测、推理、closed-loop、多卡、长训、backend freeze、Global/Agent/RL。
+- 合同：两份 backend D005 固定 `world_size=1`、100 optimizer updates、显式 microbatch/grad accumulation/global batch 公式、canonical argv/environment SHA、P1 manifest/cache/base checkpoint/resolved-config 引用。`command.executable=false`，不含审批令牌；相对路径 containment、无 shell/插值/网络/`--worker-backend`，两侧仅 backend selector、P3 verifier-owned actual optimizer membership 及隔离输出目录可不同。
+- 证据与验收：静态 builder/verifier 要拒绝 world-size/update/batch 预算错误、路径逃逸、未解析变量/执行 token、matched 字段差异、P3 TTT selector/membership 漂移、fast-state persistence 和任何 `PASS/executed/executable=true` 声明。只运行标准库/CPU 单元测试、`py_compile`、`git diff --check`；不产生可执行命令或运行证据。
+- 请求不授权 P4 后续执行、P5、B2-T 或任何 GPU 运行。请审查设计是否足以开始上述静态实现。
