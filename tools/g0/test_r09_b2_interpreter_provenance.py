@@ -52,6 +52,16 @@ class InterpreterProvenanceTest(unittest.TestCase):
             with self.assertRaises(ProvenanceError):
                 analyse_all_staged_python(root, ["x.py"])
 
+    def test_dynamic_constructor_alias_and_reassignment_fail(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self._python(root, "x.py", "from builtins import getattr as g\ng(ctypes, 'CDLL')('x.so')\n")
+            with self.assertRaises(ProvenanceError):
+                analyse_all_staged_python(root, ["x.py"])
+            self._python(root, "x.py", "import ctypes\nloader = getattr\nloader(ctypes, 'CDLL')('x.so')\n")
+            with self.assertRaises(ProvenanceError):
+                analyse_all_staged_python(root, ["x.py"])
+
     def test_parameterized_wrapper_requires_literal_invocation(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

@@ -26,6 +26,7 @@ PYTHON_NATIVE_APIS = {
 FORBIDDEN_DYNAMIC_NAMES = {
     "__import__", "eval", "exec", "getattr", "globals", "locals",
 }
+FORBIDDEN_DYNAMIC_FQNS = FORBIDDEN_DYNAMIC_NAMES | {f"builtins.{name}" for name in FORBIDDEN_DYNAMIC_NAMES}
 ELF_DYNAMIC_LOADER_SYMBOLS = {"dlopen", "dlmopen"}
 ELF_FORBIDDEN_LOADER_SYMBOLS = {"dlsym"}
 
@@ -108,6 +109,14 @@ def _assert_no_native_callable_forwarding(tree: ast.Module, aliases: Mapping[str
             raise ProvenanceError("native-load callable may not be forwarded through an alias/container")
 
 
+def _assert_no_forbidden_dynamic_aliases(tree: ast.Module, aliases: Mapping[str, str]) -> None:
+    if set(aliases.values()) & FORBIDDEN_DYNAMIC_FQNS:
+        raise ProvenanceError("forbidden dynamic constructor is imported through an alias")
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign) and _resolve_fqn(node.value, aliases) in FORBIDDEN_DYNAMIC_FQNS:
+            raise ProvenanceError("forbidden dynamic constructor is reassigned")
+
+
 def analyse_python_native_loads(source_path: Path, staging_root: Path) -> list[dict[str, str]]:
     """Return complete direct native-load records or raise on an unsafe form."""
     source_path, staging_root = source_path.resolve(), staging_root.resolve()
@@ -121,6 +130,7 @@ def analyse_python_native_loads(source_path: Path, staging_root: Path) -> list[d
     aliases = _imports(tree)
     _assert_no_alias_rebinding(tree, aliases)
     _assert_no_native_callable_forwarding(tree, aliases)
+    _assert_no_forbidden_dynamic_aliases(tree, aliases)
     parents = {child: parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
     rows: list[dict[str, str]] = []
     for node in ast.walk(tree):
@@ -131,8 +141,8 @@ def analyse_python_native_loads(source_path: Path, staging_root: Path) -> list[d
             continue
         fqn = _resolve_fqn(node.func, aliases)
         direct = _dotted_name(node.func)
-        if isinstance(node.func, ast.Name) and node.func.id in FORBIDDEN_DYNAMIC_NAMES:
-            raise ProvenanceError(f"dynamic Python construction is forbidden: {node.func.id}")
+        if fqn in FORBIDDEN_DYNAMIC_FQNS:
+            raise ProvenanceError(f"dynamic Python construction is forbidden: {fqn}")
         if fqn not in PYTHON_NATIVE_APIS:
             if direct and (direct.startswith("ctypes.") or direct.startswith("torch.ops.") or direct.startswith("torch.utils.cpp_extension.")):
                 raise ProvenanceError(f"unknown native-load API: {fqn}")
@@ -197,7 +207,7 @@ def analyse_wrapper_contract(staging_root: Path, approved_payloads: Iterable[str
         aliases = _imports(tree)
         module = relative[:-3].replace("/", ".")
         for node in tree.body:
-            if not isinstance(node, ast.FunctionDef) or node.decorator_list or node.args.vararg or node.args.kwarg or node.args.kwonlyargs or node.args.defaults:
+            if not isinstance(node, ast.FunctionDef) or node.decorator_list or node.args.vararg or node.args.kwarg or node.args.kwonlyargs or node.args.defaults or len(node.args.args) != 1:
                 continue
             calls = [item.value for item in node.body if isinstance(item, ast.Expr) and isinstance(item.value, ast.Call)]
             if len(calls) != 1 or len(node.body) != 1:
