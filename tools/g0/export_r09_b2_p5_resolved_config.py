@@ -125,6 +125,11 @@ def p5_effective_environment(recurrent: Mapping[str, Any], ttt: Mapping[str, Any
             raise ValueError("P4-v4 environment grammar differs from P5 empty-environment contract")
         if not isinstance(environment["set"], Mapping):
             raise ValueError("P4-v4 effective environment set is malformed")
+        native = record.get("native_loader_environment")
+        if (not isinstance(native, Mapping) or set(native) != {"set", "unset", "inherit_allowlist", "sha256"}
+                or not _self_sha(native, "sha256") or native["set"] != {}
+                or native["inherit_allowlist"] != [] or tuple(native["unset"]) != P5_FORBIDDEN_ENVIRONMENT):
+            raise ValueError("P4-v4 native-loader environment schema is malformed")
         return {str(key): str(value) for key, value in environment["set"].items()}
     left, right = values(recurrent), values(ttt)
     if left != right or set(left) & set(P5_FORBIDDEN_ENVIRONMENT):
@@ -166,6 +171,11 @@ def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
             raise ValueError("P4-v4 run/staging result binding differs")
         if not (source_root / "cosmos-framework").is_dir() or staging.get("relative_path") != f"import_staging/{token}":
             raise ValueError("P4-v4 child cwd or staging relative path differs")
+        roots, runtime = staging.get("payload_import_roots"), staging.get("runtime_sys_path")
+        if (not isinstance(roots, list) or not roots or not all(isinstance(item, Mapping) and set(item) == {"relative_root", "subtree_manifest_sha256"} for item in roots)
+                or not isinstance(runtime, list) or runtime != [str(staging_root / item["relative_root"]) for item in roots]
+                or any(not isinstance(item["relative_root"], str) or not (staging_root / item["relative_root"]).is_dir() or (staging_root / item["relative_root"]).is_symlink() for item in roots)):
+            raise ValueError("P4-v4 staging runtime sys.path differs from its import roots")
         _validate_roster(run_root, staging_root, token, outcome["pre_p5_run_root_roster"], request["payload_manifest"])
         result[backend] = {"request": request, "result": outcome, "verification": verification}
     p5_effective_environment(result["recurrent"]["request"], result["ttt_fast_weight"]["request"])

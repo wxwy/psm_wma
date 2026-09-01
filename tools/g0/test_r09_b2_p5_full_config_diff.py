@@ -43,7 +43,9 @@ class P5Test(unittest.TestCase):
             directory = root / P4_V4_PREFLIGHT_RELATIVE / backend; directory.mkdir(parents=True)
             environment_core = {"set": {"A": "1"}, "unset": list(P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
             environment = {**environment_core, "sha256": sha256_json(environment_core)}
-            request = {"schema_version": "v4", "backend": backend, "production_source": {"identity": identity(source, "git_source")}, "p4_run": {"identity": identity(run, "run_root"), "run_token": token}, "p4_staging": {"identity": identity(staging, "staging_root"), "relative_path": f"import_staging/{token}"}, "request_defaults": {}, "interpreter": {}, "loader_argv": {}, "effective_environment": environment, "native_loader_environment": {}, "payload_manifest": manifest, "producer": {}}
+            native_core = {"set": {}, "unset": list(P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
+            native = {**native_core, "sha256": sha256_json(native_core)}
+            request = {"schema_version": "v4", "backend": backend, "production_source": {"identity": identity(source, "git_source")}, "p4_run": {"identity": identity(run, "run_root"), "run_token": token}, "p4_staging": {"identity": identity(staging, "staging_root"), "relative_path": f"import_staging/{token}", "payload_import_roots": [{"relative_root": ".", "subtree_manifest_sha256": manifest["sha256"]}], "runtime_sys_path": [str(staging)]}, "request_defaults": {}, "interpreter": {}, "loader_argv": {}, "effective_environment": environment, "native_loader_environment": native, "payload_manifest": manifest, "producer": {}}
             request_bytes = canonical_bytes(request); request_sha = sha256_json(request)
             outcome = {**request, "status": "PASS", "request_sha256": request_sha, "native_closure": [], "pre_p5_run_root_roster": roster}
             outcome_bytes = canonical_bytes(outcome); outcome_sha = sha256_json(outcome)
@@ -59,6 +61,12 @@ class P5Test(unittest.TestCase):
             self.assertEqual(p5_effective_environment(loaded["recurrent"]["request"], loaded["ttt_fast_weight"]["request"]), {"A": "1", **PYTHON_CHILD_LOCALE})
             request = root / P4_V4_PREFLIGHT_RELATIVE / "recurrent" / "request.json"
             forged = json.loads(request.read_text()); forged["backend"] = "ttt_fast_weight"; request.write_bytes(canonical_bytes(forged))
+            with self.assertRaises(ValueError):
+                load_p4_v4_preflight(root)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); self._v4_preflight(root)
+            request = root / P4_V4_PREFLIGHT_RELATIVE / "recurrent" / "request.json"
+            forged = json.loads(request.read_text()); forged["native_loader_environment"]["sha256"] = "0" * 64; request.write_bytes(canonical_bytes(forged))
             with self.assertRaises(ValueError):
                 load_p4_v4_preflight(root)
         with self.assertRaises(ValueError):
