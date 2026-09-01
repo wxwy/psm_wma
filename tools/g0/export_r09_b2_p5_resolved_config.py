@@ -34,6 +34,7 @@ FROZEN_CHILD_REQUEST_SHA256 = {
     "ttt_fast_weight": "9c56140f1c3570c142f9bc219ef82e7880cde4fdc51082e375f796a4c4360bee",
 }
 CHILD_REQUEST_KEYS = {"backend", "root", "toml", "overrides", "command_argv", "cwd", "interpreter", "environment", "d005_sha256", "p4_record_sha256", "p4_verification_sha256", "p3_verifier_sha256", "source", "budget", "inputs", "outputs"}
+V4_CHILD_REQUEST_KEYS = {"schema_version", "backend", "cwd", "toml", "overrides", "interpreter", "loader_argv", "environment", "runtime_sys_path", "p4_request_sha256", "p4_result_sha256", "p4_verification_sha256"}
 LOADER_REQUEST_SCHEMA = "r09_b2_p5_verified_loader_request_v1"
 LOADER_REQUEST_KEYS = {"schema_version", "child_request", "child_request_sha256", "child_output"}
 BOOTSTRAP_RELATIVE = "tools/g0/export_r09_b2_p5_resolved_config.py"
@@ -229,6 +230,33 @@ def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
     return result
 
 
+def build_v4_pair_requests(evidence_root: Path) -> dict[str, dict[str, Any]]:
+    """Derive future P5 child inputs solely from verified P4-v4 evidence."""
+    preflight = load_p4_v4_preflight(evidence_root)
+    environment = p5_effective_environment(preflight["recurrent"]["request"], preflight["ttt_fast_weight"]["request"])
+    requests: dict[str, dict[str, Any]] = {}
+    for backend in P4_V4_BACKENDS:
+        record = preflight[backend]["request"]
+        source = _validate_source(record["production_source"])
+        defaults = record["request_defaults"]
+        staging = record["p4_staging"]
+        requests[backend] = {
+            "schema_version": "r09_b2_p5_v4_child_request_v1",
+            "backend": backend,
+            "cwd": str(source / "cosmos-framework"),
+            "toml": defaults["toml"]["path"],
+            "overrides": list(defaults["ordered_overrides"]),
+            "interpreter": record["interpreter"],
+            "loader_argv": record["loader_argv"],
+            "environment": environment,
+            "runtime_sys_path": list(staging["runtime_sys_path"]),
+            "p4_request_sha256": sha256_json(record),
+            "p4_result_sha256": sha256_json(preflight[backend]["result"]),
+            "p4_verification_sha256": sha256_json(preflight[backend]["verification"]),
+        }
+    return requests
+
+
 def _callable(value: object) -> dict[str, str]:
     module, qualname = getattr(value, "__module__", None), getattr(value, "__qualname__", None)
     if not isinstance(module, str) or not isinstance(qualname, str) or "<locals>" in qualname:
@@ -398,6 +426,12 @@ def build_child_request(record: Mapping[str, Any], *, production_root: Path, bac
 
 def validate_child_request(payload: Mapping[str, Any]) -> Mapping[str, Any]:
     """Require one immutable parent/verifier-owned D005 request before any compose import."""
+    if payload.get("schema_version") == "r09_b2_p5_v4_child_request_v1":
+        if (set(payload) != V4_CHILD_REQUEST_KEYS or payload.get("backend") not in P4_V4_BACKENDS
+                or not isinstance(payload.get("cwd"), str) or not isinstance(payload.get("environment"), Mapping)
+                or not isinstance(payload.get("runtime_sys_path"), list)):
+            raise ValueError("P5 v4 child request schema is malformed")
+        return payload
     backend = payload.get("backend")
     if set(payload) != CHILD_REQUEST_KEYS or backend not in FROZEN_CHILD_REQUEST_SHA256:
         raise ValueError("P5 child request schema/backend is not verifier-owned")
@@ -466,6 +500,11 @@ def bound_exporter_source(exporter_root: Path) -> tuple[dict[str, Any], Any]:
 
 def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, Any], *, exporter_source: Mapping[str, Any]) -> dict[str, Any]:
     """Construct the complete verifier-owned envelope from one D005-bound child result."""
+    if request.get("schema_version") == "r09_b2_p5_v4_child_request_v1":
+        return {"schema_version": "r09_b2_p5_full_config_diff_v4", "backend": request["backend"],
+                "provenance": {"p4_v4_request_sha256": request["p4_request_sha256"], "p4_v4_result_sha256": request["p4_result_sha256"], "p4_v4_verification_sha256": request["p4_verification_sha256"], "exporter_source": exporter_source},
+                "effective_launch": {"cwd": request["cwd"], "toml": request["toml"], "overrides": request["overrides"], "interpreter": request["interpreter"], "loader_argv": request["loader_argv"], "environment": request["environment"], "runtime_sys_path": request["runtime_sys_path"]},
+                "resolved_config": resolved_config}
     record = request
     command = record["interpreter"]
     return {"schema_version": SCHEMA, "backend": record["backend"],
@@ -481,7 +520,9 @@ def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, 
 def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path, exporter_root: Path, output_dir: Path) -> dict[str, Any]:
     """Future approved path: two D005-bound fresh children, envelope assembly, then verifier."""
     production_root, evidence_root, exporter_root = validate_root_isolation(production_root, evidence_root, exporter_root)
-    requests = build_pair_requests(recurrent, ttt, production_root=production_root, evidence_root=evidence_root)
+    del recurrent, ttt, production_root
+    build_v4_pair_requests(evidence_root)
+    raise RuntimeError("P5 v4 loader/envelope adapter is required before any export attempt")
     if output_dir.exists():
         raise FileExistsError(f"canonical P5 output already exists: {output_dir}")
     attempt_dir = output_dir.parent / f".{output_dir.name}.attempt-{uuid.uuid4().hex}"
@@ -520,6 +561,12 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
 def _child_payload(payload: Mapping[str, Any], output: Path) -> None:
     """Approved later only: compose one backend without launch/validate/instantiate."""
     payload = validate_child_request(payload)
+    if payload.get("schema_version") == "r09_b2_p5_v4_child_request_v1":
+        if Path.cwd().resolve() != Path(payload["cwd"]).resolve() or dict(os.environ) != payload["environment"]:
+            raise RuntimeError("P5 v4 child cwd/environment differs from verified preflight")
+        if sys.path != payload["runtime_sys_path"]:
+            raise RuntimeError("P5 v4 child runtime sys.path differs from verified preflight")
+        raise RuntimeError("P5 v4 compose adapter is not implemented")
     if Path.cwd().resolve() != Path(payload["cwd"]).resolve() or Path(os.path.abspath(sys.executable)) != Path(payload["interpreter"]["path"]):
         raise RuntimeError("P5 child cwd/interpreter differs from D005-bound request")
     if dict(os.environ) != payload["environment"]["effective"]:
