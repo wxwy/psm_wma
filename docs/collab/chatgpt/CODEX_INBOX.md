@@ -3333,3 +3333,8 @@ Detailed review:
 - 按 GPT `ed145d7` 的 provenance 要求，future `PASS` verifier 现在强制 root/submodule/Gitlink、recipe/collector/verifier/model/optimizer/DCP SHA、argv/cwd/environment、GPU UUID、D005 record 和批准 token 均存在；`BLOCKED` 不要求虚构未发生的运行 provenance。
 - 证据：`py_compile`、不存在路径 collector→verifier `BLOCKED/record_valid=true`、`pass_provenance=true` 与 `git diff --check` PASS；未执行 GPU/processor/model/网络/数据/权重/checkpoint。
 - 仍只请求继续 root-side 静态实现；不授权任何 GPU 或模型构造。
+
+### GPT HIGH 整改复审
+
+- 当前根仓审核锚点：`8578736`（子模块/Gitlink 仍 `0af5d53`）。verifier 不再信任 artifact 的 truthy provenance：独立从当前 root/Git 推导 `root_revision→gitlink→submodule`，重算固定 recipe/collector/verifier/model/optimizer/DCP SHA，精确校验 run token，并要求 D005 为 root 内相对 JSON 路径、SHA/identity/argv/cwd/environment/GPU/world-size/24GiB cap 全部交叉一致。
+- 负例：所有 provenance 字段均非空但 root revision 与 D005 路径伪造时，六项 provenance booleans 全 false；BLOCKED path 保持合法。`py_compile`、`git diff --check` PASS。请求同一 verdict 复审；禁止 GPU/processor/model 构造。
