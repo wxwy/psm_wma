@@ -12,7 +12,7 @@
 
 ## 当前最小步骤
 
-- `G0-R09-B2-P4-LAUNCH-D005`（2026-09-01，IN_PROGRESS）：三方已批准 `39c9f19` 静态实现。新增 root-only non-executable D005 writer/verifier/test；首次夹具目录创建报错已最小修复，CPU unittest 2/2、py_compile、diff-check PASS。未改 `cosmos-framework`，未导入 torch/Cosmos，未加载模型/数据/VAE/checkpoint，未执行 torchrun/GPU/训练/评测/推理；待提交实现复审。
+- `G0-R09-B2-P4-LAUNCH-D005`（2026-09-01，REVIEW）：ChatGPT/Kimi 对 `827c5ab` 的静态实现提出硬化意见，MM 批准不生效。已最小补充 verifier：独立复算 root/submodule/Gitlink/clean provenance、P1 count+SHA、P3 selector/membership SHA、外部资产 realpath+SHA、全量离线环境、严格单进程 argv、输出新鲜/未跟踪及 global-batch 公式；writer 只写 pair-verifier PASS 的记录。CPU unittest 3/3、py_compile、diff-check PASS。未改 `cosmos-framework`，未导入 torch/Cosmos，未加载模型/数据/VAE/checkpoint，未执行 torchrun/GPU/训练/评测/推理；整改待三方复审。
 
 - `G0-R09-B2-P3-GPU-ONLY-RUN`（2026-09-01，DONE）：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-01_R09_B2_P3_membership_closure_2daa461_6a60b92.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P3_GPU_ONLY`。唯一 attempt-6 的 recurrent/TTT production optimizer inventory 均 PASS；单卡 offline/local processor、无 forward/backward/optimizer/scheduler step、无 weights/checkpoint/data/VAE I/O，峰值 25.28 GiB < 28 GiB。新版 verifier 从冻结 selector 及实际 parameter name 独立重算 row-level selector/optimizer membership，并在 collection root=`269540e` clean worktree 上对同一证据复核 PASS；未重跑 GPU。该 closure 仅解除 P3 actual optimizer-membership blocker，不授权 P4/P5、B2-T、训练、评测、推理或任何新增 GPU 运行。根仓 closure request=`2daa461`、实现=`6a60b92`、ChatGPT approval=`42a4b53`、子模块/Gitlink=`21d064f`。
 
