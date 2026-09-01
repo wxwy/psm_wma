@@ -137,6 +137,17 @@ def build_child_request(record: Mapping[str, Any], *, root: Path, backend: str) 
             "d005_sha256": record["d005_sha256"], "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
 
 
+def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, root: Path) -> dict[str, dict[str, Any]]:
+    """Parent-only D005 gate; later approved execution consumes only these requests."""
+    from tools.g0.verify_r09_b2_p4_d005 import verify_pair
+
+    result = verify_pair(dict(recurrent), dict(ttt), root.resolve())
+    if result["status"] != "PASS":
+        raise ValueError("P5 refuses to compose a P4 pair that fails its frozen verifier")
+    return {"recurrent": build_child_request(recurrent, root=root, backend="recurrent"),
+            "ttt_fast_weight": build_child_request(ttt, root=root, backend="ttt_fast_weight")}
+
+
 def _child(request: Path, output: Path) -> None:
     """Approved later only: compose one backend without launch/validate/instantiate."""
     payload = json.loads(request.read_text())
