@@ -303,6 +303,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
 
         state = {
             "param_groups.net.a.lr": 0.1,
+            "param_groups.net.a.betas": (0.9, 0.95),
             "param_groups.net.b.lr": 0.1,
             "state.net.a.exp_avg": TensorFixture(),
         }
@@ -313,6 +314,14 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             "flat_key": "state.net.a.exp_avg", "owner": "a", "namespace": "state",
             "suffix": "exp_avg", "kind": "tensor", "shape": [2, 3], "dtype": "float32", "numel": 6,
         }])
+        self.assertEqual(
+            next(row for row in rows if row["flat_key"] == "param_groups.net.a.betas"),
+            {
+                "flat_key": "param_groups.net.a.betas", "owner": "a", "namespace": "param_groups",
+                "suffix": "betas", "kind": "tuple",
+                "items": [{"kind": "float", "value": 0.9}, {"kind": "float", "value": 0.95}],
+            },
+        )
         self.assertNotEqual({row["owner"] for row in rows}, {"a", "b", "missing"})
         with self.assertRaisesRegex(RuntimeError, "unmapped"):
             COLLECT._flattened_optimizer_schema({"param_groups.net.a_extra.lr": 0.1}, {"a"})

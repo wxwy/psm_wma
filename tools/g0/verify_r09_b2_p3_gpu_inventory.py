@@ -300,7 +300,7 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
     checks["shared_dcp_optimizer_schema_metadata"] = all(
         all(
             recurrent_schema[identity].get(field) == ttt_schema[identity].get(field)
-            for field in ("kind", "shape", "dtype", "numel", "value")
+            for field in ("kind", "shape", "dtype", "numel", "value", "items")
         )
         for identity in shared
     )

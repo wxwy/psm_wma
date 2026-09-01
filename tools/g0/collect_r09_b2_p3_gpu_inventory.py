@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -162,6 +163,24 @@ def _state_leaf_metadata(value: object, path: str = "") -> list[dict[str, object
     return [{"path": path, "kind": type(value).__name__, "value": scalar}]
 
 
+def _canonical_param_group_value(value: object) -> dict[str, object]:
+    """将 production optimizer param-group metadata 转为确定性的 JSON schema。"""
+    if value is None or isinstance(value, (bool, str)):
+        return {"kind": type(value).__name__, "value": value}
+    if isinstance(value, (int, float)):
+        if isinstance(value, float) and not math.isfinite(value):
+            raise RuntimeError("param-group metadata must be finite")
+        return {"kind": type(value).__name__, "value": value}
+    if hasattr(value, "shape") and hasattr(value, "dtype") and hasattr(value, "numel"):
+        return {"kind": "tensor", **_tensor_metadata(value)}
+    if isinstance(value, (tuple, list)):
+        return {
+            "kind": type(value).__name__,
+            "items": [_canonical_param_group_value(item) for item in value],
+        }
+    raise RuntimeError(f"unsupported param-group metadata type: {type(value).__name__}")
+
+
 def _flattened_optimizer_schema(
     state_dict: object, stable_names: set[str]
 ) -> list[dict[str, object]]:
@@ -186,15 +205,19 @@ def _flattened_optimizer_schema(
                 break
         if owner is None or not suffix:
             raise RuntimeError(f"unmapped flattened optimizer state_dict key: {flat_key!r}")
-        metadata = _state_leaf_metadata(value, flat_key)
-        if len(metadata) != 1:
-            raise RuntimeError(f"flattened optimizer value must be scalar or tensor: {flat_key!r}")
+        if namespace == "state":
+            metadata = _state_leaf_metadata(value, flat_key)
+            if len(metadata) != 1 or metadata[0]["kind"] not in {"tensor", "int", "float"}:
+                raise RuntimeError(f"unsupported flattened optimizer state value: {flat_key!r}")
+            value_metadata = {key: value for key, value in metadata[0].items() if key != "path"}
+        else:
+            value_metadata = _canonical_param_group_value(value)
         rows.append({
             "flat_key": flat_key,
             "owner": owner,
             "namespace": namespace,
             "suffix": suffix,
-            **{key: value for key, value in metadata[0].items() if key != "path"},
+            **value_metadata,
         })
     return rows
 
