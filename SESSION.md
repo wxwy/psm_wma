@@ -851,3 +851,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修改：collector/verifier 各定义同值 `APPROVED_MAX_PEAK_GIB=28`，命令行、D005、provenance 和 PASS verifier 均 fail-closed 要求该值；runbook 写入一次性 attempt-4 命令。测试把新输出路径改为 attempt-4，并固定断言 attempt-3 stderr 的实测 27,147,632,640 B 低于 28 GiB 且 collector/verifier cap 一致。
 - 验证：`cosmos-framework/.venv/bin/python -m py_compile tools/g0/{collect,verify,test_verify}_r09_b2_p3_gpu_inventory.py` PASS；`... -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 14/14 PASS；`git diff --check` PASS。未运行 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。
 - 下一步：提交并送 ChatGPT、MM、Kimi 对同一 SHA 审核；仅三方 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 后才可按 runbook 执行 attempt-4 一次。提交：未提交。
+
+### R09-B2 P3 GPU-only attempt-4 terminal evidence（2026-09-01，IN_PROGRESS）
+
+- 审核门：ChatGPT（root=`36de13a` review=`a72eba9`）、MM、Kimi 均 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 后，已严格执行一次 frozen attempt-4 命令；单卡、28 GiB、offline/no-VAE/no-data/no-weight/no-checkpoint/no-forward-backward-step 范围不变。
+- 事实：并非显存越界。recurrent 在 `OptimizersContainer.state_dict()` 的真实 flattened key `param_groups.net.language_model.model.layers.0.input_layernorm_moe_gen.weight.betas` 触发 collector `_flattened_optimizer_schema()` 的 `unmapped flattened optimizer state_dict key` fail-closed RuntimeError；TTT worker 未启动，GPU=0 MiB。attempt-4 aggregate/D005/verifier=`artifacts/g0/r09/b2/p3_gpu_inventory_attempt4/`；verifier 为 `BLOCKED`、`record_valid=true`、23/23 checks true。
+- 下一步：先提交 terminal evidence；只读核查 `model.net.named_parameters()` 与 production flattened FQN 的命名层级并补最小 parser 回归，之后三方重新审核并使用新的 fresh attempt 路径。禁止自动重试、改 cap 或启动任何 GPU。提交：未提交。
