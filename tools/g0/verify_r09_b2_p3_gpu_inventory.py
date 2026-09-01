@@ -4,8 +4,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
+import subprocess
 
 
 ALLOWED_RECURRENT_ONLY_PREFIXES = ("local_history_runtime.recurrent_backend.",)
@@ -39,6 +41,77 @@ PASS_PROVENANCE_KEYS = {
     "d005_record",
     "approved_run_token",
 }
+FROZEN_SOURCE_PATHS = {
+    "recipe_sha256": "cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml",
+    "collector_sha256": "tools/g0/collect_r09_b2_p3_gpu_inventory.py",
+    "verifier_sha256": "tools/g0/verify_r09_b2_p3_gpu_inventory.py",
+    "model_source_sha256": "cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py",
+    "optimizer_source_sha256": "cosmos-framework/cosmos_framework/utils/generator/optimizer.py",
+    "dcp_source_sha256": "cosmos-framework/cosmos_framework/checkpoint/dcp.py",
+}
+RUN_TOKEN = "APPROVE_TO_RUN_GPU_ONLY_P3_GATE"
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _git(root: Path, *args: str) -> str:
+    return subprocess.check_output(
+        ["git", "-C", str(root), *args], text=True, stderr=subprocess.DEVNULL
+    ).strip()
+
+
+def provenance_checks(artifact: dict[str, object], root: Path | None) -> dict[str, bool]:
+    """仅对 PASS 独立绑定本地 checkout、冻结源文件和 D005 record。"""
+    if artifact.get("status") != "PASS":
+        return {key: True for key in ("root_gitlink_valid", "source_hashes_valid", "d005_identity_valid", "command_binding_valid", "gpu_binding_valid", "run_token_valid")}
+    if root is None:
+        return {key: False for key in ("root_gitlink_valid", "source_hashes_valid", "d005_identity_valid", "command_binding_valid", "gpu_binding_valid", "run_token_valid")}
+    provenance = artifact.get("provenance", {})
+    try:
+        root = root.resolve()
+        root_revision = provenance["root_revision"]
+        gitlink = _git(root, "ls-tree", root_revision, "cosmos-framework").split()[2]
+        root_gitlink_valid = (
+            root_revision == _git(root, "rev-parse", "HEAD")
+            and gitlink == provenance.get("gitlink_revision") == provenance.get("submodule_revision")
+        )
+        source_hashes_valid = all(
+            provenance.get(field) == _sha256(root / relative)
+            for field, relative in FROZEN_SOURCE_PATHS.items()
+        )
+        d005_ref = provenance.get("d005_record", {})
+        d005_relative = Path(d005_ref["path"])
+        if d005_relative.is_absolute() or ".." in d005_relative.parts:
+            raise ValueError("D005 path must be relative to the verified root")
+        d005_path = root / d005_relative
+        d005 = json.loads(d005_path.read_text())
+        d005_identity_valid = (
+            d005_ref.get("sha256") == _sha256(d005_path)
+            and all(d005.get(key) == provenance.get(key) for key in ("root_revision", "submodule_revision", "gitlink_revision"))
+        )
+        command_binding_valid = (
+            d005.get("command_argv") == provenance.get("command_argv")
+            and d005.get("cwd") == provenance.get("cwd")
+            and d005.get("environment") == provenance.get("environment")
+        )
+        gpu_binding_valid = (
+            d005.get("gpu_uuid") == provenance.get("gpu_uuid")
+            and d005.get("world_size") == artifact.get("execution", {}).get("world_size") == 1
+            and d005.get("max_peak_gib") == 24
+        )
+        run_token_valid = provenance.get("approved_run_token") == RUN_TOKEN and d005.get("approved_run_token") == RUN_TOKEN
+    except (IndexError, KeyError, OSError, json.JSONDecodeError, subprocess.CalledProcessError):
+        return {key: False for key in ("root_gitlink_valid", "source_hashes_valid", "d005_identity_valid", "command_binding_valid", "gpu_binding_valid", "run_token_valid")}
+    return {
+        "root_gitlink_valid": root_gitlink_valid,
+        "source_hashes_valid": source_hashes_valid,
+        "d005_identity_valid": d005_identity_valid,
+        "command_binding_valid": command_binding_valid,
+        "gpu_binding_valid": gpu_binding_valid,
+        "run_token_valid": run_token_valid,
+    }
 
 
 def _selected(inventory: dict[str, object], field: str) -> set[str]:
@@ -92,7 +165,7 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
     return checks
 
 
-def verify(artifact: dict[str, object]) -> dict[str, object]:
+def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, object]:
     execution = artifact.get("execution", {})
     processor = artifact.get("local_processor", {})
     assets = processor.get("required_assets", {})
@@ -119,8 +192,10 @@ def verify(artifact: dict[str, object]) -> dict[str, object]:
             if pass_claimed
             else True
         ),
-        "pass_provenance": all(provenance.get(key) for key in PASS_PROVENANCE_KEYS) if pass_claimed else True,
+        "pass_provenance_fields": all(provenance.get(key) for key in PASS_PROVENANCE_KEYS) if pass_claimed else True,
     }
+    provenance = provenance_checks(artifact, root)
+    checks.update(provenance)
     backend = {name: backend_checks(record) for name, record in backends.items()} if pass_claimed else {}
     diff = diff_checks(artifact) if pass_claimed and all(name in artifact for name in backends) else {}
     pass_ready = all(checks.values()) and all(all(item.values()) for item in backend.values()) and all(diff.values())
@@ -137,8 +212,9 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--artifact", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--root", type=Path)
     args = parser.parse_args()
-    result = verify(json.loads(args.artifact.read_text()))
+    result = verify(json.loads(args.artifact.read_text()), args.root)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     print(json.dumps(result, sort_keys=True))
