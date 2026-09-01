@@ -3801,3 +3801,13 @@ Detailed review:
 - 修复 HIGH-2/3：P5 verifier 不再接收 `--contracts`；内部读取 P4 records/P3 artifact，使用 P4 verifier-owned `_p3_contract` 重算两后端 contract；每个 envelope 必含并逐侧绑定 P4 source、argv、cwd、environment.set、budget、P3 input 与本侧 P4 record SHA，故共同伪造字段不能仅因两侧相等而 PASS。
 - 修复 MEDIUM：完整 selector list 必分别等于 verifier-owned contract，`local_history_backend`/TTT switch 值精确校验。fixture 现在只读已跟踪 P4 JSON 构造完整 envelope，覆盖 path/SHA drift、cross-wire/arbitrary/extra contract 以及共同 binding 伪造 FAIL。
 - `py_compile`、`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=2/2 PASS、`git diff --check` PASS。禁止真实 config export、`load_experiment_from_toml`、launch/instantiate/CUDA/torchrun/GPU/训练；本申请仅申请将来另行发起 static-export 执行审核的资格。
+
+### Awaiting review — R09-B2 P5 complete static-export contract remediation
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `97bf5beacd9a621155183900afe31ed106f5c56c`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 review `2026-09-01_R09_B2_P5_static_tools_remediation_c7cd9f2_82a2744.md` 的四个 HIGH。
+- HIGH-1：新增未暴露的 `run_parent_export()`：P4 pair gate→写两份 request→按各 D005 canonical interpreter/cwd/净化 env 启 fresh child→读取树→`assemble_envelope()`→内部 P5 verifier→仅 PASS 才写 envelopes/verification；主 CLI 仍不提供 parent export。
+- HIGH-2/3：每侧 `_bound()` 现严格检查完整 command（argv/cwd/interpreter/TOML/ordered overrides）、environment（set/unset/inherit/effective）、world/budget、P1/P3 binding、derived job path、P4 digest、P3 path/SHA/PASS digest、production source 与 complete selector/backend 值；P3 identity 不再仅 cross-compare。
+- HIGH-4：recurrent/TTT 的 `resolved_config.model.config.local_history_backend`、`optimizer.keys_to_select` 在 diff 前逐侧精确匹配 verifier-owned contract；路径白名单不再承担正确性判断。
+- 纯 CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=2/2 PASS；`git diff --check` PASS。未执行 `load_experiment_from_toml`、config export、CUDA/torchrun/GPU/训练。即使批准，本 verdict 仅允许下一步另行申请静态 export 执行授权。
