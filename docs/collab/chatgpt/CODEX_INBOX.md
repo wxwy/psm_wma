@@ -3601,3 +3601,14 @@ Detailed review:
 - 回归：`py_compile` PASS；定向 unittest 19/19 PASS；正例 `moe_gen` 可解释；artifact 加入 broad `language_model` selector 及同名差异仍使三条 allow gate FAIL，任意 selector list 偏离使 `selector_contract_exact=false`、verifier FAIL；`git diff --check` PASS。
 - 证据：未重跑 GPU。clean collection-root=`269540e`/Gitlink=`21d064f` worktree 上由新版 verifier 重验同一 attempt-6 evidence，`artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory_verifier_selector_review.json`=PASS、record_valid=true、全部 checks/diff checks=true（含 `selector_contract_exact=true`），GPU=0 MiB。
 - 仍禁止 P4/P5/B2-T、训练、评测、推理、closed-loop、多卡、长训、backend freeze、Global/Agent/RL；请求仅关闭 P3 GPU-only optimizer inventory Gate。
+
+### Awaiting review — R09-B2 P3 row-level selector membership closure
+
+请求 verdict：`APPROVE_TO_CLOSE_B2_P3_GPU_ONLY` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `6a60b929757b803db4c7aa6d18a4303b9230dfd5`；attempt-6 collection root=`269540e3ac6b25be8c1f3549f58d9ed28147cb2e`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT `9b9d72a` HIGH；未重跑 GPU。
+- 修复：verifier 不再信任 artifact row booleans。基于 verifier-owned frozen recurrent/TTT selector contract，对各 backend 的每个 `model_parameters[*].name` 复现 production substring rule `any(key in name for key in keys_to_select)`，重算 expected membership；新增 `selector_membership_exact` 与 `optimizer_membership_exact`，要求 artifact selector/optimizer sets 逐项等于该重算集合。
+- 比较：resolved-selector、optimizer 的 recurrent-only/TTT-only 必与两侧独立重算集合精确差集相等；optimizer-DCP schema owner 集合同样精确相等。TTT-only、model/buffer/DCP-model structural gates均不放宽。
+- 回归：`py_compile` PASS；unittest 20/20 PASS；保持 frozen selector lists 不变、但一致伪造 TTT `local_history_runtime.encoder.visual_proj.weight` 为未选择，两个 new membership checks 均 false、verifier FAIL；`git diff --check` PASS。
+- 证据：不重跑 GPU。clean collection-root=`269540e`/Gitlink=`21d064f` worktree 对同一 attempt-6 evidence 用新版 verifier 复验，`artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory_verifier_selector_review.json`=PASS、record_valid=true、全部 provenance/diff checks=true，recurrent/TTT `selector_membership_exact=true`、`optimizer_membership_exact=true`，GPU=0 MiB。
+- 范围继续禁止 P4/P5/B2-T、训练、评测、推理、closed-loop、多卡、长训、backend freeze、Global/Agent/RL；请求仅关闭 P3 GPU-only optimizer inventory Gate。
