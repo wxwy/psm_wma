@@ -102,7 +102,7 @@ def provenance_checks(artifact: dict[str, object], root: Path | None) -> dict[st
             and d005.get("max_peak_gib") == 24
         )
         run_token_valid = provenance.get("approved_run_token") == RUN_TOKEN and d005.get("approved_run_token") == RUN_TOKEN
-    except (IndexError, KeyError, OSError, json.JSONDecodeError, subprocess.CalledProcessError):
+    except (IndexError, KeyError, OSError, ValueError, json.JSONDecodeError, subprocess.CalledProcessError):
         return {key: False for key in ("root_gitlink_valid", "source_hashes_valid", "d005_identity_valid", "command_binding_valid", "gpu_binding_valid", "run_token_valid")}
     return {
         "root_gitlink_valid": root_gitlink_valid,
