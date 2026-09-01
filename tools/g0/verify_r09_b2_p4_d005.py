@@ -74,7 +74,8 @@ def _asset_ok(asset: object, root: Path) -> bool:
         return False
     path = Path(str(asset["path"])).expanduser()
     realpath = path.resolve()
-    allowed = (root.resolve(), Path("/localdisk-tmp/models").resolve(), Path("/disk/rl/data").resolve())
+    interpreter_root = (root / "cosmos-framework/.venv/bin/python").resolve().parent
+    allowed = (root.resolve(), Path("/localdisk-tmp/models").resolve(), Path("/disk/rl/data").resolve(), interpreter_root)
     return path.exists() and str(realpath) == asset["realpath"] and any(realpath.is_relative_to(base) for base in allowed) and _sha256_tree(realpath) == asset["sha256"]
 
 
@@ -143,7 +144,7 @@ def _argv_ok(record: dict[str, object], framework: Path) -> bool:
 
 
 def _allowed_roots(root: Path) -> tuple[Path, ...]:
-    return (root.resolve(), Path("/localdisk-tmp/models").resolve(), Path("/disk/rl/data").resolve())
+    return (root.resolve(), Path("/localdisk-tmp/models").resolve(), Path("/disk/rl/data").resolve(), (root / "cosmos-framework/.venv/bin/python").resolve().parent)
 
 
 def _env_ok(record: dict[str, object], backend: str, root: Path) -> bool:
@@ -183,7 +184,7 @@ def _env_assets_bound(record: dict[str, object], root: Path) -> bool:
     mapping = {"BASE_CHECKPOINT_PATH": "base_checkpoint", "EDGE_POLICY_CHECKPOINT": "edge_processor", "WAN_VAE_PATH": "wan_vae", "LIBERO_ROOT": "libero_root", "PSM_R09_B2_STREAM_MANIFEST_ROOT": "stream_manifest", "LIBERO_LATENT_CACHE_ROOT": "latent_cache"}
     try:
         return (all(env[key] == assets[name]["realpath"] for key, name in mapping.items())
-                and env["PYTHONPATH"] == str(Path(assets["interpreter"]["realpath"]).parents[2])
+                and env["PYTHONPATH"] == str((root / "cosmos-framework").resolve())
                 and env["PSM_R09_B2_STREAM_MANIFEST_ROOT"] == str((root / P1_HEADER_RELATIVE).parent.resolve()))
     except (KeyError, TypeError):
         return False
