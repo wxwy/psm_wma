@@ -1,0 +1,53 @@
+{
+  "files": {
+    "builder_sha256": "8baf1edc8328b7c59bb5ba3d00e5c4668832a81e7ad908ce274a3e15e0559722",
+    "cache_manifests": {
+      "libero_10": "a1627d26ed3670dfba9d21527317020f553b6c31f03766e58717f84f753f3319",
+      "libero_goal": "0a327c4c9856e59068f19bd6c2a2052b33c7f3a7a2ae318ee8ea7862c00489d9",
+      "libero_object": "5a3756713ec6f1e00f5d00f4923dfa6846978e6ea3899372c03e1361f837aa64",
+      "libero_spatial": "4d2afe8c379a842da79089950b927547c3c09b8020e391812616e16139eb3ee3"
+    },
+    "dataset_info_sha256": {
+      "libero_10": "ba10b105378537846d33f826a5080216ab0e04b82827f7a70b4862ddb1a77168",
+      "libero_goal": "474a374f45185fe3737a3904f075f99e1a106347c82caf8b2895331cba6d685e",
+      "libero_object": "d0cb122d2a8f05ac9abe9856e4501a957dadf01199be87e8279cb6a97f298273",
+      "libero_spatial": "ed5dd5264a0bd283bf1e53cf09fafb6c457d0acfda667aeb3da9efc28376d9cd"
+    },
+    "dataset_parquet_index_sha256": {
+      "libero_10": "3436b7aef937ae841013efb0515007c33189ca1a24921f2694ef8b3f72cc75d2",
+      "libero_goal": "5a8fbbbf8bd925582a7df1f0802f6b604a4b427d2b606df77b7b6ce57d505f93",
+      "libero_object": "15c328e0dce4e91879a7bf372ab3cde47d8e7da1b372f7a0b70c93ca219fbee7",
+      "libero_spatial": "41f0949c2a31670f0c073f24044707d97f333b97f4df594b23f09a212db7084c"
+    },
+    "dataset_source_sha256": "078db5551cd7f76091c40a30b1b5df0f904bef2a52b027f846aab85fdda42fbc",
+    "recipe_toml_sha256": "bdc53c800fda7aa20a0ec67fe4446b5559d106944a75aab7dfbafce6567cd046",
+    "suite_record_sha256": {
+      "libero_10": "976c5540ad3d734b1f27fc4b72b7e5ded6d9813e63747e4b4bd34b499574a73f",
+      "libero_goal": "21890234ea5cbde8d9a8b33b8b6bc5a4cd727c34aa5aae498266f973b73e3ea9",
+      "libero_object": "85b40ad0c88a324b097768df382660b55838d9d692cb900c3c04afa81a665bba",
+      "libero_spatial": "4ce5780bba7f52e3b9427481fb72807b477d615d15c01568776bc9a8aab43522"
+    },
+    "verifier_sha256": "f9a991f0a1d2b5fca79ba7db8b8da24253cb0eb0ef8d4e8c0a46ac38bff483d1",
+    "wrapper_source_sha256": "90d4e96bb8da3c7af16be450eabd9817d13eadf181f396e5bff27c21a781a727"
+  },
+  "grad_accum": 16,
+  "max_samples_per_batch": 128,
+  "num_workers": 0,
+  "optimizer_updates": 100,
+  "record_count": 204800,
+  "records_sha256": "ae43f88c5bd503e8c10ab29fbae3f74a14e8d173170a0a46cf9f0cc8de9a73aa",
+  "schema_version": "r09_b2_stream_manifest_v1",
+  "shuffle_seed": 42,
+  "source": {
+    "gitlink_revision": "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb",
+    "root_revision": "4177e83088e6c2e0a2b620bfdf8593e325fc375b",
+    "submodule_revision": "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb"
+  },
+  "suite_order": [
+    "libero_spatial",
+    "libero_object",
+    "libero_goal",
+    "libero_10"
+  ],
+  "world_size": 1
+}

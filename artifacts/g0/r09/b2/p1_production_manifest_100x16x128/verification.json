@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "cache_window_per_record": true,
+    "flat_index_bijective": true,
+    "flat_index_present": true,
+    "ordinal_unique": true,
+    "ordinals": true,
+    "provenance_complete": true,
+    "record_count": true,
+    "record_hash": true,
+    "record_schema_and_packer_arithmetic": true,
+    "schema": true,
+    "single_process": true,
+    "source_complete": true,
+    "source_hashes_match": true,
+    "suite_record_partition": true
+  },
+  "header": "artifacts/g0/r09/b2/p1_production_manifest_100x16x128/header.json",
+  "records": "artifacts/g0/r09/b2/p1_production_manifest_100x16x128/records.jsonl",
+  "schema_version": "r09_b2_stream_manifest_verifier_v1",
+  "status": "PASS"
+}
