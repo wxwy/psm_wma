@@ -1,6 +1,6 @@
 # R09-B2 P4 Launch D005 静态设计 v0.1
 
-**状态**：draft；仅申请静态实现与 CPU 合同审核。  
+**状态**：draft；已按 ChatGPT `4e48ac5` 的实际控制面意见修订，须重新审核。
 **前置**：P1 stream manifest、P2 non-mutating capture、P3 GPU-only optimizer inventory 均已关闭。  
 **不授权**：B2-T、`torchrun`、模型/数据/VAE/checkpoint I/O、GPU、训练、评测、推理、closed-loop、多卡、backend freeze。
 
@@ -9,6 +9,8 @@
 P4 只生成并验收两份不可执行的 launch D005：`recurrent` 与
 `ttt_fast_weight`。D005 是未来 B2-T 唯一允许执行的命令模板的冻结记录，
 而不是 launcher；其中不含批准令牌，静态工具也不允许执行 `command_argv`。
+它必须绑定 production recipe 实际读取的 argv/env 控制面，不能以平行 metadata
+替代实际启动输入。
 
 它关闭 P0 的“精确 launcher/D005、world size、100 optimizer updates 与净化
 环境”阻塞项，不替代 P5 的完整 resolved-config machine diff。P5 未关闭前，
@@ -18,16 +20,24 @@ P4 D005 不得升级为 B2-T 运行申请。
 
 静态 builder 仅接受已存在的只读输入：
 
-- P1 的冻结 stream manifest 路径、SHA256、count 与五元组 schema；
+- P1 的冻结 stream manifest 路径、SHA256、count 与五元组 schema，并绑定到
+  `PSM_R09_B2_STREAM_MANIFEST_ROOT`；
 - P3 attempt-6 的 recurrent/TTT 实际 selector、optimizer membership 与
   Gitlink `21d064f` 的 provenance；
-- 同一 model-only base checkpoint 标识、四-suite cache manifests 与 SHA256；
-- 两份显式 resolved-config JSON（P5 产生前仅记录其路径/SHA，不宣称 diff 已通过）；
+- 同一 model-only base checkpoint、四-suite cache manifests 与 SHA256，分别绑定到
+  `BASE_CHECKPOINT_PATH`、`LIBERO_LATENT_CACHE_ROOT`，并绑定 `LIBERO_ROOT`、
+  `EDGE_POLICY_CHECKPOINT`、`WAN_VAE_PATH` 与离线 HF/Transformers 控制；
+- 两份显式 resolved-config JSON（P5 产生前仅记录其路径/SHA，不宣称 diff 已通过），
+  且 D005 的 argv 必须包含 production-supported `trainer.max_iter=100` override；
 - 用户批准的单卡资源类别、`world_size=1`、明确 microbatch、grad accumulation
   与完成 `100` 个 optimizer updates 的预算。
 
-所有路径必须为根目录内相对路径；绝对路径、`..`、符号链接逃逸、缺失文件、
-非 SHA256 值或任何未解析变量均 fail-closed。
+仓库拥有的 recipe、P1 manifest、D005、日志与输出路径必须为根目录内相对路径，
+拒绝绝对路径、`..`、符号链接逃逸。外部 runtime asset（checkpoint、VAE、Edge
+processor、LIBERO/cache root、Python executable）必须是 canonical absolute realpath，
+且位于 D005 allowlisted root 内；每项记录 kind、realpath、文件 SHA256 或递归
+文件清单 SHA256。缺失、非 SHA256、未解析变量、仓内路径逃逸或外部路径不在 allowlist
+均 fail-closed。
 
 ## 3. D005 schema
 
@@ -41,25 +51,40 @@ P4 D005 不得升级为 B2-T 运行申请。
   "status": "FROZEN_NOT_EXECUTED",
   "backend": "recurrent|ttt_fast_weight",
   "source": {"root_revision": "", "submodule_revision": "", "gitlink_revision": ""},
-  "command": {"argv": [], "cwd": "", "sha256": "", "executable": false},
-  "environment": {"set": {}, "unset": [], "sha256": ""},
+  "command": {"argv": [], "cwd": "", "sha256": "", "executable": false,
+              "effective_overrides": {"trainer.max_iter": 100}},
+  "environment": {"set": {}, "unset": [], "inherit_allowlist": [], "sha256": ""},
   "budget": {"world_size": 1, "optimizer_updates": 100, "microbatch": 0,
              "grad_accumulation": 0, "global_batch": 0, "samples_per_update": 0},
   "inputs": {"base_checkpoint": {}, "stream_manifest": {}, "cache_manifests": [],
-             "resolved_config": {}},
+             "resolved_config": {}, "external_assets": {}},
   "outputs": {"run_root": "", "log": "", "checkpoint_step0": "",
               "checkpoint_step100": "", "capture_root": ""},
-  "backend_contract": {"selector_keys": [], "optimizer_membership_sha256": "",
+  "backend_contract": {"ttt_enabled_env": "0|1", "selector_keys": [], "optimizer_membership_sha256": "",
                        "fast_state_persisted": false},
   "prohibitions": ["no_execution_without_future_approval"],
   "d005_sha256": ""
 }
 ```
 
-`command.argv` 只能是显式 token 数组，禁止 shell string、环境插值、命令替换、
-`sudo`、`bash -c`、网络 URL、`--worker-backend` 或任何执行批准令牌。`executable`
-恒为 `false`。builder 只序列化 canonical JSON（排序 key、UTF-8、末尾换行），
-再计算 `command.sha256` 与不含 `d005_sha256` 的记录摘要；不得自行填入运行结果。
+`command.argv` 只能是显式 token 数组，必须使用 production training entrypoint，且
+明确包含 `trainer.max_iter=100`；禁止 shell string、环境插值、命令替换、`sudo`、
+`bash -c`、网络 URL、`--worker-backend` 或任何执行批准令牌。`executable` 恒为
+`false`。builder 只序列化 canonical JSON（排序 key、UTF-8、末尾换行），再计算
+`command.sha256` 与不含 `d005_sha256` 的记录摘要；不得自行填入运行结果。
+
+`environment.set` 必须包含 production 实际消费的：
+`PSM_R08_LOCAL_HISTORY_ENABLED=1`、`PSM_R09_B1_TTT_ENABLED=0|1`、
+`PSM_R09_B2_STREAM_MANIFEST_ROOT`、`LIBERO_NUM_WORKERS=0`、
+`LIBERO_LATENT_CACHE_ROOT`、`LIBERO_LATENT_CACHE_VERIFY_RATIO=0`、`LIBERO_ROOT`、
+`BASE_CHECKPOINT_PATH`、`EDGE_POLICY_CHECKPOINT`、`WAN_VAE_PATH`、
+`HF_HUB_OFFLINE=1` 与 `TRANSFORMERS_OFFLINE=1`。recurrent 必为
+`PSM_R09_B1_TTT_ENABLED=0`，TTT 必为 `=1`；verifier 从该值独立推导 production
+selector，并与 P3 artifact 的排序 `selected_by_optimizer` 名称集合 canonical-JSON
+SHA256 比较。`environment.unset` 必须列出所有已知会改变 backend、probe、online VAE、
+checkpoint/tokenizer/cache 或网络语义的变量；`inherit_allowlist` 是唯一可继承的键集，
+任何未列入但命中 `PSM_*`、`LIBERO_*`、`*_CHECKPOINT*`、`*_CACHE*`、`HF_*`、
+`TRANSFORMERS_*`、`WAN_VAE_*` 或代理变量的父环境键均 fail-closed。
 
 ## 4. 两侧 matched 断言
 
@@ -67,15 +92,17 @@ verifier 必须独立读取两份 D005、P1 manifest 与 P3 inventory，不信�
 除下列字段外，两份 canonical value 必须逐项相等：
 
 1. `backend`；
-2. `command.argv` 内显式 backend override；
+2. `environment.set.PSM_R09_B1_TTT_ENABLED`（recurrent=`0`、TTT=`1`）及由其实际
+   派生的 selector/membership；
 3. `outputs.run_root/log/checkpoint_*/capture_root` 的 backend 隔离目录；
 4. `backend_contract.selector_keys` 与由 P3 verifier-owned selector contract 重算的
    optimizer membership 摘要。
 
 两侧都必须具有相同 root/submodule/Gitlink、base checkpoint、P1 manifest
 SHA/count、四 suite cache manifest 集合、seed、precision、deterministic/cudnn、
-worker/prefetch、noise schedule、optimizer/scheduler/EMA/clip、microbatch、grad
-accumulation、world size、100 updates 及资源上限。两个输出目录不得重叠，且均
+`PSM_R09_B2_STREAM_MANIFEST_ROOT`、`LIBERO_NUM_WORKERS=0`、cache root/verify ratio、
+noise schedule、optimizer/scheduler/EMA/clip、microbatch、grad accumulation、world
+size、argv 中实际 `trainer.max_iter=100` 及资源上限。两个输出目录不得重叠，且均
 不得已存在或已由 Git 跟踪。
 
 ## 5. 静态验收和失败分流
@@ -84,7 +111,13 @@ accumulation、world size、100 updates 及资源上限。两个输出目录不�
 `git diff --check`。最小永久负例包括：
 
 - 任一 `world_size != 1`、updates 不等于 100 或 batch 公式不成立；
-- command/environment 含未解析变量、shell、网络或执行 token；
+- metadata 为 100 但 argv 有效 `trainer.max_iter` 仍为 5000，或无显式 100 override；
+- TTT metadata 正确但 `PSM_R09_B1_TTT_ENABLED=0`，或该 env 与实际 selector/P3
+  membership 摘要不符；
+- P1 manifest SHA 正确但 `PSM_R09_B2_STREAM_MANIFEST_ROOT` 缺失，或其存在但
+  `LIBERO_NUM_WORKERS != 0`；cache metadata 正确但 cache root/verify-ratio env 缺失；
+- command/environment 含未解析变量、shell、网络、执行 token 或未 allowlist 的继承变量；
+- 仓内路径绝对/逃逸，或外部 asset 不是 allowlisted canonical absolute realpath；
 - backend 外字段差异、输出路径冲突、manifest/cache/checkpoint SHA 不一致；
 - TTT selector/membership 不等于 P3 verifier-owned contract，或声明 fast state
   将持久化；
