@@ -3791,3 +3791,13 @@ Detailed review:
 - 新增 `tools/g0/verify_r09_b2_p5_full_config_diff.py`：canonical JSON Pointer diff；P3 common path/SHA/PASS identity 强制相同；backend contract 必精确等于 verifier-owned recurrent/TTT contract；仅允许精确 backend/TTT switch/output/derived path/local backend/selector 差异。
 - 新增 `tools/g0/test_r09_b2_p5_full_config_diff.py`：纯 CPU 2/2 PASS，覆盖 callable identity、NaN、D005 override 重排、环境泄漏、实际 P4 shape 的 common P3 + distinct correct contract PASS、path/SHA drift、cross-wired/arbitrary/extra contract 和未映射 local selector mutation FAIL。`py_compile`、`git diff --check` PASS。
 - 禁止范围：未调用 `load_experiment_from_toml`，未读取真实 config/checkpoint/模型/数据/VAE，未执行 config export、torchrun、GPU、训练/评测/推理。若获批准，仅可继续申请一次独立三方 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，本申请不授权执行。
+
+### Awaiting review — R09-B2 P5 static tools remediation
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `82a2744243e743ce65c99785aa508188590e6094`（处理 review `2026-09-01_R09_B2_P5_static_tools_ba0ecde_30f3ce6.md`）；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 修复 HIGH-1：新增 `build_pair_requests()`，后续父路径只接收 recurrent/TTT 两份 P4 D005，先调用 P4 frozen pair verifier，再从每条 verified argv 精确生成 child request；child 校验 cwd、canonical interpreter、完整净化环境，默认 CLI 仍不暴露 parent export。
+- 修复 HIGH-2/3：P5 verifier 不再接收 `--contracts`；内部读取 P4 records/P3 artifact，使用 P4 verifier-owned `_p3_contract` 重算两后端 contract；每个 envelope 必含并逐侧绑定 P4 source、argv、cwd、environment.set、budget、P3 input 与本侧 P4 record SHA，故共同伪造字段不能仅因两侧相等而 PASS。
+- 修复 MEDIUM：完整 selector list 必分别等于 verifier-owned contract，`local_history_backend`/TTT switch 值精确校验。fixture 现在只读已跟踪 P4 JSON 构造完整 envelope，覆盖 path/SHA drift、cross-wire/arbitrary/extra contract 以及共同 binding 伪造 FAIL。
+- `py_compile`、`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=2/2 PASS、`git diff --check` PASS。禁止真实 config export、`load_experiment_from_toml`、launch/instantiate/CUDA/torchrun/GPU/训练；本申请仅申请将来另行发起 static-export 执行审核的资格。
