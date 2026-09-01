@@ -3633,3 +3633,13 @@ Detailed review:
 - HIGH-2/3/4 关闭：argv 必含 production-supported `trainer.max_iter=100`，而非仅 metadata；D005 建立 `environment.set/unset/inherit_allowlist`，未 allowlist 的行为型 `PSM_*`、`LIBERO_*`、checkpoint/cache/tokenizer/HF/Transformers/代理变量均 fail-closed。负例明确覆盖 metadata=100/实际5000、manifest/cache metadata 正确而 env 缺失、TTT metadata 正确而 switch=0。
 - MEDIUM 关闭：仓内 recipe/manifest/D005/output 继续 root-relative containment；外部 checkpoint/VAE/processor/LIBERO/cache/Python 记录 allowlisted canonical absolute realpath 和文件或递归清单 SHA256，不再错误要求其相对路径。
 - 范围不变：只申请后续 root 标准库/CPU static builder/verifier/tests；禁止 torch/Cosmos 导入、模型/数据/VAE/checkpoint I/O、torchrun、GPU、训练/评测/推理、P5/B2-T、backend freeze、Global/Agent/RL。请仅审查该设计修订。
+
+### Awaiting review — R09-B2 P4 output/resume/launcher-bound D005 design revision
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_STATIC_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `b546aac0721ff8efa7a3895d878596edd9e989a7`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT `117d57c`；只改 P4 design 与 `SESSION.md`。
+- output/resume HIGH 关闭：future D005 必设置 backend-specific `IMAGINAIRE_OUTPUT_ROOT`，并与 effective `job.project/group/name` 独立推导 production `JobConfig.path_local`、log/capture/checkpoint paths；D005 自报 output 不被信任。两侧 real job/checkpoint 目录必须 distinct、fresh、未跟踪、运行前不存在 `latest_checkpoint.txt`、`iter_*` 或同 job 文件，杜绝同目录 full-resume 覆盖 model-only warm-start。
+- single-GPU HIGH 关闭：冻结且仅记录（不执行）`torchrun --standalone --nnodes=1 --nproc-per-node=1 -m cosmos_framework.scripts.train`；`CUDA_VISIBLE_DEVICES=0`，不允许手写或继承 env:// rank/world/master 变量。verifier 从 argv 推导 world_size=1 并拒绝冲突，而非信任 budget metadata。
+- step0 MEDIUM 关闭：`outputs.checkpoint_step0` 仅因 argv 实际含 `trainer.save_zero_checkpoint=true` 才为 required output；同一 argv 仍含 `trainer.max_iter=100`。新增负例覆盖同 job path、已存在 latest/iter、metadata 单卡但 launcher 多进程、rank env 注入、没有 save-zero 的 step0 声明。
+- 范围不变：仍仅申请 root 标准库/CPU static builder/verifier/tests；不运行 torchrun、不导入 torch/Cosmos、不加载模型/数据/VAE/checkpoint、不运行 GPU/训练/评测/推理，P5/B2-T 继续未授权。请只审查设计。
