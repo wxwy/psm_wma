@@ -446,6 +446,60 @@ def _write_json(path: Path, value: dict[str, object]) -> None:
     path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n")
 
 
+def _read_backend_record(path: Path) -> dict[str, object]:
+    """读取子进程已写的证据；缺失或损坏也必须阻止下一个 backend。"""
+    if not path.is_file():
+        return {
+            "status": "BLOCKED",
+            "reason": "backend worker exited zero without writing its JSON artifact",
+            "backend_output_path": str(path),
+        }
+    try:
+        record = json.loads(path.read_text())
+    except json.JSONDecodeError as error:
+        return {
+            "status": "BLOCKED",
+            "reason": f"backend worker wrote invalid JSON: {error}",
+            "backend_output_path": str(path),
+        }
+    if not isinstance(record, dict):
+        return {
+            "status": "BLOCKED",
+            "reason": "backend worker JSON must be an object",
+            "backend_output_path": str(path),
+        }
+    return record
+
+
+def _run_backend_workers(
+    command_argv: list[str], output: Path, root: Path, child_environment: dict[str, str]
+) -> dict[str, dict[str, object]]:
+    """按固定顺序运行两个 backend；首个异常结果 fail-stop，绝不启动后续 backend。"""
+    backends = {}
+    for backend in ("recurrent", "ttt_fast_weight"):
+        backend_output = output.with_name(f"{output.stem}_{backend}.json").resolve()
+        command = command_argv + ["--worker-backend", backend, "--output", str(backend_output)]
+        completed = subprocess.run(command, cwd=root, env=child_environment, text=True, capture_output=True)
+        if completed.returncode:
+            evidence: dict[str, object] = {
+                "status": "BLOCKED",
+                "reason": f"backend worker exited nonzero: {completed.returncode}",
+                "returncode": completed.returncode,
+                "stdout": completed.stdout,
+                "stderr": completed.stderr,
+                "backend_output_path": str(backend_output),
+            }
+            if backend_output.is_file():
+                evidence["partial_backend_json"] = _read_backend_record(backend_output)
+            backends[backend] = evidence
+            return backends
+        record = _read_backend_record(backend_output)
+        backends[backend] = record
+        if record.get("status") != "PASS":
+            return backends
+    return backends
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path.cwd())
@@ -550,19 +604,7 @@ def main() -> None:
         raise ValueError("D005 record must be inside root") from error
     _write_json(d005_path, d005)
 
-    backends = {}
-    for backend in ("recurrent", "ttt_fast_weight"):
-        backend_output = args.output.with_name(f"{args.output.stem}_{backend}.json").resolve()
-        command = command_argv + ["--worker-backend", backend, "--output", str(backend_output)]
-        child_environment = os.environ | environment
-        completed = subprocess.run(command, cwd=root, env=child_environment, text=True, capture_output=True)
-        if completed.returncode:
-            backends[backend] = {
-                "status": "BLOCKED",
-                "reason": (completed.stderr or completed.stdout)[-4000:],
-            }
-        else:
-            backends[backend] = json.loads(backend_output.read_text())
+    backends = _run_backend_workers(command_argv, args.output, root, os.environ | environment)
 
     peak_allocated = max(record.get("execution", {}).get("peak_allocated_bytes", 0) for record in backends.values())
     peak_reserved = max(record.get("execution", {}).get("peak_reserved_bytes", 0) for record in backends.values())

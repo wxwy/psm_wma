@@ -45,7 +45,7 @@ LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
   --max-peak-gib 24
 ```
 
-顶层 collector 只派生两个独立子进程：`recurrent` 与 `ttt_fast_weight`。它们的 JSON 分别写为 `p3_gpu_inventory_recurrent.json` 与 `p3_gpu_inventory_ttt_fast_weight.json`；顶层 aggregate 与 D005 写入上述路径。不得追加 `--worker-backend`，不得重试、改参数或更换 GPU。
+顶层 collector 只按固定顺序派生两个独立子进程：`recurrent` 与 `ttt_fast_weight`。任一子进程非零、未写合法 JSON 或 JSON `status!=PASS` 时，父进程先写 aggregate/D005 和已获得的 stdout/stderr/partial JSON，再立即返回；后续 backend 不会启动。它们的 JSON 分别写为 `p3_gpu_inventory_recurrent.json` 与 `p3_gpu_inventory_ttt_fast_weight.json`；顶层 aggregate 与 D005 写入上述路径。不得追加 `--worker-backend`，不得重试、改参数或更换 GPU。
 
 ## 判据与失败分流
 

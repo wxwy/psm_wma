@@ -328,6 +328,62 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "unmapped"):
             COLLECT._flattened_optimizer_schema({"param_groups.net.extra.lr": 0.1}, {"a"})
 
+    def test_backend_orchestration_stops_after_nonzero_recurrent(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "inventory.json"
+            calls = []
+
+            def run(command: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+                calls.append(command)
+                backend_output = Path(command[command.index("--output") + 1])
+                backend_output.write_text(json.dumps({"status": "BLOCKED", "partial": True}))
+                return subprocess.CompletedProcess(command, 9, "worker stdout", "worker stderr")
+
+            with mock.patch.object(COLLECT.subprocess, "run", side_effect=run):
+                backends = COLLECT._run_backend_workers(["collector"], output, ROOT, {})
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(calls[0][calls[0].index("--worker-backend") + 1], "recurrent")
+            self.assertEqual(backends["recurrent"]["returncode"], 9)
+            self.assertEqual(backends["recurrent"]["stdout"], "worker stdout")
+            self.assertEqual(backends["recurrent"]["stderr"], "worker stderr")
+            self.assertEqual(backends["recurrent"]["partial_backend_json"], {"status": "BLOCKED", "partial": True})
+            self.assertNotIn("ttt_fast_weight", backends)
+
+    def test_backend_orchestration_stops_after_zero_exit_blocked_record(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "inventory.json"
+            calls = []
+
+            def run(command: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+                calls.append(command)
+                Path(command[command.index("--output") + 1]).write_text(json.dumps({"status": "BLOCKED"}))
+                return subprocess.CompletedProcess(command, 0, "", "")
+
+            with mock.patch.object(COLLECT.subprocess, "run", side_effect=run):
+                backends = COLLECT._run_backend_workers(["collector"], output, ROOT, {})
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(backends, {"recurrent": {"status": "BLOCKED"}})
+
+    def test_backend_orchestration_launches_ttt_only_after_recurrent_pass(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "inventory.json"
+            calls = []
+
+            def run(command: list[str], **_: object) -> subprocess.CompletedProcess[str]:
+                calls.append(command)
+                Path(command[command.index("--output") + 1]).write_text(json.dumps({"status": "PASS"}))
+                return subprocess.CompletedProcess(command, 0, "", "")
+
+            with mock.patch.object(COLLECT.subprocess, "run", side_effect=run):
+                backends = COLLECT._run_backend_workers(["collector"], output, ROOT, {})
+            self.assertEqual(
+                [command[command.index("--worker-backend") + 1] for command in calls],
+                ["recurrent", "ttt_fast_weight"],
+            )
+            self.assertEqual({name: record["status"] for name, record in backends.items()}, {
+                "recurrent": "PASS", "ttt_fast_weight": "PASS",
+            })
+
     def test_backend_diff_rejects_ttt_only_persistent_key(self) -> None:
         d005_path = ROOT / "artifacts/g0/r09/b2/p3_dcp_diff_test_d005.json"
         try:
