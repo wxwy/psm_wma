@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, PYTHON_CHILD_LOCALE, _verified_bootstrap, bound_exporter_source, build_loader_request, build_pair_requests, canonicalize, parse_d005_command, run_parent_export, sanitized_environment, validate_loader_request, validate_production_root, validate_root_isolation
+from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, P4_V4_PREFLIGHT_RELATIVE, P5_FORBIDDEN_ENVIRONMENT, PYTHON_CHILD_LOCALE, _verified_bootstrap, bound_exporter_source, build_loader_request, build_pair_requests, canonical_bytes, canonicalize, load_p4_v4_preflight, parse_d005_command, p5_effective_environment, run_parent_export, sanitized_environment, sha256_json, validate_loader_request, validate_production_root, validate_root_isolation
 from tools.g0.verify_r09_b2_p5_full_config_diff import P4_RECORD_SHA256, _expected, _expected_effective_environment, _exporter_source, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
 
@@ -20,6 +20,30 @@ def target_b() -> None: pass
 
 
 class P5Test(unittest.TestCase):
+    def _v4_preflight(self, root: Path) -> None:
+        for backend in ("recurrent", "ttt_fast_weight"):
+            directory = root / P4_V4_PREFLIGHT_RELATIVE / backend; directory.mkdir(parents=True)
+            environment = {"set": {"A": "1"}, "unset": list(P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": [], "sha256": "environment"}
+            request = {"schema_version": "v4", "backend": backend, "production_source": {}, "p4_run": {}, "p4_staging": {}, "request_defaults": {}, "interpreter": {}, "loader_argv": {}, "effective_environment": environment, "native_loader_environment": {}, "payload_manifest": {}, "producer": {}}
+            request_bytes = canonical_bytes(request); request_sha = sha256_json(request)
+            outcome = {**request, "status": "PASS", "request_sha256": request_sha, "native_closure": [], "pre_p5_run_root_roster": {}}
+            outcome_bytes = canonical_bytes(outcome); outcome_sha = sha256_json(outcome)
+            verification = {"schema_version": "v4", "status": "PASS", "backend": backend, "request_sha256": request_sha, "result_sha256": outcome_sha, "checks": [], "verifier": {}, "verification_sha256": "verification"}
+            (directory / "request.json").write_bytes(request_bytes)
+            (directory / "result.json").write_bytes(outcome_bytes)
+            (directory / "verification.json").write_bytes(canonical_bytes(verification))
+
+    def test_p4_v4_fixed_discovery_sha_chain_and_empty_environment(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); self._v4_preflight(root)
+            loaded = load_p4_v4_preflight(root)
+            self.assertEqual(p5_effective_environment(loaded["recurrent"]["request"], loaded["ttt_fast_weight"]["request"]), {"A": "1", **PYTHON_CHILD_LOCALE})
+            request = root / P4_V4_PREFLIGHT_RELATIVE / "recurrent" / "request.json"
+            forged = json.loads(request.read_text()); forged["backend"] = "ttt_fast_weight"; request.write_bytes(canonical_bytes(forged))
+            with self.assertRaises(ValueError):
+                load_p4_v4_preflight(root)
+        with self.assertRaises(ValueError):
+            p5_effective_environment({"effective_environment": {"set": {}, "unset": [], "inherit_allowlist": [], "sha256": "x"}}, {"effective_environment": {"set": {}, "unset": [], "inherit_allowlist": [], "sha256": "x"}})
     def _exporter_worktree(self, root: Path, temporary: Path) -> Path:
         exporter = temporary / "exporter"
         subprocess.run(["git", "-C", str(root), "worktree", "add", "--detach", str(exporter), "HEAD"], check=True, stdout=subprocess.DEVNULL)

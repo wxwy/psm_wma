@@ -36,6 +36,14 @@ CHILD_REQUEST_KEYS = {"backend", "root", "toml", "overrides", "command_argv", "c
 LOADER_REQUEST_SCHEMA = "r09_b2_p5_verified_loader_request_v1"
 LOADER_REQUEST_KEYS = {"schema_version", "child_request", "child_request_sha256", "child_output"}
 BOOTSTRAP_RELATIVE = "tools/g0/export_r09_b2_p5_resolved_config.py"
+P4_V4_PREFLIGHT_RELATIVE = Path("artifacts/g0/r09/b2/p4_execution_preflight_v4")
+P4_V4_BACKENDS = ("recurrent", "ttt_fast_weight")
+P5_FORBIDDEN_ENVIRONMENT = (
+    "GLIBC_TUNABLES", "LD_AUDIT", "LD_ASSUME_KERNEL", "LD_BIND_NOT", "LD_DEBUG",
+    "LD_DEBUG_OUTPUT", "LD_LIBRARY_PATH", "LD_ORIGIN_PATH", "LD_PRELOAD", "LD_PROFILE",
+    "LD_SHOW_AUXV", "LD_TRACE_LOADED_OBJECTS", "LD_USE_LOAD_BIAS", "MASTER_ADDR",
+    "MASTER_PORT", "PYTHONPATH", "RANK", "WORLD_SIZE", "LOCAL_RANK",
+)
 
 
 class CanonicalizationError(ValueError):
@@ -49,6 +57,61 @@ def canonical_bytes(value: object) -> bytes:
 def sha256_json(value: object) -> str:
     import hashlib
     return hashlib.sha256(canonical_bytes(value)).hexdigest()
+
+
+def _read_json(path: Path) -> tuple[dict[str, Any], str]:
+    if path.is_symlink() or not path.is_file():
+        raise ValueError(f"P4-v4 evidence must be a regular file: {path}")
+    raw = path.read_bytes()
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"P4-v4 evidence JSON is malformed: {path}") from exc
+    if not isinstance(value, dict) or canonical_bytes(value) != raw:
+        raise ValueError(f"P4-v4 evidence is not canonical JSON: {path}")
+    return value, hashlib.sha256(raw).hexdigest()
+
+
+def p5_effective_environment(recurrent: Mapping[str, Any], ttt: Mapping[str, Any]) -> dict[str, str]:
+    """Construct the P5 child environment from empty, never ambient parent state."""
+    def values(record: Mapping[str, Any]) -> dict[str, str]:
+        environment = record.get("effective_environment")
+        if not isinstance(environment, Mapping) or set(environment) != {"set", "unset", "inherit_allowlist", "sha256"}:
+            raise ValueError("P4-v4 effective environment schema is malformed")
+        if environment["inherit_allowlist"] != [] or tuple(environment["unset"]) != P5_FORBIDDEN_ENVIRONMENT:
+            raise ValueError("P4-v4 environment grammar differs from P5 empty-environment contract")
+        if not isinstance(environment["set"], Mapping):
+            raise ValueError("P4-v4 effective environment set is malformed")
+        return {str(key): str(value) for key, value in environment["set"].items()}
+    left, right = values(recurrent), values(ttt)
+    if left != right or set(left) & set(P5_FORBIDDEN_ENVIRONMENT):
+        raise ValueError("P4-v4 backend environments cannot be projected into P5")
+    return {**dict(sorted(left.items())), **PYTHON_CHILD_LOCALE}
+
+
+def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
+    """Load the only admissible P4→P5 handoff; historical D005 evidence is ignored."""
+    root = evidence_root.resolve()
+    result: dict[str, dict[str, Any]] = {}
+    request_keys = {"schema_version", "backend", "production_source", "p4_run", "p4_staging", "request_defaults", "interpreter", "loader_argv", "effective_environment", "native_loader_environment", "payload_manifest", "producer"}
+    result_keys = request_keys | {"status", "request_sha256", "native_closure", "pre_p5_run_root_roster"}
+    result_keys.remove("schema_version")
+    result_keys.add("schema_version")
+    verification_keys = {"schema_version", "status", "backend", "request_sha256", "result_sha256", "checks", "verifier", "verification_sha256"}
+    for backend in P4_V4_BACKENDS:
+        directory = root / P4_V4_PREFLIGHT_RELATIVE / backend
+        request, request_sha = _read_json(directory / "request.json")
+        outcome, outcome_sha = _read_json(directory / "result.json")
+        verification, _ = _read_json(directory / "verification.json")
+        if (set(request) != request_keys or set(outcome) != result_keys or set(verification) != verification_keys
+                or request.get("backend") != backend or outcome.get("backend") != backend or verification.get("backend") != backend
+                or outcome.get("status") != "PASS" or verification.get("status") != "PASS"
+                or outcome.get("request_sha256") != request_sha or verification.get("request_sha256") != request_sha
+                or verification.get("result_sha256") != outcome_sha):
+            raise ValueError("P4-v4 preflight schema, backend, status, or SHA chain differs")
+        result[backend] = {"request": request, "result": outcome, "verification": verification}
+    p5_effective_environment(result["recurrent"]["request"], result["ttt_fast_weight"]["request"])
+    return result
 
 
 def _callable(value: object) -> dict[str, str]:
