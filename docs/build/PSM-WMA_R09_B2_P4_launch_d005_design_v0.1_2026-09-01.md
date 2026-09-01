@@ -1,6 +1,6 @@
 # R09-B2 P4 Launch D005 静态设计 v0.1
 
-**状态**：draft；已按 ChatGPT `117d57c` 的输出/启动绑定意见修订，须重新审核。
+**状态**：draft；已按 ChatGPT `701d410` 的 cwd/解释器绑定意见修订，须重新审核。
 **前置**：P1 stream manifest、P2 non-mutating capture、P3 GPU-only optimizer inventory 均已关闭。  
 **不授权**：B2-T、任何 `torchrun` 执行、模型/数据/VAE/checkpoint I/O、GPU、训练、评测、推理、closed-loop、多卡、backend freeze。
 
@@ -35,6 +35,9 @@ P4 D005 不得升级为 B2-T 运行申请。
 - backend-specific `IMAGINAIRE_OUTPUT_ROOT` canonical absolute realpath，以及 recipe
   `job.project/group/name`，用于独立推导真实 `JobConfig.path_local`、checkpoint
   directory 与首次运行前的 freshness 断言。
+- canonical absolute `cosmos-framework` root、其 `.venv/bin/python` interpreter 的
+  文件 SHA256，以及仅相对此 cwd 解析的
+  `examples/toml/sft_config/action_policy_libero_edge_all.toml`。
 
 仓库拥有的 recipe、P1 manifest 与 D005 artifact 必须为根目录内相对路径，拒绝绝对
 路径、`..`、符号链接逃逸。外部 runtime asset（checkpoint、VAE、Edge processor、
@@ -56,7 +59,7 @@ SHA256、未解析变量、仓内路径逃逸或外部路径不在 allowlist 均
   "status": "FROZEN_NOT_EXECUTED",
   "backend": "recurrent|ttt_fast_weight",
   "source": {"root_revision": "", "submodule_revision": "", "gitlink_revision": ""},
-  "command": {"argv": [], "cwd": "", "sha256": "", "executable": false,
+  "command": {"argv": [], "cwd": "", "interpreter": {}, "sha256": "", "executable": false,
               "launcher": {"kind": "torchrun", "nnodes": 1, "nproc_per_node": 1,
                            "standalone": true},
               "effective_overrides": {"trainer.max_iter": 100, "trainer.save_zero_checkpoint": true}},
@@ -75,13 +78,19 @@ SHA256、未解析变量、仓内路径逃逸或外部路径不在 allowlist 均
 }
 ```
 
-`command.argv` 只能是显式 token 数组，固定为 production `torchrun --standalone
---nnodes=1 --nproc-per-node=1 -m cosmos_framework.scripts.train --sft-toml=...` 形式，且
-明确包含 `trainer.max_iter=100` 与 `trainer.save_zero_checkpoint=true`；禁止 shell
-string、环境插值、命令替换、`sudo`、`bash -c`、网络 URL、`--worker-backend` 或任何
-执行批准令牌。`executable` 恒为 `false`。builder 只序列化 canonical JSON（排序 key、
-UTF-8、末尾换行），再计算 `command.sha256` 与不含 `d005_sha256` 的记录摘要；不得
-自行填入运行结果。
+`command.cwd` 固定为 canonical absolute `<repo>/cosmos-framework` realpath，且 verifier
+必须逐字要求该值；根仓 cwd、任意其它 cwd、符号链接 alias 或缺失 cwd 均拒绝。
+`command.argv` 只能是显式 token 数组，第一项固定为 `command.interpreter.realpath`
+（该 executable 的 SHA256 必与 D005 外部资产记录一致），随后固定为 `-m
+torch.distributed.run --standalone --nnodes=1 --nproc-per-node=1 -m
+cosmos_framework.scripts.train`。禁止 bare `torchrun`、PATH-dependent launcher 或任意
+其它 Python executable。`--sft-toml` 只能为上述 cwd 下的唯一 framework-relative
+`examples/toml/sft_config/action_policy_libero_edge_all.toml`；禁止绝对/不同 cwd 语义的
+TOML 表示。argv 还须明确包含 `trainer.max_iter=100` 与
+`trainer.save_zero_checkpoint=true`；禁止 shell string、环境插值、命令替换、`sudo`、
+`bash -c`、网络 URL、`--worker-backend` 或任何执行批准令牌。`executable` 恒为 `false`。
+builder 只序列化 canonical JSON（排序 key、UTF-8、末尾换行），再计算
+`command.sha256` 与不含 `d005_sha256` 的记录摘要；不得自行填入运行结果。
 
 `environment.set` 必须包含 production 实际消费的：
 `PSM_R08_LOCAL_HISTORY_ENABLED=1`、`PSM_R09_B1_TTT_ENABLED=0|1`、
@@ -139,6 +148,10 @@ job/checkpoint 目录不得重叠，且均不得已存在或已由 Git 跟踪。
 - metadata 为 100 但 argv 有效 `trainer.max_iter` 仍为 5000，或无显式 100 override；
 - metadata `world_size=1` 但 argv 不是冻结的 one-process `torchrun`，或存在冲突的
   rank/world-size env；缺少或非单值 `CUDA_VISIBLE_DEVICES`；
+- `command.cwd` 为根仓/任意非 framework realpath/符号链接 alias，或 `--sft-toml`
+  不是 framework cwd 下的唯一相对 recipe；
+- `command.interpreter` SHA/realpath 正确但 argv 使用 bare `torchrun`、PATH-dependent
+  launcher 或不同 Python executable；
 - TTT metadata 正确但 `PSM_R09_B1_TTT_ENABLED=0`，或该 env 与实际 selector/P3
   membership 摘要不符；
 - P1 manifest SHA 正确但 `PSM_R09_B2_STREAM_MANIFEST_ROOT` 缺失，或其存在但
