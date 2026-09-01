@@ -3753,3 +3753,12 @@ Detailed review:
 - standard-library pair verifier=`PASS`：两 backend 的 schema/source/cwd/argv/environment/inputs/assets/output/budget/digest checks 全 true；matched 与 distinct outputs true。future output root 未创建，无 GPU compute/torchrun/模型执行/训练。旧 FAIL attempt 保留在独立 worktree，未覆盖、未提交。
 - closure provenance：本次 records 保留 source root=`ddb4e0e`；请以该 clean source 和只读 committed artifacts 复核，勿将 post-commit HEAD 当作 record source。
 - 仅申请关闭 P4 static D005；不授权 P5、B2-T、D005 argv、GPU、训练、评测或推理。
+
+### Awaiting review — R09-B2 P5 full resolved-config diff design
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P5_STATIC_DIFF` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `142f69b68095a2cb62ec4bea9282ff2563936630`；Gitlink=`21d064f`。P4 已三方关闭。
+- 新设计：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.1_2026-09-01.md`。后续 exporter 只用 P4 D005 的 explicit environment map 导出 recurrent/TTT 完整 resolved config，canonical JSON Pointer diff，绑定 P1/P3/D005 provenance。
+- 允许差异仅为实际 TTT switch/backend、其 selector/optimizer membership 及 backend output root；precision/seed/data-cache/manifest/world=1/128×16/100 updates/optimizer-scheduler-EMA-clip/offline controls 及其它任一 path 必相同，未知 diff FAIL。
+- 当前仅申请 root-side static exporter/verifier/tests 实现；禁止 config export 执行、trainer/model/dataloader/optimizer/checkpoint/CUDA/torchrun/GPU/训练/评测/推理。实现获批后，静态 export 仍需单独三方执行授权。
