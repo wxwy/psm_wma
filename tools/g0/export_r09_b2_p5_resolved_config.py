@@ -20,6 +20,7 @@ from typing import Any
 
 SCHEMA = "r09_b2_p5_full_config_diff_v2"
 FROZEN_OVERRIDES = ("trainer.max_iter=100", "trainer.save_zero_checkpoint=true")
+FROZEN_PRODUCTION_ROOT = Path("/disk/rl/psm_wma_p4_d005_retry")
 
 
 class CanonicalizationError(ValueError):
@@ -122,15 +123,38 @@ def sanitized_environment(contract: Mapping[str, Any], parent: Mapping[str, str]
     return result
 
 
+def _git_clean(root: Path) -> bool:
+    return subprocess.run(["git", "-C", str(root), "diff", "--quiet", "HEAD", "--"], check=False).returncode == 0
+
+
+def validate_root_isolation(*roots: Path) -> tuple[Path, ...]:
+    """Reject equal, symlink-equivalent, and nested roots before any export work."""
+    canonical = tuple(root.resolve() for root in roots)
+    if len(set(canonical)) != len(canonical):
+        raise ValueError("P5 production/evidence/exporter roots must be distinct canonical directories")
+    for index, root in enumerate(canonical):
+        if not root.is_dir():
+            raise ValueError("P5 root is not a directory")
+        for other in canonical[index + 1 :]:
+            if root.is_relative_to(other) or other.is_relative_to(root):
+                raise ValueError("P5 roots must not be ancestor/descendant overlapping directories")
+    return canonical
+
+
 def validate_production_root(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], production_root: Path) -> Path:
     """Enforce the absolute P4 D005 worktree identity; revision equality is insufficient."""
     roots = {Path(record["command"]["cwd"]).resolve().parent for record in (recurrent, ttt)}
-    if len(roots) != 1 or production_root.resolve() != next(iter(roots)):
+    if (len(roots) != 1 or production_root.resolve() != next(iter(roots))
+            or production_root.resolve() != FROZEN_PRODUCTION_ROOT.resolve()):
         raise ValueError("production_root must exactly equal the common D005 worktree root")
     root = production_root.resolve()
+    framework = root / "cosmos-framework"
+    if not _git_clean(root) or not _git_clean(framework):
+        raise ValueError("production_root and its cosmos-framework submodule must be tracked-clean")
     for record in (recurrent, ttt):
         env = record["environment"]["set"]
-        for value in (record["command"]["cwd"], env["PYTHONPATH"], env["PSM_R09_B2_STREAM_MANIFEST_ROOT"]):
+        stream_asset = record["inputs"]["external_assets"]["stream_manifest"]
+        for value in (record["command"]["cwd"], env["PYTHONPATH"], env["PSM_R09_B2_STREAM_MANIFEST_ROOT"], stream_asset["path"], stream_asset["realpath"]):
             if not Path(value).resolve().is_relative_to(root):
                 raise ValueError("D005 worktree path escapes the frozen production root")
         source = record["source"]
@@ -142,7 +166,7 @@ def validate_production_root(recurrent: Mapping[str, Any], ttt: Mapping[str, Any
     return root
 
 
-def build_child_request(record: Mapping[str, Any], *, production_root: Path, backend: str, p3_verifier_sha256: str, p4_verification_sha256: str) -> dict[str, Any]:
+def build_child_request(record: Mapping[str, Any], *, production_root: Path, backend: str, p3_verifier_sha256: str, p4_record_sha256: str, p4_verification_sha256: str) -> dict[str, Any]:
     """Bind one child request to its verified D005; the child never accepts loose inputs."""
     if record.get("backend") != backend:
         raise ValueError("D005 backend does not match requested export")
@@ -155,19 +179,20 @@ def build_child_request(record: Mapping[str, Any], *, production_root: Path, bac
     return {"backend": backend, "root": str(production_root.resolve()), "toml": toml, "overrides": overrides, "command_argv": command["argv"],
             "cwd": str(cwd), "interpreter": {"realpath": str(interpreter), "sha256": command["interpreter"]["sha256"]},
             "environment": {"contract": environment, "effective": sanitized_environment(environment, os.environ)},
-            "d005_sha256": record["d005_sha256"], "p4_record_sha256": sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}), "p4_verification_sha256": p4_verification_sha256, "p3_verifier_sha256": p3_verifier_sha256, "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
+            "d005_sha256": record["d005_sha256"], "p4_record_sha256": p4_record_sha256, "p4_verification_sha256": p4_verification_sha256, "p3_verifier_sha256": p3_verifier_sha256, "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
 
 
 def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path) -> dict[str, dict[str, Any]]:
     """Parent-only D005 gate; later approved execution consumes only these requests."""
     from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
+    from tools.g0.verify_r09_b2_p5_full_config_diff import _evidence_records
 
     root = validate_production_root(recurrent, ttt, production_root)
-    if not evidence_root.resolve().is_dir():
-        raise ValueError("evidence_root must be readable")
-    p4_verification_sha256 = hashlib.sha256((evidence_root / "artifacts/g0/r09/b2/p4_launch_d005/verification.json").read_bytes()).hexdigest()
-    return {"recurrent": build_child_request(recurrent, production_root=root, backend="recurrent", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_verification_sha256=p4_verification_sha256),
-            "ttt_fast_weight": build_child_request(ttt, production_root=root, backend="ttt_fast_weight", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_verification_sha256=p4_verification_sha256)}
+    evidence, record_sha256, p4_verification_sha256 = _evidence_records(evidence_root.resolve())
+    if recurrent != evidence["recurrent"] or ttt != evidence["ttt_fast_weight"]:
+        raise ValueError("parent D005 records differ from frozen evidence_root records")
+    return {"recurrent": build_child_request(recurrent, production_root=root, backend="recurrent", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_record_sha256=record_sha256["recurrent"], p4_verification_sha256=p4_verification_sha256),
+            "ttt_fast_weight": build_child_request(ttt, production_root=root, backend="ttt_fast_weight", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_record_sha256=record_sha256["ttt_fast_weight"], p4_verification_sha256=p4_verification_sha256)}
 
 
 def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, Any], *, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
@@ -176,7 +201,7 @@ def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, 
     command = record["interpreter"]
     return {"schema_version": SCHEMA, "backend": record["backend"],
             "provenance": {"production_source": record["source"], "exporter_source": {"root_revision": exporter_root_revision, "tool_sha256": tool_sha256},
-                           "inputs": {"p4_record_sha256": record["p4_record_sha256"], "p4_verification_sha256": record["p4_verification_sha256"],
+                           "inputs": {"p4_record_sha256": record["p4_record_sha256"], "p4_d005_sha256": record["d005_sha256"], "p4_verification_sha256": record["p4_verification_sha256"],
                                       "p3_inventory_path": record["inputs"]["p3_inventory"]["path"], "p3_inventory_sha256": record["inputs"]["p3_inventory"]["sha256"], "p3_verifier_sha256": record["p3_verifier_sha256"]}},
             "effective_launch": {"command": {"argv": record["command_argv"], "cwd": record["cwd"], "interpreter": command, "toml": record["toml"], "trailing_overrides": record["overrides"]},
                                   "environment": {**record["environment"]["contract"], "effective": record["environment"]["effective"]}, "world_size": record["budget"]["world_size"], "budget": record["budget"],
@@ -186,6 +211,7 @@ def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, 
 
 def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path, exporter_root: Path, output_dir: Path, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
     """Future approved path: two D005-bound fresh children, envelope assembly, then verifier."""
+    production_root, evidence_root, exporter_root = validate_root_isolation(production_root, evidence_root, exporter_root)
     requests = build_pair_requests(recurrent, ttt, production_root=production_root, evidence_root=evidence_root)
     if output_dir.exists():
         raise FileExistsError(f"canonical P5 output already exists: {output_dir}")
