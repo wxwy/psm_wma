@@ -10,8 +10,12 @@ from pathlib import Path
 from unittest.mock import patch
 
 import tools.g0.verify_r09_b2_p4_d005 as p4
-from tools.g0.r09_b2_interpreter_provenance import lexical_interpreter
-from tools.g0.r09_b2_interpreter_provenance import analyse_python_contract
+from tools.g0.r09_b2_interpreter_provenance import (
+    FROZEN_STDLIB_LOADER,
+    LOADER_FLAGS,
+    frozen_regular_python_manifest,
+    lexical_interpreter,
+)
 from tools.g0.write_r09_b2_p4_d005 import finalize, sha256_json
 
 
@@ -36,10 +40,12 @@ class P4D005Test(unittest.TestCase):
         subprocess.run(["git", "-C", str(framework), "add", "."], check=True)
         subprocess.run(["git", "-C", str(framework), "commit", "-qm", "sub"], check=True)
         (root / "README").write_text("root")
+        bootstrap = root / p4.BOOTSTRAP_RELATIVE
+        bootstrap.parent.mkdir(parents=True)
+        bootstrap.write_text("# fixture bootstrap\n")
         for name in ("base", "edge", "vae", "libero", "cache"):
             (root / "assets" / name).mkdir(parents=True); (root / "assets" / name / "data").write_text(name)
-        (root / "staging").mkdir(); (root / "staging" / "native.py").write_text("import ctypes\nctypes.CDLL('fixed.so')\n")
-        subprocess.run(["git", "-C", str(root), "add", "README", "assets", "staging"], check=True)
+        subprocess.run(["git", "-C", str(root), "add", "README", "assets", "tools"], check=True)
         subprocess.run(["git", "-C", str(root), "update-index", "--add", "--cacheinfo", f"160000,{self._git(framework, 'rev-parse', 'HEAD')},cosmos-framework"], check=True)
         subprocess.run(["git", "-C", str(root), "commit", "-qm", "root"], check=True)
 
@@ -72,11 +78,21 @@ class P4D005Test(unittest.TestCase):
         keys = p4.EXPECTED_TTT_SELECTOR_KEYS if backend == "ttt_fast_weight" else p4.EXPECTED_RECURRENT_SELECTOR_KEYS
         inputs = {"p1_manifest": {"path": refs["P1_HEADER_RELATIVE"], "sha256": refs["P1_HEADER_SHA256"], "records_sha256": p1["records_sha256"], "record_count": p4.PRODUCTION_P1["record_count"]}, "p3_inventory": {"path": refs["P3_ARTIFACT_RELATIVE"], "sha256": refs["P3_ARTIFACT_SHA256"], "backend_contract": {"selector_keys": list(keys), "optimizer_membership_sha256": sha256_json(sorted(f"net.{key}.weight" for key in keys))}}, "external_assets": assets}
         interpreter = lexical_interpreter(python)
-        command = {"cwd": str(framework.resolve()), "interpreter": interpreter, "argv": [interpreter["path"], "-m", "torch.distributed.run", "--standalone", "--nnodes=1", "--nproc-per-node=1", "-m", "cosmos_framework.scripts.train", f"--sft-toml={p4.TOML_RELATIVE}", "trainer.max_iter=100", "trainer.save_zero_checkpoint=true"], "executable": False, "launcher": {"kind": "python_module", "module": "torch.distributed.run"}}
+        agent = [interpreter["path"], *LOADER_FLAGS, FROZEN_STDLIB_LOADER,
+                 "<request_abs>", "<request_sha256>", "<root_abs>", p4.BOOTSTRAP_RELATIVE,
+                 "<bootstrap_sha256>"]
+        worker = [interpreter["path"], "-m", "torch.distributed.run", "--standalone",
+                  "--nnodes=1", "--nproc-per-node=1", "--no-python", *agent]
+        template = {"bootstrap": {"relative_path": p4.BOOTSTRAP_RELATIVE, "sha256": p4.sha256_file(root / p4.BOOTSTRAP_RELATIVE)},
+                    "request_defaults": {"toml": p4.TOML_RELATIVE, "overrides": list(p4.FROZEN_OVERRIDES)},
+                    "request_schema_keys": list(p4.REQUEST_SCHEMA_KEYS),
+                    "payload_manifest": frozen_regular_python_manifest(root, {"root": root, "cosmos_framework": framework}),
+                    "agent_loader_argv_template": agent,
+                    "worker_torchrun_argv_template": worker}
+        command = {"cwd": str(framework.resolve()), "interpreter": interpreter, "argv_template": ["<agent_loader_argv_template>"], "executable": False, "launcher": {"kind": "verified_lexical_loader_template"}}
         command["sha256"] = sha256_json(command)
-        identity = {"project": "cosmos3_action_libero", "group": "action_sft", "name": "edge_libero_4in1"}; run_root = output / identity["project"] / identity["group"] / identity["name"]
-        native = analyse_python_contract(root / "staging", ["native.py"]); native.update({"staging_root": str(root / "staging"), "python_payloads": ["native.py"], "closure_objects": [], "elf_loader_records": []})
-        return finalize({"schema_version": p4.SCHEMA, "status": "FROZEN_NOT_EXECUTED", "backend": backend, "source": source, "command": command, "environment": env, "budget": p4.PRODUCTION_BUDGET, "inputs": inputs, "outputs": {"job_identity": identity, "run_root": str(run_root), "checkpoint_step0": str(run_root / "checkpoints/iter_000000000"), "checkpoint_step100": str(run_root / "checkpoints/iter_000000100"), "stdout_log": str(run_root / "stdout.log"), "capture_dir": str(run_root / "capture"), "fresh": True}, "native_load_contract": native})
+        identity = {"project": "cosmos3_action_libero", "group": "action_sft", "name": "edge_libero_4in1"}
+        return finalize({"schema_version": p4.SCHEMA, "status": "FROZEN_NOT_EXECUTED", "backend": backend, "source": source, "command": command, "environment": env, "budget": p4.PRODUCTION_BUDGET, "inputs": inputs, "outputs": {"job_identity": identity, "fresh": True}, "interpreter_provenance_template": template})
 
     def _pair(self, root: Path):
         self._setup(root); p1, refs = self._frozen(root)
@@ -98,13 +114,13 @@ class P4D005Test(unittest.TestCase):
             forged["recurrent"]["inventory"]["selector"] = {"backend": "recurrent", "keys_to_select": ["fake"]}; path.write_text(json.dumps(forged)); refs["P3_ARTIFACT_SHA256"] = p4._sha256_file(path)
             with self._patched(refs): self.assertEqual(p4.verify_pair(recurrent, ttt, root)["status"], "FAIL")
 
-    def test_rejects_budget_env_and_argv_mutations(self) -> None:
+    def test_rejects_budget_env_and_template_mutations(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); recurrent, ttt, refs = self._pair(root); recurrent["budget"]["micro_batch_size"] = 1
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
             root = Path(tmp) / "two"; recurrent, ttt, refs = self._pair(root); recurrent["environment"]["unset"] = sorted(p4.RANK_ENV); recurrent["environment"]["sha256"] = sha256_json({key: recurrent["environment"][key] for key in ("set", "unset", "inherit_allowlist")})
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
-            root = Path(tmp) / "three"; recurrent, ttt, refs = self._pair(root); recurrent["command"]["argv"].append("trainer.max_iter=5000")
+            root = Path(tmp) / "three"; recurrent, ttt, refs = self._pair(root); recurrent["interpreter_provenance_template"]["agent_loader_argv_template"][1] = "-m"
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
             root = Path(tmp) / "four"; recurrent, ttt, refs = self._pair(root); recurrent["environment"]["unset"].remove("PSM_LOCAL_DUMMY_DIM"); recurrent["environment"]["sha256"] = sha256_json({key: recurrent["environment"][key] for key in ("set", "unset", "inherit_allowlist")})
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
@@ -115,6 +131,22 @@ class P4D005Test(unittest.TestCase):
             path = root / refs["P1_HEADER_RELATIVE"]; bad = json.loads(path.read_text()); bad["record_count"] = 1; path.write_text(json.dumps(bad)); refs["P1_HEADER_SHA256"] = p4._sha256_file(path)
             with self._patched(refs): self.assertEqual(p4.verify_pair(recurrent, ttt, root)["status"], "FAIL")
             root = Path(tmp) / "two"; recurrent, ttt, refs = self._pair(root); recurrent["outputs"]["job_identity"]["name"] = "forged"
+            with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
+
+    def test_rejects_legacy_direct_launch_and_runtime_output_root(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); recurrent, ttt, refs = self._pair(root)
+            recurrent["command"]["argv_template"] = [recurrent["command"]["interpreter"]["path"], "-m", "cosmos_framework.scripts.train"]
+            with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
+            root = Path(tmp) / "two"; recurrent, ttt, refs = self._pair(root)
+            recurrent["outputs"]["run_root"] = str(root / "forbidden-runtime-root")
+            with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
+
+    def test_rejects_payload_manifest_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); recurrent, ttt, refs = self._pair(root)
+            payload_roots = recurrent["interpreter_provenance_template"]["payload_manifest"]["roots"]
+            next(item for item in payload_roots if item["files"])["files"][0]["sha256"] = "0" * 64
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
 
     def test_rejects_live_gitlink_drift(self) -> None:

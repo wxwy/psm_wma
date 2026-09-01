@@ -9,7 +9,7 @@ import subprocess
 from pathlib import Path
 
 
-SCHEMA = "r09_b2_p4_launch_d005_v3"
+SCHEMA = "r09_b2_p4_launch_d005_v4"
 TOML_RELATIVE = "examples/toml/sft_config/action_policy_libero_edge_all.toml"
 
 

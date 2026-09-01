@@ -82,6 +82,36 @@ def full_git_clean(root: Path) -> bool:
     return completed.returncode == 0 and completed.stdout == ""
 
 
+def frozen_regular_python_manifest(root: Path, source_roots: Mapping[str, Path]) -> dict[str, object]:
+    """Hash the complete tracked Python payload universe for static D005.
+
+    The later execution preflight must materialize exactly these regular files;
+    this function intentionally refuses untracked or modified source roots.
+    """
+    result: list[dict[str, object]] = []
+    for name, source_root in sorted(source_roots.items()):
+        source_root = source_root.resolve()
+        if not full_git_clean(source_root):
+            raise ProvenanceError(f"source root is not fully clean: {name}")
+        completed = subprocess.run(
+            ["git", "-C", str(source_root), "ls-files", "-z", "--", "*.py"],
+            check=False,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+        )
+        if completed.returncode:
+            raise ProvenanceError(f"cannot enumerate tracked Python payloads: {name}")
+        files = [Path(item.decode("utf-8")) for item in completed.stdout.split(b"\0") if item]
+        rows = []
+        for relative in sorted(files):
+            path = (source_root / relative).resolve()
+            if not path.is_file() or not path.is_relative_to(source_root):
+                raise ProvenanceError(f"tracked Python payload is missing or escapes source root: {name}/{relative}")
+            rows.append({"relative_path": relative.as_posix(), "sha256": sha256_file(path)})
+        result.append({"name": name, "relative_path": str(source_root.relative_to(root.resolve())) if source_root != root.resolve() else ".", "files": rows})
+    return {"schema_version": "r09_b2_p4_python_payload_manifest_v1", "roots": result}
+
+
 def verified_bootstrap_bytes(root: Path, bootstrap_relative_path: str, expected_sha256: str) -> bytes:
     """Bind bootstrap Git bytes and current file bytes before the loader runs."""
     if not isinstance(expected_sha256, str) or len(expected_sha256) != 64:

@@ -9,8 +9,15 @@ import subprocess
 import tomllib
 from pathlib import Path
 
-from tools.g0.write_r09_b2_p4_d005 import SCHEMA, TOML_RELATIVE, derive_job_path, sha256_json
-from tools.g0.r09_b2_interpreter_provenance import full_git_clean, lexical_interpreter, verify_native_load_contract
+from tools.g0.write_r09_b2_p4_d005 import SCHEMA, TOML_RELATIVE, sha256_json
+from tools.g0.r09_b2_interpreter_provenance import (
+    FROZEN_STDLIB_LOADER,
+    LOADER_FLAGS,
+    full_git_clean,
+    frozen_regular_python_manifest,
+    lexical_interpreter,
+    sha256_file,
+)
 from tools.g0.verify_r09_b2_p3_gpu_inventory import (
     EXPECTED_RECURRENT_SELECTOR_KEYS,
     EXPECTED_TTT_SELECTOR_KEYS,
@@ -45,7 +52,14 @@ REQUIRED_ENV = {
     "CUDA_VISIBLE_DEVICES": "0",
 }
 FROZEN_OVERRIDES = ("trainer.max_iter=100", "trainer.save_zero_checkpoint=true")
-TOP_LEVEL_KEYS = {"schema_version", "status", "backend", "source", "command", "environment", "budget", "inputs", "outputs", "native_load_contract", "d005_sha256"}
+BOOTSTRAP_RELATIVE = "tools/g0/export_r09_b2_p5_resolved_config.py"
+REQUEST_SCHEMA_KEYS = (
+    "backend", "root", "toml", "overrides", "command_argv", "cwd", "interpreter",
+    "environment", "d005_sha256", "p4_record_sha256", "p4_verification_sha256",
+    "p3_verifier_sha256", "source", "budget", "inputs", "outputs",
+)
+REQUEST_PLACEHOLDERS = ("<request_abs>", "<request_sha256>", "<root_abs>", "<bootstrap_sha256>")
+TOP_LEVEL_KEYS = {"schema_version", "status", "backend", "source", "command", "environment", "budget", "inputs", "outputs", "interpreter_provenance_template", "d005_sha256"}
 
 
 def _sha256_file(path: Path) -> str:
@@ -133,17 +147,33 @@ def _load_frozen_inputs(root: Path) -> tuple[dict[str, object], dict[str, object
     return p1, p3
 
 
-def _argv_ok(record: dict[str, object], framework: Path) -> bool:
+def _template_ok(record: dict[str, object], root: Path, framework: Path) -> bool:
     command = record.get("command", {})
     try:
         interpreter = lexical_interpreter(framework / ".venv/bin/python")
     except (OSError, ValueError):
         return False
-    argv = command.get("argv")
-    if not isinstance(argv, list):
+    template = record.get("interpreter_provenance_template")
+    bootstrap = root / BOOTSTRAP_RELATIVE
+    if not bootstrap.is_file():
         return False
-    expected = [interpreter["path"], "-m", "torch.distributed.run", "--standalone", "--nnodes=1", "--nproc-per-node=1", "-m", "cosmos_framework.scripts.train", f"--sft-toml={TOML_RELATIVE}", *FROZEN_OVERRIDES]
-    return argv == expected and command.get("interpreter") == interpreter and command.get("launcher") == {"kind": "python_module", "module": "torch.distributed.run"}
+    bootstrap_sha = sha256_file(bootstrap)
+    agent = [interpreter["path"], *LOADER_FLAGS, FROZEN_STDLIB_LOADER,
+             "<request_abs>", "<request_sha256>", "<root_abs>", BOOTSTRAP_RELATIVE,
+             "<bootstrap_sha256>"]
+    worker = [interpreter["path"], "-m", "torch.distributed.run", "--standalone",
+              "--nnodes=1", "--nproc-per-node=1", "--no-python", *agent]
+    expected = {
+        "bootstrap": {"relative_path": BOOTSTRAP_RELATIVE, "sha256": bootstrap_sha},
+        "request_defaults": {"toml": TOML_RELATIVE, "overrides": list(FROZEN_OVERRIDES)},
+        "request_schema_keys": list(REQUEST_SCHEMA_KEYS),
+        "payload_manifest": frozen_regular_python_manifest(root, {"root": root, "cosmos_framework": framework}),
+        "agent_loader_argv_template": agent,
+        "worker_torchrun_argv_template": worker,
+    }
+    return (template == expected and command.get("interpreter") == interpreter
+            and command.get("launcher") == {"kind": "verified_lexical_loader_template"}
+            and command.get("argv_template") == ["<agent_loader_argv_template>"])
 
 
 def _allowed_roots(root: Path) -> tuple[Path, ...]:
@@ -204,23 +234,11 @@ def _env_assets_bound(record: dict[str, object], root: Path) -> bool:
         return False
 
 
-def _output_ok(record: dict[str, object], root: Path, job_identity: dict[str, str]) -> bool:
-    outputs, env = record.get("outputs", {}), record.get("environment", {})
-    if not isinstance(outputs, dict) or not isinstance(env, dict):
+def _output_ok(record: dict[str, object], job_identity: dict[str, str]) -> bool:
+    outputs = record.get("outputs", {})
+    if not isinstance(outputs, dict):
         return False
-    expected = Path(derive_job_path(env["set"]["IMAGINAIRE_OUTPUT_ROOT"], job_identity)).resolve()
-    required = {"job_identity", "run_root", "checkpoint_step0", "checkpoint_step100", "stdout_log", "capture_dir", "fresh"}
-    expected_children = {"checkpoint_step0": expected / "checkpoints/iter_000000000", "checkpoint_step100": expected / "checkpoints/iter_000000100", "stdout_log": expected / "stdout.log", "capture_dir": expected / "capture"}
-    if (not any(expected.is_relative_to(base) for base in _allowed_roots(root)) or set(outputs) != required
-            or outputs.get("job_identity") != job_identity or outputs.get("run_root") != str(expected)
-            or outputs.get("fresh") is not True
-            or any(outputs[key] != str(value) for key, value in expected_children.items())):
-        return False
-    try:
-        tracked = subprocess.run(["git", "-C", str(root), "ls-files", "--error-unmatch", str(expected.relative_to(root.resolve()))], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
-    except ValueError:
-        tracked = False
-    return not expected.exists() and not tracked
+    return set(outputs) == {"job_identity", "fresh"} and outputs.get("job_identity") == job_identity and outputs.get("fresh") is True
 
 
 def _budget_ok(record: dict[str, object]) -> bool:
@@ -248,11 +266,11 @@ def _schema_structure_ok(record: dict[str, object]) -> bool:
     outputs = record.get("outputs")
     return (set(record) == TOP_LEVEL_KEYS and isinstance(record.get("source"), dict)
             and set(record["source"]) == {"root_revision", "submodule_revision", "gitlink_revision"}
-            and isinstance(command, dict) and set(command) == {"cwd", "interpreter", "argv", "executable", "launcher", "sha256"}
+            and isinstance(command, dict) and set(command) == {"cwd", "interpreter", "argv_template", "executable", "launcher", "sha256"}
             and isinstance(environment, dict) and set(environment) == {"set", "unset", "inherit_allowlist", "sha256"}
             and isinstance(inputs, dict) and set(inputs) == {"p1_manifest", "p3_inventory", "external_assets"}
-            and isinstance(outputs, dict) and set(outputs) == {"job_identity", "run_root", "checkpoint_step0", "checkpoint_step100", "stdout_log", "capture_dir", "fresh"}
-            and isinstance(record.get("native_load_contract"), dict))
+            and isinstance(outputs, dict) and set(outputs) == {"job_identity", "fresh"}
+            and isinstance(record.get("interpreter_provenance_template"), dict))
 
 
 def _check(record: dict[str, object], root: Path, p1: dict[str, object], p3: dict[str, object], backend: str) -> dict[str, bool]:
@@ -261,8 +279,8 @@ def _check(record: dict[str, object], root: Path, p1: dict[str, object], p3: dic
     job_identity = _recipe_contract(root)
     return {
         "schema": _schema_structure_ok(record) and record.get("schema_version") == SCHEMA and record.get("status") == "FROZEN_NOT_EXECUTED" and record.get("backend") == backend, "non_executable": command.get("executable") is False,
-        "source": _source_ok(record.get("source"), root), "cwd": command.get("cwd") == str(framework), "argv": _argv_ok(record, framework),
-        "environment": _env_ok(record, backend, root), "inputs": _inputs_ok(record, root, p1, p3, backend), "env_assets_bound": _env_assets_bound(record, root) if isinstance(record.get("inputs"), dict) and isinstance(record.get("environment"), dict) else False, "native_load_contract": verify_native_load_contract(record.get("native_load_contract", {})), "outputs": job_identity is not None and _output_ok(record, root, job_identity), "budget": _budget_ok(record),
+        "source": _source_ok(record.get("source"), root), "cwd": command.get("cwd") == str(framework), "interpreter_template": _template_ok(record, root, framework),
+        "environment": _env_ok(record, backend, root), "inputs": _inputs_ok(record, root, p1, p3, backend), "env_assets_bound": _env_assets_bound(record, root) if isinstance(record.get("inputs"), dict) and isinstance(record.get("environment"), dict) else False, "outputs": job_identity is not None and _output_ok(record, job_identity), "budget": _budget_ok(record),
         "command_digest": command.get("sha256") == sha256_json({key: value for key, value in command.items() if key != "sha256"}),
         "record_digest": record.get("d005_sha256") == sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}),
     }
@@ -284,8 +302,7 @@ def verify_pair(recurrent: dict[str, object], ttt: dict[str, object], root: Path
         "p3_sha256": recurrent.get("inputs", {}).get("p3_inventory", {}).get("sha256") == ttt.get("inputs", {}).get("p3_inventory", {}).get("sha256"),
         "external_assets": recurrent.get("inputs", {}).get("external_assets") == ttt.get("inputs", {}).get("external_assets"),
     }
-    checks["distinct_outputs"] = recurrent.get("outputs", {}).get("run_root") != ttt.get("outputs", {}).get("run_root")
-    ok = all(all(values.values()) for values in checks.values() if isinstance(values, dict)) and checks["distinct_outputs"]
+    ok = all(all(values.values()) for values in checks.values() if isinstance(values, dict))
     return {"schema_version": "r09_b2_p4_d005_verifier_v2", "status": "PASS" if ok else "FAIL", "checks": checks}
 
 
