@@ -3689,3 +3689,11 @@ Detailed review:
 - 根因：原 P1 builder 每条 record 都 `torch.load` 整个 episode cache；1,693 个文件平均 32.2 MiB，构建 `100×16×128=204800` 条时会重复反序列化同一 episode，首次运行 14 分钟无产物后已安全停止。
 - 最小修复：`cache_exists` 增加每 suite/episode 的窗口 key set 缓存；每条 record 仍逐项检查 `start_frame` 存在，缺 cache 仍 fail，但每 episode 文件最多读取一次。新增 mock 回归证明同 episode 的 2/3/4 三个查询只 load 一次，缺窗口返回 false。CPU `py_compile`、unittest 1/1、`git diff --check` PASS。
 - 拟执行（获准后）：CPU-only、`CUDA_VISIBLE_DEVICES=`，从现有 LIBERO 元数据与现成 verified latent cache 生成 `artifacts/g0/r09/b2/p1_production_manifest_100x16x128/{header.json,records.jsonl,suites/*}`，再跑现有 P1 verifier；不读取 MP4/VAE/模型/权重，不执行 torchrun、训练、评测或推理。
+
+### Awaiting review — R09-B2 P1 production-manifest clean-worktree execution adjustment
+
+请求 verdict：`APPROVE_P1_PRODUCTION_MANIFEST_CLEAN_WORKTREE` 或 `REQUEST_CHANGES`。
+
+- 已获批准的 source 为根 `4177e83` / Gitlink `21d064f`，但执行前 hard precheck 发现主工作区含用户训练与评测的未跟踪产物；不得删除或忽略，也不满足 review 所要求的 clean worktree。
+- 请求仅把同一 CPU-only builder/verifier 放入独立、只读 source checkout 的 clean worktree（固定 root commit/Gitlink；不改主工作区），输出仍为该 clean worktree 下的 fresh `artifacts/g0/r09/b2/p1_production_manifest_100x16x128/`。输入 root/cache、`CUDA_VISIBLE_DEVICES=`、`100×16×128`、seed=42、禁止 MP4/VAE/model/GPU/torchrun/训练范围均不变。
+- 该调整仅解决 provenance clean 条件；成功 artifact 的 source 记录将是 clean worktree 的固定 revision，后续再以 SHA/内容回传主仓库。请确认这种独立 worktree 是否可替代主路径 `/disk/rl/psm_wma`。
