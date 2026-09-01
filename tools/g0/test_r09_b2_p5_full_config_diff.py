@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 
 from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, canonicalize, parse_d005_command, sanitized_environment, validate_production_root
-from tools.g0.verify_r09_b2_p5_full_config_diff import _expected, _exporter_source, verify_pair
+from tools.g0.verify_r09_b2_p5_full_config_diff import P4_DIR, _expected, _exporter_source, _file_sha, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256, sha256_json
 
 
@@ -25,7 +25,7 @@ class P5Test(unittest.TestCase):
         def envelope(backend):
             record = records[backend]; p3 = record["inputs"]["p3_inventory"]
             return {"schema_version": "r09_b2_p5_full_config_diff_v2", "backend": backend,
-                    "provenance": {"production_source": record["source"], "exporter_source": _exporter_source(root), "inputs": {"p4_record_sha256": sha256_json({k:v for k,v in record.items() if k != "d005_sha256"}), "p3_inventory_path": p3["path"], "p3_inventory_sha256": p3["sha256"], "p3_verifier_sha256": P3_VERIFIER_SHA256}},
+                    "provenance": {"production_source": record["source"], "exporter_source": _exporter_source(root), "inputs": {"p4_record_sha256": sha256_json({k:v for k,v in record.items() if k != "d005_sha256"}), "p4_verification_sha256": _file_sha(root / P4_DIR / "verification.json"), "p3_inventory_path": p3["path"], "p3_inventory_sha256": p3["sha256"], "p3_verifier_sha256": P3_VERIFIER_SHA256}},
                     "effective_launch": {"command": {"argv": record["command"]["argv"], "cwd": record["command"]["cwd"], "interpreter": record["command"]["interpreter"], "toml": "examples/toml/sft_config/action_policy_libero_edge_all.toml", "trailing_overrides": ["trainer.max_iter=100", "trainer.save_zero_checkpoint=true"]}, "environment": {"set": record["environment"]["set"], "unset": record["environment"]["unset"], "inherit_allowlist": record["environment"]["inherit_allowlist"], "effective": record["environment"]["set"]}, "world_size": record["budget"]["world_size"], "budget": record["budget"], "p1_p3_d005_bindings": {"p1_manifest": record["inputs"]["p1_manifest"], "p3_inventory": p3}, "derived_job_path_local": record["outputs"]["run_root"]},
                     "resolved_config": {"model": {"config": {"local_history_backend": "ttt_fast_weight" if backend == "ttt_fast_weight" else "recurrent"}}, "optimizer": {"keys_to_select": contracts[backend]["selector_keys"]}}}
         return root, envelope("recurrent"), envelope("ttt_fast_weight"), contracts

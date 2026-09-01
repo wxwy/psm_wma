@@ -103,7 +103,7 @@ def _exporter_source(exporter_root: Path) -> dict[str, Any]:
     return {"root_revision": subprocess.check_output(["git", "-C", str(exporter_root), "rev-parse", "HEAD"], text=True).strip(), "tool_sha256": {name: _file_sha(exporter_root / name) for name in files}}
 
 
-def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Mapping[str, Any], exporter_source: Mapping[str, Any]) -> bool:
+def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Mapping[str, Any], exporter_source: Mapping[str, Any], p4_verification_sha256: str) -> bool:
     try:
         required = {"schema_version", "backend", "provenance", "effective_launch", "resolved_config"}
         provenance = envelope["provenance"]
@@ -127,7 +127,7 @@ def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Map
                 and launch["p1_p3_d005_bindings"]["p3_inventory"] == record["inputs"]["p3_inventory"]
                 and launch["derived_job_path_local"] == record["outputs"]["run_root"]
                 and inputs["p4_record_sha256"] == expected_digest and inputs["p3_inventory_path"] == record["inputs"]["p3_inventory"]["path"]
-                and inputs["p3_inventory_sha256"] == record["inputs"]["p3_inventory"]["sha256"] and inputs["p3_verifier_sha256"] == P3_VERIFIER_SHA256
+                and inputs["p3_inventory_sha256"] == record["inputs"]["p3_inventory"]["sha256"] and inputs["p3_verifier_sha256"] == P3_VERIFIER_SHA256 and inputs["p4_verification_sha256"] == p4_verification_sha256
                 and envelope["resolved_config"]["model"]["config"]["local_history_backend"] == ("ttt_fast_weight" if record["backend"] == "ttt_fast_weight" else "recurrent")
                 and envelope["resolved_config"]["optimizer"]["keys_to_select"] == contract["selector_keys"])
     except (KeyError, TypeError):
@@ -136,15 +136,16 @@ def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Map
 
 def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], evidence_root: Path, exporter_root: Path) -> dict[str, Any]:
     try:
-        records, contracts = _expected(evidence_root.resolve())
+        root = evidence_root.resolve(); records, contracts = _expected(root)
         exporter_source = _exporter_source(exporter_root.resolve())
+        p4_verification_sha256 = _file_sha(root / P4_DIR / "verification.json")
     except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
         return {"schema_version": SCHEMA + "_verifier", "status": "FAIL", "error": str(exc), "checks": {}}
     checks = {
         "schema": all(item.get("schema_version") == SCHEMA for item in (recurrent, ttt)),
         "backend": recurrent.get("backend") == "recurrent" and ttt.get("backend") == "ttt_fast_weight",
-        "recurrent_bound": _bound(recurrent, records["recurrent"], contracts["recurrent"], exporter_source),
-        "ttt_bound": _bound(ttt, records["ttt_fast_weight"], contracts["ttt_fast_weight"], exporter_source),
+        "recurrent_bound": _bound(recurrent, records["recurrent"], contracts["recurrent"], exporter_source, p4_verification_sha256),
+        "ttt_bound": _bound(ttt, records["ttt_fast_weight"], contracts["ttt_fast_weight"], exporter_source, p4_verification_sha256),
         "p3_common_and_contract": _p3_checks(recurrent, ttt, contracts),
     }
     differences = diff_paths(recurrent, ttt)
