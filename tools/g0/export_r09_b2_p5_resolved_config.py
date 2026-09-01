@@ -116,7 +116,9 @@ def _validate_source(source: object) -> Path:
         revision = _git_output(root, "rev-parse", "HEAD")
         gitlink = _git_output(root, "ls-tree", "HEAD", "cosmos-framework").split()[2]
         submodule_revision = _git_output(framework, "rev-parse", "HEAD")
-        blob = _git_output(root, "rev-parse", f"HEAD:{relative.as_posix()}")
+        blob = hashlib.sha256(subprocess.check_output(
+            ["git", "-C", str(root), "show", f"HEAD:{relative.as_posix()}"],
+        )).hexdigest()
     except (subprocess.CalledProcessError, IndexError) as exc:
         raise ValueError("P4-v4 production Git identity is unreadable") from exc
     current = hashlib.sha256((root / relative).read_bytes()).hexdigest()
@@ -126,7 +128,41 @@ def _validate_source(source: object) -> Path:
     return root
 
 
-def _validate_request_identity(request: Mapping[str, Any], outcome: Mapping[str, Any]) -> None:
+def _validate_tool_identity(value: object, source_root: Path) -> None:
+    if not isinstance(value, Mapping) or set(value) != {"root_revision", "tool_path", "git_blob_sha256", "current_sha256", "sha256"} or not _self_sha(value, "sha256"):
+        raise ValueError("P4-v4 tool identity schema differs")
+    relative = value["tool_path"]
+    if not isinstance(relative, str) or Path(relative).is_absolute() or ".." in Path(relative).parts:
+        raise ValueError("P4-v4 tool identity path escapes source root")
+    path = source_root / relative
+    if path.is_symlink() or not path.is_file():
+        raise ValueError("P4-v4 tool identity path is not a regular source file")
+    try:
+        revision = _git_output(source_root, "rev-parse", "HEAD")
+        blob = hashlib.sha256(subprocess.check_output(
+            ["git", "-C", str(source_root), "show", f"HEAD:{Path(relative).as_posix()}"],
+        )).hexdigest()
+    except subprocess.CalledProcessError as exc:
+        raise ValueError("P4-v4 tool identity Git blob is unreadable") from exc
+    current = hashlib.sha256(path.read_bytes()).hexdigest()
+    if (value["root_revision"] != revision or value["git_blob_sha256"] != blob
+            or value["current_sha256"] != current or blob != current):
+        raise ValueError("P4-v4 tool identity Git/current binding differs")
+
+
+def _validate_native_closure(closure: object) -> None:
+    keys = {"path", "sha256", "elf_interpreter", "needed", "rpath", "runpath", "resolved_by"}
+    if (not isinstance(closure, list) or closure != sorted(closure, key=lambda item: item.get("path", "") if isinstance(item, Mapping) else "")
+            or not all(isinstance(item, Mapping) and set(item) == keys and isinstance(item["path"], str)
+                           and Path(item["path"]).is_absolute() and isinstance(item["sha256"], str)
+                           and len(item["sha256"]) == 64 and (isinstance(item["elf_interpreter"], str) or item["elf_interpreter"] is None)
+                           and all(isinstance(value, str) for value in item["needed"] + item["rpath"] + item["runpath"])
+                           and isinstance(item["resolved_by"], str)
+                           for item in closure)):
+        raise ValueError("P4-v4 native closure schema differs")
+
+
+def _validate_request_identity(request: Mapping[str, Any], outcome: Mapping[str, Any], source_root: Path) -> None:
     defaults = request.get("request_defaults")
     interpreter = request.get("interpreter")
     loader = request.get("loader_argv")
@@ -138,10 +174,9 @@ def _validate_request_identity(request: Mapping[str, Any], outcome: Mapping[str,
             or not _self_sha(interpreter, "identity_sha256")
             or not isinstance(loader, Mapping) or set(loader) != {"argv", "request_token_index", "loader_literal_sha256", "bootstrap_git_blob_sha256", "bootstrap_current_sha256"}
             or not isinstance(loader["argv"], list) or not all(isinstance(item, str) for item in loader["argv"])
-            or not isinstance(producer, Mapping) or set(producer) != {"root_revision", "tool_path", "git_blob_sha256", "current_sha256", "sha256"}
-            or not _self_sha(producer, "sha256")
             or any(request[key] != outcome[key] for key in ("production_source", "request_defaults", "interpreter", "loader_argv", "effective_environment", "native_loader_environment", "payload_manifest", "producer"))):
         raise ValueError("P4-v4 request/result identity schema differs")
+    _validate_tool_identity(producer, source_root)
 
 
 def _validate_roster(run_root: Path, staging_root: Path, token: str, roster: object, manifest: object) -> None:
@@ -154,7 +189,7 @@ def _validate_roster(run_root: Path, staging_root: Path, token: str, roster: obj
         raise ValueError("P4-v4 run-root roster entries are malformed")
     manifest_entries = manifest["entries"]
     if (not isinstance(manifest_entries, list)
-            or manifest_entries != sorted(manifest_entries, key=lambda item: item.get("path", ""))
+            or manifest_entries != sorted(manifest_entries, key=lambda item: item.get("path", "") if isinstance(item, Mapping) else "")
             or not all(isinstance(item, Mapping) and set(item) == {"path", "type", "sha256"}
                            and item["type"] == "regular" and isinstance(item["path"], str)
                            and not Path(item["path"]).is_absolute() and ".." not in Path(item["path"]).parts
@@ -236,8 +271,8 @@ def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
                 or outcome.get("request_sha256") != request_sha or verification.get("request_sha256") != request_sha
                 or verification.get("result_sha256") != outcome_sha):
             raise ValueError("P4-v4 preflight schema, backend, status, or SHA chain differs")
-        _validate_request_identity(request, outcome)
         source_root = _validate_source(request["production_source"])
+        _validate_request_identity(request, outcome, source_root)
         run_root = _path_identity(request["p4_run"].get("identity") if isinstance(request["p4_run"], Mapping) else None, kind="run_root")
         staging = request["p4_staging"]
         if not isinstance(staging, Mapping) or set(staging) != {
@@ -260,6 +295,12 @@ def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
         _validate_roster(run_root, staging_root, token, outcome["pre_p5_run_root_roster"], request["payload_manifest"])
         if request["p4_run"]["roster_sha256"] != outcome["pre_p5_run_root_roster"]["sha256"]:
             raise ValueError("P4-v4 run-root roster SHA differs")
+        _validate_native_closure(outcome["native_closure"])
+        checks = ["request_schema", "result_schema", "paths", "source", "staging_manifest", "staging_readonly", "runtime_sys_path", "environment", "native_closure", "run_root_roster", "producer"]
+        if (verification["checks"] != [{"name": name, "passed": True} for name in checks]
+                or not _self_sha(verification, "verification_sha256")):
+            raise ValueError("P4-v4 verification checks or SHA differs")
+        _validate_tool_identity(verification["verifier"], source_root)
         result[backend] = {"request": request, "result": outcome, "verification": verification}
     for backend in P4_V4_BACKENDS:
         p5_effective_environment(result["recurrent"]["request"], result["ttt_fast_weight"]["request"], backend=backend)

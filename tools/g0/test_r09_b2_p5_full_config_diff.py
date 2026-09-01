@@ -32,7 +32,9 @@ class P5Test(unittest.TestCase):
         subprocess.run(["git", "-C", str(framework), "add", "module.py"], check=True)
         subprocess.run(["git", "-C", str(framework), "commit", "-qm", "fixture"], check=True)
         (source / "recipe.toml").write_text("x = 1\n")
-        subprocess.run(["git", "-C", str(source), "add", "recipe.toml", "cosmos-framework"], check=True)
+        (source / "p4_producer.py").write_text("producer = True\n")
+        (source / "p4_verifier.py").write_text("verifier = True\n")
+        subprocess.run(["git", "-C", str(source), "add", "recipe.toml", "p4_producer.py", "p4_verifier.py", "cosmos-framework"], check=True)
         subprocess.run(["git", "-C", str(source), "commit", "-qm", "fixture"], check=True)
         run = root / "run"; run.mkdir(); token = "token"
         staging = run / "import_staging" / token; staging.mkdir(parents=True)
@@ -44,7 +46,7 @@ class P5Test(unittest.TestCase):
             core = {"root": str(path), "resolved_root": str(path), "kind": kind}
             return {**core, "identity_sha256": sha256_json(core)}
 
-        toml = {"path": "recipe.toml", "git_blob_sha256": self._git(source, "rev-parse", "HEAD:recipe.toml"), "current_sha256": hashlib.sha256((source / "recipe.toml").read_bytes()).hexdigest()}
+        toml = {"path": "recipe.toml", "git_blob_sha256": hashlib.sha256(subprocess.check_output(["git", "-C", str(source), "show", "HEAD:recipe.toml"])).hexdigest(), "current_sha256": hashlib.sha256((source / "recipe.toml").read_bytes()).hexdigest()}
         source_record = {"identity": identity(source, "git_source"), "revision": self._git(source, "rev-parse", "HEAD"), "gitlink": self._git(source, "ls-tree", "HEAD", "cosmos-framework").split()[2], "submodule_revision": self._git(framework, "rev-parse", "HEAD"), "toml": toml}
         manifest_entries = [{"path": f"import_staging/{token}/payload.py", "type": "regular", "sha256": hashlib.sha256(payload.read_bytes()).hexdigest()}]
         manifest_core = {"entries": manifest_entries}; manifest = {**manifest_core, "sha256": sha256_json(manifest_core)}
@@ -65,13 +67,17 @@ class P5Test(unittest.TestCase):
             defaults = {**defaults_core, "canonical_sha256": sha256_json(defaults_core)}
             interpreter_core = {"lexical_launcher": "/bin/python", "base_executable": "/bin/python", "stdlib": "/lib", "lib_dynload": "/lib"}
             interpreter = {**interpreter_core, "identity_sha256": sha256_json(interpreter_core)}
-            producer_core = {"root_revision": "root", "tool_path": "tool", "git_blob_sha256": "blob", "current_sha256": "current"}
-            producer = {**producer_core, "sha256": sha256_json(producer_core)}
+            def tool_identity(path: str) -> dict[str, str]:
+                core = {"root_revision": self._git(source, "rev-parse", "HEAD"), "tool_path": path, "git_blob_sha256": hashlib.sha256(subprocess.check_output(["git", "-C", str(source), "show", f"HEAD:{path}"])).hexdigest(), "current_sha256": hashlib.sha256((source / path).read_bytes()).hexdigest()}
+                return {**core, "sha256": sha256_json(core)}
+            producer = tool_identity("p4_producer.py")
             request = {"schema_version": "v4", "backend": backend, "production_source": source_record, "p4_run": {"identity": identity(run, "run_root"), "run_token": token, "roster_sha256": roster["sha256"]}, "p4_staging": {"identity": identity(staging, "staging_root"), "relative_path": f"import_staging/{token}", "readonly": True, "manifest_sha256": manifest["sha256"], "payload_import_roots": [{"relative_root": ".", "subtree_manifest_sha256": manifest["sha256"]}], "runtime_sys_path": [str(staging)]}, "request_defaults": defaults, "interpreter": interpreter, "loader_argv": {"argv": ["/bin/python", "-I"], "request_token_index": 0, "loader_literal_sha256": "loader", "bootstrap_git_blob_sha256": "blob", "bootstrap_current_sha256": "current"}, "effective_environment": environment, "native_loader_environment": native, "payload_manifest": manifest, "producer": producer}
             request_sha = sha256_json(request)
             outcome = {**request, "status": "PASS", "request_sha256": request_sha, "native_closure": [], "pre_p5_run_root_roster": roster}
             outcome_sha = sha256_json(outcome)
-            verification = {"schema_version": "v4", "status": "PASS", "backend": backend, "request_sha256": request_sha, "result_sha256": outcome_sha, "checks": [], "verifier": {}, "verification_sha256": "verification"}
+            checks = [{"name": name, "passed": True} for name in ("request_schema", "result_schema", "paths", "source", "staging_manifest", "staging_readonly", "runtime_sys_path", "environment", "native_closure", "run_root_roster", "producer")]
+            verification_core = {"schema_version": "v4", "status": "PASS", "backend": backend, "request_sha256": request_sha, "result_sha256": outcome_sha, "checks": checks, "verifier": tool_identity("p4_verifier.py")}
+            verification = {**verification_core, "verification_sha256": sha256_json(verification_core)}
             (directory / "request.json").write_bytes(canonical_bytes(request))
             (directory / "result.json").write_bytes(canonical_bytes(outcome))
             (directory / "verification.json").write_bytes(canonical_bytes(verification))
