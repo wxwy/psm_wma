@@ -3494,3 +3494,13 @@ Detailed review:
 - 处理 ChatGPT=`501687a`/Kimi HIGH：新增 `_worker_command_argv()`，parent 的实际/D005 `command_argv` 固定为 `[sys.executable, absolute_collector_script, *original_args]`；child 因而不依赖 collector `.py` executable bit。保留先前 `OSError` BLOCKED aggregate/fail-stop 处理，不 chmod 脚本。
 - 永久回归 `test_nonexecutable_collector_script_launches_through_interpreter` 创建 mode `0644` 临时脚本，断言 argv 前两项为解释器与绝对脚本路径，并真实以解释器执行成功；launch-error、nonzero、zero-exit BLOCKED、PASS order 回归仍在。全套 11/11 PASS；`py_compile`、双仓 diff-check PASS；GPU=0MiB。
 - 首次 D005 保留，首次尝试仍为 terminal，未被重写；本次只申请经修正 argv 的一次新运行授权。runbook 其它路径、单卡、24 GiB、令牌和禁止范围完全不变；禁止自动重试、换卡、改参数、加 `--worker-backend`、网络/数据/VAE/checkpoint I/O/forward/backward/step 及 B2-T/P4/P5/训练评测推理。
+
+### 第二次 BLOCKED 的 worker CWD 整改复审
+
+请求 verdict：`APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 第二次尝试事实：解释器 argv 修复后，recurrent child 成功构造本地 processor、跳过 Vision tokenizer，但完整 model 前 production config 的 relative `Nemotron-2B-Dense-VL.json` 以 cwd=root 解析为不存在路径而 `FileNotFoundError`。TTT 未启动、GPU=0MiB；aggregate=`BLOCKED`，verifier=`BLOCKED`/`record_valid=true`，23 项 checks true。尝试 terminal，不重试。
+- 审核对象：根仓 `893fdabe2c3c31eebd5baa57a51fd6b56a9acecb`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 整改：新增 `_set_worker_production_cwd(root)`，仅在 isolated worker 的 `load_experiment_from_toml()` 前切换到 `root/cosmos-framework`；绝对 TOML/环境路径、parent cwd、D005/provenance 及 runbook shell 命令均不变。它恢复正常 framework 启动下的 relative model JSON 语义，不增加 I/O、GPU、dataloader/VAE/checkpoint/step 行为。
+- 永久回归 `test_worker_uses_framework_cwd_for_production_relative_paths` mock 断言仅选择存在的 framework root，并在缺失 root fail-closed；全套 12/12 PASS，`py_compile`、双仓 diff-check PASS。首次/第二次 artifact SHA 均复核未变、GPU=0MiB。
+- 本次仅申请经 CWD 修复后的第三次、唯一 GPU-only inventory 授权；单卡/24GiB/路径/令牌/禁止范围完全不变，禁止自动重试、换卡、改参数、加 `--worker-backend`、网络/数据/VAE/checkpoint I/O/forward/backward/step 与 B2-T/P4/P5/训练评测推理。
