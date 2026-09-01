@@ -4271,3 +4271,12 @@ print(json.dumps(result, sort_keys=True))
 - 实现：固定从 `artifacts/g0/r09/b2/p4_execution_preflight_v4/{recurrent,ttt_fast_weight}/request.json,result.json,verification.json` 发现 P4-v4 handoff；拒绝非 canonical JSON、symlink、schema/backend/status/request-result SHA chain 漂移；从空 mapping 构造 P5 environment，拒绝 rank、PYTHONPATH 与 native-loader variables。
 - 验证：`python -m py_compile ...` PASS；7 个不读取当前 evidence-root 的定向 CPU unittest PASS；`git diff --check` PASS。完整 P5 模块 9 项中 2 项在读取 evidence 前因既有 `cosmos-framework` 未跟踪 full-clean gate FAIL，未触碰遗留。
 - 禁止范围：不授权 P4 preflight/refreeze/staging、P5 export/compose、torchrun/GPU、模型数据训练评测推理、B2-T 或 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 f87c363f126071411c6cb842da05d328255e43a5；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务/Gate：`G0-R09-B2-P5-FULL-CONFIG-DIFF` v0.9 静态设计。请求 `APPROVE_TO_IMPLEMENT_P5_V09_STATIC_TOOLS` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `f87c363f126071411c6cb842da05d328255e43a5`，文档 `docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.9_2026-09-02.md`，子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 变更：仅澄清 v0.8 未在 v4 envelope exact schema 中承载的 P3 binding：固定 P3 artifact/PASS verifier bytes SHA、backend-specific selector keys 与 optimizer-membership SHA，pair verifier 独立重算，resolved selector 必精确相等。
+- 证据：`git diff --check` PASS；未执行项目代码、P4 preflight/refreeze/staging、P5 export/compose、torchrun、GPU、模型/数据/checkpoint、训练/评测/推理。
+- 允许范围：若批准，仅 root exporter/verifier 与标准库 CPU tests 实现；不授权任何实际执行、B2-T 或 Local Memory 训练。
