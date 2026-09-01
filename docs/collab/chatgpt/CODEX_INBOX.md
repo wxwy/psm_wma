@@ -3348,3 +3348,8 @@ Detailed review:
 
 - 当前根仓审核锚点：`54e6b03`（子模块/Gitlink 仍 `0af5d53`）。future PASS verifier 现要求 root/submodule tracked-clean、submodule HEAD==root Gitlink==artifact revision；冻结 source SHA 从相应 root/submodule commit blob 计算，并强制当前 filesystem bytes 等于 blob。D005 读取前以 resolved-path containment 拒绝软链接逃逸。
 - `py_compile`、BLOCKED 回归、D005 symlink escape direct negative（全 provenance checks false）与 `git diff --check` PASS。请求 `APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`，禁止 GPU/processor/model 构造。
+
+### GPT production recipe source-set 整改复审
+
+- 当前根仓审核锚点：`e4b19fa`（子模块/Gitlink 仍 `0af5d53`）。future PASS frozen source set 已从单独 TOML 扩展为 GPT 要求的 production config 最小闭包：TOML、`action_policy_libero_edge_all.py`、`edge_model_config.py` 与 `action_policy_libero_all_nano.py`；四者均使用 submodule commit blob SHA 与当前 bytes 一致性校验。
+- `py_compile`、四 source file 存在性、BLOCKED 回归和 `git diff --check` PASS。请求 `APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`；禁止 GPU/processor/model 构造。
