@@ -3781,3 +3781,13 @@ Detailed review:
 - 新设计：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.3_2026-09-01.md`。P3 common evidence 精确拆开：P3 path/SHA/PASS identity、P1/P4/common production source 必逐值一致；只有 `backend_contract.selector_keys`、`optimizer_membership_sha256` 和其直接派生的 resolved selector/config path 可不同。
 - verifier 必从共同 P3 artifact 的 verifier-owned recurrent/TTT contract 重算后端字段；path/SHA 改动、backend contract 缺/多字段或取另一侧/任意非 verifier-owned 值均 FAIL。永久 CPU fixture 使用实际 P4 shape：same P3 path/SHA + 不同正确 backend contract=PASS，其余上述 mutation=FAIL。
 - 允许范围仍仅 root `tools/g0/` 的 exporter/verifier/标准库 CPU fixture tests 实现。禁止 config export 执行、launch/Config.validate/instantiate、trainer/model/dataloader/optimizer/checkpoint/CUDA/torchrun/GPU/训练/评测/推理；实现批准后静态 export 仍须独立三方执行授权。
+
+### Awaiting review — R09-B2 P5 static exporter/verifier/CPU fixtures
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `30f3ce6d3a73e60c49a3feefea3e6252d168bf33`（实现=`b4bebff6039b05e74d591a06d3cd386875081bfd`，补充=`30f3ce6`）；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。设计为 v0.2+v0.3，三方实现授权已获；本次请求仅审代码，不执行 exporter。
+- 新增 `tools/g0/export_r09_b2_p5_resolved_config.py`：只实现 D005 argv 精确提取、语义环境净化、完整 deterministic canonical grammar、以及 future fresh-child compose 路由；默认 CLI 拒绝真实 export，child 路径未被调用。它禁止 launch/validate/instantiate，compose 后断言 CUDA 未初始化。
+- 新增 `tools/g0/verify_r09_b2_p5_full_config_diff.py`：canonical JSON Pointer diff；P3 common path/SHA/PASS identity 强制相同；backend contract 必精确等于 verifier-owned recurrent/TTT contract；仅允许精确 backend/TTT switch/output/derived path/local backend/selector 差异。
+- 新增 `tools/g0/test_r09_b2_p5_full_config_diff.py`：纯 CPU 2/2 PASS，覆盖 callable identity、NaN、D005 override 重排、环境泄漏、实际 P4 shape 的 common P3 + distinct correct contract PASS、path/SHA drift、cross-wired/arbitrary/extra contract 和未映射 local selector mutation FAIL。`py_compile`、`git diff --check` PASS。
+- 禁止范围：未调用 `load_experiment_from_toml`，未读取真实 config/checkpoint/模型/数据/VAE，未执行 config export、torchrun、GPU、训练/评测/推理。若获批准，仅可继续申请一次独立三方 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，本申请不授权执行。
