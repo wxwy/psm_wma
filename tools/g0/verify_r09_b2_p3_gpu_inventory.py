@@ -190,7 +190,7 @@ def backend_checks(record: dict[str, object]) -> dict[str, bool]:
     rows_by_name = {row.get("name"): row for row in rows}
     schema_owners = {row.get("owner") for row in optimizer_schema}
     schema_identities = {
-        (row.get("owner"), row.get("namespace"), row.get("suffix"))
+        (row.get("owner"), row.get("owner_fqn"), row.get("namespace"), row.get("suffix"))
         for row in optimizer_schema
     }
     return {
@@ -221,10 +221,12 @@ def backend_checks(record: dict[str, object]) -> dict[str, bool]:
             and len(schema_identities) == len(optimizer_schema)
             and all(
                 row.get("owner") in set(names)
+                and isinstance(row.get("owner_fqn"), str)
+                and row.get("owner_fqn", "").startswith("net.")
                 and row.get("namespace") in {"state", "param_groups"}
                 and isinstance(row.get("suffix"), str)
                 and bool(row.get("suffix"))
-                and row.get("flat_key") == f"{row.get('namespace')}.net.{row.get('owner')}.{row.get('suffix')}"
+                and row.get("flat_key") == f"{row.get('namespace')}.{row.get('owner_fqn')}.{row.get('suffix')}"
                 for row in optimizer_schema
             )
         ),
@@ -278,11 +280,11 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
         and all(key.startswith(ALLOWED_RECURRENT_ONLY_PREFIXES) for key in recurrent_dcp - ttt_dcp)
     )
 
-    def optimizer_schema(inventory: dict[str, object]) -> dict[tuple[str, str, str], dict[str, object]]:
+    def optimizer_schema(inventory: dict[str, object]) -> dict[tuple[str, str, str, str], dict[str, object]]:
         rows = inventory.get("dcp_state", {}).get("optimizer_state_schema", [])
         schema = {}
         for row in rows:
-            identity = (row.get("owner"), row.get("namespace"), row.get("suffix"))
+            identity = (row.get("owner"), row.get("owner_fqn"), row.get("namespace"), row.get("suffix"))
             schema[identity] = row
         return schema
 

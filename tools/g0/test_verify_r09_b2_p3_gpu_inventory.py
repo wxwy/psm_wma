@@ -148,6 +148,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                     "optimizer_state_schema": [{
                         "flat_key": f"param_groups.net.{recurrent_name}.lr",
                         "owner": recurrent_name,
+                        "owner_fqn": f"net.{recurrent_name}",
                         "namespace": "param_groups",
                         "suffix": "lr",
                         "kind": "float",
@@ -307,26 +308,26 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             "param_groups.net.b.lr": 0.1,
             "state.net.a.exp_avg": TensorFixture(),
         }
-        rows = COLLECT._flattened_optimizer_schema(state, {"a", "b"})
+        rows = COLLECT._flattened_optimizer_schema(state, {"net.a": "a", "net.b": "b"})
         self.assertEqual({row["owner"] for row in rows}, {"a", "b"})
         tensor_rows = [row for row in rows if row["kind"] == "tensor"]
         self.assertEqual(tensor_rows, [{
-            "flat_key": "state.net.a.exp_avg", "owner": "a", "namespace": "state",
+            "flat_key": "state.net.a.exp_avg", "owner": "a", "owner_fqn": "net.a", "namespace": "state",
             "suffix": "exp_avg", "kind": "tensor", "shape": [2, 3], "dtype": "float32", "numel": 6,
         }])
         self.assertEqual(
             next(row for row in rows if row["flat_key"] == "param_groups.net.a.betas"),
             {
-                "flat_key": "param_groups.net.a.betas", "owner": "a", "namespace": "param_groups",
+                "flat_key": "param_groups.net.a.betas", "owner": "a", "owner_fqn": "net.a", "namespace": "param_groups",
                 "suffix": "betas", "kind": "tuple",
                 "items": [{"kind": "float", "value": 0.9}, {"kind": "float", "value": 0.95}],
             },
         )
         self.assertNotEqual({row["owner"] for row in rows}, {"a", "b", "missing"})
         with self.assertRaisesRegex(RuntimeError, "unmapped"):
-            COLLECT._flattened_optimizer_schema({"param_groups.net.a_extra.lr": 0.1}, {"a"})
+            COLLECT._flattened_optimizer_schema({"param_groups.net.a_extra.lr": 0.1}, {"net.a": "a"})
         with self.assertRaisesRegex(RuntimeError, "unmapped"):
-            COLLECT._flattened_optimizer_schema({"param_groups.net.extra.lr": 0.1}, {"a"})
+            COLLECT._flattened_optimizer_schema({"param_groups.net.extra.lr": 0.1}, {"net.a": "a"})
 
     def test_backend_orchestration_stops_after_nonzero_recurrent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -382,8 +383,8 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "framework directory is missing"):
             COLLECT._set_worker_production_cwd(Path("/missing/p3-framework-root"))
 
-    def test_attempt4_output_paths_are_fresh_and_prior_attempt_evidence_is_unchanged(self) -> None:
-        output = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt4/p3_gpu_inventory.json"
+    def test_attempt5_output_paths_are_fresh_and_prior_attempt_evidence_is_unchanged(self) -> None:
+        output = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt5/p3_gpu_inventory.json"
         d005 = output.with_name("p3_gpu_inventory_d005.json")
         attempt_one = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory_attempt1_d005.json"
         attempt_two = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory.json"
@@ -458,6 +459,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             artifact["ttt_fast_weight"]["inventory"]["dcp_state"]["optimizer_state_schema"] = [{
                 "flat_key": "param_groups.net.unexpected.lr",
                 "owner": "unexpected",
+                "owner_fqn": "net.unexpected",
                 "namespace": "param_groups",
                 "suffix": "lr",
                 "kind": "float",

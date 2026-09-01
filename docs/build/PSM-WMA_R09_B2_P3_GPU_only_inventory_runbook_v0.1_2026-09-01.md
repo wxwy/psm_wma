@@ -35,17 +35,17 @@ LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
   tools/g0/collect_r09_b2_p3_gpu_inventory.py \
   --root /disk/rl/psm_wma \
   --toml cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml \
-  --output artifacts/g0/r09/b2/p3_gpu_inventory_attempt4/p3_gpu_inventory.json \
+  --output artifacts/g0/r09/b2/p3_gpu_inventory_attempt5/p3_gpu_inventory.json \
   --edge-checkpoint-path /localdisk-tmp/models/Cosmos3-Edge-Policy-DROID \
   --wan-vae-path /localdisk-tmp/models/wan22_vae/Wan2.2_VAE.pth \
   --base-checkpoint-path /localdisk-tmp/models/Cosmos3-Edge-Policy-DROID-dcp \
   --libero-root /disk/rl/data/LIBERO_LeRobot_v3 \
-  --d005-record artifacts/g0/r09/b2/p3_gpu_inventory_attempt4/p3_gpu_inventory_d005.json \
+  --d005-record artifacts/g0/r09/b2/p3_gpu_inventory_attempt5/p3_gpu_inventory_d005.json \
   --approved-run-token APPROVE_TO_RUN_GPU_ONLY_P3_GATE \
   --max-peak-gib 28
 ```
 
-顶层 collector 只按固定顺序派生两个独立子进程：`recurrent` 与 `ttt_fast_weight`。任一子进程非零、未写合法 JSON 或 JSON `status!=PASS` 时，父进程先写 aggregate/D005 和已获得的 stdout/stderr/partial JSON，再立即返回；后续 backend 不会启动。它们的 JSON 分别写为 `p3_gpu_inventory_recurrent.json` 与 `p3_gpu_inventory_ttt_fast_weight.json`；顶层 aggregate 与 D005 写入上述 attempt-4 路径。parent 会在写 D005 前拒绝已存在或 Git 已跟踪的 aggregate/D005/backend 路径，既有 attempt evidence 不得覆盖。不得追加 `--worker-backend`，不得重试、改参数或更换 GPU。
+顶层 collector 只按固定顺序派生两个独立子进程：`recurrent` 与 `ttt_fast_weight`。任一子进程非零、未写合法 JSON 或 JSON `status!=PASS` 时，父进程先写 aggregate/D005 和已获得的 stdout/stderr/partial JSON，再立即返回；后续 backend 不会启动。它们的 JSON 分别写为 `p3_gpu_inventory_recurrent.json` 与 `p3_gpu_inventory_ttt_fast_weight.json`；顶层 aggregate 与 D005 写入上述 attempt-5 路径。parent 会在写 D005 前拒绝已存在或 Git 已跟踪的 aggregate/D005/backend 路径，既有 attempt evidence 不得覆盖。不得追加 `--worker-backend`，不得重试、改参数或更换 GPU。
 
 每个 isolated worker 在 production model config 解析前仅内部切换到 `root/cosmos-framework`，使 recipe 的相对 model JSON 路径与常规框架启动语义一致；TOML、环境路径和 D005 仍为命令中冻结的绝对/根目录记录。
 

@@ -182,13 +182,35 @@ def _canonical_param_group_value(value: object) -> dict[str, object]:
     raise RuntimeError(f"unsupported param-group metadata type: {type(value).__name__}")
 
 
+def _canonical_parameter_fqns(model: object, parameters: dict[str, object]) -> dict[str, str]:
+    """复用 PyTorch DCP 的 FQN 规则，映射 canonical FQN 到 raw stable name。"""
+    from torch.distributed.checkpoint.state_dict import _get_fqns
+
+    stable_by_parameter_id = {id(parameter): name for name, parameter in parameters.items()}
+    canonical: dict[str, str] = {}
+    for full_name, parameter in model.named_parameters():
+        stable_name = stable_by_parameter_id.get(id(parameter))
+        if stable_name is None:
+            continue
+        fqns = _get_fqns(model, full_name)
+        if len(fqns) != 1:
+            raise RuntimeError(f"expected one canonical FQN for {full_name!r}, got {sorted(fqns)!r}")
+        fqn = next(iter(fqns))
+        if not fqn.startswith("net.") or fqn in canonical:
+            raise RuntimeError(f"invalid or duplicate canonical model FQN: {fqn!r}")
+        canonical[fqn] = stable_name
+    if set(canonical.values()) != set(parameters):
+        raise RuntimeError("canonical DCP FQN mapping does not cover model.net.named_parameters")
+    return canonical
+
+
 def _flattened_optimizer_schema(
-    state_dict: object, stable_names: set[str]
+    state_dict: object, canonical_fqns: dict[str, str]
 ) -> list[dict[str, object]]:
     """解析 PyTorch ``flatten_optimizer_state_dict=True`` 的精确 key grammar。"""
     if not isinstance(state_dict, dict):
         raise RuntimeError("flattened optimizer state_dict must be a dict")
-    candidates = sorted((f"net.{name}", name) for name in stable_names)
+    candidates = sorted(canonical_fqns.items())
     rows = []
     for flat_key, value in sorted(state_dict.items()):
         if not isinstance(flat_key, str):
@@ -216,6 +238,7 @@ def _flattened_optimizer_schema(
         rows.append({
             "flat_key": flat_key,
             "owner": owner,
+            "owner_fqn": fqn,
             "namespace": namespace,
             "suffix": suffix,
             **value_metadata,
@@ -273,6 +296,7 @@ def _worker_inventory(
     enforce_peak_limit("optimizer construction")
 
     parameters = dict(model.net.named_parameters())
+    canonical_parameter_fqns = _canonical_parameter_fqns(model, parameters)
     buffers = dict(model.net.named_buffers())
     keys_to_select = list(config.optimizer.keys_to_select)
     selector = {
@@ -319,13 +343,13 @@ def _worker_inventory(
     optimizer_dcp = optimizer.state_dict()
     enforce_peak_limit("OptimizersContainer.state_dict")
     model_dcp_keys = sorted(model_dcp)
-    expected_model_keys = {name: f"net.{name}" for name in parameters}
+    expected_model_keys = {name: fqn for fqn, name in canonical_parameter_fqns.items()}
     selected_model_keys = {
         name: expected_model_keys[name]
         for name in selected
         if expected_model_keys[name] in model_dcp
     }
-    optimizer_schema = _flattened_optimizer_schema(optimizer_dcp, set(parameters))
+    optimizer_schema = _flattened_optimizer_schema(optimizer_dcp, canonical_parameter_fqns)
     optimizer_references = {row["owner"] for row in optimizer_schema}
     if set(selected_model_keys) != selected:
         raise RuntimeError("selected optimizer parameters are missing from production ModelWrapper.state_dict")

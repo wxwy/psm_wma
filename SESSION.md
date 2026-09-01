@@ -857,3 +857,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 审核门：ChatGPT（root=`36de13a` review=`a72eba9`）、MM、Kimi 均 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 后，已严格执行一次 frozen attempt-4 命令；单卡、28 GiB、offline/no-VAE/no-data/no-weight/no-checkpoint/no-forward-backward-step 范围不变。
 - 事实：并非显存越界。recurrent 在 `OptimizersContainer.state_dict()` 的真实 flattened key `param_groups.net.language_model.model.layers.0.input_layernorm_moe_gen.weight.betas` 触发 collector `_flattened_optimizer_schema()` 的 `unmapped flattened optimizer state_dict key` fail-closed RuntimeError；TTT worker 未启动，GPU=0 MiB。attempt-4 aggregate/D005/verifier=`artifacts/g0/r09/b2/p3_gpu_inventory_attempt4/`；verifier 为 `BLOCKED`、`record_valid=true`、23/23 checks true。
 - 下一步：先提交 terminal evidence；只读核查 `model.net.named_parameters()` 与 production flattened FQN 的命名层级并补最小 parser 回归，之后三方重新审核并使用新的 fresh attempt 路径。禁止自动重试、改 cap 或启动任何 GPU。提交：未提交。
+
+### R09-B2 P3 canonical FQN parser / attempt-5 static repair（2026-09-01，REVIEW）
+
+- 根因：attempt-4 证明 production optimizer DCP FQN 不可由 collector 对 `model.net.named_parameters()` 的 raw name 手工加前缀推导；该假设在真实 `param_groups.net.language_model...betas` 上 fail-closed，终止发生在任何 forward/backward/step 前。
+- 修改：collector 新增 `_canonical_parameter_fqns()`，用同一 PyTorch DCP `state_dict._get_fqns(model, full_name)` 和 parameter identity 将 canonical FQN 映射到 raw stable name；拒绝多 FQN、非 `net.`、duplicate、或覆盖不全。optimizer schema 写 `owner_fqn`，model DCP membership 使用同一 canonical key；verifier 将 `owner_fqn` 纳入 identity 和 flat-key exact 重建。runbook 仅把下一次路径推进至 fresh attempt-5。
+- 验证：`py_compile` PASS；`cosmos-framework/.venv/bin/python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 14/14 PASS；`git diff --check` PASS。未运行 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。下一步：提交并请求三方审核；仅一致 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 才能执行 attempt-5 一次。未提交。
