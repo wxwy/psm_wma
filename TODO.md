@@ -73,7 +73,7 @@
 | FIX-LIBERO-WORKER-DEFAULT-12 | DONE | Codex | GPT/Kimi/MM 均 APPROVE | 三入口均明确默认 12；仅修正 launcher 帮助文本。`bash -n`、双仓 diff-check PASS；GPT review=`2026-09-01_LIBERO_worker_default_4cfa359_0af5d53.md`，Kimi/MM 独立复核均 APPROVE；未启动训练/GPU。 |
 | G0-R09-B2-P4-LAUNCH-D005 | DONE | Codex | ChatGPT/Kimi/MM 均 `APPROVE_TO_CLOSE_P4_STATIC_D005` | clean source=`ddb4e0e`/Gitlink=`21d064f` 的 recurrent/TTT v2 `FROZEN_NOT_EXECUTED` 与 pair verifier PASS 已提交；仅关闭 P4 static D005，不授权 P5/B2-T/训练/GPU。 |
 | G0-R09-B2-P1-PRODUCTION-MANIFEST | DONE | Codex | ChatGPT/Kimi/MM 均 APPROVE_TO_BIND_P1_PRODUCTION_MANIFEST | clean worktree source=`4177e83`/Gitlink=`21d064f` 生成并提交 204,800 条固定身份，P1 verifier 14/14 PASS、GPU=0；只作为 P4 输入前置。 |
-| G0-R09-B2-P5-FULL-CONFIG-DIFF | IN_PROGRESS | Codex | P4 static D005 已 DONE | 起草完整 resolved-config machine diff 的静态方案；实现/执行须先三方审核，不加载 checkpoint、不启动训练。 |
+| G0-R09-B2-P5-FULL-CONFIG-DIFF | IN_PROGRESS | Codex | P4 static D005 已 DONE | ChatGPT 对 v0.1 提出 compose/进程隔离/canonical grammar/launch envelope 四项 HIGH；v0.2 已修订，待三方重审后才可实现 root exporter/verifier/tests，仍不执行 config export 或训练。 |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |
 | D015-LOCAL-MEMORY-GATE | DONE | Codex | D013/D014 已生效，Runtime Plan R07-R09 已对齐 | MEMORY/DECISIONS.md 新增 D015：Local/Global 必须为独立 optional clean modality；R07-R09 顺序与冻结边界；未冻结项不得在实现前写成既定事实 |
