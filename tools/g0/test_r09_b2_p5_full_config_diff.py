@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 import dataclasses
+import json
+import os
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -55,3 +59,12 @@ class P5Test(unittest.TestCase):
         self.assertEqual(validate_production_root(records["recurrent"], records["ttt_fast_weight"], Path("/disk/rl/psm_wma_p4_d005_retry")), Path("/disk/rl/psm_wma_p4_d005_retry"))
         with self.assertRaises(ValueError):
             validate_production_root(records["recurrent"], records["ttt_fast_weight"], root)
+
+    def test_child_bootstrap_reaches_precompose_guard_under_d005_env(self):
+        root = Path(__file__).resolve().parents[2]; records, _ = _expected(root); record = records["recurrent"]
+        with tempfile.TemporaryDirectory() as temp:
+            request = {"cwd": record["command"]["cwd"], "interpreter": {"realpath": "/bin/false"}, "environment": {"effective": record["environment"]["set"]}}
+            path = Path(temp) / "request.json"; path.write_text(json.dumps(request))
+            result = subprocess.run([record["command"]["interpreter"]["realpath"], str(root / "tools/g0/export_r09_b2_p5_resolved_config.py"), "--child-request", str(path), "--child-output", str(Path(temp) / "tree.json")], cwd=record["command"]["cwd"], env=record["environment"]["set"], text=True, capture_output=True, check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("cwd/interpreter differs", result.stderr)
