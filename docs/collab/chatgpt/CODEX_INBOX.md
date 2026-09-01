@@ -3513,3 +3513,16 @@ Detailed review:
 - 处理 ChatGPT worker-CWD review HIGH：唯一第三次命令的 output/D005 改为全新 `artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/`；recurrent/TTT JSON 由该 aggregate stem 派生。既有 attempt-1/2 tracked evidence 不被覆盖。
 - 新增 `_assert_fresh_output_paths()`，在写 D005 前 hard-gate aggregate、D005、recurrent、TTT 四路径均 root 内、不存在、且 `git ls-files` 无记录；不放宽 verifier `root_tracked_clean`。永久回归验证 attempt-3 fresh/untracked、attempt-1/2 SHA 不变，且 tracked attempt-2 路径被拒绝。全套 13/13 PASS，py_compile、双仓 diff-check PASS，GPU=0MiB。
 - 仅申请第三次一次性 GPU-only inventory：单卡0、24 GiB、CWD/解释器/fail-stop 修复均含；禁止自动重试/换卡/改参数/手工 backend、网络/数据/VAE/checkpoint I/O/forward/backward/step 与 B2-T/P4/P5/训练评测推理。
+
+---
+
+## 2026-09-01 — R09-B2 P3 attempt-4 28 GiB cap 整改审核申请
+
+请求 verdict：`APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `36de13a71df66cee4a8e067c31c18f44f3730f63`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。attempt-3 terminal evidence 已独立固化于前置根仓提交 `7db1690`。
+- 事实依据：已授权的 attempt-3 在 recurrent 的 `OptimizersContainer.state_dict()` 后测得 peak=`27,147,632,640` B（25.28 GiB），严格触发原 24 GiB hard stop；TTT 未启动、GPU 回到 0 MiB。`artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory.json` 与 verifier 保留该 terminal record，verifier=`BLOCKED`、`record_valid=true`、23/23 checks true。
+- 最小整改：collector 与 verifier 同时 fail-closed 固定 `APPROVED_MAX_PEAK_GIB=28`；D005/provenance/PASS checks 都要求该值。runbook 的唯一命令改为全新未跟踪 `artifacts/g0/r09/b2/p3_gpu_inventory_attempt4/`，原 attempt-1/2/3 不覆盖。28 GiB 比测得峰值保留约 2.7 GiB 余量，仍只使用一张本地 80 GiB GPU。
+- 回归：新增永久测试绑定 attempt-3 的精确峰值，断言 collector/verifier cap 相同且实测峰值低于 cap；`py_compile` PASS，`python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 14/14 PASS，`git diff --check` PASS。
+- 允许范围仍严格不变：仅两个独立 backend 的 production processor/model/optimizer 与 `ModelWrapper.state_dict()`/`OptimizersContainer.state_dict()` schema inventory；单 `CUDA_VISIBLE_DEVICES=0`、`WORLD_SIZE=1`、离线、本地 processor，`load_vision_tokenizer=false`。禁止网络/远端 tokenizer、数据/VAE/weights/checkpoint I/O、forward/backward/optimizer/scheduler step、手工 worker、自动重试/换卡、多卡、B2-T/P4/P5、训练/评测/推理/closed-loop/Global/Agent/RL。
+- 请求仅授权 attempt-4 的一次 frozen command；任一非零、`BLOCKED`/`FAIL`、超过 28 GiB、非单卡或任何禁止行为立即终止、保留证据且不自动重跑。
