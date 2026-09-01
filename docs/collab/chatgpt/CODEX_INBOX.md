@@ -3879,3 +3879,12 @@ Detailed review:
 - `FROZEN_CHILD_REQUEST_SHA256` 固定 recurrent/TTT 各一条 verifier-owned request digest；`validate_child_request()` 强制 exact 16-key schema、known backend 与 digest。parent `build_pair_requests()` 和 hidden `_child()` 在 cwd/interpreter/environment/import compose 前都重验。故 caller 无法以同一 D005 cwd/env 自行构造 TOML/override/backend request 绕过 parent/P4 evidence gate。
 - CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=7/7 PASS，新增完全 schema-consistent 但 TOML 篡改请求在真实 D005 cwd/env/interpreter 下 pre-compose guard FAIL；`git diff --check` PASS。未调用 `load_experiment_from_toml`、真实 export、CUDA/GPU、torchrun、模型/数据、训练、评测或推理。
 - 允许范围：本申请仅复审 root `tools/g0/` 静态整改；即使批准仍仅允许另行申请 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，不授予实际执行。
+
+### Awaiting review — R09-B2 P5 internally-consistent standalone-child forgery test
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `9ad602f93f5975f9ec7d033783b41052ca09107e`（处理 ChatGPT review `2026-09-01_R09_B2_P5_standalone_child_binding_db147b1_df06f37.md` 的唯一 MEDIUM）；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 仅 test remediation：attacker request 仍是 exact 16-key schema、真实 frozen D005 cwd/interpreter/environment；现在同时把 request-owned `toml` 与 `command_argv` 的对应 `--sft-toml=` token 改为同一 attacker path，因此字段内部一致。隐藏 child 必在 frozen D005 request identity guard 处失败，且 assertion 要求 output 不存在。生产 exporter/verifier/digest gate 未改。
+- CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=7/7 PASS；`git diff --check` PASS。未调用 compose/export、CUDA/GPU、torchrun、模型/数据、训练、评测或推理。
+- 允许范围：本申请仅复审此窄 test/evidence 整改；即使批准仍仅允许另行申请 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，不授予实际执行。
