@@ -74,8 +74,7 @@ def _asset_ok(asset: object, root: Path) -> bool:
         return False
     path = Path(str(asset["path"])).expanduser()
     realpath = path.resolve()
-    interpreter_root = (root / "cosmos-framework/.venv/bin/python").resolve().parent
-    allowed = (root.resolve(), Path("/localdisk-tmp/models").resolve(), Path("/disk/rl/data").resolve(), interpreter_root)
+    allowed = (root.resolve(), Path("/localdisk-tmp/models").resolve(), Path("/disk/rl/data").resolve())
     return path.exists() and str(realpath) == asset["realpath"] and any(realpath.is_relative_to(base) for base in allowed) and _sha256_tree(realpath) == asset["sha256"]
 
 
@@ -144,7 +143,14 @@ def _argv_ok(record: dict[str, object], framework: Path) -> bool:
 
 
 def _allowed_roots(root: Path) -> tuple[Path, ...]:
-    return (root.resolve(), Path("/localdisk-tmp/models").resolve(), Path("/disk/rl/data").resolve(), (root / "cosmos-framework/.venv/bin/python").resolve().parent)
+    return (root.resolve(), Path("/localdisk-tmp/models").resolve(), Path("/disk/rl/data").resolve())
+
+
+def _interpreter_asset_ok(asset: object, root: Path) -> bool:
+    expected = (root / "cosmos-framework/.venv/bin/python").resolve()
+    return (isinstance(asset, dict) and set(asset) == {"path", "realpath", "sha256"}
+            and Path(str(asset["path"])).expanduser().resolve() == expected
+            and asset["realpath"] == str(expected) and asset["sha256"] == _sha256_file(expected))
 
 
 def _env_ok(record: dict[str, object], backend: str, root: Path) -> bool:
@@ -176,7 +182,9 @@ def _inputs_ok(record: dict[str, object], root: Path, p1: dict[str, object], p3:
                                "records_sha256": p1["records_sha256"], "record_count": PRODUCTION_P1["record_count"]}
             and p3_binding == {"path": P3_ARTIFACT_RELATIVE, "sha256": P3_ARTIFACT_SHA256,
                                "backend_contract": _p3_contract(p3, backend)}
-            and set(assets) == required_assets and all(_asset_ok(asset, root) for asset in assets.values()))
+            and set(assets) == required_assets
+            and all(_asset_ok(asset, root) for name, asset in assets.items() if name != "interpreter")
+            and _interpreter_asset_ok(assets["interpreter"], root))
 
 
 def _env_assets_bound(record: dict[str, object], root: Path) -> bool:
@@ -185,6 +193,7 @@ def _env_assets_bound(record: dict[str, object], root: Path) -> bool:
     try:
         return (all(env[key] == assets[name]["realpath"] for key, name in mapping.items())
                 and env["PYTHONPATH"] == str((root / "cosmos-framework").resolve())
+                and {key: assets["interpreter"][key] for key in ("realpath", "sha256")} == record["command"]["interpreter"]
                 and env["PSM_R09_B2_STREAM_MANIFEST_ROOT"] == str((root / P1_HEADER_RELATIVE).parent.resolve()))
     except (KeyError, TypeError):
         return False

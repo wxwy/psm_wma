@@ -120,3 +120,11 @@ class P4D005Test(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp); recurrent, ttt, refs = self._pair(root); recurrent["unexpected"] = True
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
+
+    def test_interpreter_exception_is_not_a_runtime_output_root(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); recurrent, ttt, refs = self._pair(root)
+            interpreter_parent = Path(recurrent["command"]["interpreter"]["realpath"]).parent
+            self.assertFalse(any(interpreter_parent.is_relative_to(base) for base in p4._allowed_roots(root) if base != root.resolve()))
+            recurrent["inputs"]["external_assets"]["interpreter"] = recurrent["inputs"]["external_assets"]["base_checkpoint"]
+            with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
