@@ -366,10 +366,15 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
     def test_param_group_tensor_metadata_is_json_safe(self) -> None:
         import torch
 
-        self.assertEqual(
-            COLLECT._canonical_param_group_value(torch.tensor(0.1)),
-            {"kind": "tensor", "shape": [], "dtype": "float32", "numel": 1},
-        )
+        first = COLLECT._canonical_param_group_value(torch.tensor(0.25))
+        second = COLLECT._canonical_param_group_value(torch.tensor(0.5))
+        self.assertEqual(first, {"kind": "tensor", "shape": [], "dtype": "float32", "numel": 1, "value": 0.25})
+        self.assertEqual(second, {"kind": "tensor", "shape": [], "dtype": "float32", "numel": 1, "value": 0.5})
+        self.assertNotEqual(first, second)
+        with self.assertRaisesRegex(RuntimeError, "exactly one element"):
+            COLLECT._canonical_param_group_value(torch.tensor([0.1, 0.2]))
+        with self.assertRaisesRegex(RuntimeError, "finite and numeric"):
+            COLLECT._canonical_param_group_value(torch.tensor(float("nan")))
 
     def test_backend_orchestration_stops_after_nonzero_recurrent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -512,6 +517,24 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             ):
                 result = VERIFY.verify(artifact, ROOT)
                 self.assertFalse(result["matched_diff_checks"]["only_allowed_dcp_optimizer_schema"])
+                self.assertEqual(result["status"], "FAIL")
+        finally:
+            d005_path.unlink(missing_ok=True)
+
+    def test_backend_diff_rejects_shared_tensor_param_group_value_mismatch(self) -> None:
+        d005_path = ROOT / "artifacts/g0/r09/b2/p3_optimizer_tensor_value_diff_test_d005.json"
+        try:
+            artifact = self._passing_artifact(d005_path)
+            recurrent_row = artifact["recurrent"]["inventory"]["dcp_state"]["optimizer_state_schema"][0]
+            artifact["ttt_fast_weight"]["inventory"]["dcp_state"]["optimizer_state_schema"] = [dict(recurrent_row)]
+            ttt_row = artifact["ttt_fast_weight"]["inventory"]["dcp_state"]["optimizer_state_schema"][0]
+            recurrent_row.update({"kind": "tensor", "shape": [], "dtype": "float32", "numel": 1, "value": 0.1})
+            ttt_row.update({"kind": "tensor", "shape": [], "dtype": "float32", "numel": 1, "value": 0.2})
+            with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
+                VERIFY, "FROZEN_SOURCE_PATHS", {}
+            ):
+                result = VERIFY.verify(artifact, ROOT)
+                self.assertFalse(result["matched_diff_checks"]["shared_dcp_optimizer_schema_metadata"])
                 self.assertEqual(result["status"], "FAIL")
         finally:
             d005_path.unlink(missing_ok=True)

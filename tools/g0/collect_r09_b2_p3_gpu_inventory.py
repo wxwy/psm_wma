@@ -173,7 +173,12 @@ def _canonical_param_group_value(value: object) -> dict[str, object]:
             raise RuntimeError("param-group metadata must be finite")
         return {"kind": type(value).__name__, "value": value}
     if hasattr(value, "shape") and hasattr(value, "dtype") and hasattr(value, "numel"):
-        return {"kind": "tensor", **_tensor_metadata(value)}
+        if value.numel() != 1:
+            raise RuntimeError("param-group tensor metadata must have exactly one element")
+        scalar = value.item()
+        if not isinstance(scalar, (int, float)) or isinstance(scalar, bool) or not math.isfinite(scalar):
+            raise RuntimeError("param-group tensor metadata must be finite and numeric")
+        return {"kind": "tensor", **_tensor_metadata(value), "value": scalar}
     if isinstance(value, (tuple, list)):
         return {
             "kind": type(value).__name__,

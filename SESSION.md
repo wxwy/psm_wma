@@ -870,3 +870,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 事实：recurrent worker 已完成 production processor、模型与 capturable FusedAdam 构造；仅在向 worker JSON 写入 param-group metadata 时，`lr`/`weight_decay` 可为 CUDA Tensor，触发 `TypeError: Object of type Tensor is not JSON serializable`。父进程正确记录 `BLOCKED` 并停止，TTT worker 未启动；attempt-5 aggregate/D005/verifier 位于 `artifacts/g0/r09/b2/p3_gpu_inventory_attempt5/`，verifier 为 `BLOCKED`、`record_valid=true`、全部 23 项结构/范围核验为 true。
 - 最小修复：根仓 `6690e37` 仅把 param-group 的 `lr`/`weight_decay` 通过既有 canonical JSON-safe metadata 入口输出，新增 tensor scalar metadata 回归；state flattened-value 的严格 grammar 与 28 GiB cap 均未变。静态验证：`py_compile` PASS、标准库定向测试 17/17 PASS、`git diff --check` PASS；未重新运行 GPU。
 - 下一步：先提交 attempt-5 终态证据和本状态记录，再以 root=`6690e37`、submodule/Gitlink=`21d064f` 送 ChatGPT/MM/Kimi 复审。只有三方同一实现给出 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE`，才可按 fresh attempt-6 路径运行一次；否则保持禁止。
+
+### R09-B2 P3 attempt-6 scalar Tensor metadata 高优先级整改（2026-09-01，IN_PROGRESS）
+
+- ChatGPT 对 `6690e37` 返回 `REQUEST_CHANGES`：此前 Tensor param-group JSON 仅写 shape/dtype/numel，未写标量值，可能掩盖 recurrent/TTT 的实际 lr 或 weight_decay 差异；其余范围约束保持有效，未授予 GPU。
+- 修复：`_canonical_param_group_value()` 对 param-group Tensor 仅接受 finite numeric 的单元素 Tensor，并记录 `value` 与 shape/dtype/numel；多元素或非 finite/non-numeric Tensor fail-closed。optimizer `state.*` 仍只记录 metadata、不复制内容。
+- 回归：新增相同 shape/dtype 的 scalar Tensor `0.25` 与 `0.5` 必不同、multi-element/NaN 拒绝，以及 shared recurrent/TTT scalar Tensor value mismatch 令 `shared_dcp_optimizer_schema_metadata=false`、verifier=`FAIL`；`py_compile`、定向标准库测试 18/18、`git diff --check` PASS。无 GPU、worker 或项目运行。
+- 下一步：提交后重新申请三方审核；attempt-6 尚未执行，路径继续 fresh/untracked。提交：未提交。
