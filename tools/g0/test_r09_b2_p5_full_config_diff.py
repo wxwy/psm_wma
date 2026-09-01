@@ -6,7 +6,7 @@ import dataclasses
 import unittest
 from pathlib import Path
 
-from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, canonicalize, parse_d005_command, sanitized_environment
+from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, canonicalize, parse_d005_command, sanitized_environment, validate_production_root
 from tools.g0.verify_r09_b2_p5_full_config_diff import _expected, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256, sha256_json
 
@@ -49,3 +49,9 @@ class P5Test(unittest.TestCase):
         record["command"]["argv"].reverse()
         with self.assertRaises(ValueError): parse_d005_command(record)
         self.assertEqual(sanitized_environment({"set": {"B": "2"}, "unset": ["X"], "inherit_allowlist": ["A"]}, {"A": "1", "X": "x", "LEAK": "z"}), {"A": "1", "B": "2"})
+
+    def test_d005_absolute_production_root_rejects_relocated_checkout(self):
+        root = Path(__file__).resolve().parents[2]; records, _ = _expected(root)
+        self.assertEqual(validate_production_root(records["recurrent"], records["ttt_fast_weight"], Path("/disk/rl/psm_wma_p4_d005_retry")), Path("/disk/rl/psm_wma_p4_d005_retry"))
+        with self.assertRaises(ValueError):
+            validate_production_root(records["recurrent"], records["ttt_fast_weight"], root)

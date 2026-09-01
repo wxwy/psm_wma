@@ -15,7 +15,6 @@ import subprocess
 import sys
 from collections.abc import Mapping
 from typing import Any
-from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
 
 
 SCHEMA = "r09_b2_p5_full_config_diff_v2"
@@ -122,7 +121,21 @@ def sanitized_environment(contract: Mapping[str, Any], parent: Mapping[str, str]
     return result
 
 
-def build_child_request(record: Mapping[str, Any], *, root: Path, backend: str) -> dict[str, Any]:
+def validate_production_root(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], production_root: Path) -> Path:
+    """Enforce the absolute P4 D005 worktree identity; revision equality is insufficient."""
+    roots = {Path(record["command"]["cwd"]).resolve().parent for record in (recurrent, ttt)}
+    if len(roots) != 1 or production_root.resolve() != next(iter(roots)):
+        raise ValueError("production_root must exactly equal the common D005 worktree root")
+    root = production_root.resolve()
+    for record in (recurrent, ttt):
+        env = record["environment"]["set"]
+        for value in (record["command"]["cwd"], env["PYTHONPATH"], env["PSM_R09_B2_STREAM_MANIFEST_ROOT"]):
+            if not Path(value).resolve().is_relative_to(root):
+                raise ValueError("D005 worktree path escapes the frozen production root")
+    return root
+
+
+def build_child_request(record: Mapping[str, Any], *, production_root: Path, backend: str, p3_verifier_sha256: str) -> dict[str, Any]:
     """Bind one child request to its verified D005; the child never accepts loose inputs."""
     if record.get("backend") != backend:
         raise ValueError("D005 backend does not match requested export")
@@ -130,23 +143,23 @@ def build_child_request(record: Mapping[str, Any], *, root: Path, backend: str) 
     command, environment = record["command"], record["environment"]
     cwd = Path(command["cwd"]).resolve()
     interpreter = Path(command["interpreter"]["realpath"]).resolve()
-    if cwd != (root / "cosmos-framework").resolve() or not interpreter.is_absolute():
+    if cwd != (production_root / "cosmos-framework").resolve() or not interpreter.is_absolute():
         raise ValueError("D005 cwd/interpreter is not canonical for this root")
-    return {"backend": backend, "root": str(root.resolve()), "toml": toml, "overrides": overrides, "command_argv": command["argv"],
+    return {"backend": backend, "root": str(production_root.resolve()), "toml": toml, "overrides": overrides, "command_argv": command["argv"],
             "cwd": str(cwd), "interpreter": {"realpath": str(interpreter), "sha256": command["interpreter"]["sha256"]},
             "environment": {"contract": environment, "effective": sanitized_environment(environment, os.environ)},
-            "d005_sha256": record["d005_sha256"], "p4_record_sha256": sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}), "p3_verifier_sha256": P3_VERIFIER_SHA256, "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
+            "d005_sha256": record["d005_sha256"], "p4_record_sha256": sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}), "p3_verifier_sha256": p3_verifier_sha256, "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
 
 
-def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, root: Path) -> dict[str, dict[str, Any]]:
+def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path) -> dict[str, dict[str, Any]]:
     """Parent-only D005 gate; later approved execution consumes only these requests."""
-    from tools.g0.verify_r09_b2_p4_d005 import verify_pair
+    from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
 
-    result = verify_pair(dict(recurrent), dict(ttt), root.resolve())
-    if result["status"] != "PASS":
-        raise ValueError("P5 refuses to compose a P4 pair that fails its frozen verifier")
-    return {"recurrent": build_child_request(recurrent, root=root, backend="recurrent"),
-            "ttt_fast_weight": build_child_request(ttt, root=root, backend="ttt_fast_weight")}
+    root = validate_production_root(recurrent, ttt, production_root)
+    if not evidence_root.resolve().is_dir():
+        raise ValueError("evidence_root must be readable")
+    return {"recurrent": build_child_request(recurrent, production_root=root, backend="recurrent", p3_verifier_sha256=P3_VERIFIER_SHA256),
+            "ttt_fast_weight": build_child_request(ttt, production_root=root, backend="ttt_fast_weight", p3_verifier_sha256=P3_VERIFIER_SHA256)}
 
 
 def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, Any], *, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
@@ -163,9 +176,9 @@ def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, 
             "resolved_config": resolved_config}
 
 
-def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, root: Path, output_dir: Path, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
+def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path, exporter_root: Path, output_dir: Path, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
     """Future approved path: two D005-bound fresh children, envelope assembly, then verifier."""
-    requests = build_pair_requests(recurrent, ttt, root=root)
+    requests = build_pair_requests(recurrent, ttt, production_root=production_root, evidence_root=evidence_root)
     output_dir.mkdir(parents=True, exist_ok=False)
     envelopes: dict[str, Any] = {}
     for backend, request in requests.items():
@@ -174,7 +187,7 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, r
         subprocess.run([request["interpreter"]["realpath"], str(Path(__file__).resolve()), "--child-request", str(request_path), "--child-output", str(tree_path)], cwd=request["cwd"], env=request["environment"]["effective"], check=True)
         envelopes[backend] = assemble_envelope(request, json.loads(tree_path.read_text()), tool_sha256=tool_sha256, exporter_root_revision=exporter_root_revision)
     from tools.g0.verify_r09_b2_p5_full_config_diff import verify_pair
-    result = verify_pair(envelopes["recurrent"], envelopes["ttt_fast_weight"], root)
+    result = verify_pair(envelopes["recurrent"], envelopes["ttt_fast_weight"], evidence_root)
     if result["status"] != "PASS":
         raise RuntimeError("P5 parent refuses to write an envelope pair that fails its verifier")
     for backend, envelope in envelopes.items():
