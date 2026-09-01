@@ -53,15 +53,17 @@ def _p3_checks(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], contracts: 
 
 def _allowed(path: str, left: Any, right: Any, contracts: Mapping[str, Any]) -> bool:
     fixed = {
-        "/backend",
-        "/effective_launch/environment/set/PSM_R09_B1_TTT_ENABLED",
-        "/effective_launch/environment/effective/PSM_R09_B1_TTT_ENABLED",
         "/effective_launch/environment/set/IMAGINAIRE_OUTPUT_ROOT",
         "/effective_launch/environment/effective/IMAGINAIRE_OUTPUT_ROOT",
         "/effective_launch/derived_job_path_local",
-        "/resolved_config/model/config/local_history_backend",
     }
     p3 = "/effective_launch/p1_p3_d005_bindings/p3_inventory/backend_contract/"
+    if path == "/backend":
+        return left == "recurrent" and right == "ttt_fast_weight"
+    if path in {"/effective_launch/environment/set/PSM_R09_B1_TTT_ENABLED", "/effective_launch/environment/effective/PSM_R09_B1_TTT_ENABLED"}:
+        return left == "0" and right == "1"
+    if path == "/resolved_config/model/config/local_history_backend":
+        return left == "recurrent" and right == "ttt_fast_weight"
     if path in fixed or path == p3 + "optimizer_membership_sha256":
         return True
     if path == p3 + "selector_keys":

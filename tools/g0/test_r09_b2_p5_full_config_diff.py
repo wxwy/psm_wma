@@ -27,6 +27,11 @@ class P5Test(unittest.TestCase):
         bad = {**ttt, "provenance": {**ttt["provenance"], "inputs": {**ttt["provenance"]["inputs"], "p3_inventory_sha256": "bad"}}}; self.assertEqual(verify_pair(recurrent, bad, contracts)["status"], "FAIL")
         bad = {**ttt, "provenance": {**ttt["provenance"], "inputs": {**ttt["provenance"]["inputs"], "p3_inventory_path": "other.json"}}}; self.assertEqual(verify_pair(recurrent, bad, contracts)["status"], "FAIL")
         bad = {**ttt, "effective_launch": {**ttt["effective_launch"], "p1_p3_d005_bindings": {"p3_inventory": {"backend_contract": contracts["recurrent"]}}}}; self.assertEqual(verify_pair(recurrent, bad, contracts)["status"], "FAIL")
+        arbitrary = {"selector_keys": ["arbitrary"], "optimizer_membership_sha256": "bad"}
+        bad = {**ttt, "effective_launch": {**ttt["effective_launch"], "p1_p3_d005_bindings": {"p3_inventory": {"backend_contract": arbitrary}}}}; self.assertEqual(verify_pair(recurrent, bad, contracts)["status"], "FAIL")
+        extra = {**contracts["ttt_fast_weight"], "unexpected": True}
+        bad = {**ttt, "effective_launch": {**ttt["effective_launch"], "p1_p3_d005_bindings": {"p3_inventory": {"backend_contract": extra}}}}; self.assertEqual(verify_pair(recurrent, bad, contracts)["status"], "FAIL")
+        bad = {**ttt, "resolved_config": {"model": {"config": {"local_history_backend": "arbitrary"}}, "optimizer": ttt["resolved_config"]["optimizer"]}}; self.assertEqual(verify_pair(recurrent, bad, contracts)["status"], "FAIL")
 
     def test_canonicalization_and_d005_contract_are_fail_closed(self):
         self.assertNotEqual(canonicalize(target_a), canonicalize(target_b))
