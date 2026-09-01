@@ -3671,3 +3671,12 @@ Detailed review:
 - verifier 改为独立绑定：root/submodule/Gitlink revision 与 clean 状态；P1 `schema/status/record_count/SHA`；P3 实际 selector keys 与从 `model_parameters` 重算的 optimizer membership SHA；canonical interpreter realpath+SHA、所有外部资产 realpath+递归 SHA、完整 offline/cache/stream 环境；严格唯一 argv（含 TOML 位置、max_iter=100/save-zero）；JobConfig 推导 output、fresh/未 Git 跟踪；以及 `micro_batch*grad_accum*world_size=global_batch=samples_per_update`。
 - writer 不再接受未经完整 pair verifier 通过的 JSON。新增 CPU 永久负例：尾随 `trainer.max_iter=5000`、错误解释器、缺 cache env、篡改 P3 membership、Gitlink 不匹配、既有 output resume 均 FAIL；正例 PASS。`py_compile` PASS，unittest 3/3 PASS，`git diff --check` PASS。
 - 未生成真实 D005、未读取真实模型/数据/VAE/checkpoint、未导入 torch/Cosmos、未执行 torchrun/GPU/训练/评测/推理。仅请求关闭 P4 静态 builder/verifier Gate；P5/B2-T 仍未授权。
+
+### Awaiting review — R09-B2 P4 static D005 verifier closure revision
+
+请求 verdict：`APPROVE_TO_CLOSE_P4_STATIC_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `805ade9`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 Kimi 对 `ef9b5af` 的三项 REQUEST_CHANGES。
+- 关闭点：matched 检查拆分 P1 binding、P3 artifact SHA、外部资产与 source/budget，允许并实际测试 recurrent/TTT 各自不同的 P3 selector/membership contract；`IMAGINAIRE_OUTPUT_ROOT` 必须为 canonical absolute path，派生 run root 必须在 repo root 内；writer 写 D005 前拒绝已存在、仓外或 Git-tracked 目标。
+- 静态证据：`py_compile` PASS；CPU unittest 3/3 PASS（正例包含不同 backend P3 contract；尾随 override/错误解释器/缺 cache env/P3 mutation/Gitlink mutation/resume 均 FAIL）；`git diff --check` PASS。
+- 范围不变：未生成真实 D005；未导入 torch/Cosmos，未读取真实模型/数据/VAE/checkpoint，未执行 torchrun/GPU/训练/评测/推理。仅请求 P4 static closure；P5/B2-T 未授权。
