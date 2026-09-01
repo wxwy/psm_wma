@@ -3475,3 +3475,13 @@ Detailed review:
 - 永久 mock 回归：`test_backend_orchestration_stops_after_nonzero_recurrent`、`...zero_exit_blocked_record`、`...launches_ttt_only_after_recurrent_pass`，精确断言 child launch 数量/顺序与失败证据。
 - 静态证据：`cosmos-framework/.venv/bin/python -m py_compile tools/g0/{collect,verify,test_verify}_r09_b2_p3_gpu_inventory.py` PASS；`... -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 9/9 PASS；根仓/子模块 `git diff --check` PASS；无 `tools/g0` 或临时 `p3_*test_d005.json` 残留。
 - 唯一待授权运行命令仍为 runbook `PSM-WMA_R09_B2_P3_GPU_only_inventory_runbook_v0.1_2026-09-01.md:26-45`；单卡 24 GiB，禁止网络、数据/VAE/checkpoint I/O、forward/backward/step，B2-T/P4/P5/训练评测推理等范围不变。未运行 GPU/worker/model/processor。
+
+### 首次 GPU 尝试 terminal launch-error 整改复审
+
+请求 verdict：`APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 首次尝试事实：三方批准后执行唯一命令一次；parent 写 D005 后，recurrent child 因 collector `.py` 路径无 executable bit 触发 `PermissionError`。未进入 worker、未构造 processor/model/optimizer、GPU=0MiB、TTT 未启动；仅保留 `artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory_d005.json`，无 aggregate/backend JSON。该尝试已 terminal，绝不自动重试。
+- 审核对象：根仓 `bcf4f76dacc52366f8bbed50182b35ddc8b00a3d`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 整改：`_run_backend_workers()` 新增 `OSError` catch。child exec 无法启动时写 `status=BLOCKED`、`reason`、`launch_error`、`backend_output_path`，立即返回到顶层写 aggregate/D005；绝不启动 TTT。该修复只处理 parent launch 失败证据，不改变 runbook 的 GPU、路径、令牌、24 GiB 或禁止范围。
+- 永久回归新增 `test_backend_orchestration_stops_after_launch_error`，mock `PermissionError` 精确断言一条 child launch、recurrent BLOCKED、TTT 缺席；全套为 10/10 PASS。`py_compile`、根仓/子模块 diff-check PASS；测试后首次 D005 仍在、aggregate/backend JSON 仍缺、GPU=0MiB。
+- 请求仅重新授权同一 runbook 的一次新尝试；不得自动重试/换卡/改参数/加 `--worker-backend`。仍禁止网络、数据/VAE/checkpoint I/O、forward/backward/step、B2-T/P4/P5、训练/评测/推理等。
