@@ -3820,3 +3820,12 @@ Detailed review:
 - `_child()` 在 `load_experiment_from_toml` 返回后精确断言 `config.model.config.local_history_backend` 与 D005 backend 一致，compose/override 漂移即 FAIL。
 - 永久 fixture 新增两份 envelope 的 `p3_verifier_sha256` 同时伪造为相同假值仍必须 FAIL，证明其绑定的是 verifier-owned frozen digest，而非仅 pair equality。
 - `py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=2/2 PASS；`git diff --check` PASS。未执行真实 compose/export/GPU/训练；本申请仍只请求未来 static-export 执行审核资格。
+
+### Awaiting review — R09-B2 P5 v0.4 three-root static-export design
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P5_V04_STATIC_TOOLS` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `fc2124e2a9f5a6095f919a30a8186d20634fb3bb`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT review `2026-09-01_R09_B2_P5_complete_static_export_contract_53a481d_97bf5be.md` 的 production/evidence/exporter root、provenance、child bootstrap 与 staging 四项意见。
+- 新设计：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.4_2026-09-01.md`。`production_root` 固定 P4 recorded `ddb4e0e`/Gitlink；`evidence_root` 只读 P4/P1/P3 committed evidence；`exporter_root` 只读获批工具。parent 独立验证三根，拒绝重叠，不能再假定单 root 同时满足历史 source 和后提交 evidence。
+- child 无 root `tools` import，按 production D005 cwd/interpreter/env compose；parent 用 immutable staging，只有 child+pair verifier 均 PASS 后原子晋升；信封 nested schemas 与所有 evidence/exporter source SHA 独立绑定。
+- 当前仅申请 root 工具重构；禁止 compose/export/`load_experiment_from_toml`、CUDA/torchrun/GPU/训练。实现获批后，静态 export 仍需独立三方授权。
