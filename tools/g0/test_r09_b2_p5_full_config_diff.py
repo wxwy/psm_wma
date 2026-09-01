@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from tools.g0.export_r09_b2_p5_resolved_config import (
     P4_V4_PREFLIGHT_RELATIVE, P5_FORBIDDEN_ENVIRONMENT, P5_P3_BACKEND_ENVIRONMENT, PYTHON_CHILD_LOCALE,
@@ -102,12 +103,14 @@ class P5Test(unittest.TestCase):
             exporter = self._exporter_worktree(root, Path(temp)); source = _exporter_source(exporter)
             def envelope(backend: str) -> dict[str, object]:
                 request = requests[backend]
-                return {"schema_version": "r09_b2_p5_full_config_diff_v4", "backend": backend, "provenance": {"p4_v4_request_sha256": request["p4_request_sha256"], "p4_v4_result_sha256": request["p4_result_sha256"], "p4_v4_verification_sha256": request["p4_verification_sha256"], "exporter_source": source}, "effective_launch": {key: request[key] for key in ("cwd", "toml", "overrides", "interpreter", "loader_argv", "environment", "runtime_sys_path")}, "resolved_config": {"model": {"config": {"local_history_backend": backend}}}}
+                return {"schema_version": "r09_b2_p5_full_config_diff_v4", "backend": backend, "provenance": {"p4_v4_request_sha256": request["p4_request_sha256"], "p4_v4_result_sha256": request["p4_result_sha256"], "p4_v4_verification_sha256": request["p4_verification_sha256"], "exporter_source": source}, "effective_launch": {key: request[key] for key in ("cwd", "toml", "overrides", "interpreter", "loader_argv", "environment", "runtime_sys_path")}, "resolved_config": {"model": {"config": {"local_history_backend": backend}}, "optimizer": {"keys_to_select": [backend]}}}
             recurrent, ttt = envelope("recurrent"), envelope("ttt_fast_weight")
-            self.assertEqual(verify_pair(recurrent, ttt, evidence, exporter)["status"], "PASS")
-            self.assertEqual(verify_pair(recurrent, ttt, evidence, evidence)["status"], "FAIL")
-            bad = json.loads(json.dumps(ttt)); bad["provenance"]["p4_v4_result_sha256"] = "0" * 64
-            self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
+            contracts = {"recurrent": {"selector_keys": ["recurrent"]}, "ttt_fast_weight": {"selector_keys": ["ttt_fast_weight"]}}
+            with patch("tools.g0.verify_r09_b2_p5_full_config_diff._p3_contracts", return_value=contracts):
+                self.assertEqual(verify_pair(recurrent, ttt, evidence, exporter)["status"], "PASS")
+                self.assertEqual(verify_pair(recurrent, ttt, evidence, evidence)["status"], "FAIL")
+                bad = json.loads(json.dumps(ttt)); bad["provenance"]["p4_v4_result_sha256"] = "0" * 64
+                self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
             bad = json.loads(json.dumps(ttt)); bad["effective_launch"]["runtime_sys_path"].append("/ambient")
             self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
             bad = json.loads(json.dumps(ttt)); bad["effective_launch"]["environment"]["PSM_R09_B1_TTT_ENABLED"] = "0"

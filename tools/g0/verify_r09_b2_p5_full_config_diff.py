@@ -15,6 +15,7 @@ from tools.g0.export_r09_b2_p5_resolved_config import (
     build_v4_pair_requests,
     load_p4_v4_preflight,
 )
+from tools.g0.verify_r09_b2_p4_d005 import _load_frozen_inputs, _p3_contract
 
 
 SCHEMA = "r09_b2_p5_full_config_diff_v4"
@@ -72,7 +73,12 @@ def _exporter_source(exporter_root: Path) -> dict[str, Any]:
     }
 
 
-def _bound(envelope: Mapping[str, Any], request: Mapping[str, Any], record: Mapping[str, Any], exporter_source: Mapping[str, Any]) -> bool:
+def _p3_contracts(evidence_root: Path) -> dict[str, Mapping[str, Any]]:
+    _, inventory = _load_frozen_inputs(evidence_root)
+    return {backend: _p3_contract(inventory, backend) for backend in P4_V4_BACKENDS}
+
+
+def _bound(envelope: Mapping[str, Any], request: Mapping[str, Any], record: Mapping[str, Any], exporter_source: Mapping[str, Any], p3_contract: Mapping[str, Any]) -> bool:
     try:
         required = {"schema_version", "backend", "provenance", "effective_launch", "resolved_config"}
         provenance = envelope["provenance"]
@@ -100,12 +106,13 @@ def _bound(envelope: Mapping[str, Any], request: Mapping[str, Any], record: Mapp
                 "runtime_sys_path": request["runtime_sys_path"],
             }
             and isinstance(envelope["resolved_config"], Mapping)
+            and envelope["resolved_config"].get("optimizer", {}).get("keys_to_select") == p3_contract["selector_keys"]
         )
     except (KeyError, TypeError):
         return False
 
 
-def _allowed(path: str, left: Any, right: Any) -> bool:
+def _allowed(path: str, left: Any, right: Any, contracts: Mapping[str, Mapping[str, Any]]) -> bool:
     if path == "/backend":
         return left == "recurrent" and right == "ttt_fast_weight"
     if path in {
@@ -118,6 +125,11 @@ def _allowed(path: str, left: Any, right: Any) -> bool:
         return left == "0" and right == "1"
     if path == "/resolved_config/model/config/local_history_backend":
         return left == "recurrent" and right == "ttt_fast_weight"
+    selector = "/resolved_config/optimizer/keys_to_select"
+    if path == selector:
+        return left == contracts["recurrent"]["selector_keys"] and right == contracts["ttt_fast_weight"]["selector_keys"]
+    if path.startswith(selector + "/"):
+        return left in contracts["recurrent"]["selector_keys"] or right in contracts["ttt_fast_weight"]["selector_keys"]
     return False
 
 
@@ -129,17 +141,18 @@ def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], evidence_r
             raise ValueError("evidence_root and exporter_root must be distinct non-overlapping canonical directories")
         preflight = load_p4_v4_preflight(root)
         requests = build_v4_pair_requests(root)
+        contracts = _p3_contracts(root)
         exporter_source = _exporter_source(exporter_root)
     except (OSError, ValueError, KeyError, json.JSONDecodeError, subprocess.CalledProcessError) as exc:
         return {"schema_version": SCHEMA + "_verifier", "status": "FAIL", "error": str(exc), "checks": {}}
     checks = {
         "schema": all(item.get("schema_version") == SCHEMA for item in (recurrent, ttt)),
         "backend": recurrent.get("backend") == P4_V4_BACKENDS[0] and ttt.get("backend") == P4_V4_BACKENDS[1],
-        "recurrent_bound": _bound(recurrent, requests["recurrent"], preflight["recurrent"]["request"], exporter_source),
-        "ttt_bound": _bound(ttt, requests["ttt_fast_weight"], preflight["ttt_fast_weight"]["request"], exporter_source),
+        "recurrent_bound": _bound(recurrent, requests["recurrent"], preflight["recurrent"]["request"], exporter_source, contracts["recurrent"]),
+        "ttt_bound": _bound(ttt, requests["ttt_fast_weight"], preflight["ttt_fast_weight"]["request"], exporter_source, contracts["ttt_fast_weight"]),
     }
     differences = diff_paths(recurrent, ttt)
-    checks["allowlist"] = all(_allowed(path, left, right) for path, (left, right) in differences.items())
+    checks["allowlist"] = all(_allowed(path, left, right, contracts) for path, (left, right) in differences.items())
     return {"schema_version": SCHEMA + "_verifier", "status": "PASS" if all(checks.values()) else "FAIL", "checks": checks, "differences": differences}
 
 
