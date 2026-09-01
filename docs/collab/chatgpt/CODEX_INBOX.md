@@ -3578,3 +3578,14 @@ Detailed review:
 - 完整性回归：同 shape/dtype 的 scalar Tensor `0.25` 与 `0.5` 输出不同且携带精确 `value`；multi-element/NaN 均拒绝。另在 verifier fixture 将 recurrent/TTT 共享 param-group `lr` 设成同 metadata、不同 Tensor `value`，精确断言 `shared_dcp_optimizer_schema_metadata=false` 且 verifier=`FAIL`。
 - 静态证据：`cosmos-framework/.venv/bin/python -m py_compile tools/g0/collect_r09_b2_p3_gpu_inventory.py tools/g0/verify_r09_b2_p3_gpu_inventory.py tools/g0/test_verify_r09_b2_p3_gpu_inventory.py` PASS；`cosmos-framework/.venv/bin/python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 18/18 PASS；`git diff --check` PASS。无 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。
 - 未改变的门：canonical FQN/owner_fqn、28 GiB cap、recurrent→TTT fail-stop、single GPU、offline/local processor、fresh-output、禁止网络/数据/VAE/weight/checkpoint I/O、forward/backward/optimizer/scheduler step、手工 worker、重试/换卡/多卡及 B2-T/P4/P5/训练/评测/推理/closed-loop/Global/Agent/RL。仅三方针对本 SHA 一致批准后，可按 runbook 唯一命令执行一次 attempt-6。
+
+### Awaiting review — R09-B2 P3 attempt-6 selector-aware verifier closure
+
+请求 verdict：`APPROVE_TO_CLOSE_B2_P3_GPU_ONLY` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `05d85155926764bc27270b9f3baab9d1f066334b`；attempt-6 collection root=`269540e3ac6b25be8c1f3549f58d9ed28147cb2e`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 已执行且仅一次的 GPU inventory：recurrent 与 `ttt_fast_weight` workers 均 PASS；无 forward/backward/optimizer/scheduler step、无 weight/checkpoint load、单 world-size=1、offline/local processor、peak reserved=`27,147,632,640` B（25.28 GiB < 28 GiB），GPU 已归零。原始 artifact/D005/两 worker JSON 固化在 `artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/`。
+- 首个 verifier FAIL 的根因已审计：不是越界。recurrent selected=314、TTT=12；recipe `action_policy_libero_edge_all.py:221-226` 在 TTT 环境显式覆写 `keys_to_select` 为 encoder + 两个 Local projection，故 302 个 recurrent-only 参数均由实际 selector allowlist 差集解释，TTT 无 recurrent cell 参数亦符合设计。
+- 最小整改：verifier 对 optimizer/selector/optimizer-DCP schema 的 recurrent-only 差异，仅允许既有 structural recurrent prefix，或由 artifact 中 `recurrent.selector.keys_to_select - ttt.selector.keys_to_select` 的精确 substring 解释；TTT-only 仍拒绝，model/buffer/DCP-model structural policy 未放宽。新增正负回归并将 fresh-path 回归改为拒绝已终态 attempt-6。
+- 静态证据：`py_compile` PASS；`unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 19/19 PASS；`git diff --check` PASS。为保持 collection provenance，不重跑 GPU：用 clean collection-root=`269540e`/Gitlink=`21d064f` worktree 承载未跟踪 evidence 副本，由当前 verifier（SHA256 `10dd83084ff133a1ee5878125f8611aab0b6ce0ce208ac8cacd1b8bd8bce2111`）复核，`p3_gpu_inventory_verifier_selector_review.json`=PASS，record_valid=true，所有 provenance/23 checks/diff checks=true。
+- 禁止范围不变：不得重跑 P3、不得进入 P4/P5/B2-T、训练、评测、推理、closed-loop、多卡、长训、backend freeze、Global/Agent/RL。请求只关闭 P3 GPU-only optimizer inventory Gate。
