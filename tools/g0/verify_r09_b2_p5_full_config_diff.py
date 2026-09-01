@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import subprocess
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -90,10 +92,23 @@ def _expected(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     return records, contracts
 
 
-def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Mapping[str, Any]) -> bool:
+def _file_sha(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _exporter_source(exporter_root: Path) -> dict[str, Any]:
+    files = ("tools/g0/export_r09_b2_p5_resolved_config.py", "tools/g0/verify_r09_b2_p5_full_config_diff.py")
+    if not exporter_root.is_dir() or subprocess.run(["git", "-C", str(exporter_root), "diff", "--quiet", "HEAD", "--"], check=False).returncode != 0:
+        raise ValueError("exporter_root must be tracked-clean")
+    return {"root_revision": subprocess.check_output(["git", "-C", str(exporter_root), "rev-parse", "HEAD"], text=True).strip(), "tool_sha256": {name: _file_sha(exporter_root / name) for name in files}}
+
+
+def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Mapping[str, Any], exporter_source: Mapping[str, Any]) -> bool:
     try:
         required = {"schema_version", "backend", "provenance", "effective_launch", "resolved_config"}
-        if set(envelope) != required or envelope["provenance"]["production_source"] != record["source"]:
+        provenance = envelope["provenance"]
+        if (set(envelope) != required or set(provenance) != {"production_source", "exporter_source", "inputs"}
+                or provenance["production_source"] != record["source"] or provenance["exporter_source"] != exporter_source):
             return False
         launch = envelope["effective_launch"]
         inputs = envelope["provenance"]["inputs"]
@@ -119,16 +134,17 @@ def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Map
         return False
 
 
-def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], root: Path) -> dict[str, Any]:
+def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], evidence_root: Path, exporter_root: Path) -> dict[str, Any]:
     try:
-        records, contracts = _expected(root.resolve())
+        records, contracts = _expected(evidence_root.resolve())
+        exporter_source = _exporter_source(exporter_root.resolve())
     except (OSError, ValueError, KeyError, json.JSONDecodeError) as exc:
         return {"schema_version": SCHEMA + "_verifier", "status": "FAIL", "error": str(exc), "checks": {}}
     checks = {
         "schema": all(item.get("schema_version") == SCHEMA for item in (recurrent, ttt)),
         "backend": recurrent.get("backend") == "recurrent" and ttt.get("backend") == "ttt_fast_weight",
-        "recurrent_bound": _bound(recurrent, records["recurrent"], contracts["recurrent"]),
-        "ttt_bound": _bound(ttt, records["ttt_fast_weight"], contracts["ttt_fast_weight"]),
+        "recurrent_bound": _bound(recurrent, records["recurrent"], contracts["recurrent"], exporter_source),
+        "ttt_bound": _bound(ttt, records["ttt_fast_weight"], contracts["ttt_fast_weight"], exporter_source),
         "p3_common_and_contract": _p3_checks(recurrent, ttt, contracts),
     }
     differences = diff_paths(recurrent, ttt)
@@ -138,9 +154,9 @@ def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], root: Path
 
 def main() -> None:
     import argparse
-    parser = argparse.ArgumentParser(); parser.add_argument("--root", type=Path, required=True); parser.add_argument("--recurrent", type=Path, required=True); parser.add_argument("--ttt", type=Path, required=True); parser.add_argument("--output", type=Path, required=True)
+    parser = argparse.ArgumentParser(); parser.add_argument("--evidence-root", type=Path, required=True); parser.add_argument("--exporter-root", type=Path, required=True); parser.add_argument("--recurrent", type=Path, required=True); parser.add_argument("--ttt", type=Path, required=True); parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    result = verify_pair(json.loads(args.recurrent.read_text()), json.loads(args.ttt.read_text()), args.root)
+    result = verify_pair(json.loads(args.recurrent.read_text()), json.loads(args.ttt.read_text()), args.evidence_root, args.exporter_root)
     args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
     print(result["status"])
 

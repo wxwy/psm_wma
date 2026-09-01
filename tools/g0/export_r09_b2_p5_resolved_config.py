@@ -187,7 +187,7 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
         subprocess.run([request["interpreter"]["realpath"], str(Path(__file__).resolve()), "--child-request", str(request_path), "--child-output", str(tree_path)], cwd=request["cwd"], env=request["environment"]["effective"], check=True)
         envelopes[backend] = assemble_envelope(request, json.loads(tree_path.read_text()), tool_sha256=tool_sha256, exporter_root_revision=exporter_root_revision)
     from tools.g0.verify_r09_b2_p5_full_config_diff import verify_pair
-    result = verify_pair(envelopes["recurrent"], envelopes["ttt_fast_weight"], evidence_root)
+    result = verify_pair(envelopes["recurrent"], envelopes["ttt_fast_weight"], evidence_root, exporter_root)
     if result["status"] != "PASS":
         raise RuntimeError("P5 parent refuses to write an envelope pair that fails its verifier")
     for backend, envelope in envelopes.items():
