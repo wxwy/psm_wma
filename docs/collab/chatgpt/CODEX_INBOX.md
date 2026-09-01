@@ -3311,3 +3311,14 @@ Detailed review:
 
 - 当前根仓审核锚点：`4c95942`（子模块/Gitlink 仍 `0af5d53`）。关闭 Kimi 指出的合法 `BLOCKED` 语义缺陷：local path/asset 为假时，collector 的资产缺失 `BLOCKED` 由 verifier 保持为 `BLOCKED/record_valid=true`；仅 `PASS` 仍强制该两项为真。移除重复 `checkpoint_loaded` 字段。
 - 复现：有效本地路径/无 token、`/nonexistent` 路径两种 static collector→verifier 均 `BLOCKED/record_valid=true`；`py_compile`、`git diff --check` PASS。请求同一 verdict 复审；禁止 GPU。
+
+---
+
+## 2026-09-01 — R09-B2 P3 processor read-only evidence 静态实现审核请求
+
+请求 verdict：`APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `d30c11c`；子模块/Gitlink `0af5d53`。
+- 按 GPT `ed145d7` 的 run 前硬条件，仅新增静态 helper：六 frozen asset 记录 size+SHA；future worker 在任何 HF/Transformers 导入前实际应用离线环境并回读 observed 值；future PASS verifier 强制 observed env 与批准值匹配、前后六资产快照逐项相等。未调用 processor/model 构造。
+- 证据：`py_compile` + 子进程内 helper 验证（实际 env 回读、六资产 SHA/size、快照 equality）+ `git diff --check` PASS；无 GPU/网络/权重/VAE/dataloader/数据/base checkpoint。
+- 仍只请求继续 root-side 静态实现；不授权 GPU、processor/model 构造、checkpoint I/O、forward/backward/step、B2-T/P4/P5/训练/评测/推理。
