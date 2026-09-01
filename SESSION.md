@@ -24,6 +24,7 @@
 
   - 静态实现第一步：collector 在运行 token 前只读记录 canonical Edge 路径、六个 processor/tokenizer 配置文件的 SHA256 和离线 env contract；verifier 对合法未执行或资产缺失的 `BLOCKED` artifact 单独验证，绝不要求缺席的 backend inventory，也绝不降低 `PASS` backend/state/DCP 合同。Kimi 首轮指出缺资产被误报 FAIL，已改为 BLOCKED；`py_compile`、有效路径/无 token 与不存在路径两条 static collector→verifier、`git diff --check` PASS；产物仅 `/tmp/p3_*_blocked*.json`，未运行 GPU/模型/网络，未提交。
   - GPT 的 `ed145d7`、Kimi、MM 均批准继续静态实现。已新增 future worker 使用的实际离线环境应用 helper、含 size/SHA 的六资产只读快照以及严格前后快照比较；future PASS verifier 强制 observed env 与前后资产快照相等。`py_compile` 与子进程内 helper 验证 PASS；未构造 processor/model，未提交。
+  - 三方随后批准 read-only evidence。future PASS verifier 新增 GPT 要求的完整 provenance key 集合；两条 BLOCKED path 不要求虚构 run provenance。`py_compile`、不存在路径 BLOCKED→verifier 与 diff-check PASS；未运行 GPU，未提交。
 
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 

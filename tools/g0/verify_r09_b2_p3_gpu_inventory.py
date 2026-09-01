@@ -22,6 +22,23 @@ REQUIRED_PROCESSOR_ASSETS = {
     "preprocessor_config.json",
     "video_preprocessor_config.json",
 }
+PASS_PROVENANCE_KEYS = {
+    "root_revision",
+    "submodule_revision",
+    "gitlink_revision",
+    "recipe_sha256",
+    "collector_sha256",
+    "verifier_sha256",
+    "model_source_sha256",
+    "optimizer_source_sha256",
+    "dcp_source_sha256",
+    "command_argv",
+    "cwd",
+    "environment",
+    "gpu_uuid",
+    "d005_record",
+    "approved_run_token",
+}
 
 
 def _selected(inventory: dict[str, object], field: str) -> set[str]:
@@ -80,6 +97,7 @@ def verify(artifact: dict[str, object]) -> dict[str, object]:
     processor = artifact.get("local_processor", {})
     assets = processor.get("required_assets", {})
     offline = processor.get("offline_environment", {})
+    provenance = artifact.get("provenance", {})
     backends = {name: artifact.get(name, {}) for name in ("recurrent", "ttt_fast_weight")}
     pass_claimed = artifact.get("status") == "PASS"
     checks = {
@@ -101,6 +119,7 @@ def verify(artifact: dict[str, object]) -> dict[str, object]:
             if pass_claimed
             else True
         ),
+        "pass_provenance": all(provenance.get(key) for key in PASS_PROVENANCE_KEYS) if pass_claimed else True,
     }
     backend = {name: backend_checks(record) for name, record in backends.items()} if pass_claimed else {}
     diff = diff_checks(artifact) if pass_claimed and all(name in artifact for name in backends) else {}
