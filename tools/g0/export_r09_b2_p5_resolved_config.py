@@ -133,6 +133,12 @@ def validate_production_root(recurrent: Mapping[str, Any], ttt: Mapping[str, Any
         for value in (record["command"]["cwd"], env["PYTHONPATH"], env["PSM_R09_B2_STREAM_MANIFEST_ROOT"]):
             if not Path(value).resolve().is_relative_to(root):
                 raise ValueError("D005 worktree path escapes the frozen production root")
+        source = record["source"]
+        root_revision = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+        gitlink = subprocess.check_output(["git", "-C", str(root), "ls-tree", "HEAD", "cosmos-framework"], text=True).split()[2]
+        submodule_revision = subprocess.check_output(["git", "-C", str(root / "cosmos-framework"), "rev-parse", "HEAD"], text=True).strip()
+        if source != {"root_revision": root_revision, "submodule_revision": submodule_revision, "gitlink_revision": gitlink}:
+            raise ValueError("production_root Git source differs from frozen D005 source")
     return root
 
 
