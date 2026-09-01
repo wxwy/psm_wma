@@ -15,6 +15,7 @@ import subprocess
 import sys
 from collections.abc import Mapping
 from typing import Any
+from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
 
 
 SCHEMA = "r09_b2_p5_full_config_diff_v2"
@@ -131,10 +132,10 @@ def build_child_request(record: Mapping[str, Any], *, root: Path, backend: str) 
     interpreter = Path(command["interpreter"]["realpath"]).resolve()
     if cwd != (root / "cosmos-framework").resolve() or not interpreter.is_absolute():
         raise ValueError("D005 cwd/interpreter is not canonical for this root")
-    return {"backend": backend, "root": str(root.resolve()), "toml": toml, "overrides": overrides,
+    return {"backend": backend, "root": str(root.resolve()), "toml": toml, "overrides": overrides, "command_argv": command["argv"],
             "cwd": str(cwd), "interpreter": {"realpath": str(interpreter), "sha256": command["interpreter"]["sha256"]},
             "environment": {"contract": environment, "effective": sanitized_environment(environment, os.environ)},
-            "d005_sha256": record["d005_sha256"], "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
+            "d005_sha256": record["d005_sha256"], "p4_record_sha256": sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}), "p3_verifier_sha256": P3_VERIFIER_SHA256, "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
 
 
 def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, root: Path) -> dict[str, dict[str, Any]]:
@@ -146,6 +147,40 @@ def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *,
         raise ValueError("P5 refuses to compose a P4 pair that fails its frozen verifier")
     return {"recurrent": build_child_request(recurrent, root=root, backend="recurrent"),
             "ttt_fast_weight": build_child_request(ttt, root=root, backend="ttt_fast_weight")}
+
+
+def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, Any], *, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
+    """Construct the complete verifier-owned envelope from one D005-bound child result."""
+    record = request
+    command = record["interpreter"]
+    return {"schema_version": SCHEMA, "backend": record["backend"],
+            "provenance": {"production_source": record["source"], "exporter_source": {"root_revision": exporter_root_revision, "tool_sha256": tool_sha256},
+                           "inputs": {"p4_record_sha256": record["p4_record_sha256"],
+                                      "p3_inventory_path": record["inputs"]["p3_inventory"]["path"], "p3_inventory_sha256": record["inputs"]["p3_inventory"]["sha256"], "p3_verifier_sha256": record["p3_verifier_sha256"]}},
+            "effective_launch": {"command": {"argv": record["command_argv"], "cwd": record["cwd"], "interpreter": command, "toml": record["toml"], "trailing_overrides": record["overrides"]},
+                                  "environment": {**record["environment"]["contract"], "effective": record["environment"]["effective"]}, "world_size": record["budget"]["world_size"], "budget": record["budget"],
+                                  "p1_p3_d005_bindings": {"p1_manifest": record["inputs"]["p1_manifest"], "p3_inventory": record["inputs"]["p3_inventory"]}, "derived_job_path_local": record["outputs"]["run_root"]},
+            "resolved_config": resolved_config}
+
+
+def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, root: Path, output_dir: Path, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
+    """Future approved path: two D005-bound fresh children, envelope assembly, then verifier."""
+    requests = build_pair_requests(recurrent, ttt, root=root)
+    output_dir.mkdir(parents=True, exist_ok=False)
+    envelopes: dict[str, Any] = {}
+    for backend, request in requests.items():
+        request_path, tree_path = output_dir / f"{backend}.request.json", output_dir / f"{backend}.tree.json"
+        request_path.write_bytes(canonical_bytes(request))
+        subprocess.run([request["interpreter"]["realpath"], str(Path(__file__).resolve()), "--child-request", str(request_path), "--child-output", str(tree_path)], cwd=request["cwd"], env=request["environment"]["effective"], check=True)
+        envelopes[backend] = assemble_envelope(request, json.loads(tree_path.read_text()), tool_sha256=tool_sha256, exporter_root_revision=exporter_root_revision)
+    from tools.g0.verify_r09_b2_p5_full_config_diff import verify_pair
+    result = verify_pair(envelopes["recurrent"], envelopes["ttt_fast_weight"], root)
+    if result["status"] != "PASS":
+        raise RuntimeError("P5 parent refuses to write an envelope pair that fails its verifier")
+    for backend, envelope in envelopes.items():
+        (output_dir / f"{backend}_resolved.json").write_bytes(canonical_bytes(envelope))
+    (output_dir / "verification.json").write_bytes(canonical_bytes(result))
+    return result
 
 
 def _child(request: Path, output: Path) -> None:

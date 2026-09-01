@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from tools.g0.export_r09_b2_p5_resolved_config import SCHEMA
-from tools.g0.verify_r09_b2_p4_d005 import _load_frozen_inputs, _p3_contract, sha256_json
+from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256, _load_frozen_inputs, _p3_contract, sha256_json
 
 P4_DIR = Path("artifacts/g0/r09/b2/p4_launch_d005")
 
@@ -90,16 +90,31 @@ def _expected(root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     return records, contracts
 
 
-def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any]) -> bool:
+def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Mapping[str, Any]) -> bool:
     try:
         required = {"schema_version", "backend", "provenance", "effective_launch", "resolved_config"}
         if set(envelope) != required or envelope["provenance"]["production_source"] != record["source"]:
             return False
         launch = envelope["effective_launch"]
-        return (launch["command"]["argv"] == record["command"]["argv"] and launch["command"]["cwd"] == record["command"]["cwd"]
-                and launch["environment"]["set"] == record["environment"]["set"] and launch["budget"] == record["budget"]
+        inputs = envelope["provenance"]["inputs"]
+        command = launch["command"]
+        environment = launch["environment"]
+        expected_digest = sha256_json({key: value for key, value in record.items() if key != "d005_sha256"})
+        return (set(command) == {"argv", "cwd", "interpreter", "toml", "trailing_overrides"}
+                and command["argv"] == record["command"]["argv"] and command["cwd"] == record["command"]["cwd"]
+                and command["interpreter"] == record["command"]["interpreter"]
+                and command["toml"] == "examples/toml/sft_config/action_policy_libero_edge_all.toml"
+                and command["trailing_overrides"] == ["trainer.max_iter=100", "trainer.save_zero_checkpoint=true"]
+                and environment["set"] == record["environment"]["set"] and environment["unset"] == record["environment"]["unset"]
+                and environment["inherit_allowlist"] == record["environment"]["inherit_allowlist"] and environment["effective"] == record["environment"]["set"]
+                and launch["world_size"] == record["budget"]["world_size"] and launch["budget"] == record["budget"]
+                and launch["p1_p3_d005_bindings"]["p1_manifest"] == record["inputs"]["p1_manifest"]
                 and launch["p1_p3_d005_bindings"]["p3_inventory"] == record["inputs"]["p3_inventory"]
-                and envelope["provenance"]["inputs"]["p4_record_sha256"] == sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}))
+                and launch["derived_job_path_local"] == record["outputs"]["run_root"]
+                and inputs["p4_record_sha256"] == expected_digest and inputs["p3_inventory_path"] == record["inputs"]["p3_inventory"]["path"]
+                and inputs["p3_inventory_sha256"] == record["inputs"]["p3_inventory"]["sha256"] and inputs["p3_verifier_sha256"] == P3_VERIFIER_SHA256
+                and envelope["resolved_config"]["model"]["config"]["local_history_backend"] == ("ttt_fast_weight" if record["backend"] == "ttt_fast_weight" else "recurrent")
+                and envelope["resolved_config"]["optimizer"]["keys_to_select"] == contract["selector_keys"])
     except (KeyError, TypeError):
         return False
 
@@ -112,8 +127,8 @@ def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], root: Path
     checks = {
         "schema": all(item.get("schema_version") == SCHEMA for item in (recurrent, ttt)),
         "backend": recurrent.get("backend") == "recurrent" and ttt.get("backend") == "ttt_fast_weight",
-        "recurrent_bound": _bound(recurrent, records["recurrent"]),
-        "ttt_bound": _bound(ttt, records["ttt_fast_weight"]),
+        "recurrent_bound": _bound(recurrent, records["recurrent"], contracts["recurrent"]),
+        "ttt_bound": _bound(ttt, records["ttt_fast_weight"], contracts["ttt_fast_weight"]),
         "p3_common_and_contract": _p3_checks(recurrent, ttt, contracts),
     }
     differences = diff_paths(recurrent, ttt)
