@@ -3706,3 +3706,13 @@ Detailed review:
 - artifact：`artifacts/g0/r09/b2/p1_production_manifest_100x16x128/`。header：204800 records、world=1、workers=0、updates=100、grad_accum=16、max_samples=128、seed=42；`records.jsonl` SHA=`ae43f88c5bd503e8c10ab29fbae3f74a14e8d173170a0a46cf9f0cc8de9a73aa`，header SHA=`e49ade9d…`，verification SHA=`0999ccf7…`。
 - `verification.json`=`PASS`，14/14：record count/hash/schema、ordinals、packer arithmetic、four-suite partition、source/provenance SHA、single-process、每条 cache window dict/key、flat-index bijection 均 true；GPU=0，未读 MP4/VAE/model/weight，未执行 torchrun/训练/评测/推理。
 - 请求只把这个真实生产 manifest 绑定为 P4 的后续前置；不关闭 P4、不生成 D005、不授权 P5/B2-T/GPU。
+
+### Awaiting review — R09-B2 P4 static D005 production-contract closure
+
+请求 verdict：`APPROVE_TO_CLOSE_P4_STATIC_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `59d46fcfaf75821f103455b94bdcdfcf800b4d42`（实现提交=`64aad3d`）；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT `docs/collab/chatgpt/reviews/2026-09-01_R09_B2_P4_static_review_805ade9.md` 的全部 remaining HIGH。
+- verifier 不再接收调用方传入的 P1/P3：固定读取、SHA256 绑定 production P1 header（204800 records，128×16、100 updates）与 P3 attempt-6 inventory+PASS verifier；从 verifier-owned selector constants 和实际 `model_parameters` 重新计算 selector/resolved-selector/optimizer membership。
+- D005 的 effective job identity 从 recipe TOML 读取并要求 `cosmos3_action_libero/action_sft/edge_libero_4in1`；budget 精确锁为 `world=1,micro=128,accum=16,global=samples=2048,updates=100`；argv、canonical interpreter、cache/manifest 绑定、语义环境 unset、allowlisted outputs/freshness 均 fail-closed。writer 只写完整 pair verifier PASS 的非执行记录。
+- CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_verify_r09_b2_p4_d005.py -v`=4/4 PASS；`git diff --check` PASS。永久负例包括伪造但自洽的 P3、P1 record_count、预算、语义环境、尾随 argv 和自报 job identity。
+- 禁止范围：未生成真实 D005；未导入 torch/Cosmos，未读取真实模型/数据/VAE/checkpoint，未执行 torchrun、GPU、训练、评测或推理；不改子模块。仅请求 P4 static builder/verifier closure，P5/B2-T 仍未授权。
