@@ -12,7 +12,7 @@
 
 ## 当前最小步骤
 
-- `G0-R09-B2-P4-LAUNCH-D005`（2026-09-01，REVIEW）：ChatGPT `4e48ac5` 要求 D005 绑定实际 production 控制面，已仅修订静态设计 `docs/build/PSM-WMA_R09_B2_P4_launch_d005_design_v0.1_2026-09-01.md`：backend 必走 `PSM_R09_B1_TTT_ENABLED=0|1`，P1/cache/worker/checkpoint/VAE/processor 均须有实际 env/argv consumer，argv 必显式 `trainer.max_iter=100`，父环境 allowlist 与仓内相对/外部 canonical absolute path 分层 hard-gate。待重新三方审核；未改 `cosmos-framework`，未加载模型/数据，未运行 GPU、训练、评测或推理。
+- `G0-R09-B2-P4-LAUNCH-D005`（2026-09-01，REVIEW）：ChatGPT `117d57c` 要求 D005 再绑定真实 output/resume 与 distributed 启动面，已只修订静态设计：future argv 固定 one-process `torchrun --standalone --nnodes=1 --nproc-per-node=1`、`CUDA_VISIBLE_DEVICES=0`、`trainer.max_iter=100`、`trainer.save_zero_checkpoint=true`；`IMAGINAIRE_OUTPUT_ROOT + job.project/group/name` 必独立推导真实 run/checkpoint 路径，任何既有 `latest_checkpoint.txt`/`iter_*` fail-closed。仍只记录未来模板，不执行 torchrun；待重新三方审核，未改 `cosmos-framework`，未加载模型/数据，未运行 GPU、训练、评测或推理。
 
 - `G0-R09-B2-P3-GPU-ONLY-RUN`（2026-09-01，DONE）：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-01_R09_B2_P3_membership_closure_2daa461_6a60b92.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P3_GPU_ONLY`。唯一 attempt-6 的 recurrent/TTT production optimizer inventory 均 PASS；单卡 offline/local processor、无 forward/backward/optimizer/scheduler step、无 weights/checkpoint/data/VAE I/O，峰值 25.28 GiB < 28 GiB。新版 verifier 从冻结 selector 及实际 parameter name 独立重算 row-level selector/optimizer membership，并在 collection root=`269540e` clean worktree 上对同一证据复核 PASS；未重跑 GPU。该 closure 仅解除 P3 actual optimizer-membership blocker，不授权 P4/P5、B2-T、训练、评测、推理或任何新增 GPU 运行。根仓 closure request=`2daa461`、实现=`6a60b92`、ChatGPT approval=`42a4b53`、子模块/Gitlink=`21d064f`。
 
