@@ -3375,3 +3375,9 @@ Detailed review:
 - 改动：collector 新增 future isolated-worker 的导入前 hard-gate：六资产必须齐全；先应用并回读离线环境；解析后 `repository/revision` 必须均为 `None`，`tokenizer_type` 必须等于 canonical 本地 Edge 路径。未调用该 worker。
 - 证据：`py_compile`、`python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py`（2 passed）、`git diff --check` PASS。
 - 禁止范围：GPU、HF/Transformers/processor/model 构造、权重/VAE/数据/dataloader、DCP I/O、forward/backward/step、B2-T/P4/P5、训练/评测/推理。
+
+### GPT HIGH 整改复审
+
+- 审核对象：根仓 `8bff9f2`；子模块/Gitlink `0af5d53`。
+- helper 现直接返回唯一 `local_processor` schema，包含 canonical path、六资产、offline/observed environment、before/after assets 及 auditable `resolved_tokenizer_binding`；verifier 对 repository=None、revision=None、tokenizer_type==canonical_path 做 PASS hard-gate。
+- `unittest` 2 passed，新增 helper 输出可直接嵌入最小 PASS artifact 的回归；`py_compile`、`git diff --check` PASS。请求同一 verdict；禁止 GPU/HF/processor/model/weights/data/DCP/step。
