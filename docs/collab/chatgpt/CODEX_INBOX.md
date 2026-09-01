@@ -3451,3 +3451,17 @@ Detailed review:
 - verifier 的 shared optimizer-DCP schema metadata 比较新增 `items`，因此 `betas=(0.9,0.95)` 既可被记录，也参与 recurrent/TTT 一致性硬门。
 - 证据：`test_state_schema_helpers_preserve_names_and_tensor_metadata` 现包含真实 grammar 的 `param_groups.net.a.betas=(0.9,0.95)`，精确断言 canonical schema；全套 6/6 unittest PASS，py_compile、根仓/子模块 diff-check PASS，tools/g0 与临时 D005 fixture 均无残留。
 - 本轮仅静态代码/测试，未运行 GPU、worker、processor/model/VAE、checkpoint/data/DCP I/O，未执行 forward/backward/optimizer/scheduler step。仍须三方批准后才可另行申请 GPU run；禁止范围不变。
+
+---
+
+## 2026-09-01 — R09-B2 P3 GPU-only inventory 运行审核申请
+
+请求 verdict：`APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `fb1d887`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 静态前置：ChatGPT/Kimi/MM 已对实现根 `c9058b6` 一致 `APPROVE_TO_REQUEST_GPU_P3_RUN`；ChatGPT closure=`f2a10e9`。本次新增冻结 runbook：`docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_runbook_v0.1_2026-09-01.md`。
+- 唯一命令：runbook 第 26--45 行。`CUDA_VISIBLE_DEVICES=0`、单卡、24 GiB hard stop；本地 Edge processor=`/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID`，base DCP/Wan VAE/LIBERO 仅作为 recipe 环境路径，禁止其 I/O。输出仅 `artifacts/g0/r09/b2/p3_gpu_inventory/{p3_gpu_inventory.json,p3_gpu_inventory_d005.json,p3_gpu_inventory_recurrent.json,p3_gpu_inventory_ttt_fast_weight.json}`。
+- 唯一允许行为：两个独立 backend 各构造生产 processor（本地离线例外）、model、optimizer，并只读 `ModelWrapper.state_dict()`/`OptimizersContainer.state_dict()` schema；worker 要求恰好一张可见 GPU，持续检查 24 GiB 峰值。
+- PASS：两个 worker PASS、provenance/D005/source/offline/单卡全部匹配、optimizer group 与 model/optimizer DCP membership 一致、TTT five-member state 不持久化、跨 backend diff 仅允许 recurrent prefix。
+- STOP/FAIL：任一非零退出、BLOCKED/FAIL、>24 GiB、非单卡、网络/远端 tokenizer、任何数据/VAE/checkpoint I/O 或 forward/backward/optimizer/scheduler step；立即停止且不重跑。
+- 禁止范围：B2-T/P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训、backend freeze、Global/Agent/RL。未获三方相同 verdict 前，绝不执行该命令。
