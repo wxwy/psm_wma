@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import attrs
 import dataclasses
 import enum
 import json
@@ -75,8 +74,8 @@ def canonicalize(value: Any, seen: set[int] | None = None) -> Any:
             return [canonicalize(item, seen) for item in value]
         finally:
             seen.remove(identity)
-    if attrs.has(type(value)):
-        return canonicalize(attrs.asdict(value, recurse=True), seen)
+    if hasattr(type(value), "__attrs_attrs__"):
+        return canonicalize({field.name: getattr(value, field.name) for field in type(value).__attrs_attrs__}, seen)
     if dataclasses.is_dataclass(value) and not isinstance(value, type):
         return canonicalize(dataclasses.asdict(value), seen)
     if "${" in str(value):
