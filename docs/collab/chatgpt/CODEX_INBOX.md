@@ -3735,3 +3735,11 @@ Detailed review:
 - 首次 clean-worktree D005 pair verifier FAIL，未执行 argv/GPU/训练，未创建 future output：canonical `.venv/bin/python` resolve 到 uv Python，但 verifier 将该解释器拒于 allowlist 外，且错误把 `PYTHONPATH` 与 interpreter parent 比较。
 - 最小修复：`_asset_ok/_allowed_roots` 仅额外允许当前 worktree canonical interpreter parent（不放宽 `/root`）；`_env_assets_bound` 将 `PYTHONPATH` 固定比较 `<root>/cosmos-framework`。CPU py_compile、6/6 unittest、diff-check PASS。原 FAIL JSON 保留、不覆盖、不提交。
 - 请求获准后才在新的 fresh clean worktree 对同一只读本地 assets 重生成两份 `FROZEN_NOT_EXECUTED` JSON + 标准库 verifier；仍禁止 torchrun/GPU/模型执行/训练。
+
+### Awaiting review — R09-B2 P4 v2 interpreter-exception isolation
+
+请求 verdict：`APPROVE_TO_REGENERATE_P4_V2_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `ddb4e0eae97fb545d5239c1ddb6d4387170f3780`；Gitlink=`21d064f`。处理 ChatGPT `2026-09-01_R09_B2_P4_v2_regeneration_875d680_990afb6.md`。
+- interpreter exception 已隔离：generic asset/output allowlist 恢复为 root、`/localdisk-tmp/models`、`/disk/rl/data`；仅 `external_assets.interpreter` 可等于 current clean-worktree canonical `.venv/bin/python.resolve()`+SHA，且其 `realpath/sha256` 必与 command interpreter 相等。
+- 新增永久负例：interpreter parent 不会成为 runtime-output root，且用 base checkpoint 替换 interpreter asset 必 FAIL。CPU unittest 7/7、diff-check PASS；未读取资产、未生成 D005、未执行 torchrun/GPU/训练。
