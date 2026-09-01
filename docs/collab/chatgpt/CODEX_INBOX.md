@@ -4073,3 +4073,13 @@ print(json.dumps(result, sort_keys=True))
 
 - 资源/禁止：CPU only、offline；仅允许两个 child 的 `load_experiment_from_toml` resolved-config compose，且 child 强制 CUDA 未初始化。禁止 CUDA/GPU、torchrun、模型/dataloader/optimizer/checkpoint 构造、weights/data/MP4、训练、评测、推理。
 - 产物/停止：PASS 仅当 canonical 内两个 `*_resolved.json` 与 `verification.json` 存在且 verifier `status=PASS`；任一异常/FAIL 仅保留同级 attempt `failure.json`，canonical 必不存在，立即停止、不重跑、不改参数。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。这是针对已失败且不可重跑的 P5 r2 的根因设计审查；不申请 P4 重冻、P5 export 或任何运行。
+
+- 审核对象：根仓 design commit=`dc5a7994a2ebaa2d7bd488d9a09b954b0b69e93d`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；设计文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v0.1_2026-09-01.md`。
+- 根因证据：P5 r2 attempt=`/disk/rl/.psm_wma_p5_static_export_20260901_r2.attempt-077e7905a208464bbf78889ae3857eff/` 在 compose 前以 base uv Python 导入 `pydantic` 失败；P4 v2 将 `.venv/bin/python` `resolve()` 后写入 D005/P5 argv，去除了 venv `sys.prefix` 与 site-packages。canonical `_r2` 未创建，旧 attempt 不得重跑。
+- 方案：P4 新 schema 绑定 lexical venv launcher（含 symlink 类型/payload）、real base binary、`pyvenv.cfg`、最小 compose 依赖 distribution manifest；P5 使用 lexical argv[0]，并在任何 Hydra/Pydantic/Cosmos import 前复验 `sys.executable`、`sys.prefix`、base SHA、cfg、manifest 与 `sys.path`。禁止给 uv base 安装依赖或重建/修改 venv。
+- 允许范围：批准后仅允许 root `tools/g0/verify_r09_b2_p4_d005.py`、其标准库 CPU tests、P5 exporter/verifier 与其标准库 CPU tests 的最小实现；必须覆盖 launcher 去虚拟化、symlink/cfg/manifest 篡改、缺失/重复 distribution、prefix/path 和 pair mismatch 的 fail-closed 回归。
+- 禁止范围：不授权 P4 static record 重冻、P5 export/retry、compose、CUDA/GPU、torchrun、模型/dataloader/optimizer/checkpoint 构造、weights/data/MP4、训练、评测、推理或 B2-T。
