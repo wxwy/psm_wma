@@ -4112,3 +4112,13 @@ print(json.dumps(result, sort_keys=True))
 - HIGH-2：bootstrap 从所有已验证 registry/editable/VCS payload 物化 fresh run-local staging tree，拒绝 pyc/pycache/pth/customize/symlink/额外文件，runtime sys.path 只含 base stdlib/dynload+staging source/site-packages，并设 `PYTHONDONTWRITEBYTECODE=1`。
 - MEDIUM：production/submodule/VCS checkout 明确定义为 tracked+untracked 全空，且所有 source tree/staging 均 exact manifest；新增 untracked shadow/pyc/staging 篡改永久负例。
 - 允许范围：若批准仅允许新增 root bootstrap 及 P4/P5 verifier/exporter/CPU tests；禁止 P4 record 重冻、P5 export/compose、GPU/torchrun、模型数据训练评测推理/B2-T。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v0.5
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请只整改 ChatGPT v0.4 review `2026-09-01_R09_B2_P4_interpreter_provenance_design_v04_befc5ed_55d9526.md` 的三个 HIGH 与一个 MEDIUM；不申请实现之外的任何运行。
+
+- 审核对象：根仓 design commit=`e83407863d9c110715e71dff7d5a56b25b650278`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；新增文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v0.5_2026-09-01.md`。
+- worker HIGH：P4 inner launcher 固定 PyTorch `--no-python`，唯一 worker script 是 root-owned shell wrapper，它 `exec` lexical Python `-I -S -B` worker bootstrap；P4 record/verifier 绑定 outer/agent/wrapper/worker 四层 argv、mode/rank环境，永久 mocked-PyTorch worker argv negative 禁止 direct Python/PYTHON_EXEC。
+- bytecode HIGH：全部 outer/worker/P5 argv 固定 `-B`，bootstrap 首条 third-party import 前断言 `sys.flags.dont_write_bytecode`/`sys.dont_write_bytecode`；不依赖 `-I` 忽略的环境变量。
+- freshness HIGH/隔离 MEDIUM：staging copy-only；P4 仅在未来批准训练时放 run_root，P5 仅放 P5 attempt_dir 并前后断言 D005 run_root 仍 absent。新增 overlap、source-after-stage、worker overwrite、no-pyc 实测永久回归。
+- 允许范围：若批准仅允许 root bootstrap/wrapper、P4/P5 verifier/exporter和标准库 CPU tests；禁止 P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
