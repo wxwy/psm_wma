@@ -234,7 +234,7 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
         ),
         "processor_package_read_only": (
             processor.get("phase_trace") == ["offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"]
-            and processor.get("construction_witness", {}).get("constructor_identity") == "OmniMoTModel.set_up_tokenizers"
+            and processor.get("construction_witness", {}).get("constructor_identity") == "cosmos_framework.model.generator.omni_mot_model.build_vlm_processor"
             and processor.get("construction_witness", {}).get("binding_sha256") == binding_sha256
             and bool(processor.get("construction_witness", {}).get("processor_type"))
             and processor.get("before_assets") == processor.get("after_assets") == assets

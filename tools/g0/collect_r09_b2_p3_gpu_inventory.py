@@ -91,15 +91,12 @@ def prepare_isolated_worker(
 
 
 def run_production_processor_construction(
-    record: dict[str, object], model: object
+    record: dict[str, object], vlm_config: object
 ) -> dict[str, object]:
     """future worker 的固定生产构造路径；仅在独立 run 审批后调用。"""
-    from cosmos_framework.model.generator.omni_mot_model import OmniMoTModel
+    from cosmos_framework.model.generator.omni_mot_model import build_vlm_processor
 
-    if not isinstance(model, OmniMoTModel):
-        raise TypeError("production processor construction requires OmniMoTModel")
-    model.set_up_tokenizers()
-    processor = model.vlm_processor
+    processor = build_vlm_processor(vlm_config)
     if processor is None:
         raise RuntimeError("production processor construction returned None")
     after = local_processor_record(Path(record["canonical_path"]))
@@ -109,7 +106,7 @@ def run_production_processor_construction(
         "offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"
     ]
     record["construction_witness"] = {
-        "constructor_identity": "OmniMoTModel.set_up_tokenizers",
+        "constructor_identity": "cosmos_framework.model.generator.omni_mot_model.build_vlm_processor",
         "binding_sha256": hashlib.sha256(binding.encode()).hexdigest(),
         "processor_type": f"{type(processor).__module__}.{type(processor).__qualname__}",
     }

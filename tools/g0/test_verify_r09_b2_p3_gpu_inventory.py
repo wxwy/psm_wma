@@ -98,7 +98,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             "after_assets": assets,
             "phase_trace": ["offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"],
             "construction_witness": {
-                "constructor_identity": "OmniMoTModel.set_up_tokenizers",
+                "constructor_identity": "cosmos_framework.model.generator.omni_mot_model.build_vlm_processor",
                 "binding_sha256": hashlib.sha256(json.dumps({"repository": None, "revision": None, "tokenizer_type": str(ROOT)}, sort_keys=True).encode()).hexdigest(),
                 "processor_type": "fixture.Processor",
             },
