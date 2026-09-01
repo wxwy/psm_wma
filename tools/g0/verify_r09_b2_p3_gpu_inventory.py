@@ -174,11 +174,19 @@ def _selected(inventory: dict[str, object], field: str) -> set[str]:
     return {row["name"] for row in inventory.get("model_parameters", []) if row.get(field)}
 
 
+def _expected_selected(inventory: dict[str, object], selector_keys: tuple[str, ...]) -> set[str]:
+    return {
+        row["name"]
+        for row in inventory.get("model_parameters", [])
+        if isinstance(row.get("name"), str) and any(key in row["name"] for key in selector_keys)
+    }
+
+
 def _forbidden(keys: list[str]) -> bool:
     return not any(key.split(".")[-1] in TTT_RUNTIME_NAMES for key in keys)
 
 
-def backend_checks(record: dict[str, object]) -> dict[str, bool]:
+def backend_checks(record: dict[str, object], selector_keys: tuple[str, ...]) -> dict[str, bool]:
     inventory = record.get("inventory", {})
     rows = inventory.get("model_parameters", [])
     names = [row.get("name") for row in rows]
@@ -187,6 +195,7 @@ def backend_checks(record: dict[str, object]) -> dict[str, bool]:
     grouped = [entry.get("name") for entry in entries]
     selected = _selected(inventory, "selected_by_optimizer")
     selector = _selected(inventory, "selected_by_resolved_selector")
+    expected_selected = _expected_selected(inventory, selector_keys)
     state = inventory.get("optimizer_state", {})
     eligible = set(state.get("eligible_parameter_names", []))
     state_entries = state.get("entries", [])
@@ -205,6 +214,8 @@ def backend_checks(record: dict[str, object]) -> dict[str, bool]:
     return {
         "inventory_override_exact": record.get("inventory_model_overrides") == INVENTORY_MODEL_OVERRIDES,
         "selector_exclusions_empty": not inventory.get("selector_optimizer_exclusions", []),
+        "selector_membership_exact": selector == expected_selected,
+        "optimizer_membership_exact": selected == expected_selected,
         "selector_equals_optimizer": selector == selected,
         "model_names_unique": len(names) == len(set(names)),
         "optimizer_reverse_map": all(name in set(names) for name in grouped),
@@ -258,17 +269,6 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
         selector = inventory.get("selector", {})
         return selector.get("backend") == backend and selector.get("keys_to_select") == list(expected)
 
-    def explainable_by_selector_allowlist(name: object) -> bool:
-        if not isinstance(name, str):
-            return False
-        extra_keys = set(EXPECTED_RECURRENT_SELECTOR_KEYS) - set(EXPECTED_TTT_SELECTOR_KEYS)
-        return any(key in name for key in extra_keys)
-
-    def allowed_optimizer_difference(name: object) -> bool:
-        return isinstance(name, str) and (
-            name.startswith(ALLOWED_RECURRENT_ONLY_PREFIXES) or explainable_by_selector_allowlist(name)
-        )
-
     provenance = artifact.get("provenance", {})
     checks = {
         "policy_declared_exact": tuple(declared.get("allowed_backend_specific_prefixes", [])) == ALLOWED_RECURRENT_ONLY_PREFIXES,
@@ -279,11 +279,17 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
             and selector_matches(ttt, "ttt_fast_weight", EXPECTED_TTT_SELECTOR_KEYS)
         ),
     }
+    expected_recurrent = _expected_selected(recurrent, EXPECTED_RECURRENT_SELECTOR_KEYS)
+    expected_ttt = _expected_selected(ttt, EXPECTED_TTT_SELECTOR_KEYS)
+    expected_recurrent_only = expected_recurrent - expected_ttt
+    expected_ttt_only = expected_ttt - expected_recurrent
     for field, label in (("selected_by_resolved_selector", "resolved_selector"), ("selected_by_optimizer", "optimizer")):
         recurrent_only = sorted(_selected(recurrent, field) - _selected(ttt, field))
         ttt_only = sorted(_selected(ttt, field) - _selected(recurrent, field))
         checks[f"declared_{label}"] = declared.get(f"recurrent_only_{label}") == recurrent_only and declared.get(f"ttt_only_{label}") == ttt_only
-        checks[f"only_allowed_{label}"] = not ttt_only and all(allowed_optimizer_difference(name) for name in recurrent_only)
+        checks[f"only_allowed_{label}"] = (
+            set(recurrent_only) == expected_recurrent_only and set(ttt_only) == expected_ttt_only
+        )
     for collection, label in (("model_parameters", "model_parameters"), ("named_buffers", "buffers")):
         recurrent_rows = {row["name"]: row for row in recurrent.get(collection, [])}
         ttt_rows = {row["name"]: row for row in ttt.get(collection, [])}
@@ -328,11 +334,8 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
     ttt_only = set(ttt_schema) - set(recurrent_schema)
     shared = set(recurrent_schema) & set(ttt_schema)
     checks["only_allowed_dcp_optimizer_schema"] = (
-        not ttt_only
-        and all(
-            allowed_optimizer_difference(identity[0])
-            for identity in recurrent_only
-        )
+        {identity[0] for identity in recurrent_only} == expected_recurrent_only
+        and {identity[0] for identity in ttt_only} == expected_ttt_only
     )
     checks["shared_dcp_optimizer_schema_metadata"] = all(
         all(
@@ -410,7 +413,10 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
     }
     provenance = provenance_checks(artifact, root)
     checks.update(provenance)
-    backend = {name: backend_checks(record) for name, record in backends.items()} if pass_claimed else {}
+    backend = {
+        "recurrent": backend_checks(backends["recurrent"], EXPECTED_RECURRENT_SELECTOR_KEYS),
+        "ttt_fast_weight": backend_checks(backends["ttt_fast_weight"], EXPECTED_TTT_SELECTOR_KEYS),
+    } if pass_claimed else {}
     diff = diff_checks(artifact) if pass_claimed and all(name in artifact for name in backends) else {}
     pass_ready = all(checks.values()) and all(all(item.values()) for item in backend.values()) and all(diff.values())
     blocked_checks = {

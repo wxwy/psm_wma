@@ -603,6 +603,26 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         finally:
             d005_path.unlink(missing_ok=True)
 
+    def test_backend_rejects_missing_ttt_encoder_membership_with_frozen_selectors(self) -> None:
+        d005_path = ROOT / "artifacts/g0/r09/b2/p3_selector_membership_test_d005.json"
+        try:
+            artifact = self._passing_artifact(d005_path)
+            ttt = artifact["ttt_fast_weight"]["inventory"]
+            ttt["model_parameters"].append({
+                "name": "local_history_runtime.encoder.visual_proj.weight", "numel": 1, "dtype": "float32",
+                "selected_by_optimizer": False, "selected_by_resolved_selector": False,
+            })
+            with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
+                VERIFY, "FROZEN_SOURCE_PATHS", {}
+            ):
+                result = VERIFY.verify(artifact, ROOT)
+                self.assertTrue(result["matched_diff_checks"]["selector_contract_exact"])
+                self.assertFalse(result["backend_checks"]["ttt_fast_weight"]["selector_membership_exact"])
+                self.assertFalse(result["backend_checks"]["ttt_fast_weight"]["optimizer_membership_exact"])
+                self.assertEqual(result["status"], "FAIL")
+        finally:
+            d005_path.unlink(missing_ok=True)
+
 
 if __name__ == "__main__":
     unittest.main()

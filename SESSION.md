@@ -898,3 +898,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修复：verifier 新增 verifier-owned exact recurrent/TTT selector 常量，并绑定 production/inherited recipe SHA256（`d58f…c454`/`cda5…7347`）；`selector_contract_exact` 强制 artifact backend/list 与两组冻结值逐项一致。optimizer、resolved-selector、optimizer-DCP schema 差异只由冻结差集解释；TTT-only 与 model/buffer/DCP-model structural gates 不变。
 - 回归：已有正例仍验证 `moe_gen` 差异可解释；新增 artifact 加入 broad `language_model` selector 及同名差异仍令三条 allow gate FAIL，且任意 selector list 偏离令 `selector_contract_exact=false`、verifier FAIL。`py_compile`、标准库测试 19/19、`git diff --check` PASS。
 - 复核：仍未重跑 GPU。用 clean collection root=`269540e`、Gitlink/submodule=`21d064f` worktree 对同一 evidence 运行新版 verifier；`p3_gpu_inventory_verifier_selector_review.json`=PASS、record_valid=true，全部 checks/diff checks=true（含新增 `selector_contract_exact=true`），GPU=0 MiB。下一步重新三方 closure 审核。提交：未提交。
+
+### R09-B2 P3 row-level selector membership 整改（2026-09-01，REVIEW）
+
+- ChatGPT 再次指出 selector metadata 冻结仍不足：artifact 可在保持 frozen list 不变时伪造 `selected_by_*` 为 false 并同步伪造 optimizer/DCP，使 `local_history_runtime`/`local_history_runtime.encoder` 包含关系绕过差异检查。意见成立，P3 不关闭。
+- 修复：verifier 用 frozen backend selector 对每个 `model_parameters[*].name` 按生产 `any(key in name ...)` substring 规则重算 expected membership；新增 backend hard checks `selector_membership_exact`、`optimizer_membership_exact`。optimizer/selector diff 必须与两个 independently recomputed expected sets 的精确差集相等；optimizer-DCP schema 的 recurrent/TTT owners 同样精确相等，TTT-only仍拒绝。
+- 回归：新增保持 frozen lists 不变、但将 TTT `local_history_runtime.encoder.visual_proj.weight` 一致性地标为未选中的伪造 artifact，两个 membership checks 必为 false、verifier FAIL。`py_compile`、标准库定向测试 20/20、`git diff --check` PASS。
+- 复核：未重跑 GPU。clean collection root=`269540e` worktree 复验同一 attempt-6，`p3_gpu_inventory_verifier_selector_review.json`=PASS、record_valid=true，recurrent/TTT 的 `selector_membership_exact=true` 与 `optimizer_membership_exact=true`，其余 checks/diff checks=true，GPU=0 MiB。下一步重新三方 closure 审核。提交：未提交。
