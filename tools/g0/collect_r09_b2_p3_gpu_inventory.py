@@ -69,8 +69,15 @@ def validate_local_tokenizer_binding(
         raise ValueError("resolved tokenizer_type must equal the canonical local Edge checkpoint")
 
 
+def resolved_tokenizer_binding(vlm_config: object) -> dict[str, object]:
+    """Canonicalize the exact tokenizer node consumed by the production helper."""
+    tokenizer = vlm_config.get("tokenizer") if isinstance(vlm_config, dict) else getattr(vlm_config, "tokenizer")
+    getter = tokenizer.get if hasattr(tokenizer, "get") else lambda key: getattr(tokenizer, key, None)
+    return {key: getter(key) for key in ("repository", "revision", "tokenizer_type")}
+
+
 def prepare_isolated_worker(
-    edge_checkpoint_path: Path, tokenizer_config: dict[str, object]
+    edge_checkpoint_path: Path, vlm_config: object
 ) -> dict[str, object]:
     """准备未来 worker 的唯一导入前契约；本函数不导入 HF/Transformers。"""
     before = local_processor_record(edge_checkpoint_path)
@@ -79,12 +86,9 @@ def prepare_isolated_worker(
     )
     if not ready:
         raise ValueError("local Edge processor assets must exist before worker imports")
-    validate_local_tokenizer_binding(before, tokenizer_config)
-    before["resolved_tokenizer_binding"] = {
-        "repository": tokenizer_config.get("repository"),
-        "revision": tokenizer_config.get("revision"),
-        "tokenizer_type": tokenizer_config.get("tokenizer_type"),
-    }
+    binding = resolved_tokenizer_binding(vlm_config)
+    validate_local_tokenizer_binding(before, binding)
+    before["resolved_tokenizer_binding"] = binding
     before["before_assets"] = before["required_assets"]
     before["observed_offline_environment"] = apply_offline_processor_environment(before)
     return before
@@ -94,6 +98,10 @@ def run_production_processor_construction(
     record: dict[str, object], vlm_config: object
 ) -> dict[str, object]:
     """future worker 的固定生产构造路径；仅在独立 run 审批后调用。"""
+    actual_binding = resolved_tokenizer_binding(vlm_config)
+    if actual_binding != record["resolved_tokenizer_binding"]:
+        raise ValueError("actual production tokenizer binding differs from validated binding")
+
     from cosmos_framework.model.generator.omni_mot_model import build_vlm_processor
 
     processor = build_vlm_processor(vlm_config)
@@ -101,7 +109,7 @@ def run_production_processor_construction(
         raise RuntimeError("production processor construction returned None")
     after = local_processor_record(Path(record["canonical_path"]))
     record["after_assets"] = after["required_assets"]
-    binding = json.dumps(record["resolved_tokenizer_binding"], sort_keys=True)
+    binding = json.dumps(actual_binding, sort_keys=True)
     record["phase_trace"] = [
         "offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"
     ]

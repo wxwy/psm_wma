@@ -176,7 +176,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             for name in COLLECT.REQUIRED_PROCESSOR_ASSETS:
                 (root / name).write_text("fixture\n")
             record = COLLECT.prepare_isolated_worker(
-                root, {"repository": None, "revision": None, "tokenizer_type": str(root.resolve())}
+                root, {"tokenizer": {"repository": None, "revision": None, "tokenizer_type": str(root.resolve())}}
             )
             self.assertEqual(record["observed_offline_environment"], record["offline_environment"])
             d005_path = ROOT / "artifacts/g0/r09/b2/p3_worker_embedding_test_d005.json"
@@ -195,7 +195,17 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                 d005_path.unlink(missing_ok=True)
             with self.assertRaisesRegex(ValueError, "remote repository"):
                 COLLECT.prepare_isolated_worker(
-                    root, {"repository": "nvidia/Cosmos3-Edge", "revision": "main", "tokenizer_type": str(root.resolve())}
+                    root, {"tokenizer": {"repository": "nvidia/Cosmos3-Edge", "revision": "main", "tokenizer_type": str(root.resolve())}}
+                )
+            with self.assertRaisesRegex(ValueError, "differs from validated binding"):
+                COLLECT.run_production_processor_construction(
+                    record,
+                    {"tokenizer": {"repository": None, "revision": None, "tokenizer_type": str(root / "different")}},
+                )
+            with self.assertRaisesRegex(ValueError, "differs from validated binding"):
+                COLLECT.run_production_processor_construction(
+                    record,
+                    {"tokenizer": {"repository": "nvidia/Cosmos3-Edge", "revision": "main", "tokenizer_type": str(root.resolve())}},
                 )
 
 
