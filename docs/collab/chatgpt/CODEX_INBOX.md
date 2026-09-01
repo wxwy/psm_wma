@@ -4132,3 +4132,12 @@ print(json.dumps(result, sort_keys=True))
 - bootstrap HIGH：loader 是 verifier-owned command literal；在执行任何 root bootstrap 文件前一次读取、校验 request+Git blob/current bytes SHA，再对已验证 bytes `compile/exec`。bootstrap bytes drift时 loader拒绝且无 side effect。
 - base Python HIGH：execution request显式绑定 parent `/opt/conda python3.11 -I` TCB身份；parent在spawn lexical child前重算 child base executable+stdlib/lib-dynload exact manifest。base单文件改写会 pre-spawn FAIL；不再由 child自证。
 - 允许范围：若批准仅 root loader/bootstrap、P4/P5 tooling与标准库 CPU tests；禁止 P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v0.7
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请只整改 ChatGPT v0.6 review `2026-09-01_R09_B2_P4_interpreter_provenance_design_v06_4ca7f12_fa97814.md` 的 HIGH/MEDIUM；不申请实现之外的任何运行。
+
+- 审核对象：根仓 design commit=`e4dbea68338b0fee9cf3a37af848e78bfc8ea04e`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；新增文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v0.7_2026-09-01.md`。
+- request HIGH：所有 agent/worker/P5 child argv 追加 out-of-band `expected_request_sha256`，loader单次读 bytes后先与该 argv token比对才 parse/execute；parent/verifier独立构造该 SHA。same-path replacement在 bootstrap side effect 前 FAIL。
+- native MEDIUM：execution request显式定义 host-native TCB（parent、child ELF、dynamic loader、resolved native dependency canonical path/SHA、platform）。parent pre-spawn校验解析列表；base-prefix native dependency改写同样 child未启动即FAIL。项目不再默认为 base exe SHA 即覆盖 ELF层。
+- 允许范围：若批准仅 root loader/bootstrap、P4/P5 tools与CPU tests；禁止 P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
