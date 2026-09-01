@@ -3387,3 +3387,9 @@ Detailed review:
 - 审核对象：根仓 `f21e4a1`；子模块/Gitlink `0af5d53`。
 - precondition 不再生成 `after_assets`；新增 future-worker-only finalize，构造后重新读取独立快照并设 `post_construction_observed=true`。PASS verifier 要求该标志和 before/after/required 三者逐项相等。
 - 回归覆盖 precondition 直嵌 nominal PASS→FAIL、finalize 后→PASS、篡改 after→FAIL；`py_compile`、unittest 2 passed、diff-check PASS。请求同一 verdict；禁止 GPU/HF/processor/model/weights/data/DCP/step。
+
+### GPT construction-witness HIGH 整改复审
+
+- 审核对象：根仓 `349715c`；子模块/Gitlink `0af5d53`。
+- 移除可由任意调用者伪造的 finalize；future worker 唯一拥有 construction phase，构造函数返回非空实例后才记录独立 after snapshot、固定四阶段 trace 和 binding SHA256 + processor type witness。verifier 要求 trace 顺序、witness binding 与 resolved binding 一致。
+- `py_compile`、unittest 2 passed、diff-check PASS；未调用 construction function、GPU/HF/model/weights/data/DCP/step。请求同一 verdict。
