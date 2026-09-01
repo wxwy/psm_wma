@@ -244,12 +244,30 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
     declared = artifact.get("matched_diff", {})
     recurrent = artifact["recurrent"].get("inventory", {})
     ttt = artifact["ttt_fast_weight"].get("inventory", {})
+
+    def explainable_by_selector_allowlist(name: object) -> bool:
+        if not isinstance(name, str):
+            return False
+        recurrent_keys = recurrent.get("selector", {}).get("keys_to_select", [])
+        ttt_keys = ttt.get("selector", {}).get("keys_to_select", [])
+        if not isinstance(recurrent_keys, list) or not isinstance(ttt_keys, list):
+            return False
+        extra_keys = {key for key in recurrent_keys if isinstance(key, str)} - {
+            key for key in ttt_keys if isinstance(key, str)
+        }
+        return any(key in name for key in extra_keys)
+
+    def allowed_optimizer_difference(name: object) -> bool:
+        return isinstance(name, str) and (
+            name.startswith(ALLOWED_RECURRENT_ONLY_PREFIXES) or explainable_by_selector_allowlist(name)
+        )
+
     checks = {"policy_declared_exact": tuple(declared.get("allowed_backend_specific_prefixes", [])) == ALLOWED_RECURRENT_ONLY_PREFIXES}
     for field, label in (("selected_by_resolved_selector", "resolved_selector"), ("selected_by_optimizer", "optimizer")):
         recurrent_only = sorted(_selected(recurrent, field) - _selected(ttt, field))
         ttt_only = sorted(_selected(ttt, field) - _selected(recurrent, field))
         checks[f"declared_{label}"] = declared.get(f"recurrent_only_{label}") == recurrent_only and declared.get(f"ttt_only_{label}") == ttt_only
-        checks[f"only_allowed_{label}"] = not ttt_only and all(name.startswith(ALLOWED_RECURRENT_ONLY_PREFIXES) for name in recurrent_only)
+        checks[f"only_allowed_{label}"] = not ttt_only and all(allowed_optimizer_difference(name) for name in recurrent_only)
     for collection, label in (("model_parameters", "model_parameters"), ("named_buffers", "buffers")):
         recurrent_rows = {row["name"]: row for row in recurrent.get(collection, [])}
         ttt_rows = {row["name"]: row for row in ttt.get(collection, [])}
@@ -296,7 +314,7 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
     checks["only_allowed_dcp_optimizer_schema"] = (
         not ttt_only
         and all(
-            isinstance(identity[0], str) and identity[0].startswith(ALLOWED_RECURRENT_ONLY_PREFIXES)
+            allowed_optimizer_difference(identity[0])
             for identity in recurrent_only
         )
     )

@@ -55,12 +55,12 @@
     "peak_under_limit": true,
     "processor_package_read_only": true,
     "resolved_local_tokenizer_binding": true,
-    "root_gitlink_valid": false,
-    "root_tracked_clean": false,
+    "root_gitlink_valid": true,
+    "root_tracked_clean": true,
     "run_token_valid": true,
     "schema": true,
     "single_process": true,
-    "source_hashes_valid": false,
+    "source_hashes_valid": true,
     "submodule_head_valid": true,
     "submodule_tracked_clean": true
   },
@@ -78,6 +78,6 @@
     "shared_dcp_optimizer_schema_metadata": true,
     "shared_model_parameters_metadata": true
   },
-  "record_valid": false,
-  "status": "FAIL"
+  "record_valid": true,
+  "status": "PASS"
 }

@@ -430,17 +430,18 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "framework directory is missing"):
             COLLECT._set_worker_production_cwd(Path("/missing/p3-framework-root"))
 
-    def test_attempt6_output_paths_are_fresh_and_prior_attempt_evidence_is_unchanged(self) -> None:
-        output = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory.json"
+    def test_fresh_output_paths_reject_terminal_attempt6_evidence(self) -> None:
+        output = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_fresh_path_test/p3_gpu_inventory.json"
         d005 = output.with_name("p3_gpu_inventory_d005.json")
         attempt_one = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory_attempt1_d005.json"
         attempt_two = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory.json"
         attempt_three = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory.json"
-        before = {path: _sha256(path) for path in (attempt_one, attempt_two, attempt_three)}
+        attempt_six = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory.json"
+        before = {path: _sha256(path) for path in (attempt_one, attempt_two, attempt_three, attempt_six)}
         COLLECT._assert_fresh_output_paths(ROOT, output, d005)
         self.assertEqual(before, {path: _sha256(path) for path in before})
         with self.assertRaisesRegex(ValueError, "fresh and untracked"):
-            COLLECT._assert_fresh_output_paths(ROOT, attempt_two, d005)
+            COLLECT._assert_fresh_output_paths(ROOT, attempt_six, d005)
 
     def test_approved_peak_cap_matches_verifier_and_attempt3_measurement(self) -> None:
         attempt_three = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory.json"
@@ -536,6 +537,49 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                 result = VERIFY.verify(artifact, ROOT)
                 self.assertFalse(result["matched_diff_checks"]["shared_dcp_optimizer_schema_metadata"])
                 self.assertEqual(result["status"], "FAIL")
+        finally:
+            d005_path.unlink(missing_ok=True)
+
+    def test_backend_diff_allows_only_selector_delta_explained_optimizer_names(self) -> None:
+        d005_path = ROOT / "artifacts/g0/r09/b2/p3_selector_delta_test_d005.json"
+        try:
+            artifact = self._passing_artifact(d005_path)
+            recurrent = artifact["recurrent"]["inventory"]
+            ttt = artifact["ttt_fast_weight"]["inventory"]
+            recurrent["selector"] = {"backend": "recurrent", "keys_to_select": ["moe_gen"]}
+            ttt["selector"] = {"backend": "ttt_fast_weight", "keys_to_select": []}
+            recurrent_name = "language_model.layer.moe_gen.weight"
+            recurrent["model_parameters"].append({
+                "name": recurrent_name, "numel": 1, "dtype": "float32",
+                "selected_by_optimizer": True, "selected_by_resolved_selector": True,
+            })
+            recurrent["dcp_state"]["optimizer_parameter_references"].append(recurrent_name)
+            recurrent["dcp_state"]["optimizer_state_schema"].append({
+                "flat_key": f"param_groups.net.{recurrent_name}.lr", "owner": recurrent_name,
+                "owner_fqn": f"net.{recurrent_name}", "namespace": "param_groups", "suffix": "lr",
+                "kind": "float", "value": 0.1,
+            })
+            artifact["matched_diff"]["recurrent_only_optimizer"] = sorted(
+                artifact["matched_diff"]["recurrent_only_optimizer"] + [recurrent_name]
+            )
+            artifact["matched_diff"]["recurrent_only_resolved_selector"] = sorted(
+                artifact["matched_diff"]["recurrent_only_resolved_selector"] + [recurrent_name]
+            )
+            with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
+                VERIFY, "FROZEN_SOURCE_PATHS", {}
+            ):
+                result = VERIFY.verify(artifact, ROOT)
+                self.assertTrue(result["matched_diff_checks"]["only_allowed_optimizer"])
+                self.assertTrue(result["matched_diff_checks"]["only_allowed_resolved_selector"])
+                self.assertTrue(result["matched_diff_checks"]["only_allowed_dcp_optimizer_schema"])
+            recurrent["selector"]["keys_to_select"] = []
+            with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
+                VERIFY, "FROZEN_SOURCE_PATHS", {}
+            ):
+                result = VERIFY.verify(artifact, ROOT)
+                self.assertFalse(result["matched_diff_checks"]["only_allowed_optimizer"])
+                self.assertFalse(result["matched_diff_checks"]["only_allowed_resolved_selector"])
+                self.assertFalse(result["matched_diff_checks"]["only_allowed_dcp_optimizer_schema"])
         finally:
             d005_path.unlink(missing_ok=True)
 
