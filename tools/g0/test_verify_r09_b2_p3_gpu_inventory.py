@@ -346,16 +346,22 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
     def test_canonical_parameter_fqns_resolve_raw_name_mismatch(self) -> None:
         parameter = object()
         canonical = COLLECT._canonical_parameter_fqns_from_named_parameters(
-            {"language_model._fsdp_wrapped_module.weight": parameter},
-            [("net.language_model._fsdp_wrapped_module.weight", parameter)],
-            lambda _: {"net.language_model.weight"},
+            {"language_model.model.layers.0.input_layernorm_moe_gen._fsdp_wrapped_module.weight": parameter},
+            [("net.language_model.model.layers.0.input_layernorm_moe_gen._fsdp_wrapped_module.weight", parameter)],
+            lambda _: {"net.language_model.model.layers.0.input_layernorm_moe_gen.weight"},
         )
-        self.assertEqual(canonical, {"net.language_model.weight": "language_model._fsdp_wrapped_module.weight"})
+        self.assertEqual(canonical, {
+            "net.language_model.model.layers.0.input_layernorm_moe_gen.weight":
+            "language_model.model.layers.0.input_layernorm_moe_gen._fsdp_wrapped_module.weight",
+        })
         rows = COLLECT._flattened_optimizer_schema(
-            {"param_groups.net.language_model.weight.betas": (0.9, 0.95)}, canonical
+            {"param_groups.net.language_model.model.layers.0.input_layernorm_moe_gen.weight.betas": (0.9, 0.95)},
+            canonical,
         )
-        self.assertEqual(rows[0]["owner"], "language_model._fsdp_wrapped_module.weight")
-        self.assertEqual(rows[0]["owner_fqn"], "net.language_model.weight")
+        self.assertEqual(rows[0]["owner"], "language_model.model.layers.0.input_layernorm_moe_gen._fsdp_wrapped_module.weight")
+        self.assertEqual(rows[0]["owner_fqn"], "net.language_model.model.layers.0.input_layernorm_moe_gen.weight")
+        with self.assertRaisesRegex(RuntimeError, "unmapped"):
+            COLLECT._flattened_optimizer_schema({"param_groups.net.unknown.weight.lr": 0.1}, canonical)
 
     def test_backend_orchestration_stops_after_nonzero_recurrent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
