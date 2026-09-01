@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import dataclasses
 import enum
 import json
@@ -135,7 +136,7 @@ def validate_production_root(recurrent: Mapping[str, Any], ttt: Mapping[str, Any
     return root
 
 
-def build_child_request(record: Mapping[str, Any], *, production_root: Path, backend: str, p3_verifier_sha256: str) -> dict[str, Any]:
+def build_child_request(record: Mapping[str, Any], *, production_root: Path, backend: str, p3_verifier_sha256: str, p4_verification_sha256: str) -> dict[str, Any]:
     """Bind one child request to its verified D005; the child never accepts loose inputs."""
     if record.get("backend") != backend:
         raise ValueError("D005 backend does not match requested export")
@@ -148,7 +149,7 @@ def build_child_request(record: Mapping[str, Any], *, production_root: Path, bac
     return {"backend": backend, "root": str(production_root.resolve()), "toml": toml, "overrides": overrides, "command_argv": command["argv"],
             "cwd": str(cwd), "interpreter": {"realpath": str(interpreter), "sha256": command["interpreter"]["sha256"]},
             "environment": {"contract": environment, "effective": sanitized_environment(environment, os.environ)},
-            "d005_sha256": record["d005_sha256"], "p4_record_sha256": sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}), "p3_verifier_sha256": p3_verifier_sha256, "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
+            "d005_sha256": record["d005_sha256"], "p4_record_sha256": sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}), "p4_verification_sha256": p4_verification_sha256, "p3_verifier_sha256": p3_verifier_sha256, "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
 
 
 def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path) -> dict[str, dict[str, Any]]:
@@ -158,8 +159,9 @@ def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *,
     root = validate_production_root(recurrent, ttt, production_root)
     if not evidence_root.resolve().is_dir():
         raise ValueError("evidence_root must be readable")
-    return {"recurrent": build_child_request(recurrent, production_root=root, backend="recurrent", p3_verifier_sha256=P3_VERIFIER_SHA256),
-            "ttt_fast_weight": build_child_request(ttt, production_root=root, backend="ttt_fast_weight", p3_verifier_sha256=P3_VERIFIER_SHA256)}
+    p4_verification_sha256 = hashlib.sha256((evidence_root / "artifacts/g0/r09/b2/p4_launch_d005/verification.json").read_bytes()).hexdigest()
+    return {"recurrent": build_child_request(recurrent, production_root=root, backend="recurrent", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_verification_sha256=p4_verification_sha256),
+            "ttt_fast_weight": build_child_request(ttt, production_root=root, backend="ttt_fast_weight", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_verification_sha256=p4_verification_sha256)}
 
 
 def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, Any], *, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
@@ -168,7 +170,7 @@ def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, 
     command = record["interpreter"]
     return {"schema_version": SCHEMA, "backend": record["backend"],
             "provenance": {"production_source": record["source"], "exporter_source": {"root_revision": exporter_root_revision, "tool_sha256": tool_sha256},
-                           "inputs": {"p4_record_sha256": record["p4_record_sha256"],
+                           "inputs": {"p4_record_sha256": record["p4_record_sha256"], "p4_verification_sha256": record["p4_verification_sha256"],
                                       "p3_inventory_path": record["inputs"]["p3_inventory"]["path"], "p3_inventory_sha256": record["inputs"]["p3_inventory"]["sha256"], "p3_verifier_sha256": record["p3_verifier_sha256"]}},
             "effective_launch": {"command": {"argv": record["command_argv"], "cwd": record["cwd"], "interpreter": command, "toml": record["toml"], "trailing_overrides": record["overrides"]},
                                   "environment": {**record["environment"]["contract"], "effective": record["environment"]["effective"]}, "world_size": record["budget"]["world_size"], "budget": record["budget"],
