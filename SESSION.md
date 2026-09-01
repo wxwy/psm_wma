@@ -877,3 +877,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修复：`_canonical_param_group_value()` 对 param-group Tensor 仅接受 finite numeric 的单元素 Tensor，并记录 `value` 与 shape/dtype/numel；多元素或非 finite/non-numeric Tensor fail-closed。optimizer `state.*` 仍只记录 metadata、不复制内容。
 - 回归：新增相同 shape/dtype 的 scalar Tensor `0.25` 与 `0.5` 必不同、multi-element/NaN 拒绝，以及 shared recurrent/TTT scalar Tensor value mismatch 令 `shared_dcp_optimizer_schema_metadata=false`、verifier=`FAIL`；`py_compile`、定向标准库测试 18/18、`git diff --check` PASS。无 GPU、worker 或项目运行。
 - 下一步：提交后重新申请三方审核；attempt-6 尚未执行，路径继续 fresh/untracked。提交：未提交。
+
+### R09-B2 P3 GPU-only attempt-6 terminal FAIL（2026-09-01，IN_PROGRESS）
+
+- 审核门：ChatGPT `269540e`、MM、Kimi 均对 root=`c154374`/request=`5a64063`、Gitlink=`21d064f` 授权一次 attempt-6；按 frozen command 执行一次后 GPU 已释放至 0 MiB。
+- 运行事实：recurrent 与 `ttt_fast_weight` worker 均 `PASS`，aggregate 确认无 forward/backward/optimizer/scheduler step、无 weight/checkpoint load、world size=1；peak reserved=`27,147,632,640` B（25.28 GiB，低于 28 GiB）。仅运行 allowed verifier 后，`p3_gpu_inventory_verifier.json` 为终态 `FAIL`。
+- FAIL 根因：不是执行越界。真实 recurrent `selected_by_optimizer/selector=314`、optimizer DCP schema=2512；TTT 对应为 12/12/96，导致 302 个 recurrent-only optimizer/selector 与大量 recurrent-only optimizer DCP schema。当前 frozen policy 仅允许 `local_history_runtime.recurrent_backend.` 前缀，故 `only_allowed_optimizer`、`only_allowed_resolved_selector`、`only_allowed_dcp_optimizer_schema` 为 false；其中 281 个差异来自 language model，另含 action/readout/time/vae 相关参数。这否定了“两个 backend 除 recurrent cell 外 optimizer membership 相同”的前提。
+- 证据：`artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/{p3_gpu_inventory.json,p3_gpu_inventory_d005.json,p3_gpu_inventory_recurrent.json,p3_gpu_inventory_ttt_fast_weight.json,p3_gpu_inventory_verifier.json}`。本次 terminal 后不重跑、不放宽 allowlist、不改 GPU 参数；下一步仅做 selector/optimizer 生产语义的只读审计和独立静态整改提案，再送三方审核。提交：未提交。
