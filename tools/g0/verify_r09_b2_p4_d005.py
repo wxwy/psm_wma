@@ -23,12 +23,16 @@ P3_VERIFIER_RELATIVE = "artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inv
 P1_HEADER_SHA256 = "e49ade9dd63f537db89a3efc9174b0da55b2511ce58db195b002674df88ab5e1"
 P3_ARTIFACT_SHA256 = "5dd5253cabaa5efa54f3ddc8891f632e3b05e515bf91c8055108e037f69b684d"
 P3_VERIFIER_SHA256 = "e9700cd63e9626ce88969b2d21682c186af7dfe0c7489f88795de1301d5b64f8"
+FROZEN_GITLINK = "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb"
 PRODUCTION_BUDGET = {"world_size": 1, "micro_batch_size": 128, "grad_accum_steps": 16, "global_batch_size": 2048, "samples_per_update": 2048, "optimizer_updates": 100}
 PRODUCTION_P1 = {"record_count": 204800, "world_size": 1, "num_workers": 0, "optimizer_updates": 100, "grad_accum": 16, "max_samples_per_batch": 128}
 SANITIZED_ENV = {
-    "PSM_LOCAL_DUMMY_ENABLED", "PSM_LOCAL_DUMMY_MODE", "PSM_R09_A1_ENABLED", "PSM_R09_A1_PROBE_OUTPUT",
+    "PSM_LOCAL_DUMMY_ENABLED", "PSM_LOCAL_DUMMY_MODE", "PSM_LOCAL_DUMMY_DIM", "PSM_R09_A1_ENABLED", "PSM_R09_A1_PROBE_OUTPUT",
     "PSM_R08_LOCAL_HISTORY_HORIZON", "PSM_R08_GATE_B_CAPTURE_ONLY", "LIBERO_MAX_EPISODES",
-    "LIBERO_PREFETCH_FACTOR", "ONLINE_VAE_PROBE_OUTPUT", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY",
+    "LIBERO_PREFETCH_FACTOR", "ONLINE_VAE_PROBE_OUTPUT", "ONLINE_VAE_PROBE_MAX_SAMPLES",
+    "PSM_R07_RUNTIME_PROBE_OUTPUT", "PSM_R08_GATE_A_PROBE_OUTPUT", "PSM_R09_B1_PROBE_OUTPUT",
+    "PSM_R08_GATE_A_DEVICE_MONITOR_EVERY_N", "PSM_R07_PARITY_OUTPUT", "PSM_R07_PARITY_TENSOR_OUTPUT",
+    "PSM_R08_GATE_B_PROVENANCE_OUTPUT", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY",
     "http_proxy", "https_proxy", "all_proxy", "NO_PROXY", "no_proxy",
 }
 REQUIRED_ENV = {
@@ -40,6 +44,7 @@ REQUIRED_ENV = {
     "CUDA_VISIBLE_DEVICES": "0",
 }
 FROZEN_OVERRIDES = ("trainer.max_iter=100", "trainer.save_zero_checkpoint=true")
+TOP_LEVEL_KEYS = {"schema_version", "status", "backend", "source", "command", "environment", "budget", "inputs", "outputs", "d005_sha256"}
 
 
 def _sha256_file(path: Path) -> str:
@@ -78,11 +83,11 @@ def _source_ok(source: object, root: Path) -> bool:
         return False
     framework = root / "cosmos-framework"
     try:
-        return source == {
-            "root_revision": _git(root, "rev-parse", "HEAD"), "root_clean": _git_clean(root),
-            "submodule_revision": _git(framework, "rev-parse", "HEAD"), "submodule_clean": _git_clean(framework),
-            "gitlink_revision": _git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2],
-        }
+        gitlink = _git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2]
+        return (_git_clean(root) and _git_clean(framework) and gitlink == FROZEN_GITLINK
+                and _git(framework, "rev-parse", "HEAD") == FROZEN_GITLINK
+                and source == {"root_revision": _git(root, "rev-parse", "HEAD"),
+                               "submodule_revision": FROZEN_GITLINK, "gitlink_revision": FROZEN_GITLINK})
     except (subprocess.CalledProcessError, FileNotFoundError, IndexError):
         return False
 
@@ -115,7 +120,14 @@ def _load_frozen_inputs(root: Path) -> tuple[dict[str, object], dict[str, object
             or _sha256_file(p3_verifier_path) != P3_VERIFIER_SHA256):
         raise ValueError("frozen P1/P3 evidence digest mismatch")
     p1, p3, p3_verifier = json.loads(p1_path.read_text()), json.loads(p3_path.read_text()), json.loads(p3_verifier_path.read_text())
-    if {key: p1.get(key) for key in PRODUCTION_P1} != PRODUCTION_P1 or p3_verifier.get("status") != "PASS" or not p3_verifier.get("record_valid"):
+    suites = p1.get("files", {}).get("suite_record_sha256", {})
+    p1_dir = p1_path.parent
+    p1_files_ok = (_sha256_file(p1_dir / "records.jsonl") == p1.get("records_sha256")
+                   and isinstance(suites, dict)
+                   and set(suites) == {"libero_spatial", "libero_object", "libero_goal", "libero_10"}
+                   and all(_sha256_file(p1_dir / "suites" / f"{suite}.jsonl") == digest for suite, digest in suites.items()))
+    if ({key: p1.get(key) for key in PRODUCTION_P1} != PRODUCTION_P1 or not p1_files_ok
+            or p3_verifier.get("status") != "PASS" or not p3_verifier.get("record_valid")):
         raise ValueError("frozen P1/P3 evidence contract mismatch")
     return p1, p3
 
@@ -214,12 +226,25 @@ def _recipe_contract(root: Path) -> dict[str, str] | None:
         return None
 
 
+def _schema_structure_ok(record: dict[str, object]) -> bool:
+    command = record.get("command")
+    environment = record.get("environment")
+    inputs = record.get("inputs")
+    outputs = record.get("outputs")
+    return (set(record) == TOP_LEVEL_KEYS and isinstance(record.get("source"), dict)
+            and set(record["source"]) == {"root_revision", "submodule_revision", "gitlink_revision"}
+            and isinstance(command, dict) and set(command) == {"cwd", "interpreter", "argv", "executable", "launcher", "sha256"}
+            and isinstance(environment, dict) and set(environment) == {"set", "unset", "inherit_allowlist", "sha256"}
+            and isinstance(inputs, dict) and set(inputs) == {"p1_manifest", "p3_inventory", "external_assets"}
+            and isinstance(outputs, dict) and set(outputs) == {"job_identity", "run_root", "checkpoint_step0", "checkpoint_step100", "stdout_log", "capture_dir", "fresh"})
+
+
 def _check(record: dict[str, object], root: Path, p1: dict[str, object], p3: dict[str, object], backend: str) -> dict[str, bool]:
     command = record.get("command", {})
     framework = (root / "cosmos-framework").resolve()
     job_identity = _recipe_contract(root)
     return {
-        "schema": record.get("schema_version") == SCHEMA and record.get("status") == "FROZEN_NOT_EXECUTED" and record.get("backend") == backend, "non_executable": command.get("executable") is False,
+        "schema": _schema_structure_ok(record) and record.get("schema_version") == SCHEMA and record.get("status") == "FROZEN_NOT_EXECUTED" and record.get("backend") == backend, "non_executable": command.get("executable") is False,
         "source": _source_ok(record.get("source"), root), "cwd": command.get("cwd") == str(framework), "argv": _argv_ok(record, framework),
         "environment": _env_ok(record, backend, root), "inputs": _inputs_ok(record, root, p1, p3, backend), "env_assets_bound": _env_assets_bound(record, root) if isinstance(record.get("inputs"), dict) and isinstance(record.get("environment"), dict) else False, "outputs": job_identity is not None and _output_ok(record, root, job_identity), "budget": _budget_ok(record),
         "command_digest": command.get("sha256") == sha256_json({key: value for key, value in command.items() if key != "sha256"}),

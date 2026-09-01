@@ -43,18 +43,23 @@ class P4D005Test(unittest.TestCase):
     def _frozen(self, root: Path) -> tuple[dict[str, object], dict[str, object]]:
         p1_path = root / "refs/p1/header.json"; p3_path = root / "refs/p3/inventory.json"; proof_path = root / "refs/p3/verifier.json"
         p1_path.parent.mkdir(parents=True); p3_path.parent.mkdir(parents=True)
-        p1 = {"schema_version": "r09_b2_stream_manifest_v1", **p4.PRODUCTION_P1, "records_sha256": "records"}
+        records = p1_path.parent / "records.jsonl"; suites_dir = p1_path.parent / "suites"; suites_dir.mkdir()
+        records.write_text('{"ordinal":0}\n')
+        suite_digests = {}
+        for suite in ("libero_spatial", "libero_object", "libero_goal", "libero_10"):
+            suite_path = suites_dir / f"{suite}.jsonl"; suite_path.write_text('{"suite":"' + suite + '"}\n'); suite_digests[suite] = p4._sha256_file(suite_path)
+        p1 = {"schema_version": "r09_b2_stream_manifest_v1", **p4.PRODUCTION_P1, "records_sha256": p4._sha256_file(records), "files": {"suite_record_sha256": suite_digests}}
         def inventory(backend: str, keys: tuple[str, ...]) -> dict[str, object]:
             rows = [{"name": f"net.{key}.weight", "selected_by_optimizer": True, "selected_by_resolved_selector": True} for key in keys]
             rows.append({"name": "net.unrelated.weight", "selected_by_optimizer": False, "selected_by_resolved_selector": False})
             return {"inventory": {"selector": {"backend": backend, "keys_to_select": list(keys)}, "model_parameters": rows}}
         p3 = {"recurrent": inventory("recurrent", p4.EXPECTED_RECURRENT_SELECTOR_KEYS), "ttt_fast_weight": inventory("ttt_fast_weight", p4.EXPECTED_TTT_SELECTOR_KEYS)}
         p1_path.write_text(json.dumps(p1)); p3_path.write_text(json.dumps(p3)); proof_path.write_text(json.dumps({"status": "PASS", "record_valid": True}))
-        return p1, {"P1_HEADER_RELATIVE": "refs/p1/header.json", "P3_ARTIFACT_RELATIVE": "refs/p3/inventory.json", "P3_VERIFIER_RELATIVE": "refs/p3/verifier.json", "P1_HEADER_SHA256": p4._sha256_file(p1_path), "P3_ARTIFACT_SHA256": p4._sha256_file(p3_path), "P3_VERIFIER_SHA256": p4._sha256_file(proof_path)}
+        return p1, {"P1_HEADER_RELATIVE": "refs/p1/header.json", "P3_ARTIFACT_RELATIVE": "refs/p3/inventory.json", "P3_VERIFIER_RELATIVE": "refs/p3/verifier.json", "P1_HEADER_SHA256": p4._sha256_file(p1_path), "P3_ARTIFACT_SHA256": p4._sha256_file(p3_path), "P3_VERIFIER_SHA256": p4._sha256_file(proof_path), "FROZEN_GITLINK": self._git(root / "cosmos-framework", "rev-parse", "HEAD")}
 
     def _record(self, root: Path, p1: dict[str, object], backend: str, refs: dict[str, object]) -> dict[str, object]:
         framework = root / "cosmos-framework"; python = framework / ".venv/bin/python"; output = root / "future" / backend
-        source = {"root_revision": self._git(root, "rev-parse", "HEAD"), "root_clean": True, "submodule_revision": self._git(framework, "rev-parse", "HEAD"), "submodule_clean": True, "gitlink_revision": self._git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2]}
+        source = {"root_revision": self._git(root, "rev-parse", "HEAD"), "submodule_revision": self._git(framework, "rev-parse", "HEAD"), "gitlink_revision": self._git(root, "ls-tree", "HEAD", "cosmos-framework").split()[2]}
         values = dict(p4.REQUIRED_ENV)
         values.update({"PSM_R09_B2_STREAM_MANIFEST_ROOT": str((root / refs["P1_HEADER_RELATIVE"]).parent.resolve()), "LIBERO_LATENT_CACHE_ROOT": str(root / "assets/cache"), "LIBERO_ROOT": str(root / "assets/libero"), "BASE_CHECKPOINT_PATH": str(root / "assets/base"), "EDGE_POLICY_CHECKPOINT": str(root / "assets/edge"), "WAN_VAE_PATH": str(root / "assets/vae"), "PYTHONPATH": str(framework), "IMAGINAIRE_OUTPUT_ROOT": str(output), "PSM_R09_B1_TTT_ENABLED": "1" if backend == "ttt_fast_weight" else "0"})
         env = {"set": values, "unset": sorted(p4.RANK_ENV | p4.SANITIZED_ENV), "inherit_allowlist": []}; env["sha256"] = sha256_json(env)
@@ -94,6 +99,8 @@ class P4D005Test(unittest.TestCase):
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
             root = Path(tmp) / "three"; recurrent, ttt, refs = self._pair(root); recurrent["command"]["argv"].append("trainer.max_iter=5000")
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
+            root = Path(tmp) / "four"; recurrent, ttt, refs = self._pair(root); recurrent["environment"]["unset"].remove("PSM_LOCAL_DUMMY_DIM"); recurrent["environment"]["sha256"] = sha256_json({key: recurrent["environment"][key] for key in ("set", "unset", "inherit_allowlist")})
+            with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
 
     def test_rejects_p1_and_output_mutations(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -101,4 +108,15 @@ class P4D005Test(unittest.TestCase):
             path = root / refs["P1_HEADER_RELATIVE"]; bad = json.loads(path.read_text()); bad["record_count"] = 1; path.write_text(json.dumps(bad)); refs["P1_HEADER_SHA256"] = p4._sha256_file(path)
             with self._patched(refs): self.assertEqual(p4.verify_pair(recurrent, ttt, root)["status"], "FAIL")
             root = Path(tmp) / "two"; recurrent, ttt, refs = self._pair(root); recurrent["outputs"]["job_identity"]["name"] = "forged"
+            with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
+
+    def test_rejects_live_gitlink_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); recurrent, ttt, refs = self._pair(root)
+            refs["FROZEN_GITLINK"] = "0" * 40
+            with self._patched(refs): self.assertEqual(p4.verify_pair(recurrent, ttt, root)["status"], "FAIL")
+
+    def test_rejects_schema_shape_mutation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); recurrent, ttt, refs = self._pair(root); recurrent["unexpected"] = True
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
