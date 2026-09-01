@@ -515,6 +515,24 @@ def _worker_command_argv(script_path: Path, arguments: list[str]) -> list[str]:
     return [sys.executable, str(script_path.resolve()), *arguments]
 
 
+def _assert_fresh_output_paths(root: Path, output: Path, d005_path: Path) -> None:
+    """运行证据必须是新的未跟踪路径，禁止覆盖既有 attempt artifact。"""
+    outputs = [
+        output,
+        d005_path,
+        output.with_name(f"{output.stem}_recurrent.json"),
+        output.with_name(f"{output.stem}_ttt_fast_weight.json"),
+    ]
+    for path in outputs:
+        resolved = path.resolve()
+        try:
+            relative = resolved.relative_to(root)
+        except ValueError as error:
+            raise ValueError(f"P3 output must be inside root: {resolved}") from error
+        if resolved.exists() or _git(root, "ls-files", "--", str(relative)):
+            raise ValueError(f"P3 output path must be fresh and untracked: {relative}")
+
+
 def _set_worker_production_cwd(root: Path) -> Path:
     """生产 recipe 的相对 model-config 路径必须从 framework 根解析。"""
     framework = root / "cosmos-framework"
@@ -626,6 +644,7 @@ def main() -> None:
         d005_relative = d005_path.relative_to(root)
     except ValueError as error:
         raise ValueError("D005 record must be inside root") from error
+    _assert_fresh_output_paths(root, args.output, d005_path)
     _write_json(d005_path, d005)
 
     backends = _run_backend_workers(command_argv, args.output, root, os.environ | environment)
