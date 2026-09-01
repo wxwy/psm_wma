@@ -12,6 +12,8 @@
 
 ## 当前最小步骤
 
+- `G0-R09-B2-P3-GPU-ONLY-RUN`（2026-09-01，REVIEW）：静态实现根=`c9058b6`、子模块/Gitlink=`21d064f` 已获 ChatGPT/Kimi/MM 三方 `APPROVE_TO_REQUEST_GPU_P3_RUN`；ChatGPT closure=`f2a10e9`。现仅提交独立 GPU-only runbook 审核：单卡、24 GiB 硬上限、两后端隔离 inventory、只读本地 Edge processor 例外；禁止 dataloader、VAE、权重/checkpoint I/O、forward/backward/step 与 B2-T/P4/P5。未执行 GPU，未提交。
+
 - `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，IN_PROGRESS）：GPT `998d9fb` 指出 `1452cb6` 的 prepare binding A 与 construction input B 可分叉。现已让 `prepare_isolated_worker()` 接收真实 resolved `vlm_config` 并规范化其 tokenizer binding；`run_production_processor_construction()` 在导入/调用共享 helper 前重新规范化实际 input 并要求与已验证 binding 完全相等，witness SHA 取实际 construction input。远端 B、不同本地路径 B 均 fail-fast；`py_compile`、unittest 2 passed、双仓 diff-check PASS。未调用 helper/GPU/HF/model；待提交复审。
 
 - `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，IN_PROGRESS）：GPT `bd26b05`、Kimi、MM 已批准 `f9eb2ca` 的 frozen Python recipe identity 篡改负向回归。已实现未来隔离 worker 的导入前 fail-closed hard-gate：六配置资产预断言、三项离线环境应用并回读、解析后 tokenizer 必须为 canonical 本地路径且 repository/revision 均为 `None`。标准库 unittest 现为 2 passed（本地 binding 通过、`nvidia/Cosmos3-Edge/main` 远端 binding 拒绝），`py_compile`/`git diff --check` PASS；本轮不调用 worker、不导入模型/processor、不运行 GPU。待提交并独立审核；每次审核监控固定先 `git fetch origin V2` 并 fast-forward。
