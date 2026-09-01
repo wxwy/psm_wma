@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, bound_exporter_source, build_pair_requests, canonicalize, parse_d005_command, run_parent_export, sanitized_environment, validate_production_root, validate_root_isolation
+from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, PYTHON_CHILD_LOCALE, bound_exporter_source, build_pair_requests, canonicalize, parse_d005_command, run_parent_export, sanitized_environment, validate_production_root, validate_root_isolation
 from tools.g0.verify_r09_b2_p5_full_config_diff import P4_RECORD_SHA256, _expected, _exporter_source, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
 
@@ -76,7 +76,9 @@ class P5Test(unittest.TestCase):
         self.assertEqual(parse_d005_command(record), ("r.toml", ["trainer.max_iter=100", "trainer.save_zero_checkpoint=true"]))
         record["command"]["argv"].reverse()
         with self.assertRaises(ValueError): parse_d005_command(record)
-        self.assertEqual(sanitized_environment({"set": {"B": "2"}, "unset": ["X"], "inherit_allowlist": ["A"]}, {"A": "1", "X": "x", "LEAK": "z"}), {"A": "1", "B": "2"})
+        self.assertEqual(sanitized_environment({"set": {"B": "2"}, "unset": ["X"], "inherit_allowlist": ["A"]}, {"A": "1", "X": "x", "LEAK": "z"}), {"A": "1", "B": "2", **PYTHON_CHILD_LOCALE})
+        with self.assertRaises(ValueError):
+            sanitized_environment({"set": {}, "unset": ["LC_CTYPE"], "inherit_allowlist": []}, {})
 
     def test_d005_absolute_production_root_rejects_relocated_checkout(self):
         root = Path(__file__).resolve().parents[2]; records, _, _, _ = _expected(root)

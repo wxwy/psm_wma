@@ -21,9 +21,10 @@ from typing import Any
 SCHEMA = "r09_b2_p5_full_config_diff_v2"
 FROZEN_OVERRIDES = ("trainer.max_iter=100", "trainer.save_zero_checkpoint=true")
 FROZEN_PRODUCTION_ROOT = Path("/disk/rl/psm_wma_p4_d005_retry")
+PYTHON_CHILD_LOCALE = {"LC_CTYPE": "C.UTF-8"}
 FROZEN_CHILD_REQUEST_SHA256 = {
-    "recurrent": "88017ed91aa50398c20b799844e8efee8d81ab55cbf3d131d9c845b1b0bd87ed",
-    "ttt_fast_weight": "dffa6b83f65f0e937e55d5c5d5440a82c224c22696b6755c90f6f401be269c7b",
+    "recurrent": "0871417b9e8898b7be2ab4215a88ee1546ec6019592fa084c3d96009747318ad",
+    "ttt_fast_weight": "9c56140f1c3570c142f9bc219ef82e7880cde4fdc51082e375f796a4c4360bee",
 }
 CHILD_REQUEST_KEYS = {"backend", "root", "toml", "overrides", "command_argv", "cwd", "interpreter", "environment", "d005_sha256", "p4_record_sha256", "p4_verification_sha256", "p3_verifier_sha256", "source", "budget", "inputs", "outputs"}
 
@@ -111,7 +112,7 @@ def parse_d005_command(record: Mapping[str, Any]) -> tuple[str, list[str]]:
 
 
 def sanitized_environment(contract: Mapping[str, Any], parent: Mapping[str, str]) -> dict[str, str]:
-    """Build the child environment from D005; never overlay an arbitrary parent."""
+    """Build the child environment from D005 and freeze Python's locale coercion."""
     required = {"set", "unset", "inherit_allowlist"}
     if not required.issubset(contract) or not isinstance(contract["set"], Mapping):
         raise ValueError("malformed D005 environment contract")
@@ -125,6 +126,10 @@ def sanitized_environment(contract: Mapping[str, Any], parent: Mapping[str, str]
     result.update({str(key): str(value) for key, value in contract["set"].items()})
     if set(result) & set(unset):
         raise ValueError("D005 set conflicts with unset")
+    if set(PYTHON_CHILD_LOCALE) & set(unset):
+        raise ValueError("D005 cannot unset the Python child locale")
+    for key, value in PYTHON_CHILD_LOCALE.items():
+        result.setdefault(key, value)
     return result
 
 
