@@ -8,6 +8,7 @@ import importlib.util
 import json
 from pathlib import Path
 import subprocess
+import tempfile
 import unittest
 from unittest import mock
 
@@ -18,6 +19,12 @@ SPEC = importlib.util.spec_from_file_location("verify_r09_b2_p3_gpu_inventory", 
 assert SPEC is not None and SPEC.loader is not None
 VERIFY = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(VERIFY)
+COLLECT_SPEC = importlib.util.spec_from_file_location(
+    "collect_r09_b2_p3_gpu_inventory", ROOT / "tools/g0/collect_r09_b2_p3_gpu_inventory.py"
+)
+assert COLLECT_SPEC is not None and COLLECT_SPEC.loader is not None
+COLLECT = importlib.util.module_from_spec(COLLECT_SPEC)
+COLLECT_SPEC.loader.exec_module(COLLECT)
 
 
 def _git(*args: str, cwd: Path = ROOT) -> str:
@@ -135,7 +142,14 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         try:
             artifact = self._passing_artifact(d005_path)
             # 本测试工作树自身含未提交测试文件；隔离 cleanliness，专测冻结源身份。
-            with mock.patch.object(VERIFY, "_tracked_clean", return_value=True):
+            frozen_recipe_only = {
+                "production_recipe_source_sha256": VERIFY.FROZEN_SOURCE_PATHS[
+                    "production_recipe_source_sha256"
+                ]
+            }
+            with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
+                VERIFY, "FROZEN_SOURCE_PATHS", frozen_recipe_only
+            ):
                 self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "PASS")
                 source.write_bytes(original + b"\n# p3 source-hash regression fixture\n")
                 result = VERIFY.verify(artifact, ROOT)
@@ -144,6 +158,20 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         finally:
             source.write_bytes(original)
             d005_path.unlink(missing_ok=True)
+
+    def test_isolated_worker_rejects_remote_tokenizer_binding(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in COLLECT.REQUIRED_PROCESSOR_ASSETS:
+                (root / name).write_text("fixture\n")
+            record = COLLECT.prepare_isolated_worker(
+                root, {"repository": None, "revision": None, "tokenizer_type": str(root.resolve())}
+            )
+            self.assertEqual(record["observed_offline_environment"], record["local_processor"]["offline_environment"])
+            with self.assertRaisesRegex(ValueError, "remote repository"):
+                COLLECT.prepare_isolated_worker(
+                    root, {"repository": "nvidia/Cosmos3-Edge", "revision": "main", "tokenizer_type": str(root.resolve())}
+                )
 
 
 if __name__ == "__main__":

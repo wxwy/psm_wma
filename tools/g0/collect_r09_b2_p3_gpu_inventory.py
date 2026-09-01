@@ -58,6 +58,36 @@ def compare_processor_records(before: dict[str, object], after: dict[str, object
     return before == after
 
 
+def validate_local_tokenizer_binding(
+    processor: dict[str, object], tokenizer_config: dict[str, object]
+) -> None:
+    """future worker 的导入前 hard-gate：只能使用 recipe 解析后的本地路径。"""
+    canonical = processor["canonical_path"]
+    if tokenizer_config.get("repository") is not None or tokenizer_config.get("revision") is not None:
+        raise ValueError("resolved tokenizer must not retain a remote repository or revision")
+    if tokenizer_config.get("tokenizer_type") != canonical:
+        raise ValueError("resolved tokenizer_type must equal the canonical local Edge checkpoint")
+
+
+def prepare_isolated_worker(
+    edge_checkpoint_path: Path, tokenizer_config: dict[str, object]
+) -> dict[str, object]:
+    """准备未来 worker 的唯一导入前契约；本函数不导入 HF/Transformers。"""
+    before = local_processor_record(edge_checkpoint_path)
+    ready = before["is_local_directory"] and all(
+        asset["exists"] for asset in before["required_assets"].values()
+    )
+    if not ready:
+        raise ValueError("local Edge processor assets must exist before worker imports")
+    validate_local_tokenizer_binding(before, tokenizer_config)
+    observed = apply_offline_processor_environment(before)
+    return {
+        "local_processor": before,
+        "observed_offline_environment": observed,
+        "before_assets": before["required_assets"],
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, required=True)
