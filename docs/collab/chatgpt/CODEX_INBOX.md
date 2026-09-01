@@ -3623,3 +3623,13 @@ Detailed review:
 - 合同：两份 backend D005 固定 `world_size=1`、100 optimizer updates、显式 microbatch/grad accumulation/global batch 公式、canonical argv/environment SHA、P1 manifest/cache/base checkpoint/resolved-config 引用。`command.executable=false`，不含审批令牌；相对路径 containment、无 shell/插值/网络/`--worker-backend`，两侧仅 backend selector、P3 verifier-owned actual optimizer membership 及隔离输出目录可不同。
 - 证据与验收：静态 builder/verifier 要拒绝 world-size/update/batch 预算错误、路径逃逸、未解析变量/执行 token、matched 字段差异、P3 TTT selector/membership 漂移、fast-state persistence 和任何 `PASS/executed/executable=true` 声明。只运行标准库/CPU 单元测试、`py_compile`、`git diff --check`；不产生可执行命令或运行证据。
 - 请求不授权 P4 后续执行、P5、B2-T 或任何 GPU 运行。请审查设计是否足以开始上述静态实现。
+
+### Awaiting review — R09-B2 P4 production-control-bound D005 design revision
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_STATIC_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `54662a3b31e19c224bdbee3446e42968d51615fe`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT `4e48ac5`；只改 `docs/build/PSM-WMA_R09_B2_P4_launch_d005_design_v0.1_2026-09-01.md` 与 `SESSION.md`，未改子模块或工具。
+- HIGH-1 关闭：D005 不再以 command-only backend override 表示 backend。recurrent/TTT 必分别实际设置 `PSM_R09_B1_TTT_ENABLED=0|1`，verifier 由该 production env 独立推导 selector，并与 P3 attempt-6 对应 backend 的排序 `selected_by_optimizer` 名称集合 canonical-JSON SHA256 比较。P1 stream root、`LIBERO_NUM_WORKERS=0`、latent-cache root/ratio、LIBERO root、base checkpoint、Edge processor、Wan VAE、offline controls 均列为 production 消费的 env hard gate。
+- HIGH-2/3/4 关闭：argv 必含 production-supported `trainer.max_iter=100`，而非仅 metadata；D005 建立 `environment.set/unset/inherit_allowlist`，未 allowlist 的行为型 `PSM_*`、`LIBERO_*`、checkpoint/cache/tokenizer/HF/Transformers/代理变量均 fail-closed。负例明确覆盖 metadata=100/实际5000、manifest/cache metadata 正确而 env 缺失、TTT metadata 正确而 switch=0。
+- MEDIUM 关闭：仓内 recipe/manifest/D005/output 继续 root-relative containment；外部 checkpoint/VAE/processor/LIBERO/cache/Python 记录 allowlisted canonical absolute realpath 和文件或递归清单 SHA256，不再错误要求其相对路径。
+- 范围不变：只申请后续 root 标准库/CPU static builder/verifier/tests；禁止 torch/Cosmos 导入、模型/数据/VAE/checkpoint I/O、torchrun、GPU、训练/评测/推理、P5/B2-T、backend freeze、Global/Agent/RL。请仅审查该设计修订。
