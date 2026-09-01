@@ -3504,3 +3504,12 @@ Detailed review:
 - 整改：新增 `_set_worker_production_cwd(root)`，仅在 isolated worker 的 `load_experiment_from_toml()` 前切换到 `root/cosmos-framework`；绝对 TOML/环境路径、parent cwd、D005/provenance 及 runbook shell 命令均不变。它恢复正常 framework 启动下的 relative model JSON 语义，不增加 I/O、GPU、dataloader/VAE/checkpoint/step 行为。
 - 永久回归 `test_worker_uses_framework_cwd_for_production_relative_paths` mock 断言仅选择存在的 framework root，并在缺失 root fail-closed；全套 12/12 PASS，`py_compile`、双仓 diff-check PASS。首次/第二次 artifact SHA 均复核未变、GPU=0MiB。
 - 本次仅申请经 CWD 修复后的第三次、唯一 GPU-only inventory 授权；单卡/24GiB/路径/令牌/禁止范围完全不变，禁止自动重试、换卡、改参数、加 `--worker-backend`、网络/数据/VAE/checkpoint I/O/forward/backward/step 与 B2-T/P4/P5/训练评测推理。
+
+### GPT attempt-3 fresh-output 整改复审
+
+请求 verdict：`APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `4199fb0458a3b4de960c3dd653efdf5832f6a01b`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 处理 ChatGPT worker-CWD review HIGH：唯一第三次命令的 output/D005 改为全新 `artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/`；recurrent/TTT JSON 由该 aggregate stem 派生。既有 attempt-1/2 tracked evidence 不被覆盖。
+- 新增 `_assert_fresh_output_paths()`，在写 D005 前 hard-gate aggregate、D005、recurrent、TTT 四路径均 root 内、不存在、且 `git ls-files` 无记录；不放宽 verifier `root_tracked_clean`。永久回归验证 attempt-3 fresh/untracked、attempt-1/2 SHA 不变，且 tracked attempt-2 路径被拒绝。全套 13/13 PASS，py_compile、双仓 diff-check PASS，GPU=0MiB。
+- 仅申请第三次一次性 GPU-only inventory：单卡0、24 GiB、CWD/解释器/fail-stop 修复均含；禁止自动重试/换卡/改参数/手工 backend、网络/数据/VAE/checkpoint I/O/forward/backward/step 与 B2-T/P4/P5/训练评测推理。
