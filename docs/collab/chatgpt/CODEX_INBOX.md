@@ -4168,3 +4168,13 @@ print(json.dumps(result, sort_keys=True))
 - staging HIGH：未来获批P4 execution的parent在spawn agent前创建最终runroot staging、copy验证manifest、按最终路径 `$ORIGIN/RPATH` 解all-ELF closure；agent/worker只读。P5仍只用attempt staging，D005 runroot保持absent。
 - allowlist MEDIUM：expected native loads从Gitlink Python source sites与每个seed ELF loader symbols/callsite/string记录独立枚举；request allowlist只能精确相等。nonliteral/indirect/无法证明的dlopen直接FAIL；共同删第二trigger的shared-forgery negative也FAIL。
 - 允许范围：若批准仅root loader/bootstrap、P4/P5 tools与CPU tests；禁止P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v1.1
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请仅整改 ChatGPT v1.0 review `2026-09-01_R09_B2_P4_interpreter_provenance_design_v10_5cf134c_3be0f90.md` 的 native-load enumeration/detector grammar；不申请任何运行。
+
+- 审核对象：根仓 design commit=`538d414e3a42bd4c0eae8ce2f496a93d802d51f8`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；新增文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v1.1_2026-09-01.md`。
+- Python universe：对 copy-only staging manifest 的所有 approved `*.py` 做 fail-closed AST，涵盖 first-party、registry wheel、VCS；新增 registry-wheel shared-forgery permanent negative。
+- ELF universe：对 `native_seed_union ∪ resolved_native_closure` 全部 canonical object 做 native-load analysis；transitive second-site omission 必须 FAIL。
+- grammar：唯一允许的 Python API、alias/path 规则和 ELF `dlopen/dlmopen` 记录均已逐项穷尽列出；`getattr`、wrapper、function pointer、`dlsym`、computed/nonliteral target及未知 API 一律 FAIL。request allowlist 必须与 verifier 重算记录精确相等。
+- 允许范围：若批准仅允许 root P4/P5 tooling 与标准库 CPU tests 的最小实现；禁止 P4 record重冻、P5 export/retry/compose、CUDA/GPU、torchrun、模型/数据/训练/评测/推理/B2-T。
