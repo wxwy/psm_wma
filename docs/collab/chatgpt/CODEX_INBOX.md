@@ -3557,3 +3557,14 @@ Detailed review:
 - Kimi `REQUEST_CHANGES` 已关闭。根仓 `c447f13395cc2b1c3ea6806be678bb90b616a7db` 将定向回归升级为 attempt-4 的完整 production-like raw/canonical pair：raw `language_model.model.layers.0.input_layernorm_moe_gen._fsdp_wrapped_module.weight` → canonical `net.language_model.model.layers.0.input_layernorm_moe_gen.weight`，并断言真实 `param_groups.net.language_model.model.layers.0.input_layernorm_moe_gen.weight.betas` 解析成功；另断言 `param_groups.net.unknown.weight.lr` 必定 `RuntimeError("unmapped")`。
 - 审核对象：根仓 `c447f13395cc2b1c3ea6806be678bb90b616a7db`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。`py_compile`、`unittest -v` 16/16、`git diff --check` PASS。其它 scope、28 GiB 和 fresh attempt-5 路径均不变。
 - 请求三方针对该 SHA 给出 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`（附 `file:line`）；此前全部 approval 作废，attempt-5 禁止启动直至三方一致批准。
+
+### Awaiting review — R09-B2 P3 attempt-5 JSON serialization repair / fresh attempt-6
+
+请求 verdict：`APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `af68eb78e2dc0fbb3b09dae7ef52053d65a684ab`（实现提交 `6690e374d828357b39c211175b8b94c98b54292e`）；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。attempt-5 terminal evidence 已在 `af68eb7` 固化。
+- terminal 事实：三方此前批准后，recurrent worker 已完成 production local processor、模型及 capturable FusedAdam 构造；只在将 param-group metadata 写 worker JSON 时失败，错误为 `TypeError: Object of type Tensor is not JSON serializable`。TTT worker 未启动，未触发 28 GiB cap；`artifacts/g0/r09/b2/p3_gpu_inventory_attempt5/` 的 aggregate/D005/verifier 均保留，verifier=`BLOCKED`、`record_valid=true`，23/23 边界与结构 checks=true。
+- 最小整改：仅将 collector 输出的 param-group `lr`/`weight_decay` 送入既有确定性 JSON-safe canonical metadata 表示，支持 capturable scalar Tensor；不放宽 flattened `state.*` grammar、不改 canonical FQN/owner_fqn、28 GiB cap、worker 顺序或 fail-stop。新增 `test_param_group_tensor_metadata_is_json_safe` 永久回归。
+- 静态证据：`cosmos-framework/.venv/bin/python -m py_compile tools/g0/collect_r09_b2_p3_gpu_inventory.py tools/g0/verify_r09_b2_p3_gpu_inventory.py tools/g0/test_verify_r09_b2_p3_gpu_inventory.py` PASS；`cosmos-framework/.venv/bin/python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 17/17 PASS；`git diff --check` PASS。整改后未执行 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。
+- 唯一待授权命令见 runbook `docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_runbook_v0.1_2026-09-01.md:26-45`，输出固定为 fresh/untracked `artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/`；单 `CUDA_VISIBLE_DEVICES=0`、`WORLD_SIZE=1`、离线/local processor、`load_vision_tokenizer=false`，仅 inventory `ModelWrapper.state_dict()` 与 `OptimizersContainer.state_dict()` schema。
+- 禁止网络/远端 tokenizer、数据/VAE/weight/checkpoint I/O、forward/backward/optimizer/scheduler step、手工 worker、自动重试/换卡、多卡、B2-T/P4/P5、训练/评测/推理/closed-loop/Global/Agent/RL。任一非零、`BLOCKED`/`FAIL`、超 28 GiB、非单卡或禁止行为立即终止、留证据且不自动重跑。此前 approval 不可复用；仅三方针对本 SHA 一致批准后才允许一次 attempt-6。
