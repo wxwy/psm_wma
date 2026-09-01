@@ -29,6 +29,9 @@ PASS_PROVENANCE_KEYS = {
     "submodule_revision",
     "gitlink_revision",
     "recipe_sha256",
+    "production_recipe_source_sha256",
+    "edge_model_config_source_sha256",
+    "inherited_recipe_source_sha256",
     "collector_sha256",
     "verifier_sha256",
     "model_source_sha256",
@@ -43,6 +46,9 @@ PASS_PROVENANCE_KEYS = {
 }
 FROZEN_SOURCE_PATHS = {
     "recipe_sha256": "cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml",
+    "production_recipe_source_sha256": "cosmos-framework/cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_libero_edge_all.py",
+    "edge_model_config_source_sha256": "cosmos-framework/cosmos_framework/configs/base/experiment/sft/models/edge_model_config.py",
+    "inherited_recipe_source_sha256": "cosmos-framework/cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_libero_all_nano.py",
     "collector_sha256": "tools/g0/collect_r09_b2_p3_gpu_inventory.py",
     "verifier_sha256": "tools/g0/verify_r09_b2_p3_gpu_inventory.py",
     "model_source_sha256": "cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py",
