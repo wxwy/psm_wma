@@ -214,6 +214,7 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
     assets = processor.get("required_assets", {})
     offline = processor.get("offline_environment", {})
     binding = processor.get("resolved_tokenizer_binding", {})
+    binding_sha256 = hashlib.sha256(json.dumps(binding, sort_keys=True).encode()).hexdigest()
     provenance = artifact.get("provenance", {})
     backends = {name: artifact.get(name, {}) for name in ("recurrent", "ttt_fast_weight")}
     pass_claimed = artifact.get("status") == "PASS"
@@ -232,7 +233,9 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
             else True
         ),
         "processor_package_read_only": (
-            processor.get("post_construction_observed") is True
+            processor.get("phase_trace") == ["offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"]
+            and processor.get("construction_witness", {}).get("binding_sha256") == binding_sha256
+            and bool(processor.get("construction_witness", {}).get("processor_type"))
             and processor.get("before_assets") == processor.get("after_assets") == assets
             if pass_claimed
             else True

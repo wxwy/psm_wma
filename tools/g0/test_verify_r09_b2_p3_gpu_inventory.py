@@ -96,7 +96,11 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             },
             "before_assets": assets,
             "after_assets": assets,
-            "post_construction_observed": True,
+            "phase_trace": ["offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"],
+            "construction_witness": {
+                "binding_sha256": hashlib.sha256(json.dumps({"repository": None, "revision": None, "tokenizer_type": str(ROOT)}, sort_keys=True).encode()).hexdigest(),
+                "processor_type": "fixture.Processor",
+            },
             "resolved_tokenizer_binding": {
                 "repository": None,
                 "revision": None,
@@ -182,7 +186,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                     VERIFY, "FROZEN_SOURCE_PATHS", {}
                 ):
                     self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "FAIL")
-                    COLLECT.finalize_isolated_worker_processor_record(record)
+                    COLLECT.run_isolated_worker_processor_construction(record, lambda: object())
                     self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "PASS")
                     record["after_assets"] = {}
                     self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "FAIL")

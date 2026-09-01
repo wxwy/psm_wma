@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from typing import Callable
 
 
 RUN_TOKEN = "APPROVE_TO_RUN_GPU_ONLY_P3_GATE"
@@ -90,11 +91,23 @@ def prepare_isolated_worker(
     return before
 
 
-def finalize_isolated_worker_processor_record(record: dict[str, object]) -> dict[str, object]:
-    """仅供未来已获批准的 isolated worker 在 processor 构造后调用。"""
+def run_isolated_worker_processor_construction(
+    record: dict[str, object], construct_processor: Callable[[], object]
+) -> dict[str, object]:
+    """future worker 的唯一 phase owner；仅在独立 run 审批后调用。"""
+    processor = construct_processor()
+    if processor is None:
+        raise RuntimeError("production processor construction returned None")
     after = local_processor_record(Path(record["canonical_path"]))
     record["after_assets"] = after["required_assets"]
-    record["post_construction_observed"] = True
+    binding = json.dumps(record["resolved_tokenizer_binding"], sort_keys=True)
+    record["phase_trace"] = [
+        "offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"
+    ]
+    record["construction_witness"] = {
+        "binding_sha256": hashlib.sha256(binding.encode()).hexdigest(),
+        "processor_type": f"{type(processor).__module__}.{type(processor).__qualname__}",
+    }
     return record
 
 

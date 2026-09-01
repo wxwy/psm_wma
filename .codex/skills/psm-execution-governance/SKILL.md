@@ -13,7 +13,7 @@ description: 管理 PSM-WMA 的审核申请、三方批准门、执行者边界�
 
 - 只有 ChatGPT Inbox 最新有效 verdict、Kimi、MM 针对同一实现 SHA 都批准，才可启动对应执行。
 - 任一 `REQUEST_CHANGES`、SHA 不一致或未回复均不得执行；先处理意见并重新审核。
-- 审核申请后每 30 秒轮询，且每轮固定顺序为：`git fetch origin V2` → 如远端领先则 `git merge --ff-only origin/V2` → 读取最新 Inbox/review → capture Kimi pane → capture MM pane；不得只检查旧本地副本。
+- 审核申请后每 30 秒轮询，且每轮固定顺序为：保存 `before_head=$(git rev-parse HEAD)` → `git fetch origin V2` → 先输出 `git log --oneline "$before_head"..origin/V2` 的每个新提交及其 verdict → 如 SHA 不同则 `git merge --ff-only origin/V2` → 读取最新 Inbox/review → capture Kimi pane → capture MM pane。只有该 revision range 为空时才可报告“无新增”；不得 merge 后仅比较相等 SHA 而丢失新 verdict。
 - 审核等待、远端暂未回复、tmux 暂无新行都不是 `blocked`。任务保持 `REVIEW` 并持续轮询；只有同一外部阻塞已连续三轮且没有任何安全的本地检查或修复可做时，才可标记 `blocked`。
 - 每次向用户显示审核申请时，首行固定为：`Awaiting review — 🚨 审核申请已发出（根仓 <hash>；子模块/Gitlink <hash>）`；不得省略 `Awaiting review`。
 
