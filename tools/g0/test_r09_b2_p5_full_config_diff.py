@@ -10,7 +10,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, PYTHON_CHILD_LOCALE, bound_exporter_source, build_pair_requests, canonicalize, parse_d005_command, run_parent_export, sanitized_environment, validate_production_root, validate_root_isolation
-from tools.g0.verify_r09_b2_p5_full_config_diff import P4_RECORD_SHA256, _expected, _exporter_source, verify_pair
+from tools.g0.verify_r09_b2_p5_full_config_diff import P4_RECORD_SHA256, _expected, _expected_effective_environment, _exporter_source, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
 
 
@@ -31,7 +31,7 @@ class P5Test(unittest.TestCase):
             record = records[backend]; p3 = record["inputs"]["p3_inventory"]
             return {"schema_version": "r09_b2_p5_full_config_diff_v2", "backend": backend,
                     "provenance": {"production_source": record["source"], "exporter_source": None, "inputs": {"p4_record_sha256": record_sha256[backend], "p4_d005_sha256": record["d005_sha256"], "p4_verification_sha256": verification_sha256, "p3_inventory_path": p3["path"], "p3_inventory_sha256": p3["sha256"], "p3_verifier_sha256": P3_VERIFIER_SHA256}},
-                    "effective_launch": {"command": {"argv": record["command"]["argv"], "cwd": record["command"]["cwd"], "interpreter": record["command"]["interpreter"], "toml": "examples/toml/sft_config/action_policy_libero_edge_all.toml", "trailing_overrides": ["trainer.max_iter=100", "trainer.save_zero_checkpoint=true"]}, "environment": {"set": record["environment"]["set"], "unset": record["environment"]["unset"], "inherit_allowlist": record["environment"]["inherit_allowlist"], "effective": record["environment"]["set"]}, "world_size": record["budget"]["world_size"], "budget": record["budget"], "p1_p3_d005_bindings": {"p1_manifest": record["inputs"]["p1_manifest"], "p3_inventory": p3}, "derived_job_path_local": record["outputs"]["run_root"]},
+                    "effective_launch": {"command": {"argv": record["command"]["argv"], "cwd": record["command"]["cwd"], "interpreter": record["command"]["interpreter"], "toml": "examples/toml/sft_config/action_policy_libero_edge_all.toml", "trailing_overrides": ["trainer.max_iter=100", "trainer.save_zero_checkpoint=true"]}, "environment": {"set": record["environment"]["set"], "unset": record["environment"]["unset"], "inherit_allowlist": record["environment"]["inherit_allowlist"], "effective": _expected_effective_environment(record)}, "world_size": record["budget"]["world_size"], "budget": record["budget"], "p1_p3_d005_bindings": {"p1_manifest": record["inputs"]["p1_manifest"], "p3_inventory": p3}, "derived_job_path_local": record["outputs"]["run_root"]},
                     "resolved_config": {"model": {"config": {"local_history_backend": "ttt_fast_weight" if backend == "ttt_fast_weight" else "recurrent"}}, "optimizer": {"keys_to_select": contracts[backend]["selector_keys"]}}}
         return root, envelope("recurrent"), envelope("ttt_fast_weight"), contracts
 
@@ -42,6 +42,10 @@ class P5Test(unittest.TestCase):
             source = _exporter_source(exporter)
             recurrent["provenance"]["exporter_source"] = source; ttt["provenance"]["exporter_source"] = source
             self.assertEqual(verify_pair(recurrent, ttt, root, exporter)["status"], "PASS")
+            extra_effective = json.loads(json.dumps(ttt)); extra_effective["effective_launch"]["environment"]["effective"]["UNEXPECTED"] = "1"
+            self.assertEqual(verify_pair(recurrent, extra_effective, root, exporter)["status"], "FAIL")
+            changed_locale = json.loads(json.dumps(ttt)); changed_locale["effective_launch"]["environment"]["effective"]["LC_CTYPE"] = "C"
+            self.assertEqual(verify_pair(recurrent, changed_locale, root, exporter)["status"], "FAIL")
             self.assertEqual(verify_pair(recurrent, ttt, root, root)["status"], "FAIL")
             bad = {**ttt, "provenance": {**ttt["provenance"], "inputs": {**ttt["provenance"]["inputs"], "p3_inventory_sha256": "bad"}}}; self.assertEqual(verify_pair(recurrent, bad, root, exporter)["status"], "FAIL")
             bad = {**ttt, "provenance": {**ttt["provenance"], "inputs": {**ttt["provenance"]["inputs"], "p3_inventory_path": "other.json"}}}; self.assertEqual(verify_pair(recurrent, bad, root, exporter)["status"], "FAIL")

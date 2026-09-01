@@ -10,7 +10,7 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from tools.g0.export_r09_b2_p5_resolved_config import SCHEMA
+from tools.g0.export_r09_b2_p5_resolved_config import PYTHON_CHILD_LOCALE, SCHEMA
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256, _load_frozen_inputs, _p3_contract, sha256_json
 
 P4_DIR = Path("artifacts/g0/r09/b2/p4_launch_d005")
@@ -139,6 +139,14 @@ def _exporter_source(exporter_root: Path) -> dict[str, Any]:
     return {"root_revision": subprocess.check_output(["git", "-C", str(exporter_root), "rev-parse", "HEAD"], text=True).strip(), "tool_sha256": {name: _file_sha(exporter_root / name) for name in files}}
 
 
+def _expected_effective_environment(record: Mapping[str, Any]) -> dict[str, str]:
+    """Match the exporter-owned D005 environment plus frozen Python startup locale."""
+    environment = dict(record["environment"]["set"])
+    for key, value in PYTHON_CHILD_LOCALE.items():
+        environment.setdefault(key, value)
+    return environment
+
+
 def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Mapping[str, Any], exporter_source: Mapping[str, Any], p4_record_sha256: str, p4_verification_sha256: str) -> bool:
     try:
         required = {"schema_version", "backend", "provenance", "effective_launch", "resolved_config"}
@@ -161,7 +169,7 @@ def _bound(envelope: Mapping[str, Any], record: Mapping[str, Any], contract: Map
                 and command["toml"] == "examples/toml/sft_config/action_policy_libero_edge_all.toml"
                 and command["trailing_overrides"] == ["trainer.max_iter=100", "trainer.save_zero_checkpoint=true"]
                 and environment["set"] == record["environment"]["set"] and environment["unset"] == record["environment"]["unset"]
-                and environment["inherit_allowlist"] == record["environment"]["inherit_allowlist"] and environment["effective"] == record["environment"]["set"]
+                and environment["inherit_allowlist"] == record["environment"]["inherit_allowlist"] and environment["effective"] == _expected_effective_environment(record)
                 and launch["world_size"] == record["budget"]["world_size"] and launch["budget"] == record["budget"]
                 and launch["p1_p3_d005_bindings"]["p1_manifest"] == record["inputs"]["p1_manifest"]
                 and launch["p1_p3_d005_bindings"]["p3_inventory"] == record["inputs"]["p3_inventory"]
