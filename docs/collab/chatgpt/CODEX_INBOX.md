@@ -3838,3 +3838,13 @@ Detailed review:
 - 新设计：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.5_2026-09-01.md`。production root 必由两份 D005 的 `command.cwd` 推导并精确等于 `/disk/rl/psm_wma_p4_d005_retry`；禁止同 revision/Gitlink 的其他 checkout、symlink alias 或 cwd/PYTHONPATH/stream manifest remap。
 - parent 还逐条检查 worktree 内 D005 paths containment，外部模型/数据/VAE/checkpoint 仍使用其冻结 absolute paths；永久 CPU 负例为“相同 source/Gitlink 不同绝对 checkout 必 FAIL”。其余 v0.4 三根合同不变。
 - 仅申请 root 静态工具重构；禁止 compose/export/`load_experiment_from_toml`、CUDA/torchrun/GPU/训练。实现获批后，静态 export 仍需独立三方授权。
+
+### Awaiting review — R09-B2 P5 v0.5 static tools implementation
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `2534afcef4b269dd47e9d083044dda708359dc21`（实现范围 `ff17a59..c559455`）；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。依据 v0.4/v0.5 三方设计批准实现；本次仅审 root 静态工具代码。
+- `production_root` 由双 D005 cwd 精确推导，必须 `/disk/rl/psm_wma_p4_d005_retry`，并逐条校验 worktree path containment 与 root/submodule/Gitlink source；`evidence_root` 只读 P4/P1/P3/verification SHA；`exporter_root` 必 tracked-clean 并由 verifier 独立计算 revision+两工具 SHA。
+- child 已去除 root `tools.g0` 模块级依赖；CPU subprocess smoke 以真实冻结 D005 cwd/env 到达 interpreter pre-compose guard，未调用 compose。parent 使用 attempt UUID staging，只有两 child 与 pair verifier PASS 后原子晋升 canonical output。
+- verifier 强制 exact nested provenance/command/environment/budget/P1/P3/P4 verification/exporter source，逐侧 exact local backend 与 selector contract。CPU evidence：`py_compile` PASS、unittest 4/4 PASS、`git diff --check` PASS。
+- 禁止范围：未执行 `load_experiment_from_toml`、真实 export、CUDA/GPU/torchrun/训练。若全部批准，仍仅可另行申请 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，本申请不授权执行。
