@@ -3680,3 +3680,12 @@ Detailed review:
 - 关闭点：matched 检查拆分 P1 binding、P3 artifact SHA、外部资产与 source/budget，允许并实际测试 recurrent/TTT 各自不同的 P3 selector/membership contract；`IMAGINAIRE_OUTPUT_ROOT` 必须为 canonical absolute path，派生 run root 必须在 repo root 内；writer 写 D005 前拒绝已存在、仓外或 Git-tracked 目标。
 - 静态证据：`py_compile` PASS；CPU unittest 3/3 PASS（正例包含不同 backend P3 contract；尾随 override/错误解释器/缺 cache env/P3 mutation/Gitlink mutation/resume 均 FAIL）；`git diff --check` PASS。
 - 范围不变：未生成真实 D005；未导入 torch/Cosmos，未读取真实模型/数据/VAE/checkpoint，未执行 torchrun/GPU/训练/评测/推理。仅请求 P4 static closure；P5/B2-T 未授权。
+
+### Awaiting review — R09-B2 P1 production-manifest cache-index preparation
+
+请求 verdict：`APPROVE_TO_BUILD_P1_PRODUCTION_MANIFEST` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `4177e83`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。目的仅是补 P4 所缺的真实 P1 生产清单，不申请 P4 closure。
+- 根因：原 P1 builder 每条 record 都 `torch.load` 整个 episode cache；1,693 个文件平均 32.2 MiB，构建 `100×16×128=204800` 条时会重复反序列化同一 episode，首次运行 14 分钟无产物后已安全停止。
+- 最小修复：`cache_exists` 增加每 suite/episode 的窗口 key set 缓存；每条 record 仍逐项检查 `start_frame` 存在，缺 cache 仍 fail，但每 episode 文件最多读取一次。新增 mock 回归证明同 episode 的 2/3/4 三个查询只 load 一次，缺窗口返回 false。CPU `py_compile`、unittest 1/1、`git diff --check` PASS。
+- 拟执行（获准后）：CPU-only、`CUDA_VISIBLE_DEVICES=`，从现有 LIBERO 元数据与现成 verified latent cache 生成 `artifacts/g0/r09/b2/p1_production_manifest_100x16x128/{header.json,records.jsonl,suites/*}`，再跑现有 P1 verifier；不读取 MP4/VAE/模型/权重，不执行 torchrun、训练、评测或推理。
