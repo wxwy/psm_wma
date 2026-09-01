@@ -3425,3 +3425,17 @@ Detailed review:
 - 静态证据：`python -m py_compile` PASS；`python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py` 为 `5 passed`；双仓 `git diff --check` PASS。新增负例覆盖 symbolic-only DCP membership 与 TTT-only persistent DCP key。
 - 本轮没有调用 worker、GPU、HF/processor/model、VAE、checkpoint、数据或 DCP I/O；没有 forward/backward/optimizer/scheduler step。批准后也只允许准备精确 run 命令与二次运行审核，不自动授权执行。
 - 禁止范围：B2-T/P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训、backend freeze、Global/Agent/RL。
+
+---
+
+## 2026-09-01 — R09-B2 P3 flattened optimizer-DCP 整改复审请求
+
+请求 verdict：`APPROVE_TO_REQUEST_GPU_P3_RUN` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `d46818eafa849bdc53e24cfa1d07164a6f62ce7c`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 处理 GPT HIGH：已按当前 PyTorch `_flatten_optim_state_dict` 实现的精确 key grammar 解析 production DCP：仅接受 `state.<FQN>.<suffix>` / `param_groups.<FQN>.<suffix>`，以完整 `net.<stable_name>.` 边界提取 owner，任何 lookalike、遗漏或 unmapped FQN 均 fail-closed；不再递归扫描任意字符串，也不由 optimizer param groups 伪造 DCP membership。
+- 处理 GPT MEDIUM：artifact 现记录 `flat_key/owner/namespace/suffix` 及 leaf metadata；verifier 强制 schema 与 DCP references 一致、拒绝重复 identity，并比较 recurrent/TTT 的 normalized optimizer-DCP schema。TTT-only 或非 allowlist recurrent-only owner、或 shared schema metadata 漂移均 FAIL。
+- 永久测试：共 6 项，覆盖 source identity、remote/different local processor binding、symbolic-only DCP、TTT-only model DCP、真实 flattened schema ownership（含 prefix/suffix lookalike、遗漏、unmapped），以及 TTT-only optimizer-DCP schema。
+- MM 证据补齐：本轮 `py_compile` stdout 为空且 exit=0；完整 `unittest -v` 为 6/6 PASS；`git diff --check 0d3af2e~1..0d3af2e`、当前根仓和子模块均 exit=0；`git status --short tools/g0/` 仅三项已跟踪修改（提交前），`git ls-files --others --exclude-standard tools/g0/` 与临时 `p3_*test_d005.json` 查找均为空，所有 fixture 在 `finally` 清理。
+- 本轮未运行 GPU、worker、processor/model/VAE、checkpoint/data/DCP I/O，未执行 forward/backward/optimizer/scheduler step。仍仅请求静态实现 closure；GPU run 必须另行三方批准。
+- 禁止范围保持：B2-T/P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训、backend freeze、Global/Agent/RL。
