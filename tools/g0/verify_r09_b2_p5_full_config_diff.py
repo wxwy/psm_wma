@@ -114,6 +114,8 @@ def _allowed(path: str, left: Any, right: Any) -> bool:
         "/provenance/p4_v4_verification_sha256",
     }:
         return isinstance(left, str) and isinstance(right, str) and left != right
+    if path == "/effective_launch/environment/PSM_R09_B1_TTT_ENABLED":
+        return left == "0" and right == "1"
     if path == "/resolved_config/model/config/local_history_backend":
         return left == "recurrent" and right == "ttt_fast_weight"
     return False

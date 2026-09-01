@@ -10,7 +10,7 @@ import unittest
 from pathlib import Path
 
 from tools.g0.export_r09_b2_p5_resolved_config import (
-    P4_V4_PREFLIGHT_RELATIVE, P5_FORBIDDEN_ENVIRONMENT, PYTHON_CHILD_LOCALE,
+    P4_V4_PREFLIGHT_RELATIVE, P5_FORBIDDEN_ENVIRONMENT, P5_P3_BACKEND_ENVIRONMENT, PYTHON_CHILD_LOCALE,
     build_v4_pair_requests, canonical_bytes, load_p4_v4_preflight,
     p5_effective_environment, sha256_json,
 )
@@ -57,7 +57,7 @@ class P5Test(unittest.TestCase):
         roster_core = {"entries": roster_entries}; roster = {**roster_core, "sha256": sha256_json(roster_core)}
         for backend in ("recurrent", "ttt_fast_weight"):
             directory = root / P4_V4_PREFLIGHT_RELATIVE / backend; directory.mkdir(parents=True)
-            env_core = {"set": {"A": "1"}, "unset": list(P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
+            env_core = {"set": {"A": "1", "PSM_R09_B1_TTT_ENABLED": P5_P3_BACKEND_ENVIRONMENT["PSM_R09_B1_TTT_ENABLED"][backend]}, "unset": list(P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
             environment = {**env_core, "sha256": sha256_json(env_core)}
             native_core = {"set": {}, "unset": list(P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
             native = {**native_core, "sha256": sha256_json(native_core)}
@@ -87,7 +87,7 @@ class P5Test(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             evidence = Path(temp) / "evidence"; evidence.mkdir(); self._v4_preflight(evidence)
             loaded = load_p4_v4_preflight(evidence)
-            self.assertEqual(p5_effective_environment(loaded["recurrent"]["request"], loaded["ttt_fast_weight"]["request"]), {"A": "1", **PYTHON_CHILD_LOCALE})
+            self.assertEqual(p5_effective_environment(loaded["recurrent"]["request"], loaded["ttt_fast_weight"]["request"], backend="recurrent"), {"A": "1", "PSM_R09_B1_TTT_ENABLED": "0", **PYTHON_CHILD_LOCALE})
             requests = build_v4_pair_requests(evidence)
             self.assertEqual(requests["recurrent"]["cwd"], str(evidence / "source" / "cosmos-framework"))
             exporter = self._exporter_worktree(root, Path(temp)); source = _exporter_source(exporter)
@@ -100,6 +100,8 @@ class P5Test(unittest.TestCase):
             bad = json.loads(json.dumps(ttt)); bad["provenance"]["p4_v4_result_sha256"] = "0" * 64
             self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
             bad = json.loads(json.dumps(ttt)); bad["effective_launch"]["runtime_sys_path"].append("/ambient")
+            self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
+            bad = json.loads(json.dumps(ttt)); bad["effective_launch"]["environment"]["PSM_R09_B1_TTT_ENABLED"] = "0"
             self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
             bad = json.loads(json.dumps(ttt)); bad["resolved_config"]["unexpected"] = True
             self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")

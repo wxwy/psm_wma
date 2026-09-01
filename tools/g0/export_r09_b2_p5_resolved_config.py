@@ -46,6 +46,9 @@ P5_FORBIDDEN_ENVIRONMENT = (
     "LD_SHOW_AUXV", "LD_TRACE_LOADED_OBJECTS", "LD_USE_LOAD_BIAS", "MASTER_ADDR",
     "MASTER_PORT", "PYTHONPATH", "RANK", "WORLD_SIZE", "LOCAL_RANK",
 )
+P5_P3_BACKEND_ENVIRONMENT = {
+    "PSM_R09_B1_TTT_ENABLED": {"recurrent": "0", "ttt_fast_weight": "1"},
+}
 
 
 class CanonicalizationError(ValueError):
@@ -165,7 +168,7 @@ def _validate_roster(run_root: Path, staging_root: Path, token: str, roster: obj
             raise ValueError("P4-v4 run-root roster file identity differs")
 
 
-def p5_effective_environment(recurrent: Mapping[str, Any], ttt: Mapping[str, Any]) -> dict[str, str]:
+def p5_effective_environment(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, backend: str | None = None) -> dict[str, str]:
     """Construct the P5 child environment from empty, never ambient parent state."""
     def values(record: Mapping[str, Any]) -> dict[str, str]:
         environment = record.get("effective_environment")
@@ -182,9 +185,23 @@ def p5_effective_environment(recurrent: Mapping[str, Any], ttt: Mapping[str, Any
             raise ValueError("P4-v4 native-loader environment schema is malformed")
         return {str(key): str(value) for key, value in environment["set"].items()}
     left, right = values(recurrent), values(ttt)
-    if left != right or set(left) & set(P5_FORBIDDEN_ENVIRONMENT):
+    if set(left) & set(P5_FORBIDDEN_ENVIRONMENT) or set(right) & set(P5_FORBIDDEN_ENVIRONMENT):
         raise ValueError("P4-v4 backend environments cannot be projected into P5")
-    return {**dict(sorted(left.items())), **PYTHON_CHILD_LOCALE}
+    different = {key for key in set(left) | set(right) if left.get(key) != right.get(key)}
+    if different != set(P5_P3_BACKEND_ENVIRONMENT):
+        if different:
+            raise ValueError("P4-v4 backend environment difference is not P3-owned")
+        if backend is not None:
+            raise ValueError("P4-v4 P3 backend environment difference is absent")
+        return {**dict(sorted(left.items())), **PYTHON_CHILD_LOCALE}
+    if backend not in P4_V4_BACKENDS:
+        raise ValueError("P5 backend-specific environment requires a fixed backend")
+    expected = {key: values[backend] for key, values in P5_P3_BACKEND_ENVIRONMENT.items()}
+    selected = left if backend == "recurrent" else right
+    if {key: selected.get(key) for key in expected} != expected:
+        raise ValueError("P4-v4 P3 backend environment differs from the frozen contract")
+    common = {key: value for key, value in left.items() if key not in different}
+    return {**dict(sorted(common.items())), **expected, **PYTHON_CHILD_LOCALE}
 
 
 def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
@@ -226,14 +243,14 @@ def load_p4_v4_preflight(evidence_root: Path) -> dict[str, dict[str, Any]]:
             raise ValueError("P4-v4 staging runtime sys.path differs from its import roots")
         _validate_roster(run_root, staging_root, token, outcome["pre_p5_run_root_roster"], request["payload_manifest"])
         result[backend] = {"request": request, "result": outcome, "verification": verification}
-    p5_effective_environment(result["recurrent"]["request"], result["ttt_fast_weight"]["request"])
+    for backend in P4_V4_BACKENDS:
+        p5_effective_environment(result["recurrent"]["request"], result["ttt_fast_weight"]["request"], backend=backend)
     return result
 
 
 def build_v4_pair_requests(evidence_root: Path) -> dict[str, dict[str, Any]]:
     """Derive future P5 child inputs solely from verified P4-v4 evidence."""
     preflight = load_p4_v4_preflight(evidence_root)
-    environment = p5_effective_environment(preflight["recurrent"]["request"], preflight["ttt_fast_weight"]["request"])
     requests: dict[str, dict[str, Any]] = {}
     for backend in P4_V4_BACKENDS:
         record = preflight[backend]["request"]
@@ -248,7 +265,9 @@ def build_v4_pair_requests(evidence_root: Path) -> dict[str, dict[str, Any]]:
             "overrides": list(defaults["ordered_overrides"]),
             "interpreter": record["interpreter"],
             "loader_argv": record["loader_argv"],
-            "environment": environment,
+            "environment": p5_effective_environment(
+                preflight["recurrent"]["request"], preflight["ttt_fast_weight"]["request"], backend=backend,
+            ),
             "runtime_sys_path": list(staging["runtime_sys_path"]),
             "p4_request_sha256": sha256_json(record),
             "p4_result_sha256": sha256_json(preflight[backend]["result"]),
