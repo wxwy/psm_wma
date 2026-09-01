@@ -361,6 +361,16 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             self.assertIn("PermissionError", backends["recurrent"]["launch_error"])
             self.assertNotIn("ttt_fast_weight", backends)
 
+    def test_nonexecutable_collector_script_launches_through_interpreter(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            script = Path(directory) / "collector.py"
+            script.write_text("print('worker launched')\n")
+            script.chmod(0o644)
+            command = COLLECT._worker_command_argv(script, [])
+            self.assertEqual(command[:2], [COLLECT.sys.executable, str(script.resolve())])
+            completed = subprocess.run(command, text=True, capture_output=True, check=True)
+            self.assertEqual(completed.stdout, "worker launched\n")
+
     def test_backend_orchestration_stops_after_zero_exit_blocked_record(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "inventory.json"

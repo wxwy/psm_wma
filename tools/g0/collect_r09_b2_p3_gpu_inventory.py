@@ -509,6 +509,11 @@ def _run_backend_workers(
     return backends
 
 
+def _worker_command_argv(script_path: Path, arguments: list[str]) -> list[str]:
+    """以当前 Python 解释器启动 worker，不能依赖 collector 脚本的 executable bit。"""
+    return [sys.executable, str(script_path.resolve()), *arguments]
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, default=Path.cwd())
@@ -593,7 +598,7 @@ def main() -> None:
     framework = root / "cosmos-framework"
     submodule_revision = _git(framework, "rev-parse", "HEAD")
     gitlink_revision = _git(root, "ls-tree", root_revision, "cosmos-framework").split()[2]
-    command_argv = [str(Path(sys.argv[0]).resolve()), *sys.argv[1:]]
+    command_argv = _worker_command_argv(Path(sys.argv[0]), sys.argv[1:])
     d005 = {
         "root_revision": root_revision,
         "submodule_revision": submodule_revision,
