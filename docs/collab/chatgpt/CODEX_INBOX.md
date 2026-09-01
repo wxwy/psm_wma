@@ -3726,3 +3726,12 @@ Detailed review:
 - 关闭输入 binding HIGH：live root Gitlink + submodule HEAD 固定 `21d064f`；P1 除 header SHA 外，独立核验 committed `records.jsonl` 和四个 suite JSONL 与 header digest；环境净化新增 `PSM_LOCAL_DUMMY_DIM`、遗漏 probe variables 和 `ONLINE_VAE_PROBE_MAX_SAMPLES`。回归覆盖 Gitlink drift、P1 record_count、schema extra field 与 dummy-dimension unset。
 - CPU 证据：py_compile PASS，unittest 6/6 PASS，diff-check PASS。未生成 D005、未读真实模型/数据/VAE/checkpoint、未执行 torchrun/GPU/训练。
 - 获批后唯一下一步：在 clean source 只读现有本地 asset 路径，生成 recurrent/ttt 两份 `FROZEN_NOT_EXECUTED` JSON 并运行标准库 pair verifier；仍不执行 argv。
+
+### Awaiting review — R09-B2 P4 v2 D005 regeneration after verifier FAIL fix
+
+请求 verdict：`APPROVE_TO_REGENERATE_P4_V2_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `990afb6bc5c644370d7ad0356e9976f1643ff4ca`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。此前三方已批准 v2 generation。
+- 首次 clean-worktree D005 pair verifier FAIL，未执行 argv/GPU/训练，未创建 future output：canonical `.venv/bin/python` resolve 到 uv Python，但 verifier 将该解释器拒于 allowlist 外，且错误把 `PYTHONPATH` 与 interpreter parent 比较。
+- 最小修复：`_asset_ok/_allowed_roots` 仅额外允许当前 worktree canonical interpreter parent（不放宽 `/root`）；`_env_assets_bound` 将 `PYTHONPATH` 固定比较 `<root>/cosmos-framework`。CPU py_compile、6/6 unittest、diff-check PASS。原 FAIL JSON 保留、不覆盖、不提交。
+- 请求获准后才在新的 fresh clean worktree 对同一只读本地 assets 重生成两份 `FROZEN_NOT_EXECUTED` JSON + 标准库 verifier；仍禁止 torchrun/GPU/模型执行/训练。
