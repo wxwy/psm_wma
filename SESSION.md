@@ -891,3 +891,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 最小整改：`verify_r09_b2_p3_gpu_inventory.py` 对 optimizer、resolved-selector 和 optimizer-DCP schema 的 recurrent-only 差异，仍允许 structural recurrent prefix，另只允许被 artifact 中 `recurrent.selector.keys_to_select - ttt.selector.keys_to_select` 的实际 substring 精确解释；TTT-only 仍拒绝，model/buffer/DCP-model 结构白名单未放宽。新增正/负回归；fresh-output 回归改为拒绝已终态的 attempt-6。
 - 验证：`py_compile` PASS、标准库定向测试 19/19 PASS、`git diff --check` PASS。新 verifier 不可直接以当前脏/新 root 重验旧 artifact；故以临时 clean worktree root=`269540e`（artifact recorded collection root、Gitlink/submodule=`21d064f`）承载未跟踪 evidence 副本，并由当前 verifier（SHA256=`10dd83084ff133a1ee5878125f8611aab0b6ce0ce208ac8cacd1b8bd8bce2111`）复核。`p3_gpu_inventory_verifier_selector_review.json`=PASS，record_valid=true，全部 provenance/23 checks/diff checks=true；未重跑 GPU，GPU=0 MiB。
 - 证据新增：`artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory_verifier_selector_review.json`。下一步：提交后向 ChatGPT/MM/Kimi 请求 P3 closure；此前不得进入 P4/P5/B2-T、训练、评测、推理或任何 GPU 重跑。提交：未提交。
+
+### R09-B2 P3 selector contract provenance 整改（2026-09-01，REVIEW）
+
+- ChatGPT 对 selector-aware closure 提出 HIGH：artifact 自报 selector 不得成为允许差异来源。该意见成立；MM/Kimi 的此前 closure approval 不复用。
+- 修复：verifier 新增 verifier-owned exact recurrent/TTT selector 常量，并绑定 production/inherited recipe SHA256（`d58f…c454`/`cda5…7347`）；`selector_contract_exact` 强制 artifact backend/list 与两组冻结值逐项一致。optimizer、resolved-selector、optimizer-DCP schema 差异只由冻结差集解释；TTT-only 与 model/buffer/DCP-model structural gates 不变。
+- 回归：已有正例仍验证 `moe_gen` 差异可解释；新增 artifact 加入 broad `language_model` selector 及同名差异仍令三条 allow gate FAIL，且任意 selector list 偏离令 `selector_contract_exact=false`、verifier FAIL。`py_compile`、标准库测试 19/19、`git diff --check` PASS。
+- 复核：仍未重跑 GPU。用 clean collection root=`269540e`、Gitlink/submodule=`21d064f` worktree 对同一 evidence 运行新版 verifier；`p3_gpu_inventory_verifier_selector_review.json`=PASS、record_valid=true，全部 checks/diff checks=true（含新增 `selector_contract_exact=true`），GPU=0 MiB。下一步重新三方 closure 审核。提交：未提交。

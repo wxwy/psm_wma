@@ -199,6 +199,12 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                 "selector_optimizer_exclusions": [],
             },
         }
+        recurrent["inventory"]["selector"] = {
+            "backend": "recurrent", "keys_to_select": list(VERIFY.EXPECTED_RECURRENT_SELECTOR_KEYS),
+        }
+        ttt["inventory"]["selector"] = {
+            "backend": "ttt_fast_weight", "keys_to_select": list(VERIFY.EXPECTED_TTT_SELECTOR_KEYS),
+        }
         return {
             "schema_version": "r09_b2_p3_gpu_inventory_v1",
             "status": "PASS",
@@ -546,8 +552,6 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             artifact = self._passing_artifact(d005_path)
             recurrent = artifact["recurrent"]["inventory"]
             ttt = artifact["ttt_fast_weight"]["inventory"]
-            recurrent["selector"] = {"backend": "recurrent", "keys_to_select": ["moe_gen"]}
-            ttt["selector"] = {"backend": "ttt_fast_weight", "keys_to_select": []}
             recurrent_name = "language_model.layer.moe_gen.weight"
             recurrent["model_parameters"].append({
                 "name": recurrent_name, "numel": 1, "dtype": "float32",
@@ -572,14 +576,30 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                 self.assertTrue(result["matched_diff_checks"]["only_allowed_optimizer"])
                 self.assertTrue(result["matched_diff_checks"]["only_allowed_resolved_selector"])
                 self.assertTrue(result["matched_diff_checks"]["only_allowed_dcp_optimizer_schema"])
-            recurrent["selector"]["keys_to_select"] = []
+                self.assertTrue(result["matched_diff_checks"]["selector_contract_exact"])
+            recurrent["selector"]["keys_to_select"].append("language_model")
+            broad_name = "language_model.unexpected.weight"
+            recurrent["model_parameters"].append({
+                "name": broad_name, "numel": 1, "dtype": "float32",
+                "selected_by_optimizer": True, "selected_by_resolved_selector": True,
+            })
+            recurrent["dcp_state"]["optimizer_parameter_references"].append(broad_name)
+            recurrent["dcp_state"]["optimizer_state_schema"].append({
+                "flat_key": f"param_groups.net.{broad_name}.lr", "owner": broad_name,
+                "owner_fqn": f"net.{broad_name}", "namespace": "param_groups", "suffix": "lr",
+                "kind": "float", "value": 0.1,
+            })
+            for key in ("recurrent_only_optimizer", "recurrent_only_resolved_selector"):
+                artifact["matched_diff"][key] = sorted(artifact["matched_diff"][key] + [broad_name])
             with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
                 VERIFY, "FROZEN_SOURCE_PATHS", {}
             ):
                 result = VERIFY.verify(artifact, ROOT)
+                self.assertFalse(result["matched_diff_checks"]["selector_contract_exact"])
                 self.assertFalse(result["matched_diff_checks"]["only_allowed_optimizer"])
                 self.assertFalse(result["matched_diff_checks"]["only_allowed_resolved_selector"])
                 self.assertFalse(result["matched_diff_checks"]["only_allowed_dcp_optimizer_schema"])
+                self.assertEqual(result["status"], "FAIL")
         finally:
             d005_path.unlink(missing_ok=True)
 

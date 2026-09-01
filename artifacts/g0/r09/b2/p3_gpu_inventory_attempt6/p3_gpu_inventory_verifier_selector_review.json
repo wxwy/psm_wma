@@ -74,6 +74,7 @@
     "only_allowed_optimizer": true,
     "only_allowed_resolved_selector": true,
     "policy_declared_exact": true,
+    "selector_contract_exact": true,
     "shared_buffers_metadata": true,
     "shared_dcp_optimizer_schema_metadata": true,
     "shared_model_parameters_metadata": true

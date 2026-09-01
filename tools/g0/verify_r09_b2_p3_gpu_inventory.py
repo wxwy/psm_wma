@@ -11,6 +11,15 @@ import subprocess
 
 
 ALLOWED_RECURRENT_ONLY_PREFIXES = ("local_history_runtime.recurrent_backend.",)
+EXPECTED_RECURRENT_SELECTOR_KEYS = (
+    "moe_gen", "time_embedder", "vae2llm", "llm2vae", "action2llm", "llm2action",
+    "action_modality_embed", "local_memory2llm", "local_memory_modality_embed", "local_history_runtime",
+)
+EXPECTED_TTT_SELECTOR_KEYS = (
+    "local_history_runtime.encoder", "local_memory2llm", "local_memory_modality_embed",
+)
+EXPECTED_PRODUCTION_RECIPE_SHA256 = "d58f1e8d84df3c5e0a3819be3687d382f3191c47c36b38a22592b1d62805c454"
+EXPECTED_INHERITED_RECIPE_SHA256 = "cda509dfc289fc5b9b07220c09f44b5ed830f585dc01bbd703257d407e107347"
 TTT_RUNTIME_NAMES = {"W", "pending_evidence", "last_evidence", "initialized", "segment_progress"}
 NO_EXECUTION_FIELDS = (
     "weights_loaded", "checkpoint_loaded", "forward_executed", "backward_executed",
@@ -245,16 +254,14 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
     recurrent = artifact["recurrent"].get("inventory", {})
     ttt = artifact["ttt_fast_weight"].get("inventory", {})
 
+    def selector_matches(inventory: dict[str, object], backend: str, expected: tuple[str, ...]) -> bool:
+        selector = inventory.get("selector", {})
+        return selector.get("backend") == backend and selector.get("keys_to_select") == list(expected)
+
     def explainable_by_selector_allowlist(name: object) -> bool:
         if not isinstance(name, str):
             return False
-        recurrent_keys = recurrent.get("selector", {}).get("keys_to_select", [])
-        ttt_keys = ttt.get("selector", {}).get("keys_to_select", [])
-        if not isinstance(recurrent_keys, list) or not isinstance(ttt_keys, list):
-            return False
-        extra_keys = {key for key in recurrent_keys if isinstance(key, str)} - {
-            key for key in ttt_keys if isinstance(key, str)
-        }
+        extra_keys = set(EXPECTED_RECURRENT_SELECTOR_KEYS) - set(EXPECTED_TTT_SELECTOR_KEYS)
         return any(key in name for key in extra_keys)
 
     def allowed_optimizer_difference(name: object) -> bool:
@@ -262,7 +269,16 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
             name.startswith(ALLOWED_RECURRENT_ONLY_PREFIXES) or explainable_by_selector_allowlist(name)
         )
 
-    checks = {"policy_declared_exact": tuple(declared.get("allowed_backend_specific_prefixes", [])) == ALLOWED_RECURRENT_ONLY_PREFIXES}
+    provenance = artifact.get("provenance", {})
+    checks = {
+        "policy_declared_exact": tuple(declared.get("allowed_backend_specific_prefixes", [])) == ALLOWED_RECURRENT_ONLY_PREFIXES,
+        "selector_contract_exact": (
+            provenance.get("production_recipe_source_sha256") == EXPECTED_PRODUCTION_RECIPE_SHA256
+            and provenance.get("inherited_recipe_source_sha256") == EXPECTED_INHERITED_RECIPE_SHA256
+            and selector_matches(recurrent, "recurrent", EXPECTED_RECURRENT_SELECTOR_KEYS)
+            and selector_matches(ttt, "ttt_fast_weight", EXPECTED_TTT_SELECTOR_KEYS)
+        ),
+    }
     for field, label in (("selected_by_resolved_selector", "resolved_selector"), ("selected_by_optimizer", "optimizer")):
         recurrent_only = sorted(_selected(recurrent, field) - _selected(ttt, field))
         ttt_only = sorted(_selected(ttt, field) - _selected(recurrent, field))
