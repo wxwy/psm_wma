@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 
 
@@ -27,7 +28,12 @@ def local_processor_record(path: Path) -> dict[str, object]:
     for name in REQUIRED_PROCESSOR_ASSETS:
         asset = canonical / name
         digest = hashlib.sha256(asset.read_bytes()).hexdigest() if asset.is_file() else None
-        assets[name] = {"path": str(asset), "exists": asset.is_file(), "sha256": digest}
+        assets[name] = {
+            "path": str(asset),
+            "exists": asset.is_file(),
+            "size_bytes": asset.stat().st_size if asset.is_file() else None,
+            "sha256": digest,
+        }
     return {
         "canonical_path": str(canonical),
         "is_local_directory": canonical.is_dir(),
@@ -38,6 +44,18 @@ def local_processor_record(path: Path) -> dict[str, object]:
             "HUGGINGFACE_HUB_CACHE": str(canonical),
         },
     }
+
+
+def apply_offline_processor_environment(record: dict[str, object]) -> dict[str, str]:
+    """在未来隔离 worker 的任何 HF/Transformers 导入前调用。"""
+    expected = record["offline_environment"]
+    os.environ.update(expected)
+    return {key: os.environ.get(key, "") for key in expected}
+
+
+def compare_processor_records(before: dict[str, object], after: dict[str, object]) -> bool:
+    """严格比较已批准 processor 配置文件的只读快照。"""
+    return before == after
 
 
 def main() -> None:

@@ -91,6 +91,16 @@ def verify(artifact: dict[str, object]) -> dict[str, object]:
         "local_processor_path": processor.get("is_local_directory") is True and bool(processor.get("canonical_path")),
         "offline_environment": offline.get("HF_HUB_OFFLINE") == "1" and offline.get("TRANSFORMERS_OFFLINE") == "1" and offline.get("HUGGINGFACE_HUB_CACHE") == processor.get("canonical_path"),
         "local_processor_assets": set(assets) == REQUIRED_PROCESSOR_ASSETS and all(asset.get("exists") is True and asset.get("sha256") for asset in assets.values()),
+        "observed_offline_environment": (
+            processor.get("observed_offline_environment") == offline
+            if pass_claimed
+            else True
+        ),
+        "processor_package_read_only": (
+            processor.get("before_assets") == processor.get("after_assets") == assets
+            if pass_claimed
+            else True
+        ),
     }
     backend = {name: backend_checks(record) for name, record in backends.items()} if pass_claimed else {}
     diff = diff_checks(artifact) if pass_claimed and all(name in artifact for name in backends) else {}
