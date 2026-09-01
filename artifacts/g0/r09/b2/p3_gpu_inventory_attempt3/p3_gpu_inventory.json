@@ -1,0 +1,133 @@
+{
+  "execution": {
+    "backward_executed": false,
+    "checkpoint_loaded": false,
+    "checkpoint_saved": false,
+    "distributed_initialized": false,
+    "forward_executed": false,
+    "optimizer_step_executed": false,
+    "peak_allocated_bytes": 0,
+    "peak_reserved_bytes": 0,
+    "scheduler_step_executed": false,
+    "weights_loaded": false,
+    "world_size": 1
+  },
+  "local_processor": {
+    "canonical_path": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID",
+    "is_local_directory": true,
+    "offline_environment": {
+      "HF_HUB_OFFLINE": "1",
+      "HUGGINGFACE_HUB_CACHE": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID",
+      "TRANSFORMERS_OFFLINE": "1"
+    },
+    "required_assets": {
+      "chat_template.jinja": {
+        "exists": true,
+        "path": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID/chat_template.jinja",
+        "sha256": "7120ee6666468d4e9b2dc11e133ac5c2fa765fa5907706bf0f906270aa5510c8",
+        "size_bytes": 12158
+      },
+      "preprocessor_config.json": {
+        "exists": true,
+        "path": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID/preprocessor_config.json",
+        "sha256": "7fc1e423001190416180fa0a22eb1ed0cb5fb90b525a6205fbe6d2316aa46a60",
+        "size_bytes": 334
+      },
+      "special_tokens_map.json": {
+        "exists": true,
+        "path": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID/special_tokens_map.json",
+        "sha256": "e9435fefd6d838fd9fcbbc44b97a8e3ff322be7f6dfb7e4fd2468586574bb52b",
+        "size_bytes": 563
+      },
+      "tokenizer.json": {
+        "exists": true,
+        "path": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID/tokenizer.json",
+        "sha256": "4dc692a99dca6d92a44e9529ffb53541eb79bb260eec7281bc51268c05d7311c",
+        "size_bytes": 17077500
+      },
+      "tokenizer_config.json": {
+        "exists": true,
+        "path": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID/tokenizer_config.json",
+        "sha256": "85577f01be64ea03ee9aacc0536088e47b96971e4aff21e0aa604900b1410386",
+        "size_bytes": 177253
+      },
+      "video_preprocessor_config.json": {
+        "exists": true,
+        "path": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID/video_preprocessor_config.json",
+        "sha256": "4c7a48dd35a60057358a4269ae1e1402a70170bef916df1d850f15d617e225f7",
+        "size_bytes": 367
+      }
+    }
+  },
+  "matched_diff": {
+    "allowed_backend_specific_prefixes": [
+      "local_history_runtime.recurrent_backend."
+    ]
+  },
+  "provenance": {
+    "approved_run_token": "APPROVE_TO_RUN_GPU_ONLY_P3_GATE",
+    "collector_sha256": "bb13ec5f8a555ee6d624cbb996db2bf61db79d27825a05a743218f508ae95c0f",
+    "command_argv": [
+      "/disk/rl/psm_wma/cosmos-framework/.venv/bin/python",
+      "/disk/rl/psm_wma/tools/g0/collect_r09_b2_p3_gpu_inventory.py",
+      "--root",
+      "/disk/rl/psm_wma",
+      "--toml",
+      "cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml",
+      "--output",
+      "artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory.json",
+      "--edge-checkpoint-path",
+      "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID",
+      "--wan-vae-path",
+      "/localdisk-tmp/models/wan22_vae/Wan2.2_VAE.pth",
+      "--base-checkpoint-path",
+      "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID-dcp",
+      "--libero-root",
+      "/disk/rl/data/LIBERO_LeRobot_v3",
+      "--d005-record",
+      "artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory_d005.json",
+      "--approved-run-token",
+      "APPROVE_TO_RUN_GPU_ONLY_P3_GATE",
+      "--max-peak-gib",
+      "24"
+    ],
+    "cwd": "/disk/rl/psm_wma",
+    "d005_record": {
+      "path": "artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory_d005.json",
+      "sha256": "81463d12a050a6c045616843d9db8597f7a849a0d9e156c13a76372dbbfd68e0"
+    },
+    "dcp_source_sha256": "7f61207f88d68e1f94506715934b0ae280e713841643a64dcfac3af8699b03d6",
+    "edge_model_config_source_sha256": "dcdbbbbce3d9864a39144ad1abbe6c1a64c699d9da9ed75ed5cf0404c82089b5",
+    "environment": {
+      "BASE_CHECKPOINT_PATH": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID-dcp",
+      "CUDA_VISIBLE_DEVICES": "0",
+      "EDGE_POLICY_CHECKPOINT": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID",
+      "HF_HUB_OFFLINE": "1",
+      "HUGGINGFACE_HUB_CACHE": "/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID",
+      "LIBERO_ROOT": "/disk/rl/data/LIBERO_LeRobot_v3",
+      "TRANSFORMERS_OFFLINE": "1",
+      "WAN_VAE_PATH": "/localdisk-tmp/models/wan22_vae/Wan2.2_VAE.pth"
+    },
+    "gitlink_revision": "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb",
+    "gpu_uuid": "GPU-e6ca2a7b-2c3e-d6a2-a9f1-6b223cf37435",
+    "inherited_recipe_source_sha256": "cda509dfc289fc5b9b07220c09f44b5ed830f585dc01bbd703257d407e107347",
+    "model_source_sha256": "1c5ab3511aab18638ea51769b36546a3ef8a0a18ba5990040d9e5ca53ece82c1",
+    "optimizer_source_sha256": "ff7371677b63e008ac1e9efc8df02a1628b029655f8e83b3a2b8713aaf83ecdf",
+    "production_recipe_source_sha256": "d58f1e8d84df3c5e0a3819be3687d382f3191c47c36b38a22592b1d62805c454",
+    "recipe_sha256": "bdc53c800fda7aa20a0ec67fe4446b5559d106944a75aab7dfbafce6567cd046",
+    "root_revision": "6fc01becd78ead16f8f9c1b8287155ac1cc8e667",
+    "submodule_revision": "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb",
+    "verifier_sha256": "365151fd4fe8115146193e12d1180a40fbb3956148e4778daecc3b1b7f08f239"
+  },
+  "reason": "backend construction blocked or 24 GiB cap exceeded",
+  "recurrent": {
+    "backend_output_path": "/disk/rl/psm_wma/artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory_recurrent.json",
+    "reason": "backend worker exited nonzero: 1",
+    "returncode": 1,
+    "status": "BLOCKED",
+    "stderr": "2026-09-01 12:00:19.926 | DEBUG    | cosmos_framework.utils.config:_load_py_config:578 - get_config_module: took 11.73ms\n2026-09-01 12:00:42.680 | DEBUG    | cosmos_framework.utils.config:_load_py_config:583 - importlib.import_module: took 22753.11ms\n2026-09-01 12:00:43.240 | DEBUG    | cosmos_framework.utils.config:_load_py_config:588 - override: took 560.02ms\n2026-09-01 12:00:43.240 | DEBUG    | cosmos_framework.utils.config:load_config:567 - total time to load config: 23557.56ms\nThis processor does not use the `size` parameter. It will be ignored.\n`torch_dtype` is deprecated! Use `dtype` instead!\nTraceback (most recent call last):\n  File \"/disk/rl/psm_wma/tools/g0/collect_r09_b2_p3_gpu_inventory.py\", line 697, in <module>\n    main()\n    ~~~~^^\n  File \"/disk/rl/psm_wma/tools/g0/collect_r09_b2_p3_gpu_inventory.py\", line 606, in main\n    result = _worker_inventory(\n        root, args.toml.resolve(), args.edge_checkpoint_path.resolve(), args.worker_backend,\n        path_environment, args.max_peak_gib,\n    )\n  File \"/disk/rl/psm_wma/tools/g0/collect_r09_b2_p3_gpu_inventory.py\", line 319, in _worker_inventory\n    enforce_peak_limit(\"OptimizersContainer.state_dict\")\n    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/disk/rl/psm_wma/tools/g0/collect_r09_b2_p3_gpu_inventory.py\", line 257, in enforce_peak_limit\n    raise RuntimeError(f\"P3 exceeded {max_peak_gib} GiB after {phase}: {peak} bytes\")\nRuntimeError: P3 exceeded 24 GiB after OptimizersContainer.state_dict: 27147632640 bytes\n",
+    "stdout": "[09-01 12:00:43|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache\n[09-01 12:00:43|INFO|cosmos_framework/model/generator/omni_mot_model.py:125:__init__] OmniMoTModel: config {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/localdisk-tmp/models/wan22_vae/Wan2.2_VAE.pth', 'chunk_duration': 93, 'keep_decoder_cache': False, 'use_streaming_encode': False, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8, '768': 8}, 'encode_exact_durations': [17, 61, 73], 'spatial_compression_factor': 16, 'temporal_compression_factor': 4, 'temporal_window': None, 'encode_bucket_multiple': None, 'causal': True, '_target_': <class 'cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16.Wan2pt2VAEInterface'>}, 'load_vision_tokenizer': False, 'net': None, 'ema': {'enabled': False, 'rate': 0.1, 'iteration_shift': 0}, 'parallelism': {'data_parallel_shard_degree': -1, 'data_parallel_replicate_degree': 1, 'context_parallel_shard_degree': 1, 'cfg_parallel_shard_degree': 1, 'enable_inference_mode': False, 'fsdp_master_dtype': 'float32', 'fsdp_reduce_dtype': None}, 'attention_io_layout': 'sequence_sharded', 'compile': {'enabled': False, 'compiled_region': 'language', 'compile_dynamic': True, 'use_cuda_graphs': False, 'ar_post_saturation_mode': 'default', 'max_autotune_pointwise': False, 'coordinate_descent_tuning': False}, 'quantization': {'method': None, 'fp8_granularity': 'per_row', 'include_regex': [], 'exclude_regex': [], 'modelopt_fp8_checkpoint_path': None, 'modelopt_fp8_target_fqns': []}, 'activation_checkpointing': {'mode': 'selective', 'save_ops_regex': ['fmha'], 'preserve_rng_state': True, 'determinism_check': 'default'}, 'precision': 'bfloat16', 'lora_enabled': False, 'lora_rank': 16, 'lora_alpha': 32, 'lora_target_modules': 'q_proj_moe_gen,k_proj_moe_gen,v_proj_moe_gen,o_proj_moe_gen', 'rectified_flow_training_config': {'shift': {'256': 3, '480': 5, '720': 10}, 'shift_image': None, 'use_dynamic_shift': False, 'train_time_image_distribution': 'logitnormal', 'train_time_video_distribution': 'waver', 'train_time_action_distribution': 'logitnormal', 'train_time_sound_distribution': 'logitnormal', 'train_time_weight': 'uniform', 'loss_scale': 10.0, 'image_loss_scale': None, 'sound_loss_scale': 2.0, 'use_discrete_rf': False, 'action_loss_weight': 10.0, 'independent_action_schedule': False, 'shift_action': None, 'independent_sound_schedule': False, 'shift_sound': None, 'normalize_loss_by_active': False, 'sample_level_loss_averaging': False}, 'rectified_flow_inference_config': {'scheduler_type': 'unipc', 'num_train_timesteps': 1000, 'shift': 1, 'use_dynamic_shifting': False}, 'fixed_step_sampler_config': None, 'vlm_config': {'model_name': 'nvidia/Cosmos3-Edge-Reasoner', 'safetensors_path': '', 'pretrained_weights': {'enabled': False, 'backbone_path': 's3://bucket/cosmos3/pretrained/huggingface/nvidia/Cosmos3-Edge-Reasoner-590c1c0/', 'credentials_path': '', 'enable_gcs_patch_in_boto3': True, 'checkpoint_format': None}, 'model_instance': {'config': {'base_config': {'json_file': 'cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/configs/Nemotron-2B-Dense-VL.json', '_target_': <bound method _MoTConfigBase.from_json_file of <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLMoTConfig'>>}, 'freeze_und': False, 'layer_module': 'MoTDecoderLayer', 'qk_norm_for_text': False, 'use_und_k_norm_for_gen': True, 'include_visual': None, 'tie_word_embeddings': True, '_target_': <function create_vlm_config at 0x7fa310648860>}, '_target_': <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLTextForCausalLM'>}, 'tokenizer': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7fa2abc15da0>, 'tokenizer_type': '/localdisk-tmp/models/Cosmos3-Edge-Policy-DROID'}, 'layer_module': None, 'qk_norm': False, 'tie_word_embeddings': False, 'use_system_prompt': False}, 'diffusion_expert_config': {'timestep_range': 1.0, 'load_weights_from_pretrained': False, 'enable_vision_modality_embeddings': False, 'enable_media_modality_embedding': False, 'patch_spatial': 2, 'max_vae_latent_side_after_patchify': 20, 'enable_fps_modulation': True, 'base_fps': 24, 'sound_base_temporal_compression_factor': None, 'vision_temporal_position_mode': 'latent_index', 'unified_3d_mrope_reset_spatial_ids': True, 'unified_3d_mrope_temporal_modality_margin': 15000}, 'input_video_key': 'video', 'input_image_key': 'images', 'input_caption_key': 'ai_caption', 'state_ch': 48, 'state_t': 300, 'latent_downsample_factor': 16, 'resolution': '480', 'max_num_tokens_after_packing': 74000, 'joint_attn_implementation': 'two_way', 'flex_attention': {'enabled': False, 'backend': 'auto', 'mask': {'noisy_attention_scope': 'all_views'}}, 'natten_parameter_list': None, 'video_temporal_causal': False, 'causal_training_strategy': 'none', 'lbl': {'method': 'local', 'coeff_und': None, 'coeff_gen': None}, 'vision_gen': True, 'action_gen': True, 'max_action_dim': 64, 'num_embodiment_domains': 32, 'sound_gen': False, 'sound_tokenizer': None, 'sound_dim': None, 'sound_latent_fps': 25, 'local_memory_enabled': True, 'local_memory_dim': 32, 'local_history_enabled': True, 'local_history_backend': 'recurrent', 'local_history_horizon': 16, 'local_history_evidence_dim': 256, 'local_history_state_enabled': False, 'enable_input_bias': True, 'log_enc_time_every_n': 100, 'exclude_reasoner_weights_from_checkpoint': False}\n[09-01 12:00:43|WARNING|cosmos_framework/model/generator/omni_mot_model.py:159:set_precision] OmniMoTModel: precision torch.bfloat16\n[09-01 12:00:44|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache\n[09-01 12:00:44|INFO|cosmos_framework/model/generator/omni_mot_model.py:223:set_up_tokenizers] Vision tokenizer initialization skipped\n[09-01 12:00:44|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_tokenizers: 0.55 s\n[09-01 12:00:44|INFO|cosmos_framework/utils/generator/parallelism.py:107:_validate] dp_shard auto-inferred to world_size = 1\n[09-01 12:00:44|INFO|cosmos_framework/utils/generator/parallelism.py:121:_validate] dp_replicate is set to -1, will be automatically determined based on world_size 1 // dp_shard 1.\n[09-01 12:00:44|INFO|cosmos_framework/utils/generator/parallelism.py:126:_validate] dp_replicate is set to 1.\n[09-01 12:00:47|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on meta to cuda and broadcast model states: 2.24 s\n[09-01 12:00:47|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on Creating PyTorch model and ema if enabled: 2.84 s\n[09-01 12:00:47|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_model: 2.84 s\n[09-01 12:00:47|INFO|cosmos_framework/utils/generator/optimizer.py:247:_build_params_with_metadata] Total tensors: 569, trainable tensors: 569, selected tensors: 314\n[09-01 12:00:47|INFO|cosmos_framework/utils/generator/optimizer.py:433:__init__] Building optimizer for mesh 'default'\n[09-01 12:00:47|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=5e-05, WD=True): 309 tensors, 1,415,203,744 elements\n[09-01 12:00:47|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=0.00025, WD=False): 4 tensors, 8,456,192 elements\n[09-01 12:00:47|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=0.00025, WD=True): 1 tensors, 2,048 elements\n[09-01 12:00:47|INFO|cosmos_framework/utils/generator/optimizer.py:100:_optimizer_cls] FusedAdam: master_weights=True (derived from parameter dtypes)\n[09-01 12:00:47|INFO|cosmos_framework/utils/generator/fused_adam.py:81:__init__] FusedAdam master_weights: True capturable: True\n[09-01 12:00:47|INFO|cosmos_framework/utils/generator/optimizer.py:441:__init__] Created 1 optimizers\n"
+  },
+  "schema_version": "r09_b2_p3_gpu_inventory_v1",
+  "status": "BLOCKED"
+}
