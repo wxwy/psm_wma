@@ -4159,3 +4159,12 @@ print(json.dumps(result, sort_keys=True))
 - native closure HIGH：seed set固定为 child/base、lib-dynload、全部 staging registry/editable/VCS ELF/.so/approved executables；parent在v0.8同一空loader env解析每个 `PT_INTERP/DT_NEEDED/RPATH/RUNPATH/$ORIGIN` 并取SHA绑定的并集。静态图外 dlopen/driver/plugin必须有 verifier-owned canonical path/SHA/trigger allowlist，否则 fail-closed。
 - 永久 tests：单extension依赖漂移、双staged ELF disjoint union、unlisted dlopen均pre-spawn FAIL；allowlist正例才PASS。
 - 允许范围：若批准仅 root loader/bootstrap、P4/P5 tools与CPU tests；禁止 P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v1.0
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请只整改 ChatGPT v0.9 review `2026-09-01_R09_B2_P4_interpreter_provenance_design_v09_8275d76_af8bccd.md` 的 HIGH/MEDIUM；不申请实现之外的任何运行。
+
+- 审核对象：根仓 design commit=`3be0f9076b6e3348140afce6171547cab44bf519`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；新增文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v1.0_2026-09-01.md`。
+- staging HIGH：未来获批P4 execution的parent在spawn agent前创建最终runroot staging、copy验证manifest、按最终路径 `$ORIGIN/RPATH` 解all-ELF closure；agent/worker只读。P5仍只用attempt staging，D005 runroot保持absent。
+- allowlist MEDIUM：expected native loads从Gitlink Python source sites与每个seed ELF loader symbols/callsite/string记录独立枚举；request allowlist只能精确相等。nonliteral/indirect/无法证明的dlopen直接FAIL；共同删第二trigger的shared-forgery negative也FAIL。
+- 允许范围：若批准仅root loader/bootstrap、P4/P5 tools与CPU tests；禁止P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
