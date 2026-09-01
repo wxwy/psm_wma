@@ -4122,3 +4122,13 @@ print(json.dumps(result, sort_keys=True))
 - bytecode HIGH：全部 outer/worker/P5 argv 固定 `-B`，bootstrap 首条 third-party import 前断言 `sys.flags.dont_write_bytecode`/`sys.dont_write_bytecode`；不依赖 `-I` 忽略的环境变量。
 - freshness HIGH/隔离 MEDIUM：staging copy-only；P4 仅在未来批准训练时放 run_root，P5 仅放 P5 attempt_dir 并前后断言 D005 run_root 仍 absent。新增 overlap、source-after-stage、worker overwrite、no-pyc 实测永久回归。
 - 允许范围：若批准仅允许 root bootstrap/wrapper、P4/P5 verifier/exporter和标准库 CPU tests；禁止 P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v0.6
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请只整改 ChatGPT v0.5 review `2026-09-01_R09_B2_P4_interpreter_provenance_design_v05_7072ad4_e834078.md` 的三个 HIGH；不申请实现之外的任何运行。
+
+- 审核对象：根仓 design commit=`fa97814782264ac1c71f775173c42d8576e3f8c5`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；新增文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v0.6_2026-09-01.md`。
+- shell HIGH：移除 wrapper。outer/worker均 direct lexical Python `-I -S -B -c <frozen loader>`；torchrun `--no-python` executable 必为 lexical Python，永久 mocked PyTorch argv test拒绝任何 shell/PYTHON_EXEC/direct worker。
+- bootstrap HIGH：loader 是 verifier-owned command literal；在执行任何 root bootstrap 文件前一次读取、校验 request+Git blob/current bytes SHA，再对已验证 bytes `compile/exec`。bootstrap bytes drift时 loader拒绝且无 side effect。
+- base Python HIGH：execution request显式绑定 parent `/opt/conda python3.11 -I` TCB身份；parent在spawn lexical child前重算 child base executable+stdlib/lib-dynload exact manifest。base单文件改写会 pre-spawn FAIL；不再由 child自证。
+- 允许范围：若批准仅 root loader/bootstrap、P4/P5 tooling与标准库 CPU tests；禁止 P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
