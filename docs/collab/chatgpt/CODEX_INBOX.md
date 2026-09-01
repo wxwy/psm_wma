@@ -3539,3 +3539,9 @@ Detailed review:
 - fresh path：runbook 唯一命令改为 `artifacts/g0/r09/b2/p3_gpu_inventory_attempt5/`，历史 attempt-1..4 不覆盖。cap 仍固定 28 GiB，所有禁止范围不变。
 - 静态证据：`py_compile` PASS；`cosmos-framework/.venv/bin/python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 14/14 PASS；`git diff --check` PASS。未运行 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。
 - 请求仅授权一次 attempt-5 frozen run；任一非零/BLOCKED/FAIL、超 28 GiB、非单卡或禁止操作立即终止、留证据且不自动重跑。
+
+### 补充：canonical FQN 定向 CPU 回归（重新审核锚点）
+
+- 原审核根 `0539fca` 后，Kimi 指出 `_canonical_parameter_fqns()` 缺少直接定向覆盖。根仓 `728ebfb94d4ba0cef601489c66e6310275174dae` 新增真实 PyTorch CPU `nn.Module(net=Linear)` 回归，精确断言 raw `model.net.named_parameters()` 映射为 PyTorch DCP canonical `net.weight`/`net.bias`。
+- 重新审核对象：根仓 `728ebfb94d4ba0cef601489c66e6310275174dae`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。`py_compile`、`unittest -v` 为 15/15、`git diff --check` 均 PASS；其余 canonical-FQN、owner_fqn、28 GiB、fresh attempt-5 与禁止范围完全不变。
+- 请以此最新根仓 SHA 给出 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，附 `file:line`。未获 ChatGPT/MM/Kimi 对该 SHA 的一致批准前不得执行 GPU attempt-5。
