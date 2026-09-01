@@ -4225,3 +4225,12 @@ print(json.dumps(result, sort_keys=True))
 - outer/worker/P5 统一 lexical `-I -S -B -c` verified-bytes loader、request SHA token；worker 强制 `torchrun --no-python`；旧 direct Python/module/script path永久拒绝。
 - all staged Python、class-method wrapper/escape、真实 ELF bytes-derived closure、untracked full-clean 均由 verifier独立重算；永久 tests 明确列出 shared-forgery/escape/final-path negatives。
 - 允许范围：若批准仅 root P4/P5 tooling+stdlib CPU tests；禁止真实 staging/venv/external checkout、P4 record、P5 export、torchrun、GPU、模型数据训练评测推理/B2-T。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 3d990e6fb65c192f12e3c2b58ae49356d3eba1e7；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务/Gate：`G0-R09-B2-P4-INTERPRETER-PROVENANCE` static implementation closure。请求 verdict：`APPROVE_TO_CLOSE_P4_INTERPRETER_PROVENANCE_STATIC` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `3d990e6fb65c192f12e3c2b58ae49356d3eba1e7`（parent=`dc274e0`），子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；批准设计=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v1.3_2026-09-01.md`。
+- 变更与证据：`tools/g0/export_r09_b2_p5_resolved_config.py` 的 future-only P5 child 不再执行 `[python, exporter.py]`。parent 只生成 SHA-bound loader request，并通过 `tools/g0/r09_b2_interpreter_provenance.py::verified_loader_argv` 形成 `-I -S -B -c` argv；其 request SHA、root bootstrap Git/blob/current-byte binding 由既有 loader 验证，parent 还在 spawn 前用 `is_verified_loader_argv` hard-gate。exporter 脚本的 direct `__main__` 入口永久拒绝，只有 loader bootstrap 名称可调用 `_verified_bootstrap`。
+- CPU-only 验证：`python -m py_compile tools/g0/export_r09_b2_p5_resolved_config.py tools/g0/test_r09_b2_p5_full_config_diff.py` PASS；4 项定向 `python -B -m unittest ... -v` PASS（loader argv/request+bootstrap binding、non-loader pre-spawn reject、direct script reject、request mutation pre-compose reject）；`git diff --check` PASS。完整 P5 模块的另外 3 项既有 evidence tests 在读取 evidence 前因本工作区预存 `cosmos-framework`/训练遗留 untracked 而被 full-clean gate fail-closed，未修改、未掩盖或删除遗留。
+- 允许范围：本申请仅 root P4/P5 tooling+stdlib CPU 静态测试。禁止真实 staging、P4 record、P5 export/compose、torchrun、GPU、模型/数据/checkpoint、训练/评测/推理/B2-T；不得将本申请解释为任何实际执行授权。
