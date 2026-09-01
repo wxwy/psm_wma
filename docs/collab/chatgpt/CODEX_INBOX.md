@@ -4188,3 +4188,11 @@ print(json.dumps(result, sort_keys=True))
 - 明确拒绝 wrapper object 的 alias/container/callback/reflection/return/decorator escape、nonliteral invocation、循环/多定义/不完整 invocation set；request summary/allowlist 只能与 verifier重算的精确集合相等。
 - PyTorch 风格 `torch.classes.load_library(path)->torch.ops.load_library(path)->ctypes.CDLL(path)` 被定义为通用 wrapper-chain 正例，而非 filename-specific 豁免；two-fixed-invocation omission、registry second trigger、closure ELF second site 等继续 FAIL。
 - 允许范围：若批准仅允许 root P4/P5 tooling 与标准库 CPU tests 的最小实现；禁止 P4 record重冻、P5 export/retry/compose、CUDA/GPU、torchrun、模型/数据/训练/评测/推理/B2-T。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v1.2（request SHA 更正）
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本条只更正上一条 request 中截断错误的 design SHA；**不改变** v1.2 设计内容、Gitlink、允许范围或实现状态。
+
+- 精确审核对象：根仓 design commit=`476a5ddfa8beb89315234819e1e1a917ea227bc6`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；设计文档仍为=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v1.2_2026-09-01.md`。
+- 上一条 `476a5dd19755b5c1945694161674a52141b4b6ae` 不存在；不得以 parent 推断替代，此处明确重新绑定实际 Git object。
+- 其余申请内容完全沿用 v1.2：all-staged Python + closure ELF、verifier-owned wrapper definition/invocation-chain、exact candidate-set equality 与 fail-closed escapes；不申请任何实现或运行。
