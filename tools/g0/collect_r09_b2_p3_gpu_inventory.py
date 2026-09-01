@@ -186,13 +186,24 @@ def _canonical_parameter_fqns(model: object, parameters: dict[str, object]) -> d
     """复用 PyTorch DCP 的 FQN 规则，映射 canonical FQN 到 raw stable name。"""
     from torch.distributed.checkpoint.state_dict import _get_fqns
 
+    return _canonical_parameter_fqns_from_named_parameters(
+        parameters, model.named_parameters(), lambda full_name: _get_fqns(model, full_name)
+    )
+
+
+def _canonical_parameter_fqns_from_named_parameters(
+    parameters: dict[str, object],
+    named_parameters: object,
+    get_fqns: object,
+) -> dict[str, str]:
+    """将 DCP canonical FQN 与 optimizer 的 raw stable name 按参数身份绑定。"""
     stable_by_parameter_id = {id(parameter): name for name, parameter in parameters.items()}
     canonical: dict[str, str] = {}
-    for full_name, parameter in model.named_parameters():
+    for full_name, parameter in named_parameters:
         stable_name = stable_by_parameter_id.get(id(parameter))
         if stable_name is None:
             continue
-        fqns = _get_fqns(model, full_name)
+        fqns = get_fqns(full_name)
         if len(fqns) != 1:
             raise RuntimeError(f"expected one canonical FQN for {full_name!r}, got {sorted(fqns)!r}")
         fqn = next(iter(fqns))

@@ -343,6 +343,20 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             {"net.weight": "weight", "net.bias": "bias"},
         )
 
+    def test_canonical_parameter_fqns_resolve_raw_name_mismatch(self) -> None:
+        parameter = object()
+        canonical = COLLECT._canonical_parameter_fqns_from_named_parameters(
+            {"language_model._fsdp_wrapped_module.weight": parameter},
+            [("net.language_model._fsdp_wrapped_module.weight", parameter)],
+            lambda _: {"net.language_model.weight"},
+        )
+        self.assertEqual(canonical, {"net.language_model.weight": "language_model._fsdp_wrapped_module.weight"})
+        rows = COLLECT._flattened_optimizer_schema(
+            {"param_groups.net.language_model.weight.betas": (0.9, 0.95)}, canonical
+        )
+        self.assertEqual(rows[0]["owner"], "language_model._fsdp_wrapped_module.weight")
+        self.assertEqual(rows[0]["owner_fqn"], "net.language_model.weight")
+
     def test_backend_orchestration_stops_after_nonzero_recurrent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "inventory.json"
