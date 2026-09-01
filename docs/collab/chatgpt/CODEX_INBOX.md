@@ -3772,3 +3772,12 @@ Detailed review:
 - 完整 Config 的 canonical grammar 明确 attrs/dataclass/container、callable FQN、Enum/path、未解析插值及不支持对象的 fail-closed 语义；artifact 采用 `effective_launch`+`resolved_config` envelope，world/budget/env/P1/P3/D005/derived path 与 P4 production source、P5 exporter source、closure evidence source 分层记录。
 - 允许差异仅为实际 backend switch、派生 selector/config membership、backend output root/derived path；实际 optimizer parameter membership 继续绑定 P3。永久负例覆盖 D005 100-step override 缺失/改值/重排、环境泄漏、同进程污染、callable identity 和 provenance mutation。
 - 允许范围：仅 root `tools/g0/` 的 exporter/verifier/标准库 CPU fixture tests 实现。禁止 config export 执行、launch/Config.validate/instantiate、trainer/model/dataloader/optimizer/checkpoint/CUDA/torchrun/GPU/训练/评测/推理；实现批准后，静态 export 仍需独立三方执行授权。
+
+### Awaiting review — R09-B2 P5 full resolved-config diff design v0.3
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P5_STATIC_DIFF` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `a1aa4ff58c967303b3daa5fa573f6894132b123f`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 review `2026-09-01_R09_B2_P5_full_config_diff_design_v0.2_77b313c_f004e4d.md` 的唯一 HIGH；v0.3 继承 v0.2 其余已经接受的合同。
+- 新设计：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.3_2026-09-01.md`。P3 common evidence 精确拆开：P3 path/SHA/PASS identity、P1/P4/common production source 必逐值一致；只有 `backend_contract.selector_keys`、`optimizer_membership_sha256` 和其直接派生的 resolved selector/config path 可不同。
+- verifier 必从共同 P3 artifact 的 verifier-owned recurrent/TTT contract 重算后端字段；path/SHA 改动、backend contract 缺/多字段或取另一侧/任意非 verifier-owned 值均 FAIL。永久 CPU fixture 使用实际 P4 shape：same P3 path/SHA + 不同正确 backend contract=PASS，其余上述 mutation=FAIL。
+- 允许范围仍仅 root `tools/g0/` 的 exporter/verifier/标准库 CPU fixture tests 实现。禁止 config export 执行、launch/Config.validate/instantiate、trainer/model/dataloader/optimizer/checkpoint/CUDA/torchrun/GPU/训练/评测/推理；实现批准后静态 export 仍须独立三方执行授权。
