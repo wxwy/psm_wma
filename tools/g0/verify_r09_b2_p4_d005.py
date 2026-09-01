@@ -94,7 +94,8 @@ def _env_ok(record: dict[str, object], backend: str) -> bool:
         if (value is not None and values.get(key) != value) or (value is None and not isinstance(values.get(key), str)):
             return False
     bare = {"set": values, "unset": sorted(RANK_ENV), "inherit_allowlist": []}
-    return env.get("unset") == bare["unset"] and env.get("inherit_allowlist") == [] and env.get("sha256") == sha256_json(bare)
+    output_root = Path(values["IMAGINAIRE_OUTPUT_ROOT"])
+    return env.get("unset") == bare["unset"] and env.get("inherit_allowlist") == [] and env.get("sha256") == sha256_json(bare) and output_root.is_absolute() and str(output_root.resolve()) == values["IMAGINAIRE_OUTPUT_ROOT"]
 
 
 def _inputs_ok(record: dict[str, object], root: Path, p1: dict[str, object], p3: dict[str, object], backend: str) -> bool:
@@ -125,7 +126,7 @@ def _output_ok(record: dict[str, object], root: Path) -> bool:
     expected = Path(derive_job_path(env["set"]["IMAGINAIRE_OUTPUT_ROOT"], outputs.get("job_identity", {}))).resolve()
     required = {"job_identity", "run_root", "checkpoint_step0", "checkpoint_step100", "stdout_log", "capture_dir", "fresh"}
     expected_children = {"checkpoint_step0": expected / "checkpoints/iter_000000000", "checkpoint_step100": expected / "checkpoints/iter_000000100", "stdout_log": expected / "stdout.log", "capture_dir": expected / "capture"}
-    if set(outputs) != required or outputs.get("run_root") != str(expected) or outputs.get("fresh") is not True or any(outputs[key] != str(value) for key, value in expected_children.items()):
+    if not expected.is_relative_to(root.resolve()) or set(outputs) != required or outputs.get("run_root") != str(expected) or outputs.get("fresh") is not True or any(outputs[key] != str(value) for key, value in expected_children.items()):
         return False
     try:
         tracked = subprocess.run(["git", "-C", str(root), "ls-files", "--error-unmatch", str(expected.relative_to(root.resolve()))], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
@@ -154,7 +155,13 @@ def _check(record: dict[str, object], root: Path, p1: dict[str, object], p3: dic
 
 def verify_pair(recurrent: dict[str, object], ttt: dict[str, object], root: Path, p1: dict[str, object], p3: dict[str, object]) -> dict[str, object]:
     checks = {"recurrent": _check(recurrent, root, p1, p3, "recurrent"), "ttt_fast_weight": _check(ttt, root, p1, p3, "ttt_fast_weight")}
-    checks["matched"] = {key: recurrent.get(key) == ttt.get(key) for key in ("source", "budget", "inputs")}
+    checks["matched"] = {
+        "source": recurrent.get("source") == ttt.get("source"),
+        "budget": recurrent.get("budget") == ttt.get("budget"),
+        "p1_manifest": recurrent.get("inputs", {}).get("p1_manifest") == ttt.get("inputs", {}).get("p1_manifest"),
+        "p3_sha256": recurrent.get("inputs", {}).get("p3_inventory", {}).get("sha256") == ttt.get("inputs", {}).get("p3_inventory", {}).get("sha256"),
+        "external_assets": recurrent.get("inputs", {}).get("external_assets") == ttt.get("inputs", {}).get("external_assets"),
+    }
     checks["distinct_outputs"] = recurrent.get("outputs", {}).get("run_root") != ttt.get("outputs", {}).get("run_root")
     ok = all(all(values.values()) for values in checks.values() if isinstance(values, dict)) and checks["distinct_outputs"]
     return {"schema_version": "r09_b2_p4_d005_verifier_v2", "status": "PASS" if ok else "FAIL", "checks": checks}

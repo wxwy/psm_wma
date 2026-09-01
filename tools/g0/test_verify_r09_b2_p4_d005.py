@@ -33,8 +33,10 @@ class P4D005Test(unittest.TestCase):
         for name in ("base", "edge", "vae", "libero", "stream", "cache"):
             (root / "assets" / name).mkdir(parents=True); (root / "assets" / name / "data").write_text(name)
         p1 = {"schema_version": "p1", "status": "PASS", "tiny_cpu_build": {"record_count": 1}}
-        rows = [{"name": "net.a", "selected_by_optimizer": True}]
-        p3 = {backend: {"inventory": {"selector": {"keys_to_select": ["net"]}, "model_parameters": rows}} for backend in ("recurrent", "ttt_fast_weight")}
+        p3 = {
+            "recurrent": {"inventory": {"selector": {"keys_to_select": ["net"]}, "model_parameters": [{"name": "net.a", "selected_by_optimizer": True}]}},
+            "ttt_fast_weight": {"inventory": {"selector": {"keys_to_select": ["ttt"]}, "model_parameters": [{"name": "ttt.a", "selected_by_optimizer": True}]}},
+        }
         return p1, p3
 
     def _asset(self, path: Path) -> dict[str, str]:
@@ -48,7 +50,7 @@ class P4D005Test(unittest.TestCase):
         values["PYTHONPATH"] = str(framework); values["IMAGINAIRE_OUTPUT_ROOT"] = str(output); values["PSM_R09_B1_TTT_ENABLED"] = "1" if backend == "ttt_fast_weight" else "0"
         env = {"set": values, "unset": sorted(RANK_ENV), "inherit_allowlist": []}; env["sha256"] = sha256_json(env)
         assets = {"base_checkpoint": self._asset(root / "assets/base"), "edge_processor": self._asset(root / "assets/edge"), "wan_vae": self._asset(root / "assets/vae"), "libero_root": self._asset(root / "assets/libero"), "stream_manifest": self._asset(root / "assets/stream"), "latent_cache": self._asset(root / "assets/cache"), "interpreter": self._asset(python)}
-        inputs = {"p1_manifest": {"sha256": sha256_json(p1), "record_count": 1}, "p3_inventory": {"sha256": sha256_json(p3), "backend_contract": {"selector_keys": ["net"], "optimizer_membership_sha256": membership_sha256(p3, backend)}}, "external_assets": assets}
+        inputs = {"p1_manifest": {"sha256": sha256_json(p1), "record_count": 1}, "p3_inventory": {"sha256": sha256_json(p3), "backend_contract": {"selector_keys": p3[backend]["inventory"]["selector"]["keys_to_select"], "optimizer_membership_sha256": membership_sha256(p3, backend)}}, "external_assets": assets}
         command = {"cwd": str(framework.resolve()), "interpreter": {"realpath": str(python.resolve()), "sha256": _sha256_tree(python)}, "argv": [str(python.resolve()), "-m", "torch.distributed.run", "--standalone", "--nnodes=1", "--nproc-per-node=1", "-m", "cosmos_framework.scripts.train", "--sft-toml=examples/toml/sft_config/action_policy_libero_edge_all.toml", "trainer.max_iter=100", "trainer.save_zero_checkpoint=true"], "executable": False, "launcher": {"kind": "python_module", "module": "torch.distributed.run"}}
         command["sha256"] = sha256_json(command)
         identity = {"project": "p", "group": "g", "name": backend}; run_root = output / "p/g" / backend

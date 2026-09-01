@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 
@@ -47,6 +48,15 @@ def write_record(record: dict[str, object], output: Path, *, root: Path, p1: dic
     result = verify_pair(record if backend == "recurrent" else peer, record if backend == "ttt_fast_weight" else peer, root.resolve(), p1, p3)
     if result["status"] != "PASS":
         raise ValueError("refusing to write a D005 record that fails the complete static pair contract")
+    output = output.resolve()
+    if output.exists():
+        raise ValueError(f"refusing to overwrite existing D005 output: {output}")
+    try:
+        relative = output.relative_to(root.resolve())
+    except ValueError as exc:
+        raise ValueError(f"D005 output must be rooted in repository: {output}") from exc
+    if subprocess.run(["git", "-C", str(root), "ls-files", "--error-unmatch", str(relative)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
+        raise ValueError(f"refusing to write Git-tracked D005 output: {output}")
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_bytes(canonical_bytes(finalize(record)))
 
