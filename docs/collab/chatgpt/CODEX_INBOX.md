@@ -3888,3 +3888,34 @@ Detailed review:
 - 仅 test remediation：attacker request 仍是 exact 16-key schema、真实 frozen D005 cwd/interpreter/environment；现在同时把 request-owned `toml` 与 `command_argv` 的对应 `--sft-toml=` token 改为同一 attacker path，因此字段内部一致。隐藏 child 必在 frozen D005 request identity guard 处失败，且 assertion 要求 output 不存在。生产 exporter/verifier/digest gate 未改。
 - CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=7/7 PASS；`git diff --check` PASS。未调用 compose/export、CUDA/GPU、torchrun、模型/数据、训练、评测或推理。
 - 允许范围：本申请仅复审此窄 test/evidence 整改；即使批准仍仅允许另行申请 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，不授予实际执行。
+
+### Awaiting review — R09-B2 P5 concrete CPU-only static-export execution
+
+请求 verdict：`APPROVE_TO_RUN_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。这是一次性执行授权；不得将其解释为训练/GPU/B2-T 授权。
+
+- 代码前置：ChatGPT/Kimi/MM 已对 P5 static tools 给出 `APPROVE_TO_REQUEST_P5_STATIC_EXPORT`；当前 exporter code 固定 `9ad602f93f5975f9ec7d033783b41052ca09107e`/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 已建且 clean 的三根：production=`/disk/rl/psm_wma_p4_d005_retry` (`ddb4e0e`，submodule=`21d064f`)；evidence=`/disk/rl/psm_wma_p5_evidence_8bde8c1` (`8bde8c1`，submodule clean)；exporter=`/disk/rl/psm_wma_p5_exporter_9ad602f` (`9ad602f`，submodule clean)。三根 pairwise distinct。canonical output=`/disk/rl/psm_wma_p5_static_export_20260901` 已确认不存在，位于三根之外。
+- 冻结命令（fresh parent interpreter；仅执行该命令一次）：
+
+```bash
+cd /disk/rl/psm_wma_p5_exporter_9ad602f
+PYTHONPATH=/disk/rl/psm_wma_p5_exporter_9ad602f PYTHONNOUSERSITE=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 /opt/conda/bin/python3.11 -c '
+import json
+from pathlib import Path
+from tools.g0.export_r09_b2_p5_resolved_config import run_parent_export
+evidence = Path("/disk/rl/psm_wma_p5_evidence_8bde8c1")
+p4 = evidence / "artifacts/g0/r09/b2/p4_launch_d005"
+result = run_parent_export(
+    json.loads((p4 / "recurrent.json").read_text()),
+    json.loads((p4 / "ttt_fast_weight.json").read_text()),
+    production_root=Path("/disk/rl/psm_wma_p4_d005_retry"),
+    evidence_root=evidence,
+    exporter_root=Path("/disk/rl/psm_wma_p5_exporter_9ad602f"),
+    output_dir=Path("/disk/rl/psm_wma_p5_static_export_20260901"),
+)
+print(json.dumps(result, sort_keys=True))
+'
+```
+
+- 资源/禁止：CPU only，预期无 CUDA 初始化、无 GPU、无 torchrun、无 model/dataloader/optimizer/checkpoint instantiate 或 weights/data/MP4 access；child 仅 `load_experiment_from_toml` resolved-config compose，并强制 `torch.cuda.is_initialized()==False`。不访问外网（offline env）。
+- 产物与判据：PASS 仅当 canonical output 内 `recurrent_resolved.json`、`ttt_fast_weight_resolved.json`、`verification.json` 存在且 verifier `status=PASS`；任何异常/FAIL 仅保留 `.psm_wma_p5_static_export_20260901.attempt-<uuid>/failure.json`，canonical output 必不存在，立即停止，不重跑/不扩大范围。
