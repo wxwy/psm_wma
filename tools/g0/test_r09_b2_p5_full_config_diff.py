@@ -21,12 +21,31 @@ def target_b() -> None: pass
 
 class P5Test(unittest.TestCase):
     def _v4_preflight(self, root: Path) -> None:
+        source = root / "source"; (source / "cosmos-framework").mkdir(parents=True)
+        run = root / "run"; run.mkdir(); token = "token"
+        staging = run / "import_staging" / token; staging.mkdir(parents=True)
+        payload = staging / "payload.py"; payload.write_text("x = 1\n"); payload.chmod(0o444)
+        (run / "preflight.json").write_text("{}\n"); (run / "preflight.json").chmod(0o444)
+        (run / "import_staging").chmod(0o555); staging.chmod(0o555); run.chmod(0o555)
+        def identity(path: Path, kind: str) -> dict[str, str]:
+            value = {"root": str(path), "resolved_root": str(path), "kind": kind}
+            return {**value, "identity_sha256": sha256_json(value)}
+        manifest_entries = [{"path": f"import_staging/{token}/payload.py", "type": "regular", "sha256": __import__("hashlib").sha256(payload.read_bytes()).hexdigest()}]
+        manifest_core = {"entries": manifest_entries}; manifest = {**manifest_core, "sha256": sha256_json(manifest_core)}
+        roster_entries = [
+            {"path": "import_staging", "type": "directory", "mode": 0o555, "sha256": ""},
+            {"path": f"import_staging/{token}", "type": "directory", "mode": 0o555, "sha256": ""},
+            {"path": f"import_staging/{token}/payload.py", "type": "regular", "mode": 0o444, "sha256": manifest_entries[0]["sha256"]},
+            {"path": "preflight.json", "type": "regular", "mode": 0o444, "sha256": __import__("hashlib").sha256((run / "preflight.json").read_bytes()).hexdigest()},
+        ]
+        roster_core = {"entries": roster_entries}; roster = {**roster_core, "sha256": sha256_json(roster_core)}
         for backend in ("recurrent", "ttt_fast_weight"):
             directory = root / P4_V4_PREFLIGHT_RELATIVE / backend; directory.mkdir(parents=True)
-            environment = {"set": {"A": "1"}, "unset": list(P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": [], "sha256": "environment"}
-            request = {"schema_version": "v4", "backend": backend, "production_source": {}, "p4_run": {}, "p4_staging": {}, "request_defaults": {}, "interpreter": {}, "loader_argv": {}, "effective_environment": environment, "native_loader_environment": {}, "payload_manifest": {}, "producer": {}}
+            environment_core = {"set": {"A": "1"}, "unset": list(P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
+            environment = {**environment_core, "sha256": sha256_json(environment_core)}
+            request = {"schema_version": "v4", "backend": backend, "production_source": {"identity": identity(source, "git_source")}, "p4_run": {"identity": identity(run, "run_root"), "run_token": token}, "p4_staging": {"identity": identity(staging, "staging_root"), "relative_path": f"import_staging/{token}"}, "request_defaults": {}, "interpreter": {}, "loader_argv": {}, "effective_environment": environment, "native_loader_environment": {}, "payload_manifest": manifest, "producer": {}}
             request_bytes = canonical_bytes(request); request_sha = sha256_json(request)
-            outcome = {**request, "status": "PASS", "request_sha256": request_sha, "native_closure": [], "pre_p5_run_root_roster": {}}
+            outcome = {**request, "status": "PASS", "request_sha256": request_sha, "native_closure": [], "pre_p5_run_root_roster": roster}
             outcome_bytes = canonical_bytes(outcome); outcome_sha = sha256_json(outcome)
             verification = {"schema_version": "v4", "status": "PASS", "backend": backend, "request_sha256": request_sha, "result_sha256": outcome_sha, "checks": [], "verifier": {}, "verification_sha256": "verification"}
             (directory / "request.json").write_bytes(request_bytes)
