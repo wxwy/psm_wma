@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import uuid
 from collections.abc import Mapping
 from typing import Any
 
@@ -179,10 +180,13 @@ def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, 
 def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path, exporter_root: Path, output_dir: Path, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
     """Future approved path: two D005-bound fresh children, envelope assembly, then verifier."""
     requests = build_pair_requests(recurrent, ttt, production_root=production_root, evidence_root=evidence_root)
-    output_dir.mkdir(parents=True, exist_ok=False)
+    if output_dir.exists():
+        raise FileExistsError(f"canonical P5 output already exists: {output_dir}")
+    attempt_dir = output_dir.parent / f".{output_dir.name}.attempt-{uuid.uuid4().hex}"
+    attempt_dir.mkdir(parents=True, exist_ok=False)
     envelopes: dict[str, Any] = {}
     for backend, request in requests.items():
-        request_path, tree_path = output_dir / f"{backend}.request.json", output_dir / f"{backend}.tree.json"
+        request_path, tree_path = attempt_dir / f"{backend}.request.json", attempt_dir / f"{backend}.tree.json"
         request_path.write_bytes(canonical_bytes(request))
         subprocess.run([request["interpreter"]["realpath"], str(Path(__file__).resolve()), "--child-request", str(request_path), "--child-output", str(tree_path)], cwd=request["cwd"], env=request["environment"]["effective"], check=True)
         envelopes[backend] = assemble_envelope(request, json.loads(tree_path.read_text()), tool_sha256=tool_sha256, exporter_root_revision=exporter_root_revision)
@@ -191,8 +195,9 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
     if result["status"] != "PASS":
         raise RuntimeError("P5 parent refuses to write an envelope pair that fails its verifier")
     for backend, envelope in envelopes.items():
-        (output_dir / f"{backend}_resolved.json").write_bytes(canonical_bytes(envelope))
-    (output_dir / "verification.json").write_bytes(canonical_bytes(result))
+        (attempt_dir / f"{backend}_resolved.json").write_bytes(canonical_bytes(envelope))
+    (attempt_dir / "verification.json").write_bytes(canonical_bytes(result))
+    attempt_dir.rename(output_dir)
     return result
 
 
