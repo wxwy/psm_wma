@@ -4234,3 +4234,12 @@ print(json.dumps(result, sort_keys=True))
 - 变更与证据：`tools/g0/export_r09_b2_p5_resolved_config.py` 的 future-only P5 child 不再执行 `[python, exporter.py]`。parent 只生成 SHA-bound loader request，并通过 `tools/g0/r09_b2_interpreter_provenance.py::verified_loader_argv` 形成 `-I -S -B -c` argv；其 request SHA、root bootstrap Git/blob/current-byte binding 由既有 loader 验证，parent 还在 spawn 前用 `is_verified_loader_argv` hard-gate。exporter 脚本的 direct `__main__` 入口永久拒绝，只有 loader bootstrap 名称可调用 `_verified_bootstrap`。
 - CPU-only 验证：`python -m py_compile tools/g0/export_r09_b2_p5_resolved_config.py tools/g0/test_r09_b2_p5_full_config_diff.py` PASS；4 项定向 `python -B -m unittest ... -v` PASS（loader argv/request+bootstrap binding、non-loader pre-spawn reject、direct script reject、request mutation pre-compose reject）；`git diff --check` PASS。完整 P5 模块的另外 3 项既有 evidence tests 在读取 evidence 前因本工作区预存 `cosmos-framework`/训练遗留 untracked 而被 full-clean gate fail-closed，未修改、未掩盖或删除遗留。
 - 允许范围：本申请仅 root P4/P5 tooling+stdlib CPU 静态测试。禁止真实 staging、P4 record、P5 export/compose、torchrun、GPU、模型/数据/checkpoint、训练/评测/推理/B2-T；不得将本申请解释为任何实际执行授权。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 37bf7f6bac3e51bda624e96db9c767d39bc07c1b；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务/Gate：`G0-R09-B2-P5-FULL-CONFIG-DIFF` v0.6 静态设计。请求 verdict：`APPROVE_TO_IMPLEMENT_P5_V06_STATIC_TOOLS` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：root=`37bf7f6bac3e51bda624e96db9c767d39bc07c1b`，新文档=`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.6_2026-09-01.md`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 关键变更：旧 P5 v0.5 固定 P4 v2 direct-D005/fixed child-request SHA 不可继承。v0.6 要求未来独立获批的 P4 v4 execution preflight 为 verifier-owned identity，P5 parent 只从其 request defaults 派生每 backend request，并以 `-I -S -B -c` loader、out-of-band request SHA、bootstrap Git/current-byte binding 启动；direct exporter script 永久拒绝。
+- 保留：三根隔离/full-clean、attempt failure.json/canonical absence、nested exact envelope、P1/P3/P4 evidence 与 v0.3 P3 contract diff。永久测试覆盖 request/bootstrap drift、non-loader/direct-script、root overlap/untracked、P3 swap、failure attempt；测试只限 stdlib mock，禁止调用 compose。
+- 允许范围：批准后仅 root P5 exporter/verifier 与 CPU 标准库 tests；仍禁止 P4 record/preflight、P5 export/compose、staging、torchrun、GPU、模型/数据/训练/评测/推理/B2-T。
