@@ -3662,3 +3662,12 @@ Detailed review:
 - 新增 root-only `tools/g0/write_r09_b2_p4_d005.py`、`verify_r09_b2_p4_d005.py`、`test_verify_r09_b2_p4_d005.py`。writer 仅 canonicalize/write `FROZEN_NOT_EXECUTED`，不执行 argv；verifier hard-gate canonical framework cwd、interpreter-bound `-m torch.distributed.run` one-process launcher、relative TOML、100 updates/save-zero、backend env、CVD、derived/fresh output 与 D005 digest；tests 覆盖 valid、root cwd、bare launcher、preexisting output fail。
 - 证据：`cosmos-framework/.venv/bin/python -m py_compile ...` PASS；`python -m unittest tools/g0/test_verify_r09_b2_p4_d005.py -v`=2/2 PASS；`git diff --check` PASS。未生成真实 D005（P1 tiny artifact 的 manifest root 是历史 `/tmp`，不伪造 production artifact）。
 - 禁止范围不变：不导入 torch/Cosmos，不读取模型/数据/VAE/checkpoint，不执行 torchrun/GPU/训练/评测/推理；P5/B2-T 继续未授权。请审查实现 closure。
+
+### Awaiting review — R09-B2 P4 static D005 verifier hardening
+
+请求 verdict：`APPROVE_TO_CLOSE_P4_STATIC_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `ef9b5af`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT review `2026-09-01_R09_B2_P4_static_implementation_827c5ab.md` 与 Kimi 的同类 7 项整改；MM 上轮批准因另外两路 REQUEST_CHANGES 不生效。
+- verifier 改为独立绑定：root/submodule/Gitlink revision 与 clean 状态；P1 `schema/status/record_count/SHA`；P3 实际 selector keys 与从 `model_parameters` 重算的 optimizer membership SHA；canonical interpreter realpath+SHA、所有外部资产 realpath+递归 SHA、完整 offline/cache/stream 环境；严格唯一 argv（含 TOML 位置、max_iter=100/save-zero）；JobConfig 推导 output、fresh/未 Git 跟踪；以及 `micro_batch*grad_accum*world_size=global_batch=samples_per_update`。
+- writer 不再接受未经完整 pair verifier 通过的 JSON。新增 CPU 永久负例：尾随 `trainer.max_iter=5000`、错误解释器、缺 cache env、篡改 P3 membership、Gitlink 不匹配、既有 output resume 均 FAIL；正例 PASS。`py_compile` PASS，unittest 3/3 PASS，`git diff --check` PASS。
+- 未生成真实 D005、未读取真实模型/数据/VAE/checkpoint、未导入 torch/Cosmos、未执行 torchrun/GPU/训练/评测/推理。仅请求关闭 P4 静态 builder/verifier Gate；P5/B2-T 仍未授权。
