@@ -30,6 +30,10 @@ class P5Test(unittest.TestCase):
         root, recurrent, ttt, contracts = self._pair(); self.assertEqual(verify_pair(recurrent, ttt, root)["status"], "PASS")
         bad = {**ttt, "provenance": {**ttt["provenance"], "inputs": {**ttt["provenance"]["inputs"], "p3_inventory_sha256": "bad"}}}; self.assertEqual(verify_pair(recurrent, bad, root)["status"], "FAIL")
         bad = {**ttt, "provenance": {**ttt["provenance"], "inputs": {**ttt["provenance"]["inputs"], "p3_inventory_path": "other.json"}}}; self.assertEqual(verify_pair(recurrent, bad, root)["status"], "FAIL")
+        fake_inputs = {**recurrent["provenance"]["inputs"], "p3_verifier_sha256": "bogus"}
+        bad_recurrent = {**recurrent, "provenance": {**recurrent["provenance"], "inputs": fake_inputs}}
+        bad_ttt = {**ttt, "provenance": {**ttt["provenance"], "inputs": {**ttt["provenance"]["inputs"], "p3_verifier_sha256": "bogus"}}}
+        self.assertEqual(verify_pair(bad_recurrent, bad_ttt, root)["status"], "FAIL")
         bad = {**ttt, "effective_launch": {**ttt["effective_launch"], "p1_p3_d005_bindings": {"p3_inventory": {**ttt["effective_launch"]["p1_p3_d005_bindings"]["p3_inventory"], "backend_contract": contracts["recurrent"]}}}}; self.assertEqual(verify_pair(recurrent, bad, root)["status"], "FAIL")
         arbitrary = {"selector_keys": ["arbitrary"], "optimizer_membership_sha256": "bad"}
         bad = {**ttt, "effective_launch": {**ttt["effective_launch"], "p1_p3_d005_bindings": {"p3_inventory": {**ttt["effective_launch"]["p1_p3_d005_bindings"]["p3_inventory"], "backend_contract": arbitrary}}}}; self.assertEqual(verify_pair(recurrent, bad, root)["status"], "FAIL")

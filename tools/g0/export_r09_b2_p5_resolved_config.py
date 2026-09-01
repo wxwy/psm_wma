@@ -200,6 +200,8 @@ def _child(request: Path, output: Path) -> None:
         pass
     from cosmos_framework.configs.toml_config.sft_config import load_experiment_from_toml
     config = load_experiment_from_toml(payload["toml"], extra_overrides=payload["overrides"])
+    if config.model.config.local_history_backend != ("ttt_fast_weight" if payload["backend"] == "ttt_fast_weight" else "recurrent"):
+        raise RuntimeError("P5 composed backend differs from its D005-bound request")
     import torch
     if torch.cuda.is_initialized():
         raise RuntimeError("P5 static compose initialized CUDA")
