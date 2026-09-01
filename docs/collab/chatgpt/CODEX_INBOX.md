@@ -3743,3 +3743,13 @@ Detailed review:
 - 审核对象：根仓 `ddb4e0eae97fb545d5239c1ddb6d4387170f3780`；Gitlink=`21d064f`。处理 ChatGPT `2026-09-01_R09_B2_P4_v2_regeneration_875d680_990afb6.md`。
 - interpreter exception 已隔离：generic asset/output allowlist 恢复为 root、`/localdisk-tmp/models`、`/disk/rl/data`；仅 `external_assets.interpreter` 可等于 current clean-worktree canonical `.venv/bin/python.resolve()`+SHA，且其 `realpath/sha256` 必与 command interpreter 相等。
 - 新增永久负例：interpreter parent 不会成为 runtime-output root，且用 base checkpoint 替换 interpreter asset 必 FAIL。CPU unittest 7/7、diff-check PASS；未读取资产、未生成 D005、未执行 torchrun/GPU/训练。
+
+### Awaiting review — R09-B2 P4 v2 D005 evidence closure
+
+请求 verdict：`APPROVE_TO_CLOSE_P4_STATIC_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `d13d14755242c4c367f23abe2946bf5b7b7622fc`；recorded clean source=`ddb4e0e`；Gitlink=`21d064f`。
+- 已获三方 narrow approval 后，在 fresh clean worktree 只读 hash approved local assets，生成 exactly two `FROZEN_NOT_EXECUTED` records：`artifacts/g0/r09/b2/p4_launch_d005/recurrent.json` SHA=`2d04c504…`、`ttt_fast_weight.json` SHA=`8890bbec…`，以及 `verification.json` SHA=`8618488f…`。
+- standard-library pair verifier=`PASS`：两 backend 的 schema/source/cwd/argv/environment/inputs/assets/output/budget/digest checks 全 true；matched 与 distinct outputs true。future output root 未创建，无 GPU compute/torchrun/模型执行/训练。旧 FAIL attempt 保留在独立 worktree，未覆盖、未提交。
+- closure provenance：本次 records 保留 source root=`ddb4e0e`；请以该 clean source 和只读 committed artifacts 复核，勿将 post-commit HEAD 当作 record source。
+- 仅申请关闭 P4 static D005；不授权 P5、B2-T、D005 argv、GPU、训练、评测或推理。
