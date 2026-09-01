@@ -3411,3 +3411,17 @@ Detailed review:
 - 审核对象：根仓 `8ed811e`；子模块/Gitlink `21d064f`。
 - `prepare_isolated_worker()` 现接收真实 resolved `vlm_config` 并从实际 `.tokenizer` 规范化 binding；construction 在导入/调用共享 helper 前从其实际输入再次规范化并要求与已验证 binding 完全相等，witness SHA 基于实际 construction input。
 - 永久回归覆盖有效本地 A + 不同本地 B、有效本地 A + 远端 B，均在 constructor import/call 前 FAIL；`py_compile`、unittest 2 passed、双仓 diff-check PASS。未调用 helper/GPU/HF/model。请求同一 verdict。
+
+---
+
+## 2026-09-01 — R09-B2 P3 GPU inventory worker 完整静态实现审核请求
+
+请求 verdict：`APPROVE_TO_REQUEST_GPU_P3_RUN` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `0d3af2eefa22d449fac1d0a49d6a075b34ec95b6`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- collector 完成双 backend 独立单卡 worker 与顶层 D005/provenance 编排。worker 在 recipe/model import 前应用 offline/path/backend 环境；先验证实际 resolved tokenizer binding，再走共享 production `build_vlm_processor(vlm_config)`，并在 processor、完整 model/optimizer/DCP 后分别复核六资产只读快照。
+- 唯一 inventory-only model override 为 `load_vision_tokenizer: true -> false`，用于禁止 VAE；其余 recipe model/optimizer 构造沿生产入口。实际调用 `ModelWrapper.state_dict()` 与 `OptimizersContainer.state_dict()`，逐 stable name 交叉验证 optimizer group、model DCP 和 optimizer DCP membership；不再接受 symbolic-only binding。
+- verifier 新增唯一 override、backend 实际环境/processor identity、DCP invocation+membership、group metadata，以及完整 model parameter/buffer/DCP key 的 recurrent-vs-TTT allowlist hard gates。worker 在 model、optimizer、两次 state_dict 后各执行 24 GiB peak stop gate。
+- 静态证据：`python -m py_compile` PASS；`python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py` 为 `5 passed`；双仓 `git diff --check` PASS。新增负例覆盖 symbolic-only DCP membership 与 TTT-only persistent DCP key。
+- 本轮没有调用 worker、GPU、HF/processor/model、VAE、checkpoint、数据或 DCP I/O；没有 forward/backward/optimizer/scheduler step。批准后也只允许准备精确 run 命令与二次运行审核，不自动授权执行。
+- 禁止范围：B2-T/P4/P5、训练、评测、推理、closed-loop、SR、多卡、长训、backend freeze、Global/Agent/RL。
