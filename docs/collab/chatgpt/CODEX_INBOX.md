@@ -3381,3 +3381,9 @@ Detailed review:
 - 审核对象：根仓 `8bff9f2`；子模块/Gitlink `0af5d53`。
 - helper 现直接返回唯一 `local_processor` schema，包含 canonical path、六资产、offline/observed environment、before/after assets 及 auditable `resolved_tokenizer_binding`；verifier 对 repository=None、revision=None、tokenizer_type==canonical_path 做 PASS hard-gate。
 - `unittest` 2 passed，新增 helper 输出可直接嵌入最小 PASS artifact 的回归；`py_compile`、`git diff --check` PASS。请求同一 verdict；禁止 GPU/HF/processor/model/weights/data/DCP/step。
+
+### GPT post-phase evidence HIGH 整改复审
+
+- 审核对象：根仓 `f21e4a1`；子模块/Gitlink `0af5d53`。
+- precondition 不再生成 `after_assets`；新增 future-worker-only finalize，构造后重新读取独立快照并设 `post_construction_observed=true`。PASS verifier 要求该标志和 before/after/required 三者逐项相等。
+- 回归覆盖 precondition 直嵌 nominal PASS→FAIL、finalize 后→PASS、篡改 after→FAIL；`py_compile`、unittest 2 passed、diff-check PASS。请求同一 verdict；禁止 GPU/HF/processor/model/weights/data/DCP/step。
