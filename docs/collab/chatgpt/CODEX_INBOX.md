@@ -3829,3 +3829,12 @@ Detailed review:
 - 新设计：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.4_2026-09-01.md`。`production_root` 固定 P4 recorded `ddb4e0e`/Gitlink；`evidence_root` 只读 P4/P1/P3 committed evidence；`exporter_root` 只读获批工具。parent 独立验证三根，拒绝重叠，不能再假定单 root 同时满足历史 source 和后提交 evidence。
 - child 无 root `tools` import，按 production D005 cwd/interpreter/env compose；parent 用 immutable staging，只有 child+pair verifier 均 PASS 后原子晋升；信封 nested schemas 与所有 evidence/exporter source SHA 独立绑定。
 - 当前仅申请 root 工具重构；禁止 compose/export/`load_experiment_from_toml`、CUDA/torchrun/GPU/训练。实现获批后，静态 export 仍需独立三方授权。
+
+### Awaiting review — R09-B2 P5 v0.5 D005 absolute production-root design
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P5_V05_STATIC_TOOLS` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `6345716b1b9bd58991770684f93b39e83deaf090`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 review `2026-09-01_R09_B2_P5_v0.4_three_root_design_9814202_fc2124e.md` 的唯一 HIGH。
+- 新设计：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.5_2026-09-01.md`。production root 必由两份 D005 的 `command.cwd` 推导并精确等于 `/disk/rl/psm_wma_p4_d005_retry`；禁止同 revision/Gitlink 的其他 checkout、symlink alias 或 cwd/PYTHONPATH/stream manifest remap。
+- parent 还逐条检查 worktree 内 D005 paths containment，外部模型/数据/VAE/checkpoint 仍使用其冻结 absolute paths；永久 CPU 负例为“相同 source/Gitlink 不同绝对 checkout 必 FAIL”。其余 v0.4 三根合同不变。
+- 仅申请 root 静态工具重构；禁止 compose/export/`load_experiment_from_toml`、CUDA/torchrun/GPU/训练。实现获批后，静态 export 仍需独立三方授权。
