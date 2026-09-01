@@ -3405,3 +3405,9 @@ Detailed review:
 - 审核对象：根仓 `1452cb6`；子模块/Gitlink `21d064f`（已推送 `origin/v2`）。
 - 子模块把生产 `lazy_instantiate(vlm_config.tokenizer)` 抽为同文件共享 helper `build_vlm_processor(vlm_config)`，`OmniMoTModel.set_up_tokenizers()` 与 future P3 worker 均引用该 primitive；P3 不再依赖已构造的 `OmniMoTModel` 或第二次 `set_up_tokenizers()`。witness identity/verifier 固定为该 helper；该文件已由现有 `model_source_sha256` commit-blob provenance 覆盖。
 - `py_compile`、root unittest 2 passed、双仓 diff-check PASS。未调用 helper、未导入 HF/processor/model、未运行 GPU/权重/数据/DCP/step。请求 `APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+### GPT construction-input binding HIGH 整改复审
+
+- 审核对象：根仓 `8ed811e`；子模块/Gitlink `21d064f`。
+- `prepare_isolated_worker()` 现接收真实 resolved `vlm_config` 并从实际 `.tokenizer` 规范化 binding；construction 在导入/调用共享 helper 前从其实际输入再次规范化并要求与已验证 binding 完全相等，witness SHA 基于实际 construction input。
+- 永久回归覆盖有效本地 A + 不同本地 B、有效本地 A + 远端 B，均在 constructor import/call 前 FAIL；`py_compile`、unittest 2 passed、双仓 diff-check PASS。未调用 helper/GPU/HF/model。请求同一 verdict。
