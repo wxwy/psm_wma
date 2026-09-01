@@ -3343,3 +3343,8 @@ Detailed review:
 
 - 当前根仓审核锚点：`ae48c8d`（子模块/Gitlink 仍 `0af5d53`）。`provenance_checks()` 现捕获 D005 相对路径防护主动抛出的 `ValueError`，使 `../../etc/passwd` 等遍历攻击转为六项 provenance checks 全 false 的结构化 FAIL，而非 traceback。
 - `py_compile`、路径遍历 direct negative 与 `git diff --check` PASS；请求同一 verdict 复审，禁止 GPU/processor/model 构造。
+
+### GPT commit-blob/source-cleanliness 整改复审
+
+- 当前根仓审核锚点：`54e6b03`（子模块/Gitlink 仍 `0af5d53`）。future PASS verifier 现要求 root/submodule tracked-clean、submodule HEAD==root Gitlink==artifact revision；冻结 source SHA 从相应 root/submodule commit blob 计算，并强制当前 filesystem bytes 等于 blob。D005 读取前以 resolved-path containment 拒绝软链接逃逸。
+- `py_compile`、BLOCKED 回归、D005 symlink escape direct negative（全 provenance checks false）与 `git diff --check` PASS。请求 `APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`，禁止 GPU/processor/model 构造。
