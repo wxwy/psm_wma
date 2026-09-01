@@ -4150,3 +4150,12 @@ print(json.dumps(result, sort_keys=True))
 - native-loader HIGH：execution request新增 verifier-owned all-absent native-loader environment grammar，强制 `LD_PRELOAD/LD_AUDIT/LD_LIBRARY_PATH` 与全部列举 loader变量、`GLIBC_TUNABLES` 缺席。parent在该同一净化环境 resolve完整 native closure并以 `env=` spawn child；agent→worker只传 verifier允许 rank keys。注入任一变量均 child/loader/bootstrap前FAIL。
 - 保留：v0.7 direct lexical worker、verified request SHA/loader、host-native TCB、copy staging等合同不变。
 - 允许范围：若批准仅 root loader/bootstrap、P4/P5 tools与CPU tests；禁止 P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v0.9
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请只整改 ChatGPT v0.8 review `2026-09-01_R09_B2_P4_interpreter_provenance_design_v08_1761668_d8934dc.md` 的唯一 HIGH；不申请实现之外的任何运行。
+
+- 审核对象：根仓 design commit=`af8bccde4307710c515818d7cd0f32452afb1482`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；新增文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v0.9_2026-09-01.md`。
+- native closure HIGH：seed set固定为 child/base、lib-dynload、全部 staging registry/editable/VCS ELF/.so/approved executables；parent在v0.8同一空loader env解析每个 `PT_INTERP/DT_NEEDED/RPATH/RUNPATH/$ORIGIN` 并取SHA绑定的并集。静态图外 dlopen/driver/plugin必须有 verifier-owned canonical path/SHA/trigger allowlist，否则 fail-closed。
+- 永久 tests：单extension依赖漂移、双staged ELF disjoint union、unlisted dlopen均pre-spawn FAIL；allowlist正例才PASS。
+- 允许范围：若批准仅 root loader/bootstrap、P4/P5 tools与CPU tests；禁止 P4 record重冻、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
