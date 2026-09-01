@@ -185,7 +185,13 @@ def backend_checks(record: dict[str, object]) -> dict[str, bool]:
     binding = dcp.get("production_binding", {})
     selected_model_keys = dcp.get("selected_model_parameter_keys", {})
     optimizer_references = set(dcp.get("optimizer_parameter_references", []))
+    optimizer_schema = dcp.get("optimizer_state_schema", [])
     rows_by_name = {row.get("name"): row for row in rows}
+    schema_owners = {row.get("owner") for row in optimizer_schema}
+    schema_identities = {
+        (row.get("owner"), row.get("namespace"), row.get("suffix"))
+        for row in optimizer_schema
+    }
     return {
         "inventory_override_exact": record.get("inventory_model_overrides") == INVENTORY_MODEL_OVERRIDES,
         "selector_exclusions_empty": not inventory.get("selector_optimizer_exclusions", []),
@@ -209,6 +215,18 @@ def backend_checks(record: dict[str, object]) -> dict[str, bool]:
             and all(key in dcp.get("model_state_keys", []) for key in selected_model_keys.values())
         ),
         "dcp_optimizer_membership": optimizer_references == selected,
+        "dcp_optimizer_schema_valid": (
+            schema_owners == optimizer_references
+            and len(schema_identities) == len(optimizer_schema)
+            and all(
+                row.get("owner") in set(names)
+                and row.get("namespace") in {"state", "param_groups"}
+                and isinstance(row.get("suffix"), str)
+                and bool(row.get("suffix"))
+                and row.get("flat_key") == f"{row.get('namespace')}.net.{row.get('owner')}.{row.get('suffix')}"
+                for row in optimizer_schema
+            )
+        ),
         "group_metadata_matches_model": all(
             entry.get("name") in rows_by_name
             and entry.get("numel") == rows_by_name[entry.get("name")].get("numel")
@@ -257,6 +275,34 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
     checks["only_allowed_dcp_model_keys"] = (
         not (ttt_dcp - recurrent_dcp)
         and all(key.startswith(ALLOWED_RECURRENT_ONLY_PREFIXES) for key in recurrent_dcp - ttt_dcp)
+    )
+
+    def optimizer_schema(inventory: dict[str, object]) -> dict[tuple[str, str, str], dict[str, object]]:
+        rows = inventory.get("dcp_state", {}).get("optimizer_state_schema", [])
+        schema = {}
+        for row in rows:
+            identity = (row.get("owner"), row.get("namespace"), row.get("suffix"))
+            schema[identity] = row
+        return schema
+
+    recurrent_schema = optimizer_schema(recurrent)
+    ttt_schema = optimizer_schema(ttt)
+    recurrent_only = set(recurrent_schema) - set(ttt_schema)
+    ttt_only = set(ttt_schema) - set(recurrent_schema)
+    shared = set(recurrent_schema) & set(ttt_schema)
+    checks["only_allowed_dcp_optimizer_schema"] = (
+        not ttt_only
+        and all(
+            isinstance(identity[0], str) and identity[0].startswith(ALLOWED_RECURRENT_ONLY_PREFIXES)
+            for identity in recurrent_only
+        )
+    )
+    checks["shared_dcp_optimizer_schema_metadata"] = all(
+        all(
+            recurrent_schema[identity].get(field) == ttt_schema[identity].get(field)
+            for field in ("kind", "shape", "dtype", "numel", "value")
+        )
+        for identity in shared
     )
     return checks
 

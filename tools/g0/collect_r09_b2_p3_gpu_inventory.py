@@ -162,21 +162,41 @@ def _state_leaf_metadata(value: object, path: str = "") -> list[dict[str, object
     return [{"path": path, "kind": type(value).__name__, "value": scalar}]
 
 
-def _stable_parameter_references(value: object, stable_names: set[str]) -> set[str]:
-    """从 production optimizer state_dict 中反查稳定参数名。"""
-    references: set[str] = set()
-    if isinstance(value, str):
-        candidate = value.removeprefix("net.")
-        if candidate in stable_names:
-            references.add(candidate)
-    elif isinstance(value, dict):
-        for key, item in value.items():
-            references.update(_stable_parameter_references(key, stable_names))
-            references.update(_stable_parameter_references(item, stable_names))
-    elif isinstance(value, (list, tuple)):
-        for item in value:
-            references.update(_stable_parameter_references(item, stable_names))
-    return references
+def _flattened_optimizer_schema(
+    state_dict: object, stable_names: set[str]
+) -> list[dict[str, object]]:
+    """解析 PyTorch ``flatten_optimizer_state_dict=True`` 的精确 key grammar。"""
+    if not isinstance(state_dict, dict):
+        raise RuntimeError("flattened optimizer state_dict must be a dict")
+    candidates = sorted((f"net.{name}", name) for name in stable_names)
+    rows = []
+    for flat_key, value in sorted(state_dict.items()):
+        if not isinstance(flat_key, str):
+            raise RuntimeError("flattened optimizer state_dict key must be a string")
+        namespace, separator, remainder = flat_key.partition(".")
+        if namespace not in {"state", "param_groups"} or not separator:
+            raise RuntimeError(f"unexpected flattened optimizer state_dict key: {flat_key!r}")
+        owner = None
+        suffix = None
+        for fqn, stable_name in candidates:
+            prefix = f"{fqn}."
+            if remainder.startswith(prefix):
+                owner = stable_name
+                suffix = remainder[len(prefix):]
+                break
+        if owner is None or not suffix:
+            raise RuntimeError(f"unmapped flattened optimizer state_dict key: {flat_key!r}")
+        metadata = _state_leaf_metadata(value, flat_key)
+        if len(metadata) != 1:
+            raise RuntimeError(f"flattened optimizer value must be scalar or tensor: {flat_key!r}")
+        rows.append({
+            "flat_key": flat_key,
+            "owner": owner,
+            "namespace": namespace,
+            "suffix": suffix,
+            **{key: value for key, value in metadata[0].items() if key != "path"},
+        })
+    return rows
 
 
 def _worker_inventory(
@@ -280,14 +300,15 @@ def _worker_inventory(
         for name in selected
         if expected_model_keys[name] in model_dcp
     }
-    optimizer_references = _stable_parameter_references(optimizer_dcp, set(parameters))
+    optimizer_schema = _flattened_optimizer_schema(optimizer_dcp, set(parameters))
+    optimizer_references = {row["owner"] for row in optimizer_schema}
     if set(selected_model_keys) != selected:
         raise RuntimeError("selected optimizer parameters are missing from production ModelWrapper.state_dict")
     if optimizer_references != selected:
         raise RuntimeError("production OptimizersContainer.state_dict membership differs from optimizer groups")
 
     ttt_names = {"W", "pending_evidence", "last_evidence", "initialized", "segment_progress"}
-    persistent_keys = model_dcp_keys + [row["path"] for row in _state_leaf_metadata(optimizer_dcp, "optimizer")]
+    persistent_keys = model_dcp_keys + [f"optimizer.{row['flat_key']}" for row in optimizer_schema]
     forbidden = [key for key in persistent_keys if key.split(".")[-1].split("[")[0] in ttt_names]
     if forbidden:
         raise RuntimeError(f"TTT runtime state became persistent: {forbidden}")
@@ -336,7 +357,7 @@ def _worker_inventory(
                 "model_state_keys": model_dcp_keys,
                 "selected_model_parameter_keys": selected_model_keys,
                 "optimizer_parameter_references": sorted(optimizer_references),
-                "optimizer_state_schema": _state_leaf_metadata(optimizer_dcp),
+                "optimizer_state_schema": optimizer_schema,
                 "persistent_keys": persistent_keys,
             },
         },

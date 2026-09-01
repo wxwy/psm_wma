@@ -145,6 +145,14 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                     "model_state_keys": [f"net.{recurrent_name}"],
                     "selected_model_parameter_keys": {recurrent_name: f"net.{recurrent_name}"},
                     "optimizer_parameter_references": [recurrent_name],
+                    "optimizer_state_schema": [{
+                        "flat_key": f"param_groups.net.{recurrent_name}.lr",
+                        "owner": recurrent_name,
+                        "namespace": "param_groups",
+                        "suffix": "lr",
+                        "kind": "float",
+                        "value": 0.1,
+                    }],
                     "production_binding": {
                         "model_symbol": VERIFY.MODEL_DCP_SYMBOL,
                         "optimizer_symbol": VERIFY.OPTIMIZER_DCP_SYMBOL,
@@ -179,6 +187,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                     "model_state_keys": [],
                     "selected_model_parameter_keys": {},
                     "optimizer_parameter_references": [],
+                    "optimizer_state_schema": [],
                     "production_binding": {
                         "model_symbol": VERIFY.MODEL_DCP_SYMBOL,
                         "optimizer_symbol": VERIFY.OPTIMIZER_DCP_SYMBOL,
@@ -292,10 +301,23 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             def numel() -> int:
                 return 6
 
-        state = {"state": {"net.a": {"exp_avg": TensorFixture()}}, "param_groups": [{"params": ["net.a"]}]}
-        self.assertEqual(COLLECT._stable_parameter_references(state, {"a", "b"}), {"a"})
-        tensor_rows = [row for row in COLLECT._state_leaf_metadata(state) if row["kind"] == "tensor"]
-        self.assertEqual(tensor_rows, [{"path": "state.net.a.exp_avg", "kind": "tensor", "shape": [2, 3], "dtype": "float32", "numel": 6}])
+        state = {
+            "param_groups.net.a.lr": 0.1,
+            "param_groups.net.b.lr": 0.1,
+            "state.net.a.exp_avg": TensorFixture(),
+        }
+        rows = COLLECT._flattened_optimizer_schema(state, {"a", "b"})
+        self.assertEqual({row["owner"] for row in rows}, {"a", "b"})
+        tensor_rows = [row for row in rows if row["kind"] == "tensor"]
+        self.assertEqual(tensor_rows, [{
+            "flat_key": "state.net.a.exp_avg", "owner": "a", "namespace": "state",
+            "suffix": "exp_avg", "kind": "tensor", "shape": [2, 3], "dtype": "float32", "numel": 6,
+        }])
+        self.assertNotEqual({row["owner"] for row in rows}, {"a", "b", "missing"})
+        with self.assertRaisesRegex(RuntimeError, "unmapped"):
+            COLLECT._flattened_optimizer_schema({"param_groups.net.a_extra.lr": 0.1}, {"a"})
+        with self.assertRaisesRegex(RuntimeError, "unmapped"):
+            COLLECT._flattened_optimizer_schema({"param_groups.net.extra.lr": 0.1}, {"a"})
 
     def test_backend_diff_rejects_ttt_only_persistent_key(self) -> None:
         d005_path = ROOT / "artifacts/g0/r09/b2/p3_dcp_diff_test_d005.json"
@@ -307,6 +329,27 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             ):
                 result = VERIFY.verify(artifact, ROOT)
                 self.assertFalse(result["matched_diff_checks"]["only_allowed_dcp_model_keys"])
+                self.assertEqual(result["status"], "FAIL")
+        finally:
+            d005_path.unlink(missing_ok=True)
+
+    def test_backend_diff_rejects_ttt_only_optimizer_dcp_schema(self) -> None:
+        d005_path = ROOT / "artifacts/g0/r09/b2/p3_optimizer_dcp_diff_test_d005.json"
+        try:
+            artifact = self._passing_artifact(d005_path)
+            artifact["ttt_fast_weight"]["inventory"]["dcp_state"]["optimizer_state_schema"] = [{
+                "flat_key": "param_groups.net.unexpected.lr",
+                "owner": "unexpected",
+                "namespace": "param_groups",
+                "suffix": "lr",
+                "kind": "float",
+                "value": 0.1,
+            }]
+            with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
+                VERIFY, "FROZEN_SOURCE_PATHS", {}
+            ):
+                result = VERIFY.verify(artifact, ROOT)
+                self.assertFalse(result["matched_diff_checks"]["only_allowed_dcp_optimizer_schema"])
                 self.assertEqual(result["status"], "FAIL")
         finally:
             d005_path.unlink(missing_ok=True)
