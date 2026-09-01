@@ -863,3 +863,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 根因：attempt-4 证明 production optimizer DCP FQN 不可由 collector 对 `model.net.named_parameters()` 的 raw name 手工加前缀推导；该假设在真实 `param_groups.net.language_model...betas` 上 fail-closed，终止发生在任何 forward/backward/step 前。
 - 修改：collector 新增 `_canonical_parameter_fqns()`，用同一 PyTorch DCP `state_dict._get_fqns(model, full_name)` 和 parameter identity 将 canonical FQN 映射到 raw stable name；拒绝多 FQN、非 `net.`、duplicate、或覆盖不全。optimizer schema 写 `owner_fqn`，model DCP membership 使用同一 canonical key；verifier 将 `owner_fqn` 纳入 identity 和 flat-key exact 重建。runbook 仅把下一次路径推进至 fresh attempt-5。
 - 验证：`py_compile` PASS；`cosmos-framework/.venv/bin/python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 14/14 PASS；`git diff --check` PASS。未运行 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。下一步：提交并请求三方审核；仅一致 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 才能执行 attempt-5 一次。未提交。
+
+### R09-B2 P3 GPU-only attempt-5 terminal evidence / attempt-6 serialization repair（2026-09-01，IN_PROGRESS）
+
+- 目的/Gate：`G0-R09-B2-P3-GPU-ONLY-RUN`。attempt-5 在三方一次性批准后按冻结命令执行；单卡、离线/local processor、禁止 VAE/权重/checkpoint/data I/O 与 forward/backward/step、recurrent→TTT fail-stop 范围不变。
+- 事实：recurrent worker 已完成 production processor、模型与 capturable FusedAdam 构造；仅在向 worker JSON 写入 param-group metadata 时，`lr`/`weight_decay` 可为 CUDA Tensor，触发 `TypeError: Object of type Tensor is not JSON serializable`。父进程正确记录 `BLOCKED` 并停止，TTT worker 未启动；attempt-5 aggregate/D005/verifier 位于 `artifacts/g0/r09/b2/p3_gpu_inventory_attempt5/`，verifier 为 `BLOCKED`、`record_valid=true`、全部 23 项结构/范围核验为 true。
+- 最小修复：根仓 `6690e37` 仅把 param-group 的 `lr`/`weight_decay` 通过既有 canonical JSON-safe metadata 入口输出，新增 tensor scalar metadata 回归；state flattened-value 的严格 grammar 与 28 GiB cap 均未变。静态验证：`py_compile` PASS、标准库定向测试 17/17 PASS、`git diff --check` PASS；未重新运行 GPU。
+- 下一步：先提交 attempt-5 终态证据和本状态记录，再以 root=`6690e37`、submodule/Gitlink=`21d064f` 送 ChatGPT/MM/Kimi 复审。只有三方同一实现给出 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE`，才可按 fresh attempt-6 路径运行一次；否则保持禁止。

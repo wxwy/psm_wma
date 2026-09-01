@@ -1,0 +1,31 @@
+{
+  "backend_checks": {},
+  "checks": {
+    "backend_execution_binding": true,
+    "backend_processor_binding": true,
+    "backend_status": true,
+    "command_binding_valid": true,
+    "d005_identity_valid": true,
+    "gpu_binding_valid": true,
+    "local_processor_assets": true,
+    "local_processor_path": true,
+    "no_execution": true,
+    "observed_offline_environment": true,
+    "offline_environment": true,
+    "pass_provenance_fields": true,
+    "peak_under_limit": true,
+    "processor_package_read_only": true,
+    "resolved_local_tokenizer_binding": true,
+    "root_gitlink_valid": true,
+    "root_tracked_clean": true,
+    "run_token_valid": true,
+    "schema": true,
+    "single_process": true,
+    "source_hashes_valid": true,
+    "submodule_head_valid": true,
+    "submodule_tracked_clean": true
+  },
+  "matched_diff_checks": {},
+  "record_valid": true,
+  "status": "BLOCKED"
+}
