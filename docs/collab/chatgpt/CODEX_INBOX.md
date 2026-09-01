@@ -3643,3 +3643,13 @@ Detailed review:
 - single-GPU HIGH 关闭：冻结且仅记录（不执行）`torchrun --standalone --nnodes=1 --nproc-per-node=1 -m cosmos_framework.scripts.train`；`CUDA_VISIBLE_DEVICES=0`，不允许手写或继承 env:// rank/world/master 变量。verifier 从 argv 推导 world_size=1 并拒绝冲突，而非信任 budget metadata。
 - step0 MEDIUM 关闭：`outputs.checkpoint_step0` 仅因 argv 实际含 `trainer.save_zero_checkpoint=true` 才为 required output；同一 argv 仍含 `trainer.max_iter=100`。新增负例覆盖同 job path、已存在 latest/iter、metadata 单卡但 launcher 多进程、rank env 注入、没有 save-zero 的 step0 声明。
 - 范围不变：仍仅申请 root 标准库/CPU static builder/verifier/tests；不运行 torchrun、不导入 torch/Cosmos、不加载模型/数据/VAE/checkpoint、不运行 GPU/训练/评测/推理，P5/B2-T 继续未授权。请只审查设计。
+
+### Awaiting review — R09-B2 P4 cwd/interpreter-bound D005 design revision
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_STATIC_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `39c9f19017b0a829a5d06520de55f6a50406a0f3`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT `701d410`；只改 P4 design 与 `SESSION.md`。
+- cwd HIGH 关闭：`command.cwd` 固定为 canonical `<repo>/cosmos-framework` realpath，verifier 拒绝根仓 cwd、任意其它 cwd、symlink alias 或缺失 cwd；`--sft-toml` 只能是该 cwd 下的 framework-relative `examples/toml/sft_config/action_policy_libero_edge_all.toml`，从而保持 production Nemotron 相对 JSON 路径语义。
+- launcher HIGH 关闭：不再使用 bare/PATH-dependent `torchrun`。future argv 第一项必须等于 D005 记录且 SHA256 绑定的 canonical Python interpreter，随后精确为 `-m torch.distributed.run --standalone --nnodes=1 --nproc-per-node=1 -m cosmos_framework.scripts.train ...`；任何不同 Python、bare torchrun 或相对解释器路径均 fail-closed。当前 `.venv/bin/python` 若为 symlink，记录其 canonical realpath+SHA，避免伪路径身份。
+- 新负例覆盖：其它字段均正确但 cwd=root repo、TOML cwd 语义不唯一、解释器记录正确却用 bare torchrun/PATH 或不同 Python。
+- 范围不变：只申请后续 root 标准库/CPU static builder/verifier/tests；不执行 torchrun、不导入 torch/Cosmos、不加载模型/数据/VAE/checkpoint、不运行 GPU/训练/评测/推理，P5/B2-T 继续未授权。请只审查设计。
