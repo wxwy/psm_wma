@@ -36,12 +36,12 @@ class P4D005Test(unittest.TestCase):
         subprocess.run(["git", "-C", str(framework), "add", "."], check=True)
         subprocess.run(["git", "-C", str(framework), "commit", "-qm", "sub"], check=True)
         (root / "README").write_text("root")
-        subprocess.run(["git", "-C", str(root), "add", "README"], check=True)
-        subprocess.run(["git", "-C", str(root), "update-index", "--add", "--cacheinfo", f"160000,{self._git(framework, 'rev-parse', 'HEAD')},cosmos-framework"], check=True)
-        subprocess.run(["git", "-C", str(root), "commit", "-qm", "root"], check=True)
         for name in ("base", "edge", "vae", "libero", "cache"):
             (root / "assets" / name).mkdir(parents=True); (root / "assets" / name / "data").write_text(name)
         (root / "staging").mkdir(); (root / "staging" / "native.py").write_text("import ctypes\nctypes.CDLL('fixed.so')\n")
+        subprocess.run(["git", "-C", str(root), "add", "README", "assets", "staging"], check=True)
+        subprocess.run(["git", "-C", str(root), "update-index", "--add", "--cacheinfo", f"160000,{self._git(framework, 'rev-parse', 'HEAD')},cosmos-framework"], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-qm", "root"], check=True)
 
     def _frozen(self, root: Path) -> tuple[dict[str, object], dict[str, object]]:
         p1_path = root / "refs/p1/header.json"; p3_path = root / "refs/p3/inventory.json"; proof_path = root / "refs/p3/verifier.json"
@@ -58,6 +58,8 @@ class P4D005Test(unittest.TestCase):
             return {"inventory": {"selector": {"backend": backend, "keys_to_select": list(keys)}, "model_parameters": rows}}
         p3 = {"recurrent": inventory("recurrent", p4.EXPECTED_RECURRENT_SELECTOR_KEYS), "ttt_fast_weight": inventory("ttt_fast_weight", p4.EXPECTED_TTT_SELECTOR_KEYS)}
         p1_path.write_text(json.dumps(p1)); p3_path.write_text(json.dumps(p3)); proof_path.write_text(json.dumps({"status": "PASS", "record_valid": True}))
+        subprocess.run(["git", "-C", str(root), "add", "refs"], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-qm", "refs"], check=True)
         return p1, {"P1_HEADER_RELATIVE": "refs/p1/header.json", "P3_ARTIFACT_RELATIVE": "refs/p3/inventory.json", "P3_VERIFIER_RELATIVE": "refs/p3/verifier.json", "P1_HEADER_SHA256": p4._sha256_file(p1_path), "P3_ARTIFACT_SHA256": p4._sha256_file(p3_path), "P3_VERIFIER_SHA256": p4._sha256_file(proof_path), "FROZEN_GITLINK": self._git(root / "cosmos-framework", "rev-parse", "HEAD")}
 
     def _record(self, root: Path, p1: dict[str, object], backend: str, refs: dict[str, object]) -> dict[str, object]:
@@ -133,3 +135,9 @@ class P4D005Test(unittest.TestCase):
             self.assertFalse(any(interpreter_parent.is_relative_to(base) for base in p4._allowed_roots(root) if base != root.resolve()))
             recurrent["inputs"]["external_assets"]["interpreter"] = recurrent["inputs"]["external_assets"]["base_checkpoint"]
             with self._patched(refs): self.assertEqual(p4.verify_pair(finalize(recurrent), ttt, root)["status"], "FAIL")
+
+    def test_rejects_untracked_source_shadow(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); recurrent, ttt, refs = self._pair(root)
+            (root / "untracked_shadow.py").write_text("pass\n")
+            with self._patched(refs): self.assertEqual(p4.verify_pair(recurrent, ttt, root)["status"], "FAIL")

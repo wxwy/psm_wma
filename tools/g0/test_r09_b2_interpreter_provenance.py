@@ -18,10 +18,12 @@ from tools.g0.r09_b2_interpreter_provenance import (
     exact_allowlist,
     full_git_clean,
     is_verified_loader_argv,
+    is_verified_torchrun_worker_argv,
     lexical_interpreter,
     parse_elf_dynamic_bytes,
     verified_bootstrap_bytes,
     verified_loader_argv,
+    verified_torchrun_worker_argv,
 )
 
 
@@ -191,6 +193,9 @@ class InterpreterProvenanceTest(unittest.TestCase):
             argv = verified_loader_argv(interpreter, request, request_digest, root, "tools/g0/bootstrap.py", bootstrap_digest)
             self.assertTrue(is_verified_loader_argv(argv))
             self.assertFalse(is_verified_loader_argv([interpreter["path"], "-m", "bootstrap"]))
+            worker = verified_torchrun_worker_argv(interpreter, argv)
+            self.assertTrue(is_verified_torchrun_worker_argv(worker))
+            self.assertFalse(is_verified_torchrun_worker_argv(worker[:6] + worker[7:]))
             bootstrap.write_text("PASS = False\n")
             with self.assertRaises(ProvenanceError):
                 verified_bootstrap_bytes(root, "tools/g0/bootstrap.py", hashlib.sha256(b"PASS = True\n").hexdigest())

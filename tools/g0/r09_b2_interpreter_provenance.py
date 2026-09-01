@@ -122,6 +122,23 @@ def is_verified_loader_argv(argv: object) -> bool:
             and not Path(argv[9]).is_absolute() and all(len(argv[index]) == 64 for index in (7, 10)))
 
 
+def verified_torchrun_worker_argv(interpreter: Mapping[str, str], worker_loader_argv: list[str]) -> list[str]:
+    """Build the admitted ``torchrun --no-python`` worker grammar only."""
+    if not is_verified_loader_argv(worker_loader_argv):
+        raise ProvenanceError("worker must use the verified lexical loader grammar")
+    launcher = lexical_interpreter(Path(interpreter["path"]))
+    if launcher != dict(interpreter):
+        raise ProvenanceError("torchrun lexical interpreter bytes drifted")
+    return [launcher["path"], "-m", "torch.distributed.run", "--standalone", "--nnodes=1", "--nproc-per-node=1", "--no-python", *worker_loader_argv]
+
+
+def is_verified_torchrun_worker_argv(argv: object) -> bool:
+    """Reject all direct Python/module/script worker forms."""
+    return (isinstance(argv, list) and len(argv) > 7 and all(isinstance(item, str) for item in argv)
+            and argv[1:7] == ["-m", "torch.distributed.run", "--standalone", "--nnodes=1", "--nproc-per-node=1", "--no-python"]
+            and is_verified_loader_argv(argv[7:]))
+
+
 def parse_elf_dynamic_bytes(path: Path) -> dict[str, object]:
     """Derive interpreter, DT_NEEDED and RPATH/RUNPATH from real ELF bytes."""
     canonical = path.resolve()

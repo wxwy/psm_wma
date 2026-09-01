@@ -10,7 +10,7 @@ import tomllib
 from pathlib import Path
 
 from tools.g0.write_r09_b2_p4_d005 import SCHEMA, TOML_RELATIVE, derive_job_path, sha256_json
-from tools.g0.r09_b2_interpreter_provenance import lexical_interpreter, verify_native_load_contract
+from tools.g0.r09_b2_interpreter_provenance import full_git_clean, lexical_interpreter, verify_native_load_contract
 from tools.g0.verify_r09_b2_p3_gpu_inventory import (
     EXPECTED_RECURRENT_SELECTOR_KEYS,
     EXPECTED_TTT_SELECTOR_KEYS,
@@ -67,7 +67,7 @@ def _git(root: Path, *args: str) -> str:
 
 
 def _git_clean(root: Path) -> bool:
-    return subprocess.run(["git", "-C", str(root), "diff", "--quiet", "HEAD", "--"], check=False).returncode == 0
+    return full_git_clean(root)
 
 
 def _asset_ok(asset: object, root: Path) -> bool:
