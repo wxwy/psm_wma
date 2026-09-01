@@ -86,9 +86,16 @@ def prepare_isolated_worker(
         "tokenizer_type": tokenizer_config.get("tokenizer_type"),
     }
     before["before_assets"] = before["required_assets"]
-    before["after_assets"] = before["required_assets"]
     before["observed_offline_environment"] = apply_offline_processor_environment(before)
     return before
+
+
+def finalize_isolated_worker_processor_record(record: dict[str, object]) -> dict[str, object]:
+    """仅供未来已获批准的 isolated worker 在 processor 构造后调用。"""
+    after = local_processor_record(Path(record["canonical_path"]))
+    record["after_assets"] = after["required_assets"]
+    record["post_construction_observed"] = True
+    return record
 
 
 def main() -> None:

@@ -232,7 +232,8 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
             else True
         ),
         "processor_package_read_only": (
-            processor.get("before_assets") == processor.get("after_assets") == assets
+            processor.get("post_construction_observed") is True
+            and processor.get("before_assets") == processor.get("after_assets") == assets
             if pass_claimed
             else True
         ),

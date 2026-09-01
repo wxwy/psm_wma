@@ -96,6 +96,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             },
             "before_assets": assets,
             "after_assets": assets,
+            "post_construction_observed": True,
             "resolved_tokenizer_binding": {
                 "repository": None,
                 "revision": None,
@@ -180,7 +181,11 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                 with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
                     VERIFY, "FROZEN_SOURCE_PATHS", {}
                 ):
+                    self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "FAIL")
+                    COLLECT.finalize_isolated_worker_processor_record(record)
                     self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "PASS")
+                    record["after_assets"] = {}
+                    self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "FAIL")
             finally:
                 d005_path.unlink(missing_ok=True)
             with self.assertRaisesRegex(ValueError, "remote repository"):
