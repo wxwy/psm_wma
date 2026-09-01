@@ -4262,3 +4262,12 @@ print(json.dumps(result, sort_keys=True))
 
 - 文档：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.8_2026-09-02.md`。仅整改 GPT v0.7 review：P5 明确以独立 P4-v4 preflight PASS 为唯一 prerequisite，历史 v2/static D005 与 caller 补推永久拒绝；固定 evidence discovery/backend array；request/result/verification exact key/nested schema、canonical SHA chain 和 producer/verifier ownership；五路径/cwd/staging import-root/sys.path exact grammar；empty env、完整 unset array、first-import equality；readonly exact roster 与 mutation detection。
 - 验证：仅文档；`git diff --check`、新文档 no-index diff-check PASS。禁止范围不变：不实现、不执行 P4 preflight/staging、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 92b61a9144255e59bdc078e50f116ca30e85fcf4；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务/Gate：`G0-R09-B2-P5-FULL-CONFIG-DIFF` v0.8 static tooling implementation。请求 `APPROVE_TO_CLOSE_P5_V08_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 依据：三方已对 design=`bae668a` 批准 `APPROVE_TO_IMPLEMENT_P5_V08_STATIC_TOOLS`；本实现仅修改 root exporter 与 CPU 标准库测试。
+- 实现：固定从 `artifacts/g0/r09/b2/p4_execution_preflight_v4/{recurrent,ttt_fast_weight}/request.json,result.json,verification.json` 发现 P4-v4 handoff；拒绝非 canonical JSON、symlink、schema/backend/status/request-result SHA chain 漂移；从空 mapping 构造 P5 environment，拒绝 rank、PYTHONPATH 与 native-loader variables。
+- 验证：`python -m py_compile ...` PASS；7 个不读取当前 evidence-root 的定向 CPU unittest PASS；`git diff --check` PASS。完整 P5 模块 9 项中 2 项在读取 evidence 前因既有 `cosmos-framework` 未跟踪 full-clean gate FAIL，未触碰遗留。
+- 禁止范围：不授权 P4 preflight/refreeze/staging、P5 export/compose、torchrun/GPU、模型数据训练评测推理、B2-T 或 Local Memory 训练。
