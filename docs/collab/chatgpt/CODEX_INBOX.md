@@ -3870,3 +3870,12 @@ Detailed review:
 - failed staging：attempt 创建后将 child、parse、pair-verifier 等任意 Exception 写入 deterministic `failure.json`（schema/status=FAIL/stage/error_type/error），不写或 rename canonical output；原始 attempt 独立保留。
 - CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=6/6 PASS（新增 A-execution/B-exporter-root negative、forced child failure 的 `failure.json`/canonical absence）；`git diff --check` PASS。未调用 `load_experiment_from_toml`、真实 export、CUDA/GPU、torchrun、模型/数据、训练、评测或推理。
 - 允许范围：仅复审 root `tools/g0/` 静态工具；即使批准仍仅允许另行申请 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，不授予实际执行。
+
+### Awaiting review — R09-B2 P5 standalone child D005-binding remediation
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 implementation=`df06f37b87e292368e0e3b4863ec36f7c648b305`，当前整合根仓=`68464a1cfaafcb631bf6cd9ac66efe5691c73785`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT addendum `2026-09-01_R09_B2_P5_v0.5_static_tools_36a3d05_2534afc_addendum.md` 的 standalone child bypass HIGH；此前已批准 exporter identity/failed-attempt remediation 保持不变。
+- `FROZEN_CHILD_REQUEST_SHA256` 固定 recurrent/TTT 各一条 verifier-owned request digest；`validate_child_request()` 强制 exact 16-key schema、known backend 与 digest。parent `build_pair_requests()` 和 hidden `_child()` 在 cwd/interpreter/environment/import compose 前都重验。故 caller 无法以同一 D005 cwd/env 自行构造 TOML/override/backend request 绕过 parent/P4 evidence gate。
+- CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=7/7 PASS，新增完全 schema-consistent 但 TOML 篡改请求在真实 D005 cwd/env/interpreter 下 pre-compose guard FAIL；`git diff --check` PASS。未调用 `load_experiment_from_toml`、真实 export、CUDA/GPU、torchrun、模型/数据、训练、评测或推理。
+- 允许范围：本申请仅复审 root `tools/g0/` 静态整改；即使批准仍仅允许另行申请 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，不授予实际执行。
