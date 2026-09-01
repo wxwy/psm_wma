@@ -12,7 +12,7 @@
 
 ## 当前最小步骤
 
-- `G0-R09-B2-P3-GPU-ONLY-RUN`（2026-09-01，IN_PROGRESS）：runbook 审核中 ChatGPT=`0fec29e` 提出 HIGH：parent collector 在 recurrent 非零/非 PASS 后仍会启动 TTT，违反立即停止。MM/Kimi 本轮均已回复。预计仅修改 `tools/g0/collect_r09_b2_p3_gpu_inventory.py`、`tools/g0/test_verify_r09_b2_p3_gpu_inventory.py` 与 runbook：machine-enforced fail-stop、保留 stdout/stderr/partial JSON、三项 mock launch 回归。禁止 GPU，未提交。
+- `G0-R09-B2-P3-GPU-ONLY-RUN`（2026-09-01，IN_PROGRESS）：ChatGPT/MM/Kimi 已批准一次 runbook 命令，首次尝试在 recurrent child `Popen` 前因脚本路径无 executable bit `PermissionError` terminal FAIL；仅写 D005=`artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory_d005.json`，无 aggregate/backend JSON、GPU=0MiB、TTT 未启动。现仅修改 `tools/g0/collect_r09_b2_p3_gpu_inventory.py` 与其静态测试：把 `OSError` launch error 记录为 aggregate 可消费的 BLOCKED evidence 并 fail-stop；须重新三方审核，禁止重试/GPU。
 
 - `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，IN_PROGRESS）：GPT `998d9fb` 指出 `1452cb6` 的 prepare binding A 与 construction input B 可分叉。现已让 `prepare_isolated_worker()` 接收真实 resolved `vlm_config` 并规范化其 tokenizer binding；`run_production_processor_construction()` 在导入/调用共享 helper 前重新规范化实际 input 并要求与已验证 binding 完全相等，witness SHA 取实际 construction input。远端 B、不同本地路径 B 均 fail-fast；`py_compile`、unittest 2 passed、双仓 diff-check PASS。未调用 helper/GPU/HF/model；待提交复审。
 

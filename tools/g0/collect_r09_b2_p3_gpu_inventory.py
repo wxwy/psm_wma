@@ -479,7 +479,16 @@ def _run_backend_workers(
     for backend in ("recurrent", "ttt_fast_weight"):
         backend_output = output.with_name(f"{output.stem}_{backend}.json").resolve()
         command = command_argv + ["--worker-backend", backend, "--output", str(backend_output)]
-        completed = subprocess.run(command, cwd=root, env=child_environment, text=True, capture_output=True)
+        try:
+            completed = subprocess.run(command, cwd=root, env=child_environment, text=True, capture_output=True)
+        except OSError as error:
+            backends[backend] = {
+                "status": "BLOCKED",
+                "reason": f"backend worker could not launch: {error}",
+                "launch_error": f"{type(error).__name__}: {error}",
+                "backend_output_path": str(backend_output),
+            }
+            return backends
         if completed.returncode:
             evidence: dict[str, object] = {
                 "status": "BLOCKED",

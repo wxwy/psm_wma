@@ -349,6 +349,18 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             self.assertEqual(backends["recurrent"]["partial_backend_json"], {"status": "BLOCKED", "partial": True})
             self.assertNotIn("ttt_fast_weight", backends)
 
+    def test_backend_orchestration_stops_after_launch_error(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "inventory.json"
+            with mock.patch.object(
+                COLLECT.subprocess, "run", side_effect=PermissionError(13, "Permission denied", "collector")
+            ) as run:
+                backends = COLLECT._run_backend_workers(["collector"], output, ROOT, {})
+            self.assertEqual(run.call_count, 1)
+            self.assertEqual(backends["recurrent"]["status"], "BLOCKED")
+            self.assertIn("PermissionError", backends["recurrent"]["launch_error"])
+            self.assertNotIn("ttt_fast_weight", backends)
+
     def test_backend_orchestration_stops_after_zero_exit_blocked_record(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "inventory.json"
