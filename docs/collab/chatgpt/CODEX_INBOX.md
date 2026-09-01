@@ -4083,3 +4083,12 @@ print(json.dumps(result, sort_keys=True))
 - 方案：P4 新 schema 绑定 lexical venv launcher（含 symlink 类型/payload）、real base binary、`pyvenv.cfg`、最小 compose 依赖 distribution manifest；P5 使用 lexical argv[0]，并在任何 Hydra/Pydantic/Cosmos import 前复验 `sys.executable`、`sys.prefix`、base SHA、cfg、manifest 与 `sys.path`。禁止给 uv base 安装依赖或重建/修改 venv。
 - 允许范围：批准后仅允许 root `tools/g0/verify_r09_b2_p4_d005.py`、其标准库 CPU tests、P5 exporter/verifier 与其标准库 CPU tests 的最小实现；必须覆盖 launcher 去虚拟化、symlink/cfg/manifest 篡改、缺失/重复 distribution、prefix/path 和 pair mismatch 的 fail-closed 回归。
 - 禁止范围：不授权 P4 static record 重冻、P5 export/retry、compose、CUDA/GPU、torchrun、模型/dataloader/optimizer/checkpoint 构造、weights/data/MP4、训练、评测、推理或 B2-T。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v0.2
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请只整改 ChatGPT review `2026-09-01_R09_B2_P4_interpreter_provenance_design_55392c1_dc5a799.md` 的 HIGH/MEDIUM；不申请 P4 重冻、P5 export 或任何运行。
+
+- 审核对象：根仓 design commit=`8ebe4d139c089cdeca9307c33aa2b2c3086e1004`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；新增文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v0.2_2026-09-01.md`，v0.1 保留为已审历史。
+- HIGH-1：不再以当前 venv 的 METADATA/RECORD 自证。verifier 从 frozen Gitlink 的 tracked `pyproject.toml`/`uv.lock`，以 CPython3.13/Linux/x86_64/`cu130` group 解析唯一 package/version/wheel SHA；每个 wheel 是 SHA 与 lock 对齐的 external asset，并用 wheel RECORD 校验 installed importable payload。installed payload/RECORD 只能作为对该独立真源的观察证据，改包、改 native extension、改 RECORD、缺/多/错 wheel 一律 FAIL。
+- HIGH-2/MEDIUM：P5 child 固定 lexical launcher `-I -S` 启动；guard 前不处理 site、`.pth`、sitecustomize/usercustomize。bootstrap 以 stdlib 验证 provenance 后，将 `sys.path` 精确重写为 base stdlib/dynload → production framework → bound venv site-packages；任一额外/重复/symlink 等价 external path、`.pth`、customize 或 system-site=true 均 FAIL。
+- 允许范围：批准后仍仅允许 root P4/P5 tooling 与标准库 CPU tests 的最小实现。禁止 P4 record 重冻、P5 export/retry/compose、CUDA/GPU、torchrun、模型/数据/训练/评测/推理/B2-T。
