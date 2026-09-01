@@ -98,6 +98,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             "after_assets": assets,
             "phase_trace": ["offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"],
             "construction_witness": {
+                "constructor_identity": "OmniMoTModel.set_up_tokenizers",
                 "binding_sha256": hashlib.sha256(json.dumps({"repository": None, "revision": None, "tokenizer_type": str(ROOT)}, sort_keys=True).encode()).hexdigest(),
                 "processor_type": "fixture.Processor",
             },
@@ -186,9 +187,9 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                     VERIFY, "FROZEN_SOURCE_PATHS", {}
                 ):
                     self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "FAIL")
-                    COLLECT.run_isolated_worker_processor_construction(record, lambda: object())
-                    self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "PASS")
-                    record["after_assets"] = {}
+                    record["after_assets"] = record["required_assets"]
+                    record["phase_trace"] = ["offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"]
+                    record["construction_witness"] = {"constructor_identity": "arbitrary_callable", "binding_sha256": hashlib.sha256(json.dumps(record["resolved_tokenizer_binding"], sort_keys=True).encode()).hexdigest(), "processor_type": "builtins.object"}
                     self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "FAIL")
             finally:
                 d005_path.unlink(missing_ok=True)
