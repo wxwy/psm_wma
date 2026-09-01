@@ -213,6 +213,7 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
     processor = artifact.get("local_processor", {})
     assets = processor.get("required_assets", {})
     offline = processor.get("offline_environment", {})
+    binding = processor.get("resolved_tokenizer_binding", {})
     provenance = artifact.get("provenance", {})
     backends = {name: artifact.get(name, {}) for name in ("recurrent", "ttt_fast_weight")}
     pass_claimed = artifact.get("status") == "PASS"
@@ -232,6 +233,13 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
         ),
         "processor_package_read_only": (
             processor.get("before_assets") == processor.get("after_assets") == assets
+            if pass_claimed
+            else True
+        ),
+        "resolved_local_tokenizer_binding": (
+            binding.get("repository") is None
+            and binding.get("revision") is None
+            and binding.get("tokenizer_type") == processor.get("canonical_path")
             if pass_claimed
             else True
         ),

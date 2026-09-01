@@ -80,12 +80,15 @@ def prepare_isolated_worker(
     if not ready:
         raise ValueError("local Edge processor assets must exist before worker imports")
     validate_local_tokenizer_binding(before, tokenizer_config)
-    observed = apply_offline_processor_environment(before)
-    return {
-        "local_processor": before,
-        "observed_offline_environment": observed,
-        "before_assets": before["required_assets"],
+    before["resolved_tokenizer_binding"] = {
+        "repository": tokenizer_config.get("repository"),
+        "revision": tokenizer_config.get("revision"),
+        "tokenizer_type": tokenizer_config.get("tokenizer_type"),
     }
+    before["before_assets"] = before["required_assets"]
+    before["after_assets"] = before["required_assets"]
+    before["observed_offline_environment"] = apply_offline_processor_environment(before)
+    return before
 
 
 def main() -> None:

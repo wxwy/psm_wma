@@ -96,6 +96,11 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             },
             "before_assets": assets,
             "after_assets": assets,
+            "resolved_tokenizer_binding": {
+                "repository": None,
+                "revision": None,
+                "tokenizer_type": str(ROOT),
+            },
         }
         recurrent_name = "local_history_runtime.recurrent_backend.fixture"
         recurrent = {
@@ -167,7 +172,17 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             record = COLLECT.prepare_isolated_worker(
                 root, {"repository": None, "revision": None, "tokenizer_type": str(root.resolve())}
             )
-            self.assertEqual(record["observed_offline_environment"], record["local_processor"]["offline_environment"])
+            self.assertEqual(record["observed_offline_environment"], record["offline_environment"])
+            d005_path = ROOT / "artifacts/g0/r09/b2/p3_worker_embedding_test_d005.json"
+            try:
+                artifact = self._passing_artifact(d005_path)
+                artifact["local_processor"] = record
+                with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
+                    VERIFY, "FROZEN_SOURCE_PATHS", {}
+                ):
+                    self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "PASS")
+            finally:
+                d005_path.unlink(missing_ok=True)
             with self.assertRaisesRegex(ValueError, "remote repository"):
                 COLLECT.prepare_isolated_worker(
                     root, {"repository": "nvidia/Cosmos3-Edge", "revision": "main", "tokenizer_type": str(root.resolve())}
