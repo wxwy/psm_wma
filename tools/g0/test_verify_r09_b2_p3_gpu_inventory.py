@@ -363,6 +363,14 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "unmapped"):
             COLLECT._flattened_optimizer_schema({"param_groups.net.unknown.weight.lr": 0.1}, canonical)
 
+    def test_param_group_tensor_metadata_is_json_safe(self) -> None:
+        import torch
+
+        self.assertEqual(
+            COLLECT._canonical_param_group_value(torch.tensor(0.1)),
+            {"kind": "tensor", "shape": [], "dtype": "float32", "numel": 1},
+        )
+
     def test_backend_orchestration_stops_after_nonzero_recurrent(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "inventory.json"
@@ -417,8 +425,8 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "framework directory is missing"):
             COLLECT._set_worker_production_cwd(Path("/missing/p3-framework-root"))
 
-    def test_attempt5_output_paths_are_fresh_and_prior_attempt_evidence_is_unchanged(self) -> None:
-        output = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt5/p3_gpu_inventory.json"
+    def test_attempt6_output_paths_are_fresh_and_prior_attempt_evidence_is_unchanged(self) -> None:
+        output = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory.json"
         d005 = output.with_name("p3_gpu_inventory_d005.json")
         attempt_one = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory_attempt1_d005.json"
         attempt_two = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory.json"

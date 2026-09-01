@@ -330,8 +330,8 @@ def _worker_inventory(
                 "optimizer_index": optimizer_index,
                 "group_index": group_index,
                 "parameters": sorted(entries, key=lambda row: row["name"]),
-                "lr": group["lr"],
-                "weight_decay": group.get("weight_decay"),
+                "lr": _canonical_param_group_value(group["lr"]),
+                "weight_decay": _canonical_param_group_value(group.get("weight_decay")),
             })
     if len(grouped_names) != len(set(grouped_names)):
         raise RuntimeError("optimizer contains a duplicate model parameter")
