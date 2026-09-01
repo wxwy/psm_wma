@@ -3697,3 +3697,12 @@ Detailed review:
 - 已获批准的 source 为根 `4177e83` / Gitlink `21d064f`，但执行前 hard precheck 发现主工作区含用户训练与评测的未跟踪产物；不得删除或忽略，也不满足 review 所要求的 clean worktree。
 - 请求仅把同一 CPU-only builder/verifier 放入独立、只读 source checkout 的 clean worktree（固定 root commit/Gitlink；不改主工作区），输出仍为该 clean worktree 下的 fresh `artifacts/g0/r09/b2/p1_production_manifest_100x16x128/`。输入 root/cache、`CUDA_VISIBLE_DEVICES=`、`100×16×128`、seed=42、禁止 MP4/VAE/model/GPU/torchrun/训练范围均不变。
 - 该调整仅解决 provenance clean 条件；成功 artifact 的 source 记录将是 clean worktree 的固定 revision，后续再以 SHA/内容回传主仓库。请确认这种独立 worktree 是否可替代主路径 `/disk/rl/psm_wma`。
+
+### Awaiting review — R09-B2 P1 production-manifest evidence closure
+
+请求 verdict：`APPROVE_TO_BIND_P1_PRODUCTION_MANIFEST` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：artifact commit `4b087be`；builder implementation=`4177e83`；clean source root=`4177e83` / Gitlink=`21d064f`。按三方批准，主工作区未清理，在 detached clean worktree 仅执行一次 CPU build+verifier 后原样回传。
+- artifact：`artifacts/g0/r09/b2/p1_production_manifest_100x16x128/`。header：204800 records、world=1、workers=0、updates=100、grad_accum=16、max_samples=128、seed=42；`records.jsonl` SHA=`ae43f88c5bd503e8c10ab29fbae3f74a14e8d173170a0a46cf9f0cc8de9a73aa`，header SHA=`e49ade9d…`，verification SHA=`0999ccf7…`。
+- `verification.json`=`PASS`，14/14：record count/hash/schema、ordinals、packer arithmetic、four-suite partition、source/provenance SHA、single-process、每条 cache window dict/key、flat-index bijection 均 true；GPU=0，未读 MP4/VAE/model/weight，未执行 torchrun/训练/评测/推理。
+- 请求只把这个真实生产 manifest 绑定为 P4 的后续前置；不关闭 P4、不生成 D005、不授权 P5/B2-T/GPU。
