@@ -181,6 +181,18 @@ def _validate_request_identity(request: Mapping[str, Any], outcome: Mapping[str,
             or any(request[key] != outcome[key] for key in ("production_source", "request_defaults", "interpreter", "loader_argv", "effective_environment", "native_loader_environment", "payload_manifest", "producer"))):
         raise ValueError("P4-v4 request/result identity schema differs")
     _validate_tool_identity(producer, source_root)
+    bootstrap = source_root / BOOTSTRAP_RELATIVE
+    try:
+        bootstrap_blob = hashlib.sha256(subprocess.check_output(
+            ["git", "-C", str(source_root), "show", f"HEAD:{BOOTSTRAP_RELATIVE}"],
+        )).hexdigest()
+    except subprocess.CalledProcessError as exc:
+        raise ValueError("P4-v4 loader bootstrap Git blob is unreadable") from exc
+    if (bootstrap.is_symlink() or not bootstrap.is_file()
+            or loader["bootstrap_git_blob_sha256"] != bootstrap_blob
+            or loader["bootstrap_current_sha256"] != hashlib.sha256(bootstrap.read_bytes()).hexdigest()
+            or loader["bootstrap_git_blob_sha256"] != loader["bootstrap_current_sha256"]):
+        raise ValueError("P4-v4 loader bootstrap Git/current binding differs")
 
 
 def _validate_roster(run_root: Path, staging_root: Path, token: str, roster: object, manifest: object) -> None:
