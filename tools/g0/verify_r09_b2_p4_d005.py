@@ -83,7 +83,11 @@ def _argv_ok(record: dict[str, object], framework: Path) -> bool:
     return argv == expected and command.get("interpreter") == {"realpath": str(interpreter), "sha256": _sha256_file(interpreter)} and command.get("launcher") == {"kind": "python_module", "module": "torch.distributed.run"}
 
 
-def _env_ok(record: dict[str, object], backend: str) -> bool:
+def _allowed_roots(root: Path) -> tuple[Path, ...]:
+    return (root.resolve(), Path("/localdisk-tmp/models").resolve(), Path("/disk/rl/data").resolve())
+
+
+def _env_ok(record: dict[str, object], backend: str, root: Path) -> bool:
     env = record.get("environment", {})
     values = env.get("set") if isinstance(env, dict) else None
     if not isinstance(values, dict) or set(values) != set(REQUIRED_ENV) | {"PSM_R09_B1_TTT_ENABLED"}:
@@ -95,7 +99,7 @@ def _env_ok(record: dict[str, object], backend: str) -> bool:
             return False
     bare = {"set": values, "unset": sorted(RANK_ENV), "inherit_allowlist": []}
     output_root = Path(values["IMAGINAIRE_OUTPUT_ROOT"])
-    return env.get("unset") == bare["unset"] and env.get("inherit_allowlist") == [] and env.get("sha256") == sha256_json(bare) and output_root.is_absolute() and str(output_root.resolve()) == values["IMAGINAIRE_OUTPUT_ROOT"]
+    return env.get("unset") == bare["unset"] and env.get("inherit_allowlist") == [] and env.get("sha256") == sha256_json(bare) and output_root.is_absolute() and str(output_root.resolve()) == values["IMAGINAIRE_OUTPUT_ROOT"] and any(output_root.is_relative_to(base) for base in _allowed_roots(root))
 
 
 def _inputs_ok(record: dict[str, object], root: Path, p1: dict[str, object], p3: dict[str, object], backend: str) -> bool:
@@ -126,12 +130,12 @@ def _output_ok(record: dict[str, object], root: Path) -> bool:
     expected = Path(derive_job_path(env["set"]["IMAGINAIRE_OUTPUT_ROOT"], outputs.get("job_identity", {}))).resolve()
     required = {"job_identity", "run_root", "checkpoint_step0", "checkpoint_step100", "stdout_log", "capture_dir", "fresh"}
     expected_children = {"checkpoint_step0": expected / "checkpoints/iter_000000000", "checkpoint_step100": expected / "checkpoints/iter_000000100", "stdout_log": expected / "stdout.log", "capture_dir": expected / "capture"}
-    if not expected.is_relative_to(root.resolve()) or set(outputs) != required or outputs.get("run_root") != str(expected) or outputs.get("fresh") is not True or any(outputs[key] != str(value) for key, value in expected_children.items()):
+    if not any(expected.is_relative_to(base) for base in _allowed_roots(root)) or set(outputs) != required or outputs.get("run_root") != str(expected) or outputs.get("fresh") is not True or any(outputs[key] != str(value) for key, value in expected_children.items()):
         return False
     try:
         tracked = subprocess.run(["git", "-C", str(root), "ls-files", "--error-unmatch", str(expected.relative_to(root.resolve()))], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
     except ValueError:
-        return False
+        tracked = False
     return not expected.exists() and not tracked
 
 
@@ -147,7 +151,7 @@ def _check(record: dict[str, object], root: Path, p1: dict[str, object], p3: dic
     return {
         "schema": record.get("schema_version") == SCHEMA and record.get("status") == "FROZEN_NOT_EXECUTED", "non_executable": command.get("executable") is False,
         "source": _source_ok(record.get("source"), root), "cwd": command.get("cwd") == str(framework), "argv": _argv_ok(record, framework),
-        "environment": _env_ok(record, backend), "inputs": _inputs_ok(record, root, p1, p3, backend), "env_assets_bound": _env_assets_bound(record) if isinstance(record.get("inputs"), dict) and isinstance(record.get("environment"), dict) else False, "outputs": _output_ok(record, root), "budget": _budget_ok(record),
+        "environment": _env_ok(record, backend, root), "inputs": _inputs_ok(record, root, p1, p3, backend), "env_assets_bound": _env_assets_bound(record) if isinstance(record.get("inputs"), dict) and isinstance(record.get("environment"), dict) else False, "outputs": _output_ok(record, root), "budget": _budget_ok(record),
         "command_digest": command.get("sha256") == sha256_json({key: value for key, value in command.items() if key != "sha256"}),
         "record_digest": record.get("d005_sha256") == sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}),
     }

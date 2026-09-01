@@ -88,3 +88,10 @@ class P4D005Test(unittest.TestCase):
             recurrent, ttt, p1, p3 = self._pair(root / "four")
             Path(recurrent["outputs"]["run_root"]).mkdir(parents=True)
             self.assertEqual(verify_pair(recurrent, ttt, root / "four", p1, p3)["status"], "FAIL")
+
+    def test_rejects_disallowed_output_root(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); recurrent, ttt, p1, p3 = self._pair(root)
+            recurrent["environment"]["set"]["IMAGINAIRE_OUTPUT_ROOT"] = "/tmp/not_allowlisted"
+            recurrent["environment"]["sha256"] = sha256_json({key: recurrent["environment"][key] for key in ("set", "unset", "inherit_allowlist")})
+            self.assertEqual(verify_pair(finalize(recurrent), ttt, root, p1, p3)["status"], "FAIL")
