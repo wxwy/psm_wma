@@ -1,6 +1,6 @@
 # 当前协作状态
 
-更新时间：2026-08-31
+更新时间：2026-09-01
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
@@ -12,11 +12,8 @@
 
 ## 当前最小步骤
 
-- `G0-R09-B2-P3-GPU-ONLY-RUN`（2026-09-01，IN_PROGRESS）：ChatGPT 接受 worker CWD 修复，但禁止第三次覆盖 tracked 的 attempt-2 evidence，否则 verifier 的 `root_tracked_clean` 必 fail。现仅修改 collector/test/runbook：第三次输出冻结为新的 `artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/`；parent 写 D005 前 hard-gate aggregate/D005/two-backend 路径均不存在且 Git 未跟踪，回归核验 attempt-1/2 SHA 不变。需重新三方审核，禁止 GPU 重试。
+- `G0-R09-B2-P3-GPU-ONLY-RUN`（2026-09-01，DONE）：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-01_R09_B2_P3_membership_closure_2daa461_6a60b92.md`、Kimi、MM 均 `APPROVE_TO_CLOSE_B2_P3_GPU_ONLY`。唯一 attempt-6 的 recurrent/TTT production optimizer inventory 均 PASS；单卡 offline/local processor、无 forward/backward/optimizer/scheduler step、无 weights/checkpoint/data/VAE I/O，峰值 25.28 GiB < 28 GiB。新版 verifier 从冻结 selector 及实际 parameter name 独立重算 row-level selector/optimizer membership，并在 collection root=`269540e` clean worktree 上对同一证据复核 PASS；未重跑 GPU。该 closure 仅解除 P3 actual optimizer-membership blocker，不授权 P4/P5、B2-T、训练、评测、推理或任何新增 GPU 运行。根仓 closure request=`2daa461`、实现=`6a60b92`、ChatGPT approval=`42a4b53`、子模块/Gitlink=`21d064f`。
 
-- `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，IN_PROGRESS）：GPT `998d9fb` 指出 `1452cb6` 的 prepare binding A 与 construction input B 可分叉。现已让 `prepare_isolated_worker()` 接收真实 resolved `vlm_config` 并规范化其 tokenizer binding；`run_production_processor_construction()` 在导入/调用共享 helper 前重新规范化实际 input 并要求与已验证 binding 完全相等，witness SHA 取实际 construction input。远端 B、不同本地路径 B 均 fail-fast；`py_compile`、unittest 2 passed、双仓 diff-check PASS。未调用 helper/GPU/HF/model；待提交复审。
-
-- `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，IN_PROGRESS）：GPT `bd26b05`、Kimi、MM 已批准 `f9eb2ca` 的 frozen Python recipe identity 篡改负向回归。已实现未来隔离 worker 的导入前 fail-closed hard-gate：六配置资产预断言、三项离线环境应用并回读、解析后 tokenizer 必须为 canonical 本地路径且 repository/revision 均为 `None`。标准库 unittest 现为 2 passed（本地 binding 通过、`nvidia/Cosmos3-Edge/main` 远端 binding 拒绝），`py_compile`/`git diff --check` PASS；本轮不调用 worker、不导入模型/processor、不运行 GPU。待提交并独立审核；每次审核监控固定先 `git fetch origin V2` 并 fast-forward。
 
 - `FIX-LIBERO-WORKER-DEFAULT-12`（2026-09-01，DONE）：用户将 LIBERO 默认 dataloader worker 固定为 12。Python 配置、tmux 入口已为 12；已将 `cosmos-framework/examples/launch_sft_action_policy_libero_edge_all.sh` 顶部过期“32”修正为“12”。`bash -n`、三入口一致性检索、双仓 `git diff --check` PASS；GPT review=`docs/collab/chatgpt/reviews/2026-09-01_LIBERO_worker_default_4cfa359_0af5d53.md`、Kimi、MM 均 APPROVE；未启动训练/GPU。子模块=`0af5d53`，根仓审核锚点=`4cfa359`。
 
