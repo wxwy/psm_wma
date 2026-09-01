@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, bound_exporter_source, canonicalize, parse_d005_command, run_parent_export, sanitized_environment, validate_production_root, validate_root_isolation
+from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, bound_exporter_source, build_pair_requests, canonicalize, parse_d005_command, run_parent_export, sanitized_environment, validate_production_root, validate_root_isolation
 from tools.g0.verify_r09_b2_p5_full_config_diff import P4_RECORD_SHA256, _expected, _exporter_source, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
 
@@ -121,4 +121,14 @@ class P5Test(unittest.TestCase):
             path = Path(temp) / "request.json"; path.write_text(json.dumps(request))
             result = subprocess.run([record["command"]["interpreter"]["realpath"], str(root / "tools/g0/export_r09_b2_p5_resolved_config.py"), "--child-request", str(path), "--child-output", str(Path(temp) / "tree.json")], cwd=record["command"]["cwd"], env=record["environment"]["set"], text=True, capture_output=True, check=False)
             self.assertNotEqual(result.returncode, 0)
-            self.assertIn("cwd/interpreter differs", result.stderr)
+            self.assertIn("request schema/backend is not verifier-owned", result.stderr)
+
+    def test_arbitrary_consistent_child_request_is_rejected_before_compose(self):
+        root = Path(__file__).resolve().parents[2]; records, _, _, _ = _expected(root); record = records["recurrent"]
+        requests = build_pair_requests(records["recurrent"], records["ttt_fast_weight"], production_root=Path("/disk/rl/psm_wma_p4_d005_retry"), evidence_root=root)
+        forged = json.loads(json.dumps(requests["recurrent"])); forged["toml"] = "examples/toml/attacker.toml"
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "forged.json"; path.write_text(json.dumps(forged))
+            result = subprocess.run([record["command"]["interpreter"]["realpath"], str(root / "tools/g0/export_r09_b2_p5_resolved_config.py"), "--child-request", str(path), "--child-output", str(Path(temp) / "tree.json")], cwd=record["command"]["cwd"], env=record["environment"]["set"], text=True, capture_output=True, check=False)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("not a frozen D005-bound identity", result.stderr)

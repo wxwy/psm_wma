@@ -21,6 +21,11 @@ from typing import Any
 SCHEMA = "r09_b2_p5_full_config_diff_v2"
 FROZEN_OVERRIDES = ("trainer.max_iter=100", "trainer.save_zero_checkpoint=true")
 FROZEN_PRODUCTION_ROOT = Path("/disk/rl/psm_wma_p4_d005_retry")
+FROZEN_CHILD_REQUEST_SHA256 = {
+    "recurrent": "88017ed91aa50398c20b799844e8efee8d81ab55cbf3d131d9c845b1b0bd87ed",
+    "ttt_fast_weight": "dffa6b83f65f0e937e55d5c5d5440a82c224c22696b6755c90f6f401be269c7b",
+}
+CHILD_REQUEST_KEYS = {"backend", "root", "toml", "overrides", "command_argv", "cwd", "interpreter", "environment", "d005_sha256", "p4_record_sha256", "p4_verification_sha256", "p3_verifier_sha256", "source", "budget", "inputs", "outputs"}
 
 
 class CanonicalizationError(ValueError):
@@ -182,6 +187,16 @@ def build_child_request(record: Mapping[str, Any], *, production_root: Path, bac
             "d005_sha256": record["d005_sha256"], "p4_record_sha256": p4_record_sha256, "p4_verification_sha256": p4_verification_sha256, "p3_verifier_sha256": p3_verifier_sha256, "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
 
 
+def validate_child_request(payload: Mapping[str, Any]) -> Mapping[str, Any]:
+    """Require one immutable parent/verifier-owned D005 request before any compose import."""
+    backend = payload.get("backend")
+    if set(payload) != CHILD_REQUEST_KEYS or backend not in FROZEN_CHILD_REQUEST_SHA256:
+        raise ValueError("P5 child request schema/backend is not verifier-owned")
+    if sha256_json(payload) != FROZEN_CHILD_REQUEST_SHA256[backend]:
+        raise ValueError("P5 child request is not a frozen D005-bound identity")
+    return payload
+
+
 def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path) -> dict[str, dict[str, Any]]:
     """Parent-only D005 gate; later approved execution consumes only these requests."""
     from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
@@ -191,8 +206,11 @@ def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *,
     evidence, record_sha256, p4_verification_sha256 = _evidence_records(evidence_root.resolve())
     if recurrent != evidence["recurrent"] or ttt != evidence["ttt_fast_weight"]:
         raise ValueError("parent D005 records differ from frozen evidence_root records")
-    return {"recurrent": build_child_request(recurrent, production_root=root, backend="recurrent", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_record_sha256=record_sha256["recurrent"], p4_verification_sha256=p4_verification_sha256),
-            "ttt_fast_weight": build_child_request(ttt, production_root=root, backend="ttt_fast_weight", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_record_sha256=record_sha256["ttt_fast_weight"], p4_verification_sha256=p4_verification_sha256)}
+    requests = {"recurrent": build_child_request(recurrent, production_root=root, backend="recurrent", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_record_sha256=record_sha256["recurrent"], p4_verification_sha256=p4_verification_sha256),
+                "ttt_fast_weight": build_child_request(ttt, production_root=root, backend="ttt_fast_weight", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_record_sha256=record_sha256["ttt_fast_weight"], p4_verification_sha256=p4_verification_sha256)}
+    for request in requests.values():
+        validate_child_request(request)
+    return requests
 
 
 def bound_exporter_source(exporter_root: Path) -> tuple[dict[str, Any], Any]:
@@ -260,7 +278,7 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
 
 def _child(request: Path, output: Path) -> None:
     """Approved later only: compose one backend without launch/validate/instantiate."""
-    payload = json.loads(request.read_text())
+    payload = validate_child_request(json.loads(request.read_text()))
     if Path.cwd().resolve() != Path(payload["cwd"]).resolve() or Path(sys.executable).resolve() != Path(payload["interpreter"]["realpath"]).resolve():
         raise RuntimeError("P5 child cwd/interpreter differs from D005-bound request")
     if dict(os.environ) != payload["environment"]["effective"]:
