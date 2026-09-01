@@ -1,0 +1,42 @@
+{
+  "checks": {
+    "distinct_outputs": true,
+    "matched": {
+      "budget": true,
+      "external_assets": true,
+      "p1_manifest": true,
+      "p3_sha256": true,
+      "source": true
+    },
+    "recurrent": {
+      "argv": true,
+      "budget": true,
+      "command_digest": true,
+      "cwd": true,
+      "env_assets_bound": true,
+      "environment": true,
+      "inputs": true,
+      "non_executable": true,
+      "outputs": true,
+      "record_digest": true,
+      "schema": true,
+      "source": true
+    },
+    "ttt_fast_weight": {
+      "argv": true,
+      "budget": true,
+      "command_digest": true,
+      "cwd": true,
+      "env_assets_bound": true,
+      "environment": true,
+      "inputs": true,
+      "non_executable": true,
+      "outputs": true,
+      "record_digest": true,
+      "schema": true,
+      "source": true
+    }
+  },
+  "schema_version": "r09_b2_p4_d005_verifier_v2",
+  "status": "PASS"
+}
