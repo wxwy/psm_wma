@@ -3568,3 +3568,13 @@ Detailed review:
 - 静态证据：`cosmos-framework/.venv/bin/python -m py_compile tools/g0/collect_r09_b2_p3_gpu_inventory.py tools/g0/verify_r09_b2_p3_gpu_inventory.py tools/g0/test_verify_r09_b2_p3_gpu_inventory.py` PASS；`cosmos-framework/.venv/bin/python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 17/17 PASS；`git diff --check` PASS。整改后未执行 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。
 - 唯一待授权命令见 runbook `docs/build/PSM-WMA_R09_B2_P3_GPU_only_inventory_runbook_v0.1_2026-09-01.md:26-45`，输出固定为 fresh/untracked `artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/`；单 `CUDA_VISIBLE_DEVICES=0`、`WORLD_SIZE=1`、离线/local processor、`load_vision_tokenizer=false`，仅 inventory `ModelWrapper.state_dict()` 与 `OptimizersContainer.state_dict()` schema。
 - 禁止网络/远端 tokenizer、数据/VAE/weight/checkpoint I/O、forward/backward/optimizer/scheduler step、手工 worker、自动重试/换卡、多卡、B2-T/P4/P5、训练/评测/推理/closed-loop/Global/Agent/RL。任一非零、`BLOCKED`/`FAIL`、超 28 GiB、非单卡或禁止行为立即终止、留证据且不自动重跑。此前 approval 不可复用；仅三方针对本 SHA 一致批准后才允许一次 attempt-6。
+
+### Awaiting review — R09-B2 P3 scalar Tensor metadata value repair / fresh attempt-6
+
+请求 verdict：`APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `c154374e79a20c569c066951a040c8e7fa52d85f`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。ChatGPT `025b65d` 的 attempt-6 review HIGH 已处理；attempt-6 尚未运行，路径仍 fresh/untracked。
+- 整改：`tools/g0/collect_r09_b2_p3_gpu_inventory.py:_canonical_param_group_value` 对 **param-group** Tensor 仅接受 finite numeric 单元素值，输出固定 `{kind,shape,dtype,numel,value}`；多元素或非有限/non-numeric Tensor fail-closed。optimizer `state.*` 仍严格只输出 tensor metadata，不复制 tensor 内容。
+- 完整性回归：同 shape/dtype 的 scalar Tensor `0.25` 与 `0.5` 输出不同且携带精确 `value`；multi-element/NaN 均拒绝。另在 verifier fixture 将 recurrent/TTT 共享 param-group `lr` 设成同 metadata、不同 Tensor `value`，精确断言 `shared_dcp_optimizer_schema_metadata=false` 且 verifier=`FAIL`。
+- 静态证据：`cosmos-framework/.venv/bin/python -m py_compile tools/g0/collect_r09_b2_p3_gpu_inventory.py tools/g0/verify_r09_b2_p3_gpu_inventory.py tools/g0/test_verify_r09_b2_p3_gpu_inventory.py` PASS；`cosmos-framework/.venv/bin/python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 18/18 PASS；`git diff --check` PASS。无 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。
+- 未改变的门：canonical FQN/owner_fqn、28 GiB cap、recurrent→TTT fail-stop、single GPU、offline/local processor、fresh-output、禁止网络/数据/VAE/weight/checkpoint I/O、forward/backward/optimizer/scheduler step、手工 worker、重试/换卡/多卡及 B2-T/P4/P5/训练/评测/推理/closed-loop/Global/Agent/RL。仅三方针对本 SHA 一致批准后，可按 runbook 唯一命令执行一次 attempt-6。
