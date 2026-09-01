@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, canonicalize, parse_d005_command, sanitized_environment, validate_production_root, validate_root_isolation
+from tools.g0.export_r09_b2_p5_resolved_config import CanonicalizationError, bound_exporter_source, canonicalize, parse_d005_command, run_parent_export, sanitized_environment, validate_production_root, validate_root_isolation
 from tools.g0.verify_r09_b2_p5_full_config_diff import P4_RECORD_SHA256, _expected, _exporter_source, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_VERIFIER_SHA256
 
@@ -95,6 +95,24 @@ class P5Test(unittest.TestCase):
             alias = Path(temp) / "root-alias"; alias.symlink_to(root, target_is_directory=True)
             with self.assertRaises(ValueError):
                 validate_root_isolation(root, alias)
+
+    def test_execution_identity_and_failed_attempt_are_fail_closed(self):
+        root = Path(__file__).resolve().parents[2]
+        with tempfile.TemporaryDirectory() as temp:
+            temporary = Path(temp); exporter = self._exporter_worktree(root, temporary)
+            with self.assertRaises(ValueError):
+                bound_exporter_source(exporter)
+            output = temporary / "canonical-output"
+            request = {"interpreter": {"realpath": "/bin/false"}, "cwd": str(root), "environment": {"effective": {}}, "backend": "recurrent"}
+            with (patch("tools.g0.export_r09_b2_p5_resolved_config.build_pair_requests", return_value={"recurrent": request}),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.bound_exporter_source", return_value=({}, lambda *_: {"status": "PASS"})),
+                  patch("tools.g0.export_r09_b2_p5_resolved_config.subprocess.run", side_effect=subprocess.CalledProcessError(7, "child"))):
+                with self.assertRaises(subprocess.CalledProcessError):
+                    run_parent_export({}, {}, production_root=Path("/disk/rl/psm_wma_p4_d005_retry"), evidence_root=root, exporter_root=exporter, output_dir=output)
+            attempts = list(temporary.glob(".canonical-output.attempt-*"))
+            self.assertEqual(len(attempts), 1)
+            self.assertEqual(json.loads((attempts[0] / "failure.json").read_text())["status"], "FAIL")
+            self.assertFalse(output.exists())
 
     def test_child_bootstrap_reaches_precompose_guard_under_d005_env(self):
         root = Path(__file__).resolve().parents[2]; records, _, _, _ = _expected(root); record = records["recurrent"]

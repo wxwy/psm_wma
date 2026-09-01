@@ -195,12 +195,31 @@ def build_pair_requests(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *,
             "ttt_fast_weight": build_child_request(ttt, production_root=root, backend="ttt_fast_weight", p3_verifier_sha256=P3_VERIFIER_SHA256, p4_record_sha256=record_sha256["ttt_fast_weight"], p4_verification_sha256=p4_verification_sha256)}
 
 
-def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, Any], *, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
+def bound_exporter_source(exporter_root: Path) -> tuple[dict[str, Any], Any]:
+    """Ensure the parent, child script, and verifier are exactly exporter_root-owned code."""
+    root = exporter_root.resolve()
+    exporter_path = (root / "tools/g0/export_r09_b2_p5_resolved_config.py").resolve()
+    verifier_path = (root / "tools/g0/verify_r09_b2_p5_full_config_diff.py").resolve()
+    if Path(__file__).resolve() != exporter_path:
+        raise ValueError("executing P5 exporter is not owned by exporter_root")
+    from tools.g0 import verify_r09_b2_p5_full_config_diff as verifier
+    if Path(verifier.__file__).resolve() != verifier_path:
+        raise ValueError("executing P5 verifier is not owned by exporter_root")
+    source = verifier._exporter_source(root)
+    if source["tool_sha256"] != {
+        "tools/g0/export_r09_b2_p5_resolved_config.py": hashlib.sha256(exporter_path.read_bytes()).hexdigest(),
+        "tools/g0/verify_r09_b2_p5_full_config_diff.py": hashlib.sha256(verifier_path.read_bytes()).hexdigest(),
+    }:
+        raise ValueError("executing P5 exporter/verifier SHA differs from exporter_root")
+    return source, verifier.verify_pair
+
+
+def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, Any], *, exporter_source: Mapping[str, Any]) -> dict[str, Any]:
     """Construct the complete verifier-owned envelope from one D005-bound child result."""
     record = request
     command = record["interpreter"]
     return {"schema_version": SCHEMA, "backend": record["backend"],
-            "provenance": {"production_source": record["source"], "exporter_source": {"root_revision": exporter_root_revision, "tool_sha256": tool_sha256},
+            "provenance": {"production_source": record["source"], "exporter_source": exporter_source,
                            "inputs": {"p4_record_sha256": record["p4_record_sha256"], "p4_d005_sha256": record["d005_sha256"], "p4_verification_sha256": record["p4_verification_sha256"],
                                       "p3_inventory_path": record["inputs"]["p3_inventory"]["path"], "p3_inventory_sha256": record["inputs"]["p3_inventory"]["sha256"], "p3_verifier_sha256": record["p3_verifier_sha256"]}},
             "effective_launch": {"command": {"argv": record["command_argv"], "cwd": record["cwd"], "interpreter": command, "toml": record["toml"], "trailing_overrides": record["overrides"]},
@@ -209,7 +228,7 @@ def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, 
             "resolved_config": resolved_config}
 
 
-def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path, exporter_root: Path, output_dir: Path, tool_sha256: str, exporter_root_revision: str) -> dict[str, Any]:
+def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, production_root: Path, evidence_root: Path, exporter_root: Path, output_dir: Path) -> dict[str, Any]:
     """Future approved path: two D005-bound fresh children, envelope assembly, then verifier."""
     production_root, evidence_root, exporter_root = validate_root_isolation(production_root, evidence_root, exporter_root)
     requests = build_pair_requests(recurrent, ttt, production_root=production_root, evidence_root=evidence_root)
@@ -217,21 +236,26 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
         raise FileExistsError(f"canonical P5 output already exists: {output_dir}")
     attempt_dir = output_dir.parent / f".{output_dir.name}.attempt-{uuid.uuid4().hex}"
     attempt_dir.mkdir(parents=True, exist_ok=False)
-    envelopes: dict[str, Any] = {}
-    for backend, request in requests.items():
-        request_path, tree_path = attempt_dir / f"{backend}.request.json", attempt_dir / f"{backend}.tree.json"
-        request_path.write_bytes(canonical_bytes(request))
-        subprocess.run([request["interpreter"]["realpath"], str(Path(__file__).resolve()), "--child-request", str(request_path), "--child-output", str(tree_path)], cwd=request["cwd"], env=request["environment"]["effective"], check=True)
-        envelopes[backend] = assemble_envelope(request, json.loads(tree_path.read_text()), tool_sha256=tool_sha256, exporter_root_revision=exporter_root_revision)
-    from tools.g0.verify_r09_b2_p5_full_config_diff import verify_pair
-    result = verify_pair(envelopes["recurrent"], envelopes["ttt_fast_weight"], evidence_root, exporter_root)
-    if result["status"] != "PASS":
-        raise RuntimeError("P5 parent refuses to write an envelope pair that fails its verifier")
-    for backend, envelope in envelopes.items():
-        (attempt_dir / f"{backend}_resolved.json").write_bytes(canonical_bytes(envelope))
-    (attempt_dir / "verification.json").write_bytes(canonical_bytes(result))
-    attempt_dir.rename(output_dir)
-    return result
+    try:
+        exporter_source, verify_pair = bound_exporter_source(exporter_root)
+        exporter_script = exporter_root / "tools/g0/export_r09_b2_p5_resolved_config.py"
+        envelopes: dict[str, Any] = {}
+        for backend, request in requests.items():
+            request_path, tree_path = attempt_dir / f"{backend}.request.json", attempt_dir / f"{backend}.tree.json"
+            request_path.write_bytes(canonical_bytes(request))
+            subprocess.run([request["interpreter"]["realpath"], str(exporter_script), "--child-request", str(request_path), "--child-output", str(tree_path)], cwd=request["cwd"], env=request["environment"]["effective"], check=True)
+            envelopes[backend] = assemble_envelope(request, json.loads(tree_path.read_text()), exporter_source=exporter_source)
+        result = verify_pair(envelopes["recurrent"], envelopes["ttt_fast_weight"], evidence_root, exporter_root)
+        if result["status"] != "PASS":
+            raise RuntimeError("P5 parent refuses to write an envelope pair that fails its verifier")
+        for backend, envelope in envelopes.items():
+            (attempt_dir / f"{backend}_resolved.json").write_bytes(canonical_bytes(envelope))
+        (attempt_dir / "verification.json").write_bytes(canonical_bytes(result))
+        attempt_dir.rename(output_dir)
+        return result
+    except Exception as exc:
+        (attempt_dir / "failure.json").write_bytes(canonical_bytes({"schema_version": SCHEMA, "status": "FAIL", "stage": "parent_export", "error_type": type(exc).__name__, "error": str(exc)}))
+        raise
 
 
 def _child(request: Path, output: Path) -> None:
