@@ -3364,3 +3364,14 @@ Detailed review:
 - 改动：新增 `tools/g0/test_verify_r09_b2_p3_gpu_inventory.py`。该标准库 unittest 先构造通过其余 P3 hard-gate 的最小 PASS fixture，TOML identity 保持固定，只临时篡改冻结 Python production recipe `action_policy_libero_edge_all.py`，断言 `source_hashes_valid=false` 且最终 verifier=`FAIL`；finally 逐字节恢复原 source 和临时 D005 fixture。
 - 证据：`python -m py_compile tools/g0/verify_r09_b2_p3_gpu_inventory.py tools/g0/test_verify_r09_b2_p3_gpu_inventory.py`、`python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py`（1 passed）、`git diff --check` PASS。
 - 允许范围：仅 root-side 静态 verifier 负向回归。禁止 GPU、processor/model 构造、权重/VAE/数据/dataloader、checkpoint I/O、forward/backward/step、B2-T/P4/P5、训练/评测/推理。
+
+---
+
+## 2026-09-01 — R09-B2 P3 isolated worker import-precondition 审核请求
+
+请求 verdict：`APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `3af2bcb`；子模块/Gitlink `0af5d53`。
+- 改动：collector 新增 future isolated-worker 的导入前 hard-gate：六资产必须齐全；先应用并回读离线环境；解析后 `repository/revision` 必须均为 `None`，`tokenizer_type` 必须等于 canonical 本地 Edge 路径。未调用该 worker。
+- 证据：`py_compile`、`python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py`（2 passed）、`git diff --check` PASS。
+- 禁止范围：GPU、HF/Transformers/processor/model 构造、权重/VAE/数据/dataloader、DCP I/O、forward/backward/step、B2-T/P4/P5、训练/评测/推理。
