@@ -183,11 +183,11 @@ def build_child_request(record: Mapping[str, Any], *, production_root: Path, bac
     toml, overrides = parse_d005_command(record)
     command, environment = record["command"], record["environment"]
     cwd = Path(command["cwd"]).resolve()
-    interpreter = Path(command["interpreter"]["realpath"]).resolve()
-    if cwd != (production_root / "cosmos-framework").resolve() or not interpreter.is_absolute():
+    interpreter = Path(command["interpreter"]["path"])
+    if cwd != (production_root / "cosmos-framework").resolve() or not interpreter.is_absolute() or interpreter.resolve() != Path(command["interpreter"]["realpath"]):
         raise ValueError("D005 cwd/interpreter is not canonical for this root")
     return {"backend": backend, "root": str(production_root.resolve()), "toml": toml, "overrides": overrides, "command_argv": command["argv"],
-            "cwd": str(cwd), "interpreter": {"realpath": str(interpreter), "sha256": command["interpreter"]["sha256"]},
+            "cwd": str(cwd), "interpreter": dict(command["interpreter"]),
             "environment": {"contract": environment, "effective": sanitized_environment(environment, os.environ)},
             "d005_sha256": record["d005_sha256"], "p4_record_sha256": p4_record_sha256, "p4_verification_sha256": p4_verification_sha256, "p3_verifier_sha256": p3_verifier_sha256, "source": record["source"], "budget": record["budget"], "inputs": record["inputs"], "outputs": record["outputs"]}
 
@@ -266,7 +266,7 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
         for backend, request in requests.items():
             request_path, tree_path = attempt_dir / f"{backend}.request.json", attempt_dir / f"{backend}.tree.json"
             request_path.write_bytes(canonical_bytes(request))
-            subprocess.run([request["interpreter"]["realpath"], str(exporter_script), "--child-request", str(request_path), "--child-output", str(tree_path)], cwd=request["cwd"], env=request["environment"]["effective"], check=True)
+            subprocess.run([request["interpreter"]["path"], str(exporter_script), "--child-request", str(request_path), "--child-output", str(tree_path)], cwd=request["cwd"], env=request["environment"]["effective"], check=True)
             envelopes[backend] = assemble_envelope(request, json.loads(tree_path.read_text()), exporter_source=exporter_source)
         result = verify_pair(envelopes["recurrent"], envelopes["ttt_fast_weight"], evidence_root, exporter_root)
         if result["status"] != "PASS":
@@ -284,7 +284,7 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
 def _child(request: Path, output: Path) -> None:
     """Approved later only: compose one backend without launch/validate/instantiate."""
     payload = validate_child_request(json.loads(request.read_text()))
-    if Path.cwd().resolve() != Path(payload["cwd"]).resolve() or Path(sys.executable).resolve() != Path(payload["interpreter"]["realpath"]).resolve():
+    if Path.cwd().resolve() != Path(payload["cwd"]).resolve() or Path(os.path.abspath(sys.executable)) != Path(payload["interpreter"]["path"]):
         raise RuntimeError("P5 child cwd/interpreter differs from D005-bound request")
     if dict(os.environ) != payload["environment"]["effective"]:
         raise RuntimeError("P5 child environment differs from D005-bound request")

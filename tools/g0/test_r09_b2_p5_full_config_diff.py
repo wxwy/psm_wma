@@ -109,7 +109,7 @@ class P5Test(unittest.TestCase):
             with self.assertRaises(ValueError):
                 bound_exporter_source(exporter)
             output = temporary / "canonical-output"
-            request = {"interpreter": {"realpath": "/bin/false"}, "cwd": str(root), "environment": {"effective": {}}, "backend": "recurrent"}
+            request = {"interpreter": {"path": "/bin/false", "realpath": "/bin/false"}, "cwd": str(root), "environment": {"effective": {}}, "backend": "recurrent"}
             with (patch("tools.g0.export_r09_b2_p5_resolved_config.build_pair_requests", return_value={"recurrent": request}),
                   patch("tools.g0.export_r09_b2_p5_resolved_config.bound_exporter_source", return_value=({}, lambda *_: {"status": "PASS"})),
                   patch("tools.g0.export_r09_b2_p5_resolved_config.subprocess.run", side_effect=subprocess.CalledProcessError(7, "child"))):

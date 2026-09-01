@@ -10,6 +10,8 @@ from pathlib import Path
 from unittest.mock import patch
 
 import tools.g0.verify_r09_b2_p4_d005 as p4
+from tools.g0.r09_b2_interpreter_provenance import lexical_interpreter
+from tools.g0.r09_b2_interpreter_provenance import analyse_python_contract
 from tools.g0.write_r09_b2_p4_d005 import finalize, sha256_json
 
 
@@ -39,6 +41,7 @@ class P4D005Test(unittest.TestCase):
         subprocess.run(["git", "-C", str(root), "commit", "-qm", "root"], check=True)
         for name in ("base", "edge", "vae", "libero", "cache"):
             (root / "assets" / name).mkdir(parents=True); (root / "assets" / name / "data").write_text(name)
+        (root / "staging").mkdir(); (root / "staging" / "native.py").write_text("import ctypes\nctypes.CDLL('fixed.so')\n")
 
     def _frozen(self, root: Path) -> tuple[dict[str, object], dict[str, object]]:
         p1_path = root / "refs/p1/header.json"; p3_path = root / "refs/p3/inventory.json"; proof_path = root / "refs/p3/verifier.json"
@@ -63,13 +66,15 @@ class P4D005Test(unittest.TestCase):
         values = dict(p4.REQUIRED_ENV)
         values.update({"PSM_R09_B2_STREAM_MANIFEST_ROOT": str((root / refs["P1_HEADER_RELATIVE"]).parent.resolve()), "LIBERO_LATENT_CACHE_ROOT": str(root / "assets/cache"), "LIBERO_ROOT": str(root / "assets/libero"), "BASE_CHECKPOINT_PATH": str(root / "assets/base"), "EDGE_POLICY_CHECKPOINT": str(root / "assets/edge"), "WAN_VAE_PATH": str(root / "assets/vae"), "PYTHONPATH": str(framework), "IMAGINAIRE_OUTPUT_ROOT": str(output), "PSM_R09_B1_TTT_ENABLED": "1" if backend == "ttt_fast_weight" else "0"})
         env = {"set": values, "unset": sorted(p4.RANK_ENV | p4.SANITIZED_ENV), "inherit_allowlist": []}; env["sha256"] = sha256_json(env)
-        assets = {"base_checkpoint": self._asset(root / "assets/base"), "edge_processor": self._asset(root / "assets/edge"), "wan_vae": self._asset(root / "assets/vae"), "libero_root": self._asset(root / "assets/libero"), "stream_manifest": self._asset((root / refs["P1_HEADER_RELATIVE"]).parent), "latent_cache": self._asset(root / "assets/cache"), "interpreter": self._asset(python)}
+        assets = {"base_checkpoint": self._asset(root / "assets/base"), "edge_processor": self._asset(root / "assets/edge"), "wan_vae": self._asset(root / "assets/vae"), "libero_root": self._asset(root / "assets/libero"), "stream_manifest": self._asset((root / refs["P1_HEADER_RELATIVE"]).parent), "latent_cache": self._asset(root / "assets/cache"), "interpreter": lexical_interpreter(python)}
         keys = p4.EXPECTED_TTT_SELECTOR_KEYS if backend == "ttt_fast_weight" else p4.EXPECTED_RECURRENT_SELECTOR_KEYS
         inputs = {"p1_manifest": {"path": refs["P1_HEADER_RELATIVE"], "sha256": refs["P1_HEADER_SHA256"], "records_sha256": p1["records_sha256"], "record_count": p4.PRODUCTION_P1["record_count"]}, "p3_inventory": {"path": refs["P3_ARTIFACT_RELATIVE"], "sha256": refs["P3_ARTIFACT_SHA256"], "backend_contract": {"selector_keys": list(keys), "optimizer_membership_sha256": sha256_json(sorted(f"net.{key}.weight" for key in keys))}}, "external_assets": assets}
-        command = {"cwd": str(framework.resolve()), "interpreter": {"realpath": str(python.resolve()), "sha256": p4._sha256_file(python)}, "argv": [str(python.resolve()), "-m", "torch.distributed.run", "--standalone", "--nnodes=1", "--nproc-per-node=1", "-m", "cosmos_framework.scripts.train", f"--sft-toml={p4.TOML_RELATIVE}", "trainer.max_iter=100", "trainer.save_zero_checkpoint=true"], "executable": False, "launcher": {"kind": "python_module", "module": "torch.distributed.run"}}
+        interpreter = lexical_interpreter(python)
+        command = {"cwd": str(framework.resolve()), "interpreter": interpreter, "argv": [interpreter["path"], "-m", "torch.distributed.run", "--standalone", "--nnodes=1", "--nproc-per-node=1", "-m", "cosmos_framework.scripts.train", f"--sft-toml={p4.TOML_RELATIVE}", "trainer.max_iter=100", "trainer.save_zero_checkpoint=true"], "executable": False, "launcher": {"kind": "python_module", "module": "torch.distributed.run"}}
         command["sha256"] = sha256_json(command)
         identity = {"project": "cosmos3_action_libero", "group": "action_sft", "name": "edge_libero_4in1"}; run_root = output / identity["project"] / identity["group"] / identity["name"]
-        return finalize({"schema_version": p4.SCHEMA, "status": "FROZEN_NOT_EXECUTED", "backend": backend, "source": source, "command": command, "environment": env, "budget": p4.PRODUCTION_BUDGET, "inputs": inputs, "outputs": {"job_identity": identity, "run_root": str(run_root), "checkpoint_step0": str(run_root / "checkpoints/iter_000000000"), "checkpoint_step100": str(run_root / "checkpoints/iter_000000100"), "stdout_log": str(run_root / "stdout.log"), "capture_dir": str(run_root / "capture"), "fresh": True}})
+        native = analyse_python_contract(root / "staging", ["native.py"]); native.update({"staging_root": str(root / "staging"), "python_payloads": ["native.py"], "closure_objects": [], "elf_loader_records": []})
+        return finalize({"schema_version": p4.SCHEMA, "status": "FROZEN_NOT_EXECUTED", "backend": backend, "source": source, "command": command, "environment": env, "budget": p4.PRODUCTION_BUDGET, "inputs": inputs, "outputs": {"job_identity": identity, "run_root": str(run_root), "checkpoint_step0": str(run_root / "checkpoints/iter_000000000"), "checkpoint_step100": str(run_root / "checkpoints/iter_000000100"), "stdout_log": str(run_root / "stdout.log"), "capture_dir": str(run_root / "capture"), "fresh": True}, "native_load_contract": native})
 
     def _pair(self, root: Path):
         self._setup(root); p1, refs = self._frozen(root)

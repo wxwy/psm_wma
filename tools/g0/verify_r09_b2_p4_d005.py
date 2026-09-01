@@ -10,6 +10,7 @@ import tomllib
 from pathlib import Path
 
 from tools.g0.write_r09_b2_p4_d005 import SCHEMA, TOML_RELATIVE, derive_job_path, sha256_json
+from tools.g0.r09_b2_interpreter_provenance import lexical_interpreter, verify_native_load_contract
 from tools.g0.verify_r09_b2_p3_gpu_inventory import (
     EXPECTED_RECURRENT_SELECTOR_KEYS,
     EXPECTED_TTT_SELECTOR_KEYS,
@@ -44,7 +45,7 @@ REQUIRED_ENV = {
     "CUDA_VISIBLE_DEVICES": "0",
 }
 FROZEN_OVERRIDES = ("trainer.max_iter=100", "trainer.save_zero_checkpoint=true")
-TOP_LEVEL_KEYS = {"schema_version", "status", "backend", "source", "command", "environment", "budget", "inputs", "outputs", "d005_sha256"}
+TOP_LEVEL_KEYS = {"schema_version", "status", "backend", "source", "command", "environment", "budget", "inputs", "outputs", "native_load_contract", "d005_sha256"}
 
 
 def _sha256_file(path: Path) -> str:
@@ -134,12 +135,15 @@ def _load_frozen_inputs(root: Path) -> tuple[dict[str, object], dict[str, object
 
 def _argv_ok(record: dict[str, object], framework: Path) -> bool:
     command = record.get("command", {})
-    interpreter = (framework / ".venv/bin/python").resolve()
-    argv = command.get("argv")
-    if not interpreter.is_file() or not isinstance(argv, list):
+    try:
+        interpreter = lexical_interpreter(framework / ".venv/bin/python")
+    except (OSError, ValueError):
         return False
-    expected = [str(interpreter), "-m", "torch.distributed.run", "--standalone", "--nnodes=1", "--nproc-per-node=1", "-m", "cosmos_framework.scripts.train", f"--sft-toml={TOML_RELATIVE}", *FROZEN_OVERRIDES]
-    return argv == expected and command.get("interpreter") == {"realpath": str(interpreter), "sha256": _sha256_file(interpreter)} and command.get("launcher") == {"kind": "python_module", "module": "torch.distributed.run"}
+    argv = command.get("argv")
+    if not isinstance(argv, list):
+        return False
+    expected = [interpreter["path"], "-m", "torch.distributed.run", "--standalone", "--nnodes=1", "--nproc-per-node=1", "-m", "cosmos_framework.scripts.train", f"--sft-toml={TOML_RELATIVE}", *FROZEN_OVERRIDES]
+    return argv == expected and command.get("interpreter") == interpreter and command.get("launcher") == {"kind": "python_module", "module": "torch.distributed.run"}
 
 
 def _allowed_roots(root: Path) -> tuple[Path, ...]:
@@ -147,10 +151,11 @@ def _allowed_roots(root: Path) -> tuple[Path, ...]:
 
 
 def _interpreter_asset_ok(asset: object, root: Path) -> bool:
-    expected = (root / "cosmos-framework/.venv/bin/python").resolve()
-    return (isinstance(asset, dict) and set(asset) == {"path", "realpath", "sha256"}
-            and Path(str(asset["path"])).expanduser().resolve() == expected
-            and asset["realpath"] == str(expected) and asset["sha256"] == _sha256_file(expected))
+    try:
+        expected = lexical_interpreter(root / "cosmos-framework/.venv/bin/python")
+    except (OSError, ValueError):
+        return False
+    return isinstance(asset, dict) and asset == expected
 
 
 def _env_ok(record: dict[str, object], backend: str, root: Path) -> bool:
@@ -193,7 +198,7 @@ def _env_assets_bound(record: dict[str, object], root: Path) -> bool:
     try:
         return (all(env[key] == assets[name]["realpath"] for key, name in mapping.items())
                 and env["PYTHONPATH"] == str((root / "cosmos-framework").resolve())
-                and {key: assets["interpreter"][key] for key in ("realpath", "sha256")} == record["command"]["interpreter"]
+                and assets["interpreter"] == record["command"]["interpreter"]
                 and env["PSM_R09_B2_STREAM_MANIFEST_ROOT"] == str((root / P1_HEADER_RELATIVE).parent.resolve()))
     except (KeyError, TypeError):
         return False
@@ -246,7 +251,8 @@ def _schema_structure_ok(record: dict[str, object]) -> bool:
             and isinstance(command, dict) and set(command) == {"cwd", "interpreter", "argv", "executable", "launcher", "sha256"}
             and isinstance(environment, dict) and set(environment) == {"set", "unset", "inherit_allowlist", "sha256"}
             and isinstance(inputs, dict) and set(inputs) == {"p1_manifest", "p3_inventory", "external_assets"}
-            and isinstance(outputs, dict) and set(outputs) == {"job_identity", "run_root", "checkpoint_step0", "checkpoint_step100", "stdout_log", "capture_dir", "fresh"})
+            and isinstance(outputs, dict) and set(outputs) == {"job_identity", "run_root", "checkpoint_step0", "checkpoint_step100", "stdout_log", "capture_dir", "fresh"}
+            and isinstance(record.get("native_load_contract"), dict))
 
 
 def _check(record: dict[str, object], root: Path, p1: dict[str, object], p3: dict[str, object], backend: str) -> dict[str, bool]:
@@ -256,7 +262,7 @@ def _check(record: dict[str, object], root: Path, p1: dict[str, object], p3: dic
     return {
         "schema": _schema_structure_ok(record) and record.get("schema_version") == SCHEMA and record.get("status") == "FROZEN_NOT_EXECUTED" and record.get("backend") == backend, "non_executable": command.get("executable") is False,
         "source": _source_ok(record.get("source"), root), "cwd": command.get("cwd") == str(framework), "argv": _argv_ok(record, framework),
-        "environment": _env_ok(record, backend, root), "inputs": _inputs_ok(record, root, p1, p3, backend), "env_assets_bound": _env_assets_bound(record, root) if isinstance(record.get("inputs"), dict) and isinstance(record.get("environment"), dict) else False, "outputs": job_identity is not None and _output_ok(record, root, job_identity), "budget": _budget_ok(record),
+        "environment": _env_ok(record, backend, root), "inputs": _inputs_ok(record, root, p1, p3, backend), "env_assets_bound": _env_assets_bound(record, root) if isinstance(record.get("inputs"), dict) and isinstance(record.get("environment"), dict) else False, "native_load_contract": verify_native_load_contract(record.get("native_load_contract", {})), "outputs": job_identity is not None and _output_ok(record, root, job_identity), "budget": _budget_ok(record),
         "command_digest": command.get("sha256") == sha256_json({key: value for key, value in command.items() if key != "sha256"}),
         "record_digest": record.get("d005_sha256") == sha256_json({key: value for key, value in record.items() if key != "d005_sha256"}),
     }
