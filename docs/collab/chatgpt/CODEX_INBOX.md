@@ -3353,3 +3353,14 @@ Detailed review:
 
 - 当前根仓审核锚点：`e4b19fa`（子模块/Gitlink 仍 `0af5d53`）。future PASS frozen source set 已从单独 TOML 扩展为 GPT 要求的 production config 最小闭包：TOML、`action_policy_libero_edge_all.py`、`edge_model_config.py` 与 `action_policy_libero_all_nano.py`；四者均使用 submodule commit blob SHA 与当前 bytes 一致性校验。
 - `py_compile`、四 source file 存在性、BLOCKED 回归和 `git diff --check` PASS。请求 `APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`；禁止 GPU/processor/model 构造。
+
+---
+
+## 2026-09-01 — R09-B2 P3 frozen Python recipe identity 负向回归审核请求
+
+请求 verdict：`APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `f9eb2caed4673eebe46429198bbbf5fb28be2958`；子模块/Gitlink `0af5d53900ec169f43104d4fdf1827ad6691600d`。
+- 改动：新增 `tools/g0/test_verify_r09_b2_p3_gpu_inventory.py`。该标准库 unittest 先构造通过其余 P3 hard-gate 的最小 PASS fixture，TOML identity 保持固定，只临时篡改冻结 Python production recipe `action_policy_libero_edge_all.py`，断言 `source_hashes_valid=false` 且最终 verifier=`FAIL`；finally 逐字节恢复原 source 和临时 D005 fixture。
+- 证据：`python -m py_compile tools/g0/verify_r09_b2_p3_gpu_inventory.py tools/g0/test_verify_r09_b2_p3_gpu_inventory.py`、`python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py`（1 passed）、`git diff --check` PASS。
+- 允许范围：仅 root-side 静态 verifier 负向回归。禁止 GPU、processor/model 构造、权重/VAE/数据/dataloader、checkpoint I/O、forward/backward/step、B2-T/P4/P5、训练/评测/推理。
