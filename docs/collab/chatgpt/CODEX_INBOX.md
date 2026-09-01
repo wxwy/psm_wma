@@ -3716,3 +3716,13 @@ Detailed review:
 - D005 的 effective job identity 从 recipe TOML 读取并要求 `cosmos3_action_libero/action_sft/edge_libero_4in1`；budget 精确锁为 `world=1,micro=128,accum=16,global=samples=2048,updates=100`；argv、canonical interpreter、cache/manifest 绑定、语义环境 unset、allowlisted outputs/freshness 均 fail-closed。writer 只写完整 pair verifier PASS 的非执行记录。
 - CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_verify_r09_b2_p4_d005.py -v`=4/4 PASS；`git diff --check` PASS。永久负例包括伪造但自洽的 P3、P1 record_count、预算、语义环境、尾随 argv 和自报 job identity。
 - 禁止范围：未生成真实 D005；未导入 torch/Cosmos，未读取真实模型/数据/VAE/checkpoint，未执行 torchrun、GPU、训练、评测或推理；不改子模块。仅请求 P4 static builder/verifier closure，P5/B2-T 仍未授权。
+
+### Awaiting review — R09-B2 P4 v0.2/v2 static-contract revision
+
+请求 verdict：`APPROVE_TO_GENERATE_P4_V2_D005` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `a8e08fb19512dbcfd6f6e662b7be71a870e769da`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT `2026-09-01_R09_B2_P4_static_closure_c5a9e2b_64aad3d.md`。
+- 新增 v0.2 设计并将 schema 显式改为 `r09_b2_p4_launch_d005_v2`，不再以 v1 名称接受不同 record shape；verifier 对 v2 顶层、source、command、environment、inputs、outputs 全部精确字段 fail-closed。
+- 关闭输入 binding HIGH：live root Gitlink + submodule HEAD 固定 `21d064f`；P1 除 header SHA 外，独立核验 committed `records.jsonl` 和四个 suite JSONL 与 header digest；环境净化新增 `PSM_LOCAL_DUMMY_DIM`、遗漏 probe variables 和 `ONLINE_VAE_PROBE_MAX_SAMPLES`。回归覆盖 Gitlink drift、P1 record_count、schema extra field 与 dummy-dimension unset。
+- CPU 证据：py_compile PASS，unittest 6/6 PASS，diff-check PASS。未生成 D005、未读真实模型/数据/VAE/checkpoint、未执行 torchrun/GPU/训练。
+- 获批后唯一下一步：在 clean source 只读现有本地 asset 路径，生成 recurrent/ttt 两份 `FROZEN_NOT_EXECUTED` JSON 并运行标准库 pair verifier；仍不执行 argv。
