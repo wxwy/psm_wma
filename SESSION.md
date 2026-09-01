@@ -12,7 +12,7 @@
 
 ## 当前最小步骤
 
-- `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，IN_PROGRESS）：GPT `eaff2a2`、Kimi、MM 已对根仓 `e4b19fa` / 子模块 Gitlink `0af5d53` 批准继续 root-side 静态实现。已新增标准库回归 `tools/g0/test_verify_r09_b2_p3_gpu_inventory.py`：构造通过其余 hard-gate 的 PASS fixture，保持 TOML identity 不变，仅临时篡改 `action_policy_libero_edge_all.py`，断言 `source_hashes_valid=false` 且最终 verifier=`FAIL`，finally 恢复原字节和临时 D005。`py_compile`、该 unittest、`git diff --check` PASS；不导入模型、不运行 GPU。待提交并独立审核。
+- `G0-R09-B2-P3-GPU-ONLY-PLAN`（2026-09-01，REVIEW）：根仓 `f9eb2ca` / 子模块 Gitlink `0af5d53` 的 frozen Python recipe identity 篡改负向回归已提交，审核申请=`7ad11fd`，已 append Inbox 并通过 Kimi/MM tmux 单独 Enter/capture-pane 确认送达。标准库 unittest 构造通过其余 hard-gate 的 PASS fixture，保持 TOML identity 不变，仅临时篡改 `action_policy_libero_edge_all.py`，断言 `source_hashes_valid=false` 且最终 verifier=`FAIL`，finally 恢复原字节和临时 D005。`py_compile`、unittest（1 passed）、`git diff --check` PASS；不导入模型、不运行 GPU。开始每 30 秒轮询 GPT Inbox/远端、Kimi、MM，未获三方同一结论前不越过 Gate。
 
 - `FIX-LIBERO-WORKER-DEFAULT-12`（2026-09-01，DONE）：用户将 LIBERO 默认 dataloader worker 固定为 12。Python 配置、tmux 入口已为 12；已将 `cosmos-framework/examples/launch_sft_action_policy_libero_edge_all.sh` 顶部过期“32”修正为“12”。`bash -n`、三入口一致性检索、双仓 `git diff --check` PASS；GPT review=`docs/collab/chatgpt/reviews/2026-09-01_LIBERO_worker_default_4cfa359_0af5d53.md`、Kimi、MM 均 APPROVE；未启动训练/GPU。子模块=`0af5d53`，根仓审核锚点=`4cfa359`。
 
