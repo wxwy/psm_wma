@@ -3545,3 +3545,9 @@ Detailed review:
 - 原审核根 `0539fca` 后，Kimi 指出 `_canonical_parameter_fqns()` 缺少直接定向覆盖。根仓 `728ebfb94d4ba0cef601489c66e6310275174dae` 新增真实 PyTorch CPU `nn.Module(net=Linear)` 回归，精确断言 raw `model.net.named_parameters()` 映射为 PyTorch DCP canonical `net.weight`/`net.bias`。
 - 重新审核对象：根仓 `728ebfb94d4ba0cef601489c66e6310275174dae`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。`py_compile`、`unittest -v` 为 15/15、`git diff --check` 均 PASS；其余 canonical-FQN、owner_fqn、28 GiB、fresh attempt-5 与禁止范围完全不变。
 - 请以此最新根仓 SHA 给出 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`，附 `file:line`。未获 ChatGPT/MM/Kimi 对该 SHA 的一致批准前不得执行 GPU attempt-5。
+
+### 补充二：真实 raw/canonical mismatch 永久回归（重新审核锚点）
+
+- Kimi 指出 `Linear` 回归未覆盖 raw stable name 与 canonical FQN 不同的生产分叉。根仓 `9652f4a4375406a4c58208f32416b1947ab3fb97` 将映射拆为可注入 pure helper，并新增回归：同一参数对象的 raw `language_model._fsdp_wrapped_module.weight` 经 DCP canonical 化为 `net.language_model.weight`，随后 `param_groups.net.language_model.weight.betas` 被准确归属；仍 fail-closed 于 invalid/duplicate/incomplete 映射。
+- 新审核对象：根仓 `9652f4a4375406a4c58208f32416b1947ab3fb97`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。`py_compile`、`unittest -v` 16/16、`git diff --check` PASS。其它 scope/28 GiB/fresh attempt-5 禁令均不变。
+- 请针对该 SHA 重给 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 或 `REQUEST_CHANGES`（附 `file:line`）；所有旧批准不得复用，GPU attempt-5 仍禁止启动。
