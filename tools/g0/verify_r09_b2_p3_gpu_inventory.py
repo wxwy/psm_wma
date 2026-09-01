@@ -56,6 +56,9 @@ FROZEN_SOURCE_PATHS = {
     "dcp_source_sha256": "cosmos-framework/cosmos_framework/checkpoint/dcp.py",
 }
 RUN_TOKEN = "APPROVE_TO_RUN_GPU_ONLY_P3_GATE"
+INVENTORY_MODEL_OVERRIDES = {"load_vision_tokenizer": {"before": True, "after": False}}
+MODEL_DCP_SYMBOL = "cosmos_framework.checkpoint.dcp.ModelWrapper.state_dict"
+OPTIMIZER_DCP_SYMBOL = "cosmos_framework.utils.generator.optimizer.OptimizersContainer.state_dict"
 
 
 def _sha256_bytes(payload: bytes) -> str:
@@ -179,7 +182,12 @@ def backend_checks(record: dict[str, object]) -> dict[str, bool]:
     state_entries = state.get("entries", [])
     dcp = inventory.get("dcp_state", {})
     persistent_keys = dcp.get("persistent_keys", [])
+    binding = dcp.get("production_binding", {})
+    selected_model_keys = dcp.get("selected_model_parameter_keys", {})
+    optimizer_references = set(dcp.get("optimizer_parameter_references", []))
+    rows_by_name = {row.get("name"): row for row in rows}
     return {
+        "inventory_override_exact": record.get("inventory_model_overrides") == INVENTORY_MODEL_OVERRIDES,
         "selector_exclusions_empty": not inventory.get("selector_optimizer_exclusions", []),
         "selector_equals_optimizer": selector == selected,
         "model_names_unique": len(names) == len(set(names)),
@@ -190,7 +198,23 @@ def backend_checks(record: dict[str, object]) -> dict[str, bool]:
         "unmaterialized_state_empty": not state.get("not_materialized") or not state_entries,
         "materialized_state_reverse_map": state.get("not_materialized") or all(entry.get("parameter_name") in eligible and isinstance(entry.get("state_keys"), list) for entry in state_entries),
         "dcp_inspected": dcp.get("inspected") is True,
-        "dcp_production_binding": dcp.get("production_binding", {}).get("symbol") == "ModelWrapper.state_dict/OptimizersContainer.state_dict",
+        "dcp_production_binding": (
+            binding.get("model_symbol") == MODEL_DCP_SYMBOL
+            and binding.get("optimizer_symbol") == OPTIMIZER_DCP_SYMBOL
+            and binding.get("model_invoked") is True
+            and binding.get("optimizer_invoked") is True
+        ),
+        "dcp_selected_model_membership": (
+            set(selected_model_keys) == selected
+            and all(key in dcp.get("model_state_keys", []) for key in selected_model_keys.values())
+        ),
+        "dcp_optimizer_membership": optimizer_references == selected,
+        "group_metadata_matches_model": all(
+            entry.get("name") in rows_by_name
+            and entry.get("numel") == rows_by_name[entry.get("name")].get("numel")
+            and entry.get("dtype") == rows_by_name[entry.get("name")].get("dtype")
+            for entry in entries
+        ),
         "ttt_excluded_everywhere": _forbidden(names + [row.get("name", "") for row in inventory.get("named_buffers", [])] + grouped + persistent_keys),
     }
 
@@ -205,6 +229,35 @@ def diff_checks(artifact: dict[str, object]) -> dict[str, bool]:
         ttt_only = sorted(_selected(ttt, field) - _selected(recurrent, field))
         checks[f"declared_{label}"] = declared.get(f"recurrent_only_{label}") == recurrent_only and declared.get(f"ttt_only_{label}") == ttt_only
         checks[f"only_allowed_{label}"] = not ttt_only and all(name.startswith(ALLOWED_RECURRENT_ONLY_PREFIXES) for name in recurrent_only)
+    for collection, label in (("model_parameters", "model_parameters"), ("named_buffers", "buffers")):
+        recurrent_rows = {row["name"]: row for row in recurrent.get(collection, [])}
+        ttt_rows = {row["name"]: row for row in ttt.get(collection, [])}
+        recurrent_only = set(recurrent_rows) - set(ttt_rows)
+        ttt_only = set(ttt_rows) - set(recurrent_rows)
+        shared = set(recurrent_rows) & set(ttt_rows)
+        checks[f"only_allowed_{label}"] = (
+            not ttt_only
+            and all(name.startswith(ALLOWED_RECURRENT_ONLY_PREFIXES) for name in recurrent_only)
+        )
+        checks[f"shared_{label}_metadata"] = all(
+            recurrent_rows[name].get("numel") == ttt_rows[name].get("numel")
+            and recurrent_rows[name].get("dtype") == ttt_rows[name].get("dtype")
+            and recurrent_rows[name].get("shape") == ttt_rows[name].get("shape")
+            for name in shared
+        )
+
+    def normalized_model_dcp_keys(inventory: dict[str, object]) -> set[str]:
+        return {
+            key.removeprefix("net.")
+            for key in inventory.get("dcp_state", {}).get("model_state_keys", [])
+        }
+
+    recurrent_dcp = normalized_model_dcp_keys(recurrent)
+    ttt_dcp = normalized_model_dcp_keys(ttt)
+    checks["only_allowed_dcp_model_keys"] = (
+        not (ttt_dcp - recurrent_dcp)
+        and all(key.startswith(ALLOWED_RECURRENT_ONLY_PREFIXES) for key in recurrent_dcp - ttt_dcp)
+    )
     return checks
 
 
@@ -218,12 +271,31 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
     provenance = artifact.get("provenance", {})
     backends = {name: artifact.get(name, {}) for name in ("recurrent", "ttt_fast_weight")}
     pass_claimed = artifact.get("status") == "PASS"
+    backend_execution_valid = True
+    backend_processor_valid = True
+    if pass_claimed:
+        common_environment = provenance.get("environment", {})
+        for name, record in backends.items():
+            observed = record.get("execution", {}).get("observed_environment", {})
+            backend_execution_valid = backend_execution_valid and (
+                record.get("execution", {}).get("distributed_initialized") is False
+                and record.get("execution", {}).get("peak_allocated_bytes", 1 << 60) <= 24 * 1024**3
+                and record.get("execution", {}).get("peak_reserved_bytes", 1 << 60) <= 24 * 1024**3
+                and observed.get("PSM_R08_LOCAL_HISTORY_ENABLED") == "1"
+                and observed.get("PSM_LOCAL_DUMMY_ENABLED") == "0"
+                and observed.get("PSM_R09_A1_ENABLED") == "0"
+                and observed.get("PSM_R09_B1_TTT_ENABLED") == ("1" if name == "ttt_fast_weight" else "0")
+                and all(observed.get(key) == common_environment.get(key) for key in common_environment)
+            )
+            backend_processor_valid = backend_processor_valid and record.get("local_processor") == processor
     checks = {
         "schema": artifact.get("schema_version") == "r09_b2_p3_gpu_inventory_v1",
         "single_process": execution.get("world_size") == 1 and execution.get("distributed_initialized") is False,
         "no_execution": all(execution.get(key) is False for key in NO_EXECUTION_FIELDS),
         "peak_under_limit": execution.get("peak_allocated_bytes", 1 << 60) <= 24 * 1024**3 and execution.get("peak_reserved_bytes", 1 << 60) <= 24 * 1024**3,
-        "backend_status": (all(record.get("status") in {"PASS", "BLOCKED"} for record in backends.values()) if pass_claimed else True),
+        "backend_status": (all(record.get("status") == "PASS" for record in backends.values()) if pass_claimed else True),
+        "backend_execution_binding": backend_execution_valid,
+        "backend_processor_binding": backend_processor_valid,
         "local_processor_path": processor.get("is_local_directory") is True and bool(processor.get("canonical_path")),
         "offline_environment": offline.get("HF_HUB_OFFLINE") == "1" and offline.get("TRANSFORMERS_OFFLINE") == "1" and offline.get("HUGGINGFACE_HUB_CACHE") == processor.get("canonical_path"),
         "local_processor_assets": set(assets) == REQUIRED_PROCESSOR_ASSETS and all(asset.get("exists") is True and asset.get("sha256") for asset in assets.values()),
@@ -237,7 +309,7 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
             and processor.get("construction_witness", {}).get("constructor_identity") == "cosmos_framework.model.generator.omni_mot_model.build_vlm_processor"
             and processor.get("construction_witness", {}).get("binding_sha256") == binding_sha256
             and bool(processor.get("construction_witness", {}).get("processor_type"))
-            and processor.get("before_assets") == processor.get("after_assets") == assets
+            and processor.get("before_assets") == processor.get("after_assets") == processor.get("worker_final_assets") == assets
             if pass_claimed
             else True
         ),

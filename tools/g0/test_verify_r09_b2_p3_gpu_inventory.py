@@ -44,7 +44,16 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         gitlink_revision = _git("ls-tree", root_revision, "cosmos-framework").split()[2]
         submodule_revision = _git("rev-parse", "HEAD", cwd=submodule_root)
         command_argv = ["fixture", "--no-gpu"]
-        environment = {"FIXTURE": "1"}
+        environment = {
+            "CUDA_VISIBLE_DEVICES": "0",
+            "EDGE_POLICY_CHECKPOINT": str(ROOT),
+            "WAN_VAE_PATH": "/fixture/vae",
+            "BASE_CHECKPOINT_PATH": "/fixture/base",
+            "LIBERO_ROOT": "/fixture/libero",
+            "HF_HUB_OFFLINE": "1",
+            "TRANSFORMERS_OFFLINE": "1",
+            "HUGGINGFACE_HUB_CACHE": str(ROOT),
+        }
         provenance: dict[str, object] = {
             "root_revision": root_revision,
             "submodule_revision": submodule_revision,
@@ -96,6 +105,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             },
             "before_assets": assets,
             "after_assets": assets,
+            "worker_final_assets": assets,
             "phase_trace": ["offline_env_applied", "binding_validated", "processor_constructed", "post_snapshot_taken"],
             "construction_witness": {
                 "constructor_identity": "cosmos_framework.model.generator.omni_mot_model.build_vlm_processor",
@@ -111,21 +121,71 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         recurrent_name = "local_history_runtime.recurrent_backend.fixture"
         recurrent = {
             "status": "PASS",
+            "local_processor": processor,
+            "inventory_model_overrides": VERIFY.INVENTORY_MODEL_OVERRIDES,
+            "execution": {
+                "distributed_initialized": False,
+                "peak_allocated_bytes": 0,
+                "peak_reserved_bytes": 0,
+                "observed_environment": environment | {
+                    "PSM_R08_LOCAL_HISTORY_ENABLED": "1",
+                    "PSM_LOCAL_DUMMY_ENABLED": "0",
+                    "PSM_R09_A1_ENABLED": "0",
+                    "PSM_R09_B1_TTT_ENABLED": "0",
+                },
+            },
             "inventory": {
-                "model_parameters": [{"name": recurrent_name, "selected_by_optimizer": True, "selected_by_resolved_selector": True}],
+                "model_parameters": [{"name": recurrent_name, "numel": 1, "dtype": "float32", "selected_by_optimizer": True, "selected_by_resolved_selector": True}],
                 "named_buffers": [],
-                "optimizer_param_groups": [{"parameters": [{"name": recurrent_name}]}],
+                "optimizer_param_groups": [{"parameters": [{"name": recurrent_name, "numel": 1, "dtype": "float32"}]}],
                 "optimizer_state": {"eligible_parameter_names": [recurrent_name], "not_materialized": True, "entries": []},
-                "dcp_state": {"inspected": True, "persistent_keys": [], "production_binding": {"symbol": "ModelWrapper.state_dict/OptimizersContainer.state_dict"}},
+                "dcp_state": {
+                    "inspected": True,
+                    "persistent_keys": [f"net.{recurrent_name}"],
+                    "model_state_keys": [f"net.{recurrent_name}"],
+                    "selected_model_parameter_keys": {recurrent_name: f"net.{recurrent_name}"},
+                    "optimizer_parameter_references": [recurrent_name],
+                    "production_binding": {
+                        "model_symbol": VERIFY.MODEL_DCP_SYMBOL,
+                        "optimizer_symbol": VERIFY.OPTIMIZER_DCP_SYMBOL,
+                        "model_invoked": True,
+                        "optimizer_invoked": True,
+                    },
+                },
                 "selector_optimizer_exclusions": [],
             },
         }
         ttt = {
             "status": "PASS",
+            "local_processor": processor,
+            "inventory_model_overrides": VERIFY.INVENTORY_MODEL_OVERRIDES,
+            "execution": {
+                "distributed_initialized": False,
+                "peak_allocated_bytes": 0,
+                "peak_reserved_bytes": 0,
+                "observed_environment": environment | {
+                    "PSM_R08_LOCAL_HISTORY_ENABLED": "1",
+                    "PSM_LOCAL_DUMMY_ENABLED": "0",
+                    "PSM_R09_A1_ENABLED": "0",
+                    "PSM_R09_B1_TTT_ENABLED": "1",
+                },
+            },
             "inventory": {
                 "model_parameters": [], "named_buffers": [], "optimizer_param_groups": [],
                 "optimizer_state": {"eligible_parameter_names": [], "not_materialized": True, "entries": []},
-                "dcp_state": {"inspected": True, "persistent_keys": [], "production_binding": {"symbol": "ModelWrapper.state_dict/OptimizersContainer.state_dict"}},
+                "dcp_state": {
+                    "inspected": True,
+                    "persistent_keys": [],
+                    "model_state_keys": [],
+                    "selected_model_parameter_keys": {},
+                    "optimizer_parameter_references": [],
+                    "production_binding": {
+                        "model_symbol": VERIFY.MODEL_DCP_SYMBOL,
+                        "optimizer_symbol": VERIFY.OPTIMIZER_DCP_SYMBOL,
+                        "model_invoked": True,
+                        "optimizer_invoked": True,
+                    },
+                },
                 "selector_optimizer_exclusions": [],
             },
         }
@@ -207,6 +267,49 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
                     record,
                     {"tokenizer": {"repository": "nvidia/Cosmos3-Edge", "revision": "main", "tokenizer_type": str(root.resolve())}},
                 )
+
+    def test_production_dcp_membership_is_not_symbolic_only(self) -> None:
+        d005_path = ROOT / "artifacts/g0/r09/b2/p3_dcp_membership_test_d005.json"
+        try:
+            artifact = self._passing_artifact(d005_path)
+            with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
+                VERIFY, "FROZEN_SOURCE_PATHS", {}
+            ):
+                self.assertEqual(VERIFY.verify(artifact, ROOT)["status"], "PASS")
+                artifact["recurrent"]["inventory"]["dcp_state"]["optimizer_parameter_references"] = []
+                result = VERIFY.verify(artifact, ROOT)
+                self.assertFalse(result["backend_checks"]["recurrent"]["dcp_optimizer_membership"])
+                self.assertEqual(result["status"], "FAIL")
+        finally:
+            d005_path.unlink(missing_ok=True)
+
+    def test_state_schema_helpers_preserve_names_and_tensor_metadata(self) -> None:
+        class TensorFixture:
+            shape = (2, 3)
+            dtype = "torch.float32"
+
+            @staticmethod
+            def numel() -> int:
+                return 6
+
+        state = {"state": {"net.a": {"exp_avg": TensorFixture()}}, "param_groups": [{"params": ["net.a"]}]}
+        self.assertEqual(COLLECT._stable_parameter_references(state, {"a", "b"}), {"a"})
+        tensor_rows = [row for row in COLLECT._state_leaf_metadata(state) if row["kind"] == "tensor"]
+        self.assertEqual(tensor_rows, [{"path": "state.net.a.exp_avg", "kind": "tensor", "shape": [2, 3], "dtype": "float32", "numel": 6}])
+
+    def test_backend_diff_rejects_ttt_only_persistent_key(self) -> None:
+        d005_path = ROOT / "artifacts/g0/r09/b2/p3_dcp_diff_test_d005.json"
+        try:
+            artifact = self._passing_artifact(d005_path)
+            artifact["ttt_fast_weight"]["inventory"]["dcp_state"]["model_state_keys"] = ["net.unexpected"]
+            with mock.patch.object(VERIFY, "_tracked_clean", return_value=True), mock.patch.object(
+                VERIFY, "FROZEN_SOURCE_PATHS", {}
+            ):
+                result = VERIFY.verify(artifact, ROOT)
+                self.assertFalse(result["matched_diff_checks"]["only_allowed_dcp_model_keys"])
+                self.assertEqual(result["status"], "FAIL")
+        finally:
+            d005_path.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":

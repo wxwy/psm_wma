@@ -826,3 +826,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 目的：处理 ChatGPT 对 `4e85ba8` 的 `REQUEST_CHANGES`，不修改 B0 backend、CPU test、verifier 或 artifact，不运行项目代码。
 - 选择：采用 review Option B。已将 TODO/SESSION 从“`f4ca0fc`/`a9b7443` 是唯一 canonical、rerun 未提交”改为唯一 canonical=`4e85ba8` artifact，recorded root=`685ca9a`、submodule/Gitlink=`ee1b78d`；旧 pair仅作历史 initial-generation provenance。
 - 结论：ChatGPT `bbfe614`/`d8bead8`、MM、Kimi 均 `APPROVE_PROVENANCE_HYGIENE`；B0 technical closure 不重开。下一步仅为 B1 的独立 preflight 审核。提交：未提交。
+### R09-B2 P3 GPU worker 静态实现（2026-09-01，IN_PROGRESS）
+
+- 三方已对 root=`8ed811e`、submodule/Gitlink=`21d064f` 给出 `APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION`；仅授权继续静态实现，不授权 GPU 运行。
+- 本步复用生产入口 `build_vlm_processor(vlm_config)`、`OptimizersContainer`、`checkpoint.dcp.ModelWrapper.state_dict()`；预计修改 `tools/g0/collect_r09_b2_p3_gpu_inventory.py`、对应 verifier/test、`TODO.md`、`SESSION.md`。
+- 为满足“真实 recipe 网络但禁止 VAE”，worker 只允许并记录 `model.config.load_vision_tokenizer=False`，其余 model/optimizer config 不变；不执行 forward/backward/step、DCP save/load、checkpoint/data 访问。当前未提交。
+- 实际完成：隔离 worker 在 recipe/model import 前应用 offline/path/backend 环境；先走共享 production processor helper，再以唯一 VAE-disable override 构造真实网络和 optimizer；实际调用 `ModelWrapper.state_dict()`/`OptimizersContainer.state_dict()` 并逐 stable name 交叉验证 membership；双 backend 独立进程，四阶段 24 GiB stop gate，D005/provenance 和完整 model/buffer/DCP diff 均已接通。
+- 验证：`py_compile` PASS；`python -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py` 为 5 passed；双仓 `git diff --check` PASS。未调用 worker、processor/model 构造或 GPU，未读取 VAE/权重/checkpoint/data。状态转 REVIEW；提交待生成。
