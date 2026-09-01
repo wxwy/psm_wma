@@ -72,6 +72,7 @@
 | G0-R09-B2-P3-GPU-ONLY-RUN | DONE | Codex | ChatGPT/MM/Kimi 均 `APPROVE_TO_CLOSE_B2_P3_GPU_ONLY` | attempt-6 双 worker PASS、单卡 offline/no-execution 与 28 GiB cap 均通过；verifier 以冻结 selector 从每行实际 parameter name 重算 membership，artifact selector/optimizer/group/DCP 均逐项一致。collection root=`269540e` clean worktree 复核 PASS，未重跑 GPU。仅关闭 P3；P4/P5/B2-T、训练/评测/推理仍须独立 Gate。 |
 | FIX-LIBERO-WORKER-DEFAULT-12 | DONE | Codex | GPT/Kimi/MM 均 APPROVE | 三入口均明确默认 12；仅修正 launcher 帮助文本。`bash -n`、双仓 diff-check PASS；GPT review=`2026-09-01_LIBERO_worker_default_4cfa359_0af5d53.md`，Kimi/MM 独立复核均 APPROVE；未启动训练/GPU。 |
 | G0-R09-B2-P4-LAUNCH-D005 | REVIEW | Codex | P1-P3 已 DONE；P4 静态实现整改后待三方复审 | verifier 独立绑定 Git/Gitlink、P1/P3、资产路径散列、冻结 argv、离线环境、输出新鲜度和 batch 公式；只申请静态 builder/verifier，不启动训练、不改子模块。 |
+| G0-R09-B2-P1-PRODUCTION-MANIFEST | REVIEW | Codex | P1 tiny contract 已 DONE；P4 要求真实 100-step manifest | 每 episode 只读取一次 cache window key，生成前须三方复审；验收为 204,800 条固定身份、P1 verifier PASS、零 GPU/训练。 |
 | G0-R09-B2-P5-FULL-CONFIG-DIFF | TODO | Codex | P4 schema 明确 | 导出完整 resolved config 的结构化 machine diff，并拒绝允许范围外差异；先审核。 |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |

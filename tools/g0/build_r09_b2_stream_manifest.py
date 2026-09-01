@@ -71,12 +71,17 @@ def reverse_index(dataset: LIBEROLeRobotDataset, episode_index: int, start_frame
     return index
 
 
-def cache_exists(cache_root: Path, episode_index: int, start_frame: int) -> bool:
+def cache_exists(cache_root: Path, episode_index: int, start_frame: int, cache_windows: dict[int, set[str]]) -> bool:
+    windows = cache_windows.get(episode_index)
+    if windows is not None:
+        return str(start_frame) in windows
     episode_path = cache_root / "episodes" / f"episode_{episode_index:06d}.pt"
     if not episode_path.is_file():
         return False
     item = torch.load(episode_path, map_location="cpu", weights_only=True)
-    return isinstance(item.get("windows", {}).get(str(start_frame)), dict)
+    windows = set(item.get("windows", {}))
+    cache_windows[episode_index] = windows
+    return str(start_frame) in windows
 
 
 def main() -> None:
@@ -103,6 +108,7 @@ def main() -> None:
         for suite in SUITES
     }
     streams = {suite: shuffled_indices(dataset, args.shuffle_seed) for suite, dataset in datasets.items()}
+    cache_windows = {suite: {} for suite in SUITES}
     total_microbatches = args.optimizer_updates * args.grad_accum
     expected_count = total_microbatches * args.max_samples_per_batch
     records: list[dict[str, int | str]] = []
@@ -114,7 +120,7 @@ def main() -> None:
             task_index, episode_index, start_frame = identity(dataset, flat_index)
             if reverse_index(dataset, episode_index, start_frame) != flat_index:
                 raise ValueError(f"non-bijective flat index for {suite} index={flat_index}")
-            if not cache_exists(cache_root / suite, episode_index, start_frame):
+            if not cache_exists(cache_root / suite, episode_index, start_frame, cache_windows[suite]):
                 raise FileNotFoundError(f"missing cache window {suite}/{episode_index}/{start_frame}")
             records.append({"ordinal": len(records), "epoch": epoch, "optimizer_update": microbatch // args.grad_accum,
                             "microbatch": microbatch, "sample_in_microbatch": sample_in_microbatch,
