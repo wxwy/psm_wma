@@ -3322,3 +3322,14 @@ Detailed review:
 - 按 GPT `ed145d7` 的 run 前硬条件，仅新增静态 helper：六 frozen asset 记录 size+SHA；future worker 在任何 HF/Transformers 导入前实际应用离线环境并回读 observed 值；future PASS verifier 强制 observed env 与批准值匹配、前后六资产快照逐项相等。未调用 processor/model 构造。
 - 证据：`py_compile` + 子进程内 helper 验证（实际 env 回读、六资产 SHA/size、快照 equality）+ `git diff --check` PASS；无 GPU/网络/权重/VAE/dataloader/数据/base checkpoint。
 - 仍只请求继续 root-side 静态实现；不授权 GPU、processor/model 构造、checkpoint I/O、forward/backward/step、B2-T/P4/P5/训练/评测/推理。
+
+---
+
+## 2026-09-01 — R09-B2 P3 PASS provenance hard-gate 静态实现审核请求
+
+请求 verdict：`APPROVE_TO_CONTINUE_GPU_P3_IMPLEMENTATION` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `8dced75`；子模块/Gitlink `0af5d53`。
+- 按 GPT `ed145d7` 的 provenance 要求，future `PASS` verifier 现在强制 root/submodule/Gitlink、recipe/collector/verifier/model/optimizer/DCP SHA、argv/cwd/environment、GPU UUID、D005 record 和批准 token 均存在；`BLOCKED` 不要求虚构未发生的运行 provenance。
+- 证据：`py_compile`、不存在路径 collector→verifier `BLOCKED/record_valid=true`、`pass_provenance=true` 与 `git diff --check` PASS；未执行 GPU/processor/model/网络/数据/权重/checkpoint。
+- 仍只请求继续 root-side 静态实现；不授权任何 GPU 或模型构造。
