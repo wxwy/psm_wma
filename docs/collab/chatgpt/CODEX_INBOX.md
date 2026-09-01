@@ -3848,3 +3848,15 @@ Detailed review:
 - child 已去除 root `tools.g0` 模块级依赖；CPU subprocess smoke 以真实冻结 D005 cwd/env 到达 interpreter pre-compose guard，未调用 compose。parent 使用 attempt UUID staging，只有两 child 与 pair verifier PASS 后原子晋升 canonical output。
 - verifier 强制 exact nested provenance/command/environment/budget/P1/P3/P4 verification/exporter source，逐侧 exact local backend 与 selector contract。CPU evidence：`py_compile` PASS、unittest 4/4 PASS、`git diff --check` PASS。
 - 禁止范围：未执行 `load_experiment_from_toml`、真实 export、CUDA/GPU/torchrun/训练。若全部批准，仍仅可另行申请 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，本申请不授权执行。
+
+### Awaiting review — R09-B2 P5 v0.5 static tools fail-closed remediation
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `e54d5e7d3a56949624f1919ffbd8352be91a31d6`（处理 ChatGPT review `2026-09-01_R09_B2_P5_v0.5_static_tools_36a3d05_2534afc.md` 与 Kimi 2026-09-01 18:24 `REQUEST_CHANGES`）；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 三根隔离：parent canonicalize `production_root`/`evidence_root`/`exporter_root`，拒绝相等、symlink-equivalent 与 ancestor/descendant overlap；pair verifier 同样拒绝 evidence/exporter overlap。production 精确锁定双 D005 cwd 推导的 `/disk/rl/psm_wma_p4_d005_retry`。
+- tracked-clean/路径：production 与其 `cosmos-framework` submodule、evidence 与其 submodule 均须 tracked-clean；production 校验 cwd、PYTHONPATH、stream-manifest env 及 frozen external stream-manifest path/realpath 均 contained in exact root。
+- immutable evidence：P4 recurrent/TTT/verification 的 closed 文件 SHA256、P4 verification schema/status=PASS 与 Gitlink/submodule identity 均 hard-bind；envelope 记录实际 P4 record file SHA，并分离原有 `p4_d005_sha256`。parent 拒绝传入 D005 与 frozen evidence records 不逐值相等。
+- nested schema：verifier 对 provenance inputs、effective launch、command、environment、P1/P3/D005 bindings 等每个 verifier-owned nested object 强制 exact key set，双方相同未知字段也 FAIL。
+- CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=5/5 PASS（独立 clean exporter worktree 正例、equal/symlink root、dirty production、frozen P4 identity、所有 nested schema 负例）；`git diff --check` PASS。未调用 `load_experiment_from_toml`、真实 export、CUDA/GPU、torchrun、模型、数据、训练、评测或推理。
+- 允许范围：本申请只复审 root `tools/g0/` 静态代码。即使批准，也仅允许随后另行申请一次 `APPROVE_TO_RUN_P5_STATIC_EXPORT`；不授予 compose/export 或任何 GPU/训练执行权。
