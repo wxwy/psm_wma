@@ -3762,3 +3762,13 @@ Detailed review:
 - 新设计：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.1_2026-09-01.md`。后续 exporter 只用 P4 D005 的 explicit environment map 导出 recurrent/TTT 完整 resolved config，canonical JSON Pointer diff，绑定 P1/P3/D005 provenance。
 - 允许差异仅为实际 TTT switch/backend、其 selector/optimizer membership 及 backend output root；precision/seed/data-cache/manifest/world=1/128×16/100 updates/optimizer-scheduler-EMA-clip/offline controls 及其它任一 path 必相同，未知 diff FAIL。
 - 当前仅申请 root-side static exporter/verifier/tests 实现；禁止 config export 执行、trainer/model/dataloader/optimizer/checkpoint/CUDA/torchrun/GPU/训练/评测/推理。实现获批后，静态 export 仍需单独三方执行授权。
+
+### Awaiting review — R09-B2 P5 full resolved-config diff design v0.2
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P5_STATIC_DIFF` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `f004e4d1869967659617f7c85e8b2c88342b1340`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 review `2026-09-01_R09_B2_P5_full_config_diff_design_04082e4_142f69b.md` 的四个 HIGH；v0.1 仍保留，v0.2 为本次审查对象。
+- 新设计：`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.2_2026-09-01.md`。每个 backend 必由 fresh canonical interpreter 子进程、在 P4 D005 净化环境/cwd/PYTHONPATH 下，从已验证 `command.argv` 逐字派生 `--sft-toml` 与 trailing overrides，调用生产 `load_experiment_from_toml`；不得手写 override 或同进程双 compose。
+- 完整 Config 的 canonical grammar 明确 attrs/dataclass/container、callable FQN、Enum/path、未解析插值及不支持对象的 fail-closed 语义；artifact 采用 `effective_launch`+`resolved_config` envelope，world/budget/env/P1/P3/D005/derived path 与 P4 production source、P5 exporter source、closure evidence source 分层记录。
+- 允许差异仅为实际 backend switch、派生 selector/config membership、backend output root/derived path；实际 optimizer parameter membership 继续绑定 P3。永久负例覆盖 D005 100-step override 缺失/改值/重排、环境泄漏、同进程污染、callable identity 和 provenance mutation。
+- 允许范围：仅 root `tools/g0/` 的 exporter/verifier/标准库 CPU fixture tests 实现。禁止 config export 执行、launch/Config.validate/instantiate、trainer/model/dataloader/optimizer/checkpoint/CUDA/torchrun/GPU/训练/评测/推理；实现批准后，静态 export 仍需独立三方执行授权。
