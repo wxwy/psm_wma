@@ -3860,3 +3860,13 @@ Detailed review:
 - nested schema：verifier 对 provenance inputs、effective launch、command、environment、P1/P3/D005 bindings 等每个 verifier-owned nested object 强制 exact key set，双方相同未知字段也 FAIL。
 - CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=5/5 PASS（独立 clean exporter worktree 正例、equal/symlink root、dirty production、frozen P4 identity、所有 nested schema 负例）；`git diff --check` PASS。未调用 `load_experiment_from_toml`、真实 export、CUDA/GPU、torchrun、模型、数据、训练、评测或推理。
 - 允许范围：本申请只复审 root `tools/g0/` 静态代码。即使批准，也仅允许随后另行申请一次 `APPROVE_TO_RUN_P5_STATIC_EXPORT`；不授予 compose/export 或任何 GPU/训练执行权。
+
+### Awaiting review — R09-B2 P5 exporter execution identity and failed-attempt remediation
+
+请求 verdict：`APPROVE_TO_REQUEST_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `0b9e9edbe152800bec541636b4627433daee9518`（处理 ChatGPT review `2026-09-01_R09_B2_P5_v0.5_fail_closed_remediation_dfb2443_e54d5e7.md`）；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- actual execution identity：`run_parent_export()` 内部 `bound_exporter_source()` 强制当前 executing exporter `__file__`、实际 import 的 P5 verifier `__file__` 分别精确等于 `<exporter_root>/tools/g0/...`，并将两文件 SHA 与 exporter-root tracked-clean provenance 对照；不再接收 caller-owned exporter revision/tool SHA。child 一律从 exporter-root-owned script 路径启动，A 执行/B 证明在任何 child compose 前 FAIL。
+- failed staging：attempt 创建后将 child、parse、pair-verifier 等任意 Exception 写入 deterministic `failure.json`（schema/status=FAIL/stage/error_type/error），不写或 rename canonical output；原始 attempt 独立保留。
+- CPU 证据：`py_compile` PASS；`python -m unittest tools/g0/test_r09_b2_p5_full_config_diff.py -v`=6/6 PASS（新增 A-execution/B-exporter-root negative、forced child failure 的 `failure.json`/canonical absence）；`git diff --check` PASS。未调用 `load_experiment_from_toml`、真实 export、CUDA/GPU、torchrun、模型/数据、训练、评测或推理。
+- 允许范围：仅复审 root `tools/g0/` 静态工具；即使批准仍仅允许另行申请 `APPROVE_TO_RUN_P5_STATIC_EXPORT`，不授予实际执行。
