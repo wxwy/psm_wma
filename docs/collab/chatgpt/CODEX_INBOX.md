@@ -4206,3 +4206,12 @@ print(json.dumps(result, sort_keys=True))
 - P4 D005 schema v3 强制 `native_load_contract`，旧 v2 record拒绝；P5 child request 使用 lexical launcher `path`，不再将 `.venv/bin/python` resolve 为 base Python。
 - 验证：`python -m py_compile ...`；`python -m unittest tools.g0.test_r09_b2_interpreter_provenance tools.g0.test_verify_r09_b2_p4_d005 -v`，17/17 PASS；`git diff --check` PASS。测试仅临时目录/stdlib，无 project compose、模型/数据/MP4、GPU、网络或 torchrun。
 - 请重点检查：PyTorch-style wrapper chain、wrapper escape/动态 target fail-close、registry second trigger、transitive ELF second site、record candidate-vs-recomputed equality、lexical interpreter 不被 realpath 替换。
+
+### Awaiting review — R09-B2 P4 implementation alias-escape fix
+
+请求 verdict：`APPROVE_TO_CLOSE_P4_INTERPRETER_PROVENANCE_STATIC` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请仅整改 Kimi 对 implementation=`2c0290f` 的 dynamic-constructor alias/reassignment escape；不申请任何运行。
+
+- 审核对象：根仓 fix commit=`6ba8f63a5f7bb3e34d8dfdf046bb1172fd2ddaff`，前一 implementation=`2c0290fc9cfa3ca375e1b7b6c3f56fd6df8701bd`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- `_assert_no_forbidden_dynamic_aliases` 现在拒绝 `builtins.getattr/globals/locals/eval/exec/__import__` 的 import alias 与 reassignment；call scan 同时按 resolved FQN 拒绝这些动态构造。
+- wrapper admission 同步强制单一显式路径参数，和 invocation 的单参数规则一致。
+- 新增永久 CPU 回归 `from builtins import getattr as g` 与 `loader = getattr`；总计 18/18 unittest PASS，`py_compile`/`diff --check` PASS。无 P4 record/P5/torchrun/GPU/训练。
