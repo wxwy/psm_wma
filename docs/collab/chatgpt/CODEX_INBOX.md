@@ -3589,3 +3589,15 @@ Detailed review:
 - 最小整改：verifier 对 optimizer/selector/optimizer-DCP schema 的 recurrent-only 差异，仅允许既有 structural recurrent prefix，或由 artifact 中 `recurrent.selector.keys_to_select - ttt.selector.keys_to_select` 的精确 substring 解释；TTT-only 仍拒绝，model/buffer/DCP-model structural policy 未放宽。新增正负回归并将 fresh-path 回归改为拒绝已终态 attempt-6。
 - 静态证据：`py_compile` PASS；`unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 19/19 PASS；`git diff --check` PASS。为保持 collection provenance，不重跑 GPU：用 clean collection-root=`269540e`/Gitlink=`21d064f` worktree 承载未跟踪 evidence 副本，由当前 verifier（SHA256 `10dd83084ff133a1ee5878125f8611aab0b6ce0ce208ac8cacd1b8bd8bce2111`）复核，`p3_gpu_inventory_verifier_selector_review.json`=PASS，record_valid=true，所有 provenance/23 checks/diff checks=true。
 - 禁止范围不变：不得重跑 P3、不得进入 P4/P5/B2-T、训练、评测、推理、closed-loop、多卡、长训、backend freeze、Global/Agent/RL。请求只关闭 P3 GPU-only optimizer inventory Gate。
+
+### Awaiting review — R09-B2 P3 verifier-owned selector contract closure
+
+请求 verdict：`APPROVE_TO_CLOSE_B2_P3_GPU_ONLY` 或 `REQUEST_CHANGES`，请附 `file:line`。
+
+- 审核对象：根仓 `b1283d63966f87cdb3700482f9353d9ff4143afc`；attempt-6 collection root=`269540e3ac6b25be8c1f3549f58d9ed28147cb2e`；子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。处理 ChatGPT `76fe9f6` HIGH；不重跑 GPU。
+- 根因接受：上轮 verifier 使用 artifact 自报 selector 差集解释 optimizer 差异，artifact 可伪造 broad key 扩宽 allowlist，不能作为 source of truth。
+- 修复：verifier-owned exact contract 冻结 recurrent selector=`[moe_gen,time_embedder,vae2llm,llm2vae,action2llm,llm2action,action_modality_embed,local_memory2llm,local_memory_modality_embed,local_history_runtime]`、TTT selector=`[local_history_runtime.encoder,local_memory2llm,local_memory_modality_embed]`，并要求 artifact production/inherited recipe SHA256 精确为 `d58f1e8d84df3c5e0a3819be3687d382f3191c47c36b38a22592b1d62805c454` / `cda509dfc289fc5b9b07220c09f44b5ed830f585dc01bbd703257d407e107347`。`selector_contract_exact` 同时要求两个 artifact selector backend/list 逐项匹配；只用 verifier-owned delta 解释 optimizer/selector/DCP optimizer schema recurrent-only 差异。
+- 不变：TTT-only 禁止；model/buffer/DCP-model structural allowlist 不变；canonical FQN、28 GiB、offline/local/no-execution/fail-stop 范围不变。
+- 回归：`py_compile` PASS；定向 unittest 19/19 PASS；正例 `moe_gen` 可解释；artifact 加入 broad `language_model` selector 及同名差异仍使三条 allow gate FAIL，任意 selector list 偏离使 `selector_contract_exact=false`、verifier FAIL；`git diff --check` PASS。
+- 证据：未重跑 GPU。clean collection-root=`269540e`/Gitlink=`21d064f` worktree 上由新版 verifier 重验同一 attempt-6 evidence，`artifacts/g0/r09/b2/p3_gpu_inventory_attempt6/p3_gpu_inventory_verifier_selector_review.json`=PASS、record_valid=true、全部 checks/diff checks=true（含 `selector_contract_exact=true`），GPU=0 MiB。
+- 仍禁止 P4/P5/B2-T、训练、评测、推理、closed-loop、多卡、长训、backend freeze、Global/Agent/RL；请求仅关闭 P3 GPU-only optimizer inventory Gate。
