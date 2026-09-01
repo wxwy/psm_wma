@@ -4215,3 +4215,13 @@ print(json.dumps(result, sort_keys=True))
 - `_assert_no_forbidden_dynamic_aliases` 现在拒绝 `builtins.getattr/globals/locals/eval/exec/__import__` 的 import alias 与 reassignment；call scan 同时按 resolved FQN 拒绝这些动态构造。
 - wrapper admission 同步强制单一显式路径参数，和 invocation 的单参数规则一致。
 - 新增永久 CPU 回归 `from builtins import getattr as g` 与 `loader = getattr`；总计 18/18 unittest PASS，`py_compile`/`diff --check` PASS。无 P4 record/P5/torchrun/GPU/训练。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance design v1.3
+
+请求 verdict：`APPROVE_TO_IMPLEMENT_P4_INTERPRETER_PROVENANCE` 或 `REQUEST_CHANGES`，请附 `file:line`。本申请针对 GPT implementation review 的六个 HIGH 重设合同；不申请实现或任何运行。
+
+- 审核对象：根仓 design commit=`f362b827dc9b4c9c21d2af4f54f17e0ccba20278`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；文档=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v1.3_2026-09-01.md`。
+- static D005 只绑定 grammar/manifest/template；未来独立授权的 execution preflight 才在最终 run_root staging materialize并解析 path-dependent closure。
+- outer/worker/P5 统一 lexical `-I -S -B -c` verified-bytes loader、request SHA token；worker 强制 `torchrun --no-python`；旧 direct Python/module/script path永久拒绝。
+- all staged Python、class-method wrapper/escape、真实 ELF bytes-derived closure、untracked full-clean 均由 verifier独立重算；永久 tests 明确列出 shared-forgery/escape/final-path negatives。
+- 允许范围：若批准仅 root P4/P5 tooling+stdlib CPU tests；禁止真实 staging/venv/external checkout、P4 record、P5 export、torchrun、GPU、模型数据训练评测推理/B2-T。
