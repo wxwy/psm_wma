@@ -52,8 +52,12 @@ FROZEN_SOURCE_PATHS = {
 RUN_TOKEN = "APPROVE_TO_RUN_GPU_ONLY_P3_GATE"
 
 
+def _sha256_bytes(payload: bytes) -> str:
+    return hashlib.sha256(payload).hexdigest()
+
+
 def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return _sha256_bytes(path.read_bytes())
 
 
 def _git(root: Path, *args: str) -> str:
@@ -62,30 +66,60 @@ def _git(root: Path, *args: str) -> str:
     ).strip()
 
 
+def _git_bytes(root: Path, *args: str) -> bytes:
+    return subprocess.check_output(["git", "-C", str(root), *args], stderr=subprocess.DEVNULL)
+
+
+def _tracked_clean(root: Path, revision: str) -> bool:
+    return subprocess.run(
+        ["git", "-C", str(root), "diff", "--quiet", revision, "--"],
+        stderr=subprocess.DEVNULL,
+        check=False,
+    ).returncode == 0
+
+
+def _contained(root: Path, path: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+    except ValueError:
+        return False
+    return True
+
+
 def provenance_checks(artifact: dict[str, object], root: Path | None) -> dict[str, bool]:
     """仅对 PASS 独立绑定本地 checkout、冻结源文件和 D005 record。"""
+    keys = ("root_gitlink_valid", "root_tracked_clean", "submodule_head_valid", "submodule_tracked_clean", "source_hashes_valid", "d005_identity_valid", "command_binding_valid", "gpu_binding_valid", "run_token_valid")
     if artifact.get("status") != "PASS":
-        return {key: True for key in ("root_gitlink_valid", "source_hashes_valid", "d005_identity_valid", "command_binding_valid", "gpu_binding_valid", "run_token_valid")}
+        return {key: True for key in keys}
     if root is None:
-        return {key: False for key in ("root_gitlink_valid", "source_hashes_valid", "d005_identity_valid", "command_binding_valid", "gpu_binding_valid", "run_token_valid")}
+        return {key: False for key in keys}
     provenance = artifact.get("provenance", {})
     try:
         root = root.resolve()
         root_revision = provenance["root_revision"]
+        submodule_root = root / "cosmos-framework"
         gitlink = _git(root, "ls-tree", root_revision, "cosmos-framework").split()[2]
         root_gitlink_valid = (
             root_revision == _git(root, "rev-parse", "HEAD")
-            and gitlink == provenance.get("gitlink_revision") == provenance.get("submodule_revision")
+            and gitlink == provenance.get("gitlink_revision")
         )
-        source_hashes_valid = all(
-            provenance.get(field) == _sha256(root / relative)
-            for field, relative in FROZEN_SOURCE_PATHS.items()
-        )
+        root_tracked_clean = _tracked_clean(root, root_revision)
+        submodule_head_valid = _git(submodule_root, "rev-parse", "HEAD") == gitlink == provenance.get("submodule_revision")
+        submodule_tracked_clean = _tracked_clean(submodule_root, gitlink)
+        source_hashes_valid = True
+        for field, relative in FROZEN_SOURCE_PATHS.items():
+            source_root = root if relative.startswith("tools/") else submodule_root
+            source_revision = root_revision if source_root == root else gitlink
+            source_relative = relative if source_root == root else relative.removeprefix("cosmos-framework/")
+            blob = _git_bytes(source_root, "show", f"{source_revision}:{source_relative}")
+            source_hashes_valid = source_hashes_valid and provenance.get(field) == _sha256_bytes(blob) and (source_root / source_relative).read_bytes() == blob
         d005_ref = provenance.get("d005_record", {})
         d005_relative = Path(d005_ref["path"])
         if d005_relative.is_absolute() or ".." in d005_relative.parts:
             raise ValueError("D005 path must be relative to the verified root")
         d005_path = root / d005_relative
+        if not _contained(root, d005_path):
+            raise ValueError("D005 path escapes the verified root")
         d005 = json.loads(d005_path.read_text())
         d005_identity_valid = (
             d005_ref.get("sha256") == _sha256(d005_path)
@@ -103,9 +137,12 @@ def provenance_checks(artifact: dict[str, object], root: Path | None) -> dict[st
         )
         run_token_valid = provenance.get("approved_run_token") == RUN_TOKEN and d005.get("approved_run_token") == RUN_TOKEN
     except (IndexError, KeyError, OSError, ValueError, json.JSONDecodeError, subprocess.CalledProcessError):
-        return {key: False for key in ("root_gitlink_valid", "source_hashes_valid", "d005_identity_valid", "command_binding_valid", "gpu_binding_valid", "run_token_valid")}
+        return {key: False for key in keys}
     return {
         "root_gitlink_valid": root_gitlink_valid,
+        "root_tracked_clean": root_tracked_clean,
+        "submodule_head_valid": submodule_head_valid,
+        "submodule_tracked_clean": submodule_tracked_clean,
         "source_hashes_valid": source_hashes_valid,
         "d005_identity_valid": d005_identity_valid,
         "command_binding_valid": command_binding_valid,

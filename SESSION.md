@@ -26,6 +26,7 @@
   - GPT 的 `ed145d7`、Kimi、MM 均批准继续静态实现。已新增 future worker 使用的实际离线环境应用 helper、含 size/SHA 的六资产只读快照以及严格前后快照比较；future PASS verifier 强制 observed env 与前后资产快照相等。`py_compile` 与子进程内 helper 验证 PASS；未构造 processor/model，未提交。
   - 三方随后批准 read-only evidence。future PASS verifier 新增 GPT 要求的完整 provenance key 集合；两条 BLOCKED path 不要求虚构 run provenance。`py_compile`、不存在路径 BLOCKED→verifier 与 diff-check PASS；未运行 GPU，未提交。
   - GPT provenance review 指出“字段非空”不是 hard gate，已改为 verifier 独立绑定 current root revision→Gitlink/submodule、固定 recipe/tool/model/optimizer/DCP SHA、精确 run token、root 内 D005 SHA/JSON 和 argv/cwd/environment/GPU/world-size/resource cap。伪造所有字段非空但 revision/D005 绝对路径错误的 PASS provenance 负例 fail-closed；BLOCKED 回归不受影响。未运行 GPU，未提交。
+  - GPT traversal review 又指出 source SHA 不能来自可变工作树。已改为从 root/submodule 指定 commit blob 重算、同时比较当前 bytes、强制两仓 tracked-clean/submodule HEAD==Gitlink、D005 resolve 后 containment；D005 symlink escape 与 BLOCKED 回归 PASS。未运行 GPU，未提交。
 
 - 当前：`G0-R09-B1-SINGLE-GPU-SMOKE` 与 `ACCEPT-13CKPT-SMOKE` 均已关闭；暂无 Codex 可自行启动的后续 R09 实现或运行。任何正式训练、多卡、长训、matched SR、backend freeze、eval/inference/closed-loop、Global/Agent/RL 均须先新建 TODO、方案和三方审核。
 
