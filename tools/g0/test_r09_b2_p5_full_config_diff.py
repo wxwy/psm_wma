@@ -111,12 +111,14 @@ class P5Test(unittest.TestCase):
                 self.assertEqual(verify_pair(recurrent, ttt, evidence, evidence)["status"], "FAIL")
                 bad = json.loads(json.dumps(ttt)); bad["provenance"]["p4_v4_result_sha256"] = "0" * 64
                 self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
-            bad = json.loads(json.dumps(ttt)); bad["effective_launch"]["runtime_sys_path"].append("/ambient")
-            self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
-            bad = json.loads(json.dumps(ttt)); bad["effective_launch"]["environment"]["PSM_R09_B1_TTT_ENABLED"] = "0"
-            self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
-            bad = json.loads(json.dumps(ttt)); bad["resolved_config"]["unexpected"] = True
-            self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
+                bad = json.loads(json.dumps(ttt)); bad["effective_launch"]["runtime_sys_path"].append("/ambient")
+                self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
+                bad = json.loads(json.dumps(ttt)); bad["effective_launch"]["environment"]["PSM_R09_B1_TTT_ENABLED"] = "0"
+                self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
+                bad = json.loads(json.dumps(ttt)); bad["resolved_config"]["optimizer"]["keys_to_select"] = ["recurrent"]
+                self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
+                bad = json.loads(json.dumps(ttt)); bad["resolved_config"]["unexpected"] = True
+                self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
 
     def test_v4_preflight_mutation_is_fail_closed(self):
         with tempfile.TemporaryDirectory() as temp:
