@@ -4196,3 +4196,13 @@ print(json.dumps(result, sort_keys=True))
 - 精确审核对象：根仓 design commit=`476a5ddfa8beb89315234819e1e1a917ea227bc6`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；设计文档仍为=`docs/build/PSM-WMA_R09_B2_P4_interpreter_provenance_design_v1.2_2026-09-01.md`。
 - 上一条 `476a5dd19755b5c1945694161674a52141b4b6ae` 不存在；不得以 parent 推断替代，此处明确重新绑定实际 Git object。
 - 其余申请内容完全沿用 v1.2：all-staged Python + closure ELF、verifier-owned wrapper definition/invocation-chain、exact candidate-set equality 与 fail-closed escapes；不申请任何实现或运行。
+
+### Awaiting review — R09-B2 P4 interpreter-provenance implementation v1.2
+
+请求 verdict：`APPROVE_TO_CLOSE_P4_INTERPRETER_PROVENANCE_STATIC` 或 `REQUEST_CHANGES`，请附 `file:line`。仅审核 root-only static implementation；不申请 P4 record重冻、P5 export、torchrun、GPU或训练。
+
+- 审核对象：根仓 implementation commit=`2c0290fc9cfa3ca375e1b7b6c3f56fd6df8701bd`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；设计锚点=`476a5ddfa8beb89315234819e1e1a917ea227bc6`。
+- 新增 `tools/g0/r09_b2_interpreter_provenance.py`：lexical launcher 记录、all-staged Python direct/wrapper-chain summary、full closure ELF records、candidate allowlist 独立重算与精确 equality。
+- P4 D005 schema v3 强制 `native_load_contract`，旧 v2 record拒绝；P5 child request 使用 lexical launcher `path`，不再将 `.venv/bin/python` resolve 为 base Python。
+- 验证：`python -m py_compile ...`；`python -m unittest tools.g0.test_r09_b2_interpreter_provenance tools.g0.test_verify_r09_b2_p4_d005 -v`，17/17 PASS；`git diff --check` PASS。测试仅临时目录/stdlib，无 project compose、模型/数据/MP4、GPU、网络或 torchrun。
+- 请重点检查：PyTorch-style wrapper chain、wrapper escape/动态 target fail-close、registry second trigger、transitive ELF second site、record candidate-vs-recomputed equality、lexical interpreter 不被 realpath 替换。
