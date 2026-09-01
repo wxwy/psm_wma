@@ -3919,3 +3919,70 @@ print(json.dumps(result, sort_keys=True))
 
 - 资源/禁止：CPU only，预期无 CUDA 初始化、无 GPU、无 torchrun、无 model/dataloader/optimizer/checkpoint instantiate 或 weights/data/MP4 access；child 仅 `load_experiment_from_toml` resolved-config compose，并强制 `torch.cuda.is_initialized()==False`。不访问外网（offline env）。
 - 产物与判据：PASS 仅当 canonical output 内 `recurrent_resolved.json`、`ttt_fast_weight_resolved.json`、`verification.json` 存在且 verifier `status=PASS`；任何异常/FAIL 仅保留 `.psm_wma_p5_static_export_20260901.attempt-<uuid>/failure.json`，canonical output 必不存在，立即停止，不重跑/不扩大范围。
+
+### Awaiting review — R09-B2 P5 isolated reviewed-root bootstrap execution
+
+请求 verdict：`APPROVE_TO_RUN_P5_STATIC_EXPORT` 或 `REQUEST_CHANGES`，请附 `file:line`。这是对 ChatGPT review `2026-09-01_R09_B2_P5_static_export_execution_b87603d_9ad602f.md` HIGH 的唯一整改；仍是一次性 CPU-only 执行授权，不是训练/GPU/B2-T 授权。
+
+- 审核 exporter/static-tools 固定根仓=`9ad602f93f5975f9ec7d033783b41052ca09107e`、子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。production 固定 `/disk/rl/psm_wma_p4_d005_retry`/`ddb4e0eae97fb545d5239c1ddb6d4387170f3780`，evidence 固定 `/disk/rl/psm_wma_p5_evidence_8bde8c1`/`8bde8c12876219b1a36d50b604e05701bf550e3e`，exporter 固定 `/disk/rl/psm_wma_p5_exporter_9ad602f`/`9ad602f93f5975f9ec7d033783b41052ca09107e`。三根及其 `cosmos-framework` 子模块已以 `git status --porcelain=v1 --untracked-files=all` 预检全清洁；canonical output 不存在且三根外。
+- 为满足“任何项目 import 前 machine-bind 审核版本”，冻结命令从 `/tmp` 以 `/opt/conda/bin/python3.11 -I` 启动；bootstrap 仅 import Python 标准库，先逐项验证三根 canonical absolute path、HEAD、Gitlink、submodule HEAD、根/子模块 full-clean，以及 output absence/non-overlap；仅通过后 `sys.path.insert(0, exporter_root)` 并导入 `run_parent_export`。`-I` 不接受 `PYTHONPATH`/用户 site，故 preflight 前不加载根内 `sitecustomize` 或任何项目 Python。
+
+```bash
+cd /tmp
+HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 /opt/conda/bin/python3.11 -I -c '
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+frozen = {
+    "exporter": (Path("/disk/rl/psm_wma_p5_exporter_9ad602f"), "9ad602f93f5975f9ec7d033783b41052ca09107e"),
+    "production": (Path("/disk/rl/psm_wma_p4_d005_retry"), "ddb4e0eae97fb545d5239c1ddb6d4387170f3780"),
+    "evidence": (Path("/disk/rl/psm_wma_p5_evidence_8bde8c1"), "8bde8c12876219b1a36d50b604e05701bf550e3e"),
+}
+gitlink = "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb"
+roots = []
+for label, (expected, revision) in frozen.items():
+    root = expected.resolve()
+    if root != expected or not root.is_dir():
+        raise SystemExit(f"{label}: canonical path mismatch")
+    if subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip() != revision:
+        raise SystemExit(f"{label}: HEAD mismatch")
+    if subprocess.check_output(["git", "-C", str(root), "status", "--porcelain=v1", "--untracked-files=all"], text=True):
+        raise SystemExit(f"{label}: root not fully clean")
+    submodule = root / "cosmos-framework"
+    if subprocess.check_output(["git", "-C", str(root), "ls-tree", "HEAD", "cosmos-framework"], text=True).split()[2] != gitlink:
+        raise SystemExit(f"{label}: gitlink mismatch")
+    if subprocess.check_output(["git", "-C", str(submodule), "rev-parse", "HEAD"], text=True).strip() != gitlink:
+        raise SystemExit(f"{label}: submodule HEAD mismatch")
+    if subprocess.check_output(["git", "-C", str(submodule), "status", "--porcelain=v1", "--untracked-files=all"], text=True):
+        raise SystemExit(f"{label}: submodule not fully clean")
+    roots.append(root)
+
+output_dir = Path("/disk/rl/psm_wma_p5_static_export_20260901")
+if output_dir.exists() or not output_dir.is_absolute():
+    raise SystemExit("canonical output must be absent and absolute")
+output_dir = output_dir.resolve()
+if any(output_dir == root or output_dir.is_relative_to(root) or root.is_relative_to(output_dir) for root in roots):
+    raise SystemExit("canonical output overlaps a frozen root")
+
+exporter_root = frozen["exporter"][0]
+sys.path.insert(0, str(exporter_root))
+from tools.g0.export_r09_b2_p5_resolved_config import run_parent_export
+
+evidence_root = frozen["evidence"][0]
+p4 = evidence_root / "artifacts/g0/r09/b2/p4_launch_d005"
+result = run_parent_export(
+    json.loads((p4 / "recurrent.json").read_text()),
+    json.loads((p4 / "ttt_fast_weight.json").read_text()),
+    production_root=frozen["production"][0],
+    evidence_root=evidence_root,
+    exporter_root=exporter_root,
+    output_dir=output_dir,
+)
+print(json.dumps(result, sort_keys=True))
+'
+```
+
+- 资源/禁止：CPU only、offline；只允许两个 child 的 `load_experiment_from_toml` resolved-config compose，并强制 CUDA 未初始化。禁止 CUDA/GPU、torchrun、模型/dataloader/optimizer/checkpoint 构造、weights/data/MP4 access、训练、评测、推理。
+- 产物/停止：PASS 仅当 canonical output 内两个 `*_resolved.json` 与 `verification.json` 存在，且 verifier `status=PASS`；任一异常/FAIL 只保留同级 attempt 的 `failure.json`，canonical output 必不存在，立即停止、不重跑、不改参数。
