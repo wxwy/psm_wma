@@ -14,6 +14,7 @@ from pathlib import Path
 
 
 RUN_TOKEN = "APPROVE_TO_RUN_GPU_ONLY_P3_GATE"
+APPROVED_MAX_PEAK_GIB = 28
 INVENTORY_MODEL_OVERRIDES = {"load_vision_tokenizer": False}
 FROZEN_SOURCE_PATHS = {
     "recipe_sha256": "cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all.toml",
@@ -553,7 +554,7 @@ def main() -> None:
     parser.add_argument("--libero-root", type=Path)
     parser.add_argument("--d005-record", type=Path)
     parser.add_argument("--approved-run-token", default="")
-    parser.add_argument("--max-peak-gib", type=int, default=24)
+    parser.add_argument("--max-peak-gib", type=int, default=APPROVED_MAX_PEAK_GIB)
     parser.add_argument("--worker-backend", choices=("recurrent", "ttt_fast_weight"))
     args = parser.parse_args()
     root = args.root.resolve()
@@ -589,8 +590,11 @@ def main() -> None:
         args.output.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
         print(json.dumps({"status": "BLOCKED"}))
         return
-    if args.max_peak_gib != 24 or args.toml is None or args.d005_record is None:
-        raise ValueError("approved P3 run requires --toml, --d005-record, and --max-peak-gib=24")
+    if args.max_peak_gib != APPROVED_MAX_PEAK_GIB or args.toml is None or args.d005_record is None:
+        raise ValueError(
+            "approved P3 run requires --toml, --d005-record, and "
+            f"--max-peak-gib={APPROVED_MAX_PEAK_GIB}"
+        )
     required_paths = {
         "WAN_VAE_PATH": args.wan_vae_path,
         "BASE_CHECKPOINT_PATH": args.base_checkpoint_path,
@@ -668,7 +672,10 @@ def main() -> None:
     result = {
         "schema_version": "r09_b2_p3_gpu_inventory_v1",
         "status": "PASS" if pass_backends and within_limit else "BLOCKED",
-        "reason": None if pass_backends and within_limit else "backend construction blocked or 24 GiB cap exceeded",
+        "reason": (
+            None if pass_backends and within_limit
+            else f"backend construction blocked or {APPROVED_MAX_PEAK_GIB} GiB cap exceeded"
+        ),
         "local_processor": backends.get("recurrent", {}).get("local_processor", processor),
         "provenance": provenance,
         "execution": {

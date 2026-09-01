@@ -844,3 +844,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 目的/Gate：`G0-R09-B2-P3-GPU-ONLY-RUN`。在三方对 root=`4199fb0`、submodule/Gitlink=`21d064f` 的一次性 attempt-3 授权后，按 frozen command 运行；单 `CUDA_VISIBLE_DEVICES=0`、`WORLD_SIZE=1`、离线、本地 processor、禁止 VAE/权重/checkpoint/data I/O 和 forward/backward/step。
 - 事实：recurrent worker 已构造 production processor/model/optimizer，并在 `OptimizersContainer.state_dict()` 后因 peak=`27,147,632,640` bytes（25.28 GiB）超过 24 GiB hard cap 终止；TTT worker 未启动，GPU 释放至 0 MiB。aggregate=`artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory.json`，D005 与 verifier 同目录；verifier 为 `BLOCKED` 且 `record_valid=true`、23/23 checks true。
 - 本最小步骤：将 attempt-3 三份 terminal JSON 固化为独立证据提交；不改 collector/verifier/runbook，不重跑 GPU。随后仅准备 28 GiB cap、fresh attempt-4 路径的静态整改和三方审核；28 GiB 取值为对 25.28 GiB 实测峰值保留约 2.7 GiB 余量的最小实践上限，尚未获新的运行授权。预计修改：证据提交后才修改 `tools/g0/collect_r09_b2_p3_gpu_inventory.py`、`tools/g0/verify_r09_b2_p3_gpu_inventory.py`、其测试、P3 runbook、`TODO.md`、`SESSION.md`。未提交。
+
+### R09-B2 P3 attempt-4 28 GiB static re-authorization（2026-09-01，REVIEW）
+
+- 目的/Gate：处理 attempt-3 的真实 25.28 GiB cap terminal，仅把 P3 inventory 的审核硬上限改为 28 GiB，并改用 fresh `p3_gpu_inventory_attempt4/`；不改变单卡、offline/local processor、VAE/weight/checkpoint/data I/O 禁止、no-forward/backward/step、backend 顺序或 fail-stop 语义。
+- 修改：collector/verifier 各定义同值 `APPROVED_MAX_PEAK_GIB=28`，命令行、D005、provenance 和 PASS verifier 均 fail-closed 要求该值；runbook 写入一次性 attempt-4 命令。测试把新输出路径改为 attempt-4，并固定断言 attempt-3 stderr 的实测 27,147,632,640 B 低于 28 GiB 且 collector/verifier cap 一致。
+- 验证：`cosmos-framework/.venv/bin/python -m py_compile tools/g0/{collect,verify,test_verify}_r09_b2_p3_gpu_inventory.py` PASS；`... -m unittest tools/g0/test_verify_r09_b2_p3_gpu_inventory.py -v` 为 14/14 PASS；`git diff --check` PASS。未运行 GPU、worker、processor/model、VAE、checkpoint/data/DCP I/O 或 forward/backward/step。
+- 下一步：提交并送 ChatGPT、MM、Kimi 对同一 SHA 审核；仅三方 `APPROVE_TO_RUN_GPU_ONLY_P3_GATE` 后才可按 runbook 执行 attempt-4 一次。提交：未提交。

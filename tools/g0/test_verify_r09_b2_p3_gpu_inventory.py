@@ -76,7 +76,7 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
             "environment": environment,
             "gpu_uuid": "fixture-gpu-uuid",
             "world_size": 1,
-            "max_peak_gib": 24,
+            "max_peak_gib": VERIFY.APPROVED_MAX_PEAK_GIB,
             "approved_run_token": VERIFY.RUN_TOKEN,
         }
         d005_path.parent.mkdir(parents=True, exist_ok=True)
@@ -382,16 +382,25 @@ class FrozenPythonRecipeSourceRegressionTest(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "framework directory is missing"):
             COLLECT._set_worker_production_cwd(Path("/missing/p3-framework-root"))
 
-    def test_attempt3_output_paths_are_fresh_and_prior_attempt_evidence_is_unchanged(self) -> None:
-        output = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory.json"
+    def test_attempt4_output_paths_are_fresh_and_prior_attempt_evidence_is_unchanged(self) -> None:
+        output = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt4/p3_gpu_inventory.json"
         d005 = output.with_name("p3_gpu_inventory_d005.json")
         attempt_one = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory_attempt1_d005.json"
         attempt_two = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory/p3_gpu_inventory.json"
-        before = {path: _sha256(path) for path in (attempt_one, attempt_two)}
+        attempt_three = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory.json"
+        before = {path: _sha256(path) for path in (attempt_one, attempt_two, attempt_three)}
         COLLECT._assert_fresh_output_paths(ROOT, output, d005)
         self.assertEqual(before, {path: _sha256(path) for path in before})
         with self.assertRaisesRegex(ValueError, "fresh and untracked"):
             COLLECT._assert_fresh_output_paths(ROOT, attempt_two, d005)
+
+    def test_approved_peak_cap_matches_verifier_and_attempt3_measurement(self) -> None:
+        attempt_three = ROOT / "artifacts/g0/r09/b2/p3_gpu_inventory_attempt3/p3_gpu_inventory.json"
+        recurrent_stderr = json.loads(attempt_three.read_text())["recurrent"]["stderr"]
+        measured_peak = 27_147_632_640
+        self.assertIn(str(measured_peak), recurrent_stderr)
+        self.assertEqual(COLLECT.APPROVED_MAX_PEAK_GIB, VERIFY.APPROVED_MAX_PEAK_GIB)
+        self.assertLess(measured_peak, COLLECT.APPROVED_MAX_PEAK_GIB * 1024**3)
 
     def test_backend_orchestration_stops_after_zero_exit_blocked_record(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

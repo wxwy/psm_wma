@@ -56,6 +56,7 @@ FROZEN_SOURCE_PATHS = {
     "dcp_source_sha256": "cosmos-framework/cosmos_framework/checkpoint/dcp.py",
 }
 RUN_TOKEN = "APPROVE_TO_RUN_GPU_ONLY_P3_GATE"
+APPROVED_MAX_PEAK_GIB = 28
 INVENTORY_MODEL_OVERRIDES = {"load_vision_tokenizer": {"before": True, "after": False}}
 MODEL_DCP_SYMBOL = "cosmos_framework.checkpoint.dcp.ModelWrapper.state_dict"
 OPTIMIZER_DCP_SYMBOL = "cosmos_framework.utils.generator.optimizer.OptimizersContainer.state_dict"
@@ -142,7 +143,7 @@ def provenance_checks(artifact: dict[str, object], root: Path | None) -> dict[st
         gpu_binding_valid = (
             d005.get("gpu_uuid") == provenance.get("gpu_uuid")
             and d005.get("world_size") == artifact.get("execution", {}).get("world_size") == 1
-            and d005.get("max_peak_gib") == 24
+            and d005.get("max_peak_gib") == APPROVED_MAX_PEAK_GIB
         )
         run_token_valid = provenance.get("approved_run_token") == RUN_TOKEN and d005.get("approved_run_token") == RUN_TOKEN
     except (IndexError, KeyError, OSError, ValueError, json.JSONDecodeError, subprocess.CalledProcessError):
@@ -325,8 +326,8 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
             observed = record.get("execution", {}).get("observed_environment", {})
             backend_execution_valid = backend_execution_valid and (
                 record.get("execution", {}).get("distributed_initialized") is False
-                and record.get("execution", {}).get("peak_allocated_bytes", 1 << 60) <= 24 * 1024**3
-                and record.get("execution", {}).get("peak_reserved_bytes", 1 << 60) <= 24 * 1024**3
+                and record.get("execution", {}).get("peak_allocated_bytes", 1 << 60) <= APPROVED_MAX_PEAK_GIB * 1024**3
+                and record.get("execution", {}).get("peak_reserved_bytes", 1 << 60) <= APPROVED_MAX_PEAK_GIB * 1024**3
                 and observed.get("PSM_R08_LOCAL_HISTORY_ENABLED") == "1"
                 and observed.get("PSM_LOCAL_DUMMY_ENABLED") == "0"
                 and observed.get("PSM_R09_A1_ENABLED") == "0"
@@ -338,7 +339,10 @@ def verify(artifact: dict[str, object], root: Path | None = None) -> dict[str, o
         "schema": artifact.get("schema_version") == "r09_b2_p3_gpu_inventory_v1",
         "single_process": execution.get("world_size") == 1 and execution.get("distributed_initialized") is False,
         "no_execution": all(execution.get(key) is False for key in NO_EXECUTION_FIELDS),
-        "peak_under_limit": execution.get("peak_allocated_bytes", 1 << 60) <= 24 * 1024**3 and execution.get("peak_reserved_bytes", 1 << 60) <= 24 * 1024**3,
+        "peak_under_limit": (
+            execution.get("peak_allocated_bytes", 1 << 60) <= APPROVED_MAX_PEAK_GIB * 1024**3
+            and execution.get("peak_reserved_bytes", 1 << 60) <= APPROVED_MAX_PEAK_GIB * 1024**3
+        ),
         "backend_status": (all(record.get("status") == "PASS" for record in backends.values()) if pass_claimed else True),
         "backend_execution_binding": backend_execution_valid,
         "backend_processor_binding": backend_processor_valid,
