@@ -3338,3 +3338,8 @@ Detailed review:
 
 - 当前根仓审核锚点：`8578736`（子模块/Gitlink 仍 `0af5d53`）。verifier 不再信任 artifact 的 truthy provenance：独立从当前 root/Git 推导 `root_revision→gitlink→submodule`，重算固定 recipe/collector/verifier/model/optimizer/DCP SHA，精确校验 run token，并要求 D005 为 root 内相对 JSON 路径、SHA/identity/argv/cwd/environment/GPU/world-size/24GiB cap 全部交叉一致。
 - 负例：所有 provenance 字段均非空但 root revision 与 D005 路径伪造时，六项 provenance booleans 全 false；BLOCKED path 保持合法。`py_compile`、`git diff --check` PASS。请求同一 verdict 复审；禁止 GPU/processor/model 构造。
+
+### MM 路径遍历整改复审
+
+- 当前根仓审核锚点：`ae48c8d`（子模块/Gitlink 仍 `0af5d53`）。`provenance_checks()` 现捕获 D005 相对路径防护主动抛出的 `ValueError`，使 `../../etc/passwd` 等遍历攻击转为六项 provenance checks 全 false 的结构化 FAIL，而非 traceback。
+- `py_compile`、路径遍历 direct negative 与 `git diff --check` PASS；请求同一 verdict 复审，禁止 GPU/processor/model 构造。
