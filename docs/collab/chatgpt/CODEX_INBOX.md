@@ -4243,3 +4243,15 @@ print(json.dumps(result, sort_keys=True))
 - 关键变更：旧 P5 v0.5 固定 P4 v2 direct-D005/fixed child-request SHA 不可继承。v0.6 要求未来独立获批的 P4 v4 execution preflight 为 verifier-owned identity，P5 parent 只从其 request defaults 派生每 backend request，并以 `-I -S -B -c` loader、out-of-band request SHA、bootstrap Git/current-byte binding 启动；direct exporter script 永久拒绝。
 - 保留：三根隔离/full-clean、attempt failure.json/canonical absence、nested exact envelope、P1/P3/P4 evidence 与 v0.3 P3 contract diff。永久测试覆盖 request/bootstrap drift、non-loader/direct-script、root overlap/untracked、P3 swap、failure attempt；测试只限 stdlib mock，禁止调用 compose。
 - 允许范围：批准后仅 root P5 exporter/verifier 与 CPU 标准库 tests；仍禁止 P4 record/preflight、P5 export/compose、staging、torchrun、GPU、模型/数据/训练/评测/推理/B2-T。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 71a4b9f63bc5d1b6b013596fabc0d1f8d4360110；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务/Gate：`G0-R09-B2-P5-FULL-CONFIG-DIFF` v0.7 静态设计整改。请求 verdict：`APPROVE_TO_IMPLEMENT_P5_V07_STATIC_TOOLS` 或 `REQUEST_CHANGES`，请附 `file:line`。请针对明确的 design SHA 审核；本条 Inbox ledger 提交不改变审核对象。
+
+- 审核对象：root design=`71a4b9f63bc5d1b6b013596fabc0d1f8d4360110`（已推送 `origin/V2`），新文档=`docs/build/PSM-WMA_R09_B2_P5_full_config_diff_design_v0.7_2026-09-02.md`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。它只整改 GPT review=`docs/collab/chatgpt/reviews/2026-09-02_R09_B2_P5_v06_design_93d2f39_37bf7f6.md` 的三项 HIGH 与一项 MEDIUM；v0.6 不获实现批准。
+- HIGH-1：固定并分离 `production_source_root`（Git source/TOML/cwd）、`p4_run_root`（非 Git）、`p4_staging_root`（唯一 final copy-only/readonly staging），仅 Git roots full-clean；loader runtime `sys.path` 仅 base stdlib/lib-dynload + record-bound staging payload，`PYTHONPATH`/cwd/source 不作为 import authority。P5 只读已批准 P4-v4 staging，显式覆盖旧 P5-only run-root-absent 语义；source/staging substitution、relocation、symlink 和 same-byte/different-$ORIGIN 均要求 FAIL。
+- HIGH-2：历史 P4 v2/static D005 明确拒绝。固定 evidence-root 下每 backend `request.json/result.json/verification.json` discovery、exact top/nested schema、producer/verifier identity、request/result/verification SHA；parent 与 pair verifier 重读 current state、重算 manifest/native closure/path relation，shared P5-request+artifact forgery 仍必须 FAIL。
+- HIGH-3：`p5_effective_environment` 从空 mapping 独立重建，仅容许 P4 common + declared backend diff + `LC_CTYPE=C.UTF-8`；rank、`PYTHONPATH`、完整 P4 native-loader variable set 和 `GLIBC_TUNABLES` 缺席。parent resolve、spawn、pair verifier、child startup 逐键相等；loader injection/rank/unknown/locale drift 均为永久负例。
+- MEDIUM：`pre_p5_run_root_roster` 精确只允许 `import_staging/<run-token>` 与 `preflight.json`；manifest/mode/SHA 均交叉绑定，checkpoint/stdout/capture/training artifact/unknown/extra staging/可写 staging 全部 pre-spawn FAIL。
+- 验证：仅文档变更；`git diff --check` 与新增文档 no-index diff-check PASS。未执行项目代码、P4 preflight/staging、P5 export/compose、CUDA/GPU、torchrun、模型/数据/checkpoint、训练/评测/推理。
+- 允许范围：若批准，仅可实现 root P5 exporter/verifier 与 CPU 标准库测试。仍不授权 P4-v4 record/refreeze/preflight、任何 staging 创建、P5 export/compose、GPU/torchrun、模型/数据/训练/评测/推理、P5 closure、B2-T 或 Local Memory 训练。
