@@ -169,15 +169,29 @@ def _read_historical_artifact(root: Path, binding: object, expected: dict[str, s
     if relative.is_absolute() or not relative.parts or any(part in {"", ".", ".."} for part in relative.parts):
         raise ValueError(f"execution request historical {name} path differs")
     lexical = root / relative
-    if lexical.is_symlink():
+    nofollow = getattr(os, "O_NOFOLLOW", None)
+    if nofollow is None:
         raise ValueError(f"execution request historical {name} path differs")
+    flags = os.O_RDONLY | nofollow | getattr(os, "O_CLOEXEC", 0)
     try:
-        path = lexical.resolve(strict=True)
+        descriptor = os.open(lexical, flags)
     except OSError as exc:
         raise ValueError(f"execution request historical {name} path differs") from exc
-    if path.is_symlink() or not path.is_relative_to(root):
-        raise ValueError(f"execution request historical {name} path differs")
-    raw = _read_regular_nofollow(path, f"execution request historical {name} path differs")
+    try:
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            raise ValueError(f"execution request historical {name} path differs")
+        try:
+            canonical = Path(f"/proc/self/fd/{descriptor}").resolve(strict=True)
+        except OSError as exc:
+            raise ValueError(f"execution request historical {name} path differs") from exc
+        if not canonical.is_relative_to(root):
+            raise ValueError(f"execution request historical {name} path differs")
+        with os.fdopen(descriptor, "rb") as handle:
+            descriptor = -1
+            raw = handle.read()
+    finally:
+        if descriptor != -1:
+            os.close(descriptor)
     if hashlib.sha256(raw).hexdigest() != expected["sha256"]:
         raise ValueError(f"execution request historical {name} bytes differ")
     try:

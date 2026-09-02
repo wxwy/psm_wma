@@ -626,6 +626,11 @@ class EnvironmentAuthorityTest(unittest.TestCase):
 
 
 class AuthoritiesAuthorityTest(unittest.TestCase):
+    def _reidentity(self, value):
+        value["d005_pair"]["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in value["d005_pair"].items() if key != "identity_sha256"}
+        )
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({"d005_pair": value["d005_pair"]})
     def _authorities(self):
         pair = {"model": "historical_d005_v2"}
         for name in ("recurrent", "ttt_fast_weight", "verification"):
@@ -698,6 +703,31 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
             expected = {"relative_path": "artifact.json", "sha256": hashlib.sha256(target.read_bytes()).hexdigest()}
             with self.assertRaisesRegex(ValueError, "path differs"):
                 r09_b2_p4_v4_execution_preflight._read_historical_artifact(root, expected, expected, "test")
+
+    def test_authorities_reject_source_host_git_and_verifier_blob_drift(self):
+        root, request, git = self._request()
+        value = self._authorities()
+        value["d005_pair"]["historical_source"]["root_revision"] = "0" * 40
+        value["d005_pair"]["historical_source"]["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in value["d005_pair"]["historical_source"].items() if key != "identity_sha256"}
+        )
+        self._reidentity(value)
+        with self.assertRaisesRegex(ValueError, "historical source differs"):
+            r09_b2_p4_v4_execution_preflight.validate_authorities_pair(value, request, root, git)
+        with self.assertRaisesRegex(ValueError, "historical host Git differs"):
+            r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, Path("/bin/true"))
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "_git", return_value=b"bad"):
+            with self.assertRaisesRegex(ValueError, "historical verifier bytes differ"):
+                r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
+
+    def test_authorities_reject_environment_cross_binding_drift(self):
+        root, request, git = self._request()
+        request["environment"]["recurrent"]["effective_environment"]["set"]["HF_HUB_OFFLINE"] = "0"
+        section = request["environment"]["recurrent"]
+        section["effective_environment"]["sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in section["effective_environment"].items() if key != "sha256"})
+        section["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in section.items() if key != "identity_sha256"})
+        with self.assertRaisesRegex(ValueError, "projection differs"):
+            r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
 
 
 if __name__ == "__main__":
