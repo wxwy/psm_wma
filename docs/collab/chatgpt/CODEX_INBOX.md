@@ -4815,3 +4815,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 文档：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.3_2026-09-02.md`；已完整合并 ChatGPT v0.2 review=`b7bd62f` 的 B1--B3。
 - 整改：admission data 不再信任 mutable dict，path/token仅从 SHA-bound raw bytes 重派生；private per-capability `UNUSED→CONSUMED` latch使首次 mkdir零足迹失败也不可重试；required same-backend ancestor chain 明确为唯一 overlap exception，mkdir FAIL与post-mkdir stat FAIL的 poisoned prefix 分别冻结。
 - CLI保持 hard-stop；范围仅 static tooling/stdlib CPU tests，禁止真实 request/preflight/materialize/candidate/staging/P5/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 dcb5b12fbdd83dd3869884e702dc8484ac5e6bde；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` v0.4 remediation design。请仅对同一 SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 文档：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.4_2026-09-02.md`；仅处理 ChatGPT v0.3 review=`f031dde` B1。
+- 精确规则：`created_paths` 恒为成功 mkdir syscall 的有序 mutation footprint；mkdir 成功立即追加、再 nofollow stat。mkdir FAIL 不追加；post-mkdir stat FAIL 必保留刚创建 path及原始失败类型。其余 raw-byte capability/latch/ancestor/CLI hard-stop 合同不变。
+- 范围仅 static tooling/stdlib CPU tests；禁止真实 request/preflight/materialize/candidate/staging/P5/GPU/训练。
