@@ -4861,3 +4861,14 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 ### Awaiting review — 🚨 审核申请已发出（根仓 9f8c1f1373008ca8d7d1505e5b05d2b3af08525d；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 Kimi closure remediation：capability 不再保存 mutable parsed dict；reservation 从 canonical raw bytes 重派生；id registry 改为 weak capability registry；普通 mutation/reset 拒绝。P4 CPU=70/70、py_compile、diff-check PASS。请回复 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（file:line）；禁止真实执行/P5/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 b423c70231c06d580f3d7aff713848fa7e129099；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` v0.6 remediation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root remediation=`b423c70231c06d580f3d7aff713848fa7e129099`；此前三方完整结论：ChatGPT review=`0c0500a` 对 `9f8c1f1` 为 `REQUEST_CHANGES`，Kimi=`2026-09-02 20:42:19 CST`、MM=`2026-09-02 20:42:08 CST` approve；approved design=`988dcbaac2fe9a7e5f55054a1d4884763905e9a3`；Gitlink 如上。
+- B1：删除可独立调用的 `_issued_admitted_request`；现在仅 `_admit_execution_request(raw)` 在完整 `load_execution_request(raw)` 成功后构造并登记 capability。fixture 断言不存在 alternate issuer，并拒绝非完整 canonical raw。
+- B2：namespace FD 锚定后，两个 backend 的 `os.stat(..., dir_fd=namespace_fd, follow_symlinks=False)` 全部先于首次 mkdir；新增 `ttt_fast_weight` 已存在而 `recurrent` 不存在时零 mkdir/零 recurrent root fixture。
+- B3：materialization fixture 现在生成完整 canonical request，经真实 full validator/admission route（只 mock 已关闭的底层 source Git/entry-byte/clean 与 loader I/O）；新增 component-acquisition 与 post-anchor pathname retarget 外部 target 零写、ambient/subprocess/P5/child poison、CLI hard-stop 零 helper 覆盖，保留 six mkdir/six verification exact-prefix matrix。
+- CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -q`=`74/74 PASS`；materialization 定向=`11/11 PASS`；`py_compile`、`git diff --check` PASS。
+- 允许范围仅 root P4 static tooling 与 stdlib CPU tests。禁止真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
