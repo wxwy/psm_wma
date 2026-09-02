@@ -4374,3 +4374,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 ### Awaiting review — 🚨 审核申请已发出（根仓 5e4d56a；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 整改 ChatGPT/MM 意见：full P5-valid pair 现通过真实 `stage_atomic_publication()`，移除 `_path_identity` mock；完整 P4/P5 CPU 套件 14/14 PASS。请对该 SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 file:line）。仍禁止真实 preflight/staging/export/compose/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 5e8acad14765fdc40a5967c7758fd046a786956a；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` v0.5。请求 `APPROVE_TO_EXECUTE_P4_V4_PREFLIGHT_CPU_ONLY` 或 `REQUEST_CHANGES`（附 file:line）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_design_v0.5_2026-09-02.md`；static prerequisite=`5e4d56a` 已由 ChatGPT/MM/Kimi closure。
+- 允许范围若批准：仅一次 CPU-only、copy-only 双 backend candidate preflight，精确命令与 request SHA 在获批后的 execution request 冻结。
+- 禁止范围：record/refreeze、evidence publication、P5 authority 更新、P5 export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理/B2-T。
+- 验收：双 backend P5-valid candidate 或 fail-closed 无发布；不写 Git、不复用旧 run/candidate/staging root。验证：`git diff --check` PASS。
