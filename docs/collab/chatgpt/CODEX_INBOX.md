@@ -4900,6 +4900,14 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - B2：authority 改为可计算的 `source_tree_oid=git rev-parse <commit>^{tree}` 40-hex；B3：冻结 v2 lock spec exact keys/self-SHA以及至每个 commitment 字段的一对一 mapping。
 - 仅 static tooling/stdlib CPU tests；禁止 P4/P5 migration implementation、真实 request/preflight/staging/candidate/record/refreeze/P5 export/compose/GPU/训练。`git diff --check` PASS，未运行项目代码。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 75050e1f939289ea3e460eb20a3c8448c929e447；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` v0.6 静态设计整改。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 文档：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_lock_design_v0.6_2026-09-02.md`；前版=`6799e9e`，ChatGPT=`82c567c`；Gitlink 如上。
+- B1：spec 仅含 planned-run/candidates，无 final `roster_sha256`；B2：planned 明确 identity；B3：authority 提供 `/` anchored nofollow source-root FD bootstrap，spec相对路径仅从该 FD 打开。
+- 仅 static tooling/stdlib CPU tests；禁止 P4/P5 migration implementation、真实 request/preflight/staging/candidate/record/refreeze/P5 export/compose/GPU/训练。`git diff --check` PASS，未运行项目代码。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 932d0debec5935cf88d9e90f2f20b7da054ec546；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` v0.1 静态设计。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
