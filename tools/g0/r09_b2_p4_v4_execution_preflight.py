@@ -168,8 +168,11 @@ def _read_historical_artifact(root: Path, binding: object, expected: dict[str, s
     relative = Path(expected["relative_path"])
     if relative.is_absolute() or not relative.parts or any(part in {"", ".", ".."} for part in relative.parts):
         raise ValueError(f"execution request historical {name} path differs")
+    lexical = root / relative
+    if lexical.is_symlink():
+        raise ValueError(f"execution request historical {name} path differs")
     try:
-        path = (root / relative).resolve(strict=True)
+        path = lexical.resolve(strict=True)
     except OSError as exc:
         raise ValueError(f"execution request historical {name} path differs") from exc
     if path.is_symlink() or not path.is_relative_to(root):
@@ -217,7 +220,8 @@ def validate_authorities_pair(authorities: object, request: dict[str, object], r
         binding = _historical_binding(backend)
         raw, record = _read_historical_artifact(root, pair.get(backend), binding, backend)
         source = {"root_revision": _HISTORICAL_REVISION, "gitlink_revision": _HISTORICAL_GITLINK, "submodule_revision": _HISTORICAL_GITLINK}
-        if raw != (json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n").encode() or record.get("backend") != backend or record.get("schema_version") != "r09_b2_p4_launch_d005_v2" or record.get("status") != "FROZEN_NOT_EXECUTED" or record.get("source") != source:
+        digest = {key: item for key, item in record.items() if key != "d005_sha256"}
+        if raw != (json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n").encode() or record.get("backend") != backend or record.get("schema_version") != "r09_b2_p4_launch_d005_v2" or record.get("status") != "FROZEN_NOT_EXECUTED" or record.get("source") != source or record.get("d005_sha256") != canonical_sha256(digest):
             raise ValueError("execution request historical record differs")
         paths.add(binding["relative_path"]); records[backend] = record
     if len(paths) != 2:

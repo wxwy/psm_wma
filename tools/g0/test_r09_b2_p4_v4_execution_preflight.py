@@ -674,6 +674,31 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, error):
                     r09_b2_p4_v4_execution_preflight.validate_authorities_pair(value, request, root, git)
 
+    def test_authorities_reject_historical_verification_nested_roster_drift(self):
+        root, _, _ = self._request()
+        raw = (root / r09_b2_p4_v4_execution_preflight._HISTORICAL_ARTIFACTS["verification"][0]).read_bytes()
+        original = json.loads(raw)
+        mutations = (
+            lambda value: value.__setitem__("extra", True),
+            lambda value: value["checks"].__setitem__("extra", True),
+            lambda value: value["checks"].__setitem__("distinct_outputs", False),
+            lambda value: value["checks"]["matched"].__setitem__("budget", "true"),
+            lambda value: value["checks"]["recurrent"].pop("argv"),
+            lambda value: value["checks"]["ttt_fast_weight"].__setitem__("argv", 1),
+        )
+        for mutate in mutations:
+            with self.subTest(mutate=mutate), self.assertRaises(ValueError):
+                value = json.loads(json.dumps(original)); mutate(value)
+                r09_b2_p4_v4_execution_preflight._validate_historical_verification(value)
+
+    def test_authorities_reject_historical_artifact_lexical_symlink(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); target = root / "target.json"; target.write_text("{}\n")
+            link = root / "artifact.json"; link.symlink_to(target.name)
+            expected = {"relative_path": "artifact.json", "sha256": hashlib.sha256(target.read_bytes()).hexdigest()}
+            with self.assertRaisesRegex(ValueError, "path differs"):
+                r09_b2_p4_v4_execution_preflight._read_historical_artifact(root, expected, expected, "test")
+
 
 if __name__ == "__main__":
     unittest.main()
