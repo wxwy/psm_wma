@@ -4873,6 +4873,15 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -q`=`74/74 PASS`；materialization 定向=`11/11 PASS`；`py_compile`、`git diff --check` PASS。
 - 允许范围仅 root P4 static tooling 与 stdlib CPU tests。禁止真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 de20246266b514bab7459ba52eb2b7d5f24f4cdd；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` v0.3 静态设计整改。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_lock_design_v0.3_2026-09-02.md`；前版=`8f04827`，ChatGPT review=`e6593d5`；P5 evidence Git authority implementation=`3e3a853`，closure=`507a343`；Gitlink 如上。
+- B1：same-FD contract 改为 `O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC`，并冻结 write/fsync/same-FD seek+read-back/`fchmod(0444)`/`fstat`/close；任何 create 后错误均保留 `POISONED_NOT_LOCKED`，create 前零写。
+- B2/B3：不再把不可预计算的 `preflight.json` SHA 冒充 final P5 `roster_sha256`。本 Gate 仅输出不可执行 planned-roster commitment，精确冻结 P5-compatible staging projection entries 与同一 canonical serializer；final `{entries,sha256}`（含实际 preflight row）及 final request 只能在独立 record/refreeze Gate 由 P5 同一 hash 定义绑定。
+- 范围仅 root static planned-commitment tooling 与 stdlib CPU tests；禁止真实 request/preflight/materialize/staging/candidate/record/refreeze/P5 export/compose/torchrun/GPU/模型数据checkpoint I/O/训练评测推理。`git diff --check` PASS，未运行项目代码。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 932d0debec5935cf88d9e90f2f20b7da054ec546；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` v0.1 静态设计。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
