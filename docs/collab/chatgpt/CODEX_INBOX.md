@@ -4532,3 +4532,13 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 
 - 整改 `d521af7` ChatGPT/MM HIGH：补齐 12-slot 每一绑定字段、old-11/extra/direct exporter/`-m`、lexical realpath、host symlink/PATH shadow 的 identity-rehashed negatives；并让 verified loader 对 request SHA 重算实际 bytes。
 - CPU evidence：P4 parser=19/19、provenance=16/16、`py_compile`、`git diff --check` PASS；仅静态/CPU，禁止真实执行。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 6a036649518295c07571e510954167f1bb1c84fc；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-INTERPRETER` v0.4 fixture remediation closure follow-up。请求 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root implementation=`6a036649518295c07571e510954167f1bb1c84fc`；整改 ChatGPT review=`e765a56483d8cd06a7b5b38248dd08ec2aa3a7d0` 对 implementation=`3217d020818a1fcae26ae1064e4a83907dad29d9` 的两项 HIGH；approved design=`be6260348f35d8606d11709fc1748c2b63690293`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 实现：`_host_git_closure()` 将依赖改为 canonical-path 去重后延迟入队，依赖对象仅在出队时用 `_read_canonical_regular_nofollow()` 读取一次，解析/哈希只消费同一 fd-bound raw；strict-resolved canonical 调度键拒绝别名导致的重复读取。
+- CPU fixtures：真实 lexical launcher `venv-python -> base-A` 冻结后改指向 `base-B`，`validate_interpreter()` 必以 `lexical interpreter differs` fail-closed；真实 host Git ELF closure 至少一项 dependency，禁止 `Path.read_bytes`，断言每个依赖只读取一次且传给 parser 的 bytes 与 no-follow fd 返回 bytes 相同。
+- 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight tools.g0.test_r09_b2_interpreter_provenance -v`=37/37 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py tools/g0/r09_b2_interpreter_provenance.py` PASS；`git diff --check` PASS。
+- 允许范围：仅 root interpreter static tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
