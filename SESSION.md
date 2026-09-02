@@ -979,10 +979,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - v0.1=`2421b48` 已收齐 ChatGPT/MM=`REQUEST_CHANGES`、Kimi=`APPROVE`。两个 HIGH：非 forbidden 投影会泄漏 backend-specific `IMAGINAIRE_OUTPUT_ROOT`；schema 没有可验证 D005 binding。新增 v0.2：固定 `d005_projection`，以既有 D005 verifier PASS pair 为强制输入，并把 `PYTHONPATH`/`IMAGINAIRE_OUTPUT_ROOT` 唯一排除，分别归 runtime_sys_path/run section。
 - 无项目代码执行。下一步：静态检查、提交并重审 v0.2；提交：未提交。
 
-### R09-B2 P4-v4 execution request environment fixture remediation (2026-09-02，REVIEW)
+### R09-B2 P4-v4 execution request environment static closure (2026-09-02，DONE)
 
 - v0.2=`61949b1` 获 ChatGPT=`c6a12cd`、Kimi、MM 同 SHA `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS`。实现仅修改 root `r09_b2_p4_v4_execution_preflight.py` 与其 stdlib CPU test：D005 verifier PASS 强制输入、D005 可验证投影（唯一排除 `PYTHONPATH`/`IMAGINAIRE_OUTPUT_ROOT`）、空 parent effective/native loader grammar、P3-only backend difference、投影 schema/digest 漂移拒绝。
 - 三方同 SHA implementation=`052f7c8` 意见已齐：ChatGPT/Kimi 要求恢复无关 host-Git fail-closed/格式回归；ChatGPT/MM 要求补齐 v0.2 冻结环境 fixture matrix。MM 的 request-loader 串联建议不在已批准 scope：v0.2 明定 `authorities.d005_pair` 的路径/bytes/source identity 由独立 authorities section 后续冻结，当前 request 的 `authorities={}`；不在本整改静默新增 authority grammar。
 - 整改：恢复 `_host_git_closure()` 的 `resolve(strict=True)` `OSError -> ValueError` fail-closed 转换及原有格式；D005 record backend 与 requested backend 必须相等；环境 fixtures 扩展为每层 digest、P5 tuple/allowlist/native/forbidden、D005 added/removed/changed/backend/digest/projection/exclusion、excluded ownership、P3 pair/locale 和 ambient-parent 无关性。`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=28/28 PASS；`py_compile`、`git diff --check` PASS。
 - `45d78e3` 三方最终意见收齐：Kimi/MM `APPROVE`；ChatGPT `REQUEST_CHANGES` 仅三项 fixture。补充：变更非排除 D005 projected 值 `HF_HUB_OFFLINE`、top-level third backend roster、复用既有 `p5_effective_environment()` 证明 request 无 `LC_CTYPE` 且 validated pair 才投影注入 `C.UTF-8`（ambient parent 无关）。P4+P5 stdlib CPU=34/34 PASS，`py_compile`、`git diff --check` PASS。
-- 本轮仅测试代码、状态文档；未串联 `load_execution_request()`，该 authority binding 仍属独立 Gate。下一步：提交、推送并对新 remediation SHA 三方重审；三方意见齐全前不整改。未执行真实 preflight/staging/P5 export/compose/GPU/训练；提交：未提交。
+- `50d08df03d632ea4457cbefeccc97b9c3309fd4c` 三方同 SHA closure：ChatGPT review=`f7c1cb9`、Kimi=`2026-09-02 14:54:25 CST`、MM=`2026-09-03 02:03:37` 均 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS`。P4+P5 CPU=34/34、provenance/static-contract=26/26、`py_compile`、`git diff --check` PASS。
+- 本 closure 仅结束 environment static tooling；`authorities.d005_pair` full request binding、run/candidates/backends 仍为独立 Gate。未执行真实 preflight/staging/P5 export/compose/GPU/训练；下一步须新建并三方审核后续 section 设计。提交：待本状态更新提交。
