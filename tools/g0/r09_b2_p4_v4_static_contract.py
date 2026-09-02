@@ -112,7 +112,7 @@ def _reject_failed_identity_reuse(candidates: Path, payloads: dict[str, dict[str
             candidate = attempt / backend
             if candidate.exists() and (candidate / "failure.json").exists():
                 token, run_root = verify_fail_candidate(candidate, backend)
-                if (backend, token, run_root) in admitted:
+                if any(item[0] == backend and (item[1] == token or item[2] == run_root) for item in admitted):
                     raise ValueError("failed candidate token/run-root identity is permanently poisoned")
 
 
@@ -135,6 +135,9 @@ def _validate_final_pair(payloads: dict[str, dict[str, bytes]]) -> None:
                 or recurrent["request_defaults"] != ttt["request_defaults"]
                 or recurrent["interpreter"] != ttt["interpreter"]):
             raise ValueError("P4-v4 pair shared source/default/interpreter differs")
+        for key in ("cwd", "toml", "overrides", "interpreter", "loader_argv", "runtime_sys_path"):
+            if recurrent.get("effective_launch", {}).get(key) != ttt.get("effective_launch", {}).get(key):
+                raise ValueError("P4-v4 pair effective launch differs")
 
 
 def stage_atomic_publication(candidates: Path) -> dict[str, dict[str, bytes]]:
