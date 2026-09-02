@@ -28,9 +28,8 @@ class MaterializationReservationTest(unittest.TestCase):
             identity["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(identity)
             run[backend] = {"identity": identity, "run_token": token, "roster_sha256": "c" * 64}
         raw = (json.dumps({"run": run}, sort_keys=True, separators=(",", ":")) + "\n").encode()
-        return r09_b2_p4_v4_execution_preflight._AdmittedRequest(
-            raw, hashlib.sha256(raw).hexdigest(), r09_b2_p4_v4_execution_preflight._ADMISSION_SEAL,
-        )
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "load_execution_request", return_value={"run": run}):
+            return r09_b2_p4_v4_execution_preflight._admit_execution_request(raw)
 
     def test_reservation_creates_exact_ordered_six_path_footprint_once(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -53,11 +52,7 @@ class MaterializationReservationTest(unittest.TestCase):
             self.assertEqual(failure.exception.created_paths, ())
         with tempfile.TemporaryDirectory() as temporary:
             namespace = Path(temporary); admitted = self._admitted(namespace)
-            real_lstat = os.lstat
-            def fail_after_mkdir(path):
-                if Path(path) == namespace / "recurrent" and (namespace / "recurrent").exists(): raise OSError("stat")
-                return real_lstat(path)
-            with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "lstat", side_effect=fail_after_mkdir):
+            with mock.patch.object(r09_b2_p4_v4_execution_preflight, "_open_created_directory", side_effect=OSError("stat")):
                 with self.assertRaises(r09_b2_p4_v4_execution_preflight.ReservationPoisonedError) as failure:
                     r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
             self.assertEqual(len(failure.exception.created_paths), 1)

@@ -103,15 +103,32 @@ _EXECUTION_CONTRACT_ITEMS = (
     ("cleanup_retry_repair", False),
 )
 _BACKEND_ORDER = ("recurrent", "ttt_fast_weight")
-_ADMISSION_SEAL = object()
+_ADMITTED_REQUEST_IDS: set[int] = set()
 
 
-@dataclass(slots=True)
 class _AdmittedRequest:
-    raw: bytes
-    request_sha256: str
-    _seal: object
-    _consumed: bool = False
+    """Opaque, one-shot capability issued only by full request admission."""
+
+    __slots__ = ("raw", "request_sha256", "run", "_consumed", "_locked")
+
+    def __init__(self, *args: object, **kwargs: object) -> None:
+        raise TypeError("P4-v4 admitted request is factory-only")
+
+    def __setattr__(self, name: str, value: object) -> None:
+        if getattr(self, "_locked", False):
+            raise AttributeError("P4-v4 admitted request is immutable")
+        object.__setattr__(self, name, value)
+
+
+def _issued_admitted_request(raw: bytes, request: dict[str, object]) -> _AdmittedRequest:
+    admitted = object.__new__(_AdmittedRequest)
+    object.__setattr__(admitted, "raw", raw)
+    object.__setattr__(admitted, "request_sha256", request_sha256(raw))
+    object.__setattr__(admitted, "run", request["run"])
+    object.__setattr__(admitted, "_consumed", False)
+    object.__setattr__(admitted, "_locked", True)
+    _ADMITTED_REQUEST_IDS.add(id(admitted))
+    return admitted
 
 
 @dataclass(frozen=True, slots=True)
@@ -716,30 +733,24 @@ def request_sha256(raw: bytes) -> str:
 
 def _admit_execution_request(raw: bytes) -> _AdmittedRequest:
     """Create the sole in-memory capability for the static reservation helper."""
-    load_execution_request(raw)
-    return _AdmittedRequest(raw, request_sha256(raw), _ADMISSION_SEAL)
+    return _issued_admitted_request(raw, load_execution_request(raw))
 
 
 def _reservation_plan(admitted: _AdmittedRequest, namespace: Path) -> tuple[Path, ...]:
-    if not isinstance(admitted, _AdmittedRequest) or admitted._seal is not _ADMISSION_SEAL:
+    if not isinstance(admitted, _AdmittedRequest) or id(admitted) not in _ADMITTED_REQUEST_IDS:
         raise ValueError("P4-v4 reservation requires an admitted request")
     if admitted._consumed:
         raise ValueError("P4-v4 reservation capability is consumed")
-    admitted._consumed = True
+    object.__setattr__(admitted, "_consumed", True)
     if request_sha256(admitted.raw) != admitted.request_sha256:
         raise ValueError("P4-v4 admitted request SHA differs")
-    try:
-        request = json.loads(admitted.raw)
-    except json.JSONDecodeError as exc:
-        raise ValueError("P4-v4 admitted request bytes differ") from exc
-    if canonical_sha256(request) != hashlib.sha256(admitted.raw).hexdigest() or not isinstance(request, dict):
-        raise ValueError("P4-v4 admitted request bytes differ")
-    if namespace.is_symlink() or not namespace.is_dir() or namespace.resolve(strict=True) != namespace:
+    if (not namespace.is_absolute() or namespace == Path("/")
+            or any(part in ("", ".", "..") for part in namespace.parts[1:])):
         raise ValueError("P4-v4 reservation namespace differs")
     paths: list[Path] = []
     for backend in _BACKEND_ORDER:
         try:
-            run = request["run"][backend]
+            run = admitted.run[backend]
             root = Path(run["identity"]["root"])
             token = run["run_token"]
         except (KeyError, TypeError) as exc:
@@ -750,30 +761,78 @@ def _reservation_plan(admitted: _AdmittedRequest, namespace: Path) -> tuple[Path
     if len(set(paths)) != len(paths):
         raise ValueError("P4-v4 reservation overlap differs")
     for index, path in enumerate(paths):
-        if path.exists() or path.is_symlink():
-            raise ValueError("P4-v4 reservation path already exists")
         expected_parent = namespace if index % 3 == 0 else paths[index - 1]
         if path.parent != expected_parent:
             raise ValueError("P4-v4 reservation path differs")
     return tuple(paths)
 
 
+def _open_namespace_anchor(namespace: Path) -> int:
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    descriptor = os.open("/", flags)
+    try:
+        for component in namespace.parts[1:]:
+            child = os.open(component, flags, dir_fd=descriptor)
+            try:
+                if not stat.S_ISDIR(os.fstat(child).st_mode):
+                    raise ValueError("P4-v4 reservation namespace differs")
+            except BaseException:
+                os.close(child)
+                raise
+            os.close(descriptor)
+            descriptor = child
+        return descriptor
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def _open_created_directory(name: str, parent_fd: int) -> int:
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    child = os.open(name, flags, dir_fd=parent_fd)
+    try:
+        if not stat.S_ISDIR(os.fstat(child).st_mode):
+            raise OSError("reservation target is not a directory")
+        return child
+    except BaseException:
+        os.close(child)
+        raise
+
+
 def _reserve_staging(admitted: _AdmittedRequest, namespace: Path) -> ReservationResult:
     paths = _reservation_plan(admitted, namespace)
+    namespace_fd = _open_namespace_anchor(namespace)
     created: list[Path] = []
-    for path in paths:
-        try:
-            os.mkdir(path)
-        except OSError as exc:
-            raise ReservationPoisonedError(tuple(created), path, exc) from exc
-        created.append(path)
-        try:
-            mode = os.lstat(path).st_mode
-            if not stat.S_ISDIR(mode) or stat.S_ISLNK(mode):
-                raise OSError("reservation target is not a directory")
-        except OSError as exc:
-            raise ReservationPoisonedError(tuple(created), path, exc) from exc
-    return ReservationResult("RESERVED", tuple(created))
+    try:
+        for backend_index, backend in enumerate(_BACKEND_ORDER):
+            root, middle, leaf = paths[backend_index * 3:backend_index * 3 + 3]
+            try:
+                os.stat(backend, dir_fd=namespace_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                pass
+            else:
+                raise ValueError("P4-v4 reservation path already exists")
+            parent_fd = namespace_fd
+            try:
+                for path, name in ((root, backend), (middle, "import_staging"), (leaf, leaf.name)):
+                    try:
+                        os.mkdir(name, dir_fd=parent_fd)
+                    except OSError as exc:
+                        raise ReservationPoisonedError(tuple(created), path, exc) from exc
+                    created.append(path)
+                    try:
+                        child_fd = _open_created_directory(name, parent_fd)
+                    except OSError as exc:
+                        raise ReservationPoisonedError(tuple(created), path, exc) from exc
+                    if parent_fd != namespace_fd:
+                        os.close(parent_fd)
+                    parent_fd = child_fd
+            finally:
+                if parent_fd != namespace_fd:
+                    os.close(parent_fd)
+        return ReservationResult("RESERVED", tuple(created))
+    finally:
+        os.close(namespace_fd)
 
 
 def main(argv: list[str] | None = None) -> int:
