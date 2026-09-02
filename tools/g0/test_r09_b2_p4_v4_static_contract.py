@@ -128,8 +128,7 @@ class CandidateContractTest(unittest.TestCase):
                         "payload_sha256": {name: hashlib.sha256(value).hexdigest() for name, value in raw.items()}}
                 write(link, target / "candidate_link.json")
                 payloads[backend] = raw
-            with patch("tools.g0.r09_b2_p4_v4_static_contract._path_identity", return_value=root / "run"):
-                staged = stage_atomic_publication(candidate_root)
+            staged = stage_atomic_publication(candidate_root)
             self.assertEqual(set(staged), set(payloads))
 
 
