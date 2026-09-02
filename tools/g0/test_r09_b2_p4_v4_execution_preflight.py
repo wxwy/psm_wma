@@ -159,6 +159,8 @@ class RunAuthorityTest(unittest.TestCase):
         mutations = (
             ("third backend", lambda value: value.__setitem__("extra", {}), "pair schema"),
             ("extra item key", lambda value: value["recurrent"].__setitem__("extra", "x"), "item schema"),
+            ("extra identity key", lambda value: value["recurrent"]["identity"].__setitem__("extra", "x"), "identity schema"),
+            ("missing identity key", lambda value: value["recurrent"]["identity"].pop("resolved_root"), "identity schema"),
             ("wrong kind", lambda value: value["recurrent"]["identity"].__setitem__("kind", "staging"), "identity differs"),
             ("identity drift", lambda value: value["recurrent"]["identity"].__setitem__("identity_sha256", "0" * 64), "identity differs"),
             ("resolved root differs", lambda value: value["recurrent"]["identity"].__setitem__("resolved_root", "/future/other"), "identity differs"),
@@ -173,6 +175,30 @@ class RunAuthorityTest(unittest.TestCase):
                 mutate(value)
                 with self.assertRaisesRegex(ValueError, error):
                     r09_b2_p4_v4_execution_preflight.validate_run_pair(value, {"root": "/source"})
+
+    def test_run_rejects_every_token_and_roster_digest_grammar_variant(self):
+        mutations = (
+            ("token nonhex", "run_token", "g" * 64),
+            ("token short", "run_token", "a" * 63),
+            ("token long", "run_token", "a" * 65),
+            ("roster uppercase", "roster_sha256", "A" * 64),
+            ("roster nonhex", "roster_sha256", "g" * 64),
+            ("roster short", "roster_sha256", "b" * 63),
+            ("roster long", "roster_sha256", "b" * 65),
+        )
+        for name, key, replacement in mutations:
+            with self.subTest(name=name):
+                value = self._pair()
+                value["recurrent"][key] = replacement
+                with self.assertRaisesRegex(ValueError, "digest differs"):
+                    r09_b2_p4_v4_execution_preflight.validate_run_pair(value, {"root": "/source"})
+
+    def test_run_is_independent_of_ambient_environment(self):
+        value = self._pair()
+        frozen = json.loads(json.dumps(value))
+        with mock.patch.dict(os.environ, {"PATH": "/hostile", "PYTHONPATH": "/hostile", "LC_CTYPE": "bad"}, clear=True):
+            r09_b2_p4_v4_execution_preflight.validate_run_pair(value, {"root": "/source"})
+        self.assertEqual(value, frozen)
 
     def test_run_rejects_nonlexical_paths_symlink_ancestors_and_source_overlap(self):
         cases = (
