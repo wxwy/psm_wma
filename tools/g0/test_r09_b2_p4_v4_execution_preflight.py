@@ -57,6 +57,33 @@ class MaterializationReservationTest(unittest.TestCase):
                     r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
             self.assertEqual(len(failure.exception.created_paths), 1)
 
+    def test_all_six_mkdir_and_verification_faults_preserve_exact_prefixes(self):
+        for fault_index in range(6):
+            with self.subTest(kind="mkdir", fault_index=fault_index), tempfile.TemporaryDirectory() as temporary:
+                namespace = Path(temporary); admitted = self._admitted(namespace)
+                real_mkdir = os.mkdir; calls = 0
+                def fail_mkdir(name, *args, **kwargs):
+                    nonlocal calls
+                    if calls == fault_index:
+                        calls += 1; raise OSError("mkdir")
+                    calls += 1; return real_mkdir(name, *args, **kwargs)
+                with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "mkdir", side_effect=fail_mkdir):
+                    with self.assertRaises(r09_b2_p4_v4_execution_preflight.ReservationPoisonedError) as failure:
+                        r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+                self.assertEqual(len(failure.exception.created_paths), fault_index)
+            with self.subTest(kind="verify", fault_index=fault_index), tempfile.TemporaryDirectory() as temporary:
+                namespace = Path(temporary); admitted = self._admitted(namespace)
+                real_open = r09_b2_p4_v4_execution_preflight._open_created_directory; calls = 0
+                def fail_verify(name, parent_fd):
+                    nonlocal calls
+                    if calls == fault_index:
+                        calls += 1; raise OSError("verify")
+                    calls += 1; return real_open(name, parent_fd)
+                with mock.patch.object(r09_b2_p4_v4_execution_preflight, "_open_created_directory", side_effect=fail_verify):
+                    with self.assertRaises(r09_b2_p4_v4_execution_preflight.ReservationPoisonedError) as failure:
+                        r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+                self.assertEqual(len(failure.exception.created_paths), fault_index + 1)
+
 
 class EntryFoundationTest(unittest.TestCase):
     def setUp(self):

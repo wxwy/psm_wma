@@ -4,7 +4,7 @@
 
 ## 当前最小步骤（2026-09-02）
 
-- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（IN_PROGRESS）：v0.6 design=`988dcba` 已获 ChatGPT=`0765bf3`、Kimi=`20:05`、MM=`20:04:17` 同 SHA `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`。正在修改 `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py`：factory-only capability、从 `/` anchored openat/fstat namespace FD、FD-relative direct-child check 与 child FD mkdir/open/fstat；P4 CPU=65/65、py_compile PASS。尚须补全 v0.6 fixture matrix后 closure review；禁止真实 request/run/candidate/staging/P5/GPU/训练；提交：未提交。
+- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（IN_PROGRESS）：v0.6 design=`988dcba` 已获 ChatGPT=`0765bf3`、Kimi=`20:05`、MM=`20:04:17` 同 SHA implementation approval。已实现 factory-only capability、从 `/` anchored openat/fstat namespace FD、FD-relative direct-child check 与 child FD mkdir/open/fstat；并新增六 mkdir+六 verification fault exact-prefix fixture。定向 CPU=3/3、`git diff --check` PASS；尚须补全其余 v0.6 fixture matrix、全量验证和 closure review；禁止真实 request/run/candidate/staging/P5/GPU/训练；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
