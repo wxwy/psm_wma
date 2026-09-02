@@ -4442,3 +4442,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 审核对象：root design=`3ca7dc6b522f60fd4b654cf737002e5ed5bad899`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_source_design_v0.1_2026-09-02.md`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；前置 entry=`ad2bfcc` 已三方 closure。
 - source 仅在 future static validator 中独立绑定 canonical root、精确可解析 revision、root Gitlink=submodule HEAD、tracked regular entry 的 Git blob/current bytes SHA 相等，并与 entry 的 revision/blob/current 三项 cross-bind；拒绝 descendant、dirty/untracked、symlink、Gitlink/blob/current drift。
 - 若批准，仅 root parser/validator + stdlib CPU Git fixtures（正例、descendant、dirty/untracked、Gitlink/submodule、blob/current、cross-binding、symlink 负例）。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T、Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 6eea35c443bb7ac7c5f91f76d1c6d04945c7ec89；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` source v0.3 static contract remediation。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_SOURCE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root design=`6eea35c443bb7ac7c5f91f76d1c6d04945c7ec89`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_source_design_v0.3_2026-09-02.md`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；整改 GPT=`ad73362`、Kimi v0.1 `REQUEST_CHANGES`。
+- exact-HEAD：root `HEAD` 与 `rev-parse --verify <root_revision>^{commit}` 均必须等于 request revision，ancestor/descendant 均拒绝；保留 full-clean、Gitlink=submodule HEAD、entry Git blob/current bytes与 entry cross-binding。
+- 关键永久 fixture：B 仅修改无关 root 文件且 entry/Gitlink 保持 A；request=A、checkout=B 必因 checkout revision identity fail-closed。若批准仅 root parser/validator+stdlib CPU Git fixture；禁止真实 preflight、staging/materialize/candidate、record/refreeze、P5 authority/export/compose、GPU/训练。
