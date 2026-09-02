@@ -4476,6 +4476,13 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 修正：venv Python 不再声称 Git blob，改按 v1.3 lexical payload/base/pyvenv.cfg/tracked lock-RECORD chain；host Git 改绝对 native ELF/closure TCB，永久拒绝 ambient PATH。两路均 single-fd/no-follow，loader argv/bootstrap/request binding 不变。
 - 若批准，仅 root static parser/validator + stdlib CPU fixtures；禁止真实 preflight/staging、P5 export/compose、GPU、训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 7b699eef95257b90793cfd08940d53b85a6de884；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-INTERPRETER` v0.3 设计整改。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_interpreter_design_v0.3_2026-09-02.md`，root=`7b699eef95257b90793cfd08940d53b85a6de884`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；合并 GPT=`a20a42a`、Kimi、MM v0.2 意见。
+- 修正：`lexical_interpreter` 原样四字段；`loader_argv` 完整 11 槽且必须由现有 `verified_loader_argv()` 重建相等；host Git TCB 禁止 candidate 自证。仍仅 static tooling/CPU tests，禁止真实 preflight/GPU/训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 b0581d89c452cadaa40e9739c6d51313eb13a615；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` source v0.3 static remediation closure。请对同一 root implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_SOURCE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
