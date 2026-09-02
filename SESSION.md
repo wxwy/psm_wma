@@ -990,5 +990,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 ### R09-B2 P4-v4 execution request authorities design (2026-09-02，REVIEW)
 
-- v0.1=`605c9ba` 的 ChatGPT/MM `REQUEST_CHANGES`、Kimi `APPROVE` 已收齐：历史 verification 是 pretty bytes，且历史 D005 v2/source 无法由 current v4 verifier/current request source 满足。新增 v0.2：固定历史 records/verification exact bytes、historical source与 verifier Git blob；byte binding 与 decoded semantic canonicalization 分离，禁止 ambient/current verifier，历史 pair仅经已关闭 environment projection cross-bind current request。
-- 仅文档整改，未执行项目代码/preflight/staging/P5/GPU/训练。下一步：diff-check、提交并重审 v0.2；提交：未提交。
+- v0.2=`cdbb43d` 三方意见已收齐：ChatGPT `REQUEST_CHANGES` 要求绑定已验证 host-Git TCB及完整 verification nested roster；Kimi/MM `APPROVE`。新增 v0.3：`validate_authorities_pair(..., git_executable)` 仅用已验证 `request.interpreter.host_git.path` 固定 argv Git lookup；冻结 verification top/checks/matched/backend exact boolean keys。仅文档整改，未执行项目代码/preflight/staging/P5/GPU/训练；下一步：diff-check、提交并重审 v0.3；提交：未提交。
