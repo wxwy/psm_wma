@@ -4492,3 +4492,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 测试整改：保留 exact-head 正例与无关 root 文件 descendant；新增 dirty root、untracked root、declared Gitlink drift、submodule HEAD drift、entry Git blob/current drift、entry/source cross-binding drift、root/entry symlink、ancestor checkout，以及 no pathname `read_bytes()` reopen/单 open 回归。无 source admission mock。
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v` 为 13/13 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。
 - 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 61d18db3894ca65f68740aa0fac86e5f307b7c49；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-INTERPRETER` v0.3 static implementation closure。请对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root implementation=`61d18db3894ca65f68740aa0fac86e5f307b7c49`，approved design=`7b699eef95257b90793cfd08940d53b85a6de884`（ChatGPT=`c4a9b09`、Kimi、MM 同 SHA implementation authorization），Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 实现：`tools/g0/r09_b2_p4_v4_execution_preflight.py` 新增 exact `interpreter={lexical_interpreter,host_git,loader_argv,identity_sha256}` validator。lexical record 逐键重算既有 `lexical_interpreter()` 四字段；host Git 仅接受 absolute strict-resolved non-symlink executable，单 fd/no-follow bytes SHA 和递归 bytes-derived ELF closure；loader 先 `is_verified_loader_argv()` 再由既有 `verified_loader_argv()` 完整 11 槽重建相等。`tools/g0/r09_b2_interpreter_provenance.py` 只新增 raw-bytes ELF parser 入口，保持既有 API。
+- CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=15/15 PASS；`python -B -m unittest tools.g0.test_r09_b2_interpreter_provenance -v`=16/16 PASS；`py_compile`、`git diff --check` PASS。夹具覆盖 lexical/loader/host digest drift，既有 provenance fixture 覆盖 lexical repoint、11-slot grammar、direct exporter/`-m` 与 PATH shadow。
+- 允许范围仅 root static parser/validator tooling 与 stdlib CPU fixtures。禁止真实 preflight、staging/materialize/candidate、record/refreeze、P5 export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
