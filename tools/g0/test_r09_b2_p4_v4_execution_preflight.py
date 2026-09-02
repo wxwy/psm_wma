@@ -43,6 +43,15 @@ class MaterializationReservationTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "consumed"):
                 r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
 
+    def test_capability_constructor_and_bare_instance_are_rejected(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            namespace = Path(temporary)
+            with self.assertRaisesRegex(TypeError, "factory-only"):
+                r09_b2_p4_v4_execution_preflight._AdmittedRequest()
+            forged = object.__new__(r09_b2_p4_v4_execution_preflight._AdmittedRequest)
+            with self.assertRaisesRegex(ValueError, "requires an admitted request"):
+                r09_b2_p4_v4_execution_preflight._reserve_staging(forged, namespace)
+
     def test_mkdir_and_stat_failure_preserve_distinct_poison_prefixes(self):
         with tempfile.TemporaryDirectory() as temporary:
             namespace = Path(temporary); admitted = self._admitted(namespace)
