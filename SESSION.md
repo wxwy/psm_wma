@@ -973,3 +973,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT 对 execution-preflight v0.5=`5e8acad` 的 HIGH 已定位：`environment/run/candidates/backends/authorities` 尚未冻结，故不得重新申请或执行 CPU preflight。当前只起草 `docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_environment_design_v0.1_2026-09-02.md`：P5 child 从空 parent map 构造，native loader 空 set，forbidden tuple exact、无 allowlist；两个 backend 仅允许 P3-owned TTT enabled 键不同。
 - 未执行项目代码、preflight/staging/P5/GPU/训练。下一步：`git diff --check`，提交设计并对同一 SHA 请求 ChatGPT/MM/Kimi `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS`；提交：未提交。
+
+### R09-B2 P4-v4 execution request environment v0.2 (2026-09-02，REVIEW)
+
+- v0.1=`2421b48` 已收齐 ChatGPT/MM=`REQUEST_CHANGES`、Kimi=`APPROVE`。两个 HIGH：非 forbidden 投影会泄漏 backend-specific `IMAGINAIRE_OUTPUT_ROOT`；schema 没有可验证 D005 binding。新增 v0.2：固定 `d005_projection`，以既有 D005 verifier PASS pair 为强制输入，并把 `PYTHONPATH`/`IMAGINAIRE_OUTPUT_ROOT` 唯一排除，分别归 runtime_sys_path/run section。
+- 无项目代码执行。下一步：静态检查、提交并重审 v0.2；提交：未提交。
