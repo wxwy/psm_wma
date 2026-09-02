@@ -4294,3 +4294,7 @@ print(json.dumps(result, sort_keys=True))
 ### Awaiting review — 🚨 审核申请已发出（根仓 49e6ccf52227fc362ff010e097561bb31694444f；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 P5 v0.9 implementation 高优先级整改。请求 `APPROVE_TO_CLOSE_P5_V09_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。针对 GPT review 的唯一 HIGH：verifier 现每侧强制 `resolved_config.model.config.local_history_backend == backend`，新增双方同 recurrent、双方同 TTT、双方缺失三负例；CPU unittest 3/3、py_compile、diff-check PASS。仅 root static tooling/CPU tests；禁止 preflight/export/compose/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 c1f9c7a53131e75e69340b2c984027f506f5c44a；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-PREFLIGHT` 设计。请求 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。文档 `docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_design_v0.1_2026-09-02.md` 将静态 request/record/verifier tooling 与未来独立批准的一次真实 preflight 分离。允许范围仅 root tooling + stdlib CPU tests；禁止真实 staging/record/refreeze、P5 export/compose、torchrun/GPU、模型数据训练评测推理/B2-T。
