@@ -4357,3 +4357,6 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 已修复：复用 P5 final verifier grammar；双 backend shared source/default/interpreter invariant；FAIL request/token/run_root/failure schema 与永久 poison；恢复 CPU 回归。
 - 证据：P4/P5 unittest 6/6 PASS，py_compile、git diff --check PASS。
 - 允许范围：仅 root static tooling + CPU 标准库测试。禁止真实 preflight/staging/candidate/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T、Local Memory 训练。
+### Awaiting review — 🚨 审核申请已发出（根仓 50b9f5d；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-PREFLIGHT` static remediation closure。已修复 ChatGPT 指出的 token-only/run-root-only poison reuse 与 `effective_launch` 公共字段 parity；P4/P5 unittest 6/6 PASS，py_compile、diff-check PASS。请求 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`。仅 static tooling+CPU，禁止真实执行/GPU/训练。
