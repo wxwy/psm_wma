@@ -16,6 +16,7 @@ from tools.g0.export_r09_b2_p5_resolved_config import (
     p5_effective_environment, sha256_json,
 )
 from tools.g0.verify_r09_b2_p5_full_config_diff import _exporter_source, verify_pair
+from tools.g0.verify_r09_b2_p4_d005 import P3_ARTIFACT_SHA256, P3_VERIFIER_SHA256
 
 
 class P5Test(unittest.TestCase):
@@ -103,9 +104,10 @@ class P5Test(unittest.TestCase):
             exporter = self._exporter_worktree(root, Path(temp)); source = _exporter_source(exporter)
             def envelope(backend: str) -> dict[str, object]:
                 request = requests[backend]
-                return {"schema_version": "r09_b2_p5_full_config_diff_v4", "backend": backend, "provenance": {"p4_v4_request_sha256": request["p4_request_sha256"], "p4_v4_result_sha256": request["p4_result_sha256"], "p4_v4_verification_sha256": request["p4_verification_sha256"], "exporter_source": source}, "effective_launch": {key: request[key] for key in ("cwd", "toml", "overrides", "interpreter", "loader_argv", "environment", "runtime_sys_path")}, "resolved_config": {"model": {"config": {"local_history_backend": backend}}, "optimizer": {"keys_to_select": [backend]}}}
+                contract = contracts[backend]
+                return {"schema_version": "r09_b2_p5_full_config_diff_v4", "backend": backend, "provenance": {"p4_v4_request_sha256": request["p4_request_sha256"], "p4_v4_result_sha256": request["p4_result_sha256"], "p4_v4_verification_sha256": request["p4_verification_sha256"], "exporter_source": source, "p3_contract": {"artifact_sha256": P3_ARTIFACT_SHA256, "verifier_sha256": P3_VERIFIER_SHA256, "backend_contract": contract}}, "effective_launch": {key: request[key] for key in ("cwd", "toml", "overrides", "interpreter", "loader_argv", "environment", "runtime_sys_path")}, "resolved_config": {"model": {"config": {"local_history_backend": backend}}, "optimizer": {"keys_to_select": [backend]}}}
+            contracts = {"recurrent": {"selector_keys": ["recurrent"], "optimizer_membership_sha256": "a" * 64}, "ttt_fast_weight": {"selector_keys": ["ttt_fast_weight"], "optimizer_membership_sha256": "b" * 64}}
             recurrent, ttt = envelope("recurrent"), envelope("ttt_fast_weight")
-            contracts = {"recurrent": {"selector_keys": ["recurrent"]}, "ttt_fast_weight": {"selector_keys": ["ttt_fast_weight"]}}
             with patch("tools.g0.verify_r09_b2_p5_full_config_diff._p3_contracts", return_value=contracts):
                 self.assertEqual(verify_pair(recurrent, ttt, evidence, exporter)["status"], "PASS")
                 self.assertEqual(verify_pair(recurrent, ttt, evidence, evidence)["status"], "FAIL")

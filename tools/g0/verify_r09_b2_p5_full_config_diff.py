@@ -15,7 +15,8 @@ from tools.g0.export_r09_b2_p5_resolved_config import (
     build_v4_pair_requests,
     load_p4_v4_preflight,
 )
-from tools.g0.verify_r09_b2_p4_d005 import _load_frozen_inputs, _p3_contract
+from tools.g0.verify_r09_b2_p4_d005 import (P3_ARTIFACT_SHA256, P3_VERIFIER_SHA256,
+                                             _load_frozen_inputs, _p3_contract)
 
 
 SCHEMA = "r09_b2_p5_full_config_diff_v4"
@@ -78,6 +79,12 @@ def _p3_contracts(evidence_root: Path) -> dict[str, Mapping[str, Any]]:
     return {backend: _p3_contract(inventory, backend) for backend in P4_V4_BACKENDS}
 
 
+def _p3_provenance(contract: Mapping[str, Any]) -> dict[str, Any]:
+    return {"artifact_sha256": P3_ARTIFACT_SHA256, "verifier_sha256": P3_VERIFIER_SHA256,
+            "backend_contract": {"selector_keys": contract["selector_keys"],
+                                 "optimizer_membership_sha256": contract["optimizer_membership_sha256"]}}
+
+
 def _bound(envelope: Mapping[str, Any], request: Mapping[str, Any], record: Mapping[str, Any], exporter_source: Mapping[str, Any], p3_contract: Mapping[str, Any]) -> bool:
     try:
         required = {"schema_version", "backend", "provenance", "effective_launch", "resolved_config"}
@@ -94,7 +101,7 @@ def _bound(envelope: Mapping[str, Any], request: Mapping[str, Any], record: Mapp
                 "p4_v4_request_sha256": request_sha,
                 "p4_v4_result_sha256": request["p4_result_sha256"],
                 "p4_v4_verification_sha256": request["p4_verification_sha256"],
-                "exporter_source": exporter_source,
+                "exporter_source": exporter_source, "p3_contract": _p3_provenance(p3_contract),
             }
             and launch == {
                 "cwd": request["cwd"],
@@ -121,6 +128,12 @@ def _allowed(path: str, left: Any, right: Any, contracts: Mapping[str, Mapping[s
         "/provenance/p4_v4_verification_sha256",
     }:
         return isinstance(left, str) and isinstance(right, str) and left != right
+    if path == "/provenance/p3_contract/backend_contract/optimizer_membership_sha256":
+        return left == contracts["recurrent"]["optimizer_membership_sha256"] and right == contracts["ttt_fast_weight"]["optimizer_membership_sha256"]
+    if path == "/provenance/p3_contract/backend_contract/selector_keys":
+        return left == contracts["recurrent"]["selector_keys"] and right == contracts["ttt_fast_weight"]["selector_keys"]
+    if path.startswith("/provenance/p3_contract/backend_contract/selector_keys/"):
+        return left in contracts["recurrent"]["selector_keys"] or right in contracts["ttt_fast_weight"]["selector_keys"]
     if path == "/effective_launch/environment/PSM_R09_B1_TTT_ENABLED":
         return left == "0" and right == "1"
     if path == "/resolved_config/model/config/local_history_backend":

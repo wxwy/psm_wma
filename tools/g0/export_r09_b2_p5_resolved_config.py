@@ -592,11 +592,11 @@ def bound_exporter_source(exporter_root: Path) -> tuple[dict[str, Any], Any]:
     return source, verifier.verify_pair
 
 
-def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, Any], *, exporter_source: Mapping[str, Any]) -> dict[str, Any]:
+def assemble_envelope(request: Mapping[str, Any], resolved_config: Mapping[str, Any], *, exporter_source: Mapping[str, Any], p3_contract: Mapping[str, Any]) -> dict[str, Any]:
     """Construct the complete verifier-owned envelope from one D005-bound child result."""
     if request.get("schema_version") == "r09_b2_p5_v4_child_request_v1":
         return {"schema_version": "r09_b2_p5_full_config_diff_v4", "backend": request["backend"],
-                "provenance": {"p4_v4_request_sha256": request["p4_request_sha256"], "p4_v4_result_sha256": request["p4_result_sha256"], "p4_v4_verification_sha256": request["p4_verification_sha256"], "exporter_source": exporter_source},
+                "provenance": {"p4_v4_request_sha256": request["p4_request_sha256"], "p4_v4_result_sha256": request["p4_result_sha256"], "p4_v4_verification_sha256": request["p4_verification_sha256"], "exporter_source": exporter_source, "p3_contract": dict(p3_contract)},
                 "effective_launch": {"cwd": request["cwd"], "toml": request["toml"], "overrides": request["overrides"], "interpreter": request["interpreter"], "loader_argv": request["loader_argv"], "environment": request["environment"], "runtime_sys_path": request["runtime_sys_path"]},
                 "resolved_config": resolved_config}
     record = request
