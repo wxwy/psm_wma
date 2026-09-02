@@ -4883,6 +4883,15 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 后续真实 preflight 必另外以 exact request raw/SHA、命令、资源与停止条件申请三方 `APPROVE_TO_EXECUTE_P4_V4_PREFLIGHT_CPU_ONLY`；该后续 Gate 仍不授权 record/refreeze/P5/GPU/训练。
 - 本申请仅文档/状态；`git diff --check` PASS，未运行项目代码、未生成 request/staging/candidate/run-root。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 8f0482732ca72544c007f054d2d303f2ddb5e83a；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` v0.2 静态设计整改。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 整改 ChatGPT=`9581400` B1--B3：工具默认 `AUTHORIZED_P4_V4_LOCK_SPEC=None` 零写 fail-closed；未来仅独立 reviewed constant 才能锚定 exact spec commit/tree/blob/current/raw SHA 与 output parent/basename，caller不能提供语义 authority。
+- final roster 从 verifier-owned ordered planned-roster records canonical bytes 独立重算并与 final run/candidate binding比较；不接受 caller roster digest。
+- output 为 `/` anchored nofollow parent FD + create-new single FD；只有 full write+fsync+same-FD read-back SHA 才 `FROZEN_NOT_EXECUTABLE`；任何 post-create failure 为保留路径、不可 cleanup/retry 的 `POISONED_NOT_LOCKED`。
+- 仅文档/状态，`git diff --check` PASS；禁止真实 request/preflight/materialize/staging/candidate/P5/GPU/训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 bda97378bd67d1f5bb54a4a7607dd1d8942b21a1；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` hidden-authority remediation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
