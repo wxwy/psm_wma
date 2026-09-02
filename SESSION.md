@@ -4,7 +4,7 @@
 
 ## 当前最小步骤（2026-09-02）
 
-- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（IN_PROGRESS）：v0.5=`d3b37e7` 三方意见已齐：Kimi/MM 批准，ChatGPT review=`8511bf0` `REQUEST_CHANGES`，唯一 B1 是 namespace anchor 获取必须先于所有 pathname precheck。仅新增 v0.6 设计，冻结从 `/` 的逐 component nofollow openat/fstat anchor、anchor-relative direct-child absence precheck与 ancestor retarget fixture；不得修改 implementation=`9bc78f1`，公开 CLI 保持 hard-stop，禁止真实 request/run/candidate/staging/P5/GPU/训练；提交：未提交。
+- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（REVIEW）：v0.6 namespace-anchor design=`988dcba` 已申请三方审核；仅整改 ChatGPT=`8511bf0` B1：从 `/` 的逐 component nofollow openat/fstat 先锚定 namespace，再相对该 FD 作 direct-child absence precheck及 retarget fixture。等待期间不得修改 implementation=`9bc78f1`，公开 CLI 保持 hard-stop，禁止真实 request/run/candidate/staging/P5/GPU/训练；每分钟原生轮询三路；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 

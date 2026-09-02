@@ -4840,3 +4840,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 文档：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.5_2026-09-02.md`；统一处理 implementation=`9bc78f1` 的 ChatGPT=`8e1d019`、Kimi=`19:52` 意见。
 - 新合同：唯一 full-admission factory 生成不可伪造/不可重置 capability；namespace FD 与逐层 child FD 的 `O_NOFOLLOW`/`dir_fd` mkdirat-open-fstat 链，禁止 pathname parent TOCTOU；fixture 规定全 precheck、12 mutation、parent retarget、ambient/child/CLI矩阵。
 - 范围仅 root static tooling/stdlib CPU tests；CLI hard-stop。禁止真实 request/preflight/materialize/candidate/staging/P5/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 988dcbaac2fe9a7e5f55054a1d4884763905e9a3；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` v0.6 namespace-anchor remediation design。请仅对同一 SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root design=`988dcbaac2fe9a7e5f55054a1d4884763905e9a3`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.6_2026-09-02.md`；v0.5=`d3b37e7` 的 ChatGPT B1 review=`8511bf0`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 唯一整改：namespace 在所有 reservation precheck 前从 `/` 按绝对 lexical components 以 `O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC` 的 `openat(dir_fd=...)` 链锚定并逐层 `fstat`；之后仅相对 namespace FD 检查两个未来 backend direct-child roots 的 absence，禁止 namespace/ancestor 或未来 descendant 的 pathname 重解析。
+- fixture 增加 acquisition-window 与 anchor-after mutation-window 的 namespace/ancestor retarget：必须 fail-closed 或持续绑定原 FD，外部 target 零写入；保留 v0.5 的 capability、child-FD、12 fault、poison、ambient/child/CLI名册。
+- 允许范围仅未来 root P4 helper/test与 stdlib CPU tests；禁止真实 request/preflight/materialize/candidate/run-root/staging、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
