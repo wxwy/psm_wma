@@ -102,8 +102,12 @@ def load_execution_request(
     if value["execution_contract"] != dict(_execution_contract_items):
         raise ValueError("execution request contract differs")
     validate_entry(value["entry"])
-    validate_source(value["source"], value["entry"])
-    validate_interpreter(value["interpreter"], value["source"])
+    interpreter = value["interpreter"]
+    if not isinstance(interpreter, dict):
+        raise ValueError("execution request interpreter schema differs")
+    git_path = validate_host_git(interpreter.get("host_git"))
+    validate_source(value["source"], value["entry"], git_path)
+    validate_interpreter(interpreter, value["source"], git_path)
     return value
 
 
@@ -130,22 +134,22 @@ def validate_entry(value: object) -> None:
         raise ValueError("execution request entry identity differs")
 
 
-def _git(root: Path, *args: str) -> bytes:
+def _git(root: Path, *args: str, git_executable: Path | None = None) -> bytes:
     try:
-        return subprocess.run(("git", "-C", str(root), *args), check=True, stdout=subprocess.PIPE,
+        return subprocess.run((str(git_executable) if git_executable is not None else "git", "-C", str(root), *args), check=True, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE).stdout
     except (OSError, subprocess.CalledProcessError) as exc:
         raise ValueError("execution request source Git command differs") from exc
 
 
-def _clean_git_root(root: Path) -> None:
-    if root.is_symlink() or not root.is_dir() or _git(root, "rev-parse", "--show-toplevel").decode().strip() != str(root):
+def _clean_git_root(root: Path, git_executable: Path) -> None:
+    if root.is_symlink() or not root.is_dir() or _git(root, "rev-parse", "--show-toplevel", git_executable=git_executable).decode().strip() != str(root):
         raise ValueError("execution request source Git root differs")
-    if _git(root, "status", "--porcelain=v1", "--untracked-files=all"):
+    if _git(root, "status", "--porcelain=v1", "--untracked-files=all", git_executable=git_executable):
         raise ValueError("execution request source is not full-clean")
 
 
-def validate_source(value: object, entry: dict[str, object]) -> None:
+def validate_source(value: object, entry: dict[str, object], git_executable: Path) -> None:
     if not isinstance(value, dict) or set(value) != SOURCE_KEYS or not all(isinstance(item, str) for item in value.values()):
         raise ValueError("execution request source schema differs")
     if (_GIT_REVISION.fullmatch(value["root_revision"]) is None or _GIT_REVISION.fullmatch(value["gitlink"]) is None
@@ -159,17 +163,17 @@ def validate_source(value: object, entry: dict[str, object]) -> None:
         raise ValueError("execution request source identity differs")
     if any(value[key] != entry[entry_key] for key, entry_key in (("root_revision", "root_revision"), ("entry_git_blob_sha256", "git_blob_sha256"), ("entry_current_sha256", "current_sha256"))):
         raise ValueError("execution request source cross-binding differs")
-    _clean_git_root(root)
+    _clean_git_root(root, git_executable)
     framework = root / "cosmos-framework"
-    _clean_git_root(framework)
-    if framework.is_symlink() or _git(root, "rev-parse", "HEAD").decode().strip() != value["root_revision"] or _git(root, "rev-parse", "--verify", f"{value['root_revision']}^{{commit}}").decode().strip() != value["root_revision"]:
+    _clean_git_root(framework, git_executable)
+    if framework.is_symlink() or _git(root, "rev-parse", "HEAD", git_executable=git_executable).decode().strip() != value["root_revision"] or _git(root, "rev-parse", "--verify", f"{value['root_revision']}^{{commit}}", git_executable=git_executable).decode().strip() != value["root_revision"]:
         raise ValueError("execution request source checkout revision differs")
-    tree = _git(root, "ls-tree", value["root_revision"], "cosmos-framework").decode().rstrip("\n").split("\t")
-    if len(tree) != 2 or tree[1] != "cosmos-framework" or tree[0].split()[:2] != ["160000", "commit"] or tree[0].split()[2] != value["gitlink"] or _git(framework, "rev-parse", "HEAD").decode().strip() != value["gitlink"]:
+    tree = _git(root, "ls-tree", value["root_revision"], "cosmos-framework", git_executable=git_executable).decode().rstrip("\n").split("\t")
+    if len(tree) != 2 or tree[1] != "cosmos-framework" or tree[0].split()[:2] != ["160000", "commit"] or tree[0].split()[2] != value["gitlink"] or _git(framework, "rev-parse", "HEAD", git_executable=git_executable).decode().strip() != value["gitlink"]:
         raise ValueError("execution request source Gitlink differs")
     entry_path = root / ENTRY_TOOL_PATH
-    _git(root, "ls-files", "--error-unmatch", "--", ENTRY_TOOL_PATH)
-    blob = _git(root, "show", f"{value['root_revision']}:{ENTRY_TOOL_PATH}")
+    _git(root, "ls-files", "--error-unmatch", "--", ENTRY_TOOL_PATH, git_executable=git_executable)
+    blob = _git(root, "show", f"{value['root_revision']}:{ENTRY_TOOL_PATH}", git_executable=git_executable)
     current_raw = _read_regular_nofollow(entry_path, "execution request source entry path differs")
     if hashlib.sha256(blob).hexdigest() != value["entry_git_blob_sha256"] or hashlib.sha256(current_raw).hexdigest() != value["entry_current_sha256"] or blob != current_raw or value["entry_git_blob_sha256"] != value["entry_current_sha256"]:
         raise ValueError("execution request source entry bytes differ")
@@ -211,9 +215,12 @@ def _host_git_closure(path: Path, raw: bytes) -> str:
     objects: dict[str, str] = {}
     while pending:
         current, current_raw = pending.pop()
-        canonical, current_raw = _read_strict_regular_nofollow(
-            current, "execution request host Git object differs", executable=current == path,
-        )
+        if current == path:
+            canonical = path
+        else:
+            canonical, current_raw = _read_canonical_regular_nofollow(
+                current, "execution request host Git object differs",
+            )
         if str(canonical) in objects:
             if objects[str(canonical)] != hashlib.sha256(current_raw).hexdigest():
                 raise ValueError("execution request host Git object differs")
@@ -236,14 +243,23 @@ def _host_git_closure(path: Path, raw: bytes) -> str:
     return canonical_sha256({"objects": [{"path": name, "sha256": digest} for name, digest in sorted(objects.items())]})
 
 
-def validate_interpreter(value: object, source: dict[str, object]) -> None:
+def validate_host_git(value: object) -> Path:
+    if not isinstance(value, dict) or set(value) != HOST_GIT_KEYS or not all(isinstance(value[key], str) for key in HOST_GIT_KEYS):
+        raise ValueError("execution request host Git schema differs")
+    git_path, git_raw = _read_strict_regular_nofollow(Path(value["path"]), "execution request host Git path differs")
+    if (_SHA256.fullmatch(value["elf_sha256"]) is None or _SHA256.fullmatch(value["closure_sha256"]) is None
+            or hashlib.sha256(git_raw).hexdigest() != value["elf_sha256"]
+            or _host_git_closure(git_path, git_raw) != value["closure_sha256"]):
+        raise ValueError("execution request host Git identity differs")
+    return git_path
+
+
+def validate_interpreter(value: object, source: dict[str, object], git_path: Path | None = None) -> None:
     if not isinstance(value, dict) or set(value) != INTERPRETER_KEYS:
         raise ValueError("execution request interpreter schema differs")
     lexical, host_git, argv, identity_sha256 = (value["lexical_interpreter"], value["host_git"], value["loader_argv"], value["identity_sha256"])
     if not isinstance(lexical, dict) or not isinstance(host_git, dict) or not isinstance(argv, list) or not isinstance(identity_sha256, str):
         raise ValueError("execution request interpreter schema differs")
-    if set(host_git) != HOST_GIT_KEYS or not all(isinstance(host_git[key], str) for key in HOST_GIT_KEYS):
-        raise ValueError("execution request host Git schema differs")
     identity = {key: item for key, item in value.items() if key != "identity_sha256"}
     if _SHA256.fullmatch(identity_sha256) is None or identity_sha256 != canonical_sha256(identity):
         raise ValueError("execution request interpreter identity differs")
@@ -252,16 +268,15 @@ def validate_interpreter(value: object, source: dict[str, object]) -> None:
             raise ValueError("execution request lexical interpreter differs")
     except (OSError, ProvenanceError, ValueError) as exc:
         raise ValueError("execution request lexical interpreter differs") from exc
-    git_path, git_raw = _read_strict_regular_nofollow(Path(host_git["path"]), "execution request host Git path differs")
-    if (_SHA256.fullmatch(host_git["elf_sha256"]) is None or _SHA256.fullmatch(host_git["closure_sha256"]) is None
-            or hashlib.sha256(git_raw).hexdigest() != host_git["elf_sha256"]
-            or _host_git_closure(git_path, git_raw) != host_git["closure_sha256"]):
+    if git_path is None:
+        git_path = validate_host_git(host_git)
+    elif git_path != Path(host_git["path"]):
         raise ValueError("execution request host Git identity differs")
     root = Path(source["root"])
     if not is_verified_loader_argv(argv) or Path(argv[8]) != root:
         raise ValueError("execution request loader argv differs")
     try:
-        expected = verified_loader_argv(lexical, Path(argv[6]), argv[7], root, argv[9], argv[10])
+        expected = verified_loader_argv(lexical, Path(argv[6]), argv[7], root, argv[9], argv[10], git_executable=git_path)
     except (OSError, ProvenanceError, ValueError) as exc:
         raise ValueError("execution request loader argv differs") from exc
     if argv != expected:

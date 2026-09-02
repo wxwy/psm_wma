@@ -25,12 +25,17 @@ class EntryFoundationTest(unittest.TestCase):
         self._interpreter_validation = mock.patch.object(
             r09_b2_p4_v4_execution_preflight, "validate_interpreter"
         )
+        self._host_git_validation = mock.patch.object(
+            r09_b2_p4_v4_execution_preflight, "validate_host_git", return_value=Path("/usr/bin/git")
+        )
         self._source_validation.start()
         self._interpreter_validation.start()
+        self._host_git_validation.start()
 
     def tearDown(self):
         self._source_validation.stop()
         self._interpreter_validation.stop()
+        self._host_git_validation.stop()
 
     def _entry(self) -> dict[str, str]:
         entry = {"tool_path": "tools/g0/r09_b2_p4_v4_execution_preflight.py",
@@ -121,6 +126,18 @@ class EntryFoundationTest(unittest.TestCase):
 
 
 class SourceAuthorityTest(unittest.TestCase):
+    def setUp(self):
+        original = r09_b2_p4_v4_execution_preflight.validate_source
+        git_path = Path(shutil.which("git") or "").resolve()
+        self._source_validation = mock.patch.object(
+            r09_b2_p4_v4_execution_preflight, "validate_source",
+            side_effect=lambda source, entry: original(source, entry, git_path),
+        )
+        self._source_validation.start()
+
+    def tearDown(self):
+        self._source_validation.stop()
+
     def _git(self, root: Path, *args: str) -> str:
         return subprocess.check_output(("git", "-C", str(root), *args), text=True).strip()
 
@@ -295,6 +312,11 @@ class InterpreterAuthorityTest(unittest.TestCase):
         interpreter["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(interpreter)
         return interpreter, {"root": str(root)}
 
+    def _reidentity(self, value: dict[str, object]) -> None:
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in value.items() if key != "identity_sha256"}
+        )
+
     def test_interpreter_reuses_frozen_lexical_loader_and_host_git_closure(self):
         with tempfile.TemporaryDirectory() as temporary:
             interpreter, source = self._interpreter(temporary)
@@ -323,6 +345,39 @@ class InterpreterAuthorityTest(unittest.TestCase):
                 with self.subTest(error=error):
                     with self.assertRaisesRegex(ValueError, error):
                         r09_b2_p4_v4_execution_preflight.validate_interpreter(value, source)
+
+    def test_interpreter_rejects_lexical_closure_path_and_loader_mutations(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            interpreter, source = self._interpreter(temporary)
+            cases: list[tuple[dict[str, object], str]] = []
+            lexical = json.loads(json.dumps(interpreter))
+            lexical["lexical_interpreter"]["sha256"] = "0" * 64
+            self._reidentity(lexical)
+            cases.append((lexical, "lexical interpreter differs"))
+            closure = json.loads(json.dumps(interpreter))
+            closure["host_git"]["closure_sha256"] = "0" * 64
+            self._reidentity(closure)
+            cases.append((closure, "host Git identity differs"))
+            relative = json.loads(json.dumps(interpreter))
+            relative["host_git"]["path"] = "git"
+            self._reidentity(relative)
+            cases.append((relative, "host Git path differs"))
+            reordered = json.loads(json.dumps(interpreter))
+            reordered["loader_argv"][1], reordered["loader_argv"][2] = reordered["loader_argv"][2], reordered["loader_argv"][1]
+            self._reidentity(reordered)
+            cases.append((reordered, "loader argv differs"))
+            for value, error in cases:
+                with self.subTest(error=error):
+                    with self.assertRaisesRegex(ValueError, error):
+                        r09_b2_p4_v4_execution_preflight.validate_interpreter(value, source)
+
+    def test_host_git_root_uses_one_open_and_no_path_read(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            interpreter, _ = self._interpreter(temporary)
+            with mock.patch.object(Path, "read_bytes", side_effect=AssertionError("path re-read")), \
+                 mock.patch.object(r09_b2_p4_v4_execution_preflight, "_read_strict_regular_nofollow", wraps=r09_b2_p4_v4_execution_preflight._read_strict_regular_nofollow) as reader:
+                r09_b2_p4_v4_execution_preflight.validate_host_git(interpreter["host_git"])
+            self.assertEqual(reader.call_count, 1)
 
 
 if __name__ == "__main__":

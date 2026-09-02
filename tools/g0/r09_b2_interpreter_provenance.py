@@ -112,7 +112,7 @@ def frozen_regular_python_manifest(root: Path, source_roots: Mapping[str, Path])
     return {"schema_version": "r09_b2_p4_python_payload_manifest_v1", "roots": result}
 
 
-def verified_bootstrap_bytes(root: Path, bootstrap_relative_path: str, expected_sha256: str) -> bytes:
+def verified_bootstrap_bytes(root: Path, bootstrap_relative_path: str, expected_sha256: str, *, git_executable: Path | None = None) -> bytes:
     """Bind bootstrap Git bytes and current file bytes before the loader runs."""
     if not isinstance(expected_sha256, str) or len(expected_sha256) != 64:
         raise ProvenanceError("bootstrap digest is malformed")
@@ -121,7 +121,8 @@ def verified_bootstrap_bytes(root: Path, bootstrap_relative_path: str, expected_
     if not path.is_relative_to(root) or not path.is_file():
         raise ProvenanceError("bootstrap path is outside the verified root")
     try:
-        blob = subprocess.check_output(["git", "-C", str(root), "show", f"HEAD:{bootstrap_relative_path}"], stderr=subprocess.DEVNULL)
+        git = str(git_executable) if git_executable is not None else "git"
+        blob = subprocess.check_output([git, "-C", str(root), "show", f"HEAD:{bootstrap_relative_path}"], stderr=subprocess.DEVNULL)
     except subprocess.CalledProcessError as exc:
         raise ProvenanceError("bootstrap is not a Git blob at HEAD") from exc
     if sha256_file(path) != expected_sha256 or hashlib.sha256(blob).hexdigest() != expected_sha256 or path.read_bytes() != blob:
@@ -129,7 +130,7 @@ def verified_bootstrap_bytes(root: Path, bootstrap_relative_path: str, expected_
     return blob
 
 
-def verified_loader_argv(interpreter: Mapping[str, str], request_path: Path, request_sha256: str, root: Path, bootstrap_relative_path: str, bootstrap_sha256: str) -> list[str]:
+def verified_loader_argv(interpreter: Mapping[str, str], request_path: Path, request_sha256: str, root: Path, bootstrap_relative_path: str, bootstrap_sha256: str, *, git_executable: Path | None = None) -> list[str]:
     """Construct the only admitted direct Python process grammar."""
     if set(interpreter) != {"path", "sha256", "realpath", "realpath_sha256"}:
         raise ProvenanceError("lexical interpreter record is malformed")
@@ -139,7 +140,7 @@ def verified_loader_argv(interpreter: Mapping[str, str], request_path: Path, req
     request = request_path.resolve()
     if not request.is_absolute() or not isinstance(request_sha256, str) or len(request_sha256) != 64:
         raise ProvenanceError("request binding is malformed")
-    verified_bootstrap_bytes(root, bootstrap_relative_path, bootstrap_sha256)
+    verified_bootstrap_bytes(root, bootstrap_relative_path, bootstrap_sha256, git_executable=git_executable)
     return [str(launcher), *LOADER_FLAGS, FROZEN_STDLIB_LOADER, str(request), request_sha256,
             str(root.resolve()), bootstrap_relative_path, bootstrap_sha256]
 
