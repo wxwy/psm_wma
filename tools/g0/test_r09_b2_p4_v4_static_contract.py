@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.g0.r09_b2_p4_v4_static_contract import load_pass_candidate, stage_atomic_publication, verify_fail_candidate
+from tools.g0.r09_b2_p4_v4_static_contract import load_pass_candidate, stage_atomic_publication, verify_fail_candidate, _reject_failed_identity_reuse
 
 
 def write(value: object, path: Path) -> bytes:
@@ -75,6 +75,18 @@ class CandidateContractTest(unittest.TestCase):
                    "stage": "admission", "error_type": "ValueError", "error": "x"}, failure / "failure.json")
             with self.assertRaises(ValueError):
                 verify_fail_candidate(failure, "recurrent")
+
+    def test_poison_rejects_token_or_run_root_reuse(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); attempt = root / "attempt"; attempt.mkdir()
+            old = root / "old" / "recurrent"; old.mkdir(parents=True)
+            (old / "failure.json").write_text("{}")
+            payload = {"request.json": json.dumps({"p4_run": {"run_token": "b" * 64, "identity": {}}}).encode()}
+            with patch("tools.g0.r09_b2_p4_v4_static_contract.verify_fail_candidate", return_value=("a" * 64, "/run")), patch(
+                "tools.g0.r09_b2_p4_v4_static_contract._path_identity", return_value=Path("/run")
+            ):
+                with self.assertRaises(ValueError):
+                    _reject_failed_identity_reuse(attempt, {"recurrent": payload})
 
 
 if __name__ == "__main__":
