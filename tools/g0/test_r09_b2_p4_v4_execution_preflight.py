@@ -1823,6 +1823,26 @@ class PlannedRosterCommitmentTest(unittest.TestCase):
             finally:
                 os.close(descriptor)
 
+    def test_spec_fd_parent_retarget_keeps_original_chain(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "source"; root.mkdir(); nested = root / "nested"; nested.mkdir()
+            (nested / "spec.json").write_bytes(b"original\n")
+            external = Path(temporary) / "external"; external.mkdir(); (external / "spec.json").write_bytes(b"external\n")
+            descriptor = r09_b2_p4_v4_execution_preflight._open_absolute_directory_chain(str(root), "source")
+            moved = root / "moved"; original_open = os.open; swapped = False
+            def retarget(name, flags, *args, **kwargs):
+                nonlocal swapped
+                child = original_open(name, flags, *args, **kwargs)
+                if name == "nested" and not swapped and "dir_fd" in kwargs:
+                    swapped = True; nested.rename(moved); nested.symlink_to(external, target_is_directory=True)
+                return child
+            try:
+                with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "open", side_effect=retarget):
+                    self.assertEqual(r09_b2_p4_v4_execution_preflight._read_lock_spec_at(descriptor, "nested/spec.json"), b"original\n")
+                self.assertEqual((external / "spec.json").read_bytes(), b"external\n")
+            finally:
+                os.close(descriptor)
+
     def test_projection_and_self_sha_drift_are_rejected(self):
         mutations = (
             lambda value: value["payload_manifest"]["entries"].append({"path": "aaa.py", "type": "regular", "sha256": "d" * 64}),
