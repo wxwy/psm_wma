@@ -1,11 +1,11 @@
 # 当前协作状态
 
-更新时间：2026-09-02
+更新时间：2026-09-03
 
-## 当前最小步骤（2026-09-02）
+## 当前最小步骤（2026-09-03）
 
 - `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（DONE）：hidden-authority remediation=`bda9737` 获 ChatGPT review=`6910a72`、Kimi=`2026-09-02 21:04:12 CST`、MM=`2026-09-02 21:05:23 CST` 同 SHA `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`。closure-local `WeakKeyDictionary` 保存唯一 admission raw/SHA/one-shot state，visible fields 不能 forge/reset authority；B2 双 backend precheck 与 B3 full-admission/race/forbidden/CLI/12-fault fixture保持。P4 CPU=76/76、materialization=13/13、`py_compile`、`git diff --check` PASS。未创建或执行真实 request/preflight/materialize/staging/candidate/P5/GPU/训练；下一步仅可另起 exact frozen execution-request / execution design Gate；提交：未提交。
-- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（REVIEW）：B4-A/B/C fixture closure=`4108eb6` 已推送并申请 ChatGPT/Kimi/MM 同 SHA review。B4-B=`077ad10` 保留；本步仅测试，non-None test-local authority 真实通过 public lock/FD/Git/closed-section/output 路径，逐 binding fail-before-create，自洽 semantic drift 与 hostile ambient/Git-only subprocess 均覆盖。P4 CPU=`86/86 PASS`，`py_compile`、`git diff --check` PASS；生产 constant仍为 `None`，未执行真实 P4/P5/GPU/训练。下一步：每分钟原生轮询三方 verdict；未齐前不得修改或越过 Gate；提交：`4108eb6`。
+- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（DONE）：B4-A/B/C fixture closure=`4108eb6` 获 ChatGPT review=`8169d9f`、Kimi=`2026-09-02 23:23:14 CST`、MM=`2026-09-02 23:24:48 CST` 对同一 implementation SHA `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS`。B4-B=`077ad10` 保留；本步仅测试，non-None test-local authority 真实通过 public lock/FD/Git/closed-section/output 路径，逐 binding fail-before-create，自洽 semantic drift 与 hostile ambient/Git-only subprocess 均覆盖。P4 CPU=`86/86 PASS`，`py_compile`、`git diff --check` PASS；生产 constant仍为 `None`，未创建或执行真实 request/preflight/staging/candidate/run-root/P5/GPU/训练。下一步仅可另起并冻结后续 P4 execution-request/preflight 设计 Gate；提交：`4108eb6`，审核记录：`8169d9f`。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
