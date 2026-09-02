@@ -4409,3 +4409,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 已修复 MEDIUM：移除可变公开 `EXECUTION_CONTRACT`；冻结 tuple 通过 `load_execution_request()` 默认参数捕获，模块私有名重绑定不改变接受语义，并有 CPU 回归。
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v` 4/4 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。入口仍在所有静态校验后无条件 hard-stop，未创建任何目录或候选产物。
 - 允许范围：仅 root static parser/validator tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority 更新、P5 export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 和 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 2b399d1bba8329607e08abfe58804a43806e8922；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` v0.6 `entry` static contract design。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_ENTRY_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root design=`2b399d1bba8329607e08abfe58804a43806e8922`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_entry_design_v0.6_2026-09-02.md`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；前置 static validator=`334f544` 已获 ChatGPT/Kimi/MM 同 SHA批准。
+- v0.6 只定义 `entry` exact grammar：字面固定 tool path、64-lowercase-hex root revision/Git blob/current bytes SHA，以及删除自身字段后的 canonical identity SHA。该 section 不自授权：root revision/Gitlink/Git blob/current bytes 的独立交叉验证明确留给后续 `source` section。
+- 若批准，范围仅 root parser/validator 对 entry grammar 的静态实现与 stdlib CPU tests（正确例、额外 key、非固定路径、非 lower-hex、identity drift）。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority 更新、P5 export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 和 Local Memory 训练。
