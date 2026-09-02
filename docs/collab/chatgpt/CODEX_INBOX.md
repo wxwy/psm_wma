@@ -4526,6 +4526,15 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - P4 parser/provenance CPU=33/33 PASS；`py_compile`、`git diff --check` PASS；未调用 exporter/preflight/GPU/训练。
 - 仅 root static tooling/CPU；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 cdbb43d41d36bb40674eebf085969b3b6aaf086b；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES` v0.2 设计整改。请给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+- 整改对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_authorities_design_v0.2_2026-09-02.md`，root=`cdbb43d41d36bb40674eebf085969b3b6aaf086b`；v0.1=`605c9ba` 的 ChatGPT/MM `REQUEST_CHANGES`、Kimi `APPROVE` 已齐。
+- 采用 satisfiable 历史 D005 v2 authority：固定三份现有 artifact exact bytes、历史 source tuple和历史 verifier Git blob；records 保持 canonical raw，pretty-printed verification 只作 exact-byte binding后解码语义检查。明确禁止用 current verifier/current request source 验证历史 pair；与 current request 的唯一关系是复用已关闭 environment grammar 做 projection/effective/native/P3 cross-binding。
+- 补齐 MM 指定项：explicit `validate_authorities_pair(authorities, request, root)`、root 来源、strict path constraints、固定 verifier schema string、source tuple mapping、ambient isolation fixtures。仅文档，未执行 preflight/staging/P5/GPU/训练。
+- 若批准，仅 root static parser/validator+stdlib CPU fixtures；禁止真实 preflight、staging/materialize/candidate、record/refreeze、P5 authority/export/compose、torchrun/GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 605c9ba9229096a3d3f350b2c6d0b149ab625d40；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES` v0.1 静态设计。请给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS` 或 `REQUEST_CHANGES`，附 `file:line`。
