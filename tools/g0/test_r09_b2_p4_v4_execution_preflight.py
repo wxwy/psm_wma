@@ -704,6 +704,13 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "path differs"):
                 r09_b2_p4_v4_execution_preflight._read_historical_artifact(root, expected, expected, "test")
 
+    def test_authorities_reject_historical_artifact_directory_and_reads_once(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); directory = root / "artifact"; directory.mkdir()
+            expected = {"relative_path": "artifact", "sha256": "0" * 64}
+            with self.assertRaisesRegex(ValueError, "path differs"):
+                r09_b2_p4_v4_execution_preflight._read_historical_artifact(root, expected, expected, "test")
+
     def test_authorities_reject_source_host_git_and_verifier_blob_drift(self):
         root, request, git = self._request()
         value = self._authorities()
@@ -728,6 +735,32 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
         section["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in section.items() if key != "identity_sha256"})
         with self.assertRaisesRegex(ValueError, "projection differs"):
             r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
+
+    def test_authorities_reject_historical_record_field_drift(self):
+        root, request, git = self._request()
+        records = {}
+        for backend in ("recurrent", "ttt_fast_weight"):
+            path, _ = r09_b2_p4_v4_execution_preflight._HISTORICAL_ARTIFACTS[backend]
+            records[backend] = json.loads((root / path).read_bytes())
+        verification = json.loads((root / r09_b2_p4_v4_execution_preflight._HISTORICAL_ARTIFACTS["verification"][0]).read_bytes())
+        verifier = r09_b2_p4_v4_execution_preflight._git(root, "show", f"{r09_b2_p4_v4_execution_preflight._HISTORICAL_REVISION}:{r09_b2_p4_v4_execution_preflight._HISTORICAL_VERIFIER[0]}", git_executable=git)
+        mutations = (
+            lambda record: record.__setitem__("backend", "wrong"),
+            lambda record: record.__setitem__("schema_version", "wrong"),
+            lambda record: record.__setitem__("status", "PASS"),
+            lambda record: record["source"].__setitem__("root_revision", "0" * 40),
+            lambda record: record.__setitem__("d005_sha256", "0" * 64),
+        )
+        for mutate in mutations:
+            with self.subTest(mutate=mutate):
+                rows = json.loads(json.dumps(records)); mutate(rows["recurrent"])
+                def fake_read(_, __, ___, name):
+                    item = verification if name == "verification" else rows[name]
+                    return (json.dumps(item, sort_keys=True, separators=(",", ":")) + "\n").encode(), item
+                with mock.patch.object(r09_b2_p4_v4_execution_preflight, "_read_historical_artifact", side_effect=fake_read), \
+                     mock.patch.object(r09_b2_p4_v4_execution_preflight, "_git", return_value=verifier):
+                    with self.assertRaisesRegex(ValueError, "historical record differs"):
+                        r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
 
 
 if __name__ == "__main__":
