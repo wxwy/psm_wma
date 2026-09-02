@@ -4872,3 +4872,13 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - B3：materialization fixture 现在生成完整 canonical request，经真实 full validator/admission route（只 mock 已关闭的底层 source Git/entry-byte/clean 与 loader I/O）；新增 component-acquisition 与 post-anchor pathname retarget 外部 target 零写、ambient/subprocess/P5/child poison、CLI hard-stop 零 helper 覆盖，保留 six mkdir/six verification exact-prefix matrix。
 - CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -q`=`74/74 PASS`；materialization 定向=`11/11 PASS`；`py_compile`、`git diff --check` PASS。
 - 允许范围仅 root P4 static tooling 与 stdlib CPU tests。禁止真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 bda97378bd67d1f5bb54a4a7607dd1d8942b21a1；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` hidden-authority remediation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root remediation=`bda97378bd67d1f5bb54a4a7607dd1d8942b21a1`；ChatGPT review=`c2c3603` 对 prior=`b423c70` 仅余 B1，Kimi=`20:53:56`、MM=`20:54:18` 对 prior approve；approved design=`988dcbaac2fe9a7e5f55054a1d4884763905e9a3`；Gitlink 如上。
+- B1：移除 module-visible `_ADMITTED_REQUESTS`；`_admission_authority()` closure-local `WeakKeyDictionary` 保存唯一 full-admission 的 original raw/SHA/consumed state，导出唯一 `_admit_execution_request` 与内部 `_consume_admitted_request`。reservation 只信任 hidden state，visible `raw`/SHA/`_consumed` 字段不再是 authority。
+- 新 fixture：`object.__new__` 后通过 `object.__setattr__` 填满所有可见字段仍不能登记；对真实 capability 以 `object.__setattr__` 篡改 visible raw/SHA/consumed 后仍按 hidden original admission 运行，terminal consume 后再次强制复位仍拒绝。B2/B3 full-admission、dual precheck、race、forbidden-call、CLI、12 fault coverage保持。
+- CPU evidence：P4 `76/76 PASS`；materialization=`13/13 PASS`；`py_compile`、`git diff --check` PASS。
+- 允许范围仅 root P4 static tooling 与 stdlib CPU tests。禁止真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
