@@ -4636,3 +4636,9 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 整改严格限于 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py` 的 stdlib CPU fixtures，未改 validator：actual FIFO non-regular 且无挂起、lexical `os.open` 恰一次、decoded 相同但 non-canonical record raw 拒绝、decoded 相同但 verification pretty-byte SHA drift 拒绝、verification top/checks/matched/backend 的 added/missing/false/non-bool 余下分支全部拒绝。
 - 证据：`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=45/45 PASS；`git diff --check` PASS。
 - 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+### Awaiting review — 🚨 审核申请已发出（根仓 a51e41232a324679b199c164bb1c9641ef0ad81f；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-RUN` v0.1 static design。请求仅针对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_RUN_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 设计：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_run_design_v0.1_2026-09-02.md`。复用已冻结 P5 `p4_run={identity,run_token,roster_sha256}`；只冻结 future run-root lexical identity、64-hex token/roster digest、source/submodule/trust-root non-overlap 与 pair reuse 拒绝。不预填运行事实、不创建目录；最终 roster/staging/manifest/native closure/candidate 归后续独立 execution Gate。
+- 允许范围若批准：仅 root parser/validator static tooling 与 stdlib CPU fixtures。禁止真实 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
