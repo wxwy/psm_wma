@@ -4290,3 +4290,7 @@ print(json.dumps(result, sort_keys=True))
 ### Awaiting review — 🚨 审核申请已发出（根仓 979333568de6afcb2c94e694eda23131985bd3d4；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P5-FULL-CONFIG-DIFF` v0.9 静态实现。请求 `APPROVE_TO_CLOSE_P5_V09_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。依据三方设计批准；实现固定 `provenance.p3_contract`，pair verifier 独立重算 frozen P3 contract，CPU unittest 3/3、py_compile、diff-check PASS。仅 root tooling/CPU tests；禁止任何 preflight/export/compose/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 49e6ccf52227fc362ff010e097561bb31694444f；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+P5 v0.9 implementation 高优先级整改。请求 `APPROVE_TO_CLOSE_P5_V09_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。针对 GPT review 的唯一 HIGH：verifier 现每侧强制 `resolved_config.model.config.local_history_backend == backend`，新增双方同 recurrent、双方同 TTT、双方缺失三负例；CPU unittest 3/3、py_compile、diff-check PASS。仅 root static tooling/CPU tests；禁止 preflight/export/compose/GPU/训练。
