@@ -5,7 +5,7 @@
 ## 当前最小步骤（2026-09-02）
 
 - `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（DONE）：hidden-authority remediation=`bda9737` 获 ChatGPT review=`6910a72`、Kimi=`2026-09-02 21:04:12 CST`、MM=`2026-09-02 21:05:23 CST` 同 SHA `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`。closure-local `WeakKeyDictionary` 保存唯一 admission raw/SHA/one-shot state，visible fields 不能 forge/reset authority；B2 双 backend precheck 与 B3 full-admission/race/forbidden/CLI/12-fault fixture保持。P4 CPU=76/76、materialization=13/13、`py_compile`、`git diff --check` PASS。未创建或执行真实 request/preflight/materialize/staging/candidate/P5/GPU/训练；下一步仅可另起 exact frozen execution-request / execution design Gate；提交：未提交。
-- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（REVIEW）：ChatGPT=`0339c74` 对 `40eda9b` 仅余 fixture closure，Kimi/MM approve。未改生产 helper；fixture-only remediation新增 FD intermediate/final symlink、existing/symlink target、short write、non-regular fstat、projection/self-SHA rejection；P4 CPU=84/84、`py_compile`、`git diff --check` PASS。未创建真实 request/preflight/staging/candidate/run-root，未调用 P5/GPU/训练；下一步提交并重新三方 closure review；提交：未提交。
+- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（IN_PROGRESS）：ChatGPT=`be76950` 对 `aebb94f` 要求 B4-A/B/C fixture closure；Kimi/MM approve。B4-B retarget fixture=`077ad10` 已验证 parent FD 链在 pathname 换为外部 symlink 后仍读取原 spec bytes，定向=9/9 PASS；下一步实现 B4-A/C public authority与real closed-section composition fixture；未改生产 helper；提交：`077ad10`。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
