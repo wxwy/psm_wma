@@ -169,10 +169,9 @@ def is_verified_torchrun_worker_argv(argv: object) -> bool:
             and is_verified_loader_argv(argv[7:]))
 
 
-def parse_elf_dynamic_bytes(path: Path) -> dict[str, object]:
-    """Derive interpreter, DT_NEEDED and RPATH/RUNPATH from real ELF bytes."""
+def parse_elf_dynamic_raw(path: Path, data: bytes) -> dict[str, object]:
+    """Derive ELF dynamic metadata from already-bound object bytes."""
     canonical = path.resolve()
-    data = canonical.read_bytes()
     if len(data) < 16 or data[:4] != b"\x7fELF" or data[5] not in (1, 2):
         raise ProvenanceError("payload is not a supported ELF object")
     elf_class, endian = data[4], "<" if data[5] == 1 else ">"
@@ -236,6 +235,12 @@ def parse_elf_dynamic_bytes(path: Path) -> dict[str, object]:
         "rpath": [string_at(value) for value in dynamic.get(DT_RPATH, [])],
         "runpath": [string_at(value) for value in dynamic.get(DT_RUNPATH, [])],
     }
+
+
+def parse_elf_dynamic_bytes(path: Path) -> dict[str, object]:
+    """Derive interpreter, DT_NEEDED and RPATH/RUNPATH from real ELF bytes."""
+    canonical = path.resolve()
+    return parse_elf_dynamic_raw(canonical, canonical.read_bytes())
 
 
 def _span_sha256(source: bytes, node: ast.AST) -> str:

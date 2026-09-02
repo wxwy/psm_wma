@@ -5,7 +5,9 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -20,10 +22,15 @@ class EntryFoundationTest(unittest.TestCase):
         self._source_validation = mock.patch.object(
             r09_b2_p4_v4_execution_preflight, "validate_source"
         )
+        self._interpreter_validation = mock.patch.object(
+            r09_b2_p4_v4_execution_preflight, "validate_interpreter"
+        )
         self._source_validation.start()
+        self._interpreter_validation.start()
 
     def tearDown(self):
         self._source_validation.stop()
+        self._interpreter_validation.stop()
 
     def _entry(self) -> dict[str, str]:
         entry = {"tool_path": "tools/g0/r09_b2_p4_v4_execution_preflight.py",
@@ -253,6 +260,69 @@ class SourceAuthorityTest(unittest.TestCase):
                  mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "open", wraps=os.open) as open_entry:
                 r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
             self.assertEqual(open_entry.call_count, 1)
+
+
+class InterpreterAuthorityTest(unittest.TestCase):
+    def _git(self, root: Path, *args: str) -> str:
+        return subprocess.check_output(("git", "-C", str(root), *args), text=True).strip()
+
+    def _interpreter(self, temporary: str) -> tuple[dict[str, object], dict[str, object]]:
+        root = Path(temporary) / "root"
+        root.mkdir()
+        self._git(root, "init")
+        self._git(root, "config", "user.email", "test@example.invalid")
+        self._git(root, "config", "user.name", "Test")
+        bootstrap = root / "tools/g0/bootstrap.py"
+        bootstrap.parent.mkdir(parents=True)
+        bootstrap.write_text("pass\n")
+        self._git(root, "add", ".")
+        self._git(root, "commit", "-m", "bootstrap")
+        child_request = Path(temporary) / "child.json"
+        child_request.write_text("{}\n")
+        launcher = Path(sys.executable).absolute()
+        lexical = r09_b2_p4_v4_execution_preflight.lexical_interpreter(launcher)
+        git_path = Path(shutil.which("git") or "").resolve()
+        self.assertTrue(git_path.is_absolute())
+        git_raw = r09_b2_p4_v4_execution_preflight._read_regular_nofollow(git_path, "git")
+        host_git = {"path": str(git_path), "elf_sha256": hashlib.sha256(git_raw).hexdigest(),
+                    "closure_sha256": r09_b2_p4_v4_execution_preflight._host_git_closure(git_path, git_raw)}
+        bootstrap_sha = hashlib.sha256(bootstrap.read_bytes()).hexdigest()
+        argv = r09_b2_p4_v4_execution_preflight.verified_loader_argv(
+            lexical, child_request, hashlib.sha256(child_request.read_bytes()).hexdigest(), root,
+            "tools/g0/bootstrap.py", bootstrap_sha,
+        )
+        interpreter = {"lexical_interpreter": lexical, "host_git": host_git, "loader_argv": argv}
+        interpreter["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(interpreter)
+        return interpreter, {"root": str(root)}
+
+    def test_interpreter_reuses_frozen_lexical_loader_and_host_git_closure(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            interpreter, source = self._interpreter(temporary)
+            r09_b2_p4_v4_execution_preflight.validate_interpreter(interpreter, source)
+
+    def test_interpreter_rejects_identity_loader_and_host_git_drift(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            interpreter, source = self._interpreter(temporary)
+            cases = []
+            lexical = json.loads(json.dumps(interpreter))
+            lexical["lexical_interpreter"]["sha256"] = "0" * 64
+            cases.append((lexical, "identity differs"))
+            argv = json.loads(json.dumps(interpreter))
+            argv["loader_argv"] = argv["loader_argv"][:10]
+            argv["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: value for key, value in argv.items() if key != "identity_sha256"}
+            )
+            cases.append((argv, "loader argv differs"))
+            host = json.loads(json.dumps(interpreter))
+            host["host_git"]["elf_sha256"] = "0" * 64
+            host["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: value for key, value in host.items() if key != "identity_sha256"}
+            )
+            cases.append((host, "host Git identity differs"))
+            for value, error in cases:
+                with self.subTest(error=error):
+                    with self.assertRaisesRegex(ValueError, error):
+                        r09_b2_p4_v4_execution_preflight.validate_interpreter(value, source)
 
 
 if __name__ == "__main__":
