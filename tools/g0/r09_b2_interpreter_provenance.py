@@ -46,11 +46,12 @@ LOADER_FLAGS = ("-I", "-S", "-B", "-c")
 FROZEN_STDLIB_LOADER = """import hashlib,json,pathlib,subprocess,sys
 request_path=pathlib.Path(sys.argv[1]); expected_request_sha=sys.argv[2]
 root=pathlib.Path(sys.argv[3]); relative=sys.argv[4]; expected_bootstrap_sha=sys.argv[5]
+host_git=pathlib.Path(sys.argv[6])
 bootstrap_path=root / relative
 if pathlib.Path(relative).is_absolute() or not bootstrap_path.resolve().is_relative_to(root.resolve()): raise SystemExit('bootstrap path escape')
 request_bytes=request_path.read_bytes()
 if hashlib.sha256(request_bytes).hexdigest()!=expected_request_sha: raise SystemExit('request sha mismatch')
-blob=subprocess.check_output(['git','-C',str(root),'show','HEAD:'+relative])
+blob=subprocess.check_output([str(host_git),'-C',str(root),'show','HEAD:'+relative])
 current=bootstrap_path.read_bytes()
 if hashlib.sha256(blob).hexdigest()!=expected_bootstrap_sha or current!=blob: raise SystemExit('bootstrap sha mismatch')
 namespace={'__name__':'__psm_verified_bootstrap__','__file__':str(bootstrap_path),'PSM_REQUEST':json.loads(request_bytes)}
@@ -130,7 +131,7 @@ def verified_bootstrap_bytes(root: Path, bootstrap_relative_path: str, expected_
     return blob
 
 
-def verified_loader_argv(interpreter: Mapping[str, str], request_path: Path, request_sha256: str, root: Path, bootstrap_relative_path: str, bootstrap_sha256: str, *, git_executable: Path | None = None) -> list[str]:
+def verified_loader_argv(interpreter: Mapping[str, str], request_path: Path, request_sha256: str, root: Path, bootstrap_relative_path: str, bootstrap_sha256: str, *, git_executable: Path) -> list[str]:
     """Construct the only admitted direct Python process grammar."""
     if set(interpreter) != {"path", "sha256", "realpath", "realpath_sha256"}:
         raise ProvenanceError("lexical interpreter record is malformed")
@@ -140,17 +141,20 @@ def verified_loader_argv(interpreter: Mapping[str, str], request_path: Path, req
     request = request_path.resolve()
     if not request.is_absolute() or not isinstance(request_sha256, str) or len(request_sha256) != 64:
         raise ProvenanceError("request binding is malformed")
+    if not git_executable.is_absolute() or git_executable.is_symlink() or git_executable.resolve(strict=True) != git_executable:
+        raise ProvenanceError("host Git executable is malformed")
     verified_bootstrap_bytes(root, bootstrap_relative_path, bootstrap_sha256, git_executable=git_executable)
     return [str(launcher), *LOADER_FLAGS, FROZEN_STDLIB_LOADER, str(request), request_sha256,
-            str(root.resolve()), bootstrap_relative_path, bootstrap_sha256]
+            str(root.resolve()), bootstrap_relative_path, bootstrap_sha256, str(git_executable)]
 
 
 def is_verified_loader_argv(argv: object) -> bool:
     """Reject direct module/script launchers and accept only frozen loader grammar."""
-    return (isinstance(argv, list) and len(argv) == 11 and all(isinstance(item, str) for item in argv)
+    return (isinstance(argv, list) and len(argv) == 12 and all(isinstance(item, str) for item in argv)
             and tuple(argv[1:5]) == LOADER_FLAGS and argv[5] == FROZEN_STDLIB_LOADER
             and Path(argv[6]).is_absolute() and Path(argv[8]).is_absolute()
-            and not Path(argv[9]).is_absolute() and all(len(argv[index]) == 64 for index in (7, 10)))
+            and not Path(argv[9]).is_absolute() and Path(argv[11]).is_absolute()
+            and all(len(argv[index]) == 64 for index in (7, 10)))
 
 
 def verified_torchrun_worker_argv(interpreter: Mapping[str, str], worker_loader_argv: list[str]) -> list[str]:

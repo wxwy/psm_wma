@@ -632,6 +632,7 @@ def run_parent_export(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], *, p
                 argv = verified_loader_argv(
                     request["interpreter"], request_path, sha256_file(request_path), exporter_root,
                     BOOTSTRAP_RELATIVE, sha256_file(exporter_root / BOOTSTRAP_RELATIVE),
+                    git_executable=Path(request["host_git"]["path"]),
                 )
             except (OSError, ProvenanceError) as exc:
                 raise RuntimeError("P5 child must use the verified lexical loader") from exc

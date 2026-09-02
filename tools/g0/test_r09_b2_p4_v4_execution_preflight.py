@@ -306,7 +306,7 @@ class InterpreterAuthorityTest(unittest.TestCase):
         bootstrap_sha = hashlib.sha256(bootstrap.read_bytes()).hexdigest()
         argv = r09_b2_p4_v4_execution_preflight.verified_loader_argv(
             lexical, child_request, hashlib.sha256(child_request.read_bytes()).hexdigest(), root,
-            "tools/g0/bootstrap.py", bootstrap_sha,
+            "tools/g0/bootstrap.py", bootstrap_sha, git_executable=git_path,
         )
         interpreter = {"lexical_interpreter": lexical, "host_git": host_git, "loader_argv": argv}
         interpreter["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(interpreter)
