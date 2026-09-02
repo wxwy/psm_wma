@@ -968,3 +968,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 三方同 implementation SHA closure：ChatGPT review=`a966fa9`、Kimi=`2026-09-02 14:08:29 CST`、MM=`2026-09-02 14:11` 对 root=`6a036649518295c07571e510954167f1bb1c84fc`/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb` 均 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS`。MM 的 D005 11-slot template coherence 建议明确为独立且不阻塞 follow-up，未混入本 Gate。
 - 最终闭合：真实 launcher `base-A -> base-B` retarget、每个 host Git recursive ELF dependency 的 canonical no-follow 单次读取及 parser/hash 同源 bytes；P4=21/21、provenance=16/16，P5/static contract=14/14，`py_compile`、`git diff --check` PASS。
 - 本 closure 仅结束 interpreter static tooling。真实 P4-v4 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练仍未获授权。下一步须选择并独立审核后续 execution-request section 或静态 design；提交：未提交。
+
+### R09-B2 P4-v4 execution request environment v0.1 (2026-09-02，REVIEW)
+
+- ChatGPT 对 execution-preflight v0.5=`5e8acad` 的 HIGH 已定位：`environment/run/candidates/backends/authorities` 尚未冻结，故不得重新申请或执行 CPU preflight。当前只起草 `docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_environment_design_v0.1_2026-09-02.md`：P5 child 从空 parent map 构造，native loader 空 set，forbidden tuple exact、无 allowlist；两个 backend 仅允许 P3-owned TTT enabled 键不同。
+- 未执行项目代码、preflight/staging/P5/GPU/训练。下一步：`git diff --check`，提交设计并对同一 SHA 请求 ChatGPT/MM/Kimi `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS`；提交：未提交。
