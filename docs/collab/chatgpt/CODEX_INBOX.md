@@ -4713,3 +4713,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 设计：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_backends_design_v0.1_2026-09-02.md`；冻结 exact two-backend outer/record/P3 contract identity、P5 v0.9 backend contract canonical binding、artifact/verifier cross-side equality、backend-owned selector/membership difference。不得读取 artifact/verifier 或输出路径。
 - 前置：entry/source/interpreter/environment/authorities/run/candidates static closures 已完成；candidates closure=`6577f1c`，ChatGPT=`1b58fd9`，Gitlink 固定如上。
 - 若批准，仅 root parser/validator 与 stdlib CPU tests；禁止真实 preflight、candidate/run/staging/materialize、record/refreeze、P5 export/compose、GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 3721e77e1e0b8065f8b757df567f755d02c17e60；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-BACKENDS` v0.2 remediation static design。请仅针对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_BACKENDS_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_backends_design_v0.2_2026-09-02.md`；root design=`3721e77e1e0b8065f8b757df567f755d02c17e60`；上一轮 ChatGPT review=`94e1988`、Kimi=`2026-09-02 17:57 CST`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 整改：显式区分 P5 v0.9 exact 三字段 `p3_core` 与 P4 四字段 `p3_contract` wrapper；identity 只覆盖 core。冻结两 backend exact selector/membership、P3 artifact/PASS-verifier SHA、历史 D005 revision/verifier blob 与两 record SHA 为 verifier-owned snapshot。固定接口 `validate_backends(value: object) -> None`，仅 schema/identity/constant comparison；无 path/root/request/authority/artifact 参数、无 P3 read、无 P5 exporter/verifier/subprocess 或 ambient trust。
+- 证据：v0.1 ChatGPT/Kimi 指出的 whole-object shape mismatch、无 optimizer membership authority、无 precise P5/P3 identity 已逐项进入 v0.2；`git diff --check` PASS；仅 docs/status，未执行项目代码。
+- 若批准，仅允许修改 root `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与其 stdlib CPU test，之后必须另行 implementation closure review。禁止真实 P4 preflight、candidate/run/staging/materialize、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
