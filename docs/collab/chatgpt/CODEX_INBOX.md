@@ -4324,3 +4324,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 实现：`verify_r09_b2_p5_full_config_diff.py` 新增 verifier-owned `AUTHORIZED_P4_V4_EVIDENCE`；未冻结时 fail-closed。冻结后只接受 full-clean exact evidence commit（descendant 拒绝）、冻结 tree SHA256、root Gitlink 与 submodule HEAD 三方相等，及两 backend 固定 request/result/verification Git blob/current bytes SHA。每个固定文件必须是 tracked regular file；不信任 request 自身或当前 HEAD 作为授权。
 - CPU-only 证据：`python -m py_compile tools/g0/verify_r09_b2_p5_full_config_diff.py tools/g0/test_r09_b2_p5_full_config_diff.py` PASS；`python -B -m unittest tools.g0.test_r09_b2_p5_full_config_diff -v` 4/4 PASS；`git diff --check` PASS。临时 Git fixtures覆盖共同替换后 clean descendant、普通 descendant、Gitlink drift、blob drift、symlink 与 untracked fail-closed。
 - 允许范围：本申请仅 root P5 verifier tooling 与 stdlib CPU tests；禁止 runtime、真实 staging、P4 record/refreeze/preflight、P5 export/compose、torchrun、GPU、模型/数据/checkpoint、训练/评测/推理、B2-T 和 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 d03b8ddea378a3b9ade0ad37180f64440b2463a7；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-PREFLIGHT` v0.3 静态设计整改。请求 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root design=`d03b8ddea378a3b9ade0ad37180f64440b2463a7`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_design_v0.3_2026-09-02.md`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 整改 v0.2 四项：使用可解析 P4 design=`f362b824735807278b74ccc553fc8f556598a8d2`、implementation=`3d990e6fb65c192f12e3c2b58ae49356d3eba1e7`、review=`4088920d96bfb63cb64e06fe4315e74f7fbe67aa`；P5 authority prerequisite=`3e3a853`/`507a343` 已关闭；PASS 精确 `{request,result,verification}`，FAIL 精确 `{request,failure}` 并 failure-poison；P4 files 不内嵌 post-commit identity，后续独立 reviewed P5 verifier authority 常量才 out-of-band 绑定 exact commit/tree/Gitlink/blobs。
+- 验证：仅文档；`git diff --check` PASS。允许范围若批准仅 root static tooling+stdlib CPU tests；禁止真实 preflight/staging/candidate/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T 或 Local Memory 训练。
