@@ -4799,3 +4799,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 固定限制：helper 仅在测试临时目录验证双 backend lexical/nofollow/non-overlap/nonexistent 的一次空 staging-layout reservation；不得复制 source、读取 ambient/PATH/cwd、调用 Git/subprocess/child/P5、生成 payload/candidate/evidence，或执行 record/refreeze/export/compose。
 - 证据：设计/任务状态文档 `git diff --check` PASS；本申请未运行项目代码、未创建 request/run/candidate/staging/产物。
 - 永久禁止：真实 P4 request/preflight/materialize、candidate/run-root/staging、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。若获批准，仍须 implementation closure review；真实执行另起冻结 request Gate 并三方同 SHA批准。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 594923c1f34120a72d1389c883ce6800a8187b51；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` v0.2 remediation design。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 文档：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.2_2026-09-02.md`；v0.1 ChatGPT review=`9727516`、Kimi/MM意见均已统一处理。
+- 整改：private `_AdmittedRequest` capability 由唯一 `_admit_execution_request(raw)` 构造，拒绝 bare dict/raw/reparse；冻结两个 backend 各 `run_root`、`import_staging`、token leaf 的六个显式 nofollow mkdir 与路径绑定；普通顺序 mkdir 的任一 mutation failure 定义 exact partial prefix 的无 cleanup/no-retry `POISONED` terminal，并要求六个 mutation 点注入 fixture。
+- 公开 CLI 仍 SHA-bound full admission 后 hard-stop；范围仅未来 private static tooling/stdlib CPU tests。禁止真实 request/preflight/materialize/candidate/staging/record/refreeze/P5/export/compose/GPU/训练。
