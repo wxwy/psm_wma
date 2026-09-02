@@ -4332,3 +4332,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 审核对象：root design=`d03b8ddea378a3b9ade0ad37180f64440b2463a7`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_design_v0.3_2026-09-02.md`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
 - 整改 v0.2 四项：使用可解析 P4 design=`f362b824735807278b74ccc553fc8f556598a8d2`、implementation=`3d990e6fb65c192f12e3c2b58ae49356d3eba1e7`、review=`4088920d96bfb63cb64e06fe4315e74f7fbe67aa`；P5 authority prerequisite=`3e3a853`/`507a343` 已关闭；PASS 精确 `{request,result,verification}`，FAIL 精确 `{request,failure}` 并 failure-poison；P4 files 不内嵌 post-commit identity，后续独立 reviewed P5 verifier authority 常量才 out-of-band 绑定 exact commit/tree/Gitlink/blobs。
 - 验证：仅文档；`git diff --check` PASS。允许范围若批准仅 root static tooling+stdlib CPU tests；禁止真实 preflight/staging/candidate/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T 或 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 5de996bf2c1e5b5b8ac11300b190d76eae8a21dd；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-PREFLIGHT` v0.4 静态设计整改。请求 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root design=`5de996bf2c1e5b5b8ac11300b190d76eae8a21dd`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_design_v0.4_2026-09-02.md`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 整改 GPT v0.3 HIGH：PASS candidate 的 request/result/verification 现定义为 byte-for-byte 已可被 P5 接受的最终 payload，candidate identity 仅在不发布的 `candidate_link.json`；record/refreeze 禁止 parse/rewrite/re-serialize payload。
+- 整改 MEDIUM：只接受 ordered `[recurrent,ttt_fast_weight]` 两个 canonical PASS candidate，独立复验 pair invariants；任何缺失/FAIL/poison/重复 backend 禁止 publication；六 payload 只可 one commit-or-none 发布，后续独立 reviewed P5 authority 才绑定 post-commit identity。
+- 验证：仅文档；`git diff --check` PASS。若批准仅 root tooling+stdlib CPU tests；禁止真实 preflight/staging/candidate/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T/Local Memory 训练。
