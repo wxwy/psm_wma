@@ -4908,6 +4908,14 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - B1：spec 仅含 planned-run/candidates，无 final `roster_sha256`；B2：planned 明确 identity；B3：authority 提供 `/` anchored nofollow source-root FD bootstrap，spec相对路径仅从该 FD 打开。
 - 仅 static tooling/stdlib CPU tests；禁止 P4/P5 migration implementation、真实 request/preflight/staging/candidate/record/refreeze/P5 export/compose/GPU/训练。`git diff --check` PASS，未运行项目代码。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 671ca0123352b050125f3a413f8e74eeabbe6088；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` v0.7 静态设计整改。请仅对同一 SHA 回复 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 file:line）。
+
+- 文档：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_lock_design_v0.7_2026-09-02.md`；ChatGPT prior=`065b45f`；Gitlink 如上。
+- B1：spec multi-component parent 逐层 `openat(O_DIRECTORY|O_NOFOLLOW)`/fstat，final basename单独 nofollow open；B2：planned backend 为逐字段 construct，projection 后重算 identity，拒绝 direct-copy shortcut。
+- 范围仅 static tooling/stdlib CPU tests；禁止 P4/P5 migration implementation、真实执行/P5/GPU/训练；`git diff --check` PASS。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 932d0debec5935cf88d9e90f2f20b7da054ec546；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` v0.1 静态设计。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
