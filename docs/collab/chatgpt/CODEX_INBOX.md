@@ -4360,3 +4360,7 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 ### Awaiting review — 🚨 审核申请已发出（根仓 50b9f5d；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-PREFLIGHT` static remediation closure。已修复 ChatGPT 指出的 token-only/run-root-only poison reuse 与 `effective_launch` 公共字段 parity；P4/P5 unittest 6/6 PASS，py_compile、diff-check PASS。请求 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`。仅 static tooling+CPU，禁止真实执行/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 2f024f4；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-PREFLIGHT` static remediation follow-up。新增 `runtime_sys_path` parity fail-closed CPU regression；请求 ChatGPT、MM、Kimi 对同一 root SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。证据：P4/P5 unittest 9/9 PASS，py_compile、git diff --check PASS。仅 root static tooling+CPU tests；禁止真实 preflight/staging/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T、Local Memory 训练。
