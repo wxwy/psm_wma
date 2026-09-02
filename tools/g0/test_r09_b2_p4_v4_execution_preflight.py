@@ -221,11 +221,19 @@ class FullAdmissionCompositionTest(unittest.TestCase):
         git_raw = r09_b2_p4_v4_execution_preflight._read_regular_nofollow(git, "git")
         host_git = {"path": str(git), "elf_sha256": hashlib.sha256(git_raw).hexdigest(),
                     "closure_sha256": r09_b2_p4_v4_execution_preflight._host_git_closure(git, git_raw)}
-        entry = EntryFoundationTest()._entry()
+        entry_raw = b"composition entry\n"
+        entry = {"tool_path": "tools/g0/r09_b2_p4_v4_execution_preflight.py",
+                 "root_revision": "a" * 40, "git_blob_sha256": hashlib.sha256(entry_raw).hexdigest(),
+                 "current_sha256": hashlib.sha256(entry_raw).hexdigest()}
+        self._reidentity(entry)
         source = {"root": str(root), "root_revision": entry["root_revision"], "gitlink": "b" * 40,
                   "entry_git_blob_sha256": entry["git_blob_sha256"], "entry_current_sha256": entry["current_sha256"]}
         self._reidentity(source)
-        interpreter = {"host_git": host_git, "identity_sha256": "c" * 64}
+        with tempfile.TemporaryDirectory() as temporary:
+            interpreter, _ = InterpreterAuthorityTest()._interpreter(temporary)
+        interpreter["host_git"] = host_git
+        interpreter["loader_argv"][8] = str(root)
+        self._reidentity(interpreter)
         run = RunAuthorityTest()._pair()
         value = {"schema_version": "r09_b2_p4_v4_execution_request_v1", "entry": entry,
                  "source": source, "interpreter": interpreter, "environment": authority_request["environment"],
@@ -237,16 +245,37 @@ class FullAdmissionCompositionTest(unittest.TestCase):
         return value, git
 
     def _load(self, value, git):
-        expected_root = value["source"]["root"]
-        def source_spy(source, _entry, received_git):
-            if source["root"] != expected_root or received_git != git:
-                raise ValueError("composition source differs")
-        def interpreter_spy(interpreter, _source, received_git):
-            if interpreter["identity_sha256"] != "c" * 64 or received_git != git:
-                raise ValueError("composition interpreter differs")
+        root = Path(value["source"]["root"])
+        entry_raw = b"composition entry\n"
+        original_git = r09_b2_p4_v4_execution_preflight._git
+        original_reader = r09_b2_p4_v4_execution_preflight._read_regular_nofollow
+        expected_argv = value["interpreter"]["loader_argv"]
+
+        def source_git(root_arg, *args, git_executable=None):
+            if args == ("show", f"{r09_b2_p4_v4_execution_preflight._HISTORICAL_REVISION}:{r09_b2_p4_v4_execution_preflight._HISTORICAL_VERIFIER[0]}"):
+                return original_git(root_arg, *args, git_executable=git_executable)
+            if root_arg == root / "cosmos-framework" and args == ("rev-parse", "HEAD"):
+                return ("b" * 40 + "\n").encode()
+            if args == ("rev-parse", "HEAD") or args == ("rev-parse", "--verify", f"{'a' * 40}^{{commit}}"):
+                return ("a" * 40 + "\n").encode()
+            if args == ("ls-tree", "a" * 40, "cosmos-framework"):
+                return ("160000 commit " + "b" * 40 + "\tcosmos-framework\n").encode()
+            if args == ("ls-files", "--error-unmatch", "--", r09_b2_p4_v4_execution_preflight.ENTRY_TOOL_PATH):
+                return b""
+            if args == ("show", f"{'a' * 40}:{r09_b2_p4_v4_execution_preflight.ENTRY_TOOL_PATH}"):
+                return entry_raw
+            raise AssertionError(f"unexpected source Git call: {root_arg!s} {args!r}")
+
+        def source_reader(path, error):
+            if path == root / r09_b2_p4_v4_execution_preflight.ENTRY_TOOL_PATH:
+                return entry_raw
+            return original_reader(path, error)
+
         raw = (json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode()
-        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_source", side_effect=source_spy), \
-             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_interpreter", side_effect=interpreter_spy):
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "_clean_git_root"), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "_git", side_effect=source_git), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "_read_regular_nofollow", side_effect=source_reader), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "verified_loader_argv", return_value=expected_argv):
             return r09_b2_p4_v4_execution_preflight.load_execution_request(raw)
 
     def test_full_route_executes_authorities_and_rejects_reidentified_sections(self):
@@ -263,9 +292,11 @@ class FullAdmissionCompositionTest(unittest.TestCase):
         def entry_mutation(item):
             item["entry"]["tool_path"] = "other.py"; self._reidentity(item["entry"])
         def source_mutation(item):
-            item["source"]["root"] = "/wrong"; self._reidentity(item["source"])
+            item["source"]["root"] = str(Path(item["source"]["root"]) / "cosmos-framework")
+            self._reidentity(item["source"])
         def interpreter_mutation(item):
-            item["interpreter"]["identity_sha256"] = "0" * 64
+            item["interpreter"]["lexical_interpreter"]["sha256"] = "0" * 64
+            self._reidentity(item["interpreter"])
         def environment_mutation(item):
             section = item["environment"]["recurrent"]
             section["effective_environment"]["set"]["HF_HUB_OFFLINE"] = "0"
