@@ -4468,6 +4468,14 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 范围：仅冻结 interpreter exact schema、lexical Python/Git Git/current-byte single-fd authority、loader argv/bootstrap/request binding 与 stdlib CPU negative fixtures；永久拒绝 ambient PATH/direct exporter。
 - 若批准，仅 root static parser/validator + stdlib CPU tests。禁止真实 preflight/staging/materialize、record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint I/O、训练/评测/推理、B2-T、Local Memory 训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 e69f278b18664202b7c5c424401a13a31b33c320；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-INTERPRETER` v0.2 设计整改。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_interpreter_design_v0.2_2026-09-02.md`，root=`e69f278b18664202b7c5c424401a13a31b33c320`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；整改 Kimi v0.1 `REQUEST_CHANGES`。
+- 修正：venv Python 不再声称 Git blob，改按 v1.3 lexical payload/base/pyvenv.cfg/tracked lock-RECORD chain；host Git 改绝对 native ELF/closure TCB，永久拒绝 ambient PATH。两路均 single-fd/no-follow，loader argv/bootstrap/request binding 不变。
+- 若批准，仅 root static parser/validator + stdlib CPU fixtures；禁止真实 preflight/staging、P5 export/compose、GPU、训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 b0581d89c452cadaa40e9739c6d51313eb13a615；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` source v0.3 static remediation closure。请对同一 root implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_SOURCE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
