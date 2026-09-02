@@ -987,3 +987,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `45d78e3` 三方最终意见收齐：Kimi/MM `APPROVE`；ChatGPT `REQUEST_CHANGES` 仅三项 fixture。补充：变更非排除 D005 projected 值 `HF_HUB_OFFLINE`、top-level third backend roster、复用既有 `p5_effective_environment()` 证明 request 无 `LC_CTYPE` 且 validated pair 才投影注入 `C.UTF-8`（ambient parent 无关）。P4+P5 stdlib CPU=34/34 PASS，`py_compile`、`git diff --check` PASS。
 - `50d08df03d632ea4457cbefeccc97b9c3309fd4c` 三方同 SHA closure：ChatGPT review=`f7c1cb9`、Kimi=`2026-09-02 14:54:25 CST`、MM=`2026-09-03 02:03:37` 均 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS`。P4+P5 CPU=34/34、provenance/static-contract=26/26、`py_compile`、`git diff --check` PASS。
 - 本 closure 仅结束 environment static tooling；`authorities.d005_pair` full request binding、run/candidates/backends 仍为独立 Gate。未执行真实 preflight/staging/P5 export/compose/GPU/训练；下一步须新建并三方审核后续 section 设计。提交：待本状态更新提交。
+
+### R09-B2 P4-v4 execution request authorities design (2026-09-02，IN_PROGRESS)
+
+- 认领 `G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES`。预计新增 `docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_authorities_design_v0.1_2026-09-02.md`、修改 SESSION/TODO：仅冻结 `authorities.d005_pair` 的静态 path/bytes/source/verified-pair 与 environment cross-binding；不执行 preflight/staging/P5/GPU/训练；提交：未提交。
