@@ -4740,6 +4740,13 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 范围：只串联已关闭的 entry/source/interpreter/environment/authorities/run/candidates/backends 八 section；固定同一 validated host Git/root 传递、authorities 唯一 environment-D005 binding、canonical raw/request SHA 与永久 main hard-stop。成功只返回内存对象，禁止创建或执行任何东西。
 - 若批准，仅 root parser/validator + stdlib CPU fixtures，之后独立 implementation closure review。禁止真实 request/preflight、candidate/run/staging/materialize、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T/Local Memory 训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 fad1e8d6959fcfee76129e04dc213e7fd6ea49f1；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-FULL` v0.2 remediation static design。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_FULL_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- v0.1 ChatGPT=`5493b5f` 两项整改：不改关闭的 `validate_source`，以同 parsed source.root canonical value binding 后构造单一 authorities `source_root`；`git_path` 才要求 source/interpreter/authorities 同 object identity。fixture 改为 route-only mock closed sections底层 I/O，保证 full layer 不新增 subprocess，而非错误禁止既有 source/authorities 固定 Git lookup。
+- 范围仍仅 root static parser/stdlib CPU，永久 hard-stop；禁止真实 request/preflight/staging/P5/GPU/训练。设计=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_full_design_v0.2_2026-09-02.md`；Gitlink 如上。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 4338751223fa33804fdbb8b4c263c45e2bd0b779；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-BACKENDS` tests-only remediation closure。请仅针对同一 remediation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_BACKENDS_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
