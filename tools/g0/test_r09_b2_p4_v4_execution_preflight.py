@@ -52,6 +52,14 @@ class MaterializationReservationTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "requires an admitted request"):
                 r09_b2_p4_v4_execution_preflight._reserve_staging(forged, namespace)
 
+    def test_capability_fields_reject_ordinary_mutation(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            admitted = self._admitted(Path(temporary))
+            with self.assertRaises(AttributeError):
+                admitted.raw = b"{}\n"
+            with self.assertRaises(AttributeError):
+                admitted._consumed = False
+
     def test_existing_direct_child_rejects_before_any_mkdir(self):
         with tempfile.TemporaryDirectory() as temporary:
             namespace = Path(temporary); (namespace / "recurrent").mkdir()
