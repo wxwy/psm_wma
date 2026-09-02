@@ -4732,15 +4732,6 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=`60/60 PASS`；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`PYTHONHASHSEED=0,1,2` 下 `BackendsAuthorityTest` 各 `4/4 PASS`；`git diff --check` PASS。fixture 覆盖 no-I/O/subprocess/ambient、每个 frozen P3 SHA/selector/member drift、core/wrapper、schema/identity/label/swap/reuse/pair binding。
 - 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 P4 preflight、candidate/run/staging/materialize、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
 
-### Awaiting review — 🚨 审核申请已发出（根仓 c3b64b5ab56fde2669a5af739fbbc1d97a1a4733；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
-
-任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-FULL` v0.2 static implementation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_FULL_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
-
-- 审核对象：root implementation=`c3b64b5ab56fde2669a5af739fbbc1d97a1a4733`；approved design=`fad1e8d6959fcfee76129e04dc213e7fd6ea49f1`（ChatGPT=`24c3148`、Kimi=`2026-09-02 18:35 CST`、MM=`18:33:37`）；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
-- 实现范围仅 `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py`：`load_execution_request()` 保持 existing entry/source/interpreter/run/candidates/backends validators，复用同一 invocation 的 verified host-Git `Path` 给 source/interpreter/authorities；仅从同一 canonical parsed `source.root` 字段构造一次 `source_root` 传给 authorities。authorities 是唯一 environment-D005 binding；main 的 single-fd request SHA binding 与无条件 hard-stop 保持。无新增 subprocess、无路径创建或真实 request。
-- CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -q`=`61/61 PASS`；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`PYTHONHASHSEED=0/1/2 python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight.EntryFoundationTest -q` 各 `7/7 PASS`；`git diff --check` PASS。fixture 覆盖 canonical request SHA hard-stop、host-Git object reuse、source-root canonical-value binding、authorities sole route、legacy environment/D005 route 未调用及 hostile ambient independence。
-- 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 request/preflight、staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
-
 ### Awaiting review — 🚨 审核申请已发出（根仓 f1d6554e0b428ecfbdd92f6a0cfe633e5f5cafc1；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-FULL` v0.1 static design。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_FULL_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
@@ -4764,3 +4755,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 严格 tests-only：只修改 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py`。补 ChatGPT 两项 fixture：保持 selector 值集合的 recurrent `[0]↔[1]` stable-order swap，并重算 P3-wrapper/record/outer identities 后由 snapshot 拒绝；保持每侧 `backend` label byte-exact、仅交换两份 `p3_contract`，重算所有 identities 后由各自 backend snapshot 拒绝。未改 validator、snapshot、request loader 或任何执行逻辑。
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=`60/60 PASS`；`py_compile`、`git diff --check` PASS；`PYTHONHASHSEED=0,1,2` BackendsAuthorityTest 各 `4/4 PASS`。无 I/O/subprocess/真实 preflight/staging/P5/GPU/训练。
 - 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 P4 preflight、candidate/run/staging/materialize、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 c3b64b5ab56fde2669a5af739fbbc1d97a1a4733；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-FULL` v0.2 static implementation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_FULL_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root implementation=`c3b64b5ab56fde2669a5af739fbbc1d97a1a4733`；approved design=`fad1e8d6959fcfee76129e04dc213e7fd6ea49f1`（ChatGPT=`24c3148`、Kimi=`2026-09-02 18:35 CST`、MM=`18:33:37`）；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 实现范围仅 `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py`：`load_execution_request()` 保持 existing entry/source/interpreter/run/candidates/backends validators，复用同一 invocation 的 verified host-Git `Path` 给 source/interpreter/authorities；仅从同一 canonical parsed `source.root` 字段构造一次 `source_root` 传给 authorities。authorities 是唯一 environment-D005 binding；main 的 single-fd request SHA binding 与无条件 hard-stop 保持。无新增 subprocess、无路径创建或真实 request。
+- CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -q`=`61/61 PASS`；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`PYTHONHASHSEED=0/1/2 python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight.EntryFoundationTest -q` 各 `7/7 PASS`；`git diff --check` PASS。fixture 覆盖 canonical request SHA hard-stop、host-Git object reuse、source-root canonical-value binding、authorities sole route、legacy environment/D005 route 未调用及 hostile ambient independence。
+- 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 request/preflight、staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
