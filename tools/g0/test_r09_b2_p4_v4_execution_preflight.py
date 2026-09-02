@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -704,10 +705,20 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
         original = json.loads(raw)
         mutations = (
             lambda value: value.__setitem__("extra", True),
+            lambda value: value.pop("status"),
+            lambda value: value.__setitem__("status", False),
+            lambda value: value.__setitem__("schema_version", 1),
             lambda value: value["checks"].__setitem__("extra", True),
+            lambda value: value["checks"].pop("distinct_outputs"),
             lambda value: value["checks"].__setitem__("distinct_outputs", False),
+            lambda value: value["checks"].__setitem__("distinct_outputs", "true"),
+            lambda value: value["checks"]["matched"].__setitem__("extra", True),
+            lambda value: value["checks"]["matched"].pop("budget"),
+            lambda value: value["checks"]["matched"].__setitem__("budget", False),
             lambda value: value["checks"]["matched"].__setitem__("budget", "true"),
+            lambda value: value["checks"]["recurrent"].__setitem__("extra", True),
             lambda value: value["checks"]["recurrent"].pop("argv"),
+            lambda value: value["checks"]["recurrent"].__setitem__("argv", False),
             lambda value: value["checks"]["ttt_fast_weight"].__setitem__("argv", 1),
         )
         for mutate in mutations:
@@ -729,6 +740,41 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
             expected = {"relative_path": "artifact", "sha256": "0" * 64}
             with self.assertRaisesRegex(ValueError, "path differs"):
                 r09_b2_p4_v4_execution_preflight._read_historical_artifact(root, expected, expected, "test")
+
+    def test_authorities_reject_historical_artifact_fifo_without_hanging(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); fifo = root / "artifact"; os.mkfifo(fifo)
+            expected = {"relative_path": "artifact", "sha256": "0" * 64}
+            writer_ready = threading.Event()
+
+            def open_writer():
+                descriptor = os.open(fifo, os.O_WRONLY)
+                writer_ready.set()
+                os.close(descriptor)
+
+            writer = threading.Thread(target=open_writer, daemon=True); writer.start()
+            with self.assertRaisesRegex(ValueError, "path differs"):
+                r09_b2_p4_v4_execution_preflight._read_historical_artifact(root, expected, expected, "test")
+            writer.join(timeout=1)
+            self.assertTrue(writer_ready.is_set())
+            self.assertFalse(writer.is_alive())
+
+    def test_authorities_historical_artifact_opens_lexical_path_once(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); artifact = root / "artifact"
+            raw = b'{"ok":true}\n'; artifact.write_bytes(raw)
+            expected = {"relative_path": "artifact", "sha256": hashlib.sha256(raw).hexdigest()}
+            original_open = os.open; seen = []
+
+            def observe(path, flags, *args):
+                seen.append((Path(path), flags))
+                return original_open(path, flags, *args)
+
+            with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "open", side_effect=observe):
+                read_raw, decoded = r09_b2_p4_v4_execution_preflight._read_historical_artifact(root, expected, expected, "test")
+            self.assertEqual(read_raw, raw)
+            self.assertEqual(decoded, {"ok": True})
+            self.assertEqual(seen, [(artifact, os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0))])
 
     def test_authorities_reject_source_host_git_and_verifier_blob_drift(self):
         root, request, git = self._request()
@@ -812,6 +858,41 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
                      mock.patch.object(r09_b2_p4_v4_execution_preflight, "_git", return_value=verifier):
                     with self.assertRaisesRegex(ValueError, "historical record differs"):
                         r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
+
+    def test_authorities_reject_historical_record_noncanonical_raw(self):
+        root, request, git = self._request()
+        records = {}
+        for backend in ("recurrent", "ttt_fast_weight"):
+            path, _ = r09_b2_p4_v4_execution_preflight._HISTORICAL_ARTIFACTS[backend]
+            records[backend] = json.loads((root / path).read_bytes())
+        verification_path, _ = r09_b2_p4_v4_execution_preflight._HISTORICAL_ARTIFACTS["verification"]
+        verification = json.loads((root / verification_path).read_bytes())
+        verifier = r09_b2_p4_v4_execution_preflight._git(root, "show", f"{r09_b2_p4_v4_execution_preflight._HISTORICAL_REVISION}:{r09_b2_p4_v4_execution_preflight._HISTORICAL_VERIFIER[0]}", git_executable=git)
+
+        def fake_read(_, __, ___, name):
+            item = verification if name == "verification" else records[name]
+            raw = json.dumps(item, indent=2, sort_keys=True).encode() + b"\n"
+            return raw, item
+
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "_read_historical_artifact", side_effect=fake_read), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "_git", return_value=verifier):
+            with self.assertRaisesRegex(ValueError, "historical record differs"):
+                r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
+
+    def test_authorities_reject_historical_verification_pretty_byte_drift(self):
+        source_root, request, git = self._request()
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for name in ("recurrent", "ttt_fast_weight", "verification"):
+                relative, _ = r09_b2_p4_v4_execution_preflight._HISTORICAL_ARTIFACTS[name]
+                target = root / relative; target.parent.mkdir(parents=True, exist_ok=True)
+                raw = (source_root / relative).read_bytes()
+                if name == "verification":
+                    raw = json.dumps(json.loads(raw), indent=4, sort_keys=True).encode() + b"\n"
+                    self.assertNotEqual(raw, (source_root / relative).read_bytes())
+                target.write_bytes(raw)
+            with self.assertRaisesRegex(ValueError, "verification bytes differ"):
+                r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
 
 
 if __name__ == "__main__":
