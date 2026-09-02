@@ -5,8 +5,7 @@
 ## 当前最小步骤（2026-09-02）
 
 - `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（DONE）：hidden-authority remediation=`bda9737` 获 ChatGPT review=`6910a72`、Kimi=`2026-09-02 21:04:12 CST`、MM=`2026-09-02 21:05:23 CST` 同 SHA `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`。closure-local `WeakKeyDictionary` 保存唯一 admission raw/SHA/one-shot state，visible fields 不能 forge/reset authority；B2 双 backend precheck 与 B3 full-admission/race/forbidden/CLI/12-fault fixture保持。P4 CPU=76/76、materialization=13/13、`py_compile`、`git diff --check` PASS。未创建或执行真实 request/preflight/materialize/staging/candidate/P5/GPU/训练；下一步仅可另起 exact frozen execution-request / execution design Gate；提交：未提交。
-- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（IN_PROGRESS）：准备新建仅静态 canonical request lock 设计，复用已关闭 full-request/P5 authority/materialization contracts；计划修改 `docs/build/`、`SESSION.md`、`TODO.md`。该步骤不生成真实 request/staging/candidate/run-root，不调用 preflight/P5/GPU/训练；提交：未提交。
-- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（IN_PROGRESS）：v0.1=`932d0de` 收齐 ChatGPT=`9581400` REQUEST_CHANGES、Kimi/MM approve；将新建 v0.2，仅整改 verifier-owned lock-spec authority、deterministic final roster digest 与 output namespace/partial-write poison。默认无独立 reviewed authority 必 fail-closed；不生成真实 request/staging/candidate/run-root，不调用 preflight/P5/GPU/训练；提交：未提交。
+- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（IN_PROGRESS）：v0.2=`8f04827` 三方意见已齐：ChatGPT review=`e6593d5` REQUEST_CHANGES，Kimi approve，MM 无额外结构性缺陷。新增 v0.3 仅整改 same-FD `O_RDWR`/`fchmod`/`fstat` poison 合同、P5 exact roster grammar，并承认 `preflight.json` SHA 不能无循环预计算：本 Gate 只冻结不可执行 planned commitment，不输出 final request/`roster_sha256`；final P5 roster 与 execution request 留给独立 record/refreeze Gate。计划修改 `docs/build/`、`SESSION.md`、`TODO.md`；不生成真实 request/staging/candidate/run-root，不调用 preflight/P5/GPU/训练；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
