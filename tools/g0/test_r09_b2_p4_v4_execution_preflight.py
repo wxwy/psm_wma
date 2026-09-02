@@ -519,13 +519,25 @@ class BackendsAuthorityTest(unittest.TestCase):
             ("selector duplicate", lambda value: value["recurrent"]["p3_contract"]["backend_contract"].__setitem__("selector_keys", ["x", "x"]), "P3 backend contract"),
             ("selector retyped", lambda value: value["recurrent"]["p3_contract"]["backend_contract"].__setitem__("selector_keys", [1]), "P3 backend contract"),
             ("membership grammar", lambda value: value["recurrent"]["p3_contract"]["backend_contract"].__setitem__("optimizer_membership_sha256", "A" * 64), "P3 backend contract"),
-            ("core swap", lambda value: value.__setitem__("recurrent", value["ttt_fast_weight"]), "backends record"),
         )
         for name, mutate, error in grammar_mutations:
             with self.subTest(name=name):
                 value = self._value(); mutate(value); self._reidentity(value)
                 with self.assertRaisesRegex(ValueError, error):
                     r09_b2_p4_v4_execution_preflight.validate_backends(value)
+        value = self._value()
+        selectors = value["recurrent"]["p3_contract"]["backend_contract"]["selector_keys"]
+        selectors[0], selectors[1] = selectors[1], selectors[0]
+        self._reidentity(value)
+        with self.assertRaisesRegex(ValueError, "P3 snapshot"):
+            r09_b2_p4_v4_execution_preflight.validate_backends(value)
+        value = self._value()
+        recurrent_contract = value["recurrent"]["p3_contract"]
+        value["recurrent"]["p3_contract"] = value["ttt_fast_weight"]["p3_contract"]
+        value["ttt_fast_weight"]["p3_contract"] = recurrent_contract
+        self._reidentity(value)
+        with self.assertRaisesRegex(ValueError, "P3 snapshot"):
+            r09_b2_p4_v4_execution_preflight.validate_backends(value)
         snapshots = json.loads(json.dumps(r09_b2_p4_v4_execution_preflight.P3_CORE_SNAPSHOTS))
         snapshots["ttt_fast_weight"]["artifact_sha256"] = "f" * 64
         value = self._value()
