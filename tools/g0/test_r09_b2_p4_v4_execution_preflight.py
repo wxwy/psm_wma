@@ -7,6 +7,7 @@ import inspect
 import json
 import os
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -1705,6 +1706,87 @@ class PlannedRosterCommitmentTest(unittest.TestCase):
              mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_authorities_pair"):
             return r09_b2_p4_v4_execution_preflight.build_planned_roster_commitment(raw)
 
+    def _relock(self, value):
+        """Recompute every planned-only identity after a deliberate mutation."""
+        manifest = value["payload_manifest"]
+        manifest["sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in manifest.items() if key != "sha256"}
+        )
+        for backend in ("recurrent", "ttt_fast_weight"):
+            run = value["planned_run"][backend]
+            identity = run["identity"]
+            identity["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: item for key, item in identity.items() if key != "identity_sha256"}
+            )
+            run["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: item for key, item in run.items() if key != "identity_sha256"}
+            )
+            candidate = value["planned_candidates"][backend]
+            candidate["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: item for key, item in candidate.items() if key != "identity_sha256"}
+            )
+        candidates = value["planned_candidates"]
+        candidates["root"]["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in candidates["root"].items() if key != "identity_sha256"}
+        )
+        candidates["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in candidates.items() if key != "identity_sha256"}
+        )
+        value["lock_spec_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in value.items() if key != "lock_spec_sha256"}
+        )
+
+    def _planned_spec(self, source_root):
+        """Reuse the full-admission closed sections for a planned-only lock spec."""
+        request, git = FullAdmissionCompositionTest()._request()
+        entry_raw = (source_root / r09_b2_p4_v4_execution_preflight.ENTRY_TOOL_PATH).read_bytes()
+        request["entry"].update({
+            "git_blob_sha256": hashlib.sha256(entry_raw).hexdigest(),
+            "current_sha256": hashlib.sha256(entry_raw).hexdigest(),
+        })
+        request["entry"]["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in request["entry"].items() if key != "identity_sha256"}
+        )
+        request["source"].update({
+            "root": str(source_root),
+            "entry_git_blob_sha256": request["entry"]["git_blob_sha256"],
+            "entry_current_sha256": request["entry"]["current_sha256"],
+        })
+        request["source"]["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in request["source"].items() if key != "identity_sha256"}
+        )
+        request["interpreter"]["loader_argv"][8] = str(source_root)
+        request["interpreter"]["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in request["interpreter"].items() if key != "identity_sha256"}
+        )
+        run, candidates = {}, request["candidates"]
+        for backend in ("recurrent", "ttt_fast_weight"):
+            item = request["run"][backend]
+            run_item = {"identity": item["identity"], "run_token": item["run_token"]}
+            run_item["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(run_item)
+            run[backend] = run_item
+        planned_candidates = {
+            "root": candidates["root"], "attempt_id": candidates["attempt_id"],
+        }
+        for backend in ("recurrent", "ttt_fast_weight"):
+            item = candidates[backend]
+            planned = {
+                "backend": backend, "candidate_root": item["candidate_root"],
+                "run_identity": run[backend]["identity"], "run_token": run[backend]["run_token"],
+            }
+            planned["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(planned)
+            planned_candidates[backend] = planned
+        planned_candidates["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(planned_candidates)
+        manifest = {"entries": [{"path": "payload.py", "type": "regular", "sha256": "c" * 64}]}
+        manifest["sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(manifest)
+        spec = {
+            "schema_version": "r09_b2_p4_v4_lock_spec_v3",
+            **{key: request[key] for key in ("entry", "source", "interpreter", "environment", "authorities", "backends", "execution_contract")},
+            "planned_run": run, "planned_candidates": planned_candidates, "payload_manifest": manifest,
+        }
+        spec["lock_spec_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(spec)
+        return spec, git
+
     def test_builds_exact_v2_planned_commitment_without_roster_sha(self):
         commitment = self._build(self._raw())
         self.assertEqual(set(commitment), r09_b2_p4_v4_execution_preflight.PLANNED_COMMITMENT_KEYS)
@@ -1845,15 +1927,111 @@ class PlannedRosterCommitmentTest(unittest.TestCase):
 
     def test_projection_and_self_sha_drift_are_rejected(self):
         mutations = (
-            lambda value: value["payload_manifest"]["entries"].append({"path": "aaa.py", "type": "regular", "sha256": "d" * 64}),
-            lambda value: value["payload_manifest"]["entries"][0].__setitem__("type", "directory"),
-            lambda value: value.__setitem__("lock_spec_sha256", "0" * 64),
+            ("manifest order", lambda value: value["payload_manifest"]["entries"].extend([
+                {"path": "zzz.py", "type": "regular", "sha256": "d" * 64},
+                {"path": "aaa.py", "type": "regular", "sha256": "e" * 64},
+            ])),
+            ("escaping path", lambda value: value["payload_manifest"]["entries"][0].__setitem__("path", "../escape.py")),
+            ("type drift", lambda value: value["payload_manifest"]["entries"][0].__setitem__("type", "directory")),
+            ("malformed regular SHA", lambda value: value["payload_manifest"]["entries"][0].__setitem__("sha256", "g" * 64)),
+            ("nested run token", lambda value: value["planned_run"]["recurrent"].__setitem__("run_token", "f" * 64)),
+            ("outer SHA", lambda value: value.__setitem__("lock_spec_sha256", "0" * 64)),
         )
-        for mutation in mutations:
-            with self.subTest(mutation=mutation):
+        for name, mutation in mutations:
+            with self.subTest(name=name):
                 value = json.loads(self._raw()); mutation(value)
+                if name != "outer SHA":
+                    self._relock(value)
                 with self.assertRaises(ValueError):
                     self._build((json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode())
+
+    def test_authorized_public_lock_runs_real_closed_sections_and_rejects_each_binding(self):
+        """The non-None authority fixture remains test-local; production stays absent."""
+        repository = Path(__file__).resolve().parents[2]
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary_root = Path(temporary); source = temporary_root / "source"; output = temporary_root / "output"
+            entry = source / r09_b2_p4_v4_execution_preflight.ENTRY_TOOL_PATH
+            entry.parent.mkdir(parents=True); shutil.copyfile(repository / r09_b2_p4_v4_execution_preflight.ENTRY_TOOL_PATH, entry)
+            (source / "cosmos-framework").mkdir(parents=True); output.mkdir()
+            for name, (relative, _) in r09_b2_p4_v4_execution_preflight._HISTORICAL_ARTIFACTS.items():
+                target = source / relative; target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(repository / relative, target)
+            spec, git = self._planned_spec(source)
+            raw = (json.dumps(spec, sort_keys=True, separators=(",", ":")) + "\n").encode()
+            spec_path = "locks/spec.json"; target = source / spec_path; target.parent.mkdir()
+            target.write_bytes(raw)
+            authority = {
+                "schema_version": "r09_b2_p4_v4_lock_authority_v1", "source_root": str(source),
+                "source_commit": "a" * 40, "source_tree_oid": "c" * 40, "gitlink": "b" * 40,
+                "spec_path": spec_path, "spec_git_blob_sha256": hashlib.sha256(raw).hexdigest(),
+                "spec_current_sha256": hashlib.sha256(raw).hexdigest(), "spec_raw_sha256": hashlib.sha256(raw).hexdigest(),
+                "output_parent": str(output), "output_basename": "commitment.json",
+            }
+            original_git = r09_b2_p4_v4_execution_preflight._git
+            original_run = subprocess.run; commands = []
+
+            def source_git(root_arg, *args, git_executable=None):
+                if args == ("show", f"{r09_b2_p4_v4_execution_preflight._HISTORICAL_REVISION}:{r09_b2_p4_v4_execution_preflight._HISTORICAL_VERIFIER[0]}"):
+                    return original_git(repository, *args, git_executable=git_executable)
+                if root_arg == source / "cosmos-framework" and args == ("rev-parse", "HEAD"):
+                    return ("b" * 40 + "\n").encode()
+                if args in (("rev-parse", "HEAD"), ("rev-parse", "--verify", f"{'a' * 40}^{{commit}}")):
+                    return ("a" * 40 + "\n").encode()
+                if args == ("rev-parse", f"{'a' * 40}^{{tree}}"):
+                    return ("c" * 40 + "\n").encode()
+                if args == ("ls-tree", "a" * 40, "cosmos-framework"):
+                    return ("160000 commit " + "b" * 40 + "\tcosmos-framework\n").encode()
+                if args == ("ls-files", "--error-unmatch", "--", r09_b2_p4_v4_execution_preflight.ENTRY_TOOL_PATH):
+                    return b""
+                if args == ("show", f"{'a' * 40}:{r09_b2_p4_v4_execution_preflight.ENTRY_TOOL_PATH}"):
+                    return entry.read_bytes()
+                if args == ("show", f"{'a' * 40}:{spec_path}"):
+                    return raw
+                raise AssertionError(f"unexpected source Git call: {root_arg!s} {args!r}")
+
+            def observe_run(command, *args, **kwargs):
+                commands.append(command)
+                self.assertEqual(command[0], str(git))
+                return original_run(command, *args, **kwargs)
+
+            expected_argv = spec["interpreter"]["loader_argv"]
+            patches = (
+                mock.patch.object(r09_b2_p4_v4_execution_preflight, "_clean_git_root"),
+                mock.patch.object(r09_b2_p4_v4_execution_preflight, "_git", side_effect=source_git),
+                mock.patch.object(r09_b2_p4_v4_execution_preflight, "verified_loader_argv", return_value=expected_argv),
+                mock.patch.object(r09_b2_p4_v4_execution_preflight.subprocess, "run", side_effect=observe_run),
+            )
+            with mock.patch.dict(os.environ, {"PATH": "/hostile", "PYTHONPATH": "/hostile", "LC_CTYPE": "bad"}, clear=True), \
+                 mock.patch.object(r09_b2_p4_v4_execution_preflight, "AUTHORIZED_P4_V4_LOCK_SPEC", authority), \
+                 patches[0], patches[1], patches[2], patches[3]:
+                result = r09_b2_p4_v4_execution_preflight.lock_authorized_planned_roster_commitment()
+            self.assertEqual(result, output / "commitment.json")
+            expected = self._build(raw)
+            self.assertEqual(result.read_bytes(), (json.dumps(expected, sort_keys=True, separators=(",", ":")) + "\n").encode())
+            self.assertEqual(stat.S_IMODE(result.stat().st_mode), 0o444)
+            self.assertTrue(stat.S_ISREG(result.stat().st_mode))
+            self.assertFalse({"run", "candidates", "roster_sha256"} & set(json.loads(result.read_bytes())))
+            self.assertTrue(commands)
+            for name, mutate in (
+                ("source root", lambda item: item.__setitem__("source_root", str(source / "missing"))),
+                ("source commit", lambda item: item.__setitem__("source_commit", "d" * 40)),
+                ("source tree", lambda item: item.__setitem__("source_tree_oid", "d" * 40)),
+                ("Gitlink", lambda item: item.__setitem__("gitlink", "d" * 40)),
+                ("spec path", lambda item: item.__setitem__("spec_path", "locks/missing.json")),
+                ("spec blob", lambda item: item.__setitem__("spec_git_blob_sha256", "d" * 64)),
+                ("spec current", lambda item: item.__setitem__("spec_current_sha256", "d" * 64)),
+                ("spec raw", lambda item: item.__setitem__("spec_raw_sha256", "d" * 64)),
+                ("output parent", lambda item: item.__setitem__("output_parent", str(output / "missing"))),
+                ("output basename", lambda item: item.__setitem__("output_basename", "nested/file.json")),
+            ):
+                with self.subTest(binding=name), tempfile.TemporaryDirectory() as negative:
+                    candidate = dict(authority); candidate["output_parent"] = negative; mutate(candidate)
+                    with mock.patch.object(r09_b2_p4_v4_execution_preflight, "AUTHORIZED_P4_V4_LOCK_SPEC", candidate), \
+                         patches[0], patches[1], patches[2], patches[3]:
+                        with self.assertRaises((ValueError, OSError)):
+                            r09_b2_p4_v4_execution_preflight.lock_authorized_planned_roster_commitment()
+                    self.assertEqual(list(Path(negative).iterdir()), [])
+        self.assertIsNone(r09_b2_p4_v4_execution_preflight.AUTHORIZED_P4_V4_LOCK_SPEC)
 
     def test_default_authority_creates_no_output(self):
         with tempfile.TemporaryDirectory() as temporary, \
