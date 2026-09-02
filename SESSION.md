@@ -4,7 +4,7 @@
 
 ## 当前最小步骤（2026-09-02）
 
-- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（REVIEW）：ChatGPT=`c2c3603` 对 remediation=`b423c70` 关闭 B2/B3、仅要求 B1 将 admission/consumption authority 移出 module-visible registry 与 capability fields；Kimi=`20:53:56`、MM=`20:54:18` 同 SHA approve。已完成最小整改：closure-local `WeakKeyDictionary` 保存 admitted raw/SHA/one-shot state，`_admit_execution_request` 是唯一 real-admission issuer，`_reservation_plan` 仅经 closure consume 读取并单向消费隐藏 authority；visible fields 经 `object.__setattr__` 的 forge/reset/mutation 均不能授权或复位。B2/B3 fixture保持；P4 CPU=76/76、materialization=13/13、`py_compile`、`git diff --check` PASS；待提交并以新 SHA 重新三方 closure review。禁止真实 request/run/candidate/staging/P5/GPU/训练；提交：未提交。
+- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（DONE）：hidden-authority remediation=`bda9737` 获 ChatGPT review=`6910a72`、Kimi=`2026-09-02 21:04:12 CST`、MM=`2026-09-02 21:05:23 CST` 同 SHA `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`。closure-local `WeakKeyDictionary` 保存唯一 admission raw/SHA/one-shot state，visible fields 不能 forge/reset authority；B2 双 backend precheck 与 B3 full-admission/race/forbidden/CLI/12-fault fixture保持。P4 CPU=76/76、materialization=13/13、`py_compile`、`git diff --check` PASS。未创建或执行真实 request/preflight/materialize/staging/candidate/P5/GPU/训练；下一步仅可另起 exact frozen execution-request / execution design Gate；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
