@@ -4622,3 +4622,6 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 ### Awaiting review — 🚨 审核申请已发出（根仓 32f0bf9e37f85ebcbd0caf122dbc0b0955144c05；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES` remediation closure。请给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。整改 ChatGPT=`02e9022`、Kimi 意见：词法 symlink fail-closed、历史 record `d005_sha256` 独立重算、verification nested roster 与 symlink fixture；P4 CPU=34/34、py_compile/diff-check PASS。仅 static/CPU，禁止真实 preflight/staging/P5/GPU/训练。
+### Awaiting review — 🚨 审核申请已发出（根仓 d48912343525e8674f5f1070b0e4aeb07c6ecaab；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES` second remediation closure。请求 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。整改 ChatGPT=`2be7c83`、Kimi 第二轮意见：artifact 改 lexical single-fd `O_NOFOLLOW` + fd canonical containment，补 source/host-Git/verifier blob/environment authority-path、record fields、directory/symlink/verification roster regressions。P4 CPU=38/38、py_compile/diff-check PASS；仅 root static CPU，禁止真实 preflight/staging/P5/GPU/训练。
