@@ -121,16 +121,6 @@ class _AdmittedRequest:
         object.__setattr__(self, name, value)
 
 
-def _issued_admitted_request(raw: bytes, request: dict[str, object]) -> _AdmittedRequest:
-    admitted = object.__new__(_AdmittedRequest)
-    object.__setattr__(admitted, "raw", raw)
-    object.__setattr__(admitted, "request_sha256", request_sha256(raw))
-    object.__setattr__(admitted, "_consumed", False)
-    object.__setattr__(admitted, "_locked", True)
-    _ADMITTED_REQUESTS.add(admitted)
-    return admitted
-
-
 @dataclass(frozen=True, slots=True)
 class ReservationResult:
     status: str
@@ -733,7 +723,14 @@ def request_sha256(raw: bytes) -> str:
 
 def _admit_execution_request(raw: bytes) -> _AdmittedRequest:
     """Create the sole in-memory capability for the static reservation helper."""
-    return _issued_admitted_request(raw, load_execution_request(raw))
+    load_execution_request(raw)
+    admitted = object.__new__(_AdmittedRequest)
+    object.__setattr__(admitted, "raw", raw)
+    object.__setattr__(admitted, "request_sha256", request_sha256(raw))
+    object.__setattr__(admitted, "_consumed", False)
+    object.__setattr__(admitted, "_locked", True)
+    _ADMITTED_REQUESTS.add(admitted)
+    return admitted
 
 
 def _reservation_plan(admitted: _AdmittedRequest, namespace: Path) -> tuple[Path, ...]:
@@ -811,14 +808,15 @@ def _reserve_staging(admitted: _AdmittedRequest, namespace: Path) -> Reservation
         raise ValueError("P4-v4 reservation namespace differs") from exc
     created: list[Path] = []
     try:
-        for backend_index, backend in enumerate(_BACKEND_ORDER):
-            root, middle, leaf = paths[backend_index * 3:backend_index * 3 + 3]
+        for backend in _BACKEND_ORDER:
             try:
                 os.stat(backend, dir_fd=namespace_fd, follow_symlinks=False)
             except FileNotFoundError:
                 pass
             else:
                 raise ValueError("P4-v4 reservation path already exists")
+        for backend_index, backend in enumerate(_BACKEND_ORDER):
+            root, middle, leaf = paths[backend_index * 3:backend_index * 3 + 3]
             parent_fd = namespace_fd
             try:
                 for path, name in ((root, backend), (middle, "import_staging"), (leaf, leaf.name)):

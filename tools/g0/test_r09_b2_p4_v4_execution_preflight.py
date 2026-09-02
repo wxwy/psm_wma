@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import hashlib
+import inspect
 import json
 import os
 import shutil
@@ -21,15 +22,16 @@ from tools.g0.r09_b2_p4_v4_execution_preflight import main
 
 class MaterializationReservationTest(unittest.TestCase):
     def _admitted(self, namespace: Path):
-        run = {}
-        for backend, token in (("recurrent", "a" * 64), ("ttt_fast_weight", "b" * 64)):
+        composition = FullAdmissionCompositionTest()
+        value, git = composition._request()
+        for backend in ("recurrent", "ttt_fast_weight"):
+            identity = value["run"][backend]["identity"]
             root = namespace / backend
-            identity = {"root": str(root), "resolved_root": str(root), "kind": "run_root"}
-            identity["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(identity)
-            run[backend] = {"identity": identity, "run_token": token, "roster_sha256": "c" * 64}
-        raw = (json.dumps({"run": run}, sort_keys=True, separators=(",", ":")) + "\n").encode()
-        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "load_execution_request", return_value={"run": run}):
-            return r09_b2_p4_v4_execution_preflight._admit_execution_request(raw)
+            identity.update({"root": str(root), "resolved_root": str(root)})
+            composition._reidentity(identity)
+            value["candidates"][backend]["run"] = value["run"][backend]
+        CandidatesAuthorityTest()._reidentity(value["candidates"])
+        return composition._load(value, git, admit=True)
 
     def test_reservation_creates_exact_ordered_six_path_footprint_once(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -38,7 +40,7 @@ class MaterializationReservationTest(unittest.TestCase):
             self.assertEqual(result.status, "RESERVED")
             self.assertEqual([path.relative_to(namespace).as_posix() for path in result.created_paths], [
                 "recurrent", "recurrent/import_staging", "recurrent/import_staging/" + "a" * 64,
-                "ttt_fast_weight", "ttt_fast_weight/import_staging", "ttt_fast_weight/import_staging/" + "b" * 64,
+                "ttt_fast_weight", "ttt_fast_weight/import_staging", "ttt_fast_weight/import_staging/" + "c" * 64,
             ])
             with self.assertRaisesRegex(ValueError, "consumed"):
                 r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
@@ -51,6 +53,9 @@ class MaterializationReservationTest(unittest.TestCase):
             forged = object.__new__(r09_b2_p4_v4_execution_preflight._AdmittedRequest)
             with self.assertRaisesRegex(ValueError, "requires an admitted request"):
                 r09_b2_p4_v4_execution_preflight._reserve_staging(forged, namespace)
+            self.assertFalse(hasattr(r09_b2_p4_v4_execution_preflight, "_issued_admitted_request"))
+            with self.assertRaisesRegex(ValueError, "schema differs"):
+                r09_b2_p4_v4_execution_preflight._admit_execution_request(b"{}\n")
 
     def test_capability_fields_reject_ordinary_mutation(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -68,11 +73,20 @@ class MaterializationReservationTest(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "already exists"):
                     r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
 
+    def test_second_direct_child_rejects_before_any_mkdir(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            namespace = Path(temporary); (namespace / "ttt_fast_weight").mkdir()
+            admitted = self._admitted(namespace)
+            with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "mkdir", side_effect=AssertionError("mutation")):
+                with self.assertRaisesRegex(ValueError, "already exists"):
+                    r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+            self.assertFalse((namespace / "recurrent").exists())
+
     def test_symlink_namespace_rejects_before_any_mkdir(self):
         with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary); target = root / "target"; target.mkdir(); namespace = root / "namespace"
-            namespace.symlink_to(target, target_is_directory=True)
+            root = Path(temporary); target = root / "target"; target.mkdir(); namespace = root / "namespace"; namespace.mkdir()
             admitted = self._admitted(namespace)
+            moved = root / "moved"; namespace.rename(moved); namespace.symlink_to(target, target_is_directory=True)
             with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "mkdir", side_effect=AssertionError("mutation")):
                 with self.assertRaisesRegex(ValueError, "namespace differs"):
                     r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
@@ -117,6 +131,53 @@ class MaterializationReservationTest(unittest.TestCase):
                     with self.assertRaises(r09_b2_p4_v4_execution_preflight.ReservationPoisonedError) as failure:
                         r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
                 self.assertEqual(len(failure.exception.created_paths), fault_index + 1)
+
+    def test_component_acquisition_retarget_keeps_external_target_unwritten(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary); parent = base / "parent"; namespace = parent / "namespace"
+            parent.mkdir(); namespace.mkdir(); external = base / "external"; external.mkdir()
+            admitted = self._admitted(namespace); moved = base / "moved"; real_open = os.open; swapped = False
+
+            def retarget_open(name, flags, *args, **kwargs):
+                nonlocal swapped
+                descriptor = real_open(name, flags, *args, **kwargs)
+                if name == "parent" and not swapped and "dir_fd" in kwargs:
+                    swapped = True; parent.rename(moved); parent.symlink_to(external, target_is_directory=True)
+                return descriptor
+
+            with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "open", side_effect=retarget_open):
+                r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+            self.assertTrue((moved / "namespace" / "recurrent").is_dir())
+            self.assertEqual(list(external.iterdir()), [])
+
+    def test_post_anchor_retarget_keeps_external_target_unwritten(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary); namespace = base / "namespace"; namespace.mkdir(); external = base / "external"; external.mkdir()
+            admitted = self._admitted(namespace); moved = base / "moved"
+            original_anchor = r09_b2_p4_v4_execution_preflight._open_namespace_anchor
+
+            def retarget_after_anchor(path):
+                descriptor = original_anchor(path)
+                namespace.rename(moved); namespace.symlink_to(external, target_is_directory=True)
+                return descriptor
+
+            with mock.patch.object(r09_b2_p4_v4_execution_preflight, "_open_namespace_anchor", side_effect=retarget_after_anchor):
+                r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+            self.assertTrue((moved / "recurrent").is_dir())
+            self.assertEqual(list(external.iterdir()), [])
+
+    def test_reservation_never_uses_ambient_subprocess_p5_or_child(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            namespace = Path(temporary); admitted = self._admitted(namespace)
+            with mock.patch.dict(os.environ, {"PATH": "/hostile", "PYTHONPATH": "/hostile"}, clear=True), \
+                 mock.patch.object(r09_b2_p4_v4_execution_preflight.subprocess, "run", side_effect=AssertionError("subprocess")), \
+                 mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "execve", side_effect=AssertionError("child")):
+                result = r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+            self.assertEqual(result.status, "RESERVED")
+        helper_source = inspect.getsource(r09_b2_p4_v4_execution_preflight._reserve_staging)
+        self.assertNotIn("subprocess", helper_source)
+        self.assertNotIn("p5", helper_source.lower())
+        self.assertNotIn("exec", helper_source)
 
 
 class EntryFoundationTest(unittest.TestCase):
@@ -192,8 +253,10 @@ class EntryFoundationTest(unittest.TestCase):
             request = Path(temporary) / "request.json"
             request.write_bytes(self._request())
             digest = hashlib.sha256(request.read_bytes()).hexdigest()
-            with self.assertRaisesRegex(RuntimeError, "separately reviewed"):
-                main(["--request", str(request), "--request-sha256", digest])
+            with mock.patch.object(r09_b2_p4_v4_execution_preflight, "_reserve_staging", side_effect=AssertionError("helper")) as reserve:
+                with self.assertRaisesRegex(RuntimeError, "separately reviewed"):
+                    main(["--request", str(request), "--request-sha256", digest])
+            reserve.assert_not_called()
             with self.assertRaises(ValueError):
                 main(["--request", str(request), "--request-sha256", "0" * 64])
 
@@ -344,7 +407,7 @@ class FullAdmissionCompositionTest(unittest.TestCase):
                                         "cleanup_retry_repair": False}}
         return value, git
 
-    def _load(self, value, git):
+    def _load(self, value, git, *, admit=False):
         root = Path(value["source"]["root"])
         entry_raw = b"composition entry\n"
         original_git = r09_b2_p4_v4_execution_preflight._git
@@ -376,6 +439,8 @@ class FullAdmissionCompositionTest(unittest.TestCase):
              mock.patch.object(r09_b2_p4_v4_execution_preflight, "_git", side_effect=source_git), \
              mock.patch.object(r09_b2_p4_v4_execution_preflight, "_read_regular_nofollow", side_effect=source_reader), \
              mock.patch.object(r09_b2_p4_v4_execution_preflight, "verified_loader_argv", return_value=expected_argv):
+            if admit:
+                return r09_b2_p4_v4_execution_preflight._admit_execution_request(raw)
             return r09_b2_p4_v4_execution_preflight.load_execution_request(raw)
 
     def test_full_route_executes_authorities_and_rejects_reidentified_sections(self):
