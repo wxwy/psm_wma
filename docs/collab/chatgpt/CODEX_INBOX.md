@@ -4509,3 +4509,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 整改 `61d18db` 的三方意见：host Git root closure 现在直接消费 host Git single-fd raw；validated absolute host Git 在 source Git 与 bootstrap Git 两条 authority 链中显式传递，拒绝 ambient PATH authority。
 - CPU evidence：P4 parser=17/17、provenance=16/16、`py_compile`、`git diff --check` PASS。新增 lexical rehash、closure rehash、relative host Git、loader flags reorder、host root no-path-reopen 夹具。
 - 仅 root static tooling/CPU；禁止真实 preflight、staging、P5 export/compose、GPU、训练/评测/推理/B2-T。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 be6260348f35d8606d11709fc1748c2b63690293；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-INTERPRETER` v0.4 设计整改。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_interpreter_design_v0.4_2026-09-02.md`，root=`be6260348f35d8606d11709fc1748c2b63690293`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 整改 ChatGPT HIGH：唯一 loader grammar 从 v0.3 11 槽升级为完整 12 槽，末位明确绑定 validated absolute host Git；parent/source/bootstrap 与 child frozen loader 全部只用该 executable，永久拒绝 PATH/bare git/fallback。同步纳入 MM 全部 fixture 名册。
+- 若批准，仅 root static parser/validator/provenance tooling 与 stdlib CPU fixtures；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
