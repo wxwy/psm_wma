@@ -4517,3 +4517,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_interpreter_design_v0.4_2026-09-02.md`，root=`be6260348f35d8606d11709fc1748c2b63690293`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
 - 整改 ChatGPT HIGH：唯一 loader grammar 从 v0.3 11 槽升级为完整 12 槽，末位明确绑定 validated absolute host Git；parent/source/bootstrap 与 child frozen loader 全部只用该 executable，永久拒绝 PATH/bare git/fallback。同步纳入 MM 全部 fixture 名册。
 - 若批准，仅 root static parser/validator/provenance tooling 与 stdlib CPU fixtures；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 d521af7e2974d86f83a8975dc432631c875714be；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-INTERPRETER` v0.4 static implementation closure。请求 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- approved design=`be62603`（ChatGPT/Kimi/MM 同 SHA）；实现把 `FROZEN_STDLIB_LOADER`、`verified_loader_argv()`、`is_verified_loader_argv()` 同步升级至唯一 12 槽，child bootstrap Git show 仅用末槽 bound host Git，不再 bare git/PATH。
+- P4 parser/provenance CPU=33/33 PASS；`py_compile`、`git diff --check` PASS；未调用 exporter/preflight/GPU/训练。
+- 仅 root static tooling/CPU；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
