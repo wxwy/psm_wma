@@ -11,8 +11,8 @@ from pathlib import Path
 from unittest.mock import patch
 from tools.g0.test_r09_b2_p5_full_config_diff import P5Test
 
-from tools.g0.r09_b2_p4_v4_static_contract import load_pass_candidate, stage_atomic_publication, verify_fail_candidate, _reject_failed_identity_reuse, _validate_final_pair
-from tools.g0.export_r09_b2_p5_resolved_config import P4_V4_PREFLIGHT_RELATIVE
+from tools.g0.r09_b2_p4_v4_static_contract import PAYLOAD_FILES, load_pass_candidate, stage_atomic_publication, verify_fail_candidate, _reject_failed_identity_reuse, _validate_final_pair
+from tools.g0.export_r09_b2_p5_resolved_config import P4_V4_PREFLIGHT_RELATIVE, canonical_bytes
 
 
 def write(value: object, path: Path) -> bytes:
@@ -92,35 +92,24 @@ class CandidateContractTest(unittest.TestCase):
                     _reject_failed_identity_reuse(attempt, {"recurrent": payload})
 
     def test_effective_launch_drift_is_rejected(self):
-        request = {"production_source": {}, "request_defaults": {}, "interpreter": {},
-                   "effective_launch": {"cwd": "/x", "toml": "a", "overrides": [],
-                                        "interpreter": "i", "loader_argv": ["-I"], "runtime_sys_path": []}}
-        raw_request = (json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n").encode()
-        payloads = {backend: {"request.json": raw_request, "result.json": b"{}\n", "verification.json": b"{}\n"}
-                    for backend in ("recurrent", "ttt_fast_weight")}
-        loaded = {backend: {"request": dict(request), "result": {}, "verification": {}}
-                  for backend in payloads}
-        loaded["ttt_fast_weight"]["request"]["effective_launch"] = dict(request["effective_launch"], loader_argv=["-S"])
-        with patch("tools.g0.r09_b2_p4_v4_static_contract.load_p4_v4_preflight", return_value=loaded):
-            with self.assertRaises(ValueError):
-                _validate_final_pair(payloads)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); P5Test()._v4_preflight(root)
+            payloads = {b: {n: (root / P4_V4_PREFLIGHT_RELATIVE / b / n).read_bytes() for n in PAYLOAD_FILES}
+                        for b in ("recurrent", "ttt_fast_weight")}
+            value = json.loads(payloads["ttt_fast_weight"]["request.json"])
+            value["effective_launch"]["loader_argv"] = dict(value["loader_argv"], argv=["/bin/python", "-S"])
+            payloads["ttt_fast_weight"]["request.json"] = canonical_bytes(value)
+            with self.assertRaises(ValueError): _validate_final_pair(payloads)
 
     def test_runtime_sys_path_drift_is_rejected(self):
-        request = {"production_source": {}, "request_defaults": {}, "interpreter": {},
-                   "effective_launch": {"cwd": "/x", "toml": "a", "overrides": [],
-                                        "interpreter": "i", "loader_argv": ["-I"],
-                                        "runtime_sys_path": ["/staging"]}}
-        raw_request = (json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n").encode()
-        payloads = {backend: {"request.json": raw_request, "result.json": b"{}\n", "verification.json": b"{}\n"}
-                    for backend in ("recurrent", "ttt_fast_weight")}
-        loaded = {backend: {"request": dict(request), "result": {}, "verification": {}}
-                  for backend in payloads}
-        loaded["ttt_fast_weight"]["request"]["effective_launch"] = dict(
-            request["effective_launch"], runtime_sys_path=["/ambient"]
-        )
-        with patch("tools.g0.r09_b2_p4_v4_static_contract.load_p4_v4_preflight", return_value=loaded):
-            with self.assertRaises(ValueError):
-                _validate_final_pair(payloads)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp); P5Test()._v4_preflight(root)
+            payloads = {b: {n: (root / P4_V4_PREFLIGHT_RELATIVE / b / n).read_bytes() for n in PAYLOAD_FILES}
+                        for b in ("recurrent", "ttt_fast_weight")}
+            value = json.loads(payloads["ttt_fast_weight"]["request.json"])
+            value["p4_staging"]["runtime_sys_path"] = ["/ambient"]
+            payloads["ttt_fast_weight"]["request.json"] = canonical_bytes(value)
+            with self.assertRaises(ValueError): _validate_final_pair(payloads)
 
     def test_full_p5_valid_pair_passes_admission(self):
         with tempfile.TemporaryDirectory() as temp:
