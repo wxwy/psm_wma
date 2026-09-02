@@ -119,6 +119,15 @@ class P5Test(unittest.TestCase):
                 self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
                 bad = json.loads(json.dumps(ttt)); bad["resolved_config"]["optimizer"]["keys_to_select"] = ["recurrent"]
                 self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
+                for value in ("recurrent", "ttt_fast_weight"):
+                    left, right = json.loads(json.dumps(recurrent)), json.loads(json.dumps(ttt))
+                    left["resolved_config"]["model"]["config"]["local_history_backend"] = value
+                    right["resolved_config"]["model"]["config"]["local_history_backend"] = value
+                    self.assertEqual(verify_pair(left, right, evidence, exporter)["status"], "FAIL")
+                left, right = json.loads(json.dumps(recurrent)), json.loads(json.dumps(ttt))
+                del left["resolved_config"]["model"]["config"]["local_history_backend"]
+                del right["resolved_config"]["model"]["config"]["local_history_backend"]
+                self.assertEqual(verify_pair(left, right, evidence, exporter)["status"], "FAIL")
                 bad = json.loads(json.dumps(ttt)); bad["resolved_config"]["unexpected"] = True
                 self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
 

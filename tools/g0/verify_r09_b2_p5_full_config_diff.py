@@ -114,6 +114,7 @@ def _bound(envelope: Mapping[str, Any], request: Mapping[str, Any], record: Mapp
             }
             and isinstance(envelope["resolved_config"], Mapping)
             and envelope["resolved_config"].get("optimizer", {}).get("keys_to_select") == p3_contract["selector_keys"]
+            and envelope["resolved_config"].get("model", {}).get("config", {}).get("local_history_backend") == request["backend"]
         )
     except (KeyError, TypeError):
         return False
