@@ -4807,3 +4807,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 文档：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.2_2026-09-02.md`；v0.1 ChatGPT review=`9727516`、Kimi/MM意见均已统一处理。
 - 整改：private `_AdmittedRequest` capability 由唯一 `_admit_execution_request(raw)` 构造，拒绝 bare dict/raw/reparse；冻结两个 backend 各 `run_root`、`import_staging`、token leaf 的六个显式 nofollow mkdir 与路径绑定；普通顺序 mkdir 的任一 mutation failure 定义 exact partial prefix 的无 cleanup/no-retry `POISONED` terminal，并要求六个 mutation 点注入 fixture。
 - 公开 CLI 仍 SHA-bound full admission 后 hard-stop；范围仅未来 private static tooling/stdlib CPU tests。禁止真实 request/preflight/materialize/candidate/staging/record/refreeze/P5/export/compose/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 6055ee15e6f5c5867c746658975dc5e12d477de6；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` v0.3 remediation design。请仅对同一 SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 文档：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.3_2026-09-02.md`；已完整合并 ChatGPT v0.2 review=`b7bd62f` 的 B1--B3。
+- 整改：admission data 不再信任 mutable dict，path/token仅从 SHA-bound raw bytes 重派生；private per-capability `UNUSED→CONSUMED` latch使首次 mkdir零足迹失败也不可重试；required same-backend ancestor chain 明确为唯一 overlap exception，mkdir FAIL与post-mkdir stat FAIL的 poisoned prefix 分别冻结。
+- CLI保持 hard-stop；范围仅 static tooling/stdlib CPU tests，禁止真实 request/preflight/materialize/candidate/staging/P5/GPU/训练。
