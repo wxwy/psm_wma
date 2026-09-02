@@ -97,7 +97,7 @@ class CandidateContractTest(unittest.TestCase):
             payloads = {b: {n: (root / P4_V4_PREFLIGHT_RELATIVE / b / n).read_bytes() for n in PAYLOAD_FILES}
                         for b in ("recurrent", "ttt_fast_weight")}
             value = json.loads(payloads["ttt_fast_weight"]["request.json"])
-            value["effective_launch"]["loader_argv"] = dict(value["loader_argv"], argv=["/bin/python", "-S"])
+            value["loader_argv"] = dict(value["loader_argv"], argv=["/bin/python", "-S"])
             payloads["ttt_fast_weight"]["request.json"] = canonical_bytes(value)
             with self.assertRaises(ValueError): _validate_final_pair(payloads)
 
