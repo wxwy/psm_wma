@@ -547,7 +547,7 @@ def validate_candidates(value: object, source: object, run: object) -> None:
     if _lexically_overlaps(root, source_root) or _lexically_overlaps(root, source_root / "cosmos-framework"):
         raise ValueError("execution request candidates source overlap differs")
     seen: set[str] = set()
-    for backend in RUN_KEYS:
+    for backend in ("recurrent", "ttt_fast_weight"):
         item = value[backend]
         run_item = run[backend]
         if (not isinstance(item, dict) or set(item) != CANDIDATE_ITEM_KEYS or item.get("backend") != backend
@@ -557,7 +557,7 @@ def validate_candidates(value: object, source: object, run: object) -> None:
         candidate_root = _future_lexical_path(item.get("candidate_root"), f"candidates {backend}")
         if candidate_root != root / value["attempt_id"] / backend:
             raise ValueError("execution request candidates path differs")
-        for other in RUN_KEYS:
+        for other in ("recurrent", "ttt_fast_weight"):
             run_root = _future_lexical_path(run[other].get("identity", {}).get("root"), f"run {other}")
             if _lexically_overlaps(root, run_root) or _lexically_overlaps(candidate_root, run_root):
                 raise ValueError("execution request candidates run overlap differs")
