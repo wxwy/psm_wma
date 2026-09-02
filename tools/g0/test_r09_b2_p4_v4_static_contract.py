@@ -132,7 +132,9 @@ class CandidateContractTest(unittest.TestCase):
                 }
                 for backend, token in (("recurrent", "a" * 64), ("ttt_fast_weight", "b" * 64))
             }
-            with patch("tools.g0.r09_b2_p4_v4_static_contract.load_p4_v4_preflight", return_value=loaded):
+            with patch("tools.g0.r09_b2_p4_v4_static_contract.load_p4_v4_preflight", return_value=loaded), patch(
+                "tools.g0.r09_b2_p4_v4_static_contract._path_identity", return_value=Path("/run")
+            ):
                 staged = stage_atomic_publication(root / "attempt")
             self.assertEqual(set(staged), {"recurrent", "ttt_fast_weight"})
 
