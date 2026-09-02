@@ -4459,3 +4459,13 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 实现范围：`tools/g0/r09_b2_p4_v4_execution_preflight.py` 的 source-only parser/validator。它以 canonical identity、strict-resolved non-symlink root、root/submodule full-clean、`HEAD == root_revision`、root gitlink=submodule HEAD、tracked regular entry 的 Git blob/current-byte SHA 与 entry/source cross-binding 全部 exact fail-closed；既有入口仍无条件 hard-stop。
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v` 为 7/7 PASS（实际临时 Git/submodule 正例；B 只修改无关 root 文件、entry/Gitlink 保持 A 的 clean descendant 必因 HEAD identity FAIL）；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。
 - 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 b0581d89c452cadaa40e9739c6d51313eb13a615；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` source v0.3 static remediation closure。请对同一 root implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_SOURCE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root remediation implementation=`b0581d89c452cadaa40e9739c6d51313eb13a615`；整改 ChatGPT review=`9d13a7e`/Kimi 对 prior implementation=`a36ac21` 的意见；approved design=`6eea35c`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 代码整改：entry current bytes 通过唯一 `os.open(O_RDONLY|O_NOFOLLOW|O_CLOEXEC)` fd、同 fd `fstat` regular-file 与单次 raw 读取；同一 raw 同时参与 SHA256 与 Git blob equality，authority 决策无 pathname reopen，symlink/open 失败 ValueError fail-closed。
+- 测试整改：保留 exact-head 正例与无关 root 文件 descendant；新增 dirty root、untracked root、declared Gitlink drift、submodule HEAD drift、entry Git blob/current drift、entry/source cross-binding drift、root/entry symlink、ancestor checkout，以及 no pathname `read_bytes()` reopen/单 open 回归。无 source admission mock。
+- 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v` 为 13/13 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。
+- 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
