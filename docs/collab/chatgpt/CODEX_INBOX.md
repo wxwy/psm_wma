@@ -4944,3 +4944,12 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 新 fixture：`object.__new__` 后通过 `object.__setattr__` 填满所有可见字段仍不能登记；对真实 capability 以 `object.__setattr__` 篡改 visible raw/SHA/consumed 后仍按 hidden original admission 运行，terminal consume 后再次强制复位仍拒绝。B2/B3 full-admission、dual precheck、race、forbidden-call、CLI、12 fault coverage保持。
 - CPU evidence：P4 `76/76 PASS`；materialization=`13/13 PASS`；`py_compile`、`git diff --check` PASS。
 - 允许范围仅 root P4 static tooling 与 stdlib CPU tests。禁止真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 efe0056f6c1dce788c4c450a429d8ee089e05fb2；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` static implementation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root=`efe0056f6c1dce788c4c450a429d8ee089e05fb2`；approved design=`671ca0123352b050125f3a413f8e74eeabbe6088`、ChatGPT design approval=`8b09979`；Gitlink 如上。
+- 改动：`tools/g0/r09_b2_p4_v4_execution_preflight.py` 增加默认 `AUTHORIZED_P4_V4_LOCK_SPEC=None` 的 fail-closed entry、source-root/spec component `openat(O_DIRECTORY|O_NOFOLLOW)` FD walk、constant Git/tree/Gitlink/spec Git/current/raw SHA binding、planned-only v3 spec → v1 commitment、P5-v2 projection及 exclusive same-FD poison writer；未接入 CLI/admission/materialization。
+- fixture：`tools/g0/test_r09_b2_p4_v4_execution_preflight.py` 覆盖 authority None 零输出、planned mapping/projection、final run/candidate injection与candidate mapping drift；P4 CPU=`79/79 PASS`，`py_compile`、`git diff --check` PASS。
+- 允许范围仅 root P4 static tooling/stdlib CPU tests。禁止 P4/P5 migration、真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 export/compose、torchrun/GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理及 B2-T。
