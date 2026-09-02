@@ -4789,3 +4789,13 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 对象：remediation=`8535a8c`，ChatGPT changes=`026dfe0`，prior=`506e6df`，production=`c3b64b5`，design=`fad1e8d`，Gitlink 如上。
 - 仅测试：source mutation 改为 reidentified `source.root_revision` drift，并精确断言真实 `validate_source()` 的 `source cross-binding` 拒绝，避免后续 interpreter false-positive；其余 real source/interpreter/authorities full route、B1/B3 保持。
 - 证据：P4 CPU=63/63，`py_compile`、`git diff --check`、三 `PYTHONHASHSEED` composition=1/1 PASS。禁止真实 request/preflight/staging/P5/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 887fb8194bdea6539e5f8a031032f899813e8fec；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` v0.1 static design。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root design=`887fb8194bdea6539e5f8a031032f899813e8fec`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.1_2026-09-02.md`；前置 full-static closure=`8535a8c`/ChatGPT=`fd00550`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 申请范围：仅在 root `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py` 实现 private、未接入 CLI 的 CPU-only reservation helper 与 stdlib fixtures。公开 CLI 保持现有 request-SHA/full-admission 后无条件 hard-stop。
+- 固定限制：helper 仅在测试临时目录验证双 backend lexical/nofollow/non-overlap/nonexistent 的一次空 staging-layout reservation；不得复制 source、读取 ambient/PATH/cwd、调用 Git/subprocess/child/P5、生成 payload/candidate/evidence，或执行 record/refreeze/export/compose。
+- 证据：设计/任务状态文档 `git diff --check` PASS；本申请未运行项目代码、未创建 request/run/candidate/staging/产物。
+- 永久禁止：真实 P4 request/preflight/materialize、candidate/run-root/staging、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。若获批准，仍须 implementation closure review；真实执行另起冻结 request Gate 并三方同 SHA批准。
