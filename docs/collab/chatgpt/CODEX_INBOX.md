@@ -4765,6 +4765,15 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -q`=`61/61 PASS`；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`PYTHONHASHSEED=0/1/2 python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight.EntryFoundationTest -q` 各 `7/7 PASS`；`git diff --check` PASS。fixture 覆盖 canonical request SHA hard-stop、host-Git object reuse、source-root canonical-value binding、authorities sole route、legacy environment/D005 route 未调用及 hostile ambient independence。
 - 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 request/preflight、staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 506e6df8541c3aae2860ba38c1646f12d1a61a10；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-FULL` tests-only remediation closure。请仅对同一 remediation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_FULL_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root remediation=`506e6df8541c3aae2860ba38c1646f12d1a61a10`；prior remediation=`cb88465b9dd93ace2bd37046e4e76d411cae3d39`；ChatGPT HIGH=`2c6aea2`；production=`c3b64b5`；design=`fad1e8d`；Gitlink 如上。
+- 严格 tests-only：组合 fixture 现让真实 `validate_source`、`validate_interpreter`、`validate_authorities_pair` 在 `load_execution_request()` 路由内执行；仅 mock source 的 closed clean/Git/entry-byte 底层依赖与 interpreter expected-loader builder。source/interpreter 八段变异均重算 identity 后由真实 validator fail-closed；B1 顺序与 B3 全矩阵保持。
+- CPU evidence：P4 unittest=`63/63 PASS`；`py_compile`、`git diff --check` PASS；`PYTHONHASHSEED=0/1/2` composition 各 `1/1 PASS`。无真实 request/preflight/staging/materialize/P5/GPU/训练。
+- 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 request/preflight、staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 cb88465b9dd93ace2bd37046e4e76d411cae3d39；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-FULL` tests-only remediation closure。请仅对同一 remediation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_FULL_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
