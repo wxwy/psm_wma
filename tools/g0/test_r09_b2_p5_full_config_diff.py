@@ -15,7 +15,7 @@ from tools.g0.export_r09_b2_p5_resolved_config import (
     build_v4_pair_requests, canonical_bytes, load_p4_v4_preflight,
     p5_effective_environment, sha256_json,
 )
-from tools.g0.verify_r09_b2_p5_full_config_diff import _exporter_source, verify_pair
+from tools.g0.verify_r09_b2_p5_full_config_diff import _authorized_p4_v4_evidence, _exporter_source, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_ARTIFACT_SHA256, P3_VERIFIER_SHA256
 
 
@@ -24,6 +24,16 @@ class P5Test(unittest.TestCase):
         return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
 
     def _v4_preflight(self, root: Path) -> None:
+        subprocess.run(["git", "-C", str(root), "init", "-q"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.email", "p5@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root), "config", "user.name", "P5 fixture"], check=True)
+        root_framework = root / "cosmos-framework"; root_framework.mkdir()
+        subprocess.run(["git", "-C", str(root_framework), "init", "-q"], check=True)
+        subprocess.run(["git", "-C", str(root_framework), "config", "user.email", "p5@example.invalid"], check=True)
+        subprocess.run(["git", "-C", str(root_framework), "config", "user.name", "P5 fixture"], check=True)
+        (root_framework / "module.py").write_text("x = 1\n")
+        subprocess.run(["git", "-C", str(root_framework), "add", "module.py"], check=True)
+        subprocess.run(["git", "-C", str(root_framework), "commit", "-qm", "fixture"], check=True)
         source = root / "source"; source.mkdir()
         framework = source / "cosmos-framework"; framework.mkdir()
         for repository in (source, framework):
@@ -86,6 +96,22 @@ class P5Test(unittest.TestCase):
             (directory / "request.json").write_bytes(canonical_bytes(request))
             (directory / "result.json").write_bytes(canonical_bytes(outcome))
             (directory / "verification.json").write_bytes(canonical_bytes(verification))
+        (run / "import_staging").chmod(0o755); staging.chmod(0o755); run.chmod(0o755)
+        subprocess.run(["git", "-C", str(root), "add", "."], check=True)
+        subprocess.run(["git", "-C", str(root), "commit", "-qm", "fixture"], check=True)
+        (run / "import_staging").chmod(0o555); staging.chmod(0o555); run.chmod(0o555)
+
+    def _authority(self, root: Path) -> dict[str, object]:
+        commit = self._git(root, "rev-parse", "HEAD")
+        tree_sha = hashlib.sha256(subprocess.check_output(["git", "-C", str(root), "cat-file", "tree", commit])).hexdigest()
+        gitlink = self._git(root, "ls-tree", commit, "cosmos-framework").split()[2]
+        blobs: dict[str, dict[str, str]] = {}
+        for backend in ("recurrent", "ttt_fast_weight"):
+            blobs[backend] = {}
+            for filename in ("request.json", "result.json", "verification.json"):
+                relative = f"artifacts/g0/r09/b2/p4_execution_preflight_v4/{backend}/{filename}"
+                blobs[backend][filename] = hashlib.sha256(subprocess.check_output(["git", "-C", str(root), "show", f"{commit}:{relative}"])).hexdigest()
+        return {"commit": commit, "tree_sha256": tree_sha, "gitlink": gitlink, "blobs": blobs}
 
     def _exporter_worktree(self, root: Path, temporary: Path) -> Path:
         exporter = temporary / "exporter"
@@ -108,7 +134,7 @@ class P5Test(unittest.TestCase):
                 return {"schema_version": "r09_b2_p5_full_config_diff_v4", "backend": backend, "provenance": {"p4_v4_request_sha256": request["p4_request_sha256"], "p4_v4_result_sha256": request["p4_result_sha256"], "p4_v4_verification_sha256": request["p4_verification_sha256"], "exporter_source": source, "p3_contract": {"artifact_sha256": P3_ARTIFACT_SHA256, "verifier_sha256": P3_VERIFIER_SHA256, "backend_contract": contract}}, "effective_launch": {key: request[key] for key in ("cwd", "toml", "overrides", "interpreter", "loader_argv", "environment", "runtime_sys_path")}, "resolved_config": {"model": {"config": {"local_history_backend": backend}}, "optimizer": {"keys_to_select": [backend]}}}
             contracts = {"recurrent": {"selector_keys": ["recurrent"], "optimizer_membership_sha256": "a" * 64}, "ttt_fast_weight": {"selector_keys": ["ttt_fast_weight"], "optimizer_membership_sha256": "b" * 64}}
             recurrent, ttt = envelope("recurrent"), envelope("ttt_fast_weight")
-            with patch("tools.g0.verify_r09_b2_p5_full_config_diff._p3_contracts", return_value=contracts):
+            with patch("tools.g0.verify_r09_b2_p5_full_config_diff.AUTHORIZED_P4_V4_EVIDENCE", self._authority(evidence)), patch("tools.g0.verify_r09_b2_p5_full_config_diff._p3_contracts", return_value=contracts):
                 self.assertEqual(verify_pair(recurrent, ttt, evidence, exporter)["status"], "PASS")
                 self.assertEqual(verify_pair(recurrent, ttt, evidence, evidence)["status"], "FAIL")
                 bad = json.loads(json.dumps(ttt)); bad["provenance"]["p4_v4_result_sha256"] = "0" * 64
@@ -130,6 +156,65 @@ class P5Test(unittest.TestCase):
                 self.assertEqual(verify_pair(left, right, evidence, exporter)["status"], "FAIL")
                 bad = json.loads(json.dumps(ttt)); bad["resolved_config"]["unexpected"] = True
                 self.assertEqual(verify_pair(recurrent, bad, evidence, exporter)["status"], "FAIL")
+
+    def test_v4_evidence_authority_rejects_clean_replacement_descendant_and_gitlink_drift(self):
+        root = Path(__file__).resolve().parents[2]
+        with tempfile.TemporaryDirectory() as temp:
+            evidence = Path(temp) / "evidence"; evidence.mkdir(); self._v4_preflight(evidence)
+            authority = self._authority(evidence)
+            exporter = self._exporter_worktree(root, Path(temp))
+            with patch("tools.g0.verify_r09_b2_p5_full_config_diff.AUTHORIZED_P4_V4_EVIDENCE", authority):
+                _authorized_p4_v4_evidence(evidence)
+                for backend in ("recurrent", "ttt_fast_weight"):
+                    for filename in ("request.json", "result.json", "verification.json"):
+                        path = evidence / P4_V4_PREFLIGHT_RELATIVE / backend / filename
+                        path.write_bytes(path.read_bytes() + b" ")
+                subprocess.run(["git", "-C", str(evidence), "add", "."], check=True)
+                subprocess.run(["git", "-C", str(evidence), "commit", "-qm", "joint replacement"], check=True)
+                self.assertEqual(verify_pair({}, {}, evidence, exporter)["error"], "P4 v4 evidence HEAD is not the authorized exact commit")
+
+        with tempfile.TemporaryDirectory() as temp:
+            evidence = Path(temp) / "evidence"; evidence.mkdir(); self._v4_preflight(evidence)
+            authority = self._authority(evidence)
+            with patch("tools.g0.verify_r09_b2_p5_full_config_diff.AUTHORIZED_P4_V4_EVIDENCE", authority):
+                subprocess.run(["git", "-C", str(evidence), "commit", "--allow-empty", "-qm", "descendant"], check=True)
+                with self.assertRaisesRegex(ValueError, "authorized exact commit"):
+                    _authorized_p4_v4_evidence(evidence)
+
+        with tempfile.TemporaryDirectory() as temp:
+            evidence = Path(temp) / "evidence"; evidence.mkdir(); self._v4_preflight(evidence)
+            authority = self._authority(evidence)
+            framework = evidence / "cosmos-framework"
+            with patch("tools.g0.verify_r09_b2_p5_full_config_diff.AUTHORIZED_P4_V4_EVIDENCE", authority):
+                subprocess.run(["git", "-C", str(framework), "commit", "--allow-empty", "-qm", "gitlink drift"], check=True)
+                with self.assertRaisesRegex(ValueError, "submodule HEAD"):
+                    _authorized_p4_v4_evidence(evidence)
+
+        with tempfile.TemporaryDirectory() as temp:
+            evidence = Path(temp) / "evidence"; evidence.mkdir(); self._v4_preflight(evidence)
+            authority = self._authority(evidence)
+            target = evidence / P4_V4_PREFLIGHT_RELATIVE / "recurrent" / "request.json"
+            with patch("tools.g0.verify_r09_b2_p5_full_config_diff.AUTHORIZED_P4_V4_EVIDENCE", authority):
+                target.write_bytes(target.read_bytes() + b" ")
+                with self.assertRaisesRegex(ValueError, "blob does not match"):
+                    _authorized_p4_v4_evidence(evidence)
+
+        with tempfile.TemporaryDirectory() as temp:
+            evidence = Path(temp) / "evidence"; evidence.mkdir(); self._v4_preflight(evidence)
+            authority = self._authority(evidence)
+            target = evidence / P4_V4_PREFLIGHT_RELATIVE / "recurrent" / "request.json"
+            with patch("tools.g0.verify_r09_b2_p5_full_config_diff.AUTHORIZED_P4_V4_EVIDENCE", authority):
+                target.unlink(); target.symlink_to("result.json")
+                with self.assertRaisesRegex(ValueError, "current regular file"):
+                    _authorized_p4_v4_evidence(evidence)
+
+        with tempfile.TemporaryDirectory() as temp:
+            evidence = Path(temp) / "evidence"; evidence.mkdir(); self._v4_preflight(evidence)
+            authority = self._authority(evidence)
+            exporter = self._exporter_worktree(root, Path(temp))
+            (evidence / "untracked.txt").write_text("forbidden\n")
+            with patch("tools.g0.verify_r09_b2_p5_full_config_diff.AUTHORIZED_P4_V4_EVIDENCE", authority):
+                self.assertEqual(verify_pair({}, {}, evidence, exporter)["error"], "evidence_root and its cosmos-framework submodule must be full-clean")
 
     def test_v4_preflight_mutation_is_fail_closed(self):
         with tempfile.TemporaryDirectory() as temp:

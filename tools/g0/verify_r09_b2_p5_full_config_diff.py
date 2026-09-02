@@ -20,6 +20,9 @@ from tools.g0.verify_r09_b2_p4_d005 import (P3_ARTIFACT_SHA256, P3_VERIFIER_SHA2
 
 
 SCHEMA = "r09_b2_p5_full_config_diff_v4"
+P4_V4_EVIDENCE_FILES = ("request.json", "result.json", "verification.json")
+# This stays unset until a distinct reviewed P4 record/refreeze closure freezes real values.
+AUTHORIZED_P4_V4_EVIDENCE: Mapping[str, Any] | None = None
 
 
 def _pointer(token: str) -> str:
@@ -58,6 +61,57 @@ def _git_full_clean(root: Path) -> bool:
 
 def _file_sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _git_bytes(root: Path, *args: str) -> bytes:
+    return subprocess.check_output(["git", "-C", str(root), *args])
+
+
+def _git_text(root: Path, *args: str) -> str:
+    return _git_bytes(root, *args).decode().strip()
+
+
+def _authorized_p4_v4_evidence(root: Path) -> None:
+    authority = AUTHORIZED_P4_V4_EVIDENCE
+    if not isinstance(authority, Mapping):
+        raise ValueError("P4 v4 evidence authority is not frozen by a reviewed verifier revision")
+    required = {"commit", "tree_sha256", "gitlink", "blobs"}
+    if set(authority) != required or not isinstance(authority["blobs"], Mapping):
+        raise ValueError("P4 v4 evidence authority schema is invalid")
+    if set(authority["blobs"]) != set(P4_V4_BACKENDS):
+        raise ValueError("P4 v4 evidence authority backends are invalid")
+    commit = authority["commit"]
+    if not isinstance(commit, str) or len(commit) != 40 or any(char not in "0123456789abcdef" for char in commit):
+        raise ValueError("P4 v4 evidence authority commit is invalid")
+    if _git_text(root, "rev-parse", "HEAD") != commit:
+        raise ValueError("P4 v4 evidence HEAD is not the authorized exact commit")
+    if _file_sha_bytes(_git_bytes(root, "cat-file", "tree", commit)) != authority["tree_sha256"]:
+        raise ValueError("P4 v4 evidence tree does not match frozen authority")
+    tree = _git_text(root, "ls-tree", commit, "cosmos-framework").split()
+    if len(tree) < 4 or tree[0] != "160000" or tree[1] != "commit" or tree[2] != authority["gitlink"]:
+        raise ValueError("P4 v4 evidence Gitlink does not match frozen authority")
+    framework = root / "cosmos-framework"
+    if _git_text(framework, "rev-parse", "HEAD") != authority["gitlink"]:
+        raise ValueError("P4 v4 evidence submodule HEAD does not match frozen authority")
+    for backend in P4_V4_BACKENDS:
+        expected = authority["blobs"][backend]
+        if not isinstance(expected, Mapping) or set(expected) != set(P4_V4_EVIDENCE_FILES):
+            raise ValueError("P4 v4 evidence blob authority schema is invalid")
+        for filename in P4_V4_EVIDENCE_FILES:
+            relative = f"artifacts/g0/r09/b2/p4_execution_preflight_v4/{backend}/{filename}"
+            entry = _git_bytes(root, "ls-tree", "-z", commit, "--", relative)
+            if not entry.startswith(b"100644 blob ") or not entry.endswith(relative.encode() + b"\0"):
+                raise ValueError(f"P4 v4 evidence file is not an authorized tracked regular file: {relative}")
+            current = root / relative
+            if not current.is_file() or current.is_symlink():
+                raise ValueError(f"P4 v4 evidence file is not a current regular file: {relative}")
+            frozen = _git_bytes(root, "show", f"{commit}:{relative}")
+            if _file_sha_bytes(frozen) != expected[filename] or _file_sha_bytes(current.read_bytes()) != expected[filename]:
+                raise ValueError(f"P4 v4 evidence blob does not match frozen authority: {relative}")
+
+
+def _file_sha_bytes(data: bytes) -> str:
+    return hashlib.sha256(data).hexdigest()
 
 
 def _exporter_source(exporter_root: Path) -> dict[str, Any]:
@@ -153,6 +207,9 @@ def verify_pair(recurrent: Mapping[str, Any], ttt: Mapping[str, Any], evidence_r
         exporter_root = exporter_root.resolve()
         if root == exporter_root or root.is_relative_to(exporter_root) or exporter_root.is_relative_to(root):
             raise ValueError("evidence_root and exporter_root must be distinct non-overlapping canonical directories")
+        if not _git_full_clean(root) or not _git_full_clean(root / "cosmos-framework"):
+            raise ValueError("evidence_root and its cosmos-framework submodule must be full-clean")
+        _authorized_p4_v4_evidence(root)
         preflight = load_p4_v4_preflight(root)
         requests = build_v4_pair_requests(root)
         contracts = _p3_contracts(root)
