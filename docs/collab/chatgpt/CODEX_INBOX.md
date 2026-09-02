@@ -4882,6 +4882,15 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - B2/B3：不再把不可预计算的 `preflight.json` SHA 冒充 final P5 `roster_sha256`。本 Gate 仅输出不可执行 planned-roster commitment，精确冻结 P5-compatible staging projection entries 与同一 canonical serializer；final `{entries,sha256}`（含实际 preflight row）及 final request 只能在独立 record/refreeze Gate 由 P5 同一 hash 定义绑定。
 - 范围仅 root static planned-commitment tooling 与 stdlib CPU tests；禁止真实 request/preflight/materialize/staging/candidate/record/refreeze/P5 export/compose/torchrun/GPU/模型数据checkpoint I/O/训练评测推理。`git diff --check` PASS，未运行项目代码。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 1d7bad8723f388e5947cb590f026b89e09b64439；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` v0.4 静态设计整改。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_lock_design_v0.4_2026-09-02.md`；前版=`de20246`，ChatGPT review=`ef8f9e8`；Gitlink 如上。
+- B1：冻结 P4/P5 handoff migration contract：P5 v2 run-root roster 永久排除 `preflight.json`/evidence pointer，因此 pre-execution final roster SHA 不再与 result SHA 构成 fixed point；migration 的代码与真实执行不属本申请。
+- B2：冻结 `planned_roster_commitment_v1` 的 exact top-level、backend、staging projection、identity/self-SHA、P5 canonical serialization、authority-spec 与 output FD scope；default authority 仍 zero-write fail-closed。
+- 仅 root static planned-commitment tooling 与 stdlib CPU tests；禁止 P4/P5 migration implementation、真实 request/preflight/materialize/staging/candidate/record/refreeze/P5 export-compose/torchrun/GPU/训练。`git diff --check` PASS，未运行项目代码。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 932d0debec5935cf88d9e90f2f20b7da054ec546；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` v0.1 静态设计。请仅对同一 design SHA 给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
