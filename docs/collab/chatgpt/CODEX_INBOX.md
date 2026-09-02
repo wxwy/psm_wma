@@ -4674,3 +4674,10 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 审核对象：design root=`7eb00d7bc9c568f6704a972102a6ebb97a5b5e79`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_candidates_design_v0.1_2026-09-02.md`；closed run=`8295b93`、Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
 - 范围：仅冻结 future `candidates={root,attempt_id,recurrent,ttt_fast_weight,identity_sha256}` 的 exact lexical identity、backend mapping、source/submodule/run overlap 与 ambient-independent static grammar。复用已关闭 static candidate payload contract，不读取或创建 candidate、run-root/staging/P5 evidence，不预填 payload/manifest/roster。
 - 若批准，仅 root parser/validator 与 stdlib CPU fixture；禁止真实 P4 preflight、candidate/materialization、run-root/staging、record/refreeze、P5 export/compose、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T/Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 f8a7231b76fe04e3a570dc2e432da8e018008cd5；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-CANDIDATES` v0.2 design remediation。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_CANDIDATES_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 整改 v0.1=`7eb00d7` 的 ChatGPT=`b82e299`、Kimi、MM：outer canonical identity；backend exact canonical-equal run binding；candidate namespace/root/leaf 对两侧 run roots 双向 lexical isolation；derived leaf 的 ancestor-symlink rule；attempt_id 对两 run token inequality。仅 docs，未创建/read candidate、run-root/staging 或 P5 evidence。
+- 若批准仅 root parser/validator+stdlib CPU fixtures；禁止真实 preflight/candidate/P5/GPU/训练。
