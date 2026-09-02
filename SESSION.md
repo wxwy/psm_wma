@@ -4,7 +4,7 @@
 
 ## 当前最小步骤（2026-09-02）
 
-- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（REVIEW）：ChatGPT=`0c0500a` 对 remediation=`9f8c1f1` 提出 B1 唯一 real-admission issuer、B2 两 backend direct-child 预检先于首次 mkdir、B3 full-admission/race/forbidden fixture；Kimi=`20:42:19`、MM=`20:42:08` 同 SHA approve。已完成最小整改：移除 `_issued_admitted_request`，仅 `_admit_execution_request()` 在 `load_execution_request(raw)` 成功后构造/登记 capability；双 backend `stat(..., dir_fd=namespace_fd)` 在任何 mkdir 前完成；fixture 改经完整 canonical full-admission route，并覆盖 TTT-existing 零 mkdir、component/post-anchor retarget 外部零写、ambient/subprocess/P5/child poison与 CLI 零-helper。P4 CPU=74/74、`py_compile`、`git diff --check` PASS；待提交并以新 SHA 重新三方 closure review。禁止真实 request/run/candidate/staging/P5/GPU/训练；提交：未提交。
+- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（REVIEW）：ChatGPT=`c2c3603` 对 remediation=`b423c70` 关闭 B2/B3、仅要求 B1 将 admission/consumption authority 移出 module-visible registry 与 capability fields；Kimi=`20:53:56`、MM=`20:54:18` 同 SHA approve。已完成最小整改：closure-local `WeakKeyDictionary` 保存 admitted raw/SHA/one-shot state，`_admit_execution_request` 是唯一 real-admission issuer，`_reservation_plan` 仅经 closure consume 读取并单向消费隐藏 authority；visible fields 经 `object.__setattr__` 的 forge/reset/mutation 均不能授权或复位。B2/B3 fixture保持；P4 CPU=76/76、materialization=13/13、`py_compile`、`git diff --check` PASS；待提交并以新 SHA 重新三方 closure review。禁止真实 request/run/candidate/staging/P5/GPU/训练；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 

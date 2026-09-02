@@ -57,6 +57,16 @@ class MaterializationReservationTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "schema differs"):
                 r09_b2_p4_v4_execution_preflight._admit_execution_request(b"{}\n")
 
+    def test_hidden_authority_rejects_object_setattr_forgery(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            namespace = Path(temporary)
+            forged = object.__new__(r09_b2_p4_v4_execution_preflight._AdmittedRequest)
+            raw = b"{}\n"; digest = hashlib.sha256(raw).hexdigest()
+            for name, value in (("raw", raw), ("request_sha256", digest), ("_consumed", False), ("_locked", True)):
+                object.__setattr__(forged, name, value)
+            with self.assertRaisesRegex(ValueError, "requires an admitted request"):
+                r09_b2_p4_v4_execution_preflight._reserve_staging(forged, namespace)
+
     def test_capability_fields_reject_ordinary_mutation(self):
         with tempfile.TemporaryDirectory() as temporary:
             admitted = self._admitted(Path(temporary))
@@ -64,6 +74,18 @@ class MaterializationReservationTest(unittest.TestCase):
                 admitted.raw = b"{}\n"
             with self.assertRaises(AttributeError):
                 admitted._consumed = False
+
+    def test_hidden_authority_ignores_object_setattr_and_remains_consumed(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            namespace = Path(temporary); admitted = self._admitted(namespace)
+            object.__setattr__(admitted, "raw", b"{}\n")
+            object.__setattr__(admitted, "request_sha256", "0" * 64)
+            object.__setattr__(admitted, "_consumed", False)
+            result = r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+            self.assertEqual(result.status, "RESERVED")
+            object.__setattr__(admitted, "_consumed", False)
+            with self.assertRaisesRegex(ValueError, "consumed"):
+                r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
 
     def test_existing_direct_child_rejects_before_any_mkdir(self):
         with tempfile.TemporaryDirectory() as temporary:

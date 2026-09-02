@@ -104,7 +104,6 @@ _EXECUTION_CONTRACT_ITEMS = (
     ("cleanup_retry_repair", False),
 )
 _BACKEND_ORDER = ("recurrent", "ttt_fast_weight")
-_ADMITTED_REQUESTS: weakref.WeakSet = weakref.WeakSet()
 
 
 class _AdmittedRequest:
@@ -721,25 +720,45 @@ def request_sha256(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
-def _admit_execution_request(raw: bytes) -> _AdmittedRequest:
-    """Create the sole in-memory capability for the static reservation helper."""
-    load_execution_request(raw)
-    admitted = object.__new__(_AdmittedRequest)
-    object.__setattr__(admitted, "raw", raw)
-    object.__setattr__(admitted, "request_sha256", request_sha256(raw))
-    object.__setattr__(admitted, "_consumed", False)
-    object.__setattr__(admitted, "_locked", True)
-    _ADMITTED_REQUESTS.add(admitted)
-    return admitted
+def _admission_authority() -> tuple[
+    callable,
+    callable,
+]:
+    """Keep admission bytes and one-shot state outside the capability object."""
+    admitted_requests: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
+
+    def admit(raw: bytes) -> _AdmittedRequest:
+        load_execution_request(raw)
+        admitted = object.__new__(_AdmittedRequest)
+        digest = request_sha256(raw)
+        object.__setattr__(admitted, "raw", raw)
+        object.__setattr__(admitted, "request_sha256", digest)
+        object.__setattr__(admitted, "_consumed", False)
+        object.__setattr__(admitted, "_locked", True)
+        admitted_requests[admitted] = (raw, digest, False)
+        return admitted
+
+    def consume(admitted: _AdmittedRequest) -> tuple[bytes, str]:
+        if not isinstance(admitted, _AdmittedRequest):
+            raise ValueError("P4-v4 reservation requires an admitted request")
+        try:
+            raw, digest, consumed = admitted_requests[admitted]
+        except KeyError as exc:
+            raise ValueError("P4-v4 reservation requires an admitted request") from exc
+        if consumed:
+            raise ValueError("P4-v4 reservation capability is consumed")
+        admitted_requests[admitted] = (raw, digest, True)
+        return raw, digest
+
+    return admit, consume
+
+
+_admit_execution_request, _consume_admitted_request = _admission_authority()
 
 
 def _reservation_plan(admitted: _AdmittedRequest, namespace: Path) -> tuple[Path, ...]:
-    if not isinstance(admitted, _AdmittedRequest) or admitted not in _ADMITTED_REQUESTS:
-        raise ValueError("P4-v4 reservation requires an admitted request")
-    if admitted._consumed:
-        raise ValueError("P4-v4 reservation capability is consumed")
-    object.__setattr__(admitted, "_consumed", True)
-    if request_sha256(admitted.raw) != admitted.request_sha256:
+    raw, admitted_sha256 = _consume_admitted_request(admitted)
+    if request_sha256(raw) != admitted_sha256:
         raise ValueError("P4-v4 admitted request SHA differs")
     if (not namespace.is_absolute() or namespace == Path("/")
             or any(part in ("", ".", "..") for part in namespace.parts[1:])):
@@ -747,9 +766,9 @@ def _reservation_plan(admitted: _AdmittedRequest, namespace: Path) -> tuple[Path
     paths: list[Path] = []
     for backend in _BACKEND_ORDER:
         try:
-            request = json.loads(admitted.raw)
+            request = json.loads(raw)
             if (not isinstance(request, dict)
-                    or (json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n").encode() != admitted.raw):
+                    or (json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n").encode() != raw):
                 raise ValueError("P4-v4 admitted request bytes differ")
             run = request["run"][backend]
             root = Path(run["identity"]["root"])
