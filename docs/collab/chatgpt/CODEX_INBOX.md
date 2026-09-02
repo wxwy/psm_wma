@@ -4526,6 +4526,16 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - P4 parser/provenance CPU=33/33 PASS；`py_compile`、`git diff --check` PASS；未调用 exporter/preflight/GPU/训练。
 - 仅 root static tooling/CPU；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 45d78e3dafd01177c7c8da1b2f189b16b51ead58；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-ENVIRONMENT` remediation static closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+- 整改对象：root remediation=`45d78e3dafd01177c7c8da1b2f189b16b51ead58`；此前 implementation=`052f7c8f0149d6a6f703fcbec86b8085357f7e15` 的 ChatGPT/Kimi/MM `REQUEST_CHANGES` 已全部收齐；approved design=`61949b13b16310193466de0a2d60d031bd5fa9a8`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 已处理共识意见：恢复已关闭 `_host_git_closure()` 的 `resolve(strict=True)` `OSError -> ValueError` fail-closed 转换与原格式；D005 record backend 必严格等于 projected backend；environment fixture matrix 现覆盖 inner/outer digest、P5 tuple/allowlist/native/forbidden、D005 source added/removed/changed/backend/digest/projection/exclusion、excluded ownership、P3 pair/locale 和 ambient parent independence。
+- MM 的 request-loader 串联建议经 scope 核对不在本整改实现：approved v0.2 明定完整 request 必经独立 `authorities.d005_pair`（路径/bytes/source identity）Gate；当前 `authorities={}` placeholder 没有冻结 authority schema，故未静默扩展。请确认此范围裁定或指出 frozen v0.2 的冲突处。
+- CPU 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=28/28 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。无真实 preflight/staging/P5 export/compose/GPU/训练。
+- 允许范围仅 root static tooling/stdlib CPU。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 052f7c8f0149d6a6f703fcbec86b8085357f7e15；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-ENVIRONMENT` v0.2 static implementation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS` 或 `REQUEST_CHANGES`，并附 `file:line`。
