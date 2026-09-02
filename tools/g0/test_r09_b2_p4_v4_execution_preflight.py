@@ -489,6 +489,30 @@ class EnvironmentAuthorityTest(unittest.TestCase):
         recurrent, ttt = self._records()
         return {"recurrent": self._section(recurrent, "recurrent"), "ttt_fast_weight": self._section(ttt, "ttt_fast_weight")}, recurrent, ttt
 
+    def _reidentity(self, section):
+        for name in ("effective_environment", "native_loader_environment"):
+            section[name]["sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: item for key, item in section[name].items() if key != "sha256"}
+            )
+        projection = section["d005_projection"]
+        if set(projection) == r09_b2_p4_v4_execution_preflight.D005_PROJECTION_KEYS:
+            projection["sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: item for key, item in projection.items() if key != "sha256"}
+            )
+        section["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in section.items() if key != "identity_sha256"}
+        )
+
+    def _section_identity(self, section):
+        section["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in section.items() if key != "identity_sha256"}
+        )
+
+    def _assert_rejected(self, value, recurrent, ttt, error):
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", return_value={"status": "PASS"}):
+            with self.assertRaisesRegex(ValueError, error):
+                r09_b2_p4_v4_execution_preflight.validate_environment_pair(value, recurrent, ttt, Path("/unused"))
+
     def test_environment_requires_verified_d005_projection_and_p3_only_difference(self):
         value, recurrent, ttt = self._pair()
         with mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", return_value={"status": "PASS"}):
@@ -517,6 +541,71 @@ class EnvironmentAuthorityTest(unittest.TestCase):
                 with mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", return_value={"status": "PASS"}):
                     with self.assertRaisesRegex(ValueError, "projection differs"):
                         r09_b2_p4_v4_execution_preflight.validate_environment_pair(value, recurrent, ttt, Path("/unused"))
+
+    def test_environment_rejects_identity_and_p5_grammar_drift(self):
+        mutations = (
+            ("effective digest", lambda value: value["recurrent"]["effective_environment"].__setitem__("sha256", "0" * 64), "object identity"),
+            ("native digest", lambda value: value["recurrent"]["native_loader_environment"].__setitem__("sha256", "0" * 64), "object identity"),
+            ("projection digest", lambda value: value["recurrent"]["d005_projection"].__setitem__("sha256", "0" * 64), "projection differs"),
+            ("section digest", lambda value: value["recurrent"].__setitem__("identity_sha256", "0" * 64), "environment identity"),
+            ("missing forbidden", lambda value: value["recurrent"]["effective_environment"].__setitem__("unset", []), "object identity"),
+            ("reordered forbidden", lambda value: value["recurrent"]["effective_environment"].__setitem__("unset", list(reversed(r09_b2_p4_v4_execution_preflight.P5_FORBIDDEN_ENVIRONMENT))), "object identity"),
+            ("inherit", lambda value: value["recurrent"]["effective_environment"].__setitem__("inherit_allowlist", ["PATH"]), "object identity"),
+            ("native set", lambda value: value["recurrent"]["native_loader_environment"].__setitem__("set", {"PATH": "/bin"}), "native loader environment"),
+            ("forbidden effective", lambda value: value["recurrent"]["effective_environment"]["set"].__setitem__(r09_b2_p4_v4_execution_preflight.P5_FORBIDDEN_ENVIRONMENT[0], "x"), "forbidden key"),
+        )
+        for name, mutate, error in mutations:
+            with self.subTest(name=name):
+                value, recurrent, ttt = self._pair()
+                mutate(value)
+                if name in {"effective digest", "native digest", "projection digest"}:
+                    self._section_identity(value["recurrent"])
+                elif name != "section digest":
+                    self._reidentity(value["recurrent"])
+                self._assert_rejected(value, recurrent, ttt, error)
+
+    def test_environment_rejects_d005_source_projection_and_pair_drift(self):
+        mutations = (
+            ("added D005 key", lambda recurrent, ttt: recurrent["environment"]["set"].__setitem__("AMBIENT", "x"), "D005 environment"),
+            ("removed D005 key", lambda recurrent, ttt: recurrent["environment"]["set"].pop(next(iter(r09_b2_p4_v4_execution_preflight.REQUIRED_ENV))), "D005 environment"),
+            ("changed D005 fixed value", lambda recurrent, ttt: recurrent["environment"]["set"].__setitem__("PYTHONPATH", "/other"), "projection differs"),
+            ("wrong backend", lambda recurrent, ttt: recurrent.__setitem__("backend", "ttt_fast_weight"), "D005 environment"),
+            ("well formed D005 digest", lambda recurrent, ttt: recurrent.__setitem__("d005_sha256", "c" * 64), "projection differs"),
+            ("wrong input digest", lambda recurrent, ttt: value["recurrent"]["d005_projection"].__setitem__("input_set_sha256", "c" * 64), "projection differs"),
+            ("wrong projected digest", lambda recurrent, ttt: value["recurrent"]["d005_projection"].__setitem__("projected_set_sha256", "c" * 64), "projection differs"),
+            ("reordered exclusions", lambda recurrent, ttt: value["recurrent"]["d005_projection"].__setitem__("excluded_keys", list(reversed(r09_b2_p4_v4_execution_preflight.D005_EXCLUDED_ENVIRONMENT_KEYS))), "projection differs"),
+        )
+        for name, mutate, error in mutations:
+            with self.subTest(name=name):
+                value, recurrent, ttt = self._pair()
+                mutate(recurrent, ttt)
+                self._reidentity(value["recurrent"])
+                self._assert_rejected(value, recurrent, ttt, error)
+
+    def test_environment_rejects_excluded_key_pair_and_locale_drift(self):
+        mutations = (
+            ("PYTHONPATH leak", lambda value: value["recurrent"]["effective_environment"]["set"].__setitem__("PYTHONPATH", "/framework"), "forbidden key"),
+            ("output leak", lambda value: value["recurrent"]["effective_environment"]["set"].__setitem__("IMAGINAIRE_OUTPUT_ROOT", "/output/recurrent"), "projection differs"),
+            ("missing P3 key", lambda value: value["recurrent"]["effective_environment"]["set"].pop("PSM_R09_B1_TTT_ENABLED"), "projection differs"),
+            ("reversed P3", lambda value: value["recurrent"]["effective_environment"]["set"].__setitem__("PSM_R09_B1_TTT_ENABLED", "1"), "projection differs"),
+            ("third difference", lambda value: value["ttt_fast_weight"]["effective_environment"]["set"].__setitem__("CUDA_DEVICE_MAX_CONNECTIONS", "other"), "projection differs"),
+            ("locale request", lambda value: value["recurrent"]["effective_environment"]["set"].__setitem__("LC_CTYPE", "C.UTF-8"), "projection differs"),
+        )
+        for name, mutate, error in mutations:
+            with self.subTest(name=name):
+                value, recurrent, ttt = self._pair()
+                mutate(value)
+                self._reidentity(value["recurrent"])
+                self._reidentity(value["ttt_fast_weight"])
+                self._assert_rejected(value, recurrent, ttt, error)
+
+    def test_environment_is_independent_of_ambient_parent(self):
+        value, recurrent, ttt = self._pair()
+        frozen = json.loads(json.dumps(value))
+        with mock.patch.dict(os.environ, {"PYTHONPATH": "/ambient", "PATH": "/ambient", "LC_CTYPE": "bad"}, clear=True), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", return_value={"status": "PASS"}):
+            r09_b2_p4_v4_execution_preflight.validate_environment_pair(value, recurrent, ttt, Path("/unused"))
+        self.assertEqual(value, frozen)
 
 
 if __name__ == "__main__":

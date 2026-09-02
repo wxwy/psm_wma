@@ -235,7 +235,7 @@ def _host_git_closure(path: Path, raw: bytes) -> str:
         else:
             canonical, current_raw = _read_canonical_regular_nofollow(
                 current, "execution request host Git object differs",
-    )
+            )
         if str(canonical) in objects:
             if objects[str(canonical)] != hashlib.sha256(current_raw).hexdigest():
                 raise ValueError("execution request host Git object differs")
@@ -246,14 +246,20 @@ def _host_git_closure(path: Path, raw: bytes) -> str:
             raise ValueError("execution request host Git ELF differs") from exc
         objects[str(canonical)] = str(metadata["sha256"])
         dependencies = list(metadata["dt_needed"])
-        if metadata["pt_interp"] is not None:
-            dependencies.append(metadata["pt_interp"])
+        interpreter = metadata["pt_interp"]
+        if interpreter is not None:
+            dependencies.append(interpreter)
         for dependency in dependencies:
             if not isinstance(dependency, str):
                 raise ValueError("execution request host Git ELF dependency differs")
-            dependency_path = _resolve_needed(canonical, metadata, dependency).resolve(strict=True)
+            dependency_path = _resolve_needed(canonical, metadata, dependency)
+            try:
+                dependency_path = dependency_path.resolve(strict=True)
+            except OSError as exc:
+                raise ValueError("execution request host Git ELF dependency differs") from exc
             if str(dependency_path) not in scheduled:
-                scheduled.add(str(dependency_path)); pending.append((dependency_path, None))
+                scheduled.add(str(dependency_path))
+                pending.append((dependency_path, None))
     return canonical_sha256({"objects": [{"path": name, "sha256": digest} for name, digest in sorted(objects.items())]})
 
 
@@ -275,7 +281,7 @@ def _environment_object(value: object, *, native: bool) -> dict[str, object]:
 
 def _project_d005_environment(record: dict[str, object], backend: str) -> tuple[dict[str, str], dict[str, object]]:
     environment = record.get("environment")
-    if not isinstance(environment, dict) or not isinstance(environment.get("set"), dict):
+    if record.get("backend") != backend or not isinstance(environment, dict) or not isinstance(environment.get("set"), dict):
         raise ValueError("execution request D005 environment differs")
     values = environment["set"]
     expected = set(REQUIRED_ENV) | set(P5_P3_BACKEND_ENVIRONMENT)
