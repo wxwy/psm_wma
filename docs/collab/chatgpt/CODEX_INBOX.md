@@ -4698,3 +4698,10 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 审核对象：root remediation=`e27a9c9607f2a88d165b3fa79d77a9311b8f9c57`；implementation=`28b378c8861a2994fa6ae2f18b61d5ce8d909b8a`；ChatGPT review=`60cdf44`；approved design=`f8a7231`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
 - 整改：补 outer missing/retyped schema、candidate root 与 leaf 的 relative/dot/dotdot/repeated/double-leading lexical matrix、正常 namespace root 下 derived-leaf prefix symlink、attempt uppercase/short/long 与 candidate identity-reuse fixtures；retyped attempt 暴露并修复为唯一 `isinstance` fail-closed guard。未改任何执行或物化行为。
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=56/56 PASS；`py_compile`、`git diff --check` PASS。允许范围仍仅 root static tooling/stdlib CPU tests；禁止真实 preflight/candidate/run/staging/P5/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 6577f1c420fc43fd4070690ae05512cb7e61eaa5；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-CANDIDATES` deterministic-order remediation closure。请仅对同一 SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_CANDIDATES_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 整改 Kimi=`2026-09-02 17:36:16 CST`：`validate_candidates()` 的两处 backend set loop 改为固定 `("recurrent", "ttt_fast_weight")` 顺序，消除 derived-leaf symlink fixture 的 `PYTHONHASHSEED` 不稳定性。范围仅此两行。
+- 证据：`PYTHONHASHSEED=0/1/2` 定向 fixture 均 PASS；完整 P4 CPU=56/56、`py_compile`、`git diff --check` PASS。禁止真实 preflight/candidate/run/staging/P5/GPU/训练。
