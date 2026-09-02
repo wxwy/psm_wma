@@ -4526,6 +4526,14 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - P4 parser/provenance CPU=33/33 PASS；`py_compile`、`git diff --check` PASS；未调用 exporter/preflight/GPU/训练。
 - 仅 root static tooling/CPU；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 605c9ba9229096a3d3f350b2c6d0b149ab625d40；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES` v0.1 静态设计。请给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_authorities_design_v0.1_2026-09-02.md`；root design=`605c9ba9229096a3d3f350b2c6d0b149ab625d40`；已关闭 environment=`50d08df`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 设计范围：冻结 exact `authorities={d005_pair,identity_sha256}`、三份 D005 regular no-follow/single-fd canonical JSON binding、pair verifier/source tuple 与 environment cross-binding。候选不能自报 PASS；path/bytes/record/backend/self digest/verification checks/source/Gitlink/environment drift 都 fail-closed。`run/candidates/backends` 不在本 design。
+- 若批准，仅 root parser/validator 与 stdlib CPU fixture；禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun/GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 50d08df03d632ea4457cbefeccc97b9c3309fd4c；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-ENVIRONMENT` fixture remediation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS` 或 `REQUEST_CHANGES`，附 `file:line`。
