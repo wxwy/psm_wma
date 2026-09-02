@@ -134,6 +134,7 @@ class SourceAuthorityTest(unittest.TestCase):
         entry_path = root / "tools/g0/r09_b2_p4_v4_execution_preflight.py"
         entry_path.parent.mkdir(parents=True)
         entry_path.write_text("entry\n")
+        (root / "tracked.txt").write_text("tracked\n")
         subprocess.run(("git", "-C", str(root), "-c", "protocol.file.allow=always", "submodule", "add", str(framework), "cosmos-framework"), check=True, stdout=subprocess.PIPE)
         self._git(root, "add", ".")
         self._git(root, "commit", "-m", "root")
@@ -148,6 +149,18 @@ class SourceAuthorityTest(unittest.TestCase):
         source["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(source)
         return root, source, entry
 
+    def _identity(self, value: dict[str, str]) -> None:
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in value.items() if key != "identity_sha256"}
+        )
+
+    def _set_revision(self, root: Path, source: dict[str, str], entry: dict[str, str]) -> None:
+        revision = self._git(root, "rev-parse", "HEAD")
+        source["root_revision"] = revision
+        entry["root_revision"] = revision
+        self._identity(entry)
+        self._identity(source)
+
     def test_source_accepts_exact_head_and_rejects_unrelated_descendant(self):
         with tempfile.TemporaryDirectory() as temporary:
             root, source, entry = self._fixture(temporary)
@@ -157,6 +170,89 @@ class SourceAuthorityTest(unittest.TestCase):
             self._git(root, "commit", "-m", "descendant")
             with self.assertRaisesRegex(ValueError, "checkout revision differs"):
                 r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+
+    def test_source_rejects_dirty_and_untracked_root(self):
+        for name, path in (("dirty", "tracked.txt"), ("untracked", "untracked.txt")):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                root, source, entry = self._fixture(temporary)
+                (root / path).write_text(f"{name}\n")
+                with self.assertRaisesRegex(ValueError, "not full-clean"):
+                    r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+
+    def test_source_rejects_gitlink_and_submodule_head_drift(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, source, entry = self._fixture(temporary)
+            source["gitlink"] = "a" * 40
+            self._identity(source)
+            with self.assertRaisesRegex(ValueError, "Gitlink differs"):
+                r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+        with tempfile.TemporaryDirectory() as temporary:
+            root, source, entry = self._fixture(temporary)
+            framework = root / "cosmos-framework"
+            (framework / "module.txt").write_text("drift\n")
+            self._git(framework, "add", "module.txt")
+            self._git(framework, "commit", "-m", "submodule drift")
+            with self.assertRaisesRegex(ValueError, "not full-clean"):
+                r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+
+    def test_source_rejects_entry_git_blob_current_and_cross_binding_drift(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, source, entry = self._fixture(temporary)
+            entry_path = root / "tools/g0/r09_b2_p4_v4_execution_preflight.py"
+            entry_path.write_text("changed entry\n")
+            self._git(root, "add", str(entry_path.relative_to(root)))
+            self._git(root, "commit", "-m", "entry drift")
+            self._set_revision(root, source, entry)
+            with self.assertRaisesRegex(ValueError, "entry bytes differ"):
+                r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+        with tempfile.TemporaryDirectory() as temporary:
+            root, source, entry = self._fixture(temporary)
+            source["entry_current_sha256"] = "a" * 64
+            self._identity(source)
+            with self.assertRaisesRegex(ValueError, "cross-binding differs"):
+                r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+
+    def test_source_rejects_symlink_root_and_entry(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, source, entry = self._fixture(temporary)
+            linked_root = Path(temporary) / "linked-root"
+            linked_root.symlink_to(root, target_is_directory=True)
+            source["root"] = str(linked_root)
+            self._identity(source)
+            with self.assertRaisesRegex(ValueError, "source root differs"):
+                r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+        with tempfile.TemporaryDirectory() as temporary:
+            root, source, entry = self._fixture(temporary)
+            entry_path = root / "tools/g0/r09_b2_p4_v4_execution_preflight.py"
+            target = root / "entry-target.py"
+            target.write_text("entry\n")
+            entry_path.unlink()
+            entry_path.symlink_to(target.name)
+            self._git(root, "add", "tools/g0/r09_b2_p4_v4_execution_preflight.py", "entry-target.py")
+            self._git(root, "commit", "-m", "symlink entry")
+            self._set_revision(root, source, entry)
+            with self.assertRaisesRegex(ValueError, "entry path differs"):
+                r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+
+    def test_source_rejects_ancestor_checkout(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, source, entry = self._fixture(temporary)
+            ancestor = self._git(root, "rev-parse", "HEAD")
+            (root / "unrelated.txt").write_text("descendant\n")
+            self._git(root, "add", "unrelated.txt")
+            self._git(root, "commit", "-m", "descendant")
+            self._set_revision(root, source, entry)
+            self._git(root, "checkout", "--detach", ancestor)
+            with self.assertRaisesRegex(ValueError, "checkout revision differs"):
+                r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+
+    def test_source_reads_entry_once_without_path_reopen(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, source, entry = self._fixture(temporary)
+            with mock.patch.object(Path, "read_bytes", side_effect=AssertionError("path re-read")), \
+                 mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "open", wraps=os.open) as open_entry:
+                r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+            self.assertEqual(open_entry.call_count, 1)
 
 
 if __name__ == "__main__":

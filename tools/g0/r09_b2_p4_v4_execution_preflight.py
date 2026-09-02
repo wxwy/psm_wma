@@ -31,21 +31,28 @@ _EXECUTION_CONTRACT_ITEMS = (
 )
 
 
-def read_execution_request(path: Path) -> bytes:
+def _read_regular_nofollow(path: Path, error: str) -> bytes:
     nofollow = getattr(os, "O_NOFOLLOW", None)
     if nofollow is None:
-        raise ValueError("execution request requires O_NOFOLLOW")
+        raise ValueError(error)
     flags = os.O_RDONLY | nofollow | getattr(os, "O_CLOEXEC", 0)
-    descriptor = os.open(path, flags)
+    try:
+        descriptor = os.open(path, flags)
+    except OSError as exc:
+        raise ValueError(error) from exc
     try:
         if not stat.S_ISREG(os.fstat(descriptor).st_mode):
-            raise ValueError("execution request must be a regular file")
+            raise ValueError(error)
         with os.fdopen(descriptor, "rb") as request_file:
             descriptor = -1
             return request_file.read()
     finally:
         if descriptor != -1:
             os.close(descriptor)
+
+
+def read_execution_request(path: Path) -> bytes:
+    return _read_regular_nofollow(path, "execution request must be a regular file")
 
 
 def load_execution_request(
@@ -131,11 +138,10 @@ def validate_source(value: object, entry: dict[str, object]) -> None:
     if len(tree) != 2 or tree[1] != "cosmos-framework" or tree[0].split()[:2] != ["160000", "commit"] or tree[0].split()[2] != value["gitlink"] or _git(framework, "rev-parse", "HEAD").decode().strip() != value["gitlink"]:
         raise ValueError("execution request source Gitlink differs")
     entry_path = root / ENTRY_TOOL_PATH
-    if entry_path.is_symlink() or not entry_path.is_file() or not stat.S_ISREG(entry_path.stat().st_mode):
-        raise ValueError("execution request source entry path differs")
     _git(root, "ls-files", "--error-unmatch", "--", ENTRY_TOOL_PATH)
     blob = _git(root, "show", f"{value['root_revision']}:{ENTRY_TOOL_PATH}")
-    if hashlib.sha256(blob).hexdigest() != value["entry_git_blob_sha256"] or hashlib.sha256(entry_path.read_bytes()).hexdigest() != value["entry_current_sha256"] or blob != entry_path.read_bytes() or value["entry_git_blob_sha256"] != value["entry_current_sha256"]:
+    current_raw = _read_regular_nofollow(entry_path, "execution request source entry path differs")
+    if hashlib.sha256(blob).hexdigest() != value["entry_git_blob_sha256"] or hashlib.sha256(current_raw).hexdigest() != value["entry_current_sha256"] or blob != current_raw or value["entry_git_blob_sha256"] != value["entry_current_sha256"]:
         raise ValueError("execution request source entry bytes differ")
 
 
