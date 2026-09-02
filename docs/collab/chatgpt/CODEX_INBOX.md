@@ -4526,6 +4526,15 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - P4 parser/provenance CPU=33/33 PASS；`py_compile`、`git diff --check` PASS；未调用 exporter/preflight/GPU/训练。
 - 仅 root static tooling/CPU；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 50d08df03d632ea4457cbefeccc97b9c3309fd4c；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-ENVIRONMENT` fixture remediation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+- 整改对象：root remediation=`50d08df03d632ea4457cbefeccc97b9c3309fd4c`；此前 `45d78e3` 三方最终意见已齐（ChatGPT=`REQUEST_CHANGES`，Kimi/MM=`APPROVE`）；approved design=`61949b13b16310193466de0a2d60d031bd5fa9a8`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 已逐项处理 ChatGPT 的三项 HIGH：D005 `HF_HUB_OFFLINE`（非排除 projected key）值漂移保持 request 原投影时 fail-closed；top-level environment pair 增加第三 backend 时必以 pair schema 拒绝；request sections 均无 `LC_CTYPE`，只有 validated pair 经既有 P5 `p5_effective_environment()` 后注入唯一 `LC_CTYPE=C.UTF-8`，并在 ambient parent shadow 下验证。
+- 无代码执行路径变化、无 `authorities.d005_pair` 越界串联；仅增 root stdlib CPU fixtures。证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight tools.g0.test_r09_b2_p5_full_config_diff -v`=34/34 PASS；`py_compile`、`git diff --check` PASS。
+- 禁止真实 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 45d78e3dafd01177c7c8da1b2f189b16b51ead58；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-ENVIRONMENT` remediation static closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS` 或 `REQUEST_CHANGES`，附 `file:line`。
