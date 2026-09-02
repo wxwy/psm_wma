@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -15,6 +16,15 @@ from tools.g0.r09_b2_p4_v4_execution_preflight import main
 
 
 class EntryFoundationTest(unittest.TestCase):
+    def setUp(self):
+        self._source_validation = mock.patch.object(
+            r09_b2_p4_v4_execution_preflight, "validate_source"
+        )
+        self._source_validation.start()
+
+    def tearDown(self):
+        self._source_validation.stop()
+
     def _entry(self) -> dict[str, str]:
         entry = {"tool_path": "tools/g0/r09_b2_p4_v4_execution_preflight.py",
                  "root_revision": "a" * 40, "git_blob_sha256": "b" * 64,
@@ -101,6 +111,52 @@ class EntryFoundationTest(unittest.TestCase):
             request.write_bytes(raw)
             with self.assertRaisesRegex(ValueError, "entry schema differs"):
                 main(["--request", str(request), "--request-sha256", hashlib.sha256(raw).hexdigest()])
+
+
+class SourceAuthorityTest(unittest.TestCase):
+    def _git(self, root: Path, *args: str) -> str:
+        return subprocess.check_output(("git", "-C", str(root), *args), text=True).strip()
+
+    def _fixture(self, temporary: str) -> tuple[Path, dict[str, str], dict[str, str]]:
+        root = Path(temporary) / "root"
+        framework = Path(temporary) / "framework"
+        framework.mkdir()
+        self._git(framework, "init")
+        self._git(framework, "config", "user.email", "test@example.invalid")
+        self._git(framework, "config", "user.name", "Test")
+        (framework / "module.txt").write_text("framework\n")
+        self._git(framework, "add", ".")
+        self._git(framework, "commit", "-m", "framework")
+        root.mkdir()
+        self._git(root, "init")
+        self._git(root, "config", "user.email", "test@example.invalid")
+        self._git(root, "config", "user.name", "Test")
+        entry_path = root / "tools/g0/r09_b2_p4_v4_execution_preflight.py"
+        entry_path.parent.mkdir(parents=True)
+        entry_path.write_text("entry\n")
+        subprocess.run(("git", "-C", str(root), "-c", "protocol.file.allow=always", "submodule", "add", str(framework), "cosmos-framework"), check=True, stdout=subprocess.PIPE)
+        self._git(root, "add", ".")
+        self._git(root, "commit", "-m", "root")
+        revision = self._git(root, "rev-parse", "HEAD")
+        gitlink = self._git(framework, "rev-parse", "HEAD")
+        digest = hashlib.sha256(entry_path.read_bytes()).hexdigest()
+        entry = {"tool_path": "tools/g0/r09_b2_p4_v4_execution_preflight.py", "root_revision": revision,
+                 "git_blob_sha256": digest, "current_sha256": digest}
+        entry["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(entry)
+        source = {"root": str(root), "root_revision": revision, "gitlink": gitlink,
+                  "entry_git_blob_sha256": digest, "entry_current_sha256": digest}
+        source["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(source)
+        return root, source, entry
+
+    def test_source_accepts_exact_head_and_rejects_unrelated_descendant(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root, source, entry = self._fixture(temporary)
+            r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
+            (root / "unrelated.txt").write_text("descendant\n")
+            self._git(root, "add", "unrelated.txt")
+            self._git(root, "commit", "-m", "descendant")
+            with self.assertRaisesRegex(ValueError, "checkout revision differs"):
+                r09_b2_p4_v4_execution_preflight.validate_source(source, entry)
 
 
 if __name__ == "__main__":
