@@ -292,7 +292,7 @@ class FullAdmissionCompositionTest(unittest.TestCase):
         def entry_mutation(item):
             item["entry"]["tool_path"] = "other.py"; self._reidentity(item["entry"])
         def source_mutation(item):
-            item["source"]["root"] = str(Path(item["source"]["root"]) / "cosmos-framework")
+            item["source"]["root_revision"] = "c" * 40
             self._reidentity(item["source"])
         def interpreter_mutation(item):
             item["interpreter"]["lexical_interpreter"]["sha256"] = "0" * 64
@@ -319,7 +319,8 @@ class FullAdmissionCompositionTest(unittest.TestCase):
         for name, mutate in cases:
             with self.subTest(section=name):
                 candidate = json.loads(json.dumps(value)); mutate(candidate)
-                with self.assertRaises(ValueError):
+                expected = "source cross-binding" if name == "source" else ""
+                with self.assertRaisesRegex(ValueError, expected):
                     self._load(candidate, git)
 
 
