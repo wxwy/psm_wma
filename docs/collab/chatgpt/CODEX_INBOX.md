@@ -4849,3 +4849,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 唯一整改：namespace 在所有 reservation precheck 前从 `/` 按绝对 lexical components 以 `O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC` 的 `openat(dir_fd=...)` 链锚定并逐层 `fstat`；之后仅相对 namespace FD 检查两个未来 backend direct-child roots 的 absence，禁止 namespace/ancestor 或未来 descendant 的 pathname 重解析。
 - fixture 增加 acquisition-window 与 anchor-after mutation-window 的 namespace/ancestor retarget：必须 fail-closed 或持续绑定原 FD，外部 target 零写入；保留 v0.5 的 capability、child-FD、12 fault、poison、ambient/child/CLI名册。
 - 允许范围仅未来 root P4 helper/test与 stdlib CPU tests；禁止真实 request/preflight/materialize/candidate/run-root/staging、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 70a3e805f071e7d36c61883481e8dce5dba85ca2；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` v0.6 static implementation closure。请对同一 SHA 回复 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 实现仅修改 root `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与对应 stdlib test：factory-only one-shot admission、从 `/` 逐 component `O_NOFOLLOW` openat/fstat namespace anchor、FD-relative direct-child absence、child FD mkdir/open/fstat 与 poison footprint。
+- CPU evidence：P4 `69/69 PASS`，`py_compile`、`git diff --check` PASS；覆盖 six mkdir/six verification exact prefixes、forge、existing root、symlink namespace zero-mkdir。
+- 禁止真实 request/preflight/materialize/staging/P5/GPU/训练；public CLI hard-stop 未变。
