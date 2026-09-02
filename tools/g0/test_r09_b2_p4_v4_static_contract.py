@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.g0.r09_b2_p4_v4_static_contract import load_pass_candidate, stage_atomic_publication, verify_fail_candidate, _reject_failed_identity_reuse
+from tools.g0.r09_b2_p4_v4_static_contract import load_pass_candidate, stage_atomic_publication, verify_fail_candidate, _reject_failed_identity_reuse, _validate_final_pair
 
 
 def write(value: object, path: Path) -> bytes:
@@ -87,6 +87,20 @@ class CandidateContractTest(unittest.TestCase):
             ):
                 with self.assertRaises(ValueError):
                     _reject_failed_identity_reuse(attempt, {"recurrent": payload})
+
+    def test_effective_launch_drift_is_rejected(self):
+        request = {"production_source": {}, "request_defaults": {}, "interpreter": {},
+                   "effective_launch": {"cwd": "/x", "toml": "a", "overrides": [],
+                                        "interpreter": "i", "loader_argv": ["-I"], "runtime_sys_path": []}}
+        raw_request = (json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n").encode()
+        payloads = {backend: {"request.json": raw_request, "result.json": b"{}\n", "verification.json": b"{}\n"}
+                    for backend in ("recurrent", "ttt_fast_weight")}
+        loaded = {backend: {"request": dict(request), "result": {}, "verification": {}}
+                  for backend in payloads}
+        loaded["ttt_fast_weight"]["request"]["effective_launch"] = dict(request["effective_launch"], loader_argv=["-S"])
+        with patch("tools.g0.r09_b2_p4_v4_static_contract.load_p4_v4_preflight", return_value=loaded):
+            with self.assertRaises(ValueError):
+                _validate_final_pair(payloads)
 
 
 if __name__ == "__main__":
