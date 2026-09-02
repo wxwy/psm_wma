@@ -4642,3 +4642,9 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 
 - 设计：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_run_design_v0.1_2026-09-02.md`。复用已冻结 P5 `p4_run={identity,run_token,roster_sha256}`；只冻结 future run-root lexical identity、64-hex token/roster digest、source/submodule/trust-root non-overlap 与 pair reuse 拒绝。不预填运行事实、不创建目录；最终 roster/staging/manifest/native closure/candidate 归后续独立 execution Gate。
 - 允许范围若批准：仅 root parser/validator static tooling 与 stdlib CPU fixtures。禁止真实 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+### Awaiting review — 🚨 审核申请已发出（根仓 3609ae9a9c24e2565cb3c31d74a20a03490c21ad；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-RUN` v0.2 remediation design。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_RUN_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- v0.2 修复 ChatGPT=`d50800d`、MM 的意见：`run` 显式为 recurrent/ttt backend pair，保留每侧 frozen P5 inner `{identity,run_token,roster_sha256}`；static request 明确不可执行，后续 full-request Gate 决定性计算 immutable final roster SHA；路径仅基于已验证 source root/submodule，`normpath` 与既有祖先 symlink 规则明确，候选/staging/evidence/exporter roots 延后至各自 Gate。
+- 仅 design/docs，未执行项目代码；允许范围若批准仅 root parser/validator static tooling 与 stdlib CPU fixtures。禁止真实 preflight、staging/candidate、P5 export/compose、GPU、模型/数据/checkpoint、训练/评测/推理。
