@@ -4460,6 +4460,14 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v` 为 7/7 PASS（实际临时 Git/submodule 正例；B 只修改无关 root 文件、entry/Gitlink 保持 A 的 clean descendant 必因 HEAD identity FAIL）；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。
 - 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 4070a086d18740e73185829fd74fd43a493355dd；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-INTERPRETER` v0.1 静态设计。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_interpreter_design_v0.1_2026-09-02.md`，root=`4070a086d18740e73185829fd74fd43a493355dd`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；前置 source closure=`b0581d8`/`a9c2eb3`。
+- 范围：仅冻结 interpreter exact schema、lexical Python/Git Git/current-byte single-fd authority、loader argv/bootstrap/request binding 与 stdlib CPU negative fixtures；永久拒绝 ambient PATH/direct exporter。
+- 若批准，仅 root static parser/validator + stdlib CPU tests。禁止真实 preflight/staging/materialize、record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint I/O、训练/评测/推理、B2-T、Local Memory 训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 b0581d89c452cadaa40e9739c6d51313eb13a615；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` source v0.3 static remediation closure。请对同一 root implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_SOURCE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
