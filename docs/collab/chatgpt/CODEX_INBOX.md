@@ -4781,3 +4781,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 对象：remediation=`506e6df`，ChatGPT HIGH=`2c6aea2`，production=`c3b64b5`，design=`fad1e8d`，Gitlink 如上。
 - 仅测试：真实 source/interpreter/authorities validators 经 full route 执行；仅 stub 已关闭的 source Git/entry-byte/clean 与 interpreter loader builder 底层 I/O；B1 顺序、B3 reidentified eight-section mutation 均保留。
 - 证据：P4 CPU=63/63，`py_compile`、`git diff --check`、三 `PYTHONHASHSEED` composition=1/1 PASS。禁止真实 request/preflight/staging/P5/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 8535a8c670268e044f5f70eb2d53015897d8d956；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-FULL` source-fixture tests-only remediation closure。请仅对同一 SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_FULL_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 对象：remediation=`8535a8c`，ChatGPT changes=`026dfe0`，prior=`506e6df`，production=`c3b64b5`，design=`fad1e8d`，Gitlink 如上。
+- 仅测试：source mutation 改为 reidentified `source.root_revision` drift，并精确断言真实 `validate_source()` 的 `source cross-binding` 拒绝，避免后续 interpreter false-positive；其余 real source/interpreter/authorities full route、B1/B3 保持。
+- 证据：P4 CPU=63/63，`py_compile`、`git diff --check`、三 `PYTHONHASHSEED` composition=1/1 PASS。禁止真实 request/preflight/staging/P5/GPU/训练。
