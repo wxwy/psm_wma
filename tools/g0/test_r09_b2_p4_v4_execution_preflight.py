@@ -311,6 +311,8 @@ class CandidatesAuthorityTest(unittest.TestCase):
             value["recurrent"]["identity_sha256"] = "0" * 64; self._outer_identity(value)
         mutations = (
             ("outer extra", lambda value, run: value.__setitem__("extra", {}), "candidates schema"),
+            ("outer missing", lambda value, run: value.pop("ttt_fast_weight"), "candidates schema"),
+            ("outer retyped", lambda value, run: value.__setitem__("attempt_id", 1), "candidates attempt"),
             ("outer identity", lambda value, run: value.__setitem__("identity_sha256", "0" * 64), "candidates identity"),
             ("root identity", root_identity, "candidates root identity"),
             ("backend identity", backend_identity, "candidates backend identity"),
@@ -318,6 +320,7 @@ class CandidatesAuthorityTest(unittest.TestCase):
         for name, mutate, error in mutations:
             with self.subTest(name=name):
                 run = self._run(); value = self._value(run); mutate(value, run)
+                if name == "outer retyped": self._outer_identity(value)
                 with self.assertRaisesRegex(ValueError, error):
                     r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": "/source"}, run)
 
@@ -333,6 +336,9 @@ class CandidatesAuthorityTest(unittest.TestCase):
         mutations = (
             ("attempt recurrent token", attempt_recurrent, "candidates reuse"),
             ("attempt ttt token", attempt_ttt, "candidates reuse"),
+            ("attempt uppercase", lambda value, run: self._set_attempt(value, "E" * 64), "candidates attempt"),
+            ("attempt short", lambda value, run: self._set_attempt(value, "e" * 63), "candidates attempt"),
+            ("attempt long", lambda value, run: self._set_attempt(value, "e" * 65), "candidates attempt"),
             ("attempt grammar", lambda value, run: self._set_attempt(value, "g" * 64), "candidates attempt"),
             ("backend label", backend_label, "candidates backend"),
             ("run binding", run_binding, "candidates backend"),
@@ -343,6 +349,38 @@ class CandidatesAuthorityTest(unittest.TestCase):
                 run = self._run(); value = self._value(run); mutate(value, run)
                 with self.assertRaisesRegex(ValueError, error):
                     r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": "/source"}, run)
+
+    def test_candidates_reject_candidate_specific_lexical_and_identity_reuse_drift(self):
+        root_cases = (
+            ("root relative", "future", "candidates root path"),
+            ("root dot", "/candidates/./future", "candidates root path"),
+            ("root parent", "/candidates/../future", "candidates root path"),
+            ("root repeated", "/candidates//future", "candidates root path"),
+            ("root double leading", "//candidates/future", "candidates root path"),
+        )
+        for name, root_path, error in root_cases:
+            with self.subTest(name=name):
+                run = self._run(); value = self._value(run); self._set_root(value, root_path)
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": "/source"}, run)
+        leaf_cases = (
+            ("leaf relative", "future", "candidates recurrent path"),
+            ("leaf dot", "/candidates/./future", "candidates recurrent path"),
+            ("leaf parent", "/candidates/../future", "candidates recurrent path"),
+            ("leaf repeated", "/candidates//future", "candidates recurrent path"),
+            ("leaf double leading", "//candidates/future", "candidates recurrent path"),
+        )
+        for name, leaf, error in leaf_cases:
+            with self.subTest(name=name):
+                run = self._run(); value = self._value(run)
+                value["recurrent"]["candidate_root"] = leaf; self._reidentity(value)
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": "/source"}, run)
+        run = self._run(); value = self._value(run)
+        value["ttt_fast_weight"]["identity_sha256"] = value["recurrent"]["identity_sha256"]
+        self._outer_identity(value)
+        with self.assertRaisesRegex(ValueError, "candidates backend identity"):
+            r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": "/source"}, run)
 
     def test_candidates_reject_source_run_overlap_and_symlink_ancestor(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -363,6 +401,12 @@ class CandidatesAuthorityTest(unittest.TestCase):
             linked.symlink_to(source, target_is_directory=True)
             value = self._value(run); self._set_root(value, str(linked / "candidate"))
             with self.assertRaisesRegex(ValueError, "candidates root path"):
+                r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": str(source)}, run)
+            root = Path(temporary) / "candidate-root"; root.mkdir()
+            target = Path(temporary) / "target"; target.mkdir()
+            value = self._value(run, str(root))
+            (root / value["attempt_id"]).symlink_to(target, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "candidates recurrent path"):
                 r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": str(source)}, run)
 
     def test_candidates_are_independent_of_ambient_environment(self):

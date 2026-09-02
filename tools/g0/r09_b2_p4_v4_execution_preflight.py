@@ -532,7 +532,8 @@ def validate_candidates(value: object, source: object, run: object) -> None:
     if not isinstance(value, dict) or set(value) != CANDIDATES_KEYS or not isinstance(source, dict) or not isinstance(run, dict):
         raise ValueError("execution request candidates schema differs")
     _identity(value, "candidates")
-    if (_SHA256.fullmatch(value.get("attempt_id", "")) is None or set(run) != RUN_KEYS
+    if (not isinstance(value.get("attempt_id"), str)
+            or _SHA256.fullmatch(value["attempt_id"]) is None or set(run) != RUN_KEYS
             or any(not isinstance(run[backend], dict) for backend in RUN_KEYS)):
         raise ValueError("execution request candidates attempt differs")
     root_identity = value["root"]
