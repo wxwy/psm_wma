@@ -4962,3 +4962,11 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - B1：planned lock spec 现 exact 验证 frozen `execution_contract`；fixture覆盖 boolean drift、missing/extra member。B2：planned run/root 均强制 lexical/resolved/source/submodule overlap、candidate root/leaf 对两 run-root isolation、token/run identity reuse；fixture覆盖 relative/source overlap/candidate overlap/shared run root。
 - B3：exclusive writer 拆为 `_write_planned_commitment_at`：所有 create-before OSError→`NOT_LOCKED`，write/fsync/seek/read/fchmod/fstat/close 与 short write→保留目标的 `POISONED_NOT_LOCKED`，成功前验证 regular+0444；fault fixture覆盖 create、write、fsync、seek、read、fchmod、fstat、close。
 - CPU evidence：P4=`81/81 PASS`，`py_compile`、`git diff --check` PASS。仅 root static tooling/stdlib CPU tests；禁止 P4/P5 migration、任何真实执行、P5 export/compose、GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 aebb94f95eef9151c764c6b2f021a07e9363798c；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` fixture-only remediation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root=`aebb94f95eef9151c764c6b2f021a07e9363798c`；prior=`40eda9b`，ChatGPT=`0339c74` 仅要求 B4 fixture closure，Kimi/MM prior approve；Gitlink 如上。
+- 仅修改 stdlib fixture及状态：FD intermediate/final symlink reject、existing/symlink target zero-overwrite、short-write target preservation、non-regular fstat poison、payload manifest order/type与lock self-SHA rejection。生产 helper未变。
+- CPU evidence：P4=`84/84 PASS`，`py_compile`、`git diff --check` PASS。禁止 P4/P5 migration、真实 request/preflight/materialize/staging/candidate/run-root、P5 export/compose、GPU/训练。
