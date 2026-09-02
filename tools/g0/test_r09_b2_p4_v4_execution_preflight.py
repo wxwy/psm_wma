@@ -30,14 +30,19 @@ class EntryFoundationTest(unittest.TestCase):
         self._host_git_validation = mock.patch.object(
             r09_b2_p4_v4_execution_preflight, "validate_host_git", return_value=Path("/usr/bin/git")
         )
-        self._source_validation.start()
-        self._interpreter_validation.start()
-        self._host_git_validation.start()
+        self._authorities_validation = mock.patch.object(
+            r09_b2_p4_v4_execution_preflight, "validate_authorities_pair"
+        )
+        self.source_validation = self._source_validation.start()
+        self.interpreter_validation = self._interpreter_validation.start()
+        self.host_git_validation = self._host_git_validation.start()
+        self.authorities_validation = self._authorities_validation.start()
 
     def tearDown(self):
         self._source_validation.stop()
         self._interpreter_validation.stop()
         self._host_git_validation.stop()
+        self._authorities_validation.stop()
 
     def _entry(self) -> dict[str, str]:
         entry = {"tool_path": "tools/g0/r09_b2_p4_v4_execution_preflight.py",
@@ -121,6 +126,33 @@ class EntryFoundationTest(unittest.TestCase):
             with mock.patch.object(r09_b2_p4_v4_execution_preflight, "_EXECUTION_CONTRACT_ITEMS", (("network", True),)):
                 with self.assertRaisesRegex(RuntimeError, "separately reviewed"):
                     main(["--request", str(request), "--request-sha256", hashlib.sha256(raw).hexdigest()])
+
+    def test_full_route_reuses_host_git_and_canonical_source_root(self):
+        raw = self._request()
+        with mock.patch.object(
+            r09_b2_p4_v4_execution_preflight,
+            "validate_environment_pair",
+            side_effect=AssertionError("legacy environment route"),
+        ), mock.patch.object(
+            r09_b2_p4_v4_execution_preflight,
+            "verify_d005_pair",
+            side_effect=AssertionError("legacy D005 route"),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "separately reviewed"):
+                main(["--request", str(self._write_request(raw)), "--request-sha256", hashlib.sha256(raw).hexdigest()])
+        git_path = self.source_validation.call_args.args[2]
+        self.assertIs(self.interpreter_validation.call_args.args[2], git_path)
+        authorities, request, source_root, authority_git = self.authorities_validation.call_args.args
+        self.assertIs(authority_git, git_path)
+        self.assertEqual(source_root, Path(request["source"]["root"]))
+        self.assertIs(authorities, request["authorities"])
+
+    def _write_request(self, raw):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        request = Path(temporary.name) / "request.json"
+        request.write_bytes(raw)
+        return request
 
     def test_entry_rejects_noncanonical_identity_path_and_revision(self):
         cases = (

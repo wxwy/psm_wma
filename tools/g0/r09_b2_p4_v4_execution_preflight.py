@@ -173,6 +173,8 @@ def load_execution_request(
     validate_run_pair(value["run"], value["source"])
     validate_candidates(value["candidates"], value["source"], value["run"])
     validate_backends(value["backends"])
+    source_root = Path(value["source"]["root"])
+    validate_authorities_pair(value["authorities"], value, source_root, git_path)
     return value
 
 
