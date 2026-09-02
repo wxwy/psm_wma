@@ -9,6 +9,7 @@ import json
 import os
 import re
 import stat
+import weakref
 import subprocess
 from pathlib import Path
 
@@ -103,13 +104,13 @@ _EXECUTION_CONTRACT_ITEMS = (
     ("cleanup_retry_repair", False),
 )
 _BACKEND_ORDER = ("recurrent", "ttt_fast_weight")
-_ADMITTED_REQUEST_IDS: set[int] = set()
+_ADMITTED_REQUESTS: weakref.WeakSet = weakref.WeakSet()
 
 
 class _AdmittedRequest:
     """Opaque, one-shot capability issued only by full request admission."""
 
-    __slots__ = ("raw", "request_sha256", "run", "_consumed", "_locked")
+    __slots__ = ("raw", "request_sha256", "_consumed", "_locked", "__weakref__")
 
     def __init__(self, *args: object, **kwargs: object) -> None:
         raise TypeError("P4-v4 admitted request is factory-only")
@@ -124,10 +125,9 @@ def _issued_admitted_request(raw: bytes, request: dict[str, object]) -> _Admitte
     admitted = object.__new__(_AdmittedRequest)
     object.__setattr__(admitted, "raw", raw)
     object.__setattr__(admitted, "request_sha256", request_sha256(raw))
-    object.__setattr__(admitted, "run", request["run"])
     object.__setattr__(admitted, "_consumed", False)
     object.__setattr__(admitted, "_locked", True)
-    _ADMITTED_REQUEST_IDS.add(id(admitted))
+    _ADMITTED_REQUESTS.add(admitted)
     return admitted
 
 
@@ -737,7 +737,7 @@ def _admit_execution_request(raw: bytes) -> _AdmittedRequest:
 
 
 def _reservation_plan(admitted: _AdmittedRequest, namespace: Path) -> tuple[Path, ...]:
-    if not isinstance(admitted, _AdmittedRequest) or id(admitted) not in _ADMITTED_REQUEST_IDS:
+    if not isinstance(admitted, _AdmittedRequest) or admitted not in _ADMITTED_REQUESTS:
         raise ValueError("P4-v4 reservation requires an admitted request")
     if admitted._consumed:
         raise ValueError("P4-v4 reservation capability is consumed")
@@ -750,7 +750,11 @@ def _reservation_plan(admitted: _AdmittedRequest, namespace: Path) -> tuple[Path
     paths: list[Path] = []
     for backend in _BACKEND_ORDER:
         try:
-            run = admitted.run[backend]
+            request = json.loads(admitted.raw)
+            if (not isinstance(request, dict)
+                    or (json.dumps(request, sort_keys=True, separators=(",", ":")) + "\n").encode() != admitted.raw):
+                raise ValueError("P4-v4 admitted request bytes differ")
+            run = request["run"][backend]
             root = Path(run["identity"]["root"])
             token = run["run_token"]
         except (KeyError, TypeError) as exc:
