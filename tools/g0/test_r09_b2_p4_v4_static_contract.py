@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+from tools.g0.test_r09_b2_p5_full_config_diff import P5Test
 
 from tools.g0.r09_b2_p4_v4_static_contract import load_pass_candidate, stage_atomic_publication, verify_fail_candidate, _reject_failed_identity_reuse, _validate_final_pair
+from tools.g0.export_r09_b2_p5_resolved_config import P4_V4_PREFLIGHT_RELATIVE
 
 
 def write(value: object, path: Path) -> bytes:
@@ -118,6 +121,27 @@ class CandidateContractTest(unittest.TestCase):
         with patch("tools.g0.r09_b2_p4_v4_static_contract.load_p4_v4_preflight", return_value=loaded):
             with self.assertRaises(ValueError):
                 _validate_final_pair(payloads)
+
+    def test_full_p5_valid_pair_passes_admission(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            P5Test()._v4_preflight(root)
+            candidate_root = root / "attempt"
+            candidate_root.mkdir()
+            payloads = {}
+            for backend in ("recurrent", "ttt_fast_weight"):
+                source = root / P4_V4_PREFLIGHT_RELATIVE / backend
+                target = candidate_root / backend
+                shutil.copytree(source, target)
+                raw = {name: (target / name).read_bytes() for name in ("request.json", "result.json", "verification.json")}
+                link = {"schema_version": "r09_b2_p4_v4_candidate_link_v1", "backend": backend,
+                        "attempt_id": "attempt", "run_token": "a" * 64,
+                        "payload_sha256": {name: hashlib.sha256(value).hexdigest() for name, value in raw.items()}}
+                write(link, target / "candidate_link.json")
+                payloads[backend] = raw
+            with patch("tools.g0.r09_b2_p4_v4_static_contract._path_identity", return_value=root / "run"):
+                staged = stage_atomic_publication(candidate_root)
+            self.assertEqual(set(staged), set(payloads))
 
 
 if __name__ == "__main__":
