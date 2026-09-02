@@ -4953,3 +4953,12 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 改动：`tools/g0/r09_b2_p4_v4_execution_preflight.py` 增加默认 `AUTHORIZED_P4_V4_LOCK_SPEC=None` 的 fail-closed entry、source-root/spec component `openat(O_DIRECTORY|O_NOFOLLOW)` FD walk、constant Git/tree/Gitlink/spec Git/current/raw SHA binding、planned-only v3 spec → v1 commitment、P5-v2 projection及 exclusive same-FD poison writer；未接入 CLI/admission/materialization。
 - fixture：`tools/g0/test_r09_b2_p4_v4_execution_preflight.py` 覆盖 authority None 零输出、planned mapping/projection、final run/candidate injection与candidate mapping drift；P4 CPU=`79/79 PASS`，`py_compile`、`git diff --check` PASS。
 - 允许范围仅 root P4 static tooling/stdlib CPU tests。禁止 P4/P5 migration、真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 export/compose、torchrun/GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理及 B2-T。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 40eda9b58c6bcdd0ea953348fadbd39d55eb50f0；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` remediation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root=`40eda9b58c6bcdd0ea953348fadbd39d55eb50f0`；prior=`efe0056`，ChatGPT=`256192e`、Kimi=`REQUEST_CHANGES`，MM prior approve；approved design=`671ca01`；Gitlink 如上。
+- B1：planned lock spec 现 exact 验证 frozen `execution_contract`；fixture覆盖 boolean drift、missing/extra member。B2：planned run/root 均强制 lexical/resolved/source/submodule overlap、candidate root/leaf 对两 run-root isolation、token/run identity reuse；fixture覆盖 relative/source overlap/candidate overlap/shared run root。
+- B3：exclusive writer 拆为 `_write_planned_commitment_at`：所有 create-before OSError→`NOT_LOCKED`，write/fsync/seek/read/fchmod/fstat/close 与 short write→保留目标的 `POISONED_NOT_LOCKED`，成功前验证 regular+0444；fault fixture覆盖 create、write、fsync、seek、read、fchmod、fstat、close。
+- CPU evidence：P4=`81/81 PASS`，`py_compile`、`git diff --check` PASS。仅 root static tooling/stdlib CPU tests；禁止 P4/P5 migration、任何真实执行、P5 export/compose、GPU/训练。
