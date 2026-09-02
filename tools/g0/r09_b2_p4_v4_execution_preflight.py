@@ -48,6 +48,9 @@ AUTHORITIES_PAIR_KEYS = {"model", "recurrent", "ttt_fast_weight", "verification"
 RUN_KEYS = {"recurrent", "ttt_fast_weight"}
 RUN_ITEM_KEYS = {"identity", "run_token", "roster_sha256"}
 RUN_IDENTITY_KEYS = {"root", "resolved_root", "kind", "identity_sha256"}
+CANDIDATES_KEYS = {"root", "attempt_id", "recurrent", "ttt_fast_weight", "identity_sha256"}
+CANDIDATE_ROOT_KEYS = RUN_IDENTITY_KEYS
+CANDIDATE_ITEM_KEYS = {"backend", "candidate_root", "run", "identity_sha256"}
 _HISTORICAL_REVISION = "ddb4e0eae97fb545d5239c1ddb6d4387170f3780"
 _HISTORICAL_GITLINK = "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb"
 _HISTORICAL_ARTIFACTS = {
@@ -137,6 +140,7 @@ def load_execution_request(
     validate_source(value["source"], value["entry"], git_path)
     validate_interpreter(interpreter, value["source"], git_path)
     validate_run_pair(value["run"], value["source"])
+    validate_candidates(value["candidates"], value["source"], value["run"])
     return value
 
 
@@ -521,6 +525,48 @@ def validate_run_pair(value: object, source: object) -> None:
     ttt = _validate_run_item(value["ttt_fast_weight"], source_root, "ttt_fast_weight")
     if any(recurrent[key] == ttt[key] for key in RUN_ITEM_KEYS):
         raise ValueError("execution request run pair reuse differs")
+
+
+def validate_candidates(value: object, source: object, run: object) -> None:
+    """Validate the static, non-materializing candidate namespace binding."""
+    if not isinstance(value, dict) or set(value) != CANDIDATES_KEYS or not isinstance(source, dict) or not isinstance(run, dict):
+        raise ValueError("execution request candidates schema differs")
+    _identity(value, "candidates")
+    if (_SHA256.fullmatch(value.get("attempt_id", "")) is None or set(run) != RUN_KEYS
+            or any(not isinstance(run[backend], dict) for backend in RUN_KEYS)):
+        raise ValueError("execution request candidates attempt differs")
+    root_identity = value["root"]
+    if not isinstance(root_identity, dict) or set(root_identity) != CANDIDATE_ROOT_KEYS or root_identity.get("kind") != "candidate_root":
+        raise ValueError("execution request candidates root schema differs")
+    _identity(root_identity, "candidates root")
+    root = _future_lexical_path(root_identity.get("root"), "candidates root")
+    if root != _future_lexical_path(root_identity.get("resolved_root"), "candidates root"):
+        raise ValueError("execution request candidates root differs")
+    source_root = _future_lexical_path(source.get("root"), "source")
+    if _lexically_overlaps(root, source_root) or _lexically_overlaps(root, source_root / "cosmos-framework"):
+        raise ValueError("execution request candidates source overlap differs")
+    seen: set[str] = set()
+    for backend in RUN_KEYS:
+        item = value[backend]
+        run_item = run[backend]
+        if (not isinstance(item, dict) or set(item) != CANDIDATE_ITEM_KEYS or item.get("backend") != backend
+                or item.get("run") != run_item):
+            raise ValueError("execution request candidates backend differs")
+        _identity(item, "candidates backend")
+        candidate_root = _future_lexical_path(item.get("candidate_root"), f"candidates {backend}")
+        if candidate_root != root / value["attempt_id"] / backend:
+            raise ValueError("execution request candidates path differs")
+        for other in RUN_KEYS:
+            run_root = _future_lexical_path(run[other].get("identity", {}).get("root"), f"run {other}")
+            if _lexically_overlaps(root, run_root) or _lexically_overlaps(candidate_root, run_root):
+                raise ValueError("execution request candidates run overlap differs")
+        run_identity = canonical_sha256(item["run"])
+        if (value["attempt_id"] == run_item.get("run_token")
+                or item["candidate_root"] in seen
+                or item["identity_sha256"] in seen
+                or run_identity in seen):
+            raise ValueError("execution request candidates reuse differs")
+        seen.update((item["candidate_root"], item["identity_sha256"], run_identity))
 
 
 def validate_host_git(value: object) -> Path:

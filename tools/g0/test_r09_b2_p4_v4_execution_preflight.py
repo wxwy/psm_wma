@@ -56,12 +56,24 @@ class EntryFoundationTest(unittest.TestCase):
     def _run(self) -> dict[str, object]:
         return {backend: self._run_item(backend) for backend in ("recurrent", "ttt_fast_weight")}
 
+    def _candidates(self, run: dict[str, object]) -> dict[str, object]:
+        root = {"root": "/candidates", "resolved_root": "/candidates", "kind": "candidate_root"}
+        root["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(root)
+        value = {"root": root, "attempt_id": "e" * 64}
+        for backend in ("recurrent", "ttt_fast_weight"):
+            item = {"backend": backend, "candidate_root": f"/candidates/{value['attempt_id']}/{backend}", "run": run[backend]}
+            item["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(item)
+            value[backend] = item
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(value)
+        return value
+
     def _request(self) -> bytes:
+        run = self._run()
         return (json.dumps({"schema_version": "r09_b2_p4_v4_execution_request_v1",
                             "entry": self._entry(),
-                            **{key: {} for key in ("interpreter", "environment", "candidates", "backends", "authorities")},
+                            **{key: {} for key in ("interpreter", "environment", "backends", "authorities")},
                             "source": {"root": "/source"},
-                            "run": self._run(),
+                            "run": run, "candidates": self._candidates(run),
                             "execution_contract": {"network": False, "gpu": False, "torch": False,
                                                    "model_data_checkpoint_io": False, "one_shot": True,
                                                    "cleanup_retry_repair": False}},
@@ -234,6 +246,130 @@ class RunAuthorityTest(unittest.TestCase):
             )
             with self.assertRaisesRegex(ValueError, "path differs"):
                 r09_b2_p4_v4_execution_preflight.validate_run_pair(value, {"root": str(source)})
+
+
+class CandidatesAuthorityTest(unittest.TestCase):
+    def _run(self):
+        return RunAuthorityTest()._pair()
+
+    def _value(self, run, root_path="/candidates"):
+        root = {"root": root_path, "resolved_root": root_path, "kind": "candidate_root"}
+        root["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(root)
+        value = {"root": root, "attempt_id": "e" * 64}
+        for backend in ("recurrent", "ttt_fast_weight"):
+            item = {"backend": backend, "candidate_root": f"{root_path}/{value['attempt_id']}/{backend}", "run": run[backend]}
+            item["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(item)
+            value[backend] = item
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(value)
+        return value
+
+    def _reidentity(self, value):
+        root = value.get("root")
+        if isinstance(root, dict) and set(root) == r09_b2_p4_v4_execution_preflight.CANDIDATE_ROOT_KEYS:
+            root["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: item for key, item in root.items() if key != "identity_sha256"}
+            )
+        for backend in ("recurrent", "ttt_fast_weight"):
+            item = value.get(backend)
+            if isinstance(item, dict) and set(item) == r09_b2_p4_v4_execution_preflight.CANDIDATE_ITEM_KEYS:
+                item["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                    {key: entry for key, entry in item.items() if key != "identity_sha256"}
+                )
+        if set(value) == r09_b2_p4_v4_execution_preflight.CANDIDATES_KEYS:
+            self._outer_identity(value)
+
+    def _outer_identity(self, value):
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in value.items() if key != "identity_sha256"}
+        )
+
+    def _set_root(self, value, root_path):
+        value["root"].update({"root": root_path, "resolved_root": root_path})
+        for backend in ("recurrent", "ttt_fast_weight"):
+            value[backend]["candidate_root"] = f"{root_path}/{value['attempt_id']}/{backend}"
+        self._reidentity(value)
+
+    def _set_attempt(self, value, attempt_id):
+        value["attempt_id"] = attempt_id
+        root_path = value["root"]["root"]
+        for backend in ("recurrent", "ttt_fast_weight"):
+            value[backend]["candidate_root"] = f"{root_path}/{attempt_id}/{backend}"
+        self._reidentity(value)
+
+    def test_candidates_accept_exact_static_pair_without_creating_roots(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / "source"; source.mkdir()
+            candidate = Path(temporary) / "candidates"
+            run = self._run(); value = self._value(run, str(candidate))
+            r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": str(source)}, run)
+            self.assertFalse(candidate.exists())
+
+    def test_candidates_reject_exact_schema_and_identity_drift(self):
+        def root_identity(value, run):
+            value["root"]["identity_sha256"] = "0" * 64; self._outer_identity(value)
+        def backend_identity(value, run):
+            value["recurrent"]["identity_sha256"] = "0" * 64; self._outer_identity(value)
+        mutations = (
+            ("outer extra", lambda value, run: value.__setitem__("extra", {}), "candidates schema"),
+            ("outer identity", lambda value, run: value.__setitem__("identity_sha256", "0" * 64), "candidates identity"),
+            ("root identity", root_identity, "candidates root identity"),
+            ("backend identity", backend_identity, "candidates backend identity"),
+        )
+        for name, mutate, error in mutations:
+            with self.subTest(name=name):
+                run = self._run(); value = self._value(run); mutate(value, run)
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": "/source"}, run)
+
+    def test_candidates_reject_reidentified_binding_and_namespace_drift(self):
+        def attempt_recurrent(value, run): self._set_attempt(value, run["recurrent"]["run_token"])
+        def attempt_ttt(value, run): self._set_attempt(value, run["ttt_fast_weight"]["run_token"])
+        def backend_label(value, run):
+            value["recurrent"]["backend"] = "ttt_fast_weight"; self._reidentity(value)
+        def run_binding(value, run):
+            value["recurrent"]["run"] = run["ttt_fast_weight"]; self._reidentity(value)
+        def leaf_mapping(value, run):
+            value["recurrent"]["candidate_root"] = "/other"; self._reidentity(value)
+        mutations = (
+            ("attempt recurrent token", attempt_recurrent, "candidates reuse"),
+            ("attempt ttt token", attempt_ttt, "candidates reuse"),
+            ("attempt grammar", lambda value, run: self._set_attempt(value, "g" * 64), "candidates attempt"),
+            ("backend label", backend_label, "candidates backend"),
+            ("run binding", run_binding, "candidates backend"),
+            ("leaf mapping", leaf_mapping, "candidates path"),
+        )
+        for name, mutate, error in mutations:
+            with self.subTest(name=name):
+                run = self._run(); value = self._value(run); mutate(value, run)
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": "/source"}, run)
+
+    def test_candidates_reject_source_run_overlap_and_symlink_ancestor(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / "source"; source.mkdir()
+            run = self._run()
+            cases = (
+                ("source descendant", str(source / "candidate"), "source overlap"),
+                ("source ancestor", str(Path(temporary)), "source overlap"),
+                ("run ancestor", "/future", "run overlap"),
+                ("run descendant", "/future/recurrent/candidate", "run overlap"),
+            )
+            for name, root_path, error in cases:
+                with self.subTest(name=name):
+                    value = self._value(run); self._set_root(value, root_path)
+                    with self.assertRaisesRegex(ValueError, error):
+                        r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": str(source)}, run)
+            linked = Path(temporary) / "linked"
+            linked.symlink_to(source, target_is_directory=True)
+            value = self._value(run); self._set_root(value, str(linked / "candidate"))
+            with self.assertRaisesRegex(ValueError, "candidates root path"):
+                r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": str(source)}, run)
+
+    def test_candidates_are_independent_of_ambient_environment(self):
+        run = self._run(); value = self._value(run); frozen = json.loads(json.dumps(value))
+        with mock.patch.dict(os.environ, {"PATH": "/hostile", "PYTHONPATH": "/hostile"}, clear=True):
+            r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": "/source"}, run)
+        self.assertEqual(value, frozen)
 
 
 class SourceAuthorityTest(unittest.TestCase):
