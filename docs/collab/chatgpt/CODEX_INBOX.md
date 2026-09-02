@@ -4525,3 +4525,10 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - approved design=`be62603`（ChatGPT/Kimi/MM 同 SHA）；实现把 `FROZEN_STDLIB_LOADER`、`verified_loader_argv()`、`is_verified_loader_argv()` 同步升级至唯一 12 槽，child bootstrap Git show 仅用末槽 bound host Git，不再 bare git/PATH。
 - P4 parser/provenance CPU=33/33 PASS；`py_compile`、`git diff --check` PASS；未调用 exporter/preflight/GPU/训练。
 - 仅 root static tooling/CPU；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 3217d020818a1fcae26ae1064e4a83907dad29d9；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-INTERPRETER` v0.4 fixture remediation closure。请求 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 整改 `d521af7` ChatGPT/MM HIGH：补齐 12-slot 每一绑定字段、old-11/extra/direct exporter/`-m`、lexical realpath、host symlink/PATH shadow 的 identity-rehashed negatives；并让 verified loader 对 request SHA 重算实际 bytes。
+- CPU evidence：P4 parser=19/19、provenance=16/16、`py_compile`、`git diff --check` PASS；仅静态/CPU，禁止真实执行。
