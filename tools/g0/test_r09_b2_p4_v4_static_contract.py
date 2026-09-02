@@ -119,6 +119,23 @@ class CandidateContractTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 _validate_final_pair(payloads)
 
+    def test_valid_pair_passes_admission_with_verifier_loader(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            self._pass(root, "recurrent")
+            self._pass(root, "ttt_fast_weight", token="b" * 64)
+            loaded = {
+                backend: {
+                    "request": {"backend": backend, "p4_run": {"run_token": token}},
+                    "result": {"backend": backend, "status": "PASS"},
+                    "verification": {"backend": backend, "status": "PASS"},
+                }
+                for backend, token in (("recurrent", "a" * 64), ("ttt_fast_weight", "b" * 64))
+            }
+            with patch("tools.g0.r09_b2_p4_v4_static_contract.load_p4_v4_preflight", return_value=loaded):
+                staged = stage_atomic_publication(root / "attempt")
+            self.assertEqual(set(staged), {"recurrent", "ttt_fast_weight"})
+
 
 if __name__ == "__main__":
     unittest.main()
