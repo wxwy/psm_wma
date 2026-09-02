@@ -4954,6 +4954,15 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - fixture：`tools/g0/test_r09_b2_p4_v4_execution_preflight.py` 覆盖 authority None 零输出、planned mapping/projection、final run/candidate injection与candidate mapping drift；P4 CPU=`79/79 PASS`，`py_compile`、`git diff --check` PASS。
 - 允许范围仅 root P4 static tooling/stdlib CPU tests。禁止 P4/P5 migration、真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 export/compose、torchrun/GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理及 B2-T。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 4ce8ad362b8d5a1471f9cd5ec09b599727dcaa62；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-P5-V4-HANDOFF-MIGRATION` v0.1 静态设计。请仅对同一 design SHA 回复 `APPROVE_TO_IMPLEMENT_P4_P5_V4_HANDOFF_MIGRATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_P5_v4_handoff_migration_design_v0.1_2026-09-03.md`；前置 P4 planned-lock closure=`4108eb6`/ChatGPT=`8169d9f`、P4 materialization=`bda9737`、P5 full-config=`49e6ccf`、P5 evidence Git authority=`3e3a853`；Gitlink 如上。
+- 唯一迁移：将 `r09_b2_p5_run_root_roster_v2` 固定为 `{import_staging, import_staging/<run_token>} ∪ payload_manifest.entries`，保持 embedded roster exact `{entries,sha256}` 与 P5 canonical SHA，永久拒绝 `preflight.json`、三份 P4 payload 与任何 pointer/evidence，从而消除 v1 `preflight.json -> result/verification -> roster` fixed point。
+- 仅允许未来 root P4/P5 static grammar、loader/verifier、temporary validator 与 stdlib CPU fixtures；`AUTHORIZED_P4_V4_LOCK_SPEC`、`AUTHORIZED_P4_V4_EVIDENCE` 仍须 `None`，`run_parent_export()` hard-stop 保持。
+- 禁止真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 export/compose、torchrun/GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理/B2-T。`git diff --check` PASS，未运行项目代码、未生成任何 artifact。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 40eda9b58c6bcdd0ea953348fadbd39d55eb50f0；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` remediation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
