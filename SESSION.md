@@ -4,7 +4,7 @@
 
 ## 当前最小步骤（2026-09-02）
 
-- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（IN_PROGRESS）：v0.1=`887fb81` 的最终意见已齐：ChatGPT review=`9727516` 为 `REQUEST_CHANGES`，Kimi/MM为 APPROVE。共同范围不变；仅新增 v0.2 设计，处理 ChatGPT 三个 implementation blocker：private admitted-request capability、每 backend `run_root/import_staging/token` 精确三 mkdir footprint、每 mutation 点失败后的无 cleanup poisoned partial state 与 fixture。既有 CLI 只完成解析与 `hard-stop`，不得误作真实 preflight；不创建 request/run/candidate/staging，不执行 P4/P5/GPU/训练。下一步：diff-check、提交并重审；提交：未提交。
+- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（IN_PROGRESS）：v0.2=`594923c` 的最终意见已齐：ChatGPT review=`b7bd62f` 为 `REQUEST_CHANGES`，Kimi/MM为 APPROVE。共同范围不变；仅新增 v0.3 设计，关闭 mutable admitted dict、zero-footprint first mkdir poison、同 backend nested footprint overlap 三项 blocker：admission data 从 raw bytes 重派生、private per-capability latch、mkdir/stat precise poisoned prefix、required ancestor exception。既有 CLI 保持 `hard-stop`；不创建 request/run/candidate/staging，不执行 P4/P5/GPU/训练。下一步：diff-check、提交并重审；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
