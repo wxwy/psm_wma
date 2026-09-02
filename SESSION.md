@@ -926,3 +926,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修复共享审核意见：candidate admission 复用 P5 final verifier grammar，绑定双 backend shared source/default/interpreter，FAIL request/token/run_root schema 与 failure-poison 检查；恢复 CPU 回归测试。
 - 验证：P4/P5 标准库测试 6/6 PASS，py_compile、git diff --check PASS。未执行真实 preflight/staging/record/refreeze/export/GPU/训练。
 - 下一步：提交本阶段并请求 ChatGPT/MM/Kimi 对同一 root SHA closure；三方未同 SHA 批准前保持禁止执行。提交：未提交。
+
+### R09-B2 P4-v4 static tooling closure (2026-09-02，DONE)
+
+- 三方同实现 SHA closure：ChatGPT 权威 review history=`6eca65f`、MM、Kimi 对 implementation=`5e4d56a`/Gitlink=`21d064f` 均 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS`；review-record commit=`8c0d721`。
+- 最终整改：真实 P5 fixture 的 loader/runtime-path drift、完整 P5-valid dual-backend pair 通过 `stage_atomic_publication()`，且移除 `_path_identity` mock。CPU P4/P5 unittest 14/14 PASS；未执行真实 preflight/staging/candidate/record/refreeze/P5 export/compose/GPU/训练。
+- 本 closure 仅结束静态 tooling Gate。下一步若要执行真实 P4-v4 preflight，必须另建 execution runbook 并获得独立三方审核；训练仍不获授权。提交：待本状态更新提交。
