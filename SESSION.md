@@ -992,3 +992,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - `3e6de3b0f1a5fdfa071b5356e1174fdf6ec8afc9` 仅修改 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py`：补 v0.3:17 与 ChatGPT 五项永久 stdlib CPU 负例：FIFO non-regular、一次 lexical `os.open`/fd-bound TOCTOU、record non-canonical raw、verification pretty-byte SHA binding、top/checks/matched/backend 各层 added/missing/false/non-bool roster。未改历史 D005 authority 模型，未触发真实项目执行。验证：`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=45/45 PASS；`git diff --check` PASS；无 GPU、无外网、无 checkpoint/数据/产物写入。
 - 同 SHA 最终 closure 已齐：ChatGPT review=`6b6146e`、Kimi=`2026-09-02 16:32:57 CST`、MM=`2026-09-02 16:33:47 CST` 均 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS`。本 closure 仅结束 `authorities` static section；`run/candidates/backends` 与任何真实 execution request/preflight、staging/materialize、record/refreeze、P5 export/compose、GPU/CUDA、训练/评测/推理仍须独立 Gate。下一步：选择下一个未冻结 section 的设计工作；提交：待本状态更新提交。
+
+### R09-B2 P4-v4 execution request run v0.1（2026-09-02，REVIEW）
+
+- 新增 `docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_run_design_v0.1_2026-09-02.md`，只冻结 future run root 的 lexical identity、64-hex token/roster digest、source/submodule/trust-root non-overlap 与双 backend identity reuse 拒绝。复用 P5 v0.8/v0.9 已冻结 `p4_run={identity,run_token,roster_sha256}`，不预填 run/root/roster 运行事实；实际不存在性、mkdir、staging、candidate、roster/manifest/closure 均留给独立 execution Gate。
+- 未执行项目代码、preflight/staging/P5/GPU/训练。下一步：`git diff --check`，提交并按三方同 SHA 请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_RUN_STATIC_TOOLS`；提交：未提交。
