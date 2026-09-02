@@ -962,3 +962,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 审核收齐后合并意见：`3217d02` 的 ChatGPT=`REQUEST_CHANGES`，Kimi/MM=`APPROVE`。仅处理 ChatGPT 的两项静态夹具：真实 lexical launcher 从 `base-A` 改指向 `base-B` 必以 `lexical interpreter differs` 拒绝；host Git ELF dependency 只以 canonical no-follow fd 读取一次，解析/哈希仅消费该绑定 raw，禁止 pathname reopen。修复同时 canonicalize 调度键，消除同一依赖的别名重复读取。
 - 验证：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight tools.g0.test_r09_b2_interpreter_provenance -v` 为 37/37 PASS；`py_compile`、`git diff --check` PASS。未执行真实 preflight/staging/P5 export-compose/GPU/训练。
 - 下一步：提交整改、推送并对新 root SHA 重新申请 ChatGPT/MM/Kimi closure 审核；三方同 SHA 批准前保持 `REVIEW`。提交：未提交。
+
+### R09-B2 P4-v4 interpreter v0.4 static closure (2026-09-02，DONE)
+
+- 三方同 implementation SHA closure：ChatGPT review=`a966fa9`、Kimi=`2026-09-02 14:08:29 CST`、MM=`2026-09-02 14:11` 对 root=`6a036649518295c07571e510954167f1bb1c84fc`/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb` 均 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS`。MM 的 D005 11-slot template coherence 建议明确为独立且不阻塞 follow-up，未混入本 Gate。
+- 最终闭合：真实 launcher `base-A -> base-B` retarget、每个 host Git recursive ELF dependency 的 canonical no-follow 单次读取及 parser/hash 同源 bytes；P4=21/21、provenance=16/16，P5/static contract=14/14，`py_compile`、`git diff --check` PASS。
+- 本 closure 仅结束 interpreter static tooling。真实 P4-v4 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练仍未获授权。下一步须选择并独立审核后续 execution-request section 或静态 design；提交：未提交。
