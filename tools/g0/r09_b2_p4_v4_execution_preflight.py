@@ -211,7 +211,8 @@ def _resolve_needed(owner: Path, metadata: dict[str, object], name: str) -> Path
 
 
 def _host_git_closure(path: Path, raw: bytes) -> str:
-    pending = [(path, raw)]
+    pending: list[tuple[Path, bytes | None]] = [(path, raw)]
+    scheduled = {str(path)}
     objects: dict[str, str] = {}
     while pending:
         current, current_raw = pending.pop()
@@ -238,8 +239,13 @@ def _host_git_closure(path: Path, raw: bytes) -> str:
             if not isinstance(dependency, str):
                 raise ValueError("execution request host Git ELF dependency differs")
             dependency_path = _resolve_needed(canonical, metadata, dependency)
-            dependency_path, dependency_raw = _read_canonical_regular_nofollow(dependency_path, "execution request host Git object differs")
-            pending.append((dependency_path, dependency_raw))
+            try:
+                dependency_path = dependency_path.resolve(strict=True)
+            except OSError as exc:
+                raise ValueError("execution request host Git ELF dependency differs") from exc
+            if str(dependency_path) not in scheduled:
+                scheduled.add(str(dependency_path))
+                pending.append((dependency_path, None))
     return canonical_sha256({"objects": [{"path": name, "sha256": digest} for name, digest in sorted(objects.items())]})
 
 

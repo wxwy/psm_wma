@@ -283,7 +283,7 @@ class InterpreterAuthorityTest(unittest.TestCase):
     def _git(self, root: Path, *args: str) -> str:
         return subprocess.check_output(("git", "-C", str(root), *args), text=True).strip()
 
-    def _interpreter(self, temporary: str) -> tuple[dict[str, object], dict[str, object]]:
+    def _interpreter(self, temporary: str, *, launcher: Path | None = None) -> tuple[dict[str, object], dict[str, object]]:
         root = Path(temporary) / "root"
         root.mkdir()
         self._git(root, "init")
@@ -296,7 +296,7 @@ class InterpreterAuthorityTest(unittest.TestCase):
         self._git(root, "commit", "-m", "bootstrap")
         child_request = Path(temporary) / "child.json"
         child_request.write_text("{}\n")
-        launcher = Path(sys.executable).absolute()
+        launcher = launcher or Path(sys.executable).absolute()
         lexical = r09_b2_p4_v4_execution_preflight.lexical_interpreter(launcher)
         git_path = Path(shutil.which("git") or "").resolve()
         self.assertTrue(git_path.is_absolute())
@@ -378,6 +378,48 @@ class InterpreterAuthorityTest(unittest.TestCase):
                  mock.patch.object(r09_b2_p4_v4_execution_preflight, "_read_strict_regular_nofollow", wraps=r09_b2_p4_v4_execution_preflight._read_strict_regular_nofollow) as reader:
                 r09_b2_p4_v4_execution_preflight.validate_host_git(interpreter["host_git"])
             self.assertEqual(reader.call_count, 1)
+
+    def test_host_git_closure_reads_each_dependency_once_without_pathname_reopen(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            interpreter, _ = self._interpreter(temporary)
+            host_git = interpreter["host_git"]
+            bound_raw = {Path(host_git["path"]): r09_b2_p4_v4_execution_preflight._read_regular_nofollow(
+                Path(host_git["path"]), "git"
+            )}
+            original_reader = r09_b2_p4_v4_execution_preflight._read_canonical_regular_nofollow
+            original_parser = r09_b2_p4_v4_execution_preflight.parse_elf_dynamic_raw
+
+            def read_dependency(path: Path, error: str) -> tuple[Path, bytes]:
+                canonical, raw = original_reader(path, error)
+                bound_raw[canonical] = raw
+                return canonical, raw
+
+            def parse_bound(path: Path, raw: bytes) -> dict[str, object]:
+                self.assertEqual(raw, bound_raw[path])
+                return original_parser(path, raw)
+
+            with mock.patch.object(Path, "read_bytes", side_effect=AssertionError("path re-read")), \
+                 mock.patch.object(r09_b2_p4_v4_execution_preflight, "_read_canonical_regular_nofollow", side_effect=read_dependency) as reader, \
+                 mock.patch.object(r09_b2_p4_v4_execution_preflight, "parse_elf_dynamic_raw", side_effect=parse_bound):
+                r09_b2_p4_v4_execution_preflight.validate_host_git(host_git)
+            dependency_paths = [Path(call.args[0]).resolve() for call in reader.call_args_list]
+            self.assertGreater(len(dependency_paths), 0)
+            self.assertEqual(len(dependency_paths), len(set(dependency_paths)))
+
+    def test_interpreter_rejects_retargeted_lexical_launcher(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            launcher_dir = Path(temporary) / "venv"
+            launcher_dir.mkdir()
+            base_a, base_b = launcher_dir / "base-A", launcher_dir / "base-B"
+            shutil.copyfile(sys.executable, base_a)
+            shutil.copyfile(sys.executable, base_b)
+            launcher = launcher_dir / "venv-python"
+            launcher.symlink_to(base_a.name)
+            interpreter, source = self._interpreter(temporary, launcher=launcher)
+            launcher.unlink()
+            launcher.symlink_to(base_b.name)
+            with self.assertRaisesRegex(ValueError, "lexical interpreter differs"):
+                r09_b2_p4_v4_execution_preflight.validate_interpreter(interpreter, source)
 
     def test_interpreter_rejects_every_bound_loader_slot_and_old_grammar(self):
         with tempfile.TemporaryDirectory() as temporary:

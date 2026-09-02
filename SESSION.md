@@ -956,3 +956,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新增 v0.5 design：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_design_v0.5_2026-09-02.md`。范围只申请一次 CPU-only、copy-only 的双 backend candidate preflight；严格禁止 record/refreeze、P5 export/compose、torchrun/GPU/训练。
 - 下一步：静态检查、提交并向 ChatGPT/MM/Kimi 申请 `APPROVE_TO_EXECUTE_P4_V4_PREFLIGHT_CPU_ONLY`；三方同 SHA 批准前不运行任何 preflight。提交：未提交。
+
+### R09-B2 P4-v4 interpreter v0.4 fixture remediation (2026-09-02，REVIEW)
+
+- 审核收齐后合并意见：`3217d02` 的 ChatGPT=`REQUEST_CHANGES`，Kimi/MM=`APPROVE`。仅处理 ChatGPT 的两项静态夹具：真实 lexical launcher 从 `base-A` 改指向 `base-B` 必以 `lexical interpreter differs` 拒绝；host Git ELF dependency 只以 canonical no-follow fd 读取一次，解析/哈希仅消费该绑定 raw，禁止 pathname reopen。修复同时 canonicalize 调度键，消除同一依赖的别名重复读取。
+- 验证：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight tools.g0.test_r09_b2_interpreter_provenance -v` 为 37/37 PASS；`py_compile`、`git diff --check` PASS。未执行真实 preflight/staging/P5 export-compose/GPU/训练。
+- 下一步：提交整改、推送并对新 root SHA 重新申请 ChatGPT/MM/Kimi closure 审核；三方同 SHA 批准前保持 `REVIEW`。提交：未提交。
