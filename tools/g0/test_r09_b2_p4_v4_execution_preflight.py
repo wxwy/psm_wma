@@ -8,13 +8,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tools.g0.r09_b2_p4_v4_execution_preflight import main
+from tools.g0.r09_b2_p4_v4_execution_preflight import EXECUTION_CONTRACT, main
 
 
 class EntryFoundationTest(unittest.TestCase):
     def _request(self) -> bytes:
         return (json.dumps({"schema_version": "r09_b2_p4_v4_execution_request_v1",
-                            **{key: {} for key in ("entry", "source", "interpreter", "environment", "run", "candidates", "backends", "authorities", "execution_contract")}},
+                            **{key: {} for key in ("entry", "source", "interpreter", "environment", "run", "candidates", "backends", "authorities")},
+                            "execution_contract": EXECUTION_CONTRACT},
                            sort_keys=True, separators=(",", ":")) + "\n").encode()
 
     def test_requires_matching_regular_request_and_never_executes(self):

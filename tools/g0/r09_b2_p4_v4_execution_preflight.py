@@ -12,6 +12,14 @@ REQUEST_KEYS = {
     "schema_version", "entry", "source", "interpreter", "environment", "run", "candidates",
     "backends", "authorities", "execution_contract",
 }
+EXECUTION_CONTRACT = {
+    "network": False,
+    "gpu": False,
+    "torch": False,
+    "model_data_checkpoint_io": False,
+    "one_shot": True,
+    "cleanup_retry_repair": False,
+}
 
 def request_sha256(path: Path) -> str:
     if path.is_symlink() or not path.is_file():
@@ -32,6 +40,8 @@ def load_execution_request(path: Path) -> dict[str, object]:
         raise ValueError("execution request schema differs")
     if not all(isinstance(value[key], dict) for key in REQUEST_KEYS - {"schema_version"}):
         raise ValueError("execution request section differs")
+    if value["execution_contract"] != EXECUTION_CONTRACT:
+        raise ValueError("execution request contract differs")
     return value
 
 
