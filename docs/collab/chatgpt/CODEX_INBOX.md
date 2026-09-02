@@ -4542,3 +4542,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - CPU fixtures：真实 lexical launcher `venv-python -> base-A` 冻结后改指向 `base-B`，`validate_interpreter()` 必以 `lexical interpreter differs` fail-closed；真实 host Git ELF closure 至少一项 dependency，禁止 `Path.read_bytes`，断言每个依赖只读取一次且传给 parser 的 bytes 与 no-follow fd 返回 bytes 相同。
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight tools.g0.test_r09_b2_interpreter_provenance -v`=37/37 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py tools/g0/r09_b2_interpreter_provenance.py` PASS；`git diff --check` PASS。
 - 允许范围：仅 root interpreter static tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 2421b486bb468b1edf1446dc67ccfe455fba0f97；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-ENVIRONMENT` v0.1 静态设计。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root design=`2421b486bb468b1edf1446dc67ccfe455fba0f97`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_environment_design_v0.1_2026-09-02.md`；已关闭 entry/source/interpreter static sections，其中 interpreter closure=`6a036649518295c07571e510954167f1bb1c84fc`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 设计：冻结 exact `{effective_environment,native_loader_environment,identity_sha256}`，每个环境对象 exact `{set,unset,inherit_allowlist,sha256}`。P5 child 从空 parent map 构造；native set 固定为空、两个 allowlist 固定为空、forbidden tuple 必与 P5 逐项相等、`PYTHONPATH` 只可由后续 runtime_sys_path 表达。两 backend 只允许 P3-owned `PSM_R09_B1_TTT_ENABLED` 为 recurrent=`0`/TTT=`1` 的差异。
+- 计划验证（若获准实现）：stdlib CPU 正例及 identity/grammar/forbidden/allowlist/native/ambient parent/P3 difference/locale ordering 永久负例；每个 request mutation 重算 outer identity。无项目代码执行、无证据/目录副作用。
+- 允许范围若批准：仅 root parser/validator environment static tooling 与 CPU tests。禁止真实 P4 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
