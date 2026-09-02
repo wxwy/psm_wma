@@ -379,6 +379,52 @@ class InterpreterAuthorityTest(unittest.TestCase):
                 r09_b2_p4_v4_execution_preflight.validate_host_git(interpreter["host_git"])
             self.assertEqual(reader.call_count, 1)
 
+    def test_interpreter_rejects_every_bound_loader_slot_and_old_grammar(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            interpreter, source = self._interpreter(temporary)
+            mutations = (
+                (5, "different frozen loader"), (7, "0" * 64), (8, "/tmp"),
+                (9, "other/bootstrap.py"), (10, "0" * 64), (11, "/bin/true"),
+            )
+            for index, replacement in mutations:
+                with self.subTest(index=index):
+                    value = json.loads(json.dumps(interpreter))
+                    value["loader_argv"][index] = replacement
+                    self._reidentity(value)
+                    with self.assertRaisesRegex(ValueError, "loader argv differs"):
+                        r09_b2_p4_v4_execution_preflight.validate_interpreter(value, source)
+            for argv in (interpreter["loader_argv"][:11], interpreter["loader_argv"] + ["extra"],
+                         [interpreter["lexical_interpreter"]["path"], "-m", "x"],
+                         [interpreter["lexical_interpreter"]["path"], "tools/g0/export_r09_b2_p5_resolved_config.py"]):
+                value = json.loads(json.dumps(interpreter))
+                value["loader_argv"] = argv
+                self._reidentity(value)
+                with self.assertRaisesRegex(ValueError, "loader argv differs"):
+                    r09_b2_p4_v4_execution_preflight.validate_interpreter(value, source)
+
+    def test_interpreter_rejects_realpath_host_symlink_and_path_shadow(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            interpreter, source = self._interpreter(temporary)
+            for key in ("realpath", "realpath_sha256"):
+                value = json.loads(json.dumps(interpreter))
+                value["lexical_interpreter"][key] = "/tmp/other" if key == "realpath" else "0" * 64
+                self._reidentity(value)
+                with self.assertRaisesRegex(ValueError, "lexical interpreter differs"):
+                    r09_b2_p4_v4_execution_preflight.validate_interpreter(value, source)
+            value = json.loads(json.dumps(interpreter))
+            link = Path(temporary) / "git-link"
+            link.symlink_to(value["host_git"]["path"])
+            value["host_git"]["path"] = str(link)
+            self._reidentity(value)
+            with self.assertRaisesRegex(ValueError, "host Git path differs"):
+                r09_b2_p4_v4_execution_preflight.validate_interpreter(value, source)
+            shadow = Path(temporary) / "shadow"
+            shadow.mkdir()
+            (shadow / "git").write_text("#!/bin/sh\nexit 99\n")
+            (shadow / "git").chmod(0o755)
+            with mock.patch.dict(os.environ, {"PATH": f"{shadow}:{os.environ['PATH']}"}):
+                r09_b2_p4_v4_execution_preflight.validate_interpreter(interpreter, source)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -141,6 +141,8 @@ def verified_loader_argv(interpreter: Mapping[str, str], request_path: Path, req
     request = request_path.resolve()
     if not request.is_absolute() or not isinstance(request_sha256, str) or len(request_sha256) != 64:
         raise ProvenanceError("request binding is malformed")
+    if sha256_file(request) != request_sha256:
+        raise ProvenanceError("request bytes digest mismatch")
     if not git_executable.is_absolute() or git_executable.is_symlink() or git_executable.resolve(strict=True) != git_executable:
         raise ProvenanceError("host Git executable is malformed")
     verified_bootstrap_bytes(root, bootstrap_relative_path, bootstrap_sha256, git_executable=git_executable)
