@@ -1,6 +1,10 @@
 # 当前协作状态
 
-更新时间：2026-09-01
+更新时间：2026-09-02
+
+## 当前最小步骤（2026-09-02）
+
+- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（IN_PROGRESS）：P4 execution-request eight sections/full static admission 已由 root=`baf8581`、implementation=`8535a8c`、ChatGPT=`fd00550`、Kimi/MM 同 SHA关闭。既有 `r09_b2_p4_v4_execution_preflight.py` 只完成解析与 `hard-stop`，不得误作真实 preflight。当前只新建 `docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.1_2026-09-02.md`，冻结未来 CPU-only materialization tooling 的最小实现范围；不创建 request/run/candidate/staging，不执行 P4/P5/GPU/训练。完成文档校验后提交并申请三方 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
