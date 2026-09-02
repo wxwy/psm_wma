@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import stat
 from pathlib import Path
 
@@ -14,6 +15,10 @@ REQUEST_KEYS = {
     "schema_version", "entry", "source", "interpreter", "environment", "run", "candidates",
     "backends", "authorities", "execution_contract",
 }
+ENTRY_KEYS = {"tool_path", "root_revision", "git_blob_sha256", "current_sha256", "identity_sha256"}
+ENTRY_TOOL_PATH = "tools/g0/r09_b2_p4_v4_execution_preflight.py"
+_GIT_REVISION = re.compile(r"[0-9a-f]{40}\Z")
+_SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 _EXECUTION_CONTRACT_ITEMS = (
     ("network", False),
     ("gpu", False),
@@ -58,7 +63,31 @@ def load_execution_request(
         raise ValueError("execution request section differs")
     if value["execution_contract"] != dict(_execution_contract_items):
         raise ValueError("execution request contract differs")
+    validate_entry(value["entry"])
     return value
+
+
+def canonical_sha256(value: object) -> str:
+    return hashlib.sha256(
+        (json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode()
+    ).hexdigest()
+
+
+def validate_entry(value: object) -> None:
+    if not isinstance(value, dict) or set(value) != ENTRY_KEYS or not all(
+        isinstance(item, str) for item in value.values()
+    ):
+        raise ValueError("execution request entry schema differs")
+    if value["tool_path"] != ENTRY_TOOL_PATH:
+        raise ValueError("execution request entry path differs")
+    if _GIT_REVISION.fullmatch(value["root_revision"]) is None or any(
+        _SHA256.fullmatch(value[key]) is None
+        for key in ("git_blob_sha256", "current_sha256", "identity_sha256")
+    ):
+        raise ValueError("execution request entry digest differs")
+    identity = {key: item for key, item in value.items() if key != "identity_sha256"}
+    if value["identity_sha256"] != canonical_sha256(identity):
+        raise ValueError("execution request entry identity differs")
 
 
 def request_sha256(raw: bytes) -> str:
