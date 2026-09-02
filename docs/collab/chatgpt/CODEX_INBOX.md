@@ -4551,3 +4551,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 设计：冻结 exact `{effective_environment,native_loader_environment,identity_sha256}`，每个环境对象 exact `{set,unset,inherit_allowlist,sha256}`。P5 child 从空 parent map 构造；native set 固定为空、两个 allowlist 固定为空、forbidden tuple 必与 P5 逐项相等、`PYTHONPATH` 只可由后续 runtime_sys_path 表达。两 backend 只允许 P3-owned `PSM_R09_B1_TTT_ENABLED` 为 recurrent=`0`/TTT=`1` 的差异。
 - 计划验证（若获准实现）：stdlib CPU 正例及 identity/grammar/forbidden/allowlist/native/ambient parent/P3 difference/locale ordering 永久负例；每个 request mutation 重算 outer identity。无项目代码执行、无证据/目录副作用。
 - 允许范围若批准：仅 root parser/validator environment static tooling 与 CPU tests。禁止真实 P4 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 61949b13b16310193466de0a2d60d031bd5fa9a8；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-ENVIRONMENT` v0.2 设计整改。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 整改 v0.1 ChatGPT/MM HIGH：`d005_projection` 精确绑定 verified D005 pair 的 backend/self digest/input set SHA/excluded keys/projected set SHA；投影只删除 ordered `[IMAGINAIRE_OUTPUT_ROOT,PYTHONPATH]`，前者归未来 run section、后者归 runtime_sys_path，禁止任意非 forbidden key 伪造或泄漏。
+- 强制实现接口：environment validator 输入既有 D005 `verify_pair()` PASS pair；完整 request 后续必须以 named `authorities.d005_pair` 传入同一 pair，独立 authorities section 再绑定路径/bytes/source identity。CPU fixtures覆盖未验证/错误 D005、added/removed/changed key、excluded leak、P3 difference、ambient shadow。
+- 仅 root static tooling/CPU；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
