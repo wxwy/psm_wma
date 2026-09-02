@@ -997,3 +997,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新增 `docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_run_design_v0.1_2026-09-02.md`，只冻结 future run root 的 lexical identity、64-hex token/roster digest、source/submodule/trust-root non-overlap 与双 backend identity reuse 拒绝。复用 P5 v0.8/v0.9 已冻结 `p4_run={identity,run_token,roster_sha256}`，不预填 run/root/roster 运行事实；实际不存在性、mkdir、staging、candidate、roster/manifest/closure 均留给独立 execution Gate。
 - 未执行项目代码、preflight/staging/P5/GPU/训练。下一步：`git diff --check`，提交并按三方同 SHA 请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_RUN_STATIC_TOOLS`；提交：未提交。
+
+### R09-B2 P4-v4 execution request run v0.2（2026-09-02，IN_PROGRESS）
+
+- v0.1=`a51e412` 三方 final 已齐：ChatGPT review=`d50800d`、MM=`REQUEST_CHANGES`、Kimi 批准。新增 v0.2 仅整改 backend pair 表达、static-only 到 final immutable roster SHA 生命周期、named source authority/non-strict lexical canonicalization；未执行项目代码、preflight/staging/P5/GPU/训练。预计修改：v0.2 design、SESSION、TODO；验证：`git diff --check`；提交：未提交。
