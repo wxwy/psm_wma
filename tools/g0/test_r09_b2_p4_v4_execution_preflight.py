@@ -147,6 +147,28 @@ class EntryFoundationTest(unittest.TestCase):
         self.assertEqual(source_root, Path(request["source"]["root"]))
         self.assertIs(authorities, request["authorities"])
 
+    def test_full_route_calls_frozen_validator_order(self):
+        raw = self._request()
+        calls = []
+
+        def record(name, result=None):
+            def validator(*_args):
+                calls.append(name)
+                return result
+            return validator
+
+        git_path = Path("/usr/bin/git")
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_entry", side_effect=record("entry")), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_host_git", side_effect=record("host_git", git_path)), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_source", side_effect=record("source")), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_interpreter", side_effect=record("interpreter")), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_run_pair", side_effect=record("run")), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_candidates", side_effect=record("candidates")), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_backends", side_effect=record("backends")), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_authorities_pair", side_effect=record("authorities")):
+            r09_b2_p4_v4_execution_preflight.load_execution_request(raw)
+        self.assertEqual(calls, ["entry", "host_git", "source", "interpreter", "run", "candidates", "backends", "authorities"])
+
     def _write_request(self, raw):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
@@ -184,6 +206,90 @@ class EntryFoundationTest(unittest.TestCase):
             request.write_bytes(raw)
             with self.assertRaisesRegex(ValueError, "entry schema differs"):
                 main(["--request", str(request), "--request-sha256", hashlib.sha256(raw).hexdigest()])
+
+
+class FullAdmissionCompositionTest(unittest.TestCase):
+    """Composition fixture: real D005 authorities, no request or execution I/O."""
+
+    def _reidentity(self, value):
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+            {key: item for key, item in value.items() if key != "identity_sha256"}
+        )
+
+    def _request(self):
+        root, authority_request, git = AuthoritiesAuthorityTest()._request()
+        git_raw = r09_b2_p4_v4_execution_preflight._read_regular_nofollow(git, "git")
+        host_git = {"path": str(git), "elf_sha256": hashlib.sha256(git_raw).hexdigest(),
+                    "closure_sha256": r09_b2_p4_v4_execution_preflight._host_git_closure(git, git_raw)}
+        entry = EntryFoundationTest()._entry()
+        source = {"root": str(root), "root_revision": entry["root_revision"], "gitlink": "b" * 40,
+                  "entry_git_blob_sha256": entry["git_blob_sha256"], "entry_current_sha256": entry["current_sha256"]}
+        self._reidentity(source)
+        interpreter = {"host_git": host_git, "identity_sha256": "c" * 64}
+        run = RunAuthorityTest()._pair()
+        value = {"schema_version": "r09_b2_p4_v4_execution_request_v1", "entry": entry,
+                 "source": source, "interpreter": interpreter, "environment": authority_request["environment"],
+                 "authorities": AuthoritiesAuthorityTest()._authorities(), "run": run,
+                 "candidates": CandidatesAuthorityTest()._value(run), "backends": BackendsAuthorityTest()._value(),
+                 "execution_contract": {"network": False, "gpu": False, "torch": False,
+                                        "model_data_checkpoint_io": False, "one_shot": True,
+                                        "cleanup_retry_repair": False}}
+        return value, git
+
+    def _load(self, value, git):
+        expected_root = value["source"]["root"]
+        def source_spy(source, _entry, received_git):
+            if source["root"] != expected_root or received_git != git:
+                raise ValueError("composition source differs")
+        def interpreter_spy(interpreter, _source, received_git):
+            if interpreter["identity_sha256"] != "c" * 64 or received_git != git:
+                raise ValueError("composition interpreter differs")
+        raw = (json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode()
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_source", side_effect=source_spy), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_interpreter", side_effect=interpreter_spy):
+            return r09_b2_p4_v4_execution_preflight.load_execution_request(raw)
+
+    def test_full_route_executes_authorities_and_rejects_reidentified_sections(self):
+        value, git = self._request()
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_authorities_pair", wraps=r09_b2_p4_v4_execution_preflight.validate_authorities_pair) as authorities, \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_environment_pair", side_effect=AssertionError("legacy route")), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", side_effect=AssertionError("legacy route")):
+            self._load(value, git)
+        self.assertEqual(authorities.call_count, 1)
+        self.assertEqual(authorities.call_args.args[0], value["authorities"])
+        self.assertEqual(authorities.call_args.args[2], Path(value["source"]["root"]))
+        self.assertEqual(authorities.call_args.args[3], git)
+
+        def entry_mutation(item):
+            item["entry"]["tool_path"] = "other.py"; self._reidentity(item["entry"])
+        def source_mutation(item):
+            item["source"]["root"] = "/wrong"; self._reidentity(item["source"])
+        def interpreter_mutation(item):
+            item["interpreter"]["identity_sha256"] = "0" * 64
+        def environment_mutation(item):
+            section = item["environment"]["recurrent"]
+            section["effective_environment"]["set"]["HF_HUB_OFFLINE"] = "0"
+            effective = section["effective_environment"]
+            effective["sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: entry for key, entry in effective.items() if key != "sha256"})
+            self._reidentity(section)
+        def authorities_mutation(item):
+            item["authorities"]["d005_pair"]["recurrent"]["sha256"] = "0" * 64
+            AuthoritiesAuthorityTest()._reidentity(item["authorities"])
+        def candidates_mutation(item):
+            CandidatesAuthorityTest()._set_attempt(item["candidates"], "g" * 64)
+        def backends_mutation(item):
+            item["backends"]["recurrent"]["p3_contract"]["artifact_sha256"] = "0" * 64
+            BackendsAuthorityTest()._reidentity(item["backends"])
+        cases = (("entry", entry_mutation), ("source", source_mutation),
+                 ("interpreter", interpreter_mutation), ("environment", environment_mutation),
+                 ("authorities", authorities_mutation),
+                 ("run", lambda item: item["run"]["recurrent"].__setitem__("run_token", "g" * 64)),
+                 ("candidates", candidates_mutation), ("backends", backends_mutation))
+        for name, mutate in cases:
+            with self.subTest(section=name):
+                candidate = json.loads(json.dumps(value)); mutate(candidate)
+                with self.assertRaises(ValueError):
+                    self._load(candidate, git)
 
 
 class RunAuthorityTest(unittest.TestCase):
