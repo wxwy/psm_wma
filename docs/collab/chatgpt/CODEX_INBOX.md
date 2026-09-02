@@ -4628,3 +4628,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 ### Awaiting review — 🚨 审核申请已发出（根仓 71298606989270640f9338c612ff3559882a7c9c；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES` fixture-matrix closure。请求 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。整改 ChatGPT=`bdf5574`：补 host-Git exact argv/PATH/ambient isolation、pair/source/verifier/binding identity、environment native/P3/missing authority 等 frozen CPU matrix。P4 CPU=41/41、py_compile/diff-check PASS；仅 root static CPU，禁止真实 preflight/staging/P5/GPU/训练。
+### Awaiting review — 🚨 审核申请已发出（根仓 3e6de3b0f1a5fdfa071b5356e1174fdf6ec8afc9；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES` fixture-matrix final remediation。请求仅针对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root implementation=`3e6de3b0f1a5fdfa071b5356e1174fdf6ec8afc9`；上一轮 ChatGPT review=`93725da`；approved design=`54830a20cab3e2d9995781faf1244684c6bd02d0`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 整改严格限于 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py` 的 stdlib CPU fixtures，未改 validator：actual FIFO non-regular 且无挂起、lexical `os.open` 恰一次、decoded 相同但 non-canonical record raw 拒绝、decoded 相同但 verification pretty-byte SHA drift 拒绝、verification top/checks/matched/backend 的 added/missing/false/non-bool 余下分支全部拒绝。
+- 证据：`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=45/45 PASS；`git diff --check` PASS。
+- 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
