@@ -19,6 +19,50 @@ from tools.g0.export_r09_b2_p5_resolved_config import PYTHON_CHILD_LOCALE, p5_ef
 from tools.g0.r09_b2_p4_v4_execution_preflight import main
 
 
+class MaterializationReservationTest(unittest.TestCase):
+    def _admitted(self, namespace: Path):
+        run = {}
+        for backend, token in (("recurrent", "a" * 64), ("ttt_fast_weight", "b" * 64)):
+            root = namespace / backend
+            identity = {"root": str(root), "resolved_root": str(root), "kind": "run_root"}
+            identity["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(identity)
+            run[backend] = {"identity": identity, "run_token": token, "roster_sha256": "c" * 64}
+        raw = (json.dumps({"run": run}, sort_keys=True, separators=(",", ":")) + "\n").encode()
+        return r09_b2_p4_v4_execution_preflight._AdmittedRequest(
+            raw, hashlib.sha256(raw).hexdigest(), r09_b2_p4_v4_execution_preflight._ADMISSION_SEAL,
+        )
+
+    def test_reservation_creates_exact_ordered_six_path_footprint_once(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            namespace = Path(temporary); admitted = self._admitted(namespace)
+            result = r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+            self.assertEqual(result.status, "RESERVED")
+            self.assertEqual([path.relative_to(namespace).as_posix() for path in result.created_paths], [
+                "recurrent", "recurrent/import_staging", "recurrent/import_staging/" + "a" * 64,
+                "ttt_fast_weight", "ttt_fast_weight/import_staging", "ttt_fast_weight/import_staging/" + "b" * 64,
+            ])
+            with self.assertRaisesRegex(ValueError, "consumed"):
+                r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+
+    def test_mkdir_and_stat_failure_preserve_distinct_poison_prefixes(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            namespace = Path(temporary); admitted = self._admitted(namespace)
+            with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "mkdir", side_effect=OSError("mkdir")):
+                with self.assertRaises(r09_b2_p4_v4_execution_preflight.ReservationPoisonedError) as failure:
+                    r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+            self.assertEqual(failure.exception.created_paths, ())
+        with tempfile.TemporaryDirectory() as temporary:
+            namespace = Path(temporary); admitted = self._admitted(namespace)
+            real_lstat = os.lstat
+            def fail_after_mkdir(path):
+                if Path(path) == namespace / "recurrent" and (namespace / "recurrent").exists(): raise OSError("stat")
+                return real_lstat(path)
+            with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "lstat", side_effect=fail_after_mkdir):
+                with self.assertRaises(r09_b2_p4_v4_execution_preflight.ReservationPoisonedError) as failure:
+                    r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+            self.assertEqual(len(failure.exception.created_paths), 1)
+
+
 class EntryFoundationTest(unittest.TestCase):
     def setUp(self):
         self._source_validation = mock.patch.object(

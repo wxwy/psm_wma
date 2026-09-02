@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import hashlib
 import json
 import os
@@ -101,6 +102,28 @@ _EXECUTION_CONTRACT_ITEMS = (
     ("one_shot", True),
     ("cleanup_retry_repair", False),
 )
+_BACKEND_ORDER = ("recurrent", "ttt_fast_weight")
+_ADMISSION_SEAL = object()
+
+
+@dataclass(slots=True)
+class _AdmittedRequest:
+    raw: bytes
+    request_sha256: str
+    _seal: object
+    _consumed: bool = False
+
+
+@dataclass(frozen=True, slots=True)
+class ReservationResult:
+    status: str
+    created_paths: tuple[Path, ...]
+
+
+class ReservationPoisonedError(RuntimeError):
+    def __init__(self, created_paths: tuple[Path, ...], failed_path: Path, cause: OSError):
+        super().__init__(f"P4-v4 reservation poisoned at {failed_path}")
+        self.created_paths, self.failed_path, self.cause = created_paths, failed_path, cause
 
 
 def _read_regular_nofollow(path: Path, error: str) -> bytes:
@@ -689,6 +712,68 @@ def request_sha256(raw: bytes) -> str:
     if not isinstance(raw, bytes):
         raise ValueError("execution request must be a regular file")
     return hashlib.sha256(raw).hexdigest()
+
+
+def _admit_execution_request(raw: bytes) -> _AdmittedRequest:
+    """Create the sole in-memory capability for the static reservation helper."""
+    load_execution_request(raw)
+    return _AdmittedRequest(raw, request_sha256(raw), _ADMISSION_SEAL)
+
+
+def _reservation_plan(admitted: _AdmittedRequest, namespace: Path) -> tuple[Path, ...]:
+    if not isinstance(admitted, _AdmittedRequest) or admitted._seal is not _ADMISSION_SEAL:
+        raise ValueError("P4-v4 reservation requires an admitted request")
+    if admitted._consumed:
+        raise ValueError("P4-v4 reservation capability is consumed")
+    admitted._consumed = True
+    if request_sha256(admitted.raw) != admitted.request_sha256:
+        raise ValueError("P4-v4 admitted request SHA differs")
+    try:
+        request = json.loads(admitted.raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("P4-v4 admitted request bytes differ") from exc
+    if canonical_sha256(request) != hashlib.sha256(admitted.raw).hexdigest() or not isinstance(request, dict):
+        raise ValueError("P4-v4 admitted request bytes differ")
+    if namespace.is_symlink() or not namespace.is_dir() or namespace.resolve(strict=True) != namespace:
+        raise ValueError("P4-v4 reservation namespace differs")
+    paths: list[Path] = []
+    for backend in _BACKEND_ORDER:
+        try:
+            run = request["run"][backend]
+            root = Path(run["identity"]["root"])
+            token = run["run_token"]
+        except (KeyError, TypeError) as exc:
+            raise ValueError("P4-v4 admitted run differs") from exc
+        if root.parent != namespace or not isinstance(token, str):
+            raise ValueError("P4-v4 reservation root differs")
+        paths.extend((root, root / "import_staging", root / "import_staging" / token))
+    if len(set(paths)) != len(paths):
+        raise ValueError("P4-v4 reservation overlap differs")
+    for index, path in enumerate(paths):
+        if path.exists() or path.is_symlink():
+            raise ValueError("P4-v4 reservation path already exists")
+        expected_parent = namespace if index % 3 == 0 else paths[index - 1]
+        if path.parent != expected_parent:
+            raise ValueError("P4-v4 reservation path differs")
+    return tuple(paths)
+
+
+def _reserve_staging(admitted: _AdmittedRequest, namespace: Path) -> ReservationResult:
+    paths = _reservation_plan(admitted, namespace)
+    created: list[Path] = []
+    for path in paths:
+        try:
+            os.mkdir(path)
+        except OSError as exc:
+            raise ReservationPoisonedError(tuple(created), path, exc) from exc
+        created.append(path)
+        try:
+            mode = os.lstat(path).st_mode
+            if not stat.S_ISDIR(mode) or stat.S_ISLNK(mode):
+                raise OSError("reservation target is not a directory")
+        except OSError as exc:
+            raise ReservationPoisonedError(tuple(created), path, exc) from exc
+    return ReservationResult("RESERVED", tuple(created))
 
 
 def main(argv: list[str] | None = None) -> int:
