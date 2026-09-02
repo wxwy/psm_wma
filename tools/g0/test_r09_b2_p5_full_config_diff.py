@@ -50,7 +50,7 @@ class P5Test(unittest.TestCase):
         (source / "tools/g0/export_r09_b2_p5_resolved_config.py").write_text("bootstrap = True\n")
         subprocess.run(["git", "-C", str(source), "add", "recipe.toml", "p4_producer.py", "p4_verifier.py", "tools/g0/export_r09_b2_p5_resolved_config.py", "cosmos-framework"], check=True)
         subprocess.run(["git", "-C", str(source), "commit", "-qm", "fixture"], check=True)
-        run = root / "run"; run.mkdir(); token = "token"
+        run = root / "run"; run.mkdir(); token = "a" * 64
         staging = run / "import_staging" / token; staging.mkdir(parents=True)
         payload = staging / "payload.py"; payload.write_text("x = 1\n"); payload.chmod(0o444)
         preflight = run / "preflight.json"; preflight.write_text("{}\n"); preflight.chmod(0o444)

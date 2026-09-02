@@ -4350,3 +4350,10 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 新增 `r09_b2_p4_v4_static_contract.py`：PASS candidate 精确文件集、canonical payload SHA/link、link directory/backend/token binding、candidate-only request key reject、FAIL exact grammar；pair 仅接受 recurrent+TTT 全集。无 CLI、无 materialize/copy/staging/preflight/record/refreeze 实现。
 - 证据：`python -m py_compile tools/g0/r09_b2_p4_v4_static_contract.py tools/g0/test_r09_b2_p4_v4_static_contract.py` PASS；`python -B -m unittest tools.g0.test_r09_b2_p4_v4_static_contract -v` 2/2 PASS；`git diff --check` PASS。临时文件夹测试覆盖字节 drift、candidate-only top key、FAIL grammar 和缺失 backend fail-closed。
 - 范围：仅 root static tooling+stdlib CPU tests；禁止真实 preflight/staging/candidate/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T/Local Memory 训练。
+### Awaiting review — 🚨 审核申请已发出（根仓 179f0f5445ddbf2c65419145b7ed8d27b44c6d4d；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-PREFLIGHT` v0.4 static tooling closure。请对 root implementation `179f0f5` 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 已修复：复用 P5 final verifier grammar；双 backend shared source/default/interpreter invariant；FAIL request/token/run_root/failure schema 与永久 poison；恢复 CPU 回归。
+- 证据：P4/P5 unittest 6/6 PASS，py_compile、git diff --check PASS。
+- 允许范围：仅 root static tooling + CPU 标准库测试。禁止真实 preflight/staging/candidate/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T、Local Memory 训练。
