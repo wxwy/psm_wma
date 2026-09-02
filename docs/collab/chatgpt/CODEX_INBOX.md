@@ -4383,3 +4383,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 允许范围若批准：仅一次 CPU-only、copy-only 双 backend candidate preflight，精确命令与 request SHA 在获批后的 execution request 冻结。
 - 禁止范围：record/refreeze、evidence publication、P5 authority 更新、P5 export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理/B2-T。
 - 验收：双 backend P5-valid candidate 或 fail-closed 无发布；不写 Git、不复用旧 run/candidate/staging root。验证：`git diff --check` PASS。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 add23d4dbd053e42cf1bdd113d6737b9454d3f0e；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` static entry foundation。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 file:line）。
+
+- 新增 root-only stdlib entry `tools/g0/r09_b2_p4_v4_execution_preflight.py`：要求 regular request 与 SHA256 精确匹配，然后无条件 hard-stop；不创建目录、不 materialize、不写 candidate、不触碰 GPU/torch/训练。
+- CPU test 证明匹配 SHA 后仍 hard-stop、错误 SHA fail-closed；`py_compile`、`git diff --check` PASS。
+- 允许范围若批准仅静态 execution-request parser/validator tooling + CPU tests；禁止真实 preflight/staging/candidate/record/refreeze/P5 export/compose/GPU/训练。
