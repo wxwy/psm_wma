@@ -4315,3 +4315,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 整改 GPT 对 v1.0 的 HIGH：不再以 evidence root 自身的当前 `HEAD`/三个文件互相授权。未来 P5 verifier 仅接受一个在独立 record/refreeze closure 后、经审查写入新 verifier revision 的 `AUTHORIZED_P4_V4_EVIDENCE`：精确 evidence commit、tree SHA256、Gitlink、及 request/result/verification 的固定 Git-blob SHA256。
 - acceptance 是 exact-commit-only（不接受 descendant）：full-clean、`HEAD==authorized_commit`、`git ls-tree HEAD cosmos-framework==authorized_gitlink==submodule HEAD`，且三固定 tracked regular file 的 `git show authorized_commit:<path>`、current bytes、canonical bytes SHA 都等于 frozen blob SHA。共同替换并提交新 clean HEAD、错误 clean submodule、任何 descendant、untracked/symlink/blob drift 均必须 FAIL；永久 CPU Git fixtures 覆盖负例。
 - 范围：若批准，仅实现 root P5 verifier tooling 与 stdlib CPU tests；固定授权常量只能在未来独立 P4 record/refreeze closure 后的 reviewed verifier revision 写入。禁止 runtime、真实 staging、P4 record/refreeze、P5 export/compose、torchrun、GPU、模型/数据/checkpoint、训练/评测/推理、B2-T 和 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 3e3a853c61dd32888932041e6afbfac466818e09；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P5-EVIDENCE-GIT-AUTHORITY` v1.1 静态实现 closure。请求 `APPROVE_TO_CLOSE_P5_EVIDENCE_GIT_AUTHORITY_STATIC` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root implementation=`3e3a853c61dd32888932041e6afbfac466818e09`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；已批准设计=`docs/build/PSM-WMA_R09_B2_P5_evidence_git_authority_design_v1.1_2026-09-02.md`（`e0e9f89`）。
+- 实现：`verify_r09_b2_p5_full_config_diff.py` 新增 verifier-owned `AUTHORIZED_P4_V4_EVIDENCE`；未冻结时 fail-closed。冻结后只接受 full-clean exact evidence commit（descendant 拒绝）、冻结 tree SHA256、root Gitlink 与 submodule HEAD 三方相等，及两 backend 固定 request/result/verification Git blob/current bytes SHA。每个固定文件必须是 tracked regular file；不信任 request 自身或当前 HEAD 作为授权。
+- CPU-only 证据：`python -m py_compile tools/g0/verify_r09_b2_p5_full_config_diff.py tools/g0/test_r09_b2_p5_full_config_diff.py` PASS；`python -B -m unittest tools.g0.test_r09_b2_p5_full_config_diff -v` 4/4 PASS；`git diff --check` PASS。临时 Git fixtures覆盖共同替换后 clean descendant、普通 descendant、Gitlink drift、blob drift、symlink 与 untracked fail-closed。
+- 允许范围：本申请仅 root P5 verifier tooling 与 stdlib CPU tests；禁止 runtime、真实 staging、P4 record/refreeze/preflight、P5 export/compose、torchrun、GPU、模型/数据/checkpoint、训练/评测/推理、B2-T 和 Local Memory 训练。
