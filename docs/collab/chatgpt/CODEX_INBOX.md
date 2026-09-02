@@ -4370,3 +4370,7 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 ### Awaiting review — 🚨 审核申请已发出（根仓 a77a6ca；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 整改完成：新增复用真实 P5 `_v4_preflight` fixture 的双 backend 正向 admission 测试；P4/P5 CPU 测试、编译、diff-check 全部通过。请对该 SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 file:line）。范围仅静态工具与 CPU 测试，禁止真实执行及训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 5e4d56a；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+整改 ChatGPT/MM 意见：full P5-valid pair 现通过真实 `stage_atomic_publication()`，移除 `_path_identity` mock；完整 P4/P5 CPU 套件 14/14 PASS。请对该 SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 file:line）。仍禁止真实 preflight/staging/export/compose/GPU/训练。
