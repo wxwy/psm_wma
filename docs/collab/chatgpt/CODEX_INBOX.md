@@ -4648,3 +4648,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 
 - v0.2 修复 ChatGPT=`d50800d`、MM 的意见：`run` 显式为 recurrent/ttt backend pair，保留每侧 frozen P5 inner `{identity,run_token,roster_sha256}`；static request 明确不可执行，后续 full-request Gate 决定性计算 immutable final roster SHA；路径仅基于已验证 source root/submodule，`normpath` 与既有祖先 symlink 规则明确，候选/staging/evidence/exporter roots 延后至各自 Gate。
 - 仅 design/docs，未执行项目代码；允许范围若批准仅 root parser/validator static tooling 与 stdlib CPU fixtures。禁止真实 preflight、staging/candidate、P5 export/compose、GPU、模型/数据/checkpoint、训练/评测/推理。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 c86b0b522f129f5ea5449882e7095a803aa1409d；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-RUN` v0.2 static implementation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_RUN_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root implementation=`c86b0b522f129f5ea5449882e7095a803aa1409d`，approved design=`3609ae9a9c24e2565cb3c31d74a20a03490c21ad`，ChatGPT design review=`e23722d`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 实现范围仅 `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py`：`run` exact `{recurrent,ttt_fast_weight}`，每侧 exact P5 inner `{identity,run_token,roster_sha256}`；future root 要求 absolute/normpath/no-dot/no-repeated-separator/no-existing-ancestor-symlink，identity canonical SHA、kind=`run_root`、64-lowercase-hex token/roster、pair reuse 和 source/submodule lexical overlap 均 fail-closed。入口仍无条件 hard-stop，未创建路径。
+- CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=48/48 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。fixture 覆盖 exact pair、identity/kind/digest/reuse、relative/dot/dotdot/repeated separator/double slash、source/submodule/ancestor overlap、existing ancestor symlink 与不创建 future root。
+- 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 P4 preflight、run-root/staging/materialize/candidate、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
