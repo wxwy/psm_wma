@@ -4434,3 +4434,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 实现：`entry` 精确 key/path、40 lowercase-hex root revision、三项 64 lowercase-hex SHA 与删除自身字段的 canonical identity SHA。此 step 仅 grammar/identity；source-owned revision/Gitlink/Git blob/current-byte authority 未实现，入口仍无条件 hard-stop。
 - CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v` 6/6 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。负例覆盖 identity/path、64/39/41/uppercase/non-hex revision、extra key，既有 one-fd/SHA==parsed raw/immutable contract 继续覆盖。
 - 范围仅 root static parser/validator + stdlib CPU tests；禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T、Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 3ca7dc6b522f60fd4b654cf737002e5ed5bad899；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` source v0.1 static contract design。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_SOURCE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root design=`3ca7dc6b522f60fd4b654cf737002e5ed5bad899`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_source_design_v0.1_2026-09-02.md`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；前置 entry=`ad2bfcc` 已三方 closure。
+- source 仅在 future static validator 中独立绑定 canonical root、精确可解析 revision、root Gitlink=submodule HEAD、tracked regular entry 的 Git blob/current bytes SHA 相等，并与 entry 的 revision/blob/current 三项 cross-bind；拒绝 descendant、dirty/untracked、symlink、Gitlink/blob/current drift。
+- 若批准，仅 root parser/validator + stdlib CPU Git fixtures（正例、descendant、dirty/untracked、Gitlink/submodule、blob/current、cross-binding、symlink 负例）。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T、Local Memory 训练。
