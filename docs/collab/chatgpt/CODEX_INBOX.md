@@ -4302,3 +4302,7 @@ P5 v0.9 implementation 高优先级整改。请求 `APPROVE_TO_CLOSE_P5_V09_STAT
 ### Awaiting review — 🚨 审核申请已发出（根仓 b29edb2ef9ded7577be0d80d07ff285d9da99088；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 P4-v4 preflight v0.2 设计整改。请求 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。文档 `docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_design_v0.2_2026-09-02.md` 解决 GPT v0.1 review：P5 full-clean Git evidence/blob-current binding 前置、candidate→独立 record/refreeze→committed evidence 两阶段、fresh verifier token/one-shot failure poison/no retry、上游 SHA pin。仅设计/未来 root CPU tooling；禁止所有实际 staging/refreeze/export/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 25c93f8234faef81938abfd18c6658cad6a050fb；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_EVIDENCE_GIT_AUTHORITY_STATIC` 或 `REQUEST_CHANGES`（附 `file:line`）。文档 `docs/build/PSM-WMA_R09_B2_P5_evidence_git_authority_design_v1.0_2026-09-02.md` 要求 P5 固定 P4-v4 files 从 full-clean Git evidence root discovered，并逐文件 `git show HEAD` bytes=current bytes；仅 root verifier/tests CPU。禁止所有 runtime、staging、refreeze、export、GPU、训练。
