@@ -60,6 +60,15 @@ class MaterializationReservationTest(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "already exists"):
                     r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
 
+    def test_symlink_namespace_rejects_before_any_mkdir(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary); target = root / "target"; target.mkdir(); namespace = root / "namespace"
+            namespace.symlink_to(target, target_is_directory=True)
+            admitted = self._admitted(namespace)
+            with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "mkdir", side_effect=AssertionError("mutation")):
+                with self.assertRaisesRegex(ValueError, "namespace differs"):
+                    r09_b2_p4_v4_execution_preflight._reserve_staging(admitted, namespace)
+
     def test_mkdir_and_stat_failure_preserve_distinct_poison_prefixes(self):
         with tempfile.TemporaryDirectory() as temporary:
             namespace = Path(temporary); admitted = self._admitted(namespace)

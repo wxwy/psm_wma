@@ -801,7 +801,10 @@ def _open_created_directory(name: str, parent_fd: int) -> int:
 
 def _reserve_staging(admitted: _AdmittedRequest, namespace: Path) -> ReservationResult:
     paths = _reservation_plan(admitted, namespace)
-    namespace_fd = _open_namespace_anchor(namespace)
+    try:
+        namespace_fd = _open_namespace_anchor(namespace)
+    except OSError as exc:
+        raise ValueError("P4-v4 reservation namespace differs") from exc
     created: list[Path] = []
     try:
         for backend_index, backend in enumerate(_BACKEND_ORDER):
