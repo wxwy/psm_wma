@@ -45,6 +45,9 @@ D005_PROJECTION_KEYS = {"backend", "d005_sha256", "input_set_sha256", "excluded_
 D005_EXCLUDED_ENVIRONMENT_KEYS = ["IMAGINAIRE_OUTPUT_ROOT", "PYTHONPATH"]
 AUTHORITIES_KEYS = {"d005_pair", "identity_sha256"}
 AUTHORITIES_PAIR_KEYS = {"model", "recurrent", "ttt_fast_weight", "verification", "historical_source", "historical_verifier", "identity_sha256"}
+RUN_KEYS = {"recurrent", "ttt_fast_weight"}
+RUN_ITEM_KEYS = {"identity", "run_token", "roster_sha256"}
+RUN_IDENTITY_KEYS = {"root", "resolved_root", "kind", "identity_sha256"}
 _HISTORICAL_REVISION = "ddb4e0eae97fb545d5239c1ddb6d4387170f3780"
 _HISTORICAL_GITLINK = "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb"
 _HISTORICAL_ARTIFACTS = {
@@ -133,6 +136,7 @@ def load_execution_request(
     git_path = validate_host_git(interpreter.get("host_git"))
     validate_source(value["source"], value["entry"], git_path)
     validate_interpreter(interpreter, value["source"], git_path)
+    validate_run_pair(value["run"], value["source"])
     return value
 
 
@@ -461,6 +465,64 @@ def validate_environment_pair(value: object, recurrent: dict[str, object], ttt: 
     if verify_d005_pair(recurrent, ttt, root).get("status") != "PASS":
         raise ValueError("execution request D005 pair is not verified")
     _validate_environment_sections(value, {"recurrent": recurrent, "ttt_fast_weight": ttt})
+
+
+def _future_lexical_path(value: object, name: str) -> Path:
+    if not isinstance(value, str) or not value or not os.path.isabs(value) or value.startswith("//"):
+        raise ValueError(f"execution request {name} path differs")
+    path = Path(value)
+    if os.path.normpath(value) != value or any(part in {".", ".."} for part in path.parts):
+        raise ValueError(f"execution request {name} path differs")
+    current = Path(path.anchor)
+    for part in path.parts[1:]:
+        current /= part
+        try:
+            mode = os.lstat(current).st_mode
+        except FileNotFoundError:
+            break
+        except OSError as exc:
+            raise ValueError(f"execution request {name} path differs") from exc
+        if stat.S_ISLNK(mode):
+            raise ValueError(f"execution request {name} path differs")
+    return path
+
+
+def _lexically_overlaps(left: Path, right: Path) -> bool:
+    return left == right or left in right.parents or right in left.parents
+
+
+def _validate_run_item(value: object, source_root: Path, backend: str) -> dict[str, object]:
+    if not isinstance(value, dict) or set(value) != RUN_ITEM_KEYS:
+        raise ValueError("execution request run item schema differs")
+    identity = value.get("identity")
+    if not isinstance(identity, dict) or set(identity) != RUN_IDENTITY_KEYS:
+        raise ValueError("execution request run identity schema differs")
+    if identity.get("kind") != "run_root" or not isinstance(identity.get("identity_sha256"), str):
+        raise ValueError("execution request run identity differs")
+    root = _future_lexical_path(identity.get("root"), f"run {backend}")
+    resolved_root = _future_lexical_path(identity.get("resolved_root"), f"run {backend}")
+    if root != resolved_root or identity["identity_sha256"] != canonical_sha256(
+        {key: item for key, item in identity.items() if key != "identity_sha256"}
+    ):
+        raise ValueError("execution request run identity differs")
+    if any(_SHA256.fullmatch(value.get(key, "")) is None for key in ("run_token", "roster_sha256")):
+        raise ValueError("execution request run digest differs")
+    if _lexically_overlaps(root, source_root) or _lexically_overlaps(root, source_root / "cosmos-framework"):
+        raise ValueError("execution request run source overlap differs")
+    return value
+
+
+def validate_run_pair(value: object, source: object) -> None:
+    """Validate only the non-executable future run-root pair contract."""
+    if not isinstance(value, dict) or set(value) != RUN_KEYS or not isinstance(source, dict):
+        raise ValueError("execution request run pair schema differs")
+    source_root = _future_lexical_path(source.get("root"), "source")
+    recurrent = _validate_run_item(value["recurrent"], source_root, "recurrent")
+    ttt = _validate_run_item(value["ttt_fast_weight"], source_root, "ttt_fast_weight")
+    if any(recurrent[key] == ttt[key] for key in RUN_ITEM_KEYS):
+        raise ValueError("execution request run pair reuse differs")
+
+
 def validate_host_git(value: object) -> Path:
     if not isinstance(value, dict) or set(value) != HOST_GIT_KEYS or not all(isinstance(value[key], str) for key in HOST_GIT_KEYS):
         raise ValueError("execution request host Git schema differs")

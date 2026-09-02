@@ -46,10 +46,22 @@ class EntryFoundationTest(unittest.TestCase):
         entry["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(entry)
         return entry
 
+    def _run_item(self, backend: str) -> dict[str, object]:
+        root = f"/future/{backend}"
+        identity = {"root": root, "resolved_root": root, "kind": "run_root"}
+        identity["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(identity)
+        return {"identity": identity, "run_token": ("a" if backend == "recurrent" else "b") * 64,
+                "roster_sha256": ("c" if backend == "recurrent" else "d") * 64}
+
+    def _run(self) -> dict[str, object]:
+        return {backend: self._run_item(backend) for backend in ("recurrent", "ttt_fast_weight")}
+
     def _request(self) -> bytes:
         return (json.dumps({"schema_version": "r09_b2_p4_v4_execution_request_v1",
                             "entry": self._entry(),
-                            **{key: {} for key in ("source", "interpreter", "environment", "run", "candidates", "backends", "authorities")},
+                            **{key: {} for key in ("interpreter", "environment", "candidates", "backends", "authorities")},
+                            "source": {"root": "/source"},
+                            "run": self._run(),
                             "execution_contract": {"network": False, "gpu": False, "torch": False,
                                                    "model_data_checkpoint_io": False, "one_shot": True,
                                                    "cleanup_retry_repair": False}},
@@ -125,6 +137,77 @@ class EntryFoundationTest(unittest.TestCase):
             request.write_bytes(raw)
             with self.assertRaisesRegex(ValueError, "entry schema differs"):
                 main(["--request", str(request), "--request-sha256", hashlib.sha256(raw).hexdigest()])
+
+
+class RunAuthorityTest(unittest.TestCase):
+    def _item(self, root: str, token: str, roster: str) -> dict[str, object]:
+        identity = {"root": root, "resolved_root": root, "kind": "run_root"}
+        identity["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(identity)
+        return {"identity": identity, "run_token": token * 64, "roster_sha256": roster * 64}
+
+    def _pair(self) -> dict[str, object]:
+        return {"recurrent": self._item("/future/recurrent", "a", "b"),
+                "ttt_fast_weight": self._item("/future/ttt", "c", "d")}
+
+    def test_run_accepts_exact_future_pair_without_creating_roots(self):
+        value = self._pair()
+        r09_b2_p4_v4_execution_preflight.validate_run_pair(value, {"root": "/source"})
+        self.assertFalse(Path("/future/recurrent").exists())
+        self.assertFalse(Path("/future/ttt").exists())
+
+    def test_run_rejects_schema_identity_digest_and_pair_reuse(self):
+        mutations = (
+            ("third backend", lambda value: value.__setitem__("extra", {}), "pair schema"),
+            ("extra item key", lambda value: value["recurrent"].__setitem__("extra", "x"), "item schema"),
+            ("wrong kind", lambda value: value["recurrent"]["identity"].__setitem__("kind", "staging"), "identity differs"),
+            ("identity drift", lambda value: value["recurrent"]["identity"].__setitem__("identity_sha256", "0" * 64), "identity differs"),
+            ("resolved root differs", lambda value: value["recurrent"]["identity"].__setitem__("resolved_root", "/future/other"), "identity differs"),
+            ("token grammar", lambda value: value["recurrent"].__setitem__("run_token", "A" * 64), "digest differs"),
+            ("roster reuse", lambda value: value["ttt_fast_weight"].__setitem__("roster_sha256", value["recurrent"]["roster_sha256"]), "pair reuse"),
+            ("token reuse", lambda value: value["ttt_fast_weight"].__setitem__("run_token", value["recurrent"]["run_token"]), "pair reuse"),
+            ("identity reuse", lambda value: value["ttt_fast_weight"].__setitem__("identity", value["recurrent"]["identity"]), "pair reuse"),
+        )
+        for name, mutate, error in mutations:
+            with self.subTest(name=name):
+                value = self._pair()
+                mutate(value)
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_run_pair(value, {"root": "/source"})
+
+    def test_run_rejects_nonlexical_paths_symlink_ancestors_and_source_overlap(self):
+        cases = (
+            ("relative", "future/recurrent", "path differs"),
+            ("dot", "/future/./recurrent", "path differs"),
+            ("parent", "/future/../recurrent", "path differs"),
+            ("repeated separator", "/future//recurrent", "path differs"),
+            ("double leading separator", "//future/recurrent", "path differs"),
+            ("source overlap", "/source/future", "source overlap"),
+            ("submodule overlap", "/source/cosmos-framework/future", "source overlap"),
+            ("source ancestor overlap", "/", "source overlap"),
+        )
+        for name, root, error in cases:
+            with self.subTest(name=name):
+                value = self._pair()
+                value["recurrent"]["identity"]["root"] = root
+                value["recurrent"]["identity"]["resolved_root"] = root
+                identity = value["recurrent"]["identity"]
+                identity["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                    {key: item for key, item in identity.items() if key != "identity_sha256"}
+                )
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_run_pair(value, {"root": "/source"})
+        with tempfile.TemporaryDirectory() as temporary:
+            source = Path(temporary) / "source"; source.mkdir()
+            linked = Path(temporary) / "linked"; linked.symlink_to(source, target_is_directory=True)
+            value = self._pair()
+            root = str(linked / "future")
+            value["recurrent"]["identity"].update({"root": root, "resolved_root": root})
+            identity = value["recurrent"]["identity"]
+            identity["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: item for key, item in identity.items() if key != "identity_sha256"}
+            )
+            with self.assertRaisesRegex(ValueError, "path differs"):
+                r09_b2_p4_v4_execution_preflight.validate_run_pair(value, {"root": str(source)})
 
 
 class SourceAuthorityTest(unittest.TestCase):
