@@ -5,7 +5,7 @@
 ## 当前最小步骤（2026-09-02）
 
 - `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（DONE）：hidden-authority remediation=`bda9737` 获 ChatGPT review=`6910a72`、Kimi=`2026-09-02 21:04:12 CST`、MM=`2026-09-02 21:05:23 CST` 同 SHA `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`。closure-local `WeakKeyDictionary` 保存唯一 admission raw/SHA/one-shot state，visible fields 不能 forge/reset authority；B2 双 backend precheck 与 B3 full-admission/race/forbidden/CLI/12-fault fixture保持。P4 CPU=76/76、materialization=13/13、`py_compile`、`git diff --check` PASS。未创建或执行真实 request/preflight/materialize/staging/candidate/P5/GPU/训练；下一步仅可另起 exact frozen execution-request / execution design Gate；提交：未提交。
-- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（REVIEW）：implementation=`efe0056` 收到 ChatGPT=`256192e`、Kimi `REQUEST_CHANGES`、MM approve 的完整同 SHA 意见。已仅改 root P4 helper/test：execution_contract exact grammar、planned run/candidate source/run lexical-overlap 与 run-identity reuse、same-FD create-before `NOT_LOCKED`/post-create close/fstat `POISONED_NOT_LOCKED`；永久 negative fixtures覆盖 contract/path/reuse及 create/write/fsync/seek/read/fchmod/fstat/close faults。P4 CPU=81/81、`py_compile`、`git diff --check` PASS；未创建真实 request/preflight/staging/candidate/run-root，未调用 P5/GPU/训练；下一步提交并重新三方 closure review；提交：未提交。
+- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（REVIEW）：ChatGPT=`0339c74` 对 `40eda9b` 仅余 fixture closure，Kimi/MM approve。未改生产 helper；fixture-only remediation新增 FD intermediate/final symlink、existing/symlink target、short write、non-regular fstat、projection/self-SHA rejection；P4 CPU=84/84、`py_compile`、`git diff --check` PASS。未创建真实 request/preflight/staging/candidate/run-root，未调用 P5/GPU/训练；下一步提交并重新三方 closure review；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 

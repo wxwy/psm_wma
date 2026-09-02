@@ -1783,6 +1783,58 @@ class PlannedRosterCommitmentTest(unittest.TestCase):
             finally:
                 os.close(descriptor)
 
+    def test_output_target_short_write_and_mode_faults_are_terminal(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            parent = Path(temporary); descriptor = os.open(parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                (parent / "existing.json").write_text("old")
+                with self.assertRaisesRegex(ValueError, "NOT_LOCKED"):
+                    r09_b2_p4_v4_execution_preflight._write_planned_commitment_at(descriptor, "existing.json", {})
+                self.assertEqual((parent / "existing.json").read_text(), "old")
+                (parent / "target.json").write_text("old")
+                (parent / "linked.json").symlink_to(parent / "target.json")
+                with self.assertRaisesRegex(ValueError, "NOT_LOCKED"):
+                    r09_b2_p4_v4_execution_preflight._write_planned_commitment_at(descriptor, "linked.json", {})
+                with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "write", return_value=1):
+                    with self.assertRaisesRegex(RuntimeError, "POISONED_NOT_LOCKED"):
+                        r09_b2_p4_v4_execution_preflight._write_planned_commitment_at(descriptor, "short.json", {"x": "y"})
+                self.assertTrue((parent / "short.json").exists())
+                original_fstat = os.fstat
+                with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "fstat", side_effect=lambda fd: type("S", (), {"st_mode": 0o444})()):
+                    with self.assertRaisesRegex(RuntimeError, "POISONED_NOT_LOCKED"):
+                        r09_b2_p4_v4_execution_preflight._write_planned_commitment_at(descriptor, "not-regular.json", {})
+                self.assertTrue((parent / "not-regular.json").exists())
+            finally:
+                os.close(descriptor)
+
+    def test_spec_fd_walk_rejects_intermediate_and_final_symlinks(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "source"; root.mkdir(); nested = root / "nested"; nested.mkdir()
+            (nested / "spec.json").write_bytes(b"{}\n")
+            descriptor = r09_b2_p4_v4_execution_preflight._open_absolute_directory_chain(str(root), "source")
+            try:
+                self.assertEqual(r09_b2_p4_v4_execution_preflight._read_lock_spec_at(descriptor, "nested/spec.json"), b"{}\n")
+                (root / "linked").symlink_to(nested, target_is_directory=True)
+                with self.assertRaises(ValueError):
+                    r09_b2_p4_v4_execution_preflight._read_lock_spec_at(descriptor, "linked/spec.json")
+                (nested / "linked.json").symlink_to(nested / "spec.json")
+                with self.assertRaises(ValueError):
+                    r09_b2_p4_v4_execution_preflight._read_lock_spec_at(descriptor, "nested/linked.json")
+            finally:
+                os.close(descriptor)
+
+    def test_projection_and_self_sha_drift_are_rejected(self):
+        mutations = (
+            lambda value: value["payload_manifest"]["entries"].append({"path": "aaa.py", "type": "regular", "sha256": "d" * 64}),
+            lambda value: value["payload_manifest"]["entries"][0].__setitem__("type", "directory"),
+            lambda value: value.__setitem__("lock_spec_sha256", "0" * 64),
+        )
+        for mutation in mutations:
+            with self.subTest(mutation=mutation):
+                value = json.loads(self._raw()); mutation(value)
+                with self.assertRaises(ValueError):
+                    self._build((json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode())
+
     def test_default_authority_creates_no_output(self):
         with tempfile.TemporaryDirectory() as temporary, \
              mock.patch.object(r09_b2_p4_v4_execution_preflight, "AUTHORIZED_P4_V4_LOCK_SPEC", None):
