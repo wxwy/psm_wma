@@ -679,6 +679,25 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, error):
                     r09_b2_p4_v4_execution_preflight.validate_authorities_pair(value, request, root, git)
 
+    def test_authorities_reject_pair_source_verifier_and_binding_identity_drift(self):
+        root, request, git = self._request()
+        cases = (
+            (lambda value: value["d005_pair"].__setitem__("identity_sha256", "0" * 64), "authorities pair identity"),
+            (lambda value: value["d005_pair"]["recurrent"].__setitem__("relative_path", "other.json"), "binding differs"),
+            (lambda value: value["d005_pair"]["historical_source"].__setitem__("gitlink_revision", "0" * 40), "historical source differs"),
+            (lambda value: value["d005_pair"]["historical_verifier"].__setitem__("relative_path", "other.py"), "historical source differs"),
+            (lambda value: value["d005_pair"]["ttt_fast_weight"].update(value["d005_pair"]["recurrent"]), "binding differs"),
+        )
+        for mutate, error in cases:
+            with self.subTest(error=error):
+                value = self._authorities(); mutate(value)
+                if error == "authorities pair identity":
+                    value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({"d005_pair": value["d005_pair"]})
+                else:
+                    self._reidentity(value)
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_authorities_pair(value, request, root, git)
+
     def test_authorities_reject_historical_verification_nested_roster_drift(self):
         root, _, _ = self._request()
         raw = (root / r09_b2_p4_v4_execution_preflight._HISTORICAL_ARTIFACTS["verification"][0]).read_bytes()
@@ -735,6 +754,38 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
         section["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in section.items() if key != "identity_sha256"})
         with self.assertRaisesRegex(ValueError, "projection differs"):
             r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
+
+    def test_authorities_reject_environment_native_p3_and_missing_drift(self):
+        root, request, git = self._request()
+        mutations = (
+            lambda value: value["recurrent"]["native_loader_environment"].__setitem__("set", {"X": "1"}),
+            lambda value: value["ttt_fast_weight"]["effective_environment"]["set"].__setitem__("PSM_R09_B1_TTT_ENABLED", "0"),
+            lambda value: value.pop("ttt_fast_weight"),
+        )
+        for mutate in mutations:
+            with self.subTest(mutate=mutate):
+                value = json.loads(json.dumps(request["environment"])); mutate(value)
+                for section in value.values():
+                    for name in ("effective_environment", "native_loader_environment"):
+                        section[name]["sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in section[name].items() if key != "sha256"})
+                    section["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in section.items() if key != "identity_sha256"})
+                candidate = {**request, "environment": value}
+                with self.assertRaises(ValueError):
+                    r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), candidate, root, git)
+
+    def test_authorities_host_git_argv_and_path_shadow_are_fixed(self):
+        root, request, git = self._request()
+        seen = []
+        original = r09_b2_p4_v4_execution_preflight._git
+        def observe(root_arg, *args, git_executable=None):
+            seen.append((root_arg, args, git_executable))
+            return original(root_arg, *args, git_executable=git_executable)
+        with tempfile.TemporaryDirectory() as temporary:
+            shadow = Path(temporary); (shadow / "git").write_text("#!/bin/sh\nexit 99\n"); (shadow / "git").chmod(0o755)
+            with mock.patch.dict(os.environ, {"PATH": str(shadow), "UNTRUSTED": "x"}, clear=True), \
+                 mock.patch.object(r09_b2_p4_v4_execution_preflight, "_git", side_effect=observe):
+                r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
+        self.assertEqual(seen[-1], (root, ("show", f"{r09_b2_p4_v4_execution_preflight._HISTORICAL_REVISION}:{r09_b2_p4_v4_execution_preflight._HISTORICAL_VERIFIER[0]}"), git))
 
     def test_authorities_reject_historical_record_field_drift(self):
         root, request, git = self._request()
