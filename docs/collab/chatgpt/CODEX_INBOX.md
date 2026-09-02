@@ -4399,3 +4399,13 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 新增 exact execution contract：network/GPU/torch/model-data-checkpoint I/O/cleanup-retry-repair 均 false，one_shot=true；request canonical JSON、top-level exact schema 与 SHA guard 保持 fail-closed 后无条件 hard-stop。
 - 证据：stdlib CPU unittest 2/2、py_compile、git diff --check PASS。
 - 仅申请 root static parser/validator + CPU tests；禁止真实 preflight/staging/materialize/candidate/record/refreeze/P5 export/compose/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 334f544f1d9a4cb130dbbbbb7df042d3dd0b06cf；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` execution-request static validator remediation。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root implementation=`334f544f1d9a4cb130dbbbbb7df042d3dd0b06cf`，整改 ChatGPT review=`d5f4bac` 对 implementation=`2376de2` 的 HIGH/MEDIUM；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 已修复 HIGH：`read_execution_request()` 用 Linux `O_NOFOLLOW` 单次 fd 打开、`fstat` regular-file 断言与单次 raw read；该同一 raw 同时用于 SHA256 和 canonical JSON/schema/execution-contract 校验，之后无 pathname reopen。CPU 回归 mock `Path.read_bytes` 为失败且断言 `os.open` 恰好一次。
+- 已修复 MEDIUM：移除可变公开 `EXECUTION_CONTRACT`；冻结 tuple 通过 `load_execution_request()` 默认参数捕获，模块私有名重绑定不改变接受语义，并有 CPU 回归。
+- 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v` 4/4 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。入口仍在所有静态校验后无条件 hard-stop，未创建任何目录或候选产物。
+- 允许范围：仅 root static parser/validator tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority 更新、P5 export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 和 Local Memory 训练。
