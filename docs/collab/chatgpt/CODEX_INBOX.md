@@ -4526,6 +4526,13 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - P4 parser/provenance CPU=33/33 PASS；`py_compile`、`git diff --check` PASS；未调用 exporter/preflight/GPU/训练。
 - 仅 root static tooling/CPU；禁止真实 preflight/staging/P5 export-compose/GPU/训练。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 54830a20cab3e2d9995781faf1244684c6bd02d0；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES` v0.3 设计整改。请给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+- v0.2=`cdbb43d` 三方意见已齐：ChatGPT `REQUEST_CHANGES`，Kimi/MM `APPROVE`。v0.3 精确消费已关闭 interpreter 的 verified absolute `request.interpreter.host_git.path`，固定唯一 `git -C <root> show <historical-revision>:<path>` argv，拒绝 PATH/bare git/fallback；并冻结 historical verification top/checks/matched/recurrent/ttt 全部 nested boolean key roster及 added/missing/false/non-bool fixtures。
+- 历史 D005 v2 bytes/source/verifier identity、environment-only cross-binding与所有禁止范围不变；仅设计，未执行 preflight/staging/P5/GPU/训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 cdbb43d41d36bb40674eebf085969b3b6aaf086b；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES` v0.2 设计整改。请给出 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS` 或 `REQUEST_CHANGES`，附 `file:line`。
