@@ -4970,3 +4970,14 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 审核对象：root=`aebb94f95eef9151c764c6b2f021a07e9363798c`；prior=`40eda9b`，ChatGPT=`0339c74` 仅要求 B4 fixture closure，Kimi/MM prior approve；Gitlink 如上。
 - 仅修改 stdlib fixture及状态：FD intermediate/final symlink reject、existing/symlink target zero-overwrite、short-write target preservation、non-regular fstat poison、payload manifest order/type与lock self-SHA rejection。生产 helper未变。
 - CPU evidence：P4=`84/84 PASS`，`py_compile`、`git diff --check` PASS。禁止 P4/P5 migration、真实 request/preflight/materialize/staging/candidate/run-root、P5 export/compose、GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 4108eb63f4b65835b860352b1633767df3fab58a；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` B4 fixture-only remediation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root=`4108eb63f4b65835b860352b1633767df3fab58a`；prior=`aebb94f`，ChatGPT=`be76950` 的 B4-A/B/C；approved design=`671ca0123352b050125f3a413f8e74eeabbe6088`；Gitlink 如上。
+- B4-A：仅 test-local non-None authority 驱动 `lock_authorized_planned_roster_commitment()` 的 source-root/spec FD、source/HEAD/tree/Gitlink/blob/current/raw binding、完整 closed-section validators、same-FD write/read-back/chmod/fstat/close；断言 canonical commitment bytes、`0444` regular、无 final `run`/`candidates`/`roster_sha256`，并逐项拒绝 source-root/commit/tree/Gitlink/spec path/blob/current/raw/output parent/basename drift 且输出未创建。生产 `AUTHORIZED_P4_V4_LOCK_SPEC` 保持 `None`。
+- B4-B：保留 `077ad10` 的 parent-FD retarget fixture，外部 symlink target 未被消费。
+- B4-C：manifest 顺序、escaping path、type、malformed SHA、nested planned token、outer SHA 均在重算内外 identity 后拒绝；完整 planned spec 从既有 full-admission closed sections派生，hostile `PATH`/`PYTHONPATH`/locale 下仅固定 Git subprocess 可达，无 child/P5/torch 路径。
+- 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=`86/86 PASS`；`python -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。
+- 允许范围仅 root P4 static tooling/stdlib CPU tests。禁止 P4/P5 migration、真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 export/compose、torchrun/GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理及 B2-T。
