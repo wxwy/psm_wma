@@ -4,7 +4,7 @@
 
 ## 当前最小步骤（2026-09-02）
 
-- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（IN_PROGRESS）：design=`dcb5b12` 获 ChatGPT review=`35e4e49`、Kimi=`2026-09-02 19:45 CST`、MM同 SHA `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`。预计仅修改 `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py`：private raw-byte-bound capability、per-capability latch、测试临时 namespace six-mkdir reservation/poison fixtures；公开 CLI 保持 hard-stop。禁止真实 request/run/candidate/staging/P5/GPU/训练；提交：未提交。
+- `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（IN_PROGRESS）：implementation=`9bc78f1` 的最终意见已齐：ChatGPT review=`8e1d019`、Kimi=`2026-09-02 19:52 CST` 为 `REQUEST_CHANGES`，MM APPROVE。B1 capability forge/reset、B2 pathname parent-symlink TOCTOU 会改变静态合同，先新增 v0.5 design；同时冻结全 precheck/12 mutation/ambient fixture 名册。公开 CLI 保持 hard-stop，禁止真实 request/run/candidate/staging/P5/GPU/训练；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 
