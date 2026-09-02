@@ -4823,3 +4823,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 文档：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_materialization_design_v0.4_2026-09-02.md`；仅处理 ChatGPT v0.3 review=`f031dde` B1。
 - 精确规则：`created_paths` 恒为成功 mkdir syscall 的有序 mutation footprint；mkdir 成功立即追加、再 nofollow stat。mkdir FAIL 不追加；post-mkdir stat FAIL 必保留刚创建 path及原始失败类型。其余 raw-byte capability/latch/ancestor/CLI hard-stop 合同不变。
 - 范围仅 static tooling/stdlib CPU tests；禁止真实 request/preflight/materialize/candidate/staging/P5/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 9bc78f1bae4a9177d6f5f2b6a79bc70d875c911a；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION` v0.4 static implementation closure。请仅对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 前置设计：`dcb5b12` 获 ChatGPT=`35e4e49`、Kimi/MM 同 SHA `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`；实现仅修改 `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py`。
+- 行为：private raw-SHA-bound `_AdmittedRequest`、per-capability consumption latch、six-path reserved footprint 与 `ReservationPoisonedError`；`created_paths` 仅代表成功 mkdir mutation。公开 CLI 仍 full admission 后 unconditional hard-stop，未接入 helper。
+- 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -q`=65/65 PASS；`py_compile`、`git diff --check` PASS；新 fixture 仅用 `TemporaryDirectory`，覆盖 six path 成功顺序、重复拒绝、first-mkdir 空 prefix 和 post-mkdir stat failure prefix。
+- 禁止真实 request/preflight/materialize/candidate/staging/record/refreeze/P5 export-compose/torchrun/GPU/CUDA/模型数据checkpoint I/O/训练评测推理/B2-T。若 closure 通过，真实 execution 仍另起 exact-request Gate。
