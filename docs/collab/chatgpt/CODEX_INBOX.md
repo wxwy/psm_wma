@@ -4341,3 +4341,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 整改 GPT v0.3 HIGH：PASS candidate 的 request/result/verification 现定义为 byte-for-byte 已可被 P5 接受的最终 payload，candidate identity 仅在不发布的 `candidate_link.json`；record/refreeze 禁止 parse/rewrite/re-serialize payload。
 - 整改 MEDIUM：只接受 ordered `[recurrent,ttt_fast_weight]` 两个 canonical PASS candidate，独立复验 pair invariants；任何缺失/FAIL/poison/重复 backend 禁止 publication；六 payload 只可 one commit-or-none 发布，后续独立 reviewed P5 authority 才绑定 post-commit identity。
 - 验证：仅文档；`git diff --check` PASS。若批准仅 root tooling+stdlib CPU tests；禁止真实 preflight/staging/candidate/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T/Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 010dfc7da60418586fb1270e2f05f104c9893179；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-PREFLIGHT` v0.4 静态 tooling closure。请求 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root implementation=`010dfc7da60418586fb1270e2f05f104c9893179`，approved design=`5de996b`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 新增 `r09_b2_p4_v4_static_contract.py`：PASS candidate 精确文件集、canonical payload SHA/link、link directory/backend/token binding、candidate-only request key reject、FAIL exact grammar；pair 仅接受 recurrent+TTT 全集。无 CLI、无 materialize/copy/staging/preflight/record/refreeze 实现。
+- 证据：`python -m py_compile tools/g0/r09_b2_p4_v4_static_contract.py tools/g0/test_r09_b2_p4_v4_static_contract.py` PASS；`python -B -m unittest tools.g0.test_r09_b2_p4_v4_static_contract -v` 2/2 PASS；`git diff --check` PASS。临时文件夹测试覆盖字节 drift、candidate-only top key、FAIL grammar 和缺失 backend fail-closed。
+- 范围：仅 root static tooling+stdlib CPU tests；禁止真实 preflight/staging/candidate/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T/Local Memory 训练。
