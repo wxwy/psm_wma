@@ -921,3 +921,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修复：verifier 用 frozen backend selector 对每个 `model_parameters[*].name` 按生产 `any(key in name ...)` substring 规则重算 expected membership；新增 backend hard checks `selector_membership_exact`、`optimizer_membership_exact`。optimizer/selector diff 必须与两个 independently recomputed expected sets 的精确差集相等；optimizer-DCP schema 的 recurrent/TTT owners 同样精确相等，TTT-only仍拒绝。
 - 回归：新增保持 frozen lists 不变、但将 TTT `local_history_runtime.encoder.visual_proj.weight` 一致性地标为未选中的伪造 artifact，两个 membership checks 必为 false、verifier FAIL。`py_compile`、标准库定向测试 20/20、`git diff --check` PASS。
 - 复核：未重跑 GPU。clean collection root=`269540e` worktree 复验同一 attempt-6，`p3_gpu_inventory_verifier_selector_review.json`=PASS、record_valid=true，recurrent/TTT 的 `selector_membership_exact=true` 与 `optimizer_membership_exact=true`，其余 checks/diff checks=true，GPU=0 MiB。下一步重新三方 closure 审核。提交：未提交。
+### R09-B2 P4-v4 static tooling remediation (2026-09-02，REVIEW)
+
+- 修复共享审核意见：candidate admission 复用 P5 final verifier grammar，绑定双 backend shared source/default/interpreter，FAIL request/token/run_root schema 与 failure-poison 检查；恢复 CPU 回归测试。
+- 验证：P4/P5 标准库测试 6/6 PASS，py_compile、git diff --check PASS。未执行真实 preflight/staging/record/refreeze/export/GPU/训练。
+- 下一步：提交本阶段并请求 ChatGPT/MM/Kimi 对同一 root SHA closure；三方未同 SHA 批准前保持禁止执行。提交：未提交。
