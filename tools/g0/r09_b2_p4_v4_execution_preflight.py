@@ -241,6 +241,11 @@ def _p5_canonical_sha256(value: object) -> str:
     ).hexdigest()
 
 
+def _validate_execution_contract(value: object) -> None:
+    if value != dict(_EXECUTION_CONTRACT_ITEMS):
+        raise ValueError("execution request contract differs")
+
+
 def _open_absolute_directory_chain(value: object, error: str) -> int:
     if not isinstance(value, str) or not value or not os.path.isabs(value) or value.startswith("//"):
         raise ValueError(error)
@@ -368,6 +373,7 @@ def build_planned_roster_commitment(raw: bytes) -> dict[str, object]:
     validate_interpreter(spec["interpreter"], spec["source"], git_path)
     validate_backends(spec["backends"])
     validate_authorities_pair(spec["authorities"], spec, Path(spec["source"]["root"]), git_path)
+    _validate_execution_contract(spec["execution_contract"])
     planned_run = spec["planned_run"]
     candidates = spec["planned_candidates"]
     if not isinstance(planned_run, dict) or set(planned_run) != RUN_KEYS:
@@ -381,12 +387,16 @@ def build_planned_roster_commitment(raw: bytes) -> dict[str, object]:
     root_path = _future_lexical_path(root.get("root"), "planned candidates root")
     if root_path != _future_lexical_path(root.get("resolved_root"), "planned candidates root"):
         raise ValueError("P4-v4 lock planned root differs")
+    source_root = _future_lexical_path(spec["source"].get("root") if isinstance(spec["source"], dict) else None, "source")
+    if _lexically_overlaps(root_path, source_root) or _lexically_overlaps(root_path, source_root / "cosmos-framework"):
+        raise ValueError("P4-v4 lock planned candidates source overlap differs")
     attempt = candidates.get("attempt_id")
     if not isinstance(attempt, str) or _SHA256.fullmatch(attempt) is None:
         raise ValueError("P4-v4 lock planned attempt differs")
     manifest = _validate_payload_manifest(spec["payload_manifest"])
     planned: dict[str, object] = {"root": root, "attempt_id": attempt}
     seen: set[str] = set()
+    run_roots: dict[str, Path] = {}
     for backend in _BACKEND_ORDER:
         run = _identity_exact(planned_run[backend], PLANNED_RUN_ITEM_KEYS, "P4-v4 lock planned run differs")
         run_identity = _identity_exact(run["identity"], RUN_IDENTITY_KEYS, "P4-v4 lock planned run identity differs")
@@ -394,20 +404,30 @@ def build_planned_roster_commitment(raw: bytes) -> dict[str, object]:
         if (run_identity.get("kind") != "run_root" or not isinstance(token, str)
                 or _SHA256.fullmatch(token) is None or token in seen or attempt == token):
             raise ValueError("P4-v4 lock planned run differs")
+        run_root = _future_lexical_path(run_identity.get("root"), f"planned run {backend}")
+        if (run_root != _future_lexical_path(run_identity.get("resolved_root"), f"planned run {backend}")
+                or _lexically_overlaps(run_root, source_root)
+                or _lexically_overlaps(run_root, source_root / "cosmos-framework")
+                or str(run_root) in seen or run_identity["identity_sha256"] in seen):
+            raise ValueError("P4-v4 lock planned run isolation differs")
         candidate = _identity_exact(candidates[backend], PLANNED_CANDIDATE_ITEM_KEYS, "P4-v4 lock planned candidate differs")
         candidate_root = candidate.get("candidate_root")
         if (candidate.get("backend") != backend or candidate.get("run_identity") != run_identity
                 or candidate.get("run_token") != token or not isinstance(candidate_root, str)
                 or _future_lexical_path(candidate_root, f"planned candidate {backend}") != root_path / attempt / backend):
             raise ValueError("P4-v4 lock planned candidate mapping differs")
+        candidate_path = _future_lexical_path(candidate_root, f"planned candidate {backend}")
+        if any(_lexically_overlaps(path, other) for path in (root_path, candidate_path) for other in (*run_roots.values(), run_root)):
+            raise ValueError("P4-v4 lock planned candidate run overlap differs")
         item = {
             "backend": backend, "run_identity": run_identity, "run_token": token,
             "candidate_root": candidate_root, "staging_projection": _planned_projection(manifest, token),
         }
         item["identity_sha256"] = canonical_sha256(item)
         planned[backend] = item
-        seen.update((token, candidate_root, item["identity_sha256"]))
-    if len(seen) != 6:
+        seen.update((token, str(run_root), run_identity["identity_sha256"], candidate_root, item["identity_sha256"]))
+        run_roots[backend] = run_root
+    if len(seen) != 10:
         raise ValueError("P4-v4 lock planned pair reuse differs")
     planned["identity_sha256"] = canonical_sha256(planned)
     commitment = {key: spec[key] for key in (
@@ -416,6 +436,37 @@ def build_planned_roster_commitment(raw: bytes) -> dict[str, object]:
     commitment = {"schema_version": "r09_b2_p4_v4_planned_roster_commitment_v1", **commitment, "planned": planned}
     commitment["commitment_sha256"] = canonical_sha256(commitment)
     return commitment
+
+
+def _write_planned_commitment_at(parent_fd: int, basename: str, commitment: dict[str, object]) -> None:
+    flags = os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    try:
+        descriptor = os.open(basename, flags, 0o600, dir_fd=parent_fd)
+    except OSError as exc:
+        raise ValueError("P4-v4 lock output is NOT_LOCKED") from exc
+    payload = (json.dumps(commitment, sort_keys=True, separators=(",", ":")) + "\n").encode()
+    try:
+        written = os.write(descriptor, payload)
+        if written != len(payload):
+            raise OSError("short write")
+        os.fsync(descriptor)
+        os.lseek(descriptor, 0, os.SEEK_SET)
+        if os.read(descriptor, len(payload) + 1) != payload:
+            raise OSError("same-FD read-back differs")
+        os.fchmod(descriptor, 0o444)
+        mode = os.fstat(descriptor).st_mode
+        if not stat.S_ISREG(mode) or stat.S_IMODE(mode) != 0o444:
+            raise OSError("output mode differs")
+    except BaseException as exc:
+        try:
+            os.close(descriptor)
+        except OSError:
+            pass
+        raise RuntimeError("P4-v4 lock output is POISONED_NOT_LOCKED") from exc
+    try:
+        os.close(descriptor)
+    except OSError as exc:
+        raise RuntimeError("P4-v4 lock output is POISONED_NOT_LOCKED") from exc
 
 
 def lock_authorized_planned_roster_commitment() -> Path:
@@ -464,24 +515,7 @@ def lock_authorized_planned_roster_commitment() -> Path:
     commitment = build_planned_roster_commitment(raw)
     output_parent_fd = _open_absolute_directory_chain(authority["output_parent"], "P4-v4 lock output parent differs")
     try:
-        flags = os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
-        descriptor = os.open(authority["output_basename"], flags, 0o600, dir_fd=output_parent_fd)
-        try:
-            payload = (json.dumps(commitment, sort_keys=True, separators=(",", ":")) + "\n").encode()
-            os.write(descriptor, payload); os.fsync(descriptor); os.lseek(descriptor, 0, os.SEEK_SET)
-            if os.read(descriptor, len(payload) + 1) != payload:
-                raise RuntimeError("P4-v4 lock output is POISONED_NOT_LOCKED")
-            os.fchmod(descriptor, 0o444)
-            if stat.S_IMODE(os.fstat(descriptor).st_mode) != 0o444:
-                raise RuntimeError("P4-v4 lock output is POISONED_NOT_LOCKED")
-        except BaseException as exc:
-            if isinstance(exc, RuntimeError):
-                raise
-            raise RuntimeError("P4-v4 lock output is POISONED_NOT_LOCKED") from exc
-        finally:
-            os.close(descriptor)
-    except FileExistsError as exc:
-        raise ValueError("P4-v4 lock output is NOT_LOCKED") from exc
+        _write_planned_commitment_at(output_parent_fd, authority["output_basename"], commitment)
     finally:
         os.close(output_parent_fd)
     return Path(authority["output_parent"]) / authority["output_basename"]

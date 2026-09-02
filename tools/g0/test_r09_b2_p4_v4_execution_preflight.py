@@ -1690,7 +1690,7 @@ class PlannedRosterCommitmentTest(unittest.TestCase):
         spec = {
             "schema_version": "r09_b2_p4_v4_lock_spec_v3", "entry": {}, "source": {"root": "/source"},
             "interpreter": {"host_git": {}}, "environment": {}, "authorities": {}, "backends": {},
-            "execution_contract": {}, "planned_run": run, "planned_candidates": candidates,
+            "execution_contract": dict(r09_b2_p4_v4_execution_preflight._EXECUTION_CONTRACT_ITEMS), "planned_run": run, "planned_candidates": candidates,
             "payload_manifest": manifest,
         }
         spec["lock_spec_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(spec)
@@ -1730,6 +1730,58 @@ class PlannedRosterCommitmentTest(unittest.TestCase):
                 value["lock_spec_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in value.items() if key != "lock_spec_sha256"})
                 with self.assertRaises(ValueError):
                     self._build((json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode())
+
+    def test_rejects_execution_contract_path_and_pair_reuse_drift(self):
+        mutations = (
+            ("contract value", lambda value: value["execution_contract"].__setitem__("gpu", True)),
+            ("contract missing", lambda value: value["execution_contract"].pop("torch")),
+            ("contract extra", lambda value: value["execution_contract"].__setitem__("extra", False)),
+            ("run relative", lambda value: value["planned_run"]["recurrent"]["identity"].update({"root": "relative", "resolved_root": "relative"})),
+            ("run source overlap", lambda value: value["planned_run"]["recurrent"]["identity"].update({"root": "/source/run", "resolved_root": "/source/run"})),
+            ("candidate source overlap", lambda value: value["planned_candidates"]["root"].update({"root": "/source/candidates", "resolved_root": "/source/candidates"})),
+            ("shared run root", lambda value: value["planned_run"]["ttt_fast_weight"].__setitem__("identity", value["planned_run"]["recurrent"]["identity"])),
+        )
+        for name, mutate in mutations:
+            with self.subTest(name=name):
+                value = json.loads(self._raw()); mutate(value)
+                for backend in ("recurrent", "ttt_fast_weight"):
+                    identity = value["planned_run"][backend]["identity"]
+                    identity["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in identity.items() if key != "identity_sha256"})
+                    item = value["planned_run"][backend]
+                    item["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: entry for key, entry in item.items() if key != "identity_sha256"})
+                    candidate = value["planned_candidates"][backend]
+                    candidate["run_identity"] = item["identity"]
+                    candidate["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: entry for key, entry in candidate.items() if key != "identity_sha256"})
+                root = value["planned_candidates"]["root"]
+                root["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in root.items() if key != "identity_sha256"})
+                candidates = value["planned_candidates"]
+                candidates["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in candidates.items() if key != "identity_sha256"})
+                value["lock_spec_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in value.items() if key != "lock_spec_sha256"})
+                with self.assertRaises(ValueError):
+                    self._build((json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode())
+
+    def test_output_create_and_post_create_faults_are_terminal(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            parent = Path(temporary); descriptor = os.open(parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "open", side_effect=OSError("EACCES")):
+                    with self.assertRaisesRegex(ValueError, "NOT_LOCKED"):
+                        r09_b2_p4_v4_execution_preflight._write_planned_commitment_at(descriptor, "denied.json", {})
+                for name, target, method in (
+                    ("write", "write.json", "write"), ("fsync", "fsync.json", "fsync"),
+                    ("seek", "seek.json", "lseek"), ("read", "read.json", "read"),
+                    ("chmod", "chmod.json", "fchmod"), ("fstat", "fstat.json", "fstat"),
+                ):
+                    with self.subTest(name=name), mock.patch.object(r09_b2_p4_v4_execution_preflight.os, method, side_effect=OSError(name)):
+                        with self.assertRaisesRegex(RuntimeError, "POISONED_NOT_LOCKED"):
+                            r09_b2_p4_v4_execution_preflight._write_planned_commitment_at(descriptor, target, {})
+                        self.assertTrue((parent / target).exists())
+                with mock.patch.object(r09_b2_p4_v4_execution_preflight.os, "close", side_effect=OSError("close")):
+                    with self.assertRaisesRegex(RuntimeError, "POISONED_NOT_LOCKED"):
+                        r09_b2_p4_v4_execution_preflight._write_planned_commitment_at(descriptor, "close.json", {})
+                    self.assertTrue((parent / "close.json").exists())
+            finally:
+                os.close(descriptor)
 
     def test_default_authority_creates_no_output(self):
         with tempfile.TemporaryDirectory() as temporary, \
