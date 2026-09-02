@@ -67,13 +67,16 @@ class EntryFoundationTest(unittest.TestCase):
         value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(value)
         return value
 
+    def _backends(self) -> dict[str, object]:
+        return BackendsAuthorityTest()._value()
+
     def _request(self) -> bytes:
         run = self._run()
         return (json.dumps({"schema_version": "r09_b2_p4_v4_execution_request_v1",
                             "entry": self._entry(),
-                            **{key: {} for key in ("interpreter", "environment", "backends", "authorities")},
+                            **{key: {} for key in ("interpreter", "environment", "authorities")},
                             "source": {"root": "/source"},
-                            "run": run, "candidates": self._candidates(run),
+                            "run": run, "candidates": self._candidates(run), "backends": self._backends(),
                             "execution_contract": {"network": False, "gpu": False, "torch": False,
                                                    "model_data_checkpoint_io": False, "one_shot": True,
                                                    "cleanup_retry_repair": False}},
@@ -414,6 +417,123 @@ class CandidatesAuthorityTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {"PATH": "/hostile", "PYTHONPATH": "/hostile"}, clear=True):
             r09_b2_p4_v4_execution_preflight.validate_candidates(value, {"root": "/source"}, run)
         self.assertEqual(value, frozen)
+
+
+class BackendsAuthorityTest(unittest.TestCase):
+    def _value(self):
+        value = {}
+        for backend in ("recurrent", "ttt_fast_weight"):
+            core = json.loads(json.dumps(r09_b2_p4_v4_execution_preflight.P3_CORE_SNAPSHOTS[backend]))
+            contract = {**core, "identity_sha256": r09_b2_p4_v4_execution_preflight.canonical_sha256(core)}
+            record = {"backend": backend, "p3_contract": contract}
+            record["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(record)
+            value[backend] = record
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(value)
+        return value
+
+    def _reidentity(self, value):
+        for backend in ("recurrent", "ttt_fast_weight"):
+            record = value.get(backend)
+            if not isinstance(record, dict):
+                continue
+            contract = record.get("p3_contract")
+            if isinstance(contract, dict) and set(contract) == r09_b2_p4_v4_execution_preflight.P3_CONTRACT_KEYS:
+                contract["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                    {key: item for key, item in contract.items() if key != "identity_sha256"}
+                )
+            if set(record) == r09_b2_p4_v4_execution_preflight.BACKEND_ITEM_KEYS:
+                record["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                    {key: item for key, item in record.items() if key != "identity_sha256"}
+                )
+        if set(value) == r09_b2_p4_v4_execution_preflight.BACKENDS_KEYS:
+            value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                {key: item for key, item in value.items() if key != "identity_sha256"}
+            )
+
+    def test_backends_accept_exact_snapshot_without_side_effects(self):
+        value = self._value(); frozen = json.loads(json.dumps(value))
+        with mock.patch.object(Path, "read_bytes", side_effect=AssertionError("artifact read")), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight.subprocess, "run", side_effect=AssertionError("subprocess")), \
+             mock.patch.dict(os.environ, {"PATH": "/hostile", "PYTHONPATH": "/hostile"}, clear=True):
+            r09_b2_p4_v4_execution_preflight.validate_backends(value)
+        self.assertEqual(value, frozen)
+
+    def test_backends_reject_schema_identity_label_and_reuse_drift(self):
+        mutations = (
+            ("outer extra", lambda value: value.__setitem__("extra", {}), "backends schema"),
+            ("outer missing", lambda value: value.pop("ttt_fast_weight"), "backends schema"),
+            ("outer identity", lambda value: value.__setitem__("identity_sha256", "0" * 64), "backends identity"),
+            ("record extra", lambda value: value["recurrent"].__setitem__("extra", {}), "backends record"),
+            ("label swap", lambda value: value["recurrent"].__setitem__("backend", "ttt_fast_weight"), "backends record"),
+            ("record reuse", lambda value: value["ttt_fast_weight"].__setitem__("identity_sha256", value["recurrent"]["identity_sha256"]), "backends reuse"),
+            ("contract missing", lambda value: value["recurrent"]["p3_contract"].pop("verifier_sha256"), "P3 contract schema"),
+            ("contract identity", lambda value: value["recurrent"]["p3_contract"].__setitem__("identity_sha256", "0" * 64), "P3 contract identity"),
+        )
+        for name, mutate, error in mutations:
+            with self.subTest(name=name):
+                value = self._value(); mutate(value)
+                if name == "record reuse":
+                    value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                        {key: item for key, item in value.items() if key != "identity_sha256"}
+                    )
+                elif name == "contract identity":
+                    record = value["recurrent"]
+                    record["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                        {key: item for key, item in record.items() if key != "identity_sha256"}
+                    )
+                    value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                        {key: item for key, item in value.items() if key != "identity_sha256"}
+                    )
+                elif name != "outer identity":
+                    self._reidentity(value)
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_backends(value)
+
+    def test_backends_reject_every_frozen_core_field_drift(self):
+        value = self._value()
+        for backend, core in r09_b2_p4_v4_execution_preflight.P3_CORE_SNAPSHOTS.items():
+            for field in ("artifact_sha256", "verifier_sha256"):
+                with self.subTest(backend=backend, field=field):
+                    candidate = json.loads(json.dumps(value))
+                    candidate[backend]["p3_contract"][field] = "0" * 64
+                    self._reidentity(candidate)
+                    with self.assertRaisesRegex(ValueError, "P3 snapshot"):
+                        r09_b2_p4_v4_execution_preflight.validate_backends(candidate)
+            with self.subTest(backend=backend, field="membership"):
+                candidate = json.loads(json.dumps(value))
+                candidate[backend]["p3_contract"]["backend_contract"]["optimizer_membership_sha256"] = "0" * 64
+                self._reidentity(candidate)
+                with self.assertRaisesRegex(ValueError, "P3 snapshot"):
+                    r09_b2_p4_v4_execution_preflight.validate_backends(candidate)
+            for index in range(len(core["backend_contract"]["selector_keys"])):
+                with self.subTest(backend=backend, selector=index):
+                    candidate = json.loads(json.dumps(value))
+                    candidate[backend]["p3_contract"]["backend_contract"]["selector_keys"][index] = "other"
+                    self._reidentity(candidate)
+                    with self.assertRaisesRegex(ValueError, "P3 snapshot"):
+                        r09_b2_p4_v4_execution_preflight.validate_backends(candidate)
+
+    def test_backends_reject_core_grammar_swap_and_pair_binding_drift(self):
+        grammar_mutations = (
+            ("selector empty", lambda value: value["recurrent"]["p3_contract"]["backend_contract"].__setitem__("selector_keys", []), "P3 backend contract"),
+            ("selector duplicate", lambda value: value["recurrent"]["p3_contract"]["backend_contract"].__setitem__("selector_keys", ["x", "x"]), "P3 backend contract"),
+            ("selector retyped", lambda value: value["recurrent"]["p3_contract"]["backend_contract"].__setitem__("selector_keys", [1]), "P3 backend contract"),
+            ("membership grammar", lambda value: value["recurrent"]["p3_contract"]["backend_contract"].__setitem__("optimizer_membership_sha256", "A" * 64), "P3 backend contract"),
+            ("core swap", lambda value: value.__setitem__("recurrent", value["ttt_fast_weight"]), "backends record"),
+        )
+        for name, mutate, error in grammar_mutations:
+            with self.subTest(name=name):
+                value = self._value(); mutate(value); self._reidentity(value)
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_backends(value)
+        snapshots = json.loads(json.dumps(r09_b2_p4_v4_execution_preflight.P3_CORE_SNAPSHOTS))
+        snapshots["ttt_fast_weight"]["artifact_sha256"] = "f" * 64
+        value = self._value()
+        value["ttt_fast_weight"]["p3_contract"]["artifact_sha256"] = "f" * 64
+        self._reidentity(value)
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "P3_CORE_SNAPSHOTS", snapshots):
+            with self.assertRaisesRegex(ValueError, "P3 pair binding"):
+                r09_b2_p4_v4_execution_preflight.validate_backends(value)
 
 
 class SourceAuthorityTest(unittest.TestCase):

@@ -51,6 +51,11 @@ RUN_IDENTITY_KEYS = {"root", "resolved_root", "kind", "identity_sha256"}
 CANDIDATES_KEYS = {"root", "attempt_id", "recurrent", "ttt_fast_weight", "identity_sha256"}
 CANDIDATE_ROOT_KEYS = RUN_IDENTITY_KEYS
 CANDIDATE_ITEM_KEYS = {"backend", "candidate_root", "run", "identity_sha256"}
+BACKENDS_KEYS = {"recurrent", "ttt_fast_weight", "identity_sha256"}
+BACKEND_ITEM_KEYS = {"backend", "p3_contract", "identity_sha256"}
+P3_CONTRACT_KEYS = {"artifact_sha256", "verifier_sha256", "backend_contract", "identity_sha256"}
+P3_CORE_KEYS = P3_CONTRACT_KEYS - {"identity_sha256"}
+BACKEND_CONTRACT_KEYS = {"selector_keys", "optimizer_membership_sha256"}
 _HISTORICAL_REVISION = "ddb4e0eae97fb545d5239c1ddb6d4387170f3780"
 _HISTORICAL_GITLINK = "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb"
 _HISTORICAL_ARTIFACTS = {
@@ -59,6 +64,32 @@ _HISTORICAL_ARTIFACTS = {
     "verification": ("artifacts/g0/r09/b2/p4_launch_d005/verification.json", "8618488f9c8cbbcdda2ea9d513f1f76a0154798fe386ce19dcbeac78fcff4080"),
 }
 _HISTORICAL_VERIFIER = ("tools/g0/verify_r09_b2_p4_d005.py", "2c94f28a7779f7e74a2798124a0d85e57bafa8aab739b6072ef6790a91c9a4e6")
+P3_SNAPSHOT_AUTHORITY = {
+    "historical_d005_revision": _HISTORICAL_REVISION,
+    "historical_d005_verifier_blob_sha256": _HISTORICAL_VERIFIER[1],
+    "recurrent_d005_sha256": _HISTORICAL_ARTIFACTS["recurrent"][1],
+    "ttt_fast_weight_d005_sha256": _HISTORICAL_ARTIFACTS["ttt_fast_weight"][1],
+    "p3_artifact_sha256": "5dd5253cabaa5efa54f3ddc8891f632e3b05e515bf91c8055108e037f69b684d",
+    "p3_verifier_sha256": "e9700cd63e9626ce88969b2d21682c186af7dfe0c7489f88795de1301d5b64f8",
+}
+P3_CORE_SNAPSHOTS = {
+    "recurrent": {
+        "artifact_sha256": P3_SNAPSHOT_AUTHORITY["p3_artifact_sha256"],
+        "verifier_sha256": P3_SNAPSHOT_AUTHORITY["p3_verifier_sha256"],
+        "backend_contract": {
+            "selector_keys": ["moe_gen", "time_embedder", "vae2llm", "llm2vae", "action2llm", "llm2action", "action_modality_embed", "local_memory2llm", "local_memory_modality_embed", "local_history_runtime"],
+            "optimizer_membership_sha256": "31f5e455485b2c471c47da2d2c1819214372967ad1c76311e79bfe7865ec15fd",
+        },
+    },
+    "ttt_fast_weight": {
+        "artifact_sha256": P3_SNAPSHOT_AUTHORITY["p3_artifact_sha256"],
+        "verifier_sha256": P3_SNAPSHOT_AUTHORITY["p3_verifier_sha256"],
+        "backend_contract": {
+            "selector_keys": ["local_history_runtime.encoder", "local_memory2llm", "local_memory_modality_embed"],
+            "optimizer_membership_sha256": "379abd364d8a741adeafca441736c034fc3d93250d5ca8685630d18872867404",
+        },
+    },
+}
 _VERIFICATION_BACKEND_KEYS = {"argv", "budget", "command_digest", "cwd", "env_assets_bound", "environment", "inputs", "non_executable", "outputs", "record_digest", "schema", "source"}
 _GIT_REVISION = re.compile(r"[0-9a-f]{40}\Z")
 _SHA256 = re.compile(r"[0-9a-f]{64}\Z")
@@ -141,6 +172,7 @@ def load_execution_request(
     validate_interpreter(interpreter, value["source"], git_path)
     validate_run_pair(value["run"], value["source"])
     validate_candidates(value["candidates"], value["source"], value["run"])
+    validate_backends(value["backends"])
     return value
 
 
@@ -568,6 +600,47 @@ def validate_candidates(value: object, source: object, run: object) -> None:
                 or run_identity in seen):
             raise ValueError("execution request candidates reuse differs")
         seen.update((item["candidate_root"], item["identity_sha256"], run_identity))
+
+
+def validate_backends(value: object) -> None:
+    """Validate the verifier-owned P3 core snapshots without reading any evidence."""
+    if not isinstance(value, dict) or set(value) != BACKENDS_KEYS:
+        raise ValueError("execution request backends schema differs")
+    _identity(value, "backends")
+    records: dict[str, dict[str, object]] = {}
+    identities: set[str] = set()
+    for backend in ("recurrent", "ttt_fast_weight"):
+        record = value[backend]
+        if not isinstance(record, dict) or set(record) != BACKEND_ITEM_KEYS or record.get("backend") != backend:
+            raise ValueError("execution request backends record differs")
+        record_identity = record.get("identity_sha256")
+        if not isinstance(record_identity, str):
+            _identity(record, "backends record")
+        if record_identity in identities:
+            raise ValueError("execution request backends reuse differs")
+        _identity(record, "backends record")
+        identities.add(record_identity)
+        contract = record["p3_contract"]
+        if not isinstance(contract, dict) or set(contract) != P3_CONTRACT_KEYS:
+            raise ValueError("execution request P3 contract schema differs")
+        _identity(contract, "P3 contract")
+        core = {key: contract[key] for key in P3_CORE_KEYS}
+        if (not all(isinstance(core[key], str) and _SHA256.fullmatch(core[key]) is not None for key in ("artifact_sha256", "verifier_sha256"))
+                or not isinstance(core["backend_contract"], dict) or set(core["backend_contract"]) != BACKEND_CONTRACT_KEYS):
+            raise ValueError("execution request P3 contract digest differs")
+        backend_contract = core["backend_contract"]
+        selectors = backend_contract["selector_keys"]
+        membership = backend_contract["optimizer_membership_sha256"]
+        if (not isinstance(selectors, list) or not selectors or not all(isinstance(item, str) for item in selectors)
+                or len(selectors) != len(set(selectors)) or not isinstance(membership, str)
+                or _SHA256.fullmatch(membership) is None):
+            raise ValueError("execution request P3 backend contract differs")
+        if core != P3_CORE_SNAPSHOTS[backend]:
+            raise ValueError("execution request P3 snapshot differs")
+        records[backend] = core
+    if (records["recurrent"]["artifact_sha256"] != records["ttt_fast_weight"]["artifact_sha256"]
+            or records["recurrent"]["verifier_sha256"] != records["ttt_fast_weight"]["verifier_sha256"]):
+        raise ValueError("execution request P3 pair binding differs")
 
 
 def validate_host_git(value: object) -> Path:
