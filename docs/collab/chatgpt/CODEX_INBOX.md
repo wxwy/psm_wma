@@ -4501,3 +4501,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 实现：`tools/g0/r09_b2_p4_v4_execution_preflight.py` 新增 exact `interpreter={lexical_interpreter,host_git,loader_argv,identity_sha256}` validator。lexical record 逐键重算既有 `lexical_interpreter()` 四字段；host Git 仅接受 absolute strict-resolved non-symlink executable，单 fd/no-follow bytes SHA 和递归 bytes-derived ELF closure；loader 先 `is_verified_loader_argv()` 再由既有 `verified_loader_argv()` 完整 11 槽重建相等。`tools/g0/r09_b2_interpreter_provenance.py` 只新增 raw-bytes ELF parser 入口，保持既有 API。
 - CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=15/15 PASS；`python -B -m unittest tools.g0.test_r09_b2_interpreter_provenance -v`=16/16 PASS；`py_compile`、`git diff --check` PASS。夹具覆盖 lexical/loader/host digest drift，既有 provenance fixture 覆盖 lexical repoint、11-slot grammar、direct exporter/`-m` 与 PATH shadow。
 - 允许范围仅 root static parser/validator tooling 与 stdlib CPU fixtures。禁止真实 preflight、staging/materialize/candidate、record/refreeze、P5 export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 077e7a73c51550045c6d334f55f56cc774bc7967；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-INTERPRETER` remediation closure。请对同一 root SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_INTERPRETER_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 整改 `61d18db` 的三方意见：host Git root closure 现在直接消费 host Git single-fd raw；validated absolute host Git 在 source Git 与 bootstrap Git 两条 authority 链中显式传递，拒绝 ambient PATH authority。
+- CPU evidence：P4 parser=17/17、provenance=16/16、`py_compile`、`git diff --check` PASS。新增 lexical rehash、closure rehash、relative host Git、loader flags reorder、host root no-path-reopen 夹具。
+- 仅 root static tooling/CPU；禁止真实 preflight、staging、P5 export/compose、GPU、训练/评测/推理/B2-T。
