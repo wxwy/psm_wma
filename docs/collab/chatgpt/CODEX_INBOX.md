@@ -4857,3 +4857,7 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 实现仅修改 root `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与对应 stdlib test：factory-only one-shot admission、从 `/` 逐 component `O_NOFOLLOW` openat/fstat namespace anchor、FD-relative direct-child absence、child FD mkdir/open/fstat 与 poison footprint。
 - CPU evidence：P4 `69/69 PASS`，`py_compile`、`git diff --check` PASS；覆盖 six mkdir/six verification exact prefixes、forge、existing root、symlink namespace zero-mkdir。
 - 禁止真实 request/preflight/materialize/staging/P5/GPU/训练；public CLI hard-stop 未变。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 9f8c1f1373008ca8d7d1505e5b05d2b3af08525d；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+Kimi closure remediation：capability 不再保存 mutable parsed dict；reservation 从 canonical raw bytes 重派生；id registry 改为 weak capability registry；普通 mutation/reset 拒绝。P4 CPU=70/70、py_compile、diff-check PASS。请回复 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（file:line）；禁止真实执行/P5/GPU/训练。
