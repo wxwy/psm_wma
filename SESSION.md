@@ -988,6 +988,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `50d08df03d632ea4457cbefeccc97b9c3309fd4c` 三方同 SHA closure：ChatGPT review=`f7c1cb9`、Kimi=`2026-09-02 14:54:25 CST`、MM=`2026-09-03 02:03:37` 均 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS`。P4+P5 CPU=34/34、provenance/static-contract=26/26、`py_compile`、`git diff --check` PASS。
 - 本 closure 仅结束 environment static tooling；`authorities.d005_pair` full request binding、run/candidates/backends 仍为独立 Gate。未执行真实 preflight/staging/P5 export/compose/GPU/训练；下一步须新建并三方审核后续 section 设计。提交：待本状态更新提交。
 
-### R09-B2 P4-v4 execution request authorities design (2026-09-02，IN_PROGRESS)
+### R09-B2 P4-v4 execution request authorities design (2026-09-02，REVIEW)
 
-- 认领 `G0-R09-B2-P4-V4-EXECUTION-REQUEST-AUTHORITIES`。预计新增 `docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_authorities_design_v0.1_2026-09-02.md`、修改 SESSION/TODO：仅冻结 `authorities.d005_pair` 的静态 path/bytes/source/verified-pair 与 environment cross-binding；不执行 preflight/staging/P5/GPU/训练；提交：未提交。
+- v0.1=`605c9ba` 的 ChatGPT/MM `REQUEST_CHANGES`、Kimi `APPROVE` 已收齐：历史 verification 是 pretty bytes，且历史 D005 v2/source 无法由 current v4 verifier/current request source 满足。新增 v0.2：固定历史 records/verification exact bytes、historical source与 verifier Git blob；byte binding 与 decoded semantic canonicalization 分离，禁止 ambient/current verifier，历史 pair仅经已关闭 environment projection cross-bind current request。
+- 仅文档整改，未执行项目代码/preflight/staging/P5/GPU/训练。下一步：diff-check、提交并重审 v0.2；提交：未提交。
