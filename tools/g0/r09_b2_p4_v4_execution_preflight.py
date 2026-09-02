@@ -53,6 +53,26 @@ RUN_IDENTITY_KEYS = {"root", "resolved_root", "kind", "identity_sha256"}
 CANDIDATES_KEYS = {"root", "attempt_id", "recurrent", "ttt_fast_weight", "identity_sha256"}
 CANDIDATE_ROOT_KEYS = RUN_IDENTITY_KEYS
 CANDIDATE_ITEM_KEYS = {"backend", "candidate_root", "run", "identity_sha256"}
+LOCK_AUTHORITY_KEYS = {
+    "schema_version", "source_root", "source_commit", "source_tree_oid", "gitlink",
+    "spec_path", "spec_git_blob_sha256", "spec_current_sha256", "spec_raw_sha256",
+    "output_parent", "output_basename",
+}
+LOCK_SPEC_KEYS = {
+    "schema_version", "entry", "source", "interpreter", "environment", "authorities",
+    "backends", "execution_contract", "planned_run", "planned_candidates",
+    "payload_manifest", "lock_spec_sha256",
+}
+PLANNED_RUN_ITEM_KEYS = {"identity", "run_token", "identity_sha256"}
+PLANNED_CANDIDATE_ITEM_KEYS = {
+    "backend", "candidate_root", "run_identity", "run_token", "identity_sha256",
+}
+PLANNED_COMMITMENT_KEYS = {
+    "schema_version", "entry", "source", "interpreter", "environment", "authorities",
+    "backends", "execution_contract", "planned", "commitment_sha256",
+}
+PLANNED_KEYS = {"root", "attempt_id", "recurrent", "ttt_fast_weight", "identity_sha256"}
+STAGING_PROJECTION_KEYS = {"entries", "projection_sha256"}
 BACKENDS_KEYS = {"recurrent", "ttt_fast_weight", "identity_sha256"}
 BACKEND_ITEM_KEYS = {"backend", "p3_contract", "identity_sha256"}
 P3_CONTRACT_KEYS = {"artifact_sha256", "verifier_sha256", "backend_contract", "identity_sha256"}
@@ -104,6 +124,7 @@ _EXECUTION_CONTRACT_ITEMS = (
     ("cleanup_retry_repair", False),
 )
 _BACKEND_ORDER = ("recurrent", "ttt_fast_weight")
+AUTHORIZED_P4_V4_LOCK_SPEC: dict[str, str] | None = None
 
 
 class _AdmittedRequest:
@@ -211,6 +232,259 @@ def canonical_sha256(value: object) -> str:
     return hashlib.sha256(
         (json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode()
     ).hexdigest()
+
+
+def _p5_canonical_sha256(value: object) -> str:
+    """Use the frozen P5 JSON spelling only for the planned v2 projection."""
+    return hashlib.sha256(
+        (json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
+    ).hexdigest()
+
+
+def _open_absolute_directory_chain(value: object, error: str) -> int:
+    if not isinstance(value, str) or not value or not os.path.isabs(value) or value.startswith("//"):
+        raise ValueError(error)
+    path = Path(value)
+    if os.path.normpath(value) != value or any(part in {"", ".", ".."} for part in path.parts[1:]):
+        raise ValueError(error)
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    try:
+        descriptor = os.open(path.anchor, flags)
+    except OSError as exc:
+        raise ValueError(error) from exc
+    try:
+        for component in path.parts[1:]:
+            child = os.open(component, flags, dir_fd=descriptor)
+            try:
+                if not stat.S_ISDIR(os.fstat(child).st_mode):
+                    raise ValueError(error)
+            except BaseException:
+                os.close(child)
+                raise
+            os.close(descriptor)
+            descriptor = child
+        return descriptor
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def _lock_relative_components(value: object, error: str) -> tuple[str, ...]:
+    if not isinstance(value, str) or not value or os.path.isabs(value) or "//" in value:
+        raise ValueError(error)
+    parts = tuple(value.split("/"))
+    if any(part in {"", ".", ".."} for part in parts):
+        raise ValueError(error)
+    return parts
+
+
+def _read_lock_spec_at(source_fd: int, relative: object) -> bytes:
+    parts = _lock_relative_components(relative, "P4-v4 lock spec path differs")
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+    parent_fd = os.dup(source_fd)
+    try:
+        for component in parts[:-1]:
+            child = os.open(component, flags, dir_fd=parent_fd)
+            try:
+                if not stat.S_ISDIR(os.fstat(child).st_mode):
+                    raise ValueError("P4-v4 lock spec path differs")
+            except BaseException:
+                os.close(child)
+                raise
+            os.close(parent_fd)
+            parent_fd = child
+        descriptor = os.open(parts[-1], os.O_RDONLY | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0), dir_fd=parent_fd)
+        try:
+            if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+                raise ValueError("P4-v4 lock spec must be a regular file")
+            chunks: list[bytes] = []
+            while True:
+                chunk = os.read(descriptor, 1024 * 1024)
+                if not chunk:
+                    return b"".join(chunks)
+                chunks.append(chunk)
+        finally:
+            os.close(descriptor)
+    except OSError as exc:
+        raise ValueError("P4-v4 lock spec path differs") from exc
+    finally:
+        os.close(parent_fd)
+
+
+def _identity_exact(value: object, keys: set[str], error: str, *, key: str = "identity_sha256") -> dict[str, object]:
+    if not isinstance(value, dict) or set(value) != keys or not isinstance(value.get(key), str):
+        raise ValueError(error)
+    if value[key] != canonical_sha256({name: item for name, item in value.items() if name != key}):
+        raise ValueError(error)
+    return value
+
+
+def _validate_payload_manifest(value: object) -> dict[str, object]:
+    manifest = _identity_exact(value, {"entries", "sha256"}, "P4-v4 lock payload manifest differs", key="sha256")
+    entries = manifest["entries"]
+    if not isinstance(entries, list) or not entries:
+        raise ValueError("P4-v4 lock payload manifest differs")
+    seen: set[str] = set()
+    for item in entries:
+        if (not isinstance(item, dict) or set(item) != {"path", "type", "sha256"}
+                or not isinstance(item["path"], str) or not item["path"]
+                or item["path"].startswith("/") or "//" in item["path"]
+                or any(part in {"", ".", ".."} for part in item["path"].split("/"))
+                or item["type"] != "regular"
+                or not isinstance(item["sha256"], str) or _SHA256.fullmatch(item["sha256"]) is None
+                or item["path"] in seen):
+            raise ValueError("P4-v4 lock payload manifest differs")
+        seen.add(item["path"])
+    if [item["path"] for item in entries] != sorted(seen):
+        raise ValueError("P4-v4 lock payload manifest order differs")
+    return manifest
+
+
+def _planned_projection(manifest: dict[str, object], token: str) -> dict[str, object]:
+    entries = [
+        {"path": "import_staging", "type": "directory", "mode": "0555", "sha256": ""},
+        {"path": f"import_staging/{token}", "type": "directory", "mode": "0555", "sha256": ""},
+    ]
+    entries.extend({"path": item["path"], "type": "regular", "mode": "0444", "sha256": item["sha256"]} for item in manifest["entries"])
+    entries.sort(key=lambda item: item["path"])
+    return {"entries": entries, "projection_sha256": _p5_canonical_sha256({"entries": entries})}
+
+
+def build_planned_roster_commitment(raw: bytes) -> dict[str, object]:
+    """Validate a planned-only lock spec and derive its non-executable commitment."""
+    try:
+        spec = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("P4-v4 lock spec is not JSON") from exc
+    if (not isinstance(spec, dict) or raw != (json.dumps(spec, sort_keys=True, separators=(",", ":")) + "\n").encode()
+            or set(spec) != LOCK_SPEC_KEYS or spec.get("schema_version") != "r09_b2_p4_v4_lock_spec_v3"):
+        raise ValueError("P4-v4 lock spec schema differs")
+    _identity_exact(spec, LOCK_SPEC_KEYS, "P4-v4 lock spec identity differs", key="lock_spec_sha256")
+    if any(key in spec for key in ("run", "candidates", "roster_sha256")):
+        raise ValueError("P4-v4 lock spec final request field differs")
+    validate_entry(spec["entry"])
+    git_path = validate_host_git(spec["interpreter"].get("host_git") if isinstance(spec["interpreter"], dict) else None)
+    validate_source(spec["source"], spec["entry"], git_path)
+    validate_interpreter(spec["interpreter"], spec["source"], git_path)
+    validate_backends(spec["backends"])
+    validate_authorities_pair(spec["authorities"], spec, Path(spec["source"]["root"]), git_path)
+    planned_run = spec["planned_run"]
+    candidates = spec["planned_candidates"]
+    if not isinstance(planned_run, dict) or set(planned_run) != RUN_KEYS:
+        raise ValueError("P4-v4 lock planned run schema differs")
+    if not isinstance(candidates, dict) or set(candidates) != CANDIDATES_KEYS:
+        raise ValueError("P4-v4 lock planned candidates schema differs")
+    _identity_exact(candidates, CANDIDATES_KEYS, "P4-v4 lock planned candidates identity differs")
+    root = _identity_exact(candidates["root"], CANDIDATE_ROOT_KEYS, "P4-v4 lock planned root differs")
+    if root.get("kind") != "candidate_root":
+        raise ValueError("P4-v4 lock planned root differs")
+    root_path = _future_lexical_path(root.get("root"), "planned candidates root")
+    if root_path != _future_lexical_path(root.get("resolved_root"), "planned candidates root"):
+        raise ValueError("P4-v4 lock planned root differs")
+    attempt = candidates.get("attempt_id")
+    if not isinstance(attempt, str) or _SHA256.fullmatch(attempt) is None:
+        raise ValueError("P4-v4 lock planned attempt differs")
+    manifest = _validate_payload_manifest(spec["payload_manifest"])
+    planned: dict[str, object] = {"root": root, "attempt_id": attempt}
+    seen: set[str] = set()
+    for backend in _BACKEND_ORDER:
+        run = _identity_exact(planned_run[backend], PLANNED_RUN_ITEM_KEYS, "P4-v4 lock planned run differs")
+        run_identity = _identity_exact(run["identity"], RUN_IDENTITY_KEYS, "P4-v4 lock planned run identity differs")
+        token = run.get("run_token")
+        if (run_identity.get("kind") != "run_root" or not isinstance(token, str)
+                or _SHA256.fullmatch(token) is None or token in seen or attempt == token):
+            raise ValueError("P4-v4 lock planned run differs")
+        candidate = _identity_exact(candidates[backend], PLANNED_CANDIDATE_ITEM_KEYS, "P4-v4 lock planned candidate differs")
+        candidate_root = candidate.get("candidate_root")
+        if (candidate.get("backend") != backend or candidate.get("run_identity") != run_identity
+                or candidate.get("run_token") != token or not isinstance(candidate_root, str)
+                or _future_lexical_path(candidate_root, f"planned candidate {backend}") != root_path / attempt / backend):
+            raise ValueError("P4-v4 lock planned candidate mapping differs")
+        item = {
+            "backend": backend, "run_identity": run_identity, "run_token": token,
+            "candidate_root": candidate_root, "staging_projection": _planned_projection(manifest, token),
+        }
+        item["identity_sha256"] = canonical_sha256(item)
+        planned[backend] = item
+        seen.update((token, candidate_root, item["identity_sha256"]))
+    if len(seen) != 6:
+        raise ValueError("P4-v4 lock planned pair reuse differs")
+    planned["identity_sha256"] = canonical_sha256(planned)
+    commitment = {key: spec[key] for key in (
+        "entry", "source", "interpreter", "environment", "authorities", "backends", "execution_contract",
+    )}
+    commitment = {"schema_version": "r09_b2_p4_v4_planned_roster_commitment_v1", **commitment, "planned": planned}
+    commitment["commitment_sha256"] = canonical_sha256(commitment)
+    return commitment
+
+
+def lock_authorized_planned_roster_commitment() -> Path:
+    """Write the single approved planned commitment, or fail before output creation."""
+    authority = AUTHORIZED_P4_V4_LOCK_SPEC
+    if authority is None:
+        raise ValueError("P4-v4 lock authority is absent")
+    if not isinstance(authority, dict) or set(authority) != LOCK_AUTHORITY_KEYS:
+        raise ValueError("P4-v4 lock authority schema differs")
+    if authority.get("schema_version") != "r09_b2_p4_v4_lock_authority_v1":
+        raise ValueError("P4-v4 lock authority schema differs")
+    if (any(not isinstance(authority[key], str) for key in LOCK_AUTHORITY_KEYS)
+            or _GIT_REVISION.fullmatch(authority["source_commit"]) is None
+            or _GIT_REVISION.fullmatch(authority["source_tree_oid"]) is None
+            or _GIT_REVISION.fullmatch(authority["gitlink"]) is None
+            or any(_SHA256.fullmatch(authority[key]) is None for key in ("spec_git_blob_sha256", "spec_current_sha256", "spec_raw_sha256"))
+            or "/" in authority["output_basename"] or not authority["output_basename"]):
+        raise ValueError("P4-v4 lock authority differs")
+    source_fd = _open_absolute_directory_chain(authority["source_root"], "P4-v4 lock source root differs")
+    try:
+        raw = _read_lock_spec_at(source_fd, authority["spec_path"])
+    finally:
+        os.close(source_fd)
+    if hashlib.sha256(raw).hexdigest() != authority["spec_raw_sha256"]:
+        raise ValueError("P4-v4 lock spec raw SHA differs")
+    try:
+        spec = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("P4-v4 lock spec is not JSON") from exc
+    source_root = Path(authority["source_root"])
+    if (not isinstance(spec, dict) or not isinstance(spec.get("source"), dict)
+            or spec["source"].get("root") != authority["source_root"]):
+        raise ValueError("P4-v4 lock source binding differs")
+    interpreter = spec.get("interpreter")
+    git_path = validate_host_git(interpreter.get("host_git") if isinstance(interpreter, dict) else None)
+    _clean_git_root(source_root, git_path)
+    if (_git(source_root, "rev-parse", "HEAD", git_executable=git_path).decode().strip() != authority["source_commit"]
+            or _git(source_root, "rev-parse", f"{authority['source_commit']}^{{tree}}", git_executable=git_path).decode().strip() != authority["source_tree_oid"]):
+        raise ValueError("P4-v4 lock source revision differs")
+    tree = _git(source_root, "ls-tree", authority["source_commit"], "cosmos-framework", git_executable=git_path).decode().rstrip("\n").split("\t")
+    if len(tree) != 2 or tree[1] != "cosmos-framework" or tree[0].split()[:2] != ["160000", "commit"] or tree[0].split()[2] != authority["gitlink"]:
+        raise ValueError("P4-v4 lock Gitlink differs")
+    blob = _git(source_root, "show", f"{authority['source_commit']}:{authority['spec_path']}", git_executable=git_path)
+    if hashlib.sha256(blob).hexdigest() != authority["spec_git_blob_sha256"] or hashlib.sha256(raw).hexdigest() != authority["spec_current_sha256"] or blob != raw:
+        raise ValueError("P4-v4 lock spec Git/current binding differs")
+    commitment = build_planned_roster_commitment(raw)
+    output_parent_fd = _open_absolute_directory_chain(authority["output_parent"], "P4-v4 lock output parent differs")
+    try:
+        flags = os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | getattr(os, "O_CLOEXEC", 0)
+        descriptor = os.open(authority["output_basename"], flags, 0o600, dir_fd=output_parent_fd)
+        try:
+            payload = (json.dumps(commitment, sort_keys=True, separators=(",", ":")) + "\n").encode()
+            os.write(descriptor, payload); os.fsync(descriptor); os.lseek(descriptor, 0, os.SEEK_SET)
+            if os.read(descriptor, len(payload) + 1) != payload:
+                raise RuntimeError("P4-v4 lock output is POISONED_NOT_LOCKED")
+            os.fchmod(descriptor, 0o444)
+            if stat.S_IMODE(os.fstat(descriptor).st_mode) != 0o444:
+                raise RuntimeError("P4-v4 lock output is POISONED_NOT_LOCKED")
+        except BaseException as exc:
+            if isinstance(exc, RuntimeError):
+                raise
+            raise RuntimeError("P4-v4 lock output is POISONED_NOT_LOCKED") from exc
+        finally:
+            os.close(descriptor)
+    except FileExistsError as exc:
+        raise ValueError("P4-v4 lock output is NOT_LOCKED") from exc
+    finally:
+        os.close(output_parent_fd)
+    return Path(authority["output_parent"]) / authority["output_basename"]
 
 
 def _identity(value: dict[str, object], name: str) -> None:

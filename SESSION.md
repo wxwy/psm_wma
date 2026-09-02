@@ -5,7 +5,7 @@
 ## 当前最小步骤（2026-09-02）
 
 - `G0-R09-B2-P4-V4-PREFLIGHT-MATERIALIZATION`（DONE）：hidden-authority remediation=`bda9737` 获 ChatGPT review=`6910a72`、Kimi=`2026-09-02 21:04:12 CST`、MM=`2026-09-02 21:05:23 CST` 同 SHA `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_MATERIALIZATION_STATIC_TOOLS`。closure-local `WeakKeyDictionary` 保存唯一 admission raw/SHA/one-shot state，visible fields 不能 forge/reset authority；B2 双 backend precheck 与 B3 full-admission/race/forbidden/CLI/12-fault fixture保持。P4 CPU=76/76、materialization=13/13、`py_compile`、`git diff --check` PASS。未创建或执行真实 request/preflight/materialize/staging/candidate/P5/GPU/训练；下一步仅可另起 exact frozen execution-request / execution design Gate；提交：未提交。
-- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（IN_PROGRESS）：v0.7=`671ca01` 获 ChatGPT=`8b09979`、Kimi、MM 同 SHA `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS`。预计仅修改 root P4 static planned-commitment helper 与 stdlib CPU fixture；默认 authority `None`、不实施 P4/P5 migration、不生成真实 request/preflight/staging/candidate/run-root、不调用 P5/GPU/训练；提交：未提交。
+- `G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK`（REVIEW）：v0.7=`671ca01` 获 ChatGPT=`8b09979`、Kimi、MM 同 SHA implementation authorization。已仅修改 `tools/g0/r09_b2_p4_v4_execution_preflight.py`、`tools/g0/test_r09_b2_p4_v4_execution_preflight.py`：默认 authority `None` fail-closed；source-FD lexical spec loader、constant Git/tree/Gitlink/current-byte binding、planned-only v3 spec→v1 commitment与P5-v2 projection、same-FD exclusive poison writer；CPU=79/79、`py_compile`、`git diff --check` PASS。未创建真实 request/preflight/staging/candidate/run-root，未调用 P5/GPU/训练；下一步提交并三方 implementation closure review；提交：未提交。
 
 ## 2026-08-25~26 数据下载会话(sandbox,Codex)
 

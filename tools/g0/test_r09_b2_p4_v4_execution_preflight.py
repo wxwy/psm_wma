@@ -1672,6 +1672,72 @@ class AuthoritiesAuthorityTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "verification bytes differ"):
                 r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
 
+class PlannedRosterCommitmentTest(unittest.TestCase):
+    def _identity(self, value):
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(value)
+        return value
+
+    def _raw(self):
+        run = {}
+        candidates = {"root": self._identity({"root": "/candidates", "resolved_root": "/candidates", "kind": "candidate_root"}), "attempt_id": "e" * 64}
+        for backend, token in (("recurrent", "a" * 64), ("ttt_fast_weight", "b" * 64)):
+            identity = self._identity({"root": f"/runs/{backend}", "resolved_root": f"/runs/{backend}", "kind": "run_root"})
+            run[backend] = self._identity({"identity": identity, "run_token": token})
+            candidates[backend] = self._identity({"backend": backend, "candidate_root": f"/candidates/{'e' * 64}/{backend}", "run_identity": identity, "run_token": token})
+        candidates = self._identity(candidates)
+        manifest = {"entries": [{"path": "pkg/module.py", "type": "regular", "sha256": "c" * 64}]}
+        manifest["sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(manifest)
+        spec = {
+            "schema_version": "r09_b2_p4_v4_lock_spec_v3", "entry": {}, "source": {"root": "/source"},
+            "interpreter": {"host_git": {}}, "environment": {}, "authorities": {}, "backends": {},
+            "execution_contract": {}, "planned_run": run, "planned_candidates": candidates,
+            "payload_manifest": manifest,
+        }
+        spec["lock_spec_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(spec)
+        return (json.dumps(spec, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+    def _build(self, raw):
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_entry"), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_host_git", return_value=Path("/usr/bin/git")), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_source"), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_interpreter"), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_backends"), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "validate_authorities_pair"):
+            return r09_b2_p4_v4_execution_preflight.build_planned_roster_commitment(raw)
+
+    def test_builds_exact_v2_planned_commitment_without_roster_sha(self):
+        commitment = self._build(self._raw())
+        self.assertEqual(set(commitment), r09_b2_p4_v4_execution_preflight.PLANNED_COMMITMENT_KEYS)
+        self.assertEqual(commitment["planned"]["root"]["root"], "/candidates")
+        for backend, token in (("recurrent", "a" * 64), ("ttt_fast_weight", "b" * 64)):
+            item = commitment["planned"][backend]
+            self.assertEqual(item["run_token"], token)
+            self.assertEqual(item["candidate_root"], f"/candidates/{'e' * 64}/{backend}")
+            self.assertNotIn("roster_sha256", item)
+            self.assertEqual(item["staging_projection"]["entries"], [
+                {"path": "import_staging", "type": "directory", "mode": "0555", "sha256": ""},
+                {"path": f"import_staging/{token}", "type": "directory", "mode": "0555", "sha256": ""},
+                {"path": "pkg/module.py", "type": "regular", "mode": "0444", "sha256": "c" * 64},
+            ])
+
+    def test_rejects_final_field_and_candidate_mapping_drift(self):
+        for mutation in (
+            lambda value: value.__setitem__("run", {}),
+            lambda value: value["planned_candidates"]["recurrent"].__setitem__("candidate_root", "/wrong"),
+        ):
+            with self.subTest(mutation=mutation):
+                value = json.loads(self._raw()); mutation(value)
+                value["lock_spec_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in value.items() if key != "lock_spec_sha256"})
+                with self.assertRaises(ValueError):
+                    self._build((json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode())
+
+    def test_default_authority_creates_no_output(self):
+        with tempfile.TemporaryDirectory() as temporary, \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "AUTHORIZED_P4_V4_LOCK_SPEC", None):
+            with self.assertRaisesRegex(ValueError, "authority is absent"):
+                r09_b2_p4_v4_execution_preflight.lock_authorized_planned_roster_commitment()
+            self.assertEqual(list(Path(temporary).iterdir()), [])
+
 
 if __name__ == "__main__":
     unittest.main()
