@@ -4366,3 +4366,7 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 任务：`G0-R09-B2-P4-V4-EXECUTION-PREFLIGHT` static remediation follow-up。新增 `runtime_sys_path` parity fail-closed CPU regression；请求 ChatGPT、MM、Kimi 对同一 root SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。证据：P4/P5 unittest 9/9 PASS，py_compile、git diff --check PASS。仅 root static tooling+CPU tests；禁止真实 preflight/staging/record/refreeze、P5 export/compose、torchrun/GPU、模型/数据/checkpoint、训练/评测/推理、B2-T、Local Memory 训练。
 
 更正锚点：上述申请内容随提交 `1b14d89` 固化，后续 verdict 请以 root `1b14d89`（Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`）为唯一审核 SHA。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 a77a6ca；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+整改完成：新增复用真实 P5 `_v4_preflight` fixture 的双 backend 正向 admission 测试；P4/P5 CPU 测试、编译、diff-check 全部通过。请对该 SHA 给出 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 file:line）。范围仅静态工具与 CPU 测试，禁止真实执行及训练。
