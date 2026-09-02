@@ -14,6 +14,7 @@ from pathlib import Path
 from unittest import mock
 
 from tools.g0 import r09_b2_p4_v4_execution_preflight
+from tools.g0.export_r09_b2_p5_resolved_config import PYTHON_CHILD_LOCALE, p5_effective_environment
 from tools.g0.r09_b2_p4_v4_execution_preflight import main
 
 
@@ -568,7 +569,7 @@ class EnvironmentAuthorityTest(unittest.TestCase):
         mutations = (
             ("added D005 key", lambda recurrent, ttt: recurrent["environment"]["set"].__setitem__("AMBIENT", "x"), "D005 environment"),
             ("removed D005 key", lambda recurrent, ttt: recurrent["environment"]["set"].pop(next(iter(r09_b2_p4_v4_execution_preflight.REQUIRED_ENV))), "D005 environment"),
-            ("changed D005 fixed value", lambda recurrent, ttt: recurrent["environment"]["set"].__setitem__("PYTHONPATH", "/other"), "projection differs"),
+            ("changed D005 projected value", lambda recurrent, ttt: recurrent["environment"]["set"].__setitem__("HF_HUB_OFFLINE", "changed"), "projection differs"),
             ("wrong backend", lambda recurrent, ttt: recurrent.__setitem__("backend", "ttt_fast_weight"), "D005 environment"),
             ("well formed D005 digest", lambda recurrent, ttt: recurrent.__setitem__("d005_sha256", "c" * 64), "projection differs"),
             ("wrong input digest", lambda recurrent, ttt: value["recurrent"]["d005_projection"].__setitem__("input_set_sha256", "c" * 64), "projection differs"),
@@ -598,6 +599,22 @@ class EnvironmentAuthorityTest(unittest.TestCase):
                 self._reidentity(value["recurrent"])
                 self._reidentity(value["ttt_fast_weight"])
                 self._assert_rejected(value, recurrent, ttt, error)
+
+    def test_environment_rejects_third_backend_roster(self):
+        value, recurrent, ttt = self._pair()
+        value["unexpected"] = value["recurrent"]
+        self._assert_rejected(value, recurrent, ttt, "environment pair schema")
+
+    def test_environment_leaves_locale_to_p5_projection(self):
+        value, recurrent, ttt = self._pair()
+        self.assertNotIn("LC_CTYPE", value["recurrent"]["effective_environment"]["set"])
+        self.assertNotIn("LC_CTYPE", value["ttt_fast_weight"]["effective_environment"]["set"])
+        with mock.patch.dict(os.environ, {"PYTHONPATH": "/ambient", "LC_CTYPE": "bad"}, clear=True), \
+             mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", return_value={"status": "PASS"}):
+            r09_b2_p4_v4_execution_preflight.validate_environment_pair(value, recurrent, ttt, Path("/unused"))
+            effective = p5_effective_environment(value["recurrent"], value["ttt_fast_weight"], backend="recurrent")
+        self.assertEqual(effective, {**dict(sorted(value["recurrent"]["effective_environment"]["set"].items())), **PYTHON_CHILD_LOCALE})
+        self.assertEqual(effective["LC_CTYPE"], "C.UTF-8")
 
     def test_environment_is_independent_of_ambient_parent(self):
         value, recurrent, ttt = self._pair()
