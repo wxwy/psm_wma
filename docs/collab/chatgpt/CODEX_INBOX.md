@@ -4306,3 +4306,12 @@ P4-v4 preflight v0.2 设计整改。请求 `APPROVE_TO_IMPLEMENT_P4_V4_PREFLIGHT
 ### Awaiting review — 🚨 审核申请已发出（根仓 25c93f8234faef81938abfd18c6658cad6a050fb；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_EVIDENCE_GIT_AUTHORITY_STATIC` 或 `REQUEST_CHANGES`（附 `file:line`）。文档 `docs/build/PSM-WMA_R09_B2_P5_evidence_git_authority_design_v1.0_2026-09-02.md` 要求 P5 固定 P4-v4 files 从 full-clean Git evidence root discovered，并逐文件 `git show HEAD` bytes=current bytes；仅 root verifier/tests CPU。禁止所有 runtime、staging、refreeze、export、GPU、训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 e0e9f89002805f88b2c17c04597357e5ad909349；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P5-EVIDENCE-GIT-AUTHORITY` v1.1 静态设计整改。请求 `APPROVE_TO_IMPLEMENT_P5_EVIDENCE_GIT_AUTHORITY_STATIC` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：根仓 design commit=`e0e9f89002805f88b2c17c04597357e5ad909349`，文档=`docs/build/PSM-WMA_R09_B2_P5_evidence_git_authority_design_v1.1_2026-09-02.md`，子模块/Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 整改 GPT 对 v1.0 的 HIGH：不再以 evidence root 自身的当前 `HEAD`/三个文件互相授权。未来 P5 verifier 仅接受一个在独立 record/refreeze closure 后、经审查写入新 verifier revision 的 `AUTHORIZED_P4_V4_EVIDENCE`：精确 evidence commit、tree SHA256、Gitlink、及 request/result/verification 的固定 Git-blob SHA256。
+- acceptance 是 exact-commit-only（不接受 descendant）：full-clean、`HEAD==authorized_commit`、`git ls-tree HEAD cosmos-framework==authorized_gitlink==submodule HEAD`，且三固定 tracked regular file 的 `git show authorized_commit:<path>`、current bytes、canonical bytes SHA 都等于 frozen blob SHA。共同替换并提交新 clean HEAD、错误 clean submodule、任何 descendant、untracked/symlink/blob drift 均必须 FAIL；永久 CPU Git fixtures 覆盖负例。
+- 范围：若批准，仅实现 root P5 verifier tooling 与 stdlib CPU tests；固定授权常量只能在未来独立 P4 record/refreeze closure 后的 reviewed verifier revision 写入。禁止 runtime、真实 staging、P4 record/refreeze、P5 export/compose、torchrun、GPU、模型/数据/checkpoint、训练/评测/推理、B2-T 和 Local Memory 训练。
