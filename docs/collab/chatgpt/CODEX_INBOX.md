@@ -4450,3 +4450,12 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 审核对象：root design=`6eea35c443bb7ac7c5f91f76d1c6d04945c7ec89`，文档=`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_source_design_v0.3_2026-09-02.md`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`；整改 GPT=`ad73362`、Kimi v0.1 `REQUEST_CHANGES`。
 - exact-HEAD：root `HEAD` 与 `rev-parse --verify <root_revision>^{commit}` 均必须等于 request revision，ancestor/descendant 均拒绝；保留 full-clean、Gitlink=submodule HEAD、entry Git blob/current bytes与 entry cross-binding。
 - 关键永久 fixture：B 仅修改无关 root 文件且 entry/Gitlink 保持 A；request=A、checkout=B 必因 checkout revision identity fail-closed。若批准仅 root parser/validator+stdlib CPU Git fixture；禁止真实 preflight、staging/materialize/candidate、record/refreeze、P5 authority/export/compose、GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 a36ac2151bfa9637225edc93dab474a6dd4f8f1b；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-RUNBOOK` source v0.3 static implementation closure。请对同一 implementation SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_SOURCE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root implementation=`a36ac2151bfa9637225edc93dab474a6dd4f8f1b`，approved design=`6eea35c443bb7ac7c5f91f76d1c6d04945c7ec89`，Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 实现范围：`tools/g0/r09_b2_p4_v4_execution_preflight.py` 的 source-only parser/validator。它以 canonical identity、strict-resolved non-symlink root、root/submodule full-clean、`HEAD == root_revision`、root gitlink=submodule HEAD、tracked regular entry 的 Git blob/current-byte SHA 与 entry/source cross-binding 全部 exact fail-closed；既有入口仍无条件 hard-stop。
+- 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v` 为 7/7 PASS（实际临时 Git/submodule 正例；B 只修改无关 root 文件、entry/Gitlink 保持 A 的 clean descendant 必因 HEAD identity FAIL）；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。
+- 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 preflight、staging/materialize/candidate、record/refreeze、evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
