@@ -625,5 +625,55 @@ class EnvironmentAuthorityTest(unittest.TestCase):
         self.assertEqual(value, frozen)
 
 
+class AuthoritiesAuthorityTest(unittest.TestCase):
+    def _authorities(self):
+        pair = {"model": "historical_d005_v2"}
+        for name in ("recurrent", "ttt_fast_weight", "verification"):
+            pair[name] = r09_b2_p4_v4_execution_preflight._historical_binding(name)
+        pair["historical_source"] = r09_b2_p4_v4_execution_preflight._historical_source()
+        pair["historical_verifier"] = r09_b2_p4_v4_execution_preflight._historical_verifier()
+        pair["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(pair)
+        value = {"d005_pair": pair}
+        value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(value)
+        return value
+
+    def _request(self):
+        root = Path(__file__).resolve().parents[2]
+        records = {}
+        for backend in ("recurrent", "ttt_fast_weight"):
+            path, _ = r09_b2_p4_v4_execution_preflight._HISTORICAL_ARTIFACTS[backend]
+            records[backend] = json.loads((root / path).read_bytes())
+        environment = {}
+        for backend, record in records.items():
+            projected, projection = r09_b2_p4_v4_execution_preflight._project_d005_environment(record, backend)
+            effective_core = {"set": projected, "unset": list(r09_b2_p4_v4_execution_preflight.P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
+            native_core = {"set": {}, "unset": list(r09_b2_p4_v4_execution_preflight.P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
+            section = {"effective_environment": {**effective_core, "sha256": r09_b2_p4_v4_execution_preflight.canonical_sha256(effective_core)}, "native_loader_environment": {**native_core, "sha256": r09_b2_p4_v4_execution_preflight.canonical_sha256(native_core)}, "d005_projection": projection}
+            environment[backend] = {**section, "identity_sha256": r09_b2_p4_v4_execution_preflight.canonical_sha256(section)}
+        git = Path(shutil.which("git") or "").resolve()
+        return root, {"environment": environment, "interpreter": {"host_git": {"path": str(git)}}}, git
+
+    def test_authorities_bind_historical_bytes_verifier_and_environment(self):
+        root, request, git = self._request()
+        r09_b2_p4_v4_execution_preflight.validate_authorities_pair(self._authorities(), request, root, git)
+
+    def test_authorities_reject_identity_binding_and_verification_drift(self):
+        root, request, git = self._request()
+        for mutate, error in (
+            (lambda value: value["d005_pair"]["recurrent"].__setitem__("sha256", "0" * 64), "binding differs"),
+            (lambda value: value.__setitem__("identity_sha256", "0" * 64), "authorities identity"),
+        ):
+            with self.subTest(error=error):
+                value = self._authorities()
+                mutate(value)
+                if error == "binding differs":
+                    value["d005_pair"]["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                        {key: item for key, item in value["d005_pair"].items() if key != "identity_sha256"}
+                    )
+                    value["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({"d005_pair": value["d005_pair"]})
+                with self.assertRaisesRegex(ValueError, error):
+                    r09_b2_p4_v4_execution_preflight.validate_authorities_pair(value, request, root, git)
+
+
 if __name__ == "__main__":
     unittest.main()

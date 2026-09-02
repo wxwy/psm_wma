@@ -43,6 +43,17 @@ ENVIRONMENT_KEYS = {"effective_environment", "native_loader_environment", "d005_
 ENVIRONMENT_OBJECT_KEYS = {"set", "unset", "inherit_allowlist", "sha256"}
 D005_PROJECTION_KEYS = {"backend", "d005_sha256", "input_set_sha256", "excluded_keys", "projected_set_sha256", "sha256"}
 D005_EXCLUDED_ENVIRONMENT_KEYS = ["IMAGINAIRE_OUTPUT_ROOT", "PYTHONPATH"]
+AUTHORITIES_KEYS = {"d005_pair", "identity_sha256"}
+AUTHORITIES_PAIR_KEYS = {"model", "recurrent", "ttt_fast_weight", "verification", "historical_source", "historical_verifier", "identity_sha256"}
+_HISTORICAL_REVISION = "ddb4e0eae97fb545d5239c1ddb6d4387170f3780"
+_HISTORICAL_GITLINK = "21d064f2b7c7aeeb67cfee50ac8d6722a944eddb"
+_HISTORICAL_ARTIFACTS = {
+    "recurrent": ("artifacts/g0/r09/b2/p4_launch_d005/recurrent.json", "2d04c5040c5836249bcab78e7904c2cf8a475c4fcf5925942ebb496985cd3190"),
+    "ttt_fast_weight": ("artifacts/g0/r09/b2/p4_launch_d005/ttt_fast_weight.json", "8890bbec61a808d5964657806cf01166c893ff66abc2fdf64ea3cd201a03274e"),
+    "verification": ("artifacts/g0/r09/b2/p4_launch_d005/verification.json", "8618488f9c8cbbcdda2ea9d513f1f76a0154798fe386ce19dcbeac78fcff4080"),
+}
+_HISTORICAL_VERIFIER = ("tools/g0/verify_r09_b2_p4_d005.py", "2c94f28a7779f7e74a2798124a0d85e57bafa8aab739b6072ef6790a91c9a4e6")
+_VERIFICATION_BACKEND_KEYS = {"argv", "budget", "command_digest", "cwd", "env_assets_bound", "environment", "inputs", "non_executable", "outputs", "record_digest", "schema", "source"}
 _GIT_REVISION = re.compile(r"[0-9a-f]{40}\Z")
 _SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 _EXECUTION_CONTRACT_ITEMS = (
@@ -129,6 +140,94 @@ def canonical_sha256(value: object) -> str:
     return hashlib.sha256(
         (json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode()
     ).hexdigest()
+
+
+def _identity(value: dict[str, object], name: str) -> None:
+    if not isinstance(value.get("identity_sha256"), str) or value["identity_sha256"] != canonical_sha256({key: item for key, item in value.items() if key != "identity_sha256"}):
+        raise ValueError(f"execution request {name} identity differs")
+
+
+def _historical_source() -> dict[str, str]:
+    value = {"root_revision": _HISTORICAL_REVISION, "gitlink_revision": _HISTORICAL_GITLINK, "submodule_revision": _HISTORICAL_GITLINK}
+    return {**value, "identity_sha256": canonical_sha256(value)}
+
+
+def _historical_verifier() -> dict[str, str]:
+    value = {"relative_path": _HISTORICAL_VERIFIER[0], "root_revision": _HISTORICAL_REVISION, "git_blob_sha256": _HISTORICAL_VERIFIER[1]}
+    return {**value, "identity_sha256": canonical_sha256(value)}
+
+
+def _historical_binding(name: str) -> dict[str, str]:
+    path, digest = _HISTORICAL_ARTIFACTS[name]
+    return {"relative_path": path, "sha256": digest}
+
+
+def _read_historical_artifact(root: Path, binding: object, expected: dict[str, str], name: str) -> tuple[bytes, dict[str, object]]:
+    if binding != expected:
+        raise ValueError(f"execution request historical {name} binding differs")
+    relative = Path(expected["relative_path"])
+    if relative.is_absolute() or not relative.parts or any(part in {"", ".", ".."} for part in relative.parts):
+        raise ValueError(f"execution request historical {name} path differs")
+    try:
+        path = (root / relative).resolve(strict=True)
+    except OSError as exc:
+        raise ValueError(f"execution request historical {name} path differs") from exc
+    if path.is_symlink() or not path.is_relative_to(root):
+        raise ValueError(f"execution request historical {name} path differs")
+    raw = _read_regular_nofollow(path, f"execution request historical {name} path differs")
+    if hashlib.sha256(raw).hexdigest() != expected["sha256"]:
+        raise ValueError(f"execution request historical {name} bytes differ")
+    try:
+        return raw, json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"execution request historical {name} JSON differs") from exc
+
+
+def _validate_historical_verification(value: object) -> None:
+    if not isinstance(value, dict) or set(value) != {"checks", "schema_version", "status"} or value["schema_version"] != "r09_b2_p4_d005_verifier_v2" or value["status"] != "PASS":
+        raise ValueError("execution request historical verification schema differs")
+    checks = value["checks"]
+    if not isinstance(checks, dict) or set(checks) != {"distinct_outputs", "matched", "recurrent", "ttt_fast_weight"} or checks["distinct_outputs"] is not True:
+        raise ValueError("execution request historical verification checks differ")
+    matched = checks["matched"]
+    if not isinstance(matched, dict) or set(matched) != {"budget", "external_assets", "p1_manifest", "p3_sha256", "source"} or any(item is not True for item in matched.values()):
+        raise ValueError("execution request historical verification matched differs")
+    for backend in ("recurrent", "ttt_fast_weight"):
+        item = checks[backend]
+        if not isinstance(item, dict) or set(item) != _VERIFICATION_BACKEND_KEYS or any(flag is not True for flag in item.values()):
+            raise ValueError("execution request historical verification backend differs")
+
+
+def validate_authorities_pair(authorities: object, request: dict[str, object], root: Path, git_executable: Path) -> None:
+    """Validate the fixed historical D005 authority without invoking its verifier."""
+    if not isinstance(authorities, dict) or set(authorities) != AUTHORITIES_KEYS:
+        raise ValueError("execution request authorities schema differs")
+    _identity(authorities, "authorities")
+    pair = authorities["d005_pair"]
+    if not isinstance(pair, dict) or set(pair) != AUTHORITIES_PAIR_KEYS or pair.get("model") != "historical_d005_v2":
+        raise ValueError("execution request authorities pair schema differs")
+    _identity(pair, "authorities pair")
+    if pair.get("historical_source") != _historical_source() or pair.get("historical_verifier") != _historical_verifier():
+        raise ValueError("execution request historical source differs")
+    if not git_executable.is_absolute() or Path(request.get("interpreter", {}).get("host_git", {}).get("path", "")) != git_executable:
+        raise ValueError("execution request historical host Git differs")
+    records: dict[str, dict[str, object]] = {}
+    paths: set[str] = set()
+    for backend in ("recurrent", "ttt_fast_weight"):
+        binding = _historical_binding(backend)
+        raw, record = _read_historical_artifact(root, pair.get(backend), binding, backend)
+        source = {"root_revision": _HISTORICAL_REVISION, "gitlink_revision": _HISTORICAL_GITLINK, "submodule_revision": _HISTORICAL_GITLINK}
+        if raw != (json.dumps(record, sort_keys=True, separators=(",", ":")) + "\n").encode() or record.get("backend") != backend or record.get("schema_version") != "r09_b2_p4_launch_d005_v2" or record.get("status") != "FROZEN_NOT_EXECUTED" or record.get("source") != source:
+            raise ValueError("execution request historical record differs")
+        paths.add(binding["relative_path"]); records[backend] = record
+    if len(paths) != 2:
+        raise ValueError("execution request historical artifact path differs")
+    _, verification = _read_historical_artifact(root, pair.get("verification"), _historical_binding("verification"), "verification")
+    _validate_historical_verification(verification)
+    blob = _git(root, "show", f"{_HISTORICAL_REVISION}:{_HISTORICAL_VERIFIER[0]}", git_executable=git_executable)
+    if hashlib.sha256(blob).hexdigest() != _HISTORICAL_VERIFIER[1]:
+        raise ValueError("execution request historical verifier bytes differ")
+    _validate_environment_sections(request.get("environment"), records)
 
 
 def validate_entry(value: object) -> None:
@@ -303,14 +402,11 @@ def _project_d005_environment(record: dict[str, object], backend: str) -> tuple[
     return projected, projection
 
 
-def validate_environment_pair(value: object, recurrent: dict[str, object], ttt: dict[str, object], root: Path) -> None:
-    """Validate the D005-bound, empty-parent environment pair without launching anything."""
+def _validate_environment_sections(value: object, records: dict[str, dict[str, object]]) -> None:
     if not isinstance(value, dict) or set(value) != {"recurrent", "ttt_fast_weight"}:
         raise ValueError("execution request environment pair schema differs")
-    if verify_d005_pair(recurrent, ttt, root).get("status") != "PASS":
-        raise ValueError("execution request D005 pair is not verified")
     sections: dict[str, dict[str, object]] = {}
-    for backend, record in (("recurrent", recurrent), ("ttt_fast_weight", ttt)):
+    for backend, record in records.items():
         section = value[backend]
         if not isinstance(section, dict) or set(section) != ENVIRONMENT_KEYS:
             raise ValueError("execution request environment schema differs")
@@ -340,6 +436,13 @@ def validate_environment_pair(value: object, recurrent: dict[str, object], ttt: 
         for key, values in P5_P3_BACKEND_ENVIRONMENT.items()
     ):
         raise ValueError("execution request environment backend difference differs")
+
+
+def validate_environment_pair(value: object, recurrent: dict[str, object], ttt: dict[str, object], root: Path) -> None:
+    """Validate the D005-bound, empty-parent environment pair without launching anything."""
+    if verify_d005_pair(recurrent, ttt, root).get("status") != "PASS":
+        raise ValueError("execution request D005 pair is not verified")
+    _validate_environment_sections(value, {"recurrent": recurrent, "ttt_fast_weight": ttt})
 def validate_host_git(value: object) -> Path:
     if not isinstance(value, dict) or set(value) != HOST_GIT_KEYS or not all(isinstance(value[key], str) for key in HOST_GIT_KEYS):
         raise ValueError("execution request host Git schema differs")

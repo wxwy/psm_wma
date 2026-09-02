@@ -990,4 +990,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 ### R09-B2 P4-v4 execution request authorities design (2026-09-02，REVIEW)
 
-- v0.2=`cdbb43d` 三方意见已收齐：ChatGPT `REQUEST_CHANGES` 要求绑定已验证 host-Git TCB及完整 verification nested roster；Kimi/MM `APPROVE`。新增 v0.3：`validate_authorities_pair(..., git_executable)` 仅用已验证 `request.interpreter.host_git.path` 固定 argv Git lookup；冻结 verification top/checks/matched/backend exact boolean keys。仅文档整改，未执行项目代码/preflight/staging/P5/GPU/训练；下一步：diff-check、提交并重审 v0.3；提交：未提交。
+- v0.3=`54830a2` 获 ChatGPT=`b385077`、Kimi、MM 同 SHA `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_AUTHORITIES_STATIC_TOOLS`。root 静态实现新增 `validate_authorities_pair()`：仅以已验证 absolute host Git 执行固定 `git -C <root> show ddb4e0e:tools/g0/verify_r09_b2_p4_d005.py`，single-fd/no-follow 绑定三份历史 D005 bytes，冻结 source/verifier identity 与 verification nested boolean roster，复用已关闭的 environment projection（不调用 current `verify_pair()`）。stdlib CPU=32/32、`py_compile`、`git diff --check` PASS；未执行 preflight/staging/P5/GPU/训练。下一步：创建 implementation 提交并向三方申请同 SHA closure 审核；提交：未提交。
