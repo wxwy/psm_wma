@@ -4690,3 +4690,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 - 实现范围仅 `tools/g0/r09_b2_p4_v4_execution_preflight.py` 与 `tools/g0/test_r09_b2_p4_v4_execution_preflight.py`：`candidates`/root/backend 均为 exact schema+canonical identity；backend `run` 必与 closed run side canonical-equal；future root/derived leaf 强制 lexical/no-existing-ancestor-symlink；root、leaf 与 source/submodule/two run roots 双向不重叠；attempt_id 不等于两 run tokens；不会创建或读取 candidate/run/staging。
 - CPU evidence：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=55/55 PASS；`python -B -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。fixture 覆盖外/内层摘要及 exact schema、摘要重算后的 backend/run/attempt/leaf drift、source/run 双向 overlap、ancestor symlink、ambient independence与无 candidate 目录副作用。
 - 允许范围仅 root static tooling 与 stdlib CPU tests。禁止真实 P4 preflight、candidate/run-root/staging/materialize、record/refreeze/evidence publication、P5 authority/export/compose、torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory 训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 e27a9c9607f2a88d165b3fa79d77a9311b8f9c57；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-CANDIDATES` tests-first remediation closure。请仅对同一 SHA 给出 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_CANDIDATES_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root remediation=`e27a9c9607f2a88d165b3fa79d77a9311b8f9c57`；implementation=`28b378c8861a2994fa6ae2f18b61d5ce8d909b8a`；ChatGPT review=`60cdf44`；approved design=`f8a7231`；Gitlink=`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`。
+- 整改：补 outer missing/retyped schema、candidate root 与 leaf 的 relative/dot/dotdot/repeated/double-leading lexical matrix、正常 namespace root 下 derived-leaf prefix symlink、attempt uppercase/short/long 与 candidate identity-reuse fixtures；retyped attempt 暴露并修复为唯一 `isinstance` fail-closed guard。未改任何执行或物化行为。
+- 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=56/56 PASS；`py_compile`、`git diff --check` PASS。允许范围仍仅 root static tooling/stdlib CPU tests；禁止真实 preflight/candidate/run/staging/P5/GPU/训练。
