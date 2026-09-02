@@ -978,3 +978,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - v0.1=`2421b48` 已收齐 ChatGPT/MM=`REQUEST_CHANGES`、Kimi=`APPROVE`。两个 HIGH：非 forbidden 投影会泄漏 backend-specific `IMAGINAIRE_OUTPUT_ROOT`；schema 没有可验证 D005 binding。新增 v0.2：固定 `d005_projection`，以既有 D005 verifier PASS pair 为强制输入，并把 `PYTHONPATH`/`IMAGINAIRE_OUTPUT_ROOT` 唯一排除，分别归 runtime_sys_path/run section。
 - 无项目代码执行。下一步：静态检查、提交并重审 v0.2；提交：未提交。
+
+### R09-B2 P4-v4 execution request environment implementation (2026-09-02，REVIEW)
+
+- v0.2=`61949b1` 获 ChatGPT=`c6a12cd`、Kimi、MM 同 SHA `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_ENVIRONMENT_STATIC_TOOLS`。实现仅修改 root `r09_b2_p4_v4_execution_preflight.py` 与其 stdlib CPU test：D005 verifier PASS 强制输入、D005 可验证投影（唯一排除 `PYTHONPATH`/`IMAGINAIRE_OUTPUT_ROOT`）、空 parent effective/native loader grammar、P3-only backend difference、投影 schema/digest 漂移拒绝。
+- 验证：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=24/24 PASS；`python -B -m py_compile ...`、`git diff --check` PASS。未执行真实 preflight/staging/P5 export/compose/GPU/训练。下一步：提交、推送并对 implementation SHA 申请三方 closure 审核；三方意见齐全前不合并意见或整改。提交：未提交。

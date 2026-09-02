@@ -18,6 +18,16 @@ from tools.g0.r09_b2_interpreter_provenance import (
     parse_elf_dynamic_raw,
     verified_loader_argv,
 )
+from tools.g0.export_r09_b2_p5_resolved_config import (
+    P5_FORBIDDEN_ENVIRONMENT,
+    P5_P3_BACKEND_ENVIRONMENT,
+)
+from tools.g0.verify_r09_b2_p4_d005 import (
+    RANK_ENV,
+    REQUIRED_ENV,
+    SANITIZED_ENV,
+    verify_pair as verify_d005_pair,
+)
 
 
 REQUEST_KEYS = {
@@ -29,6 +39,10 @@ ENTRY_TOOL_PATH = "tools/g0/r09_b2_p4_v4_execution_preflight.py"
 SOURCE_KEYS = {"root", "root_revision", "gitlink", "entry_git_blob_sha256", "entry_current_sha256", "identity_sha256"}
 INTERPRETER_KEYS = {"lexical_interpreter", "host_git", "loader_argv", "identity_sha256"}
 HOST_GIT_KEYS = {"path", "elf_sha256", "closure_sha256"}
+ENVIRONMENT_KEYS = {"effective_environment", "native_loader_environment", "d005_projection", "identity_sha256"}
+ENVIRONMENT_OBJECT_KEYS = {"set", "unset", "inherit_allowlist", "sha256"}
+D005_PROJECTION_KEYS = {"backend", "d005_sha256", "input_set_sha256", "excluded_keys", "projected_set_sha256", "sha256"}
+D005_EXCLUDED_ENVIRONMENT_KEYS = ["IMAGINAIRE_OUTPUT_ROOT", "PYTHONPATH"]
 _GIT_REVISION = re.compile(r"[0-9a-f]{40}\Z")
 _SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 _EXECUTION_CONTRACT_ITEMS = (
@@ -221,7 +235,7 @@ def _host_git_closure(path: Path, raw: bytes) -> str:
         else:
             canonical, current_raw = _read_canonical_regular_nofollow(
                 current, "execution request host Git object differs",
-            )
+    )
         if str(canonical) in objects:
             if objects[str(canonical)] != hashlib.sha256(current_raw).hexdigest():
                 raise ValueError("execution request host Git object differs")
@@ -232,23 +246,94 @@ def _host_git_closure(path: Path, raw: bytes) -> str:
             raise ValueError("execution request host Git ELF differs") from exc
         objects[str(canonical)] = str(metadata["sha256"])
         dependencies = list(metadata["dt_needed"])
-        interpreter = metadata["pt_interp"]
-        if interpreter is not None:
-            dependencies.append(interpreter)
+        if metadata["pt_interp"] is not None:
+            dependencies.append(metadata["pt_interp"])
         for dependency in dependencies:
             if not isinstance(dependency, str):
                 raise ValueError("execution request host Git ELF dependency differs")
-            dependency_path = _resolve_needed(canonical, metadata, dependency)
-            try:
-                dependency_path = dependency_path.resolve(strict=True)
-            except OSError as exc:
-                raise ValueError("execution request host Git ELF dependency differs") from exc
+            dependency_path = _resolve_needed(canonical, metadata, dependency).resolve(strict=True)
             if str(dependency_path) not in scheduled:
-                scheduled.add(str(dependency_path))
-                pending.append((dependency_path, None))
+                scheduled.add(str(dependency_path)); pending.append((dependency_path, None))
     return canonical_sha256({"objects": [{"path": name, "sha256": digest} for name, digest in sorted(objects.items())]})
 
 
+def _environment_object(value: object, *, native: bool) -> dict[str, object]:
+    if not isinstance(value, dict) or set(value) != ENVIRONMENT_OBJECT_KEYS:
+        raise ValueError("execution request environment object schema differs")
+    items = {key: item for key, item in value.items() if key != "sha256"}
+    if value["sha256"] != canonical_sha256(items) or value["inherit_allowlist"] != [] or value["unset"] != list(P5_FORBIDDEN_ENVIRONMENT):
+        raise ValueError("execution request environment object identity differs")
+    values = value["set"]
+    if not isinstance(values, dict) or not all(isinstance(key, str) and isinstance(item, str) for key, item in values.items()):
+        raise ValueError("execution request environment set differs")
+    if set(values) & set(P5_FORBIDDEN_ENVIRONMENT):
+        raise ValueError("execution request environment forbidden key differs")
+    if native and values != {}:
+        raise ValueError("execution request native loader environment differs")
+    return value
+
+
+def _project_d005_environment(record: dict[str, object], backend: str) -> tuple[dict[str, str], dict[str, object]]:
+    environment = record.get("environment")
+    if not isinstance(environment, dict) or not isinstance(environment.get("set"), dict):
+        raise ValueError("execution request D005 environment differs")
+    values = environment["set"]
+    expected = set(REQUIRED_ENV) | set(P5_P3_BACKEND_ENVIRONMENT)
+    if (set(values) != expected or not all(isinstance(key, str) and isinstance(item, str) for key, item in values.items())
+            or set(values) & (RANK_ENV | SANITIZED_ENV)):
+        raise ValueError("execution request D005 environment differs")
+    projected = {key: item for key, item in values.items() if key not in D005_EXCLUDED_ENVIRONMENT_KEYS}
+    if set(values) - set(projected) != set(D005_EXCLUDED_ENVIRONMENT_KEYS):
+        raise ValueError("execution request D005 projection differs")
+    expected_backend = P5_P3_BACKEND_ENVIRONMENT["PSM_R09_B1_TTT_ENABLED"][backend]
+    if values.get("PSM_R09_B1_TTT_ENABLED") != expected_backend:
+        raise ValueError("execution request D005 backend differs")
+    projection = {"backend": backend, "d005_sha256": record.get("d005_sha256"),
+                  "input_set_sha256": canonical_sha256(values), "excluded_keys": D005_EXCLUDED_ENVIRONMENT_KEYS,
+                  "projected_set_sha256": canonical_sha256(projected)}
+    if not isinstance(projection["d005_sha256"], str):
+        raise ValueError("execution request D005 digest differs")
+    projection["sha256"] = canonical_sha256(projection)
+    return projected, projection
+
+
+def validate_environment_pair(value: object, recurrent: dict[str, object], ttt: dict[str, object], root: Path) -> None:
+    """Validate the D005-bound, empty-parent environment pair without launching anything."""
+    if not isinstance(value, dict) or set(value) != {"recurrent", "ttt_fast_weight"}:
+        raise ValueError("execution request environment pair schema differs")
+    if verify_d005_pair(recurrent, ttt, root).get("status") != "PASS":
+        raise ValueError("execution request D005 pair is not verified")
+    sections: dict[str, dict[str, object]] = {}
+    for backend, record in (("recurrent", recurrent), ("ttt_fast_weight", ttt)):
+        section = value[backend]
+        if not isinstance(section, dict) or set(section) != ENVIRONMENT_KEYS:
+            raise ValueError("execution request environment schema differs")
+        identity = {key: item for key, item in section.items() if key != "identity_sha256"}
+        if section["identity_sha256"] != canonical_sha256(identity):
+            raise ValueError("execution request environment identity differs")
+        effective = _environment_object(section["effective_environment"], native=False)
+        native = _environment_object(section["native_loader_environment"], native=True)
+        projected, projection = _project_d005_environment(record, backend)
+        projection_value = section["d005_projection"]
+        if (not isinstance(projection_value, dict) or set(projection_value) != D005_PROJECTION_KEYS
+                or any(not isinstance(projection_value[key], str) for key in (
+                    "backend", "d005_sha256", "input_set_sha256", "projected_set_sha256", "sha256"
+                ))
+                or any(_SHA256.fullmatch(projection_value[key]) is None for key in (
+                    "d005_sha256", "input_set_sha256", "projected_set_sha256", "sha256"
+                ))
+                or effective["set"] != projected or projection_value != projection):
+            raise ValueError("execution request D005 projection differs")
+        sections[backend] = {"effective": effective, "native": native}
+    if sections["recurrent"]["native"] != sections["ttt_fast_weight"]["native"]:
+        raise ValueError("execution request native loader pair differs")
+    left, right = sections["recurrent"]["effective"]["set"], sections["ttt_fast_weight"]["effective"]["set"]
+    different = {key for key in set(left) | set(right) if left.get(key) != right.get(key)}
+    if different != set(P5_P3_BACKEND_ENVIRONMENT) or any(
+        left.get(key) != values["recurrent"] or right.get(key) != values["ttt_fast_weight"]
+        for key, values in P5_P3_BACKEND_ENVIRONMENT.items()
+    ):
+        raise ValueError("execution request environment backend difference differs")
 def validate_host_git(value: object) -> Path:
     if not isinstance(value, dict) or set(value) != HOST_GIT_KEYS or not all(isinstance(value[key], str) for key in HOST_GIT_KEYS):
         raise ValueError("execution request host Git schema differs")

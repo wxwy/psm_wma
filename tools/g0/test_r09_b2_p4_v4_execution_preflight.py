@@ -468,5 +468,56 @@ class InterpreterAuthorityTest(unittest.TestCase):
                 r09_b2_p4_v4_execution_preflight.validate_interpreter(interpreter, source)
 
 
+class EnvironmentAuthorityTest(unittest.TestCase):
+    def _records(self):
+        values = {key: "x" for key in r09_b2_p4_v4_execution_preflight.REQUIRED_ENV}
+        values.update({"PYTHONPATH": "/framework", "IMAGINAIRE_OUTPUT_ROOT": "/output/recurrent", "PSM_R09_B1_TTT_ENABLED": "0"})
+        recurrent = {"backend": "recurrent", "environment": {"set": values}, "d005_sha256": "a" * 64}
+        ttt_values = dict(values); ttt_values["IMAGINAIRE_OUTPUT_ROOT"] = "/output/ttt"; ttt_values["PSM_R09_B1_TTT_ENABLED"] = "1"
+        return recurrent, {"backend": "ttt_fast_weight", "environment": {"set": ttt_values}, "d005_sha256": "b" * 64}
+
+    def _section(self, record, backend):
+        projected, projection = r09_b2_p4_v4_execution_preflight._project_d005_environment(record, backend)
+        effective_core = {"set": projected, "unset": list(r09_b2_p4_v4_execution_preflight.P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
+        native_core = {"set": {}, "unset": list(r09_b2_p4_v4_execution_preflight.P5_FORBIDDEN_ENVIRONMENT), "inherit_allowlist": []}
+        effective = {**effective_core, "sha256": r09_b2_p4_v4_execution_preflight.canonical_sha256(effective_core)}
+        native = {**native_core, "sha256": r09_b2_p4_v4_execution_preflight.canonical_sha256(native_core)}
+        value = {"effective_environment": effective, "native_loader_environment": native, "d005_projection": projection}
+        return {**value, "identity_sha256": r09_b2_p4_v4_execution_preflight.canonical_sha256(value)}
+
+    def _pair(self):
+        recurrent, ttt = self._records()
+        return {"recurrent": self._section(recurrent, "recurrent"), "ttt_fast_weight": self._section(ttt, "ttt_fast_weight")}, recurrent, ttt
+
+    def test_environment_requires_verified_d005_projection_and_p3_only_difference(self):
+        value, recurrent, ttt = self._pair()
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", return_value={"status": "PASS"}):
+            r09_b2_p4_v4_execution_preflight.validate_environment_pair(value, recurrent, ttt, Path("/unused"))
+
+    def test_environment_rejects_unverified_d005_and_projection_drift(self):
+        value, recurrent, ttt = self._pair()
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", return_value={"status": "FAIL"}):
+            with self.assertRaisesRegex(ValueError, "not verified"):
+                r09_b2_p4_v4_execution_preflight.validate_environment_pair(value, recurrent, ttt, Path("/unused"))
+        value["recurrent"]["effective_environment"]["set"]["UNREVIEWED_ENV"] = "x"
+        value["recurrent"]["effective_environment"]["sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in value["recurrent"]["effective_environment"].items() if key != "sha256"})
+        value["recurrent"]["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256({key: item for key, item in value["recurrent"].items() if key != "identity_sha256"})
+        with mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", return_value={"status": "PASS"}):
+            with self.assertRaisesRegex(ValueError, "projection differs"):
+                r09_b2_p4_v4_execution_preflight.validate_environment_pair(value, recurrent, ttt, Path("/unused"))
+
+    def test_environment_rejects_projection_schema_and_digest_drift(self):
+        for key, replacement in (("ambient", "x"), ("d005_sha256", "not-a-sha256")):
+            with self.subTest(key=key):
+                value, recurrent, ttt = self._pair()
+                value["recurrent"]["d005_projection"][key] = replacement
+                value["recurrent"]["identity_sha256"] = r09_b2_p4_v4_execution_preflight.canonical_sha256(
+                    {name: item for name, item in value["recurrent"].items() if name != "identity_sha256"}
+                )
+                with mock.patch.object(r09_b2_p4_v4_execution_preflight, "verify_d005_pair", return_value={"status": "PASS"}):
+                    with self.assertRaisesRegex(ValueError, "projection differs"):
+                        r09_b2_p4_v4_execution_preflight.validate_environment_pair(value, recurrent, ttt, Path("/unused"))
+
+
 if __name__ == "__main__":
     unittest.main()
