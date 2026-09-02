@@ -932,3 +932,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 三方同实现 SHA closure：ChatGPT 权威 review history=`6eca65f`、MM、Kimi 对 implementation=`5e4d56a`/Gitlink=`21d064f` 均 `APPROVE_TO_CLOSE_P4_V4_PREFLIGHT_STATIC_TOOLS`；review-record commit=`8c0d721`。
 - 最终整改：真实 P5 fixture 的 loader/runtime-path drift、完整 P5-valid dual-backend pair 通过 `stage_atomic_publication()`，且移除 `_path_identity` mock。CPU P4/P5 unittest 14/14 PASS；未执行真实 preflight/staging/candidate/record/refreeze/P5 export/compose/GPU/训练。
 - 本 closure 仅结束静态 tooling Gate。下一步若要执行真实 P4-v4 preflight，必须另建 execution runbook 并获得独立三方审核；训练仍不获授权。提交：待本状态更新提交。
+
+### R09-B2 P4-v4 execution runbook (2026-09-02，REVIEW)
+
+- 新增 v0.5 design：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_preflight_design_v0.5_2026-09-02.md`。范围只申请一次 CPU-only、copy-only 的双 backend candidate preflight；严格禁止 record/refreeze、P5 export/compose、torchrun/GPU/训练。
+- 下一步：静态检查、提交并向 ChatGPT/MM/Kimi 申请 `APPROVE_TO_EXECUTE_P4_V4_PREFLIGHT_CPU_ONLY`；三方同 SHA 批准前不运行任何 preflight。提交：未提交。
