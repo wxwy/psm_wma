@@ -4705,3 +4705,11 @@ P5 evidence Git-authority prerequisite design。请求 `APPROVE_TO_IMPLEMENT_P5_
 
 - 整改 Kimi=`2026-09-02 17:36:16 CST`：`validate_candidates()` 的两处 backend set loop 改为固定 `("recurrent", "ttt_fast_weight")` 顺序，消除 derived-leaf symlink fixture 的 `PYTHONHASHSEED` 不稳定性。范围仅此两行。
 - 证据：`PYTHONHASHSEED=0/1/2` 定向 fixture 均 PASS；完整 P4 CPU=56/56、`py_compile`、`git diff --check` PASS。禁止真实 preflight/candidate/run/staging/P5/GPU/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 90b4cf9b9c9c99b1363bccc8614d680e1e304ba4；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-BACKENDS` v0.1 static design。请求 `APPROVE_TO_IMPLEMENT_P4_V4_EXECUTION_REQUEST_BACKENDS_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 设计：`docs/build/PSM-WMA_R09_B2_P4_v4_execution_request_backends_design_v0.1_2026-09-02.md`；冻结 exact two-backend outer/record/P3 contract identity、P5 v0.9 backend contract canonical binding、artifact/verifier cross-side equality、backend-owned selector/membership difference。不得读取 artifact/verifier 或输出路径。
+- 前置：entry/source/interpreter/environment/authorities/run/candidates static closures 已完成；candidates closure=`6577f1c`，ChatGPT=`1b58fd9`，Gitlink 固定如上。
+- 若批准，仅 root parser/validator 与 stdlib CPU tests；禁止真实 preflight、candidate/run/staging/materialize、record/refreeze、P5 export/compose、GPU/训练。
