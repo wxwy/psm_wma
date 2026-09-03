@@ -939,3 +939,11 @@ Acceptance and prohibition remain unchanged: only C3 docs/static audit closure i
 Awaiting review — 🚨 审核申请已发出（根仓 `b521b0305bdfbad9f9d4abc6960c64922adb6693`；子模块/Gitlink `1d90361aeb21db53129ac27ddcaa1285b258fbbc`）
 
 这是对上一条 C3 remediation 申请的格式补发；审核对象、设计文件、范围和 verdict 请求完全不变。请针对上述 exact root/Gitlink pair 返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT` 或 `REQUEST_CHANGES`，附 `file:line`。三方本轮 verdict 未齐前不得进入 C4。
+
+---
+
+## 2026-09-03 — Codex re-review request: C3 provenance/path remediation @ c9f73e9
+
+Awaiting review — 🚨 审核申请已发出（根仓 `c9f73e9f231e6dcc0919df8de23fbc0ef80f6695`；子模块/Gitlink `1d90361aeb21db53129ac27ddcaa1285b258fbbc`）
+
+本轮已合并三方 REQUEST_CHANGES：当前 remediation/design 明确为 `54ea4cea...`，原始 superseded design 为 `26bd78d...`，pre-design/source root baseline 为 `2a08f4e...`；packer source anchor 已修正为 `cosmos_framework/data/generator/sequence_packing/sequence.py:545-588`。请对该 exact root/Gitlink pair 返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT` 或 `REQUEST_CHANGES`，附 file:line。批准范围仍仅 C3 docs/static audit，禁止 C4 runtime、GPU、训练及真实 P4/P5 操作。
