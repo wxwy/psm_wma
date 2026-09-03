@@ -75,3 +75,47 @@ Review-file commit:
 - **Acceptance review**: C4-P01/P02/P03 native geometry/payload separation; C4-K01/K02 normalized no-RoPE Memory K reference; C4-A01 AR blind + DM joint-softmax CPU reference; C4-F01 legacy-none and unsupported-mode kernel-pre guards.
 - **Requested verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` with severity and exact `file:line`.
 - **Forbidden even if approved**: C5 fast state/chronology, config/optimizer/checkpoint/trainer/inference/parallelization, GPU/CUDA/torchrun, real data/cache/checkpoint I/O, training/eval/inference. A subsequent independently frozen Gate is required for each.
+
+---
+
+## 2026-09-03 — ChatGPT review: C4 Memory Prefix CPU implementation @ 8cd506f
+
+**Verdict: REQUEST_CHANGES**
+
+Formal target:
+- root implementation SHA: `8cd506f2d61883ad112d31b5f5b7c1ee18bec577`
+- child/Gitlink: `e0dbf839c513b162f4e4ad2d717fd3d4132421cf`
+- request/ledger SHA observed at review start: `b2a31af5f69f90e73a6ba9c57f548fdc29d9dd87`
+- approved C4 design authority: `73d592a90c93897ca6f9be681801b87617e0a7a9`
+
+Findings:
+1. **HIGH — Prefix + native KV-cache memory is not fail-closed at the owner boundary.** `cosmos3_vfm_network.py:1015-1018,1060-1062` admits `memory: MemoryState | None` together with a created Prefix and only guards CUDA-graph padding. `attention.py:690` falls back to the pre-existing generic `assert memory_value is None`, not the frozen Prefix-specific `ValueError`. Add an owner-level Prefix+MemoryState guard before native memory read/write and an explicit dispatch-level Prefix+MemoryValue `ValueError`, with a fail-before-kernel CPU fixture.
+2. **HIGH — the reported 10-test selector does not exercise the frozen production-route C4 contracts.** `memory_prefix_test.py:120-203` computes AR/DM behavior in a local reference helper and checks K norm manually rather than driving the real Prefix-present `two_way_attention` / `PackedAttentionMoT.forward` route. Unsupported-path coverage also omits Flex, native MemoryValue, CUDA graph and replicated I/O; the packer parity fixture at `memory_prefix_test.py:43-68` is text-only and only checks a subset of frozen metadata. Add production-route CPU fixtures using a monkeypatched deterministic attention primitive / spies, full unsupported-mode guards, and a native-generation parity case; report the new selector count.
+3. **MEDIUM — common `K_local` is detected after earlier samples may already be projected.** `memory_prefix.py:60-70` projects each sample in the same loop that discovers later `K_local` mismatches, while the frozen design requires rejection before projector use; direct `MemoryPrefixContext.validate()` also does not enforce equal positive per-sample lengths. Prevalidate the whole batch, strengthen context validation, and add a zero-projector-call negative fixture.
+
+Accepted and unchanged:
+- exact seven-file child scope, one commit ahead of `1d90361...`;
+- out-of-band pre-pack Local payload and native geometry removal;
+- generator K norm + no-RoPE K_MEM;
+- no Q_MEM/output/residual/MLP path;
+- AR structurally Memory-blind and DM one-call joint Prefix/native attention route;
+- three-way/multi-control/sharded/Flex dispatch guards and CUDA-graph/replicated owner guards exist;
+- no C5/config/optimizer/checkpoint/GPU/training scope drift found.
+
+Allowed remediation only:
+- the same seven C4 child files plus root status/ledger docs;
+- synthetic CPU C4 tests, py_compile and diff-check.
+
+Still prohibited:
+- C5 fast-state/chronology;
+- config/optimizer/checkpoint/trainer/inference/parallelization expansion;
+- GPU/CUDA/torchrun, model/data/cache/checkpoint runtime access, training/eval/inference;
+- P4/P5, B2-T and LIBERO4IN1 training.
+
+A new root/child implementation pair requires fresh same-SHA three-party review.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v032_memory_prefix_cpu_implementation_8cd506f.md`
+
+Review-file commit:
+`a2b6041d89d2f396042140c661fcc36e34506656`
