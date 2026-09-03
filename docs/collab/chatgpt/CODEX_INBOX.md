@@ -5068,3 +5068,12 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 整改仅为冻结 exact nested authority value grammar（含 CPU/wall type/range/unit、path/env/stop）、raw `git cat-file tree` SHA-256 与 tree OID 的不同 identity、及 verifier-owned temporary-index 的 clean-base CAS → 一次性 `read-tree --reset -u` → `POISONED_PUBLISHED` 状态机；未修改 production tooling。
 - 静态证据：仅文档/状态提交；`git diff --check` PASS。允许范围仅 root static tooling/stdlib CPU fixtures；production execution/record/publication authority仍 `None`。
 - 禁止：真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 b70cd294f4d9896cbe297d96535540b62cf43391；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXACT-REQUEST-RECORD-REFREEZE-DESIGN` v0.5 整改。请仅回复 `APPROVE_TO_IMPLEMENT_P4_V4_EXACT_REQUEST_RECORD_REFREEZE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_exact_request_record_refreeze_design_v0.5_2026-09-03.md`；prior=`1ec0667`；ChatGPT review=`b4242f3` HIGH-1；Kimi/MM v0.4 approvals；Gitlink 如上。
+- 整改仅为移除 candidate subtree 内日志：`logs_v1` 冻结 one-shot verifier-owned external log root、精确 non-overlap/initial absence/0600 lifecycle；candidate `result.json` 仅保留既有 payload ownership；closed `r09_b2_p4_v4_static_contract.py` file-set不改。
+- 静态证据：仅文档/状态提交；`git diff --check` PASS。允许范围仅 root static tooling/stdlib CPU fixtures；production execution/record/publication authority仍 `None`。
+- 禁止：真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
