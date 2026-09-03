@@ -222,3 +222,27 @@ Detailed review:
 
 Review-file commit:
 `3646bdf0116f0645d01b356caed72accf530dce6`
+
+---
+
+## 2026-09-03 — ChatGPT re-review: C4 prepared-metadata remediation @ a2a1f69
+
+**Verdict: APPROVE_TO_CLOSE_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT**
+
+Formal target:
+- root remediation SHA: `a2a1f69950887cb981f0ad8d7e58fb86023723f2`
+- child/Gitlink: `447f4a61a2205ff6be1788b9903fd7bc83363d53`
+- request/ledger SHA observed: `8ef6ec5af7063e28da81a6135f40e47ddbd5bbde`
+
+Closure:
+- prior MEDIUM prepared-metadata finding is CLOSED: the native action-generation Prefix/No-Memory fixture now calls real `prepare_sequence_pack_metadata()` on both packs, asserts both metadata objects are non-None, and compares every current `SequencePackMetadata` scalar/tuple/tensor field;
+- child delta from `dd6b7dc...` is exactly one test-only commit touching only `memory_prefix_test.py`;
+- no new blocker or scope drift was found.
+
+This verdict closes C4 Memory Prefix CPU contract only. It does not authorize C5 chronology/fast-state, config/optimizer/checkpoint/trainer/inference/parallelization, GPU/CUDA/torchrun, real model/data/cache/checkpoint I/O, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 training. Later Gates still require independently frozen same-SHA three-party approval.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v032_memory_prefix_cpu_prepared_metadata_remediation_a2a1f69.md`
+
+Review-file commit:
+`266d0147ab9db2b5f9522aa59d4104f3ff152519`
