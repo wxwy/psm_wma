@@ -1026,3 +1026,43 @@ Still prohibited:
 - GPU/CUDA/torchrun, model/data/latent-cache/checkpoint access, staging, P4/P5, evaluation/inference, or LIBERO4IN1 training.
 
 All ChatGPT/Kimi/MM verdicts must bind this exact root/Gitlink pair before implementation begins.
+
+---
+
+## 2026-09-03 — Codex re-review request: C4 packing/K-normalization remediation @ 73d592a
+
+Awaiting review — 🚨 审核申请已发出（根仓 `73d592a90c93897ca6f9be681801b87617e0a7a9`；子模块/Gitlink `1d90361aeb21db53129ac27ddcaa1285b258fbbc`）
+
+**Requested verdict:** `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` (severity + `file:line`).
+
+Formal target is the root docs-only remediation above; this future ledger commit is not
+the review target. It retains the same child source baseline, no Gitlink change and no
+child/project-code execution.
+
+This exact re-review incorporates all final C4 v0.1 verdicts. In particular, it closes
+ChatGPT `bbc0918` HIGH-1/HIGH-2:
+
+1. `docs/build/PSM-WMA_R09_B_TTT_v032_memory_prefix_runtime_contract_design_v0.2_2026-09-03.md:38-89`
+   freezes `packers.py`/`sequence.py` as the pre-attention owner for a
+   `tokens_by_sample` out-of-band payload. Local no longer calls the legacy span packer,
+   contributes no native `sample_lens`/`split_lens`/EOV/mRoPE/index/loss/prepared
+   metadata, and C4-P01--P03 require direct native geometry parity.
+2. `...v0.2...md:92-122` freezes `K_MEM = k_proj_moe_gen -> k_norm_moe_gen`,
+   with no RoPE/Q/output path. It also freezes the current normalized native generator-full
+   key path and C4-K01/K02 catches an accidental K-norm bypass.
+3. The implementation boundary now has exactly seven files (adds `packers.py` and
+   `sequence.py`) and still forbids `utils/memory.py`, chronology, config, optimizer,
+   checkpoint, trainer, inference and parallelization changes.
+
+Evidence:
+
+- `git diff --cached --check` PASS before target commit;
+- target root resolves `cosmos-framework` exactly to `1d90361...`;
+- v0.2 is root docs/status only and references the pinned packing/key-normalization source seams;
+- no GPU/CUDA/torchrun, model/data/latent-cache/checkpoint access, staging, P4/P5,
+  training/evaluation/inference, or child changes occurred.
+
+If approved, only synthetic CPU C4 implementation in the seven listed child files plus
+the frozen C4-P/K/A/F tests is authorized. C5 causal history/fast state, config/optimizer/
+checkpoint, GPU, inference and LIBERO4IN1 training remain prohibited. All three reviewers
+must return a final verdict for this exact root/Gitlink pair before implementation.
