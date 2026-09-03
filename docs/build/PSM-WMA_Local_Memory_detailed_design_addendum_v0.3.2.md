@@ -5,7 +5,8 @@
 **适用分支**：根仓 `V2`  
 **上游版本**：`docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.1.md`  
 **continual-TTT 算法基础**：v0.2 / v0.2.1 的 persistent fast-state、KVB、TBPTT、outer-task-loss 合同继续有效  
-**当前 Cosmos 实现基线 / Gitlink**：`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+**当前 Cosmos 实现基线 / Gitlink**：`cf52f43dc328d4c8eec51923d66835125664dee5`（含已关闭的 `K_local=1` compatibility CPU core）
+**历史 v0.3.1 / pre-CPU-core source baseline**：`21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
 
 > 本文件只更新 Local TTT 的 **multi-slot readout / Q-K-V 数量关系 / self-supervised inner loss 与 outer loss 的参数训练职责**。  
 > v0.3.1 的 Memory Prefix K/V-only、无 `Q_MEM`、AR 不读 Memory、DM 读 Memory+AR+DM、Memory 无 attention output/MLP 等 Cosmos 接入合同全部保持不变。  
