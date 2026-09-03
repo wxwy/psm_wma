@@ -5059,3 +5059,12 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 整改仅为 `test_v4_roster_rejects_missing_payload_path`：为 portable unlink 临时设为 `0755` 后，删除 expected payload regular 立即恢复 token staging=`0555`；显式断言剩余 directory mode=`0555`、payload path absent，且 `load_p4_v4_preflight()` 必抛 stable `roster-unlisted path`，唯一绑定 actual-tree exact-set 缺失。existing extra-path regression未改；production verifier/roster semantics未改。
 - 静态证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=`86/86 PASS`；`python -B -m unittest tools.g0.test_r09_b2_p5_full_config_diff -v`=`6/6 PASS`；相应 `py_compile`、`git diff --check` PASS。
 - 允许范围仅 root P4/P5 static grammar/loader/verifier 的 stdlib fixture与状态记录；`AUTHORIZED_P4_V4_LOCK_SPEC=None`、`AUTHORIZED_P4_V4_EVIDENCE=None`、`run_parent_export()` hard-stop保持。禁止真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 1ec06676f8ff55bb2869e95327ff8226ed9f3b89；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXACT-REQUEST-RECORD-REFREEZE-DESIGN` v0.4 整改。请仅回复 `APPROVE_TO_IMPLEMENT_P4_V4_EXACT_REQUEST_RECORD_REFREEZE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_exact_request_record_refreeze_design_v0.4_2026-09-03.md`；prior=`7679b4f`；ChatGPT review=`0459282` HIGH-1/2/3；Kimi=`2026-09-03 11:02:45 CST` 两项 REQUEST_CHANGES；Gitlink 如上。
+- 整改仅为冻结 exact nested authority value grammar（含 CPU/wall type/range/unit、path/env/stop）、raw `git cat-file tree` SHA-256 与 tree OID 的不同 identity、及 verifier-owned temporary-index 的 clean-base CAS → 一次性 `read-tree --reset -u` → `POISONED_PUBLISHED` 状态机；未修改 production tooling。
+- 静态证据：仅文档/状态提交；`git diff --check` PASS。允许范围仅 root static tooling/stdlib CPU fixtures；production execution/record/publication authority仍 `None`。
+- 禁止：真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
