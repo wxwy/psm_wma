@@ -5077,6 +5077,14 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_static_contract -v`=`13/13 PASS`；`py_compile`、`git diff --check` PASS。
 - 禁止真实 request/preflight/staging/candidate/record/refreeze/P5/GPU/训练；无子模块改动。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 1ef7f4962346e4cdbdf3a179ef657eb59db09591；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXACT-REQUEST-RECORD-REFREEZE-STATIC-TOOLS` log-namespace validator slice closure。请仅回复 `APPROVE_TO_CLOSE_P4_V4_LOG_NAMESPACE_STATIC_SLICE` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：prior=`6c521c1`；ChatGPT=`21d1988` HIGH-1/2、Kimi fixture意见、MM批准。此申请明确仅为 slice，完整 record/refreeze/CAS static contracts仍保持 `IN_PROGRESS`。
+- 整改：logs exclusion 改为 exact structured source/submodule/two-run/candidate/six-P5 namespaces，补 schema/digest/lexical/type/arity/双向 overlap 的永久 stdlib fixtures。
+- 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_static_contract -v`=`13/13 PASS`；`py_compile`、`git diff --check` PASS。production authorities仍 None；禁止真实 P4/P5/GPU/训练。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 b70cd294f4d9896cbe297d96535540b62cf43391；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXACT-REQUEST-RECORD-REFREEZE-DESIGN` v0.5 整改。请仅回复 `APPROVE_TO_IMPLEMENT_P4_V4_EXACT_REQUEST_RECORD_REFREEZE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
