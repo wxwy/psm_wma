@@ -119,3 +119,16 @@ Detailed review:
 
 Review-file commit:
 `a2b6041d89d2f396042140c661fcc36e34506656`
+
+---
+
+## 2026-09-03 — C4 Memory Prefix CPU remediation closure request
+
+- **Gate/task**: `G0-R09-B-TTT-V032-MEMORY-PREFIX-CPU-IMPLEMENTATION` C4 remediation closure.
+- **Root target**: `0dace8dc033eef445e89eecfdd58b5df5f82a37f` on `V2`.
+- **Child/Gitlink**: `cosmos-framework@f98b7193d9c33a373f277a66d90c2e26221944e9` on `v2`, pushed before root.
+- **Prior findings closed**: (1) owner-level Prefix+`MemoryState` and dispatch-level Prefix+`MemoryValue` now raise named `ValueError` before native cache/attention work; (2) Prefix-present non-base dispatch raises named `ValueError`, while Prefix-absent retains the baseline dispatch keyword signature; Flex guard is covered; (3) all present samples validate a common positive `K_local` before any projector call, and direct context validation enforces it.
+- **Scope/evidence**: only approved C4 child files changed: `memory_prefix.py`, `cosmos3_vfm_network.py`, `unified_mot.py`, `attention.py`, `memory_prefix_test.py`; CPU selector `memory_prefix_test.py` = `14 passed`; seven-file `py_compile` PASS; child `git diff --check` PASS. No GPU, torchrun, model/data/latent-cache/checkpoint I/O, training, evaluation, inference, C5 chronology, config/optimizer/checkpoint changes.
+- **Acceptance requested**: verify all prior ChatGPT/Kimi `REQUEST_CHANGES` close without scope expansion, including fail-before-kernel/cache and legacy alternate dispatch behavior.
+- **Requested verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` with severity and exact `file:line`.
+- **Forbidden even if approved**: C5 fast state/chronology, `local_evidence.py`, `utils/memory.py`, config/optimizer/checkpoint/trainer/inference/parallelization, GPU/CUDA/torchrun, real data/cache/checkpoint I/O, training/eval/inference, P4/P5 and B2-T/LIBERO4IN1 training. Each needs a separate frozen and approved Gate.
