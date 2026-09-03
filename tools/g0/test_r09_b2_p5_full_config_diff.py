@@ -270,6 +270,16 @@ class P5Test(unittest.TestCase):
             with self.assertRaises(ValueError):
                 load_p4_v4_preflight(evidence)
 
+    def test_v4_roster_rejects_missing_payload_path(self):
+        with tempfile.TemporaryDirectory() as temp:
+            evidence = Path(temp); self._v4_preflight(evidence)
+            run = evidence / "run"; run.chmod(0o755)
+            staging = run / "import_staging" / ("a" * 64)
+            staging.chmod(0o755)
+            (staging / "payload.py").unlink()
+            with self.assertRaises(ValueError):
+                load_p4_v4_preflight(evidence)
+
 
 if __name__ == "__main__":
     unittest.main()
