@@ -954,4 +954,39 @@ Awaiting review — 🚨 审核申请已发出（根仓 `c9f73e9f231e6dcc0919df8
 
 Awaiting review — 🚨 审核申请已发出（根仓 `e53fffe22444516ff04523bfccff0d66fccdc75c`；子模块/Gitlink `1d90361aeb21db53129ac27ddcaa1285b258fbbc`）
 
-本条之后生成的 Inbox 提交仅为 request ledger，不是 formal verdict target。正式 remediation/design target 是上述 `e53fffe...`：已删除设计正文会自指的“当前 SHA”，补全 `cosmos_framework/model/generator/omni_mot_model.py` 两处路径，修正 `LocalHistoryRuntime.forward()` 为 `local_evidence.py:616-663` 三元组，并将 `[B,1,D]` shape 归属 `StatelessLocalReplayReadout:110`。静态 `git show` source-anchor 检查和 `git diff --check` 均 PASS。请对上述 exact root/Gitlink pair 返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT` 或 `REQUEST_CHANGES`，附 file:line；仅申请 C3 docs/static closure，仍禁止 runtime/GPU/训练。
+本条之后生成的 Inbox 提交仅为 request ledger，不是 formal verdict target。正式 remediation/design target 是上述 `e53fffe...`：已删除设计正文会自指的“当前 SHA”，补全 `cosmos_framework/model/generator/omni_mot_model.py` 两处路径，修正 `LocalHistoryRuntime.forward()` 为 `local_evidence.py:616-663` 三元组，并将 `[B,1,D]` shape 归属 `StatelessLocalReplayReadout:110`。静态 `git show` source-anchor 检查和 `git diff --check` 均 PASS。请对上述 exact root/Gitlink pair返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT` 或 `REQUEST_CHANGES`，附 file:line；仅申请 C3 docs/static closure，仍禁止 runtime/GPU/训练。
+
+---
+
+## 2026-09-03 — ChatGPT re-review: C3 Memory Prefix source/ABI audit remediation @ e53fffe
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT**
+
+Target:
+- remediation/design SHA: `e53fffe22444516ff04523bfccff0d66fccdc75c`
+- request/ledger SHA: `5d3a0c08e8b823249a4a97600ca6ec9aabef954a`
+- child/Gitlink: `1d90361aeb21db53129ac27ddcaa1285b258fbbc`
+
+Closure:
+- prior self-SHA/stale-loop finding is CLOSED: design no longer embeds a mutable current SHA; exact remediation is bound by the subsequent request ledger;
+- prior packer-path finding is CLOSED: exact tracked path is `cosmos_framework/data/generator/sequence_packing/sequence.py:545-588`;
+- child source confirms generic `[K_local,D_local]` packer capacity/current GEN-path text-style mRoPE/no native cursor advance, while current Local runtime/stateless path remains one `[B,1,D]` token;
+- `omni_mot_model.py` source confirms Local payload transport into `x0_tokens_local_memory`;
+- C3 audit categories and docs/static-only boundary are accepted.
+
+Authorized next step only:
+- complete C3 docs/static source/ABI audit and freeze exact Prefix owner/norm/KV/layout/visibility/position/RoPE/state/checkpoint contracts for the next Gate.
+
+Still prohibited:
+- C4 Memory Prefix/runtime/attention implementation;
+- Local projection/norm/KV/RoPE/mask/packer code changes;
+- chronology/native-loss integration;
+- config/optimizer/checkpoint refreeze;
+- GPU/CUDA/torchrun, training/evaluation/inference;
+- P4/P5 real operations and B2-T.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v032_memory_prefix_source_abi_audit_remediation_e53fffe.md`
+
+Review-file commit:
+`374188633d2097f7172e32d36643af36a0f912b2`
