@@ -1,3 +1,6 @@
+> [!WARNING]
+> **2026-09-03 DESIGN OVERRIDE**：本文件关于 `state_start=zeros`、fast state 只在单 sample/window 内 carry、默认零 TTT slow learned parameters、boundary 外不得读取 state 等 B0 语义，已被 `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.2.md` supersede。v0.2 正式方向为：每 control step 单步 streaming evidence、fast state 跨整个 episode carry、每步 KVB inner update、16-step TBPTT 只 detach graph、learned Q/K/V + W0，并保持 Cosmos 原有 task loss。旧 runbook 仅保留历史 Gate/provenance 价值，不得再授权正式 B2-T。
+
 # R09-B TTT Fast-Weight Preflight Runbook v0.2
 
 **状态**：REVIEW；本版替代 v0.1 的 B0 审核申请，未授权任何代码、CPU 测试、GPU、训练或评测。  
@@ -60,6 +63,6 @@ FAIL：任一断言失败、fast state 在 `named_parameters()`、optimizer 或 
 
 ## 5. 禁止项与审核请求
 
-持续禁止 runtime wiring、GPU、A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared MoT、Global/Agent/RL，以及 inner update 的跨 sample 梯度耦合或边界外 fast-state 读取。
+持续禁止 runtime wiring、GPU、A1-style smoke、多卡、长训、matched SR、backend freeze、RoboTTT/shared-MoT、Global/Agent/RL，以及 inner update 的跨 sample 梯度耦合或边界外 fast-state 读取。
 
 本 runbook 请求三方给出 `APPROVE_TO_ADVANCE_B0_SOURCE_AUDIT` 或 `REQUEST_CHANGES`；它不请求 `APPROVE_TO_IMPLEMENT_B0`。只有 source audit 冻结具体 8 项 candidate 后，才另发 B0 implementation 申请。
