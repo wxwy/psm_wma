@@ -53,8 +53,8 @@ bounded GPU train smoke → inference persistent-state design/smoke → optimize
 | native noise | `_get_train_noise_level_vision/action()`：`omni_mot_model.py:1720-1866`；`_add_noise_to_input()`：`:1930-2048` | flatten 后每 packed sample 独立 sigma；action 默认复用该 sample 的 vision sigma，但不同 sample 不共享；每个 action tensor独立 `randn`。 | 当 `(episode,t)` 映射为独立 packed item 时已满足跨 item独立；无需改 noise 数学，只需 chronology adapter保持一 item 一 draw。 |
 | native loss | `_compute_losses()`：`omni_mot_model.py:1526-1654`；`compute_flow_matching_loss()`：`algorithm/loss/flow_matching.py:18-90` | modality 内先 per-instance，再 batch mean；action caller丢弃 per-instance值；trainer再固定除以 accumulation=16。 | **需最小 loss adapter**导出 time-weighted native per-item scalar及 valid mask，再做 accumulation/rank 全局有效步 mean。 |
 | dataloader/packer | `B2ManifestAwareIterableDataset`：`action_sft_dataset.py:95-143`；`IterativeJointDataLoader._iter_synchronous()`：`joint_dataloader.py:953-1044` | manifest wrapper逐 record校验 identity；packer从一个 suite连续取最多 128 个 sample后普通合并，不保留 sequence 轴。 | identity可复用；需 segment grouping/metadata与边界断言，不能把普通 B 误当 episode state batch。 |
-| production inference | `ActionPolicyRunner.predict_policy_batch()`：`scripts/action_policy_server_libero.py:931-977`；serial：`:979-1121` | 请求只有 image/prompt/domain/image_size；整个 `generate_samples_from_batch()` 在 `torch.inference_mode()`；没有 rollout identity、executed action、done/reset或 Local state。 | **需新增独立 inference seam**；Local update必须在 inference_mode 前，且 request/state ownership需单独设计。 |
-| closed-loop caller | client payload：`simulation/libero/closed_loop_eval.py:235-295`；vector env loop：`:1193-1263` | 客户端知道 env slot/done/实际执行 action，但未发送给 server；active slot会压缩重排。 | 必须显式发送稳定 rollout/env identity、step、previous executed action与 reset/done，不能用 batch row作 state key。 |
+| production inference | `cosmos-framework@21d064f:cosmos_framework/scripts/action_policy_server_libero.py:931-977,979-1121` | 请求只有 image/prompt/domain/image_size；整个 `generate_samples_from_batch()` 在 `torch.inference_mode()`；没有 rollout identity、executed action、done/reset或 Local state。 | **需新增独立 inference seam**；Local update必须在 inference_mode 前，且 request/state ownership需单独设计。 |
+| closed-loop caller | `cosmos-framework@21d064f:cosmos_framework/simulation/libero/closed_loop_eval.py:235-295,1193-1263` | 客户端知道 env slot/done/实际执行 action，但未发送给 server；active slot会压缩重排。 | 必须显式发送稳定 rollout/env identity、step、previous executed action与 reset/done，不能用 batch row作 state key。 |
 
 ## 2. Full fast-state pytree proposal
 
@@ -149,22 +149,46 @@ condition mask、time weight及两项 recipe scale全部保持不变。
 
 ## 5. Inference context audit
 
+### 5.1 不可变来源
+
+本节只以 root `90bc09e9117a8aabab144007aa82d2771e21fc0f` 的 Gitlink
+`cosmos-framework=21d064f2b7c7aeeb67cfee50ac8d6722a944eddb` 和该提交中的 tracked
+blob 为 authority。路径均相对 `cosmos-framework` 仓根：
+
+| immutable source | exact blob SHA | 本节使用的行 |
+| --- | --- | --- |
+| `cosmos-framework@21d064f2b7c7aeeb67cfee50ac8d6722a944eddb:cosmos_framework/scripts/action_policy_server_libero.py` | `9ef6845ade715dbe617f2c7e98553251929ae4b7` | `866-881,931-977,979-1121,1229-1279` |
+| `cosmos-framework@21d064f2b7c7aeeb67cfee50ac8d6722a944eddb:cosmos_framework/simulation/libero/closed_loop_eval.py` | `b31a3fc7f9d3b10b47cf3a429a7b785cd31e6918` | `235-295,1193-1263` |
+| `cosmos-framework@21d064f2b7c7aeeb67cfee50ac8d6722a944eddb:cosmos_framework/model/generator/omni_mot_model.py` | `89d1d32ddd2f906ee118e2dbe6d0bd71be8dd2b1` | `2878-2879,3029-3039,4210-4238` |
+
+这里没有使用或引用 `generator_mixin.py`；`generate_samples_from_batch()` 的
+`@torch.no_grad()` 直接位于上述 tracked `omni_mot_model.py:2878-2879`。
+
+### 5.2 精确生产调用图
+
 当前嵌套图：
 
 ```text
-closed_loop_eval active env slots
-  -> HTTP /predict or /predict_batch（payload无稳定 rollout identity/action/done）
-  -> ActionPolicyRunner._prep_policy_item()             # 普通 CPU tensors
+closed_loop_eval active env slots                         # closed_loop_eval.py:1193-1263
+  -> HTTP /predict or /predict_batch                     # closed_loop_eval.py:235-295
+  -> _ActionHandler.do_POST()                            # action_policy_server_libero.py:1229-1279
+  -> ActionModelService._prep_policy_item()              # action_policy_server_libero.py:866-929
   -> with self._lock
        -> with torch.inference_mode()                   # server :959 / :1061
-            -> OmniMoTModel.generate_samples_from_batch # 自身还有 @torch.no_grad(), :2878
-                 -> _prepare_inference_data()
+            -> OmniMoTModel.generate_samples_from_batch # omni_mot_model.py:2878-2879
+                 -> _prepare_inference_data()            # omni_mot_model.py:3029-3039
                  -> get_data_and_condition()
                  -> Cosmos sampling
 ```
 
+上述 server lock/context-manager 的批量路径 authority 是
+`cosmos-framework@21d064f2b7c7aeeb67cfee50ac8d6722a944eddb:cosmos_framework/scripts/action_policy_server_libero.py:931-966`，
+串行路径 authority 是同文件 `:979-1068`；HTTP entry 与 dispatch 是同文件
+`:1229-1279`。
+
 `generate_samples_from_batch()` 不调用训练用 `_inject_local_history()`；它只会消费调用者已
-放入 batch 的 `local_memory`（`get_data_and_condition()`：`omni_mot_model.py:4210-4238`）。
+放入 batch 的 `local_memory`（
+`cosmos-framework@21d064f2b7c7aeeb67cfee50ac8d6722a944eddb:cosmos_framework/model/generator/omni_mot_model.py:4210-4238`）。
 因此唯一安全的最小插入边界是 server 的 lock 内、`torch.inference_mode()` 之前：
 
 ```text
@@ -177,8 +201,14 @@ ordinary observation / previous executed action / stable rollout identity
   -> 原 torch.inference_mode() + @torch.no_grad() Cosmos generate
 ```
 
-现有 request schema无法提供 `rollout_id/env_id`、control step、上一步实际执行 action或
-reset/done，且 vectorized loop会压缩 active slot顺序（`closed_loop_eval.py:1216-1259`）。
+客户端 serial/batch payload 只有 `image,prompt,domain_name,image_size`（
+`cosmos-framework@21d064f2b7c7aeeb67cfee50ac8d6722a944eddb:cosmos_framework/simulation/libero/closed_loop_eval.py:250-255,274-287`），
+server 也只校验这四项（
+`cosmos-framework@21d064f2b7c7aeeb67cfee50ac8d6722a944eddb:cosmos_framework/scripts/action_policy_server_libero.py:866-881`）。
+HTTP 层生成的 `request_id` 只是日志/转储关联号（同文件 `:1258-1271`），不是 rollout/env
+identity。现有 request schema 因而无法提供 `rollout_id/env_id`、control step、上一步实际执行
+action 或 reset/done，且 vectorized loop 会压缩 active slot 顺序（
+`cosmos-framework@21d064f2b7c7aeeb67cfee50ac8d6722a944eddb:cosmos_framework/simulation/libero/closed_loop_eval.py:1216-1259`）。
 因此 inference persistent state 当前**无可复用 owner**；需独立设计 request schema、
 server state registry、异常/超时清理、partial done reset和串行/批量等价。不得用请求行号或
 HTTP request ID冒充 env identity。
