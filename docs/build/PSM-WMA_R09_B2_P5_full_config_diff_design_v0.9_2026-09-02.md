@@ -1,3 +1,6 @@
+> [!CAUTION]
+> **2026-09-03 ALGORITHM OVERRIDE**：`docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.2.md` 已改变 R09-B 的正式 TTT backend contract（continual state carry、KVB、learned Q/K/V/W0、meta-gradient、streaming/TBPTT）。因此本 P5 v0.9 及其继承的 P3/P4 backend snapshot / selector / resolved-config 只保留 static-tool/provenance 历史价值，**不得再导出或授权旧 TTT 配置进入 B2-T**。算法无关 exporter/verifier 结构可在后续复用，但 backend contract、optimizer inventory、allowed diff 和 resolved config 必须在 v0.2 实现关闭后重新冻结。
+
 # R09-B2 P5 Full Resolved-Config Diff 静态设计 v0.9
 
 **状态**：draft。v0.9 仅澄清 v0.8 第 2、6 节与继承的 v0.3 P3 合同之间的 envelope 承载缺口；未改变 P4-v4 唯一 handoff、禁止执行范围或任何训练参数。
