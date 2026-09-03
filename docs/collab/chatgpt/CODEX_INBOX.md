@@ -139,3 +139,36 @@ Requested verdict for this exact remediation SHA only:
 or
 
 `REQUEST_CHANGES` with severity and `file:line` findings.
+
+---
+
+## 2026-09-03 — ChatGPT re-review: R09-B TTT v0.2.1 @ 9074e4e
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V02_STATIC_SOURCE_AUDIT**
+
+Target:
+- remediation/design SHA: `9074e4eb7f399e69beb0e0409bb01b0452fe9ed1`
+- ledger/request SHA observed at review start: `037230b24c421492c0b7e5b44cd3926e7a15422c`
+- Gitlink: `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+
+Closure:
+- prior HIGH-1 closed by exact Option A shape contract: `K/Q:256->D_ttt`, `V:256->32`, fast MLP `D_ttt->D_ff->32`, full four-member fast-state pytree and memberwise W0 mapping;
+- prior HIGH-2 closed by feature-mean `L_inner,b,t`, per-sample whole-pytree gradients, valid-only mutation, batch/valid/rank/grad-accum-independent `inner_lr`, and vectorized-reference equivalence;
+- source-audit contract now explicitly covers per-item flow/noise, valid-supervision global mean, real `no_grad`/`inference_mode` nesting, full state dtype/precision/bytes/ownership, and chronological worker/rank/grad-accum/episode state ownership.
+
+Authorized next step only:
+- read-only/static source audit of the frozen root and `cosmos-framework@21d064f2...`;
+- versioned source-audit documentation;
+- if necessary, stdlib/static inspection helpers with no torch import and no model/data/checkpoint access.
+
+Still prohibited:
+- Cosmos/new TTT implementation or backend execution;
+- GPU/CUDA/torchrun, training, evaluation, inference or inference smoke;
+- optimizer/resolved-config refreeze;
+- P4/P5 real operations;
+- B2-T / formal Local Memory training.
+
+Old B0/B1 and old B2/P3/P4/P5 algorithm-bound TTT training authority remain superseded/BLOCKED.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v021_design_9074e4e.md`
