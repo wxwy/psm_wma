@@ -384,3 +384,46 @@ Approval authorizes only the CPU core implementation in `local_evidence.py` plus
 followed by documentation-only v0.3.1 source/ABI audit. It does not authorize Memory Prefix runtime wiring,
 chronology/loss, GPU/CUDA/torchrun, training, evaluation, inference, optimizer/config refreeze, P4/P5 real
 operations or B2-T.
+
+---
+
+## 2026-09-03 — ChatGPT independent review: R09-B TTT v0.3.1 route @ af9caf0
+
+**Verdicts:**
+
+`APPROVE_R09_B_TTT_V031_IMPLEMENTATION_ROUTE`
+
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V02_CPU_ALGORITHM_CORE`
+
+Target:
+- implementation/design SHA: `af9caf0cfffbb70b7fbf2e8bc3f763bf9bd9d1a2`
+- request/ledger SHA observed at final review check: `d99490a169f84fa01b005db757609f5909a3c097`
+- v0.3.1 authority: `4754f5bc25859894e6fc963a9484640ccb5cd082`
+- CPU-core design re-reviewed in exact state: `216f1261c81cf6f2bd13053b5e937beeccd335b3`
+- Gitlink: `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+
+Accepted:
+- Memory is K/V-only read-only context with no `Q_MEM`, output, residual or MLP;
+- Local must leave the native AR/DM query pack and enter via a separate per-sample Memory context;
+- current two-way dense DM attention should use one varlen joint softmax over `[K_MEM,K_AR,K_DM]`, while the AR causal pass remains unchanged;
+- unsupported three-way/Flex/NATTEN/multi-control/CP/Ulysses/CUDA-graph combinations fail closed while Memory is present;
+- exact norm/projection/RoPE/warm-start details remain frozen for the later source/ABI audit; zero K/V is correctly not treated as automatically function-preserving;
+- the backbone-independent continual-TTT CPU core remains orthogonal to v0.3.1 and may be implemented before the later Memory Prefix source/ABI audit.
+
+Non-blocking source-anchor note:
+- route `docs/build/PSM-WMA_R09_B_TTT_v031_implementation_route_v0.1_2026-09-03.md:62` says the LIBERO recipe inherits `model_config.py:220`'s default `two_way`; the effective Edge recipe actually copies `EDGE_MODEL_CONFIG`, which explicitly sets `joint_attn_implementation="two_way"` at `cosmos_framework/configs/base/experiment/sft/models/edge_model_config.py:44`. Effective behavior is still `two_way`; Gate-C source/ABI audit must cite the exact effective config path.
+
+Authorized next step only:
+- Gate B CPU-core implementation in `local_evidence.py` plus adjacent `local_evidence_test.py`, with only the CPU tests / `py_compile` / diff-check frozen by the design;
+- then submit the new child implementation + root Gitlink bump for fresh same-SHA closure review.
+
+Still prohibited:
+- Memory Prefix runtime wiring;
+- chronology/native-loss/runtime integration;
+- GPU/CUDA/torchrun, training, evaluation or inference;
+- optimizer/config/checkpoint authority refreeze;
+- P4/P5 real operations;
+- B2-T.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v031_architecture_route_af9caf0.md`
