@@ -5018,3 +5018,12 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - HIGH-2：ancestor derivation 后明确拒绝 `directories & {preflight.json,request.json,result.json,verification.json,candidate_link.json}`；fixture覆盖五个 `reserved/x` 负例，同时保留 exact-only namespace语义。
 - MEDIUM：P4 fixture精确断言 `set(staging_projection)==STAGING_PROJECTION_KEYS`；P5 fixture精确断言 P4 projection key-set，且 entries/digest跨 schema一致。P4=`86/86 PASS`、P5=`5/5 PASS`、`py_compile`、`git diff --check` PASS。
 - 仅 root static grammar/loader/verifier/stdlib fixtures；`AUTHORIZED_P4_V4_LOCK_SPEC=None`、`AUTHORIZED_P4_V4_EVIDENCE=None`、`run_parent_export()` hard-stop保持。禁止真实 request/preflight/staging/candidate/run-root、record/refreeze/P5 export/compose、child/torch/torchrun、GPU/模型数据/训练。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 bba062377b32f185822ae8eb8f6d46beddd1e8d4；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-P5-V4-HANDOFF-MIGRATION` missing-tree fixture remediation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_P5_V4_HANDOFF_MIGRATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root=`bba062377b32f185822ae8eb8f6d46beddd1e8d4`；prior=`01da148`，ChatGPT review=`03ddc1b` 唯一 MEDIUM；已批准设计=`f16f6e4`；Gitlink 如上。
+- 整改仅为 `tools/g0/test_r09_b2_p5_full_config_diff.py:test_v4_roster_rejects_missing_payload_path`：从既有 `_v4_preflight()` stdlib temporary Git fixture 删除 expected `import_staging/<token>/payload.py` regular，断言 `load_p4_v4_preflight()` 因 actual-tree exact path-set missing 而抛出 `ValueError`。原 `test_v4_roster_rejects_unlisted_path`（extra tree entry）未改；production verifier与所有 roster semantics未改。
+- 静态证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=`86/86 PASS`；`python -B -m unittest tools.g0.test_r09_b2_p5_full_config_diff -v`=`6/6 PASS`；相应 `py_compile`、`git diff --check` PASS。
+- 允许范围仅 root P4/P5 static grammar/loader/verifier 的 stdlib fixture与状态记录；`AUTHORIZED_P4_V4_LOCK_SPEC=None`、`AUTHORIZED_P4_V4_EVIDENCE=None`、`run_parent_export()` hard-stop保持。禁止真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
