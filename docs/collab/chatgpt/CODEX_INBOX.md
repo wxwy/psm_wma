@@ -671,3 +671,47 @@ Detailed review:
 
 Review-file commit:
 `7f227eecc33b945cce8e65f7537a4b83901733fc`
+
+---
+
+## 2026-09-03 — ChatGPT independent review: v0.3.2 multi-slot CPU-core design @ 411e967
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MULTI_SLOT_CPU_CORE**
+
+Target:
+- root design SHA: `411e96760bdd1187303c0c2bfe2185223cc5c58e`
+- request/ledger SHA observed before review write-back: `86022073e631c60531d45ed90af90924f33bd643`
+- child/Gitlink baseline: `cf52f43dc328d4c8eec51923d66835125664dee5`
+- approved v0.3.2 architecture authority: `ef3ff1a9dfe73c62df5991d3ece88b1677a2b6d3`
+
+Accepted:
+- `k_local` is construction/checkpoint-time identity, not a runtime-varying slot count;
+- registered `slot_queries[K_local,D_ttt]` is the only multi-slot slow-parameter extension; fast-state payload remains unchanged;
+- each valid sample performs exactly one K/V-only higher-order KVB write, followed by K pure post-update reads from the same `W_t`;
+- Q/base query and slot queries remain outside `L_inner`; K/V retain differentiable-inner-update meta-gradient semantics;
+- `project_evidence()` keeps the existing triple ABI; `project_queries`/`read_many` and `*_many` APIs carry the multi-slot rank explicitly;
+- legacy public APIs remain K=1 compatible and fail closed for K>1;
+- MS01–MS13 provide adequate CPU closure coverage for counts, one-write invariant, post-update read, state purity/inertia, K=1 equivalence, slot permutation/isolation, gradient reachability, scan equivalence and K-mismatch strict-load failure.
+
+Non-blocking clarification:
+- §1.3's “no checkpoint schema change” is interpreted as no checkpoint-loader/migration/config/refreeze change. C2 is explicitly allowed to add the designed module `state_dict` key `slot_queries`; old checkpoint migration remains out of scope.
+- C2 proves synthetic CPU fp32 math only; it does not establish future bf16 production fast-state read/storage authority.
+
+Authorized next step only:
+- C2 child CPU-only implementation in exactly `cosmos_framework/model/generator/mot/local_evidence.py` and `local_evidence_test.py`;
+- run only the frozen isolated synthetic CPU selector and static diff checks;
+- then submit the new exact child SHA/root Gitlink for fresh same-SHA closure review.
+
+Still prohibited:
+- Memory Prefix/source-ABI/runtime/attention wiring, local_memory2llm, norm/KV projection, position/RoPE/mask;
+- chronology/native-loss integration;
+- production config/optimizer/checkpoint migration or refreeze;
+- GPU/CUDA/torchrun, training, evaluation or inference;
+- real cache/data/model/checkpoint access;
+- P4/P5 real operations and B2-T.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v032_multi_slot_cpu_design_411e967.md`
+
+Review-file commit:
+`7e639bf2edbaf2a72c43e54b2473a9711ed29b56`
