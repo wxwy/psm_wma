@@ -250,3 +250,47 @@ Still prohibited:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v02_source_audit_90bc09e.md`
+
+---
+
+## 2026-09-03 — R09-B TTT v0.2 inference-provenance remediation @ 39ec772
+
+Awaiting review — 🚨 审核申请已发出（根仓 `39ec772720603ce9cae98b7e30cb41c10437f64e`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`）
+
+Task/Gate: `G0-R09-B-TTT-V02-STATIC-SOURCE-AUDIT`
+
+Review target:
+- remediation SHA: `39ec772720603ce9cae98b7e30cb41c10437f64e`
+- remediated document: `docs/build/PSM-WMA_R09_B_TTT_source_audit_v0.2_2026-09-03.md`
+- prior technical SHA: `90bc09e9117a8aabab144007aa82d2771e21fc0f`
+- prior ChatGPT review: `85e4f18b8ae083aa5b0174f35e80ba4430e61f97`
+- Cosmos baseline / Gitlink: `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+
+HIGH-1 remediation:
+1. Proves the root Gitlink and records exact tracked blob identities for the production server, closed-loop client and model generation source.
+2. Rewrites the inference gap-map rows and Section 5 with complete `cosmos-framework@commit:path:line` evidence for the HTTP client/server entry, request validation, lock, `torch.inference_mode()`, `@torch.no_grad()`, generation preparation, Local-token consumption, active-slot compaction and available/missing request fields.
+3. Clarifies that the audit never relies on `generator_mixin.py`; the generation decorator is directly at tracked `omni_mot_model.py:2878-2879`.
+4. Preserves all previously accepted algorithm, trainer/TBPTT, loss/noise, chronology and Gate-split findings unchanged.
+
+Exact provenance evidence:
+- server `21d064f...:cosmos_framework/scripts/action_policy_server_libero.py` -> blob `9ef6845ade715dbe617f2c7e98553251929ae4b7`;
+- client `21d064f...:cosmos_framework/simulation/libero/closed_loop_eval.py` -> blob `b31a3fc7f9d3b10b47cf3a429a7b785cd31e6918`;
+- model `21d064f...:cosmos_framework/model/generator/omni_mot_model.py` -> blob `89d1d32ddd2f906ee118e2dbe6d0bd71be8dd2b1`;
+- `git diff --check` passed, and all three `commit:path -> blob` assertions passed;
+- no Cosmos tracked file/Gitlink changed; no torch/project runtime, model/data/checkpoint access, GPU, training, evaluation or inference was run.
+
+Allowed after unanimous approval:
+- write the versioned CPU algorithm/gradient implementation design only.
+
+Still forbidden:
+- Cosmos implementation/backend execution and chronology/loss/runtime integration;
+- GPU/CUDA/torchrun, training, evaluation or inference;
+- optimizer/config refreeze, P4/P5 real operations, B2-T or formal Local Memory training.
+
+Requested verdict for this exact remediation SHA and Gitlink only:
+
+`APPROVE_TO_DESIGN_R09_B_TTT_V02_CPU_ALGORITHM_IMPLEMENTATION`
+
+or
+
+`REQUEST_CHANGES` with severity and exact `file:line` findings.
