@@ -21,8 +21,9 @@ backward。若直接换 backend，会继续重复写历史、丢失跨 call stat
 
 1. CPU-only functional KVB core：四成员 fast pytree、learned Q/K/V/W0、逐 sample
    feature-mean update、更新后读取、整树 reset/detach；
-2. chronological segment adapter：把 window stream 变成 episode 内连续、最多 16 个
-   control timestep 的 segment，segment 内有图、segment 间只 carry detached 数值；
+2. chronological segment adapter：把 window stream 变成 episode 内连续、最多
+   `ttt_tbptt_steps` 个 control timestep 的 segment，segment 内有图、segment 间只 carry
+   detached 数值；截断长度可配置，默认 16，与 RoboTTT 对齐；
 3. native outer-loss adapter：保留 Cosmos 原 vision/action flow loss 定义，但对所有有效
    `(episode,t)` 累积 numerator/denominator，消除 padding、microbatch、accumulation 和 rank
    对权重的影响；
@@ -69,6 +70,7 @@ bounded GPU train smoke → inference persistent-state design/smoke → optimize
 | fast storage dtype | `bfloat16` production；CPU reference=`float32` | LIBERO Edge recipe precision为 bf16（`examples/toml/sft_config/action_policy_libero_edge_all.toml:27`）；CPU contract按 v0.2.1 使用 fp32。 |
 | inner compute | K/Q/V 与四叶 fast functional计算、loss、`autograd.grad` 均提升 `float32`；update结果 cast回 storage dtype | 避免 bf16 feature-mean/inner gradient累计；cast必须保持训练图。 |
 | `inner_lr` | config scalar首版候选 `0.1`，finite 且 `>0`；不是 parameter/buffer | 与旧 prototype只共享数量级，不共享算法；必须在 implementation design 中做显式批准，不能硬编码。 |
+| `ttt_tbptt_steps` | positive config integer，默认 `16` | 默认截断长度与 RoboTTT 对齐；它只控制图截断而非 memory horizon，改变它不得重置 fast-state数值。 |
 
 ### 2.2 四成员 exact inventory
 
@@ -191,7 +193,7 @@ HTTP request ID冒充 env identity。
 | shuffle/sampler/packing | manifest模式禁 iterable shuffle、逐 record消费（`action_sft_dataset.py:125-143,352-360`）；recipe要求 `num_workers=0,in_order=True`（`action_policy_libero_edge_all.py:160-190`）；joint loader按 suite round-robin并一次 pack最多 128（`joint_dataloader.py:953-1044`）。 | window stream可作为输入，但必须重组为完整 TBPTT segment；普通 packed B不是 state batch。 |
 | worker owner / handoff | manifest wrapper拒绝 worker进程（`action_sft_dataset.py:125-127`）。 | `num_workers=0` 可形成唯一 process owner；保持 fail-closed。 |
 | rank owner | P1 header固定 `world_size=1,num_workers=0`（`build_r09_b2_stream_manifest.py:145-151`），verifier检查（`verify_r09_b2_stream_manifest.py:108-123`）。 | 首版正式候选维持单 rank，唯一 owner可证明；多 rank另行 Gate，不从当前设计推导。 |
-| grad accumulation / optimizer boundary | recipe `max_samples_per_batch=128`、`grad_accum_iter=16`；trainer每 microbatch backward、16次后 step。 | 每个 microbatch必须由完整 `<=16` step segments组成；segment末 detach数值后才允许该 microbatch backward。不能保留跨 backward图。state每个真实 transition恰好前进一次。 |
+| grad accumulation / optimizer boundary | recipe `max_samples_per_batch=128`、`grad_accum_iter=16`；trainer每 microbatch backward、16次后 step。 | 每个 microbatch必须由完整 `<=ttt_tbptt_steps` segments组成；segment末 detach数值后才允许该 microbatch backward。不能保留跨 backward图。state每个真实 transition恰好前进一次。 |
 | epoch/drop/retry/replay | manifest记录 epoch；dataset内部加载失败会随机重试（`libero_lerobot_dataset.py:398-410`），但 wrapper随后 identity mismatch并 fail；finite manifest迭代结束后重新建 iterator会从头开始。 | 禁止随机替代；首版中断/异常整 run fail。epoch identity须参与 reset/owner key。不得无记录重放。 |
 | partial reset | backend有旧 `reset_mask()`，但 production runtime从未调用；训练/推理均无 per-owner reset入口。 | chronology owner按 episode/env done mask复制完整 learned W0，其他 owner bitwise不变。 |
 | checkpoint/resume | DCP保存 model/optim/dataloader/trainer，但现有 fast state既不注册也无独立 artifact；`set_start_iteration()`只调整 joint-loader suite选择（`trainer/__init__.py:320-323`），未恢复 manifest child cursor或 fast state。 | strict sequence resume首版明确非目标；中断后从 fresh run/episode重启。未来若需要，另设 detached state+cursor artifact Gate，绝不把 W_t混入 model/Adam。 |
@@ -199,21 +201,22 @@ HTTP request ID冒充 env identity。
 ### 6.1 当前阻塞的精确证明
 
 现有 128-window microbatch可以在任意 episode offset处开始/结束；episode长度也不保证是
-16 的倍数。若 runtime只在每 16 个 episode step detach，则 microbatch末可能留下少于 16
-步的未 detach图，而 trainer已在该 microbatch立即 backward。下一 microbatch继续该 state
+16 的倍数。若 runtime只在每 `ttt_tbptt_steps` 个 episode step detach，则 microbatch末可能
+留下不足一段的未 detach图，而 trainer已在该 microbatch立即 backward。下一 microbatch继续该 state
 会引用已释放图；若强制在 microbatch末 detach，又会把 16 改成由 packing决定的短截断。
 
-因此后续 chronology design 必须先形成**完整 segment是 trainer backward的原子边界**：
+因此 chronology design 必须先形成**完整 segment是 trainer backward的原子边界**：
 一个 packed microbatch可包含多个完整 segment，episode尾 segment可小于 16；同一 episode
 的下个 segment只接收上个 segment末 detached数值。这样同一 transition只有一个 state
-owner和一次 update，TBPTT语义也不依赖 128-window pack边界。
+owner和一次 update，TBPTT语义也不依赖 128-window pack边界。`ttt_tbptt_steps` 可改为其他
+正整数；实现仍须保证截断边界不跨 pack/backward，否则 fail-closed。
 
 ## 7. 最小实现面与 Gate 拆分
 
 ### Gate A：CPU algorithm/gradient implementation design（本 audit 通过后才可写）
 
 冻结本文件候选值、functional API、四叶命名、W0初始化、higher-order gradient、容差、
-内存预算和 exact CPU tests。预计实现锚点仅为：
+内存预算、`ttt_tbptt_steps` 配置合同和 exact CPU tests。预计实现锚点仅为：
 
 - `cosmos_framework/model/generator/mot/local_evidence.py`
 - `cosmos_framework/model/generator/mot/local_evidence_test.py`
@@ -244,7 +247,7 @@ resolved config、A/B matched diff、P3/P4/P5 authority；旧 B2/P3/P4/P5算法�
 
 本 source audit 已输出 v0.2.1 §6 要求的六类 exact 表，明确给出当前事实、阻塞和最小
 future seam，并提出首版 `D_ttt=64,D_ff=128,SiLU,bf16 storage/fp32 inner compute,
-inner_lr=0.1` 候选。审核应检查：
+inner_lr=0.1,ttt_tbptt_steps=16`（RoboTTT-aligned default）候选。审核应检查：
 
 1. `file:line` 是否覆盖真实 production training/inference/sampler路径；
 2. 四成员 fast pytree、W0 mapping、bytes和 slow inventory是否闭合；
