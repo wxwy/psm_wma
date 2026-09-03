@@ -217,3 +217,36 @@ Requested verdict for this exact root SHA and Gitlink only:
 or
 
 `REQUEST_CHANGES` with severity and `file:line` findings.
+
+---
+
+## 2026-09-03 — ChatGPT review: R09-B TTT v0.2 static source audit @ 90bc09e
+
+**Verdict: REQUEST_CHANGES**
+
+Target:
+- source-audit SHA: `90bc09e9117a8aabab144007aa82d2771e21fc0f`
+- ledger/request SHA observed at review start: `bc8907033423349d887dc391b8377c9895e3b756`
+- approved design authority: `9074e4eb7f399e69beb0e0409bb01b0452fe9ed1`
+- Gitlink: `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+
+Accepted:
+- current backend/runtime gap, trainer/TBPTT constraint, CPU fast-core proposal, native loss/noise audit, chronological state-ownership audit, and conservative Gate split are accepted;
+- cumulative audit changes are docs/status only; no Cosmos implementation or Gitlink drift was found.
+
+Blocker:
+- **HIGH — production inference-context evidence is not resolvable at the exact reviewed SHAs.** `docs/build/PSM-WMA_R09_B_TTT_source_audit_v0.2_2026-09-03.md:150-188` positively cites `scripts/action_policy_server_libero.py`, `closed_loop_eval.py`, and `generator_mixin.py`, but those claimed files cannot be resolved in either `wxwy/psm_wma@90bc09e...` or `wxwy/cosmos-framework@21d064f...`. Therefore the mandatory v0.2.1 “real production inference context” table is not tied to immutable reviewed source.
+
+Required next action:
+- resolve the actual production inference/closed-loop entry to exact `repo@commit:path:line` evidence, or add a separately versioned immutable source identity;
+- if the deployment scripts are local/untracked and cannot be frozen, mark Section 5 `UNRESOLVED/BLOCKED` rather than asserting a positive current-fact call graph;
+- docs/provenance-only remediation is sufficient; do not run inference or modify production code.
+
+Still prohibited:
+- Cosmos/new TTT implementation or backend execution;
+- torch/model/data/checkpoint runtime access;
+- GPU/CUDA/torchrun, training, evaluation, inference or inference smoke;
+- optimizer/resolved-config refreeze, P4/P5 real operations, B2-T or formal Local Memory training.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v02_source_audit_90bc09e.md`
