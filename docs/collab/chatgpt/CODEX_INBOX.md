@@ -5008,3 +5008,13 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 改动：P5 新增唯一 pure `validate_v2_payload_manifest()` / `derive_v2_roster_entries()`；P4 `_validate_payload_manifest()` 与 `_planned_projection()` 复用它。该 derivation 保留既有 manifest grammar、导出 `import_staging`/token 与所有合法 nested regular 的祖先目录，拒绝五个 reserved root evidence 名、directory-only path 作为 regular、regular/ancestor collision；P5 roster validator exact-equal 该 entries 并排除 `preflight.json`。P4 `{entries,projection_sha256}` 和 P5 `{entries,sha256}` key-set 未变，绑定同一 entries 与 P5 canonical digest。
 - fixture：P4 projection既有 nested expectation补 ancestor；P5 临时 v4 fixture迁移为 v2；新增 deep nested P4/P5 semantic parity、reserved-name 与 collision reject。`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=`86/86 PASS`；`python -B -m unittest tools.g0.test_r09_b2_p5_full_config_diff -v`=`5/5 PASS`；`py_compile`、`git diff --check` PASS。
 - 允许范围仅 root P4/P5 static grammar/loader/verifier 与 stdlib CPU fixtures。`AUTHORIZED_P4_V4_LOCK_SPEC=None`、`AUTHORIZED_P4_V4_EVIDENCE=None`、`run_parent_export()` hard-stop 保持。禁止真实 request/preflight/staging/candidate/run-root、record/refreeze/evidence publication、P5 export/compose、child/torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理/B2-T/Local Memory training。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 01da148b5e3ebbd254c8ba57166dc817ff17e02d；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-P5-V4-HANDOFF-MIGRATION` remediation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_P5_V4_HANDOFF_MIGRATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root=`01da148b5e3ebbd254c8ba57166dc817ff17e02d`；prior=`3c04c475`，ChatGPT review=`e3afdd2` HIGH-1/2 + MEDIUM；Gitlink 如上。
+- HIGH-1：共享 `validate_v2_payload_manifest()` 现以旧 P4 `json.dumps(sort_keys=True,separators=(",",":"))`（`ensure_ascii=True`）验证 manifest self-SHA；P5 roster/projection digest仍为 `sha256_json({"entries": entries})`（P5 canonical spelling）。fixture固定 `pkg/é.py` 旧 P4 SHA 被 P4/P5 shared validation 接受、且与 P5 spelling不同。
+- HIGH-2：ancestor derivation 后明确拒绝 `directories & {preflight.json,request.json,result.json,verification.json,candidate_link.json}`；fixture覆盖五个 `reserved/x` 负例，同时保留 exact-only namespace语义。
+- MEDIUM：P4 fixture精确断言 `set(staging_projection)==STAGING_PROJECTION_KEYS`；P5 fixture精确断言 P4 projection key-set，且 entries/digest跨 schema一致。P4=`86/86 PASS`、P5=`5/5 PASS`、`py_compile`、`git diff --check` PASS。
+- 仅 root static grammar/loader/verifier/stdlib fixtures；`AUTHORIZED_P4_V4_LOCK_SPEC=None`、`AUTHORIZED_P4_V4_EVIDENCE=None`、`run_parent_export()` hard-stop保持。禁止真实 request/preflight/staging/candidate/run-root、record/refreeze/P5 export/compose、child/torch/torchrun、GPU/模型数据/训练。
