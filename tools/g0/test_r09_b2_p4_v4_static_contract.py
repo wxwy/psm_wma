@@ -25,12 +25,25 @@ class CandidateContractTest(unittest.TestCase):
     def test_external_log_namespace_is_exact_and_disjoint(self):
         core = {"root": "/logs/attempt", "stdout": "/logs/attempt/stdout.log", "stderr": "/logs/attempt/stderr.log"}
         value = {**core, "sha256": hashlib.sha256((json.dumps(core, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()}
-        validate_logs(value, ("/source", "/run/recurrent", "/run/ttt", "/candidates", "/evidence"))
-        for field, replacement in (("stdout", "/candidates/stdout.log"), ("root", "/source/logs")):
+        namespaces = {"source_root": "/source", "submodule_root": "/source/cosmos-framework", "run_roots": ("/run/recurrent", "/run/ttt"), "candidate_root": "/candidates", "p5_paths": tuple(f"/evidence/{index}" for index in range(6))}
+        validate_logs(value, namespaces)
+        for field, replacement in (("stdout", "/candidates/stdout.log"), ("stderr", "/logs/attempt/other.log"), ("root", "/source/logs")):
             candidate = dict(value); candidate[field] = replacement
             candidate["sha256"] = hashlib.sha256((json.dumps({key: item for key, item in candidate.items() if key != "sha256"}, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()
             with self.assertRaises(ValueError):
-                validate_logs(candidate, ("/source", "/run/recurrent", "/run/ttt", "/candidates", "/evidence"))
+                validate_logs(candidate, namespaces)
+        for root in ("logs", "/logs/../attempt", "/logs/attempt/", "//logs/attempt"):
+            candidate = dict(value); candidate["root"] = root
+            with self.assertRaises(ValueError): validate_logs(candidate, namespaces)
+        for candidate in ({**value, "extra": True}, {key: item for key, item in value.items() if key != "stderr"}, {**value, "stdout": 1}):
+            with self.assertRaises(ValueError): validate_logs(candidate, namespaces)
+        stale = dict(value); stale["root"] = "/other"
+        with self.assertRaises(ValueError): validate_logs(stale, namespaces)
+        for broken in ([], {**namespaces, "run_roots": ()}, {**namespaces, "source_root": "relative"}):
+            with self.assertRaises(ValueError): validate_logs(value, broken)
+        reverse = {"root": "/run", "stdout": "/run/stdout.log", "stderr": "/run/stderr.log"}
+        reverse["sha256"] = hashlib.sha256((json.dumps(reverse, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()
+        with self.assertRaises(ValueError): validate_logs(reverse, namespaces)
 
     def _pass(self, root: Path, backend: str, token: str = "a" * 64) -> None:
         folder = root / "attempt" / backend

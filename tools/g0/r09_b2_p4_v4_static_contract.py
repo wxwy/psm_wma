@@ -16,6 +16,7 @@ from tools.g0.export_r09_b2_p5_resolved_config import (
 
 PAYLOAD_FILES = ("request.json", "result.json", "verification.json")
 LOG_KEYS = {"root", "stdout", "stderr", "sha256"}
+LOG_NAMESPACE_KEYS = {"source_root", "submodule_root", "run_roots", "candidate_root", "p5_paths"}
 LINK_KEYS = {"schema_version", "backend", "attempt_id", "run_token", "payload_sha256"}
 FAILURE_KEYS = {"schema_version", "backend", "attempt_id", "run_token", "status", "stage", "error_type", "error"}
 REQUEST_KEYS = {"schema_version", "backend", "production_source", "p4_run", "p4_staging", "request_defaults", "interpreter", "loader_argv", "effective_environment", "native_loader_environment", "payload_manifest", "producer"}
@@ -35,7 +36,7 @@ def _overlaps(left: Path, right: Path) -> bool:
     return left == right or left in right.parents or right in left.parents
 
 
-def validate_logs(value: object, forbidden_roots: object) -> None:
+def validate_logs(value: object, namespaces: object) -> None:
     """Validate the static-only external log namespace without creating it."""
     if not isinstance(value, dict) or set(value) != LOG_KEYS:
         raise ValueError("execution logs schema differs")
@@ -46,8 +47,14 @@ def validate_logs(value: object, forbidden_roots: object) -> None:
     stdout, stderr = (_absolute_lexical(value[key], "execution log path differs") for key in ("stdout", "stderr"))
     if stdout != root / "stdout.log" or stderr != root / "stderr.log" or stdout == stderr:
         raise ValueError("execution log path differs")
-    if not isinstance(forbidden_roots, tuple) or not forbidden_roots:
-        raise ValueError("execution log forbidden roots differ")
+    if not isinstance(namespaces, dict) or set(namespaces) != LOG_NAMESPACE_KEYS:
+        raise ValueError("execution log namespaces differ")
+    run_roots, p5_paths = namespaces["run_roots"], namespaces["p5_paths"]
+    if (not isinstance(run_roots, tuple) or len(run_roots) != 2
+            or not isinstance(p5_paths, tuple) or len(p5_paths) != 6):
+        raise ValueError("execution log namespaces differ")
+    forbidden_roots = (namespaces["source_root"], namespaces["submodule_root"], *run_roots,
+                       namespaces["candidate_root"], *p5_paths)
     for item in forbidden_roots:
         if _overlaps(root, _absolute_lexical(item, "execution log forbidden root differs")):
             raise ValueError("execution log root overlaps frozen namespace")
