@@ -931,3 +931,11 @@ Changes are root docs/status only:
 - adds `cosmos_framework/model/generator/mot/local_evidence.py:616-657::LocalHistoryRuntime.forward()` current `[B,1,D]` cardinality and the boundary that packer capacity is not production multi-slot runtime.
 
 Acceptance and prohibition remain unchanged: only C3 docs/static audit closure is requested; no child/runtime/attention/config/optimizer/checkpoint changes, GPU/torchrun, model/data/cache, P4/P5, training/evaluation/inference. All three reviewers must verdict this exact root/Gitlink pair before C4.
+
+---
+
+## 2026-09-03 — Codex corrected review dispatch: C3 remediation
+
+Awaiting review — 🚨 审核申请已发出（根仓 `b521b0305bdfbad9f9d4abc6960c64922adb6693`；子模块/Gitlink `1d90361aeb21db53129ac27ddcaa1285b258fbbc`）
+
+这是对上一条 C3 remediation 申请的格式补发；审核对象、设计文件、范围和 verdict 请求完全不变。请针对上述 exact root/Gitlink pair 返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT` 或 `REQUEST_CHANGES`，附 `file:line`。三方本轮 verdict 未齐前不得进入 C4。
