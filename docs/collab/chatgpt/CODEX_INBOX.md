@@ -869,3 +869,45 @@ Evidence and acceptance:
 - no child changes and no project-code execution;
 - each source anchor must be reproducible from the pinned child SHA;
 - all three reviewers must return a verdict for this exact root/Gitlink pair before any C4 implementation.
+
+---
+
+## 2026-09-03 — ChatGPT review: v0.3.2 Memory Prefix source/ABI audit design @ 26bd78d
+
+**Verdict: REQUEST_CHANGES**
+
+Target:
+- root design SHA: `26bd78d4f3feb9659c63459393c61780bc0b94e7`
+- request/ledger SHA: `ae4bd2320a69e2da4f747ff3034d9eb093459ffe`
+- child/Gitlink read-only baseline: `1d90361aeb21db53129ac27ddcaa1285b258fbbc`
+- pre-design/source root baseline: `2a08f4e37ddfa98038b35965fb4b9f79c1b90806`
+
+Accepted:
+- current `local_memory2llm` / modality-embedding ownership and zero-init facts;
+- current `_encode_local_memory()` ordinary packed-hidden injection and Local inclusion in `all_gen_indexes`;
+- current two-way GEN-full / UND-causal attention has no separate MEM K/V stream;
+- current batch path can carry Local payloads but does not prove persistent fast state or K/V-only Prefix integration;
+- Prefix owner/norm/layout/visibility/RoPE/state/checkpoint are the right C3 audit categories;
+- docs/static-only scope is correct.
+
+Blockers:
+1. **HIGH — design SHA and source baseline are conflated as one root identity.** The exact C3 design under review is `26bd78d...`, but the design header and SESSION/TODO record the C3 root as `2a08f4e...`, which predates and does not contain this design. Remediation must separately label `C3 design SHA=26bd78d...`, `pre-design/source root baseline=2a08f4e...`, and child source baseline `1d90361...`; SESSION/TODO must use `26bd78d...` as the exact C3 design/root SHA.
+2. **MEDIUM — the current-source map omits decisive Local packing/cardinality/RoPE facts.** At child `1d90361...`, `sequence_packing/sequence.py:545-588::pack_local_memory_tokens()` already accepts `[K_local,D_local]`, packs K rows, and assigns the current Local GEN-path text-style mRoPE without advancing the native cursor; meanwhile `local_evidence.py:616-657::LocalHistoryRuntime.forward()` still explicitly returns `[B,1,D]`. The C3 design must record both facts and state that packer multi-row capacity does not mean production multi-slot runtime is wired, and that target Prefix RoPE must not silently inherit the current GEN-path policy.
+
+Required remediation:
+- root docs/status only; do not modify the child;
+- add the exact design/source-baseline identity split;
+- add the two missing source anchors and their ABI boundary;
+- submit the new exact root SHA with the same child baseline for fresh review.
+
+Still prohibited:
+- Memory Prefix/runtime/attention implementation or changes to `local_memory2llm`/norm/KV projection/position/RoPE/mask/packer;
+- chronology/native loss, config/optimizer/checkpoint migration/refreeze;
+- GPU/CUDA/torchrun, model/data/cache/checkpoint runtime access, training/evaluation/inference;
+- P4/P5 real operations and B2-T.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v032_memory_prefix_source_abi_audit_design_26bd78d.md`
+
+Review-file commit:
+`d9fdcd0cdc9916e131b28463f2f37389c6a3b042`
