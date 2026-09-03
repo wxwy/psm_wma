@@ -246,3 +246,15 @@ Detailed review:
 
 Review-file commit:
 `266d0147ab9db2b5f9522aa59d4104f3ff152519`
+
+---
+
+## 2026-09-03 — C5 persistent fast-state / chronology design review request
+
+- **Gate/task**: `G0-R09-B-TTT-V032-C5-FAST-STATE-CHRONOLOGY-DESIGN`.
+- **Formal target**: root `abf33a4ddbc871bb89b75b761ab57444a91118e6` on `V2`; child/Gitlink `cosmos-framework@447f4a61a2205ff6be1788b9903fd7bc83363d53` on `v2` (unchanged by this root-only design commit).
+- **Design authority and scope**: `docs/build/PSM-WMA_R09_B_TTT_v032_c5_fast_state_chronology_design_v0.1_2026-09-03.md`, based on v0.3.2 and closed C2/C3/C4. It freezes an explicit persistent `ContinualTTTFastState` runtime owner, one completed causal evidence per call, one K/V write followed by updated-state `K_local` reads, per-row reset, and positive configurable `ttt_tbptt_steps` defaulting to 16.
+- **Requested implementation scope if approved**: only `cosmos_framework/model/generator/mot/local_evidence.py` and adjacent `local_evidence_test.py`, synthetic CPU tensors, plus root status/ledger docs. C5 runtime must take explicit state input/output and must not rescan overlapping history as repeated writes.
+- **Acceptance**: verify causality and no-double-write, updated-state multi-slot reads, `K_local=1` compatibility, per-row reset/sparse validity isolation, numerical-invariant per-row TBPTT detach, and outer-gradient reachability to Q/K/V/slots/W0 while fast state is not an optimizer parameter.
+- **Forbidden**: `Cosmos3VFMNetwork`/packer/attention change, config/optimizer/checkpoint/trainer/inference/parallelization, `MemoryState`/native KV-cache mixing, GPU/CUDA/torchrun, real model/data/cache/checkpoint I/O, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 training.
+- **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5_FAST_STATE_CHRONOLOGY_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
