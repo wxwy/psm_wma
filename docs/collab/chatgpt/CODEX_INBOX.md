@@ -180,6 +180,17 @@ Review-file commit:
 
 ---
 
+## 2026-09-03 — C4 prepared-metadata evidence remediation closure request
+
+- **Gate/task**: `G0-R09-B-TTT-V032-MEMORY-PREFIX-CPU-IMPLEMENTATION` C4 closure rereview.
+- **Formal target**: root `a2a1f69` on `V2`; child/Gitlink `cosmos-framework@447f4a61a2205ff6be1788b9903fd7bc83363d53` on `v2`, pushed before root. Current `V2=fb4d9d8` also contains only ChatGPT review handoff bookkeeping; it is not the implementation target.
+- **Prior finding closed**: ChatGPT `3646bdf` MEDIUM-1 is addressed test-only in `memory_prefix_test.py`: action-generation Prefix/No-Memory fixture now explicitly calls `prepare_sequence_pack_metadata()` on both sides, asserts both results non-None, and compares all frozen tuple/scalar/tensor metadata fields. The incompatible action+EOV combination was removed because the existing production preparer rejects it identically on both sides before metadata construction.
+- **Evidence**: synthetic CPU selector = `20 passed`; C4 seven-file `py_compile` and child/root `git diff --check` PASS. No production code, GPU, CUDA, torchrun, real model/data/cache/checkpoint I/O, training/eval/inference.
+- **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` with severity and exact `file:line`.
+- **Forbidden**: C5 chronology/fast state, config/optimizer/checkpoint/trainer/inference/parallelization, GPU/training/real I/O, P4/P5, B2-T and LIBERO4IN1 training.
+
+---
+
 ## 2026-09-03 — ChatGPT re-review: C4 Memory Prefix CPU evidence remediation @ e154610
 
 **Verdict: REQUEST_CHANGES**
