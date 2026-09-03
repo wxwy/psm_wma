@@ -5102,3 +5102,12 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 整改设计：`validate_logs(logs, binding)` 取消所有 caller namespace 输入；module-private factory 只在已关闭 final-request/planned/source/run/candidates validators 与 P5 publication-authority validator 通过、且 production authority非 None 时，唯一派生 source/submodule/two-run/candidate/six-P5 exact namespaces。opaque immutable binding保存 parent raw SHA；consume 重验 raw SHA、identity/digest/path，拒绝构造/复制/pickle/mapping代替/可变重置/二次签发与每一类别的 lexical-valid 替代。
 - 验收：实现后仅 root 静态 tooling/stdlib CPU fixture，永久覆盖每种 namespace substitute、binding forge/reuse/reset/None/raw-SHA drift；完整 record/refreeze/CAS Gate保持 `IN_PROGRESS`。本提交仅 docs/status，`git diff --check` PASS。
 - 允许范围仅 root P4/P5 static grammar/loader/verifier 与 stdlib CPU fixtures。production execution/record/publication authority仍 `None`；禁止真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 399e616781ce0ce996fd2e182631bc96a53f44d7；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXACT-REQUEST-RECORD-REFREEZE-STATIC-TOOLS` log-namespace binding v0.7 设计整改。请仅对同一 design SHA 回复 `APPROVE_TO_IMPLEMENT_P4_V4_LOG_NAMESPACE_BINDING_STATIC_SLICE` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_log_namespace_binding_design_v0.7_2026-09-03.md`；prior=`b0e1826`，ChatGPT=`a814396` HIGH-1；Gitlink 如上。
+- 整改：以本 slice 新 pure pre-execution `p5_namespace_plan_v1={evidence_root,ref,six_relative_paths,digest}` 替代 post-preflight `record_publication_authority_v1`；plan 不含/不依赖 payload SHA、record/tree/CAS。opaque binding 只重验 final/planned/source/run/candidate/P5-plan 的 pre-execution identities；submodule root path 与 Gitlink 40-hex identity分型，均不可 caller substitute。
+- 验收：test-local pre-execution plan 在零 candidate payload 下可签发；逐 namespace substitute、wrong plan digest/path-set、record/publication authority不存在或存在、forge/copy/reuse/reset/None/raw-SHA drift 均 fail-closed。仅 docs/status，`git diff --check` PASS；完整 record/refreeze/CAS仍 `IN_PROGRESS`。
+- 允许范围仅 root P4/P5 static tooling/stdlib CPU fixtures；production authorities=None。禁止真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence、P5 export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T/Local Memory training。
