@@ -332,3 +332,55 @@ Detailed review:
 
 Review-file commit:
 `c8cdb1659df3faa984639b092e433c7834339b19`
+
+---
+
+## 2026-09-03 — R09-B TTT v0.3.1 architecture + implementation-route review @ af9caf0
+
+Awaiting review — 🚨 审核申请已发出（根仓 `af9caf0cfffbb70b7fbf2e8bc3f763bf9bd9d1a2`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`）
+
+Task/Gate: `G0-R09-B-TTT-V031-ARCHITECTURE-ROUTE-REVIEW`
+
+Review target:
+- route/design SHA: `af9caf0cfffbb70b7fbf2e8bc3f763bf9bd9d1a2`
+- v0.3.1 authority commit: `4754f5bc25859894e6fc963a9484640ccb5cd082`
+- CPU-core design in ancestry: `216f1261c81cf6f2bd13053b5e937beeccd335b3`
+- Cosmos baseline / Gitlink: `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+- architecture authority: `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.1.md`
+- implementation route: `docs/build/PSM-WMA_R09_B_TTT_v031_implementation_route_v0.1_2026-09-03.md`
+- CPU-core design: `docs/build/PSM-WMA_R09_B_TTT_CPU_algorithm_implementation_design_v0.1_2026-09-03.md`
+
+Codex assessment and proposed route:
+1. Accept K/V-only Memory Prefix: no `Q_MEM`, attention output, residual, post-attention norm, MLP or native loss.
+2. Remove Local from the native AR/DM query pack; carry it as an explicit per-sample Memory context.
+3. First attention implementation is limited to current LIBERO default `two_way` dense path. AR pass remains exact; DM uses one varlen joint softmax over `[K_MEM,K_AR,K_DM]`. Unsupported three-way/Flex/NATTEN/multi-control/CP/CUDA-graph combinations fail closed until separate Gates.
+4. Before runtime implementation, an exact source/ABI audit must freeze per-layer norm, K/V projection ownership, Memory position/RoPE and warm-start behavior. Zero K/V alone is not function-preserving because it changes the softmax denominator.
+5. The backbone-independent continual-TTT CPU core remains mathematically compatible with v0.3.1, but `216f126` has not previously received three-party implementation approval.
+6. Frozen order is CPU core -> v0.3.1 source/ABI audit -> two-way Memory Prefix CPU attention contract -> chronology/native-loss integration -> bounded GPU smoke -> inference -> authority rebuild -> formal training.
+
+Evidence:
+- route document includes exact current-code seams and line references;
+- 6/6 route sections and `git diff --check` passed;
+- no Cosmos tracked file or Gitlink changed;
+- no torch/project test, model/data/checkpoint access, GPU, training, evaluation or inference was run.
+
+Please explicitly judge:
+- whether the route correctly implements v0.3.1 on the current codebase;
+- whether single-varlen joint softmax and a separate Memory context are the right minimal first slice;
+- whether the fail-closed compatibility boundary is adequate;
+- whether Gate B CPU core may start before the later Memory Prefix source/ABI audit.
+
+Requested exact verdicts for this same SHA and Gitlink:
+
+`APPROVE_R09_B_TTT_V031_IMPLEMENTATION_ROUTE`
+
+and
+
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V02_CPU_ALGORITHM_CORE`
+
+or `REQUEST_CHANGES` with severity and exact `file:line` findings.
+
+Approval authorizes only the CPU core implementation in `local_evidence.py` plus its adjacent CPU tests,
+followed by documentation-only v0.3.1 source/ABI audit. It does not authorize Memory Prefix runtime wiring,
+chronology/loss, GPU/CUDA/torchrun, training, evaluation, inference, optimizer/config refreeze, P4/P5 real
+operations or B2-T.
