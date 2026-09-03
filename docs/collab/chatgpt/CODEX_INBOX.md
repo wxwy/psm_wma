@@ -380,6 +380,59 @@ and
 
 or `REQUEST_CHANGES` with severity and exact `file:line` findings.
 
+---
+
+## 2026-09-03 — R09-B v0.3.2 multi-slot CPU-core implementation closure review @ 6fedfe9
+
+Awaiting review — 🚨 审核申请已发出（根仓 `6fedfe9d184ee1dfc25a4195d601ab7a537d705f`；子模块/Gitlink `5b806554aa60c99b2681a68ae6b7763eb270dd96`）
+
+Task/Gate: `G0-R09-B-TTT-V032-MULTI-SLOT-CPU-IMPLEMENTATION`
+
+Exact review target:
+
+- root implementation/Gitlink record: `6fedfe9d184ee1dfc25a4195d601ab7a537d705f`;
+- child implementation: `5b806554aa60c99b2681a68ae6b7763eb270dd96` (already pushed on child `v2`);
+- C1 authority: root=`411e96760bdd1187303c0c2bfe2185223cc5c58e`, Gitlink=`cf52f43dc328d4c8eec51923d66835125664dee5`, with ChatGPT/Kimi/MM implementation approval.
+
+Actual child changes are strictly limited to:
+
+1. `cosmos_framework/model/generator/mot/local_evidence.py`;
+2. `cosmos_framework/model/generator/mot/local_evidence_test.py`.
+
+Implementation and required checks:
+
+- `k_local` is non-bool positive construction/checkpoint identity; registered `slot_queries[K_local,D_ttt]` is zero-init for K=1 and normal-init for K>1. Slow count is `53,568 + 64*K`; four-leaf fast state stays `12,448` elements/sample.
+- `project_evidence()` retains K/base-Q/V tuple ABI. New `project_queries()` builds `[B,K,D_ttt]`; `read_many()` is pure/read-only.
+- `step_projected_many()` performs exactly one K/V-only inner `autograd.grad` per valid sample, then K post-update reads from the same W. Invalid rows preserve fast state and return zero `[K,D_local]` tokens.
+- `step/step_projected/scan_segment` remain K=1 rank-compatible wrappers; K>1 legacy calls fail closed. New `*_many` APIs expose multi-slot ranks.
+- Tests cover K=1/4/8 registry/count, strict K mismatch state-dict failure, manual post-update multi reads/state purity/inert rows, exactly-one grad call per valid sample, K=1 wrapper, K>1 fail-close, slot permutation/isolation, multi scan-vs-step and outer gradients.
+
+CPU-only evidence (no network/data/checkpoint/GPU):
+
+```bash
+cd /disk/rl/psm_wma/cosmos-framework
+/disk/rl/starVLA/.venv/bin/python -B -m pytest \
+  -o addopts='' --confcutdir=cosmos_framework/model/generator/mot \
+  cosmos_framework/model/generator/mot/local_evidence_test.py \
+  -k 'continual_ttt' -q
+```
+
+Result: `21 passed, 8 deselected`; only pre-existing unknown `L0` mark warnings. `/disk/rl/starVLA/.venv/bin/python -m py_compile` over the two changed files, child `git diff --check`, and root `git diff --check` all PASS. A first local multi-slot test run exposed only a missing base-query `unsqueeze(1)` broadcast axis; it was corrected before the recorded PASS run.
+
+Requested exact closure verdict for this root + Gitlink:
+
+`APPROVE_TO_CLOSE_R09_B_TTT_V032_MULTI_SLOT_CPU_CORE`
+
+or `REQUEST_CHANGES` with severity and exact `file:line` findings.
+
+Still forbidden:
+
+- Memory Prefix/source-ABI/runtime/attention wiring; `local_memory2llm`, norm/KV projection, position/RoPE/mask/packing;
+- chronology/native loss, production config/optimizer/checkpoint migration/refreeze;
+- GPU/CUDA/torchrun, training/evaluation/inference, real model/data/cache/checkpoint access, P4/P5 or B2-T.
+
+Only if all three close this exact pair may the next activity be a separate docs-only v0.3.2 Memory Prefix source/ABI audit design.
+
 Approval authorizes only the CPU core implementation in `local_evidence.py` plus its adjacent CPU tests,
 followed by documentation-only v0.3.1 source/ABI audit. It does not authorize Memory Prefix runtime wiring,
 chronology/loss, GPU/CUDA/torchrun, training, evaluation, inference, optimizer/config refreeze, P4/P5 real
