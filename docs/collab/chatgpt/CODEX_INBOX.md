@@ -5093,3 +5093,12 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 整改仅为移除 candidate subtree 内日志：`logs_v1` 冻结 one-shot verifier-owned external log root、精确 non-overlap/initial absence/0600 lifecycle；candidate `result.json` 仅保留既有 payload ownership；closed `r09_b2_p4_v4_static_contract.py` file-set不改。
 - 静态证据：仅文档/状态提交；`git diff --check` PASS。允许范围仅 root static tooling/stdlib CPU fixtures；production execution/record/publication authority仍 `None`。
 - 禁止：真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 b0e18260845025996331e825207261234ce34622；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXACT-REQUEST-RECORD-REFREEZE-STATIC-TOOLS` log-namespace binding v0.6 设计整改。请仅对同一 design SHA 回复 `APPROVE_TO_IMPLEMENT_P4_V4_LOG_NAMESPACE_BINDING_STATIC_SLICE` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_log_namespace_binding_design_v0.6_2026-09-03.md`；prior implementation=`1ef7f49`，ChatGPT review=`ab8d6e0` HIGH（namespace identity由caller选择）；Gitlink 如上。
+- 整改设计：`validate_logs(logs, binding)` 取消所有 caller namespace 输入；module-private factory 只在已关闭 final-request/planned/source/run/candidates validators 与 P5 publication-authority validator 通过、且 production authority非 None 时，唯一派生 source/submodule/two-run/candidate/six-P5 exact namespaces。opaque immutable binding保存 parent raw SHA；consume 重验 raw SHA、identity/digest/path，拒绝构造/复制/pickle/mapping代替/可变重置/二次签发与每一类别的 lexical-valid 替代。
+- 验收：实现后仅 root 静态 tooling/stdlib CPU fixture，永久覆盖每种 namespace substitute、binding forge/reuse/reset/None/raw-SHA drift；完整 record/refreeze/CAS Gate保持 `IN_PROGRESS`。本提交仅 docs/status，`git diff --check` PASS。
+- 允许范围仅 root P4/P5 static grammar/loader/verifier 与 stdlib CPU fixtures。production execution/record/publication authority仍 `None`；禁止真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
