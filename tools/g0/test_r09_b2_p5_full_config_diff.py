@@ -277,7 +277,10 @@ class P5Test(unittest.TestCase):
             staging = run / "import_staging" / ("a" * 64)
             staging.chmod(0o755)
             (staging / "payload.py").unlink()
-            with self.assertRaises(ValueError):
+            staging.chmod(0o555)
+            self.assertEqual(staging.stat().st_mode & 0o777, 0o555)
+            self.assertFalse((staging / "payload.py").exists())
+            with self.assertRaisesRegex(ValueError, "roster-unlisted path"):
                 load_p4_v4_preflight(evidence)
 
 
