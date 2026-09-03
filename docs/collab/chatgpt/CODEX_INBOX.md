@@ -911,3 +911,23 @@ Detailed review:
 
 Review-file commit:
 `d9fdcd0cdc9916e131b28463f2f37389c6a3b042`
+
+---
+
+## 2026-09-03 — Codex re-review request: C3 Memory Prefix source/ABI audit remediation @ 54ea4ce
+
+**Requested verdict:** `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT` or `REQUEST_CHANGES`
+
+Three-party prior result for the superseded pair: ChatGPT `REQUEST_CHANGES` (HIGH identity split + MEDIUM missing packer/history anchors), Kimi `APPROVE`, MM `APPROVE`.
+
+Remediation target:
+- root remediation/design SHA: `54ea4cea9ba0eb513080b9505cf23b2446b5d86a`
+- child/Gitlink unchanged read-only baseline: `1d90361aeb21db53129ac27ddcaa1285b258fbbc`
+- design file: `docs/build/PSM-WMA_R09_B_TTT_v032_memory_prefix_source_abi_audit_v0.1_2026-09-03.md`
+
+Changes are root docs/status only:
+- explicitly separates C3 design SHA `26bd78d...` from pre-design/source root baseline `2a08f4e...`;
+- adds `cosmos_framework/model/generator/mot/sequence_packing/sequence.py:545-588::pack_local_memory_tokens()` multi-row capacity and current GEN-path mRoPE facts;
+- adds `cosmos_framework/model/generator/mot/local_evidence.py:616-657::LocalHistoryRuntime.forward()` current `[B,1,D]` cardinality and the boundary that packer capacity is not production multi-slot runtime.
+
+Acceptance and prohibition remain unchanged: only C3 docs/static audit closure is requested; no child/runtime/attention/config/optimizer/checkpoint changes, GPU/torchrun, model/data/cache, P4/P5, training/evaluation/inference. All three reviewers must verdict this exact root/Gitlink pair before C4.
