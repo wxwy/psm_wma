@@ -5111,3 +5111,10 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 整改：以本 slice 新 pure pre-execution `p5_namespace_plan_v1={evidence_root,ref,six_relative_paths,digest}` 替代 post-preflight `record_publication_authority_v1`；plan 不含/不依赖 payload SHA、record/tree/CAS。opaque binding 只重验 final/planned/source/run/candidate/P5-plan 的 pre-execution identities；submodule root path 与 Gitlink 40-hex identity分型，均不可 caller substitute。
 - 验收：test-local pre-execution plan 在零 candidate payload 下可签发；逐 namespace substitute、wrong plan digest/path-set、record/publication authority不存在或存在、forge/copy/reuse/reset/None/raw-SHA drift 均 fail-closed。仅 docs/status，`git diff --check` PASS；完整 record/refreeze/CAS仍 `IN_PROGRESS`。
 - 允许范围仅 root P4/P5 static tooling/stdlib CPU fixtures；production authorities=None。禁止真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence、P5 export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T/Local Memory training。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 a2ed6bac0b60c159cba4852ba7e7b38c7d6bd1a4；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B-TTT-V02-DESIGN-REVIEW`。请审核 `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.2.md` 及同链旧 authority invalidations（`4975dac`、`ede63b0`、`4f21189`、`a2ed6ba`），仅回复 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V02_STATIC_SOURCE_AUDIT` 或 `REQUEST_CHANGES`（file:line）。
+
+- 冻结方向：单步 causal streaming evidence、跨 timestep persistent fast W、每 valid step learned Q/K/V KVB inner update、16 仅 TBPTT graph truncate、learned W0/slow params、segment 内 Cosmos native outer-loss meta-gradient；TTT 仅独立 Local modality branch，backbone/loss不变。
+- 明确：旧 window-local/MSE(e[:32])/每4步/zero-W0/detach/zero-slow-param/旧 optimizer-config 与 B2-T authority 均 superseded/BLOCKED；本次只允许后续 static source audit，禁止子模块实现、GPU、训练/评测/推理、P4/P5真实操作。
