@@ -1,3 +1,6 @@
+> [!CAUTION]
+> **2026-09-03 ALGORITHM DESIGN INVALIDATION**：`docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.2.md` 已纠偏 R09-B 为 continual fast-weight TTT：单步 streaming evidence、跨 episode timestep state carry、每步 KVB inner update、16-step TBPTT 只 detach graph、learned Q/K/V + W0、segment 内 outer meta-gradient。本文原先依赖的 window-local TTT、zero slow TTT parameters、TTT 3-selector optimizer、B1 training-only/no-grad fail-fast 和独立 window-ID stream 已不再足以构成正式 B2-T。**因此旧 B2-T authority 失效并保持 BLOCKED；任何 P3/P4/P5 backend contract / optimizer inventory / resolved config 必须在 v0.2 backend 实现和新审计后重新冻结。** 算法无关的 provenance/static tooling 可以保留，旧 artifact 不删除。
+
 # R09-B2 Matched Training Preflight Runbook v0.1
 
 **状态**：P0 只读审计已完成，结论 `BLOCKED`，待三方复核；不得据此启动训练、GPU、评测、推理或修改 `cosmos-framework`。
