@@ -1,3 +1,6 @@
+> [!WARNING]
+> **2026-09-03 DESIGN OVERRIDE**：本文件的 B0 concrete candidate 现仅保留为历史 prototype / CPU-contract 记录。其 `W[B,32,256]` zero-init、`MSE(W @ e, e[:32])`、`segment_steps=4`、`create_graph=False`、zero slow learned parameters、window-local state/no outer-forward carry 等算法语义已被 `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.2.md` supersede。不得再据此生成正式 R09-B/B2-T 训练配置、optimizer inventory 或论文算法口径。旧 artifact/审核记录保留 provenance，不删除；新的 continual-TTT backend 必须重新走 design/source/implementation/runtime/optimizer/config Gate。
+
 # R09-B TTT B0 Source Audit v0.1
 
 **状态**：REVIEW；本文件是三方已批准的只读 source audit 产物，不授权实现、CPU contract、runtime、GPU、训练或评测。  
