@@ -5118,3 +5118,5 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 
 - 冻结方向：单步 causal streaming evidence、跨 timestep persistent fast W、每 valid step learned Q/K/V KVB inner update、16 仅 TBPTT graph truncate、learned W0/slow params、segment 内 Cosmos native outer-loss meta-gradient；TTT 仅独立 Local modality branch，backbone/loss不变。
 - 明确：旧 window-local/MSE(e[:32])/每4步/zero-W0/detach/zero-slow-param/旧 optimizer-config 与 B2-T authority 均 superseded/BLOCKED；本次只允许后续 static source audit，禁止子模块实现、GPU、训练/评测/推理、P4/P5真实操作。
+
+**SHA 更正**：上条申请根仓完整 SHA 应为 `a2ed6bac747a4f65868bb4aee5bb7070e083b625`；此前末尾误写的 `...c7d6bd1a4` 无效。其余审核对象、范围与 verdict 请求不变。
