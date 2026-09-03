@@ -4999,3 +4999,12 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - B4-C：manifest 顺序、escaping path、type、malformed SHA、nested planned token、outer SHA 均在重算内外 identity 后拒绝；完整 planned spec 从既有 full-admission closed sections派生，hostile `PATH`/`PYTHONPATH`/locale 下仅固定 Git subprocess 可达，无 child/P5/torch 路径。
 - 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=`86/86 PASS`；`python -m py_compile tools/g0/r09_b2_p4_v4_execution_preflight.py tools/g0/test_r09_b2_p4_v4_execution_preflight.py` PASS；`git diff --check` PASS。
 - 允许范围仅 root P4 static tooling/stdlib CPU tests。禁止 P4/P5 migration、真实 request/preflight/materialize/staging/candidate/run-root、record/refreeze/evidence publication、P5 export/compose、torchrun/GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理及 B2-T。
+
+### Awaiting review — 🚨 审核申请已发出（根仓 3c04c4752d71a6a8003fdb0521f3e2646e9cd4e5；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-P5-V4-HANDOFF-MIGRATION` static implementation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_P5_V4_HANDOFF_MIGRATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：root=`3c04c4752d71a6a8003fdb0521f3e2646e9cd4e5`；批准设计=`f16f6e4`，ChatGPT design review=`260072f`、Kimi=`2026-09-03 09:20:12 CST`、MM=`2026-09-03 09:25:18 CST`；Gitlink 如上。
+- 改动：P5 新增唯一 pure `validate_v2_payload_manifest()` / `derive_v2_roster_entries()`；P4 `_validate_payload_manifest()` 与 `_planned_projection()` 复用它。该 derivation 保留既有 manifest grammar、导出 `import_staging`/token 与所有合法 nested regular 的祖先目录，拒绝五个 reserved root evidence 名、directory-only path 作为 regular、regular/ancestor collision；P5 roster validator exact-equal 该 entries 并排除 `preflight.json`。P4 `{entries,projection_sha256}` 和 P5 `{entries,sha256}` key-set 未变，绑定同一 entries 与 P5 canonical digest。
+- fixture：P4 projection既有 nested expectation补 ancestor；P5 临时 v4 fixture迁移为 v2；新增 deep nested P4/P5 semantic parity、reserved-name 与 collision reject。`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=`86/86 PASS`；`python -B -m unittest tools.g0.test_r09_b2_p5_full_config_diff -v`=`5/5 PASS`；`py_compile`、`git diff --check` PASS。
+- 允许范围仅 root P4/P5 static grammar/loader/verifier 与 stdlib CPU fixtures。`AUTHORIZED_P4_V4_LOCK_SPEC=None`、`AUTHORIZED_P4_V4_EVIDENCE=None`、`run_parent_export()` hard-stop 保持。禁止真实 request/preflight/staging/candidate/run-root、record/refreeze/evidence publication、P5 export/compose、child/torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理/B2-T/Local Memory training。
