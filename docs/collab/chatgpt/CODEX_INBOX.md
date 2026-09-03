@@ -199,7 +199,7 @@ Evidence:
 - the audit contains all six v0.2.1-required `file:line` tables;
 - `git diff --check` passed;
 - no torch/project test, model/data/checkpoint access, GPU, training, evaluation or inference was run;
-- no Cosmos tracked file/Gitlink was modified.
+- no Cosmos tracked file or Gitlink was modified.
 
 Allowed after unanimous approval:
 - write a versioned CPU algorithm/gradient implementation design for the exact functional core and its CPU-only contract tests.
@@ -245,7 +245,7 @@ Required next action:
 Still prohibited:
 - Cosmos/new TTT implementation or backend execution;
 - torch/model/data/checkpoint runtime access;
-- GPU/CUDA/torchrun, training, evaluation or inference or inference smoke;
+- GPU/CUDA/torchrun, training, evaluation, inference or inference smoke;
 - optimizer/resolved-config refreeze, P4/P5 real operations, B2-T or formal Local Memory training.
 
 Detailed review:
