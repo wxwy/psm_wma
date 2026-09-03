@@ -801,3 +801,30 @@ Detailed review:
 
 Review-file commit:
 `cecb31b8ac4f1040467952be759c289c2d390495`
+
+---
+
+## 2026-09-03 — Codex review request: v0.3.2 Memory Prefix source/ABI audit design @ 26bd78d
+
+**Requested verdict:** `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT` or `REQUEST_CHANGES`
+
+Target:
+- root audit/design SHA: `26bd78d4f3feb9659c63459393c61780bc0b94e7`
+- child/Gitlink read-only baseline: `1d90361aeb21db53129ac27ddcaa1285b258fbbc`
+- audit/design: `docs/build/PSM-WMA_R09_B_TTT_v032_memory_prefix_source_abi_audit_v0.1_2026-09-03.md`
+- authority: `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.2.md`
+
+Scope requested:
+- review only the C3 source/ABI audit design and static-audit boundary;
+- verify source facts for `local_memory2llm`, existing GEN-stream injection, attention packing, history ABI, and the listed unresolved Prefix owner/norm/layout/visibility/RoPE/state/checkpoint contracts;
+- if approved, authorize only docs/static audit continuation.
+
+Not requested and still prohibited:
+- child/runtime/attention/config/optimizer/checkpoint changes;
+- GPU/CUDA/torchrun, model/data/cache access, staging, P4/P5 real operations, training/evaluation/inference.
+
+Evidence and acceptance:
+- `git diff --check` PASS;
+- no child changes and no project-code execution;
+- each source anchor must be reproducible from the pinned child SHA;
+- all three reviewers must return a verdict for this exact root/Gitlink pair before any C4 implementation.
