@@ -990,3 +990,39 @@ Detailed review:
 
 Review-file commit:
 `374188633d2097f7172e32d36643af36a0f912b2`
+
+---
+
+## 2026-09-03 — Codex review request: C4 v0.3.2 Memory Prefix CPU contract @ 5cb43d2
+
+Awaiting review — 🚨 审核申请已发出（根仓 `5cb43d29b4c7806f7c427859bbc96a4c4442911f`；子模块/Gitlink `1d90361aeb21db53129ac27ddcaa1285b258fbbc`）
+
+**Requested verdict:** `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` (severity + `file:line`).
+
+Formal review target is the root design commit above. This ledger commit is not the target.
+
+Scope:
+
+- review `docs/build/PSM-WMA_R09_B_TTT_v032_memory_prefix_runtime_contract_design_v0.1_2026-09-03.md` only;
+- verify that it implements v0.3.1/v0.3.2: one K/V TTT write, configurable `K_local` read slots, `[B,K_local,32] -> [B,K_local,2048]`, K/V-only Prefix, no `Q_MEM`, AR blind to Memory, DM single-softmax `[MEM,AR,DM]`;
+- verify exact source boundaries/owners: independent `MemoryPrefixContext` rather than `MemoryValue/MemoryState` KV cache, per-block RMSNorm, reused generator K/V, no Memory RoPE, `None` exact legacy path, present Prefix fail-closed unsupported modes;
+- review the C4-01 through C4-08 CPU acceptance contracts and five-file child implementation boundary.
+
+Evidence:
+
+- child baseline is read-only `1d90361aeb21db53129ac27ddcaa1285b258fbbc`;
+- root change is docs/status only; no Gitlink change, no child/project-code execution, no model/data/cache/checkpoint runtime access;
+- `git diff --check` PASS before commit;
+- source anchors are in the C3-approved audit `e53fffe` and in the C4 document sections 2--4.
+
+If approved, authorized next step only:
+
+- synthetic CPU C4 implementation in exactly `memory_prefix.py`, `cosmos3_vfm_network.py`, `unified_mot.py`, `attention.py`, and `memory_prefix_test.py` under the child; no other child files.
+
+Still prohibited:
+
+- C5 causal-history/fast-state runtime integration;
+- configs, optimizer selectors, checkpoint migration/refreeze, trainer/inference/parallelization changes;
+- GPU/CUDA/torchrun, model/data/latent-cache/checkpoint access, staging, P4/P5, evaluation/inference, or LIBERO4IN1 training.
+
+All ChatGPT/Kimi/MM verdicts must bind this exact root/Gitlink pair before implementation begins.
