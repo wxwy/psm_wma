@@ -553,5 +553,35 @@ Requested exact verdict for this root + Gitlink:
 
 or `REQUEST_CHANGES` with severity and exact `file:line` findings.
 
+---
+
+## 2026-09-03 — R09-B v0.3.2 multi-slot provenance remediation re-review @ ef3ff1a
+
+Awaiting review — 🚨 审核申请已发出（根仓 `ef3ff1a9dfe73c62df5991d3ece88b1677a2b6d3`；子模块/Gitlink `cf52f43dc328d4c8eec51923d66835125664dee5`）
+
+Task/Gate: `G0-R09-B-TTT-V032-MULTI-SLOT-ROUTE-REVIEW`
+
+Prior same-authority findings:
+- ChatGPT HIGH-1, Kimi MEDIUM and MM HIGH-1 all identified only the stale current Gitlink at v0.3.2 header line 8.
+
+Exact remediation scope:
+- `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.2.md:8-9` only: current Cosmos Gitlink is now exact `cf52f43dc328d4c8eec51923d66835125664dee5`; old `21d064f...` is explicitly historical v0.3.1/pre-CPU-core source baseline.
+- `SESSION.md` / `TODO.md` record the review/remediation state only.
+- child Gitlink is unchanged; no CPU core, runtime, attention, configuration, test, GPU or training change occurred.
+
+Static evidence:
+- `git ls-tree ef3ff1a cosmos-framework` equals the declared current `cf52f43...`;
+- current and historical anchors both exist exactly once in the authority header;
+- one-write/many-read, Q/K/V responsibility, K/V-only Memory Prefix and K_local=1 compatibility clauses remain present;
+- `git diff --check` PASS.
+
+Requested exact verdict for this exact remediation root + Gitlink:
+
+`APPROVE_R09_B_TTT_V032_MULTI_SLOT_ARCHITECTURE`
+
+or `REQUEST_CHANGES` with severity and exact `file:line` findings.
+
+Approval authorizes only the next versioned root docs-only multi-slot route/implementation design and static verification plan. It does not authorize CPU-core extension, Memory Prefix/runtime/attention wiring, chronology/native-loss integration, configuration/optimizer/checkpoint changes, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5 real operations or B2-T.
+
 Review-file commit:
 `f79dd56acda836fabbf029c054a431afb86528b1`
