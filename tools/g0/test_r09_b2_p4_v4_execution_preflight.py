@@ -1796,6 +1796,7 @@ class PlannedRosterCommitmentTest(unittest.TestCase):
             self.assertEqual(item["run_token"], token)
             self.assertEqual(item["candidate_root"], f"/candidates/{'e' * 64}/{backend}")
             self.assertNotIn("roster_sha256", item)
+            self.assertEqual(set(item["staging_projection"]), r09_b2_p4_v4_execution_preflight.STAGING_PROJECTION_KEYS)
             self.assertEqual(item["staging_projection"]["entries"], [
             {"path": "import_staging", "type": "directory", "mode": "0555", "sha256": ""},
             {"path": f"import_staging/{token}", "type": "directory", "mode": "0555", "sha256": ""},

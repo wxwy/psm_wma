@@ -84,9 +84,16 @@ def _self_sha(value: Mapping[str, Any], key: str) -> bool:
     return isinstance(value.get(key), str) and value[key] == sha256_json({name: item for name, item in value.items() if name != key})
 
 
+def _p4_manifest_self_sha(value: Mapping[str, Any]) -> bool:
+    """Preserve the frozen P4 manifest spelling (json.dumps ensure_ascii=True)."""
+    core = {name: item for name, item in value.items() if name != "sha256"}
+    raw = (json.dumps(core, sort_keys=True, separators=(",", ":")) + "\n").encode()
+    return isinstance(value.get("sha256"), str) and value["sha256"] == hashlib.sha256(raw).hexdigest()
+
+
 def validate_v2_payload_manifest(value: object) -> dict[str, Any]:
     """Validate the shared P4/P5 payload-manifest grammar without filesystem I/O."""
-    if not isinstance(value, dict) or set(value) != {"entries", "sha256"} or not _self_sha(value, "sha256"):
+    if not isinstance(value, dict) or set(value) != {"entries", "sha256"} or not _p4_manifest_self_sha(value):
         raise ValueError("P4-v4 payload manifest differs")
     entries = value["entries"]
     if not isinstance(entries, list) or not entries:
@@ -125,6 +132,8 @@ def derive_v2_roster_entries(payload_manifest: object, run_token: object) -> lis
         while parent != Path("."):
             directories.add(parent.as_posix())
             parent = parent.parent
+    if directories & P5_V2_RESERVED_ROOT_PATHS:
+        raise ValueError("P4-v4 payload manifest derives a reserved run-root path")
     if regular_paths & directories:
         raise ValueError("P4-v4 payload manifest regular/directory collision differs")
     entries = [
@@ -255,7 +264,7 @@ def _validate_request_identity(request: Mapping[str, Any], outcome: Mapping[str,
 def _validate_roster(run_root: Path, staging_root: Path, token: str, roster: object, manifest: object) -> None:
     if not isinstance(roster, Mapping) or set(roster) != {"entries", "sha256"} or not _self_sha(roster, "sha256"):
         raise ValueError("P4-v4 run-root roster schema or SHA differs")
-    if not isinstance(manifest, Mapping) or set(manifest) != {"entries", "sha256"} or not _self_sha(manifest, "sha256"):
+    if not isinstance(manifest, Mapping) or set(manifest) != {"entries", "sha256"}:
         raise ValueError("P4-v4 payload manifest schema or SHA differs")
     entries = roster["entries"]
     if not isinstance(entries, list) or not all(isinstance(item, Mapping) and set(item) == {"path", "type", "mode", "sha256"} for item in entries):

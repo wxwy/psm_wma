@@ -37,6 +37,7 @@ class P5Test(unittest.TestCase):
             f"import_staging/{token}/pkg/sub", f"import_staging/{token}/pkg/sub/module.py", "top.py",
         ])
         projection = _planned_projection(manifest, token)
+        self.assertEqual(set(projection), {"entries", "projection_sha256"})
         self.assertEqual(projection["entries"], entries)
         self.assertEqual(projection["projection_sha256"], sha256_json({"entries": entries}))
         for path in ("preflight.json", "request.json", "result.json", "verification.json", "candidate_link.json", "import_staging", f"import_staging/{token}"):
@@ -49,6 +50,18 @@ class P5Test(unittest.TestCase):
         ]}
         with self.assertRaises(ValueError):
             derive_v2_roster_entries({**collision_core, "sha256": sha256_json(collision_core)}, token)
+        for path in ("preflight.json/x", "request.json/x", "result.json/x", "verification.json/x", "candidate_link.json/x"):
+            bad_core = {"entries": [{"path": path, "type": "regular", "sha256": "d" * 64}]}
+            with self.assertRaises(ValueError):
+                derive_v2_roster_entries({**bad_core, "sha256": sha256_json(bad_core)}, token)
+        unicode_core = {"entries": [{"path": "pkg/é.py", "type": "regular", "sha256": "e" * 64}]}
+        p4_raw = (json.dumps(unicode_core, sort_keys=True, separators=(",", ":")) + "\n").encode()
+        unicode_manifest = {**unicode_core, "sha256": hashlib.sha256(p4_raw).hexdigest()}
+        self.assertNotEqual(unicode_manifest["sha256"], sha256_json(unicode_core))
+        unicode_entries = derive_v2_roster_entries(unicode_manifest, token)
+        unicode_projection = _planned_projection(unicode_manifest, token)
+        self.assertEqual(unicode_projection["entries"], unicode_entries)
+        self.assertEqual(unicode_projection["projection_sha256"], sha256_json({"entries": unicode_entries}))
 
     def _v4_preflight(self, root: Path) -> None:
         subprocess.run(["git", "-C", str(root), "init", "-q"], check=True)
