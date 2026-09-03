@@ -5028,6 +5028,14 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 静态证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_execution_preflight -v`=`86/86 PASS`；`python -B -m unittest tools.g0.test_r09_b2_p5_full_config_diff -v`=`6/6 PASS`；相应 `py_compile`、`git diff --check` PASS。
 - 允许范围仅 root P4/P5 static grammar/loader/verifier 的 stdlib fixture与状态记录；`AUTHORIZED_P4_V4_LOCK_SPEC=None`、`AUTHORIZED_P4_V4_EVIDENCE=None`、`run_parent_export()` hard-stop保持。禁止真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 675e299ef30603ffd704731cf723b31b6c59216e；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXACT-REQUEST-RECORD-REFREEZE-DESIGN` v0.1。请仅对同一 design SHA 回复 `APPROVE_TO_IMPLEMENT_P4_V4_EXACT_REQUEST_RECORD_REFREEZE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_v4_exact_request_record_refreeze_design_v0.1_2026-09-03.md`；前置 handoff closure=`28b8592`/ChatGPT=`90cb466`/Kimi/MM；Gitlink 如上。
+- 设计把 verifier-owned exact request freeze、后续一次 CPU-only preflight、双 backend raw-byte record/refreeze、再后 P5 authority revision 分离；所有真实 source revision/path/request SHA/attempt/token/command/resource字段保持未填，禁止历史 evidence 或 caller/ambient 补权。
+- 本轮仅文档/状态，`git diff --check` PASS；未运行项目代码、未创建 request/run-root/staging/candidate/evidence。禁止真实 preflight、record/refreeze、P5 export/compose、child/torch/torchrun、GPU、模型/数据/checkpoint I/O、训练/评测/推理、B2-T/Local Memory training。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 28b859203d1735e33e0b1d8d7813429841e1c778；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-P5-V4-HANDOFF-MIGRATION` exact missing-tree fixture remediation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_P5_V4_HANDOFF_MIGRATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
