@@ -59,3 +59,40 @@ with corrected root design SHA:
 `a2ed6bac747a4f65868bb4aee5bb7070e083b625`
 
 No ChatGPT verdict for that request is created by this rollover entry. Review it separately on its exact SHA.
+
+---
+
+## 2026-09-03 — R09-B TTT v0.2 continual fast-weight Local Memory design @ a2ed6ba
+
+**Verdict: REQUEST_CHANGES**
+
+Target:
+- design chain: `79dfde1 -> 4975dac -> ede63b0 -> 4f21189 -> a2ed6bac747a4f65868bb4aee5bb7070e083b625`
+- design: `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.2.md`
+- Gitlink: `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+
+Accepted direction:
+- one newly completed causal evidence per control step;
+- persistent fast state across the episode;
+- per-step KVB update;
+- learned Q/K/V + W0;
+- exact within-segment meta-gradient;
+- 16-step TBPTT detaches graph only, not state value;
+- inference updates fast state only;
+- TTT stays in independent Local modality branch;
+- old B2/P3/P4/P5 algorithm-bound training authority correctly superseded/BLOCKED.
+
+Blockers:
+1. **HIGH — KVB shape contract is inconsistent.** The design says `K/Q/V: 256 -> D_ttt` but `f_W: D_ttt -> D_ff -> D_local(32)`, while `L_inner=||f_W(K)-V||^2`; therefore `f_W(K)` and `V` have different widths unless `D_ttt==32`, which is not required. Freeze an exact mathematically valid K/Q/V/fast-model/readout shape contract before source audit.
+2. **HIGH — per-sample KVB reduction/update semantics are not frozen.** Define `L_inner,b,t`, feature-only reduction, `grad_{W_b}`, valid-mask behavior and batch-size/valid-count-independent inner step scaling; vectorized implementation must match this per-sample definition.
+
+Required source-audit contract after those fixes:
+- verify/freeze per-timestep independent flow-noise/sequence-action-forcing and outer-loss normalization over valid supervised timesteps;
+- freeze actual inference `no_grad` vs `inference_mode` boundary so local W-only inner autograd is valid;
+- enumerate complete fast-state pytree, shapes/dtypes/precision/bytes, W0 mapping and slow/fast optimizer ownership;
+- audit chronological sampler/worker/rank/grad-accum state ownership and episode boundaries.
+
+Do not implement the new TTT backend yet. Old B2-T remains BLOCKED.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v02_design_a2ed6ba.md`
