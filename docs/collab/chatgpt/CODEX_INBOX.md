@@ -132,3 +132,35 @@ Review-file commit:
 - **Acceptance requested**: verify all prior ChatGPT/Kimi `REQUEST_CHANGES` close without scope expansion, including fail-before-kernel/cache and legacy alternate dispatch behavior.
 - **Requested verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` with severity and exact `file:line`.
 - **Forbidden even if approved**: C5 fast state/chronology, `local_evidence.py`, `utils/memory.py`, config/optimizer/checkpoint/trainer/inference/parallelization, GPU/CUDA/torchrun, real data/cache/checkpoint I/O, training/eval/inference, P4/P5 and B2-T/LIBERO4IN1 training. Each needs a separate frozen and approved Gate.
+
+---
+
+## 2026-09-03 — ChatGPT re-review: C4 Memory Prefix CPU remediation @ 0dace8d
+
+**Verdict: REQUEST_CHANGES**
+
+Formal target:
+- root remediation SHA: `0dace8dc033eef445e89eecfdd58b5df5f82a37f`
+- child/Gitlink: `f98b7193d9c33a373f277a66d90c2e26221944e9`
+- request/ledger SHA: `7dec625b6cbdb28cfb53a97e37199f8c2881f414`
+- latest status/ledger SHA observed before review write: `75c6499fce1f9177bb648deef05538031afe49d6`
+
+Closed from prior review:
+- Prefix + native `MemoryState` and Prefix + `MemoryValue` now have named code-level fail-closed `ValueError` paths.
+- Common positive `K_local` is validated for the full batch before any projector call, and direct context validation enforces equal present lengths.
+- Prefix-present alternate dispatch fails closed while Prefix-absent preserves its legacy signature; Flex rejection is covered.
+
+Remaining blockers:
+1. **HIGH — production-route acceptance evidence remains missing.** `memory_prefix_test.py:140-300` still verifies AR/DM behavior through a local reference helper and K normalization through direct projection/norm calls; it never drives the successful Prefix-present `PackedAttentionMoT.forward -> dispatch_attention -> two_way_attention` path. Add deterministic CPU production-route/spied fixtures proving actual AR invariance, exactly one DM joint `[MEM,AR,DM]` softmax, and actual normalized/no-RoPE `K_MEM` delivered to dispatch.
+2. **HIGH — owner-level fail-before-work fixtures are still missing.** The new source guards are correct, but tests only cover direct `MemoryValue` dispatch rejection. Add CPU owner-route/spied coverage for Prefix + `MemoryState`, CUDA-graph and replicated-I/O, proving rejection before packed-attention/native-memory work.
+3. **MEDIUM — C4-P01 packing parity is still text-only/subset coverage.** Add at least one synthetic native-generation pack and compare the frozen relevant native geometry/index/loss/prepared metadata; Local payload must be the only intended difference.
+
+Allowed remediation remains the approved seven C4 child files plus root status/ledger docs, synthetic CPU tests, `py_compile`, and `git diff --check` only.
+
+Still prohibited: C5 fast-state/chronology, `local_evidence.py`, `utils/memory.py`, config/optimizer/checkpoint/trainer/inference/parallelization expansion, GPU/CUDA/torchrun, real model/data/cache/checkpoint I/O, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 training.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v032_memory_prefix_cpu_remediation_0dace8d.md`
+
+Review-file commit:
+`f184fca9e78b7bd4dcd353e216e25a297bd8876b`
