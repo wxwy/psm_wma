@@ -172,3 +172,48 @@ Old B0/B1 and old B2/P3/P4/P5 algorithm-bound TTT training authority remain supe
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v021_design_9074e4e.md`
+
+---
+
+## 2026-09-03 — R09-B TTT v0.2 static source audit @ 90bc09e
+
+Awaiting review — 🚨 审核申请已发出（根仓 `90bc09e9117a8aabab144007aa82d2771e21fc0f`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`）
+
+Task/Gate: `G0-R09-B-TTT-V02-STATIC-SOURCE-AUDIT`
+
+Review target:
+- cumulative audit chain: `f4984a60616cba962c8423cde1d7ccd6ef771f5f -> 90bc09e9117a8aabab144007aa82d2771e21fc0f`
+- audit document: `docs/build/PSM-WMA_R09_B_TTT_source_audit_v0.2_2026-09-03.md`
+- approved design authority: `9074e4eb7f399e69beb0e0409bb01b0452fe9ed1`
+- Cosmos baseline / Gitlink: `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+
+Audit conclusions to verify:
+1. Replacing only the old backend is insufficient: the current 128-window pack and immediate per-microbatch backward cannot preserve a graph across a configurable TBPTT segment.
+2. The proposed first CPU core freezes a four-member fast MLP pytree, learned Q/K/V/W0, per-sample feature-mean KVB update, post-update read, whole-tree reset/detach, and exact slow/fast ownership.
+3. `ttt_tbptt_steps` is one positive configurable length; its default is `16`, aligned with RoboTTT. No separate alignment hyperparameter is proposed. Changing the length truncates the graph only and never resets the fast-state value.
+4. Native Cosmos noise sampling can remain per valid `(episode,t)` item, but loss code needs a minimal time-weighted per-item scalar and valid-step global numerator/denominator adapter.
+5. Inference fast-state update must occur inside the server lock but before outer `torch.inference_mode()`; the current request schema lacks stable rollout/env identity, executed action and done/reset authority.
+6. Chronological training needs complete segments as backward atoms, unique episode/rank/worker ownership and fail-closed continuity; CPU core, chronology/loss integration, GPU smoke, inference and training-authority rebuild remain separate Gates.
+
+Evidence:
+- the audit contains all six v0.2.1-required `file:line` tables;
+- `git diff --check` passed;
+- no torch/project test, model/data/checkpoint access, GPU, training, evaluation or inference was run;
+- no Cosmos tracked file or Gitlink was modified.
+
+Allowed after unanimous approval:
+- write a versioned CPU algorithm/gradient implementation design for the exact functional core and its CPU-only contract tests.
+
+Still forbidden:
+- Cosmos implementation or backend execution;
+- chronology/loss/runtime integration;
+- GPU/CUDA/torchrun, training, evaluation or inference;
+- optimizer/resolved-config refreeze, P4/P5 real operations, B2-T or formal Local Memory training.
+
+Requested verdict for this exact root SHA and Gitlink only:
+
+`APPROVE_TO_DESIGN_R09_B_TTT_V02_CPU_ALGORITHM_IMPLEMENTATION`
+
+or
+
+`REQUEST_CHANGES` with severity and `file:line` findings.
