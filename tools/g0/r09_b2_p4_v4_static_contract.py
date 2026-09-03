@@ -15,9 +15,42 @@ from tools.g0.export_r09_b2_p5_resolved_config import (
 
 
 PAYLOAD_FILES = ("request.json", "result.json", "verification.json")
+LOG_KEYS = {"root", "stdout", "stderr", "sha256"}
 LINK_KEYS = {"schema_version", "backend", "attempt_id", "run_token", "payload_sha256"}
 FAILURE_KEYS = {"schema_version", "backend", "attempt_id", "run_token", "status", "stage", "error_type", "error"}
 REQUEST_KEYS = {"schema_version", "backend", "production_source", "p4_run", "p4_staging", "request_defaults", "interpreter", "loader_argv", "effective_environment", "native_loader_environment", "payload_manifest", "producer"}
+AUTHORIZED_P4_V4_EXECUTION_AUTHORITY: dict[str, object] | None = None
+
+
+def _absolute_lexical(value: object, error: str) -> Path:
+    if not isinstance(value, str) or not value or value.startswith("//"):
+        raise ValueError(error)
+    path = Path(value)
+    if not path.is_absolute() or str(path) != value or any(part in {".", ".."} for part in path.parts):
+        raise ValueError(error)
+    return path
+
+
+def _overlaps(left: Path, right: Path) -> bool:
+    return left == right or left in right.parents or right in left.parents
+
+
+def validate_logs(value: object, forbidden_roots: object) -> None:
+    """Validate the static-only external log namespace without creating it."""
+    if not isinstance(value, dict) or set(value) != LOG_KEYS:
+        raise ValueError("execution logs schema differs")
+    core = {key: item for key, item in value.items() if key != "sha256"}
+    if value.get("sha256") != _sha((json.dumps(core, sort_keys=True, separators=(",", ":")) + "\n").encode()):
+        raise ValueError("execution logs digest differs")
+    root = _absolute_lexical(value["root"], "execution log root differs")
+    stdout, stderr = (_absolute_lexical(value[key], "execution log path differs") for key in ("stdout", "stderr"))
+    if stdout != root / "stdout.log" or stderr != root / "stderr.log" or stdout == stderr:
+        raise ValueError("execution log path differs")
+    if not isinstance(forbidden_roots, tuple) or not forbidden_roots:
+        raise ValueError("execution log forbidden roots differ")
+    for item in forbidden_roots:
+        if _overlaps(root, _absolute_lexical(item, "execution log forbidden root differs")):
+            raise ValueError("execution log root overlaps frozen namespace")
 
 
 def _canonical(path: Path) -> tuple[dict[str, Any], bytes]:

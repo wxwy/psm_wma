@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest.mock import patch
 from tools.g0.test_r09_b2_p5_full_config_diff import P5Test
 
-from tools.g0.r09_b2_p4_v4_static_contract import PAYLOAD_FILES, load_pass_candidate, stage_atomic_publication, verify_fail_candidate, _reject_failed_identity_reuse, _validate_final_pair
+from tools.g0.r09_b2_p4_v4_static_contract import PAYLOAD_FILES, load_pass_candidate, stage_atomic_publication, validate_logs, verify_fail_candidate, _reject_failed_identity_reuse, _validate_final_pair
 from tools.g0.export_r09_b2_p5_resolved_config import P4_V4_PREFLIGHT_RELATIVE, canonical_bytes
 
 
@@ -22,6 +22,16 @@ def write(value: object, path: Path) -> bytes:
 
 
 class CandidateContractTest(unittest.TestCase):
+    def test_external_log_namespace_is_exact_and_disjoint(self):
+        core = {"root": "/logs/attempt", "stdout": "/logs/attempt/stdout.log", "stderr": "/logs/attempt/stderr.log"}
+        value = {**core, "sha256": hashlib.sha256((json.dumps(core, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()}
+        validate_logs(value, ("/source", "/run/recurrent", "/run/ttt", "/candidates", "/evidence"))
+        for field, replacement in (("stdout", "/candidates/stdout.log"), ("root", "/source/logs")):
+            candidate = dict(value); candidate[field] = replacement
+            candidate["sha256"] = hashlib.sha256((json.dumps({key: item for key, item in candidate.items() if key != "sha256"}, sort_keys=True, separators=(",", ":")) + "\n").encode()).hexdigest()
+            with self.assertRaises(ValueError):
+                validate_logs(candidate, ("/source", "/run/recurrent", "/run/ttt", "/candidates", "/evidence"))
+
     def _pass(self, root: Path, backend: str, token: str = "a" * 64) -> None:
         folder = root / "attempt" / backend
         folder.mkdir(parents=True)
