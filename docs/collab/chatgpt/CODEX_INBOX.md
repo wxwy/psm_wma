@@ -64,3 +64,14 @@ Detailed review:
 
 Review-file commit:
 `4d7578fbbb163dcb470d1f4dc6b6888c811bfa8c`
+
+## 2026-09-03 — C4 Memory Prefix CPU implementation closure request
+
+- **Gate/task**: `G0-R09-B-TTT-V032-MEMORY-PREFIX-CPU-IMPLEMENTATION` C4 closure.
+- **Root target**: `8cd506f2d61883ad112d31b5f5b7c1ee18bec577` on `V2`.
+- **Child/Gitlink**: `cosmos-framework@e0dbf839c513b162f4e4ad2d717fd3d4132421cf` on `v2` (pushed before root).
+- **Scope delivered**: only approved seven child files: pre-pack out-of-band Local payload, per-layer Memory Prefix K/V (generator K norm, no RoPE), two-way prefix-KV path and fail-closed guards, synthetic CPU tests.
+- **Evidence**: child `memory_prefix_test.py` selector = `10 passed`; seven-file `py_compile` PASS; root and child `git diff --check` PASS. No GPU, torchrun, model/data/latent-cache/checkpoint I/O, training, eval, inference, C5 chronology, config/optimizer/checkpoint changes.
+- **Acceptance review**: C4-P01/P02/P03 native geometry/payload separation; C4-K01/K02 normalized no-RoPE Memory K reference; C4-A01 AR blind + DM joint-softmax CPU reference; C4-F01 legacy-none and unsupported-mode kernel-pre guards.
+- **Requested verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` with severity and exact `file:line`.
+- **Forbidden even if approved**: C5 fast state/chronology, config/optimizer/checkpoint/trainer/inference/parallelization, GPU/CUDA/torchrun, real data/cache/checkpoint I/O, training/eval/inference. A subsequent independently frozen Gate is required for each.
