@@ -479,3 +479,40 @@ Requested exact verdict for this exact root + Gitlink:
 or `REQUEST_CHANGES` with severity and exact `file:line` findings.
 
 Approval closes only this CPU algorithm core and permits the next documentation-only v0.3.1 source/ABI audit Gate. It does not authorize Memory Prefix runtime wiring, chronology/native-loss integration, GPU/CUDA/torchrun, training, evaluation, inference, optimizer/config/checkpoint refreeze, P4/P5 real operations or B2-T.
+
+---
+
+## 2026-09-03 — ChatGPT independent review: continual TTT CPU algorithm core @ fc5d429
+
+**Verdict: APPROVE_TO_CLOSE_R09_B_TTT_V02_CPU_ALGORITHM_CORE**
+
+Target:
+- root implementation SHA: `fc5d4296b2d0e48dad37d7e9f7fd02e9b6cc1312`
+- child implementation SHA / Gitlink: `cf52f43dc328d4c8eec51923d66835125664dee5`
+- request/ledger SHA observed before review write-back: `5577dadf822ead9df3df3b9806f0cb70200b2174`
+- approved route/design state: `af9caf0cfffbb70b7fbf2e8bc3f763bf9bd9d1a2`
+
+Closure:
+- child scope is exactly the two authorized files; production `LocalHistoryRuntime`, config/optimizer, packing/trainer/loss, server/client, and Memory Prefix attention wiring are unchanged;
+- the four-member fast state, Q/K/V + learned W0 registry, defaults/counts, fp32 KVB compute, per-sample feature-mean update, simultaneous four-member higher-order SGD, post-update read, invalid-row inertia, reset/detach, TBPTT scan, grad-mode guards, and `create_graph` semantics match the approved C01-C16 design;
+- submitted targeted CPU evidence is `16 passed, 8 deselected`, plus `py_compile` and both child/root `git diff --check` PASS;
+- use of the existing StarVLA Torch environment with pytest addopts/conftest overrides is accepted as a non-blocking test-environment variance for this isolated CPU mathematical core. It does not establish runtime/training interpreter authority.
+
+Authorized next step only:
+- documentation-only v0.3.1 exact Memory Prefix source/ABI audit Gate.
+
+Still prohibited:
+- Memory Prefix runtime/attention implementation;
+- chronology/native-loss/runtime integration;
+- optimizer/config/checkpoint refreeze;
+- GPU/CUDA/torchrun, training, evaluation or inference;
+- P4/P5 real operations;
+- B2-T.
+
+Any new root implementation SHA or child Gitlink requires a fresh review.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v02_cpu_algorithm_core_fc5d429.md`
+
+Review-file commit:
+`f79dd56acda836fabbf029c054a431afb86528b1`
