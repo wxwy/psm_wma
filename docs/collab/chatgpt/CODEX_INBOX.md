@@ -514,5 +514,44 @@ Any new root implementation SHA or child Gitlink requires a fresh review.
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v02_cpu_algorithm_core_fc5d429.md`
 
+---
+
+## 2026-09-03 — R09-B v0.3.2 multi-slot Local TTT architecture review @ 3f7e434
+
+Awaiting review — 🚨 审核申请已发出（根仓 `3f7e4341d5547eec23d2ff7370b45d34b51a96ca`；子模块/Gitlink `cf52f43dc328d4c8eec51923d66835125664dee5`）
+
+Task/Gate: `G0-R09-B-TTT-V032-MULTI-SLOT-ROUTE-REVIEW`
+
+Review target:
+- exact v0.3.2 authority commit: `3f7e4341d5547eec23d2ff7370b45d34b51a96ca`
+- actual Gitlink at that root commit: `cf52f43dc328d4c8eec51923d66835125664dee5`
+- authority document: `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.2.md`
+- superseded interface authority: v0.3.1=`4754f5bc25859894e6fc963a9484640ccb5cd082`
+- retained K_local=1 compatibility core closure: root=`fc5d4296b2d0e48dad37d7e9f7fd02e9b6cc1312`, Gitlink=`cf52f43dc328d4c8eec51923d66835125664dee5`.
+
+Requested architectural judgment:
+1. `K_local` is a configurable positive integer; every timestep performs exactly one K/V KVB write and only the post-update W is read by K_local evidence-conditioned Q slots.
+2. `Q_t^k = theta_Q(e_t) + r_k`; Q and slot queries do not enter the inner KVB loss, while K/V receive outer-task gradients through differentiable inner update and Q/r_k receive direct outer-task gradients through readout.
+3. The production interface is `[B,K_local,32] -> local_memory2llm -> [B,K_local,2048] -> Memory Prefix norm -> K_MEM/V_MEM only`; internal TTT Q is not Cosmos Q_MEM. AR remains Memory-blind; DM reads Memory+AR+DM.
+4. The completed single-read CPU core is retained strictly as K_local=1 compatibility/sanity contract. It is not multi-slot implementation and cannot be used to bypass a new exact implementation review.
+5. Proposed next route is docs-only multi-slot CPU-extension implementation design, then fresh implementation approval for `read_many`/query-bank CPU core, then exact v0.3.2 Memory Prefix source/ABI audit, then separate two-way attention contract and chronology/native-loss Gates. No runtime implementation is requested now.
+
+Provenance question requiring an explicit verdict:
+- v0.3.2 header calls `21d064f...` the current Cosmos baseline, but `git ls-tree 3f7e434 cosmos-framework` is `cf52f43...`. Please state whether this stale header anchor must be remediated before the route is frozen.
+
+Allowed only if approved:
+- write a versioned root docs-only multi-slot route/implementation design and its static verification plan.
+
+Still forbidden:
+- extending the CPU core, Memory Prefix/runtime/attention wiring, chronology/native-loss integration, model config/optimizer/checkpoint refreeze;
+- GPU/CUDA/torchrun, training, evaluation, inference;
+- P4/P5 real operations and B2-T.
+
+Requested exact verdict for this root + Gitlink:
+
+`APPROVE_R09_B_TTT_V032_MULTI_SLOT_ARCHITECTURE`
+
+or `REQUEST_CHANGES` with severity and exact `file:line` findings.
+
 Review-file commit:
 `f79dd56acda836fabbf029c054a431afb86528b1`
