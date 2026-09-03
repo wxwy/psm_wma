@@ -80,7 +80,7 @@ Accepted direction:
 - 16-step TBPTT detaches graph only, not state value;
 - inference updates fast state only;
 - TTT stays in independent Local modality branch;
-- old B2/P3/P4/P5 algorithm-bound TTT training authority correctly superseded/BLOCKED.
+- old B2/P3/P4/P5 algorithm-bound training authority correctly superseded/BLOCKED.
 
 Blockers:
 1. **HIGH — KVB shape contract is inconsistent.** The design says `K/Q/V: 256 -> D_ttt` but `f_W: D_ttt -> D_ff -> D_local(32)`, while `L_inner=||f_W(K)-V||^2`; therefore `f_W(K)` and `V` have different widths unless `D_ttt==32`, which is not required. Freeze an exact mathematically valid K/Q/V/fast-model/readout shape contract before source audit.
@@ -199,7 +199,7 @@ Evidence:
 - the audit contains all six v0.2.1-required `file:line` tables;
 - `git diff --check` passed;
 - no torch/project test, model/data/checkpoint access, GPU, training, evaluation or inference was run;
-- no Cosmos tracked file or Gitlink was modified.
+- no Cosmos tracked file/Gitlink was modified.
 
 Allowed after unanimous approval:
 - write a versioned CPU algorithm/gradient implementation design for the exact functional core and its CPU-only contract tests.
@@ -245,7 +245,7 @@ Required next action:
 Still prohibited:
 - Cosmos/new TTT implementation or backend execution;
 - torch/model/data/checkpoint runtime access;
-- GPU/CUDA/torchrun, training, evaluation, inference or inference smoke;
+- GPU/CUDA/torchrun, training, evaluation or inference or inference smoke;
 - optimizer/resolved-config refreeze, P4/P5 real operations, B2-T or formal Local Memory training.
 
 Detailed review:
@@ -287,7 +287,7 @@ Still forbidden:
 - GPU/CUDA/torchrun, training, evaluation or inference;
 - optimizer/config refreeze, P4/P5 real operations, B2-T or formal Local Memory training.
 
-Requested exact verdict for this exact remediation SHA and Gitlink only:
+Requested verdict for this exact remediation SHA and Gitlink only:
 
 `APPROVE_TO_DESIGN_R09_B_TTT_V02_CPU_ALGORITHM_IMPLEMENTATION`
 
@@ -433,6 +433,47 @@ Still forbidden:
 
 Only if all three close this exact pair may the next activity be a separate docs-only v0.3.2 Memory Prefix source/ABI audit design.
 
+---
+
+## 2026-09-03 — R09-B v0.3.2 multi-slot CPU-core closure remediation re-review @ 8b0ea2f
+
+Awaiting review — 🚨 审核申请已发出（根仓 `8b0ea2fb289a4bced803148a51ac562165cc2f8d`；子模块/Gitlink `1d90361aeb21db53129ac27ddcaa1285b258fbbc`）
+
+Task/Gate: `G0-R09-B-TTT-V032-MULTI-SLOT-CPU-IMPLEMENTATION`
+
+Prior target and findings:
+
+- root=`6fedfe9d184ee1dfc25a4195d601ab7a537d705f`, child=`5b806554aa60c99b2681a68ae6b7763eb270dd96`;
+- ChatGPT HIGH-1: invalid rows were read before post-hoc zero multiplication, permitting finite overflow to yield NaN;
+- Kimi MEDIUM: direct negative/fail-before-mutation fixtures were missing for `project_queries/read_many/step_projected_many/step_many`;
+- MM approved the original CPU core surface; no reviewer requested scope expansion.
+
+Exact remediation, all within the pre-approved two child files:
+
+1. `step_projected_many()` now appends exact fp32 zero `[K_local,D_local]` and preserves state inside the invalid-row branch, then `continue`s. Invalid rows never reach `_fast_mlp`/`read_many`; valid rows still perform one K/V-only update followed by one vectorized K-slot post-update read.
+2. `project_queries` and `read_many` now check shape/dtype/device before finite reduction so device mismatch rejects deterministically.
+3. Tests add finite-overflow invalid-row call instrumentation (only the valid row can call `_fast_mlp`; invalid output is finite exact zero and state is bitwise unchanged) and direct invalid rank/shape/dtype/nonfinite/device/state plus direct `step_projected_many/step_many` fail-before-`autograd.grad` fixtures.
+
+Validation repeated after remediation:
+
+```bash
+cd /disk/rl/psm_wma/cosmos-framework
+/disk/rl/starVLA/.venv/bin/python -B -m pytest \
+  -o addopts='' --confcutdir=cosmos_framework/model/generator/mot \
+  cosmos_framework/model/generator/mot/local_evidence_test.py \
+  -k 'continual_ttt' -q
+```
+
+Result: `23 passed, 8 deselected`; only existing unknown `L0` mark warnings. Both changed files py_compile; child and root `git diff --check` PASS. No GPU/network/data/checkpoint/runtime/training/evaluation/inference command was run.
+
+Requested exact closure verdict for this root + Gitlink:
+
+`APPROVE_TO_CLOSE_R09_B_TTT_V032_MULTI_SLOT_CPU_CORE`
+
+or `REQUEST_CHANGES` with severity and exact `file:line` findings.
+
+Scope remains prohibited: all Memory Prefix/source-ABI/runtime/attention/local_memory2llm/norm/KV/position/RoPE/mask/packing; chronology/native loss; production config/optimizer/checkpoint migration/refreeze; GPU/CUDA/torchrun; training/evaluation/inference; real model/data/cache/checkpoint; P4/P5/B2-T. C3 remains a separate docs-only Gate even if this C2 closure passes.
+
 Approval authorizes only the CPU core implementation in `local_evidence.py` plus its adjacent CPU tests,
 followed by documentation-only v0.3.1 source/ABI audit. It does not authorize Memory Prefix runtime wiring,
 chronology/loss, GPU/CUDA/torchrun, training, evaluation, inference, optimizer/config refreeze, P4/P5 real
@@ -542,7 +583,7 @@ Approval closes only this CPU algorithm core and permits the next documentation-
 Target:
 - root implementation SHA: `fc5d4296b2d0e48dad37d7e9f7fd02e9b6cc1312`
 - child implementation SHA / Gitlink: `cf52f43dc328d4c8eec51923d66835125664dee5`
-- request/ledger SHA observed before review write-back: `5577dadf822ead9df3dfb9806f0cb70200b2174`
+- request/ledger SHA observed before review write-back: `5577dadf822ead9df3df3b9806f0cb70200b2174`
 - approved route/design state: `af9caf0cfffbb70b7fbf2e8bc3f763bf9bd9d1a2`
 
 Closure:
