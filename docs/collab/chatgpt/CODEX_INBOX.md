@@ -177,3 +177,37 @@ Review-file commit:
 - **Acceptance requested**: close ChatGPT `f184fca` HIGH-1 (successful production-route attention/K delivery), HIGH-2 (owner fail-before-work), MEDIUM-1 (native-generation packing parity), and verify no scope drift.
 - **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` with severity and exact `file:line`.
 - **Forbidden even if approved**: C5 fast-state/chronology, `local_evidence.py`, `utils/memory.py`, config/optimizer/checkpoint/trainer/inference/parallelization, GPU/CUDA/torchrun, real model/data/cache/checkpoint access, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 training. Every later Gate requires separately frozen same-SHA authority.
+
+---
+
+## 2026-09-03 — ChatGPT re-review: C4 Memory Prefix CPU evidence remediation @ e154610
+
+**Verdict: REQUEST_CHANGES**
+
+Formal target:
+- root remediation SHA: `e15461014ca5c9ee0c37e8290e927cd8f4e9ff04`
+- child/Gitlink: `dd6b7dc4ac0713736dca61c5a01de6932b7e5576`
+- request/ledger SHA: `6b6c407f8d017219f4c66894227ccb4f5ca8afef`
+
+Closed:
+- real `dispatch_attention -> two_way_attention` Prefix-present CPU route is now exercised with deterministic attention; AR remains Prefix-blind and the DM call receives one joint `[MEM,AR,DM]` K/V sequence;
+- real `PackedAttentionMoT.forward` Prefix seam now proves normalized, positionless `K_MEM` reaches dispatch and no extra Memory query projection is invoked;
+- Prefix+`MemoryState`, CUDA-graph and replicated-I/O owner guards now have fail-before-`build_packed_sequence` fixtures;
+- native action-generation geometry/index/loss/condition parity is substantially covered;
+- child delta from `f98b719...` is test-only and touches only `memory_prefix_test.py`; no production/C5/config/optimizer/checkpoint/GPU/training scope drift.
+
+Remaining finding:
+1. **MEDIUM — prepared-metadata parity assertion is vacuous.** In `memory_prefix_test.py:102-157`, the action-generation fixture compares `prefix.get_sequence_pack_metadata() == native.get_sequence_pack_metadata()` immediately after packing. But `PackedSequence.get_sequence_pack_metadata()` only returns `_sequence_pack_metadata`; that field remains `None` until `prepare_sequence_pack_metadata()` (or `to_cuda()`) runs (`sequence.py:1110-1127`). The current test therefore only checks `None == None`, not the frozen prepared-metadata parity contract claimed in the request.
+
+Acceptance:
+- explicitly call `prepare_sequence_pack_metadata()` on both CPU packs (or an equivalent real metadata-preparation path), assert both prepared metadata objects are non-`None`, then compare the prepared fields/equality;
+- re-run only the synthetic C4 selector and report its exact count; `py_compile` + `git diff --check` remain sufficient companion evidence;
+- test-only remediation inside the already-approved C4 seven-file boundary; no production-code change is required.
+
+Until fresh same-SHA closure, C5 fast-state/chronology, `local_evidence.py`, `utils/memory.py`, config/optimizer/checkpoint/trainer/inference/parallelization, GPU/CUDA/torchrun, real model/data/cache/checkpoint access, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 training remain prohibited.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v032_memory_prefix_cpu_evidence_remediation_e154610.md`
+
+Review-file commit:
+`3646bdf0116f0645d01b356caed72accf530dce6`
