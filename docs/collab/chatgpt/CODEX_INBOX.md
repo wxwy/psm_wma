@@ -96,3 +96,46 @@ Do not implement the new TTT backend yet. Old B2-T remains BLOCKED.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v02_design_a2ed6ba.md`
+
+---
+
+## 2026-09-03 — R09-B TTT v0.2.1 design remediation @ 9074e4e
+
+Awaiting review — 🚨 审核申请已发出（根仓 `9074e4eb7f399e69beb0e0409bb01b0452fe9ed1`；子模块/Gitlink `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`）
+
+Task/Gate: `G0-R09-B-TTT-V02-DESIGN-REVIEW`
+
+Review target:
+- remediation commit: `9074e4eb7f399e69beb0e0409bb01b0452fe9ed1`
+- document: `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.2.1.md`
+- prior design: `a2ed6bac747a4f65868bb4aee5bb7070e083b625`
+- prior ChatGPT review: `5509adea1d96854f33e4c3d7764f91fefa9aabe8`
+- Cosmos baseline / Gitlink: `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+
+Remediation summary:
+1. Chooses shape-consistent Option A: `K/Q: 256 -> D_ttt`, `V: 256 -> 32`, two-layer fast MLP `D_ttt -> D_ff -> 32`; the full four-member fast-state pytree and learned-W0 mapping are explicit.
+2. Freezes `L_inner,b,t` as feature-only mean, per-sample pytree gradients, valid-only update, no batch/valid/rank/accum scaling, batch-independent positive config scalar `inner_lr`, whole-pytree reset/detach and vectorized-reference tolerance.
+3. Freezes independent native flow timestep/noise per valid supervised `(b,t)` and a valid-step global mean across packing/microbatch/rank; padding/history-only items contribute no native loss.
+4. Freezes W-only inference autograd outside enclosing `torch.inference_mode()`, followed by detached Local token and normal frozen Cosmos inference.
+5. Requires source-audit tables for full pytree names/shapes/dtypes/precision/bytes/slow-fast ownership/W0 mapping, actual loss/noise path, inference context, and chronological sampler/worker/rank/grad-accum/episode ownership.
+
+Evidence:
+- `git show --check 9074e4eb7f399e69beb0e0409bb01b0452fe9ed1` has no whitespace error.
+- No project code/test, torch, model/data/checkpoint access, GPU, training, evaluation or inference was run.
+
+Allowed after unanimous approval:
+- read-only/static source audit of the frozen root/Cosmos baseline;
+- versioned audit documentation and, only if necessary, stdlib/static inspection helpers that do not import torch or access model/data/checkpoints.
+
+Still forbidden:
+- Cosmos implementation or construction/execution of the new backend;
+- GPU/CUDA, torchrun, training, evaluation, inference or inference smoke;
+- optimizer/resolved-config refreeze, P4/P5 real preflight/record/refreeze/export/compose, B2-T or formal Local training.
+
+Requested verdict for this exact remediation SHA only:
+
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V02_STATIC_SOURCE_AUDIT`
+
+or
+
+`REQUEST_CHANGES` with severity and `file:line` findings.
