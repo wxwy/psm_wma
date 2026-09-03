@@ -427,3 +427,55 @@ Still prohibited:
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v031_architecture_route_af9caf0.md`
+
+---
+
+## 2026-09-03 — R09-B continual TTT CPU algorithm core closure @ fc5d429
+
+Awaiting review — 🚨 审核申请已发出（根仓 `fc5d4296b2d0e48dad37d7e9f7fd02e9b6cc1312`；子模块/Gitlink `cf52f43dc328d4c8eec51923d66835125664dee5`）
+
+Task/Gate: `G0-R09-B-TTT-V02-CPU-ALGORITHM-IMPLEMENTATION`
+
+Review target:
+- root implementation SHA: `fc5d4296b2d0e48dad37d7e9f7fd02e9b6cc1312`
+- Cosmos child implementation SHA / root Gitlink: `cf52f43dc328d4c8eec51923d66835125664dee5`
+- approved route/design target: `af9caf0cfffbb70b7fbf2e8bc3f763bf9bd9d1a2`
+- v0.3.1 authority: `4754f5bc25859894e6fc963a9484640ccb5cd082`
+- implementation design: `docs/build/PSM-WMA_R09_B_TTT_CPU_algorithm_implementation_design_v0.1_2026-09-03.md`
+
+Exact implementation scope:
+- `cosmos-framework/cosmos_framework/model/generator/mot/local_evidence.py`
+- `cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py`
+
+Implemented contract:
+1. Adds an independent `ContinualTTTFastState` four-member pytree and functional `ContinualTTTLocalMemoryCore`; the superseded prototype and production `LocalHistoryRuntime` are unchanged.
+2. Registers only Q/K/V and four learned-W0 tensors; defaults remain `D_e=256,D_local=32,D_ttt=64,D_ff=128,inner_lr=0.1,ttt_tbptt_steps=16`.
+3. Implements per-sample KVB loss, simultaneous four-member higher-order SGD update, post-update query read, exact invalid-row inertia, learned-W0 reset, detach-only TBPTT boundary and fail-before-mutation grad-mode/input validation.
+4. `step()` delegates to `project_evidence()+step_projected()`; `scan_segment()` uses the same step in chronology order and fails closed above the configured TBPTT length.
+5. Clarifies that the scan output `[B,T,32]` retains per-timestep readouts for outer-loss/TBPTT tests only. Production Local remains one current readout `[B,1,32]`, later projected to one `[B,1,2048]` Memory Prefix token; no runtime wiring is implemented here.
+
+Evidence:
+- alternate existing Torch environment command:
+  `/disk/rl/starVLA/.venv/bin/python -m pytest -q -o addopts='' --confcutdir=cosmos_framework/model/generator/mot cosmos_framework/model/generator/mot/local_evidence_test.py -k 'continual_ttt'`
+  -> `16 passed, 8 deselected`;
+- `python -m py_compile` for both changed files -> PASS;
+- child and root `git diff --check` -> PASS;
+- AST contract -> 16/16 named tests, functional no-subscript-mutation, fast-state elements 12,448, slow elements 53,568.
+
+Environment disclosure:
+- the frozen bare `/opt/conda/bin/python -m pytest ...` command cannot collect in this workspace because that interpreter lacks both `omegaconf` and `torch`;
+- the existing StarVLA Torch environment has the runtime needed by the target test, but the repo-level pytest configuration references an unavailable custom-exit-code plugin and root conftest dependencies, so the two pytest configuration overrides above were required;
+- no dependency was installed and no external data/model/checkpoint/GPU was accessed.
+
+Acceptance requested:
+- review the implementation against design C01-C16 and the functional/meta-gradient contract;
+- confirm no production runtime, Memory Prefix attention, chronology owner, native-loss, config or optimizer surface changed;
+- treat the environment variance explicitly and report whether it blocks code closure.
+
+Requested exact verdict for this exact root + Gitlink:
+
+`APPROVE_TO_CLOSE_R09_B_TTT_V02_CPU_ALGORITHM_CORE`
+
+or `REQUEST_CHANGES` with severity and exact `file:line` findings.
+
+Approval closes only this CPU algorithm core and permits the next documentation-only v0.3.1 source/ABI audit Gate. It does not authorize Memory Prefix runtime wiring, chronology/native-loss integration, GPU/CUDA/torchrun, training, evaluation, inference, optimizer/config/checkpoint refreeze, P4/P5 real operations or B2-T.
