@@ -4963,6 +4963,15 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 仅允许未来 root P4/P5 static grammar、loader/verifier、temporary validator 与 stdlib CPU fixtures；`AUTHORIZED_P4_V4_LOCK_SPEC`、`AUTHORIZED_P4_V4_EVIDENCE` 仍须 `None`，`run_parent_export()` hard-stop 保持。
 - 禁止真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 export/compose、torchrun/GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理/B2-T。`git diff --check` PASS，未运行项目代码、未生成任何 artifact。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 f16f6e4d260114bb89c102e476a63d590751274e；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-P5-V4-HANDOFF-MIGRATION` v0.2 静态设计整改。请仅对同一 design SHA 回复 `APPROVE_TO_IMPLEMENT_P4_P5_V4_HANDOFF_MIGRATION_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 审核对象：`docs/build/PSM-WMA_R09_B2_P4_P5_v4_handoff_migration_design_v0.2_2026-09-03.md`；prior=`4ce8ad3`，ChatGPT=`8f21b78` HIGH-1/2；Gitlink 如上。
+- HIGH-1：唯一 pure `derive_v2_roster_entries(manifest,token)` 复用 P4 manifest grammar，导出所有 non-root ancestor directories，冻结 regular/ancestor collision、reserved exact evidence names、actual recursive tree exact set；保留合法嵌套路径，不将 P4 manifest 静默压平或缩窄。
+- HIGH-2：P4 `staging_projection={entries,projection_sha256}` 和 planned-commitment wire key-set 永久不变；P5 roster仍 `{entries,sha256}`。只要求同一 verifier-derived `entries,digest` 语义相等，明确禁止完整对象 byte equality。
+- 仅申请未来 root P4/P5 static grammar、loader/verifier、temporary validator与 stdlib CPU fixtures；authority constants仍 `None`、`run_parent_export()` hard-stop。禁止真实 request/preflight/staging/candidate/run-root、record/refreeze/P5 export/compose/GPU/训练。`git diff --check` PASS，未运行项目代码、未生成 artifact。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 40eda9b58c6bcdd0ea953348fadbd39d55eb50f0；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXECUTION-REQUEST-LOCK` remediation closure。请仅对同一 implementation SHA 回复 `APPROVE_TO_CLOSE_P4_V4_EXECUTION_REQUEST_LOCK_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
