@@ -588,6 +588,50 @@ Review-file commit:
 
 ---
 
+## 2026-09-03 — R09-B v0.3.2 multi-slot CPU-core implementation design review @ 411e967
+
+Awaiting review — 🚨 审核申请已发出（根仓 `411e96760bdd1187303c0c2bfe2185223cc5c58e`；子模块/Gitlink `cf52f43dc328d4c8eec51923d66835125664dee5`）
+
+Task/Gate: `G0-R09-B-TTT-V032-MULTI-SLOT-CPU-DESIGN`
+
+Review target:
+
+- exact root design SHA: `411e96760bdd1187303c0c2bfe2185223cc5c58e`;
+- exact child Gitlink: `cf52f43dc328d4c8eec51923d66835125664dee5` (unchanged; no child worktree/source change);
+- new design: `docs/build/PSM-WMA_R09_B_TTT_v032_multi_slot_CPU_algorithm_implementation_design_v0.1_2026-09-03.md`;
+- approved v0.3.2 architecture/provenance authority: root `ef3ff1a9dfe73c62df5991d3ece88b1677a2b6d3`, ChatGPT=`7f227ee`, Kimi=`2026-09-03 17:11 CST`, MM=`2026-09-03 17:17 CST`.
+
+Requested review points:
+
+1. `k_local` is a positive construction/checkpoint identity; `slot_queries[K_local,D_ttt]` is a registered slow parameter. K=1 zero-init gives new-API numerical read compatibility, while strict old-checkpoint migration is explicitly out of scope.
+2. `project_evidence()` remains a K/base-Q/V triple. `project_queries()` produces `[B,K,D_ttt]`; `read_many()` is pure and produces `[B,K,D_local]` from one state.
+3. For each valid sample, `step_projected_many()` has exactly one K/V-only higher-order inner update, then K post-update reads. Q/base query/slot query are excluded from `L_inner`; no state member or inner update is duplicated by slot.
+4. Old K=1 public methods remain rank-compatible wrappers; K>1 must fail closed on legacy methods rather than silently discarding slots.
+5. The test plan explicitly covers parameter/state payload counts, post-update manual KVB, update count independent of K, no read mutation, invalid rows, K=1 equivalence, slot permutation/isolation, gradients and strict K-mismatched checkpoint failure.
+
+Static evidence:
+
+- root `git diff --check` PASS;
+- only root `docs/build/`, `SESSION.md`, and `TODO.md` changed in target; Gitlink resolves exactly to the listed child SHA;
+- no Python/test/GPU/training/evaluation/inference/runtime command was run for this docs-only Gate.
+
+Allowed only if approved:
+
+- child CPU-only implementation limited to `cosmos_framework/model/generator/mot/local_evidence.py` and `local_evidence_test.py`, using synthetic CPU tensors and the frozen selector in the design.
+
+Still forbidden:
+
+- any Memory Prefix/runtime/attention wiring, `local_memory2llm`, LayerNorm, RoPE/mask/position, chronology/native-loss, config/optimizer/checkpoint migration/refreeze;
+- GPU/CUDA/torchrun, training, evaluation, inference, real cache/data use, P4/P5 real operations or B2-T.
+
+Requested exact verdict for this root + Gitlink:
+
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MULTI_SLOT_CPU_CORE`
+
+or `REQUEST_CHANGES` with severity and exact `file:line` findings.
+
+---
+
 ## 2026-09-03 — ChatGPT re-review: v0.3.2 multi-slot provenance remediation @ ef3ff1a
 
 **Verdict: APPROVE_R09_B_TTT_V032_MULTI_SLOT_ARCHITECTURE**
