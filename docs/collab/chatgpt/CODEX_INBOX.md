@@ -294,3 +294,41 @@ Requested verdict for this exact remediation SHA and Gitlink only:
 or
 
 `REQUEST_CHANGES` with severity and exact `file:line` findings.
+
+---
+
+## 2026-09-03 — ChatGPT re-review: R09-B TTT v0.2 inference provenance @ 39ec772
+
+**Verdict: APPROVE_TO_DESIGN_R09_B_TTT_V02_CPU_ALGORITHM_IMPLEMENTATION**
+
+Target:
+- implementation/remediation SHA: `39ec772720603ce9cae98b7e30cb41c10437f64e`
+- request/ledger SHA observed at review start: `b3b9a4e764a0aa032ace6efd86abf1d717b31213`
+- prior blocked technical SHA: `90bc09e9117a8aabab144007aa82d2771e21fc0f`
+- Gitlink: `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb`
+
+Closure:
+- prior HIGH-1 is CLOSED: the server, closed-loop client and model generation sources now resolve at the exact Gitlink to immutable blobs `9ef6845...`, `b31a3fc...`, and `89d1d32...` respectively;
+- exact source confirms HTTP payload/request validation, server lock + outer `torch.inference_mode()`, model `@torch.no_grad()`, caller-provided `local_memory` consumption, and vectorized active-slot compaction;
+- `generator_mixin.py` is not required or cited by the remediated authority;
+- root `39ec772...` still pins `cosmos-framework` to the declared `21d064f2...` Gitlink.
+
+Authorized next step only:
+- write the versioned CPU algorithm/gradient implementation **design** and CPU-only contract-test design for the frozen functional KVB core.
+
+Still prohibited:
+- Cosmos/new TTT backend implementation or execution;
+- chronology/loss/runtime integration or production inference-state registry implementation;
+- torch/model/data/checkpoint runtime execution for this Gate;
+- GPU/CUDA/torchrun, training, evaluation, inference or inference smoke;
+- optimizer/resolved-config refreeze;
+- P4/P5 real preflight, staging, record/refreeze, export or compose;
+- B2-T / formal Local Memory training.
+
+Any later implementation/remediation SHA requires a fresh same-SHA review; this approval may not be reused.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v02_inference_provenance_39ec772.md`
+
+Review-file commit:
+`c8cdb1659df3faa984639b092e433c7834339b19`
