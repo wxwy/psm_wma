@@ -23,6 +23,8 @@ from tools.g0.r09_b2_interpreter_provenance import (
 from tools.g0.export_r09_b2_p5_resolved_config import (
     P5_FORBIDDEN_ENVIRONMENT,
     P5_P3_BACKEND_ENVIRONMENT,
+    derive_v2_roster_entries,
+    validate_v2_payload_manifest,
 )
 from tools.g0.verify_r09_b2_p4_d005 import (
     RANK_ENV,
@@ -325,33 +327,11 @@ def _identity_exact(value: object, keys: set[str], error: str, *, key: str = "id
 
 
 def _validate_payload_manifest(value: object) -> dict[str, object]:
-    manifest = _identity_exact(value, {"entries", "sha256"}, "P4-v4 lock payload manifest differs", key="sha256")
-    entries = manifest["entries"]
-    if not isinstance(entries, list) or not entries:
-        raise ValueError("P4-v4 lock payload manifest differs")
-    seen: set[str] = set()
-    for item in entries:
-        if (not isinstance(item, dict) or set(item) != {"path", "type", "sha256"}
-                or not isinstance(item["path"], str) or not item["path"]
-                or item["path"].startswith("/") or "//" in item["path"]
-                or any(part in {"", ".", ".."} for part in item["path"].split("/"))
-                or item["type"] != "regular"
-                or not isinstance(item["sha256"], str) or _SHA256.fullmatch(item["sha256"]) is None
-                or item["path"] in seen):
-            raise ValueError("P4-v4 lock payload manifest differs")
-        seen.add(item["path"])
-    if [item["path"] for item in entries] != sorted(seen):
-        raise ValueError("P4-v4 lock payload manifest order differs")
-    return manifest
+    return validate_v2_payload_manifest(value)
 
 
 def _planned_projection(manifest: dict[str, object], token: str) -> dict[str, object]:
-    entries = [
-        {"path": "import_staging", "type": "directory", "mode": "0555", "sha256": ""},
-        {"path": f"import_staging/{token}", "type": "directory", "mode": "0555", "sha256": ""},
-    ]
-    entries.extend({"path": item["path"], "type": "regular", "mode": "0444", "sha256": item["sha256"]} for item in manifest["entries"])
-    entries.sort(key=lambda item: item["path"])
+    entries = derive_v2_roster_entries(manifest, token)
     return {"entries": entries, "projection_sha256": _p5_canonical_sha256({"entries": entries})}
 
 

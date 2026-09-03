@@ -1797,9 +1797,10 @@ class PlannedRosterCommitmentTest(unittest.TestCase):
             self.assertEqual(item["candidate_root"], f"/candidates/{'e' * 64}/{backend}")
             self.assertNotIn("roster_sha256", item)
             self.assertEqual(item["staging_projection"]["entries"], [
-                {"path": "import_staging", "type": "directory", "mode": "0555", "sha256": ""},
-                {"path": f"import_staging/{token}", "type": "directory", "mode": "0555", "sha256": ""},
-                {"path": "pkg/module.py", "type": "regular", "mode": "0444", "sha256": "c" * 64},
+            {"path": "import_staging", "type": "directory", "mode": "0555", "sha256": ""},
+            {"path": f"import_staging/{token}", "type": "directory", "mode": "0555", "sha256": ""},
+            {"path": "pkg", "type": "directory", "mode": "0555", "sha256": ""},
+            {"path": "pkg/module.py", "type": "regular", "mode": "0444", "sha256": "c" * 64},
             ])
 
     def test_rejects_final_field_and_candidate_mapping_drift(self):

@@ -12,9 +12,10 @@ from unittest.mock import patch
 
 from tools.g0.export_r09_b2_p5_resolved_config import (
     P4_V4_PREFLIGHT_RELATIVE, P5_FORBIDDEN_ENVIRONMENT, P5_P3_BACKEND_ENVIRONMENT, PYTHON_CHILD_LOCALE,
-    build_v4_pair_requests, canonical_bytes, load_p4_v4_preflight,
+    build_v4_pair_requests, canonical_bytes, derive_v2_roster_entries, load_p4_v4_preflight,
     p5_effective_environment, sha256_json,
 )
+from tools.g0.r09_b2_p4_v4_execution_preflight import _planned_projection
 from tools.g0.verify_r09_b2_p5_full_config_diff import _authorized_p4_v4_evidence, _exporter_source, verify_pair
 from tools.g0.verify_r09_b2_p4_d005 import P3_ARTIFACT_SHA256, P3_VERIFIER_SHA256
 
@@ -22,6 +23,32 @@ from tools.g0.verify_r09_b2_p4_d005 import P3_ARTIFACT_SHA256, P3_VERIFIER_SHA25
 class P5Test(unittest.TestCase):
     def _git(self, root: Path, *args: str) -> str:
         return subprocess.check_output(["git", "-C", str(root), *args], text=True).strip()
+
+    def test_v2_roster_derivation_is_nested_closed_and_p4_semantically_identical(self):
+        token = "a" * 64
+        manifest_core = {"entries": [
+            {"path": f"import_staging/{token}/pkg/sub/module.py", "type": "regular", "sha256": "b" * 64},
+            {"path": "top.py", "type": "regular", "sha256": "c" * 64},
+        ]}
+        manifest = {**manifest_core, "sha256": sha256_json(manifest_core)}
+        entries = derive_v2_roster_entries(manifest, token)
+        self.assertEqual([item["path"] for item in entries], [
+            "import_staging", f"import_staging/{token}", f"import_staging/{token}/pkg",
+            f"import_staging/{token}/pkg/sub", f"import_staging/{token}/pkg/sub/module.py", "top.py",
+        ])
+        projection = _planned_projection(manifest, token)
+        self.assertEqual(projection["entries"], entries)
+        self.assertEqual(projection["projection_sha256"], sha256_json({"entries": entries}))
+        for path in ("preflight.json", "request.json", "result.json", "verification.json", "candidate_link.json", "import_staging", f"import_staging/{token}"):
+            bad_core = {"entries": [{"path": path, "type": "regular", "sha256": "d" * 64}]}
+            with self.assertRaises(ValueError):
+                derive_v2_roster_entries({**bad_core, "sha256": sha256_json(bad_core)}, token)
+        collision_core = {"entries": [
+            {"path": "pkg", "type": "regular", "sha256": "d" * 64},
+            {"path": "pkg/module.py", "type": "regular", "sha256": "e" * 64},
+        ]}
+        with self.assertRaises(ValueError):
+            derive_v2_roster_entries({**collision_core, "sha256": sha256_json(collision_core)}, token)
 
     def _v4_preflight(self, root: Path) -> None:
         subprocess.run(["git", "-C", str(root), "init", "-q"], check=True)
@@ -53,7 +80,6 @@ class P5Test(unittest.TestCase):
         run = root / "run"; run.mkdir(); token = "a" * 64
         staging = run / "import_staging" / token; staging.mkdir(parents=True)
         payload = staging / "payload.py"; payload.write_text("x = 1\n"); payload.chmod(0o444)
-        preflight = run / "preflight.json"; preflight.write_text("{}\n"); preflight.chmod(0o444)
         (run / "import_staging").chmod(0o555); staging.chmod(0o555); run.chmod(0o555)
 
         def identity(path: Path, kind: str) -> dict[str, str]:
@@ -65,10 +91,9 @@ class P5Test(unittest.TestCase):
         manifest_entries = [{"path": f"import_staging/{token}/payload.py", "type": "regular", "sha256": hashlib.sha256(payload.read_bytes()).hexdigest()}]
         manifest_core = {"entries": manifest_entries}; manifest = {**manifest_core, "sha256": sha256_json(manifest_core)}
         roster_entries = [
-            {"path": "import_staging", "type": "directory", "mode": 0o555, "sha256": ""},
-            {"path": f"import_staging/{token}", "type": "directory", "mode": 0o555, "sha256": ""},
-            {"path": f"import_staging/{token}/payload.py", "type": "regular", "mode": 0o444, "sha256": manifest_entries[0]["sha256"]},
-            {"path": "preflight.json", "type": "regular", "mode": 0o444, "sha256": hashlib.sha256(preflight.read_bytes()).hexdigest()},
+            {"path": "import_staging", "type": "directory", "mode": "0555", "sha256": ""},
+            {"path": f"import_staging/{token}", "type": "directory", "mode": "0555", "sha256": ""},
+            {"path": f"import_staging/{token}/payload.py", "type": "regular", "mode": "0444", "sha256": manifest_entries[0]["sha256"]},
         ]
         roster_core = {"entries": roster_entries}; roster = {**roster_core, "sha256": sha256_json(roster_core)}
         for backend in ("recurrent", "ttt_fast_weight"):

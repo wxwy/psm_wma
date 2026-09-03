@@ -49,6 +49,9 @@ P5_FORBIDDEN_ENVIRONMENT = (
 P5_P3_BACKEND_ENVIRONMENT = {
     "PSM_R09_B1_TTT_ENABLED": {"recurrent": "0", "ttt_fast_weight": "1"},
 }
+P5_V2_RESERVED_ROOT_PATHS = {
+    "preflight.json", "request.json", "result.json", "verification.json", "candidate_link.json",
+}
 
 
 class CanonicalizationError(ValueError):
@@ -79,6 +82,60 @@ def _read_json(path: Path) -> tuple[dict[str, Any], str]:
 
 def _self_sha(value: Mapping[str, Any], key: str) -> bool:
     return isinstance(value.get(key), str) and value[key] == sha256_json({name: item for name, item in value.items() if name != key})
+
+
+def validate_v2_payload_manifest(value: object) -> dict[str, Any]:
+    """Validate the shared P4/P5 payload-manifest grammar without filesystem I/O."""
+    if not isinstance(value, dict) or set(value) != {"entries", "sha256"} or not _self_sha(value, "sha256"):
+        raise ValueError("P4-v4 payload manifest differs")
+    entries = value["entries"]
+    if not isinstance(entries, list) or not entries:
+        raise ValueError("P4-v4 payload manifest differs")
+    seen: set[str] = set()
+    for item in entries:
+        if (not isinstance(item, dict) or set(item) != {"path", "type", "sha256"}
+                or not isinstance(item["path"], str) or not item["path"]
+                or item["path"].startswith("/") or "//" in item["path"]
+                or any(part in {"", ".", ".."} for part in item["path"].split("/"))
+                or item["type"] != "regular"
+                or not isinstance(item["sha256"], str) or len(item["sha256"]) != 64
+                or any(character not in "0123456789abcdef" for character in item["sha256"])
+                or item["path"] in seen):
+            raise ValueError("P4-v4 payload manifest differs")
+        seen.add(item["path"])
+    if [item["path"] for item in entries] != sorted(seen):
+        raise ValueError("P4-v4 payload manifest order differs")
+    return value
+
+
+def derive_v2_roster_entries(payload_manifest: object, run_token: object) -> list[dict[str, str]]:
+    """Derive the sole filesystem-closed P4/P5 v2 roster from manifest and token."""
+    manifest = validate_v2_payload_manifest(payload_manifest)
+    if (not isinstance(run_token, str) or len(run_token) != 64
+            or any(character not in "0123456789abcdef" for character in run_token)):
+        raise ValueError("P4-v4 run token differs")
+    required_directories = {"import_staging", f"import_staging/{run_token}"}
+    regular_entries = manifest["entries"]
+    regular_paths = {item["path"] for item in regular_entries}
+    if regular_paths & P5_V2_RESERVED_ROOT_PATHS or regular_paths & required_directories:
+        raise ValueError("P4-v4 payload manifest uses a reserved run-root path")
+    directories = set(required_directories)
+    for path in regular_paths:
+        parent = Path(path).parent
+        while parent != Path("."):
+            directories.add(parent.as_posix())
+            parent = parent.parent
+    if regular_paths & directories:
+        raise ValueError("P4-v4 payload manifest regular/directory collision differs")
+    entries = [
+        {"path": path, "type": "directory", "mode": "0555", "sha256": ""}
+        for path in directories
+    ]
+    entries.extend(
+        {"path": item["path"], "type": "regular", "mode": "0444", "sha256": item["sha256"]}
+        for item in regular_entries
+    )
+    return sorted(entries, key=lambda item: item["path"])
 
 
 def _path_identity(value: object, *, kind: str) -> Path:
@@ -203,24 +260,13 @@ def _validate_roster(run_root: Path, staging_root: Path, token: str, roster: obj
     entries = roster["entries"]
     if not isinstance(entries, list) or not all(isinstance(item, Mapping) and set(item) == {"path", "type", "mode", "sha256"} for item in entries):
         raise ValueError("P4-v4 run-root roster entries are malformed")
-    manifest_entries = manifest["entries"]
-    if (not isinstance(manifest_entries, list)
-            or manifest_entries != sorted(manifest_entries, key=lambda item: item.get("path", "") if isinstance(item, Mapping) else "")
-            or not all(isinstance(item, Mapping) and set(item) == {"path", "type", "sha256"}
-                           and item["type"] == "regular" and isinstance(item["path"], str)
-                           and not Path(item["path"]).is_absolute() and ".." not in Path(item["path"]).parts
-                           and isinstance(item["sha256"], str) and len(item["sha256"]) == 64
-                           for item in manifest_entries)):
-        raise ValueError("P4-v4 payload manifest entries are malformed")
-    expected_files = {item["path"] for item in manifest_entries}
-    expected = {"import_staging", f"import_staging/{token}", "preflight.json"} | expected_files
-    observed = {item["path"] for item in entries}
-    if observed != expected or any(not isinstance(path, str) or path.startswith("/") or ".." in Path(path).parts for path in observed):
+    expected_entries = derive_v2_roster_entries(manifest, token)
+    if entries != expected_entries:
         raise ValueError("P4-v4 run-root roster path set differs")
     if staging_root != run_root / "import_staging" / token:
         raise ValueError("P4-v4 staging root differs from run-root token path")
     actual = {path.relative_to(run_root).as_posix() for path in run_root.rglob("*")}
-    if actual != observed:
+    if actual != {item["path"] for item in expected_entries}:
         raise ValueError("P4-v4 run-root contains a roster-unlisted path")
     for item in entries:
         path = run_root / item["path"]
