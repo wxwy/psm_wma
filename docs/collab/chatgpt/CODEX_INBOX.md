@@ -585,3 +585,45 @@ Approval authorizes only the next versioned root docs-only multi-slot route/impl
 
 Review-file commit:
 `f79dd56acda836fabbf029c054a431afb86528b1`
+
+---
+
+## 2026-09-03 — ChatGPT re-review: v0.3.2 multi-slot provenance remediation @ ef3ff1a
+
+**Verdict: APPROVE_R09_B_TTT_V032_MULTI_SLOT_ARCHITECTURE**
+
+Target:
+- remediation/design SHA: `ef3ff1a9dfe73c62df5991d3ece88b1677a2b6d3`
+- request/ledger SHA observed before review write-back: `4def62e6b96cae6fb90699dd6bbbfefd0233f65a`
+- actual child/Gitlink: `cf52f43dc328d4c8eec51923d66835125664dee5`
+- prior blocked authority: `3f7e4341d5547eec23d2ff7370b45d34b51a96ca`
+
+Prior review chain:
+- `3f7e434...` received ChatGPT `REQUEST_CHANGES` with HIGH-1 because v0.3.2 header labeled historical `21d064f...` as the current Gitlink while the exact root pinned `cf52f43...`.
+- detailed prior review: `docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v032_multi_slot_architecture_3f7e434.md`.
+
+Closure:
+- v0.3.2 now declares current Gitlink `cf52f43dc328d4c8eec51923d66835125664dee5` and explicitly labels `21d064f2b7c7aeeb67cfee50ac8d6722a944eddb` as the historical v0.3.1/pre-CPU-core source baseline;
+- exact root `ef3ff1a...` independently resolves the child to the declared `cf52f43...`;
+- accepted architecture is unchanged: exactly one K/V KVB write per new causal evidence, followed by `K_local` post-update TTT reads; Q/slot parameters stay out of the inner loss, Q/slots receive direct outer-task gradients, K/V are meta-learned through the differentiable inner update;
+- Local remains `[B,K_local,32] -> [B,K_local,2048]` and enters the v0.3.1 K/V-only Memory Prefix; internal TTT Q does not create Cosmos `Q_MEM`;
+- the closed `cf52f43` CPU core remains only `K_local=1` compatibility/sanity evidence and grants no multi-slot implementation authority.
+
+Authorized next step only:
+- create a versioned root docs-only multi-slot route/CPU-extension implementation design and static verification plan, then submit its new exact SHA for independent review.
+
+Next design must explicitly freeze `K_local` construction/checkpoint semantics, query-bank registered shape, `read_many` contract, one-write/no-state-mutation properties, K=1 equivalence, slot permutation, gradient reachability, and parameter/checkpoint/optimizer implications.
+
+Still prohibited:
+- multi-slot CPU-core/query-bank implementation or child Gitlink change;
+- Memory Prefix source/ABI implementation or runtime/attention wiring;
+- chronology/native-loss/runtime integration;
+- config/optimizer/checkpoint refreeze;
+- GPU/CUDA/torchrun, training, evaluation or inference;
+- P4/P5 real operations and B2-T.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-03_R09_B_TTT_v032_multi_slot_architecture_ef3ff1a.md`
+
+Review-file commit:
+`7f227eecc33b945cce8e65f7537a4b83901733fc`
