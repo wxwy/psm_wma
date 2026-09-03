@@ -5069,6 +5069,14 @@ Kimi closure remediation：capability 不再保存 mutable parsed dict；reserva
 - 静态证据：仅文档/状态提交；`git diff --check` PASS。允许范围仅 root static tooling/stdlib CPU fixtures；production execution/record/publication authority仍 `None`。
 - 禁止：真实 request/preflight/staging/materialize/candidate/run-root、record/refreeze/evidence publication、P5 authority/export/compose/child、torch/torchrun、GPU/CUDA、模型/数据/checkpoint I/O、训练/评测/推理、B2-T 与 Local Memory training。
 
+### Awaiting review — 🚨 审核申请已发出（根仓 6c521c115b05006d20d8ce37288b72331c9cb7f2；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
+
+任务：`G0-R09-B2-P4-V4-EXACT-REQUEST-RECORD-REFREEZE-STATIC-TOOLS` 首个最小实现 closure。请仅回复 `APPROVE_TO_CLOSE_P4_V4_EXACT_REQUEST_RECORD_REFREEZE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
+
+- 修改：`tools/g0/r09_b2_p4_v4_static_contract.py` 的 default-None execution authority 与纯 `logs_v1` exact schema/digest/absolute-path/non-overlap validator；对应 stdlib fixture。未改 closed candidate file-set。
+- 证据：`python -B -m unittest tools.g0.test_r09_b2_p4_v4_static_contract -v`=`13/13 PASS`；`py_compile`、`git diff --check` PASS。
+- 禁止真实 request/preflight/staging/candidate/record/refreeze/P5/GPU/训练；无子模块改动。
+
 ### Awaiting review — 🚨 审核申请已发出（根仓 b70cd294f4d9896cbe297d96535540b62cf43391；子模块/Gitlink 21d064f2b7c7aeeb67cfee50ac8d6722a944eddb）
 
 任务：`G0-R09-B2-P4-V4-EXACT-REQUEST-RECORD-REFREEZE-DESIGN` v0.5 整改。请仅回复 `APPROVE_TO_IMPLEMENT_P4_V4_EXACT_REQUEST_RECORD_REFREEZE_STATIC_TOOLS` 或 `REQUEST_CHANGES`（附 `file:line`）。
