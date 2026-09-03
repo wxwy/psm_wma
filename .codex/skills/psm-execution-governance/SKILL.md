@@ -11,11 +11,21 @@ description: 管理 PSM-WMA 的审核申请、三方批准门、执行者边界�
 
 ## 审核门
 
-- 只有 ChatGPT Inbox 最新有效 verdict、Kimi、MM 针对同一实现 SHA 都批准，才可启动对应执行。
+- 只有 canonical live ChatGPT Inbox 的最新有效 verdict、Kimi、MM 针对同一实现 SHA 都批准，才可启动对应执行。
 - 任一 `REQUEST_CHANGES`、SHA 不一致或未回复均不得执行；先处理意见并重新审核。
-- 审核申请后每 1 分钟轮询，且每轮固定顺序为：保存 `before_head=$(git rev-parse HEAD)` → `git fetch origin V2` → 先输出 `git log --oneline "$before_head"..origin/V2` 的每个新提交及其 verdict → 如 SHA 不同则 `git merge --ff-only origin/V2` → 无论 revision range 是否为空都读取最新 Inbox/review 文件的完整 verdict → capture Kimi pane → capture MM pane。只有该 revision range 为空且最新 review 未变化时才可报告“无新增”；不得 merge 后仅比较相等 SHA 而丢失新 verdict。
+- 审核申请后每 1 分钟轮询，且每轮固定顺序为：保存 `before_head=$(git rev-parse HEAD)` → `git fetch origin V2` → 先输出 `git log --oneline "$before_head"..origin/V2` 的每个新提交及其 verdict → 如 SHA 不同则 `git merge --ff-only origin/V2` → 无论 revision range 是否为空都读取 canonical live Inbox/review 文件的完整最新 verdict → capture Kimi pane → capture MM pane。只有该 revision range 为空且最新 review 未变化时才可报告“无新增”；不得 merge 后仅比较相等 SHA 而丢失新 verdict。
 - 审核等待、远端暂未回复、tmux 暂无新行都不是 `blocked`。任务保持 `REVIEW` 并持续轮询；只有同一外部阻塞已连续三轮且没有任何安全的本地检查或修复可做时，才可标记 `blocked`。
 - 每次向用户显示审核申请时，首行固定为：`Awaiting review — 🚨 审核申请已发出（根仓 <hash>；子模块/Gitlink <hash>）`；不得省略 `Awaiting review`。
+
+## Inbox rollover
+
+- canonical live Inbox 固定为 `docs/collab/chatgpt/CODEX_INBOX.md`；Codex 始终先读这个路径。
+- live Inbox 硬上限为 **131072 bytes（128 KiB）**。任何 append 前先检查 `current_bytes + append_bytes`。
+- 若预计超过阈值，必须在 append 前执行 rollover：把当前 live Inbox byte-for-byte 保存为 `docs/collab/chatgpt/archive/CODEX_INBOX_<timestamp>_<head7>.md`，archive 一经创建即 immutable；然后在相同 canonical 路径建立精简 live Inbox。
+- 精简 live Inbox 至少保留：immediate archive 路径 + blob SHA、pre-rollover head、当前 unresolved/latest Gate、formal target SHA、child/Gitlink、最新有效 verdict、详细 review 路径。完成后再 append 新条目。
+- rollover 是 live Inbox 唯一允许的 replacement；普通操作仍严格 append-only。
+- rollover/Inbox commit 永远是 ledger/bookkeeping SHA，不能替代 design/implementation target SHA。
+- 普通审核轮询只读 live Inbox 尾部及其明确链接的 review；除非追溯历史事实，不要读取完整 archive，从而避免 Inbox 历史持续拖慢审核。
 
 ## 角色边界
 

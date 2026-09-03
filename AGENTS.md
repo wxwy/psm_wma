@@ -6,7 +6,7 @@
 
 1. `AGENTS.md`
 2. `SESSION.md`
-3. `docs/collab/chatgpt/CODEX_INBOX.md`（读取最底部最新条目；若有详细 review，按条目链接继续读）
+3. `docs/collab/chatgpt/CODEX_INBOX.md`（始终读取 canonical live Inbox；若有详细 review，按条目链接继续读；仅在 live Inbox 明确要求或需要历史上下文时读取 archive）
 4. `TODO.md`
 5. `MEMORY/DECISIONS.md`
 6. 当前任务涉及的 `docs/build/` 文档
@@ -15,11 +15,21 @@
 ## 文档职责
 
 - `docs/build/`：版本化的正式方案、详细设计、Gate Runbook 和核验报告。已标记 `frozen` 或 `locked` 的文件不得静默改写，变更必须新建版本或显式记录 override。
-- `docs/collab/chatgpt/CODEX_INBOX.md`：ChatGPT → Codex/Agent 的 append-only 审核与交接入口；开始或继续当前任务前必须读取最底部最新条目。重大审核详情位于 `docs/collab/chatgpt/reviews/`。
+- `docs/collab/chatgpt/CODEX_INBOX.md`：ChatGPT → Codex/Agent 的 **canonical live** 审核与交接入口；开始或继续当前任务前必须读取。普通写入 append-only；达到 rollover 阈值时按下述规则归档并重建 live Inbox。重大审核详情位于 `docs/collab/chatgpt/reviews/`。
 - `SESSION.md`：当前阶段的短期状态和 Agent 交接入口，只保留最新事实。
 - `TODO.md`：唯一的待办队列。任务必须有 ID、状态、前置条件、负责人和验收条件。
 - `MEMORY/DECISIONS.md`：跨会话长期有效的工程决策及依据，不记录临时过程。
 - `artifacts/g0/`：R Gate 的机器可读结果；不得用文字结论替代 JSON 产物。
+
+### ChatGPT Inbox 大小与 rollover（强制）
+
+- live `docs/collab/chatgpt/CODEX_INBOX.md` 硬上限为 **131072 bytes（128 KiB）**。
+- 每次准备 append 前先检查 `当前字节数 + 待追加字节数`。若将超过 128 KiB，必须先 rollover，不能继续把 live Inbox 无限增大。
+- rollover 时把当前 live Inbox **byte-for-byte** 保存到 `docs/collab/chatgpt/archive/CODEX_INBOX_<timestamp>_<head7>.md`；archive 创建后不可改写、删除或截断。
+- 然后在相同 canonical 路径重建精简 `CODEX_INBOX.md`，至少携带：立即前序 archive 路径与 blob SHA、pre-rollover head、当前 unresolved/latest Gate、formal target SHA、child/Gitlink、最新有效 verdict、详细 review 路径。重建后恢复 append-only。
+- rollover 是 live Inbox 唯一允许的非 append-only replacement；archive 永远保持 append-only/immutable。
+- Codex 始终先读 canonical live Inbox；除非 live 条目显式链接或确需历史信息，不得在普通审核轮询中反复读取完整 archive。
+- rollover/ledger commit 只属于 bookkeeping，绝不能替代 design/implementation SHA 作为 verdict authority。
 
 ## 任务状态
 
@@ -68,7 +78,7 @@
 
 ## 持续执行与监控
 
-- 触发 `提交审核`、`审核回复`、`启动/恢复训练、评测或推理`、`交给 Execute`、`监控执行` 时，必须先读取 `.codex/skills/psm-execution-governance/SKILL.md`；该技能定义三方审核门、角色边界及 30 秒/5 分钟监控节奏。
+- 触发 `提交审核`、`审核回复`、`启动/恢复训练、评测或推理`、`交给 Execute`、`监控执行` 时，必须先读取 `.codex/skills/psm-execution-governance/SKILL.md`；该技能定义三方审核门、角色边界及监控节奏。
 
 - Agent 只能在发起审核、任务全部完成，或确实需要用户作出明确决策/授权时结束当前工作；普通阶段结果、可自行修复的错误和后台任务启动后都必须继续执行。
 - 后台代码、训练、推理、评测必须由 Codex 原生每分钟轮询；审核等待必须由 Codex 原生每五分钟轮询；不得将 tmux 会话本身作为监控机制。
@@ -77,9 +87,9 @@
 
 ### 审核申请发送与回复监控（强制）
 
-1. 申请必须先 append 到 `docs/collab/chatgpt/CODEX_INBOX.md`，并写清任务/Gate、根仓提交号、子模块提交号与 Gitlink、证据路径、验收条件、允许/禁止范围，以及明确的 verdict 请求。
+1. 申请必须先 append 到 `docs/collab/chatgpt/CODEX_INBOX.md`；若预计 append 后超过 128 KiB，先按 Inbox rollover 规则归档/重建，再把申请 append 到新的 live Inbox。申请必须写清任务/Gate、根仓提交号、子模块提交号与 Gitlink、证据路径、验收条件、允许/禁止范围，以及明确的 verdict 请求。
 2. 同一申请必须主动发送到 MM 和 Kimi 的指定 `tmux` pane。发送时先用 `tmux send-keys -l` 写入完整文本，再单独执行 `tmux send-keys Enter`；不得把“文本已显示在输入框”当作“已发送”。随后必须 `tmux capture-pane` 回读，确认申请已提交且会话进入处理或已回复状态。
 3. 用户可见的申请标记固定为 `🚨 审核申请已发出（根仓 <hash>；子模块/Gitlink <hash>）`，两个提交号不得省略。
-4. 申请发出后，每五分钟由 Codex 原生轮询三路：ChatGPT Inbox/`reviews/`、MM pane、Kimi pane；每次轮询记录申请是否送达、是否开始处理、最终 verdict 与 `file:line` 意见。不得仅依赖 tmux 自行运行或只检查其中一路。
+4. 申请发出后，每五分钟由 Codex 原生轮询三路：canonical live ChatGPT Inbox/`reviews/`、MM pane、Kimi pane；每次轮询记录申请是否送达、是否开始处理、最终 verdict 与 `file:line` 意见。普通轮询不得反复读取完整 Inbox archive。
 5. 审核等待期间任务状态保持 `REVIEW`，禁止越过该 Gate。收到全部所需审核结论后，先处理 `REQUEST_CHANGES`；全部批准后才更新 `SESSION.md`、`TODO.md` 并提交。若会话不存在、发送失败或未提交，立即重发并在 `SESSION.md` 记录，不能声称申请已发出。
 6. 同一审核申请的 ChatGPT、Kimi、MM 三方最终 verdict 必须全部收到后，才合并意见并启动“评估 → 最小整改 → 验证 → 提交/推送 → 新 SHA 重新申请审核”闭环；不得依据单一审核者意见提前修改或使其他同 SHA 审核失效。整改必须严格限于已批准范围；若意见要求扩大权限、真实执行或改变 Gate，仍须先取得对应独立批准。新申请发出后重新开始三路五分钟原生轮询。
