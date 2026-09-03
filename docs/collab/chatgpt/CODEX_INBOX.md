@@ -927,7 +927,7 @@ Remediation target:
 
 Changes are root docs/status only:
 - explicitly separates C3 design SHA `26bd78d...` from pre-design/source root baseline `2a08f4e...`;
-- adds `cosmos_framework/model/generator/mot/sequence_packing/sequence.py:545-588::pack_local_memory_tokens()` multi-row capacity and current GEN-path mRoPE facts;
+- adds `cosmos_framework/data/generator/sequence_packing/sequence.py:545-588::pack_local_memory_tokens()` multi-row capacity and current GEN-path mRoPE facts;
 - adds `cosmos_framework/model/generator/mot/local_evidence.py:616-657::LocalHistoryRuntime.forward()` current `[B,1,D]` cardinality and the boundary that packer capacity is not production multi-slot runtime.
 
 Acceptance and prohibition remain unchanged: only C3 docs/static audit closure is requested; no child/runtime/attention/config/optimizer/checkpoint changes, GPU/torchrun, model/data/cache, P4/P5, training/evaluation/inference. All three reviewers must verdict this exact root/Gitlink pair before C4.

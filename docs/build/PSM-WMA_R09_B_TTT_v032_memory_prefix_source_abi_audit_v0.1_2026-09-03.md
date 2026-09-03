@@ -2,7 +2,8 @@
 
 **日期**：2026-09-03  
 **状态**：C3 docs-only/static audit，待三方审核  
-**C3 设计提交（本轮审核对象）**：`26bd78d4f3feb9659c63459393c61780bc0b94e7`
+**C3 当前 remediation/design 提交**：`54ea4cea9ba0eb513080b9505cf23b2446b5d86a`
+**原始、已 superseded 的 C3 初始设计提交**：`26bd78d4f3feb9659c63459393c61780bc0b94e7`
 **设计前/source 根仓基线**：`2a08f4e37ddfa98038b35965fb4b9f79c1b90806`
 **子模块基线**：`1d90361aeb21db53129ac27ddcaa1285b258fbbc`（仅作为只读 source baseline）
 
@@ -32,7 +33,7 @@
 
 ### 2.5 Packer cardinality 与当前 runtime cardinality
 
-在子模块 `1d90361` 的 `cosmos_framework/model/generator/mot/sequence_packing/sequence.py:545-588`，`pack_local_memory_tokens()` 已接受每个样本形如 `[K_local,D_local]` 的载荷，按 K 行写入 Local GEN 区域，并使用当前 Local GEN 路径的 text-style mRoPE；该函数不推进 native position cursor。该能力只说明 packer 可容纳多行，不说明生产 runtime 已完成 v0.3.2 multi-slot fast-state/readout 接线。
+在子模块 `1d90361` 的 `cosmos_framework/data/generator/sequence_packing/sequence.py:545-588`，`pack_local_memory_tokens()` 已接受每个样本形如 `[K_local,D_local]` 的载荷，按 K 行写入 Local GEN 区域，并使用当前 Local GEN 路径的 text-style mRoPE；该函数不推进 native position cursor。该能力只说明 packer 可容纳多行，不说明生产 runtime 已完成 v0.3.2 multi-slot fast-state/readout 接线。
 
 相反，`cosmos_framework/model/generator/mot/local_evidence.py:616-657` 的 `LocalHistoryRuntime.forward()` 当前仍返回 `[B,1,D]` 形态的单行兼容载荷。目标 Memory Prefix 必须在后续 Gate 明确 `K_local` 行的生产来源，并禁止无审计地继承当前 GEN-path 的 RoPE/position 策略。
 
