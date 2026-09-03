@@ -164,3 +164,16 @@ Detailed review:
 
 Review-file commit:
 `f184fca9e78b7bd4dcd353e216e25a297bd8876b`
+
+---
+
+## 2026-09-03 — C4 Memory Prefix CPU evidence remediation closure request
+
+- **Gate/task**: `G0-R09-B-TTT-V032-MEMORY-PREFIX-CPU-IMPLEMENTATION` C4 remediation closure.
+- **Formal target**: root `e15461014ca5c9ee0c37e8290e927cd8f4e9ff04` on `V2`; child/Gitlink `cosmos-framework@dd6b7dc4ac0713736dca61c5a01de6932b7e5576` on `v2` (child pushed before root; `git ls-tree` verified).
+- **Prior same-SHA verdicts consumed**: ChatGPT `f184fca` `REQUEST_CHANGES`; MM/Kimi had approved `0dace8d/f98b719`. This is a new implementation pair and requires new independent three-party verdicts.
+- **Scope delivered**: child changes only `cosmos_framework/model/generator/mot/memory_prefix_test.py`; no production code changed. New synthetic CPU fixtures drive (1) real `dispatch_attention -> two_way_attention` with spied deterministic primitive, proving AR receives no Prefix K/V and DM performs exactly one `[MEM,AR,DM]` joint softmax; (2) real `PackedAttentionMoT.forward` dispatch seam, proving actual `k_proj_moe_gen -> k_norm_moe_gen` positionless `K_MEM` delivery and no Memory query projection; (3) owner `Cosmos3VFMNetwork.forward` guards for Prefix+`MemoryState`, CUDA graph and replicated attention-I/O before `build_packed_sequence`; (4) native action-generation Prefix/No-Memory packing parity across geometry, indexes, loss/condition metadata and prepared metadata, with Local payload as the only intended difference.
+- **Evidence**: `cosmos-framework/.venv/bin/python -B -m pytest -q cosmos_framework/model/generator/mot/memory_prefix_test.py` = `20 passed` (only existing unregistered-L0 warnings); C4 seven-file `py_compile` PASS; child and root `git diff --check` PASS. CPU-only synthetic tensors; no GPU/CUDA/torchrun, external data/model/latent-cache/checkpoint I/O, training, evaluation or inference.
+- **Acceptance requested**: close ChatGPT `f184fca` HIGH-1 (successful production-route attention/K delivery), HIGH-2 (owner fail-before-work), MEDIUM-1 (native-generation packing parity), and verify no scope drift.
+- **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` with severity and exact `file:line`.
+- **Forbidden even if approved**: C5 fast-state/chronology, `local_evidence.py`, `utils/memory.py`, config/optimizer/checkpoint/trainer/inference/parallelization, GPU/CUDA/torchrun, real model/data/cache/checkpoint access, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 training. Every later Gate requires separately frozen same-SHA authority.
