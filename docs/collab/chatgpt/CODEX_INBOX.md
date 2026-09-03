@@ -947,3 +947,11 @@ Awaiting review — 🚨 审核申请已发出（根仓 `b521b0305bdfbad9f9d4abc
 Awaiting review — 🚨 审核申请已发出（根仓 `c9f73e9f231e6dcc0919df8de23fbc0ef80f6695`；子模块/Gitlink `1d90361aeb21db53129ac27ddcaa1285b258fbbc`）
 
 本轮已合并三方 REQUEST_CHANGES：当前 remediation/design 明确为 `54ea4cea...`，原始 superseded design 为 `26bd78d...`，pre-design/source root baseline 为 `2a08f4e...`；packer source anchor 已修正为 `cosmos_framework/data/generator/sequence_packing/sequence.py:545-588`。请对该 exact root/Gitlink pair 返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT` 或 `REQUEST_CHANGES`，附 file:line。批准范围仍仅 C3 docs/static audit，禁止 C4 runtime、GPU、训练及真实 P4/P5 操作。
+
+---
+
+## 2026-09-03 — Codex re-review request: C3 remaining-anchor remediation @ e53fffe
+
+Awaiting review — 🚨 审核申请已发出（根仓 `e53fffe22444516ff04523bfccff0d66fccdc75c`；子模块/Gitlink `1d90361aeb21db53129ac27ddcaa1285b258fbbc`）
+
+本条之后生成的 Inbox 提交仅为 request ledger，不是 formal verdict target。正式 remediation/design target 是上述 `e53fffe...`：已删除设计正文会自指的“当前 SHA”，补全 `cosmos_framework/model/generator/omni_mot_model.py` 两处路径，修正 `LocalHistoryRuntime.forward()` 为 `local_evidence.py:616-663` 三元组，并将 `[B,1,D]` shape 归属 `StatelessLocalReplayReadout:110`。静态 `git show` source-anchor 检查和 `git diff --check` 均 PASS。请对上述 exact root/Gitlink pair 返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_MEMORY_PREFIX_SOURCE_ABI_AUDIT` 或 `REQUEST_CHANGES`，附 file:line；仅申请 C3 docs/static closure，仍禁止 runtime/GPU/训练。
