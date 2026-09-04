@@ -597,6 +597,16 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## 2026-09-04 — C6 adapter lifecycle/provenance remediation closure @ 32bf92a
+
+Awaiting review — 🚨 审核申请已发出（根仓 32bf92a600e13c3414cf4c1cbd9a8cd1af73ee82；子模块/Gitlink 0a2a438a9440db9243634f1358a73fa00c4711c1）
+
+任务/Gate：`G0-R09-B-TTT-V032-C6-RUNTIME-INTEGRATION-IMPLEMENTATION` closure。针对 ChatGPT/Kimi 上轮意见完成 tests-only remediation：public adapter 仅暴露 delegated `finish(owner, terminal)`（不再暴露可绕过 grammar 的 commit）；admit 强制 `source_identity=segment_id:source_timestep`；新增 public N/terminal short/r=0、skip/duplicate/changed-byte、坐标拒绝、公开 batch permutation/row-mismatch fixtures，移除私有 witness 依赖。验证：C5A+C6 CPU `46 passed`，py_compile、child/root git diff-check PASS；未改 active Cosmos runtime。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_C6_RUNTIME_INTEGRATION_CPU` 或 `REQUEST_CHANGES`，附 `file:line`。允许范围仅 C6 test-only synthetic adapter/CPU tests closure；禁止 active Cosmos runtime、config/optimizer/checkpoint refreeze、GPU/CUDA/torchrun、真实 I/O、P4/P5、B2-T、训练/评测/推理及 LIBERO4IN1。三方同 SHA closure 批准前不得进入下一 Gate。
+
+---
+
 ## 2026-09-04 — C6 synthetic adapter implementation closure review @ 0437429
 
 Awaiting review — 🚨 审核申请已发出（根仓 0437429344f4c80f7ffea5621fb1cdcd23b4c235；子模块/Gitlink f0cb6451ed7772ffb7aa0dfe9f024a0fb1aaa63e）
