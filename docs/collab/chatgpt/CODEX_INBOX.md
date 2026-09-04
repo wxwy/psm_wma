@@ -909,3 +909,10 @@ Awaiting review — 🚨 审核申请已发出（根仓 78bb329fe8cd82dee74cd3c2
 任务/Gate：`G0-R09-B-TTT-V032-PRODUCTION-RUNTIME-CONTRACT-IMPLEMENTATION`。依据已批准 v0.3，仅实现 production-safe shared `runtime_authority.py::ProductionRuntimeAuthority`、C5A/C6 test-only facade migration、`production_runtime_adapter.py` 与相邻 CPU tests；C5A+C6+production CPU=`60 passed`，py_compile 与 child/root `git diff --check` PASS。未改 active Cosmos wiring/config/optimizer/checkpoint，未执行 GPU、真实 I/O、训练/评测/推理。
 
 请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_PRODUCTION_RUNTIME_CONTRACT` 或 `REQUEST_CHANGES`，附 `file:line`。验收须检查 C5A/C6 等价 facade、唯一 authority、production adapter one-step/reset/disabled seam 与禁止范围；三方同 SHA closure 批准前不得进入 config/checkpoint、GPU 或训练 Gate。
+## 2026-09-04 — config/optimizer/checkpoint design v0.1 @ 8b54b1f
+
+Awaiting review — 🚨 审核申请已发出（根仓 8b54b1f9a5f759ececa42098337a4ae9cc2e2a57；子模块/Gitlink 4f857ea430d6fb3c35ccbadc3933d552f8f9af8a）
+
+任务/Gate：`G0-R09-B-TTT-V032-CONFIG-OPTIMIZER-CHECKPOINT-DESIGN`。设计文档冻结 `ttt_tbptt_steps` 默认16且可配置、`inner_lr`、`K_local` 1/4/8、runtime evidence=1、四组 slow selector、fast W_t/pending/epoch/replay 不进 checkpoint、strict-load/config identity 与显式 warm-start边界。未修改配置/生产训练路径，未执行真实 checkpoint I/O、GPU、训练。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_CONFIG_OPTIMIZER_CHECKPOINT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权该 contract 的 CPU/static implementation；禁止 active trainer、真实 checkpoint、GPU/CUDA/torchrun、训练/评测/推理、P4/P5、B2-T、LIBERO4IN1。三方同 SHA批准前不得实现。
