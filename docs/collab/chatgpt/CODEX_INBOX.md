@@ -597,6 +597,16 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## 2026-09-04 — C6 runtime integration design review @ efdf29a
+
+Awaiting review — 🚨 审核申请已发出（根仓 efdf29ad64f23d0b22f0e69723c6035052861aed；子模块/Gitlink 0e904111c189bba46105cfe79c61301f4759c796）
+
+任务/Gate：`G0-R09-B-TTT-V032-C6-RUNTIME-INTEGRATION-DESIGN`。设计文档：`docs/build/PSM-WMA_R09_B_TTT_v032_C6_runtime_integration_design_v0.1_2026-09-04.md`。本设计仅冻结 C5A owner/segment/epoch 生命周期在 runtime adapter 的映射、`[B,K_local,32] -> [B,K_local,2048]` Memory Prefix 接口、outer-gradient/no-grad 边界、Local disabled parity 与最小允许文件范围；未修改生产代码，未执行项目代码/GPU/训练。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C6_RUNTIME_INTEGRATION_CPU` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权 synthetic CPU runtime contract 及相邻测试；明确禁止 Cosmos 生产接线、config/optimizer/checkpoint refreeze、GPU/CUDA/torchrun、真实数据/cache/checkpoint I/O、P4/P5、B2-T、训练/评测/推理及 LIBERO4IN1。三方同 SHA 批准前不得实现。
+
+---
+
 ## 2026-09-04 — C5A graph-bound backward fixtures closure re-request @ 38f4633
 
 Awaiting review — 🚨 审核申请已发出（根仓 38f4633e4642189838bc71d87af4e5af1e05c767；子模块/Gitlink 0e904111c189bba46105cfe79c61301f4759c796）
