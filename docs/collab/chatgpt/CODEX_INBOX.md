@@ -916,3 +916,10 @@ Awaiting review — 🚨 审核申请已发出（根仓 8b54b1f9a5f759ececa42098
 任务/Gate：`G0-R09-B-TTT-V032-CONFIG-OPTIMIZER-CHECKPOINT-DESIGN`。设计文档冻结 `ttt_tbptt_steps` 默认16且可配置、`inner_lr`、`K_local` 1/4/8、runtime evidence=1、四组 slow selector、fast W_t/pending/epoch/replay 不进 checkpoint、strict-load/config identity 与显式 warm-start边界。未修改配置/生产训练路径，未执行真实 checkpoint I/O、GPU、训练。
 
 请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_CONFIG_OPTIMIZER_CHECKPOINT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权该 contract 的 CPU/static implementation；禁止 active trainer、真实 checkpoint、GPU/CUDA/torchrun、训练/评测/推理、P4/P5、B2-T、LIBERO4IN1。三方同 SHA批准前不得实现。
+## 2026-09-04 — config/optimizer/checkpoint design v0.2 remediation @ 93c9974
+
+Awaiting review — 🚨 审核申请已发出（根仓 93c9974266a58a2cd54ab3e524bd2d8e0c2ab6d0；子模块/Gitlink 4f857ea430d6fb3c35ccbadc3933d552f8f9af8a）
+
+任务/Gate：`G0-R09-B-TTT-V032-CONFIG-OPTIMIZER-CHECKPOINT-DESIGN`。针对 ChatGPT v0.1 两项 HIGH 完成 docs-only remediation：明确 `inner_lr=0.1` 默认与 config identity；冻结唯一 `local_history_runtime` registered `nn.Module` owner，runtime/authority 必须引用同一 encoder/recurrent_backend 对象，禁止副本，并加入 named_parameters/object-identity/slow-only strict checkpoint 验收。未改配置/生产训练路径，未执行真实 checkpoint I/O、GPU、训练。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_CONFIG_OPTIMIZER_CHECKPOINT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权该 contract 的 CPU/static implementation；禁止 active trainer、真实 checkpoint、GPU/CUDA/torchrun、训练/评测/推理、P4/P5、B2-T、LIBERO4IN1。三方同 SHA批准前不得实现。
