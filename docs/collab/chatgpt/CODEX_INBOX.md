@@ -172,7 +172,7 @@ Review-file commit:
 - **Gate/task**: `G0-R09-B-TTT-V032-MEMORY-PREFIX-CPU-IMPLEMENTATION` C4 remediation closure.
 - **Formal target**: root `e15461014ca5c9ee0c37e8290e927cd8f4e9ff04` on `V2`; child/Gitlink `cosmos-framework@dd6b7dc4ac0713736dca61c5a01de6932b7e5576` on `v2` (child pushed before root; `git ls-tree` verified).
 - **Prior same-SHA verdicts consumed**: ChatGPT `f184fca` `REQUEST_CHANGES`; MM/Kimi had approved `0dace8d/f98b719`. This is a new implementation pair and requires new independent three-party verdicts.
-- **Scope delivered**: child changes only `cosmos_framework/model/generator/mot/memory_prefix_test.py`; no production code changed. New synthetic CPU fixtures drive (1) real `dispatch_attention -> two_way_attention` with spied deterministic primitive, proving AR receives no Prefix K/V and DM performs exactly one `[MEM,AR,DM]` joint softmax; (2) real `PackedAttentionMoT.forward` dispatch seam, proving actual `k_proj_moe_gen -> k_norm_moe_gen` positionless `K_MEM` delivery and no Memory query projection; (3) owner `Cosmos3VFMNetwork.forward` guards for Prefix+`MemoryState`, CUDA graph and replicated attention-I/O before `build_packed_sequence`; (4) native action-generation Prefix/No-Memory packing parity across geometry, indexes, loss/condition metadata and prepared metadata, with Local payload as the only intended difference.
+- **Scope delivered**: child changes only `cosmos_framework/model/generator/mot/memory_prefix_test.py`; no production code changed. New synthetic CPU fixtures drive (1) real `dispatch_attention -> two_way_attention` with spied deterministic primitive, proving AR receives no Prefix K/V and DM performs exactly one `[MEM,AR,DM]` joint softmax; (2) real `PackedAttentionMoT.forward` Prefix seam, proving actual `k_proj_moe_gen -> k_norm_moe_gen` positionless `K_MEM` delivery and no Memory query projection; (3) owner `Cosmos3VFMNetwork.forward` guards for Prefix+`MemoryState`, CUDA graph and replicated attention-I/O before `build_packed_sequence`; (4) native action-generation Prefix/No-Memory packing parity across geometry, indexes, loss/condition metadata and prepared metadata, with Local payload as the only intended difference.
 - **Evidence**: `cosmos-framework/.venv/bin/python -B -m pytest -q cosmos_framework/model/generator/mot/memory_prefix_test.py` = `20 passed` (only existing unregistered-L0 warnings); C4 seven-file `py_compile` PASS; child and root `git diff --check` PASS. CPU-only synthetic tensors; no GPU/CUDA/torchrun, external data/model/latent-cache/checkpoint I/O, training, evaluation or inference.
 - **Acceptance requested**: close ChatGPT `f184fca` HIGH-1 (successful production-route attention/K delivery), HIGH-2 (owner fail-before-work), MEDIUM-1 (native-generation packing parity), and verify no scope drift.
 - **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_MEMORY_PREFIX_CPU_CONTRACT` or `REQUEST_CHANGES` with severity and exact `file:line`.
@@ -631,5 +631,37 @@ Detailed review:
 
 Detailed review commit:
 `12d40bcdec4383a978054b619389fdc1429286d5`
+
+Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/trainer/inference/parallelization; GPU/CUDA/torchrun; real model/data/cache/checkpoint I/O; training/evaluation/inference; P4/P5; B2-T; LIBERO4IN1.
+
+---
+
+## 2026-09-04 — ChatGPT re-review: C5A owner-batch remediation @ b371cf1
+
+**Verdict: REQUEST_CHANGES**
+
+Formal target:
+- root remediation SHA: `b371cf1f0b2e8a5846b3cf76df609338f96f56a5`
+- child/Gitlink: `cebe8a95b705b120cee21a4f047acba60d239a48`
+- request/bookkeeping SHA: `d9cce5ed2c76006d70625e5a97131232b5b2dee1`
+- latest routing/bookkeeping HEAD observed before review write: `f36e66794ab830bbbc6ff025cee89e692b9387b6`
+- frozen design authority: `bbe0444eaa8c08f05ca5a5eea0e331253d263592`
+
+Closed relative to the prior target:
+- direct `admit -> commit` without materialization is now rejected by a transaction phase guard;
+- reset now clears owner committed replay/reverse-index state before incrementing an owner epoch counter;
+- an owner-list `materialize_many()` surface was added and submitted isolated CPU evidence increased to `6 passed`.
+
+Blocking findings:
+1. **HIGH — exact-issued capability authenticity remains missing.** `c5a_owner_segment.py:26-61,95-112`: `_seal` remains reusable and there is no authority registry/token binding the exact issued owner/source/timestep/schema/bytes/epoch. Same-seal field tampering can remain valid.
+2. **HIGH — real backward/commit atomicity and exactly-once materialization are not enforced.** `c5a_owner_segment.py:125-147,156-196`: `materialize()` only marks `MATERIALIZED_PENDING`; `commit()` itself labels it `BACKWARD_OK` without observing ordinary outer backward, repeated materialize is allowed, and `finish()` rematerializes then commits.
+3. **HIGH — epoch counter is not bound to capability authority.** `c5a_owner_segment.py:80-94,95-123,174-184`: reset clears caches but stale old-epoch capabilities remain acceptable because epoch is absent from capability/keys/admission validation.
+4. **HIGH — `materialize_many()` is still repeated B=1 work plus output stacking, not the frozen B>1 gather/scatter contract; evidence is vacuous/incomplete.** `c5a_owner_segment.py:125-154`, `c5a_owner_segment_test.py:66-76`: the test runs only `[a,b]` and asserts `shape[0]==2`; it does not test `[b,a]`, owner-keyed equivalence, row mismatch, a real C5 `[B,256]` input, valid/done rows, or the rest of the v0.6 matrix.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-04_R09_B_TTT_v032_C5A_owner_batch_remediation_b371cf1.md`
+
+Detailed review commit:
+`1abff0c87798969c462eb8148e845c4dad845fd8`
 
 Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/trainer/inference/parallelization; GPU/CUDA/torchrun; real model/data/cache/checkpoint I/O; training/evaluation/inference; P4/P5; B2-T; LIBERO4IN1.
