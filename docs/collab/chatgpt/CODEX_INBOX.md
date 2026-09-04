@@ -282,6 +282,19 @@ Review-file commit:
 
 ---
 
+## 2026-09-04 — C5 transition CPU tests-only remediation closure request
+
+- **Gate**: `G0-R09-B-TTT-V032-C5-FAST-STATE-TRANSITION-IMPLEMENTATION`.
+- **Formal target**: root `0c5b3d253a7a06bff804f41fc8915e1063ae5ab3`; child/Gitlink `cosmos-framework@6de8f2056c62cb10c89791d70335a44a6ab232fc`.
+- **Prior same-target conclusions merged before remediation**: ChatGPT `627cf2b` HIGH and Kimi MEDIUM-1/2 both found only missing transition-level test evidence; MM gave `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5_FAST_STATE_TRANSITION_CPU`. No production defect or scope expansion was reported.
+- **Exact delta**: child changes only adjacent `local_evidence_test.py`; `local_evidence.py` is byte-identical to `4e34690`. The remediation replaces the vacuous `torch.equal(x, x.detach())` check with direct autograd tests for one detached boundary row versus one live non-boundary row, while separately proving the current boundary token retains finite/nonzero gradients to all core slow parameters. It additionally covers `N=1`, default `N=16`, non-default `N=3`, reset-plus-invalid isolation, all requested counter/init grammar failures before a monkeypatched `core.step_many()`, and wrapper `named_parameters()` ownership.
+- **Evidence**: synthetic CPU `.venv/bin/python -B -m pytest -q cosmos_framework/model/generator/mot/local_evidence_test.py` = `36 passed`; two-file `py_compile`; child/root `git diff --check` PASS. No GPU, network data/model/checkpoint I/O, training, evaluation, or inference was executed.
+- **Acceptance requested**: verify all ChatGPT/Kimi findings are closed by the test-only delta, the runtime state remains explicit non-parameter data, and no scope drift exists.
+- **Forbidden**: C5A chronology/owner implementation; model/packer/attention/config/optimizer/checkpoint/trainer/inference/parallelization; MemoryState mixing; GPU/CUDA/torchrun; real I/O; training/eval/inference; P4/P5/B2-T/LIBERO4IN1.
+- **Literal verdict requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5_FAST_STATE_TRANSITION_CPU` or `REQUEST_CHANGES` with severity and `file:line`.
+
+---
+
 ## 2026-09-04 — ChatGPT re-review: C5 fast-state transition v0.2 @ d0f29f3
 
 **Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5_FAST_STATE_TRANSITION_CPU**
