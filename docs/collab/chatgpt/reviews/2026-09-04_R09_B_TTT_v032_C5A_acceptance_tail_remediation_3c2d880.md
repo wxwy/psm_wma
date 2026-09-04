@@ -31,11 +31,23 @@ The current tests-only remediation materially closes most of the prior acceptanc
 - pending replay after `valid=False` now proves `present=False` and `ReplayRecord.value.grad_fn is None`;
 - stale old-epoch capability rejection plus fresh same-owner/same-source-identity/same-timestep capability admission in epoch 1 is directly covered;
 - abort after an already-committed owner now snapshots and compares committed fast state, `_last_timestep`, reverse identity index, epoch and committed-key set;
-- production code remains unchanged, and no new production defect was found.
+- production code remains unchanged in this remediation.
 
-## Finding
+## Findings
 
-### HIGH — three explicit acceptance details from the prior review remain unproven; remediation is still tests-only
+### 1. HIGH — `valid=False` rows still advance committed chronology/replay despite zero C5 execution
+
+**Location:**
+- `cosmos_framework/model/generator/mot/c5a_owner_segment.py:190-245`
+- especially `materialize_many()` replay population and `commit()` chronology promotion.
+
+**Root cause:** `scan_segment_many()` receives the row-level `valid` mask and `c5_write_count` increments only by `valid.sum()`, so an invalid row performs zero C5 write. However, after the scan the wrapper still creates a `ReplayRecord` for every pending row, including `valid=False`, and `commit()` unconditionally sets `_last_timestep[owner] = pending.rows[-1].source_timestep` and promotes the whole pending replay/reverse index. Thus an owner row can consume/commit chronology for a transition that did not execute a C5 update. The new test explicitly demonstrates `present=False` for such a row but then stops before checking commit semantics.
+
+**Contract violation:** the frozen v0.6 owner/chronology contract requires one authoritative chronology transition per admitted/materialized causal source and fail-closed owner semantics. A masked-out row cannot silently become an ordinary committed transition while `c5_write_count` proves no C5 work occurred, unless the design explicitly defines `valid=False` as a consumed chronology event with a separate proof model. No such exception is frozen.
+
+**Acceptance condition:** freeze and implement one coherent rule. Preferred: `valid=False` must not advance `_last_timestep`, committed replay or reverse index for that owner and must not be exposed as an ordinary committed source transition. If the intent is instead "consumed but no C5 update", that semantics must be explicitly added to the design with a distinct committed presence/consumed contract before closure. Add a true B>1 row-selective fixture that commits one `valid=True` and one `valid=False` owner and verifies per-owner fast state, `_last_timestep`, replay/index contents and write count.
+
+### 2. HIGH — three explicit acceptance-tail details remain unproven
 
 **Location:**
 - `cosmos_framework/model/generator/mot/c5a_owner_segment_test.py:248-291`
@@ -43,15 +55,19 @@ The current tests-only remediation materially closes most of the prior acceptanc
 - frozen authority: `docs/build/PSM-WMA_R09_B_TTT_v032_c5a_chronology_owner_segment_design_v0.6_2026-09-04.md`
 
 **Remaining direct gaps:**
-1. **Pending replay integrity/zero-write is only partially asserted.** `test_pending_invalid_replay_preserves_presence_and_stateless_readout_is_unused()` proves `present=False` and `value.grad_fn is None`, but it does not assert `tuple(replay.value.shape) == replay.shape`, does not compare the replay value/metadata to the materialized row, and does not snapshot/assert `c5_write_count` is unchanged by the exact pending replay lookup. The prior acceptance condition explicitly required pending replay value/shape/presence integrity plus zero extra C5 write.
-2. **Changed-byte fresh-epoch reuse is still missing.** `test_epoch_allows_same_identity_fresh_capability_and_rejects_stale()` covers the fresh epoch-1 capability only with the same source bytes. The prior acceptance condition explicitly required the same owner + same source identity + same timestep across the new epoch for both same bytes and changed bytes, while the old-epoch capability rejects before Encoder/C5. Add a second fresh epoch case whose source bytes differ and prove admission is a new epoch-local row rather than stale replay/conflict.
-3. **Backward-failure rollback lacks the exact committed-state snapshot.** `test_abort_exact_snapshot_preserves_committed_owner_state()` proves the abort half. The existing `test_backward_failure_does_not_open_commit_phase()` proves phase/commit rejection, but does not snapshot and compare committed fast state, `_last_timestep`, committed replay, reverse index and epoch before/after the failed backward. The prior acceptance condition required failed/aborted pending work to leave committed C exactly unchanged.
+1. **Pending replay integrity/zero-write is only partially asserted.** The new pending replay test proves `present=False` and `value.grad_fn is None`, but it does not assert `tuple(replay.value.shape) == replay.shape`, does not compare value/metadata to the materialized row, and does not snapshot/assert `c5_write_count` is unchanged by the exact pending replay lookup.
+2. **Changed-byte fresh-epoch reuse is still missing.** The new epoch test covers same owner/source identity/timestep with the same source bytes in epoch 1, but not a fresh new-epoch capability with changed source bytes. The old-epoch capability must reject before Encoder/C5 in both cases.
+3. **Backward-failure rollback lacks exact committed-state snapshot.** Abort now has a committed-state snapshot, but the failing-backward path only proves phase/commit rejection. It still needs before/after equality for committed fast state, `_last_timestep`, committed replay, reverse index and epoch.
 
-**Acceptance condition:** keep production code unchanged unless these fixtures expose a defect. Add direct tests for the three points above, retain all current v0.6 coverage, rerun the isolated selector and report the exact count plus py_compile and child/root diff-check. If those pass without revealing a production issue, this Gate should be ready for closure review.
+**Acceptance condition:** keep production code unchanged for these evidence items unless stronger fixtures expose another defect. Add direct tests for the three points above, retain all current v0.6 coverage, rerun the isolated selector and report the exact count plus py_compile and child/root diff-check.
 
 ## Evidence note
 
 Root status records isolated CPU pytest = `32 passed`, plus py_compile and diff-check PASS. These commands were not independently rerun in this connector environment and are treated as submitted evidence.
+
+## Required next submission
+
+The next remediation must address Finding 1 in production semantics/code (or formally reopen/freeze the design if a consumed-invalid transition is intentional) and complete the remaining evidence in Finding 2. A new child/root implementation pair requires fresh same-SHA review.
 
 Still prohibited until fresh same-SHA closure:
 - production/runtime Cosmos wiring;
