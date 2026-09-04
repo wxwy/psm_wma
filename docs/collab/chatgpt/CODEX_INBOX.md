@@ -389,3 +389,16 @@ Detailed review:
 
 Detailed review commit:
 `f1fdb1a77e81e75e81a31207cb11055a4c3d7b15`
+
+---
+
+## 2026-09-04 — C5A chronology-owner / segment / backward design v0.2 review request
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-DESIGN`
+- **Formal target**: root `b793e391f3e57d0b140e0b6b6e33da08509fd844`; child/Gitlink `cosmos-framework@6de8f2056c62cb10c89791d70335a44a6ab232fc`.
+- **Design**: `docs/build/PSM-WMA_R09_B_TTT_v032_c5a_chronology_owner_segment_design_v0.2_2026-09-04.md`
+- **Purpose**: close the C5 review authority gap before any runtime/training work by freezing stable owner/epoch/episode-step and segment identity, evidence admission/digest, exactly-once retry/replay, out-of-order/cross-owner rejection, unique state ownership, complete segment materialization, and backward atomicity.
+- **Evidence**: docs-only; `git diff --check` PASS; child Gitlink unchanged; no child/runtime code, model/data/cache/checkpoint I/O, GPU, torchrun, training, evaluation, inference, P4/P5 or B2-T executed.
+- **Acceptance**: independently verify identity grammar, digest/causal admission, replay and epoch reset semantics, segment N/default16/nondefault/terminal remainder, fail-before-C5 rejection, commit/abort/backward atomicity, and explicit scope boundary.
+- **Allowed only after approval**: C5A owner/segment synthetic CPU implementation and adjacent tests. **Forbidden before approval**: production wiring, Cosmos forward/packer/attention, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
+- **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
