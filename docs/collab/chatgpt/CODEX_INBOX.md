@@ -415,3 +415,40 @@ Detailed review commit:
 - **Acceptance**: verify the two-phase state machine and rollback invariants, capability authority/forgery resistance, per-owner digest and batch permutation, pending exact replay/no second write, terminal/reset ordering and remainder matrix, ordinary outer backward with inner meta-gradient, and explicit scope boundary.
 - **Allowed only after approval**: C5A owner/segment synthetic CPU implementation and adjacent tests. **Forbidden before approval**: production wiring, Cosmos forward/packer/attention, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
 - **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
+## 2026-09-04 — ChatGPT review: C5A chronology-owner / segment / backward design @ b793e39
+
+**Verdict: REQUEST_CHANGES**
+
+Formal target:
+- root design SHA: `b793e391f3e57d0b140e0b6b6e33da08509fd844`
+- child/Gitlink: `6de8f2056c62cb10c89791d70335a44a6ab232fc`
+- request/ledger SHA: `679f615109082c2142d4b28489636f461b43fcd5`
+- remote `V2` HEAD at final pre-write check: `ff59d59c31e280eef290aadb30c80800aa4bf266`
+
+Blocking findings:
+1. **HIGH — committed owner state vs pending segment state is not separated.** `c5a_chronology_owner_segment_design_v0.2_2026-09-04.md:16-24,43-45,50-52,56`. Strict `episode_step == last_step+1` admission cannot advance a multi-transition pending segment without advancing authoritative state/cursors early; but early advance violates rollback/no-partial-commit if materialization/backward later fails. Freeze explicit committed record + pending transaction state/cursors/ledger/cache, pending replay, deterministic segment progression, one materialization lifecycle, atomic promotion after one successful outer backward, and exact discard on abort/failure/duplicate commit.
+2. **HIGH — causal/provenance admission is caller-asserted and the digest schema is inconsistent with per-row ownership.** `...md:27,31-39,62-67`. `evidence_complete` / `causal_visible` booleans and a caller digest do not prove completed-causal/non-GT provenance; `source_timestep` is required by the prose/tests but absent from the envelope; a digest over full `[B,256]` conflicts with a one-row logical-owner key and batch permutation. Freeze a trusted upstream admission authority/capability, explicit source timestep, canonical owner-local digest/binding, and identity-based batch gather/scatter/permutation semantics.
+3. **HIGH — terminal remainder and done/reset ordering are referenced but not defined.** `...md:46,50-52,65-66`. The design allows `<N` terminal remainder but never states its closure/commit rule, while done/reset immediately creates a new epoch and clears the old ledger. Freeze exact old-epoch terminal remainder materialize/backward/commit ordering, failure/retry behavior, new-epoch visibility point, reset/detach semantics, and terminal/nonterminal short-segment rules.
+4. **MEDIUM — outer `backward(create_graph=True)` conflates inner TTT higher-order graph construction with the outer task backward.** `...md:52,68`. The inner fast-weight `autograd.grad` needs `create_graph=True`; the outer loss normally should use ordinary `backward()` unless a further derivative is explicitly required. Freeze these separately and prove slow-parameter gradient reachability without retaining an unnecessary outer higher-order graph.
+
+Accepted direction:
+- C5A remains the correct mandatory predecessor for chronology/owner/segment authority;
+- logical owner identity, exact replay/no-second-write, fail-closed substitution/bypass and the closed C5 single-transition primitive remain valid directions;
+- remediation is root docs-only. No child/runtime/config/GPU/training change is authorized.
+
+Allowed remediation only:
+- root docs-only C5A design/status/ledger updates and static/diff-check evidence.
+
+Still prohibited:
+- C5A implementation/runtime wiring, C6+, Cosmos forward/packer/attention, config/optimizer/checkpoint/trainer/inference/parallelization, native MemoryState mixing, GPU/CUDA/torchrun, real I/O, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1.
+
+A remediated design is a new SHA and requires fresh same-SHA three-party review.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-04_R09_B_TTT_v032_C5A_chronology_owner_segment_design_b793e39.md`
+
+Review-file commit:
+`a7124a7c4ae3e54f419a8df70e8d9f4a55add5ec`
