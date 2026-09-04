@@ -89,6 +89,7 @@
 
 1. 申请必须先 append 到 `docs/collab/chatgpt/CODEX_INBOX.md`；若预计 append 后超过 128 KiB，先按 Inbox rollover 规则归档/重建，再把申请 append 到新的 live Inbox。申请必须写清任务/Gate、根仓提交号、子模块提交号与 Gitlink、证据路径、验收条件、允许/禁止范围，以及明确的 verdict 请求。
 2. 同一申请必须主动发送到 MM 和 Kimi 的指定 `tmux` pane。发送时先用 `tmux send-keys -l` 写入完整文本，再单独执行 `tmux send-keys Enter`；不得把“文本已显示在输入框”当作“已发送”。随后必须 `tmux capture-pane` 回读，确认申请已提交且会话进入处理或已回复状态。
+   - 固定节奏：写入完整文本后与单独的 `Enter` 之间至少间隔 1 秒；Enter 后必须 capture-pane 回读确认。
 3. 用户可见的申请标记固定为 `🚨 审核申请已发出（根仓 <hash>；子模块/Gitlink <hash>）`，两个提交号不得省略。
 4. 申请发出后，每五分钟由 Codex 原生轮询三路：canonical live ChatGPT Inbox/`reviews/`、MM pane、Kimi pane；每次轮询记录申请是否送达、是否开始处理、最终 verdict 与 `file:line` 意见。普通轮询不得反复读取完整 Inbox archive。
 5. 审核等待期间任务状态保持 `REVIEW`，禁止越过该 Gate。收到全部所需审核结论后，先处理 `REQUEST_CHANGES`；全部批准后才更新 `SESSION.md`、`TODO.md` 并提交。若会话不存在、发送失败或未提交，立即重发并在 `SESSION.md` 记录，不能声称申请已发出。
