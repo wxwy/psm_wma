@@ -597,6 +597,16 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## 2026-09-04 — C6 runtime integration design v0.2 review @ 6ac74c5
+
+Awaiting review — 🚨 审核申请已发出（根仓 6ac74c5588a03304b590e803e6179537d5381317；子模块/Gitlink 0e904111c189bba46105cfe79c61301f4759c796）
+
+任务/Gate：`G0-R09-B-TTT-V032-C6-RUNTIME-INTEGRATION-DESIGN`。v0.1 的 ChatGPT/Kimi `REQUEST_CHANGES` 已统一整改，MM approve 保留。新文档 `docs/build/PSM-WMA_R09_B_TTT_v032_C6_runtime_integration_design_v0.2_2026-09-04.md` 明确：C6 仅 synthetic test-only adapter，直接委托已关闭 `C5AOwnerSegmentCPU`（不重实现 authority）；整段 `COLLECT_RAW -> materialize once -> segment outer loss backward -> commit` 与 N=1/3/16、terminal r=0..N；segment loss 定义；synthetic owner/source/epoch provenance authority；`[B,K_local,32]` prefix 形状与统一禁止范围。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C6_RUNTIME_INTEGRATION_CPU` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权 test-only synthetic adapter 与 CPU tests；禁止 active Cosmos runtime、config/optimizer/checkpoint refreeze、GPU/CUDA/torchrun、真实 I/O、P4/P5、B2-T、训练/评测/推理及 LIBERO4IN1。三方同 SHA 批准前不得实现。
+
+---
+
 ## 2026-09-04 — C6 runtime integration design review @ efdf29a
 
 Awaiting review — 🚨 审核申请已发出（根仓 efdf29ad64f23d0b22f0e69723c6035052861aed；子模块/Gitlink 0e904111c189bba46105cfe79c61301f4759c796）
