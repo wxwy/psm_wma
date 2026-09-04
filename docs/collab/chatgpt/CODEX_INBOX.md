@@ -597,6 +597,90 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## 2026-09-04 — C5A owner/segment implementation closure re-request @ b039c56
+
+Awaiting review — 🚨 审核申请已发出（根仓 b039c56f4b264dbd04fae3980727b64510583c03；子模块/Gitlink 4ae44604eeb63f2ebc258f8d73fb2d0a12e82e76）
+
+- **Gate/task**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION` closure remediation.
+- **Frozen design**: v0.6 `bbe0444eaa8c08f05ca5a5eea0e331253d263592`.
+- **Scope**: only synthetic CPU C5A wrapper/tests. Exact issuer registry authentication and epoch binding; explicit `COLLECT_RAW -> MATERIALIZED_PENDING -> BACKWARD_OK -> COMMITTED` lifecycle with `mark_backward_done`, duplicate-materialize/commit rejection, true B>1 gather/scan/scatter with `[B,T] valid` and `[B] done_before`, rollback and outer-gradient fixtures, N=1/3/16 and terminal remainder matrix.
+- **Evidence**: child `.venv/bin/python -m pytest --noconftest cosmos_framework/model/generator/mot/c5a_owner_segment_test.py -q` = `14 passed`; py_compile and child/root `git diff --check` PASS. No production/runtime wiring, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, P4/P5, B2-T, LIBERO4IN1 or training.
+- **Acceptance requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`; review the exact root/child pair above.
+
+---
+
+## 2026-09-04 — C5A replay/atomicity remediation closure re-request @ c897b3a
+
+Awaiting review — 🚨 审核申请已发出（根仓 c897b3a5b7e2992f00f959a316158a5e0dc21c03；子模块/Gitlink 7d22b63cba11d642214a15c8a3ccd0bb81a9865b）
+
+- **Gate/task**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION` closure.
+- **Prior three-way review**: ChatGPT `REQUEST_CHANGES` review `40b1079` on `b039c56/4ae4460`; Kimi and MM approved that same pair. All findings were evaluated before this remediation.
+- **Remediation**: unseen admissions reject after materialization; exact detached `ReplayRecord(value, shape, present)` is retained for pending/committed replay; only wrapper-owned `backward_and_mark(loss)` can open `BACKWARD_OK` and failed backward leaves phase unchanged; stateful `done_before` requires explicit owner reset/epoch boundary.
+- **Evidence**: child isolated C5A selector `17 passed`; py_compile and child/root `git diff --check` PASS. Scope remains only two synthetic CPU files; no production/runtime wiring, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, P4/P5, B2-T, LIBERO4IN1 or training.
+- **Acceptance requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line` against this exact root/child pair.
+
+---
+
+## 2026-09-04 — C5A validity chronology-hole remediation closure re-request @ bfae469
+
+Awaiting review — 🚨 审核申请已发出（根仓 bfae469715566a0c82ad80a5e58f3227ab2be50a；子模块/Gitlink 958bb20b96578acc92a6375899855a5b49274e41）
+
+- **Gate/task**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION` closure.
+- **Prior review**: ChatGPT `REQUEST_CHANGES` review `c97e590` on `f030e36/26b08e8`; Kimi retained graph-negative MEDIUM; MM no HIGH. All findings were evaluated.
+- **Remediation**: enforce per-owner validity as a contiguous prefix before Encoder/C5; `[True,False,True]` rejects with zero writes and no phase mutation; legal `[True,True,False]` commits only contiguous valid chronology, replay and index.
+- **Evidence**: child isolated selector `33 passed`; py_compile and child/root `git diff --check` PASS. Only synthetic CPU C5A files changed; no runtime/GPU/training/real I/O/P4/P5/B2-T/LIBERO4IN1.
+- **Acceptance requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line` against this exact root/child pair.
+
+---
+
+## 2026-09-04 — C5A invalid-row chronology remediation closure re-request @ f030e36
+
+Awaiting review — 🚨 审核申请已发出（根仓 f030e36b3f866e38793533512bfc5bbda9f98743；子模块/Gitlink 26b08e8b1a8861ea8903027b6bef3e9eda1509e2）
+
+- **Gate/task**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION` closure.
+- **Prior review**: ChatGPT `REQUEST_CHANGES` review `903f3cd` on `3c2d880/87bd7f7`; Kimi retained MEDIUM graph-negative fixtures; MM approved. All findings were evaluated.
+- **Remediation**: pending stores per-row validity; commit promotes fast state, chronology, replay and reverse index only for `valid=True` rows; invalid rows remain non-ordinary `present=False` and do not advance owner chronology or C5 write count. Added mixed-valid B>1 commit assertions and pending replay shape/presence/zero-write checks.
+- **Evidence**: child isolated selector `32 passed`; py_compile and child/root `git diff --check` PASS. Only synthetic CPU C5A files changed; no production/runtime wiring, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, P4/P5, B2-T, LIBERO4IN1 or training.
+- **Acceptance requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line` against this exact root/child pair.
+
+---
+
+## 2026-09-04 — C5A final acceptance-fixture remediation closure re-request @ 3c2d880
+
+Awaiting review — 🚨 审核申请已发出（根仓 3c2d8808dd04d5d3a7a49aaf3b2236d493994a05；子模块/Gitlink 87bd7f71ac6eddbcf753f0b2365eea4747145b7b）
+
+- **Gate/task**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION` closure.
+- **Prior review**: ChatGPT `REQUEST_CHANGES` review `db1cb84` on `40931e6/be121a4`; Kimi/MM results were consumed before this tests-only remediation.
+- **Remediation**: added stateless readout spy=0; pending invalid ReplayRecord `present=False`/graph-free assertion; same owner/source identity/timestep fresh-vs-stale epoch boundary; exact before/after committed state, chronology, replay and reverse-index rollback snapshot. Public batch graph-bound path and all prior hostile/terminal/gradient tests retained.
+- **Evidence**: child isolated selector `32 passed`; py_compile and child/root `git diff --check` PASS. Only synthetic CPU test file changed in this delta; no production/runtime wiring, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, P4/P5, B2-T, LIBERO4IN1 or training.
+- **Acceptance requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line` against this exact root/child pair.
+
+---
+
+## 2026-09-04 — C5A public-batch graph/matrix remediation closure re-request @ 40931e6
+
+Awaiting review — 🚨 审核申请已发出（根仓 40931e62acc91c225ebd178856443a807ea6ccce；子模块/Gitlink be121a492c30f6eb9d322d09d4ad11461775e031）
+
+- **Gate/task**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION` closure.
+- **Prior review**: ChatGPT `REQUEST_CHANGES` review `e099bcd` on `ddddee4/9ea54b5`; Kimi/MM results were consumed before this remediation.
+- **Remediation**: public `materialize_many()` now returns each owner’s witness-derived final row, so `result -> outer loss -> backward_and_mark_many` is graph-bound; added exact owner/source/timestep/schema/shape/dtype mutation fixtures, chronology-advanced graph-free replay/presence/shape checks, provenance and terminal matrix coverage.
+- **Evidence**: child isolated selector `29 passed`; py_compile and child/root `git diff --check` PASS. Only synthetic CPU files changed; no production/runtime wiring, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, P4/P5, B2-T, LIBERO4IN1 or training.
+- **Acceptance requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line` against this exact root/child pair.
+
+---
+
+## 2026-09-04 — C5A provenance/graph-bound/matrix remediation closure re-request @ ddddee4
+
+Awaiting review — 🚨 审核申请已发出（根仓 ddddee444dccac72d5a6a5ddac4c8030e485acfa；子模块/Gitlink 9ea54b5484839bd9399029433ffed40831a36ba5）
+
+- **Gate/task**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION` closure.
+- **Prior review**: ChatGPT `REQUEST_CHANGES` review `13db634` on `c897b3a/7d22b63`; Kimi/MM results were consumed before this remediation.
+- **Remediation**: capability now binds `R08_COMPLETED_CAUSAL`; `backward_and_mark`/`backward_and_mark_many` require a scalar loss graph reaching a per-materialization witness leaf and leave phase closed on failure; ReplayRecord retains value/shape/present; unseen post-materialize admissions reject; stateful `done_before` requires explicit reset; tests add hostile provenance, terminal `r=N` for N=1/3/16 and per-group Encoder/Q/K/V/slot/W0 gradient reachability.
+- **Evidence**: child isolated selector `22 passed`; py_compile and child/root `git diff --check` PASS. Only synthetic CPU wrapper/tests changed; no production/runtime wiring, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, P4/P5, B2-T, LIBERO4IN1 or training.
+- **Acceptance requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line` against this exact root/child pair.
+
+---
+
 ## Routing clarification — current C5A closure target
 
 All earlier C5A implementation requests (`1ea0f6f`, `3dfc4cb`, `beba8c9`) are superseded. Do not continue auditing those targets. The current target is root `b371cf1f0b2e8a5846b3cf76df609338f96f56a5` with child/Gitlink `cebe8a95b705b120cee21a4f047acba60d239a48`; review only the owner-keyed batch/gather-scatter remediation request immediately preceding this note and return its requested closure literal.
