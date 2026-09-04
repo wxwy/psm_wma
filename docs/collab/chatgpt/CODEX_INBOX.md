@@ -409,6 +409,20 @@ The immediately preceding ChatGPT response for request ledger `679f615` reviewed
 
 ---
 
+## 2026-09-04 — C5A chronology-owner / segment / backward design v0.4 remediation review request
+
+Awaiting review — 🚨 审核申请已发出（根仓 c73fbe90c24f5376f77e1c4109a205a50145c311；子模块/Gitlink 6de8f2056c62cb10c89791d70335a44a6ab232fc）
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-DESIGN`
+- **Formal target**: root `c73fbe90c24f5376f77e1c4109a205a50145c311`; child/Gitlink `cosmos-framework@6de8f2056c62cb10c89791d70335a44a6ab232fc`.
+- **Design**: `docs/build/PSM-WMA_R09_B_TTT_v032_c5a_chronology_owner_segment_design_v0.4_2026-09-04.md`
+- **Remediation**: R08 evidence is collected as immutable source payload/handle and rematerialized under grad during the atomic segment; evidence-encoder parameter version/source-byte binding is explicit. C5A alone owns chronology; capability authenticates provenance only. Committed replay is a detached/cloned numerical cache with value/shape metadata and zero-write, no-graph replay semantics.
+- **Evidence/scope**: docs-only root change; child Gitlink unchanged; no child/runtime/config/optimizer/checkpoint/trainer/model/data/cache I/O, GPU, torchrun, training, evaluation, inference, P4/P5 or B2-T executed.
+- **Allowed only after approval**: owner/segment synthetic CPU implementation and adjacent tests. **Forbidden before approval**: production/runtime wiring, Cosmos forward/packer/attention, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
+- **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
 ## 2026-09-04 — C5A chronology-owner / segment / backward design v0.3 remediation review request
 
 - **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-DESIGN`
