@@ -937,3 +937,10 @@ Awaiting review — 🚨 审核申请已发出（根仓 1663f14a2d22415bbf9bd3b6
 任务/Gate：`G0-R09-B-TTT-V032-CONFIG-OPTIMIZER-CHECKPOINT-IMPLEMENTATION`。针对 ChatGPT `875cb7b` 的 HIGH/MEDIUM 意见完成 tests-only remediation：新增 strict-load/restore（missing/extra/shape/dtype/config drift）、四组 selector/optimizer membership、exact inventory/fast-state exclusion，并拒绝 bool 与 `K_local=2`；相关套件=`71 passed`，py_compile、child/root diff-check PASS。未改 active trainer，未执行真实 checkpoint/GPU/训练。
 
 请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_CONFIG_OPTIMIZER_CHECKPOINT` 或 `REQUEST_CHANGES`，附 `file:line`。三方同 SHA closure 批准前不得进入真实 checkpoint、GPU smoke 或训练 Gate。
+## 2026-09-04 — config/optimizer/checkpoint implementation remediation 2 closure @ cd942e0
+
+Awaiting review — 🚨 审核申请已发出（根仓 cd942e01a894b2f952e8ea6e1785d918db86b25d；子模块/Gitlink 86890bc7ebe8b68ebc241c407f0654373f3e92e2）
+
+任务/Gate：`G0-R09-B-TTT-V032-CONFIG-OPTIMIZER-CHECKPOINT-IMPLEMENTATION`。针对 ChatGPT `1fd58c8` 复审完成最小 remediation：canonical slow inventory 与 exact optimizer object membership、完整 strict module restore/identity、`inner_lr`/`runtime_evidence_steps` 类型 fail-closed、K=8 与 tbptp=1 正例；config 测试=`13 passed`，py_compile、child/root diff-check PASS。未改 active trainer，未执行真实 checkpoint/GPU/训练。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_CONFIG_OPTIMIZER_CHECKPOINT` 或 `REQUEST_CHANGES`，附 `file:line`。三方同 SHA closure 批准前不得进入真实 checkpoint、GPU smoke 或训练 Gate。
