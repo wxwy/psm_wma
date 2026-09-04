@@ -597,6 +597,16 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## 2026-09-04 — C6 disabled-path parity remediation closure @ 4fd219c
+
+Awaiting review — 🚨 审核申请已发出（根仓 4fd219c19263b8719b3cf8bc539eeabe9bee5d68；子模块/Gitlink fce9918609329ad419232c707586b46d669c2d8c）
+
+任务/Gate：`G0-R09-B-TTT-V032-C6-RUNTIME-INTEGRATION-IMPLEMENTATION` closure。针对 ChatGPT 唯一 HIGH，新增公开 synthetic `disabled_path()` bypass：同一输入分别经 adapter disabled route 与独立 no-memory baseline，比较 packed input 与 scalar loss，另断言 zero C5 writes/no pending/state。此前 pending/abort exact snapshot、public finish/terminal N 矩阵、identity/replay/batch/negative fixtures 保持。实现仍仅 test-only，无 active runtime。验证：C5A+C6 CPU `58 passed`，py_compile、child/root diff-check PASS。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_C6_RUNTIME_INTEGRATION_CPU` 或 `REQUEST_CHANGES`，附 `file:line`。允许范围仅 C6 synthetic adapter/CPU tests closure；禁止 active Cosmos runtime、config/optimizer/checkpoint、GPU/CUDA/torchrun、真实 I/O、P4/P5、B2-T、训练/评测/推理及 LIBERO4IN1。三方同 SHA closure 批准前不得进入下一 Gate。
+
+---
+
 ## 2026-09-04 — C6 exact snapshot/parity closure @ dae7feb
 
 Awaiting review — 🚨 审核申请已发出（根仓 dae7feb3fbfaccf3837b55d1248d046c54c6aaa1；子模块/Gitlink ea152b6eab9296c3fc4dd7cf98fbd5b5ffd52ae7）
