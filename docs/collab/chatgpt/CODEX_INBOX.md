@@ -923,3 +923,10 @@ Awaiting review — 🚨 审核申请已发出（根仓 93c9974266a58a2cd54ab3e5
 任务/Gate：`G0-R09-B-TTT-V032-CONFIG-OPTIMIZER-CHECKPOINT-DESIGN`。针对 ChatGPT v0.1 两项 HIGH 完成 docs-only remediation：明确 `inner_lr=0.1` 默认与 config identity；冻结唯一 `local_history_runtime` registered `nn.Module` owner，runtime/authority 必须引用同一 encoder/recurrent_backend 对象，禁止副本，并加入 named_parameters/object-identity/slow-only strict checkpoint 验收。未改配置/生产训练路径，未执行真实 checkpoint I/O、GPU、训练。
 
 请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_CONFIG_OPTIMIZER_CHECKPOINT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权该 contract 的 CPU/static implementation；禁止 active trainer、真实 checkpoint、GPU/CUDA/torchrun、训练/评测/推理、P4/P5、B2-T、LIBERO4IN1。三方同 SHA批准前不得实现。
+## 2026-09-04 — config/optimizer/checkpoint implementation closure @ b3efa4a
+
+Awaiting review — 🚨 审核申请已发出（根仓 b3efa4a5e50395ecbc8748d60b745d8fad8c9ff8；子模块/Gitlink e54fba4c3b71993f1d1af299392ab5f32c6a45db）
+
+任务/Gate：`G0-R09-B-TTT-V032-CONFIG-OPTIMIZER-CHECKPOINT-IMPLEMENTATION`。依据已批准 v0.2，仅新增 `config_checkpoint_contract.py` 与相邻 CPU tests：冻结默认 `ttt_tbptt_steps=16`、`inner_lr=0.1`、`K_local`、runtime evidence=1；exact slow selector/object identity/无副本；slow-only strict checkpoint payload 与 fast-state 排除。C5A+C6+production+config=`68 passed`，py_compile、child/root diff-check PASS；未改 active trainer，未执行真实 checkpoint/GPU/训练。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_CONFIG_OPTIMIZER_CHECKPOINT` 或 `REQUEST_CHANGES`，附 `file:line`。三方同 SHA closure 批准前不得进入真实 checkpoint、GPU smoke 或训练 Gate。
