@@ -518,6 +518,18 @@ Awaiting review — 🚨 审核申请已发出（根仓 ede084c94019a6fc83728fc5
 
 ---
 
+## 2026-09-04 — C5A lifecycle remediation closure request
+
+Awaiting review — 🚨 审核申请已发出（根仓 beba8c95475e93abda26dc722bf096b2df99ecc8；子模块/Gitlink 789864a90410934c2ee1d0eb8edb1c04f077574f）
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION`
+- **Formal target**: root `beba8c95475e93abda26dc722bf096b2df99ecc8`; child/Gitlink `cosmos-framework@789864a90410934c2ee1d0eb8edb1c04f077574f`.
+- **Remediation**: adds owner committed chronology/skip rejection/reset and explicit `finish()` grammar: nonterminal short reject, terminal `r=0` reset, terminal `0<r≤N` materialize+commit; prior temporal carry, byte binding and transactional identity fixes retained.
+- **Evidence**: isolated `.venv --noconftest` CPU pytest `5 passed`, py_compile and child/root diff-check PASS; no production/runtime/GPU/training.
+- **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
 ## 2026-09-04 — C5A temporal-carry remediation closure request
 
 Awaiting review — 🚨 审核申请已发出（根仓 3dfc4cb574a448ebd3b936752589f20a8d6e8bae；子模块/Gitlink 95ef1bc2c71d9239f63489383d91b7661587d0ca）
