@@ -902,3 +902,10 @@ Awaiting review — 🚨 审核申请已发出（根仓 bc6ff9e6509d8d87cf5c654d
 任务/Gate：`G0-R09-B-TTT-V032-PRODUCTION-RUNTIME-CONTRACT-DESIGN`。针对 ChatGPT v0.2 HIGH-1 完成 docs-only remediation：segment outer loss 统一使用 native window `N_valid_window` 分母，明确 `L_segment=sum_{t∈I_s}L_task[t]/max(N_valid_window,1)`，禁止独立 segment mean，并冻结 unequal-valid-count terminal CPU/static scalar+gradient parity 与零分母规则；v0.2 的共享 authority/R08 provenance/contiguous-prefix 继续有效。未修改 active runtime、config/optimizer/checkpoint，未执行 GPU/训练。
 
 请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_PRODUCTION_RUNTIME_CONTRACT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权共享 authority extraction/facade migration、production adapter 与相邻 CPU/static tests；禁止 config/optimizer/checkpoint、P4/P5、真实 I/O、GPU/CUDA/torchrun、训练/评测/推理及 LIBERO4IN1。三方同 SHA批准前不得实现。
+## 2026-09-04 — production runtime contract implementation closure @ 78bb329
+
+Awaiting review — 🚨 审核申请已发出（根仓 78bb329fe8cd82dee74cd3c2bf85e60181f8450c；子模块/Gitlink 4f857ea430d6fb3c35ccbadc3933d552f8f9af8a）
+
+任务/Gate：`G0-R09-B-TTT-V032-PRODUCTION-RUNTIME-CONTRACT-IMPLEMENTATION`。依据已批准 v0.3，仅实现 production-safe shared `runtime_authority.py::ProductionRuntimeAuthority`、C5A/C6 test-only facade migration、`production_runtime_adapter.py` 与相邻 CPU tests；C5A+C6+production CPU=`60 passed`，py_compile 与 child/root `git diff --check` PASS。未改 active Cosmos wiring/config/optimizer/checkpoint，未执行 GPU、真实 I/O、训练/评测/推理。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_PRODUCTION_RUNTIME_CONTRACT` 或 `REQUEST_CHANGES`，附 `file:line`。验收须检查 C5A/C6 等价 facade、唯一 authority、production adapter one-step/reset/disabled seam 与禁止范围；三方同 SHA closure 批准前不得进入 config/checkpoint、GPU 或训练 Gate。
