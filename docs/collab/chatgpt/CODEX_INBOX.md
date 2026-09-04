@@ -402,3 +402,16 @@ Detailed review commit:
 - **Acceptance**: independently verify identity grammar, digest/causal admission, replay and epoch reset semantics, segment N/default16/nondefault/terminal remainder, fail-before-C5 rejection, commit/abort/backward atomicity, and explicit scope boundary.
 - **Allowed only after approval**: C5A owner/segment synthetic CPU implementation and adjacent tests. **Forbidden before approval**: production wiring, Cosmos forward/packer/attention, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
 - **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
+## 2026-09-04 — C5A chronology-owner / segment / backward design v0.3 remediation review request
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-DESIGN`
+- **Formal target**: root `4b3a4129aa3d6f1fbf971397c958cb3abfe6652b`; child/Gitlink `cosmos-framework@6de8f2056c62cb10c89791d70335a44a6ab232fc`.
+- **Design**: `docs/build/PSM-WMA_R09_B_TTT_v032_c5a_chronology_owner_segment_design_v0.3_2026-09-04.md`
+- **Prior findings closed**: ChatGPT `a7124a7` HIGH-1/2/3 + MEDIUM-1 and Kimi MEDIUM terminal-remainder. v0.3 adds committed/pending transactional owner state, trusted R08 `AdmissionCapability` with explicit source timestep and per-owner canonical SHA-256 digest, pending/committed replay separation, deterministic segment cursors, exact terminal `r=0/r=N/0<r<N` and non-terminal-short rules, and inner `create_graph=True` versus outer ordinary `backward()` semantics.
+- **Evidence**: docs-only; `git diff --check` PASS; child Gitlink unchanged; no child/runtime/config/optimizer/checkpoint/trainer/model/data/cache I/O, GPU, torchrun, training, evaluation, inference, P4/P5 or B2-T executed.
+- **Acceptance**: verify the two-phase state machine and rollback invariants, capability authority/forgery resistance, per-owner digest and batch permutation, pending exact replay/no second write, terminal/reset ordering and remainder matrix, ordinary outer backward with inner meta-gradient, and explicit scope boundary.
+- **Allowed only after approval**: C5A owner/segment synthetic CPU implementation and adjacent tests. **Forbidden before approval**: production wiring, Cosmos forward/packer/attention, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
+- **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
