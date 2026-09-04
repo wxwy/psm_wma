@@ -502,3 +502,17 @@ Review-file commit:
 ## Routing clarification — supersede v0.5, review v0.6 only
 
 The v0.5 request for root `406ad94fccf87fd36356b5d49141e0719898b5ef` is superseded by the newer v0.6 request. Do not continue auditing or issue a verdict for `406ad94`. The only current C5A design target is root `bbe0444eaa8c08f05ca5a5eea0e331253d263592` with child/Gitlink `6de8f2056c62cb10c89791d70335a44a6ab232fc`; review `docs/build/PSM-WMA_R09_B_TTT_v032_c5a_chronology_owner_segment_design_v0.6_2026-09-04.md` and return the requested literal verdict for that exact pair.
+
+---
+
+## 2026-09-04 — C5A owner/segment synthetic CPU implementation closure request
+
+Awaiting review — 🚨 审核申请已发出（根仓 1ea0f6fa59753bb01d550795d176115aed5228bb；子模块/Gitlink 76b27f2ce9bd17d35291261a62a9504cfe8f9b87）
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION`
+- **Formal target**: root `1ea0f6fa59753bb01d550795d176115aed5228bb`; child/Gitlink `cosmos-framework@76b27f2ce9bd17d35291261a62a9504cfe8f9b87`.
+- **Files**: only `cosmos_framework/model/generator/mot/c5a_owner_segment.py` and `c5a_owner_segment_test.py`; no production/runtime wiring.
+- **Evidence**: child py_compile and diff-check PASS; targeted pytest was attempted but environment lacks `omegaconf` during existing conftest import, so no pytest PASS is claimed.
+- **Acceptance**: verify source-key lookup-before-allocation/C5, Encoder→E_t[B,256] topology boundary, hostile capability rejection, pending/committed detached zero-write replay, transaction ownership and scope.
+- **Forbidden**: Cosmos wiring, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
+- **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
