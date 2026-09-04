@@ -888,3 +888,10 @@ Awaiting review — 🚨 审核申请已发出（根仓 1e73c00ff05f7c77f62866c7
 任务/Gate：`G0-R09-B-TTT-V032-PRODUCTION-RUNTIME-CONTRACT-DESIGN`。设计文档：`docs/build/PSM-WMA_R09_B_TTT_v032_production_runtime_contract_design_v0.1_2026-09-04.md`。C6 synthetic CPU closure 已获三方同 SHA批准；本设计冻结 production chronology owner、one-step evidence、训练 segment/loss、推理 inference-mode 前更新、K_local shape、slow/fast state 与 disabled parity。
 
 请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_PRODUCTION_RUNTIME_CONTRACT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权下一步 production runtime adapter 的受限 CPU/static implementation；禁止 config/optimizer/checkpoint refreeze、P4/P5、真实 I/O、GPU/CUDA/torchrun、训练/评测/推理及 LIBERO4IN1。三方同 SHA批准前不得实现。
+## 2026-09-04 — production runtime contract design v0.2 remediation @ 9ff48c8
+
+Awaiting review — 🚨 审核申请已发出（根仓 9ff48c8c1ac9db0cfa4c973b70bc7057d6907c1d；子模块/Gitlink fce9918609329ad419232c707586b46d669c2d8c）
+
+任务/Gate：`G0-R09-B-TTT-V032-PRODUCTION-RUNTIME-CONTRACT-DESIGN`。针对 ChatGPT HIGH-1（无合法 production authority owner）及 Kimi MEDIUM/LOW 完成 docs-only remediation：v0.2 明确唯一 production-safe `runtime_authority.py`，C5A/C6 保持 test-only facade；冻结 segment valid-row outer-loss 切片公式 `sum(L_task[t])/max(valid_count,1)`，并显式继承 `R08_COMPLETED_CAUSAL` 与 contiguous-prefix。未修改 active runtime/config/optimizer/checkpoint，未执行 GPU/训练。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_PRODUCTION_RUNTIME_CONTRACT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权 runtime authority extraction/facade 与 production adapter 的受限 CPU/static implementation；禁止 config/optimizer/checkpoint、P4/P5、真实 I/O、GPU/CUDA/torchrun、训练/评测/推理及 LIBERO4IN1。三方同 SHA批准前不得实现。
