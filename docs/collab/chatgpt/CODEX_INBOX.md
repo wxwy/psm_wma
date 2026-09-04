@@ -881,3 +881,10 @@ Detailed review commit:
 `1abff0c87798969c462eb8148e845c4dad845fd8`
 
 Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/trainer/inference/parallelization; GPU/CUDA/torchrun; real model/data/cache/checkpoint I/O; training/evaluation/inference; P4/P5; B2-T; LIBERO4IN1.
+## 2026-09-04 — production runtime contract design v0.1 @ 1e73c00
+
+Awaiting review — 🚨 审核申请已发出（根仓 1e73c00ff05f7c77f62866c75ea8826e0260724d；子模块/Gitlink fce9918609329ad419232c707586b46d669c2d8c）
+
+任务/Gate：`G0-R09-B-TTT-V032-PRODUCTION-RUNTIME-CONTRACT-DESIGN`。设计文档：`docs/build/PSM-WMA_R09_B_TTT_v032_production_runtime_contract_design_v0.1_2026-09-04.md`。C6 synthetic CPU closure 已获三方同 SHA批准；本设计冻结 production chronology owner、one-step evidence、训练 segment/loss、推理 inference-mode 前更新、K_local shape、slow/fast state 与 disabled parity。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_PRODUCTION_RUNTIME_CONTRACT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权下一步 production runtime adapter 的受限 CPU/static implementation；禁止 config/optimizer/checkpoint refreeze、P4/P5、真实 I/O、GPU/CUDA/torchrun、训练/评测/推理及 LIBERO4IN1。三方同 SHA批准前不得实现。
