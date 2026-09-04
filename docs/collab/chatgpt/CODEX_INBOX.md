@@ -405,6 +405,19 @@ Detailed review commit:
 
 ---
 
+## 2026-09-04 — C5A chronology-owner / segment / backward design v0.6 remediation review request
+
+Awaiting review — 🚨 审核申请已发出（根仓 bbe0444eaa8c08f05ca5a5eea0e331253d263592；子模块/Gitlink 6de8f2056c62cb10c89791d70335a44a6ab232fc）
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-DESIGN`
+- **Formal target**: root `bbe0444eaa8c08f05ca5a5eea0e331253d263592`; child/Gitlink `cosmos-framework@6de8f2056c62cb10c89791d70335a44a6ab232fc`.
+- **Design**: `docs/build/PSM-WMA_R09_B_TTT_v032_c5a_chronology_owner_segment_design_v0.6_2026-09-04.md`
+- **Remediation**: restores explicit hostile admission rejection, owner gather/scatter and batch permutation/row-mismatch invariants, fixed little-endian canonical SHA-256/byte binding, while retaining v0.5 Encoder→E_t[B,256] topology and source-key lookup-before-allocation.
+- **Scope**: root docs-only; no child/runtime/production/GPU/real I/O/training/evaluation/inference/P4/P5/B2-T/LIBERO4IN1.
+- **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
 ## 2026-09-04 — C5A chronology-owner / segment / backward design v0.5 remediation review request
 
 Awaiting review — 🚨 审核申请已发出（根仓 406ad94fccf87fd36356b5d49141e0719898b5ef；子模块/Gitlink 6de8f2056c62cb10c89791d70335a44a6ab232fc）
