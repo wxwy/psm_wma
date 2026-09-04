@@ -597,6 +597,18 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## 2026-09-04 — C5A replay/rollback evidence remediation closure re-request @ eb2a583
+
+Awaiting review — 🚨 审核申请已发出（根仓 eb2a5839d41e1e611b5d4ea4ec5f6924c7e8425f；子模块/Gitlink ca4b88a7d6ed3091acc0ab5f5f97f7e6f5e5cfd2）
+
+任务/Gate：`G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION` closure。当前根仓提交 `eb2a5839d41e1e611b5d4ea4ec5f6924c7e8425f`，子模块 `ca4b88a7d6ed3091acc0ab5f5f97f7e6f5e5cfd2` 已推送 `origin/v2`，根仓 Gitlink 已绑定该 SHA。设计 authority：`bbe0444eaa8c08f05ca5a5eea0e331253d263592`。
+
+本轮仅为 tests-only remediation：补齐 ChatGPT 最新 review `cf32620` 指出的四项精确证据：pending invalid replay 的值/shape/presence/grad-free 等价；reset 后同 owner/source identity/timestep 但源字节改变的 fresh epoch admission；abort 前后 committed ReplayRecord 值、shape、presence、state、chronology、reverse index、epoch 精确快照；backward hook 失败前后同一完整快照且不得进入 commit phase。子模块证据：隔离 `pytest --noconftest cosmos_framework/model/generator/mot/c5a_owner_segment_test.py -q` = `33 passed`；目标文件 `py_compile` PASS；`git diff --check` PASS。
+
+请求 ChatGPT、Kimi、MM 针对**同一根仓/子模块 SHA**给出最终 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` 或 `REQUEST_CHANGES`，并附 `file:line`。允许范围仅 C5A synthetic CPU wrapper/tests evidence closure；禁止生产/runtime 接线、Cosmos attention/config/optimizer/checkpoint/trainer/inference、GPU/CUDA/torchrun、真实数据/cache/checkpoint I/O、P4/P5、训练/评测/推理及 LIBERO4IN1。三方同 SHA 全部批准前不得进入下一 Gate。
+
+---
+
 ## 2026-09-04 — C5A owner/segment implementation closure re-request @ b039c56
 
 Awaiting review — 🚨 审核申请已发出（根仓 b039c56f4b264dbd04fae3980727b64510583c03；子模块/Gitlink 4ae44604eeb63f2ebc258f8d73fb2d0a12e82e76）
