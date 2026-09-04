@@ -258,3 +258,13 @@ Review-file commit:
 - **Acceptance**: verify causality and no-double-write, updated-state multi-slot reads, `K_local=1` compatibility, per-row reset/sparse validity isolation, numerical-invariant per-row TBPTT detach, and outer-gradient reachability to Q/K/V/slots/W0 while fast state is not an optimizer parameter.
 - **Forbidden**: `Cosmos3VFMNetwork`/packer/attention change, config/optimizer/checkpoint/trainer/inference/parallelization, `MemoryState`/native KV-cache mixing, GPU/CUDA/torchrun, real model/data/cache/checkpoint I/O, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 training.
 - **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5_FAST_STATE_CHRONOLOGY_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
+## 2026-09-04 — C5 v0.2 transition-contract remediation review request
+
+- **Gate**: `G0-R09-B-TTT-V032-C5-FAST-STATE-TRANSITION-DESIGN`.
+- **Formal target**: root `d0f29f31cc223284769d726239e0ec71a59a484c`; child/Gitlink `cosmos-framework@447f4a61a2205ff6be1788b9903fd7bc83363d53`.
+- **Remediation**: `docs/build/PSM-WMA_R09_B_TTT_v032_c5_fast_state_chronology_design_v0.2_2026-09-04.md` resolves ChatGPT `611d462` HIGH-1/2. C5 is narrowed to an already-admitted single-transition CPU state transform; duplicate/future/owner authority is explicitly deferred to mandatory C5A before C6/GPU/training. It freezes `0<=counter<N`, init counter zero, exact N-th-step row-selective detach and `N=1` behavior.
+- **Requested scope if approved**: only `local_evidence.py` and adjacent synthetic CPU test. All model/packer/attention/config/checkpoint/GPU/real-I/O/training paths remain forbidden.
+- **Literal verdict requested**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5_FAST_STATE_TRANSITION_CPU` or `REQUEST_CHANGES` with severity and `file:line`.
