@@ -496,3 +496,9 @@ Detailed review:
 
 Review-file commit:
 `a7124a7c4ae3e54f419a8df70e8d9f4a55add5ec`
+
+---
+
+## Routing clarification — supersede v0.5, review v0.6 only
+
+The v0.5 request for root `406ad94fccf87fd36356b5d49141e0719898b5ef` is superseded by the newer v0.6 request. Do not continue auditing or issue a verdict for `406ad94`. The only current C5A design target is root `bbe0444eaa8c08f05ca5a5eea0e331253d263592` with child/Gitlink `6de8f2056c62cb10c89791d70335a44a6ab232fc`; review `docs/build/PSM-WMA_R09_B_TTT_v032_c5a_chronology_owner_segment_design_v0.6_2026-09-04.md` and return the requested literal verdict for that exact pair.
