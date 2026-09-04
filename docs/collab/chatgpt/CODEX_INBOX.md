@@ -518,6 +518,18 @@ Awaiting review — 🚨 审核申请已发出（根仓 ede084c94019a6fc83728fc5
 
 ---
 
+## 2026-09-04 — C5A owner batch/validity remediation closure request
+
+Awaiting review — 🚨 审核申请已发出（根仓 b371cf1f0b2e8a5846b3cf76df609338f96f56a5；子模块/Gitlink cebe8a95b705b120cee21a4f047acba60d239a48）
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION`
+- **Formal target**: root `b371cf1f0b2e8a5846b3cf76df609338f96f56a5`; child/Gitlink `cosmos-framework@cebe8a95b705b120cee21a4f047acba60d239a48`.
+- **Remediation**: owner-keyed `materialize_many` gather/scatter preserves independent owner rows and batch permutation; prior temporal carry, source byte/schema binding, transactional identity, phase guard, chronology/reset and terminal grammar retained.
+- **Evidence**: isolated `.venv --noconftest` CPU pytest `6 passed`, py_compile and child/root diff-check PASS; no production/runtime/GPU/training.
+- **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
 ## 2026-09-04 — C5A lifecycle remediation closure request
 
 Awaiting review — 🚨 审核申请已发出（根仓 beba8c95475e93abda26dc722bf096b2df99ecc8；子模块/Gitlink 789864a90410934c2ee1d0eb8edb1c04f077574f）
