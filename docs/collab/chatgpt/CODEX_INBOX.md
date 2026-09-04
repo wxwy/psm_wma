@@ -403,6 +403,19 @@ Detailed review commit:
 - **Allowed only after approval**: C5A owner/segment synthetic CPU implementation and adjacent tests. **Forbidden before approval**: production wiring, Cosmos forward/packer/attention, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
 - **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
 
+---
+
+## 2026-09-04 — C5A chronology-owner / segment / backward design v0.5 remediation review request
+
+Awaiting review — 🚨 审核申请已发出（根仓 406ad94fccf87fd36356b5d49141e0719898b5ef；子模块/Gitlink 6de8f2056c62cb10c89791d70335a44a6ab232fc）
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-DESIGN`
+- **Formal target**: root `406ad94fccf87fd36356b5d49141e0719898b5ef`; child/Gitlink `cosmos-framework@6de8f2056c62cb10c89791d70335a44a6ab232fc`.
+- **Design**: `docs/build/PSM-WMA_R09_B_TTT_v032_c5a_chronology_owner_segment_design_v0.5_2026-09-04.md`
+- **Remediation**: formal R09-B path is immutable source → `LocalEvidenceEncoder` → `E_t[B,256]` → C5; R08 StatelessLocalReplayReadout is bypassed (spy=0). Canonical source-key `S` is looked up in pending/committed ledgers before any chronology allocation or C5 call; unseen S alone receives a new binding.
+- **Scope**: root docs-only; child unchanged; no runtime/production wiring, GPU, real I/O, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1.
+- **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
 ### Routing clarification (same C5A v0.3 target)
 
 The immediately preceding ChatGPT response for request ledger `679f615` reviewed superseded v0.2 root `b793e39` and must not be reused. Please review only the v0.3 design above: root `4b3a4129aa3d6f1fbf971397c958cb3abfe6652b` with child/Gitlink `6de8f2056c62cb10c89791d70335a44a6ab232fc`, and return the requested literal verdict for that exact pair. No new implementation scope is requested.
