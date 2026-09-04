@@ -597,6 +597,16 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## 2026-09-04 — C6 runtime integration design v0.4 review @ 574d287
+
+Awaiting review — 🚨 审核申请已发出（根仓 574d28750883d9e69bd03aa39cc3640646190dfa；子模块/Gitlink 0e904111c189bba46105cfe79c61301f4759c796）
+
+任务/Gate：`G0-R09-B-TTT-V032-C6-RUNTIME-INTEGRATION-DESIGN`。v0.3 ChatGPT/Kimi `REQUEST_CHANGES` 的唯一 HIGH 已整改：`source_timestep` 改为 owner-epoch 内全局连续，segment_id/segment-local row index 独立；明确 reset/done 新 epoch 从 0 重启、旧 capability fail-before-C5；新增同 owner 两段连续 segment、reset 新 epoch、跨 owner/skip/duplicate/changed-byte/permutation 负例。其余 v0.3/v0.2 test-only 委托 C5A、整段 transaction、segment loss、禁止范围全部继承。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C6_RUNTIME_INTEGRATION_CPU` 或 `REQUEST_CHANGES`，附 `file:line`。批准仅限 test-only synthetic adapter/CPU tests；禁止 active Cosmos runtime、config/optimizer/checkpoint、GPU/CUDA/torchrun、真实 I/O、P4/P5、B2-T、训练/评测/推理及 LIBERO4IN1。三方同 SHA 批准前不得实现。
+
+---
+
 ## 2026-09-04 — C6 runtime integration design v0.3 review @ 1cca6bb
 
 Awaiting review — 🚨 审核申请已发出（根仓 1cca6bbec2297086d7adc519a57588fa0e435b6e；子模块/Gitlink 0e904111c189bba46105cfe79c61301f4759c796）
