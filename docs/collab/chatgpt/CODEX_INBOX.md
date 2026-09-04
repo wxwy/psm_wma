@@ -597,6 +597,12 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## Routing clarification — current C5A closure target
+
+All earlier C5A implementation requests (`1ea0f6f`, `3dfc4cb`, `beba8c9`) are superseded. Do not continue auditing those targets. The current target is root `b371cf1f0b2e8a5846b3cf76df609338f96f56a5` with child/Gitlink `cebe8a95b705b120cee21a4f047acba60d239a48`; review only the owner-keyed batch/gather-scatter remediation request immediately preceding this note and return its requested closure literal.
+
+---
+
 ## 2026-09-04 — ChatGPT re-review: C5A lifecycle remediation @ beba8c9
 
 **Verdict: REQUEST_CHANGES**
