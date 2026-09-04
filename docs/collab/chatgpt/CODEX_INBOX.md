@@ -279,3 +279,69 @@ Review-file commit:
 - **Acceptance**: counter invalid fail-before-update, sparse/reset isolation, N=1/default/nondefault behavior, K_local read shape, and no runtime-state parameter registration.
 - **Forbidden**: C5A chronology ownership, model/packer/attention/config/optimizer/checkpoint/trainer/inference, GPU/torchrun/real I/O/training/eval/inference/P4/P5/B2-T/LIBERO4IN1.
 - **Literal verdict requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5_FAST_STATE_TRANSITION_CPU` or `REQUEST_CHANGES` with severity and `file:line`.
+
+---
+
+## 2026-09-04 — ChatGPT re-review: C5 fast-state transition v0.2 @ d0f29f3
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5_FAST_STATE_TRANSITION_CPU**
+
+Formal target:
+- remediation/design SHA: `d0f29f31cc223284769d726239e0ec71a59a484c`
+- request/ledger SHA: `86a65d59dfbb48ed86aeba498eb7c22cfa1c8e8c`
+- child/Gitlink: `447f4a61a2205ff6be1788b9903fd7bc83363d53`
+
+Closure:
+- prior HIGH-1 CLOSED: C5 is now only an already-admitted single-transition state transform; no bare-tensor chronology/provenance overclaim. Mandatory C5A before C6/GPU/training owns episode/transition identity, retry/replay, unique state owner, segment materialization and trainer backward atomicity.
+- prior HIGH-2 CLOSED: exact `0<=counter<N`, init-zero, fail `counter>=N`, N-th-step post-read row detach/counter0, and N=1 behavior are frozen.
+- no new blocker found.
+
+Authorized only:
+- synthetic CPU implementation in `local_evidence.py` + adjacent `local_evidence_test.py`;
+- required transition/counter/reset/detach/gradient CPU fixtures.
+
+Still prohibited:
+- chronology-owner C5A implementation itself under this Gate;
+- Cosmos forward/packer/attention;
+- config/optimizer/checkpoint/trainer/inference/parallelization;
+- MemoryState mixing, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-04_R09_B_TTT_v032_C5_fast_state_transition_design_v02_d0f29f3.md`
+
+Review-file commit:
+`d0599206817b978d385ec271e216bf5b6d004150`
+
+---
+
+## 2026-09-04 — ChatGPT review: C5 fast-state transition CPU implementation @ 46e065c
+
+**Verdict: REQUEST_CHANGES**
+
+Formal target:
+- root implementation SHA: `46e065c3484823228ed29900fdb3ea032a8e1c27`
+- child/Gitlink: `4e34690af2e194104b4c10142d28edf88e8c5faf`
+- request/ledger SHA: `060f88b62155befd0ca044eb424bbb0c0ee714ac`
+
+Finding:
+1. **HIGH — transition-level acceptance evidence is incomplete.** The only new wrapper fixture uses `torch.equal(x, x.detach())`, which is numerically true for any tensor and does not prove row-selective graph truncation. It also does not cover the frozen wrapper matrix: N=1/default16/non-default progression, selected-row detach vs live non-boundary row, boundary-token outer-gradient reachability, complete counter/init fail-before-work grammar, done/invalid isolation, and wrapper-level runtime-state registration behavior. Existing core tests cover core KVB/multi-slot math, but cannot prove wrapper reset/counter/detach ordering.
+
+Required remediation:
+- test-only `local_evidence_test.py` is sufficient unless stronger fixtures expose a production defect;
+- add direct autograd reachability assertions for boundary/non-boundary rows and current boundary token;
+- cover N=1, default N=16, a non-default N, negative/>=N/wrong counter grammar and init-nonzero with fail-before-core spies, partial reset+invalid isolation, and wrapper `named_parameters()` ownership;
+- rerun the exact synthetic selector and report count, plus two-file `py_compile` and diff-check.
+
+Accepted production code direction:
+- two-file scope, exact counter grammar, W0 reset, one `core.step_many()` update/read, row-selective N-th detach and counter reset appear structurally consistent with the approved design; no production algorithm change is required unless the stronger fixtures expose one.
+
+C5A remains mandatory before C6/config/GPU/training.
+
+Still prohibited:
+- C5A runtime/owner implementation, Cosmos forward/packer/attention/config/optimizer/checkpoint/trainer/inference/parallelization, MemoryState mixing, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-04_R09_B_TTT_v032_C5_fast_state_transition_cpu_implementation_46e065c.md`
+
+Review-file commit:
+`627cf2bfadf19f720f13ac86a41cf1834319c7fb`
