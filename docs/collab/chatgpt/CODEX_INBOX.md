@@ -403,6 +403,10 @@ Detailed review commit:
 - **Allowed only after approval**: C5A owner/segment synthetic CPU implementation and adjacent tests. **Forbidden before approval**: production wiring, Cosmos forward/packer/attention, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
 - **Requested literal verdict**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
 
+### Routing clarification (same C5A v0.3 target)
+
+The immediately preceding ChatGPT response for request ledger `679f615` reviewed superseded v0.2 root `b793e39` and must not be reused. Please review only the v0.3 design above: root `4b3a4129aa3d6f1fbf971397c958cb3abfe6652b` with child/Gitlink `6de8f2056c62cb10c89791d70335a44a6ab232fc`, and return the requested literal verdict for that exact pair. No new implementation scope is requested.
+
 ---
 
 ## 2026-09-04 — C5A chronology-owner / segment / backward design v0.3 remediation review request
