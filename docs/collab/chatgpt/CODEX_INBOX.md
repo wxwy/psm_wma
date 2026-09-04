@@ -505,6 +505,19 @@ The v0.5 request for root `406ad94fccf87fd36356b5d49141e0719898b5ef` is supersed
 
 ---
 
+## 2026-09-04 — C5A owner/segment CPU remediation closure request
+
+Awaiting review — 🚨 审核申请已发出（根仓 ede084c94019a6fc83728fc5a1229df6d5a872a3；子模块/Gitlink aa88aaacc1a1fad2d8348487fab260989c3aa067）
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION`
+- **Formal target**: root `ede084c94019a6fc83728fc5a1229df6d5a872a3`; child/Gitlink `cosmos-framework@aa88aaacc1a1fad2d8348487fab260989c3aa067`.
+- **Remediation**: authority-sealed immutable raw-source admission; owner-keyed transactions; source-key conflict/replay lookup before chronology/C5; Encoder rematerialization to `[B,256]`; pending candidate state with detached committed replay; abort isolation.
+- **Evidence**: child py_compile and diff-check PASS; pytest attempted but blocked by missing `omegaconf` in existing conftest import (no pytest PASS claimed).
+- **Forbidden**: production/runtime wiring, Cosmos, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
+- **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
 ## 2026-09-04 — C5A owner/segment synthetic CPU implementation closure request
 
 Awaiting review — 🚨 审核申请已发出（根仓 1ea0f6fa59753bb01d550795d176115aed5228bb；子模块/Gitlink 76b27f2ce9bd17d35291261a62a9504cfe8f9b87）
