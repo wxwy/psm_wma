@@ -895,3 +895,10 @@ Awaiting review — 🚨 审核申请已发出（根仓 9ff48c8c1ac9db0cfa4c973b
 任务/Gate：`G0-R09-B-TTT-V032-PRODUCTION-RUNTIME-CONTRACT-DESIGN`。针对 ChatGPT HIGH-1（无合法 production authority owner）及 Kimi MEDIUM/LOW 完成 docs-only remediation：v0.2 明确唯一 production-safe `runtime_authority.py`，C5A/C6 保持 test-only facade；冻结 segment valid-row outer-loss 切片公式 `sum(L_task[t])/max(valid_count,1)`，并显式继承 `R08_COMPLETED_CAUSAL` 与 contiguous-prefix。未修改 active runtime/config/optimizer/checkpoint，未执行 GPU/训练。
 
 请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_PRODUCTION_RUNTIME_CONTRACT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权 runtime authority extraction/facade 与 production adapter 的受限 CPU/static implementation；禁止 config/optimizer/checkpoint、P4/P5、真实 I/O、GPU/CUDA/torchrun、训练/评测/推理及 LIBERO4IN1。三方同 SHA批准前不得实现。
+## 2026-09-04 — production runtime contract design v0.3 remediation @ bc6ff9e
+
+Awaiting review — 🚨 审核申请已发出（根仓 bc6ff9e6509d8d87cf5c654d8c881b66f6f31cf8；子模块/Gitlink fce9918609329ad419232c707586b46d669c2d8c）
+
+任务/Gate：`G0-R09-B-TTT-V032-PRODUCTION-RUNTIME-CONTRACT-DESIGN`。针对 ChatGPT v0.2 HIGH-1 完成 docs-only remediation：segment outer loss 统一使用 native window `N_valid_window` 分母，明确 `L_segment=sum_{t∈I_s}L_task[t]/max(N_valid_window,1)`，禁止独立 segment mean，并冻结 unequal-valid-count terminal CPU/static scalar+gradient parity 与零分母规则；v0.2 的共享 authority/R08 provenance/contiguous-prefix 继续有效。未修改 active runtime、config/optimizer/checkpoint，未执行 GPU/训练。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_PRODUCTION_RUNTIME_CONTRACT` 或 `REQUEST_CHANGES`，附 `file:line`。若批准，仅授权共享 authority extraction/facade migration、production adapter 与相邻 CPU/static tests；禁止 config/optimizer/checkpoint、P4/P5、真实 I/O、GPU/CUDA/torchrun、训练/评测/推理及 LIBERO4IN1。三方同 SHA批准前不得实现。
