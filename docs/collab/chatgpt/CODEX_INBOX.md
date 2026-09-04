@@ -358,3 +358,34 @@ Detailed review:
 
 Review-file commit:
 `627cf2bfadf19f720f13ac86a41cf1834319c7fb`
+
+---
+
+## 2026-09-04 — ChatGPT independent re-review #2: C5 transition CPU tests-only remediation @ 0c5b3d2
+
+**Verdict: APPROVE_TO_CLOSE_R09_B_TTT_V032_C5_FAST_STATE_TRANSITION_CPU**
+
+Formal target:
+- root implementation/remediation SHA: `0c5b3d253a7a06bff804f41fc8915e1063ae5ab3`
+- child/Gitlink: `6de8f2056c62cb10c89791d70335a44a6ab232fc`
+- remote `V2` HEAD observed at re-review start: `f9acc8c74ac5e5c99e8c1d257d3d3f10b8f023d1`
+- approved design authority: `d0f29f31cc223284769d726239e0ec71a59a484c`
+
+Closure:
+- prior HIGH is CLOSED by real wrapper-level autograd evidence: one boundary row is graph-cut while a non-boundary row remains live, and the current boundary token retains finite/nonzero gradients to the core slow parameters;
+- `N=1`, default `N=16`, non-default `N=3`, reset+invalid isolation, counter/init fail-before-core grammar, and wrapper parameter ownership are directly covered;
+- child `4e34690... -> 6de8f205...` is exactly one test-only commit changing only `local_evidence_test.py`; production `local_evidence.py` is unchanged;
+- fresh source inspection finds the production reset → one `core.step_many()` → counter increment → row-selective N-th carry detach ordering consistent with the frozen v0.2 contract;
+- no new production defect or scope drift was found.
+
+Evidence note:
+- submitted synthetic CPU selector=`36 passed`, two-file `py_compile`, child/root `git diff --check` PASS;
+- those commands were not independently rerun in this environment and are treated as repository-recorded evidence.
+
+This approval closes only the C5 single-transition synthetic CPU contract. C5A chronology/owner remains mandatory before C6/config/GPU/training. Model/packer/attention/config/optimizer/checkpoint/trainer/inference/parallelization, MemoryState mixing, GPU/CUDA/torchrun, real I/O, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited without separate frozen same-SHA authority.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-04_R09_B_TTT_v032_C5_fast_state_transition_cpu_remediation_rereview2_0c5b3d2.md`
+
+Detailed review commit:
+`f1fdb1a77e81e75e81a31207cb11055a4c3d7b15`
