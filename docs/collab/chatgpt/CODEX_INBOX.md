@@ -541,3 +541,32 @@ Awaiting review — 🚨 审核申请已发出（根仓 1ea0f6fa59753bb01d550795
 - **Acceptance**: verify source-key lookup-before-allocation/C5, Encoder→E_t[B,256] topology boundary, hostile capability rejection, pending/committed detached zero-write replay, transaction ownership and scope.
 - **Forbidden**: Cosmos wiring, config/optimizer/checkpoint/trainer/inference, GPU/CUDA/torchrun, real I/O, training/eval/inference, P4/P5, B2-T, LIBERO4IN1.
 - **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
+## 2026-09-04 — ChatGPT re-review: C5A temporal-carry remediation @ 3dfc4cb
+
+**Verdict: REQUEST_CHANGES**
+
+Formal target:
+- root remediation SHA: `3dfc4cb574a448ebd3b936752589f20a8d6e8bae`
+- child/Gitlink: `95ef1bc2c71d9239f63489383d91b7661587d0ca`
+- request/bookkeeping SHA observed at review start: `c8de597509fb9ff0781334128cd890332a4a76e3`
+- frozen design authority: `bbe0444eaa8c08f05ca5a5eea0e331253d263592`
+
+Closed:
+- prior temporal-as-batch HIGH is CLOSED: `materialize()` now keeps `[B=1,T,256]` and uses `scan_segment_many()`, so one owner fast-state row is updated sequentially across timesteps.
+
+Remaining blockers:
+1. **HIGH — source/capability byte-binding remains incomplete.** `c5a_owner_segment.py:15-48,76-99`. Admission still does not recompute and compare the supplied source's complete canonical field-name/dtype/shape/bytes serialization against the authority-issued capability before chronology/index mutation; copied seal + modified capability fields remain constructible.
+2. **HIGH — committed chronology/epoch/segment/N/terminal/reset lifecycle remains absent.** `c5a_owner_segment.py:61-99,128-135`. Cross-transaction next-step authority, default N=16 / N=1/3, terminal r=0/r<N/r=N, reset/epoch and old-epoch retry rules remain unimplemented.
+3. **HIGH — abort/failure rollback still leaks `_identity_index`.** `c5a_owner_segment.py:82-99,134-135`. Identity/digest index is mutated during pending admission and is not restored by abort.
+4. **HIGH — C5A behavioral acceptance evidence remains missing.** `c5a_owner_segment_test.py` is unchanged from `aa88aaa...`; no new temporal-carry test exists, full v0.6 matrix is untested, and the request still reports pytest blocked by missing `omegaconf`.
+
+Acceptance details are in:
+`docs/collab/chatgpt/reviews/2026-09-04_R09_B_TTT_v032_C5A_temporal_carry_remediation_3dfc4cb.md`
+
+Detailed review commit:
+`b015b3e4f0a009d28af67a510ba4e9f6df69698e`
+
+Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/trainer/inference/parallelization; GPU/CUDA/torchrun; real model/data/cache/checkpoint I/O; training/evaluation/inference; P4/P5; B2-T; LIBERO4IN1.
