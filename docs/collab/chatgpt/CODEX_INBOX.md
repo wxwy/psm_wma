@@ -597,6 +597,16 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## 2026-09-04 — C6 snapshot/parity remediation closure @ 1435db1
+
+Awaiting review — 🚨 审核申请已发出（根仓 1435db1560bb920f5e4326ae5c434a19b5109a83；子模块/Gitlink f81a47bc67a45c65b75f399c597c64fab25e9daf）
+
+任务/Gate：`G0-R09-B-TTT-V032-C6-RUNTIME-INTEGRATION-IMPLEMENTATION` closure。针对 ChatGPT 上轮 HIGH，tests-only 增加 public seam pending-done 完整快照、backward-failure/abort committed state/chronology/replay/index/epoch 精确快照，以及 Local-disabled zero-write parity；保留此前 finish/terminal、N/terminal、identity/replay、batch permutation/row-mismatch、loss 负例矩阵。实现仍仅委托 C5A，无 active runtime 修改。验证：C5A+C6 CPU `58 passed`，py_compile、child/root diff-check PASS。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_C6_RUNTIME_INTEGRATION_CPU` 或 `REQUEST_CHANGES`，附 `file:line`。允许范围仅 C6 test-only synthetic adapter/CPU tests closure；禁止 active Cosmos runtime、config/optimizer/checkpoint、GPU/CUDA/torchrun、真实 I/O、P4/P5、B2-T、训练/评测/推理及 LIBERO4IN1。三方同 SHA closure 批准前不得进入下一 Gate。
+
+---
+
 ## 2026-09-04 — C6 public acceptance matrix remediation closure @ 21f9392
 
 Awaiting review — 🚨 审核申请已发出（根仓 21f939287477e3791546954eaac808bd1c0aff8c；子模块/Gitlink 997d117ff1a9780af9e1c82507a441b7adc787ec）
