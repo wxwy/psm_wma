@@ -582,3 +582,36 @@ Detailed review commit:
 `b015b3e4f0a009d28af67a510ba4e9f6df69698e`
 
 Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/trainer/inference/parallelization; GPU/CUDA/torchrun; real model/data/cache/checkpoint I/O; training/evaluation/inference; P4/P5; B2-T; LIBERO4IN1.
+
+---
+
+## 2026-09-04 — ChatGPT re-review: C5A lifecycle remediation @ beba8c9
+
+**Verdict: REQUEST_CHANGES**
+
+Formal target:
+- root remediation SHA: `beba8c95475e93abda26dc722bf096b2df99ecc8`
+- child/Gitlink: `789864a90410934c2ee1d0eb8edb1c04f077574f`
+- request/bookkeeping SHA observed: `22ea46a7c5cc4016cfa1f84ac8299cdb1a7b12b0`
+- frozen design authority: `bbe0444eaa8c08f05ca5a5eea0e331253d263592`
+
+Closed relative to the prior target:
+- raw-source canonical serializer and admission-side byte/schema recomputation are present;
+- pending identity/digest state is now transaction-local and promoted only on commit;
+- temporal carry remains `[B=1,T,256] -> scan_segment_many()`;
+- simple committed skip rejection and structural `finish()` length grammar are present;
+- submitted isolated CPU evidence is now `5 passed`.
+
+Blocking findings:
+1. **HIGH — the authority seal does not authenticate exact issued capability fields.** `c5a_owner_segment.py:26-61,92-107`. Same-seal copies can modify owner/source/timestep/schema-bearing fields coherently; the line-106 digest check reconstructs the modified object from itself and is tautological. `source_shape/source_dtype` are also not digest-bound. Require an opaque authority registry/token or equivalent exact issued-field binding and fail-before-work tamper tests.
+2. **HIGH — committed chronology can advance without materialization/backward, and `finish()` cannot enforce exactly-once atomic backward ordering.** `c5a_owner_segment.py:145-151,162-177`; current test `c5a_owner_segment_test.py:48` directly accepts `begin -> admit -> commit`. Direct finish commits without outer backward; materialize+backward followed by finish would rematerialize the same rows and double-write. Require an explicit phase machine (`COLLECTED -> MATERIALIZED_ONCE -> BACKWARD_DONE -> COMMITTED`) and exact-one-pass spies.
+3. **HIGH — reset is not an epoch boundary for replay/reverse-index authority.** `c5a_owner_segment.py:108-112,149-160`. `_committed` and `_identity_index` survive reset and keys contain no epoch, so the new epoch can replay or conflict with prior-epoch entries. The current reset test changes source identity and therefore misses this. Scope replay/indexes by epoch and test same identity/timestep across reset plus stale old-epoch rejection.
+4. **HIGH — the frozen B>1 owner gather/scatter/permutation contract and full CPU acceptance matrix remain missing.** `c5a_owner_segment.py:123-143`; `c5a_owner_segment_test.py:1-65`. The wrapper still hard-requires batch size 1 and only five tests exist. Add B>1 owner semantics/permutation+row-mismatch checks and the complete v0.6 matrix including outer gradients, N=1/3/16, terminal r matrix, pending/committed replay, rollback, stateless spy=0, C5 input shape, duplicate commit and fast-state ownership.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-04_R09_B_TTT_v032_C5A_lifecycle_remediation_beba8c9.md`
+
+Detailed review commit:
+`12d40bcdec4383a978054b619389fdc1429286d5`
+
+Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/trainer/inference/parallelization; GPU/CUDA/torchrun; real model/data/cache/checkpoint I/O; training/evaluation/inference; P4/P5; B2-T; LIBERO4IN1.
