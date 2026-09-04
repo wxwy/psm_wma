@@ -597,6 +597,16 @@ Still prohibited: production/runtime Cosmos wiring; config/optimizer/checkpoint/
 
 ---
 
+## 2026-09-04 — C6 exact snapshot/parity closure @ dae7feb
+
+Awaiting review — 🚨 审核申请已发出（根仓 dae7feb3fbfaccf3837b55d1248d046c54c6aaa1；子模块/Gitlink ea152b6eab9296c3fc4dd7cf98fbd5b5ffd52ae7）
+
+任务/Gate：`G0-R09-B-TTT-V032-C6-RUNTIME-INTEGRATION-IMPLEMENTATION` closure。针对 ChatGPT 上轮 HIGH，tests-only 补齐：snapshot 纳入 pending existence/phase/row identities/validity/witness shape；rejected pending done 与 failed backward 前后完整 snapshot 等价；explicit abort 后 committed baseline state/chronology/replay/index/epoch 全等；Local-disabled 与同一 synthetic input/packing/loss baseline parity 加上 zero-write/no-state 检查。保留既有 public finish/terminal、N/terminal、identity/replay、batch permutation/row-mismatch 与 loss 负例矩阵。C5A+C6 CPU `58 passed`，py_compile、child/root diff-check PASS；未改 active runtime。
+
+请求 ChatGPT、Kimi、MM 针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V032_C6_RUNTIME_INTEGRATION_CPU` 或 `REQUEST_CHANGES`，附 `file:line`。允许范围仅 C6 test-only synthetic adapter/CPU tests closure；禁止 active Cosmos runtime、config/optimizer/checkpoint、GPU/CUDA/torchrun、真实 I/O、P4/P5、B2-T、训练/评测/推理及 LIBERO4IN1。三方同 SHA closure 批准前不得进入下一 Gate。
+
+---
+
 ## 2026-09-04 — C6 snapshot/parity remediation closure @ 1435db1
 
 Awaiting review — 🚨 审核申请已发出（根仓 1435db1560bb920f5e4326ae5c434a19b5109a83；子模块/Gitlink f81a47bc67a45c65b75f399c597c64fab25e9daf）
