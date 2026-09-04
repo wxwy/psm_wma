@@ -518,6 +518,18 @@ Awaiting review — 🚨 审核申请已发出（根仓 ede084c94019a6fc83728fc5
 
 ---
 
+## 2026-09-04 — C5A temporal-carry remediation closure request
+
+Awaiting review — 🚨 审核申请已发出（根仓 3dfc4cb574a448ebd3b936752589f20a8d6e8bae；子模块/Gitlink 95ef1bc2c71d9239f63489383d91b7661587d0ca）
+
+- **Gate**: `G0-R09-B-TTT-V032-C5A-CHRONOLOGY-OWNER-SEGMENT-IMPLEMENTATION`
+- **Formal target**: root `3dfc4cb574a448ebd3b936752589f20a8d6e8bae`; child/Gitlink `cosmos-framework@95ef1bc2c71d9239f63489383d91b7661587d0ca`.
+- **Remediation**: C5A materialize now preserves explicit `[B=1,T,D]` time axis and sequentially scans one owner state; no temporal-as-batch state reset. Prior source/authority/transaction fixes retained.
+- **Evidence**: child py_compile/diff-check PASS; pytest remains blocked by missing `omegaconf` in existing conftest; no runtime/GPU/training.
+- **Requested literal verdict**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5A_CHRONOLOGY_OWNER_SEGMENT_CPU` or `REQUEST_CHANGES` with severity and exact `file:line`.
+
+---
+
 ## 2026-09-04 — C5A owner/segment synthetic CPU implementation closure request
 
 Awaiting review — 🚨 审核申请已发出（根仓 1ea0f6fa59753bb01d550795d176115aed5228bb；子模块/Gitlink 76b27f2ce9bd17d35291261a62a9504cfe8f9b87）
