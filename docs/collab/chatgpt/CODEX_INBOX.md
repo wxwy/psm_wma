@@ -268,3 +268,14 @@ Review-file commit:
 - **Remediation**: `docs/build/PSM-WMA_R09_B_TTT_v032_c5_fast_state_chronology_design_v0.2_2026-09-04.md` resolves ChatGPT `611d462` HIGH-1/2. C5 is narrowed to an already-admitted single-transition CPU state transform; duplicate/future/owner authority is explicitly deferred to mandatory C5A before C6/GPU/training. It freezes `0<=counter<N`, init counter zero, exact N-th-step row-selective detach and `N=1` behavior.
 - **Requested scope if approved**: only `local_evidence.py` and adjacent synthetic CPU test. All model/packer/attention/config/checkpoint/GPU/real-I/O/training paths remain forbidden.
 - **Literal verdict requested**: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V032_C5_FAST_STATE_TRANSITION_CPU` or `REQUEST_CHANGES` with severity and `file:line`.
+
+---
+
+## 2026-09-04 — C5 transition CPU implementation closure request
+
+- **Gate**: `G0-R09-B-TTT-V032-C5-FAST-STATE-TRANSITION-IMPLEMENTATION`.
+- **Formal target**: root `46e065c3484823228ed29900fdb3ea032a8e1c27`; child/Gitlink `cosmos-framework@4e34690af2e194104b4c10142d28edf88e8c5faf`.
+- **Scope/evidence**: only `local_evidence.py` and `local_evidence_test.py`; adds an explicit already-admitted transition wrapper with whole-row W0 reset, closed `0<=counter<N` grammar, one core KVB write then post-update multi-slot read, and N-th row-selective detach. Synthetic CPU selector=`32 passed`; two-file py_compile and child diff-check PASS.
+- **Acceptance**: counter invalid fail-before-update, sparse/reset isolation, N=1/default/nondefault behavior, K_local read shape, and no runtime-state parameter registration.
+- **Forbidden**: C5A chronology ownership, model/packer/attention/config/optimizer/checkpoint/trainer/inference, GPU/torchrun/real I/O/training/eval/inference/P4/P5/B2-T/LIBERO4IN1.
+- **Literal verdict requested**: `APPROVE_TO_CLOSE_R09_B_TTT_V032_C5_FAST_STATE_TRANSITION_CPU` or `REQUEST_CHANGES` with severity and `file:line`.
