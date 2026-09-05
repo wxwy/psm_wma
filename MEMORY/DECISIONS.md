@@ -167,3 +167,11 @@
 - 决策：`iter_000002800` 立即冻结为 R06 No-Memory baseline，G0-R06 记为 DONE；取消 `ACCEPT-CANONICAL-R06-BASELINE` 的额外 400-episode 准入要求。13-ckpt 1-trial sweep 保留为训练趋势证据，不再阻塞 Local。R07 implementation 自此 UNBLOCKED，仍严格按 R07 → R08 → R09 Gate 顺序，禁止提前实施 R08/R09。
 - 覆盖范围：本条覆盖 D003/D015 中“R06 PASS 后才实现 R07”的准入判定以及 SESSION/TODO 中 canonical-400-episode 口径；不篡改历史 R06 zero-shot FAIL 证据或 frozen 文档。
 - 原因：用户确认现有 `iter_000002800` 四 suite no-Memory 结果足以作为后续 matched +Local 对照；继续等待 canonical acceptance 只增加无关阻塞。
+
+## D018 Local Memory addendum v0.3.3 chronology 口径登记
+
+- 日期：2026-09-05
+- 状态：生效（user-directed 设计澄清；implementation 前仍需独立 Gate 三方审核）
+- 决策：后续 R09-B TTT 实现、audit、review 统一以 `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.3.md`（commit `fa65c0c`）为 chronology 口径：双时间轴（z1..z4 禁入 TTT evidence）、past-only 一步错位 `M_t := ReadAfterUpdate(e_{t-1}, W_{t-2})`、`ttt_tbptt_steps=16` 仅限 meta-gradient 长度（非 memory horizon、非 grad_accum）、segment 结束 detach 图但数值 carry、仅 episode done/reset 回 learned W0、未 detach fast-state graph 不跨 optimizer step、§7 硬合同 A-J 优先在 manifest/sampler 层证明。
+- 悬置对齐项：addendum §4 的 `B_seg=8 × T=16` fixed-length packing + stable stream slots 与 v0.6+ 已批准 manifest-route owner-run 组织的结构差异，须在 ⑪ GPU smoke 设计 Gate 显式裁决，不得静默二选一。
+- 原因：消除旧图/旧实现对双时间轴与 TBPTT 语义的歧义，保证后续 Gate 审核与实现使用同一 chronology 语言。
