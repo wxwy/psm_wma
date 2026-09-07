@@ -4,7 +4,7 @@
 
 ## 当前最小步骤（2026-09-07）
 
-- `G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`（IN_PROGRESS）：根仓已快进至 `ef18ce789b381cad6a1844786f783f8d201f6a94`，纳入 v0.3.4/v0.3.5 rolling training-semantics addendum。该文档尚未收敛为 canonical v1.0，未授权 runtime/packer/trainer 修改、GPU、真实 checkpoint、训练、评测或推理。
+- `G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`（REVIEW）：migration design implementation=`6de94de`，根仓 formal target=`6828b55`、Gitlink=`80aec09`；申请已 append Inbox 并发送 MM。当前 tmux 未发现 DS session，故 DS 尚未送达；Kimi 本轮下班。未授权 runtime/packer/trainer 修改、GPU、真实 checkpoint、训练、评测或推理。
 - v0.3.5 已 supersede 旧 active-wiring 的 `1 micro-batch = 1 evidence row`、closing-row witness/replay 生产路线；旧 child `80aec09` 不得继续扩展。当前只允许完成 v0.3.5 的实现前差距核对与 supersession/migration design，不得静默混用两条 chronology。
 - 已确认的新首版口径：`B_stream=8`、`T=16`、`N_consumer_nominal_micro=128`、fresh episode 从 step0、shifted previous evidence + update-then-read、logical padding、valid-consumer 加权、TTT graph 不跨 microbatch、slow gradient 可跨 GA、首轮 `K_local=1`/no-state/no-dt/no-age/fp32 fast state。
 - v0.3.5 仍待源码级冻结的问题：variable-valid Cosmos pack/gather、native loss reduction 接缝、GA planned valid count、weighted scheduler/provenance、feature disable、旧 lifecycle 迁移边界、单卡 higher-order/显存预算、runtime-sidecar/distributed resume。三方审核申请暂不发出，因文档自标记 rolling 未收敛。
