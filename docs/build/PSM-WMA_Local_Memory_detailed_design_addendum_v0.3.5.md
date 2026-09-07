@@ -1,15 +1,16 @@
 # PSM-WMA Temporal Local Memory 详细设计补充 v0.3.5
 
 **日期**：2026-09-07  
-**状态**：user-directed canonical training-semantics refinement；implementation 前仍需按项目 Gate 纪律独立审核  
+**状态**：rolling user-directed canonical training-semantics refinement；**尚未收敛为最终 canonical v1.0**；implementation 前仍需按项目 Gate 纪律独立审核  
 **适用分支**：根仓 `V2`  
 **上游版本**：`docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.4.md`  
-**当前根仓参考基线**：`9bd11ad5c888e3231c3e5477c0d31b013929e6eb`  
+**当前根仓参考基线**：`f55d5f7938bf1232ff338be724b4f125dabfa726`  
 **当前 Cosmos Gitlink 参考基线**：`80aec090688e3c710c41e1dfd86b6500773db2c7`
 
 > 本文件继续收紧 v0.3.4 的 `B_stream x T -> Cosmos consumer batch` 训练路线，重点冻结：**时间索引、首轮 evidence feature set、通用 weighted episode-stream scheduler、episode tail/padding、consumer batch/effective batch 口径、valid-consumer loss normalization、flatten ABI、fast-state/slow-optimizer 生命周期、错误事务、checkpoint/resume、distributed 与 inference parity**。  
 > v0.3.2 的 multi-slot K/V/Q 数学、v0.3.3 的 Cosmos/TTT 双时间轴与 past-only 原则、v0.3.4 的 fresh episode 从 step 0 开始继续有效；与本文冲突时以本文为准。  
 > 当前旧 active-wiring 的 `1 micro-batch = 1 evidence row` / closing-row witness-materialization 路线与本文的 segment-level production training 存在结构差异，后续必须另起 supersession/implementation Gate 显式迁移，禁止静默混用。  
+> 本文件仍是**持续修订中的附加说明**；本轮只把用户已经确认的“七及后续”工程口径继续写入 v0.3.5，**暂不收敛、不新建最终 canonical contract**。  
 > 本文件不授权 runtime/packer/trainer 代码变更、真实 checkpoint I/O、GPU、训练、评测或推理。
 
 ---
@@ -619,6 +620,26 @@ L_outer(segment > 0) 不反传穿过历史 segment 回到 episode-start W_bar_0
 
 即 `W_bar_0` 主要由各 episode 第一 TBPTT segment 的 outer loss学习。这是 canonical TBPTT 语义，不是 gradient bug。
 
+## 10.2 TBPTT 与 gradient accumulation 的严格关系
+
+v0.3.5 后：
+
+```text
+TTT graph 生命周期 = 当前一个 [B_stream,T] microbatch
+slow gradient 生命周期 = GA 个 microbatches
+```
+
+因此：
+
+```text
+TTT graph 不跨 microbatch
+slow parameter .grad 可以跨 microbatch accumulate
+```
+
+例如 `GA=16`：每个 microbatch 都独立完成 TTT scan → Cosmos → backward → detach/commit 当前 8 条 stream 的 W；到第16个 microbatch 后才执行一次 slow `optimizer.step()`。
+
+不得因为 `GA=16` 与 `T=16` 数值相同而把两者合并成同一个 clock。
+
 ---
 
 # 11. Fast-state dtype 与 inner-loss reduction
@@ -641,6 +662,8 @@ L_inner,b = mean_j((f_{W_b}(K_b)[j] - V_b[j])^2)
 ```
 
 `grad_W` 对每个 stream自己的 `W_b` 求导；batch size/B_stream 不得改变单条 stream fast update scale。
+
+`L_inner` 只定义 fast-state transition，**永不作为 ordinary auxiliary loss 加入 `L_outer`**。
 
 ---
 
@@ -739,6 +762,8 @@ W_fast 不 FSDP shard
 只有 slow parameters通过 DDP/FSDP 正常同步。
 
 多卡 category balance按 global valid-consumer exposure 解释；outer loss normalization按 §7.1 global denominator处理。
+
+world size 改变时不得声称可 exact resume 旧 runtime-sidecar stream ownership。
 
 ---
 
@@ -853,6 +878,53 @@ state detach/commit after backward
 
 ---
 
-# 19. 当前最终口径
+# 19. 当前最终口径（rolling，未收敛）
 
 > **首版 canonical TTT training 以 `N_consumer_nominal_micro=128` 为 Cosmos consumer budget，并将其结构化为 `B_stream=8 x T=16`。每个 episode 首次进入 stream 必须从 step0 开始；时间索引统一为 `W_fast[-1]=clone(W_bar_0)`、`W_fast[t]=Update(W_fast[t-1],e_t)`、`M_{t+1}=Read(W_fast[t],Q_t)`。首轮 evidence 仅由 causal visual summary + executed action 构成，不再使用 per-consumer H-history，也关闭 state/dt/age 神经特征。采样采用与 LIBERO/RoboCasa/多数据集兼容的 weighted episode-stream scheduler，按 configurable target distribution 与累计 valid-consumer exposure 做长期平衡；不要求 task/suite 数整除 B_stream 或 GA。episode tail 首版采用 logical padding，不在同一 T block 中途 rebind 新 episode；PAD 不更新 TTT，并优先在 flatten 后 gather 掉，不送入 Cosmos。含 tail 时 outer gradient accumulation按实际 valid consumers加权，full batch时精确退化为原 `micro_bs x GA` 语义。每个 microbatch的 TTT graph在自身 outer backward 后 detach/commit，runtime W 不经过 optimizer.step；只有 fresh episode使用最新 learned W_bar_0。**
+
+---
+
+# 20. 本轮“七及后续”用户确认补充
+
+本节不是新版本收敛，而是把本轮已确认的工程取舍明确登记到同一个 v0.3.5 中，供后续继续逐项审查。
+
+## 20.1 已确认继续采用的工程口径
+
+以下条目在 v0.3.5 内视为当前默认，不再作为开放二选一：
+
+```text
+1. flatten ABI = stream-major，flat(b,t)=b*T+t
+2. production training = shifted previous evidence + update-then-read
+3. 一个 microbatch 内完成完整 TTT TBPTT graph
+4. outer backward 完成后才 detach/commit W_fast
+5. TTT graph 不跨 microbatch；slow .grad 可以跨 GA microbatches
+6. optimizer.step 不修改既存 runtime W_fast
+7. runtime W_fast 首轮使用 fp32
+8. L_inner per-stream 独立，且不加入 L_outer
+9. tail 首版保留 logical padding；不做 block 内 episode rebind
+10. PAD 优先在 Cosmos forward 前 gather 掉
+11. outer loss按实际 valid consumer exposure归一化
+12. weighted episode-stream scheduler按长期 valid-consumer exposure追踪目标分布
+13. forward/inner/backward异常 fail closed；GradScaler skip沿用 Option-B
+14. canonical smoke 不支持 exact mid-episode resume；正式长训前再设计 runtime sidecar
+15. B_stream 是 per-rank；runtime W_fast 不做 DDP/FSDP 同步
+16. train/inference 使用同一 causal update/read顺序
+17. 首次 canonical GPU smoke 维持 K_local=1、no-state、no-dt、no-age
+```
+
+## 20.2 仍保留为后续逐项审查/实现设计的问题
+
+虽然上述工程方向已经确认，但以下内容仍需在 implementation design / GPU smoke Gate 前做源码级落地设计，不应因为写入 v0.3.5 就视为已实现：
+
+```text
+A. 当前 Cosmos packer 是否能直接 gather N_valid_micro<128 的 variable batch；若不能，等价 mask ABI 如何实现
+B. native loss 的实际 reduction 点在哪里，§7.1 valid-consumer weighting具体接在哪个 trainer seam
+C. GA window 的 planned N_valid_count 如何在不提前加载全部 tensor的情况下可靠获得
+D. WeightedDeficitScheduler 的精确状态字段、seeded episode queue、epoch rollover 与 provenance schema
+E. 当前 R08 LocalEvidenceEncoder 如何最小改造为真正可关闭 state/dt/age branch，而不是喂常数
+F. 旧 active-wiring 中哪些 authority/provenance/transaction组件保留，哪些 row-wise witness graph 逻辑 supersede
+G. single-GPU canonical smoke 的显存、吞吐、higher-order gradient 与 W_fast fp32实际实现是否满足预算
+H. 正式长训 runtime sidecar、distributed ownership 与 world-size change fail-closed 另起 Gate
+```
+
+这些仍属于后续实现前需要继续细化的对象；本文件此时**不收敛为最终 Canonical Training & Runtime Contract v1.0**。
