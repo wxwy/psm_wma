@@ -9,6 +9,7 @@
 - 已确认的新首版口径：`B_stream=8`、`T=16`、`N_consumer_nominal_micro=128`、fresh episode 从 step0、shifted previous evidence + update-then-read、logical padding、valid-consumer 加权、TTT graph 不跨 microbatch、slow gradient 可跨 GA、首轮 `K_local=1`/no-state/no-dt/no-age/fp32 fast state。
 - v0.3.5 仍待源码级冻结的问题：variable-valid Cosmos pack/gather、native loss reduction 接缝、GA planned valid count、weighted scheduler/provenance、feature disable、旧 lifecycle 迁移边界、单卡 higher-order/显存预算、runtime-sidecar/distributed resume。三方审核申请暂不发出，因文档自标记 rolling 未收敛。
 - 源码核对证据（只读）：child `ttt_lifecycle.py` 当前仍明确写着 `1 micro-batch = 1 native window = 1 evidence row`，`process_sample()` 走 detached candidate + closing-window `materialize()`；trainer `__init__.py` 仍按单 loss/GA 事务接缝运行。因此它与 v0.3.5 的 `[B_stream,T]` 单 microbatch scan、flatten/gather、一次 Cosmos forward 结构不兼容，不能继续补丁式扩展。
+- 预计本最小步骤修改：`docs/build/PSM-WMA_Local_Memory_v0.3.5_supersession_migration_design_v0.1.md`（docs-only）；完成后再申请该设计的三方同 SHA 审核，审核前禁止实现。
 
 ## 当前最小步骤（2026-09-03）
 
