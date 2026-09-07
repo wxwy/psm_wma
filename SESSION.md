@@ -4,11 +4,11 @@
 
 ## 当前最小步骤（2026-09-07）
 
-- `G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`（REVIEW）：migration design implementation=`6de94de`，根仓 formal target=`6828b55`、Gitlink=`80aec09`；本轮要求的 MM、DS 均已对同一 target 返回 literal `REQUEST_CHANGES`。未授权 runtime/packer/trainer 修改、GPU、真实 checkpoint、训练、评测或推理。
+- `G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`（IN_PROGRESS）：旧 migration design=`6de94de`、formal target=`6828b55`/Gitlink=`80aec09` 已获 MM、DS 同 SHA `REQUEST_CHANGES`，不得实现。已新建 docs-only `docs/build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.6.md`，待验证、提交并申请 MM、DS 审核；未授权 runtime/packer/trainer 修改、GPU、真实 checkpoint、训练、评测或推理。
 - 审核归并（2026-09-08）：DS 五项 HIGH 与 Codex 独立复审一致：valid-consumer loss 与 trainer `/GA` 二次缩放、load-balancing auxiliary loss 不得整体按 consumer exposure 缩放、state/dt/age 真关闭与参数/inventory 冲突、`SegmentBatch` 必须冻结 `S_t <- e_(t-1)` shifted-evidence ABI、GradScaler skip 必须区分 LR scheduler 与 `WeightedDeficitScheduler`。MM 另要求继承 v0.10 的未缩放 native-loss 有限性谓词；`6828b55` 的 migration 文档第 3--6 行 trailing whitespace 已由 `git show --check` 证实。`training_stream_end` 定义与 formal-training 前 runtime-sidecar Gate 一并纳入下版整改。不得将 sparse Memory Prefix 当作阻塞项：现有 `None` per-sample payload 已支持 S0 Local absent。
 - v0.3.5 已 supersede 旧 active-wiring 的 `1 micro-batch = 1 evidence row`、closing-row witness/replay 生产路线；旧 child `80aec09` 不得继续扩展。当前只允许完成 v0.3.5 的实现前差距核对与 supersession/migration design，不得静默混用两条 chronology。
 - 已确认的新首版口径：`B_stream=8`、`T=16`、`N_consumer_nominal_micro=128`、fresh episode 从 step0、shifted previous evidence + update-then-read、logical padding、valid-consumer 加权、TTT graph 不跨 microbatch、slow gradient 可跨 GA、首轮 `K_local=1`/no-state/no-dt/no-age/fp32 fast state。
-- v0.3.5 仍待源码级冻结的问题：variable-valid Cosmos pack/gather、native loss reduction 接缝、GA planned valid count、weighted scheduler/provenance、feature disable、旧 lifecycle 迁移边界、单卡 higher-order/显存预算、runtime-sidecar/distributed resume。三方审核申请暂不发出，因文档自标记 rolling 未收敛。
+- v0.3.6 已冻结的整改口径：shifted `S_t <- e_(t-1)` SegmentBatch source ABI、`training_stream_end`、rank-local `num_workers=0` scheduler owner、episode scheduler 与 slow LR scheduler 分离、未缩放 native-loss 有限谓词、primary/aux loss partition 与唯一缩放权、真 feature-disable inventory、runtime-sidecar Gate。仍需 MM、DS 对新 SHA 审核后才可进入 CPU/static implementation design。
 - 源码核对证据（只读）：child `ttt_lifecycle.py` 当前仍明确写着 `1 micro-batch = 1 native window = 1 evidence row`，`process_sample()` 走 detached candidate + closing-window `materialize()`；trainer `__init__.py` 仍按单 loss/GA 事务接缝运行。因此它与 v0.3.5 的 `[B_stream,T]` 单 microbatch scan、flatten/gather、一次 Cosmos forward 结构不兼容，不能继续补丁式扩展。
 - 预计本最小步骤修改：`docs/build/PSM-WMA_Local_Memory_v0.3.5_supersession_migration_design_v0.1.md`（docs-only）；完成后再申请该设计的三方同 SHA 审核，审核前禁止实现。
 
