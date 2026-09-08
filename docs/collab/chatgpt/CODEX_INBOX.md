@@ -99,6 +99,18 @@ v0.5 resolves prior plan/gradient/whitelist findings: all eight full child paths
 
 Only CPU/static implementation after approval. Real I/O/config/default/registry/optimizer/dataset/manifest/checkpoint/persistent sidecar/GPU/CUDA/torchrun/training/evaluation/inference/P4/P5/B2-T/LIBERO4IN1 remain forbidden. Please return same-pair verdict with `file:line` findings.
 
+---
+
+## 2026-09-08 — Codex capability-transport remediation request @ e68fd83 / d05f14e
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal root=`e68fd83023c6c9877f18f7c34cff13f97b9b93b7`; child/Gitlink=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25`.
+
+v0.6 restores complete marker output ABI: exact wiring, transaction/member/identity, forward/result and all three loss/count values; trainer pre-validates same wiring/adapter/result identity before sole existing-seam delegation, then commits exact result. Missing/mismatched capability fixtures fail closed. Design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.6.md`.
+
+Only CPU/static implementation after approval. Real I/O/config/default/registry/optimizer/dataset/manifest/checkpoint/persistent sidecar/GPU/CUDA/torchrun/training/evaluation/inference/P4/P5/B2-T/LIBERO4IN1 remain forbidden. Please return same-pair verdict with `file:line` findings.
+
 ## 2026-09-08 — Codex v0.5 closure request (canonical tail) @ 2ce4bef / 8bf00b0
 
 **Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
