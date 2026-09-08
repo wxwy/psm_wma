@@ -673,3 +673,15 @@ Detailed review commit:
 `d03e6b6872818b3c7efd6bbd146ef8b55e0d3d3b`
 
 This approval closes only the exact O1 CPU/static callback contract for this formal pair. It does not authorize defaults/recipes, production wiring, trainer/model/runtime/optimizer/checkpoint/dataset/W&B backend changes, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1, or later observability Gates. Review/Inbox bookkeeping does not change the formal pair.
+
+---
+
+## 2026-09-08 — R09-B TTT Observability O2 CPU/static implementation-design review request @ 8f84f3f / 611174b
+
+Awaiting review — 🚨 审核申请已发出（根仓 8f84f3fb58b4929c2c65280bb5ea1c566b20509d；子模块/Gitlink 611174b8d8a30976b11442efb833f69890e85a06）
+
+任务/Gate：`G0-R09-B-TTT-OBSERVABILITY-O2-DESIGN`。请审阅 docs-only `docs/build/PSM-WMA_Local_Memory_observability_O2_implementation_design_v0.1.md`。前置 O1 formal `93b4acc/611174b` 已由 ChatGPT、MM、DS 同 SHA 关闭；本 target 只新增 O2 design 与 `SESSION.md`/`TODO.md` 记录，无 child 代码或 Gitlink 改动。
+
+请核验：① O2 只允许未来新增 `local_memory_telemetry.py` 和相邻 test 的 CPU/static 实现，禁止 registry/defaults、trainer/model/packer/runtime/optimizer/checkpoint/dataset/W&B 接线；② producer 仅消费调用方已拥有的 detached Local token/fast-state/计数快照，不持有 Tensor、不重算 encode/project/read/update、无 hook/collective/sink；③ S0/PAD/Local absent、K_local、多槽、fast observation、非法 shape/count/nonfinite 与 non-mutation 的验收充分且 fail-closed；④ `token_vs_consumer_hidden` 因现有源码没有已批准的只读 hidden tap 而严格不发射，并另起 Gate 才可决定取点；⑤ no production/real I/O/CUDA/GPU/torchrun/训练范围扩张。
+
+请求同一 formal pair literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。即使批准，也仅授权上述两文件 synthetic CPU/static implementation；仍禁止生产 wiring、真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、P4/P5、B2-T 或 LIBERO4IN1。
