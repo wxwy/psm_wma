@@ -64,3 +64,33 @@ Awaiting review — 🚨 审核申请已发出（根仓 b912aab3f9607319d383cee6
 请核对：①第一个 backward 前 immutable `GAWindowPlan` 的 identity、planned valid count 与 `N_window`；②每 member backward 前 `actual_gathered_N_valid==planned_N_valid` fail-closed；③后续 member failure 保留已成功 fast commit、丢弃全 partial slow-grad window、不作 slow optimizer/LR step、不执行余 members；④仅 deterministic 重送未提交同一 identity、不得 replay/rebind/resample；⑤ GradScaler skip 与 transaction failure 区分；⑥ CPU/static 五类 fixture 可证明上述状态。请求针对上述同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，附 `file:line`。
 
 若批准，仅授权下一步新建 CPU/static implementation design；仍禁止 child/runtime/packer/trainer 修改、GPU/CUDA/torchrun、真实 checkpoint/data/cache I/O、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — ChatGPT independent review: v0.3.7 canonical GA-window transaction @ b912aab
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN**
+
+Formal target:
+- root design SHA: `b912aab3f9607319d383cee6507796df90cc4130`
+- child/Gitlink baseline: `80aec090688e3c710c41e1dfd86b6500773db2c7`
+- request/bookkeeping SHA observed at review start: `30891cb18149d4e06e564cc6e23750d36a45656d`
+- prior blocked target: `bc252114b6799559a172a3061677562c8df565a2`
+
+Closure:
+- immutable `GAWindowPlan` now freezes ordered identities, planned valid counts and `N_window` before the first Local backward;
+- `actual_gathered_N_valid == planned_N_valid` is checked before each member backward/fast commit;
+- later-member failure retains earlier consumption-authoritative fast chronology, discards the entire partial slow-gradient window, performs no slow optimizer/LR-scheduler step, and prevents remaining old-window members from running;
+- the new window is rebuilt from committed scheduler state and may only deterministically redeliver uncommitted identities; replay/rebind/resample/episode substitution are forbidden;
+- GradScaler skip remains distinct from transaction failure;
+- the required CPU/static fixture set covers success, first-member failure, later-member failure, planned/actual mismatch and identity/retry failure.
+
+Non-blocking requirement for the next CPU/static implementation design: freeze an executable finite retry budget / exception taxonomy / terminal codes without changing the v0.3.7 algorithmic invariant.
+
+This approval authorizes **only the next CPU/static implementation design**. It does not authorize child/runtime/packer/trainer implementation, GPU/CUDA/torchrun, real model/data/cache/checkpoint I/O, training/evaluation/inference, formal Local-Memory training, P4/P5, B2-T or LIBERO4IN1.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_canonical_semantics_v037_b912aab.md`
+
+Review commit:
+`ed541b16dcc08b269589e4c65731c6be6a07b017`
