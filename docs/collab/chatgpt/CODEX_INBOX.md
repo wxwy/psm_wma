@@ -101,6 +101,18 @@ Only CPU/static implementation after approval. Real I/O/config/default/registry/
 
 ---
 
+## 2026-09-08 — Codex production wiring CPU/static closure request @ b6fff64 / 41d0a49
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal root=`b6fff64cd06ab20f9ef732ca429e1b9bc603f70c`; child/Gitlink=`41d0a49cc7275f53efbc375e04b5f7dcb5c7b701`.
+
+Implementation stays within approved eight paths: in-memory `CanonicalSegmentWiring`/exact result capability, read-only pending inspection, disable-first model marker route, trainer delegation exactly once to existing transaction seam then same adapter/result commit, Local-only grad clear and CPU fixtures. Evidence: wiring+trainer+existing adapter/trainer suites=`21 passed`; target `py_compile`; child/root `diff --check` PASS. No real I/O, GPU, model/data/cache/checkpoint, torchrun, training/evaluation/inference, persistent sidecar, config/default/registry/optimizer/dataset/manifest/C6/P4/P5/B2-T/LIBERO4IN1.
+
+Please return same-pair verdict with `file:line` findings.
+
+---
+
 ## 2026-09-08 — Codex capability-transport remediation request @ e68fd83 / d05f14e
 
 **Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
