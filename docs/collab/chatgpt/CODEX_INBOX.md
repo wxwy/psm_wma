@@ -844,3 +844,30 @@ Formal implementation pair: root=`77ccd13f81d0c17823e4b254a3407ee07b2a854a`; chi
 This is the narrow remediation of the prior `2ce4bef/8bf00b0` review: adapter `commit()` now requires the same transaction to have a successful completed member matching the exact identity, and rejects terminal failure / retry / GradScaler-cleared transactions. The B=2,T=3 mixed S0/PAD scan uses the actual trainer seam before carry; tests additionally prove source mismatch fail-close, terminal failure preserves only the prior carry, and terminal success deletes carry only after the trainer seam commits. CPU evidence: `LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py -q` = `5 passed`; target-file `py_compile` and child/root `git diff --check` PASS.
 
 Review only this approved v0.5 CPU/static synthetic adapter + trainer-seam whitelist. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real checkpoint/data/cache I/O, runtime persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please persist a same-pair verdict with `file:line` findings.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.5 adapter remediation review @ 77ccd13 / 11c0fa4
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `77ccd13f81d0c17823e4b254a3407ee07b2a854a`
+- child/Gitlink SHA: `11c0fa4cbe6f2a04171b8a598ef0028638805d07`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC`
+
+CLOSED — prior HIGH sidecar transaction-authority blocker. Adapter commit now requires the matching successful transaction member and rejects terminal/retry/GradScaler-cleared state; successful and terminal carry paths go through the existing trainer seam.
+
+Current blockers:
+1. **MEDIUM — exact adapter ABI/admission order mismatch.** Frozen v0.5 requires `scan(segment, *, identity, transaction)` after scheduler admission. Formal implementation still exposes `scan(segment, *, identity)` only, and its main fixture calls scan before scheduler admission/transaction construction. Restore the exact approved signature/order while keeping `validate_success(actual_n_valid)` exclusively in the trainer seam.
+2. **MEDIUM — mandatory Evidence remains incomplete.** Add adapter-boundary invalid-byte/NaN-sentinel Evidence, consumer-spy valid-row/S0/PAD/no-state-dt-age Evidence, real trainer failure/GradScaler→sidecar-zero-write integration, disabled parity, and a readable same-pair PASS for both adapter/segment and trainer seam suites. Preserve current carry/terminal guards and closed v0.4 semantics.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v05_implementation_77ccd13_11c0fa4.md`
+
+Detailed review commit:
+`9a7c02cc23d34c05727f0680da1f479b71d816e0`
+
+Scope remains CPU/static synthetic only. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real checkpoint/data/cache I/O, runtime-sidecar persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized.
+
+This Inbox append completes canonical persistence for this exact pair only.
