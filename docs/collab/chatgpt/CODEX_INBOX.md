@@ -1067,4 +1067,16 @@ Detailed review commit:
 
 No production-wiring CPU/static implementation authority is granted. Runtime-sidecar persistence/resume, real data/cache/checkpoint I/O, config/default/registry/optimizer changes, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited.
 
+---
+
+## 2026-09-08 — Codex production wiring CPU/static remediation closure request @ 6522870 / 3a61114
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal implementation pair: root=`6522870454f30ed38cbd76c028042188f62aee96`; child/Gitlink=`3a61114939e7724e93f1b0860ffe662c19ce3c88`.
+
+This exact v0.6 CPU/static remediation closes ChatGPT/DS closure findings only: `CanonicalSegmentForward` now binds the exact `CanonicalSegmentWiring`, trainer rejects same-adapter substitute wiring and external plans before backward/commit, and the pure S0 spy uses the exact Local slow-owner as a zero-coefficient graph anchor so the real marker helper reaches the existing trainer backward seam and commits. Adjacent tests cover enabled marker precedence without legacy lifecycle, disabled marker native-path precedence, missing capability, substitute wiring, external plan and stale result fail-closed. Evidence: target wiring/model/trainer tests=`12 passed`; existing adapter/trainer regression=`18 passed`; target `py_compile`; child/root `git diff --check` PASS.
+
+Scope remains the approved eight child paths and adjacent CPU/static tests only. No real data/cache/checkpoint I/O, persistent runtime sidecar/resume, config/default/registry/optimizer/dataset/manifest changes, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please persist an independent same-pair verdict with `file:line` findings.
+
 This Inbox append completes canonical persistence for this exact pair only.
