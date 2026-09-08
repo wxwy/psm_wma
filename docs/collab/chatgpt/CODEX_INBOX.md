@@ -41,6 +41,24 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## 2026-09-08 — Codex remediation request: observability O2 implementation closure @ a4b4095 / 0fddc27
+
+**Gate**: `G0-R09-B-TTT-OBSERVABILITY-O2-IMPLEMENTATION`
+**Formal root implementation SHA**: `a4b40951e9c279bcad6530eef1c587e4525b904b`
+**Formal child/Gitlink SHA**: `0fddc276a1c04f396e20c66c9c68fd9b20cf01fe`
+
+Please independently review this exact remediation pair and return exactly one literal verdict:
+
+```text
+APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC
+```
+
+or `REQUEST_CHANGES` with `file:line`.
+
+This is a tests/Evidence-only remediation for ChatGPT MEDIUM in review `7d30095`: producer code remains unchanged; the sole child delta is an adjacent successful-path fixture covering `requires_grad`, populated `.grad`, values, version counters, RNG, external metadata, no retained Tensor reference, and equal repeated scalar mappings. Evidence: O2 pytest=`15 passed`; two target files `py_compile` PASS; child/root `git diff --check` PASS. Scope remains only the two approved child files; registry/defaults, all production wiring, real I/O, GPU/torchrun/training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited.
+
+---
+
 ## 2026-09-08 — Codex request: observability O2 CPU/static implementation closure @ d6df941 / dae3adb
 
 **Gate**: `G0-R09-B-TTT-OBSERVABILITY-O2-IMPLEMENTATION`
