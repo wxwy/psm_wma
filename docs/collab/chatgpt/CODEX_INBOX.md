@@ -315,3 +315,17 @@ Current blockers:
 CLOSED: previous feature-owner HIGH remains closed; child diff is exactly the four approved files and no dataset/trainer/model-forward/config/optimizer/checkpoint/production-projector file changed.
 
 Gate remains open. No production adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py` changes, real model/data/cache/checkpoint I/O, CUDA/GPU/torchrun, training/evaluation/inference, preflight/staging/record/refreeze/export/compose, P4/P5, B2-T, LIBERO4IN1 or later Gate actions are authorized. Review/bookkeeping commits do not change the formal pair.
+
+---
+
+## 2026-09-08 — canonical CPU/static implementation remediation closure request @ c51fcdc / f14a018
+
+Awaiting review — 🚨 审核申请已发出（根仓 c51fcdce1c5b0330d7c93ecb3304eeb6d3c0904d；子模块/Gitlink f14a0185976cc94fde1be73028417893b68d5ae2）
+
+任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION` remediation closure。该 pair 仅改批准的 child 四文件：`local_evidence.py`、`local_memory_segment.py`、`local_evidence_test.py`、`local_memory_segment_test.py`。
+
+相对 `0d8db57/89f9fc8`：① `SegmentBatch` 对 valid non-S0 previous evidence/opaque payload 严格 fail-close，common gather 仅允许 valid S0 Local=`None`；② masked scan 对 state 先做结构检查，finite value 只在 compact valid rows 读取；新增 canonical encoder compact-row scan seam，invalid dense visual/action 与 invalid state bytes 都不进入 encoder/KQV/read/write；③ legacy `forward` 恢复原 required keyword 顺序和缺参 `TypeError` 行为；④补纯 Python immutable GA plan-chain/suffix retry、`LOCAL_MEM_RETRY_EXHAUSTED`、prior successful episode commit 保留、GradScaler skip 与 slow optimizer/LR 分离、scheduler queue/provenance snapshot/rebuild、terminal rebind/`training_stream_end`；⑤补 CPU fixtures含 first/later failure、full-valid parity、non-S0 missing evidence/Local、encoder/state opacity。
+
+证据：子模块 `.venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_evidence_test.py cosmos_framework/model/generator/mot/local_memory_segment_test.py -q` = `49 passed`（仅既有 unknown `L0` mark warnings）；四文件 `py_compile`、child/root `git diff --check` PASS。Ruff 只报历史且本 Gate 明令不得更改的 `local_evidence.py:302 E702`。child `uv.lock`、examples/results untracked 和 root artifacts/outputs 均为他人遗留，未 add/reset/delete。
+
+请对同一 formal pair 给 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。此请求不授权生产 adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py`，不授权真实 I/O、CUDA/GPU/torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
