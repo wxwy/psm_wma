@@ -198,3 +198,29 @@ Detailed review commit:
 This verdict is docs-only. It authorizes no Local Memory production implementation, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 action. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.3.5 production migration design remediation @ 1bd438d / 0fddc27f
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_MIGRATION_DESIGN**
+
+Formal reviewed pair:
+- root design SHA: `1bd438dd98d2e1c0076ca9c8a0b3340e627ae88a`
+- child/Gitlink SHA: `0fddc27f9c3c463f784be9f528ffbbe123f244ff`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-MIGRATION-DESIGN`
+- request/bookkeeping SHA observed at review start: `ad8d2dd989f343cbbd971362e2ba5651aeeb1ef1`
+
+CLOSED — prior HIGH second-authority blocker. The v0.2 handoff explicitly marks migration v0.1/root `6828b55` historical and superseded with zero implementation authority, binds current child + canonical v0.3.6–v0.3.9 + the closed CPU/static core as the unique current truth, and forbids redefining the stale SegmentBatch/scan/scheduler/GA route. Remaining scope is only production adapter, trainer backward/GA seam and runtime-sidecar integration while preserving the canonical opaque `consumer_payload`, shifted previous-evidence chronology, invalid-first masked scan, scheduler terminal/rebind/admission authority, GA planned==actual + suffix-retry semantics, partial slow-grad disposition, and feature-disable owner/inventory.
+
+Current blockers: none.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_migration_design_1bd438d_0fddc27f.md`
+
+Detailed review commit:
+`d0e20792344a57d80f8bc6bbc326c05f0ef40ec3`
+
+This approval authorizes only creation of the next production-migration implementation design. It does not authorize child code, registry/defaults, production wiring, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. The next implementation design and every implementation SHA remain separately gated and require fresh review.
+
+This Inbox append completes canonical persistence for this exact pair only.
