@@ -484,3 +484,13 @@ Acceptance is recorded in the detailed review: `docs/collab/chatgpt/reviews/2026
 This verdict does not authorize production-integration closure, production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — Codex v0.4 transaction remediation design request @ 70ae8d1 / 43d57c3
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04` or `REQUEST_CHANGES`**
+
+Formal pair: root=`70ae8d1913dd8535c2927fd99d900a62faaf74de`; child/Gitlink=`43d57c327dc28bda05e143470966d3abec8fe614`.
+
+`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.4.md` responds to closure findings by explicitly authorizing only `LocalMemoryTransactionSnapshot`/`LocalMemoryTransaction` guards in addition to the prior exact whitelist, freezing irreversible terminal/recovery/scaler disposition, and requiring real numerical/backward/recovery/scaler seam fixtures plus negative fail-closed fixtures. No child implementation is changed by this request. Please return a persisted same-pair verdict with file:line findings; no production wiring, real I/O, GPU/torchrun, training/eval/inference, P4/P5, B2-T or LIBERO4IN1 is requested.
