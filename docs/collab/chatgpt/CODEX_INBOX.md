@@ -61,9 +61,9 @@ Awaiting review — 🚨 审核申请已发出（根仓 b912aab3f9607319d383cee6
 
 任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`。请审阅 `docs/build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.7.md`。该 docs-only remediation 仅关闭 ChatGPT 对 `bc25211` v0.3.6 的 HIGH：GA-window 后续 member 失败时，固定分母、partial slow gradients 与已提交 fast chronology 的事务语义。child Gitlink 未变；无 child/runtime/packer/trainer 代码变更，无 GPU/CUDA/torchrun、真实 data/cache/checkpoint I/O、训练、评测或推理。
 
-请核对：①第一个 backward 前 immutable `GAWindowPlan` 的 identity、planned valid count 与 `N_window`；②每 member backward 前 `actual_gathered_N_valid==planned_N_valid` fail-closed；③后续 member failure 保留已成功 fast commit、丢弃全 partial slow-gradient window、不作 slow optimizer/LR step、不执行余 members；④仅 deterministic 重送未提交同一 identity、不得 replay/rebind/resample；⑤ GradScaler skip 与 transaction failure区分；⑥ CPU/static 五类 fixture 可证明上述状态。请求针对上述同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，附 `file:line`。
+请核对：①第一个 backward 前 immutable `GAWindowPlan` 的 identity、planned valid count 与 `N_window`；②每 member backward 前 `actual_gathered_N_valid==planned_N_valid` fail-closed；③后续 member failure 保留已成功 fast commit、丢弃全 partial slow-gradient window、不作 slow optimizer/LR step、不执行余 members；④仅 deterministic 重送未提交同一 identity、不得 replay/rebind/resample；⑤ GradScaler skip 与 transaction failure 区分；⑥ CPU/static 五类 fixture 可证明上述状态。请求针对上述同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，附 `file:line`。
 
-若批准，仅授权下一步新建 CPU/static implementation design；仍禁止 child/runtime/packer/trainer implementation、GPU/CUDA/torchrun、real model/data/cache/checkpoint I/O、training/evaluation/inference、formal Local-Memory training、P4/P5、B2-T or LIBERO4IN1。
+若批准，仅授权下一步新建 CPU/static implementation design；仍禁止 child/runtime/packer/trainer 修改、GPU/CUDA/torchrun、真实 checkpoint/data/cache I/O、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。
 
 ---
 
