@@ -73,7 +73,7 @@ Formal root `357bd468276b947b5f57d83d5f670e87d634bac7`; child/Gitlink `0fddc27f9
 
 ## Codex request — production integration implementation design @ 8697a4c / 0fddc27f
 
-Formal root `8697a4caf47b43164f03e79b841a11ebb1991287`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.1.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Scope is docs-only design: no code, production wiring, real I/O, GPU/torchrun, training/eval/inference authorization.
+Formal root `8697a4caf47b43164f03e79b841a11ebb1991287`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.1.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Scope is docs-only: no code, production wiring, real I/O, GPU/torchrun, training/eval/inference authorization.
 
 ---
 
@@ -400,6 +400,35 @@ Detailed review:
 
 Detailed review commit:
 `f73e3c1588a7919af10297a136e46d6c441d5f3c`
+
+This verdict does not authorize production-integration closure, production wiring, registry/defaults, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent production integration CPU/static remediation @ 764eb09 / 6c5251b
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `764eb09da87dddae265f4476c0237ca00b05cd52`
+- child/Gitlink SHA: `6c5251b9f07901bf0161838fb7d17e895c0ce37d`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION`
+- request/bookkeeping SHA observed: `6846280c71edf0d2e3541c5da2c70231584a7882`
+
+Prior HIGH status: **OPEN — partially remediated, not closed.** This pair correctly makes `commit_fast`/`clear_slow_grads` mandatory and routes planned/actual mismatch to `LOCAL_MEM_IDENTITY_CONTRACT_FAILURE` with slow-grad clear. Scope remains clean: relative to `d5b2cd3`, child changes only `trainer/__init__.py` and `trainer_local_memory_integration_test.py`, with no production/registry/real-I/O/GPU/training wiring.
+
+Current blocker:
+1. **HIGH — the seam is still a single-member backward/commit primitive, not the authoritative GA transaction owner required by the approved design.** `_run_local_memory_segment_backward` still receives a caller-provided `identity_valid` boolean rather than owning exact frozen member identity/plan validation; it has no failure-kind/attempt input and never invokes the existing transient-only failure classifier; it creates no attempt0 suffix recovery plan and performs no attempt1 retry-exhaustion handling; it owns no remaining-member suppression or optimizer/LR suppression state; and GradScaler skip is not represented at this transaction boundary. The new 3-test trainer matrix covers success commit, identity failure and planned/actual mismatch only, leaving numerical/outer failure, transient recovery/exhaustion, prior-fast retention, remaining suppression, optimizer/LR suppression, GradScaler skip, unequal-valid-count/nonzero-aux/full-window-equivalence/no-second-GA-scaling unproven through the new seam.
+
+Acceptance: within the already-approved exact whitelist/symbols, make the trainer/adapter seam own the deterministic GA transaction lifecycle: exact member identity + planned==actual validation; mandatory successful fast commit; terminal identity/numerical/outer disposition with slow-grad clear/prior-fast retention/remaining suppression/no slow optimizer-LR; same-digest transient attempt0-only suffix recovery + attempt1 exhaustion; and GradScaler-skip fast-retention/no-slow-step behavior. Add adjacent seam-level CPU fixtures for the complete inherited v0.2 transaction matrix and weighted primary/aux objective invariants.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_implementation_764eb09_6c5251b.md`
+
+Detailed review commit:
+`b9c15cc4467f9d51ba0cee044fc4408a1aae70d9`
 
 This verdict does not authorize production-integration closure, production wiring, registry/defaults, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
