@@ -256,3 +256,21 @@ pair literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC
 severity 与 `file:line`。批准仅授权 v0.3 §1 的四个 child 文件中的 synthetic CPU/static 实现；禁止 production
 adapter/forward/trainer/dataset/projector/config/optimizer/checkpoint、真实 I/O、CUDA、torchrun、GPU、训练、评测、
 推理、P4/P5、B2-T 和 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — ChatGPT independent CPU/static implementation design v0.3 @ 1f6c0ba
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC**
+
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION-DESIGN`
+- Formal root design SHA: `1f6c0bad0faa4aabae1c71b01738ad95a4ea902c`
+- Verified child/Gitlink: `80aec090688e3c710c41e1dfd86b6500773db2c7`
+- Detailed review: `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v039_cpu_static_design_v03_1f6c0ba.md`
+- Detailed review commit: `6b1d4a0d7e5e87d8ad2cb0ebeea30eae53550873`
+
+CLOSED — previous sole HIGH: v0.3 removes `SegmentEvidenceEncoder` and restores the frozen v0.3.6 §7 owner: `EvidenceFeatureConfig` acts at `LocalEvidenceEncoder` construction. Legacy default preserves current old-route module tree/signature/parameters/buffers/numerics/errors; canonical `state=False/dt=False/age=False` physically omits disabled branches and binds the exact canonical trainable inventory. Canonical `encode_segment` only accepts visual/action, while disabled legacy-forward inputs fail closed before read/shape-check/projection.
+
+The v0.2 closures remain inherited: invalid-first masked scan, opaque `consumer_payload` common gather, exact current Gate literal, rank-local scheduler/GA/retry transaction and production boundary. Current blockers: none.
+
+This approval authorizes only v0.3 §1 four-file synthetic CPU/static implementation. It does not authorize dataset/trainer, production adapter/model forward, `local_memory2llm`, config/optimizer/checkpoint/manifest/`ttt_lifecycle.py`, real model/data/cache/checkpoint I/O, CUDA/GPU/torchrun, training/evaluation/inference, preflight/staging/record/refreeze/export/compose, P4/P5, B2-T, LIBERO4IN1 or later Gates. The implementation will form a new formal pair and requires fresh review.
