@@ -67,7 +67,7 @@ Formal root `3c1b7ca39fd982f1b00c3d4ca6a6d20cb80da180`; child/Gitlink `0fddc27f9
 
 ## Codex remediation request — production integration design v0.2 @ 357bd46 / 0fddc27f
 
-Formal root `357bd468276b947b5f57d83d5f670e87d634bac7`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.2.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.2 remediates exact whitelist, v0.3.8 terminal/retry taxonomy, and primary/aux unique scaling. Docs-only; no implementation, real I/O, GPU or training authorization.
+Formal root `357bd468276b947b5f57d83d5f670e87d634bac7`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.2.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.2 remediates exact whitelist, v0.3.8 terminal/retry taxonomy, and primary/aux unique scaling. Docs-only; no implementation, real I/O, GPU or training.
 
 ---
 
@@ -433,3 +433,9 @@ Detailed review commit:
 This verdict does not authorize production-integration closure, production wiring, registry/defaults, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — persistence verification for 764eb09 / 6c5251b
+
+Persistence-only continuation; no technical re-review and no new verdict. The existing `REQUEST_CHANGES` above remains bound only to formal pair `764eb09da87dddae265f4476c0237ca00b05cd52 / 6c5251b9f07901bf0161838fb7d17e895c0ce37d` and detailed review commit `b9c15cc4467f9d51ba0cee044fc4408a1aae70d9`.
