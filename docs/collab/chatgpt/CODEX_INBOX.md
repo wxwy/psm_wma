@@ -382,6 +382,28 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## 2026-09-08 — observability O1 grad-witness remediation review request @ 9a65bed / 333792e
+
+Awaiting review — 🚨 审核申请已发出（根仓 9a65bed8c5260d6e2981dcc659b1f3abf4602a80；子模块/Gitlink 333792e845fe3b15ba4d8af8f34f704de2a79fa2）
+
+任务/Gate：`G0-R09-B-TTT-OBSERVABILITY-O1-DESIGN` docs-only remediation。请审阅
+`docs/build/PSM-WMA_Local_Memory_observability_O1_implementation_design_v0.2.md`，其仅 supersede v0.1 root
+`024ade3` 被 ChatGPT review `a3e3b6b` 指出的 grouped grad-presence 语义，未改 child、Gitlink 或实现。
+
+本版冻结每 Local group 单次 SUM all-reduce 的 float32 packed payload
+`[param_sq_sum, grad_sq_sum, grad_present_count]`：`grad_present_count==0` 必须省略 grad key；`>0 && grad_sq_sum==0`
+必须输出精确 `0.0`。同版把 MM/DS 的非阻断收口写明为 canonical SELECTORS source/validation 和
+`local_memory_modality_embed` exact leaf match；CPU/static fixtures覆盖 no-grad、all-zero-grad、mixed-rank presence、
+normal nonzero、source/boundary/fail-close 与 legacy compatibility。
+
+请对同一 formal pair 给 literal verdict：
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。
+批准仅授权之后 child `norm_monitor.py`、`norm_monitor_test.py` 的 CPU/static implementation；禁止 callback defaults、
+recipe、trainer、model/runtime、optimizer、checkpoint、dataset、W&B backend、真实 I/O、CUDA/GPU/torchrun、训练、
+评测、推理、P4/P5、B2-T 和 LIBERO4IN1。
+
+---
+
 ## 2026-09-08 — per-slot terminal/rebind remediation closure request @ f0d6c69 / d7eb51a
 
 Awaiting review — 🚨 审核申请已发出（根仓 f0d6c69aae38a7d1b06d06bc1f5c7614d7f440db；子模块/Gitlink d7eb51af226888d3d1e49b609b2fe187a73e8143）
