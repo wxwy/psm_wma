@@ -27,3 +27,28 @@ Awaiting review — 🚨 审核申请已发出（根仓 bc252114b6799559a172a306
 - DS: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` after confirming old 5 HIGH and 2 MEDIUM are closed; only non-blocking implementation-design notes remain.
 - MM: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN`; explicit literal re-confirmed in `mm:0.0` after its completed review.
 - Authorized next action: create the CPU/static implementation design only. Still prohibited: child/runtime/packer/trainer modification, GPU/CUDA/torchrun, real checkpoint/data/cache I/O, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1.
+
+---
+
+## 2026-09-08 — ChatGPT independent review: v0.3.6 canonical semantics @ bc25211
+
+**Verdict: REQUEST_CHANGES**
+
+Formal target:
+- root design SHA: `bc252114b6799559a172a3061677562c8df565a2`
+- child/Gitlink baseline: `80aec090688e3c710c41e1dfd86b6500773db2c7`
+
+Closed relative to `6828b55`: shifted previous-evidence ABI, `training_stream_end`/tail/rebind, sparse Local absence, episode-vs-slow LR scheduler split under GradScaler skip, unscaled native-loss finiteness, primary/aux loss partition + unique Local scaling ownership, physical state/dt/age disable with inventory refreeze, and runtime-sidecar Gate.
+
+Blocking finding:
+1. **HIGH — GA-window partial failure semantics are not atomic.** `PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.6.md:78-88,92-121` commits successful segment fast chronology after each backward while `N_window` is fixed before the first GA backward. If a later microbatch load/forward/backward fails, earlier slow grads are already scaled by the original denominator and earlier fast chronology is already committed, but the design does not freeze whether the partial slow-grad window is discarded, continued, rescaled or replayed. It also does not explicitly bind planned `N_valid_mu` to the actual gathered count before each backward.
+
+Acceptance: freeze one GA-window transaction rule. At minimum require planned==actual valid count before backward, define exact disposition of accumulated slow grads/optimizer/LR scheduler/remaining microbatches after a later failure, and preserve chronology/no-replay consistency. A deterministic acceptable policy is: retain already successful fast chronology commits, zero/discard the entire partial slow-gradient GA window, perform no slow optimizer/LR-scheduler step for that window, and start the next GA window with a newly planned denominator; otherwise freeze equivalent mathematics/rollback explicitly. Add CPU acceptance fixtures for failure at microbatch 0 and after at least one successful backward.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_canonical_semantics_v036_bc25211.md`
+
+Review commit:
+`2dfd518332d62378f8f27bb2adfc251d71b57d6a`
+
+This verdict is design-only. Child/runtime/packer/trainer changes, GPU/CUDA/torchrun, real checkpoint/data/cache I/O, training/evaluation/inference and later Gates remain prohibited.
