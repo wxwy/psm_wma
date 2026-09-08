@@ -117,7 +117,7 @@
 | G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION-DESIGN | DONE | Codex | v0.3 root=`1f6c0ba`/Gitlink=`80aec09` 获 ChatGPT review=`6b1d4a0`、DS、MM 三方 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC` | 仅授权 v0.3 §1 四文件 synthetic CPU/static implementation。 |
 | G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION | DONE | Codex | root=`d1f155d`/child=`333792e` 获 ChatGPT、MM、DS 三方同 SHA APPROVE；pytest=50 passed、py_compile/diff-check PASS | 仅关闭 canonical CPU/static contract；production、真实 I/O、GPU、训练仍须新 Gate。 |
 | G0-R09-B-TTT-OBSERVABILITY-DESIGN | DONE | Codex | v0.3 root=`7a3f023`/child context=`333792e` 获 MM、DS 同 SHA APPROVE | 仅授权新建 O1 独立实现设计；O2--O5、代码、生产、真实 I/O、GPU、训练仍禁止。 |
-| G0-R09-B-TTT-OBSERVABILITY-O1-DESIGN | REVIEW | Codex | v0.1 implementation design完成，default兼容、Local four-group opt-in selector、CPU/static acceptance | 提交后由 ChatGPT、MM、DS 审核；批准前不得改实现。 |
+| G0-R09-B-TTT-OBSERVABILITY-O1-DESIGN | REVIEW | Codex | v0.1=`024ade3` 获 MM/DS approve、ChatGPT=`a3e3b6b` request changes；v0.2 补单 SUM grad-presence witness 与四类聚合 fixtures | 提交后由 ChatGPT、MM、DS 对新 SHA 审核；批准前不得改实现。 |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |
 | D015-LOCAL-MEMORY-GATE | DONE | Codex | D013/D014 已生效，Runtime Plan R07-R09 已对齐 | MEMORY/DECISIONS.md 新增 D015：Local/Global 必须为独立 optional clean modality；R07-R09 顺序与冻结边界；未冻结项不得在实现前写成既定事实 |
