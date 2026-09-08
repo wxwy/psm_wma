@@ -138,3 +138,21 @@ Awaiting review — 🚨 审核申请已发出（根仓 e4b2d2f；子模块/Gitl
 请对同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，并附 `file:line`。如批准，仅授权新建 CPU/static implementation design；禁止实现代码、GPU/CUDA/torchrun、真实 data/cache/checkpoint I/O、训练/评测/推理、P4/P5、B2-T 和 LIBERO4IN1。
 
 申请哈希更正（范围不变）：formal root SHA 为 `e4b2d2f980ce0f038ae1a44ed379d16bbf05b9d9`；child/Gitlink 为 `80aec090688e3c710c41e1dfd86b6500773db2c7`。
+
+---
+
+## 2026-09-08 — ChatGPT independent review: v0.3.9 plan-chain retry @ e4b2d2f
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN**
+
+- Formal root design SHA: `e4b2d2f980ce0f038ae1a44ed379d16bbf05b9d9`
+- Verified child/Gitlink: `80aec090688e3c710c41e1dfd86b6500773db2c7`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`
+- Detailed review: `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_canonical_semantics_v039_e4b2d2f.md`
+- Detailed review commit: `2ee5a94ffaec824e0ae8fe0f651bb868f2f2f829`
+
+CLOSED — previous sole MEDIUM: v0.3.9 lines 15–23 freeze plan-chain budget, at most one suffix recovery, and LOCAL_MEM_RETRY_EXHAUSTED for any transient at attempt=1, including the first load failure of a later identity. No nested recovery or identity-local budget reset is allowed. Successful fast commits remain; current candidate aborts; all partial slow grads are discarded; no optimizer/LR step or remaining member execution occurs.
+
+Line 27 freezes the A/B/C/D acceptance fixture with preserved A/B chronology/cursor/exposure, no C commit, no D execution, zero slow grads, unchanged optimizer/LR iterations, exact terminal code and retry bound. Existing suffix membership/denominator/objective/slow-step semantics remain unchanged. Current blockers: none.
+
+Design-only review; no code/tests or real execution performed, and no claim that the specified fixtures have run. This verdict closes only ChatGPT's review of this precise design pair. Only after all required reviewers formally approve the same pair may the next CPU/static implementation design be created. It does not authorize implementation, later Gates, production wiring, GPU/CUDA/torchrun, real model/data/cache/checkpoint I/O, preflight/staging/record/refreeze/export/compose, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox commits do not change the formal pair.
