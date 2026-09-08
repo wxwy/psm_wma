@@ -729,3 +729,28 @@ Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementa
 Formal design root=`19a4d59e0e7535e71c483f3a147a747fee7d5f2a`; child/Gitlink=`8754c96a6bde002269751eca55c01dee694f6caa`.
 
 This docs-only remediation closes ChatGPT's v0.5 findings: sidecar read/commit/reset now consumes only the scheduler-admitted exact `SegmentIdentity` projection, with stale/duplicate/source/terminal-rebind fixtures; no inferred/private cursor. `SegmentScanResult` is now an explicit immutable whitelist symbol with frozen field order. No child code, real I/O, GPU or training is authorized. Please review this fresh same-pair request with file:line findings.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.5 identity/result remediation review @ 19a4d59 / 8754c96
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root design SHA: `19a4d59e0e7535e71c483f3a147a747fee7d5f2a`
+- child/Gitlink SHA: `8754c96a6bde002269751eca55c01dee694f6caa`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION-DESIGN`
+
+Prior HIGH remains OPEN, materially narrowed: the identity source is now canonical, but v0.5 freezes `transaction.validate_success()` before scan/gather even though formal child requires `(index, identity, actual_n_valid)`, and the existing trainer seam is already the sole owner of that validation immediately before backward. The adapter has no `member_index`, while `actual_n_valid` does not exist until gather/consumer output. The full current `SegmentIdentity` (including cursor/segment_id) is also not by itself a usable lookup key for the previous committed state of the next segment; predecessor/carry storage semantics and the terminal-success no-write/delete branch remain underfrozen.
+
+Prior MEDIUM remains OPEN, partially remediated: `SegmentScanResult` is now explicitly whitelisted and field order is frozen, but its exact immutable concrete type, field types/shapes, opaque-payload identity semantics, Local graph ownership and graph-bearing `state_out` lifetime before post-commit detach-copy are still unspecified.
+
+Acceptance is frozen in the detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v05_design_19a4d59_8754c96.md`
+
+Detailed review commit:
+`b0d1d1fe33541c715a0e9d39b28cc6c46b2df9b0`
+
+The already-closed v0.4 transaction implementation remains CLOSED. This verdict authorizes no segment-adapter implementation, production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
