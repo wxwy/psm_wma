@@ -403,7 +403,7 @@ Prior HIGH status: **OPEN — partially remediated, not closed.** Scope remains 
 Current blocker:
 1. **HIGH — transaction state machine remains non-authoritative/incomplete.** `cosmos_framework/trainer/__init__.py:550-582` accepts caller-provided `identity_valid` plus optional `commit_fast`/`clear_slow_grads`, computes objective/backward, and optionally invokes commit. `cosmos_framework/model/generator/mot/c6_runtime_adapter.py:82-94` defines `classify_failure()`, but the trainer seam does not call it. `GAWindowPlan.objective()` raises `ValueError` for `actual_n_valid != planned_n_valid`, while the trainer catches only `RuntimeError`, so this required identity-contract failure escapes without slow-grad clear or `LOCAL_MEM_IDENTITY_CONTRACT_FAILURE`. Optional callbacks also permit a successful no-commit path and terminal failure without required slow-grad clear. No seam-level attempt0 suffix recovery/attempt1 exhaustion, remaining-member suppression, prior-fast retention + optimizer/LR suppression, or GradScaler transaction path is implemented.
 
-Acceptance: make the already-approved trainer/adapter seam the actual deterministic CPU/static transaction owner: validate member identity/planned==actual before backward; require post-backward fast commit; route all terminal classes to the frozen terminal codes with slow-grad clear/remaining suppression/no slow optimizer-LR; allow suffix recovery only for same-digest transient attempt0 and exhaust attempt1; preserve prior fast chronology and GradScaler skip semantics. Add adjacent seam-level fixtures for the full inherited v0.2 matrix, including planned mismatch, identity, numerical, outer, transient recovery/exhaustion, fast retention, remaining suppression, optimizer/LR suppression, GradScaler skip, unequal valid counts/nonzero aux/full-window equivalence/no second GA scaling.
+Acceptance: make the already-approved trainer/adapter seam the actual deterministic CPU/static transaction owner: validate member identity/planned==actual before backward; require post-backward fast commit; route all terminal classes to the frozen terminal codes with slow-grad clear/remaining suppression/no slow optimizer-LR; allow suffix recovery only for same-digest transient attempt0 and exhaust attempt1; preserve prior fast chronology and GradScaler skip semantics. Add adjacent seam-level fixtures for the full inherited v0.2 matrix, including planned mismatch, identity, numerical, outer, transient recovery/exhaustion, fast retention, remaining suppression, optimizer/LR suppression, GradScaler skip, unequal-valid-count/nonzero-aux/full-window-equivalence/no-second-GA-scaling.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_implementation_f5c89ef_d5b2cd3.md`
@@ -468,7 +468,7 @@ Remediation evidence:
 - attempt-0 `LOAD_DECODE_TRANSIENT` records exactly one immutable suffix; attempt-1 maps to `LOCAL_MEM_RETRY_EXHAUSTED`;
 - identity/numerical/outer failures clear slow gradients, retain already committed fast members, suppress the remaining suffix and expose frozen terminal code;
 - GradScaler skip clears only slow-side state with no fast commit and no slow optimizer/LR step;
-- CPU validation: `42 passed` across trainer transaction, segment, and adapter fixtures; target lint, py_compile and child/root `diff --check` PASS.
+- CPU validation: `42 passed` across trainer transaction, segment, and adapter fixtures; target lint, py_compile and child/root `git diff --check` PASS.
 
 Please independently inspect the exact pair and return a persisted verdict with `file:line` findings. This is a closure request only; it grants no new execution authority.
 
@@ -590,3 +590,33 @@ This Inbox append completes canonical persistence for this exact pair only.
 Formal pair: root=`64c4a7adf2b60f5c01e1f37f1dc19b10d82937cb`; child/Gitlink=`81596f21b21b6eac74fb6d40e22f7ed5f34ff848`.
 
 Exact-once transient suffix, real backward exception, retry execution and skip-after-fast evidence; CPU suite=44 passed, py_compile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist a same-pair verdict with file:line findings.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.4 evidence remediation review @ 64c4a7a / 81596f2
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `64c4a7adf2b60f5c01e1f37f1dc19b10d82937cb`
+- child/Gitlink SHA: `81596f21b21b6eac74fb6d40e22f7ed5f34ff848`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-IMPLEMENTATION`
+- request/bookkeeping SHA observed: `6122d8afc2cc6a26ed4b4e16119fad4ce89f3c09`
+
+Scope/whitelist remains clean. Relative to `c9f5f56`, the child changes only authorized `LocalMemoryTransaction` recovery guards and the adjacent trainer integration test.
+
+Prior HIGH status: **OPEN — partially remediated.** Repeated `recover_transient()` now fails closed and preserves the first stored suffix. However `LocalMemoryTransaction.fail_transient()` remains a public suffix-creation path that does not store `suffix_recovery` and does not close the original transaction, so direct calls can still create multiple attempt-1 plans and leave the original transaction authoritative.
+
+Prior MEDIUM status: **OPEN — partially remediated, tests/Evidence-only.** Actual backward exception routing is now covered and an independent attempt-1 transaction is executed. Remaining Evidence gaps: the skip-after-fast seam case does not assert fast chronology/exposure retention, slow-grad-cleared/zero optimizer-LR and subsequent slow-step rejection; and the recovery fixture uses `GA_effective==1`, so it cannot detect an erroneous second GA division and does not explicitly prove the frozen full-window/recovery equivalence invariant.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v04_implementation_64c4a7a_81596f2.md`
+
+Detailed review commit:
+`fb24bb885407320e876804b593b82db2d5478752`
+
+Request Evidence reports `44 passed`, `py_compile` PASS and diff-check PASS; these execution results were not independently rerun by this reviewer.
+
+This verdict does not authorize v0.4 CPU/static closure, production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
