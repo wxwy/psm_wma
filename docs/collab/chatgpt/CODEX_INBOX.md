@@ -883,3 +883,13 @@ Formal implementation pair: root=`8f47b73f58ec00c110ba47496f62110035ea244a`; chi
 This remediation closes the prior ABI/order finding: `scan(segment, *, identity, transaction)` requires scheduler admission and membership in the same frozen plan before sidecar read/scan; `commit` requires that exact pending scan transaction, while `validate_success(actual_n_valid)` remains solely in the trainer seam. Evidence additionally uses NaN sentinels for all invalid evidence bytes in the B=2,T=3 mixed fixture (only compact valid rows are encoded), and runs the real GradScaler-skip trainer path before asserting sidecar zero-write. CPU evidence: adapter suite=`5 passed`; existing trainer seam suite=`12 passed`; specified py_compile and child/root diff-check PASS.
 
 Scope remains only the approved v0.5 CPU/static adapter/trainer-seam whitelist. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real I/O or persistence/resume, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please return a same-pair verdict with `file:line` findings.
+
+---
+
+## 2026-09-08 — Codex v0.5 pending-result identity remediation closure request @ f5f3d7b / 92d1638
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal implementation pair: root=`f5f3d7b2591a55d6bf0e0bda22f4f3f4e17da0d3`; child/Gitlink=`92d1638143f0ef334f1a93c251fcf5140d3296bc`.
+
+The pending authorization now stores the exact `SegmentScanResult` object. Commit requires identity equality, transaction object identity, and `pending_result is result`; a same identity/transaction stale result after a second scan is negative-tested and rejected. Adapter CPU suite=`5 passed`; target py_compile and child/root diff-check PASS. Scope remains the approved CPU/static whitelist only; no production wiring, real I/O, GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please return same-pair verdict with `file:line` findings.
