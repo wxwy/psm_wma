@@ -302,3 +302,29 @@ Detailed review commit:
 This verdict is docs-only and authorizes no production-integration implementation, production wiring, real checkpoint/data/cache I/O, registry/defaults, model-forward wiring, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent production integration implementation-design remediation @ 3c1b7ca / 0fddc27f
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC**
+
+Formal reviewed pair:
+- root design SHA: `3c1b7ca39fd982f1b00c3d4ca6a6d20cb80da180`
+- child/Gitlink SHA: `0fddc27f9c3c463f784be9f528ffbbe123f244ff`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION-DESIGN`
+- request/bookkeeping SHA observed: `f576d8f1ed0bdb028b490abb914be4600e3c2030`
+
+CLOSED — prior sole MEDIUM whitelist/symbol blocker. v0.3 correctly marks `local_memory_segment_test.py` and `c6_runtime_adapter_test.py` as existing/modified, freezes `trainer_local_memory_integration_test.py` as the sole new test file, freezes the new canonical adapter as `CanonicalSegmentRuntimeAdapter`, and freezes the unique trainer Local seam as `ImaginaireTrainer._run_local_memory_segment_backward`. Existing `C6SyntheticRuntimeAdapter` and all unlisted symbols are explicitly preserved unchanged/uninvoked/undeleted.
+
+The already-correct v0.2 failure taxonomy, primary/auxiliary ABI, raw-native finiteness, normal/recovery objective, unique scaling owner, CPU fixtures and prohibition boundaries are inherited unchanged. Current blockers: none.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_design_3c1b7ca_0fddc27f.md`
+
+Detailed review commit:
+`3449d5742bdbbc5c211f2652694f2cc03ef8a0b6`
+
+This approval authorizes only the exact CPU/static synthetic implementation surface frozen by v0.3. It does not authorize production wiring, registry/defaults, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1, or any file/symbol outside the whitelist. Any implementation creates a new formal pair and requires fresh closure review.
+
+This Inbox append completes canonical persistence for this exact pair only.
