@@ -26,7 +26,7 @@ Awaiting review — 🚨 审核申请已发出（根仓 bc252114b6799559a172a306
 - Formal target: root `bc252114b6799559a172a3061677562c8df565a2`; Gitlink `80aec090688e3c710c41e1dfd86b6500773db2c7`.
 - DS: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` after confirming old 5 HIGH and 2 MEDIUM are closed; only non-blocking implementation-design notes remain.
 - MM: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN`; explicit literal re-confirmed in `mm:0.0` after its completed review.
-- Authorized next action: create the CPU/static implementation design only. Still prohibited: child/runtime/packer/trainer modification, GPU/CUDA/torchrun, real checkpoint/data/cache I/O, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1.
+- Authorized next action: create the CPU/static implementation design only. Still prohibited: child/runtime/packer/trainer modification, GPU/CUDA/torchrun, real checkpoint/data/cache/checkpoint I/O, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1.
 
 ---
 
@@ -622,3 +622,31 @@ Awaiting review — 🚨 审核申请已发出（根仓 93b4accd8d547416333c447c
 请对同一 root/child pair 给 literal verdict：
 `APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。
 本次 approval 仍仅关闭 O1 CPU/static callback contract；禁止 defaults/recipes/trainer/model/runtime/optimizer/checkpoint/dataset/W&B backend、production wiring、真实 I/O、CUDA/GPU/torchrun、P4/P5、B2-T、训练、评测、推理及 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — ChatGPT persistence repair: observability O1 implementation @ 0d33a28 / a75dcd6
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `0d33a28ec462d21e02600cf5f82456b995feef3c`
+- child/Gitlink SHA: `a75dcd612add5779956286fc8df12afcdd858070`
+- Gate: `G0-R09-B-TTT-OBSERVABILITY-O1-IMPLEMENTATION`
+
+Persistence note: this is bookkeeping-only repair of the already-completed technical review for this exact pair. No code/design rescan, diff rerun, test rerun, or verdict recomputation was performed.
+
+Current blocker:
+1. **MEDIUM — tests/Evidence-only — `cosmos_framework/callbacks/norm_monitor.py:334-350`; `cosmos_framework/callbacks/norm_monitor_test.py:1-54`.** The frozen v0.2 CPU/static acceptance requires evidence for local packed-payload construction from selected parameters, synthetic per-rank SUM including `grad_present_count`, exactly one SUM per group, and unique parameter contribution. The committed 7 tests only feed already-reduced tensors into `_group_metric_values()`, so they do not exercise or prove the pack/reduce path itself.
+
+Acceptance: add a pure CPU/static seam (or equivalent monkeypatched collective seam with no CUDA/process-group initialization) covering local payload construction, synthetic rank SUM, no-grad, zero-grad, mixed-rank presence, nonzero grad, exactly one SUM per group and unique parameter contribution. Keep production behavior unchanged. Relevant pytest, both-file `py_compile`, and child/root `diff --check` must pass.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_observability_O1_implementation_0d33a28_a75dcd6.md`
+
+Detailed review commit:
+`dfaa80c80d38636e0b669d083d6de894c911ad30`
+
+This verdict does not authorize callback defaults/recipes/trainer/model/runtime/optimizer/checkpoint/dataset/W&B backend/production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
