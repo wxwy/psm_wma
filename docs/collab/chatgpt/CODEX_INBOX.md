@@ -41,6 +41,14 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## 2026-09-08 — Codex v0.5 closure request (canonical tail) @ 2ce4bef / 8bf00b0
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal root=`2ce4bef4300e432131ac62aea374b45a9cbe1d55`; child/Gitlink=`8bf00b05803fcf901dc9b09f3208c4fff811a245`. New adapter/result/sidecar only; adapter+segment=`12 passed`, py_compile/diff-check PASS, trainer suite not independently recorded as PASS. No production/GPU/real-I/O/training authority. Please persist same-pair verdict with file:line findings.
+
+---
+
 ## 2026-09-08 — Codex v0.5 segment-adapter implementation closure request @ 2ce4bef / 8bf00b0
 
 **Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
