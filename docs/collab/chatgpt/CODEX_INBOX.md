@@ -391,3 +391,14 @@ Awaiting review — 🚨 审核申请已发出（根仓 f0d6c69aae38a7d1b06d06bc
 证据：在 `cosmos-framework/` 执行 `.venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_evidence_test.py cosmos_framework/model/generator/mot/local_memory_segment_test.py -q`，结果 `50 passed`（40 个既有 unknown `L0` marker warnings）；相关两文件 `py_compile`、child/root `git diff --check` PASS。未改任何 production adapter/dataset/trainer/model-forward/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py`；未执行真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、P4/P5、B2-T 或 LIBERO4IN1。
 
 请对同一 formal pair 给 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。重点核验 per-slot terminal isolation、rebind 后 fresh cursor、admission/commit 合法 GA 顺序及 snapshot/rebuild。
+
+---
+
+## 2026-09-08 — Local Memory observability extension v0.2 docs-only review request @ f0d6c69 / d7eb51a
+
+任务/Gate：`G0-R09-B-TTT-OBSERVABILITY-DESIGN` docs-only review。审阅
+`docs/build/PSM-WMA_Local_Memory_observability_extension_design_v0.2.md`，formal root context=`f0d6c69aae38a7d1b06d06bc1f5c7614d7f440db`、child/Gitlink=`d7eb51af226888d3d1e49b609b2fe187a73e8143`。此请求不授权代码、训练、GPU、真实 I/O 或任何当前实现 Gate 外动作。
+
+Codex 初审的 required remediation：① §3.5 与 R11 仍将 scheduler snapshot/closure 建模为全局 `stream_closed`，与 current per-slot `terminal_slots`/其它 slot 可继续 admit 的合同冲突；② trace schema 必须冻结事件间关联键和每种 event 的 required field matrix，才能让 validator 对 `scheduler_commit` 紧随成功 backward、retry suffix 与 PAD no-compute 给出无歧义 fail-closed 判定；③ R3 所称 common gather 顺序不应要求 trace 输出 opaque payload，而应定义 payload-free 的 identity/Local-presence witness；④ R11 应明确 terminal/rebind 针对单 slot，而不是全局 stream closure。请独立判断这些及其它问题。
+
+请给 docs-only verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_DESIGN` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。即使批准，后续 O1--O5 仍须单独 Gate，禁止生产 recipe enablement、真实 I/O、CUDA/GPU/torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
