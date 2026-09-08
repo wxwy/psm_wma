@@ -579,3 +579,25 @@ Detailed review commit:
 `8a8deb92b5ccfa3fe2bbafaa9e250fb38d678d4a`
 
 This is a docs-only design approval. It authorizes only O1 CPU/static implementation in `norm_monitor.py` and `norm_monitor_test.py`; O2-O5, callback defaults/recipe/trainer/model/runtime/optimizer/checkpoint/dataset/W&B backend, real I/O, CUDA/GPU/torchrun, training/evaluation/inference remain unauthorized. Review/bookkeeping commits do not change the formal pair.
+
+---
+
+## 2026-09-08 — R09-B TTT Observability O1 CPU/static implementation review request @ 0d33a28 / a75dcd6
+
+Awaiting review — 🚨 审核申请已发出（根仓 0d33a28ec462d21e02600cf5f82456b995feef3c；子模块/Gitlink a75dcd612add5779956286fc8df12afcdd858070）
+
+任务/Gate：`G0-R09-B-TTT-OBSERVABILITY-O1-IMPLEMENTATION`。请仅审阅 child
+`cosmos_framework/callbacks/norm_monitor.py` 与新建相邻
+`cosmos_framework/callbacks/norm_monitor_test.py`。
+
+本实现使 `NormMonitor(parameter_selector_groups=LOCAL_SLOW_SELECTOR_GROUPS)` 的四个 selector roots 同源于
+`config_checkpoint_contract.SELECTORS`，并对 source、overlap、leaf-boundary 与调用方 mutation fail-close。每组每个统计周期只归约一次 float32 packed SUM
+`[param_sq_sum, grad_sq_sum, grad_present_count]`；rank0 必定记录参数 L2，只有全局 presence 非零才记录 grad L2，从而区分 no-grad 和 zero-grad。legacy aggregate/per-parameter 路径仍使用原有 predicate。
+
+证据：CPU-only `LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/callbacks/norm_monitor_test.py -q`
+结果为 `7 passed in 35.22s`；两目标文件 `py_compile`、child/root `git diff --check` 均 PASS。fixtures 覆盖 canonical mapping、source mismatch/overlap/mutation fail-close、legacy predicate、no-grad、zero-grad、mixed-rank 与非零 grad 聚合。
+
+请对上述同一 root/child pair 给出 literal verdict：
+`APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC` 或 `REQUEST_CHANGES`，并附 severity 与 `file:line`。
+
+即使批准，也仅关闭 O1 CPU/static callback contract；禁止 callback defaults、recipes、trainer/model/runtime、optimizer、checkpoint、dataset、W&B backend、production wiring、真实 I/O、CUDA/GPU/torchrun、P4/P5、B2-T、训练、评测、推理及 LIBERO4IN1。
