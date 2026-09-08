@@ -402,3 +402,33 @@ Awaiting review — 🚨 审核申请已发出（根仓 f0d6c69aae38a7d1b06d06bc
 Codex 初审的 required remediation：① §3.5 与 R11 仍将 scheduler snapshot/closure 建模为全局 `stream_closed`，与 current per-slot `terminal_slots`/其它 slot 可继续 admit 的合同冲突；② trace schema 必须冻结事件间关联键和每种 event 的 required field matrix，才能让 validator 对 `scheduler_commit` 紧随成功 backward、retry suffix 与 PAD no-compute 给出无歧义 fail-closed 判定；③ R3 所称 common gather 顺序不应要求 trace 输出 opaque payload，而应定义 payload-free 的 identity/Local-presence witness；④ R11 应明确 terminal/rebind 针对单 slot，而不是全局 stream closure。请独立判断这些及其它问题。
 
 请给 docs-only verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_DESIGN` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。即使批准，后续 O1--O5 仍须单独 Gate，禁止生产 recipe enablement、真实 I/O、CUDA/GPU/torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — ChatGPT independent canonical CPU/static remediation review @ f0d6c69 / d7eb51a
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `f0d6c69aae38a7d1b06d06bc1f5c7614d7f440db`
+- child/Gitlink SHA: `d7eb51af226888d3d1e49b609b2fe187a73e8143`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION`
+
+Fresh incremental review relative to `c51fcdc/f14a018`; prior approval is not inherited.
+
+CLOSED in this delta: global `stream_closed` is replaced by per-slot `terminal_slots`; unrelated slots may continue; continued slot admission rejects category/episode/source switches and noncontiguous cursor; terminal state participates in snapshot/rebuild; terminal rebind requires the exact terminal slot and `cursor=0`.
+
+Blocking finding:
+1. **HIGH — `cosmos_framework/model/generator/mot/local_memory_segment.py:300-310`; `local_memory_segment_test.py:130-133`**: `terminal_rebind()` takes a caller-preselected replacement, writes it directly into `stable_slots`, and appends it directly to `admission_order`; the test then calls `commit(replacement, 1)` without `RankLocalSegmentScheduler.admit()`. This lets a fresh episode bypass the scheduler's frozen weighted-deficit category selection and become commit-eligible outside the canonical admission/GA ordering. After rebind the same cursor0 identity cannot subsequently pass `admit()` because `_is_admissible()` expects `previous.cursor + 1`.
+
+Acceptance: preserve per-slot terminal isolation but route the next fresh cursor0 episode through the unique weighted-deficit scheduler authority before it becomes commit-eligible. Rebind may clear/mark the slot free and then `admit(candidates)` must choose/bind cursor0, or `terminal_rebind()` itself must accept a candidate set and run the same weighted-deficit selection; it must not silently mark an arbitrary preselected replacement admitted. Add CPU fixtures proving arbitrary rebind cannot directly commit, deficit-driven fresh selection starts at cursor0, the fresh member follows the frozen GA order before commit, and snapshot/rebuild preserves terminal/free/rebound state.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_canonical_cpu_implementation_f0d6c69_d7eb51a.md`
+
+Detailed review commit:
+`b109b153d0420fe1d9f8da004b60b3b930c55a7f`
+
+The request reports related CPU pytest=`50 passed`, py_compile PASS and child/root `git diff --check` PASS; this review did not independently execute them, and they do not override the blocker.
+
+No production adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py` changes, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, preflight/staging/record/refreeze/export/compose, P4/P5, B2-T, LIBERO4IN1 or later Gate actions are authorized. Review/bookkeeping commits do not change the formal pair.
