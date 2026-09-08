@@ -764,3 +764,30 @@ Detailed review commit:
 The already-closed v0.4 transaction implementation remains CLOSED. This verdict authorizes no segment-adapter implementation, production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.5 executable-sidecar design remediation review @ 52c5f7d / 8754c96
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC**
+
+Formal reviewed pair:
+- root design SHA: `52c5f7d2542b348bf13ad6ada4fde5b5da02aa91`
+- child/Gitlink SHA: `8754c96a6bde002269751eca55c01dee694f6caa`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION-DESIGN`
+
+CLOSED — prior HIGH sidecar/transaction lifecycle blocker. Sidecar carry is now a stable-slot lookup of `(last_committed_identity, detached_fast_state)` and consumes only scheduler-admitted canonical `SegmentIdentity`; first/rebind starts fresh, continuity is verified against the last committed canonical identity without generating cursor, terminal success performs no carry write and deletes the slot record, and only successful trainer/transaction commit permits detach-copy state carry. Existing trainer seam remains the sole owner of `validate_success(member_index, identity, actual_n_valid)`, frozen objective, backward, and `successful_backward()`.
+
+CLOSED — prior MEDIUM `SegmentScanResult` ABI blocker. The design now freezes `@dataclass(frozen=True)` plus exact field order/types/shapes, tuple containers, opaque-payload identity preservation, graph-bearing Local/state ownership, and forbids result-level detach/copy/materialization. Formal child is consistent with the frozen Local width `D_local=32`.
+
+Current blockers: none.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v05_design_52c5f7d_8754c96.md`
+
+Detailed review commit:
+`a1ac911e7859110bf6e6d44d50e5f09251212d8b`
+
+This approval authorizes only the exact v0.5 CPU/static synthetic segment-adapter + trainer-seam implementation surface. It does not authorize model-forward wiring, registry/default/config changes, production runtime/lifecycle/C6 routes, real checkpoint/data/cache I/O, runtime-sidecar persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Any implementation forms a new formal pair and requires fresh three-party closure review.
+
+This Inbox append completes canonical persistence for this exact pair only.
