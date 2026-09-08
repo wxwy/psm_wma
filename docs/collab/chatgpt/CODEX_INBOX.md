@@ -444,3 +444,14 @@ Awaiting review — 🚨 审核申请已发出（根仓 d1f155d9a0cf0cf49055c065
 证据：`cosmos-framework/.venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_evidence_test.py cosmos_framework/model/generator/mot/local_memory_segment_test.py -q`=`50 passed`（40 个既有 unknown `L0` marker warnings）；相关 py_compile、child/root `git diff --check` PASS。仅白名单 CPU/static 文件；未执行或授权 production、真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、P4/P5、B2-T、LIBERO4IN1。
 
 请给同一 formal pair literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。重点核验 rebind 不绕过 scheduler authority、fresh episode 的 weighted-deficit admission/GA commit 顺序、per-slot isolation 与 snapshot/rebuild。
+
+---
+
+## 2026-09-08 — Local Memory observability extension v0.3 docs-only remediation review request @ 7a3f023
+
+任务/Gate：`G0-R09-B-TTT-OBSERVABILITY-DESIGN` docs-only remediation。审阅
+`docs/build/PSM-WMA_Local_Memory_observability_extension_design_v0.3.md`；formal root=`7a3f023efcc82446c9bf930a302c5a3edd0043f9`，context child/Gitlink=`333792e845fe3b15ba4d8af8f34f704de2a79fa2`。v0.3 supersede v0.2 的 scheduler authority、trace schema、R3/R4/R11 与 bounded trace 描述；不授权代码、生产 wiring、真实 I/O、GPU 或训练。
+
+本版响应 MM/DS：①删除全局 `stream_closed`，明确 `terminal_slots[slot_id]`，rebind 只释放 exact terminal slot，fresh cursor0 必经 scheduler `admit()`；②以 rank-local monotonic `event_index`、GA member linkage key、layout_id 关联 event；③冻结每种 canonical event 的 required field/causal matrix；④以 payload-free identity/Local-present witness 取代任何 opaque payload/tensor 读取；⑤定义 PAD/evidence-invalid no-compute；⑥每 chain 256 default FIFO ring 与 overflow summary。请核验这些 remediation 是否足以使后续 O1--O4 deterministic/fail-closed、non-mutating 且不产生第二 authority。
+
+请给 docs-only literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_DESIGN` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。即使批准，O1--O5 仍各需独立 Gate；禁止 production recipe、真实 I/O、CUDA/GPU/torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
