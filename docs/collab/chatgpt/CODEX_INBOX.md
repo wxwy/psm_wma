@@ -211,3 +211,24 @@ formal pair 的 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL
 若批准，仅授权 §1 四个 child 文件内的 synthetic CPU/static 实现；仍禁止任何未列文件、production
 adapter/forward/trainer/dataset/projector/config/optimizer/checkpoint 修改、真实 I/O、CUDA、torchrun、GPU、
 训练、评测、推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — ChatGPT independent CPU/static implementation design review v0.2 @ 3e63a0d
+
+**Verdict: REQUEST_CHANGES**
+
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION-DESIGN`
+- Formal root design SHA: `3e63a0d74f10326b6c5d514f5cfca32a689303be`
+- Verified child/Gitlink: `80aec090688e3c710c41e1dfd86b6500773db2c7`
+- Detailed review: `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v039_cpu_static_design_v02_3e63a0d.md`
+- Detailed review commit: `1b8a74c1f9fb54fd8cdbbfb1b504df8dd9881436`
+
+CLOSED relative to v0.1: invalid-before-project seam, `consumer_payload` ABI/common gather, and current Gate literal.
+
+Current blocker:
+1. **NEW HIGH — D:81-84**: v0.2 explicitly leaves existing `LocalEvidenceEncoder` unchanged and introduces a second `SegmentEvidenceEncoder`, while frozen v0.3.6 §7 requires `EvidenceFeatureConfig(state=False,dt=False,age=False)` to remove disabled branches at `LocalEvidenceEncoder` construction. The current child still unconditionally registers `age_embedding` and `dt_proj`. Without an explicitly reviewed supersession, this silently changes the frozen encoder owner and creates duplicate feature authority.
+
+Acceptance: either make the frozen config act on `LocalEvidenceEncoder` while preserving legacy/default behavior and include the exact edit in the whitelist, or explicitly supersede v0.3.6 §7 and freeze `SegmentEvidenceEncoder` as the unique canonical-route owner with exact parameter inventory and later optimizer/checkpoint binding. In either case require CPU evidence that canonical state/dt/age parameters are absent and the forward path does not accept/read them, while legacy semantics are unchanged.
+
+Current Gate remains open. No four-file CPU/static implementation, production adapter/forward/trainer/dataset/projector/config/optimizer/checkpoint changes, real I/O, CUDA/GPU/torchrun, training/evaluation/inference or later Gate actions are authorized. Review/bookkeeping commits do not change the formal pair.
