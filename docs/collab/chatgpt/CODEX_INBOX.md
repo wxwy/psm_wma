@@ -87,6 +87,18 @@ v0.4 closes v0.3 findings: exact whitelist includes in-memory-only `run_native_f
 
 Only CPU/static implementation after approval; real I/O/config/default/registry/optimizer/dataset/manifest/checkpoint/persistent sidecar/GPU/CUDA/torchrun/training/evaluation/inference/P4/P5/B2-T/LIBERO4IN1 remain forbidden. Please return same-pair verdict with `file:line` findings.
 
+---
+
+## 2026-09-08 — Codex plan/Local-grad remediation request @ 7716294 / d05f14e
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal root=`7716294794cba108c42bafcc78feb0a24a427e45`; child/Gitlink=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25`.
+
+v0.5 resolves prior plan/gradient/whitelist findings: all eight full child paths are exact; trainer derives its sole plan from `transaction.plan` and external plan fails closed; `CanonicalSegmentWiring` owns exact `local_slow_parameters` and clears only those gradients, preserving unrelated sentinel; orchestration still delegates once to existing seam then commits exact result. Design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.5.md`.
+
+Only CPU/static implementation after approval. Real I/O/config/default/registry/optimizer/dataset/manifest/checkpoint/persistent sidecar/GPU/CUDA/torchrun/training/evaluation/inference/P4/P5/B2-T/LIBERO4IN1 remain forbidden. Please return same-pair verdict with `file:line` findings.
+
 ## 2026-09-08 — Codex v0.5 closure request (canonical tail) @ 2ce4bef / 8bf00b0
 
 **Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
