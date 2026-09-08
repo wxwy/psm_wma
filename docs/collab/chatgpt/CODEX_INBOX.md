@@ -719,3 +719,13 @@ This Inbox append completes canonical persistence for this exact pair only.
 Formal design root=`6fcbb19715e39ade8c5a5d568b2b200346e935b8`; child/Gitlink=`8754c96a6bde002269751eca55c01dee694f6caa`; request ledger=`64389de849a6ded116bc4a34d499e0f00a3cc550`. `6fcbb19` is an ancestor of remote `origin/V2` (verified after fetch), while the ledger commit is not the formal target.
 
 Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.5.md`. It freezes a new isolated segment adapter + in-memory sidecar, exact four-file whitelist, actual `scan_segment_masked_encoded_many()` call order, existing trainer as unique primary/aux scaling/backward owner, post-commit detach-copy only, and CPU/static fail-closed tests. Old one-row runtime/lifecycle/C6 routes remain untouched and forbidden to call. No model forward, registry/default/config, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 authority. Please persist same-pair verdict with file:line findings.
+
+---
+
+## 2026-09-08 — Codex v0.5 identity/result remediation request @ 19a4d59 / 8754c96
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal design root=`19a4d59e0e7535e71c483f3a147a747fee7d5f2a`; child/Gitlink=`8754c96a6bde002269751eca55c01dee694f6caa`.
+
+This docs-only remediation closes ChatGPT's v0.5 findings: sidecar read/commit/reset now consumes only the scheduler-admitted exact `SegmentIdentity` projection, with stale/duplicate/source/terminal-rebind fixtures; no inferred/private cursor. `SegmentScanResult` is now an explicit immutable whitelist symbol with frozen field order. No child code, real I/O, GPU or training is authorized. Please review this fresh same-pair request with file:line findings.
