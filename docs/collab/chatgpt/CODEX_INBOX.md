@@ -334,3 +334,32 @@ Detailed review commit:
 This approval authorizes only the exact CPU/static synthetic implementation surface frozen by v0.3. It does not authorize production wiring, registry/defaults, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1, or any file/symbol outside the whitelist. Any implementation creates a new formal pair and requires fresh closure review.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent production integration CPU/static implementation review @ b4ee077 / 14c005e
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `b4ee077c1d94927f69730b125c0d8c16686b01b1`
+- child/Gitlink SHA: `14c005e5226ef1d1bd64fdf78cc76c0af12cda73`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION`
+- request/bookkeeping SHA observed: `9b1bbd654516f3ac82e54c9fc72a34a9ca1a7cc1`
+
+Scope/whitelist: child compare touches exactly four approved files (`c6_runtime_adapter.py`, `c6_runtime_adapter_test.py`, `trainer/__init__.py`, new `trainer_local_memory_integration_test.py`); no registry/defaults/model-forward/real-I/O/GPU/training wiring was introduced. The primary/aux objective formula and raw finite check are present.
+
+Current blocker:
+1. **HIGH — approved backward/commit transaction-owner contract is not implemented end-to-end.** `cosmos_framework/trainer/__init__.py:546-562` computes the canonical objective, calls `loss.backward()`, and returns; `cosmos_framework/model/generator/mot/c6_runtime_adapter.py:62-81` only provides gather/objective helpers. The frozen v0.3 contract requires `_run_local_memory_segment_backward` to be the unique Local primary/aux scaling and backward/commit transaction owner and inherits v0.2 failure taxonomy + mandatory CPU fixtures. The implementation therefore lacks identity/planned failure routing, terminal codes, partial-slow-grad clearing, remaining-member suppression, fast commit after successful backward/identity validation, transient-only suffix recovery/retry exhaustion, and GradScaler/optimizer-LR transaction semantics. The new trainer fixture proves only a successful one-member scaling/backward case; it does not establish the inherited transaction matrix end-to-end through the new seam.
+
+Acceptance: within the already-approved exact whitelist/symbols, implement the canonical CPU/static transaction seam so planned==actual/identity validation, success commit, terminal failure disposition/codes, transient attempt0-only suffix recovery + attempt1 exhaustion, prior-fast retention, zero partial slow grads, remaining-member suppression, optimizer/LR suppression, and GradScaler skip semantics are observable through `CanonicalSegmentRuntimeAdapter` / `ImaginaireTrainer._run_local_memory_segment_backward`. Extend only approved fixtures to cover the full inherited v0.2 transaction matrix plus unequal valid counts/nonzero aux/full-window equivalence/no second GA scaling.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_implementation_b4ee077_14c005e.md`
+
+Detailed review commit:
+`6178e1d13e7ac9aa0748e5b76d93702af1255500`
+
+This verdict does not authorize production-integration closure, production wiring, registry/defaults, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
