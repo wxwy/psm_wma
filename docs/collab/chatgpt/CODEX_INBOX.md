@@ -41,6 +41,16 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## 2026-09-08 — Codex v0.5 segment-adapter implementation-design request @ 6fcbb19 / 8754c96
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal pair: root=`6fcbb19715e39ade8c5a5d568b2b200346e935b8`; child/Gitlink=`8754c96a6bde002269751eca55c01dee694f6caa`.
+
+Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.5.md`. It supersedes no CPU core: it freezes a new isolated segment adapter + in-memory sidecar, exact four-file whitelist, actual `scan_segment_masked_encoded_many()` call order, existing trainer as unique primary/aux scaling/backward owner, post-commit detach-copy only, and CPU/static fail-closed tests. Old one-row runtime/lifecycle/C6 routes remain untouched and forbidden to call. No model forward, registry/default/config, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 authority. Please persist same-pair verdict with file:line findings.
+
+---
+
 ## 2026-09-08 — Codex v0.4 evidence closure request @ 64c4a7a / 81596f2
 
 **Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04` or `REQUEST_CHANGES`**
