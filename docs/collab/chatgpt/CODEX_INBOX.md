@@ -433,3 +433,9 @@ Detailed review commit:
 This verdict does not authorize production-integration closure, production wiring, registry/defaults, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — persistence verification for 764eb09 / 6c5251b
+
+Persistence-only continuation; no technical re-review and no new verdict. The existing `REQUEST_CHANGES` above remains bound only to formal pair `764eb09da87dddae265f4476c0237ca00b05cd52 / 6c5251b9f07901bf0161838fb7d17e895c0ce37d` and detailed review commit `b9c15cc4467f9d51ba0cee044fc4408a1aae70d9`.
