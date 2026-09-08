@@ -893,3 +893,28 @@ Scope remains only the approved v0.5 CPU/static adapter/trainer-seam whitelist. 
 Formal implementation pair: root=`f5f3d7b2591a55d6bf0e0bda22f4f3f4e17da0d3`; child/Gitlink=`92d1638143f0ef334f1a93c251fcf5140d3296bc`.
 
 The pending authorization now stores the exact `SegmentScanResult` object. Commit requires identity equality, transaction object identity, and `pending_result is result`; a same identity/transaction stale result after a second scan is negative-tested and rejected. Adapter CPU suite=`5 passed`; target py_compile and child/root diff-check PASS. Scope remains the approved CPU/static whitelist only; no production wiring, real I/O, GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please return same-pair verdict with `file:line` findings.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.5 pending-result remediation review @ f5f3d7b / 92d1638
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `f5f3d7b2591a55d6bf0e0bda22f4f3f4e17da0d3`
+- child/Gitlink SHA: `92d1638143f0ef334f1a93c251fcf5140d3296bc`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC`
+
+CLOSED — prior exact pending-result binding blocker. Pending authorization now stores the exact `SegmentScanResult`; commit requires exact identity, transaction object identity, and `pending_result is result`, and the stale-result negative witness passes the intended fail-closed contract.
+
+Current blocker:
+1. **MEDIUM — tests/Evidence-only.** Frozen v0.5 mandatory adapter integration Evidence remains incomplete: no consumer-spy valid-row/S0/PAD/no-state-dt-age witness; no real trainer terminal/backward failure followed by adapter zero-write while retaining prior carry; and no disabled-parity witness. This pair changes only exact-result binding plus its stale-result fixture, so those prior Evidence gaps remain unchanged.
+
+Acceptance: add only adjacent CPU/static fixtures for those three missing witnesses, preserve production code unless a fixture exposes a semantic defect, and rerun adapter/segment plus trainer seam suites with readable PASS, target py_compile and child/root diff-check.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v05_implementation_f5f3d7b_92d1638.md`
+
+Scope remains CPU/static synthetic only. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real checkpoint/data/cache I/O, runtime persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized.
+
+This Inbox append completes canonical persistence for this exact pair only.
