@@ -61,9 +61,9 @@ Awaiting review — 🚨 审核申请已发出（根仓 b912aab3f9607319d383cee6
 
 任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`。请审阅 `docs/build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.7.md`。该 docs-only remediation 仅关闭 ChatGPT 对 `bc25211` v0.3.6 的 HIGH：GA-window 后续 member 失败时，固定分母、partial slow gradients 与已提交 fast chronology 的事务语义。child Gitlink 未变；无 child/runtime/packer/trainer 代码变更，无 GPU/CUDA/torchrun、真实 data/cache/checkpoint I/O、训练、评测或推理。
 
-请核对：①第一个 backward 前 immutable `GAWindowPlan` 的 identity、planned valid count 与 `N_window`；②每 member backward 前 `actual_gathered_N_valid==planned_N_valid` fail-closed；③后续 member failure 保留已成功 fast commit、丢弃全 partial slow-gradient window、不作 slow optimizer/LR step、不执行余 members；④仅 deterministic 重送未提交同一 identity、不得 replay/rebind/resample；⑤ GradScaler skip 与 transaction failure 区分；⑥ CPU/static 五类 fixture 可证明上述状态。请求针对上述同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，附 `file:line`。
+请核对：①第一个 backward 前 immutable `GAWindowPlan` 的 identity、planned valid count 与 `N_window`；②每 member backward 前 `actual_gathered_N_valid==planned_N_valid` fail-closed；③后续 member failure 保留已成功 fast commit、丢弃全 partial slow-gradient window、不作 slow optimizer/LR step、不执行余 members；④仅 deterministic 重送未提交同一 identity、不得 replay/rebind/resample；⑤ GradScaler skip 与 transaction failure区分；⑥ CPU/static 五类 fixture 可证明上述状态。请求针对上述同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，附 `file:line`。
 
-若批准，仅授权下一步新建 CPU/static implementation design；仍禁止 child/runtime/packer/trainer 修改、GPU/CUDA/torchrun、真实 checkpoint/data/cache I/O、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。
+若批准，仅授权下一步新建 CPU/static implementation design；仍禁止 child/runtime/packer/trainer implementation、GPU/CUDA/torchrun、real model/data/cache/checkpoint I/O、training/evaluation/inference、formal Local-Memory training、P4/P5、B2-T or LIBERO4IN1。
 
 ---
 
@@ -354,3 +354,28 @@ Detailed review commit:
 `ca982eacfc53b2be8d2154f2017a7b67a7fee6e0`
 
 This Inbox append completes canonical persistence for that historical exact pair only. It grants no implementation/GPU/training authority and does not change any newer formal pair or verdict.
+
+---
+
+## 2026-09-08 — ChatGPT persistence repair: canonical CPU/static implementation @ c51fcdc / f14a018
+
+**Verdict: APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC**
+
+Formal reviewed pair:
+- root implementation SHA: `c51fcdce1c5b0330d7c93ecb3304eeb6d3c0904d`
+- child/Gitlink SHA: `f14a0185976cc94fde1be73028417893b68d5ae2`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION`
+
+Persistence note: this is bookkeeping-only repair of the already-issued technical verdict for this exact pair. The formal pair is unchanged; no code/design rescan, diff rerun, test rerun, or verdict recomputation was performed.
+
+Blocker status: **none**. The five blockers from `0d8db57/89f9fc8` are `CLOSED`: shifted non-S0 evidence/Local fail-close; pure-Python GA transaction/recovery + scheduler snapshot/rebuild; invalid-first compact-row-before-encoder/state-value access; legacy forward requiredness/error behavior; and the mandatory related CPU Evidence, recorded as `49 passed` with `py_compile` and root/child `diff --check` PASS. The remaining Ruff `local_evidence.py:302 E702` is historical and outside this Gate's permitted modification scope.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_canonical_cpu_implementation_c51fcdc_f14a018.md`
+
+Detailed review persistence commit:
+`55303415536f060f23149fa676ebebcbcc91319d`
+
+This verdict closes only the exact synthetic CPU/static Gate and does not authorize production adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py` changes, real model/data/cache/checkpoint I/O, preflight/staging/record/refreeze/export/compose, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1, or any later Gate. Review/Inbox bookkeeping commits do not change the formal implementation target.
+
+This Inbox append completes canonical persistence for this exact pair only.
