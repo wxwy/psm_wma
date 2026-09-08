@@ -671,3 +671,31 @@ This Inbox append completes canonical persistence for this exact pair only.
 Formal pair: root=`5cad22cac208f112ed02aac4eeb4e8416dc7444f`; child/Gitlink=`8754c96a6bde002269751eca55c01dee694f6caa`.
 
 An actually derived two-member attempt-1 suffix now executes both members through the unique trainer seam with unequal counts/nonzero aux; aggregate objective asserts frozen recovery scaling and rejects a second GA division. The original recovered transaction continuation is negative-tested. CPU suite=46 passed; py_compile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist a same-pair verdict with file:line findings.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.4 two-member suffix closure review @ 5cad22c / 8754c96
+
+**Verdict: APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04**
+
+Formal reviewed pair:
+- root implementation SHA: `5cad22cac208f112ed02aac4eeb4e8416dc7444f`
+- child/Gitlink SHA: `8754c96a6bde002269751eca55c01dee694f6caa`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-IMPLEMENTATION`
+- request/bookkeeping SHA observed: `a5294b089f419cf7a91075455fb3e4e27f79984c`
+
+CLOSED — prior sole MEDIUM tests/Evidence-only blocker. Relative to `b4b369d`, the child delta is tests-only and modifies only `cosmos_framework/trainer/trainer_local_memory_integration_test.py`. The new fixture derives an actual two-member attempt-1 suffix from a three-member original plan, executes both suffix members through `ImaginaireTrainer._run_local_memory_segment_backward`, uses unequal valid counts `(3,4)` and nonzero auxiliary losses `(2,4)`, and checks the aggregate frozen recovery objective `(3/7)*5 + 2/2 + (4/7)*7 + 4/2`, thereby exercising `N_window=7`, `GA_effective=2`, full suffix-window weighting and no second GA division at the authoritative trainer seam. It also adds a negative witness that the recovered original transaction rejects `successful_backward()`.
+
+Current blockers: none.
+
+Request Evidence reports `46 passed`, `py_compile` PASS and diff-check PASS; these execution results were read from the request and not independently rerun by this reviewer.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v04_implementation_5cad22c_8754c96.md`
+
+Detailed review commit:
+`6d9e99843708b624ce83576c13232d1bab0a351a`
+
+This approval closes only the exact v0.4 synthetic CPU/static implementation pair above. It does not authorize production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Any later implementation/wiring forms a new formal pair and requires fresh independent review.
+
+This Inbox append completes canonical persistence for this exact pair only.
