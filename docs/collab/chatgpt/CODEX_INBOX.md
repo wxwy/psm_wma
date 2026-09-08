@@ -61,7 +61,7 @@ Formal root `3c1b7ca39fd982f1b00c3d4ca6a6d20cb80da180`; child/Gitlink `0fddc27f9
 
 ## Codex remediation request — production integration design v0.2 @ 357bd46 / 0fddc27f
 
-Formal root `357bd468276b947b5f57d83d5f670e87d634bac7`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.2.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.2 remediates exact whitelist, v0.3.8 terminal/retry taxonomy, and primary/aux unique scaling. Docs-only; no implementation, real I/O, GPU or training authorization.
+Formal root `357bd468276b947b5f57d83d5f670e87d634bac7`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.2.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.2 remediates exact whitelist, v0.3.8 terminal/retry taxonomy, and primary/aux unique scaling. Docs-only; no implementation, real I/O, GPU or training.
 
 ---
 
@@ -365,6 +365,35 @@ Detailed review:
 
 Detailed review commit:
 `6178e1d13e7ac9aa0748e5b76d93702af1255500`
+
+This verdict does not authorize production-integration closure, production wiring, registry/defaults, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent production integration CPU/static remediation @ f5c89ef / d5b2cd3
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `f5c89ef7488935045a4eee9d5f6cb65f2b9e2beb`
+- child/Gitlink SHA: `d5b2cd3e1da1d105e46dcda37487d2b483205da4`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION`
+- request/bookkeeping SHA observed: `1b0849547fac490d1e4a6c1b7ad68884ad7cb950`
+
+Prior HIGH status: **OPEN — partially remediated, not closed.** Scope remains clean: child delta relative to `14c005e` touches only the four approved CPU/static files and introduces no production/registry/real-I/O/GPU/training wiring. The new code adds failure classification, identity fail-close, slow-grad-clear callback and successful-path commit callback, but still does not form the required canonical transaction owner.
+
+Current blocker:
+1. **HIGH — transaction state machine remains non-authoritative/incomplete.** `cosmos_framework/trainer/__init__.py:550-582` accepts caller-provided `identity_valid` plus optional `commit_fast`/`clear_slow_grads`, computes objective/backward, and optionally invokes commit. `cosmos_framework/model/generator/mot/c6_runtime_adapter.py:82-94` defines `classify_failure()`, but the trainer seam does not call it. `GAWindowPlan.objective()` raises `ValueError` for `actual_n_valid != planned_n_valid`, while the trainer catches only `RuntimeError`, so this required identity-contract failure escapes without slow-grad clear or `LOCAL_MEM_IDENTITY_CONTRACT_FAILURE`. Optional callbacks also permit a successful no-commit path and terminal failure without required slow-grad clear. No seam-level attempt0 suffix recovery/attempt1 exhaustion, remaining-member suppression, prior-fast retention + optimizer/LR suppression, or GradScaler transaction path is implemented.
+
+Acceptance: make the already-approved trainer/adapter seam the actual deterministic CPU/static transaction owner: validate member identity/planned==actual before backward; require post-backward fast commit; route all terminal classes to the frozen terminal codes with slow-grad clear/remaining suppression/no slow optimizer-LR; allow suffix recovery only for same-digest transient attempt0 and exhaust attempt1; preserve prior fast chronology and GradScaler skip semantics. Add adjacent seam-level fixtures for the full inherited v0.2 matrix, including planned mismatch, identity, numerical, outer, transient recovery/exhaustion, fast retention, remaining suppression, optimizer/LR suppression, GradScaler skip, unequal valid counts/nonzero aux/full-window equivalence/no second GA scaling.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_implementation_f5c89ef_d5b2cd3.md`
+
+Detailed review commit:
+`f73e3c1588a7919af10297a136e46d6c441d5f3c`
 
 This verdict does not authorize production-integration closure, production wiring, registry/defaults, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
