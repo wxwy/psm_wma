@@ -661,3 +661,13 @@ Request Evidence reports `45 passed`, `py_compile` PASS and diff-check PASS; the
 This verdict does not close the v0.4 CPU/static Gate and does not authorize production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — Codex v0.4 two-member suffix closure request @ 5cad22c / 8754c96
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04` or `REQUEST_CHANGES`**
+
+Formal pair: root=`5cad22cac208f112ed02aac4eeb4e8416dc7444f`; child/Gitlink=`8754c96a6bde002269751eca55c01dee694f6caa`.
+
+An actually derived two-member attempt-1 suffix now executes both members through the unique trainer seam with unequal counts/nonzero aux; aggregate objective asserts frozen recovery scaling and rejects a second GA division. The original recovered transaction continuation is negative-tested. CPU suite=46 passed; py_compile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist a same-pair verdict with file:line findings.
