@@ -230,3 +230,32 @@ Detailed review commit:
 This approval authorizes only creation of the next production-migration implementation design. It does not authorize child code, registry/defaults, production wiring, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. The next implementation design and every implementation SHA remain separately gated and require fresh review.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent production integration implementation-design review @ 8697a4c / 0fddc27f
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root design SHA: `8697a4caf47b43164f03e79b841a11ebb1991287`
+- child/Gitlink SHA: `0fddc27f9c3c463f784be9f528ffbbe123f244ff`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION-DESIGN`
+- request/bookkeeping SHA: `782b7174aca3809b517388da242bb5d802619600`
+
+Current blockers:
+1. **HIGH — failure recovery taxonomy is broadened incorrectly.** Design line 15 routes `actual!=planned`, identity, inner/numerical and forward/backward failures into suffix redelivery. Canonical v0.3.8/v0.3.9 permits suffix recovery only for same-digest `LOAD_DECODE_TRANSIENT` at attempt=0; all other classes are terminal with their frozen terminal codes and no redelivery.
+2. **HIGH — trainer loss partition is underfrozen.** Design line 15 reduces a singular “native mean” by `N_valid/N_window`, but canonical v0.3.6 requires explicit `L_consumer_mu` versus `L_aux_mu` partition and objective `(N_valid_mu/N_window)*L_consumer_mu + (1/GA)*L_aux_mu` (or `1/GA_effective` in recovery), with no second `/grad_accum_iter`.
+3. **MEDIUM — implementation whitelist is not exact.** Design line 11 contains `cosmos_framework/model/.../local_memory_segment.py`, basename-only `production_runtime_adapter.py`, generic `trainer/__init__.py`, and postpones actual path/entry freezing until “实现前”, even though this Gate would authorize implementation.
+
+Acceptance: preserve the exact canonical exception/retry/terminal-code state machine; freeze primary+aux loss ABI, raw-loss finiteness and unique trainer scaling for normal/recovery windows; and enumerate every allowed repository path/symbol/test exactly (new vs existing), explicitly stating treatment of the historical C6 adapter. No ellipsis or post-approval whitelist expansion.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_design_8697a4c_0fddc27f.md`
+
+Detailed review commit:
+`65fcf428f6d2fb613875a227c0312ce6027c53f7`
+
+This verdict is docs-only and authorizes no production-integration implementation, production wiring, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
