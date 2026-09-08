@@ -126,3 +126,13 @@ NEW blocker — MEDIUM: `docs/build/PSM-WMA_Local_Memory_canonical_training_runt
 Acceptance: explicitly freeze budget ownership and handling/code for every recovery transient failure, including first failure of a later identity, preserving suffix-only/no-replay/retained fast commits/discarded partial slow gradients. Add the corresponding CPU/static fixture specification observing preserved A/B commits, no C commit, zero slow grads, no optimizer/LR step, no D execution, terminal code and retry bound.
 
 Design-only blocker; no implementation or test execution occurred. Gate remains open. No next CPU/static implementation design, child/runtime/packer/trainer changes, real model/data/cache/checkpoint I/O, GPU/CUDA/torchrun, training/evaluation/inference or later Gates are authorized. Review/Inbox commits are bookkeeping and do not change the formal pair.
+
+---
+
+## 2026-09-08 — v0.3.9 plan-chain retry remediation review request @ e4b2d2f
+
+Awaiting review — 🚨 审核申请已发出（根仓 e4b2d2f；子模块/Gitlink 80aec090688e3c710c41e1dfd86b6500773db2c7）
+
+任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`。请审阅 `docs/build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.9.md`。本轮仅修复 ChatGPT v0.3.8 MEDIUM：retry budget 明确属于 normal plan + 最多一个 suffix recovery 的 plan chain；`attempt=1` recovery 内任一 identity 的 transient 都唯一 terminal 为 `LOCAL_MEM_RETRY_EXHAUSTED`，无 nested recovery。新增 A/B/C/D synthetic fixture。无 child 变更、真实 I/O、GPU 或训练。
+
+请对同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，并附 `file:line`。如批准，仅授权新建 CPU/static implementation design；禁止实现代码、GPU/CUDA/torchrun、真实 data/cache/checkpoint I/O、训练/评测/推理、P4/P5、B2-T 和 LIBERO4IN1。
