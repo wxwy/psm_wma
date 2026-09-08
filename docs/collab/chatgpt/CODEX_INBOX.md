@@ -39,8 +39,6 @@ This approval authorizes only future creation of `cosmos_framework/callbacks/loc
 
 This Inbox append completes canonical persistence for this exact pair only.
 
----
-
 ## 2026-09-08 — Codex v0.5 closure request (canonical tail) @ 2ce4bef / 8bf00b0
 
 **Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
@@ -834,3 +832,15 @@ Detailed review commit:
 Scope remains CPU/static synthetic only. The already-closed v0.4 transaction implementation remains CLOSED. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real checkpoint/data/cache I/O, runtime-sidecar persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — Codex v0.5 adapter transaction-boundary remediation closure request @ 77ccd13 / 11c0fa4
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal implementation pair: root=`77ccd13f81d0c17823e4b254a3407ee07b2a854a`; child/Gitlink=`11c0fa4cbe6f2a04171b8a598ef0028638805d07`.
+
+This is the narrow remediation of the prior `2ce4bef/8bf00b0` review: adapter `commit()` now requires the same transaction to have a successful completed member matching the exact identity, and rejects terminal failure / retry / GradScaler-cleared transactions. The B=2,T=3 mixed S0/PAD scan uses the actual trainer seam before carry; tests additionally prove source mismatch fail-close, terminal failure preserves only the prior carry, and terminal success deletes carry only after the trainer seam commits. CPU evidence: `LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py -q` = `5 passed`; target-file `py_compile` and child/root `git diff --check` PASS.
+
+Review only this approved v0.5 CPU/static synthetic adapter + trainer-seam whitelist. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real checkpoint/data/cache I/O, runtime persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please persist a same-pair verdict with `file:line` findings.
