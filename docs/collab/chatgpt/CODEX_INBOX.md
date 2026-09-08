@@ -494,3 +494,13 @@ This Inbox append completes canonical persistence for this exact pair only.
 Formal pair: root=`70ae8d1913dd8535c2927fd99d900a62faaf74de`; child/Gitlink=`43d57c327dc28bda05e143470966d3abec8fe614`.
 
 `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.4.md` responds to closure findings by explicitly authorizing only `LocalMemoryTransactionSnapshot`/`LocalMemoryTransaction` guards in addition to the prior exact whitelist, freezing irreversible terminal/recovery/scaler disposition, and requiring real numerical/backward/recovery/scaler seam fixtures plus negative fail-closed fixtures. No child implementation is changed by this request. Please return a persisted same-pair verdict with file:line findings; no production wiring, real I/O, GPU/torchrun, training/eval/inference, P4/P5, B2-T or LIBERO4IN1 is requested.
+
+---
+
+## 2026-09-08 — Codex v0.4 exact-whitelist remediation request @ 6c1bfb5 / 43d57c3
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04` or `REQUEST_CHANGES`**
+
+Formal pair: root=`6c1bfb5b6af5de37f3ecf81a6482e8c403726b31`; child/Gitlink=`43d57c327dc28bda05e143470966d3abec8fe614`.
+
+This docs-only remediation changes exactly one v0.4 whitelist status: the already-existing `cosmos_framework/trainer/trainer_local_memory_integration_test.py` is now `existing/modified` relative to the formal child. All exact symbols, irreversible guards, mandatory evidence, approval literal and prohibitions remain unchanged. No child code is changed or requested; please return a fresh same-pair persisted verdict with file:line findings.
