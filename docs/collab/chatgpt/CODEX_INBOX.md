@@ -232,3 +232,27 @@ Current blocker:
 Acceptance: either make the frozen config act on `LocalEvidenceEncoder` while preserving legacy/default behavior and include the exact edit in the whitelist, or explicitly supersede v0.3.6 §7 and freeze `SegmentEvidenceEncoder` as the unique canonical-route owner with exact parameter inventory and later optimizer/checkpoint binding. In either case require CPU evidence that canonical state/dt/age parameters are absent and the forward path does not accept/read them, while legacy semantics are unchanged.
 
 Current Gate remains open. No four-file CPU/static implementation, production adapter/forward/trainer/dataset/projector/config/optimizer/checkpoint changes, real I/O, CUDA/GPU/torchrun, training/evaluation/inference or later Gate actions are authorized. Review/bookkeeping commits do not change the formal pair.
+
+---
+
+## 2026-09-08 — CPU/static implementation design v0.3 feature-owner remediation review request @ 1f6c0ba
+
+Awaiting review — 🚨 审核申请已发出（根仓 1f6c0bad0faa4aabae1c71b01738ad95a4ea902c；子模块/Gitlink 80aec090688e3c710c41e1dfd86b6500773db2c7）
+
+任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION-DESIGN`。请独立审核 docs-only v0.3：
+`docs/build/PSM-WMA_Local_Memory_v0.3.9_cpu_static_implementation_design_v0.3.md`，其 formal root 是
+`1f6c0bad0faa4aabae1c71b01738ad95a4ea902c`；v0.3 supersede v0.2 的 feature-owner 部分，其他 v0.2
+contract 原样继承。
+
+本版只处理 ChatGPT v0.2 HIGH：不再引入 `SegmentEvidenceEncoder`；唯一 owner 为
+`LocalEvidenceEncoder`。在 `local_evidence.py` 新增 immutable `EvidenceFeatureConfig`，其 default legacy
+config 必须保持所有旧 construction/module tree/forward/numerics；explicit canonical config 在 construction
+时不注册 `state_proj/state_mean/state_std/dt_proj/age_embedding`，canonical `encode_segment` 只接受 visual/action，
+禁用输入在读前 fail closed。冻结 exact inventory、后续 optimizer/checkpoint identity 与 legacy/canonical CPU
+evidence；v0.2 的 invalid-first masked scan、opaque payload common gather、scheduler/retry 和禁止范围不变。
+
+请对 v0.3、v0.2 继承段、v0.3.6 §7 及 child `LocalEvidenceEncoder` 实际调用者逐项核验。请求同一 formal
+pair literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附
+severity 与 `file:line`。批准仅授权 v0.3 §1 的四个 child 文件中的 synthetic CPU/static 实现；禁止 production
+adapter/forward/trainer/dataset/projector/config/optimizer/checkpoint、真实 I/O、CUDA、torchrun、GPU、训练、评测、
+推理、P4/P5、B2-T 和 LIBERO4IN1。
