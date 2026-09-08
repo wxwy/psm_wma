@@ -125,3 +125,32 @@ Detailed review commit:
 This blocker is tests/Evidence-only; no O2 closure or production action is authorized. Registry/defaults, trainer/model/packer/runtime/scheduler/Local core, hidden tap, trace/validator/recipe, production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent observability O2 implementation remediation @ a4b4095 / 0fddc27f
+
+**Verdict: APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC**
+
+Formal reviewed pair (repository truth):
+- root implementation SHA: `a4b40951e9c279bcad6530eef1c587e4525b904b`
+- child/Gitlink SHA: `0fddc27f9c3c463f784be9f528ffbbe123f244ff`
+- Gate: `G0-R09-B-TTT-OBSERVABILITY-O2-IMPLEMENTATION`
+
+Formal-pair correction: the earlier request text used child SHA `0fddc276a1c04f396e20c66c9c68fd9b20cf01fe`, which does not exist in `wxwy/cosmos-framework`. The formal root `a4b4095` actually pins `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. This verdict binds only the actual repository pair; MM/DS must also approve this exact child SHA for three-party Gate closure.
+
+CLOSED — previous sole MEDIUM tests/Evidence blocker. Relative to `dae3adb`, the child delta is tests-only and touches only `cosmos_framework/callbacks/local_memory_telemetry_test.py`; producer code is unchanged. The added successful-path fixture covers `requires_grad=True`, populated `.grad`, tensor values, version counters, Torch RNG, repeated-call equality and absence of retained producer instance state, closing the frozen v0.2 successful-path non-mutation/determinism Evidence gap.
+
+Current blockers: none.
+
+Request Evidence: O2 pytest=`15 passed`, both target files `py_compile` PASS, child/root `git diff --check` PASS. These execution results were read from the request and not independently executed by this reviewer.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_observability_O2_implementation_a4b4095_0fddc27f.md`
+
+Detailed review commit:
+`676e044cd568746a89db6a306ffb96b9cecae551`
+
+This approval closes only the exact O2 synthetic CPU/static implementation pair above. It does not authorize callback registry/defaults, trainer/model/packer/runtime/scheduler/Local core, hidden tap, trace/validator/recipe, production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
