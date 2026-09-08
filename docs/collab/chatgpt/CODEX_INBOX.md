@@ -979,3 +979,32 @@ Detailed review commit:
 This approval closes only the exact v0.5 synthetic CPU/static production-integration pair above. It does not authorize model-forward wiring, registry/default/config changes, production runtime/lifecycle/C6 routes, real checkpoint/data/cache I/O, runtime-sidecar persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Any later implementation/wiring or any formal root/child SHA change forms a new formal pair and requires fresh independent review.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent production wiring/runtime-sidecar design v0.2 review @ 65a6434 / d05f14e
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root design SHA: `65a643457136d26aec634c95864102cbed8b8378`
+- child/Gitlink SHA: `d05f14e7195ee5efc37f9d9955923d51fd4e4b25`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`
+
+CLOSED — prior selector/supersession blocker. The canonical marker path now has explicit precedence and forbids construction/calls of `_ttt_lifecycle` / `TTTLifecycle.process_sample()` on that branch.
+
+CLOSED — prior plan-aware loss ABI blocker. The unique scalar is frozen as `(N_valid_i/N_valid_window)*primary_consumer_mean_i + auxiliary_loss_i/GA_effective`, with raw-finite checking and no second `/grad_accum_iter` or second backward.
+
+Current blockers:
+1. **HIGH — approved child surface cannot realize the frozen model selector/forward ABI.** v0.2 authorizes `omni_mot_model.py` only for adding `_canonical_local_memory_segment_forward`, but does not authorize an existing callsite (`_inject_local_history`, `_prepare_training_data`, `_get_training_inputs`, or `training_step`) to invoke it. Repository truth shows `training_step()` is monolithic and there is no named existing native training-forward helper matching the design text. Therefore the canonical marker selector is unreachable under the exact whitelist, and the trainer trigger requiring `canonical_segment_forward` is likewise not grounded in an authorized model return path. Acceptance: freeze an exact reachable existing callsite or a named extracted helper plus the minimal authorized callsite, including exact input/output ABI and where `canonical_segment_forward` is inserted into `output_batch`; name the exact native forward/loss symbol instead of an unnamed “existing helper”.
+2. **MEDIUM — whitelist new/existing status is not exact.** `cosmos_framework/model/generator/omni_mot_model_test.py` already exists at formal child `d05f14e`, but v0.2 still says “若不存在则新建”. Mark it unconditionally `existing/modified` and freeze every other authorized path as exact new vs existing/modified.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_wiring_runtime_sidecar_design_v02_65a6434_d05f14e.md`
+
+Detailed review commit:
+`39596cc1cefde728c571b1e9f7368210bde77caa`
+
+No production-wiring CPU/static implementation authority is granted. Runtime-sidecar persistence/resume, real data/cache/checkpoint I/O, config/default/registry/optimizer changes, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited.
+
+This Inbox append completes canonical persistence for this exact pair only.
