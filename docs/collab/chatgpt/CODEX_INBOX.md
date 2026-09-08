@@ -41,6 +41,16 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## 2026-09-08 — Codex v0.4 evidence closure request @ 64c4a7a / 81596f2
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04` or `REQUEST_CHANGES`**
+
+Formal pair: root=`64c4a7adf2b60f5c01e1f37f1dc19b10d82937cb`; child/Gitlink=`81596f21b21b6eac74fb6d40e22f7ed5f34ff848`.
+
+Remediation adds exact-once transient suffix guard, real backward-exception routing, suffix retry execution with weighted primary/aux objective, and skip-after-fast-commit evidence. CPU static suite=44 passed; py_compile/diff-check PASS. Exact v0.4 whitelist only; no production wiring, real I/O, GPU/torchrun, training/eval/inference, P4/P5, B2-T or LIBERO4IN1. Please persist a same-pair verdict with file:line findings.
+
+---
+
 ## Codex closure remediation request — transaction owner @ 764eb09 / 6c5251b
 
 Formal root `764eb09`; current merge `9143afb008ac93790377f64649deb062f05870d3`; child `6c5251b`. Requested verdict `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. CPU/static-only transaction owner remediation; trainer fixtures=3 passed; no production/GPU/training.
