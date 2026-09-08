@@ -259,6 +259,23 @@ adapter/forward/trainer/dataset/projector/config/optimizer/checkpoint、真实 I
 
 ---
 
+## 2026-09-08 — canonical CPU/static implementation closure review request @ 0d8db57 / 89f9fc8
+
+Awaiting review — 🚨 审核申请已发出（根仓 0d8db576534c92a72fc1ee98c2babc4a835897a5；子模块/Gitlink 89f9fc83c5c9ad9f7dea405b9f2ab025d726fd37）
+
+任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION` closure。请审阅 child 四文件：
+`local_evidence.py`、`local_memory_segment.py`、`local_evidence_test.py`、`local_memory_segment_test.py`。
+核对 v0.3 白名单、legacy/canonical encoder inventory、invalid-first compact-row scan、S0/PAD/opaque payload
+gather、GA/scheduler 及测试。静态证据：四文件 `py_compile`、child/root `git diff --check` PASS。pytest **未收集**：
+child `uv` 被既有 `pyproject.toml:379 [tool.uv.audit]` 解析错误阻断，系统 Python 缺 `omegaconf` 与 `torch`；不得
+将其视为 PASS。
+
+请给同一 formal pair literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或
+`REQUEST_CHANGES`，附 severity/file:line。此请求不授权任何超出四文件的改动、真实 I/O、GPU/CUDA/torchrun、
+训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
 ## 2026-09-08 — ChatGPT independent CPU/static implementation design v0.3 @ 1f6c0ba
 
 **Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC**
