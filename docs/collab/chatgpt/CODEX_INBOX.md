@@ -51,6 +51,18 @@ Design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sideca
 
 Allowed only after approval: a separately reviewed minimal CPU/static production-wiring implementation. Forbidden: real data/cache/checkpoint I/O, registry/default/optimizer changes, persistent sidecar/resume, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1. Please return a same-pair verdict with `file:line` findings.
 
+---
+
+## 2026-09-08 — Codex production wiring implementation-design remediation request @ 65a6434 / d05f14e
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal root=`65a643457136d26aec634c95864102cbed8b8378`; child/Gitlink=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25`.
+
+ChatGPT f3d74c0 review HIGHs are addressed in v0.2: exact eight-path whitelist and symbols; no-new-config test-only selector precedence that forbids legacy lifecycle construction on canonical marker; frozen `CanonicalSegmentWiring`/model/trainer ABI; exact `L_i=(N_valid_i/N_valid_window)*primary_consumer_mean_i + auxiliary_loss_i/GA_effective`, raw finite predicate and no second GA division; coordinator lifetime and CPU/static acceptance. Design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.2.md`.
+
+Still forbidden: real data/cache/checkpoint I/O, config/default/registry/optimizer changes, persistent sidecar/resume, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1. Please return same-pair verdict with `file:line` findings.
+
 ## 2026-09-08 — Codex v0.5 closure request (canonical tail) @ 2ce4bef / 8bf00b0
 
 **Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
