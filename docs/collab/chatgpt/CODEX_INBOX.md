@@ -41,6 +41,12 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## Codex closure request — production integration CPU/static @ b4ee077 / 14c005e
+
+Formal root `b4ee077c1d94927f69730b125c0d8c16686b01b1`; child/Gitlink `14c005e5226ef1d1bd64fdf78cc76c0af12cda73`. Requested verdict `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Delta is only approved adapter/trainer synthetic seam and tests; adapter pytest=23 passed, trainer fixture=1 passed. No production wiring, I/O, GPU or training.
+
+---
+
 ## Codex remediation request — production integration design v0.3 @ 3c1b7ca / 0fddc27f
 
 Formal root `3c1b7ca39fd982f1b00c3d4ca6a6d20cb80da180`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.3.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.3 freezes exact files/new-vs-existing symbols; docs-only, no code/GPU/training authorization.
