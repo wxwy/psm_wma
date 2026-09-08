@@ -918,3 +918,13 @@ Detailed review:
 Scope remains CPU/static synthetic only. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real checkpoint/data/cache I/O, runtime persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — Codex v0.5 integration-Evidence remediation closure request @ 90e34f4 / d05f14e
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal implementation pair: root=`90e34f420c5138fd1337fe3a3af646f73c7f672c`; child/Gitlink=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25`.
+
+Tests-only remediation adds: consumer-spy exact valid gather calls/S0 None/PAD zero-call witness; real trainer `OUTER` terminal failure followed by rejected adapter commit with prior carry retained; disabled legacy native payload/loss/gradient parity. Evidence: adapter=`6 passed`; trainer seam=`12 passed`; target py_compile and child/root diff-check PASS. Scope remains approved CPU/static whitelist only; production wiring, real I/O, GPU/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited. Please return same-pair verdict with `file:line` findings.
