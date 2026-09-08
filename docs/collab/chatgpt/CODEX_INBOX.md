@@ -265,3 +265,34 @@ Detailed review commit:
 This verdict is docs-only and authorizes no production-integration implementation, production wiring, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent production integration implementation-design remediation @ 357bd46 / 0fddc27f
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root design SHA: `357bd468276b947b5f57d83d5f670e87d634bac7`
+- child/Gitlink SHA: `0fddc27f9c3c463f784be9f528ffbbe123f244ff`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION-DESIGN`
+- request/bookkeeping SHA observed: `ab9e49564118fa9c86b4e4585864db1aad4552a4`
+
+CLOSED — prior HIGH failure-taxonomy blocker. v0.2 now preserves canonical v0.3.8/v0.3.9 recovery and terminal-code semantics.
+
+CLOSED — prior HIGH loss-partition blocker. v0.2 now freezes the primary/aux ABI, raw-native finiteness, canonical normal/recovery scaling and no second `/grad_accum_iter`.
+
+Current blocker:
+1. **MEDIUM — whitelist/symbol ownership is still not implementation-exact.** `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.2.md:9` labels existing `local_memory_segment_test.py` and `c6_runtime_adapter_test.py` as newly-created files, although both already exist at child `0fddc27f`; only `cosmos_framework/trainer/trainer_local_memory_integration_test.py` is absent. The design also leaves the canonical C6 adapter facade and trainer Local loss/backward seam unnamed, so the exact existing/new symbols authorized for modification remain ambiguous.
+
+Acceptance: mark the two existing tests as existing/modified and the trainer integration test as new; freeze exact new adapter class/function names and exact trainer Local loss/backward function/seam names; state that all other existing symbols, including `C6SyntheticRuntimeAdapter`, remain behaviorally unchanged unless explicitly named. Keep the already-correct taxonomy/loss/test/prohibition clauses unchanged.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_design_v02_357bd46_0fddc27f.md`
+
+Detailed review commit:
+`260a528bd640e98a5b0d11df312b1d1a963c93df`
+
+This verdict is docs-only and authorizes no production-integration implementation, production wiring, real checkpoint/data/cache I/O, registry/defaults, model-forward wiring, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
