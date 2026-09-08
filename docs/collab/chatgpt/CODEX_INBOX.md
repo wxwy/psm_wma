@@ -61,7 +61,7 @@ Awaiting review — 🚨 审核申请已发出（根仓 b912aab3f9607319d383cee6
 
 任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`。请审阅 `docs/build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.7.md`。该 docs-only remediation 仅关闭 ChatGPT 对 `bc25211` v0.3.6 的 HIGH：GA-window 后续 member 失败时，固定分母、partial slow gradients 与已提交 fast chronology 的事务语义。child Gitlink 未变；无 child/runtime/packer/trainer 代码变更，无 GPU/CUDA/torchrun、真实 data/cache/checkpoint I/O、训练、评测或推理。
 
-请核对：①第一个 backward 前 immutable `GAWindowPlan` 的 identity、planned valid count 与 `N_window`；②每 member backward 前 `actual_gathered_N_valid==planned_N_valid` fail-closed；③后续 member failure 保留已成功 fast commit、丢弃全 partial slow-grad window、不作 slow optimizer/LR step、不执行余 members；④仅 deterministic 重送未提交同一 identity、不得 replay/rebind/resample；⑤ GradScaler skip 与 transaction failure 区分；⑥ CPU/static 五类 fixture 可证明上述状态。请求针对上述同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，附 `file:line`。
+请核对：①第一个 backward 前 immutable `GAWindowPlan` 的 identity、planned valid count 与 `N_window`；②每 member backward 前 `actual_gathered_N_valid==planned_N_valid` fail-closed；③后续 member failure 保留已成功 fast commit、丢弃全 partial slow-gradient window、不作 slow optimizer/LR step、不执行余 members；④仅 deterministic 重送未提交同一 identity、不得 replay/rebind/resample；⑤ GradScaler skip 与 transaction failure 区分；⑥ CPU/static 五类 fixture 可证明上述状态。请求针对上述同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，附 `file:line`。
 
 若批准，仅授权下一步新建 CPU/static implementation design；仍禁止 child/runtime/packer/trainer 修改、GPU/CUDA/torchrun、真实 checkpoint/data/cache I/O、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。
 
@@ -291,3 +291,27 @@ CLOSED — previous sole HIGH: v0.3 removes `SegmentEvidenceEncoder` and restore
 The v0.2 closures remain inherited: invalid-first masked scan, opaque `consumer_payload` common gather, exact current Gate literal, rank-local scheduler/GA/retry transaction and production boundary. Current blockers: none.
 
 This approval authorizes only v0.3 §1 four-file synthetic CPU/static implementation. It does not authorize dataset/trainer, production adapter/model forward, `local_memory2llm`, config/optimizer/checkpoint/manifest/`ttt_lifecycle.py`, real model/data/cache/checkpoint I/O, CUDA/GPU/torchrun, training/evaluation/inference, preflight/staging/record/refreeze/export/compose, P4/P5, B2-T, LIBERO4IN1 or later Gates. The implementation will form a new formal pair and requires fresh review.
+
+---
+
+## 2026-09-08 — ChatGPT independent canonical CPU/static implementation review @ 0d8db57 / 89f9fc8
+
+**Verdict: REQUEST_CHANGES**
+
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION`
+- Formal root implementation SHA: `0d8db576534c92a72fc1ee98c2babc4a835897a5`
+- Verified child/Gitlink: `89f9fc83c5c9ad9f7dea405b9f2ab025d726fd37`
+- Approved implementation-design baseline: root `1f6c0bad0faa4aabae1c71b01738ad95a4ea902c` / child `80aec090688e3c710c41e1dfd86b6500773db2c7`
+- Detailed review: `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_canonical_cpu_implementation_0d8db57_89f9fc8.md`
+- Detailed review commit: `2465ad448259287545caa34ecad5d8991f2a13b4`
+
+Current blockers:
+1. **HIGH — `local_memory_segment.py:64-73,75-92`**: shifted ABI is not fail-closed. A valid non-S0 consumer may have `evidence_valid=False`/source `-1`, and `gather_consumers()` may silently return Local `None` for any valid row. Frozen v0.2 §2 requires S0-only absence and previous-evidence/Local presence for every other valid consumer.
+2. **HIGH — `local_memory_segment.py:95-168`**: required pure-Python scheduler/GA transaction/recovery owner is incomplete. Plan-chain/suffix recovery, `LOCAL_MEM_RETRY_EXHAUSTED`, first/later failure handling, GradScaler skip separation, tail/rebind/`training_stream_end`, full snapshot/rebuild state and episode-vs-slow-LR semantics are absent.
+3. **HIGH — `local_evidence.py:146-159,451-467,684-705`**: invalid-first is not end-to-end. `encode_segment()` dense-finite-checks/projects all B/T inputs, and masked scan globally `_validate_state()` before row selection, so invalid/all-invalid rows still participate in value reads/finite checks before compact masking.
+4. **MEDIUM — `local_evidence.py:90-98`**: default/legacy `forward` signature and missing-argument behavior changed; frozen v0.3 §2 requires legacy forward signature/error behavior compatibility.
+5. **MEDIUM — root `SESSION.md:9`; `local_memory_segment_test.py:35-77`; `local_evidence_test.py:244-255`**: mandatory CPU acceptance Evidence is incomplete and pytest was not collected. The committed fixtures do not cover the frozen v0.2 §5 + v0.3 §2 matrix.
+
+CLOSED: previous feature-owner HIGH remains closed; child diff is exactly the four approved files and no dataset/trainer/model-forward/config/optimizer/checkpoint/production-projector file changed.
+
+Gate remains open. No production adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py` changes, real model/data/cache/checkpoint I/O, CUDA/GPU/torchrun, training/evaluation/inference, preflight/staging/record/refreeze/export/compose, P4/P5, B2-T, LIBERO4IN1 or later Gate actions are authorized. Review/bookkeeping commits do not change the formal pair.
