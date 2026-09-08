@@ -713,3 +713,15 @@ Detailed review commit:
 This verdict is docs-only and authorizes no O2 implementation, hidden tap, production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference or later observability Gate action. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — R09-B TTT Observability O2 v0.2 remediation design review request @ 98b834a / 611174b
+
+Awaiting review — 🚨 审核申请已发出（根仓 98b834a141661513e1444f65a50c9a28d0779bc6；子模块/Gitlink 611174b8d8a30976b11442efb833f69890e85a06）
+
+任务/Gate：`G0-R09-B-TTT-OBSERVABILITY-O2-DESIGN` docs-only remediation。请审阅 `docs/build/PSM-WMA_Local_Memory_observability_O2_implementation_design_v0.2.md`。该 target 只新增 v0.2 并更新 `SESSION.md`/`TODO.md`；child/Gitlink 无改动，未运行代码、真实 I/O、GPU 或训练。
+
+本版关闭 ChatGPT 对 `8f84f3f` 的两项 MEDIUM：①不再静默缩减/改名 v0.2 telemetry；能由纯 snapshot 无歧义提供的 inherited key 保留原名，`by_category/by_slot` 与 scheduler family 逐项声明唯一 authority 和 `O2-SCHEDULER-SIDECAR-DESIGN` defer，hidden ratio 仍由 `O2-HIDDEN-TAP-DESIGN` defer；CPU acceptance 冻结 full emitted/deferred key schema。② fast_state/update 唯一接受 CPU float32 contiguous `[N,D]`，逐 row last-axis L2 mean/max、absence/empty/nonfinite/rank/dtype fail-close 与 fixture 完整冻结。另采纳 DS 的 multi-slot 分母澄清与 MM 的 immutable mapping 要求。
+
+请给同一 formal pair literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。即使批准，仅授权未来新增 `local_memory_telemetry.py` 与相邻 test 的 synthetic CPU/static implementation；禁止 registry/defaults、trainer/model/packer/runtime、真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、P4/P5、B2-T、LIBERO4IN1。
