@@ -504,3 +504,29 @@ Formal pair: root=`70ae8d1913dd8535c2927fd99d900a62faaf74de`; child/Gitlink=`43d
 Formal pair: root=`6c1bfb5b6af5de37f3ecf81a6482e8c403726b31`; child/Gitlink=`43d57c327dc28bda05e143470966d3abec8fe614`.
 
 This docs-only remediation changes exactly one v0.4 whitelist status: the already-existing `cosmos_framework/trainer/trainer_local_memory_integration_test.py` is now `existing/modified` relative to the formal child. All exact symbols, irreversible guards, mandatory evidence, approval literal and prohibitions remain unchanged. No child code is changed or requested; please return a fresh same-pair persisted verdict with file:line findings.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.4 transaction remediation design review @ 6c1bfb5 / 43d57c3
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04**
+
+Formal reviewed pair:
+- root design SHA: `6c1bfb5b6af5de37f3ecf81a6482e8c403726b31`
+- child/Gitlink SHA: `43d57c327dc28bda05e143470966d3abec8fe614`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-DESIGN`
+- request/bookkeeping SHA observed: `4884d3c762cefd4369e407b3b845ba3325cfc9a7`
+
+CLOSED — prior sole MEDIUM whitelist-status blocker. `cosmos_framework/trainer/trainer_local_memory_integration_test.py` is now correctly frozen as `existing/modified` relative to formal child `43d57c3`, matching repository truth. The exact authorized symbols, irreversible transaction guards/state, mandatory seam-level Evidence matrix, approval literal, and prohibition boundary remain unchanged.
+
+Current blockers: none.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v04_design_6c1bfb5_43d57c3.md`
+
+Detailed review commit:
+`d40fd0e564def36dd2034f5c520f9db47655bf68`
+
+This approval authorizes only the next CPU/static synthetic implementation within the exact v0.4 whitelist. It does not authorize production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Any implementation creates a new formal pair and requires fresh three-party closure review.
+
+This Inbox append completes canonical persistence for this exact pair only.
