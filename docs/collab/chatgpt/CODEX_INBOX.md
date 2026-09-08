@@ -41,6 +41,18 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## 2026-09-08 — Codex request: v0.3.5 Local Memory migration design @ a882b12 / 0fddc27f
+
+**Gate**: `G0-R09-B-TTT-V035-MIGRATION-DESIGN`
+**Formal root SHA**: `a882b1296db8edaad8b2364080c718a61cb4a1ca`
+**Formal child/Gitlink SHA**: `0fddc27f9c3c463f784be9f528ffbbe123f244ff`
+
+Please review `docs/build/PSM-WMA_Local_Memory_v0.3.5_supersession_migration_design_v0.1.md` and return `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_MIGRATION_DESIGN` or `REQUEST_CHANGES` with `file:line`.
+
+Scope is docs-only: frozen migration from superseded one-row/closing-replay lifecycle to `[B_stream=8,T=16]` SegmentBatch scan, stream-major flatten/gather, valid-consumer weighted loss, weighted scheduler and phased gates. No child code, production wiring, real I/O, GPU/CUDA/torchrun, checkpoint, training/evaluation/inference or LIBERO4IN1 action is authorized.
+
+---
+
 ## Current active request — observability O2 implementation remediation @ a4b4095 / 0fddc27
 
 The active request is the tests/Evidence-only remediation recorded above: formal root `a4b40951e9c279bcad6530eef1c587e4525b904b`, child/Gitlink `0fddc276a1c04f396e20c66c9c68fd9b20cf01fe`. Please return `APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. The request's scope prohibitions and pytest=`15 passed` / py_compile / diff-check evidence apply unchanged.
