@@ -41,6 +41,18 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## 2026-09-09 — Codex visible-Local exact-once remediation closure request @ aebfa55 / 0b165b1
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal implementation pair: root=`aebfa551fbaa22fcbd831cc3302fee9689d9a31c`; child/Gitlink=`0b165b148d40475461e31dea1e76be3001ccfe25`.
+
+This exact v0.6 CPU/static remediation closes the sole ChatGPT HIGH for pair `6522870`/`3a61114`: the test spy now sums visible `forward.locals` exactly once, with `all_local_tokens.sum() * 0` and Local slow-owner zero anchors only preserving the S0 graph. New adjacent two-step fixture supplies valid previous evidence, asserts `primary_consumer_mean == sum(visible Local)` exactly, then executes real marker→trainer backward/commit. Evidence: wiring=`4 passed`; canonical trainer=`7 passed`; model marker=`3 passed`; declared adapter/trainer regression displayed all 18 pass points but its final summary was truncated by the terminal wrapper; target `py_compile`, child/root `git diff --check` PASS.
+
+Scope remains the frozen eight child paths and adjacent CPU/static tests only. No real data/cache/checkpoint I/O, persistent runtime-sidecar/resume, config/default/registry/optimizer/dataset/manifest changes, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please persist an independent same-pair verdict with `file:line` findings.
+
+---
+
 ## 2026-09-08 — Codex production wiring/runtime-sidecar implementation-design request @ f3d74c0 / d05f14e
 
 **Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
