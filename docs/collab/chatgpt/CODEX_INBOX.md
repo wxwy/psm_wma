@@ -540,3 +540,33 @@ Formal pair: root=`43913155b8d0dc67b3d0fceade6b300def7224bc`; child/Gitlink=`c9f
 Within v0.4 exact whitelist only, the transaction is now fail-closed after terminal failure, original-plan suffix recovery, or GradScaler skip; slow optimizer/LR progression is rejected then. Fixtures now cover real NaN numerical routing and fail-closed guards. CPU validation: 43 passed; py_compile and diff-check PASS. No production wiring, real I/O, GPU/torchrun, training/eval/inference, P4/P5, B2-T or LIBERO4IN1. Please persist an independent same-pair verdict with file:line findings.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.4 transaction implementation review @ 4391315 / c9f5f56
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `43913155b8d0dc67b3d0fceade6b300def7224bc`
+- child/Gitlink SHA: `c9f5f56a4276dde7ed4f7cd53e17fc0d951673c0`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-IMPLEMENTATION`
+- request/bookkeeping SHA observed: `1693d3a886011b2b57543ba8a542326744671e8f`
+
+Scope/whitelist: clean. The child changes only v0.4-authorized `LocalMemoryTransaction` guard state and adjacent synthetic tests; no production/registry/real-I/O/GPU/training wiring is introduced.
+
+Current blockers:
+1. **HIGH — transient suffix recovery is not exactly-once fail-closed.** `LocalMemoryTransaction.recover_transient()` sets `_closed=True` only after calling `fail_transient()`, while neither method checks `_require_open()` before creating a suffix. The same closed attempt-0 transaction can therefore call recovery again and obtain another attempt-1 `GAWindowPlan`; the trainer transient branch also reaches recovery before any open-state validation. v0.4 permits exactly one immutable suffix and requires the original transaction to become permanent non-authority after that creation.
+2. **MEDIUM — tests/Evidence-only — mandatory seam matrix is incomplete.** The NaN numerical route is now covered, but there is still no actual `loss.backward()` exception fixture, no seam fixture that first commits fast chronology and then exercises GradScaler skip retention/no-slow-step, and no actual execution of an independent attempt1 suffix transaction proving unequal-valid-count/nonzero-aux recovery `GA_effective`, full-window equivalence and no second GA scaling. Negative fail-closed coverage is also incomplete for repeated recovery / `successful_backward()`.
+
+Acceptance and exact file:line detail are recorded in:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v04_implementation_4391315_c9f5f56.md`
+
+Detailed review commit:
+`ab1856af27f3f9bfe6fda85b1fb4a4dbb12a3dba`
+
+Request Evidence reports `43 passed`, `py_compile` PASS and diff-check PASS; these execution results were not independently rerun by this reviewer.
+
+This verdict does not authorize v0.4 CPU/static closure, production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
