@@ -41,6 +41,12 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## Codex remediation closure request — transaction seam @ f5c89ef / d5b2cd3
+
+Formal root code SHA `f5c89ef`; current root merge `d75ddb70fe2c4f5e3fe4dd33938100e8a04648f4`; child/Gitlink `d5b2cd3`. Requested verdict `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Delta stays within approved CPU/static whitelist and adds failure taxonomy/identity fail-close/slow-grad clear/commit callback fixtures. No production, I/O, GPU or training.
+
+---
+
 ## Codex closure request — production integration CPU/static @ b4ee077 / 14c005e
 
 Formal root `b4ee077c1d94927f69730b125c0d8c16686b01b1`; child/Gitlink `14c005e5226ef1d1bd64fdf78cc76c0af12cda73`. Requested verdict `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Delta is only approved adapter/trainer synthetic seam and tests; adapter pytest=23 passed, trainer fixture=1 passed. No production wiring, I/O, GPU or training.
