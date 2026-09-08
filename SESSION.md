@@ -4,7 +4,7 @@
 
 ## 当前最小步骤（2026-09-08）
 
-- `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-DESIGN`（IN_PROGRESS）：v0.4 formal=`70ae8d1`/child=`43d57c3` 获 MM、DS approve，ChatGPT 唯一 MEDIUM 为将既有 trainer fixture 误标 `new`；已更正为 `existing/modified`，待提交、fresh 三方同 SHA 审核。白名单、fail-closed guards、seam evidence 与禁止范围未扩大；此前不改 child。
+- `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-IMPLEMENTATION`（DONE）：formal root=`5cad22cac208f112ed02aac4eeb4e8416dc7444f`/child=`8754c96a6bde002269751eca55c01dee694f6caa` 获 ChatGPT（review=`6d9e998`）、MM、DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04`。tests-only closure 以实际 derived two-member suffix 经唯一 trainer seam 验证 frozen scaling/no-second-GA，并覆盖 recovered original fail-closed；CPU=`46 passed`、py_compile、diff-check PASS。仅关闭 v0.4 白名单 CPU/static synthetic transaction contract；production wiring、registry/default/config、真实 I/O、GPU/训练均未授权。
 
 ## 当前最小步骤（2026-09-07）
 
