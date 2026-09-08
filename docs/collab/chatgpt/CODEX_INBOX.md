@@ -184,3 +184,30 @@ Current blockers (D = `docs/build/PSM-WMA_Local_Memory_v0.3.9_cpu_static_impleme
 3. **NEW MEDIUM — D:86–87**: document uses prior CANONICAL_CPU_DESIGN literal to authorize implementation, while this Gate request specifies CANONICAL_CPU_STATIC. Unify current Gate/literal/scope; retain the former only as prerequisite, not implementation authority.
 
 Previous semantics retry MEDIUM remains CLOSED; this is a new Gate and fresh pair. No project tests or real execution ran. These are design blockers, not tests-only findings. Current Gate stays open; no whitelist implementation, production wiring, real model/data/cache/checkpoint I/O, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1 or later Gate actions are authorized. Review/Inbox commits do not change the formal pair.
+
+---
+
+## 2026-09-08 — CPU/static implementation design v0.2 remediation review request @ 3e63a0d
+
+Awaiting review — 🚨 审核申请已发出（根仓 3e63a0d74f10326b6c5d514f5cfca32a689303be；子模块/Gitlink 80aec090688e3c710c41e1dfd86b6500773db2c7）
+
+任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION-DESIGN`。请独立审核 docs-only remediation：
+`docs/build/PSM-WMA_Local_Memory_v0.3.9_cpu_static_implementation_design_v0.2.md`。formal root target 是
+`3e63a0d74f10326b6c5d514f5cfca32a689303be`；本 Inbox ledger 后续提交不是 authority。
+
+本版响应 v0.1 的全部三方意见：①只允许新增 `scan_segment_masked_many()`，且在 finite check/K/Q/V
+projection/read/write 之前排除 invalid row，mixed/all-invalid tests 必须实际观测参与行和 state bytes；②恢复
+opaque `consumer_payload`，冻结与 Local/identity 的同 index stream-major gather；③ current literal 统一为
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC`；④新 `SegmentEvidenceEncoder` 与 flags 只在新
+route 生效，旧 `LocalEvidenceEncoder` 不改；⑤所有新 scheduler/GA helper 位于一个白名单新文件，且模型
+`local_memory2llm`、dataset、trainer 均不在本 Gate 修改范围；⑥冻结 weighted-deficit snapshot/exposure 与
+episode vs slow-LR scheduler 的 skip 语义。
+
+验收：核对 v0.3.6--v0.3.9、child=`80aec09` 的真实 scan 行为和本版精确白名单；确认 no invalid
+encode/project/read/write、payload gather、scheduler/transaction synthetic fixtures均足够且不越权。请给出同一
+formal pair 的 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或
+`REQUEST_CHANGES`，附 severity 与 `file:line`。
+
+若批准，仅授权 §1 四个 child 文件内的 synthetic CPU/static 实现；仍禁止任何未列文件、production
+adapter/forward/trainer/dataset/projector/config/optimizer/checkpoint 修改、真实 I/O、CUDA、torchrun、GPU、
+训练、评测、推理、P4/P5、B2-T 或 LIBERO4IN1。
