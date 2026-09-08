@@ -432,3 +432,15 @@ Detailed review commit:
 The request reports related CPU pytest=`50 passed`, py_compile PASS and child/root `git diff --check` PASS; this review did not independently execute them, and they do not override the blocker.
 
 No production adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py` changes, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, preflight/staging/record/refreeze/export/compose, P4/P5, B2-T, LIBERO4IN1 or later Gate actions are authorized. Review/bookkeeping commits do not change the formal pair.
+
+---
+
+## 2026-09-08 — terminal admission-authority remediation closure request @ d1f155d / 333792e
+
+Awaiting review — 🚨 审核申请已发出（根仓 d1f155d9a0cf0cf49055c065defa8119b0ac178f；子模块/Gitlink 333792e845fe3b15ba4d8af8f34f704de2a79fa2）
+
+任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION` ChatGPT HIGH remediation closure。formal pair 仅修改 child `local_memory_segment.py`、`local_memory_segment_test.py`。相对 `f0d6c69/d7eb51a`：`terminal_rebind(identity)` 只验证并释放该 slot 的 terminal/stable binding；不再接受 replacement、写入 `admission_order` 或令其可 commit。之后 fresh `cursor=0` candidates 必须经 canonical weighted-deficit `admit()` 选择才可 commit。fixture 证明：另一 slot 仍连续；未 admission 的 caller replacement 不能 commit；两 fresh candidates 中 scheduler 依 exposure 选择目标 category；rebuild 保持 rebound state。
+
+证据：`cosmos-framework/.venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_evidence_test.py cosmos_framework/model/generator/mot/local_memory_segment_test.py -q`=`50 passed`（40 个既有 unknown `L0` marker warnings）；相关 py_compile、child/root `git diff --check` PASS。仅白名单 CPU/static 文件；未执行或授权 production、真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、P4/P5、B2-T、LIBERO4IN1。
+
+请给同一 formal pair literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。重点核验 rebind 不绕过 scheduler authority、fresh episode 的 weighted-deficit admission/GA commit 顺序、per-slot isolation 与 snapshot/rebuild。
