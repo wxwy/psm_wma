@@ -556,3 +556,26 @@ Detailed review commit:
 This verdict authorizes no O1 implementation or later observability Gate until a new formal pair closes the blocker. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent observability O1 design remediation review @ 9a65bed / 333792e
+
+**Verdict: APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC**
+
+Formal reviewed pair:
+- root design SHA: `9a65bed8c5260d6e2981dcc659b1f3abf4602a80`
+- child/Gitlink SHA: `333792e845fe3b15ba4d8af8f34f704de2a79fa2`
+- Gate: `G0-R09-B-TTT-OBSERVABILITY-O1-DESIGN`
+
+Fresh incremental review relative to `024ade3/333792e`; prior verdict not inherited.
+
+CLOSED — previous sole MEDIUM: v0.2 packs `grad_present_count` into the same fixed-shape group SUM payload as parameter/gradient squared sums, so rank0 can distinguish no-grad from present-but-all-zero grads without an additional collective. Acceptance now covers no-grad, all-zero-grad, mixed-rank presence and nonzero-grad cases. Current blockers: none.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_observability_O1_design_v02_9a65bed_333792e.md`
+
+Detailed review commit:
+`8a8deb92b5ccfa3fe2bbafaa9e250fb38d678d4a`
+
+This is a docs-only design approval. It authorizes only O1 CPU/static implementation in `norm_monitor.py` and `norm_monitor_test.py`; O2-O5, callback defaults/recipe/trainer/model/runtime/optimizer/checkpoint/dataset/W&B backend, real I/O, CUDA/GPU/torchrun, training/evaluation/inference remain unauthorized. Review/bookkeeping commits do not change the formal pair.
