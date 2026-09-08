@@ -119,6 +119,7 @@
 | G0-R09-B-TTT-OBSERVABILITY-DESIGN | DONE | Codex | v0.3 root=`7a3f023`/child context=`333792e` 获 MM、DS 同 SHA APPROVE | 仅授权新建 O1 独立实现设计；O2--O5、代码、生产、真实 I/O、GPU、训练仍禁止。 |
 | G0-R09-B-TTT-OBSERVABILITY-O1-DESIGN | DONE | Codex | v0.2=`9a65bed`/child=`333792e` 获 ChatGPT=`8a8deb9`、MM、DS 三方 `APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC` | 仅授权 O1 两个 callback 文件 CPU/static implementation。 |
 | G0-R09-B-TTT-OBSERVABILITY-O1-IMPLEMENTATION | DONE | Codex | formal root=`93b4acc`/child=`611174b` 获 ChatGPT=`d03e6b6`、MM、DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC`；pytest=9 passed、py_compile/diff-check PASS | 仅关闭 O1 CPU/static callback contract；O2--O5、production wiring、真实 I/O、GPU、训练仍须独立 Gate。 |
+| G0-R09-B-TTT-OBSERVABILITY-O2-DESIGN | REVIEW | Codex | 已新增 docs-only O2 v0.1；无已批准 consumer-hidden tap，ratio 显式延后；`git diff --check` PASS | 对 formal root SHA 获 ChatGPT/MM/DS 三方 `APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC`；批准前禁止 O2 代码与 production 接线。 |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |
 | D015-LOCAL-MEMORY-GATE | DONE | Codex | D013/D014 已生效，Runtime Plan R07-R09 已对齐 | MEMORY/DECISIONS.md 新增 D015：Local/Global 必须为独立 optional clean modality；R07-R09 顺序与冻结边界；未冻结项不得在实现前写成既定事实 |
