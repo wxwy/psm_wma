@@ -2,6 +2,10 @@
 
 更新时间：2026-09-08
 
+## 当前最小步骤（2026-09-08）
+
+- `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC`（IN_PROGRESS）：针对 closure review HIGH，在 v0.3 §1 白名单内收敛 `LocalMemoryTransaction`：backward 前身份/计数核验、backward 后 fast commit、首轮 transient 唯一 suffix、attempt=1 耗尽、terminal suppress、GradScaler skip。修改仅 child `local_memory_segment.py`、`trainer/__init__.py::_run_local_memory_segment_backward`、相邻 synthetic test；42 passed、目标 lint、py_compile、diff-check PASS，待 child 提交/推送、root Gitlink 提交后发起三方 closure review。未执行 production wiring、真实 I/O、GPU 或训练。
+
 ## 当前最小步骤（2026-09-07）
 
 - `G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`（DONE）：v0.3.9 formal target=`e4b2d2f980ce0f038ae1a44ed379d16bbf05b9d9`/Gitlink=`80aec090688e3c710c41e1dfd86b6500773db2c7` 获 ChatGPT review=`2ee5a94`、DS 与按审核规范 fresh 重审的 MM 三方同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN`。仅授权新建 CPU/static implementation design；未授权实现、GPU、真实 I/O 或训练。
