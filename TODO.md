@@ -116,6 +116,7 @@
 | G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN | DONE | Codex | v0.3.9 root=`e4b2d2f`/Gitlink=`80aec09` 获 ChatGPT=`2ee5a94`、DS、fresh-MM 三方同 SHA APPROVE | 仅关闭 canonical semantics design；仅授权新建 CPU/static implementation design。 |
 | G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION-DESIGN | DONE | Codex | v0.3 root=`1f6c0ba`/Gitlink=`80aec09` 获 ChatGPT review=`6b1d4a0`、DS、MM 三方 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC` | 仅授权 v0.3 §1 四文件 synthetic CPU/static implementation。 |
 | G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION | REVIEW | Codex | `f0d6c69/d7eb51a` 的三方意见已合并；rebind/admission authority 修复为 pytest=50 passed、py_compile/diff-check PASS | 推送新 child/root formal pair 后重新三方 closure review；禁止真实 I/O、GPU、训练。 |
+| G0-R09-B-TTT-OBSERVABILITY-DESIGN | REVIEW | Codex | v0.3 docs-only remediation：per-slot authority、payload-free witness、event linkage/field matrix、bounded trace；diff-check PASS | 提交后由 MM、DS 重新审核；禁止代码、真实 I/O、GPU、训练。 |
 | G0-R12-CACHE | DONE | Codex/Kimi | Cosmos RGB 编码契约已确认；本地 Wan2.2_VAE.pth | 379/379 episode 全量编码成功、零错误；manifest、finite 抽查和全量时序映射校验通过 |
 | DOC-RGB-REP | DONE | ChatGPT | 用户确认 Policy/Memory RGB 表征不应过早绑定 | 新增项目级 RGB/Memory 编码规划，记录到 D014，并将 regular-episode latent 从当前主线降级为候选实验 |
 | D015-LOCAL-MEMORY-GATE | DONE | Codex | D013/D014 已生效，Runtime Plan R07-R09 已对齐 | MEMORY/DECISIONS.md 新增 D015：Local/Global 必须为独立 optional clean modality；R07-R09 顺序与冻结边界；未冻结项不得在实现前写成既定事实 |
