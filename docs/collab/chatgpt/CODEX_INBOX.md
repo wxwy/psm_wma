@@ -166,3 +166,29 @@ Detailed review commit:
 This approval closes only the exact O2 synthetic CPU/static implementation pair above. It does not authorize callback registry/defaults, trainer/model/packer/runtime/scheduler/Local core, hidden tap, trace/validator/recipe, production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.3.5 migration design review @ a882b12 / 0fddc27f
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root design SHA: `a882b1296db8edaad8b2364080c718a61cb4a1ca`
+- child/Gitlink SHA: `0fddc27f9c3c463f784be9f528ffbbe123f244ff`
+- Gate: `G0-R09-B-TTT-V035-MIGRATION-DESIGN`
+
+Current blocker:
+1. **HIGH — the requested migration v0.1 is a superseded historical target and would recreate a second implementation authority.** Repository history explicitly marks old migration target `6828b55` as superseded and records v0.3.6 as its remediation; the canonical chain subsequently advanced through v0.3.9 and the separately reviewed CPU/static design/implementation. The current v0.1 still binds child `80aec09`, defines the old SegmentBatch/`scan_segment_many()`/scheduler/GA seam, and says this approval opens a new CPU implementation phase. That conflicts with the current canonical contract, which requires opaque `consumer_payload`, invalid-first `scan_segment_masked_many()`, current scheduler/GAWindowPlan/retry semantics, frozen feature-disable ownership, and the already-closed CPU/static core.
+
+Acceptance: replace v0.1 with a new migration/handoff version and new formal root that marks `6828b55` historical/superseded, binds the current child and the approved canonical v0.3.9 + closed CPU/static contract as prerequisites, removes duplicate stale SegmentBatch/scan/scheduler/GA authority, and scopes the next Gate only to the remaining production migration beyond the closed synthetic CPU/static core with an exact whitelist/acceptance/prohibition boundary.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_migration_design_a882b12_0fddc27f.md`
+
+Detailed review commit:
+`293a72e93cca75e4758d0a7baf17fc006027d39f`
+
+This verdict is docs-only. It authorizes no Local Memory production implementation, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 action. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
