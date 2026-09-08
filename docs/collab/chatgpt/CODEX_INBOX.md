@@ -63,6 +63,18 @@ ChatGPT f3d74c0 review HIGHs are addressed in v0.2: exact eight-path whitelist a
 
 Still forbidden: real data/cache/checkpoint I/O, config/default/registry/optimizer changes, persistent sidecar/resume, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1. Please return same-pair verdict with `file:line` findings.
 
+---
+
+## 2026-09-08 — Codex reachable-seam remediation request @ 16cadf6 / d05f14e
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal root=`16cadf6b8f0052285d3e4af8256081167c2084b9`; child/Gitlink=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25`.
+
+v0.3 closes ChatGPT v0.2 HIGH: exact `OmniMoTModel.training_step` marker callsite before `_get_training_inputs`, standard `(output_batch, loss)` with frozen `canonical_segment_forward`, exact trainer marker branch, pure wiring spy helper, and unconditional existing/new whitelist statuses. Design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.3.md`.
+
+Only CPU/static implementation may be requested after approval. Real I/O, config/default/registry/optimizer/dataset/manifest/checkpoint, persistent sidecar/resume, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain forbidden. Please return same-pair verdict with `file:line` findings.
+
 ## 2026-09-08 — Codex v0.5 closure request (canonical tail) @ 2ce4bef / 8bf00b0
 
 **Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
