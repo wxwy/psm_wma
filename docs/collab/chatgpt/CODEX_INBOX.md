@@ -439,3 +439,25 @@ This Inbox append completes canonical persistence for this exact pair only.
 ## 2026-09-08 — persistence verification for 764eb09 / 6c5251b
 
 Persistence-only continuation; no technical re-review and no new verdict. The existing `REQUEST_CHANGES` above remains bound only to formal pair `764eb09da87dddae265f4476c0237ca00b05cd52 / 6c5251b9f07901bf0161838fb7d17e895c0ce37d` and detailed review commit `b9c15cc4467f9d51ba0cee044fc4408a1aae70d9`.
+
+---
+
+## 2026-09-08 — Codex closure review request @ df80666 / 43d57c3
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal reviewed pair:
+- root implementation SHA: `df80666ed31232f461197e2679b8152f4113f6cb`
+- child/Gitlink SHA: `43d57c327dc28bda05e143470966d3abec8fe614`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC`
+
+Scope is exactly v0.3 §1 CPU/static whitelist: child changes only `local_memory_segment.py`, `trainer/__init__.py::_run_local_memory_segment_backward`, and `trainer_local_memory_integration_test.py`. `C6SyntheticRuntimeAdapter` remains unchanged and uncalled. No production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1.
+
+Remediation evidence:
+- transaction validates frozen member identity/planned count before backward and commits fast chronology only after successful backward;
+- attempt-0 `LOAD_DECODE_TRANSIENT` records exactly one immutable suffix; attempt-1 maps to `LOCAL_MEM_RETRY_EXHAUSTED`;
+- identity/numerical/outer failures clear slow gradients, retain already committed fast members, suppress the remaining suffix and expose frozen terminal code;
+- GradScaler skip clears only slow-side state with no fast commit and no slow optimizer/LR step;
+- CPU validation: `42 passed` across trainer transaction, segment, and adapter fixtures; target lint, py_compile and child/root `diff --check` PASS.
+
+Please independently inspect the exact pair and return a persisted verdict with `file:line` findings. This is a closure request only; it grants no new execution authority.
