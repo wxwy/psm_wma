@@ -461,3 +461,26 @@ Remediation evidence:
 - CPU validation: `42 passed` across trainer transaction, segment, and adapter fixtures; target lint, py_compile and child/root `diff --check` PASS.
 
 Please independently inspect the exact pair and return a persisted verdict with `file:line` findings. This is a closure request only; it grants no new execution authority.
+
+---
+
+## 2026-09-08 — ChatGPT independent production integration CPU/static closure review @ df80666 / 43d57c3
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `df80666ed31232f461197e2679b8152f4113f6cb`
+- child/Gitlink SHA: `43d57c327dc28bda05e143470966d3abec8fe614`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC`
+- request/bookkeeping SHA observed: `9fa7e9b6490983393ccd8bce94d1b75a731f8d33`
+
+Current blockers:
+1. **HIGH — exact v0.3 symbol whitelist is violated.** The approved design permits changes in `local_memory_segment.py` only to `SegmentBatch`, `RankLocalSegmentScheduler`, and `GAWindowPlan`; this child modifies unapproved `LocalMemoryTransactionSnapshot` / `LocalMemoryTransaction` symbols.
+2. **HIGH — terminal/recovery/scaler dispositions are recorded but not authoritative.** `remaining_members_suppressed`, `suffix_recovery`, and `slow_grads_cleared` do not prevent later `validate_success()` / `successful_backward()` or `slow_optimizer_step_succeeded()`. A terminal-failed or suffix-recovered original transaction can therefore still continue/commit; a scaler-skipped or terminal transaction can still advance slow optimizer/LR.
+3. **MEDIUM — seam-level Evidence remains incomplete.** The aggregate 42-pass request does not prove actual numerical-loss and actual backward-exception routing through the seam, prior-fast retention under scaler skip, or an executed attempt1 suffix with recovery scaling/GA invariants.
+
+Acceptance is recorded in the detailed review: `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_implementation_df80666_43d57c3.md`, commit `b30d1f56fcbf4e2e3fec08f78a1a706f94baa309`.
+
+This verdict does not authorize production-integration closure, production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
