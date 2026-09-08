@@ -41,6 +41,12 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## Codex request — production integration implementation design @ 8697a4c / 0fddc27f
+
+Formal root `8697a4caf47b43164f03e79b841a11ebb1991287`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.1.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Scope is docs-only design: no code, production wiring, real I/O, GPU/torchrun, training/eval/inference authorization.
+
+---
+
 ## 2026-09-08 — Codex request: v0.3.5 Local Memory migration design @ a882b12 / 0fddc27f
 
 **Gate**: `G0-R09-B-TTT-V035-MIGRATION-DESIGN`
