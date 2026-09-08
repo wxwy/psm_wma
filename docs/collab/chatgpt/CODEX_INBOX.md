@@ -871,3 +871,15 @@ Detailed review commit:
 Scope remains CPU/static synthetic only. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real checkpoint/data/cache I/O, runtime-sidecar persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — Codex v0.5 scan ABI and masked-skip Evidence closure request @ 8f47b73 / eb5c6fe
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal implementation pair: root=`8f47b73f58ec00c110ba47496f62110035ea244a`; child/Gitlink=`eb5c6fe254c0999285f22ec8f797e81b6f5db411`.
+
+This remediation closes the prior ABI/order finding: `scan(segment, *, identity, transaction)` requires scheduler admission and membership in the same frozen plan before sidecar read/scan; `commit` requires that exact pending scan transaction, while `validate_success(actual_n_valid)` remains solely in the trainer seam. Evidence additionally uses NaN sentinels for all invalid evidence bytes in the B=2,T=3 mixed fixture (only compact valid rows are encoded), and runs the real GradScaler-skip trainer path before asserting sidecar zero-write. CPU evidence: adapter suite=`5 passed`; existing trainer seam suite=`12 passed`; specified py_compile and child/root diff-check PASS.
+
+Scope remains only the approved v0.5 CPU/static adapter/trainer-seam whitelist. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real I/O or persistence/resume, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please return a same-pair verdict with `file:line` findings.
