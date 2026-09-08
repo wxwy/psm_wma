@@ -14,7 +14,7 @@
 
 | 路径 | 状态 | 唯一允许变更 |
 |---|---|---|
-| `cosmos_framework/model/generator/mot/local_memory_segment_adapter.py` | new | `CanonicalLocalMemorySegmentAdapter`、不可序列化的 in-memory `LocalMemorySegmentSidecar`，只适配既有 `SegmentBatch`、masked scan、gather 与 `LocalMemoryTransaction`。 |
+| `cosmos_framework/model/generator/mot/local_memory_segment_adapter.py` | new | 不可变 `SegmentScanResult`（字段顺序：`local_tokens`、`local_present`、`state_out`、`payloads`、`locals`、`identities`），`CanonicalLocalMemorySegmentAdapter`、不可序列化的 in-memory `LocalMemorySegmentSidecar`；只适配既有 `SegmentBatch`、masked scan、gather 与 `LocalMemoryTransaction`。 |
 | `cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py` | new | adapter CPU/static synthetic fixtures。 |
 | `cosmos_framework/trainer/__init__.py` | existing/modified | 仅 `ImaginaireTrainer._run_local_memory_segment_backward`；维持其为 primary/aux scaling、raw finite predicate、single backward 与 transaction commit 的唯一 owner。 |
 | `cosmos_framework/trainer/trainer_local_memory_integration_test.py` | existing/modified | 仅该 trainer seam 的 synthetic fixtures。 |
@@ -23,23 +23,25 @@
 
 ## 3. Adapter ABI 与调用序
 
-`CanonicalLocalMemorySegmentAdapter.scan(segment, *, state_in)` 只接受已 `SegmentBatch.validate()` 的 canonical segment 与显式 in-memory state；返回 `SegmentScanResult(local_tokens, local_present, state_out, payloads, locals, identities)`。其中 `payloads/locals/identities` 必须唯一来自既有 `SegmentBatch.gather_consumers()`，保持 stream-major valid gather 与 opaque payload identity；S0 Local 为 `None`，PAD 不存在于三元组。
+`CanonicalLocalMemorySegmentAdapter.scan(segment, *, identity: SegmentIdentity, transaction: LocalMemoryTransaction)` 只接受已 `SegmentBatch.validate()` 的 canonical segment、已由 `RankLocalSegmentScheduler.admit()` 产生的 exact `SegmentIdentity` 与该 plan 的 transaction；返回不可变 `SegmentScanResult(local_tokens, local_present, state_out, payloads, locals, identities)`。其中 `payloads/locals/identities` 必须唯一来自既有 `SegmentBatch.gather_consumers()`，保持 stream-major valid gather 与 opaque payload identity；S0 Local 为 `None`，PAD 不存在于三元组。
 
 固定顺序：
 
 ```text
-validate SegmentBatch
+validate SegmentBatch + scheduler-admitted exact SegmentIdentity
+-> transaction.validate_success() using that identity
+-> sidecar read using that same identity
 -> ContinualTTTLocalMemoryCore.scan_segment_masked_encoded_many(
      canonical LocalEvidenceEncoder, visual_summary, executed_action, evidence_valid,
      state_in, create_graph=True)
 -> SegmentBatch.gather_consumers(...)
 -> synthetic consumer spy(payloads, locals, identities)
 -> trainer unique primary/aux loss seam + exactly one backward
--> transaction.successful_backward() commit
+-> transaction.successful_backward() commit using that same identity
 -> sidecar detach-copy state_out only after successful backward/commit
 ```
 
-`LocalMemorySegmentSidecar` 仅保存以 stable slot/episode/source identity 绑定的 detach-copy fast state；不得保存 autograd graph、slow optimizer state 或 checkpoint payload。新 segment 仅在同一 admitted episode 的连续 cursor 下读取 sidecar；terminal 后删除；identity/cursor mismatch、重复 commit、未 commit 写入、或尝试跨 microbatch 保留 graph 均 fail closed。该对象不实现 load/save；runtime-sidecar 持久化及 resume 是后续独立 Gate。
+`LocalMemorySegmentSidecar` 的唯一键是 admitted `SegmentIdentity` 的 one-to-one immutable projection：`slot_id`、`episode_id`、`category`、`cursor`、`segment_id`、`source_digest`、`training_stream_end`；不得从 consumer step、scan index、segment id 或私有计数器推断 cursor。它只保存该 exact identity 的 detach-copy fast state；不得保存 autograd graph、slow optimizer state 或 checkpoint payload。连续读取、terminal/reset、terminal rebind 都只由同一 scheduler/identity 事件驱动；stale/duplicate cursor、source mismatch、重复 commit、未 commit 写入、或尝试跨 microbatch 保留 graph 均 fail closed。该对象不实现 load/save；runtime-sidecar 持久化及 resume 是后续独立 Gate。
 
 ## 4. Loss、异常与事务
 
@@ -55,7 +57,7 @@ L_backward = (planned_N_valid / N_window) * primary_consumer_mean
 ## 5. CPU/static 验收
 
 1. `B=2,T=3` mixed valid/S0/PAD fixture 证明 masked scan 未读 invalid bytes，gather 顺序与 opaque payload/identity 精确一致。
-2. 两个连续 segment fixture 证明同 identity/cursor 仅在 successful backward 后 carry numeric state；第二段图不引用第一段 graph；terminal 后 state 删除；错误 cursor/source fail closed。
+2. 两个连续 scheduler-admitted segment fixture 证明仅 exact canonical `SegmentIdentity` 在 successful backward 后 carry numeric state；第二段图不引用第一段 graph；stale/duplicate cursor、source mismatch、terminal/rebind fresh state 均 fail closed，且没有 sidecar-private cursor。
 3. consumer spy 证明只被 valid gathered rows 调用一次，S0 receives `None`，PAD 零调用；`state/dt/age` 无构造/传递/读取。
 4. unequal valid count + nonzero aux normal 与 derived attempt-1 suffix 经唯一 trainer seam，验证 full-window formula/no second GA division。
 5. raw non-finite、backward exception、GradScaler skip、attempt-1 exhaustion和 identity mismatch：保留既有 committed fast state，sidecar 不新增，slow grads 清理、remaining suppression/slow step 禁止。
