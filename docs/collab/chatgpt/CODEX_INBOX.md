@@ -57,9 +57,9 @@ Formal root `764eb09`; current merge `9143afb008ac93790377f64649deb062f05870d3`;
 
 ---
 
-## Codex remediation closure request — transaction seam @ f5c89ef / d5b2cd3
+## Codex remediation request — transaction seam @ f5c89ef / d5b2cd3
 
-Formal root code SHA `f5c89ef`; current root merge `d75ddb70fe2c4f5e3fe4dd33938100e8a04648f4`; child/Gitlink `d5b2cd3`. Requested verdict `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Delta stays within approved CPU/static whitelist and adds failure taxonomy/identity fail-close/slow-grad clear/commit callback fixtures. No production, I/O, GPU or training.
+Formal root code SHA `f5c89ef`; current merge `d75ddb70fe2c4f5e3fe4dd33938100e8a04648f4`; child/Gitlink `d5b2cd3`. Requested verdict `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Delta stays within approved CPU/static whitelist and adds failure taxonomy/identity fail-close/slow-grad clear/commit callback fixtures. No production, I/O, GPU or training.
 
 ---
 
@@ -403,7 +403,7 @@ Prior HIGH status: **OPEN — partially remediated, not closed.** Scope remains 
 Current blocker:
 1. **HIGH — transaction state machine remains non-authoritative/incomplete.** `cosmos_framework/trainer/__init__.py:550-582` accepts caller-provided `identity_valid` plus optional `commit_fast`/`clear_slow_grads`, computes objective/backward, and optionally invokes commit. `cosmos_framework/model/generator/mot/c6_runtime_adapter.py:82-94` defines `classify_failure()`, but the trainer seam does not call it. `GAWindowPlan.objective()` raises `ValueError` for `actual_n_valid != planned_n_valid`, while the trainer catches only `RuntimeError`, so this required identity-contract failure escapes without slow-grad clear or `LOCAL_MEM_IDENTITY_CONTRACT_FAILURE`. Optional callbacks also permit a successful no-commit path and terminal failure without required slow-grad clear. No seam-level attempt0 suffix recovery/attempt1 exhaustion, remaining-member suppression, prior-fast retention + optimizer/LR suppression, or GradScaler transaction path is implemented.
 
-Acceptance: make the already-approved trainer/adapter seam the actual deterministic CPU/static transaction owner: validate member identity/planned==actual before backward; require post-backward fast commit; route all terminal classes to the frozen terminal codes with slow-grad clear/remaining suppression/no slow optimizer-LR; allow suffix recovery only for same-digest transient attempt0 and exhaust attempt1; preserve prior fast chronology and GradScaler skip semantics. Add adjacent seam-level fixtures for the full inherited v0.2 matrix, including planned mismatch, identity, numerical, outer, transient recovery/exhaustion, fast retention, remaining suppression, optimizer/LR suppression, GradScaler skip, unequal-valid-count/nonzero-aux/full-window-equivalence/no-second-GA-scaling.
+Acceptance: make the already-approved trainer/adapter seam the actual deterministic CPU/static transaction owner: validate member identity/planned==actual before backward; require post-backward fast commit; route all terminal classes to the frozen terminal codes with slow-grad clear/remaining suppression/no slow optimizer-LR; allow suffix recovery only for same-digest transient attempt0 and exhaust attempt1; preserve prior fast chronology and GradScaler skip semantics. Add adjacent seam-level fixtures for the full inherited v0.2 matrix, including planned mismatch, identity, numerical, outer, transient recovery/exhaustion, fast retention, remaining suppression, optimizer/LR suppression, GradScaler skip, unequal valid counts/nonzero aux/full-window equivalence/no second GA scaling.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_implementation_f5c89ef_d5b2cd3.md`
@@ -468,7 +468,7 @@ Remediation evidence:
 - attempt-0 `LOAD_DECODE_TRANSIENT` records exactly one immutable suffix; attempt-1 maps to `LOCAL_MEM_RETRY_EXHAUSTED`;
 - identity/numerical/outer failures clear slow gradients, retain already committed fast members, suppress the remaining suffix and expose frozen terminal code;
 - GradScaler skip clears only slow-side state with no fast commit and no slow optimizer/LR step;
-- CPU validation: `42 passed` across trainer transaction, segment, and adapter fixtures; target lint, py_compile and child/root `git diff --check` PASS.
+- CPU validation: `42 passed` across trainer transaction, segment, and adapter fixtures; target lint, py_compile and child/root `diff --check` PASS.
 
 Please independently inspect the exact pair and return a persisted verdict with `file:line` findings. This is a closure request only; it grants no new execution authority.
 
