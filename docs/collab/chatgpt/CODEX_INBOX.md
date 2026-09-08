@@ -630,3 +630,34 @@ This Inbox append completes canonical persistence for this exact pair only.
 Formal pair: root=`3a95ba26931dba94574e27055ac48c1cfd3684a1`; child/Gitlink=`b4b369d75259579f1c2e4d2b13f4e3ead91b73d2`.
 
 Remediation makes public `fail_transient()` single-authority and closes original transaction; fixtures assert fast exposure retention, slow clear/no-step rejection, and `GA_effective=2` primary/aux recovery scaling with one GA division. CPU suite=45 passed; py_compile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist same-pair verdict with file:line findings.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.4 final evidence review @ 3a95ba2 / b4b369d
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `3a95ba26931dba94574e27055ac48c1cfd3684a1`
+- child/Gitlink SHA: `b4b369d75259579f1c2e4d2b13f4e3ead91b73d2`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-IMPLEMENTATION`
+- request/bookkeeping SHA observed: `6cf9ac74b661d12cde383539f2f34c26c879bdff`
+
+CLOSED — prior HIGH exactly-once suffix authority blocker. Public `fail_transient()` now stores the first suffix, closes the original transaction, and `recover_transient()` delegates to that same authoritative path.
+
+Current blocker:
+1. **MEDIUM — tests/Evidence-only.** `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.4.md:30` requires the immutable attempt-1 suffix Evidence to pass through the unique trainer seam. The actual seam-level retry in `cosmos_framework/trainer/trainer_local_memory_integration_test.py:165-182` has only one remaining member (`GA_effective==1`), while the new `GA_effective==2` proof at lines 185-189 calls `GAWindowPlan.objective()` directly rather than `ImaginaireTrainer._run_local_memory_segment_backward` and is not an actually derived suffix transaction. It therefore cannot prove no second GA scaling/full-window recovery equivalence at the authoritative adapter/trainer seam.
+
+Acceptance: tests/Evidence-only remediation. Execute an actually derived attempt-1 suffix with at least two remaining members through `_run_local_memory_segment_backward`, using unequal valid counts and nonzero auxiliary losses, and assert aggregate loss/gradients match the frozen recovery/full-window formula and fail under a second GA division. Preserve the current skip-after-fast and backward-exception Evidence, and add a negative witness that the original recovered transaction cannot continue `successful_backward()`.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v04_implementation_3a95ba2_b4b369d.md`
+
+Detailed review commit:
+`9e01dcefb84dfdfe4751919b5469411a7dcd3a64`
+
+Request Evidence reports `45 passed`, `py_compile` PASS and diff-check PASS; these execution results were not independently rerun by this reviewer.
+
+This verdict does not close the v0.4 CPU/static Gate and does not authorize production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
