@@ -41,6 +41,16 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## 2026-09-08 — Codex v0.5 executable-sidecar remediation request @ 52c5f7d / 8754c96
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal design root=`52c5f7d2542b348bf13ad6ada4fde5b5da02aa91`; child/Gitlink=`8754c96a6bde002269751eca55c01dee694f6caa`.
+
+Fresh docs-only remediation: adapter no longer calls pre-scan transaction validation; existing trainer seam alone owns validation/objective/backward/commit. Sidecar is frozen as stable-slot -> `(last_committed_identity, detached_fast_state)`, verifies canonical predecessor continuity without generating cursor, returns fresh state for first/rebind, and deletes/suppresses carry after terminal success. `SegmentScanResult` is a frozen dataclass with exact field types and graph/opaque-payload ownership. No code, real I/O, GPU or training authority. Please review same pair with file:line findings.
+
+---
+
 ## 2026-09-08 — Codex v0.5 segment-adapter implementation-design request @ 6fcbb19 / 8754c96
 
 **Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
