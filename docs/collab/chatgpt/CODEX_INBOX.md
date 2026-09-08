@@ -809,3 +809,28 @@ Detailed review commit:
 This approval authorizes only the exact v0.5 CPU/static synthetic segment-adapter + trainer-seam implementation surface. It does not authorize model-forward wiring, registry/default/config changes, production runtime/lifecycle/C6 routes, real checkpoint/data/cache I/O, runtime-sidecar persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Any implementation forms a new formal pair and requires fresh three-party closure review.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.5 segment-adapter implementation review @ 2ce4bef / 8bf00b0
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root implementation SHA: `2ce4bef4300e432131ac62aea374b45a9cbe1d55`
+- child/Gitlink SHA: `8bf00b05803fcf901dc9b09f3208c4fff811a245`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC`
+
+Current blockers:
+1. **HIGH — sidecar mutation is not transaction-authorized/fail-closed.** `cosmos_framework/model/generator/mot/local_memory_segment_adapter.py:39-43,53-65`; `cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py:54-61`. The adapter test scans and then directly calls `adapter.commit()` without the trainer backward or `transaction.successful_backward()`, yet the next segment successfully reads carried state. Frozen v0.5 requires sidecar detach-copy only after the same member's successful trainer transaction; identity/planned/non-finite/backward/retry/GradScaler failures must not write the failed member.
+2. **MEDIUM — tests/Evidence-only.** `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.5.md:50-61`; `cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py:23-61`. Mandatory v0.5 B=2 mixed-mask, two scheduler-admitted consecutive-segment post-transaction carry, failure/GradScaler no-sidecar-write, terminal/rebind and disabled-parity integration Evidence are incomplete; the request explicitly states the existing trainer seam suite was not recorded as PASS.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v05_implementation_2ce4bef_8bf00b0.md`
+
+Detailed review commit:
+`3f499aad779371de22b0591664c5789873e35e53`
+
+Scope remains CPU/static synthetic only. The already-closed v0.4 transaction implementation remains CLOSED. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real checkpoint/data/cache I/O, runtime-sidecar persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized.
+
+This Inbox append completes canonical persistence for this exact pair only.
