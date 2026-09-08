@@ -20,3 +20,10 @@ Awaiting review — 🚨 审核申请已发出（根仓 bc252114b6799559a172a306
 需核对的冻结事项：① segment ABI 明确 `S_t <- e_(t-1)` 且 S0 Local absent；② `training_stream_end`、tail/rebind 与 sparse Memory Prefix；③ rank-local main-process scheduler、`num_workers=0`、episode scheduler 与 slow LR scheduler 的 GradScaler skip 语义分离；④ 未缩放 native model loss 的有限性谓词和 abort-before-commit；⑤ primary consumer loss 按 actual valid exposure、auxiliary load-balancing loss 按 `1/GA`，Local path 禁止旧 trainer 再除 `/GA`；⑥ state/dt/age 真移除后的 optimizer/checkpoint identity；⑦ formal training 前 runtime-sidecar Gate。
 
 请求针对同一根仓/Gitlink SHA 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，并附 `file:line`。若批准，仅授权下一步新建 CPU/static implementation design；禁止 child/runtime/packer/trainer 修改、GPU/CUDA/torchrun、真实 checkpoint/data/cache I/O、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+## 2026-09-08 — v0.3.6 review outcome
+
+- Formal target: root `bc252114b6799559a172a3061677562c8df565a2`; Gitlink `80aec090688e3c710c41e1dfd86b6500773db2c7`.
+- DS: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` after confirming old 5 HIGH and 2 MEDIUM are closed; only non-blocking implementation-design notes remain.
+- MM: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN`; explicit literal re-confirmed in `mm:0.0` after its completed review.
+- Authorized next action: create the CPU/static implementation design only. Still prohibited: child/runtime/packer/trainer modification, GPU/CUDA/torchrun, real checkpoint/data/cache I/O, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1.
