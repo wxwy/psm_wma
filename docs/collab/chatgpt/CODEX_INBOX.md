@@ -506,3 +506,31 @@ synthetic scalar aggregation，且不将其误称为 distributed/GPU logging 或
 即使批准，也只授权 O1 两文件 CPU/static implementation；禁止 callback defaults、TOML/Hydra recipe、trainer、
 model/runtime、optimizer、checkpoint、dataset、W&B backend、真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、
 P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — ChatGPT independent observability O1 design review @ 024ade3 / 333792e
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root design SHA: `024ade385887dfc3abc149df1cc30b3ae4fa8c06`
+- child/Gitlink SHA: `333792e845fe3b15ba4d8af8f34f704de2a79fa2`
+- Gate: `G0-R09-B-TTT-OBSERVABILITY-O1-DESIGN`
+
+Persistence note: this canonical Inbox entry persists the already-completed technical review for the unchanged formal pair. No fresh design/code scan, test run, or verdict recomputation was performed.
+
+Current blocker:
+1. **MEDIUM — `docs/build/PSM-WMA_Local_Memory_observability_O1_implementation_design_v0.1.md:60-73,85`**: the frozen one-SUM-all-reduce-per-group payload carries squared sums but no global grad-presence witness. Therefore `grad_sq_sum == 0` cannot distinguish “no selected grad exists” from “selected grads exist and are exactly zero”, while the contract requires the former to omit the grad metric and the latter to emit exact `0.0`.
+
+Acceptance: keep one collective per group but include an explicitly reduced grad-presence witness in the same packed SUM payload (or mathematically equivalent encoding), and cover no-grad, all-zero-grad, mixed-rank presence, and normal nonzero-grad CPU/static fixtures while preserving legacy `NormMonitor` behavior.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_observability_O1_design_024ade3_333792e.md`
+
+Detailed review commit:
+`a3e3b6b2aeb752c4c6c1acad9e9558f10a7263a2`
+
+This verdict authorizes no O1 implementation or later observability Gate until a new formal pair closes the blocker. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
