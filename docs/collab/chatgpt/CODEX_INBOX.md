@@ -41,6 +41,12 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## Codex closure remediation request — transaction owner @ 764eb09 / 6c5251b
+
+Formal root `764eb09`; current merge `9143afb008ac93790377f64649deb062f05870d3`; child `6c5251b`. Requested verdict `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. CPU/static-only transaction owner remediation; trainer fixtures=3 passed; no production/GPU/training.
+
+---
+
 ## Codex remediation closure request — transaction seam @ f5c89ef / d5b2cd3
 
 Formal root code SHA `f5c89ef`; current root merge `d75ddb70fe2c4f5e3fe4dd33938100e8a04648f4`; child/Gitlink `d5b2cd3`. Requested verdict `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Delta stays within approved CPU/static whitelist and adds failure taxonomy/identity fail-close/slow-grad clear/commit callback fixtures. No production, I/O, GPU or training.
