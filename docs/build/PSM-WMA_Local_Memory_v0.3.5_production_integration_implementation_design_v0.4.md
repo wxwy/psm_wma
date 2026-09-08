@@ -13,7 +13,7 @@
 | `cosmos_framework/model/generator/mot/c6_runtime_adapter.py` | existing/modified | 仅 `CanonicalSegmentRuntimeAdapter`。 |
 | `cosmos_framework/model/generator/mot/c6_runtime_adapter_test.py` | existing/modified | 仅 `CanonicalSegmentRuntimeAdapter` fixtures。 |
 | `cosmos_framework/trainer/__init__.py` | existing/modified | 仅 `ImaginaireTrainer._run_local_memory_segment_backward`。 |
-| `cosmos_framework/trainer/trainer_local_memory_integration_test.py` | new | 仅该 seam 的 synthetic tests。 |
+| `cosmos_framework/trainer/trainer_local_memory_integration_test.py` | existing/modified | 仅该 seam 的 synthetic tests。 |
 
 所有其他路径与 symbols 保持行为不变；尤其历史 `C6SyntheticRuntimeAdapter` 不修改、不调用、不删除。不得增加任何其他文件。
 

@@ -4,7 +4,7 @@
 
 ## 当前最小步骤（2026-09-08）
 
-- `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-DESIGN`（IN_PROGRESS）：formal=`df80666`/child=`43d57c3` closure 三方意见已齐：ChatGPT、DS `REQUEST_CHANGES`，MM approve。共同 HIGH 要求将 `LocalMemoryTransaction*` 精确纳入授权并使 terminal/recovery/skip 不可逆；新 v0.4 docs-only 设计冻结 whitelist、fail-closed guards 与 seam evidence，待提交并申请三方同 SHA 设计审核。此前不再改 child。
+- `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-DESIGN`（IN_PROGRESS）：v0.4 formal=`70ae8d1`/child=`43d57c3` 获 MM、DS approve，ChatGPT 唯一 MEDIUM 为将既有 trainer fixture 误标 `new`；已更正为 `existing/modified`，待提交、fresh 三方同 SHA 审核。白名单、fail-closed guards、seam evidence 与禁止范围未扩大；此前不改 child。
 
 ## 当前最小步骤（2026-09-07）
 
