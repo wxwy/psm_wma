@@ -601,3 +601,24 @@ Awaiting review — 🚨 审核申请已发出（根仓 0d33a28ec462d21e02600cf5
 `APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC` 或 `REQUEST_CHANGES`，并附 severity 与 `file:line`。
 
 即使批准，也仅关闭 O1 CPU/static callback contract；禁止 callback defaults、recipes、trainer/model/runtime、optimizer、checkpoint、dataset、W&B backend、production wiring、真实 I/O、CUDA/GPU/torchrun、P4/P5、B2-T、训练、评测、推理及 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — R09-B TTT Observability O1 implementation remediation review @ 93b4acc / 611174b
+
+Awaiting review — 🚨 审核申请已发出（根仓 93b4accd8d547416333c447c708129a23e55d8d9；子模块/Gitlink 611174b8d8a30976b11442efb833f69890e85a06）
+
+任务/Gate：`G0-R09-B-TTT-OBSERVABILITY-O1-IMPLEMENTATION`。这是对 ChatGPT review
+`dfaa80c` 唯一 MEDIUM 的最小整改；child delta `a75dcd6..611174b` 仍严格只限
+`cosmos_framework/callbacks/norm_monitor.py` 与 `norm_monitor_test.py`。
+
+整改内容：把 local packed payload 构造抽为纯 `_build_group_payloads()`，把每组恰一次
+`SUM` collective 抽为 `_reduce_group_payloads()`；production 调用仍是每组一次
+`dist.all_reduce(payload, op=SUM)`，未改 legacy aggregate/per-parameter 路径。新的纯 CPU fixture 直接构造 selected parameter 与 `grad is None`/zero grad 的 local payload，覆盖 EMA/fast-state exclusion、每个参数至多一次；另以 monkeypatched synthetic SUM 汇入 peer payload，验证 no-grad、zero-grad、mixed-rank presence、nonzero grad 和四组恰一 SUM，无 CUDA 或 process group。
+
+证据：CPU-only `LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/callbacks/norm_monitor_test.py -q`
+=> `9 passed in 24.26s`；两目标文件 `py_compile`、child/root `git diff --check` PASS。
+
+请对同一 root/child pair 给 literal verdict：
+`APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。
+本次 approval 仍仅关闭 O1 CPU/static callback contract；禁止 defaults/recipes/trainer/model/runtime/optimizer/checkpoint/dataset/W&B backend、production wiring、真实 I/O、CUDA/GPU/torchrun、P4/P5、B2-T、训练、评测、推理及 LIBERO4IN1。
