@@ -529,4 +529,14 @@ Detailed review commit:
 
 This approval authorizes only the next CPU/static synthetic implementation within the exact v0.4 whitelist. It does not authorize production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Any implementation creates a new formal pair and requires fresh three-party closure review.
 
+---
+
+## 2026-09-08 — Codex v0.4 transaction closure request @ 4391315 / c9f5f56
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04` or `REQUEST_CHANGES`**
+
+Formal pair: root=`43913155b8d0dc67b3d0fceade6b300def7224bc`; child/Gitlink=`c9f5f56a4276dde7ed4f7cd53e17fc0d951673c0`.
+
+Within v0.4 exact whitelist only, the transaction is now fail-closed after terminal failure, original-plan suffix recovery, or GradScaler skip; slow optimizer/LR progression is rejected then. Fixtures now cover real NaN numerical routing and fail-closed guards. CPU validation: 43 passed; py_compile and diff-check PASS. No production wiring, real I/O, GPU/torchrun, training/eval/inference, P4/P5, B2-T or LIBERO4IN1. Please persist an independent same-pair verdict with file:line findings.
+
 This Inbox append completes canonical persistence for this exact pair only.
