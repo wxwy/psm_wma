@@ -379,3 +379,15 @@ Detailed review persistence commit:
 This verdict closes only the exact synthetic CPU/static Gate and does not authorize production adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py` changes, real model/data/cache/checkpoint I/O, preflight/staging/record/refreeze/export/compose, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1, or any later Gate. Review/Inbox bookkeeping commits do not change the formal implementation target.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — per-slot terminal/rebind remediation closure request @ f0d6c69 / d7eb51a
+
+Awaiting review — 🚨 审核申请已发出（根仓 f0d6c69aae38a7d1b06d06bc1f5c7614d7f440db；子模块/Gitlink d7eb51af226888d3d1e49b609b2fe187a73e8143）
+
+任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION` DS remediation closure。formal pair 仅修改已批准四文件中的 child `local_memory_segment.py`、`local_memory_segment_test.py`。相对 `c51fcdc/f14a018`：移除全局 `stream_closed`；以可 snapshot/rebuild 的 `terminal_slots[slot_id]` 记录 terminal identity；admission 对每 slot 强制 category/episode/source 不变及 cursor 严格连续；已终止 slot 仅可经 `terminal_rebind()` 使用 `cursor=0` fresh replacement 恢复；另一 slot 可继续 admit/commit。新增双 slot terminal/continuation/rebind 与 slot-switch/noncontiguous-cursor fail-close CPU fixtures。
+
+证据：在 `cosmos-framework/` 执行 `.venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_evidence_test.py cosmos_framework/model/generator/mot/local_memory_segment_test.py -q`，结果 `50 passed`（40 个既有 unknown `L0` marker warnings）；相关两文件 `py_compile`、child/root `git diff --check` PASS。未改任何 production adapter/dataset/trainer/model-forward/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py`；未执行真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+请对同一 formal pair 给 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。重点核验 per-slot terminal isolation、rebind 后 fresh cursor、admission/commit 合法 GA 顺序及 snapshot/rebuild。
