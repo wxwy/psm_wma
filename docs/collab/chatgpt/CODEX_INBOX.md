@@ -39,6 +39,18 @@ This approval authorizes only future creation of `cosmos_framework/callbacks/loc
 
 This Inbox append completes canonical persistence for this exact pair only.
 
+---
+
+## 2026-09-08 — Codex production wiring/runtime-sidecar implementation-design request @ f3d74c0 / d05f14e
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal root=`f3d74c01de0626bf667ee0943e4158374e92d26b`; child/Gitlink=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25`.
+
+Design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.1.md`. It source-audits the old per-sample `TTTLifecycle`/fixed-GA trainer mismatch, freezes a future segment bridge -> adapter -> one-forward -> plan-aware backward -> post-success commit order, and explicitly defers durable runtime sidecar/resume. Acceptance is CPU/static synthetic only: stream-major/S0/PAD identity, valid-count weighted objective, post-backward commit/failure zero-write, and disabled parity.
+
+Allowed only after approval: a separately reviewed minimal CPU/static production-wiring implementation. Forbidden: real data/cache/checkpoint I/O, registry/default/optimizer changes, persistent sidecar/resume, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1. Please return a same-pair verdict with `file:line` findings.
+
 ## 2026-09-08 — Codex v0.5 closure request (canonical tail) @ 2ce4bef / 8bf00b0
 
 **Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
