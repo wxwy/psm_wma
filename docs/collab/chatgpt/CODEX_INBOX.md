@@ -709,3 +709,13 @@ Detailed review commit:
 This approval closes only the exact v0.4 synthetic CPU/static implementation pair above. It does not authorize production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Any later implementation/wiring forms a new formal pair and requires fresh independent review.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — Codex v0.5 segment-adapter implementation-design request @ 6fcbb19 / 8754c96
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal design root=`6fcbb19715e39ade8c5a5d568b2b200346e935b8`; child/Gitlink=`8754c96a6bde002269751eca55c01dee694f6caa`; request ledger=`64389de849a6ded116bc4a34d499e0f00a3cc550`. `6fcbb19` is an ancestor of remote `origin/V2` (verified after fetch), while the ledger commit is not the formal target.
+
+Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.5.md`. It freezes a new isolated segment adapter + in-memory sidecar, exact four-file whitelist, actual `scan_segment_masked_encoded_many()` call order, existing trainer as unique primary/aux scaling/backward owner, post-commit detach-copy only, and CPU/static fail-closed tests. Old one-row runtime/lifecycle/C6 routes remain untouched and forbidden to call. No model forward, registry/default/config, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 authority. Please persist same-pair verdict with file:line findings.
