@@ -156,3 +156,11 @@ CLOSED — previous sole MEDIUM: v0.3.9 lines 15–23 freeze plan-chain budget, 
 Line 27 freezes the A/B/C/D acceptance fixture with preserved A/B chronology/cursor/exposure, no C commit, no D execution, zero slow grads, unchanged optimizer/LR iterations, exact terminal code and retry bound. Existing suffix membership/denominator/objective/slow-step semantics remain unchanged. Current blockers: none.
 
 Design-only review; no code/tests or real execution performed, and no claim that the specified fixtures have run. This verdict closes only ChatGPT's review of this precise design pair. Only after all required reviewers formally approve the same pair may the next CPU/static implementation design be created. It does not authorize implementation, later Gates, production wiring, GPU/CUDA/torchrun, real model/data/cache/checkpoint I/O, preflight/staging/record/refreeze/export/compose, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox commits do not change the formal pair.
+
+---
+
+## 2026-09-08 — CPU/static implementation design review request @ 4874bfd
+
+Awaiting review — 🚨 审核申请已发出（根仓 4874bfd223606e4d3b9335c4bc2490a088011c78；子模块/Gitlink 80aec090688e3c710c41e1dfd86b6500773db2c7）
+
+请审核 `G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION-DESIGN`：`docs/build/PSM-WMA_Local_Memory_v0.3.9_cpu_static_implementation_design_v0.1.md`。核对最小文件白名单、SegmentBatch shifted ABI、旧 lifecycle/history 的隔离、state/dt/age 真关闭、batched scan、GA/retry helper、loss scaling 与 synthetic CPU acceptance 是否完整且不越权。请求 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附 file:line。批准仅授权白名单 CPU/static 实现，禁止真实 I/O、GPU、训练与后续 Gate。
