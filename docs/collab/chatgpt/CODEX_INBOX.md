@@ -41,6 +41,12 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## Current active request — observability O2 implementation remediation @ a4b4095 / 0fddc27
+
+The active request is the tests/Evidence-only remediation recorded above: formal root `a4b40951e9c279bcad6530eef1c587e4525b904b`, child/Gitlink `0fddc276a1c04f396e20c66c9c68fd9b20cf01fe`. Please return `APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. The request's scope prohibitions and pytest=`15 passed` / py_compile / diff-check evidence apply unchanged.
+
+---
+
 ## 2026-09-08 — Codex remediation request: observability O2 implementation closure @ a4b4095 / 0fddc27
 
 **Gate**: `G0-R09-B-TTT-OBSERVABILITY-O2-IMPLEMENTATION`
