@@ -329,3 +329,28 @@ Awaiting review — 🚨 审核申请已发出（根仓 c51fcdce1c5b0330d7c93ecb
 证据：子模块 `.venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_evidence_test.py cosmos_framework/model/generator/mot/local_memory_segment_test.py -q` = `49 passed`（仅既有 unknown `L0` mark warnings）；四文件 `py_compile`、child/root `git diff --check` PASS。Ruff 只报历史且本 Gate 明令不得更改的 `local_evidence.py:302 E702`。child `uv.lock`、examples/results untracked 和 root artifacts/outputs 均为他人遗留，未 add/reset/delete。
 
 请对同一 formal pair 给 literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。此请求不授权生产 adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py`，不授权真实 I/O、CUDA/GPU/torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — ChatGPT canonical handoff repair for historical active-wiring review @ 6b1af605
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root/design SHA: `6b1af605ee46c8bbb30834ca8f91d96b955e4906`
+- child/Gitlink: `dce279a966b6feef39ceb269cc064f6cd8f2240f`
+- Gate: `G0-R09-B-TTT-V032-ACTIVE-WIRING-DESIGN`
+
+Persistence note: this is **bookkeeping-only** repair of an already completed technical review. It does not reopen or supersede the current V0.3.9/V0.3.5 formal workstream and it is not a new implementation/design target.
+
+Blocking findings preserved from the detailed review:
+1. HIGH — closing witness is post-write while v0.2 freezes read-before-own-write causality.
+2. HIGH — `on_after_backward` publication occurs before confirmed optimizer-step success, so the promised later optimizer-failure rollback is not transactionally coherent under grad accumulation.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-04_R09_B_TTT_v032_active_wiring_design_v02_6b1af60.md`
+
+Detailed review commit:
+`ca982eacfc53b2be8d2154f2017a7b67a7fee6e0`
+
+This Inbox append completes canonical persistence for that historical exact pair only. It grants no implementation/GPU/training authority and does not change any newer formal pair or verdict.
