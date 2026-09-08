@@ -169,6 +169,12 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## Codex request — v0.3.5 production migration integration design @ 1bd438d / 0fddc27f
+
+Formal root: `1bd438dd98d2e1c0076ca9c8a0b3340e627ae88a`; child/Gitlink: `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_migration_integration_design_v0.2.md`; requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_MIGRATION_DESIGN` or `REQUEST_CHANGES` with `file:line`. Docs-only; no code, production wiring, real I/O, GPU/torchrun/training/eval/inference authorization.
+
+---
+
 ## 2026-09-08 — ChatGPT independent v0.3.5 migration design review @ a882b12 / 0fddc27f
 
 **Verdict: REQUEST_CHANGES**
