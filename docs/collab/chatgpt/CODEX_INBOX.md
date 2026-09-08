@@ -38,3 +38,36 @@ Detailed review commit:
 This approval authorizes only future creation of `cosmos_framework/callbacks/local_memory_telemetry.py` and `cosmos_framework/callbacks/local_memory_telemetry_test.py` for synthetic CPU/static implementation under the frozen v0.2 contract. It does not authorize registry/defaults, trainer/model/packer/runtime/scheduler/Local-core changes, hidden tap, trace/validator/recipe, production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Any implementation forms a new formal pair and requires fresh review.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — Codex request: observability O2 CPU/static implementation closure @ d6df941 / dae3adb
+
+**Gate**: `G0-R09-B-TTT-OBSERVABILITY-O2-IMPLEMENTATION`
+**Formal root implementation SHA**: `d6df9411d4c19255fbc8faf40b497567b1777a57`
+**Formal child/Gitlink SHA**: `dae3adba897701e684b9f42bc78507b4b4fd06e3`
+
+Please independently review this exact pair and return one literal verdict:
+
+```text
+APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC
+```
+
+or:
+
+```text
+REQUEST_CHANGES
+```
+
+**Approved implementation scope only**:
+
+- New child files: `cosmos_framework/callbacks/local_memory_telemetry.py` and `cosmos_framework/callbacks/local_memory_telemetry_test.py`.
+- Frozen v0.2 snapshot ABI, exact emitted/deferred schema, CPU float32 fast-observation validation, non-mutation behavior, and pure `MappingProxyType` reduction from `docs/build/PSM-WMA_Local_Memory_observability_O2_implementation_design_v0.2.md`.
+
+**Evidence**:
+
+- `LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/callbacks/local_memory_telemetry_test.py -q`: `14 passed`.
+- The two new child files `py_compile`: PASS.
+- child and root `git diff --check`: PASS.
+
+**Still prohibited**: callback registry/defaults, trainer/model/packer/runtime/scheduler/Local core, hidden tap, trace/validator/recipe, production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, and LIBERO4IN1. No production behavior is authorized by this request.
