@@ -650,3 +650,26 @@ Detailed review commit:
 This verdict does not authorize callback defaults/recipes/trainer/model/runtime/optimizer/checkpoint/dataset/W&B backend/production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — ChatGPT independent observability O1 remediation review @ 93b4acc / 611174b
+
+**Verdict: APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC**
+
+Formal reviewed pair:
+- root implementation SHA: `93b4accd8d547416333c447c708129a23e55d8d9`
+- child/Gitlink SHA: `611174b8d8a30976b11442efb833f69890e85a06`
+- Gate: `G0-R09-B-TTT-OBSERVABILITY-O1-IMPLEMENTATION`
+
+CLOSED — previous sole MEDIUM tests/Evidence blocker. The remediation adds `_build_group_payloads()` and `_reduce_group_payloads()` and routes production grouped aggregation through those same seams. The CPU fixtures now directly cover local packed payload construction, zero/no-grad presence, EMA/fast-state exclusion, unique parameter contribution, synthetic peer-rank SUM, mixed-rank presence, nonzero grad, and exactly one SUM per canonical group. Current blockers: none.
+
+Request Evidence: CPU-only pytest=`9 passed in 24.26s`; both target files `py_compile` PASS; child/root `git diff --check` PASS. These execution results were read from the request and were not independently executed by this reviewer.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_observability_O1_implementation_93b4acc_611174b.md`
+
+Detailed review commit:
+`d03e6b6872818b3c7efd6bbd146ef8b55e0d3d3b`
+
+This approval closes only the exact O1 CPU/static callback contract for this formal pair. It does not authorize defaults/recipes, production wiring, trainer/model/runtime/optimizer/checkpoint/dataset/W&B backend changes, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1, or later observability Gates. Review/Inbox bookkeeping does not change the formal pair.
