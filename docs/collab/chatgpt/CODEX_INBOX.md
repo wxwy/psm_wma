@@ -482,3 +482,27 @@ Detailed review commit:
 Request Evidence: related CPU pytest=`50 passed`, relevant py_compile PASS, child/root `git diff --check` PASS. This review did not independently execute those commands.
 
 This approval closes only the exact synthetic CPU/static Gate. It does not authorize production adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py` changes, real model/data/cache/checkpoint I/O, preflight/staging/record/refreeze/export/compose, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1 or later Gates. Review/bookkeeping commits do not change the formal pair.
+
+---
+
+## 2026-09-08 — Local Memory observability O1 implementation-design review request @ 024ade3 / 333792e
+
+Awaiting review — 🚨 审核申请已发出（根仓 024ade385887dfc3abc149df1cc30b3ae4fa8c06；子模块/Gitlink 333792e845fe3b15ba4d8af8f34f704de2a79fa2）
+
+任务/Gate：`G0-R09-B-TTT-OBSERVABILITY-O1-DESIGN`。请审阅
+`docs/build/PSM-WMA_Local_Memory_observability_O1_implementation_design_v0.1.md`。其前置为 observability
+v0.3（root=`7a3f023efcc82446c9bf930a302c5a3edd0043f9`）已获 MM、DS docs-only 批准；本 formal target 只新增 O1
+implementation design，并更新 `SESSION.md`/`TODO.md` 状态。
+
+请逐项核验：① `NormMonitor(parameter_selector_groups=None)` 的 legacy selector、metric key、数值与 EMA exclusion
+完全保持；② opt-in `LOCAL_SLOW_SELECTOR_GROUPS` 精确覆盖 canonical slow inventory 的 encoder/core/projector/
+modality_embed，且 overlap、空 prefix、非法 group name、调用方 mutation 均 fail closed；③复用现有 local-shard
+aggregate/all-reduce/rank0 sink，不 full gather、不重复 collective、不把无 grad 伪报为零；④仅允许未来 child
+`norm_monitor.py` 与 `norm_monitor_test.py` 的 CPU/static 改动；⑤ acceptance 覆盖 legacy、四组、fail-close、
+synthetic scalar aggregation，且不将其误称为 distributed/GPU logging 或训练验证。
+
+请求对此同一 formal pair 给 literal verdict：
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_O1_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。
+即使批准，也只授权 O1 两文件 CPU/static implementation；禁止 callback defaults、TOML/Hydra recipe、trainer、
+model/runtime、optimizer、checkpoint、dataset、W&B backend、真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、
+P4/P5、B2-T 或 LIBERO4IN1。
