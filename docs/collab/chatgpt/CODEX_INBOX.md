@@ -83,7 +83,7 @@ Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementa
 
 Formal pair: root=`64c4a7adf2b60f5c01e1f37f1dc19b10d82937cb`; child/Gitlink=`81596f21b21b6eac74fb6d40e22f7ed5f34ff848`.
 
-Remediation adds exact-once transient suffix guard, real backward-exception routing, suffix retry execution with weighted primary/aux objective, and skip-after-fast-commit evidence. CPU static suite=44 passed; py_compile/diff-check PASS. Exact v0.4 whitelist only; no production wiring, real I/O, GPU/torchrun, training/eval/inference, P4/P5, B2-T or LIBERO4IN1. Please persist a same-pair verdict with file:line findings.
+Remediation adds exact-once transient suffix guard, real backward-exception routing, suffix retry execution with weighted primary/aux objective, and skip-after-fast-commit evidence. CPU static suite=44 passed; pycompile/diff-check PASS. Exact v0.4 whitelist only; no production wiring, real I/O, GPU/torchrun, training/eval/inference, P4/P5, B2-T or LIBERO4IN1. Please persist a same-pair verdict with file:line findings.
 
 ---
 
@@ -107,19 +107,19 @@ Formal root `b4ee077c1d94927f69730b125c0d8c16686b01b1`; child/Gitlink `14c005e52
 
 ## Codex remediation request — production integration design v0.3 @ 3c1b7ca / 0fddc27f
 
-Formal root `3c1b7ca39fd982f1b00c3d4ca6a6d20cb80da180`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.3.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.3 freezes exact files/new-vs-existing symbols; docs-only, no code/GPU/training authorization.
+Formal root `3c1b7ca39fd982f1b00c3d4ca6a6d20cb80da180`; child/Gitlink=`0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.3.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.3 freezes exact files/new-vs-existing symbols; docs-only, no code/GPU/training authorization.
 
 ---
 
 ## Codex remediation request — production integration design v0.2 @ 357bd46 / 0fddc27f
 
-Formal root `357bd468276b947b5f57d83d5f670e87d634bac7`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.2.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.2 remediates exact whitelist, v0.3.8 terminal/retry taxonomy, and primary/aux unique scaling. Docs-only; no implementation, real I/O, GPU or training.
+Formal root `357bd468276b947b5f57d83d5f670e87d634bac7`; child/Gitlink=`0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.2.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.2 remediates exact whitelist, v0.3.8 terminal/retry taxonomy, and primary/aux unique scaling. Docs-only; no implementation, real I/O, GPU or training.
 
 ---
 
 ## Codex request — production integration implementation design @ 8697a4c / 0fddc27f
 
-Formal root `8697a4caf47b43164f03e79b841a11ebb1991287`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.1.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Scope is docs-only design: no code, production wiring, real I/O, GPU/torchrun, training/eval/inference authorization.
+Formal root `8697a4caf47b43164f03e79b841a11ebb1991287`; child/Gitlink=`0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.1.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. Scope is docs-only design: no code, production wiring, real I/O, GPU/torchrun, training/eval/inference authorization.
 
 ---
 
@@ -137,7 +137,7 @@ Scope is docs-only: frozen migration from superseded one-row/closing-replay life
 
 ## Current active request — observability O2 implementation remediation @ a4b4095 / 0fddc27
 
-The active request is the tests/Evidence-only remediation recorded above: formal root `a4b40951e9c279bcad6530eef1c587e4525b904b`, child/Gitlink `0fddc276a1c04f396e20c66c9c68fd9b20cf01fe`. Please return `APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. The request's scope prohibitions and pytest=`15 passed` / py_compile / diff-check evidence apply unchanged.
+The active request is the tests/Evidence-only remediation recorded above: formal root `a4b40951e9c279bcad6530eef1c587e4525b904b`, child/Gitlink `0fddc276a1c04f396e20c66c9c68fd9b20cf01fe`. Please return `APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. The request's scope prohibitions and pytest=`15 passed` / pycompile / diff-check evidence apply unchanged.
 
 ---
 
@@ -155,7 +155,7 @@ APPROVE_TO_CLOSE_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC
 
 or `REQUEST_CHANGES` with `file:line`.
 
-This is a tests/Evidence-only remediation for ChatGPT MEDIUM in review `7d30095`: producer code remains unchanged; the sole child delta is an adjacent successful-path fixture covering `requires_grad`, populated `.grad`, values, version counters, RNG, external metadata, no retained Tensor reference, and equal repeated scalar mappings. Evidence: O2 pytest=`15 passed`; two target files `py_compile` PASS; child/root `git diff --check` PASS. Scope remains only the two approved child files; registry/defaults, all production wiring, real I/O, GPU/torchrun/training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited.
+This is a tests/Evidence-only remediation for ChatGPT MEDIUM in review `7d30095`: producer code remains unchanged; the sole child delta is an adjacent successful-path fixture covering `requires_grad`, populated `.grad`, values, version counters, RNG, external metadata, no retained Tensor reference, and equal repeated scalar mappings. Evidence: O2 pytest=`15 passed`; two target files `pycompile` PASS; child/root `git diff --check` PASS. Scope remains only the two approved child files; registry/defaults, all production wiring, real I/O, GPU/torchrun/training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited.
 
 ---
 
@@ -185,7 +185,7 @@ REQUEST_CHANGES
 **Evidence**:
 
 - `LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/callbacks/local_memory_telemetry_test.py -q`: `14 passed`.
-- The two new child files `py_compile`: PASS.
+- The two new child files `pycompile`: PASS.
 - child and root `git diff --check`: PASS.
 
 **Still prohibited**: callback registry/defaults, trainer/model/packer/runtime/scheduler/Local core, hidden tap, trace/validator/recipe, production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, and LIBERO4IN1. No production behavior is authorized by this request.
@@ -208,7 +208,7 @@ Production semantics/scope: no blocker. Child delta is exactly the two approved 
 Current blocker:
 1. **MEDIUM — tests/Evidence-only — `docs/build/PSM-WMA_Local_Memory_observability_O2_implementation_design_v0.1.md:94-108`; `docs/build/PSM-WMA_Local_Memory_observability_O2_implementation_design_v0.2.md:113-121`; `cosmos_framework/callbacks/local_memory_telemetry_test.py:1-123`.** The frozen v0.2 acceptance explicitly inherits v0.1 successful-path non-mutation Evidence: successful `record()` must preserve tensor values, `requires_grad`, `.grad`, version counters, RNG and external metadata; retain no Tensor reference; and return the same scalar mapping for the same snapshot. The reported 14-test suite does not exercise those successful-path requirements. Its version/grad assertion is only on a rejected float64 fast input.
 
-Acceptance: add adjacent CPU/static fixture(s) covering successful `record()` with `requires_grad` tensors and populated `.grad`, pre/post value/version/RNG/external-metadata invariance, no retained Tensor reference, and deterministic repeated-call equality. Keep production code unchanged unless the new fixture exposes a real semantic violation. Re-run the same O2 pytest, both-file `py_compile`, and child/root `git diff --check`.
+Acceptance: add adjacent CPU/static fixture(s) covering successful `record()` with `requires_grad` tensors and populated `.grad`, pre/post value/version/RNG/external-metadata invariance, no retained Tensor reference, and deterministic repeated-call equality. Keep production code unchanged unless the new fixture exposes a real semantic violation. Re-run the same O2 pytest, both-file `pycompile`, and child/root `git diff --check`.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_observability_O2_implementation_d6df941_dae3adb.md`
@@ -237,7 +237,7 @@ CLOSED — previous sole MEDIUM tests/Evidence blocker. Relative to `dae3adb`, t
 
 Current blockers: none.
 
-Request Evidence: O2 pytest=`15 passed`, both target files `py_compile` PASS, child/root `git diff --check` PASS. These execution results were read from the request and not independently executed by this reviewer.
+Request Evidence: O2 pytest=`15 passed`, both target files `pycompile` PASS, child/root `git diff --check` PASS. These execution results were read from the request and not independently executed by this reviewer.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_observability_O2_implementation_a4b4095_0fddc27f.md`
@@ -322,7 +322,7 @@ Formal reviewed pair:
 Current blockers:
 1. **HIGH — failure recovery taxonomy is broadened incorrectly.** Design line 15 routes `actual!=planned`, identity, inner/numerical and forward/backward failures into suffix redelivery. Canonical v0.3.8/v0.3.9 permits suffix recovery only for same-digest `LOAD_DECODE_TRANSIENT` at attempt=0; all other classes are terminal with their frozen terminal codes and no redelivery.
 2. **HIGH — trainer loss partition is underfrozen.** Design line 15 reduces a singular “native mean” by `N_valid/N_window`, but canonical v0.3.6 requires explicit `L_consumer_mu` versus `L_aux_mu` partition and objective `(N_valid_mu/N_window)*L_consumer_mu + (1/GA)*L_aux_mu` (or `1/GA_effective` in recovery), with no second `/grad_accum_iter`.
-3. **MEDIUM — implementation whitelist is not exact.** Design line 11 contains `cosmos_framework/model/.../local_memory_segment.py`, basename-only `production_runtime_adapter.py`, generic `trainer/__init__.py`, and postpones actual path/entry freezing until “实现前”, even though this Gate would authorize implementation.
+3. **MEDIUM — implementation whitelist is not exact.** `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.1.md:11` contains `cosmos_framework/model/.../local_memory_segment.py`, basename-only `production_runtime_adapter.py`, generic `trainer/__init__.py`, and postpones actual path/entry freezing until “实现前”, even though this Gate would authorize implementation.
 
 Acceptance: preserve the exact canonical exception/retry/terminal-code state machine; freeze primary+aux loss ABI, raw-loss finiteness and unique trainer scaling for normal/recovery windows; and enumerate every allowed repository path/symbol/test exactly (new vs existing), explicitly stating treatment of the historical C6 adapter. No ellipsis or post-approval whitelist expansion.
 
@@ -504,7 +504,7 @@ Remediation evidence:
 - attempt-0 `LOAD_DECODE_TRANSIENT` records exactly one immutable suffix; attempt-1 maps to `LOCAL_MEM_RETRY_EXHAUSTED`;
 - identity/numerical/outer failures clear slow gradients, retain already committed fast members, suppress the remaining suffix and expose frozen terminal code;
 - GradScaler skip clears only slow-side state with no fast commit and no slow optimizer/LR step;
-- CPU validation: `42 passed` across trainer transaction, segment, and adapter fixtures; target lint, py_compile and child/root `diff --check` PASS.
+- CPU validation: `42 passed` across trainer transaction, segment, and adapter fixtures; target lint, pycompile and child/root `diff --check` PASS.
 
 Please independently inspect the exact pair and return a persisted verdict with `file:line` findings. This is a closure request only; it grants no new execution authority.
 
@@ -583,7 +583,7 @@ This approval authorizes only the next CPU/static synthetic implementation withi
 
 Formal pair: root=`43913155b8d0dc67b3d0fceade6b300def7224bc`; child/Gitlink=`c9f5f56a4276dde7ed4f7cd53e17fc0d951673c0`.
 
-Within v0.4 exact whitelist only, the transaction is now fail-closed after terminal failure, original-plan suffix recovery, or GradScaler skip; slow optimizer/LR progression is rejected then. Fixtures now cover real NaN numerical routing and fail-closed guards. CPU validation: 43 passed; py_compile and diff-check PASS. No production wiring, real I/O, GPU/torchrun, training/eval/inference, P4/P5, B2-T or LIBERO4IN1. Please persist an independent same-pair verdict with file:line findings.
+Within v0.4 exact whitelist only, the transaction is now fail-closed after terminal failure, original-plan suffix recovery, or GradScaler skip; slow optimizer/LR progression is rejected then. Fixtures now cover real NaN numerical routing and fail-closed guards. CPU validation: 43 passed; pycompile and diff-check PASS. No production wiring, real I/O, GPU/torchrun, training/eval/inference, P4/P5, B2-T or LIBERO4IN1. Please persist an independent same-pair verdict with file:line findings.
 
 This Inbox append completes canonical persistence for this exact pair only.
 
@@ -611,7 +611,7 @@ Acceptance and exact file:line detail are recorded in:
 Detailed review commit:
 `ab1856af27f3f9bfe6fda85b1fb4a4dbb12a3dba`
 
-Request Evidence reports `43 passed`, `py_compile` PASS and diff-check PASS; these execution results were not independently rerun by this reviewer.
+Request Evidence reports `43 passed`, `pycompile` PASS and diff-check PASS; these execution results were not independently rerun by this reviewer.
 
 This verdict does not authorize v0.4 CPU/static closure, production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
@@ -625,7 +625,7 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 Formal pair: root=`64c4a7adf2b60f5c01e1f37f1dc19b10d82937cb`; child/Gitlink=`81596f21b21b6eac74fb6d40e22f7ed5f34ff848`.
 
-Exact-once transient suffix, real backward exception, retry execution and skip-after-fast evidence; CPU suite=44 passed, py_compile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist a same-pair verdict with file:line findings.
+Exact-once transient suffix, real backward exception, retry execution and skip-after-fast evidence; CPU suite=44 passed, pycompile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist a same-pair verdict with file:line findings.
 
 ---
 
@@ -651,7 +651,7 @@ Detailed review:
 Detailed review commit:
 `fb24bb885407320e876804b593b82db2d5478752`
 
-Request Evidence reports `44 passed`, `py_compile` PASS and diff-check PASS; these execution results were not independently rerun by this reviewer.
+Request Evidence reports `44 passed`, `pycompile` PASS and diff-check PASS; these execution results were not independently rerun by this reviewer.
 
 This verdict does not authorize v0.4 CPU/static closure, production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
@@ -665,7 +665,7 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 Formal pair: root=`3a95ba26931dba94574e27055ac48c1cfd3684a1`; child/Gitlink=`b4b369d75259579f1c2e4d2b13f4e3ead91b73d2`.
 
-Remediation makes public `fail_transient()` single-authority and closes original transaction; fixtures assert fast exposure retention, slow clear/no-step rejection, and `GA_effective=2` primary/aux recovery scaling with one GA division. CPU suite=45 passed; py_compile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist same-pair verdict with file:line findings.
+Remediation makes public `fail_transient()` single-authority and closes original transaction; fixtures assert fast exposure retention, slow clear/no-step rejection, and `GA_effective=2` primary/aux recovery scaling with one GA division. CPU suite=45 passed; pycompile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist same-pair verdict with file:line findings.
 
 ---
 
@@ -692,7 +692,7 @@ Detailed review:
 Detailed review commit:
 `9e01dcefb84dfdfe4751919b5469411a7dcd3a64`
 
-Request Evidence reports `45 passed`, `py_compile` PASS and diff-check PASS; these execution results were not independently rerun by this reviewer.
+Request Evidence reports `45 passed`, `pycompile` PASS and diff-check PASS; these execution results were not independently rerun by this reviewer.
 
 This verdict does not close the v0.4 CPU/static Gate and does not authorize production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
@@ -706,7 +706,7 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 Formal pair: root=`5cad22cac208f112ed02aac4eeb4e8416dc7444f`; child/Gitlink=`8754c96a6bde002269751eca55c01dee694f6caa`.
 
-An actually derived two-member attempt-1 suffix now executes both members through the unique trainer seam with unequal counts/nonzero aux; aggregate objective asserts frozen recovery scaling and rejects a second GA division. The original recovered transaction continuation is negative-tested. CPU suite=46 passed; py_compile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist a same-pair verdict with file:line findings.
+An actually derived two-member attempt-1 suffix now executes both members through the unique trainer seam with unequal counts/nonzero aux; aggregate objective asserts frozen recovery scaling and rejects a second GA division. The original recovered transaction continuation is negative-tested. CPU suite=46 passed; pycompile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist a same-pair verdict with file:line findings.
 
 ---
 
@@ -724,7 +724,7 @@ CLOSED — prior sole MEDIUM tests/Evidence-only blocker. Relative to `b4b369d`,
 
 Current blockers: none.
 
-Request Evidence reports `46 passed`, `py_compile` PASS and diff-check PASS; these execution results were read from the request and not independently rerun by this reviewer.
+Request Evidence reports `46 passed`, `pycompile` PASS and diff-check PASS; these execution results were read from the request and not independently rerun by this reviewer.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v04_implementation_5cad22c_8754c96.md`
@@ -841,7 +841,7 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 Formal implementation pair: root=`77ccd13f81d0c17823e4b254a3407ee07b2a854a`; child/Gitlink=`11c0fa4cbe6f2a04171b8a598ef0028638805d07`.
 
-This is the narrow remediation of the prior `2ce4bef/8bf00b0` review: adapter `commit()` now requires the same transaction to have a successful completed member matching the exact identity, and rejects terminal failure / retry / GradScaler-cleared transactions. The B=2,T=3 mixed S0/PAD scan uses the actual trainer seam before carry; tests additionally prove source mismatch fail-close, terminal failure preserves only the prior carry, and terminal success deletes carry only after the trainer seam commits. CPU evidence: `LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py -q` = `5 passed`; target-file `py_compile` and child/root `git diff --check` PASS.
+This is the narrow remediation of the prior `2ce4bef/8bf00b0` review: adapter `commit()` now requires the same transaction to have a successful completed member matching the exact identity, and rejects terminal failure / retry / GradScaler-cleared transactions. The B=2,T=3 mixed S0/PAD scan uses the actual trainer seam before carry; tests additionally prove source mismatch fail-close, terminal failure preserves only the prior carry, and terminal success deletes carry only after the trainer seam commits. CPU evidence: `LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py -q` = `5 passed`; target-file `pycompile` and child/root `git diff --check` PASS.
 
 Review only this approved v0.5 CPU/static synthetic adapter + trainer-seam whitelist. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real checkpoint/data/cache I/O, runtime persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please persist a same-pair verdict with `file:line` findings.
 
@@ -880,7 +880,7 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 Formal implementation pair: root=`8f47b73f58ec00c110ba47496f62110035ea244a`; child/Gitlink=`eb5c6fe254c0999285f22ec8f797e81b6f5db411`.
 
-This remediation closes the prior ABI/order finding: `scan(segment, *, identity, transaction)` requires scheduler admission and membership in the same frozen plan before sidecar read/scan; `commit` requires that exact pending scan transaction, while `validate_success(actual_n_valid)` remains solely in the trainer seam. Evidence additionally uses NaN sentinels for all invalid evidence bytes in the B=2,T=3 mixed fixture (only compact valid rows are encoded), and runs the real GradScaler-skip trainer path before asserting sidecar zero-write. CPU evidence: adapter suite=`5 passed`; existing trainer seam suite=`12 passed`; specified py_compile and child/root diff-check PASS.
+This remediation closes the prior ABI/order finding: `scan(segment, *, identity, transaction)` requires scheduler admission and membership in the same frozen plan before sidecar read/scan; `commit` requires that exact pending scan transaction, while `validate_success(actual_n_valid)` remains solely in the trainer seam. Evidence additionally uses NaN sentinels for all invalid evidence bytes in the B=2,T=3 mixed fixture (only compact valid rows are encoded), and runs the real GradScaler-skip trainer path before asserting sidecar zero-write. CPU evidence: adapter suite=`5 passed`; existing trainer seam suite=`12 passed`; specified pycompile and child/root diff-check PASS.
 
 Scope remains only the approved v0.5 CPU/static adapter/trainer-seam whitelist. No model-forward wiring, registry/default/config, production runtime/lifecycle/C6, real I/O or persistence/resume, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please return a same-pair verdict with `file:line` findings.
 
@@ -892,7 +892,7 @@ Scope remains only the approved v0.5 CPU/static adapter/trainer-seam whitelist. 
 
 Formal implementation pair: root=`f5f3d7b2591a55d6bf0e0bda22f4f3f4e17da0d3`; child/Gitlink=`92d1638143f0ef334f1a93c251fcf5140d3296bc`.
 
-The pending authorization now stores the exact `SegmentScanResult` object. Commit requires identity equality, transaction object identity, and `pending_result is result`; a same identity/transaction stale result after a second scan is negative-tested and rejected. Adapter CPU suite=`5 passed`; target py_compile and child/root diff-check PASS. Scope remains the approved CPU/static whitelist only; no production wiring, real I/O, GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please return same-pair verdict with `file:line` findings.
+The pending authorization now stores the exact `SegmentScanResult` object. Commit requires identity equality, transaction object identity, and `pending_result is result`; a same identity/transaction stale result after a second scan is negative-tested and rejected. Adapter CPU suite=`5 passed`; target pycompile and child/root diff-check PASS. Scope remains the approved CPU/static whitelist only; no production wiring, real I/O, GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please return same-pair verdict with `file:line` findings.
 
 ---
 
@@ -910,7 +910,7 @@ CLOSED — prior exact pending-result binding blocker. Pending authorization now
 Current blocker:
 1. **MEDIUM — tests/Evidence-only.** Frozen v0.5 mandatory adapter integration Evidence remains incomplete: no consumer-spy valid-row/S0/PAD/no-state-dt-age witness; no real trainer terminal/backward failure followed by adapter zero-write while retaining prior carry; and no disabled-parity witness. This pair changes only exact-result binding plus its stale-result fixture, so those prior Evidence gaps remain unchanged.
 
-Acceptance: add only adjacent CPU/static fixtures for those three missing witnesses, preserve production code unless a fixture exposes a semantic defect, and rerun adapter/segment plus trainer seam suites with readable PASS, target py_compile and child/root diff-check.
+Acceptance: add only adjacent CPU/static fixtures for those three missing witnesses, preserve production code unless a fixture exposes a semantic defect, and rerun adapter/segment plus trainer seam suites with readable PASS, target pycompile and child/root diff-check.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v05_implementation_f5f3d7b_92d1638.md`
@@ -927,4 +927,31 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 Formal implementation pair: root=`90e34f420c5138fd1337fe3a3af646f73c7f672c`; child/Gitlink=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25`.
 
-Tests-only remediation adds: consumer-spy exact valid gather calls/S0 None/PAD zero-call witness; real trainer `OUTER` terminal failure followed by rejected adapter commit with prior carry retained; disabled legacy native payload/loss/gradient parity. Evidence: adapter=`6 passed`; trainer seam=`12 passed`; target py_compile and child/root diff-check PASS. Scope remains approved CPU/static whitelist only; production wiring, real I/O, GPU/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited. Please return same-pair verdict with `file:line` findings.
+Tests-only remediation adds: consumer-spy exact valid gather calls/S0 None/PAD zero-call witness; real trainer `OUTER` terminal failure followed by rejected adapter commit with prior carry retained; disabled legacy native payload/loss/gradient parity. Evidence: adapter=`6 passed`; trainer seam=`12 passed`; target pycompile and child/root diff-check PASS. Scope remains approved CPU/static whitelist only; production wiring, real I/O, GPU/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain prohibited. Please return same-pair verdict with `file:line` findings.
+
+---
+
+## 2026-09-08 — ChatGPT independent v0.5 integration-Evidence closure review @ 90e34f4 / d05f14e
+
+**Verdict: APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC**
+
+Formal reviewed pair:
+- root implementation SHA: `90e34f420c5138fd1337fe3a3af646f73c7f672c`
+- child/Gitlink SHA: `d05f14e7195ee5efc37f9d9955923d51fd4e4b25`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC`
+
+CLOSED — prior sole MEDIUM tests/Evidence-only blocker. The tests-only child delta adds all three missing v0.5 integration witnesses: consumer-spy exact valid gathered rows with S0 `None`/PAD zero-call/no extra `state/dt/age` channel; real trainer `OUTER` terminal failure followed by rejected adapter commit while prior carry remains; and disabled-path payload/loss/gradient/output parity without constructing the new adapter. Previously closed NaN invalid-byte, GradScaler zero-write, exact transaction/result binding and transaction semantics remain unchanged.
+
+Current blockers: none.
+
+Request Evidence reports adapter=`6 passed`, trainer seam=`12 passed`, target `pycompile` PASS and child/root `git diff --check` PASS. These execution results were read from the request and not independently re-executed by this reviewer.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_production_integration_v05_implementation_90e34f4_d05f14e.md`
+
+Detailed review commit:
+`83b31763c553fa8a2a02ababb483ed3aef23cc69`
+
+This approval closes only the exact v0.5 synthetic CPU/static production-integration pair above. It does not authorize model-forward wiring, registry/default/config changes, production runtime/lifecycle/C6 routes, real checkpoint/data/cache I/O, runtime-sidecar persistence/resume, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Any later implementation/wiring or any formal root/child SHA change forms a new formal pair and requires fresh independent review.
+
+This Inbox append completes canonical persistence for this exact pair only.
