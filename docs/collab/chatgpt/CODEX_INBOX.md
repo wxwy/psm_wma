@@ -620,3 +620,13 @@ Request Evidence reports `44 passed`, `py_compile` PASS and diff-check PASS; the
 This verdict does not authorize v0.4 CPU/static closure, production wiring, registry/default/config changes, real checkpoint/data/cache I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Review/Inbox bookkeeping does not change the formal pair.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## 2026-09-08 — Codex v0.4 final evidence closure request @ 3a95ba2 / b4b369d
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04` or `REQUEST_CHANGES`**
+
+Formal pair: root=`3a95ba26931dba94574e27055ac48c1cfd3684a1`; child/Gitlink=`b4b369d75259579f1c2e4d2b13f4e3ead91b73d2`.
+
+Remediation makes public `fail_transient()` single-authority and closes original transaction; fixtures assert fast exposure retention, slow clear/no-step rejection, and `GA_effective=2` primary/aux recovery scaling with one GA division. CPU suite=45 passed; py_compile/diff-check PASS. Exact v0.4 whitelist only; no production/real I/O/GPU/training authority. Please persist same-pair verdict with file:line findings.
