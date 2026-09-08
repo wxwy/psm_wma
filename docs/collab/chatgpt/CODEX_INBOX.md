@@ -685,3 +685,31 @@ Awaiting review — 🚨 审核申请已发出（根仓 8f84f3fb58b4929c2c65280b
 请核验：① O2 只允许未来新增 `local_memory_telemetry.py` 和相邻 test 的 CPU/static 实现，禁止 registry/defaults、trainer/model/packer/runtime/optimizer/checkpoint/dataset/W&B 接线；② producer 仅消费调用方已拥有的 detached Local token/fast-state/计数快照，不持有 Tensor、不重算 encode/project/read/update、无 hook/collective/sink；③ S0/PAD/Local absent、K_local、多槽、fast observation、非法 shape/count/nonfinite 与 non-mutation 的验收充分且 fail-closed；④ `token_vs_consumer_hidden` 因现有源码没有已批准的只读 hidden tap 而严格不发射，并另起 Gate 才可决定取点；⑤ no production/real I/O/CUDA/GPU/torchrun/训练范围扩张。
 
 请求同一 formal pair literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_OBSERVABILITY_O2_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。即使批准，也仅授权上述两文件 synthetic CPU/static implementation；仍禁止生产 wiring、真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — ChatGPT independent observability O2 design review @ 8f84f3f / 611174b
+
+**Verdict: REQUEST_CHANGES**
+
+Formal reviewed pair:
+- root design SHA: `8f84f3fb58b4929c2c65280bb5ea1c566b20509d`
+- child/Gitlink SHA: `611174b8d8a30976b11442efb833f69890e85a06`
+- Gate: `G0-R09-B-TTT-OBSERVABILITY-O2-DESIGN`
+- request/bookkeeping SHA observed at review start: `f5f26181983c5da84d5d4b89a3933bd20d9a0714`
+
+The explicit deferral of `local/token_vs_consumer_hidden/l2_ratio` is accepted and is not a blocker.
+
+Current blockers:
+1. **MEDIUM — inherited telemetry contract is silently reduced/renamed.** O2 v0.1 emits a smaller/different key schema than the v0.2 telemetry set that v0.3 explicitly leaves inherited. It omits inherited fast/exposure/scheduler/transaction metrics and renames several keys/namespaces without an explicit supersession/defer contract. Acceptance: either preserve the inherited v0.2 key set/names or explicitly supersede/defer every omitted/renamed metric, bind its authority source/later Gate, and freeze exact emitted-key schema in CPU acceptance.
+2. **MEDIUM — fast-state/update L2 semantics are under-specified.** O2 v0.1 accepts `fast_state`/`fast_update` observations and requires exact `state_l2_mean/max` and `update_l2_mean/max`, but does not freeze accepted ranks/shapes/dtypes or reduction axes. Acceptance: freeze admissible shapes/dtypes (or canonical normalization), exact L2 axes/reductions and absent/empty behavior; add CPU fixtures for accepted and rejected forms.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_observability_O2_design_8f84f3f_611174b.md`
+
+Detailed review commit:
+`5b4361e80d27edd911542834be9646df65518aee`
+
+This verdict is docs-only and authorizes no O2 implementation, hidden tap, production wiring, real I/O, CUDA/GPU/torchrun, training/evaluation/inference or later observability Gate action. Review/Inbox bookkeeping does not change the formal pair.
+
+This Inbox append completes canonical persistence for this exact pair only.
