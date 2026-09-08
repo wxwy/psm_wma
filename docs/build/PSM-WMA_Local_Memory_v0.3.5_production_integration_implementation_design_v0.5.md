@@ -14,7 +14,7 @@
 
 | 路径 | 状态 | 唯一允许变更 |
 |---|---|---|
-| `cosmos_framework/model/generator/mot/local_memory_segment_adapter.py` | new | 不可变 `SegmentScanResult`（字段顺序：`local_tokens`、`local_present`、`state_out`、`payloads`、`locals`、`identities`），`CanonicalLocalMemorySegmentAdapter`、不可序列化的 in-memory `LocalMemorySegmentSidecar`；只适配既有 `SegmentBatch`、masked scan、gather 与 `LocalMemoryTransaction`。 |
+| `cosmos_framework/model/generator/mot/local_memory_segment_adapter.py` | new | frozen `@dataclass(frozen=True) SegmentScanResult`：`local_tokens: torch.Tensor[B,T,K,32]`、`local_present: torch.BoolTensor[B,T]`、`state_out: ContinualTTTFastState`、`payloads: tuple[Any, ...]`、`locals: tuple[torch.Tensor | None, ...]`、`identities: tuple[tuple[int,str,int], ...]`；`CanonicalLocalMemorySegmentAdapter`、不可序列化的 in-memory `LocalMemorySegmentSidecar`。result 不复制/reconstruct opaque payload；`locals/state_out` 保持 graph-bearing，result 内不得 detach/copy/materialize。 |
 | `cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py` | new | adapter CPU/static synthetic fixtures。 |
 | `cosmos_framework/trainer/__init__.py` | existing/modified | 仅 `ImaginaireTrainer._run_local_memory_segment_backward`；维持其为 primary/aux scaling、raw finite predicate、single backward 与 transaction commit 的唯一 owner。 |
 | `cosmos_framework/trainer/trainer_local_memory_integration_test.py` | existing/modified | 仅该 trainer seam 的 synthetic fixtures。 |
@@ -29,7 +29,6 @@
 
 ```text
 validate SegmentBatch + scheduler-admitted exact SegmentIdentity
--> transaction.validate_success() using that identity
 -> sidecar read using that same identity
 -> ContinualTTTLocalMemoryCore.scan_segment_masked_encoded_many(
      canonical LocalEvidenceEncoder, visual_summary, executed_action, evidence_valid,
@@ -37,11 +36,11 @@ validate SegmentBatch + scheduler-admitted exact SegmentIdentity
 -> SegmentBatch.gather_consumers(...)
 -> synthetic consumer spy(payloads, locals, identities)
 -> trainer unique primary/aux loss seam + exactly one backward
--> transaction.successful_backward() commit using that same identity
+-> trainer seam alone performs transaction.validate_success(member_index, identity, actual_n_valid), objective/backward and transaction.successful_backward()
 -> sidecar detach-copy state_out only after successful backward/commit
 ```
 
-`LocalMemorySegmentSidecar` 的唯一键是 admitted `SegmentIdentity` 的 one-to-one immutable projection：`slot_id`、`episode_id`、`category`、`cursor`、`segment_id`、`source_digest`、`training_stream_end`；不得从 consumer step、scan index、segment id 或私有计数器推断 cursor。它只保存该 exact identity 的 detach-copy fast state；不得保存 autograd graph、slow optimizer state 或 checkpoint payload。连续读取、terminal/reset、terminal rebind 都只由同一 scheduler/identity 事件驱动；stale/duplicate cursor、source mismatch、重复 commit、未 commit 写入、或尝试跨 microbatch 保留 graph 均 fail closed。该对象不实现 load/save；runtime-sidecar 持久化及 resume 是后续独立 Gate。
+`LocalMemorySegmentSidecar` 以 stable `slot_id` 为 lookup，值是 `(last_committed_identity, detached_fast_state)`；其中 `last_committed_identity` 是 admitted `SegmentIdentity` 的完整 immutable projection：`slot_id`、`episode_id`、`category`、`cursor`、`segment_id`、`source_digest`、`training_stream_end`。它仅验证新 admitted identity 与此 canonical previous identity 的 episode/source 一致且 `current.cursor == last.cursor + 1`，不得生成、递增或从 consumer step/scan index/private counter 推断 cursor。首段无记录时返回 fresh state；terminal success 不写入且删除 slot record，terminal rebind 因无记录从 fresh state 开始。它只在 trainer seam 成功 commit 后 detach-copy `state_out`；不得保存 autograd graph、slow optimizer state 或 checkpoint payload。该对象不实现 load/save；runtime-sidecar 持久化及 resume 是后续独立 Gate。
 
 ## 4. Loss、异常与事务
 
