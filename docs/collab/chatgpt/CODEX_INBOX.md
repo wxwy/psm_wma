@@ -94,3 +94,15 @@ Detailed review:
 
 Review commit:
 `ed541b16dcc08b269589e4c65731c6be6a07b017`
+
+---
+
+## 2026-09-08 — v0.3.8 recovery-plan remediation review request @ 0dcbd58
+
+Awaiting review — 🚨 审核申请已发出（根仓 0dcbd5897381ffa4467ad64f300e010d376f9af9；子模块/Gitlink 80aec090688e3c710c41e1dfd86b6500773db2c7）
+
+任务/Gate：`G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`。请审阅 `docs/build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.8.md`。本轮 docs-only remediation 响应 DS 对 v0.3.7 的 `REQUEST_CHANGES`，并以新版本消除 MM 指出的 v0.3.7 第 3--5 行 trailing whitespace；child Gitlink 未变，无实现代码或真实执行。
+
+请核对：①失败 plan 的 immutable suffix snapshot；② recovery members 必须恰为未提交 suffix、不可追加 admission；③ `GA_effective=GA-failed_mu`、`N_window=sum(suffix planned counts)`、primary/aux objective；④仅整个 recovery suffix 成功后尝试一次 slow step，之后才恢复普通固定 GA plan；⑤ retry taxonomy、单次 transient redelivery 与 terminal codes；⑥ recovery fixture 的可执行观测量。请针对同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，附 `file:line`。
+
+若批准，仅授权新建 CPU/static implementation design；仍禁止 child/runtime/packer/trainer 修改、GPU/CUDA/torchrun、真实 checkpoint/data/cache I/O、训练/评测/推理、P4/P5、B2-T 和 LIBERO4IN1。
