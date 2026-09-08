@@ -164,3 +164,23 @@ Design-only review; no code/tests or real execution performed, and no claim that
 Awaiting review — 🚨 审核申请已发出（根仓 4874bfd223606e4d3b9335c4bc2490a088011c78；子模块/Gitlink 80aec090688e3c710c41e1dfd86b6500773db2c7）
 
 请审核 `G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION-DESIGN`：`docs/build/PSM-WMA_Local_Memory_v0.3.9_cpu_static_implementation_design_v0.1.md`。核对最小文件白名单、SegmentBatch shifted ABI、旧 lifecycle/history 的隔离、state/dt/age 真关闭、batched scan、GA/retry helper、loss scaling 与 synthetic CPU acceptance 是否完整且不越权。请求 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附 file:line。批准仅授权白名单 CPU/static 实现，禁止真实 I/O、GPU、训练与后续 Gate。
+
+---
+
+## 2026-09-08 — ChatGPT independent CPU/static implementation design review @ 4874bfd
+
+**Verdict: REQUEST_CHANGES**
+
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION-DESIGN`
+- Formal root design SHA: `4874bfd223606e4d3b9335c4bc2490a088011c78`
+- Verified child/Gitlink: `80aec090688e3c710c41e1dfd86b6500773db2c7`
+- Detailed review: `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v039_cpu_static_design_v01_4874bfd.md`
+- Detailed review commit: `789edb7668e613b18615e1283f5bc391b83d400d`
+
+Current blockers (D = `docs/build/PSM-WMA_Local_Memory_v0.3.9_cpu_static_implementation_design_v0.1.md`):
+
+1. **NEW HIGH — D:56–57**: existing scan_segment_many calls step_many, which projects/checks all rows before valid masking (child local_evidence.py:549, :373–384, :483–488). Encoder-only masking does not satisfy v0.3.6 invalid/PAD no-encode/no-project semantics. Freeze the canonical pre-projection masking seam and its allowed edits; require mixed/all-invalid CPU observations of actual encoder/projection/read/write participation and unchanged invalid committed state, not just present=False.
+2. **NEW MEDIUM — D:31, :34–42**: claimed identical SegmentBatch ABI drops consumer_payload and substitutes consumer_action without equivalent payload/identity ownership. Restore or freeze equivalent payload ABI and identity-preserving common gather for consumer payload and Local None/token; require synthetic round-trip assertions including S0 and PAD.
+3. **NEW MEDIUM — D:86–87**: document uses prior CANONICAL_CPU_DESIGN literal to authorize implementation, while this Gate request specifies CANONICAL_CPU_STATIC. Unify current Gate/literal/scope; retain the former only as prerequisite, not implementation authority.
+
+Previous semantics retry MEDIUM remains CLOSED; this is a new Gate and fresh pair. No project tests or real execution ran. These are design blockers, not tests-only findings. Current Gate stays open; no whitelist implementation, production wiring, real model/data/cache/checkpoint I/O, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1 or later Gate actions are authorized. Review/Inbox commits do not change the formal pair.
