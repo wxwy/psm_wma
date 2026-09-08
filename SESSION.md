@@ -8,6 +8,7 @@
 - `G0-R09-B-TTT-V035-PRODUCTION-MIGRATION-DESIGN`（DONE）：formal root=`1bd438dd98d2e1c0076ca9c8a0b3340e627ae88a`/child=`0fddc27f9c3c463f784be9f528ffbbe123f244ff` 获 ChatGPT、MM、DS 三方同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_MIGRATION_DESIGN`。旧 `6828b55` migration v0.1 已 superseded；仅授权创建下一份 production-integration implementation design，不授权 child 代码、真实 I/O、GPU 或训练。
 - `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION-DESIGN`（DONE）：formal root=`90e34f420c5138fd1337fe3a3af646f73c7f672c`/child=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25` 获 ChatGPT review=`83b3176`、MM、DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC`。CPU/static closure 补齐 consumer-spy、真实 trainer terminal-failure carry 保留及 disabled parity；adapter=`6 passed`、trainer=`12 passed`、target `py_compile`、双仓 `diff --check` PASS。仅关闭白名单 synthetic contract；production wiring、registry/default/config、真实 I/O、runtime-sidecar persistence、GPU/训练均未授权。
 - 下一步：新建并冻结 production wiring / runtime-sidecar implementation design；获得新的三方同 SHA implementation authority 前，禁止修改 child 生产路径或启动任何真实 I/O、GPU、训练。
+- `G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`（IN_PROGRESS）：已核对 child 当前 `omni_mot_model.py` 的逐 sample `TTTLifecycle.process_sample()` 以及 trainer 的固定 `loss / grad_accum_iter` 均不满足 v0.3.5 的 `[B_stream,T]`、valid-consumer weighted loss 语义。预计仅新增根仓 docs design；不改 child、真实 I/O、GPU 或训练。
 
 ## 当前最小步骤（2026-09-07）
 
