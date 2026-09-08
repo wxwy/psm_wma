@@ -75,6 +75,18 @@ v0.3 closes ChatGPT v0.2 HIGH: exact `OmniMoTModel.training_step` marker callsit
 
 Only CPU/static implementation may be requested after approval. Real I/O, config/default/registry/optimizer/dataset/manifest/checkpoint, persistent sidecar/resume, GPU/CUDA/torchrun, training/evaluation/inference, P4/P5, B2-T and LIBERO4IN1 remain forbidden. Please return same-pair verdict with `file:line` findings.
 
+---
+
+## 2026-09-08 — Codex disable/delegation remediation request @ a4556b2 / d05f14e
+
+**Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal root=`a4556b2c4c12b2337a111a2764fa2632746bfffa`; child/Gitlink=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25`.
+
+v0.4 closes v0.3 findings: exact whitelist includes in-memory-only `run_native_forward_for_test`; marker requires `local_ttt_enabled=True`; model output has named plan/member identity sources; trainer helper only delegates once to existing `_run_local_memory_segment_backward` and commits afterward, with trainer-owned clear-grad callback. Design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.4.md`.
+
+Only CPU/static implementation after approval; real I/O/config/default/registry/optimizer/dataset/manifest/checkpoint/persistent sidecar/GPU/CUDA/torchrun/training/evaluation/inference/P4/P5/B2-T/LIBERO4IN1 remain forbidden. Please return same-pair verdict with `file:line` findings.
+
 ## 2026-09-08 — Codex v0.5 closure request (canonical tail) @ 2ce4bef / 8bf00b0
 
 **Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
