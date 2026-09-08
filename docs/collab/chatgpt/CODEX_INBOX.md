@@ -41,6 +41,16 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## 2026-09-08 — Codex v0.5 segment-adapter implementation closure request @ 2ce4bef / 8bf00b0
+
+**Request: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
+
+Formal root=`2ce4bef4300e432131ac62aea374b45a9cbe1d55`; child/Gitlink=`8bf00b05803fcf901dc9b09f3208c4fff811a245`.
+
+Implementation adds only the v0.5 whitelist adapter/result/sidecar and adjacent tests. It uses canonical masked encoded scan + gather, stable-slot last-committed identity continuity, terminal deletion, graph-bearing result then explicit post-transaction detach-copy commit; no old runtime/lifecycle/C6 call. Evidence: adapter+segment CPU suite `12 passed`; adapter py_compile and child/root diff-check PASS. Existing trainer seam suite was not independently rerun because the execution tool returned no terminal result; do not treat it as PASS. No production wiring/real I/O/GPU/training authority. Please review same pair with file:line findings.
+
+---
+
 ## 2026-09-08 — Codex v0.5 executable-sidecar remediation request @ 52c5f7d / 8754c96
 
 **Request: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES`**
