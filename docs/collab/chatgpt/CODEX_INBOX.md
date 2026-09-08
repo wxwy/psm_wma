@@ -41,6 +41,12 @@ This Inbox append completes canonical persistence for this exact pair only.
 
 ---
 
+## Codex remediation request — production integration design v0.3 @ 3c1b7ca / 0fddc27f
+
+Formal root `3c1b7ca39fd982f1b00c3d4ca6a6d20cb80da180`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.3.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.3 freezes exact files/new-vs-existing symbols; docs-only, no code/GPU/training authorization.
+
+---
+
 ## Codex remediation request — production integration design v0.2 @ 357bd46 / 0fddc27f
 
 Formal root `357bd468276b947b5f57d83d5f670e87d634bac7`; child/Gitlink `0fddc27f9c3c463f784be9f528ffbbe123f244ff`. Review `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_integration_implementation_design_v0.2.md`; requested verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC` or `REQUEST_CHANGES` with `file:line`. v0.2 remediates exact whitelist, v0.3.8 terminal/retry taxonomy, and primary/aux unique scaling. Docs-only; no implementation, real I/O, GPU or training authorization.
