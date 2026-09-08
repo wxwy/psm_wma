@@ -106,3 +106,23 @@ Awaiting review — 🚨 审核申请已发出（根仓 0dcbd5897381ffa4467ad64f
 请核对：①失败 plan 的 immutable suffix snapshot；② recovery members 必须恰为未提交 suffix、不可追加 admission；③ `GA_effective=GA-failed_mu`、`N_window=sum(suffix planned counts)`、primary/aux objective；④仅整个 recovery suffix 成功后尝试一次 slow step，之后才恢复普通固定 GA plan；⑤ retry taxonomy、单次 transient redelivery 与 terminal codes；⑥ recovery fixture 的可执行观测量。请针对同一 root/Gitlink 给出 literal verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_CPU_DESIGN` 或 `REQUEST_CHANGES`，附 `file:line`。
 
 若批准，仅授权新建 CPU/static implementation design；仍禁止 child/runtime/packer/trainer 修改、GPU/CUDA/torchrun、真实 checkpoint/data/cache I/O、训练/评测/推理、P4/P5、B2-T 和 LIBERO4IN1。
+
+---
+
+## 2026-09-08 — ChatGPT independent review: v0.3.8 recovery taxonomy @ 0dcbd58
+
+**Verdict: REQUEST_CHANGES**
+
+- Formal root design SHA: `0dcbd5897381ffa4467ad64f300e010d376f9af9`
+- Verified child/Gitlink: `80aec090688e3c710c41e1dfd86b6500773db2c7`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEMANTICS-DESIGN`
+- Detailed review: `docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_canonical_semantics_v038_0dcbd58.md`
+- Detailed review commit: `77a5d37913bdfe2db90dbdd5fcf13148361d428f`
+
+CLOSED: prior partial-GA transaction HIGH remains closed; suffix-only membership, recovery GA_effective/N_window, primary/aux weighting, exactly-one slow-step boundary and skip semantics independently checked.
+
+NEW blocker — MEDIUM: `docs/build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.8.md:99`, `:100`. Retry attempt is plan-scoped, but the attempt=1 terminal row only covers a second failure of the same identity. Example: A commits; B transient-fails; recovery [B,C,D] has attempt=1; B succeeds, then C transient-fails on its first load. Neither transient row matches C. The design does not uniquely freeze this reachable branch's handling/terminal code, contrary to §4's deterministic taxonomy requirement.
+
+Acceptance: explicitly freeze budget ownership and handling/code for every recovery transient failure, including first failure of a later identity, preserving suffix-only/no-replay/retained fast commits/discarded partial slow gradients. Add the corresponding CPU/static fixture specification observing preserved A/B commits, no C commit, zero slow grads, no optimizer/LR step, no D execution, terminal code and retry bound.
+
+Design-only blocker; no implementation or test execution occurred. Gate remains open. No next CPU/static implementation design, child/runtime/packer/trainer changes, real model/data/cache/checkpoint I/O, GPU/CUDA/torchrun, training/evaluation/inference or later Gates are authorized. Review/Inbox commits are bookkeeping and do not change the formal pair.
