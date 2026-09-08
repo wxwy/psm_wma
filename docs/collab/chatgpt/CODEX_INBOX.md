@@ -444,3 +444,30 @@ Awaiting review — 🚨 审核申请已发出（根仓 d1f155d9a0cf0cf49055c065
 证据：`cosmos-framework/.venv/bin/python -m pytest cosmos_framework/model/generator/mot/local_evidence_test.py cosmos_framework/model/generator/mot/local_memory_segment_test.py -q`=`50 passed`（40 个既有 unknown `L0` marker warnings）；相关 py_compile、child/root `git diff --check` PASS。仅白名单 CPU/static 文件；未执行或授权 production、真实 I/O、CUDA/GPU/torchrun、训练、评测、推理、P4/P5、B2-T、LIBERO4IN1。
 
 请给同一 formal pair literal verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC` 或 `REQUEST_CHANGES`，附 severity 与 `file:line`。重点核验 rebind 不绕过 scheduler authority、fresh episode 的 weighted-deficit admission/GA commit 顺序、per-slot isolation 与 snapshot/rebuild。
+
+---
+
+## 2026-09-08 — ChatGPT independent canonical CPU/static remediation review @ d1f155d / 333792e
+
+**Verdict: APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_CPU_STATIC**
+
+Formal reviewed pair:
+- root implementation SHA: `d1f155d9a0cf0cf49055c065defa8119b0ac178f`
+- child/Gitlink SHA: `333792e845fe3b15ba4d8af8f34f704de2a79fa2`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-CPU-IMPLEMENTATION`
+
+Fresh incremental review relative to `f0d6c69/d7eb51a`; prior verdict not inherited.
+
+CLOSED — prior sole HIGH: `terminal_rebind()` now only frees the exact terminal slot and no longer creates replacement admission. A fresh cursor0 episode cannot commit until it passes `RankLocalSegmentScheduler.admit()`. Updated CPU evidence proves an arbitrary caller replacement is rejected by commit, fresh candidates pass through weighted-deficit admission, the selected identity commits, and snapshot/rebuild preserves rebound state. Existing scheduler evidence independently covers deterministic weighted-deficit exposure selection.
+
+Current blockers: none.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-09-08_R09_B_TTT_v035_canonical_cpu_implementation_d1f155d_333792e.md`
+
+Detailed review commit:
+`de9a2c622bab78b1e79c6847c4c106f8f84daa11`
+
+Request Evidence: related CPU pytest=`50 passed`, relevant py_compile PASS, child/root `git diff --check` PASS. This review did not independently execute those commands.
+
+This approval closes only the exact synthetic CPU/static Gate. It does not authorize production adapter/dataset/trainer/model-forward/`local_memory2llm`/config/optimizer/checkpoint/manifest/`ttt_lifecycle.py` changes, real model/data/cache/checkpoint I/O, preflight/staging/record/refreeze/export/compose, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, LIBERO4IN1 or later Gates. Review/bookkeeping commits do not change the formal pair.
