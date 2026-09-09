@@ -12,33 +12,40 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
-## ACTIVE — Production Active Wiring CPU/static closure
+## ACTIVE — Canonical Segment Supersession Source Audit
 
 Formal pair:
-- root implementation SHA: `a7f5db0323e573c27298118c248187b78d7e9181`
+- root source-audit SHA: `5e4fbd3cf0542fa6df9b1f08eb9ea1736792033d`
 - child/Gitlink SHA: `f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
-- Gate: `G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
-- previous formal pair: `ae80bae6474a81ca0c93f761b6bce8c29f6b4806` / `d17f09c349cad2da93381033749c4a901391e920`
-- approved design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
-- request/bookkeeping HEAD observed: `5b31e15c697e054fd7a67b45782058e77f570890`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-SUPERSESSION-SOURCE-AUDIT`
+- audit: `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_supersession_source_audit_v0.1.md`
+- source snapshot baseline: `ee07ca057afd203f8d58821051c0cfa6298e78ee` / `f14a8d8e3f0cc453545f3d9b1406af76cea7e151` — source snapshot only, not formal canonical authority.
+- request/bookkeeping HEAD observed during review: `aa694b995648121db6c0c6f4999bd53bc4322d71`
 
-Verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC`
+Verdict: `REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_supersession_source_audit_v0.1.md:§1)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_production_active_wiring_implementation_a7f5db0_f14a8d8.md`
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_supersession_source_audit_5e4fbd3_f14a8d8.md`
 
 Canonical review commit:
-`30542ed2aeae0cf29a60d1168fa889d2bf2484ba`
+`b32ad3751843c793d6bb9b55a227cebe900d9e2f`
 
-Closure:
-- CLOSED: attempt-1 later-member transient now takes precedence and terminalizes exactly as `LOCAL_MEM_RETRY_AFTER_MEMBER`; repeated transient on the retried first member remains `LOCAL_MEM_RETRY_EXHAUSTED`.
-- CLOSED: adjacent trainer-level no-marker/active controls now prove original no-marker dispatcher + legacy lifecycle behavior and active lifecycle isolation.
-- CLOSED: all prior registry/GA/retry/optimizer/token/test-only-native-seam blockers remain closed.
+Closure / findings:
+- A–H canonical/transitional/legacy source-routing direction is consistent with frozen v0.3.5 supersession semantics.
+- The closed v0.3.9 canonical CPU/static authority chain exists; no competing second implementation authority was found.
 
-Current blockers: none.
+Current blockers:
+- **1 MEDIUM — source-audit provenance is not self-contained.** The audit refers to “v0.3.9 contract/design 及其已关闭实现” but does not freeze the exact formal pairs, so the unique authority must be reconstructed from TODO/history.
+
+Required docs-only amendment:
+- semantics design: `e4b2d2f980ce0f038ae1a44ed379d16bbf05b9d9` / `80aec090688e3c710c41e1dfd86b6500773db2c7`
+- CPU/static implementation design: `1f6c0bad0faa4aabae1c71b01738ad95a4ea902c` / `80aec090688e3c710c41e1dfd86b6500773db2c7`
+- CPU/static implementation closure: `d1f155d9a0cf0cf49055c065defa8119b0ac178f` / `333792e845fe3b15ba4d8af8f34f704de2a79fa2`
+- exact design artifact: `docs/build/PSM-WMA_Local_Memory_v0.3.9_cpu_static_implementation_design_v0.3.md`
+- explicitly label `ee07ca057afd203f8d58821051c0cfa6298e78ee / f14a8d8e3f0cc453545f3d9b1406af76cea7e151` as source snapshot baseline only.
 
 Next authorized action for Codex:
-- this Gate is closed for the exact CPU/static synthetic formal pair above;
-- any real native MoT/Memory-Prefix adapter, producer/packer ABI, GPU numerical smoke, persistence/checkpoint, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 requires a new Gate and new formal pair.
+- make only the docs-only source-audit provenance amendment above;
+- submit the amended audit as a new root formal SHA with the exact child/Gitlink for fresh source-audit review.
 
-No real I/O, CUDA/GPU/torchrun, training/evaluation/inference or production native adapter is authorized by this closure itself.
+No implementation, producer/packer/dataset/manifest/config/optimizer-selector/checkpoint change, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized by this verdict.
