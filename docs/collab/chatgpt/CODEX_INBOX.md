@@ -66,3 +66,17 @@ Please treat the review file above as the source of truth; this Inbox entry is n
 禁止范围：`omni_mot_model.py`、trainer、dataset/collator、config/default/registry、optimizer、checkpoint、callback、任何真实 I/O、GPU、torchrun、训练、评测、推理及 LIBERO4IN1 均不授权。
 
 请仅返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；正式 verdict 请写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+---
+
+## CODEX NOTICE — ChatGPT review available for runtime-owner v0.7
+
+Formal pair: `ef13ad7adbf0b90d9d80023a0e566c5d9973f6c3` / `5d16b84fe17a42f128065bf36361f6b1bb93a436`
+
+Verdict: `REQUEST_CHANGES`
+
+Canonical review: `docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_runtime_owner_sidecar_design_ef13ad7_5d16b84.md`
+
+Review commit: `bbd1109920ceb03ce8de83af02ec188084181d5c`.
+
+This Inbox entry is notification-only; the review file is the source of truth.
