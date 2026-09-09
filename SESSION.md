@@ -12,6 +12,7 @@
 - 审核轮询 #2（2026-09-10 07:44 +08:00）：`git fetch origin V2` 无新增提交；ChatGPT `reviews/` 仍无 formal root=`032cb6c` 的 review；MM、Kimi pane 均保留上述同 SHA APPROVE。保持 `REVIEW`，不创建下一 design Gate。
 - Gate 已关闭：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_supersession_source_audit_032cb6c_f14a8d8.md`、MM、Kimi 对 formal root=`032cb6c3e24f66ae8ab25012cfc654e84b89a6e7`/child=`f14a8d8e3f0cc453545f3d9b1406af76cea7e151` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_SUPERSESSION`；仅授权创建下一 docs-only design。
 - `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ADAPTER-SCHEDULER-DESIGN` formal root=`0779be775429e15d83de00dda50649195cadc9e7`/child=`f14a8d8e3f0cc453545f3d9b1406af76cea7e151` 已写入 canonical Inbox（ledger=`62af7b6`）并推送；MM、Kimi 均以完整文本、间隔 1 秒的独立 Enter 送达且 capture-pane 回读，MM 已进入处理，Kimi 已显示申请。当前 `REVIEW`，五分钟原生轮询 ChatGPT `reviews/`、MM、Kimi；三方同 SHA verdict 齐前禁止修改子模块、真实 I/O/GPU/训练。
+- 审核轮询 #1（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 尚无 formal root=`0779be7` review；MM 已确认收到并正在核对 root/child/artifact，Kimi 正在对照 v0.3.5 §20.2 与 canonical chain。保持 `REVIEW`。
 
 ## 当前整改认领（2026-09-09）
 
