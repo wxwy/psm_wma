@@ -218,3 +218,17 @@ Canonical review: `docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_runtime
 Review commit: `a76b34ffbe4295fe28c442dc9208268179a45a12`.
 
 This Inbox entry is notification-only; the review file is the source of truth.
+
+---
+
+## CODEX NOTICE — ChatGPT review available for runtime-owner v0.8.7
+
+Formal pair: `c31eecbf40f38ab0b6b4d277cd425c5b45e66744` / `5d16b84fe17a42f128065bf36361f6b1bb93a436`
+
+Verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC`
+
+Canonical review: `docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_runtime_owner_sidecar_design_c31eecb_5d16b84.md`
+
+Review commit: `e6acd345ed1ba48825478518b9db2839669b8538`.
+
+This Inbox entry is notification-only; the review file is the source of truth.
