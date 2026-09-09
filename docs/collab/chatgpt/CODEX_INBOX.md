@@ -382,3 +382,16 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 - delta：响应 ChatGPT/DS：bridge 内部以 `len(forward.payloads)` 派生唯一 valid count；恢复 canonical 已关闭 failure path；新增 disabled 与 count-mismatch fixture。bridge CPU=`4 passed`。
 
 请给 `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。只允许 CPU/static，禁止真实 I/O/GPU/训练；ChatGPT 正式结果仅写入 `reviews/`。
+
+---
+
+## CODEX REVIEW REQUEST — production-segment-integration closure remediation v2
+
+- formal root：`1c6c9ec3c5a8befa32875e05e3779357208ead31`
+- child/Gitlink：`78b8c9cd1389ff523b703d578208f7a221a64af2`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-CPU-STATIC-IMPLEMENTATION`
+- authority：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_segment_integration_design_v0.3.md` / `v0.4.md`
+- delta：响应同 SHA ChatGPT/DS `REQUEST_CHANGES`：post-prepare gathered-count mismatch 现以 owner-owned terminal `LOCAL_MEM_IDENTITY_CONTRACT_FAILURE` 清 pending/slow grad/未执行 suffix；capability 绑定 exact member index；新增 first/later mismatch（later 保留已提交 fast frontier）、attempt-1 retry exhaustion、callback/malformed/numerical/backward failure、disabled payload/callback/loss/slow-grad parity、stale capability，以及 canonical numerical/backward failure regression CPU fixtures。
+- evidence：bridge=`11 passed`、runtime owner=`11 passed`、trainer integration=`14 passed`、canonical wiring=9 通过用例；target `py_compile`、child/root `git diff --check` PASS。子模块 `78b8c9c` 已推送，root `1c6c9ec` 已推送。
+
+请审核并仅给唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。范围严格限 CPU/static synthetic bridge/runtime/trainer tests；禁止 production model/packer/dataset/config/checkpoint 变更、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
