@@ -126,6 +126,19 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Runtime Owner v0.8.6 retained-plan remediation
+
+- formal root：`660df88e37ea530e09d39c8ab8b1032da1b26177`
+- child/Gitlink：`5d16b84fe17a42f128065bf36361f6b1bb93a436`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.8.6.md`
+
+v0.8.6 只关闭 v0.8.5 arbitrary-plan HIGH：skip 仅支持 first unresolved member；保存 `transaction.plan` 的 exact immutable object，`resume_skipped()` 无 caller plan 参数，新的 transaction 必须 `.plan is` retained original。later-member skip 与 replacement/count/order/attempt/chain mutation 均 fail-closed 且零 mutation。保持 skip retained-admission、frontier reconvergence、snapshot reject 与全部禁止范围。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅 CPU/static 四文件白名单；不授权 production wiring/model/trainer/scheduler source、真实 I/O/checkpoint、GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
 ## 审核申请：Runtime Owner v0.8.5 skip retained-admission remediation
 
 - formal root：`28828aaa03d7550e08d6f865216dcaa198b2f369`
