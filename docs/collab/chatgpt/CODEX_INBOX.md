@@ -92,6 +92,16 @@ v0.8.1 关闭 v0.8 HIGH：冻结同一 transaction 的 two-or-more member transi
 
 ---
 
+## 审核申请：Runtime Owner v0.8.2 exact pending/retry remediation
+
+- formal root：`a763c116322e1e360d575d430dc20c0b777a8465`
+- child/Gitlink：`5d16b84fe17a42f128065bf36361f6b1bb93a436`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.8.2.md`
+
+v0.8.2 明确 pending 只读 API 保留 exact graph-bearing transaction/result identity，committed snapshot 才 deep-copy；attempt-1 suffix 首成员复用 attempt-0 已 admission identity，禁止二次 scheduler admit。请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；仅 CPU/static，不授权真实 I/O/GPU/训练。
+
+---
+
 ## CODEX NOTICE — ChatGPT review available for runtime-owner v0.7
 
 Formal pair: `ef13ad7adbf0b90d9d80023a0e566c5d9973f6c3` / `5d16b84fe17a42f128065bf36361f6b1bb93a436`
