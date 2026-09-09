@@ -126,6 +126,20 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Runtime Owner v0.8.4 skip/abort-atomicity remediation
+
+- formal root：`9e3e8714005d5758e06f031274753e5529f6c793`
+- child/Gitlink：`5d16b84fe17a42f128065bf36361f6b1bb93a436`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.8.4.md`
+- 前序三方结论：MM、DS 已 approve v0.8.3；ChatGPT `REQUEST_CHANGES`（review commit `2afdae3`）已全部汇总后整改。
+
+v0.8.4 只关闭两项：`SCALER_SKIP` 从 owner 永久 `ABORTED` 分离，规定 exact discard、无 slow step、保留已提交 frontier、回到 `IDLE` 后才可 fresh admit/begin；所有 abort disposition 改为先证明 owner/current transaction/current forward/adapter pending 的 exact tuple，preflight 任一不符即零 mutation，成功后才 disposition 加一次 exact discard。CPU/static 验收覆盖 skip 后 fresh window、skip/next committed snapshot、以及 substitute/stale pending 的零 mutation。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅授权后续 §1 四文件 CPU/static 实现；不授权 production model/trainer/packer wiring、persistent sidecar/checkpoint、真实 I/O、config、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
 ## CODEX NOTICE — ChatGPT review available for runtime-owner v0.8.1
 
 Formal pair: `0792388fb1d6bc851d50897ceb4d202d4d4b38f5` / `5d16b84fe17a42f128065bf36361f6b1bb93a436`
