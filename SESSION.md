@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## 当前整改认领（2026-09-09）
+
+- `G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-CPU-STATIC-IMPLEMENTATION`：三方对前一 formal root=`609aed4864e5b884467174615910a99861df4784` / child=`5bfa506b0200f5cbd11049378690dcef90af8f30` 的最终结论已齐：ChatGPT review commit=`a1d8af7`、DS 均 `REQUEST_CHANGES`，MM `APPROVE`。整改 child=`78b8c9cd1389ff523b703d578208f7a221a64af2` 已推送：bridge 的 post-prepare count mismatch 现 owner-owned terminalize/discard/clear；capability 绑定 exact member index；新增 first/later mismatch、attempt-1 retry、callback/malformed/numerical/backward failure、disabled loss/slow-grad parity、stale capability，以及 canonical numerical/backward failure regression CPU fixtures。
+- 当前验证：bridge=`11 passed`、runtime owner=`11 passed`、trainer integration=`14 passed`、canonical wiring 输出 9 个通过用例且进程正常退出；目标 `py_compile`、child/root `git diff --check` PASS。未运行任何真实 I/O、GPU、训练。下一步：提交根仓 Gitlink/记录，针对新 formal pair 重新申请 ChatGPT、MM、DS closure review；整改前不得越过该 Gate。
+
 更新时间：2026-09-08
 
 ## 协作协议更新（2026-09-09）
