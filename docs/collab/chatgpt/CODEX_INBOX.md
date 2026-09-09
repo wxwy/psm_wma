@@ -102,6 +102,16 @@ v0.8.2 明确 pending 只读 API 保留 exact graph-bearing transaction/result i
 
 ---
 
+## 审核申请：Runtime Owner v0.8.3 retry projection remediation
+
+- formal root：`f2face62e51c4aef89dff6085fd87bb5441a612b`
+- child/Gitlink：`5d16b84fe17a42f128065bf36361f6b1bb93a436`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.8.3.md`
+
+v0.8.3 将 `GAWindowPlan` member tuple projection 与 retained full `SegmentIdentity` 分离：先比较 `(slot,episode,cursor)`，再由 scheduler authority 验证 exact full identity，禁止 duplicate admission/reconstructed metadata mismatch。请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；仅 CPU/static，无真实 I/O/GPU/训练。
+
+---
+
 ## CODEX NOTICE — ChatGPT review available for runtime-owner v0.7
 
 Formal pair: `ef13ad7adbf0b90d9d80023a0e566c5d9973f6c3` / `5d16b84fe17a42f128065bf36361f6b1bb93a436`
