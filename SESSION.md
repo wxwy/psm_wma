@@ -14,6 +14,7 @@
 - 审核轮询 #1（2026-09-09）：MM 已返回 `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC`；ChatGPT `reviews/` 尚无匹配 formal SHA；DS 本轮仍返回 `Insufficient Balance`，未形成 verdict。保持 `REVIEW`，不以单方批准执行下一步。
 - 审核轮询 #2（2026-09-09）：远端 `V2` 无新增；MM 保持同 SHA `APPROVE_TO_CLOSE`，ChatGPT 正式 review 仍缺失；DS pane 仍为已提交申请后的 `Insufficient Balance`，无有效 verdict。保持 `REVIEW`。
 - 审核轮询 #3（2026-09-09）：远端仍无新增；MM 保持 `APPROVE_TO_CLOSE`；ChatGPT 仍无匹配 formal review；DS 余额错误未恢复。审核等待不构成可越过的 Gate，保持 `REVIEW`。
+- 审核轮询 #5（2026-09-09）：远端快进 ChatGPT review=`647e9c7` / align=`4f906ad`；formal pair `f24599d`/`acb2bf2` 的 ChatGPT verdict=`REQUEST_CHANGES`。HIGH：retry identity 必须在 backward 前 exact/fail-closed，且 tagged first-member retry 必须有 trainer-owned exact re-arm orchestration；MEDIUM：optimizer preflight 的 registry/capability authority chain 与 active fixture matrix。MM 保持批准；DS 仍无有效 verdict，故尚未合并整改。
 
 更新时间：2026-09-08
 
