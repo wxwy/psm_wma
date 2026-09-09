@@ -126,6 +126,19 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Runtime Owner v0.8.7 retry-skip fail-closed remediation
+
+- formal root：`c31eecbf40f38ab0b6b4d277cd425c5b45e66744`
+- child/Gitlink：`5d16b84fe17a42f128065bf36361f6b1bb93a436`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.8.7.md`
+
+v0.8.7 仅关闭 attempt-1 scaler-skip：`abort(SCALER_SKIP)` 在任何 mutation 前要求 `plan.attempt == 0` 与无 completed member；attempt-1 或 later member 一律保持 `PREPARED` 并零 mutation，使用既有 exhausted→terminal taxonomy。仅通过此 preflight 才运行 v0.8.6 retained-plan resume。CPU/static 新增 attempt-1 skip fail-closed fixture。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅四文件 CPU/static 白名单；不授权 production wiring/model/trainer/scheduler source、真实 I/O/checkpoint、GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
 ## 审核申请：Runtime Owner v0.8.6 retained-plan remediation
 
 - formal root：`660df88e37ea530e09d39c8ab8b1032da1b26177`
