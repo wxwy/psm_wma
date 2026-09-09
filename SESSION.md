@@ -4,7 +4,7 @@
 
 - `G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-CPU-STATIC-IMPLEMENTATION`（DONE）：formal root=`1c6c9ec3c5a8befa32875e05e3779357208ead31` / child=`78b8c9cd1389ff523b703d578208f7a221a64af2` 获 ChatGPT review=`f7b2a81`、MM、DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC`。整改关闭 post-prepare count mismatch 的 owner terminal/discard/clear、exact member-index capability，以及 v0.3 §4 public negative/disabled parity/canonical regression matrix。
 - 验证：bridge=`11 passed`、runtime owner=`11 passed`、trainer integration=`14 passed`、canonical wiring=`9 passed`；目标 `py_compile`、child/root `git diff --check` PASS。仅关闭 synthetic CPU/static bridge/runtime/trainer contract；production model/packer/dataset/config/checkpoint、真实 I/O、GPU、训练仍未授权。下一步必须另建并审核 production wiring/runtime-sidecar 或等价下一实现设计 Gate，不能直接训练。
-- 当前认领：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`。v0.3 formal=`a357e5c`/child=`78b8c9c` 的三方结论已齐：MM、DS approve，ChatGPT review=`9a51177` `REQUEST_CHANGES`。已新增未提交 docs-only v0.4：trainer/main-process exact registry binding 与 pre-forward shallow injection；将 `canonical_segment_runtime.py` 纳入白名单并冻结 owner preflight/sealed resolve；active step 的 legacy callback/optimizer bypass 与 pre-existing lifecycle zero-call Evidence。待提交推送后重启三方审核；批准前禁止 child 生产路径、真实 I/O/GPU/训练。
+- 当前认领：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`。v0.4 formal=`edea9f9`/child=`78b8c9c` 的三方结论已齐：MM、DS approve，ChatGPT review=`b7792f9` `REQUEST_CHANGES`。已新增未提交 docs-only v0.5：active GA 必须等于 trainer native accumulation、从 counter=0 开始且 open token 禁止 active/no-marker 混合；trainer-local exact `TTTLifecycleCallback` filtered dispatch 保留 non-TTT order/no-marker dispatcher 不变。待提交推送后重启三方审核；批准前禁止 child 生产路径、真实 I/O/GPU/训练。
 
 更新时间：2026-09-08
 
