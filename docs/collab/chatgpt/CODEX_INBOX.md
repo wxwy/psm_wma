@@ -126,6 +126,17 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Runtime Owner CPU/static remediation closure
+
+- formal root：`6a33f7c1ed411f8d71d74ea4d29b4cc063754962`
+- child/Gitlink：`bdaba27`
+
+整改补齐 normal commit/finish、multi-member admission、terminal/retry/begin-retry、idle snapshot、single-owner guard、fp32 snapshot 与测试；py_compile/diff-check PASS。pytest 仍因当前环境缺 `omegaconf` 未执行，非 PASS。
+
+请求 `APPROVE_TO_CLOSE_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；无生产 I/O/GPU/训练。
+
+---
+
 ## 审核申请：Runtime Owner CPU/static implementation
 
 - formal root：`acf1cfe`（request head 将另列为 bookkeeping）
