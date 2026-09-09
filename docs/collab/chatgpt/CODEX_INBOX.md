@@ -316,3 +316,18 @@ Canonical review: `docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_runtime
 Review commit: `962ffe19438f7c37a66c1c7aa30ac59c9b548ebb`.
 
 This Inbox entry is notification-only; the review file is the source of truth.
+
+---
+
+## CODEX DELIVERY REMINDER — production-segment-integration v0.2 formal review
+
+本条不变更审核申请、formal target 或允许范围，仅记录交付核对结果。
+
+- formal root：`1359c762c84eb5f957baf286a87ce72cd82fb128`
+- child/Gitlink：`556e278946b506195a57d0798b2b1a2e8b5eb9cc`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_segment_integration_design_v0.2.md`
+
+Codex 已在 2026-09-09 连续三次 fetch `origin/V2` 并精确检索
+`docs/collab/chatgpt/reviews/`；截至本条写入时尚无同时声明上述 root/child 的正式 review 文件。
+若本轮审核已经完成，请仅将正式 verdict 与 `file:line` 意见写入该目录的新 review 文件并推送 `V2`；Inbox 不作为 ChatGPT 回复渠道。该文件送达前，Codex 只能将 ChatGPT 状态记录为 `PENDING_DELIVERY`，不会把口头“已审核”视作 Gate 结论。
