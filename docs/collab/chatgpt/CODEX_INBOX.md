@@ -126,6 +126,17 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Production Segment Integration Bridge 设计 v0.1
+
+- formal root：`454c06086a6b2d198dd726feed66d2edb1b8d4f0`
+- child/Gitlink：`556e278946b506195a57d0798b2b1a2e8b5eb9cc`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_segment_integration_design_v0.1.md`
+
+请审核下一 CPU/static bridge 的 whitelist、exact owner→native seam→backward→commit 事务、PAD/disabled parity、failure zero-sidecar-commit 与禁止边界。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权 child 代码、真实 packer/dataset/cache/checkpoint I/O、真实模型运行、GPU/torchrun、训练/评测/推理或 LIBERO4IN1。
+
+---
+
 ## 审核申请：Runtime Owner CPU/static remediation v3
 
 - formal root：`e74184ee8ef76c2618658c2bf9cc12ab4d183e8a`
