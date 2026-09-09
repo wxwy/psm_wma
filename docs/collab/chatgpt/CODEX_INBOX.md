@@ -630,3 +630,21 @@ v0.3.5 §12/§18 已 supersede 已闭合 row-wise active wiring；本 audit 不�
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅限 CPU/static synthetic contract。禁止 production packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment production adapter + scheduler/GA metadata design
+
+- formal root：`0779be775429e15d83de00dda50649195cadc9e7`
+- child/Gitlink：`f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ADAPTER-SCHEDULER-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.1.md`
+- upstream approval：audit root=`032cb6c`/child=`f14a8d8` 已获 ChatGPT、MM、Kimi `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_SUPERSESSION`。
+
+本 design 仅冻结 v0.3.5 §20.2 A--D、F 的下一 CPU/static 实现路线：①完整 `[B_stream,T]` 的 canonical scan 与 stream-major valid gather；②S0 Local absent/PAD 不进入 encoder、pack 或 native loss；③native forward 必须分离 per-valid-consumer mean `consumer_loss`、`auxiliary_loss` 与 `actual_n_valid`，唯一 weighted GA objective；④scheduler 在任何 tensor/latent load 前冻结 identity、planned valid count、queue/exposure/provenance；⑤任何 count/identity/load/forward mismatch fail-closed，禁止 row-wise active route、resample 或 rebind。
+
+请对照 v0.3.5 §12/§18/§20.2、canonical chain 与 audit 强制顺序，重点核对：variable-gather/packer 未证明时是否严格限为 CPU/static ABI double、loss reduction authority 是否足够明确、GA planned count 是否真正 pre-load frozen、旧 row-wise authority 是否仅作 provenance、白名单/禁止范围是否无扩大。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only design；禁止任何 child 代码、producer/packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
