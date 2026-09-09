@@ -501,6 +501,24 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 
 仅限 CPU/static synthetic contract。禁止 production packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
 
+---
+
+## CODEX REVIEW REQUEST — production active-wiring remediation closure v2
+
+- formal root：`27b60046080290adeb574281f8fcdedf5840439b`
+- child/Gitlink：`19394c2824d36728976a9df680eab839cfd915e0`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
+- approved design：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
+- prior formal verdict：root=`5d548d9`/child=`3b3d83c` 的 MM、DS approve，ChatGPT `REQUEST_CHANGES`；本 pair 仅整改已齐意见。
+
+本轮：①production `OmniMoTModel._run_active_local_memory_native_forward()` 不再调用 `run_native_forward_for_test()`；正式 native MoT adapter 尚未在本 Gate 授权时直接 fail-closed。纯 tensor spy 移入 test-only subclass。②`PreparedActiveMemberCapability` 绑定 exact `SegmentBatch`；trainer 在相同 `training_step()` 内只对 tagged first-member transient 保留 owner attempt-1 plan/registry/segment，重臂同一 capability 并重试，不 fetch 新 batch、不推进 GA；retry failure 仍按既有 terminal policy。③slow resolution 后显式 retire exact `ga_window_token`，下一 optimizer window 获新 token。④新增 two-consumer ordered S0=None/PAD-absent、production fail-close、actual trainer retry、resolved consecutive-window token freshness fixtures。
+
+范围仅 child `production_active_wiring.py`、`omni_mot_model.py`、`trainer/__init__.py` 与相邻 test。证据：Cosmos `.venv`、`LD_LIBRARY_PATH=''`、`--num-gpus=0` 定向 pytest=`47 passed in 29.43s`；target `py_compile`、child/root `git diff --check` PASS。未读 checkpoint/训练数据，未运行真实 I/O、CUDA/GPU 或训练。
+
+请核对 ChatGPT 前轮 HIGH/MEDIUM 是否关闭，特别是 production test-only seam 永久隔离、actual trainer retry 不推进 GA/不取新成员、resolution 后 token 生命周期及新增 evidence。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅限 CPU/static synthetic contract。禁止 producer/packer/dataset/manifest/config/optimizer-selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
 ### SHA 更正（本条覆盖紧邻上一申请的 child/Gitlink 字段）
 
 - formal root 不变：`f24599d92f7447064c7422a43575e38cec843d48`
