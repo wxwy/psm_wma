@@ -126,6 +126,18 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Runtime Owner CPU/static remediation v3
+
+- formal root：`e74184ee8ef76c2618658c2bf9cc12ab4d183e8a`
+- child/Gitlink：`556e278946b506195a57d0798b2b1a2e8b5eb9cc`
+- Gate：`G0-R09-B-TTT-V035-RUNTIME-OWNER-CPU-STATIC-IMPLEMENTATION`
+- 仅整改 v2 ChatGPT review：普通 `begin()` 仅允许 attempt-0；attempt-1 只能经 exact retained retry capability；补 attempt-1 与 later-member scaler-skip 的 public-path zero-mutation Evidence。
+- 验证：CPU-only `.venv/bin/python -m pytest -q --tb=short cosmos_framework/model/generator/mot/canonical_segment_runtime_test.py cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py`=`16 passed in 24.61s`；目标 `py_compile`、child/root `git diff --check` PASS。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅当前 CPU/static whitelist；production、真实 I/O/checkpoint、config、GPU、torchrun、训练/评测/推理、P4/P5、B2-T、LIBERO4IN1 均未授权。
+
+---
+
 ## 审核申请：Runtime Owner CPU/static implementation remediation v2
 
 - formal root：`a684202cbe389c08b4c60fc6fbd8ddd3729584ab`
