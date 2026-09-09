@@ -4,6 +4,7 @@
 
 - `G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-CPU-STATIC-IMPLEMENTATION`（DONE）：formal root=`1c6c9ec3c5a8befa32875e05e3779357208ead31` / child=`78b8c9cd1389ff523b703d578208f7a221a64af2` 获 ChatGPT review=`f7b2a81`、MM、DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC`。整改关闭 post-prepare count mismatch 的 owner terminal/discard/clear、exact member-index capability，以及 v0.3 §4 public negative/disabled parity/canonical regression matrix。
 - 验证：bridge=`11 passed`、runtime owner=`11 passed`、trainer integration=`14 passed`、canonical wiring=`9 passed`；目标 `py_compile`、child/root `git diff --check` PASS。仅关闭 synthetic CPU/static bridge/runtime/trainer contract；production model/packer/dataset/config/checkpoint、真实 I/O、GPU、训练仍未授权。下一步必须另建并审核 production wiring/runtime-sidecar 或等价下一实现设计 Gate，不能直接训练。
+- 当前认领：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`。先只读对照 v0.3.5 与现有 MoT/trainer marker、bridge、optimizer-boundary 接缝，冻结新 docs-only active-wiring 实现路径和精确白名单；在该设计获三方同 SHA 批准前，不改生产路径、不做真实 I/O/GPU/训练。
 
 更新时间：2026-09-08
 
