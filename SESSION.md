@@ -16,6 +16,7 @@
 - 审核轮询 #3（2026-09-09）：远端仍无新增；MM 保持 `APPROVE_TO_CLOSE`；ChatGPT 仍无匹配 formal review；DS 余额错误未恢复。审核等待不构成可越过的 Gate，保持 `REVIEW`。
 - 审核轮询 #5（2026-09-09）：远端快进 ChatGPT review=`647e9c7` / align=`4f906ad`；formal pair `f24599d`/`acb2bf2` 的 ChatGPT verdict=`REQUEST_CHANGES`。HIGH：retry identity 必须在 backward 前 exact/fail-closed，且 tagged first-member retry 必须有 trainer-owned exact re-arm orchestration；MEDIUM：optimizer preflight 的 registry/capability authority chain 与 active fixture matrix。MM 保持批准；DS 仍无有效 verdict，故尚未合并整改。
 - 三方意见已齐（2026-09-09）：MM=`APPROVE_TO_CLOSE`；ChatGPT 与 DS=`REQUEST_CHANGES`。当前重新认领 `G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION` 整改，预计仅修改已批准白名单子模块 `production_active_wiring.py`、`trainer/__init__.py` 与相邻 CPU/static tests（必要时 owner test）；不触碰 packer/dataset/manifest/config/optimizer selector/checkpoint 或任何真实 I/O/GPU/训练。整改目标：retry exact authority + pre-backward validation/terminal cleanup、trainer retry arm、optimizer registry chain、scaler success/skip 及 marker/interleaving/lifecycle fixture matrix。
+- 本轮补充 child=`d0519dda8a3705650237399aae3a3880293c337f`：活跃 registry 已处于 `PREPARED` 而 trainer 未持有 marker capability 时，`ImaginaireTrainer.training_step()` 必须在 forward/callback 之前拒绝 untagged interleave，并保持 owner pending 状态不变。定向 CPU/static suite=`41 passed in 33.98s`，目标 `py_compile`、child/root `git diff --check` PASS；仅测试变更，未执行真实 I/O、GPU 或训练。下一步：更新 root Gitlink/任务记录并继续补齐剩余 optimizer-boundary 负例，再统一提交新的 closure review。
 
 更新时间：2026-09-08
 
