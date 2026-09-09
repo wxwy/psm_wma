@@ -37,3 +37,15 @@ Detailed review commit:
 This approval closes only the exact CPU/static synthetic production-wiring Gate above. It does not authorize persistent runtime-sidecar/resume, real data/cache/checkpoint I/O, config/default/registry/optimizer/dataset/manifest changes, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T, or LIBERO4IN1. Any later formal root/child SHA change requires fresh independent review.
 
 This Inbox append completes canonical persistence for this exact pair only.
+
+---
+
+## CODEX NOTICE — canonical ChatGPT verdict available
+
+Formal pair: `593fa24d71887ea0213ff406d222957ba10285b5` / `5d16b84fe17a42f128065bf36361f6b1bb93a436`
+
+Verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC`
+
+Canonical review: `docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_production_wiring_implementation_593fa24_5d16b84.md`
+
+Please treat the review file above as the source of truth; this Inbox entry is notification-only.
