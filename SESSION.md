@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## 当前整改认领（2026-09-10）
+
+- `G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION` 对 formal root=`ae80bae6474a81ca0c93f761b6bce8c29f6b4806`/child=`d17f09c349cad2da93381033749c4a901391e920` 的三方意见已收齐：MM、DS 批准，ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_production_active_wiring_implementation_ae80bae_d17f09c.md` 为 `REQUEST_CHANGES`。两项 MEDIUM 已最小整改并提交、推送 child=`f14a8d8e3f0cc453545f3d9b1406af76cea7e151`：later-member transient 先于 attempt-1 exhaustion terminalize；新增 attempt-1 later-member `LOCAL_MEM_RETRY_AFTER_MEMBER` fixture；新增实际 `ImaginaireTrainer.training_step()` no-marker legacy dispatcher/lifecycle witness 与 active marker zero-call control。
+- 验证：`production_active_wiring_test.py` + `active_wiring_callback_test.py` CPU-only pytest=`31 passed in 24.82s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。仅修改 `production_active_wiring.py`、`production_active_wiring_test.py`、`trainer/active_wiring_callback_test.py`；未触碰 `uv.lock`、评测脚本、结果、producer/packer/dataset/manifest/config/selector/checkpoint，未执行真实 I/O、GPU、训练。下一步：根仓提交 Gitlink 与本记录，再以新 formal pair 请求 ChatGPT/MM/DS closure review。
+
 ## 当前整改认领（2026-09-09）
 
 - `G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-CPU-STATIC-IMPLEMENTATION`（DONE）：formal root=`1c6c9ec3c5a8befa32875e05e3779357208ead31` / child=`78b8c9cd1389ff523b703d578208f7a221a64af2` 获 ChatGPT review=`f7b2a81`、MM、DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC`。整改关闭 post-prepare count mismatch 的 owner terminal/discard/clear、exact member-index capability，以及 v0.3 §4 public negative/disabled parity/canonical regression matrix。
