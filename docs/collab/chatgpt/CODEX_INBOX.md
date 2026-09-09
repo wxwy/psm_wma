@@ -395,3 +395,16 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 - evidence：bridge=`11 passed`、runtime owner=`11 passed`、trainer integration=`14 passed`、canonical wiring=9 通过用例；target `py_compile`、child/root `git diff --check` PASS。子模块 `78b8c9c` 已推送，root `1c6c9ec` 已推送。
 
 请审核并仅给唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。范围严格限 CPU/static synthetic bridge/runtime/trainer tests；禁止 production model/packer/dataset/config/checkpoint 变更、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — production active-wiring implementation design v0.1
+
+- formal root：`305b791ac6cc4f6cf3a5ebb578fa3a332a6688fb`
+- child/Gitlink：`78b8c9cd1389ff523b703d578208f7a221a64af2`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.1.md`
+
+请审核 v0.1 是否正确将 v0.3.5 的 `[B_stream,T]` segment training 迁移到真实 MoT/trainer 接缝：旧逐 row witness lifecycle 的 supersession、exact owner/bridge transaction、native forward 注入、post-backward fast commit、optimizer-boundary slow resolution、disabled parity、精确白名单与 CPU/static 验收。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+本轮仅 docs-only；不授权 child 实现、packer/dataset/config/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`。
