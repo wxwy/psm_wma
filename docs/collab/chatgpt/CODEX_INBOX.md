@@ -126,6 +126,19 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Runtime Owner v0.8.5 skip retained-admission remediation
+
+- formal root：`28828aaa03d7550e08d6f865216dcaa198b2f369`
+- child/Gitlink：`5d16b84fe17a42f128065bf36361f6b1bb93a436`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.8.5.md`
+
+v0.8.5 只整改 ChatGPT v0.8.4 HIGH：`SCALER_SKIP` 转为 `SKIP_READY`，保留已 admission、未 committed 的 exact identity；立即 snapshot 与 normal admit/begin 均 fail-closed。`resume_skipped` 复用同一 retained identity，禁止 second `scheduler.admit()`；待其从 committed `k` 读取并成功 commit `k+1` 后，scheduler/sidecar frontier 才 reconverge，后继 `k+2` 才可正常 admit。保持 v0.8.4 的 exact-pending abort preflight 及零 mutation 负例。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅授权下一阶段四文件 CPU/static；不授权 production wiring/model/trainer/scheduler source、真实 I/O/checkpoint、GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
 ## 审核申请：Runtime Owner v0.8.4 skip/abort-atomicity remediation
 
 - formal root：`9e3e8714005d5758e06f031274753e5529f6c793`
