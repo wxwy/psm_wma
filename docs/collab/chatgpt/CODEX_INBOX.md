@@ -500,3 +500,21 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅限 CPU/static synthetic contract。禁止 production packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — production active-wiring remediation closure
+
+- formal root：`f24599d92f7447064c7422a43575e38cec843d48`
+- child/Gitlink：`acb2bf2b7f8d7eeab3f8ad510351b596b356a0ed`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
+- approved design：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
+- prior formal verdict：root=`cba2e76`/child=`eb7a7ee` 的 MM approve，DS 与 ChatGPT `REQUEST_CHANGES`；本提交只合并已齐意见。
+
+整改范围：① initial plan 在 admission 前精确绑定 attempt-0/first member；prepare 后 native-input 或 count 合同失败必 owner terminal/discard/clear；② initial arm 绑定 native GA/counter，任何 open active window 到 optimizer boundary 必有 exact completed capability；③仅显式 `ActiveSourceTransientError` 的首成员进入 retained retry，后续成员 `LOCAL_MEM_RETRY_AFTER_MEMBER` terminal，任意其他 forward exception 一律 outer terminal；④ owner seal 的 enabled GradScaler 在不可逆 `step()` 前 `unscale_` 并要求可验证 per-optimizer found-inf，缺失/非法即 fail-closed；⑤补齐相应 CPU/static 负例。
+
+证据：Cosmos `.venv`、`LD_LIBRARY_PATH=''`、`--num-gpus=0` 下 active registry/owner/callback/trainer 定向 pytest=`31 passed in 34.20s`；target `py_compile`、child/root `git diff --check` PASS。Ruff 仅报告既存压缩格式/导入顺序，未作无关格式化。未读 checkpoint/数据、未启动真实 I/O、CUDA/GPU 或训练。
+
+请核对上述五项是否精确关闭前轮 `REQUEST_CHANGES`，并请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅限 CPU/static synthetic contract。禁止 production packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
