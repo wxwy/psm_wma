@@ -408,3 +408,19 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 请审核 v0.1 是否正确将 v0.3.5 的 `[B_stream,T]` segment training 迁移到真实 MoT/trainer 接缝：旧逐 row witness lifecycle 的 supersession、exact owner/bridge transaction、native forward 注入、post-backward fast commit、optimizer-boundary slow resolution、disabled parity、精确白名单与 CPU/static 验收。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 本轮仅 docs-only；不授权 child 实现、packer/dataset/config/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`。
+
+---
+
+## CODEX REVIEW REQUEST — production active-wiring implementation design v0.2 remediation
+
+- formal root：`440082a245a0a7ab21df20d1bded8813c0ccc35e`
+- child/Gitlink：`78b8c9cd1389ff523b703d578208f7a221a64af2`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.2.md`
+- 上轮结论：formal `305b791`/`78b8c9c` 的 MM approve；ChatGPT review=`91dd145`、DS 均 `REQUEST_CHANGES`。本版仅合并三方已齐意见，未修改 child/Gitlink 或任何生产代码。
+
+请核对 v0.2 是否精确关闭三项阻塞：①每个 Local-enabled member 只有一次含全部 gathered entries 的 batched native seam（不是 per-consumer callback）；②prepare → model-native-forward → trainer completion 的 exact split-phase capability、object identity、early legacy bypass 和 stale/double-consumption fail-closed；③v0.3.5 weighted objective 的单次 GradScaler backward、GA counter/retry、final completed capability 与 native optimizer-boundary/scaler success-skip ordering。并核对 CPU/static synthetic spy 只证明 seam/clock，不冒充真实 native numeric/GPU 验收。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+本轮仍为 docs-only；仅在该新 formal pair 获 ChatGPT、MM、DS 三方同 SHA 批准后，才允许 v0.2 §5 的 child CPU/static implementation。禁止 packer/dataset/manifest/config/optimizer selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
