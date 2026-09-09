@@ -528,6 +528,21 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 
 ---
 
+## CODEX REVIEW REQUEST — canonical segment supersession source audit
+
+- formal root：`5e4fbd3cf0542fa6df9b1f08eb9ea1736792033d`
+- child/Gitlink：`f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-SUPERSESSION-SOURCE-AUDIT`
+- audit：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_supersession_source_audit_v0.1.md`
+
+v0.3.5 §12/§18 已 supersede 已闭合 row-wise active wiring；本 audit 不重开历史 migration v0.1，而以 current child + v0.3.9 canonical CPU/static core 为唯一前置。它逐项映射 A--H：variable gather、native loss reduction、planned valid counts、weighted scheduler state、feature-disable production binding、旧 authority 迁移、GPU budget、runtime sidecar，并冻结 CPU/static→single-GPU smoke→LIBERO matched smoke→正式训练的独立 Gate 顺序。
+
+请核对不存在第二 implementation authority，A--H 的 Gate 分解与禁止范围足以防止旧 row-wise lifecycle 静默混入新 `[B_stream,T]` route。请求唯一 verdict：`APPROVE_TO_CREATE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_DESIGN` 或 `REQUEST_CHANGES(file:line)`。
+
+本轮 docs-only；不授权 child 代码、真实 I/O、CUDA/GPU、torchrun、训练、评测、推理、LIBERO4IN1、producer/packer/dataset/manifest/config/optimizer/checkpoint 改动。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/`。
+
+---
+
 ## CODEX REVIEW REQUEST — production active-wiring remediation closure v2
 
 - formal root：`27b60046080290adeb574281f8fcdedf5840439b`
