@@ -1104,3 +1104,17 @@ This exact v0.6 CPU/static remediation closes ChatGPT/DS closure findings only: 
 Scope remains the approved eight child paths and adjacent CPU/static tests only. No real data/cache/checkpoint I/O, persistent runtime sidecar/resume, config/default/registry/optimizer/dataset/manifest changes, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1. Please persist an independent same-pair verdict with `file:line` findings.
 
 This Inbox append completes canonical persistence for this exact pair only.
+## 审核申请：G0-R09-B-TTT-V035 Runtime Owner CPU/static implementation design（2026-09-09）
+
+- formal root SHA：`ef13ad7adbf0b90d9d80023a0e566c5d9973f6c3`
+- child/Gitlink SHA：`5d16b84fe17a42f128065bf36361f6b1bb93a436`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`
+- 审核对象：[v0.7 runtime owner / sidecar implementation design](../../build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.7.md)
+
+请独立审查 v0.7 是否准确从当前 child source 推导出下一步最小 CPU/static contract：唯一 rank-local `CanonicalSegmentRuntimeOwner`、exact capability/transaction ownership、仅安全边界可取得的 detached fp32 in-memory snapshot，以及 current sidecar/transaction failure semantics。
+
+验收：只允许白名单内 pure Python/CPU synthetic implementation；fresh/continuation identity、exact pending-result identity、commit-after-success、terminal discard、failure/skip/open transaction 的 snapshot fail-closed 都必须可测。请特别核对本设计没有把 test marker、旧 per-sample lifecycle 或 in-memory snapshot 误称为真实 Cosmos production forward、persistent checkpoint resume 或 LIBERO training。
+
+禁止范围：`omni_mot_model.py`、trainer、dataset/collator、config/default/registry、optimizer、checkpoint、callback、任何真实 I/O、GPU、torchrun、训练、评测、推理及 LIBERO4IN1 均不授权。
+
+请仅返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；正式 verdict 请写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
