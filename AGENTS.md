@@ -15,7 +15,7 @@
 ## 文档职责
 
 - `docs/build/`：版本化的正式方案、详细设计、Gate Runbook 和核验报告。已标记 `frozen` 或 `locked` 的文件不得静默改写，变更必须新建版本或显式记录 override。
-- `docs/collab/chatgpt/CODEX_INBOX.md`：ChatGPT → Codex/Agent 的 **canonical live** 审核与交接入口；开始或继续当前任务前必须读取。普通写入 append-only；达到 rollover 阈值时按下述规则归档并重建 live Inbox。重大审核详情位于 `docs/collab/chatgpt/reviews/`。
+- `docs/collab/chatgpt/CODEX_INBOX.md`：Codex → ChatGPT 的 **canonical live** 审核申请与交接 ledger；开始或继续当前任务前必须读取。Codex 的申请普通写入 append-only；达到 rollover 阈值时按下述规则归档并重建 live Inbox。ChatGPT 不在 Inbox 回写审核结论；其正式审核结果唯一存放于 `docs/collab/chatgpt/reviews/`，并以文件中声明的 formal root/child SHA 与 verdict 为准。
 - `SESSION.md`：当前阶段的短期状态和 Agent 交接入口，只保留最新事实。
 - `TODO.md`：唯一的待办队列。任务必须有 ID、状态、前置条件、负责人和验收条件。
 - `MEMORY/DECISIONS.md`：跨会话长期有效的工程决策及依据，不记录临时过程。
@@ -91,6 +91,6 @@
 2. 同一申请必须主动发送到 MM 和 Kimi 的指定 `tmux` pane。发送时先用 `tmux send-keys -l` 写入完整文本，再单独执行 `tmux send-keys Enter`；不得把“文本已显示在输入框”当作“已发送”。随后必须 `tmux capture-pane` 回读，确认申请已提交且会话进入处理或已回复状态。
    - 固定节奏：写入完整文本后与单独的 `Enter` 之间至少间隔 1 秒；Enter 后必须 capture-pane 回读确认。
 3. 用户可见的申请标记固定为 `🚨 审核申请已发出（根仓 <hash>；子模块/Gitlink <hash>）`，两个提交号不得省略。
-4. 申请发出后，每五分钟由 Codex 原生轮询三路，至少连续三十轮：canonical live ChatGPT Inbox/`reviews/`、MM pane、Kimi pane；每次轮询记录申请是否送达、是否开始处理、最终 verdict 与 `file:line` 意见。普通轮询不得反复读取完整 Inbox archive。
-5. 审核等待期间任务状态保持 `REVIEW`，禁止越过该 Gate。收到全部所需审核结论后，先处理 `REQUEST_CHANGES`；全部批准后才更新 `SESSION.md`、`TODO.md` 并提交。若会话不存在、发送失败或未提交，立即重发并在 `SESSION.md` 记录，不能声称申请已发出。
+4. 申请发出后，每五分钟由 Codex 原生轮询三路，至少连续三十轮：ChatGPT `docs/collab/chatgpt/reviews/`（按 formal SHA 查找新增正式 review，不将 Inbox 当作回复来源）、MM pane、Kimi pane；每次轮询记录申请是否送达、是否开始处理、最终 verdict 与 `file:line` 意见。普通轮询不得反复读取完整 Inbox archive。
+5. 审核等待期间任务状态保持 `REVIEW`，禁止越过该 Gate。收到全部所需审核结论后，先处理 `REQUEST_CHANGES`；全部批准后才更新 `SESSION.md`、`TODO.md` 并提交。ChatGPT 未在 Inbox 回复不构成缺件；若 `reviews/` 中没有匹配 formal SHA 的正式 review，则视为尚未回复。MM/Kimi 会话不存在、发送失败或未提交时，立即重发并在 `SESSION.md` 记录，不能声称申请已发出。
 6. 同一审核申请的 ChatGPT、Kimi、MM 三方最终 verdict 必须全部收到后，才合并意见并启动“评估 → 最小整改 → 验证 → 提交/推送 → 新 SHA 重新申请审核”闭环；不得依据单一审核者意见提前修改或使其他同 SHA 审核失效。整改必须严格限于已批准范围；若意见要求扩大权限、真实执行或改变 Gate，仍须先取得对应独立批准。新申请发出后重新开始三路五分钟、至少三十轮的原生轮询。

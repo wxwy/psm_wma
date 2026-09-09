@@ -2,6 +2,10 @@
 
 更新时间：2026-09-08
 
+## 协作协议更新（2026-09-09）
+
+- ChatGPT 审核申请继续由 Codex append 至 canonical `docs/collab/chatgpt/CODEX_INBOX.md`；ChatGPT 的正式回复不再回写 Inbox，而仅以 `docs/collab/chatgpt/reviews/` 内、formal root/child SHA 精确匹配的 review 文件为准。轮询 ChatGPT 时检查该目录，不将 Inbox 当作回复来源。
+
 ## 当前最小步骤（2026-09-08）
 
 - `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-CPU-STATIC-V04-IMPLEMENTATION`（DONE）：formal root=`5cad22cac208f112ed02aac4eeb4e8416dc7444f`/child=`8754c96a6bde002269751eca55c01dee694f6caa` 获 ChatGPT（review=`6d9e998`）、MM、DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC_V04`。tests-only closure 以实际 derived two-member suffix 经唯一 trainer seam 验证 frozen scaling/no-second-GA，并覆盖 recovered original fail-closed；CPU=`46 passed`、py_compile、diff-check PASS。仅关闭 v0.4 白名单 CPU/static synthetic transaction contract；production wiring、registry/default/config、真实 I/O、GPU/训练均未授权。
