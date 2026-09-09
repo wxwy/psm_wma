@@ -501,6 +501,13 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 
 仅限 CPU/static synthetic contract。禁止 production packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
 
+### SHA 更正（本条覆盖紧邻上一申请的 child/Gitlink 字段）
+
+- formal root 不变：`f24599d92f7447064c7422a43575e38cec843d48`
+- 正确 child/Gitlink：`acb2bf2c8b4caf5a415b3eaaffa34edf9a514323`
+
+上一条 child SHA 的后缀为写入错误；本更正不改变 scope、证据、请求 verdict 或任何代码。
+
 ---
 
 ## CODEX REVIEW REQUEST — production active-wiring remediation closure
