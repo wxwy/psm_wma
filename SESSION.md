@@ -10,6 +10,8 @@
 - 当前 `REVIEW`：MM 与 Kimi 已对 `032cb6c`/`f14a8d8` 返回 `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_SUPERSESSION`；ChatGPT `docs/collab/chatgpt/reviews/` 尚无同 formal SHA 结果。DS 已下班，Kimi 自本轮起替代 DS 为第三审核者；轮询对象固定为 ChatGPT、MM、Kimi。未获三方同 SHA verdict 前禁止创建 production implementation design 或执行任何真实 I/O/GPU/训练。
 - 审核轮询 #1（2026-09-10）：`git fetch origin V2` 无新增提交；ChatGPT `reviews/` 仍无 formal root=`032cb6c` 的 review；MM、Kimi pane 均保留上述同 SHA APPROVE。保持 `REVIEW`，不创建下一 design Gate。
 - 审核轮询 #2（2026-09-10 07:44 +08:00）：`git fetch origin V2` 无新增提交；ChatGPT `reviews/` 仍无 formal root=`032cb6c` 的 review；MM、Kimi pane 均保留上述同 SHA APPROVE。保持 `REVIEW`，不创建下一 design Gate。
+- Gate 已关闭：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_supersession_source_audit_032cb6c_f14a8d8.md`、MM、Kimi 对 formal root=`032cb6c3e24f66ae8ab25012cfc654e84b89a6e7`/child=`f14a8d8e3f0cc453545f3d9b1406af76cea7e151` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_SUPERSESSION`；仅授权创建下一 docs-only design。
+- 当前认领：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ADAPTER-SCHEDULER-DESIGN`。预计仅新建 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.1.md`，冻结 A--D/F 的 stream-major adapter、native loss/valid count objective 与 pre-load frozen scheduler/GA metadata；禁止子模块代码、真实 I/O/GPU/训练。待文档完成、记录并推送后以新 root/child pair 请求 ChatGPT、MM、Kimi 审核。
 
 ## 当前整改认领（2026-09-09）
 
