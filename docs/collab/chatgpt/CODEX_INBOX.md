@@ -454,3 +454,15 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 请核对 v0.4：① exact trainer/model runtime registry binding 与 trainer pre-forward shallow marker injection；② `canonical_segment_runtime.py` owner-created preflight/sealed deterministic resolve 的明确白名单；③ active marker step 对 pre-existing legacy `TTTLifecycle` callback/abort/optimizer route 的 zero-call isolation，同时 no-marker 不变。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本轮仅 docs；禁止真实 I/O、GPU、训练和所有白名单外代码。ChatGPT 正式回复仅写入 `reviews/` 并推送 V2。
+
+---
+
+## CODEX REVIEW REQUEST — production active-wiring implementation design v0.5 remediation
+
+- formal root：`a416b2729ac031bddd78488d07c6301a107390cb`
+- child/Gitlink：`78b8c9cd1389ff523b703d578208f7a221a64af2`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.5.md`
+- 上轮：MM/DS approve，ChatGPT review=`b7792f9` `REQUEST_CHANGES`；本版仅 docs、child/生产代码不变。
+
+请核对 v0.5：① `GAWindowPlan.ga_effective == trainer.grad_accum_iter config`、仅 counter=0 开始、open token 全窗口 active 且同 registry/token、禁止 no-marker interleave；② trainer-local exact `TTTLifecycleCallback` filter，non-TTT registration order/args不变且 no-marker 原 dispatcher 不变。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅 docs，禁止真实 I/O/GPU/训练；正式 reply 仅 `reviews/`。
