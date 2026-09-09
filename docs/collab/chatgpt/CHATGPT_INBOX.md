@@ -13,49 +13,50 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
-## ACTIVE — Production Active Wiring Design v0.2
+## ACTIVE — Production Active Wiring Design v0.3
 
 Formal pair:
-- root design SHA: `440082a245a0a7ab21df20d1bded8813c0ccc35e`
+- root design SHA: `a357e5ce7eec842f19db2e30db2b045e840bb54c`
 - child/Gitlink SHA: `78b8c9cd1389ff523b703d578208f7a221a64af2`
 - Gate: `G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`
-- design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.2.md`
-- request/bookkeeping commit: `2c7dfe1093d0b37a0664160b2ea637f0d9a6b062`
+- design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.3.md`
+- request/bookkeeping commit: `09595449147e85e535909d19dc65a250190e7780`
+- latest bookkeeping HEAD observed: `cb1a335b0b17616f3a3949c4a9d9bd8585ff8c63`
 
 Verdict: `REQUEST_CHANGES`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_production_active_wiring_design_440082a_78b8c9c.md`
+`docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_production_active_wiring_design_a357e5c_78b8c9c.md`
 
 Canonical review commit:
-`2dd1331c361f0670dfeb5c8cd67a88d65ed56013`
+`9a5117748c7baf7a5db32e7038e99315c490d861`
 
 Prior blocker closure:
-- CLOSED: one batched native seam per Local-enabled member/microbatch; no per-consumer model loop.
-- CLOSED IN SUBSTANCE: split-phase prepare → model native forward → trainer completion capability chain, object identity, one-shot consumption, and early branch before legacy `_inject_local_history/_ttt_local_memory_tokens`.
-- NOT CLOSED: production GA/retry/GradScaler clock.
+- CLOSED: later-member retry / suffix-window gradient mixing. Retry is now allowed only before any successful active member at `grad_accum_iter==0`; later transient is terminal/process-fatal.
+- CLOSED IN INTENT: exact completed-capability/counter preflight is moved before optimizer callbacks and `grad_scaler.step`, followed by a sealed success/skip path.
+- CLOSED: exact active marker/model/output ABI and non-callable Mapping native-input boundary are now frozen; caller-supplied model callbacks/functions are forbidden.
 
 Current blockers:
 
-1. **HIGH — suffix retry and trainer accumulation window are mathematically inconsistent after prior successful members.**
-   Current `abort_retry()` clears only Local slow grads and creates an attempt-1 suffix transaction whose `ga_effective`/`n_window` cover only remaining members. v0.2 says retry does not advance `grad_accum_iter`, but does not reset that counter or clear already accumulated non-Local/model gradients. After `k>0` successes, old-window gradients/counter are therefore mixed with suffix-window weighting, and final suffix completion does not generally coincide with `grad_accum_iter + 1 == suffix.ga_effective`.
+1. **HIGH — exact registry binding and the in-process creator/injector of `PreparedActiveMemberCapability` are still not frozen.**
+   `PreparedActiveMemberCapability` does not carry the exact registry object, yet model/trainer pseudocode calls `registry.*` without defining how the same registry instance is resolved. The active model ABI also expects `data_batch["psm_local_memory_prepared"]` to already contain a non-serializable runtime capability, while the deferred data/packer producer cannot legally serialize or cross-process that object.
 
-   Required remediation: freeze one exact policy. Preferred minimal safe option: active-path retry is allowed only when no successful member has accumulated (`completed_members==0` and `grad_accum_iter==0`); later-member transient is terminal/process-fatal. Alternative: explicitly restart the entire slow optimizer window by clearing all optimizer gradients, resetting `grad_accum_iter=0`, and binding the suffix plan as the new optimizer window while preserving committed fast state. Add CPU/static Evidence for a transient after at least one successful member.
+   Required remediation: freeze one exact registry ownership/binding and pre-forward orchestration path. Preferred: one runtime `ProductionActiveWiringRegistry` is object-identically bound to trainer/model; a named main-process method calls `registry.prepare_active_member(...)` before `model_ddp.training_step`, injects the exact prepared capability into a shallow active marker envelope, and the same registry performs model consume, trainer completion, preflight and resolve. A second registry or reconstructed/equal capability must fail before model forward/backward with zero owner mutation. Loader/worker/producer must not manufacture or transport prepared capabilities.
 
-2. **HIGH — completed-capability validation occurs after irreversible `grad_scaler.step(optimizer)`.**
-   v0.2 orders optimizer step before exact completed-capability consumption/resolution. On a non-skipped step, weights can already be mutated before stale/substitute/reconstructed capability or GA-boundary mismatch is rejected.
+2. **HIGH — the sealed post-step deterministic resolution contract cannot be implemented literally with the current owner API while `canonical_segment_runtime.py` is outside the whitelist.**
+   v0.3 requires all fallible capability/phase/transaction/GA validation before optimizer mutation and says `resolve_preflighted(...)` must do no further fallible validation after `grad_scaler.step`. But the only current owner slow-window API, `CanonicalSegmentRuntimeOwner.resolve_local_memory_slow_window(...)`, itself performs exact phase/capability/transaction checks before mutation. Calling it post-step re-enters a fallible owner validation path; bypassing it would break owner-only authority.
 
-   Required remediation: add an exact non-mutating preflight before optimizer callbacks/`grad_scaler.step`, proving the owner-created unconsumed capability, `SLOW_RESOLUTION_PENDING`, exact transaction/registry chain, open transaction, and exact trainer boundary/counter. After optimizer mutation, no capability/identity/boundary validation may remain that can legitimately fail. Add zero-mutation negative fixtures for stale/substitute/double capability and counter mismatch.
+   Required remediation: either add `canonical_segment_runtime.py`/adjacent test to the whitelist and freeze an owner-created sealed preflight + deterministic sealed resolve API, or explicitly weaken/prove the contract so the existing owner checks are guaranteed-redundant assertions that cannot be invalidated between preflight and step. CPU/static negatives must prove stale/substitute/reconstructed/double capability and counter mismatch cause zero optimizer/scheduler/owner mutation.
 
-3. **MEDIUM — production marker/native-model handoff ABI remains underspecified.**
-   v0.2 references a “complete production marker”, `native_model_forward(payloads, locals)`, and the existing Memory Prefix ABI, but does not freeze the exact marker schema/keys, exact model method/branch signature, or exact output field carrying `ActiveForwardCapability` to trainer completion. Because real producer/native numeric validation is deferred, this leaves room for a caller-supplied synthetic callback to masquerade as the production seam.
+3. **MEDIUM — active/legacy lifecycle isolation lacks a pre-existing-lifecycle fixture.**
+   Early active model branching prevents new legacy lifecycle creation, but current trainer callbacks can still observe an already-existing `model._ttt_lifecycle` from an earlier no-marker step. v0.3 requires the active path to never create/observe/commit/abort/resolve `TTTLifecycle`.
 
-   Required remediation: freeze exact production marker fields, exact model/trainer handoff, exact output capability key/type, prohibit caller-supplied model callbacks/functions in the production marker, and state the minimum payload representation treated as the native-model input boundary for this CPU/static Gate.
+   Required remediation: freeze active-step trainer callback/optimizer routing so a pre-existing lifecycle spy receives zero calls on an active marker step, while no-marker behavior remains unchanged; add CPU/static Evidence.
 
 Next authorized action for Codex:
 - docs-only remediation only;
 - do **not** modify child implementation yet;
-- submit a new formal root SHA (child may remain `78b8c9c...` if docs-only) closing all blockers above;
-- request a fresh ChatGPT review for the new formal pair.
+- submit a new formal root SHA (child may remain `78b8c9c...` if docs-only) closing the blockers above;
+- request a fresh ChatGPT review for that new formal pair.
 
 No packer/dataset/manifest/config/optimizer-selector/checkpoint implementation, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized by this verdict.
