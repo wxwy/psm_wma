@@ -13,33 +13,45 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
-## ACTIVE — Production Active Wiring Design v0.6
+## ACTIVE — Production Active Wiring CPU/static Implementation
 
 Formal pair:
-- root design SHA: `721b4100624a37edbdd75bb555515b7d7e67c8e1`
-- child/Gitlink SHA: `78b8c9cd1389ff523b703d578208f7a221a64af2`
-- Gate: `G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`
-- design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
-- request/bookkeeping HEAD: `7abf307a331d2e2001ded68f7098bb1c1713e4e3`
+- root implementation SHA: `cba2e763f4f8f4557abe4d45d47f5c73fb97812a`
+- child/Gitlink SHA: `eb7a7ee0a391ea56f2967c4641b37d8baea2c0dc`
+- Gate: `G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
+- approved design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
+- request/ledger: `ccb4b2a54b4adc3aaf91c5fe5a75fd0bf39474ef`
+- latest bookkeeping HEAD observed: `ca9e4133ba28ea3a6dc110cd52dc8fe439dc6593`
 
-Verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC`
+Verdict: `REQUEST_CHANGES`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_production_active_wiring_design_721b410_78b8c9c.md`
+`docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_production_active_wiring_implementation_cba2e76_eb7a7ee.md`
 
 Canonical review commit:
-`a7ad3d586b7195e6fa2c348253bd7cfd24bc38ac`
+`1165204ad4549bbe366704df6b1c62784e89ca8a`
 
-Closure:
-- CLOSED: active/native GA window is exactly bound to trainer accumulation and no-marker interleaving is forbidden while an active token is open.
-- CLOSED: trainer-local callback filtering is now explicitly implementable via a narrowly scoped read-only access to `callback_group._callbacks`; exact-class `TTTLifecycleCallback` exclusion, registration order, arguments, callback identity, subclass behavior, and no-marker parity are all frozen.
-- CLOSED: registry binding, pre-forward prepared injection, owner sealed preflight/resolve, one batched native seam, first-member-only retry, and legacy lifecycle isolation remain intact.
+Current blockers:
 
-Current blockers: none.
+1. **HIGH — post-prepare validation is not owner-terminal/fail-closed.**
+   `ProductionActiveWiringRegistry._prepare()` calls `owner.prepare()` first, then payload/type/count validation may raise directly, leaving `PREPARED` + live pending. `prepare_initial()` can also admit before exact initial-plan validation completes.
+
+2. **HIGH — v0.5/v0.6 exact active/native GA mode is not implemented.**
+   Initial arm does not validate `plan.ga_effective == config.trainer.grad_accum_iter` and hardcodes trainer counter zero instead of checking the real counter. A longer active plan can reach the native trainer optimizer boundary with no completed capability and fall through to a normal optimizer step mid active window.
+
+3. **HIGH — active first-member transient retry/later-member terminal policy is absent.**
+   Active registry has only initial/continuation; model forward exceptions always terminalize as `LOCAL_MEM_OUTER_FAILURE`. Existing bridge retry Evidence does not cover this active model/trainer surface.
+
+4. **HIGH — post-step owner resolution is still fallible.**
+   `resolve_preflighted_slow_window()` rechecks exact seal and can raise after `grad_scaler.step`; enabled-scaler state lookup also defaults missing state to success rather than fail closed.
+
+5. **MEDIUM — active-specific Evidence matrix is incomplete.**
+   Missing active-path coverage includes GA mismatch/interleaving, first-only retry/later terminal, post-prepare cleanup, multi-entry/S0/PAD seam, active exception cleanup, trainer-level preflight negatives, sealed success+skip, and pre-existing legacy lifecycle/no-marker parity.
 
 Next authorized action for Codex:
-- implement only the v0.6 CPU/static whitelist: `production_active_wiring.py`, `canonical_segment_runtime.py`, `omni_mot_model.py`, `trainer/__init__.py`, `production_segment_bridge.py`, and adjacent CPU/static tests;
-- `utils/callback.py` remains out of scope;
-- after implementation, submit a new formal root/child pair for fresh ChatGPT closure review.
+- remediate only inside the approved v0.6 CPU/static whitelist and adjacent tests;
+- do not perform real I/O, CUDA/GPU/torchrun, training/evaluation/inference;
+- submit a new root/child formal pair after the implementation and Evidence blockers above are closed;
+- request a fresh ChatGPT closure review for that new pair.
 
-No producer/packer/dataset/manifest/config/optimizer-selector/checkpoint changes, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized by this design approval.
+No producer/packer/dataset/manifest/config/optimizer-selector/checkpoint changes, P4/P5, B2-T or LIBERO4IN1 are authorized by this verdict.
