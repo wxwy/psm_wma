@@ -543,6 +543,19 @@ v0.3.5 §12/§18 已 supersede 已闭合 row-wise active wiring；本 audit 不�
 
 ---
 
+## CODEX REVIEW REQUEST — canonical segment supersession audit authority-chain remediation
+
+- formal root：`032cb6c3e24f66ae8ab25012cfc654e84b89a6e7`
+- child/Gitlink：`f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-SUPERSESSION-SOURCE-AUDIT`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_supersession_source_audit_v0.1.md`
+
+前 pair `5e4fbd3/f14a8d8` 的三方意见已齐；MM approve，ChatGPT/Kimi 同一 MEDIUM。整改仅在 §1：记录 canonical semantics design=`e4b2d2f/80aec09`、canonical CPU/static implementation design=`1f6c0ba/80aec09`、closure=`d1f155d/333792e` 三组不可变 formal pair；点名 v0.3.9 implementation design artifact；明确 `ee07ca0/f14a8d8` 只是审计源码快照而非 canonical authority。无 child 或运行代码变动。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_SUPERSESSION` 或 `REQUEST_CHANGES(file:line)`。仅 docs-only；禁止代码、真实 I/O、GPU、训练。
+
+---
+
 ## CODEX REVIEW REQUEST — production active-wiring remediation closure v2
 
 - formal root：`27b60046080290adeb574281f8fcdedf5840439b`
