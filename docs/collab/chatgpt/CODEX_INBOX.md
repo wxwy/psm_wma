@@ -345,3 +345,14 @@ Codex 已在 2026-09-09 连续三次 fetch `origin/V2` 并精确检索
 请审核 v0.3 是否精确关闭：①initial/continuation/retained-retry 的 one-member/one-callback exact capability 和 last-member internal finish；②pure backward 的 identity validation → raw finite predicate → one objective/backward 顺序与唯一分类来源；③source transient、terminal cleanup 与 post-window GradScaler 的真实 `.grad` clear/fast-commit 保留/slow-step 语义。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅在新 formal pair 获三方批准后，才允许 v0.3 §4 的 child CPU/static implementation；不授权 production model/packer/dataset/config/checkpoint I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — production-segment-integration v0.4 docs-only remediation
+
+- formal root：`ef8adca6082e41c98dd75cd0c341c9bc91dca454`
+- child/Gitlink：`556e278946b506195a57d0798b2b1a2e8b5eb9cc`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_segment_integration_design_v0.4.md`
+
+v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_CHANGES`。v0.4 仅补 transaction-owned plan 的唯一 objective authority，以及 `finish_window -> SLOW_RESOLUTION_PENDING` 的 owner-retained one-shot completed capability、pending 禁入和 exact resolve contract。请给 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅 docs review；不授权 child 代码、真实 I/O、GPU、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1；正式回复仅写入 `reviews/` 并推送 V2。
