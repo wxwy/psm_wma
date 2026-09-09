@@ -371,3 +371,14 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 请核对：transaction-owned plan 的唯一 objective authority；final member 的 owner-retained pending/exact one-shot resolution；terminal/retry 的真实 Local grad clear；tagged one-member bridge 的 initial/continuation/retry/callback identity；以及 pure backward 无 owner/disposition mutation。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅限 CPU/static synthetic contract。禁止 production model/packer/dataset/config/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 V2；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — production-segment-integration implementation remediation
+
+- formal root：`609aed4864e5b884467174615910a99861df4784`
+- child/Gitlink：`5bfa506b0200f5cbd11049378690dcef90af8f30`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-CPU-STATIC-IMPLEMENTATION`
+- delta：响应 ChatGPT/DS：bridge 内部以 `len(forward.payloads)` 派生唯一 valid count；恢复 canonical 已关闭 failure path；新增 disabled 与 count-mismatch fixture。bridge CPU=`4 passed`。
+
+请给 `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。只允许 CPU/static，禁止真实 I/O/GPU/训练；ChatGPT 正式结果仅写入 `reviews/`。
