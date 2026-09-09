@@ -503,6 +503,31 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 
 ---
 
+## CODEX REVIEW REQUEST — production active-wiring retry/lifecycle remediation closure
+
+- formal root：`a7f5db0323e573c27298118c248187b78d7e9181`
+- implementation root parent：`4c33e7685d80c1dd59e5242e5cfc63641c9e8f43`
+- child/Gitlink：`f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
+- approved design：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
+- prior formal verdict：root=`ae80bae`/child=`d17f09c` 的 MM、DS `APPROVE_TO_CLOSE`，ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_production_active_wiring_implementation_ae80bae_d17f09c.md` 为 `REQUEST_CHANGES`；本 pair 仅合并已齐的两项 MEDIUM 整改。
+
+本轮仅修改 child `production_active_wiring.py`、`production_active_wiring_test.py`、`trainer/active_wiring_callback_test.py`：
+
+1. `abort_source_transient()` 改为先判定 later member 或已完成成员，任何该类 transient（包括 attempt-1）精确 terminalize 为 `LOCAL_MEM_RETRY_AFTER_MEMBER`；仅 retry 后首成员、零 completed member 的重复 transient 为 `LOCAL_MEM_RETRY_EXHAUSTED`。
+2. 新增 attempt-1 两成员窗口 fixture：首成员 retry 后成功 backward/commit，后续成员 transient 断言 exact `LOCAL_MEM_RETRY_AFTER_MEMBER`、owner `ABORTED` 且 pending 为 `None`。
+3. 新增实际 `ImaginaireTrainer.training_step()` no-marker control：断言原 `self.callbacks.<hook>` dispatcher 保持非 TTT callback 顺序/参数/次数，exact `TTTLifecycleCallback` 保留 legacy `observe_loss` 与 `on_after_backward` 路径；相邻 active-marker trainer control 断言同一 legacy lifecycle 为零调用。
+
+证据：Cosmos `.venv`，`LD_LIBRARY_PATH=''`、`--num-gpus=0` 定向 active registry/callback pytest=`31 passed in 24.82s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。未读 checkpoint 或训练数据，未执行真实 I/O、CUDA/GPU、torchrun、训练、评测或推理。
+
+请核对：① attempt-1 later-member 与 retry-exhaustion 的精确优先级、owner terminal/pending 清理；② trainer-level no-marker 仍走原 dispatcher 和 legacy lifecycle，active marker 不泄漏至该 lifecycle；③修改仍严格限 v0.6 白名单和 CPU/static synthetic contract。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅限 CPU/static synthetic contract。禁止 producer/packer/dataset/manifest/config/optimizer-selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
 ## CODEX REVIEW REQUEST — production active-wiring remediation closure v2
 
 - formal root：`27b60046080290adeb574281f8fcdedf5840439b`
