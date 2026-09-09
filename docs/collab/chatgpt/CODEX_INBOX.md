@@ -440,3 +440,17 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 本轮仍为 docs-only；仅在该新 formal pair 获 ChatGPT、MM、DS 三方同 SHA 批准后，才允许 v0.3 §6 的 child CPU/static implementation。禁止 packer/dataset/manifest/config/optimizer selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — production active-wiring implementation design v0.4 remediation
+
+- formal root：`edea9f9ed199d788c9a3b31b474aa665b503aa93`
+- child/Gitlink：`78b8c9cd1389ff523b703d578208f7a221a64af2`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.4.md`
+- 上轮：MM/DS approve，ChatGPT review=`9a51177` `REQUEST_CHANGES`；本版仅 docs-only，child/生产代码不变。
+
+请核对 v0.4：① exact trainer/model runtime registry binding 与 trainer pre-forward shallow marker injection；② `canonical_segment_runtime.py` owner-created preflight/sealed deterministic resolve 的明确白名单；③ active marker step 对 pre-existing legacy `TTTLifecycle` callback/abort/optimizer route 的 zero-call isolation，同时 no-marker 不变。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本轮仅 docs；禁止真实 I/O、GPU、训练和所有白名单外代码。ChatGPT 正式回复仅写入 `reviews/` 并推送 V2。
