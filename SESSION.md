@@ -13,6 +13,7 @@
 - remediation formal pair 已推送：root=`f24599d92f7447064c7422a43575e38cec843d48` / child=`acb2bf2c8b4caf5a415b3eaaffa34edf9a514323`。canonical Inbox 申请与 SHA 更正已推送（ledger=`8654b22`/`b109764`）；MM capture-pane 显示处理中，DS 在一次余额错误后已重发并显示处理中。ChatGPT 正式结果仅查 `docs/collab/chatgpt/reviews/`。当前 `REVIEW`，三方同 SHA verdict 前禁止整改或真实 I/O/GPU/训练。
 - 审核轮询 #1（2026-09-09）：MM 已返回 `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC`；ChatGPT `reviews/` 尚无匹配 formal SHA；DS 本轮仍返回 `Insufficient Balance`，未形成 verdict。保持 `REVIEW`，不以单方批准执行下一步。
 - 审核轮询 #2（2026-09-09）：远端 `V2` 无新增；MM 保持同 SHA `APPROVE_TO_CLOSE`，ChatGPT 正式 review 仍缺失；DS pane 仍为已提交申请后的 `Insufficient Balance`，无有效 verdict。保持 `REVIEW`。
+- 审核轮询 #3（2026-09-09）：远端仍无新增；MM 保持 `APPROVE_TO_CLOSE`；ChatGPT 仍无匹配 formal review；DS 余额错误未恢复。审核等待不构成可越过的 Gate，保持 `REVIEW`。
 
 更新时间：2026-09-08
 
