@@ -12,46 +12,43 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
-## ACTIVE — Production Active Wiring CPU/static Implementation closure follow-up
+## ACTIVE — Production Active Wiring CPU/static Implementation closure remediation v2
 
 Formal pair:
-- root implementation SHA: `5d548d97029302817efeaad49983a2a16883be6e`
-- child/Gitlink SHA: `3b3d83c33b54a14d52ce54f97e920875f9b48e4e`
+- root implementation SHA: `27b60046080290adeb574281f8fcdedf5840439b`
+- child/Gitlink SHA: `19394c2824d36728976a9df680eab839cfd915e0`
 - Gate: `G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
-- previous formal pair: `f24599d92f7447064c7422a43575e38cec843d48` / `acb2bf2c8b4caf5a415b3eaaffa34edf9a514323`
+- previous formal pair: `5d548d97029302817efeaad49983a2a16883be6e` / `3b3d83c33b54a14d52ce54f97e920875f9b48e4e`
 - approved design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
-- request/bookkeeping HEAD observed: `2433963a88509f618f16c38d9b9561e951a63cf7`
+- request/bookkeeping HEAD observed: `f86cad3c13500a46a88bcde5b298be8d013b8974`
 
 Verdict: `REQUEST_CHANGES`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_production_active_wiring_implementation_5d548d9_3b3d83c.md`
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_production_active_wiring_implementation_27b6004_19394c2.md`
 
 Canonical review commit:
-`610e5ccb04c8a20dbeb2105645515f47cec09e5f`
+`7704646c24d5bf62708413e056e8764bb7b2d501`
 
 Prior blocker closure:
-- CLOSED: retry identity is now owner-retained; active backward validates identity before scaled backward and terminal-cleans failures.
-- CLOSED: exact optimizer registry/owner/transaction/GA preflight is now explicit and covers open-incomplete/foreign completion.
-- PARTIAL: tagged first-member retry plan/registry is retained and has an exact retry-arm API, but the standard trainer loop still propagates the tagged exception rather than consuming the retry in-process.
+- CLOSED: production active base class no longer enters `run_native_forward_for_test`; it fail-closes until the future native MoT adapter exists, while the synthetic spy is test-only.
+- CLOSED FOR FIRST ATTEMPT: standard trainer now performs one tagged first-member retry in-process without another dataloader fetch or GA advance.
+- CLOSED: retry identity is owner-retained and active backward validates before scaled backward with owner-terminal cleanup.
+- CLOSED: exact optimizer registry/owner/transaction/GA preflight.
+- CLOSED: resolved-window `ga_window_token` retirement/fresh next-window token.
+- PARTIAL: Evidence now covers two-consumer S0/PAD ordering, first retry, scaler success/skip, optimizer negatives, and token freshness.
 
 Current blockers:
 
-1. **HIGH — production active model branch still calls test-only `run_native_forward_for_test()`.**
-   `OmniMoTModel._run_active_local_memory_native_forward()` does not execute the ordinary MoT native forward/loss surface. Frozen design explicitly forbids `run_native_forward_for_test` in production.
+1. **HIGH — attempt-1 second tagged transient is not terminalized fail-closed.**
+   `ProductionActiveWiringRegistry.abort_source_transient()` does not check `transaction.plan.attempt`. On an attempt-1 retry, a second tagged transient enters `owner.abort_retry()`, whose `recover_transient()->suffix_after_failure()` raises `LOCAL_MEM_RETRY_EXHAUSTED` before pending discard/owner terminalization. This can leave owner `PREPARED` with a live pending graph.
 
-   Required: remove the production dependency on the test helper. Route the production branch to the model-owned batched native MoT/Memory-Prefix surface, or fail closed until the future internal native adapter exists while tests override the model method with a test-only spy.
+   Required: if `prepared.transaction.plan.attempt == 1`, route directly through exact `owner.abort_terminal(...)` with a frozen retry-exhausted terminal code, clear registry authority/pending/Local grads, suppress suffix, and propagate process-fatal failure. Add a trainer-path transient-twice fixture proving first retry at counter 0, second terminal, owner `ABORTED`, pending `None`, zero optimizer/scheduler/fast commit, and no third forward.
 
-2. **HIGH — first-member tagged retry is retained but not executable by the standard trainer loop.**
-   `_handle_active_forward_exception()` stores the exact retry plan/registry, but `training_step()` re-raises and the ordinary `train()` loop has no exact retry catch/re-arm path. Direct handler/arm unit tests do not make the production trainer retry.
+2. **MEDIUM — required adjacent no-marker lifecycle/callback parity Evidence is still missing.**
+   `active_wiring_callback_test.py` proves active exact-class TTT filtering and zero lifecycle touch, but not the v0.6-required neighboring no-marker trainer control through the original dispatcher/legacy lifecycle route.
 
-   Required: implement one in-process trainer control path for tagged first-member retry with no GA/optimizer/scheduler/fast-frontier advance and prove transient -> retry -> successful member. Later transient remains process-fatal.
-
-3. **MEDIUM — `ga_window_token` is not retired after final slow-window resolution.**
-   The registry never clears the token, so consecutive optimizer windows reuse the same token. Retain it across retry/member continuation, but retire it after exact success/skip resolution and create a fresh token for the next window.
-
-4. **MEDIUM — active Evidence is still incomplete.**
-   Missing direct active-path witnesses include two valid consumers + S0/PAD ordering, full trainer retry success, consecutive-window fresh token, and full no-marker/pre-existing-lifecycle trainer parity.
+   Required: add the adjacent no-marker trainer-level control proving active zero lifecycle calls while no-marker preserves original callback order/args/count and legacy behavior; rerun targeted CPU/static suites, target `py_compile`, and root/child `git diff --check`.
 
 Next authorized action for Codex:
 - remediate only inside the approved v0.6 CPU/static whitelist and adjacent tests;
