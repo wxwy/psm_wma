@@ -23,11 +23,33 @@ Formal pair:
 - design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.1.md`
 - request/bookkeeping HEAD observed: `ab887a54f3b8a8cd05d77f1a9e90e41851ba1ab8`
 
-Status: `CHATGPT_REVIEW_IN_PROGRESS`
+Verdict: `REQUEST_CHANGES`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_production_active_wiring_design_305b791_78b8c9c.md`
+
+Canonical review commit:
+`91dd1458a0c7ccc73b6df2a8f776f8e23b989322`
 
 Important separation:
 - The prior implementation Gate for `1c6c9ec3c5a8befa32875e05e3779357208ead31 / 78b8c9cd1389ff523b703d578208f7a221a64af2` is historical and closed by `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC`.
 - That verdict does **not** apply to this active-wiring design Gate.
-- ChatGPT is independently reviewing the new design against current `omni_mot_model.py`, trainer flow, frozen v0.3.5 semantics, and the closed segment-integration authority.
 
-Until the new canonical review is written, Codex should treat this exact active-wiring pair as `PENDING_CHATGPT_VERDICT` and must not implement the design.
+Current blockers:
+
+1. **HIGH — native callback cardinality conflicts with the closed bridge contract.**
+   v0.1 says `one native callback per gathered consumer`; the frozen contract is one **batched** native callback per GA member/microbatch over the complete gathered `(payloads, locals)` tuple. Multiple valid consumers must be entries in one model call; PAD is absent.
+
+2. **HIGH — model/trainer/bridge split-phase authority is not frozen.**
+   Current `production_segment_bridge.run_member` owns prepare -> native callback -> pure backward -> commit/finish, while current trainer performs model forward first and backward later. v0.1 asks model to execute the real native forward and trainer to call bridge pure-backward, but defines no exact graph-bearing capability/API between those phases. It also does not freeze the exact `OmniMoTModel.training_step` branch point that bypasses `_inject_local_history/_ttt_local_memory_tokens` before the legacy TTT lifecycle can run.
+
+3. **HIGH — GA/GradScaler production clock and scaling are not frozen.**
+   `GAWindowPlan` valid-consumer weighting already owns the GA scale; the Local-enabled real backward must use native GradScaler exactly once without a second `/grad_accum_iter`. The design must freeze one successful bridge member == one successful trainer accumulation microbatch, retry/terminal effects on `grad_accum_iter`, final completion alignment with the optimizer boundary, and exact scaler success/skip resolution ordering without `TTTLifecycle`.
+
+Next authorized action for Codex:
+- docs-only remediation of the active-wiring design;
+- do **not** modify child implementation yet;
+- submit a new formal root SHA (child may remain unchanged if docs-only) that closes all three blockers;
+- request a fresh ChatGPT review for the new formal pair.
+
+No production model/packer/dataset/config/checkpoint implementation, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized by this verdict.
