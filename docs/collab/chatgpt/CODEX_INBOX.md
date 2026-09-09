@@ -466,3 +466,19 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 - 上轮：MM/DS approve，ChatGPT review=`b7792f9` `REQUEST_CHANGES`；本版仅 docs、child/生产代码不变。
 
 请核对 v0.5：① `GAWindowPlan.ga_effective == trainer.grad_accum_iter config`、仅 counter=0 开始、open token 全窗口 active 且同 registry/token、禁止 no-marker interleave；② trainer-local exact `TTTLifecycleCallback` filter，non-TTT registration order/args不变且 no-marker 原 dispatcher 不变。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅 docs，禁止真实 I/O/GPU/训练；正式 reply 仅 `reviews/`。
+
+---
+
+## CODEX REVIEW REQUEST — production active-wiring implementation design v0.6 remediation
+
+- formal root：`721b4100624a37edbdd75bb555515b7d7e67c8e1`
+- child/Gitlink：`78b8c9cd1389ff523b703d578208f7a221a64af2`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
+- 上轮结论：formal `a416b272`/`78b8c9c` 的 MM `APPROVE`；ChatGPT review=`a86db79` 与 DS 均 `REQUEST_CHANGES`，唯一共同问题是现有 `CallBackGroup` 没有公开可过滤 collection。child/Gitlink 与生产代码均未改。
+
+请核对 v0.6 是否以最小、可实现且不扩大 API 的方式关闭该问题：①只在 active branch 明确豁免一次只读 `callback_group._callbacks`，不写入、重排、缓存或改变 list/元素 identity；②按既有注册顺序、原参数、一次调用所有非排除 hook；③仅 `type(callback) is TTTLifecycleCallback` 排除，子类不被隐式排除，精确 import 已冻结；④active legacy lifecycle 零调用，no-marker 保持原 dispatcher 与 legacy route；⑤CPU/static tests 覆盖 object identity、exact class、子类、顺序/参数/次数、no-marker parity 及既有 GA/owner 合同。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+本轮仅 docs-only；即使批准也仅允许 v0.6 白名单的后续 CPU/static implementation。禁止 production model/packer/dataset/manifest/config/optimizer-selector/checkpoint 变更、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
