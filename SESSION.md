@@ -2,8 +2,8 @@
 
 ## 当前整改认领（2026-09-09）
 
-- `G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-CPU-STATIC-IMPLEMENTATION`：三方对前一 formal root=`609aed4864e5b884467174615910a99861df4784` / child=`5bfa506b0200f5cbd11049378690dcef90af8f30` 的最终结论已齐：ChatGPT review commit=`a1d8af7`、DS 均 `REQUEST_CHANGES`，MM `APPROVE`。整改 child=`78b8c9cd1389ff523b703d578208f7a221a64af2` 已推送：bridge 的 post-prepare count mismatch 现 owner-owned terminalize/discard/clear；capability 绑定 exact member index；新增 first/later mismatch、attempt-1 retry、callback/malformed/numerical/backward failure、disabled loss/slow-grad parity、stale capability，以及 canonical numerical/backward failure regression CPU fixtures。
-- 当前验证：bridge=`11 passed`、runtime owner=`11 passed`、trainer integration=`14 passed`、canonical wiring 输出 9 个通过用例且进程正常退出；目标 `py_compile`、child/root `git diff --check` PASS。未运行任何真实 I/O、GPU、训练。下一步：提交根仓 Gitlink/记录，针对新 formal pair 重新申请 ChatGPT、MM、DS closure review；整改前不得越过该 Gate。
+- `G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-CPU-STATIC-IMPLEMENTATION`（DONE）：formal root=`1c6c9ec3c5a8befa32875e05e3779357208ead31` / child=`78b8c9cd1389ff523b703d578208f7a221a64af2` 获 ChatGPT review=`f7b2a81`、MM、DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC`。整改关闭 post-prepare count mismatch 的 owner terminal/discard/clear、exact member-index capability，以及 v0.3 §4 public negative/disabled parity/canonical regression matrix。
+- 验证：bridge=`11 passed`、runtime owner=`11 passed`、trainer integration=`14 passed`、canonical wiring=`9 passed`；目标 `py_compile`、child/root `git diff --check` PASS。仅关闭 synthetic CPU/static bridge/runtime/trainer contract；production model/packer/dataset/config/checkpoint、真实 I/O、GPU、训练仍未授权。下一步必须另建并审核 production wiring/runtime-sidecar 或等价下一实现设计 Gate，不能直接训练。
 
 更新时间：2026-09-08
 
