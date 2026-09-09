@@ -3,13 +3,21 @@
 **日期**：2026-09-10
 **状态**：docs-only source audit；待三方审核；不授权代码、真实 I/O、GPU、训练、评测或推理
 **任务/Gate**：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-SUPERSESSION-SOURCE-AUDIT`
-**当前 formal baseline**：root `ee07ca057afd203f8d58821051c0cfa6298e78ee` / child `f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
+**审计源码快照（非 canonical authority）**：root `ee07ca057afd203f8d58821051c0cfa6298e78ee` / child `f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
 
 ## 1. Authority 与结论
 
 本文件仅将 `PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.5.md` §20.2 的 A--H 未落地项映射到当前源码。v0.3.5 §12、§18 明确 supersede 旧 row-wise active-wiring 的生产训练语义；刚关闭的 active-wiring Gate 仍是 synthetic CPU/static contract，不是 v0.3.5 segment production authority。
 
-历史 `PSM-WMA_Local_Memory_v0.3.5_supersession_migration_design_v0.1.md` 已被 ChatGPT review `2026-09-08_R09_B_TTT_v035_migration_design_a882b12_0fddc27f.md` 标记 superseded，禁止重开。唯一可继承的 canonical CPU/static authority 是 v0.3.9 contract/design 及其已关闭实现；不得重新定义 `SegmentBatch`、`scan_segment_masked_many()`、feature-disable inventory、scheduler 或 GA retry 语义。
+历史 `PSM-WMA_Local_Memory_v0.3.5_supersession_migration_design_v0.1.md` 已被 ChatGPT review `2026-09-08_R09_B_TTT_v035_migration_design_a882b12_0fddc27f.md` 标记 superseded，禁止重开。唯一可继承的 canonical CPU/static authority 是以下不可变 formal chain：
+
+| 阶段 | formal root | child/Gitlink | 唯一文档/结论 |
+|---|---|---|---|
+| canonical semantics design | `e4b2d2f980ce0f038ae1a44ed379d16bbf05b9d9` | `80aec090688e3c710c41e1dfd86b6500773db2c7` | v0.3.9 canonical training/runtime contract |
+| canonical CPU/static implementation design | `1f6c0bad0faa4aabae1c71b01738ad95a4ea902c` | `80aec090688e3c710c41e1dfd86b6500773db2c7` | `docs/build/PSM-WMA_Local_Memory_v0.3.9_cpu_static_implementation_design_v0.3.md` |
+| canonical CPU/static implementation closure | `d1f155d9a0cf0cf49055c065defa8119b0ac178f` | `333792e845fe3b15ba4d8af8f34f704de2a79fa2` | canonical synthetic core 已关闭 |
+
+上方 `ee07ca0/f14a8d8` 仅是本 audit 核对旧/过渡源码的快照，绝不替代该 canonical chain。不得重新定义 `SegmentBatch`、`scan_segment_masked_many()`、feature-disable inventory、scheduler 或 GA retry 语义。
 
 ## 2. 当前源码事实
 
