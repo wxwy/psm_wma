@@ -525,3 +525,23 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 请核对上述五项是否精确关闭前轮 `REQUEST_CHANGES`，并请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅限 CPU/static synthetic contract。禁止 production packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — production active-wiring remediation closure follow-up
+
+- formal root：`5d548d97029302817efeaad49983a2a16883be6e`
+- child/Gitlink：`3b3d83c33b54a14d52ce54f97e920875f9b48e4e`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
+- approved design：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
+- prior formal verdict：root=`f24599d`/child=`acb2bf2` 的 MM `APPROVE_TO_CLOSE`，ChatGPT 与 DS `REQUEST_CHANGES`；本 pair 只闭合三方已齐意见。
+
+本轮在既有 remediation 之上补齐可直接审计的 production seam fixtures：①`training_step()` 的 open active window/no-marker 路径在任何 forward/callback 前 fail-closed；②optimizer boundary 的 exact registry/owner/transaction/GA chain 抽为私有 preflight seam，并直接覆盖 open-but-incomplete 与 foreign-completed capability；③tagged `ActiveSourceTransientError` 的 production handler 仅保留 owner 生成的 attempt-1 retry plan/registry，随后只能由 trainer exact retry arm 消耗。此前的 pre-backward identity validation/terminal cleanup、enabled scaler success/skip、marker schema、two-member GA、legacy lifecycle isolation 仍在同一 suite。
+
+修改仅限 child `cosmos_framework/trainer/__init__.py` 与 `cosmos_framework/model/generator/mot/production_active_wiring_test.py`；未修改 packer/dataset/manifest/config/optimizer selector/checkpoint。证据：Cosmos `.venv`，`LD_LIBRARY_PATH=''`、`--num-gpus=0` 下定向 pytest=`43 passed in 34.18s`（active wiring、canonical runtime、active callback、trainer canonical wiring）；目标 `py_compile`、child/root `git diff --check` PASS。未读 checkpoint/训练数据，未启动真实 I/O、CUDA/GPU 或训练。
+
+请核对：① retry identity 是否在 backward 前验证且异常路径仅首成员保留 exact owner retry authority；② retry arm、registry/owner/transaction/GA optimizer-boundary authority 是否 fail-closed；③ marker/interleave、scaler success/skip、lifecycle isolation fixtures 是否覆盖 active seam；④所有修改是否仍在 v0.6 CPU/static 白名单内。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅限 CPU/static synthetic contract。禁止 production packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。

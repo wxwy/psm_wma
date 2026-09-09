@@ -19,6 +19,7 @@
 - 本轮补充 child=`d0519dda8a3705650237399aae3a3880293c337f`：活跃 registry 已处于 `PREPARED` 而 trainer 未持有 marker capability 时，`ImaginaireTrainer.training_step()` 必须在 forward/callback 之前拒绝 untagged interleave，并保持 owner pending 状态不变。定向 CPU/static suite=`41 passed in 33.98s`，目标 `py_compile`、child/root `git diff --check` PASS；仅测试变更，未执行真实 I/O、GPU 或训练。下一步：更新 root Gitlink/任务记录并继续补齐剩余 optimizer-boundary 负例，再统一提交新的 closure review。
 - child=`f4ad42c09e90e30193b0bbe3a3c638c4e51a4384`：将 optimizer-boundary exact authority 检查抽为 trainer 私有 preflight seam，production 路径行为不变；新增 open-but-incomplete 与 foreign-completed capability 两条 fail-before-callback/optimizer 负例。定向 CPU/static suite=`42 passed in 35.48s`，目标 `py_compile`、child/root `git diff --check` PASS。仍只属于 v0.6 白名单 CPU/static；下一步审视 remaining fixture matrix，禁止真实 I/O、GPU、训练。
 - child=`3b3d83c33b54a14d52ce54f97e920875f9b48e4e`：将 production `training_step` 的 active forward exception 处理收为私有 seam，tagged 首成员只保留 owner 生成的 attempt-1 retry plan/registry，其他错误保持 terminal；新增 direct handler fixture 并与 exact retry arm coverage 闭环。定向 CPU/static suite=`43 passed in 34.18s`，目标 `py_compile`、child/root `git diff --check` PASS；未执行真实 I/O、GPU、训练。
+- 新 closure follow-up formal pair=`5d548d97029302817efeaad49983a2a16883be6e`/`3b3d83c33b54a14d52ce54f97e920875f9b48e4e` 已写入 canonical live Inbox，等待 ChatGPT、MM、DS 对同 SHA 的正式 verdict；进入 `REVIEW`，不得整改或启动真实 I/O、GPU、训练。
 
 更新时间：2026-09-08
 
