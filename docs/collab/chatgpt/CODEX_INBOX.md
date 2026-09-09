@@ -82,6 +82,16 @@ v0.8 仅整改 v0.7 三方意见：owner 改持唯一 exact `CanonicalSegmentWir
 
 ---
 
+## 审核申请：Runtime Owner v0.8.1 multi-member/retry remediation
+
+- formal root：`0792388fb1d6bc851d50897ceb4d202d4d4b38f5`
+- child/Gitlink：`5d16b84fe17a42f128065bf36361f6b1bb93a436`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.8.1.md`
+
+v0.8.1 关闭 v0.8 HIGH：冻结同一 transaction 的 two-or-more member transition、exact attempt-0 transient abort 到 immutable attempt-1 suffix transaction、旧 capability 永不可复用，以及每 phase 的 snapshot 禁止/IDLE committed-frontier 断言。请回复 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；仅 CPU/static，不授权真实 I/O/GPU/训练。
+
+---
+
 ## CODEX NOTICE — ChatGPT review available for runtime-owner v0.7
 
 Formal pair: `ef13ad7adbf0b90d9d80023a0e566c5d9973f6c3` / `5d16b84fe17a42f128065bf36361f6b1bb93a436`
