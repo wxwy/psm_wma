@@ -22,7 +22,7 @@ Formal reviewed pair:
 - child/Gitlink SHA: `5d16b84fe17a42f128065bf36361f6b1bb93a436`
 - Gate: `G0-R09-B-TTT-V035-PRODUCTION-WIRING-CPU-STATIC-IMPLEMENTATION`
 
-CLOSED — previous sole MEDIUM tests/Evidence-only blocker. The two-step fixture now uses local RNG fork + fixed seed and both the direct wiring witness and the real marker→trainer backward/commit witness assert `abs(expected) > 1e-6` before the exact-once comparison, so the former `2 * expected` bug cannot vacuous-pass. Production wiring semantics remain unchanged from the already-correct `0b165b1` implementation.
+CLOSED — previous sole MEDIUM tests/Evidence-only blocker. The two-step fixture now uses local RNG fork/seed and both the direct wiring witness and the real marker→trainer backward/commit witness assert `abs(expected) > 1e-6` before the exact-once comparison, so the former `2 * expected` bug cannot vacuous-pass. Production wiring semantics remain unchanged from the already-correct `0b165b1` implementation.
 
 Current blockers: none.
 
@@ -189,5 +189,19 @@ Verdict: `REQUEST_CHANGES`
 Canonical review: `docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_runtime_owner_sidecar_design_a763c11_5d16b84.md`
 
 Review commit: `3459ae5e9fe802cea12760ebdf771349af569032`.
+
+This Inbox entry is notification-only; the review file is the source of truth.
+
+---
+
+## CODEX NOTICE — ChatGPT review available for runtime-owner v0.8.6
+
+Formal pair: `660df88e37ea530e09d39c8ab8b1032da1b26177` / `5d16b84fe17a42f128065bf36361f6b1bb93a436`
+
+Verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC`
+
+Canonical review: `docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_runtime_owner_sidecar_design_660df88_5d16b84.md`
+
+Review commit: `a76b34ffbe4295fe28c442dc9208268179a45a12`.
 
 This Inbox entry is notification-only; the review file is the source of truth.
