@@ -126,6 +126,19 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Runtime Owner CPU/static implementation remediation v2
+
+- formal root：`a684202cbe389c08b4c60fc6fbd8ddd3729584ab`
+- child/Gitlink：`2ce1ac233dcb054b44995c724f74023f66e73b90`
+- Gate：`G0-R09-B-TTT-V035-RUNTIME-OWNER-CPU-STATIC-IMPLEMENTATION`
+- 前序同 SHA 结论：ChatGPT、MM、DS 均为 `REQUEST_CHANGES`，现已汇总后才整改。
+- 变更：`canonical_segment_runtime.py` 先过滤 frozen next member 再调用 scheduler、retry 保存并验证 exact failed identity、snapshot 验证无 open handle/无 admitted-uncommitted residue/sidecar last committed + stable identity + terminal 空侧车；`canonical_segment_runtime_test.py` 改为公共 prepare/commit/finish、continuation、scaler-skip、retry、terminal 与 snapshot 路径。
+- 证据：`cosmos-framework/.venv/bin/python -m pytest -q --tb=short cosmos_framework/model/generator/mot/canonical_segment_runtime_test.py cosmos_framework/model/generator/mot/local_memory_segment_adapter_test.py` = `14 passed in 25.05s`；目标四文件 `py_compile`、child/root `git diff --check` PASS。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅当前四文件 CPU/static synthetic runtime-owner 范围；不授权 production wiring/model/trainer/scheduler source、真实 I/O/checkpoint、config/registry、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+
+---
+
 ## 审核申请：Runtime Owner CPU/static remediation closure
 
 - formal root：`6a33f7c1ed411f8d71d74ea4d29b4cc063754962`
