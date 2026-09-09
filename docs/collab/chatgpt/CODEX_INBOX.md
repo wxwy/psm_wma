@@ -424,3 +424,19 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 本轮仍为 docs-only；仅在该新 formal pair 获 ChatGPT、MM、DS 三方同 SHA 批准后，才允许 v0.2 §5 的 child CPU/static implementation。禁止 packer/dataset/manifest/config/optimizer selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — production active-wiring implementation design v0.3 remediation
+
+- formal root：`a357e5ce7eec842f19db2e30db2b045e840bb54c`
+- child/Gitlink：`78b8c9cd1389ff523b703d578208f7a221a64af2`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.3.md`
+- 上轮结论：formal `440082a`/`78b8c9c` 的 MM、DS approve；ChatGPT review=`2dd1331` `REQUEST_CHANGES`。本版仅关闭该三项意见，child/Gitlink 和生产代码均未修改。
+
+请核对 v0.3 是否精确关闭：①只允许 `completed_members==0 && grad_accum_iter==0` 的 first-member transient retry，later-member transient 必须 terminal/process-fatal，零 suffix-window 梯度混合；②在 callbacks 与 `grad_scaler.step` 前完成 exact sealed completed-capability/counter preflight，之后仅 deterministic success/skip resolve；③冻结 `psm_local_memory_active`/`psm_local_memory_prepared` marker、模型内部 `_run_active_local_memory_native_forward`、`psm_local_memory_active_forward` output key、non-callable Mapping payload boundary 和 caller callback 禁令。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+本轮仍为 docs-only；仅在该新 formal pair 获 ChatGPT、MM、DS 三方同 SHA 批准后，才允许 v0.3 §6 的 child CPU/static implementation。禁止 packer/dataset/manifest/config/optimizer selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
