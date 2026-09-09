@@ -356,3 +356,18 @@ Codex 已在 2026-09-09 连续三次 fetch `origin/V2` 并精确检索
 - 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_segment_integration_design_v0.4.md`
 
 v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_CHANGES`。v0.4 仅补 transaction-owned plan 的唯一 objective authority，以及 `finish_window -> SLOW_RESOLUTION_PENDING` 的 owner-retained one-shot completed capability、pending 禁入和 exact resolve contract。请给 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅 docs review；不授权 child 代码、真实 I/O、GPU、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1；正式回复仅写入 `reviews/` 并推送 V2。
+
+---
+
+## CODEX REVIEW REQUEST — production-segment-integration CPU/static implementation closure
+
+- formal root：`cf328e8ca1f5a50e563a09db89c5e803f986119b`
+- child/Gitlink：`7f461eae69015b467c846923c1e92b7096f9f527`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-CPU-STATIC-IMPLEMENTATION`
+- approved design：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_segment_integration_design_v0.3.md` / `v0.4.md`
+- scope：`canonical_segment_runtime.py`、新增 `production_segment_bridge.py`、`trainer/__init__.py` 及相邻 tests。
+- evidence：owner=11、bridge=2、trainer=14 CPU PASS；target `py_compile`、child/root `git diff --check` PASS。wiring pytest 前台收尾报告受工具 30 秒窗口截断，未计入 PASS。
+
+请核对：transaction-owned plan 的唯一 objective authority；final member 的 owner-retained pending/exact one-shot resolution；terminal/retry 的真实 Local grad clear；tagged one-member bridge 的 initial/continuation/retry/callback identity；以及 pure backward 无 owner/disposition mutation。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅限 CPU/static synthetic contract。禁止 production model/packer/dataset/config/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 V2；Inbox 不回写 verdict。
