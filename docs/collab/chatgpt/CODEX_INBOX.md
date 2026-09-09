@@ -482,3 +482,21 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 本轮仅 docs-only；即使批准也仅允许 v0.6 白名单的后续 CPU/static implementation。禁止 production model/packer/dataset/manifest/config/optimizer-selector/checkpoint 变更、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — production active-wiring CPU/static implementation closure
+
+- formal root：`cba2e763f4f8f4557abe4d45d47f5c73fb97812a`
+- child/Gitlink：`eb7a7ee0a391ea56f2967c4641b37d8baea2c0dc`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
+- approved design：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
+- scope：新增 `mot/production_active_wiring.py`、相邻 registry/model/trainer/owner seam 与 CPU/static tests；未修改 packer/dataset/manifest/config/optimizer selector/checkpoint。
+- implementation：registry-bound one-shot prepared/forward capabilities；模型 early active marker branch；仅 active branch 的 exact-class `TTTLifecycleCallback` callback filter；transaction-owned single scaled weighted backward；owner sealed slow-window preflight/resolve；trainer arm/bind/shallow marker injection、open-window interleaving guard 与 active forward terminal cleanup。
+- evidence：既有 Cosmos `.venv`（Python 3.13.7、torch `2.10.0+cu130`）下 `--num-gpus=0` 定向 pytest=`36 passed in 44.44s`，含 model→trainer 单次 backward→owner completion 闭环；target `py_compile`、scoped F-lint、child/root `git diff --check` PASS。`canonical_segment_runtime.py` 有一处基线既存 F401，未混入无关清理。
+
+请核对：① capability、owner、trainer/model registry 的 exact identity/one-shot/fail-closed 边界；② marker schema、no-marker interleaving 与 legacy callback isolation；③单次 objective/scaled backward、commit、optimizer-boundary preflight/success-skip resolve 顺序；④active forward/backward 异常是否 owner-terminal 且不泄露 pending/grad；⑤CPU/static fixtures 是否真实覆盖 active seam 而不冒充 native I/O/GPU 训练。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅限 CPU/static synthetic contract。禁止 production packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
