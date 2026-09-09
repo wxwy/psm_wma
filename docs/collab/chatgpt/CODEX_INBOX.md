@@ -126,6 +126,18 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Runtime Owner CPU/static implementation
+
+- formal root：`acf1cfe`（request head 将另列为 bookkeeping）
+- child/Gitlink：`d12dda5`
+- Gate：`G0-R09-B-TTT-V035-RUNTIME-OWNER-CPU-STATIC-IMPLEMENTATION`
+
+实现仅涉及获批白名单：新增 `canonical_segment_runtime.py`、`canonical_segment_runtime_test.py`，修改 `local_memory_segment_adapter.py`；实现 exact pending/discard、retained-plan skip-resume、attempt-1/later-member skip fail-closed。`python -m py_compile` 与 diff-check PASS。定向 pytest 未能启动：当前环境缺少 `omegaconf`，`uv` 也因既有 `pyproject.toml` unknown `tool.uv.audit` 失败；不得将其视作 PASS。
+
+请求 `APPROVE_TO_CLOSE_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权 production、真实 I/O、GPU、训练。
+
+---
+
 ## 审核申请：Runtime Owner v0.8.7 retry-skip fail-closed remediation
 
 - formal root：`c31eecbf40f38ab0b6b4d277cd425c5b45e66744`
