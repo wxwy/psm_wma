@@ -12,6 +12,7 @@
 - 整改已完成待提交：initial plan 在 owner admission 前精确绑定 attempt/member；prepare 后任何 native-input/count 合同失败均 terminal/discard/clear；active 初始 arm 绑定 native GA/counter，未完成 active window 不得越过 optimizer boundary；仅 `ActiveSourceTransientError` 的首成员进入 retained retry，后续成员 terminal；enabled GradScaler 在不可逆 `step()` 前先 `unscale_` 并要求可验证 found-inf 记录，缺失/非法即 fail-closed。CPU/static：active owner/registry/runtime/callback/trainer 定向 `31 passed in 34.20s`，`py_compile`、child/root `git diff --check` PASS；Ruff 仅报告既存压缩格式/导入顺序，未作无关格式化。未执行真实 I/O、GPU、训练。下一步：只提交五个白名单 child 文件、更新 root Gitlink/记录，然后对新 formal pair 重新三方 closure review。
 - remediation formal pair 已推送：root=`f24599d92f7447064c7422a43575e38cec843d48` / child=`acb2bf2c8b4caf5a415b3eaaffa34edf9a514323`。canonical Inbox 申请与 SHA 更正已推送（ledger=`8654b22`/`b109764`）；MM capture-pane 显示处理中，DS 在一次余额错误后已重发并显示处理中。ChatGPT 正式结果仅查 `docs/collab/chatgpt/reviews/`。当前 `REVIEW`，三方同 SHA verdict 前禁止整改或真实 I/O/GPU/训练。
 - 审核轮询 #1（2026-09-09）：MM 已返回 `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC`；ChatGPT `reviews/` 尚无匹配 formal SHA；DS 本轮仍返回 `Insufficient Balance`，未形成 verdict。保持 `REVIEW`，不以单方批准执行下一步。
+- 审核轮询 #2（2026-09-09）：远端 `V2` 无新增；MM 保持同 SHA `APPROVE_TO_CLOSE`，ChatGPT 正式 review 仍缺失；DS pane 仍为已提交申请后的 `Insufficient Balance`，无有效 verdict。保持 `REVIEW`。
 
 更新时间：2026-09-08
 
