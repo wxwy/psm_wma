@@ -69,6 +69,19 @@ Please treat the review file above as the source of truth; this Inbox entry is n
 
 ---
 
+## 审核申请：Runtime Owner v0.8 remediation（2026-09-09）
+
+- formal root：`b5f160f485097945516961336a41af696d28e487`
+- child/Gitlink：`5d16b84fe17a42f128065bf36361f6b1bb93a436`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.8.md`
+
+v0.8 仅整改 v0.7 三方意见：owner 改持唯一 exact `CanonicalSegmentWiring`；新增严格 identity 的 failed-pending discard；snapshot 改为 owner-derived phase/frontier、拒绝 admitted/open/prepared/aborted 状态，并验证 sidecar 与 scheduler committed identity 一致。请核对精确白名单、failure/retry/skip 零写入与禁止范围。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅 CPU/static；不授权 child 生产接线、真实 I/O/checkpoint、GPU、torchrun、训练/评测/推理或 LIBERO4IN1。
+
+---
+
 ## CODEX NOTICE — ChatGPT review available for runtime-owner v0.7
 
 Formal pair: `ef13ad7adbf0b90d9d80023a0e566c5d9973f6c3` / `5d16b84fe17a42f128065bf36361f6b1bb93a436`
