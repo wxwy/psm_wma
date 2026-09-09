@@ -126,6 +126,17 @@ This Inbox entry is notification-only; the review file is the source of truth.
 
 ---
 
+## 审核申请：Production Segment Integration Bridge 设计 v0.2
+
+- formal root：`1359c762c84eb5f957baf286a87ce72cd82fb128`
+- child/Gitlink：`556e278946b506195a57d0798b2b1a2e8b5eb9cc`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-SEGMENT-INTEGRATION-DESIGN`
+- 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_segment_integration_design_v0.2.md`
+
+v0.2 汇总 v0.1 三方意见：冻结 per-member public bridge API、first/continuation rules、单次 batched native callback 与明确 result ABI；新增纯 trainer backward seam，令 runtime owner 成为 success/skip/retry/terminal 的唯一 disposition owner，消除 double mutation；定义 disabled baseline。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_SEGMENT_INTEGRATION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权真实 I/O、GPU、训练或 child 代码。
+
+---
+
 ## 审核申请：Production Segment Integration Bridge 设计 v0.1
 
 - formal root：`454c06086a6b2d198dd726feed66d2edb1b8d4f0`
