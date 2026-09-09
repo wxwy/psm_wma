@@ -12,44 +12,33 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
-## ACTIVE — Production Active Wiring CPU/static retry-exhaustion closure
+## ACTIVE — Production Active Wiring CPU/static closure
 
 Formal pair:
-- root implementation SHA: `ae80bae6474a81ca0c93f761b6bce8c29f6b4806`
-- child/Gitlink SHA: `d17f09c349cad2da93381033749c4a901391e920`
+- root implementation SHA: `a7f5db0323e573c27298118c248187b78d7e9181`
+- child/Gitlink SHA: `f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
 - Gate: `G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
-- previous formal pair: `27b60046080290adeb574281f8fcdedf5840439b` / `19394c2824d36728976a9df680eab839cfd915e0`
+- previous formal pair: `ae80bae6474a81ca0c93f761b6bce8c29f6b4806` / `d17f09c349cad2da93381033749c4a901391e920`
 - approved design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_production_active_wiring_implementation_design_v0.6.md`
-- request/bookkeeping HEAD observed: `e2c039802021f52a707d4d61d6dcb56201e3b6ca`
+- request/bookkeeping HEAD observed: `5b31e15c697e054fd7a67b45782058e77f570890`
 
-Verdict: `REQUEST_CHANGES`
+Verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_production_active_wiring_implementation_ae80bae_d17f09c.md`
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_production_active_wiring_implementation_a7f5db0_f14a8d8.md`
 
 Canonical review commit:
-`41d4242c559267c02ea6abc10bdeea919a951e79`
+`30542ed2aeae0cf29a60d1168fa889d2bf2484ba`
 
-Prior blocker closure:
-- CLOSED: retried first-member attempt-1 transient now terminal-cleans via `LOCAL_MEM_RETRY_EXHAUSTED`, owner `ABORTED`, pending discarded.
-- PARTIAL: no-marker callback parity now proves original `CallBackGroup` ordering, but not the required trainer-level legacy lifecycle control.
+Closure:
+- CLOSED: attempt-1 later-member transient now takes precedence and terminalizes exactly as `LOCAL_MEM_RETRY_AFTER_MEMBER`; repeated transient on the retried first member remains `LOCAL_MEM_RETRY_EXHAUSTED`.
+- CLOSED: adjacent trainer-level no-marker/active controls now prove original no-marker dispatcher + legacy lifecycle behavior and active lifecycle isolation.
+- CLOSED: all prior registry/GA/retry/optimizer/token/test-only-native-seam blockers remain closed.
 
-Current blockers:
-
-1. **MEDIUM — later-member disposition precedence is wrong for attempt-1 windows.**
-   `abort_source_transient()` checks `plan.attempt != 0` before checking `member_index != 0` / completed members. Therefore a transient on member 2 of an attempt-1 window becomes `LOCAL_MEM_RETRY_EXHAUSTED`, while the frozen contract requires any later-member transient to be `LOCAL_MEM_RETRY_AFTER_MEMBER`.
-
-   Required: later-member condition must take precedence; use `LOCAL_MEM_RETRY_EXHAUSTED` only for a repeated transient on the retried first member. Add an attempt-1 later-member exact-code/ABORTED/pending-none fixture.
-
-2. **MEDIUM — no-marker parity Evidence remains below the frozen trainer-level requirement.**
-   The new test directly calls `CallBackGroup.on_before_backward()` and monkeypatches the exact TTT callback. It does not prove the real trainer no-marker path preserves the pre-existing lifecycle observe/backward/abort-or-resolve behavior.
-
-   Required: add an adjacent trainer-level no-marker control with a pre-existing lifecycle spy. Prove original dispatcher, exact TTT callback order/args/count, and legacy lifecycle behavior remain intact while active marker remains zero-call. Re-run/report exact pair CPU/static suites, target `py_compile`, root/child `git diff --check`.
+Current blockers: none.
 
 Next authorized action for Codex:
-- remediate only inside the approved v0.6 CPU/static whitelist and adjacent tests;
-- do not modify producer/packer/dataset/manifest/config/optimizer-selector/checkpoint;
-- do not perform real I/O, CUDA/GPU/torchrun, training/evaluation/inference;
-- submit a new root/child formal pair after these blockers close, then request fresh ChatGPT closure review.
+- this Gate is closed for the exact CPU/static synthetic formal pair above;
+- any real native MoT/Memory-Prefix adapter, producer/packer ABI, GPU numerical smoke, persistence/checkpoint, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 requires a new Gate and new formal pair.
 
-No P4/P5, B2-T or LIBERO4IN1 is authorized by this verdict.
+No real I/O, CUDA/GPU/torchrun, training/evaluation/inference or production native adapter is authorized by this closure itself.
