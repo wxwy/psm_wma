@@ -184,7 +184,7 @@ v0.8.7 仅关闭 attempt-1 scaler-skip：`abort(SCALER_SKIP)` 在任何 mutation
 
 v0.8.6 只关闭 v0.8.5 arbitrary-plan HIGH：skip 仅支持 first unresolved member；保存 `transaction.plan` 的 exact immutable object，`resume_skipped()` 无 caller plan 参数，新的 transaction 必须 `.plan is` retained original。later-member skip 与 replacement/count/order/attempt/chain mutation 均 fail-closed 且零 mutation。保持 skip retained-admission、frontier reconvergence、snapshot reject 与全部禁止范围。
 
-请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅 CPU/static 四文件白名单；不授权 production wiring/model/trainer/scheduler source、真实 I/O/checkpoint、GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
+请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅 CPU/static 四文件白名单；不授权 production wiring/model/trainer/scheduler source、真实 I/O/checkpoint、GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
 
 ---
 
@@ -195,7 +195,7 @@ v0.8.6 只关闭 v0.8.5 arbitrary-plan HIGH：skip 仅支持 first unresolved me
 - Gate：`G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`
 - 文档：`docs/build/PSM-WMA_Local_Memory_v0.3.5_production_wiring_runtime_sidecar_implementation_design_v0.8.5.md`
 
-v0.8.5 只整改 ChatGPT v0.8.4 HIGH：`SCALER_SKIP` 转为 `SKIP_READY`，保留已 admission、未 committed 的 exact identity；立即 snapshot 与 normal admit/begin 均 fail-closed。`resume_skipped` 复用同一 retained identity，禁止 second `scheduler.admit()`；待其从 committed `k` 读取并成功 commit `k+1` 后，scheduler/sidecar frontier 才 reconverge，后继 `k+2` 才可正常 admit。保持 v0.8.4 的 exact-pending abort preflight 及零 mutation 负例。
+v0.8.5 只整改 ChatGPT v0.8.4 HIGH：`SCALER_SKIP` 转为 `SKIP_READY`，保留已 admission、未 committed 的 exact identity；立即 snapshot 与 normal admit/begin 均 fail-closed。`resume_skipped` 复用同一 retained identity，禁止 second `scheduler.admit()`；待其从 committed `k` 读取并成功 commit `k+1` 后，scheduler/sidecar frontier 才 reconverge，后继 `k+2` 才可正常 admit。保持 v0.8.4 的 exact-pending abort preflight 及零 mutation负例。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅授权下一阶段四文件 CPU/static；不授权 production wiring/model/trainer/scheduler source、真实 I/O/checkpoint、GPU、torchrun、训练/评测/推理、P4/P5、B2-T 或 LIBERO4IN1。
 
@@ -266,5 +266,19 @@ Verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_RUNTIME_OWNER_CPU_STATIC`
 Canonical review: `docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_runtime_owner_sidecar_design_c31eecb_5d16b84.md`
 
 Review commit: `e6acd345ed1ba48825478518b9db2839669b8538`.
+
+This Inbox entry is notification-only; the review file is the source of truth.
+
+---
+
+## CODEX NOTICE — ChatGPT review available for runtime-owner remediation v2
+
+Formal pair: `a684202cbe389c08b4c60fc6fbd8ddd3729584ab` / `2ce1ac233dcb054b44995c724f74023f66e73b90`
+
+Verdict: `REQUEST_CHANGES`
+
+Canonical review: `docs/collab/chatgpt/reviews/2026-09-09_R09_B_TTT_v035_runtime_owner_implementation_a684202_2ce1ac2.md`
+
+Review commit: `962ffe19438f7c37a66c1c7aa30ac59c9b548ebb`.
 
 This Inbox entry is notification-only; the review file is the source of truth.
