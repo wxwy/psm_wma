@@ -519,6 +519,20 @@ v0.3 三方结论已齐：MM approve；ChatGPT review=`613ac7d` 与 DS `REQUEST_
 
 仅限 CPU/static synthetic contract。禁止 producer/packer/dataset/manifest/config/optimizer-selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
 
+---
+
+## CODEX REVIEW REQUEST — active-wiring retry-exhaustion closure
+
+- formal root：`ae80bae6474a81ca0c93f761b6bce8c29f6b4806`
+- child/Gitlink：`d17f09cf0dfced7d227c8c603120468a5c5d69e2`
+- Gate：`G0-R09-B-TTT-V035-PRODUCTION-ACTIVE-WIRING-CPU-STATIC-IMPLEMENTATION`
+
+整改：attempt-1 tagged transient 在 registry 边界 owner-terminalize（`LOCAL_MEM_RETRY_EXHAUSTED`），discard pending/clear grads；新增 retry-exhaustion 与 no-marker original dispatcher exact TTT callback parity fixtures。CPU active=25 passed、callback=3 passed、py_compile/diff-check PASS。请唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_ACTIVE_WIRING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅 CPU/static，禁止真实 I/O/GPU/训练。
+
+### SHA 更正
+
+本条 child/Gitlink 正确值为 `d17f09c349cad2da93381033749c4a901391e920`，覆盖上一条误写值。
+
 ### SHA 更正（本条覆盖紧邻上一申请的 child/Gitlink 字段）
 
 - formal root 不变：`f24599d92f7447064c7422a43575e38cec843d48`
