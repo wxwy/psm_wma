@@ -88,9 +88,9 @@
 ### 审核申请发送与回复监控（强制）
 
 1. 申请必须先 append 到 `docs/collab/chatgpt/CODEX_INBOX.md`；若预计 append 后超过 128 KiB，先按 Inbox rollover 规则归档/重建，再把申请 append 到新的 live Inbox。申请必须写清任务/Gate、根仓提交号、子模块提交号与 Gitlink、证据路径、验收条件、允许/禁止范围，以及明确的 verdict 请求。
-2. 同一申请必须主动发送到 MM 和 Kimi 的指定 `tmux` pane。发送时先用 `tmux send-keys -l` 写入完整文本，再单独执行 `tmux send-keys Enter`；不得把“文本已显示在输入框”当作“已发送”。随后必须 `tmux capture-pane` 回读，确认申请已提交且会话进入处理或已回复状态。
+2. 同一申请必须主动发送到 MM 和 DS 的指定 `tmux` pane。发送时先用 `tmux send-keys -l` 写入完整文本，再单独执行 `tmux send-keys Enter`；不得把“文本已显示在输入框”当作“已发送”。随后必须 `tmux capture-pane` 回读，确认申请已提交且会话进入处理或已回复状态。
    - 固定节奏：写入完整文本后与单独的 `Enter` 之间至少间隔 1 秒；Enter 后必须 capture-pane 回读确认。
 3. 用户可见的申请标记固定为 `🚨 审核申请已发出（根仓 <hash>；子模块/Gitlink <hash>）`，两个提交号不得省略。
-4. 申请发出后，每五分钟由 Codex 原生轮询三路，至少连续三十轮：ChatGPT `docs/collab/chatgpt/reviews/`（按 formal SHA 查找新增正式 review，不将 Inbox 当作回复来源）、MM pane、Kimi pane；每次轮询记录申请是否送达、是否开始处理、最终 verdict 与 `file:line` 意见。普通轮询不得反复读取完整 Inbox archive。
-5. 审核等待期间任务状态保持 `REVIEW`，禁止越过该 Gate。收到全部所需审核结论后，先处理 `REQUEST_CHANGES`；全部批准后才更新 `SESSION.md`、`TODO.md` 并提交。ChatGPT 未在 Inbox 回复不构成缺件；若 `reviews/` 中没有匹配 formal SHA 的正式 review，则视为尚未回复。MM/Kimi 会话不存在、发送失败或未提交时，立即重发并在 `SESSION.md` 记录，不能声称申请已发出。
-6. 同一审核申请的 ChatGPT、Kimi、MM 三方最终 verdict 必须全部收到后，才合并意见并启动“评估 → 最小整改 → 验证 → 提交/推送 → 新 SHA 重新申请审核”闭环；不得依据单一审核者意见提前修改或使其他同 SHA 审核失效。整改必须严格限于已批准范围；若意见要求扩大权限、真实执行或改变 Gate，仍须先取得对应独立批准。新申请发出后重新开始三路五分钟、至少三十轮的原生轮询。
+4. 申请发出后，每五分钟由 Codex 原生轮询三路，至少连续三十轮：ChatGPT `docs/collab/chatgpt/reviews/`（按 formal SHA 查找新增正式 review，不将 Inbox 当作回复来源）、MM pane、DS pane；每次轮询记录申请是否送达、是否开始处理、最终 verdict 与 `file:line` 意见。普通轮询不得反复读取完整 Inbox archive。
+5. 审核等待期间任务状态保持 `REVIEW`，禁止越过该 Gate。收到全部所需审核结论后，先处理 `REQUEST_CHANGES`；全部批准后才更新 `SESSION.md`、`TODO.md` 并提交。ChatGPT 未在 Inbox 回复不构成缺件；若 `reviews/` 中没有匹配 formal SHA 的正式 review，则视为尚未回复。MM/DS 会话不存在、发送失败或未提交时，立即重发并在 `SESSION.md` 记录，不能声称申请已发出。
+6. 同一审核申请的 ChatGPT、DS、MM 三方最终 verdict 必须全部收到后，才合并意见并启动“评估 → 最小整改 → 验证 → 提交/推送 → 新 SHA 重新申请审核”闭环；不得依据单一审核者意见提前修改或使其他同 SHA 审核失效。整改必须严格限于已批准范围；若意见要求扩大权限、真实执行或改变 Gate，仍须先取得对应独立批准。新申请发出后重新开始三路五分钟、至少三十轮的原生轮询。

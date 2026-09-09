@@ -5,6 +5,7 @@
 ## 协作协议更新（2026-09-09）
 
 - ChatGPT 审核申请继续由 Codex append 至 canonical `docs/collab/chatgpt/CODEX_INBOX.md`；ChatGPT 的正式回复不再回写 Inbox，而仅以 `docs/collab/chatgpt/reviews/` 内、formal root/child SHA 精确匹配的 review 文件为准。轮询 ChatGPT 时检查该目录，不将 Inbox 当作回复来源。
+- 2026-09-09 起，DS 正式替代已下班的 Kimi；所有新审核及闭环三方固定为 ChatGPT、MM、DS。
 
 ## 当前最小步骤（2026-09-08）
 
@@ -13,7 +14,8 @@
 - `G0-R09-B-TTT-V035-PRODUCTION-INTEGRATION-IMPLEMENTATION-DESIGN`（DONE）：formal root=`90e34f420c5138fd1337fe3a3af646f73c7f672c`/child=`d05f14e7195ee5efc37f9d9955923d51fd4e4b25` 获 ChatGPT review=`83b3176`、MM、DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_INTEGRATION_CPU_STATIC`。CPU/static closure 补齐 consumer-spy、真实 trainer terminal-failure carry 保留及 disabled parity；adapter=`6 passed`、trainer=`12 passed`、target `py_compile`、双仓 `diff --check` PASS。仅关闭白名单 synthetic contract；production wiring、registry/default/config、真实 I/O、runtime-sidecar persistence、GPU/训练均未授权。
 - 下一步：新建并冻结 production wiring / runtime-sidecar implementation design；获得新的三方同 SHA implementation authority 前，禁止修改 child 生产路径或启动任何真实 I/O、GPU、训练。
 - `G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN`（IN_PROGRESS）：已核对 child 当前 `omni_mot_model.py` 的逐 sample `TTTLifecycle.process_sample()` 以及 trainer 的固定 `loss / grad_accum_iter` 均不满足 v0.3.5 的 `[B_stream,T]`、valid-consumer weighted loss 语义。预计仅新增根仓 docs design；不改 child、真实 I/O、GPU 或训练。
-- `G0-R09-B-TTT-V035-PRODUCTION-WIRING-CPU-STATIC-IMPLEMENTATION`（REVIEW）：formal design=`e68fd83`/prior child=`d05f14e` 获 ChatGPT、MM、DS 同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC`。pair `aebfa55`/`0b165b1` 收到 ChatGPT MEDIUM（two-step exact-once witness 未保证 non-zero）、MM/DS APPROVE；已按 acceptance 提交 child=`5d16b84fe17a42f128065bf36361f6b1bb93a436`：fixture 使用局部 RNG fork/seed 固定两 timestep non-S0 visible Local，并在 wiring/real marker→trainer fixture 明确断言 `abs(expected)>1e-6`。CPU=32 passed（wiring=4、canonical trainer=7、model+adapter+integration=21）、target py_compile、child/root diff-check PASS。整改新 root/child pair 必须三方重新 closure review；真实 I/O、GPU、训练未授权。
+- `G0-R09-B-TTT-V035-PRODUCTION-WIRING-CPU-STATIC-IMPLEMENTATION`（DONE）：formal root=`593fa24d71887ea0213ff406d222957ba10285b5`/child=`5d16b84fe17a42f128065bf36361f6b1bb93a436` 获 ChatGPT（review=`7f84942`）、MM（2026-09-09 08:49:20）和 DS 三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_PRODUCTION_WIRING_CPU_STATIC`。fixture 以局部 RNG fork/seed 固定两 timestep non-S0 visible Local，并在 wiring/real marker→trainer fixture 明确断言 `abs(expected)>1e-6`；CPU=32 passed（wiring=4、canonical trainer=7、model+adapter+integration=21）、target py_compile、child/root diff-check PASS。仅关闭 synthetic CPU/static wiring contract；persistent runtime-sidecar、真实 I/O、GPU、训练仍未授权。
+- 下一步：继续 `G0-R09-B-TTT-V035-PRODUCTION-WIRING-RUNTIME-SIDECAR-DESIGN` 的 docs-only 设计，预计仅新建根仓 `docs/build/` 版本化设计文件；先冻结 production adapter/trainer/runtime-sidecar 的最小接线与验收并取得新三方 implementation authority，禁止提前修改 child、真实 I/O、GPU 或训练。
 
 ## 当前最小步骤（2026-09-07）
 
