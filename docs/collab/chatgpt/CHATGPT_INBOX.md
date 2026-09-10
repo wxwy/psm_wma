@@ -319,3 +319,36 @@ Authorized next action:
 Not authorized: child implementation under this Gate, real producer/data pipeline changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native training/evaluation/inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer implementation design v0.4 changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `7a678c28d4c9b47ffe6e9e9df0659b843fc49f81`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.4.md:17)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_7a678c2_36bf3b2.md`
+
+Canonical review commit:
+`4a29b33c820cbf0cca298aebb565f2d1c3f0060f`
+
+Current blockers: 1 HIGH.
+
+Blocker summary:
+- v0.4 correctly closes the prior pre-scan/post-scan authority-order defect, but the typed carrier storage ABI is still not singular: v0.4 says the v0.1 typed-carrier contract remains effective and claims to retain its logical `[B,T]` shape, while concretely declaring flat row-major `logical_raw_rows[B*T]`; v0.1 explicitly declared nested `raw_rows[B][T]`.
+- implementation cannot simultaneously satisfy both exact field/shape contracts, and the ambiguity directly affects PAD/source/order validation.
+
+Authorized next action:
+- docs-only remediation under the same Gate: either retain the v0.1 nested `raw_rows[B][T]` ABI and use `flat=b*T+t` only as a traversal index, or explicitly supersede the v0.1 raw-row field/shape and make flat `logical_raw_rows[B*T]` the sole carrier storage authority. Align `row_model_samples`, PAD/source checks and CPU/static fixtures to the chosen representation.
+
+Not authorized: child implementation under this Gate, real producer/data pipeline changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native training/evaluation/inference, runtime sidecar, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
