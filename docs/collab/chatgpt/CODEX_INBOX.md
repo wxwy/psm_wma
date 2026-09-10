@@ -1047,3 +1047,14 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 本轮仅整改 closure 的 safe helper/CP/fixture 缺口：CP enabled 在 scan 前拒绝；canonical branch 调用 non-Local text→plan→clean→memory preparation，clean 后唯一从 gathered prefixes 写 plan+dense Local，再 abort + packer 前 hard-stop；补 B=2,T=3 mixed carrier 和 mock CPU call-order/CP tests。无真实 I/O/GPU/forward/loss/backward。定向 pytest、py_compile、diff-check 均已执行。
 
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权真实 I/O/GPU/torchrun/训练/评测/推理/LIBERO4IN1。正式 verdict仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Segment Producer CPU/static authority remediation closure（2026-09-10）
+
+- formal root SHA：`b2fc3c85e650dff3c3a4db1c79da6d384440f091`
+- child/Gitlink SHA：`1e26473aa5a17ca2ab256359fa012154bf4d9cfa`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+- 前序 review：`2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_3db2c4a_b8e778d.md`。
+
+本轮仅整改 carrier authority：恢复独立 data-batch carrier marker transport；carrier exact-bind request/member/SegmentBatch/row identities/chronology；scan 前 closed-keyset 与 expected logical index的逐项 model-batch source-identity 校验；post-clean 再断言无 `local_memory`；补同 cardinality foreign model-batch negative fixture。CPU-only，无真实 I/O/GPU/forward/loss/backward/训练。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权真实 I/O/GPU/torchrun/训练/评测/推理/LIBERO4IN1。正式 verdict仅写入 `docs/collab/chatgpt/reviews/`。
