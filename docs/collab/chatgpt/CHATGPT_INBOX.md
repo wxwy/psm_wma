@@ -121,3 +121,43 @@ Authorized next action:
 Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer CPU/static authority remediation changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `b2fc3c85e650dff3c3a4db1c79da6d384440f091`
+- child/Gitlink SHA: `1e26473aa5a17ca2ab256359fa012154bf4d9cfa`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_adapter.py:58)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_b2fc3c8_1e26473.md`
+
+Canonical review commit:
+`f56e3eeeed74c71bdcc32e3b3277e568fab97962`
+
+Current blockers: 3 HIGH.
+
+Blocker lifecycle:
+- the previous post-`get_data_and_condition()` working-mapping Local-neutral HIGH is CLOSED;
+- carrier transport/object binding is PARTIALLY CLOSED: the separate carrier marker is restored, `request.carrier` removed, and exact request/member/SegmentBatch/row identity/chronology references are now stored;
+- the previous Evidence HIGH remains PARTIALLY OPEN.
+
+Current blocker summary:
+- carrier/model-batch preflight still violates the frozen native-collate authority: the adapter hard-codes `image` while the live default `input_image_key` is `images`, does not enforce image/video XOR, rejects all stacked/default-collated tensor fields by requiring every value to be a list/tuple, lacks the required deterministic stacked-field provenance, and does not prove `row_model_samples` are the exact producer-native source of each raw row; full category/provenance/request-plan checks can still occur only inside `adapter.scan()`, and carrier validation currently happens after adapter lookup/creation so a foreign preflight can mutate adapter/model state;
+- the restored `canonical_production_segment_carrier` marker is not included in `_canonical_production_request_from_batch()` activation presence checks, so carrier-only input with `local_ttt_enabled=False` silently returns `None` and falls through to the ordinary No-Local path;
+- tests still do not prove a valid production canonical forward through scan/equality/safe-helper/abort/hard-stop, actual-mismatch abort, injected post-scan failure disposition, legacy zero-call, No-Local parity/marker isolation, or the full source/provenance/default-image/stacked-tensor authority matrix.
+
+Authorized next action:
+- remediate only this CPU/static implementation under the already-approved v0.1-v0.5 design contract and return a new formal root/child pair for fresh closure review;
+- keep all fallible authority validation before adapter lookup/creation and scan; preserve the already-closed CP, Local-neutral, safe-helper, nested-storage and abort contracts.
+
+Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
