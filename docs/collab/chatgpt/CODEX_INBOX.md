@@ -684,6 +684,22 @@ v0.2 不改 child/Gitlink，仅 supersede v0.1 并关闭四项 blocker：①定�
 
 ---
 
+## CODEX REVIEW REQUEST — canonical adapter/scheduler queue-authority remediation closure
+
+- formal root：`6fc0d111756177e60b06325c8d400dc6a25972ef`
+- child/Gitlink：`86091472fd9a49e0b5b8a35d7797abb2d70b4fa8`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`
+- prior pair/reviews：root=`7481c5c`/child=`1005ef6` 的 ChatGPT 2 HIGH+1 MEDIUM、Kimi multi-member MEDIUM、MM approve；本 pair 仅整改已齐意见。
+- exact child diff whitelist：`cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler.py`、`cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler_test.py`。
+
+本整改将 fresh episode queue 与 continuation chronology 分离：queue 仅使用按 `(source_digest,episode_id)` canonical 排序的 `cursor=0/start=0` entries；continuation 仅服务 bound `cursor+1`。同一 B>1 member 逐 slot reserve projected queue state；`freeze_plan` 可在 member 边界 projected-only safe rollover。移除 plan-level retry constructor，batch transaction 独占 attempt-1、拒绝 phantom indices并在最后 member seal。新增同一 two-member plan 内 two-free-slot same-category admission、continuation-exclusion、projected rollover、FIFO exact reconcile/乱序 no-mutation evidence。CPU scheduler+segment=`24 passed in 8.12s`，Ruff、`py_compile`、双仓 `git diff --check` PASS。
+
+请核对 ChatGPT HIGH-1/2 与 MEDIUM、Kimi MEDIUM 是否关闭，尤其 queue/chronology separation、same-member reservation、projected rollover 与 transaction-only retry。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 CPU/static closure；禁止 production binding、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
 ## CODEX REVIEW REQUEST — canonical segment adapter/scheduler CPU/static implementation closure
 
 - formal root：`61f469b0a142e340becd8038e2be23eca63b73e4`
