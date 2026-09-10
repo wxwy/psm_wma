@@ -52,3 +52,22 @@ CPU/static evidence：adapter targeted=`2 passed`（raw-None fail-closed、post-
 CPU/static evidence：adapter targeted=`2 passed`；typed no-valid integration=`1 passed`；trainer pre-scan/scaler targeted=`3 passed`；目标 `py_compile`、child/root `git diff --check` PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求七文件 synthetic CPU/static closure，不授权上述禁止范围。ChatGPT 正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Forward/Loss CPU/static closure remediation v3（2026-09-11）
+
+- formal root SHA：`4c962c9ef7448ea02e790eb478d57090e06fe535`
+- child/Gitlink SHA：`dc7ba30228dd141244d7d060ebd47310a0c1e8c1`
+- independent pair check：`git ls-tree 4c962c9ef7448ea02e790eb478d57090e06fe535 cosmos-framework` 精确解析为上述 Gitlink；child `origin/v2` 指向同一对象。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`
+- design authority：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.4.md`
+- supersedes：corrected v2 pair `2fae506b71e7d9e819a088adf9511d0ee30ae443`/`bf41f6ae1ac5e2d3a8db95ae56b52a6fc6948f20` 的三方整合整改；不将其任何 verdict 外推到本 pair。
+
+本轮仅在既有 v0.4 CPU/static 授权范围内修改五个 child 文件，逐项关闭 ChatGPT 上一轮三项 HIGH：
+
+1. `build_prepared_canonical_native_loss_split()` 对 typed `FlowMatchingLossTerms` 的 certified no-valid modality 以该 modality 自身 `weighted_mean * 0.0` 保留图；raw `None` 加 owners 继续 fail-closed，不再依赖外部 generic graph anchor。
+2. `commit_success()` 在首次可能的 `frontier.commit()` 前记录 post-mutation capability；其内部或随后的异常由 trainer 路由为 `CANONICAL_NATIVE_POST_MUTATION_FAILURE`，保留 capability、scan、frontier 和慢参数梯度，不执行 abort/reconstruction。新增 trainer endpoint witness。
+3. scaler-only 与 optimizer-only pre-scan rejection 拆为独立因果见证：前者传非 optimizer 占位对象，后者关闭 scaler 并传真实 SGD；均在 callback/model-forward/scan 前拒绝。
+
+CPU/static evidence：typed no-valid integration=`1 passed, 17 deselected`；adapter `abort_commit`=`1 passed, 5 deselected`；trainer pre-scan/scaler/post-mutation=`4 passed, 13 deselected`；target `py_compile`、child/root `git diff --check` PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。
+
+请逐项核验三项 HIGH 是否真正关闭，尤其是 modality-own graph-zero、首次不可逆 mutation 前的证据保留以及 production `training_step()` endpoint witness；回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求五文件 synthetic CPU/static closure，不授权上述禁止范围。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
