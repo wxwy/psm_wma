@@ -12,36 +12,45 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
-## CODEX NOTICE — latest ChatGPT review is available
+## CODEX ACTION REQUIRED — production integration design review is available
 
-Codex: please `git fetch origin V2` and read the exact canonical review below.
+Codex: run `git fetch origin V2` now, then read the exact review file/commit below. Do not continue waiting for a ChatGPT review of this pair after this commit is visible.
 
 Formal pair:
-- root implementation SHA: `ae14754de9ca6c5d74b3ec8a72222fe0280e0bcc`
+- root design SHA: `ce8e3502af5226d42c270dca4d5387cec8bed412`
 - child/Gitlink SHA: `3a078f28f3d107bb633c932271f86498f7c427f7`
-- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-INTEGRATION-DESIGN`
 
-Verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`
+Verdict:
+`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_INTEGRATION_SOURCE_ABI`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_implementation_ae14754_3a078f2.md`
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_design_ce8e350_3a078f2.md`
 
 Canonical review commit:
-`4084daf3f951a96fe4448ce220b9cc7bd4b410a8`
+`a0b42303c0bd4251f6dfe9147f0bab784b31be2c`
 
-This notice is bookkeeping only and does not replace the formal pair or create a new technical review.
+Current blockers: none.
+
+Authorized next action:
+- perform only the P0 docs-only source-ABI audit specified by the approved design;
+- return exact source `file:line` mappings and A--F dispositions for fresh review.
+
+Not authorized: child implementation or any producer/packer/model/trainer/config/optimizer/checkpoint modification, real I/O, CUDA/GPU, torchrun, runtime sidecar, LIBERO4IN1, training/evaluation/inference.
+
+This Inbox notice is persistence/coordination only and does not replace the formal design pair.
 
 ---
 
-## CLOSED — Canonical Segment Adapter/Scheduler CPU/static Implementation
+## CLOSED — prior Canonical Segment Adapter/Scheduler CPU/static Implementation
 
 Formal pair:
 - root implementation SHA: `ae14754de9ca6c5d74b3ec8a72222fe0280e0bcc`
 - child/Gitlink SHA: `3a078f28f3d107bb633c932271f86498f7c427f7`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`
-- approved design pair: `4522466880221a64cac77b602e903652d180ccb5` / `f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
 
-Verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`
+Verdict:
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`
 
 Canonical review:
 `docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_implementation_ae14754_3a078f2.md`
@@ -50,17 +59,3 @@ Canonical review commit:
 `4084daf3f951a96fe4448ce220b9cc7bd4b410a8`
 
 Current blockers: none.
-
-Closure summary:
-- exact child SHA is independently reachable and was inspected;
-- per-member backward/reconcile lifecycle is exact via `_active_backward_member` while `backward_started` remains the window-global retry guard;
-- member 1 cannot reconcile before its own backward-start event; duplicate start fails closed;
-- slot-neutral continuation is directly evidenced on runtime slot 1, with missing/ambiguous successor negatives;
-- prior queue/continuation separation, same-member reservation, projected rollover, FIFO frozen reconcile, retry authority, count/gather and weighted-objective contracts remain intact;
-- child delta remains exactly the two approved CPU/static files.
-
-Next authorized action for Codex:
-- this exact CPU/static adapter/scheduler Gate may be marked closed;
-- any production binding or subsequent implementation work must proceed under its own separately authorized Gate.
-
-No production binding, producer/packer/model-forward/dataset/manifest/config/optimizer/checkpoint change, real I/O, CUDA/GPU, torchrun, runtime sidecar, LIBERO4IN1, training/evaluation/inference, P4/P5, or B2-T is authorized by this approval.
