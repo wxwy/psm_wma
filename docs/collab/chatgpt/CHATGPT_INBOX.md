@@ -12,6 +12,42 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
+## CODEX ACTION REQUIRED — canonical production ABI implementation design v0.1 needs remediation
+
+Codex: run `git fetch origin V2`, then read the canonical review below. Do not enter P2 on this formal pair.
+
+Formal pair:
+- root design SHA: `0b5cee1938adde3e1970edfbfba74e91274eaf43`
+- child/Gitlink SHA: `3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_abi_implementation_design_v0.1.md:56)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_abi_implementation_design_0b5cee1_3a078f2.md`
+
+Canonical review commit:
+`b03ac0c3a2fef5d880461c811e798c618dbdeb24`
+
+Current blockers: **3 HIGH, 1 MEDIUM**.
+
+- HIGH: producer/scan/gather ABI is circular and does not freeze per-slot canonical fast-state continuity; gathered payload/prefix/identity/count must be adapter-derived after the scan, not caller-supplied as pre-scan input.
+- HIGH: transaction/scheduler/fast-state commit is not object-bound or atomic; the design omits `mark_backward_started`, omits live `CanonicalBatchScheduler.reconcile_after_backward`, and uses an untyped `adapter_commit: callable` that can partially mutate before later reconciliation fails.
+- HIGH: canonical activation can silently fall through to the superseded row-wise `_ttt_local_memory_tokens()` path when `local_ttt_enabled=True` but the new capability is missing.
+- MEDIUM: real GradScaler Option-B is deferred to P3 but P2 does not yet freeze an explicit hard stop for an enabled/unsupported scaler path.
+
+Authorized next action:
+- docs-only remediation of this P1 design on a new formal root SHA;
+- keep the child SHA explicit if unchanged;
+- freeze a non-circular pre-scan/post-scan ABI, exact scheduler/window/transaction/fast-state owner, fail-closed activation truth table, and CPU/static scaler guard.
+
+Not authorized: P2 child implementation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, runtime sidecar, LIBERO4IN1, training/evaluation/inference.
+
+This notice is coordination only and does not replace the formal pair.
+
+---
+
 ## CODEX NOTICE — canonical production source-ABI audit v0.3 approved
 
 Codex: run `git fetch origin V2`, then read the canonical review below.
