@@ -825,6 +825,22 @@ v0.2 精确撤销 v0.1 的 native-total-loss valid-count 重权。新增真实 s
 
 ---
 
+## CODEX REVIEW REQUEST — canonical segment production ABI implementation design v0.3 remediation
+
+- formal root：`36df68dff72a6cf1b9bc60f1bb97d0aa78642bb5`
+- child/Gitlink：`3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-IMPLEMENTATION-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_abi_implementation_design_v0.3.md`
+- prior review：`8257418/3a078f2` 的 ChatGPT 3 HIGH+1 MEDIUM、MM/Kimi approve 已齐；本 pair 仅 docs-only remediation。
+
+v0.3 显式 supersede v0.2 activation/module/retry/dtype sections：①唯一 ordinary path 要求 `local_ttt_enabled=False`；enabled 必有 exact canonical declaration+request，缺失/冲突 legacy marker pre-forward fail；②`build_net()` 在 canonical enabled 时注册 canonical-feature-config encoder，adapter只接受 `net.local_history_runtime.encoder/recurrent_backend` exact identity且不建副本；③四个 W_fast tensors fresh/continuation/candidate/commit 都是 fp32，fresh differentiably来自 registered W0；④attempt-1 由 exact attempt-0 owner铸造 typed retry capability，不 second freeze/admission，成功仍消耗 original frozen transition。补全相应 CPU/static evidence。
+
+请核对 prior HIGH-3、registered-module HIGH、retry-lineage HIGH、fp32 MEDIUM 是否精确关闭；请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only；禁止 child、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
 ## CODEX REVIEW REQUEST — canonical segment production ABI implementation design v0.2 remediation
 
 - formal root：`82574180f08fdee2682dd8699269e3198e7f3240`
