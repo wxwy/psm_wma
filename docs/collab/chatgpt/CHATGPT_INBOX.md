@@ -352,3 +352,37 @@ Authorized next action:
 Not authorized: child implementation under this Gate, real producer/data pipeline changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native training/evaluation/inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer implementation design v0.5 approved
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `17901f65d9f09772a98921cd28ffbb05d82d3725`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_17901f6_36bf3b2.md`
+
+Canonical review commit:
+`62ac9fcdde1c8032a8b45c54a86aa992186b6fb2`
+
+Current blockers: none.
+
+Closure:
+- the v0.4 carrier-storage HIGH is CLOSED exactly: nested `raw_rows[B][T]` is the sole carrier raw-row source authority; `row_model_samples[B][T]` uses the same shape; `flat=b*T+t` is transient traversal metadata only and cannot become a carrier field or second source of truth;
+- the previously closed expected-before-scan / actual-after-scan split, Local-neutral preparation, single canonical prefix adaptation, CP fail-closed behavior and exact-once scan abort disposition remain in force.
+
+Authorized next action:
+- implement only the four-file CPU/static child bridge under the accumulated v0.1-v0.5 design contract;
+- return a new formal root/child pair for fresh implementation review.
+
+Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
