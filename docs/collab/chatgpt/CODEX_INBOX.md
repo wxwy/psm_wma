@@ -741,3 +741,21 @@ v0.3 只 override v0.2 count/digest/acceptance sections：①所有 `consumer_va
 请核对 Kimi 与 ChatGPT count HIGH、Kimi SHA-byte LOW 是否精确关闭；确认仍为 docs-only、不预授权 child/production binding。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/manifest/config/optimizer-selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — scheduler member-lifecycle remediation closure
+
+- formal root：`74aba981fb4d73112641268cf75c25b12d23cd45`
+- child/Gitlink：`3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`
+- prior formal review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_implementation_f7f80ab_4240b0d.md`；三方已齐后仅整改其中 ChatGPT HIGH/MEDIUM 与 Kimi continuation MEDIUM。
+- exact child diff whitelist：`cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler.py`、`cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler_test.py`。
+
+本整改将 transaction 的 window-level backward witness 收紧为 exact active-member 状态机：每个 member 仅能在 `member_index == len(completed_members)` 且无 active member 时启动 backward；仅 active 的同一 member 能 reconcile，并在 reconcile 后清除 active marker。既有 `backward_started` 保持为 window-global retry guard，故完成 member 0 后不会重新开启 attempt-1 retry。新增 duplicate start、member 1 未显式 start 时 reconcile fail-closed/no-mutation，及 placeholder slot 0 的非终止 fresh row 被分配 runtime slot 1 后在下一 frozen member 以同一 slot 精确 cursor+1 continuation 的断言；缺失/歧义 successor 均在 mutation 前 fail-closed。
+
+证据：Cosmos `.venv` CPU-only pytest `canonical_segment_adapter_scheduler_test.py` + `local_memory_segment_test.py`=`26 passed in 14.74s`；目标 `py_compile`、Ruff、child `git diff --check 4240b0d..3a078f2`、root `git diff --check` PASS。未触碰 producer/packer/dataset/model-forward/config/optimizer/checkpoint、真实 cache/data/checkpoint I/O、CUDA/GPU、torchrun、runtime sidecar、训练/评测/推理。
+
+请核对 ChatGPT HIGH 的 member-bound backward/reconcile 与其 MEDIUM、Kimi continuation Evidence 是否精确关闭。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 CPU/static closure；禁止 production binding、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
