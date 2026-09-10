@@ -12,40 +12,31 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
-## ACTIVE — Canonical Segment Production Adapter + Scheduler/GA Design v0.2
+## ACTIVE — Canonical Segment Production Adapter + Scheduler/GA Design v0.3
 
 Formal pair:
-- root design SHA: `7cfa68eadd0f72d66e01b198c5d2c279d35fff54`
+- root design SHA: `4522466880221a64cac77b602e903652d180ccb5`
 - child/Gitlink SHA: `f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ADAPTER-SCHEDULER-DESIGN`
-- artifact: `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.2.md`
-- request/bookkeeping commit observed: `2c0e22e45fad19db97da12c6ed6d175726cfa945`; subsequent handoff/poll/session commits do not replace the formal pair.
+- artifact: `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.3.md`
 
-Verdict: `REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.2.md:71)`
+Verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_design_7cfa68e_f14a8d8.md`
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_design_4522466_f14a8d8.md`
 
 Canonical review commit:
-`f3060d58a9b23327c514fb7d2846f00a250db3b6`
+`da05500f748dccb3dc7af924d81761189a6b6c15`
 
-Prior v0.1 blockers now CLOSED at design level:
-- batch-level member / all-row atomic transaction;
-- pure projected pre-load GA planning and chronology source;
-- first-member-only objective-preserving retry;
-- deterministic queue epoch rollover semantics.
+Closure:
+- prior v0.2 HIGH is CLOSED: planned/native count now includes every `consumer_valid=True` cell including S0, excludes only PAD, and freezes row/member/window/gather/item/actual count equality;
+- queue SHA-256 preimage bytes are now exact and implementation-independent;
+- inherited v0.2 batch-level member, projected planning, all-row atomic reconcile, first-member-only retry, rollover and exposure contracts remain authoritative.
 
-Current blocker:
-- **HIGH 1 — `planned_n_valid` excludes valid S0 while canonical gather/native item count includes S0.** v0.2 §4 counts only `consumer_step > 0` but also requires equality to `SegmentBatch.consumer_valid[b].sum()`. Canonical S0 is a valid native consumer with Local absent. For `[S0,S1,PAD]`, the design plans 1 while gather/item-count is 2, so legal first segments fail closed and the consumer-loss denominator is wrong.
-
-Exact remediation:
-- count every valid consumer timestep including S0; exclude only PAD;
-- row frozen count == `consumer_valid[b].sum()`; member aggregate == gathered payload count == `NativeConsumerBatch.item_count`;
-- use the same count for `original_n_valid_window` / consumer weighting;
-- add CPU/static S0 + non-S0 + PAD exact-count/objective evidence.
+Current blockers: none.
 
 Next authorized action for Codex:
-- docs-only remediation of the count semantics above;
-- submit a new root formal SHA with the exact child/Gitlink for fresh review.
+- begin only the bounded CPU/static adapter/scheduler implementation described by the approved v0.3/v0.2 design chain;
+- freeze the exact child-file whitelist in the implementation request and provide the required CPU/static Evidence before closure review.
 
-No child implementation, producer/packer/dataset/manifest/config/optimizer-selector/checkpoint change, real I/O, CUDA/GPU/torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1 is authorized by this verdict.
+This approval does not authorize production binding, producer/packer/dataset/manifest/config/optimizer-selector/checkpoint changes outside a separately approved whitelist, real I/O, CUDA/GPU, torchrun, training/evaluation/inference, P4/P5, B2-T or LIBERO4IN1.
