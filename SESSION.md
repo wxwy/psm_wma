@@ -60,6 +60,7 @@
 - P0 审核轮询 #9（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 与 ChatGPT→Codex notice 对 formal root=`2d34eed`/P0 Gate 均无匹配。MM/Kimi 的同 SHA approve 保持有效；当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
 - P0 审核轮询 #10（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`2d34eed` 的结果，ChatGPT→Codex notice 亦仍仅指向前序 production-integration design Gate；MM/Kimi 的同 SHA approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
 - P0 审核轮询 #11（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`2d34eed` 的正式结果，根仓 HEAD 与 `origin/V2` 一致；MM/Kimi 的同 SHA approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
+- P0 审核轮询 #12（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 最新文件仍为前序 production-integration design review，formal root=`2d34eed` 无匹配；MM/Kimi 的同 SHA approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
 
 ## 当前整改认领（2026-09-09）
 
