@@ -253,3 +253,36 @@ Watchpoint:
 Not authorized: child implementation under this Gate, real producer/materialization, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native training/evaluation/inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer implementation design v0.2 changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `9b8883f1d171df9b8e70062d2988310554a499e9`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.2.md:21)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_9b8883f_36bf3b2.md`
+
+Canonical review commit:
+`9b7d7f8cdf6e317a5ac3f7bba966bc3c01a46f33`
+
+Current blockers: 2 HIGH.
+
+Blocker summary:
+- `model_data_batch` is introduced as a producer-supplied gathered-order mapping but is not field-wise/row-wise derived and identity-bound to `raw_rows`; a foreign same-cardinality native mapping can therefore pass the stated coarse checks. In addition, `get_data_and_condition()` itself reads ordinary `data_batch["local_memory"]` and can materialize `x0_tokens_local_memory` before the canonical §3 adaptation, so the design must make this model batch explicitly Local-neutral and fail closed on ordinary `local_memory` input.
+- the intended path performs `CanonicalProductionAdapter.scan()` and later intentionally hard-stops before packer/forward/backward, while current `scan()` records `_scan_requests/_scan_results`. No abort/discard/rollback is defined, so both the normal hard-stop path and any post-scan helper failure leave a consumed graph-bearing scan capability and violate failure zero-partial-mutation.
+
+Authorized next action:
+- docs-only remediation under the same Gate: freeze the exact `raw_rows -> model_data_batch` derivation/identity contract and Local-neutral precondition, and freeze an exact scan failure/hard-stop disposition (or do not call real scan and narrow acceptance accordingly).
+
+Not authorized: child implementation under this Gate, real producer/data pipeline changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native training/evaluation/inference, runtime sidecar, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
