@@ -35,6 +35,11 @@
 - 同时仓内旧 `production_integration_implementation_design_v0.5` 已定义另一条 `local_memory_segment_adapter.py`/sidecar/trainer seam，但其白名单和 authority 与本 P2 six-file whitelist 不同，不能静默混用。故当前 P2 不得擅自把 opaque payload 接到 `_get_training_inputs()`、packer 或旧 row-wise route；保持 canonical branch hard-stop。
 - 下一步：以 producer/native-input ABI 与 P2/v0.5 authority relationship 建立独立 docs-only design/audit Gate，获三方批准后才可继续 native loss split/trainer boundary；在此之前 P2 仅可继续已有六文件内的无歧义静态合同补强。提交：未提交。
 
+## Producer ABI docs-only remediation（2026-09-10）
+
+- 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_abi_design_v0.1.md`：冻结 immutable native-row source、stream-major valid gather、S0 None/PAD exclusion、native input bundle和 P0 file:line audit questions；显式禁止把 v0.5 sidecar 或旧 row route混入当前 P2。
+- 未改 child、未运行项目代码/真实 I/O/GPU。下一步：静态核验、提交后按 producer ABI 新 Gate 发起三方 docs-only审核。提交：未提交。
+
 ## 当前整改认领（2026-09-10）
 
 - P0 source-ABI audit v0.3 已关闭：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_395dadf_3a078f2.md`、MM、Kimi 对 formal root=`395dadff0b17ed6206887e372718bb166aa63b40`/child=`3a078f28f3d107bb633c932271f86498f7c427f7` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`。P0 仅授权下一 P1 docs-only design。
