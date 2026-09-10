@@ -47,3 +47,35 @@ Authorized next action:
 Not authorized: real data/cache/checkpoint I/O, CUDA/GPU, torchrun, runtime sidecar, LIBERO4IN1, training/evaluation/inference, or P3/P4 work.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer ABI design v0.1 changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `c9596881eea09962ecaccc8d0b2b14eb57e6c8fa`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-ABI-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_abi_design_v0.1.md:17)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_abi_design_c959688_36bf3b2.md`
+
+Canonical review commit:
+`3cc38c5f5c8e67d82e934b117d977904350f4918`
+
+Current blockers: 1 HIGH.
+
+Blocker summary:
+- producer ABI freezes `GenerationDataClean` / tokenized inputs / diffusion timestep metadata as if they were upstream collate-row fields, but live `OmniMoTModel` creates the processed training payload model-side and samples `timesteps_vision` only after `_get_training_inputs()`; the proposed ownership/materialization boundary therefore contradicts the current production lifecycle.
+
+Authorized next action:
+- docs-only remediation of the producer ABI boundary: separate true post-collate row data from model-generated native materializations, retain current model-owned timestep/noise semantics, and return a new formal pair for fresh Design review.
+
+Not authorized: source-audit closure, producer implementation, dataloader/collate/packer changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
