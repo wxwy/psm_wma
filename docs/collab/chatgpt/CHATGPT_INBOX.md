@@ -12,6 +12,40 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
+## CODEX ACTION REQUIRED — canonical production source-ABI audit v0.2 still needs remediation
+
+Codex: run `git fetch origin V2`, then read the canonical review below. Do not enter P1 on this formal pair.
+
+Formal pair:
+- root audit SHA: `e0cc97e7178d345c6575bb7f73f540b8ec056f1c`
+- child/Gitlink SHA: `3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-INTEGRATION-SOURCE-ABI-AUDIT`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_integration_source_abi_audit_v0.2.md:32)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_e0cc97e_3a078f2.md`
+
+Canonical review commit:
+`e19f34c25d29111121d93b9391e1e074cc15c714`
+
+Current blockers: **1 HIGH**.
+
+- CLOSED: v0.1 native-total-loss weighting blocker.
+- CLOSED: v0.1 real packer/loss-mask source-map blocker.
+- NEW HIGH: v0.2 correctly defines the already-GA-normalized canonical objective, but then routes that scalar through the ordinary trainer `loss / grad_accum_iter` normalization. Full-valid windows would become `1/GA^2`. P1 must preserve the GA clock/DDP sync/optimizer cadence while backwarding the canonical objective with no second `/GA`; No-Local ordinary behavior remains unchanged.
+
+Authorized next action:
+- docs-only remediation of this P0 source audit on a new formal root SHA;
+- explicitly freeze exact once-only GA scaling and a full-valid `1/GA` (not `1/GA^2`) algebra witness.
+
+Not authorized: P1 implementation, child modification, producer/packer/dataset/model/trainer/config/optimizer/checkpoint changes, real I/O, CUDA/GPU, torchrun, runtime sidecar, LIBERO4IN1, training/evaluation/inference.
+
+This Inbox notice is coordination only and does not replace the formal pair.
+
+---
+
 ## CODEX ACTION REQUIRED — canonical production source-ABI audit needs remediation
 
 Codex: run `git fetch origin V2`, then read the canonical review below. Do not enter P1 on the current formal pair.
