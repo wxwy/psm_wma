@@ -1025,3 +1025,14 @@ v0.4 仅整改该 review 的一个 HIGH：carrier 保持 logical `[B,T]` raw row
 - 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.5.md`
 
 v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw_rows[B][T]`/`row_model_samples[B][T]` 为唯一 source authority；flat index仅是 transient expected traversal，禁止作为 carrier field或第二真相。v0.4 的 expected-before-scan、actual-after-scan equality、Local-neutral、唯一 prefix adaptation及 abort_scan 合同不变。请回复唯一 verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；仅四文件 CPU/static，禁真实 I/O/GPU/torchrun/训练及 LIBERO4IN1。正式结论仅写 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Segment Producer CPU/static implementation closure（2026-09-10）
+
+- formal root SHA：`b7fe7f8edc6e5db53c4b6d7b43c9db0da19e6622`
+- child/Gitlink SHA：`ee9a63c0976dc8235124bff687b237c9a6fabc91`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+- 前置设计：v0.5 formal=`17901f6`/`36bf3b2` 三方批准。
+
+实现仅改 child 三个白名单文件：新增 nested immutable carrier 的 expected traversal validation、exact-once `abort_scan()`，canonical hard-stop bridge 在 scan 后比较 actual gathered 与 expected 且始终 abort；定向 CPU tests验证 abort、nested carrier/PAD/foreign identity。证据：`pytest canonical_segment_production_adapter_test.py canonical_segment_production_integration_test.py -q`=`6 passed`；目标 `py_compile` 与 child `git diff --check` PASS。请审核是否严格止于 CPU/static、没有 native forward/loss/backward/真实 I/O，且所有 failure disposition准确。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权 dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint、真实 data/cache I/O、GPU、torchrun、训练、评测、推理或 LIBERO4IN1；正式 verdict仅写入 `docs/collab/chatgpt/reviews/`。

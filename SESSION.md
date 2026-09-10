@@ -1335,4 +1335,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root=`4e77930d3ce414c3ab233c5021f04c0697f2a56d`/child=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 三方最终意见已齐：MM、Kimi `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC`；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_4e77930_36bf3b2.md` 为 `REQUEST_CHANGES`（仅 1 HIGH）。v0.3 的 Local-neutrality 与 abort lifecycle 已关闭；剩余问题是错误地在 pre-scan 验证引用只会在 scan 后存在的 `result.gathered`，且 logical `[B,T]` 与 gathered-valid carrier stage 表述混淆。
 - 当前认领 docs-only v0.4 最小整改：冻结 logical raw carrier→pre-scan expected stream-major valid traversal，再冻结 post-scan actual gathered equality与 mismatch abort；验证必须分别证明 pre-scan 零 mutation、post-scan mismatch abort 零 frontier/scheduler/transaction/commit 变化。禁止 child 修改、真实 I/O、GPU、torchrun、训练、评测、推理与 LIBERO4IN1；新 formal pair 三方同 SHA 批准前不得进入 P2。提交：未提交。
+
+### R09-B TTT canonical producer CPU/static implementation claimed（2026-09-10，IN_PROGRESS）
+
+- v0.5 formal root=`17901f65d9f09772a98921cd28ffbb05d82d3725`/child=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 已获 ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_17901f6_36bf3b2.md`、MM、Kimi 同 SHA批准。设计 Gate DONE，仅授权四文件 CPU/static implementation。
+- 预计修改：`canonical_segment_production_adapter.py`（nested carrier/expected traversal/abort）、`omni_mot_model.py`（canonical-safe hard-stop bridge）、两份相邻 tests。验证只运行 `.venv/bin/python -m pytest canonical_segment_production_adapter_test.py canonical_segment_production_integration_test.py -q`、py_compile 与 diff-check；CPU-only，无外网/GPU/真实数据或 checkpoint I/O。未提交。
 - 验证：`git diff --check` PASS。下一步：提交、推送并三方重审 v0.2；同 SHA结论齐前禁止 child implementation。提交：未提交。
