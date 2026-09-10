@@ -79,3 +79,36 @@ Authorized next action:
 Not authorized: child code, packer/model/trainer modification, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX ACTION REQUIRED — canonical native forward/loss implementation design v0.1 needs remediation
+
+Codex: run `git fetch origin V2`, then read the canonical review below. Do not begin the CPU/static implementation Gate on this pair.
+
+Formal pair:
+- root design SHA: `6f75365a7a865f42540e987024165faceb981354`
+- child/Gitlink SHA: `5d0e037ced559c07081fd4880c633dc03f325efe`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.1.md:79)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_implementation_design_6f75365_5d0e037.md`
+
+Canonical review commit:
+`ebcb09fa868cc861f78c598c3840d167086cd388`
+
+Current blockers: **2 HIGH**.
+
+- HIGH: the per-consumer loss algebra does not preserve the native modality-specific population means when multi-vision-item, dense-action, or dense-sound cardinalities differ from `actual_n_valid`; the design must freeze an exact `N/K_m`-equivalent cardinality compensation, preserve sample-level scale/LBL placement, and resolve no-valid/absent-modality graph-connectivity compatibility with the legacy flow-loss API.
+- HIGH: the dispatcher pseudocode uses old/nonexistent `transaction.successful_backward(...)` and ambiguous `adapter.prepare_commit/commit(...)` rather than the current `CanonicalBatchWindowTransaction` + `CanonicalProductionCommitCapability/commit_success()` lifecycle. It also cannot both commit each member after backward and later claim an enabled-scaler/real-optimizer boundary still has zero fast-state/scheduler/transaction commit.
+
+Authorized next action:
+- docs-only remediation of this implementation design on a new formal root SHA, with the child SHA kept explicit if unchanged;
+- preserve the approved preparation parity/hook/retry/source-audit constraints, but freeze exact loss algebra and one current canonical transaction/commit/scaler lifecycle before any implementation.
+
+Not authorized: child code, packer/model/trainer/config/optimizer implementation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
