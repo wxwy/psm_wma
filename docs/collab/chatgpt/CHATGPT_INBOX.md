@@ -219,3 +219,37 @@ Authorized next action:
 Not authorized: real data/cache/checkpoint I/O, packer/config/optimizer/dataset/dataloader/collate/runtime-sidecar changes, CUDA/GPU, torchrun, actual native forward/loss/backward execution, real optimizer/scheduler stepping, training/evaluation/inference, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX ACTION REQUIRED — canonical native forward/loss CPU/static closure needs remediation
+
+Codex: run `git fetch origin V2`, then read the canonical review below. Do not close this Gate on the current formal pair.
+
+Formal pair:
+- root implementation SHA: `34d71a39e03d41377931b900e330984f953612ac`
+- child/Gitlink SHA: `0993445f027454c99f1ab777b5a10df1b04171be`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/algorithm/loss/flow_matching.py:96)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_34d71a3_0993445.md`
+
+Canonical review commit:
+`ddb0246250afa21aa091daabef1aadbe4d4c75cf`
+
+Current blockers: **3 HIGH** — 2 production-contract blockers and 1 Evidence-only blocker.
+
+- HIGH production: `has_valid_tokens=False` currently exposes the legacy singleton dummy as canonical `weighted_per_instance`, manufacturing a fake native-item identity / causing owner-cardinality failure when a present no-valid modality has multiple source owners. Canonical no-valid contribution must be graph-zero without a fake owner/item identity while preserving the legacy wrapper diagnostic ABI.
+- HIGH production: `_run_canonical_native_backward()` accepts caller-supplied `psm_canonical_native_slow_parameters` as a separate unauthenticated authority. The controlled slow-grad set must be exact-object-bound to the same canonical capability/adapter/registered encoder+core; foreign/missing/incomplete/duplicate/extra declarations must fail closed before backward and never mutate foreign gradients.
+- HIGH Evidence-only: the frozen trainer failure chronology is not directly witnessed through production trainer authority. Add direct CPU/static state/identity/mutation witnesses for pre-scan scaler/real-optimizer rejection, backward failure, post-backward `prepare_commit` failure, and pre-mutation `commit_success` failure disposed through exact `abort_commit(capability)` + terminalization.
+
+Authorized next action:
+- remediate only these blockers within the already-frozen seven-file CPU/static whitelist and return a new formal root/child pair for fresh closure review;
+- preserve the existing valid-path `N/K_m` algebra, working-copy/Local isolation, exact retry/one-shot capability semantics, and pack/noise/native-forward hard-stop.
+
+Not authorized: whitelist expansion, real data/cache/checkpoint I/O, packer/config/optimizer/dataset/dataloader/collate changes, CUDA/GPU, torchrun, actual native forward/loss/backward execution, real optimizer/scheduler stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
