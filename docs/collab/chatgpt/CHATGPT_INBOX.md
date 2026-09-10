@@ -185,3 +185,37 @@ Authorized next action:
 Not authorized: child code, packer/model/trainer/config/optimizer implementation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical native forward/loss implementation design v0.4 approved
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `1c6ceedb27004e52cd256c404159b85f9be6ba8b`
+- child/Gitlink SHA: `5d0e037ced559c07081fd4880c633dc03f325efe`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_implementation_design_1c6ceed_5d0e037.md`
+
+Canonical review commit:
+`b911d320d3c594b65b0e73f5110609af2fabe3a4`
+
+Current blockers: none.
+
+Closure:
+- the v0.3 commit-capability leak HIGH is CLOSED by exact typed `abort_commit(capability)`: preflight exact registered capability/request/result/scheduler ownership, consume the one-shot commit capability exactly once, dispose exact scan bookkeeping, and perform no frontier/scheduler/transaction reconcile;
+- trainer failure ownership is explicit: backward or `prepare_commit` failure uses slow-grad clear + `abort_scan` + transaction terminalize; supported `commit_success` pre-mutation failure uses slow-grad clear + `abort_commit` + terminalize; any failure after irreversible commit mutation is unsupported and must preserve evidence rather than auto-recover;
+- v0.2 `N/K_m` loss algebra, absent/no-valid graph-zero semantics, field-wise non-alias ownership, preparation parity/hook order, exact retry lineage, S0/PAD, old-schema supersession and pre-scan enabled-scaler/real-optimizer rejection remain in force.
+
+Authorized next action:
+- enter only the already-frozen seven-file `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION` Gate and return a new formal root/child pair for closure review.
+
+Not authorized: real data/cache/checkpoint I/O, packer/config/optimizer/dataset/dataloader/collate/runtime-sidecar changes, CUDA/GPU, torchrun, actual native forward/loss/backward execution, real optimizer/scheduler stepping, training/evaluation/inference, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
