@@ -24,6 +24,7 @@
 - 当前整改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.3.md`，仅 override v0.2 的 count/digest/acceptance sections：count range 定义为全部 `consumer_valid=True`（含 S0）、row/member/window/item/actual 五方 exact equality，S0 仅 Local absent；SHA preimage 固定 UTF-8、NUL byte、ASCII 无填充整数与无 normalization category。仅 root docs，child/Gitlink 不变；未执行项目代码、真实 I/O/GPU/训练。下一步：静态核验、提交推送，再对新 pair 请求 ChatGPT/MM/Kimi 复审。
 - 新 remediation formal pair 已推送并复审：root=`4522466880221a64cac77b602e903652d180ccb5`/child=`f14a8d8e3f0cc453545f3d9b1406af76cea7e151`；canonical live Inbox ledger=`63899d8`。MM/Kimi 申请均按完整文本、至少一秒独立 Enter 后 capture-pane 回读：MM 已进入处理，Kimi 已显示提交。当前 `REVIEW`；三方同 SHA verdict 齐前禁止 child 代码、真实 I/O/GPU/训练。
 - v0.3 审核轮询 #1（2026-09-10 08:25 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 尚无 formal root=`4522466` review。Kimi、MM 均对 root=`4522466`/child=`f14a8d8` 返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`，确认 S0 native count、SHA bytes、CPU/static acceptance 和禁止范围均闭合。ChatGPT 未回复，保持 `REVIEW`，不开始 implementation。
+- v0.3 审核轮询 #2（2026-09-10 08:34 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`4522466` review；MM/Kimi pane 均保留同 SHA approve。保持 `REVIEW`，不修改 child 或启动 CPU/static implementation。
 
 ## 当前整改认领（2026-09-09）
 
