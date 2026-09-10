@@ -977,3 +977,17 @@ v0.2 仅整改该 HIGH：明确 current carrier 不存在，而非由 collate fi
 v0.1 冻结最小 CPU/static bridge，不伪造真实 producer/materialization：白名单只允许 canonical adapter、OmniMoT model与两份已有 CPU tests；typed immutable `CanonicalRawRowCarrier` 仅在 `training_step()` canonical diversion 引入，须与同 request/member/segment/gather objects、chronology及stream-major count绑定；raw mapping不产生prefix，prefix仅来自scan/gather。CP initial hard-stop；safe helper不能调用ordinary preparation/tokenization/clean materialization/packer/noise/loss，canonical forward仍hard-stop。请核白名单、carrier binding、legacy zero-call、CP disposition与不偷授权范围。唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only design；禁止 child实现、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、config/optimizer/checkpoint、训练、评测、推理或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment producer CPU/static implementation design v0.2 remediation
+
+- formal root：`9b8883f1d171df9b8e70062d2988310554a499e9`
+- child/Gitlink：`36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-IMPLEMENTATION-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.2.md`
+- prior all-review disposition：formal `1cf9ec3/36bf3b2` 的 MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_1cf9ec3_36bf3b2.md` 为 `REQUEST_CHANGES`（HIGH：safe preparation/prefix adaptation被错误延期）。
+
+v0.2 仅整改该 HIGH：冻结 carrier `model_data_batch`、safe helper exact input/output与pre-scan validation/CP rejection；明确仅执行 non-Local text/plan/clean preparation且零 legacy injection；在 `get_data_and_condition()` 后、`memory_init_training()` 前唯一把 exact gathered prefixes映射为plan flag+dense tokens，S0 None/PAD exclusion/identity/count断言；packer/noise/forward/loss前仍hard-stop。请核 prior HIGH 是否关闭、white-list/scope是否仍严格。唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only remediation；禁止 child implementation、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、config/optimizer/checkpoint、训练、评测、推理或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
