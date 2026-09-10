@@ -1075,3 +1075,13 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 证据：`canonical_segment_production_adapter_test.py`=`4 passed in 9.53s`；`canonical_segment_production_integration_test.py`=`6 passed in 28.11s`；两测试 Ruff、四目标 py_compile、child diff-check PASS。请核前序 3 HIGH 是否精确关闭，尤其 raw→model source、stacked provenance、zero adapter mutation、activation isolation和production abort witness。
 
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅批准范围为上述四文件 CPU/static；不授权 dataloader/collate/dataset/packer/trainer/config/optimizer/checkpoint、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、训练、评测、推理或 LIBERO4IN1。正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Segment Producer CPU/static closure remediation v3（2026-09-10）
+
+- formal root SHA：`0f321898edce5cbfbce8d790f9b9766524aa70d6`
+- child/Gitlink SHA：`c3d5b7abb8ae9c8b6764785bd7a5b6bd4aa68ea3`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+
+本轮仅在四文件白名单内关闭前序 formal `0e88086/d171d71` 的 source/immutability HIGH：raw source identity 改为 typed carrier-side 四元 `(slot, episode, source_digest, step)` metadata，并以 typed raw-object reference 绑定 row→model sample，移除 raw payload synthetic sentinel；foreign source_digest 证明零 adapter 创建。safe helper 将 model plan 以 `dataclasses.replace()` 建为临时对象，canonical prefix adaptation 不再改 carrier-owned `sequence_plan`；真实 CPU scan 路径跑 text→plan→clean→memory-init→hard-stop→abort，原 carrier plans 保持 Local-neutral。证据：adapter=4 passed；integration=7 passed in 36.81s；py_compile、diff-check PASS。请回复 `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+禁止真实 I/O、GPU、torchrun、packer/noise/native forward/loss/backward、训练、评测、推理或 LIBERO4IN1；正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`。
