@@ -825,6 +825,22 @@ v0.2 精确撤销 v0.1 的 native-total-loss valid-count 重权。新增真实 s
 
 ---
 
+## CODEX REVIEW REQUEST — canonical segment production ABI implementation design v0.2 remediation
+
+- formal root：`82574180f08fdee2682dd8699269e3198e7f3240`
+- child/Gitlink：`3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-IMPLEMENTATION-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_abi_implementation_design_v0.2.md`
+- prior review：formal `0b5cee1/3a078f2` 的 ChatGPT 3 HIGH+1 MEDIUM、Kimi scan-owner `REQUEST_CHANGES` 与 MM approve 均已齐；本 pair 只作 docs-only unified remediation。
+
+v0.2 显式 supersede v0.1 §2--§7：①新 `CanonicalProductionAdapter` 在 model canonical branch 的同一 autograd graph 中调用既有 `LocalEvidenceEncoder(CANONICAL_EVIDENCE_FEATURE_CONFIG)` + `ContinualTTTLocalMemoryCore.scan_segment_masked_encoded_many(..., create_graph=True)`，将 pre-scan request、typed scan result、`NativeConsumerBatch.from_segment` gather 分层，actual count 只从 gather 导出；②冻结 per-slot detached fast-state frontier（fresh=W_bar_0、continuation exact slot/episode/source/cursor、success-only state commit）；③以 scheduler/plan/transaction/member object identity 绑定 typed one-shot commit capability，新增 P2 scheduler prepared-reconcile preflight，冻结 `mark_backward_started`、无 partial mutation sequence；④activation truth table 使 canonical expected 缺/malformed/foreign capability 或 legacy marker 在 `_get_training_inputs()` 前 fail closed；⑤P3 前 enabled GradScaler/real optimizer boundary hard stop。
+
+请逐项核对 prior 3 HIGH+1 MEDIUM 与 Kimi scan-graph 缺口是否关闭，特别是 P2 不得改 `local_evidence.py`/`local_memory_segment.py`/packer 或真实 I/O/GPU。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only remediation；禁止任何 child 代码、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练、评测或推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
 ## CODEX REVIEW REQUEST — canonical segment production ABI implementation design
 
 - formal root：`0b5cee1938adde3e1970edfbfba74e91274eaf43`
