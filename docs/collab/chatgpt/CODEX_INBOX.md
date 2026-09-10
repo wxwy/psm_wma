@@ -931,3 +931,19 @@ v0.3 保留已关闭的 consumer/auxiliary split、真实 packer/loss map 与 ex
 请核对 ChatGPT prior HIGH 是否精确关闭，尤其：safe seam 是否被正确标成待 source audit 冻结而非偷授权新 builder；raw/model-prepared 的 `SequencePlan` owner 是否无歧义；canonical 是否明确杜绝第二 Local token/TTT transition。请求唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_ABI` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练、评测或推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment producer source audit v0.1
+
+- formal root：`7bca13823f448ef08faa21d7d16f035abe7ecfc6`
+- child/Gitlink：`36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-SOURCE-AUDIT`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_source_audit_v0.1.md`
+- prerequisite：producer ABI v0.2 `c57e77c/36bf3b2` 已获 ChatGPT/MM/Kimi `APPROVE_TO_AUDIT`；本 pair 只新增 root docs，child 未变。
+
+本审计对 v0.2 §3 六项给出 source-backed `file:line` map。结论：canonical prefix/order/count 唯一来自 `CanonicalProductionAdapter.scan()` → `NativeConsumerBatch.from_segment()`；`SegmentBatch.gather_consumers()` 已按 stream-major 排除 PAD，且只有 S0 可 prefix=None。ordinary `_prepare_training_data()` 在 `omni_mot_model.py:1027` 无条件进入 `_inject_local_history()`，enabled TTT 再到 legacy `_ttt_local_memory_tokens()`；ordinary CP owner 同样调用/缓存该 flow，故均不可复用。native packer 已有唯一 Local-prefix 落点，但 current child 没有可直接调用的 Local-neutral preparation helper。
+
+审计仅请求下一 docs-only implementation design：最小范围应冻结 model-owned `omni_mot_model.py` canonical-safe factoring/builder、single Local-prefix adaptation 和 CP disposition；不得直接实现，也不得改 dataloader/collate/packer/dataset/loss scaling 或扩大 runtime scope。请核对 source map、fail-closed CP 结论、后续 design boundary 是否准确。唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only source audit；禁止 child 代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、runtime sidecar、config/optimizer/checkpoint 改动、训练、评测、推理或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
