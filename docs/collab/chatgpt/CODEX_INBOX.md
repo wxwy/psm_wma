@@ -106,3 +106,12 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 3. audit 的 `REQUEST_CHANGES` 分流是否足以阻止静默移除 hard-stop、重复 GA 缩放、legacy Local 混入、cache identity 缺失或未经批准的 runtime/GPU/训练。
 
 请回复唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_SOURCE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权后续只读 source/ABI audit；不授权 child 实现、真实 I/O、GPU smoke、matched smoke 或正式训练。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Runtime Source-Audit 设计 v0.2 remediation（2026-09-11）
+
+- formal root SHA：`59bd39f61b3498e56d9824b99059c1566b05b87c`
+- child/Gitlink SHA：`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-SOURCE-AUDIT-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.2.md`
+
+仅 docs-only 整改 ChatGPT 对 v0.1 的两项 HIGH：精确拆分 `planned/actual/N_window`、primary `planned/N_window`、auxiliary `1/GA_effective` 与 GradScaler/optimizer 边界；补回 feature/config/optimizer/checkpoint refreeze，以及 sidecar design→CPU/static→resume smoke 在 matched/training 前的顺序。未改 child、未运行真实 I/O、GPU、训练。请回复 `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_SOURCE` 或 `REQUEST_CHANGES(file:line)`。
