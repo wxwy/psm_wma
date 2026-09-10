@@ -963,3 +963,17 @@ v0.2 仅整改该 HIGH：明确 current carrier 不存在，而非由 collate fi
 请核 ChatGPT HIGH 是否精确关闭、future/current 事实是否严格区分、carrier binding和 scope consequence是否充分。唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only remediation；禁止 child 代码、producer/builder implementation、dataset/dataloader/collate/packer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment producer CPU/static implementation design v0.1
+
+- formal root：`1cf9ec39b8af6f3f7e16670a57a94ee9a75dd79e`
+- child/Gitlink：`36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-IMPLEMENTATION-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.1.md`
+- prerequisite：source audit v0.2 `10d84a5/36bf3b2` 已获 ChatGPT/MM/Kimi `APPROVE_TO_DESIGN`；本 pair only root docs。
+
+v0.1 冻结最小 CPU/static bridge，不伪造真实 producer/materialization：白名单只允许 canonical adapter、OmniMoT model与两份已有 CPU tests；typed immutable `CanonicalRawRowCarrier` 仅在 `training_step()` canonical diversion 引入，须与同 request/member/segment/gather objects、chronology及stream-major count绑定；raw mapping不产生prefix，prefix仅来自scan/gather。CP initial hard-stop；safe helper不能调用ordinary preparation/tokenization/clean materialization/packer/noise/loss，canonical forward仍hard-stop。请核白名单、carrier binding、legacy zero-call、CP disposition与不偷授权范围。唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only design；禁止 child实现、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、config/optimizer/checkpoint、训练、评测、推理或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
