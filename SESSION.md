@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## Canonical producer closure review 整改认领（2026-09-10）
+
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION` 保持 `IN_PROGRESS`。对 formal root=`b2fc3c85e650dff3c3a4db1c79da6d384440f091`/child=`1e26473aa5a17ca2ab256359fa012154bf4d9cfa`，Kimi、MM 为 `APPROVE_TO_CLOSE`；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_b2fc3c8_1e26473.md` 为 `REQUEST_CHANGES`（3 HIGH）。三方结论已齐，禁止关闭 Gate 或进入真实 I/O/GPU/forward/loss/backward/训练。
+- 认可的最小整改范围：仅 `canonical_segment_production_adapter.py`、`omni_mot_model.py` 及二者相邻的两个定向 CPU/static 测试。先做无 adapter 创建/scan 的 carrier-request-member-model-batch authority preflight；以 model 的 `input_image_key XOR input_video_key` 取代静态图像键；补齐 list/tuple 与受 carrier source 记录约束的 stacked tensor 溯源；carrier marker 纳入 enabled/No-Local activation matrix；补齐真实 canonical adapter 生命周期、异常 abort、No-Local marker-negative 见证。
+- 禁止范围不变：不改 dataloader/collate/dataset/packer/trainer/config/optimizer/checkpoint；不读真实数据/cache/checkpoint；不执行 CUDA/GPU、torchrun、native forward/loss/backward、训练、评测、推理或 LIBERO4IN1。待整改、CPU-only 定向验证、child/root 提交推送后以新 formal pair重新三方审核。提交：未提交。
+- 本轮整改实现：carrier 在 adapter lookup/creation 前完成 exact request/plan/member/segment、`member.validate_batch()`、raw→producer-native model-sample、dynamic `input_image_key XOR input_video_key`、list/tuple 与带 source-order 记录的 stacked-tensor model-batch preflight；carrier marker 纳入 enabled/No-Local activation matrix。integration 新增 foreign batch 零 adapter 创建与真实 scan 后 controlled hard-stop exact abort 见证。验证：adapter pytest=`4 passed in 9.53s`；integration pytest=`6 passed in 28.11s`；两个测试 Ruff、四个目标文件 py_compile、child diff-check PASS。仅 CPU/static，无外网/GPU/真实 I/O。下一步：提交/推送后以新 formal root/child pair 重新请求三方 closure review。提交：未提交。
+
 ## P2 子步骤：canonical adapter 原子 preflight（2026-09-10）
 
 - 目的/Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`；在 P1 已批准的六文件白名单内收紧 typed adapter 的 commit authority。
