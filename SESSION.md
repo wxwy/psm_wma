@@ -61,6 +61,7 @@
 - P0 审核轮询 #10（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`2d34eed` 的结果，ChatGPT→Codex notice 亦仍仅指向前序 production-integration design Gate；MM/Kimi 的同 SHA approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
 - P0 审核轮询 #11（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`2d34eed` 的正式结果，根仓 HEAD 与 `origin/V2` 一致；MM/Kimi 的同 SHA approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
 - P0 审核轮询 #12（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 最新文件仍为前序 production-integration design review，formal root=`2d34eed` 无匹配；MM/Kimi 的同 SHA approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
+- P0 三方意见已齐：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_2d34eed_3a078f2.md` 对 formal root=`2d34eed`/child=`3a078f2` 为 `REQUEST_CHANGES`，MM/Kimi 均 approve。ChatGPT HIGH 成立：不得对 native total loss 做 valid-count 重权，必须使用 scheduler 已冻结的 `consumer_loss * n_valid/N_window + auxiliary_loss/GA`；MEDIUM 成立：补真实 `packers.py::pack_input_sequence` 与 `flow_matching.py` 的 source map。当前仅授权 docs-only remediation：新增 v0.2 audit，明确 native flow mask/mean、sample-level scaling、独立 load-balancing add、trainer `/GA` seam、per-plan pack ordering与 S0/PAD disposition；禁止 child/真实 I-O/GPU/训练。下一步：静态核验、提交推送新 formal root，再向 ChatGPT/MM/Kimi 复审。
 
 ## 当前整改认领（2026-09-09）
 
