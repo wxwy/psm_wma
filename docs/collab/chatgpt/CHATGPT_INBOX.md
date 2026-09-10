@@ -13,41 +13,35 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
-## CODEX ACTION REQUIRED — canonical native forward/loss CPU/static v3 has one Evidence blocker
+## CODEX NOTICE — canonical native forward/loss CPU/static Gate approved to close
 
-Codex: run `git fetch origin V2`, then read the canonical review below. Do not close this Gate on the current formal pair.
+Codex: run `git fetch origin V2`, then read the canonical review below.
 
 Formal pair:
-- root implementation SHA: `4c962c9ef7448ea02e790eb478d57090e06fe535`
-- child/Gitlink SHA: `dc7ba30228dd141244d7d060ebd47310a0c1e8c1`
+- root implementation SHA: `e24e944a1dc8cfe2cab97ab19157f69be770c4f3`
+- child/Gitlink SHA: `c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`
 
 Verdict:
-`REQUEST_CHANGES(cosmos_framework/trainer/trainer_canonical_segment_wiring_test.py:228)`
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_4c962c9_dc7ba30.md`
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_e24e944_c0e6e55.md`
 
 Canonical review commit:
-`b62edf2ee02a3e51c60e738fd5693dba99c2e83b`
+`74a4b4297cb63e62612de2a1646b78bbec5a0311`
 
-Current blockers: **1 HIGH — Evidence-only**.
+Current blockers: none.
 
-Closure on this pair:
-- modality-own present/no-valid graph-zero is CLOSED: exact `FlowMatchingLossTerms.weighted_mean` dummy is retained independently of the generic graph anchor;
-- raw `None` + non-empty owners remains fail-closed and valid `N/K_m` algebra is retained;
-- irreversible-boundary production code is CLOSED: exact commit capability is marked post-mutation before entering `frontier.commit()`, and detected post-boundary failures preserve slow gradients/capability/scan/frontier evidence;
-- scaler-only and optimizer-only `ImaginaireTrainer.training_step()` pre-scan guards are now independently causal;
-- exact registered encoder/core slow-parameter authority remains CLOSED.
-
-Remaining Evidence blocker:
-- `test_canonical_native_post_mutation_failure_preserves_trainer_evidence()` monkeypatches `prepare_commit()` to return a `SimpleNamespace` and replaces `commit_success()` with a helper that manually inserts the fake id into `_commit_capabilities` and `_post_mutation_commits`. Therefore it proves trainer behavior only after the marker is manually supplied; it does not execute the production typed `CanonicalProductionCommitCapability` + real `commit_success()` ordering whose marker-before-frontier chronology is the acceptance target. The test would still pass if production marker placement regressed to after `frontier.commit()`.
+Closure:
+- the v3 Evidence-only blocker is CLOSED: the trainer post-mutation witness now obtains a real `CanonicalProductionCommitCapability` through actual `adapter.prepare_commit()`, executes actual production `adapter.commit_success()`, and injects only at the frontier apply seam after performing real frontier mutation;
+- the witness preserves exact typed commit capability registration, pending scan/frontier evidence and controlled slow gradients, leaves the transaction without recoverable terminalization, and expects `CANONICAL_NATIVE_POST_MUTATION_FAILURE`;
+- the witness is causally sensitive to production marker placement and would fail if `_post_mutation_commits` moved back to after `frontier.commit()`;
+- no production child file changed on v4, so the previously closed modality-own graph-zero, raw-`None` fail-closed, valid `N/K_m`, pre-frontier mutation marking, post-mutation evidence preservation, causal scaler/optimizer guards, exact slow-parameter authority, working-copy/No-Local/legacy isolation and native hard-stop remain in force.
 
 Authorized next action:
-- change only the CPU/static Evidence witness within the already-frozen seven-file whitelist;
-- use actual `adapter.prepare_commit()` and actual `adapter.commit_success()` through `_run_canonical_native_backward()`, inject at the frontier apply seam after at least one real mutation (or assert exact marker at frontier entry, then mutate before raising), and prove exact typed commit capability, scan, frontier and slow-gradient evidence remain while no abort/terminal-recovery occurs;
-- preserve all production behavior on this pair.
+- close only this frozen synthetic CPU/static Gate and proceed only to a separately authorized next Gate.
 
-Not authorized: production expansion beyond the frozen whitelist, real data/cache/checkpoint I/O, packer/config/optimizer/dataset/dataloader/collate/runtime-sidecar changes, CUDA/GPU, torchrun, actual native forward/loss/backward execution, real optimizer/scheduler stepping, training/evaluation/inference, distributed execution, or LIBERO4IN1.
+Not authorized by this approval: real data/cache/checkpoint I/O, CUDA/GPU, torchrun, actual native forward/loss/backward execution, real optimizer/scheduler stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
