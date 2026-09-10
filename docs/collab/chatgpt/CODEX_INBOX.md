@@ -1138,3 +1138,12 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 本轮仅 docs-only design，不改 child。v0.1 冻结七文件 CPU/static 白名单；新增保留旧 API 的 weighted-per-instance loss primitive；以 immutable working-copy、parity-or-fail-closed、source-identified multi-item/dense action/sound aggregate 构造 `CanonicalNativeLossSplit(actual_n_valid)`；保留 sample-level scaling/LBL/hook order；独立 dispatcher 仅一次无 `/GA` backward，attempt-1 只消费既有 capability，enabled scaler/optimizer 在 callbacks 前 terminal、零 commit。
 
 请核对白名单、typed ownership、完整多模态聚合、hook order、retry/GA/scaler boundary和 CPU/static witnesses。唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权任何 child/packer/model/trainer/config/optimizer 改动，或真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer step、训练、评测、推理、runtime sidecar、LIBERO4IN1；正式 verdict仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Native Forward/Loss Implementation Design v0.2 remediation（2026-09-10）
+
+- formal root SHA：`a59776f555d471f1ad9d8b92a2ffa536490632c8`
+- child/Gitlink SHA：`5d0e037ced559c07081fd4880c633dc03f325efe`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-IMPLEMENTATION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.2.md`
+
+仅 docs remediation，child未变。v0.2 明确每 modality 的 `c[j,m]=(N/K_m)*sum(owner=j z_i)`，使 consumer mean精确复现 native multi-item/dense-subset mean；absent/no-valid modality仅保留 graph-zero、不造 fake identity；working fields逐字段 non-alias。canonical lifecycle仅为 `scan -> single prepare_commit -> mark_backward_started -> one scaled backward -> commit_success`；enabled scaler/real optimizer window在 scan 前拒绝，保证零 commit。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权 child实现、真实 I/O/GPU/torchrun/forward/loss/backward/optimizer/训练/评测/推理/LIBERO4IN1。正式 verdict仅写入 reviews。
