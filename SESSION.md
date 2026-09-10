@@ -1314,3 +1314,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`10d84a5898f447fd1ab311de10817193fc149135`/child=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 三方 verdict 已齐：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_source_audit_10d84a5_36bf3b2.md`、MM、Kimi 均 `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_IMPLEMENTATION`。source audit Gate 关闭。
 - 当前认领 implementation design，严格仅 docs-only：冻结 `CanonicalRawRowCarrier` 在 `training_step()` canonical diversion 的引入、同 request/member/segment/gather binding、legacy-zero-call safe preparation factoring、single Local-prefix adaptation 与 CP disposition。若这些关联需 dataloader/collate/dataset/packer 改动，设计必须 fail closed，另起 data-side Gate。
 - 禁止 child implementation、真实 I/O、CUDA/GPU、torchrun、训练、评测、推理和 LIBERO4IN1。提交：本状态更新未提交。
+
+### R09-B TTT canonical producer CPU/static implementation design v0.1（2026-09-10，IN_PROGRESS）
+
+- 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.1.md`。根据 source audit 的 carrier absence，冻结初始 CPU/static bridge：typed immutable `CanonicalRawRowCarrier` 仅在 `training_step()` canonical diversion 处作为显式 capability 引入，必须与同 request/member/segment/gather objects、chronology、stream-major count 绑定；raw mappings 不产生 prefix，prefix 仅来自 scan/gather。
+- 白名单仅 `canonical_segment_production_adapter.py`、`omni_mot_model.py`、两份相邻 CPU tests。CP 先 hard-stop；safe helper 只做 carrier/boundary validation，不能调用 ordinary preparation、tokenization/clean materialization、packer/noise/loss，canonical forward 保持 hard-stop。未改 child、未执行项目代码/真实 I/O/GPU/训练。
+- 验证：`git diff --check` PASS。下一步：提交、推送并向 ChatGPT/MM/Kimi 请求 CPU/static implementation design review；同 SHA三方批准前禁止 child 改动。提交：未提交。
