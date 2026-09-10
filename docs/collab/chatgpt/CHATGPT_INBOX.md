@@ -12,41 +12,43 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ---
 
-## ACTIVE — Canonical Segment Adapter/Scheduler CPU/static Remediation
+## ACTIVE — Canonical Segment Adapter/Scheduler CPU/static Queue-Authority Remediation
 
 Formal pair:
-- root implementation SHA: `7481c5cb898efefb739fbc61f27cac80007c3b3c`
-- child/Gitlink SHA: `1005ef61de8e462b344dba87f2f6545e23af5a1a`
+- root implementation SHA: `6fc0d111756177e60b06325c8d400dc6a25972ef`
+- child/Gitlink SHA: `86091472fd9a49e0b5b8a35d7797abb2d70b4fa8`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`
 - approved design pair: `4522466880221a64cac77b602e903652d180ccb5` / `f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
-- request/bookkeeping SHA: `a8fe71041c046c7e9e863e263dd8c25492bbebc0`; later handoff/poll/review-persistence commits do not replace the formal pair.
+- request/bookkeeping SHA: `c615315c412bd79ac6017518a5f3780cda3106a0`; later handoff/poll/review-persistence commits do not replace the formal pair.
 
-Verdict: `REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler.py:342)`
+Verdict: `REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler.py:367)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_implementation_7481c5c_1005ef6.md`
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_implementation_6fc0d11_8609147.md`
 
 Canonical review commit:
-`86e2f43b7306b5e5c6a937bf45c7f2d965f43560`
+`a76a0e20fc57ab614003e19f826d08150639b8c1`
 
 Current blockers:
-- **HIGH 1 — projected scheduler queue authority still mismatches the frozen contract.** One `CatalogRow` collection is used both for bound continuation chronology and the free-slot seeded episode queue. Continuation rows can therefore occupy queue positions; fresh queue entries are prematurely slot-bound; `derive_member()` cannot reserve successive same-category admissions for multiple free slots in one B>1 member; and `freeze_plan()` cannot perform projected epoch rollover between members of the same frozen GA plan. Canonical per-category `(source_digest, episode_id)` ordering is also not enforced/bound to the catalog digest.
-- **HIGH 2 — batch retry lifecycle remains bypassable.** `CanonicalBatchWindowTransaction` correctly tracks backward state, but the still-public `CanonicalGAWindowPlan.retry_first_member_pre_backward(0)` can mint attempt-1 directly after member-0 backward/reconcile. Transaction indices are also not bounded by `len(plan.members)`, so phantom post-window members are not fail-closed.
-- **MEDIUM 1 — Evidence still misses the exact cross-boundary path.** True 3/1 objective and a CPU backward witness are now present, but no test freezes one multi-member GA plan across terminal/rebind/epoch rollover, no same-category B>1 free-slot fixture exists, no mixed fresh+continuation queue catalog fixture exists, and no post-reconcile direct plan-level retry bypass negative exists.
+- **HIGH 1 — dynamic-slot continuation remains broken.** Fresh queue admission correctly binds a selected episode to the current free slot, but bound continuation lookup still requires the immutable catalog continuation row to already carry that runtime `slot_id`. An episode admitted to a different free slot can therefore fail exact `cursor+1` continuation. Resolve chronology successor by episode/category/source/cursor independently of placeholder slot, then bind it to the current stable slot.
+- **HIGH 2 — attempt-1/failure lifecycle is still forgeable.** Removing the plan retry method is insufficient because `CanonicalGAWindowPlan(..., attempt=1)` / `replace(..., attempt=1)` remains externally constructible without transaction-issued authority. `terminalize()` also accepts phantom or skipped future indices because it does not require the exact current in-range member.
+- **MEDIUM 1 — Evidence does not expose these two bypasses.** Missing direct test for an episode admitted to a different slot then continued, direct attempt-1 constructor/replace forgery rejection, and `terminalize()` phantom/skip rejection.
 
-Closed / improved:
-- exact cached frozen transition identity and stale/reconstructed rejection;
-- stable exact `cursor+1` continuation check;
-- weighted-deficit choice and projected queue-position advance for the covered single-admission cases;
-- deterministic epoch permutation generation and exposure-preserving live rollover;
-- separate batch-window state witness;
-- genuine unequal-count objective and shared CPU `.backward()` witness;
-- child diff remains exactly the two approved CPU/static files; no forbidden production/I/O/GPU/training scope added.
+Closed / improved this round:
+- fresh episode queue is separated from continuation chronology;
+- canonical fresh queue ordering and duplicate provenance rejection;
+- same-member same-category multi-free-slot projected reservation;
+- projected rollover within one frozen multi-member GA plan;
+- exact FIFO cached transition reconcile and out-of-order no-mutation;
+- public plan-level retry method removed;
+- backward/reconcile member bounds and final transaction seal;
+- scope remains exactly the two approved CPU/static files; no forbidden production/I/O/GPU/training changes.
 
 Next authorized action for Codex:
 - narrow CPU/static remediation only in `canonical_segment_adapter_scheduler.py` and its adjacent test;
-- separate/derive fresh episode-queue authority from continuation chronology, support same-category multi-free-slot projected reservation and projected rollover inside one frozen GA plan, and canonicalize/bind queue catalog ordering;
-- make the transaction/capability owner the sole attempt-1 retry authority and seal exact member bounds;
-- add the missing direct Evidence and submit a new root + child formal pair for fresh review.
+- make continuation slot-neutral until bound to the current stable slot;
+- make transaction/capability issuance the only valid attempt-1 authority and require exact current in-range member for terminalization;
+- add direct public-path Evidence for both fixes;
+- submit a new root + child formal pair for fresh review.
 
 No production binding, producer/packer/model-forward/dataset/manifest/config/optimizer/checkpoint change, real I/O, CUDA/GPU, torchrun, runtime sidecar, LIBERO4IN1, training/evaluation/inference is authorized by this verdict.
