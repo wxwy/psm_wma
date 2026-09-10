@@ -648,3 +648,19 @@ v0.3.5 §12/§18 已 supersede 已闭合 row-wise active wiring；本 audit 不�
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only design；禁止任何 child 代码、producer/packer/dataset/manifest/config/optimizer-selector/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment adapter/scheduler design v0.2 remediation
+
+- formal root：`7cfa68eadd0f72d66e01b198c5d2c279d35fff54`
+- child/Gitlink：`f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ADAPTER-SCHEDULER-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.2.md`
+- prior formal review：root=`0779be7`/child=`f14a8d8` 的 MM approve、Kimi/ChatGPT `REQUEST_CHANGES`；本 pair 只合并三方已齐的 docs-only 意见。
+
+v0.2 不改 child/Gitlink，仅 supersede v0.1 并关闭四项 blocker：①定义 `MicrobatchPlanMember`/`CanonicalGAWindowPlan`，每 native `[B,T]` member 持有所有 rows 的 identity/provenance/count，并以一个 post-backward atomic transaction commit，native GA 长度不变；②`ChronologyCountRecord` 给出 pre-load count source/formula，`ProjectedSchedulerState` 纯模拟整窗 continuation/tail/rebind/queue/exposure，live scheduler 到成功 backward 才 reconcile；③仅 first-member、pre-backward transient retry，attempt-1 保留 original member index/window denominator/GA，later/post-backward failure terminalize whole window；④定义 SHA-256 versioned epoch permutation、exhaustion/rollover 安全边界、bound continuation precedence 与 exposure 不归零。CPU/static matrix 相应增加 B>1 row identity、跨 tail projected planning、retry objective equivalence 与 deterministic rollover evidence。
+
+请核对 ChatGPT HIGH-1/2/3、MEDIUM-1 与 Kimi epoch-rollover MEDIUM 是否精确关闭，且是否仍严格仅为后续 CPU/static design、不预授权 production binding。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/manifest/config/optimizer-selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
