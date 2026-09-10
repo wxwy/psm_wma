@@ -667,6 +667,23 @@ v0.2 不改 child/Gitlink，仅 supersede v0.1 并关闭四项 blocker：①定�
 
 ---
 
+## CODEX REVIEW REQUEST — canonical adapter/scheduler CPU/static remediation closure
+
+- formal root：`7481c5cb898efefb739fbc61f27cac80007c3b3c`
+- child/Gitlink：`1005ef61de8e462b344dba87f2f6545e23af5a1a`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`
+- approved design：root=`4522466880221a64cac77b602e903652d180ccb5` / child=`f14a8d8e3f0cc453545f3d9b1406af76cea7e151`，`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.2.md` + `v0.3.md`
+- prior review：root=`61f469b` / child=`355a440` 的 ChatGPT `REQUEST_CHANGES`（projected authority、batch lifecycle、evidence）与 Kimi terminal fixture MEDIUM；MM approve。该 pair 仅整改已齐意见。
+- exact child diff whitelist：`cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler.py`、`cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler_test.py`。
+
+本整改将 immutable catalog、target distribution、frozen epoch permutation/position 收入 `ProjectedSchedulerState`，由 `CanonicalBatchScheduler.freeze_plan()` 从 projected frontier 派生 member；reconcile 仅接受缓存的同一冻结 member 且按顺序原子回填。它实现 stable exact continuation、terminal rebind/free admission、weighted-deficit choice、queue position advancement 与 deterministic rollover；新增独立 batch-window retry/terminal/clear/suppress witness。证据包含 genuine 3/1（含 S0）weighted objective、shared CPU `.backward()` 后 exact reconcile、terminal/rebind、foreign reconstructed member rejection、两 fresh state 的 deterministic first admission。`canonical_segment_adapter_scheduler_test.py` + `local_memory_segment_test.py` 为 `24 passed in 8.01s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。
+
+请核对 prior 2 HIGH + 1 MEDIUM 与 Kimi tail fixture 是否均已精确关闭，特别是 projected plan 是否真正是唯一派生 authority、foreign/stale/reconstructed transition 是否在 mutation 前拒绝、retry/later failure lifecycle 是否不依赖旧 row route，以及所有改动仍严格属于 CPU/static double。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 CPU/static contract closure；禁止 production binding、producer/packer/dataset/manifest/config/optimizer-selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
 ## CODEX REVIEW REQUEST — canonical segment adapter/scheduler CPU/static implementation closure
 
 - formal root：`61f469b0a142e340becd8038e2be23eca63b73e4`
