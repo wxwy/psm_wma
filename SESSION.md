@@ -4,6 +4,7 @@
 
 - Design Gate 已关闭：formal root=`1c6ceedb27004e52cd256c404159b85f9be6ba8b`，child/Gitlink=`5d0e037ced559c07081fd4880c633dc03f325efe`；ChatGPT review=`2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_implementation_design_1c6ceed_5d0e037.md`、MM、Kimi 均为 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC`。
 - 新 Gate=`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`，仅 v0.1 §2 七文件白名单、synthetic CPU/static；先实现 v0.2/v0.3/v0.4 的 loss algebra、post-backward commit capability和 `abort_commit` failure disposal。真实 I/O/GPU/torchrun/native forward/loss/backward/optimizer/训练/评测/推理/LIBERO4IN1 仍禁止。
+- 子步骤 1：仅修改 adapter 与相邻测试，新增 exact `abort_commit(capability)`（先消费 commit capability，再 abort exact scan，零 reconcile）及 foreign/double-disposal witness。child=`8c830f4e509e0646231a2a8151da091a65a16a80` 已推送；pytest=`6 passed in 6.54s`、Ruff、`py_compile`、child diff-check PASS。尚未实现其余六文件 native loss/dispatcher seam，未触及真实 I/O/GPU/训练。
 - 用户指定的审核与已启动程序监控频率统一为每三十分钟一次、至少连续三十轮；每轮按 ChatGPT `reviews/`、Kimi pane、MM pane 顺序核验，ChatGPT 仅以正式 review 文件为准。
 
 ## Canonical producer closure review 整改认领（2026-09-10）
