@@ -915,3 +915,19 @@ v0.3 保留已关闭的 consumer/auxiliary split、真实 packer/loss map 与 ex
 请核对 v0.2 ChatGPT HIGH 是否精确关闭、No-Local 原路径与 canonical branch 是否不混淆、以及范围仍严格 docs-only。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment producer ABI v0.2 canonical-safe materialization remediation
+
+- formal root：`c57e77c42b13e0a397d42c5d7979c8382b1ee144`
+- child/Gitlink：`36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-ABI-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_abi_design_v0.2.md`
+- prior all-review disposition：formal `ce705715/36bf3b2` 的 MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_abi_design_ce70571_36bf3b2.md` 为 `REQUEST_CHANGES`（HIGH：ordinary preparation 会重入 legacy TTT injection）。
+
+本次仅作 docs-only 生命周期整改，并新建 v0.2 保留 v0.1 的已审历史：①明确 canonical branch 不得直接、包装或经 CP ordinary path 间接执行会触及 `_inject_local_history()` / `_ttt_local_memory_tokens()` 的 `_prepare_training_data()` / `_get_training_inputs()` flow；②拆为 pre-model `CanonicalGatheredRawBatch`（仅 collate truth、stream-major raw rows、S0 None prefix、PAD exclusion、identity/count）与 model-owned `CanonicalModelPreparedBatch`（model-built/validated plans、tokenized indexes、`GenerationDataClean` 与 native preparation outputs）；③将 exact canonical-safe materialization seam、CP owner、single Local-prefix mapping 时点、safe builder/factoring 白名单列为下一 docs-only source audit 的必须 `file:line` 证明项，不能由实现者临时选择；④timestep 继续只能在 model-prepared batch 后的既有 noise seam 产生。保留所有 legacy exclusion、fail-closed/zero-mutation、No-Local parity 与禁止范围。
+
+请核对 ChatGPT prior HIGH 是否精确关闭，尤其：safe seam 是否被正确标成待 source audit 冻结而非偷授权新 builder；raw/model-prepared 的 `SequencePlan` owner 是否无歧义；canonical 是否明确杜绝第二 Local token/TTT transition。请求唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_ABI` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练、评测或推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
