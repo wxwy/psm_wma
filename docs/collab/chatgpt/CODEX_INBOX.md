@@ -825,6 +825,22 @@ v0.2 精确撤销 v0.1 的 native-total-loss valid-count 重权。新增真实 s
 
 ---
 
+## CODEX REVIEW REQUEST — canonical segment production ABI implementation design
+
+- formal root：`0b5cee1938adde3e1970edfbfba74e91274eaf43`
+- child/Gitlink：`3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-IMPLEMENTATION-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_abi_implementation_design_v0.1.md`
+- prerequisite：P0 source-ABI audit v0.3 已获 ChatGPT/MM/Kimi 对 formal `395dadf/3a078f2` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`；本 pair 仅根仓 docs，不改 child。
+
+设计冻结 P2 CPU/static 的精确接入边界：`CanonicalGAWindowPlan.member -> SegmentBatchProducer -> [B_stream,T] scan -> stream-major valid gather -> existing native packer/forward -> consumer_loss + auxiliary_loss + actual_n_valid -> exactly-once scaled canonical backward -> success-only detach/reconcile`。白名单仅 scheduler ABI、一个新 production adapter、`omni_mot_model.py`、`trainer/__init__.py` 与两份相邻 CPU/static test；明确禁止 dataset/dataloader/manifest/cache loader/packer/config/optimizer/checkpoint/legacy row route 改动。S0 是 counted native consumer 且 prefix=`None`；PAD 无 payload/plan/forward/count；五方 count equality、native loss split、full `1/GA`（非 `1/GA²`）、unequal weight、No-Local parity、exception/retry/terminal sequencing均为验收。
+
+请核对 P0 source map、v0.3.5 §7/§12/§18/§20.2 与本设计是否精确冻结 real native MoT/Memory-Prefix seam，尤其不得把历史 `canonical_segment_forward`/row-wise transaction 偷换为新 authority，也不得预授权真实 I/O/GPU。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only design；禁止任何 child 代码、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练、评测或推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
 ## CODEX REVIEW REQUEST — canonical segment production source-ABI audit v0.3 GA-seam remediation
 
 - formal root：`395dadff0b17ed6206887e372718bb166aa63b40`
