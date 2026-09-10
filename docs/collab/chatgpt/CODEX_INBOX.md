@@ -1098,3 +1098,14 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 最终 child SHA 定向证据：`LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_adapter_test.py cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py -q`=`16 passed in 32.05s`；三个 target 文件 Ruff、四文件 `py_compile`、child/root `git diff --check` PASS。仅 synthetic CPU fixture；未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、packer/noise/native forward/loss/backward、训练、评测、推理或 LIBERO4IN1。
 
 请核证据是否准确闭合前序 review 的六项 Evidence 条件，以及是否仍严格止于 approved CPU/static 范围。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权任何上述禁止范围；正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Forward/Loss Source Audit v0.1（2026-09-10）
+
+- formal root SHA：`dec45ecef491ef85bec9c4adb3a21871b16d9d49`
+- child/Gitlink SHA：`5d0e037ced559c07081fd4880c633dc03f325efe`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-SOURCE-AUDIT`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_source_audit_v0.1.md`。
+
+本轮是纯 docs/source audit：确认已关闭 producer bridge 在 native packer 前 hard-stop；审计 ordinary native packer/loss链、packer 的 Local `None` prefix ABI、flow per-instance loss、ordinary trainer `/grad_accum_iter` backward，及历史 row-wise canonical dispatcher。结论冻结：下一步必须新建独立 typed canonical capability、gathered native-row→packer schema、consumer/auxiliary loss split与独立 trainer dispatcher；禁止复用旧 `canonical_segment_forward` schema、禁止 total-loss 后加权或调用 ordinary `_get_training_inputs()` fallback。
+
+请求核对 source map、supersession和失败闭包是否足以进入下一份 implementation design。唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS` 或 `REQUEST_CHANGES(file:line)`。不授权任何 child代码、packer/model/trainer修改、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、forward/loss/backward、训练、评测、推理或 LIBERO4IN1；正式 verdict仅写入 `docs/collab/chatgpt/reviews/`。
