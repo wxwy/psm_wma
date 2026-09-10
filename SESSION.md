@@ -1,5 +1,13 @@
 # 当前协作状态
 
+## P2 子步骤：canonical adapter 原子 preflight（2026-09-10）
+
+- 目的/Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`；在 P1 已批准的六文件白名单内收紧 typed adapter 的 commit authority。
+- 阅读/复用：`canonical_segment_adapter_scheduler.py` 的 frozen transition / transaction lifecycle，及 P1 v0.2/v0.3 §4--§5 的 fp32 frontier、object-bound one-shot capability 合同。
+- 修改：scheduler 增加无副作用 `validate_prepared_reconcile()` 与 transaction `validate_reconcile()`；adapter 绑定 canonical feature config、保存 adapter-owned scan/capability identity、commit 前完整预检、commit exact-once、terminal 时按 slot/episode/source retire 全链；相邻 CPU fixture 覆盖 pre-backward zero-mutation、successful exact-once、double consume 拒绝。
+- 验证：`cd cosmos-framework && .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_adapter_test.py cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler_test.py -q` = `19 passed in 8.46s`；目标 `py_compile`、child `git diff --check` PASS。CPU-only，无 GPU、外网、真实数据/checkpoint I/O。
+- 限制/下一步：尚未实现 model/trainer canonical seam，且不得据此进入 P3/真实运行；child=`74f8313e58d6f0d48e1b6c67b633d7b6e2fbb4ce`，待记录 root Gitlink 后继续 P2 已批准白名单。
+
 ## 当前整改认领（2026-09-10）
 
 - P0 source-ABI audit v0.3 已关闭：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_395dadf_3a078f2.md`、MM、Kimi 对 formal root=`395dadff0b17ed6206887e372718bb166aa63b40`/child=`3a078f28f3d107bb633c932271f86498f7c427f7` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`。P0 仅授权下一 P1 docs-only design。
