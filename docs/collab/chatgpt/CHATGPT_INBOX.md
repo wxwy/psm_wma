@@ -214,7 +214,7 @@ Closure:
 Authorized next action:
 - create only the next docs-only canonical segment producer implementation design under the approved source-audit boundary and return a new formal pair for fresh review.
 
-Not authorized: producer/builder implementation, child production changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+Not authorized: producer/builder implementation, child production changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
 
@@ -382,6 +382,42 @@ Closure:
 Authorized next action:
 - implement only the four-file CPU/static child bridge under the accumulated v0.1-v0.5 design contract;
 - return a new formal root/child pair for fresh implementation review.
+
+Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer CPU/static implementation changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `b7fe7f8edc6e5db53c4b6d7b43c9db0da19e6622`
+- child/Gitlink SHA: `ee9a63c0976dc8235124bff687b237c9a6fabc91`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/omni_mot_model.py:1409)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_b7fe7f8_ee9a63c.md`
+
+Canonical review commit:
+`0c3cbdaf1794656538667a4a8b6769b5c9c2f45e`
+
+Current blockers: 4 HIGH.
+
+Blocker summary:
+- canonical production branch hard-stops immediately after expected/actual gather equality and never executes the approved safe non-Local preparation, post-clean Local-neutral assertions, single canonical prefix adaptation, or `memory_init_training()` before the pre-packer hard-stop;
+- CP-enabled canonical mode is not rejected before `adapter.scan()`;
+- the implemented carrier preflight is materially weaker than the frozen object/provenance/model-batch authority contract: it lacks exact request/member/segment/chronology binding, full source/category/provenance attribution, closed model-batch keyset/field-source validation, and silently transports the carrier inside `CanonicalProductionSegmentRequest` instead of the frozen separate model-diversion marker;
+- the cited `6 passed` suite does not exercise the canonical production forward bridge, CP rejection, safe-preparation/legacy-zero-call behavior, prefix adaptation, actual-mismatch abort, failure disposition, No-Local parity, or the required B=2,T=3 nested acceptance matrix.
+
+Authorized next action:
+- remediate only this CPU/static implementation under the accumulated approved v0.1-v0.5 design contract and return a new formal root/child pair for fresh closure review;
+- if `request.carrier` is intentionally replacing the frozen separate carrier marker/object-binding ABI, return to a docs-only Design Gate first rather than changing that contract inside an implementation closure.
 
 Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
