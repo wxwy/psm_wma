@@ -822,3 +822,19 @@ v0.2 精确撤销 v0.1 的 native-total-loss valid-count 重权。新增真实 s
 请核对 ChatGPT HIGH 的 consumer/auxiliary 分离、一次 sample/DDP/GA scaling，及 MEDIUM 的真实 packer/loss-mask ABI 是否精确关闭；并确认未扩大 docs-only 范围。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment production source-ABI audit v0.3 GA-seam remediation
+
+- formal root：`395dadff0b17ed6206887e372718bb166aa63b40`
+- child/Gitlink：`3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-INTEGRATION-SOURCE-ABI-AUDIT`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_integration_source_abi_audit_v0.3.md`
+- prior review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_e0cc97e_3a078f2.md`；v0.2 三方意见已齐后仅整改其 GA double-division HIGH。
+
+v0.3 保留已关闭的 consumer/auxiliary split、真实 packer/loss map 与 exact count；仅更正 trainer seam：`CanonicalGAWindowPlan.objective()` 产生已按 window/GA 归一化的 `L_member`，canonical production branch 保留 native DDP sync、GA clock 和 optimizer cadence，但恰执行一次 `grad_scaler.scale(L_member).backward()`，不得再 ordinary `/grad_accum_iter`。No-Local ordinary path 保持原 `/GA`。P1 验收新增 full-valid `1/GA` 非 `1/GA^2`、unequal-valid consumer=`N_valid_i/N_valid_window`、auxiliary=`1/GA` CPU/static algebra witness。
+
+请核对 v0.2 ChatGPT HIGH 是否精确关闭、No-Local 原路径与 canonical branch 是否不混淆、以及范围仍严格 docs-only。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
