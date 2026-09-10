@@ -14,6 +14,7 @@
 - `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ADAPTER-SCHEDULER-DESIGN` formal root=`0779be775429e15d83de00dda50649195cadc9e7`/child=`f14a8d8e3f0cc453545f3d9b1406af76cea7e151` 已写入 canonical Inbox（ledger=`62af7b6`）并推送；MM、Kimi 均以完整文本、间隔 1 秒的独立 Enter 送达且 capture-pane 回读，MM 已进入处理，Kimi 已显示申请。当前 `REVIEW`，五分钟原生轮询 ChatGPT `reviews/`、MM、Kimi；三方同 SHA verdict 齐前禁止修改子模块、真实 I/O/GPU/训练。
 - 审核轮询 #1（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 尚无 formal root=`0779be7` review；MM 已确认收到并正在核对 root/child/artifact，Kimi 正在对照 v0.3.5 §20.2 与 canonical chain。保持 `REVIEW`。
 - 审核轮询 #2（2026-09-10）：DS 已下班，Kimi 为当前第三审核者且其原申请已送达。`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`0779be7` review；MM 仍在核对。Kimi 已对同一 formal pair 返回 `REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.1.md:15)`：本设计声称闭合 §20.2 D，却未定义 epoch rollover/queue 推进的确定性语义。意见要求二选一：在 §5 明确 queue 耗尽后的 epoch+1、由 `(queue_seed, epoch)` 决定 permutation、bound-slot continuation 优先且 exposure 不归零；或把 D 的 queue/rollover 明确留给后续 production-binding Gate。三方同 SHA verdict 尚未齐，保持 `REVIEW`，不得整改、修改 child 或执行真实 I/O/GPU/训练。
+- MM 审核回复（2026-09-10 08:00 +08:00）：对 formal root=`0779be7`/child=`f14a8d8` 返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`。该单方批准不覆盖 Kimi 的 `REQUEST_CHANGES`，ChatGPT formal review 亦未到；继续保持 `REVIEW`。
 
 ## 当前整改认领（2026-09-09）
 
