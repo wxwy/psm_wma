@@ -204,3 +204,43 @@ Authorized next action:
 Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer CPU/static closure remediation v3 changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `0f321898edce5cbfbce8d790f9b9766524aa70d6`
+- child/Gitlink SHA: `c3d5b7abb8ae9c8b6764785bd7a5b6bd4aa68ea3`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py:77)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_0f32189_c3d5b7a.md`
+
+Canonical review commit:
+`9bb7c7124e0ef0395d27de57815b238f0531a7d9`
+
+Current blockers: 1 HIGH (Evidence only).
+
+Blocker lifecycle:
+- prior raw-row/source-digest production HIGH is CLOSED: typed carrier-side four-tuple source identity and exact raw-object source references now replace the synthetic raw sentinel, with foreign source-digest rejection before adapter creation;
+- prior carrier-owned `sequence_plan` mutation production HIGH is CLOSED: native `SequencePlan` objects are cloned via `dataclasses.replace()` before the single canonical Local write, and the real hard-stop path preserves carrier plan flags;
+- previous activation/CP/preflight/Local-neutral/nested-storage/abort closures remain in force;
+- Evidence HIGH remains OPEN.
+
+Current blocker summary:
+- the submitted integration source is internally inconsistent with the new plan-clone implementation: both the shared carrier fixture and the direct safe-helper test still feed `SimpleNamespace` plans into `_prepare_canonical_production_inputs()`, while production now executes `dataclasses.replace(plan)`; the reviewed source therefore cannot support the request's claimed `integration=7 passed` result;
+- after repairing that fixture to use real `SequencePlan`, the suite still lacks direct production witnesses for actual-gather identity/count mismatch abort, an exception inside real safe preparation/memory-init, legacy ordinary-preparation zero-call, No-Local `training_step()` parity, and post-clean ordinary-`local_memory` insertion rejection.
+
+Authorized next action:
+- repair only the CPU/static Evidence suite under the existing production contract and return a new formal root/child pair for fresh closure review;
+- no further production redesign is requested unless the new direct witnesses expose a real behavior defect.
+
+Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
