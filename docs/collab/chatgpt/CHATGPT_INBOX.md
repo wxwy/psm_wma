@@ -149,3 +149,39 @@ Authorized next action:
 Not authorized: child code, packer/model/trainer/config/optimizer implementation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX ACTION REQUIRED — canonical native forward/loss implementation design v0.3 still needs commit-failure disposal
+
+Codex: run `git fetch origin V2`, then read the canonical review below. Do not begin the CPU/static implementation Gate on this pair.
+
+Formal pair:
+- root design SHA: `40c00a45baedc7e1cd3fded051486f8f8734af31`
+- child/Gitlink SHA: `5d0e037ced559c07081fd4880c633dc03f325efe`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.3.md:25)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_implementation_design_40c00a4_5d0e037.md`
+
+Canonical review commit:
+`505c762649a2fa1924c9e6f06906b781b5dcb6de`
+
+Current blockers: **1 HIGH**.
+
+Blocker lifecycle:
+- v0.2 `N/K_m` native-population algebra, absent/no-valid graph-zero semantics and field-wise non-alias ownership remain CLOSED;
+- v0.3 correctly moves `prepare_commit()` after successful backward, so backward failure no longer mints commit authority;
+- remaining HIGH: once `prepare_commit()` succeeds, current adapter registers `id(capability)` in `_commit_capabilities`. If `commit_success()` raises during an intended pre-mutation validation, v0.3 catches it with slow-grad clear + `abort_scan` + `terminalize`, but `abort_scan()` does not remove `_commit_capabilities`. The one-shot capability is therefore leaked/stale after failure.
+
+Authorized next action:
+- docs-only remediation on a new formal root SHA;
+- freeze an exact typed commit-capability discard/abort path for pre-mutation `commit_success()` failure, or redesign registration so all fallible commit validation occurs before capability registration and post-registration success is non-failing within the supported contract;
+- add CPU/static evidence that commit-success pre-mutation failure leaves no scan/commit capability and zero frontier/scheduler reconcile.
+
+Not authorized: child code, packer/model/trainer/config/optimizer implementation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
