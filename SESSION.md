@@ -66,6 +66,7 @@
 - P0 v0.2 审核轮询 #1（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 尚无 formal root=`e0cc97e` review；MM 已定位 packer/loss 文件并审核中，Kimi 已核验 pair、读取 v0.1 review 与 v0.2 diff 后继续逐条核对。保持 `REVIEW`，不进入 P1。
 - P0 v0.2 审核轮询 #2（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT formal review 仍缺；MM 继续核对 packer/loss 文件，Kimi 已完成 flow loss、native consumer/auxiliary split、scheduler objective 与 packer source-map 核验，尚待最终 verdict。保持 `REVIEW`，不进入 P1。
 - P0 v0.2 审核轮询 #3（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT formal review 仍缺；MM 仍在审核；Kimi 对 formal root=`e0cc97e`/child=`3a078f2` 返回 `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`，确认 ChatGPT HIGH/MEDIUM 均精确关闭。保持 `REVIEW`，不进入 P1。
+- P0 v0.2 审核轮询 #4（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT formal review 仍缺；MM 已收申请但其 packer/loss 定位命令仍在运行、未出 verdict；Kimi approve 保持有效。保持 `REVIEW`，不进入 P1。
 
 ## 当前整改认领（2026-09-09）
 
