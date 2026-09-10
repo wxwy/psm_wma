@@ -1,9 +1,9 @@
 # 当前协作状态
 
-## Canonical Native Runtime Source-Audit 设计（2026-09-11，IN_PROGRESS）
+## Canonical Native Runtime Source-Audit 设计（2026-09-11，REVIEW）
 
-- 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-SOURCE-AUDIT-DESIGN`。它是 native forward/loss CPU/static closure 后的下一项 docs-only 工作：仅冻结对真实 model/trainer/packer/cache/checkpoint 执行前必须完成的 source/ABI 审计，不授权或执行任何 child 代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
-- 预计修改：根仓 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.1.md`、`SESSION.md`、`TODO.md`。审计目标是明确 production hard-stop 解除前的唯一 seam 和 fail-closed 条件；任何需先修改 packer/dataloader/config/checkpoint 或与 v0.3.5/v0.3.9 冲突的结论均为 `REQUEST_CHANGES`，不得静默实施。提交：未提交。
+- formal root=`7a52b4bd00a2b0f5e6abb283c5212fa3f85b7bac`/Gitlink=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`，设计为 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.1.md`；仅冻结对真实 model/trainer/packer/cache/checkpoint 执行前必须完成的 source/ABI 审计，不授权或执行任何 child 代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
+- ChatGPT Inbox 申请已随 ledger=`c984ec02769e0bc200ed3247c928748dfc5c627f` 推送；MM `%1` 已按完整文本、间隔至少一秒的独立 Enter 送达并 capture-pane 回读。当前 tmux 只存在 MM `%1` 与 Kimi `%2`，**不存在 DS pane**，故 DS 尚未送达、三方 Gate 未齐，不得实施。收到 DS 可用 pane 后必须重发同一 pair，再按五分钟轮询 ChatGPT reviews、MM、DS。提交：`7a52b4b`（design）与 `c984ec0`（Inbox ledger）。
 
 ## Canonical Native Forward/Loss CPU/static Gate closed（2026-09-11）
 
