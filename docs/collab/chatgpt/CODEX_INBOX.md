@@ -1156,3 +1156,12 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 - 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.3.md`
 
 仅 docs remediation，child未变。v0.3 不再在 backward 前 `prepare_commit`：capability 仅在成功 backward 后创建；backward 或 post-backward preparation失败均清受控慢梯度、`abort_scan`、`terminalize`，零 reconcile。attempt-1同序列；enabled scaler/real optimizer拒绝仍在 scan前。请唯一 verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权 child实现、真实 I/O/GPU/torchrun/forward/loss/backward/optimizer/训练/评测/推理/LIBERO4IN1；正式 verdict仅写 reviews。
+
+## 审核申请：Canonical Native Forward/Loss Implementation Design v0.4 remediation（2026-09-10）
+
+- formal root SHA：`1c6ceedb27004e52cd256c404159b85f9be6ba8b`
+- child/Gitlink SHA：`5d0e037ced559c07081fd4880c633dc03f325efe`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-IMPLEMENTATION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.4.md`
+
+仅 docs remediation，child未变。新增 exact one-shot `abort_commit(capability)`：先消费 `_commit_capabilities`，再 abort exact scan，零 frontier/scheduler/reconcile；commit_success pre-mutation failure固定为 clear grads→abort_commit→terminalize，post-mutation为保留证据的不可自动恢复 bug。请唯一 verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权 child实现、真实 I/O/GPU/torchrun/forward/loss/backward/optimizer/训练/评测/推理/LIBERO4IN1。正式 verdict仅写 reviews。
