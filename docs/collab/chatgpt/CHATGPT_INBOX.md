@@ -286,3 +286,36 @@ Authorized next action:
 Not authorized: child implementation under this Gate, real producer/data pipeline changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native training/evaluation/inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer implementation design v0.3 changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `4e77930d3ce414c3ab233c5021f04c0697f2a56d`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.3.md:26)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_4e77930_36bf3b2.md`
+
+Canonical review commit:
+`1518be13b1d185b7a86a4b44848d2fde1cead3f1`
+
+Current blockers: 1 HIGH.
+
+Blocker summary:
+- v0.3 materially closes the prior Local-neutrality gap and the post-scan capability-leak HIGH, but its raw/model authority validation is temporally inconsistent: it requires carrier/model-batch length/order to equal the actual `result.gathered` while also requiring all such identity/order/count failures to reject before `adapter.scan()`; the actual `result.gathered` is created only inside `scan()`.
+- the same section also leaves the carrier stage ambiguous by saying v0.1 typed-carrier semantics remain effective while redefining `raw_rows` from logical `[B,T]` to a valid stream-major gathered tuple. This is treated as part of the same pre/post-scan authority blocker, not a second blocker.
+
+Authorized next action:
+- docs-only remediation under the same Gate: split validation into pre-scan expected traversal derived only from frozen member/SegmentBatch/chronology/source binding, then post-scan exact comparison against actual `result.gathered`; explicitly resolve the carrier raw-row stage/shape. Any post-scan mismatch must dispose the exact pending scan via the now-approved `abort_scan()` contract.
+
+Not authorized: child implementation under this Gate, real producer/data pipeline changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native training/evaluation/inference, runtime sidecar, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
