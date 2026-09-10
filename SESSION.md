@@ -8,6 +8,13 @@
 - 验证：`cd cosmos-framework && .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_adapter_test.py cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler_test.py -q` = `19 passed in 8.46s`；目标 `py_compile`、child `git diff --check` PASS。CPU-only，无 GPU、外网、真实数据/checkpoint I/O。
 - 限制/下一步：尚未实现 model/trainer canonical seam，且不得据此进入 P3/真实运行；child=`74f8313e58d6f0d48e1b6c67b633d7b6e2fbb4ce`，待记录 root Gitlink 后继续 P2 已批准白名单。
 
+## P2 子步骤：strict canonical activation（2026-09-10）
+
+- 目的/Gate：同一 P2；在 `OmniMoTModel.training_step()` 的任何旧 Local lifecycle 或 `_get_training_inputs()` 前实施 P1 v0.3 的 strict activation matrix。
+- 修改：当 `local_ttt_enabled=False` 时任何 canonical/legacy Local marker 均 fail closed；当启用时只接受 exact `canonical_production_segment_mode=True` 和 `CanonicalProductionSegmentRequest`，缺失/错误类型/旧 marker 冲突均 pre-forward 拒绝；build-net 的 canonical evidence feature config 同步保留。canonical branch 目前显式 hard-stop，尚未接 native pack/forward，故不会偷落 legacy row route。
+- 验证：`cd cosmos-framework && .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py -q`=`1 passed in 25.82s`；目标 `py_compile`、child `git diff --check` PASS。CPU-only，无 GPU、外网、真实数据/checkpoint I/O。
+- 下一步：实现 exact registered module lookup、adapter scan→native loss split 与 trainer disabled-scaler guard；当前不得执行真实 canonical route。提交：未提交。
+
 ## 当前整改认领（2026-09-10）
 
 - P0 source-ABI audit v0.3 已关闭：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_395dadf_3a078f2.md`、MM、Kimi 对 formal root=`395dadff0b17ed6206887e372718bb166aa63b40`/child=`3a078f28f3d107bb633c932271f86498f7c427f7` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`。P0 仅授权下一 P1 docs-only design。
