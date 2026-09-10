@@ -52,6 +52,7 @@
 - P0 审核轮询 #1（2026-09-10）：`git fetch origin V2` 无新增，ChatGPT `reviews/` 尚无 formal root=`2d34eed` 的正式 review；MM 已返回同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`；Kimi 已核验 formal pair、读取 audit 并处于审核中。保持 `REVIEW`，不进入 P1。
 - P0 审核轮询 #2（2026-09-10）：`git fetch origin V2` 无新增，ChatGPT `reviews/` 仍无 formal root=`2d34eed` 的正式 review；MM 同 SHA批准保持有效；Kimi 已对 Prefix/S0、scheduler plan/count、trainer GA seam 与 active-native hard-stop 做源码 spot-check，尚未输出最终 verdict。保持 `REVIEW`，不进入 P1。
 - P0 审核轮询 #3（2026-09-10）：`git fetch origin V2` 无新增，ChatGPT formal review 仍缺；MM approve 保持有效；Kimi 继续逐条交叉验证 collate/pack/loss/Evidence/legacy source map，尚未返回 final verdict。保持 `REVIEW`，不进入 P1。
+- P0 审核轮询 #4（2026-09-10）：`git fetch origin V2` 无新增，ChatGPT formal review 仍缺；MM approve 保持有效；Kimi 对 formal root=`2d34eed`/child=`3a078f2` 返回 `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`，并确认 A--F source map 真实。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
 
 ## 当前整改认领（2026-09-09）
 
