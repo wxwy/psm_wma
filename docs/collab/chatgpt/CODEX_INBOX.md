@@ -1058,3 +1058,20 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 本轮仅整改 carrier authority：恢复独立 data-batch carrier marker transport；carrier exact-bind request/member/SegmentBatch/row identities/chronology；scan 前 closed-keyset 与 expected logical index的逐项 model-batch source-identity 校验；post-clean 再断言无 `local_memory`；补同 cardinality foreign model-batch negative fixture。CPU-only，无真实 I/O/GPU/forward/loss/backward/训练。
 
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权真实 I/O/GPU/torchrun/训练/评测/推理/LIBERO4IN1。正式 verdict仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Segment Producer CPU/static closure remediation v2（2026-09-10）
+
+- formal root SHA：`0e88086397eb0ca709a7215fc918f5f662264fc1`
+- child/Gitlink SHA：`d171d7149533cb31b241b402eb738d091c927ed0`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+- 前序同 Gate review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_b2fc3c8_1e26473.md`（3 HIGH）。
+
+本轮严格只改既有四文件白名单。逐项整改：
+
+1. `CanonicalRawRowCarrier.preflight()` 在 adapter lookup/creation/scan 前完成 exact request/plan/member/segment、`member.validate_batch()`、nested raw→exact producer-native model-sample 与 model-batch authority；动态采用 model 的 `input_image_key XOR input_video_key`，拒绝静态错误 key、冲突 vision key、foreign list/tuple；stacked tensor 保存 row-source record，并校验 source-key、dtype/device/shape/leading dimension/order。
+2. 独立 carrier marker 纳入 activation matrix：No-Local carrier-only fail-closed；enabled canonical mode 要求 exact request 加 typed carrier，缺失/foreign marker 不得落 ordinary path。
+3. 新 CPU integration witnesses：foreign model batch 在 adapter creation 前拒绝；有效 carrier 走真实 canonical adapter scan，controlled pre-packer hard-stop 后 exact abort pending scan bookkeeping。无 packer/noise/native forward/loss/backward。
+
+证据：`canonical_segment_production_adapter_test.py`=`4 passed in 9.53s`；`canonical_segment_production_integration_test.py`=`6 passed in 28.11s`；两测试 Ruff、四目标 py_compile、child diff-check PASS。请核前序 3 HIGH 是否精确关闭，尤其 raw→model source、stacked provenance、zero adapter mutation、activation isolation和production abort witness。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅批准范围为上述四文件 CPU/static；不授权 dataloader/collate/dataset/packer/trainer/config/optimizer/checkpoint、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、训练、评测、推理或 LIBERO4IN1。正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
