@@ -1296,3 +1296,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`7bca13823f448ef08faa21d7d16f035abe7ecfc6`、child/Gitlink=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 已推送；ChatGPT request 已 append 到 canonical live Inbox 并以 ledger=`0897acb30957c0ef04026147c2f6aa87bdd19243` 推送，ledger 非 formal target。
 - Kimi/MM 均收到相同完整申请：`tmux kimi:0.0` 和 `tmux mm:0.0` 都以 `send-keys -l` 写入、等待至少一秒后独立 Enter，capture-pane 回读；Kimi 已回空输入，MM 显示处理中。当前仅等 ChatGPT `reviews/`、Kimi、MM 的同 pair verdict。
 - 三方同 SHA verdict 齐前禁止新的 implementation design、child 代码、真实 I/O、CUDA/GPU、torchrun、训练、评测、推理和 LIBERO4IN1；按治理规则每一分钟原生轮询。提交：本状态更新未提交。
+
+### R09-B TTT canonical producer source audit v0.2 remediation（2026-09-10，IN_PROGRESS）
+
+- `7bca13823f448ef08faa21d7d16f035abe7ecfc6`/`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 三方意见已齐：MM/Kimi `APPROVE_TO_DESIGN...`；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_source_audit_7bca138_36bf3b2.md` 为 `REQUEST_CHANGES`（1 HIGH）。v0.1 只证明 collate fields 存在，未证明 raw rows 的 current canonical carrier/extraction seam；该意见成立。
+- 最小整改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_source_audit_v0.2.md`。它明确 current carrier 不存在：request 无 raw rows（`canonical_segment_production_adapter.py:26-33`）、`SegmentBatch.consumer_payload: Any` 非 collate identity、`training_step()` `omni_mot_model.py:1425-1429` 是同时持有 `data_batch` 与 request 的最后 source boundary、后续 forward 丢弃 `data_batch`。future typed carrier 只能由下一 design 在该 model boundary 引入，并强制绑定 same request/member/segment/gather identity、stream-major cardinality；prefix 仍只来自 gather。未改 child/运行项目代码/真实 I/O/GPU/训练。
+- 验证：`git diff --check` PASS。下一步：提交、推送并三方重审 v0.2；同 SHA三方结论齐前禁止 implementation design/child。提交：未提交。
