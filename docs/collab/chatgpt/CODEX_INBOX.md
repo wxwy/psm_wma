@@ -1180,3 +1180,20 @@ CPU/static evidence：adapter+integration=`23 passed in 26.08s`；trainer enable
 请特别检查：prepared provenance 必填、S0/PAD/owner cardinality、weighted consumer denominator/auxiliary isolation、retry/one-shot authority、enabled scaler在 `.backward()` 前零 commit、pre-mutation failure零 frontier/scheduler reconcile、No-Local/legacy isolation，以及仍严格保持 hard-stop。
 
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅批准范围为七文件 synthetic CPU/static implementation；不授权真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Forward/Loss CPU/static implementation closure remediation（2026-09-11）
+
+- formal root SHA：`be2cd4656ac0ccd92e90ffbeceeb5cda90dae2a1`
+- child/Gitlink SHA：`8d68f791241fbd26f4cdd297d502b6ef19a4a0db`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`
+- 前序 formal review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_34d71a3_0993445.md`（3 HIGH）。
+
+本轮严格仍只改原七文件白名单中的五文件，整改前序三项 HIGH：
+
+1. `FlowMatchingLossTerms` 显式区分 legacy singleton diagnostic 与 canonical item population；no-valid 返回 `canonical_weighted_per_instance=None`，prepared canonical split 因此对即使有多 source owner 的 no-valid modality仅保留 graph-connected zero，不制造 fake native-item/owner identity，也不破坏 legacy wrapper。
+2. `CanonicalNativeForwardCapability` exact-bind 本 adapter 注册的 `encoder.parameters()+core.parameters()`；trainer 只从 capability 取该 exact identity set。任何 batch `psm_canonical_native_slow_parameters` 声明在 backward 前清 exact registered gradients、abort exact capability/scan、terminalize 后拒绝，foreign gradient 保持不变。
+3. 新增 direct production dispatcher CPU witnesses：backward exception、post-backward `prepare_commit` exception、pre-mutation `commit_success` exception 都清 exact registered grads、dispose exact authority、terminalize，且 frontier/scheduler/reconcile 零 mutation；原生产 `training_step` pre-scan scaler/optimizer rejection 保持不变。
+
+证据：direct CPU witnesses=`PASS no-valid`、`PASS slow-authority/scaler`、`PASS dispatcher-disposal`；完整定向 pytest=`32 passed, 6 failed in 40.85s`。6 个 red 是 formal base=`5d0e037` 已复现的 stale legacy canonical wiring fixtures，不属于该 five-file remediation；本轮新增相关见证均 PASS。五个目标 `py_compile`、child/root `git diff --check` PASS；Ruff 仅为 `trainer/__init__.py` base 已有的三项 I001，未作无关重排。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。
+
+请独立核验三项 HIGH 是否精确关闭，并回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请只请求七文件 synthetic CPU/static closure；不授权上述任何禁止范围。ChatGPT 正式 verdict仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
