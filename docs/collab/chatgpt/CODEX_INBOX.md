@@ -667,6 +667,24 @@ v0.2 不改 child/Gitlink，仅 supersede v0.1 并关闭四项 blocker：①定�
 
 ---
 
+## CODEX REVIEW REQUEST — canonical segment adapter/scheduler CPU/static implementation closure
+
+- formal root：`61f469b0a142e340becd8038e2be23eca63b73e4`
+- child/Gitlink：`355a44087d0149b4875fb37e81d726523af66fdd`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`
+- approved design chain：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.2.md` + `v0.3.md`，design approval root=`4522466`/child=`f14a8d8`
+- modified child files only：`cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler.py`、`canonical_segment_adapter_scheduler_test.py`
+
+本实现隔离旧 row-wise `GAWindowPlan`/`RankLocalSegmentScheduler`，只新增 CPU/static batch-level metadata double：`ChronologyCountRecord` 将 S0 纳入 valid native count；immutable `MicrobatchPlanMember`/`CanonicalGAWindowPlan`；stream-major `NativeConsumerBatch`；pure `ProjectedSchedulerState` 和 post-backward all-row atomic reconcile；精确 UTF-8/NUL/ASCII SHA-256 queue preimage、permutation、exposure-preserving rollover；first-member pre-backward retry（原 members/denominator/GA 保持）及 later-member fail-closed。
+
+证据：Cosmos `.venv` CPU-only pytest `canonical_segment_adapter_scheduler_test.py`=`8 passed`，覆盖 `B=2,T=3` S0/non-S0/PAD 五方 count/gather equality、foreign/count mismatch、unequal/full-valid GA objective、projected-pure/all-row atomic、queue bytes/permutation/rollover/bound continuation、retry negative；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。未修改 producer/packer/dataset/model forward/config/optimizer-selector/checkpoint；未读真实 cache/data/checkpoint，未做真实 I/O、CUDA/GPU、torchrun、训练/评测/推理。
+
+请核对设计 v0.2/v0.3 §7、v0.3 §4 的 scope 和验收是否闭合。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 CPU/static contract closure；禁止任何 production binding、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1 与训练。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
 ## CODEX REVIEW REQUEST — canonical adapter/scheduler design v0.3 count-semantics remediation
 
 - formal root：`4522466880221a64cac77b602e903652d180ccb5`
