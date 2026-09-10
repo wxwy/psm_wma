@@ -14,23 +14,23 @@ authority 为 addendum v0.3.5、canonical production integration P0 source audit
 
 ## 2. 冻结 producer 输入与输出
 
-producer 的输入必须是单一不可变 `CanonicalSegmentNativeSource`，由上游 collate/segment builder 在内存中已准备好，且不在 producer 内读 loader/cache：
+producer 的输入必须区分 collate 已存在的 raw/native row 与 model-owned materialization；producer 不读 loader/cache，也不重建或前移 tokenization、clean generation payload、CP cache/broadcast 或 noise schedule：
 
 ```text
 member: exact MicrobatchPlanMember
 segment: exact SegmentBatch [B_stream,T]
-native_rows: tuple[CanonicalNativeRow, ...]  # logical [B,T] 同形，PAD=None
+raw_rows: tuple[CanonicalRawNativeRow | None, ...]  # logical [B,T] 同形，PAD=None
 ```
 
-每个 non-PAD `CanonicalNativeRow` 必须持有其已存在的 native training fields（opaque、不得复制/重建）：`sequence_plan`、对应单 sample 的 clean generation payload、tokenized text indexes、input timestep metadata，及可选的 S0 Local absent witness。它还必须带 `(slot_id, episode_id, source_digest, consumer_step)`；该 identity 必与 `member` chronology 和 `SegmentBatch` 完全相等。
+每个 non-PAD `CanonicalRawNativeRow` 只持有 collate 真正保留的 opaque raw/native fields（例如 raw data payload、已存在的 `sequence_plan` metadata、text source/ids 与可选 S0 Local-absent witness）及 `(slot_id, episode_id, source_digest, consumer_step)`。它不得声明持有 `GenerationDataClean`、model-generated `input_text_indexes` 或 diffusion timestep；identity 必与 `member` chronology 和 `SegmentBatch` 完全相等。
+
+固定生命周期为：先按 member/segment stream-major gather valid raw rows；随后**一次**调用现有 model-side preparation chain，在模型内继续执行 `_load_and_tokenize_text_data()`、`build_sequence_plans_from_data_batch()`、`get_data_and_condition()` 与现有 CP handling；再由既有 model noise-level seam 生成 diffusion timesteps，最后调用 `_pack_input_sequence()`。producer 只冻结 gather identity/order/Local prefix，绝不改变这些模型侧语义或把 timestep 移到上游。
 
 producer 输出不可变 `CanonicalNativeConsumerBatch`：
 
 ```text
 sequence_plans: tuple[SequencePlan, ...]
-clean_rows: tuple[opaque clean payload, ...]
-text_indexes: tuple[list[int], ...]
-input_timesteps: tuple[opaque timestep metadata, ...]
+raw_rows: tuple[CanonicalRawNativeRow, ...]
 local_prefixes: tuple[Tensor | None, ...]
 identities: tuple[(slot, episode, step), ...]
 actual_n_valid: int
@@ -42,9 +42,9 @@ actual_n_valid: int
 
 下一个 audit 必须对现有 child 给出 `file:line`：
 
-1. `joint_dataloader` 如何保留每 native sample 的 `sequence_plan`、clean payload、text/timestep inputs，及最小 immutable row extraction seam；
-2. 是否能从 gathered rows 组装合法 batched `GenerationDataClean` 而不改 packer；若不能，明确最小新增 builder 的路径和白名单；
-3. `_pack_input_sequence()` 与 `_compute_losses()` 的 consumer/auxiliary split seam，保证 flow modality/sample scaling已完成且 load-balance 单独返回；
+1. `joint_dataloader` 实际保留哪些 raw fields与最小 immutable raw-row extraction seam；不得要求它产生 clean payload、tokenized indexes 或 timestep；
+2. gathered rows 如何一次进入现有 model-side `_prepare_training_data()`/`_get_training_inputs()`，分别映射 `GenerationDataClean`、tokenized indexes、CP payload handling；若现有输入 shape 不可安全组装，明确最小新增 builder 的路径和白名单；
+3. 既有 model noise-level seam 如何在 preparation 后生成 diffusion timesteps，并与 `_pack_input_sequence()`、`_compute_losses()` 的 consumer/auxiliary split 保持一次语义；
 4. S0 absent prefix 与 PAD exclusion 从 producer 到 packer 的逐字段证明；
 5. foreign/reconstructed/stale member、row identity/count mismatch 的 pre-forward zero-mutation rejection；
 6. No-Local path 不构造 producer，保持原 input/loss/GA 语义。
