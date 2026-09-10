@@ -71,6 +71,7 @@
 - P0 v0.2 审核轮询 #6（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT formal review 仍缺；MM 对 formal root=`e0cc97e`/child=`3a078f2` 返回 `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`，Kimi approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
 - P0 v0.2 审核轮询 #7（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 最新文件仍为 v0.1 P0 review，formal root=`e0cc97e` 无匹配；MM/Kimi 的同 SHA approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
 - P0 v0.2 审核轮询 #8（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 与 ChatGPT→Codex notice 对 formal root=`e0cc97e`/v0.2 均无匹配；MM/Kimi 的同 SHA approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
+- P0 v0.2 审核轮询 #9（2026-09-10）：`git fetch origin V2` 无新增；ChatGPT `reviews/` formal root=`e0cc97e` 无匹配，目录最新仍为 v0.1 P0 review；MM/Kimi 的同 SHA approve 保持有效。当前仅 ChatGPT verdict 缺失，保持 `REVIEW`，不进入 P1。
 
 ## 当前整改认领（2026-09-09）
 
