@@ -161,3 +161,46 @@ Authorized next action:
 Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer CPU/static closure remediation v2 changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `0e88086397eb0ca709a7215fc918f5f662264fc1`
+- child/Gitlink SHA: `d171d7149533cb31b241b402eb738d091c927ed0`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_adapter.py:100)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_0e88086_d171d71.md`
+
+Canonical review commit:
+`46da6adf9101b9b81dd1a23d6223d059a2e8f91b`
+
+Current blockers: 3 HIGH.
+
+Blocker lifecycle:
+- prior carrier-marker activation isolation HIGH is CLOSED;
+- prior post-clean working-mapping Local-neutral HIGH remains CLOSED;
+- prior adapter-creation-before-preflight / dynamic image-key / image-video XOR / tensor-stacked validation portions are CLOSED;
+- carrier raw-source authority remains OPEN in a narrower form;
+- Evidence remains PARTIALLY OPEN;
+- one new production failure-path blocker is recorded for carrier-owned `sequence_plan` mutation.
+
+Current blocker summary:
+- producer ABI freezes raw-row identity as `(slot_id, episode_id, source_digest, consumer_step)` and collate-truth-only raw fields, but current preflight still validates only `(slot, episode, step)` and injects a synthetic `canonical_model_sample` pointer into raw rows; foreign source_digest can therefore alias the same consumer triple;
+- when legal raw/native `sequence_plan` metadata is present, `build_sequence_plans_from_data_batch()` returns carrier-owned plan objects directly, canonical adaptation mutates `plan.has_local_memory`, then the intentional hard-stop aborts only scan bookkeeping; carrier/raw plan metadata remains mutated and can poison a retry;
+- tests now cover carrier activation, B=2,T=3, list/stacked/XOR authority, pre-adapter foreign model-batch rejection and a real scan->abort witness, but still lack source_digest negative, actual-mismatch abort, real safe-helper production lifecycle, post-scan materialization failure disposition, legacy-zero-call, No-Local `training_step` parity, and `sequence_plan` immutability/rollback evidence.
+
+Authorized next action:
+- remediate only this CPU/static implementation under the already-approved producer ABI / v0.1-v0.5 design authority and return a new formal root/child pair for fresh closure review;
+- preserve the now-closed activation, CP, post-clean Local-neutral, preflight ordering, dynamic model-key, nested-storage and exact abort contracts.
+
+Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
