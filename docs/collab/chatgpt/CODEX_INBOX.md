@@ -1036,3 +1036,14 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 实现仅改 child 三个白名单文件：新增 nested immutable carrier 的 expected traversal validation、exact-once `abort_scan()`，canonical hard-stop bridge 在 scan 后比较 actual gathered 与 expected 且始终 abort；定向 CPU tests验证 abort、nested carrier/PAD/foreign identity。证据：`pytest canonical_segment_production_adapter_test.py canonical_segment_production_integration_test.py -q`=`6 passed`；目标 `py_compile` 与 child `git diff --check` PASS。请审核是否严格止于 CPU/static、没有 native forward/loss/backward/真实 I/O，且所有 failure disposition准确。
 
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权 dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint、真实 data/cache I/O、GPU、torchrun、训练、评测、推理或 LIBERO4IN1；正式 verdict仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Segment Producer CPU/static implementation closure remediation（2026-09-10）
+
+- formal root SHA：`3db2c4a407b42e3c8f6325a196e83223052f293d`
+- child/Gitlink SHA：`b8e778dd2f39c58708e5d9d6751e0bd5a20cd4be`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+- 前序 review：`2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_b7fe7f8_ee9a63c.md`。
+
+本轮仅整改 closure 的 safe helper/CP/fixture 缺口：CP enabled 在 scan 前拒绝；canonical branch 调用 non-Local text→plan→clean→memory preparation，clean 后唯一从 gathered prefixes 写 plan+dense Local，再 abort + packer 前 hard-stop；补 B=2,T=3 mixed carrier 和 mock CPU call-order/CP tests。无真实 I/O/GPU/forward/loss/backward。定向 pytest、py_compile、diff-check 均已执行。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权真实 I/O/GPU/torchrun/训练/评测/推理/LIBERO4IN1。正式 verdict仅写入 `docs/collab/chatgpt/reviews/`。
