@@ -29,6 +29,7 @@
 - v0.3 审核轮询 #4（2026-09-10 08:52 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`4522466` review；MM/Kimi pane 均保持同 SHA批准。保持 `REVIEW`，不重复发送申请、不开始 implementation。
 - v0.3 审核轮询 #5（2026-09-10 08:57 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`4522466` review；MM/Kimi pane 均保持同 SHA批准。保持 `REVIEW`，不重复发送申请、不开始 implementation。
 - Gate 已关闭（2026-09-10 09:02 +08:00）：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_design_4522466_f14a8d8.md`、MM、Kimi 对 formal root=`4522466880221a64cac77b602e903652d180ccb5`/child=`f14a8d8e3f0cc453545f3d9b1406af76cea7e151` 均给出 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`。仅授权下一步冻结精确 child 文件白名单并实现 CPU/static adapter/scheduler contract double；真实 packer/feature binding、I/O、GPU、runtime sidecar、LIBERO4IN1 与训练仍须独立 Gate。
+- 当前认领：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`。只读核验确认 `local_memory_segment.py` 的 `GAWindowPlan`/`RankLocalSegmentScheduler` 是历史单行 contract，不能承载新 batch-level member；预计仅在 child 新增 `cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler.py` 与 `canonical_segment_adapter_scheduler_test.py`，作为隔离 CPU/static double。禁止修改旧 row route、producer/packer/dataset/model/config/optimizer/checkpoint；无真实 I/O/GPU/训练。
 
 ## 当前整改认领（2026-09-09）
 
