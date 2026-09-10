@@ -947,3 +947,19 @@ v0.3 保留已关闭的 consumer/auxiliary split、真实 packer/loss map 与 ex
 审计仅请求下一 docs-only implementation design：最小范围应冻结 model-owned `omni_mot_model.py` canonical-safe factoring/builder、single Local-prefix adaptation 和 CP disposition；不得直接实现，也不得改 dataloader/collate/packer/dataset/loss scaling 或扩大 runtime scope。请核对 source map、fail-closed CP 结论、后续 design boundary 是否准确。唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only source audit；禁止 child 代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、runtime sidecar、config/optimizer/checkpoint 改动、训练、评测、推理或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment producer source audit v0.2 raw-row carrier remediation
+
+- formal root：`10d84a5898f447fd1ab311de10817193fc149135`
+- child/Gitlink：`36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-SOURCE-AUDIT`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_source_audit_v0.2.md`
+- prior all-review disposition：formal `7bca138/36bf3b2` 的 MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_source_audit_7bca138_36bf3b2.md` 为 `REQUEST_CHANGES`（HIGH：v0.1 未映射 canonical raw-row carrier）。
+
+v0.2 仅整改该 HIGH：明确 current carrier 不存在，而非由 collate field availability 推断。source map 明确 request 无 raw rows、`SegmentBatch.consumer_payload: Any` 只证明 presence/PAD 不能证明 collate identity，fixture 甚至使用 string/object payload；`training_step()` `:1425-1429` 是仍同时持有 collated `data_batch` 与 resolved request 的最后 source boundary，下一 forward 只收 request/iteration。因此 future typed immutable carrier 只能由后续 design 在这一 model boundary 引入，且必须同一 request/member/segment/gather object + stream-major identities/count 绑定；prefix 仍只来自 scan/gather。若此关联不能在 model/producer seam完成，须 fail closed、另起 data-side design，不能偷改 collate/packer。
+
+请核 ChatGPT HIGH 是否精确关闭、future/current 事实是否严格区分、carrier binding和 scope consequence是否充分。唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only remediation；禁止 child 代码、producer/builder implementation、dataset/dataloader/collate/packer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
