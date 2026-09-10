@@ -1325,4 +1325,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - `1cf9ec39b8af6f3f7e16670a57a94ee9a75dd79e`/`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 三方意见已齐：MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_1cf9ec3_36bf3b2.md` 为 `REQUEST_CHANGES`（1 HIGH）。v0.1 把 source-audit 已授权的 safe non-Local factoring 与 single Local-prefix adaptation 延后，意见成立。
 - 最小 docs-only 整改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.2.md`。冻结 canonical-safe helper的 exact input/output、carrier `model_data_batch` capability、pre-scan validation/CP reject、非 Local materialization顺序、`get_data_and_condition()`后且`memory_init_training()`前的唯一 prefix adaptation、S0/PAD/dense token relationship及packer前 hard-stop。未改 child、未执行项目代码/真实 I/O/GPU/训练。
+
+### R09-B TTT canonical producer implementation design v0.2 review closed（2026-09-10，IN_PROGRESS）
+
+- formal root=`9b8883f1d171df9b8e70062d2988310554a499e9`/child=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 三方最终意见已齐：MM、Kimi 为 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC`；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_9b8883f_36bf3b2.md` 为 `REQUEST_CHANGES`，两项 HIGH：`model_data_batch` 必须从 frozen raw-row authority 逐字段可归因且在 `get_data_and_condition()` 前/后保持 Local-neutral；scan 成功但 intentional hard-stop 或 post-scan exception 时必须 dispose pending scan capability。
+- 当前认领 docs-only v0.3 最小整改：冻结 carrier→model batch exact derivation、Local-neutral assertions、identity-bound idempotent `abort_scan()` disposition 和异常/intentional-hard-stop CPU evidence。禁止 child 修改、真实 I/O、GPU、torchrun、训练、评测、推理与 LIBERO4IN1；新 formal pair 三方同 SHA 批准前不得进入 P2。提交：未提交。
 - 验证：`git diff --check` PASS。下一步：提交、推送并三方重审 v0.2；同 SHA结论齐前禁止 child implementation。提交：未提交。
