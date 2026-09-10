@@ -44,3 +44,38 @@ Authorized next action:
 Not authorized: child modification, packer/model/trainer implementation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward, training/evaluation/inference, runtime sidecar, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical native forward/loss source audit v0.2 approved
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root audit SHA: `d75a3371f48c2b6538e093f5fd693f843b72e1d6`
+- child/Gitlink SHA: `5d0e037ced559c07081fd4880c633dc03f325efe`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-SOURCE-AUDIT`
+
+Verdict:
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_source_audit_d75a337_5d0e037.md`
+
+Canonical review commit:
+`b5c43d4aff3ff9479a7276e388fba1ff935af4b8`
+
+Current blockers: none.
+
+Closure:
+- v0.1 HIGH preparation-parity gap is CLOSED: v0.2 correctly downgrades the current helper to a safe prefix, maps ordinary per-camera/retain/raw-state/image-size-resolution/VAE-shape semantics plus native memory hooks, and requires exact parity or reversible fail-closed restrictions in the next design;
+- v0.1 HIGH reduction-axis gap is CLOSED: v0.2 distinguishes logical consumers, multi-vision items, dense action/sound subsets, weighted native item loss, sample-level scaling and LBL auxiliary, and requires an explicit actual_n_valid-denominated per-consumer aggregate or a source-proven one-to-one admitted footprint;
+- v0.1 MEDIUM optimizer-boundary gap is CLOSED: v0.2 maps post-backward GA/callback/_optimizer_step/GradScaler/scheduler/zero-grad seams and requires a new canonical dispatcher to fail closed before unsupported irreversible optimizer behavior, without reusing active/legacy authority.
+
+Authorized next action:
+- create only the docs-only `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-IMPLEMENTATION-DESIGN` and return a new formal pair for review;
+- explicitly inherit current `5d0e037...` attempt-1 retry lineage and immutable carrier ownership when freezing the new capability.
+
+Not authorized: child code, packer/model/trainer modification, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
