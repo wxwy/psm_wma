@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Canonical Native Forward/Loss closure-review remediation v4（2026-09-11，IN_PROGRESS）
+
+- v3 formal root=`4c962c9ef7448ea02e790eb478d57090e06fe535`/child=`dc7ba30228dd141244d7d060ebd47310a0c1e8c1` 的同 SHA 结论已齐：MM、Kimi `APPROVE_TO_CLOSE`；ChatGPT canonical review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_4c962c9_dc7ba30.md` 为 `REQUEST_CHANGES`（1 HIGH，Evidence-only）。
+- ChatGPT 确认 production 的 modality-own graph-zero、pre-frontier marker、post-boundary evidence preservation 及 scaler/optimizer causal guards 均已关闭；唯一缺口是 trainer test `trainer_canonical_segment_wiring_test.py:228` monkeypatch 了 `prepare_commit()` 和 `commit_success()`，未证明真实 typed capability 的 production ordering。
+- 最小整改 child=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9` 已推送：trainer witness 以真实 `scheduler.freeze_plan()` 建立 exact pending transition，实际调用 `adapter.prepare_commit()`/`adapter.commit_success()`，仅包装 frontier apply seam 为“先执行真实 mutation、后抛异常”；它捕获并断言 exact typed capability、pending scan/frontier、controlled slow grads 保留，transaction 未 terminalize/reconcile。定向 trainer=`4 passed, 13 deselected`、Ruff、target `py_compile`、child/root `git diff --check` PASS；typed no-valid=`1 passed, 17 deselected`、adapter abort=`1 passed, 5 deselected` 继续 PASS。下一步更新 root Gitlink/状态、提交推送并对新 pair 重新三方审核。禁止任何 production code、白名单扩张、真实 I/O、GPU、torchrun、训练、评测、推理或 LIBERO4IN1。
+
 ## Canonical Native Forward/Loss closure-review remediation v3（2026-09-11，REVIEW）
 
 - formal implementation root=`4c962c9ef7448ea02e790eb478d57090e06fe535`，其 `cosmos-framework` Gitlink 与 child `origin/v2` 均精确为 `dc7ba30228dd141244d7d060ebd47310a0c1e8c1`；root current HEAD=`3ffe1778f29a5fcdf4162aa1ddc2fabac24c1730` 仅为随后合并 ledger/协作历史，不是 formal target。
