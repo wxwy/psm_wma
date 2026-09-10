@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Canonical Native Runtime Source-Audit 设计（2026-09-11，IN_PROGRESS）
+
+- 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-SOURCE-AUDIT-DESIGN`。它是 native forward/loss CPU/static closure 后的下一项 docs-only 工作：仅冻结对真实 model/trainer/packer/cache/checkpoint 执行前必须完成的 source/ABI 审计，不授权或执行任何 child 代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
+- 预计修改：根仓 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.1.md`、`SESSION.md`、`TODO.md`。审计目标是明确 production hard-stop 解除前的唯一 seam 和 fail-closed 条件；任何需先修改 packer/dataloader/config/checkpoint 或与 v0.3.5/v0.3.9 冲突的结论均为 `REQUEST_CHANGES`，不得静默实施。提交：未提交。
+
 ## Canonical Native Forward/Loss CPU/static Gate closed（2026-09-11）
 
 - formal root=`e24e944a1dc8cfe2cab97ab19157f69be770c4f3`/Gitlink=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9` 已收齐三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC`：ChatGPT canonical review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_e24e944_c0e6e55.md`，MM、Kimi pane verdict 均同意。v0.1--v0.4 frozen seven-file synthetic CPU/static contract关闭。
