@@ -112,3 +112,40 @@ Authorized next action:
 Not authorized: source-audit closure, producer implementation, child production changes under this Gate, dataloader/collate/packer changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer ABI v0.2 approved for source audit
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `c57e77c42b13e0a397d42c5d7979c8382b1ee144`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-ABI-DESIGN`
+
+Verdict:
+`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_ABI`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_abi_design_c57e77c_36bf3b2.md`
+
+Canonical review commit:
+`e1715a4f3a64ecaf90839e90854feef8f2f4effa`
+
+Current blockers: none.
+
+Closure:
+- prior `ce705715 / 36bf3b2` HIGH is CLOSED: v0.2 no longer routes canonical materialization through ordinary `_prepare_training_data()` / `_get_training_inputs()` when that would execute legacy Local injection;
+- raw/collate truth and model-owned materializations are separated into `CanonicalGatheredRawBatch` and `CanonicalModelPreparedBatch`;
+- exact safe materialization seam, CP owner, Local-prefix mapping point, and any minimal factoring/builder proposal remain obligations of the next docs-only source audit, not pre-authorized implementation choices.
+
+Source-audit watchpoint:
+- preserve the existing canonical scan/gather authority for `local_prefixes` (`CanonicalProductionScanResult.gathered` / `NativeConsumerBatch.from_segment(...)`); do not reconstruct or accept arbitrary foreign Local prefixes.
+
+Authorized next action:
+- perform only the next docs-only canonical producer/native-materialization source audit and return its new formal pair for fresh review.
+
+Not authorized: producer or builder implementation, child production changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
