@@ -6,6 +6,7 @@
 - 新 Gate=`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`，仅 v0.1 §2 七文件白名单、synthetic CPU/static；先实现 v0.2/v0.3/v0.4 的 loss algebra、post-backward commit capability和 `abort_commit` failure disposal。真实 I/O/GPU/torchrun/native forward/loss/backward/optimizer/训练/评测/推理/LIBERO4IN1 仍禁止。
 - 子步骤 1：仅修改 adapter 与相邻测试，新增 exact `abort_commit(capability)`（先消费 commit capability，再 abort exact scan，零 reconcile）及 foreign/double-disposal witness。child=`8c830f4e509e0646231a2a8151da091a65a16a80` 已推送；pytest=`6 passed in 6.54s`、Ruff、`py_compile`、child diff-check PASS。尚未实现其余六文件 native loss/dispatcher seam，未触及真实 I/O/GPU/训练。
 - 子步骤 2：仅修改 `flow_matching.py` 和相邻 integration test，新增不可变 `FlowMatchingLossTerms`/`compute_flow_matching_loss_terms()`，旧 `compute_flow_matching_loss()` 仍返回原二元值。child=`dcf8058a500ff50a15d4bb2e3d8217f0c46e38d4` 已推送；新用例=`1 passed, 12 deselected in 20.08s`、Ruff、`py_compile`、child diff-check PASS。完整 integration 文件两次受宿主 I/O 等待影响，未取得可记录退出码，尚待补跑；未触及真实 I/O/GPU/训练。
+- 子步骤 3：仅修改 adapter 与相邻 integration test，新增 exact scan-bound `CanonicalNativePreparedInputs` 与 field-wise recursive working clone；carrier/preflight/gather mismatch 会 abort exact scan，工作容器的 dict/list/tensor/dataclass 改写不 alias carrier。child=`8b136ed7a0e746fe77bc7e0003d9769a57604e32` 已推送；新用例=`1 passed, 13 deselected in 19.77s`、Ruff、`py_compile`、child diff-check PASS。完整 integration 仍待稳定环境补跑；未触及真实 I/O/GPU/训练。
 - 用户指定的审核与已启动程序监控频率统一为每三十分钟一次、至少连续三十轮；每轮按 ChatGPT `reviews/`、Kimi pane、MM pane 顺序核验，ChatGPT 仅以正式 review 文件为准。
 
 ## Canonical producer closure review 整改认领（2026-09-10）
