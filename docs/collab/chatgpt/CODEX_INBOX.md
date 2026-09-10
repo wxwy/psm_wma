@@ -1085,3 +1085,16 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 本轮仅在四文件白名单内关闭前序 formal `0e88086/d171d71` 的 source/immutability HIGH：raw source identity 改为 typed carrier-side 四元 `(slot, episode, source_digest, step)` metadata，并以 typed raw-object reference 绑定 row→model sample，移除 raw payload synthetic sentinel；foreign source_digest 证明零 adapter 创建。safe helper 将 model plan 以 `dataclasses.replace()` 建为临时对象，canonical prefix adaptation 不再改 carrier-owned `sequence_plan`；真实 CPU scan 路径跑 text→plan→clean→memory-init→hard-stop→abort，原 carrier plans 保持 Local-neutral。证据：adapter=4 passed；integration=7 passed in 36.81s；py_compile、diff-check PASS。请回复 `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 禁止真实 I/O、GPU、torchrun、packer/noise/native forward/loss/backward、训练、评测、推理或 LIBERO4IN1；正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Segment Producer CPU/static closure remediation v4（2026-09-10）
+
+- formal root SHA：`5e8d557e00782b694f267481905b95c1e4665595`
+- child/Gitlink SHA：`42e83646864b2124fedc1a85439d8290fa057d64`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+- 前序同 Gate review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_0f32189_c3d5b7a.md`。
+
+本轮严格只改 approved 四文件中的 `canonical_segment_production_integration_test.py`，不改生产实现。整改前序 Evidence HIGH 与 Kimi 红灯：两个经过 real helper 的 plan fixture 改为 native `SequencePlan` dataclass，使 model-owned `dataclasses.replace()` 语义由实际 native 计划对象覆盖；新增 post-scan gathered identity/count mismatch 的 exact abort + frontier/scheduler/transaction/commit 零变更 witness；新增 `memory_init_training()` 注入异常的同一 abort disposition；新增 canonical production-path 对 `_prepare_training_data`、`_get_training_inputs`、`_inject_local_history`、`_ttt_local_memory_tokens` 的零调用 spy；新增 post-clean ordinary `local_memory` 注入在 adaptation/memory-init 前拒绝；新增 `training_step()` No-Local ordinary fall-through且零 canonical adapter construction witness。
+
+最终 child SHA 定向证据：`LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_adapter_test.py cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py -q`=`16 passed in 32.05s`；三个 target 文件 Ruff、四文件 `py_compile`、child/root `git diff --check` PASS。仅 synthetic CPU fixture；未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、packer/noise/native forward/loss/backward、训练、评测、推理或 LIBERO4IN1。
+
+请核证据是否准确闭合前序 review 的六项 Evidence 条件，以及是否仍严格止于 approved CPU/static 范围。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权任何上述禁止范围；正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
