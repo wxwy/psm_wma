@@ -89,3 +89,20 @@ CPU/static evidence：typed no-valid integration=`1 passed, 17 deselected`；ada
 CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 13 deselected`；typed no-valid integration=`1 passed, 17 deselected`；adapter abort=`1 passed, 5 deselected`；Ruff、target `py_compile`、child/root `git diff --check` PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。
 
 请核验唯一 HIGH 的 direct production typed commit/frontier evidence 是否关闭，并回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求冻结七文件内 synthetic CPU/static closure，不授权上述禁止范围。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Runtime Source-Audit 设计 v0.1（2026-09-11）
+
+- formal root SHA：`7a52b4bd00a2b0f5e6abb283c5212fa3f85b7bac`
+- child/Gitlink SHA：`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- independent pair check：`git ls-tree 7a52b4bd00a2b0f5e6abb283c5212fa3f85b7bac cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-SOURCE-AUDIT-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.1.md`
+- 前置 closure：`e24e944`/`c0e6e55` 仅关闭 synthetic CPU/static canonical native forward/loss contract，未授权真实执行。
+
+本轮只新增根仓 docs-only 审计设计，未改 child，也未执行项目代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。请重点核验：
+
+1. audit 是否准确保留 v0.3.5 chronology、S0/PAD/stream-major 与 v0.3.8/0.3.9 GA transaction；
+2. 是否要求逐个 source owner 证明 model seam、packer/flatten、native loss、real scaler/GA、producer/cache 与 persistence/distributed 边界，且不以 CPU/static double 代替真实路径；
+3. audit 的 `REQUEST_CHANGES` 分流是否足以阻止静默移除 hard-stop、重复 GA 缩放、legacy Local 混入、cache identity 缺失或未经批准的 runtime/GPU/训练。
+
+请回复唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_SOURCE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权后续只读 source/ABI audit；不授权 child 实现、真实 I/O、GPU smoke、matched smoke 或正式训练。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
