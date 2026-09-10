@@ -806,3 +806,19 @@ v0.3 只 override v0.2 count/digest/acceptance sections：①所有 `consumer_va
 请核对 source map、A--F disposition 与 P1 边界是否准确、是否避免把 S0/PAD 或 legacy row-wise replay 偷换为 canonical production ABI。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only source audit；禁止 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment production source-ABI audit v0.2 remediation
+
+- formal root：`e0cc97e7178d345c6575bb7f73f540b8ec056f1c`
+- child/Gitlink：`3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-INTEGRATION-SOURCE-ABI-AUDIT`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_integration_source_abi_audit_v0.2.md`
+- prior review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_2d34eed_3a078f2.md`；三方意见已齐后仅整改其 HIGH/MEDIUM。
+
+v0.2 精确撤销 v0.1 的 native-total-loss valid-count 重权。新增真实 source map：`flow_matching.py:18-90` 的 per-instance noisy `condition_mask`/mean、`omni_mot_model.py:1732-1850` 的 flow consumer term、一次 sample-level scaling 与独立 load-balancing auxiliary add、trainer `:520-589` 的唯一 `/GA` backward seam；P1 唯一公式冻结为 `N_valid/N_window * consumer_loss + auxiliary_loss/GA`，且 backward 前 exact actual-count check。另补 `packers.py:76-255` 的 plan-order loop 与 per-sample Prefix `None`、以及 `:257+` modality-index ownership，明确 native plan list 有稳定顺序但无 `[B_stream,T]`/PAD/segment gather。
+
+请核对 ChatGPT HIGH 的 consumer/auxiliary 分离、一次 sample/DDP/GA scaling，及 MEDIUM 的真实 packer/loss-mask ABI 是否精确关闭；并确认未扩大 docs-only 范围。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
