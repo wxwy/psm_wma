@@ -181,3 +181,39 @@ Authorized next action:
 Not authorized: implementation design approval, producer/builder implementation, child production changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer source audit v0.2 approved for implementation design
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root source-audit SHA: `10d84a5898f447fd1ab311de10817193fc149135`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-SOURCE-AUDIT`
+
+Verdict:
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_IMPLEMENTATION`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_source_audit_10d84a5_36bf3b2.md`
+
+Canonical review commit:
+`b2d397c5fcbf2cd8dc2156f8cdcb86b578c79606`
+
+Current blockers: none.
+
+Closure:
+- prior `7bca138 / 36bf3b2` raw-row carrier HIGH is CLOSED;
+- v0.2 correctly records that the current canonical raw-row carrier does not exist rather than inferring it from collate field availability;
+- the next design is constrained to a typed immutable carrier introduced at the model-owned canonical diversion boundary and bound to the exact request/member/SegmentBatch/gather order/count authority;
+- full provenance remains anchored in the frozen member/chronology, while Local prefixes remain exclusively owned by the canonical scan/gather result;
+- if the association cannot be established within the authorized model/producer seam without changing dataloader/collate/dataset/packer, the next design must fail closed and route to a separate data-side Gate.
+
+Authorized next action:
+- create only the next docs-only canonical segment producer implementation design under the approved source-audit boundary and return a new formal pair for fresh review.
+
+Not authorized: producer/builder implementation, child production changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
