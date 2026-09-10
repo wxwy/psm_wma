@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Canonical Native Forward/Loss v0.4 审核等待（2026-09-10）
+
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-IMPLEMENTATION-DESIGN`。formal root=`1c6ceedb27004e52cd256c404159b85f9be6ba8b`，child/Gitlink=`5d0e037ced559c07081fd4880c633dc03f325efe`；仅 docs remediation，新增 `abort_commit(capability)` 的 pre-mutation failure disposal 合同。
+- ChatGPT canonical live Inbox 申请已由 ledger=`105f959` 推送；MM 与 Kimi 已按完整文本→至少一秒→独立 Enter→capture-pane 回读送达。三方最终 verdict 未齐，状态=`REVIEW`；此时禁止 child implementation、真实 I/O/GPU/torchrun/native forward/loss/backward/optimizer/训练/评测/推理/LIBERO4IN1。
+- 用户指定的审核与已启动程序监控频率统一为每三十分钟一次、至少连续三十轮；每轮按 ChatGPT `reviews/`、Kimi pane、MM pane 顺序核验，ChatGPT 仅以正式 review 文件为准。
+
 ## Canonical producer closure review 整改认领（2026-09-10）
 
 - native forward/loss implementation design v0.1 review 已齐：formal root=`6f75365a7a865f42540e987024165faceb981354`/child=`5d0e037ced559c07081fd4880c633dc03f325efe`；MM/Kimi approve，ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_implementation_design_6f75365_5d0e037.md` 为 `REQUEST_CHANGES`（2 HIGH）。仅 docs remediation：冻结原生 population 到 consumer 的 `N/K_m` cardinality-preserving algebra/absent graph semantics；采用 current canonical `mark_backward_started`、single prepare capability、`commit_success` exact lifecycle；enabled scaler在任何 member backward/commit 前拒绝以保证零 commit；明确 field-wise working ownership。禁止 child/packer/model/trainer、真实 I/O/GPU/forward/loss/backward/训练。提交：未提交。
