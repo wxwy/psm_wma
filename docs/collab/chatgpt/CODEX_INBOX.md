@@ -1004,3 +1004,15 @@ v0.3 仅整改该 review 两项 HIGH：一，carrier 封装 ABI v0.2 raw bundle�
 请核对 raw→model mapping 没有重新引入 foreign/ordinary Local authority，get_data 前后 Local-neutral 断言及唯一 canonical prefix adaptation 是否精确；同时核对 abort 身份、idempotence、exception disposition 和 CPU witness 是否足以关闭 graph-bearing scan capability 泄漏。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。批准范围仅四文件白名单 CPU/static implementation；不授权 child 以外文件、真实 producer/data/cache/checkpoint I/O、dataset/dataloader/collate/packer/trainer/config/optimizer、CUDA/GPU、torchrun、训练、评测、推理或 LIBERO4IN1。正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Segment Producer implementation design v0.4（2026-09-10）
+
+- formal root SHA：`7a678c28d4c9b47ffe6e9e9df0659b843fc49f81`
+- child/Gitlink SHA：`36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-IMPLEMENTATION-DESIGN`
+- 审核对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.4.md`
+- 前序同 Gate review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_4e77930_36bf3b2.md`。
+
+v0.4 仅整改该 review 的一个 HIGH：carrier 保持 logical `[B,T]` raw rows/PAD=None；pre-scan 仅从 frozen request/member/segment/chronology及 logical raw source推导 immutable expected stream-major valid traversal并零 mutation reject；scan后才逐项校验 actual `result.gathered` 等于 expected，若不等则 exact-once `abort_scan` 后失败。v0.3 的 Local-neutral、唯一 prefix adaptation和abort hard-stop/exception disposition保持有效。
+
+请核对 pre/post-scan authority 没有混用 actual result、logical/gathered stages不再歧义、PAD/source provenance/foreign mismatch的 pre-scan 行为与 actual mismatch abort CPU evidence完整。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。批准仅四文件 CPU/static implementation；不授权 child 以外文件、真实 I/O、dataset/dataloader/collate/packer/trainer/config/optimizer、GPU、torchrun、训练、评测、推理或 LIBERO4IN1。正式 verdict请仅写入 `docs/collab/chatgpt/reviews/`。
