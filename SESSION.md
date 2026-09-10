@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## Canonical Native Forward/Loss closure-review 整改（2026-09-11）
+
+- 对 formal root=`be2cd4656ac0ccd92e90ffbeceeb5cda90dae2a1` / child=`8d68f791241fbd26f4cdd297d502b6ef19a4a0db` 的三方结论已完整合并：ChatGPT `REQUEST_CHANGES` 三项（raw `None` fail-closed、frontier mutation 后异常保留证据、production `training_step()` 前置拒绝）；Kimi 复核其前两项已关闭但同意补强第三项；MM `APPROVE`。以 ChatGPT 的 formal review 为最高待整改基线，未采纳单方批准越过问题。
+- 最小整改 child=`bf41f6a`：仅四个 v0.4 白名单文件。`build_prepared_canonical_native_loss_split()` 仅允许 typed `FlowMatchingLossTerms` 的认证 no-valid 走 graph-zero，raw `None` 且 owner 非空即拒绝；frontier 成功 mutation 后显式标记 capability，scheduler reconcile 失败时 trainer 直接报 `CANONICAL_NATIVE_POST_MUTATION_FAILURE`，不执行 abort/reconstruction；canonical production marker 的 enabled scaler 或真实 optimizer 在 callback/model forward/scan 前拒绝。
+- CPU/static 证据：adapter targeted=`2 passed`（raw-None fail-closed + post-mutation scheduler fault 后 capability/scan/frontier 保留且 abort 禁止）；typed no-valid integration=`1 passed`；trainer pre-scan/scaler targeted=`3 passed`；目标 `py_compile`、child `git diff --check` PASS。未执行真实 I/O/GPU/native forward/loss/backward/optimizer/训练。
+- 下一步：推送 child 后提交 root Gitlink/状态记录，以新的 formal root/child pair 重发三方 closure review。Gate 在新三方结论齐全前保持 `REVIEW`，不得关闭或进入真实执行。
+
 ## Canonical Native Forward/Loss v0.4 审核等待（2026-09-10）
 
 - Design Gate 已关闭：formal root=`1c6ceedb27004e52cd256c404159b85f9be6ba8b`，child/Gitlink=`5d0e037ced559c07081fd4880c633dc03f325efe`；ChatGPT review=`2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_implementation_design_1c6ceed_5d0e037.md`、MM、Kimi 均为 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC`。
