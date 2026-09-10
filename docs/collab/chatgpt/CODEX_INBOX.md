@@ -790,3 +790,19 @@ v0.3 只 override v0.2 count/digest/acceptance sections：①所有 `consumer_va
 请核对是否完整保留 v0.3.5 segment semantics，是否确实阻断 row-wise witness 混用，以及 P0 scope/验收/禁止范围是否足以安全授权只读 source audit。请求唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_INTEGRATION_SOURCE_ABI` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only design；禁止任何 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment production integration source-ABI audit
+
+- formal root：`2d34eedcf30163de9e011bf1c4166199e916a2f6`
+- child/Gitlink：`3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-INTEGRATION-SOURCE-ABI-AUDIT`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_integration_source_abi_audit_v0.1.md`
+- prerequisite：production-integration design `ce8e350/3a078f2` 已由 ChatGPT/MM/Kimi 批准，且只授权本 P0 docs-only audit。
+
+审计逐项给出 v0.3.5 §20.2 A--F 的真实 `file:line` source map 与 disposition。结论：① native collate/pack 有逐样本 list，但没有 `[B_stream,T]` 的 canonical valid gather/PAD/stream-major ABI；② native loss/trainer seam 可复用但 member-weight bridge 必须新实现；③ `CanonicalBatchScheduler.freeze_plan` 可保持 metadata authority，但 producer catalog/count 必须新建；④ Memory Prefix 已有 `None -> zero-length offset/present=False` 的真实 S0-absent 表达；⑤ `CANONICAL_EVIDENCE_FEATURE_CONFIG`/`encode_segment` 是 state/dt/age 真关闭；⑥旧 row-wise owner/bridge/active marker 仅保留 provenance/fail-closed reference，native adapter 仍 hard-stop。
+
+请核对 source map、A--F disposition 与 P1 边界是否准确、是否避免把 S0/PAD 或 legacy row-wise replay 偷换为 canonical production ABI。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only source audit；禁止 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
