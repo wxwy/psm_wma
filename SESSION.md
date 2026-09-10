@@ -1320,3 +1320,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.1.md`。根据 source audit 的 carrier absence，冻结初始 CPU/static bridge：typed immutable `CanonicalRawRowCarrier` 仅在 `training_step()` canonical diversion 处作为显式 capability 引入，必须与同 request/member/segment/gather objects、chronology、stream-major count 绑定；raw mappings 不产生 prefix，prefix 仅来自 scan/gather。
 - 白名单仅 `canonical_segment_production_adapter.py`、`omni_mot_model.py`、两份相邻 CPU tests。CP 先 hard-stop；safe helper 只做 carrier/boundary validation，不能调用 ordinary preparation、tokenization/clean materialization、packer/noise/loss，canonical forward 保持 hard-stop。未改 child、未执行项目代码/真实 I/O/GPU/训练。
 - 验证：`git diff --check` PASS。下一步：提交、推送并向 ChatGPT/MM/Kimi 请求 CPU/static implementation design review；同 SHA三方批准前禁止 child 改动。提交：未提交。
+
+### R09-B TTT canonical producer implementation design v0.2 remediation（2026-09-10，IN_PROGRESS）
+
+- `1cf9ec39b8af6f3f7e16670a57a94ee9a75dd79e`/`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 三方意见已齐：MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_1cf9ec3_36bf3b2.md` 为 `REQUEST_CHANGES`（1 HIGH）。v0.1 把 source-audit 已授权的 safe non-Local factoring 与 single Local-prefix adaptation 延后，意见成立。
+- 最小 docs-only 整改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.2.md`。冻结 canonical-safe helper的 exact input/output、carrier `model_data_batch` capability、pre-scan validation/CP reject、非 Local materialization顺序、`get_data_and_condition()`后且`memory_init_training()`前的唯一 prefix adaptation、S0/PAD/dense token relationship及packer前 hard-stop。未改 child、未执行项目代码/真实 I/O/GPU/训练。
+- 验证：`git diff --check` PASS。下一步：提交、推送并三方重审 v0.2；同 SHA结论齐前禁止 child implementation。提交：未提交。
