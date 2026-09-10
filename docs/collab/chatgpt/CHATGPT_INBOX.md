@@ -244,3 +244,36 @@ Authorized next action:
 Not authorized: dataset/dataloader/collate/packer/trainer/config/optimizer/checkpoint changes, real producer/data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native forward/loss/backward/training, evaluation, inference, runtime sidecar, distributed execution or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer CPU/static closure remediation v4 approved
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `5e8d557e00782b694f267481905b95c1e4665595`
+- child/Gitlink SHA: `42e83646864b2124fedc1a85439d8290fa057d64`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_cpu_static_implementation_5e8d557_42e8364.md`
+
+Canonical review commit:
+`72a4d6b7ec4e541601a5651a83c5e7142a936a5a`
+
+Current blockers: none.
+
+Closure:
+- the previous sole Evidence HIGH is CLOSED: all integration fixtures crossing the real helper now use native `SequencePlan`; post-scan gathered mismatch and memory-init exceptions prove exact abort/no commit; ordinary/legacy preparation zero-call, No-Local `training_step()` fall-through, and post-clean ordinary-Local rejection are directly witnessed;
+- prior source-digest/raw-authority and carrier-plan-immutability production HIGHs remain CLOSED;
+- earlier activation, CP, preflight, Local-neutral, nested-storage, expected/actual ordering, and exact abort closures remain in force.
+
+Authorized next action:
+- treat this exact CPU/static Producer implementation Gate as closed;
+- any next real-I/O, GPU/distributed, native-forward/loss/backward, optimizer/GradScaler, checkpoint/sidecar, training/evaluation/inference, or LIBERO4IN1 step requires its own authorized Gate and a new formal pair.
+
+This notice is coordination only and does not replace the formal pair.
