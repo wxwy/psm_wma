@@ -1109,3 +1109,21 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 本轮是纯 docs/source audit：确认已关闭 producer bridge 在 native packer 前 hard-stop；审计 ordinary native packer/loss链、packer 的 Local `None` prefix ABI、flow per-instance loss、ordinary trainer `/grad_accum_iter` backward，及历史 row-wise canonical dispatcher。结论冻结：下一步必须新建独立 typed canonical capability、gathered native-row→packer schema、consumer/auxiliary loss split与独立 trainer dispatcher；禁止复用旧 `canonical_segment_forward` schema、禁止 total-loss 后加权或调用 ordinary `_get_training_inputs()` fallback。
 
 请求核对 source map、supersession和失败闭包是否足以进入下一份 implementation design。唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS` 或 `REQUEST_CHANGES(file:line)`。不授权任何 child代码、packer/model/trainer修改、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、forward/loss/backward、训练、评测、推理或 LIBERO4IN1；正式 verdict仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Native Forward/Loss Source Audit v0.2 remediation（2026-09-10）
+
+- formal root SHA：`d75a3371f48c2b6538e093f5fd693f843b72e1d6`
+- child/Gitlink SHA：`5d0e037ced559c07081fd4880c633dc03f325efe`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-SOURCE-AUDIT`
+- 审核对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_source_audit_v0.2.md`
+- 前序同 pair review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_source_audit_dec45ec_5d0e037.md`（2 HIGH、1 MEDIUM）。
+
+本轮严格为 docs-only remediation，child/Gitlink 未改变。v0.2 逐项关闭前序意见：
+
+1. 它将 `_prepare_canonical_production_inputs()` 降为 safe preparation prefix；冻结 gathered axis 必须逐项 exact-parity ordinary `per_camera_vae_encoding`、`retain_raw_state_vision`、`image_size -> data_resolutions`、VAE shape/raw-state lifetime，或在 pack/noise 前可逆 fail-closed；并补入 overrideable `pre_noise_memory_hook()`/`build_memory_state()` seam。
+2. 它冻结 `flat(b,t)` consumer identity 到 logical sample、multi vision item、dense action/sound、weighted native item term 与最终 `actual_n_valid` consumer denominator 的完整映射；不得将 unweighted `per_instance_loss` 冒充 weighted scalar，不得在 total scalar 后补权重，LBL auxiliary 不按 consumer 比例缩放。
+3. 它映射 post-backward `grad_accum_iter`、optimizer callbacks、`_optimizer_step()`、`GradScaler.unscale_/step/update`、scheduler 和 zero-grad；下一设计必须在 unsupported canonical enabled-scaler/optimizer case 的 callbacks 前 terminalize，且不得复用 active/legacy authority。
+
+静态证据：root/new-doc `git diff --check` PASS；相关 child source definition/边界行号已只读核验。未改 child、packer、model、trainer、config、optimizer、dataset/dataloader/collate；未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。
+
+请核对三项前序意见是否精确关闭，以及 v0.2 是否仅授权下一份 docs-only implementation design。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS` 或 `REQUEST_CHANGES(file:line)`。正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
