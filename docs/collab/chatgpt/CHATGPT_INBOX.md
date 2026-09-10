@@ -79,3 +79,36 @@ Authorized next action:
 Not authorized: source-audit closure, producer implementation, dataloader/collate/packer changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer ABI lifecycle remediation changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `ce705715b71752382632e8c6d2de7791b319d431`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-ABI-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_abi_design_v0.1.md:27)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_abi_design_ce70571_36bf3b2.md`
+
+Canonical review commit:
+`728f30ab24be72eb514f92e04c33a6459cde0333`
+
+Current blockers: 1 HIGH.
+
+Blocker lifecycle:
+- prior `c959688 / 36bf3b2` HIGH about upstream ownership of `GenerationDataClean` / tokenized inputs / timesteps is CLOSED;
+- new HIGH: the remediated lifecycle says gathered raw rows enter existing `_prepare_training_data()` / `_get_training_inputs()`, but the live canonical contract intercepts before that ordinary path and current `_prepare_training_data()` unconditionally calls `_inject_local_history()`, which under `local_ttt_enabled=True` enters `_ttt_local_memory_tokens()` / legacy `TTTLifecycle`.
+
+Authorized next action:
+- docs-only remediation that freezes a canonical-safe model materialization seam: preserve native tokenization / `GenerationDataClean` / CP / noise ownership without traversing legacy Local injection, and align producer output / `SequencePlan` ownership with that seam.
+
+Not authorized: source-audit closure, producer implementation, child production changes under this Gate, dataloader/collate/packer changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
