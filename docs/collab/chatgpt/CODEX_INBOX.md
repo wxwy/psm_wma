@@ -664,3 +664,19 @@ v0.2 不改 child/Gitlink，仅 supersede v0.1 并关闭四项 blocker：①定�
 请核对 ChatGPT HIGH-1/2/3、MEDIUM-1 与 Kimi epoch-rollover MEDIUM 是否精确关闭，且是否仍严格仅为后续 CPU/static design、不预授权 production binding。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/manifest/config/optimizer-selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical adapter/scheduler design v0.3 count-semantics remediation
+
+- formal root：`4522466880221a64cac77b602e903652d180ccb5`
+- child/Gitlink：`f14a8d8e3f0cc453545f3d9b1406af76cea7e151`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ADAPTER-SCHEDULER-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.3.md`
+- prior formal review：root=`7cfa68e`/child=`f14a8d8` 的 MM approve、Kimi/ChatGPT 同一 `REQUEST_CHANGES(v0.2:71)`；本 pair 只合并已齐的 docs-only count/digest 意见。
+
+v0.3 只 override v0.2 count/digest/acceptance sections：①所有 `consumer_valid=True` native consumer 均计入 `row_planned_n_valid`，包括 S0；仅 PAD 排除。冻结 row count == `consumer_valid.sum()` == gathered payload count == item_count == actual count，original window weighted denominator 同源；S0 仅 Local prefix absent。②SHA preimage 精确固定 UTF-8、NUL `0x00`、ASCII 无填充非负整数和不做 normalization 的 catalog category。③增加 S0/non-S0/PAD、含 S0 不等 count GA、byte-identical permutation CPU/static evidence。
+
+请核对 Kimi 与 ChatGPT count HIGH、Kimi SHA-byte LOW 是否精确关闭；确认仍为 docs-only、不预授权 child/production binding。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only remediation；禁止 child 代码、producer/packer/dataset/manifest/config/optimizer-selector/checkpoint、真实 I/O、CUDA/GPU、torchrun、训练/评测/推理、P4/P5、B2-T 与 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
