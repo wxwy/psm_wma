@@ -217,3 +217,39 @@ Authorized next action:
 Not authorized: producer/builder implementation, child production changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer implementation design v0.1 changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `1cf9ec39b8af6f3f7e16670a57a94ee9a75dd79e`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.1.md:54)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_1cf9ec3_36bf3b2.md`
+
+Canonical review commit:
+`2b4b40ab4fc792526f9bff7335dde586dc8e5882`
+
+Current blockers: 1 HIGH.
+
+Blocker summary:
+- source audit v0.2 and the prior ChatGPT approval explicitly require the next implementation design to freeze canonical-safe model preparation factoring, exactly one Local-prefix adaptation into the native model-prepared path, and CP disposition in addition to the typed carrier;
+- v0.1 freezes the carrier shell and CP hard-stop but explicitly defers the real non-Local factoring and `x0_tokens_local_memory` / `SequencePlan.has_local_memory` adaptation to a later Gate, so the requested `APPROVE_TO_IMPLEMENT...PRODUCER_CPU_STATIC` would authorize child work before the already-required prepared/native ABI is designed.
+
+Authorized next action:
+- docs-only remediation under the same Gate: freeze the exact canonical-safe non-Local preparation sequence and one Local-prefix adaptation, with a precise CPU/static whitelist and acceptance contract; or explicitly split/rename this as a narrower pre-bridge Gate instead of claiming implementation-design closure.
+
+Watchpoint:
+- if an intentional fail-closed model path calls `CanonicalProductionAdapter.scan()` before hard-stop, account for the adapter's scan-capability bookkeeping so the failure path does not leave an undisposed consumed request/result.
+
+Not authorized: child implementation under this Gate, real producer/materialization, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, native training/evaluation/inference, runtime sidecar, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
