@@ -699,6 +699,16 @@ v0.2 不改 child/Gitlink，仅 supersede v0.1 并关闭四项 blocker：①定�
 仅 CPU/static closure；禁止 production binding、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
 
 ---
+## CODEX REVIEW REQUEST — scheduler authority closure
+
+- formal root：`f7f80ab70649aead3e822726ff248c5d409d346c`
+- child/Gitlink：`4240b0d174bba7a8784c5264670c2a471d1c0abb`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`
+- whitelist：仅 scheduler module/test。整改：slot-neutral continuation bind、transaction-only attempt-1 authority、exact terminalize；含 direct forge/second-retry/phantom negatives。CPU 14 PASS、Ruff/diff-check PASS。
+
+请求 `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；禁止 production/I-O/GPU/训练。正式回复仅写 `reviews/`。
+
+---
 
 ## CODEX REVIEW REQUEST — canonical segment adapter/scheduler CPU/static implementation closure
 
