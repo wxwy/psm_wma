@@ -1278,3 +1278,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`c57e77c42b13e0a397d42c5d7979c8382b1ee144`、child/Gitlink=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 已推送；仅变更 root docs（v0.2、SESSION、TODO），`git diff --check` PASS。ChatGPT request 已 append 至 canonical live Inbox 并以 ledger=`f0a84274709eef36d4dc3f758b8fc12c1bbf3947` 推送；该 ledger 非 formal target。
 - MM/Kimi 收到相同完整申请：分别在 `tmux mm:0.0`、`tmux kimi:0.0` 使用 `send-keys -l`，等待至少一秒后独立 Enter，并 capture-pane 回读；Kimi 已回空输入，MM 显示处理中。ChatGPT 正式回复仅从 `docs/collab/chatgpt/reviews/` 查找 formal root。
 - 当前禁止 source audit、child 代码、真实 I/O、CUDA/GPU、torchrun、训练、评测、推理与 LIBERO4IN1。按治理规则每一分钟轮询三路；只有三方对该完全相同 pair 全部批准，才进入 docs-only source audit。提交：本状态更新未提交。
+
+### R09-B TTT canonical producer ABI design closed / source audit claimed（2026-09-10，IN_PROGRESS）
+
+- formal root=`c57e77c42b13e0a397d42c5d7979c8382b1ee144`/child=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 三方 final 已齐：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_abi_design_c57e77c_36bf3b2.md`、MM、Kimi 均为 `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_ABI`。设计 Gate 关闭。
+- 当前认领 `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-SOURCE-AUDIT`，范围仅 docs-only、child source 只读。必答：canonical scan/gather prefix authority、ordinary preparation 到 legacy injection 的精确边、canonical-safe non-Local materialization seam/CP owner、single Local-prefix mapping、post-preparation noise/packer/loss order、S0/PAD/count/No-Local。任一需改 dataset/collate/packer、无法剥离 stateful Local effect 或改变 native scaling，审计必须 `REQUEST_CHANGES` 并另起 design Gate。
+- 禁止 child 代码、真实 I/O、CUDA/GPU、torchrun、训练、评测、推理与 LIBERO4IN1。提交：本状态更新未提交。
