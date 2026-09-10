@@ -759,3 +759,18 @@ v0.3 只 override v0.2 count/digest/acceptance sections：①所有 `consumer_va
 请核对 ChatGPT HIGH 的 member-bound backward/reconcile 与其 MEDIUM、Kimi continuation Evidence 是否精确关闭。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 CPU/static closure；禁止 production binding、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — scheduler member-lifecycle reachable-formal closure
+
+- formal root：`ae14754de9ca6c5d74b3ec8a72222fe0280e0bcc`
+- child/Gitlink：`3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-ADAPTER-SCHEDULER-CPU-STATIC-IMPLEMENTATION`
+- prior review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_implementation_74aba98_3a078f2.md` 唯一 HIGH 为 formal child 不可达；技术内容未提出未关闭项，MM/Kimi 已对同一 child 批准。
+
+可达性整改：此前 child 误推 NVIDIA `upstream`；现已将**同一** `3a078f28f3d107bb633c932271f86498f7c427f7` 推送至 ChatGPT 审核实际访问的 `https://github.com/wxwy/cosmos-framework.git` 的 `refs/heads/v2`。本 formal root Gitlink 解析为该公开 child。除 root 的审核状态记录外没有任何代码、设计、测试或范围变更；child diff 相对 `4240b0d` 仍严格仅 scheduler module/test。
+
+请对可访问的 exact pair 重新核验此前 member-bound backward/reconcile HIGH 和 slot-neutral continuation Evidence；请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 CPU/static closure；禁止 production binding、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
