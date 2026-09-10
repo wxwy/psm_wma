@@ -774,3 +774,19 @@ v0.3 只 override v0.2 count/digest/acceptance sections：①所有 `consumer_va
 请对可访问的 exact pair 重新核验此前 member-bound backward/reconcile HIGH 和 slot-neutral continuation Evidence；请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 CPU/static closure；禁止 production binding、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
+## CODEX REVIEW REQUEST — canonical segment production integration design
+
+- formal root：`ce8e3502af5226d42c270dca4d5387cec8bed412`
+- child/Gitlink：`3a078f28f3d107bb633c932271f86498f7c427f7`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-INTEGRATION-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_integration_design_v0.1.md`
+- prerequisite：scheduler CPU/static contract 已由 ChatGPT/MM/Kimi 对 `ae14754/3a078f2` 关闭；本 pair 没有 child 代码变更。
+
+本设计以 v0.3.5 §18/§20.2 为 authority：明确 supersede 旧 row-wise active-wiring，将 route 拆为 P0 docs-only source-ABI audit、P1 production ABI implementation design、P2 CPU/static integration、P3 single-GPU smoke design、P4 runtime/long-train designs。P0 必须逐项审计 variable-valid gather、native loss reduction/GA planned count、Memory Prefix/S0 absent、state/dt/age 真关闭、scheduler producer metadata，以及旧 owner/bridge/active-wiring retain/bypass 表；G/H 保持独立后续 Gate。
+
+请核对是否完整保留 v0.3.5 segment semantics，是否确实阻断 row-wise witness 混用，以及 P0 scope/验收/禁止范围是否足以安全授权只读 source audit。请求唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_INTEGRATION_SOURCE_ABI` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only design；禁止任何 child 代码、producer/packer/dataset/model/trainer/config/optimizer/checkpoint 改动、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练/评测/推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
