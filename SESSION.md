@@ -28,6 +28,7 @@
 - v0.3 审核轮询 #3（2026-09-10 08:47 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`4522466` review；MM/Kimi pane 均已对 root=`4522466`/child=`f14a8d8` 给出同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`。DS 已下班，Kimi 为当前第三审核者。保持 `REVIEW`，不得开始 implementation。
 - v0.3 审核轮询 #4（2026-09-10 08:52 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`4522466` review；MM/Kimi pane 均保持同 SHA批准。保持 `REVIEW`，不重复发送申请、不开始 implementation。
 - v0.3 审核轮询 #5（2026-09-10 08:57 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`4522466` review；MM/Kimi pane 均保持同 SHA批准。保持 `REVIEW`，不重复发送申请、不开始 implementation。
+- Gate 已关闭（2026-09-10 09:02 +08:00）：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_adapter_scheduler_design_4522466_f14a8d8.md`、MM、Kimi 对 formal root=`4522466880221a64cac77b602e903652d180ccb5`/child=`f14a8d8e3f0cc453545f3d9b1406af76cea7e151` 均给出 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`。仅授权下一步冻结精确 child 文件白名单并实现 CPU/static adapter/scheduler contract double；真实 packer/feature binding、I/O、GPU、runtime sidecar、LIBERO4IN1 与训练仍须独立 Gate。
 
 ## 当前整改认领（2026-09-09）
 
