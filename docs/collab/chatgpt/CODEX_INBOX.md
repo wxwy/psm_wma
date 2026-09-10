@@ -1165,3 +1165,18 @@ v0.5 仅关闭 v0.4 的 carrier storage ABI HIGH：保留前置 v0.1 nested `raw
 - 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.4.md`
 
 仅 docs remediation，child未变。新增 exact one-shot `abort_commit(capability)`：先消费 `_commit_capabilities`，再 abort exact scan，零 frontier/scheduler/reconcile；commit_success pre-mutation failure固定为 clear grads→abort_commit→terminalize，post-mutation为保留证据的不可自动恢复 bug。请唯一 verdict `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权 child实现、真实 I/O/GPU/torchrun/forward/loss/backward/optimizer/训练/评测/推理/LIBERO4IN1。正式 verdict仅写 reviews。
+
+## 审核申请：Canonical Native Forward/Loss CPU/static implementation closure（2026-09-10）
+
+- formal root SHA：`34d71a39e03d41377931b900e330984f953612ac`
+- child/Gitlink SHA：`0993445f027454c99f1ab777b5a10df1b04171be`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`
+- 设计 authority：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.4.md`。
+
+请独立核验该 formal pair 的七文件白名单 CPU/static implementation 是否可以关闭。实现包括：weighted-per-instance flow primitive与 `N/K_m` consumer algebra；source-identified multi-vision/dense action/sound owner map；field-wise working copy与 model-safe text/plan/clean/memory/resolution/VAE-shape provenance；canonical forward capability/abort；pre-scan enabled-scaler/optimizer拒绝；独立 canonical dispatcher，以及 exact `abort_commit()` pre-mutation disposal。canonical model branch 仍在 native pack/noise/denoise 前 hard-stop；未执行真实 native forward/loss/backward。
+
+CPU/static evidence：adapter+integration=`23 passed in 26.08s`；trainer enabled-scaler pre-backward rejection=`1 passed, 9 deselected in 21.46s`；injected `commit_success()` pre-mutation failure + exact `abort_commit()`/terminalize=`1 passed, 5 deselected in 9.19s`；相关白名单 Ruff、七文件 `py_compile`、child/root `git diff --check` PASS。已知非本次问题：`omni_mot_model.py` 与 `trainer/__init__.py` 的全文件 Ruff 仅报既有 import-order I001，未作无关重排。
+
+请特别检查：prepared provenance 必填、S0/PAD/owner cardinality、weighted consumer denominator/auxiliary isolation、retry/one-shot authority、enabled scaler在 `.backward()` 前零 commit、pre-mutation failure零 frontier/scheduler reconcile、No-Local/legacy isolation，以及仍严格保持 hard-stop。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅批准范围为七文件 synthetic CPU/static implementation；不授权真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
