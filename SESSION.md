@@ -1272,3 +1272,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `ce705715b71752382632e8c6d2de7791b319d431`/`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 的三方意见已齐：MM、Kimi `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_ABI`；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_abi_design_ce70571_36bf3b2.md` 为 `REQUEST_CHANGES`，新增一个 HIGH。此前 raw/model owner 修复保留，但 v0.1 将 canonical reuse 写成可进入 ordinary `_prepare_training_data()`/`_get_training_inputs()`，而 child `omni_mot_model.py:1021-1027` 会无条件执行 `_inject_local_history()`，启用 TTT 时 `:1100-1112` 进入 legacy `_ttt_local_memory_tokens()`。
 - 最小 docs-only 整改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_abi_design_v0.2.md`，显式 supersede v0.1 的 lifecycle 部分；冻结 pre-model `CanonicalGatheredRawBatch` 与 model-owned `CanonicalModelPreparedBatch` 两阶段 ABI，禁止 canonical 直接/间接执行 ordinary Local injection，并把 canonical-safe materialization seam、CP owner、单次 Local-prefix mapping 和 exact whitelist 留给下一 source audit `file:line` 证明。未改 child、未执行项目代码、真实 I/O/GPU/训练。
 - 验证：`git diff --check` PASS。下一步：提交、推送并以新 formal root/同一 child Gitlink 请求 ChatGPT/MM/Kimi 对本 Gate 复审；三方同 SHA verdict 齐前禁止 source audit、child 代码、真实 I/O/GPU/训练。提交：未提交。
+
+### R09-B TTT canonical producer ABI v0.2 review（2026-09-10，REVIEW）
+
+- formal root=`c57e77c42b13e0a397d42c5d7979c8382b1ee144`、child/Gitlink=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 已推送；仅变更 root docs（v0.2、SESSION、TODO），`git diff --check` PASS。ChatGPT request 已 append 至 canonical live Inbox 并以 ledger=`f0a84274709eef36d4dc3f758b8fc12c1bbf3947` 推送；该 ledger 非 formal target。
+- MM/Kimi 收到相同完整申请：分别在 `tmux mm:0.0`、`tmux kimi:0.0` 使用 `send-keys -l`，等待至少一秒后独立 Enter，并 capture-pane 回读；Kimi 已回空输入，MM 显示处理中。ChatGPT 正式回复仅从 `docs/collab/chatgpt/reviews/` 查找 formal root。
+- 当前禁止 source audit、child 代码、真实 I/O、CUDA/GPU、torchrun、训练、评测、推理与 LIBERO4IN1。按治理规则每一分钟轮询三路；只有三方对该完全相同 pair 全部批准，才进入 docs-only source audit。提交：本状态更新未提交。
