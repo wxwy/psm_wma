@@ -71,3 +71,21 @@ CPU/static evidence：adapter targeted=`2 passed`；typed no-valid integration=`
 CPU/static evidence：typed no-valid integration=`1 passed, 17 deselected`；adapter `abort_commit`=`1 passed, 5 deselected`；trainer pre-scan/scaler/post-mutation=`4 passed, 13 deselected`；target `py_compile`、child/root `git diff --check` PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。
 
 请逐项核验三项 HIGH 是否真正关闭，尤其是 modality-own graph-zero、首次不可逆 mutation 前的证据保留以及 production `training_step()` endpoint witness；回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求五文件 synthetic CPU/static closure，不授权上述禁止范围。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Forward/Loss CPU/static closure remediation v4（2026-09-11）
+
+- formal root SHA：`e24e944a1dc8cfe2cab97ab19157f69be770c4f3`
+- child/Gitlink SHA：`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- independent pair check：`git ls-tree e24e944a1dc8cfe2cab97ab19157f69be770c4f3 cosmos-framework` 精确解析为上述 Gitlink；child `origin/v2` 指向同一对象。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`
+- design authority：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.4.md`
+- prior review：`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_4c962c9_dc7ba30.md`；其唯一 HIGH 为 Evidence-only，production behavior 无 blocker。
+
+本轮仅修改既有白名单中的 `cosmos_framework/trainer/trainer_canonical_segment_wiring_test.py`，关闭上一轮 Evidence-only HIGH：
+
+1. witness 不再伪造 `SimpleNamespace` capability 或手工写入 `_commit_capabilities` / `_post_mutation_commits`；它以真实 `CanonicalBatchScheduler.freeze_plan()` 建立 frozen transition，实际走 `adapter.prepare_commit()` 取得 exact typed `CanonicalProductionCommitCapability`，并实际进入 production `adapter.commit_success()`。
+2. 仅在 `frontier.commit` apply seam 注入：先调用原 real frontier commit 写入真实 state，再抛异常。因此若 production marker 移到 `frontier.commit()` 后，trainer 将不能识别 post-mutation；当前 witness 断言 post-mutation error、exact typed capability 仍 registered、exact scan/frontier evidence 与 controlled slow grads 保留、transaction 未 terminalize/reconcile，且无 abort。
+
+CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 13 deselected`；typed no-valid integration=`1 passed, 17 deselected`；adapter abort=`1 passed, 5 deselected`；Ruff、target `py_compile`、child/root `git diff --check` PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。
+
+请核验唯一 HIGH 的 direct production typed commit/frontier evidence 是否关闭，并回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求冻结七文件内 synthetic CPU/static closure，不授权上述禁止范围。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
