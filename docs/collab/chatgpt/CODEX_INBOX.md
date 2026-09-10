@@ -34,3 +34,21 @@ CPU/static evidence：adapter targeted=`2 passed`（raw-None fail-closed、post-
 - 核验命令：`git ls-tree 2fae506b71e7d9e819a088adf9511d0ee30ae443 cosmos-framework`。
 
 请仅对上述正确 pair 审核；对象、范围、三项整改、证据和唯一 verdict 请求均与紧邻前述申请完全相同。此前错误 pair 不得视作送达或回复。
+
+## 审核申请：Canonical Native Forward/Loss CPU/static closure remediation v2 — corrected formal pair（2026-09-11）
+
+- formal root SHA：`2fae506b71e7d9e819a088adf9511d0ee30ae443`
+- child/Gitlink SHA：`bf41f6ae1ac5e2d3a8db95ae56b52a6fc6948f20`
+- independent pair check：`git ls-tree 2fae506b71e7d9e819a088adf9511d0ee30ae443 cosmos-framework` resolves exactly to the above reachable child commit.
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`
+- design authority：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.4.md`
+
+请独立审核同一七文件 CPU/static 白名单内的三项前序 HIGH 整改：
+
+1. raw `None` 加非空 owners 必须 fail-closed；仅 typed `FlowMatchingLossTerms` certified no-valid 可贡献 graph-zero。
+2. `frontier.commit()` 成功后的 scheduler reconcile 异常必须保留 capability、scan provenance 与 frontier state，且禁止 abort/reconstruction；trainer 必须路由 `CANONICAL_NATIVE_POST_MUTATION_FAILURE`。
+3. production `ImaginaireTrainer.training_step()` 必须对 canonical marker 的 enabled scaler 或真实 `torch.optim.Optimizer` 在 callback/model-forward/scan 前拒绝。
+
+CPU/static evidence：adapter targeted=`2 passed`；typed no-valid integration=`1 passed`；trainer pre-scan/scaler targeted=`3 passed`；目标 `py_compile`、child/root `git diff --check` PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求七文件 synthetic CPU/static closure，不授权上述禁止范围。ChatGPT 正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
