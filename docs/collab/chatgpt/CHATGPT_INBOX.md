@@ -149,3 +149,35 @@ Authorized next action:
 Not authorized: producer or builder implementation, child production changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical segment producer source audit v0.1 changes requested
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root source-audit SHA: `7bca13823f448ef08faa21d7d16f035abe7ecfc6`
+- child/Gitlink SHA: `36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-SOURCE-AUDIT`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_source_audit_v0.1.md:22)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_source_audit_7bca138_36bf3b2.md`
+
+Canonical review commit:
+`908f3c6d4d3f359d7cd9535efb37488c36ba1b2d`
+
+Current blockers: 1 HIGH.
+
+Blocker summary:
+- §2.1 proves what `custom_collate_fn()` preserves, but does not prove the required immutable raw-row extraction/carrier seam into canonical `[B_stream,T]` production. The current `CanonicalProductionSegmentRequest` has no raw-row/data-batch field, `_canonical_production_segment_forward()` receives only `(request, iteration)`, and `SegmentBatch.consumer_payload` is merely opaque `Any`, not a source-backed guarantee that each payload is the exact collate-native row.
+
+Authorized next action:
+- docs-only remediation of this source audit: record the current carrier truth and identify the smallest source-backed capture/ownership boundary that a later implementation design may freeze; bind any future raw-row carrier to exact member/segment/gather identity/order/count while retaining canonical scan/gather as the sole Local-prefix authority.
+
+Not authorized: implementation design approval, producer/builder implementation, child production changes, dataset/dataloader/collate/packer/config/optimizer/checkpoint changes, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, GradScaler runtime work, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
