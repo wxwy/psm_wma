@@ -1308,3 +1308,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`10d84a5898f447fd1ab311de10817193fc149135`、child/Gitlink=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 已推送；ChatGPT request 已 append 到 canonical live Inbox 并以 ledger=`5cce08f8ce67328156ec1b0503740d179b6e9cf7` 推送，ledger 非 formal target。
 - Kimi/MM 均以完整文本、间隔至少一秒的独立 Enter 送达并回读：Kimi 回空输入，MM 显示处理中。等待 ChatGPT `reviews/`、Kimi、MM 对同一 pair 的 final verdict。
 - 当前禁止 implementation design、child 代码、真实 I/O、CUDA/GPU、torchrun、训练、评测、推理与 LIBERO4IN1；每一分钟原生轮询三方。提交：本状态更新未提交。
+
+### R09-B TTT canonical producer source audit closed / implementation design claimed（2026-09-10，IN_PROGRESS）
+
+- formal root=`10d84a5898f447fd1ab311de10817193fc149135`/child=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 三方 verdict 已齐：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_source_audit_10d84a5_36bf3b2.md`、MM、Kimi 均 `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_IMPLEMENTATION`。source audit Gate 关闭。
+- 当前认领 implementation design，严格仅 docs-only：冻结 `CanonicalRawRowCarrier` 在 `training_step()` canonical diversion 的引入、同 request/member/segment/gather binding、legacy-zero-call safe preparation factoring、single Local-prefix adaptation 与 CP disposition。若这些关联需 dataloader/collate/dataset/packer 改动，设计必须 fail closed，另起 data-side Gate。
+- 禁止 child implementation、真实 I/O、CUDA/GPU、torchrun、训练、评测、推理和 LIBERO4IN1。提交：本状态更新未提交。
