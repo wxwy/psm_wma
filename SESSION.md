@@ -15,6 +15,13 @@
 - 验证：`cd cosmos-framework && .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py -q`=`1 passed in 25.82s`；目标 `py_compile`、child `git diff --check` PASS。CPU-only，无 GPU、外网、真实数据/checkpoint I/O。
 - 下一步：实现 exact registered module lookup、adapter scan→native loss split 与 trainer disabled-scaler guard；当前不得执行真实 canonical route。提交：未提交。
 
+## P2 子步骤：registered module adapter binding（2026-09-10）
+
+- 目的/Gate：同一 P2；使 canonical adapter 只使用 model 已注册的 canonical encoder 与 `ContinualTTTLocalMemoryCore`，而非构造/持有替代 trainable module。
+- 修改：新增 exact identity lookup/cache helper，检查 `net.local_history_runtime.encoder`、`recurrent_backend` 与 canonical feature config；已有 adapter 若非同一两个对象则 fail closed。integration fixture 覆盖首次绑定、同一缓存复用与 foreign adapter 拒绝。
+- 验证：`cd cosmos-framework && .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py -q`=`2 passed`；目标 `py_compile`、child `git diff --check` PASS。CPU-only，无真实 I/O/GPU。
+- 下一步：完成 adapter scan→native loss split 与 trainer disabled-scaler guard；当前 canonical branch 仍 hard-stop，禁止真实运行。提交：未提交。
+
 ## 当前整改认领（2026-09-10）
 
 - P0 source-ABI audit v0.3 已关闭：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_395dadf_3a078f2.md`、MM、Kimi 对 formal root=`395dadff0b17ed6206887e372718bb166aa63b40`/child=`3a078f28f3d107bb633c932271f86498f7c427f7` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`。P0 仅授权下一 P1 docs-only design。
