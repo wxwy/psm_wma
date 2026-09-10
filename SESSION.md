@@ -1266,3 +1266,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### R09-B2 P4-v4 execution request run v0.2（2026-09-02，IN_PROGRESS）
 
 - v0.1=`a51e412` 三方 final 已齐：ChatGPT review=`d50800d`、MM=`REQUEST_CHANGES`、Kimi 批准。新增 v0.2 仅整改 backend pair 表达、static-only 到 final immutable roster SHA 生命周期、named source authority/non-strict lexical canonicalization；未执行项目代码、preflight/staging/P5/GPU/训练。预计修改：v0.2 design、SESSION、TODO；验证：`git diff --check`；提交：未提交。
+
+### R09-B TTT canonical producer ABI lifecycle remediation v0.2（2026-09-10，IN_PROGRESS）
+
+- `ce705715b71752382632e8c6d2de7791b319d431`/`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 的三方意见已齐：MM、Kimi `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_ABI`；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_abi_design_ce70571_36bf3b2.md` 为 `REQUEST_CHANGES`，新增一个 HIGH。此前 raw/model owner 修复保留，但 v0.1 将 canonical reuse 写成可进入 ordinary `_prepare_training_data()`/`_get_training_inputs()`，而 child `omni_mot_model.py:1021-1027` 会无条件执行 `_inject_local_history()`，启用 TTT 时 `:1100-1112` 进入 legacy `_ttt_local_memory_tokens()`。
+- 最小 docs-only 整改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_abi_design_v0.2.md`，显式 supersede v0.1 的 lifecycle 部分；冻结 pre-model `CanonicalGatheredRawBatch` 与 model-owned `CanonicalModelPreparedBatch` 两阶段 ABI，禁止 canonical 直接/间接执行 ordinary Local injection，并把 canonical-safe materialization seam、CP owner、单次 Local-prefix mapping 和 exact whitelist 留给下一 source audit `file:line` 证明。未改 child、未执行项目代码、真实 I/O/GPU/训练。
+- 验证：`git diff --check` PASS。下一步：提交、推送并以新 formal root/同一 child Gitlink 请求 ChatGPT/MM/Kimi 对本 Gate 复审；三方同 SHA verdict 齐前禁止 source audit、child 代码、真实 I/O/GPU/训练。提交：未提交。
