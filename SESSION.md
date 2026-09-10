@@ -1290,3 +1290,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_source_audit_v0.1.md`，只读 child source 并完成 v0.2 §3 六项 `file:line` map：collate raw truth=`joint_dataloader.py:128-207,793-821`；canonical prefix/order/count=`canonical_segment_production_adapter.py:112-145` + `canonical_segment_adapter_scheduler.py:293-321` + `local_memory_segment.py:64-106`；ordinary preparation 的 legacy edge=`omni_mot_model.py:1008-1053,1100-1150,1295-1327`；native plan/prefix packer=`sequence.py:1209-1264` + `packers.py:244-255`；post-preparation noise/packer/loss=`omni_mot_model.py:1448-1605,1778+`。
 - 结论：不需改 dataloader/collate/packer/dataset；但 current child 没有直接可调用的 Local-neutral preparation helper。下一步必须建立独立 docs-only implementation design，冻结 `omni_mot_model.py` model-owned factoring/builder、single Local-prefix adaptation 与 CP disposition；ordinary CP payload 不能复用，因为 owner preparation 已经过 legacy injection。未改 child、未执行项目代码/真实 I/O/GPU/训练。
 - 验证：`git diff --check` PASS；已重读 `local_memory_segment.py:64-106`，S0/PAD/stream-major 结论有 source 依据。下一步：提交、推送并向 ChatGPT/MM/Kimi 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_IMPLEMENTATION`；三方未齐前禁止新的 implementation design 或 child 改动。提交：未提交。
+
+### R09-B TTT canonical producer source audit v0.1 review（2026-09-10，REVIEW）
+
+- formal root=`7bca13823f448ef08faa21d7d16f035abe7ecfc6`、child/Gitlink=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 已推送；ChatGPT request 已 append 到 canonical live Inbox 并以 ledger=`0897acb30957c0ef04026147c2f6aa87bdd19243` 推送，ledger 非 formal target。
+- Kimi/MM 均收到相同完整申请：`tmux kimi:0.0` 和 `tmux mm:0.0` 都以 `send-keys -l` 写入、等待至少一秒后独立 Enter，capture-pane 回读；Kimi 已回空输入，MM 显示处理中。当前仅等 ChatGPT `reviews/`、Kimi、MM 的同 pair verdict。
+- 三方同 SHA verdict 齐前禁止新的 implementation design、child 代码、真实 I/O、CUDA/GPU、torchrun、训练、评测、推理和 LIBERO4IN1；按治理规则每一分钟原生轮询。提交：本状态更新未提交。
