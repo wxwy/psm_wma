@@ -26,6 +26,7 @@
 - v0.3 审核轮询 #1（2026-09-10 08:25 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 尚无 formal root=`4522466` review。Kimi、MM 均对 root=`4522466`/child=`f14a8d8` 返回 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`，确认 S0 native count、SHA bytes、CPU/static acceptance 和禁止范围均闭合。ChatGPT 未回复，保持 `REVIEW`，不开始 implementation。
 - v0.3 审核轮询 #2（2026-09-10 08:34 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`4522466` review；MM/Kimi pane 均保留同 SHA approve。保持 `REVIEW`，不修改 child 或启动 CPU/static implementation。
 - v0.3 审核轮询 #3（2026-09-10 08:47 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`4522466` review；MM/Kimi pane 均已对 root=`4522466`/child=`f14a8d8` 给出同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_ADAPTER_SCHEDULER_CPU_STATIC`。DS 已下班，Kimi 为当前第三审核者。保持 `REVIEW`，不得开始 implementation。
+- v0.3 审核轮询 #4（2026-09-10 08:52 +08:00）：`git fetch origin V2` 无新增；ChatGPT `reviews/` 仍无 formal root=`4522466` review；MM/Kimi pane 均保持同 SHA批准。保持 `REVIEW`，不重复发送申请、不开始 implementation。
 
 ## 当前整改认领（2026-09-09）
 
