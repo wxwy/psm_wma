@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Canonical Native Forward/Loss CPU/static Gate closed（2026-09-11）
+
+- formal root=`e24e944a1dc8cfe2cab97ab19157f69be770c4f3`/Gitlink=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9` 已收齐三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FORWARD_LOSS_CPU_STATIC`：ChatGPT canonical review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_e24e944_c0e6e55.md`，MM、Kimi pane verdict 均同意。v0.1--v0.4 frozen seven-file synthetic CPU/static contract关闭。
+- 未授权真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、training/evaluation/inference、runtime-sidecar、distributed 或 LIBERO4IN1。下一步必须另行确定并审核新的 Gate，不能从本 closure 直接启动训练。
+
 ## Canonical Native Forward/Loss closure-review remediation v4（2026-09-11，IN_PROGRESS）
 
 - v3 formal root=`4c962c9ef7448ea02e790eb478d57090e06fe535`/child=`dc7ba30228dd141244d7d060ebd47310a0c1e8c1` 的同 SHA 结论已齐：MM、Kimi `APPROVE_TO_CLOSE`；ChatGPT canonical review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_4c962c9_dc7ba30.md` 为 `REQUEST_CHANGES`（1 HIGH，Evidence-only）。
