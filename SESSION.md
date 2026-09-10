@@ -22,6 +22,13 @@
 - 验证：`cd cosmos-framework && .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py -q`=`2 passed`；目标 `py_compile`、child `git diff --check` PASS。CPU-only，无真实 I/O/GPU。
 - 下一步：完成 adapter scan→native loss split 与 trainer disabled-scaler guard；当前 canonical branch 仍 hard-stop，禁止真实运行。提交：未提交。
 
+## P2 子步骤：fp32 fast-state isolation evidence（2026-09-10）
+
+- 目的/Gate：同一 P2；补齐 P1 v0.3 对 fresh fp32 W0 gradient 与 B>1 slot continuation 不串槽的定向 CPU evidence。
+- 修改：adapter test 覆盖 fresh state 四个 tensor fp32、sum backward 到 registered core `_w0` 四参数、两个 distinct slot committed 后 exact cursor continuation，以及 row storage 不 alias。
+- 验证：`cd cosmos-framework && .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_adapter_test.py -q`=`3 passed in 8.41s`。CPU-only，无真实 I/O/GPU。
+- 下一步：继续完成 native loss split 与 trainer disabled-scaler guard；当前 canonical branch 仍 hard-stop，禁止真实运行。提交：未提交。
+
 ## 当前整改认领（2026-09-10）
 
 - P0 source-ABI audit v0.3 已关闭：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_395dadf_3a078f2.md`、MM、Kimi 对 formal root=`395dadff0b17ed6206887e372718bb166aa63b40`/child=`3a078f28f3d107bb633c932271f86498f7c427f7` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`。P0 仅授权下一 P1 docs-only design。
