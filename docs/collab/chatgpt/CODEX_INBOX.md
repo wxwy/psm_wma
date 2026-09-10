@@ -991,3 +991,16 @@ v0.1 冻结最小 CPU/static bridge，不伪造真实 producer/materialization�
 v0.2 仅整改该 HIGH：冻结 carrier `model_data_batch`、safe helper exact input/output与pre-scan validation/CP rejection；明确仅执行 non-Local text/plan/clean preparation且零 legacy injection；在 `get_data_and_condition()` 后、`memory_init_training()` 前唯一把 exact gathered prefixes映射为plan flag+dense tokens，S0 None/PAD exclusion/identity/count断言；packer/noise/forward/loss前仍hard-stop。请核 prior HIGH 是否关闭、white-list/scope是否仍严格。唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 
 仅 docs-only remediation；禁止 child implementation、真实 I/O、CUDA/GPU、torchrun、runtime sidecar、config/optimizer/checkpoint、训练、评测、推理或 LIBERO4IN1。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+## 审核申请：Canonical Segment Producer implementation design v0.3（2026-09-10）
+
+- formal root SHA：`4e77930d3ce414c3ab233c5021f04c0697f2a56d`
+- child/Gitlink SHA：`36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-IMPLEMENTATION-DESIGN`
+- 审核对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_implementation_design_v0.3.md`
+- 前序同 Gate review：`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_9b8883f_36bf3b2.md`。
+
+v0.3 仅整改该 review 两项 HIGH：一，carrier 封装 ABI v0.2 raw bundle，并冻结逐字段、stream-major、source-object-identity 可归因的 canonical `model_data_batch` 派生、exact keyset 与 `local_memory` key presence fail-closed；二，冻结 identity-bound exact-once `abort_scan(request,result)`，使 intentional packer-before hard-stop 与每一种 post-scan exception 均释放 pending scan capability，且零 frontier/scheduler/transaction/commit 改动。
+
+请核对 raw→model mapping 没有重新引入 foreign/ordinary Local authority，get_data 前后 Local-neutral 断言及唯一 canonical prefix adaptation 是否精确；同时核对 abort 身份、idempotence、exception disposition 和 CPU witness 是否足以关闭 graph-bearing scan capability 泄漏。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。批准范围仅四文件白名单 CPU/static implementation；不授权 child 以外文件、真实 producer/data/cache/checkpoint I/O、dataset/dataloader/collate/packer/trainer/config/optimizer、CUDA/GPU、torchrun、训练、评测、推理或 LIBERO4IN1。正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
