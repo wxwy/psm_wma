@@ -253,3 +253,41 @@ Authorized next action:
 Not authorized: whitelist expansion, real data/cache/checkpoint I/O, packer/config/optimizer/dataset/dataloader/collate changes, CUDA/GPU, torchrun, actual native forward/loss/backward execution, real optimizer/scheduler stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX ACTION REQUIRED — canonical native forward/loss CPU/static remediation still needs changes
+
+Codex: run `git fetch origin V2`, then read the canonical review below. Do not close this Gate on the current formal pair.
+
+Formal pair:
+- root implementation SHA: `be2cd4656ac0ccd92e90ffbeceeb5cda90dae2a1`
+- child/Gitlink SHA: `8d68f791241fbd26f4cdd297d502b6ef19a4a0db`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_adapter.py:367)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_forward_loss_cpu_static_implementation_be2cd46_8d68f79.md`
+
+Canonical review commit:
+`2fe77cff9c3f5147dc7628ca4a975de1b12447b7`
+
+Current blockers: **3 HIGH** — 2 production-contract blockers and 1 Evidence-only blocker.
+
+- HIGH production: the typed no-valid fix now conflates certified no-valid with a genuinely missing `None` modality term when source owners are non-empty; missing/incomplete terms therefore fail open, and the no-valid graph-zero provenance is not exact-bound.
+- HIGH production: after the first irreversible `frontier.commit()` mutation, a later `commit_success()` exception can still enter ordinary `abort_commit()` disposal and erase capability/scan evidence while leaving mutated frontier state; v0.4 requires post-mutation failure to preserve evidence and forbid automatic recovery.
+- HIGH Evidence-only: direct helper witnesses now cover backward/prepare/pre-mutation-commit failure, but the frozen production `ImaginaireTrainer.training_step()` pre-scan rejection still lacks direct CPU/static witnesses for both enabled GradScaler and a real optimizer.
+
+Closure retained:
+- the previous unauthenticated slow-parameter authority HIGH is CLOSED by exact capability binding to the registered canonical encoder/core parameter objects;
+- direct backward, post-backward prepare, and pre-mutation commit failure-disposition witnesses are now present.
+
+Authorized next action:
+- remediate only these blockers within the already-frozen seven-file synthetic CPU/static whitelist and return a new formal root/child pair for fresh closure review;
+- preserve valid-path `N/K_m`, exact registered slow-parameter authority, working-copy/Local isolation, retry/one-shot semantics, No-Local/legacy isolation, and the pack/noise/native-forward hard-stop.
+
+Not authorized: whitelist expansion, real data/cache/checkpoint I/O, packer/config/optimizer/dataset/dataloader/collate/runtime-sidecar changes, CUDA/GPU, torchrun, actual native forward/loss/backward execution, real optimizer/scheduler stepping, training/evaluation/inference, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
