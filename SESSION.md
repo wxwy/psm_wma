@@ -1,9 +1,9 @@
 # 当前协作状态
 
-## Canonical Native Runtime Source-Audit 设计（2026-09-11，REVIEW）
+## Canonical Native Runtime Source-Audit（2026-09-11，IN_PROGRESS）
 
-- formal root=`7a52b4bd00a2b0f5e6abb283c5212fa3f85b7bac`/Gitlink=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`，设计为 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.1.md`；仅冻结对真实 model/trainer/packer/cache/checkpoint 执行前必须完成的 source/ABI 审计，不授权或执行任何 child 代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
-- ChatGPT Inbox 申请已随 ledger=`c984ec02769e0bc200ed3247c928748dfc5c627f` 推送；MM `%1` 与 Kimi `%2` 均已按完整文本、间隔至少一秒的独立 Enter 送达并 capture-pane 回读，且均对 `7a52b4b`/`c0e6e55` 给出 `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_SOURCE`。第 1 轮五分钟轮询先保存 HEAD、fetch `origin/V2`、检查新增提交并在可快进时合并；随后确认 `docs/collab/chatgpt/reviews/` 尚无匹配 `7a52b4b` 的正式 review。按现行协作规则，后续每五分钟轮询 ChatGPT reviews、Kimi、MM；ChatGPT 未回复前 Gate 未齐，不得实施。提交：`7a52b4b`（design）与 `c984ec0`（Inbox ledger）；本状态未提交。
+- remediation formal root=`59bd39f61b3498e56d9824b99059c1566b05b87c`/Gitlink=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`，设计为 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.2.md`。ChatGPT formal review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_source_audit_design_59bd39f_c0e6e55.md`、MM `%1`、Kimi `%2` 已同 SHA `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_SOURCE`。
+- 当前只执行 v0.2 定义的 child source/ABI 只读审计：八项 `file:line -> 唯一 owner -> fail-closed` 地图和后续实现路径报告。预计新增根仓 audit 报告；不改 child/config/checkpoint/data/cache，不运行项目代码、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler、训练、评测、推理或 LIBERO4IN1。审计报告完成后必须新 SHA 三方审核。
 
 ## Canonical Native Forward/Loss CPU/static Gate closed（2026-09-11）
 
