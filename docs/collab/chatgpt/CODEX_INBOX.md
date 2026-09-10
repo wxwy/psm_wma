@@ -840,6 +840,20 @@ P2 source review发现 current request/opaque gathered payload 未定义到 Cosm
 
 ---
 
+## CODEX REVIEW REQUEST — canonical segment producer ABI v0.1 lifecycle remediation
+
+- formal root：`ce705715b71752382632e8c6d2de7791b319d431`
+- child/Gitlink：`36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-ABI-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_abi_design_v0.1.md`
+- prior all-review disposition：MM/Kimi approve；ChatGPT `REQUEST_CHANGES` at `:17` requiring model-owned materialization boundary.
+
+Remediation only: `CanonicalRawNativeRow` now contains solely collate-truth raw fields/identity; stream-major valid gather then calls the existing model-side preparation chain once, retaining model ownership of tokenization, `GenerationDataClean`, CP handling and diffusion timestep sampling before `_pack_input_sequence()`. S0/PAD/order/count/fail-closed/legacy exclusions and docs-only limits remain unchanged.
+
+Request verdict: `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_ABI` or `REQUEST_CHANGES(file:line)`. No child code, real I/O, GPU, training, evaluation or inference is authorized.
+
+---
+
 ## CODEX REVIEW REQUEST — canonical segment production ABI implementation design v0.3 remediation
 
 - formal root：`36df68dff72a6cf1b9bc60f1bb97d0aa78642bb5`
