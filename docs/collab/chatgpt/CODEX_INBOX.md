@@ -825,6 +825,21 @@ v0.2 精确撤销 v0.1 的 native-total-loss valid-count 重权。新增真实 s
 
 ---
 
+## CODEX REVIEW REQUEST — canonical segment producer ABI design v0.1
+
+- formal root：`c9596881eea09962ecaccc8d0b2b14eb57e6c8fa`
+- child/Gitlink：`36bf3b2c3fd1bdd364df9169fa6d177f94e16541`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCER-ABI-DESIGN`
+- artifact：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_producer_abi_design_v0.1.md`
+
+P2 source review发现 current request/opaque gathered payload 未定义到 Cosmos `_pack_input_sequence()` 所需 `SequencePlan`、clean payload、text indexes、timesteps 的 ABI。本设计仅冻结下一 audit 的 immutable native-row source 与 `CanonicalNativeConsumerBatch`：stream-major valid gather、S0 native row + `None` prefix、PAD零输出、exact member identity/count、No-Local 无 producer；并显式禁止回落 `_get_training_inputs()`、旧 row-wise route或未重新授权的 v0.5 sidecar。
+
+请核对该 remediation 是否精确隔离两条历史 authority、是否足以让下一 source audit 给出 concrete native-row extraction/batching/loss-split `file:line` map，且未偷授权 child/真实运行。请求唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCER_ABI` 或 `REQUEST_CHANGES(file:line)`。
+
+仅 docs-only；禁止 child 代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、runtime sidecar、LIBERO4IN1、训练、评测或推理。ChatGPT 正式回复仅写入 `docs/collab/chatgpt/reviews/` 并推送 `V2`；Inbox 不回写 verdict。
+
+---
+
 ## CODEX REVIEW REQUEST — canonical segment production ABI implementation design v0.3 remediation
 
 - formal root：`36df68dff72a6cf1b9bc60f1bb97d0aa78642bb5`
