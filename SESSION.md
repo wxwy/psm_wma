@@ -29,6 +29,12 @@
 - 验证：`cd cosmos-framework && .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_adapter_test.py -q`=`3 passed in 8.41s`。CPU-only，无真实 I/O/GPU。
 - 下一步：继续完成 native loss split 与 trainer disabled-scaler guard；当前 canonical branch 仍 hard-stop，禁止真实运行。提交：未提交。
 
+## P2 native pack/loss seam ABI finding（2026-09-10）
+
+- 已核对 P0 source audit v0.3 与当前源码：native `_pack_input_sequence()` 需要 `SequencePlan`、`GenerationDataClean`、text indexes、timesteps；当前 P2 `CanonicalProductionSegmentRequest` 只含 `SegmentBatch`，其 gathered payload 为 opaque，未冻结 producer/转换 schema。P0 audit 明确要求新 immutable `SegmentBatchProducer`，PAD 排除、S0 prefix None、stream-major gathered native consumers。
+- 同时仓内旧 `production_integration_implementation_design_v0.5` 已定义另一条 `local_memory_segment_adapter.py`/sidecar/trainer seam，但其白名单和 authority 与本 P2 six-file whitelist 不同，不能静默混用。故当前 P2 不得擅自把 opaque payload 接到 `_get_training_inputs()`、packer 或旧 row-wise route；保持 canonical branch hard-stop。
+- 下一步：以 producer/native-input ABI 与 P2/v0.5 authority relationship 建立独立 docs-only design/audit Gate，获三方批准后才可继续 native loss split/trainer boundary；在此之前 P2 仅可继续已有六文件内的无歧义静态合同补强。提交：未提交。
+
 ## 当前整改认领（2026-09-10）
 
 - P0 source-ABI audit v0.3 已关闭：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_production_integration_source_abi_audit_395dadf_3a078f2.md`、MM、Kimi 对 formal root=`395dadff0b17ed6206887e372718bb166aa63b40`/child=`3a078f28f3d107bb633c932271f86498f7c427f7` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_IMPLEMENTATION`。P0 仅授权下一 P1 docs-only design。
