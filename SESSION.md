@@ -5,7 +5,7 @@
 - formal implementation root=`4c962c9ef7448ea02e790eb478d57090e06fe535`，其 `cosmos-framework` Gitlink 与 child `origin/v2` 均精确为 `dc7ba30228dd141244d7d060ebd47310a0c1e8c1`；root current HEAD=`3ffe1778f29a5fcdf4162aa1ddc2fabac24c1730` 仅为随后合并 ledger/协作历史，不是 formal target。
 - child 仅五个 v0.4 白名单文件：typed certified no-valid modality 以本 modality `weighted_mean * 0.0` 保图；commit capability 在 `frontier.commit()` 前标记不可逆边界、post-mutation 异常不清慢梯度/不 abort；pre-scan scaler-only 和 optimizer-only rejection 分开因果见证；新增 trainer post-mutation evidence witness。
 - CPU/static evidence：typed no-valid=`1 passed, 17 deselected`；adapter `abort_commit`=`1 passed, 5 deselected`；trainer pre-scan/scaler/post-mutation=`4 passed, 13 deselected`；target `py_compile`、child/root `git diff --check` PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理、runtime sidecar 或 LIBERO4IN1。
-- 下一步：先将该 exact pair append 到 canonical live Inbox、提交/推送 ledger 并送达 MM/Kimi，然后按项目当前每 60 分钟节奏原生轮询 ChatGPT reviews、MM、Kimi；三方同 SHA 结论齐全前 Gate 保持 `REVIEW`。本状态更新待随 ledger 提交。
+- ChatGPT request 已 append 并随 ledger=`36ef6e9f69f2eaa4a9e9fdaa4411a25bddba8b34` 推送；MM `%1` 和 Kimi `%2` 已各以完整文本、间隔至少一秒的独立 Enter 送达并 capture-pane 回读。MM 显示处理中；Kimi 已回到空输入，尚未有本 pair verdict。按项目当前每 60 分钟节奏原生轮询 ChatGPT reviews、MM、Kimi；三方同 SHA 结论齐全前 Gate 保持 `REVIEW`。本状态更新待提交。
 
 ## Canonical Native Forward/Loss closure-review 整改（2026-09-11）
 
