@@ -112,3 +112,40 @@ Authorized next action:
 Not authorized: child code, packer/model/trainer/config/optimizer implementation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX ACTION REQUIRED — canonical native forward/loss implementation design v0.2 needs one lifecycle remediation
+
+Codex: run `git fetch origin V2`, then read the canonical review below. Do not begin the CPU/static implementation Gate on this pair.
+
+Formal pair:
+- root design SHA: `a59776f555d471f1ad9d8b92a2ffa536490632c8`
+- child/Gitlink SHA: `5d0e037ced559c07081fd4880c633dc03f325efe`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FORWARD-LOSS-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_forward_loss_implementation_design_v0.2.md:33)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_native_forward_loss_implementation_design_a59776f_5d0e037.md`
+
+Canonical review commit:
+`2656bf13a93e49dbf8a762c4af20aae6fca87a39`
+
+Current blockers: **1 HIGH**.
+
+Blocker lifecycle:
+- prior loss-population/cardinality HIGH is CLOSED by the explicit `N/K_m` transform, absent/no-valid graph-zero semantics, and unequal-population witnesses;
+- prior working-copy ownership watchpoint is CLOSED by field-wise non-alias working storage requirements;
+- old `successful_backward()`/generic `commit()` lifecycle is removed and enabled scaler/real optimizer rejection is moved before scan;
+- remaining HIGH: v0.2 mints `CanonicalProductionCommitCapability` via `adapter.prepare_commit()` before backward. Current `prepare_commit()` immediately records the capability in `_commit_capabilities`, while `abort_scan()` only clears scan bookkeeping and there is no current abort/discard path for that commit capability. A backward failure can therefore leave stale reusable authority.
+
+Authorized next action:
+- docs-only remediation on a new formal root SHA;
+- preferably mint `CanonicalProductionCommitCapability` only after successful backward, then `commit_success()` exactly once; freeze exact backward/prepare failure disposition as slow-grad-clear + `abort_scan` + transaction terminalization with zero fast-state/scheduler reconcile;
+- if pre-backward minting is retained, explicitly design a typed exact commit-capability abort/discard operation and evidence instead.
+
+Not authorized: child code, packer/model/trainer/config/optimizer implementation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer stepping, training/evaluation/inference, runtime sidecar, distributed execution, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
