@@ -312,3 +312,14 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 证据：批准范围三文件 CPU/static pytest=`49 passed in 45.04s`；`config_checkpoint_contract.py`/其 test Ruff PASS；三文件 `py_compile`、child/root `git diff --check` PASS。未执行真实 checkpoint/filesystem/DCP/remote I-O、public runtime activation、native forward/loss/backward、optimizer/scheduler step、CUDA/GPU、torchrun、sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请对该 exact pair 重新核验此前 ChatGPT/Kimi 的 restore atomicity、optimizer object membership、真实 runtime-authority evidence、`32 -> 2048` ABI 以及 approved nine-item acceptance matrix，回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭六文件 synthetic CPU/static Gate；不授权任何真实 I/O/runtime/GPU/训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Feature / Config / Optimizer / Checkpoint CPU/static Implementation evidence closure v2（2026-09-11）
+
+- formal root SHA：`774d01d43c8a144747ee93014b2c11afe91498b3`
+- child/Gitlink SHA：`1231215fb066142251ce556ba59241ada54ef18a`
+- Gate：`G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-CPU-STATIC-IMPLEMENTATION`
+- supersedes `d0267a.../fa964ef...` 的 ChatGPT Evidence-only HIGH。
+
+仅六文件 CPU/static evidence 整改：新增 direct reorder/duplicate/missing optimizer negatives；真实 native-forward、pending commit/retry、suffix-recovery/consumed suffix request/recovery receipt authority admission rejects；并在 `OmniMoTModel.build_net()` 原始 active-TTT 分支上使用 CPU/meta lightweight mocks 证明唯一 `local_memory_runtime.evidence_encoder/ttt_core` 注册且无 legacy owner/readout。三定向 pytest=`53 passed in 44.40s`；Ruff、py_compile、diff-check PASS。无真实 I/O/GPU/forward/backward/step/sidecar/训练。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仍不授权任何真实执行；ChatGPT formal verdict 仅写入 `docs/collab/chatgpt/reviews/`。
