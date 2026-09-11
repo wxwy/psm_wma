@@ -171,8 +171,8 @@ Current blockers: `0`.
 Closure:
 - previous HIGH-1 is CLOSED: predecessor authority now uses the exact corrected source/ABI-audit verdict and provenance;
 - previous HIGH-2 is CLOSED: approval of this Gate authorizes only the next docs-only CPU/static implementation design, never child/code;
-- previous HIGH-3 is CLOSED: the normal attempt-0 window freezes once; suffix recovery is derived from the original transaction without second admission/refreeze/resample; recovery owns exact `N_window` and `GA_effective=len(recovery.members)`; committed fast state is retained; controlled partial slow gradients are discarded once; the original transition is reconciled once; attempt-1 failure is terminal.
-- §3's prohibition on "再写 fast state" is read together with the explicit inherited successful per-stream detach/commit rule: retry derivation cannot rewrite already committed prefix state or mutate fast state outside post-backward commit, while an unconsumed suffix member that succeeds still performs its own first exactly-once post-backward fast-state commit.
+- previous HIGH-3 is CLOSED: the normal attempt-0 window freezes once; suffix recovery is derived from the original transaction without second admission/refreeze/resample; recovery owns exact `N_window` and `GA_effective=len(recovery.members)`; committed fast state is retained; controlled partial slow gradients are discarded exactly once; optimizer/LR is suppressed for the failed original disposition; recovery success reconciles the original transition exactly once; attempt-1 failure is terminal and cannot produce attempt-2/new window;
+- §3's prohibition on "再写 fast state" is read together with the explicit inherited successful per-stream detach/commit rule: retry derivation cannot rewrite an already committed prefix state or mutate fast state outside post-backward commit, while an unconsumed suffix member that later succeeds still performs its own first, exactly-once post-backward fast-state commit.
 
 Authorized next action:
 - create and independently review only the next docs-only CPU/static implementation design.
@@ -244,5 +244,45 @@ Authorized next action:
 - implement and independently review only the frozen **eight-file synthetic CPU/static** scope.
 
 Not authorized: real runtime activation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real native forward/loss/backward, real optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical native runtime CPU/static implementation requires changes
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `fb9bd00978c7ef3db2b16d60e8129df29f3eeac8`
+- child/Gitlink SHA: `03e2442d12e26492c44180257c61737b7ce4f611`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_adapter_scheduler.py:263)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_cpu_static_implementation_fb9bd00_03e2442.md`
+
+Canonical review commit:
+`13f1efdaf82fdcffa4a5207515e0cca03d4299a3`
+
+Current blockers: `3 HIGH`.
+
+Blockers:
+- HIGH-1 (production/contract): suffix recovery authority is bypassable before scan. The public scheduler `derive_suffix_recovery()` does not bind the retryable failure taxonomy, and its returned recovery plan/transaction can be used to construct requests that `adapter.scan()` accepts without exact one-shot `CanonicalProductionSuffixRecoveryCapability` consumption. This bypasses `LOAD_DECODE_TRANSIENT` and the frozen one-shot authority.
+- HIGH-2 (production/contract): the frozen one-shot original-transition reconciliation receipt is absent. Derivation suppresses/closes the original attempt-0 path, but there is no typed success receipt/consume seam that reconciles the original transition exactly once after all recovery members succeed; `transition_identity` is stored but not used to enforce that lifecycle.
+- HIGH-3 (Evidence-only): new tests stop at suffix derivation or adapter request consumption. They do not execute the required committed-prefix -> transient -> suffix scan/backward/commit -> original reconciliation lifecycle, and the v0.2-mandated spies excluding ordinary `/grad_accum_iter`, second `/GA`, ratio shorthand and second backward are absent.
+
+Checks that passed:
+- formal root Gitlink resolves exactly to the child and child `v2` points to the same commit;
+- child delta is confined to five files, all inside the approved eight-file whitelist;
+- non-degenerate normal/recovery numeric objective formulas are correctly represented in the new unit tests;
+- the test-only wiring adjustment does not modify the public `omni_mot_model.py` activation guard.
+
+Authorized next action:
+- remediate only within the already approved eight-file synthetic CPU/static implementation scope and submit a new formal root/child pair for fresh review. If fixing authority requires anything outside that whitelist, stop and open a separate Design Gate first.
+
+Not authorized: implementation Gate closure, public/real runtime activation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real model forward/loss/backward, real optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
