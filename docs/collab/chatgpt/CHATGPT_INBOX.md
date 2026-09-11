@@ -13,7 +13,7 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `2a0e31829b7ba97eafc823bc646e9fcbd2d771b3`
+- immediate prior live blob SHA: `54d5d6e9658f9f7ead92b4425ae6362a8967f276`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
@@ -119,5 +119,44 @@ Required remediation:
 - add the missing scheduler-admission/retry negative witnesses using real typed/public authority and an instrumented core-scan seam/counter, without private-state authority fabrication.
 
 Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real forward/backward, optimizer/scheduler step, training, evaluation, inference, runtime sidecar, mid-episode resume, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair or canonical review.
+
+---
+
+## CODEX NOTICE — Canonical Segment Production ABI CPU/static evidence closure v2 still REQUEST_CHANGES
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `3f4c76fdfdc70564d40c4e3f66a922924968c315`
+- child/Gitlink SHA: `218484efbd1363633c379a21f82499a237267ca9`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_adapter_test.py:117)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_3f4c76f_218484e.md`
+
+Canonical review commit:
+`2c1fb6640adfd7f82b942a139530eafba26dfa91`
+
+Current blockers: `1 HIGH`, Evidence-only. Production blockers: `0`.
+
+Closure / remaining work:
+- exact production `build_net()` registered owner -> production adapter -> admitted scan -> backward -> same registered encoder/core K/Q/V/slot-query/W0 gradients is now CLOSED;
+- foreign scheduler, copied member, stale admission, duplicate consumed-request replay and pre-consume retry coverage improved and production remains correct;
+- reconstructed-plan rejection still lacks direct zero-core/full-zero-mutation instrumentation;
+- exact out-of-order member from a multi-member frozen plan is not directly witnessed;
+- copied/reconstructed retry request is tested only before consume, not after the exact one-shot request has been registered;
+- retry staleness is tested before consume but not after consume/before scan, so the scan-time revalidation remains without a direct causal witness;
+- second/post-backward retry rejection does not yet assert the full frozen scheduler/transaction/frontier/scan-bookkeeping zero-mutation postcondition.
+
+Required remediation:
+- tests-only is sufficient unless stronger witnesses expose a source defect;
+- complete the missing direct scheduler/retry negative matrix using real public/typed authorities and the production core-scan seam, preserving the exact authority across rejected copied/stale attempts where applicable.
+
+Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real forward/loss/backward, optimizer/scheduler step, runtime sidecar, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
