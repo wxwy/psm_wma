@@ -233,3 +233,19 @@ formal tree 仅改 evidence design、`SESSION.md`、`TODO.md`，Gitlink 不变�
 请重点核验：phase vocabulary 是否与检查顺序完整一对一；source-read/candidate 的 partial prefix 是否唯一且无 placeholder digest；collection/receipt/post-check/rollback 的 nullability 是否可由 record 机械审计；以及本轮仍仅完成既有 source-evidence 链而不新增横向 provenance Gate。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一既有闭合步骤，不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Evidence failure-lifecycle remediation（2026-09-12）
+
+- formal root SHA：`9efae217d8c45b7afd651d52e3cb5b8cc63226f9`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
+
+前轮 `7e633d1c6b4d74f661d9421c6ab7e75eda0cf203`/同 child 三方 final 已齐：ChatGPT `REQUEST_CHANGES`（3 evidence-only HIGH），MM/Kimi approve。本轮仅 docs-only 最小整改：
+
+1. FAIL `phase` 保留 first primary failure identity；rollback 改为 live primary failure 后的独立 recovery outcome。collection、receipt、post-check、push/publication 的失败均必须带 concrete before/after snapshot SHA 与 verified witness；rollback 不完整时保持 primary phase 并 fail-stop 为 `ROLLBACK_INCOMPLETE`。pre-live phase 使用唯一 null rollback record。
+2. `push_publication` FAIL 允许记录 observed `{pushed:boolean,published:boolean}`，并强制至少一个为 true；该 evidence 只能 FAIL，绝不授权下游。
+3. 将 candidate construction 与 complete one-shot handoff 后的 candidate verification 分开：construction 可有 0..5 digest prefix 且 handoff null；verification failure 必须保留 complete candidates 与 complete handoff，用 phase 表示 binding/equality/single-use failure。
+
+formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；提交在远端 review notify 后安全 rebase，formal root 为上列 SHA。验证：`git diff --check` PASS。未执行项目代码，未读取/写入真实 source/checkpoint/data/cache，未 mutation collection/receipt/source-evidence/publication，未改 child/runtime，未运行 CUDA/GPU、torchrun、forward/backward、optimizer/scaler step、训练、评测、推理或 LIBERO4IN1。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许既有 source-evidence 闭合的下一步骤；不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
