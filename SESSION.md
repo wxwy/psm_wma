@@ -1,8 +1,9 @@
 # 当前协作状态
 
-## Root Gitlink Authority Source-audit Design v0.2（2026-09-12，REVIEW）
+## Root Gitlink Authority Source-audit Design v0.3（2026-09-12，IN_PROGRESS）
 
 - 第 1 次审核轮询（2026-09-12 01:40:09 CST）：`before_head=cbc74cbbf8228d4442606b223479f29473afcb0b`；`git fetch origin V2` 成功；`origin/V2` advertised=`cbc74cbbf8228d4442606b223479f29473afcb0b`；范围 `cbc74cbb..origin/V2` 为空，`git merge --ff-only origin/V2` 成功且本地 HEAD 不变。formal pair=`ae2e94b045c9d1cf3f352ad49e374548153b0043`/`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT exact-pair 检索命令 `rg -l 'ae2e94b045c9d1cf3f352ad49e374548153b0043' docs/collab/chatgpt/reviews/` 无输出，故正式 review=未找到；MM `mm:0.0` capture 显示同 pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT`；Kimi `kimi:0.0` capture 显示同 pair 相同 APPROVE verdict。逐方状态：ChatGPT=处理中（无 formal review），MM=已回复(APPROVE)，Kimi=已回复(APPROVE)。三方未齐，Gate 保持 `REVIEW`；未改 child、未运行真实 I/O/GPU/训练。工作区 `cosmos-framework` 修改及根仓 artifacts/outputs/tmp_escape 遗留均未触碰；观察记录提交=`6823d24e79e5b44c898dac97d5d617ea7ac1a59d`。
+- 第 2 次审核轮询（2026-09-12 01:41:33 CST）：`before_head=dba228a123c8048a692cdc6ed532e0d8adbf077a`；fetch/fast-forward 合入 `698b71b73b2111eb6f7e0e01406c67063fbc1870`，advertised/local 均为该 SHA，新增提交为 `review: request changes root gitlink source audit design ae2e94b`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_design_ae2e94b_93a89ba.md`，同 pair `REQUEST_CHANGES`：HIGH-1 publication blob 含自身 digest/root-tree OID 的循环固定点；HIGH-2 nested config/source schema 未冻结。MM/Kimi capture 都是同 pair `APPROVE_TO_DESIGN`。意见已齐，已开始 docs-only remediation：新建 v0.3 以 external audit record 消除循环并冻结两个 nested schema；不改 child、不运行真实 I/O/GPU/训练；未提交。
 
 ## 审核事实防遗漏协议（2026-09-11，DONE）
 
