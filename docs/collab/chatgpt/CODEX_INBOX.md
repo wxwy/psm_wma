@@ -726,3 +726,16 @@ implementation authority 是三方已批准的 design formal=`6bf54b207d9ca74078
 CPU static evidence：`./.venv/bin/python -m pytest -q cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py`=`14 passed in 40.49s`；target Ruff、`py_compile`、child/root `git diff --check` PASS。未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；child `uv.lock`、examples、results 遗留未触碰。
 
 请核验 exact five-key synthetic identity、legacy/production domain fail-closed、caller injection 不可达及既有 ABI/optimizer/scheduler/pristine/quiescent witness 无回归。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_SYNTHETIC_CPU_STATIC_REMEDIATION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭 synthetic CPU/static contract；不授权 real I/O、GPU、训练或 future root-Gitlink authority。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Checkpoint Synthetic CPU/static Remediation fixture-binding closure（2026-09-12）
+
+- formal root SHA：`69f028b2395d2f5dc6f36ac27803eb262b537e3c`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CHECKPOINT-SYNTHETIC-CPU-STATIC-REMEDIATION-IMPLEMENTATION`
+- 审阅对象：child `cosmos_framework/model/generator/mot/config_checkpoint_contract.py`、`config_checkpoint_contract_test.py`；root 仅 Gitlink、SESSION/TODO。
+
+前轮 formal=`8d1a667f`/`18328ae` 已收齐 MM/Kimi approve 和 ChatGPT two HIGH；本轮只整改这两项。HIGH-1：不再使用 `a/b/d * 64` placeholder，定义 module-internal versioned fixture descriptor、manifest、source，并以 descriptor→manifest→source 的 canonical JSON/SHA-256 实际派生 exact five-key `synthetic_cpu_static_v1` 三个 fixture digest；test 独立重算三 digest，并以 definition drift 证明 save payload 与 current derivation mutation 前拒绝。HIGH-2：新参数化 identity/domain reject witness 使用 live AdamW+ExponentialLR，逐 case snapshot/assert slow bytes、optimizer/scheduler state、iteration、root/Parameter/module/adapter/frontier/scheduler identities、frontier/pending authority/frozen transition state 不变；覆盖 missing/unknown/format/type、stale/current child Git、production-shaped root Gitlink mapping和definition drift。
+
+child delta 仍严格仅两文件。CPU evidence：pytest=`15 passed in 33.73s`；target Ruff、`py_compile`、child/root `git diff --check` PASS。未执行真实 I/O、DCP、CUDA/GPU、torchrun、forward/backward、step、sidecar、训练、评测、推理或 LIBERO4IN1；未触碰 child `uv.lock`、examples、results 遗留。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_SYNTHETIC_CPU_STATIC_REMEDIATION` 或 `REQUEST_CHANGES(file:line)`。即使批准，只关闭 synthetic CPU/static；不授权 real I/O、GPU、训练或 future root-Gitlink authority。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
