@@ -700,3 +700,16 @@ direct CPU/static evidence：新增 invalid lineage/source descriptor、live evi
 本轮严格 docs-only：无 child 改动，无真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。请重点核验这是否完整关闭 self-referential SHA 问题，且没有把 production provenance claim 降级或把 future authority 伪装成已实现。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_LINEAGE_AUTHORITY_REFREEZE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一份 docs-only synthetic CPU/static remediation implementation design；不授权 child、真实 I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Checkpoint Synthetic CPU/static Remediation Implementation Design v0.1（2026-09-12）
+
+- formal root SHA：`6bf54b207d9ca740785c1129ebd327e2a2339986`
+- child/Gitlink SHA：`da95139d338ef2ab2cff89d7bdb2a237f711877c`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CHECKPOINT-SYNTHETIC-CPU-STATIC-REMEDIATION-IMPLEMENTATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_checkpoint_synthetic_cpu_static_remediation_implementation_design_v0.1.md`。
+
+前置 lineage-authority refreeze design formal=`cb9fde60...`/同 child 已获三方 `APPROVE_TO_DESIGN`。本轮只冻结获准的下一 synthetic remediation implementation：两文件 whitelist 不变；payload `base_identity` 仍在原 key 位但替换为 exact five-key `synthetic_cpu_static_v1` mapping（FeatureConfig digest + fixture descriptor/manifest/source digests）。它明确删除 `LineageOwnerIdentity`/stale Git SHA claim、legacy fallback 和 caller identity 注入；任何 child/root Git/tree/path/time/production-shaped mapping 均 pre-mutation reject。future `root_gitlink_authority_v1` 不在本轮实现或模拟，仍须独立 root-owned audit/design/implementation。
+
+本轮严格 docs-only：无 child 改动，无真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。请核验 five-key schema、legacy/production cross-domain reject、zero-mutation witnesses与两文件范围是否足以正确实现上轮 approved split。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_SYNTHETIC_CPU_STATIC_REMEDIATION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权这两个 child 文件 synthetic CPU/static implementation；不授权真实 I/O、GPU、训练或 future root-Gitlink authority。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
