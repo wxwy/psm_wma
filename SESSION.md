@@ -1,6 +1,6 @@
 # 当前协作状态
 
-## Feature / Config / Optimizer / Checkpoint CPU/static Implementation（2026-09-11，IN_PROGRESS）
+## Feature / Config / Optimizer / Checkpoint CPU/static Implementation（2026-09-11，REVIEW）
 
 - formal implementation-design pair=`93529fb3762efa8425f50f8a214615310fe6e388`/`d96406e3b273d35e328c88142b36ef2eae895d2c` 的三方结论已核实：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_feature_config_optimizer_checkpoint_cpu_static_implementation_design_93529fb_d96406e.md`（blockers=0）、MM `%1`、Kimi `%2` 均为 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`。设计 Gate 关闭，实际 six-file synthetic CPU/static implementation 已认领。
 - 预计修改仅为 `config_checkpoint_contract.py`/其 test、`model_config.py`、`omni_mot_model.py`/其 test、`c5a_owner_segment_test.py`；当前先完成 strict config identity、active-TTT registered root/adaptor binding、preflight-first in-memory restore 和真实 adapter/scheduler/transaction authority witness。不得修改白名单外文件，且不执行真实 checkpoint I/O、native forward/loss/backward、optimizer/scheduler step、GPU/CUDA、torchrun、sidecar、训练、评测、推理或 LIBERO4IN1。当前 child partial contract diff 未提交。
