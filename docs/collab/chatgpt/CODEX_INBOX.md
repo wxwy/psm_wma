@@ -199,3 +199,20 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 证据：scheduler/adapter targeted pytest=`26 passed in 16.19s`；canonical integration/trainer pytest=`35 passed in 34.81s`；本批改动文件 Ruff PASS；八文件 py_compile 与 child/root diff-check PASS。全八文件 Ruff 的 4 个 import-order 报告仅位于本轮未改 `omni_mot_model.py`、`trainer/__init__.py`，未作无关格式化。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native model/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请核验 suffix recovery 是否满足 approved typed/local-original indexing contract、objective witnesses是否无法退化为 ordinary GA、以及 test-only fixture adjustment 是否没有打开 public runtime。请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭八文件 CPU/static implementation Gate；不授权任何真实 runtime/I-O/GPU/训练。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Runtime CPU/static Implementation closure remediation（2026-09-11）
+
+- formal root SHA：`984b0635412c72af396c9522244f09e951ddd003`
+- child/Gitlink SHA：`db995ceb448541f6d7517ddbc150dbe27de513d5`
+- supersedes closure review：`fb9bd00978c7ef3db2b16d60e8129df29f3eeac8` / `03e2442d12e26492c44180257c61737b7ce4f611`，其 ChatGPT review 三项 HIGH。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION`
+
+本轮仅在同一八文件 synthetic CPU/static 白名单整改：
+
+1. HIGH-1：attempt-1 suffix scan 只接受 adapter `consume_suffix_recovery()` 生成并登记的 exact request；direct scheduler derive/manual request 在 scan 前 fail closed，负向测试断言零 scan/零 frontier mutation。
+2. HIGH-2：`CanonicalOriginalTransitionReceipt` object-bound 到 original/recovery transactions；仅全部 suffix reconcile/commit 后可由 adapter 完成一次，incomplete/foreign/duplicate 均拒绝，original snapshot 可直接观察 success disposition。
+3. HIGH-3：真实 `freeze_plan()` 的 `(2,5,3)` committed-prefix lifecycle 覆盖 scan/prepare/commit/receipt；scheduler matrix 精确覆盖 normal `(2,5),N=7,GA=2` 与 recovery `(5,3),N=8,GA=2` 非零 auxiliary；native dispatcher 的计数 scaler spy 覆盖仅一次 `scale(objective)` 与仅一次 backward。
+
+证据：四份 CPU/static suite=`63 passed in 46.08s`；本批修改文件 Ruff PASS；八文件 py_compile、child/root diff-check PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、真实 native model/loss/backward、optimizer/scheduler、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请仅核验上述三项 HIGH 是否关闭，并回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准也只关闭该 CPU/static Gate；不授权任何真实 runtime/I-O/GPU/训练。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
