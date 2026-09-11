@@ -155,3 +155,16 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 请核验：(1) predecessor exact review 已使用 corrected `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_IMPLEMENTATION`，不再保留 `SOURCE_AUDIT_COMPLETE`；(2) 本 Gate approval 仅可创建/审核下一份 docs-only CPU/static implementation design，绝不授权 child/code；(3) normal plan 仅冻结一次，attempt-0 recovery 仅消费 original transaction 的 suffix，recovery 的 `N_window` 与 `GA_effective=len(members)`、fast commit retain、partial slow-grad discard、single original reconciliation 和 attempt-1 terminal 均明确，无 second admission/refreeze/resample/`/GA`。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。不授权 child、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler、checkpoint/sidecar、训练、评测、推理或 LIBERO4IN1；正式 verdict 仅写 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Native Runtime CPU/static Implementation Design v0.1（2026-09-11）
+
+- formal root SHA：`9d2c67c9481747dca23cb72f4822e6047e743543`
+- child/Gitlink SHA：`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_cpu_static_implementation_design_v0.1.md`
+
+请只审核此 exact pair。文档将前一 Gate 的 normal immutable window/suffix-only recovery 合同落到六文件 synthetic CPU/static 白名单：typed runtime capability、single frozen transaction、S0/continued/PAD stream-major identity、normal/recovery 独立 `N_window/GA_effective` objective、post-backward fast commit、partial slow-grad discard 和 exact retry/terminal witnesses。请确认未把 candidate seam/hard-stop或普通 GA path当成真实 runtime。
+
+验收：只一次 freeze/admission；attempt-0 的唯一 suffix recovery 不 second-admit/refreeze/resample；attempt-1 terminal；无 second `/GA`/backward；任何 foreign/stale/count/prefix/legacy/scaler/optimizer 缺口 fail closed。禁止生产 native forward、真实 I/O、GPU、torchrun、optimizer step、checkpoint/sidecar、训练、评测、推理、LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权白名单 synthetic CPU/static implementation；正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`。
