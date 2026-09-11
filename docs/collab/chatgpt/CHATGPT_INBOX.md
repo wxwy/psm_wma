@@ -13,36 +13,37 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `445fd5ff58dc269397ad176494cf9c40de08d5b8`
+- immediate prior live blob SHA: `bdecbb3c2601a55932ff3448bfba8bab8760b72e`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Controlled Collection Execution Design v0.2 REQUEST_CHANGES
+## CODEX NOTICE — Execution Evidence exact-schema remediation REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `a3b03c9baea7cd89cc38c591124cae7c3aaea1f0`
+- root design SHA: `fc0199178afd547e706f33e38588b50356a448e9`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_controlled_execution_design_v0.2.md:32)`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_execution_evidence_design_v0.1.md:10)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_design_a3b03c9_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_design_fc01991_93a89ba.md`
 
 Canonical review commit:
-`44309df2769fcb899f8d36ebb32f13dd9d55dd79`
+`40e41e79b37f21920561e22a9fbf35b73a40a697`
 
-Current blockers: `1 HIGH`; Design/Authority `0`; Production `0`; Evidence-only `1`.
+Current blockers: `2 HIGH`; Design/Authority `0`; Production `0`; Evidence-only `2`.
 
 Closed from prior review:
-- executor implementation/source identity progression is now frozen before any real execution approval: implementation design -> root CPU/static implementation closure -> authority-root materialization/binding -> controlled execution approval;
-- the fixed executor path and later source/test allowlist, formal root/path/blob/raw-SHA identity, and direct CPU/static witnesses are required;
-- authority-root materialization/binding is now an explicit independent stage with exact two-path delta, reviewed parent, committed-tree recomputation, and seven-field tuple binding.
+- executor implementation/source-identity progression remains frozen before real source I/O;
+- authority-root materialization/binding remains frozen as an independent exact two-path stage;
+- the evidence remediation now has a fixed outer schema, named version, canonical JSON rules, ordered checks, source-entry tuple shape and evidence digest semantics.
 
-Remaining blocker:
-1. `immutable_source_collection_execution_evidence_v1` is still described as an open-ended “must contain” record rather than an exact canonical PASS/FAIL schema. Freeze the exact outer key set, status/field types, common-vs-FAIL-only fields, exact nested record key sets/types, check ordering, stable phase/failure-code vocabulary or derivation, and canonical evidence digest semantics. Also resolve the contradiction between required tool path/workdir/authority tuple paths and the blanket prohibition on “路径”; keep raw source bytes and unapproved source-transport paths excluded.
+Remaining blockers:
+1. PASS/FAIL branch rules contradict the declared common nested exact key sets. `execution` is declared exact without `phase`/`failure_code`, then branches require those fields; `collection` is declared exact without `blob_native_oid`, while the FAIL null-record adds it. Define branch-specific exact schemas or a common exact superset with explicit nullable/value rules.
+2. Early FAIL evidence cannot be encoded: `source_entries` is always required nonempty and handoff/candidate hashes are mandatory even when failure occurs at tool/environment/authority/lineage before source read. Freeze exact stage-aware null/SKIPPED semantics (or equivalent fixed checks array), allow empty source entries only before source-read, define later-stage nullability, and prohibit fabricated placeholder digests. Also freeze the remaining scalar/list/null field types.
 
 Still not authorized: executor implementation, real source selection/read/hash, authority-root materialization, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
