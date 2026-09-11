@@ -547,3 +547,16 @@ child 仅改 `trainer/__init__.py` 与 approved integration test：生产 topolo
 不授权 child 修改、Python/pytest、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、真实 native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权第 1 节六文件 synthetic CPU/static implementation；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Production Runtime CPU/static Implementation Design v0.2 remediation（2026-09-11）
+
+- formal root SHA：`106c2ad19d93d289cb33e7d1f38d9309e6614b23`
+- child/Gitlink SHA：`f49f568923555fe15efe546925cbe6cc9140170e`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_production_runtime_cpu_static_implementation_design_v0.2.md`；仅整改 v0.1 的 ChatGPT HIGH。
+
+v0.2 明确不可逆边界为 `commit_success()` 首次 frontier/scheduler/transaction mutation：pre-mutation failure 才清 controlled grads、exact abort/terminalize、零 reconcile；post-mutation failure 单独保留 exact capability/scan/frontier/transaction evidence，禁止 ordinary abort/reconstruction/auto retry。其余 v0.1 six-file CPU/static scope、公式、recovery、hard-stop与禁止范围保持 binding。
+
+未修改 child，未执行 Python/pytest、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
