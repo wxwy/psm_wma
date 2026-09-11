@@ -1,8 +1,8 @@
 # 当前协作状态
 
-## Canonical Native Consumer Runtime Implementation Design（2026-09-11，IN_PROGRESS）
+## Canonical Native Consumer Runtime Implementation Design（2026-09-11，DONE）
 
-- v0.1 formal=`3e058eb4`/`08775da` 三方意见已齐：MM/Kimi approve；ChatGPT 2 项 design-only HIGH 成立。新增 v0.2 remediation，明确保留 real optimizer/enabled scaler pre-scan reject，并把 DDP/FSDP/data-parallel/world-size!=1/CP 统一规定为 single-process CPU/static 以外的 pre-scan fail-closed topology；其余 v0.1 binding。待验证/提交后重新三方审核；禁止 child 修改、Python/pytest、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
+- v0.2 formal=`86b321aaf3a4f96afbd427060bcceb5f39a0dc98`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 已获 ChatGPT formal review、MM、Kimi 同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC`。只授权 v0.1+v0.2 复合合同的 six-file、single-process/world-size-1 synthetic CPU/static implementation；real optimizer/enabled scaler及DDP/FSDP/data-parallel/world-size!=1/CP 必在 scan 前拒绝。真实 I/O、GPU、torchrun、sidecar、训练、评测、推理或 LIBERO4IN1 仍禁止。
 
 ## Canonical Native Consumer Runtime Source Audit（2026-09-11，DONE）
 
