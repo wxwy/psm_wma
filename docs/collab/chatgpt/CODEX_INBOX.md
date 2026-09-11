@@ -936,3 +936,20 @@ v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本�
 本提交只增加该设计、TODO/SESSION 状态；`git diff --check` PASS。未创建 publication、未运行真实 audit、未修改 child/runtime，未执行 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、模型 forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一份 docs-only materializer/verifier implementation design；不授权 publication 写入、真实 audit、child 修改、真实 I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Root Publication Freeze Design v0.1 remediation closure（2026-09-12）
+
+- formal root SHA：`de81c294019647e7678ef3f8da484c8d5bdbdba7`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-ROOT-PUBLICATION-FREEZE-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_root_publication_freeze_design_v0.1.md`；formal commit tree 仅该设计和 `SESSION.md`，Gitlink 未变。
+
+前轮 `dc11da5...`/`93a89ba...` final verdict 已齐：ChatGPT `REQUEST_CHANGES` 三项 HIGH，MM/Kimi approve。本轮只做 docs-only remediation：
+
+1. §2 现冻结 exact `root_checkpoint_source_evidence_record_v1`、七键 `root_publication_input_package_v1` 与七键 `root_publication_input_witness_v1`；canonical SHA-256 关系、fixed evidence path、formal evidence-root binding 与 production caller/env/working-tree selection 禁令均明确，source-evidence closure 被置于任何 materialization execution 之前。
+2. §3 不再把 child SHA 作为 audit invocation authority；index Gitlink 只作为 `cosmos-framework` 未被 staged 的 mutation guard。post-commit audit 只接收 new formal root，再由 root tree 导出 Gitlink；child Git dir 仅作 object transport。
+3. 所有可失败验证先在 isolated temporary file/index/tree 完成；进入 live transaction 后明确 target/index snapshots、rollback、逐 byte/entry复核和 `ROLLBACK_INCOMPLETE` fail-stop，删除不可实现的无条件零 mutation 声称。
+
+验证：`git diff --check de81c294^` PASS；`git diff-tree --no-commit-id --name-only -r de81c294...` 仅 design/SESSION；parent/formal Gitlink 均为 child SHA。未创建 publication、未运行真实 audit、未修改 child/runtime，未执行 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、模型 forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许独立 source-evidence producer/closure design；不授权 publication、真实 audit、child、真实 I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
