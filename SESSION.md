@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Canonical Native Runtime CPU/static Implementation Design（2026-09-11，IN_PROGRESS）
+
+- runtime implementation design v0.2 formal root=`5fd23a289c4197a7a8887ec61d318c769f7c90e8`/Gitlink=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9` 已获 ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_implementation_design_5fd23a2_c0e6e55.md`、MM `%1`、Kimi `%2` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC_IMPLEMENTATION`。
+- 当前认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`；预计并已新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_cpu_static_implementation_design_v0.1.md`。它只冻结六文件 synthetic CPU/static 白名单、exact typed transaction、normal/suffix-recovery ownership、single objective/backward 和 witness；未修改 child，未执行 Python/真实 I/O/CUDA/GPU/torchrun/native forward/loss/backward/optimizer/训练。待本 root 新 SHA 三方审核。
+
 ## Canonical Native Runtime Source-Audit closed / implementation design opened（2026-09-11，IN_PROGRESS）
 
 - remediation formal root=`59bd39f61b3498e56d9824b99059c1566b05b87c`/Gitlink=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`，设计为 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.2.md`。ChatGPT formal review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_source_audit_design_59bd39f_c0e6e55.md`、MM `%1`、Kimi `%2` 已同 SHA `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_SOURCE`。
