@@ -124,7 +124,7 @@ preflight 失败必须不创建或替换 live target，不变更 live index/HEAD
 1. 没有实际 publication 或真实 source I/O；
 2. 唯一 target path、nested schema 来源及 self-reference 禁令明确；
 3. 将输入来源证明、bytes、index、formal root 和 audit 分成不可替代的阶段；
-4. 对失败规定零 target/index/commit/authority mutation；
+4. 对失败采用 §3 的两阶段合同：live transaction 前任一失败必须令 target、index、HEAD 与 authority 逐 byte/entry 不变；live mutation 开始后任一失败必须按 snapshot rollback target/index 并逐 byte/entry 核验恢复后才返回普通失败；rollback 或 HEAD-state verification 不完整/不确定时必须返回 `ROLLBACK_INCOMPLETE`、保留证据、禁止 authority/audit/runtime 推进和自动重试，且不得声称零 mutation；任何失败均不得产生已接受的 publication authority 或进入 read-only source audit；
 5. 没有放宽任何 v0.3 source-audit contract。
 
 请求唯一 verdict：

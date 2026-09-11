@@ -12,6 +12,13 @@
 - 修改：根 `AGENTS.md` 的持续执行、审核申请、重新申请与唯一节奏条款，以及 `.codex/skills/psm-execution-governance/SKILL.md` 的审核与执行监控条款，均改为每三分钟；未放宽审核证据、送达回执、Gate 或执行边界。
 - 验证：精确关键词检索确认两处无残留“五分钟/5 分钟”节奏，`git diff --check` PASS。未运行项目代码，未触及 child、真实 I/O、GPU 或训练。提交：未提交。
 
+## Root Publication Freeze remediation 审核观察（2026-09-12，第 21 次）
+
+- formal pair：root=`de81c294019647e7678ef3f8da484c8d5bdbdba7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册未变：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
+- 本轮凭证（CST）：`before_head=a1976f6be8384f02cc13c851a3d90bc07bc86839`；`git fetch origin V2` 成功；`git ls-remote origin refs/heads/V2` advertised=`a1976f6be8384f02cc13c851a3d90bc07bc86839`；`a1976f6b..origin/V2` 无新增；`git merge-base --is-ancestor`=0，`git merge --ff-only origin/V2`=Already up to date。ChatGPT exact-pair 检索命中 `docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_root_publication_freeze_design_de81c29_93a89ba.md`，final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_root_publication_freeze_design_v0.1.md:127)`；MM capture 将同 pair 与 final `APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE` 绑定；Kimi capture 将同 pair 与相同 final approve 绑定。
+- 结论：三方同 pair final verdict 已齐，存在仅限 docs-only 的整改推进令牌。唯一 HIGH 指出 §6:127 把 preflight 的零 mutation 误写成所有失败的无条件零 mutation，与 §3 的 post-mutation rollback/`ROLLBACK_INCOMPLETE` fail-stop 相矛盾。允许下一步仅将验收项改为同一两阶段合同；禁止 publication、真实 audit/I-O、child、GPU 与训练。提交：未提交。
+- 整改：将该验收项替换为 §3 同一两阶段合同，逐项区分 preflight 零 live mutation、live transaction rollback 后 ordinary failure、rollback/HEAD-state 不完整时 `ROLLBACK_INCOMPLETE` fail-stop，以及任一失败都不产生 accepted authority/audit progression。验证：`git diff --check` PASS；formal tree scope 复核为仅 `SESSION.md` 与该 design，formal child 仍为 `93a89ba61306d840a008813f62f26a34d54850f4`。未运行任何项目代码或真实操作；提交：未提交。下一步：提交、推送并以新 root/同 child 重新申请三方 docs-only review。
+
 ## Root Publication Freeze Design（2026-09-12，IN_PROGRESS）
 
 - 目的/Gate：`G0-R09-B-TTT-V035-ROOT-PUBLICATION-FREEZE-DESIGN`；在 root Gitlink authority static tooling closure 后，只冻结 future publication 的输入、index/commit boundary、验证和 fail-closed 分流。
