@@ -185,3 +185,13 @@ formal tree 仅更新 closure design 与 `SESSION.md`，Gitlink 不变；`git di
 前轮 47a05a5 三方 final 已齐：ChatGPT 3 HIGH、MM/Kimi approve。本轮只新增 v0.2 docs：冻结 executor source identity/allowlist 与 CPU/static witness；exact two-path authority-root materialization/tuple binding；canonical machine-readable PASS/FAIL evidence 字段。保留既有 source-evidence 闭环，未增加横向 Gate。无真实 I/O、mutation、child、GPU 或训练。
 
 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`；正式 verdict 仅写入 reviews。
+
+## 审核申请：Execution Evidence exact-schema remediation（2026-09-12）
+
+- formal root SHA：`fc0199178afd547e706f33e38588b50356a448e9`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
+
+仅 docs-only：新增 evidence v0.1，精确冻结 canonical outer/nested key sets、PASS/FAIL status 分支、types、source-entry array、null-record、phase/failure code、固定 check ordering、evidence SHA-256 与路径排除规则，解决 a3b03c9 的唯一 evidence HIGH。无真实执行。
+
+请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。
