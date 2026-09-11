@@ -145,3 +145,38 @@ Authorized next action:
 Not authorized: child implementation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer/scheduler stepping, runtime sidecar/resume, matched smoke, training, evaluation, or inference.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical native runtime implementation design v0.2 approved
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `5fd23a289c4197a7a8887ec61d318c769f7c90e8`
+- child/Gitlink SHA: `c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC_IMPLEMENTATION`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_implementation_design_5fd23a2_c0e6e55.md`
+
+Canonical review commit:
+`078ceceef8e258b5a6de1e2348c8172015855d64`
+
+Current blockers: `0`.
+
+Closure:
+- previous HIGH-1 is CLOSED: predecessor authority now uses the exact corrected source/ABI-audit verdict and provenance;
+- previous HIGH-2 is CLOSED: approval of this Gate authorizes only the next docs-only CPU/static implementation design, never child/code;
+- previous HIGH-3 is CLOSED: the normal attempt-0 window freezes once; suffix recovery is derived from the original transaction without second admission/refreeze/resample; recovery owns exact `N_window` and `GA_effective=len(recovery.members)`; committed fast state is retained; controlled partial slow gradients are discarded once; the original transition is reconciled once; attempt-1 failure is terminal.
+- §3's prohibition on "再写 fast state" is read together with the explicit inherited successful per-stream detach/commit rule: retry derivation cannot rewrite already committed prefix state or mutate fast state outside post-backward commit, while an unconsumed suffix member that succeeds still performs its own first exactly-once post-backward commit.
+
+Authorized next action:
+- create and independently review only the next docs-only CPU/static implementation design.
+
+Not authorized: child/code implementation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, real native forward/loss/backward, optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
