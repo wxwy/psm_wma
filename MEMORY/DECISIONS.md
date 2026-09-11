@@ -207,3 +207,11 @@
 - 决策：formal commit 的文件范围和 Gitlink 只能从 commit tree 读取：`git diff-tree --no-commit-id --name-only -r <formal-root>`、必要的 parent-tree diff、`git ls-tree <formal-root> <submodule>`。禁止以 `git diff <parent>` 代表 commit，因为该形式会将当前脏工作树纳入比较。
 - 覆盖范围：所有审核申请、formal scope 声明和 Gitlink drift 判断。未提交 child/训练遗留仅是单独的 dirty-residue 事实，永远不是 formal commit 的文件变更。
 - 原因：本轮 `git diff HEAD^` 将共享工作树中的 dirty `cosmos-framework` 错报为 formal commit Gitlink 变化；tree-based 命令确认 formal pair 的 parent/child Gitlink 均为同一 SHA。
+
+## D023 审核证据完整性与失效语义
+
+- 日期：2026-09-12
+- 状态：生效（用户要求）
+- 决策：审核状态证据必须拆为独立且可完整读取的 Git 同步、formal-pair review 检索、MM capture、Kimi capture。任一命令输出截断、超时、非零退出、缺页或不能逐字段核验，整轮即为“检查失败/状态未知”；不得由局部输出、旧轮结果、用户转述或命令意图补推。只有全部独立证据完成后才可原子写入观察凭证和输出受控状态词。远端 SHA 变化时必须先消费提交范围并完成可用的 fast-forward；tmux 送达则强制 `send-keys -l`、至少一秒、独立 Enter、独立 capture 三联回执。
+- 覆盖范围：所有审核申请、审核轮询、用户提示的“已回复/已更新/是否拉取最新”以及任何据此准备整改、实现或推进 Gate 的操作。
+- 原因：既有流程虽规定 fetch 与 exact-pair，但一次过大的组合命令可能截断关键后续输出，随后又被口头叙述错误地补成“未回复”或“已齐”。将输出完整性定义为事实前提，才能让检查链在信息不完整时自动停在安全状态。

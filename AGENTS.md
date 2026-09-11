@@ -127,3 +127,12 @@
 5. **状态词保留**：`已送达`、`处理中`、`已回复`、`未回复`、`无新增`、`三方齐全`、`可以推进` 均为受控状态词，只能逐字从已写入的同轮观察凭证或推进令牌导出。无法导出时只能写“未检查”或“检查失败/状态未知”。
 6. **快进方向机械判定**：fetch 后只可用 `git merge-base --is-ancestor "$before_head" origin/V2` 判断远端是否可从本轮开始 HEAD 快进；返回 0 时必须执行 `git merge --ff-only origin/V2`，而不是反向测试 `origin/V2` 是否为本地祖先。若两端分叉或 merge 失败，本轮为“检查失败/状态未知”，不得跳过远端 review、手工 merge 或把远端提交当作已合并。
 7. **formal commit 范围隔离**：审核 formal commit 的变更范围只能用 `git diff-tree --no-commit-id --name-only -r <formal-root>`（必要时对其 parent tree 作 `git diff-tree`）和 `git ls-tree <formal-root> <submodule>` 得出；禁止用未指定 commit 的 `git diff <parent>`，因为它会把共享工作树的未提交 child/训练遗留混入结果。工作树状态只能单独作为 dirty-residue 事实，绝不能作为 formal diff 或 Gitlink drift 结论。
+
+### 审核证据完整性与失效语义（强制，杜绝“检查过但没拿到结果”）
+
+1. **工具输出截断即失败**：任何用于审核状态、远端同步、tmux 送达/回复或 formal-pair 结论的命令，只要工具报告 `truncated`、输出缺页、命令超时、退出码非零，或结果无法逐字段读取，本步骤即失败。不得从已显示的片段、上一轮结果或命令意图补推结果；本轮只能记录“检查失败/状态未知”，随后将缺失检查拆成更小的独立只读命令重做。
+2. **一项证据一条命令**：审核观察不得把读取会话、fetch/merge、review 检索、两个 pane capture 与大段文档输出混在单个命令中。每项证据必须有独立、可见且未截断的命令结果；先取得并记录 Git 同步结果，再检索 ChatGPT review，最后分别 capture MM/Kimi。禁止因前一项输出过大而跳过后项或沿用旧结果。
+3. **结论与凭证原子写入**：同轮观察凭证必须在所有独立命令成功后一次性写入 `SESSION.md`；任一证据尚未取得时不得先写部分“已回复/未回复/已送达”状态，也不得向用户输出这些受控状态词。凭证提交前必须复读写入后的相关段，确认 formal root、child、三方 verdict 与本轮远端 SHA 均逐字一致。
+4. **远端新提交的强制消费**：`origin/V2` advertised SHA 与 `before_head` 不同时，必须先逐条读取 `before_head..origin/V2` 的提交主题，并在可快进时完成并核验 `merge --ff-only`；在此之前禁止扫描 review 后作任何否定性或完整性结论。用户提示的 SHA/文件名只作为本轮精确检索输入，不能替代此同步步骤。
+5. **发送回执不可省略**：tmux 申请的“已送达”必须来自同一次 `send-keys -l`、至少一秒后独立 Enter、随后独立且未截断 capture 的三联回执；少任一项即是发送失败，不能进入轮询名册，更不能称已送达。ChatGPT 则必须先确认 Inbox append 的字节数、内容和提交已存在于当前 `HEAD`。
+6. **无凭证不得继续**：在当前 Gate 没有最新完整观察凭证或推进令牌时，Agent 不得为了“持续工作”而猜测审核状态、提交状态更新、修改既有审核对象或启动后续 Gate；只可重做缺失检查、修复送达链路，或执行不依赖该 Gate 的只读检查。持续目标不构成绕过此闭锁的理由。
