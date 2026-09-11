@@ -595,3 +595,14 @@ current child 已包含获准 six-file synthetic CPU/static 合同，未制造�
 本轮严格 docs-only。v0.2 将完整 FeatureConfigIdentity 固定为所有 active Local feature flags、backend/dim、`enable_input_bias` projector ABI 与 resolved TTT identity；将 `base_identity` 固定为 versioned child revision/model-config digest/checkpoint-source fingerprint/manifest/source digest，禁止 generic/caller-guessed mapping；并冻结 optimizer/scheduler fully-qualified class、ordered groups/members、typed hyperparameters/state/progress 及 scheduler--optimizer--iteration predicate，要求 shadow staged validation 后才允许单次 live mutation。每类 config/base/optimizer/scheduler drift 都新增 zero-live-mutation witness。当前 child 无改动。
 
 请核验上述三项 HIGH 是否完整关闭。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_REFREEZE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅允许下一份 docs-only CPU/static implementation design；不授权 child 修改、真实 checkpoint/data I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Feature / Config / Optimizer / Checkpoint Refreeze Design v0.3 progress remediation（2026-09-11）
+
+- formal root SHA：`5ede9ac264518ccdbca1cdbc24f4e0694b6cf85a`
+- child/Gitlink SHA：`f49f568923555fe15efe546925cbe6cc9140170e`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_feature_config_optimizer_checkpoint_refreeze_design_v0.3.md`；仅整改 v0.2 formal=`bc5459e91ad8b53c52ffaadfde9d585508dadec4`/同 child 的 ChatGPT HIGH（progress relation 不得交由后续 implementation design 发明）。
+
+本轮严格 docs-only。v0.3 冻结本 Gate 唯一 progress predicate 为 pristine-before-first-step：`payload.iteration == 0`、每个 canonical optimizer member 无 state entry、`optimizer.state == {}`、saved scheduler state exact equals 对已验证 class/constructor/config 新建 detached shadow scheduler 的 pristine `state_dict()`；若 optimizer/scheduler 都不存在，二者必须 explicit null 且仍须 `iteration == 0`。任一 nonzero iteration/state/step/pristine scheduler field drift、单边存在或 identity drift 均 pre-mutation reject。真实训练 progress 必须由未来独立 Gate 显式重冻，不得 migration/warm-start。本轮未改 child，未执行真实 I/O/GPU/训练。
+
+请核验此 predicate 是否关闭 v0.2 的唯一 HIGH。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_REFREEZE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一份 docs-only CPU/static implementation design；不授权 child、真实 checkpoint/data I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
