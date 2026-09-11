@@ -345,3 +345,14 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 证据：adapter/integration pytest=`26 passed in 37.23s`；`omni_mot_model_test.py` + `local_evidence_test.py`=`45 passed in 46.66s`（仅既有 L0 mark warnings）；目标 `py_compile`、child/root `git diff --check` PASS。
 
 请核验 P1 v0.3 的 activation matrix、exact registered encoder/core binding、fp32 frontier/W0 gradient、attempt-1 typed lineage 与四条 abort boundary 是否在该 formal pair 完整闭合。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭 CPU/static Gate；不授权任何真实 I/O、GPU、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Segment Production ABI CPU/static Implementation remediation closure（2026-09-11）
+
+- formal root SHA：`74baed85688c84aa42e9eb3fb00077665267b588`
+- child/Gitlink SHA：`b1a138b79bdc2d4dc40b978ea34094512a07d378`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
+- 前轮 ChatGPT review：`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_b0df057_f6a660f.md`。
+
+仅处理该 review 的三项 HIGH：scheduler 在 scan 前验证 exact `freeze_plan()` object、next frozen transition 和 live frontier；first-member attempt-1 仅允许 consumed one-shot retry request scan；新增 reconstructed-plan、pre-consume retry、registered production owner actual-scan gradient 与 terminal commit frontier retirement 的直接 CPU/static witnesses。定向 pytest=`28 passed`；Ruff、py_compile、child/root diff-check PASS。无真实 I/O、GPU、native forward/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
