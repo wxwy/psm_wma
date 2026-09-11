@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 from pathlib import Path
 import subprocess
 import tempfile
 import unittest
 from unittest import mock
+from contextlib import redirect_stdout
 
 from tools.g0 import audit_r09_b_ttt_root_gitlink_authority as audit
 
@@ -118,6 +120,14 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
             ]
         )
 
+    def invoke_payload(
+        self, root: Path, child_git: Path, formal: str, output: Path
+    ) -> tuple[int, dict[str, object]]:
+        stdout = io.StringIO()
+        with redirect_stdout(stdout):
+            code = self.invoke(root, child_git, formal, output)
+        return code, json.loads(stdout.getvalue())
+
     def test_valid_fixture_writes_exact_pass_evidence(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root, child_git, formal, output = self.fixture(Path(temp))
@@ -154,6 +164,37 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
             self.assertEqual(self.invoke(root, child_git, "A" * 40, output), 2)
             self.assertEqual(output.read_bytes(), b"preserve")
 
+    def test_failure_evidence_preserves_ordered_pass_fail_skipped_rows(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root, child_git, formal, output = self.fixture(
+                Path(temp), canonical_publication=False
+            )
+            code, payload = self.invoke_payload(root, child_git, formal, output)
+            self.assertEqual(code, 2)
+            checks = payload["checks"]
+            self.assertEqual(
+                [row["status"] for row in checks],
+                ["PASS"] * 5 + ["FAIL"] + ["SKIPPED"] * 6,
+            )
+            self.assertEqual(checks[5]["reason"], "PUBLICATION_NOT_CANONICAL")
+            self.assertFalse(output.exists())
+
+    def test_unreachable_child_commit_marks_child_commit_after_prior_passes(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root, _, formal, output = self.fixture(Path(temp))
+            foreign = Path(temp) / "foreign"
+            subprocess.run(["/usr/bin/git", "init", "-q", str(foreign)], check=True)
+            code, payload = self.invoke_payload(root, foreign / ".git", formal, output)
+            self.assertEqual(code, 2)
+            checks = payload["checks"]
+            self.assertEqual(
+                [row["status"] for row in checks],
+                ["PASS"] * 8 + ["FAIL"] + ["SKIPPED"] * 3,
+            )
+            self.assertEqual(checks[8]["reason"], "GIT_COMMAND_FAILURE")
+
     def test_hostile_environment_cannot_redirect_fixture(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root, child_git, formal, output = self.fixture(Path(temp))
@@ -162,6 +203,8 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
                 {
                     "GIT_DIR": "/missing",
                     "GIT_OBJECT_DIRECTORY": "/missing",
+                    "GIT_ALTERNATE_OBJECT_DIRECTORIES": "/missing-alt",
+                    "GIT_REPLACE_REF_BASE": "refs/replace",
                     "GIT_CONFIG_COUNT": "1",
                     "GIT_CONFIG_KEY_0": "alias.cat-file=!false",
                 },
@@ -169,6 +212,14 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
             ):
                 self.assertEqual(self.invoke(root, child_git, formal, output), 0)
             self.assertEqual(json.loads(output.read_bytes())["status"], "PASS")
+
+    def test_success_uses_the_single_pre_audit_bootstrap_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root, child_git, formal, output = self.fixture(Path(temp))
+            original = audit.bootstrap_git
+            with mock.patch.object(audit, "bootstrap_git", wraps=original) as bootstrap:
+                self.assertEqual(self.invoke(root, child_git, formal, output), 0)
+            self.assertEqual(bootstrap.call_count, 1)
 
     def test_bootstrap_failures_have_null_command_identity_and_preserve_output(
         self,

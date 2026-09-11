@@ -325,7 +325,7 @@ def parse_ls_tree(
     return oid.decode("ascii")
 
 
-def validate_publication(raw: bytes) -> tuple[dict[str, Any], str, str]:
+def validate_publication(raw: bytes) -> dict[str, Any]:
     try:
         data = json.loads(raw)
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
@@ -339,9 +339,7 @@ def validate_publication(raw: bytes) -> tuple[dict[str, Any], str, str]:
     )
     if data["schema"] != "root_gitlink_authority_publication_v1":
         raise AuditFailure("PUBLICATION_SCHEMA")
-    _, config_sha = validate_config(data["canonical_model_config"])
-    _, source_sha = validate_descriptor(data["checkpoint_source_descriptor"])
-    return data, config_sha, source_sha
+    return data
 
 
 def checks_template() -> list[dict[str, Any]]:
@@ -356,49 +354,111 @@ def mark(checks: list[dict[str, Any]], name: str, observed: dict[str, Any]) -> N
     row.update(status="PASS", reason="OK", observed=observed)
 
 
-def audit(repo_root: Path, formal: str, child_git_dir: Path) -> dict[str, Any]:
-    lower_hex(formal, 40, "FORMAL_REVISION")
-    root = path_arg(repo_root, "ROOT")
-    child = path_arg(child_git_dir, "CHILD_GIT_DIR")
-    if not child.is_dir():
-        raise AuditFailure("CHILD_GIT_DIR_PATH", True)
-    checks = checks_template()
-    if run_git(root, None, ("cat-file", "-e", f"{formal}^{{commit}}")) != b"":
-        raise AuditFailure("ROOT_COMMIT_OUTPUT")
+def guarded(checks: list[dict[str, Any]], name: str, operation: Any) -> Any:
+    try:
+        return operation()
+    except AuditFailure as exc:
+        row = checks[CHECK_NAMES.index(name)]
+        row.update(status="FAIL", reason=exc.reason, observed={})
+        setattr(exc, "checks", checks)
+        raise
+
+
+def audit(
+    repo_root: Path,
+    formal: str,
+    child_git_dir: Path,
+    identity: dict[str, Any],
+    checks: list[dict[str, Any]],
+) -> dict[str, Any]:
+    root = guarded(
+        checks,
+        "root_commit",
+        lambda: (lower_hex(formal, 40, "FORMAL_REVISION"), path_arg(repo_root, "ROOT"))[
+            1
+        ],
+    )
+    child = guarded(
+        checks, "root_commit", lambda: path_arg(child_git_dir, "CHILD_GIT_DIR")
+    )
+    guarded(
+        checks,
+        "root_commit",
+        lambda: (
+            child.is_dir()
+            or (_ for _ in ()).throw(AuditFailure("CHILD_GIT_DIR_PATH", True))
+        ),
+    )
+    if (
+        guarded(
+            checks,
+            "root_commit",
+            lambda: run_git(root, None, ("cat-file", "-e", f"{formal}^{{commit}}")),
+        )
+        != b""
+    ):
+        exc = AuditFailure("ROOT_COMMIT_OUTPUT")
+        checks[0].update(status="FAIL", reason=exc.reason, observed={})
+        setattr(exc, "checks", checks)
+        raise exc
     mark(checks, "root_commit", {"oid": formal, "type": "commit"})
     root_tree = (
-        run_git(root, None, ("rev-parse", f"{formal}^{{tree}}"))
+        guarded(
+            checks,
+            "root_tree",
+            lambda: run_git(root, None, ("rev-parse", f"{formal}^{{tree}}")),
+        )
         .rstrip(b"\n")
         .decode("ascii")
     )
-    lower_hex(root_tree, 40, "ROOT_TREE_OID")
+    guarded(checks, "root_tree", lambda: lower_hex(root_tree, 40, "ROOT_TREE_OID"))
     mark(checks, "root_tree", {"oid": root_tree, "type": "tree"})
-    root_raw = run_git(root, None, ("cat-file", "tree", root_tree))
-    root_record, root_record_sha = tree_record(
-        root_tree,
-        root_raw,
-        run_git(root, None, ("cat-file", "-t", root_tree)),
-        run_git(root, None, ("cat-file", "-s", root_tree)),
+    root_raw = guarded(
+        checks,
+        "root_tree_record",
+        lambda: run_git(root, None, ("cat-file", "tree", root_tree)),
+    )
+    root_record, root_record_sha = guarded(
+        checks,
+        "root_tree_record",
+        lambda: tree_record(
+            root_tree,
+            root_raw,
+            run_git(root, None, ("cat-file", "-t", root_tree)),
+            run_git(root, None, ("cat-file", "-s", root_tree)),
+        ),
     )
     mark(
         checks,
         "root_tree_record",
         {"sha256": root_record_sha, "byte_length": len(root_raw)},
     )
-    gitlink = parse_ls_tree(
-        run_git(root, None, ("ls-tree", root_tree, "--", SUBMODULE_PATH)),
-        b"160000",
-        b"commit",
-        SUBMODULE_PATH.encode(),
+    gitlink = guarded(
+        checks,
+        "gitlink",
+        lambda: parse_ls_tree(
+            run_git(root, None, ("ls-tree", root_tree, "--", SUBMODULE_PATH)),
+            b"160000",
+            b"commit",
+            SUBMODULE_PATH.encode(),
+        ),
     )
     mark(checks, "gitlink", {"oid": gitlink, "path": SUBMODULE_PATH})
-    blob = parse_ls_tree(
-        run_git(root, None, ("ls-tree", root_tree, "--", PUBLICATION_PATH)),
-        b"100644",
-        b"blob",
-        PUBLICATION_PATH.encode(),
+    blob = guarded(
+        checks,
+        "publication_blob",
+        lambda: parse_ls_tree(
+            run_git(root, None, ("ls-tree", root_tree, "--", PUBLICATION_PATH)),
+            b"100644",
+            b"blob",
+            PUBLICATION_PATH.encode(),
+        ),
     )
-    publication_raw = run_git(root, None, ("cat-file", "blob", blob))
+    publication_raw = guarded(
+        checks,
+        "publication_blob",
+        lambda: run_git(root, None, ("cat-file", "blob", blob)),
+    )
     mark(
         checks,
         "publication_blob",
@@ -408,26 +468,62 @@ def audit(repo_root: Path, formal: str, child_git_dir: Path) -> dict[str, Any]:
             "byte_length": len(publication_raw),
         },
     )
-    _, config_sha, source_sha = validate_publication(publication_raw)
+    publication = guarded(
+        checks, "publication_json", lambda: validate_publication(publication_raw)
+    )
     mark(checks, "publication_json", {"sha256": sha256(publication_raw)})
+    _, config_sha = guarded(
+        checks,
+        "canonical_model_config",
+        lambda: validate_config(publication["canonical_model_config"]),
+    )
     mark(checks, "canonical_model_config", {"sha256": config_sha})
+    _, source_sha = guarded(
+        checks,
+        "checkpoint_source_descriptor",
+        lambda: validate_descriptor(publication["checkpoint_source_descriptor"]),
+    )
     mark(checks, "checkpoint_source_descriptor", {"sha256": source_sha})
-    if run_git(None, child, ("cat-file", "-e", f"{gitlink}^{{commit}}")) != b"":
-        raise AuditFailure("CHILD_COMMIT_OUTPUT")
+    if (
+        guarded(
+            checks,
+            "child_commit",
+            lambda: run_git(None, child, ("cat-file", "-e", f"{gitlink}^{{commit}}")),
+        )
+        != b""
+    ):
+        exc = AuditFailure("CHILD_COMMIT_OUTPUT")
+        checks[CHECK_NAMES.index("child_commit")].update(
+            status="FAIL", reason=exc.reason, observed={}
+        )
+        setattr(exc, "checks", checks)
+        raise exc
     mark(checks, "child_commit", {"oid": gitlink, "type": "commit"})
     child_tree = (
-        run_git(None, child, ("rev-parse", f"{gitlink}^{{tree}}"))
+        guarded(
+            checks,
+            "child_tree",
+            lambda: run_git(None, child, ("rev-parse", f"{gitlink}^{{tree}}")),
+        )
         .rstrip(b"\n")
         .decode("ascii")
     )
-    lower_hex(child_tree, 40, "CHILD_TREE_OID")
+    guarded(checks, "child_tree", lambda: lower_hex(child_tree, 40, "CHILD_TREE_OID"))
     mark(checks, "child_tree", {"oid": child_tree, "type": "tree"})
-    child_raw = run_git(None, child, ("cat-file", "tree", child_tree))
-    child_record, child_record_sha = tree_record(
-        child_tree,
-        child_raw,
-        run_git(None, child, ("cat-file", "-t", child_tree)),
-        run_git(None, child, ("cat-file", "-s", child_tree)),
+    child_raw = guarded(
+        checks,
+        "child_tree_record",
+        lambda: run_git(None, child, ("cat-file", "tree", child_tree)),
+    )
+    child_record, child_record_sha = guarded(
+        checks,
+        "child_tree_record",
+        lambda: tree_record(
+            child_tree,
+            child_raw,
+            run_git(None, child, ("cat-file", "-t", child_tree)),
+            run_git(None, child, ("cat-file", "-s", child_tree)),
+        ),
     )
     mark(
         checks,
@@ -450,10 +546,15 @@ def audit(repo_root: Path, formal: str, child_git_dir: Path) -> dict[str, Any]:
         "root_tree_record_sha256": root_record_sha,
         "child_tree_record_sha256": child_record_sha,
     }
-    exact_keys(record, tuple(record), "AUDIT_RECORD_KEYS")
-    record_sha = sha256(canonical_bytes(record))
+    guarded(
+        checks,
+        "audit_record",
+        lambda: exact_keys(record, tuple(record), "AUDIT_RECORD_KEYS"),
+    )
+    record_sha = guarded(
+        checks, "audit_record", lambda: sha256(canonical_bytes(record))
+    )
     mark(checks, "audit_record", {"sha256": record_sha})
-    identity = command_identity(bootstrap_git())
     return {
         "schema": "root_gitlink_source_audit_evidence_v1",
         "status": "PASS",
@@ -514,7 +615,13 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if not args.output.is_absolute() or args.output.is_symlink():
             raise AuditFailure("OUTPUT_PATH", True)
-        evidence = audit(args.repo_root, args.formal_root_revision, args.child_git_dir)
+        evidence = audit(
+            args.repo_root,
+            args.formal_root_revision,
+            args.child_git_dir,
+            identity,
+            checks,
+        )
         write_atomic(args.output, evidence)
         print(
             canonical_bytes(
@@ -528,7 +635,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     except AuditFailure as exc:
         code = 3 if exc.operational else 2
-        print(canonical_bytes(failure(bootstrap, identity, checks, code)).decode())
+        print(
+            canonical_bytes(
+                failure(bootstrap, identity, getattr(exc, "checks", checks), code)
+            ).decode()
+        )
         return code
 
 
