@@ -412,3 +412,18 @@ CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 
 请重点核验：审计文件是否完整覆盖首次 canonical GPU smoke 前必要的 source-level unknowns，是否拒绝可训练 zero-PAD/常数 feature 伪关闭/未证明的 loss 重标定，及是否将任何需要 dataset/collate/packer/model/trainer 改动或真实执行的事项明确分流到后续 Gate。
 
 请求唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_SOURCE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权定义的只读 source audit；不授权 child 代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、runtime sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：v0.3.5 Canonical Native Consumer Runtime Source-Audit Design v0.2 remediation（2026-09-11）
+
+- formal root SHA：`825f08673536bcfeb4983688c463e04b5d16f312`
+- child/Gitlink SHA：`08775da2e73e352ebb1497548de5909baab8c2dc`
+- independent pair check：`git ls-tree 825f08673536bcfeb4983688c463e04b5d16f312 cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-SOURCE-AUDIT-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_source_audit_design_v0.2.md`。
+- supersedes：v0.1 formal `91dc6f16d80c410aaa103637cd0e65efc7888525`/`08775da2e73e352ebb1497548de5909baab8c2dc` 的 ChatGPT 两项 design-only HIGH。
+
+本轮严格 docs-only。v0.2 已将 authority 显式绑定到 canonical runtime contracts v0.3.6/v0.3.8/v0.3.9；要求只读审计以 `file:line -> unique owner -> fail-closed` 裁决 normal/suffix-recovery 的 `actual_N_valid==planned_N_valid`、`N_window`、primary/auxiliary coefficient、`GA_effective`、suffix-only plan-chain retry、objective-before-backward 与无第二次 unconditional GA scaling。v0.3.5 §20.2 完整保留 A--H：G 仅静态 prerequisite，真实 budget/throughput 标为 `DEFERRED / NOT PROVEN`，须独立 GPU smoke Gate；H 为正式训练前 runtime-sidecar/distributed/world-size-change fail-closed mandatory separate Gate。
+
+不改 child；不执行 Python/pytest、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、runtime sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_SOURCE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权定义的只读 source audit；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。

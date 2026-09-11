@@ -1,8 +1,8 @@
 # 当前协作状态
 
-## Canonical Native Consumer Runtime Source-Audit Design（2026-09-11，IN_PROGRESS）
+## Canonical Native Consumer Runtime Source-Audit Design（2026-09-11，REVIEW）
 
-- formal `91dc6f16`/`08775da` 的三方结论已齐：MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_source_audit_design_91dc6f1_08775da.md` 为 2 项 design-only HIGH。意见成立：v0.1 漏列仍绑定的 canonical runtime contracts v0.3.6/v0.3.8/v0.3.9，且把 v0.3.5 §20.2 A--H 窄化为 A--F。当前仅新增 v0.2 docs remediation：冻结 normal/recovery `planned==actual`、`N_window`、primary/auxiliary coefficient、no-second-GA scaling 与 plan-chain retry；G 的静态项和 GPU feasibility `DEFERRED`，H 的 sidecar/distributed/world-size change 独立 Gate。不改 child、不执行 Python、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。
+- formal `91dc6f16`/`08775da` 的三方结论已齐：MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_source_audit_design_91dc6f1_08775da.md` 为 2 项 design-only HIGH。整改 formal=`825f08673536bcfeb4983688c463e04b5d16f312`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc`，只新增 v0.2 docs remediation：冻结 normal/recovery `planned==actual`、`N_window`、primary/auxiliary coefficient、no-second-GA scaling 与 plan-chain retry；G 的静态项和 GPU feasibility `DEFERRED`，H 的 sidecar/distributed/world-size change 独立 Gate。已转三方审核；不改 child、不执行 Python、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。
 
 ## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，DONE）
 
