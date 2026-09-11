@@ -6,7 +6,7 @@
 
 ## Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design（2026-09-11，IN_PROGRESS）
 
-- v0.1 formal=`a99b6b94777517b5d1ecf0fcd099524544ea3309`/child=`f49f568923555fe15efe546925cbe6cc9140170e` 已收齐 MM/Kimi approve、ChatGPT 1 HIGH design-only：FeatureConfigIdentity key-count ambiguity。现仅起草 root docs-only v0.2：枚举 exact 15-key schema（`schema`+14 non-schema fields）并同步 witness wording；不改 child、不运行真实 I/O/GPU/训练。待静态核验、提交/推送与新 formal pair 三方 review。
+- v0.2 remediation formal=`9468e10fec3e83a4754ced24b900def5478bd5f9`/child=`f49f568923555fe15efe546925cbe6cc9140170e` 已完成 `git diff --check`、rebase 后提交并推送；ChatGPT request 已 append live Inbox，MM/Kimi tmux 均按 send-keys→1s→Enter→capture 回读确认送达。任务现为 REVIEW：只等同一 pair 三方最终 verdict，5 分钟一次原生远端锁定轮询；不改 child、不运行真实 I/O/GPU/训练。
 
 ## Canonical Native Production Runtime CPU/static Implementation（2026-09-11，DONE）
 
