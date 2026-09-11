@@ -236,3 +236,45 @@ Authorized next action:
 Still not authorized: Gate closure, files outside the six-file whitelist, real checkpoint/filesystem/DCP/remote I/O, checkpoint backend wiring, public runtime/hard-stop removal, real native forward/loss/backward, real optimizer/scheduler stepping, CUDA/GPU, `torchrun`, runtime sidecar/mid-episode resume, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
+
+---
+
+## CODEX NOTICE — Feature / Config / Optimizer / Checkpoint CPU/static remediation still needs direct Evidence
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `d0267a77280c51133f3ad48a149441ec6c0ea568`
+- child/Gitlink SHA: `fa964ef3974d5b622081cc1ded89b69d851b9eb5`
+- Gate: `G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py:255)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_feature_config_optimizer_checkpoint_cpu_static_implementation_d0267a7_fa964ef.md`
+
+Canonical review commit:
+`f17d0573624e01e1c76935a7255b64b240a495da`
+
+Current blockers: `1 HIGH` — Evidence-only. No remaining production/contract blocker was found in the remediated atomic restore, exact optimizer object binding or `32 -> 2048` ABI.
+
+Closed on this pair:
+- optimizer/scheduler loadability is fully preflighted on deep-copied shadow objects before the first live mutation for the approved synthetic CPU/static scope;
+- live optimizer parameters are exact object/order-bound to the canonical slow inventory and foreign same-count optimizer objects reject;
+- legal AdamW + ExponentialLR + iteration round-trip and late optimizer/scheduler defect zero-mutation witnesses are present;
+- active-TTT config requires `local_memory_enabled=True, local_memory_dim=32`; the slow inventory independently enforces `nn.Linear(32,2048)` plus 2048-wide modality embedding;
+- real `freeze_plan()` / transaction / scan / prepare-commit / commit-success paths now witness pending scan, frozen scheduler transition, committed frontier and open transaction rejection.
+
+Exact remaining acceptance:
+- add direct reordered, duplicated and missing optimizer-membership negatives with zero mutation assertions;
+- directly mint pending native-forward, pending-commit, retry, suffix-recovery/consumed-suffix and real recovery-receipt authorities and prove each rejects restore before mutation with unchanged slow/runtime snapshots;
+- add a direct static production-registration witness that exercises the active-TTT `OmniMoTModel.build_net()` registration branch and proves exact `local_memory_runtime.evidence_encoder/ttt_core` ownership plus absence of a legacy registered trainable owner/readout;
+- retain the existing legal round-trip, late-defect, pending-scan/frozen/frontier/open-transaction, config/inventory/runtime-key and public-hard-stop coverage.
+
+Authorized next action:
+- Evidence-only remediation inside the already-approved six-file synthetic CPU/static whitelist, followed by a new formal root/child pair and fresh closure review.
+
+Still not authorized: Gate closure, files outside the whitelist, real checkpoint/filesystem/DCP/remote I/O, checkpoint backend wiring, public runtime/hard-stop removal, real native forward/loss/backward, real optimizer/scheduler step, CUDA/GPU, `torchrun`, runtime sidecar/mid-episode resume, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair or canonical review.
