@@ -13,40 +13,39 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `78835f29a1e5484416c08c745361ea4b6c65bb09`
+- immediate prior live blob SHA: `b95936f38c79e46a38d6e4e09f52284544f40546`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Immutable Source Collection Closure Design v0.1 REQUEST_CHANGES
+## CODEX NOTICE — Immutable Source Collection Closure Design authority remediation APPROVED
 
 Formal pair:
-- root design SHA: `ee4ab4ab4ad6dd8b84aa354afc51ac47aa1c0474`
+- root design SHA: `5f6741ca0bfb61ca0e55fae95709c891fa5c5520`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CLOSURE-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_closure_design_v0.1.md:23)`
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CLOSURE`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_closure_design_ee4ab4a_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_closure_design_5f6741c_93a89ba.md`
 
 Canonical review commit:
-`0f86223dae35148a1d42c567fb094644d6006928`
+`1e8b0165be8998c46b483f9f22e9ffb5b1e1aa7b`
 
-Current blockers: `2 HIGH`; Design/Authority `2`; Production `0`; Evidence-only `0`.
+Current blockers: `0`. Design/Authority `0`; Production `0`; Evidence-only `0`.
 
-Blockers:
-1. The closure accepts candidate canonical bytes while explicitly neither re-reading the source root nor trusting prior-process/preflight memory. It only checks that supplied candidate bytes form a self-consistent derivation chain, so an arbitrary self-consistent candidate set can replace the actual approved same-FD source-read result. Freeze an exact non-substitutable preflight→closure handoff binding the reviewed execution-authority tuple, ordered `(ordinal,byte_length,sha256)` results, and all candidate canonical blob digests/tree identity; closure must require exact equality to that handoff before mutation, or independently re-read/hash the reviewed source selection.
-2. The future collection target ref/HEAD snapshot is explicit input but is not bound to one reviewed expected base revision or expected `cosmos-framework` Gitlink. A valid collection/receipt could therefore be committed on the wrong root lineage while the transaction itself still shows zero Gitlink delta. The real controlled-execution approval must bind exact target ref/base root revision and expected child/Gitlink, and closure must verify them before preflight/live mutation; also verify the execution-authority root's required parent relation from Git.
+Closure:
+- preflight source-read output is no longer replaceable at closure: the approved source-read preflight emits a same-activation, non-serializable, single-use typed `immutable_source_collection_preflight_handoff_v1` binding the reviewed execution-authority tuple, ordered source-entry `(ordinal,byte_length,sha256)` results, fixed candidate artifact path/schema/raw SHA-256 values, candidate config digest and `candidate_handoff_sha256`;
+- restart, repeat consume, cross-process handle, caller replacement and post-read reconstruction are fail-closed; closure consumes candidate raw blobs only through that handoff and requires byte/digest equality before independently recomputing the full source-identity derivation;
+- the future controlled-execution approval must bind exact `(target_ref, expected_base_root_revision, expected_child_gitlink, authority_approval_formal_root_revision)`; target HEAD, base Gitlink and authority-root parent are recomputed before source preflight and again before live mutation;
+- collection commit parent is exact `expected_base_root_revision`, preventing a self-consistent collection from landing on an unreviewed root/child lineage;
+- two-root collection/receipt ordering, exact allowlists, committed-tree re-read, receipt-parent lookup, rollback/`ROLLBACK_INCOMPLETE`, and no-push-before-success semantics remain intact;
+- formal root resolves exactly to the requested reachable child/Gitlink and child is unchanged.
 
-Positive findings:
-- formal root resolves exactly to the requested reachable child/Gitlink;
-- existing downstream source-evidence controlled-write / record / post-commit receipt / publication / read-only audit progression is preserved;
-- collection-root -> receipt-root ordering, fixed path allowlists, post-commit tree lookup and receipt-parent checks are fail-closed;
-- snapshot rollback / `ROLLBACK_INCOMPLETE` semantics remain intact;
-- no push/publication/downstream consumption is allowed before both roots and all post-checks succeed.
+Authorized next action only: proceed to the independently reviewed real collection controlled-execution design/review required by the frozen progression. This approval does not itself authorize source I/O or any collection/receipt mutation.
 
-Still not authorized: real source selection/read/hash, execution-authority creation, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root source audit, child/runtime modification, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
+Still not authorized: real source selection/read/hash, execution-authority creation, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root source audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
