@@ -15,7 +15,7 @@
 ## Immutable Source Collection Execution Design（2026-09-12，IN_PROGRESS）
 
 - 目的/Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-EXECUTION-DESIGN`。前置 collection design 已获同 pair三方批准；只冻结 future real-source selection/read 的最小受控 execution contract，后续仍须独立 closure Gate 才能执行。
-- 预计修改：仅新增一份 root `docs/build/` execution design，并更新 `SESSION.md`/`TODO.md`。禁止真实 source selection/read、collection mutation、child/I-O/GPU/训练。提交：未提交。
+- 修改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_execution_design_v0.1.md`；冻结 source-root 仅作 transport、canonical selection request、路径/regular-file fail-closed、流式 raw-byte hashes、五 artifact preflight 与 closure handoff。禁止真实 source selection/read、collection mutation、child/I-O/GPU/训练；未提交。
 
 ## Source-evidence Producer / Closure Design（2026-09-12，DONE）
 
