@@ -146,3 +146,18 @@
 请重点核验：authority tuple 和 preflight candidate 是否没有被误当 authority；two-root transaction/rollback 是否不产生部分 accepted authority；receipt parent/tree/blob re-derivation 是否足以拒绝 drift；以及既有 source-evidence/publication 顺序和 “闭环后直接 single-GPU smoke” 路线是否完整保留。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CLOSURE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许申请独立 controlled collection/receipt execution design；不授权真实 source I/O、collection/receipt mutation、record/package/witness、publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Immutable Source Collection Closure authority remediation（2026-09-12）
+
+- formal root SHA：`5f6741ca0bfb61ca0e55fae95709c891fa5c5520`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CLOSURE-DESIGN`
+
+前轮 `ee4ab4ab4ad6dd8b84aa354afc51ac47aa1c0474`/同 child 三方 final 已齐：ChatGPT `REQUEST_CHANGES` 两项 HIGH，MM/Kimi approve。本轮仅 docs-only 最小整改：
+
+1. 候选 blobs 不再是 caller input；改为 approved same-executor source-read preflight 产生的不可序列化、single-use typed handoff，canonical content 绑定 authority tuple、ordered `(ordinal,byte_length,sha256)`、五 artifact fixed path/schema/raw SHA-256、config SHA 与 `candidate_handoff_sha256`。closure 实际 bytes 必须逐项等于 handoff，重启/跨进程/caller replacement 均 FAIL。
+2. future 已有 controlled-execution approval 明示 target lineage tuple `(target_ref, expected_base_root_revision, expected_child_gitlink, authority_approval_formal_root_revision)`；source preflight 与 live mutation 前从 Git lookup 复验 target HEAD、base Gitlink、authority-root parent，collection parent 必须精确等于 expected base。
+
+formal tree 仅更新 closure design 与 `SESSION.md`，Gitlink 不变；`git diff --check` 与关键词核验 PASS。未执行真实 source I/O、collection/receipt mutation、record/package/witness、publication/audit、child/runtime、GPU 或训练；没有新增闭环外 provenance Gate，闭环后仍直接进入 single-GPU smoke design。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CLOSURE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许后续独立 controlled collection/receipt execution design；不授权真实操作。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
