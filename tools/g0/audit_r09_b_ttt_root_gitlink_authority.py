@@ -280,11 +280,17 @@ def run_git(
     return result.stdout
 
 
-def path_arg(value: Path, label: str) -> Path:
-    if not value.is_absolute() or value.is_symlink():
+def path_arg(value: Path, label: str, *, must_exist: bool = True) -> Path:
+    if not value.is_absolute():
         raise AuditFailure(f"{label}_PATH", True)
+    probe = value
+    while not probe.exists() and probe != probe.parent:
+        probe = probe.parent
+    for ancestor in (probe, *probe.parents):
+        if ancestor.is_symlink():
+            raise AuditFailure(f"{label}_PATH", True)
     try:
-        return value.resolve(strict=True)
+        return value.resolve(strict=must_exist)
     except OSError as exc:
         raise AuditFailure(f"{label}_PATH", True) from exc
 
@@ -613,8 +619,7 @@ def main(argv: list[str] | None = None) -> int:
         return 3
     identity = command_identity(bootstrap)
     try:
-        if not args.output.is_absolute() or args.output.is_symlink():
-            raise AuditFailure("OUTPUT_PATH", True)
+        path_arg(args.output, "OUTPUT", must_exist=False)
         evidence = audit(
             args.repo_root,
             args.formal_root_revision,

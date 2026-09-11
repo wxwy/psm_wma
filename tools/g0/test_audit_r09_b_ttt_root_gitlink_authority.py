@@ -267,6 +267,79 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
             self.assertEqual(self.invoke(root_link, child_git, formal, output), 3)
             self.assertFalse(output.exists())
 
+    def test_ancestor_symlink_root_child_and_output_escape_fail(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            root, child_git, formal, output = self.fixture(base)
+            for label, candidate in (
+                ("root", root),
+                ("child", child_git),
+            ):
+                link_parent = base / f"{label}-parent"
+                link_parent.symlink_to(candidate.parent)
+                escaped = link_parent / candidate.name
+                with self.subTest(label=label):
+                    self.assertEqual(
+                        self.invoke(
+                            escaped if label == "root" else root,
+                            escaped if label == "child" else child_git,
+                            formal,
+                            output,
+                        ),
+                        3,
+                    )
+            output_parent = base / "output-parent"
+            output_parent.symlink_to(base)
+            escaped_output = output_parent / "escaped.json"
+            self.assertEqual(self.invoke(root, child_git, formal, escaped_output), 3)
+            self.assertFalse((base / "escaped.json").exists())
+
+    def test_direct_schema_and_raw_object_negative_matrix(self) -> None:
+        config = {
+            "schema": "canonical_native_local_ttt_config_v2",
+            "local_memory_enabled": True,
+            "local_memory_dim": 32,
+            "local_history_enabled": True,
+            "local_history_backend": "ttt_fast_weight",
+            "local_history_evidence_dim": 106,
+            "local_history_state_enabled": False,
+            "local_ttt_enabled": True,
+            "enable_input_bias": False,
+            "ttt_tbptt_steps": 16,
+            "ttt_inner_lr": 0.01,
+            "k_local": 1,
+            "local_evidence_feature_version": "causal_visual96_executed_action10_v1",
+            "local_fast_state_dtype": "fp32",
+            "local_runtime_resume_mode": "slow_only_no_mid_episode_resume",
+        }
+        descriptor = {
+            "schema": "root_gitlink_checkpoint_source_descriptor_v1",
+            "source_kind": "checkpoint_source_manifest_v1",
+            "immutable_source_identifier": "a" * 64,
+            "source_manifest_sha256": "b" * 64,
+            "source_input_sha256": "c" * 64,
+        }
+        for mapping, validator, changed in (
+            (config, audit.validate_config, {"unknown": True}),
+            (config, audit.validate_config, {"local_memory_dim": True}),
+            (descriptor, audit.validate_descriptor, {"unknown": True}),
+            (descriptor, audit.validate_descriptor, {"source_input_sha256": "A" * 64}),
+        ):
+            bad = dict(mapping)
+            bad.update(changed)
+            with self.subTest(changed=changed):
+                with self.assertRaises(audit.AuditFailure):
+                    validator(bad)
+        with self.assertRaises(audit.AuditFailure):
+            audit.parse_ls_tree(
+                b"100644 blob " + b"a" * 40 + b"\tcosmos-framework\n",
+                b"160000",
+                b"commit",
+                b"cosmos-framework",
+            )
+        with self.assertRaises(audit.AuditFailure):
+            audit.tree_record("a" * 40, b"raw", b"blob\n", b"3\n")
+
 
 if __name__ == "__main__":
     unittest.main()
