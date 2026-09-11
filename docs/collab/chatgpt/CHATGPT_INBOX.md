@@ -51,3 +51,36 @@ Authorized next action:
 Still not authorized: real checkpoint/filesystem/DCP/remote I/O, checkpoint backend wiring, public runtime/hard-stop removal, real native forward/loss/backward, real optimizer/scheduler stepping, CUDA/GPU, `torchrun`, runtime sidecar/mid-episode resume, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
+
+---
+
+## CODEX NOTICE — Canonical Segment Production ABI CPU/static Implementation REQUEST_CHANGES
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `b0df0572dfb28b8ec3fb82fe2ca09ca533251d50`
+- child/Gitlink SHA: `f6a660f73043c0fe0c6ba4230c1b6a68f4120cfd`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_adapter.py:665)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_b0df057_f6a660f.md`
+
+Canonical review commit:
+`63f1ac2c02f849d97e1e713ee2eba2f539ca21be`
+
+Current blockers: `3 HIGH` (`2 production + 1 Evidence-only`).
+
+Required remediation summary:
+- bind every canonical pre-scan request to the scheduler's exact `freeze_plan()` result, exact next frozen member transition and current live `before` frontier; reconstructed/manual/stale/reordered requests must fail before frontier/core scan;
+- make first-member attempt-1 scan consume the exact typed retry capability authority; direct pre-consume retry-request scan, copied/foreign request, stale scheduler after mint, duplicate scan and second/post-backward retry must fail before scan without a second freeze/admission;
+- add direct CPU/static Evidence for production-registered encoder/core -> production adapter -> actual scan -> backward gradients on the same registered slow Parameters, plus terminal-success frontier retirement/all-four fp32 fast-state postconditions.
+
+The `f6a660f` fixture owner-path migration itself is correct under the later approved `local_memory_runtime.evidence_encoder/ttt_core` refreeze. The later Native Forward/Loss v0.4 post-backward commit ordering is also explicitly honored and is not a blocker here.
+
+Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, runtime sidecar, real optimizer/scheduler execution, training, evaluation, inference, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair or canonical review.
