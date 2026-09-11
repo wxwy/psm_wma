@@ -802,6 +802,25 @@ v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本�
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 reviews。
 
+## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation dangling-symlink / full-witness remediation closure（2026-09-12）
+
+- formal root SHA：`661786fc3e944348998745240b24f6c6f65a1d8a`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
+- 对象仍仅：`tools/g0/audit_r09_b_ttt_root_gitlink_authority.py`、`tools/g0/test_audit_r09_b_ttt_root_gitlink_authority.py`；根 SESSION/TODO 仅记录审核事实。
+
+前轮 `12e07051...`/`93a89ba...` 的三方 final verdict 已齐：ChatGPT `REQUEST_CHANGES`（dangling ancestor symlink + direct witness matrix）、Kimi `REQUEST_CHANGES`（matrix）、MM approve。本轮仅在已批准两文件内整改：
+
+1. `path_arg()` 不再用会跟随 dangling link 的 `Path.exists()` 选择检查起点；对 absolute root、child Git dir、output 的完整原始 lexical ancestor chain 逐一 `is_symlink()` fail-closed，`main()` 只将验证/解析后的 output 交给 atomic writer。
+2. `AUDIT_RECORD_KEYS` 为冻结 14-key tuple，替代此前恒真的 `tuple(record)` 校验。
+3. temporary Git-fixture 直接 witnesses 现在覆盖：relative/dangling root-child-output path；publication fixed-path/type/outer-key/schema/self-reference；config 15-key 与 source 5-key missing/type/value/hex/digest；root/child unexpected stdout；child working-tree substitution；root/child tree type、raw byte/length/digest；以及 success-only atomic replacement。integration failure 均断言 exact failed check、prior PASS/current FAIL/later SKIPPED、exit 与 output 零 mutation。
+
+验证：`python -m unittest tools.g0.test_audit_r09_b_ttt_root_gitlink_authority`=`16/16 PASS`；target Ruff、`py_compile`、root `git diff --check` 均 PASS。没有创建 publication，也没有对真实根仓运行 audit；未改 child/runtime；未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请重点逐项核验 ChatGPT 两项 HIGH 与 Kimi matrix HIGH 的闭合、悬空 symlink 的 pre-mutation fail-closed 语义、每个 v0.1 §4 family 的 direct witness，以及是否仍保持两 root tooling 文件/temporary fixture 范围。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭 root CPU/static tooling Gate；不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
 ## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation closure（2026-09-12）
 
 - formal root SHA：`12277d0649a2f886186f9bf7554231971e207836`
