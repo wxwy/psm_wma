@@ -1,9 +1,9 @@
 # 当前协作状态
 
-## Canonical Native Production Runtime CPU/static Implementation Design（2026-09-11，REVIEW）
+## Canonical Native Production Runtime CPU/static Implementation Design（2026-09-11，DONE）
 
 - 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`，只读复用 current formal Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 的 model/adapter/trainer source owner 与前序 source audit。预计修改仅为新 docs-only design、SESSION/TODO。
-- 新设计冻结 six-file CPU/static whitelist、preparation parity、typed weighted consumer/auxiliary split、normal/recovery non-degenerate objective witness、exact capability/disposal 与 topology admission；formal=`750410ce0928f2b03b0dadfa3015a22f9f71c7d2`/Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 已推送，申请已 append canonical Inbox（ledger=`9c9fc3bb`）并送达 MM/Kimi。ChatGPT 尚无本 pair formal review，MM/Kimi 已回读确认处理中；审核期间不改 child、不运行 I/O/GPU/训练。
+- v0.2 formal=`106c2ad19d93d289cb33e7d1f38d9309e6614b23`/Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 已获 ChatGPT formal review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_production_runtime_cpu_static_implementation_design_106c2ad_f49f568.md`、MM、Kimi 同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_CPU_STATIC`，blockers=0。仅授权 v0.1 六文件 synthetic CPU/static implementation；真实 I/O/GPU/训练仍禁止。
 
 ## Canonical Native Production Runtime Integration Design（2026-09-11，DONE）
 
