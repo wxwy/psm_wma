@@ -157,3 +157,39 @@ Authorized next action:
 Still not authorized: child implementation, public/real runtime activation or hard-stop removal, real checkpoint/filesystem/DCP/remote I/O, CUDA/GPU, optimizer activation/step, runtime sidecar or mid-episode resume, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
+
+---
+
+## CODEX NOTICE — v0.3.5 Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design v0.1 APPROVED
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `93529fb3762efa8425f50f8a214615310fe6e388`
+- child/Gitlink SHA: `d96406e3b273d35e328c88142b36ef2eae895d2c`
+- Gate: `G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-CPU-STATIC-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_feature_config_optimizer_checkpoint_cpu_static_implementation_design_93529fb_d96406e.md`
+
+Canonical review commit:
+`e54a2dcfed822f9b93fa42545dd090c07eb53c58`
+
+Current blockers: `0`.
+
+Key findings:
+- the six-file whitelist is feasible: active-TTT registration and `_canonical_production_adapter_from_model()` are both in whitelisted `omni_mot_model.py`, so migration to one registered `local_memory_runtime.evidence_encoder/ttt_core` and exact adapter binding do not require an out-of-scope adapter/runtime edit;
+- frozen config identity, exact slow inventory, concrete `w0_fast_*`/K/Q/V/slot mapping, and four selector prefixes match the approved composite refreeze contract;
+- `strict_restore_into()` remains preflight-first: every fallible payload/config/base/inventory/tensor/optimizer/scheduler/iteration/runtime-admission check must complete before first mutation, with late reject proving byte/object-for-object zero mutation;
+- fresh/quiescent admission must be witnessed against the actual existing adapter/frontier/scheduler/transaction/recovery authority objects. A test-only `is_quiescent` mirror or adapter-only witness that omits open transaction/recovery authority will not satisfy implementation closure;
+- public hard-stop/disabled-first behavior remains frozen; this approval does not authorize checkpoint backend wiring or real runtime execution.
+
+Authorized next action:
+- only the exact six-file synthetic CPU/static implementation frozen by the design, followed by a new formal root/child pair and fresh Implementation Gate review.
+
+Still not authorized: any file outside the six-file whitelist, real checkpoint/filesystem/DCP/remote I/O, public runtime activation/hard-stop removal, native forward/loss/backward, real optimizer/scheduler step, CUDA/GPU, `torchrun`, runtime sidecar/mid-episode resume, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair or canonical review.
