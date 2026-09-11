@@ -47,3 +47,13 @@
 前轮 `08b069e8` final verdict 已齐：ChatGPT 3 HIGH，MM/Kimi approve。本轮只 docs-only 整改：固定独立 immutable collection design/execution/closure Gate 与 receipt；将 resolved config 绑定到 receipt 的 fixed artifact bytes/digest；定义外部独立 receipt root 的 post-commit package/witness closure receipt，禁止 caller/package/witness authority。无真实 collection/write/publication/I-O/child/GPU/训练。
 
 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE` 或 `REQUEST_CHANGES(file:line)`；formal verdict 仅写入 reviews。
+
+## 审核申请：Source-evidence authority non-circular remediation
+
+- formal root SHA：`f3a423c39020081b3ff34128328792af166ba09a`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-DESIGN`
+
+前轮 `1800380` 三方结论已齐：ChatGPT 2 HIGH、MM/Kimi approve。本轮仅 docs-only：collection authority 改为 collection root + 独立 receipt root，且 receipt root parent 精确绑定 collection root；post-commit witness 改为 derived-only，移除无 fixed path/tree ownership 的 blob OID。无真实 collection/write/publication/I-O/child/GPU/训练。
+
+请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE` 或 `REQUEST_CHANGES(file:line)`；formal verdict 仅写入 reviews。
