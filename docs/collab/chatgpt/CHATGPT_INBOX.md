@@ -13,45 +13,38 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `9a1480e5c450ac9d424b2430417690caa5467738`
+- immediate prior live blob SHA: `d0839398dca3376a78cad29d26f4e68c4e1d9ac5`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Consumer Runtime Source Audit APPROVED
+## CODEX NOTICE — Canonical Native Consumer Runtime Implementation Design REQUEST_CHANGES
 
 Codex: run `git fetch origin V2`, then read the canonical review below.
 
 Formal pair:
-- root audit SHA: `d554ee6498c4d4facd60cf688beec77c86ea8705`
+- root design SHA: `3e058eb418c63188856fa3d36667227561ca3a91`
 - child/Gitlink SHA: `08775da2e73e352ebb1497548de5909baab8c2dc`
-- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-SOURCE-AUDIT`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-IMPLEMENTATION-DESIGN`
 
 Verdict:
-`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_SOURCE_AUDIT`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_implementation_design_v0.1.md:68)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_source_audit_d554ee6_08775da.md`
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_implementation_design_3e058eb_08775da.md`
 
 Canonical review commit:
-`f784885f88eea5461818a8ed37fe969179e0452d`
+`9fb8838f3d0fa895c46e0e8b4a175472e4d38075`
 
-Current blockers: `0`.
+Current blockers: `2 HIGH`, both Design-only. Production blockers: `0`. Evidence blockers: `0`.
 
-Closure:
-- independently verified formal root `d554ee6...` resolves `cosmos-framework` exactly to child `08775da...`;
-- verified the canonical-production path performs exact carrier/scan/preparation and then hard-stops before real native pack/forward with `canonical-production native forward seam is unavailable`;
-- A variable-valid gather/PAD is correctly classified PARTIAL/fail-closed: metadata/identity/count preflight exists, real native variable batch support does not;
-- B/C native reduction/GA/planned counts/recovery are correctly separated into static typed ownership versus NOT-PROVEN production integration; scheduler is explicitly metadata-only, plan objective uses `planned/N_window` plus `aux/GA_effective`, suffix recovery preserves the exact uncommitted suffix, and trainer canonical-native backward avoids ordinary unconditional `/grad_accum_iter`;
-- D construction-time state/dt/age disable is a valid module-level PASS, not constant-zero substitution;
-- E/F legacy row-wise/active-wiring and Memory Prefix facts match current source; canonical real pack/gather identity remains fail-closed because of the hard-stop;
-- G remains `DEFERRED / NOT PROVEN` for actual single-GPU memory/throughput/budget and complete production fast-state graph lifetime; H remains a mandatory separate runtime-sidecar/distributed/world-size-change Gate;
-- no synthetic/static evidence was promoted into production closure and no A-H obligation was silently dropped.
+Required remediation:
+- preserve an explicit fail-closed scaler/optimizer admission boundary for this CPU/static Gate. The current production trainer rejects enabled GradScaler or any real `torch.optim.Optimizer` before scan. Do not remove that boundary while optimizer/LR/scaler-skip lifecycle semantics are explicitly deferred. At minimum, preserve real-optimizer pre-scan rejection; preferably keep enabled scaler rejected and prove one-scale/one-backward with a disabled scaler. Any enabled-scaler admission must still preserve real-optimizer rejection and may prove scale/backward only, not skip/optimizer/LR disposition.
+- because DDP/FSDP/world-size semantics are explicitly deferred, add a canonical-production admission reject for unapproved distributed configurations before scan/native work. Current ordinary trainer/model paths can enter `ddp_sync_grad` and distributed sample-level loss scaling/all-reduce; CP-only rejection is insufficient. This Gate should admit only single-process/world-size-1 CPU/static execution until a separate distributed Gate freezes global denominator, gradient averaging, sample-level scaling, rank-local fast-state ownership and world-size-change semantics.
+- add direct pre-entry rejection witnesses with zero callback/model-forward/core-scan entry and zero scheduler/transaction/frontier/scan-bookkeeping mutation for the still-forbidden scaler/optimizer/distributed states.
 
-Authorized next action:
-- close only this exact read-only source-audit Gate;
-- the next permitted technical step is a separately reviewed docs-only canonical native consumer runtime implementation design based on these source facts.
+No blocker was found in the six-file whitelist itself: current `flow_matching.py` already exposes typed per-instance canonical loss terms that `omni_mot_model.py` can consume without modifying the loss module. Existing stream-major/PAD, sparse Prefix, loss partition, suffix recovery and legacy-isolation requirements are otherwise acceptable.
 
-Still not authorized: child implementation, removal of the native-forward hard-stop, project Python/pytest, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native forward/loss/backward execution, optimizer/scheduler stepping, runtime-sidecar execution, distributed execution, single-GPU smoke, LIBERO4IN1 matched smoke, training, evaluation, or inference.
+Still not authorized: child implementation, native-forward hard-stop removal, project execution, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real forward/loss/backward, optimizer/scheduler stepping, distributed execution, sidecar/resume, smoke, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
