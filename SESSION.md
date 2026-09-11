@@ -1,8 +1,8 @@
 # 当前协作状态
 
-## Canonical Native Consumer Runtime Source-Audit Design（2026-09-11，IN_PROGRESS）
+## Canonical Native Consumer Runtime Source-Audit Design（2026-09-11，REVIEW）
 
-- 已关闭 `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION` 的三方 CPU/static closure；下一步认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-SOURCE-AUDIT-DESIGN`，只新增 root docs。它为 v0.3.5 §20.2 A--F 冻结只读审计：variable-valid consumer gather/PAD、native reduction 与 valid-exposure weighting、planned valid-count、weighted stream scheduler/provenance、feature-disable，以及旧 row-wise active-wiring 的 supersession。预计仅新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_source_audit_design_v0.1.md` 并更新 SESSION/TODO；不改 child，不执行 Python、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。完成 docs-only design 后须三方同 SHA 批准，批准范围也只允许其定义的只读 source audit。
+- formal root=`91dc6f16d80c410aaa103637cd0e65efc7888525`/child=`08775da2e73e352ebb1497548de5909baab8c2dc` 已推送；仅新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_source_audit_design_v0.1.md`。它为 v0.3.5 §20.2 A--F 冻结只读审计：variable-valid consumer gather/PAD、native reduction 与 valid-exposure weighting、planned valid-count、weighted stream scheduler/provenance、feature-disable，以及旧 row-wise active-wiring 的 supersession。已写 ChatGPT canonical Inbox，并向 MM/Kimi 送达同一 pair；等待三方 verdict。不得改 child，不执行 Python、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。
 
 ## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，DONE）
 

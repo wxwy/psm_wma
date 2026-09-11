@@ -398,3 +398,17 @@ CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 
 证据：`LD_LIBRARY_PATH='' .venv/bin/python -m pytest model/generator/mot/canonical_segment_production_adapter_test.py -q`=`12 passed in 18.13s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native production forward/loss/backward、optimizer/scheduler step、runtime sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请只核验上轮要求的 retry rejection 全量零 mutation 是否闭合，并回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭此 CPU/static Gate；不授权任何真实执行。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：v0.3.5 Canonical Native Consumer Runtime Source-Audit Design v0.1（2026-09-11）
+
+- formal root SHA：`91dc6f16d80c410aaa103637cd0e65efc7888525`
+- child/Gitlink SHA：`08775da2e73e352ebb1497548de5909baab8c2dc`
+- independent pair check：`git ls-tree 91dc6f16d80c410aaa103637cd0e65efc7888525 cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-SOURCE-AUDIT-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_source_audit_design_v0.1.md`。
+
+本轮仅 docs-only，针对 v0.3.5 §20.2 尚未裁决的 A--F，冻结后续只读源码审计的入口、问题、产物和 fail-closed 分流：variable-valid consumer gather/PAD；native modality reduction/valid-exposure weighting/GA；planned valid count、weighted scheduler 与 provenance；state/dt/age 的真实 disable；以及旧 row-wise active-wiring 与 canonical `[B_stream,T]` 的 supersession boundary。它不预设 native packer 或 loss 已支持这些合同。
+
+请重点核验：审计文件是否完整覆盖首次 canonical GPU smoke 前必要的 source-level unknowns，是否拒绝可训练 zero-PAD/常数 feature 伪关闭/未证明的 loss 重标定，及是否将任何需要 dataset/collate/packer/model/trainer 改动或真实执行的事项明确分流到后续 Gate。
+
+请求唯一 verdict：`APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_SOURCE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权定义的只读 source audit；不授权 child 代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、runtime sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
