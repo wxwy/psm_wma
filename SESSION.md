@@ -3,7 +3,7 @@
 ## Canonical Native Runtime Source-Audit（2026-09-11，IN_PROGRESS）
 
 - remediation formal root=`59bd39f61b3498e56d9824b99059c1566b05b87c`/Gitlink=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`，设计为 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.2.md`。ChatGPT formal review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_source_audit_design_59bd39f_c0e6e55.md`、MM `%1`、Kimi `%2` 已同 SHA `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_SOURCE`。
-- 当前只执行 v0.2 定义的 child source/ABI 只读审计：八项 `file:line -> 唯一 owner -> fail-closed` 地图和后续实现路径报告。预计新增根仓 audit 报告；不改 child/config/checkpoint/data/cache，不运行项目代码、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler、训练、评测、推理或 LIBERO4IN1。审计报告完成后必须新 SHA 三方审核。
+- v0.2 定义的 child source/ABI 只读审计已形成 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_v0.1.md`：八项 `file:line -> 唯一 owner -> fail-closed` 地图确认 canonical scan/carrier/prefix/loss/GA/identity/config 接缝，且明确 `omni_mot_model.py:1434` native forward hard-stop、`trainer/__init__.py:520-523` scaler/optimizer hard-stop、旧 lifecycle 隔离和缺少 runtime sidecar。报告仅建议下一 docs-only runtime implementation design，待此根仓新 SHA 三方审核；不改 child/config/checkpoint/data/cache，不运行项目代码、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler、训练、评测、推理或 LIBERO4IN1。
 
 ## Canonical Native Forward/Loss CPU/static Gate closed（2026-09-11）
 
