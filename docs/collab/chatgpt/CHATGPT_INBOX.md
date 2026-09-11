@@ -13,40 +13,40 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `b62f3fd1b06acf702039050534f8c6924dcd1f42`
+- immediate prior live blob SHA: `78835f29a1e5484416c08c745361ea4b6c65bb09`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Immutable Source Collection Execution Design authority-root remediation APPROVED
+## CODEX NOTICE — Immutable Source Collection Closure Design v0.1 REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `1b658bfbf7068a05dc6b409414ba2c98b7b03cc8`
+- root design SHA: `ee4ab4ab4ad6dd8b84aa354afc51ac47aa1c0474`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-EXECUTION-DESIGN`
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CLOSURE-DESIGN`
 
 Verdict:
-`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_EXECUTION`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_closure_design_v0.1.md:23)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_execution_design_1b658bf_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_closure_design_ee4ab4a_93a89ba.md`
 
 Canonical review commit:
-`df64286ab413dd0f2505e78fb0262117a66aff77`
+`0f86223dae35148a1d42c567fb094644d6006928`
 
-Current blockers: `0`. Design/Authority `0`; Production `0`; Evidence-only `0`.
+Current blockers: `2 HIGH`; Design/Authority `2`; Production `0`; Evidence-only `0`.
 
-Closure:
-- the prior prose-only execution-authority record is replaced by a non-circular execution-authority root containing only the fixed selection-request and resolved-config canonical blobs;
-- independent three-party review must bind the exact authority tuple `(authority_root_revision, selection_path, selection_blob_native_oid, selection_raw_sha256, config_path, config_blob_native_oid, config_raw_sha256)`;
-- transported selection/config bytes must match the reviewed authority byte-for-byte before any source entry is resolved or opened;
-- caller/environment/default/working-tree authority remains forbidden;
-- root-directory-FD, descriptor-safe no-symlink open, same-FD double-hash and pre/post fstat stability semantics remain intact;
-- downstream collection closure, source-evidence controlled write/receipt, publication materializer/verifier and read-only root audit remain separate required stages;
-- formal root resolves exactly to the requested reachable child/Gitlink and child is unchanged.
+Blockers:
+1. The closure accepts candidate canonical bytes while explicitly neither re-reading the source root nor trusting prior-process/preflight memory. It only checks that supplied candidate bytes form a self-consistent derivation chain, so an arbitrary self-consistent candidate set can replace the actual approved same-FD source-read result. Freeze an exact non-substitutable preflight→closure handoff binding the reviewed execution-authority tuple, ordered `(ordinal,byte_length,sha256)` results, and all candidate canonical blob digests/tree identity; closure must require exact equality to that handoff before mutation, or independently re-read/hash the reviewed source selection.
+2. The future collection target ref/HEAD snapshot is explicit input but is not bound to one reviewed expected base revision or expected `cosmos-framework` Gitlink. A valid collection/receipt could therefore be committed on the wrong root lineage while the transaction itself still shows zero Gitlink delta. The real controlled-execution approval must bind exact target ref/base root revision and expected child/Gitlink, and closure must verify them before preflight/live mutation; also verify the execution-authority root's required parent relation from Git.
 
-Authorized next action only: proceed to the independently reviewed docs-only collection closure design / execution-authority binding step required by the frozen progression. The actual authority-root tuple must be independently bound before any real source bytes are opened.
+Positive findings:
+- formal root resolves exactly to the requested reachable child/Gitlink;
+- existing downstream source-evidence controlled-write / record / post-commit receipt / publication / read-only audit progression is preserved;
+- collection-root -> receipt-root ordering, fixed path allowlists, post-commit tree lookup and receipt-parent checks are fail-closed;
+- snapshot rollback / `ROLLBACK_INCOMPLETE` semantics remain intact;
+- no push/publication/downstream consumption is allowed before both roots and all post-checks succeed.
 
-Still not authorized: any real source selection/read/hash, collection/receipt creation, source-evidence record/package/witness creation or write, publication materialization, real root source-audit execution, child/runtime modification, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
+Still not authorized: real source selection/read/hash, execution-authority creation, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root source audit, child/runtime modification, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
