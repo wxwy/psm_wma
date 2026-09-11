@@ -441,3 +441,17 @@ CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 
 未修改 child，未执行 Python/pytest、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。后续只能新建 docs-only implementation design，再获独立批准。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭只读 audit；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Consumer Runtime Implementation Design v0.1（2026-09-11）
+
+- formal root SHA：`3e058eb418c63188856fa3d36667227561ca3a91`
+- child/Gitlink SHA：`08775da2e73e352ebb1497548de5909baab8c2dc`
+- independent pair check：`git ls-tree 3e058eb418c63188856fa3d36667227561ca3a91 cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-IMPLEMENTATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_implementation_design_v0.1.md`；事实前置 audit=`d554ee6498c4d4facd60cf688beec77c86ea8705`/`08775da2e73e352ebb1497548de5909baab8c2dc` 已三方 closure。
+
+本轮严格 docs-only，响应 source audit 的唯一核心事实：`omni_mot_model.py:1408-1447` 在 native pack/forward 前 hard-stop。v0.1 仅设计六文件 CPU/static whitelist 的最小 continuation：carrier stream-major gather 和 sparse `[K_local,32]` prefix identity；真实 native pack/noise/denoise/loss 的 typed per-instance consumer/auxiliary split；normal/suffix recovery `actual==planned`、`N_window`、`GA_effective` 的唯一 plan objective；one scaled backward 且不落 ordinary second `/grad_accum_iter`；legacy row-wise/active marker isolation；synthetic CPU/static acceptance。若 native loss terms 需白名单外修改，或任何 GPU/I-O/sidecar/distributed/skip/throughput 事实，必须 fail closed 并新建 Gate。
+
+没有 child 修改、Python/pytest、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权文档第 1 节六文件 whitelist 的 CPU/static synthetic implementation；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
