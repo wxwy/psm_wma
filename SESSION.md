@@ -6,7 +6,7 @@
 
 ## Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design（2026-09-11，IN_PROGRESS）
 
-- 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION-DESIGN`；已起草 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_feature_config_optimizer_checkpoint_cpu_static_implementation_design_v0.1.md`。它把 v0.1+v0.2+v0.3 composite refreeze contract 落为两文件 child whitelist、in-memory CPU/static direct witnesses 与禁止范围；不改 child、不运行真实 I/O/GPU/训练。待静态核验、提交/推送与三方 review。
+- v0.1 formal=`a99b6b94777517b5d1ecf0fcd099524544ea3309`/child=`f49f568923555fe15efe546925cbe6cc9140170e` 已完成 `git diff --check`、提交并推送；ChatGPT request 已 append live Inbox，MM/Kimi tmux 均按 send-keys→1s→Enter→capture 回读确认送达。任务现为 REVIEW：只等同一 pair 三方最终 verdict，5 分钟一次原生远端锁定轮询；不改 child、不运行真实 I/O/GPU/训练。
 
 ## Canonical Native Production Runtime CPU/static Implementation（2026-09-11，DONE）
 
