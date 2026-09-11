@@ -13,38 +13,37 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `ff54fa74062c80197dfec4ba031f0d9ca46278f4`
+- immediate prior live blob SHA: `445fd5ff58dc269397ad176494cf9c40de08d5b8`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Immutable Source Collection Controlled Execution Design v0.1 REQUEST_CHANGES
+## CODEX NOTICE — Controlled Collection Execution Design v0.2 REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `47a05a526ed98ab477ffad7e7f8548be1c1d981c`
+- root design SHA: `a3b03c9baea7cd89cc38c591124cae7c3aaea1f0`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_controlled_execution_design_v0.1.md:15)`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_controlled_execution_design_v0.2.md:32)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_design_47a05a5_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_design_a3b03c9_93a89ba.md`
 
 Canonical review commit:
-`db7a94ce1101e07009e3a01fe38a0343474dc3ff`
+`44309df2769fcb899f8d36ebb32f13dd9d55dd79`
 
-Current blockers: `3 HIGH`; Design/Authority `2`; Production `0`; Evidence-only `1`.
+Current blockers: `1 HIGH`; Design/Authority `0`; Production `0`; Evidence-only `1`.
 
-Blockers:
-1. The only future command invokes `tools/psm_wma/immutable_source_collection.py`, but that executor does not exist in the formal tree and no implementation/source-review progression is frozen before the next execution approval could authorize real source I/O. Freeze and independently review the exact root-owned executor implementation/source identity plus direct CPU/static witnesses before any real execution.
-2. The runbook consumes an already-reviewed `--authority-root-revision` but explicitly does not create the execution-authority root, and no exact materialization/binding transaction is frozen. Add a non-circular authority-root materialization/binding step that restricts the delta to the fixed selection/config blobs, verifies parent/tree/blob/raw-SHA identities, and obtains the reviewed seven-field authority tuple before source read.
-3. Success/failure evidence is prose-only. Freeze exact canonical machine-readable PASS/FAIL evidence binding tool/interpreter/command/environment identity, authority tuple, target lineage, ordered source-entry hashes, handoff digest, candidate digests, collection/receipt roots and parents, staged deltas, post-checks, publication state, and rollback / `ROLLBACK_INCOMPLETE`; raw source bytes remain forbidden.
+Closed from prior review:
+- executor implementation/source identity progression is now frozen before any real execution approval: implementation design -> root CPU/static implementation closure -> authority-root materialization/binding -> controlled execution approval;
+- the fixed executor path and later source/test allowlist, formal root/path/blob/raw-SHA identity, and direct CPU/static witnesses are required;
+- authority-root materialization/binding is now an explicit independent stage with exact two-path delta, reviewed parent, committed-tree recomputation, and seven-field tuple binding.
 
-Positive findings:
-- the approved authority tuple, target lineage, same-activation one-shot handoff, same-FD double-hash source semantics, five-path collection root, one-path receipt root, rollback and downstream progression are preserved;
-- formal root resolves exactly to the requested reachable child/Gitlink and child is unchanged.
+Remaining blocker:
+1. `immutable_source_collection_execution_evidence_v1` is still described as an open-ended “must contain” record rather than an exact canonical PASS/FAIL schema. Freeze the exact outer key set, status/field types, common-vs-FAIL-only fields, exact nested record key sets/types, check ordering, stable phase/failure-code vocabulary or derivation, and canonical evidence digest semantics. Also resolve the contradiction between required tool path/workdir/authority tuple paths and the blanket prohibition on “路径”; keep raw source bytes and unapproved source-transport paths excluded.
 
-Still not authorized: real source selection/read/hash, execution-authority creation, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root source audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
+Still not authorized: executor implementation, real source selection/read/hash, authority-root materialization, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
