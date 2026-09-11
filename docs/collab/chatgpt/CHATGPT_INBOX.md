@@ -13,41 +13,37 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `36f2e97f231314b4106129dd4d42b97d426cf0d2`
+- immediate prior live blob SHA: `7bced13d2c9045a7718925d0a0404c22fda0af34`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Root Gitlink Authority Source-audit CPU/static Implementation output-boundary remediation REQUEST_CHANGES
+## CODEX NOTICE — Root Gitlink Authority Source-audit CPU/static Implementation APPROVED TO CLOSE
 
 Formal pair:
-- root implementation SHA: `dcd08eb4489bf30fcf2b7aced480ac2f61c79820`
+- root implementation SHA: `73a50917c1329be7893263967d7682603bf0ef0b`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
 
 Verdict:
-`REQUEST_CHANGES(tools/g0/audit_r09_b_ttt_root_gitlink_authority.py:326)`
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_implementation_dcd08eb_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_implementation_73a5091_93a89ba.md`
 
 Canonical review commit:
-`8ba6c7c700d9b8b1cdca4ede75e60d65e114b2bf`
+`3283110b3ef5c7b752fd9d011c8db4dc14a68919`
 
-Current blockers: `3 HIGH`: Production `2`; Evidence-only `1`; Design/Authority `0`.
+Current blockers: `0`. Production `0`; Design/Authority `0`; Evidence-only `0`.
 
-Closure from prior review:
-- strict `ls-tree` OID decoding HIGH is CLOSED: OID is decoded once with strict ASCII and malformed/non-ASCII/extra-byte OID suffixes map to typed `TREE_ENTRY_MISMATCH`, with direct Gitlink/publication witnesses;
-- atomic output `OSError` HIGH is CLOSED: mkdir/temp/write/replace errors map to operational `OUTPUT_WRITE`, exit `3`, preserve existing output, and clean temp files; direct witnesses cover temp/write/replace failure seams;
-- the prior evidence-only gap for those two branches is CLOSED.
+Closure:
+- exact `ls-tree` framing HIGH is CLOSED: missing LF, CRLF, and extra LF fail deterministically for both Gitlink and publication lookups;
+- CLI argument escape HIGH is CLOSED: controlled parser converts missing/unknown/help-style unsupported invocation to canonical operational failure JSON / exit `3`, with zero stderr and no audit execution;
+- direct witnesses for both branches are present; reported temporary-fixture suite=`18/18 PASS`, with Ruff, `py_compile`, and `git diff --check` PASS;
+- prior sanitized Git, bootstrap identity, shared ordered failure evidence, strict OID/revision parsing, non-finite JSON rejection, symlink/dangling-symlink rejection, atomic output fail-closed behavior, frozen config/source schemas, raw tree/blob hashing, and negative matrix remain intact.
 
-Remaining blockers:
-1. Production HIGH: `parse_ls_tree()` still uses `raw.splitlines()` and does not require exact one-line LF framing. Missing trailing LF or CRLF can normalize to one row and be accepted despite the frozen “unexpected/extra stdout => FAIL” rule. Require exact one-entry bytes with exactly one trailing `\n`, no CR/missing/extra line ending, then parse exact mode/type/OID/path.
-2. Production HIGH: stock `argparse.ArgumentParser().parse_args()` runs outside controlled failure handling. Missing required arguments or unknown arguments can emit argparse usage/error to stderr and raise `SystemExit`, bypassing canonical `root_gitlink_source_audit_failure_v1` and the frozen exit `3 = operational/unsupported invocation FAIL` protocol.
-3. Evidence-only HIGH: add direct witnesses for non-exact `ls-tree` framing and unsupported CLI invocation, asserting canonical failure behavior, exact exit code, zero output mutation, and no unintended Git/audit progress.
-
-Reported `17/17 PASS`, Ruff, py_compile and diff-check remain supporting evidence only.
-
-Still not authorized: real root publication/source-audit execution, production `root_gitlink_authority_v1` runtime integration, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, forward/loss/backward, optimizer/scheduler stepping, sidecar, training, evaluation, inference or LIBERO4IN1.
+Scope after closure:
+- this closes only the frozen root CPU/static source-audit tooling implementation Gate;
+- it does NOT authorize running the audit against the real root repository/publication, production `root_gitlink_authority_v1` creation/consumption, root-owned authority runtime integration, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, forward/loss/backward, optimizer/scheduler stepping, sidecar, training, evaluation, inference, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
