@@ -496,3 +496,13 @@ CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 
 本轮严格整改 ChatGPT 两项 HIGH，child 仅改 `trainer/__init__.py`、`canonical_segment_production_integration_test.py`：`on_after_forward` exception、canonical capture-only return、`on_before_backward` exception 均通过 exact `CanonicalNativeForwardCapability` disposition 清理 native capability/scan、清 Local slow gradients、typed terminalize；新增 real model-seam capability 的三个 direct production-entry witnesses。并补 DataParallel、FSDP class、initialized process group、world-size!=1 的 trainer entry reject witnesses，均在 callback/DDP-sync/model-forward/scan 前拒绝。联合 CPU/static pytest=`48 passed in 31.99s`；target Ruff（忽略既有 I001）、py_compile、child/root diff-check PASS。
 
 请核验两项 HIGH 是否完整关闭，尤其是 pre-backward exit 无 orphan authority、pre-entry topology guards 的 callback/scan 零进入。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仍不授权真实 I/O、CUDA/GPU、torchrun、native real forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Native Consumer Runtime CPU/static topology-evidence closure（2026-09-11）
+
+- formal root SHA：`e29f291fbeb966edfeebfb4c6820345a6095e8f6`
+- child/Gitlink SHA：`f49f568923555fe15efe546925cbe6cc9140170e`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-CPU-STATIC-IMPLEMENTATION`；仅整改上一 pair 的 ChatGPT evidence-only HIGH。
+
+child 仅改 `trainer/__init__.py` 与 approved integration test：生产 topology predicate 明确接纳 `FSDPModule` identity；direct `ImaginaireTrainer.training_step()` witnesses 以 project `distributed.DistributedDataParallel` 和 trainer 实际 `FSDPModule` 符号的 CPU/static doubles 触发对应 `isinstance` 分支，并以 `ddp_sync_grad`/callback/model-forward 禁入哨兵证明 pre-entry reject。联合 pytest=`50 passed in 32.91s`；target Ruff（忽略既有 I001）/py_compile/child-root diff-check PASS。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权真实 I/O、CUDA/GPU、torchrun、native real forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
