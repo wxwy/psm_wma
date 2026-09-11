@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Canonical Native Production Runtime CPU/static Implementation Design（2026-09-11，IN_PROGRESS）
+
+- 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`，只读复用 current formal Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 的 model/adapter/trainer source owner 与前序 source audit。预计修改仅为新 docs-only design、SESSION/TODO。
+- 新设计冻结 six-file CPU/static whitelist、preparation parity、typed weighted consumer/auxiliary split、normal/recovery non-degenerate objective witness、exact capability/disposal 与 topology admission；不改 child、不运行 I/O/GPU/训练。待文档静态核验、提交、推送及三方审核。
+
 ## Canonical Native Production Runtime Integration Design（2026-09-11，DONE）
 
 - v0.1 formal=`bd6ea801367efc88e569c2cd4f9f62ebce2cdaeb`/Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 已收齐 ChatGPT `REQUEST_CHANGES`、MM/Kimi approve；ChatGPT HIGH 确认 v0.1 静默重排/漏列已冻结的 refreeze、single-GPU smoke、sidecar/resume、matched-smoke 与 formal-training progression。
