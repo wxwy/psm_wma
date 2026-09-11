@@ -6,6 +6,7 @@
 - 已阅读：root Gitlink authority source-audit design v0.3 §3--§7、feature/config/checkpoint refreeze design，以及当前 TODO/长期决策；复用其唯一 publication path 与 nested schema，不重新定义算法配置。
 - 预计修改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_root_publication_freeze_design_v0.1.md`，并在完成验证后更新 `SESSION.md`/`TODO.md`。不会修改 child、publication target 或运行时代码。
 - 禁止范围：真实 publication、真实 audit、checkpoint/data/cache I/O、CUDA/GPU、torchrun、模型运行、训练/评测/推理/LIBERO4IN1。提交：`dc11da59495f41cea58ccf17225469fcf6183452`。
+- 审核申请冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`（formal root/child exact verdict）；MM=`mm:0.0`；Kimi=`kimi:0.0`。formal pair 固定为 root=`dc11da59495f41cea58ccf17225469fcf6183452`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。名册未获用户明确替换前不得更换；当前无推进令牌，Gate=`REVIEW`。
 
 ## 审核治理互锁加固（2026-09-12，DONE）
 

@@ -915,3 +915,24 @@ v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本�
 仅整改 ChatGPT v0.2 唯一 HIGH：定义 `root_gitlink_git_bootstrap_v1` exact READY/FAIL schema；Git 缺失、不可执行、不可读、版本无效时三 identity 值严格 null、reason 固定、failure stdout 含 bootstrap、`command_identity=null`、exit=3 且不改 output；READY 后才构造 full identity。新增四类 bootstrap failure CPU/static witnesses。无代码、真实 audit、I/O、GPU 或训练。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 reviews。
+
+## 审核申请：Root Publication Freeze Design v0.1（2026-09-12）
+
+- formal root SHA：`dc11da59495f41cea58ccf17225469fcf6183452`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-ROOT-PUBLICATION-FREEZE-DESIGN`
+- 设计文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_root_publication_freeze_design_v0.1.md`
+- 依赖合同：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_root_gitlink_authority_source_audit_design_v0.3.md` 第 3--6 节。
+
+本申请仅审核 docs-only 的 future publication freeze 路线。v0.1 将 future root-owned publication 严格拆分为：独立 source-evidence 输入包、root stdlib temporary-fixture materializer/verifier、单次受控 Git publication 写入、独立 read-only source audit。唯一 future target 仍是 `docs/build/PSM-WMA_root_gitlink_authority_publication_v1.json`；publication 只允许 exact 三键 outer schema，禁止 self digest、root/tree/blob OID、formal revision、verifier schema 或任何派生 audit 值。
+
+请重点核验：
+
+1. 15-key `canonical_model_config` 与 5-key `checkpoint_source_descriptor` 是否仅从已批准 immutable source evidence 取得，且 publication 时不猜测默认值、不读环境或工作树；
+2. canonical bytes、index blob、formal root、Gitlink 与 audit 是否被分为不可替代阶段，任何失败是否保证 target/index/commit/authority 零 mutation；
+3. future CPU/static implementation 是否仅限 root stdlib temporary fixture，未提前授权真实 publication、真实 audit、child、checkpoint/data/cache I/O、GPU、训练；
+4. Gate 序列是否防止 static approval 被误解释为真实 provenance、checkpoint restore 或 LIBERO4IN1 training authorization。
+
+本提交只增加该设计、TODO/SESSION 状态；`git diff --check` PASS。未创建 publication、未运行真实 audit、未修改 child/runtime，未执行 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、模型 forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一份 docs-only materializer/verifier implementation design；不授权 publication 写入、真实 audit、child 修改、真实 I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
