@@ -115,3 +115,17 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 - 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_design_v0.2.md`
 
 仅 docs-only 整改 ChatGPT 对 v0.1 的两项 HIGH：精确拆分 `planned/actual/N_window`、primary `planned/N_window`、auxiliary `1/GA_effective` 与 GradScaler/optimizer 边界；补回 feature/config/optimizer/checkpoint refreeze，以及 sidecar design→CPU/static→resume smoke 在 matched/training 前的顺序。未改 child、未运行真实 I/O、GPU、训练。请回复 `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_SOURCE` 或 `REQUEST_CHANGES(file:line)`。
+
+## 审核申请：Canonical Native Runtime Source/ABI 审计 v0.1（2026-09-11）
+
+- formal root SHA：`8d9bcee0df5f414f21c0e4b94c1ed617d58b3c6e`
+- child/Gitlink SHA：`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- independent pair check：`git ls-tree 8d9bcee0df5f414f21c0e4b94c1ed617d58b3c6e cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-SOURCE-AUDIT`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_source_audit_v0.1.md`
+
+本轮为只读 source/ABI 审计报告。请核验其八项 `file:line -> 唯一 owner -> fail-closed` 地图是否准确覆盖 canonical model/legacy 隔离、packer/多模态 cardinality/`[K_local,2048]` prefix、planned/actual/N_window、primary/auxiliary 单一缩放、DDP/scaler/optimizer 边界、LIBERO carrier identity、feature/config/optimizer/checkpoint refreeze、sidecar/rank restore。请特别核验报告没有把 `omni_mot_model.py:1434` native-forward hard-stop、`trainer/__init__.py:520-523` scaler/optimizer hard-stop 或缺失 runtime sidecar 误称已实现。
+
+审计结论仅建议新建下一份 docs-only runtime implementation design；未改 child，未执行项目代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler、训练、评测、推理或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也不授权 child 实现、真实 I/O、GPU smoke、runtime sidecar、matched smoke 或正式训练。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
