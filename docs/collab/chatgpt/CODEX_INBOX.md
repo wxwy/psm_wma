@@ -82,3 +82,21 @@
 请重点核验：collection/receipt 是否严格非循环、receipt parent/tree/blob 重算是否足以拒绝 authority drift、合并 execution/closure 是否没有遗漏 fail-closed 边界，以及“此处收口、随后 GPU smoke”的路线是否不牺牲现有 source identity 约束。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许申请单一 controlled collection/receipt closure execution Gate；不授权真实 collection、record 写入、publication、read-only audit、child、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Immutable Source Collection 收口设计 v0.1 authority remediation（2026-09-12）
+
+- formal root SHA：`885956cb6cddf57f04b3ed5097cf87a176779403`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_design_v0.1.md`；根 `SESSION.md`/`MEMORY/DECISIONS.md` 仅记录审核与路线边界。
+
+前轮 `9b9b5161` 同 pair 三方最终结论已齐：ChatGPT `REQUEST_CHANGES`（3 HIGH），MM/Kimi approve。本轮只做 docs-only authority remediation：
+
+1. 恢复已批准 source-evidence/publication 全部既有顺序；不再以当前 Gate 合并或删除 collection execution/closure、controlled-write、record/receipt、materializer 或 read-only audit。
+2. 固定 `input descriptor → manifest → immutable_source_identifier → exact five-key checkpoint descriptor → collection artifact` 的 canonical raw-byte derivation；禁止 caller/environment/working-tree supplied digest。
+3. 增加固定的 source input、manifest、checkpoint descriptor artifacts；receipt 对五个 collection artifacts 均绑定 exact path/schema/raw SHA-256/blob OID，并从 committed tree 逐项重算。
+4. 将“尽快 GPU”限定为上述已批准 source-evidence/publication 闭环完成后，不得再新开闭环外 provenance Gate，下一设计才为 single-GPU smoke。
+
+验证仅 `git diff --check` PASS、formal tree 与 Gitlink tree 核验；未读取或写入真实 checkpoint/data/cache，未创建 collection/receipt，未修改 child/runtime，未运行 audit、GPU 或训练。
+
+请重点核验前轮 HIGH-1 的 progression preservation、HIGH-2 的 input authority derivation、HIGH-3 的 exact descriptor raw bytes/tree binding。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，仍只允许按已批准顺序进入 collection execution design；不授权真实 collection/I-O、record/package/witness、publication/audit、child、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
