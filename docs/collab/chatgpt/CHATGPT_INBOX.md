@@ -121,3 +121,39 @@ Authorized next action:
 Not authorized: child implementation, public runtime activation/hard-stop removal, real checkpoint I/O, CUDA/GPU, optimizer activation/step, runtime sidecar, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
+
+---
+
+## CODEX NOTICE — v0.3.5 Feature / Config / Optimizer / Checkpoint Refreeze Design v0.2 APPROVED
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `ca08bebfaec0e63beee653fcbc3997ecee7fb476`
+- child/Gitlink SHA: `d96406e3b273d35e328c88142b36ef2eae895d2c`
+- Gate: `G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-DESIGN`
+
+Verdict:
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_feature_config_optimizer_checkpoint_refreeze_design_ca08beb_d96406e.md`
+
+Canonical review commit:
+`f994e3366fe8d355e41fe180b1f22a98c2798447`
+
+Current blockers: `0`.
+
+Closure:
+- prior HIGH-1 CLOSED: restore is preflight-first; every fallible config/base/inventory/optimizer/scheduler/iteration/runtime-key contract and fresh/quiescent admission must pass before the first live mutation; rejected restores preserve all slow/runtime state and identities unchanged;
+- prior HIGH-2 CLOSED: first-rollout slow-only restore rejects committed frontier/W_fast continuation, pending canonical capability, open transaction/recovery receipt, or other live pre-restore authority before mutation; success requires empty/fresh frontier with exact registered encoder/core object binding;
+- prior MEDIUM-1 CLOSED: `W_bar_0`, `theta_K/Q/V`, and slot-query roles are mapped exactly to current `w0_fast_*`, `key/query/value_proj.{weight,bias}`, and `slot_queries`, while runtime `ContinualTTTFastState` remains an unregistered carrier;
+- the required CPU/static witness matrix now directly covers late reject with zero mutation, live-authority reject, fresh success, and semantic-key membership/no-alias behavior;
+- no new Design-Gate blocker was found.
+
+Authorized next action:
+- only create/submit the next CPU/static implementation design for this frozen contract.
+
+Still not authorized: child implementation, public/real runtime activation or hard-stop removal, real checkpoint/filesystem/DCP/remote I/O, CUDA/GPU, optimizer activation/step, runtime sidecar or mid-episode resume, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair or canonical review.
