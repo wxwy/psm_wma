@@ -252,3 +252,14 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 本轮仅 docs-only。请核验它是否正确以 v0.3.5 TTT 取代旧 v0.3.2 recurrent owner：严格 config identity（T=16、inner LR=0.1、K_local=1、causal visual96/action10、fp32、slow-only resume）；唯一 registered slow owner/inventory（evidence encoder、TTT W_bar_0/theta K/V/Q/slot queries、projector、modality embed）；四 selector exact-cover；W_fast/runtime frontier/pending 排除；slow-only strict checkpoint 与无 sidecar时禁止 mid-episode resume。请确认逐 token `[B,K,32] -> [B,K,2048]` 没有错误拼 slot。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一份 CPU/static implementation design；不授权 child 实现、真实 checkpoint I/O、GPU、runtime、optimizer activation、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：v0.3.5 Feature / Config / Optimizer / Checkpoint Refreeze Design v0.2 remediation（2026-09-11）
+
+- formal root SHA：`ca08bebfaec0e63beee653fcbc3997ecee7fb476`
+- child/Gitlink SHA：`d96406e3b273d35e328c88142b36ef2eae895d2c`
+- Gate：`G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-DESIGN`
+- supersedes：v0.1 / root `98767ca5...` 的 ChatGPT 2 HIGH + 1 MEDIUM。
+
+仅 docs-only remediation：v0.2 强制 restore 在所有 config/base/inventory/optimizer/scheduler/iteration/runtime admission preflight 成功前零 mutation；live frontier、pending authority、open transaction/recovery receipt 一律 quiescent-admission reject；`W_bar_0/theta_K/Q/V/slot query` 显式绑定到现有 `w0_fast_*`、`key/query/value_proj.*`、`slot_queries`，并区分 unregistered runtime `ContinualTTTFastState`。新增 late reject、live authority reject、fresh success、semantic-key inventory四类 CPU/static witnesses。
+
+请回复 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权 child/I-O/GPU/optimizer step/sidecar/训练。
