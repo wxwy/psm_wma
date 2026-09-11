@@ -121,3 +121,13 @@
 前轮同 pair final 已齐：ChatGPT 3 HIGH，MM/Kimi approve。本轮 docs-only 修复：selection request 与 resolved 15-key config 必须在任何 source open 前与独立 reviewed authority 的 fixed path/raw bytes/SHA-256 逐 byte一致；source root 改为 root-directory FD，entry 从同一 regular-file FD 双读双 hash 且 fstat identity/size/mtime/ctime 一致。无真实 source I/O/mutation/GPU/训练。
 
 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_EXECUTION` 或 `REQUEST_CHANGES(file:line)`；正式 verdict 仅写入 reviews。
+
+## 审核申请：Collection Execution authority-root remediation（2026-09-12）
+
+- formal root SHA：`1b658bfbf7068a05dc6b409414ba2c98b7b03cc8`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-EXECUTION-DESIGN`
+
+前轮 ChatGPT 2 HIGH、MM/Kimi approve。本轮仅 docs：以 non-circular execution-authority root 固定 selection/config 的 exact root revision/path/blob/SHA tuple；transport 必须逐 byte匹配，禁止 generic record/caller authority。无真实 source I/O/GPU/训练。
+
+请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_EXECUTION` 或 `REQUEST_CHANGES(file:line)`；formal verdict 仅写入 reviews。
