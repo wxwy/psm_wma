@@ -13,42 +13,35 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `a1535acebeb00ce531139af1beb5d42342982ebf`
+- immediate prior live blob SHA: `e7c3dcf6cccae11560abab9b266f39a8f19e2830`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Consumer Runtime CPU/static Implementation remediation REQUEST_CHANGES
-
-Codex: run `git fetch origin V2`, then read the canonical review below.
+## CODEX NOTICE — Canonical Native Consumer Runtime CPU/static Implementation CLOSED
 
 Formal pair:
-- root implementation SHA: `748a6ad4380a2934672c8d261d15f7bddfa0ef62`
-- child/Gitlink SHA: `9368b0b5df9ddc76eed237c80ffeff40fe46a3ef`
+- root implementation SHA: `e29f291fbeb966edfeebfb4c6820345a6095e8f6`
+- child/Gitlink SHA: `f49f568923555fe15efe546925cbe6cc9140170e`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-CPU-STATIC-IMPLEMENTATION`
 
 Verdict:
-`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py:624)`
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_cpu_static_implementation_748a6ad_9368b0b.md`
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_cpu_static_implementation_e29f291_f49f568.md`
 
 Canonical review commit:
-`e9891d9e504bcab83c401fb696f184e97a801a88`
+`c161a7ce43c3f421a7ba601c4b67510663377687`
 
-Current blockers: `1 HIGH`, Evidence-only. Production blockers: `0`. Evidence blockers: `1 HIGH`.
+Current blockers: `0`. Production blockers: `0`. Evidence blockers: `0`.
 
-Closure status:
-- prior Production HIGH is CLOSED: `on_after_forward` exception, canonical `capture_only`, and `on_before_backward` exception now dispose the exact `CanonicalNativeForwardCapability`, abort its pending scan, clear Local slow grads, preserve frontier/scheduler state, and typed-terminalize the exact transaction member; direct witnesses obtain a real capability through the model seam and exercise all three production exits;
-- DataParallel, trainer-side initialized process group, explicit world-size>1, distributed config, CP, optimizer, and enabled-scaler rejection coverage is materially improved;
-- remaining Evidence HIGH: the previous exact acceptance also required direct production-entry witnesses for the project `distributed.DistributedDataParallel` predicate and FSDP/FSDP2 identity. Current remediation exercises only `torch.nn.DataParallel` and a fake object whose class name is `FullyShardedDataParallel`; it does not exercise project DDP or the repository/PyTorch `FSDPModule`-style FSDP2 identity;
-- the wrapper witnesses also need to explicitly prove rejection before `ddp_sync_grad`/callbacks/model-forward/native prepare/core scan with unchanged scheduler/transaction/frontier/scan/retry state and no Local slow-grad side effect.
+Closure:
+- prior Production HIGH remains closed;
+- project `distributed.DistributedDataParallel` and FSDP2 / `FSDPModule` production predicates now have direct CPU/static production-entry witnesses;
+- `ddp_sync_grad`, callback, and model-forward sentinels prove rejection before those surfaces; source order keeps canonical model/adapter/bookkeeping and Local slow-grad owners unreachable on the rejected paths;
+- production FSDP predicate now explicitly recognizes `FSDPModule` identity.
 
-Required remediation:
-1. add a direct `ImaginaireTrainer.training_step()` witness for the actual `isinstance(..., distributed.DistributedDataParallel)` branch; a CPU/static monkeypatched/test-double class is acceptable and no real process group is needed;
-2. add a direct FSDP2 identity witness using `FSDPModule`-style topology or an equivalent test double that exercises the real intended predicate. If it shows the current top-level class-name check is insufficient, fix `_canonical_native_cpu_static_topology_error()` within the already-approved `trainer/__init__.py` scope;
-3. for both, assert zero entry into `ddp_sync_grad`, callbacks, model-forward/native prepare/core scan, unchanged scheduler/transaction/frontier/scan/retry bookkeeping, and no Local slow-grad side effect.
-
-Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real workload forward/loss/backward, real optimizer/scheduler stepping, enabled AMP/scaler-skip lifecycle, distributed execution, runtime sidecar/resume, single-GPU smoke, matched smoke, training, evaluation, inference or LIBERO4IN1.
+Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real workload execution, real optimizer/scheduler stepping, enabled AMP/scaler-skip lifecycle, distributed execution, runtime sidecar/resume, single-GPU smoke, matched smoke, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
