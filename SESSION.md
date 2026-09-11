@@ -19,6 +19,7 @@
 - 结论：三方同 pair final verdict 已齐，存在仅限 docs-only 的整改推进令牌。唯一 HIGH 指出 §6:127 把 preflight 的零 mutation 误写成所有失败的无条件零 mutation，与 §3 的 post-mutation rollback/`ROLLBACK_INCOMPLETE` fail-stop 相矛盾。允许下一步仅将验收项改为同一两阶段合同；禁止 publication、真实 audit/I-O、child、GPU 与训练。提交：未提交。
 - 整改：将该验收项替换为 §3 同一两阶段合同，逐项区分 preflight 零 live mutation、live transaction rollback 后 ordinary failure、rollback/HEAD-state 不完整时 `ROLLBACK_INCOMPLETE` fail-stop，以及任一失败都不产生 accepted authority/audit progression。验证：`git diff --check` PASS；formal tree scope 复核为仅 `SESSION.md` 与该 design，formal child 仍为 `93a89ba61306d840a008813f62f26a34d54850f4`。未运行任何项目代码或真实操作；提交：未提交。下一步：提交、推送并以新 root/同 child 重新申请三方 docs-only review。
 - 重审准备：formal target 固定为 root=`c6be81ef0b9b9937987c53bb84524131019b5d9a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册仍为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。canonical live Inbox 原为 128851 bytes，预期追加将越过 131072-byte 上限，已 byte-for-byte 归档为 `docs/collab/chatgpt/archive/CODEX_INBOX_2026-09-12_051938_CST_c6be81e.md`，复核 archive blob=`e85c8d136e2f8c67ed25f50003f985194a2cdd80`；新 live ledger 已重建并写入完整申请。待 ledger 提交/推送后按 send-keys 三联回执发送 MM/Kimi；未送达前不使用“已送达”状态词。
+- 送达回执：ledger commit=`141ad5b4d108c880da604137d24dd72f9eadf0d5` 已推送；ChatGPT 申请在该 canonical live Inbox。MM=`mm:0.0` 与 Kimi=`kimi:0.0` 均已完成 `send-keys -l` → 等待至少 1 秒 → 独立 `Enter` → 未截断 capture；capture 均显示完整 c6be81e/93a89ba request 已离开输入框并进入会话，MM 显示处理状态，Kimi 显示高推理处理状态。三方均已送达、均未有 c6be81e/93a89ba final verdict；Gate=`REVIEW`，每三分钟完整轮询。
 
 ## Root Publication Freeze Design（2026-09-12，IN_PROGRESS）
 
