@@ -761,3 +761,19 @@ child delta 仍严格仅两文件。CPU evidence：pytest=`15 passed in 33.73s`�
 仅整改 ChatGPT v0.1 的两项 HIGH：定义 native Git tree OID 与 `git cat-file tree` raw bytes 的 SHA-256/record SHA-256 关系；定义 root-tree immutable publication blob、exact envelope/schema/canonical bytes、publication digest 与 signature-equivalent root-tree trust predicate。仍严格 docs-only，无 child/runtime、真实 I/O/GPU/训练。
 
 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 reviews。
+
+## 审核申请：Root Gitlink Authority Source-audit Design v0.3 remediation（2026-09-12）
+
+- formal root SHA：`7d5580b34e9f27ecf5dbbfde863bacd15a03e67c`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_root_gitlink_authority_source_audit_design_v0.3.md`。
+
+前轮同 pair `ae2e94b...`/`93a89ba...` 的 final verdict 已齐：ChatGPT `REQUEST_CHANGES` 两项 HIGH，MM/Kimi `APPROVE_TO_DESIGN`。本轮仅 docs-only 整改两项 HIGH：
+
+1. publication blob 改为 exact 三键 `schema/canonical_model_config/checkpoint_source_descriptor`，明确禁止自身 digest、blob OID、containing tree OID、formal revision 和 verifier 字段；formal root/tree、固定 path、blob native OID、raw blob SHA-256 和 verifier schema 都由外部 `root_gitlink_source_audit_record_v1` 从已验证 Git tree lookup 派生，消除 self-hash/tree-OID fixed point。
+2. publication 的 `canonical_model_config` 锚定已批准的 exact `canonical_native_local_ttt_config_v2` 15-key mapping，冻结 key/type/active-TTT value contract、canonical bytes 和 SHA-256；`checkpoint_source_descriptor` 冻结为 exact 五键 `root_gitlink_checkpoint_source_descriptor_v1`，固定 source kind 与 immutable identifier/manifest/input digest grammar。缺失、未知、schema/type/value/digest/reachability drift 均 source-audit pre-authority FAIL。
+
+本轮没有 child/root runtime 代码、真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。请重点复核 non-circular external binding、两 nested mapping 是否已不再 implementation-defined，以及没有扩大授权。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
