@@ -220,6 +220,6 @@
 
 - 日期：2026-09-12
 - 状态：生效（用户明确路线调整；每个实际执行动作仍须其独立三方 Gate）
-- 决策：source-evidence 链只完成已开启的 immutable collection/receipt 闭合，不再为 checkpoint authority、publication evidence 或相同 binding 横向增加 provenance Gate。该 closure 后的下一设计固定为 single-GPU TTT smoke，依序处理真实 optimizer/scaler、1 batch GPU 与 20--100 step smoke；不得用新的 provenance 子 Gate 推迟该路线。
+- 决策：source-evidence 链按已批准顺序完成 immutable collection/receipt、controlled write、record/receipt、publication materializer/verifier 与 read-only root audit 的既有闭环，不再为 checkpoint authority、publication evidence 或相同 binding 横向增加闭环外 provenance Gate。该闭环后的下一设计固定为 single-GPU TTT smoke，依序处理真实 optimizer/scaler、1 batch GPU 与 20--100 step smoke；不得用新的 provenance 子 Gate 推迟该路线。
 - 边界：本决策不授权真实 collection、source-evidence record/publication、GPU、训练或绕过三方审核；它只限制后续 Gate 的路线与拆分方式。
 - 原因：现有 provenance 合同已经覆盖 source identity、collection/receipt 非循环绑定、失败回滚和 downstream package 输入；继续横向细分的边际收益低于尽快以受控 GPU smoke 验证 TTT 有效性的收益。
