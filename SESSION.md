@@ -1,8 +1,8 @@
 # 当前协作状态
 
-## Canonical Native Consumer Runtime Implementation Design（2026-09-11，REVIEW）
+## Canonical Native Consumer Runtime Implementation Design（2026-09-11，IN_PROGRESS）
 
-- 上游 root-only source audit formal=`d554ee6498c4d4facd60cf688beec77c86ea8705`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 已三方关闭。`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_implementation_design_v0.1.md` 已冻结为审阅对象：以 `omni_mot_model.py:1443` hard-stop 为唯一生产接线缺口，冻结 gather/packer/native-loss/one-backward、recovery、legacy isolation 与 CPU/static acceptance。待本 root-only design 的三方同 SHA verdict；禁止 child 修改、Python/pytest、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
+- v0.1 formal=`3e058eb4`/`08775da` 三方意见已齐：MM/Kimi approve；ChatGPT 2 项 design-only HIGH 成立。新增 v0.2 remediation，明确保留 real optimizer/enabled scaler pre-scan reject，并把 DDP/FSDP/data-parallel/world-size!=1/CP 统一规定为 single-process CPU/static 以外的 pre-scan fail-closed topology；其余 v0.1 binding。待验证/提交后重新三方审核；禁止 child 修改、Python/pytest、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
 
 ## Canonical Native Consumer Runtime Source Audit（2026-09-11，DONE）
 
