@@ -802,6 +802,19 @@ v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本�
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 reviews。
 
+## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation closure（2026-09-12）
+
+- formal root SHA：`12277d0649a2f886186f9bf7554231971e207836`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
+- 对象：`tools/g0/audit_r09_b_ttt_root_gitlink_authority.py` 与 `tools/g0/test_audit_r09_b_ttt_root_gitlink_authority.py`；根仓 SESSION/TODO 只记录 Gate 状态。
+
+前置 v0.3 implementation design `b29fdf7...`/`93a89ba...` 已获 ChatGPT/MM/Kimi 同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT`。本轮严格只新增这两个 root 标准库文件：冻结 `/usr/bin/git` bootstrap READY/FAIL、sanitized Git environment 与 command identity；从 formal root Git object database 的 raw tree/blob 建立 Gitlink、publication、nested config/source descriptor、child tree 与 14-key audit record；成功仅 atomic replace canonical evidence，所有失败 stdout single JSON 且不改 output。CPU/static unittest 仅创建独立临时 root/child Git fixture，覆盖 valid PASS、canonical publication、hostile caller Git env、root symlink、missing/non-executable/unreadable/invalid-version bootstrap；`6/6 PASS`、target Ruff、`py_compile`、`git diff --check` 全 PASS。
+
+没有创建 publication，也没有对当前根仓执行该 audit；未改 child/runtime；未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。请重点核验 exact schemas、raw-byte binding、bootstrap failure `command_identity=null`、failure zero-output-mutation、temporary-fixture scope及是否出现任何越权实际运行。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭此 root CPU/static tooling Gate；不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
 ## 审核申请：Root Gitlink Source-audit Implementation Design v0.3 bootstrap remediation
 
 - formal root SHA：`b29fdf7e71a0464e8678e0750871284ebd866f10`
