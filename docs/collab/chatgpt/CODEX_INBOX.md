@@ -532,3 +532,18 @@ child 仅改 `trainer/__init__.py` 与 approved integration test：生产 topolo
 未修改 child，未执行 Python/pytest、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_INTEGRATION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权下一份 docs-only CPU/static runtime implementation design；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Production Runtime CPU/static Implementation Design v0.1（2026-09-11）
+
+- formal root SHA：`750410ce0928f2b03b0dadfa3015a22f9f71c7d2`
+- child/Gitlink SHA：`f49f568923555fe15efe546925cbe6cc9140170e`
+- independent pair check：`git ls-tree 750410ce0928f2b03b0dadfa3015a22f9f71c7d2 cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_production_runtime_cpu_static_implementation_design_v0.1.md`。
+- 前置 authority：关闭的 production-runtime-integration design `ee979172b8bef4709e94fe84ed4ff4e9c711e2e7`/`f49f568923555fe15efe546925cbe6cc9140170e` 三方同 SHA approve。
+
+本轮严格 docs-only，只请求实施前的设计批准。v0.1 冻结六文件 CPU/static whitelist：model/adapter/trainer 及其三份定向测试；不触及 config/checkpoint/sidecar/data/packer/flow-matching/registry。它保持 model/trainer hard-stop，禁止解除后调用真实 native 模型；只允许在现有 synthetic CPU/static seam 上验证 gathered preparation parity、source-identified weighted consumer/independent auxiliary split、normal+suffix recovery 各自非等 valid count/非零 auxiliary 的精确 objective、one exact capability/backward/commit 与所有 pre-mutation abort disposition。enabled scaler、real optimizer、DDP/FSDP/DataParallel/group/world-size/CP 必在 callback/model-forward/scan 前拒绝。
+
+不授权 child 修改、Python/pytest、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、真实 native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权第 1 节六文件 synthetic CPU/static implementation；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
