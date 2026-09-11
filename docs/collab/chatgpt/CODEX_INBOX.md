@@ -821,6 +821,23 @@ v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本�
 
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭 root CPU/static tooling Gate；不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
 
+## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation non-finite / exact-rev-parse remediation closure（2026-09-12）
+
+- formal root SHA：`445eba6c14cb484dd113b2994ceee07822bcec69`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
+- 对象仍仅：`tools/g0/audit_r09_b_ttt_root_gitlink_authority.py`、`tools/g0/test_audit_r09_b_ttt_root_gitlink_authority.py`。
+
+前轮 `661786fc...`/`93a89ba...` final verdict 已齐：ChatGPT `REQUEST_CHANGES`（non-finite JSON 与 malformed `rev-parse` 逃逸 canonical FAIL）、MM/Kimi approve。本轮整改不扩大两 root tooling 文件范围：
+
+1. publication JSON 的 `NaN`、`Infinity`、`-Infinity` 通过 `parse_constant` 直接映射 `PUBLICATION_NONFINITE`；canonical encoder 发现非有限值也映射同一 typed `AuditFailure`，不会再出现 native exception。
+2. root/child `rev-parse` 唯一使用 `parse_revision_output()`，严格接受 byte-for-byte `40` lowercase-hex ASCII 加一个 newline；额外 newline、malformed 或 non-ASCII 分别 fail-closed 为稳定 `ROOT_TREE_OUTPUT`/`CHILD_TREE_OUTPUT`。
+3. 新增 CLI-level temporary Git-fixture direct witnesses：三种 non-finite publication，以及 root/child extra-newline 与 non-ASCII rev-parse stdout；每例断言 exact failed check、prior PASS/current FAIL/later SKIPPED、exit=2 和 pre-existing output bytes 不变。
+
+验证：`python -m unittest tools.g0.test_audit_r09_b_ttt_root_gitlink_authority`=`16/16 PASS`；target Ruff、`py_compile`、root `git diff --check` 均 PASS。未创建 publication，未对真实根仓执行 audit；未改 child/runtime；未运行真实 checkpoint/data/cache I/O、DCP、GPU、torchrun、forward/loss/backward、step、训练、评测、推理或 LIBERO4IN1。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭该 root CPU/static tooling Gate；不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
 ## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation closure（2026-09-12）
 
 - formal root SHA：`12277d0649a2f886186f9bf7554231971e207836`
