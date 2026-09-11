@@ -633,6 +633,23 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
                     return b"blob\n"
                 return None
 
+            def malformed_ls_tree(
+                path: str, suffix: bytes
+            ) -> object:
+                def altered(
+                    root_arg: Path | None, _: Path | None, args: tuple[str, ...]
+                ) -> bytes | None:
+                    if root_arg == root and args == ("ls-tree", root_tree, "--", path):
+                        mode, kind = (
+                            (b"160000", b"commit")
+                            if path == audit.SUBMODULE_PATH
+                            else (b"100644", b"blob")
+                        )
+                        return mode + b" " + kind + b" " + b"a" * 40 + suffix + b"\t" + path.encode() + b"\n"
+                    return None
+
+                return altered
+
             def publication_nonfinite(token: bytes) -> object:
                 def altered(
                     root_arg: Path | None, _: Path | None, args: tuple[str, ...]
@@ -671,6 +688,14 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
             ):
                 with self.subTest(reason=reason):
                     invoke_with(change, index, reason)
+            for path, suffix, index in (
+                (audit.SUBMODULE_PATH, b"\xff", 3),
+                (audit.SUBMODULE_PATH, b"x", 3),
+                (audit.PUBLICATION_PATH, b"\xff", 4),
+                (audit.PUBLICATION_PATH, b"x", 4),
+            ):
+                with self.subTest(path=path, suffix=suffix):
+                    invoke_with(malformed_ls_tree(path, suffix), index, "TREE_ENTRY_MISMATCH")
             for token in (b"NaN", b"Infinity", b"-Infinity"):
                 with self.subTest(nonfinite=token):
                     invoke_with(publication_nonfinite(token), 5, "PUBLICATION_NONFINITE")
@@ -687,6 +712,58 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
             self.assertEqual(code, 2)
             self.assert_failure_rows(payload, 8, "GIT_COMMAND_FAILURE")
             self.assertEqual(output.read_bytes(), b"preserve")
+
+    def test_output_operational_failures_are_canonical_and_cleanup(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root, child_git, formal, output = self.fixture(Path(temp))
+
+            class WriteFailure:
+                def __init__(self, name: Path) -> None:
+                    self.name = str(name)
+
+                def __enter__(self) -> "WriteFailure":
+                    return self
+
+                def __exit__(self, *_: object) -> None:
+                    return None
+
+                def write(self, _: bytes) -> None:
+                    raise OSError("write failure")
+
+            def invoke_failure(name: str, patcher: object) -> None:
+                output.write_bytes(b"preserve")
+                with patcher:
+                    code, payload = self.invoke_payload(root, child_git, formal, output)
+                self.assertEqual(code, 3)
+                self.assertEqual(payload["schema"], "root_gitlink_source_audit_failure_v1")
+                self.assertEqual(payload["exit_code"], 3)
+                self.assertTrue(all(row["status"] == "PASS" for row in payload["checks"]))
+                self.assertEqual(output.read_bytes(), b"preserve")
+                self.assertEqual(list(output.parent.glob(f".{output.name}.*")), [])
+
+            with self.subTest(name="temporary"):
+                invoke_failure(
+                    "temporary",
+                    mock.patch.object(
+                        audit.tempfile, "NamedTemporaryFile", side_effect=OSError("temp failure")
+                    ),
+                )
+            temporary = output.parent / f".{output.name}.write-failure"
+            temporary.write_bytes(b"partial")
+            with self.subTest(name="write"):
+                invoke_failure(
+                    "write",
+                    mock.patch.object(
+                        audit.tempfile,
+                        "NamedTemporaryFile",
+                        return_value=WriteFailure(temporary),
+                    ),
+                )
+            with self.subTest(name="replace"):
+                invoke_failure(
+                    "replace",
+                    mock.patch.object(audit.os, "replace", side_effect=OSError("replace failure")),
+                )
 
     def test_success_atomically_replaces_existing_output(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

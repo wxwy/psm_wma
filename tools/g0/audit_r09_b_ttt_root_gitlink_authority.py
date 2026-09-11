@@ -334,14 +334,18 @@ def parse_ls_tree(
         mode, kind, oid = left.split(b" ")
     except ValueError as exc:
         raise AuditFailure("TREE_ENTRY_FORMAT") from exc
+    try:
+        oid_text = oid.decode("ascii")
+    except UnicodeDecodeError as exc:
+        raise AuditFailure("TREE_ENTRY_MISMATCH") from exc
     if (
         mode != expected_mode
         or kind != expected_type
         or path != expected_path
-        or HEX40.fullmatch(oid.decode("ascii", "ignore")) is None
+        or HEX40.fullmatch(oid_text) is None
     ):
         raise AuditFailure("TREE_ENTRY_MISMATCH")
-    return oid.decode("ascii")
+    return oid_text
 
 
 def parse_revision_output(raw: bytes, reason: str) -> str:
@@ -624,17 +628,23 @@ def failure(
 
 
 def write_atomic(output: Path, payload: dict[str, Any]) -> None:
-    output.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(
-        dir=output.parent, prefix=f".{output.name}.", delete=False
-    ) as handle:
-        temporary = Path(handle.name)
-        handle.write(canonical_bytes(payload))
+    temporary: Path | None = None
     try:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(
+            dir=output.parent, prefix=f".{output.name}.", delete=False
+        ) as handle:
+            temporary = Path(handle.name)
+            handle.write(canonical_bytes(payload))
         os.replace(temporary, output)
+    except OSError as exc:
+        raise AuditFailure("OUTPUT_WRITE", True) from exc
     finally:
-        if temporary.exists():
-            temporary.unlink()
+        if temporary is not None:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass
 
 
 def main(argv: list[str] | None = None) -> int:
