@@ -1,5 +1,9 @@
 # 当前协作状态
 
+## Canonical Native Feature / Config / Optimizer / Checkpoint Refreeze Design（2026-09-11，IN_PROGRESS）
+
+- 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-DESIGN`；预计仅新增上述 docs-only design、SESSION/TODO。它以 current runtime closure=`420fc259d938d12f41c7f42d7b6aaec8076eb0f3`/`f49f568923555fe15efe546925cbe6cc9140170e` 为前置，冻结 current config/owner/inventory/preflight-first slow-only restore；不改 child、不运行真实 I/O/GPU/训练。
+
 ## Canonical Native Production Runtime CPU/static Implementation（2026-09-11，DONE）
 
 - 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`，只读复用 current formal Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 的 model/adapter/trainer source owner 与前序 source audit。预计修改仅为新 docs-only design、SESSION/TODO。
