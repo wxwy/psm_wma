@@ -1,5 +1,9 @@
 # 当前协作状态
 
+## Canonical Native Consumer Runtime CPU/static Implementation（2026-09-11，REVIEW）
+
+- 上游 formal=`86b321aaf3a4f96afbd427060bcceb5f39a0dc98`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 三方批准。child 实现提交=`4dd2eed00a1d9d6e2b28716c106fd9edfe940fcc` 已推送 `origin/v2`：仅改 `omni_mot_model.py`、`trainer/__init__.py`、`canonical_segment_production_integration_test.py`。canonical hard-stop 改为显式 injected CPU/static typed-loss seam → exact one-shot capability；model 在 scan 前拒绝 CP/已初始化 process group，trainer 在 callback/DDP-sync 前拒绝 real optimizer、enabled scaler、DDP/FSDP/DataParallel/process group/distributed config。定向 pytest=`41 passed in 30.20s`；target Ruff（忽略 4 个未改动既有 I001）/py_compile/child-root diff-check PASS。full target Ruff 仅报既有 I001（model=1、trainer=3），未作无关格式化。下一步：根仓 Gitlink/记录提交后申请三方同 SHA closure review；禁止真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、真实 native workload、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+
 ## Canonical Native Consumer Runtime Implementation Design（2026-09-11，DONE）
 
 - v0.2 formal=`86b321aaf3a4f96afbd427060bcceb5f39a0dc98`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 已获 ChatGPT formal review、MM、Kimi 同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC`。只授权 v0.1+v0.2 复合合同的 six-file、single-process/world-size-1 synthetic CPU/static implementation；real optimizer/enabled scaler及DDP/FSDP/data-parallel/world-size!=1/CP 必在 scan 前拒绝。真实 I/O、GPU、torchrun、sidecar、训练、评测、推理或 LIBERO4IN1 仍禁止。
