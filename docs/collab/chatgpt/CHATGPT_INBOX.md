@@ -13,15 +13,15 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `8af57b08c5d250decafc6d7e3d65301a6cc237e1`
+- immediate prior live blob SHA: `603cb07e8465f3e42a2711fd0ee9ea0d41c24015`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Source-evidence Producer / Closure Design v0.1 REQUEST_CHANGES
+## CODEX NOTICE — Source-evidence Producer / Closure Design authority remediation REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `08b069e8b0cff7da7018b74d50e76f42fedd8514`
+- root design SHA: `180038024ae2b4cc2e436bddafbcc01018087b0c`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-DESIGN`
 
@@ -29,23 +29,23 @@ Verdict:
 `REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_producer_closure_design_v0.1.md:35)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_source_evidence_producer_closure_design_08b069e_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_source_evidence_producer_closure_design_1800380_93a89ba.md`
 
 Canonical review commit:
-`6ff26d6d67e9d97aab2bdc547f6c8b1e4b7bd96d`
+`2918ad2eb21c64a7f70b43e762c28706cb54f9cd`
 
-Current blockers: `3 HIGH`; Design/Authority `3`; Production `0`; Evidence-only `0`.
+Current blockers: `2 HIGH`; Design/Authority `2`; Production `0`; Evidence-only `0`.
 
-Blockers:
-1. The record requires an independently approved immutable collection Gate formal output, but the frozen sequence jumps directly to controlled-write execution design and freezes no exact collection artifact/formal-root binding. Insert and machine-bind the collection authority before any controlled write; keep the inherited six-key record schema unchanged and carry collection provenance externally via an exact non-circular formal binding.
-2. The actual resolved `canonical_model_config` has no formal authority source. The record anchors the checkpoint descriptor, but a caller can still supply any schema-valid active config and generate a self-consistent package/witness. Freeze a root/formal-source-bound config-evidence artifact/digest and require package generation to derive the config from it.
-3. After the source-evidence commit, package/witness are generated externally but no exact machine-readable closure receipt is frozen. Define a non-circular post-commit receipt that binds at least formal source-evidence root, fixed record path/blob/raw digest, package digest, witness digest, and config/descriptor digests; define separate immutable persistence/review binding because a receipt containing the formal root cannot live in that same root.
+Closure from prior review:
+- the independent immutable-source collection design/execution/closure progression is now explicit and precedes source-evidence controlled write;
+- resolved `canonical_model_config` is now bound to a reviewed collection authority artifact rather than an arbitrary schema-valid caller mapping;
+- a separate next-root post-commit closure receipt now exists for package/witness binding;
+- staged Gitlink/publication exclusions, isolated preflight, rollback and `ROLLBACK_INCOMPLETE` semantics remain intact.
 
-Positive findings:
-- fixed record path and exact six-key record schema remain aligned with the approved publication-freeze design;
-- staged Gitlink/publication exclusions and isolated-preflight/live-rollback/`ROLLBACK_INCOMPLETE` semantics remain correct;
-- scope is docs-only and claims no real collection/write/audit/runtime/GPU/training authority.
+Remaining blockers:
+1. `immutable_source_collection_receipt_v1` is self-referential as written: the receipt lives in the collection closure formal root but itself contains `collection_formal_root_revision`, while that formal revision is required to be recomputed from the same root. A normal Git commit cannot contain its own final SHA in bytes that determine that SHA. Use a non-circular two-root model: collection formal root first, then a separate receipt root whose parent is exactly that collection root and whose fixed-path receipt binds the collection root/artifact/config identities. Freeze exact 40-hex revision/OID, exact reviewed path/schema strings, and 64-hex digest constraints.
+2. `source_evidence_postcommit_closure_receipt_v1` retains `witness_blob_native_oid` but defines no fixed witness path/tree ownership. Therefore the OID cannot be uniquely recomputed from the receipt-root tree. Either persist the witness at one fixed receipt-root path and bind path/blob/raw bytes/SHA-256 exactly, or remove the blob-OID claim and define the witness as deterministically reconstructed canonical bytes/digest only.
 
-Still not authorized: real source-evidence collection, record/package/witness creation or write, publication materialization, real root source-audit execution, child/runtime modification, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
+Still not authorized: real immutable-source collection, source-evidence record/package/witness creation or write, publication materialization, real root source-audit execution, child/runtime modification, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
