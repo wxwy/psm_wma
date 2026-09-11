@@ -608,6 +608,9 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
                 return None
 
             gitlink = self.git(root, "ls-tree", root_tree, "--", audit.SUBMODULE_PATH).split()[2]
+            publication_blob = self.git(
+                root, "ls-tree", root_tree, "--", audit.PUBLICATION_PATH
+            ).split()[2]
 
             def child_unexpected_stdout(
                 _: Path | None, child_arg: Path | None, args: tuple[str, ...]
@@ -630,16 +633,55 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
                     return b"blob\n"
                 return None
 
+            def publication_nonfinite(token: bytes) -> object:
+                def altered(
+                    root_arg: Path | None, _: Path | None, args: tuple[str, ...]
+                ) -> bytes | None:
+                    if root_arg == root and args == ("cat-file", "blob", publication_blob):
+                        return b'{"value":' + token + b"}"
+                    return None
+
+                return altered
+
+            def revision_output(
+                child: bool, raw: bytes
+            ) -> object:
+                def altered(
+                    root_arg: Path | None,
+                    child_arg: Path | None,
+                    args: tuple[str, ...],
+                ) -> bytes | None:
+                    expected = ("rev-parse", f"{gitlink}^{{tree}}") if child else (
+                        "rev-parse",
+                        f"{formal}^{{tree}}",
+                    )
+                    if args == expected and (child_arg == child_git if child else root_arg == root):
+                        return raw
+                    return None
+
+                return altered
+
             for change, index, reason in (
                 (publication_missing, 4, "TREE_ENTRY_COUNT"),
                 (publication_wrong_type, 4, "TREE_ENTRY_MISMATCH"),
                 (root_unexpected_stdout, 0, "ROOT_COMMIT_OUTPUT"),
                 (child_unexpected_stdout, 8, "CHILD_COMMIT_OUTPUT"),
-                (child_tree_drift, 9, "CHILD_TREE_OID"),
+                (child_tree_drift, 9, "CHILD_TREE_OUTPUT"),
                 (root_tree_type_drift, 2, "TREE_OBJECT"),
             ):
                 with self.subTest(reason=reason):
                     invoke_with(change, index, reason)
+            for token in (b"NaN", b"Infinity", b"-Infinity"):
+                with self.subTest(nonfinite=token):
+                    invoke_with(publication_nonfinite(token), 5, "PUBLICATION_NONFINITE")
+            for child, raw, reason, index in (
+                (False, root_tree.encode() + b"\n\n", "ROOT_TREE_OUTPUT", 1),
+                (False, b"\xff" * 40 + b"\n", "ROOT_TREE_OUTPUT", 1),
+                (True, b"a" * 40 + b"\n\n", "CHILD_TREE_OUTPUT", 9),
+                (True, b"\xff" * 40 + b"\n", "CHILD_TREE_OUTPUT", 9),
+            ):
+                with self.subTest(child=child, raw=raw):
+                    invoke_with(revision_output(child, raw), index, reason)
             output.write_bytes(b"preserve")
             code, payload = self.invoke_payload(root, child_git.parent, formal, output)
             self.assertEqual(code, 2)

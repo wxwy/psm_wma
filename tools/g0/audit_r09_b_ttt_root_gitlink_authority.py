@@ -344,12 +344,31 @@ def parse_ls_tree(
     return oid.decode("ascii")
 
 
-def validate_publication(raw: bytes) -> dict[str, Any]:
+def parse_revision_output(raw: bytes, reason: str) -> str:
+    if len(raw) != 41 or raw[-1:] != b"\n":
+        raise AuditFailure(reason)
     try:
-        data = json.loads(raw)
+        oid = raw[:-1].decode("ascii")
+    except UnicodeDecodeError as exc:
+        raise AuditFailure(reason) from exc
+    return lower_hex(oid, 40, reason)
+
+
+def validate_publication(raw: bytes) -> dict[str, Any]:
+    def reject_nonfinite(_: str) -> None:
+        raise AuditFailure("PUBLICATION_NONFINITE")
+
+    try:
+        data = json.loads(raw, parse_constant=reject_nonfinite)
+    except AuditFailure:
+        raise
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise AuditFailure("PUBLICATION_JSON") from exc
-    if canonical_bytes(data) != raw:
+    try:
+        canonical = canonical_bytes(data)
+    except (TypeError, ValueError) as exc:
+        raise AuditFailure("PUBLICATION_NONFINITE") from exc
+    if canonical != raw:
         raise AuditFailure("PUBLICATION_NOT_CANONICAL")
     data = exact_keys(
         data,
@@ -425,12 +444,12 @@ def audit(
         guarded(
             checks,
             "root_tree",
-            lambda: run_git(root, None, ("rev-parse", f"{formal}^{{tree}}")),
+            lambda: parse_revision_output(
+                run_git(root, None, ("rev-parse", f"{formal}^{{tree}}")),
+                "ROOT_TREE_OUTPUT",
+            ),
         )
-        .rstrip(b"\n")
-        .decode("ascii")
     )
-    guarded(checks, "root_tree", lambda: lower_hex(root_tree, 40, "ROOT_TREE_OID"))
     mark(checks, "root_tree", {"oid": root_tree, "type": "tree"})
     root_raw = guarded(
         checks,
@@ -522,12 +541,12 @@ def audit(
         guarded(
             checks,
             "child_tree",
-            lambda: run_git(None, child, ("rev-parse", f"{gitlink}^{{tree}}")),
+            lambda: parse_revision_output(
+                run_git(None, child, ("rev-parse", f"{gitlink}^{{tree}}")),
+                "CHILD_TREE_OUTPUT",
+            ),
         )
-        .rstrip(b"\n")
-        .decode("ascii")
     )
-    guarded(checks, "child_tree", lambda: lower_hex(child_tree, 40, "CHILD_TREE_OID"))
     mark(checks, "child_tree", {"oid": child_tree, "type": "tree"})
     child_raw = guarded(
         checks,
