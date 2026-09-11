@@ -48,6 +48,16 @@
 
 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE` 或 `REQUEST_CHANGES(file:line)`；formal verdict 仅写入 reviews。
 
+## 审核申请：Derived-only witness remediation
+
+- formal root SHA：`1d8f103e1dcf119ac8e90abbcbcde0eaced0bb95`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-DESIGN`
+
+前轮 `f3a423c` 三方结论已齐：ChatGPT 1 HIGH、MM/Kimi approve。本轮仅删除 §3 仍要求 witness Git blob OID 的残留文字，统一为 derived-only canonical bytes/SHA-256，禁止声明/保留 Git blob OID。无真实 I/O/GPU/训练。
+
+请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE` 或 `REQUEST_CHANGES(file:line)`；formal verdict 仅写入 reviews。
+
 ## 审核申请：Source-evidence authority non-circular remediation
 
 - formal root SHA：`f3a423c39020081b3ff34128328792af166ba09a`
