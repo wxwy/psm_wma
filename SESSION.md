@@ -6,6 +6,7 @@
 - 已阅读：source-evidence producer/closure v0.1、root source-audit v0.3、root publication freeze v0.1、当前 TODO/长期决策。新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_design_v0.1.md`；将用户的路线优先级固化为 collection closure 后直接 `single-GPU smoke design → optimizer/scaler → 1 batch GPU → 20--100 step TTT smoke`，不再横向打开 provenance Gate。
 - formal design 已提交并推送：root=`9b9b516132806369718361b0e1b7b54c15c0483d`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree 仅含本 design、`SESSION.md`、`TODO.md`、`MEMORY/DECISIONS.md`。验证：`git diff --check` PASS、契约关键词核验 PASS；未读取或写入真实 checkpoint/data/cache，未触及 child、真实 I/O、GPU 或训练。
 - 审核冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。申请已 append canonical live Inbox，待 ledger 提交/推送后按 `send-keys -l` → 等待至少 1 秒 → 独立 Enter → capture 三联回执送达 MM/Kimi。Gate=`REVIEW`；三分钟完整轮询，三方同 pair final verdict 齐全前不得改动该设计或执行真实 collection。
+- 送达回执（2026-09-12 CST）：ChatGPT=canonical live Inbox 已提交（ledger=`a493d82a120717d9b2e8d6c6dafbb369969d4a26`）；MM=`mm:0.0` 首次空 payload 未构成送达，已立即以完整消息重发，等待至少 1 秒、独立 Enter 后 capture 显示 formal pair 申请已离开输入框且会话开始 compact/处理；Kimi=`kimi:0.0` 同样完成完整消息、等待、独立 Enter、capture，申请显示为会话消息且输入框为空。两 pane 当前没有本 formal pair 的 final verdict；首次完整审核观察将在发送后满三分钟执行。
 
 ## Source-evidence Producer / Closure Design（2026-09-12，DONE）
 
