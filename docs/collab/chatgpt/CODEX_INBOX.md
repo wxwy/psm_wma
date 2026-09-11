@@ -215,3 +215,21 @@ formal tree 仅更新 closure design 与 `SESSION.md`，Gitlink 不变；`git di
 前轮 evidence review 的 collection/receipt FAIL null-record 键集矛盾已最小修复：collection 严格 4 键 null-record，receipt 严格 5 键 null-record；未到达 stage 用对应 null-record、空 source entries 和既定键 null 值，禁止伪造 digest。仅 docs，无真实执行。
 
 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。
+
+## 审核申请：Evidence phase/reachability remediation（2026-09-12）
+
+- formal root SHA：`7e633d1c6b4d74f661d9421c6ab7e75eda0cf203`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
+
+前轮 `c8e05cff42b1a6d4a3a599d2c02f8cdbf648c43c`/同 child 三方 final 已齐：ChatGPT `REQUEST_CHANGES`（1 HIGH），MM/Kimi approve。本轮仅 docs-only 最小整改，修改 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_execution_evidence_design_v0.1.md`：
+
+1. 冻结 FAIL `phase` 的有限 vocabulary，与 fixed check order 一一对应，并定义为首个未成功完成的检查；禁止任意 phase string 或由 failure_code 改写 nullability。
+2. 为 source-read 冻结成功 entry 的严格 ordered prefix，为 candidate derivation 冻结六个 digest 的长度 `0..5` 成功前缀；失败项均不得伪造 digest。
+3. 分离 collection 与 receipt 的 partial 边界；冻结 post-check 的 true-prefix/首个 false/null-suffix、push/publication 的固定 false 记录与 rollback 的完整 snapshot/`ROLLBACK_INCOMPLETE` 表示，使 auditor 可仅凭 phase 机械导出每个 nested field 的 concrete/null/empty 形态。
+
+formal tree 仅改 evidence design、`SESSION.md`、`TODO.md`，Gitlink 不变。验证：`git diff --check` PASS。未执行项目代码，未读取或写入真实 source/checkpoint/data/cache，未进行 collection/receipt/source-evidence/publication mutation，未改 child/runtime，未运行 CUDA/GPU、torchrun、forward/backward、optimizer/scaler step、训练、评测、推理或 LIBERO4IN1。
+
+请重点核验：phase vocabulary 是否与检查顺序完整一对一；source-read/candidate 的 partial prefix 是否唯一且无 placeholder digest；collection/receipt/post-check/rollback 的 nullability 是否可由 record 机械审计；以及本轮仍仅完成既有 source-evidence 链而不新增横向 provenance Gate。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一既有闭合步骤，不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
