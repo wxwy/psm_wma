@@ -175,3 +175,13 @@ formal tree 仅更新 closure design 与 `SESSION.md`，Gitlink 不变；`git di
 请重点核验：runbook 是否完整继承已批准 authority、lineage 和 two-root contract；命令/approval 回填是否阻止 caller-selected inputs；failure/rollback 是否 fail-closed；以及它是否仅完成既有闭环而未新开 provenance Gate。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许独立 execution approval；不授权真实执行、source I/O、child、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Controlled Collection Execution v0.2 remediation（2026-09-12）
+
+- formal root SHA：`a3b03c9baea7cd89cc38c591124cae7c3aaea1f0`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
+
+前轮 47a05a5 三方 final 已齐：ChatGPT 3 HIGH、MM/Kimi approve。本轮只新增 v0.2 docs：冻结 executor source identity/allowlist 与 CPU/static witness；exact two-path authority-root materialization/tuple binding；canonical machine-readable PASS/FAIL evidence 字段。保留既有 source-evidence 闭环，未增加横向 Gate。无真实 I/O、mutation、child、GPU 或训练。
+
+请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`；正式 verdict 仅写入 reviews。
