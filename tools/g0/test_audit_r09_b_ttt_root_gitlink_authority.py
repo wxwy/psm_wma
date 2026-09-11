@@ -10,7 +10,7 @@ import subprocess
 import tempfile
 import unittest
 from unittest import mock
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 
 from tools.g0 import audit_r09_b_ttt_root_gitlink_authority as audit
 
@@ -650,6 +650,21 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
 
                 return altered
 
+            def malformed_ls_tree_framing(path: str, ending: bytes) -> object:
+                def altered(
+                    root_arg: Path | None, _: Path | None, args: tuple[str, ...]
+                ) -> bytes | None:
+                    if root_arg == root and args == ("ls-tree", root_tree, "--", path):
+                        mode, kind = (
+                            (b"160000", b"commit")
+                            if path == audit.SUBMODULE_PATH
+                            else (b"100644", b"blob")
+                        )
+                        return mode + b" " + kind + b" " + b"a" * 40 + b"\t" + path.encode() + ending
+                    return None
+
+                return altered
+
             def publication_nonfinite(token: bytes) -> object:
                 def altered(
                     root_arg: Path | None, _: Path | None, args: tuple[str, ...]
@@ -679,7 +694,7 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
                 return altered
 
             for change, index, reason in (
-                (publication_missing, 4, "TREE_ENTRY_COUNT"),
+                (publication_missing, 4, "TREE_ENTRY_FORMAT"),
                 (publication_wrong_type, 4, "TREE_ENTRY_MISMATCH"),
                 (root_unexpected_stdout, 0, "ROOT_COMMIT_OUTPUT"),
                 (child_unexpected_stdout, 8, "CHILD_COMMIT_OUTPUT"),
@@ -696,6 +711,16 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
             ):
                 with self.subTest(path=path, suffix=suffix):
                     invoke_with(malformed_ls_tree(path, suffix), index, "TREE_ENTRY_MISMATCH")
+            for path, ending, index in (
+                (audit.SUBMODULE_PATH, b"", 3),
+                (audit.SUBMODULE_PATH, b"\r\n", 3),
+                (audit.SUBMODULE_PATH, b"\n\n", 3),
+                (audit.PUBLICATION_PATH, b"", 4),
+                (audit.PUBLICATION_PATH, b"\r\n", 4),
+                (audit.PUBLICATION_PATH, b"\n\n", 4),
+            ):
+                with self.subTest(path=path, ending=ending):
+                    invoke_with(malformed_ls_tree_framing(path, ending), index, "TREE_ENTRY_FORMAT")
             for token in (b"NaN", b"Infinity", b"-Infinity"):
                 with self.subTest(nonfinite=token):
                     invoke_with(publication_nonfinite(token), 5, "PUBLICATION_NONFINITE")
@@ -712,6 +737,49 @@ class RootGitlinkAuthorityAuditTest(unittest.TestCase):
             self.assertEqual(code, 2)
             self.assert_failure_rows(payload, 8, "GIT_COMMAND_FAILURE")
             self.assertEqual(output.read_bytes(), b"preserve")
+
+    def test_cli_argument_failures_are_canonical_and_do_not_audit(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root, child_git, formal, output = self.fixture(Path(temp))
+            ready = audit.bootstrap_git()
+            for argv in (
+                [
+                    "--repo-root",
+                    str(root),
+                    "--formal-root-revision",
+                    formal,
+                    "--child-git-dir",
+                    str(child_git),
+                ],
+                [
+                    "--repo-root",
+                    str(root),
+                    "--formal-root-revision",
+                    formal,
+                    "--child-git-dir",
+                    str(child_git),
+                    "--output",
+                    str(output),
+                    "--unknown",
+                ],
+            ):
+                output.write_bytes(b"preserve")
+                stdout = io.StringIO()
+                stderr = io.StringIO()
+                with (
+                    self.subTest(argv=argv),
+                    mock.patch.object(audit, "bootstrap_git", return_value=ready),
+                    mock.patch.object(audit, "audit") as audit_call,
+                    redirect_stdout(stdout),
+                    redirect_stderr(stderr),
+                ):
+                    self.assertEqual(audit.main(argv), 3)
+                payload = json.loads(stdout.getvalue())
+                self.assertEqual(payload["schema"], "root_gitlink_source_audit_failure_v1")
+                self.assertEqual(payload["exit_code"], 3)
+                self.assertEqual(stderr.getvalue(), "")
+                audit_call.assert_not_called()
+                self.assertEqual(output.read_bytes(), b"preserve")
 
     def test_output_operational_failures_are_canonical_and_cleanup(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

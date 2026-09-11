@@ -80,6 +80,11 @@ class AuditFailure(Exception):
         super().__init__(reason)
 
 
+class AuditArgumentParser(argparse.ArgumentParser):
+    def error(self, _: str) -> None:
+        raise AuditFailure("ARGUMENTS", True)
+
+
 def canonical_bytes(value: object) -> bytes:
     return json.dumps(
         value,
@@ -326,6 +331,8 @@ def tree_record(
 def parse_ls_tree(
     raw: bytes, expected_mode: bytes, expected_type: bytes, expected_path: bytes
 ) -> str:
+    if not raw.endswith(b"\n") or raw.endswith(b"\n\n") or b"\r" in raw:
+        raise AuditFailure("TREE_ENTRY_FORMAT")
     rows = raw.splitlines()
     if len(rows) != 1:
         raise AuditFailure("TREE_ENTRY_COUNT")
@@ -648,18 +655,22 @@ def write_atomic(output: Path, payload: dict[str, Any]) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser()
+    parser = AuditArgumentParser(add_help=False)
     parser.add_argument("--repo-root", type=Path, required=True)
     parser.add_argument("--formal-root-revision", required=True)
     parser.add_argument("--child-git-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    args = parser.parse_args(argv)
     checks = checks_template()
     bootstrap = bootstrap_git()
+    identity = command_identity(bootstrap) if bootstrap["status"] == "READY" else None
+    try:
+        args = parser.parse_args(argv)
+    except AuditFailure:
+        print(canonical_bytes(failure(bootstrap, identity, checks, 3)).decode())
+        return 3
     if bootstrap["status"] != "READY":
         print(canonical_bytes(failure(bootstrap, None, checks, 3)).decode())
         return 3
-    identity = command_identity(bootstrap)
     try:
         output = path_arg(args.output, "OUTPUT", must_exist=False)
         evidence = audit(
