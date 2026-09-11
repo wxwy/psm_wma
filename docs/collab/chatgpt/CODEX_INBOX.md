@@ -241,3 +241,14 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 仅补该 HIGH：同一 `freeze_plan()` normal `(2,5),N=7,GA=2` transaction 的两个 member 均构造 exact canonical native capability，以 nonzero auxiliary 经 `_run_canonical_native_backward()`、counting scaler 与 production post-backward commit；精确 objective 分别为 `3.5` 和 `5/7*11+3/2`，并断言两次且仅两次 scale/backward、最终 transaction `(0,1)` reconciled。此前完整 recovery `(5,3)` witness 与 typed authority/receipt negative coverage 保持不变。四份 CPU/static suite=`64 passed in 43.80s`，改动文件 Ruff、py_compile、diff-check PASS。未执行真实 I/O/GPU/runtime/训练。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。ChatGPT formal verdict 仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：v0.3.5 Feature / Config / Optimizer / Checkpoint Refreeze Design v0.1（2026-09-11）
+
+- formal root SHA：`98767ca5a2b67d2b8e7d21e1df1bf2ecb34503af`
+- child/Gitlink SHA：`d96406e3b273d35e328c88142b36ef2eae895d2c`
+- Gate：`G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_feature_config_optimizer_checkpoint_refreeze_design_v0.1.md`
+
+本轮仅 docs-only。请核验它是否正确以 v0.3.5 TTT 取代旧 v0.3.2 recurrent owner：严格 config identity（T=16、inner LR=0.1、K_local=1、causal visual96/action10、fp32、slow-only resume）；唯一 registered slow owner/inventory（evidence encoder、TTT W_bar_0/theta K/V/Q/slot queries、projector、modality embed）；四 selector exact-cover；W_fast/runtime frontier/pending 排除；slow-only strict checkpoint 与无 sidecar时禁止 mid-episode resume。请确认逐 token `[B,K,32] -> [B,K,2048]` 没有错误拼 slot。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一份 CPU/static implementation design；不授权 child 实现、真实 checkpoint I/O、GPU、runtime、optimizer activation、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 仅写入 `docs/collab/chatgpt/reviews/`。
