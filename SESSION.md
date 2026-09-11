@@ -4,6 +4,10 @@
 
 - v0.3 formal=`5ede9ac264518ccdbca1cdbc24f4e0694b6cf85a`/child=`f49f568923555fe15efe546925cbe6cc9140170e` 获三方同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_REFREEZE`：ChatGPT formal review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_feature_config_optimizer_checkpoint_refreeze_design_5ede9ac_f49f568.md`，MM/Kimi 均显式 approve，blockers=0。仅关闭 docs-only refreeze design；下一步只可创建并审核 composite v0.1+v0.2+v0.3 下的 docs-only CPU/static implementation design，不改 child、不运行真实 I/O/GPU/训练。
 
+## Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design（2026-09-11，IN_PROGRESS）
+
+- 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION-DESIGN`；预计仅新增 root docs-only implementation design、SESSION/TODO。必须把 v0.1+v0.2+v0.3 composite refreeze contract 落为精确 child whitelist、in-memory CPU/static direct witnesses 和禁止范围；不改 child、不运行真实 I/O/GPU/训练。
+
 ## Canonical Native Production Runtime CPU/static Implementation（2026-09-11，DONE）
 
 - 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`，只读复用 current formal Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 的 model/adapter/trainer source owner 与前序 source audit。预计修改仅为新 docs-only design、SESSION/TODO。
