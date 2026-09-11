@@ -323,3 +323,12 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 仅六文件 CPU/static evidence 整改：新增 direct reorder/duplicate/missing optimizer negatives；真实 native-forward、pending commit/retry、suffix-recovery/consumed suffix request/recovery receipt authority admission rejects；并在 `OmniMoTModel.build_net()` 原始 active-TTT 分支上使用 CPU/meta lightweight mocks 证明唯一 `local_memory_runtime.evidence_encoder/ttt_core` 注册且无 legacy owner/readout。三定向 pytest=`53 passed in 44.40s`；Ruff、py_compile、diff-check PASS。无真实 I/O/GPU/forward/backward/step/sidecar/训练。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仍不授权任何真实执行；ChatGPT formal verdict 仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Feature / Config / Optimizer / Checkpoint CPU/static Implementation evidence closure v3（2026-09-11）
+
+- formal root SHA：`87bdb26ebe860cf48c1ec61a54ea6a1d474f74cf`
+- child/Gitlink SHA：`410dd00258443c175f72f4ffd87e7cf4f9f25653`
+- Gate：`G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-CPU-STATIC-IMPLEMENTATION`
+- supersedes `774d01d.../1231215...` 的唯一 Evidence-only HIGH。
+
+仅追加同一 approved test whitelist 内两个 direct witness：真实 `scan -> mark_backward_started -> prepare_commit` 后、`commit_success` 前的 pending commit restore reject；以及真实 `derive_suffix_recovery()` 产生 recovery lineage/receipt 后，以 fresh adapter/scheduler 传入该 recovery authority 的 restore reject。两者均断言 slow state 零 mutation；无生产代码变更、无真实 I/O/GPU/forward/backward/step/sidecar/训练。请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 `docs/collab/chatgpt/reviews/`。
