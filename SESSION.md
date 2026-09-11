@@ -1,8 +1,8 @@
 # 当前协作状态
 
-## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，REVIEW）
+## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，IN_PROGRESS）
 
-- `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION` 的 P1 v0.3 formal design 已批准；本轮最小整改 child=`f6a660f73043c0fe0c6ba4230c1b6a68f4120cfd` 已推送 `origin/v2`：`canonical_segment_production_integration_test.py` 的 registered-object 与共享 production fixture 从旧 `local_history_runtime.encoder/recurrent_backend` 迁移为生产实际的 `local_memory_runtime.evidence_encoder/ttt_core`，从而让 pending scan、gather mismatch、memory-init exception、ordinary/legacy preparation 四条 abort 路径到达目标 native-seam hard-stop；替换 core 与旧 runtime 结构也保持 fail-closed。两份定向 CPU pytest=`26 passed in 37.23s`，该测试文件 `py_compile`、child `diff --check` PASS；未运行真实 I/O、GPU/CUDA、torchrun、训练、评测、推理或 LIBERO4IN1。Gate 保持 `IN_PROGRESS`；下一步核对 P1 v0.3 尚缺的 activation、fp32 frontier 与 attempt-1 typed lineage证据，完成后才可申请新的 closure review。
+- ChatGPT `REQUEST_CHANGES` 已最小整改为 child=`b1a138b79bdc2d4dc40b978ea34094512a07d378`：scheduler 将 exact `freeze_plan()` identity、next frozen transition 与 live frontier 设为 scan 前 authority；first-member attempt-1 只能经 consume 的 one-shot retry request scan；新增 reconstructed-plan/pre-consume retry negatives，以及 registered owner actual-scan gradient 与 terminal commit frontier retirement witnesses。定向 CPU/static pytest=`28 passed`、Ruff、py_compile、child diff-check PASS；child 已推送。下一步提交新的 root Gitlink/记录并申请三方 closure review；未执行真实 I/O、GPU/CUDA、torchrun、训练、评测、推理或 LIBERO4IN1。
 
 ## Feature / Config / Optimizer / Checkpoint CPU/static Implementation（2026-09-11，DONE）
 
