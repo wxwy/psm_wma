@@ -617,3 +617,14 @@ current child 已包含获准 six-file synthetic CPU/static 合同，未制造�
 本轮严格 docs-only，唯一前置为 v0.1+v0.2+v0.3 composite refreeze contract 的 formal=`5ede9ac264518ccdbca1cdbc24f4e0694b6cf85a`/同 child 三方批准。v0.1 将实施白名单收窄为 `config_checkpoint_contract.py` 与其定向 test：exact 15-field FeatureConfigIdentity、six-key BaseIdentity、exact optimizer/scheduler identity、v0.3 pristine-before-first-step predicate、preflight-first zero-mutation restore 与 fresh/quiescent admission。direct CPU/static witnesses逐项覆盖 config/base/owner/tensor/optimizer/scheduler/progress/runtime authority drift；不允许 `optimizer.step()`/`scheduler.step()`、native forward/backward或真实 I/O。
 
 请核验两文件 whitelist、identity/progress predicate 是否完整翻译 composite contract，及 witness 是否足以证明 zero-live-mutation。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权该两文件 synthetic CPU/static implementation；不授权真实 I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design v0.2 remediation（2026-09-11）
+
+- formal root SHA：`9468e10fec3e83a4754ced24b900def5478bd5f9`
+- child/Gitlink SHA：`f49f568923555fe15efe546925cbe6cc9140170e`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_feature_config_optimizer_checkpoint_cpu_static_implementation_design_v0.2.md`；仅整改 v0.1 formal=`a99b6b94777517b5d1ecf0fcd099524544ea3309`/同 child 的 ChatGPT HIGH。
+
+本轮严格 docs-only。v0.2 明确 `FeatureConfigIdentity` 的 key set 是 exact **15 keys total**：`schema` 加 14 个已逐字列出的 non-schema fields；没有第 16 键，`schema` 不得另算。并把定向 witness wording 同步为该 15-key mapping，要求所有 missing/unknown/type/value drift pre-mutation reject。v0.1 其余两文件 whitelist、BaseIdentity、pristine progress、preflight-first/zero-mutation 和禁止范围保持 binding；未改 child，未执行真实 I/O/GPU/训练。
+
+请核验唯一 key-count HIGH 是否关闭。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权 v0.1+v0.2 两文件 synthetic CPU/static implementation；不授权真实 I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
