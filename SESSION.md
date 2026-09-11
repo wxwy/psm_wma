@@ -14,6 +14,7 @@
 - remediation pair=`984b0635412c72af396c9522244f09e951ddd003`/`db995ceb448541f6d7517ddbc150dbe27de513d5` 已收齐 MM/Kimi approve、ChatGPT `REQUEST_CHANGES` 三项 HIGH：failure literal 必须替换为 exact typed retryable source authority；success receipt 必须要求每个 adapter-minted suffix request 已真正 scan/commit；normal `(2,5)` 与 recovery `(5,3)` 都须经 dispatcher counting scaler/backward witness。仅在同八文件 CPU/static scope整改，真实执行仍禁止。
 - HIGH-1/2 child=`700b8db754916d79eb2dcfad90feb86d6b92056f` 已推送：free-form failure string 已替换为 one-shot `CanonicalRetryableSourceTransientCapability`，仅 exact unscanned request 可声明且 derive 消费；recovery completion 必须匹配每个 minted request 的 scan/commit evidence，手工 transaction advance 不再可完成 receipt。adapter/scheduler pytest=`27 passed in 21.00s`。HIGH-3 nondeg dispatcher witness仍待完成。
 - HIGH-3 normal witness child=`fbd2c3af989b9edcc5181680593e092e4a70ede9` 已推送：真实 two-member `freeze_plan` 绑定 normal `(2,5),N=7,GA=2`，nonzero primary/auxiliary objective 精确断言并经 counting scaler 验证 one scale/one backward；trainer suite=`18 passed in 40.72s`。recovery `(5,3)` 同等级 dispatcher witness 仍待。
+- recovery evidence child=`6ea37e313226d06084a5432745a40a1335a35fc7` 已推送：在 `(2,5,3)` recovery lifecycle 中，两个 suffix member 各自使用 exact recovery-plan objective（primary=`13/17`、auxiliary=`5`）执行一次 backward 后才 `commit_success`，断言两次且仅两次；adapter suite=`8 passed in 23.26s`。仍待完整 trainer dispatcher binding。
 
 ## Canonical Native Runtime Source-Audit closed / implementation design opened（2026-09-11，IN_PROGRESS）
 
