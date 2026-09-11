@@ -38,6 +38,7 @@
 - remediation 第 18 次审核观察凭证（2026-09-12 04:41:46 CST）：formal pair 不变；`before_head=97a148d4b242554e301de5e903d01ab98611cfab`；fetch/remote advertised/ff-only 均成功且为该 SHA，新增范围为空。ChatGPT exact 检索无输出；MM/Kimi 均由独立精确行段回读将同 pair final `APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE` 绑定。逐方：ChatGPT=处理中，MM=已回复(APPROVE)，Kimi=已回复(APPROVE)；无推进令牌，Gate=`REVIEW`。
 - remediation 第 19 次审核观察凭证（2026-09-12 04:47:41 CST）：formal pair 不变；`before_head=6b7541cd51124f02ac71998d9e662a69eacee293`；fetch/remote advertised/ff-only 均成功且为该 SHA，新增范围为空。ChatGPT exact 检索无输出；MM/Kimi 均由独立精确行段回读将同 pair final `APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE` 绑定。逐方：ChatGPT=处理中，MM=已回复(APPROVE)，Kimi=已回复(APPROVE)；无推进令牌，Gate=`REVIEW`。
 - remediation 第 20 次审核观察凭证（2026-09-12 04:54:12 CST）：formal pair 不变；`before_head=7693f67a4598f29532bf2baf117e62d83808cd64`；fetch/remote advertised/ff-only 均成功且为该 SHA，新增范围为空。ChatGPT exact 检索无输出；MM/Kimi 均由独立精确行段回读将同 pair final `APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE` 绑定。逐方：ChatGPT=处理中，MM=已回复(APPROVE)，Kimi=已回复(APPROVE)；无推进令牌，Gate=`REVIEW`。
+- 恢复后第 1 次审核观察凭证（2026-09-12 05:05:13 CST）：formal pair 不变；`before_head=0a228113f6bd72c769e480d0f9c0f6f7da811b69`；fetch/remote advertised/ff-only 均成功且为该 SHA，新增范围为空。ChatGPT exact 检索无输出；MM/Kimi 均由独立精确行段回读将同 pair final `APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE` 绑定。逐方：ChatGPT=处理中，MM=已回复(APPROVE)，Kimi=已回复(APPROVE)；无推进令牌，Gate=`REVIEW`。
 
 ## 审核治理互锁加固（2026-09-12，DONE）
 
