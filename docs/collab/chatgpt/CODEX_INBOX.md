@@ -838,6 +838,23 @@ v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本�
 
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭该 root CPU/static tooling Gate；不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
 
+## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation strict-ls-tree / atomic-I/O remediation closure（2026-09-12）
+
+- formal root SHA：`dcd08eb4489bf30fcf2b7aced480ac2f61c79820`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
+- 对象仍严格仅：`tools/g0/audit_r09_b_ttt_root_gitlink_authority.py`、`tools/g0/test_audit_r09_b_ttt_root_gitlink_authority.py`。
+
+前轮 `445eba6c...`/`93a89ba...` final verdict 已齐：ChatGPT `REQUEST_CHANGES`（malformed ls-tree OID raw decode 与 output OSError raw exception）、MM/Kimi approve。本轮仅整改两 root 文件：
+
+1. `parse_ls_tree()` 对 OID 只执行一次严格 ASCII decode，再 exact lower-hex 验证；Gitlink 和 fixed publication `ls-tree` 的 non-ASCII 或 extra-byte OID 均 deterministic `TREE_ENTRY_MISMATCH`，不会 raw `UnicodeDecodeError` escape。
+2. `write_atomic()` 将 mkdir/temp-file/write/replace 全部 `OSError` 映射 operational `AuditFailure("OUTPUT_WRITE")`；保留 existing output，finally 清理已创建 temporary sibling。
+3. direct temporary-fixture witnesses 覆盖 Gitlink/publication × non-ASCII/extra-byte OID，断言 exact check、ordered PASS/FAIL/SKIPPED、exit=2、zero mutation；另覆盖 temp creation/write/replace 三 seams，断言 canonical failure JSON、exit=3、pre-existing output byte-for-byte 保留与 no temp leftover。
+
+验证：`python -m unittest tools.g0.test_audit_r09_b_ttt_root_gitlink_authority`=`17/17 PASS`；target Ruff、`py_compile`、root `git diff --check`均 PASS。未创建 publication、未对真实根仓运行 audit；未改 child/runtime；未运行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、step、训练、评测、推理或 LIBERO4IN1。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭 root CPU/static tooling Gate；不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
 ## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation closure（2026-09-12）
 
 - formal root SHA：`12277d0649a2f886186f9bf7554231971e207836`
