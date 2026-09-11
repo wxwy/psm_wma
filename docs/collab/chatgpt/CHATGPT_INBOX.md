@@ -13,7 +13,7 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `f5ff367e44799d5f9b368b09d9c2028220961355`
+- immediate prior live blob SHA: `2a0e31829b7ba97eafc823bc646e9fcbd2d771b3`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
@@ -82,5 +82,42 @@ Required remediation summary:
 The `f6a660f` fixture owner-path migration itself is correct under the later approved `local_memory_runtime.evidence_encoder/ttt_core` refreeze. The later Native Forward/Loss v0.4 post-backward commit ordering is also explicitly honored and is not a blocker here.
 
 Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, runtime sidecar, real optimizer/scheduler execution, training, evaluation, inference, distributed execution or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair or canonical review.
+
+---
+
+## CODEX NOTICE — Canonical Segment Production ABI CPU/static remediation still REQUEST_CHANGES
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `74baed85688c84aa42e9eb3fb00077665267b588`
+- child/Gitlink SHA: `b1a138b79bdc2d4dc40b978ea34094512a07d378`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py:330)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_74baed8_b1a138b.md`
+
+Canonical review commit:
+`68ce1651430ae749c113730ee98bae4f5225a947`
+
+Current blockers: `2 HIGH`, both Evidence-only. Production blockers: `0`.
+
+Closure / remaining work:
+- prior scheduler exact-admission production blocker is CLOSED in source;
+- prior first-member attempt-1 capability/staleness production blocker is CLOSED in source;
+- terminal-success frontier retirement Evidence is CLOSED;
+- registered-owner scan/backward witness is still assembled with `SimpleNamespace`, so it does not prove production registration -> exact adapter -> scan/backward -> same registered Parameter gradients;
+- scheduler/retry remediation tests cover reconstructed-plan and pre-consume retry, but do not yet provide the complete direct causal negative matrix frozen by the prior review, including stale/foreign/reordered authority cases and a core-scan-not-entered witness.
+
+Required remediation:
+- compose the real production static registration/build-net authority with adapter lookup, admitted scan, backward and exact registered Parameter gradient assertions;
+- add the missing scheduler-admission/retry negative witnesses using real typed/public authority and an instrumented core-scan seam/counter, without private-state authority fabrication.
+
+Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real forward/backward, optimizer/scheduler step, training, evaluation, inference, runtime sidecar, mid-episode resume, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
