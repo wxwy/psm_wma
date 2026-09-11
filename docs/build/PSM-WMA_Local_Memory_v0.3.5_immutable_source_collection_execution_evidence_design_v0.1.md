@@ -28,7 +28,7 @@ rollback={before_snapshot_sha256,after_snapshot_sha256,verified}
 
 `source_entries` 为 nonempty ordered array，each exact `{ordinal,byte_length,sha256}`。SHA fields 为 64 lowercase hex，revision/blob/tree fields 为 40 lowercase Git SHA-1；boolean fields为 JSON boolean；paths 仅允许 approved fixed tool/workdir/authority artifact paths，不得含 source transport/source raw path、raw bytes、URL 或 secret。
 
-PASS 规则：`execution` 另含 exact `phase="complete"`；collection/receipt revision 非空、`post_checks` 所有值 true、`pushed=false`、`published=false`、rollback `verified=true`。FAIL 规则：`execution` 另含 exact `phase,failure_code`（非空 stable identifiers）；collection/receipt 可为 null-record `{revision:null,tree_native_oid:null,parent_revision:null,delta_paths:[],blob_native_oid:null}`；rollback 必须有 `verified`，不完整恢复时 failure_code=`ROLLBACK_INCOMPLETE`。未知/缺失/type drift FAIL。
+PASS 规则：`execution` 另含 exact `phase="complete"`；collection/receipt revision 非空、`post_checks` 所有值 true、`pushed=false`、`published=false`、rollback `verified=true`。FAIL 规则：`execution` 另含 exact `phase,failure_code`（非空 stable identifiers）；collection null-record 精确为 `{revision:null,tree_native_oid:null,parent_revision:null,delta_paths:[]}`，receipt null-record 精确为 `{revision:null,tree_native_oid:null,parent_revision:null,delta_paths:[],blob_native_oid:null}`；未到达 stage 必须使用对应 null-record、`source_entries=[]`，且 handoff/candidates 使用其既定 exact keys 的全部 null 值，不得伪造 digest。rollback 必须有 `verified`，不完整恢复时 failure_code=`ROLLBACK_INCOMPLETE`。未知/缺失/type drift FAIL。
 
 检查顺序固定：tool identity→environment→authority→lineage→source entries/handoff→candidate derivation→collection→receipt→post-check→push/publication→rollback。`evidence_sha256` 为去除此字段后的 canonical bytes SHA-256；audit 必须重算并拒绝不一致记录。
 
