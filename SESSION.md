@@ -1,9 +1,10 @@
 # 当前协作状态
 
-## Canonical Native Production Runtime Integration Design（2026-09-11，IN_PROGRESS）
+## Canonical Native Production Runtime Integration Design（2026-09-11，REVIEW）
 
 - v0.1 formal=`bd6ea801367efc88e569c2cd4f9f62ebce2cdaeb`/Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 已收齐 ChatGPT `REQUEST_CHANGES`、MM/Kimi approve；ChatGPT HIGH 确认 v0.1 静默重排/漏列已冻结的 refreeze、single-GPU smoke、sidecar/resume、matched-smoke 与 formal-training progression。
-- 已新建 docs-only remediation `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_production_runtime_integration_design_v0.2.md`，不改写 v0.1；v0.2 从属于已冻结顺序，补回所有不可跳过 Gate，并移除过时 current-root 锚点。预计只改该文档、SESSION/TODO；待文档静态核验、提交、推送及新的三方 design review。不改 child、不运行真实 I/O/GPU/训练。
+- docs-only remediation `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_production_runtime_integration_design_v0.2.md` 已经 `git diff --check`、提交并推送为 formal=`ee979172b8bef4709e94fe84ed4ff4e9c711e2e7`/Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e`；v0.2 从属于已冻结顺序，补回所有不可跳过 Gate，并移除过时 current-root 锚点。
+- 新 pair 审核申请已 append canonical live Inbox（ledger=`7bf9f86f`）并送达 MM/Kimi：ChatGPT 尚无本 pair formal review，MM/Kimi 均已回读确认处理中。审核等待期间不得改 child、运行真实 I/O/GPU/训练或推进后续 Gate。
 
 ## Canonical Native Consumer Runtime CPU/static Implementation（2026-09-11，DONE）
 
