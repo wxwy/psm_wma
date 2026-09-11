@@ -801,3 +801,14 @@ child delta 仍严格仅两文件。CPU evidence：pytest=`15 passed in 33.73s`�
 v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本轮仅 docs-only 整改：冻结唯一 `/usr/bin/git`、binary/version/hash、无 caller Git context 的 explicit sanitized env、`GIT_NO_REPLACE_OBJECTS` 与 root/child transport；冻结 exact command identity、12-step PASS/FAIL/SKIPPED evidence schema、failure stdout schema与 failure-no-output-mutation，并新增 hostile Git env/replace/config 与 noncanonical publication raw-byte witnesses。无代码、真实 audit、checkpoint/data/cache I/O、GPU 或训练。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 reviews。
+
+## 审核申请：Root Gitlink Source-audit Implementation Design v0.3 bootstrap remediation
+
+- formal root SHA：`b29fdf7e71a0464e8678e0750871284ebd866f10`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_root_gitlink_authority_source_audit_implementation_design_v0.3.md`。
+
+仅整改 ChatGPT v0.2 唯一 HIGH：定义 `root_gitlink_git_bootstrap_v1` exact READY/FAIL schema；Git 缺失、不可执行、不可读、版本无效时三 identity 值严格 null、reason 固定、failure stdout 含 bootstrap、`command_identity=null`、exit=3 且不改 output；READY 后才构造 full identity。新增四类 bootstrap failure CPU/static witnesses。无代码、真实 audit、I/O、GPU 或训练。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 reviews。
