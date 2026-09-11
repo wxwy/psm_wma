@@ -11,7 +11,8 @@
 
 ## Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design（2026-09-11，IN_PROGRESS）
 
-- v0.2 remediation formal=`9468e10fec3e83a4754ced24b900def5478bd5f9`/child=`f49f568923555fe15efe546925cbe6cc9140170e` 已完成 `git diff --check`、rebase 后提交并推送；ChatGPT request 已 append live Inbox，MM/Kimi tmux 均按 send-keys→1s→Enter→capture 回读确认送达。任务现为 REVIEW：只等同一 pair 三方最终 verdict，5 分钟一次原生远端锁定轮询；不改 child、不运行真实 I/O/GPU/训练。
+- v0.2 implementation-design formal=`9468e10fec3e83a4754ced24b900def5478bd5f9`/parent child=`f49f568923555fe15efe546925cbe6cc9140170e` 已获 ChatGPT/MM/Kimi 同 pair `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`。仅批准的两个 child 文件已实现并推送 child=`bc4792aa8112ed583b62d22b9f069d2095c764ce`：exact 15-key FeatureConfigIdentity、BaseIdentity SHA binding、slow-only payload、optimizer/scheduler identity、pristine progress、quiescent restore preflight 与 fail-closed CPU witnesses。
+- 验证：`config_checkpoint_contract_test.py`=`13 passed in 26.87s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。当前 Gate=`REVIEW`，下一步仅提交 root Gitlink/状态后对 implementation pair 三方 closure review；禁止真实 checkpoint/data/cache I/O、DCP、GPU/CUDA、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
 
 ## Canonical Native Production Runtime CPU/static Implementation（2026-09-11，DONE）
 
