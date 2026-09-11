@@ -196,6 +196,16 @@ formal tree 仅更新 closure design 与 `SESSION.md`，Gitlink 不变；`git di
 
 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。
 
+## 审核申请：Evidence branch typing remediation（2026-09-12）
+
+- formal root SHA：`c8e05cff42b1a6d4a3a599d2c02f8cdbf648c43c`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
+
+仅 docs：PASS/FAIL execution exact keys 分开；补齐 ordinal、byte_length、command argv、phase/failure code、delta paths、refs/paths、stage-aware nullability 类型合同，解决 eb658e0 的 evidence-only HIGH。无真实执行。
+
+请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。
+
 ## 审核申请：Evidence null-record remediation（2026-09-12）
 
 - formal root SHA：`eb658e0b4f7f006a20ba8a7aca9102d5cc64cb15`
