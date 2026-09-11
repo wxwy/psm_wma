@@ -628,3 +628,19 @@ current child 已包含获准 six-file synthetic CPU/static 合同，未制造�
 本轮严格 docs-only。v0.2 明确 `FeatureConfigIdentity` 的 key set 是 exact **15 keys total**：`schema` 加 14 个已逐字列出的 non-schema fields；没有第 16 键，`schema` 不得另算。并把定向 witness wording 同步为该 15-key mapping，要求所有 missing/unknown/type/value drift pre-mutation reject。v0.1 其余两文件 whitelist、BaseIdentity、pristine progress、preflight-first/zero-mutation 和禁止范围保持 binding；未改 child，未执行真实 I/O/GPU/训练。
 
 请核验唯一 key-count HIGH 是否关闭。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权 v0.1+v0.2 两文件 synthetic CPU/static implementation；不授权真实 I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation closure（2026-09-11）
+
+- formal root SHA：`b0b8790924e474f00d0aedf276559d344d5d0e75`
+- child/Gitlink SHA：`bc4792aa8112ed583b62d22b9f069d2095c764ce`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- implementation authority：v0.1+v0.2 design formal=`9468e10fec3e83a4754ced24b900def5478bd5f9`/parent child=`f49f568923555fe15efe546925cbe6cc9140170e` 已获三方 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`。
+- 审阅对象：child `cosmos_framework/model/generator/mot/config_checkpoint_contract.py`、`cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py`；根仓仅更新 Gitlink、SESSION/TODO。
+
+实现内容严格限于两文件：exact 15-key `FeatureConfigIdentity`、Feature/Base canonical SHA binding、无 generic Base default 的 slow-only in-memory payload、optimizer fully-qualified class/ordered member/hyperparameter identity、scheduler class/state-schema identity、pristine-before-first-step predicate，以及 identity/shadow-loadability→progress→quiescent admission→single live-copy 的 preflight restore。新增 direct zero-live-mutation drift witnesses；未改 model config、runtime adapter/scheduler/trainer、checkpoint backend、recipe、data 或测试基础设施。
+
+执行证据：`.venv/bin/python -m pytest -q cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py`=`13 passed in 26.87s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。请重点核验 Feature/Base payload binding、optimizer/scheduler identity 与 pristine ordering 是否完全符合 v0.1+v0.2 复合合同，以及 reject 是否保持 mutation 前失败。
+
+未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；未触碰 child `uv.lock`、examples 或 results 遗留。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
