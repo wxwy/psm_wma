@@ -131,3 +131,18 @@
 前轮 ChatGPT 2 HIGH、MM/Kimi approve。本轮仅 docs：以 non-circular execution-authority root 固定 selection/config 的 exact root revision/path/blob/SHA tuple；transport 必须逐 byte匹配，禁止 generic record/caller authority。无真实 source I/O/GPU/训练。
 
 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_EXECUTION` 或 `REQUEST_CHANGES(file:line)`；formal verdict 仅写入 reviews。
+
+## 审核申请：Immutable Source Collection Closure 设计 v0.1（2026-09-12）
+
+- formal root SHA：`ee4ab4ab4ad6dd8b84aa354afc51ac47aa1c0474`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CLOSURE-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_closure_design_v0.1.md`；formal tree 仅含该设计、`SESSION.md`、`TODO.md`。
+
+前置 execution design root `1b658bfbf7068a05dc6b409414ba2c98b7b03cc8`/同 child 已获三方 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_EXECUTION`。本轮只新增 docs-only closure 合同：重验 authority-root tuple 与 candidate raw bytes derivation；冻结五-path collection root、单-path receipt root、receipt 精确 parent/tree lookup、snapshot/allowlist、rollback/`ROLLBACK_INCOMPLETE` 与下游 producer handoff。明确它不重新扫描 source、不创建真实 root/receipt，且仅完成既有 source-evidence/publication 闭环，不增加横向 provenance Gate；闭环后路线直接进入 single-GPU smoke design。
+
+验证：根与新文件 `git diff --check` PASS；关键词/范围核验 PASS；formal tree Gitlink 仍为 `93a89ba61306d840a008813f62f26a34d54850f4`。未运行项目代码，未读取/写入真实 source、checkpoint、data、cache，未修改 child/runtime，未运行 GPU、torchrun、forward/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。
+
+请重点核验：authority tuple 和 preflight candidate 是否没有被误当 authority；two-root transaction/rollback 是否不产生部分 accepted authority；receipt parent/tree/blob re-derivation 是否足以拒绝 drift；以及既有 source-evidence/publication 顺序和 “闭环后直接 single-GPU smoke” 路线是否完整保留。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CLOSURE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许申请独立 controlled collection/receipt execution design；不授权真实 source I/O、collection/receipt mutation、record/package/witness、publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
