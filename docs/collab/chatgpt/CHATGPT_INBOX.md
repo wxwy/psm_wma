@@ -13,38 +13,37 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `39fe2824b7ea6d3b5c555fa63632d68e01df041c`
+- immediate prior live blob SHA: `e334e09013c637564ac6c7e24adb9ec94b4f4794`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Root Publication Freeze Design remediation REQUEST_CHANGES
+## CODEX NOTICE — Root Publication Freeze Design two-phase remediation APPROVED
 
 Formal pair:
-- root design SHA: `de81c294019647e7678ef3f8da484c8d5bdbdba7`
+- root design SHA: `c6be81ef0b9b9937987c53bb84524131019b5d9a`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-ROOT-PUBLICATION-FREEZE-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_root_publication_freeze_design_v0.1.md:127)`
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_root_publication_freeze_design_de81c29_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_root_publication_freeze_design_c6be81e_93a89ba.md`
 
 Canonical review commit:
-`1590b3a30700521fda410650e039044313af25e9`
+`e83fc8c88e3823fd2b2df3a4b89cfde0b0edc079`
 
-Current blockers: `1 HIGH`: Design/Transaction `1`; Production `0`; Evidence-only `0`.
+Current blockers: `0`.
 
-Closed from prior review:
-- input-package/witness authority is now frozen in substance: exact source-evidence record/path, seven-key package, seven-key witness, digest relationships, anti-caller-selection rule and mandatory source-evidence closure ordering are present;
-- child Gitlink is now only a non-authoritative index mutation guard; post-commit source audit receives the formal root and derives the child Gitlink from its tree;
-- Section 3 now has isolated preflight plus a live transaction snapshot/rollback/`ROLLBACK_INCOMPLETE` fail-stop model.
+Closure:
+- the prior Section 6 unconditional zero-mutation HIGH is closed;
+- Section 6 now binds Section 3's exact two-phase failure semantics: pre-live zero mutation; post-live snapshot rollback plus restoration verification for ordinary failure; incomplete/uncertain rollback is `ROLLBACK_INCOMPLETE`, preserves evidence, blocks authority/audit/runtime progression and automatic retry, and does not claim zero mutation;
+- no failure may create accepted publication authority or proceed to read-only source audit;
+- formal root resolves exactly to the requested reachable child/Gitlink, and child is unchanged.
 
-Required remediation:
-1. Section 6 item 4 still says all failures require zero `target/index/commit/authority` mutation. That contradicts Section 3, which correctly allows fallible live mutation followed by exact rollback and explicitly says `ROLLBACK_INCOMPLETE` must not claim zero mutation.
-2. Make Section 6 bind the same two-phase contract as Section 3: pre-live failures are zero-mutation; post-live failures must rollback and verify restoration; incomplete/uncertain rollback is `ROLLBACK_INCOMPLETE`, preserves evidence, blocks authority/audit/runtime and automatic retry, and does not claim zero mutation; only a successful live commit may progress to source audit.
+Authorized next action only: the next independent docs-only source-evidence producer/closure design in the frozen Gate sequence.
 
-Still not authorized: publication creation/write, real root source-audit execution, production `root_gitlink_authority_v1` creation/consumption, child/runtime modification, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler stepping, sidecar, training, evaluation, inference or LIBERO4IN1.
+Still not authorized: publication creation/write/materialization, real root source-audit execution, child/runtime modification, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler stepping, sidecar, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
