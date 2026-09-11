@@ -517,3 +517,18 @@ child 仅改 `trainer/__init__.py` 与 approved integration test：生产 topolo
 本轮仅 docs-only。设计锁定真实 native integration 的不可跳步顺序：immutable stream-major producer、preparation parity、source-identified weighted consumer loss/independent auxiliary、canonical one-backward/optimizer boundary、sidecar/resume、bounded GPU smoke、matched LIBERO4IN1 training。请求的唯一下一权限仍是创建 CPU/static implementation design；不授权 child 修改、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar write、训练、评测、推理或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_INTEGRATION` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Native Production Runtime Integration Design v0.2 remediation（2026-09-11）
+
+- formal root SHA：`ee979172b8bef4709e94fe84ed4ff4e9c711e2e7`
+- child/Gitlink SHA：`f49f568923555fe15efe546925cbe6cc9140170e`
+- independent pair check：`git ls-tree ee979172b8bef4709e94fe84ed4ff4e9c711e2e7 cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-INTEGRATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_production_runtime_integration_design_v0.2.md`。
+- remediation：v0.1 formal=`bd6ea801367efc88e569c2cd4f9f62ebce2cdaeb`/`f49f568923555fe15efe546925cbe6cc9140170e` 已收齐 ChatGPT `REQUEST_CHANGES`、MM/Kimi approve；本版逐项恢复 ChatGPT HIGH 所指既冻结 progression，且不声明 superseding contract。
+
+本轮严格 docs-only。v0.2 的唯一顺序逐字保持为：runtime implementation design → CPU/static implementation → feature/config/optimizer/checkpoint refreeze → single-GPU smoke design/approval → single-GPU smoke → runtime-sidecar design → CPU/static verification → resume smoke → LIBERO4IN1 matched-smoke design/approval → matched smoke → formal-training design/command approval → formal Local Memory training。它同时明确 sidecar/resume 仅在后续独立 Gate 定义/验证，不能前置或由本 Gate 推导；并移除 v0.1 的过时 current-root 阅读锚点。
+
+未修改 child，未执行 Python/pytest、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_INTEGRATION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权下一份 docs-only CPU/static runtime implementation design；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
