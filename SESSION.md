@@ -1,8 +1,8 @@
 # 当前协作状态
 
-## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，REVIEW）
+## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，DONE）
 
-- formal pair=`e1a0c53ee91d7f1ac1dae34f785db2a88ec30e6d`/child=`08775da2e73e352ebb1497548de5909baab8c2dc` 已推送；它仅整改上一轮 ChatGPT Evidence HIGH：对 second retry 与 `mark_backward_started()` 后 retry 拒绝，各自在调用前后完整快照并断言 scheduler、frozen-transition、transaction、frontier、scan request/result 与 retry bookkeeping 均零变更。仅触及已批准的 `canonical_segment_production_adapter_test.py`；`LD_LIBRARY_PATH='' .venv/bin/python -m pytest model/generator/mot/canonical_segment_production_adapter_test.py -q`=`12 passed in 18.13s`，目标 Ruff、`py_compile`、child/root `diff --check` PASS。现已进入三方同 SHA closure review；不得真实 I/O、GPU、torchrun、训练、评测、推理或 LIBERO4IN1。提交：根 `e1a0c53`，child `08775da`；本 review ledger/status 尚未提交。
+- formal pair=`e1a0c53ee91d7f1ac1dae34f785db2a88ec30e6d`/child=`08775da2e73e352ebb1497548de5909baab8c2dc` 的三方同 SHA closure verdict 已齐：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_e1a0c53_08775da.md`、MM、Kimi 均为 `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC`，blockers=0。该对仅在 `canonical_segment_production_adapter_test.py` 证明 second/post-backward retry 拒绝的 scheduler、frozen-transition、transaction、frontier、scan/retry bookkeeping 全量零 mutation；adapter CPU/static=`12 passed`，Ruff/`py_compile`/child-root diff-check PASS。仅关闭 synthetic CPU/static ABI Gate；真实 I/O、GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、runtime sidecar、训练、评测、推理及 LIBERO4IN1 仍须独立设计和三方 Gate。提交：formal root `e1a0c53`，child `08775da`；本 closure 状态更新未提交。
 
 ## Feature / Config / Optimizer / Checkpoint CPU/static Implementation（2026-09-11，DONE）
 
