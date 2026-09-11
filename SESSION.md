@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## Feature / Config / Optimizer / Checkpoint CPU/static Implementation（2026-09-11，IN_PROGRESS）
+
+- formal implementation-design pair=`93529fb3762efa8425f50f8a214615310fe6e388`/`d96406e3b273d35e328c88142b36ef2eae895d2c` 的三方结论已核实：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_feature_config_optimizer_checkpoint_cpu_static_implementation_design_93529fb_d96406e.md`（blockers=0）、MM `%1`、Kimi `%2` 均为 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`。设计 Gate 关闭，实际 six-file synthetic CPU/static implementation 已认领。
+- 预计修改仅为 `config_checkpoint_contract.py`/其 test、`model_config.py`、`omni_mot_model.py`/其 test、`c5a_owner_segment_test.py`；当前先完成 strict config identity、active-TTT registered root/adaptor binding、preflight-first in-memory restore 和真实 adapter/scheduler/transaction authority witness。不得修改白名单外文件，且不执行真实 checkpoint I/O、native forward/loss/backward、optimizer/scheduler step、GPU/CUDA、torchrun、sidecar、训练、评测、推理或 LIBERO4IN1。当前 child partial contract diff 未提交。
+
+- implementation child=`ddd49d318a7b2198e024cd013859ca956b57479d` 已推送 `origin/v2`：严格 versioned config、`local_memory_runtime.evidence_encoder/ttt_core` 唯一 registered active-TTT owner 与 adapter `is`-binding、四 selector exact-cover、slow-only in-memory payload/preflight-first restore、真实 `CanonicalProductionAdapter`/scheduler live-authority pre-mutation reject 均已落在六文件白名单。三定向 CPU/static pytest=`45 passed in 46.24s`；contract/contract-test Ruff PASS；六文件 `py_compile`、child/root `diff --check` PASS。全六文件 Ruff 仍显示 `model_config.py` 的既有 import order、`omni_mot_model.py`/`c5a_owner_segment_test.py` 的既有风格问题，未作无关重排。当前 Gate=`REVIEW`，待 root Gitlink/记录提交并对新 formal pair 收齐三方 closure verdict；真实 I/O/GPU/训练仍禁止。
+
 ## Canonical Native Runtime CPU/static Implementation Design（2026-09-11，IN_PROGRESS）
 
 - runtime implementation design v0.2 formal root=`5fd23a289c4197a7a8887ec61d318c769f7c90e8`/Gitlink=`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9` 已获 ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_implementation_design_5fd23a2_c0e6e55.md`、MM `%1`、Kimi `%2` 同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC_IMPLEMENTATION`。
