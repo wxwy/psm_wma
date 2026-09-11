@@ -13,38 +13,39 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `8d3659d2db54c649853ccc48ae88795f34ce12f6`
+- immediate prior live blob SHA: `49f61dc4ef0645b2dd6555ccac3af7d29732376b`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Root Gitlink Authority Source-audit CPU/static Implementation ancestor-symlink/matrix remediation REQUEST_CHANGES
+## CODEX NOTICE — Root Gitlink Authority Source-audit CPU/static Implementation closure remediation REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `12e07051ff74ecdb46d67aafdd9883eecfac8e7a`
+- root implementation SHA: `661786fc3e944348998745240b24f6c6f65a1d8a`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
 
 Verdict:
-`REQUEST_CHANGES(tools/g0/audit_r09_b_ttt_root_gitlink_authority.py:283)`
+`REQUEST_CHANGES(tools/g0/audit_r09_b_ttt_root_gitlink_authority.py:347)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_implementation_12e0705_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_implementation_661786f_93a89ba.md`
 
 Canonical review commit:
-`292c3539025214a02d098073a59abb58aa16de4b`
+`84737ede6798377bc3333543c7c2641e52da2166`
 
-Current blockers: `2 HIGH`: Production `1`; Evidence-only `1`; Design/Authority `0`.
+Current blockers: `3 HIGH`: Production `2`; Evidence-only `1`; Design/Authority `0`.
 
 Closure from prior review:
-- ordinary existing-target ancestor-symlink HIGH is partially closed: root/child/output now walk the nearest existing component and parents, and direct tests cover symlinked parent components;
-- shared failure evidence and single-bootstrap identity remain closed.
+- dangling ancestor symlink HIGH is CLOSED: root/child/output now inspect the original lexical path chain directly, including dangling symlink ancestors, and `main()` writes via the validated/resolved output path;
+- the prior broad negative-matrix HIGH is substantially closed: the suite now directly exercises config/source key/type/value/digest families, publication/path/type/schema families, raw tree record coupling, root/child unexpected command output, child worktree/tree drift, hostile Git environment, ordered failure evidence, and atomic success replacement.
 
 Remaining blockers:
-1. Production HIGH: `path_arg()` uses `Path.exists()` to find the nearest existing component. Because `exists()` follows symlinks and returns false for dangling symlinks, a dangling symlink ancestor is skipped. This is especially unsafe for `--output`, which uses `resolve(strict=False)` and then discards the resolved path before `write_atomic()` operates on the original path. Detect symlink entries without following them across the lexical chain, including dangling ancestors, and return canonical operational FAIL / exit 3 before mutation.
-2. Evidence-only HIGH: the suite is now 11 tests and adds useful ancestor-symlink plus representative config/source/Gitlink/tree negatives, but the approved direct-witness matrix is still materially incomplete. Missing families include publication path/blob type drift; Gitlink path/object drift; child tree drift; distinct raw tree/blob byte/length/SHA/record-digest drift; publication outer-key/schema/self-reference injection; fuller config/source missing/schema/value/type/digest variants; relative/child-worktree substitution; Git command failure/unexpected stdout; and exact success-only atomic replacement. Add direct parameterized witnesses with exact failed check/status/reason and zero output mutation where applicable.
+1. Production HIGH: `validate_publication()` accepts Python `json.loads()` non-standard `NaN`/`Infinity` values, then `canonical_bytes(... allow_nan=False)` raises native `ValueError`. This escapes the approved canonical failure JSON / exit-2 path instead of deterministic fail-closed evidence. Reject non-finite JSON as typed `AuditFailure` and add CLI-level direct witnesses for `NaN`, `Infinity`, and `-Infinity` with zero output mutation.
+2. Production HIGH: root/child `rev-parse` output is parsed with `.rstrip(b"\n").decode("ascii")`; extra trailing newlines can be silently normalized and non-ASCII can raise native `UnicodeDecodeError` outside `guarded()`. Require exact `40 lowercase hex + single newline` bytes and map all malformed/extra/non-ASCII output to stable `AuditFailure` reasons.
+3. Evidence-only HIGH: add direct root and child malformed/extra/non-ASCII `rev-parse` witnesses plus non-finite publication witnesses, asserting exact failed check/reason, ordered PASS/FAIL/SKIPPED evidence, exit 2, and unchanged output.
 
-Reported `11/11 PASS`, Ruff, py_compile and diff-check are supporting evidence only and do not close these gaps.
+Reported `16/16 PASS`, Ruff, py_compile and diff-check are supporting evidence only and do not close these remaining source/evidence gaps.
 
 Still not authorized: real root publication/source-audit execution, production `root_gitlink_authority_v1` runtime integration, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, forward/loss/backward, optimizer/scheduler stepping, sidecar, training, evaluation, inference or LIBERO4IN1.
 
