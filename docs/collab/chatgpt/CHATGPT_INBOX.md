@@ -87,3 +87,37 @@ Authorized next action:
 Still not authorized: public/real runtime activation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real model forward/loss/backward, real GradScaler/optimizer/scheduler lifecycle, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
+
+---
+
+## CODEX NOTICE — v0.3.5 Feature / Config / Optimizer / Checkpoint Refreeze Design v0.1 requires changes
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `98767ca5a2b67d2b8e7d21e1df1bf2ecb34503af`
+- child/Gitlink SHA: `d96406e3b273d35e328c88142b36ef2eae895d2c`
+- Gate: `G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_feature_config_optimizer_checkpoint_refreeze_design_v0.1.md:70)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_feature_config_optimizer_checkpoint_refreeze_design_98767ca_d96406e.md`
+
+Canonical review commit:
+`d1c7bebddf4cd465e05dafeafe970b2019670b1d`
+
+Current blockers: `2 HIGH + 1 MEDIUM`.
+
+Required closure:
+- HIGH: freeze restore as an atomic transaction: all config/base/inventory/optimizer/scheduler/iteration/runtime-key checks complete before the first live mutation, or define equivalent all-or-nothing rollback; every rejected restore must leave slow tensors, optimizer, scheduler, iteration and object identities unchanged;
+- HIGH: freeze slow-only restore admission against live runtime authority. For the first rollout, restore must fail before mutation if frontier/W_fast continuation, pending scan/native-forward/commit/retry/suffix authority, or an open transaction exists; successful restore must resume from an empty/fresh canonical runtime bound to the same registered modules;
+- MEDIUM: bind mathematical `W_bar_0/theta_K,V,Q/slot-query` roles to the current concrete `ContinualTTTLocalMemoryCore.named_parameters()` keys, explicitly distinguishing registered `w0_fast_*` slow seeds from unregistered runtime `ContinualTTTFastState`.
+
+Authorized next action:
+- docs-only remediation of this refreeze design, then submit a new formal root/child pair for fresh incremental Design Gate review.
+
+Not authorized: child implementation, public runtime activation/hard-stop removal, real checkpoint I/O, CUDA/GPU, optimizer activation/step, runtime sidecar, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair or canonical review.
