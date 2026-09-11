@@ -1,5 +1,9 @@
 # 当前协作状态
 
+## Canonical Native Consumer Runtime Implementation Design（2026-09-11，REVIEW）
+
+- 上游 root-only source audit formal=`d554ee6498c4d4facd60cf688beec77c86ea8705`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 已三方关闭。`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_implementation_design_v0.1.md` 已冻结为审阅对象：以 `omni_mot_model.py:1443` hard-stop 为唯一生产接线缺口，冻结 gather/packer/native-loss/one-backward、recovery、legacy isolation 与 CPU/static acceptance。待本 root-only design 的三方同 SHA verdict；禁止 child 修改、Python/pytest、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
+
 ## Canonical Native Consumer Runtime Source Audit（2026-09-11，DONE）
 
 - formal=`d554ee6498c4d4facd60cf688beec77c86ea8705`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 的 root-only audit v0.1 已获三方同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_SOURCE_AUDIT`：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_source_audit_d554ee6_08775da.md`，MM、Kimi 均在 tmux 完整锚定 pair。结论固定：现有 metadata/prefix/scheduler 构件只为 partial，canonical production 在 `omni_mot_model.py:1443` native pack/forward 前 hard-stop，所有真实 variable-valid、loss/GA、runtime/smoke/sidecar 事实均 fail-closed。下一步仅能起草新的 docs-only implementation design；不改 child、不执行 Python/pytest、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
