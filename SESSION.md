@@ -1,8 +1,8 @@
 # 当前协作状态
 
-## Canonical Native Consumer Runtime CPU/static Implementation（2026-09-11，REVIEW）
+## Canonical Native Consumer Runtime CPU/static Implementation（2026-09-11，DONE）
 
-- 上游 formal=`86b321aaf3a4f96afbd427060bcceb5f39a0dc98`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 三方批准。remediation pair=`748a6ad4`/`9368b0b5` 收齐 ChatGPT evidence-only HIGH、MM/Kimi approve；二次最小整改 child=`f49f568923555fe15efe546925cbe6cc9140170e` 已推送 `origin/v2`，仅补 project DDP 与 trainer 实际 `FSDPModule` identity 的 direct production-entry sentinel witnesses。联合 pytest=`50 passed in 32.91s`；target Ruff（忽略既有 I001）/py_compile/child-root diff-check PASS。下一步：根仓 Gitlink/记录提交后按新 pair 重新申请三方 closure review；禁止真实 I/O/GPU/训练。
+- 上游 formal=`86b321aaf3a4f96afbd427060bcceb5f39a0dc98`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 三方批准。closure pair=`e29f291fbeb966edfeebfb4c6820345a6095e8f6`/`f49f568923555fe15efe546925cbe6cc9140170e` 已收齐 ChatGPT formal review、MM、Kimi 同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC`。最终 child 只改获准 whitelist 内 trainer/integration；Kimi 复跑三套件=`62 passed`，ChatGPT blockers=0。仅关闭 single-process/world-size-1 synthetic CPU/static Gate；真实 I/O、GPU、torchrun、native real workload、optimizer/scheduler step、sidecar、训练、评测、推理和 LIBERO4IN1 仍须独立 Gate。
 
 ## Canonical Native Consumer Runtime Implementation Design（2026-09-11，DONE）
 
