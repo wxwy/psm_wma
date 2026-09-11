@@ -384,3 +384,17 @@ CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 
 仅在 `canonical_segment_production_adapter_test.py` 追加剩余 direct matrix：reconstructed plan 进入 zero-core/zero-mutation helper；真实两成员 freeze plan 的 exact later member out-of-order；successful consume 后 copied retry request 不可消耗 exact authority；successful consume 后 scheduler stale、scan-time revalidation 仍 zero-core 且 retry authority 留存；保留 second/post-backward retry failure。adapter CPU/static=`12 passed in 16.36s`，Ruff、py_compile、child diff-check PASS。无真实 I/O/GPU/forward/backward/step/训练。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；正式 verdict 仅写 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Segment Production ABI CPU/static final zero-mutation remediation（2026-09-11）
+
+- formal root SHA：`e1a0c53ee91d7f1ac1dae34f785db2a88ec30e6d`
+- child/Gitlink SHA：`08775da2e73e352ebb1497548de5909baab8c2dc`
+- independent pair check：`git ls-tree e1a0c53ee91d7f1ac1dae34f785db2a88ec30e6d cosmos-framework` 精确解析为上述 Gitlink；child 已推送 `origin/v2`。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
+- supersedes：`59d0848ff5d77023365a0f540fcdf1f562500583` / `331622d41ac0c76fe2f14479fb67ceb607b8aef9` 的 ChatGPT Evidence-only `REQUEST_CHANGES`（production blockers=0）。
+
+本轮仅在既批准的 `canonical_segment_production_adapter_test.py` 补齐剩余 evidence：对第二次 `retry_first_member_pre_backward()` 拒绝，以及 `mark_backward_started(0)` 后 retry 拒绝，分别在 rejected call 前后快照并断言 scheduler、frozen-transition sequence、transaction、frontier、`_scan_requests`、`_scan_results`、retry capability/request bookkeeping 全部不变。无生产代码、接口或范围扩张。
+
+证据：`LD_LIBRARY_PATH='' .venv/bin/python -m pytest model/generator/mot/canonical_segment_production_adapter_test.py -q`=`12 passed in 18.13s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native production forward/loss/backward、optimizer/scheduler step、runtime sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请只核验上轮要求的 retry rejection 全量零 mutation 是否闭合，并回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭此 CPU/static Gate；不授权任何真实执行。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。

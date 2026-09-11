@@ -1,8 +1,8 @@
 # 当前协作状态
 
-## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，IN_PROGRESS）
+## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，REVIEW）
 
-- formal pair=`3f4c76fdfdc70564d40c4e3f66a922924968c315`/child=`218484efbd1363633c379a21f82499a237267ca9` 的三方结论已齐：MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_3f4c76f_218484e.md` 为仅 Evidence `REQUEST_CHANGES`（production blockers=0）。当前仅 tests-only 整改：reconstructed plan 必走 zero-core helper；真实 multi-member exact later member out-of-order；consume 后 copied retry identity；consume 后至 scan 前 stale revalidation；second/post-backward retry 的 scheduler/frozen-transition/transaction/frontier/bookkeeping 全量零变更。仅两份既批准测试文件；不得真实 I/O、GPU、torchrun、训练、评测、推理或 LIBERO4IN1。提交：未提交。
+- formal pair=`e1a0c53ee91d7f1ac1dae34f785db2a88ec30e6d`/child=`08775da2e73e352ebb1497548de5909baab8c2dc` 已推送；它仅整改上一轮 ChatGPT Evidence HIGH：对 second retry 与 `mark_backward_started()` 后 retry 拒绝，各自在调用前后完整快照并断言 scheduler、frozen-transition、transaction、frontier、scan request/result 与 retry bookkeeping 均零变更。仅触及已批准的 `canonical_segment_production_adapter_test.py`；`LD_LIBRARY_PATH='' .venv/bin/python -m pytest model/generator/mot/canonical_segment_production_adapter_test.py -q`=`12 passed in 18.13s`，目标 Ruff、`py_compile`、child/root `diff --check` PASS。现已进入三方同 SHA closure review；不得真实 I/O、GPU、torchrun、训练、评测、推理或 LIBERO4IN1。提交：根 `e1a0c53`，child `08775da`；本 review ledger/status 尚未提交。
 
 ## Feature / Config / Optimizer / Checkpoint CPU/static Implementation（2026-09-11，DONE）
 
