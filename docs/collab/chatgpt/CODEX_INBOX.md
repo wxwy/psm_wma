@@ -373,3 +373,14 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 34.69s`；目标 Ruff、两文件 `py_compile`、child/root `git diff --check` PASS。没有真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native production forward/loss/backward、optimizer/scheduler step、runtime sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请只核验前一 review 的 HIGH-1 exact production registered owner graph witness、HIGH-2 complete scheduler/retry fail-closed zero-core matrix 是否关闭，回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭本 CPU/static Gate；不授权上述任何真实执行。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Segment Production ABI CPU/static final evidence closure（2026-09-11）
+
+- formal root SHA：`59d0848ff5d77023365a0f540fcdf1f562500583`
+- child/Gitlink SHA：`331622d41ac0c76fe2f14479fb67ceb607b8aef9`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
+- supersedes：`3f4c76fdfdc70564d40c4e3f66a922924968c315` / `218484efbd1363633c379a21f82499a237267ca9` 的 ChatGPT Evidence-only HIGH；无生产代码改动。
+
+仅在 `canonical_segment_production_adapter_test.py` 追加剩余 direct matrix：reconstructed plan 进入 zero-core/zero-mutation helper；真实两成员 freeze plan 的 exact later member out-of-order；successful consume 后 copied retry request 不可消耗 exact authority；successful consume 后 scheduler stale、scan-time revalidation 仍 zero-core 且 retry authority 留存；保留 second/post-backward retry failure。adapter CPU/static=`12 passed in 16.36s`，Ruff、py_compile、child diff-check PASS。无真实 I/O/GPU/forward/backward/step/训练。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；正式 verdict 仅写 `docs/collab/chatgpt/reviews/`。
