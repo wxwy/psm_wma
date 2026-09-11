@@ -645,6 +645,19 @@ current child 已包含获准 six-file synthetic CPU/static 合同，未制造�
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
 
+## 审核申请：Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation trusted-lineage closure（2026-09-12）
+
+- formal root SHA：`2d2a32a9ced1f7fd2767e783c9b1dd133164669a`
+- child/Gitlink SHA：`da95139d338ef2ab2cff89d7bdb2a237f711877c`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION`
+- 前轮：`eeec46d5`/`d0d73338` 收齐 MM/Kimi approve 与 ChatGPT REQUEST_CHANGES；identity schema/digest、feature ABI 已关闭，仅剩 BaseIdentity caller self-authorization HIGH。
+
+本轮 child delta 仍只含已批准的 contract/test 两文件。`slow_checkpoint_payload()`、`strict_restore()`、`strict_restore_into()` 已删除 caller `base_identity` 参数；它们只由 module-internal `_CPU_STATIC_TRUSTED_LINEAGE_OWNER` 派生 expected BaseIdentity。该 authority 是本 CPU/static Gate 独立冻结的 child/manifest/source lineage descriptor，不可由 payload 或调用者选择。payload 内 foreign syntactically-valid child revision 即使外部调用方认可，仍与 trusted derivation 不同而在 mutation 前拒绝。pytest=`14 passed in 82.96s`；Ruff、`py_compile`、child/root `git diff --check` PASS。
+
+未执行真实 I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；未触碰 child `uv.lock`、examples 或 results 遗留。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
 ## 审核申请：Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation lineage-identity remediation closure（2026-09-12）
 
 - formal root SHA：`eeec46d5c5667d7c3a30d9637025cc0819aeb468`
