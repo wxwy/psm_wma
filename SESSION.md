@@ -31,6 +31,7 @@
 - 范围：冻结 preflight candidate 的逐字重验、collection/receipt 两阶段 Git transaction、tree lookup、allowlist、rollback/`ROLLBACK_INCOMPLETE`、acceptance 与后续 producer handoff；不读取 source、不创建 root/receipt、不修改 child/runtime，不运行真实 I/O、GPU、训练或 LIBERO4IN1。提交：未提交。
 - 实际修改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_closure_design_v0.1.md`。它将 authority-root tuple 的 tree/blob 复验、candidate 的纯 bytes derivation、五-path collection root 与单-path receipt root 的提交/回滚边界、receipt parent/tree lookup、success authority 及现有下游闭环写成 fail-closed 合同；明确闭环完成后直接进入 single-GPU smoke design，不新增横向 provenance Gate。验证：根与新文件 `git diff --check` PASS；关键 Gate/禁止范围/transaction/rollback/downstream 关键词核验 PASS；formal tree scope 仅为该设计、`SESSION.md`、`TODO.md`，Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。未运行项目代码或真实 source I/O；未触及 child/GPU/训练。formal root=`ee4ab4ab4ad6dd8b84aa354afc51ac47aa1c0474`，已推送。
 - 审核冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。申请已 append canonical live Inbox，待 ledger 提交/推送后以 `send-keys -l`、等待至少 1 秒、独立 Enter、capture 发送 MM/Kimi。Gate=`REVIEW`；三方同 pair final verdict 齐全前不得修改该设计或执行真实 collection。
+- 送达回执（2026-09-12 CST）：ChatGPT=canonical live Inbox 已在 ledger=`54830540f4fa4d131eadd6c60e6db0227e380a2a` 推送；MM=`mm:0.0` 已完成完整 `send-keys -l`、等待至少 1 秒、独立 Enter，capture 显示 exact pair 申请离开输入框进入会话；Kimi=`kimi:0.0` 首次 Enter 后 capture 显示输入框未提交，未计为送达，已等待至少 1 秒补发独立 `C-m`，随后 capture 显示 exact pair 申请离开输入框并进入 `thinking`。两 pane 均尚无本 pair final verdict；首次完整审核观察在送达后满三分钟执行。
 
 ## Source-evidence Producer / Closure Design（2026-09-12，DONE）
 
