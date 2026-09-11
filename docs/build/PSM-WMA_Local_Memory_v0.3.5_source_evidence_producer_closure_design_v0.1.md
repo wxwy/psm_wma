@@ -66,7 +66,7 @@ source_evidence_record_sha256,
 source_evidence_record_schema
 ```
 
-`schema="root_publication_input_witness_v1"`；三个 digest 必须逐字等于各 canonical bytes 的 SHA-256，revision/schema 必须与 package 一致。witness raw bytes SHA-256 和 Git blob OID 必须由 closure formal root 外部记录；不得写入 record、package 或 future publication payload，避免 self-reference。
+`schema="root_publication_input_witness_v1"`；三个 digest 必须逐字等于各 canonical bytes 的 SHA-256，revision/schema 必须与 package 一致。witness 是 derived-only，其 canonical bytes/SHA-256 仅由 reviewed bindings 重构；不得声明或保留 Git blob OID，也不得写入 record、package 或 future publication payload，避免 self-reference。
 
 post-commit 的唯一 non-circular closure receipt path 是 `docs/build/PSM-WMA_source_evidence_postcommit_closure_receipt_v1.json`，但它必须存在于**下一独立 receipt root**，不能在 record formal root 内。其 exact key set 为 `schema,source_evidence_formal_root_revision,source_evidence_record_path,source_evidence_record_blob_native_oid,source_evidence_record_sha256,input_package_sha256,input_witness_sha256,canonical_model_config_sha256,checkpoint_source_descriptor_sha256`，`schema="source_evidence_postcommit_closure_receipt_v1"`。witness 是 derived-only：其 canonical bytes/SHA-256 只能由 reviewed record/config/descriptor/package bindings 重构，不保留或声明 witness Git blob OID。receipt root 必须由独立 review 绑定其 parent=source-evidence formal root；后续 materializer 只能接收该 reviewed receipt 的 formal root/path/blob identity，绝不接收 caller supplied package/witness。
 
