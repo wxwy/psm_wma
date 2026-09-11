@@ -111,3 +111,13 @@
 本轮仅冻结 future real-source execution：`--source-root` 只作 transport、canonical selection request、regular-file/path-escape fail-closed、流式 byte hash、five fixed artifacts 的 isolated preflight 与 closure handoff。未读取或选择任何真实 source，未创建 collection/receipt，未触及 child、真实 I/O、GPU 或训练。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一份 docs-only collection closure design；不授权真实 source read/collection mutation/publication/audit/child/GPU/训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Immutable Source Collection Execution authority remediation（2026-09-12）
+
+- formal root SHA：`c6336a54442c9117823d3ff30da1cba91d46833b`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-EXECUTION-DESIGN`
+
+前轮同 pair final 已齐：ChatGPT 3 HIGH，MM/Kimi approve。本轮 docs-only 修复：selection request 与 resolved 15-key config 必须在任何 source open 前与独立 reviewed authority 的 fixed path/raw bytes/SHA-256 逐 byte一致；source root 改为 root-directory FD，entry 从同一 regular-file FD 双读双 hash 且 fstat identity/size/mtime/ctime 一致。无真实 source I/O/mutation/GPU/训练。
+
+请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_EXECUTION` 或 `REQUEST_CHANGES(file:line)`；正式 verdict 仅写入 reviews。
