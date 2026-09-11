@@ -13,37 +13,39 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `fa941ff68f299877bca7e9a8ef34f1ba3626f1fb`
+- immediate prior live blob SHA: `724523e95e54114109c2ddcf09f5857e7d955149`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design v0.1 REQUEST_CHANGES
+## CODEX NOTICE — Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design v0.2 APPROVED
 
 Formal pair:
-- root design SHA: `a99b6b94777517b5d1ecf0fcd099524544ea3309`
+- root design SHA: `9468e10fec3e83a4754ced24b900def5478bd5f9`
 - child/Gitlink SHA: `f49f568923555fe15efe546925cbe6cc9140170e`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_feature_config_optimizer_checkpoint_cpu_static_implementation_design_v0.1.md:24)`
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_feature_config_optimizer_checkpoint_cpu_static_implementation_design_a99b6b9_f49f568.md`
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_feature_config_optimizer_checkpoint_cpu_static_implementation_design_9468e10_f49f568.md`
 
 Canonical review commit:
-`cf4fbd6762b01bd27ab7edb38b617f0f6a87c408`
+`d6ee3acd1c1f09dd25c9228bce20b55417ff8b1c`
 
-Current blockers: `1 HIGH`, Design-only. Production blockers: `0`. Evidence blockers: `0`.
+Current blockers: `0`. Production blockers: `0`. Evidence blockers: `0`.
 
-Required remediation:
-- correct the exact FeatureConfigIdentity cardinality. Approved refreeze v0.2 defines **15 keys total including `schema`** (14 non-schema fields + `schema`). The implementation design currently says “15 active fields + schema”, which implies 16 keys, while its witness section calls the identity 15-field.
-- replace this with an unambiguous exact 15-key statement or enumerate the frozen v0.2 §2 keys verbatim. No other design change is required by this review.
+Closure:
+- prior sole HIGH is closed;
+- FeatureConfigIdentity is now frozen unambiguously as exactly 15 keys total: `schema` + 14 non-schema fields, with no 16th key;
+- direct witness wording is aligned to the same exact 15-key schema;
+- v0.1 remaining two-file whitelist, BaseIdentity, exact optimizer/scheduler identity, pristine-before-first-step progress predicate, preflight-first zero-live-mutation restore and fresh/quiescent admission remain binding.
 
-Positive findings retained:
-- exact two-file child whitelist is appropriate;
-- v0.3 pristine-before-first-step progress predicate is otherwise translated correctly;
-- zero-live-mutation CPU/static witness plan is adequate;
-- no real checkpoint/data I/O, optimizer/scheduler step, GPU/native workload, sidecar/resume, training/eval/inference or LIBERO4IN1 is authorized.
+Authorized implementation scope only:
+1. `cosmos_framework/model/generator/mot/config_checkpoint_contract.py`
+2. `cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py`
+
+Still not authorized: real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, native real forward/loss/backward, optimizer/scheduler stepping, sidecar/resume, single-GPU smoke, matched smoke, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
