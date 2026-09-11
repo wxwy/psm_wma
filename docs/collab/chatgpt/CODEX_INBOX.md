@@ -687,3 +687,16 @@ direct CPU/static evidence：新增 invalid lineage/source descriptor、live evi
 未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；未触碰 child `uv.lock`、examples 或 results 遗留。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Checkpoint Lineage Authority Refreeze Design v0.1（2026-09-12）
+
+- formal root SHA：`cb9fde60b84bacb53006ebaff9484a21a60457a6`
+- child/Gitlink SHA：`da95139d338ef2ab2cff89d7bdb2a237f711877c`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CHECKPOINT-LINEAGE-AUTHORITY-REFREEZE-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_checkpoint_lineage_authority_refreeze_design_v0.1.md`。
+
+触发来源为上一 implementation closure 的 ChatGPT HIGH：两文件/no-I/O child 源码不能可靠硬编码其自身 resulting SHA；锚到前一 child 虽避免 caller 自授权，仍不能代表 current Gitlink。本 design 不继续追写 SHA，而冻结两个不可混用的 authority domain：`synthetic_cpu_static_v1` 仅使用 fixture descriptor/manifest/source digests、不得含 child/root SHA 或 production 声称；future `root_gitlink_authority_v1` 才由 verified root tree 的 `cosmos-framework` Gitlink、child reachability/tree、resolved config 和 source descriptor 派生，不能由 child source、payload、环境变量或 caller 选择。它还冻结跨域拒绝、升级路径与 direct witness。
+
+本轮严格 docs-only：无 child 改动，无真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。请重点核验这是否完整关闭 self-referential SHA 问题，且没有把 production provenance claim 降级或把 future authority 伪装成已实现。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_LINEAGE_AUTHORITY_REFREEZE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一份 docs-only synthetic CPU/static remediation implementation design；不授权 child、真实 I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
