@@ -31,6 +31,22 @@ CHECK_NAMES = (
     "child_tree_record",
     "audit_record",
 )
+AUDIT_RECORD_KEYS = (
+    "schema",
+    "formal_root_revision",
+    "root_tree_native_oid",
+    "submodule_path",
+    "child_git_revision",
+    "child_tree_native_oid",
+    "publication_path",
+    "publication_blob_native_oid",
+    "publication_blob_sha256",
+    "verifier_schema",
+    "canonical_model_config_sha256",
+    "checkpoint_source_descriptor_sha256",
+    "root_tree_record_sha256",
+    "child_tree_record_sha256",
+)
 ENVIRONMENT = {
     "LC_ALL": "C",
     "LANG": "C",
@@ -283,10 +299,7 @@ def run_git(
 def path_arg(value: Path, label: str, *, must_exist: bool = True) -> Path:
     if not value.is_absolute():
         raise AuditFailure(f"{label}_PATH", True)
-    probe = value
-    while not probe.exists() and probe != probe.parent:
-        probe = probe.parent
-    for ancestor in (probe, *probe.parents):
+    for ancestor in (value, *value.parents):
         if ancestor.is_symlink():
             raise AuditFailure(f"{label}_PATH", True)
     try:
@@ -555,7 +568,7 @@ def audit(
     guarded(
         checks,
         "audit_record",
-        lambda: exact_keys(record, tuple(record), "AUDIT_RECORD_KEYS"),
+        lambda: exact_keys(record, AUDIT_RECORD_KEYS, "AUDIT_RECORD_KEYS"),
     )
     record_sha = guarded(
         checks, "audit_record", lambda: sha256(canonical_bytes(record))
@@ -619,7 +632,7 @@ def main(argv: list[str] | None = None) -> int:
         return 3
     identity = command_identity(bootstrap)
     try:
-        path_arg(args.output, "OUTPUT", must_exist=False)
+        output = path_arg(args.output, "OUTPUT", must_exist=False)
         evidence = audit(
             args.repo_root,
             args.formal_root_revision,
@@ -627,7 +640,7 @@ def main(argv: list[str] | None = None) -> int:
             identity,
             checks,
         )
-        write_atomic(args.output, evidence)
+        write_atomic(output, evidence)
         print(
             canonical_bytes(
                 {
