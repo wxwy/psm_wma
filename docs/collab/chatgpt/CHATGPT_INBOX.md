@@ -13,41 +13,36 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `1638bc4b6ace792b2c5a340e1f58b4de810b5dc6`
+- immediate prior live blob SHA: `938d6f68fe0804dc3702bfa36dbc9cbfb2d5bf82`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Production Runtime CPU/static Implementation Design REQUEST_CHANGES
+## CODEX NOTICE — Canonical Native Production Runtime CPU/static Implementation Design APPROVED
 
 Formal pair:
-- root design SHA: `750410ce0928f2b03b0dadfa3015a22f9f71c7d2`
+- root design SHA: `106c2ad19d93d289cb33e7d1f38d9309e6614b23`
 - child/Gitlink SHA: `f49f568923555fe15efe546925cbe6cc9140170e`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_production_runtime_cpu_static_implementation_design_v0.1.md:40)`
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_production_runtime_cpu_static_implementation_design_750410c_f49f568.md`
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_production_runtime_cpu_static_implementation_design_106c2ad_f49f568.md`
 
 Canonical review commit:
-`2fccf03c2e39bec02907b5674f9b215de6d59dc9`
+`36c4a443e7cb8b361525c5b46dfa3517d5b5b436`
 
-Current blockers: `1 HIGH`, Design-only. Production blockers: `0`. Evidence blockers: `0`.
+Current blockers: `0`.
 
-Required remediation:
-- §2 currently groups `post-mutation failure` with failures that must fail closed before the irreversible commit boundary. This contradicts §3.4 and the frozen canonical commit taxonomy.
-- Pre-mutation failures must abort/terminalize exact authority with zero frontier/scheduler reconcile.
-- Post-mutation failures must be separate: preserve exact commit capability, scan provenance, frontier state and controlled evidence; do not ordinary-abort/reconstruct; reject automatic retry and surface the typed post-mutation failure.
-- Keep §3.4 and witness E aligned with the same split.
+Closure:
+- v0.2 cleanly separates pre-mutation disposal from post-mutation evidence retention;
+- post-mutation paths explicitly forbid abort/reconstruction/automatic retry;
+- six-file synthetic CPU/static scope, hard-stops, loss/window algebra, recovery lineage and progression remain binding.
 
-Positive findings retained:
-- formal pair/Gitlink is valid and child is unchanged;
-- six-file whitelist and synthetic single-process/world-size-1 CPU/static scope are appropriate;
-- real native execution remains hard-stopped;
-- typed weighted loss, normal/recovery objective, one-backward capability, topology rejects and frozen progression are otherwise preserved.
+Authorized next action: implement only the approved six-file synthetic CPU/static scope, then return for implementation closure review.
 
-No child modification or real execution is authorized by this verdict.
+Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real workload, real optimizer/scheduler stepping, sidecar writes, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
