@@ -713,3 +713,16 @@ direct CPU/static evidence：新增 invalid lineage/source descriptor、live evi
 本轮严格 docs-only：无 child 改动，无真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。请核验 five-key schema、legacy/production cross-domain reject、zero-mutation witnesses与两文件范围是否足以正确实现上轮 approved split。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_SYNTHETIC_CPU_STATIC_REMEDIATION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权这两个 child 文件 synthetic CPU/static implementation；不授权真实 I/O、GPU、训练或 future root-Gitlink authority。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Checkpoint Synthetic CPU/static Remediation Implementation closure（2026-09-12）
+
+- formal root SHA：`8d1a667fa504f316a6f11561c639b1147ecfd16e`
+- child/Gitlink SHA：`18328aeed1e6c541fadd9d9063903dee585d79a5`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CHECKPOINT-SYNTHETIC-CPU-STATIC-REMEDIATION-IMPLEMENTATION`
+- 审阅对象：child `cosmos_framework/model/generator/mot/config_checkpoint_contract.py` 与 `cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py`；root 仅 Gitlink、SESSION/TODO。
+
+implementation authority 是三方已批准的 design formal=`6bf54b207d9ca740785c1129ebd327e2a2339986`/parent child=`da95139d338ef2ab2cff89d7bdb2a237f711877c`。本 child delta 精确限两文件：删除 `LineageOwnerIdentity`、`_CPU_STATIC_TRUSTED_LINEAGE_OWNER` 与所有 stale Git SHA/source descriptor；`base_identity` 改为 exact five-key `synthetic_cpu_static_v1`（FeatureConfig digest + module-internal fixture descriptor/manifest/source digests）。save/restore 仍只从内部导出 expected identity，不能 caller 注入；legacy stale `d0d733...`、current `da951...` Git-key mapping、production-shaped `root_gitlink_authority_v1`、missing/unknown/type/format/digest drift 均 mutation 前拒绝。未实现、导入或模拟 future root Gitlink authority。
+
+CPU static evidence：`./.venv/bin/python -m pytest -q cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py`=`14 passed in 40.49s`；target Ruff、`py_compile`、child/root `git diff --check` PASS。未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；child `uv.lock`、examples、results 遗留未触碰。
+
+请核验 exact five-key synthetic identity、legacy/production domain fail-closed、caller injection 不可达及既有 ABI/optimizer/scheduler/pristine/quiescent witness 无回归。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_SYNTHETIC_CPU_STATIC_REMEDIATION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭 synthetic CPU/static contract；不授权 real I/O、GPU、训练或 future root-Gitlink authority。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
