@@ -26,3 +26,14 @@
 验证仅为 `git diff --check` PASS；formal tree scope 为 `SESSION.md`、`TODO.md` 与该 design，Gitlink 从 parent 到 formal root 均为 child SHA。未创建 publication、未运行真实 root audit、未修改 child/runtime，未执行 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
 
 请重点核验该验收项是否完全消除前轮 HIGH，且没有放宽 §3 事务边界或越权。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_ROOT_PUBLICATION_FREEZE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅允许下一份独立 docs-only source-evidence producer/closure design；不授权 publication、真实 audit、child、真实 I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Source-evidence Producer / Closure Design v0.1（2026-09-12）
+
+- formal root SHA：`08b069e8b0cff7da7018b74d50e76f42fedd8514`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_producer_closure_design_v0.1.md`。
+
+本轮只冻结 future source-evidence record/package/witness 的 producer 与 closure：固定 record path/six键 schema、formal-root tree 作为唯一来源、七键 package/witness 的外部非循环 binding，以及 isolated preflight、live transaction、rollback/`ROLLBACK_INCOMPLETE` 与 staged Gitlink/publication 禁令。未创建 record/publication，未读取真实 checkpoint/data/cache，未修改 child/runtime，未运行真实 I/O、GPU 或训练。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许独立 controlled-write execution design；不授权真实 source evidence collection、record 写入、publication、真实 audit、child、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
