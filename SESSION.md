@@ -13,6 +13,7 @@
 
 - v0.2 implementation-design formal=`9468e10fec3e83a4754ced24b900def5478bd5f9`/parent child=`f49f568923555fe15efe546925cbe6cc9140170e` 已获 ChatGPT/MM/Kimi 同 pair `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`。仅批准的两个 child 文件已实现并推送 child=`bc4792aa8112ed583b62d22b9f069d2095c764ce`：exact 15-key FeatureConfigIdentity、BaseIdentity SHA binding、slow-only payload、optimizer/scheduler identity、pristine progress、quiescent restore preflight 与 fail-closed CPU witnesses。
 - 验证：`config_checkpoint_contract_test.py`=`13 passed in 26.87s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。当前 Gate=`REVIEW`，下一步仅提交 root Gitlink/状态后对 implementation pair 三方 closure review；禁止真实 checkpoint/data/cache I/O、DCP、GPU/CUDA、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+- closure formal=`b0b8790924e474f00d0aedf276559d344d5d0e75`/child=`bc4792aa8112ed583b62d22b9f069d2095c764ce` 已 append/push ChatGPT canonical Inbox（ledger=`9d3c4133bf64a3953d2903b52d2c3a47e684cc4c`，非 formal target），并以 `send-keys -l`→1s→独立 Enter→capture 送达 MM `mm:0.0`（`Determining…`）与 Kimi `kimi:0.0`（本次申请可见、待处理）。审核等待每五分钟原生轮询；三方同 pair final verdict 齐前禁止改 child 或越过 Gate。
 
 ## Canonical Native Production Runtime CPU/static Implementation（2026-09-11，DONE）
 
