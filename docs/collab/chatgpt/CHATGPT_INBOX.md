@@ -111,3 +111,37 @@ Reason for correction:
 Not authorized: child production implementation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer/scheduler stepping, runtime sidecar/resume, matched smoke, training, evaluation, or inference.
 
 This correction supersedes the older source/ABI audit notice's verdict literal only; it does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical native runtime implementation design requires changes
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `bb71e4fe49e3ae146b48ccab01cc8c397753d43c`
+- child/Gitlink SHA: `c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_implementation_design_v0.1.md:4-6)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_implementation_design_bb71e4f_c0e6e55.md`
+
+Canonical review commit:
+`ec9acec8eec9756c0b3733cc987fe7e895e0c2e7`
+
+Current blockers: `3 HIGH`.
+
+Blockers:
+- HIGH-1: the exact root still records the predecessor ChatGPT verdict as non-frozen `SOURCE_AUDIT_COMPLETE`; it must use the corrected exact predecessor verdict `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_IMPLEMENTATION` and corrected provenance.
+- HIGH-2: line 4 says three-party `APPROVE_TO_IMPLEMENT` permits code changes, conflicting with §8/current request, which only permits creation of the next docs-only CPU/static implementation design.
+- HIGH-3: inherited immutable-plan + suffix-only recovery semantics are weakened by per-microbatch `freeze plan`, terminal no-replay behavior, and no explicit recovery `GA_effective`/attempt lineage/partial-slow-grad disposition.
+
+Authorized next action:
+- docs-only remediation on a new formal root; keep the child unchanged unless a separately authorized child change is introduced.
+
+Not authorized: child implementation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer/scheduler stepping, runtime sidecar/resume, matched smoke, training, evaluation, or inference.
+
+This notice is coordination only and does not replace the formal pair.
