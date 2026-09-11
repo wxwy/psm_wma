@@ -4,7 +4,7 @@
 
 - 目的：针对“未完成本轮 fetch/精确扫描/回读即判断无更新或审核状态”的重复失误，补充可机械执行的 fail-closed 约束。
 - 修改：根 `AGENTS.md` 新增“审核证据完整性与失效语义”。审核证据命令一旦输出截断、超时、失败或无法逐字段读取，即为检查失败/状态未知；Git 同步、review 检索、MM/Kimi capture 必须分别取得未截断回执；没有同轮完整凭证不得使用审核状态词或推进/改动既有审核对象。
-- 验证：`git diff --check` PASS；规则关键词定位 PASS。未运行项目代码、未触及 child、数据、GPU 或训练。下一步：提交该 docs/governance-only 加固；提交：未提交。
+- 验证：`git diff --check` PASS；规则关键词定位 PASS。未运行项目代码、未触及 child、数据、GPU 或训练。提交：`de5bd3044d24715d8cf26e9cb1c9ed87c9e83e39`。
 
 ## Root Publication Freeze Design（2026-09-12，IN_PROGRESS）
 
