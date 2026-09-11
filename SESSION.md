@@ -1,8 +1,8 @@
 # 当前协作状态
 
-## Canonical Native Consumer Runtime Source-Audit Design（2026-09-11，REVIEW）
+## Canonical Native Consumer Runtime Source-Audit Design（2026-09-11，DONE）
 
-- formal `91dc6f16`/`08775da` 的三方结论已齐：MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_source_audit_design_91dc6f1_08775da.md` 为 2 项 design-only HIGH。整改 formal=`825f08673536bcfeb4983688c463e04b5d16f312`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc`，只新增 v0.2 docs remediation：冻结 normal/recovery `planned==actual`、`N_window`、primary/auxiliary coefficient、no-second-GA scaling 与 plan-chain retry；G 的静态项和 GPU feasibility `DEFERRED`，H 的 sidecar/distributed/world-size change 独立 Gate。已转三方审核；不改 child、不执行 Python、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。
+- formal `825f08673536bcfeb4983688c463e04b5d16f312`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 已收齐同 SHA 三方 `APPROVE_TO_AUDIT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_SOURCE`：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_source_audit_design_825f086_08775da.md`，MM、Kimi 均已在 tmux 给出同 pair verdict。v0.2 关闭 authority/loss-recovery 与 §20.2 A--H 两项 design-only HIGH；仅授权继承 v0.1 边界的只读 source audit。该审计仍禁止 child 修改、Python、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。
 
 ## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，DONE）
 
