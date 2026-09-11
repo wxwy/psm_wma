@@ -13,150 +13,40 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `54d5d6e9658f9f7ead92b4425ae6362a8967f276`
+- immediate prior live blob SHA: `25179b75796f440c6ad7d59c080236a742e7c4f2`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Feature / Config / Optimizer / Checkpoint CPU/static evidence closure v3 APPROVED
+## CODEX NOTICE — Canonical Segment Production ABI CPU/static final evidence closure still REQUEST_CHANGES
 
 Codex: run `git fetch origin V2`, then read the canonical review below.
 
 Formal pair:
-- root implementation SHA: `87bdb26ebe860cf48c1ec61a54ea6a1d474f74cf`
-- child/Gitlink SHA: `410dd00258443c175f72f4ffd87e7cf4f9f25653`
-- Gate: `G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-CPU-STATIC-IMPLEMENTATION`
-
-Verdict:
-`APPROVE_TO_CLOSE_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`
-
-Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_feature_config_optimizer_checkpoint_cpu_static_implementation_87bdb26_410dd00.md`
-
-Canonical review commit:
-`85d0ee90989809518aa44b3ff45b94752f0cc807`
-
-Current blockers: `0`.
-
-Closure:
-- the prior pair's only remaining HIGH was Evidence-only;
-- the pending-commit witness now attempts restore after `scan -> mark_backward_started -> prepare_commit` and before commit/abort, proves slow-state zero mutation, then successfully uses the same typed capability in `commit_success()`, proving it remained live across the restore boundary;
-- the recovery-lineage witness uses a fresh adapter/scheduler and passes the real `CanonicalSuffixRecovery` from `derive_suffix_recovery()` through restore admission, so no suffix pending collection masks the explicit recovery-authority rejection;
-- all previously accepted optimizer reorder/duplicate/missing, native-forward, retry, suffix capability/request, build-net registration, round-trip/late-defect, scan/frozen/frontier/open-transaction, config/inventory/runtime-key and public-hard-stop evidence remains unchanged;
-- no production code changed in this remediation and no new production/contract blocker was found.
-
-Authorized next action:
-- close only this exact six-file synthetic CPU/static Feature / Config / Optimizer / Checkpoint implementation Gate and proceed only to a separately frozen/approved next Gate.
-
-Still not authorized: real checkpoint/filesystem/DCP/remote I/O, checkpoint backend wiring, public runtime/hard-stop removal, real native forward/loss/backward, real optimizer/scheduler stepping, CUDA/GPU, `torchrun`, runtime sidecar/mid-episode resume, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
-
-This notice is coordination only and does not replace the formal pair or canonical review.
-
----
-
-## CODEX NOTICE — Canonical Segment Production ABI CPU/static Implementation REQUEST_CHANGES
-
-Codex: run `git fetch origin V2`, then read the canonical review below.
-
-Formal pair:
-- root implementation SHA: `b0df0572dfb28b8ec3fb82fe2ca09ca533251d50`
-- child/Gitlink SHA: `f6a660f73043c0fe0c6ba4230c1b6a68f4120cfd`
+- root implementation SHA: `59d0848ff5d77023365a0f540fcdf1f562500583`
+- child/Gitlink SHA: `331622d41ac0c76fe2f14479fb67ceb607b8aef9`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
 
 Verdict:
-`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_adapter.py:665)`
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_adapter_test.py:604)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_b0df057_f6a660f.md`
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_59d0848_331622d.md`
 
 Canonical review commit:
-`63f1ac2c02f849d97e1e713ee2eba2f539ca21be`
-
-Current blockers: `3 HIGH` (`2 production + 1 Evidence-only`).
-
-Required remediation summary:
-- bind every canonical pre-scan request to the scheduler's exact `freeze_plan()` result, exact next frozen member transition and current live `before` frontier; reconstructed/manual/stale/reordered requests must fail before frontier/core scan;
-- make first-member attempt-1 scan consume the exact typed retry capability authority; direct pre-consume retry-request scan, copied/foreign request, stale scheduler after mint, duplicate scan and second/post-backward retry must fail before scan without a second freeze/admission;
-- add direct CPU/static Evidence for production-registered encoder/core -> production adapter -> actual scan -> backward gradients on the same registered slow Parameters, plus terminal-success frontier retirement/all-four fp32 fast-state postconditions.
-
-The `f6a660f` fixture owner-path migration itself is correct under the later approved `local_memory_runtime.evidence_encoder/ttt_core` refreeze. The later Native Forward/Loss v0.4 post-backward commit ordering is also explicitly honored and is not a blocker here.
-
-Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, runtime sidecar, real optimizer/scheduler execution, training, evaluation, inference, distributed execution or LIBERO4IN1.
-
-This notice is coordination only and does not replace the formal pair or canonical review.
-
----
-
-## CODEX NOTICE — Canonical Segment Production ABI CPU/static remediation still REQUEST_CHANGES
-
-Codex: run `git fetch origin V2`, then read the canonical review below.
-
-Formal pair:
-- root implementation SHA: `74baed85688c84aa42e9eb3fb00077665267b588`
-- child/Gitlink SHA: `b1a138b79bdc2d4dc40b978ea34094512a07d378`
-- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
-
-Verdict:
-`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py:330)`
-
-Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_74baed8_b1a138b.md`
-
-Canonical review commit:
-`68ce1651430ae749c113730ee98bae4f5225a947`
-
-Current blockers: `2 HIGH`, both Evidence-only. Production blockers: `0`.
-
-Closure / remaining work:
-- prior scheduler exact-admission production blocker is CLOSED in source;
-- prior first-member attempt-1 capability/staleness production blocker is CLOSED in source;
-- terminal-success frontier retirement Evidence is CLOSED;
-- registered-owner scan/backward witness is still assembled with `SimpleNamespace`, so it does not prove production registration -> exact adapter -> scan/backward -> same registered Parameter gradients;
-- scheduler/retry remediation tests cover reconstructed-plan and pre-consume retry, but do not yet provide the complete direct causal negative matrix frozen by the prior review, including stale/foreign/reordered authority cases and a core-scan-not-entered witness.
-
-Required remediation:
-- compose the real production static registration/build-net authority with adapter lookup, admitted scan, backward and exact registered Parameter gradient assertions;
-- add the missing scheduler-admission/retry negative witnesses using real typed/public authority and an instrumented core-scan seam/counter, without private-state authority fabrication.
-
-Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real forward/backward, optimizer/scheduler step, training, evaluation, inference, runtime sidecar, mid-episode resume, or LIBERO4IN1.
-
-This notice is coordination only and does not replace the formal pair or canonical review.
-
----
-
-## CODEX NOTICE — Canonical Segment Production ABI CPU/static evidence closure v2 still REQUEST_CHANGES
-
-Codex: run `git fetch origin V2`, then read the canonical review below.
-
-Formal pair:
-- root implementation SHA: `3f4c76fdfdc70564d40c4e3f66a922924968c315`
-- child/Gitlink SHA: `218484efbd1363633c379a21f82499a237267ca9`
-- Gate: `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
-
-Verdict:
-`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_adapter_test.py:117)`
-
-Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_3f4c76f_218484e.md`
-
-Canonical review commit:
-`2c1fb6640adfd7f82b942a139530eafba26dfa91`
+`47211e150f234ebce01c55cabfdc4abe6b638146`
 
 Current blockers: `1 HIGH`, Evidence-only. Production blockers: `0`.
 
 Closure / remaining work:
-- exact production `build_net()` registered owner -> production adapter -> admitted scan -> backward -> same registered encoder/core K/Q/V/slot-query/W0 gradients is now CLOSED;
-- foreign scheduler, copied member, stale admission, duplicate consumed-request replay and pre-consume retry coverage improved and production remains correct;
-- reconstructed-plan rejection still lacks direct zero-core/full-zero-mutation instrumentation;
-- exact out-of-order member from a multi-member frozen plan is not directly witnessed;
-- copied/reconstructed retry request is tested only before consume, not after the exact one-shot request has been registered;
-- retry staleness is tested before consume but not after consume/before scan, so the scan-time revalidation remains without a direct causal witness;
-- second/post-backward retry rejection does not yet assert the full frozen scheduler/transaction/frontier/scan-bookkeeping zero-mutation postcondition.
+- reconstructed-plan zero-core/full-zero-mutation witness is CLOSED;
+- exact later frozen-member out-of-order witness is CLOSED;
+- post-consume copied retry identity witness is CLOSED and preserves the exact registered retry authority;
+- post-consume pre-scan stale retry witness is CLOSED and proves scan-time revalidation before core scan;
+- the only remaining gap is the previously frozen full zero-mutation evidence for second-retry and post-backward retry rejection: snapshot/assert scheduler live state, exact frozen transitions, transaction, frontier, `_scan_requests`, `_scan_results`, and retry authority/capability bookkeeping immediately across each rejected call.
 
-Required remediation:
-- tests-only is sufficient unless stronger witnesses expose a source defect;
-- complete the missing direct scheduler/retry negative matrix using real public/typed authorities and the production core-scan seam, preserving the exact authority across rejected copied/stale attempts where applicable.
+Tests-only remediation is sufficient unless those stronger witnesses expose a source defect.
 
-Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real forward/loss/backward, optimizer/scheduler step, runtime sidecar, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
+Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real forward/loss/backward, optimizer/scheduler stepping, runtime sidecar, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
