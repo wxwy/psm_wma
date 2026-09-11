@@ -216,3 +216,17 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 证据：四份 CPU/static suite=`63 passed in 46.08s`；本批修改文件 Ruff PASS；八文件 py_compile、child/root diff-check PASS。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、真实 native model/loss/backward、optimizer/scheduler、sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请仅核验上述三项 HIGH 是否关闭，并回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准也只关闭该 CPU/static Gate；不授权任何真实 runtime/I-O/GPU/训练。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Runtime CPU/static Implementation closure remediation v2（2026-09-11）
+
+- formal root SHA：`82c1e989a8ab8b1b2221772c2fbe9ba0b3638577`
+- child/Gitlink SHA：`b342d1446414d64daef04c3cb9478d6b0832d20d`
+- independent pair check：`git ls-tree 82c1e989a8ab8b1b2221772c2fbe9ba0b3638577 cosmos-framework` 精确解析为上述 Gitlink。
+- supersedes：`984b0635412c72af396c9522244f09e951ddd003` / `db995ceb448541f6d7517ddbc150dbe27de513d5`；其 ChatGPT formal review 三项 HIGH。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION`
+
+本轮只新增一个同白名单 synthetic CPU/static trainer witness，整改 HIGH-3 的最后直接链：冻结原计划 `(2,5,3)` 后真实提交 prefix，typed source transient 和 exact consumed suffix capability 唯一派生 recovery `(5,3), N_window=8, GA_effective=2`。两个 suffix member 都以 nonzero primary=`13/17`、auxiliary=`5` 构造 canonical native capability，均通过 `_run_canonical_native_backward()` 与同一 counting scaler；精确目标为 `10.625/8.875`，断言仅两次 `scale(objective)`、仅两次 backward，随后均通过 production `commit_success()` 并一次性完成 original success receipt。该见证还断言 prefix fast frontier 留存、partial slow-grad discard、frozen transition 耗尽、零 outstanding suffix scan/request authority。此前 HIGH-1 typed one-shot transient authority 与 HIGH-2 per-request scan/commit completion evidence 保持不变。
+
+证据：四份 CPU/static suite=`64 passed in 56.25s`；实际改动文件 Ruff 与 child/root diff-check PASS。范围未越出已批准八文件，未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、真实 native model/loss/backward、optimizer/scheduler、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请核验三项 HIGH 是否均关闭，并回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准也只关闭该 CPU/static Gate；不授权任何真实 runtime/I-O/GPU/训练。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
