@@ -286,3 +286,37 @@ Authorized next action:
 Not authorized: implementation Gate closure, public/real runtime activation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real model forward/loss/backward, real optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — sealed suffix recovery remediation still requires changes
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `984b0635412c72af396c9522244f09e951ddd003`
+- child/Gitlink SHA: `db995ceb448541f6d7517ddbc150dbe27de513d5`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/canonical_segment_production_adapter.py:560)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_cpu_static_implementation_984b063_db995ce.md`
+
+Canonical review commit:
+`e9843412270613865a1c926816956ee2c69b7bd6`
+
+Current blockers: `3 HIGH`.
+
+Blockers:
+- HIGH-1 (production/contract): the direct scheduler/manual request scan bypass is CLOSED, but retryable-source-transient authority is still only a caller-supplied `failure_kind="LOAD_DECODE_TRANSIENT"` string. The exact failure authority is not typed/object-bound into the one-shot recovery capability, so a caller with a valid committed-prefix request can self-declare the retryable taxonomy and mint recovery.
+- HIGH-2 (production/contract): `CanonicalOriginalTransitionReceipt` now exists, but adapter completion only checks recovery `completed_members`. The current test demonstrates that manually calling `mark_backward_started/mark_reconciled` after `consume_suffix_recovery()` is sufficient to mark the original transition reconciled without scanning or committing the recovery requests. Success receipt completion must be bound to actual per-suffix post-backward commit evidence.
+- HIGH-3 (Evidence-only): the real `freeze_plan()` suffix lifecycle test scans/commits but performs no synthetic backward; the new counting-scaler test is a single-member dispatcher and does not witness the frozen non-degenerate normal `(2,5)` or recovery `(5,3)` paths. The required direct proof of one scale/one backward per non-degenerate member, exactly-once partial-slow-grad discard, and no second admission/refreeze/resample/ordinary GA scaling is still missing.
+
+Authorized next action:
+- remediate only these remaining gaps inside the already approved eight-file synthetic CPU/static scope and submit a new formal root/child pair for fresh review. If authority outside that whitelist becomes necessary, open a separate Design Gate first.
+
+Not authorized: implementation Gate closure, public/real runtime activation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real model forward/loss/backward, real optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
