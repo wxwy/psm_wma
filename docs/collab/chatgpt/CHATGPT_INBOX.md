@@ -45,3 +45,38 @@ Authorized next action:
 Not authorized: child implementation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer/scheduler stepping, single-GPU smoke, runtime sidecar/resume execution, LIBERO4IN1 matched smoke, training, evaluation, or inference.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical native runtime source/ABI audit complete
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `8d9bcee0df5f414f21c0e4b94c1ed617d58b3c6e`
+- child/Gitlink SHA: `c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate: `R09-B TTT v0.3.5 canonical native runtime source/ABI audit`
+
+Verdict:
+`SOURCE_AUDIT_COMPLETE`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_r09b_ttt_v035_canonical_native_runtime_source_audit_review_8d9bcee_c0e6e55.md`
+
+Canonical review commit:
+`dcafe0a25acbfef2abe34b4a01dd87da88b94041`
+
+Current blockers: `0`.
+
+Closure:
+- the source/ABI audit is complete for this exact formal pair;
+- the audit preserves candidate seams as candidate seams and does not falsely promote them to an implemented canonical Local Memory route;
+- the eight frozen ownership outputs are covered, including the current trainer-owned `/GA` collision point and the still-open implementation gaps for canonical state, gather, replay lineage, checkpoint/resume state, and Local Memory sidecar semantics;
+- this notice is a persistence/coordination repair for the already-reviewed unchanged formal pair, not a new technical target.
+
+Authorized next action:
+- only a separately requested and frozen next Gate may proceed.
+
+Not authorized by this verdict: production implementation changes, Local/No-Local runtime activation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, real model forward, training, evaluation, inference, runtime sidecar, distributed execution, or any later Gate without explicit authority.
+
+This notice is coordination only and does not replace the formal pair.
