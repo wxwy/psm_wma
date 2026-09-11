@@ -278,3 +278,19 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 请重点核验：(1) 六文件白名单是否足以完成静态 owner migration 而不接通 public runtime；(2) restore 是否保证一切 fallible checks 均在第一 mutation 前，reject 零 mutation；(3) runtime W_fast/frontier/pending/receipt 是否被明确排除且 live authority pre-mutation reject；(4) concrete `w0_fast_*` slow seed 与 unregistered `ContinualTTTFastState` 是否无误区分；(5) tests 是否足以防止 legacy/recurrent owner、selector alias、post-mutation restore 与假 mid-episode resume 回归。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权六文件 synthetic CPU/static implementation；不授权真实 checkpoint/filesystem/DCP/remote I-O、public runtime activation/hard-stop removal、native forward/loss/backward、optimizer/scheduler step、CUDA/GPU、torchrun、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Feature / Config / Optimizer / Checkpoint CPU/static Implementation closure（2026-09-11）
+
+- formal root SHA：`a27e9425e4f8e05d7e9ef5414a75f103a2f39d3d`
+- child/Gitlink SHA：`ddd49d318a7b2198e024cd013859ca956b57479d`
+- independent pair check：`git ls-tree a27e9425e4f8e05d7e9ef5414a75f103a2f39d3d cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-CPU-STATIC-IMPLEMENTATION`
+- 前置 implementation design：`docs/build/PSM-WMA_Local_Memory_v0.3.5_feature_config_optimizer_checkpoint_cpu_static_implementation_design_v0.1.md`（formal=`93529fb3762efa8425f50f8a214615310fe6e388`/child=`d96406e3b273d35e328c88142b36ef2eae895d2c` 三方批准）。
+
+本轮仅修改设计白名单六个 child 文件：严格 versioned `LocalMemoryConfig`/`OmniMoTModelConfig` identity（拒绝 legacy `runtime_evidence_steps`、K!=1 与 drift）；active-TTT 迁移为唯一 registered `local_memory_runtime.evidence_encoder/ttt_core`，canonical adapter exact `is` binding；四 selector exact-cover；slow-only in-memory payload 与 preflight-first restore；真实 `CanonicalProductionAdapter`/scheduler live frontier、pending authority、frozen transition 的 pre-mutation rejection。没有修改 local_evidence/runtime authority/adapter/scheduler/packer/producer/trainer/checkpoint backend/recipe/数据或测试基础设施。
+
+证据：三份批准范围 CPU/static tests=`45 passed in 46.24s`；contract/contract-test Ruff PASS；六个白名单文件 `py_compile` PASS；child/root `git diff --check` PASS。全六文件 Ruff 仍报告未改历史范围的 `model_config.py` import order 及 `omni_mot_model.py`/`c5a_owner_segment_test.py` 风格问题，未作无关重排。未执行真实 checkpoint/filesystem/DCP/remote I-O、public runtime activation、native forward/loss/backward、optimizer/scheduler step、CUDA/GPU、torchrun、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请核验九项 implementation-design acceptance matrix 是否均已以 CPU/static evidence 闭合，尤其：(1) active TTT 没有 legacy second owner；(2) adapter/owner binding 是真实 object identity；(3) live authority 与 late payload defect 均在第一 mutation 前拒绝且零 mutation；(4) runtime/sidecar 没有进入 slow payload；(5) public marker仍 fail-closed。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭该六文件 synthetic CPU/static Gate；不授权真实 I/O、runtime/hard-stop removal、GPU、forward/backward、optimizer step、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
