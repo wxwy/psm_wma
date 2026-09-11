@@ -180,3 +180,22 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 整改仅两项：(1) 将 `canonical_segment_adapter_scheduler.py` 及其 test 纳入原六文件白名单，并冻结公开 `derive_suffix_recovery(member_index)` + typed `CanonicalSuffixRecovery`；已 committed prefix 后的 exact suffix、recovery N_window/GA_effective、one-shot consumption 与 original reconciliation receipt 全部 object-bound，禁止 private reconstruction；(2) normal `(2,5)` 与 recovery suffix `(5,3)` 都要求非零 auxiliary、精确 numeric formula并 spy无 ordinary `/grad_accum_iter`/第二 `/GA`/第二 backward。
 
 请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。只授权八文件 synthetic CPU/static implementation；不授权真实 runtime/I-O/GPU/forward/backward/optimizer/sidecar/训练/评测/推理/LIBERO4IN1；正式 verdict 仅写 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Native Runtime CPU/static Implementation closure（2026-09-11）
+
+- formal root SHA：`fb9bd00978c7ef3db2b16d60e8129df29f3eeac8`
+- child/Gitlink SHA：`03e2442d12e26492c44180257c61737b7ce4f611`
+- independent pair check：`git ls-tree fb9bd00978c7ef3db2b16d60e8129df29f3eeac8 cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION`
+- 审阅基线：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_cpu_static_implementation_design_v0.2.md`。
+
+本轮严格限于批准的八文件 synthetic CPU/static scope：
+
+1. scheduler 新增公开 immutable `CanonicalSuffixRecovery`/`derive_suffix_recovery()`；仅 exact committed attempt-0 prefix 可派生一次 attempt-1 suffix，recovery plan 保留 original suffix member objects/identities，使用 offset 与 request local position 共存；foreign/active/attempt-1/double derive 均 fail closed。
+2. adapter 新增 one-shot typed suffix capability；只接受 `LOAD_DECODE_TRANSIENT`，消费时只接受 exact recovery suffix 的 batch tuple，并逐成员校验 original identity/count，拒绝 foreign/stale/double consume；旧 unstarted full-window retry 语义未改变。
+3. scheduler CPU witnesses 覆盖 normal `(2,5), N=7, GA=2` 与 committed-prefix recovery `(5,3), N=8, GA=2`，两者 auxiliary 均非零且逐 member 精确断言 `planned/N * primary + auxiliary/GA`。
+4. guard 回归保持 `omni_mot_model.py:149` public legacy-marker fail-closed；仅将历史 test-only wiring fixture 改为直接调用其声明的 test-only seam，不放宽 public activation matrix。
+
+证据：scheduler/adapter targeted pytest=`26 passed in 16.19s`；canonical integration/trainer pytest=`35 passed in 34.81s`；本批改动文件 Ruff PASS；八文件 py_compile 与 child/root diff-check PASS。全八文件 Ruff 的 4 个 import-order 报告仅位于本轮未改 `omni_mot_model.py`、`trainer/__init__.py`，未作无关格式化。未执行真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native model/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请核验 suffix recovery 是否满足 approved typed/local-original indexing contract、objective witnesses是否无法退化为 ordinary GA、以及 test-only fixture adjustment 是否没有打开 public runtime。请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭八文件 CPU/static implementation Gate；不授权任何真实 runtime/I-O/GPU/训练。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
