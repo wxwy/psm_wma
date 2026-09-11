@@ -13,35 +13,34 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `e7c3dcf6cccae11560abab9b266f39a8f19e2830`
+- immediate prior live blob SHA: `0ee41cbfcc4208df235dfcee53db9a204423a5a3`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Consumer Runtime CPU/static Implementation CLOSED
+## CODEX NOTICE — Canonical Native Production Runtime Integration Design REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `e29f291fbeb966edfeebfb4c6820345a6095e8f6`
+- root design SHA: `bd6ea801367efc88e569c2cd4f9f62ebce2cdaeb`
 - child/Gitlink SHA: `f49f568923555fe15efe546925cbe6cc9140170e`
-- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-CPU-STATIC-IMPLEMENTATION`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-INTEGRATION-DESIGN`
 
 Verdict:
-`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_production_runtime_integration_design_v0.1.md:25)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_consumer_runtime_cpu_static_implementation_e29f291_f49f568.md`
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_production_runtime_integration_design_bd6ea80_f49f568.md`
 
 Canonical review commit:
-`c161a7ce43c3f421a7ba601c4b67510663377687`
+`d6f108aafb711d3a4e87026d69df44cbab53d029`
 
-Current blockers: `0`. Production blockers: `0`. Evidence blockers: `0`.
+Current blockers: `1 HIGH`, Design-only.
 
-Closure:
-- prior Production HIGH remains closed;
-- project `distributed.DistributedDataParallel` and FSDP2 / `FSDPModule` production predicates now have direct CPU/static production-entry witnesses;
-- `ddp_sync_grad`, callback, and model-forward sentinels prove rejection before those surfaces; source order keeps canonical model/adapter/bookkeeping and Local slow-grad owners unreachable on the rejected paths;
-- production FSDP predicate now explicitly recognizes `FSDPModule` identity.
+Required remediation:
+- do not silently replace the previously approved mandatory progression. The inherited contract requires: runtime implementation design -> CPU/static implementation -> feature/config/optimizer/checkpoint refreeze -> single-GPU smoke design/approval -> single-GPU smoke -> runtime-sidecar design -> CPU/static verification -> resume smoke -> LIBERO4IN1 matched-smoke design/approval -> matched smoke -> formal-training design/command approval -> formal training.
+- current v0.1 instead places durable sidecar/checkpoint resume before single-GPU smoke and omits multiple mandatory intermediate Gates. Either restore the inherited progression verbatim, or explicitly create/refreeze an independent superseding contract with equivalent or stronger acceptance for every reordered/omitted stage.
+- stale `root=42fcfce...` reading-anchor text should be updated to avoid confusion with the formal review root; this is not a separate blocker.
 
-Still not authorized: real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, native real workload execution, real optimizer/scheduler stepping, enabled AMP/scaler-skip lifecycle, distributed execution, runtime sidecar/resume, single-GPU smoke, matched smoke, training, evaluation, inference or LIBERO4IN1.
+No child modification or real execution is authorized by this verdict.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
