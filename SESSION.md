@@ -1,5 +1,9 @@
 # 当前协作状态
 
+## Canonical Native Consumer Runtime Source-Audit Design（2026-09-11，IN_PROGRESS）
+
+- 已关闭 `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION` 的三方 CPU/static closure；下一步认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-SOURCE-AUDIT-DESIGN`，只新增 root docs。它为 v0.3.5 §20.2 A--F 冻结只读审计：variable-valid consumer gather/PAD、native reduction 与 valid-exposure weighting、planned valid-count、weighted stream scheduler/provenance、feature-disable，以及旧 row-wise active-wiring 的 supersession。预计仅新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_source_audit_design_v0.1.md` 并更新 SESSION/TODO；不改 child，不执行 Python、真实 I/O、GPU、torchrun、forward/loss/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。完成 docs-only design 后须三方同 SHA 批准，批准范围也只允许其定义的只读 source audit。
+
 ## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，DONE）
 
 - formal pair=`e1a0c53ee91d7f1ac1dae34f785db2a88ec30e6d`/child=`08775da2e73e352ebb1497548de5909baab8c2dc` 的三方同 SHA closure verdict 已齐：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_e1a0c53_08775da.md`、MM、Kimi 均为 `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC`，blockers=0。该对仅在 `canonical_segment_production_adapter_test.py` 证明 second/post-backward retry 拒绝的 scheduler、frozen-transition、transaction、frontier、scan/retry bookkeeping 全量零 mutation；adapter CPU/static=`12 passed`，Ruff/`py_compile`/child-root diff-check PASS。仅关闭 synthetic CPU/static ABI Gate；真实 I/O、GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、runtime sidecar、训练、评测、推理及 LIBERO4IN1 仍须独立设计和三方 Gate。提交：formal root `e1a0c53`，child `08775da`；本 closure 状态更新未提交。
