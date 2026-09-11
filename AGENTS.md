@@ -98,3 +98,12 @@
    - 若 `fetch` 后发现远端相对检查开始已推进，必须先逐条呈现新增提交和 merge 结果，再读取 verdict；禁止先说“没有更新”后才拉取。任何先前基于旧 fetch 的否定性陈述，在新 fetch 前均视为过期，不得复述。
 5. 审核等待期间任务状态保持 `REVIEW`，禁止越过该 Gate。收到全部所需审核结论后，先处理 `REQUEST_CHANGES`；全部批准后才更新 `SESSION.md`、`TODO.md` 并提交。ChatGPT 未在 Inbox 回复不构成缺件；若 `reviews/` 中没有匹配 formal SHA 的正式 review，则视为尚未回复。MM/Kimi 会话不存在、发送失败或未提交时，立即重发并在 `SESSION.md` 记录，不能声称申请已发出。
 6. 同一审核申请的 ChatGPT、Kimi、MM 三方最终 verdict 必须全部收到后，才合并意见并启动“评估 → 最小整改 → 验证 → 提交/推送 → 新 SHA 重新申请审核”闭环；不得依据单一审核者意见提前修改或使其他同 SHA 审核失效。整改必须严格限于已批准范围；若意见要求扩大权限、真实执行或改变 Gate，仍须先取得对应独立批准。新申请发出后重新开始三路五分钟、至少三十轮的原生轮询。
+
+### 审核事实防遗漏协议（强制，覆盖任何相冲突的旧表述）
+
+1. **唯一节奏与触发**：审核等待的固定轮询间隔为五分钟；用户提示“已回复”“已提交”“拉取最新”或 Agent 准备作任何审核状态判断时，必须立即执行一轮完整检查，不能等待下一定时轮询。项目 `AGENTS.md` 与项目治理技能必须保持该同一节奏；发现冲突时先修正规范再继续，不得自行择一执行。
+2. **单轮观察记录**：每一轮都必须在 `SESSION.md` 的当前 Gate 记录可复核字段：检查时间（CST）、`before_head`、`origin/V2` advertised SHA、`fetch`/`merge --ff-only` 结果、完整新增提交范围、formal root/child pair、ChatGPT exact-match review 文件或“未找到”的检索命令和结果、MM/Kimi pane 名称与 capture 摘要、三方各自状态。记录只描述本轮事实，不能复制旧轮次的否定结论。
+3. **否定结论的证据门槛**：只有本轮 `git fetch origin V2`、`git ls-remote`、必要的 fast-forward、exact formal-pair review 扫描，以及两个 pane 的成功 capture 全部完成，才可写“尚未回复”“无新增”或“未发现 review”。任一步失败、pane 不存在、远端不可达、formal pair 不明确或检索异常时，唯一允许的结论是“本轮检查失败/状态未知”，并列出失败步骤；不得把失败解释成未回复。
+4. **回执与送达不可推断**：审核者口头提示、远端新增提交、Inbox 条目、tmux 输入框已有文本，均只是线索，不是最终审核事实。ChatGPT 只有 `reviews/` 内 exact formal root/child 且含正式 verdict 的文件才算回复；MM/Kimi 只有 capture 中已提交的、锚定 exact pair 的最终 verdict 才算回复。任何一个 SHA 不同、仅中间意见、或没有明确 verdict，均为“处理中”，不得计为批准或拒绝。
+5. **推进互锁**：汇总/整改/实施/关闭 Gate 前，必须在同一轮观察记录中显式列出三方 exact pair 与 verdict；缺任一项即保持 `REVIEW`，不得以“之前已经看过”“应该已回复”补足。若收到 `REQUEST_CHANGES`，同样先等同 SHA 的三方 final verdict 全部到齐后才合并处理。
+6. **可追责表达**：用户可见的审核进度必须逐方写为 `已送达 / 处理中 / 已回复(<verdict>, 证据路径或 pane) / 检查失败`，并带“截至本轮检查”的本地 HEAD 与远端 advertised SHA。禁止使用无证据的“都齐了”“没有新的”“应该”“似乎”等概括性表述。

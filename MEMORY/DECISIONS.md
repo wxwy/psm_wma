@@ -175,3 +175,11 @@
 - 决策：后续 R09-B TTT 实现、audit、review 统一以 `docs/build/PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.3.md`（commit `fa65c0c`）为 chronology 口径：双时间轴（z1..z4 禁入 TTT evidence）、past-only 一步错位 `M_t := ReadAfterUpdate(e_{t-1}, W_{t-2})`、`ttt_tbptt_steps=16` 仅限 meta-gradient 长度（非 memory horizon、非 grad_accum）、segment 结束 detach 图但数值 carry、仅 episode done/reset 回 learned W0、未 detach fast-state graph 不跨 optimizer step、§7 硬合同 A-J 优先在 manifest/sampler 层证明。
 - 悬置对齐项：addendum §4 的 `B_seg=8 × T=16` fixed-length packing + stable stream slots 与 v0.6+ 已批准 manifest-route owner-run 组织的结构差异，须在 ⑪ GPU smoke 设计 Gate 显式裁决，不得静默二选一。
 - 原因：消除旧图/旧实现对双时间轴与 TBPTT 语义的歧义，保证后续 Gate 审核与实现使用同一 chronology 语言。
+
+## D019 审核事实防遗漏协议
+
+- 日期：2026-09-11
+- 状态：生效（用户要求）
+- 决策：审核状态只能由同一轮、可复核的远端锁定和三方 exact-pair 证据得出。每轮必须记录 CST 时间、`before_head`、远端 advertised SHA、fetch/fast-forward、完整新增提交范围、formal root/child、ChatGPT review 精确检索、MM/Kimi capture 与逐方状态；任一检查失败即为“状态未知”，不可表述为无回复或审核齐全。审核固定五分钟轮询，收到用户回复提示时立即额外检查。ChatGPT 的正式事实仅来自 `docs/collab/chatgpt/reviews/` 的 exact formal pair；MM/Kimi 仅来自已提交且锚定该 pair 的 tmux 最终 verdict。
+- 覆盖范围：覆盖所有依赖旧轮询结果、远端提交线索、Inbox 文本或输入框内容进行审核状态判断的做法；项目 `AGENTS.md` 与治理技能需保持同一节奏和字段。
+- 原因：此前出现未在本轮 fetch/精确扫描/回读完成前就断言“无新审核”或“审核已齐”的失真；把判断前提、失败语义和审计字段固定下来，才能让 Gate 推进可追溯且不可由记忆替代。

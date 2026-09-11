@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## 审核事实防遗漏协议（2026-09-11，DONE）
+
+- 针对“未在本轮拉取、精确 SHA 检索和 pane 回读完成前即判断审核状态”的流程缺口，已同步更新根 `AGENTS.md`、项目治理技能和 `MEMORY/DECISIONS.md`（D019）。新规则统一审核等待为五分钟轮询，并要求每轮记录远端锁定、formal pair、ChatGPT exact review、MM/Kimi capture 与逐方状态；任一步失败只能写“检查失败/状态未知”，不能推断为未回复或已齐。
+- 验证：仅规则文本变更，`git diff --check` PASS；未触碰 `cosmos-framework` 的未提交实现或训练遗留。下一步：提交该独立根仓治理记录；提交：未提交。
+
 ## Canonical Native Feature / Config / Optimizer / Checkpoint Refreeze Design（2026-09-11，DONE）
 
 - v0.3 formal=`5ede9ac264518ccdbca1cdbc24f4e0694b6cf85a`/child=`f49f568923555fe15efe546925cbe6cc9140170e` 获三方同 SHA `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_REFREEZE`：ChatGPT formal review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_feature_config_optimizer_checkpoint_refreeze_design_5ede9ac_f49f568.md`，MM/Kimi 均显式 approve，blockers=0。仅关闭 docs-only refreeze design；下一步只可创建并审核 composite v0.1+v0.2+v0.3 下的 docs-only CPU/static implementation design，不改 child、不运行真实 I/O/GPU/训练。
