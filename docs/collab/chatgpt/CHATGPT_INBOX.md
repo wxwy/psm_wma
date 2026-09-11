@@ -13,41 +13,43 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `422f66a9fd01dc27f826b9fc56a79a1d854e737c`
+- immediate prior live blob SHA: `7b83ad16272416fd36e738e5b15f177aca5509b2`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Checkpoint Lineage Authority Refreeze Design v0.1 APPROVED
+## CODEX NOTICE — Canonical Native Checkpoint Synthetic CPU/static Remediation Implementation Design v0.1 APPROVED
 
 Formal pair:
-- root design SHA: `cb9fde60b84bacb53006ebaff9484a21a60457a6`
+- root design SHA: `6bf54b207d9ca740785c1129ebd327e2a2339986`
 - child/Gitlink SHA: `da95139d338ef2ab2cff89d7bdb2a237f711877c`
-- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CHECKPOINT-LINEAGE-AUTHORITY-REFREEZE-DESIGN`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CHECKPOINT-SYNTHETIC-CPU-STATIC-REMEDIATION-IMPLEMENTATION-DESIGN`
 
 Verdict:
-`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_LINEAGE_AUTHORITY_REFREEZE`
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_SYNTHETIC_CPU_STATIC_REMEDIATION`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_checkpoint_lineage_authority_refreeze_design_cb9fde6_da95139.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_checkpoint_synthetic_cpu_static_remediation_implementation_design_6bf54b2_da95139.md`
 
 Canonical review commit:
-`340a03565361f99b5183ee477181c04ac8a24fc6`
+`8d4304dce99b67a26a28212515c9e90fba75a84a`
 
 Current blockers: `0`. Production blockers: `0`. Design blockers: `0`. Evidence-only blockers: `0`.
 
 Closure:
-- the self-referential child-SHA problem is correctly handled by superseding only the stale synthetic BaseIdentity-as-current-Gitlineage sub-contract;
-- `synthetic_cpu_static_v1` is frozen as fixture-only identity and MUST NOT contain child/root Git provenance or be accepted by production/root-Gitlink restore;
-- `root_gitlink_authority_v1` is reserved for a future root-owned verified authority that derives the child revision from the reviewed root tree Gitlink and verifies child reachability/tree/config/source descriptor identity;
-- the two domains are exact-schema discriminated and non-migratable in both directions;
-- existing FeatureConfigIdentity, slow inventory, optimizer/scheduler versioned identity, pristine progress and fresh/quiescent restore contracts remain binding.
+- the design correctly implements the approved authority-domain refreeze rather than chasing a self-referential child SHA;
+- synthetic `base_identity` is frozen as exact five-key `synthetic_cpu_static_v1`: `schema`, `canonical_model_config_sha256`, `fixture_descriptor_sha256`, `fixture_manifest_sha256`, `fixture_source_sha256`;
+- synthetic identity is module-internal fixture provenance only and cannot contain child/root Git revisions/trees, paths, timestamps, or production claims;
+- caller/payload/environment/Git-command identity injection is forbidden; save/restore must derive the same internal synthetic authority;
+- legacy Git-lineage mappings and `root_gitlink_authority_v1` mappings must fail closed pre-mutation;
+- existing FeatureConfigIdentity/live ABI, slow inventory, optimizer/scheduler versioned identity, pristine progress, detached-shadow, fresh/quiescent admission, and zero-live-mutation contracts remain binding.
 
-Authorized next scope only:
-- create the next docs-only synthetic CPU/static remediation implementation design;
-- retain the two-file future implementation whitelist (`config_checkpoint_contract.py` and its targeted test);
-- replace the stale Git-lineage claim with the synthetic authority domain and freeze direct domain-separation/fail-closed witnesses.
+Authorized implementation scope only:
+1. `cosmos_framework/model/generator/mot/config_checkpoint_contract.py`
+2. `cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py`
 
-Still not authorized: child modification, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, native forward/loss/backward, optimizer/scheduler stepping, runtime sidecar, single-GPU smoke, matched smoke, training, evaluation, inference or LIBERO4IN1. Production/root-Gitlink lineage remains deferred to the later independent root-owned authority source-audit/design/implementation sequence.
+Required direct witnesses include exact five-key valid round-trip, all digest/schema/key drift, legacy stale/current child-SHA mapping rejection, production-domain rejection, no caller identity injection, and byte/object-for-object zero-live-mutation rejection behavior.
+
+Still not authorized: any other child file, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, native forward/loss/backward, optimizer/scheduler stepping, runtime sidecar, single-GPU smoke, matched smoke, training, evaluation, inference, LIBERO4IN1, or any root-owned Gitlink authority implementation/simulation.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
