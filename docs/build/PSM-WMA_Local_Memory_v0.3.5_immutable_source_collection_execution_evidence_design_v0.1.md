@@ -12,7 +12,8 @@ record 必须是 canonical JSON：UTF-8、递归 key sort、`separators=(',', ':
 共同 nested exact keys：
 
 ```text
-execution={approval_formal_root,command_argv,interpreter}
+PASS execution={approval_formal_root,command_argv,interpreter,phase}
+FAIL execution={approval_formal_root,command_argv,interpreter,phase,failure_code}
 tool={path,blob_native_oid,raw_sha256}
 environment={workdir,python_executable,cpu_only,no_network,sanitized_env_sha256}
 authority={root_revision,selection_path,selection_blob_native_oid,selection_raw_sha256,config_path,config_blob_native_oid,config_raw_sha256}
@@ -26,7 +27,7 @@ push_publication={pushed,published}
 rollback={before_snapshot_sha256,after_snapshot_sha256,verified}
 ```
 
-`source_entries` 为 nonempty ordered array，each exact `{ordinal,byte_length,sha256}`。SHA fields 为 64 lowercase hex，revision/blob/tree fields 为 40 lowercase Git SHA-1；boolean fields为 JSON boolean；paths 仅允许 approved fixed tool/workdir/authority artifact paths，不得含 source transport/source raw path、raw bytes、URL 或 secret。
+PASS `source_entries` 为 nonempty ordered array，FAIL 在 source-read 未到达时为 `[]`；each entry exact `{ordinal,byte_length,sha256}`，ordinal 为非 bool、`>=0` JSON integer，byte_length 为非 bool、`>0` JSON integer。SHA fields 在 PASS/已到达 stage 为 64 lowercase hex、未到达 FAIL stage 为 null；revision/blob/tree fields为 40 lowercase Git SHA-1 或对应 FAIL null-record null；boolean fields在已到达 stage 为 JSON boolean、未到达 stage 为 null。command_argv 为 string array；phase/failure_code 为非空 stable-identifier string；delta_paths 为 fixed approved path string array；refs/paths 为 approved string 或未到达 FAIL stage null。paths 仅允许 approved fixed tool/workdir/authority artifact paths，不得含 source transport/source raw path、raw bytes、URL 或 secret。
 
 PASS 规则：`execution` 另含 exact `phase="complete"`；collection/receipt revision 非空、`post_checks` 所有值 true、`pushed=false`、`published=false`、rollback `verified=true`。FAIL 规则：`execution` 另含 exact `phase,failure_code`（非空 stable identifiers）；collection null-record 精确为 `{revision:null,tree_native_oid:null,parent_revision:null,delta_paths:[]}`，receipt null-record 精确为 `{revision:null,tree_native_oid:null,parent_revision:null,delta_paths:[],blob_native_oid:null}`；未到达 stage 必须使用对应 null-record、`source_entries=[]`，且 handoff/candidates 使用其既定 exact keys 的全部 null 值，不得伪造 digest。rollback 必须有 `verified`，不完整恢复时 failure_code=`ROLLBACK_INCOMPLETE`。未知/缺失/type drift FAIL。
 
