@@ -6,6 +6,12 @@
 - 修改：根 `AGENTS.md` 新增“审核证据完整性与失效语义”。审核证据命令一旦输出截断、超时、失败或无法逐字段读取，即为检查失败/状态未知；Git 同步、review 检索、MM/Kimi capture 必须分别取得未截断回执；没有同轮完整凭证不得使用审核状态词或推进/改动既有审核对象。
 - 验证：`git diff --check` PASS；规则关键词定位 PASS。未运行项目代码、未触及 child、数据、GPU 或训练。提交：`de5bd3044d24715d8cf26e9cb1c9ed87c9e83e39`。
 
+## 审核与执行监控节奏调整（2026-09-12，DONE）
+
+- 目的：落实用户最新指令，将审核等待及已启动后台执行的 Codex 原生监控从每五分钟统一调整为每三分钟；保留至少连续三十轮、用户提示即时完整检查以及三方同 SHA 推进互锁。
+- 修改：根 `AGENTS.md` 的持续执行、审核申请、重新申请与唯一节奏条款，以及 `.codex/skills/psm-execution-governance/SKILL.md` 的审核与执行监控条款，均改为每三分钟；未放宽审核证据、送达回执、Gate 或执行边界。
+- 验证：精确关键词检索确认两处无残留“五分钟/5 分钟”节奏，`git diff --check` PASS。未运行项目代码，未触及 child、真实 I/O、GPU 或训练。提交：未提交。
+
 ## Root Publication Freeze Design（2026-09-12，IN_PROGRESS）
 
 - 目的/Gate：`G0-R09-B-TTT-V035-ROOT-PUBLICATION-FREEZE-DESIGN`；在 root Gitlink authority static tooling closure 后，只冻结 future publication 的输入、index/commit boundary、验证和 fail-closed 分流。
