@@ -560,3 +560,16 @@ v0.2 明确不可逆边界为 `commit_success()` 首次 frontier/scheduler/trans
 未修改 child，未执行 Python/pytest、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Native Production Runtime CPU/static Implementation closure（2026-09-11）
+
+- formal root SHA：`420fc259d938d12f41c7f42d7b6aaec8076eb0f3`
+- child/Gitlink SHA：`f49f568923555fe15efe546925cbe6cc9140170e`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-CPU-STATIC-IMPLEMENTATION`
+- authority：v0.2 design formal `106c2ad19d93d289cb33e7d1f38d9309e6614b23`/`f49f568923555fe15efe546925cbe6cc9140170e` 获三方 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_CPU_STATIC`。
+
+current child 已包含获准 six-file synthetic CPU/static 合同，未制造无意义的新 child diff。执行证据：`canonical_segment_production_adapter_test.py`=`12 passed in 9.25s`；`canonical_segment_production_integration_test.py`=`31 passed in 26.11s`；`trainer_canonical_segment_wiring_test.py`=`19 passed in 23.78s`，共 `62 passed`。目标 `py_compile` 与 child/root `git diff --check` PASS。请核验 preparation parity、typed weighted consumer/auxiliary split、normal/recovery non-degenerate objective、pre/post-mutation disposition、topology admission，及无新增子模块改动的 closure 合理性。
+
+未执行真实 I/O、CUDA/GPU、torchrun、native real forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；子模块训练遗留未触碰。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
