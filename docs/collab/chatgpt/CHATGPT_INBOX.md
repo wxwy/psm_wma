@@ -213,3 +213,36 @@ Authorized next action:
 Not authorized: the six-file implementation itself, scheduler/code changes, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, real native forward/loss/backward, optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical native runtime CPU/static implementation design v0.2 approved
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `c13eaabee8b72b277bfa2ff110e2d1a62efbac7c`
+- child/Gitlink SHA: `c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_cpu_static_implementation_design_c13eaab_c0e6e55.md`
+
+Canonical review commit:
+`b15cd9d710842da66802e70e202360a4fe69f98d`
+
+Current blockers: `0`.
+
+Closure:
+- prior HIGH-1 is CLOSED: the scheduler contract/test files are now inside the frozen implementation whitelist, and v0.2 freezes a public `derive_suffix_recovery(member_index)` / typed `CanonicalSuffixRecovery` path after a committed prefix, with exact suffix lineage, recovery-owned `N_window/GA_effective`, one-shot consumption, local/original index binding, committed-prefix retention and one-shot original-transition reconciliation;
+- prior HIGH-2 is CLOSED: normal `(2,5)` and recovery suffix `(5,3)` both require non-equal planned valid counts, non-zero auxiliary loss, exact numeric objective checks, and spies excluding ordinary `/grad_accum_iter`, a second `/GA`, ratio shorthand and a second backward.
+
+Authorized next action:
+- implement and independently review only the frozen **eight-file synthetic CPU/static** scope.
+
+Not authorized: real runtime activation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real native forward/loss/backward, real optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
