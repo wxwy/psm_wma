@@ -13,37 +13,38 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `78e1b00293c4fd79bc4ef2798b41ae7564bbacd8`
+- immediate prior live blob SHA: `937e5524af4112f5c11504152273a46fc86b5a85`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Feature / Config / Optimizer / Checkpoint Refreeze Design v0.2 REQUEST_CHANGES
+## CODEX NOTICE — Canonical Native Feature / Config / Optimizer / Checkpoint Refreeze Design v0.3 APPROVED
 
 Formal pair:
-- root design SHA: `bc5459e91ad8b53c52ffaadfde9d585508dadec4`
+- root design SHA: `5ede9ac264518ccdbca1cdbc24f4e0694b6cf85a`
 - child/Gitlink SHA: `f49f568923555fe15efe546925cbe6cc9140170e`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_feature_config_optimizer_checkpoint_refreeze_design_v0.2.md:66)`
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_REFREEZE`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_feature_config_optimizer_checkpoint_refreeze_design_bc5459e_f49f568.md`
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_feature_config_optimizer_checkpoint_refreeze_design_5ede9ac_f49f568.md`
 
 Canonical review commit:
-`ed563dd490cc6314780f4753a4154e8163b952c6`
+`a83679cde8d27f09d71dcaef49518d66d7adbf5a`
 
-Current blockers: `1 HIGH`, Design-only. Production blockers: `0`. Evidence blockers: `0`.
+Current blockers: `0`. Production blockers: `0`. Evidence blockers: `0`.
 
-Remediation status:
-- prior HIGH-1 CLOSED: FeatureConfigIdentity now binds active Local flags/backend/dims/projector-bias plus resolved TTT identity;
-- prior HIGH-2 CLOSED: BaseIdentity now has a versioned exact lineage schema and rejects generic/caller-chosen identity;
-- prior HIGH-3 PARTIALLY CLOSED: optimizer/scheduler class, groups, hyperparameters and state schemas are frozen, but the exact optimizer-step / scheduler-progress / payload-iteration relation is still deferred to the next implementation design.
+Closure:
+- the prior sole HIGH is closed: v0.3 freezes the exact progress relation as pristine-before-first-step;
+- `payload.iteration == 0`, canonical optimizer state is exactly empty, and scheduler state must exactly match the pristine state of the approved exact-validated scheduler identity;
+- constructor-created scheduler progress fields are compared as full canonical state, not guessed zero values;
+- nonzero iteration/state/step, scheduler progress drift, one-sided optimizer/scheduler presence, or identity drift reject before any live mutation;
+- any real optimizer/scheduler progress or resume semantics require a future independently approved checkpoint/runtime Gate.
 
-Required remediation:
-- freeze the exact canonical progress predicate in this refreeze design (or a superseding design). The later implementation design may encode/test that already-frozen predicate but may not choose its semantics.
+Authorized next stage: create/review the next docs-only CPU/static implementation design under the composite v0.1 + v0.2 + v0.3 refreeze contract.
 
-No child implementation, real checkpoint/data I/O, DCP, CUDA/GPU, torchrun, native real forward/loss/backward, optimizer/scheduler stepping, sidecar/resume, single-GPU smoke, matched smoke, training, evaluation, inference or LIBERO4IN1 is authorized.
+Still not authorized: child implementation, real checkpoint/data I/O, DCP, CUDA/GPU, `torchrun`, native real forward/loss/backward, optimizer/scheduler stepping, sidecar/resume, single-GPU smoke, matched smoke, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
