@@ -750,3 +750,14 @@ child delta 仍严格仅两文件。CPU evidence：pytest=`15 passed in 33.73s`�
 本轮 strict docs-only。设计将 production authority 的唯一根冻结为同一 immutable root tree 内的 root revision/tree、`cosmos-framework` Gitlink、可达 child commit/tree、canonical config/source descriptor digest；显式拒绝 detached child、payload/env/path/time/child-source SHA 替代。未来 audit 只读产物须记录每个 lookup/reachability/digest 的 PASS/FAIL；失败不得生成 production authority 或进入 runtime。没有 child/root runtime 改动，也没有真实 checkpoint/data/cache I/O、GPU/训练。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，仅允许下一 docs-only source-audit implementation design；不授权代码、真实 I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Root Gitlink Authority Source-audit Design v0.2 remediation（2026-09-12）
+
+- formal root SHA：`ae2e94b045c9d1cf3f352ad49e374548153b0043`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_root_gitlink_authority_source_audit_design_v0.2.md`。
+
+仅整改 ChatGPT v0.1 的两项 HIGH：定义 native Git tree OID 与 `git cat-file tree` raw bytes 的 SHA-256/record SHA-256 关系；定义 root-tree immutable publication blob、exact envelope/schema/canonical bytes、publication digest 与 signature-equivalent root-tree trust predicate。仍严格 docs-only，无 child/runtime、真实 I/O/GPU/训练。
+
+请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 reviews。
