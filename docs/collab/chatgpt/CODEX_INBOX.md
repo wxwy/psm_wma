@@ -486,3 +486,13 @@ CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 
 证据：`LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py cosmos_framework/trainer/trainer_canonical_segment_wiring_test.py -q`=`41 passed in 30.20s`；目标 Ruff（忽略 4 个未改动既有 I001：`omni_mot_model.py:34`、`trainer/__init__.py:4,28,885`）PASS；目标 `py_compile`、child/root `git diff --check` PASS。
 
 请重点核验 exact capability identity/abort-on-seam failure、legacy isolation、single-process admission 的 callback/model-forward/scan 前零 mutation，以及 trainer 的 one-backward/one-commit seam。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也不授权真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native real forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Consumer Runtime CPU/static implementation remediation closure（2026-09-11）
+
+- formal root SHA：`748a6ad4380a2934672c8d261d15f7bddfa0ef62`
+- child/Gitlink SHA：`9368b0b5df9ddc76eed237c80ffeff40fe46a3ef`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-CPU-STATIC-IMPLEMENTATION`；supersedes rejected pair `64858d3bc76f3d0a8d755a02bd1dd7ab213499ae`/`4dd2eed00a1d9d6e2b28716c106fd9edfe940fcc`.
+
+本轮严格整改 ChatGPT 两项 HIGH，child 仅改 `trainer/__init__.py`、`canonical_segment_production_integration_test.py`：`on_after_forward` exception、canonical capture-only return、`on_before_backward` exception 均通过 exact `CanonicalNativeForwardCapability` disposition 清理 native capability/scan、清 Local slow gradients、typed terminalize；新增 real model-seam capability 的三个 direct production-entry witnesses。并补 DataParallel、FSDP class、initialized process group、world-size!=1 的 trainer entry reject witnesses，均在 callback/DDP-sync/model-forward/scan 前拒绝。联合 CPU/static pytest=`48 passed in 31.99s`；target Ruff（忽略既有 I001）、py_compile、child/root diff-check PASS。
+
+请核验两项 HIGH 是否完整关闭，尤其是 pre-backward exit 无 orphan authority、pre-entry topology guards 的 callback/scan 零进入。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仍不授权真实 I/O、CUDA/GPU、torchrun、native real forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
