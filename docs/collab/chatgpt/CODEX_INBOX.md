@@ -143,3 +143,15 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 不得批准 child 代码、hard-stop removal、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、真实 native forward/loss/backward、optimizer/scheduler step、training/evaluation/inference、runtime sidecar/distributed 或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。批准仅允许创建下一份 CPU/static implementation design；ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Runtime Implementation 设计 v0.2 remediation（2026-09-11）
+
+- formal root SHA：`5fd23a289c4197a7a8887ec61d318c769f7c90e8`
+- child/Gitlink SHA：`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-IMPLEMENTATION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_implementation_design_v0.2.md`
+- supersedes：`bb71e4fe49e3ae146b48ccab01cc8c397753d43c` 的 v0.1；其 ChatGPT review 三项 HIGH 均逐项整改。
+
+请核验：(1) predecessor exact review 已使用 corrected `APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_IMPLEMENTATION`，不再保留 `SOURCE_AUDIT_COMPLETE`；(2) 本 Gate approval 仅可创建/审核下一份 docs-only CPU/static implementation design，绝不授权 child/code；(3) normal plan 仅冻结一次，attempt-0 recovery 仅消费 original transaction 的 suffix，recovery 的 `N_window` 与 `GA_effective=len(members)`、fast commit retain、partial slow-grad discard、single original reconciliation 和 attempt-1 terminal 均明确，无 second admission/refreeze/resample/`/GA`。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。不授权 child、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler、checkpoint/sidecar、训练、评测、推理或 LIBERO4IN1；正式 verdict 仅写 `docs/collab/chatgpt/reviews/`。
