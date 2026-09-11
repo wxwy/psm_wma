@@ -473,3 +473,16 @@ CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 
 未修改 child，未执行 Python/pytest、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权 six-file CPU/static synthetic implementation；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Consumer Runtime CPU/static implementation closure（2026-09-11）
+
+- formal root SHA：`64858d3bc76f3d0a8d755a02bd1dd7ab213499ae`
+- child/Gitlink SHA：`4dd2eed00a1d9d6e2b28716c106fd9edfe940fcc`
+- independent pair check：`git ls-tree 64858d3bc76f3d0a8d755a02bd1dd7ab213499ae cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-CPU-STATIC-IMPLEMENTATION`。
+
+本轮仅改 child 的 `omni_mot_model.py`、`trainer/__init__.py`、`canonical_segment_production_integration_test.py`。canonical pre-pack hard-stop 现只能通过显式 injected CPU/static typed-loss seam 续接为 existing exact prepared scan 的 one-shot native capability；model 在 carrier preflight/scan 前拒绝 CP/已初始化 process group，trainer 在 callback/DDP sync/model forward/scan 前拒绝 real `torch.optim.Optimizer`、enabled scaler、DDP/FSDP/DataParallel、initialized group 与 non-`none` distributed configuration。没有调用真实 tokenizer/VAE/pack CUDA 或真实 data/cache/checkpoint I/O。
+
+证据：`LD_LIBRARY_PATH='' .venv/bin/python -m pytest cosmos_framework/model/generator/mot/canonical_segment_production_integration_test.py cosmos_framework/trainer/trainer_canonical_segment_wiring_test.py -q`=`41 passed in 30.20s`；目标 Ruff（忽略 4 个未改动既有 I001：`omni_mot_model.py:34`、`trainer/__init__.py:4,28,885`）PASS；目标 `py_compile`、child/root `git diff --check` PASS。
+
+请重点核验 exact capability identity/abort-on-seam failure、legacy isolation、single-process admission 的 callback/model-forward/scan 前零 mutation，以及 trainer 的 one-backward/one-commit seam。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也不授权真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native real forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
