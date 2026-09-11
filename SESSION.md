@@ -1,5 +1,9 @@
 # 当前协作状态
 
+## Canonical Native Production Runtime Integration Design（2026-09-11，IN_PROGRESS）
+
+- 已新建 docs-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_production_runtime_integration_design_v0.1.md`；预计只改该文档、SESSION/TODO。它冻结 producer→native prepare/loss→owner→optimizer→sidecar→GPU smoke→matched training 的不可跳步顺序，并请求仅授权下一份 CPU/static implementation design；不改 child、不运行真实 I/O/GPU/训练。待 `git diff --check` 后提交并申请三方 design review。
+
 ## Canonical Native Consumer Runtime CPU/static Implementation（2026-09-11，DONE）
 
 - 上游 formal=`86b321aaf3a4f96afbd427060bcceb5f39a0dc98`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 三方批准。closure pair=`e29f291fbeb966edfeebfb4c6820345a6095e8f6`/`f49f568923555fe15efe546925cbe6cc9140170e` 已收齐 ChatGPT formal review、MM、Kimi 同 SHA `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC`。最终 child 只改获准 whitelist 内 trainer/integration；Kimi 复跑三套件=`62 passed`，ChatGPT blockers=0。仅关闭 single-process/world-size-1 synthetic CPU/static Gate；真实 I/O、GPU、torchrun、native real workload、optimizer/scheduler step、sidecar、训练、评测、推理和 LIBERO4IN1 仍须独立 Gate。
