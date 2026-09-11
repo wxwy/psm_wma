@@ -332,3 +332,16 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 - supersedes `774d01d.../1231215...` 的唯一 Evidence-only HIGH。
 
 仅追加同一 approved test whitelist 内两个 direct witness：真实 `scan -> mark_backward_started -> prepare_commit` 后、`commit_success` 前的 pending commit restore reject；以及真实 `derive_suffix_recovery()` 产生 recovery lineage/receipt 后，以 fresh adapter/scheduler 传入该 recovery authority 的 restore reject。两者均断言 slow state 零 mutation；无生产代码变更、无真实 I/O/GPU/forward/backward/step/sidecar/训练。请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Segment Production ABI CPU/static Implementation closure（2026-09-11）
+
+- formal root SHA：`b0df0572dfb28b8ec3fb82fe2ca09ca533251d50`
+- child/Gitlink SHA：`f6a660f73043c0fe0c6ba4230c1b6a68f4120cfd`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
+- approved design：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_segment_production_abi_implementation_design_v0.3.md`，前置 formal=`36df68d`/child=`3a078f2` 三方批准。
+
+本轮仅在 approved CPU/static test whitelist 内修正 canonical-production fixture：所有 registered binding 与 abort tests 从旧 `local_history_runtime.encoder/recurrent_backend` 对齐到生产实际 `local_memory_runtime.evidence_encoder/ttt_core`。因此 pending scan、gather mismatch、memory-init exception 与 ordinary/legacy preparation 均能穿过 exact registered-object guard，并在 native forward seam hard-stop 前验证 abort/zero-mutation；替换 core/旧 runtime 均 fail-closed。无真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、runtime sidecar、native forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
+
+证据：adapter/integration pytest=`26 passed in 37.23s`；`omni_mot_model_test.py` + `local_evidence_test.py`=`45 passed in 46.66s`（仅既有 L0 mark warnings）；目标 `py_compile`、child/root `git diff --check` PASS。
+
+请核验 P1 v0.3 的 activation matrix、exact registered encoder/core binding、fp32 frontier/W0 gradient、attempt-1 typed lineage 与四条 abort boundary 是否在该 formal pair 完整闭合。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭 CPU/static Gate；不授权任何真实 I/O、GPU、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
