@@ -67,3 +67,18 @@
 前轮 `1800380` 三方结论已齐：ChatGPT 2 HIGH、MM/Kimi approve。本轮仅 docs-only：collection authority 改为 collection root + 独立 receipt root，且 receipt root parent 精确绑定 collection root；post-commit witness 改为 derived-only，移除无 fixed path/tree ownership 的 blob OID。无真实 collection/write/publication/I-O/child/GPU/训练。
 
 请求 `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE` 或 `REQUEST_CHANGES(file:line)`；formal verdict 仅写入 reviews。
+
+## 审核申请：Immutable Source Collection 收口设计 v0.1（2026-09-12）
+
+- formal root SHA：`9b9b516132806369718361b0e1b7b54c15c0483d`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_design_v0.1.md`；formal tree 还只更新根 `SESSION.md`、`TODO.md`、`MEMORY/DECISIONS.md`。
+
+本轮是 source-evidence 链的最后一个横向 provenance 设计：固定 collection root 的两个 canonical artifacts、parent 精确为 collection root 的独立 receipt root、exact paths/schemas/digests/Git object lookup 与 preflight/rollback fail-stop。它将后续真实工作收敛为一次独立的 collection/receipt closure Gate；该 Gate 关闭后路线固定为 `single-GPU smoke design → real optimizer/scaler → 1 batch GPU → 20--100 step TTT smoke`，不得再横向打开 checkpoint/publication/source-binding provenance Gate。
+
+验证仅 `git diff --check` PASS 和文档契约关键词核验；未读取或写入 checkpoint、manifest、data、cache，未创建 collection/receipt，未修改 child/runtime，未运行 audit、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、训练、评测、推理或 LIBERO4IN1。
+
+请重点核验：collection/receipt 是否严格非循环、receipt parent/tree/blob 重算是否足以拒绝 authority drift、合并 execution/closure 是否没有遗漏 fail-closed 边界，以及“此处收口、随后 GPU smoke”的路线是否不牺牲现有 source identity 约束。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许申请单一 controlled collection/receipt closure execution Gate；不授权真实 collection、record 写入、publication、read-only audit、child、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。

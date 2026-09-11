@@ -4,7 +4,8 @@
 
 - 目的/Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-DESIGN`；source-evidence 链最后一个 provenance 设计，只冻结 collection root、独立 receipt root 与单一受控 collection/closure transaction。
 - 已阅读：source-evidence producer/closure v0.1、root source-audit v0.3、root publication freeze v0.1、当前 TODO/长期决策。新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_design_v0.1.md`；将用户的路线优先级固化为 collection closure 后直接 `single-GPU smoke design → optimizer/scaler → 1 batch GPU → 20--100 step TTT smoke`，不再横向打开 provenance Gate。
-- 当前修改仅 root docs：上述 build design、`SESSION.md`、`TODO.md`。未读取或写入真实 checkpoint/data/cache，未触及 child、真实 I/O、GPU 或训练；未提交。下一步：`git diff --check`、全文契约核验后提交推送并申请三方 docs-only review。
+- formal design 已提交并推送：root=`9b9b516132806369718361b0e1b7b54c15c0483d`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree 仅含本 design、`SESSION.md`、`TODO.md`、`MEMORY/DECISIONS.md`。验证：`git diff --check` PASS、契约关键词核验 PASS；未读取或写入真实 checkpoint/data/cache，未触及 child、真实 I/O、GPU 或训练。
+- 审核冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。申请已 append canonical live Inbox，待 ledger 提交/推送后按 `send-keys -l` → 等待至少 1 秒 → 独立 Enter → capture 三联回执送达 MM/Kimi。Gate=`REVIEW`；三分钟完整轮询，三方同 pair final verdict 齐全前不得改动该设计或执行真实 collection。
 
 ## Source-evidence Producer / Closure Design（2026-09-12，DONE）
 
