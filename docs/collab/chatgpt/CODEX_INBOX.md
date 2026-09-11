@@ -356,3 +356,20 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 仅处理该 review 的三项 HIGH：scheduler 在 scan 前验证 exact `freeze_plan()` object、next frozen transition 和 live frontier；first-member attempt-1 仅允许 consumed one-shot retry request scan；新增 reconstructed-plan、pre-consume retry、registered production owner actual-scan gradient 与 terminal commit frontier retirement 的直接 CPU/static witnesses。定向 pytest=`28 passed`；Ruff、py_compile、child/root diff-check PASS。无真实 I/O、GPU、native forward/backward、optimizer step、训练、评测、推理或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Segment Production ABI CPU/static Implementation evidence closure v2（2026-09-11）
+
+- formal root SHA：`3f4c76fdfdc70564d40c4e3f66a922924968c315`
+- child/Gitlink SHA：`218484efbd1363633c379a21f82499a237267ca9`
+- independent pair check：`git ls-tree 3f4c76fdfdc70564d40c4e3f66a922924968c315 cosmos-framework` 精确解析为上述 Gitlink；child 已推送 `origin/v2`。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION`
+- supersedes：`74baed85688c84aa42e9eb3fb00077665267b588` / `b1a138b79bdc2d4dc40b978ea34094512a07d378`；其 MM 批准、Kimi/ChatGPT 均为仅 evidence 的 `REQUEST_CHANGES`，并明确无 production blocker。
+
+本轮严格 tests-only，仍只修改已批准白名单内的 `canonical_segment_production_adapter_test.py` 与 `canonical_segment_production_integration_test.py`：
+
+1. registered-owner witness 不再手工组装 owner；它以 CPU/meta lightweight mock 走实际 `OmniMoTModel.build_net()` active-TTT branch，取得其已注册的 `net.local_memory_runtime.evidence_encoder/ttt_core`，经 `_canonical_production_adapter_from_model()`、真实 admitted `adapter.scan()` 与 local-token backward，逐个断言 exact registered encoder 参数及 K/Q/V/slot-query/W0 的 finite gradients。
+2. scheduler admission 以真实 scheduler/frozen plan 覆盖 foreign scheduler、copied member 和 public reconcile 后 stale live frontier；retry 覆盖 capability mint 后 stale consume、copied request、consumed request duplicate scan、post-backward retry。每个 pre-scan reject 均 instrument production `core.scan_segment_masked_encoded_many` seam，并断言零进入、scheduler snapshot/frozen transition、frontier、transaction 与 scan bookkeeping 均不变；没有通过私有容器制造 authority。
+
+CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 34.69s`；目标 Ruff、两文件 `py_compile`、child/root `git diff --check` PASS。没有真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native production forward/loss/backward、optimizer/scheduler step、runtime sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请只核验前一 review 的 HIGH-1 exact production registered owner graph witness、HIGH-2 complete scheduler/retry fail-closed zero-core matrix 是否关闭，回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_SEGMENT_PRODUCTION_ABI_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭本 CPU/static Gate；不授权上述任何真实执行。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
