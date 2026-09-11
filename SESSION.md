@@ -5,7 +5,7 @@
 - 目的：杜绝以旧 fetch、口头提示、相似 review、tmux 输入框或跨审核者/跨 SHA 线索拼接出审核结论。
 - 修改：根 `AGENTS.md`、`.codex/skills/psm-execution-governance/SKILL.md` 与 `MEMORY/DECISIONS.md` 增加冻结审核者名册、同轮观察凭证、同 SHA 三方 final verdict 推进令牌，以及无令牌 fail-closed 规则。
 - 验证：`git diff --check` PASS；只改治理文本，未运行项目代码、未读取/写入模型、数据或训练产物。未触碰 `cosmos-framework`、`artifacts/g0/latent_cache_route_probe/**`、`outputs/**` 或 `tmp_escape*`。
-- 下一步：任何后续审核状态判断或实现前，先生成当前 formal pair 的完整观察凭证；无推进令牌不得整改或执行。提交：未提交。
+- 下一步：任何后续审核状态判断或实现前，先生成当前 formal pair 的完整观察凭证；无推进令牌不得整改或执行。提交：`ef7de26ce481c32cb9e0b87fa6f9288a0402be32`。
 
 ## Root Gitlink Authority Source-audit Tooling（2026-09-12，IN_PROGRESS）
 
