@@ -645,6 +645,21 @@ current child 已包含获准 six-file synthetic CPU/static 合同，未制造�
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
 
+## 审核申请：Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation lineage-identity remediation closure（2026-09-12）
+
+- formal root SHA：`eeec46d5c5667d7c3a30d9637025cc0819aeb468`
+- child/Gitlink SHA：`d0d73338ca1b0e8ae350d447181a804308241390`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION`
+- 前轮：`1f5eb1cbf172893a1640008a15d23e878ca73ed3`/`11f9adf7fa209805ef6437145cf7a0dbf1625697` 收齐 ChatGPT `REQUEST_CHANGES`、MM/Kimi `APPROVE_TO_CLOSE`；本轮只整改 ChatGPT 的 owner-derived lineage、versioned/digested optimizer/scheduler identity、feature-version live ABI 三项 HIGH。
+
+child delta 仍精确限于 `config_checkpoint_contract.py` 与 `config_checkpoint_contract_test.py`。BaseIdentity 现在仅接受 `LineageOwnerIdentity`：full child revision、manifest digest，以及 exact versioned source descriptor（`source_kind`、immutable `source_id_sha256`、`source_manifest_sha256`、`source_sha256`）；checkpoint fingerprint 从 descriptor canonical JSON SHA-256 派生。optimizer/scheduler identities 现在均具有 exact schema、canonical JSON SHA-256、schema/digest validation，并冻结 named group/index/member/hyperparameter/member-state-schema 和 scheduler optimizer binding/constructor/state schema。`causal_visual96_executed_action10_v1` 现在在 mutation 前绑定 encoder visual=96/action=10 输入、canonical state/dt/age disabled feature config，及既有 evidence/core/projector ABI。
+
+新增 direct witnesses：syntactically-valid foreign child lineage payload reject、descriptor missing lineage fields reject、identity SHA/schema drift reject、visual/action/live legacy feature config drift reject；`config_checkpoint_contract_test.py`=`14 passed in 32.93s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。
+
+未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；child `uv.lock`、examples 与 results 遗留未触碰。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
 ## 审核申请：Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation remediation closure（2026-09-12）
 
 - formal root SHA：`1f5eb1cbf172893a1640008a15d23e878ca73ed3`
