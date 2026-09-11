@@ -50,3 +50,40 @@ Authorized next action:
 Not authorized: Gate closure, public/real runtime activation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real model forward/loss/backward, real optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical native runtime CPU/static closure remediation v3 APPROVED
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `d29889522994fdc947ef59e8ee9cd173c3c196b5`
+- child/Gitlink SHA: `d96406e3b273d35e328c88142b36ef2eae895d2c`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_cpu_static_implementation_d298895_d96406e.md`
+
+Canonical review commit:
+`e23bacc2baf0c4745fa782481894d93d801fe638`
+
+Current blockers: `0`.
+
+Closure:
+- the prior pair's only remaining blocker was Evidence-only;
+- the normal `(2,5), N_window=7, GA_effective=2` witness now processes both frozen members in order through exact production request/scan/native-capability construction and `_run_canonical_native_backward()`;
+- both members use non-zero auxiliary loss and exact plan-owned objectives; the witness records exactly two scale/backward calls total, one per member;
+- the production dispatcher performs post-backward `prepare_commit() -> commit_success()` before returning, and the shared normal transaction ends with `completed_members == (0,1)`;
+- the previously accepted `(5,3)` recovery dispatcher witness and typed-authority / incomplete-receipt negative coverage remain unchanged;
+- no production code changed in this remediation and no new contract violation was found.
+
+Authorized next action:
+- close only this exact synthetic CPU/static implementation Gate and proceed only to a separately frozen/approved next Gate.
+
+Still not authorized: public/real runtime activation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real model forward/loss/backward, real GradScaler/optimizer/scheduler lifecycle, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair or canonical review.
