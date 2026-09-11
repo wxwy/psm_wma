@@ -183,3 +183,11 @@
 - 决策：审核状态只能由同一轮、可复核的远端锁定和三方 exact-pair 证据得出。每轮必须记录 CST 时间、`before_head`、远端 advertised SHA、fetch/fast-forward、完整新增提交范围、formal root/child、ChatGPT review 精确检索、MM/Kimi capture 与逐方状态；任一检查失败即为“状态未知”，不可表述为无回复或审核齐全。审核固定五分钟轮询，收到用户回复提示时立即额外检查。ChatGPT 的正式事实仅来自 `docs/collab/chatgpt/reviews/` 的 exact formal pair；MM/Kimi 仅来自已提交且锚定该 pair 的 tmux 最终 verdict。
 - 覆盖范围：覆盖所有依赖旧轮询结果、远端提交线索、Inbox 文本或输入框内容进行审核状态判断的做法；项目 `AGENTS.md` 与治理技能需保持同一节奏和字段。
 - 原因：此前出现未在本轮 fetch/精确扫描/回读完成前就断言“无新审核”或“审核已齐”的失真；把判断前提、失败语义和审计字段固定下来，才能让 Gate 推进可追溯且不可由记忆替代。
+
+## D020 审核推进令牌与名册冻结
+
+- 日期：2026-09-12
+- 状态：生效（用户要求）
+- 决策：每一审核申请在 `SESSION.md` 冻结 ChatGPT、MM、Kimi 的身份/pane 名册；任何替换必须由用户明确指定，并废弃旧观察、重新送达。审核状态只由同轮观察凭证产生；三位冻结审核者对完全相同 formal root/child 的 final verdict 同时存在时才形成推进令牌。全批准令牌仅授权申请中明确的范围；含 `REQUEST_CHANGES` 的令牌仅授权汇总意见；其余情形无令牌且 Gate 保持 `REVIEW`。用户转述、远端提交、Inbox、相似 review 文件、旧 capture 和 tmux 输入框仅为重新检查线索，不能成为审核事实。
+- 覆盖范围：任何依靠跨时间、跨 SHA、跨审核者或未送达消息拼接出“已齐/可推进”的做法；没有推进令牌时，禁止整改、实现、提交、执行、训练和关闭 Gate。
+- 原因：仅规定检查步骤还不足以防止把旧观察、线索和不同审核者的结论拼接成推进判断。以名册、凭证和令牌三者同源互锁，使审核事实可机械复核并 fail-closed。

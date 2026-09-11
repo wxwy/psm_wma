@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## 审核治理互锁加固（2026-09-12，DONE）
+
+- 目的：杜绝以旧 fetch、口头提示、相似 review、tmux 输入框或跨审核者/跨 SHA 线索拼接出审核结论。
+- 修改：根 `AGENTS.md`、`.codex/skills/psm-execution-governance/SKILL.md` 与 `MEMORY/DECISIONS.md` 增加冻结审核者名册、同轮观察凭证、同 SHA 三方 final verdict 推进令牌，以及无令牌 fail-closed 规则。
+- 验证：`git diff --check` PASS；只改治理文本，未运行项目代码、未读取/写入模型、数据或训练产物。未触碰 `cosmos-framework`、`artifacts/g0/latent_cache_route_probe/**`、`outputs/**` 或 `tmp_escape*`。
+- 下一步：任何后续审核状态判断或实现前，先生成当前 formal pair 的完整观察凭证；无推进令牌不得整改或执行。提交：未提交。
+
 ## Root Gitlink Authority Source-audit Tooling（2026-09-12，IN_PROGRESS）
 
 - 第 4 次 remediation closure 审核观察凭证（2026-09-12 02:33:56 CST）：formal pair=`12e07051ff74ecdb46d67aafdd9883eecfac8e7a`/`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=d0e61a0136f1f13ba4f53f41b5ad281f41525942`；`git fetch origin V2` 成功；远端 advertised=`303c007cdf736efe9075912a60f7f014cec7a011`；相对 before 的新增范围为空（本地 `d0e61a01` 是 remote `303c007c` 之上的未推送治理提交，故 `merge --ff-only` 不适用，未覆盖本地提交）。ChatGPT exact-review 检索命令 `rg -l '12e07051ff74ecdb46d67aafdd9883eecfac8e7a' docs/collab/chatgpt/reviews/` 命中 `docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_implementation_12e0705_93a89ba.md`，formal verdict=`REQUEST_CHANGES(tools/g0/audit_r09_b_ttt_root_gitlink_authority.py:283)`，两项 HIGH（dangling ancestor symlink；冻结 witness matrix 未完整直测）；MM `mm:0.0` capture 为同 pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT`（02:29:39）；Kimi `kimi:0.0` capture 为同 pair `REQUEST_CHANGES(tools/g0/test_audit_r09_b_ttt_root_gitlink_authority.py:297)`（缺 publication/raw tree/publication schema/relative path/child tree/Git stdout/child substitution families direct witness）。三方 final verdict 已齐且包含 REQUEST_CHANGES；Gate 维持 `REVIEW`。下一步只能合并两份 change request 并在批准的两 root tooling 文件内最小整改；未运行真实 audit/I-O/GPU/训练。

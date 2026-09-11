@@ -17,6 +17,14 @@ description: 管理 PSM-WMA 的审核申请、三方批准门、执行者边界�
 - 审核等待、远端暂未回复、tmux 暂无新行都不是 `blocked`。任务保持 `REVIEW` 并持续轮询；只有同一外部阻塞已连续三轮且没有任何安全的本地检查或修复可做时，才可标记 `blocked`。
 - 每次向用户显示审核申请时，首行固定为：`Awaiting review — 🚨 审核申请已发出（根仓 <hash>；子模块/Gitlink <hash>）`；不得省略 `Awaiting review`。
 
+## 审核状态原子互锁
+
+- 每个申请必须在 `SESSION.md` 冻结三位审核者与各自 pane；未经用户明确指定不得替换。替换会使旧观察失效，必须重新送达和完整检查。
+- 先在 `SESSION.md` 写本轮观察凭证，才能向用户使用任何审核状态词。凭证必须含轮次、时间、formal root/child、`before_head`、远端 advertised SHA、fetch/merge、新增提交、ChatGPT exact-pair 检索、两个 pane capture 与逐方状态。
+- 只有最新同轮凭证中冻结名册三方对同一 pair 均有 final verdict，才存在推进令牌：全 `APPROVE` 仅授权申请明确范围；任一 `REQUEST_CHANGES` 仅允许汇总；其余一律没有令牌、保持 `REVIEW`。
+- 用户转述、远端新增提交、Inbox、相似文件名、旧 review/capture 与 tmux 输入框都只是线索，只能触发重新完整检查，绝不可直接作为送达、回复、verdict 或推进依据。
+- 没有推进令牌时，禁止整改、编码、提交、执行、训练或关闭 Gate；仅可修复审核链路、记录失败，或撰写不依赖既有审核结论的 docs-only 设计。
+
 ## Inbox rollover
 
 - canonical live Inbox 固定为 `docs/collab/chatgpt/CODEX_INBOX.md`；Codex 始终先读这个路径。
