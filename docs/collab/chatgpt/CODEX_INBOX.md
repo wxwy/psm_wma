@@ -821,6 +821,17 @@ v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本�
 
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭 root CPU/static tooling Gate；不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
 
+## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation exact-ls-tree-framing / canonical-CLI remediation closure（2026-09-12）
+
+- formal root SHA：`73a50917c1329be7893263967d7682603bf0ef0b`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
+- 对象仍仅两 root tooling 文件。
+
+前轮 `dcd08eb...`/`93a89ba...` 三方 verdict 已齐：ChatGPT `REQUEST_CHANGES`（ls-tree framing、argparse escape），MM/Kimi approve。本轮仅两文件整改：`parse_ls_tree()` 要求恰一条、单 LF、无 CR（missing-LF/CRLF/extra-LF=`TREE_ENTRY_FORMAT`）；无 help 的受控 `AuditArgumentParser` 将 missing/unknown/help 参数在任何 audit 前变为 canonical failure JSON/exit=3、无 stderr。临时 fixture direct witnesses 覆盖 Gitlink/publication × 三种 framing、missing/unknown CLI，均断言 ordered evidence/exit/zero mutation；CLI test 断言不调用 audit。CPU/static=`18/18 PASS`，Ruff/py_compile/diff-check PASS。
+
+未创建 publication、未运行真实 audit/I-O/GPU/训练、未改 child。请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；批准仅关闭该 CPU/static tooling Gate，不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 仅写入 `docs/collab/chatgpt/reviews/`。
+
 ## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation non-finite / exact-rev-parse remediation closure（2026-09-12）
 
 - formal root SHA：`445eba6c14cb484dd113b2994ceee07822bcec69`
