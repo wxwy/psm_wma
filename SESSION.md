@@ -1,5 +1,9 @@
 # 当前协作状态
 
+## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，IN_PROGRESS）
+
+- `G0-R09-B-TTT-V035-CANONICAL-SEGMENT-PRODUCTION-ABI-CPU-STATIC-IMPLEMENTATION` 的 P1 v0.3 formal design 已批准；本轮最小整改 child=`55d6b330bf386249404a35f74498e409cf6a8196` 已推送 `origin/v2`：`canonical_segment_production_integration_test.py` 的 registered-object fixture 从旧 `local_history_runtime.encoder/recurrent_backend` 迁移为生产实际的 `local_memory_runtime.evidence_encoder/ttt_core`，并断言替换 core 与旧 runtime 结构均 fail-closed。定向 CPU pytest=`1 passed in 40.14s`，未运行真实 I/O、GPU/CUDA、torchrun、训练、评测、推理或 LIBERO4IN1。Gate 保持 `IN_PROGRESS`；下一步核对 P1 v0.3 尚缺的 activation、fp32 frontier 与 attempt-1 typed lineage证据，完成后才可申请新的 closure review。
+
 ## Feature / Config / Optimizer / Checkpoint CPU/static Implementation（2026-09-11，DONE）
 
 - formal implementation-design pair=`93529fb3762efa8425f50f8a214615310fe6e388`/`d96406e3b273d35e328c88142b36ef2eae895d2c` 的三方结论已核实：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_feature_config_optimizer_checkpoint_cpu_static_implementation_design_93529fb_d96406e.md`（blockers=0）、MM `%1`、Kimi `%2` 均为 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`。设计 Gate 关闭，实际 six-file synthetic CPU/static implementation 已认领。
