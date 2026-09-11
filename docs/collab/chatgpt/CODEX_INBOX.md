@@ -790,3 +790,14 @@ child delta 仍严格仅两文件。CPU evidence：pytest=`15 passed in 33.73s`�
 本轮不创建实际 publication、不对当前根仓执行 audit、不改 child/runtime，也不做真实 checkpoint/data/cache I/O、DCP、GPU、torchrun、forward/loss/backward、step、sidecar、训练、评测、推理或 LIBERO4IN1。请重点审查 CLI transport-vs-authority 边界、Git raw-object commands、fail-closed output 语义和 fixture 覆盖是否足以授权后续两文件 CPU/static 实现。
 
 请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Root Gitlink Source-audit Implementation Design v0.2 remediation（2026-09-12）
+
+- formal root SHA：`e572934e6bbe5cabf2085fdf23aece8e2f0f2c20`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_root_gitlink_authority_source_audit_implementation_design_v0.2.md`。
+
+v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本轮仅 docs-only 整改：冻结唯一 `/usr/bin/git`、binary/version/hash、无 caller Git context 的 explicit sanitized env、`GIT_NO_REPLACE_OBJECTS` 与 root/child transport；冻结 exact command identity、12-step PASS/FAIL/SKIPPED evidence schema、failure stdout schema与 failure-no-output-mutation，并新增 hostile Git env/replace/config 与 noncanonical publication raw-byte witnesses。无代码、真实 audit、checkpoint/data/cache I/O、GPU 或训练。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 仅写入 reviews。
