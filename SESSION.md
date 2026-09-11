@@ -27,6 +27,7 @@
 
 - 针对“未在本轮拉取、精确 SHA 检索和 pane 回读完成前即判断审核状态”的流程缺口，已同步更新根 `AGENTS.md`、项目治理技能和 `MEMORY/DECISIONS.md`（D019）。新规则统一审核等待为五分钟轮询，并要求每轮记录远端锁定、formal pair、ChatGPT exact review、MM/Kimi capture 与逐方状态；任一步失败只能写“检查失败/状态未知”，不能推断为未回复或已齐。
 - 验证：仅规则文本变更，`git diff --check` PASS；未触碰 `cosmos-framework` 的未提交实现或训练遗留。下一步：提交该独立根仓治理记录；提交：未提交。
+- 补强（2026-09-12）：在根 `AGENTS.md` 增加“审核状态原子互锁”。根因是历史观察、口头提示或未确认送达曾被错误地当作本轮事实；新规将观察凭证、送达双回执、失败闭锁、实施前机械复核和用户汇报同源化设为硬前置。任何链路缺失只能报告“检查失败/状态未知”，并禁止整改、实现或执行。仅规则文本变更；`git diff --check` PASS；未触碰 child、真实 I/O/GPU/训练或遗留产物；提交：未提交。
 
 ## Canonical Native Feature / Config / Optimizer / Checkpoint Refreeze Design（2026-09-11，DONE）
 
