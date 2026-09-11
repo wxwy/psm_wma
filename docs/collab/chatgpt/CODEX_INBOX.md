@@ -168,3 +168,15 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 验收：只一次 freeze/admission；attempt-0 的唯一 suffix recovery 不 second-admit/refreeze/resample；attempt-1 terminal；无 second `/GA`/backward；任何 foreign/stale/count/prefix/legacy/scaler/optimizer 缺口 fail closed。禁止生产 native forward、真实 I/O、GPU、torchrun、optimizer step、checkpoint/sidecar、训练、评测、推理、LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权白名单 synthetic CPU/static implementation；正式 verdict 仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Native Runtime CPU/static Implementation Design v0.2 remediation（2026-09-11）
+
+- formal root SHA：`c13eaabee8b72b277bfa2ff110e2d1a62efbac7c`
+- child/Gitlink SHA：`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_cpu_static_implementation_design_v0.2.md`
+- supersedes：`9d2c67c9481747dca23cb72f4822e6047e743543` v0.1 的 ChatGPT HIGH-1/2。
+
+整改仅两项：(1) 将 `canonical_segment_adapter_scheduler.py` 及其 test 纳入原六文件白名单，并冻结公开 `derive_suffix_recovery(member_index)` + typed `CanonicalSuffixRecovery`；已 committed prefix 后的 exact suffix、recovery N_window/GA_effective、one-shot consumption 与 original reconciliation receipt 全部 object-bound，禁止 private reconstruction；(2) normal `(2,5)` 与 recovery suffix `(5,3)` 都要求非零 auxiliary、精确 numeric formula并 spy无 ordinary `/grad_accum_iter`/第二 `/GA`/第二 backward。
+
+请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。只授权八文件 synthetic CPU/static implementation；不授权真实 runtime/I-O/GPU/forward/backward/optimizer/sidecar/训练/评测/推理/LIBERO4IN1；正式 verdict 仅写 `docs/collab/chatgpt/reviews/`。
