@@ -13,43 +13,38 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `fc6c8bb27993352d7c18e9143d6d61ebc067b7ce`
+- immediate prior live blob SHA: `59a11f1c03f154576438612ed9983cf9cc762e5c`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Checkpoint Synthetic CPU/static Remediation Implementation REQUEST_CHANGES
+## CODEX NOTICE — Canonical Native Checkpoint Synthetic CPU/static Remediation Implementation CLOSED
 
 Formal pair:
-- root implementation SHA: `8d1a667fa504f316a6f11561c639b1147ecfd16e`
-- child/Gitlink SHA: `18328aeed1e6c541fadd9d9063903dee585d79a5`
+- root implementation SHA: `69f028b2395d2f5dc6f36ac27803eb262b537e3c`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CHECKPOINT-SYNTHETIC-CPU-STATIC-REMEDIATION-IMPLEMENTATION`
 
 Verdict:
-`REQUEST_CHANGES(cosmos_framework/model/generator/mot/config_checkpoint_contract.py:120)`
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_SYNTHETIC_CPU_STATIC_REMEDIATION`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_checkpoint_synthetic_cpu_static_remediation_implementation_8d1a667_18328ae.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_checkpoint_synthetic_cpu_static_remediation_implementation_69f028b_93a89ba.md`
 
 Canonical review commit:
-`48b4dc27bd59f0573e75b7cc183a3180ebf06713`
+`d2e966c3f8dc5c3b531bf6819ae1d927b527eaf9`
 
-Current blockers: `2 HIGH`: Production `1`; Evidence-only `1`; Design/Authority `0`.
+Current blockers: `0`. Production blockers: `0`. Design/Authority blockers: `0`. Evidence-only blockers: `0`.
 
-Positive findings retained:
-- formal root resolves exactly to requested child;
-- child delta from approved baseline is one commit and exactly the approved two-file whitelist;
-- exact five-key `synthetic_cpu_static_v1` is present and contains no Git provenance;
-- stale/current child-Git mappings and `root_gitlink_authority_v1` mappings fail closed;
-- caller-supplied expected BaseIdentity remains removed;
-- existing FeatureConfig/live ABI, optimizer/scheduler versioned identity, pristine progress, detached-shadow, and quiescent admission remain intact.
+Closure:
+- prior Production HIGH is closed: fixture descriptor -> manifest -> source are explicit versioned in-memory definitions with canonical JSON/SHA-256 derivation, and the targeted test independently recomputes all three digests plus a definition-drift rejection witness;
+- prior Evidence-only HIGH is closed: identity/domain reject witnesses snapshot and reassert slow tensor bytes, optimizer/scheduler state, iteration identity, Parameter/module/adapter/frontier/scheduler identities, frontier state, pending authority container identity/content, and frozen-transition identity/content;
+- child delta from the approved design baseline remains exactly the approved two-file whitelist;
+- exact five-key `synthetic_cpu_static_v1` remains fixture provenance only, with no child/root Git provenance;
+- legacy child-Git mappings and `root_gitlink_authority_v1` mappings remain fail-closed, with no caller identity injection.
 
-Required remediation:
-1. Production HIGH: `_synthetic_fixture_authority()` currently uses placeholder 64-hex literals (`"d"*64`, `"a"*64`, `"b"*64`). The approved design requires fixture descriptor/manifest/source digests to be derived from explicit module-internal **versioned canonical fixture definitions**. Define those deterministic in-memory definitions and derive the three SHA-256 values from their canonical content; add independent recomputation/drift witnesses.
-2. Evidence-only HIGH: identity/domain rejection witnesses currently do not directly prove the full frozen zero-live-mutation set. Add direct parameterized evidence with live optimizer+scheduler and snapshots asserting unchanged slow tensors, optimizer/scheduler state, iteration, Parameter/module/adapter object identities, and adapter/frontier/pending authority for synthetic digest/schema/key drift, legacy Git mapping, and production-domain rejection.
+Still not authorized: real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, native real forward/loss/backward, optimizer/scheduler stepping, runtime sidecar/resume, single-GPU smoke, matched smoke, training, evaluation, inference, LIBERO4IN1, or any `root_gitlink_authority_v1` implementation/simulation.
 
-Reported `14 passed` plus Ruff/py_compile/diff-check are supporting evidence only and do not close the above source/evidence gaps.
-
-Still not authorized: any other child file, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, native forward/loss/backward, optimizer/scheduler stepping, runtime sidecar, single-GPU smoke, matched smoke, training, evaluation, inference, LIBERO4IN1, or any `root_gitlink_authority_v1` implementation/simulation.
+Per the approved lineage-authority progression, production/root-Gitlink provenance remains deferred to the separate root-owned Gitlink authority source-audit/design/implementation sequence.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
