@@ -32,7 +32,9 @@ checkpoint_source_descriptor_sha256
 
 `schema="root_checkpoint_source_evidence_record_v1"`，`source_kind="checkpoint_source_manifest_v1"`；其余四项均为 64 位 lowercase hex string。`source_evidence_record_sha256` 只定义为该 raw canonical bytes 的 SHA-256。未知/缺失 key、重复语义、非 string、upper-case hex、路径、URL、mutable ref、时间戳、环境变量、caller label、bool 或非 canonical bytes 均为 FAIL。
 
-record 的四项 digest 必须由独立、已批准的 immutable source-evidence collection Gate 的 formal output 导出；producer 不得从 current working tree、child、环境、caller 参数或 publication payload 补值、选择或替换来源。该 collection Gate 的 formal root revision 与 record blob 均须能从 future closure 的 formal root tree lookup 重新得到。
+record 的四项 digest 必须由独立、已批准的 immutable source-evidence collection Gate 的 formal output 导出；producer 不得从 current working tree、child、环境、caller 参数或 publication payload 补值、选择或替换来源。
+
+在任何 controlled-write execution design 前，必须依次建立并关闭 `IMMUTABLE-SOURCE-COLLECTION-DESIGN`、`IMMUTABLE-SOURCE-COLLECTION-EXECUTION-DESIGN`、`IMMUTABLE-SOURCE-COLLECTION-CLOSURE`。collection closure 的唯一 future artifact path 为 `docs/build/PSM-WMA_immutable_source_collection_receipt_v1.json`，其 exact canonical JSON key set 为 `schema,collection_formal_root_revision,collection_artifact_path,collection_artifact_schema,collection_artifact_sha256,collection_artifact_blob_native_oid,immutable_source_identifier,source_manifest_sha256,source_input_sha256,checkpoint_source_descriptor_sha256,canonical_model_config_sha256,canonical_model_config_artifact_path,canonical_model_config_artifact_sha256`。`schema="immutable_source_collection_receipt_v1"`；formal revision/reachable blob OID 与 all SHA values 必须由 closure formal root 的 tree/blob lookup 重算。该 receipt 不替代六键 record；它是唯一可重建的外部 collection provenance。future controlled-write producer 只可由该 reviewed receipt 的 formal root/path/blob/raw digest 导出 record 四项值及 config authority。
 
 ## 3. package 与 witness 的闭合关系
 
@@ -50,6 +52,8 @@ source_evidence_record_schema
 
 值必须分别为 `root_publication_input_package_v1`、该 closure formal root 的 reachable lowercase Git SHA-1、固定 path、record raw-bytes SHA-256 和 `root_checkpoint_source_evidence_record_v1`。nested object 完整继承 source-audit design v0.3 §4--§5；package 内 descriptor canonical digest 必须等于 record 的 `checkpoint_source_descriptor_sha256`。
 
+`canonical_model_config` 只能从 receipt 所绑定的 `canonical_model_config_artifact_path` raw canonical bytes 读取，重算后必须等于 `canonical_model_config_artifact_sha256` 与 receipt 的 `canonical_model_config_sha256`；不得接受 caller supplied mapping、environment 或工作树选择。
+
 同一 package 必须生成 exact 七键 external witness：
 
 ```text
@@ -63,6 +67,8 @@ source_evidence_record_schema
 ```
 
 `schema="root_publication_input_witness_v1"`；三个 digest 必须逐字等于各 canonical bytes 的 SHA-256，revision/schema 必须与 package 一致。witness raw bytes SHA-256 和 Git blob OID 必须由 closure formal root 外部记录；不得写入 record、package 或 future publication payload，避免 self-reference。
+
+post-commit 的唯一 non-circular closure receipt path 是 `docs/build/PSM-WMA_source_evidence_postcommit_closure_receipt_v1.json`，但它必须存在于**下一独立 receipt root**，不能在 record formal root 内。其 exact key set 为 `schema,source_evidence_formal_root_revision,source_evidence_record_path,source_evidence_record_blob_native_oid,source_evidence_record_sha256,input_package_sha256,input_witness_sha256,canonical_model_config_sha256,checkpoint_source_descriptor_sha256,witness_blob_native_oid`，`schema="source_evidence_postcommit_closure_receipt_v1"`。receipt root 必须由独立 review 绑定其 parent=source-evidence formal root；所有 revision/OID/raw digest 均通过 receipt-root tree 与 parent-root tree lookup 重算。后续 materializer 只能接收该 reviewed receipt 的 formal root/path/blob identity，绝不接收 caller supplied package/witness。
 
 ## 4. future controlled closure transaction
 
@@ -78,9 +84,11 @@ source_evidence_record_schema
 
 ```text
 三方 APPROVE_TO_DESIGN
+  -> immutable-source collection design/execution/closure（独立三方 Gate）
   -> 独立 source-evidence controlled-write execution design
   -> 三方 APPROVE_TO_WRITE_SOURCE_EVIDENCE
   -> 一次受控 record closure
+  -> 独立 post-commit receipt closure/review
   -> docs-only publication materializer/verifier implementation design
 ```
 
