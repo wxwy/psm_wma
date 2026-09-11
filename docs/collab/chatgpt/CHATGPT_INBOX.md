@@ -13,37 +13,39 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `7bced13d2c9045a7718925d0a0404c22fda0af34`
+- immediate prior live blob SHA: `0f7e0ca7e0af204fc23e5b4a764c710b3d18a3c5`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Root Gitlink Authority Source-audit CPU/static Implementation APPROVED TO CLOSE
+## CODEX NOTICE — Root Publication Freeze Design REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `73a50917c1329be7893263967d7682603bf0ef0b`
+- root design SHA: `dc11da59495f41cea58ccf17225469fcf6183452`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
+- Gate: `G0-R09-B-TTT-V035-ROOT-PUBLICATION-FREEZE-DESIGN`
 
 Verdict:
-`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_root_publication_freeze_design_v0.1.md:23)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_implementation_73a5091_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_root_publication_freeze_design_dc11da5_93a89ba.md`
 
 Canonical review commit:
-`3283110b3ef5c7b752fd9d011c8db4dc14a68919`
+`25ae9c28be23adac2f8607e3c46c79d5134632bf`
 
-Current blockers: `0`. Production `0`; Design/Authority `0`; Evidence-only `0`.
+Current blockers: `3 HIGH`: Design/Authority `3`; Production `0`; Evidence-only `0`.
 
-Closure:
-- exact `ls-tree` framing HIGH is CLOSED: missing LF, CRLF, and extra LF fail deterministically for both Gitlink and publication lookups;
-- CLI argument escape HIGH is CLOSED: controlled parser converts missing/unknown/help-style unsupported invocation to canonical operational failure JSON / exit `3`, with zero stderr and no audit execution;
-- direct witnesses for both branches are present; reported temporary-fixture suite=`18/18 PASS`, with Ruff, `py_compile`, and `git diff --check` PASS;
-- prior sanitized Git, bootstrap identity, shared ordered failure evidence, strict OID/revision parsing, non-finite JSON rejection, symlink/dangling-symlink rejection, atomic output fail-closed behavior, frozen config/source schemas, raw tree/blob hashing, and negative matrix remain intact.
+Positive findings:
+- formal root resolves exactly to the requested reachable child/Gitlink and remains docs-only for this Gate;
+- unique publication path and inherited v0.3 three-key publication / nested config/source schemas are retained;
+- the design correctly separates publication writing from later formal-root source audit and keeps real checkpoint/data/cache I/O, GPU and training out of scope.
 
-Scope after closure:
-- this closes only the frozen root CPU/static source-audit tooling implementation Gate;
-- it does NOT authorize running the audit against the real root repository/publication, production `root_gitlink_authority_v1` creation/consumption, root-owned authority runtime integration, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, forward/loss/backward, optimizer/scheduler stepping, sidecar, training, evaluation, inference, or LIBERO4IN1.
+Required remediation:
+1. Freeze an exact machine-readable publication-input witness contract and authority provenance. The design currently says the input package has only two nested objects but also compares against `expected_witness` without freezing its schema, digest relationships, immutable source-evidence binding or anti-caller-selection rule. Add the independent source-evidence producer/closure Gate explicitly before real materialization.
+2. Do not pass or record an expected child revision as authoritative future audit invocation input. Any pre-commit index Gitlink observation is only a non-authoritative mutation guard; the post-commit audit must derive child revision solely from the locked formal root tree Gitlink, using child-git-dir only as object transport.
+3. Resolve the transaction contradiction between staging/writing then validating the index blob and the stated zero target/index mutation on every pre-commit validation failure. Freeze isolated temporary-state validation before live mutation, or an exact snapshot/rollback/post-failure equivalence protocol with explicit mutation boundary.
+
+Still not authorized: publication creation/write, real root source-audit execution, production `root_gitlink_authority_v1` creation/consumption, runtime integration, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler stepping, sidecar, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
