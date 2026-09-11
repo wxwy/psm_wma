@@ -2,7 +2,7 @@
 
 ## Canonical Native Consumer Runtime CPU/static Implementation（2026-09-11，REVIEW）
 
-- 上游 formal=`86b321aaf3a4f96afbd427060bcceb5f39a0dc98`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 三方批准。首次 closure pair=`64858d3bc76f3d0a8d755a02bd1dd7ab213499ae`/`4dd2eed00a1d9d6e2b28716c106fd9edfe940fcc` 收齐 ChatGPT 两项 HIGH、MM/Kimi approve；最小整改 child=`9368b0b5df9ddc76eed237c80ffeff40fe46a3ef` 已推送 `origin/v2`。仅改 `trainer/__init__.py`、`canonical_segment_production_integration_test.py`：after-forward/capture-only/before-backward 均 disposition exact capability/scan 并 terminalize；补 DataParallel/FSDP/initialized group/world-size≠1 production-entry reject witnesses。联合定向 pytest=`48 passed in 31.99s`；target Ruff（忽略既有 I001）/py_compile/child-root diff-check PASS。下一步：根仓 Gitlink/记录提交后按新 pair 重新申请三方 closure review；禁止真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、真实 native workload、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+- 上游 formal=`86b321aaf3a4f96afbd427060bcceb5f39a0dc98`/Gitlink=`08775da2e73e352ebb1497548de5909baab8c2dc` 三方批准。remediation pair=`748a6ad4`/`9368b0b5` 收齐 ChatGPT evidence-only HIGH、MM/Kimi approve；二次最小整改 child=`f49f568923555fe15efe546925cbe6cc9140170e` 已推送 `origin/v2`，仅补 project DDP 与 trainer 实际 `FSDPModule` identity 的 direct production-entry sentinel witnesses。联合 pytest=`50 passed in 32.91s`；target Ruff（忽略既有 I001）/py_compile/child-root diff-check PASS。下一步：根仓 Gitlink/记录提交后按新 pair 重新申请三方 closure review；禁止真实 I/O/GPU/训练。
 
 ## Canonical Native Consumer Runtime Implementation Design（2026-09-11，DONE）
 
