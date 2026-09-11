@@ -263,3 +263,18 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 仅 docs-only remediation：v0.2 强制 restore 在所有 config/base/inventory/optimizer/scheduler/iteration/runtime admission preflight 成功前零 mutation；live frontier、pending authority、open transaction/recovery receipt 一律 quiescent-admission reject；`W_bar_0/theta_K/Q/V/slot query` 显式绑定到现有 `w0_fast_*`、`key/query/value_proj.*`、`slot_queries`，并区分 unregistered runtime `ContinualTTTFastState`。新增 late reject、live authority reject、fresh success、semantic-key inventory四类 CPU/static witnesses。
 
 请回复 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权 child/I-O/GPU/optimizer step/sidecar/训练。
+
+## 审核申请：v0.3.5 Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design v0.1（2026-09-11）
+
+- formal root SHA：`93529fb3762efa8425f50f8a214615310fe6e388`
+- child/Gitlink SHA：`d96406e3b273d35e328c88142b36ef2eae895d2c`
+- independent pair check：`git ls-tree 93529fb3762efa8425f50f8a214615310fe6e388 cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_feature_config_optimizer_checkpoint_cpu_static_implementation_design_v0.1.md`。
+- 前置：refreeze design v0.2 的 formal `ca08bebf.../d96406e...` 已获三方批准；其 composite contract 是本设计唯一 authority。
+
+请只审核该 exact pair 和 docs-only v0.1。它将实现范围锁为六个 child 文件：config contract/其 test、model config、Omni registration/其 test及既有 owner test 的静态 key 断言；禁止修改 local-evidence/runtime authority/adapter/scheduler/packer/producer/trainer/checkpoint backend/recipes。它要求 active-TTT 唯一 registered root 从旧 `local_history_runtime` 原子迁移到 `local_memory_runtime.evidence_encoder/ttt_core`，不留下 legacy `StatelessLocalReplayReadout` 或 recurrent owner 的第二 trainable copy；冻结 exact slow inventory/four selectors、K=1 config identity、32->2048 per-token projection、preflight-first in-memory restore/fresh-quiescent admission，以及九项 direct CPU/static witnesses。
+
+请重点核验：(1) 六文件白名单是否足以完成静态 owner migration 而不接通 public runtime；(2) restore 是否保证一切 fallible checks 均在第一 mutation 前，reject 零 mutation；(3) runtime W_fast/frontier/pending/receipt 是否被明确排除且 live authority pre-mutation reject；(4) concrete `w0_fast_*` slow seed 与 unregistered `ContinualTTTFastState` 是否无误区分；(5) tests 是否足以防止 legacy/recurrent owner、selector alias、post-mutation restore 与假 mid-episode resume 回归。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权六文件 synthetic CPU/static implementation；不授权真实 checkpoint/filesystem/DCP/remote I-O、public runtime activation/hard-stop removal、native forward/loss/backward、optimizer/scheduler step、CUDA/GPU、torchrun、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
