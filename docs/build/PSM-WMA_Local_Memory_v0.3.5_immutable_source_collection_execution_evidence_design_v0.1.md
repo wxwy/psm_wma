@@ -27,9 +27,26 @@ push_publication={pushed,published}
 rollback={before_snapshot_sha256,after_snapshot_sha256,verified}
 ```
 
-PASS `source_entries` 为 nonempty ordered array，FAIL 在 source-read 未到达时为 `[]`；each entry exact `{ordinal,byte_length,sha256}`，ordinal 为非 bool、`>=0` JSON integer，byte_length 为非 bool、`>0` JSON integer。SHA fields 在 PASS/已到达 stage 为 64 lowercase hex、未到达 FAIL stage 为 null；revision/blob/tree fields为 40 lowercase Git SHA-1 或对应 FAIL null-record null；boolean fields在已到达 stage 为 JSON boolean、未到达 stage 为 null。command_argv 为 string array；phase/failure_code 为非空 stable-identifier string；delta_paths 为 fixed approved path string array；refs/paths 为 approved string 或未到达 FAIL stage null。paths 仅允许 approved fixed tool/workdir/authority artifact paths，不得含 source transport/source raw path、raw bytes、URL 或 secret。
+PASS `source_entries` 为 nonempty ordered array；each entry exact `{ordinal,byte_length,sha256}`，ordinal 为非 bool、`>=0` JSON integer，byte_length 为非 bool、`>0` JSON integer。command_argv 为 string array；FAIL `failure_code` 为非空 stable-identifier string；delta_paths 为 fixed approved path string array；paths 仅允许 approved fixed tool/workdir/authority artifact paths，不得含 source transport/source raw path、raw bytes、URL 或 secret。
 
-PASS 规则：`execution` 另含 exact `phase="complete"`；collection/receipt revision 非空、`post_checks` 所有值 true、`pushed=false`、`published=false`、rollback `verified=true`。FAIL 规则：`execution` 另含 exact `phase,failure_code`（非空 stable identifiers）；collection null-record 精确为 `{revision:null,tree_native_oid:null,parent_revision:null,delta_paths:[]}`，receipt null-record 精确为 `{revision:null,tree_native_oid:null,parent_revision:null,delta_paths:[],blob_native_oid:null}`；未到达 stage 必须使用对应 null-record、`source_entries=[]`，且 handoff/candidates 使用其既定 exact keys 的全部 null 值，不得伪造 digest。rollback 必须有 `verified`，不完整恢复时 failure_code=`ROLLBACK_INCOMPLETE`。未知/缺失/type drift FAIL。
+FAIL `execution.phase` 必须且只能是下列与固定检查顺序一一对应的有限值：`tool_identity`、`environment`、`authority`、`lineage`、`source_read`、`candidate_derivation`、`collection`、`receipt`、`post_check`、`push_publication`、`rollback`。它表示**首个未成功完成的检查**；其前所有 phase 必须按 PASS 类型完整 materialize，其后所有 phase 必须按下表的未到达 null-record materialize。`failure_code` 只说明该 phase 内的失败原因，不得改变 phase 或 nullability。
+
+FAIL 的确定性 partial 规则如下，禁止伪造 digest：
+
+| failure phase | 本 phase 的唯一允许 partial 表示 | 后续字段 |
+| --- | --- | --- |
+| `tool_identity`、`environment`、`authority`、`lineage` | 本 phase 与其后 section 的 SHA/revision/blob/tree/ref/path/boolean 均为对应 null；`source_entries=[]`；handoff/candidates 全 null。 | 全部后续 section 的 null-record。 |
+| `source_read` | `source_entries` 是已成功 read/hash 的严格 ordered prefix（可为空）；每个已有 entry 完整 typed，失败 entry 不写 placeholder。handoff/candidates 全 null。 | collection/receipt null-record，后续 boolean/ref/path 为 null。 |
+| `candidate_derivation` | `source_entries` 必须完整；handoff 已完整 typed。`candidates` 按固定顺序 `input_descriptor_sha256,manifest_sha256,identifier_sha256,checkpoint_descriptor_sha256,collection_sha256,config_sha256` 只允许长度 `0..5` 的完整 64-hex 前缀，余项必须 null；六项都 concrete 时此 phase 已成功，失败不得仍标本 phase。 | collection/receipt null-record，post_checks/push_publication/rollback 的字段为 null。 |
+| `collection` | source_entries、handoff、candidates 必须完整；collection 使用 exact null-record，不得写 partial revision/tree/blob 或 delta path；receipt 亦为 exact null-record。 | post_checks/push_publication/rollback 的字段为 null。 |
+| `receipt` | source_entries、handoff、candidates、collection 必须完整；receipt 使用 exact null-record，不得写 partial revision/tree/blob 或 delta path。 | post_checks/push_publication/rollback 的字段为 null。 |
+| `post_check` | 之前 collection/receipt 必须完整。`post_checks` 的固定顺序为 `authority,lineage,derivation,collection,receipt`：严格成功前缀为 `true`，首个失败 check 必为 `false`，其后 keys 必为 null。 | push_publication/rollback 的字段为 null。 |
+| `push_publication` | 之前 collection/receipt 与五个 post_checks 必须完整且均 true；`push_publication` 精确为 `{pushed:false,published:false}`，任何非 false 值无合法 FAIL 表示。 | rollback 的字段为 null。 |
+| `rollback` | 之前 section 均完整，`rollback.before_snapshot_sha256` 与 `after_snapshot_sha256` 均为 64-hex，`verified=false`；且 failure_code 必为 `ROLLBACK_INCOMPLETE`。 | 无后续字段。 |
+
+除上表明确允许的 partial prefix 外，SHA fields 在 FAIL 必须为 64 lowercase hex 或 null；revision/blob/tree fields 必须为 40 lowercase Git SHA-1 或 null；boolean fields 必须为 JSON boolean 或 null；refs/paths 必须为 approved string 或 null。auditor 必须由 `phase` 和该表逐字段导出可接受的 nullability，未知 phase、非前缀 candidates/source entries、或任一不符均 FAIL。
+
+PASS 规则：`execution` 另含 exact `phase="complete"`；collection/receipt revision 非空、`post_checks` 所有值 true、`pushed=false`、`published=false`、rollback `verified=true`。FAIL 规则：`execution` 另含上表的 exact `phase,failure_code`；collection null-record 精确为 `{revision:null,tree_native_oid:null,parent_revision:null,delta_paths:[]}`，receipt null-record 精确为 `{revision:null,tree_native_oid:null,parent_revision:null,delta_paths:[],blob_native_oid:null}`。除表中定义的 null key 外，FAIL 的 handoff、candidates、collection、receipt、post_checks、push_publication、rollback 均不得遗漏 nested exact key。未知/缺失/type drift FAIL。
 
 检查顺序固定：tool identity→environment→authority→lineage→source entries/handoff→candidate derivation→collection→receipt→post-check→push/publication→rollback。`evidence_sha256` 为去除此字段后的 canonical bytes SHA-256；audit 必须重算并拒绝不一致记录。
 

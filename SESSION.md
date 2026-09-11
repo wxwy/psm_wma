@@ -1,5 +1,9 @@
 # 当前协作状态
 
+## Controlled Execution Evidence phase/reachability 整改（2026-09-12，IN_PROGRESS）
+
+- 第 1 次审核观察凭证（2026-09-12 07:50 CST）：formal pair=root=`c8e05cff42b1a6d4a3a599d2c02f8cdbf648c43c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=b4ad8bf316cf5f6f5a2af2662c17ad74b26328ab`；`git fetch origin V2` 成功；`git ls-remote origin refs/heads/V2` advertised=`b4ad8bf316cf5f6f5a2af2662c17ad74b26328ab`；新增范围为空；`git merge-base --is-ancestor`=0，`git merge --ff-only origin/V2`=Already up to date。ChatGPT exact-pair scan 命中 `docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_design_c8e05cf_93a89ba.md`，final=`REQUEST_CHANGES`，HIGH-1=`immutable_source_collection_execution_evidence_design_v0.1.md:27` 缺有限 phase vocabulary、per-phase reachability 与 partial-stage encoding。MM `mm:0.0` capture=同 pair final `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION`（07:44:52）；Kimi `kimi:0.0` capture=同 pair同 final approve。逐方：ChatGPT=已回复(REQUEST_CHANGES)、MM=已回复(APPROVE)、Kimi=已回复(APPROVE)；三方同 pair final 齐全，存在只允许汇总并作最小 docs-only 整改的推进令牌。当前整改只修改 evidence schema：冻结 phase 有限词表、先失败 phase 语义以及 source-read/candidate partial prefix；禁止真实 source I/O、collection/receipt/publication、child、GPU、训练。提交：未提交。
+
 ## Immutable Source Collection 收口设计（2026-09-12，IN_PROGRESS）
 
 - 目的/Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-DESIGN`；只冻结 collection root 与独立 receipt root 的 source authority。它不得删改已批准 source-evidence/publication 闭环；闭环完成后才直接进入 single-GPU smoke 路线。
