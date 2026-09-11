@@ -172,11 +172,44 @@ Closure:
 - previous HIGH-1 is CLOSED: predecessor authority now uses the exact corrected source/ABI-audit verdict and provenance;
 - previous HIGH-2 is CLOSED: approval of this Gate authorizes only the next docs-only CPU/static implementation design, never child/code;
 - previous HIGH-3 is CLOSED: the normal attempt-0 window freezes once; suffix recovery is derived from the original transaction without second admission/refreeze/resample; recovery owns exact `N_window` and `GA_effective=len(recovery.members)`; committed fast state is retained; controlled partial slow gradients are discarded once; the original transition is reconciled once; attempt-1 failure is terminal.
-- §3's prohibition on "再写 fast state" is read together with the explicit inherited successful per-stream detach/commit rule: retry derivation cannot rewrite already committed prefix state or mutate fast state outside post-backward commit, while an unconsumed suffix member that succeeds still performs its own first exactly-once post-backward commit.
+- §3's prohibition on "再写 fast state" is read together with the explicit inherited successful per-stream detach/commit rule: retry derivation cannot rewrite already committed prefix state or mutate fast state outside post-backward commit, while an unconsumed suffix member that succeeds still performs its own first exactly-once post-backward fast-state commit.
 
 Authorized next action:
 - create and independently review only the next docs-only CPU/static implementation design.
 
 Not authorized: child/code implementation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, real native forward/loss/backward, optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CODEX NOTICE — canonical native runtime CPU/static implementation design requires changes
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root design SHA: `9d2c67c9481747dca23cb72f4822e6047e743543`
+- child/Gitlink SHA: `c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_cpu_static_implementation_design_v0.1.md:60-61)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_runtime_cpu_static_implementation_design_9d2c67c_c0e6e55.md`
+
+Canonical review commit:
+`a16351effd35530fe4b083c7acb6a9d57f6c6530`
+
+Current blockers: `2 HIGH`.
+
+Blockers:
+- HIGH-1: the design requires suffix-only attempt-1 after an already committed prefix while saying it uses the existing exact retry capability, but the exact child retry ABI only supports an unstarted full window at member 0; the scheduler transaction also rejects retry once backward has started/completed members exist, and that scheduler file is outside the six-file whitelist. The design must freeze an implementable public recovery owner/path before implementation can be authorized.
+- HIGH-2: the minimum test matrix weakens inherited v0.2's mandatory scaling witness by omitting explicit non-equal valid counts plus non-zero auxiliary loss for both normal and recovery, allowing degenerate fixtures to miss ratio/auxiliary/second-GA errors.
+
+Authorized next action:
+- docs-only remediation on a new formal root. Keep the child unchanged unless the remediated Design Gate explicitly and independently authorizes any necessary whitelist expansion.
+
+Not authorized: the six-file implementation itself, scheduler/code changes, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, real native forward/loss/backward, optimizer/scheduler stepping, checkpoint/sidecar work, training, evaluation, inference, distributed execution, matched smoke, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair.
