@@ -24,6 +24,7 @@ description: 管理 PSM-WMA 的审核申请、三方批准门、执行者边界�
 - 只有最新同轮凭证中冻结名册三方对同一 pair 均有 final verdict，才存在推进令牌：全 `APPROVE` 仅授权申请明确范围；任一 `REQUEST_CHANGES` 仅允许汇总；其余一律没有令牌、保持 `REVIEW`。
 - 用户转述、远端新增提交、Inbox、相似文件名、旧 review/capture 与 tmux 输入框都只是线索，只能触发重新完整检查，绝不可直接作为送达、回复、verdict 或推进依据。
 - 没有推进令牌时，禁止整改、编码、提交、执行、训练或关闭 Gate；仅可修复审核链路、记录失败，或撰写不依赖既有审核结论的 docs-only 设计。
+- fast-forward 只能用 `git merge-base --is-ancestor "$before_head" origin/V2` 判定；该命令返回 0 时必须 `git merge --ff-only origin/V2`。不得反向测试祖先关系；分叉或 merge 失败即“检查失败/状态未知”，不可跳过远端 review 或手工整合。
 
 ## Inbox rollover
 
