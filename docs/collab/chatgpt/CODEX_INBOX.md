@@ -644,3 +644,18 @@ current child 已包含获准 six-file synthetic CPU/static 合同，未制造�
 未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；未触碰 child `uv.lock`、examples 或 results 遗留。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation remediation closure（2026-09-12）
+
+- formal root SHA：`1f5eb1cbf172893a1640008a15d23e878ca73ed3`
+- child/Gitlink SHA：`11f9adf7fa209805ef6437145cf7a0dbf1625697`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION`
+- 前轮同 pair conclusion：`b0b8790924e474f00d0aedf276559d344d5d0e75`/`bc4792aa8112ed583b62d22b9f069d2095c764ce` 收齐 ChatGPT `REQUEST_CHANGES`、MM/Kimi `APPROVE_TO_CLOSE`；本轮仅整改 ChatGPT HIGH-1--5。
+
+child delta 仍严格只改 `config_checkpoint_contract.py` 与 `config_checkpoint_contract_test.py`。HIGH-1：BaseIdentity 现要求 full lowercase child SHA、SHA-256 manifest/source 与由 exact versioned source descriptor canonical JSON 派生的 checkpoint fingerprint；任意 label/非法 digest 拒绝。HIGH-2：restore 在 inventory/mutation 前验证 FeatureConfigIdentity 与 live encoder/core evidence/local/TBPTT/K-local/inner-LR、projector `32 -> 2048` bias ABI、modality shape 精确一致。HIGH-3：仅接受 named AdamW + ExponentialLR，identity 绑定 fully-qualified class、ordered group name/index/member、typed hyperparameters、per-member state schema、scheduler optimizer binding、constructor gamma 与完整 state schema。HIGH-4：save 与 restore 都从该 identity 重建 detached pristine shadow pair；payload 与已手工推进 live scheduler 一致时仍 fail-closed。HIGH-5：本 Gate 已从 design Gate 分离。
+
+direct CPU/static evidence：新增 invalid lineage/source descriptor、live evidence/bias ABI drift、group/member schema/scheduler config drift、advanced-live scheduler matching payload rejection；`.venv/bin/python -m pytest -q cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py`=`14 passed in 21.78s`；目标 Ruff、`py_compile`、child/root `git diff --check` PASS。
+
+未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；未触碰 child `uv.lock`、examples 或 results 遗留。
+
+请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
