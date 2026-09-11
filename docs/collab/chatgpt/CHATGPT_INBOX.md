@@ -80,3 +80,34 @@ Authorized next action:
 Not authorized by this verdict: production implementation changes, Local/No-Local runtime activation, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, real model forward, training, evaluation, inference, runtime sidecar, distributed execution, or any later Gate without explicit authority.
 
 This notice is coordination only and does not replace the formal pair.
+
+---
+
+## CORRECTION NOTICE — source/ABI audit verdict literal
+
+This is a persistence-only correction; no new technical audit was performed for the pair below.
+
+Formal pair:
+- root implementation SHA: `8d9bcee0df5f414f21c0e4b94c1ed617d58b3c6e`
+- child/Gitlink SHA: `c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-SOURCE-AUDIT`
+
+Corrected verdict:
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_IMPLEMENTATION`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_r09b_ttt_v035_canonical_native_runtime_source_audit_review_8d9bcee_c0e6e55.md`
+
+Canonical review correction commit:
+`2d35448c7eb587eabef817db141c32b74fa87014`
+
+Current blockers: `0`.
+
+Reason for correction:
+- the previously persisted literal `SOURCE_AUDIT_COMPLETE` was not one of the two verdict forms frozen by the source/ABI audit request;
+- the underlying technical findings, blocker count, formal pair, and evidence basis are unchanged;
+- the corrected verdict authorizes only the next docs-only runtime implementation design, exactly as frozen by the original request.
+
+Not authorized: child production implementation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, torchrun, native forward/loss/backward execution, optimizer/scheduler stepping, runtime sidecar/resume, matched smoke, training, evaluation, or inference.
+
+This correction supersedes the older source/ABI audit notice's verdict literal only; it does not replace the formal pair.
