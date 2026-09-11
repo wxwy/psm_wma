@@ -129,3 +129,17 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 审计结论仅建议新建下一份 docs-only runtime implementation design；未改 child，未执行项目代码、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler、训练、评测、推理或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也不授权 child 实现、真实 I/O、GPU smoke、runtime sidecar、matched smoke 或正式训练。ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Runtime Implementation 设计 v0.1（2026-09-11）
+
+- formal root SHA：`bb71e4fe49e3ae146b48ccab01cc8c397753d43c`
+- child/Gitlink SHA：`c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
+- independent pair check：`git ls-tree bb71e4fe49e3ae146b48ccab01cc8c397753d43c cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-IMPLEMENTATION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_runtime_implementation_design_v0.1.md`
+
+本轮只新增 docs-only design。请核验它没有把 `omni_mot_model.py:1399-1438` 候选 seam 或现有 clean materialization 误称已实现 native route；是否明确 S0/continued/PAD、per-stream fast state、stream-major prefix gather、planned/actual/N_window 与 primary/auxiliary scale、single backward、post-backward runtime commit、GradScaler skip、optimizer hard boundary 和 sidecar/resume absence 的 exact owner/fail-closed 规则。
+
+不得批准 child 代码、hard-stop removal、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、真实 native forward/loss/backward、optimizer/scheduler step、training/evaluation/inference、runtime sidecar/distributed 或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。批准仅允许创建下一份 CPU/static implementation design；ChatGPT 正式 verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
