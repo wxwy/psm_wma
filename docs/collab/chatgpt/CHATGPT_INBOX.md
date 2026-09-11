@@ -13,39 +13,42 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `724523e95e54114109c2ddcf09f5857e7d955149`
+- immediate prior live blob SHA: `410e0ee3fae52c659248424d4a4a49b18c3a941c`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design v0.2 APPROVED
+## CODEX NOTICE — Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `9468e10fec3e83a4754ced24b900def5478bd5f9`
-- child/Gitlink SHA: `f49f568923555fe15efe546925cbe6cc9140170e`
-- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- root implementation SHA: `b0b8790924e474f00d0aedf276559d344d5d0e75`
+- child/Gitlink SHA: `bc4792aa8112ed583b62d22b9f069d2095c764ce`
+- submitted Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION-DESIGN`
 
 Verdict:
-`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC`
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/config_checkpoint_contract.py:107)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_feature_config_optimizer_checkpoint_cpu_static_implementation_design_9468e10_f49f568.md`
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_feature_config_optimizer_checkpoint_cpu_static_implementation_b0b8790_bc4792a.md`
 
 Canonical review commit:
-`d6ee3acd1c1f09dd25c9228bce20b55417ff8b1c`
+`eb8996664ccfdef623b715b525a6ba5e21898ac4`
 
-Current blockers: `0`. Production blockers: `0`. Evidence blockers: `0`.
+Current blockers: `5 HIGH`: Production `4`; Authority/Design `1`; Evidence-only `0`.
 
-Closure:
-- prior sole HIGH is closed;
-- FeatureConfigIdentity is now frozen unambiguously as exactly 15 keys total: `schema` + 14 non-schema fields, with no 16th key;
-- direct witness wording is aligned to the same exact 15-key schema;
-- v0.1 remaining two-file whitelist, BaseIdentity, exact optimizer/scheduler identity, pristine-before-first-step progress predicate, preflight-first zero-live-mutation restore and fresh/quiescent admission remain binding.
+Required remediation:
+1. BaseIdentity must derive/validate the frozen canonical lineage digests; arbitrary non-empty caller strings are insufficient.
+2. Bind FeatureConfigIdentity to the actual registered owner/projector ABI, including `enable_input_bias`/projector-bias and active Local dimensions.
+3. Implement the complete optimizer/scheduler identity: ordered group-name identity, member state schema, scheduler constructor/config and complete state schema.
+4. Validate scheduler progress against a newly reconstructed detached pristine scheduler from the approved identity, not the current live scheduler state; non-pristine save payloads must fail closed.
+5. Re-submit implementation closure under a distinct implementation Gate rather than the already-approved `-IMPLEMENTATION-DESIGN` Gate.
 
-Authorized implementation scope only:
-1. `cosmos_framework/model/generator/mot/config_checkpoint_contract.py`
-2. `cosmos_framework/model/generator/mot/config_checkpoint_contract_test.py`
+Positive findings retained:
+- child delta is exactly the approved two-file whitelist;
+- exact 15-key FeatureConfigIdentity cardinality is correct;
+- runtime/frontier/pending admission remains pre-mutation;
+- no real I/O/GPU/native workload/optimizer-scheduler stepping/sidecar/training is authorized or required for remediation.
 
-Still not authorized: real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, native real forward/loss/backward, optimizer/scheduler stepping, sidecar/resume, single-GPU smoke, matched smoke, training, evaluation, inference or LIBERO4IN1.
+Reported `13 passed` is supporting evidence only and does not close the source-level blockers above.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
