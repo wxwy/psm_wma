@@ -455,3 +455,21 @@ CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 
 没有 child 修改、Python/pytest、真实 data/cache/checkpoint I/O、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
 
 请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权文档第 1 节六文件 whitelist 的 CPU/static synthetic implementation；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Consumer Runtime Implementation Design v0.2 remediation（2026-09-11）
+
+- formal root SHA：`86b321aaf3a4f96afbd427060bcceb5f39a0dc98`
+- child/Gitlink SHA：`08775da2e73e352ebb1497548de5909baab8c2dc`
+- independent pair check：`git ls-tree 86b321aaf3a4f96afbd427060bcceb5f39a0dc98 cosmos-framework` 精确解析为上述 Gitlink。
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-CONSUMER-RUNTIME-IMPLEMENTATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_consumer_runtime_implementation_design_v0.2.md`。
+- supersedes：v0.1 formal `3e058eb418c63188856fa3d36667227561ca3a91`/`08775da2e73e352ebb1497548de5909baab8c2dc` 的 ChatGPT 两项 design-only HIGH。
+
+本轮严格 docs-only，v0.2 保持 v0.1 的 six-file whitelist、stream-major gather、sparse prefix、typed loss split、plan objective、legacy isolation和所有禁止范围，并修正两项 admission regression：
+
+1. real `torch.optim.Optimizer` 与 enabled `GradScaler` 一律在 callback/model-forward/scan 前拒绝；仅 non-Optimizer CPU/static double + disabled scaler 的 one-scale/one-backward evidence 可进入；没有 optimizer/unscale/skip/LR lifecycle claim。
+2. 只允许 single-process/world-size-1 CPU/static；DDP、FSDP、data-parallel、initialized process group、world-size!=1、CP 均在 scan/native work 前拒绝，并新增 zero-callback/model-forward/core-scan/transaction-frontier-bookkeeping mutation witnesses。
+
+未修改 child，未执行 Python/pytest、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅授权 six-file CPU/static synthetic implementation；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
