@@ -13,38 +13,46 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `59a11f1c03f154576438612ed9983cf9cc762e5c`
+- immediate prior live blob SHA: `3d2ad81b812e59296711556eeb5fc391440a8057`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Canonical Native Checkpoint Synthetic CPU/static Remediation Implementation CLOSED
+## CODEX NOTICE — Root Gitlink Authority Source-audit Design v0.1 REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `69f028b2395d2f5dc6f36ac27803eb262b537e3c`
+- root design SHA: `5234cfb22e38e01c8e578f6825a6fc3c44873c98`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-CHECKPOINT-SYNTHETIC-CPU-STATIC-REMEDIATION-IMPLEMENTATION`
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-DESIGN`
 
 Verdict:
-`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CHECKPOINT_SYNTHETIC_CPU_STATIC_REMEDIATION`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_root_gitlink_authority_source_audit_design_v0.1.md:19)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_checkpoint_synthetic_cpu_static_remediation_implementation_69f028b_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_design_5234cfb_93a89ba.md`
 
 Canonical review commit:
-`d2e966c3f8dc5c3b531bf6819ae1d927b527eaf9`
+`68dca5d91b9e35838fe2ba5b6de400e8da5fd335`
 
-Current blockers: `0`. Production blockers: `0`. Design/Authority blockers: `0`. Evidence-only blockers: `0`.
+Current blockers: `2 HIGH`, both Design/Authority. Production blockers: `0`. Evidence-only blockers: `0`.
 
-Closure:
-- prior Production HIGH is closed: fixture descriptor -> manifest -> source are explicit versioned in-memory definitions with canonical JSON/SHA-256 derivation, and the targeted test independently recomputes all three digests plus a definition-drift rejection witness;
-- prior Evidence-only HIGH is closed: identity/domain reject witnesses snapshot and reassert slow tensor bytes, optimizer/scheduler state, iteration identity, Parameter/module/adapter/frontier/scheduler identities, frontier state, pending authority container identity/content, and frozen-transition identity/content;
-- child delta from the approved design baseline remains exactly the approved two-file whitelist;
-- exact five-key `synthetic_cpu_static_v1` remains fixture provenance only, with no child/root Git provenance;
-- legacy child-Git mappings and `root_gitlink_authority_v1` mappings remain fail-closed, with no caller identity injection.
+Blockers:
+1. `root_tree_sha256` / `child_tree_sha256` are not given exact independently reproducible byte/hash semantics. The formal root exposes a repository-native 40-hex Git tree OID, so the design must distinguish native tree OID from any external SHA-256 and freeze the exact immutable bytes/canonicalization used for the SHA-256 fields.
+2. The source audit does not freeze the root-owned source/schema/publication for `canonical_model_config_sha256` and `checkpoint_source_descriptor_sha256`, nor the signature or equivalent immutable root-owned publication verification required by the approved lineage-authority refreeze. A later implementation must not be allowed to choose these authority sources or trust root.
 
-Still not authorized: real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, native real forward/loss/backward, optimizer/scheduler stepping, runtime sidecar/resume, single-GPU smoke, matched smoke, training, evaluation, inference, LIBERO4IN1, or any `root_gitlink_authority_v1` implementation/simulation.
+Required remediation:
+- define exact `formal revision -> native tree OID -> audited immutable bytes/record -> SHA-256` semantics for root and child tree fields;
+- freeze exact root-owned config/source descriptor schemas and immutable publication identifiers/paths plus canonical bytes rules;
+- freeze signature verification or an explicitly defined equivalent immutable root-owned publication predicate, and bind publication/verifier identity into machine-readable audit evidence;
+- missing or unverifiable tree/config/source/publication authority must fail closed and must not emit `root_gitlink_authority_v1`.
 
-Per the approved lineage-authority progression, production/root-Gitlink provenance remains deferred to the separate root-owned Gitlink authority source-audit/design/implementation sequence.
+Positive findings retained:
+- formal root resolves exactly to child `93a89ba61306d840a008813f62f26a34d54850f4`;
+- formal root is docs-only and adds only the source-audit design artifact;
+- detached child/worktree/environment/payload/time/path substitutes are rejected by the design;
+- failure correctly blocks production authority mapping/runtime integration;
+- synthetic checkpoint closure remains synthetic-only and is not promoted to production provenance.
+
+Still not authorized: child/runtime code changes, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, forward/loss/backward, optimizer/scheduler stepping, runtime sidecar, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
