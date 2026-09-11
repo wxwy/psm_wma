@@ -2,7 +2,7 @@
 
 ## Canonical Native Feature / Config / Optimizer / Checkpoint Refreeze Design（2026-09-11，IN_PROGRESS）
 
-- v0.2 formal=`bc5459e91ad8b53c52ffaadfde9d585508dadec4`/child=`f49f568923555fe15efe546925cbe6cc9140170e` 三方 verdict 已齐：MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_feature_config_optimizer_checkpoint_refreeze_design_bc5459e_f49f568.md` 为 1 HIGH design-only，要求本 Gate 固定 step/scheduler/iteration relation。现仅起草 root docs-only v0.3：冻结 pristine-before-first-step 唯一 predicate（`iteration=0`、optimizer state 空、scheduler 等于 newly-constructed pristine state）；不改 child、不运行真实 I/O/GPU/训练。待静态核验、提交/推送与新 formal pair 三方 review。
+- v0.3 remediation formal=`5ede9ac264518ccdbca1cdbc24f4e0694b6cf85a`/child=`f49f568923555fe15efe546925cbe6cc9140170e` 已完成 `git diff --check`、提交并推送；它冻结唯一 pristine-before-first-step progress predicate。ChatGPT request 已 append live Inbox，MM/Kimi tmux 均按 send-keys→1s→Enter→capture 回读确认送达。任务现为 REVIEW：只等同一 pair 三方最终 verdict，5 分钟一次原生远端锁定轮询；不改 child、不运行真实 I/O/GPU/训练。
 
 ## Canonical Native Production Runtime CPU/static Implementation（2026-09-11，DONE）
 
