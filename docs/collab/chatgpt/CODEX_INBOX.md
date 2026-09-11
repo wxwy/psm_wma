@@ -777,3 +777,16 @@ child delta 仍严格仅两文件。CPU evidence：pytest=`15 passed in 33.73s`�
 本轮没有 child/root runtime 代码、真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。请重点复核 non-circular external binding、两 nested mapping 是否已不再 implementation-defined，以及没有扩大授权。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Root Gitlink Authority Source-audit Implementation Design v0.1（2026-09-12）
+
+- formal root SHA：`ba684bf769016aaf8bac8b8d4271f6b6bcb3708c`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION-DESIGN`
+- 对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_root_gitlink_authority_source_audit_implementation_design_v0.1.md`。
+
+前置 source-audit design `7d5580b...`/`93a89ba...` 已获三方 `APPROVE_TO_DESIGN`。本轮仅冻结下一实现的两个根仓 stdlib 文件及临时 Git fixture CPU/static test：`tools/g0/audit_r09_b_ttt_root_gitlink_authority.py` 与对应 `unittest`。它精确规定 only-object Git command whitelist、root tree Gitlink/child object lookup、`cat-file tree/blob` 原始 bytes hash、三键 non-circular publication、两 nested exact schemas、14-key external audit record、atomic success-only output 与 failure-no-write witness。
+
+本轮不创建实际 publication、不对当前根仓执行 audit、不改 child/runtime，也不做真实 checkpoint/data/cache I/O、DCP、GPU、torchrun、forward/loss/backward、step、sidecar、训练、评测、推理或 LIBERO4IN1。请重点审查 CLI transport-vs-authority 边界、Git raw-object commands、fail-closed output 语义和 fixture 覆盖是否足以授权后续两文件 CPU/static 实现。
+
+请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
