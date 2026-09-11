@@ -2,7 +2,7 @@
 
 ## Canonical Native Feature / Config / Optimizer / Checkpoint Refreeze Design（2026-09-11，IN_PROGRESS）
 
-- 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-DESIGN`；预计仅新增上述 docs-only design、SESSION/TODO。它以 current runtime closure=`420fc259d938d12f41c7f42d7b6aaec8076eb0f3`/`f49f568923555fe15efe546925cbe6cc9140170e` 为前置，冻结 current config/owner/inventory/preflight-first slow-only restore；不改 child、不运行真实 I/O/GPU/训练。
+- 已收齐 formal=`f890b72fe1ff27eaa5eca0eb7b185af2c6b75459`/child=`f49f568923555fe15efe546925cbe6cc9140170e` 三方结论：ChatGPT `REQUEST_CHANGES`（3 design-only HIGH：完整 FeatureConfigIdentity、不可 caller-guess 的 BaseIdentity、optimizer/scheduler/progress identity 与 staged atomicity），MM/Kimi approve。现仅起草 root docs-only v0.2 remediation：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_feature_config_optimizer_checkpoint_refreeze_design_v0.2.md`；不改 child、不运行真实 I/O/GPU/训练。待静态核验、提交/推送与同一新 pair 三方 review。
 
 ## Canonical Native Production Runtime CPU/static Implementation（2026-09-11，DONE）
 
