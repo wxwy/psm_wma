@@ -1,9 +1,10 @@
 # 当前协作状态
 
-## Canonical Native Production Runtime CPU/static Implementation Design（2026-09-11，DONE）
+## Canonical Native Production Runtime CPU/static Implementation（2026-09-11，REVIEW）
 
 - 已认领 `G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-CPU-STATIC-IMPLEMENTATION-DESIGN`，只读复用 current formal Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 的 model/adapter/trainer source owner 与前序 source audit。预计修改仅为新 docs-only design、SESSION/TODO。
 - v0.2 formal=`106c2ad19d93d289cb33e7d1f38d9309e6614b23`/Gitlink=`f49f568923555fe15efe546925cbe6cc9140170e` 已获 ChatGPT formal review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_native_production_runtime_cpu_static_implementation_design_106c2ad_f49f568.md`、MM、Kimi 同 SHA `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_CPU_STATIC`，blockers=0。仅授权 v0.1 六文件 synthetic CPU/static implementation；真实 I/O/GPU/训练仍禁止。
+- current child=`f49f568923555fe15efe546925cbe6cc9140170e` 已逐项覆盖 approved CPU/static contract，无需伪造新代码 diff：adapter pytest=`12 passed in 9.25s`、integration pytest=`31 passed in 26.11s`、trainer wiring pytest=`19 passed in 23.78s`，共 `62 passed`；目标 `py_compile`、child/root `git diff --check` PASS。仅 root SESSION/TODO closure 记录待提交/三方 review；子模块受保护遗留未触碰。
 
 ## Canonical Native Production Runtime Integration Design（2026-09-11，DONE）
 
