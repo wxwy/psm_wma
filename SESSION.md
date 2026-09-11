@@ -2,7 +2,7 @@
 
 ## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，IN_PROGRESS）
 
-- remediation pair=`74baed85688c84aa42e9eb3fb00077665267b588`/child=`b1a138b79bdc2d4dc40b978ea34094512a07d378` 的三方结论已齐：MM approve；Kimi 与 ChatGPT 均为 Evidence-only `REQUEST_CHANGES`，确认无生产 blocker。最小 tests-only 整改 child=`218484efbd1363633c379a21f82499a237267ca9` 已推送：仅 `canonical_segment_production_adapter_test.py` 与 `canonical_segment_production_integration_test.py`，以实际 `OmniMoTModel.build_net()` 注册对象完成 adapter scan/backward 和 exact encoder/core gradients；real scheduler/retry 负例覆盖 foreign/stale/copied admission、capability mint 后 staleness、copied/duplicate retry request、post-backward retry，并在每个 scan-boundary 断言 core scan=0、scheduler/frontier/transaction/bookkeeping 不变。CPU pytest：adapter=`11 passed in 16.05s`、integration=`19 passed in 34.69s`；Ruff、两文件 `py_compile`、child diff-check PASS。下一步根仓提交 Gitlink/记录，随后以新 pair 三方 closure review；不得修改生产范围或启动真实 I/O、GPU、torchrun、训练、评测、推理或 LIBERO4IN1。
+- formal pair=`3f4c76fdfdc70564d40c4e3f66a922924968c315`/child=`218484efbd1363633c379a21f82499a237267ca9` 的三方结论已齐：MM/Kimi approve；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_canonical_segment_production_abi_cpu_static_implementation_3f4c76f_218484e.md` 为仅 Evidence `REQUEST_CHANGES`（production blockers=0）。当前仅 tests-only 整改：reconstructed plan 必走 zero-core helper；真实 multi-member exact later member out-of-order；consume 后 copied retry identity；consume 后至 scan 前 stale revalidation；second/post-backward retry 的 scheduler/frozen-transition/transaction/frontier/bookkeeping 全量零变更。仅两份既批准测试文件；不得真实 I/O、GPU、torchrun、训练、评测、推理或 LIBERO4IN1。提交：未提交。
 
 ## Feature / Config / Optimizer / Checkpoint CPU/static Implementation（2026-09-11，DONE）
 
