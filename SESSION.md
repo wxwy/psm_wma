@@ -16,6 +16,7 @@
 
 - 目的/Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-EXECUTION-DESIGN`。前置 collection design 已获同 pair三方批准；只冻结 future real-source selection/read 的最小受控 execution contract，后续仍须独立 closure Gate 才能执行。
 - 修改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_execution_design_v0.1.md`；冻结 source-root 仅作 transport、canonical selection request、路径/regular-file fail-closed、流式 raw-byte hashes、五 artifact preflight 与 closure handoff。禁止真实 source selection/read、collection mutation、child/I-O/GPU/训练；未提交。
+- formal root=`cd4cced4c0cd875b88f98af4fc1bbdad7cad8cf6`/child=`93a89ba61306d840a008813f62f26a34d54850f4` 已推送，申请已 append live Inbox；待 ledger 推送后发送 MM/Kimi。Gate=`REVIEW`，三分钟轮询，三方同 pair final 前不执行 source read。
 
 ## Source-evidence Producer / Closure Design（2026-09-12，DONE）
 
