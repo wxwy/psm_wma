@@ -506,3 +506,14 @@ CPU/static evidence：adapter=`11 passed in 16.05s`；integration=`19 passed in 
 child 仅改 `trainer/__init__.py` 与 approved integration test：生产 topology predicate 明确接纳 `FSDPModule` identity；direct `ImaginaireTrainer.training_step()` witnesses 以 project `distributed.DistributedDataParallel` 和 trainer 实际 `FSDPModule` 符号的 CPU/static doubles 触发对应 `isinstance` 分支，并以 `ddp_sync_grad`/callback/model-forward 禁入哨兵证明 pre-entry reject。联合 pytest=`50 passed in 32.91s`；target Ruff（忽略既有 I001）/py_compile/child-root diff-check PASS。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_CONSUMER_RUNTIME_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不授权真实 I/O、CUDA/GPU、torchrun、native real forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Canonical Native Production Runtime Integration Design v0.1（2026-09-11）
+
+- formal root SHA：`bd6ea801367efc88e569c2cd4f9f62ebce2cdaeb`
+- child/Gitlink SHA：`f49f568923555fe15efe546925cbe6cc9140170e`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-PRODUCTION-RUNTIME-INTEGRATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_production_runtime_integration_design_v0.1.md`。
+
+本轮仅 docs-only。设计锁定真实 native integration 的不可跳步顺序：immutable stream-major producer、preparation parity、source-identified weighted consumer loss/independent auxiliary、canonical one-backward/optimizer boundary、sidecar/resume、bounded GPU smoke、matched LIBERO4IN1 training。请求的唯一下一权限仍是创建 CPU/static implementation design；不授权 child 修改、真实 I/O、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar write、训练、评测、推理或 LIBERO4IN1。
+
+请回复唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_PRODUCTION_RUNTIME_INTEGRATION` 或 `REQUEST_CHANGES(file:line)`；ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
