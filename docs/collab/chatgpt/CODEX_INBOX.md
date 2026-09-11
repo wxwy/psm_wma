@@ -606,3 +606,14 @@ current child 已包含获准 six-file synthetic CPU/static 合同，未制造�
 本轮严格 docs-only。v0.3 冻结本 Gate 唯一 progress predicate 为 pristine-before-first-step：`payload.iteration == 0`、每个 canonical optimizer member 无 state entry、`optimizer.state == {}`、saved scheduler state exact equals 对已验证 class/constructor/config 新建 detached shadow scheduler 的 pristine `state_dict()`；若 optimizer/scheduler 都不存在，二者必须 explicit null 且仍须 `iteration == 0`。任一 nonzero iteration/state/step/pristine scheduler field drift、单边存在或 identity drift 均 pre-mutation reject。真实训练 progress 必须由未来独立 Gate 显式重冻，不得 migration/warm-start。本轮未改 child，未执行真实 I/O/GPU/训练。
 
 请核验此 predicate 是否关闭 v0.2 的唯一 HIGH。请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_REFREEZE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许下一份 docs-only CPU/static implementation design；不授权 child、真实 checkpoint/data I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Canonical Native Feature / Config / Optimizer / Checkpoint CPU/static Implementation Design v0.1（2026-09-11）
+
+- formal root SHA：`a99b6b94777517b5d1ecf0fcd099524544ea3309`
+- child/Gitlink SHA：`f49f568923555fe15efe546925cbe6cc9140170e`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- 审阅对象：`docs/build/PSM-WMA_Local_Memory_v0.3.5_canonical_native_feature_config_optimizer_checkpoint_cpu_static_implementation_design_v0.1.md`。
+
+本轮严格 docs-only，唯一前置为 v0.1+v0.2+v0.3 composite refreeze contract 的 formal=`5ede9ac264518ccdbca1cdbc24f4e0694b6cf85a`/同 child 三方批准。v0.1 将实施白名单收窄为 `config_checkpoint_contract.py` 与其定向 test：exact 15-field FeatureConfigIdentity、six-key BaseIdentity、exact optimizer/scheduler identity、v0.3 pristine-before-first-step predicate、preflight-first zero-mutation restore 与 fresh/quiescent admission。direct CPU/static witnesses逐项覆盖 config/base/owner/tensor/optimizer/scheduler/progress/runtime authority drift；不允许 `optimizer.step()`/`scheduler.step()`、native forward/backward或真实 I/O。
+
+请核验两文件 whitelist、identity/progress predicate 是否完整翻译 composite contract，及 witness 是否足以证明 zero-live-mutation。请求唯一 verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_CANONICAL_NATIVE_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只授权该两文件 synthetic CPU/static implementation；不授权真实 I/O、DCP、CUDA/GPU、torchrun、native forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
