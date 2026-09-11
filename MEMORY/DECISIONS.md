@@ -215,3 +215,11 @@
 - 决策：审核状态证据必须拆为独立且可完整读取的 Git 同步、formal-pair review 检索、MM capture、Kimi capture。任一命令输出截断、超时、非零退出、缺页或不能逐字段核验，整轮即为“检查失败/状态未知”；不得由局部输出、旧轮结果、用户转述或命令意图补推。只有全部独立证据完成后才可原子写入观察凭证和输出受控状态词。远端 SHA 变化时必须先消费提交范围并完成可用的 fast-forward；tmux 送达则强制 `send-keys -l`、至少一秒、独立 Enter、独立 capture 三联回执。
 - 覆盖范围：所有审核申请、审核轮询、用户提示的“已回复/已更新/是否拉取最新”以及任何据此准备整改、实现或推进 Gate 的操作。
 - 原因：既有流程虽规定 fetch 与 exact-pair，但一次过大的组合命令可能截断关键后续输出，随后又被口头叙述错误地补成“未回复”或“已齐”。将输出完整性定义为事实前提，才能让检查链在信息不完整时自动停在安全状态。
+
+## D024 Source-evidence 收口后的 GPU 优先级
+
+- 日期：2026-09-12
+- 状态：生效（用户明确路线调整；每个实际执行动作仍须其独立三方 Gate）
+- 决策：source-evidence 链只完成已开启的 immutable collection/receipt 闭合，不再为 checkpoint authority、publication evidence 或相同 binding 横向增加 provenance Gate。该 closure 后的下一设计固定为 single-GPU TTT smoke，依序处理真实 optimizer/scaler、1 batch GPU 与 20--100 step smoke；不得用新的 provenance 子 Gate 推迟该路线。
+- 边界：本决策不授权真实 collection、source-evidence record/publication、GPU、训练或绕过三方审核；它只限制后续 Gate 的路线与拆分方式。
+- 原因：现有 provenance 合同已经覆盖 source identity、collection/receipt 非循环绑定、失败回滚和 downstream package 输入；继续横向细分的边际收益低于尽快以受控 GPU smoke 验证 TTT 有效性的收益。

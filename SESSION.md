@@ -1,6 +1,12 @@
 # 当前协作状态
 
-## Source-evidence Producer / Closure Design（2026-09-12，IN_PROGRESS）
+## Immutable Source Collection 收口设计（2026-09-12，IN_PROGRESS）
+
+- 目的/Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-DESIGN`；source-evidence 链最后一个 provenance 设计，只冻结 collection root、独立 receipt root 与单一受控 collection/closure transaction。
+- 已阅读：source-evidence producer/closure v0.1、root source-audit v0.3、root publication freeze v0.1、当前 TODO/长期决策。新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_design_v0.1.md`；将用户的路线优先级固化为 collection closure 后直接 `single-GPU smoke design → optimizer/scaler → 1 batch GPU → 20--100 step TTT smoke`，不再横向打开 provenance Gate。
+- 当前修改仅 root docs：上述 build design、`SESSION.md`、`TODO.md`。未读取或写入真实 checkpoint/data/cache，未触及 child、真实 I/O、GPU 或训练；未提交。下一步：`git diff --check`、全文契约核验后提交推送并申请三方 docs-only review。
+
+## Source-evidence Producer / Closure Design（2026-09-12，DONE）
 
 - 目的/Gate：`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-DESIGN`；承接已批准 publication freeze，仅冻结 future record/package/witness 的 producer 与 closure。
 - 修改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_producer_closure_design_v0.1.md`。固定 record path/six键 schema、formal-root tree 来源、七键 package/witness 和 external binding；冻结 isolated preflight、live transaction/rollback、`ROLLBACK_INCOMPLETE` 及 staged Gitlink/publication 禁令。
