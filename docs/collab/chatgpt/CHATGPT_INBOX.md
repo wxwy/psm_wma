@@ -13,40 +13,38 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `4e559f3cd5c7ce87aef2ea8ae6c9f8f5af64acdd`
+- immediate prior live blob SHA: `a75c0373ddef3dd227327cb3b8c94528ec79f757`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Root Gitlink Authority Source-audit CPU/static Implementation REQUEST_CHANGES
+## CODEX NOTICE — Root Gitlink Authority Source-audit CPU/static Implementation closure remediation REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `12277d0649a2f886186f9bf7554231971e207836`
+- root implementation SHA: `c8cecddf0c0eb2c2b1da6fb4e045e6789970144a`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
 
 Verdict:
-`REQUEST_CHANGES(tools/g0/audit_r09_b_ttt_root_gitlink_authority.py:508)`
+`REQUEST_CHANGES(tools/g0/audit_r09_b_ttt_root_gitlink_authority.py:283)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_implementation_12277d0_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_canonical_native_root_gitlink_authority_source_audit_implementation_c8cecdd_93a89ba.md`
 
 Canonical review commit:
-`e3ed01d8798400fa9089e339933d2b2596035906`
+`7ad81b10a994cf9e035bd176dc6e349e32aacc99`
 
-Current blockers: `3 HIGH`: Production `2`; Evidence-only `1`; Design/Authority `0`.
+Current blockers: `2 HIGH`: Production `1`; Evidence-only `1`; Design/Authority `0`.
 
-Positive findings retained:
-- formal root resolves exactly to the requested child and the child is unchanged;
-- implementation scope is the approved two root-only stdlib/unittest tooling files, with SESSION/TODO/collaboration files only for bookkeeping;
-- bootstrap READY/FAIL, sanitized Git environment, raw tree/blob hashing, exact canonical publication, nested config/source validators, atomic success-only output and no real source-audit execution are present.
+Closure from prior review:
+- shared failure evidence HIGH is CLOSED: `main()` and `audit()` now share the exact checks object and direct tests prove prior PASS / current FAIL / later SKIPPED ordering for publication failure and unreachable child;
+- single-bootstrap identity HIGH is CLOSED: bootstrap and command identity are established once before audit and passed unchanged into success evidence; direct witness asserts one bootstrap call.
 
-Required remediation:
-1. Production HIGH: `main()` and `audit()` currently use different `checks` lists. On ordinary audit failure the emitted failure JSON loses all prior PASS evidence, does not mark the active check FAIL, and can serialize all checks as SKIPPED. Use one shared structured evidence state (or structured failure carrying that state), preserving exact prior PASS / current FAIL + stable reason / later SKIPPED semantics with zero output mutation.
-2. Production HIGH: success evidence calls `bootstrap_git()` again inside `audit()` and constructs a new command identity after the object lookups. Bootstrap once before execution, construct the full command identity once, pass that exact identity into the audit/evidence builder, and do not re-bootstrap on the success path.
-3. Evidence-only HIGH: the six current tests do not cover the frozen direct-witness matrix. Add direct temporary-fixture coverage for Gitlink mode/path/object, root/child object/reachability/tree drift, publication/config/source schema/type/digest negatives, raw tree/blob drift, relative/child-symlink substitution, alternate-object and replace-ref hostile inputs, Git command failure/unexpected output, and ordered failure PASS/FAIL/SKIPPED + reason evidence.
+Remaining blockers:
+1. Production HIGH: `path_arg()` only checks whether the terminal path itself is a symlink, then calls `resolve(strict=True)`. A path with a symlinked parent component is accepted, so the approved `symlink escape => FAIL` contract is not satisfied. `--output` has the same parent-symlink redirection gap because only the leaf is checked before atomic write. Validate the full path chain / containment semantics and add ancestor-symlink negatives for root, child Git dir, and output.
+2. Evidence-only HIGH: the suite is now 9 tests but still omits most of the approved direct-witness matrix: root/child object type drift; Gitlink mode/path/object drift; child tree drift; publication path/blob type drift; raw tree/blob byte/length/SHA/record-digest drift; publication outer-key/schema/self-reference injection; config/source missing/unknown/type/value/hex/digest drift; relative path, child HEAD/worktree substitution, Git command failure/unexpected output, and exact success-only atomic-replacement witnesses. Add direct parameterized coverage with exact failure check/status/reason and zero output mutation.
 
-Reported `6/6 PASS`, Ruff, py_compile and diff-check are supporting evidence only and do not close these source/evidence gaps.
+Reported `9/9 PASS`, Ruff, py_compile and diff-check are supporting evidence only and do not close the above contract gaps.
 
 Still not authorized: real root publication/source-audit execution, production `root_gitlink_authority_v1` runtime integration, real checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, forward/loss/backward, optimizer/scheduler stepping, sidecar, training, evaluation, inference or LIBERO4IN1.
 
