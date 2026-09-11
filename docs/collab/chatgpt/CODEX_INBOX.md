@@ -815,6 +815,19 @@ v0.1 三方 final verdict 已齐：ChatGPT 两项 HIGH，MM/Kimi approve。本�
 
 请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭此 root CPU/static tooling Gate；不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
 
+## 审核申请：Root Gitlink Authority Source-audit CPU/static Implementation remediation closure（2026-09-12）
+
+- formal root SHA：`c8cecddf0c0eb2c2b1da6fb4e045e6789970144a`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-CANONICAL-NATIVE-ROOT-GITLINK-AUTHORITY-SOURCE-AUDIT-IMPLEMENTATION`
+- 对象仍严格仅：`tools/g0/audit_r09_b_ttt_root_gitlink_authority.py`、`tools/g0/test_audit_r09_b_ttt_root_gitlink_authority.py`；SESSION 仅记录审查事实。
+
+前轮 `12277d0...`/`93a89ba...` final verdict 已齐：ChatGPT 三项 HIGH、Kimi shared failure-evidence HIGH、MM approve。整改不扩大已批准两文件范围：`audit()` 与 `main()` 现在使用同一 12-step checks object；每一个 fallible stage通过 guarded state 保留前序 PASS、标记当前 FAIL stable reason、仅后续 SKIPPED；success evidence 只使用 audit 前单次 READY bootstrap 产生的 exact command identity，audit 内不再 re-bootstrap。新增 direct temporary-fixture witnesses：noncanonical publication 后的 5 PASS/1 FAIL/6 SKIPPED，unreachable child commit 后的 8 PASS/1 FAIL/3 SKIPPED，single-bootstrap identity，`GIT_ALTERNATE_OBJECT_DIRECTORIES`、replace-ref/config injection，保留 bootstrap/symlink/zero-output-mutation coverage。CPU/static=`9/9 PASS`；target Ruff、`py_compile`、`git diff --check` PASS。
+
+未创建 publication，未对当前根仓运行 audit；未改 child/runtime，未执行真实 checkpoint/data/cache I/O、DCP、CUDA/GPU、torchrun、forward/loss/backward、optimizer/scheduler step、sidecar、训练、评测、推理或 LIBERO4IN1。请重点核验三项 HIGH 的 exact closure、failure check 的顺序/可观测字段、identity single-binding及新增 witnesses是否仍只使用 temporary Git fixture。
+
+请求唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_CANONICAL_NATIVE_ROOT_GITLINK_AUTHORITY_SOURCE_AUDIT` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭 root CPU/static tooling Gate；不授权真实 audit、publication、I/O、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
 ## 审核申请：Root Gitlink Source-audit Implementation Design v0.3 bootstrap remediation
 
 - formal root SHA：`b29fdf7e71a0464e8678e0750871284ebd866f10`
