@@ -294,3 +294,21 @@ CPU/static evidence：trainer post-mutation + pre-scan/scaler group=`4 passed, 1
 请核验九项 implementation-design acceptance matrix 是否均已以 CPU/static evidence 闭合，尤其：(1) active TTT 没有 legacy second owner；(2) adapter/owner binding 是真实 object identity；(3) live authority 与 late payload defect 均在第一 mutation 前拒绝且零 mutation；(4) runtime/sidecar 没有进入 slow payload；(5) public marker仍 fail-closed。
 
 请回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭该六文件 synthetic CPU/static Gate；不授权真实 I/O、runtime/hard-stop removal、GPU、forward/backward、optimizer step、sidecar、训练、评测、推理或 LIBERO4IN1。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
+
+## 审核申请：Feature / Config / Optimizer / Checkpoint CPU/static Implementation closure remediation（2026-09-11）
+
+- formal root SHA：`d0267a77280c51133f3ad48a149441ec6c0ea568`
+- child/Gitlink SHA：`fa964ef3974d5b622081cc1ded89b69d851b9eb5`
+- independent pair check：`git ls-tree d0267a77280c51133f3ad48a149441ec6c0ea568 cosmos-framework` 精确解析为上述 Gitlink；child 已推送 `origin/v2`。
+- Gate：`G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-CPU-STATIC-IMPLEMENTATION`
+- supersedes：`a27e9425e4f8e05d7e9ef5414a75f103a2f39d3d` / `ddd49d318a7b2198e024cd013859ca956b57479d`，其 MM 批准、Kimi 与 ChatGPT `REQUEST_CHANGES`。
+
+本轮整改仍只命中已批准六文件中的三个：`model_config.py`、`config_checkpoint_contract.py`、`config_checkpoint_contract_test.py`。未修改 adapter/scheduler/producer/trainer/checkpoint backend 或其他越界文件。
+
+1. restore 现在先验证 live optimizer 的实际 Parameter 对象、扁平顺序与 canonical slow inventory exact identity；同时验证 saved optimizer state id/schema，再以 deep-copied shadow optimizer/scheduler 完整验证 `load_state_dict()` 可载入。只有这些可失败条件和 runtime admission 均通过后才 copy live slow tensors；新增 legal optimizer+scheduler+iteration round-trip、foreign optimizer 以及 late optimizer/scheduler defect 的逐对象零 mutation witness。
+2. active-TTT config 在 `local_ttt_enabled=True` 时 fail-closed 要求 `local_memory_enabled=True, local_memory_dim=32`；slow inventory 另核验 projector/embedding 为逐 token `32 -> 2048` / width `2048`。
+3. admission evidence 删除了测试对私有 set/list 的手工篡改，改以真实 `CanonicalBatchScheduler.freeze_plan()`、adapter `scan()`、`prepare_commit()`、`commit_success()` 产生 pending scan、frozen transition、committed frontier 与真实 transaction；每项 rejection 均在 live slow tensors mutation 前。
+
+证据：批准范围三文件 CPU/static pytest=`49 passed in 45.04s`；`config_checkpoint_contract.py`/其 test Ruff PASS；三文件 `py_compile`、child/root `git diff --check` PASS。未执行真实 checkpoint/filesystem/DCP/remote I-O、public runtime activation、native forward/loss/backward、optimizer/scheduler step、CUDA/GPU、torchrun、sidecar、训练、评测、推理或 LIBERO4IN1。
+
+请对该 exact pair 重新核验此前 ChatGPT/Kimi 的 restore atomicity、optimizer object membership、真实 runtime-authority evidence、`32 -> 2048` ABI 以及 approved nine-item acceptance matrix，回复唯一 verdict：`APPROVE_TO_CLOSE_R09_B_TTT_V035_FEATURE_CONFIG_OPTIMIZER_CHECKPOINT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。即使批准，也仅关闭六文件 synthetic CPU/static Gate；不授权任何真实 I/O/runtime/GPU/训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`，不回写 Inbox。
