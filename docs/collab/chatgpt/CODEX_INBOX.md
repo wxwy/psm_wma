@@ -161,3 +161,17 @@
 formal tree 仅更新 closure design 与 `SESSION.md`，Gitlink 不变；`git diff --check` 与关键词核验 PASS。未执行真实 source I/O、collection/receipt mutation、record/package/witness、publication/audit、child/runtime、GPU 或训练；没有新增闭环外 provenance Gate，闭环后仍直接进入 single-GPU smoke design。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CLOSURE` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许后续独立 controlled collection/receipt execution design；不授权真实操作。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Immutable Source Collection Controlled Execution 设计 v0.1（2026-09-12）
+
+- formal root SHA：`47a05a526ed98ab477ffad7e7f8548be1c1d981c`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
+
+前置 closure design root `5f6741ca0bfb61ca0e55fae95709c891fa5c5520`/同 child 已获三方批准。本轮新增 root docs-only runbook：冻结 real execution approval 必须回填的 authority/target lineage/source transport/isolated roots/evidence 字段、CPU-only/no-network command shape、same-activation handoff、two-root transaction、rollback 与受限下游。formal tree 仅该设计、`SESSION.md`、`TODO.md`，Gitlink 不变。
+
+验证：`git diff --check` PASS；authority/handoff/lineage/rollback/GPU 禁止范围/下游路线关键词核验 PASS。未运行项目代码、真实 source I/O、collection mutation、source-evidence write、publication/audit、child/runtime、GPU、训练、评测、推理或 LIBERO4IN1。
+
+请重点核验：runbook 是否完整继承已批准 authority、lineage 和 two-root contract；命令/approval 回填是否阻止 caller-selected inputs；failure/rollback 是否 fail-closed；以及它是否仅完成既有闭环而未新开 provenance Gate。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许独立 execution approval；不授权真实执行、source I/O、child、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。

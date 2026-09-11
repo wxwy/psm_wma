@@ -43,6 +43,7 @@
 - 目的/Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`。前置 closure design 已获 root=`5f6741ca0bfb61ca0e55fae95709c891fa5c5520`/child=`93a89ba61306d840a008813f62f26a34d54850f4` 三方同 pair批准；本步只撰写 root docs-only runbook，不执行真实 collection。
 - 已阅读并复用：immutable collection design、approved execution design、approved closure design 的 authority tuple、typed one-shot handoff、target lineage、two-root transaction 和 rollback 合同。预计新增 controlled-execution design，并在静态验证后更新本节/TODO；不修改 child/runtime、source、cache、GPU 或训练。提交：未提交。
 - 实际修改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_controlled_execution_design_v0.1.md`；冻结独立 execution approval 回填项、CPU-only/no-network 命令形状、source FD→typed handoff→five-path collection→one-path receipt 的步骤、rollback 与受限下游。验证：根与新文件 diff-check PASS，authority/handoff/lineage/rollback/GPU 禁止范围/下游路线关键词核验 PASS。未运行项目代码或真实 source I/O；未触及 child/GPU/训练。提交：未提交。
+- formal root=`47a05a526ed98ab477ffad7e7f8548be1c1d981c`/child=`93a89ba61306d840a008813f62f26a34d54850f4` 已推送；申请已 append canonical live Inbox。审核冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。待 ledger 推送后按 `send-keys -l`、等待至少 1 秒、独立 Enter、capture 送达 MM/Kimi；Gate=`REVIEW`，三方同 pair final 前不得真实执行。
 
 ## Source-evidence Producer / Closure Design（2026-09-12，DONE）
 
