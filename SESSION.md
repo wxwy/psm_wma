@@ -2,7 +2,7 @@
 
 ## Canonical Segment Production ABI CPU/static Implementation（2026-09-11，IN_PROGRESS）
 
-- ChatGPT `REQUEST_CHANGES` 已最小整改为 child=`b1a138b79bdc2d4dc40b978ea34094512a07d378`：scheduler 将 exact `freeze_plan()` identity、next frozen transition 与 live frontier 设为 scan 前 authority；first-member attempt-1 只能经 consume 的 one-shot retry request scan；新增 reconstructed-plan/pre-consume retry negatives，以及 registered owner actual-scan gradient 与 terminal commit frontier retirement witnesses。定向 CPU/static pytest=`28 passed`、Ruff、py_compile、child diff-check PASS；child 已推送。下一步提交新的 root Gitlink/记录并申请三方 closure review；未执行真实 I/O、GPU/CUDA、torchrun、训练、评测、推理或 LIBERO4IN1。
+- remediation pair=`74baed85688c84aa42e9eb3fb00077665267b588`/child=`b1a138b79bdc2d4dc40b978ea34094512a07d378` 的三方结论已齐：MM approve；Kimi 与 ChatGPT 均为 Evidence-only `REQUEST_CHANGES`，确认无生产 blocker。最小 tests-only 整改 child=`218484efbd1363633c379a21f82499a237267ca9` 已推送：仅 `canonical_segment_production_adapter_test.py` 与 `canonical_segment_production_integration_test.py`，以实际 `OmniMoTModel.build_net()` 注册对象完成 adapter scan/backward 和 exact encoder/core gradients；real scheduler/retry 负例覆盖 foreign/stale/copied admission、capability mint 后 staleness、copied/duplicate retry request、post-backward retry，并在每个 scan-boundary 断言 core scan=0、scheduler/frontier/transaction/bookkeeping 不变。CPU pytest：adapter=`11 passed in 16.05s`、integration=`19 passed in 34.69s`；Ruff、两文件 `py_compile`、child diff-check PASS。下一步根仓提交 Gitlink/记录，随后以新 pair 三方 closure review；不得修改生产范围或启动真实 I/O、GPU、torchrun、训练、评测、推理或 LIBERO4IN1。
 
 ## Feature / Config / Optimizer / Checkpoint CPU/static Implementation（2026-09-11，DONE）
 
