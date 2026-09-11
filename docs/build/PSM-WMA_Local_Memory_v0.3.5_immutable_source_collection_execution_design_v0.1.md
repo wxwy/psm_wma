@@ -12,13 +12,15 @@
 
 ## 2. future invocation 与 source transport
 
-future executor 的唯一 real-source 输入是显式 `--source-root <absolute-directory>` 与 `--selection-request <canonical-json-file>`；二者只用于定位和读取 bytes，绝不是 accepted authority。selection request 必须是 exact canonical `immutable_source_selection_request_v1`，keys=`schema,source_kind,entries`，`source_kind="checkpoint_source_manifest_v1"`；`entries` 是 nonempty、ordinal 严格递增 array，每项 exact keys=`ordinal,relative_path`。relative_path 必须是 POSIX relative normal path：非空、无 leading slash、无 `.`/`..` component、无 NUL，且 UTF-8 bytewise sort 顺序与 ordinal 一致。
+future executor 的 `--source-root <absolute-directory>` 与 `--selection-request <canonical-json-file>`只作 transport，绝不是 accepted authority。selection request 必须是 exact canonical `immutable_source_selection_request_v1`，keys=`schema,source_kind,entries`，`source_kind="checkpoint_source_manifest_v1"`；`entries` 是 nonempty、ordinal 严格递增 array，每项 exact keys=`ordinal,relative_path`。relative_path 必须是 POSIX relative normal path：非空、无 leading slash、无 `.`/`..` component、无 NUL，且 UTF-8 bytewise sort 顺序与 ordinal 一致。
 
-`--source-root` 必须 realpath 后仍为目录；每个 resolved candidate 必须 realpath 后仍在 root 下、是 regular file、非 symlink。request 不得来自 env、stdin、working-tree discovery 或 caller-supplied digest；request raw canonical bytes 与其 SHA-256 只记录在 isolated preflight evidence，不能替代 collection artifacts 的 authority。root、request 或任一 file transport error/missing/duplicate/escape/type drift 都 preflight FAIL。
+在任何 entry resolve/open 前，独立 reviewed execution-authority record 必须固定 selection request 的 raw canonical bytes、SHA-256 与 fixed root-owned path `docs/build/PSM-WMA_immutable_source_selection_request_v1.json`，以及 exact resolved `canonical_native_local_ttt_config_v2` raw canonical bytes、SHA-256 与 fixed root-owned path `docs/build/PSM-WMA_immutable_source_canonical_model_config_v1.json`。transport files 必须逐 byte等于这两项 authority；任何 caller/env/working-tree/default mapping 或 digest、path、bytes drift 均 FAIL。该 authority record 不读取 source bytes，且必须在本 Gate 实际执行 approval 前独立三方绑定。
+
+`--source-root` 必须以 root directory FD 打开；每个 component 必须在该 FD 下以拒绝 symlink traversal 的 descriptor-safe open 解析，最终只接受 regular-file FD。request 不得来自 env、stdin、working-tree discovery 或 caller-supplied digest。root、request 或任一 file transport error/missing/duplicate/escape/type drift 都 preflight FAIL。
 
 ## 3. isolated preflight derivation
 
-executor 在独立 temporary index/tree 中按 ordinal 一次顺序流式读取每个 regular file，计算 byte_length 与 SHA-256；不载入模型、不解析 checkpoint payload、不联网，且不得写 source root。它构造：
+executor 在独立 temporary index/tree 中按 ordinal 从同一 opened regular-file FD 流式读取，计算 byte_length 与 SHA-256；不载入模型、不解析 checkpoint payload、不联网，且不得写 source root。每个 FD 必须 read 前/后 `fstat` 同一 identity/size/mtime/ctime，rewind 后第二次完整 hash 必须相同；任何 mismatch 均 FAIL。它构造：
 
 1. `immutable_source_input_descriptor_v1`：仅 `schema,source_kind,source_entries`，entries 为 `ordinal,byte_length,sha256`；
 2. `immutable_source_manifest_v1`：仅 `schema,source_kind,source_input_sha256,source_entries`，其中 entries 逐字等于 input descriptor；
@@ -26,7 +28,7 @@ executor 在独立 temporary index/tree 中按 ordinal 一次顺序流式读取�
 4. fixed-path exact five-key `root_gitlink_checkpoint_source_descriptor_v1`；
 5. fixed-path `immutable_source_collection_v1` 与已批准 canonical model config artifact。
 
-每项必须 canonical UTF-8 bytes、递归 key sort、`separators=(',', ':')`、`ensure_ascii=false`、`allow_nan=false`；逐项重算所有 SHA-256、key/type/value/ordinal/count/equality relation 后才可构造候选 collection tree。任一错误、source bytes read race（pre/post `stat` identity/size 不一致）、canonical/digest drift 或 temporary write failure均 FAIL；live target/index/HEAD/authority 逐 byte/entry 不变。
+每项必须 canonical UTF-8 bytes、递归 key sort、`separators=(',', ':')`、`ensure_ascii=false`、`allow_nan=false`；逐项重算所有 SHA-256、key/type/value/ordinal/count/equality relation 后才可构造候选 collection tree。任一错误、FD identity/size/mtime/ctime/read/hash mismatch、canonical/digest drift 或 temporary write failure均 FAIL；live target/index/HEAD/authority 逐 byte/entry 不变。
 
 ## 4. staged boundary、产物与移交
 
