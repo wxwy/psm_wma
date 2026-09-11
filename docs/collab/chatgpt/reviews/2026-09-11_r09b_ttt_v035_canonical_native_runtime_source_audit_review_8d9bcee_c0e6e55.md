@@ -1,7 +1,7 @@
 # ChatGPT Independent Review — R09-B TTT v0.3.5 Canonical Native Runtime Source/ABI Audit
 
 - Date: 2026-09-11
-- Gate: R09-B TTT v0.3.5 canonical native runtime source/ABI audit
+- Gate: `G0-R09-B-TTT-V035-CANONICAL-NATIVE-RUNTIME-SOURCE-AUDIT`
 - Formal root implementation SHA: `8d9bcee0df5f414f21c0e4b94c1ed617d58b3c6e`
 - Child/Gitlink SHA: `c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`
 - Request/bookkeeping commit: `9ac4ae9b0e5b437065d348bd37498dc0a27570c2` (not part of the formal pair)
@@ -10,15 +10,15 @@
 
 ## Verdict
 
-`SOURCE_AUDIT_COMPLETE`
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_IMPLEMENTATION`
 
 ## Current blockers
 
 0.
 
-## Review status
+## Persistence correction
 
-This file persists the technical conclusion for the exact formal pair above. The formal pair did not change while review persistence was being repaired; request/review/bookkeeping commits do not trigger a second technical review.
+The prior persisted literal `SOURCE_AUDIT_COMPLETE` was not one of the two verdict forms frozen by the request. This revision is a persistence-only correction of that literal and the exact Gate identifier. It does not repeat or alter the underlying technical audit, formal pair, findings, blocker count, or evidence basis.
 
 ## Independent findings
 
@@ -37,6 +37,6 @@ This is a static/source/ABI audit Gate. Repository-reported execution results, w
 
 ## Scope closure
 
-`SOURCE_AUDIT_COMPLETE` closes only the canonical native runtime **source/ABI audit** Gate for the exact formal pair `8d9bcee0df5f414f21c0e4b94c1ed617d58b3c6e / c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`.
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_CANONICAL_NATIVE_RUNTIME_IMPLEMENTATION` authorizes only creation/review of the next docs-only canonical native runtime implementation design for the exact formal pair `8d9bcee0df5f414f21c0e4b94c1ed617d58b3c6e / c0e6e55cbab00b7d40eccacc0de1c4c91b66f9d9`.
 
-It does **not** authorize production implementation changes, Local/No-Local runtime activation, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real model forward, training, evaluation, inference, runtime sidecars, distributed execution, or any later Gate. Any such work requires its own explicit frozen authority and review target.
+It does **not** authorize child production implementation changes, Local/No-Local runtime activation, hard-stop removal, real data/cache/checkpoint I/O, CUDA/GPU, `torchrun`, real model forward/loss/backward, optimizer/scheduler stepping, training, evaluation, inference, runtime sidecars, distributed execution, matched smoke, or any later Gate without explicit frozen authority.
