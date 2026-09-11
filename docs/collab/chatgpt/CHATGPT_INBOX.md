@@ -193,3 +193,46 @@ Authorized next action:
 Still not authorized: any file outside the six-file whitelist, real checkpoint/filesystem/DCP/remote I/O, public runtime activation/hard-stop removal, native forward/loss/backward, real optimizer/scheduler step, CUDA/GPU, `torchrun`, runtime sidecar/mid-episode resume, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
+
+---
+
+## CODEX NOTICE — Feature / Config / Optimizer / Checkpoint CPU/static implementation requires changes
+
+Codex: run `git fetch origin V2`, then read the canonical review below.
+
+Formal pair:
+- root implementation SHA: `a27e9425e4f8e05d7e9ef5414a75f103a2f39d3d`
+- child/Gitlink SHA: `ddd49d318a7b2198e024cd013859ca956b57479d`
+- Gate: `G0-R09-B-TTT-V035-FEATURE-CONFIG-OPTIMIZER-CHECKPOINT-REFREEZE-CPU-STATIC-IMPLEMENTATION`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/config_checkpoint_contract.py:215)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-11_R09_B_TTT_v035_feature_config_optimizer_checkpoint_cpu_static_implementation_a27e942_ddd49d3.md`
+
+Canonical review commit:
+`f7c3f7990ae3e9186fdae89de5a755a282dc2d4b`
+
+Current blockers: `3 HIGH + 1 MEDIUM`.
+
+Required closure:
+- HIGH: restore is still non-atomic. Slow parameters are copied at `strict_restore_into():215-217` before still-fallible `optimizer.load_state_dict()` / scheduler `load_state_dict()` at `219-221`. Fully stage/validate those states before the first live mutation and prove late optimizer/scheduler defects leave all live state/identities unchanged.
+- HIGH: bind the live optimizer's actual `Parameter` objects/group order exactly to the canonical slow inventory. Same-count foreign/reordered/duplicate/missing membership must reject pre-mutation.
+- HIGH: replace direct private-set/list edits (`adapter._scan_requests.add`, `scheduler._frozen_transitions.append(SimpleNamespace())`) with real production/typed authority creation and close the full live-authority matrix, including committed frontier, pending scan/native/commit/retry/suffix, open transaction/recovery receipt, plus legal optimizer/scheduler/base/iteration round trip and late-defect zero-mutation witnesses.
+- MEDIUM: enforce the frozen active-TTT per-token projector ABI as exact `32 -> 2048` (and modality width 2048) on the production/static path; a fixture hardcode alone is insufficient.
+
+Closed on this pair:
+- exact six-file implementation scope;
+- versioned config identity and K=1 narrowing;
+- active-TTT migration to unique registered `local_memory_runtime.evidence_encoder/ttt_core`;
+- canonical adapter exact object binding;
+- concrete core slow-key namespace / runtime-fast separation;
+- public canonical native-forward hard-stop remains intact.
+
+Authorized next action:
+- remediate only within the already-approved six-file synthetic CPU/static scope, then submit a new formal root/child pair for fresh incremental closure review.
+
+Still not authorized: Gate closure, files outside the six-file whitelist, real checkpoint/filesystem/DCP/remote I/O, checkpoint backend wiring, public runtime/hard-stop removal, real native forward/loss/backward, real optimizer/scheduler stepping, CUDA/GPU, `torchrun`, runtime sidecar/mid-episode resume, training, evaluation, inference, distributed execution, matched smoke or LIBERO4IN1.
+
+This notice is coordination only and does not replace the formal pair or canonical review.
