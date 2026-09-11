@@ -199,3 +199,11 @@
 - 决策：审核轮询中远端是否可快进只能以 `git merge-base --is-ancestor "$before_head" origin/V2` 判断；成功后强制 `git merge --ff-only origin/V2`。禁止反向祖先测试，因为它会把“远端包含本地”的可快进状态误作不可合并，从而遗漏已提交 review。
 - 覆盖范围：所有审核 fetch/merge 操作。分叉或 ff-only 失败必须闭锁为“检查失败/状态未知”，仍可从 `origin/V2` 精确读取 review，但不可声称本地已经合并或推进。
 - 原因：本轮远端 review commit 是本地 HEAD 的后继，反向 `merge-base` 检查错误地跳过了 ff-only；改为精确命令使远端锁定步骤可机械复现。
+
+## D022 Formal Commit Tree 范围隔离
+
+- 日期：2026-09-12
+- 状态：生效（审核链路修复）
+- 决策：formal commit 的文件范围和 Gitlink 只能从 commit tree 读取：`git diff-tree --no-commit-id --name-only -r <formal-root>`、必要的 parent-tree diff、`git ls-tree <formal-root> <submodule>`。禁止以 `git diff <parent>` 代表 commit，因为该形式会将当前脏工作树纳入比较。
+- 覆盖范围：所有审核申请、formal scope 声明和 Gitlink drift 判断。未提交 child/训练遗留仅是单独的 dirty-residue 事实，永远不是 formal commit 的文件变更。
+- 原因：本轮 `git diff HEAD^` 将共享工作树中的 dirty `cosmos-framework` 错报为 formal commit Gitlink 变化；tree-based 命令确认 formal pair 的 parent/child Gitlink 均为同一 SHA。

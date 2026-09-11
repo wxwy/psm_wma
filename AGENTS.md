@@ -126,3 +126,4 @@
 4. **先写后做**：任何会改变工作树、提交、发送新的审核申请、执行代码或更新 Gate 状态的动作前，必须在当前会话重新读取最近观察凭证及冻结名册，并在操作记录中引用该凭证。没有推进令牌时，唯一允许的写操作是修复审核链路、记录失败或撰写不依赖审核结论的新 docs-only 设计；不得整改既有 review 意见。
 5. **状态词保留**：`已送达`、`处理中`、`已回复`、`未回复`、`无新增`、`三方齐全`、`可以推进` 均为受控状态词，只能逐字从已写入的同轮观察凭证或推进令牌导出。无法导出时只能写“未检查”或“检查失败/状态未知”。
 6. **快进方向机械判定**：fetch 后只可用 `git merge-base --is-ancestor "$before_head" origin/V2` 判断远端是否可从本轮开始 HEAD 快进；返回 0 时必须执行 `git merge --ff-only origin/V2`，而不是反向测试 `origin/V2` 是否为本地祖先。若两端分叉或 merge 失败，本轮为“检查失败/状态未知”，不得跳过远端 review、手工 merge 或把远端提交当作已合并。
+7. **formal commit 范围隔离**：审核 formal commit 的变更范围只能用 `git diff-tree --no-commit-id --name-only -r <formal-root>`（必要时对其 parent tree 作 `git diff-tree`）和 `git ls-tree <formal-root> <submodule>` 得出；禁止用未指定 commit 的 `git diff <parent>`，因为它会把共享工作树的未提交 child/训练遗留混入结果。工作树状态只能单独作为 dirty-residue 事实，绝不能作为 formal diff 或 Gitlink drift 结论。
