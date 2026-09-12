@@ -2791,3 +2791,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root materialization request v0.2 runtime-authority remediation（2026-09-12，IN_PROGRESS）
 
 - 仅修改v0.2 docs：v0.1只继承transaction/PASS/FAIL/rollback/prohibitions；annex成为runtime fields唯一权威，明确endpoint不是alias、fresh paths、工具/env/input/bootstrap/argv/FD ABI与批准后不可变，且不能覆盖§2/§3。未生成annex或真实I/O；待提交、重新三方docs审核。
+
+### Authority-root materialization request v0.2 runtime-authority remediation 审核送达准备（2026-09-12 CST，REVIEW）
+
+- formal=`15e665576c8af37dbbbaf15cd05d2b4bf6af2f63`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。Inbox为117116 bytes，追加申请不触发rollover。仅审docs HIGH整改，目标仍只允许只读snapshot annex准备。
+
+### Authority-root materialization request v0.2 runtime-authority remediation 送达回执（2026-09-12 CST，REVIEW）
+
+- Inbox已append；MM/Kimi均以完整文本→至少1秒→独立`C-m`→capture送达，输入框已清空并进入处理。ChatGPT正式结果仍只认exact review。三分钟后完整远端锁定回收；未获三方新pair结论前禁止snapshot annex。

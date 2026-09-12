@@ -956,3 +956,10 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - v0.1 request绑定旧`ad9e011...` adapter tree，已由v0.2替代。v0.2仅将formal parent和四模块formal-tree blob/raw identity重绑到三方刚关闭的`9dd2fb8...` routing-authority tree；其余v0.1 single-transaction、PASS/FAIL/rollback、禁止范围不变。
 - 请求只允许准备一次只读运行时 snapshot annex，冻结clean paths、tools、env/remote/input/native-OID/bootstrap/argv digests；annex和实际命令仍须独立三方`APPROVE_TO_MATERIALIZE`。不创建JSON/worktree/index/candidate/ref/evidence，不读source，不执行collection/child/GPU/训练。
 - 请求唯一 verdict：`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT` 或 `REQUEST_CHANGES(file:line)`。
+
+## 审核申请：Authority-root v0.2 runtime-authority remediation（2026-09-12）
+
+- formal root：`15e665576c8af37dbbbaf15cd05d2b4bf6af2f63`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.2.md`。
+- 相对`cfdd2fc...`仅处理ChatGPT HIGH：v0.1仅继承transaction/PASS/FAIL/rollback/prohibitions；所有runtime fields由annex唯一冻结，明确canonical HTTPS endpoint+SHA而非remote alias、fresh paths、tools/env/input/bootstrap/argv/FD ABI以及annex批准后不可变；annex不得覆盖v0.2 §2/§3。
+- 仍只请求 `APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT`；禁止创建JSON/worktree/index/candidate/ref/evidence、source读、child/GPU/训练。
