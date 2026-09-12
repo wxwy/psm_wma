@@ -3110,3 +3110,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增隔离的`...v0.7_witness_core.py`及直接运行的`...v0.7_witness_test.py`，覆盖 backing path mode/identity、same-bytes replacement、ordinary `.git/commondir` insertion 与 first-add failure classification；只在`TemporaryDirectory`中运行，不导入或调用payload `main()`。
 - `python ...v0.7_witness_test.py -v`=3/3 PASS；两个文件`py_compile`与`git diff --check` PASS。此前首次按带hyphen文件路径使用`python -m unittest`的模块名解析失败，未产生项目副作用；已改为直接文件运行并通过。下一步继续把这些verified seams并入新的immutable v0.7 payload。
 - 扩展 extra inherited-FD close-set 与 cleanup success/failure classifiers；直接CPU witness现为4/4 PASS，`py_compile`与`git diff --check` PASS。所有产物仍限定`TemporaryDirectory`。
+
+### Authority-root launcher payload v0.7 docs-only implementation（2026-09-13，待提交）
+
+- 新增独立 immutable v0.7 payload及annex/request，不改v0.6：ordinary route将`commondir`与`config.worktree`均作为前后重验的absent predicate；handoff新增pathname non-symlink/regular/`0600`与reader/target identity重验；first `worktree add` 的任一异常一律`ROLLBACK_INCOMPLETE`，避免在admin residue不可证明时ordinary FAIL。
+- `py_compile` PASS；temporary witness=4/4 PASS；payload raw=`16479` bytes、SHA-256=`c8d6611369d3eef6eb09c8030def5c95df1277099b521d81f94d9fbe29de954a`；`git diff --check` PASS。未运行payload main、未创建真实worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未改child/GPU/训练。下一步提交、推送；native-Git full causal witness仍未完成，故不得申请或执行materialization。
