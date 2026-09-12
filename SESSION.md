@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## Authority-root CPU/static implementation design送达与第1轮观察（2026-09-12 12:20:13 CST）
+
+- formal root=`c61f32f3a99688043f2dfdb3d69480e11b1811dd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- ChatGPT申请已存在于current HEAD live Inbox，append后49911 bytes，ledger=`231bf2940fe1b40675c06730f6e63292135dc364`已推送。MM/Kimi均以完整同pair文本、各等待1.1秒后独立Enter，capture确认消息离开输入框进入会话。
+- before_head、advertised V2、origin/V2均为`231bf2940fe1b40675c06730f6e63292135dc364`；独立fetch/ls-remote/祖先检查成功，完整新增范围空，ff-only=Already up to date。exact-pair ChatGPT review无匹配。
+- MM独立capture含完整pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC`；Kimi本轮只确认送达，尚无本pair final；ChatGPT尚未找到正式回复。无三方推进令牌，保持REVIEW并继续三分钟监控。未提交。
+
 ## Authority-root CPU/static implementation design v0.1 复审准备（2026-09-12）
 
 - formal root=`c61f32f3a99688043f2dfdb3d69480e11b1811dd`已推送；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。formal diff仅设计、SESSION、TODO；`git diff --check` PASS，未运行测试（docs-only）。
