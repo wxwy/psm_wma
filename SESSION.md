@@ -2885,3 +2885,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`11950c953d7c3e781f821ab648d45af83e60d340`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已 append 至 canonical Inbox（124207 bytes，低于128 KiB），ledger=`4e39efccfce555b5ab978dad1394c33b82bdb0c3`已推送，ledger不是formal target。
 - MM/Kimi 均按完整文本 `send-keys -l`→至少一秒→独立 Enter→capture 回读：MM消息已离开输入框并进入`Befuddling…`处理状态；Kimi消息已离开输入框、返回空输入框。下一轮按三分钟节奏先完整远端锁定，再检索 ChatGPT exact pair 和两 pane；此前禁止 materialization、真实 I/O、child、GPU与训练。
+
+### Authority-root launcher procedure v0.4 审核观察凭证 #1（2026-09-13 00:17:45 CST，REVIEW）
+
+- formal=`11950c953d7c3e781f821ab648d45af83e60d340`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=caf681a9334124da4527f31d9d44b504abb3967e`；fetch成功；advertised/origin/local-after均为`caf681a9334124da4527f31d9d44b504abb3967e`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT 精确检索 `rg -l '11950c953d7c3e781f821ab648d45af83e60d340' docs/collab/chatgpt/reviews/` 无匹配正式 review；MM `mm:0.0` capture给出same-pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`；Kimi `kimi:0.0` capture显示已独立解析pair、读取v0.4并逐项核验，尚无same-pair final。无推进令牌，保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
