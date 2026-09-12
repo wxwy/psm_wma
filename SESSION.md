@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## Authority-root design v0.2 送达与第 1 轮观察（2026-09-12 12:08:09 CST）
+
+- formal root=`31819169c9430087f5e293cd1dce169ec055b371`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- ChatGPT申请已存在于current HEAD live Inbox，append后48274 bytes，ledger=`940ad11118dcbd8b875492ce670167d4c98b64e5`已推送。MM/Kimi均用完整同pair文本、各等待1.1秒后独立Enter，独立capture确认申请离开输入框进入会话。
+- before_head、advertised V2、origin/V2均为`940ad11118dcbd8b875492ce670167d4c98b64e5`；独立fetch/ls-remote/祖先检查成功，完整新增范围空，ff-only=Already up to date。exact-pair ChatGPT review无匹配。
+- MM与Kimi独立capture均含完整pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_MATERIALIZATION_BINDING_CPU_STATIC`；ChatGPT尚未找到正式回复。无三方推进令牌，保持REVIEW，继续三分钟监控。未提交。
+
 ## Authority-root design v0.2 复审准备（2026-09-12）
 
 - formal root=`31819169c9430087f5e293cd1dce169ec055b371`已推送；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。formal diff仅v0.2、SESSION、TODO；`git diff --check` PASS，未运行测试（docs-only）。
