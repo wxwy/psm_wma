@@ -13,15 +13,15 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `bb519c5997bc9ddaf072cf4b4700599816aded72`
+- immediate prior live blob SHA: `f2fb37e5fb872909e9717af29979057d2f097991`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Executor CPU/static implementation design REQUEST_CHANGES
+## CODEX NOTICE — Executor implementation seam remediation REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `c62bc80440dc2e78091c183b39cec96aa17e7f13`
+- root design SHA: `ed824b2e06c27328f6639aba6b5c06e1de6bee73`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
 
@@ -29,20 +29,21 @@ Verdict:
 `REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_executor_implementation_design_v0.1.md:8)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_implementation_design_c62bc80_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_implementation_design_ed824b2_93a89ba.md`
 
 Canonical review commit:
-`3e5a846e609b1d86c365751b387b64718fda69be`
+`b23681f077ea3df31d9e11c7855df666fe66641d`
 
-Current blockers: `2 HIGH`; Design/Authority `1`; Implementation `1`; Production `0`; Evidence-only `0`.
+Current blockers: `1 HIGH`; Design/Authority `1`; Implementation `0`; Production `0`; Evidence-only `0`.
 
-Remaining blockers:
-1. The design requires path/Git-blob/raw-SHA/interpreter identity to be frozen before implementation against the formal root, but the two proposed implementation files do not exist in the implementation-design formal root. Freeze only the two-path allowlist and identity derivation rule in this design; after implementation is committed, the CPU/static implementation closure must bind the exact implementation formal root plus path/blob/raw-SHA/interpreter from that committed tree. Later authority materialization / controlled execution approval must accept only that exact reviewed tool identity.
-2. The unique production executor is currently specified as accepting only `TemporaryGitFixture` / FD shims and constructing evidence only in memory. That would require later source edits to add real Git/FD adapters and the controlled failure-evidence sink, invalidating the CPU/static tool identity. Freeze one exact production dependency-injection seam now and implement it unchanged: CPU/static tests bind the same production code path only to temporary synthetic Git/FD roots and a temporary/in-memory evidence sink; later real execution binds the unchanged interfaces to approved real inputs only after authority materialization and execution approval.
+Closed from prior review:
+- concrete executor/test path/blob/raw-SHA binding is now delayed until the implementation files exist in the CPU/static implementation formal root/closure;
+- request/ledger/handoff commits are explicitly forbidden from replacing that implementation formal pair;
+- one unchanged production dependency-injection seam now spans CPU/static synthetic fixtures and later approved real Git/FD/evidence-sink dependencies, so switching to real execution does not require changing the reviewed executor source.
 
-Positive / unchanged:
-- two-file implementation allowlist is narrow;
-- synthetic CPU/static witnesses cover authority/lineage drift, descriptor-safe FD/race failures, one-shot handoff, collection/receipt allowlists, retained snapshots, rollback and `ROLLBACK_INCOMPLETE`;
-- real source/checkpoint/cache I/O, authority-root materialization, live collection/receipt/publication mutation, child/GPU/training remain forbidden.
+Remaining blocker:
+1. The design still groups `interpreter` with executor/test `path/Git blob/raw SHA` as values bound "from committed tree". Git tree objects can bind file path/blob/raw bytes but cannot establish the actual Python interpreter identity. Freeze a separate exact interpreter-identity derivation and authority source from the controlled runtime environment, and state the reviewed binding stage. CPU/static closure may record its test interpreter witness, while later real execution must independently satisfy the same rule under controlled execution approval. No caller/default interpreter may become authority, and interpreter drift must still fail before source open.
+
+Still not authorized: executor implementation, real source selection/read/hash, authority-root materialization, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
