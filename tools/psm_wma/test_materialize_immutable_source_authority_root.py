@@ -695,6 +695,17 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
                 self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
+    def test_bootstrap_rejects_preexisting_worktree_config_before_git_or_import(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            (root / ".git/config.worktree").write_text("[core]\n fsmonitor = /bin/false\n")
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "evidence.json").exists(), result.stderr)
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
     def test_bootstrap_rejects_executable_identity_drift_before_import(self):
         for option, value in (
             ("--interpreter", "/bin/false"),
