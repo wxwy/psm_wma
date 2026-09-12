@@ -322,3 +322,12 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 前轮 `c62bc804...` 三方 final 已齐：ChatGPT `REQUEST_CHANGES` 两项 HIGH，MM/Kimi approve。本轮仅 docs-only 最小整改：具体 executor/test blob/raw-SHA/interpreter identity 延后绑定到文件存在后的 CPU/static implementation formal root/closure，禁止 request/ledger/handoff 替代；生产 executor 冻结一次 explicit DI seam（Git transaction、root-FD opener、evidence sink），CPU/static temporary fixture 与未来仅在独立批准后的 real inputs 复用同一未改源码、只替换依赖。
 
 `git diff --check` PASS；未运行真实 source I/O、authority/collection/receipt/publication、child、GPU 或训练。请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权真实执行或 GPU/训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+# 审核申请：Executor interpreter-identity remediation（2026-09-12）
+
+- formal root SHA：`97ed73442fc56aa57e4bae27028bc5ffef7897bc`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
+
+前轮 `ed824b2e...` 三方 final 已齐：ChatGPT 对 interpreter authority 给出唯一 HIGH，MM/Kimi approve。本轮只分离 authority：executor/test path/blob/raw-SHA 从 CPU/static implementation tree 绑定；CPU/static 仅记录 test interpreter witness；future controlled execution approval 独立冻结 `{executable_path,executable_raw_sha256,version}`，由 executable bytes 与 `--version` 派生，禁止 caller default，任一 drift 在 source open 前 FAIL。
+
+`git diff --check` PASS；无真实 source I/O、authority/collection/receipt/publication、child、GPU 或训练。请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
