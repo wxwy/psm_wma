@@ -35,6 +35,7 @@
 - v0.10 docs-only整改认领：新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_pass_linearization_design_v0.10.md`；冻结observation-only witness的单一边界：最后exact observation后的pre-swap与post-swap drift均不改变历史witness或撤销transition，之后任一ref check不一致才external-corruption fail-stop；最后观察前验证失败仍按既有pre-state rollback。待`diff --check`、提交和三方同SHA复审；未运行项目代码。
 - v0.10设计申请：formal root=`001336fa5d785d8c77a2685ac1c754c096b4fb06`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；申请已append canonical Inbox，冻结名册为ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。待本申请ledger推送及MM/Kimi独立Enter/capture回执后进入三分钟审核回收；无implementation推进令牌。
 - v0.10送达回执（2026-09-12 18:50:06 CST）：MM `mm:0.0`与Kimi `kimi:0.0`均以`send-keys -l`写入、间隔至少1秒、独立Enter后capture回读；两条申请均已离开输入框，MM进入`Flowing`，Kimi的完整申请已进入会话且输入框恢复为空。ChatGPT送达回执为canonical Inbox已推送条目。待第1轮完整远端锁定检查；无implementation推进令牌。
+- v0.10第1轮观察凭证（2026-09-12 18:50:47 CST）：formal=`001336fa5d785d8c77a2685ac1c754c096b4fb06`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。`before_head=02ddc5920c7727390d0846f16479807de69c2852`；fetch成功，advertised/origin同为`02ddc5920c7727390d0846f16479807de69c2852`，新增范围为空；祖先判定=0，`merge --ff-only`=`Already up to date`。ChatGPT exact-pair `rg -l -U`检索为空；MM/Kimi capture均只有已送达申请、尚无同pair final，状态=处理中。无推进令牌，保持`REVIEW`，三分钟后第2轮完整检查。
 - 新formal root=`1440fd3391d46ef383d60387da8d7e7aa8238d5f`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；final-evidence-lock申请已append Inbox。待本记录/InBox提交推送、送达MM/Kimi后进入三分钟原生回收；新pair无推进令牌。
 
 ## Real adapter implementation review整改认领（2026-09-12，IN_PROGRESS）
