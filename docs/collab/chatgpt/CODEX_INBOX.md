@@ -561,3 +561,15 @@ v0.5逐项整改前轮两项 HIGH。第一项：authority在finalizer前创建�
 v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个finalizer调用（normal return与`BaseException`）捕获为outcome，并在既有rollback boundary内仅按exact issued `EvidenceCommit.state`分流：non-committed outcome仍pre-commit并rollback；committed outcome绝不rollback。committed后的exception在boundary外变为保留cause的`PostCommitFinalizerError`；normal return值统一被忽略、返回exact witness，因而不是违约。新增post-unlink普通/custom/BaseException、ordinary return及pre-commit对照的direct CPU/static spy验收。
 
 请核验前轮 1 HIGH 是否关闭，并给完整 exact pair 的唯一 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求 v0.3 四个root文件的temporary CPU/static implementation及temporary local bare-remote tests；不授权真实JSON/candidate/ref/origin/source/collection、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测或推理。
+
+## 审核申请：Authority Root Real Adapter CPU/static implementation（2026-09-12）
+
+- formal root SHA：`166e5f5f6470bcc7c77f8c3326914e1281e922b6`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 设计依据：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.3.md`至`v0.6.md`。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+- 实现范围：仅`tools/psm_wma/immutable_source_authority_root.py`及其test、`tools/psm_wma/materialize_immutable_source_authority_root.py`及其test；只用temporary directory/local bare remote CPU/static fixture。formal tree不含child Gitlink变化。
+- 验收：两模块unittest=36/36 PASS；`py_compile`、`git diff --check` PASS。覆盖one-shot commit、pre/post-unlink outcome、exact CAS lease/foreign保留、Evidence v1 ABI/digest/failure rows、guard/cleanup fail-stop。
+
+请求完整 exact pair 唯一 final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。仅审CPU/static implementation；不授权真实JSON/candidate/ref/origin/source/collection/child/runtime/checkpoint/data/cache、CUDA/GPU、训练、评测或推理。
