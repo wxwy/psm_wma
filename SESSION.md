@@ -9,6 +9,7 @@
 - 已提交`ebd0827a`：增加完整 adapter argv digest、缺失`-S` isolation flag与malformed contract-FD三项真实隔离解释器拒绝反例；均在`runpy/Git/evidence`前退出且local/remote ref不存在。
 - 已提交`ea042d37`：common config 在native Git view前后的dev/inode与bytes均重验；新增symlink、mocked raw/Git-view divergence、actual linked-worktree forbidden remote与view期间replace-after-read反例。43/43临时CPU测试、`py_compile`、`git diff --check` PASS。
 - closure review候选：root将在本条状态记录提交后冻结，child/Gitlink固定`93a89ba61306d840a008813f62f26a34d54850f4`；冻结审核名册为ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。范围为`9aba446..候选root`中的root adapter/test/任务记录；核验命令为88项stdlib unittest、四文件`py_compile`/Ruff、`git diff --check`。禁止真实materialization/source I/O/ref/remote、child、GPU与训练。申请前本地=`d77f33af...`、origin advertised同SHA、ff-only成功；尚未发送申请。
+- closure review申请送达回执（2026-09-12 21:46:25 CST）：formal root=`bb17774ce6da4e4d14c57993fe97f813065de319`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；canonical live Inbox条目已由ledger commit`41cfd087`推送。MM=`mm:0.0`按`send-keys -l`、等待≥1秒、独立Enter后capture显示申请离开输入框并进入`Scampering`，送达/处理中；Kimi=`kimi:0.0`同序列capture显示完整申请进入消息流且输入框为空，送达/处理中。首次Enter后的capture仍见输入框，未计送达；已再次仅发送独立Enter并回读成功。ChatGPT正式回复仅以reviews目录exact pair文件计。下一步三分钟后第1轮完整观察；无推进令牌，禁止整改、真实I/O、GPU与训练。
 
 ## Authority Root Real Adapter 第三轮整改复审（2026-09-12 17:25 CST，REVIEW）
 
