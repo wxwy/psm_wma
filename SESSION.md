@@ -3065,3 +3065,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 按#35令牌新增 immutable formal-tree launcher artifact `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.5.py`，以及 annex/request v0.5；artifact raw=`8542` bytes、SHA-256=`cfbb67dc1583eaab433176ad44c16635c09907efda17bdf6167b23a37540461b`。annex v0.5 将`-c` payload 精确绑定该 path/bytes/digest，final execve 唯一从v0.3 bootstrap raw与actual argv JSON推导，并要求所有native Git command前后parent `.git`/common-config identity、raw与allowlist重验。
 - 静态验证：`py_compile` PASS；只读 helper extraction 对v0.2 selection=`516/8fe458...`、config=`508/43b3...`、v0.3 argv=`2427/72777...`、adapter bootstrap=`7538/7e1c...`均与冻结值一致；`git diff --check` PASS。未运行 payload main，未创建worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未触碰child/GPU/训练。下一步提交推送并对新root/同Gitlink重新三方审核。
+
+### Authority-root launcher payload v0.5 复审申请（2026-09-13，REVIEW）
+
+- formal=`8d1c10015a632c3c48eb46ad26b3180658cee0a1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。申请已append canonical live Inbox，待提交推送后按`send-keys -l`→等待≥1秒→独立Enter→capture送达MM/Kimi。仅审v0.5 immutable payload/annex/request docs-only整改；禁止materialization、source/checkpoint I/O、collection/receipt/publication、child、GPU、训练。

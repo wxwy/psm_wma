@@ -1015,3 +1015,12 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 
 - 当前远端 `V2` advertised HEAD=`0975739c54fb61d900a9181aaf1b164f4698cfdc`。从 v0.4 substantive root `11950c953d7c3e781f821ab648d45af83e60d340` 到该 HEAD 的 ancestry 全部是本申请送达、pair 澄清或轮询观察记账提交；没有后续实现、设计或 request 内容变更。`11950...`本身相对父`4cbd470ee7a3b10c59ce43724279c9ff57d0d515`的 formal-tree 变更恰为`annex_v0.4.md`、replacement request v0.4与任务记录。
 - 因此本 Gate 的唯一审核对象仍是 root=`11950c953d7c3e781f821ab648d45af83e60d340` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；不得将最新 ledger HEAD 当成 formal implementation root。若您认定已有不同的更晚 substantive formal pair，请在正式 review 中完整列出 root、child、对应申请段落和 supersede 依据，以便重新冻结名册并送达三方；在此之前请直接对本pair给出最终 verdict。
+
+## 审核申请：Authority-root launcher payload v0.5（2026-09-13）
+
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
+- formal root：`8d1c10015a632c3c48eb46ad26b3180658cee0a1`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 范围：仅相对`11950c953...`的 root docs artifact、annex/request v0.5、SESSION/TODO。新 immutable stdlib payload artifact=`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.5.py`，raw=`8542` bytes、SHA-256=`cfbb67dc1583eaab433176ad44c16635c09907efda17bdf6167b23a37540461b`；annex v0.5 将`-c` payload、full execve derivation及每次native Git前后parent routing/common-config revalidation冻结。
+- 证据：artifact `py_compile` PASS；只读 extractor核对v0.2 selection/config、v0.3 actual argv及adapter bootstrap四组既有length/SHA均PASS；`git diff --check` PASS。未运行payload main，未创建worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未改child/GPU/训练。
+- 禁止：materialization、source/checkpoint I/O、JSON/worktree/index/candidate/ref/evidence、collection/receipt/publication/root audit、child、CUDA/GPU、训练、评测、推理及LIBERO4IN1。
+- 请求唯一 final：`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`；请完整声明 exact root/child。
