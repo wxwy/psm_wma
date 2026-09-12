@@ -2761,3 +2761,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=77ba29484563e06cb8a208861dec017ba22ee1d2`；fetch成功；advertised/origin/local-after均为`cfbd0bb9964b1c949f3ff406f0e476503d220869`；新增`772f75d9`及`cfbd0bb9`，祖先检查成功且已`merge --ff-only`。
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_9dd2fb8_93a89ba.md` final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`；MM `mm:0.0`与Kimi `kimi:0.0` capture均为同一exact pair、同一final token。三方同pair全批准推进令牌成立，仅关闭temporary root CPU/static authority implementation；不授权真实materialization/source/ref/evidence、child、GPU、训练。下一步应按既有source-evidence路线确定单次真实 materialization request 的独立审批资产，不能以本批准直接执行。
+
+### Authority-root materialization request v0.2 rebind（2026-09-12，IN_PROGRESS）
+
+- v0.1 request 固定在旧`ad9e011...` adapter tree，不能覆盖`9dd2fb8...`已关闭的routing-authority保护。新增 docs-only v0.2 replacement：唯一 formal parent改为`9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`，四个formal-tree module blob/raw digest按该commit只读重算；v0.1其余事务/禁止合同继续生效。v0.2只请求批准创建一次只读运行时 snapshot annex，annex及执行命令仍需独立三方 `APPROVE_TO_MATERIALIZE`。未执行项目代码或真实I/O；提交：未提交。
