@@ -12,6 +12,7 @@ from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
+from tools.psm_wma.immutable_source_authority_root import EvidenceCleanupIncomplete
 from tools.psm_wma.materialize_immutable_source_authority_root import (
     NativeAuthorityGit,
     NativeGitError,
@@ -273,6 +274,19 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 write_pending_evidence(path, _pass_evidence(), Commit())
             self.assertFalse(path.exists())
             self.assertFalse(path.with_name("evidence.json.pending").exists())
+
+    def test_writer_reports_cleanup_that_cannot_be_proven(self):
+        class Commit:
+            def seal_for_guard(self, _callback):
+                raise AssertionError("seal must not be reached")
+
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "evidence.json"
+            with patch(
+                "tools.psm_wma.materialize_immutable_source_authority_root._fsync_directory",
+                side_effect=OSError("fixture"),
+            ), self.assertRaises(EvidenceCleanupIncomplete):
+                write_pending_evidence(path, _pass_evidence(), Commit())
 
     def test_temporary_index_commit_and_exact_ref_cas(self):
         git = Path(shutil.which("git") or "")
