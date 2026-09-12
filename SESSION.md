@@ -6,6 +6,14 @@
 - 同 Gate 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。申请只请求 CPU/static 三 HIGH 复审，不请求真实执行或扩展 Gate。
 - Inbox 追加前 40406 bytes，追加后低于 128 KiB；先提交推送 ledger，再发送两个 pane 并回读。此为准备记录，尚不声明送达；当前 REVIEW，不继续修改审核对象。
 
+### 新 pair 送达回执（2026-09-12 10:30:53 CST）
+
+- formal root=`08afbed4e1843c23a1cc3542f0184a1898c1772c`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT/MM/Kimi 不变。
+- ChatGPT 已送达：canonical Inbox=42915 bytes，ledger=`b53e4b3c6090665924ef1c958ce3ea79cb9ba764` 已成功推送。申请明确逐项复核三 HIGH；不推断 verdict。
+- Kimi `kimi:0.0` 已送达：同一完整 pair/三 HIGH/29 tests/边界消息，send-keys -l 后原生等待至少 1 秒、独立 Enter，独立未截断 capture 显示消息在会话内且输入框为空、进入处理。
+- MM `mm:0.0` 已送达：同消息写入后至少 1 秒 Enter，首 capture 仍为 pasted text 输入框，未当作发送完成；再至少 1 秒独立 C-m，最终独立未截断 capture 显示完整消息在会话内、输入框为空且正在运行语法检查。
+- 保持 REVIEW；按本轮用户文本的 60 分钟等待，下一定时检查不早于 11:30:53 CST，用户回复提示立即触发完整三路检查。旧句柄 3661 已终止；不得再等待它。新等待句柄由本轮原生工具返回后交接，不创建 shell/tmux 伪监控。真实执行仍禁止。
+
 ## 累计整改复审第 1 轮（2026-09-12 10:24 CST，用户回复提示触发）
 
 - formal root=`1db0d539fd3d52fa7d521962a47204b578e0f94f`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
