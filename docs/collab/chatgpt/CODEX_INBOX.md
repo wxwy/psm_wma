@@ -522,3 +522,16 @@ v0.1三方意见齐并均要求更正blob OID；ChatGPT另要求CAS/evidence合�
 v0.3 仅整改 evidence transaction 合同：allowlist从两文件扩至 authority module/direct test + adapter/direct test 四文件；future `publish_candidate(..., finalizer=...)`把 writer failure 保持在已有 remote→local ownership-aware rollback 内，opaque witness/commit capability禁止构造、复制与重放；冻结 execution/observation/authority/candidate nested ABI、first-failure nullability、ordinary FAIL/ROLLBACK_INCOMPLETE/PASS terminal invariants、pending-guard accepted-evidence commit及清理规则。v0.2 的 raw OID、per-ref exact-old remote lease 与禁止项不变。
 
 请求完整pair唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅授权四文件的 temporary CPU/static 实现及本地 bare-remote tests；不授权真实JSON/candidate/ref/origin/source/collection/GPU/训练。
+
+## 审核申请：Authority Root Real Adapter设计 v0.4整改（2026-09-12）
+
+- formal root SHA：`be833f807e50a9a1d433c8fdf7f341e7ad3544f6`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-EXECUTION-REQUEST-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.4.md`
+- 证据：前轮 ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_c413338_93a89ba.md`；`git diff --cached --check` PASS。
+- 冻结名册：ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+v0.4 把guard成功`unlink`定义为 writer visibility、sealed EvidenceCommit与authority transaction共同的唯一PASS linearization；所有fallible fsync/re-read/validator均留在guard存在的pre-commit阶段，unlink后禁止异常回流rollback。failure改为exact primary/rollback双字段；rollback-required仅允许verified authority/candidate与concrete pre-observation，并按四个primary origin冻结ownership与终态。
+
+请求完整pair唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅授权四文件temporary CPU/static implementation/tests；不授权真实JSON/candidate/ref/origin/source/collection/GPU/训练。

@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.4 已提交、待三方复审（2026-09-12，REVIEW）
+
+- formal root=`be833f807e50a9a1d433c8fdf7f341e7ad3544f6`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。v0.4 将guard成功unlink设为唯一PASS linearization；此前完成全部fallible fsync/re-read，之后禁止异常回流rollback；failure改为primary/rollback双字段，rollback-required按四个真实primary origin收紧。
+- `git diff --cached --check` PASS；仅`SESSION.md`、`TODO.md`、v0.4 doc入提交`be833f80...`并已push。前轮观察`a53bba9...`也已随此push；dirty residue未触碰。
+- 冻结名册：ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。下一步仅为exact-pair三方审核；无令牌前禁止adapter/真实I-O/GPU/训练。未提交。
+
 ## Real adapter design v0.3三方结论与 v0.4整改认领（2026-09-12，IN_PROGRESS）
 
 - push拒绝后已先 fetch：远端新增`08fb2a45`（ChatGPT exact review）/`7f0b3452`（发布），formal pair=`c4133389f856f5ab7a5ad01923f71c0c3892ce09`/`93a89ba61306d840a008813f62f26a34d54850f4`。本地轮询记录`bf1f1021`已无冲突地 rebase 为`a53bba9b`，尚未push，不强推。
