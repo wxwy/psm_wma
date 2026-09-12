@@ -621,3 +621,15 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 - 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
 
 这是同一已推送、可解析 implementation commit 的新 exact-pair 申请，非对错误 SHA verdict 的替换或继承。请相对`2f9fd4bcaec0fd0ea0c6302aa69910e24ce9e378`审核 formal tree 四个已批准 tooling/test 文件的累计整改：HIGH-1--3已在前序提交完成；HIGH-4补齐每 endpoint value/read-error witness，serializer输出exact `absent`/`revision`/`unreadable`，并让`pre_publication`、post/final read-error 可落盘。temporary local-bare-remote CLI 子进程覆盖pre/local/remote/post/binding/evidence失败及 persistent post-read 的`ROLLBACK_INCOMPLETE`，均由`verify_evidence_path()`复验；unittest=53/53、py_compile、Ruff、diff-check PASS。仅 root CPU/static temporary fixtures；不授权真实 source/selection/config/candidate/ref/origin/collection/evidence、child、GPU、模型/数据/训练/评测/推理。请对这个完整 pair 给出新的唯一最终`APPROVE_TO_CLOSE...`或`REQUEST_CHANGES(file:line)`。
+
+## 审核申请：Authority Root Real Adapter activation/ref-race/FD-cleanup remediation（2026-09-12）
+
+- formal root SHA：`8879742c4ea99bf2676903d4085a77aee91cd4e1`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮精确审核：`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_2249fdd_93a89ba.md`；同pair三方final已齐（ChatGPT=`REQUEST_CHANGES`四项HIGH，Kimi=`REQUEST_CHANGES`，MM=`APPROVE_TO_CLOSE`）。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+请相对`2f9fd4bcaec0fd0ea0c6302aa69910e24ce9e378`审核四个批准root tooling/test文件的累计整改。H1：witness/commit capability只在同一activation内有效，stale retained object不能用于下一transaction。H2：guard unlink前fresh观察local/remote fixed refs；任一endpoint drift会拒绝提交且保留foreign ref。H3：guard/tmp/final的cleanup由创建FD的dev/inode身份绑定，path被外来替换即fail-stop且绝不unlink/overwrite foreign bytes，含实际CLI failure/PASS writer回归。H4：verify失败保留prepared candidate、pre-input request error产生preflight Evidence-v1、cleanup不确定产生可验证`ROLLBACK_INCOMPLETE`/`EVIDENCE_CLEANUP_INCOMPLETE`。验证：temporary directory/local bare remote CPU/static unittest=`58/58 PASS`；`py_compile`、Ruff、限定任务文件`git diff --check` PASS。formal tree Gitlink不变。
+
+请求完整exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。范围只限四个root工具/测试的temporary CPU/static fixture；不授权真实source/selection/config/candidate/ref/origin/collection/evidence操作、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。

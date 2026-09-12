@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority Root Real Adapter 第三轮整改复审（2026-09-12 17:25 CST，REVIEW）
+
+- formal root=`8879742c4ea99bf2676903d4085a77aee91cd4e1`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。审核申请将先写入canonical live Inbox，再按`send-keys -l`→等待至少1秒→独立Enter→capture发送至两pane。
+- 相对前轮review root=`2f9fd4bcaec0fd0ea0c6302aa69910e24ce9e378`，累计改动严格限`immutable_source_authority_root.py`、`materialize_immutable_source_authority_root.py`及其两个direct tests。关闭前轮ChatGPT四项HIGH：activation/witness的逐transaction能力边界；guard unlink前的双端ref重观测；以创建时FD的dev/inode绑定guard/tmp/final清理、拒绝外来替换；verify/pre-input/publication cleanup的真实Evidence-v1 terminal failure产物。仅temporary directory/local bare remote CPU/static fixture。
+- 本轮验证：`python -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root`=`58/58 PASS`；两模块`py_compile`、四文件`ruff check`、限定本任务文件的`git diff --check 2f9fd4bc..HEAD`均PASS。formal root tree Gitlink为`93a89ba61306d840a008813f62f26a34d54850f4`；未触碰dirty `cosmos-framework`或训练遗留。根仓已fetch/ls-remote/ff-only锁定为`8879742c4ea99bf2676903d4085a77aee91cd4e1`。等待本exact pair三方最终verdict；无推进令牌，禁止进一步整改、真实操作、GPU或训练。
+
 ## Real adapter implementation review整改认领（2026-09-12，IN_PROGRESS）
 
 - 第3轮完整观察凭证：formal root=`166e5f5f6470bcc7c77f8c3326914e1281e922b6`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。`before_head=5032ac720ff6a608a6113253be58f752cb17a166`；`git fetch origin V2`后 advertised/origin 均为`8fc0a10ab54692eec4273ab6e39ea54b3c3b3c95`，新增提交仅`8fc0a10a docs: publish ChatGPT 166e5f5 authority adapter implementation review`，`git merge --ff-only origin/V2`成功，HEAD相同。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_166e5f5_93a89ba.md`，final=`REQUEST_CHANGES`；MM capture为同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`；Kimi capture为同pair `REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:14)`。三方final齐全，形成仅限同Gate四文件CPU/static整改的汇总令牌。
