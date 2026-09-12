@@ -2655,3 +2655,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root execution-authority implementation 设计 v0.2（2026-09-12，IN_PROGRESS）
 
 - 新增v0.2，冻结`sys.orig_argv`实际`-c` bootstrap观测和摘要算法，以及exact env/Git prefix/HTTPS endpoint/config-reject policy/isolation fingerprint与direct temporary bare-remote witness；继承两文件CPU/static范围。未运行项目代码或真实动作；待提交并对新formal pair三方审核。
+
+### Authority-root execution-authority implementation 设计 v0.2送达准备（2026-09-12 CST，REVIEW）
+
+- formal=`e69d78c0758cb77111e371897093e0765018d7bc`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。申请已append live Inbox；待以完整文本、至少1秒、独立Enter和capture投递两pane。未获三方同pair批准前禁止实现或真实执行。

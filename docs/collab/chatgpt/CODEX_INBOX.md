@@ -851,3 +851,14 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 5. 下一 actual request 须一次性冻结 bootstrap bytes、完整argv、FD、输入binding、metadata/env、endpoint与路径；本设计不创建或执行该request。
 
 请求 exact pair 唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。批准范围仅为两root文件的temporary CPU/static实现及测试；不授权真实JSON/candidate/ref/origin/source/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority-root execution-authority implementation 设计 v0.2（2026-09-12）
+
+- formal root SHA：`e69d78c0758cb77111e371897093e0765018d7bc`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-EXECUTION-AUTHORITY-IMPLEMENTATION-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_execution_authority_implementation_design_v0.2.md`
+
+仅审相对`569a34d...` ChatGPT两项HIGH的docs-only整改：以Python 3.11 `sys.orig_argv`对实际`-c` payload做进程级bootstrap/raw+argv摘要观测并写入Evidence-v1；冻结Git exact env/prefix、HTTPS endpoint grammar、config reject/fingerprint；要求production NativeAuthorityGit经temporary local bare remote直接验证replace/config/rewrite/CAS。范围仍只允许后续两root文件CPU/static实现，不新增Gate。
+
+请求唯一`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；不授权真实执行、child、GPU或训练。
