@@ -10,6 +10,7 @@ import subprocess
 from pathlib import Path
 from typing import Mapping
 
+from tools.psm_wma.immutable_source_authority_root import EvidenceCleanupIncomplete
 from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, TreeEntry
 
 
@@ -303,7 +304,7 @@ def _cleanup_pending_evidence(paths: tuple[Path, ...], directory: Path) -> None:
     except OSError:
         failed = True
     if failed:
-        raise NativeGitError("evidence pre-commit cleanup 无法证明完成")
+        raise EvidenceCleanupIncomplete("evidence pre-commit cleanup 无法证明完成")
 
 
 def write_pending_evidence(path: Path, record: Mapping[str, object], commit) -> None:

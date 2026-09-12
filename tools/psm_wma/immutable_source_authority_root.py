@@ -33,6 +33,10 @@ class RollbackIncomplete(AuthorityRootError):
         super().__init__("ROLLBACK_INCOMPLETE")
 
 
+class EvidenceCleanupIncomplete(AuthorityRootError):
+    """A writer cannot prove that pre-commit evidence cleanup completed."""
+
+
 class AuthorityGitTransaction(Protocol):
     def tree_entries(self, revision: str) -> Mapping[str, TreeEntry]: ...
     def parents(self, revision: str) -> tuple[str, ...]: ...
@@ -388,6 +392,13 @@ def publish_candidate(
             _rollback(git, revision, local_created, remote_created)
         except RollbackIncomplete:
             raise
+        callback_error = (
+            error.callback_error
+            if isinstance(error, _PreCommitFinalizerError)
+            else error
+        )
+        if isinstance(callback_error, EvidenceCleanupIncomplete):
+            raise RollbackIncomplete() from error
         if isinstance(error, _PreCommitFinalizerError) and error.callback_error:
             raise error.callback_error
         raise error

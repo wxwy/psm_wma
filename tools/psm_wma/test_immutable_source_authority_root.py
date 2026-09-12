@@ -10,6 +10,7 @@ from copy import copy, deepcopy
 from tools.psm_wma.immutable_source_authority_root import (
     AuthorityBinding,
     AuthorityCandidate,
+    EvidenceCleanupIncomplete,
     EvidenceCommit,
     AuthorityRequest,
     AuthorityRootError,
@@ -376,6 +377,17 @@ class AuthorityRootTest(unittest.TestCase):
         self.assertIsInstance(raised.exception.__cause__, AuthorityRootError)
         self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
         self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+
+    def test_unprovable_evidence_cleanup_is_rollback_incomplete(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(_witness, _commit):
+            raise EvidenceCleanupIncomplete("fixture")
+
+        with self.assertRaises(RollbackIncomplete):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
 
     def test_all_typed_boundaries_reject_copy_and_pickle(self):
         candidate, binding = self.candidate()
