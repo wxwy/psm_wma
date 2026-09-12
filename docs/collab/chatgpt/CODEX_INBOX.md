@@ -783,3 +783,15 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 仅审相对`074d0a0f036ac6a107a693a3b9903d17e2565e10`的两个批准root文件整改：authority-private `_AcceptanceAuthority` 在callback前冻结revision、binding SHA-256及最终双端ref observer，`PublicationWitness`/`EvidenceCommit`不能替换参与acceptance的authority输入；新增drift后伪造observer/binding的负例。guard已durable移除而accept失败时，authority粘滞`recovery_required`，`publish_candidate()`在callback返回后强制fail-stop，callback吞掉`PassClosureRecoveryRequired`亦不触发ordinary rollback；新增直接回归。
 
 验证：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`78/78 PASS`；四文件`py_compile`、Ruff与`git diff --check` PASS。Gitlink不变。请求该 exact pair 唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。范围只限temporary CPU/static fixtures；不授权真实source/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root handoff/restore recovery remediation（2026-09-12）
+
+- formal root SHA：`313b1dc81d83646b310d86c58c10d20b453fc739`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮 exact review：`2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_a18d178_93a89ba.md`，ChatGPT=`REQUEST_CHANGES`（1 HIGH）；MM/Kimi=`APPROVE_TO_CLOSE...`。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+仅审相对`a18d178877c192fdc9682033acbd36c4184b3639`的两个批准root文件整改：`_commit_exact_guard()`明确区分handoff前A失败与handoff后B失败；handoff后仅在恢复的public guard精确匹配原identity时才返回`False`，否则`PassClosureRecoveryRequired`。新增真实handoff→parked unlink失败→restore失败、callback吞即时异常后outer authority仍粘滞fail-stop的回归；双端refs保留且无rollback delete。`79/79` CPU unittest、py_compile、Ruff、diff-check PASS。该commit因承接远端ChatGPT ledger被安全rebase，formal SHA为上列`313b1dc8...`，代码diff相对`a18d1788...`不变。Gitlink不变。
+
+请求该 exact pair 唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。范围只限temporary CPU/static fixtures；不授权真实source/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
