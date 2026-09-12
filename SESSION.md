@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## 两 HIGH 整改复审准备（2026-09-12）
+
+- formal root=`d281d6f3079602632000b1576c47fd4546de22e6` 已推送；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4` 不变。32/32 CPU tests、py_compile、diff-check PASS。
+- 冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`；同 Gate 仅请求两项 authority seam 复审。Inbox 追加前 42915 bytes，追加后低于 128 KiB；先推送 ledger 再向 pane 发送。此为准备记录，不声明送达，审核对象保持冻结。
+
 ## 两项 authority 整改前复核第 4 轮（2026-09-12 10:59:50 CST）
 
 - formal root=`08afbed4e1843c23a1cc3542f0184a1898c1772c`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；名册 ChatGPT/MM/Kimi 不变。

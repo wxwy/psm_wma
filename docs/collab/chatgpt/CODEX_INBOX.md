@@ -373,3 +373,19 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 证据：formal tree 的 `tools/psm_wma/immutable_source_collection.py`、对应 unittest 和 SESSION；`python3 -B -m unittest tools.psm_wma.test_immutable_source_collection -v` 29/29 PASS；两文件临时目录 py_compile PASS；git diff --check PASS。无真实 source/checkpoint/cache I/O、collection/receipt/publication、child、GPU 或训练。
 
 请求同 Gate final：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，逐项确认三项 acceptance。请特别确认原子 sink 接口与 unavailable-snapshot 非 authority 诊断的实现语义；不新增横向 provenance Gate。ChatGPT 正式结果仅写 reviews/，请完整声明 formal root/child。三方同 pair final 到齐后才合并执行；本申请不请求真实执行权限。
+
+## 审核申请：Executor tree-entry / selection-transport 两 HIGH 整改（2026-09-12）
+
+- formal root SHA：`d281d6f3079602632000b1576c47fd4546de22e6`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+前轮 `08afbed4e1843c23a1cc3542f0184a1898c1772c` 三方 final 完整回收后，仅原两工具文件整改 ChatGPT 新两 HIGH（前轮三 HIGH 已关闭，不重开）：
+
+1. tree_entries 改为 path→(Git mode,type,native OID)；authority pre/post 共用完整 entry 的父树 delta 比较；collection/receipt 所有 inherited preservation 同样比较完整 entry。固定 JSON artifacts 为 100644/blob，拒绝其 mode/type 漂移。CPU fixture 包含继承普通文件和 Gitlink；直接测试 OID 不变的 mode/type 漂移、五加一路径及继承项 mode-only mutation 的拒绝/回滚。
+2. collect_synthetic 的 caller paths mapping 移除，替换必填 selection_request: bytes；executor 验证其与 bound authority selection blob 完全逐字节一致，随后仅从该 blob 导出 ordered entries，校验全部在 source open 前完成。测试同语义不同换行/缩进/Unicode escape 的字节漂移、parsed mapping 拒绝以及 exact bytes PASS。调用点检索仅原两工具文件，已全部迁移。
+
+证据为 formal tree 的 `tools/psm_wma/immutable_source_collection.py`、对应 unittest、SESSION。标准库 unittest 32/32 PASS；两文件临时目录 py_compile PASS；git diff --check PASS。无真实 source/checkpoint/cache I/O、authority/collection/receipt/publication、child、GPU 或训练。
+
+请求 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明 exact pair，逐项核验上述两 acceptance。不请求真实执行授权，不新增横向 provenance Gate；ChatGPT 正式结果仅写 reviews/。三方 final 齐后才合并整改或推进。
