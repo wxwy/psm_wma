@@ -206,7 +206,15 @@ def preflight_authority_invocation(
     _verify_loaded_identity(invocation, cwd)
     evidence_path = invocation.evidence_path
     guard = evidence_path.with_name(evidence_path.name + ".pending")
-    if not evidence_path.is_absolute() or evidence_path.exists() or evidence_path.is_symlink() or guard.exists() or guard.is_symlink():
+    if not evidence_path.is_absolute():
+        raise NativeGitError("evidence destination 必须为fresh absent absolute path")
+    if (
+        evidence_path.exists()
+        or evidence_path.is_symlink()
+        or guard.exists()
+        or guard.is_symlink()
+    ):
+        classify_pass_restart(evidence_path)
         raise NativeGitError("evidence destination 必须为fresh absent absolute path")
     if transaction.local_ref(AUTHORITY_REF) is not None:
         raise NativeGitError("fixed local ref 必须预先absent")

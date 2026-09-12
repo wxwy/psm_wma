@@ -198,6 +198,8 @@ class AuthorityGitTransaction(Protocol):
 
 
 class _NonSerializable:
+    __slots__ = ()
+
     def __copy__(self):
         raise AuthorityRootError("typed authority object 不可复制")
 
@@ -283,28 +285,95 @@ _ACCEPTED_TERMINAL_STATE = _AuthorityTerminalState(
 
 
 class _AuthorityTerminalCell:
-    __slots__ = ("state",)
+    __slots__ = ("__state",)
 
     def __init__(self) -> None:
-        self.state = _PENDING_TERMINAL_STATE
+        object.__setattr__(self, "_AuthorityTerminalCell__state", _PENDING_TERMINAL_STATE)
+
+    def __setattr__(self, _name: str, _value: object) -> None:
+        raise AttributeError("authority terminal cell 只能由authority transition修改")
+
+    @property
+    def state(self) -> _AuthorityTerminalState:
+        return self.__state
+
+    def _accept(self, token: object) -> None:
+        if token is not _CAPABILITY_TOKEN or self.__state is not _PENDING_TERMINAL_STATE:
+            raise AuthorityRootError("authority terminal transition 无效")
+        object.__setattr__(self, "_AuthorityTerminalCell__state", _ACCEPTED_TERMINAL_STATE)
+
+
+_AUTHORITY_TERMINALS: dict[object, _AuthorityTerminalCell] = {}
+
+
+def _terminal_state(key: object) -> _AuthorityTerminalState:
+    try:
+        return _AUTHORITY_TERMINALS[key].state
+    except KeyError as error:
+        raise AuthorityRootError("authority terminal 不可用") from error
+
+
+def _accept_terminal(key: object, token: object) -> None:
+    try:
+        _AUTHORITY_TERMINALS[key]._accept(token)
+    except KeyError as error:
+        raise AuthorityRootError("authority terminal 不可用") from error
 
 
 class _AcceptedPass(_NonSerializable):
-    __slots__ = ("_witness", "_activation", "_terminal", "_token")
+    __slots__ = ("_witness", "_activation", "_terminal_key", "_facts", "_token")
 
     def __init__(self, witness: "PublicationWitness", token: object) -> None:
         if token is not _CAPABILITY_TOKEN:
             raise AuthorityRootError("accepted pass 不可重建")
         self._witness = witness
         self._activation = witness._activation
-        self._terminal = witness._terminal
+        self._terminal_key = witness._terminal_key
+        self._facts: tuple[object, ...] | None = None
         self._token = token
+
+    def bind(
+        self,
+        witness: "PublicationWitness",
+        candidate_revision: str,
+        binding_sha256: str,
+        evidence_identity: tuple[int, int],
+        evidence_sha256: str,
+        record_sha256: str,
+        final_ref_witness: tuple[str, str],
+        token: object,
+    ) -> None:
+        expected_binding = hashlib.sha256(
+            canonical_json_bytes(witness._binding.as_mapping())
+        ).hexdigest()
+        if (
+            self._facts is not None
+            or token is not _CAPABILITY_TOKEN
+            or witness is not self._witness
+            or not self._activation.active
+            or candidate_revision != witness.revision
+            or binding_sha256 != expected_binding
+            or not all(isinstance(value, int) for value in evidence_identity)
+            or not all(
+                isinstance(value, str)
+                and len(value) == 64
+                and all(char in "0123456789abcdef" for char in value)
+                for value in (evidence_sha256, record_sha256)
+            )
+            or final_ref_witness != (candidate_revision, candidate_revision)
+        ):
+            raise AuthorityRootError("accepted pass binding 无效")
+        self._facts = (
+            candidate_revision, binding_sha256, evidence_identity, evidence_sha256,
+            record_sha256, final_ref_witness,
+        )
 
     def consume(self, witness: "PublicationWitness") -> None:
         if (
             witness is not self._witness
             or not self._activation.active
-            or not self._terminal.state.accepted
+            or not _terminal_state(self._terminal_key).accepted
+            or self._facts is None
         ):
             raise AuthorityRootError("accepted pass 无效")
 
@@ -312,7 +381,7 @@ class _AcceptedPass(_NonSerializable):
 class PublicationWitness(_NonSerializable):
     __slots__ = (
         "revision", "local_created", "remote_created", "_request", "_candidate",
-        "_binding", "_activation", "_terminal", "_token",
+        "_binding", "_activation", "_terminal_key", "_token",
     )
 
     def __init__(
@@ -322,7 +391,7 @@ class PublicationWitness(_NonSerializable):
         candidate: AuthorityCandidate,
         binding: AuthorityBinding,
         activation: _FinalizerActivation,
-        terminal: _AuthorityTerminalCell,
+        terminal_key: object,
         token: object,
     ) -> None:
         if token is not _CAPABILITY_TOKEN:
@@ -330,15 +399,15 @@ class PublicationWitness(_NonSerializable):
         self.revision = revision
         self.local_created = self.remote_created = True
         self._request, self._candidate, self._binding = request, candidate, binding
-        self._activation, self._terminal = activation, terminal
+        self._activation, self._terminal_key = activation, terminal_key
         self._token = token
 
 
 class EvidenceCommit(_NonSerializable):
     __slots__ = (
-        "_witness", "_activation", "_terminal", "_sealed", "_guard",
+        "_witness", "_activation", "_terminal_key", "_accepted_pass", "_sealed", "_guard",
         "_evidence_path", "_evidence_sha256", "_guard_identity",
-        "_evidence_identity", "_record_sha256", "_pre_unlink", "_token",
+        "_evidence_identity", "_record_sha256", "_binding_sha256", "_pre_unlink", "_token",
     )
 
     def __init__(
@@ -351,7 +420,7 @@ class EvidenceCommit(_NonSerializable):
         if token is not _CAPABILITY_TOKEN:
             raise AuthorityRootError("evidence commit 不可重建")
         self._witness, self._activation = witness, witness._activation
-        self._terminal, self._token = witness._terminal, token
+        self._terminal_key, self._token = witness._terminal_key, token
         self._accepted_pass = accepted_pass
         self._sealed = False
         self._guard: Path | None = None
@@ -360,11 +429,14 @@ class EvidenceCommit(_NonSerializable):
         self._guard_identity: tuple[int, int] | None = None
         self._evidence_identity: tuple[int, int] | None = None
         self._record_sha256: str | None = None
+        self._binding_sha256 = hashlib.sha256(
+            canonical_json_bytes(witness._binding.as_mapping())
+        ).hexdigest()
         self._pre_unlink = pre_unlink
 
     @property
     def committed(self) -> bool:
-        return self._terminal.state.accepted
+        return _terminal_state(self._terminal_key).accepted
 
     def seal_for_guard(
         self,
@@ -466,17 +538,48 @@ class EvidenceCommit(_NonSerializable):
             ):
                 raise AuthorityRootError("evidence commit identity/digest 漂移")
             try:
-                self._pre_unlink()
+                evidence_value = json.loads(raw)
+            except (TypeError, ValueError) as error:
+                raise AuthorityRootError("evidence commit record 无效") from error
+            if (
+                not isinstance(evidence_value, dict)
+                or evidence_value.get("evidence_sha256") != self._evidence_sha256
+            ):
+                raise AuthorityRootError("evidence commit evidence digest 漂移")
+            try:
+                final_ref_witness = self._pre_unlink()
             except Exception as error:
                 raise AuthorityRootError("evidence commit fixed ref 漂移") from error
+            if not isinstance(final_ref_witness, tuple) or len(final_ref_witness) != 2:
+                raise AuthorityRootError("evidence commit fixed ref witness 无效")
+            self._accepted_pass.bind(
+                self._witness,
+                self._witness.revision,
+                self._binding_sha256,
+                self._evidence_identity,
+                self._evidence_sha256,
+                self._record_sha256,
+                final_ref_witness,
+                _CAPABILITY_TOKEN,
+            )
             if not _commit_exact_guard(self._guard, self._guard_identity):
                 raise AuthorityRootError("evidence commit guard identity 漂移")
-            self._terminal.state = _ACCEPTED_TERMINAL_STATE
+            try:
+                _accept_terminal(self._terminal_key, _CAPABILITY_TOKEN)
+            except BaseException as error:
+                raise PassClosureRecoveryRequired() from error
             self._accepted_pass.consume(self._witness)
 
 
 class PostCommitFinalizerError(AuthorityRootError):
     pass
+
+
+class PassClosureRecoveryRequired(AuthorityRootError):
+    """The durable guard moved but in-process acceptance did not complete."""
+
+    def __init__(self) -> None:
+        super().__init__("PASS_CLOSURE_RECOVERY_REQUIRED")
 
 
 class _PreCommitFinalizerError(AuthorityRootError):
@@ -762,9 +865,10 @@ def publish_candidate(
             raise AuthorityRootError("committed binding drift")
         binding_reverified = True
         activation = _FinalizerActivation()
-        terminal = _AuthorityTerminalCell()
+        terminal_key = object()
+        _AUTHORITY_TERMINALS[terminal_key] = _AuthorityTerminalCell()
         witness = PublicationWitness(
-            revision, request, candidate, binding, activation, terminal, _CAPABILITY_TOKEN
+            revision, request, candidate, binding, activation, terminal_key, _CAPABILITY_TOKEN
         )
         phase = "evidence_write"
         def pre_unlink() -> None:
@@ -774,6 +878,7 @@ def publish_candidate(
                 or local != revision or remote != revision
             ):
                 raise AuthorityRootError("evidence commit fixed ref drift")
+            return local, remote
 
         accepted_pass = _AcceptedPass(witness, _CAPABILITY_TOKEN)
         commit = EvidenceCommit(witness, pre_unlink, accepted_pass, _CAPABILITY_TOKEN)
@@ -794,6 +899,8 @@ def publish_candidate(
             else error
         )
         cleanup_incomplete = isinstance(callback_error, EvidenceCleanupIncomplete)
+        if isinstance(callback_error, PassClosureRecoveryRequired):
+            raise callback_error from error
         outcome: RollbackOutcome | None = None
         try:
             outcome = _rollback(git, revision, local_created, remote_created)

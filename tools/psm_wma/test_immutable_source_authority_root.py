@@ -19,6 +19,7 @@ from tools.psm_wma.immutable_source_authority_root import (
     AuthorityCandidate,
     EvidenceCleanupIncomplete,
     EvidenceCommit,
+    PassClosureRecoveryRequired,
     _ACCEPTED_TERMINAL_STATE,
     _PENDING_TERMINAL_STATE,
     _commit_exact_guard,
@@ -353,6 +354,69 @@ class AuthorityRootTest(unittest.TestCase):
             commit.consume_by_unlink()
 
         publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+
+    def test_callback_cannot_forge_terminal_acceptance(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            self.assertFalse(hasattr(witness, "_terminal"))
+            self.assertFalse(hasattr(commit, "_terminal"))
+            for operation in (
+                lambda: setattr(witness, "_terminal", _ACCEPTED_TERMINAL_STATE),
+                lambda: setattr(commit, "_terminal", _ACCEPTED_TERMINAL_STATE),
+                lambda: setattr(commit, "committed", True),
+            ):
+                with self.assertRaises(AttributeError):
+                    operation()
+            self.assertFalse(commit.committed)
+
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
+    def test_accepted_pass_binds_evidence_binding_and_final_ref_witness(self):
+        for field, value in (
+            ("_binding_sha256", "0" * 64),
+            ("_evidence_identity", (0, 0)),
+            ("_evidence_sha256", "0" * 64),
+            ("_record_sha256", "0" * 64),
+        ):
+            with self.subTest(field=field):
+                candidate, binding = self.candidate()
+
+                def finalizer(witness, commit, field=field, value=value):
+                    self._seal_commit(witness, commit)
+                    setattr(commit, field, value)
+                    with self.assertRaises(AuthorityRootError):
+                        commit.consume_by_unlink()
+
+                with self.assertRaises(AuthorityRootError):
+                    publish_candidate(
+                        self.request, candidate, binding, self.git, finalizer=finalizer
+                    )
+                self.git.local.clear()
+                self.git.remote.clear()
+
+    def test_b_window_after_guard_transition_is_recovery_not_rollback(self):
+        class Cancellation(BaseException):
+            pass
+
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            with patch(
+                "tools.psm_wma.immutable_source_authority_root._accept_terminal",
+                side_effect=Cancellation("B window"),
+            ):
+                commit.consume_by_unlink()
+            self.assertFalse(guard.exists())
+
+        with self.assertRaises(PassClosureRecoveryRequired):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
 
     def test_stale_commit_cannot_seal_current_activation_guard(self):
         stale: list[tuple[object, EvidenceCommit]] = []

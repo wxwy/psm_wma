@@ -2401,3 +2401,17 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 整改 checkpoint H（2026-09-12，IN_PROGRESS）：H2 final unlink boundary新增local/remote双端drift反例；在seal后、consume前置foreign ref，authority拒绝guard消费、guard仍在，rollback不会删foreign endpoint。四文件unittest=57/57、py_compile、Ruff、diff-check PASS；测试提交=`69261ced`。剩余：PASS writer guard/temp replacement及最终审前复核；SESSION未提交。
 - 整改 checkpoint I（2026-09-12，IN_PROGRESS）：H3 race修复：guard/temp的owned identity由创建FD的`fstat()`立即取得，final identity直接继承temp hard-link identity，禁止创建后pathname `lstat()`将foreign replacement误纳入owned集合。四文件unittest=57/57、Ruff、diff-check PASS。剩余：该FD-bound修复的时序回归与最终审前复核；未提交。
 - 整改 checkpoint J（2026-09-12，IN_PROGRESS）：FD-bound identity direct回归：用`O_EXCL`创建regular FD并从`fstat()`读取identity，随后替换相同pathname为foreign bytes；cleanup必须`EvidenceCleanupIncomplete`且foreign bytes保留。四文件unittest=58/58、py_compile、Ruff、diff-check PASS。剩余：最后审前范围/失败矩阵复核；未提交。
+
+### PASS lifecycle remediation 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`）。formal root=`bc40191f0e80f98201774cce8a1b551fa2343128`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=575009abf3fe088db269dd99ba9db5938fa34053`；`git fetch origin V2`成功，advertised `V2`=`fb2fe30142b52fa5a336f788d93a8c7c9847ec1c`且与`origin/V2`一致；新增提交为`a1ec3adf docs: add ChatGPT bc40191 pass lifecycle remediation review`、`fb2fe301 docs: publish ChatGPT bc40191 pass lifecycle remediation review`；祖先检查成功并`git merge --ff-only origin/V2`成功，本地after=`fb2fe30142b52fa5a336f788d93a8c7c9847ec1c`。
+- ChatGPT exact-pair检索：`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_bc40191_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_authority_root.py:289)`，3 HIGH：callback可改terminal cell、AcceptedPass未绑定evidence/ref witness、B窗口/CLI restart未闭合。
+- MM `mm:0.0` capture：同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。Kimi `kimi:0.0` capture：同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。
+- 三方final已齐；推进令牌仅授权汇总ChatGPT的三项HIGH并在既批准的四个root tooling/test文件、temporary CPU/static范围内最小整改。未授权真实source/candidate/ref/evidence、child、GPU或训练。本记录未提交。
+
+### PASS lifecycle remediation 实现（2026-09-12，IN_PROGRESS）
+
+- 针对`bc40191f`的同pair三方final（ChatGPT=3 HIGH，MM/Kimi=APPROVE），仅修改批准的四个root tooling/test文件。terminal cell移入authority私有registry，callback可见的`PublicationWitness`/`EvidenceCommit`不再持有cell；cell没有公开setter，唯一acceptance transition仍是guard成功后的token-gated pointer replacement。
+- `_AcceptedPass`在该transition前绑定candidate revision、binding SHA-256、sealed evidence identity/digest、record digest及最后local/remote candidate观察；任何不一致拒绝。guard已移除但terminal尚未accept的B窗口抛`PASS_CLOSURE_RECOVERY_REQUIRED`并跳过普通rollback；adapter preflight在fresh-destination拒绝前接入`classify_pass_restart()`，B/C均进入同一recovery语义。
+- 验证：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=74/74 PASS；四文件`py_compile`、Ruff、`git diff --check` PASS。未运行真实Git/source/candidate/ref/evidence、child、GPU、数据或训练。下一步：更新TODO，提交并对新formal SHA重新三方审核。提交：未提交。

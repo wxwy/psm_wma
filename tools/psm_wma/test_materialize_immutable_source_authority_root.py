@@ -14,12 +14,19 @@ from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.psm_wma.immutable_source_authority_root import EvidenceCleanupIncomplete
+from tools.psm_wma.immutable_source_authority_root import (
+    AuthorityRequest,
+    EvidenceCleanupIncomplete,
+)
 from tools.psm_wma.materialize_immutable_source_authority_root import (
     NativeAuthorityGit,
     CommitMetadata,
     main,
     NativeGitError,
+    AuthorityAdapterInvocation,
+    ExecutableIdentity,
+    ModuleIdentity,
+    preflight_authority_invocation,
     _tool_version,
     verify_evidence_bytes,
     verify_evidence_path,
@@ -253,6 +260,38 @@ class NativeAuthorityGitTest(unittest.TestCase):
             path.write_bytes(_redigest(_pass_evidence()))
             with self.assertRaisesRegex(NativeGitError, "PASS_CLOSURE_RECOVERY_REQUIRED"):
                 classify_pass_restart(path)
+
+    def test_preflight_routes_guard_absent_pass_evidence_to_recovery(self):
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "evidence.json"
+            path.write_bytes(_redigest(_pass_evidence()))
+            request = AuthorityRequest("a" * 40, "b" * 40, b"{}", b"{}")
+            invocation = AuthorityAdapterInvocation(
+                request,
+                hashlib.sha256(b"{}").hexdigest(),
+                hashlib.sha256(b"{}").hexdigest(),
+                ModuleIdentity("adapter.py", "c" * 40, "d" * 64),
+                ModuleIdentity("authority.py", "e" * 40, "f" * 64),
+                ExecutableIdentity(Path("/bin/true"), "0" * 64, "fixture"),
+                ExecutableIdentity(Path("/bin/true"), "1" * 64, "fixture"),
+                path,
+                "2" * 64,
+            )
+            tree = {"cosmos-framework": ("160000", "commit", request.expected_child_gitlink)}
+            with patch(
+                "tools.psm_wma.materialize_immutable_source_authority_root.validate_request"
+            ), patch(
+                "tools.psm_wma.materialize_immutable_source_authority_root.validated_git_tree",
+                return_value=tree,
+            ), patch(
+                "tools.psm_wma.materialize_immutable_source_authority_root._verify_module_identity"
+            ), patch(
+                "tools.psm_wma.materialize_immutable_source_authority_root._verify_executable_identity"
+            ), patch(
+                "tools.psm_wma.materialize_immutable_source_authority_root._verify_loaded_identity"
+            ):
+                with self.assertRaisesRegex(NativeGitError, "PASS_CLOSURE_RECOVERY_REQUIRED"):
+                    preflight_authority_invocation(invocation, object(), Path(raw))
 
     def test_cleanup_preserves_replaced_foreign_path(self):
         with tempfile.TemporaryDirectory() as raw:
