@@ -18,7 +18,12 @@ from tools.psm_wma.immutable_source_authority_root import (
 )
 from tools.psm_wma.immutable_source_collection import (
     AUTHORITY_REF,
+    CollectionError,
+    MemoryEvidenceSink,
     SELECTION_PATH,
+    SyntheticRootFd,
+    TemporaryGitFixture,
+    collect_synthetic,
 )
 
 
@@ -35,15 +40,15 @@ class Git:
                 "cosmos-framework": ("160000", "commit", self.child),
             }
         }
-        self.parents, self.blobs = {}, {}
+        self.parent_lists, self.blobs = {}, {}
         self.local, self.remote = {}, {}
         self.events, self.hook = [], None
 
     def tree_entries(self, revision):
         return self.trees[revision]
 
-    def parent(self, revision):
-        return self.parents[revision]
+    def parents(self, revision):
+        return self.parent_lists[revision]
 
     def blob_bytes(self, value):
         return self.blobs[value]
@@ -55,7 +60,7 @@ class Git:
         tree = dict(self.trees[parent])
         tree.update({p: ("100644", "blob", oid(v)) for p, v in blobs.items()})
         revision = hashlib.sha1(json.dumps(tree, sort_keys=True).encode()).hexdigest()
-        self.trees[revision], self.parents[revision] = tree, parent
+        self.trees[revision], self.parent_lists[revision] = tree, (parent,)
         self.blobs.update({oid(raw): raw for raw in blobs.values()})
         return revision
 
@@ -169,23 +174,75 @@ class AuthorityRootTest(unittest.TestCase):
         )
         with self.assertRaises(AuthorityRootError):
             prepare_candidate(bad, self.git)
-        self.assertEqual(self.git.parents, {})
+        self.assertEqual(self.git.parent_lists, {})
         self.git.trees[self.git.root][SELECTION_PATH] = ("100644", "blob", "f" * 40)
         with self.assertRaises(AuthorityRootError):
             prepare_candidate(self.request, self.git)
 
     def test_verifier_rejects_parent_delta_and_blob_drift(self):
         candidate, _ = self.candidate()
-        for mutation in ("parent", "extra", "blob"):
+        for mutation in ("parent", "extra", "blob", "inherited", "fixed_mode"):
             git = deepcopy(self.git)
             if mutation == "parent":
-                git.parents[candidate.revision] = "f" * 40
+                git.parent_lists[candidate.revision] = ("f" * 40,)
             elif mutation == "extra":
                 git.trees[candidate.revision]["extra"] = ("100644", "blob", "f" * 40)
-            else:
+            elif mutation == "blob":
                 git.blobs[git.trees[candidate.revision][SELECTION_PATH][2]] += b"x"
+            elif mutation == "inherited":
+                git.trees[candidate.revision]["README.md"] = (
+                    "100755",
+                    "blob",
+                    "e" * 40,
+                )
+            else:
+                entry = git.trees[candidate.revision][SELECTION_PATH]
+                git.trees[candidate.revision][SELECTION_PATH] = (
+                    "100755",
+                    entry[1],
+                    entry[2],
+                )
             with self.subTest(mutation=mutation), self.assertRaises(AuthorityRootError):
                 verify_candidate(self.request, candidate, git)
+
+    def test_exact_parent_and_formal_gitlink_structure(self):
+        candidate, _ = self.candidate()
+        mutations = (
+            (),
+            (self.git.root, "f" * 40),
+        )
+        for parents in mutations:
+            git = deepcopy(self.git)
+            git.parent_lists[candidate.revision] = parents
+            with self.subTest(parents=parents), self.assertRaises(AuthorityRootError):
+                verify_candidate(self.request, candidate, git)
+        for entry in (
+            None,
+            ("100644", "blob", self.git.child),
+            ("160000", "blob", self.git.child),
+            ("160000", "commit", "f" * 40),
+        ):
+            git = deepcopy(self.git)
+            if entry is None:
+                del git.trees[git.root]["cosmos-framework"]
+            else:
+                git.trees[git.root]["cosmos-framework"] = entry
+            with self.subTest(entry=entry), self.assertRaises(CollectionError):
+                verify_candidate(self.request, candidate, git)
+
+    def test_prepare_revalidates_created_candidate(self):
+        class CorruptCreate(Git):
+            def create_detached_commit(self, parent, blobs):
+                revision = super().create_detached_commit(parent, blobs)
+                self.trees[revision]["README.md"] = ("100755", "blob", "e" * 40)
+                return revision
+
+        git = CorruptCreate()
+        request = AuthorityRequest(
+            git.root, git.child, self.request.selection_raw, self.request.config_raw
+        )
+        with self.assertRaises(AuthorityRootError):
+            prepare_candidate(request, git)
 
     def test_capability_copy_and_replay_fail(self):
         candidate, binding = self.candidate()
@@ -200,6 +257,67 @@ class AuthorityRootTest(unittest.TestCase):
         publish_candidate(self.request, candidate, binding, self.git)
         with self.assertRaises(AuthorityRootError):
             publish_candidate(self.request, candidate, binding, self.git)
+
+    def test_all_typed_boundaries_reject_copy_and_pickle(self):
+        candidate, binding = self.candidate()
+        witness = publish_candidate(self.request, candidate, binding, self.git)
+        for value in (self.request, candidate, witness):
+            with self.subTest(kind=type(value).__name__):
+                with self.assertRaises(AuthorityRootError):
+                    copy(value)
+                with self.assertRaises(AuthorityRootError):
+                    pickle.dumps(value)
+
+    def test_verifier_mapping_enters_real_collection_executor(self):
+        candidate, binding = self.candidate()
+        publish_candidate(self.request, candidate, binding, self.git)
+        authority = binding.as_mapping()
+        base = "b" * 40
+        lineage = {
+            "target_ref": "refs/heads/fixture",
+            "expected_base_root_revision": base,
+            "expected_child_gitlink": self.git.child,
+            "authority_approval_formal_root_revision": self.git.root,
+        }
+        fixture = TemporaryGitFixture(
+            {lineage["target_ref"]: base},
+            parents={candidate.revision: self.git.root},
+            trees={**deepcopy(self.git.trees), base: {}},
+            blobs=deepcopy(self.git.blobs),
+            gitlinks={base: self.git.child},
+            local_refs={AUTHORITY_REF: candidate.revision},
+            remote_refs={AUTHORITY_REF: candidate.revision},
+        )
+        pristine = deepcopy(fixture)
+        result = collect_synthetic(
+            authority=authority,
+            lineage=lineage,
+            selection_request=self.request.selection_raw,
+            git=fixture,
+            root_fd=SyntheticRootFd({"fixture/checkpoint": b"x"}),
+            sink=MemoryEvidenceSink(),
+        )
+        self.assertEqual(result["status"], "PASS")
+        for changed in (
+            {**authority, "authority_root_revision": authority["root_revision"]},
+            {k: v for k, v in authority.items() if k != "root_revision"},
+            {**authority, "extra": "x"},
+        ):
+
+            class Unopened:
+                def open_regular(self, path):
+                    raise AssertionError("invalid mapping不得打开source")
+
+            bad_fixture = deepcopy(pristine)
+            with self.assertRaises(CollectionError):
+                collect_synthetic(
+                    authority=changed,
+                    lineage=lineage,
+                    selection_request=self.request.selection_raw,
+                    git=bad_fixture,
+                    root_fd=Unopened(),
+                    sink=MemoryEvidenceSink(),
+                )
 
     def test_capability_rejects_cross_request_and_candidate(self):
         candidate, binding = self.candidate()
@@ -225,6 +343,23 @@ class AuthorityRootTest(unittest.TestCase):
             publish_candidate(self.request, candidate, binding, self.git)
         self.assertNotIn(AUTHORITY_REF, self.git.local)
         self.assertEqual(self.git.remote[AUTHORITY_REF], foreign)
+        self.assertEqual(self.git.events[-2:], ["read_local", "read_remote"])
+
+    def test_observation_error_still_reads_both_endpoints(self):
+        class ReadFailure(Git):
+            def local_ref(self, ref):
+                self.events.append("read_local")
+                raise OSError("injected unreadable")
+
+        git = ReadFailure()
+        request = AuthorityRequest(
+            git.root, git.child, self.request.selection_raw, self.request.config_raw
+        )
+        candidate = prepare_candidate(request, git)
+        binding = verify_candidate(request, candidate, git)
+        with self.assertRaises(RollbackIncomplete):
+            publish_candidate(request, candidate, binding, git)
+        self.assertEqual(git.events[-2:], ["read_local", "read_remote"])
 
     def test_postcheck_and_rollback_races_never_delete_foreign(self):
         for endpoint in ("local", "remote"):

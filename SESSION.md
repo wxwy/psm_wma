@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## Authority-root synthetic implementation ChatGPT整改（2026-09-12 13:16:49 CST，REVIEW）
+
+- formal `8cd1103deecc0720b7168e9e2b86b576e818b2bd`/child `93a89ba61306d840a008813f62f26a34d54850f4`三方意见齐：ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_authority_root_cpu_static_implementation_8cd1103_93a89ba.md`给出4项`REQUEST_CHANGES`；MM/Kimi=`APPROVE_TO_CLOSE...`。按最严格意见在同Gate整改。
+- production整改：protocol改为exact parents tuple，共享`_candidate_mapping()`在prepare返回前及verify内分别重查精确单parent/full-tree/fixed blobs/raw bytes/inherited entries；formal-root Gitlink直接要求full entry=`160000/commit/expected OID`。pre/post/rollback local+remote观察全部独立调用后再聚合，禁止boolean短路。
+- typed request/candidate/publication witness增加copy/deepcopy/pickle拒绝；新增verifier生成七键mapping经approved synthetic publication state直入真实`collect_synthetic()`的PASS与alias/缺键/额外键pre-source负例。新增zero/two parent、Gitlink missing/mode/type/OID、inherited/fixed mode、prepare revalidation、final双读事件测试。
+- 验证：unittest=`46/46 PASS`；两个新文件Ruff PASS；四文件py_compile与git diff-check PASS。测试中曾有1项异常类型断言过窄，确认非法tree已由共享`_tree()`正确拒绝后改为合同基类断言并全绿。不执行真实I/O/GPU/训练。下一步提交推送新formal SHA并重新三方审核。未提交。
+
 ## Authority-root synthetic implementation第2轮观察（2026-09-12 13:08:49 CST）
 
 - formal root=`8cd1103deecc0720b7168e9e2b86b576e818b2bd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。before_head、advertised V2、origin/V2、ff-only后HEAD均为`8d71d9055dd52635e0457c58590fb73e01158cec`；完整新增范围空。ChatGPT reviews/ exact formal root仍无匹配。

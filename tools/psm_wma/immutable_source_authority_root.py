@@ -35,7 +35,7 @@ class RollbackIncomplete(AuthorityRootError):
 
 class AuthorityGitTransaction(Protocol):
     def tree_entries(self, revision: str) -> Mapping[str, TreeEntry]: ...
-    def parent(self, revision: str) -> str: ...
+    def parents(self, revision: str) -> tuple[str, ...]: ...
     def blob_bytes(self, oid: str) -> bytes: ...
     def gitlink_at(self, revision: str) -> str: ...
     def create_detached_commit(
@@ -49,8 +49,19 @@ class AuthorityGitTransaction(Protocol):
     def cas_delete_remote(self, ref: str, revision: str) -> bool: ...
 
 
+class _NonSerializable:
+    def __copy__(self):
+        raise AuthorityRootError("typed authority object 不可复制")
+
+    def __deepcopy__(self, memo):
+        raise AuthorityRootError("typed authority object 不可复制")
+
+    def __reduce__(self):
+        raise AuthorityRootError("typed authority object 不可序列化")
+
+
 @dataclass(frozen=True)
-class AuthorityRequest:
+class AuthorityRequest(_NonSerializable):
     materialization_formal_root: str
     expected_child_gitlink: str
     selection_raw: bytes
@@ -58,7 +69,7 @@ class AuthorityRequest:
 
 
 @dataclass(frozen=True)
-class AuthorityCandidate:
+class AuthorityCandidate(_NonSerializable):
     revision: str
 
 
@@ -92,7 +103,7 @@ class AuthorityBinding:
 
 
 @dataclass(frozen=True)
-class PublicationWitness:
+class PublicationWitness(_NonSerializable):
     revision: str
     local_created: bool
     remote_created: bool
@@ -175,8 +186,7 @@ def prepare_candidate(
     before = _tree(git, parent)
     if SELECTION_PATH in before or COLLECTION_PATHS[1] in before:
         raise AuthorityRootError("formal root 已含fixed path")
-    if git.gitlink_at(parent) != request.expected_child_gitlink:
-        raise AuthorityRootError("formal root Gitlink 漂移")
+    _formal_gitlink(before, request.expected_child_gitlink)
     revision = git.create_detached_commit(
         parent,
         {
@@ -184,8 +194,7 @@ def prepare_candidate(
             COLLECTION_PATHS[1]: request.config_raw,
         },
     )
-    if not _sha1(revision):
-        raise AuthorityRootError("candidate revision 无效")
+    _candidate_mapping(request, revision, git)
     return AuthorityCandidate(revision)
 
 
@@ -195,9 +204,21 @@ def verify_candidate(
     git: AuthorityGitTransaction,
 ) -> AuthorityBinding:
     _verify_request(request)
-    revision, parent = candidate.revision, request.materialization_formal_root
-    if not _sha1(revision) or git.parent(revision) != parent:
-        raise AuthorityRootError("candidate parent 漂移")
+    mapping = _candidate_mapping(request, candidate.revision, git)
+    return AuthorityBinding(request, candidate, mapping, _CAPABILITY_TOKEN)
+
+
+def _formal_gitlink(tree: Mapping[str, TreeEntry], expected: str) -> None:
+    if tree.get("cosmos-framework") != ("160000", "commit", expected):
+        raise AuthorityRootError("formal root Gitlink结构漂移")
+
+
+def _candidate_mapping(
+    request: AuthorityRequest, revision: str, git: AuthorityGitTransaction
+) -> dict[str, str]:
+    parent = request.materialization_formal_root
+    if not _sha1(revision) or git.parents(revision) != (parent,):
+        raise AuthorityRootError("candidate必须精确单parent")
     before, after = _tree(git, parent), _tree(git, revision)
     paths = (SELECTION_PATH, COLLECTION_PATHS[1])
     changed = {p for p in set(before) | set(after) if before.get(p) != after.get(p)}
@@ -205,8 +226,7 @@ def verify_candidate(
         after.get(p, ())[:2] != ("100644", "blob") for p in paths
     ):
         raise AuthorityRootError("candidate delta 漂移")
-    if git.gitlink_at(parent) != request.expected_child_gitlink:
-        raise AuthorityRootError("formal root Gitlink 漂移")
+    _formal_gitlink(before, request.expected_child_gitlink)
     raws = (request.selection_raw, request.config_raw)
     for path, raw in zip(paths, raws):
         oid = after[path][2]
@@ -222,7 +242,7 @@ def verify_candidate(
         "config_blob_native_oid": after[COLLECTION_PATHS[1]][2],
         "config_raw_sha256": _digest(raws[1]),
     }
-    return AuthorityBinding(request, candidate, mapping, _CAPABILITY_TOKEN)
+    return mapping
 
 
 def _rollback(
@@ -243,16 +263,32 @@ def _rollback(
                 complete = False
         except Exception:
             complete = False
+    local_absent = remote_absent = False
     try:
-        complete = (
-            complete
-            and git.local_ref(AUTHORITY_REF) is None
-            and git.remote_ref(AUTHORITY_REF) is None
-        )
+        local_absent = git.local_ref(AUTHORITY_REF) is None
     except Exception:
         complete = False
+    try:
+        remote_absent = git.remote_ref(AUTHORITY_REF) is None
+    except Exception:
+        complete = False
+    complete = complete and local_absent and remote_absent
     if not complete:
         raise RollbackIncomplete()
+
+
+def _observe_refs(git: AuthorityGitTransaction) -> tuple[str | None, str | None]:
+    values = []
+    errors = []
+    for endpoint in ("local", "remote"):
+        try:
+            values.append(getattr(git, endpoint + "_ref")(AUTHORITY_REF))
+        except Exception as exc:
+            values.append(None)
+            errors.append(exc)
+    if errors:
+        raise AuthorityRootError("fixed ref observation失败") from errors[0]
+    return values[0], values[1]
 
 
 def publish_candidate(
@@ -274,10 +310,8 @@ def publish_candidate(
     revision = candidate.revision
     local_created = remote_created = False
     try:
-        if (
-            git.local_ref(AUTHORITY_REF) is not None
-            or git.remote_ref(AUTHORITY_REF) is not None
-        ):
+        local_before, remote_before = _observe_refs(git)
+        if local_before is not None or remote_before is not None:
             raise AuthorityRootError("fixed ref 必须预先absent")
         if not git.cas_create_local(AUTHORITY_REF, revision):
             raise AuthorityRootError("local CAS conflict")
@@ -285,10 +319,8 @@ def publish_candidate(
         if not git.cas_create_remote(AUTHORITY_REF, revision):
             raise AuthorityRootError("remote CAS conflict")
         remote_created = True
-        if (
-            git.local_ref(AUTHORITY_REF) != revision
-            or git.remote_ref(AUTHORITY_REF) != revision
-        ):
+        local_after, remote_after = _observe_refs(git)
+        if local_after != revision or remote_after != revision:
             raise AuthorityRootError("post-CAS ref drift")
         if verify_candidate(request, candidate, git).as_mapping() != expected:
             raise AuthorityRootError("committed binding drift")
