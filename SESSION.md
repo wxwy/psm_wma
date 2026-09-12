@@ -3081,3 +3081,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 引用上述#1含`REQUEST_CHANGES`的同Gate推进令牌；新增`...authority_root_launcher_payload_v0.6.py`与annex/request v0.6。v0.6内联已冻结selection/config/actual-argv canonical bytes，保留`9dd2...`只作为candidate parent/adapter tree，消除v0.5对后置annex错误`ls-tree`依赖；补齐同号FD安全handoff、writer/reader/target identity及bytes复验、exact `{3,4,5}` close-set、post-add ownership/postcondition、cleanup absent/reproof与`ROLLBACK_INCOMPLETE`；普通`.git`采用retained no-follow directory/config FD，linked route明确fail-closed。
 - 验证：`py_compile` PASS；embedded inputs length/SHA=`516/8fe458...`、`508/43b3b...`、`2427/72777...` PASS；payload raw=`15756` bytes、SHA-256=`fb73f934cacf72931353e64fd89d7f5b18c2d18d4e660cc899650ab06ca084fd`；`git diff --check` PASS；temporary-directory CPU handoff distinct-FD 与 same-FD均PASS。未运行`main()`，未创建真实worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未触碰child/GPU/训练。下一步：提交、推送，发起新pair三方审核。
+
+### Authority-root launcher payload v0.6 审核申请名册（2026-09-13，REVIEW）
+
+- formal=`80132197c29bd139e3e05ce6deb3cbcf8f525de6`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结审核名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已append live Inbox（append后`129055 < 131072` bytes）并由ledger=`e005d7a917871edc30013a5724d1b889e4c5b564`推送；该ledger不是formal target。
+- 仅审v0.6 docs-only payload/annex/request；请求`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`。MM/Kimi送达回执和首轮三方完整观察尚未产生；此前不得materialization、真实I/O、child、GPU或训练。
