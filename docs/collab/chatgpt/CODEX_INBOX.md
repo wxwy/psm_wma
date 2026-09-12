@@ -692,3 +692,16 @@ v0.7选择同进程 sealed-final-FD `AcceptedPass` capability：authority在同�
 v0.8明确：保留v0.6 `publish_candidate`→exact `PublicationWitness`返回ABI，`AcceptedPass`永不出authority transaction；它是preallocated、activation-scoped的`prepared→issued→consumed`内部capability。所有字段预验证后，唯一total transition同步标记issued、EvidenceCommit committed与preserve-refs branch，紧接total internal consume；transition后异常永不rollback。崩溃选择永久fail-stop：没有capability重建/自动retry/自动close，后续只能独立人工 recovery design Gate。Evidence-v1 bytes ABI保持，path verifier只是观察。
 
 请求完整exact pair唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。只请求后续四root工具/测试temporary CPU/static implementation；不授权真实source/candidate/ref/evidence、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root PASS 线性化设计 v0.9（2026-09-12）
+
+- formal root SHA：`a98e82714940d7bed1969cafb2ef32100c287d59`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-PASS-LINEARIZATION-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_pass_linearization_design_v0.9.md`
+- 前轮 ChatGPT exact review：`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_design_0ad5fb3_93a89ba.md`（H1 terminal state非不可分、H2 guard/crash语义不完整、H3 ref witness语义不充分）；MM/Kimi同pair批准。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+v0.9仅为设计整改：全部 acceptance、rollback、preserve-ref、witness资格均由单个不可变`AuthorityTerminalState` cell派生，唯一状态变更为不可抛出的`PENDING→ACCEPTED`指针替换；guard转移是最后一个fallible pre-state action，并冻结A/B/C crash/restart matrix，B/C一律不自动恢复；ref witness明确为最后一次精确观察，之后漂移按external corruption fail-stop处理。formal tree仅新增v0.9设计并更新`SESSION.md`/`TODO.md`；Gitlink不变。
+
+请求完整exact pair唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。批准范围仅为后续四个root工具/测试文件的temporary CPU/static implementation；不授权真实source/candidate/ref/evidence、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
