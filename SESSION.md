@@ -2915,3 +2915,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal/child及冻结名册不变。`before=a06538e3e71cd4dee7a9cd8a56ad3be02f9a8b51`；fetch成功；advertised/origin/local-after同为`a06538e3e71cd4dee7a9cd8a56ad3be02f9a8b51`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT exact-pair检索仍无正式review；MM同pair批准与Kimi同pair `REQUEST_CHANGES(...annex_v0.4.md:35)` capture均保持。无推进令牌，保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
+
+### Authority-root launcher procedure v0.4 审核观察凭证 #7（2026-09-13 00:32:35 CST，REVIEW）
+
+- formal/child及冻结名册不变。`before=98ec30b4d240f3927cb57ce628eb2c48cc0bd938`；fetch成功；advertised/origin/local-after同为`98ec30b4d240f3927cb57ce628eb2c48cc0bd938`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-pair检索仍无正式review；MM同pair批准与Kimi同pair `REQUEST_CHANGES(...annex_v0.4.md:35)` capture均保持。无推进令牌，保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
