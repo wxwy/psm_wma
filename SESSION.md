@@ -2783,3 +2783,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal/child与冻结名册不变；`before/advertised/origin/local-after=a175d87a8a6315eaf506d7c3d7dda1ac38c06a2d`；fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact-pair正式review仍未找到。
 - MM批准保持有效；Kimi `kimi:0.0` capture新增same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT`。ChatGPT缺件，无推进令牌，保持REVIEW，禁止snapshot annex或真实materialization；三分钟后继续完整锁定。
+
+### Authority-root materialization request v0.2 审核观察凭证 #3（2026-09-12 CST，REVIEW）
+
+- 本轮远端锁定因ChatGPT并发 review ledger 后本地分叉，已保留双方提交并合并推送；formal pair仍为`cfdd2fc79142b500910613759d316b283bfe372a`/`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_materialization_execution_request_v02_cfdd2fc_93a89ba.md` final=`REQUEST_CHANGES(...v0.2.md:12)`；MM/Kimi为same-pair `APPROVE_TO_PREPARE...SNAPSHOT`。三方final齐，推进令牌仅授权docs HIGH整改：移除v0.1旧runtime authority继承，明确annex对runtime fields唯一权威、canonical HTTPS endpoint/SHA与完整ABI字段；禁止生成annex或真实materialization。
+
+### Authority-root materialization request v0.2 runtime-authority remediation（2026-09-12，IN_PROGRESS）
+
+- 仅修改v0.2 docs：v0.1只继承transaction/PASS/FAIL/rollback/prohibitions；annex成为runtime fields唯一权威，明确endpoint不是alias、fresh paths、工具/env/input/bootstrap/argv/FD ABI与批准后不可变，且不能覆盖§2/§3。未生成annex或真实I/O；待提交、重新三方docs审核。
