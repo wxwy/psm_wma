@@ -474,3 +474,14 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 前轮formal `fce040f...`三方final齐：ChatGPT 1 HIGH+1 MEDIUM、MM/Kimi批准。本次shared independent validator明确拒绝formal parent预含任一fixed path，并以两path table-driven adversarial candidate测试；collection暴露最小公共canonical/tree/blob/digest helper surface，authority不再跨模块导入private helper；补alias-only verifier→real executor负例。既有结构、ref、rollback与typed边界合同不变。
 
 证据：unittest 47/47 PASS；新文件Ruff、四文件py_compile、diff-check PASS。请求完整pair唯一final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。不授权真实I/O/ref/remote/GPU/训练。
+
+## 审核申请：Authority Root consumer-side remediation 3（2026-09-12）
+
+- formal root SHA：`0b18620f84959bf25379f3c227b796edc1097efd`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-CPU-STATIC-IMPLEMENTATION`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+前轮formal `ae52cb3...`三方final齐：ChatGPT 1 HIGH、MM/Kimi批准。本次真实collection `GitTransaction`增加exact `commit_parents()->tuple`，`_authority_tree()`要求精确单parent等于approval formal root并在delta前拒绝parent预含任一fixed path；direct `collect_synthetic()` adversarial tests覆盖selection/config预含、zero/two parent、Unopened sentinel与零commit。47/47 PASS；新文件Ruff、四文件py_compile、diff-check PASS。
+
+请求完整pair唯一final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。不授权真实I/O/ref/remote/GPU/训练。
