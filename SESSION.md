@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root CPU/static implementation design v0.2 第1轮观察（2026-09-12 12:53:33 CST）
+
+- formal root=`ee0de157d337bc85bf3d8d1c9e4957c31aa03c07`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox ledger=`cb78c37d99394ba902cf8ea60b8bb5232a0cc1ad`已推送，MM/Kimi均按文本→等待1.1秒→独立Enter发送并capture确认进入处理。
+- before_head、advertised V2、origin/V2、ff-only后HEAD均为`cb78c37d99394ba902cf8ea60b8bb5232a0cc1ad`，完整新增范围空。ChatGPT reviews/按exact formal root查找无匹配，尚未回复。
+- MM exact pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC`；Kimi已开始核验exact pair，尚无v0.2 final。三方未齐，保持REVIEW，三分钟后继续原生轮询。未提交。
+
 ## Authority-root CPU/static implementation design v0.2 整改（2026-09-12，IN_PROGRESS）
 
 - formal root=`c61f32f3a99688043f2dfdb3d69480e11b1811dd`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`的三方正式意见已齐：ChatGPT=`REQUEST_CHANGES`（2 HIGH），MM/Kimi=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC`；同SHA合并后以最严格意见进入整改。
