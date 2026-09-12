@@ -2733,3 +2733,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Bootstrap linked-worktree/config-observation remediation 送达回执（2026-09-12 CST，REVIEW）
 
 - canonical live Inbox 已在 112956 bytes 基础上 append 本申请，未触及128 KiB rollover阈值。MM `mm:0.0` 与Kimi `kimi:0.0` 均已完整文本→间隔至少1秒→单独`C-m`→capture回读：消息已离开输入框；MM已开始对`817191c..fff6d05e` diff 核验，Kimi显示本次申请进入处理。ChatGPT送达以已提交live Inbox为准，正式 verdict 仍只认`reviews/` exact pair。下一次审核观察必须先完整远端锁定，然后精确检索与capture三路。
+
+### Bootstrap linked-worktree/config-observation remediation 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`fff6d05ef330ada5f6db5edbdc8dde32e2c99019`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=907923ec2e7f1172edc0003f518f52581e120876`；fetch成功；advertised/origin/local-after均为`907923ec2e7f1172edc0003f518f52581e120876`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-pair检索无匹配正式review；MM `mm:0.0` capture 显示已开始读取`817191c..fff6d05e` full adapter diff；Kimi `kimi:0.0` capture 显示已解析新pair、核验Gitlink/范围并进入diff审读，均未给 same-pair final verdict。无推进令牌，保持REVIEW；下一轮三分钟后必须重新完整远端锁定。
