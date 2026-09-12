@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter v0.6三方批准与CPU/static实现认领（2026-09-12 14:54:32 CST，IN_PROGRESS）
+
+- formal pair=`944c1305bcaef818e178c781b5cf2ce8aebbc9a8`/`93a89ba61306d840a008813f62f26a34d54850f4`。本轮`before_head=1634aa54371b18a044e4fdcb9b0d4776b39707ec`；fetch后advertised/origin/ff-only后HEAD=`7dc65c5d6e417b0dc68e10329872bbb2411c2c05`，新增`f2c3531a`、`7dc65c5d`且成功快进。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_944c130_93a89ba.md`为`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`；Kimi、MM capture均为同pair同verdict。
+- 已形成全批准推进令牌，仅授权四文件temporary CPU/static实现。认领新implementation任务；预计修改/新增`tools/psm_wma/immutable_source_authority_root.py`、`tools/psm_wma/test_immutable_source_authority_root.py`、`tools/psm_wma/materialize_immutable_source_authority_root.py`、`tools/psm_wma/test_materialize_immutable_source_authority_root.py`。当前后两文件不存在，属于批准allowlist内必要新增；只使用temporary directory/local bare remote，禁止真实JSON/candidate/ref/origin/source/collection/child/GPU/训练。待提交。
+- 已完成第一实现checkpoint：authority新增opaque one-shot `EvidenceCommit`/post-commit outcome dispatch与三项callback覆盖；新增absolute-Git、temporary-index、local/bare-remote exact-CAS adapter及其fixture。`python -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root`=17/17 PASS；两module `py_compile` PASS。尚未实现guard/evidence ABI完整矩阵，禁止申请审查或真实执行。待提交。
+
 ## Real adapter design v0.6第2轮观察（2026-09-12 14:52:15 CST，REVIEW）
 
 - formal root=`944c1305bcaef818e178c781b5cf2ce8aebbc9a8`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head`、远端 advertised SHA、`origin/V2`与ff-only后HEAD均=`4414ac93def39eed50de7a2bbf4fa7a4522537b9`；新增范围空，fetch/ls-remote/ff-only均成功。

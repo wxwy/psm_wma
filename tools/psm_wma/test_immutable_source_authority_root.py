@@ -10,8 +10,10 @@ from copy import copy, deepcopy
 from tools.psm_wma.immutable_source_authority_root import (
     AuthorityBinding,
     AuthorityCandidate,
+    EvidenceCommit,
     AuthorityRequest,
     AuthorityRootError,
+    PostCommitFinalizerError,
     RollbackIncomplete,
     prepare_candidate,
     publish_candidate,
@@ -258,6 +260,37 @@ class AuthorityRootTest(unittest.TestCase):
         publish_candidate(self.request, candidate, binding, self.git)
         with self.assertRaises(AuthorityRootError):
             publish_candidate(self.request, candidate, binding, self.git)
+
+    def test_finalizer_commit_and_post_commit_error_preserve_refs(self):
+        candidate, binding = self.candidate()
+        calls = []
+
+        def finalizer(witness, commit):
+            self.assertEqual(witness.revision, candidate.revision)
+            self.assertIsInstance(commit, EvidenceCommit)
+            commit.seal_for_guard(lambda: calls.append("unlink"))
+            commit.consume_by_unlink()
+            raise KeyboardInterrupt("after unlink")
+
+        with self.assertRaises(PostCommitFinalizerError) as raised:
+            publish_candidate(
+                self.request, candidate, binding, self.git, finalizer=finalizer
+            )
+        self.assertIsInstance(raised.exception.__cause__, KeyboardInterrupt)
+        self.assertEqual(calls, ["unlink"])
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+        self.assertNotIn("delete_local", self.git.events)
+        self.assertNotIn("delete_remote", self.git.events)
+
+    def test_finalizer_without_commit_rolls_back(self):
+        candidate, binding = self.candidate()
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(
+                self.request, candidate, binding, self.git, finalizer=lambda _w, _c: object()
+            )
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
 
     def test_all_typed_boundaries_reject_copy_and_pickle(self):
         candidate, binding = self.candidate()

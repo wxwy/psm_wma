@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from types import MappingProxyType
-from typing import Mapping, Protocol
+from typing import Callable, Mapping, Protocol
 
 from tools.g0.audit_r09_b_ttt_root_gitlink_authority import (
     AuditFailure,
@@ -102,14 +102,55 @@ class AuthorityBinding:
         raise AuthorityRootError("verified capability 不可序列化")
 
 
-@dataclass(frozen=True)
-class PublicationWitness(_NonSerializable):
-    revision: str
-    local_created: bool
-    remote_created: bool
-
-
 _CAPABILITY_TOKEN = object()
+
+
+class PublicationWitness(_NonSerializable):
+    __slots__ = ("revision", "local_created", "remote_created", "_token")
+
+    def __init__(self, revision: str, token: object) -> None:
+        if token is not _CAPABILITY_TOKEN:
+            raise AuthorityRootError("publication witness 不可重建")
+        self.revision = revision
+        self.local_created = self.remote_created = True
+        self._token = token
+
+
+class EvidenceCommit(_NonSerializable):
+    __slots__ = ("_witness", "_sealed", "_committed", "_consumer", "_token")
+
+    def __init__(self, witness: PublicationWitness, token: object) -> None:
+        if token is not _CAPABILITY_TOKEN:
+            raise AuthorityRootError("evidence commit 不可重建")
+        self._witness, self._token = witness, token
+        self._sealed = self._committed = False
+        self._consumer: Callable[[], None] | None = None
+
+    @property
+    def committed(self) -> bool:
+        return self._committed
+
+    def seal_for_guard(self, consumer: Callable[[], None]) -> None:
+        if self._sealed or self._committed or not callable(consumer):
+            raise AuthorityRootError("evidence commit seal 无效")
+        self._consumer = consumer
+        self._sealed = True
+
+    def consume_by_unlink(self) -> None:
+        if not self._sealed or self._committed or self._consumer is None:
+            raise AuthorityRootError("evidence commit 未seal或已消费")
+        self._consumer()
+        self._committed = True
+
+
+class PostCommitFinalizerError(AuthorityRootError):
+    pass
+
+
+class _PreCommitFinalizerError(AuthorityRootError):
+    def __init__(self, error: BaseException | None) -> None:
+        super().__init__("FINALIZER_EXCEPTION" if error else "FINALIZER_DID_NOT_COMMIT")
+        self.callback_error = error
 
 
 def _sha1(value: object) -> bool:
@@ -298,6 +339,8 @@ def publish_candidate(
     candidate: AuthorityCandidate,
     binding: AuthorityBinding,
     git: AuthorityGitTransaction,
+    *,
+    finalizer: Callable[[PublicationWitness, EvidenceCommit], object] | None = None,
 ) -> PublicationWitness:
     if (
         binding._request is not request
@@ -311,6 +354,8 @@ def publish_candidate(
         raise AuthorityRootError("verified binding漂移")
     revision = candidate.revision
     local_created = remote_created = False
+    witness: PublicationWitness | None = None
+    post_commit_error: BaseException | None = None
     try:
         local_before, remote_before = _observe_refs(git)
         if local_before is not None or remote_before is not None:
@@ -326,10 +371,28 @@ def publish_candidate(
             raise AuthorityRootError("post-CAS ref drift")
         if verify_candidate(request, candidate, git).as_mapping() != expected:
             raise AuthorityRootError("committed binding drift")
-        return PublicationWitness(revision, True, True)
+        witness = PublicationWitness(revision, _CAPABILITY_TOKEN)
+        if finalizer is None:
+            return witness
+        commit = EvidenceCommit(witness, _CAPABILITY_TOKEN)
+        callback_error: BaseException | None = None
+        try:
+            finalizer(witness, commit)
+        except BaseException as error:
+            callback_error = error
+        if not commit.committed:
+            raise _PreCommitFinalizerError(callback_error)
+        post_commit_error = callback_error
     except Exception as error:
         try:
             _rollback(git, revision, local_created, remote_created)
         except RollbackIncomplete:
             raise
+        if isinstance(error, _PreCommitFinalizerError) and error.callback_error:
+            raise error.callback_error
         raise error
+    if post_commit_error is not None:
+        raise PostCommitFinalizerError("post-commit finalizer failure") from post_commit_error
+    if witness is None:
+        raise AuthorityRootError("publication witness 缺失")
+    return witness
