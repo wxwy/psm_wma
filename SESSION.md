@@ -4,7 +4,7 @@
 
 - formal root=`be833f807e50a9a1d433c8fdf7f341e7ad3544f6`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。本轮先保存`before_head=b813ce73ed65c3accc60466e4295790027c983b3`，`fetch origin V2`后 advertised/origin 均=`1274d97dc027a40dfcb63853795985d84cab5d5f`，新增`c7816b56`、`1274d97d`，fast-forward成功且后HEAD相同。
 - ChatGPT exact-pair review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_be833f8_93a89ba.md`：`REQUEST_CHANGES`，2 HIGH：guard unlink 后 authority 仍会验证 callback `EvidenceCommit` 并可能进入rollback；现四条rollback-required行遗漏当前`publish_candidate()`的`pre_publication`/`local_cas`无owned但fresh final不可证明的`ROLLBACK_INCOMPLETE`，且`post_publication`错误允许remote未owned。Kimi `kimi:0.0`同pair final为`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`；MM `mm:0.0`同pair final相同。
-- 冻结名册三方final已齐但含ChatGPT `REQUEST_CHANGES`，仅形成整改汇总令牌，不形成实现令牌。已完成同一Gate docs-only v0.5：冻结authority侧capability postcondition/one-shot消费以及完整的pre_publication、local_cas、remote_cas、post_publication、binding_reverify、evidence_write故障矩阵；`git diff --check` PASS。禁止四文件实现、真实I-O/GPU/训练。修改仅`SESSION.md`、`TODO.md`、新增v0.5 doc；待提交。
+- 冻结名册三方final已齐但含ChatGPT `REQUEST_CHANGES`，仅形成整改汇总令牌，不形成实现令牌。已完成同一Gate docs-only v0.5：冻结authority侧capability postcondition/one-shot消费以及完整的pre_publication、local_cas、remote_cas、post_publication、binding_reverify、evidence_write故障矩阵；`git diff --check` PASS。formal root=`066de7052310dc889074632981cc3cdec880ab41`已push；canonical Inbox申请 ledger=`880b7cfe0410e5e8c438ffcdc5be9e18e3441973`已push。MM/Kimi均按`send-keys -l`→等待≥1秒→独立Enter→capture送达：MM已进入处理；Kimi已显示申请、尚无处理/最终回执。禁止四文件实现、真实I-O/GPU/训练；三分钟后开始新pair原生轮询。待提交。
 
 ## Real adapter design v0.4第1轮观察（2026-09-12，REVIEW）
 
