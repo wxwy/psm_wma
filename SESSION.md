@@ -5,7 +5,8 @@
 - 已批准 formal design=`9aba4460469ddab4640e90694e78968d497a9273`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；三方批准范围仅`tools/psm_wma/materialize_immutable_source_authority_root.py`及其stdlib CPU测试，禁止真实物化、source I/O、child、GPU与训练。
 - 已提交增量`e9374ebf`绑定四个模块 closure 与 Evidence-v1 identities；当前继续在同一已批准范围补 bootstrap `sys.orig_argv`、canonical HTTPS endpoint、common-worktree config authority、Git fixed prefix 与 direct native 对抗测试。预计修改仅上述两文件；尚未提交。
 - 已提交`55284aa8`：production CLI 已在任何 Git action 前拒绝非canonical HTTPS endpoint；production Git 固定`--no-replace-objects`及 hooks/attributes/filter/protocol prefix，测试专用 local-bare seam 不进入 production parser；common config 同FD raw SHA、allowlist、Git `--no-includes --local --null --list`视图、linked-worktree `config.worktree`缺席和 isolation fingerprint 写入Evidence。
-- 本最小步骤（未提交）：新增 import-free bootstrap payload；唯一启动ABI为`python -I -S -B -c <payload> -- <adapter argv>`，payload 从`sys.orig_argv`和继承regular-FD contract核验 `-c` bytes/完整`--`后argv 两个SHA后才插入`sys.path`和`runpy`。main再次核验同一观察并把 declared/observed pair写入Evidence。真实隔离解释器测试证明本地endpoint到达adapter preflight；仅篡改`-c` payload时evidence/ref均不存在。38/38临时CPU测试、`py_compile`、`git diff --check` PASS。下一步补 bootstrap argv/contract FD 对抗覆盖后提交；禁止真实I/O/GPU/训练。
+- 已提交`88abcb88`：新增 import-free bootstrap payload；唯一启动ABI为`python -I -S -B -c <payload> -- <adapter argv>`，payload 从`sys.orig_argv`和继承regular-FD contract核验 `-c` bytes/完整`--`后argv 两个SHA后才插入`sys.path`和`runpy`。main再次核验同一观察并把 declared/observed pair写入Evidence。真实隔离解释器测试证明本地endpoint到达adapter preflight；仅篡改`-c` payload时evidence/ref均不存在。
+- 本最小步骤（未提交）：增加完整 adapter argv digest、缺失`-S` isolation flag与malformed contract-FD三项真实隔离解释器拒绝反例；均在`runpy/Git/evidence`前退出且local/remote ref不存在。41/41临时CPU测试、`py_compile`、`git diff --check` PASS。下一步提交此bootstrap对抗覆盖，随后审查剩余endpoint/config exact ABI与正式完成范围；禁止真实I/O/GPU/训练。
 
 ## Authority Root Real Adapter 第三轮整改复审（2026-09-12 17:25 CST，REVIEW）
 

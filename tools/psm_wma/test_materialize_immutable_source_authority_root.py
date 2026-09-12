@@ -423,7 +423,10 @@ class NativeAuthorityGitTest(unittest.TestCase):
             check=False,
         )
 
-    def _run_bootstrap_cli(self, root: Path, selection, config, argv, *, contract_payload=None):
+    def _run_bootstrap_cli(
+        self, root: Path, selection, config, argv, *, contract_payload=None,
+        mutate_adapter_argv=None, mutate_contract=None,
+    ):
         payload = __import__(
             "tools.psm_wma.materialize_immutable_source_authority_root",
             fromlist=["bootstrap_payload"],
@@ -440,16 +443,22 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 str(Path(sys.executable).resolve()), "-I", "-S", "-B", "-c",
                 payload, "--", *adapter_argv,
             ]
+            contract_argv = list(original)
+            if mutate_adapter_argv is not None:
+                mutate_adapter_argv(original)
             contract.write(json.dumps({
                 "bootstrap_raw_sha256": hashlib.sha256(
                     (payload if contract_payload is None else contract_payload).encode()
                 ).hexdigest(),
                 "bootstrap_argv_sha256": hashlib.sha256(json.dumps(
-                    original[6:], sort_keys=True, separators=(",", ":"),
+                    contract_argv[6:], sort_keys=True, separators=(",", ":"),
                     ensure_ascii=False,
                 ).encode()).hexdigest(),
             }, sort_keys=True, separators=(",", ":")).encode())
             contract.flush()
+            if mutate_contract is not None:
+                mutate_contract(contract)
+                contract.flush()
             return subprocess.run(
                 original,
                 cwd=root, pass_fds=(selection.fileno(), config.fileno(), contract.fileno()),
@@ -563,6 +572,54 @@ class NativeAuthorityGitTest(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertTrue((root / "evidence.json").exists(), result.stderr)
             self.assertEqual(verify_evidence_path(root / "evidence.json")["status"], "FAIL")
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+            self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_tampered_adapter_argv_before_evidence(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(
+                    root, selection_handle, config_handle, argv,
+                    mutate_adapter_argv=lambda values: values.__setitem__(
+                        values.index("--remote") + 1, "https://example.invalid/drift"
+                    ),
+                )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "evidence.json").exists())
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+            self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_missing_isolation_flag_before_evidence(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(
+                    root, selection_handle, config_handle, argv,
+                    mutate_adapter_argv=lambda values: values.__setitem__(2, "-B"),
+                )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "evidence.json").exists())
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+            self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_malformed_contract_before_evidence(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            def replace_contract(handle):
+                handle.seek(0)
+                handle.truncate()
+                handle.write(b"{}")
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(
+                    root, selection_handle, config_handle, argv,
+                    mutate_contract=replace_contract,
+                )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "evidence.json").exists())
             transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
