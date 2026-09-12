@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.6第1轮观察（2026-09-12 14:51:31 CST，REVIEW）
+
+- formal root=`944c1305bcaef818e178c781b5cf2ce8aebbc9a8`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head`、远端 advertised SHA、`origin/V2`与ff-only后HEAD均=`3d69d78d843265fe1fcd3d8ac72faefffeaee692`；新增范围空，fetch/ls-remote/ff-only均成功。
+- ChatGPT exact-root扫描无正式 review。MM `mm:0.0` capture含同pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`。Kimi `kimi:0.0` capture显示已读取v0.6并执行核验命令，未含本pair final。
+- 冻结名册中ChatGPT与Kimi仍缺，无推进令牌；保持`REVIEW`，禁止四文件实现、真实I-O/GPU/训练。三分钟后继续原生轮询。待提交。
+
 ## Real adapter design v0.5三方结论与 v0.6整改认领（2026-09-12 14:47:59 CST，IN_PROGRESS）
 
 - formal pair=`066de7052310dc889074632981cc3cdec880ab41`/`93a89ba61306d840a008813f62f26a34d54850f4`。本轮推送被拒后先保存`before_head=b5bfe71ebc022ceba5e40f0c4e09ff4ad3663a8e`，fetch得到advertised/origin=`fac31a610ef6a04d537b8f31ecd0fc38f1d9e02e`及新增`dc0d6684`、`fac31a61`；因本地含未推送`b5bfe71e`而非远端祖先，ff-only按规则失败。随后安全`git rebase origin/V2`成功，本地HEAD=`50c6ecef8b8a2bc4524abbd28bbe85ce487c4817`，未触碰dirty residue。
