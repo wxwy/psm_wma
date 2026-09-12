@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import subprocess
 from pathlib import Path
@@ -12,6 +14,36 @@ from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, TreeEntry
 
 class NativeGitError(RuntimeError):
     pass
+
+
+def write_pending_evidence(path: Path, record: Mapping[str, object], commit) -> None:
+    """Write a canonical temporary PASS record; guard unlink is delegated to commit."""
+    if path.exists() or path.is_symlink():
+        raise NativeGitError("evidence final path 必须fresh absent")
+    guard = path.with_name(path.name + ".pending")
+    if guard.exists() or guard.is_symlink():
+        raise NativeGitError("evidence guard 必须fresh absent")
+    payload = json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
+    directory = path.parent
+    directory.mkdir(parents=True, exist_ok=True)
+    fd = os.open(guard, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+    try:
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+    temporary = path.with_name(path.name + ".tmp")
+    fd = os.open(temporary, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+    try:
+        os.write(fd, payload)
+        os.fsync(fd)
+    finally:
+        os.close(fd)
+    os.replace(temporary, path)
+    with path.open("rb") as handle:
+        if handle.read() != payload:
+            raise NativeGitError("evidence re-read drift")
+    commit.seal_for_guard(lambda: guard.unlink())
+    commit.consume_by_unlink()
 
 
 class NativeAuthorityGit:
