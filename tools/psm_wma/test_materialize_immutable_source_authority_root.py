@@ -25,6 +25,7 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     NativeGitError,
     AuthorityAdapterInvocation,
     ExecutableIdentity,
+    GitConfigurationAuthority,
     ModuleIdentity,
     preflight_authority_invocation,
     _tool_version,
@@ -62,6 +63,12 @@ def _pass_evidence() -> dict[str, object]:
         "cwd": "/temporary/fixture",
         "sanitized_env_sha256": _sha("environment"),
         "argv_sha256": _sha("argv"),
+        "git_dir": "/temporary/fixture/.git",
+        "git_common_dir": "/temporary/fixture/.git",
+        "git_config_path": "/temporary/fixture/.git/config",
+        "git_config_raw_sha256": _sha("git-config"),
+        "git_config_allowlist": {"core.bare": "false"},
+        "git_isolation_fingerprint": _sha("git-isolation"),
         "commit_metadata": {"author_name": "fixture", "author_email": "fixture@example.invalid", "author_date": "0 +0000", "committer_name": "fixture", "committer_email": "fixture@example.invalid", "committer_date": "0 +0000", "message": "fixture"},
         "remote_identity_sha256": _sha("remote"),
         "fixed_ref": "refs/psm-wma/authority",
@@ -282,6 +289,13 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 "2" * 64,
             )
             tree = {"cosmos-framework": ("160000", "commit", request.expected_child_gitlink)}
+            transaction = type("Transaction", (), {
+                "production": False,
+                "verify_configuration_authority": lambda _self: GitConfigurationAuthority(
+                    Path(raw) / ".git", Path(raw) / ".git", Path(raw) / ".git/config",
+                    "3" * 64, {}, "4" * 64,
+                ),
+            })()
             with patch(
                 "tools.psm_wma.materialize_immutable_source_authority_root.validate_request"
             ), patch(
@@ -295,7 +309,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 "tools.psm_wma.materialize_immutable_source_authority_root._verify_loaded_identity"
             ):
                 with self.assertRaisesRegex(NativeGitError, "PASS_CLOSURE_RECOVERY_REQUIRED"):
-                    preflight_authority_invocation(invocation, object(), Path(raw))
+                    preflight_authority_invocation(invocation, transaction, Path(raw))
 
     def test_cleanup_preserves_replaced_foreign_path(self):
         with tempfile.TemporaryDirectory() as raw:
@@ -367,19 +381,9 @@ class NativeAuthorityGitTest(unittest.TestCase):
             self.assertEqual(path.with_name("evidence.json.tmp").read_bytes(), b"foreign")
 
     def _run_cli(self, root: Path, selection, config, argv):
-        return subprocess.run(
-            [
-                str(Path(sys.executable).resolve()), "-m",
-                "tools.psm_wma.materialize_immutable_source_authority_root",
-                "--selection-fd", str(selection.fileno()),
-                "--config-fd", str(config.fileno()), *argv,
-            ],
-            cwd=root,
-            pass_fds=(selection.fileno(), config.fileno()),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=False,
+        return self._run_cli_with_hook(
+            root, selection, config, argv,
+            "tool._validate_https_endpoint = lambda remote: None",
         )
 
     def _run_cli_with_remote_cas_failure(self, root: Path, selection, config, argv):
@@ -392,6 +396,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
         harness = (
             "import sys; "
             "import tools.psm_wma.materialize_immutable_source_authority_root as tool; "
+            "tool._validate_https_endpoint = lambda remote: None; "
+            "tool.NativeAuthorityGit._prefix = property(lambda self: (*tool._GIT_PREFIX[:-1], 'protocol.file.allow=always')); "
             f"exec({hook!r}); "
             "raise SystemExit(tool.main(sys.argv[1:]))"
         )
@@ -412,8 +418,6 @@ class NativeAuthorityGitTest(unittest.TestCase):
         git = Path(shutil.which("git") or "").resolve()
         root, remote = directory / "root", directory / "remote.git"
         subprocess.run([str(git), "init", "-q", str(root)], check=True)
-        subprocess.run([str(git), "-C", str(root), "config", "user.name", "fixture"], check=True)
-        subprocess.run([str(git), "-C", str(root), "config", "user.email", "fixture@example.invalid"], check=True)
         adapter_path = "tools/psm_wma/materialize_immutable_source_authority_root.py"
         authority_path = "tools/psm_wma/immutable_source_authority_root.py"
         project_root = Path(__file__).parents[2]
@@ -433,7 +437,10 @@ class NativeAuthorityGitTest(unittest.TestCase):
             [str(git), "-C", str(root), "update-index", "--add", "--cacheinfo", f"160000,{child},cosmos-framework"],
             check=True,
         )
-        subprocess.run([str(git), "-C", str(root), "commit", "-qm", "formal root"], check=True)
+        subprocess.run([
+            str(git), "-C", str(root), "-c", "user.name=fixture",
+            "-c", "user.email=fixture@example.invalid", "commit", "-qm", "formal root",
+        ], check=True)
         subprocess.run([str(git), "init", "--bare", "-q", str(remote)], check=True)
         formal_root = subprocess.run(
             [str(git), "-C", str(root), "rev-parse", "HEAD"], check=True, stdout=subprocess.PIPE, text=True,
@@ -504,6 +511,57 @@ class NativeAuthorityGitTest(unittest.TestCase):
             transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNotNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNotNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_production_cli_rejects_non_https_endpoint_before_authority_action(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = subprocess.run(
+                    [
+                        str(Path(sys.executable).resolve()), "-m",
+                        "tools.psm_wma.materialize_immutable_source_authority_root",
+                        "--selection-fd", str(selection_handle.fileno()),
+                        "--config-fd", str(config_handle.fileno()), *argv,
+                    ],
+                    cwd=root, pass_fds=(selection_handle.fileno(), config_handle.fileno()),
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False,
+                )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(verify_evidence_path(root / "evidence.json")["status"], "FAIL")
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+            self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_common_config_authority_rejects_forbidden_and_worktree_drift(self):
+        mutations = {
+            "forbidden": "\n[remote \"origin\"]\n url = https://example.invalid/rewrite\n",
+            "worktree_config": "\n[extensions]\n worktreeConfig = true\n",
+        }
+        for name, payload in mutations.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as raw:
+                git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+                common_config = root / ".git/config"
+                common_config.write_text(common_config.read_text() + payload)
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    result = self._run_cli(root, selection_handle, config_handle, argv)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(verify_evidence_path(root / "evidence.json")["status"], "FAIL")
+                transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+                self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+                self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_linked_worktree_uses_common_config_and_rejects_worktree_config(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            linked = root.parent / "linked"
+            subprocess.run([str(git), "-C", str(root), "worktree", "add", "--detach", "-q", str(linked), "HEAD"], check=True)
+            transaction = NativeAuthorityGit(git, linked, str(remote), linked / "read.index", COMMIT_METADATA)
+            authority = transaction.verify_configuration_authority()
+            self.assertEqual(authority.git_common_dir, (root / ".git").resolve())
+            self.assertEqual(authority.config_path, (root / ".git/config").resolve())
+            authority.git_dir.joinpath("config.worktree").write_text("[core]\n filemode = false\n")
+            with self.assertRaisesRegex(NativeGitError, "config.worktree"):
+                transaction.verify_configuration_authority()
 
     def test_cli_preflight_rejects_input_and_identity_drift_before_mutation(self):
         cases = (

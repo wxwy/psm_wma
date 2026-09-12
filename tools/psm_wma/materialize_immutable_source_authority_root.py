@@ -9,6 +9,7 @@ import os
 import stat
 import subprocess
 import sys
+from urllib.parse import urlsplit
 from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Callable, Mapping, Sequence
@@ -70,6 +71,16 @@ class ExecutableIdentity:
 
 
 @dataclass(frozen=True)
+class GitConfigurationAuthority:
+    git_dir: Path
+    git_common_dir: Path
+    config_path: Path
+    raw_sha256: str
+    allowlist: Mapping[str, str]
+    fingerprint: str
+
+
+@dataclass(frozen=True)
 class AuthorityAdapterInvocation:
     request: AuthorityRequest
     selection_raw_sha256: str
@@ -82,6 +93,7 @@ class AuthorityAdapterInvocation:
     git_executable: ExecutableIdentity
     evidence_path: Path
     argv_sha256: str
+    git_configuration: GitConfigurationAuthority | None = None
 
 
 def _is_sha1(value: str) -> bool:
@@ -96,6 +108,110 @@ def _is_repo_path(value: str) -> bool:
     return bool(value) and not value.startswith("/") and "\0" not in value and all(
         part not in ("", ".", "..") for part in value.split("/")
     )
+
+
+_GIT_PREFIX = (
+    "--no-replace-objects",
+    "-c", "core.hooksPath=/dev/null",
+    "-c", "core.attributesFile=/dev/null",
+    "-c", "filter.lfs.process=",
+    "-c", "protocol.file.allow=never",
+)
+_CONFIG_ALLOWLIST = frozenset((
+    "core.repositoryformatversion", "core.filemode", "core.bare",
+    "core.logallrefupdates", "core.worktree", "extensions.worktreeconfig",
+))
+
+
+def _canonical_json(value: object) -> bytes:
+    return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+
+
+def _validate_https_endpoint(remote: str) -> None:
+    parsed = urlsplit(remote)
+    if (
+        parsed.scheme != "https"
+        or not parsed.hostname
+        or parsed.hostname != parsed.hostname.lower()
+        or parsed.netloc != parsed.hostname
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.query
+        or parsed.fragment
+        or not parsed.path
+        or parsed.path == "/"
+        or not parsed.path.startswith("/")
+    ):
+        raise NativeGitError("production remote 必须为canonical HTTPS endpoint")
+
+
+def _read_regular_path(path: Path) -> bytes:
+    try:
+        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    except OSError as error:
+        raise NativeGitError("Git config 无法安全读取") from error
+    try:
+        if not stat.S_ISREG(os.fstat(descriptor).st_mode):
+            raise NativeGitError("Git config 必须为regular file")
+        size = os.fstat(descriptor).st_size
+        raw = os.pread(descriptor, size, 0)
+        if len(raw) != size:
+            raise NativeGitError("Git config truncated")
+        return raw
+    finally:
+        os.close(descriptor)
+
+
+def _parse_config_raw(raw: bytes, cwd: Path) -> dict[str, str]:
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise NativeGitError("Git config 必须为UTF-8") from error
+    section: str | None = None
+    result: dict[str, str] = {}
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith(("#", ";")):
+            continue
+        if stripped.startswith("[") and stripped.endswith("]"):
+            section = stripped[1:-1].strip().lower()
+            if not section or '"' in section or "." in section:
+                raise NativeGitError("Git config section 无效")
+            continue
+        if section is None or "=" not in stripped:
+            raise NativeGitError("Git config syntax 无效")
+        key, value = (item.strip() for item in stripped.split("=", 1))
+        canonical_key = f"{section}.{key.lower()}"
+        if canonical_key in result:
+            raise NativeGitError("Git config 不允许duplicate key")
+        result[canonical_key] = value
+    for key, value in result.items():
+        if key not in _CONFIG_ALLOWLIST:
+            raise NativeGitError("Git config 含未授权 key")
+        if key == "core.repositoryformatversion" and value != "0":
+            raise NativeGitError("Git config repositoryformatversion 无效")
+        if key in {"core.filemode", "core.logallrefupdates", "extensions.worktreeconfig"} and value not in {"true", "false"}:
+            raise NativeGitError("Git config boolean 无效")
+        if key == "core.bare" and value != "false":
+            raise NativeGitError("Git config bare 无效")
+        if key == "core.worktree" and value != str(cwd):
+            raise NativeGitError("Git config worktree 漂移")
+    return result
+
+
+def _parse_git_config_output(raw: bytes) -> dict[str, str]:
+    result: dict[str, str] = {}
+    for entry in raw.split(b"\0"):
+        if not entry:
+            continue
+        try:
+            key, value = entry.decode("utf-8").split("\n", 1)
+        except (UnicodeDecodeError, ValueError) as error:
+            raise NativeGitError("Git config --null output 无效") from error
+        if key in result:
+            raise NativeGitError("Git config view 含duplicate key")
+        result[key] = value
+    return result
 
 
 def _verify_module_identity(
@@ -188,7 +304,7 @@ def preflight_authority_invocation(
     invocation: AuthorityAdapterInvocation,
     transaction: AuthorityGitTransaction,
     cwd: Path,
-) -> None:
+) -> AuthorityAdapterInvocation:
     request = invocation.request
     validate_request(request)
     if (
@@ -209,6 +325,9 @@ def preflight_authority_invocation(
     _verify_executable_identity(invocation.interpreter)
     _verify_executable_identity(invocation.git_executable)
     _verify_loaded_identity(invocation, cwd)
+    if transaction.production:
+        _validate_https_endpoint(transaction.remote)
+    configuration = transaction.verify_configuration_authority()
     evidence_path = invocation.evidence_path
     guard = evidence_path.with_name(evidence_path.name + ".pending")
     if not evidence_path.is_absolute():
@@ -225,6 +344,7 @@ def preflight_authority_invocation(
         raise NativeGitError("fixed local ref 必须预先absent")
     if transaction.remote_ref(AUTHORITY_REF) is not None:
         raise NativeGitError("fixed remote ref 必须预先absent")
+    return replace(invocation, git_configuration=configuration)
 
 
 def _pass_evidence_record(
@@ -277,6 +397,12 @@ def _pass_evidence_record(
             "cwd": str(transaction.cwd),
             "sanitized_env_sha256": sha256_digest(json.dumps(transaction.env, sort_keys=True, separators=(",", ":")).encode()),
             "argv_sha256": invocation.argv_sha256,
+            "git_dir": str(invocation.git_configuration.git_dir),
+            "git_common_dir": str(invocation.git_configuration.git_common_dir),
+            "git_config_path": str(invocation.git_configuration.config_path),
+            "git_config_raw_sha256": invocation.git_configuration.raw_sha256,
+            "git_config_allowlist": dict(invocation.git_configuration.allowlist),
+            "git_isolation_fingerprint": invocation.git_configuration.fingerprint,
             "commit_metadata": vars(metadata),
             "remote_identity_sha256": sha256_digest(transaction.remote.encode()),
             "fixed_ref": AUTHORITY_REF,
@@ -348,6 +474,12 @@ def _no_mutation_failure_record(
             "cwd": str(transaction.cwd),
             "sanitized_env_sha256": sha256_digest(json.dumps(transaction.env, sort_keys=True, separators=(",", ":")).encode()),
             "argv_sha256": invocation.argv_sha256,
+            "git_dir": None if invocation.git_configuration is None else str(invocation.git_configuration.git_dir),
+            "git_common_dir": None if invocation.git_configuration is None else str(invocation.git_configuration.git_common_dir),
+            "git_config_path": None if invocation.git_configuration is None else str(invocation.git_configuration.config_path),
+            "git_config_raw_sha256": None if invocation.git_configuration is None else invocation.git_configuration.raw_sha256,
+            "git_config_allowlist": None if invocation.git_configuration is None else dict(invocation.git_configuration.allowlist),
+            "git_isolation_fingerprint": None if invocation.git_configuration is None else invocation.git_configuration.fingerprint,
             "commit_metadata": vars(metadata),
             "remote_identity_sha256": sha256_digest(transaction.remote.encode()),
             "fixed_ref": AUTHORITY_REF,
@@ -479,7 +611,7 @@ def run_authority_cli(
 ) -> str:
     """Preflight, then traverse the closed authority flow exactly once."""
     try:
-        preflight_authority_invocation(invocation, transaction, cwd)
+        invocation = preflight_authority_invocation(invocation, transaction, cwd)
     except BaseException as error:
         raise InvocationFailure("preflight", error) from error
     try:
@@ -553,7 +685,9 @@ _EVIDENCE_KEYS = frozenset((
 _EXECUTION_KEYS = frozenset((
     "formal_root_revision", "child_gitlink", "adapter", "authority_module", "collection_module", "audit_module",
     "interpreter", "git_executable", "cwd", "sanitized_env_sha256",
-    "argv_sha256", "commit_metadata", "remote_identity_sha256", "fixed_ref",
+    "argv_sha256", "git_dir", "git_common_dir", "git_config_path",
+    "git_config_raw_sha256", "git_config_allowlist", "git_isolation_fingerprint",
+    "commit_metadata", "remote_identity_sha256", "fixed_ref",
 ))
 _AUTHORITY_KEYS = (
     "root_revision", "selection_path", "selection_blob_native_oid",
@@ -646,6 +780,21 @@ def _validate_execution(value: object) -> Mapping[str, object]:
     for field in ("sanitized_env_sha256", "argv_sha256", "remote_identity_sha256"):
         if not _is_sha256(execution[field]):
             raise NativeGitError(f"evidence execution {field} 无效")
+    configuration = tuple(execution[field] for field in (
+        "git_dir", "git_common_dir", "git_config_path", "git_config_raw_sha256",
+        "git_config_allowlist", "git_isolation_fingerprint",
+    ))
+    if any(value is None for value in configuration):
+        if not all(value is None for value in configuration):
+            raise NativeGitError("evidence execution Git config nullability 无效")
+    else:
+        if not all(isinstance(execution[field], str) and execution[field] for field in ("git_dir", "git_common_dir", "git_config_path")):
+            raise NativeGitError("evidence execution Git config path 无效")
+        if not _is_sha256(execution["git_config_raw_sha256"]) or not _is_sha256(execution["git_isolation_fingerprint"]):
+            raise NativeGitError("evidence execution Git config digest 无效")
+        allowlist = execution["git_config_allowlist"]
+        if not isinstance(allowlist, dict) or set(allowlist) - _CONFIG_ALLOWLIST or not all(isinstance(key, str) and isinstance(value, str) for key, value in allowlist.items()):
+            raise NativeGitError("evidence execution Git config allowlist 无效")
     for field in ("adapter", "authority_module", "collection_module", "audit_module"):
         identity = _exact_mapping(execution[field], ("path", "blob_native_oid", "raw_sha256"), field)
         if not _is_repo_path(identity["path"]) or not _is_sha1(identity["blob_native_oid"]) or not _is_sha256(identity["raw_sha256"]):
@@ -1115,25 +1264,38 @@ def write_failure_evidence(path: Path, record: Mapping[str, object]) -> None:
 class NativeAuthorityGit:
     """Explicit-identity Git transaction; callers must provide a temporary repository."""
 
-    def __init__(self, git: Path, cwd: Path, remote: str, index: Path, metadata: CommitMetadata) -> None:
+    def __init__(
+        self, git: Path, cwd: Path, remote: str, index: Path,
+        metadata: CommitMetadata, *, production: bool = False,
+    ) -> None:
         if not git.is_absolute() or not cwd.is_absolute() or not index.is_absolute():
             raise NativeGitError("git/cwd/index 必须为绝对路径")
         self.git, self.cwd, self.remote, self.index = git, cwd, remote, index
         self.env = {"GIT_INDEX_FILE": str(index), "GIT_NO_REPLACE_OBJECTS": "1", "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null", "LC_ALL": "C", "LANG": "C", "GIT_AUTHOR_NAME": metadata.author_name, "GIT_AUTHOR_EMAIL": metadata.author_email, "GIT_AUTHOR_DATE": metadata.author_date, "GIT_COMMITTER_NAME": metadata.committer_name, "GIT_COMMITTER_EMAIL": metadata.committer_email, "GIT_COMMITTER_DATE": metadata.committer_date}
         self.metadata = metadata
+        self.production = production
 
-    def _run(self, *args: str, input: bytes | None = None, check: bool = True) -> str:
+    @property
+    def _prefix(self) -> tuple[str, ...]:
+        if self.production:
+            return _GIT_PREFIX
+        return (*_GIT_PREFIX[:-1], "protocol.file.allow=always")
+
+    def _run_bytes(self, *args: str, input: bytes | None = None, check: bool = True) -> bytes:
         completed = subprocess.run(
-            [str(self.git), "--no-replace-objects", *args], cwd=self.cwd, env=self.env, input=input,
+            [str(self.git), *self._prefix, *args], cwd=self.cwd, env=self.env, input=input,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False,
         )
         if check and completed.returncode:
             raise NativeGitError(completed.stderr.decode("utf-8", "replace").strip())
-        return completed.stdout.decode().strip()
+        return completed.stdout
+
+    def _run(self, *args: str, input: bytes | None = None, check: bool = True) -> str:
+        return self._run_bytes(*args, input=input, check=check).decode().strip()
 
     def _mutation_succeeded(self, *args: str, porcelain_flag: str | None = None) -> bool:
         completed = subprocess.run(
-            [str(self.git), "--no-replace-objects", *args], cwd=self.cwd, env=self.env,
+            [str(self.git), *self._prefix, *args], cwd=self.cwd, env=self.env,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False,
         )
         if completed.returncode:
@@ -1159,7 +1321,58 @@ class NativeAuthorityGit:
         return tuple(self._run("show", "-s", "--format=%P", revision).split())
 
     def blob_bytes(self, oid: str) -> bytes:
-        return subprocess.run([str(self.git), "--no-replace-objects", "cat-file", "blob", oid], cwd=self.cwd, env=self.env, stdout=subprocess.PIPE, check=True).stdout
+        return self._run_bytes("cat-file", "blob", oid)
+
+    def _repository_directory(self, value: str, name: str) -> Path:
+        path = Path(value)
+        if not path.is_absolute() or path.is_symlink() or not path.is_dir():
+            raise NativeGitError(f"{name} 必须为absolute non-symlink directory")
+        resolved = path.resolve()
+        return resolved
+
+    def verify_configuration_authority(self) -> GitConfigurationAuthority:
+        git_dir = self._repository_directory(
+            self._run("rev-parse", "--absolute-git-dir"), "git_dir"
+        )
+        common_dir = self._repository_directory(
+            self._run("rev-parse", "--path-format=absolute", "--git-common-dir"), "git_common_dir"
+        )
+        # Linked worktrees are siblings of the primary worktree, while their
+        # administrative directory remains below the common Git directory.
+        repository_root = common_dir.parent.parent
+        try:
+            self.cwd.resolve().relative_to(repository_root)
+            git_dir.relative_to(repository_root)
+            common_dir.relative_to(repository_root)
+        except ValueError as error:
+            raise NativeGitError("Git directory 超出冻结 repository root") from error
+        config_path = common_dir / "config"
+        if config_path.is_symlink() or not config_path.is_file():
+            raise NativeGitError("common config 必须为regular non-symlink file")
+        worktree_config = git_dir / "config.worktree"
+        if worktree_config.exists() or worktree_config.is_symlink():
+            raise NativeGitError("worktree config.worktree 必须absent")
+        raw = _read_regular_path(config_path)
+        allowlist = _parse_config_raw(raw, self.cwd)
+        git_view = _parse_git_config_output(
+            self._run_bytes("config", "--no-includes", "--local", "--null", "--list")
+        )
+        if git_view != allowlist:
+            raise NativeGitError("common config raw/Git view 漂移")
+        if allowlist.get("extensions.worktreeconfig") not in (None, "false"):
+            raise NativeGitError("extensions.worktreeConfig 必须absent或false")
+        fingerprint = sha256_digest(_canonical_json({
+            "env": self.env,
+            "prefix": _GIT_PREFIX,
+            "endpoint_grammar": "https-lowercase-host-no-credential-query-fragment",
+            "git_dir": str(git_dir),
+            "git_common_dir": str(common_dir),
+            "git_config_raw_sha256": sha256_digest(raw),
+            "git_config_allowlist": allowlist,
+        }))
+        return GitConfigurationAuthority(
+            git_dir, common_dir, config_path, sha256_digest(raw), allowlist, fingerprint
+        )
 
     def gitlink_at(self, revision: str) -> str:
         return self.tree_entries(revision)["cosmos-framework"][2]
@@ -1240,7 +1453,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.committer_date,
         args.commit_message,
     )
-    transaction = NativeAuthorityGit(args.git, args.cwd, args.remote, args.index, metadata)
+    transaction = NativeAuthorityGit(
+        args.git, args.cwd, args.remote, args.index, metadata, production=True
+    )
     invocation = AuthorityAdapterInvocation(
         AuthorityRequest(args.formal_root, args.child_gitlink, b"", b""),
         args.selection_raw_sha256,

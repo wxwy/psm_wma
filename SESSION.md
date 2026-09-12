@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root execution-authority CPU/static 实现（2026-09-12，IN_PROGRESS）
+
+- 已批准 formal design=`9aba4460469ddab4640e90694e78968d497a9273`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；三方批准范围仅`tools/psm_wma/materialize_immutable_source_authority_root.py`及其stdlib CPU测试，禁止真实物化、source I/O、child、GPU与训练。
+- 已提交增量`e9374ebf`绑定四个模块 closure 与 Evidence-v1 identities；当前继续在同一已批准范围补 bootstrap `sys.orig_argv`、canonical HTTPS endpoint、common-worktree config authority、Git fixed prefix 与 direct native 对抗测试。预计修改仅上述两文件；尚未提交。
+- 本最小步骤：production CLI 已在任何 Git action 前拒绝非canonical HTTPS endpoint；production Git 固定`--no-replace-objects`及 hooks/attributes/filter/protocol prefix，测试专用 local-bare seam 不进入 production parser；common config 同FD raw SHA、allowlist、Git `--no-includes --local --null --list`视图、linked-worktree `config.worktree`缺席和 isolation fingerprint 写入Evidence。新增37项临时CPU测试全部PASS，`py_compile`与`git diff --check` PASS。下一步是 bootstrap `sys.orig_argv`；当前变更未提交。
+
 ## Authority Root Real Adapter 第三轮整改复审（2026-09-12 17:25 CST，REVIEW）
 
 - formal root=`8879742c4ea99bf2676903d4085a77aee91cd4e1`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。审核申请将先写入canonical live Inbox，再按`send-keys -l`→等待至少1秒→独立Enter→capture发送至两pane。
