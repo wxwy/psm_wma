@@ -344,6 +344,22 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 self.assertFalse(path.with_name("evidence.json.pending").exists())
                 self.assertFalse(path.with_name("evidence.json.tmp").exists())
 
+    def test_writer_cleans_postrename_reread_failure_before_guard_unlink(self):
+        class Commit:
+            def seal_for_guard(self, _callback):
+                raise AssertionError("seal must not be reached")
+
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "evidence.json"
+            with patch(
+                "tools.psm_wma.materialize_immutable_source_authority_root._read_regular_evidence",
+                side_effect=OSError("fixture"),
+            ), self.assertRaises(OSError):
+                write_pending_evidence(path, _pass_evidence(), Commit())
+            self.assertFalse(path.exists())
+            self.assertFalse(path.with_name("evidence.json.pending").exists())
+            self.assertFalse(path.with_name("evidence.json.tmp").exists())
+
     def test_writer_cleans_when_unlink_commit_does_not_happen(self):
         class Commit:
             committed = False
