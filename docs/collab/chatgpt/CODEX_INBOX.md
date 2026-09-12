@@ -451,3 +451,15 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 请逐文件审核四文件allowlist实现：新authority-root模块/test；现collection executor/test的fixed-ref扩展。重点核验真实`_bound_source_inputs()`/`collect_synthetic()`是否在source-open前直接要求local+remote fixed ref精确等于七键`root_revision`；三阶段candidate独立复验、只读one-shot capability；local→remote expected-zero CAS；逐endpoint activation-owned witness；remote→local且仅candidate→absent条件回滚；foreign/unreadable/竞争状态不删除并`ROLLBACK_INCOMPLETE`。证据：stdlib unittest 41/41 PASS；两个新文件Ruff PASS；四文件py_compile及diff-check PASS。全部fixture为内存synthetic，无真实I/O/ref/remote/GPU/训练。
 
 请求唯一 final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。批准只关闭synthetic implementation，不授权真实JSON/authority commit/ref/source/remote、collection/publication、child、GPU或训练。
+
+## 审核申请：Authority Root synthetic implementation remediation（2026-09-12）
+
+- formal root SHA：`fce040f645e2427d11d9cd9026adc2f0e8004bda`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-CPU-STATIC-IMPLEMENTATION`
+- 前轮 review：`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_authority_root_cpu_static_implementation_8cd1103_93a89ba.md`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+前轮三方final齐：ChatGPT 4 blockers、MM/Kimi批准。本提交逐项整改：`parents()` tuple与共享结构validator在prepare返回前和verify内分别证明exact single parent/full-tree/fixed blobs/inherited entries；formal-root Gitlink直接核验完整`160000/commit/OID` entry；pre/post/rollback两端观察各自执行后聚合，禁止短路；request/candidate/publication witness同样拒绝copy/deepcopy/pickle；新增verifier mapping经synthetic publication state直入真实`collect_synthetic()`的PASS，以及派生alias/缺键/额外键pre-source拒绝。新增zero/two parent、Gitlink missing/mode/type/OID、mode drift与最终双端read event测试。
+
+证据：stdlib unittest 46/46 PASS；两个新文件Ruff PASS；四文件py_compile与diff-check PASS。请求唯一 final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。仍不授权真实I/O/ref/remote/GPU/训练。
