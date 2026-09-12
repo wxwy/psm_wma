@@ -598,6 +598,16 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 
 本整改仍限四个批准root文件及temporary directory/local bare-remote CPU/static tests。CLI接受absolute fresh `--evidence-path`并冻结actual argv digest；其finalizer在同一个`publish_candidate` transaction中以实际identity/authority/candidate/ref witness构造PASS record，调用`write_pending_evidence()`，所以成功CLI现在断言accepted evidence与两端candidate refs同时存在。`EvidenceCommit`不再接受任意callable：它绑定同一opaque witness activation、实际pending guard、evidence path与evidence digest，并且仅authority-owned `os.unlink(guard)`能使`committed=True`。所有publication-try ordinary FAIL（包括无owned的pre-publication/local-CAS）要求entered+complete与双端absent final proof。preflight还绑定实际`sys.executable`、adapter `__file__`与authority module `__file__`；真实临时CLI在copy的formal tree子进程运行，直接调用当前加载模块而只提供pristine copy会在candidate/ref mutation前拒绝。
 
+## 审核申请：Authority Root Real Adapter HIGH-4 failure-evidence remediation（2026-09-12）
+
+- formal root SHA：`2249fdd3377f82d037d85b7f3ed854cf90472303`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮 ChatGPT review：`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_2f9fd4b_93a89ba.md`；同pair三方 final 已齐，ChatGPT=`REQUEST_CHANGES`（4 HIGH），MM/Kimi=`APPROVE_TO_CLOSE`。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+请只审核 formal tree 的四个批准 tooling/test 文件相对 `2f9fd4bcaec0fd0ea0c6302aa69910e24ce9e378` 的累计整改。HIGH-1--3 已在前序提交完成；本次收口 HIGH-4：publication/rollback failure witness 逐端点保留 `value` 与 read-error，serializer 规范化为 exact `absent`/`revision`/`unreadable` evidence observation；`pre_publication` 不再不可序列化，post/final 读取失败也不再被伪装为 absent。temporary local-bare-remote CLI 子进程覆盖 pre-publication、local/remote CAS、post-publication、binding reverify、evidence-write 及 persistent post-read 触发的 `ROLLBACK_INCOMPLETE`，全部经 `verify_evidence_path()`复验。验收：root unittest=53/53、py_compile、Ruff、diff-check PASS。范围严格限 root CPU/static temporary fixtures；禁止真实 source/selection/config/candidate/ref/origin/collection/evidence、child、GPU、模型/数据/训练/评测/推理。请给出同一完整 pair 的最终 `APPROVE_TO_CLOSE...` 或 `REQUEST_CHANGES`（含 `file:line`）。
+
 证据：`python -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root`=`47/47 PASS`；四文件`py_compile` PASS；Ruff=`All checks passed!`；`git diff --check` PASS。无真实JSON/candidate/ref/origin/source/collection、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
 
 请求该exact pair唯一final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
