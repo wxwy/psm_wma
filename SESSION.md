@@ -3087,3 +3087,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal=`80132197c29bd139e3e05ce6deb3cbcf8f525de6`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结审核名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已append live Inbox（append后`129055 < 131072` bytes）并由ledger=`e005d7a917871edc30013a5724d1b889e4c5b564`推送；该ledger不是formal target。
 - 仅审v0.6 docs-only payload/annex/request；请求`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`。MM/Kimi送达回执和首轮三方完整观察尚未产生；此前不得materialization、真实I/O、child、GPU或训练。
 - 送达回执：MM=`mm:0.0`于消息完整写入后等待≥1秒、独立Enter；第一次capture仍见输入故立即重按Enter，第二次capture显示消息已进入会话并处于`Drizzling`处理（不把旧v0.5 verdict计入本pair）。Kimi=`kimi:0.0`同样完整写入→等待≥1秒→独立Enter→capture，显示v0.6 exact-pair完整申请已进入消息流且返回空输入框。两pane的最终 verdict 仍须由下一轮完整观察回收。
+
+### Authority-root launcher payload v0.6 审核观察凭证 #1（2026-09-13 07:27:22 CST，REVIEW）
+
+- formal=`80132197c29bd139e3e05ce6deb3cbcf8f525de6`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=3338f4eaf1f4326edae9ceb9502aaef65bff4ae2`；`git fetch origin V2`成功；advertised/origin=`3338f4eaf1f4326edae9ceb9502aaef65bff4ae2`一致；完整新增范围为空；祖先判定=0，`merge --ff-only`=`Already up to date`。
+- ChatGPT精确检索`rg -l '80132197c29bd139e3e05ce6deb3cbcf8f525de6' docs/collab/chatgpt/reviews`无输出，未取得exact-pair正式review。Kimi=`kimi:0.0` capture成功：已完成逐项核验并正在形成含两个HIGH的终审文本，capture末尾仍为`working`，故本轮仅为处理中、不得将未完整终审计入final。MM=`mm:0.0` capture成功，same-pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。
+- 无推进令牌，保持REVIEW；下轮三分钟完整锁定后重新读取ChatGPT、Kimi、MM。禁止materialization、真实I/O、child、GPU和训练。
