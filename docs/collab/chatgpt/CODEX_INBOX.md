@@ -730,3 +730,15 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 请审核四文件临时CPU/static实现：`EvidenceCommit._committed`替换为与witness共享的`_AuthorityTerminalCell`；`committed`及全部terminal语义只派生自immutable PENDING/ACCEPTED state；guard成功转移后唯一`cell.state=ACCEPTED`写入。新增在last ref observation后、guard转移期间注入remote drift的回归：保留historical acceptance，后续namespace不应被宣称为current exact。CPU unittest=`67/67 PASS`、四文件`py_compile`、Ruff与`git diff --check` PASS；Gitlink不变。
 
 请求该exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。只限temporary CPU/static；不授权真实source/candidate/ref/evidence、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root PASS lifecycle HIGH remediation（2026-09-12）
+
+- formal root SHA：`bc40191f0e80f98201774cce8a1b551fa2343128`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮：`885b94fe`三方final齐，ChatGPT 4 HIGH；MM/Kimi approve。
+- 冻结名册：ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+整改：拒绝`finalizer=None`成功旁路；`_AuthorityTerminalState`改frozen；私有不可复制/序列化的`_AcceptedPass`绑定activation/witness/cell；restart classifier仅允许guard-visible PENDING，guard缺失+evidence一律B/C recovery；普通与BaseException guard interruption回滚。CPU=70/70、Ruff、py_compile、diff-check PASS；仅temporary CPU/static。
+
+请求唯一`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`；不授权真实I/O、child、GPU、训练或LIBERO4IN1。
