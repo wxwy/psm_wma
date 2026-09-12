@@ -4,7 +4,7 @@
 
 - formal pair=`066de7052310dc889074632981cc3cdec880ab41`/`93a89ba61306d840a008813f62f26a34d54850f4`。本轮推送被拒后先保存`before_head=b5bfe71ebc022ceba5e40f0c4e09ff4ad3663a8e`，fetch得到advertised/origin=`fac31a610ef6a04d537b8f31ecd0fc38f1d9e02e`及新增`dc0d6684`、`fac31a61`；因本地含未推送`b5bfe71e`而非远端祖先，ff-only按规则失败。随后安全`git rebase origin/V2`成功，本地HEAD=`50c6ecef8b8a2bc4524abbd28bbe85ce487c4817`，未触碰dirty residue。
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_066de70_93a89ba.md`：1 HIGH `REQUEST_CHANGES`，要求覆盖`consume_by_unlink()`成功后finalizer抛异常的post-commit preserve-refs dispatch，并统一ordinary return语义。Kimi `kimi:0.0`与MM `mm:0.0` capture均为该exact pair批准。
-- 三方final齐且含ChatGPT request-changes，仅形成docs整改令牌。已认领v0.6 docs-only：authority捕获normal/exception outcome后先按commit state dispatch；committed exception在rollback boundary外转为preserve-refs error；ordinary return一律忽略；新增post-unlink异常矩阵。预计仅`SESSION.md`、`TODO.md`、新增v0.6 doc；禁止四文件实现、真实I-O/GPU/训练。待验证、提交。
+- 三方final齐且含ChatGPT request-changes，仅形成docs整改令牌。已完成v0.6 docs-only：authority捕获normal/exception outcome后先按commit state dispatch；committed exception在rollback boundary外转为preserve-refs error；ordinary return一律忽略；新增post-unlink异常矩阵。formal root=`944c1305bcaef818e178c781b5cf2ce8aebbc9a8`已push；canonical Inbox申请 ledger=`92829879988a0edd01d8e6c7137cbf630a502d44`已push。MM/Kimi均按`send-keys -l`→等待≥1秒→独立Enter→capture送达：MM已进入处理；Kimi已显示申请、尚无处理/最终回执。禁止四文件实现、真实I-O/GPU/训练；满三分钟后开始新pair原生轮询。待提交。
 
 ## Real adapter design v0.5第3轮观察（2026-09-12 14:47:00 CST，REVIEW）
 
