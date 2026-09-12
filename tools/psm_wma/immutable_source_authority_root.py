@@ -633,6 +633,9 @@ class EvidenceCommit(_NonSerializable):
             try:
                 guard_committed = _commit_exact_guard(self._guard, self._guard_identity)
             except BaseException as error:
+                if isinstance(error, PassClosureRecoveryRequired):
+                    authority.require_recovery()
+                    raise PassClosureRecoveryRequired() from error
                 if not self._guard.exists() and not self._guard.is_symlink():
                     authority.require_recovery()
                     raise PassClosureRecoveryRequired() from error

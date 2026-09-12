@@ -2522,3 +2522,48 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 针对`a18d1788`三方final（ChatGPT=1 HIGH，MM/Kimi=APPROVE），只修改两个批准root文件。`_commit_exact_guard()`以`handed_off`区分A/B：handoff前系统失败仍可普通`False`；handoff后只有`os.rename(parked→public)`成功且`lstat(public)`精确匹配原identity时才返回`False`，否则抛`PassClosureRecoveryRequired`。
 - 新增真实public→parking handoff、parked unlink失败、restore rename失败的对抗回归；callback吞掉即时recovery后，outer authority仍粘滞fail-stop、双端candidate refs保留且无delete。既有handoff后lstat故障且精确restore成功仍保留ordinary A回滚语义。
 - 验证：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`79/79 PASS`；四文件`py_compile`、Ruff、`git diff --check` PASS。未运行真实Git/source/candidate/ref/evidence、child、GPU、数据或训练。下一步：提交/推送并对新formal SHA重新三方审核。提交：未提交。
+
+### PASS lifecycle handoff-restore recovery remediation 送达回执（2026-09-12 CST，REVIEW）
+
+- formal=`313b1dc81d83646b310d86c58c10d20b453fc739`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；申请已append至canonical live Inbox并由ledger=`c4812591f9cb6812cd352071f44239d288381fe7`推送（ledger非formal target）。冻结名册：ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。
+- MM/Kimi均完整文本→至少1秒→独立Enter投递并capture回读：MM显示处理状态；Kimi显示提交消息且输入框为空。ChatGPT正式结果只认其`reviews/`内exact pair。三方均已送达；三分钟后执行第1轮完整远端锁定检查。本记录未提交。
+
+### PASS lifecycle handoff-restore recovery remediation 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`313b1dc81d83646b310d86c58c10d20b453fc739`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before/advertised/origin/local-after=c4812591f9cb6812cd352071f44239d288381fe7`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact root+child检索无匹配；MM `mm:0.0`正在读取formal diff；Kimi `kimi:0.0`已接收申请、尚未给final token。三方均处理中、无推进令牌；三分钟后完整锁定检查。本记录未提交。
+
+### PASS lifecycle handoff-restore recovery remediation 审核观察凭证 #2（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=c4812591f9cb6812cd352071f44239d288381fe7`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索无匹配；MM `mm:0.0` same-pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`；Kimi `kimi:0.0` 正在读取formal tree与diff，未给final token。三方final未齐、无推进令牌；三分钟后完整锁定检查。本记录未提交。
+
+### PASS lifecycle handoff-restore recovery remediation 审核观察凭证 #3（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=c4812591f9cb6812cd352071f44239d288381fe7`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索无匹配；MM批准有效；Kimi正在审读formal源码/测试diff，未给final token。三方final未齐、无推进令牌；三分钟后完整锁定检查。本记录未提交。
+
+### PASS lifecycle handoff-restore recovery remediation 审核观察凭证 #4（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=c4812591f9cb6812cd352071f44239d288381fe7`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索无匹配；MM批准有效；Kimi仍在formal源码/测试diff核验，未给final token。三方final未齐、无推进令牌；三分钟后完整锁定检查。本记录未提交。
+
+### PASS lifecycle handoff-restore recovery remediation 审核观察凭证 #5（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=c4812591f9cb6812cd352071f44239d288381fe7`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索无匹配；MM批准有效；Kimi仍在formal范围和对抗测试diff复核，未给final token。三方final未齐、无推进令牌；三分钟后完整锁定检查。本记录未提交。
+
+### PASS lifecycle handoff-restore recovery remediation 审核观察凭证 #6（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=c4812591f9cb6812cd352071f44239d288381fe7`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索无匹配；MM批准有效；Kimi已开始从formal tree抽取后复跑79项CPU unittest与静态检查，未给final token。三方final未齐、无推进令牌；三分钟后完整锁定检查。本记录未提交。
+
+### PASS lifecycle handoff-restore recovery remediation 审核观察凭证 #7（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=c4812591f9cb6812cd352071f44239d288381fe7`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索无匹配；Kimi `kimi:0.0` formal-tree复跑79项CPU/static后same-pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`；MM批准有效。ChatGPT仍缺件，三方final未齐、无推进令牌；三分钟后完整锁定检查。本记录未提交。
+
+### PASS lifecycle foreign-public-guard recovery remediation（2026-09-12 CST，IN_PROGRESS）
+
+- 已汇总 `313b1dc81d83646b310d86c58c10d20b453fc739` 同 pair 三方 final：ChatGPT review `docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_313b1dc_93a89ba.md` 的 HIGH 要求：`_commit_exact_guard()` 显式抛出 `PassClosureRecoveryRequired` 时，`EvidenceCommit.consume_by_unlink()` 必须无条件粘滞 `authority.require_recovery()`，即使 public path 已被 foreign guard 占据；MM/Kimi 同 pair APPROVE。
+- 仅修改批准 root CPU/static 的 `tools/psm_wma/immutable_source_authority_root.py` 和既有 stdlib 测试：helper 的明确 recovery 异常在 callback 可吞掉前闭锁 authority；两条 handoff 后 foreign-guard 对抗回归断言 outer recovery、candidate refs 保留、无 delete。验证：79/79 unittest、四文件 py_compile、Ruff、`git diff --check` 均 PASS。未运行真实 Git/source/candidate/ref/evidence、child、GPU、数据或训练。下一步：提交、推送并对新 formal SHA 重新三方审核。提交：未提交。

@@ -674,16 +674,18 @@ class AuthorityRootTest(unittest.TestCase):
             with patch(
                 "tools.psm_wma.immutable_source_authority_root.os.rename",
                 side_effect=replace_before_handoff,
-            ), self.assertRaises(AuthorityRootError):
+            ), self.assertRaises(PassClosureRecoveryRequired):
                 commit.consume_by_unlink()
             self.assertEqual(guard.read_bytes(), b"foreign")
             with self.assertRaises(NativeGitError):
                 verify_evidence_path(guard.with_name("evidence.json"))
 
-        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+        with self.assertRaises(PassClosureRecoveryRequired):
             publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
-        self.assertNotIn(AUTHORITY_REF, self.git.local)
-        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+        self.assertNotIn("delete_local", self.git.events)
+        self.assertNotIn("delete_remote", self.git.events)
 
     def test_guard_handoff_keeps_pass_hidden_until_committed(self):
         candidate, binding = self.candidate()
@@ -765,16 +767,18 @@ class AuthorityRootTest(unittest.TestCase):
             with patch(
                 "tools.psm_wma.immutable_source_authority_root.os.rename",
                 side_effect=rename_then_create_foreign,
-            ), self.assertRaises(AuthorityRootError):
+            ), self.assertRaises(PassClosureRecoveryRequired):
                 commit.consume_by_unlink()
             self.assertEqual(guard.read_bytes(), b"foreign")
             with self.assertRaises(NativeGitError):
                 verify_evidence_path(guard.with_name("evidence.json"))
 
-        with self.assertRaises(AuthorityRootError):
+        with self.assertRaises(PassClosureRecoveryRequired):
             publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
-        self.assertNotIn(AUTHORITY_REF, self.git.local)
-        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+        self.assertNotIn("delete_local", self.git.events)
+        self.assertNotIn("delete_remote", self.git.events)
 
     def test_final_evidence_lock_identity_drift_preserves_guard(self):
         candidate, binding = self.candidate()
