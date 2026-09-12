@@ -33,8 +33,22 @@ class AuthorityRootError(CollectionError):
 
 
 class RollbackIncomplete(AuthorityRootError):
-    def __init__(self) -> None:
+    def __init__(self, outcome: "RollbackOutcome | None" = None) -> None:
         super().__init__("ROLLBACK_INCOMPLETE")
+        self.outcome = outcome
+
+
+@dataclass(frozen=True)
+class RollbackOutcome:
+    entered: bool
+    required: bool
+    remote_delete_attempted: bool
+    remote_delete_succeeded: bool
+    local_delete_attempted: bool
+    local_delete_succeeded: bool
+    final_local: str | None
+    final_remote: str | None
+    complete: bool
 
 
 class EvidenceCleanupIncomplete(AuthorityRootError):
@@ -419,31 +433,57 @@ def _rollback(
     revision: str,
     local_created: bool,
     remote_created: bool,
-) -> None:
+) -> RollbackOutcome:
     complete = True
+    remote_delete_attempted = remote_delete_succeeded = False
+    local_delete_attempted = local_delete_succeeded = False
     for endpoint, created in (("remote", remote_created), ("local", local_created)):
         if not created:
             continue
+        if endpoint == "remote":
+            remote_delete_attempted = True
+        else:
+            local_delete_attempted = True
         try:
             current = getattr(git, endpoint + "_ref")(AUTHORITY_REF)
-            if current != revision or not getattr(git, "cas_delete_" + endpoint)(
+            succeeded = current == revision and getattr(git, "cas_delete_" + endpoint)(
                 AUTHORITY_REF, revision
-            ):
+            )
+            if endpoint == "remote":
+                remote_delete_succeeded = succeeded
+            else:
+                local_delete_succeeded = succeeded
+            if not succeeded:
                 complete = False
         except Exception:
             complete = False
     local_absent = remote_absent = False
+    final_local = final_remote = None
     try:
-        local_absent = git.local_ref(AUTHORITY_REF) is None
+        final_local = git.local_ref(AUTHORITY_REF)
+        local_absent = final_local is None
     except Exception:
         complete = False
     try:
-        remote_absent = git.remote_ref(AUTHORITY_REF) is None
+        final_remote = git.remote_ref(AUTHORITY_REF)
+        remote_absent = final_remote is None
     except Exception:
         complete = False
     complete = complete and local_absent and remote_absent
+    outcome = RollbackOutcome(
+        entered=True,
+        required=local_created or remote_created,
+        remote_delete_attempted=remote_delete_attempted,
+        remote_delete_succeeded=remote_delete_succeeded,
+        local_delete_attempted=local_delete_attempted,
+        local_delete_succeeded=local_delete_succeeded,
+        final_local=final_local,
+        final_remote=final_remote,
+        complete=complete,
+    )
     if not complete:
-        raise RollbackIncomplete()
+        raise RollbackIncomplete(outcome)
+    return outcome
 
 
 def _observe_refs(git: AuthorityGitTransaction) -> tuple[str | None, str | None]:
