@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root consumer-side第三次整改（2026-09-12 13:32:30 CST，REVIEW）
+
+- formal `ae52cb313cfafda4eedad600501030f4dc01297c`/child `93a89ba61306d840a008813f62f26a34d54850f4`三方意见齐：ChatGPT exact review给出1 HIGH，MM/Kimi同pair批准。HIGH为真实collection consumer仍用单parent值且未拒绝formal parent预含fixed path。
+- `GitTransaction`新增无字段冲突的exact `commit_parents()->tuple`；`_authority_tree()`要求精确`(authority_approval_formal_root_revision,)`，并在delta前拒绝parent含selection/config任一路径。direct `collect_synthetic()`测试覆盖两fixed path、zero/two parent，Unopened sentinel与零commit。
+- 首轮回归因fixture既有`parents`字段与同名方法遮蔽产生78个TypeError，根因定位后改用`commit_parents`保留既有构造接口；另1个旧测试错误文本更新为新精确原因。最终unittest=`47/47 PASS`，新文件Ruff、四文件py_compile、diff-check PASS。不执行真实I/O/GPU/训练。下一步提交新SHA三方复审。未提交。
+
 ## Authority-root remediation 2第1轮观察（2026-09-12 13:26:17 CST）
 
 - formal root=`ae52cb313cfafda4eedad600501030f4dc01297c`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox ledger=`9fede6ef5d202bbbcae8c58c336405d177ce10d2`已推送，MM/Kimi均确认进入处理；Kimi paused会话经额外Enter后已读取formal tree。

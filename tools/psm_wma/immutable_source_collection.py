@@ -78,7 +78,7 @@ class GitTransaction(Protocol):
     def execution_metadata(self) -> Mapping[str, object]: ...
     def publication_state(self) -> Mapping[str, bool]: ...
     def resolve(self, revision: str) -> str: ...
-    def parent(self, revision: str) -> str: ...
+    def commit_parents(self, revision: str) -> tuple[str, ...]: ...
     def tree_entries(self, revision: str) -> Mapping[str, TreeEntry]: ...
     def blob_bytes(self, oid: str) -> bytes: ...
     def gitlink_at(self, revision: str) -> str: ...
@@ -175,10 +175,11 @@ class TemporaryGitFixture:
                           "index_tree_native_oid": "0" * 40, "worktree_entries": entries,
                           "worktree_sha256": _sha(entries)}
 
-    def parent(self, revision: str) -> str:
+    def commit_parents(self, revision: str) -> tuple[str, ...]:
         if revision not in self.parents:
             raise CollectionError("authority commit 不可达")
-        return self.parents[revision]
+        value = self.parents[revision]
+        return (value,) if isinstance(value, str) else tuple(value)
 
     def tree_entries(self, revision: str) -> Mapping[str, TreeEntry]:
         if revision not in self.trees:
@@ -628,10 +629,12 @@ def _authority_tree(git: GitTransaction, authority: Mapping[str, str],
                     lineage: Mapping[str, str]) -> Mapping[str, TreeEntry]:
     revision = authority["root_revision"]
     parent = lineage["authority_approval_formal_root_revision"]
-    if git.parent(revision) != parent:
-        raise CollectionError("authority parent 漂移")
+    if git.commit_parents(revision) != (parent,):
+        raise CollectionError("authority 必须精确单parent")
     before, tree = _tree(git, parent), _tree(git, revision)
     paths = {SELECTION_PATH, COLLECTION_PATHS[1]}
+    if paths.intersection(before):
+        raise CollectionError("authority formal parent 已含固定路径")
     changed = {path for path in set(before) | set(tree) if before.get(path) != tree.get(path)}
     if changed != paths or not paths.issubset(tree):
         raise CollectionError("authority delta 必须恰为两个固定 blob，保留全部继承项")

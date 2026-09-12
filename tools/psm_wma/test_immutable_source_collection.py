@@ -440,7 +440,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         cases = []
         git = deepcopy(self.git)
         git.trees["d" * 40][SELECTION_PATH] = ("100644", "blob", self.authority["selection_blob_native_oid"])
-        cases.append((git, self.authority, "两个固定"))
+        cases.append((git, self.authority, "已含固定路径"))
         for path in ("README.md", "cosmos-framework"):
             for removed in (True, False):
                 git = deepcopy(self.git)
@@ -540,13 +540,26 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                     self.assertEqual(git.snapshot(), before)
                     self.assertEqual(sink.records[0]["status"], "FAIL")
 
-    def test_authority_delta_preserves_parent_and_postcheck_revalidates(self) -> None:
-        git = deepcopy(self.git)
-        # 两个路径也允许是实际修改，而不仅是新建；继承项必须完整保留。
-        git.trees["d" * 40].update({SELECTION_PATH: ("100644", "blob", "f" * 40), COLLECTION_PATHS[1]: ("100644", "blob", "f" * 40)})
-        result = collect_synthetic(authority=self.authority, lineage=self.lineage,
-                                   selection_request=self.selection_raw, git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
-        self.assertEqual(result["status"], "PASS")
+    def test_authority_parent_contract_and_postcheck_revalidates(self) -> None:
+        class Unopened:
+            def open_regular(self, path):
+                raise AssertionError("authority parent失败不得打开source")
+
+        for path in (SELECTION_PATH, COLLECTION_PATHS[1]):
+            git = deepcopy(self.git)
+            git.trees["d" * 40][path] = ("100644", "blob", "f" * 40)
+            with self.subTest(path=path), self.assertRaisesRegex(CollectionError, "已含固定路径"):
+                collect_synthetic(authority=self.authority, lineage=self.lineage,
+                    selection_request=self.selection_raw, git=git, root_fd=Unopened(), sink=MemoryEvidenceSink())
+            self.assertEqual(git.commits, [])
+
+        for parents in ((), ("d" * 40, "e" * 40)):
+            git = deepcopy(self.git)
+            git.parents["a" * 40] = parents
+            with self.subTest(parents=parents), self.assertRaisesRegex(CollectionError, "单parent"):
+                collect_synthetic(authority=self.authority, lineage=self.lineage,
+                    selection_request=self.selection_raw, git=git, root_fd=Unopened(), sink=MemoryEvidenceSink())
+            self.assertEqual(git.commits, [])
 
         class LateAuthorityDrift(TemporaryGitFixture):
             def commit(self, paths, parent, blobs):
