@@ -1024,3 +1024,12 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 证据：artifact `py_compile` PASS；只读 extractor核对v0.2 selection/config、v0.3 actual argv及adapter bootstrap四组既有length/SHA均PASS；`git diff --check` PASS。未运行payload main，未创建worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未改child/GPU/训练。
 - 禁止：materialization、source/checkpoint I/O、JSON/worktree/index/candidate/ref/evidence、collection/receipt/publication/root audit、child、CUDA/GPU、训练、评测、推理及LIBERO4IN1。
 - 请求唯一 final：`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`；请完整声明 exact root/child。
+
+## 审核申请：Authority-root launcher payload v0.6（2026-09-13）
+
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`。
+- formal root：`80132197c29bd139e3e05ce6deb3cbcf8f525de6`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 范围：仅相对`8d1c100...`的 root docs-only launcher artifact、annex/request v0.6 与记录。按该pair三方final整改：内联已冻结selection/config/actual-argv bytes；同号安全FD=3/4/5 handoff和exact close-set；transactional worktree add、ownership cleanup/`ROLLBACK_INCOMPLETE`；ordinary parent `.git` retained no-follow route/config authority，linked route fail-closed。candidate parent、Gitlink、actual argv、bootstrap、环境与禁止范围未改变。
+- 证据：payload `py_compile` PASS；inline inputs为`516/8fe458...`、`508/43b3b...`、`2427/72777...`；payload raw=`15756`、SHA-256=`fb73f934cacf72931353e64fd89d7f5b18c2d18d4e660cc899650ab06ca084fd`；`git diff --check` PASS；temporary-only same/different FD handoff PASS。未运行payload main，未创建真实worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未改child/GPU/训练。
+- 禁止：materialization、source/checkpoint I/O、JSON/worktree/index/candidate/ref/evidence、collection/receipt/publication/root audit、child、CUDA/GPU、训练、评测、推理及LIBERO4IN1。
+- 请求唯一 final：`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`；请完整声明 exact root/child。
