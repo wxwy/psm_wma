@@ -441,7 +441,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
 
     def _run_bootstrap_cli(
         self, root: Path, selection, config, argv, *, contract_payload=None,
-        mutate_adapter_argv=None, mutate_contract=None,
+        mutate_adapter_argv=None, mutate_bootstrap_argv=None, mutate_contract=None,
     ):
         payload = __import__(
             "tools.psm_wma.materialize_immutable_source_authority_root",
@@ -459,6 +459,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 str(Path(sys.executable).resolve()), "-I", "-S", "-B", "-c",
                 payload, "--", *adapter_argv,
             ]
+            if mutate_bootstrap_argv is not None:
+                mutate_bootstrap_argv(original)
             contract_argv = list(original)
             if mutate_adapter_argv is not None:
                 mutate_adapter_argv(original)
@@ -680,6 +682,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
         for payload in (
             "\n[core]\n fsmonitor = /bin/false\n",
             "\n[include]\n path = /hostile/config\n",
+            "\n[extensions]\n worktreeConfig = true\n",
         ):
             with self.subTest(payload=payload), tempfile.TemporaryDirectory() as raw:
                 git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
@@ -687,6 +690,28 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 config_path.write_text(config_path.read_text() + payload)
                 with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
                     result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertFalse((root / "evidence.json").exists(), result.stderr)
+                transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+                self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_executable_identity_drift_before_import(self):
+        for option, value in (
+            ("--interpreter", "/bin/false"),
+            ("--interpreter-raw-sha256", "0" * 64),
+            ("--interpreter-version", "hostile-version"),
+            ("--git-version", "hostile-version"),
+        ):
+            with self.subTest(option=option), tempfile.TemporaryDirectory() as raw:
+                git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+                def mutate(command):
+                    position = command.index(option)
+                    command[position + 1] = value
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    result = self._run_bootstrap_cli(
+                        root, selection_handle, config_handle, argv,
+                        mutate_bootstrap_argv=mutate,
+                    )
                 self.assertNotEqual(result.returncode, 0)
                 self.assertFalse((root / "evidence.json").exists(), result.stderr)
                 transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
