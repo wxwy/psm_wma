@@ -376,6 +376,18 @@ class NativeAuthorityGitTest(unittest.TestCase):
             self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
+    def test_cli_tool_preflight_failure_writes_fail_evidence(self):
+        with tempfile.TemporaryDirectory() as raw:
+            _git, root, _remote, selection, config, argv = self._cli_fixture(Path(raw))
+            position = argv.index("--git-raw-sha256")
+            argv[position + 1] = "0" * 64
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_cli(root, selection_handle, config_handle, argv)
+            self.assertNotEqual(result.returncode, 0, result.stderr)
+            if not (root / "evidence.json").exists():
+                self.fail(result.stderr)
+            self.assertEqual(verify_evidence_path(root / "evidence.json")["status"], "FAIL")
+
     def test_cli_rejects_pristine_formal_copy_when_loaded_adapter_differs(self):
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))

@@ -37,6 +37,12 @@ class NativeGitError(RuntimeError):
     pass
 
 
+class InvocationFailure(NativeGitError):
+    def __init__(self, phase: str, error: BaseException) -> None:
+        super().__init__(str(error))
+        self.phase, self.error = phase, error
+
+
 def _read_input_fd(descriptor: int) -> bytes:
     info = os.fstat(descriptor)
     if not stat.S_ISREG(info.st_mode):
@@ -289,15 +295,64 @@ def _pass_evidence_record(
     return record
 
 
+def _no_mutation_failure_record(
+    invocation: AuthorityAdapterInvocation,
+    transaction: "NativeAuthorityGit",
+    phase: str,
+    error: BaseException,
+) -> dict[str, object]:
+    if phase not in {"preflight", "prepare", "verify"}:
+        raise NativeGitError("no-mutation failure phase 无效")
+    metadata = transaction.metadata
+    record: dict[str, object] = {
+        "schema": "immutable_source_authority_root_materialization_evidence_v1",
+        "status": "FAIL",
+        "execution": {
+            "formal_root_revision": invocation.request.materialization_formal_root,
+            "child_gitlink": invocation.request.expected_child_gitlink,
+            "adapter": {"path": invocation.adapter.repo_path, "blob_native_oid": invocation.adapter.blob_native_oid, "raw_sha256": invocation.adapter.raw_sha256},
+            "authority_module": {"path": invocation.authority_module.repo_path, "blob_native_oid": invocation.authority_module.blob_native_oid, "raw_sha256": invocation.authority_module.raw_sha256},
+            "interpreter": {"path": str(invocation.interpreter.path), "raw_sha256": invocation.interpreter.raw_sha256, "version": invocation.interpreter.version},
+            "git_executable": {"path": str(invocation.git_executable.path), "raw_sha256": invocation.git_executable.raw_sha256, "version": invocation.git_executable.version},
+            "cwd": str(transaction.cwd),
+            "sanitized_env_sha256": sha256_digest(json.dumps(transaction.env, sort_keys=True, separators=(",", ":")).encode()),
+            "argv_sha256": invocation.argv_sha256,
+            "commit_metadata": vars(metadata),
+            "remote_identity_sha256": sha256_digest(transaction.remote.encode()),
+            "fixed_ref": AUTHORITY_REF,
+        },
+        "authority": {key: None for key in _AUTHORITY_KEYS},
+        "candidate": {"revision": None, "parents": None, "tree_native_oid": None, "verifier_pass": False, "binding_sha256": None},
+        "pre_publication": {"local_observation": None, "remote_observation": None, "both_absent": False},
+        "publication": {key: False for key in _PUBLICATION_KEYS},
+        "post_publication": {"local_observation": None, "remote_observation": None, "both_candidate": False, "committed_binding_reverified": False},
+        "rollback": {"entered": False, "required": False, "remote_delete_attempted": False, "remote_delete_succeeded": False, "local_delete_attempted": False, "local_delete_succeeded": False, "final_local_observation": None, "final_remote_observation": None, "complete": False},
+        "failure": {"primary_phase": phase, "primary_code": type(error).__name__.upper(), "rollback_phase": None, "rollback_code": None},
+    }
+    record["evidence_sha256"] = sha256_digest(
+        json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
+    )
+    return record
+
+
 def run_authority_cli(
     invocation: AuthorityAdapterInvocation,
     transaction: AuthorityGitTransaction,
     cwd: Path,
 ) -> str:
     """Preflight, then traverse the closed authority flow exactly once."""
-    preflight_authority_invocation(invocation, transaction, cwd)
-    candidate = prepare_candidate(invocation.request, transaction)
-    binding = verify_candidate(invocation.request, candidate, transaction)
+    try:
+        preflight_authority_invocation(invocation, transaction, cwd)
+    except BaseException as error:
+        raise InvocationFailure("preflight", error) from error
+    try:
+        candidate = prepare_candidate(invocation.request, transaction)
+    except BaseException as error:
+        raise InvocationFailure("prepare", error) from error
+    try:
+        binding = verify_candidate(invocation.request, candidate, transaction)
+    except BaseException as error:
+        raise InvocationFailure("verify", error) from error
     def finalizer(witness, commit):
         local_observation = transaction.local_ref(AUTHORITY_REF)
         remote_observation = transaction.remote_ref(AUTHORITY_REF)
@@ -824,6 +879,38 @@ def write_pending_evidence(
         raise
 
 
+def write_failure_evidence(path: Path, record: Mapping[str, object]) -> None:
+    """Atomically publish only a verified terminal non-PASS record."""
+    payload = json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
+    verified = verify_evidence_bytes(payload)
+    if verified["status"] == "PASS":
+        raise NativeGitError("failure writer 不接受 PASS evidence")
+    directory = path.parent
+    directory.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(path.name + ".tmp")
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW | os.O_CLOEXEC
+    owned = False
+    try:
+        descriptor = os.open(temporary, flags, 0o600)
+        owned = True
+        try:
+            _write_all(descriptor, payload)
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+        os.link(temporary, path)
+        path_info = path.lstat()
+        if not stat.S_ISREG(path_info.st_mode) or verify_evidence_bytes(
+            _read_regular_evidence(path)
+        ) != verified:
+            raise NativeGitError("failure evidence publication drift")
+        temporary.unlink()
+        owned = False
+        _fsync_directory(directory)
+    except BaseException:
+        if owned:
+            _cleanup_pending_evidence((temporary,), directory)
+        raise
 class NativeAuthorityGit:
     """Explicit-identity Git transaction; callers must provide a temporary repository."""
 
@@ -980,7 +1067,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.evidence_path,
         sha256_digest(json.dumps(actual_argv, separators=(",", ":")).encode()),
     )
-    print(run_authority_cli(invocation, transaction, args.cwd))
+    try:
+        print(run_authority_cli(invocation, transaction, args.cwd))
+    except InvocationFailure as error:
+        write_failure_evidence(
+            invocation.evidence_path,
+            _no_mutation_failure_record(invocation, transaction, error.phase, error.error),
+        )
+        raise error.error
     return 0
 
 
