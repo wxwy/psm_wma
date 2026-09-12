@@ -587,3 +587,17 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 证据：`python -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root`=`44/44 PASS`；四文件`py_compile` PASS；Ruff=`All checks passed!`；`git diff --check` PASS。CLI tests仅使用temporary working repository与local bare remote，覆盖CLI PASS、raw/canonical/formal-root/Gitlink/module/tool/ref drift pre-mutation rejection、local/remote same-candidate create与concurrent-delete races、冻结metadata不受ambient Git config/time影响。
 
 请求完整exact pair唯一final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。本申请不授权真实JSON/candidate/ref/origin/source/collection、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root Real Adapter CPU/static evidence-transaction remediation（2026-09-12）
+
+- formal root SHA：`2f9fd4bcaec0fd0ea0c6302aa69910e24ce9e378`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮 ChatGPT review：`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_64db875_93a89ba.md`；同pair三方final已齐（ChatGPT 4 HIGH、MM/Kimi批准）。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+本整改仍限四个批准root文件及temporary directory/local bare-remote CPU/static tests。CLI接受absolute fresh `--evidence-path`并冻结actual argv digest；其finalizer在同一个`publish_candidate` transaction中以实际identity/authority/candidate/ref witness构造PASS record，调用`write_pending_evidence()`，所以成功CLI现在断言accepted evidence与两端candidate refs同时存在。`EvidenceCommit`不再接受任意callable：它绑定同一opaque witness activation、实际pending guard、evidence path与evidence digest，并且仅authority-owned `os.unlink(guard)`能使`committed=True`。所有publication-try ordinary FAIL（包括无owned的pre-publication/local-CAS）要求entered+complete与双端absent final proof。preflight还绑定实际`sys.executable`、adapter `__file__`与authority module `__file__`；真实临时CLI在copy的formal tree子进程运行，直接调用当前加载模块而只提供pristine copy会在candidate/ref mutation前拒绝。
+
+证据：`python -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root`=`47/47 PASS`；四文件`py_compile` PASS；Ruff=`All checks passed!`；`git diff --check` PASS。无真实JSON/candidate/ref/origin/source/collection、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+请求该exact pair唯一final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
