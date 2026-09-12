@@ -1,72 +1,196 @@
-"""CPU-only regressions for immutable_source_collection's injected seam."""
-
+"""CPU-only regressions for the injected immutable collection seam."""
 from __future__ import annotations
-
 import unittest
-
-from tools.psm_wma.immutable_source_collection import (
-    CollectionError, MemoryEvidenceSink, SOURCE_PATHS, SyntheticRootFd,
-    OneShotHandoff, TemporaryGitFixture, collect_synthetic, verify_synthetic_rollback,
-)
-
+import hashlib
+import json
+import pickle
+from dataclasses import replace
+import stat
+from tools.psm_wma.immutable_source_collection import EntryStat, derive_candidates, _source_handoff
+from tools.psm_wma.immutable_source_collection import COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
 class ImmutableSourceCollectionTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.authority = {"formal_root": "root", "formal_child": "child", "base": "b", "target": "t"}
-        self.paths = {name: f"fixture/{name}.bin" for name in SOURCE_PATHS}
-        self.git = TemporaryGitFixture({"base": "b", "target": "t"})
-        self.fd = SyntheticRootFd({path: name.encode() for name, path in self.paths.items()})
+        self.config = {
+            "schema": "canonical_native_local_ttt_config_v2", "local_memory_enabled": True,
+            "local_memory_dim": 32, "local_history_enabled": True,
+            "local_history_backend": "ttt_fast_weight", "local_history_evidence_dim": 106,
+            "local_history_state_enabled": False, "local_ttt_enabled": True,
+            "enable_input_bias": False, "ttt_tbptt_steps": 16, "ttt_inner_lr": 0.01,
+            "k_local": 1, "local_evidence_feature_version": "causal_visual96_executed_action10_v1",
+            "local_fast_state_dtype": "fp32", "local_runtime_resume_mode": "slow_only_no_mid_episode_resume",
+        }
+        self.config_raw = json.dumps(self.config, sort_keys=True, separators=(",", ":")).encode()
+        self.authority = dict(zip(("root_revision", "selection_path", "selection_blob_native_oid", "selection_raw_sha256", "config_path", "config_blob_native_oid", "config_raw_sha256"), ("r"*40, "selection", "s"*40, "a"*64, "config", "c"*40, "b"*64)))
+        self.lineage = {"target_ref": "t"*40, "expected_base_root_revision": "b"*40, "expected_child_gitlink": "g"*40, "authority_approval_formal_root_revision": "r"*40}
+        self.paths = {name: f"fixture/{name}" for name in SOURCE_PATHS}; self.git = TemporaryGitFixture({"base": "b"*40, "target": "t"*40}, authority_values=self.authority, gitlink=self.lineage["expected_child_gitlink"]); self.fd = SyntheticRootFd({path: name.encode() for name, path in self.paths.items()})
+        self.authority["config_raw_sha256"] = hashlib.sha256(self.config_raw).hexdigest()
+        self.git.config_blob = self.config_raw
+    def test_exact_pass_evidence(self) -> None:
+        sink = MemoryEvidenceSink(); record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=sink)
+        self.assertEqual(record["status"], "PASS"); self.assertEqual(record["execution"]["phase"], "complete"); self.assertEqual(sink.records, [record])
+    def test_authority_lineage_allowlist_drift_fails(self) -> None:
+        with self.assertRaises(CollectionError): collect_synthetic(authority={**self.authority, "x": "x"}, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths={name: "same" for name in SOURCE_PATHS}, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        bad_gitlink = TemporaryGitFixture(self.git.revisions, authority_values=self.authority, gitlink="x" * 40)
+        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=bad_gitlink, root_fd=self.fd, sink=MemoryEvidenceSink())
+    def test_descriptor_and_digest_drift_fail(self) -> None:
+        files = dict(self.fd.files); files[self.paths["checkpoint"]] = SyntheticEntry(b"x", reads=[b"x", b"y"])
+        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=SyntheticRootFd(files), sink=MemoryEvidenceSink())
+        files[self.paths["checkpoint"]] = SyntheticEntry(b"x", stats=[EntryStat(1, 1, 1, 0, 0), EntryStat(2, 1, 1, 0, 0)])
+        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=SyntheticRootFd(files), sink=MemoryEvidenceSink())
+        record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink()); record["status"] = "FAIL"
+        with self.assertRaises(CollectionError): verify_evidence(record)
+    def test_escape_and_transaction_allowlist_fail(self) -> None:
+        with self.assertRaises(CollectionError): SyntheticRootFd({}).open_regular("../escape")
+        with self.assertRaises(CollectionError): self.git.commit(("wrong",), None)
+        with self.assertRaisesRegex(CollectionError, "component is a symlink"):
+            SyntheticRootFd({}, frozenset({"fixture"})).open_regular("fixture/checkpoint")
+        with self.assertRaisesRegex(CollectionError, "non-regular"):
+            SyntheticRootFd({"fixture/checkpoint": "directory"}).open_regular("fixture/checkpoint")
 
-    def test_pass_record_has_exact_contract(self) -> None:
-        sink = MemoryEvidenceSink()
-        record = collect_synthetic(authority=self.authority, paths=self.paths, git=self.git, root_fd=self.fd, sink=sink)
-        self.assertEqual(set(record), {"schema_version", "phase", "status", "authority", "candidate", "snapshot"})
-        self.assertEqual(record["status"], "PASS")
-        self.assertEqual(sink.records, [record])
-
-    def test_authority_lineage_and_allowlist_drift_fail(self) -> None:
-        for authority, paths in (({**self.authority, "extra": "x"}, self.paths),
-                                 (self.authority, {name: "same" for name in SOURCE_PATHS})):
-            with self.subTest(authority=authority, paths=paths), self.assertRaises(CollectionError):
-                collect_synthetic(authority=authority, paths=paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+    def test_every_fstat_field_drift_closes_handle(self) -> None:
+        before = EntryStat(1, 1, 1, 0, 0)
+        for field_name in ("device", "inode", "size", "mtime_ns", "ctime_ns"):
+            with self.subTest(field=field_name):
+                after = replace(before, **{field_name: getattr(before, field_name) + 1})
+                entry = SyntheticEntry(b"x", stats=[before, after, after])
+                files = {**self.fd.files, self.paths["checkpoint"]: entry}
+                with self.assertRaises(CollectionError):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                                      git=self.git, root_fd=SyntheticRootFd(files), sink=MemoryEvidenceSink())
+                self.assertTrue(entry.closed)
+        nonregular = SyntheticEntry(b"x", identity=replace(before, mode=stat.S_IFDIR))
         with self.assertRaises(CollectionError):
-            collect_synthetic(authority=self.authority, paths=self.paths,
-                              git=TemporaryGitFixture({"base": "wrong", "target": "t"}), root_fd=self.fd, sink=MemoryEvidenceSink())
+            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                git=self.git, root_fd=SyntheticRootFd({**self.fd.files, self.paths["checkpoint"]: nonregular}), sink=MemoryEvidenceSink())
+        self.assertTrue(nonregular.closed)
 
-    def test_fd_escape_missing_and_nonregular_fail(self) -> None:
-        for path in ("../escape", "/absolute", "missing"):
-            with self.subTest(path=path), self.assertRaises(CollectionError):
-                SyntheticRootFd({}).read_regular(path)
+    def test_streamed_source_hash_and_successful_close(self) -> None:
+        data = b"abc" * 50000
+        entry = SyntheticEntry(data)
+        record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+            git=self.git, root_fd=SyntheticRootFd({**self.fd.files, self.paths["checkpoint"]: entry}), sink=MemoryEvidenceSink())
+        self.assertEqual(record["source_entries"][0], {"ordinal": 0, "byte_length": len(data),
+                                                     "sha256": hashlib.sha256(data).hexdigest()})
+        self.assertTrue(entry.closed)
+    def test_committed_tree_relookup_drift_fails(self) -> None:
+        class DriftingGit(TemporaryGitFixture):
+            def lookup(self, revision: str) -> dict[str, str]:
+                return {**super().lookup(revision), "tree_native_oid": "d" * 40}
         with self.assertRaises(CollectionError):
-            SyntheticRootFd({"regular": b"x", "dir": "not-bytes"}).read_regular("dir")
+            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=DriftingGit(self.git.revisions, authority_values=self.authority, gitlink=self.lineage["expected_child_gitlink"], config_blob=self.config_raw), root_fd=self.fd, sink=MemoryEvidenceSink())
 
-    def test_same_fd_race_and_single_use_handoff_fail(self) -> None:
-        class RacingFd(SyntheticRootFd):
-            reads = 0
+    def test_frozen_candidate_paths_and_raw_byte_chain(self) -> None:
+        entries = ({"ordinal": 0, "byte_length": 3, "sha256": hashlib.sha256(b"abc").hexdigest()},)
+        artifacts, digests = derive_candidates(entries, self.config_raw)
+        blobs = dict(artifacts)
+        expected_paths = {
+            "docs/build/PSM-WMA_immutable_source_collection_v1.json",
+            "docs/build/PSM-WMA_immutable_source_canonical_model_config_v1.json",
+            "docs/build/PSM-WMA_immutable_source_input_descriptor_v1.json",
+            "docs/build/PSM-WMA_immutable_source_manifest_v1.json",
+            "docs/build/PSM-WMA_immutable_source_checkpoint_descriptor_v1.json",
+        }
+        self.assertEqual(set(blobs), expected_paths)
+        input_raw = blobs["docs/build/PSM-WMA_immutable_source_input_descriptor_v1.json"]
+        manifest_raw = blobs["docs/build/PSM-WMA_immutable_source_manifest_v1.json"]
+        input_value, manifest = json.loads(input_raw), json.loads(manifest_raw)
+        self.assertEqual(set(input_value), {"schema", "source_kind", "source_entries"})
+        self.assertEqual(set(manifest), {"schema", "source_kind", "source_entries", "source_input_sha256"})
+        self.assertEqual(input_value["source_entries"], list(entries))
+        self.assertEqual(manifest["source_entries"], list(entries))
+        self.assertEqual(manifest["source_input_sha256"], hashlib.sha256(input_raw).hexdigest())
+        identifier_raw = json.dumps({"schema": "immutable_source_identifier_v1",
+            "source_manifest_sha256": hashlib.sha256(manifest_raw).hexdigest(),
+            "source_input_sha256": hashlib.sha256(input_raw).hexdigest()},
+            sort_keys=True, separators=(",", ":")).encode()
+        self.assertEqual(digests["identifier_sha256"], hashlib.sha256(identifier_raw).hexdigest())
+        descriptor_raw = blobs["docs/build/PSM-WMA_immutable_source_checkpoint_descriptor_v1.json"]
+        descriptor = json.loads(descriptor_raw)
+        self.assertEqual(set(descriptor), {"schema", "source_kind", "immutable_source_identifier", "source_manifest_sha256", "source_input_sha256"})
+        self.assertEqual(descriptor["immutable_source_identifier"], digests["identifier_sha256"])
+        collection = json.loads(blobs["docs/build/PSM-WMA_immutable_source_collection_v1.json"])
+        self.assertEqual(collection["checkpoint_source_descriptor_sha256"], hashlib.sha256(descriptor_raw).hexdigest())
+        self.assertEqual(blobs["docs/build/PSM-WMA_immutable_source_canonical_model_config_v1.json"], self.config_raw)
+        for value in blobs.values():
+            self.assertEqual(value, json.dumps(json.loads(value), sort_keys=True, separators=(",", ":")).encode())
 
-            def read_regular(self, relative_path: str) -> bytes:
-                self.reads += 1
-                value = super().read_regular(relative_path)
-                return value if self.reads <= len(SOURCE_PATHS) else value + b"drift"
-
+    def test_candidate_rejects_invalid_entries_and_config(self) -> None:
+        valid = {"ordinal": 0, "byte_length": 1, "sha256": hashlib.sha256(b"x").hexdigest()}
+        for key, value in (("ordinal", True), ("byte_length", False), ("byte_length", 0), ("sha256", "X" * 64)):
+            with self.subTest(key=key, value=value), self.assertRaises(CollectionError):
+                derive_candidates(({**valid, key: value},), self.config_raw)
         with self.assertRaises(CollectionError):
-            collect_synthetic(authority=self.authority, paths=self.paths, git=self.git,
-                              root_fd=RacingFd(self.fd.files), sink=MemoryEvidenceSink())
-        handoff = OneShotHandoff()
-        record = collect_synthetic(authority=self.authority, paths=self.paths, git=self.git,
-                                   root_fd=self.fd, sink=MemoryEvidenceSink())
-        self.assertEqual(handoff.take(record)["status"], "PASS")
+            derive_candidates((valid,), json.dumps(self.config, indent=2).encode())
         with self.assertRaises(CollectionError):
-            handoff.take(record)
+            derive_candidates((valid,), b"{}")
 
-    def test_retained_snapshot_rollback_contract(self) -> None:
-        snapshot = {"target": "t", "worktree": "digest"}
-        verify_synthetic_rollback(snapshot, dict(snapshot), completed=True)
-        with self.assertRaisesRegex(CollectionError, "snapshot mismatch"):
-            verify_synthetic_rollback(snapshot, {"target": "other"}, completed=True)
+    def test_config_failure_precedes_source_open(self) -> None:
+        class UnopenedSource:
+            def open_regular(self, path: str) -> object:
+                self.fail_open = True
+                raise AssertionError("config 失败前不应打开 source")
+        source = UnopenedSource()
+        for raw in (b"{}", self.config_raw + b"\n"):
+            with self.subTest(raw=raw):
+                self.git.config_blob = raw
+                self.authority["config_raw_sha256"] = hashlib.sha256(raw).hexdigest()
+                with self.assertRaises(CollectionError):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                                      git=self.git, root_fd=source, sink=MemoryEvidenceSink())
+                self.assertFalse(hasattr(source, "fail_open"))
+
+    def test_handoff_rejects_changed_candidate_bytes(self) -> None:
+        activation = object()
+        entries = ({"ordinal": 0, "byte_length": 1, "sha256": hashlib.sha256(b"x").hexdigest()},)
+        handoff = _source_handoff(self.authority, entries, self.config_raw, activation)
+        handoff._artifacts = ((COLLECTION_PATHS[0], b"{}"),) + handoff._artifacts[1:]
+        with self.assertRaises(CollectionError):
+            handoff.take(activation)
+        with self.assertRaises(CollectionError):
+            handoff.take(activation)
+
+    def test_canonical_roundtrip_does_not_depend_on_dict_order(self) -> None:
+        record = collect_synthetic(authority=json.loads(json.dumps(self.authority, sort_keys=True)),
+                                  lineage=json.loads(json.dumps(self.lineage, sort_keys=True)),
+                                  paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        verify_evidence(json.loads(json.dumps(record, sort_keys=True)))
+    def test_handoff_and_retained_rollback_are_one_shot(self) -> None:
+        activation = object()
+        entries = ({"ordinal": 0, "byte_length": 1, "sha256": hashlib.sha256(b"x").hexdigest()},)
+        handoff = _source_handoff(self.authority, entries, self.config_raw, activation)
+        with self.assertRaises(CollectionError):
+            OneShotHandoff()
+        with self.assertRaises(CollectionError):
+            handoff.take(object())
+        with self.assertRaises(CollectionError):
+            pickle.dumps(handoff)
+        bundle = handoff.take(activation)
+        self.assertEqual(bundle.source_entries, entries)
+        self.assertEqual(dict(bundle.artifact_bytes)[COLLECTION_PATHS[1]], self.config_raw)
+        with self.assertRaises(CollectionError): handoff.take(activation)
+        paths = sorted((*COLLECTION_PATHS, RECEIPT_PATH), key=lambda path: path.encode())
+        worktree = [{"path": path, "mode": "100644", "kind": "regular", "sha256": "a" * 64} for path in paths]
+        snapshot = {"target_ref": "refs/heads/V2", "target_ref_revision": "a" * 40, "head_mode": "symbolic", "head_symbolic_ref": "refs/heads/V2", "head_revision": "b" * 40, "index_tree_native_oid": "c" * 40, "worktree_entries": worktree, "worktree_sha256": _sha(worktree)}
+        witness = verify_synthetic_rollback(snapshot, dict(snapshot), completed=True)
+        self.assertTrue(witness["verified"])
         with self.assertRaisesRegex(CollectionError, "ROLLBACK_INCOMPLETE"):
-            verify_synthetic_rollback(snapshot, snapshot, completed=False)
+            verify_synthetic_rollback(snapshot, {**snapshot, "target_ref": "other"}, completed=True)
+        with self.assertRaises(CollectionError):
+            verify_synthetic_rollback({**snapshot, "head_mode": "detached", "head_symbolic_ref": "refs/heads/V2"}, snapshot, completed=True)
+        # canonical JSON 解码按 key 排序，字典插入顺序不应成为合同的一部分。
+        reordered = json.loads(json.dumps(snapshot, sort_keys=True))
+        self.assertTrue(verify_synthetic_rollback(reordered, snapshot, completed=True)["verified"])
+        with self.assertRaises(CollectionError):
+            verify_synthetic_rollback({**snapshot, "worktree_sha256": "f" * 64}, snapshot, completed=True)
+        with self.assertRaises(CollectionError):
+            verify_synthetic_rollback({**snapshot, "head_revision": "z" * 40}, snapshot, completed=True)
+    def test_fail_phase_nullability_is_checked(self) -> None:
+        record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        record["status"] = "FAIL"; record["execution"] = {**record["execution"], "phase": "authority", "failure_code": "AUTHORITY_DRIFT"}; record["source_entries"] = []; record["collection"] = _null_collection(); record["receipt"] = _null_receipt(); record["evidence_sha256"] = _sha({key: value for key, value in record.items() if key != "evidence_sha256"})
+        verify_evidence(record)
+        record["source_entries"] = [{"ordinal": 0}]; record["evidence_sha256"] = _sha({key: value for key, value in record.items() if key != "evidence_sha256"})
+        with self.assertRaises(CollectionError): verify_evidence(record)
 
-
-if __name__ == "__main__":
-    unittest.main()
+if __name__ == "__main__": unittest.main()
