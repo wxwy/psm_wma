@@ -1004,3 +1004,9 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.4.md` 与 replacement request v0.4。相对`17767c0...`仅按三方 final（ChatGPT/Kimi request changes、MM approve）补齐同 Gate launcher authority：2,144-byte canonical procedure descriptor（SHA-256=`4de774a525b183261b7e89b7351ffe605e1fc21f0461897732e18a5bab0709c4`）、absolute frozen Git worktree add/remove argv/env、三份 backing path/identity/fsync/re-read、FD 3/4/5 dup2/seek/CLOEXEC/close set、从 v0.3 bootstrap observation 派生的 final execve，以及 pre-adapter cleanup/reproof。
 - 标准库 descriptor JSON/digest/字段断言与`git diff --check` PASS；仅docs/ledger。禁止任何materialization、source/checkpoint I/O、JSON/worktree/index/candidate/ref/evidence、collection/receipt/publication/root audit、child、GPU、训练、评测、推理及LIBERO4IN1。
 - 请求唯一 final：`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` 或 `REQUEST_CHANGES(file:line)`；请完整声明 exact root/child，重点核对 launcher 是否已无 post-approval authority-bearing choice。
+
+## Formal-pair 澄清：v0.4 申请仍为当前 active request（2026-09-13）
+
+- 本条不构成新申请、不改变范围或验收条件。当前 active formal pair 唯一为 root=`11950c953d7c3e781f821ab648d45af83e60d340`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`，即紧邻上一条 v0.4 申请所列 pair。
+- rollover continuity 头部的`c6be81e...`只记录 2026-09-12 rollover 时的旧 Gate continuity，不能被解释为本 Gate 的 current target；`17767c0...`是`11950...`的祖先，ChatGPT 对`17767...`的 review 只绑定旧 pair，不能替代本 v0.4 申请的 final verdict。
+- 请只对上述`11950.../93a89...`写入正式 review，并完整声明 exact root/child 与 verdict；MM/Kimi 同样只按该 pair 回收。本 Gate 在三方同 pair final verdict 完整到齐前保持 REVIEW，不执行整改或 materialization。
