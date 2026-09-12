@@ -19,6 +19,7 @@ from tools.psm_wma.immutable_source_authority_root import (
     AuthorityCandidate,
     EvidenceCleanupIncomplete,
     EvidenceCommit,
+    _commit_exact_guard,
     _evidence_guard_lock,
     AuthorityRequest,
     AuthorityRootError,
@@ -369,6 +370,30 @@ class AuthorityRootTest(unittest.TestCase):
                 self.assertEqual(getattr(self.git, endpoint)[AUTHORITY_REF], foreign)
                 self.git.local.clear()
                 self.git.remote.clear()
+
+    def test_ref_drift_after_last_observation_preserves_historical_acceptance(self):
+        candidate, binding = self.candidate()
+        foreign = "f" * 40
+
+        def finalizer(witness, commit):
+            self._seal_commit(witness, commit)
+            original_commit_guard = _commit_exact_guard
+
+            def commit_guard_then_drift(guard, identity):
+                result = original_commit_guard(guard, identity)
+                self.git.remote[AUTHORITY_REF] = foreign
+                return result
+
+            with patch(
+                "tools.psm_wma.immutable_source_authority_root._commit_exact_guard",
+                side_effect=commit_guard_then_drift,
+            ):
+                commit.consume_by_unlink()
+            self.assertTrue(commit.committed)
+
+        publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], foreign)
 
     def test_guard_replacement_cannot_commit_or_delete_foreign_guard(self):
         candidate, binding = self.candidate()

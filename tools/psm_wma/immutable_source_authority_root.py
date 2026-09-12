@@ -260,10 +260,48 @@ class _FinalizerActivation:
         self.active = True
 
 
+class _AuthorityTerminalState:
+    __slots__ = ("accepted", "rollback_enabled", "preserve_refs", "witness_returnable")
+
+    def __init__(
+        self,
+        *,
+        accepted: bool,
+        rollback_enabled: bool,
+        preserve_refs: bool,
+        witness_returnable: bool,
+    ) -> None:
+        self.accepted = accepted
+        self.rollback_enabled = rollback_enabled
+        self.preserve_refs = preserve_refs
+        self.witness_returnable = witness_returnable
+
+
+_PENDING_TERMINAL_STATE = _AuthorityTerminalState(
+    accepted=False,
+    rollback_enabled=True,
+    preserve_refs=False,
+    witness_returnable=False,
+)
+_ACCEPTED_TERMINAL_STATE = _AuthorityTerminalState(
+    accepted=True,
+    rollback_enabled=False,
+    preserve_refs=True,
+    witness_returnable=True,
+)
+
+
+class _AuthorityTerminalCell:
+    __slots__ = ("state",)
+
+    def __init__(self) -> None:
+        self.state = _PENDING_TERMINAL_STATE
+
+
 class PublicationWitness(_NonSerializable):
     __slots__ = (
         "revision", "local_created", "remote_created", "_request", "_candidate",
-        "_binding", "_activation", "_token",
+        "_binding", "_activation", "_terminal", "_token",
     )
 
     def __init__(
@@ -273,6 +311,7 @@ class PublicationWitness(_NonSerializable):
         candidate: AuthorityCandidate,
         binding: AuthorityBinding,
         activation: _FinalizerActivation,
+        terminal: _AuthorityTerminalCell,
         token: object,
     ) -> None:
         if token is not _CAPABILITY_TOKEN:
@@ -280,13 +319,13 @@ class PublicationWitness(_NonSerializable):
         self.revision = revision
         self.local_created = self.remote_created = True
         self._request, self._candidate, self._binding = request, candidate, binding
-        self._activation = activation
+        self._activation, self._terminal = activation, terminal
         self._token = token
 
 
 class EvidenceCommit(_NonSerializable):
     __slots__ = (
-        "_witness", "_activation", "_sealed", "_committed", "_guard",
+        "_witness", "_activation", "_terminal", "_sealed", "_guard",
         "_evidence_path", "_evidence_sha256", "_guard_identity",
         "_evidence_identity", "_record_sha256", "_pre_unlink", "_token",
     )
@@ -299,8 +338,9 @@ class EvidenceCommit(_NonSerializable):
     ) -> None:
         if token is not _CAPABILITY_TOKEN:
             raise AuthorityRootError("evidence commit 不可重建")
-        self._witness, self._activation, self._token = witness, witness._activation, token
-        self._sealed = self._committed = False
+        self._witness, self._activation = witness, witness._activation
+        self._terminal, self._token = witness._terminal, token
+        self._sealed = False
         self._guard: Path | None = None
         self._evidence_path: Path | None = None
         self._evidence_sha256: str | None = None
@@ -311,7 +351,7 @@ class EvidenceCommit(_NonSerializable):
 
     @property
     def committed(self) -> bool:
-        return self._committed
+        return self._terminal.state.accepted
 
     def seal_for_guard(
         self,
@@ -322,7 +362,7 @@ class EvidenceCommit(_NonSerializable):
     ) -> None:
         if (
             self._sealed
-            or self._committed
+            or self.committed
             or witness is not self._witness
             or witness._activation is not self._activation
             or not self._activation.active
@@ -376,7 +416,7 @@ class EvidenceCommit(_NonSerializable):
     def consume_by_unlink(self) -> None:
         if (
             not self._sealed
-            or self._committed
+            or self.committed
             or self._guard is None
             or self._evidence_path is None
             or self._guard_identity is None
@@ -418,7 +458,7 @@ class EvidenceCommit(_NonSerializable):
                 raise AuthorityRootError("evidence commit fixed ref 漂移") from error
             if not _commit_exact_guard(self._guard, self._guard_identity):
                 raise AuthorityRootError("evidence commit guard identity 漂移")
-            self._committed = True
+            self._terminal.state = _ACCEPTED_TERMINAL_STATE
 
 
 class PostCommitFinalizerError(AuthorityRootError):
@@ -706,8 +746,9 @@ def publish_candidate(
             raise AuthorityRootError("committed binding drift")
         binding_reverified = True
         activation = _FinalizerActivation()
+        terminal = _AuthorityTerminalCell()
         witness = PublicationWitness(
-            revision, request, candidate, binding, activation, _CAPABILITY_TOKEN
+            revision, request, candidate, binding, activation, terminal, _CAPABILITY_TOKEN
         )
         if finalizer is None:
             return witness
