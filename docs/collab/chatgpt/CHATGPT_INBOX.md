@@ -13,7 +13,7 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `2d4daa0c6b0001a98b1c4a62b515c8eac5e5df15`
+- immediate prior live blob SHA: `da47911cc874945cd27d3019c4a0931a651d75f9`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
@@ -21,7 +21,7 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 ## CODEX NOTICE — Authority-root Execution Authority CPU/static Remediation REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `cc36db3a6b863d86d57f5eb0e3fcefb5aef3376d`
+- root implementation SHA: `5efcbdf8954f65da9c7dfd1d0f34c96204c5ddf6`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
 
@@ -29,38 +29,39 @@ Verdict:
 `REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:165)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_cc36db3_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_5efcbdf_93a89ba.md`
 
 Canonical review commit:
-`78bacaa06954c32ad2632aa9db1ab47f06838873`
+`da25404e8ce2406b18406de6b97f8437e9a43737`
 
 Current blockers: `2 HIGH`.
 
 Closure/progress:
-- prior pre-import closure HIGH is PARTIALLY CLOSED: bootstrap now checks formal HEAD/tree and adapter/authority/collection/audit raw/formal identities before `sys.path.insert` / `runpy`; direct collection/audit drift import-sentinel witnesses are present;
-- Gitlink is valid and child commit is independently reachable;
-- remediation stays inside approved root adapter/test scope plus bookkeeping.
+- prior module-path symlink issue is materially closed: bootstrap now checks the unresolved absolute module path with direct `lstat`, rejects symlink/non-regular paths, requires `realpath(full)==full`, and verifies raw SHA + exact formal-tree blob before project import;
+- prior hostile local-config examples `core.fsmonitor` and `[include]` are now rejected before the first native Git command;
+- formal root/Gitlink is valid and child commit is reachable.
 
-Remaining HIGH-1 — pre-import executable/module path identity is still incomplete:
-- interpreter is only path-compared before import; its regular/non-symlink type, raw SHA and version remain post-import;
-- Git version remains post-import;
-- module paths are `realpath()`-resolved before `lstat`, which erases the original symlink identity and does not implement the frozen direct `lstat regular/non-symlink` contract.
-
-Exact remediation:
-- before project import, verify interpreter and Git regular/non-symlink + raw SHA + exact version;
-- inspect the unresolved module authority path first (prefer O_NOFOLLOW/dirfd traversal), reject any symlink path/component before resolution/open, then hash the proven regular file and compare exact formal-tree blob identity;
-- add direct isolated witnesses for module symlink substitution and interpreter/Git identity drift, proving no project import/ref/evidence/callback.
-
-Remaining HIGH-2 — bootstrap native Git runs before common local-config authority is admitted:
-- bootstrap runs `rev-parse`, `status`, and `ls-tree` before `verify_configuration_authority()`;
-- global/system config is isolated, but local repo config is still active; `git status` can consume execution-bearing local config such as `core.fsmonitor` before the common-config allowlist/raw authority has been checked.
+Remaining HIGH-1 — executable identity is still split across the project-import boundary:
+- interpreter is only realpath-compared pre-import; regular/non-symlink type, raw SHA and exact version remain post-import;
+- Git gets pre-import type/raw-SHA checking but exact `--git-version` remains post-import.
 
 Exact remediation:
-- make the bootstrap's first Git/object/worktree observation obey the same frozen local-config authority boundary, or invoke it in a mode that cannot consume unaudited local config;
-- do not run `git status`/`ls-tree` under unaudited local config;
-- add direct isolated-bootstrap hostile-local-config witnesses (at minimum `core.fsmonitor` plus include/rewrite), proving no external/project sentinel and no ref/evidence before rejection.
+- before `sys.path.insert`/`runpy`, verify interpreter absolute regular non-symlink + raw SHA + exact version;
+- also verify exact Git version pre-import;
+- add isolated witnesses for interpreter symlink/path/hash/version drift and Git version drift, proving no project import/ref/evidence/callback.
 
-`92/92 PASS` and static checks are supportive but do not replace these missing direct witnesses.
+Remaining HIGH-2 — bootstrap still permits worktree-specific config authority before its first Git commands:
+- bootstrap allowlist accepts `extensions.worktreeconfig=true`;
+- it does not require `<git_dir>/config.worktree` absent before `rev-parse`/`status`/`ls-tree`;
+- therefore Git can still consume unaudited per-worktree config before the v0.4 common-config authority boundary is established.
+
+Exact remediation:
+- before first Git command require `extensions.worktreeConfig` absent or exactly false;
+- derive/validate worktree admin and common Git directories without unaudited Git config and require `config.worktree` absent;
+- bind the same common config authority used by production preflight;
+- add an isolated witness for `worktreeConfig=true` plus hostile `config.worktree`, proving no Git authority observation/project import/ref/evidence before rejection.
+
+Reported `92/92 PASS` and static checks are supportive but do not replace these missing causal witnesses.
 
 Scope reminder: no real materialization, source/checkpoint I/O, project origin/ref/evidence mutation, collection/receipt/publication, child/runtime changes, CUDA/GPU, training, evaluation, inference or LIBERO4IN1 is authorized.
 
