@@ -265,6 +265,16 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许既有 source-evidence 收口的下一步骤；不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
 
+## 审核申请：Executor CPU/static implementation design（2026-09-12）
+
+- formal root SHA：`c62bc80440dc2e78091c183b39cec96aa17e7f13`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
+
+前置 controlled-execution design `2c73ad0b...` 已获 ChatGPT/MM/Kimi 同 SHA批准。本轮新增独立 docs-only v0.1：冻结唯一 executor `tools/psm_wma/immutable_source_collection.py` 与直接 stdlib test allowlist；temporary Git/FD fixtures 覆盖 authority/lineage drift、FD race、handoff、allowlists、retained snapshot、rollback/ROLLBACK_INCOMPLETE；只允许构造内存 synthetic evidence，禁止真实 source I/O、authority/collection/receipt/publication、child、GPU、训练。
+
+验证：`git diff --check` PASS。请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；即使批准也仅授权上述 root CPU/static implementation，不授权真实执行或 GPU/训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
 ## 审核申请：Evidence untracked-path snapshot remediation（2026-09-12）
 
 - formal root SHA：`2c73ad0bf9f49d1dd13f0803046ac75f3cd9449c`
