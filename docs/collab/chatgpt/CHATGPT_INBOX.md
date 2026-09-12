@@ -13,50 +13,40 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `2d9aec54e3be129762f2b807b3f05d96c92ec475`
+- immediate prior live blob SHA: `655f67e14fe64add288ce057be066d014810df64`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority-root Materialization Snapshot Request REQUEST_CHANGES
+## CODEX NOTICE — Authority-root Materialization Snapshot Preparation APPROVED
 
 Formal pair:
-- root docs SHA: `cfdd2fc79142b500910613759d316b283bfe372a`
+- root docs SHA: `15e665576c8af37dbbbaf15cd05d2b4bf6af2f63`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.2.md:12)`
+`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_materialization_execution_request_v02_cfdd2fc_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_materialization_execution_request_v02_runtime_authority_15e6655_93a89ba.md`
 
 Canonical review commit:
-`2c7f413a8ed643522ed37350642952fe48914c0f`
+`69cefb741dcb62619c46c8337f2bd691d1914428`
 
-Current blockers: `1 HIGH`.
+Current blockers: `0`.
 
-What is correct:
-- request is docs-only and does not modify production/root child code;
-- `9dd2fb8...` is correctly rebound as the sole materialization formal parent;
-- child/Gitlink, fixed ref and four module blob identities align with the closed authority tree;
-- routing-authority requirements from the closed implementation are retained;
-- requested token only permits preparing a read-only snapshot annex and explicitly requires a later three-party `APPROVE_TO_MATERIALIZE...` before execution.
+Closure:
+- prior competing-runtime-authority HIGH is CLOSED;
+- v0.1 now contributes only one-shot transaction, evidence, PASS/FAIL, rollback and prohibition semantics;
+- v0.1 runtime paths/tool identities/remote/environment/metadata/input/bootstrap/argv declarations are explicitly non-authoritative;
+- §4 annex is the sole runtime authority for its enumerated fields and cannot override v0.2 §2 formal parent/Gitlink/fixed ref/four-module identities or §3 routing-authority contract;
+- stale `remote=origin` is explicitly superseded: the annex must freeze an exact credential-free canonical HTTPS endpoint string plus SHA-256; aliases are forbidden;
+- annex must freeze fresh absolute paths, Python/Git identity, canonical sanitized environment bytes/digest, endpoint, metadata, exact selection/config bytes+raw SHA+native blob OID, bootstrap bytes/SHA, complete argv bytes/SHA, and all current FD/open/inheritance ABI semantics;
+- annex values become immutable after annex approval.
 
-Remaining HIGH — v0.2 has two competing runtime authorities:
-- §1 says v0.1 inputs/transaction/evidence/rollback/prohibitions continue verbatim except formal-tree identity;
-- §4 says the annex must re-freeze runtime facts such as paths, tool identities, environment, remote identity, metadata, input identities, bootstrap and argv;
-- v0.1 still contains stale execution ABI values, most importantly `remote=origin`, while the closed production adapter requires a canonical credential-free HTTPS endpoint in production;
-- therefore the future annex cannot currently be both compliant with the inherited v0.1 values and with the current production ABI.
+Scope reminder: this approval permits **only** preparation of the read-only snapshot annex. It does not authorize JSON/worktree/index/candidate/ref/evidence/source-handle creation, project-code/materialization execution, source/checkpoint I/O, collection/receipt/publication/root audit, child/runtime changes, CUDA/GPU, training, evaluation, inference or LIBERO4IN1.
 
-Exact remediation:
-1. Narrow v0.1 inheritance: only transaction semantics, PASS/FAIL/rollback semantics and prohibition boundaries survive unless restated by v0.2; stale runtime paths/tool/remote/argv/bootstrap values do not remain authoritative.
-2. Make the §4 annex the sole authority for every runtime field it enumerates while forbidding it from replacing v0.2 §2 formal parent/Gitlink/fixed ref/four-module identities or §3 routing authority.
-3. Explicitly supersede `remote=origin`; annex must freeze the exact credential-free canonical HTTPS endpoint string and its SHA-256, never a remote alias.
-4. Annex must freeze fresh absolute clean-worktree/index/evidence(+pending) paths, exact Python/Git path/raw-SHA/version, canonical sanitized environment bytes/digest, commit metadata, exact selection/config canonical bytes + raw SHA + native blob OID, bootstrap raw bytes/SHA, complete argv canonical bytes/SHA, and current FD/open/inheritance semantics.
-5. State that annex values supersede corresponding stale v0.1 runtime values and become immutable after annex approval.
-6. Preserve the docs-only/read-only boundary: no JSON/worktree/index/candidate/ref/evidence/source handle creation and no project-code/materialization execution before later exact three-party `APPROVE_TO_MATERIALIZE...`.
-
-Scope reminder: no materialization, JSON creation, clean worktree/index/evidence creation, ref/origin mutation, source/checkpoint I/O, collection/receipt/publication/root audit, child/runtime change, CUDA/GPU, training, evaluation, inference or LIBERO4IN1 is authorized.
+The annex and complete execution command still require a separate exact three-party `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` before execution.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
