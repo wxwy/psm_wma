@@ -657,3 +657,14 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 请仅审相对`153bf17b3755b20296e69d2f5790becd8520875d`的批准root files。为关闭public guard handoff可见性，`EvidenceCommit.consume_by_unlink()`现在以authority-owned exclusive `flock`持有identity/digest/ref recheck、guard handoff、private parked inode重验/删除与`committed=True`；`verify_evidence_path()`以同lock shared读取，因此handoff期间verifier阻塞，只有commit后才能观察guard absent。parked lstat/unlink失败在unlock前restore guard；handoff后foreign `.pending`重现则fail-stop、不commit且verifier拒绝。新增direct tests覆盖：handoff内线程verifier不可在commit前返回、parked-lstat失败恢复guard、handoff后foreign guard阻止commit/acceptance，以及此前altered-record。CPU unittest=`64/64 PASS`；py_compile、Ruff、diff-check PASS；Gitlink不变。
 
 请求完整exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。仅授权四个root工具/测试temporary CPU/static；不授权真实I/O、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root Real Adapter final-evidence-lock remediation（2026-09-12）
+
+- formal root SHA：`1440fd3391d46ef383d60387da8d7e7aa8238d5f`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮ChatGPT review：`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_e1d5e11_93a89ba.md`（sidecar lock identity HIGH）；Kimi/MM同pair批准。
+
+请仅审相对`e1d5e1115023caa0e18d80108f218a9f5d2382b6`的批准root文件整改。移除`<evidence>.lock` sidecar；writer/verifier均锁定已seal final evidence的`O_NOFOLLOW` FD。writer要求locked FD dev/inode等于seal identity并从该FD读取；verifier在同一locked FD上读取，guard检查仍处于同一临界区。新增direct tests：writer取得锁后final evidence pathname被foreign替换，guard保留且verifier拒绝；foreign旧sidecar无法改变实际lock identity。CPU unittest=`66/66 PASS`、py_compile、Ruff、diff-check PASS，Gitlink不变。仅temporary CPU/static，不授权真实I/O、child/GPU/训练。
+
+请求该exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。
