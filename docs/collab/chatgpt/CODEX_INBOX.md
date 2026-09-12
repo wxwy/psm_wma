@@ -771,3 +771,15 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 请仅审相对`8534ae8d5a0979a6dd7e90cedf45f6ad33a14ae5`的批准root CPU/static整改：authority identity slots不可改写；AcceptedPass改为私有不可改写对象且不再通过commit暴露；新增stale terminal-key substitution负例。guard helper若在durable移除后抛普通/custom BaseException，B窗口统一`PASS_CLOSURE_RECOVERY_REQUIRED`并永不ordinary rollback；新增真实helper完成后再中断回归。CPU=76/76、py_compile、Ruff、diff-check PASS；Gitlink不变。
 
 请求 exact pair 唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。仅temporary CPU/static；不授权真实I/O、child、GPU、训练或LIBERO4IN1。
+
+## 审核申请：Authority Root acceptance authority/sticky-B remediation（2026-09-12）
+
+- formal root SHA：`a18d178877c192fdc9682033acbd36c4184b3639`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮 exact review：`2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_074d0a0_93a89ba.md`，ChatGPT=`REQUEST_CHANGES`（2 HIGH）；MM/Kimi=`APPROVE_TO_CLOSE...`。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+仅审相对`074d0a0f036ac6a107a693a3b9903d17e2565e10`的两个批准root文件整改：authority-private `_AcceptanceAuthority` 在callback前冻结revision、binding SHA-256及最终双端ref observer，`PublicationWitness`/`EvidenceCommit`不能替换参与acceptance的authority输入；新增drift后伪造observer/binding的负例。guard已durable移除而accept失败时，authority粘滞`recovery_required`，`publish_candidate()`在callback返回后强制fail-stop，callback吞掉`PassClosureRecoveryRequired`亦不触发ordinary rollback；新增直接回归。
+
+验证：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`78/78 PASS`；四文件`py_compile`、Ruff与`git diff --check` PASS。Gitlink不变。请求该 exact pair 唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。范围只限temporary CPU/static fixtures；不授权真实source/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
