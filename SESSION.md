@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.2整改（2026-09-12，REVIEW）
+
+- v0.1 formal `7c17c90a3b25182436fef89fbe063de9fcf1d67e`/child `93a89ba61306d840a008813f62f26a34d54850f4`三方意见齐：MM/Kimi同指blob OID错误；ChatGPT exact review再要求remote exact-old CAS与完整transaction evidence合同。
+- 新增v0.2 docs-only：更正selection/config blob OID为`9f03614b...`/`89b12047...`并要求native hash-object交叉验证；remote仅允许per-fixed-ref exact`--force-with-lease`（absent→candidate、candidate→absent），禁止无条件force/普通overwrite/delete-recreate；冻结十键evidence v1、phase reachability、ownership/ref observations/rollback及原子writer。
+- 实际预计仅修改v0.2、SESSION、TODO；不实现adapter、不创建真实JSON/candidate/ref，不读source/GPU/训练。`git diff --check`待执行，完成后提交新SHA三方复审。未提交。
+
 ## Real adapter design第1轮观察（2026-09-12 13:45:49 CST）
 
 - formal root=`7c17c90a3b25182436fef89fbe063de9fcf1d67e`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；before_head、advertised/origin V2、ff-only后HEAD均=`0eef33db0837f4cd071274bb5f8d8f0b9a50e1e0`，新增范围空，ChatGPT exact review无匹配。
