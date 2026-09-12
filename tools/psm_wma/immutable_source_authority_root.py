@@ -223,6 +223,11 @@ def _verify_request(request: AuthorityRequest) -> None:
     _config(request.config_raw)
 
 
+def validate_request(request: AuthorityRequest) -> None:
+    """Validate an authority request without creating candidate objects or refs."""
+    _verify_request(request)
+
+
 def prepare_candidate(
     request: AuthorityRequest, git: AuthorityGitTransaction
 ) -> AuthorityCandidate:

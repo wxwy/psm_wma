@@ -8,18 +8,33 @@ import tempfile
 import unittest
 import hashlib
 import json
+import os
+import sys
 from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.psm_wma.immutable_source_authority_root import EvidenceCleanupIncomplete
+from tools.psm_wma.immutable_source_authority_root import (
+    AuthorityRootError,
+    EvidenceCleanupIncomplete,
+    prepare_candidate,
+    publish_candidate,
+    verify_candidate,
+)
 from tools.psm_wma.materialize_immutable_source_authority_root import (
     NativeAuthorityGit,
+    CommitMetadata,
+    main,
     NativeGitError,
+    _tool_version,
     verify_evidence_bytes,
     verify_evidence_path,
     write_pending_evidence,
+    _read_input_fd,
 )
+
+
+COMMIT_METADATA = CommitMetadata("fixture", "fixture@example.invalid", "@0 +0000", "fixture", "fixture@example.invalid", "@0 +0000", "fixture commit")
 
 
 def _sha(seed: str) -> str:
@@ -228,6 +243,161 @@ def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
 
 
 class NativeAuthorityGitTest(unittest.TestCase):
+    def _cli_fixture(self, directory: Path):
+        git = Path(shutil.which("git") or "").resolve()
+        root, remote = directory / "root", directory / "remote.git"
+        subprocess.run([str(git), "init", "-q", str(root)], check=True)
+        subprocess.run([str(git), "-C", str(root), "config", "user.name", "fixture"], check=True)
+        subprocess.run([str(git), "-C", str(root), "config", "user.email", "fixture@example.invalid"], check=True)
+        adapter_path = "tools/psm_wma/materialize_immutable_source_authority_root.py"
+        authority_path = "tools/psm_wma/immutable_source_authority_root.py"
+        for relative in (adapter_path, authority_path):
+            destination = root / relative
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(Path(__file__).with_name(Path(relative).name).read_bytes())
+        (root / "README").write_text("fixture")
+        subprocess.run([str(git), "-C", str(root), "add", "."], check=True)
+        child = "c" * 40
+        subprocess.run(
+            [str(git), "-C", str(root), "update-index", "--add", "--cacheinfo", f"160000,{child},cosmos-framework"],
+            check=True,
+        )
+        subprocess.run([str(git), "-C", str(root), "commit", "-qm", "formal root"], check=True)
+        subprocess.run([str(git), "init", "--bare", "-q", str(remote)], check=True)
+        formal_root = subprocess.run(
+            [str(git), "-C", str(root), "rev-parse", "HEAD"], check=True, stdout=subprocess.PIPE, text=True,
+        ).stdout.strip()
+        selection = json.dumps({
+            "schema": "immutable_source_selection_request_v1",
+            "source_kind": "checkpoint_source_manifest_v1",
+            "entries": [{"ordinal": 0, "relative_path": "fixture/checkpoint"}],
+        }, sort_keys=True, separators=(",", ":")).encode()
+        config = json.dumps({
+            "schema": "canonical_native_local_ttt_config_v2",
+            "local_memory_enabled": True,
+            "local_memory_dim": 32,
+            "local_history_enabled": True,
+            "local_history_backend": "ttt_fast_weight",
+            "local_history_evidence_dim": 106,
+            "local_history_state_enabled": False,
+            "local_ttt_enabled": True,
+            "enable_input_bias": False,
+            "ttt_tbptt_steps": 16,
+            "ttt_inner_lr": 0.01,
+            "k_local": 1,
+            "local_evidence_feature_version": "causal_visual96_executed_action10_v1",
+            "local_fast_state_dtype": "fp32",
+            "local_runtime_resume_mode": "slow_only_no_mid_episode_resume",
+        }, sort_keys=True, separators=(",", ":")).encode()
+        selection_path, config_path = root / "selection.json", root / "config.json"
+        selection_path.write_bytes(selection)
+        config_path.write_bytes(config)
+        identities = []
+        for relative in (adapter_path, authority_path):
+            raw = (root / relative).read_bytes()
+            oid = subprocess.run(
+                [str(git), "-C", str(root), "rev-parse", f"HEAD:{relative}"], check=True, stdout=subprocess.PIPE, text=True,
+            ).stdout.strip()
+            identities.extend([relative, oid, hashlib.sha256(raw).hexdigest()])
+        interpreter = Path(sys.executable).resolve()
+        argv = [
+            "--formal-root", formal_root, "--child-gitlink", child,
+            "--selection-raw-sha256", hashlib.sha256(selection).hexdigest(),
+            "--config-raw-sha256", hashlib.sha256(config).hexdigest(),
+            "--cwd", str(root), "--remote", str(remote), "--index", str(root / "temporary.index"),
+            "--git", str(git), "--git-raw-sha256", hashlib.sha256(git.read_bytes()).hexdigest(), "--git-version", _tool_version(git),
+            "--interpreter", str(interpreter), "--interpreter-raw-sha256", hashlib.sha256(interpreter.read_bytes()).hexdigest(), "--interpreter-version", _tool_version(interpreter),
+            "--adapter-path", identities[0], "--adapter-blob-oid", identities[1], "--adapter-raw-sha256", identities[2],
+            "--authority-module-path", identities[3], "--authority-module-blob-oid", identities[4], "--authority-module-raw-sha256", identities[5],
+            "--author-name", COMMIT_METADATA.author_name, "--author-email", COMMIT_METADATA.author_email, "--author-date", COMMIT_METADATA.author_date,
+            "--committer-name", COMMIT_METADATA.committer_name, "--committer-email", COMMIT_METADATA.committer_email, "--committer-date", COMMIT_METADATA.committer_date,
+            "--commit-message", COMMIT_METADATA.message,
+        ]
+        return git, root, remote, selection_path, config_path, argv
+
+    def test_cli_preflight_then_authority_flow_uses_only_temporary_git(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                with patch(
+                    "tools.psm_wma.materialize_immutable_source_authority_root.prepare_candidate",
+                    wraps=prepare_candidate,
+                ) as prepare, patch(
+                    "tools.psm_wma.materialize_immutable_source_authority_root.verify_candidate",
+                    wraps=verify_candidate,
+                ) as verify, patch(
+                    "tools.psm_wma.materialize_immutable_source_authority_root.publish_candidate",
+                    wraps=publish_candidate,
+                ) as publish:
+                    result = main(["--selection-fd", str(selection_handle.fileno()), "--config-fd", str(config_handle.fileno()), *argv])
+            self.assertEqual(result, 0)
+            self.assertEqual(prepare.call_count, 1)
+            self.assertEqual(verify.call_count, 1)
+            self.assertEqual(publish.call_count, 1)
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNotNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+            self.assertIsNotNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_cli_preflight_rejects_input_and_identity_drift_before_mutation(self):
+        cases = (
+            ("--selection-raw-sha256", "0" * 64),
+            ("--formal-root", "0" * 40),
+            ("--child-gitlink", "0" * 40),
+            ("--git-raw-sha256", "0" * 64),
+            ("--interpreter-raw-sha256", "0" * 64),
+            ("--adapter-raw-sha256", "0" * 64),
+        )
+        for option, value in cases:
+            with self.subTest(option=option), tempfile.TemporaryDirectory() as raw:
+                git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+                position = argv.index(option)
+                argv[position + 1] = value
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    with self.assertRaises(NativeGitError):
+                        main(["--selection-fd", str(selection_handle.fileno()), "--config-fd", str(config_handle.fileno()), *argv])
+                transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+                self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+                self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_cli_preflight_rejects_noncanonical_input_before_mutation(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            selection.write_bytes(selection.read_bytes() + b"\n")
+            position = argv.index("--selection-raw-sha256")
+            argv[position + 1] = hashlib.sha256(selection.read_bytes()).hexdigest()
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                with self.assertRaises(AuthorityRootError):
+                    main(["--selection-fd", str(selection_handle.fileno()), "--config-fd", str(config_handle.fileno()), *argv])
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+            self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_cli_preflight_rejects_preexisting_local_or_remote_ref(self):
+        for endpoint in ("local", "remote"):
+            with self.subTest(endpoint=endpoint), tempfile.TemporaryDirectory() as raw:
+                git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+                transaction = NativeAuthorityGit(git, root, str(remote), root / "fixture.index", COMMIT_METADATA)
+                revision = transaction._run("rev-parse", "HEAD")
+                if endpoint == "local":
+                    transaction._run("update-ref", "refs/heads/authority/r09-b-ttt-v035-immutable-source-v1", revision)
+                else:
+                    self.assertTrue(transaction.cas_create_remote("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1", revision))
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    with self.assertRaises(NativeGitError):
+                        main(["--selection-fd", str(selection_handle.fileno()), "--config-fd", str(config_handle.fileno()), *argv])
+    def test_input_fd_requires_regular_file(self):
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "input.json"
+            path.write_bytes(b"{}")
+            with path.open("rb") as handle:
+                self.assertEqual(_read_input_fd(handle.fileno()), b"{}")
+            read_end, write_end = os.pipe()
+            try:
+                with self.assertRaises(NativeGitError):
+                    _read_input_fd(read_end)
+            finally:
+                os.close(read_end)
+                os.close(write_end)
     def test_pending_evidence_unlinks_only_through_commit(self):
         class Commit:
             def __init__(self): self.callback = None
@@ -280,6 +450,17 @@ class NativeAuthorityGitTest(unittest.TestCase):
         }
         with self.assertRaises(NativeGitError):
             verify_evidence_bytes(_redigest(missing_rollback))
+
+        impossible_primary = _preflight_failure_evidence()
+        impossible_primary["failure"]["primary_phase"] = "rollback"
+        with self.assertRaises(NativeGitError):
+            verify_evidence_bytes(_redigest(impossible_primary))
+
+        secondary_on_fail = _local_cas_failure_evidence()
+        secondary_on_fail["failure"]["rollback_phase"] = "rollback"
+        secondary_on_fail["failure"]["rollback_code"] = "UNEXPECTED"
+        with self.assertRaises(NativeGitError):
+            verify_evidence_bytes(_redigest(secondary_on_fail))
 
     def test_no_mutation_failure_rows_reject_publication_witnesses(self):
         preflight = _preflight_failure_evidence()
@@ -403,7 +584,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
             subprocess.run([str(git), "-C", str(root), "add", "README"], check=True)
             subprocess.run([str(git), "-C", str(root), "commit", "-qm", "root"], check=True)
             subprocess.run([str(git), "init", "--bare", "-q", str(remote)], check=True)
-            tx = NativeAuthorityGit(git, root, str(remote), root / "temporary.index")
+            tx = NativeAuthorityGit(git, root, str(remote), root / "temporary.index", COMMIT_METADATA)
             parent = tx._run("rev-parse", "HEAD")
             revision = tx.create_detached_commit(parent, {"proof.json": b"{}"})
             self.assertEqual(tx.parents(revision), (parent,))
@@ -411,6 +592,26 @@ class NativeAuthorityGitTest(unittest.TestCase):
             self.assertTrue(tx.cas_create_remote("refs/heads/test", revision))
             self.assertTrue(tx.cas_delete_remote("refs/heads/test", revision))
             self.assertTrue(tx.cas_delete_local("refs/heads/test", revision))
+
+    def test_frozen_metadata_controls_detached_commit_identity(self):
+        git = Path(shutil.which("git") or "")
+        with tempfile.TemporaryDirectory() as raw:
+            root, remote = Path(raw) / "root", Path(raw) / "remote.git"
+            subprocess.run([str(git), "init", "-q", str(root)], check=True)
+            subprocess.run([str(git), "-C", str(root), "config", "user.name", "ambient-one"], check=True)
+            subprocess.run([str(git), "-C", str(root), "config", "user.email", "one@example.invalid"], check=True)
+            (root / "README").write_text("x")
+            subprocess.run([str(git), "-C", str(root), "add", "README"], check=True)
+            subprocess.run([str(git), "-C", str(root), "commit", "-qm", "root"], check=True)
+            subprocess.run([str(git), "init", "--bare", "-q", str(remote)], check=True)
+            parent = subprocess.run([str(git), "-C", str(root), "rev-parse", "HEAD"], check=True, stdout=subprocess.PIPE, text=True).stdout.strip()
+            first = NativeAuthorityGit(git, root, str(remote), root / "first.index", COMMIT_METADATA).create_detached_commit(parent, {"proof.json": b"{}"})
+            subprocess.run([str(git), "-C", str(root), "config", "user.name", "ambient-two"], check=True)
+            second = NativeAuthorityGit(git, root, str(remote), root / "second.index", COMMIT_METADATA).create_detached_commit(parent, {"proof.json": b"{}"})
+            changed = CommitMetadata("fixture", "fixture@example.invalid", "@1 +0000", "fixture", "fixture@example.invalid", "@1 +0000", "fixture commit")
+            third = NativeAuthorityGit(git, root, str(remote), root / "third.index", changed).create_detached_commit(parent, {"proof.json": b"{}"})
+            self.assertEqual(first, second)
+            self.assertNotEqual(first, third)
 
     def test_absent_remote_lease_rejects_fast_forwardable_foreign_ref(self):
         git = Path(shutil.which("git") or "")
@@ -425,7 +626,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
             subprocess.run([str(git), "-C", str(root), "add", "README"], check=True)
             subprocess.run([str(git), "-C", str(root), "commit", "-qm", "root"], check=True)
             subprocess.run([str(git), "init", "--bare", "-q", str(remote)], check=True)
-            tx = NativeAuthorityGit(git, root, str(remote), root / "temporary.index")
+            tx = NativeAuthorityGit(git, root, str(remote), root / "temporary.index", COMMIT_METADATA)
             parent = tx._run("rev-parse", "HEAD")
             candidate = tx.create_detached_commit(parent, {"candidate.json": b"{}"})
             foreign = tx.create_detached_commit(candidate, {"foreign.json": b"{}"})
@@ -435,6 +636,60 @@ class NativeAuthorityGitTest(unittest.TestCase):
             self.assertEqual(tx.remote_ref(ref), candidate)
             self.assertFalse(tx.cas_delete_remote(ref, foreign))
             self.assertEqual(tx.remote_ref(ref), candidate)
+
+    def test_failed_mutation_never_claims_same_candidate_or_absent_success(self):
+        git = Path(shutil.which("git") or "")
+        with tempfile.TemporaryDirectory() as raw:
+            root, remote = Path(raw) / "root", Path(raw) / "remote.git"
+            subprocess.run([str(git), "init", "-q", str(root)], check=True)
+            subprocess.run([str(git), "-C", str(root), "config", "user.name", "fixture"], check=True)
+            subprocess.run([str(git), "-C", str(root), "config", "user.email", "fixture@example.invalid"], check=True)
+            (root / "README").write_text("x")
+            subprocess.run([str(git), "-C", str(root), "add", "README"], check=True)
+            subprocess.run([str(git), "-C", str(root), "commit", "-qm", "root"], check=True)
+            subprocess.run([str(git), "init", "--bare", "-q", str(remote)], check=True)
+            tx = NativeAuthorityGit(git, root, str(remote), root / "temporary.index", COMMIT_METADATA)
+            revision = tx._run("rev-parse", "HEAD")
+            ref = "refs/heads/race"
+            tx._run("update-ref", ref, revision)
+            self.assertTrue(tx.cas_create_remote(ref, revision))
+            mutation_succeeded = tx._mutation_succeeded
+            tx._mutation_succeeded = lambda *_args, **_kwargs: False
+            self.assertFalse(tx.cas_create_local(ref, revision))
+            self.assertFalse(tx.cas_create_remote(ref, revision))
+            tx._mutation_succeeded = mutation_succeeded
+            tx._run("update-ref", "-d", ref, revision)
+            self.assertTrue(tx.cas_delete_remote(ref, revision))
+            tx._mutation_succeeded = lambda *_args, **_kwargs: False
+            self.assertFalse(tx.cas_delete_local(ref, revision))
+            self.assertFalse(tx.cas_delete_remote(ref, revision))
+
+    def test_cas_same_candidate_and_concurrent_delete_races_require_own_success(self):
+        git = Path(shutil.which("git") or "")
+        with tempfile.TemporaryDirectory() as raw:
+            root, remote = Path(raw) / "root", Path(raw) / "remote.git"
+            subprocess.run([str(git), "init", "-q", str(root)], check=True)
+            subprocess.run([str(git), "-C", str(root), "config", "user.name", "fixture"], check=True)
+            subprocess.run([str(git), "-C", str(root), "config", "user.email", "fixture@example.invalid"], check=True)
+            (root / "README").write_text("x")
+            subprocess.run([str(git), "-C", str(root), "add", "README"], check=True)
+            subprocess.run([str(git), "-C", str(root), "commit", "-qm", "root"], check=True)
+            subprocess.run([str(git), "init", "--bare", "-q", str(remote)], check=True)
+            tx = NativeAuthorityGit(git, root, str(remote), root / "temporary.index", COMMIT_METADATA)
+            revision = tx._run("rev-parse", "HEAD")
+            local_ref, remote_ref = "refs/heads/local-race", "refs/heads/remote-race"
+            tx._run("update-ref", local_ref, revision)
+            self.assertFalse(tx.cas_create_local(local_ref, revision))
+            self.assertEqual(tx.local_ref(local_ref), revision)
+            self.assertTrue(tx.cas_create_remote(remote_ref, revision))
+            self.assertFalse(tx.cas_create_remote(remote_ref, revision))
+            self.assertEqual(tx.remote_ref(remote_ref), revision)
+            tx._run("update-ref", "-d", local_ref, revision)
+            self.assertFalse(tx.cas_delete_local(local_ref, revision))
+            self.assertIsNone(tx.local_ref(local_ref))
+            self.assertTrue(tx.cas_delete_remote(remote_ref, revision))
+            self.assertFalse(tx.cas_delete_remote(remote_ref, revision))
+            self.assertIsNone(tx.remote_ref(remote_ref))
 
 
 if __name__ == "__main__":

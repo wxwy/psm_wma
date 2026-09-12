@@ -2,20 +2,209 @@
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import os
 import stat
 import subprocess
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Mapping
+from typing import Mapping, Sequence
 
-from tools.psm_wma.immutable_source_authority_root import EvidenceCleanupIncomplete
-from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, TreeEntry
+from tools.psm_wma.immutable_source_authority_root import (
+    AuthorityGitTransaction,
+    AuthorityRequest,
+    EvidenceCleanupIncomplete,
+    prepare_candidate,
+    publish_candidate,
+    validate_request,
+    verify_candidate,
+)
+from tools.psm_wma.immutable_source_collection import (
+    AUTHORITY_REF,
+    TreeEntry,
+    git_blob_oid,
+    sha256_digest,
+    validated_git_tree,
+)
 
 
 class NativeGitError(RuntimeError):
     pass
+
+
+def _read_input_fd(descriptor: int) -> bytes:
+    info = os.fstat(descriptor)
+    if not stat.S_ISREG(info.st_mode):
+        raise NativeGitError("input FD 必须为regular file")
+    return os.pread(descriptor, info.st_size, 0)
+
+
+@dataclass(frozen=True)
+class ModuleIdentity:
+    repo_path: str
+    blob_native_oid: str
+    raw_sha256: str
+
+
+@dataclass(frozen=True)
+class ExecutableIdentity:
+    path: Path
+    raw_sha256: str
+    version: str
+
+
+@dataclass(frozen=True)
+class AuthorityAdapterInvocation:
+    request: AuthorityRequest
+    selection_raw_sha256: str
+    config_raw_sha256: str
+    adapter: ModuleIdentity
+    authority_module: ModuleIdentity
+    interpreter: ExecutableIdentity
+    git_executable: ExecutableIdentity
+
+
+def _is_sha1(value: str) -> bool:
+    return len(value) == 40 and all(char in "0123456789abcdef" for char in value)
+
+
+def _is_sha256(value: str) -> bool:
+    return len(value) == 64 and all(char in "0123456789abcdef" for char in value)
+
+
+def _is_repo_path(value: str) -> bool:
+    return bool(value) and not value.startswith("/") and "\0" not in value and all(
+        part not in ("", ".", "..") for part in value.split("/")
+    )
+
+
+def _verify_module_identity(
+    identity: ModuleIdentity,
+    tree: Mapping[str, TreeEntry],
+    transaction: AuthorityGitTransaction,
+    cwd: Path,
+) -> None:
+    if (
+        not _is_repo_path(identity.repo_path)
+        or not _is_sha1(identity.blob_native_oid)
+        or not _is_sha256(identity.raw_sha256)
+        or tree.get(identity.repo_path) != ("100644", "blob", identity.blob_native_oid)
+    ):
+        raise NativeGitError("formal module identity 无效")
+    path = cwd / identity.repo_path
+    info = path.lstat()
+    if not stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode):
+        raise NativeGitError("adapter module 必须为regular non-symlink file")
+    raw = path.read_bytes()
+    if (
+        sha256_digest(raw) != identity.raw_sha256
+        or git_blob_oid(raw) != identity.blob_native_oid
+        or transaction.blob_bytes(identity.blob_native_oid) != raw
+    ):
+        raise NativeGitError("formal module bytes 漂移")
+
+
+def _tool_version(path: Path) -> str:
+    completed = subprocess.run(
+        [str(path), "--version"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=False,
+        check=False,
+    )
+    if completed.returncode:
+        raise NativeGitError("tool --version 失败")
+    return (completed.stdout + completed.stderr).decode("utf-8", "replace").strip()
+
+
+def _verify_executable_identity(identity: ExecutableIdentity) -> None:
+    if not identity.path.is_absolute() or not _is_sha256(identity.raw_sha256) or not identity.version:
+        raise NativeGitError("tool identity 无效")
+    info = identity.path.lstat()
+    if not stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode):
+        raise NativeGitError("tool executable 必须为regular non-symlink file")
+    if sha256_digest(identity.path.read_bytes()) != identity.raw_sha256:
+        raise NativeGitError("tool executable bytes 漂移")
+    if _tool_version(identity.path) != identity.version:
+        raise NativeGitError("tool version 漂移")
+
+
+def request_from_input_fds(
+    formal_root: str,
+    child_gitlink: str,
+    selection_fd: int,
+    config_fd: int,
+    selection_raw_sha256: str,
+    config_raw_sha256: str,
+) -> AuthorityRequest:
+    selection_raw = _read_input_fd(selection_fd)
+    config_raw = _read_input_fd(config_fd)
+    if (
+        not _is_sha256(selection_raw_sha256)
+        or not _is_sha256(config_raw_sha256)
+        or sha256_digest(selection_raw) != selection_raw_sha256
+        or sha256_digest(config_raw) != config_raw_sha256
+    ):
+        raise NativeGitError("input raw SHA-256 漂移")
+    request = AuthorityRequest(formal_root, child_gitlink, selection_raw, config_raw)
+    validate_request(request)
+    return request
+
+
+def preflight_authority_invocation(
+    invocation: AuthorityAdapterInvocation,
+    transaction: AuthorityGitTransaction,
+    cwd: Path,
+) -> None:
+    request = invocation.request
+    validate_request(request)
+    if (
+        sha256_digest(request.selection_raw) != invocation.selection_raw_sha256
+        or sha256_digest(request.config_raw) != invocation.config_raw_sha256
+    ):
+        raise NativeGitError("request raw SHA-256 漂移")
+    tree = validated_git_tree(transaction, request.materialization_formal_root)
+    if tree.get("cosmos-framework") != (
+        "160000", "commit", request.expected_child_gitlink,
+    ):
+        raise NativeGitError("formal root Gitlink 漂移")
+    _verify_module_identity(invocation.adapter, tree, transaction, cwd)
+    _verify_module_identity(invocation.authority_module, tree, transaction, cwd)
+    _verify_executable_identity(invocation.interpreter)
+    _verify_executable_identity(invocation.git_executable)
+    if transaction.local_ref(AUTHORITY_REF) is not None:
+        raise NativeGitError("fixed local ref 必须预先absent")
+    if transaction.remote_ref(AUTHORITY_REF) is not None:
+        raise NativeGitError("fixed remote ref 必须预先absent")
+
+
+def run_authority_cli(
+    invocation: AuthorityAdapterInvocation,
+    transaction: AuthorityGitTransaction,
+    cwd: Path,
+) -> str:
+    """Preflight, then traverse the closed authority flow exactly once."""
+    preflight_authority_invocation(invocation, transaction, cwd)
+    candidate = prepare_candidate(invocation.request, transaction)
+    binding = verify_candidate(invocation.request, candidate, transaction)
+    return publish_candidate(invocation.request, candidate, binding, transaction).revision
+
+
+@dataclass(frozen=True)
+class CommitMetadata:
+    author_name: str
+    author_email: str
+    author_date: str
+    committer_name: str
+    committer_email: str
+    committer_date: str
+    message: str
+
+    def __post_init__(self) -> None:
+        if not all(isinstance(value, str) and value for value in self.__dict__.values()):
+            raise NativeGitError("commit metadata 必须为non-empty string")
 
 
 _EVIDENCE_KEYS = frozenset((
@@ -52,7 +241,6 @@ _FAILURE_KEYS = frozenset((
 _PHASES = frozenset((
     "preflight", "prepare", "verify", "pre_publication", "local_cas",
     "remote_cas", "post_publication", "binding_reverify", "evidence_write",
-    "rollback",
 ))
 
 
@@ -172,6 +360,8 @@ def _validate_failure(value: object, status: str) -> None:
         raise NativeGitError("evidence rollback failure nullability 无效")
     if rollback_phase is not None and (rollback_phase != "rollback" or not _is_ascii_code(rollback_code)):
         raise NativeGitError("evidence rollback failure 无效")
+    if status == "FAIL" and rollback_phase is not None:
+        raise NativeGitError("ordinary FAIL 不得含 rollback failure")
     if status == "ROLLBACK_INCOMPLETE" and rollback_phase != "rollback":
         raise NativeGitError("ROLLBACK_INCOMPLETE 必须保留 rollback failure")
 
@@ -472,11 +662,12 @@ def write_pending_evidence(path: Path, record: Mapping[str, object], commit) -> 
 class NativeAuthorityGit:
     """Explicit-identity Git transaction; callers must provide a temporary repository."""
 
-    def __init__(self, git: Path, cwd: Path, remote: str, index: Path) -> None:
+    def __init__(self, git: Path, cwd: Path, remote: str, index: Path, metadata: CommitMetadata) -> None:
         if not git.is_absolute() or not cwd.is_absolute() or not index.is_absolute():
             raise NativeGitError("git/cwd/index 必须为绝对路径")
         self.git, self.cwd, self.remote, self.index = git, cwd, remote, index
-        self.env = {"GIT_INDEX_FILE": str(index), "LC_ALL": "C", "LANG": "C"}
+        self.env = {"GIT_INDEX_FILE": str(index), "LC_ALL": "C", "LANG": "C", "GIT_AUTHOR_NAME": metadata.author_name, "GIT_AUTHOR_EMAIL": metadata.author_email, "GIT_AUTHOR_DATE": metadata.author_date, "GIT_COMMITTER_NAME": metadata.committer_name, "GIT_COMMITTER_EMAIL": metadata.committer_email, "GIT_COMMITTER_DATE": metadata.committer_date}
+        self.metadata = metadata
 
     def _run(self, *args: str, input: bytes | None = None, check: bool = True) -> str:
         completed = subprocess.run(
@@ -486,6 +677,20 @@ class NativeAuthorityGit:
         if check and completed.returncode:
             raise NativeGitError(completed.stderr.decode("utf-8", "replace").strip())
         return completed.stdout.decode().strip()
+
+    def _mutation_succeeded(self, *args: str, porcelain_flag: str | None = None) -> bool:
+        completed = subprocess.run(
+            [str(self.git), *args], cwd=self.cwd, env=self.env,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False,
+        )
+        if completed.returncode:
+            return False
+        if porcelain_flag is None:
+            return True
+        return any(
+            line.startswith(porcelain_flag + "\t")
+            for line in completed.stdout.decode("utf-8", "replace").splitlines()
+        )
 
     def tree_entries(self, revision: str) -> Mapping[str, TreeEntry]:
         result: dict[str, TreeEntry] = {}
@@ -512,7 +717,7 @@ class NativeAuthorityGit:
             oid = self._run("hash-object", "-w", "--stdin", input=raw)
             self._run("update-index", "--add", "--cacheinfo", f"100644,{oid},{path}")
         tree = self._run("write-tree")
-        return self._run("commit-tree", tree, "-p", parent)
+        return self._run("commit-tree", tree, "-p", parent, input=self.metadata.message.encode())
 
     def local_ref(self, ref: str) -> str | None:
         value = self._run("rev-parse", "--verify", "-q", ref, check=False)
@@ -523,16 +728,92 @@ class NativeAuthorityGit:
         return value.split()[0] if value else None
 
     def cas_create_local(self, ref: str, revision: str) -> bool:
-        return not bool(self._run("update-ref", ref, revision, "0" * 40, check=False)) and self.local_ref(ref) == revision
+        return self._mutation_succeeded("update-ref", ref, revision, "0" * 40) and self.local_ref(ref) == revision
 
     def cas_create_remote(self, ref: str, revision: str) -> bool:
-        self._run("push", "--porcelain", f"--force-with-lease={ref}:", self.remote, f"{revision}:{ref}", check=False)
-        return self.remote_ref(ref) == revision
+        return self._mutation_succeeded("push", "--porcelain", f"--force-with-lease={ref}:", self.remote, f"{revision}:{ref}", porcelain_flag="*") and self.remote_ref(ref) == revision
 
     def cas_delete_local(self, ref: str, revision: str) -> bool:
-        self._run("update-ref", "-d", ref, revision, check=False)
-        return self.local_ref(ref) is None
+        return self._mutation_succeeded("update-ref", "-d", ref, revision) and self.local_ref(ref) is None
 
     def cas_delete_remote(self, ref: str, revision: str) -> bool:
-        self._run("push", "--porcelain", f"--force-with-lease={ref}:{revision}", self.remote, f":{ref}", check=False)
-        return self.remote_ref(ref) is None
+        return self._mutation_succeeded("push", "--porcelain", f"--force-with-lease={ref}:{revision}", self.remote, f":{ref}", porcelain_flag="-") and self.remote_ref(ref) is None
+
+
+def _parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="immutable authority-root materialization adapter"
+    )
+    parser.add_argument("--selection-fd", type=int, required=True)
+    parser.add_argument("--config-fd", type=int, required=True)
+    parser.add_argument("--formal-root", required=True)
+    parser.add_argument("--child-gitlink", required=True)
+    parser.add_argument("--selection-raw-sha256", required=True)
+    parser.add_argument("--config-raw-sha256", required=True)
+    parser.add_argument("--cwd", type=Path, required=True)
+    parser.add_argument("--remote", required=True)
+    parser.add_argument("--index", type=Path, required=True)
+    parser.add_argument("--git", type=Path, required=True)
+    parser.add_argument("--git-raw-sha256", required=True)
+    parser.add_argument("--git-version", required=True)
+    parser.add_argument("--interpreter", type=Path, required=True)
+    parser.add_argument("--interpreter-raw-sha256", required=True)
+    parser.add_argument("--interpreter-version", required=True)
+    for name in ("adapter", "authority-module"):
+        parser.add_argument(f"--{name}-path", required=True)
+        parser.add_argument(f"--{name}-blob-oid", required=True)
+        parser.add_argument(f"--{name}-raw-sha256", required=True)
+    parser.add_argument("--author-name", required=True)
+    parser.add_argument("--author-email", required=True)
+    parser.add_argument("--author-date", required=True)
+    parser.add_argument("--committer-name", required=True)
+    parser.add_argument("--committer-email", required=True)
+    parser.add_argument("--committer-date", required=True)
+    parser.add_argument("--commit-message", required=True)
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    """Run only an explicitly-identified authority-root invocation."""
+    args = _parser().parse_args(argv)
+    request = request_from_input_fds(
+        args.formal_root,
+        args.child_gitlink,
+        args.selection_fd,
+        args.config_fd,
+        args.selection_raw_sha256,
+        args.config_raw_sha256,
+    )
+    metadata = CommitMetadata(
+        args.author_name,
+        args.author_email,
+        args.author_date,
+        args.committer_name,
+        args.committer_email,
+        args.committer_date,
+        args.commit_message,
+    )
+    transaction = NativeAuthorityGit(args.git, args.cwd, args.remote, args.index, metadata)
+    invocation = AuthorityAdapterInvocation(
+        request,
+        args.selection_raw_sha256,
+        args.config_raw_sha256,
+        ModuleIdentity(args.adapter_path, args.adapter_blob_oid, args.adapter_raw_sha256),
+        ModuleIdentity(
+            args.authority_module_path,
+            args.authority_module_blob_oid,
+            args.authority_module_raw_sha256,
+        ),
+        ExecutableIdentity(
+            args.interpreter,
+            args.interpreter_raw_sha256,
+            args.interpreter_version,
+        ),
+        ExecutableIdentity(args.git, args.git_raw_sha256, args.git_version),
+    )
+    print(run_authority_cli(invocation, transaction, args.cwd))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
