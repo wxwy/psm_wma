@@ -13,46 +13,41 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `865cf98d59a1eb36b72a1bc90c838e69ee0b5822`
+- immediate prior live blob SHA: `2319669a1265d5de8e9e0bf055898a51e12afc04`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority Root PASS Linearization Design v0.9 REQUEST_CHANGES
+## CODEX NOTICE — Authority Root PASS Linearization Design v0.10 APPROVED
 
 Formal pair:
-- root design SHA: `a98e82714940d7bed1969cafb2ef32100c287d59`
+- root design SHA: `001336fa5d785d8c77a2685ac1c754c096b4fb06`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-PASS-LINEARIZATION-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_pass_linearization_design_v0.9.md:38)`
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_design_a98e827_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_design_001336f_93a89ba.md`
 
 Canonical review commit:
-`409d70116a093599f877c77b39eeb65a202833ea`
+`18caa70a6b7cbca992d6961b77c380aaf9b7ee97`
 
-Current blockers: `1 HIGH`.
+Current blockers: `0`.
 
-Prior v0.8 findings:
-- terminal-state indivisibility: CLOSED. v0.9 freezes one authority-owned terminal-state cell and derives accepted/rollback/preserve/witness-return semantics from it, with no independent semantic flag writes.
-- guard/crash window: CLOSED. v0.9 explicitly recognizes the durable B window (`guard absent + final evidence present + terminal PENDING`) and makes B/C restart permanent fail-stop/manual recovery rather than reconstructing acceptance from pathname evidence.
-- ref witness semantics: PARTIALLY CLOSED and remains the sole HIGH.
+v0.9's sole HIGH is CLOSED. v0.10 explicitly chooses the observation-only Option A: the terminal transition is bound to the final explicit local/remote exact-candidate observation; any external ref drift after that observation, including drift before the in-memory terminal-state pointer swap, does not retroactively invalidate the historical witness or cancel the prepared acceptance transition. If a later explicit ref check detects mismatch, the result is external-corruption fail-stop/recovery; it must not silently claim current refs are exact, auto-repair them, or roll back an already ACCEPTED terminal state. Only drift observed by the declared final validation before that observation can cause ordinary pre-state rejection/rollback.
 
-Remaining HIGH:
+Retained approved design contracts:
+- one authority-owned terminal-state cell is the sole semantic acceptance state;
+- guard transition is the final fallible pre-state action;
+- A/B/C crash windows remain explicit; B/C restart states are fail-stop and cannot reconstruct acceptance from pathname/evidence alone;
+- successful public ABI remains exact `PublicationWitness`; private `AcceptedPass` never escapes authority dispatch;
+- pathname/evidence verification remains audit/observation only;
+- exact-old CAS remains activation ownership evidence, not a global namespace lock.
 
-**v0.9 chooses an observation-only ref witness but requires behavior that would need a stronger current-ref invariant.** The design says AcceptedPass binds only the last exact local/remote `== candidate` observation and does not claim refs remain exact after that observation; any later drift is external corruption/fail-stop. But the CPU/static matrix then requires local/remote drift injected *between the last observation and terminal-state pointer swap* to keep the transaction PENDING, prevent acceptance, and roll back.
+Implementation evidence must prove the frozen semantics without strengthening them ad hoc: post-final-observation ref drift may still lead to ACCEPTED from the historical witness, and any later mismatch check must report external corruption/fail-stop rather than current exactness. Crash-window A must remain fail-closed and must not infer activation ownership from same-candidate ref equality after process loss.
 
-Those statements are incompatible. With an observation-only witness, there is intentionally no ref I/O/namespace lock after the declared last observation and before the in-memory pointer swap. A drift in that interval cannot be detected before acceptance. Adding another read merely creates a new "last observation" and moves the race boundary.
-
-Exact acceptance: choose one semantics and make §3 plus the test matrix consistent. Recommended: retain observation-only semantics, explicitly permit the terminal swap to rely on the historical exact observation even if an external drift races after it, and require any later-discovered mismatch to be external-corruption fail-stop without claiming current exact refs. Alternatively, if drift before swap must prevent acceptance, abandon pure observation-only semantics and freeze the exact stronger coordination/read mechanism and its atomicity contract. Do not leave implementation to invent the choice.
-
-Non-blocking evidence requirement: crash-window A tests should prove process loss with candidate refs never infers activation ownership from same-candidate equality; existing exact-old lease/preflight must fail closed rather than delete/adopt a foreign same-candidate ref.
-
-Formal root/tree is independently valid: `cosmos-framework` is mode `160000`, type `commit`, exact child `93a89ba61306d840a008813f62f26a34d54850f4`; the child commit is independently reachable.
-
-No `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC` token is granted. Real source/candidate/ref/evidence operations, child/runtime changes, checkpoint/data/cache I/O, CUDA/GPU, training, evaluation, inference, and LIBERO4IN1 remain prohibited.
+Authorization is strictly limited to the already frozen four root tooling/test files and temporary directory/local bare-remote CPU/static implementation/tests. This does not authorize real source/candidate/ref/evidence operations, child/runtime changes, checkpoint/data/cache I/O, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the exact formal pair or canonical review.
