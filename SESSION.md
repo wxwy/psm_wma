@@ -2432,3 +2432,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal/child不变；`before_head=5f3d3826310e9e2a1dfc6b5a858b4d1aeac46217`；fetch成功，advertised/origin/local-after均为同一SHA，新增范围为空，祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT：exact root+child review检索无匹配，处理中。MM `mm:0.0`：same pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。Kimi `kimi:0.0`：已完成formal diff及3 HIGH逐项分析，capture仍为`thinking`且无final token，处理中。
 - 三方final未齐、无推进令牌；禁止整改、实现、执行及训练。下一轮三分钟后重新完整锁定。本记录未提交。
+
+### PASS lifecycle recovery remediation 审核观察凭证 #3（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before_head=961146d35615521e9645cdbc22181c4f0d268743`；fetch成功，advertised/origin/local-after均为同一SHA，新增范围为空，祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT：exact root+child review检索无匹配，处理中。MM `mm:0.0`：same pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。Kimi `kimi:0.0`：same pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`，其formal-tree复跑为74/74 PASS。
+- ChatGPT final缺件，三方推进令牌不存在；禁止整改、实现、执行及训练。下一轮三分钟后重新完整锁定。本记录未提交。
