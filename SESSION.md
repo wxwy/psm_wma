@@ -2849,3 +2849,18 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`b2fc05489abb2a4c1bc7314844c94c197834b9ff`/child=`93a89ba61306d840a008813f62f26a34d54850f4`已推送。canonical Inbox从120088 bytes append七行，未触发128KiB rollover。MM `mm:0.0`与Kimi `kimi:0.0`均完成完整文本→至少1秒→独立Enter→capture，文本离开输入框并进入处理；ChatGPT正式结果仍只从`reviews/` exact pair读取。
 - 冻结名册不变；三分钟后按完整远端锁定、exact review及两pane capture回收。未获该pair三方final前，禁止一切materialization或真实I/O/GPU/训练。
+
+### Authority-root execution snapshot annex v0.3 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`b2fc05489abb2a4c1bc7314844c94c197834b9ff`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before=4921bb6bed3482ac26dc9a830cd030ed068ff91e`；fetch成功；advertised/origin/local-after均为`4921bb6bed3482ac26dc9a830cd030ed068ff91e`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact-pair review未出现。
+- MM `mm:0.0`已给same-pair `APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`。Kimi已开始完整核验v0.3；其capture观察到远端归档的ChatGPT review markdown有既存trailing-whitespace，使whole-tree `git diff --check`报该外部归档项，但针对申请人formal delta的`git diff --check 81f752..b2fc054`通过；Kimi未给final。无推进令牌，继续REVIEW并禁止整改或真实执行。
+
+### Authority-root execution snapshot annex v0.3 审核观察凭证 #2（2026-09-12 CST，APPROVED PREPARATION）
+
+- formal/child=`b2fc05489abb2a4c1bc7314844c94c197834b9ff`/`93a89ba61306d840a008813f62f26a34d54850f4`；`before=4921bb6bed3482ac26dc9a830cd030ed068ff91e`；fetch成功；advertised/origin/local-after=`6a79ce32a5c48efd73009c08ab011e867c078ceb`；新增`a0e578fe`（ChatGPT formal approval）与`6a79ce32`（ledger），祖先检查成功并已快进。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_snapshot_annex_v03_b2fc054_93a89ba.md`、MM与Kimi均对same-pair给出`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`。三方同pair批准令成立，仅允许撰写完整docs-only execution request；仍禁止materialization、真实输入/JSON/worktree/index/candidate/ref/evidence、source/checkpoint I/O、child、GPU与训练。下一步：只读复用v0.3 annex，撰写新execution request并送新SHA三方`APPROVE_TO_MATERIALIZE`审核。
+
+### Authority-root materialization execution request v0.3（2026-09-12，REVIEW PREPARATION）
+
+- 新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.3.md`，仅把获批annex v0.3收敛为单次事务、preflight、PASS/FAIL、rollback、禁止范围与唯一`APPROVE_TO_MATERIALIZE`请求；未新增runtime authority或执行命令。
+- `git diff --check` PASS。未运行project code、未创建/读取真实资产、未执行materialization/child/GPU/训练。下一步：提交推送、对新formal SHA三方审核本execution request。
