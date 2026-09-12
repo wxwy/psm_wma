@@ -2799,3 +2799,23 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root materialization request v0.2 runtime-authority remediation 送达回执（2026-09-12 CST，REVIEW）
 
 - Inbox已append；MM/Kimi均以完整文本→至少1秒→独立`C-m`→capture送达，输入框已清空并进入处理。ChatGPT正式结果仍只认exact review。三分钟后完整远端锁定回收；未获三方新pair结论前禁止snapshot annex。
+
+### Authority-root execution snapshot annex v0.1 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- 冻结 formal pair=`29c8aaa2a048f538892295afa6bc6d49031b0d0c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before=8f75c7e6dcb215a6436742f08e3a463ef610bf67`；`git fetch origin V2`成功；advertised/origin=`0adde2632862644b9c53f3499160f1a5ed569bcc`；新增`95cf0f30`（ChatGPT formal review）与`0adde263`（review ledger），祖先检查成功且已`merge --ff-only`至同一SHA。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_snapshot_annex_v01_29c8aaa_93a89ba.md`，final=`REQUEST_CHANGES(...execution_snapshot_annex_v0.1.md:22)`；该review明确绑定本pair，而非旧`15e665...` pair。其HIGH要求annex本身冻结env canonical bytes/digest、selection/config canonical bytes、actual FD ABI、bootstrap raw bytes/SHA、complete argv bytes/SHA、commit metadata，并禁止后续execution request引入新runtime字段。MM capture为同pair `APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`；Kimi capture仍在核验本pair，未给final。三方final未齐、无推进令牌；保持REVIEW，禁止整改、materialization及一切真实I/O/GPU/训练。
+
+### Authority-root execution snapshot annex v0.1 审核观察凭证 #2（2026-09-12 CST，REVIEW）
+
+- formal/child及冻结名册不变；`before=0adde2632862644b9c53f3499160f1a5ed569bcc`；fetch成功；advertised/origin/local-after均为`0adde2632862644b9c53f3499160f1a5ed569bcc`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact review仍为same-pair `REQUEST_CHANGES`，MM same-pair final批准保持有效。
+- Kimi `kimi:0.0` capture显示已完成输入字节/OID等事实核验，正在将annex第25行的延后字段与已批准v0.2 §4冻结清单逐项对照；尚无same-pair最终verdict。无推进令牌，继续REVIEW；不修改文档或代码。
+
+### Authority-root execution snapshot annex v0.1 审核观察凭证 #3（2026-09-12 CST，REVIEW）
+
+- formal/child及冻结名册不变；`before=0adde2632862644b9c53f3499160f1a5ed569bcc`；fetch成功；advertised/origin/local-after均为`0adde2632862644b9c53f3499160f1a5ed569bcc`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- 三方本pair final现已齐全：ChatGPT=`REQUEST_CHANGES(...execution_snapshot_annex_v0.1.md:22)`、Kimi=`REQUEST_CHANGES(...execution_snapshot_annex_v0.1.md:25)`、MM=`APPROVE_TO_PREPARE...EXECUTION_REQUEST`。推进令牌仅授权汇总两项HIGH并作docs-only最小整改：annex必须直接冻结全部运行时authority（env canonical bytes/digest、selection/config canonical bytes、bootstrap bytes/SHA、argv bytes/SHA、commit metadata、FD ABI），或对唯一不可预先决定的launch-time字段给出显式override及格式；后续execution request不得引入新runtime字段。禁止materialization、source/checkpoint I/O、JSON/worktree/index/candidate/ref/evidence、child、GPU与训练。
+
+### Authority-root execution snapshot annex v0.2 docs-only remediation（2026-09-12，REVIEW）
+
+- 基于同pair三方final仅作docs整改，新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.2.md`，显式supersede v0.1；冻结selection/config raw JSON、sanitized-env canonical JSON和digest、FD=3/4/5、candidate metadata、bootstrap extraction identity/length/digest与complete argv tuple/digest。后续execution request只可复现，不得引入新runtime字段。
+- `git diff --check` PASS；未执行project module、未创建任何真实输入/worktree/index/candidate/ref/evidence，未访问source/checkpoint、child、GPU或训练。下一步：提交推送该docs-only新formal SHA，并以新pair重新发起三方审核。
