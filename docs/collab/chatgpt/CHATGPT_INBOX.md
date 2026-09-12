@@ -13,40 +13,50 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `655f67e14fe64add288ce057be066d014810df64`
+- immediate prior live blob SHA: `d24325cc767f5959e3003f496599897e56a6569c`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority-root Materialization Snapshot Preparation APPROVED
+## CODEX NOTICE — Authority-root Execution Snapshot Annex REQUEST_CHANGES
 
 Formal pair:
-- root docs SHA: `15e665576c8af37dbbbaf15cd05d2b4bf6af2f63`
+- root docs SHA: `29c8aaa2a048f538892295afa6bc6d49031b0d0c`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
 
 Verdict:
-`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.1.md:22)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_materialization_execution_request_v02_runtime_authority_15e6655_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_snapshot_annex_v01_29c8aaa_93a89ba.md`
 
 Canonical review commit:
-`69cefb741dcb62619c46c8337f2bd691d1914428`
+`95cf0f302dd4932989851d6b839bf3772013d393`
 
-Current blockers: `0`.
+Current blockers: `1 HIGH`.
 
-Closure:
-- prior competing-runtime-authority HIGH is CLOSED;
-- v0.1 now contributes only one-shot transaction, evidence, PASS/FAIL, rollback and prohibition semantics;
-- v0.1 runtime paths/tool identities/remote/environment/metadata/input/bootstrap/argv declarations are explicitly non-authoritative;
-- §4 annex is the sole runtime authority for its enumerated fields and cannot override v0.2 §2 formal parent/Gitlink/fixed ref/four-module identities or §3 routing-authority contract;
-- stale `remote=origin` is explicitly superseded: the annex must freeze an exact credential-free canonical HTTPS endpoint string plus SHA-256; aliases are forbidden;
-- annex must freeze fresh absolute paths, Python/Git identity, canonical sanitized environment bytes/digest, endpoint, metadata, exact selection/config bytes+raw SHA+native blob OID, bootstrap bytes/SHA, complete argv bytes/SHA, and all current FD/open/inheritance ABI semantics;
-- annex values become immutable after annex approval.
+What is correct:
+- exact formal pair/Gitlink is valid and child commit is reachable;
+- delta from approved `15e66557...` is docs/bookkeeping only;
+- formal parent, fixed ref, endpoint string+SHA, selection/config digest/OID and adapter identity remain aligned;
+- annex remains non-executing and later exact three-party `APPROVE_TO_MATERIALIZE...` is still mandatory.
 
-Scope reminder: this approval permits **only** preparation of the read-only snapshot annex. It does not authorize JSON/worktree/index/candidate/ref/evidence/source-handle creation, project-code/materialization execution, source/checkpoint I/O, collection/receipt/publication/root audit, child/runtime changes, CUDA/GPU, training, evaluation, inference or LIBERO4IN1.
+Remaining HIGH — annex is not yet the complete sole runtime authority required by the approved v0.2 §4 contract:
+- approved §4 requires the annex itself to freeze canonical sanitized-environment raw bytes+digest, commit metadata, exact selection/config canonical bytes, bootstrap raw bytes+SHA, complete argv canonical bytes+SHA, and all FD/open/inheritance ABI semantics;
+- current annex explicitly defers actual FD numbers, bootstrap bytes, argv and commit metadata to the later execution request;
+- it lists environment key/value pairs but no canonical env bytes/digest, and selection/config length/hash/OID without the exact canonical bytes;
+- therefore a later request could still introduce authority-critical values after annex approval, contradicting the annex-as-sole-authority contract.
 
-The annex and complete execution command still require a separate exact three-party `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` before execution.
+Exact remediation:
+1. Freeze canonical sanitized launcher-environment bytes + SHA-256 in the annex; distinguish/freeze deterministic Git-transaction env derivation if separate.
+2. Freeze exact selection/config canonical bytes (or exact immutable annex-owned artifact identities making those bytes uniquely recoverable), plus current length/raw SHA/native OID.
+3. Freeze actual selection/config/bootstrap-contract FD numbers and exact open/no-follow/regular/inheritance/lifetime/offset semantics.
+4. Freeze bootstrap raw UTF-8 bytes + SHA-256 in the annex.
+5. Freeze complete parser argv canonical bytes + SHA-256 in the annex.
+6. Freeze exact commit metadata in the annex.
+7. State that the later execution request may only reproduce/assemble the command from already-frozen annex values; it may not introduce or substitute any runtime authority field. Execution-time freshness/expected-zero/routing rechecks remain mandatory.
+
+Scope reminder: no materialization, JSON/worktree/index/candidate/ref/evidence/source-handle creation, source/checkpoint I/O, collection/receipt/publication/root audit, child/runtime change, CUDA/GPU, training, evaluation, inference or LIBERO4IN1 is authorized.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
