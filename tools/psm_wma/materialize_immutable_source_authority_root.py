@@ -226,8 +226,14 @@ def verify_evidence_bytes(raw: bytes) -> Mapping[str, object]:
     if status == "PASS":
         if not all(item is not None for item in record["authority"].values()) or candidate["verifier_pass"] is not True or not (pre["both_absent"] and all(publication.values()) and post["both_candidate"] and post["committed_binding_reverified"]) or rollback["entered"]:
             raise NativeGitError("PASS evidence chronology 无效")
-    if status == "ROLLBACK_INCOMPLETE" and rollback["complete"]:
-        raise NativeGitError("ROLLBACK_INCOMPLETE 不得标记 complete")
+    if status == "FAIL" and owned and not (
+        rollback["entered"] and rollback["required"] and rollback["complete"]
+    ):
+        raise NativeGitError("owned publication FAIL 必须有完整 rollback")
+    if status == "ROLLBACK_INCOMPLETE" and (
+        not rollback["entered"] or rollback["complete"]
+    ):
+        raise NativeGitError("ROLLBACK_INCOMPLETE terminal 无效")
     without_digest = dict(record)
     digest = without_digest.pop("evidence_sha256")
     if not _is_sha256(digest) or hashlib.sha256(json.dumps(without_digest, sort_keys=True, separators=(",", ":")).encode()).hexdigest() != digest:

@@ -8,6 +8,7 @@ import tempfile
 import unittest
 import hashlib
 import json
+from copy import deepcopy
 from pathlib import Path
 
 from tools.psm_wma.materialize_immutable_source_authority_root import (
@@ -64,6 +65,30 @@ def _redigest(record: dict[str, object]) -> bytes:
     return json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
 
 
+def _rollback_incomplete_evidence() -> dict[str, object]:
+    record = deepcopy(_pass_evidence())
+    record["status"] = "ROLLBACK_INCOMPLETE"
+    record["rollback"] = {
+        "entered": True,
+        "required": True,
+        "remote_delete_attempted": True,
+        "remote_delete_succeeded": True,
+        "local_delete_attempted": True,
+        "local_delete_succeeded": False,
+        "final_local_observation": {"state": "unreadable", "revision": None, "error": "READ_ERROR"},
+        "final_remote_observation": {"state": "absent", "revision": None, "error": None},
+        "complete": False,
+    }
+    record["failure"] = {
+        "primary_phase": "evidence_write",
+        "primary_code": "WRITE_FAILED",
+        "rollback_phase": "rollback",
+        "rollback_code": "LOCAL_DELETE_FAILED",
+    }
+    _redigest(record)
+    return record
+
+
 class NativeAuthorityGitTest(unittest.TestCase):
     def test_pending_evidence_unlinks_only_through_commit(self):
         class Commit:
@@ -94,6 +119,30 @@ class NativeAuthorityGitTest(unittest.TestCase):
             with self.assertRaises(NativeGitError):
                 verify_evidence_path(path)
 
+    def test_evidence_verifier_requires_reachable_failure_terminals(self):
+        incomplete = _rollback_incomplete_evidence()
+        self.assertEqual(
+            verify_evidence_bytes(_redigest(incomplete))["status"],
+            "ROLLBACK_INCOMPLETE",
+        )
+        ordinary = deepcopy(incomplete)
+        ordinary["status"] = "FAIL"
+        ordinary["rollback"]["complete"] = True
+        ordinary["rollback"]["final_local_observation"] = {
+            "state": "absent", "revision": None, "error": None,
+        }
+        ordinary["failure"]["rollback_phase"] = None
+        ordinary["failure"]["rollback_code"] = None
+        self.assertEqual(verify_evidence_bytes(_redigest(ordinary))["status"], "FAIL")
+        missing_rollback = _pass_evidence()
+        missing_rollback["status"] = "FAIL"
+        missing_rollback["failure"] = {
+            "primary_phase": "evidence_write", "primary_code": "WRITE_FAILED",
+            "rollback_phase": None, "rollback_code": None,
+        }
+        with self.assertRaises(NativeGitError):
+            verify_evidence_bytes(_redigest(missing_rollback))
+
     def test_temporary_index_commit_and_exact_ref_cas(self):
         git = Path(shutil.which("git") or "")
         self.assertTrue(git.is_absolute())
@@ -115,6 +164,30 @@ class NativeAuthorityGitTest(unittest.TestCase):
             self.assertTrue(tx.cas_create_remote("refs/heads/test", revision))
             self.assertTrue(tx.cas_delete_remote("refs/heads/test", revision))
             self.assertTrue(tx.cas_delete_local("refs/heads/test", revision))
+
+    def test_absent_remote_lease_rejects_fast_forwardable_foreign_ref(self):
+        git = Path(shutil.which("git") or "")
+        self.assertTrue(git.is_absolute())
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "root"
+            remote = Path(raw) / "remote.git"
+            subprocess.run([str(git), "init", "-q", str(root)], check=True)
+            subprocess.run([str(git), "-C", str(root), "config", "user.name", "fixture"], check=True)
+            subprocess.run([str(git), "-C", str(root), "config", "user.email", "fixture@example.invalid"], check=True)
+            (root / "README").write_text("x")
+            subprocess.run([str(git), "-C", str(root), "add", "README"], check=True)
+            subprocess.run([str(git), "-C", str(root), "commit", "-qm", "root"], check=True)
+            subprocess.run([str(git), "init", "--bare", "-q", str(remote)], check=True)
+            tx = NativeAuthorityGit(git, root, str(remote), root / "temporary.index")
+            parent = tx._run("rev-parse", "HEAD")
+            candidate = tx.create_detached_commit(parent, {"candidate.json": b"{}"})
+            foreign = tx.create_detached_commit(candidate, {"foreign.json": b"{}"})
+            ref = "refs/heads/lease"
+            self.assertTrue(tx.cas_create_remote(ref, candidate))
+            self.assertFalse(tx.cas_create_remote(ref, foreign))
+            self.assertEqual(tx.remote_ref(ref), candidate)
+            self.assertFalse(tx.cas_delete_remote(ref, foreign))
+            self.assertEqual(tx.remote_ref(ref), candidate)
 
 
 if __name__ == "__main__":
