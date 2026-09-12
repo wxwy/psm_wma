@@ -718,3 +718,15 @@ v0.9仅为设计整改：全部 acceptance、rollback、preserve-ref、witness�
 v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observation是唯一绑定进pointer swap的历史 ref fact；该观察之后（**包括pointer swap前**）的外部drift不可由authority观察，故不撤销历史-witness transition。任何后续ref check不一致均为external corruption并fail-stop/recovery，禁止静默将其称为current exact ref、自动修复或rollback已ACCEPTED terminal cell；只有最后观察前验证失败才按既有pre-state rollback。单一`AuthorityTerminalState`、A/B/C crash matrix、v0.8 ABI及范围保持。
 
 请求完整exact pair唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。批准范围仅为后续四个root工具/测试文件的temporary CPU/static implementation；不授权真实source/candidate/ref/evidence、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root PASS线性化 CPU/static implementation（2026-09-12）
+
+- formal root SHA：`885b94fe8ed4c859014410dd7f53abb4550f3dc1`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前置授权：v0.10 design=`001336fa5d785d8c77a2685ac1c754c096b4fb06`获三方同pair `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`。
+- 冻结名册：ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+请审核四文件临时CPU/static实现：`EvidenceCommit._committed`替换为与witness共享的`_AuthorityTerminalCell`；`committed`及全部terminal语义只派生自immutable PENDING/ACCEPTED state；guard成功转移后唯一`cell.state=ACCEPTED`写入。新增在last ref observation后、guard转移期间注入remote drift的回归：保留historical acceptance，后续namespace不应被宣称为current exact。CPU unittest=`67/67 PASS`、四文件`py_compile`、Ruff与`git diff --check` PASS；Gitlink不变。
+
+请求该exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。只限temporary CPU/static；不授权真实source/candidate/ref/evidence、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
