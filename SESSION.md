@@ -2864,3 +2864,19 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.3.md`，仅把获批annex v0.3收敛为单次事务、preflight、PASS/FAIL、rollback、禁止范围与唯一`APPROVE_TO_MATERIALIZE`请求；未新增runtime authority或执行命令。
 - `git diff --check` PASS。未运行project code、未创建/读取真实资产、未执行materialization/child/GPU/训练。下一步：提交推送、对新formal SHA三方审核本execution request。
+
+### Authority-root materialization launcher remediation 审核观察凭证 #1（2026-09-13 00:09:03 CST，REVIEW）
+
+- formal=`17767c0c52cb2e5856a9c98baf29f520ce27fc5b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。本轮 `before=ad4bdb2f5c833fdf6bd48ac4ff971c18ec0064b6`；`git fetch origin V2` 成功；`git ls-remote` advertised、`origin/V2` 与 local-after 均为`ad4bdb2f5c833fdf6bd48ac4ff971c18ec0064b6`；新增范围为空；祖先检查成功且 `merge --ff-only`=`Already up to date`。
+- ChatGPT 精确检索 `rg -l '17767c0c52cb2e5856a9c98baf29f520ce27fc5b' docs/collab/chatgpt/reviews/` 无匹配正式 review。MM `mm:0.0` capture 给出 same-pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`；Kimi `kimi:0.0` capture 给出 same-pair `REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.3.md:23)`：launcher 必须冻结为 byte-exact artifact，明确 worktree Git argv、三个 backing-object 路径与 closefrom/FD 机制。无推进令牌，保持 REVIEW；在 ChatGPT 对该 exact pair 给出最终 verdict 前不得整改、materialization、真实 I/O、child、GPU 或训练。
+- 同轮复核上游 collection executor 的最后闭环 pair 为`d281d6f3079602632000b1576c47fd4546de22e6`/同 child，已在 TODO 标为 DONE；`08afbed...`仅为其已整改的前序 rejected pair，不能作为当前 materialization request 的 formal pair。
+
+### Authority-root materialization launcher remediation 审核观察凭证 #2（2026-09-13 00:10:55 CST，REVIEW）
+
+- formal=`17767c0c52cb2e5856a9c98baf29f520ce27fc5b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=ad4bdb2f5c833fdf6bd48ac4ff971c18ec0064b6`；fetch成功；advertised/origin/local-after均为`4cbd470ee7a3b10c59ce43724279c9ff57d0d515`；新增依次为`9506f869 chatgpt: review launcher remediation 17767c0`及`4cbd470e chatgpt: record launcher remediation review 17767c0`；祖先检查成功并已`merge --ff-only`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_materialization_execution_request_launcher_17767c0_93a89ba.md`，final=`REQUEST_CHANGES(...execution_request_v0.3.md:23)`；MM `mm:0.0` capture为same-pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`；Kimi `kimi:0.0` capture为same-pair `REQUEST_CHANGES(...execution_request_v0.3.md:23)`。三方final齐全，推进令牌仅授权同一Gate docs-only最小整改：以可审计的精确 canonical launcher artifact/procedure补齐 frozen Git worktree/cleanup argv/env、三份 backing-object paths及identity/fsync/re-read、FD 3/4/5 dup/offset/CLOEXEC/close-set、final execve arrays和launcher rollback identity证明；不能增加实际执行或横向Gate。未获新SHA三方批准前禁止materialization、真实I/O、child、GPU和训练。
+
+### Authority-root materialization launcher remediation v0.4（2026-09-13，IN_PROGRESS）
+
+- 依据刚写入的 #2 推进令牌，新增 docs-only `...execution_snapshot_annex_v0.4.md` 与 replacement `...materialization_execution_request_v0.4.md`。v0.4 保留 v0.3 全部既有 authority，并新冻结 2,144-byte canonical launcher procedure descriptor（SHA-256=`4de774a525b183261b7e89b7351ffe605e1fc21f0461897732e18a5bab0709c4`）：absolute Git worktree add/remove argv/env、三条 backing absolute path、FD 3/4/5 的 writer/reader identity+fsync+pread、dup2/seek/CLOEXEC、`/proc/self/fd` exact close policy、由 v0.3 bootstrap observation机械导出的 final execve arrays，以及 launcher-owned cleanup/reproof。
+- 标准库 JSON/digest/字段断言 PASS，两个新增文档显式 `diff --check` PASS；未运行项目模块、未创建/读取真实资产、未调用 materialization、child、GPU或训练。下一步：复核文档与现有 authority 的一致性，更新本记录后只提交这两个 docs 与 SESSION/TODO，推送并以新formal SHA重新三方审核。提交：未提交。
