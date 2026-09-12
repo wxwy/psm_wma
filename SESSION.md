@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.3三方结论与 v0.4整改认领（2026-09-12，IN_PROGRESS）
+
+- push拒绝后已先 fetch：远端新增`08fb2a45`（ChatGPT exact review）/`7f0b3452`（发布），formal pair=`c4133389f856f5ab7a5ad01923f71c0c3892ce09`/`93a89ba61306d840a008813f62f26a34d54850f4`。本地轮询记录`bf1f1021`已无冲突地 rebase 为`a53bba9b`，尚未push，不强推。
+- 三方 final 已齐：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_c413338_93a89ba.md`为2 HIGH `REQUEST_CHANGES`；MM/Kimi capture均为同pair批准。HIGH-1：v0.3 guard删除后仍有fallible fsync/re-read，和“callback异常须rollback”冲突；HIGH-2：generic rollback row允许不可能的null authority/unverified candidate且覆盖primary failure。按最严格意见整改。
+- 已认领同一Gate的 v0.4 docs-only addendum：预计新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.4.md`，将所有fallible writer检查置于guard存在阶段、guard成功删除作为唯一commit操作且之后禁止异常回流；failure拆为exact primary/rollback字段，按remote_cas/post_publication/binding_reverify/evidence_write拆分rollback terminal条件。禁止 adapter/真实I-O/GPU/训练。未提交。
+
 ## Real adapter design v0.3第1轮观察（2026-09-12 14:26:04 CST）
 
 - formal root=`c4133389f856f5ab7a5ad01923f71c0c3892ce09`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head`、远端 advertised SHA、`origin/V2` 与 ff-only 后 HEAD 均为`1368b616da00ecc459505761134a6a7838ceeaba`；完整新增范围为空，fetch/ls-remote/ff-only均成功。
