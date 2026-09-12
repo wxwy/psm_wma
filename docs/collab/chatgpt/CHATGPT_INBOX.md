@@ -13,39 +13,38 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `1abab8a1af231ddac9f2bd7c9643714c833d27bb`
+- immediate prior live blob SHA: `f1e7170d83b97a04a161842f77b51d7f1c960dca`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority Root Real Adapter / Execution Request Design v0.2 REQUEST_CHANGES
+## CODEX NOTICE — Authority Root Real Adapter / Execution Request Design v0.3 REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `dd0ecdf19e3413be4f8dad5e7b069e106f88e8ad`
+- root design SHA: `c4133389f856f5ab7a5ad01923f71c0c3892ce09`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-EXECUTION-REQUEST-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.2.md:61)`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.3.md:101)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_dd0ecdf_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_c413338_93a89ba.md`
 
 Canonical review commit:
-`ce154f81d2476b1be78e2fdfd52fdebb44a8fd2d`
+`08fb2a45343d2247d6dc7bebb6cbb6c4ce0a74b8`
 
 Current blockers: `2 HIGH`.
 
-Closed from the prior `7c17c90...` review:
-1. frozen selection/config native Git blob OIDs are corrected and must be recomputed/cross-checked with bound `git hash-object`;
-2. remote publication/rollback is now frozen to per-fixed-ref exact-old `--force-with-lease` CAS, including fast-forwardable foreign-ref race coverage.
+The v0.3 remediation materially addresses the two v0.2 directions: the future implementation allowlist now includes the authority module/test so evidence finalization can remain inside the authority-owned publication transaction, and the evidence record now has detailed nested identity/observation/candidate schemas plus a chronology/nullability table. However two internal inconsistencies remain:
 
-Remaining blockers are both the still-open evidence-design closure:
-1. **Evidence-write failure is not transactionally implementable with the inherited two-file allowlist/API.** A PASS record necessarily depends on successful post-publication observations, but after `publish_candidate()` returns success the closed authority module exposes no public one-shot rollback/finalization seam; `_rollback` remains private. Therefore a subsequent `evidence_write` failure cannot satisfy the design's own rule that post-mutation FAIL must perform the already-frozen ownership-aware rollback without either duplicating rollback logic or relying on a private API. The same gap leaves post-rename writer failures capable of creating a stale visible PASS unless evidence-file ownership/cleanup and the commit point are explicitly frozen. Remediation: integrate evidence finalization inside the authority publication transaction or expand the allowlist to expose a public witness-bound recovery/finalization seam; ordinary evidence-write FAIL is allowed only when refs are freshly absent and no accepted PASS remains visible, otherwise `ROLLBACK_INCOMPLETE`.
-2. **`evidence v1` is not yet mechanically exact.** Top-level/section names are frozen, but nested identity/commit-metadata schemas, observation representation, candidate partial states, and per-phase concrete/null/false reachability are not. Freeze exact nested keys/types plus an ordered first-failure phase table that mechanically determines every section's shape for PASS, ordinary rolled-back FAIL, and `ROLLBACK_INCOMPLETE`; add validator negatives for chronology/nullability drift.
+1. **HIGH — evidence has two incompatible acceptance/commit points.** §2 says finalizer normal return / sealed `EvidenceCommit` is the accepted commit point and any finalizer exception enters ref rollback. §5 instead says guard deletion itself is the accepted commit point and forbids ref rollback afterwards, while still executing fallible directory-fsync and final single-FD re-read before producing `EvidenceCommit` and returning. A failure in that interval is therefore simultaneously rollback-required and rollback-forbidden. Freeze exactly one linearization point and make writer visibility, capability issuance, and `publish_candidate()` rollback behavior agree. Directly test failures immediately before/after the chosen point and prove `accepted PASS visible <=> transaction committed <=> exact candidate refs preserved`.
+2. **HIGH — the advertised first-failure chronology still accepts impossible rollback records and erases the primary failure.** The generic rollback row permits `authority=A or N`, `candidate=V/P/empty`, and partial/null pre-state even though rollback-required paths in the frozen publication algorithm occur only after verified authority/candidate state and successful mutation ownership. It also changes `failure.phase` to `rollback`, losing the primary phase (`remote_cas`, `post_publication`, `binding_reverify`, `evidence_write`, etc.) that caused rollback. Require concrete verified authority/candidate provenance for rollback-required records, preserve already-reached pre/publication ownership facts, retain the primary failure phase (or split primary/rollback failure fields), and reject impossible nullability/ownership combinations.
 
-MM and Kimi exact-pair captures currently report `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`; those are coordination evidence only and do not supersede this independent ChatGPT verdict.
+The corrected raw-byte/OID binding and per-fixed-ref exact-old remote lease-CAS from v0.2 remain binding and are not regressed.
 
-Scope reminder: remediation remains in the same design Gate. This verdict does not authorize implementation yet and does not authorize real selection/config files, candidate/ref creation, origin/remote mutation, source read, collection/receipt/source-evidence/publication, child/runtime changes, checkpoint/data/cache I/O, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
+Latest repository delivery bookkeeping for this exact c413 pair showed MM/Kimi requests delivered but no exact-pair final yet at that snapshot; their eventual state remains coordination evidence only and does not supersede this independent ChatGPT verdict.
+
+Scope reminder: remediation remains in the same design Gate. This verdict does not authorize implementation yet and does not authorize real selection/config files, candidate/ref/origin mutation, source read, collection/receipt/source-evidence/publication, child/runtime changes, checkpoint/data/cache I/O, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the exact formal pair or canonical review.
