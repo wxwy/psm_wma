@@ -13,37 +13,41 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `e14deba906d616eea84e6531917c1b7cb3670f0b`
+- immediate prior live blob SHA: `04c59bc1e23781301bb2a22f5509c24c54e8f4d2`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Executor interpreter-identity remediation APPROVED
+## CODEX NOTICE — Executor CPU/static implementation REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `97ed73442fc56aa57e4bae27028bc5ffef7897bc`
+- root implementation SHA: `fb9c5e04e811865247e2ed44072af59acc8b93c9`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
 
 Verdict:
-`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC`
+`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:70)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_implementation_design_97ed734_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_fb9c5e0_93a89ba.md`
 
 Canonical review commit:
-`f2ada763afbf484f2c43665b338897be783723eb`
+`1d9d3c40d7c6681c0cd4bbd33bd5e5991e650f19`
 
-Current blockers: `0`; Design/Authority `0`; Implementation `0`; Production `0`; Evidence-only `0`.
+Current blockers: `5 HIGH`; Evidence-only `1`; Design/Authority `1`; Implementation `3`.
 
-Closed / positive:
-- executor/test `path`, Git blob OID and raw SHA-256 remain bound only from the committed CPU/static implementation formal root/closure;
-- interpreter identity is explicitly separate from Git-tree source identity;
-- CPU/static closure records only its test interpreter witness;
-- future controlled-execution approval independently freezes `{executable_path,executable_raw_sha256,version}` from the controlled runtime environment, derived from executable bytes and `--version`, with no caller/default authority;
-- interpreter drift still fails before any source entry is opened;
-- the unchanged production dependency-injection seam spans CPU/static synthetic fixtures and later approved real Git/FD/evidence-sink dependencies without requiring executor source changes.
+Blockers:
+1. The implementation emits a six-key toy `{schema_version,phase,status,authority,candidate,snapshot}` record instead of the approved exact `immutable_source_collection_execution_evidence_v1` outer/nested schema, FAIL branches and `evidence_sha256`.
+2. `_exact_authority()` replaces the reviewed seven-field execution-authority root tuple and target-lineage tuple with `{formal_root,formal_child,base,target}`; authority parent/path/blob/raw-byte and child-Gitlink drift are not witnessed, and `formal_child` is never verified.
+3. `read_regular()` called twice is not the approved descriptor-safe same-opened-FD lifecycle: there is no rooted component traversal/symlink rejection witness, pre/post fstat identity/size/mtime/ctime, rewind or second hash on the same FD.
+4. `OneShotHandoff` can wrap any mapping/final record and lacks same-activation producer ownership, ordered entry results, five artifact/config bindings and `candidate_handoff_sha256`; candidate derivation is only raw hashes, not the approved canonical artifact chain.
+5. `GitTransaction` exposes only `resolve()`: there is no isolated temporary index/tree, exact five collection + one receipt path transaction, commit-parent/post-check logic, exact `target_snapshot_v1`, actual rollback, or `ROLLBACK_INCOMPLETE` transaction witness. Real execution would still require executor source changes and invalidate the CPU/static identity.
 
-Scope remains CPU/static implementation only. This approval does not authorize real source selection/read/hash, authority-root materialization, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler/scaler step, sidecar, training, evaluation, inference or LIBERO4IN1.
+Positive / unchanged:
+- the formal implementation stays within the approved two technical file paths and does not modify the child;
+- the module remains stdlib/CPU-static and does not access real source/checkpoint/cache/network/GPU/model/training resources;
+- explicit DI is directionally compatible with the approved design, but the production semantics behind the interfaces are incomplete.
+
+Still not authorized: authority-root materialization, real source selection/read/hash, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler/scaler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the formal pair or canonical review.
