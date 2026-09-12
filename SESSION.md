@@ -14,6 +14,7 @@
 - 验证：`python -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root`=`47/47 PASS`；四文件`py_compile` PASS；Ruff=`All checks passed!`；`git diff --check` PASS。测试只在temporary working repositories/local bare remotes及temporary evidence files中运行；不触碰`cosmos-framework`或训练遗留。待提交、推送并以新formal pair重新三方审核。
 - 新formal root=`2f9fd4bcaec0fd0ea0c6302aa69910e24ce9e378`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；live Inbox已append新申请，冻结名册为ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。待Inbox/SESSION ledger提交推送后按`send-keys -l`→等待≥1秒→独立Enter→capture三联回执送达MM/Kimi；之后三分钟原生轮询。新pair无推进令牌，禁止真实执行、训练或无审核授权整改。提交：本申请记录未提交。
 - 新申请送达回执：Inbox/初始名册已在`0ba1b9e1add2efa234268d1b50dbfce211f68b3f`提交并推送；MM `mm:0.0`按`send-keys -l`→等待≥1秒→独立Enter→capture，消息已离开输入框且会话显示`Caramelizing…`，状态=处理中；Kimi `kimi:0.0`同样完成三联回读、申请显示在消息流且输入框恢复，状态=已送达/待处理。ChatGPT仅以future exact-pair reviews/正式文件计结果。三分钟后第1轮完整观察；无推进令牌，禁止真实执行、训练或提前整改。提交：本回执未提交。
+- 新pair第1轮完整观察（2026-09-12 CST）：formal root=`2f9fd4bcaec0fd0ea0c6302aa69910e24ce9e378`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head`、fetch后advertised/origin与ff-only后HEAD均=`d251796b8ff5dbda571c2429d46b69ea95845706`，新增范围空。ChatGPT exact search为空；Kimi `kimi:0.0` capture仅有该pair申请和其正在review的命令，尚无exact final；MM `mm:0.0` capture有“4 HIGH closed/准予close”技术结论但未出现锚定该formal pair的required final verdict token，按协议同样不计final。逐方：ChatGPT=处理中、Kimi=处理中、MM=处理中；无推进令牌，保持REVIEW。提交：本观察未提交。
 
 ## Real adapter v0.6三方批准与CPU/static实现认领（2026-09-12 14:54:32 CST，IN_PROGRESS）
 
