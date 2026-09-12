@@ -52,7 +52,9 @@ class EntryHandle(Protocol):
 class RootFdOpener(Protocol):
     def open_regular(self, relative_path: str) -> EntryHandle: ...
 class GitTransaction(Protocol):
+    def approved_execution_metadata(self) -> Mapping[str, object]: ...
     def execution_metadata(self) -> Mapping[str, object]: ...
+    def publication_state(self) -> Mapping[str, bool]: ...
     def resolve(self, revision: str) -> str: ...
     def parent(self, revision: str) -> str: ...
     def tree_entries(self, revision: str) -> Mapping[str, str]: ...
@@ -114,11 +116,20 @@ class TemporaryGitFixture:
     blobs: Mapping[str, bytes] = field(default_factory=dict)
     gitlinks: Mapping[str, str] = field(default_factory=dict)
 
+    def approved_execution_metadata(self) -> Mapping[str, object]:
+        # 审批 fixture 与可被故障注入的本次观察方法分离。
+        return TemporaryGitFixture.execution_metadata(self)
+
+    def publication_state(self) -> Mapping[str, bool]:
+        return {"pushed": False, "published": False}
+
     def execution_metadata(self) -> Mapping[str, object]:
         # 仅测试替身提供合成身份，executor 自身不再填入零摘要。
         tool = b"synthetic executor identity"
         return {"execution": {"approval_formal_root": "d" * 40, "command_argv": ["synthetic"],
-                              "interpreter": "fixture-python"},
+                              "interpreter": {"executable_path": "/synthetic/python",
+                                              "executable_raw_sha256": _digest(b"fixture-python"),
+                                              "version": "synthetic-python-version"}},
                 "tool": {"path": "tools/psm_wma/immutable_source_collection.py",
                          "blob_native_oid": _blob_oid(tool), "raw_sha256": _digest(tool)},
                 "environment": {"workdir": "/synthetic", "python_executable": "/synthetic/python",
@@ -402,6 +413,13 @@ def _verify_evidence_sections(record: Mapping[str, object]) -> None:
     passed = record["status"] == "PASS"
     execution_keys = ("approval_formal_root", "command_argv", "interpreter", "phase")
     execution = _exact_section(record["execution"], execution_keys if passed else execution_keys + ("failure_code",))
+    approval_root = execution["approval_formal_root"]
+    if not isinstance(approval_root, str) or len(approval_root) != 40 or any(c not in "0123456789abcdef" for c in approval_root):
+        raise CollectionError("execution approval root 无效")
+    interpreter = _exact_section(execution["interpreter"], ("executable_path", "executable_raw_sha256", "version"))
+    if (not _is_sha(interpreter["executable_raw_sha256"])
+            or any(not isinstance(interpreter[key], str) or not interpreter[key] for key in ("executable_path", "version"))):
+        raise CollectionError("interpreter identity 无效")
     phase = execution["phase"]
     if phase not in EVIDENCE_PHASES or passed != (phase == "complete"):
         raise CollectionError("evidence status/phase 矛盾")
@@ -684,6 +702,42 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
                 or _receipt_from_collection(git, receipt["parent_revision"], blobs) != receipt_raw):
             raise CollectionError("receipt committed blob 漂移")
         record["receipt"] = {**receipt, "delta_paths": [RECEIPT_PATH], "blob_native_oid": oid}
+        record["execution"]["phase"] = "post_check"
+        authority = payload.authority
+        def authority_matches() -> bool:
+            expected_tree = {authority["selection_path"]: authority["selection_blob_native_oid"],
+                             authority["config_path"]: authority["config_blob_native_oid"]}
+            return (git.parent(authority["root_revision"]) == lineage["authority_approval_formal_root_revision"]
+                    and dict(git.tree_entries(authority["root_revision"])) == expected_tree
+                    and all(_digest(git.blob_bytes(authority[prefix + "_blob_native_oid"])) == authority[prefix + "_raw_sha256"]
+                            for prefix in ("selection", "config")))
+        publication_observation = {}
+        def receipt_matches() -> bool:
+            publication = dict(git.publication_state())
+            if set(publication) != {"pushed", "published"} or any(type(v) is not bool for v in publication.values()):
+                return False
+            publication_observation.update(publication)
+            return dict(git.lookup(receipt["revision"])) == receipt and git.blob_bytes(oid) == receipt_raw
+        checks = (
+            ("authority", authority_matches),
+            ("lineage", lambda: git.resolve(lineage["target_ref"]) == receipt["revision"] and git.gitlink_at(base) == lineage["expected_child_gitlink"]),
+            ("derivation", lambda: _receipt_from_collection(git, collection["revision"], blobs) == receipt_raw),
+            ("collection", lambda: dict(git.lookup(collection["revision"])) == collection),
+            ("receipt", receipt_matches),
+        )
+        for name, check in checks:
+            try:
+                valid = check() is True
+            except Exception:
+                valid = False
+            record["post_checks"][name] = valid
+            if not valid:
+                raise CollectionError("post-check 失败: " + name)
+        publication = publication_observation
+        record["execution"]["phase"] = "push_publication"
+        record["push_publication"] = publication
+        if any(publication.values()):
+            raise CollectionError("禁止 push/publication")
         return collection, receipt, oid
     except Exception:
         try:
@@ -701,13 +755,22 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
 
 
 def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str], paths: Mapping[str, str], git: GitTransaction, root_fd: RootFdOpener, sink: EvidenceSink) -> dict[str, object]:
-    metadata = git.execution_metadata()
+    metadata = git.approved_execution_metadata()
     record = {name: {key: None for key in keys} for name, keys in SECTION_KEYS.items()}
     record.update(schema=SCHEMA, status="FAIL", source_entries=[],
-                  execution={**metadata["execution"], "phase": "authority", "failure_code": "UNFINISHED"},
-                  tool=dict(metadata["tool"]), environment=dict(metadata["environment"]),
+                  execution={**metadata["execution"], "phase": "tool_identity", "failure_code": "UNFINISHED"},
                   collection=_null_collection(), receipt=_null_receipt())
     try:
+        observed = git.execution_metadata()
+        if (_canonical(observed["tool"]) != _canonical(metadata["tool"])
+                or _canonical(observed["execution"]) != _canonical(metadata["execution"])):
+            raise CollectionError("tool/interpreter/command identity 漂移")
+        record["tool"] = dict(observed["tool"])
+        record["execution"]["phase"] = "environment"
+        if _canonical(observed["environment"]) != _canonical(metadata["environment"]):
+            raise CollectionError("environment identity 漂移")
+        record["environment"] = dict(observed["environment"])
+        record["execution"]["phase"] = "authority"
         ordered, config_raw = _bound_source_inputs(authority, lineage, paths, git, record)
         record["execution"]["phase"] = "source_read"
         for i, path in enumerate(ordered):
@@ -721,8 +784,6 @@ def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str
         payload = handoff.take(activation)
         record["handoff"]["consumed_once"] = True
         _commit_candidates(git, payload, lineage, record)
-        record["post_checks"] = {key: True for key in SECTION_KEYS["post_checks"]}
-        record["push_publication"] = {"pushed": False, "published": False}
         record["status"] = "PASS"
         record["execution"]["phase"] = "complete"
         del record["execution"]["failure_code"]

@@ -200,6 +200,48 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         for path in self.paths.values():
             self.assertNotIn(path, serialized)
 
+    def test_observed_execution_identity_drift_fails_before_source(self) -> None:
+        for section, key, bad in (("tool", "raw_sha256", "e" * 64),
+                                  ("execution", "command_argv", ["wrong"]),
+                                  ("environment", "cpu_only", False)):
+            class Drift(TemporaryGitFixture):
+                def execution_metadata(self):
+                    metadata = super().execution_metadata()
+                    metadata[section][key] = bad
+                    return metadata
+            class Unopened:
+                def open_regular(self, path):
+                    raise AssertionError("identity 失败不得读取 source")
+            with self.subTest(section=section):
+                sink = MemoryEvidenceSink()
+                git = Drift(**deepcopy(vars(self.git)))
+                with self.assertRaises(CollectionError):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                                      git=git, root_fd=Unopened(), sink=sink)
+                failure = sink.records[0]
+                self.assertEqual(failure["execution"]["phase"], "environment" if section == "environment" else "tool_identity")
+                verify_evidence(failure)
+                self.assertEqual(git.commits, [])
+
+    def test_publication_violation_and_observation_failure_rollback(self) -> None:
+        for observation, phase in (({"pushed": True, "published": False}, "push_publication"),
+                                    ({"pushed": 1, "published": False}, "post_check")):
+            class Published(TemporaryGitFixture):
+                def publication_state(self):
+                    return observation
+            with self.subTest(observation=observation):
+                git = Published(**deepcopy(vars(self.git)))
+                before = git.snapshot()
+                sink = MemoryEvidenceSink()
+                with self.assertRaises(CollectionError):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                                      git=git, root_fd=self.fd, sink=sink)
+                failure = sink.records[0]
+                self.assertEqual(failure["execution"]["phase"], phase)
+                self.assertEqual(git.snapshot(), before)
+                self.assertIs(failure["rollback"]["verified"], True)
+                verify_evidence(failure)
+
     def test_frozen_candidate_paths_and_raw_byte_chain(self) -> None:
         entries = ({"ordinal": 0, "byte_length": 3, "sha256": hashlib.sha256(b"abc").hexdigest()},)
         artifacts, digests = derive_candidates(entries, self.config_raw)

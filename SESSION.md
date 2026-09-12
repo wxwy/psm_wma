@@ -1,5 +1,13 @@
 # 当前协作状态
 
+## 执行身份与最终观测切片（2026-09-12，IN_PROGRESS）
+
+- 前一 FAIL 生成切片已提交/推送 `68278f58158a657d188cf2957f97fc7b33e1ed0c`。
+- approved_execution_metadata 与 execution_metadata 两条依赖分开，按 canonical bytes 比较 tool/execution/environment；interpreter 使用 path/raw SHA/version exact record。身份不符在 source open 前分别产生 tool_identity/environment FAIL。测试依赖提供合成身份；真实绑定仍需从受控环境实际读取 executable/tool，而非使用合成 fixture。
+- final post_checks 逐项查询 authority parent/tree/blob、target/Gitlink、候选派生、collection/receipt lookup；publication_state 查询经类型检查后记录真实观察布尔值。查询不合法作为最后 receipt post-check 失败，已确认 true 作为 push_publication violation；两者均恢复 live snapshot。
+- 根目录 `python3 -B -m unittest tools.psm_wma.test_immutable_source_collection -v`：24/24 PASS；`git diff --check` PASS。新增身份漂移前置拒绝、publication violation/无效观测与 rollback 输出。仅 CPU/内存 fixture，无真实 source/GPU/训练。
+- 下一步完整自审：sink 失败、snapshot 不可读取、畸形依赖返回、未覆盖的结构/类型漂移、DI 生产绑定范围；核验后再决定是否具备新 SHA 三方重审条件。未宣称 HIGH 全部关闭。提交：待本次提交。
+
 ## 实际 FAIL evidence 生成切片（2026-09-12，IN_PROGRESS）
 
 - 前一事务切片已提交/推送 `21d7a5be354eb09dabe8248092a4b63a355afad1`。本次仍只改两工具文件及本记录。
