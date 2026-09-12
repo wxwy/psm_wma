@@ -427,3 +427,15 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 前置binding v0.2 formal `31819169c9430087f5e293cd1dce169ec055b371` 已获三方批准。本设计只冻结下一步root-only两文件实现：`immutable_source_authority_root.py`及test；单一DI算法`prepare_candidate→verify_candidate→publish_candidate`；full tree entry、detached single-parent candidate、fixed-ref expected-zero CAS、post-CAS relookup/exact rollback、same-activation one-shot capability、`ROLLBACK_INCOMPLETE`。exact seven-key `root_revision` binding必须直接进入现collection executor真实authority seam，不能只比较常量。
 
 请逐项审核allowlist/复用边界、DI protocol是否足以支持future real adapter、canonical schema/parent/delta、candidate不信任、CAS/rollback、capability lifecycle、executor ABI正反例及CPU matrix。请求唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。批准仅授权root CPU/static synthetic implementation；不创建真实JSON/authority commit/ref，不访问真实source/remote，不执行collection/publication/child/GPU/训练。
+
+## 审核申请：Authority Root CPU/static Implementation 设计 v0.2（2026-09-12）
+
+- formal root SHA：`ee0de157d337bc85bf3d8d1c9e4957c31aa03c07`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_cpu_static_implementation_design_v0.2.md`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+前轮 formal `c61f32f3a99688043f2dfdb3d69480e11b1811dd` 三方 final 已齐：ChatGPT 两项 HIGH `REQUEST_CHANGES`，MM/Kimi批准。v0.2逐项整改：实现allowlist扩为authority-root tool/test与现collection executor/test四文件；实际 `_bound_source_inputs()` / `collect_synthetic()` 在source-open前直接重查不可覆盖fixed ref的local+remote观察，任一absent/wrong/disagree/error零mutation拒绝；publication冻结local→remote expected-zero CAS与逐端点activation-owned witness；rollback冻结remote→local、仅exact-candidate→absent条件删除、foreign/unreadable不删除、fresh两端观察与统一`ROLLBACK_INCOMPLETE`；CPU matrix注入首CAS后、CAS/postcheck间、rollback中竞态及单端冲突。
+
+请确认两项 HIGH 均关闭，并给唯一 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。批准仅授权上述四文件synthetic CPU/static实现及标准库测试；不授权真实JSON/authority commit/ref、source/remote I/O、collection/publication、child、GPU或训练。
