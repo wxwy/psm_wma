@@ -40,6 +40,20 @@ def _null_collection() -> dict[str, object]: return {"revision": None, "tree_nat
 def _null_receipt() -> dict[str, object]: return {**_null_collection(), "blob_native_oid": None}
 SNAPSHOT_KEYS = ("target_ref", "target_ref_revision", "head_mode", "head_symbolic_ref", "head_revision", "index_tree_native_oid", "worktree_entries", "worktree_sha256")
 SNAPSHOT_PATHS = tuple(sorted((*COLLECTION_PATHS, RECEIPT_PATH), key=lambda path: path.encode()))
+TreeEntry = tuple[str, str, str]  # Git mode、object type、native OID；不丢弃 mode-only 变化。
+
+
+def _tree(git: GitTransaction, revision: str) -> dict[str, TreeEntry]:
+    entries = dict(git.tree_entries(revision))
+    kinds = {"100644": "blob", "100755": "blob", "120000": "blob", "160000": "commit", "040000": "tree"}
+    for path, entry in entries.items():
+        if (not isinstance(path, str) or not path
+                or not isinstance(entry, tuple) or len(entry) != 3
+                or any(not isinstance(item, str) for item in entry)
+                or kinds.get(entry[0]) != entry[1]
+                or len(entry[2]) != 40 or any(c not in "0123456789abcdef" for c in entry[2])):
+            raise CollectionError("Git tree entry mode/type/OID 无效")
+    return entries
 
 @dataclass(frozen=True)
 class EntryStat:
@@ -64,7 +78,7 @@ class GitTransaction(Protocol):
     def publication_state(self) -> Mapping[str, bool]: ...
     def resolve(self, revision: str) -> str: ...
     def parent(self, revision: str) -> str: ...
-    def tree_entries(self, revision: str) -> Mapping[str, str]: ...
+    def tree_entries(self, revision: str) -> Mapping[str, TreeEntry]: ...
     def blob_bytes(self, oid: str) -> bytes: ...
     def gitlink_at(self, revision: str) -> str: ...
     def snapshot(self) -> Mapping[str, object]: ...
@@ -124,7 +138,7 @@ class TemporaryGitFixture:
     commits: list[Mapping[str, str]] = field(default_factory=list)
     state: Mapping[str, object] = field(default_factory=dict)
     parents: Mapping[str, str] = field(default_factory=dict)
-    trees: Mapping[str, Mapping[str, str]] = field(default_factory=dict)
+    trees: Mapping[str, Mapping[str, TreeEntry]] = field(default_factory=dict)
     blobs: Mapping[str, bytes] = field(default_factory=dict)
     gitlinks: Mapping[str, str] = field(default_factory=dict)
 
@@ -161,7 +175,7 @@ class TemporaryGitFixture:
             raise CollectionError("authority commit 不可达")
         return self.parents[revision]
 
-    def tree_entries(self, revision: str) -> Mapping[str, str]:
+    def tree_entries(self, revision: str) -> Mapping[str, TreeEntry]:
         if revision not in self.trees:
             raise CollectionError("authority tree 不可达")
         return dict(self.trees[revision])
@@ -184,13 +198,13 @@ class TemporaryGitFixture:
     def preflight(self, paths: tuple[str, ...], parent: str, blobs: Mapping[str, bytes]) -> str:
         if paths not in (COLLECTION_PATHS, (RECEIPT_PATH,)) or set(blobs) != set(paths):
             raise CollectionError("transaction allowlist drift")
-        tree = dict(self.tree_entries(parent))
+        tree = _tree(self, parent)
         if set(tree).intersection(paths):
             raise CollectionError("preflight 不允许覆盖已有路径")
         for path, raw in blobs.items():
             if not isinstance(raw, bytes):
                 raise CollectionError("preflight blob 必须为 bytes")
-            tree[path] = _blob_oid(raw)
+            tree[path] = ("100644", "blob", _blob_oid(raw))
         # 测试替身的 tree identity；真实绑定必须返回 Git tree OID。
         return _sha(tree)[:40]
 
@@ -201,7 +215,7 @@ class TemporaryGitFixture:
         row = {"revision": _sha({"parent": parent, "tree": tree_oid})[:40],
                "tree_native_oid": tree_oid, "parent_revision": parent}
         self.parents = {**self.parents, row["revision"]: parent}
-        self.trees = {**self.trees, row["revision"]: {**self.tree_entries(parent), **{p: _blob_oid(b) for p, b in blobs.items()}}}
+        self.trees = {**self.trees, row["revision"]: {**_tree(self, parent), **{p: ("100644", "blob", _blob_oid(b)) for p, b in blobs.items()}}}
         self.blobs = {**self.blobs, **{_blob_oid(raw): raw for raw in blobs.values()}}
         entries = [{"path": entry["path"], "mode": "100644", "kind": "regular", "sha256": _digest(blobs[entry["path"]])}
                    if entry["path"] in blobs else dict(entry) for entry in self.state["worktree_entries"]]
@@ -595,21 +609,24 @@ def _blob_oid(raw: bytes) -> str:
 
 
 def _authority_tree(git: GitTransaction, authority: Mapping[str, str],
-                    lineage: Mapping[str, str]) -> Mapping[str, str]:
+                    lineage: Mapping[str, str]) -> Mapping[str, TreeEntry]:
     revision = authority["root_revision"]
     parent = lineage["authority_approval_formal_root_revision"]
     if git.parent(revision) != parent:
         raise CollectionError("authority parent 漂移")
-    before, tree = git.tree_entries(parent), git.tree_entries(revision)
+    before, tree = _tree(git, parent), _tree(git, revision)
     paths = {SELECTION_PATH, COLLECTION_PATHS[1]}
     changed = {path for path in set(before) | set(tree) if before.get(path) != tree.get(path)}
     if changed != paths or not paths.issubset(tree):
         raise CollectionError("authority delta 必须恰为两个固定 blob，保留全部继承项")
+    if any(tree[path][:2] != ("100644", "blob")
+           or (path in before and before[path][:2] != tree[path][:2]) for path in paths):
+        raise CollectionError("authority 固定路径 mode/type 漂移")
     return tree
 
 
 def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str],
-                         paths: Mapping[str, str], git: GitTransaction,
+                         selection_request: bytes, git: GitTransaction,
                          record: dict[str, object]) -> tuple[tuple[str, ...], bytes]:
     """只从指定 commit tree/blob 复算 authority，再绑定 source transport。"""
     authority_keys = ("root_revision", "selection_path", "selection_blob_native_oid", "selection_raw_sha256", "config_path", "config_blob_native_oid", "config_raw_sha256")
@@ -628,12 +645,14 @@ def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str
     raw_values = {}
     for prefix in ("selection", "config"):
         path, oid = authority[prefix + "_path"], authority[prefix + "_blob_native_oid"]
-        if tree[path] != oid:
+        if tree[path][2] != oid:
             raise CollectionError("authority tree/blob 绑定漂移")
         raw = git.blob_bytes(oid)
         if not isinstance(raw, bytes) or _blob_oid(raw) != oid or _digest(raw) != authority[prefix + "_raw_sha256"]:
             raise CollectionError("authority blob/raw bytes 漂移")
         raw_values[prefix] = raw
+    if not isinstance(selection_request, bytes) or selection_request != raw_values["selection"]:
+        raise CollectionError("selection transport 原始字节与 authority 不一致")
     config_raw = raw_values["config"]
     try:
         config, _ = validate_config(json.loads(config_raw))
@@ -663,8 +682,6 @@ def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str
             ordered.append(path)
         if ordered != sorted(set(ordered), key=lambda path: path.encode("utf-8")):
             raise CollectionError("selection 路径顺序或唯一性漂移")
-        if len(paths) != len(ordered) or set(paths.values()) != set(ordered):
-            raise CollectionError("source transport 与 selection 不一致")
     except (ValueError, TypeError, UnicodeError) as exc:
         raise CollectionError("selection 无效") from exc
     record["authority"] = dict(authority)
@@ -680,13 +697,13 @@ def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str
 def _receipt_from_collection(git: GitTransaction, revision: str,
                               expected: Mapping[str, bytes]) -> bytes:
     """receipt 每个字段均从已提交 collection tree/blob 重新读取。"""
-    tree = git.tree_entries(revision)
+    tree = _tree(git, revision)
     raw = {}
     for path in COLLECTION_PATHS:
         if path not in tree:
             raise CollectionError("collection artifact 缺失")
-        raw[path] = git.blob_bytes(tree[path])
-        if _blob_oid(raw[path]) != tree[path] or raw[path] != expected[path]:
+        raw[path] = git.blob_bytes(tree[path][2])
+        if tree[path] != ("100644", "blob", _blob_oid(raw[path])) or raw[path] != expected[path]:
             raise CollectionError("collection committed blob 漂移")
     input_value = json.loads(raw[COLLECTION_PATHS[2]])
     artifacts, digests = derive_candidates(tuple(input_value["source_entries"]), raw[COLLECTION_PATHS[1]])
@@ -704,7 +721,7 @@ def _receipt_from_collection(git: GitTransaction, revision: str,
     for prefix, path in zip(prefixes, COLLECTION_PATHS):
         receipt[prefix + "_path"] = path
         receipt[prefix + "_sha256"] = _digest(raw[path])
-        receipt[prefix + "_blob_native_oid"] = tree[path]
+        receipt[prefix + "_blob_native_oid"] = tree[path][2]
         if prefix != "canonical_model_config_artifact":
             receipt[prefix + "_schema"] = json.loads(raw[path])["schema"]
     return _canonical(receipt)
@@ -728,8 +745,8 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
         if (dict(git.lookup(collection["revision"])) != collection or collection["parent_revision"] != base
                 or collection["tree_native_oid"] != candidate_tree):
             raise CollectionError("collection committed-tree post-check drift")
-        tree = git.tree_entries(collection["revision"])
-        parent_tree = git.tree_entries(base)
+        tree = _tree(git, collection["revision"])
+        parent_tree = _tree(git, base)
         if set(tree) - set(parent_tree) != set(COLLECTION_PATHS) or any(tree.get(p) != oid for p, oid in parent_tree.items()):
             raise CollectionError("collection delta 超出五路径")
         receipt_raw = _receipt_from_collection(git, collection["revision"], blobs)
@@ -741,11 +758,11 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
         if (dict(git.lookup(receipt["revision"])) != receipt or receipt["parent_revision"] != collection["revision"]
                 or receipt["tree_native_oid"] != receipt_tree):
             raise CollectionError("receipt committed-tree post-check drift")
-        committed_tree = git.tree_entries(receipt["revision"])
+        committed_tree = _tree(git, receipt["revision"])
         if set(committed_tree) - set(tree) != {RECEIPT_PATH} or any(committed_tree.get(p) != oid for p, oid in tree.items()):
             raise CollectionError("receipt delta 超出唯一路径")
-        oid = committed_tree[RECEIPT_PATH]
-        if (oid != _blob_oid(receipt_raw) or git.blob_bytes(oid) != receipt_raw
+        oid = committed_tree[RECEIPT_PATH][2]
+        if (committed_tree[RECEIPT_PATH] != ("100644", "blob", _blob_oid(receipt_raw)) or git.blob_bytes(oid) != receipt_raw
                 or _receipt_from_collection(git, receipt["parent_revision"], blobs) != receipt_raw):
             raise CollectionError("receipt committed blob 漂移")
         record["receipt"] = {**receipt, "delta_paths": [RECEIPT_PATH], "blob_native_oid": oid}
@@ -755,7 +772,7 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
             expected_tree = {authority["selection_path"]: authority["selection_blob_native_oid"],
                              authority["config_path"]: authority["config_blob_native_oid"]}
             tree = _authority_tree(git, authority, lineage)
-            return (all(tree[path] == oid for path, oid in expected_tree.items())
+            return (all(tree[path] == ("100644", "blob", oid) for path, oid in expected_tree.items())
                     and all(_digest(git.blob_bytes(authority[prefix + "_blob_native_oid"])) == authority[prefix + "_raw_sha256"]
                             for prefix in ("selection", "config")))
         publication_observation = {}
@@ -804,7 +821,7 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
         raise
 
 
-def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str], paths: Mapping[str, str], git: GitTransaction, root_fd: RootFdOpener, sink: EvidenceSink) -> dict[str, object]:
+def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str], selection_request: bytes, git: GitTransaction, root_fd: RootFdOpener, sink: EvidenceSink) -> dict[str, object]:
     metadata = git.approved_execution_metadata()
     record = {name: {key: None for key in keys} for name, keys in SECTION_KEYS.items()}
     record.update(schema=SCHEMA, status="FAIL", source_entries=[],
@@ -821,7 +838,7 @@ def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str
             raise CollectionError("environment identity 漂移")
         record["environment"] = dict(observed["environment"])
         record["execution"]["phase"] = "authority"
-        ordered, config_raw = _bound_source_inputs(authority, lineage, paths, git, record)
+        ordered, config_raw = _bound_source_inputs(authority, lineage, selection_request, git, record)
         record["execution"]["phase"] = "source_read"
         for i, path in enumerate(ordered):
             record["source_entries"].append(_entry(root_fd, path, i))

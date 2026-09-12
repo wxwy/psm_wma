@@ -29,6 +29,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                      "entries": [{"ordinal": i, "relative_path": path}
                                  for i, path in enumerate(sorted(self.paths.values()))]}
         selection_raw = json.dumps(selection, sort_keys=True, separators=(",", ":")).encode()
+        self.selection_raw = selection_raw
         def oid(raw: bytes) -> str:
             return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
         self.authority = {
@@ -43,19 +44,19 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         self.git = TemporaryGitFixture(
             {"refs/heads/fixture": "b" * 40},
             parents={"a" * 40: "d" * 40},
-            trees={"a" * 40: {"README.md": "e" * 40, "cosmos-framework": "c" * 40,
-                             SELECTION_PATH: oid(selection_raw), COLLECTION_PATHS[1]: oid(self.config_raw)},
-                   "d" * 40: {"README.md": "e" * 40, "cosmos-framework": "c" * 40}, "b" * 40: {}},
+            trees={"a" * 40: {"README.md": ("100644", "blob", "e" * 40), "cosmos-framework": ("160000", "commit", "c" * 40),
+                             SELECTION_PATH: ("100644", "blob", oid(selection_raw)), COLLECTION_PATHS[1]: ("100644", "blob", oid(self.config_raw))},
+                   "d" * 40: {"README.md": ("100644", "blob", "e" * 40), "cosmos-framework": ("160000", "commit", "c" * 40)}, "b" * 40: {}},
             blobs={oid(selection_raw): selection_raw, oid(self.config_raw): self.config_raw},
             gitlinks={"b" * 40: "c" * 40},
         )
     def test_exact_pass_evidence(self) -> None:
-        sink = MemoryEvidenceSink(); record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=sink)
+        sink = MemoryEvidenceSink(); record = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=sink)
         self.assertEqual(record["status"], "PASS"); self.assertEqual(record["execution"]["phase"], "complete"); self.assertEqual(sink.records, [record])
     def test_retained_evidence_does_not_alias_returned_record(self) -> None:
         sink = MemoryEvidenceSink()
         record = collect_synthetic(authority=self.authority, lineage=self.lineage,
-                                   paths=self.paths, git=self.git, root_fd=self.fd, sink=sink)
+                                   selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=sink)
         retained = deepcopy(sink.records[0])
         record["execution"]["phase"] = "source_read"
         record["source_entries"][0]["sha256"] = "0" * 64
@@ -81,7 +82,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 expected = "ROLLBACK_INCOMPLETE" if rollback_fails else "EVIDENCE_SINK_FAILED"
                 with self.assertRaisesRegex(CollectionError, expected):
                     collect_synthetic(authority=self.authority, lineage=self.lineage,
-                                      paths=self.paths, git=git, root_fd=self.fd, sink=RejectingSink())
+                                      selection_request=self.selection_raw, git=git, root_fd=self.fd, sink=RejectingSink())
                 self.assertEqual(len(git.commits), 2)
                 if not rollback_fails:
                     self.assertEqual(git.snapshot(), before)
@@ -89,11 +90,11 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                                      self.lineage["expected_base_root_revision"])
 
     def test_authority_lineage_allowlist_drift_fails(self) -> None:
-        with self.assertRaises(CollectionError): collect_synthetic(authority={**self.authority, "x": "x"}, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
-        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths={name: "same" for name in SOURCE_PATHS}, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        with self.assertRaises(CollectionError): collect_synthetic(authority={**self.authority, "x": "x"}, lineage=self.lineage, selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=b"{}", git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
         bad_gitlink = deepcopy(self.git)
         bad_gitlink.gitlinks = {"b" * 40: "f" * 40}
-        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=bad_gitlink, root_fd=self.fd, sink=MemoryEvidenceSink())
+        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=bad_gitlink, root_fd=self.fd, sink=MemoryEvidenceSink())
 
     def test_atomic_sink_partial_and_after_write_leave_no_stale_pass(self) -> None:
         for stage in ("partial_write", "after_write"):
@@ -103,13 +104,13 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 sink = MemoryEvidenceSink(failure_stage=stage)
                 with self.assertRaisesRegex(CollectionError, "EVIDENCE_SINK_FAILED"):
                     collect_synthetic(authority=self.authority, lineage=self.lineage,
-                                      paths=self.paths, git=git, root_fd=self.fd, sink=sink)
+                                      selection_request=self.selection_raw, git=git, root_fd=self.fd, sink=sink)
                 self.assertEqual(git.snapshot(), before)
                 self.assertEqual(sink.records, [])
                 self.assertEqual(len(git.commits), 2)
                 sink.failure_stage = None
                 record = collect_synthetic(authority=self.authority, lineage=self.lineage,
-                                           paths=self.paths, git=git, root_fd=self.fd, sink=sink)
+                                           selection_request=self.selection_raw, git=git, root_fd=self.fd, sink=sink)
                 sink.failure_stage = stage
                 with self.assertRaises(OSError):
                     sink.emit(record)
@@ -141,16 +142,16 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                     sink = MemoryEvidenceSink()
                     with self.assertRaisesRegex(RollbackUnavailable, "^ROLLBACK_INCOMPLETE$") as raised:
                         collect_synthetic(authority=self.authority, lineage=self.lineage,
-                                          paths=self.paths, git=git, root_fd=self.fd, sink=sink)
+                                          selection_request=self.selection_raw, git=git, root_fd=self.fd, sink=sink)
                     self.assertEqual(raised.exception.primary_phase, "collection")
                     self.assertEqual(sink.records, [])
                     self.assertEqual(len(git.commits), 1)
     def test_descriptor_and_digest_drift_fail(self) -> None:
         files = dict(self.fd.files); files[self.paths["checkpoint"]] = SyntheticEntry(b"x", reads=[b"x", b"y"])
-        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=SyntheticRootFd(files), sink=MemoryEvidenceSink())
+        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=self.git, root_fd=SyntheticRootFd(files), sink=MemoryEvidenceSink())
         files[self.paths["checkpoint"]] = SyntheticEntry(b"x", stats=[EntryStat(1, 1, 1, 0, 0), EntryStat(2, 1, 1, 0, 0)])
-        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=SyntheticRootFd(files), sink=MemoryEvidenceSink())
-        record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink()); record["status"] = "FAIL"
+        with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=self.git, root_fd=SyntheticRootFd(files), sink=MemoryEvidenceSink())
+        record = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink()); record["status"] = "FAIL"
         with self.assertRaises(CollectionError): verify_evidence(record)
     def test_escape_and_transaction_allowlist_fail(self) -> None:
         with self.assertRaises(CollectionError): SyntheticRootFd({}).open_regular("../escape")
@@ -168,19 +169,19 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 entry = SyntheticEntry(b"x", stats=[before, after, after])
                 files = {**self.fd.files, self.paths["checkpoint"]: entry}
                 with self.assertRaises(CollectionError):
-                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                                       git=self.git, root_fd=SyntheticRootFd(files), sink=MemoryEvidenceSink())
                 self.assertTrue(entry.closed)
         nonregular = SyntheticEntry(b"x", identity=replace(before, mode=stat.S_IFDIR))
         with self.assertRaises(CollectionError):
-            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+            collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                 git=self.git, root_fd=SyntheticRootFd({**self.fd.files, self.paths["checkpoint"]: nonregular}), sink=MemoryEvidenceSink())
         self.assertTrue(nonregular.closed)
 
     def test_streamed_source_hash_and_successful_close(self) -> None:
         data = b"abc" * 50000
         entry = SyntheticEntry(data)
-        record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+        record = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
             git=self.git, root_fd=SyntheticRootFd({**self.fd.files, self.paths["checkpoint"]: entry}), sink=MemoryEvidenceSink())
         self.assertEqual(record["source_entries"][0], {"ordinal": 0, "byte_length": len(data),
                                                      "sha256": hashlib.sha256(data).hexdigest()})
@@ -190,10 +191,10 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             def lookup(self, revision: str) -> dict[str, str]:
                 return {**super().lookup(revision), "tree_native_oid": "d" * 40}
         with self.assertRaises(CollectionError):
-            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=DriftingGit(**vars(self.git)), root_fd=self.fd, sink=MemoryEvidenceSink())
+            collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=DriftingGit(**vars(self.git)), root_fd=self.fd, sink=MemoryEvidenceSink())
 
     def test_raw_blob_transaction_and_receipt_binding(self) -> None:
-        record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+        record = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                                    git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
         collection, receipt = record["collection"], record["receipt"]
         self.assertEqual(collection["parent_revision"], "b" * 40)
@@ -202,16 +203,16 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         receipt_tree = self.git.tree_entries(receipt["revision"])
         self.assertEqual(set(collection_tree), set(COLLECTION_PATHS))
         self.assertEqual(set(receipt_tree) - set(collection_tree), {RECEIPT_PATH})
-        raw = self.git.blob_bytes(receipt_tree[RECEIPT_PATH])
+        raw = self.git.blob_bytes(receipt_tree[RECEIPT_PATH][2])
         value = json.loads(raw)
         self.assertEqual(value["schema"], "immutable_source_collection_receipt_v1")
         self.assertEqual(value["collection_formal_root_revision"], collection["revision"])
         self.assertEqual(value["source_input_artifact_path"], "docs/build/PSM-WMA_immutable_source_input_descriptor_v1.json")
-        self.assertEqual(value["source_input_artifact_blob_native_oid"], collection_tree[value["source_input_artifact_path"]])
+        self.assertEqual(value["source_input_artifact_blob_native_oid"], collection_tree[value["source_input_artifact_path"]][2])
         for prefix in ("collection_artifact", "source_input_artifact", "source_manifest_artifact",
                        "checkpoint_source_descriptor_artifact", "canonical_model_config_artifact"):
             path = value[prefix + "_path"]
-            blob = self.git.blob_bytes(collection_tree[path])
+            blob = self.git.blob_bytes(collection_tree[path][2])
             self.assertEqual(value[prefix + "_sha256"], hashlib.sha256(blob).hexdigest())
             self.assertEqual(value[prefix + "_blob_native_oid"], hashlib.sha1(b"blob " + str(len(blob)).encode() + b"\0" + blob).hexdigest())
         self.assertEqual(self.git.resolve(self.lineage["target_ref"]), receipt["revision"])
@@ -224,7 +225,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         git = FailedPreflight(**deepcopy(vars(self.git)))
         before = git.snapshot()
         with self.assertRaisesRegex(CollectionError, "INJECTED_PREFLIGHT_FAILURE"):
-            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+            collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                               git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
         self.assertEqual(git.snapshot(), before)
         self.assertEqual(git.commits, [])
@@ -242,7 +243,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 before = git.snapshot()
                 sink = MemoryEvidenceSink()
                 with self.assertRaisesRegex(CollectionError, "INJECTED_PARTIAL_COMMIT"):
-                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                                       git=git, root_fd=self.fd, sink=sink)
                 self.assertEqual(git.snapshot(), before)
                 self.assertEqual(git.resolve(self.lineage["target_ref"]), self.lineage["expected_base_root_revision"])
@@ -263,7 +264,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         git = FailedRollback(**deepcopy(vars(self.git)))
         sink = MemoryEvidenceSink()
         with self.assertRaisesRegex(CollectionError, "ROLLBACK_INCOMPLETE"):
-            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+            collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                               git=git, root_fd=self.fd, sink=sink)
         failure = sink.records[0]
         self.assertEqual(failure["execution"]["phase"], "collection")
@@ -276,7 +277,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         del files[self.paths["manifest"]]
         sink = MemoryEvidenceSink()
         with self.assertRaises(CollectionError):
-            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+            collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                               git=self.git, root_fd=SyntheticRootFd(files), sink=sink)
         failure = sink.records[0]
         self.assertEqual(failure["execution"]["phase"], "source_read")
@@ -305,7 +306,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 sink = MemoryEvidenceSink()
                 git = Drift(**deepcopy(vars(self.git)))
                 with self.assertRaises(CollectionError):
-                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                                       git=git, root_fd=Unopened(), sink=sink)
                 failure = sink.records[0]
                 self.assertEqual(failure["execution"]["phase"], "environment" if section == "environment" else "tool_identity")
@@ -323,7 +324,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 before = git.snapshot()
                 sink = MemoryEvidenceSink()
                 with self.assertRaises(CollectionError):
-                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                                       git=git, root_fd=self.fd, sink=sink)
                 failure = sink.records[0]
                 self.assertEqual(failure["execution"]["phase"], phase)
@@ -386,11 +387,11 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             with self.subTest(raw=raw):
                 oid = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
                 self.git.blobs[oid] = raw
-                self.git.trees["a" * 40][COLLECTION_PATHS[1]] = oid
+                self.git.trees["a" * 40][COLLECTION_PATHS[1]] = ("100644", "blob", oid)
                 self.authority["config_blob_native_oid"] = oid
                 self.authority["config_raw_sha256"] = hashlib.sha256(raw).hexdigest()
                 with self.assertRaises(CollectionError):
-                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                                       git=self.git, root_fd=source, sink=MemoryEvidenceSink())
                 self.assertFalse(hasattr(source, "fail_open"))
 
@@ -401,7 +402,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
 
         cases = []
         git = deepcopy(self.git)
-        git.trees["d" * 40][SELECTION_PATH] = self.authority["selection_blob_native_oid"]
+        git.trees["d" * 40][SELECTION_PATH] = ("100644", "blob", self.authority["selection_blob_native_oid"])
         cases.append((git, self.authority, "两个固定"))
         for path in ("README.md", "cosmos-framework"):
             for removed in (True, False):
@@ -409,16 +410,16 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 if removed:
                     del git.trees["a" * 40][path]
                 else:
-                    git.trees["a" * 40][path] = "f" * 40
+                    git.trees["a" * 40][path] = (*git.trees["a" * 40][path][:2], "f" * 40)
                 cases.append((git, self.authority, "两个固定"))
         git = deepcopy(self.git)
         git.parents["a" * 40] = "e" * 40
         cases.append((git, self.authority, "parent"))
         git = deepcopy(self.git)
-        git.trees["a" * 40]["extra.json"] = "e" * 40
+        git.trees["a" * 40]["extra.json"] = ("100644", "blob", "e" * 40)
         cases.append((git, self.authority, "两个固定"))
         git = deepcopy(self.git)
-        git.trees["a" * 40][SELECTION_PATH] = "e" * 40
+        git.trees["a" * 40][SELECTION_PATH] = ("100644", "blob", "e" * 40)
         cases.append((git, self.authority, "tree/blob"))
         git = deepcopy(self.git)
         git.blobs[self.authority["selection_blob_native_oid"]] += b" "
@@ -434,23 +435,87 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         for git, authority, reason in cases:
             with self.subTest(reason=reason):
                 with self.assertRaisesRegex(CollectionError, reason):
-                    collect_synthetic(authority=authority, lineage=self.lineage, paths=self.paths,
+                    collect_synthetic(authority=authority, lineage=self.lineage, selection_request=self.selection_raw,
                                       git=git, root_fd=UnopenedSource(), sink=MemoryEvidenceSink())
                 self.assertEqual(git.commits, [])
+
+    def test_selection_transport_requires_exact_raw_bytes_before_source(self) -> None:
+        class UnopenedSource:
+            def open_regular(self, path):
+                raise AssertionError("transport 未绑定不得读取 source")
+
+        parsed = json.loads(self.selection_raw)
+        variants = (self.selection_raw + b"\n", json.dumps(parsed, indent=2).encode(),
+                    self.selection_raw.replace(b"/", b"\\u002f"))
+        for raw in variants:
+            with self.subTest(raw=raw):
+                self.assertEqual(json.loads(raw), parsed)
+                sink = MemoryEvidenceSink()
+                with self.assertRaisesRegex(CollectionError, "transport 原始字节"):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                      selection_request=raw, git=self.git, root_fd=UnopenedSource(), sink=sink)
+                self.assertEqual(self.git.commits, [])
+                self.assertEqual(sink.records[0]["execution"]["phase"], "authority")
+        with self.assertRaisesRegex(CollectionError, "transport 原始字节"):
+            collect_synthetic(authority=self.authority, lineage=self.lineage,
+                              selection_request=parsed, git=self.git, root_fd=UnopenedSource(), sink=MemoryEvidenceSink())
+        result = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                   selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        self.assertEqual(result["status"], "PASS")
+
+    def test_authority_mode_and_type_drift_precedes_source(self) -> None:
+        class UnopenedSource:
+            def open_regular(self, path):
+                raise AssertionError("mode/type 漂移后不得读取 source")
+
+        for path in ("README.md", "cosmos-framework", SELECTION_PATH, COLLECTION_PATHS[1]):
+            for mode, kind in (("100755", "blob"), ("120000", "blob"), ("040000", "tree")):
+                with self.subTest(path=path, mode=mode):
+                    git = deepcopy(self.git)
+                    oid = git.trees["a" * 40][path][2]
+                    git.trees["a" * 40][path] = (mode, kind, oid)
+                    with self.assertRaises(CollectionError):
+                        collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                          selection_request=self.selection_raw, git=git,
+                                          root_fd=UnopenedSource(), sink=MemoryEvidenceSink())
+                    self.assertEqual(git.commits, [])
+
+    def test_transaction_rejects_mode_only_drift_in_fixed_and_inherited_entries(self) -> None:
+        for phase_paths in (COLLECTION_PATHS, (RECEIPT_PATH,)):
+            for inherited in (False, True):
+                class ModeDrift(TemporaryGitFixture):
+                    def commit(self, paths, parent, blobs):
+                        row = super().commit(paths, parent, blobs)
+                        if paths == phase_paths:
+                            path = "README.md" if inherited else paths[0]
+                            entry = self.trees[row["revision"]][path]
+                            self.trees[row["revision"]][path] = ("100755", entry[1], entry[2])
+                        return row
+
+                with self.subTest(phase=phase_paths, inherited=inherited):
+                    git = ModeDrift(**deepcopy(vars(self.git)))
+                    git.trees["b" * 40]["README.md"] = ("100644", "blob", "e" * 40)
+                    before = git.snapshot()
+                    sink = MemoryEvidenceSink()
+                    with self.assertRaises(CollectionError):
+                        collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                          selection_request=self.selection_raw, git=git, root_fd=self.fd, sink=sink)
+                    self.assertEqual(git.snapshot(), before)
+                    self.assertEqual(sink.records[0]["status"], "FAIL")
 
     def test_authority_delta_preserves_parent_and_postcheck_revalidates(self) -> None:
         git = deepcopy(self.git)
         # 两个路径也允许是实际修改，而不仅是新建；继承项必须完整保留。
-        git.trees["d" * 40].update({SELECTION_PATH: "f" * 40, COLLECTION_PATHS[1]: "f" * 40})
+        git.trees["d" * 40].update({SELECTION_PATH: ("100644", "blob", "f" * 40), COLLECTION_PATHS[1]: ("100644", "blob", "f" * 40)})
         result = collect_synthetic(authority=self.authority, lineage=self.lineage,
-                                   paths=self.paths, git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
+                                   selection_request=self.selection_raw, git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
         self.assertEqual(result["status"], "PASS")
 
         class LateAuthorityDrift(TemporaryGitFixture):
             def commit(self, paths, parent, blobs):
                 row = super().commit(paths, parent, blobs)
                 if paths == (RECEIPT_PATH,):
-                    self.trees["a" * 40]["README.md"] = "f" * 40
+                    self.trees["a" * 40]["README.md"] = ("100644", "blob", "f" * 40)
                 return row
 
         git = LateAuthorityDrift(**deepcopy(vars(self.git)))
@@ -458,7 +523,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         sink = MemoryEvidenceSink()
         with self.assertRaisesRegex(CollectionError, "post-check 失败: authority"):
             collect_synthetic(authority=self.authority, lineage=self.lineage,
-                              paths=self.paths, git=git, root_fd=self.fd, sink=sink)
+                              selection_request=self.selection_raw, git=git, root_fd=self.fd, sink=sink)
         self.assertEqual(git.snapshot(), before)
         self.assertIs(sink.records[0]["post_checks"]["authority"], False)
 
@@ -475,7 +540,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
     def test_canonical_roundtrip_does_not_depend_on_dict_order(self) -> None:
         record = collect_synthetic(authority=json.loads(json.dumps(self.authority, sort_keys=True)),
                                   lineage=json.loads(json.dumps(self.lineage, sort_keys=True)),
-                                  paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+                                  selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
         verify_evidence(json.loads(json.dumps(record, sort_keys=True)))
     def test_handoff_and_retained_rollback_are_one_shot(self) -> None:
         activation = object()
@@ -508,7 +573,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         with self.assertRaises(CollectionError):
             verify_synthetic_rollback({**snapshot, "head_revision": "z" * 40}, snapshot, completed=True)
     def test_fail_phase_nullability_is_checked(self) -> None:
-        record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        record = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
         record["status"] = "FAIL"; record["execution"] = {**record["execution"], "phase": "authority", "failure_code": "AUTHORITY_DRIFT"}; record["source_entries"] = []; record["collection"] = _null_collection(); record["receipt"] = _null_receipt(); record["evidence_sha256"] = _sha({key: value for key, value in record.items() if key != "evidence_sha256"})
         for name in ("authority", "lineage", "handoff", "candidates", "post_checks", "push_publication"):
             record[name] = {key: None for key in record[name]}
@@ -518,7 +583,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         with self.assertRaises(CollectionError): verify_evidence(record)
 
     def test_all_failure_phases_follow_frozen_reachability(self) -> None:
-        passed = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+        passed = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                                    git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
         phases = ("tool_identity", "environment", "authority", "lineage", "source_read",
                   "candidate_construction", "candidate_verification", "collection", "receipt",
@@ -574,7 +639,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                     verify_evidence(bad)
 
     def test_resigned_pass_nested_type_drift_is_rejected(self) -> None:
-        passed = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+        passed = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                                    git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
         for section, field_name, replacement in (("environment", "cpu_only", 1),
                 ("tool", "raw_sha256", "X" * 64), ("handoff", "consumed_once", 1),

@@ -1,5 +1,14 @@
 # 当前协作状态
 
+## 两项 authority 整改前复核第 4 轮（2026-09-12 10:59:50 CST）
+
+- formal root=`08afbed4e1843c23a1cc3542f0184a1898c1772c`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；名册 ChatGPT/MM/Kimi 不变。
+- before_head、advertised V2 和 origin/V2 均为 `ea5d489616f96f191f72025855793f0c5c063972`；fetch/ls-remote/祖先检查成功，新增范围空，ff-only Already up to date。exact review 关键字段独立检索确认 ChatGPT REQUEST_CHANGES（两 HIGH）；Kimi -S -35、MM -S -30 独立 capture 均含同 pair final APPROVE_TO_IMPLEMENT_CPU_STATIC，输出无截断。
+- 已认领 IN_PROGRESS 原任务；本轮开始修改原两工具文件：完整 tree entry 与 selection raw bytes；完成后仅 CPU 测试及新 SHA 重审。无真实 I/O/GPU/训练。未提交。
+- 两项整改已实现：GitTransaction tree_entries 保留 `(mode,type,OID)`，authority pre/post 与 collection/receipt 的继承项比较均使用完整 entry；固定 JSON blob 要求 100644/blob，不允许固定路径 mode/type 变化。selection_request 必须为与 authority blob 逐字节相同的 bytes，删除 caller parsed paths/set 比较通路；source 顺序只从验证后的 authority selection 导出。
+- 直接测试：authority 继承项/固定路径在 OID 不变时 mode/type 漂移；collection/receipt 固定项与继承项 mode-only 漂移及回滚；semantic entries 相同的换行/缩进/Unicode escape transport 均在 source open 前拒绝；exact raw-byte PASS。全部 32/32 stdlib CPU tests PASS，两文件临时目录 py_compile PASS，git diff --check PASS。没有真实 source/cache/checkpoint/network/GPU I/O；rg 调用点仅原两文件。
+- 下一步提交推送同 Gate 重审两 HIGH，不自签关闭。Gate 不扩展，真实执行仍禁止；提交：待本次提交。
+
 ## 用户要求：审核拉取前置硬规则（DOC-GOV-FETCH-FIRST，DONE）
 
 - 原因：已有规则未阻止先进入计时等待、后读取已提交 review。用户要求把先拉取最新结果写死在 AGENTS.md。
