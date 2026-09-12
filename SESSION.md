@@ -3115,3 +3115,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新增独立 immutable v0.7 payload及annex/request，不改v0.6：ordinary route将`commondir`与`config.worktree`均作为前后重验的absent predicate；handoff新增pathname non-symlink/regular/`0600`与reader/target identity重验；first `worktree add` 的任一异常一律`ROLLBACK_INCOMPLETE`，避免在admin residue不可证明时ordinary FAIL。
 - `py_compile` PASS；temporary witness=4/4 PASS；payload raw=`16479` bytes、SHA-256=`c8d6611369d3eef6eb09c8030def5c95df1277099b521d81f94d9fbe29de954a`；`git diff --check` PASS。未运行payload main、未创建真实worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未改child/GPU/训练。下一步提交、推送；native-Git full causal witness仍未完成，故不得申请或执行materialization。
+- 增加真实临时 Git repo 的 `commondir` insertion witness；v0.7 witness现为5/5 PASS，仍仅临时目录，未调用payload `main()`。

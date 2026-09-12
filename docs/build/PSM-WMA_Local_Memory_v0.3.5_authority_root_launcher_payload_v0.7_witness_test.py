@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -16,6 +17,14 @@ SPEC.loader.exec_module(W)
 
 
 class WitnessTest(unittest.TestCase):
+    def test_native_git_commondir_witness(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "repo"
+            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            admin = root / ".git"
+            W.require_commondir_absent(admin)
+            (admin / "commondir").write_text("../common\n")
+            with self.assertRaises(W.WitnessFailure): W.require_commondir_absent(admin)
     def test_path_identity_and_mode(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw); path = root / "backing"; path.write_bytes(b"x"); path.chmod(0o600)
