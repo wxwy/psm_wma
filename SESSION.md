@@ -3122,3 +3122,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root launcher v0.7 审核申请名册（2026-09-13，REVIEW）
 
 - formal=`bf852c233b2c2e31eb33dc859188a9a4b41c50df`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。live Inbox append后=`129760 < 131072` bytes，未触发rollover；仅审static closure，不运行payload且不请求真实materialization。
+- 送达回执：MM与Kimi均完成`send-keys -l`→等待≥1秒→独立Enter→capture；MM显示`Pollinating`，Kimi显示已收到v0.7 exact pair并执行scope/SHA/witness核验。三分钟后完整远端锁定并回收最终verdict。
