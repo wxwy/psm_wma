@@ -1,5 +1,18 @@
 # 当前协作状态
 
+## Authority-root CPU/static implementation design v0.1（2026-09-12，IN_PROGRESS）
+
+- 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_cpu_static_implementation_design_v0.1.md`；仅冻结未来root tool/test allowlist与CPU/static合同，未修改代码、创建JSON/authority commit/ref或运行真实I/O/GPU/训练。
+- 设计冻结单一DI生产算法`prepare_candidate→verify_candidate→publish_candidate`，full tree entry、detached single-parent candidate、固定ref expected-zero CAS、post-CAS relookup/rollback、same-activation one-shot verified capability与`ROLLBACK_INCOMPLETE`。exact seven-key `root_revision` mapping必须直接进入现executor真实authority seam，不允许只测key常量。
+- CPU matrix覆盖canonical bytes/schema、formal root/Gitlink、parent/delta/inherited entry、自报值不可信、ref竞态/postcheck/rollback、capability copy/replay、exact ABI正反例与ambient isolation。预计本阶段只修改本设计、SESSION、TODO；验证仅`git diff --check`，docs-only不运行项目测试。完成后新SHA三方审核。未提交。
+
+## Authority-root design v0.2 第 3 轮推进令牌 / design closure（2026-09-12 12:16:15 CST）
+
+- formal root=`31819169c9430087f5e293cd1dce169ec055b371`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- before_head=`d0b7d067b23c4ac2519856bb1e2afc4336221d85`；fetch后advertised V2与origin/V2=`d99c423a1dfc30629c5bfa6373d6fae8ec197466`；新增`676f674a review: approve 3181916 authority-root ABI remediation`、`d99c423a docs: publish ChatGPT authority-root ABI approval`；祖先检查成功并ff-only。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_authority_root_materialization_binding_design_3181916_93a89ba.md`，完整pair一致，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_MATERIALIZATION_BINDING_CPU_STATIC`，blockers=0。Kimi、MM本轮独立capture同pair相同final。
+- 三方同pair批准，形成只允许下一步root-only materializer/verifier CPU/static implementation design的推进令牌；不授权真实materialization/source I/O/ref CAS/GPU/训练。下一步仅docs-only implementation design。未提交。
+
 ## Authority-root design v0.2 第 2 轮观察（2026-09-12 12:12:04 CST）
 
 - formal root=`31819169c9430087f5e293cd1dce169ec055b371`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
