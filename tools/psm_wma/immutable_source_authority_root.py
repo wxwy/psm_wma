@@ -58,6 +58,11 @@ class PublicationFailure:
     local_created: bool
     remote_created: bool
     rollback: RollbackOutcome | None
+    pre_local: str | None
+    pre_remote: str | None
+    post_local: str | None
+    post_remote: str | None
+    binding_reverified: bool
 
 
 class EvidenceCleanupIncomplete(AuthorityRootError):
@@ -533,8 +538,11 @@ def publish_candidate(
     witness: PublicationWitness | None = None
     post_commit_error: BaseException | None = None
     phase = "pre_publication"
+    pre_local = pre_remote = post_local = post_remote = None
+    binding_reverified = False
     try:
         local_before, remote_before = _observe_refs(git)
+        pre_local, pre_remote = local_before, remote_before
         if local_before is not None or remote_before is not None:
             raise AuthorityRootError("fixed ref 必须预先absent")
         phase = "local_cas"
@@ -547,11 +555,13 @@ def publish_candidate(
         remote_created = True
         phase = "post_publication"
         local_after, remote_after = _observe_refs(git)
+        post_local, post_remote = local_after, remote_after
         if local_after != revision or remote_after != revision:
             raise AuthorityRootError("post-CAS ref drift")
         phase = "binding_reverify"
         if verify_candidate(request, candidate, git).as_mapping() != expected:
             raise AuthorityRootError("committed binding drift")
+        binding_reverified = True
         witness = PublicationWitness(
             revision, request, candidate, binding, object(), _CAPABILITY_TOKEN
         )
@@ -575,12 +585,14 @@ def publish_candidate(
             outcome = rollback_error.outcome
             if failure_reporter is not None:
                 failure_reporter(PublicationFailure(
-                    phase, error, local_created, remote_created, outcome
+                    phase, error, local_created, remote_created, outcome,
+                    pre_local, pre_remote, post_local, post_remote, binding_reverified,
                 ))
             raise
         if failure_reporter is not None:
             failure_reporter(PublicationFailure(
-                phase, error, local_created, remote_created, outcome
+                phase, error, local_created, remote_created, outcome,
+                pre_local, pre_remote, post_local, post_remote, binding_reverified,
             ))
         callback_error = (
             error.callback_error
