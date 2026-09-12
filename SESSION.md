@@ -2592,3 +2592,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`1eb08dea015c1c3c64d504d96a52f02de4665dbd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已append并由ledger=`16e11974ee1b3aa5d50a16efcbf2ccb3621f18fe`推送（ledger非formal target）。
 - MM/Kimi分别以完整文本→至少1秒→独立Enter发送；Enter后 capture 显示申请已离开输入框并进入会话。三方正式 verdict 必须以同pair review/capture回收；三分钟后执行第1轮远端锁定检查。
+
+### Authority-root materialization execution request 设计审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`1eb08dea015c1c3c64d504d96a52f02de4665dbd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before/advertised/origin/local-after=bcb2aab2a35407554af86d693c25b652e73d44af`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact检索命令=`rg -l '1eb08dea015c1c3c64d504d96a52f02de4665dbd' docs/collab/chatgpt/reviews/`，无匹配。
+- MM `mm:0.0` capture same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`；Kimi `kimi:0.0` capture same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`。ChatGPT缺件，无推进令牌；保持REVIEW，三分钟后再次完整锁定检查。
