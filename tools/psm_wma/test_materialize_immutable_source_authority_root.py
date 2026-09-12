@@ -676,6 +676,22 @@ class NativeAuthorityGitTest(unittest.TestCase):
             transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
+    def test_bootstrap_rejects_hostile_local_config_before_git_or_import(self):
+        for payload in (
+            "\n[core]\n fsmonitor = /bin/false\n",
+            "\n[include]\n path = /hostile/config\n",
+        ):
+            with self.subTest(payload=payload), tempfile.TemporaryDirectory() as raw:
+                git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+                config_path = root / ".git/config"
+                config_path.write_text(config_path.read_text() + payload)
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertFalse((root / "evidence.json").exists(), result.stderr)
+                transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+                self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
     def test_bootstrap_rejects_tampered_c_payload_before_evidence(self):
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
