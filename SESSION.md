@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.2第3轮观察（2026-09-12 14:05:27 CST）
+
+- formal root=`dd0ecdf19e3413be4f8dad5e7b069e106f88e8ad`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head`、远端 advertised SHA、`origin/V2` 与 ff-only 后 HEAD 均为`ee7eb9926185b84547a3d42dc06bd2415376d7ca`；完整新增范围为空，fetch/ls-remote/ff-only 均成功。
+- ChatGPT：已对 `docs/collab/chatgpt/reviews/` 作 exact-root 扫描，无匹配正式 review；故尚未回复。MM：capture 含同 pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`。Kimi：capture 含同 pair相同 final。
+- 冻结名册为 ChatGPT、MM（`mm:0.0`）、Kimi（`kimi:0.0`）。三方仅缺 ChatGPT，尚无推进令牌；保持 `REVIEW`、三分钟后继续原生轮询，禁止实现 adapter、真实 I/O、GPU 或训练。未提交。
+
 ## Real adapter design v0.2第2轮观察（2026-09-12 13:59:34 CST）
 
 - formal root=`dd0ecdf19e3413be4f8dad5e7b069e106f88e8ad`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。before_head、advertised/origin V2、ff-only后HEAD均=`d26bd8d0b1c16026fdc9dc043323908a17c6ad1e`，完整新增范围空；ChatGPT reviews/ exact root仍无匹配。
