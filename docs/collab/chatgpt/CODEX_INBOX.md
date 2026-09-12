@@ -795,3 +795,15 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 仅审相对`a18d178877c192fdc9682033acbd36c4184b3639`的两个批准root文件整改：`_commit_exact_guard()`明确区分handoff前A失败与handoff后B失败；handoff后仅在恢复的public guard精确匹配原identity时才返回`False`，否则`PassClosureRecoveryRequired`。新增真实handoff→parked unlink失败→restore失败、callback吞即时异常后outer authority仍粘滞fail-stop的回归；双端refs保留且无rollback delete。`79/79` CPU unittest、py_compile、Ruff、diff-check PASS。该commit因承接远端ChatGPT ledger被安全rebase，formal SHA为上列`313b1dc8...`，代码diff相对`a18d1788...`不变。Gitlink不变。
 
 请求该 exact pair 唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。范围只限temporary CPU/static fixtures；不授权真实source/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root foreign-public-guard recovery remediation（2026-09-12）
+
+- formal root SHA：`ad9e0110494a582e707ed5f041610d4cc40a82df`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮 exact review：`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_313b1dc_93a89ba.md`，ChatGPT=`REQUEST_CHANGES(tools/psm_wma/immutable_source_authority_root.py:135)`（1 HIGH）；MM/Kimi=`APPROVE_TO_CLOSE...`。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+仅审相对`313b1dc81d83646b310d86c58c10d20b453fc739`的两个批准 root CPU/static 文件整改：当 `_commit_exact_guard()` 已明确抛出 `PassClosureRecoveryRequired` 时，`EvidenceCommit.consume_by_unlink()` 无条件先对 authority 置 sticky recovery，再重新抛出；因此 callback 吞掉该异常后，`publish_candidate()` 仍永久 fail-stop，不进入 ordinary rollback。两条 handoff 后 foreign-public-guard 对抗回归均断言 outer recovery、candidate 双端 refs 保留、无 delete。`79/79` CPU unittest、四文件 py_compile、Ruff、diff-check PASS；Gitlink不变。
+
+请求该 exact pair 唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。范围只限temporary CPU/static fixtures；不授权真实source/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
