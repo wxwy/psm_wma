@@ -920,6 +920,13 @@ def _path_identity(path: Path) -> tuple[int, int]:
     return info.st_dev, info.st_ino
 
 
+def _fd_identity(descriptor: int) -> tuple[int, int]:
+    info = os.fstat(descriptor)
+    if not stat.S_ISREG(info.st_mode):
+        raise NativeGitError("evidence owned FD 必须为regular file")
+    return info.st_dev, info.st_ino
+
+
 def _unlink_owned(path: Path, identity: tuple[int, int]) -> bool:
     try:
         info = path.lstat()
@@ -975,22 +982,22 @@ def write_pending_evidence(
         fd = os.open(guard, flags, 0o600)
         guard_owned = True
         try:
+            guard_identity = _fd_identity(fd)
             os.fsync(fd)
         finally:
             os.close(fd)
-        guard_identity = _path_identity(guard)
         _fsync_directory(directory)
         fd = os.open(temporary, flags, 0o600)
         temporary_owned = True
         try:
+            temporary_identity = _fd_identity(fd)
             _write_all(fd, payload)
             os.fsync(fd)
         finally:
             os.close(fd)
-        temporary_identity = _path_identity(temporary)
         os.link(temporary, path)
         final_owned = True
-        final_identity = _path_identity(path)
+        final_identity = temporary_identity
         if not _unlink_owned(temporary, temporary_identity):
             raise EvidenceCleanupIncomplete("evidence temporary identity 漂移")
         temporary_owned = False
@@ -1045,11 +1052,11 @@ def write_failure_evidence(path: Path, record: Mapping[str, object]) -> None:
         descriptor = os.open(temporary, flags, 0o600)
         owned = True
         try:
+            temporary_identity = _fd_identity(descriptor)
             _write_all(descriptor, payload)
             os.fsync(descriptor)
         finally:
             os.close(descriptor)
-        temporary_identity = _path_identity(temporary)
         os.link(temporary, path)
         path_info = path.lstat()
         if not stat.S_ISREG(path_info.st_mode) or verify_evidence_bytes(
