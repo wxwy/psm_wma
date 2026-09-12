@@ -3050,3 +3050,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`11950c953d7c3e781f821ab648d45af83e60d340`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before=c8b681f479aa27c799e00c051363b4275efbf47a`；fetch成功；advertised/origin/local-after均为`c8b681f479aa27c799e00c051363b4275efbf47a`；新增范围为空；`merge --ff-only`=`Already up to date`。
 - ChatGPT exact-pair检索无匹配正式review；Kimi/MM pane仍为同 pair `REQUEST_CHANGES(...annex_v0.4.md:35)`与`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。无推进令牌，Gate保持 REVIEW；禁止整改或执行。
+
+### Authority-root launcher procedure v0.4 审核观察凭证 #34（2026-09-13 06:39:06 CST，REVIEW）
+
+- formal=`11950c953d7c3e781f821ab648d45af83e60d340`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。本轮 `before_head=0975739c54fb61d900a9181aaf1b164f4698cfdc`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2` advertised=`0975739c54fb61d900a9181aaf1b164f4698cfdc`，与`origin/V2`一致；`before_head..origin/V2`新增范围为空；`git merge-base --is-ancestor`返回0，`git merge --ff-only origin/V2`=`Already up to date`，本地after=`0975739c54fb61d900a9181aaf1b164f4698cfdc`。
+- ChatGPT独立精确检索命令为`rg -l '11950c953d7c3e781f821ab648d45af83e60d340' docs/collab/chatgpt/reviews`及root/child 2 KiB邻接检索，均无匹配；现存`...launcher_17767c0_93a89ba.md`不匹配本formal root，不能采用。Kimi=`kimi:0.0`成功capture：same-pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.4.md:35)`；MM=`mm:0.0`成功capture：same-pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。ChatGPT尚无exact-pair正式review，故无推进令牌，Gate保持REVIEW；禁止整改、materialization、真实I/O、child、GPU与训练。

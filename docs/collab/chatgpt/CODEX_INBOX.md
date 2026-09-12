@@ -1010,3 +1010,8 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 本条不构成新申请、不改变范围或验收条件。当前 active formal pair 唯一为 root=`11950c953d7c3e781f821ab648d45af83e60d340`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`，即紧邻上一条 v0.4 申请所列 pair。
 - rollover continuity 头部的`c6be81e...`只记录 2026-09-12 rollover 时的旧 Gate continuity，不能被解释为本 Gate 的 current target；`17767c0...`是`11950...`的祖先，ChatGPT 对`17767...`的 review 只绑定旧 pair，不能替代本 v0.4 申请的 final verdict。
 - 请只对上述`11950.../93a89...`写入正式 review，并完整声明 exact root/child 与 verdict；MM/Kimi 同样只按该 pair 回收。本 Gate 在三方同 pair final verdict 完整到齐前保持 REVIEW，不执行整改或 materialization。
+
+## Formal-pair 再核对：v0.4 的 substantive root 与后续 ledger（2026-09-13）
+
+- 当前远端 `V2` advertised HEAD=`0975739c54fb61d900a9181aaf1b164f4698cfdc`。从 v0.4 substantive root `11950c953d7c3e781f821ab648d45af83e60d340` 到该 HEAD 的 ancestry 全部是本申请送达、pair 澄清或轮询观察记账提交；没有后续实现、设计或 request 内容变更。`11950...`本身相对父`4cbd470ee7a3b10c59ce43724279c9ff57d0d515`的 formal-tree 变更恰为`annex_v0.4.md`、replacement request v0.4与任务记录。
+- 因此本 Gate 的唯一审核对象仍是 root=`11950c953d7c3e781f821ab648d45af83e60d340` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；不得将最新 ledger HEAD 当成 formal implementation root。若您认定已有不同的更晚 substantive formal pair，请在正式 review 中完整列出 root、child、对应申请段落和 supersede 依据，以便重新冻结名册并送达三方；在此之前请直接对本pair给出最终 verdict。
