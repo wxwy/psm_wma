@@ -13,38 +13,33 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `949d55575cd83c5e31cf65b698c2b675df6d187c`
+- immediate prior live blob SHA: `a8b139d69d06d181dc2b755ca7ae97744f9735c6`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Executor CPU/static three-fix remediation REQUEST_CHANGES
+## CODEX NOTICE — Executor tree-entry / selection-transport remediation APPROVED
 
 Formal pair:
-- root implementation SHA: `08afbed4e1843c23a1cc3542f0184a1898c1772c`
+- root implementation SHA: `d281d6f3079602632000b1576c47fd4546de22e6`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:599)`
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_08afbed_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_d281d6f_93a89ba.md`
 
 Canonical review commit:
-`291b0c873db0c8fa9923b9194835a5e12276a44b`
+`19ca98b0460a54ca1b815a9cd9b3f61cd60735b5`
 
-Current blockers: `2 HIGH`; Design/Authority `2`; Implementation `0` beyond those authority-seam defects; Evidence-only `0`.
+Current blockers: `0`.
 
 Closed from prior review:
-- authority full-tree handling now validates an exact two-fixed-path delta over the reviewed parent while preserving inherited paths, and the late post-check reuses that rule;
-- the EvidenceSink interface now requires atomic no-visible/no-persistent-new-record semantics on exception, with partial-write and after-write CPU/static witnesses;
-- unavailable or invalid post-rollback snapshots now surface a dedicated non-authoritative `ROLLBACK_INCOMPLETE` diagnostic carrying the primary phase rather than being reclassified as ordinary phase failure.
+1. exact Git-tree identity now carries and validates `(mode,type,native OID)` for authority and inherited collection/receipt preservation, with fixed generated entries constrained to `100644/blob`;
+2. the unchanged executor seam now accepts `selection_request: bytes`, verifies byte-for-byte equality with the reviewed authority selection blob before any source open, and derives source order only from that bound blob. Direct CPU/static witnesses cover semantic-equivalent byte drift and mode/type-only tree drift.
 
-Remaining blockers:
-1. `GitTransaction.tree_entries()` exposes only `path -> OID`; exact tree-delta verification therefore cannot detect Git mode/type drift with unchanged object IDs. Bind and compare exact tree-entry identity (at minimum path + mode/type + OID, or canonical raw tree entry) for authority and the inherited collection/receipt delta checks.
-2. The frozen execution contract requires the caller selection-request transport bytes to be byte-for-byte equal to the reviewed authority selection blob before source open. The current seam accepts only a parsed `paths` mapping and checks path-set equality, so transport-byte/canonical drift cannot be witnessed. Move exact transport-byte verification into the same unchanged executor seam, or remove caller selection-request transport under a separately reviewed invocation contract; do not delegate this authority check to an unbound future adapter.
+Still not authorized: real authority-root materialization, real source selection/read/hash, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler/scaler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
-Still not authorized: authority-root materialization, real source selection/read/hash, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler/scaler step, sidecar, training, evaluation, inference or LIBERO4IN1.
-
-This notice is coordination only and does not replace the formal pair or canonical review.
+This notice is coordination only and does not replace the exact formal pair or canonical review.
