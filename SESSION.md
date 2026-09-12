@@ -3086,3 +3086,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`80132197c29bd139e3e05ce6deb3cbcf8f525de6`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结审核名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已append live Inbox（append后`129055 < 131072` bytes）并由ledger=`e005d7a917871edc30013a5724d1b889e4c5b564`推送；该ledger不是formal target。
 - 仅审v0.6 docs-only payload/annex/request；请求`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`。MM/Kimi送达回执和首轮三方完整观察尚未产生；此前不得materialization、真实I/O、child、GPU或训练。
+- 送达回执：MM=`mm:0.0`于消息完整写入后等待≥1秒、独立Enter；第一次capture仍见输入故立即重按Enter，第二次capture显示消息已进入会话并处于`Drizzling`处理（不把旧v0.5 verdict计入本pair）。Kimi=`kimi:0.0`同样完整写入→等待≥1秒→独立Enter→capture，显示v0.6 exact-pair完整申请已进入消息流且返回空输入框。两pane的最终 verdict 仍须由下一轮完整观察回收。
