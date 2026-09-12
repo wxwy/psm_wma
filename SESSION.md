@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root synthetic implementation closure（2026-09-12，DONE）
+
+- formal root=`0b18620f84959bf25379f3c227b796edc1097efd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_authority_root_cpu_static_implementation_0b18620_93a89ba.md`、MM、Kimi均给出`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION`，blockers=0。
+- 关闭范围仅synthetic CPU/static；47/47 tests、Ruff/py_compile/diff-check证据有效。不授权真实JSON/authority commit/ref/source/remote I/O、collection/publication、GPU/训练。
+- 下一步认领独立`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST-DESIGN`：只读发现并冻结raw-byte inputs、工具/解释器identity、commit metadata、fixed-ref expected-zero、argv/evidence/rollback；预计新增一个docs/build设计并更新SESSION/TODO，不执行真实materialization。未提交。
+
 ## Authority-root consumer-side第三次整改（2026-09-12 13:32:30 CST，REVIEW）
 
 - formal `ae52cb313cfafda4eedad600501030f4dc01297c`/child `93a89ba61306d840a008813f62f26a34d54850f4`三方意见齐：ChatGPT exact review给出1 HIGH，MM/Kimi同pair批准。HIGH为真实collection consumer仍用单parent值且未拒绝formal parent预含fixed path。
