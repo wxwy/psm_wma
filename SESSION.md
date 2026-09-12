@@ -6,6 +6,14 @@
 - 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`；MM `mm:0.0`；Kimi `kimi:0.0`。同 Gate 累计重审 5 HIGH；披露 sink/不可读取 snapshot 边界，不宣称全关闭，不新增 Gate。
 - Inbox append 前 38026 bytes，追加后低于 128 KiB；申请先提交/推送再向两个 pane 发送。当前仅准备，不构成送达回执；新 pair 三方 final 前禁止继续修改审核对象和真实执行。
 
+### 送达回执（2026-09-12 10:06:33 CST）
+
+- formal root=`1db0d539fd3d52fa7d521962a47204b578e0f94f`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。冻结名册不变。
+- ChatGPT：已送达，canonical Inbox 40406 bytes，申请 ledger=`387a76757dadc986883ec31783ee91417ad281fe` 已提交并成功推送 V2。本回执不推断其 verdict。
+- Kimi `kimi:0.0`：已送达；完整消息为累计 5 HIGH 复审、26 tests、边界披露和同 pair verdict 请求。`send-keys -l` 后原生等待至少 1 秒，独立 Enter 后未截断 capture 显示消息在会话中且输入框为空，进入处理。
+- MM `mm:0.0`：已送达；同一消息、写入后至少 1 秒独立 Enter，首 capture 仍显示输入框，因此未当作送达；再次间隔至少 1 秒独立 C-m 后 capture 显示消息在会话中，`Verifying child gitlink` 和新命令在运行，输入框为空。
+- Gate=REVIEW，等待三方 exact pair final，禁止整改审核对象或真实执行。监控频率存在指令冲突：本轮用户提供的 AGENTS 文本为 60 分钟，磁盘 AGENTS/skill 为 3 分钟；按用户最新指令优先，下一定时检查不早于 11:06:33 CST。用户提示审核回复时仍立即检查。未创建 shell/tmux 伪监控，不声称已有独立后台定时器。
+
 ## 整改复核第 1 轮（2026-09-12 10:00 CST）
 
 - formal root=`fb9c5e04e811865247e2ed44072af59acc8b93c9`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
