@@ -3099,3 +3099,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal=`80132197c29bd139e3e05ce6deb3cbcf8f525de6`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=6d4c344727ae9f252173754d52992ec52532ca52`；fetch成功；advertised/origin=`625236999fc83ed059755c47a8b38579c428740d`一致；新增完整为`5cfbb337 chatgpt: review authority root launcher v0.6 8013219`、`62523699 chatgpt: record launcher v0.6 review 8013219`；祖先判定=0、ff-only成功，本地after=`625236999fc83ed059755c47a8b38579c428740d`。
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_materialization_execution_request_launcher_v06_8013219_93a89ba.md`，same-pair final=`REQUEST_CHANGES(...launcher_payload_v0.6.py:131)`：first add失败窗口、ordinary `.git/commondir`未绑定、backing pathname/mode identity缺失、annex承诺的causal witnesses缺失。Kimi=`kimi:0.0`成功capture，same-pair final=`REQUEST_CHANGES(...launcher_payload_v0.6.py:131)`：同意add失败窗口，并阻断witness缺失；MM=`mm:0.0`成功capture，same-pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。
 - 三方final齐全且含REQUEST_CHANGES，形成仅限同Gate docs-only整改令牌：修复add失败终态、commondir、backing path/mode并补全temporary causal witnesses；删除inert错误base64副本。仍不授权materialization、真实I/O、child、GPU或训练。
+
+### Authority-root launcher payload v0.7 整改准备（2026-09-13，IN_PROGRESS）
+
+- 按v0.6 #2整改令牌新增`...v0.7_remediation_plan.md`与`...v0.7_temporary_witness_plan.md`，将四个HIGH拆为无歧义实现/验收项：first-mutation boundary、ordinary `.git/commondir` absence、writer/path/reader/target identity+0600、完整temporary causal witness矩阵；目标为后续新 immutable v0.7 payload/test，而非运行v0.6。
+- 未运行payload、未创建真实worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未改child/GPU/训练。下一步：在该docs-only令牌范围内写入v0.7 payload及temporary witness，再作静态验证。
