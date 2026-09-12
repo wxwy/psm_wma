@@ -2334,4 +2334,5 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - Gate=`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`。在既有`0b77d2d1`基础上仅修改批准的四个 root tooling/test 文件：`PublicationFailure`/`RollbackOutcome`保留每个 endpoint 的 value 与 read-error；CLI serializer 将其规范化为`absent`、`revision`或`unreadable` observation，覆盖此前不能落盘的`pre_publication`及读取失败的 post/final witness。
 - CPU temporary-Git 子进程验证覆盖 pre-publication、local/remote CAS、post-publication、binding reverify、evidence-write，另有 persistent post read failure 产生并验证`ROLLBACK_INCOMPLETE`；根 unittest=53/53 PASS，`py_compile`、Ruff、`git diff --check` PASS。未创建真实 candidate/ref/source/collection/evidence，未访问真实远端、GPU、模型、数据或训练。
-- formal root=`2249fdd3377f82d037d85b7f3ed854cf90472303`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；申请已 append 至 live Inbox，冻结名册为 ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。待将同一文本以发送后回读方式送达 MM/Kimi，并按三分钟完整远端锁定轮询三方。ledger/session 更新未提交。
+- formal root=`2249fdd3377f82d037d85b7f3ed854cf90472303`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；申请已 append 至 live Inbox，冻结名册为 ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。
+- 送达回执（2026-09-12 CST）：MM/Kimi均已按完整文本→至少1秒→独立Enter发送，并独立capture。MM capture 显示完整申请进入会话历史、无未发送输入状态；Kimi capture 显示完整引用申请及`thinking`状态。ChatGPT Inbox条目为其送达回执；正式结果只读 exact-pair `reviews/`。下一步三分钟后执行第1轮完整远端锁定观察；本记录未提交。
