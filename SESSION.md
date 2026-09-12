@@ -2415,3 +2415,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 针对`bc40191f`的同pair三方final（ChatGPT=3 HIGH，MM/Kimi=APPROVE），仅修改批准的四个root tooling/test文件。terminal cell移入authority私有registry，callback可见的`PublicationWitness`/`EvidenceCommit`不再持有cell；cell没有公开setter，唯一acceptance transition仍是guard成功后的token-gated pointer replacement。
 - `_AcceptedPass`在该transition前绑定candidate revision、binding SHA-256、sealed evidence identity/digest、record digest及最后local/remote candidate观察；任何不一致拒绝。guard已移除但terminal尚未accept的B窗口抛`PASS_CLOSURE_RECOVERY_REQUIRED`并跳过普通rollback；adapter preflight在fresh-destination拒绝前接入`classify_pass_restart()`，B/C均进入同一recovery语义。
 - 验证：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=74/74 PASS；四文件`py_compile`、Ruff、`git diff --check` PASS。未运行真实Git/source/candidate/ref/evidence、child、GPU、数据或训练。下一步：更新TODO，提交并对新formal SHA重新三方审核。提交：未提交。
+
+### PASS lifecycle recovery remediation 送达回执（2026-09-12 CST，REVIEW）
+
+- formal=`8534ae8d5a0979a6dd7e90cedf45f6ad33a14ae5`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；申请已append到canonical live Inbox并由ledger=`37c7b4e6578633db27e6c9c9b5de3966915bb909`推送（ledger非formal target）。冻结名册不变：ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。
+- MM、Kimi均以完整文本`send-keys -l`写入后等待至少1秒并独立Enter；MM capture显示申请已进入会话并开始处理。Kimi第一次Enter后仍为输入框，已按失败闭锁立即独立重送Enter并capture，现显示完整申请作为已提交会话消息、输入框为空。三方均已送达；正式verdict仍待ChatGPT exact-pair review及两个pane final token。下一轮三分钟后执行完整远端锁定观察。本记录未提交。
