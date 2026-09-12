@@ -13,41 +13,40 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `7aa57b6dedc2f6ce98a58b3b46b017a80a4fd5dc`
+- immediate prior live blob SHA: `371e194865e44cbcdfc674cc096d9ec2e767e1dd`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority Root One-shot Materialization Execution Request REQUEST_CHANGES
+## CODEX NOTICE — Authority-root Execution Authority Implementation Design REQUEST_CHANGES
 
 Formal pair:
-- root request SHA: `d3cd3c9b26cea021814c9f48bcd864183a811293`
+- root design SHA: `569a34d50e5106f982c3ed111171d67ea3344bc9`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-EXECUTION-AUTHORITY-IMPLEMENTATION-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.1.md:36)`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_execution_authority_implementation_design_v0.1.md:53)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_materialization_execution_request_d3cd3c9_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_implementation_design_569a34d_93a89ba.md`
 
 Canonical review commit:
-`534787895dd32687d4b14f2e0c7bdadd97af84af`
+`bb72384f74dc1ad6851ba2a03f6afc8ab49b7376`
 
-Current blockers: `3 HIGH`.
+Current blockers: `2 HIGH`.
 
 Closure/progress:
-- previous HIGH-1 is CLOSED: this formal target is now the actual one-shot request and asks directly for `APPROVE_TO_MATERIALIZE...`; no extra request-design Gate remains;
-- previous HIGH-2 is PARTIALLY CLOSED: the request now enumerates adapter/authority/collection/audit as the transitive project import closure and gives exact formal-tree blob identities.
+- the previous one-shot completeness blocker is correctly deferred: the old `d3cd3c9...` request remains unapproved, and this Gate is a permitted fresh root-tooling implementation design rather than an attempt to execute the incomplete request;
+- the design correctly extends the planned ABI from two modules to adapter/authority/collection/audit, removes `origin` as execution authority, and introduces bootstrap/Git isolation fields;
+- the already-closed `ad9e011...` CPU/static production pair is not reopened by this docs-only verdict.
 
-Remaining blockers:
+Remaining HIGHs:
 
-1. **The exact pair is still not an immutable executable request.** The document itself says execution-time review must later fill commit metadata, sanitized-env bytes/hash, bootstrap raw SHA, argv SHA, remote identity SHA and exact paths; the exact bootstrap source/full command/FD inheritance are not present. Exact-pair approval cannot authorize values supplied after verdict. Next formal target must contain every execution-significant byte/value with no post-approval substitution.
+1. **Bootstrap identity is still declarative rather than causally observed.** §4 freezes a bootstrap digest/argv digest and requires parity with evidence/fixture values, but does not define how the running Python process independently observes the exact `-c` source bytes that actually executed. A caller-declared hash propagated into Evidence-v1 is not a direct runtime witness. Freeze one process-level observation rule (for example an exact Python-3.11 `sys.orig_argv` projection, or another explicitly frozen stdlib source), hash the observed `-c` bytes and observed argv before any project import/Git/evidence action, compare them with the approved values, carry the observed digests into the typed invocation/Evidence-v1, and add a direct changed-`-c` adversarial test proving pre-import rejection.
 
-2. **The requested bootstrap/transitive-closure authority is not representable by the closed production CLI/Evidence ABI.** `_parser()` accepts module identities only for adapter + authority-module; Evidence-v1 exact keys likewise contain only those two and no bootstrap identity. The request asks for four module identities/bootstrap binding. `argv_sha256` hashes adapter `sys.argv[1:]` and does not intrinsically bind the `python -c` bootstrap source. Either reopen the approved four-file root tooling scope in a fresh implementation pair to bind bootstrap+transitive identities directly, or provide an equally causal typed pre-import authority consumable by the unchanged adapter. Add a direct adversarial transitive-drift witness before real execution.
+2. **Native Git isolation is not yet an exact contract and the planned tests are too synthetic.** §5 says fixed `-c` options/local-config isolation but does not enumerate the effective command prefix/config admission or endpoint normalization rules; §6 explicitly limits tests to fixture/injected subprocess behavior. That cannot directly prove native Git semantics such as replace refs, `url.*.insteadOf`, local config, and actual `ls-remote`/`push --force-with-lease`. Freeze the exact env/command/config/endpoint contract and require direct CPU/static tests against temporary local repositories plus a temporary local bare remote (never project origin), including replace/config/alias adversaries and real CAS create/delete. Injected seams may supplement but not replace these witnesses.
 
-3. **Real Git destination/object semantics are not closed.** The request says `--remote=origin`, while production evidence computes `remote_identity_sha256 = sha256(transaction.remote.encode())`, so it attests only the alias `origin`, not the endpoint used by `ls-remote`/push. `NativeAuthorityGit` also lacks the no-replace/config-isolation environment used by the project source-audit tool, so formal-root object semantics remain ambient for real execution. Bind the actual transport endpoint and make the production Git path fail-closed against replacement/config drift, with direct CPU/static adversarial witnesses.
-
-Formal root/Gitlink was independently verified; child commit is reachable. The formal delta is docs/status only. No real materialization/source I/O/ref/evidence mutation, child/runtime change, GPU, training, evaluation, inference or LIBERO4IN1 is authorized.
+Scope reminder: this verdict does not authorize modifying the two root tooling files, real materialization, source/checkpoint I/O, candidate/ref/evidence mutation, collection/receipt, child/runtime changes, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the exact formal pair or canonical review.
