@@ -1011,6 +1011,12 @@ tool.NativeAuthorityGit.remote_ref = failing
         record = _pass_evidence()
         raw = json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
         self.assertEqual(verify_evidence_bytes(raw)["status"], "PASS")
+        remote_drift = deepcopy(record)
+        remote_drift["execution"]["remote_identity_sha256"] = _sha("foreign-remote")
+        with self.assertRaises(NativeGitError):
+            verify_evidence_bytes(
+                json.dumps(remote_drift, sort_keys=True, separators=(",", ":")).encode()
+            )
         record["publication"]["remote_owned"] = False
         broken = _redigest(record)
         with self.assertRaises(NativeGitError):
@@ -1191,6 +1197,34 @@ tool.NativeAuthorityGit.remote_ref = failing
                 side_effect=OSError("fixture"),
             ), self.assertRaises(NativeGitError):
                 write_pending_evidence(path, _pass_evidence(), None, Commit())
+
+    def test_production_git_view_ignores_native_replace_ref(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "replace.index", COMMIT_METADATA)
+            parent = transaction._run("rev-parse", "HEAD")
+            replacement = transaction.create_detached_commit(parent, {"replace-proof": b"foreign"})
+            subprocess.run([str(git), "-C", str(root), "replace", parent, replacement], check=True)
+            self.assertNotIn("replace-proof", transaction.tree_entries(parent))
+            visible = subprocess.run(
+                [str(git), "-C", str(root), "ls-tree", "-r", parent],
+                check=True, stdout=subprocess.PIPE, text=True,
+            ).stdout
+            self.assertIn("replace-proof", visible)
+
+    def test_native_git_environment_does_not_inherit_hostile_parent_config(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "environment.index", COMMIT_METADATA)
+            with patch.dict(os.environ, {
+                "GIT_CONFIG_GLOBAL": "/hostile/global",
+                "GIT_CONFIG_SYSTEM": "/hostile/system",
+                "GIT_REPLACE_REF_BASE": "refs/replace/hostile",
+            }):
+                self.assertEqual(transaction._run("rev-parse", "HEAD"), transaction._run("rev-parse", "HEAD"))
+            self.assertNotIn("GIT_REPLACE_REF_BASE", transaction.env)
+            self.assertEqual(transaction.env["GIT_CONFIG_GLOBAL"], "/dev/null")
+            self.assertEqual(transaction.env["GIT_CONFIG_SYSTEM"], "/dev/null")
 
     def test_temporary_index_commit_and_exact_ref_cas(self):
         git = Path(shutil.which("git") or "")
