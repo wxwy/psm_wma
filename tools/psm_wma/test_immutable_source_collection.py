@@ -7,7 +7,7 @@ import pickle
 from dataclasses import replace
 import stat
 from copy import deepcopy
-from tools.psm_wma.immutable_source_collection import EntryStat, SELECTION_PATH, derive_candidates, _source_handoff
+from tools.psm_wma.immutable_source_collection import EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff
 from tools.psm_wma.immutable_source_collection import COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
 class ImmutableSourceCollectionTest(unittest.TestCase):
@@ -43,7 +43,9 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         self.git = TemporaryGitFixture(
             {"refs/heads/fixture": "b" * 40},
             parents={"a" * 40: "d" * 40},
-            trees={"a" * 40: {SELECTION_PATH: oid(selection_raw), COLLECTION_PATHS[1]: oid(self.config_raw)}, "b" * 40: {}},
+            trees={"a" * 40: {"README.md": "e" * 40, "cosmos-framework": "c" * 40,
+                             SELECTION_PATH: oid(selection_raw), COLLECTION_PATHS[1]: oid(self.config_raw)},
+                   "d" * 40: {"README.md": "e" * 40, "cosmos-framework": "c" * 40}, "b" * 40: {}},
             blobs={oid(selection_raw): selection_raw, oid(self.config_raw): self.config_raw},
             gitlinks={"b" * 40: "c" * 40},
         )
@@ -92,6 +94,57 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         bad_gitlink = deepcopy(self.git)
         bad_gitlink.gitlinks = {"b" * 40: "f" * 40}
         with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=bad_gitlink, root_fd=self.fd, sink=MemoryEvidenceSink())
+
+    def test_atomic_sink_partial_and_after_write_leave_no_stale_pass(self) -> None:
+        for stage in ("partial_write", "after_write"):
+            with self.subTest(stage=stage):
+                git = deepcopy(self.git)
+                before = git.snapshot()
+                sink = MemoryEvidenceSink(failure_stage=stage)
+                with self.assertRaisesRegex(CollectionError, "EVIDENCE_SINK_FAILED"):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                      paths=self.paths, git=git, root_fd=self.fd, sink=sink)
+                self.assertEqual(git.snapshot(), before)
+                self.assertEqual(sink.records, [])
+                self.assertEqual(len(git.commits), 2)
+                sink.failure_stage = None
+                record = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                           paths=self.paths, git=git, root_fd=self.fd, sink=sink)
+                sink.failure_stage = stage
+                with self.assertRaises(OSError):
+                    sink.emit(record)
+                self.assertEqual(sink.records, [record])
+
+    def test_unavailable_rollback_snapshot_is_non_authoritative_fail_stop(self) -> None:
+        for invalid_snapshot in (False, True):
+            for restore_raises in (False, True):
+                class UnavailableSnapshot(TemporaryGitFixture):
+                    def commit(self, paths, parent, blobs):
+                        super().commit(paths, parent, blobs)
+                        raise OSError("合成 commit 后失败")
+
+                    def rollback(self, snapshot):
+                        self.after_unavailable = True
+                        if restore_raises:
+                            raise OSError("合成 restore 失败")
+                        return super().rollback(snapshot)
+
+                    def snapshot(self):
+                        if getattr(self, "after_unavailable", False):
+                            if invalid_snapshot:
+                                return {"unavailable": True}
+                            raise OSError("合成 snapshot 无法读取")
+                        return super().snapshot()
+
+                with self.subTest(invalid=invalid_snapshot, restore_raises=restore_raises):
+                    git = UnavailableSnapshot(**deepcopy(vars(self.git)))
+                    sink = MemoryEvidenceSink()
+                    with self.assertRaisesRegex(RollbackUnavailable, "^ROLLBACK_INCOMPLETE$") as raised:
+                        collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                          paths=self.paths, git=git, root_fd=self.fd, sink=sink)
+                    self.assertEqual(raised.exception.primary_phase, "collection")
+                    self.assertEqual(sink.records, [])
+                    self.assertEqual(len(git.commits), 1)
     def test_descriptor_and_digest_drift_fail(self) -> None:
         files = dict(self.fd.files); files[self.paths["checkpoint"]] = SyntheticEntry(b"x", reads=[b"x", b"y"])
         with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=SyntheticRootFd(files), sink=MemoryEvidenceSink())
@@ -348,6 +401,17 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
 
         cases = []
         git = deepcopy(self.git)
+        git.trees["d" * 40][SELECTION_PATH] = self.authority["selection_blob_native_oid"]
+        cases.append((git, self.authority, "两个固定"))
+        for path in ("README.md", "cosmos-framework"):
+            for removed in (True, False):
+                git = deepcopy(self.git)
+                if removed:
+                    del git.trees["a" * 40][path]
+                else:
+                    git.trees["a" * 40][path] = "f" * 40
+                cases.append((git, self.authority, "两个固定"))
+        git = deepcopy(self.git)
         git.parents["a" * 40] = "e" * 40
         cases.append((git, self.authority, "parent"))
         git = deepcopy(self.git)
@@ -368,10 +432,35 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         cases.append((self.git, {**self.authority, "selection_path": "wrong.json"}, "固定路径"))
         cases.append((self.git, {**self.authority, "selection_raw_sha256": "e" * 64}, "raw bytes"))
         for git, authority, reason in cases:
-            with self.subTest(reason=reason), self.assertRaisesRegex(CollectionError, reason):
-                collect_synthetic(authority=authority, lineage=self.lineage, paths=self.paths,
-                                  git=git, root_fd=UnopenedSource(), sink=MemoryEvidenceSink())
-            self.assertEqual(git.commits, [])
+            with self.subTest(reason=reason):
+                with self.assertRaisesRegex(CollectionError, reason):
+                    collect_synthetic(authority=authority, lineage=self.lineage, paths=self.paths,
+                                      git=git, root_fd=UnopenedSource(), sink=MemoryEvidenceSink())
+                self.assertEqual(git.commits, [])
+
+    def test_authority_delta_preserves_parent_and_postcheck_revalidates(self) -> None:
+        git = deepcopy(self.git)
+        # 两个路径也允许是实际修改，而不仅是新建；继承项必须完整保留。
+        git.trees["d" * 40].update({SELECTION_PATH: "f" * 40, COLLECTION_PATHS[1]: "f" * 40})
+        result = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                   paths=self.paths, git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        self.assertEqual(result["status"], "PASS")
+
+        class LateAuthorityDrift(TemporaryGitFixture):
+            def commit(self, paths, parent, blobs):
+                row = super().commit(paths, parent, blobs)
+                if paths == (RECEIPT_PATH,):
+                    self.trees["a" * 40]["README.md"] = "f" * 40
+                return row
+
+        git = LateAuthorityDrift(**deepcopy(vars(self.git)))
+        before = git.snapshot()
+        sink = MemoryEvidenceSink()
+        with self.assertRaisesRegex(CollectionError, "post-check 失败: authority"):
+            collect_synthetic(authority=self.authority, lineage=self.lineage,
+                              paths=self.paths, git=git, root_fd=self.fd, sink=sink)
+        self.assertEqual(git.snapshot(), before)
+        self.assertIs(sink.records[0]["post_checks"]["authority"], False)
 
     def test_handoff_rejects_changed_candidate_bytes(self) -> None:
         activation = object()

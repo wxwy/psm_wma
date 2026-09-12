@@ -5,6 +5,7 @@ import hashlib
 import json
 import stat
 from dataclasses import dataclass, field
+from threading import Lock
 from typing import Mapping, Protocol
 
 from tools.g0.audit_r09_b_ttt_root_gitlink_authority import AuditFailure, validate_config
@@ -24,6 +25,12 @@ EVIDENCE_KEYS = frozenset(("schema", "status", "execution", "tool", "environment
 CANDIDATE_KEYS = ("input_descriptor_sha256", "manifest_sha256", "identifier_sha256", "checkpoint_descriptor_sha256", "collection_sha256", "config_sha256")
 
 class CollectionError(ValueError): pass
+class RollbackUnavailable(CollectionError):
+    """无可重算 after snapshot；仅异常诊断，绝不是 canonical evidence authority。"""
+    def __init__(self, primary_phase: str) -> None:
+        super().__init__("ROLLBACK_INCOMPLETE")
+        self.primary_phase = primary_phase
+
 def _canonical(value: object) -> bytes: return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False).encode()
 def _digest(value: bytes) -> str: return hashlib.sha256(value).hexdigest()
 def _sha(value: object) -> str: return _digest(_canonical(value))
@@ -66,6 +73,11 @@ class GitTransaction(Protocol):
     def lookup(self, revision: str) -> Mapping[str, str]: ...
     def rollback(self, snapshot: Mapping[str, object]) -> Mapping[str, object]: ...
 class EvidenceSink(Protocol):
+    """原子提交：正常返回代表记录已接受；抛异常保证无新增可见/持久记录。
+
+    实现必须隔离未提交写入，并在失败返回前撤销它们。先发布 PASS 再抛异常
+    而不撤销的适配器违反此接口，不能用于 controlled execution。
+    """
     def emit(self, record: Mapping[str, object]) -> None: ...
 
 @dataclass
@@ -207,11 +219,34 @@ class TemporaryGitFixture:
         self.revisions = {**self.revisions, self.state["target_ref"]: self.state["target_ref_revision"]}
         return self.snapshot()
 class MemoryEvidenceSink:
-    def __init__(self) -> None: self.records: list[dict[str, object]] = []
+    def __init__(self, failure_stage: str | None = None) -> None:
+        self._records: list[dict[str, object]] = []
+        self._lock = Lock()
+        self.failure_stage = failure_stage
+
+    @property
+    def records(self) -> list[dict[str, object]]:
+        with self._lock:
+            return json.loads(_canonical(self._records))
+
     def emit(self, record: Mapping[str, object]) -> None:
-        retained = json.loads(_canonical(record))
+        raw = _canonical(record)
+        retained = json.loads(raw)
         verify_evidence(retained)
-        self.records.append(retained)
+        with self._lock:
+            count = len(self._records)
+            try:
+                # 模拟不可见 staging 的部分写入与完成写入故障。
+                staged = raw[:len(raw) // 2]
+                if self.failure_stage == "partial_write":
+                    raise OSError("合成 evidence partial write")
+                staged += raw[len(staged):]
+                self._records.append(json.loads(staged))
+                if self.failure_stage == "after_write":
+                    raise OSError("合成 evidence after write")
+            except BaseException:
+                del self._records[count:]
+                raise
 @dataclass(frozen=True)
 class CandidateHandoff:
     authority: Mapping[str, str]
@@ -559,6 +594,20 @@ def _blob_oid(raw: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
 
 
+def _authority_tree(git: GitTransaction, authority: Mapping[str, str],
+                    lineage: Mapping[str, str]) -> Mapping[str, str]:
+    revision = authority["root_revision"]
+    parent = lineage["authority_approval_formal_root_revision"]
+    if git.parent(revision) != parent:
+        raise CollectionError("authority parent 漂移")
+    before, tree = git.tree_entries(parent), git.tree_entries(revision)
+    paths = {SELECTION_PATH, COLLECTION_PATHS[1]}
+    changed = {path for path in set(before) | set(tree) if before.get(path) != tree.get(path)}
+    if changed != paths or not paths.issubset(tree):
+        raise CollectionError("authority delta 必须恰为两个固定 blob，保留全部继承项")
+    return tree
+
+
 def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str],
                          paths: Mapping[str, str], git: GitTransaction,
                          record: dict[str, object]) -> tuple[tuple[str, ...], bytes]:
@@ -575,12 +624,7 @@ def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str
                 raise CollectionError("authority SHA-256 格式无效")
     if authority["selection_path"] != SELECTION_PATH or authority["config_path"] != COLLECTION_PATHS[1]:
         raise CollectionError("authority 固定路径漂移")
-    revision = authority["root_revision"]
-    if git.parent(revision) != lineage["authority_approval_formal_root_revision"]:
-        raise CollectionError("authority parent 漂移")
-    tree = git.tree_entries(revision)
-    if set(tree) != {SELECTION_PATH, COLLECTION_PATHS[1]}:
-        raise CollectionError("authority tree 必须仅含两个固定 blob")
+    tree = _authority_tree(git, authority, lineage)
     raw_values = {}
     for prefix in ("selection", "config"):
         path, oid = authority[prefix + "_path"], authority[prefix + "_blob_native_oid"]
@@ -710,8 +754,8 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
         def authority_matches() -> bool:
             expected_tree = {authority["selection_path"]: authority["selection_blob_native_oid"],
                              authority["config_path"]: authority["config_blob_native_oid"]}
-            return (git.parent(authority["root_revision"]) == lineage["authority_approval_formal_root_revision"]
-                    and dict(git.tree_entries(authority["root_revision"])) == expected_tree
+            tree = _authority_tree(git, authority, lineage)
+            return (all(tree[path] == oid for path, oid in expected_tree.items())
                     and all(_digest(git.blob_bytes(authority[prefix + "_blob_native_oid"])) == authority[prefix + "_raw_sha256"]
                             for prefix in ("selection", "config")))
         publication_observation = {}
@@ -749,7 +793,10 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
             if git.resolve(lineage["target_ref"]) != base:
                 raise CollectionError("rollback target ref 未恢复")
         except Exception as rollback_error:
-            after = git.snapshot()
+            try:
+                after = _snapshot(git.snapshot())
+            except Exception as snapshot_error:
+                raise RollbackUnavailable(record["execution"]["phase"]) from snapshot_error
             record["rollback"] = {"before_snapshot": before, "after_snapshot": after,
                                   "before_snapshot_sha256": _sha(before), "after_snapshot_sha256": _sha(after),
                                   "verified": False}
@@ -791,6 +838,9 @@ def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str
         record["status"] = "PASS"
         record["execution"]["phase"] = "complete"
         del record["execution"]["failure_code"]
+    except RollbackUnavailable:
+        # 缺少 after snapshot 时不得发出伪造的 canonical FAIL；保留主 phase 的异常诊断。
+        raise
     except Exception as error:
         record["execution"]["failure_code"] = ("ROLLBACK_INCOMPLETE" if str(error) == "ROLLBACK_INCOMPLETE"
                                                    else record["execution"]["phase"].upper() + "_FAILED")

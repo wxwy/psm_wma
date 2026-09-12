@@ -1,5 +1,16 @@
 # 当前协作状态
 
+## 累计整改复审第 1 轮（2026-09-12 10:24 CST，用户回复提示触发）
+
+- formal root=`1db0d539fd3d52fa7d521962a47204b578e0f94f`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- before_head=`f98bb7780c438f599aadbc6585b6714f79af224c`；fetch/ls-remote 成功，advertised V2=`72ab0b067cf0e912a6ff50da2e7a6ecf6560851a`。新增依次 `daec436e review: request changes cumulative executor CPU static implementation 1db0d53`、`72ab0b06 review: notify Codex cumulative CPU static changes 1db0d53`；祖先检查返回 0，ff-only 成功到 advertised SHA。
+- `rg -l '1db0d539fd3d52fa7d521962a47204b578e0f94f' docs/collab/chatgpt/reviews/` 命中唯一正式 review：`2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_1db0d53_93a89ba.md`。完整读取证实 exact pair，ChatGPT 已回复 REQUEST_CHANGES：3 HIGH（authority full-tree/delta、sink 原子提交、不可读取 snapshot 的 fail-stop）。
+- Kimi 独立 capture `-S -100`：exact pair final 已回复 APPROVE_TO_IMPLEMENT_CPU_STATIC。MM 初次 capture 缺 pair，未直接计为批准；同轮补发仅锚点确认消息，send-keys -l 后至少 1 秒独立 Enter，首 capture 仍在输入框，再至少 1 秒独立 C-m；最终独立 capture 显示完整 pair 与 10:08:12 final APPROVE_TO_IMPLEMENT_CPU_STATIC。所有最终证据未截断。
+- 三方同 pair final 已齐，含 REQUEST_CHANGES；只可合并原范围最小整改。停止原等待句柄 3661（用户回复触发），未创建新 Gate。预计仍仅两工具文件及 SESSION/TODO：authority 两路径 delta、原子 sink fixture、不可读取 snapshot 的非 authority fail-stop 诊断。未提交，未运行真实 I/O/GPU/训练。
+- 实际整改：`_authority_tree` 在 source open 前和 final post-check 共用父树 exact two-path delta 校验，保留 inherited blob/Gitlink；EvidenceSink 明确原子异常语义，MemoryEvidenceSink 用锁隔离 staging/读取，partial_write 与 after_write 均撤销新增记录且保留此前记录；不可读取/无效 after snapshot 抛 `RollbackUnavailable("ROLLBACK_INCOMPLETE")`，附 primary_phase，只是非 authority 异常诊断，不交给 canonical sink，不伪造 snapshot。
+- 最终验证：根仓 stdlib unittest 29/29 PASS；两文件 py_compile（临时目录自动清理）PASS；git diff --check PASS。测试增加继承项增删改、两路径修改/无变化拒绝、late authority post-check、partial/after-write 原子撤销、restore 与 snapshot 抛错/畸形组合；纠正旧测试在 assertRaises 内不可达的 commits 断言。未执行真实 source/GPU/训练。
+- 本次只提交两工具文件和 SESSION/TODO；请求同 Gate 新 SHA 复审三项 HIGH，不自签关闭。真实 sink 适配器必须满足新明确的原子接口，不能把内存故障注入当作磁盘耐久性证据。提交：待本次提交。
+
 ## 累计整改复审准备（2026-09-12）
 
 - 实现提交已推送：formal root=`1db0d539fd3d52fa7d521962a47204b578e0f94f`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。26/26 CPU tests PASS；formal diff 四文件，不含 child 或训练遗留。
