@@ -705,3 +705,16 @@ v0.8明确：保留v0.6 `publish_candidate`→exact `PublicationWitness`返回AB
 v0.9仅为设计整改：全部 acceptance、rollback、preserve-ref、witness资格均由单个不可变`AuthorityTerminalState` cell派生，唯一状态变更为不可抛出的`PENDING→ACCEPTED`指针替换；guard转移是最后一个fallible pre-state action，并冻结A/B/C crash/restart matrix，B/C一律不自动恢复；ref witness明确为最后一次精确观察，之后漂移按external corruption fail-stop处理。formal tree仅新增v0.9设计并更新`SESSION.md`/`TODO.md`；Gitlink不变。
 
 请求完整exact pair唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。批准范围仅为后续四个root工具/测试文件的temporary CPU/static implementation；不授权真实source/candidate/ref/evidence、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root PASS 线性化设计 v0.10（2026-09-12）
+
+- formal root SHA：`001336fa5d785d8c77a2685ac1c754c096b4fb06`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-PASS-LINEARIZATION-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_pass_linearization_design_v0.10.md`
+- 前轮三方同pair final：ChatGPT=`REQUEST_CHANGES(...v0.9.md:38)`、MM/Kimi=`APPROVE_TO_IMPLEMENT...`；整改仅处理ChatGPT唯一HIGH。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observation是唯一绑定进pointer swap的历史 ref fact；该观察之后（**包括pointer swap前**）的外部drift不可由authority观察，故不撤销历史-witness transition。任何后续ref check不一致均为external corruption并fail-stop/recovery，禁止静默将其称为current exact ref、自动修复或rollback已ACCEPTED terminal cell；只有最后观察前验证失败才按既有pre-state rollback。单一`AuthorityTerminalState`、A/B/C crash matrix、v0.8 ABI及范围保持。
+
+请求完整exact pair唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。批准范围仅为后续四个root工具/测试文件的temporary CPU/static implementation；不授权真实source/candidate/ref/evidence、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
