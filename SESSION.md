@@ -2824,3 +2824,23 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`81f7526881dc4f93cf03da13988e2b74dda7d0de`/child=`93a89ba61306d840a008813f62f26a34d54850f4`，已推送且远端 advertised 同为该formal root。canonical Inbox在118848 bytes基础上append八行，不触发128KiB rollover；ChatGPT正式结论仍只认`reviews/` exact pair。
 - MM `mm:0.0` 与 Kimi `kimi:0.0` 均执行完整消息写入→至少1秒→独立Enter→capture：文本已离开输入框，MM进入处理，Kimi显示已收到新pair。冻结名册不变。三分钟后必须先完整远端锁定，再收回三方结论；在此之前禁止任何materialization或真实I/O。
+
+### Authority-root execution snapshot annex v0.2 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`81f7526881dc4f93cf03da13988e2b74dda7d0de`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before=a29b8a32debbf3ce66bdf875dcaeb02e4b51553b`；fetch成功；advertised/origin/local-after均为`a29b8a32debbf3ce66bdf875dcaeb02e4b51553b`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact-pair正式 review 尚未出现。
+- MM `mm:0.0` capture 给出same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`；Kimi `kimi:0.0` capture显示已解析新pair、读取v0.2并开始独立核验冻结值，尚未给final。无推进令牌，保持REVIEW；禁止改变annex或执行materialization/真实I-O。
+
+### Authority-root execution snapshot annex v0.2 审核观察凭证 #2（2026-09-12 CST，REVIEW）
+
+- formal/child及冻结名册不变；`before=a29b8a32debbf3ce66bdf875dcaeb02e4b51553b`；fetch成功；advertised/origin/local-after=`883a7be1e2f60a61ad5cf98929d8d04534e1eac6`；新增`a8bcb473`（ChatGPT formal review）与`883a7be1`（ledger），祖先检查成功并已快进。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_snapshot_annex_v02_81f7526_93a89ba.md`，final=`REQUEST_CHANGES(...snapshot_annex_v0.2.md:89)`：bootstrap `sys.orig_argv[6:]` 含`"--"`，应与parser argv digest分离并冻结2432-byte digest=`aefa3a7d02be8ca5af6572e59eb125ced458b739d5f9ac2cc8fc3122018455a6`及contract JSON；另需冻结六键launcher env之外含`GIT_INDEX_FILE`和六个author/committer变量的471-byte `NativeAuthorityGit.env`，digest=`daf9e4bfb1740f5e94d038547619256b900eb16be7830bd37c7df8d4f6a0f235`，明确message只经commit-tree stdin。MM同pair批准保持有效；Kimi仍在核验，尚未final。无推进令牌，禁止整改或真实执行。
+
+### Authority-root execution snapshot annex v0.2 审核观察凭证 #3（2026-09-12 CST，REVIEW）
+
+- formal/child及冻结名册不变；`before=883a7be1e2f60a61ad5cf98929d8d04534e1eac6`；fetch成功；advertised/origin/local-after均为`883a7be1e2f60a61ad5cf98929d8d04534e1eac6`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- 三方本pair final齐全：ChatGPT=`REQUEST_CHANGES(...v0.2.md:89)`、Kimi=`REQUEST_CHANGES(...v0.2.md:88)`、MM=`APPROVE_TO_PREPARE...EXECUTION_REQUEST`。推进令牌仅授权docs-only v0.3最小整改：inline complete parser argv canonical JSON，直接复算parser digest/length；另冻结含leading`--`的bootstrap argv bytes/digest与contract JSON，以及含`GIT_INDEX_FILE`和六个author/committer变量的transaction env canonical JSON/digest，明确commit message仅为commit-tree stdin。禁止真实I/O/materialization/child/GPU/训练。
+
+### Authority-root execution snapshot annex v0.3 docs-only remediation（2026-09-12，REVIEW）
+
+- 新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.3.md`，完全supersede v0.2：内联2,427-byte parser argv JSON（`72777bd...`）；独立冻结带`--`的2,432-byte bootstrap observation（`aefa3a7...`）与182-byte contract JSON（`62a7bb...`）；内联471-byte `NativeAuthorityGit.env` JSON（`daf9e4...`）并明确commit message仅经commit-tree stdin。
+- 标准库文档JSON重 canonicalization/length/SHA 校验 PASS，`git diff --check` PASS。未运行project module、未创建或读取真实资产、未调用materialization/child/GPU/训练。下一步：提交、推送并对新formal SHA重新三方审核。
