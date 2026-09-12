@@ -2616,3 +2616,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root one-shot materialization request 送达回执（2026-09-12 CST，REVIEW）
 
 - formal=`d3cd3c9b26cea021814c9f48bcd864183a811293`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT申请已append并由ledger=`e70f394d`推送。冻结名册为ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`；MM/Kimi已按完整文本→1秒→独立Enter发送并capture确认。三分钟后执行首轮完整回收。
+
+### Authority-root one-shot materialization request 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`d3cd3c9b26cea021814c9f48bcd864183a811293`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before/advertised/origin/local-after=9ad7c47314b4d2203ae560182f6db316d4f3d9ca`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`；ChatGPT exact检索无匹配。
+- MM `mm:0.0` 已开始交叉核验Python/Git identity，Kimi `kimi:0.0` 正在读取formal tree与冻结值；两者均未给same-pair final。无推进令牌，保持REVIEW。
