@@ -23,6 +23,7 @@
 - PASS线性化设计认领（2026-09-12，IN_PROGRESS）：仅新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.7.md`，选择同进程sealed-FD `AcceptedPass` capability；public path verifier降格为内容观察，文件namespace不再是 acceptance authority。待文档静态核验、提交、推送及三方设计审核；不修改工具、child或运行任何真实操作。
 - PASS线性化设计申请：formal root=`c396ad298057810c04016e9d6116b7f9e5ac16d4`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；v0.7申请已append canonical Inbox。待本记录/Inbox提交推送、送达MM/Kimi后进入三分钟原生审核回收；新pair无implementation令牌。
 - v0.7三方设计观察：ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_design_c396ad2_93a89ba.md`为`REQUEST_CHANGES(...v0.7.md:23)`，要求冻结ABI/lifetime、preallocated nonthrowing issuance与crash closure；MM/Kimi为同pair`APPROVE_TO_IMPLEMENT...`。三方final齐，进入docs-only整改。新增v0.8仅设计：保留witness ABI，AcceptedPass内部total issue/consume，process loss定义permanent fail-stop/manual recovery Gate；待提交复审。
+- v0.8设计申请：formal root=`0ad5fb3379456f485fd861595e3db4ab62c3555f`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；申请已append canonical Inbox。待本记录/Inbox提交推送、送达MM/Kimi后进入三分钟原生回收；新pair无implementation令牌。
 - 新formal root=`1440fd3391d46ef383d60387da8d7e7aa8238d5f`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；final-evidence-lock申请已append Inbox。待本记录/InBox提交推送、送达MM/Kimi后进入三分钟原生回收；新pair无推进令牌。
 
 ## Real adapter implementation review整改认领（2026-09-12，IN_PROGRESS）

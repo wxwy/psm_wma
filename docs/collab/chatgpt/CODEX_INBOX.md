@@ -680,3 +680,15 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 v0.7选择同进程 sealed-final-FD `AcceptedPass` capability：authority在同一transaction内核验sealed FD identity/digest与fixed refs、执行guard transition后签发不可复制/不可重放 capability；只有capability是 acceptance authority。`verify_evidence_path()`保留为不改变refs/commit的内容观察API，pathname success不再授权PASS。Evidence-v1 bytes ABI保持，但旧“path verifier success即authorization”consumer必须迁移。无service/port/sidecar/durable coordination artifact；任何输出目录pathname锁/marker/rename/lstat方案明确拒绝。
 
 请求完整exact pair唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。本申请只请求后续四root工具/测试的temporary CPU/static implementation；不授权真实source/candidate/ref/evidence操作、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root PASS 线性化设计 v0.8（2026-09-12）
+
+- formal root SHA：`0ad5fb3379456f485fd861595e3db4ab62c3555f`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-PASS-LINEARIZATION-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_pass_linearization_design_v0.8.md`
+- 前轮ChatGPT exact review：`2026-09-12_R09_B_TTT_v035_pass_linearization_design_c396ad2_93a89ba.md`提出return/lifetime、nonthrowing issuance、crash closure三项HIGH；MM/Kimi批准。
+
+v0.8明确：保留v0.6 `publish_candidate`→exact `PublicationWitness`返回ABI，`AcceptedPass`永不出authority transaction；它是preallocated、activation-scoped的`prepared→issued→consumed`内部capability。所有字段预验证后，唯一total transition同步标记issued、EvidenceCommit committed与preserve-refs branch，紧接total internal consume；transition后异常永不rollback。崩溃选择永久fail-stop：没有capability重建/自动retry/自动close，后续只能独立人工 recovery design Gate。Evidence-v1 bytes ABI保持，path verifier只是观察。
+
+请求完整exact pair唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。只请求后续四root工具/测试temporary CPU/static implementation；不授权真实source/candidate/ref/evidence、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
