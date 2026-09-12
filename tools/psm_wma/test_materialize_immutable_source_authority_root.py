@@ -532,6 +532,17 @@ def failing(*args, **kwargs):
     raise OSError('evidence fixture')
 tool.write_pending_evidence = failing
 """,
+            "evidence_cleanup_incomplete": """
+original = tool._fsync_directory
+calls = 0
+def failing(directory):
+    global calls
+    calls += 1
+    if calls <= 2:
+        raise OSError('cleanup fixture')
+    return original(directory)
+tool._fsync_directory = failing
+""",
             "post_publication_rollback_incomplete": """
 original = tool.NativeAuthorityGit.remote_ref
 calls = 0
@@ -555,17 +566,29 @@ tool.NativeAuthorityGit.remote_ref = failing
                 record = verify_evidence_path(root / "evidence.json")
                 expected_status = (
                     "ROLLBACK_INCOMPLETE"
-                    if phase == "post_publication_rollback_incomplete" else "FAIL"
+                    if phase in {"post_publication_rollback_incomplete", "evidence_cleanup_incomplete"}
+                    else "FAIL"
                 )
-                expected_phase = "post_publication" if phase.startswith("post_") else phase
+                expected_phase = (
+                    "post_publication" if phase.startswith("post_")
+                    else "evidence_write" if phase == "evidence_cleanup_incomplete"
+                    else phase
+                )
                 self.assertEqual(record["status"], expected_status)
                 self.assertEqual(record["failure"]["primary_phase"], expected_phase)
-                if expected_phase != "verify":
+                if expected_phase != "verify" and phase != "evidence_cleanup_incomplete":
                     self.assertEqual(
                         record["rollback"]["complete"], expected_status == "FAIL"
                     )
                 else:
-                    self.assertFalse(record["rollback"]["entered"])
+                    if expected_phase == "verify":
+                        self.assertFalse(record["rollback"]["entered"])
+                    else:
+                        self.assertTrue(record["rollback"]["complete"])
+                        self.assertEqual(
+                            record["failure"]["rollback_code"],
+                            "EVIDENCE_CLEANUP_INCOMPLETE",
+                        )
                     self.assertIsNotNone(record["candidate"]["revision"])
 
     def test_cli_rejects_pristine_formal_copy_when_loaded_adapter_differs(self):
