@@ -3069,3 +3069,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root launcher payload v0.5 复审申请（2026-09-13，REVIEW）
 
 - formal=`8d1c10015a632c3c48eb46ad26b3180658cee0a1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。申请已append canonical live Inbox，待提交推送后按`send-keys -l`→等待≥1秒→独立Enter→capture送达MM/Kimi。仅审v0.5 immutable payload/annex/request docs-only整改；禁止materialization、source/checkpoint I/O、collection/receipt/publication、child、GPU、训练。
+- 送达回执：Inbox申请已由ledger=`046e06eb5b7f08978377e2d21ab0655a6ecac1a5`推送；MM=`mm:0.0`按`send-keys -l`→等待≥1秒→独立Enter后capture显示完整申请离开输入框并进入`Zesting`处理；Kimi=`kimi:0.0`同序capture显示完整申请进入消息流且返回空输入框。二者均已送达/处理中；ChatGPT正式回复仍只从reviews目录exact pair取得。
