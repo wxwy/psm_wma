@@ -14,6 +14,7 @@ from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
+from tools.psm_wma.immutable_source_authority_root import EvidenceCleanupIncomplete
 from tools.psm_wma.materialize_immutable_source_authority_root import (
     NativeAuthorityGit,
     CommitMetadata,
@@ -24,6 +25,8 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     verify_evidence_path,
     write_pending_evidence,
     _read_input_fd,
+    _cleanup_pending_evidence,
+    _path_identity,
 )
 
 
@@ -236,6 +239,18 @@ def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
 
 
 class NativeAuthorityGitTest(unittest.TestCase):
+    def test_cleanup_preserves_replaced_foreign_path(self):
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            path = directory / "evidence.json.pending"
+            path.write_bytes(b"owned")
+            identity = _path_identity(path)
+            path.unlink()
+            path.write_bytes(b"foreign")
+            with self.assertRaises(EvidenceCleanupIncomplete):
+                _cleanup_pending_evidence(((path, identity),), directory)
+            self.assertEqual(path.read_bytes(), b"foreign")
+
     def _run_cli(self, root: Path, selection, config, argv):
         return subprocess.run(
             [
