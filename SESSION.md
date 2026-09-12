@@ -2663,3 +2663,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root execution-authority implementation 设计 v0.2送达回执（2026-09-12 CST，REVIEW）
 
 - ChatGPT Inbox申请已由ledger=`583509d119d8e10eb38c5ff8c54a5cda807ce6db`推送；MM/Kimi均完整文本→至少1秒→独立Enter→capture，消息已离开输入框并进入处理。formal/child及冻结名册不变；三分钟后完整锁定回收。
+
+### Authority-root execution-authority implementation 设计 v0.2 formal-SHA 更正（2026-09-12，REVIEW）
+
+- `e69d78c0758cb77111e371897093e0765018d7bc`为错误且不可达；实际可达formal root为`e69d78c02bd946d44a3a00e455668e83a639917c`（当前V2祖先，tree含v0.2），child不变。旧错误pair的ChatGPT/MM/Kimi拒绝只触发更正，不构成技术整改；已append更正申请，必须向三方重送该exact pair后重新回收。

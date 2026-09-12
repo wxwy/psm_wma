@@ -862,3 +862,13 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 仅审相对`569a34d...` ChatGPT两项HIGH的docs-only整改：以Python 3.11 `sys.orig_argv`对实际`-c` payload做进程级bootstrap/raw+argv摘要观测并写入Evidence-v1；冻结Git exact env/prefix、HTTPS endpoint grammar、config reject/fingerprint；要求production NativeAuthorityGit经temporary local bare remote直接验证replace/config/rewrite/CAS。范围仍只允许后续两root文件CPU/static实现，不新增Gate。
 
 请求唯一`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；不授权真实执行、child、GPU或训练。
+
+## 更正审核申请：Authority-root execution-authority implementation 设计 v0.2（2026-09-12）
+
+上一条 formal root 误写为不可达 SHA，现明确撤回；不得以该错误 pair 作技术审核。
+
+- **唯一正确 formal root SHA**：`e69d78c02bd946d44a3a00e455668e83a639917c`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate/设计/范围/verdict 请求与上一条相同：仅审 v0.2 docs-only 两root文件CPU/static路线。
+
+请对这个 exact reachable pair 重新审核，唯一`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；不授权真实执行、child、GPU或训练。
