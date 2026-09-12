@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import os
+import hashlib
+import stat
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
@@ -138,7 +140,8 @@ class PublicationWitness(_NonSerializable):
 class EvidenceCommit(_NonSerializable):
     __slots__ = (
         "_witness", "_activation", "_sealed", "_committed", "_guard",
-        "_evidence_path", "_evidence_sha256", "_token",
+        "_evidence_path", "_evidence_sha256", "_guard_identity",
+        "_evidence_identity", "_record_sha256", "_token",
     )
 
     def __init__(self, witness: PublicationWitness, token: object) -> None:
@@ -149,17 +152,27 @@ class EvidenceCommit(_NonSerializable):
         self._guard: Path | None = None
         self._evidence_path: Path | None = None
         self._evidence_sha256: str | None = None
+        self._guard_identity: tuple[int, int] | None = None
+        self._evidence_identity: tuple[int, int] | None = None
+        self._record_sha256: str | None = None
 
     @property
     def committed(self) -> bool:
         return self._committed
 
     def seal_for_guard(
-        self, guard: Path, evidence_path: Path, evidence_sha256: str
+        self,
+        witness: PublicationWitness,
+        guard: Path,
+        evidence_path: Path,
+        evidence_sha256: str,
     ) -> None:
         if (
             self._sealed
             or self._committed
+            or witness is not self._witness
+            or witness._activation is not self._activation
+            or witness._token is not _CAPABILITY_TOKEN
             or not isinstance(guard, Path)
             or not isinstance(evidence_path, Path)
             or guard != evidence_path.with_name(evidence_path.name + ".pending")
@@ -169,24 +182,84 @@ class EvidenceCommit(_NonSerializable):
         ):
             raise AuthorityRootError("evidence commit seal 无效")
         try:
-            raw = evidence_path.read_bytes()
+            guard_info = guard.lstat()
+            evidence_info = evidence_path.lstat()
+            descriptor = os.open(evidence_path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+            try:
+                opened_info = os.fstat(descriptor)
+                raw = b""
+                remaining = opened_info.st_size
+                while remaining:
+                    chunk = os.read(descriptor, remaining)
+                    if not chunk:
+                        raise OSError("evidence truncated")
+                    raw += chunk
+                    remaining -= len(chunk)
+            finally:
+                os.close(descriptor)
             value = json.loads(raw)
         except (OSError, ValueError, TypeError) as error:
             raise AuthorityRootError("evidence commit seal evidence 无效") from error
         if (
-            not guard.is_file()
-            or guard.is_symlink()
+            not stat.S_ISREG(guard_info.st_mode)
+            or not stat.S_ISREG(evidence_info.st_mode)
+            or not stat.S_ISREG(opened_info.st_mode)
+            or (guard_info.st_dev, guard_info.st_ino)
+            != (guard.lstat().st_dev, guard.lstat().st_ino)
+            or (evidence_info.st_dev, evidence_info.st_ino)
+            != (opened_info.st_dev, opened_info.st_ino)
             or not isinstance(value, dict)
             or value.get("evidence_sha256") != evidence_sha256
         ):
             raise AuthorityRootError("evidence commit seal guard/digest 无效")
         self._guard, self._evidence_path = guard, evidence_path
         self._evidence_sha256 = evidence_sha256
+        self._guard_identity = (guard_info.st_dev, guard_info.st_ino)
+        self._evidence_identity = (evidence_info.st_dev, evidence_info.st_ino)
+        self._record_sha256 = hashlib.sha256(raw).hexdigest()
         self._sealed = True
 
     def consume_by_unlink(self) -> None:
-        if not self._sealed or self._committed or self._guard is None:
+        if (
+            not self._sealed
+            or self._committed
+            or self._guard is None
+            or self._evidence_path is None
+            or self._guard_identity is None
+            or self._evidence_identity is None
+            or self._record_sha256 is None
+        ):
             raise AuthorityRootError("evidence commit 未seal或已消费")
+        try:
+            guard_info = self._guard.lstat()
+            evidence_info = self._evidence_path.lstat()
+            descriptor = os.open(
+                self._evidence_path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC
+            )
+            try:
+                opened_info = os.fstat(descriptor)
+                chunks: list[bytes] = []
+                remaining = opened_info.st_size
+                while remaining:
+                    chunk = os.read(descriptor, remaining)
+                    if not chunk:
+                        raise OSError("evidence truncated")
+                    chunks.append(chunk)
+                    remaining -= len(chunk)
+                raw = b"".join(chunks)
+            finally:
+                os.close(descriptor)
+        except OSError as error:
+            raise AuthorityRootError("evidence commit identity 无效") from error
+        if (
+            not stat.S_ISREG(guard_info.st_mode)
+            or not stat.S_ISREG(evidence_info.st_mode)
+            or (guard_info.st_dev, guard_info.st_ino) != self._guard_identity
+            or (evidence_info.st_dev, evidence_info.st_ino) != self._evidence_identity
+            or (opened_info.st_dev, opened_info.st_ino) != self._evidence_identity
+            or hashlib.sha256(raw).hexdigest() != self._record_sha256
+        ):
+            raise AuthorityRootError("evidence commit identity/digest 漂移")
         os.unlink(self._guard)
         self._committed = True
 

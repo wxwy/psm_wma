@@ -113,14 +113,14 @@ class Git:
 
 
 class AuthorityRootTest(unittest.TestCase):
-    def _seal_commit(self, commit):
+    def _seal_commit(self, witness, commit):
         directory = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
         evidence = directory / "evidence.json"
         guard = directory / "evidence.json.pending"
         evidence.write_text(json.dumps({"evidence_sha256": "a" * 64}))
         guard.write_bytes(b"")
-        commit.seal_for_guard(guard, evidence, "a" * 64)
+        commit.seal_for_guard(witness, guard, evidence, "a" * 64)
         return guard
 
     def setUp(self):
@@ -280,7 +280,7 @@ class AuthorityRootTest(unittest.TestCase):
         def finalizer(witness, commit):
             self.assertEqual(witness.revision, candidate.revision)
             self.assertIsInstance(commit, EvidenceCommit)
-            guard = self._seal_commit(commit)
+            guard = self._seal_commit(witness, commit)
             commit.consume_by_unlink()
             self.assertFalse(guard.exists())
             raise KeyboardInterrupt("after unlink")
@@ -319,13 +319,50 @@ class AuthorityRootTest(unittest.TestCase):
         self.assertNotIn(AUTHORITY_REF, self.git.local)
         self.assertNotIn(AUTHORITY_REF, self.git.remote)
 
+    def test_stale_commit_cannot_seal_current_activation_guard(self):
+        stale: list[EvidenceCommit] = []
+        candidate, binding = self.candidate()
+
+        def retain(_witness, commit):
+            stale.append(commit)
+
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=retain)
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            with self.assertRaises(AuthorityRootError):
+                self._seal_commit(witness, stale[0])
+            self._seal_commit(witness, commit)
+            commit.consume_by_unlink()
+
+        publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+
+    def test_guard_replacement_cannot_commit_or_delete_foreign_guard(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            guard.unlink()
+            guard.write_bytes(b"foreign")
+            with self.assertRaises(AuthorityRootError):
+                commit.consume_by_unlink()
+            self.assertEqual(guard.read_bytes(), b"foreign")
+
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
     def test_committed_finalizer_ordinary_returns_preserve_refs(self):
         for returned in (None, object(), {"ignored": True}):
             with self.subTest(returned=type(returned).__name__):
                 candidate, binding = self.candidate()
 
-                def finalizer(_witness, commit, result=returned):
-                    self._seal_commit(commit)
+                def finalizer(witness, commit, result=returned):
+                    self._seal_commit(witness, commit)
                     commit.consume_by_unlink()
                     return result
 
@@ -344,8 +381,8 @@ class AuthorityRootTest(unittest.TestCase):
 
         candidate, binding = self.candidate()
 
-        def finalizer(_witness, commit):
-            self._seal_commit(commit)
+        def finalizer(witness, commit):
+            self._seal_commit(witness, commit)
             commit.consume_by_unlink()
             raise Cancellation("after commit")
 
@@ -376,12 +413,12 @@ class AuthorityRootTest(unittest.TestCase):
             with self.subTest(operation=operation):
                 candidate, binding = self.candidate()
 
-                def finalizer(_witness, commit, kind=operation):
+                def finalizer(witness, commit, kind=operation):
                     if kind == "unsealed":
                         commit.consume_by_unlink()
                     else:
-                        self._seal_commit(commit)
-                        self._seal_commit(commit)
+                        self._seal_commit(witness, commit)
+                        self._seal_commit(witness, commit)
 
                 with self.assertRaises(AuthorityRootError):
                     publish_candidate(
@@ -393,8 +430,8 @@ class AuthorityRootTest(unittest.TestCase):
     def test_replayed_commit_after_unlink_preserves_refs(self):
         candidate, binding = self.candidate()
 
-        def finalizer(_witness, commit):
-            self._seal_commit(commit)
+        def finalizer(witness, commit):
+            self._seal_commit(witness, commit)
             commit.consume_by_unlink()
             commit.consume_by_unlink()
 

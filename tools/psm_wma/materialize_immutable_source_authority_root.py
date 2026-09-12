@@ -11,11 +11,12 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Mapping, Sequence
+from typing import Callable, Mapping, Sequence
 
 from tools.psm_wma.immutable_source_authority_root import (
     AuthorityGitTransaction,
     AuthorityRequest,
+    EvidenceCommit,
     EvidenceCleanupIncomplete,
     prepare_candidate,
     publish_candidate,
@@ -207,6 +208,8 @@ def _pass_evidence_record(
     transaction: "NativeAuthorityGit",
     candidate,
     binding,
+    local_observation: str,
+    remote_observation: str,
 ) -> dict[str, object]:
     metadata = transaction.metadata
     authority = binding.as_mapping()
@@ -263,9 +266,10 @@ def _pass_evidence_record(
             "local_owned": True, "remote_owned": True,
         },
         "post_publication": {
-            "local_observation": {"state": "revision", "revision": revision, "error": None},
-            "remote_observation": {"state": "revision", "revision": revision, "error": None},
-            "both_candidate": True, "committed_binding_reverified": True,
+            "local_observation": {"state": "revision", "revision": local_observation, "error": None},
+            "remote_observation": {"state": "revision", "revision": remote_observation, "error": None},
+            "both_candidate": local_observation == revision and remote_observation == revision,
+            "committed_binding_reverified": True,
         },
         "rollback": {
             "entered": False, "required": False,
@@ -294,11 +298,27 @@ def run_authority_cli(
     preflight_authority_invocation(invocation, transaction, cwd)
     candidate = prepare_candidate(invocation.request, transaction)
     binding = verify_candidate(invocation.request, candidate, transaction)
-    def finalizer(_witness, commit):
+    def finalizer(witness, commit):
+        local_observation = transaction.local_ref(AUTHORITY_REF)
+        remote_observation = transaction.remote_ref(AUTHORITY_REF)
+        if local_observation != candidate.revision or remote_observation != candidate.revision:
+            raise NativeGitError("evidence commit fixed ref drift")
+        def reobserve_before_seal() -> None:
+            if (
+                transaction.local_ref(AUTHORITY_REF) != local_observation
+                or transaction.remote_ref(AUTHORITY_REF) != remote_observation
+            ):
+                raise NativeGitError("evidence commit fixed ref drift")
+
         write_pending_evidence(
             invocation.evidence_path,
-            _pass_evidence_record(invocation, transaction, candidate, binding),
+            _pass_evidence_record(
+                invocation, transaction, candidate, binding,
+                local_observation, remote_observation,
+            ),
+            witness,
             commit,
+            before_seal=reobserve_before_seal,
         )
 
     return publish_candidate(
@@ -732,13 +752,18 @@ def _cleanup_pending_evidence(paths: tuple[Path, ...], directory: Path) -> None:
         raise EvidenceCleanupIncomplete("evidence pre-commit cleanup 无法证明完成")
 
 
-def write_pending_evidence(path: Path, record: Mapping[str, object], commit) -> None:
+def write_pending_evidence(
+    path: Path,
+    record: Mapping[str, object],
+    witness,
+    commit: EvidenceCommit,
+    *,
+    before_seal: Callable[[], None] | None = None,
+) -> None:
     """Write a verified PASS record; guard unlink is the final operation."""
-    if path.exists() or path.is_symlink():
-        raise NativeGitError("evidence final path 必须fresh absent")
+    if not isinstance(commit, EvidenceCommit):
+        raise NativeGitError("evidence commit capability 无效")
     guard = path.with_name(path.name + ".pending")
-    if guard.exists() or guard.is_symlink():
-        raise NativeGitError("evidence guard 必须fresh absent")
     payload = json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
     verified = verify_evidence_bytes(payload)
     if verified["status"] != "PASS":
@@ -747,33 +772,55 @@ def write_pending_evidence(path: Path, record: Mapping[str, object], commit) -> 
     directory.mkdir(parents=True, exist_ok=True)
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW | os.O_CLOEXEC
     temporary = path.with_name(path.name + ".tmp")
+    guard_owned = temporary_owned = final_owned = False
     try:
         fd = os.open(guard, flags, 0o600)
+        guard_owned = True
         try:
             os.fsync(fd)
         finally:
             os.close(fd)
         _fsync_directory(directory)
         fd = os.open(temporary, flags, 0o600)
+        temporary_owned = True
         try:
             _write_all(fd, payload)
             os.fsync(fd)
         finally:
             os.close(fd)
-        os.replace(temporary, path)
+        os.link(temporary, path)
+        final_owned = True
+        temporary.unlink()
+        temporary_owned = False
         _fsync_directory(directory)
         if verify_evidence_bytes(_read_regular_evidence(path)) != verified:
             raise NativeGitError("evidence re-read drift")
-        commit.seal_for_guard(guard, path, verified["evidence_sha256"])
+        if before_seal is not None:
+            before_seal()
+        commit.seal_for_guard(witness, guard, path, verified["evidence_sha256"])
     except BaseException:
-        _cleanup_pending_evidence((temporary, path, guard), directory)
+        _cleanup_pending_evidence(
+            tuple(
+                candidate for candidate, owned in (
+                    (temporary, temporary_owned), (path, final_owned), (guard, guard_owned)
+                ) if owned
+            ),
+            directory,
+        )
         raise
     try:
         commit.consume_by_unlink()
     except BaseException:
         if getattr(commit, "committed", False):
             raise
-        _cleanup_pending_evidence((temporary, path, guard), directory)
+        _cleanup_pending_evidence(
+            tuple(
+                candidate for candidate, owned in (
+                    (temporary, temporary_owned), (path, final_owned), (guard, guard_owned)
+                ) if owned
+            ),
+            directory,
+        )
         raise
 
 

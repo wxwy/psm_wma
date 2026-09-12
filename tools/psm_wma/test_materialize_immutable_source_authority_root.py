@@ -14,7 +14,6 @@ from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.psm_wma.immutable_source_authority_root import EvidenceCleanupIncomplete
 from tools.psm_wma.materialize_immutable_source_authority_root import (
     NativeAuthorityGit,
     CommitMetadata,
@@ -416,17 +415,17 @@ class NativeAuthorityGitTest(unittest.TestCase):
             finally:
                 os.close(read_end)
                 os.close(write_end)
-    def test_pending_evidence_unlinks_only_through_commit(self):
+    def test_writer_rejects_forged_commit_before_creating_evidence(self):
         class Commit:
             def __init__(self): self.guard = None
             def seal_for_guard(self, guard, _path, _digest): self.guard = guard
             def consume_by_unlink(self): os.unlink(self.guard)
         with tempfile.TemporaryDirectory() as raw:
             path = Path(raw) / "evidence.json"
-            write_pending_evidence(path, _pass_evidence(), Commit())
-            self.assertTrue(path.is_file())
+            with self.assertRaises(NativeGitError):
+                write_pending_evidence(path, _pass_evidence(), None, Commit())
+            self.assertFalse(path.exists())
             self.assertFalse(path.with_name("evidence.json.pending").exists())
-            self.assertEqual(verify_evidence_path(path)["status"], "PASS")
 
     def test_evidence_verifier_rejects_digest_and_chronology_drift(self):
         record = _pass_evidence()
@@ -554,15 +553,15 @@ class NativeAuthorityGitTest(unittest.TestCase):
                         "tools.psm_wma.materialize_immutable_source_authority_root._fsync_directory",
                         side_effect=(OSError("fixture"), None),
                     ):
-                        with self.assertRaises(OSError):
-                            write_pending_evidence(path, _pass_evidence(), Commit())
+                        with self.assertRaises(NativeGitError):
+                            write_pending_evidence(path, _pass_evidence(), None, Commit())
                 else:
                     with patch(
-                        "tools.psm_wma.materialize_immutable_source_authority_root.os.replace",
+                        "tools.psm_wma.materialize_immutable_source_authority_root.os.link",
                         side_effect=OSError("fixture"),
                     ):
-                        with self.assertRaises(OSError):
-                            write_pending_evidence(path, _pass_evidence(), Commit())
+                        with self.assertRaises(NativeGitError):
+                            write_pending_evidence(path, _pass_evidence(), None, Commit())
                 self.assertFalse(path.exists())
                 self.assertFalse(path.with_name("evidence.json.pending").exists())
                 self.assertFalse(path.with_name("evidence.json.tmp").exists())
@@ -577,8 +576,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
             with patch(
                 "tools.psm_wma.materialize_immutable_source_authority_root._read_regular_evidence",
                 side_effect=OSError("fixture"),
-            ), self.assertRaises(OSError):
-                write_pending_evidence(path, _pass_evidence(), Commit())
+            ), self.assertRaises(NativeGitError):
+                write_pending_evidence(path, _pass_evidence(), None, Commit())
             self.assertFalse(path.exists())
             self.assertFalse(path.with_name("evidence.json.pending").exists())
             self.assertFalse(path.with_name("evidence.json.tmp").exists())
@@ -595,8 +594,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as raw:
             path = Path(raw) / "evidence.json"
-            with self.assertRaises(OSError):
-                write_pending_evidence(path, _pass_evidence(), Commit())
+            with self.assertRaises(NativeGitError):
+                write_pending_evidence(path, _pass_evidence(), None, Commit())
             self.assertFalse(path.exists())
             self.assertFalse(path.with_name("evidence.json.pending").exists())
 
@@ -610,8 +609,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
             with patch(
                 "tools.psm_wma.materialize_immutable_source_authority_root._fsync_directory",
                 side_effect=OSError("fixture"),
-            ), self.assertRaises(EvidenceCleanupIncomplete):
-                write_pending_evidence(path, _pass_evidence(), Commit())
+            ), self.assertRaises(NativeGitError):
+                write_pending_evidence(path, _pass_evidence(), None, Commit())
 
     def test_temporary_index_commit_and_exact_ref_cas(self):
         git = Path(shutil.which("git") or "")
