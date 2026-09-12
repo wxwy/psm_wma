@@ -2778,3 +2778,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`cfdd2fc79142b500910613759d316b283bfe372a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before/advertised/origin/local-after=02d5216b08b0833f1312276be9254091b130c5e6`；fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT exact-pair正式review未找到；MM `mm:0.0` capture已给same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT`；Kimi `kimi:0.0` capture显示已完成pair/范围/文档读取并在重算四模块identity，尚未给final。无推进令牌，保持REVIEW，禁止生成snapshot annex或真实materialization；三分钟后重新完整锁定。
+
+### Authority-root materialization request v0.2 审核观察凭证 #2（2026-09-12 CST，REVIEW）
+
+- formal/child与冻结名册不变；`before/advertised/origin/local-after=a175d87a8a6315eaf506d7c3d7dda1ac38c06a2d`；fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact-pair正式review仍未找到。
+- MM批准保持有效；Kimi `kimi:0.0` capture新增same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT`。ChatGPT缺件，无推进令牌，保持REVIEW，禁止snapshot annex或真实materialization；三分钟后继续完整锁定。
