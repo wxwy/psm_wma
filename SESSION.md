@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.2三方结论与 v0.3整改认领（2026-09-12，IN_PROGRESS）
+
+- 已先 fetch/核对 advertised=`origin/V2`=`85eafa5616c9d458892e3872b9215e50b36a4da9`，并 ff-only 从`17603ab6...`快进；新增`ce154f81`（ChatGPT exact review）与`85eafa56`（其发布 ledger）。formal pair仍为`dd0ecdf19e3413be4f8dad5e7b069e106f88e8ad`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_dd0ecdf_93a89ba.md`给出2 HIGH `REQUEST_CHANGES`：现两文件 allowlist/私有`_rollback`无法使 evidence-write-after-publication 在同一 ownership-aware transaction 内回滚；v1 只冻结顶层、未冻结nested ABI/first-failure nullability。MM、Kimi capture 均为同pair `APPROVE_TO_IMPLEMENT...CPU_STATIC`。按三方齐后的最严格意见推进。
+- 已认领同一 Gate 的 docs-only v0.3：预计新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.3.md`，并更新本文件与 TODO。v0.3 将扩大未来 CPU/static allowlist 至 authority module/direct test，以公开、opaque、one-shot transaction-finalizer callback 使 evidence failure 留在既有 rollback 边界；并冻结所有 nested evidence 类型、observation union、first-failure phase table、terminal invariants。禁止 adapter/真实 refs/source/GPU/训练。未提交。
+
 ## Real adapter design v0.2第6轮观察（2026-09-12 14:11:11 CST）
 
 - formal root=`dd0ecdf19e3413be4f8dad5e7b069e106f88e8ad`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head`、远端 advertised SHA、`origin/V2` 与 ff-only 后 HEAD 均为`3cb5337764f9db72c3b9e5f8de4a0a5581bd5073`；完整新增范围为空，fetch/ls-remote/ff-only 均成功。
