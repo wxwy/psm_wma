@@ -2667,3 +2667,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root execution-authority implementation 设计 v0.2 formal-SHA 更正（2026-09-12，REVIEW）
 
 - `e69d78c0758cb77111e371897093e0765018d7bc`为错误且不可达；实际可达formal root为`e69d78c02bd946d44a3a00e455668e83a639917c`（当前V2祖先，tree含v0.2），child不变。旧错误pair的ChatGPT/MM/Kimi拒绝只触发更正，不构成技术整改；已append更正申请，必须向三方重送该exact pair后重新回收。
+
+### Execution-authority v0.2 审核观察（2026-09-12，三方final齐）
+
+- 正确pair=`e69d78c02bd946d44a3a00e455668e83a639917c`/`93a89ba61306d840a008813f62f26a34d54850f4`：ChatGPT review=`2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_implementation_design_e69d78c_93a89ba.md` final REQUEST_CHANGES（HIGH：未冻结local-config完整allowlist/值约束或typed config digest/allowlist ABI，且Git-dir config路径解析与accepted/rejected direct witness未定义）；MM/Kimi同pair批准。推进令牌仅允许v0.3 docs-only补齐该合同；禁止实现。
