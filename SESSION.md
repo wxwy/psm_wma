@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root synthetic implementation第1轮观察（2026-09-12 13:04:52 CST）
+
+- formal root=`8cd1103deecc0720b7168e9e2b86b576e818b2bd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox ledger=`eb00fc188c743c19bec078ff8fcb083c87ecd5aa`已推送，MM/Kimi均按固定节奏发送并capture确认进入实现审查。
+- before_head、advertised V2、origin/V2、ff-only后HEAD均为`eb00fc188c743c19bec078ff8fcb083c87ecd5aa`；新增范围空。ChatGPT reviews/ exact formal root无匹配；MM正在核验rollback实现，Kimi正在核验scope/design authority与重跑测试，均尚无本pair final。
+- 三方未齐，保持REVIEW，三分钟后继续原生轮询；不执行真实I/O/GPU/训练。未提交。
+
 ## Authority-root synthetic CPU/static implementation（2026-09-12 13:02:31 CST，REVIEW）
 
 - 按获批四文件allowlist新增`immutable_source_authority_root.py`及test，并最小修改现collection executor/test。新模块实现`prepare_candidate→verify_candidate→publish_candidate`、exact seven-key binding、同activation只读one-shot capability、local→remote expected-zero CAS、逐端点owned witness、remote→local conditional compare-delete rollback与fresh observation。
