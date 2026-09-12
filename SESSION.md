@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root CPU/static implementation design v0.1 复审准备（2026-09-12）
+
+- formal root=`c61f32f3a99688043f2dfdb3d69480e11b1811dd`已推送；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。formal diff仅设计、SESSION、TODO；`git diff --check` PASS，未运行测试（docs-only）。
+- 冻结名册ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。申请只请求两root文件CPU/static synthetic implementation授权，不请求真实JSON/authority commit/ref/source/remote/GPU/训练。
+- live Inbox追加前48274 bytes、追加后49911 bytes；下一步提交推送ledger再按固定tmux节奏发送。本段不提前声明送达。未提交。
+
 ## Authority-root CPU/static implementation design v0.1（2026-09-12，IN_PROGRESS）
 
 - 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_cpu_static_implementation_design_v0.1.md`；仅冻结未来root tool/test allowlist与CPU/static合同，未修改代码、创建JSON/authority commit/ref或运行真实I/O/GPU/训练。

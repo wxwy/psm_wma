@@ -415,3 +415,15 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 前轮 formal `36b4e6bc3144a67d16d6c9684649e8939d181230` 三方 final 齐：ChatGPT一项HIGH，MM/Kimi批准。v0.2仅按ChatGPT acceptance方案1整改：conceptual authority-root revision的唯一executor-facing serialization key冻结为现有实现的`root_revision`。exact seven-key mapping用于materializer候选、独立verifier、review/evidence binding及现有`_authority_tree()`/`_bound_source_inputs()`；serialized `authority_root_revision`、双键、tuple、caller rename或adapter全部pre-source FAIL。v0.1其余parent/tree/ref/canonical bytes/边界完整继承。
 
 请确认该HIGH关闭并给唯一 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_MATERIALIZATION_BINDING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。本申请仍只请求进入root CPU/static implementation design，不授权真实materialization/source I/O/collection/publication/child/GPU/训练；不新增横向Gate。
+
+## 审核申请：Authority Root CPU/static Implementation 设计 v0.1（2026-09-12）
+
+- formal root SHA：`c61f32f3a99688043f2dfdb3d69480e11b1811dd`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-CPU-STATIC-IMPLEMENTATION-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_cpu_static_implementation_design_v0.1.md`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+前置binding v0.2 formal `31819169c9430087f5e293cd1dce169ec055b371` 已获三方批准。本设计只冻结下一步root-only两文件实现：`immutable_source_authority_root.py`及test；单一DI算法`prepare_candidate→verify_candidate→publish_candidate`；full tree entry、detached single-parent candidate、fixed-ref expected-zero CAS、post-CAS relookup/exact rollback、same-activation one-shot capability、`ROLLBACK_INCOMPLETE`。exact seven-key `root_revision` binding必须直接进入现collection executor真实authority seam，不能只比较常量。
+
+请逐项审核allowlist/复用边界、DI protocol是否足以支持future real adapter、canonical schema/parent/delta、candidate不信任、CAS/rollback、capability lifecycle、executor ABI正反例及CPU matrix。请求唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。批准仅授权root CPU/static synthetic implementation；不创建真实JSON/authority commit/ref，不访问真实source/remote，不执行collection/publication/child/GPU/训练。
