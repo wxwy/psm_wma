@@ -69,6 +69,7 @@ class PublicationFailure:
     post_local_error: str | None
     post_remote_error: str | None
     binding_reverified: bool
+    cleanup_incomplete: bool
 
 
 class EvidenceCleanupIncomplete(AuthorityRootError):
@@ -628,6 +629,12 @@ def publish_candidate(
             raise _PreCommitFinalizerError(callback_error)
         post_commit_error = callback_error
     except Exception as error:
+        callback_error = (
+            error.callback_error
+            if isinstance(error, _PreCommitFinalizerError)
+            else error
+        )
+        cleanup_incomplete = isinstance(callback_error, EvidenceCleanupIncomplete)
         outcome: RollbackOutcome | None = None
         try:
             outcome = _rollback(git, revision, local_created, remote_created)
@@ -638,7 +645,7 @@ def publish_candidate(
                     phase, error, local_created, remote_created, outcome,
                     pre_local, pre_remote, post_local, post_remote,
                     pre_local_error, pre_remote_error, post_local_error,
-                    post_remote_error, binding_reverified,
+                    post_remote_error, binding_reverified, cleanup_incomplete,
                 ))
             raise
         if failure_reporter is not None:
@@ -646,13 +653,8 @@ def publish_candidate(
                 phase, error, local_created, remote_created, outcome,
                 pre_local, pre_remote, post_local, post_remote,
                 pre_local_error, pre_remote_error, post_local_error,
-                post_remote_error, binding_reverified,
+                post_remote_error, binding_reverified, cleanup_incomplete,
             ))
-        callback_error = (
-            error.callback_error
-            if isinstance(error, _PreCommitFinalizerError)
-            else error
-        )
         if isinstance(callback_error, EvidenceCleanupIncomplete):
             raise RollbackIncomplete() from error
         if isinstance(error, _PreCommitFinalizerError) and error.callback_error:

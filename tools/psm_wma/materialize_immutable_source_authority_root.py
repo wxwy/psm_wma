@@ -362,7 +362,8 @@ def _publication_failure_record(
     outcome = failure.rollback
     if outcome is None:
         raise NativeGitError("publication failure 缺少 rollback outcome")
-    record["status"] = "FAIL" if outcome.complete else "ROLLBACK_INCOMPLETE"
+    terminal_incomplete = failure.cleanup_incomplete or not outcome.complete
+    record["status"] = "ROLLBACK_INCOMPLETE" if terminal_incomplete else "FAIL"
     def observation(value: str | None, error: str | None) -> dict[str, object]:
         if error is not None:
             return {"state": "unreadable", "revision": None, "error": error}
@@ -431,8 +432,12 @@ def _publication_failure_record(
     record["failure"] = {
         "primary_phase": failure.phase,
         "primary_code": type(failure.error).__name__.upper(),
-        "rollback_phase": None if outcome.complete else "rollback",
-        "rollback_code": None if outcome.complete else "ROLLBACK_INCOMPLETE",
+        "rollback_phase": None if not terminal_incomplete else "rollback",
+        "rollback_code": (
+            None if not terminal_incomplete else
+            "EVIDENCE_CLEANUP_INCOMPLETE" if failure.cleanup_incomplete
+            else "ROLLBACK_INCOMPLETE"
+        ),
     }
     record["evidence_sha256"] = sha256_digest(
         json.dumps({key: value for key, value in record.items() if key != "evidence_sha256"}, sort_keys=True, separators=(",", ":")).encode()
@@ -848,8 +853,9 @@ def verify_evidence_bytes(raw: bytes) -> Mapping[str, object]:
         rollback["entered"] and rollback["complete"]
     ):
         raise NativeGitError("publication FAIL 必须有完整终态证明")
+    cleanup_incomplete = record["failure"]["rollback_code"] == "EVIDENCE_CLEANUP_INCOMPLETE"
     if status == "ROLLBACK_INCOMPLETE" and (
-        not rollback["entered"] or rollback["complete"]
+        not rollback["entered"] or (rollback["complete"] and not cleanup_incomplete)
     ):
         raise NativeGitError("ROLLBACK_INCOMPLETE terminal 无效")
     without_digest = dict(record)

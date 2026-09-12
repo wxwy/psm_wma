@@ -385,6 +385,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
                     result = self._run_cli(root, selection_handle, config_handle, argv)
                 self.assertNotEqual(result.returncode, 0)
+                self.assertEqual(verify_evidence_path(root / "evidence.json")["status"], "FAIL")
                 transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
                 self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
                 self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
@@ -429,6 +430,11 @@ class NativeAuthorityGitTest(unittest.TestCase):
 
     def test_cli_other_publication_failures_write_verified_evidence(self):
         hooks = {
+            "verify": """
+def failing(*args):
+    raise tool.NativeGitError('verify fixture')
+tool.verify_candidate = failing
+""",
             "local_cas": """
 tool.NativeAuthorityGit.cas_create_local = lambda self, ref, revision: False
 """,
@@ -499,9 +505,13 @@ tool.NativeAuthorityGit.remote_ref = failing
                 expected_phase = "post_publication" if phase.startswith("post_") else phase
                 self.assertEqual(record["status"], expected_status)
                 self.assertEqual(record["failure"]["primary_phase"], expected_phase)
-                self.assertEqual(
-                    record["rollback"]["complete"], expected_status == "FAIL"
-                )
+                if expected_phase != "verify":
+                    self.assertEqual(
+                        record["rollback"]["complete"], expected_status == "FAIL"
+                    )
+                else:
+                    self.assertFalse(record["rollback"]["entered"])
+                    self.assertIsNotNone(record["candidate"]["revision"])
 
     def test_cli_rejects_pristine_formal_copy_when_loaded_adapter_differs(self):
         with tempfile.TemporaryDirectory() as raw:
