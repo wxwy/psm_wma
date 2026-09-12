@@ -14,13 +14,7 @@ from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
 
-from tools.psm_wma.immutable_source_authority_root import (
-    AuthorityRootError,
-    EvidenceCleanupIncomplete,
-    prepare_candidate,
-    publish_candidate,
-    verify_candidate,
-)
+from tools.psm_wma.immutable_source_authority_root import EvidenceCleanupIncomplete
 from tools.psm_wma.materialize_immutable_source_authority_root import (
     NativeAuthorityGit,
     CommitMetadata,
@@ -243,6 +237,22 @@ def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
 
 
 class NativeAuthorityGitTest(unittest.TestCase):
+    def _run_cli(self, root: Path, selection, config, argv):
+        return subprocess.run(
+            [
+                str(Path(sys.executable).resolve()), "-m",
+                "tools.psm_wma.materialize_immutable_source_authority_root",
+                "--selection-fd", str(selection.fileno()),
+                "--config-fd", str(config.fileno()), *argv,
+            ],
+            cwd=root,
+            pass_fds=(selection.fileno(), config.fileno()),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+
     def _cli_fixture(self, directory: Path):
         git = Path(shutil.which("git") or "").resolve()
         root, remote = directory / "root", directory / "remote.git"
@@ -251,10 +261,16 @@ class NativeAuthorityGitTest(unittest.TestCase):
         subprocess.run([str(git), "-C", str(root), "config", "user.email", "fixture@example.invalid"], check=True)
         adapter_path = "tools/psm_wma/materialize_immutable_source_authority_root.py"
         authority_path = "tools/psm_wma/immutable_source_authority_root.py"
-        for relative in (adapter_path, authority_path):
+        project_root = Path(__file__).parents[2]
+        for relative in (
+            adapter_path,
+            authority_path,
+            "tools/psm_wma/immutable_source_collection.py",
+            "tools/g0/audit_r09_b_ttt_root_gitlink_authority.py",
+        ):
             destination = root / relative
             destination.parent.mkdir(parents=True, exist_ok=True)
-            destination.write_bytes(Path(__file__).with_name(Path(relative).name).read_bytes())
+            destination.write_bytes((project_root / relative).read_bytes())
         (root / "README").write_text("fixture")
         subprocess.run([str(git), "-C", str(root), "add", "."], check=True)
         child = "c" * 40
@@ -305,6 +321,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
             "--selection-raw-sha256", hashlib.sha256(selection).hexdigest(),
             "--config-raw-sha256", hashlib.sha256(config).hexdigest(),
             "--cwd", str(root), "--remote", str(remote), "--index", str(root / "temporary.index"),
+            "--evidence-path", str(root / "evidence.json"),
             "--git", str(git), "--git-raw-sha256", hashlib.sha256(git.read_bytes()).hexdigest(), "--git-version", _tool_version(git),
             "--interpreter", str(interpreter), "--interpreter-raw-sha256", hashlib.sha256(interpreter.read_bytes()).hexdigest(), "--interpreter-version", _tool_version(interpreter),
             "--adapter-path", identities[0], "--adapter-blob-oid", identities[1], "--adapter-raw-sha256", identities[2],
@@ -319,21 +336,9 @@ class NativeAuthorityGitTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
             with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
-                with patch(
-                    "tools.psm_wma.materialize_immutable_source_authority_root.prepare_candidate",
-                    wraps=prepare_candidate,
-                ) as prepare, patch(
-                    "tools.psm_wma.materialize_immutable_source_authority_root.verify_candidate",
-                    wraps=verify_candidate,
-                ) as verify, patch(
-                    "tools.psm_wma.materialize_immutable_source_authority_root.publish_candidate",
-                    wraps=publish_candidate,
-                ) as publish:
-                    result = main(["--selection-fd", str(selection_handle.fileno()), "--config-fd", str(config_handle.fileno()), *argv])
-            self.assertEqual(result, 0)
-            self.assertEqual(prepare.call_count, 1)
-            self.assertEqual(verify.call_count, 1)
-            self.assertEqual(publish.call_count, 1)
+                result = self._run_cli(root, selection_handle, config_handle, argv)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(verify_evidence_path(root / "evidence.json")["status"], "PASS")
             transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNotNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNotNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
@@ -353,8 +358,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 position = argv.index(option)
                 argv[position + 1] = value
                 with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
-                    with self.assertRaises(NativeGitError):
-                        main(["--selection-fd", str(selection_handle.fileno()), "--config-fd", str(config_handle.fileno()), *argv])
+                    result = self._run_cli(root, selection_handle, config_handle, argv)
+                self.assertNotEqual(result.returncode, 0)
                 transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
                 self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
                 self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
@@ -366,8 +371,21 @@ class NativeAuthorityGitTest(unittest.TestCase):
             position = argv.index("--selection-raw-sha256")
             argv[position + 1] = hashlib.sha256(selection.read_bytes()).hexdigest()
             with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
-                with self.assertRaises(AuthorityRootError):
-                    main(["--selection-fd", str(selection_handle.fileno()), "--config-fd", str(config_handle.fileno()), *argv])
+                result = self._run_cli(root, selection_handle, config_handle, argv)
+            self.assertNotEqual(result.returncode, 0)
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+            self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_cli_rejects_pristine_formal_copy_when_loaded_adapter_differs(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                with self.assertRaises(NativeGitError):
+                    main([
+                        "--selection-fd", str(selection_handle.fileno()),
+                        "--config-fd", str(config_handle.fileno()), *argv,
+                    ])
             transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
@@ -383,8 +401,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 else:
                     self.assertTrue(transaction.cas_create_remote("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1", revision))
                 with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
-                    with self.assertRaises(NativeGitError):
-                        main(["--selection-fd", str(selection_handle.fileno()), "--config-fd", str(config_handle.fileno()), *argv])
+                    result = self._run_cli(root, selection_handle, config_handle, argv)
+                self.assertNotEqual(result.returncode, 0)
     def test_input_fd_requires_regular_file(self):
         with tempfile.TemporaryDirectory() as raw:
             path = Path(raw) / "input.json"
@@ -400,9 +418,9 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 os.close(write_end)
     def test_pending_evidence_unlinks_only_through_commit(self):
         class Commit:
-            def __init__(self): self.callback = None
-            def seal_for_guard(self, callback): self.callback = callback
-            def consume_by_unlink(self): self.callback()
+            def __init__(self): self.guard = None
+            def seal_for_guard(self, guard, _path, _digest): self.guard = guard
+            def consume_by_unlink(self): os.unlink(self.guard)
         with tempfile.TemporaryDirectory() as raw:
             path = Path(raw) / "evidence.json"
             write_pending_evidence(path, _pass_evidence(), Commit())
@@ -478,6 +496,30 @@ class NativeAuthorityGitTest(unittest.TestCase):
         with self.assertRaises(NativeGitError):
             verify_evidence_bytes(_redigest(drifted))
 
+    def test_no_owned_publication_failures_require_complete_absent_proof(self):
+        for phase, record in (
+            ("pre_publication", deepcopy(_local_cas_failure_evidence())),
+            ("local_cas", _local_cas_failure_evidence()),
+        ):
+            with self.subTest(phase=phase):
+                if phase == "pre_publication":
+                    record["pre_publication"] = {
+                        "local_observation": {"state": "revision", "revision": "a" * 40, "error": None},
+                        "remote_observation": {"state": "absent", "revision": None, "error": None},
+                        "both_absent": False,
+                    }
+                    record["publication"] = {key: False for key in record["publication"]}
+                    record["failure"] = {
+                        "primary_phase": "pre_publication", "primary_code": "PRECHECK_FAILED",
+                        "rollback_phase": None, "rollback_code": None,
+                    }
+                record["rollback"]["complete"] = False
+                record["rollback"]["final_local_observation"] = {
+                    "state": "unreadable", "revision": None, "error": "READ_ERROR",
+                }
+                with self.assertRaises(NativeGitError):
+                    verify_evidence_bytes(_redigest(record))
+
     def test_remote_cas_failure_requires_local_only_rollback(self):
         remote_cas = _remote_cas_failure_evidence()
         self.assertEqual(verify_evidence_bytes(_redigest(remote_cas))["status"], "FAIL")
@@ -501,7 +543,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
 
     def test_writer_cleans_precommit_files_after_directory_fsync_or_rename_failure(self):
         class Commit:
-            def seal_for_guard(self, _callback):
+            def seal_for_guard(self, *_args):
                 raise AssertionError("seal must not be reached")
 
         for failure in ("directory_fsync", "rename"):
@@ -527,7 +569,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
 
     def test_writer_cleans_postrename_reread_failure_before_guard_unlink(self):
         class Commit:
-            def seal_for_guard(self, _callback):
+            def seal_for_guard(self, *_args):
                 raise AssertionError("seal must not be reached")
 
         with tempfile.TemporaryDirectory() as raw:
@@ -545,7 +587,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
         class Commit:
             committed = False
 
-            def seal_for_guard(self, _callback):
+            def seal_for_guard(self, *_args):
                 pass
 
             def consume_by_unlink(self):
@@ -560,7 +602,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
 
     def test_writer_reports_cleanup_that_cannot_be_proven(self):
         class Commit:
-            def seal_for_guard(self, _callback):
+            def seal_for_guard(self, *_args):
                 raise AssertionError("seal must not be reached")
 
         with tempfile.TemporaryDirectory() as raw:

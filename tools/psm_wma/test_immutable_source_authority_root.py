@@ -4,8 +4,11 @@ from __future__ import annotations
 import hashlib
 import json
 import pickle
+import shutil
+import tempfile
 import unittest
 from copy import copy, deepcopy
+from pathlib import Path
 
 from tools.psm_wma.immutable_source_authority_root import (
     AuthorityBinding,
@@ -110,6 +113,16 @@ class Git:
 
 
 class AuthorityRootTest(unittest.TestCase):
+    def _seal_commit(self, commit):
+        directory = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        evidence = directory / "evidence.json"
+        guard = directory / "evidence.json.pending"
+        evidence.write_text(json.dumps({"evidence_sha256": "a" * 64}))
+        guard.write_bytes(b"")
+        commit.seal_for_guard(guard, evidence, "a" * 64)
+        return guard
+
     def setUp(self):
         selection = {
             "schema": "immutable_source_selection_request_v1",
@@ -264,13 +277,12 @@ class AuthorityRootTest(unittest.TestCase):
 
     def test_finalizer_commit_and_post_commit_error_preserve_refs(self):
         candidate, binding = self.candidate()
-        calls = []
-
         def finalizer(witness, commit):
             self.assertEqual(witness.revision, candidate.revision)
             self.assertIsInstance(commit, EvidenceCommit)
-            commit.seal_for_guard(lambda: calls.append("unlink"))
+            guard = self._seal_commit(commit)
             commit.consume_by_unlink()
+            self.assertFalse(guard.exists())
             raise KeyboardInterrupt("after unlink")
 
         with self.assertRaises(PostCommitFinalizerError) as raised:
@@ -278,7 +290,6 @@ class AuthorityRootTest(unittest.TestCase):
                 self.request, candidate, binding, self.git, finalizer=finalizer
             )
         self.assertIsInstance(raised.exception.__cause__, KeyboardInterrupt)
-        self.assertEqual(calls, ["unlink"])
         self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
         self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
         self.assertNotIn("delete_local", self.git.events)
@@ -293,13 +304,28 @@ class AuthorityRootTest(unittest.TestCase):
         self.assertNotIn(AUTHORITY_REF, self.git.local)
         self.assertNotIn(AUTHORITY_REF, self.git.remote)
 
+    def test_noop_consumer_cannot_mark_evidence_commit_committed(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(_witness, commit):
+            with self.assertRaises(TypeError):
+                commit.seal_for_guard(lambda: None)
+            self.assertFalse(commit.committed)
+
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(
+                self.request, candidate, binding, self.git, finalizer=finalizer
+            )
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
     def test_committed_finalizer_ordinary_returns_preserve_refs(self):
         for returned in (None, object(), {"ignored": True}):
             with self.subTest(returned=type(returned).__name__):
                 candidate, binding = self.candidate()
 
                 def finalizer(_witness, commit, result=returned):
-                    commit.seal_for_guard(lambda: None)
+                    self._seal_commit(commit)
                     commit.consume_by_unlink()
                     return result
 
@@ -319,7 +345,7 @@ class AuthorityRootTest(unittest.TestCase):
         candidate, binding = self.candidate()
 
         def finalizer(_witness, commit):
-            commit.seal_for_guard(lambda: None)
+            self._seal_commit(commit)
             commit.consume_by_unlink()
             raise Cancellation("after commit")
 
@@ -354,8 +380,8 @@ class AuthorityRootTest(unittest.TestCase):
                     if kind == "unsealed":
                         commit.consume_by_unlink()
                     else:
-                        commit.seal_for_guard(lambda: None)
-                        commit.seal_for_guard(lambda: None)
+                        self._seal_commit(commit)
+                        self._seal_commit(commit)
 
                 with self.assertRaises(AuthorityRootError):
                     publish_candidate(
@@ -368,7 +394,7 @@ class AuthorityRootTest(unittest.TestCase):
         candidate, binding = self.candidate()
 
         def finalizer(_witness, commit):
-            commit.seal_for_guard(lambda: None)
+            self._seal_commit(commit)
             commit.consume_by_unlink()
             commit.consume_by_unlink()
 

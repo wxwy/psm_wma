@@ -8,6 +8,7 @@ import json
 import os
 import stat
 import subprocess
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Sequence
@@ -21,6 +22,7 @@ from tools.psm_wma.immutable_source_authority_root import (
     validate_request,
     verify_candidate,
 )
+import tools.psm_wma.immutable_source_authority_root as authority_module
 from tools.psm_wma.immutable_source_collection import (
     AUTHORITY_REF,
     TreeEntry,
@@ -64,6 +66,8 @@ class AuthorityAdapterInvocation:
     authority_module: ModuleIdentity
     interpreter: ExecutableIdentity
     git_executable: ExecutableIdentity
+    evidence_path: Path
+    argv_sha256: str
 
 
 def _is_sha1(value: str) -> bool:
@@ -131,6 +135,19 @@ def _verify_executable_identity(identity: ExecutableIdentity) -> None:
         raise NativeGitError("tool version 漂移")
 
 
+def _verify_loaded_identity(
+    invocation: AuthorityAdapterInvocation, cwd: Path
+) -> None:
+    expected_adapter = (cwd / invocation.adapter.repo_path).resolve()
+    expected_authority = (cwd / invocation.authority_module.repo_path).resolve()
+    if Path(sys.executable).resolve() != invocation.interpreter.path.resolve():
+        raise NativeGitError("actual interpreter identity 漂移")
+    if Path(__file__).resolve() != expected_adapter:
+        raise NativeGitError("actual adapter module identity 漂移")
+    if Path(authority_module.__file__).resolve() != expected_authority:
+        raise NativeGitError("actual authority module identity 漂移")
+
+
 def request_from_input_fds(
     formal_root: str,
     child_gitlink: str,
@@ -174,10 +191,98 @@ def preflight_authority_invocation(
     _verify_module_identity(invocation.authority_module, tree, transaction, cwd)
     _verify_executable_identity(invocation.interpreter)
     _verify_executable_identity(invocation.git_executable)
+    _verify_loaded_identity(invocation, cwd)
+    evidence_path = invocation.evidence_path
+    guard = evidence_path.with_name(evidence_path.name + ".pending")
+    if not evidence_path.is_absolute() or evidence_path.exists() or evidence_path.is_symlink() or guard.exists() or guard.is_symlink():
+        raise NativeGitError("evidence destination 必须为fresh absent absolute path")
     if transaction.local_ref(AUTHORITY_REF) is not None:
         raise NativeGitError("fixed local ref 必须预先absent")
     if transaction.remote_ref(AUTHORITY_REF) is not None:
         raise NativeGitError("fixed remote ref 必须预先absent")
+
+
+def _pass_evidence_record(
+    invocation: AuthorityAdapterInvocation,
+    transaction: "NativeAuthorityGit",
+    candidate,
+    binding,
+) -> dict[str, object]:
+    metadata = transaction.metadata
+    authority = binding.as_mapping()
+    revision = candidate.revision
+    record: dict[str, object] = {
+        "schema": "immutable_source_authority_root_materialization_evidence_v1",
+        "status": "PASS",
+        "execution": {
+            "formal_root_revision": invocation.request.materialization_formal_root,
+            "child_gitlink": invocation.request.expected_child_gitlink,
+            "adapter": {
+                "path": invocation.adapter.repo_path,
+                "blob_native_oid": invocation.adapter.blob_native_oid,
+                "raw_sha256": invocation.adapter.raw_sha256,
+            },
+            "authority_module": {
+                "path": invocation.authority_module.repo_path,
+                "blob_native_oid": invocation.authority_module.blob_native_oid,
+                "raw_sha256": invocation.authority_module.raw_sha256,
+            },
+            "interpreter": {
+                "path": str(invocation.interpreter.path),
+                "raw_sha256": invocation.interpreter.raw_sha256,
+                "version": invocation.interpreter.version,
+            },
+            "git_executable": {
+                "path": str(invocation.git_executable.path),
+                "raw_sha256": invocation.git_executable.raw_sha256,
+                "version": invocation.git_executable.version,
+            },
+            "cwd": str(transaction.cwd),
+            "sanitized_env_sha256": sha256_digest(json.dumps(transaction.env, sort_keys=True, separators=(",", ":")).encode()),
+            "argv_sha256": invocation.argv_sha256,
+            "commit_metadata": vars(metadata),
+            "remote_identity_sha256": sha256_digest(transaction.remote.encode()),
+            "fixed_ref": AUTHORITY_REF,
+        },
+        "authority": authority,
+        "candidate": {
+            "revision": revision,
+            "parents": [invocation.request.materialization_formal_root],
+            "tree_native_oid": transaction._run("rev-parse", f"{revision}^{{tree}}"),
+            "verifier_pass": True,
+            "binding_sha256": sha256_digest(json.dumps(authority, sort_keys=True, separators=(",", ":")).encode()),
+        },
+        "pre_publication": {
+            "local_observation": {"state": "absent", "revision": None, "error": None},
+            "remote_observation": {"state": "absent", "revision": None, "error": None},
+            "both_absent": True,
+        },
+        "publication": {
+            "local_create_attempted": True, "local_create_succeeded": True,
+            "remote_create_attempted": True, "remote_create_succeeded": True,
+            "local_owned": True, "remote_owned": True,
+        },
+        "post_publication": {
+            "local_observation": {"state": "revision", "revision": revision, "error": None},
+            "remote_observation": {"state": "revision", "revision": revision, "error": None},
+            "both_candidate": True, "committed_binding_reverified": True,
+        },
+        "rollback": {
+            "entered": False, "required": False,
+            "remote_delete_attempted": False, "remote_delete_succeeded": False,
+            "local_delete_attempted": False, "local_delete_succeeded": False,
+            "final_local_observation": None, "final_remote_observation": None,
+            "complete": False,
+        },
+        "failure": {
+            "primary_phase": None, "primary_code": None,
+            "rollback_phase": None, "rollback_code": None,
+        },
+    }
+    record["evidence_sha256"] = sha256_digest(
+        json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
+    )
+    return record
 
 
 def run_authority_cli(
@@ -189,7 +294,16 @@ def run_authority_cli(
     preflight_authority_invocation(invocation, transaction, cwd)
     candidate = prepare_candidate(invocation.request, transaction)
     binding = verify_candidate(invocation.request, candidate, transaction)
-    return publish_candidate(invocation.request, candidate, binding, transaction).revision
+    def finalizer(_witness, commit):
+        write_pending_evidence(
+            invocation.evidence_path,
+            _pass_evidence_record(invocation, transaction, candidate, binding),
+            commit,
+        )
+
+    return publish_candidate(
+        invocation.request, candidate, binding, transaction, finalizer=finalizer
+    ).revision
 
 
 @dataclass(frozen=True)
@@ -534,10 +648,14 @@ def verify_evidence_bytes(raw: bytes) -> Mapping[str, object]:
     if status == "PASS":
         if not all(item is not None for item in record["authority"].values()) or candidate["verifier_pass"] is not True or not (pre["both_absent"] and all(publication.values()) and post["both_candidate"] and post["committed_binding_reverified"]) or rollback["entered"]:
             raise NativeGitError("PASS evidence chronology 无效")
-    if status == "FAIL" and owned and not (
-        rollback["entered"] and rollback["required"] and rollback["complete"]
+    publication_try = record["failure"]["primary_phase"] in {
+        "pre_publication", "local_cas", "remote_cas", "post_publication",
+        "binding_reverify", "evidence_write",
+    }
+    if status == "FAIL" and publication_try and not (
+        rollback["entered"] and rollback["complete"]
     ):
-        raise NativeGitError("owned publication FAIL 必须有完整 rollback")
+        raise NativeGitError("publication FAIL 必须有完整终态证明")
     if status == "ROLLBACK_INCOMPLETE" and (
         not rollback["entered"] or rollback["complete"]
     ):
@@ -646,7 +764,7 @@ def write_pending_evidence(path: Path, record: Mapping[str, object], commit) -> 
         _fsync_directory(directory)
         if verify_evidence_bytes(_read_regular_evidence(path)) != verified:
             raise NativeGitError("evidence re-read drift")
-        commit.seal_for_guard(lambda: os.unlink(guard))
+        commit.seal_for_guard(guard, path, verified["evidence_sha256"])
     except BaseException:
         _cleanup_pending_evidence((temporary, path, guard), directory)
         raise
@@ -753,6 +871,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--cwd", type=Path, required=True)
     parser.add_argument("--remote", required=True)
     parser.add_argument("--index", type=Path, required=True)
+    parser.add_argument("--evidence-path", type=Path, required=True)
     parser.add_argument("--git", type=Path, required=True)
     parser.add_argument("--git-raw-sha256", required=True)
     parser.add_argument("--git-version", required=True)
@@ -775,7 +894,8 @@ def _parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     """Run only an explicitly-identified authority-root invocation."""
-    args = _parser().parse_args(argv)
+    actual_argv = tuple(sys.argv[1:] if argv is None else argv)
+    args = _parser().parse_args(actual_argv)
     request = request_from_input_fds(
         args.formal_root,
         args.child_gitlink,
@@ -810,6 +930,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.interpreter_version,
         ),
         ExecutableIdentity(args.git, args.git_raw_sha256, args.git_version),
+        args.evidence_path,
+        sha256_digest(json.dumps(actual_argv, separators=(",", ":")).encode()),
     )
     print(run_authority_cli(invocation, transaction, args.cwd))
     return 0

@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
+from pathlib import Path
 from types import MappingProxyType
 from typing import Callable, Mapping, Protocol
 
@@ -110,40 +112,82 @@ _CAPABILITY_TOKEN = object()
 
 
 class PublicationWitness(_NonSerializable):
-    __slots__ = ("revision", "local_created", "remote_created", "_token")
+    __slots__ = (
+        "revision", "local_created", "remote_created", "_request", "_candidate",
+        "_binding", "_activation", "_token",
+    )
 
-    def __init__(self, revision: str, token: object) -> None:
+    def __init__(
+        self,
+        revision: str,
+        request: AuthorityRequest,
+        candidate: AuthorityCandidate,
+        binding: AuthorityBinding,
+        activation: object,
+        token: object,
+    ) -> None:
         if token is not _CAPABILITY_TOKEN:
             raise AuthorityRootError("publication witness 不可重建")
         self.revision = revision
         self.local_created = self.remote_created = True
+        self._request, self._candidate, self._binding = request, candidate, binding
+        self._activation = activation
         self._token = token
 
 
 class EvidenceCommit(_NonSerializable):
-    __slots__ = ("_witness", "_sealed", "_committed", "_consumer", "_token")
+    __slots__ = (
+        "_witness", "_activation", "_sealed", "_committed", "_guard",
+        "_evidence_path", "_evidence_sha256", "_token",
+    )
 
     def __init__(self, witness: PublicationWitness, token: object) -> None:
         if token is not _CAPABILITY_TOKEN:
             raise AuthorityRootError("evidence commit 不可重建")
-        self._witness, self._token = witness, token
+        self._witness, self._activation, self._token = witness, witness._activation, token
         self._sealed = self._committed = False
-        self._consumer: Callable[[], None] | None = None
+        self._guard: Path | None = None
+        self._evidence_path: Path | None = None
+        self._evidence_sha256: str | None = None
 
     @property
     def committed(self) -> bool:
         return self._committed
 
-    def seal_for_guard(self, consumer: Callable[[], None]) -> None:
-        if self._sealed or self._committed or not callable(consumer):
+    def seal_for_guard(
+        self, guard: Path, evidence_path: Path, evidence_sha256: str
+    ) -> None:
+        if (
+            self._sealed
+            or self._committed
+            or not isinstance(guard, Path)
+            or not isinstance(evidence_path, Path)
+            or guard != evidence_path.with_name(evidence_path.name + ".pending")
+            or not isinstance(evidence_sha256, str)
+            or len(evidence_sha256) != 64
+            or any(char not in "0123456789abcdef" for char in evidence_sha256)
+        ):
             raise AuthorityRootError("evidence commit seal 无效")
-        self._consumer = consumer
+        try:
+            raw = evidence_path.read_bytes()
+            value = json.loads(raw)
+        except (OSError, ValueError, TypeError) as error:
+            raise AuthorityRootError("evidence commit seal evidence 无效") from error
+        if (
+            not guard.is_file()
+            or guard.is_symlink()
+            or not isinstance(value, dict)
+            or value.get("evidence_sha256") != evidence_sha256
+        ):
+            raise AuthorityRootError("evidence commit seal guard/digest 无效")
+        self._guard, self._evidence_path = guard, evidence_path
+        self._evidence_sha256 = evidence_sha256
         self._sealed = True
 
     def consume_by_unlink(self) -> None:
-        if not self._sealed or self._committed or self._consumer is None:
+        if not self._sealed or self._committed or self._guard is None:
             raise AuthorityRootError("evidence commit 未seal或已消费")
-        self._consumer()
+        os.unlink(self._guard)
         self._committed = True
 
 
@@ -380,7 +424,9 @@ def publish_candidate(
             raise AuthorityRootError("post-CAS ref drift")
         if verify_candidate(request, candidate, git).as_mapping() != expected:
             raise AuthorityRootError("committed binding drift")
-        witness = PublicationWitness(revision, _CAPABILITY_TOKEN)
+        witness = PublicationWitness(
+            revision, request, candidate, binding, object(), _CAPABILITY_TOKEN
+        )
         if finalizer is None:
             return witness
         commit = EvidenceCommit(witness, _CAPABILITY_TOKEN)
