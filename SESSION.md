@@ -2970,3 +2970,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal/child及冻结名册不变。`before=3a4e596c2b606acf5b7da5ffade7bebd6bfa3021`；fetch成功；advertised/origin/local-after同为`3a4e596c2b606acf5b7da5ffade7bebd6bfa3021`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT exact-pair检索仍无正式review；MM同pair批准与Kimi同pair `REQUEST_CHANGES(...annex_v0.4.md:35)` capture均保持。无推进令牌，保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
+
+### Authority-root launcher procedure v0.4 审核观察凭证 #18（2026-09-13 01:16:54 CST，REVIEW）
+
+- formal/child及冻结名册不变。`before=f4208cf1e0c38b24e2b17e2632974025bccc36f0`；fetch成功；advertised/origin/local-after同为`f4208cf1e0c38b24e2b17e2632974025bccc36f0`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-pair检索仍无正式review；MM同pair批准与Kimi同pair `REQUEST_CHANGES(...annex_v0.4.md:35)` capture均保持。无推进令牌，保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
+
+### Authority-root launcher procedure v0.4 审核观察凭证 #19（2026-09-13 01:18:20 CST，REVIEW）
+
+- formal root 以最新申请条目为`11950c953d7c3e781f821ab648d45af83e60d340`、child/Gitlink 为`93a89ba61306d840a008813f62f26a34d54850f4`；该 root 是`17767c0c52cb2e5856a9c98baf29f520ce27fc5b`的后继（ancestry-path=`9506f869`、`4cbd470e`、`11950c95`）。live Inbox rollover continuity 头部的`c6be81e...`是旧 Gate continuity，不是本 Gate 当前申请；不得据此或以最新 bookkeeping HEAD 改写 formal pair。
+- 本轮`before=f4208cf1e0c38b24e2b17e2632974025bccc36f0`；`git fetch origin V2`成功；advertised/origin/local-after均为`f4208cf1e0c38b24e2b17e2632974025bccc36f0`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT 精确检索`11950...`无命中；最新 ChatGPT 文件`2026-09-13_R09_B_TTT_v035_authority_root_materialization_execution_request_launcher_17767c0_93a89ba.md`明确仅绑定旧 pair `17767.../93a89...`，不能作为当前 final。MM capture=同 pair approve；Kimi capture=同 pair `REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.4.md:35)`。无推进令牌，Gate 保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
