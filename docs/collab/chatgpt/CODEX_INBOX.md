@@ -930,3 +930,12 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 证据：51/51 CPU unittest、py_compile、diff-check PASS。请求 `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`；禁止真实 I/O、child、GPU、训练。
 - 证据：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`92/92 PASS`；py_compile、Ruff、diff-check PASS。只使用temporary repo/local bare remote；不含真实source/materialization、child、GPU、训练。
 - 请求：仅对exact pair回复`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。
+
+## 审核申请：Bootstrap linked-worktree/config-observation remediation closure（2026-09-12）
+
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`。
+- formal root：`fff6d05ef330ada5f6db5edbdc8dde32e2c99019`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 前轮 exact pair：`817191c91ae8c8eb7e1a66f15055d2286d0b76c4`/同一Gitlink；ChatGPT/Kimi=`REQUEST_CHANGES`、MM=`APPROVE`。本轮仅汇总三方共同授权的最小root CPU/static整改。
+- 范围：仅 `tools/psm_wma/materialize_immutable_source_authority_root.py`、既有 stdlib test、`SESSION.md` 与 `TODO.md`；formal tree Gitlink 不变。linked `.git` marker、`gitdir` reciprocal 与 `commondir` 均以 no-follow FD 绑定；实际 `<git_dir>/config.worktree` 必须不存在；每次 native Git bootstrap observation 前后均重验 common config pathname identity 与 retained-FD bytes。
+- 直接 isolated-bootstrap temporary-fixture 负例覆盖：actual detached linked worktree `config.worktree`、伪造 gitdir escape、Git precheck 后 common-config replacement；定向=55/55、组合root stdlib=100/100、py_compile、diff-check PASS。仅临时目录/local bare remote；不含真实source/materialization/ref/evidence/collection/receipt/publication、child、GPU、数据、训练、评测、推理或LIBERO4IN1。
+- 请求：请仅对该 exact pair 给出 `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。

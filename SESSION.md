@@ -2725,3 +2725,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 基于上述同轮推进令牌，仅修改 `tools/psm_wma/materialize_immutable_source_authority_root.py` 与其既有 stdlib 测试：linked `.git` marker 通过 no-follow FD 读取；`git_dir/gitdir` 回指必须精确绑定该 marker，`git_dir/commondir` 通过 no-follow FD 解析，且 `git_dir` 必须是该 common dir 的后代；实际 per-worktree `git_dir/config.worktree` 缺失才可继续。`grun()` 每次 native Git 观测前后均对 common config 的 pathname identity 与 retained-FD bytes 重验。
 - 新增 direct isolated-bootstrap temporary-fixture 负例：实际 detached linked worktree 的 `config.worktree`、伪造 gitdir escape，以及 wrapper 在 Git precheck 后替换 common config。定向 `55/55`、组合 root stdlib `100/100`、两文件 `py_compile`、`git diff --check` 均 PASS；不执行真实 materialization/source/ref/evidence、child、GPU、数据或训练。下一步：更新待办、提交并推送该最小整改，重新对新 formal SHA 三方审核。提交：未提交。
+
+### Bootstrap linked-worktree/config-observation remediation 审核送达准备（2026-09-12 CST，REVIEW）
+
+- formal=`fff6d05ef330ada5f6db5edbdc8dde32e2c99019`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；提交已推送且本轮远端 advertised SHA 同为`fff6d05ef330ada5f6db5edbdc8dde32e2c99019`。冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。待 append canonical live Inbox 后依次以完整文本、至少1秒、独立Enter及capture送达MM/Kimi；正式范围仅两个root CPU/static文件，禁止真实materialization/source/ref/evidence、child、GPU、训练。
+
+### Bootstrap linked-worktree/config-observation remediation 送达回执（2026-09-12 CST，REVIEW）
+
+- canonical live Inbox 已在 112956 bytes 基础上 append 本申请，未触及128 KiB rollover阈值。MM `mm:0.0` 与Kimi `kimi:0.0` 均已完整文本→间隔至少1秒→单独`C-m`→capture回读：消息已离开输入框；MM已开始对`817191c..fff6d05e` diff 核验，Kimi显示本次申请进入处理。ChatGPT送达以已提交live Inbox为准，正式 verdict 仍只认`reviews/` exact pair。下一次审核观察必须先完整远端锁定，然后精确检索与capture三路。
