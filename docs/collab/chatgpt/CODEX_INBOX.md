@@ -439,3 +439,15 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 前轮 formal `c61f32f3a99688043f2dfdb3d69480e11b1811dd` 三方 final 已齐：ChatGPT 两项 HIGH `REQUEST_CHANGES`，MM/Kimi批准。v0.2逐项整改：实现allowlist扩为authority-root tool/test与现collection executor/test四文件；实际 `_bound_source_inputs()` / `collect_synthetic()` 在source-open前直接重查不可覆盖fixed ref的local+remote观察，任一absent/wrong/disagree/error零mutation拒绝；publication冻结local→remote expected-zero CAS与逐端点activation-owned witness；rollback冻结remote→local、仅exact-candidate→absent条件删除、foreign/unreadable不删除、fresh两端观察与统一`ROLLBACK_INCOMPLETE`；CPU matrix注入首CAS后、CAS/postcheck间、rollback中竞态及单端冲突。
 
 请确认两项 HIGH 均关闭，并给唯一 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。批准仅授权上述四文件synthetic CPU/static实现及标准库测试；不授权真实JSON/authority commit/ref、source/remote I/O、collection/publication、child、GPU或训练。
+
+## 审核申请：Authority Root synthetic CPU/static Implementation（2026-09-12）
+
+- formal root SHA：`8cd1103deecc0720b7168e9e2b86b576e818b2bd`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-CPU-STATIC-IMPLEMENTATION`
+- 设计 authority：v0.2 formal `ee0de157d337bc85bf3d8d1c9e4957c31aa03c07`，已获 ChatGPT/MM/Kimi 同pair批准。
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+请逐文件审核四文件allowlist实现：新authority-root模块/test；现collection executor/test的fixed-ref扩展。重点核验真实`_bound_source_inputs()`/`collect_synthetic()`是否在source-open前直接要求local+remote fixed ref精确等于七键`root_revision`；三阶段candidate独立复验、只读one-shot capability；local→remote expected-zero CAS；逐endpoint activation-owned witness；remote→local且仅candidate→absent条件回滚；foreign/unreadable/竞争状态不删除并`ROLLBACK_INCOMPLETE`。证据：stdlib unittest 41/41 PASS；两个新文件Ruff PASS；四文件py_compile及diff-check PASS。全部fixture为内存synthetic，无真实I/O/ref/remote/GPU/训练。
+
+请求唯一 final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。批准只关闭synthetic implementation，不授权真实JSON/authority commit/ref/source/remote、collection/publication、child、GPU或训练。
