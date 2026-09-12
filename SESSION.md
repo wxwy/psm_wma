@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## Authority-root design v0.1 第 2 轮观察（2026-09-12 11:59:06 CST）
+
+- formal root=`36b4e6bc3144a67d16d6c9684649e8939d181230`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- before_head、advertised V2、origin/V2均为`9da0fbf869017e4f762605022b20037096ff7f0b`；独立fetch/ls-remote/祖先检查成功，完整新增范围空，ff-only=Already up to date。exact-pair ChatGPT review检索无匹配。
+- Kimi独立capture含完整pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_MATERIALIZATION_BINDING_CPU_STATIC`，并给一项后续非阻塞要求：implementation design显式冻结七字段首键`authority_root_revision`到现executor key `root_revision` 的exact ABI映射。MM独立capture含同pair相同final；其trailing whitespace仅cosmetic。
+- 当前MM/Kimi已回复APPROVE，ChatGPT尚未找到正式回复，无推进令牌，保持REVIEW并继续三分钟监控。未提交。
+
 ## Authority-root design v0.1 送达与第 1 轮观察（2026-09-12 11:54:56 CST）
 
 - formal root=`36b4e6bc3144a67d16d6c9684649e8939d181230`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
