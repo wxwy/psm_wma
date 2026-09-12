@@ -162,6 +162,71 @@ def _local_cas_failure_evidence() -> dict[str, object]:
     return record
 
 
+def _remote_cas_failure_evidence() -> dict[str, object]:
+    record = deepcopy(_local_cas_failure_evidence())
+    record["publication"] = {
+        "local_create_attempted": True,
+        "local_create_succeeded": True,
+        "remote_create_attempted": True,
+        "remote_create_succeeded": False,
+        "local_owned": True,
+        "remote_owned": False,
+    }
+    record["rollback"] = {
+        "entered": True,
+        "required": True,
+        "remote_delete_attempted": False,
+        "remote_delete_succeeded": False,
+        "local_delete_attempted": True,
+        "local_delete_succeeded": True,
+        "final_local_observation": {"state": "absent", "revision": None, "error": None},
+        "final_remote_observation": {"state": "absent", "revision": None, "error": None},
+        "complete": True,
+    }
+    record["failure"] = {
+        "primary_phase": "remote_cas",
+        "primary_code": "REMOTE_CAS_FAILED",
+        "rollback_phase": None,
+        "rollback_code": None,
+    }
+    _redigest(record)
+    return record
+
+
+def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
+    record = deepcopy(_pass_evidence())
+    record["status"] = "FAIL"
+    revision = record["candidate"]["revision"]
+    if phase == "post_publication":
+        record["post_publication"] = {
+            "local_observation": {"state": "revision", "revision": revision, "error": None},
+            "remote_observation": {"state": "unreadable", "revision": None, "error": "REMOTE_READ_FAILED"},
+            "both_candidate": False,
+            "committed_binding_reverified": False,
+        }
+    else:
+        record["post_publication"]["committed_binding_reverified"] = False
+    record["rollback"] = {
+        "entered": True,
+        "required": True,
+        "remote_delete_attempted": True,
+        "remote_delete_succeeded": True,
+        "local_delete_attempted": True,
+        "local_delete_succeeded": True,
+        "final_local_observation": {"state": "absent", "revision": None, "error": None},
+        "final_remote_observation": {"state": "absent", "revision": None, "error": None},
+        "complete": True,
+    }
+    record["failure"] = {
+        "primary_phase": phase,
+        "primary_code": phase.upper() + "_FAILED",
+        "rollback_phase": None,
+        "rollback_code": None,
+    }
+    _redigest(record)
+    return record
+
+
 class NativeAuthorityGitTest(unittest.TestCase):
     def test_pending_evidence_unlinks_only_through_commit(self):
         class Commit:
@@ -231,6 +296,27 @@ class NativeAuthorityGitTest(unittest.TestCase):
         drifted["publication"]["remote_create_attempted"] = True
         with self.assertRaises(NativeGitError):
             verify_evidence_bytes(_redigest(drifted))
+
+    def test_remote_cas_failure_requires_local_only_rollback(self):
+        remote_cas = _remote_cas_failure_evidence()
+        self.assertEqual(verify_evidence_bytes(_redigest(remote_cas))["status"], "FAIL")
+        drifted = deepcopy(remote_cas)
+        drifted["publication"]["remote_owned"] = True
+        with self.assertRaises(NativeGitError):
+            verify_evidence_bytes(_redigest(drifted))
+
+    def test_post_and_binding_failures_require_their_distinct_post_witnesses(self):
+        for phase in ("post_publication", "binding_reverify"):
+            with self.subTest(phase=phase):
+                record = _post_publication_failure_evidence(phase)
+                self.assertEqual(verify_evidence_bytes(_redigest(record))["status"], "FAIL")
+                drifted = deepcopy(record)
+                if phase == "post_publication":
+                    drifted["publication"]["remote_owned"] = False
+                else:
+                    drifted["post_publication"]["both_candidate"] = False
+                with self.assertRaises(NativeGitError):
+                    verify_evidence_bytes(_redigest(drifted))
 
     def test_writer_cleans_precommit_files_after_directory_fsync_or_rename_failure(self):
         class Commit:
