@@ -2641,3 +2641,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`569a34d50e5106f982c3ed111171d67ea3344bc9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。申请范围仅`materialize_immutable_source_authority_root.py`及其existing stdlib测试的CPU/static实现设计；请求唯一`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`。
 - 申请须先append至live Inbox（当前102428 bytes，预计新增不足3KiB，不触发128KiB rollover），再分别以完整文本→至少1秒→独立Enter→capture投递MM/Kimi。未获同pair三方批准前，禁止改root tooling及所有真实materialization/source/ref/evidence/child/GPU/训练动作。
+
+### Authority-root execution-authority implementation 设计送达回执（2026-09-12 CST，REVIEW）
+
+- formal=`569a34d50e5106f982c3ed111171d67ea3344bc9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT申请已append至canonical live Inbox，并由ledger=`816e3183d84f2f440013dab57496b6e519a9c5ca`推送（ledger非formal target）。
+- MM `mm:0.0` 与 Kimi `kimi:0.0` 均已完整文本写入、间隔至少1秒、独立Enter；随后capture确认文本已离开输入框：MM显示`Finding design file in tree`，Kimi显示已提交审核申请且输入框为空。三方均已送达；三分钟后执行第1轮完整远端锁定检查。
