@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.3 已提交、待三方复审（2026-09-12，REVIEW）
+
+- formal root=`c4133389f856f5ab7a5ad01923f71c0c3892ce09`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。新增v0.3仅关闭 ChatGPT 对 v0.2 的两项HIGH：future allowlist扩至四文件；`publish_candidate(..., finalizer=...)`在既有ownership rollback边界内处理 evidence failure；冻结nested identity/observation/candidate ABI、first-failure nullability表和pending-guard evidence commit point。
+- 已验证暂存 diff `git diff --cached --check` PASS；仅`SESSION.md`、`TODO.md`、v0.3 doc入提交`c4133389...`并已 push。dirty `cosmos-framework`、`artifacts/g0/latent_cache_route_probe/`、`outputs/`、`tmp_escape_*.json`未触碰。
+- 冻结审核名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。待按该 exact pair 请求三方 final；无令牌前禁止 adapter/真实 I-O/GPU/训练。
+
 ## Real adapter design v0.2三方结论与 v0.3整改认领（2026-09-12，IN_PROGRESS）
 
 - 已先 fetch/核对 advertised=`origin/V2`=`85eafa5616c9d458892e3872b9215e50b36a4da9`，并 ff-only 从`17603ab6...`快进；新增`ce154f81`（ChatGPT exact review）与`85eafa56`（其发布 ledger）。formal pair仍为`dd0ecdf19e3413be4f8dad5e7b069e106f88e8ad`/`93a89ba61306d840a008813f62f26a34d54850f4`。

@@ -509,3 +509,16 @@ synthetic implementation formal `0b18620f...`已三方关闭。当前无真实Gi
 v0.1三方意见齐并均要求更正blob OID；ChatGPT另要求CAS/evidence合同。v0.2更正selection/config OID为`9f03614b...`/`89b12047...`，测试须raw→SHA/OID并由temporary native `hash-object`交叉验证；remote仅允许fixed-ref per-ref exact`--force-with-lease`，creation expected absent、rollback expected candidate，禁止unconditional force/普通overwrite/delete-recreate；冻结exact transaction evidence v1的十个顶层section、phase/reachability/ownership/pre-post observations/rollback及原子writer故障矩阵。
 
 请求完整pair唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅授权两文件temporary CPU/static adapter实现，不授权真实JSON/candidate/ref/origin/source/GPU/训练。
+
+## 审核申请：Authority Root Real Adapter设计 v0.3整改（2026-09-12）
+
+- formal root SHA：`c4133389f856f5ab7a5ad01923f71c0c3892ce09`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-EXECUTION-REQUEST-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.3.md`
+- 证据：前轮 ChatGPT 2 HIGH review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_dd0ecdf_93a89ba.md`；`git diff --cached --check` PASS。
+- 冻结名册：ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+v0.3 仅整改 evidence transaction 合同：allowlist从两文件扩至 authority module/direct test + adapter/direct test 四文件；future `publish_candidate(..., finalizer=...)`把 writer failure 保持在已有 remote→local ownership-aware rollback 内，opaque witness/commit capability禁止构造、复制与重放；冻结 execution/observation/authority/candidate nested ABI、first-failure nullability、ordinary FAIL/ROLLBACK_INCOMPLETE/PASS terminal invariants、pending-guard accepted-evidence commit及清理规则。v0.2 的 raw OID、per-ref exact-old remote lease 与禁止项不变。
+
+请求完整pair唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅授权四文件的 temporary CPU/static 实现及本地 bare-remote tests；不授权真实JSON/candidate/ref/origin/source/collection/GPU/训练。
