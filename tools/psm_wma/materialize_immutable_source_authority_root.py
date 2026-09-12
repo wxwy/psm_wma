@@ -18,6 +18,7 @@ from tools.psm_wma.immutable_source_authority_root import (
     AuthorityRequest,
     EvidenceCommit,
     EvidenceCleanupIncomplete,
+    PublicationFailure,
     prepare_candidate,
     publish_candidate,
     validate_request,
@@ -335,6 +336,67 @@ def _no_mutation_failure_record(
     return record
 
 
+def _publication_failure_record(
+    invocation: AuthorityAdapterInvocation,
+    transaction: "NativeAuthorityGit",
+    candidate,
+    binding,
+    failure: PublicationFailure,
+) -> dict[str, object]:
+    if failure.phase not in {"local_cas", "remote_cas", "evidence_write"}:
+        raise NativeGitError("publication failure phase 尚未可序列化")
+    revision = candidate.revision
+    record = _pass_evidence_record(
+        invocation, transaction, candidate, binding, revision, revision
+    )
+    outcome = failure.rollback
+    if outcome is None:
+        raise NativeGitError("publication failure 缺少 rollback outcome")
+    record["status"] = "FAIL" if outcome.complete else "ROLLBACK_INCOMPLETE"
+    if failure.phase == "local_cas":
+        record["publication"] = {
+            "local_create_attempted": True, "local_create_succeeded": False,
+            "remote_create_attempted": False, "remote_create_succeeded": False,
+            "local_owned": False, "remote_owned": False,
+        }
+        record["post_publication"] = {
+            "local_observation": None, "remote_observation": None,
+            "both_candidate": False, "committed_binding_reverified": False,
+        }
+    elif failure.phase == "remote_cas":
+        record["publication"] = {
+            "local_create_attempted": True, "local_create_succeeded": True,
+            "remote_create_attempted": True, "remote_create_succeeded": False,
+            "local_owned": True, "remote_owned": False,
+        }
+        record["post_publication"] = {
+            "local_observation": None, "remote_observation": None,
+            "both_candidate": False, "committed_binding_reverified": False,
+        }
+    def observation(value: str | None) -> dict[str, object]:
+        return {"state": "absent", "revision": None, "error": None} if value is None else {"state": "revision", "revision": value, "error": None}
+    record["rollback"] = {
+        "entered": outcome.entered, "required": outcome.required,
+        "remote_delete_attempted": outcome.remote_delete_attempted,
+        "remote_delete_succeeded": outcome.remote_delete_succeeded,
+        "local_delete_attempted": outcome.local_delete_attempted,
+        "local_delete_succeeded": outcome.local_delete_succeeded,
+        "final_local_observation": observation(outcome.final_local),
+        "final_remote_observation": observation(outcome.final_remote),
+        "complete": outcome.complete,
+    }
+    record["failure"] = {
+        "primary_phase": failure.phase,
+        "primary_code": type(failure.error).__name__.upper(),
+        "rollback_phase": None if outcome.complete else "rollback",
+        "rollback_code": None if outcome.complete else "ROLLBACK_INCOMPLETE",
+    }
+    record["evidence_sha256"] = sha256_digest(
+        json.dumps({key: value for key, value in record.items() if key != "evidence_sha256"}, sort_keys=True, separators=(",", ":")).encode()
+    )
+    return record
+
+
 def run_authority_cli(
     invocation: AuthorityAdapterInvocation,
     transaction: AuthorityGitTransaction,
@@ -376,9 +438,21 @@ def run_authority_cli(
             before_seal=reobserve_before_seal,
         )
 
-    return publish_candidate(
-        invocation.request, candidate, binding, transaction, finalizer=finalizer
-    ).revision
+    failures: list[PublicationFailure] = []
+    try:
+        return publish_candidate(
+            invocation.request, candidate, binding, transaction, finalizer=finalizer,
+            failure_reporter=failures.append,
+        ).revision
+    except BaseException:
+        if failures:
+            write_failure_evidence(
+                invocation.evidence_path,
+                _publication_failure_record(
+                    invocation, transaction, candidate, binding, failures[0]
+                ),
+            )
+        raise
 
 
 @dataclass(frozen=True)
