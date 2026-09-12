@@ -617,6 +617,13 @@ def _blob_oid(raw: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
 
 
+# Authority-root tooling复用的最小公共validation surface；保留私有名兼容现executor。
+canonical_json_bytes = _canonical
+sha256_digest = _digest
+validated_git_tree = _tree
+git_blob_oid = _blob_oid
+
+
 def _authority_tree(git: GitTransaction, authority: Mapping[str, str],
                     lineage: Mapping[str, str]) -> Mapping[str, TreeEntry]:
     revision = authority["root_revision"]

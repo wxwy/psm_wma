@@ -17,10 +17,10 @@ from tools.psm_wma.immutable_source_collection import (
     SELECTION_PATH,
     CollectionError,
     TreeEntry,
-    _blob_oid,
-    _canonical,
-    _digest,
-    _tree,
+    canonical_json_bytes,
+    git_blob_oid,
+    sha256_digest,
+    validated_git_tree,
 )
 
 
@@ -128,7 +128,7 @@ def _selection(raw: bytes) -> None:
             or set(value) != {"schema", "source_kind", "entries"}
             or value["schema"] != "immutable_source_selection_request_v1"
             or value["source_kind"] != "checkpoint_source_manifest_v1"
-            or _canonical(value) != raw
+            or canonical_json_bytes(value) != raw
             or not isinstance(value["entries"], list)
             or not value["entries"]
         ):
@@ -159,7 +159,7 @@ def _selection(raw: bytes) -> None:
 def _config(raw: bytes) -> None:
     try:
         value, _ = validate_config(json.loads(raw))
-        if _canonical(value) != raw:
+        if canonical_json_bytes(value) != raw:
             raise AuthorityRootError("config bytes 非canonical")
     except (ValueError, TypeError, UnicodeError, AuditFailure) as exc:
         raise AuthorityRootError("config 无效") from exc
@@ -183,7 +183,7 @@ def prepare_candidate(
 ) -> AuthorityCandidate:
     _verify_request(request)
     parent = request.materialization_formal_root
-    before = _tree(git, parent)
+    before = validated_git_tree(git, parent)
     if SELECTION_PATH in before or COLLECTION_PATHS[1] in before:
         raise AuthorityRootError("formal root 已含fixed path")
     _formal_gitlink(before, request.expected_child_gitlink)
@@ -219,8 +219,10 @@ def _candidate_mapping(
     parent = request.materialization_formal_root
     if not _sha1(revision) or git.parents(revision) != (parent,):
         raise AuthorityRootError("candidate必须精确单parent")
-    before, after = _tree(git, parent), _tree(git, revision)
+    before, after = validated_git_tree(git, parent), validated_git_tree(git, revision)
     paths = (SELECTION_PATH, COLLECTION_PATHS[1])
+    if any(path in before for path in paths):
+        raise AuthorityRootError("formal root 已含fixed path")
     changed = {p for p in set(before) | set(after) if before.get(p) != after.get(p)}
     if changed != set(paths) or any(
         after.get(p, ())[:2] != ("100644", "blob") for p in paths
@@ -231,16 +233,16 @@ def _candidate_mapping(
     for path, raw in zip(paths, raws):
         oid = after[path][2]
         observed = git.blob_bytes(oid)
-        if observed != raw or _blob_oid(observed) != oid:
+        if observed != raw or git_blob_oid(observed) != oid:
             raise AuthorityRootError("candidate blob漂移")
     mapping = {
         "root_revision": revision,
         "selection_path": SELECTION_PATH,
         "selection_blob_native_oid": after[SELECTION_PATH][2],
-        "selection_raw_sha256": _digest(raws[0]),
+        "selection_raw_sha256": sha256_digest(raws[0]),
         "config_path": COLLECTION_PATHS[1],
         "config_blob_native_oid": after[COLLECTION_PATHS[1]][2],
-        "config_raw_sha256": _digest(raws[1]),
+        "config_raw_sha256": sha256_digest(raws[1]),
     }
     return mapping
 

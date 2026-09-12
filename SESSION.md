@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root synthetic implementation第二次ChatGPT整改（2026-09-12 13:24:24 CST，REVIEW）
+
+- formal `fce040f645e2427d11d9cd9026adc2f0e8004bda`/child `93a89ba61306d840a008813f62f26a34d54850f4`三方意见齐：ChatGPT exact review给出1 HIGH+1 MEDIUM `REQUEST_CHANGES`；MM/Kimi同pair批准。按最严格意见同Gate整改。
+- shared `_candidate_mapping()`新增formal parent两个fixed path必须均absent，table-driven直接构造parent预含selection/config且candidate替换为批准bytes的独立verifier负例；prepare原有pre-create拒绝保持。collection新增四个最小公共helper alias，authority不再跨模块导入private helper；补alias-only七键ABI负例。
+- 验证：unittest=`47/47 PASS`；两个新文件Ruff PASS；四文件py_compile和diff-check PASS。不执行真实I/O/GPU/训练。下一步提交推送新formal SHA并三方复审。未提交。
+
 ## Authority-root remediation第2轮观察（2026-09-12 13:22:39 CST）
 
 - formal root=`fce040f645e2427d11d9cd9026adc2f0e8004bda`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。before_head、advertised V2、origin/V2、ff-only后HEAD均为`0c27db1ca44ddea40bd70e3069ed6808005c458d`，完整新增范围空；ChatGPT reviews/ exact formal root仍无匹配。

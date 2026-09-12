@@ -9,6 +9,7 @@ from copy import copy, deepcopy
 
 from tools.psm_wma.immutable_source_authority_root import (
     AuthorityBinding,
+    AuthorityCandidate,
     AuthorityRequest,
     AuthorityRootError,
     RollbackIncomplete,
@@ -300,6 +301,10 @@ class AuthorityRootTest(unittest.TestCase):
         self.assertEqual(result["status"], "PASS")
         for changed in (
             {**authority, "authority_root_revision": authority["root_revision"]},
+            {
+                **{k: v for k, v in authority.items() if k != "root_revision"},
+                "authority_root_revision": authority["root_revision"],
+            },
             {k: v for k, v in authority.items() if k != "root_revision"},
             {**authority, "extra": "x"},
         ):
@@ -318,6 +323,27 @@ class AuthorityRootTest(unittest.TestCase):
                     root_fd=Unopened(),
                     sink=MemoryEvidenceSink(),
                 )
+
+    def test_verifier_rejects_parent_with_either_fixed_path(self):
+        fixed = (
+            (SELECTION_PATH, self.request.selection_raw),
+            (
+                "docs/build/PSM-WMA_immutable_source_canonical_model_config_v1.json",
+                self.request.config_raw,
+            ),
+        )
+        for path, _ in fixed:
+            git = Git()
+            git.trees[git.root][path] = ("100644", "blob", "f" * 40)
+            revision = git.create_detached_commit(git.root, dict(fixed))
+            request = AuthorityRequest(
+                git.root, git.child, self.request.selection_raw, self.request.config_raw
+            )
+            with (
+                self.subTest(path=path),
+                self.assertRaisesRegex(AuthorityRootError, "已含fixed path"),
+            ):
+                verify_candidate(request, AuthorityCandidate(revision), git)
 
     def test_capability_rejects_cross_request_and_candidate(self):
         candidate, binding = self.candidate()
