@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root real adapter/execution request设计 v0.1（2026-09-12，REVIEW）
+
+- 只读发现确认现production仅有injected protocol、无真实Git adapter/CLI，故不能直接执行materialization。新增docs-only设计，将剩余路线压缩为：两文件real adapter CPU/static implementation closure → exact execution request三方批准 → 一次真实materialization/binding；不插入其他横向Gate。
+- 冻结future selection为Gate-A iter_000000002的8个排序相对分片，canonical raw 516 bytes/SHA256=`8fe4585f...`/blob OID=`6c7d53c...`；active config为TBPTT=16、inner_lr=0.1、k_local=1等15键，raw 508 bytes/SHA256=`43b3b77b...`/blob OID=`d1b80b1c...`。只计算内联bytes摘要，未打开source。
+- host只读观察Python `/opt/conda/bin/python3.11`与Git `/usr/bin/git`身份；future request须重新冻结formal-tree tools、sanitized env、metadata、argv、remote与fixed-ref fresh absent。预计实际修改仅本设计、SESSION、TODO；验证`git diff --check`后提交新SHA三方审核。未提交。
+
 ## Authority-root synthetic implementation closure（2026-09-12，DONE）
 
 - formal root=`0b18620f84959bf25379f3c227b796edc1097efd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_authority_root_cpu_static_implementation_0b18620_93a89ba.md`、MM、Kimi均给出`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION`，blockers=0。
