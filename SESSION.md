@@ -1,5 +1,17 @@
 # 当前协作状态
 
+## Authority-root synthetic CPU/static implementation（2026-09-12 13:02:31 CST，REVIEW）
+
+- 按获批四文件allowlist新增`immutable_source_authority_root.py`及test，并最小修改现collection executor/test。新模块实现`prepare_candidate→verify_candidate→publish_candidate`、exact seven-key binding、同activation只读one-shot capability、local→remote expected-zero CAS、逐端点owned witness、remote→local conditional compare-delete rollback与fresh observation。
+- 现`_bound_source_inputs()`在已有authority/lineage object检查后、source open前直接观察固定`AUTHORITY_REF`的local+remote值；absent/wrong/disagree/error全部pre-source拒绝。测试使用纯内存fixture注入首CAS后、postcheck前、rollback中竞态并断言foreign ref保留；无真实Git/ref/source/remote操作。
+- 验证：`python -m unittest tools.psm_wma.test_immutable_source_collection tools.psm_wma.test_immutable_source_authority_root`=`41/41 PASS`；两个新文件`ruff check` PASS；四文件`py_compile` PASS；`git diff --check` PASS。旧collection文件的既存紧凑风格lint债未重排。下一步提交推送implementation formal SHA并三方复审。未提交。
+
+## Authority-root CPU/static implementation design v0.2 三方关闭（2026-09-12 12:57:56 CST）
+
+- formal root=`ee0de157d337bc85bf3d8d1c9e4957c31aa03c07`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。第2轮先发现advertised V2=`5c48701c38116de4925d7d7cff325eb1bd600d1a`而初次fetch后的origin/V2仍为`e51acee2caac8456e936b5ae3b88f4a9fd0451c4`，故未读取旧目录，二次fetch后对齐并ff-only至`5c48701c38116de4925d7d7cff325eb1bd600d1a`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_authority_root_cpu_static_implementation_design_ee0de15_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC`，blockers=0；MM、Kimi独立capture均为同pair同final。
+- 三方推进令牌仅授权四文件 synthetic CPU/static implementation与stdlib tests。下一步预计修改`tools/psm_wma/immutable_source_authority_root.py`、对应test、`immutable_source_collection.py`、对应test；禁止真实JSON/commit/ref/source/remote、child、GPU或训练。未提交。
+
 ## Authority-root CPU/static implementation design v0.2 第1轮观察（2026-09-12 12:53:33 CST）
 
 - formal root=`ee0de157d337bc85bf3d8d1c9e4957c31aa03c07`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox ledger=`cb78c37d99394ba902cf8ea60b8bb5232a0cc1ad`已推送，MM/Kimi均按文本→等待1.1秒→独立Enter发送并capture确认进入处理。

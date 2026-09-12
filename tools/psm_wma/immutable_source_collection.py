@@ -21,6 +21,7 @@ COLLECTION_PATHS = (
 )
 RECEIPT_PATH = "docs/build/PSM-WMA_immutable_source_collection_receipt_v1.json"
 SELECTION_PATH = "docs/build/PSM-WMA_immutable_source_selection_request_v1.json"
+AUTHORITY_REF = "refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"
 EVIDENCE_KEYS = frozenset(("schema", "status", "execution", "tool", "environment", "authority", "lineage", "source_entries", "handoff", "candidates", "collection", "receipt", "post_checks", "push_publication", "rollback", "evidence_sha256"))
 CANDIDATE_KEYS = ("input_descriptor_sha256", "manifest_sha256", "identifier_sha256", "checkpoint_descriptor_sha256", "collection_sha256", "config_sha256")
 
@@ -81,6 +82,8 @@ class GitTransaction(Protocol):
     def tree_entries(self, revision: str) -> Mapping[str, TreeEntry]: ...
     def blob_bytes(self, oid: str) -> bytes: ...
     def gitlink_at(self, revision: str) -> str: ...
+    def local_ref(self, ref: str) -> str | None: ...
+    def remote_ref(self, ref: str) -> str | None: ...
     def snapshot(self) -> Mapping[str, object]: ...
     def preflight(self, paths: tuple[str, ...], parent: str, blobs: Mapping[str, bytes]) -> str: ...
     def commit(self, paths: tuple[str, ...], parent: str, blobs: Mapping[str, bytes]) -> Mapping[str, str]: ...
@@ -141,6 +144,8 @@ class TemporaryGitFixture:
     trees: Mapping[str, Mapping[str, TreeEntry]] = field(default_factory=dict)
     blobs: Mapping[str, bytes] = field(default_factory=dict)
     gitlinks: Mapping[str, str] = field(default_factory=dict)
+    local_refs: Mapping[str, str] = field(default_factory=dict)
+    remote_refs: Mapping[str, str] = field(default_factory=dict)
 
     def approved_execution_metadata(self) -> Mapping[str, object]:
         # 审批 fixture 与可被故障注入的本次观察方法分离。
@@ -189,6 +194,10 @@ class TemporaryGitFixture:
         if revision not in self.gitlinks:
             raise CollectionError("base Gitlink 不可达")
         return self.gitlinks[revision]
+    def local_ref(self, ref: str) -> str | None:
+        return self.local_refs.get(ref)
+    def remote_ref(self, ref: str) -> str | None:
+        return self.remote_refs.get(ref)
     def resolve(self, revision: str) -> str:
         if revision not in self.revisions: raise CollectionError("unbound Git revision")
         return self.revisions[revision]
@@ -690,6 +699,14 @@ def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str
         raise CollectionError("target ref/base 漂移")
     if git.gitlink_at(lineage["expected_base_root_revision"]) != lineage["expected_child_gitlink"]:
         raise CollectionError("base child Gitlink 漂移")
+    expected_authority = authority["root_revision"]
+    try:
+        local_authority = git.local_ref(AUTHORITY_REF)
+        remote_authority = git.remote_ref(AUTHORITY_REF)
+    except Exception as exc:
+        raise CollectionError("authority fixed ref observation 失败") from exc
+    if local_authority != expected_authority or remote_authority != expected_authority:
+        raise CollectionError("authority fixed ref local/remote 漂移")
     record["lineage"] = dict(lineage)
     return tuple(ordered), config_raw
 

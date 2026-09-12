@@ -7,7 +7,7 @@ import pickle
 from dataclasses import replace
 import stat
 from copy import deepcopy
-from tools.psm_wma.immutable_source_collection import EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff
+from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff
 from tools.psm_wma.immutable_source_collection import COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
 class ImmutableSourceCollectionTest(unittest.TestCase):
@@ -49,6 +49,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                    "d" * 40: {"README.md": ("100644", "blob", "e" * 40), "cosmos-framework": ("160000", "commit", "c" * 40)}, "b" * 40: {}},
             blobs={oid(selection_raw): selection_raw, oid(self.config_raw): self.config_raw},
             gitlinks={"b" * 40: "c" * 40},
+            local_refs={AUTHORITY_REF: "a" * 40}, remote_refs={AUTHORITY_REF: "a" * 40},
         )
     def test_exact_pass_evidence(self) -> None:
         sink = MemoryEvidenceSink(); record = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=sink)
@@ -95,6 +96,42 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         bad_gitlink = deepcopy(self.git)
         bad_gitlink.gitlinks = {"b" * 40: "f" * 40}
         with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=bad_gitlink, root_fd=self.fd, sink=MemoryEvidenceSink())
+
+    def test_authority_fixed_ref_is_checked_before_source_open(self) -> None:
+        class Unopened:
+            def open_regular(self, path):
+                raise AssertionError("fixed ref 失败不得打开 source")
+        cases = (
+            ({}, {AUTHORITY_REF: "a" * 40}),
+            ({AUTHORITY_REF: "a" * 40}, {}),
+            ({AUTHORITY_REF: "e" * 40}, {AUTHORITY_REF: "a" * 40}),
+            ({AUTHORITY_REF: "a" * 40}, {AUTHORITY_REF: "e" * 40}),
+        )
+        for local_refs, remote_refs in cases:
+            with self.subTest(local=local_refs, remote=remote_refs):
+                git = deepcopy(self.git)
+                git.local_refs, git.remote_refs = local_refs, remote_refs
+                with self.assertRaisesRegex(CollectionError, "fixed ref"):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                      selection_request=self.selection_raw, git=git,
+                                      root_fd=Unopened(), sink=MemoryEvidenceSink())
+                self.assertEqual(git.commits, [])
+
+        for endpoint in ("local", "remote"):
+            class ObservationError(TemporaryGitFixture):
+                def local_ref(self, ref):
+                    if endpoint == "local": raise OSError("injected")
+                    return super().local_ref(ref)
+                def remote_ref(self, ref):
+                    if endpoint == "remote": raise OSError("injected")
+                    return super().remote_ref(ref)
+            with self.subTest(endpoint=endpoint):
+                git = ObservationError(**deepcopy(vars(self.git)))
+                with self.assertRaisesRegex(CollectionError, "observation"):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                      selection_request=self.selection_raw, git=git,
+                                      root_fd=Unopened(), sink=MemoryEvidenceSink())
+                self.assertEqual(git.commits, [])
 
     def test_atomic_sink_partial_and_after_write_leave_no_stale_pass(self) -> None:
         for stage in ("partial_write", "after_write"):
