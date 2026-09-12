@@ -2646,3 +2646,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`569a34d50e5106f982c3ed111171d67ea3344bc9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT申请已append至canonical live Inbox，并由ledger=`816e3183d84f2f440013dab57496b6e519a9c5ca`推送（ledger非formal target）。
 - MM `mm:0.0` 与 Kimi `kimi:0.0` 均已完整文本写入、间隔至少1秒、独立Enter；随后capture确认文本已离开输入框：MM显示`Finding design file in tree`，Kimi显示已提交审核申请且输入框为空。三方均已送达；三分钟后执行第1轮完整远端锁定检查。
+
+### Authority-root execution-authority implementation 设计审核观察凭证 #1（2026-09-12 20:54:23 CST，三方final齐）
+
+- formal=`569a34d50e5106f982c3ed111171d67ea3344bc9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before=e0f200d26530d9432fdd054da26b3a137d553842`，fetch成功；advertised/origin/local-after=`6bf074051c4bf1d383bdfa0230f627658ca841aa`一致；新增=`bb72384f chatgpt: review execution authority design 569a34d`、`6bf07405 chatgpt: record execution authority design review 569a34d`；祖先检查成功并已`merge --ff-only`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_implementation_design_569a34d_93a89ba.md`。
+- ChatGPT final=`REQUEST_CHANGES(...implementation_design_v0.1.md:53)`：bootstrap必须以`sys.orig_argv`等进程级实际`-c`源观察计算摘要；Git isolation须冻结全部命令/env/config/endpoint合同，并以temporary local bare remote运行production NativeAuthorityGit验证replace/config/rewrite/CAS。MM `mm:0.0`与Kimi `kimi:0.0` capture同pair final均为`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`。三方final齐，推进令牌仅允许汇总两项HIGH并生成docs-only修订设计；未授权root tooling、真实materialization、child/GPU/训练。
+
+### Authority-root execution-authority implementation 设计 v0.2（2026-09-12，IN_PROGRESS）
+
+- 新增v0.2，冻结`sys.orig_argv`实际`-c` bootstrap观测和摘要算法，以及exact env/Git prefix/HTTPS endpoint/config-reject policy/isolation fingerprint与direct temporary bare-remote witness；继承两文件CPU/static范围。未运行项目代码或真实动作；待提交并对新formal pair三方审核。
