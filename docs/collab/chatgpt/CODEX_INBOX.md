@@ -888,3 +888,12 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_execution_authority_implementation_design_v0.4.md`
 
 仅审v0.3 linked-worktree HIGH整改：冻结absolute git-dir/common-git-dir、common config唯一authority、same-FD raw/parsed view一致性、worktreeConfig与config.worktree拒绝及actual linked/detached worktree正反native witness。请求唯一`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；仅两root文件CPU/static。
+
+## 审核申请：Authority-root execution-authority CPU/static implementation closure（2026-09-12）
+
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`。
+- formal root：`bb17774ce6da4e4d14c57993fe97f813065de319`；formal child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 范围：相对已批准设计`9aba4460469ddab4640e90694e78968d497a9273`，仅`tools/psm_wma/materialize_immutable_source_authority_root.py`、其stdlib test及`SESSION.md`/`TODO.md`/既有ledger记录；formal tree Gitlink未变。实现包括four-module closure、`python -I -S -B -c`的`sys.orig_argv` bootstrap、canonical HTTPS endpoint、固定Git env/prefix、common/linked-worktree config authority与Evidence-v1 exact fields。
+- 证据：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`88/88 PASS`；四文件`py_compile`、Ruff、`git diff --check` PASS。direct temporary-only witnesses覆盖tampered bootstrap payload/argv/flag/contract、endpoint、symlink、raw/Git-view drift、linked worktree与local-bare CAS；无外网、GPU、模型/数据或真实source/materialization操作。
+- 禁止范围：真实JSON/candidate/ref/source/collection/receipt/publication、child、GPU、训练、评测、推理。
+- 请求：请只针对该exact pair给出`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。
