@@ -176,6 +176,49 @@ def _validate_failure(value: object, status: str) -> None:
         raise NativeGitError("ROLLBACK_INCOMPLETE 必须保留 rollback failure")
 
 
+def _all_false(mapping: Mapping[str, object]) -> bool:
+    return all(value is False for value in mapping.values())
+
+
+def _candidate_kind(candidate: Mapping[str, object]) -> str:
+    if candidate["revision"] is None:
+        return "empty"
+    if candidate["verifier_pass"] is False:
+        return "prepared"
+    return "verified"
+
+
+def _is_unreached(stage: Mapping[str, object]) -> bool:
+    return all(value is None or value is False for value in stage.values())
+
+
+def _validate_no_mutation_failure(
+    record: Mapping[str, object],
+    candidate: Mapping[str, object],
+    pre: Mapping[str, object],
+    publication: Mapping[str, object],
+    post: Mapping[str, object],
+    rollback: Mapping[str, object],
+) -> None:
+    phase = record["failure"]["primary_phase"]
+    if phase not in ("preflight", "prepare", "verify"):
+        return
+    allowed_candidates = {
+        "preflight": {"empty"},
+        "prepare": {"empty", "prepared"},
+        "verify": {"prepared"},
+    }
+    if (
+        not all(value is None for value in record["authority"].values())
+        or _candidate_kind(candidate) not in allowed_candidates[phase]
+        or not _is_unreached(pre)
+        or not _all_false(publication)
+        or not _is_unreached(post)
+        or rollback["entered"]
+    ):
+        raise NativeGitError(f"{phase} evidence 不得含 mutation witness")
+
+
 def verify_evidence_bytes(raw: bytes) -> Mapping[str, object]:
     """Validate the frozen evidence-v1 bytes without touching a repository."""
     try:
@@ -224,6 +267,10 @@ def verify_evidence_bytes(raw: bytes) -> Mapping[str, object]:
     if rollback["complete"] and not (_is_absent(rollback["final_local_observation"]) and _is_absent(rollback["final_remote_observation"])):
         raise NativeGitError("rollback complete 必须有双端 absent observation")
     _validate_failure(record["failure"], status)
+    if status != "PASS":
+        _validate_no_mutation_failure(
+            record, candidate, pre, publication, post, rollback
+        )
     if status == "PASS":
         if not all(item is not None for item in record["authority"].values()) or candidate["verifier_pass"] is not True or not (pre["both_absent"] and all(publication.values()) and post["both_candidate"] and post["committed_binding_reverified"]) or rollback["entered"]:
             raise NativeGitError("PASS evidence chronology 无效")

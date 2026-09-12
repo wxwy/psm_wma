@@ -90,6 +90,39 @@ def _rollback_incomplete_evidence() -> dict[str, object]:
     return record
 
 
+def _preflight_failure_evidence() -> dict[str, object]:
+    record = deepcopy(_pass_evidence())
+    record["status"] = "FAIL"
+    record["authority"] = {key: None for key in record["authority"]}
+    record["candidate"] = {
+        "revision": None,
+        "parents": None,
+        "tree_native_oid": None,
+        "verifier_pass": False,
+        "binding_sha256": None,
+    }
+    record["pre_publication"] = {
+        "local_observation": None,
+        "remote_observation": None,
+        "both_absent": False,
+    }
+    record["publication"] = {key: False for key in record["publication"]}
+    record["post_publication"] = {
+        "local_observation": None,
+        "remote_observation": None,
+        "both_candidate": False,
+        "committed_binding_reverified": False,
+    }
+    record["failure"] = {
+        "primary_phase": "preflight",
+        "primary_code": "PREFLIGHT_FAILED",
+        "rollback_phase": None,
+        "rollback_code": None,
+    }
+    _redigest(record)
+    return record
+
+
 class NativeAuthorityGitTest(unittest.TestCase):
     def test_pending_evidence_unlinks_only_through_commit(self):
         class Commit:
@@ -143,6 +176,14 @@ class NativeAuthorityGitTest(unittest.TestCase):
         }
         with self.assertRaises(NativeGitError):
             verify_evidence_bytes(_redigest(missing_rollback))
+
+    def test_no_mutation_failure_rows_reject_publication_witnesses(self):
+        preflight = _preflight_failure_evidence()
+        self.assertEqual(verify_evidence_bytes(_redigest(preflight))["status"], "FAIL")
+        drifted = deepcopy(preflight)
+        drifted["publication"]["local_create_attempted"] = True
+        with self.assertRaises(NativeGitError):
+            verify_evidence_bytes(_redigest(drifted))
 
     def test_writer_cleans_precommit_files_after_directory_fsync_or_rename_failure(self):
         class Commit:
