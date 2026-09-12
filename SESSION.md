@@ -3123,3 +3123,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`bf852c233b2c2e31eb33dc859188a9a4b41c50df`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。live Inbox append后=`129760 < 131072` bytes，未触发rollover；仅审static closure，不运行payload且不请求真实materialization。
 - 送达回执：MM与Kimi均完成`send-keys -l`→等待≥1秒→独立Enter→capture；MM显示`Pollinating`，Kimi显示已收到v0.7 exact pair并执行scope/SHA/witness核验。三分钟后完整远端锁定并回收最终verdict。
+
+### Authority-root launcher v0.7 审核观察凭证 #1（2026-09-13 07:48:18 CST，REVIEW）
+
+- formal=`bf852c233b2c2e31eb33dc859188a9a4b41c50df`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before=2b6ab250298408e5959131879a48d9074db2c258`；fetch成功；advertised/origin/local-after均为`2b6ab250298408e5959131879a48d9074db2c258`；新增为空；祖先判定=0、ff-only=`Already up to date`。ChatGPT精确检索无exact review。Kimi=`kimi:0.0` same-pair final=`REQUEST_CHANGES(...execution_request_v0.7.md:3)`：request不应提前请求materialization、补payload真实seam witness、删除inert base64并同步plan。MM=`mm:0.0` same-pair final=`APPROVE_TO_MATERIALIZE...`。
+- ChatGPT尚缺，三方final不齐，无推进令牌；保持REVIEW，禁止整改、materialization、真实I/O、child、GPU、训练。
