@@ -2765,3 +2765,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root materialization request v0.2 rebind（2026-09-12，IN_PROGRESS）
 
 - v0.1 request 固定在旧`ad9e011...` adapter tree，不能覆盖`9dd2fb8...`已关闭的routing-authority保护。新增 docs-only v0.2 replacement：唯一 formal parent改为`9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`，四个formal-tree module blob/raw digest按该commit只读重算；v0.1其余事务/禁止合同继续生效。v0.2只请求批准创建一次只读运行时 snapshot annex，annex及执行命令仍需独立三方 `APPROVE_TO_MATERIALIZE`。未执行项目代码或真实I/O；提交：未提交。
+
+### Authority-root materialization request v0.2 审核送达准备（2026-09-12 CST，REVIEW）
+
+- formal=`cfdd2fc79142b500910613759d316b283bfe372a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。Inbox为116028 bytes，追加申请不触发rollover。只审docs-only v0.2，目标是`APPROVE_TO_PREPARE...EXECUTION_SNAPSHOT`，不授权materialization。
+
+### Authority-root materialization request v0.2 送达回执（2026-09-12 CST，REVIEW）
+
+- canonical Inbox 已append；MM `mm:0.0`与Kimi `kimi:0.0`均已完整文本→至少1秒→独立`C-m`→capture，消息离开输入框并开始核验。ChatGPT申请以Inbox为送达，正式结果只认`reviews/` exact pair。下一轮三分钟后完整远端锁定回收；期间禁止materialization。

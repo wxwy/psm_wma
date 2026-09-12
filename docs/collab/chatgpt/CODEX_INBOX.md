@@ -948,3 +948,11 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 范围：仅 root adapter、既有 stdlib test、`SESSION.md`；formal Gitlink未变。normal `.git` directory 和 linked `.git` marker/`gitdir`/`commondir` 的 no-follow FD identities/raw bytes、linked `git_dir`/common-dir identities、`config.worktree` absent 与 common config identity/FD bytes均进入`routecheck()`，每个 native Git observation 前后执行。
 - 直接 actual detached linked-worktree wrapper-race witness分别在precheck后替换`.git` marker和`commondir`，均证明拒绝且无 project import/evidence/ref；保留config replacement、config.worktree、gitdir escape及symlink见证。定向=56/56、组合root stdlib=101/101、py_compile、diff-check PASS。只用临时目录/local bare remote；不授权真实materialization/source/ref/evidence/child/GPU/训练。
 - 请求：请仅对该 exact pair回复 `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
+
+## 审核申请：Authority-root materialization execution request v0.2 rebind（2026-09-12）
+
+- formal root：`cfdd2fc79142b500910613759d316b283bfe372a`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.2.md`。
+- v0.1 request绑定旧`ad9e011...` adapter tree，已由v0.2替代。v0.2仅将formal parent和四模块formal-tree blob/raw identity重绑到三方刚关闭的`9dd2fb8...` routing-authority tree；其余v0.1 single-transaction、PASS/FAIL/rollback、禁止范围不变。
+- 请求只允许准备一次只读运行时 snapshot annex，冻结clean paths、tools、env/remote/input/native-OID/bootstrap/argv digests；annex和实际命令仍须独立三方`APPROVE_TO_MATERIALIZE`。不创建JSON/worktree/index/candidate/ref/evidence，不读source，不执行collection/child/GPU/训练。
+- 请求唯一 verdict：`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT` 或 `REQUEST_CHANGES(file:line)`。
