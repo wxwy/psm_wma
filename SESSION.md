@@ -2582,3 +2582,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION` 已由 `ad9e011.../93a89ba...` 三方全批准关闭。最终实现只处理foreign public guard后的sticky recovery；79/79 CPU/static、py_compile、Ruff与diff-check已PASS。未运行或授权真实source/candidate/ref/evidence、child/runtime、GPU、训练、评测、推理或LIBERO4IN1。
 - 后续依D024不得横向新增provenance Gate；进入已定义的 single-GPU TTT smoke 设计阶段，先冻结真实 optimizer/scaler、1 batch GPU和20--100 step边界的设计与独立三方审核，未获该新Gate批准前不得执行。
+
+### Authority-root materialization execution request 设计（2026-09-12 CST，IN_PROGRESS）
+
+- 认领既有 source-evidence 闭环中的唯一 real materialization execution request（不是横向 provenance Gate）：预计新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_design_v0.1.md`，并更新本文件与 TODO。只读复用 `ad9e011...` formal tree、已冻结 selection/config bytes contract、real adapter CLI；不创建 JSON/candidate/ref，不打开真实 source，不触碰 child/GPU/训练。
+- 已完成 docs-only v0.1：冻结 formal root/Gitlink、formal-tree adapter/authority module blob+raw identity、selection/config raw SHA、fixed ref、受控 `-I -S -B` bootstrap、argv完整性、expected-zero/fresh-destination preflight、PASS/FAIL/`ROLLBACK_INCOMPLETE` 与停机边界。只读核验 formal tree和本机工具 identity；`git diff --check` PASS，未运行项目代码或真实操作。下一步：提交并申请本设计三方审核；提交：未提交。
