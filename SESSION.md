@@ -1,5 +1,14 @@
 # 当前协作状态
 
+## 原始 blob 事务整改切片（2026-09-12，IN_PROGRESS）
+
+- 前一 evidence phase 校验切片已提交/推送 `410242ae7b7ed5804d3a72f7f6aba33428929764`。本次仍仅两工具文件及 SESSION。
+- Git DI 加入携带原始 blob 的 preflight/commit；内存 fixture 保存独立 tree/blob/parent 对象、ref 与 exact snapshot。fixture tree/commit 标识为合成值，不冒充真实 Git 原生结果。
+- 主流程先隔离预检并验证 snapshot 未变、lineage 未变，再提交 expected-base parent 的 collection；独立查 committed blobs、重新派生候选，生成冻结 receipt schema；receipt 唯一新增路径与 parent/digest/blob/OID 均后验核对。
+- live failure 调用 rollback 并重新查询 snapshot/ref；partial collection/receipt commit 失败恢复，rollback 不完整以 ROLLBACK_INCOMPLETE 停止。此处只验证内存事务算法，未调用真实 Git/source I/O。
+- 根目录 `python3 -B -m unittest tools.psm_wma.test_immutable_source_collection -v` 及新增故障注入后 `-q`：21/21 PASS；`git diff --check` PASS。新增零变更 preflight、collection/receipt 部分写入恢复、失败恢复 fail-stop、receipt 五个 raw blob binding 直接测试。
+- 仍待：实际 FAIL evidence 生成/保留 primary phase、tool/environment/interpreter identity 绑定、最终异常分类与完整自审。失败测试当前断言无 PASS 输出；下一步应同时输出合法 FAIL。Gate 未关闭，未重审，未真实执行。提交：待本次提交。
+
 ## Evidence phase 矩阵整改切片（2026-09-12，IN_PROGRESS）
 
 - 前一 authority 对象绑定切片已提交/推送 `a1360d0d35693fe3c05c7a59742ebbdd013f1672`。本次仍只改两工具文件及本记录。

@@ -43,7 +43,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         self.git = TemporaryGitFixture(
             {"refs/heads/fixture": "b" * 40},
             parents={"a" * 40: "d" * 40},
-            trees={"a" * 40: {SELECTION_PATH: oid(selection_raw), COLLECTION_PATHS[1]: oid(self.config_raw)}},
+            trees={"a" * 40: {SELECTION_PATH: oid(selection_raw), COLLECTION_PATHS[1]: oid(self.config_raw)}, "b" * 40: {}},
             blobs={oid(selection_raw): selection_raw, oid(self.config_raw): self.config_raw},
             gitlinks={"b" * 40: "c" * 40},
         )
@@ -65,7 +65,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         with self.assertRaises(CollectionError): verify_evidence(record)
     def test_escape_and_transaction_allowlist_fail(self) -> None:
         with self.assertRaises(CollectionError): SyntheticRootFd({}).open_regular("../escape")
-        with self.assertRaises(CollectionError): self.git.commit(("wrong",), None)
+        with self.assertRaises(CollectionError): self.git.commit(("wrong",), "b" * 40, {})
         with self.assertRaisesRegex(CollectionError, "component is a symlink"):
             SyntheticRootFd({}, frozenset({"fixture"})).open_regular("fixture/checkpoint")
         with self.assertRaisesRegex(CollectionError, "non-regular"):
@@ -102,6 +102,74 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 return {**super().lookup(revision), "tree_native_oid": "d" * 40}
         with self.assertRaises(CollectionError):
             collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=DriftingGit(**vars(self.git)), root_fd=self.fd, sink=MemoryEvidenceSink())
+
+    def test_raw_blob_transaction_and_receipt_binding(self) -> None:
+        record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                                   git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        collection, receipt = record["collection"], record["receipt"]
+        self.assertEqual(collection["parent_revision"], "b" * 40)
+        self.assertEqual(receipt["parent_revision"], collection["revision"])
+        collection_tree = self.git.tree_entries(collection["revision"])
+        receipt_tree = self.git.tree_entries(receipt["revision"])
+        self.assertEqual(set(collection_tree), set(COLLECTION_PATHS))
+        self.assertEqual(set(receipt_tree) - set(collection_tree), {RECEIPT_PATH})
+        raw = self.git.blob_bytes(receipt_tree[RECEIPT_PATH])
+        value = json.loads(raw)
+        self.assertEqual(value["schema"], "immutable_source_collection_receipt_v1")
+        self.assertEqual(value["collection_formal_root_revision"], collection["revision"])
+        self.assertEqual(value["source_input_artifact_path"], "docs/build/PSM-WMA_immutable_source_input_descriptor_v1.json")
+        self.assertEqual(value["source_input_artifact_blob_native_oid"], collection_tree[value["source_input_artifact_path"]])
+        for prefix in ("collection_artifact", "source_input_artifact", "source_manifest_artifact",
+                       "checkpoint_source_descriptor_artifact", "canonical_model_config_artifact"):
+            path = value[prefix + "_path"]
+            blob = self.git.blob_bytes(collection_tree[path])
+            self.assertEqual(value[prefix + "_sha256"], hashlib.sha256(blob).hexdigest())
+            self.assertEqual(value[prefix + "_blob_native_oid"], hashlib.sha1(b"blob " + str(len(blob)).encode() + b"\0" + blob).hexdigest())
+        self.assertEqual(self.git.resolve(self.lineage["target_ref"]), receipt["revision"])
+
+    def test_preflight_failure_has_zero_live_mutations(self) -> None:
+        class FailedPreflight(TemporaryGitFixture):
+            def preflight(self, paths, parent, blobs):
+                super().preflight(paths, parent, blobs)
+                raise CollectionError("INJECTED_PREFLIGHT_FAILURE")
+        git = FailedPreflight(**deepcopy(vars(self.git)))
+        before = git.snapshot()
+        with self.assertRaisesRegex(CollectionError, "INJECTED_PREFLIGHT_FAILURE"):
+            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                              git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        self.assertEqual(git.snapshot(), before)
+        self.assertEqual(git.commits, [])
+
+    def test_partial_collection_and_receipt_failures_restore_snapshot(self) -> None:
+        for failed_paths in (COLLECTION_PATHS, (RECEIPT_PATH,)):
+            class PartialCommit(TemporaryGitFixture):
+                def commit(self, paths, parent, blobs):
+                    row = super().commit(paths, parent, blobs)
+                    if paths == failed_paths:
+                        raise CollectionError("INJECTED_PARTIAL_COMMIT")
+                    return row
+            with self.subTest(paths=failed_paths):
+                git = PartialCommit(**deepcopy(vars(self.git)))
+                before = git.snapshot()
+                sink = MemoryEvidenceSink()
+                with self.assertRaisesRegex(CollectionError, "INJECTED_PARTIAL_COMMIT"):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                                      git=git, root_fd=self.fd, sink=sink)
+                self.assertEqual(git.snapshot(), before)
+                self.assertEqual(git.resolve(self.lineage["target_ref"]), self.lineage["expected_base_root_revision"])
+                self.assertEqual(sink.records, [])
+
+    def test_incomplete_rollback_fail_stops(self) -> None:
+        class FailedRollback(TemporaryGitFixture):
+            def commit(self, paths, parent, blobs):
+                super().commit(paths, parent, blobs)
+                raise CollectionError("INJECTED_PARTIAL_COMMIT")
+            def rollback(self, snapshot):
+                return self.snapshot()
+        git = FailedRollback(**deepcopy(vars(self.git)))
+        with self.assertRaisesRegex(CollectionError, "ROLLBACK_INCOMPLETE"):
+            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                              git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
 
     def test_frozen_candidate_paths_and_raw_byte_chain(self) -> None:
         entries = ({"ordinal": 0, "byte_length": 3, "sha256": hashlib.sha256(b"abc").hexdigest()},)
