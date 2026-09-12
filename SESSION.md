@@ -2895,3 +2895,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal/child及冻结名册不变。`before=f4a7788645702dd70bfed6a93fd0d9902e1b399d`；fetch成功；advertised/origin/local-after同为`f4a7788645702dd70bfed6a93fd0d9902e1b399d`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT exact-pair检索仍无正式review；MM `mm:0.0` capture保持same-pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`；Kimi `kimi:0.0` capture最终为same-pair `REQUEST_CHANGES(...execution_snapshot_annex_v0.4.md:35)`，HIGH：实际 stdlib launcher payload raw bytes/长度/SHA仍未冻结，`launch.argv`的`payload`只是占位；次级同改：`O_WRONLY` writer FD不可 `pread`，readback必须限于reader FD。三方final尚未齐，无推进令牌；禁止整改、materialization、真实I/O、child、GPU和训练，等待ChatGPT exact verdict后才合并处理。
+
+### Authority-root launcher procedure v0.4 审核观察凭证 #3（2026-09-13 00:19:39 CST，REVIEW）
+
+- formal/child及冻结名册不变。`before=7a93977a0f2210c65c6c1e646b223f4b5242fa25`；fetch成功；advertised/origin/local-after同为`7a93977a0f2210c65c6c1e646b223f4b5242fa25`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-pair检索仍无正式review；MM同pair批准与Kimi同pair `REQUEST_CHANGES(...annex_v0.4.md:35)` capture均保持，且两个pane capture成功。无推进令牌，保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
