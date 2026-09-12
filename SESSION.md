@@ -2626,3 +2626,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`d3cd3c9b26cea021814c9f48bcd864183a811293`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变（ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`）。`before=862c3b87e05af8ac62e46af811e47ecaac812ebf`；`git fetch origin V2`成功；advertised=`862c3b87e05af8ac62e46af811e47ecaac812ebf`与`origin/V2`一致；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT exact检索命令=`rg -l -F 'd3cd3c9b26cea021814c9f48bcd864183a811293' docs/collab/chatgpt/reviews/ || true`，无匹配。MM `mm:0.0` capture同pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。Kimi `kimi:0.0` capture同pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.1.md:36)`：bootstrap本体及metadata、sanitized-env、argv、remote identity、精确输入/输出路径等实际执行值未冻结。ChatGPT尚缺件；无推进令牌，保持REVIEW，禁止整改、执行及训练。
+
+### Authority-root one-shot materialization request 审核观察凭证 #3（2026-09-12 20:44 CST，三方final齐）
+
+- formal=`d3cd3c9b26cea021814c9f48bcd864183a811293`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before=df65f2abac51589d66f6367f0e86140b0b0fbc0c`，`git fetch origin V2`成功；advertised/origin/local-after=`1bbf7e4d78fd4e285935c6a5bf1df3b7442a59c6`一致；新增=`53478789 chatgpt: review materialization execution request d3cd3c9`、`1bbf7e4d chatgpt: record one-shot materialization review d3cd3c9`；祖先检查成功并已`merge --ff-only`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_materialization_execution_request_d3cd3c9_93a89ba.md`。
+- ChatGPT final=`REQUEST_CHANGES(...execution_request_v0.1.md:36)`（未冻结完整可执行bootstrap/argv/FD与输入输出/metadata/env/endpoint；现ABI不能attest四模块与bootstrap；remote alias及Git replace/config语义未闭合）。MM `mm:0.0` capture same-pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。Kimi `kimi:0.0` capture same-pair final=`REQUEST_CHANGES(...execution_request_v0.1.md:36)`（同意bootstrap与执行值未冻结，另要求传递依赖漂移在project import前拒绝的对抗witness）。三方final齐，推进令牌仅允许汇总意见并形成docs-only root-tooling实现设计；不授权真实materialization、source/ref/evidence、child/GPU/训练。
+
+### Authority-root execution-authority implementation 设计（2026-09-12，IN_PROGRESS）
+
+- 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_execution_authority_implementation_design_v0.1.md`，将三方final汇为最小两文件CPU/static实现路线：四模块+bootstrap invocation/evidence ABI、pre-import closure、FD/argv protocol、canonical endpoint、no-replace/config isolation，以及传递依赖漂移/alias/config对抗witness。
+- 此设计不是新增横向provenance Gate，而是`d3cd3c9` real-execution request所需的已有root-tooling闭合；仅申请后续两root文件实现授权。未改生产代码、未运行项目代码或真实Git/source/ref/evidence/GPU/训练；提交：未提交。
