@@ -6,6 +6,7 @@ import json
 import os
 import pickle
 import shutil
+import fcntl
 import tempfile
 import threading
 import unittest
@@ -18,6 +19,7 @@ from tools.psm_wma.immutable_source_authority_root import (
     AuthorityCandidate,
     EvidenceCleanupIncomplete,
     EvidenceCommit,
+    _evidence_guard_lock,
     AuthorityRequest,
     AuthorityRootError,
     PostCommitFinalizerError,
@@ -521,6 +523,47 @@ class AuthorityRootTest(unittest.TestCase):
             publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
         self.assertNotIn(AUTHORITY_REF, self.git.local)
         self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
+    def test_final_evidence_lock_identity_drift_preserves_guard(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            evidence = guard.with_name("evidence.json")
+            original_flock = fcntl.flock
+            replaced = False
+
+            def lock_then_replace(descriptor, operation):
+                nonlocal replaced
+                result = original_flock(descriptor, operation)
+                if operation == fcntl.LOCK_EX and not replaced:
+                    replaced = True
+                    evidence.unlink()
+                    evidence.write_bytes(b"foreign")
+                return result
+
+            with patch(
+                "tools.psm_wma.immutable_source_authority_root.fcntl.flock",
+                side_effect=lock_then_replace,
+            ), self.assertRaises(AuthorityRootError):
+                commit.consume_by_unlink()
+            self.assertTrue(guard.exists())
+            self.assertEqual(evidence.read_bytes(), b"foreign")
+            with self.assertRaises(NativeGitError):
+                verify_evidence_path(evidence)
+
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+
+    def test_foreign_sidecar_cannot_change_final_evidence_lock_identity(self):
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            evidence = directory / "evidence.json"
+            evidence.write_bytes(b"owned")
+            evidence_identity = (evidence.lstat().st_dev, evidence.lstat().st_ino)
+            evidence.with_name("evidence.json.lock").write_bytes(b"foreign")
+            with _evidence_guard_lock(evidence, exclusive=True) as (_descriptor, identity):
+                self.assertEqual(identity, evidence_identity)
 
     def test_committed_finalizer_ordinary_returns_preserve_refs(self):
         for returned in (None, object(), {"ignored": True}):

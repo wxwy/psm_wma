@@ -891,11 +891,19 @@ def _read_regular_evidence(path: Path) -> bytes:
 
 def verify_evidence_path(path: Path) -> Mapping[str, object]:
     """Accept a final record only when the sibling pending guard is absent."""
-    with _evidence_guard_lock(path, exclusive=False):
+    with _evidence_guard_lock(path, exclusive=False) as (descriptor, _identity):
         guard = path.with_name(path.name + ".pending")
         if guard.exists() or guard.is_symlink():
             raise NativeGitError("evidence pending guard 仍存在")
-        raw = _read_regular_evidence(path)
+        remaining = os.fstat(descriptor).st_size
+        chunks: list[bytes] = []
+        while remaining:
+            chunk = os.read(descriptor, remaining)
+            if not chunk:
+                raise NativeGitError("evidence final path truncated")
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        raw = b"".join(chunks)
         return verify_evidence_bytes(raw)
 
 

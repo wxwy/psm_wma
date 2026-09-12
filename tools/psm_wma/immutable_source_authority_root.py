@@ -117,15 +117,16 @@ def _unlink_exact_regular(path: Path, identity: tuple[int, int]) -> bool:
 
 @contextmanager
 def _evidence_guard_lock(evidence_path: Path, *, exclusive: bool):
-    lock_path = evidence_path.with_name(evidence_path.name + ".lock")
     descriptor = os.open(
-        lock_path,
-        os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC,
-        0o600,
+        evidence_path,
+        os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
     )
     try:
+        info = os.fstat(descriptor)
+        if not stat.S_ISREG(info.st_mode):
+            raise AuthorityRootError("evidence guard lock 必须绑定regular evidence FD")
         fcntl.flock(descriptor, fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH)
-        yield
+        yield descriptor, (info.st_dev, info.st_ino)
     finally:
         fcntl.flock(descriptor, fcntl.LOCK_UN)
         os.close(descriptor)
@@ -384,26 +385,22 @@ class EvidenceCommit(_NonSerializable):
             or not self._activation.active
         ):
             raise AuthorityRootError("evidence commit 未seal或已消费")
-        with _evidence_guard_lock(self._evidence_path, exclusive=True):
+        with _evidence_guard_lock(self._evidence_path, exclusive=True) as (
+            descriptor,
+            locked_identity,
+        ):
             try:
                 guard_info = self._guard.lstat()
                 evidence_info = self._evidence_path.lstat()
-                descriptor = os.open(
-                    self._evidence_path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC
-                )
-                try:
-                    opened_info = os.fstat(descriptor)
-                    chunks: list[bytes] = []
-                    remaining = opened_info.st_size
-                    while remaining:
-                        chunk = os.read(descriptor, remaining)
-                        if not chunk:
-                            raise OSError("evidence truncated")
-                        chunks.append(chunk)
-                        remaining -= len(chunk)
-                    raw = b"".join(chunks)
-                finally:
-                    os.close(descriptor)
+                chunks: list[bytes] = []
+                remaining = os.fstat(descriptor).st_size
+                while remaining:
+                    chunk = os.read(descriptor, remaining)
+                    if not chunk:
+                        raise OSError("evidence truncated")
+                    chunks.append(chunk)
+                    remaining -= len(chunk)
+                raw = b"".join(chunks)
             except OSError as error:
                 raise AuthorityRootError("evidence commit identity 无效") from error
             if (
@@ -411,7 +408,7 @@ class EvidenceCommit(_NonSerializable):
                 or not stat.S_ISREG(evidence_info.st_mode)
                 or (guard_info.st_dev, guard_info.st_ino) != self._guard_identity
                 or (evidence_info.st_dev, evidence_info.st_ino) != self._evidence_identity
-                or (opened_info.st_dev, opened_info.st_ino) != self._evidence_identity
+                or locked_identity != self._evidence_identity
                 or hashlib.sha256(raw).hexdigest() != self._record_sha256
             ):
                 raise AuthorityRootError("evidence commit identity/digest 漂移")
