@@ -2330,3 +2330,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - v0.5 formal root=`17901f65d9f09772a98921cd28ffbb05d82d3725`/child=`36bf3b2c3fd1bdd364df9169fa6d177f94e16541` 已获 ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-10_R09_B_TTT_v035_canonical_segment_producer_implementation_design_17901f6_36bf3b2.md`、MM、Kimi 同 SHA批准。设计 Gate DONE，仅授权四文件 CPU/static implementation。
 - 预计修改：`canonical_segment_production_adapter.py`（nested carrier/expected traversal/abort）、`omni_mot_model.py`（canonical-safe hard-stop bridge）、两份相邻 tests。验证只运行 `.venv/bin/python -m pytest canonical_segment_production_adapter_test.py canonical_segment_production_integration_test.py -q`、py_compile 与 diff-check；CPU-only，无外网/GPU/真实数据或 checkpoint I/O。未提交。
 - 验证：`git diff --check` PASS。下一步：提交、推送并三方重审 v0.2；同 SHA结论齐前禁止 child implementation。提交：未提交。
+## Authority-root real-adapter HIGH-4 remediation（2026-09-12，IN_PROGRESS）
+
+- Gate=`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`。在既有`0b77d2d1`基础上仅修改批准的四个 root tooling/test 文件：`PublicationFailure`/`RollbackOutcome`保留每个 endpoint 的 value 与 read-error；CLI serializer 将其规范化为`absent`、`revision`或`unreadable` observation，覆盖此前不能落盘的`pre_publication`及读取失败的 post/final witness。
+- CPU temporary-Git 子进程验证覆盖 pre-publication、local/remote CAS、post-publication、binding reverify、evidence-write，另有 persistent post read failure 产生并验证`ROLLBACK_INCOMPLETE`；根 unittest=53/53 PASS，`py_compile`、Ruff、`git diff --check` PASS。未创建真实 candidate/ref/source/collection/evidence，未访问真实远端、GPU、模型、数据或训练。
+- 待做：仅提交这四个文件加 SESSION/TODO bookkeeping、推送 final SHA；然后按三方 Gate 重新申请同一 root/child pair 审核。未提交。

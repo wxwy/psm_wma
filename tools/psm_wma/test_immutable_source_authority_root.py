@@ -591,9 +591,46 @@ class AuthorityRootTest(unittest.TestCase):
         )
         candidate = prepare_candidate(request, git)
         binding = verify_candidate(request, candidate, git)
+        reports = []
         with self.assertRaises(RollbackIncomplete):
-            publish_candidate(request, candidate, binding, git)
+            publish_candidate(request, candidate, binding, git, failure_reporter=reports.append)
         self.assertEqual(git.events[-2:], ["read_local", "read_remote"])
+        self.assertEqual(len(reports), 1)
+        self.assertEqual(reports[0].phase, "pre_publication")
+        self.assertEqual(reports[0].pre_local_error, "OSERROR")
+        self.assertIsNone(reports[0].pre_remote_error)
+        self.assertEqual(reports[0].rollback.final_local_error, "OSERROR")
+
+    def test_post_publication_observation_failure_retains_unreadable_witness(self):
+        class PostReadFailure(Git):
+            def __init__(self):
+                super().__init__()
+                self.fail_remote = False
+
+            def remote_ref(self, ref):
+                self.events.append("read_remote")
+                if self.fail_remote:
+                    raise OSError("injected unreadable")
+                return self.remote.get(ref)
+
+            def cas_create_remote(self, ref, revision):
+                created = super().cas_create_remote(ref, revision)
+                self.fail_remote = True
+                return created
+
+        git = PostReadFailure()
+        request = AuthorityRequest(
+            git.root, git.child, self.request.selection_raw, self.request.config_raw
+        )
+        candidate = prepare_candidate(request, git)
+        binding = verify_candidate(request, candidate, git)
+        reports = []
+        with self.assertRaises(RollbackIncomplete):
+            publish_candidate(request, candidate, binding, git, failure_reporter=reports.append)
+        self.assertEqual(len(reports), 1)
+        self.assertEqual(reports[0].phase, "post_publication")
+        self.assertEqual(reports[0].post_remote_error, "OSERROR")
+        self.assertEqual(reports[0].rollback.final_remote_error, "OSERROR")
 
     def test_postcheck_and_rollback_races_never_delete_foreign(self):
         for endpoint in ("local", "remote"):

@@ -48,6 +48,8 @@ class RollbackOutcome:
     local_delete_succeeded: bool
     final_local: str | None
     final_remote: str | None
+    final_local_error: str | None
+    final_remote_error: str | None
     complete: bool
 
 
@@ -62,6 +64,10 @@ class PublicationFailure:
     pre_remote: str | None
     post_local: str | None
     post_remote: str | None
+    pre_local_error: str | None
+    pre_remote_error: str | None
+    post_local_error: str | None
+    post_remote_error: str | None
     binding_reverified: bool
 
 
@@ -473,15 +479,18 @@ def _rollback(
             complete = False
     local_absent = remote_absent = False
     final_local = final_remote = None
+    final_local_error = final_remote_error = None
     try:
         final_local = git.local_ref(AUTHORITY_REF)
         local_absent = final_local is None
-    except Exception:
+    except Exception as error:
+        final_local_error = type(error).__name__.upper()
         complete = False
     try:
         final_remote = git.remote_ref(AUTHORITY_REF)
         remote_absent = final_remote is None
-    except Exception:
+    except Exception as error:
+        final_remote_error = type(error).__name__.upper()
         complete = False
     complete = complete and local_absent and remote_absent
     outcome = RollbackOutcome(
@@ -493,6 +502,8 @@ def _rollback(
         local_delete_succeeded=local_delete_succeeded,
         final_local=final_local,
         final_remote=final_remote,
+        final_local_error=final_local_error,
+        final_remote_error=final_remote_error,
         complete=complete,
     )
     if not complete:
@@ -500,18 +511,20 @@ def _rollback(
     return outcome
 
 
-def _observe_refs(git: AuthorityGitTransaction) -> tuple[str | None, str | None]:
-    values = []
-    errors = []
+def _observe_refs(
+    git: AuthorityGitTransaction,
+) -> tuple[str | None, str | None, str | None, str | None]:
+    values: list[str | None] = []
+    errors: list[str | None] = []
     for endpoint in ("local", "remote"):
         try:
             values.append(getattr(git, endpoint + "_ref")(AUTHORITY_REF))
         except Exception as exc:
             values.append(None)
-            errors.append(exc)
-    if errors:
-        raise AuthorityRootError("fixed ref observation失败") from errors[0]
-    return values[0], values[1]
+            errors.append(type(exc).__name__.upper())
+        else:
+            errors.append(None)
+    return values[0], values[1], errors[0], errors[1]
 
 
 def publish_candidate(
@@ -539,10 +552,14 @@ def publish_candidate(
     post_commit_error: BaseException | None = None
     phase = "pre_publication"
     pre_local = pre_remote = post_local = post_remote = None
+    pre_local_error = pre_remote_error = post_local_error = post_remote_error = None
     binding_reverified = False
     try:
-        local_before, remote_before = _observe_refs(git)
+        local_before, remote_before, local_error, remote_error = _observe_refs(git)
         pre_local, pre_remote = local_before, remote_before
+        pre_local_error, pre_remote_error = local_error, remote_error
+        if local_error is not None or remote_error is not None:
+            raise AuthorityRootError("fixed ref pre-publication observation失败")
         if local_before is not None or remote_before is not None:
             raise AuthorityRootError("fixed ref 必须预先absent")
         phase = "local_cas"
@@ -554,8 +571,11 @@ def publish_candidate(
             raise AuthorityRootError("remote CAS conflict")
         remote_created = True
         phase = "post_publication"
-        local_after, remote_after = _observe_refs(git)
+        local_after, remote_after, local_error, remote_error = _observe_refs(git)
         post_local, post_remote = local_after, remote_after
+        post_local_error, post_remote_error = local_error, remote_error
+        if local_error is not None or remote_error is not None:
+            raise AuthorityRootError("fixed ref post-publication observation失败")
         if local_after != revision or remote_after != revision:
             raise AuthorityRootError("post-CAS ref drift")
         phase = "binding_reverify"
@@ -586,13 +606,17 @@ def publish_candidate(
             if failure_reporter is not None:
                 failure_reporter(PublicationFailure(
                     phase, error, local_created, remote_created, outcome,
-                    pre_local, pre_remote, post_local, post_remote, binding_reverified,
+                    pre_local, pre_remote, post_local, post_remote,
+                    pre_local_error, pre_remote_error, post_local_error,
+                    post_remote_error, binding_reverified,
                 ))
             raise
         if failure_reporter is not None:
             failure_reporter(PublicationFailure(
                 phase, error, local_created, remote_created, outcome,
-                pre_local, pre_remote, post_local, post_remote, binding_reverified,
+                pre_local, pre_remote, post_local, post_remote,
+                pre_local_error, pre_remote_error, post_local_error,
+                post_remote_error, binding_reverified,
             ))
         callback_error = (
             error.callback_error

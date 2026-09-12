@@ -252,6 +252,32 @@ class NativeAuthorityGitTest(unittest.TestCase):
             check=False,
         )
 
+    def _run_cli_with_remote_cas_failure(self, root: Path, selection, config, argv):
+        return self._run_cli_with_hook(
+            root, selection, config, argv,
+            "tool.NativeAuthorityGit.cas_create_remote = lambda self, ref, revision: False",
+        )
+
+    def _run_cli_with_hook(self, root: Path, selection, config, argv, hook: str):
+        harness = (
+            "import sys; "
+            "import tools.psm_wma.materialize_immutable_source_authority_root as tool; "
+            f"exec({hook!r}); "
+            "raise SystemExit(tool.main(sys.argv[1:]))"
+        )
+        return subprocess.run(
+            [
+                str(Path(sys.executable).resolve()), "-c", harness,
+                "--selection-fd", str(selection.fileno()),
+                "--config-fd", str(config.fileno()), *argv,
+            ],
+            cwd=root,
+            pass_fds=(selection.fileno(), config.fileno()),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
     def _cli_fixture(self, directory: Path):
         git = Path(shutil.which("git") or "").resolve()
         root, remote = directory / "root", directory / "remote.git"
@@ -387,6 +413,92 @@ class NativeAuthorityGitTest(unittest.TestCase):
             if not (root / "evidence.json").exists():
                 self.fail(result.stderr)
             self.assertEqual(verify_evidence_path(root / "evidence.json")["status"], "FAIL")
+
+    def test_cli_remote_cas_failure_writes_verified_failure_evidence(self):
+        with tempfile.TemporaryDirectory() as raw:
+            _git, root, _remote, selection, config, argv = self._cli_fixture(Path(raw))
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_cli_with_remote_cas_failure(
+                    root, selection_handle, config_handle, argv
+                )
+            self.assertNotEqual(result.returncode, 0, result.stderr)
+            record = verify_evidence_path(root / "evidence.json")
+            self.assertEqual(record["status"], "FAIL")
+            self.assertEqual(record["failure"]["primary_phase"], "remote_cas")
+            self.assertTrue(record["rollback"]["complete"])
+
+    def test_cli_other_publication_failures_write_verified_evidence(self):
+        hooks = {
+            "pre_publication": """
+original = tool.NativeAuthorityGit.local_ref
+calls = 0
+def failing(self, ref):
+    global calls
+    calls += 1
+    if calls == 2:
+        raise OSError('pre-publication fixture')
+    return original(self, ref)
+tool.NativeAuthorityGit.local_ref = failing
+""",
+            "post_publication": """
+original = tool.NativeAuthorityGit.remote_ref
+calls = 0
+def failing(self, ref):
+    global calls
+    calls += 1
+    if calls == 4:
+        raise OSError('post-publication fixture')
+    return original(self, ref)
+tool.NativeAuthorityGit.remote_ref = failing
+""",
+            "binding_reverify": """
+original = tool.verify_candidate
+calls = 0
+def failing(*args):
+    global calls
+    calls += 1
+    if calls == 3:
+        raise tool.NativeGitError('binding fixture')
+    return original(*args)
+tool.verify_candidate = failing
+tool.authority_module.verify_candidate = failing
+""",
+            "evidence_write": """
+def failing(*args, **kwargs):
+    raise OSError('evidence fixture')
+tool.write_pending_evidence = failing
+""",
+            "post_publication_rollback_incomplete": """
+original = tool.NativeAuthorityGit.remote_ref
+calls = 0
+def failing(self, ref):
+    global calls
+    calls += 1
+    if calls >= 4:
+        raise OSError('persistent post-publication fixture')
+    return original(self, ref)
+tool.NativeAuthorityGit.remote_ref = failing
+""",
+        }
+        for phase, hook in hooks.items():
+            with self.subTest(phase=phase), tempfile.TemporaryDirectory() as raw:
+                _git, root, _remote, selection, config, argv = self._cli_fixture(Path(raw))
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    result = self._run_cli_with_hook(
+                        root, selection_handle, config_handle, argv, hook
+                    )
+                self.assertNotEqual(result.returncode, 0, result.stderr)
+                record = verify_evidence_path(root / "evidence.json")
+                expected_status = (
+                    "ROLLBACK_INCOMPLETE"
+                    if phase == "post_publication_rollback_incomplete" else "FAIL"
+                )
+                expected_phase = "post_publication" if phase.startswith("post_") else phase
+                self.assertEqual(record["status"], expected_status)
+                self.assertEqual(record["failure"]["primary_phase"], expected_phase)
+                self.assertEqual(
+                    record["rollback"]["complete"], expected_status == "FAIL"
+                )
 
     def test_cli_rejects_pristine_formal_copy_when_loaded_adapter_differs(self):
         with tempfile.TemporaryDirectory() as raw:

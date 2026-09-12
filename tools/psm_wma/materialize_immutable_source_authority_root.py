@@ -344,8 +344,8 @@ def _publication_failure_record(
     failure: PublicationFailure,
 ) -> dict[str, object]:
     if failure.phase not in {
-        "local_cas", "remote_cas", "post_publication", "binding_reverify",
-        "evidence_write",
+        "pre_publication", "local_cas", "remote_cas", "post_publication",
+        "binding_reverify", "evidence_write",
     }:
         raise NativeGitError("publication failure phase 尚未可序列化")
     revision = candidate.revision
@@ -356,7 +356,28 @@ def _publication_failure_record(
     if outcome is None:
         raise NativeGitError("publication failure 缺少 rollback outcome")
     record["status"] = "FAIL" if outcome.complete else "ROLLBACK_INCOMPLETE"
-    if failure.phase == "local_cas":
+    def observation(value: str | None, error: str | None) -> dict[str, object]:
+        if error is not None:
+            return {"state": "unreadable", "revision": None, "error": error}
+        if value is None:
+            return {"state": "absent", "revision": None, "error": None}
+        return {"state": "revision", "revision": value, "error": None}
+
+    record["pre_publication"] = {
+        "local_observation": observation(failure.pre_local, failure.pre_local_error),
+        "remote_observation": observation(failure.pre_remote, failure.pre_remote_error),
+        "both_absent": (
+            failure.pre_local is None and failure.pre_remote is None
+            and failure.pre_local_error is None and failure.pre_remote_error is None
+        ),
+    }
+    if failure.phase == "pre_publication":
+        record["publication"] = {key: False for key in _PUBLICATION_KEYS}
+        record["post_publication"] = {
+            "local_observation": None, "remote_observation": None,
+            "both_candidate": False, "committed_binding_reverified": False,
+        }
+    elif failure.phase == "local_cas":
         record["publication"] = {
             "local_create_attempted": True, "local_create_succeeded": False,
             "remote_create_attempted": False, "remote_create_succeeded": False,
@@ -377,24 +398,27 @@ def _publication_failure_record(
             "both_candidate": False, "committed_binding_reverified": False,
         }
     elif failure.phase in {"post_publication", "binding_reverify"}:
-        if failure.post_local is None or failure.post_remote is None:
-            raise NativeGitError("publication failure 缺少concrete post observation")
         record["post_publication"] = {
-            "local_observation": {"state": "revision", "revision": failure.post_local, "error": None},
-            "remote_observation": {"state": "revision", "revision": failure.post_remote, "error": None},
-            "both_candidate": failure.post_local == revision and failure.post_remote == revision,
+            "local_observation": observation(failure.post_local, failure.post_local_error),
+            "remote_observation": observation(failure.post_remote, failure.post_remote_error),
+            "both_candidate": (
+                failure.post_local == revision and failure.post_remote == revision
+                and failure.post_local_error is None and failure.post_remote_error is None
+            ),
             "committed_binding_reverified": failure.binding_reverified,
         }
-    def observation(value: str | None) -> dict[str, object]:
-        return {"state": "absent", "revision": None, "error": None} if value is None else {"state": "revision", "revision": value, "error": None}
     record["rollback"] = {
         "entered": outcome.entered, "required": outcome.required,
         "remote_delete_attempted": outcome.remote_delete_attempted,
         "remote_delete_succeeded": outcome.remote_delete_succeeded,
         "local_delete_attempted": outcome.local_delete_attempted,
         "local_delete_succeeded": outcome.local_delete_succeeded,
-        "final_local_observation": observation(outcome.final_local),
-        "final_remote_observation": observation(outcome.final_remote),
+        "final_local_observation": observation(
+            outcome.final_local, outcome.final_local_error
+        ),
+        "final_remote_observation": observation(
+            outcome.final_remote, outcome.final_remote_error
+        ),
         "complete": outcome.complete,
     }
     record["failure"] = {
