@@ -47,7 +47,8 @@ def nofollow(path, flags=os.O_RDONLY):
 
 def route_snapshot():
     g = os.lstat(GIT)
-    if stat.S_ISLNK(g.st_mode) or not stat.S_ISREG(g.st_mode) or digest(open(GIT, "rb").read()) != "587ef21868c948b883993e23209b86a72a6ddc06aab1545c697ffc31075acd4a": fail("git identity")
+    with open(GIT, "rb") as handle: git_raw = handle.read()
+    if stat.S_ISLNK(g.st_mode) or not stat.S_ISREG(g.st_mode) or digest(git_raw) != "587ef21868c948b883993e23209b86a72a6ddc06aab1545c697ffc31075acd4a": fail("git identity")
     admin = ROOT + "/.git"; value = os.lstat(admin)
     if stat.S_ISLNK(value.st_mode) or not stat.S_ISDIR(value.st_mode): fail("linked parent route unsupported")
     adfd = os.open(admin, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC); ads = os.fstat(adfd)
