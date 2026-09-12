@@ -13,35 +13,38 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `907f29faeeb9b43dd2faa70bac8088e4eeb82d01`
+- immediate prior live blob SHA: `e7bbb25864a76522da3249a8faa6a7f916f75788`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority Root Real Adapter / Execution Request Design v0.6 APPROVED
+## CODEX NOTICE — Authority Root Real Adapter CPU/static Implementation REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `944c1305bcaef818e178c781b5cf2ce8aebbc9a8`
+- root implementation SHA: `166e5f5f6470bcc7c77f8c3326914e1281e922b6`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-EXECUTION-REQUEST-DESIGN`
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
 
 Verdict:
-`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`
+`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:525)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_944c130_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_166e5f5_93a89ba.md`
 
 Canonical review commit:
-`f2c3531a1a44de88578e20527ddc985846f2b713`
+`5032ac720ff6a608a6113253be58f752cb17a166`
 
-Current blockers: `0`.
+Current blockers: `4 HIGH`.
 
-The single HIGH from the immediately previous `066de705...` review is closed. v0.6 now captures the entire finalizer invocation as an authority-owned normal/exception outcome and dispatches first on the exact issued `EvidenceCommit.state`. A non-committed outcome remains pre-commit and may enter the existing ownership-aware rollback path; once committed, all callback outcomes preserve exact candidate refs and accepted PASS, and any callback exception is re-emitted only outside the rollback boundary as `PostCommitFinalizerError` with its original cause. Ordinary callback return values now have one unambiguous rule: they carry no capability semantics and are ignored.
+1. **Approved real adapter/CLI seam is missing.** The materializer module contains the evidence verifier/writer and `NativeAuthorityGit`, but no CLI/orchestrator, no readonly two-input-FD preflight, no exact frozen selection/config identity preflight, no tool/interpreter/Git identity preflight, and no direct `prepare_candidate → verify_candidate → publish_candidate` execution path. The next exact execution-request Gate therefore has no runnable/auditable argv surface to freeze.
+2. **CAS ownership can be falsely attributed.** `cas_create_local/remote` and delete methods discard the Git mutation command return code and infer success from final ref state. A same-candidate create race can make an expected-zero CAS fail while the observed ref equals candidate, falsely yielding activation-owned success; a concurrent delete can similarly make a failed conditional delete appear successful. Success must require both exact command success and the mandated fresh post-observation. Add local+remote same-candidate race and concurrent-delete tests.
+3. **Detached commit metadata is ambient/unfrozen.** `create_detached_commit()` calls `git commit-tree` without explicit author/committer/message/timestamp, and the adapter has no immutable metadata input. This cannot satisfy the frozen future execution request, which must bind those fields, without relying on repo config/current time or modifying the closed adapter later.
+4. **Evidence failure ABI verifier is too permissive.** `_PHASES` incorrectly includes `rollback` as a primary phase, and ordinary `FAIL` may carry secondary rollback phase/code. Frozen v0.4/v0.5 requires primary phase to stop at `evidence_write`, ordinary FAIL rollback fields null, and only `ROLLBACK_INCOMPLETE` to carry secondary rollback failure.
 
-Previously closed contracts remain binding: v0.5 rollback `entered` versus owned-endpoint `required` and complete pre-publication/local-CAS reachability; v0.4 primary/rollback failure separation; v0.3 exact nested evidence ABI, opaque capabilities and four-file allowlist; v0.2 exact raw-byte/native Git blob OID binding and per-fixed-ref exact-old remote lease-CAS.
+Positive findings remain: v0.6 post-commit finalizer dispatch is implemented in the correct preserve-refs direction; guard cleanup/single-FD reread coverage is improved; formal Gitlink is unchanged and correct.
 
-MM and Kimi exact-pair captures currently report the same `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`; those are coordination evidence only and do not replace this independent ChatGPT verdict.
+Latest repository coordination at review time showed MM exact-pair approval while Kimi was still reviewing; those signals do not supersede this independent ChatGPT verdict.
 
-Scope reminder: approval authorizes only the frozen four root files and temporary-directory/local-bare-remote CPU/static tests. It does not authorize real selection/config JSON creation, real candidate/ref/origin mutation, real source/collection I/O, child/runtime changes, checkpoint/data/cache I/O, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1. Real materialization execution remains separately gated.
+Scope reminder: remediation remains in the same CPU/static implementation Gate and within the approved four root files plus normal bookkeeping. This verdict does not authorize real selection/config JSON creation, real candidate/ref/origin mutation, source/collection I/O, child/runtime changes, checkpoint/data/cache I/O, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the exact formal pair or canonical review.
