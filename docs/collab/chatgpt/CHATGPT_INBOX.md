@@ -13,44 +13,45 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `79414baceb10c34701e9c5f6307afa320d51012d`
+- immediate prior live blob SHA: `d9595a1340a3e0b1efcf86c312c73657358aecd8`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority Root PASS Lifecycle Remediation REQUEST_CHANGES
+## CODEX NOTICE — Authority Root PASS Lifecycle Recovery Remediation REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `bc40191f0e80f98201774cce8a1b551fa2343128`
+- root implementation SHA: `8534ae8d5a0979a6dd7e90cedf45f6ad33a14ae5`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
 
 Verdict:
-`REQUEST_CHANGES(tools/psm_wma/immutable_source_authority_root.py:289)`
+`REQUEST_CHANGES(tools/psm_wma/immutable_source_authority_root.py:297)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_bc40191_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_8534ae8_93a89ba.md`
 
 Canonical review commit:
-`a1ec3adf7ce0ccfb13e19a0356fa08f85359b453`
+`8151789fa7be027eafe0ea03e6a891364530d248`
 
 Current blockers: `3 HIGH`.
 
-Prior finding closure:
-- no-finalizer PENDING success bypass: CLOSED; `publish_candidate` now rejects `finalizer=None` before ref mutation.
-- terminal state member mutability: CLOSED AS WRITTEN; `_AuthorityTerminalState` is now frozen.
-- private AcceptedPass: PARTIALLY CLOSED.
-- A/B/C crash/restart fail-stop: PARTIALLY CLOSED.
+Closure/progress:
+- `finalizer=None` rejection remains closed.
+- frozen terminal state value objects remain closed.
+- `AcceptedPass.bind(...)` now includes candidate/binding/evidence/final-ref facts.
+- adapter preflight now invokes restart classification before ordinary fresh-destination rejection.
+- `_accept_terminal()` failures after the guard helper returns now surface recovery-required rather than ordinary rollback.
 
 Remaining HIGHs:
 
-1. **The mutable terminal cell itself escapes to the finalizer callback.** `PublicationWitness` and `EvidenceCommit` expose `_terminal`; `_AuthorityTerminalCell.state` is writable. A callback can set `witness._terminal.state = _ACCEPTED_TERMINAL_STATE` and return without seal/evidence/ref witness/guard transition. `publish_candidate()` then sees `commit.committed == True`, skips rollback, preserves refs and returns a witness. Make the semantic pointer transition authority-private and add a direct callback-forgery negative.
-2. **`_AcceptedPass` is under-bound.** It currently stores only witness/activation/terminal/token and is constructed before evidence seal and before the v0.10 last exact ref observation. It therefore cannot bind the frozen candidate/binding digest + sealed evidence identity/digest + historical local/remote witness facts. Complete the pre-accept binding and add wrong-evidence/binding/ref-witness/replay negatives, or explicitly return to design to supersede that retained capability contract.
-3. **The real B crash window still rolls back and restart classification is not in the CLI path.** If the real guard transition succeeds and an interruption occurs before the terminal pointer swap, `commit.committed` remains false and `publish_candidate()` enters ordinary `_rollback`, contrary to v0.10's permanent B fail-stop. The new interruption test raises from `_commit_exact_guard` before a successful transition and does not cover B. `classify_pass_restart()` is also isolated: preflight still rejects existing evidence/guard as generic fresh-path failure and `main()` never invokes the classifier. Implement B fail-stop/no-rollback, wire restart classification into the real entrypoint, and directly test B/C restart and A same-candidate foreign-ref fail-closed semantics.
+1. **Stale terminal-key replay still bypasses current authority.** Callback-visible `PublicationWitness` / `EvidenceCommit` carry writable `_terminal_key` slots. A prior successful returned witness exposes a key whose registry cell is ACCEPTED. During a new activation, finalizer code can assign `commit_B._terminal_key = witness_A._terminal_key`, perform no seal/guard transition, return, and make `commit_B.committed` read the stale ACCEPTED cell. The current B refs can then be preserved and its witness returned while B's own terminal is PENDING. Terminal identity used for committed/return authority must be immutable and exact-current-activation bound; add stale-key substitution negatives.
+2. **`AcceptedPass` is fact-bound but not mechanically authority-private/replay-safe.** It remains exposed as `commit._accepted_pass`, and its `_witness`, `_activation`, `_terminal_key`, `_facts`, `_token` slots are writable. A stale pass can be rewritten toward a later activation; current `bind()` does not prove stored activation identity equals `witness._activation` or stored terminal identity equals `witness._terminal_key`. Freeze/hide identity-bearing capability state and add stale-pass/cross-activation rewrite/replay negatives.
+3. **A guard-success-then-`BaseException` edge still falls back to ordinary rollback.** Recovery handling starts only around `_accept_terminal()`. If `_commit_exact_guard()` performs the durable unlink and then raises `KeyboardInterrupt`/custom `BaseException` before returning, the exception escapes before that recovery boundary; `publish_candidate()` sees PENDING and follows ordinary precommit rollback. Add the exact hook requested previously: call the real guard helper to completion, then raise before the terminal swap, and prove stable `PASS_CLOSURE_RECOVERY_REQUIRED`, refs preserved, no `_rollback`, and restart recovery routing.
 
-Formal tree/Gitlink is independently correct for this exact pair: `cosmos-framework` is mode `160000`, type `commit`, exact child `93a89ba61306d840a008813f62f26a34d54850f4`; child commit is independently reachable.
+Formal root/tree is independently valid: `cosmos-framework` is mode `160000`, type `commit`, exact child `93a89ba61306d840a008813f62f26a34d54850f4`; child commit is independently reachable.
 
-Reported `70/70` CPU tests and static checks are auxiliary evidence only.
+Reported `74/74` CPU tests and static checks are auxiliary evidence only.
 
 Remediation remains strictly limited to the already approved four root tooling/test files and temporary directory/local bare-remote CPU/static tests. No real source/candidate/ref/evidence operations, child/runtime changes, checkpoint/data/cache I/O, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1 are authorized.
 
