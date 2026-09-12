@@ -2880,3 +2880,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依据刚写入的 #2 推进令牌，新增 docs-only `...execution_snapshot_annex_v0.4.md` 与 replacement `...materialization_execution_request_v0.4.md`。v0.4 保留 v0.3 全部既有 authority，并新冻结 2,144-byte canonical launcher procedure descriptor（SHA-256=`4de774a525b183261b7e89b7351ffe605e1fc21f0461897732e18a5bab0709c4`）：absolute Git worktree add/remove argv/env、三条 backing absolute path、FD 3/4/5 的 writer/reader identity+fsync+pread、dup2/seek/CLOEXEC、`/proc/self/fd` exact close policy、由 v0.3 bootstrap observation机械导出的 final execve arrays，以及 launcher-owned cleanup/reproof。
 - 标准库 JSON/digest/字段断言 PASS，两个新增文档显式 `diff --check` PASS；未运行项目模块、未创建/读取真实资产、未调用 materialization、child、GPU或训练。下一步：复核文档与现有 authority 的一致性，更新本记录后只提交这两个 docs 与 SESSION/TODO，推送并以新formal SHA重新三方审核。提交：未提交。
+
+### Authority-root launcher procedure v0.4 审核送达回执（2026-09-13 CST，REVIEW）
+
+- formal=`11950c953d7c3e781f821ab648d45af83e60d340`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已 append 至 canonical Inbox（124207 bytes，低于128 KiB），ledger=`4e39efccfce555b5ab978dad1394c33b82bdb0c3`已推送，ledger不是formal target。
+- MM/Kimi 均按完整文本 `send-keys -l`→至少一秒→独立 Enter→capture 回读：MM消息已离开输入框并进入`Befuddling…`处理状态；Kimi消息已离开输入框、返回空输入框。下一轮按三分钟节奏先完整远端锁定，再检索 ChatGPT exact pair 和两 pane；此前禁止 materialization、真实 I/O、child、GPU与训练。
