@@ -2602,3 +2602,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal/child不变；`before/advertised/origin/local-after=a6d43df16d19c0f559676953bbfe6448219d9554`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact检索命令不变且无匹配。
 - MM `mm:0.0` 与 Kimi `kimi:0.0` capture 均保留同pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`；ChatGPT缺件，无推进令牌；保持REVIEW。
+
+### Authority-root materialization execution request 设计审核观察凭证 #3（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before=ae98a074`，fetch成功，advertised/origin/local-after=`f13cf926d9b8203218b0fa25b00885c934593af4`；新增=`b59ceb27 chatgpt: review materialization execution request design 1eb08de`、`f13cf926 chatgpt: record request-design review 1eb08de`，祖先检查成功且已`merge --ff-only`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_materialization_execution_request_design_1eb08de_93a89ba.md`，final=`REQUEST_CHANGES`（HIGH-1: 不得插入额外 request-design Gate，下一 target 必须是实际 one-shot execution request；HIGH-2: 在任何项目 import 前必须验证完整 transitive project import closure）；MM/Kimi `mm:0.0`/`kimi:0.0` capture均为same-pair `APPROVE_TO_PREPARE...`。三方final齐全，推进令牌仅允许汇总两项HIGH并在docs-only范围生成实际 one-shot request。
+
+### Authority-root one-shot materialization request（2026-09-12 CST，IN_PROGRESS）
+
+- 依`1eb08dea...`三方final，仅新增实际 request `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.1.md`，不再引入中间 Gate。它将H1的下一审核对象改为 one-shot `APPROVE_TO_MATERIALIZE`，并将H2的pre-import closure扩展至 adapter、authority、collection、audit 四个项目模块，要求在项目 import 前逐项 regular/non-symlink、raw SHA和formal-tree blob三重核验。
+- 此步骤仍为docs-only：未创建clean worktree/input JSON/index/evidence/candidate/ref，未打开source、执行collection或GPU/训练；待`git diff --check`后提交并对新的exact pair三方审核。提交：未提交。
