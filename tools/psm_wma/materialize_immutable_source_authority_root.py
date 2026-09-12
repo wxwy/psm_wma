@@ -9,7 +9,7 @@ import os
 import stat
 import subprocess
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Callable, Mapping, Sequence
 
@@ -39,9 +39,11 @@ class NativeGitError(RuntimeError):
 
 
 class InvocationFailure(NativeGitError):
-    def __init__(self, phase: str, error: BaseException) -> None:
+    def __init__(
+        self, phase: str, error: BaseException, candidate=None
+    ) -> None:
         super().__init__(str(error))
-        self.phase, self.error = phase, error
+        self.phase, self.error, self.candidate = phase, error, candidate
 
 
 def _read_input_fd(descriptor: int) -> bytes:
@@ -301,6 +303,7 @@ def _no_mutation_failure_record(
     transaction: "NativeAuthorityGit",
     phase: str,
     error: BaseException,
+    candidate=None,
 ) -> dict[str, object]:
     if phase not in {"preflight", "prepare", "verify"}:
         raise NativeGitError("no-mutation failure phase 无效")
@@ -323,7 +326,11 @@ def _no_mutation_failure_record(
             "fixed_ref": AUTHORITY_REF,
         },
         "authority": {key: None for key in _AUTHORITY_KEYS},
-        "candidate": {"revision": None, "parents": None, "tree_native_oid": None, "verifier_pass": False, "binding_sha256": None},
+        "candidate": {
+            "revision": None if candidate is None else candidate.revision,
+            "parents": None, "tree_native_oid": None,
+            "verifier_pass": False, "binding_sha256": None,
+        },
         "pre_publication": {"local_observation": None, "remote_observation": None, "both_absent": False},
         "publication": {key: False for key in _PUBLICATION_KEYS},
         "post_publication": {"local_observation": None, "remote_observation": None, "both_candidate": False, "committed_binding_reverified": False},
@@ -450,7 +457,7 @@ def run_authority_cli(
     try:
         binding = verify_candidate(invocation.request, candidate, transaction)
     except BaseException as error:
-        raise InvocationFailure("verify", error) from error
+        raise InvocationFailure("verify", error, candidate) from error
     def finalizer(witness, commit):
         local_observation = transaction.local_ref(AUTHORITY_REF)
         remote_observation = transaction.remote_ref(AUTHORITY_REF)
@@ -1170,14 +1177,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     """Run only an explicitly-identified authority-root invocation."""
     actual_argv = tuple(sys.argv[1:] if argv is None else argv)
     args = _parser().parse_args(actual_argv)
-    request = request_from_input_fds(
-        args.formal_root,
-        args.child_gitlink,
-        args.selection_fd,
-        args.config_fd,
-        args.selection_raw_sha256,
-        args.config_raw_sha256,
-    )
     metadata = CommitMetadata(
         args.author_name,
         args.author_email,
@@ -1189,7 +1188,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     )
     transaction = NativeAuthorityGit(args.git, args.cwd, args.remote, args.index, metadata)
     invocation = AuthorityAdapterInvocation(
-        request,
+        AuthorityRequest(args.formal_root, args.child_gitlink, b"", b""),
         args.selection_raw_sha256,
         args.config_raw_sha256,
         ModuleIdentity(args.adapter_path, args.adapter_blob_oid, args.adapter_raw_sha256),
@@ -1208,11 +1207,29 @@ def main(argv: Sequence[str] | None = None) -> int:
         sha256_digest(json.dumps(actual_argv, separators=(",", ":")).encode()),
     )
     try:
+        request = request_from_input_fds(
+            args.formal_root,
+            args.child_gitlink,
+            args.selection_fd,
+            args.config_fd,
+            args.selection_raw_sha256,
+            args.config_raw_sha256,
+        )
+    except BaseException as error:
+        write_failure_evidence(
+            invocation.evidence_path,
+            _no_mutation_failure_record(invocation, transaction, "preflight", error),
+        )
+        raise
+    invocation = replace(invocation, request=request)
+    try:
         print(run_authority_cli(invocation, transaction, args.cwd))
     except InvocationFailure as error:
         write_failure_evidence(
             invocation.evidence_path,
-            _no_mutation_failure_record(invocation, transaction, error.phase, error.error),
+            _no_mutation_failure_record(
+                invocation, transaction, error.phase, error.error, error.candidate
+            ),
         )
         raise error.error
     return 0
