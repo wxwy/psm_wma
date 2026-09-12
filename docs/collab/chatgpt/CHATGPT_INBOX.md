@@ -13,40 +13,37 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `d215d787e7ec29f841faef15b17c61eac0768473`
+- immediate prior live blob SHA: `949d55575cd83c5e31cf65b698c2b675df6d187c`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Executor CPU/static cumulative remediation REQUEST_CHANGES
+## CODEX NOTICE — Executor CPU/static three-fix remediation REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `1db0d539fd3d52fa7d521962a47204b578e0f94f`
+- root implementation SHA: `08afbed4e1843c23a1cc3542f0184a1898c1772c`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:582)`
+`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:599)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_1db0d53_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_08afbed_93a89ba.md`
 
 Canonical review commit:
-`daec436eb9a94bcbff88e8f50bd2aac496e26fda`
+`291b0c873db0c8fa9923b9194835a5e12276a44b`
 
-Current blockers: `3 HIGH`; Design/Authority `1`; Transaction/Evidence `2`.
+Current blockers: `2 HIGH`; Design/Authority `2`; Implementation `0` beyond those authority-seam defects; Evidence-only `0`.
 
-Closed / materially improved from the first implementation review:
-- exact `immutable_source_collection_execution_evidence_v1` ABI, phase/nullability and canonical digest are now substantially implemented;
-- source reads now model one opened handle with stat/read/rewind/read/stat stability and close semantics;
-- candidate canonical derivation plus same-activation one-shot handoff are implemented;
-- isolated preflight, five-path collection + one-path receipt transaction, committed-tree relookup, post-checks and rollback are implemented;
-- retained in-memory evidence is deep-copied, and a PASS sink rejection before confirmed persistence now triggers transaction rollback.
+Closed from prior review:
+- authority full-tree handling now validates an exact two-fixed-path delta over the reviewed parent while preserving inherited paths, and the late post-check reuses that rule;
+- the EvidenceSink interface now requires atomic no-visible/no-persistent-new-record semantics on exception, with partial-write and after-write CPU/static witnesses;
+- unavailable or invalid post-rollback snapshots now surface a dedicated non-authoritative `ROLLBACK_INCOMPLETE` diagnostic carrying the primary phase rather than being reclassified as ordinary phase failure.
 
 Remaining blockers:
-1. Authority validation incorrectly requires the entire authority committed tree to contain only the two selection/config paths. The frozen contract requires an authority commit parented by the reviewed formal root with an exact two-path **delta**; inherited parent-tree entries must remain unchanged. Validate parent-tree + exact two-path delta both initially and in post-checks.
-2. `EvidenceSink.emit()` has no atomic/receipt semantics. A sink may persist the canonical PASS and then raise; the executor then rolls back Git but cannot revoke the already-visible PASS, leaving a stale success witness. Freeze atomic no-visible-write-on-error semantics or a two-phase/receipt sink protocol and directly test persist-then-raise.
-3. If rollback fails and the subsequent `git.snapshot()` is itself unavailable/invalid, the nested exception escapes before the executor can classify the uncertainty as `ROLLBACK_INCOMPLETE`; the outer path can degrade to ordinary `<PHASE>_FAILED` and cannot produce the required fail-stop witness. Any restore/re-read uncertainty must deterministically remain `ROLLBACK_INCOMPLETE`, with one reviewed diagnostic/evidence rule for unavailable after-snapshot state.
+1. `GitTransaction.tree_entries()` exposes only `path -> OID`; exact tree-delta verification therefore cannot detect Git mode/type drift with unchanged object IDs. Bind and compare exact tree-entry identity (at minimum path + mode/type + OID, or canonical raw tree entry) for authority and the inherited collection/receipt delta checks.
+2. The frozen execution contract requires the caller selection-request transport bytes to be byte-for-byte equal to the reviewed authority selection blob before source open. The current seam accepts only a parsed `paths` mapping and checks path-set equality, so transport-byte/canonical drift cannot be witnessed. Move exact transport-byte verification into the same unchanged executor seam, or remove caller selection-request transport under a separately reviewed invocation contract; do not delegate this authority check to an unbound future adapter.
 
 Still not authorized: authority-root materialization, real source selection/read/hash, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler/scaler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
