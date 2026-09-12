@@ -11,7 +11,8 @@ description: 管理 PSM-WMA 的审核申请、三方批准门、执行者边界�
 
 ## 审核门
 
-- 只有 canonical live ChatGPT Inbox 的最新有效 verdict、Kimi、MM 针对同一实现 SHA 都批准，才可启动对应执行。
+- ChatGPT 最终 verdict 只从 `docs/collab/chatgpt/reviews/` 的完整 formal root/child 匹配文件取得；canonical live Inbox 只定位申请。ChatGPT、Kimi、MM 针对同一 pair 都批准，才可启动对应执行。
+- **先拉取后等待**：恢复/继续审核任务、用户询问审核/送达或提示回复、首次进入或重新进入审核等待前，必须先执行 AGENTS.md「审核结果获取的前置硬检查」全部步骤。先 fetch V2、核对 ls-remote 与 origin/V2 一致并快进，再读 exact-pair reviews、分别 capture 两 pane、写 SESSION，最后决定整改/推进或等待。旧记录与未到计时点均不能跳过初检；单纯续等已经检查过的同一计时句柄不触发额外轮询，也不产生审核状态结论。
 - 任一 `REQUEST_CHANGES`、SHA 不一致或未回复均不得执行；先处理意见并重新审核。
 - 审核申请后每 3 分钟轮询；用户提示“已回复”“已提交”“拉取最新”或准备作审核状态判断时立即额外执行一轮。每轮固定顺序为：保存 `before_head=$(git rev-parse HEAD)` → `git fetch origin V2` → `git ls-remote origin refs/heads/V2` → 先输出 `git log --oneline "$before_head"..origin/V2` 的每个新提交 → 如可快进则 `git merge --ff-only origin/V2` → 无论 revision range 是否为空都按 exact formal root/child 扫描 `docs/collab/chatgpt/reviews/` → capture Kimi pane → capture MM pane。只有这些步骤均成功且精确检索未命中时才可报告“无新增/尚未回复”；任一步失败必须报告“检查失败/状态未知”，不得把失败或旧结果解释成未回复。
 - 审核等待、远端暂未回复、tmux 暂无新行都不是 `blocked`。任务保持 `REVIEW` 并持续轮询；只有同一外部阻塞已连续三轮且没有任何安全的本地检查或修复可做时，才可标记 `blocked`。

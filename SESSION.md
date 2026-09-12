@@ -1,5 +1,33 @@
 # 当前协作状态
 
+## 用户要求：审核拉取前置硬规则（DOC-GOV-FETCH-FIRST，DONE）
+
+- 原因：已有规则未阻止先进入计时等待、后读取已提交 review。用户要求把先拉取最新结果写死在 AGENTS.md。
+- 预计修改 AGENTS.md 与治理技能的触发顺序，并更新 SESSION/TODO；不修改当前待整改两工具文件，不改变审核批准范围或轮询周期。原 authority 两项整改继续保留，尚未编码。
+- 复用现有 fetch/ls-remote/ff-only/exact-pair/pane/观察凭证流程，只把它升级为进入等待前不可跳过的前置检查；未提交。
+- 已在 AGENTS.md 顶部加入七步硬检查，并同步治理技能；另纠正技能中将 ChatGPT verdict 指向 Inbox 的旧错误，唯一来源保持 reviews/。规定 tracking ref 与 advertised SHA 不一致必须重取，零新增也扫描 review，三方结果齐全即退出等待。
+- 文档复读与 `git diff --check` PASS；未运行测试（纯规范修改），未改 executor/test、child、配置或训练遗留。阶段提交仅治理文档与 SESSION/TODO；对应提交见本段所在提交。后续恢复原两项 authority 整改。
+
+## 两项 authority 整改前复核第 3 轮（2026-09-12 10:57:17 CST）
+
+- formal root=`08afbed4e1843c23a1cc3542f0184a1898c1772c`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT/MM/Kimi 名册不变。before_head=advertised=`815ced3d32da030eb8413cdcfe065671d7f3045b`；独立 fetch/ls-remote/祖先检查成功，新增范围空，ff-only Already up to date。
+- 本轮 exact review 的 `Formal root|Formal child|REQUEST_CHANGES|HIGH-[12]` 检索确认 ChatGPT REQUEST_CHANGES；Kimi `capture-pane -S -35` 与 MM `-S -30` 独立未截断返回同 pair final APPROVE_TO_IMPLEMENT_CPU_STATIC。三方同 pair final 齐全，令牌仅用于原范围最小整改。
+- 认领原任务，预计只改 executor/test 及 SESSION/TODO：采用完整 mode/type/OID tree entry；selection raw bytes 替代 parsed paths 入参，拒绝任何非逐字节一致 transport。无新 Gate、真实 I/O、child/GPU/训练。未提交。
+
+## 三项整改复审第 2 轮（2026-09-12 10:55:59 CST，用户提示 GPT 已审）
+
+- formal root=`08afbed4e1843c23a1cc3542f0184a1898c1772c`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。
+- before_head=advertised V2=`815ced3d32da030eb8413cdcfe065671d7f3045b`；独立 fetch/ls-remote 成功；完整新增范围为空，祖先检查 0，ff-only=Already up to date。
+- 本轮 `rg -n 'Formal root|Formal child|REQUEST_CHANGES|HIGH-[12]'` 对 exact review `2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_08afbed_93a89ba.md` 命中同 pair 与 final REQUEST_CHANGES。独立 Kimi `capture-pane -S -35`、MM `-S -30` 均完整包含同 pair final APPROVE_TO_IMPLEMENT_CPU_STATIC；结果均未截断。
+- 当前事实：08afbed 已有三方最终结果，不能再称等待它的审核；前轮三 HIGH 已关闭，剩余两个新 authority seam HIGH。旧等待句柄已终止，下一动作是原范围整改 tree mode/type identity 和 selection raw transport binding，再发新 SHA；尚未修改这两处代码。未提交。
+
+## 三项整改复审第 1 轮（2026-09-12 10:54 CST，送达质疑触发复核）
+
+- formal root=`08afbed4e1843c23a1cc3542f0184a1898c1772c`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0` 不变。
+- before_head=`5dce1c0e92d2ce0a2521bbed92004173398f97c1`；fetch/ls-remote 成功，advertised=`815ced3d32da030eb8413cdcfe065671d7f3045b`；新增依次 `291b0c87 review: request changes CPU static authority seams 08afbed`、`815ced3d review: notify Codex CPU static authority seam changes 08afbed`；祖先判定 0，ff-only 成功。
+- 精确检索 `rg -l '08afbed4e1843c23a1cc3542f0184a1898c1772c' docs/collab/chatgpt/reviews/` 命中唯一 `2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_08afbed_93a89ba.md`；完整读取，ChatGPT 同 pair 已回复 REQUEST_CHANGES：前轮三 HIGH 关闭，新两 HIGH 为 tree mode/type identity 与 selection transport raw bytes。两 pane 独立未截断 capture `-S -90` 均含完整 pair 与最终 APPROVE_TO_IMPLEMENT_CPU_STATIC。MM 输出日期字符串与会话完成时间冲突，不用它推断检查时间；本条时间来自本机 date。
+- 三方同 pair final 齐全，只进行原两文件最小整改。停止等待句柄 3693。预计修改 executor/test 及 SESSION/TODO：tree entry 比较加入 mode/type/OID，selection 改为原始 canonical bytes 入参并在 source open 前逐字节绑定。不新增 Gate、不启动真实 I/O/GPU/训练。未提交。
+
 ## 三项 HIGH 整改复审准备（2026-09-12）
 
 - formal root=`08afbed4e1843c23a1cc3542f0184a1898c1772c` 已提交推送；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4` 不变。formal diff 仅原两工具文件、SESSION/TODO；29/29 CPU tests、py_compile、diff-check PASS。

@@ -12,6 +12,22 @@
 6. 当前任务涉及的 `docs/build/` 文档
 7. 进入 `cosmos-framework/` 后再读取其目录内的 `AGENTS.md`
 
+## 审核结果获取的前置硬检查（不得被等待计时器跳过）
+
+当前任务涉及审核时，恢复/继续任务、用户询问审核或送达状态、提示已回复，以及准备首次进入或重新进入审核等待前，**必须先拉取最新 V2，再检测结果，最后决定是否等待**。旧 SESSION、旧 capture、上次 fetch、已有等待句柄和未到定时轮询点都不能替代这次检查。已完成本轮检查后，单纯续等同一计时句柄无需额外拉取；计时输出不是审核检查，也不得据此更新审核状态。
+
+以下步骤必须顺序完成，每步独立取得未截断的成功输出：
+
+1. 保存 `before_head=$(git rev-parse HEAD)`，执行 `git fetch origin V2`。
+2. 执行 `git ls-remote origin refs/heads/V2`，核对 advertised SHA 与 `git rev-parse origin/V2` 一致；不一致则重新 fetch/锁定，不能继续使用旧 tracking ref。
+3. 输出 `git log --oneline "$before_head"..origin/V2` 全部新增提交；以 `git merge-base --is-ancestor "$before_head" origin/V2` 判定快进方向，返回 0 后执行 `git merge --ff-only origin/V2`。同步失败或分叉时不得默认为最新。
+4. **同步成功后**扫描 `docs/collab/chatgpt/reviews/`，读取内容中的完整 formal root、child/Gitlink 与最终 verdict；即使没有新增 commit 也必须扫描。Inbox 只用于定位申请，不能作为 ChatGPT 回复来源。
+5. 分别 capture 冻结名册的 Kimi/MM pane，核对同一完整 pair 的最终 verdict，不用旧 pane 输出推断。
+6. 将本轮时间、两个 HEAD、同步结果、review 路径与三方结果一次性写入 SESSION，再向用户报告或采取下一动作。
+7. 三方 final 已齐：立即退出该 pair 的等待，合并意见并按批准范围推进；仍有缺件：才进入规定间隔的原生等待。任何步骤失败：只报告“检查失败/状态未知”，先修复检查链路，禁止报告“尚未回复”或继续实施。
+
+本节是后文所有审核监控规则的执行入口；不能先 sleep 再用“尚未到点”跳过初检。它不缩短正常轮询间隔，也不将 REQUEST_CHANGES 变成执行批准。
+
 ## 文档职责
 
 - `docs/build/`：版本化的正式方案、详细设计、Gate Runbook 和核验报告。已标记 `frozen` 或 `locked` 的文件不得静默改写，变更必须新建版本或显式记录 override。
