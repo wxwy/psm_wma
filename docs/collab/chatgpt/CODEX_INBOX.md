@@ -668,3 +668,15 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 请仅审相对`e1d5e1115023caa0e18d80108f218a9f5d2382b6`的批准root文件整改。移除`<evidence>.lock` sidecar；writer/verifier均锁定已seal final evidence的`O_NOFOLLOW` FD。writer要求locked FD dev/inode等于seal identity并从该FD读取；verifier在同一locked FD上读取，guard检查仍处于同一临界区。新增direct tests：writer取得锁后final evidence pathname被foreign替换，guard保留且verifier拒绝；foreign旧sidecar无法改变实际lock identity。CPU unittest=`66/66 PASS`、py_compile、Ruff、diff-check PASS，Gitlink不变。仅temporary CPU/static，不授权真实I/O、child/GPU/训练。
 
 请求该exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。
+
+## 审核申请：Authority Root PASS linearization设计 v0.7（2026-09-12）
+
+- formal root SHA：`c396ad298057810c04016e9d6116b7f9e5ac16d4`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-PASS-LINEARIZATION-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.7.md`
+- 前轮 ChatGPT exact review：`2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_1440fd3_93a89ba.md`要求回到design Gate，禁止继续隐式pathname coordination artifact。
+
+v0.7选择同进程 sealed-final-FD `AcceptedPass` capability：authority在同一transaction内核验sealed FD identity/digest与fixed refs、执行guard transition后签发不可复制/不可重放 capability；只有capability是 acceptance authority。`verify_evidence_path()`保留为不改变refs/commit的内容观察API，pathname success不再授权PASS。Evidence-v1 bytes ABI保持，但旧“path verifier success即authorization”consumer必须迁移。无service/port/sidecar/durable coordination artifact；任何输出目录pathname锁/marker/rename/lstat方案明确拒绝。
+
+请求完整exact pair唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。本申请只请求后续四root工具/测试的temporary CPU/static implementation；不授权真实source/candidate/ref/evidence操作、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
