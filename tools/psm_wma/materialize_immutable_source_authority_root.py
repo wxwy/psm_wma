@@ -219,6 +219,73 @@ def _validate_no_mutation_failure(
         raise NativeGitError(f"{phase} evidence 不得含 mutation witness")
 
 
+def _validate_publication_failure(
+    record: Mapping[str, object],
+    candidate: Mapping[str, object],
+    pre: Mapping[str, object],
+    publication: Mapping[str, object],
+    post: Mapping[str, object],
+    rollback: Mapping[str, object],
+) -> None:
+    phase = record["failure"]["primary_phase"]
+    shapes = {
+        "pre_publication",
+        "local_cas",
+        "remote_cas",
+        "post_publication",
+        "binding_reverify",
+        "evidence_write",
+    }
+    if phase not in shapes:
+        return
+    if (
+        not all(value is not None for value in record["authority"].values())
+        or _candidate_kind(candidate) != "verified"
+        or not rollback["entered"]
+    ):
+        raise NativeGitError(f"{phase} authority/candidate/rollback chronology 无效")
+    unreached_post = _is_unreached(post)
+    all_publication = all(publication.values())
+    if phase == "pre_publication":
+        valid = not pre["both_absent"] and _all_false(publication) and unreached_post
+    elif phase == "local_cas":
+        valid = pre["both_absent"] and publication == {
+            "local_create_attempted": True,
+            "local_create_succeeded": False,
+            "remote_create_attempted": False,
+            "remote_create_succeeded": False,
+            "local_owned": False,
+            "remote_owned": False,
+        } and unreached_post
+    elif phase == "remote_cas":
+        valid = pre["both_absent"] and publication == {
+            "local_create_attempted": True,
+            "local_create_succeeded": True,
+            "remote_create_attempted": True,
+            "remote_create_succeeded": False,
+            "local_owned": True,
+            "remote_owned": False,
+        } and unreached_post
+    elif phase == "post_publication":
+        valid = pre["both_absent"] and all_publication and not post["both_candidate"]
+    elif phase == "binding_reverify":
+        valid = (
+            pre["both_absent"]
+            and all_publication
+            and post["both_candidate"]
+            and not post["committed_binding_reverified"]
+        )
+    else:
+        valid = (
+            pre["both_absent"]
+            and all_publication
+            and post["both_candidate"]
+            and post["committed_binding_reverified"]
+        )
+    if not valid:
+        raise NativeGitError(f"{phase} evidence witness shape 无效")
+
+
 def verify_evidence_bytes(raw: bytes) -> Mapping[str, object]:
     """Validate the frozen evidence-v1 bytes without touching a repository."""
     try:
@@ -269,6 +336,9 @@ def verify_evidence_bytes(raw: bytes) -> Mapping[str, object]:
     _validate_failure(record["failure"], status)
     if status != "PASS":
         _validate_no_mutation_failure(
+            record, candidate, pre, publication, post, rollback
+        )
+        _validate_publication_failure(
             record, candidate, pre, publication, post, rollback
         )
     if status == "PASS":

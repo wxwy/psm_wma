@@ -123,6 +123,44 @@ def _preflight_failure_evidence() -> dict[str, object]:
     return record
 
 
+def _local_cas_failure_evidence() -> dict[str, object]:
+    record = deepcopy(_pass_evidence())
+    record["status"] = "FAIL"
+    record["publication"] = {
+        "local_create_attempted": True,
+        "local_create_succeeded": False,
+        "remote_create_attempted": False,
+        "remote_create_succeeded": False,
+        "local_owned": False,
+        "remote_owned": False,
+    }
+    record["post_publication"] = {
+        "local_observation": None,
+        "remote_observation": None,
+        "both_candidate": False,
+        "committed_binding_reverified": False,
+    }
+    record["rollback"] = {
+        "entered": True,
+        "required": False,
+        "remote_delete_attempted": False,
+        "remote_delete_succeeded": False,
+        "local_delete_attempted": False,
+        "local_delete_succeeded": False,
+        "final_local_observation": {"state": "absent", "revision": None, "error": None},
+        "final_remote_observation": {"state": "absent", "revision": None, "error": None},
+        "complete": True,
+    }
+    record["failure"] = {
+        "primary_phase": "local_cas",
+        "primary_code": "LOCAL_CAS_FAILED",
+        "rollback_phase": None,
+        "rollback_code": None,
+    }
+    _redigest(record)
+    return record
+
+
 class NativeAuthorityGitTest(unittest.TestCase):
     def test_pending_evidence_unlinks_only_through_commit(self):
         class Commit:
@@ -182,6 +220,14 @@ class NativeAuthorityGitTest(unittest.TestCase):
         self.assertEqual(verify_evidence_bytes(_redigest(preflight))["status"], "FAIL")
         drifted = deepcopy(preflight)
         drifted["publication"]["local_create_attempted"] = True
+        with self.assertRaises(NativeGitError):
+            verify_evidence_bytes(_redigest(drifted))
+
+    def test_local_cas_failure_requires_its_exact_witness_shape(self):
+        local_cas = _local_cas_failure_evidence()
+        self.assertEqual(verify_evidence_bytes(_redigest(local_cas))["status"], "FAIL")
+        drifted = deepcopy(local_cas)
+        drifted["publication"]["remote_create_attempted"] = True
         with self.assertRaises(NativeGitError):
             verify_evidence_bytes(_redigest(drifted))
 
