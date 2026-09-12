@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root CPU/static implementation design v0.2 整改（2026-09-12，IN_PROGRESS）
+
+- formal root=`c61f32f3a99688043f2dfdb3d69480e11b1811dd`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`的三方正式意见已齐：ChatGPT=`REQUEST_CHANGES`（2 HIGH），MM/Kimi=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC`；同SHA合并后以最严格意见进入整改。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_authority_root_cpu_static_implementation_design_c61f32f_93a89ba.md`。HIGH-1要求实际collection executor在source-open前直接重查fixed authority ref local+remote；HIGH-2要求显式发布顺序、逐endpoint ownership witness与candidate→absent条件回滚，竞态下不得删除foreign ref。
+- 新增v0.2 docs-only supersession：实现allowlist扩为authority-root tool/test与现collection executor/test四文件；冻结local→remote CAS、remote→local rollback、fresh observation和竞态测试矩阵。实际仅修改v0.2、SESSION、TODO；`git diff --check` PASS，未运行项目测试（docs-only）；不修改代码，不执行真实I/O/GPU/训练。下一步提交推送新SHA并重新三方审核。未提交。
+
 ## Authority-root CPU/static implementation design第7轮观察（2026-09-12 12:44:36 CST）
 
 - formal root=`c61f32f3a99688043f2dfdb3d69480e11b1811dd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
