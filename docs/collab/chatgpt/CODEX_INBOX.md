@@ -356,3 +356,20 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 请逐一复核前轮 5 HIGH 的 acceptance，给出已关闭项与剩余 file:line，不能以 tests 数量替代生产算法覆盖。特别明确仍需审查的失败边界：sink 保存后抛异常时持久化状态未知；snapshot 无法重取时不能编造 exact live rollback witness。当前 sink 拒绝后恢复 ref/index/worktree 并抛 EVIDENCE_SINK_FAILED，恢复失败抛 ROLLBACK_INCOMPLETE，不宣称 FAIL 已落盘；这不构成新增 phase/schema。请判断是否满足现有冻结合同；如不满足，请在同一 implementation Gate 给最小整改，不新开横向 provenance Gate。真实适配器/运行未获批准，合成 tree/commit 标识不冒充生产证据。
 
 请求唯一 final verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不请求真实执行授权。ChatGPT 正式结果仅放 `docs/collab/chatgpt/reviews/`，写清完整 pair。等待三方同 pair final 后才合并整改，source-evidence 既有闭环后直接 single-GPU smoke。
+
+## 审核申请：Executor 三项 HIGH 最小整改（2026-09-12）
+
+- formal root SHA：`08afbed4e1843c23a1cc3542f0184a1898c1772c`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+前轮 `1db0d539fd3d52fa7d521962a47204b578e0f94f` 三方 final 在同轮回收：ChatGPT REQUEST_CHANGES（三项 HIGH）、MM/Kimi APPROVE，凭证见 SESSION。现仅原两工具文件整改：
+
+1. HIGH-1：共用 `_authority_tree` 检查父树与 full committed tree 的 exact two-path delta；source open 前与 post-check 均执行，继承 blob/Gitlink 不得增删改。fixture 现在含真实语义的继承项，覆盖两路径新建/修改、继承项漂移、无变化不算 delta、late post-check。
+2. HIGH-2：采用 review 允许的方案 (a)，EvidenceSink.emit 明确原子接口：异常保证无新增可见/持久记录。MemoryEvidenceSink 以 lock 隔离 staging 和读取，partial_write/after_write 注入均撤销新增记录，保留以前记录；测试验证事务回滚后没有 stale PASS。未来真实 sink 适配器必须独立满足该原子合同，内存测试不代表磁盘耐久性证据。
+3. HIGH-3：不可重取/无效 after snapshot 均抛 RollbackUnavailable，稳定消息 ROLLBACK_INCOMPLETE，保留 primary_phase；仅非 authority 异常诊断，不 emit canonical evidence、不编造 after_snapshot、不自动重试/推进。可重取 snapshot 时保留既有 canonical FAIL witness。直接测试 restore 抛错/成功与 snapshot 抛错/畸形组合。
+
+证据：formal tree 的 `tools/psm_wma/immutable_source_collection.py`、对应 unittest 和 SESSION；`python3 -B -m unittest tools.psm_wma.test_immutable_source_collection -v` 29/29 PASS；两文件临时目录 py_compile PASS；git diff --check PASS。无真实 source/checkpoint/cache I/O、collection/receipt/publication、child、GPU 或训练。
+
+请求同 Gate final：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，逐项确认三项 acceptance。请特别确认原子 sink 接口与 unavailable-snapshot 非 authority 诊断的实现语义；不新增横向 provenance Gate。ChatGPT 正式结果仅写 reviews/，请完整声明 formal root/child。三方同 pair final 到齐后才合并执行；本申请不请求真实执行权限。
