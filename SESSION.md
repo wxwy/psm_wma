@@ -1,5 +1,19 @@
 # 当前协作状态
 
+## 两 HIGH 复审第 2 轮观察（2026-09-12 11:09:43 CST）
+
+- formal root=`d281d6f3079602632000b1576c47fd4546de22e6`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- before_head、advertised V2、origin/V2 均为 `45a1fbe39efc2f66bc9120cf1011d24512171613`。独立 fetch/ls-remote/祖先检查成功，完整新增范围空，ff-only=Already up to date。
+- `rg -l 'd281d6f3079602632000b1576c47fd4546de22e6' docs/collab/chatgpt/reviews/` 无匹配（正常无匹配退出码已区分于检索错误）；ChatGPT 当前尚未找到正式回复。Kimi 独立 capture 已确认开始读取本 pair 的 AGENTS 和 Git tree，处理中。MM 独立 capture 包含完整同 pair final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC`，两 HIGH 已关闭，仅 CPU/static，禁止真实执行；不采信其输出中的未来日期作为观察时间。
+- 本轮没有三方 final 推进令牌，保持 REVIEW，仅将送达修复和观察凭证记账。前一目标轮完成发送修复，属于实际进展。没有代码、child、数据、GPU 或训练修改；未提交。
+
+## 两 HIGH 复审送达修复及第 1 轮观察（2026-09-12 11:08:46 CST）
+
+- formal root=`d281d6f3079602632000b1576c47fd4546de22e6`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- before_head、advertised V2、tracking ref 均为 `45a1fbe39efc2f66bc9120cf1011d24512171613`；独立 fetch、ls-remote、祖先检查成功，新增范围为空，ff-only=Already up to date。`rg -l 'd281d6f3079602632000b1576c47fd4546de22e6' docs/collab/chatgpt/reviews/` 无匹配；不是从 Inbox 推断回复。
+- 本轮初次独立 capture 发现两份申请仍停在输入框，不能算送达。已对前次写入的原文分别补独立 Enter（距写入超过一秒），未重复粘贴；之后独立未截断 capture 确认同 pair 原文已进入会话。Kimi 输入框为空并进入处理；MM 已开始读取该 pair 的测试 diff。此前写入工具输出截断，原发送回执不完整，本条记录实际补发修复，不追认旧送达。
+- ChatGPT 申请已核验存在于当前 HEAD 的 live Inbox 末条，当前未找到该 pair 正式 review；MM 处理中；Kimi 处理中。尚无本 pair 三方 final，不实施、不推进 Gate。仅修复审核消息发送与记录，没有修改代码或启动训练。未提交。
+
 ## 两 HIGH 整改复审准备（2026-09-12）
 
 - formal root=`d281d6f3079602632000b1576c47fd4546de22e6` 已推送；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4` 不变。32/32 CPU tests、py_compile、diff-check PASS。
