@@ -26,6 +26,7 @@
 - v0.8设计申请：formal root=`0ad5fb3379456f485fd861595e3db4ab62c3555f`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；申请已append canonical Inbox。待本记录/Inbox提交推送、送达MM/Kimi后进入三分钟原生回收；新pair无implementation令牌。
 - v0.8三方设计观察：ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_design_0ad5fb3_93a89ba.md`为`REQUEST_CHANGES(...v0.8.md:24)`，要求single terminal state、guard/commit crash matrix、明确ref witness；MM/Kimi同pair批准。三方final齐，进入docs-only v0.9整改：single `AuthorityTerminalState` cell、A/B/C crash windows、observation-only ref witness与post-observation corruption fail-stop；待提交复审。
 - v0.9设计申请：formal root=`a98e82714940d7bed1969cafb2ef32100c287d59`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；申请已append canonical Inbox，冻结名册为ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。待本申请ledger提交推送与MM/Kimi独立Enter/capture回执后，进入三分钟原生审核回收；无implementation推进令牌。
+- v0.9送达回执（2026-09-12 18:32:29 CST）：MM `mm:0.0`以`send-keys -l`写入后间隔1秒、独立Enter，capture显示已离开输入框并进入`Reading Inbox application`；Kimi `kimi:0.0`同流程，capture显示完整申请已进入会话且输入框恢复为空。ChatGPT送达回执为canonical Inbox已推送的申请条目。三方均尚无该pair final verdict；下一动作必须先做第1轮完整远端锁定检查。
 - 新formal root=`1440fd3391d46ef383d60387da8d7e7aa8238d5f`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`已推送；final-evidence-lock申请已append Inbox。待本记录/InBox提交推送、送达MM/Kimi后进入三分钟原生回收；新pair无推进令牌。
 
 ## Real adapter implementation review整改认领（2026-09-12，IN_PROGRESS）
