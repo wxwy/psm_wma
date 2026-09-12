@@ -13,62 +13,39 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `c6c902a1cea4921c38a15b2ff202b09e8d890b2b`
+- immediate prior live blob SHA: `3f0afef77e9c5d25d487ac80a930b3785feda5ab`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority-root Execution Snapshot Annex v0.2 REQUEST_CHANGES
+## CODEX NOTICE — Authority-root Execution Snapshot Annex v0.3 APPROVED
 
 Formal pair:
-- root docs SHA: `81f7526881dc4f93cf03da13988e2b74dda7d0de`
+- root docs SHA: `b2fc05489abb2a4c1bc7314844c94c197834b9ff`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.2.md:89)`
+`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_snapshot_annex_v02_81f7526_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_snapshot_annex_v03_b2fc054_93a89ba.md`
 
 Canonical review commit:
-`a8bcb473caa9b0ade8b5da1453e1be86b90d1c54`
+`a0e578feb827b546675528a369ff9a3872267dcb`
 
-Current blockers: `2 HIGH`.
+Current blockers: `0`.
 
-What is closed/correct:
-- prior annex-completeness HIGH is structurally addressed: v0.2 supersedes v0.1 and freezes selection/config bytes, base launcher environment, FD numbers, commit metadata, bootstrap identity and parser argv;
-- endpoint/input lengths, SHA-256 and native OIDs independently recompute correctly;
-- exact formal root/Gitlink is valid and child commit is reachable;
-- delta from `29c8aaa...` is docs/bookkeeping only; no production/child code changed;
-- scope remains non-executing; even approval would only permit preparing the next docs-only execution request, not materialization.
+Closure:
+- prior bootstrap argv HIGH is CLOSED: parser `actual_argv` remains 2427 bytes / `72777bd...`, while bootstrap `sys.orig_argv[6:]` including leading `--` is separately frozen at 2432 bytes / `aefa3a7d...`;
+- bootstrap contract canonical JSON independently recomputes to 182 bytes / `62a7bb...`;
+- prior transaction-env HIGH is CLOSED: exact production `NativeAuthorityGit.env` is frozen as six base keys + `GIT_INDEX_FILE` + six author/committer keys, 471 bytes / `daf9e4...`;
+- commit message is correctly frozen as `git commit-tree` stdin, not an environment variable;
+- formal Gitlink/child are exact and reachable; delta remains docs/bookkeeping only;
+- no new Design/Implementation/Evidence blocker found in this docs-only scope.
 
-HIGH-1 — parser argv digest is incorrectly reused as bootstrap `sys.orig_argv[6:]` digest:
-- annex freezes parser `actual_argv` JSON at 2427 bytes / `72777bd7305c760c48c069eafd068f1a538383a6fdb8d40258acf3d8fc3b7ae2`;
-- that is correct for adapter evidence `argv_sha256`;
-- production bootstrap instead hashes `sys.orig_argv[6:]`, whose first element is the literal `--` before the parser argv;
-- independently recomputed bootstrap-observed bytes are 2432 bytes / `aefa3a7d02be8ca5af6572e59eb125ced458b739d5f9ac2cc8fc3122018455a6`;
-- annex currently requires `bootstrap_argv_sha256` to equal the parser digest, so the frozen bootstrap contract would deterministically fail before execution.
+Scope reminder: this approval permits only preparation of the complete docs-only execution request. It does not authorize materialization, JSON/worktree/index/candidate/ref/evidence creation, source/checkpoint I/O, collection/receipt/publication/root audit, child/runtime changes, CUDA/GPU, training, evaluation, inference or LIBERO4IN1.
 
-Exact remediation HIGH-1:
-1. Keep parser/evidence `argv_sha256` as the 2427-byte `72777bd...` value.
-2. Freeze bootstrap-observed canonical argv separately as `["--", *actual_argv]` / `sys.orig_argv[6:]`.
-3. Freeze `bootstrap_argv_sha256` to the corresponding 2432-byte `aefa3a7d02be8ca5af6572e59eb125ced458b739d5f9ac2cc8fc3122018455a6` value (or show an exact equivalent derivation matching production).
-4. Freeze the two-key bootstrap-contract canonical JSON from bootstrap raw digest + this distinct bootstrap argv digest.
-
-HIGH-2 — NativeAuthorityGit environment authority does not match production:
-- annex says transaction environment equals the six-key launcher mapping plus the next section's seven metadata keys;
-- production actually uses six base keys + `GIT_INDEX_FILE` + six author/committer env keys;
-- commit message is not an environment variable; it is passed to `git commit-tree` via stdin;
-- therefore annex omits authority-critical `GIT_INDEX_FILE` and misclassifies the commit message;
-- with the annex-frozen index and metadata, the exact canonical production `transaction.env` is 471 bytes with SHA-256 `daf9e4bfb1740f5e94d038547619256b900eb16be7830bd37c7df8d4f6a0f235`.
-
-Exact remediation HIGH-2:
-1. Keep the six-key launcher/bootstrap environment separately frozen.
-2. Freeze exact `NativeAuthorityGit.env` as six base keys + `GIT_INDEX_FILE` + six author/committer keys, with canonical raw bytes and digest.
-3. State explicitly that commit message is frozen `commit-tree` stdin, not an env key.
-4. Require the later execution request/evidence to reproduce this exact environment without ambient additions.
-
-Scope reminder: no materialization, JSON/worktree/index/candidate/ref/evidence creation, source/checkpoint I/O, collection/receipt/publication/root audit, child/runtime change, CUDA/GPU, training, evaluation, inference or LIBERO4IN1 is authorized.
+The complete execution request and command still require a separate exact three-party `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` before execution.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
