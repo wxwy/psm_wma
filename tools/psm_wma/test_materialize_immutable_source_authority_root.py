@@ -24,6 +24,7 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     verify_evidence_bytes,
     verify_evidence_path,
     write_pending_evidence,
+    write_failure_evidence,
     _read_input_fd,
     _cleanup_pending_evidence,
     _path_identity,
@@ -250,6 +251,24 @@ class NativeAuthorityGitTest(unittest.TestCase):
             with self.assertRaises(EvidenceCleanupIncomplete):
                 _cleanup_pending_evidence(((path, identity),), directory)
             self.assertEqual(path.read_bytes(), b"foreign")
+
+    def test_failure_writer_preserves_replaced_foreign_temporary(self):
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "evidence.json"
+            original_link = os.link
+
+            def replace_then_fail(source, destination, *args, **kwargs):
+                original_link(source, destination, *args, **kwargs)
+                Path(source).unlink()
+                Path(source).write_bytes(b"foreign")
+                raise OSError("fixture")
+
+            with patch(
+                "tools.psm_wma.materialize_immutable_source_authority_root.os.link",
+                side_effect=replace_then_fail,
+            ), self.assertRaises(EvidenceCleanupIncomplete):
+                write_failure_evidence(path, _preflight_failure_evidence())
+            self.assertEqual(path.with_name("evidence.json.tmp").read_bytes(), b"foreign")
 
     def _run_cli(self, root: Path, selection, config, argv):
         return subprocess.run(
