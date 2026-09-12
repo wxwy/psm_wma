@@ -2621,3 +2621,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`d3cd3c9b26cea021814c9f48bcd864183a811293`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before/advertised/origin/local-after=9ad7c47314b4d2203ae560182f6db316d4f3d9ca`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`；ChatGPT exact检索无匹配。
 - MM `mm:0.0` 已开始交叉核验Python/Git identity，Kimi `kimi:0.0` 正在读取formal tree与冻结值；两者均未给same-pair final。无推进令牌，保持REVIEW。
+
+### Authority-root one-shot materialization request 审核观察凭证 #2（2026-09-12 20:40:33 CST，REVIEW）
+
+- formal=`d3cd3c9b26cea021814c9f48bcd864183a811293`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变（ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`）。`before=862c3b87e05af8ac62e46af811e47ecaac812ebf`；`git fetch origin V2`成功；advertised=`862c3b87e05af8ac62e46af811e47ecaac812ebf`与`origin/V2`一致；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact检索命令=`rg -l -F 'd3cd3c9b26cea021814c9f48bcd864183a811293' docs/collab/chatgpt/reviews/ || true`，无匹配。MM `mm:0.0` capture同pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。Kimi `kimi:0.0` capture同pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.1.md:36)`：bootstrap本体及metadata、sanitized-env、argv、remote identity、精确输入/输出路径等实际执行值未冻结。ChatGPT尚缺件；无推进令牌，保持REVIEW，禁止整改、执行及训练。
