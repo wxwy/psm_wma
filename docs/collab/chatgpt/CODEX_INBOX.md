@@ -403,3 +403,15 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 请重点审核：selection/config exact canonical raw bytes 与 schema；materialization formal root 作为唯一 parent；相对 parent 恰好两 fixed `100644/blob` path 的 full `(mode,type,OID)` delta 与 Gitlink/继承项保持；authority payload无自引用；candidate 不推进 V2；固定 `refs/heads/authority/r09-b-ttt-v035-immutable-source-v1` expected-zero CAS；独立 verifier 不信任自报 tuple；三方 review 明示绑定七字段 tuple，collection executor source-open 前重算全部字段与远端 ref。
 
 批准仅允许下一步 root-only materializer/verifier CPU/static implementation design。当前不创建 selection/config JSON、authority commit/ref，不执行 source I/O、collection/receipt/source-evidence/publication、child、GPU或训练。请给唯一 final：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_MATERIALIZATION_BINDING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；完整声明 exact pair。ChatGPT 正式回复仅写 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Authority Root Binding v0.2 ABI 最小整改（2026-09-12）
+
+- formal root SHA：`31819169c9430087f5e293cd1dce169ec055b371`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-BINDING-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_binding_design_v0.2.md`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+前轮 formal `36b4e6bc3144a67d16d6c9684649e8939d181230` 三方 final 齐：ChatGPT一项HIGH，MM/Kimi批准。v0.2仅按ChatGPT acceptance方案1整改：conceptual authority-root revision的唯一executor-facing serialization key冻结为现有实现的`root_revision`。exact seven-key mapping用于materializer候选、独立verifier、review/evidence binding及现有`_authority_tree()`/`_bound_source_inputs()`；serialized `authority_root_revision`、双键、tuple、caller rename或adapter全部pre-source FAIL。v0.1其余parent/tree/ref/canonical bytes/边界完整继承。
+
+请确认该HIGH关闭并给唯一 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_MATERIALIZATION_BINDING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。本申请仍只请求进入root CPU/static implementation design，不授权真实materialization/source I/O/collection/publication/child/GPU/训练；不新增横向Gate。

@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root design v0.2 复审准备（2026-09-12）
+
+- formal root=`31819169c9430087f5e293cd1dce169ec055b371`已推送；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。formal diff仅v0.2、SESSION、TODO；`git diff --check` PASS，未运行测试（docs-only）。
+- 冻结名册ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。申请仅复审一个ABI HIGH；不请求真实materialization/source I/O/GPU/训练。
+- live Inbox追加前46816 bytes、追加后48274 bytes；下一步提交推送ledger，再逐pane按文本→至少1秒→Enter→capture发送。本段不提前声明送达。未提交。
+
 ## Authority-root design v0.2 ABI remediation（2026-09-12，IN_PROGRESS）
 
 - 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_binding_design_v0.2.md`，只override v0.1 §4命名冲突：executor-facing authority exact为七键mapping且首键唯一是`root_revision`；conceptual `authority_root_revision`仅是语义说明，禁止作为serialized key、双键、tuple、caller rename或adapter bridge。
