@@ -2587,3 +2587,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 认领既有 source-evidence 闭环中的唯一 real materialization execution request（不是横向 provenance Gate）：预计新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_design_v0.1.md`，并更新本文件与 TODO。只读复用 `ad9e011...` formal tree、已冻结 selection/config bytes contract、real adapter CLI；不创建 JSON/candidate/ref，不打开真实 source，不触碰 child/GPU/训练。
 - 已完成 docs-only v0.1：冻结 formal root/Gitlink、formal-tree adapter/authority module blob+raw identity、selection/config raw SHA、fixed ref、受控 `-I -S -B` bootstrap、argv完整性、expected-zero/fresh-destination preflight、PASS/FAIL/`ROLLBACK_INCOMPLETE` 与停机边界。只读核验 formal tree和本机工具 identity；`git diff --check` PASS，未运行项目代码或真实操作。下一步：提交并申请本设计三方审核；提交：未提交。
+
+### Authority-root materialization execution request 设计送达回执（2026-09-12 CST，REVIEW）
+
+- formal=`1eb08dea015c1c3c64d504d96a52f02de4665dbd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已append并由ledger=`16e11974ee1b3aa5d50a16efcbf2ccb3621f18fe`推送（ledger非formal target）。
+- MM/Kimi分别以完整文本→至少1秒→独立Enter发送；Enter后 capture 显示申请已离开输入框并进入会话。三方正式 verdict 必须以同pair review/capture回收；三分钟后执行第1轮远端锁定检查。
