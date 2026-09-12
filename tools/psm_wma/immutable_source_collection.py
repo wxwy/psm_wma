@@ -208,7 +208,10 @@ class TemporaryGitFixture:
         return self.snapshot()
 class MemoryEvidenceSink:
     def __init__(self) -> None: self.records: list[dict[str, object]] = []
-    def emit(self, record: Mapping[str, object]) -> None: verify_evidence(record); self.records.append(dict(record))
+    def emit(self, record: Mapping[str, object]) -> None:
+        retained = json.loads(_canonical(record))
+        verify_evidence(retained)
+        self.records.append(retained)
 @dataclass(frozen=True)
 class CandidateHandoff:
     authority: Mapping[str, str]
@@ -783,6 +786,7 @@ def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str
         record["execution"]["phase"] = "candidate_verification"
         payload = handoff.take(activation)
         record["handoff"]["consumed_once"] = True
+        before_commit = _snapshot(git.snapshot())
         _commit_candidates(git, payload, lineage, record)
         record["status"] = "PASS"
         record["execution"]["phase"] = "complete"
@@ -794,5 +798,16 @@ def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str
         sink.emit(record)
         raise
     record["evidence_sha256"] = _sha(record)
-    sink.emit(record)
+    try:
+        sink.emit(record)
+    except Exception as error:
+        # sink 不可用时不伪造已持久化 FAIL，也不允许未获确认的 PASS 返回。
+        try:
+            git.rollback(before_commit)
+            verify_synthetic_rollback(before_commit, git.snapshot(), completed=True)
+            if git.resolve(lineage["target_ref"]) != before_commit["target_ref_revision"]:
+                raise CollectionError("target ref 未恢复")
+        except Exception as rollback_error:
+            raise CollectionError("ROLLBACK_INCOMPLETE") from rollback_error
+        raise CollectionError("EVIDENCE_SINK_FAILED") from error
     return record

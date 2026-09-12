@@ -50,6 +50,42 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
     def test_exact_pass_evidence(self) -> None:
         sink = MemoryEvidenceSink(); record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=sink)
         self.assertEqual(record["status"], "PASS"); self.assertEqual(record["execution"]["phase"], "complete"); self.assertEqual(sink.records, [record])
+    def test_retained_evidence_does_not_alias_returned_record(self) -> None:
+        sink = MemoryEvidenceSink()
+        record = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                   paths=self.paths, git=self.git, root_fd=self.fd, sink=sink)
+        retained = deepcopy(sink.records[0])
+        record["execution"]["phase"] = "source_read"
+        record["source_entries"][0]["sha256"] = "0" * 64
+        self.assertEqual(sink.records, [retained])
+        verify_evidence(sink.records[0])
+
+    def test_pass_sink_failure_restores_transaction_or_fails_closed(self) -> None:
+        class RejectingSink:
+            def emit(self, record):
+                verify_evidence(record)
+                raise OSError("合成 sink 不可用")
+
+        class FailedRollbackGit(TemporaryGitFixture):
+            def rollback(self, snapshot):
+                raise OSError("合成 rollback 不可用")
+
+        for rollback_fails in (False, True):
+            with self.subTest(rollback_fails=rollback_fails):
+                git = deepcopy(self.git)
+                if rollback_fails:
+                    git = FailedRollbackGit(**vars(git))
+                before = deepcopy(git.snapshot())
+                expected = "ROLLBACK_INCOMPLETE" if rollback_fails else "EVIDENCE_SINK_FAILED"
+                with self.assertRaisesRegex(CollectionError, expected):
+                    collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                      paths=self.paths, git=git, root_fd=self.fd, sink=RejectingSink())
+                self.assertEqual(len(git.commits), 2)
+                if not rollback_fails:
+                    self.assertEqual(git.snapshot(), before)
+                    self.assertEqual(git.resolve(self.lineage["target_ref"]),
+                                     self.lineage["expected_base_root_revision"])
+
     def test_authority_lineage_allowlist_drift_fails(self) -> None:
         with self.assertRaises(CollectionError): collect_synthetic(authority={**self.authority, "x": "x"}, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
         with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths={name: "same" for name in SOURCE_PATHS}, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())

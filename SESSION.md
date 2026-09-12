@@ -1,5 +1,14 @@
 # 当前协作状态
 
+## 整改复核第 1 轮（2026-09-12 10:00 CST）
+
+- formal root=`fb9c5e04e811865247e2ed44072af59acc8b93c9`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- before_head 与远端 advertised V2 均为 `fe8b6d84b4eec66f42bd6e2c335498ffc6d2a335`；独立 fetch/ls-remote 成功；`git log --oneline fe8b6d84b4eec66f42bd6e2c335498ffc6d2a335..origin/V2` 为空；祖先检查返回 0，ff-only=Already up to date。
+- 独立完整读取 `docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_fb9c5e0_93a89ba.md`：exact pair，已回复 REQUEST_CHANGES（5 HIGH）。独立 `tmux capture-pane -p -t kimi:0.0 -S -100`：exact pair，已回复 REQUEST_CHANGES（evidence ABI）；MM 同命令 `mm:0.0`：exact pair，已回复 APPROVE_TO_IMPLEMENT_CPU_STATIC。所有结果未截断。
+- 合并意见仍限原两工具文件 CPU/static 整改，不关闭 Gate。本轮预计修改 `tools/psm_wma/immutable_source_collection.py`、对应 unittest、SESSION/TODO：补 evidence sink 拒绝后的事务恢复和内存记录隔离。不增加 phase/schema 或横向 Gate；真实执行仍禁止。未提交。
+- 实际完成：MemoryEvidenceSink 保留 canonical 深拷贝；PASS sink 抛错后回滚并重新验证 snapshot/ref，成功恢复仍抛 EVIDENCE_SINK_FAILED，不能恢复则 ROLLBACK_INCOMPLETE，不伪造 sink 已接受的 FAIL。测试新增嵌套 alias 污染拒绝、sink 不可用的恢复/恢复失败。根目录 `python3 -B -m unittest tools.psm_wma.test_immutable_source_collection -v` 26/26 PASS，`git diff --check` PASS；CPU/标准库/内存 fixture，无真实 source/GPU/网络。
+- 重审需明确的剩余边界：sink 在保存后再抛异常时持久化状态未知；snapshot 无法重取时冻结 exact live witness 不能凭空补齐。当前不可把两者包装为可审计的成功执行；同一 CPU/static implementation 重审中说明，禁止新增横向 provenance Gate。真实 Git/FD/sink adapter 未获执行批准，合成测试不是生产运行证据。下一步对累计整改提交申请同 Gate 重审，未宣称 5 HIGH 全部关闭。
+
 ## 执行身份与最终观测切片（2026-09-12，IN_PROGRESS）
 
 - 前一 FAIL 生成切片已提交/推送 `68278f58158a657d188cf2957f97fc7b33e1ed0c`。
