@@ -3000,3 +3000,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`11950c953d7c3e781f821ab648d45af83e60d340`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=14a30235ee14545846a01b47c2a2221a7349c501`；fetch成功；advertised/origin/local-after均为`14a30235ee14545846a01b47c2a2221a7349c501`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT exact-pair检索无匹配正式review；Kimi/MM pane分别回读同 pair `REQUEST_CHANGES(...annex_v0.4.md:35)`与`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。无推进令牌，Gate保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
+
+### Authority-root launcher procedure v0.4 审核观察凭证 #24（2026-09-13 01:37:29 CST，REVIEW）
+
+- formal=`11950c953d7c3e781f821ab648d45af83e60d340`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=7c4d1d408323db25e030e846fa0752476bbeec92`；fetch成功；advertised/origin/local-after均为`7c4d1d408323db25e030e846fa0752476bbeec92`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-pair检索无匹配正式review；Kimi/MM pane分别回读同 pair `REQUEST_CHANGES(...annex_v0.4.md:35)`与`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。无推进令牌，Gate保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
