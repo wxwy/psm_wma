@@ -16,6 +16,7 @@
 - 整改checkpoint（未提交）：bootstrap现于`sys.path/runpy`前以stdlib frozen Git prefix核验HEAD/formal、tracked clean（忽略未初始化Gitlink状态）及adapter/authority/collection/audit四模块的non-symlink raw SHA/formal-tree blob identity；collection/audit漂移带import-sentinel隔离解释器反例证明没有项目import/evidence/ref。另补HTTPS credential/query/fragment/uppercase-host/port/alias负例与canonical正例。90/90 CPU tests、py_compile、Ruff、diff-check PASS。余下Kimi三类witness（replace-ref、ambient config、remote digest）待补；禁止真实I/O/GPU/训练。
 - 整改checkpoint（未提交续）：已补临时repo真实replace-ref下`NativeAuthorityGit`仍读取原tree、hostile父`GIT_CONFIG_GLOBAL/SYSTEM/REPLACE_REF_BASE`不进入fixed env、以及remote_identity_sha256未重签篡改被Evidence verifier拒绝。92/92 CPU tests、Ruff、diff-check PASS；待py_compile后提交，禁止真实I/O/GPU/训练。
 - 已提交`6abc8891`完成上述witness。closure review候选将在本状态提交后冻结，child/Gitlink仍为`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册保持ChatGPT reviews、MM=`mm:0.0`、Kimi=`kimi:0.0`。仅审`bb17774..候选root`两root工具/test及记录；禁止真实I/O、child、GPU与训练。
+- remediation closure送达回执（2026-09-12）：formal=`cc36db3a6b863d86d57f5eb0e3fcefb5aef3376d`/child不变；Inbox ledger=`7b7f48cc`已推送；MM/Kimi均按`send-keys -l`→等待≥1秒→独立Enter并capture确认申请已离开输入框，均处理中。第1轮：`before=7b7f48cc`，fetch/advertised/origin均同SHA、无新增、ff-only成功；ChatGPT exact review未找到；MM正在读full adapter diff；Kimi正在核验整改范围，均无final。无推进令牌，保持REVIEW。
 
 ## Authority Root Real Adapter 第三轮整改复审（2026-09-12 17:25 CST，REVIEW）
 
