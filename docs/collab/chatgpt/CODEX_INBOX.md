@@ -645,3 +645,15 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 请仅审相对`8879742c4ea99bf2676903d4085a77aee91cd4e1`的四个批准root tooling/test文件累计整改。原先identity-check后直接pathname unlink改为`_unlink_exact_regular()`：先验证public regular-file dev/inode，再原子rename至同父目录下mode-0700私有parking目录；只在private pathname重验相同identity后删除。handoff边界若发现foreign replacement，则原样restore并fail-stop。该原语同时用于`EvidenceCommit.consume_by_unlink()`的PASS guard和adapter `_unlink_owned()`的guard/tmp/final cleanup。新增direct adversarial回归：guard handoff边界foreign replacement保留foreign并rollback；adapter cleanup handoff边界foreign保留；seal后改写evidence bytes则consume拒绝、guard与篡改record保留。temporary CPU/static unittest=`61/61 PASS`，`py_compile`、Ruff、`git diff --check` PASS；formal Gitlink不变。
 
 请求完整exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。仅授权四个root工具/测试的temporary directory/local bare remote CPU/static fixture；不授权真实source/selection/config/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root Real Adapter PASS-linearization remediation（2026-09-12）
+
+- formal root SHA：`e1d5e1115023caa0e18d80108f218a9f5d2382b6`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮 exact review：`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_153bf17_93a89ba.md`（1 HIGH PASS linearization）；Kimi/MM同pair批准。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+请仅审相对`153bf17b3755b20296e69d2f5790becd8520875d`的批准root files。为关闭public guard handoff可见性，`EvidenceCommit.consume_by_unlink()`现在以authority-owned exclusive `flock`持有identity/digest/ref recheck、guard handoff、private parked inode重验/删除与`committed=True`；`verify_evidence_path()`以同lock shared读取，因此handoff期间verifier阻塞，只有commit后才能观察guard absent。parked lstat/unlink失败在unlock前restore guard；handoff后foreign `.pending`重现则fail-stop、不commit且verifier拒绝。新增direct tests覆盖：handoff内线程verifier不可在commit前返回、parked-lstat失败恢复guard、handoff后foreign guard阻止commit/acceptance，以及此前altered-record。CPU unittest=`64/64 PASS`；py_compile、Ruff、diff-check PASS；Gitlink不变。
+
+请求完整exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。仅授权四个root工具/测试temporary CPU/static；不授权真实I/O、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
