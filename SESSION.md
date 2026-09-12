@@ -2597,3 +2597,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`1eb08dea015c1c3c64d504d96a52f02de4665dbd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before/advertised/origin/local-after=bcb2aab2a35407554af86d693c25b652e73d44af`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact检索命令=`rg -l '1eb08dea015c1c3c64d504d96a52f02de4665dbd' docs/collab/chatgpt/reviews/`，无匹配。
 - MM `mm:0.0` capture same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`；Kimi `kimi:0.0` capture same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`。ChatGPT缺件，无推进令牌；保持REVIEW，三分钟后再次完整锁定检查。
+
+### Authority-root materialization execution request 设计审核观察凭证 #2（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=a6d43df16d19c0f559676953bbfe6448219d9554`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact检索命令不变且无匹配。
+- MM `mm:0.0` 与 Kimi `kimi:0.0` capture 均保留同pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`；ChatGPT缺件，无推进令牌；保持REVIEW。
