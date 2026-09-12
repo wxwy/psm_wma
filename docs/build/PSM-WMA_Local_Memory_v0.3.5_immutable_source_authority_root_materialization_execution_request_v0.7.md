@@ -1,5 +1,5 @@
 # Authority-root one-shot materialization execution request v0.7
 
-This is a docs-only replacement request.  It binds only the v0.7 immutable launcher and annex.  Approval is not
-requested until the full temporary native-Git witness matrix in the annex has been completed and independently
-reviewed.  No materialization or other real execution is authorized.
+This is a docs-only replacement request.  It binds only the v0.7 immutable launcher and annex.  It requests
+`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE` only: completing
+the temporary native-Git witness matrix.  No materialization or other real execution is authorized.

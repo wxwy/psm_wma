@@ -62,6 +62,19 @@ class WitnessTest(unittest.TestCase):
                 with self.assertRaises(W.WitnessFailure): W.verify_handoff_path(path, fd, fd)
             finally: os.close(fd)
 
+    def test_payload_handoff_same_and_different_fd(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            old = P.CLEAN; P.CLEAN = raw
+            try:
+                os.close(3)
+                P.handoff(b"same", ".same", 3, P.digest(b"same"))
+                self.assertEqual(os.pread(3, 4, 0), b"same")
+                other = os.open("/dev/null", os.O_RDONLY)
+                P.handoff(b"other", ".other", other, P.digest(b"other"))
+                self.assertEqual(os.pread(other, 5, 0), b"other")
+                os.close(3); os.close(other)
+            finally: P.CLEAN = old
+
     def test_replacement_and_commondir(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw); path = root / "backing"; path.write_bytes(b"x"); path.chmod(0o600)
