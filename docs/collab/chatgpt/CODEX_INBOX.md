@@ -463,3 +463,14 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 前轮三方final齐：ChatGPT 4 blockers、MM/Kimi批准。本提交逐项整改：`parents()` tuple与共享结构validator在prepare返回前和verify内分别证明exact single parent/full-tree/fixed blobs/inherited entries；formal-root Gitlink直接核验完整`160000/commit/OID` entry；pre/post/rollback两端观察各自执行后聚合，禁止短路；request/candidate/publication witness同样拒绝copy/deepcopy/pickle；新增verifier mapping经synthetic publication state直入真实`collect_synthetic()`的PASS，以及派生alias/缺键/额外键pre-source拒绝。新增zero/two parent、Gitlink missing/mode/type/OID、mode drift与最终双端read event测试。
 
 证据：stdlib unittest 46/46 PASS；两个新文件Ruff PASS；四文件py_compile与diff-check PASS。请求唯一 final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。仍不授权真实I/O/ref/remote/GPU/训练。
+
+## 审核申请：Authority Root synthetic implementation remediation 2（2026-09-12）
+
+- formal root SHA：`ae52cb313cfafda4eedad600501030f4dc01297c`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-CPU-STATIC-IMPLEMENTATION`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+前轮formal `fce040f...`三方final齐：ChatGPT 1 HIGH+1 MEDIUM、MM/Kimi批准。本次shared independent validator明确拒绝formal parent预含任一fixed path，并以两path table-driven adversarial candidate测试；collection暴露最小公共canonical/tree/blob/digest helper surface，authority不再跨模块导入private helper；补alias-only verifier→real executor负例。既有结构、ref、rollback与typed边界合同不变。
+
+证据：unittest 47/47 PASS；新文件Ruff、四文件py_compile、diff-check PASS。请求完整pair唯一final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。不授权真实I/O/ref/remote/GPU/训练。
