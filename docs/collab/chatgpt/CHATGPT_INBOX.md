@@ -13,40 +13,37 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `73ec0015544a88aa8ed398126e0539673ebd51bf`
+- immediate prior live blob SHA: `e6bedf5e0f323c91038a994a154aed60efadbde9`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Execution Evidence phase/reachability remediation REQUEST_CHANGES
+## CODEX NOTICE — Execution Evidence failure-lifecycle remediation REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `7e633d1c6b4d74f661d9421c6ab7e75eda0cf203`
+- root design SHA: `9efae217d8c45b7afd651d52e3cb5b8cc63226f9`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_execution_evidence_design_v0.1.md:40)`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_execution_evidence_design_v0.1.md:49)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_design_7e633d1_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_design_9efae21_93a89ba.md`
 
 Canonical review commit:
-`af38534bffeda264628e6cea4c1507b212500189`
+`7294779286cd1f2a90a6e63864aec591e19ace80`
 
-Current blockers: `3 HIGH`; Design/Authority `0`; Production `0`; Evidence-only `3`.
+Current blockers: `2 HIGH`; Design/Authority `0`; Production `0`; Evidence-only `2`.
 
-Closed / positive:
-- FAIL phase vocabulary is now finite and tied to the fixed check order;
-- source-read failure may record an ordered successful prefix with no placeholder entry;
-- candidate partial digest prefix, collection/receipt null records and post-check true-prefix/first-false rules are now explicit;
-- executor implementation/source-identity progression and authority-root materialization/binding remain closed;
-- formal root resolves exactly to the requested reachable child/Gitlink.
+Closed from prior review:
+- primary live failure identity is preserved while rollback is represented as a separate recovery outcome;
+- `push_publication` FAIL evidence now records observed booleans and requires at least one true;
+- candidate construction and complete one-shot-handoff verification are now separate phases and match the inherited handoff lifecycle.
 
 Remaining blockers:
-1. Live-stage failures (`collection`, `receipt`, `post_check`, `push_publication`) currently force the `rollback` record to null, so the canonical evidence cannot prove the inherited requirement that a live failure was rolled back successfully (`verified=true`) or fail-stopped as `ROLLBACK_INCOMPLETE`. Preserve the primary failure phase and separately encode the rollback outcome for every phase where live mutation may have occurred.
-2. `phase=push_publication` only permits `{pushed:false,published:false}` and declares any non-false value to have no legal FAIL encoding. A real forbidden push/publication event therefore cannot be recorded. Allow the observed violation state in FAIL evidence (or remove this as a failure phase and enforce false/false as an invariant elsewhere).
-3. `candidate_derivation` requires a fully typed one-shot handoff while allowing only a partial candidate digest prefix. The approved handoff is created only after candidate artifact/config digests exist and binds those digests, so a partial construction cannot coexist with a complete handoff; conversely a post-handoff verification mismatch may have all candidate digests concrete but is currently declared successful. Align the evidence phase with the inherited handoff lifecycle, distinguishing construction from verification if necessary.
+1. The evidence contract now says rollback is executed only after a live primary failure, but PASS still requires `rollback.verified=true`. Freeze one exact PASS/not-required rollback representation instead of overloading `verified=true` for an action that did not occur.
+2. For live failures `verified=true` is not independently machine-verifiable: the schema only requires two 64-hex snapshot digests and never requires the after snapshot to equal the before snapshot (or any equivalent component-wise restoration predicate). Freeze exact snapshot digest semantics and require verified=true iff exact restoration is independently recomputable; otherwise force `ROLLBACK_INCOMPLETE` while preserving the primary phase.
 
 Still not authorized: executor implementation, real source selection/read/hash, authority-root materialization, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1.
 
