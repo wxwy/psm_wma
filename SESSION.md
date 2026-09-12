@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root remediation 2第1轮观察（2026-09-12 13:26:17 CST）
+
+- formal root=`ae52cb313cfafda4eedad600501030f4dc01297c`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox ledger=`9fede6ef5d202bbbcae8c58c336405d177ce10d2`已推送，MM/Kimi均确认进入处理；Kimi paused会话经额外Enter后已读取formal tree。
+- before_head、advertised V2、origin/V2、ff-only后HEAD均为`9fede6ef5d202bbbcae8c58c336405d177ce10d2`，完整新增范围空；ChatGPT reviews/ exact formal root无匹配。
+- MM exact pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION`；Kimi正在复核、尚无本pair final；ChatGPT尚未回复。保持REVIEW，三分钟后继续原生轮询。未提交。
+
 ## Authority-root synthetic implementation第二次ChatGPT整改（2026-09-12 13:24:24 CST，REVIEW）
 
 - formal `fce040f645e2427d11d9cd9026adc2f0e8004bda`/child `93a89ba61306d840a008813f62f26a34d54850f4`三方意见齐：ChatGPT exact review给出1 HIGH+1 MEDIUM `REQUEST_CHANGES`；MM/Kimi同pair批准。按最严格意见同Gate整改。
