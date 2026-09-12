@@ -265,6 +265,18 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许既有 source-evidence 收口的下一步骤；不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
 
+## 审核申请：Evidence untracked-path snapshot remediation（2026-09-12）
+
+- formal root SHA：`2c73ad0bf9f49d1dd13f0803046ac75f3cd9449c`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
+
+前轮 `981f89873263f5c10fcfc8c30740bf5ce014eb2d`/同 child final 已齐：ChatGPT/MM approve，Kimi `REQUEST_CHANGES` 仅 1 个 evidence HIGH。最小 docs-only 修复：明确六个 allowlist path 中任何 worktree-present 但未 tracked 的状态（包括 porcelain `??`）直接 FAIL，不能写入 snapshot；并将它列入 porcelein/fstype 双重检查的 allowlist 内 FAIL 条件。由此 snapshot 只接受 absent 或 tracked regular 的唯一 record。
+
+formal tree 仅 evidence design，Gitlink 不变；`git diff --check` PASS。未运行项目代码或真实 I/O，未修改 child、GPU、训练、评测、推理或 LIBERO4IN1。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许既有 source-evidence 收口的下一步骤；不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
 ## 审核申请：Evidence canonical worktree-snapshot remediation（2026-09-12）
 
 - formal root SHA：`981f89873263f5c10fcfc8c30740bf5ce014eb2d`
