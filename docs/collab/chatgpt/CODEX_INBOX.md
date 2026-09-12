@@ -313,3 +313,12 @@ formal tree 仅改 evidence design，Gitlink 不变；`git diff --check` PASS。
 formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff --check` PASS。未运行项目代码或真实 source/checkpoint/data/cache I/O，未 mutation collection/receipt/source-evidence/publication，未改 child/runtime，未运行 CUDA/GPU、torchrun、forward/backward、optimizer/scaler step、训练、评测、推理或 LIBERO4IN1。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许既有 source-evidence 收口的下一步骤；不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+# 审核申请：Executor implementation seam remediation（2026-09-12）
+
+- formal root SHA：`ed824b2e06c27328f6639aba6b5c06e1de6bee73`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
+
+前轮 `c62bc804...` 三方 final 已齐：ChatGPT `REQUEST_CHANGES` 两项 HIGH，MM/Kimi approve。本轮仅 docs-only 最小整改：具体 executor/test blob/raw-SHA/interpreter identity 延后绑定到文件存在后的 CPU/static implementation formal root/closure，禁止 request/ledger/handoff 替代；生产 executor 冻结一次 explicit DI seam（Git transaction、root-FD opener、evidence sink），CPU/static temporary fixture 与未来仅在独立批准后的 real inputs 复用同一未改源码、只替换依赖。
+
+`git diff --check` PASS；未运行真实 source I/O、authority/collection/receipt/publication、child、GPU 或训练。请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权真实执行或 GPU/训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
