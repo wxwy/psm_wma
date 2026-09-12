@@ -341,19 +341,25 @@ class AuthorityRootTest(unittest.TestCase):
         self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
 
     def test_ref_drift_after_seal_cannot_unlink_guard(self):
-        candidate, binding = self.candidate()
-        foreign = "f" * 40
+        for endpoint in ("local", "remote"):
+            with self.subTest(endpoint=endpoint):
+                candidate, binding = self.candidate()
+                foreign = "f" * 40
 
-        def finalizer(witness, commit):
-            guard = self._seal_commit(witness, commit)
-            self.git.remote[AUTHORITY_REF] = foreign
-            with self.assertRaises(AuthorityRootError):
-                commit.consume_by_unlink()
-            self.assertTrue(guard.exists())
+                def finalizer(witness, commit, target=endpoint):
+                    guard = self._seal_commit(witness, commit)
+                    getattr(self.git, target)[AUTHORITY_REF] = foreign
+                    with self.assertRaises(AuthorityRootError):
+                        commit.consume_by_unlink()
+                    self.assertTrue(guard.exists())
 
-        with self.assertRaises(RollbackIncomplete):
-            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
-        self.assertEqual(self.git.remote[AUTHORITY_REF], foreign)
+                with self.assertRaises(RollbackIncomplete):
+                    publish_candidate(
+                        self.request, candidate, binding, self.git, finalizer=finalizer
+                    )
+                self.assertEqual(getattr(self.git, endpoint)[AUTHORITY_REF], foreign)
+                self.git.local.clear()
+                self.git.remote.clear()
 
     def test_guard_replacement_cannot_commit_or_delete_foreign_guard(self):
         candidate, binding = self.candidate()
