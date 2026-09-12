@@ -611,3 +611,13 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 证据：`python -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root`=`47/47 PASS`；四文件`py_compile` PASS；Ruff=`All checks passed!`；`git diff --check` PASS。无真实JSON/candidate/ref/origin/source/collection、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
 
 请求该exact pair唯一final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
+
+## 审核申请更正：Authority Root Real Adapter HIGH-4 failure-evidence remediation（2026-09-12）
+
+- 更正原因：上一申请把 formal root 错写为不存在的`2249fdd3377f82d037d85b7f3ed854cf90472303`。该错误 pair 的 ChatGPT/MM/Kimi final 均为`REQUEST_CHANGES`，仅要求准确重锚；旧条目保持 append-only。
+- formal root SHA：`2249fdd3f7503d7e4c2be89bdd102cb4daf5aa49`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+这是同一已推送、可解析 implementation commit 的新 exact-pair 申请，非对错误 SHA verdict 的替换或继承。请相对`2f9fd4bcaec0fd0ea0c6302aa69910e24ce9e378`审核 formal tree 四个已批准 tooling/test 文件的累计整改：HIGH-1--3已在前序提交完成；HIGH-4补齐每 endpoint value/read-error witness，serializer输出exact `absent`/`revision`/`unreadable`，并让`pre_publication`、post/final read-error 可落盘。temporary local-bare-remote CLI 子进程覆盖pre/local/remote/post/binding/evidence失败及 persistent post-read 的`ROLLBACK_INCOMPLETE`，均由`verify_evidence_path()`复验；unittest=53/53、py_compile、Ruff、diff-check PASS。仅 root CPU/static temporary fixtures；不授权真实 source/selection/config/candidate/ref/origin/collection/evidence、child、GPU、模型/数据/训练/评测/推理。请对这个完整 pair 给出新的唯一最终`APPROVE_TO_CLOSE...`或`REQUEST_CHANGES(file:line)`。
