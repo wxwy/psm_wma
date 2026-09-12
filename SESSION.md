@@ -2567,3 +2567,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 已汇总 `313b1dc81d83646b310d86c58c10d20b453fc739` 同 pair 三方 final：ChatGPT review `docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_313b1dc_93a89ba.md` 的 HIGH 要求：`_commit_exact_guard()` 显式抛出 `PassClosureRecoveryRequired` 时，`EvidenceCommit.consume_by_unlink()` 必须无条件粘滞 `authority.require_recovery()`，即使 public path 已被 foreign guard 占据；MM/Kimi 同 pair APPROVE。
 - 仅修改批准 root CPU/static 的 `tools/psm_wma/immutable_source_authority_root.py` 和既有 stdlib 测试：helper 的明确 recovery 异常在 callback 可吞掉前闭锁 authority；两条 handoff 后 foreign-guard 对抗回归断言 outer recovery、candidate refs 保留、无 delete。验证：79/79 unittest、四文件 py_compile、Ruff、`git diff --check` 均 PASS。未运行真实 Git/source/candidate/ref/evidence、child、GPU、数据或训练。下一步：提交、推送并对新 formal SHA 重新三方审核。提交：未提交。
+
+### foreign-public-guard recovery remediation 送达回执（2026-09-12 CST，REVIEW）
+
+- formal=`ad9e0110494a582e707ed5f041610d4cc40a82df`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT申请已 append 并由 ledger=`7e919e8fabc3ca7393b05a3fdced7aa6517fe50b` 推送（ledger非formal target）。冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+- MM/Kimi均以完整文本→间隔至少1秒→独立Enter发送；随后 capture：MM `mm:0.0` 显示新申请并进入处理，Kimi `kimi:0.0` 显示新申请且输入框为空。三方正式 verdict 尚待按同一 exact pair回收；三分钟后开始第1轮远端锁定检查。
