@@ -806,6 +806,49 @@ class NativeAuthorityGitTest(unittest.TestCase):
             transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
+    def test_bootstrap_rejects_linked_routing_replacement_after_git_precheck(self):
+        for routing_name in ("marker", "commondir"):
+            with self.subTest(routing_name=routing_name), tempfile.TemporaryDirectory() as raw:
+                git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+                linked = root.parent / "linked"
+                subprocess.run(
+                    [str(git), "-C", str(root), "worktree", "add", "--detach", "-q", str(linked), "HEAD"],
+                    check=True,
+                )
+                marker = linked / ".git"
+                git_dir_text = marker.read_text().strip()
+                self.assertTrue(git_dir_text.startswith("gitdir: "))
+                git_dir = Path(git_dir_text[8:])
+                if not git_dir.is_absolute():
+                    git_dir = (linked / git_dir).resolve()
+                routing_path = marker if routing_name == "marker" else git_dir / "commondir"
+                replacement = root.parent / f"replacement-{routing_name}"
+                replacement.write_bytes(routing_path.read_bytes())
+                wrapper = root.parent / f"git-replaces-{routing_name}"
+                wrapper.write_text(
+                    "#!" + str(Path(sys.executable).resolve()) + "\n"
+                    "import os, sys\n"
+                    f"replacement = {str(replacement)!r}\n"
+                    f"routing_path = {str(routing_path)!r}\n"
+                    f"git = {str(git)!r}\n"
+                    "if sys.argv[1:] != ['--version'] and os.path.exists(replacement):\n"
+                    "    os.replace(replacement, routing_path)\n"
+                    "os.execv(git, [git, *sys.argv[1:]])\n"
+                )
+                wrapper.chmod(0o755)
+                linked_argv = self._relocate_bootstrap_argv(argv, root, linked)
+                linked_argv[linked_argv.index("--git") + 1] = str(wrapper)
+                linked_argv[linked_argv.index("--git-raw-sha256") + 1] = hashlib.sha256(wrapper.read_bytes()).hexdigest()
+                linked_argv[linked_argv.index("--git-version") + 1] = _tool_version(wrapper)
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    result = self._run_bootstrap_cli(
+                        linked, selection_handle, config_handle, linked_argv
+                    )
+                self.assertNotEqual(result.returncode, 0)
+                self.assertFalse((linked / "evidence.json").exists(), result.stderr)
+                transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+                self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
     def test_bootstrap_rejects_executable_identity_drift_before_import(self):
         for option, value in (
             ("--interpreter", "/bin/false"),

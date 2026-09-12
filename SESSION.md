@@ -2738,3 +2738,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`fff6d05ef330ada5f6db5edbdc8dde32e2c99019`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=907923ec2e7f1172edc0003f518f52581e120876`；fetch成功；advertised/origin/local-after均为`907923ec2e7f1172edc0003f518f52581e120876`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT exact-pair检索无匹配正式review；MM `mm:0.0` capture 显示已开始读取`817191c..fff6d05e` full adapter diff；Kimi `kimi:0.0` capture 显示已解析新pair、核验Gitlink/范围并进入diff审读，均未给 same-pair final verdict。无推进令牌，保持REVIEW；下一轮三分钟后必须重新完整远端锁定。
+
+### Bootstrap linked-worktree/config-observation remediation 审核观察凭证 #2（2026-09-12 CST，REVIEW）
+
+- formal=`fff6d05ef330ada5f6db5edbdc8dde32e2c99019`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=ebbeb647c97cd8886757b67ca7f1339f57caaa79`；fetch成功；advertised/origin/local-after均为`f95e4e068a11855503cb35ad503dbb159c66a719`；新增`0c8bb944`（ChatGPT formal review）和`f95e4e06`（review ledger），祖先检查成功且已`merge --ff-only`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_fff6d05_93a89ba.md` final=`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:172)`：routing authority（`.git` marker、`gitdir`、`commondir`与Git directories）必须在每次 native Git observation 前后与config.worktree一并重验，且需marker/commondir replacement race witness。MM `mm:0.0`及Kimi `kimi:0.0` capture均为same-pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`。三方final已齐；推进令牌仅授权在已批准两root CPU/static文件范围整改该HIGH，禁止真实materialization/source/ref/evidence、child、GPU、训练。
+
+### Bootstrap routing-authority race remediation（2026-09-12，IN_PROGRESS）
+
+- 仅在上述推进令牌范围内修改两个root CPU/static文件：normal worktree 对`.git` directory的 no-follow directory-FD identity 重验；linked worktree 对`.git` marker、`gitdir`、`commondir` retained-FD raw bytes/identity以及`git_dir`/common-dir no-follow directory identity重验；`config.worktree` absent及common config FD/path identity纳入同一 `routecheck()`，每个 native Git observation 前后执行。
+- 新增实际 detached linked-worktree wrapper-race witness，分别在bootstrap precheck后替换`.git` marker和`commondir`，均要求无evidence/ref；保留前轮 config-replacement witness。定向=56/56、组合root stdlib=101/101、两文件py_compile与diff-check PASS。未执行真实materialization/source/ref/evidence、child、GPU、数据或训练。下一步：提交并推送新formal SHA，重新三方审核。提交：未提交。
