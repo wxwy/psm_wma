@@ -3109,3 +3109,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新增隔离的`...v0.7_witness_core.py`及直接运行的`...v0.7_witness_test.py`，覆盖 backing path mode/identity、same-bytes replacement、ordinary `.git/commondir` insertion 与 first-add failure classification；只在`TemporaryDirectory`中运行，不导入或调用payload `main()`。
 - `python ...v0.7_witness_test.py -v`=3/3 PASS；两个文件`py_compile`与`git diff --check` PASS。此前首次按带hyphen文件路径使用`python -m unittest`的模块名解析失败，未产生项目副作用；已改为直接文件运行并通过。下一步继续把这些verified seams并入新的immutable v0.7 payload。
+- 扩展 extra inherited-FD close-set 与 cleanup success/failure classifiers；直接CPU witness现为4/4 PASS，`py_compile`与`git diff --check` PASS。所有产物仍限定`TemporaryDirectory`。

@@ -45,5 +45,13 @@ class WitnessTest(unittest.TestCase):
             self.assertEqual(W.classify_add_failure(clean, False), "ROLLBACK_INCOMPLETE")
             self.assertEqual(W.classify_add_failure(clean, True), "ROLLBACK_INCOMPLETE")
 
+    def test_fd_and_cleanup_classifiers(self) -> None:
+        W.require_exact_fd_set({3, 4, 5})
+        with self.assertRaises(W.WitnessFailure): W.require_exact_fd_set({0, 3, 4, 5})
+        self.assertEqual(W.classify_cleanup(True, True, False), "CLEANUP_PASS")
+        self.assertEqual(W.classify_cleanup(False, True, False), "ROLLBACK_INCOMPLETE")
+        self.assertEqual(W.classify_cleanup(True, False, False), "ROLLBACK_INCOMPLETE")
+        self.assertEqual(W.classify_cleanup(True, True, True), "ROLLBACK_INCOMPLETE")
+
 
 if __name__ == "__main__": unittest.main()

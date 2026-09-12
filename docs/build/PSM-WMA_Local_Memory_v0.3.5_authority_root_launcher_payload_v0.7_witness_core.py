@@ -44,3 +44,14 @@ def classify_add_failure(clean: Path, listed: bool) -> str:
     if os.path.lexists(clean) or listed:
         return "ROLLBACK_INCOMPLETE"
     return "FAIL"
+
+
+def require_exact_fd_set(observed: set[int]) -> None:
+    if observed != {3, 4, 5}:
+        raise WitnessFailure("inherited FD set")
+
+
+def classify_cleanup(owned: bool, paths_absent: bool, listed: bool) -> str:
+    if not owned or not paths_absent or listed:
+        return "ROLLBACK_INCOMPLETE"
+    return "CLEANUP_PASS"
