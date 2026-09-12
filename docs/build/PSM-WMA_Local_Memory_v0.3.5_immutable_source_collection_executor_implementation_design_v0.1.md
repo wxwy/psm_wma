@@ -5,17 +5,17 @@
 
 ## 范围
 
-本设计仅将已批准 controlled-execution v0.2 固化为后续 root CPU/static 实现的文件 allowlist、temporary-fixture tests 和 fail-closed interface。唯一 production executor 为 `tools/psm_wma/immutable_source_collection.py`；仅允许新增该文件及 `tools/psm_wma/test_immutable_source_collection.py`。实现前再次冻结 formal root 中两文件的 path/Git blob/raw SHA 与解释器；不匹配即在任何 source open 前 FAIL。
+本设计仅将已批准 controlled-execution v0.2 固化为后续 root CPU/static 实现的文件 allowlist、temporary-fixture tests 和 fail-closed interface。唯一 production executor 为 `tools/psm_wma/immutable_source_collection.py`；仅允许新增该文件及 `tools/psm_wma/test_immutable_source_collection.py`。本设计仅冻结两-path allowlist 与 identity derivation rule；具体 path/Git blob/raw SHA/interpreter 在文件存在后的 CPU/static implementation formal root/closure 从 committed tree 绑定。后续 authority materialization/execution approval 只接受该 implementation formal pair，任何 drift 在 source open 前 FAIL；request/ledger/handoff commit 不得替代它。
 
 禁止真实 source/checkpoint/cache I/O、authority-root materialization、collection/receipt/source-evidence/publication 写入、网络、child、GPU、torchrun、模型/optimizer/scaler 或训练。
 
 ## CPU/static seam
 
-模块只接受 injectable `TemporaryGitFixture`/FD shim；fixture 临时目录不得指向项目 root、source transport、checkpoint 或 cache。fixture 覆盖：authority tuple/parent/path/blob drift、target/base/Gitlink drift、root-FD symlink/escape/non-regular 拒绝、same-FD read/hash/fstat race、single-use handoff、five-path/one-path allowlist、retained snapshot equality、rollback success 与 `ROLLBACK_INCOMPLETE`。所有 fixture source bytes 为测试内小型合成 bytes，测试结束自动清理。
+生产 executor 实现一次 explicit dependency-injection seam：Git transaction、root-FD opener、evidence sink 均以依赖传入，算法/validation/record construction code path 不因 synthetic 或 approved real execution 而改变。CPU/static tests 仅绑定 `TemporaryGitFixture`、FD shim、temporary/in-memory evidence sink；future real execution 仅在审批后以同一未改源码绑定 approved real Git/FD/controlled evidence directory。fixture 临时目录不得指向项目 root、source transport、checkpoint 或 cache。fixture 覆盖：authority tuple/parent/path/blob drift、target/base/Gitlink drift、root-FD symlink/escape/non-regular 拒绝、same-FD read/hash/fstat race、single-use handoff、five-path/one-path allowlist、retained snapshot equality、rollback success 与 `ROLLBACK_INCOMPLETE`。所有 fixture source bytes 为测试内小型合成 bytes，测试结束自动清理。
 
 ## 静态接口与证据
 
-实现必须只构造 canonical `immutable_source_collection_execution_evidence_v1` 的内存对象并在 tests 验证 exact key set、phase/null-record、snapshot、candidate 与 path contract；不得把临时 fixture 证据发布为真实 artifact。未知字段、path/interpreter/allowlist drift、raw source path/URL/secret 字段、或任何未绑定 authority tuple 都 FAIL。
+实现必须通过 injected evidence sink 输出 canonical `immutable_source_collection_execution_evidence_v1`；CPU/static tests 只使用 temporary/in-memory sink 并验证 exact key set、phase/null-record、snapshot、candidate 与 path contract，不得把 fixture 证据发布为真实 artifact。未知字段、path/interpreter/allowlist drift、raw source path/URL/secret 字段、或任何未绑定 authority tuple 都 FAIL。
 
 ## 验收
 
