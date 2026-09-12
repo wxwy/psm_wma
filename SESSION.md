@@ -2844,3 +2844,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.3.md`，完全supersede v0.2：内联2,427-byte parser argv JSON（`72777bd...`）；独立冻结带`--`的2,432-byte bootstrap observation（`aefa3a7...`）与182-byte contract JSON（`62a7bb...`）；内联471-byte `NativeAuthorityGit.env` JSON（`daf9e4...`）并明确commit message仅经commit-tree stdin。
 - 标准库文档JSON重 canonicalization/length/SHA 校验 PASS，`git diff --check` PASS。未运行project module、未创建或读取真实资产、未调用materialization/child/GPU/训练。下一步：提交、推送并对新formal SHA重新三方审核。
+
+### Authority-root execution snapshot annex v0.3 审核送达回执（2026-09-12 CST，REVIEW）
+
+- formal=`b2fc05489abb2a4c1bc7314844c94c197834b9ff`/child=`93a89ba61306d840a008813f62f26a34d54850f4`已推送。canonical Inbox从120088 bytes append七行，未触发128KiB rollover。MM `mm:0.0`与Kimi `kimi:0.0`均完成完整文本→至少1秒→独立Enter→capture，文本离开输入框并进入处理；ChatGPT正式结果仍只从`reviews/` exact pair读取。
+- 冻结名册不变；三分钟后按完整远端锁定、exact review及两pane capture回收。未获该pair三方final前，禁止一切materialization或真实I/O/GPU/训练。
