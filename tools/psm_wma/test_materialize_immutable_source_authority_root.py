@@ -55,6 +55,8 @@ def _pass_evidence() -> dict[str, object]:
         "child_gitlink": "b" * 40,
         "adapter": {"path": "tools/psm_wma/materialize_immutable_source_authority_root.py", "blob_native_oid": "c" * 40, "raw_sha256": _sha("adapter")},
         "authority_module": {"path": "tools/psm_wma/immutable_source_authority_root.py", "blob_native_oid": "d" * 40, "raw_sha256": _sha("authority")},
+        "collection_module": {"path": "tools/psm_wma/immutable_source_collection.py", "blob_native_oid": "e" * 40, "raw_sha256": _sha("collection")},
+        "audit_module": {"path": "tools/g0/audit_r09_b_ttt_root_gitlink_authority.py", "blob_native_oid": "f" * 40, "raw_sha256": _sha("audit")},
         "interpreter": {"path": "/usr/bin/python3", "raw_sha256": _sha("python"), "version": "Python fixture"},
         "git_executable": {"path": "/usr/bin/git", "raw_sha256": _sha("git"), "version": "git fixture"},
         "cwd": "/temporary/fixture",
@@ -272,6 +274,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 hashlib.sha256(b"{}").hexdigest(),
                 ModuleIdentity("adapter.py", "c" * 40, "d" * 64),
                 ModuleIdentity("authority.py", "e" * 40, "f" * 64),
+                None,
+                None,
                 ExecutableIdentity(Path("/bin/true"), "0" * 64, "fixture"),
                 ExecutableIdentity(Path("/bin/true"), "1" * 64, "fixture"),
                 path,
@@ -460,7 +464,12 @@ class NativeAuthorityGitTest(unittest.TestCase):
         selection_path.write_bytes(selection)
         config_path.write_bytes(config)
         identities = []
-        for relative in (adapter_path, authority_path):
+        for relative in (
+            adapter_path,
+            authority_path,
+            "tools/psm_wma/immutable_source_collection.py",
+            "tools/g0/audit_r09_b_ttt_root_gitlink_authority.py",
+        ):
             raw = (root / relative).read_bytes()
             oid = subprocess.run(
                 [str(git), "-C", str(root), "rev-parse", f"HEAD:{relative}"], check=True, stdout=subprocess.PIPE, text=True,
@@ -477,6 +486,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
             "--interpreter", str(interpreter), "--interpreter-raw-sha256", hashlib.sha256(interpreter.read_bytes()).hexdigest(), "--interpreter-version", _tool_version(interpreter),
             "--adapter-path", identities[0], "--adapter-blob-oid", identities[1], "--adapter-raw-sha256", identities[2],
             "--authority-module-path", identities[3], "--authority-module-blob-oid", identities[4], "--authority-module-raw-sha256", identities[5],
+            "--collection-module-path", identities[6], "--collection-module-blob-oid", identities[7], "--collection-module-raw-sha256", identities[8],
+            "--audit-module-path", identities[9], "--audit-module-blob-oid", identities[10], "--audit-module-raw-sha256", identities[11],
             "--author-name", COMMIT_METADATA.author_name, "--author-email", COMMIT_METADATA.author_email, "--author-date", COMMIT_METADATA.author_date,
             "--committer-name", COMMIT_METADATA.committer_name, "--committer-email", COMMIT_METADATA.committer_email, "--committer-date", COMMIT_METADATA.committer_date,
             "--commit-message", COMMIT_METADATA.message,
@@ -502,6 +513,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
             ("--git-raw-sha256", "0" * 64),
             ("--interpreter-raw-sha256", "0" * 64),
             ("--adapter-raw-sha256", "0" * 64),
+            ("--collection-module-raw-sha256", "0" * 64),
+            ("--audit-module-raw-sha256", "0" * 64),
         )
         for option, value in cases:
             with self.subTest(option=option), tempfile.TemporaryDirectory() as raw:

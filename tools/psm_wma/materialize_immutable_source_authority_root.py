@@ -76,6 +76,8 @@ class AuthorityAdapterInvocation:
     config_raw_sha256: str
     adapter: ModuleIdentity
     authority_module: ModuleIdentity
+    collection_module: ModuleIdentity | None
+    audit_module: ModuleIdentity | None
     interpreter: ExecutableIdentity
     git_executable: ExecutableIdentity
     evidence_path: Path
@@ -201,6 +203,9 @@ def preflight_authority_invocation(
         raise NativeGitError("formal root Gitlink 漂移")
     _verify_module_identity(invocation.adapter, tree, transaction, cwd)
     _verify_module_identity(invocation.authority_module, tree, transaction, cwd)
+    for identity in (invocation.collection_module, invocation.audit_module):
+        if identity is not None:
+            _verify_module_identity(identity, tree, transaction, cwd)
     _verify_executable_identity(invocation.interpreter)
     _verify_executable_identity(invocation.git_executable)
     _verify_loaded_identity(invocation, cwd)
@@ -248,6 +253,16 @@ def _pass_evidence_record(
                 "path": invocation.authority_module.repo_path,
                 "blob_native_oid": invocation.authority_module.blob_native_oid,
                 "raw_sha256": invocation.authority_module.raw_sha256,
+            },
+            "collection_module": {
+                "path": invocation.collection_module.repo_path,
+                "blob_native_oid": invocation.collection_module.blob_native_oid,
+                "raw_sha256": invocation.collection_module.raw_sha256,
+            },
+            "audit_module": {
+                "path": invocation.audit_module.repo_path,
+                "blob_native_oid": invocation.audit_module.blob_native_oid,
+                "raw_sha256": invocation.audit_module.raw_sha256,
             },
             "interpreter": {
                 "path": str(invocation.interpreter.path),
@@ -326,6 +341,8 @@ def _no_mutation_failure_record(
             "child_gitlink": invocation.request.expected_child_gitlink,
             "adapter": {"path": invocation.adapter.repo_path, "blob_native_oid": invocation.adapter.blob_native_oid, "raw_sha256": invocation.adapter.raw_sha256},
             "authority_module": {"path": invocation.authority_module.repo_path, "blob_native_oid": invocation.authority_module.blob_native_oid, "raw_sha256": invocation.authority_module.raw_sha256},
+            "collection_module": {"path": invocation.collection_module.repo_path, "blob_native_oid": invocation.collection_module.blob_native_oid, "raw_sha256": invocation.collection_module.raw_sha256},
+            "audit_module": {"path": invocation.audit_module.repo_path, "blob_native_oid": invocation.audit_module.blob_native_oid, "raw_sha256": invocation.audit_module.raw_sha256},
             "interpreter": {"path": str(invocation.interpreter.path), "raw_sha256": invocation.interpreter.raw_sha256, "version": invocation.interpreter.version},
             "git_executable": {"path": str(invocation.git_executable.path), "raw_sha256": invocation.git_executable.raw_sha256, "version": invocation.git_executable.version},
             "cwd": str(transaction.cwd),
@@ -534,7 +551,7 @@ _EVIDENCE_KEYS = frozenset((
     "failure", "evidence_sha256",
 ))
 _EXECUTION_KEYS = frozenset((
-    "formal_root_revision", "child_gitlink", "adapter", "authority_module",
+    "formal_root_revision", "child_gitlink", "adapter", "authority_module", "collection_module", "audit_module",
     "interpreter", "git_executable", "cwd", "sanitized_env_sha256",
     "argv_sha256", "commit_metadata", "remote_identity_sha256", "fixed_ref",
 ))
@@ -629,7 +646,7 @@ def _validate_execution(value: object) -> Mapping[str, object]:
     for field in ("sanitized_env_sha256", "argv_sha256", "remote_identity_sha256"):
         if not _is_sha256(execution[field]):
             raise NativeGitError(f"evidence execution {field} 无效")
-    for field in ("adapter", "authority_module"):
+    for field in ("adapter", "authority_module", "collection_module", "audit_module"):
         identity = _exact_mapping(execution[field], ("path", "blob_native_oid", "raw_sha256"), field)
         if not _is_repo_path(identity["path"]) or not _is_sha1(identity["blob_native_oid"]) or not _is_sha256(identity["raw_sha256"]):
             raise NativeGitError(f"evidence execution {field} identity 无效")
@@ -1102,12 +1119,12 @@ class NativeAuthorityGit:
         if not git.is_absolute() or not cwd.is_absolute() or not index.is_absolute():
             raise NativeGitError("git/cwd/index 必须为绝对路径")
         self.git, self.cwd, self.remote, self.index = git, cwd, remote, index
-        self.env = {"GIT_INDEX_FILE": str(index), "LC_ALL": "C", "LANG": "C", "GIT_AUTHOR_NAME": metadata.author_name, "GIT_AUTHOR_EMAIL": metadata.author_email, "GIT_AUTHOR_DATE": metadata.author_date, "GIT_COMMITTER_NAME": metadata.committer_name, "GIT_COMMITTER_EMAIL": metadata.committer_email, "GIT_COMMITTER_DATE": metadata.committer_date}
+        self.env = {"GIT_INDEX_FILE": str(index), "GIT_NO_REPLACE_OBJECTS": "1", "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null", "LC_ALL": "C", "LANG": "C", "GIT_AUTHOR_NAME": metadata.author_name, "GIT_AUTHOR_EMAIL": metadata.author_email, "GIT_AUTHOR_DATE": metadata.author_date, "GIT_COMMITTER_NAME": metadata.committer_name, "GIT_COMMITTER_EMAIL": metadata.committer_email, "GIT_COMMITTER_DATE": metadata.committer_date}
         self.metadata = metadata
 
     def _run(self, *args: str, input: bytes | None = None, check: bool = True) -> str:
         completed = subprocess.run(
-            [str(self.git), *args], cwd=self.cwd, env=self.env, input=input,
+            [str(self.git), "--no-replace-objects", *args], cwd=self.cwd, env=self.env, input=input,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False,
         )
         if check and completed.returncode:
@@ -1116,7 +1133,7 @@ class NativeAuthorityGit:
 
     def _mutation_succeeded(self, *args: str, porcelain_flag: str | None = None) -> bool:
         completed = subprocess.run(
-            [str(self.git), *args], cwd=self.cwd, env=self.env,
+            [str(self.git), "--no-replace-objects", *args], cwd=self.cwd, env=self.env,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False,
         )
         if completed.returncode:
@@ -1142,7 +1159,7 @@ class NativeAuthorityGit:
         return tuple(self._run("show", "-s", "--format=%P", revision).split())
 
     def blob_bytes(self, oid: str) -> bytes:
-        return subprocess.run([str(self.git), "cat-file", "blob", oid], cwd=self.cwd, env=self.env, stdout=subprocess.PIPE, check=True).stdout
+        return subprocess.run([str(self.git), "--no-replace-objects", "cat-file", "blob", oid], cwd=self.cwd, env=self.env, stdout=subprocess.PIPE, check=True).stdout
 
     def gitlink_at(self, revision: str) -> str:
         return self.tree_entries(revision)["cosmos-framework"][2]
@@ -1196,7 +1213,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--interpreter", type=Path, required=True)
     parser.add_argument("--interpreter-raw-sha256", required=True)
     parser.add_argument("--interpreter-version", required=True)
-    for name in ("adapter", "authority-module"):
+    for name in ("adapter", "authority-module", "collection-module", "audit-module"):
         parser.add_argument(f"--{name}-path", required=True)
         parser.add_argument(f"--{name}-blob-oid", required=True)
         parser.add_argument(f"--{name}-raw-sha256", required=True)
@@ -1233,6 +1250,16 @@ def main(argv: Sequence[str] | None = None) -> int:
             args.authority_module_path,
             args.authority_module_blob_oid,
             args.authority_module_raw_sha256,
+        ),
+        ModuleIdentity(
+            args.collection_module_path,
+            args.collection_module_blob_oid,
+            args.collection_module_raw_sha256,
+        ),
+        ModuleIdentity(
+            args.audit_module_path,
+            args.audit_module_blob_oid,
+            args.audit_module_raw_sha256,
         ),
         ExecutableIdentity(
             args.interpreter,
