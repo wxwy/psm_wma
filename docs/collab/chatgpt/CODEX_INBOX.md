@@ -265,6 +265,18 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许既有 source-evidence 收口的下一步骤；不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
 
+## 审核申请：Evidence canonical worktree-snapshot remediation（2026-09-12）
+
+- formal root SHA：`981f89873263f5c10fcfc8c30740bf5ce014eb2d`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
+
+前轮 `dee42d02a3e40b5da66c8ac96a8a4d5a66066665`/同 child 三方 final 已齐：ChatGPT `REQUEST_CHANGES`（2 evidence-only HIGH），MM/Kimi approve。本轮仅 docs-only 最小整改：早期 FAIL rollback 统一使用 five-key not-required null-record；worktree entries 冻结 repo-relative POSIX path、`100644|100755` mode、absent/regular exact record、raw-byte SHA，及 `git status --porcelain=v1 -z --untracked-files=all` + `find -P` 的 allowlist 外/类型拒绝语义，确保 audit 唯一重算 `worktree_sha256`。
+
+formal tree 仅改 evidence design，Gitlink 不变；`git diff --check` PASS。未运行项目代码或真实 I/O，未修改 child、GPU、训练、评测、推理或 LIBERO4IN1。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许既有 source-evidence 收口的下一步骤；不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
 ## 审核申请：Evidence retained rollback-snapshot remediation（2026-09-12）
 
 - formal root SHA：`dee42d02a3e40b5da66c8ac96a8a4d5a66066665`
