@@ -742,3 +742,21 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 整改：拒绝`finalizer=None`成功旁路；`_AuthorityTerminalState`改frozen；私有不可复制/序列化的`_AcceptedPass`绑定activation/witness/cell；restart classifier仅允许guard-visible PENDING，guard缺失+evidence一律B/C recovery；普通与BaseException guard interruption回滚。CPU=70/70、Ruff、py_compile、diff-check PASS；仅temporary CPU/static。
 
 请求唯一`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`；不授权真实I/O、child、GPU、训练或LIBERO4IN1。
+
+## 审核申请：Authority Root PASS lifecycle recovery remediation（2026-09-12）
+
+- formal root SHA：`8534ae8d5a0979a6dd7e90cedf45f6ad33a14ae5`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮 exact pair：`bc40191f0e80f98201774cce8a1b551fa2343128` / 同一 Gitlink，ChatGPT=`REQUEST_CHANGES`（3 HIGH），MM/Kimi=`APPROVE_TO_CLOSE...`。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+请仅审相对`bc40191f0e80f98201774cce8a1b551fa2343128`的四个批准 root tooling/test 文件。整改关闭三项 HIGH：
+
+1. callback-visible `PublicationWitness` / `EvidenceCommit` 不再持有 mutable terminal cell；terminal 仅存 authority-private registry，cell无公开 setter，唯一 token-gated acceptance transition 在 guard 成功后发生。
+2. private `_AcceptedPass` 在 transition 前绑定 candidate revision、binding SHA-256、sealed evidence dev/inode + evidence/record digest、最后双端 candidate ref observation；篡改 binding/evidence/record/ref witness 必拒绝。
+3. guard 已成功移除但 terminal 尚未 ACCEPTED 的 B 窗口抛 `PASS_CLOSURE_RECOVERY_REQUIRED` 并绕过普通 rollback、保留 refs；adapter preflight 在 fresh-destination 拒绝前调用 restart classifier，使 B/C 均进入 recovery，而非普通 preflight FAIL。
+
+新增 adversarial CPU tests：callback不能伪造 acceptance、四类 binding/evidence篡改拒绝、B窗口普通/custom `BaseException`路径保留 refs 且 recovery、真实 preflight entrypoint 路由 B/C recovery。`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`74/74 PASS`；四文件`py_compile`、Ruff、`git diff --check` PASS。Gitlink不变。
+
+请求该 exact pair 唯一最终 `APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。范围仅 temporary directory/local bare-remote CPU/static fixtures；不授权真实 source/selection/config/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或 LIBERO4IN1。
