@@ -970,3 +970,11 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.1.md`。
 - 前轮`15e66557...`三方批准仅允许本只读 annex。annex冻结formal parent/Gitlink/ref、credential-free HTTPS endpoint SHA、Python/Git identity、fresh路径观察、selection/config identity、module identity、sanitized env与FD ABI/停止条件；不创建JSON/worktree/index/candidate/ref/evidence，也不读source。
 - 请求唯一 verdict：`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST` 或 `REQUEST_CHANGES(file:line)`；批准后仅允许撰写完整执行 request，仍不授权 materialization。
+
+## 审核申请：Authority-root execution snapshot annex v0.2 remediation（2026-09-12）
+
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`。
+- formal root：`81f7526881dc4f93cf03da13988e2b74dda7d0de`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.2.md`。相对 `29c8aaa...`，本轮仅落实 ChatGPT/Kimi same-pair HIGH：v0.1 显式 supersede；annex 直接冻结 selection/config canonical JSON、sanitized env canonical JSON+digest、FD=3/4/5、candidate metadata、exact bootstrap extraction identity/length/digest，以及 complete parser argv tuple/length/digest；后续 request 不得新增或替换 runtime authority。
+- 范围仅 docs/ledger；`git diff --check` PASS。禁止 materialization、source/checkpoint I/O、JSON/worktree/index/candidate/ref/evidence 创建、collection/receipt/publication、child、GPU、训练、评测、推理及 LIBERO4IN1。
+- 请求唯一 verdict：`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST` 或 `REQUEST_CHANGES(file:line)`；即使批准仍不授权 materialization。
