@@ -142,6 +142,7 @@ def _commit_exact_guard(path: Path, identity: tuple[int, int]) -> bool:
         return False
     parking = Path(tempfile.mkdtemp(prefix=f".{path.name}.commit-", dir=path.parent))
     parked = parking / "owned"
+    handed_off = False
 
     def restore_if_public_absent() -> bool:
         if not parked.exists() and not parked.is_symlink():
@@ -150,29 +151,38 @@ def _commit_exact_guard(path: Path, identity: tuple[int, int]) -> bool:
             return False
         try:
             os.rename(parked, path)
+            restored = path.lstat()
         except OSError:
             return False
-        return True
+        return (
+            stat.S_ISREG(restored.st_mode)
+            and (restored.st_dev, restored.st_ino) == identity
+        )
+
+    def restore_or_recover() -> bool:
+        if restore_if_public_absent():
+            return False
+        raise PassClosureRecoveryRequired()
 
     try:
         os.rename(path, parked)
+        handed_off = True
         parked_info = parked.lstat()
         if (
             not stat.S_ISREG(parked_info.st_mode)
             or (parked_info.st_dev, parked_info.st_ino) != identity
         ):
-            restore_if_public_absent()
-            return False
+            return restore_or_recover()
         if path.exists() or path.is_symlink():
-            return False
+            return restore_or_recover()
         try:
             os.unlink(parked)
         except OSError:
-            restore_if_public_absent()
-            return False
+            return restore_or_recover()
         return True
     except OSError:
-        restore_if_public_absent()
+        if handed_off:
+            return restore_or_recover()
         return False
     finally:
         try:

@@ -2480,3 +2480,45 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 针对`074d0a0f`三方final（ChatGPT=2 HIGH，MM/Kimi=APPROVE），只修改两个已批准root文件：新增authority-private `_AcceptanceAuthority`，在callback前冻结revision、binding SHA-256和最终ref observer；`EvidenceCommit`/`PublicationWitness`不可替换这些authority输入。新增对抗回归证明finalizer无法伪造observer/binding，drift保留foreign ref。
 - guard已durable移除而accept失败时，authority粘滞记录`recovery_required`；`publish_candidate()`在callback返回后优先fail-stop，即使callback吞掉`PassClosureRecoveryRequired`也不进入ordinary rollback。新增该吞异常回归。
 - 验证：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`78/78 PASS`；四文件`py_compile`、Ruff、`git diff --check` PASS。未运行真实Git/source/candidate/ref/evidence、child、GPU、数据或训练。下一步：提交/推送并对新formal SHA重新三方审核。提交：未提交。
+
+### PASS lifecycle authority-input/sticky-B remediation 送达回执（2026-09-12 CST，REVIEW）
+
+- formal=`a18d178877c192fdc9682033acbd36c4184b3639`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；申请已append至canonical live Inbox并由ledger=`d70ca8561529e10b585c2a58f9dc1bfd44c0d972`推送（ledger非formal target）。冻结名册：ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。
+- MM/Kimi均以完整文本→至少1秒→独立Enter投递并capture回读：MM显示新申请后处理状态；Kimi显示新申请消息且输入框为空。ChatGPT正式结果只认其`reviews/`内exact pair。三方均已送达；下一轮三分钟后完整远端锁定检查。本记录未提交。
+
+### PASS lifecycle authority-input/sticky-B remediation 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`a18d178877c192fdc9682033acbd36c4184b3639`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before/advertised/origin/local-after=d70ca8561529e10b585c2a58f9dc1bfd44c0d972`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact root+child检索无匹配，处理中。Kimi `kimi:0.0` 已确认新pair并在核验commit/Gitlink、前轮验收条件和78项复跑，未给final token；MM `mm:0.0` 正在读取新pair差异，未给final token。三方均处理中、无推进令牌；三分钟后再次完整锁定检查。本记录未提交。
+
+### PASS lifecycle authority-input/sticky-B remediation 审核观察凭证 #2（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=d70ca8561529e10b585c2a58f9dc1bfd44c0d972`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索仍无匹配。Kimi `kimi:0.0` 已完成formal范围、前轮验收条件和实现/测试diff读取，待78项复跑和final token；MM `mm:0.0` 已进入Ruff/static核验，尚无final token。三方均处理中、无推进令牌；三分钟后再次完整锁定检查。本记录未提交。
+
+### PASS lifecycle authority-input/sticky-B remediation 审核观察凭证 #3（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=d70ca8561529e10b585c2a58f9dc1bfd44c0d972`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索无匹配。MM `mm:0.0` 本pair实质批准且复核两HIGH关闭，但token为`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`，与申请的固定token不一致，暂不计作final，须补充。Kimi `kimi:0.0` 已完成formal-tree 78项复跑及静态检查，尚无final token。三方final未齐、无推进令牌；下一步向MM请求固定token，并继续等待ChatGPT/Kimi。本记录未提交。
+
+### PASS lifecycle authority-input/sticky-B remediation 审核观察凭证 #4（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=d70ca8561529e10b585c2a58f9dc1bfd44c0d972`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索仍无匹配。Kimi `kimi:0.0` same-pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`；MM `mm:0.0`已补该固定same-pair final token。ChatGPT仍缺件，三方final未齐、无推进令牌；三分钟后继续完整锁定检查。本记录未提交。
+
+### PASS lifecycle authority-input/sticky-B remediation 审核观察凭证 #5（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before/advertised/origin/local-after=d70ca8561529e10b585c2a58f9dc1bfd44c0d972`，fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-header检索仍无匹配；MM/Kimi均保有同pair固定`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。ChatGPT仍缺件，三方final未齐、无推进令牌；三分钟后继续完整锁定检查。本记录未提交。
+
+### PASS lifecycle authority-input/sticky-B remediation 审核观察凭证 #6（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before=d70ca8561529e10b585c2a58f9dc1bfd44c0d972`，fetch成功，advertised/origin/local-after=`e2a49e443e0ca5a757a26a39bb442410daa2c81c`，新增`e2a49e44`并ff-only成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_a18d178_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_authority_root.py:135)`，1 HIGH：guard已handoff但parked unlink及restore均失败时，helper可能在public guard缺失下返回`False`，被误走ordinary rollback。MM/Kimi均为same-pair固定`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。
+- 三方final已齐；推进令牌仅授权在批准root tooling/test文件temporary CPU/static范围整改该HIGH：每个helper非成功结果必须机械证明original public guard已恢复，否则粘滞recovery并fail-stop；补handoff+restore失败与restart route对抗验证。禁止真实source/candidate/ref/evidence、child、GPU及训练。本记录未提交。
+
+### PASS lifecycle handoff-restore recovery remediation（2026-09-12，IN_PROGRESS）
+
+- 针对`a18d1788`三方final（ChatGPT=1 HIGH，MM/Kimi=APPROVE），只修改两个批准root文件。`_commit_exact_guard()`以`handed_off`区分A/B：handoff前系统失败仍可普通`False`；handoff后只有`os.rename(parked→public)`成功且`lstat(public)`精确匹配原identity时才返回`False`，否则抛`PassClosureRecoveryRequired`。
+- 新增真实public→parking handoff、parked unlink失败、restore rename失败的对抗回归；callback吞掉即时recovery后，outer authority仍粘滞fail-stop、双端candidate refs保留且无delete。既有handoff后lstat故障且精确restore成功仍保留ordinary A回滚语义。
+- 验证：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`79/79 PASS`；四文件`py_compile`、Ruff、`git diff --check` PASS。未运行真实Git/source/candidate/ref/evidence、child、GPU、数据或训练。下一步：提交/推送并对新formal SHA重新三方审核。提交：未提交。

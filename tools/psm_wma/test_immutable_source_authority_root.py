@@ -454,6 +454,41 @@ class AuthorityRootTest(unittest.TestCase):
         self.assertNotIn("delete_local", self.git.events)
         self.assertNotIn("delete_remote", self.git.events)
 
+    def test_handoff_restore_failure_is_sticky_recovery_when_callback_swallows(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            original_unlink, original_rename = os.unlink, os.rename
+
+            def fail_parked_unlink(path, *args, **kwargs):
+                target = Path(path)
+                if (
+                    target.name == "owned"
+                    and target.parent.name.startswith(".evidence.json.pending.commit-")
+                ):
+                    raise OSError("parked unlink failure")
+                return original_unlink(path, *args, **kwargs)
+
+            def fail_restore(source, destination, *args, **kwargs):
+                if Path(source).name == "owned" and Path(destination) == guard:
+                    raise OSError("restore failure")
+                return original_rename(source, destination, *args, **kwargs)
+
+            with patch("os.unlink", side_effect=fail_parked_unlink), patch(
+                "os.rename", side_effect=fail_restore
+            ):
+                with self.assertRaises(PassClosureRecoveryRequired):
+                    commit.consume_by_unlink()
+            self.assertFalse(guard.exists())
+
+        with self.assertRaises(PassClosureRecoveryRequired):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+        self.assertNotIn("delete_local", self.git.events)
+        self.assertNotIn("delete_remote", self.git.events)
+
     def test_b_window_after_guard_transition_is_recovery_not_rollback(self):
         class Cancellation(BaseException):
             pass
