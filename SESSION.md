@@ -2890,3 +2890,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`11950c953d7c3e781f821ab648d45af83e60d340`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=caf681a9334124da4527f31d9d44b504abb3967e`；fetch成功；advertised/origin/local-after均为`caf681a9334124da4527f31d9d44b504abb3967e`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT 精确检索 `rg -l '11950c953d7c3e781f821ab648d45af83e60d340' docs/collab/chatgpt/reviews/` 无匹配正式 review；MM `mm:0.0` capture给出same-pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`；Kimi `kimi:0.0` capture显示已独立解析pair、读取v0.4并逐项核验，尚无same-pair final。无推进令牌，保持 REVIEW；禁止整改、materialization、真实I/O、child、GPU和训练。
+
+### Authority-root launcher procedure v0.4 审核观察凭证 #2（2026-09-13 00:18:44 CST，REVIEW）
+
+- formal/child及冻结名册不变。`before=f4a7788645702dd70bfed6a93fd0d9902e1b399d`；fetch成功；advertised/origin/local-after同为`f4a7788645702dd70bfed6a93fd0d9902e1b399d`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-pair检索仍无正式review；MM `mm:0.0` capture保持same-pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`；Kimi `kimi:0.0` capture最终为same-pair `REQUEST_CHANGES(...execution_snapshot_annex_v0.4.md:35)`，HIGH：实际 stdlib launcher payload raw bytes/长度/SHA仍未冻结，`launch.argv`的`payload`只是占位；次级同改：`O_WRONLY` writer FD不可 `pread`，readback必须限于reader FD。三方final尚未齐，无推进令牌；禁止整改、materialization、真实I/O、child、GPU和训练，等待ChatGPT exact verdict后才合并处理。
