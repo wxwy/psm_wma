@@ -24,7 +24,6 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     main,
     NativeGitError,
     AuthorityAdapterInvocation,
-    BootstrapIdentity,
     ExecutableIdentity,
     GitConfigurationAuthority,
     ModuleIdentity,
