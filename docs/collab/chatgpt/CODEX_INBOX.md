@@ -331,3 +331,13 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 前轮 `ed824b2e...` 三方 final 已齐：ChatGPT 对 interpreter authority 给出唯一 HIGH，MM/Kimi approve。本轮只分离 authority：executor/test path/blob/raw-SHA 从 CPU/static implementation tree 绑定；CPU/static 仅记录 test interpreter witness；future controlled execution approval 独立冻结 `{executable_path,executable_raw_sha256,version}`，由 executable bytes 与 `--version` 派生，禁止 caller default，任一 drift 在 source open 前 FAIL。
 
 `git diff --check` PASS；无真实 source I/O、authority/collection/receipt/publication、child、GPU 或训练。请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+## 审核申请：Executor CPU/static implementation（2026-09-12）
+
+- formal root SHA：`fb9c5e04e811865247e2ed44072af59acc8b93c9`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
+
+依批准 design 新增唯一 executor 与 stdlib tests：显式 DI 的 Git/root-FD/evidence sink、exact authority/five-path allowlist、同 FD re-read drift、single-use handoff、retained snapshot rollback/ROLLBACK_INCOMPLETE。仅内存 synthetic bytes。验证：5/5 unittest、py_compile、diff-check PASS。
+
+请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权真实 source I/O、collection/receipt/publication、child、GPU 或训练。正式 verdict 请仅写入 reviews/。
