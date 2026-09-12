@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.3审核申请送达（2026-09-12 14:22:11 CST，REVIEW）
+
+- formal root=`c4133389f856f5ab7a5ad01923f71c0c3892ce09`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；canonical Inbox 已 append 且 ledger=`a006b1c1e7c7ce9a81e426780912e1bd80463dea`已 push，live Inbox 申请前为59375 bytes，未触发 rollover。
+- 已按`send-keys -l`→等待≥1秒→独立Enter→capture三联向 MM `mm:0.0`与 Kimi `kimi:0.0`送达完整 exact-pair 申请。MM capture 显示该申请后进入 `Compacting conversation`；Kimi capture 显示申请已提交至会话（补一次独立Enter后仍未出现执行/最终回执）。两者均尚无本pair final，不能声称审核完成。
+- ChatGPT 暂无本pair review（申请已由 Inbox 定位）；冻结名册不变。保持 `REVIEW`，三分钟后按 fetch→advertised→ff-only→exact review→Kimi/MM capture 原生轮询；无推进令牌前禁止实现/真实 I-O/GPU/训练。未提交。
+
 ## Real adapter design v0.3 已提交、待三方复审（2026-09-12，REVIEW）
 
 - formal root=`c4133389f856f5ab7a5ad01923f71c0c3892ce09`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。新增v0.3仅关闭 ChatGPT 对 v0.2 的两项HIGH：future allowlist扩至四文件；`publish_candidate(..., finalizer=...)`在既有ownership rollback边界内处理 evidence failure；冻结nested identity/observation/candidate ABI、first-failure nullability表和pending-guard evidence commit point。
