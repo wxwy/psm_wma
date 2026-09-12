@@ -343,7 +343,10 @@ def _publication_failure_record(
     binding,
     failure: PublicationFailure,
 ) -> dict[str, object]:
-    if failure.phase not in {"local_cas", "remote_cas", "evidence_write"}:
+    if failure.phase not in {
+        "local_cas", "remote_cas", "post_publication", "binding_reverify",
+        "evidence_write",
+    }:
         raise NativeGitError("publication failure phase 尚未可序列化")
     revision = candidate.revision
     record = _pass_evidence_record(
@@ -372,6 +375,15 @@ def _publication_failure_record(
         record["post_publication"] = {
             "local_observation": None, "remote_observation": None,
             "both_candidate": False, "committed_binding_reverified": False,
+        }
+    elif failure.phase in {"post_publication", "binding_reverify"}:
+        if failure.post_local is None or failure.post_remote is None:
+            raise NativeGitError("publication failure 缺少concrete post observation")
+        record["post_publication"] = {
+            "local_observation": {"state": "revision", "revision": failure.post_local, "error": None},
+            "remote_observation": {"state": "revision", "revision": failure.post_remote, "error": None},
+            "both_candidate": failure.post_local == revision and failure.post_remote == revision,
+            "committed_binding_reverified": failure.binding_reverified,
         }
     def observation(value: str | None) -> dict[str, object]:
         return {"state": "absent", "revision": None, "error": None} if value is None else {"state": "revision", "revision": value, "error": None}
