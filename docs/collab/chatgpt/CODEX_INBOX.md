@@ -633,3 +633,15 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 请相对`2f9fd4bcaec0fd0ea0c6302aa69910e24ce9e378`审核四个批准root tooling/test文件的累计整改。H1：witness/commit capability只在同一activation内有效，stale retained object不能用于下一transaction。H2：guard unlink前fresh观察local/remote fixed refs；任一endpoint drift会拒绝提交且保留foreign ref。H3：guard/tmp/final的cleanup由创建FD的dev/inode身份绑定，path被外来替换即fail-stop且绝不unlink/overwrite foreign bytes，含实际CLI failure/PASS writer回归。H4：verify失败保留prepared candidate、pre-input request error产生preflight Evidence-v1、cleanup不确定产生可验证`ROLLBACK_INCOMPLETE`/`EVIDENCE_CLEANUP_INCOMPLETE`。验证：temporary directory/local bare remote CPU/static unittest=`58/58 PASS`；`py_compile`、Ruff、限定任务文件`git diff --check` PASS。formal tree Gitlink不变。
 
 请求完整exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。范围只限四个root工具/测试的temporary CPU/static fixture；不授权真实source/selection/config/candidate/ref/origin/collection/evidence操作、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority Root Real Adapter identity-safe unlink remediation（2026-09-12）
+
+- formal root SHA：`153bf17b3755b20296e69d2f5790becd8520875d`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮 exact reviews：ChatGPT=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_8879742_93a89ba.md`（1 HIGH）；Kimi同pair=`REQUEST_CHANGES`（seal后altered-record witness）；MM同pair=`APPROVE_TO_CLOSE`。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+请仅审相对`8879742c4ea99bf2676903d4085a77aee91cd4e1`的四个批准root tooling/test文件累计整改。原先identity-check后直接pathname unlink改为`_unlink_exact_regular()`：先验证public regular-file dev/inode，再原子rename至同父目录下mode-0700私有parking目录；只在private pathname重验相同identity后删除。handoff边界若发现foreign replacement，则原样restore并fail-stop。该原语同时用于`EvidenceCommit.consume_by_unlink()`的PASS guard和adapter `_unlink_owned()`的guard/tmp/final cleanup。新增direct adversarial回归：guard handoff边界foreign replacement保留foreign并rollback；adapter cleanup handoff边界foreign保留；seal后改写evidence bytes则consume拒绝、guard与篡改record保留。temporary CPU/static unittest=`61/61 PASS`，`py_compile`、Ruff、`git diff --check` PASS；formal Gitlink不变。
+
+请求完整exact pair唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。仅授权四个root工具/测试的temporary directory/local bare remote CPU/static fixture；不授权真实source/selection/config/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
