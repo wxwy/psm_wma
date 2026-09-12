@@ -344,12 +344,7 @@ class AuthorityRootTest(unittest.TestCase):
         candidate, binding = self.candidate()
 
         def finalizer(witness, commit):
-            accepted_pass = commit._accepted_pass
-            for operation in (lambda: copy(accepted_pass), lambda: pickle.dumps(accepted_pass)):
-                with self.assertRaises(AuthorityRootError):
-                    operation()
-            with self.assertRaises(AuthorityRootError):
-                accepted_pass.consume(witness)
+            self.assertFalse(hasattr(commit, "_accepted_pass"))
             self._seal_commit(witness, commit)
             commit.consume_by_unlink()
 
@@ -368,6 +363,25 @@ class AuthorityRootTest(unittest.TestCase):
             ):
                 with self.assertRaises(AttributeError):
                     operation()
+            self.assertFalse(commit.committed)
+
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
+    def test_stale_accepted_terminal_key_cannot_rebind_new_commit(self):
+        candidate, binding = self.candidate()
+        stale = publish_candidate(
+            self.request, candidate, binding, self.git, finalizer=self._accepted_finalizer
+        )
+        self.git.local.clear()
+        self.git.remote.clear()
+        candidate, binding = self.candidate()
+
+        def finalizer(_witness, commit):
+            with self.assertRaises(AttributeError):
+                commit._terminal_key = stale._terminal_key
             self.assertFalse(commit.committed)
 
         with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
@@ -409,6 +423,32 @@ class AuthorityRootTest(unittest.TestCase):
             with patch(
                 "tools.psm_wma.immutable_source_authority_root._accept_terminal",
                 side_effect=Cancellation("B window"),
+            ):
+                commit.consume_by_unlink()
+            self.assertFalse(guard.exists())
+
+        with self.assertRaises(PassClosureRecoveryRequired):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+
+    def test_guard_helper_success_then_base_exception_is_recovery_not_rollback(self):
+        class Cancellation(BaseException):
+            pass
+
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            original = _commit_exact_guard
+
+            def commit_then_interrupt(path, identity):
+                self.assertTrue(original(path, identity))
+                raise Cancellation("after durable guard transition")
+
+            with patch(
+                "tools.psm_wma.immutable_source_authority_root._commit_exact_guard",
+                side_effect=commit_then_interrupt,
             ):
                 commit.consume_by_unlink()
             self.assertFalse(guard.exists())

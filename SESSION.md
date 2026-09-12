@@ -2450,3 +2450,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal/child不变；`before_head=1716134d92cb79b72fd6269741a79385a2f1f1d3`；fetch成功，advertised/origin/local-after均为同一SHA，新增范围为空，祖先检查成功且`merge --ff-only`=`Already up to date`。
 - ChatGPT：exact root+child review检索无匹配，处理中。MM及Kimi的same-pair final均仍为`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。
 - ChatGPT final缺件，三方推进令牌不存在；禁止整改、实现、执行及训练。下一轮三分钟后重新完整锁定。本记录未提交。
+
+### PASS lifecycle recovery remediation 审核观察凭证 #6（2026-09-12 CST，REVIEW）
+
+- formal=`8534ae8d5a0979a6dd7e90cedf45f6ad33a14ae5`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；本地观察记录曾与远端ChatGPT review commit分叉，已将唯一local-only状态记录rebase到`e39850f1`之上并推送为`87e07df7`，随后完整重新检查。`before=87e07df77bb54b59295072caf697867df2655bf1`，fetch成功，advertised/origin/local-after相同，新增范围为空，祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_8534ae8_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_authority_root.py:297)`，3 HIGH：terminal-key stale replay、callback-visible/rewriteable AcceptedPass、guard helper内部durable B窗口异常仍走rollback。MM/Kimi均为same-pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。
+- 三方final齐全，推进令牌仅授权汇总并在四个批准root tooling/test文件的temporary CPU/static范围最小整改；不授权真实I/O、child、GPU或训练。下一步：逐项修复3 HIGH、验证、提交/推送并重新三方审核。本记录未提交。
+
+### PASS lifecycle recovery remediation 第二轮整改（2026-09-12，IN_PROGRESS）
+
+- 仅改批准的四个root tooling/test文件：`PublicationWitness`与`EvidenceCommit`的authority identity slots在初始化后不可改写；`_AcceptedPass`改为不可改写的私有identity/facts，且通过authority-private `_ACCEPTED_PASSES` registry取得，不再以`commit._accepted_pass`暴露给callback。stale accepted key无法rebind新commit。
+- `consume_by_unlink()`将`_commit_exact_guard()`置于B-window恢复边界：helper抛出`BaseException`后若guard已消失，立即稳定转换为`PASS_CLOSURE_RECOVERY_REQUIRED`，跳过ordinary rollback；guard仍存在则保持A窗口普通失败语义。
+- 新增stale terminal-key substitution与“真实helper完成durable guard移除后再抛BaseException”对抗回归。`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=76/76 PASS；四文件`py_compile`、Ruff、`git diff --check` PASS。未运行真实Git/source/candidate/ref/evidence、child、GPU或训练。下一步：更新TODO、提交/推送并对新formal SHA重审。提交：未提交。
