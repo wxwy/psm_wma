@@ -497,3 +497,15 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 synthetic implementation formal `0b18620f...`已三方关闭。当前无真实Git adapter/CLI，故设计冻结最短两阶段：两文件real adapter CPU/static implementation closure；随后立即以formal-tree tool identity发一次exact materialization execution request，不增加其他横向Gate。已冻结8-entry selection与15-key config exact canonical raw bytes/SHA/blob OID；adapter必须复用既有三阶段算法、absolute identity-bound Git argv、temporary index/plumbing、expected-zero fixed-ref与ownership rollback。当前仅请求adapter CPU/static implementation授权，不请求真实JSON/candidate/ref/source/remote/GPU/训练。
 
 请求唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。
+
+## 审核申请：Authority Root Real Adapter设计 v0.2整改（2026-09-12）
+
+- formal root SHA：`dd0ecdf19e3413be4f8dad5e7b069e106f88e8ad`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-EXECUTION-REQUEST-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.2.md`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+v0.1三方意见齐并均要求更正blob OID；ChatGPT另要求CAS/evidence合同。v0.2更正selection/config OID为`9f03614b...`/`89b12047...`，测试须raw→SHA/OID并由temporary native `hash-object`交叉验证；remote仅允许fixed-ref per-ref exact`--force-with-lease`，creation expected absent、rollback expected candidate，禁止unconditional force/普通overwrite/delete-recreate；冻结exact transaction evidence v1的十个顶层section、phase/reachability/ownership/pre-post observations/rollback及原子writer故障矩阵。
+
+请求完整pair唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅授权两文件temporary CPU/static adapter实现，不授权真实JSON/candidate/ref/origin/source/GPU/训练。
