@@ -13,39 +13,48 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `3f0afef77e9c5d25d487ac80a930b3785feda5ab`
+- immediate prior live blob SHA: `9412eed966463dd0f059fca00b3b77f227b2c1f2`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority-root Execution Snapshot Annex v0.3 APPROVED
+## CODEX NOTICE — Authority-root One-shot Materialization Request v0.3 REQUEST_CHANGES
 
 Formal pair:
-- root docs SHA: `b2fc05489abb2a4c1bc7314844c94c197834b9ff`
+- root docs SHA: `3b67d317de595ac8df2529eabfb239efbf988733`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
 
 Verdict:
-`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.3.md:17)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_snapshot_annex_v03_b2fc054_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_materialization_execution_request_v03_3b67d31_93a89ba.md`
 
 Canonical review commit:
-`a0e578feb827b546675528a369ff9a3872267dcb`
+`d38bcb247ebc3424db0587ea37cdca36f2ed660f`
 
-Current blockers: `0`.
+Current blockers: `1 HIGH`.
 
-Closure:
-- prior bootstrap argv HIGH is CLOSED: parser `actual_argv` remains 2427 bytes / `72777bd...`, while bootstrap `sys.orig_argv[6:]` including leading `--` is separately frozen at 2432 bytes / `aefa3a7d...`;
-- bootstrap contract canonical JSON independently recomputes to 182 bytes / `62a7bb...`;
-- prior transaction-env HIGH is CLOSED: exact production `NativeAuthorityGit.env` is frozen as six base keys + `GIT_INDEX_FILE` + six author/committer keys, 471 bytes / `daf9e4...`;
-- commit message is correctly frozen as `git commit-tree` stdin, not an environment variable;
-- formal Gitlink/child are exact and reachable; delta remains docs/bookkeeping only;
-- no new Design/Implementation/Evidence blocker found in this docs-only scope.
+What is correct:
+- exact formal pair/Gitlink is valid and child commit is independently reachable;
+- delta from approved snapshot annex `b2fc054...` is docs/status/review bookkeeping only;
+- approved annex v0.3 remains the sole authority for formal parent/Gitlink/ref, endpoint, tool/input/module identities, FD numbers, bootstrap/contracts, parser/bootstrap argv, launcher/transaction environments and metadata;
+- no production or child/runtime code regression is introduced by this request.
 
-Scope reminder: this approval permits only preparation of the complete docs-only execution request. It does not authorize materialization, JSON/worktree/index/candidate/ref/evidence creation, source/checkpoint I/O, collection/receipt/publication/root audit, child/runtime changes, CUDA/GPU, training, evaluation, inference or LIBERO4IN1.
+Remaining HIGH — complete launcher/command is missing from the real materialization approval object:
+- approved annex v0.3 explicitly required the complete execution request **and command** to receive a new exact three-party `APPROVE_TO_MATERIALIZE...`;
+- current v0.3 request describes the transaction but contains no complete launcher/command or equivalent canonical launch artifact;
+- therefore post-approval choices are still required for clean-worktree creation, backing-object creation, FD 3/4/5 binding/inheritance, closure of other FDs and exact `execve` of frozen Python/bootstrap/argv/environment;
+- clean-worktree creation itself mutates worktree administration before the production adapter runs, but the request does not freeze launcher-side ownership/cleanup semantics, so its “zero mutation FAIL” statement is not causally closed.
 
-The complete execution request and command still require a separate exact three-party `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` before execution.
+Exact remediation:
+1. Include/freeze the complete one-shot launcher/command (or exact canonical equivalent) in the reviewed request without shell/PATH/ambient/caller/remote-alias authority.
+2. Freeze exact pre-adapter sequence: clean-root absent check + detached worktree creation at `9dd2fb8...`; creation/ownership of the three backing objects; exact FD 3/4/5 open/dup/inheritance/lifetime/offset semantics; close every non-authorized inherited FD; exact fixed-Python `execve` with `-I -S -B -c`, bootstrap, literal `--`, parser argv and six-key launcher env.
+3. Define launcher-side failure cleanup: after any owned launcher mutation, ordinary FAIL only after exact cleanup/freshness recovery is proven; otherwise fail-stop `ROLLBACK_INCOMPLETE` (or already-frozen equivalent), no retry/continuation/ref mutation.
+4. The launcher may only reproduce annex v0.3 authority. If launcher implementation needs new executable/payload bytes or other runtime authority, amend within this same Gate and obtain a new exact-pair review before execution.
+5. Preserve current prohibition of source/checkpoint I/O, collection/receipt/publication/root audit, child/runtime changes, CUDA/GPU, training, evaluation, inference and LIBERO4IN1.
+
+Scope reminder: **no materialization is authorized** by this verdict.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
