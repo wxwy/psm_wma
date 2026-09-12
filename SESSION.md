@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root synthetic implementation第2轮观察（2026-09-12 13:08:49 CST）
+
+- formal root=`8cd1103deecc0720b7168e9e2b86b576e818b2bd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。before_head、advertised V2、origin/V2、ff-only后HEAD均为`8d71d9055dd52635e0457c58590fb73e01158cec`；完整新增范围空。ChatGPT reviews/ exact formal root仍无匹配。
+- MM、Kimi独立capture均含完整pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION`；Kimi独立从formal tree复跑41 tests PASS，MM逐项核验executor fixed-ref、capability和rollback语义。
+- ChatGPT尚未回复，三方未齐，保持REVIEW并继续三分钟原生轮询；不采纳pane中其他未发送输入，不执行真实I/O/GPU/训练。未提交。
+
 ## Authority-root synthetic implementation第1轮观察（2026-09-12 13:04:52 CST）
 
 - formal root=`8cd1103deecc0720b7168e9e2b86b576e818b2bd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox ledger=`eb00fc188c743c19bec078ff8fcb083c87ecd5aa`已推送，MM/Kimi均按固定节奏发送并capture确认进入实现审查。
