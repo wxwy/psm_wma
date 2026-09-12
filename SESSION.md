@@ -2659,3 +2659,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root execution-authority implementation 设计 v0.2送达准备（2026-09-12 CST，REVIEW）
 
 - formal=`e69d78c0758cb77111e371897093e0765018d7bc`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。申请已append live Inbox；待以完整文本、至少1秒、独立Enter和capture投递两pane。未获三方同pair批准前禁止实现或真实执行。
+
+### Authority-root execution-authority implementation 设计 v0.2送达回执（2026-09-12 CST，REVIEW）
+
+- ChatGPT Inbox申请已由ledger=`583509d119d8e10eb38c5ff8c54a5cda807ce6db`推送；MM/Kimi均完整文本→至少1秒→独立Enter→capture，消息已离开输入框并进入处理。formal/child及冻结名册不变；三分钟后完整锁定回收。
