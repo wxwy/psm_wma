@@ -5,7 +5,7 @@
 
 ## 范围
 
-本设计仅将已批准 controlled-execution v0.2 固化为后续 root CPU/static 实现的文件 allowlist、temporary-fixture tests 和 fail-closed interface。唯一 production executor 为 `tools/psm_wma/immutable_source_collection.py`；仅允许新增该文件及 `tools/psm_wma/test_immutable_source_collection.py`。本设计仅冻结两-path allowlist 与 identity derivation rule；具体 path/Git blob/raw SHA/interpreter 在文件存在后的 CPU/static implementation formal root/closure 从 committed tree 绑定。后续 authority materialization/execution approval 只接受该 implementation formal pair，任何 drift 在 source open 前 FAIL；request/ledger/handoff commit 不得替代它。
+本设计仅将已批准 controlled-execution v0.2 固化为后续 root CPU/static 实现的文件 allowlist、temporary-fixture tests 和 fail-closed interface。唯一 production executor 为 `tools/psm_wma/immutable_source_collection.py`；仅允许新增该文件及 `tools/psm_wma/test_immutable_source_collection.py`。本设计仅冻结两-path allowlist 与 identity derivation rule：文件 `path/Git blob/raw SHA-256` 在文件存在后的 CPU/static implementation formal root/closure 从 committed tree 绑定；解释器不来自 Git tree。CPU/static closure 仅记录 test interpreter witness；未来 controlled-execution approval 必须独立冻结 exact interpreter identity record `{executable_path,executable_raw_sha256,version}`，由受控环境的 executable bytes 与 `--version` 输出导出，且不得来自 caller default。authority materialization/execution approval 分别要求 implementation formal pair 与该 approval-bound interpreter record；任一 drift 在 source open 前 FAIL，request/ledger/handoff commit 不得替代任一 authority。
 
 禁止真实 source/checkpoint/cache I/O、authority-root materialization、collection/receipt/source-evidence/publication 写入、网络、child、GPU、torchrun、模型/optimizer/scaler 或训练。
 
