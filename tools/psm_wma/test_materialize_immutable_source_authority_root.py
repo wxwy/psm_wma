@@ -39,6 +39,7 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     _unlink_owned,
     _path_identity,
     _fd_identity,
+    _validate_https_endpoint,
 )
 
 
@@ -265,6 +266,22 @@ def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
 
 
 class NativeAuthorityGitTest(unittest.TestCase):
+    def test_https_endpoint_grammar_is_canonical_and_direct(self):
+        _validate_https_endpoint("https://example.invalid/authority/root")
+        for value in (
+            "https://user@example.invalid/path",
+            "https://user:pass@example.invalid/path",
+            "https://example.invalid/path?query=1",
+            "https://example.invalid/path#fragment",
+            "https://EXAMPLE.invalid/path",
+            "https://example.invalid:443/path",
+            "origin",
+            "file:///temporary/remote.git",
+        ):
+            with self.subTest(value=value):
+                with self.assertRaises(NativeGitError):
+                    _validate_https_endpoint(value)
+
     def test_pass_restart_never_reconstructs_acceptance_from_evidence(self):
         with tempfile.TemporaryDirectory() as raw:
             path = Path(raw) / "evidence.json"
@@ -430,7 +447,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
             "tools.psm_wma.materialize_immutable_source_authority_root",
             fromlist=["bootstrap_payload"],
         ).bootstrap_payload()
-        contract_path = root / "bootstrap-contract.json"
+        contract_path = root.parent / "bootstrap-contract.json"
         with contract_path.open("w+b") as contract:
             position = argv.index("--bootstrap-contract-fd")
             argv[position + 1] = str(contract.fileno())
@@ -516,7 +533,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
             "local_fast_state_dtype": "fp32",
             "local_runtime_resume_mode": "slow_only_no_mid_episode_resume",
         }, sort_keys=True, separators=(",", ":")).encode()
-        selection_path, config_path = root / "selection.json", root / "config.json"
+        selection_path, config_path = directory / "selection.json", directory / "config.json"
         selection_path.write_bytes(selection)
         config_path.write_bytes(config)
         identities = []
@@ -622,6 +639,26 @@ class NativeAuthorityGitTest(unittest.TestCase):
             transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_collection_or_audit_drift_before_import(self):
+        for relative in (
+            "tools/psm_wma/immutable_source_collection.py",
+            "tools/g0/audit_r09_b_ttt_root_gitlink_authority.py",
+        ):
+            with self.subTest(relative=relative), tempfile.TemporaryDirectory() as raw:
+                git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+                sentinel = root / "bootstrap-imported"
+                (root / relative).write_text(
+                    "open('bootstrap-imported', 'w').write('imported')\n"
+                )
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertFalse(sentinel.exists(), result.stderr)
+                self.assertFalse((root / "evidence.json").exists())
+                transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+                self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+                self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
     def test_bootstrap_rejects_tampered_c_payload_before_evidence(self):
         with tempfile.TemporaryDirectory() as raw:
