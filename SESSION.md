@@ -2636,3 +2636,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_execution_authority_implementation_design_v0.1.md`，将三方final汇为最小两文件CPU/static实现路线：四模块+bootstrap invocation/evidence ABI、pre-import closure、FD/argv protocol、canonical endpoint、no-replace/config isolation，以及传递依赖漂移/alias/config对抗witness。
 - 此设计不是新增横向provenance Gate，而是`d3cd3c9` real-execution request所需的已有root-tooling闭合；仅申请后续两root文件实现授权。未改生产代码、未运行项目代码或真实Git/source/ref/evidence/GPU/训练；提交：未提交。
+
+### Authority-root execution-authority implementation 设计送达准备（2026-09-12 CST，REVIEW）
+
+- formal=`569a34d50e5106f982c3ed111171d67ea3344bc9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。申请范围仅`materialize_immutable_source_authority_root.py`及其existing stdlib测试的CPU/static实现设计；请求唯一`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`。
+- 申请须先append至live Inbox（当前102428 bytes，预计新增不足3KiB，不触发128KiB rollover），再分别以完整文本→至少1秒→独立Enter→capture投递MM/Kimi。未获同pair三方批准前，禁止改root tooling及所有真实materialization/source/ref/evidence/child/GPU/训练动作。

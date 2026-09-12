@@ -832,3 +832,22 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 仅审相对`313b1dc81d83646b310d86c58c10d20b453fc739`的两个批准 root CPU/static 文件整改：当 `_commit_exact_guard()` 已明确抛出 `PassClosureRecoveryRequired` 时，`EvidenceCommit.consume_by_unlink()` 无条件先对 authority 置 sticky recovery，再重新抛出；因此 callback 吞掉该异常后，`publish_candidate()` 仍永久 fail-stop，不进入 ordinary rollback。两条 handoff 后 foreign-public-guard 对抗回归均断言 outer recovery、candidate 双端 refs 保留、无 delete。`79/79` CPU unittest、四文件 py_compile、Ruff、diff-check PASS；Gitlink不变。
 
 请求该 exact pair 唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。范围只限temporary CPU/static fixtures；不授权真实source/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
+## 审核申请：Authority-root execution-authority implementation 设计 v0.1（2026-09-12）
+
+- formal root SHA：`569a34d50e5106f982c3ed111171d67ea3344bc9`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-EXECUTION-AUTHORITY-IMPLEMENTATION-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_execution_authority_implementation_design_v0.1.md`
+- 前轮 exact pair：`d3cd3c9b26cea021814c9f48bcd864183a811293` / 同一Gitlink；ChatGPT/Kimi=`REQUEST_CHANGES`，MM=`APPROVE_TO_MATERIALIZE...`。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+请只审核 docs-only 最小实现路线，目标是闭合已批准 source-evidence 链中 real materialization 的既有执行权威缺口，不新增 checkpoint/publication/provenance Gate：
+
+1. 仅允许后续修改 `tools/psm_wma/materialize_immutable_source_authority_root.py` 与既有 `test_materialize_immutable_source_authority_root.py`；不触碰 child/Cosmos。
+2. 将 adapter、authority、collection、audit 四模块、bootstrap raw/argv identity、FD protocol、canonical remote endpoint 与 Git isolation 纳入同一 parser/invocation/Evidence-v1 exact-key ABI。
+3. bootstrap 在任何 project import 前完成四模块 regular/non-symlink + raw SHA + no-replace formal blob 三重检查；以collection/audit漂移、symlink、shadowing、HEAD漂移为直接CPU/static拒绝witness。
+4. Git transaction 只使用 canonical endpoint，不接受remote alias；对replace/global/system/local config、attributes/filter/hooks注入 fail-stop，并证据绑定 endpoint digest/isolation fingerprint。
+5. 下一 actual request 须一次性冻结 bootstrap bytes、完整argv、FD、输入binding、metadata/env、endpoint与路径；本设计不创建或执行该request。
+
+请求 exact pair 唯一最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`。批准范围仅为两root文件的temporary CPU/static实现及测试；不授权真实JSON/candidate/ref/origin/source/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
