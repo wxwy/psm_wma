@@ -660,6 +660,22 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
                 self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
+    def test_bootstrap_rejects_module_symlink_before_import(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            target = root.parent / "foreign-collection.py"
+            target.write_text("open('bootstrap-imported', 'w').write('imported')\n")
+            module_path = root / "tools/psm_wma/immutable_source_collection.py"
+            module_path.unlink()
+            module_path.symlink_to(target)
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "bootstrap-imported").exists())
+            self.assertFalse((root / "evidence.json").exists())
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
     def test_bootstrap_rejects_tampered_c_payload_before_evidence(self):
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))

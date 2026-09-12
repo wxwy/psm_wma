@@ -179,10 +179,10 @@ def bootstrap_payload() -> str:
         " if row:\n"
         "  meta,name=row.split(b'\\t',1); mode,kind,oid=meta.decode().split(); tree[name.decode()]=(mode,kind,oid)\n"
         "for n in ('adapter','authority-module','collection-module','audit-module'):\n"
-        " path=one('--'+n+'-path'); oid=one('--'+n+'-blob-oid'); digest=one('--'+n+'-raw-sha256'); full=os.path.realpath(os.path.join(root,path))\n"
-        " if os.path.commonpath((os.path.realpath(root),full))!=os.path.realpath(root): fail()\n"
+        " path=one('--'+n+'-path'); oid=one('--'+n+'-blob-oid'); digest=one('--'+n+'-raw-sha256'); full=os.path.abspath(os.path.join(root,path))\n"
+        " if os.path.commonpath((os.path.abspath(root),full))!=os.path.abspath(root): fail()\n"
         " z=os.lstat(full)\n"
-        " if not stat.S_ISREG(z.st_mode) or stat.S_ISLNK(z.st_mode) or tree.get(path)!=('100644','blob',oid) or hashlib.sha256(open(full,'rb').read()).hexdigest()!=digest: fail()\n"
+        " if not stat.S_ISREG(z.st_mode) or stat.S_ISLNK(z.st_mode) or os.path.realpath(full)!=full or tree.get(path)!=('100644','blob',oid) or hashlib.sha256(open(full,'rb').read()).hexdigest()!=digest: fail()\n"
         "sys.path.insert(0,root);sys.argv=[module,*a[7:]];runpy.run_module(module,run_name='__main__')\n"
     )
 
