@@ -1,5 +1,18 @@
 # 当前协作状态
 
+## Authority-root design v0.2 ABI remediation（2026-09-12，IN_PROGRESS）
+
+- 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_binding_design_v0.2.md`，只override v0.1 §4命名冲突：executor-facing authority exact为七键mapping且首键唯一是`root_revision`；conceptual `authority_root_revision`仅是语义说明，禁止作为serialized key、双键、tuple、caller rename或adapter bridge。
+- materializer候选、独立verifier、review/evidence binding、现有`_authority_tree()`/`_bound_source_inputs()`逐键同型；CPU/static acceptance必须直接证明exact mapping可消费及alias/双键/缺额外键pre-source拒绝。v0.1其余authority与边界全部继承。
+- 预计修改仅v0.2、SESSION、TODO；`git diff --check`待执行，纯docs-only不运行测试。不创建JSON/authority commit/ref，不真实I/O/GPU/训练。验证后提交推送新SHA并三方重审。未提交。
+
+## Authority-root design v0.1 第 3 轮推进令牌 / 一项 HIGH（2026-09-12 12:03:37 CST）
+
+- formal root=`36b4e6bc3144a67d16d6c9684649e8939d181230`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- before_head=`e34f43ab744942022114790743671e643063172d`；fetch后advertised V2与origin/V2=`211c40e1102ed9433ee865fdd02fd5b8c0aecbab`；新增`4f2e362e review: request authority-root binding ABI remediation`、`211c40e1 docs: publish ChatGPT review for authority-root binding design`，祖先检查成功并ff-only。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_authority_root_materialization_binding_design_36b4e6b_93a89ba.md`，同pair final=`REQUEST_CHANGES(...v0.1.md:42)`：conceptual `authority_root_revision` 与已批准 executor exact key `root_revision` 不一致且无冻结bridge。Kimi、MM本轮独立capture同pair final均为`APPROVE_TO_IMPLEMENT...CPU_STATIC`；Kimi亦将该命名差异列为非阻塞后续项。
+- 三方final齐，形成只允许汇总/最小整改的推进令牌。意见成立；采用ChatGPT acceptance方案1，新建docs-only v0.2，冻结executor-facing七键的首键exact为`root_revision`，仅说明它承载conceptual authority-root revision，不引入adapter/caller rename。禁止实现、真实I/O/GPU/训练。未提交。
+
 ## Authority-root design v0.1 第 2 轮观察（2026-09-12 11:59:06 CST）
 
 - formal root=`36b4e6bc3144a67d16d6c9684649e8939d181230`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
