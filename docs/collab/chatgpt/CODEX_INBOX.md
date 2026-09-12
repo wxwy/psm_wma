@@ -548,3 +548,16 @@ v0.4 把guard成功`unlink`定义为 writer visibility、sealed EvidenceCommit�
 v0.5逐项整改前轮两项 HIGH。第一项：authority在finalizer前创建并预验证同activation的opaque `PublicationWitness`/`EvidenceCommit`；所有identity/type/token/replay/seal检查在guard存在时完成；`consume_by_unlink()`是唯一one-shot消费操作；authority仅作total state dispatch，unlink后任何callback-return/report异常统一为preserve-refs `POST_COMMIT_CAPABILITY_VIOLATION`，绝不回到rollback。第二项：将`rollback.required`严格定义为owned delete需求，并新增`entered`表达无owned的恢复/终态证明；完整冻结`pre_publication`、`local_cas`、`remote_cas`、`post_publication`、`binding_reverify`、`evidence_write`的真实可达矩阵，收紧post_publication为local/remote六bit均true。新增针对callback坏返回、foreign/unreadable、lost-race与impossible evidence的CPU/static验收。
 
 请核验两项 HIGH 是否关闭，并给完整 exact pair 的唯一 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求 v0.3 四个root文件的temporary CPU/static implementation及temporary local bare-remote tests；不授权真实JSON/candidate/ref/origin/source/collection、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测或推理。
+
+## 审核申请：Authority Root Real Adapter设计 v0.6整改（2026-09-12）
+
+- formal root SHA：`944c1305bcaef818e178c781b5cf2ce8aebbc9a8`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-EXECUTION-REQUEST-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.6.md`
+- 证据：前轮 ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_066de70_93a89ba.md`；该 pair 三方 final 已齐（ChatGPT 1 HIGH，MM/Kimi批准）；`git diff --cached --check` PASS。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个finalizer调用（normal return与`BaseException`）捕获为outcome，并在既有rollback boundary内仅按exact issued `EvidenceCommit.state`分流：non-committed outcome仍pre-commit并rollback；committed outcome绝不rollback。committed后的exception在boundary外变为保留cause的`PostCommitFinalizerError`；normal return值统一被忽略、返回exact witness，因而不是违约。新增post-unlink普通/custom/BaseException、ordinary return及pre-commit对照的direct CPU/static spy验收。
+
+请核验前轮 1 HIGH 是否关闭，并给完整 exact pair 的唯一 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求 v0.3 四个root文件的temporary CPU/static implementation及temporary local bare-remote tests；不授权真实JSON/candidate/ref/origin/source/collection、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测或推理。
