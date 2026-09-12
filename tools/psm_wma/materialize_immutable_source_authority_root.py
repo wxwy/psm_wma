@@ -18,6 +18,7 @@ from tools.psm_wma.immutable_source_authority_root import (
     AuthorityRequest,
     EvidenceCommit,
     EvidenceCleanupIncomplete,
+    _evidence_guard_lock,
     _unlink_exact_regular,
     PublicationFailure,
     prepare_candidate,
@@ -890,11 +891,12 @@ def _read_regular_evidence(path: Path) -> bytes:
 
 def verify_evidence_path(path: Path) -> Mapping[str, object]:
     """Accept a final record only when the sibling pending guard is absent."""
-    guard = path.with_name(path.name + ".pending")
-    if guard.exists() or guard.is_symlink():
-        raise NativeGitError("evidence pending guard 仍存在")
-    raw = _read_regular_evidence(path)
-    return verify_evidence_bytes(raw)
+    with _evidence_guard_lock(path, exclusive=False):
+        guard = path.with_name(path.name + ".pending")
+        if guard.exists() or guard.is_symlink():
+            raise NativeGitError("evidence pending guard 仍存在")
+        raw = _read_regular_evidence(path)
+        return verify_evidence_bytes(raw)
 
 
 def _fsync_directory(directory: Path) -> None:

@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+import fcntl
 import json
 import os
 import hashlib
 import stat
 import tempfile
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
@@ -107,6 +109,71 @@ def _unlink_exact_regular(path: Path, identity: tuple[int, int]) -> bool:
         if parked.exists() or parked.is_symlink():
             if not restored:
                 raise AuthorityRootError("evidence owned path 无法安全恢复")
+        try:
+            parking.rmdir()
+        except OSError:
+            pass
+
+
+@contextmanager
+def _evidence_guard_lock(evidence_path: Path, *, exclusive: bool):
+    lock_path = evidence_path.with_name(evidence_path.name + ".lock")
+    descriptor = os.open(
+        lock_path,
+        os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC,
+        0o600,
+    )
+    try:
+        fcntl.flock(descriptor, fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH)
+        yield
+    finally:
+        fcntl.flock(descriptor, fcntl.LOCK_UN)
+        os.close(descriptor)
+
+
+def _commit_exact_guard(path: Path, identity: tuple[int, int]) -> bool:
+    """Move a guard only while writer/verifier serialization is held."""
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return False
+    if not stat.S_ISREG(info.st_mode) or (info.st_dev, info.st_ino) != identity:
+        return False
+    parking = Path(tempfile.mkdtemp(prefix=f".{path.name}.commit-", dir=path.parent))
+    parked = parking / "owned"
+
+    def restore_if_public_absent() -> bool:
+        if not parked.exists() and not parked.is_symlink():
+            return False
+        if path.exists() or path.is_symlink():
+            return False
+        try:
+            os.rename(parked, path)
+        except OSError:
+            return False
+        return True
+
+    try:
+        os.rename(path, parked)
+        parked_info = parked.lstat()
+        if (
+            not stat.S_ISREG(parked_info.st_mode)
+            or (parked_info.st_dev, parked_info.st_ino) != identity
+        ):
+            restore_if_public_absent()
+            return False
+        if path.exists() or path.is_symlink():
+            return False
+        try:
+            os.unlink(parked)
+        except OSError:
+            restore_if_public_absent()
+            return False
+        return True
+    except OSError:
+        restore_if_public_absent()
+        return False
+    finally:
         try:
             parking.rmdir()
         except OSError:
@@ -317,43 +384,44 @@ class EvidenceCommit(_NonSerializable):
             or not self._activation.active
         ):
             raise AuthorityRootError("evidence commit 未seal或已消费")
-        try:
-            guard_info = self._guard.lstat()
-            evidence_info = self._evidence_path.lstat()
-            descriptor = os.open(
-                self._evidence_path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC
-            )
+        with _evidence_guard_lock(self._evidence_path, exclusive=True):
             try:
-                opened_info = os.fstat(descriptor)
-                chunks: list[bytes] = []
-                remaining = opened_info.st_size
-                while remaining:
-                    chunk = os.read(descriptor, remaining)
-                    if not chunk:
-                        raise OSError("evidence truncated")
-                    chunks.append(chunk)
-                    remaining -= len(chunk)
-                raw = b"".join(chunks)
-            finally:
-                os.close(descriptor)
-        except OSError as error:
-            raise AuthorityRootError("evidence commit identity 无效") from error
-        if (
-            not stat.S_ISREG(guard_info.st_mode)
-            or not stat.S_ISREG(evidence_info.st_mode)
-            or (guard_info.st_dev, guard_info.st_ino) != self._guard_identity
-            or (evidence_info.st_dev, evidence_info.st_ino) != self._evidence_identity
-            or (opened_info.st_dev, opened_info.st_ino) != self._evidence_identity
-            or hashlib.sha256(raw).hexdigest() != self._record_sha256
-        ):
-            raise AuthorityRootError("evidence commit identity/digest 漂移")
-        try:
-            self._pre_unlink()
-        except Exception as error:
-            raise AuthorityRootError("evidence commit fixed ref 漂移") from error
-        if not _unlink_exact_regular(self._guard, self._guard_identity):
-            raise AuthorityRootError("evidence commit guard identity 漂移")
-        self._committed = True
+                guard_info = self._guard.lstat()
+                evidence_info = self._evidence_path.lstat()
+                descriptor = os.open(
+                    self._evidence_path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC
+                )
+                try:
+                    opened_info = os.fstat(descriptor)
+                    chunks: list[bytes] = []
+                    remaining = opened_info.st_size
+                    while remaining:
+                        chunk = os.read(descriptor, remaining)
+                        if not chunk:
+                            raise OSError("evidence truncated")
+                        chunks.append(chunk)
+                        remaining -= len(chunk)
+                    raw = b"".join(chunks)
+                finally:
+                    os.close(descriptor)
+            except OSError as error:
+                raise AuthorityRootError("evidence commit identity 无效") from error
+            if (
+                not stat.S_ISREG(guard_info.st_mode)
+                or not stat.S_ISREG(evidence_info.st_mode)
+                or (guard_info.st_dev, guard_info.st_ino) != self._guard_identity
+                or (evidence_info.st_dev, evidence_info.st_ino) != self._evidence_identity
+                or (opened_info.st_dev, opened_info.st_ino) != self._evidence_identity
+                or hashlib.sha256(raw).hexdigest() != self._record_sha256
+            ):
+                raise AuthorityRootError("evidence commit identity/digest 漂移")
+            try:
+                self._pre_unlink()
+            except Exception as error:
+                raise AuthorityRootError("evidence commit fixed ref 漂移") from error
+            if not _commit_exact_guard(self._guard, self._guard_identity):
+                raise AuthorityRootError("evidence commit guard identity 漂移")
+            self._committed = True
 
 
 class PostCommitFinalizerError(AuthorityRootError):

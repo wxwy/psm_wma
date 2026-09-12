@@ -7,6 +7,7 @@ import os
 import pickle
 import shutil
 import tempfile
+import threading
 import unittest
 from copy import copy, deepcopy
 from pathlib import Path
@@ -33,6 +34,10 @@ from tools.psm_wma.immutable_source_collection import (
     SyntheticRootFd,
     TemporaryGitFixture,
     collect_synthetic,
+)
+from tools.psm_wma.materialize_immutable_source_authority_root import (
+    NativeGitError,
+    verify_evidence_path,
 )
 
 
@@ -418,8 +423,101 @@ class AuthorityRootTest(unittest.TestCase):
             ), self.assertRaises(AuthorityRootError):
                 commit.consume_by_unlink()
             self.assertEqual(guard.read_bytes(), b"foreign")
+            with self.assertRaises(NativeGitError):
+                verify_evidence_path(guard.with_name("evidence.json"))
 
         with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
+    def test_guard_handoff_keeps_pass_hidden_until_committed(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            evidence = guard.with_name("evidence.json")
+            original_rename = os.rename
+            observer_started = threading.Event()
+            observer_finished = threading.Event()
+            observed: list[str] = []
+
+            def observe():
+                observer_started.set()
+                observed.append(verify_evidence_path(evidence)["status"])
+                observer_finished.set()
+
+            def rename_then_observe(source, destination):
+                result = original_rename(source, destination)
+                if Path(source) == guard:
+                    thread = threading.Thread(target=observe)
+                    thread.start()
+                    self.assertTrue(observer_started.wait(1))
+                    self.assertFalse(observer_finished.wait(0.1))
+                    self.addCleanup(thread.join)
+                return result
+
+            with patch(
+                "tools.psm_wma.immutable_source_authority_root.os.rename",
+                side_effect=rename_then_observe,
+            ), patch(
+                "tools.psm_wma.materialize_immutable_source_authority_root.verify_evidence_bytes",
+                return_value={"status": "PASS"},
+            ):
+                commit.consume_by_unlink()
+                self.assertTrue(observer_finished.wait(1))
+                self.assertEqual(observed, ["PASS"])
+
+        publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+
+    def test_guard_handoff_lstat_failure_restores_guard_before_unlock(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            original_lstat = Path.lstat
+
+            def fail_parked(candidate_path):
+                if (
+                    candidate_path.name == "owned"
+                    and candidate_path.parent.name.startswith(".evidence.json.pending.commit-")
+                ):
+                    raise OSError("fixture")
+                return original_lstat(candidate_path)
+
+            with patch.object(Path, "lstat", autospec=True, side_effect=fail_parked):
+                with self.assertRaises(AuthorityRootError):
+                    commit.consume_by_unlink()
+            self.assertTrue(guard.exists())
+            with self.assertRaises(NativeGitError):
+                verify_evidence_path(guard.with_name("evidence.json"))
+
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+
+    def test_foreign_guard_after_handoff_prevents_commit_and_acceptance(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            original_rename = os.rename
+
+            def rename_then_create_foreign(source, destination):
+                result = original_rename(source, destination)
+                if Path(source) == guard:
+                    guard.write_bytes(b"foreign")
+                return result
+
+            with patch(
+                "tools.psm_wma.immutable_source_authority_root.os.rename",
+                side_effect=rename_then_create_foreign,
+            ), self.assertRaises(AuthorityRootError):
+                commit.consume_by_unlink()
+            self.assertEqual(guard.read_bytes(), b"foreign")
+            with self.assertRaises(NativeGitError):
+                verify_evidence_path(guard.with_name("evidence.json"))
+
+        with self.assertRaises(AuthorityRootError):
             publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
         self.assertNotIn(AUTHORITY_REF, self.git.local)
         self.assertNotIn(AUTHORITY_REF, self.git.remote)
