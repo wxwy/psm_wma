@@ -1,5 +1,14 @@
 # 当前协作状态
 
+## Authority 对象绑定整改切片（2026-09-12，IN_PROGRESS）
+
+- 延续 `fb9c5e04` 同 pair 三方意见的两文件整改范围；前一可运行切片已提交/推送为 `fbdb30ae6b8afb8e470be607251dd1917e1067f7`。
+- executor 通过注入 Git 的 parent/tree_entries/blob_bytes/gitlink_at 按 revision 查询，独立重算两个固定 authority blob 的 Git blob OID、raw SHA；验证 authority parent、target ref resolve/base/Gitlink、selection canonical schema、ordinal/规范相对路径/排序/去重。source entry 数量来自 selection，不再固定成五个 source；五个固定的是输出 artifact。
+- 删除旧 authority()/child_gitlink()/config_bytes() 的 mapping/默认值通路。config 与 selection 全部核验完成才打开 source。
+- 独立内存对象 fixture 覆盖 parent、额外 tree path、tree/blob 不符、raw bytes、ref/base、Gitlink、固定路径、SHA 漂移，逐项验证 source 未打开、commits 为空。修正 config-negative 测试，使它绑定真实 fixture blob/OID 后才测试 schema/canonical 错误。
+- 根目录 `python3 -B -m unittest tools.psm_wma.test_immutable_source_collection -v` 及最终 `-q`：15/15 PASS；`git diff --check` PASS。仅 CPU/内存 fixture；无真实 source/collection/receipt/GPU/训练。
+- 下一步：完整 evidence nested/FAIL 分支及 tool/environment 依赖绑定；带候选原始 blob 的 isolated preflight/collection/receipt transaction、主流程 snapshot/rollback。Gate 未关闭，未申请重审。本切片提交：待本次提交。
+
 ## 整改复核观察（2026-09-12 09:32:17 CST）
 
 - formal root=`fb9c5e04e811865247e2ed44072af59acc8b93c9`；child=`93a89ba61306d840a008813f62f26a34d54850f4`。名册保持 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。

@@ -6,7 +6,8 @@ import json
 import pickle
 from dataclasses import replace
 import stat
-from tools.psm_wma.immutable_source_collection import EntryStat, derive_candidates, _source_handoff
+from copy import deepcopy
+from tools.psm_wma.immutable_source_collection import EntryStat, SELECTION_PATH, derive_candidates, _source_handoff
 from tools.psm_wma.immutable_source_collection import COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
 class ImmutableSourceCollectionTest(unittest.TestCase):
@@ -21,18 +22,39 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             "local_fast_state_dtype": "fp32", "local_runtime_resume_mode": "slow_only_no_mid_episode_resume",
         }
         self.config_raw = json.dumps(self.config, sort_keys=True, separators=(",", ":")).encode()
-        self.authority = dict(zip(("root_revision", "selection_path", "selection_blob_native_oid", "selection_raw_sha256", "config_path", "config_blob_native_oid", "config_raw_sha256"), ("r"*40, "selection", "s"*40, "a"*64, "config", "c"*40, "b"*64)))
-        self.lineage = {"target_ref": "t"*40, "expected_base_root_revision": "b"*40, "expected_child_gitlink": "g"*40, "authority_approval_formal_root_revision": "r"*40}
-        self.paths = {name: f"fixture/{name}" for name in SOURCE_PATHS}; self.git = TemporaryGitFixture({"base": "b"*40, "target": "t"*40}, authority_values=self.authority, gitlink=self.lineage["expected_child_gitlink"]); self.fd = SyntheticRootFd({path: name.encode() for name, path in self.paths.items()})
-        self.authority["config_raw_sha256"] = hashlib.sha256(self.config_raw).hexdigest()
-        self.git.config_blob = self.config_raw
+        self.paths = {name: f"fixture/{name}" for name in SOURCE_PATHS}
+        self.fd = SyntheticRootFd({path: name.encode() for name, path in self.paths.items()})
+        selection = {"schema": "immutable_source_selection_request_v1",
+                     "source_kind": "checkpoint_source_manifest_v1",
+                     "entries": [{"ordinal": i, "relative_path": path}
+                                 for i, path in enumerate(sorted(self.paths.values()))]}
+        selection_raw = json.dumps(selection, sort_keys=True, separators=(",", ":")).encode()
+        def oid(raw: bytes) -> str:
+            return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        self.authority = {
+            "root_revision": "a" * 40, "selection_path": SELECTION_PATH,
+            "selection_blob_native_oid": oid(selection_raw),
+            "selection_raw_sha256": hashlib.sha256(selection_raw).hexdigest(),
+            "config_path": COLLECTION_PATHS[1], "config_blob_native_oid": oid(self.config_raw),
+            "config_raw_sha256": hashlib.sha256(self.config_raw).hexdigest(),
+        }
+        self.lineage = {"target_ref": "refs/heads/fixture", "expected_base_root_revision": "b" * 40,
+                        "expected_child_gitlink": "c" * 40, "authority_approval_formal_root_revision": "d" * 40}
+        self.git = TemporaryGitFixture(
+            {"refs/heads/fixture": "b" * 40},
+            parents={"a" * 40: "d" * 40},
+            trees={"a" * 40: {SELECTION_PATH: oid(selection_raw), COLLECTION_PATHS[1]: oid(self.config_raw)}},
+            blobs={oid(selection_raw): selection_raw, oid(self.config_raw): self.config_raw},
+            gitlinks={"b" * 40: "c" * 40},
+        )
     def test_exact_pass_evidence(self) -> None:
         sink = MemoryEvidenceSink(); record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=sink)
         self.assertEqual(record["status"], "PASS"); self.assertEqual(record["execution"]["phase"], "complete"); self.assertEqual(sink.records, [record])
     def test_authority_lineage_allowlist_drift_fails(self) -> None:
         with self.assertRaises(CollectionError): collect_synthetic(authority={**self.authority, "x": "x"}, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
         with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths={name: "same" for name in SOURCE_PATHS}, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
-        bad_gitlink = TemporaryGitFixture(self.git.revisions, authority_values=self.authority, gitlink="x" * 40)
+        bad_gitlink = deepcopy(self.git)
+        bad_gitlink.gitlinks = {"b" * 40: "f" * 40}
         with self.assertRaises(CollectionError): collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=bad_gitlink, root_fd=self.fd, sink=MemoryEvidenceSink())
     def test_descriptor_and_digest_drift_fail(self) -> None:
         files = dict(self.fd.files); files[self.paths["checkpoint"]] = SyntheticEntry(b"x", reads=[b"x", b"y"])
@@ -79,7 +101,7 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             def lookup(self, revision: str) -> dict[str, str]:
                 return {**super().lookup(revision), "tree_native_oid": "d" * 40}
         with self.assertRaises(CollectionError):
-            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=DriftingGit(self.git.revisions, authority_values=self.authority, gitlink=self.lineage["expected_child_gitlink"], config_blob=self.config_raw), root_fd=self.fd, sink=MemoryEvidenceSink())
+            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=DriftingGit(**vars(self.git)), root_fd=self.fd, sink=MemoryEvidenceSink())
 
     def test_frozen_candidate_paths_and_raw_byte_chain(self) -> None:
         entries = ({"ordinal": 0, "byte_length": 3, "sha256": hashlib.sha256(b"abc").hexdigest()},)
@@ -134,12 +156,47 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         source = UnopenedSource()
         for raw in (b"{}", self.config_raw + b"\n"):
             with self.subTest(raw=raw):
-                self.git.config_blob = raw
+                oid = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+                self.git.blobs[oid] = raw
+                self.git.trees["a" * 40][COLLECTION_PATHS[1]] = oid
+                self.authority["config_blob_native_oid"] = oid
                 self.authority["config_raw_sha256"] = hashlib.sha256(raw).hexdigest()
                 with self.assertRaises(CollectionError):
                     collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
                                       git=self.git, root_fd=source, sink=MemoryEvidenceSink())
                 self.assertFalse(hasattr(source, "fail_open"))
+
+    def test_authority_object_drift_precedes_all_source_reads(self) -> None:
+        class UnopenedSource:
+            def open_regular(self, path: str) -> object:
+                raise AssertionError("authority 检查失败时不得读取 source")
+
+        cases = []
+        git = deepcopy(self.git)
+        git.parents["a" * 40] = "e" * 40
+        cases.append((git, self.authority, "parent"))
+        git = deepcopy(self.git)
+        git.trees["a" * 40]["extra.json"] = "e" * 40
+        cases.append((git, self.authority, "两个固定"))
+        git = deepcopy(self.git)
+        git.trees["a" * 40][SELECTION_PATH] = "e" * 40
+        cases.append((git, self.authority, "tree/blob"))
+        git = deepcopy(self.git)
+        git.blobs[self.authority["selection_blob_native_oid"]] += b" "
+        cases.append((git, self.authority, "raw bytes"))
+        git = deepcopy(self.git)
+        git.revisions[self.lineage["target_ref"]] = "e" * 40
+        cases.append((git, self.authority, "ref/base"))
+        git = deepcopy(self.git)
+        git.gitlinks["b" * 40] = "e" * 40
+        cases.append((git, self.authority, "Gitlink"))
+        cases.append((self.git, {**self.authority, "selection_path": "wrong.json"}, "固定路径"))
+        cases.append((self.git, {**self.authority, "selection_raw_sha256": "e" * 64}, "raw bytes"))
+        for git, authority, reason in cases:
+            with self.subTest(reason=reason), self.assertRaisesRegex(CollectionError, reason):
+                collect_synthetic(authority=authority, lineage=self.lineage, paths=self.paths,
+                                  git=git, root_fd=UnopenedSource(), sink=MemoryEvidenceSink())
+            self.assertEqual(git.commits, [])
 
     def test_handoff_rejects_changed_candidate_bytes(self) -> None:
         activation = object()

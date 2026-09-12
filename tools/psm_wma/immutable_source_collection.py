@@ -19,6 +19,7 @@ COLLECTION_PATHS = (
     "docs/build/PSM-WMA_immutable_source_checkpoint_descriptor_v1.json",
 )
 RECEIPT_PATH = "docs/build/PSM-WMA_immutable_source_collection_receipt_v1.json"
+SELECTION_PATH = "docs/build/PSM-WMA_immutable_source_selection_request_v1.json"
 EVIDENCE_KEYS = frozenset(("schema", "status", "execution", "tool", "environment", "authority", "lineage", "source_entries", "handoff", "candidates", "collection", "receipt", "post_checks", "push_publication", "rollback", "evidence_sha256"))
 CANDIDATE_KEYS = ("input_descriptor_sha256", "manifest_sha256", "identifier_sha256", "checkpoint_descriptor_sha256", "collection_sha256", "config_sha256")
 
@@ -52,9 +53,10 @@ class RootFdOpener(Protocol):
     def open_regular(self, relative_path: str) -> EntryHandle: ...
 class GitTransaction(Protocol):
     def resolve(self, revision: str) -> str: ...
-    def authority(self) -> Mapping[str, str]: ...
-    def child_gitlink(self) -> str: ...
-    def config_bytes(self) -> bytes: ...
+    def parent(self, revision: str) -> str: ...
+    def tree_entries(self, revision: str) -> Mapping[str, str]: ...
+    def blob_bytes(self, oid: str) -> bytes: ...
+    def gitlink_at(self, revision: str) -> str: ...
     def snapshot(self) -> Mapping[str, object]: ...
     def commit(self, paths: tuple[str, ...], parent: str | None) -> Mapping[str, str]: ...
     def lookup(self, revision: str) -> Mapping[str, str]: ...
@@ -105,22 +107,33 @@ class TemporaryGitFixture:
     revisions: Mapping[str, str]
     commits: list[Mapping[str, str]] = field(default_factory=list)
     state: Mapping[str, object] = field(default_factory=lambda: {"target": "synthetic"})
-    authority_values: Mapping[str, str] | None = None
-    gitlink: str | None = None
-    config_blob: bytes | None = None
+    parents: Mapping[str, str] = field(default_factory=dict)
+    trees: Mapping[str, Mapping[str, str]] = field(default_factory=dict)
+    blobs: Mapping[str, bytes] = field(default_factory=dict)
+    gitlinks: Mapping[str, str] = field(default_factory=dict)
+
+    def parent(self, revision: str) -> str:
+        if revision not in self.parents:
+            raise CollectionError("authority commit 不可达")
+        return self.parents[revision]
+
+    def tree_entries(self, revision: str) -> Mapping[str, str]:
+        if revision not in self.trees:
+            raise CollectionError("authority tree 不可达")
+        return dict(self.trees[revision])
+
+    def blob_bytes(self, oid: str) -> bytes:
+        if oid not in self.blobs:
+            raise CollectionError("authority blob 不可达")
+        return self.blobs[oid]
+
+    def gitlink_at(self, revision: str) -> str:
+        if revision not in self.gitlinks:
+            raise CollectionError("base Gitlink 不可达")
+        return self.gitlinks[revision]
     def resolve(self, revision: str) -> str:
         if revision not in self.revisions: raise CollectionError("unbound Git revision")
         return self.revisions[revision]
-    def authority(self) -> Mapping[str, str]:
-        if self.authority_values is None: raise CollectionError("authority fixture is absent")
-        return dict(self.authority_values)
-    def child_gitlink(self) -> str:
-        if self.gitlink is None: raise CollectionError("child Gitlink fixture is absent")
-        return self.gitlink
-    def config_bytes(self) -> bytes:
-        if self.config_blob is None:
-            raise CollectionError("缺少 authority config blob")
-        return self.config_blob
     def snapshot(self) -> Mapping[str, object]: return dict(self.state)
     def commit(self, paths: tuple[str, ...], parent: str | None) -> Mapping[str, str]:
         if paths not in (COLLECTION_PATHS, (RECEIPT_PATH,)): raise CollectionError("transaction allowlist drift")
@@ -335,23 +348,83 @@ def _hash_handle(handle: EntryHandle) -> tuple[int, str]:
         length += len(chunk)
         digest.update(chunk)
 
-def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str], paths: Mapping[str, str], git: GitTransaction, root_fd: RootFdOpener, sink: EvidenceSink) -> dict[str, object]:
+def _blob_oid(raw: bytes) -> str:
+    return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw).hexdigest()
+
+
+def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str],
+                         paths: Mapping[str, str], git: GitTransaction) -> tuple[tuple[str, ...], bytes]:
+    """只从指定 commit tree/blob 复算 authority，再绑定 source transport。"""
     authority_keys = ("root_revision", "selection_path", "selection_blob_native_oid", "selection_raw_sha256", "config_path", "config_blob_native_oid", "config_raw_sha256")
     lineage_keys = ("target_ref", "expected_base_root_revision", "expected_child_gitlink", "authority_approval_formal_root_revision")
     if set(authority) != set(authority_keys) or set(lineage) != set(lineage_keys): raise CollectionError("authority or lineage tuple drift")
-    if set(paths) != set(SOURCE_PATHS) or len(set(paths.values())) != len(paths): raise CollectionError("source allowlist drift")
-    if dict(git.authority()) != dict(authority): raise CollectionError("authority root/blob/raw drift")
-    if git.resolve("base") != lineage["expected_base_root_revision"] or git.resolve("target") != lineage["target_ref"] or git.child_gitlink() != lineage["expected_child_gitlink"]: raise CollectionError("Git lineage drift")
-    config_raw = git.config_bytes()
-    if _digest(config_raw) != authority["config_raw_sha256"]:
-        raise CollectionError("authority config raw SHA 漂移")
+    for values in (authority, lineage):
+        for key, value in values.items():
+            if key.endswith(("revision", "oid", "gitlink")):
+                if not isinstance(value, str) or len(value) != 40 or any(c not in "0123456789abcdef" for c in value):
+                    raise CollectionError("authority/lineage Git SHA 格式无效")
+            if key.endswith("sha256") and not _is_sha(value):
+                raise CollectionError("authority SHA-256 格式无效")
+    if authority["selection_path"] != SELECTION_PATH or authority["config_path"] != COLLECTION_PATHS[1]:
+        raise CollectionError("authority 固定路径漂移")
+    revision = authority["root_revision"]
+    if git.parent(revision) != lineage["authority_approval_formal_root_revision"]:
+        raise CollectionError("authority parent 漂移")
+    if git.resolve(lineage["target_ref"]) != lineage["expected_base_root_revision"]:
+        raise CollectionError("target ref/base 漂移")
+    if git.gitlink_at(lineage["expected_base_root_revision"]) != lineage["expected_child_gitlink"]:
+        raise CollectionError("base child Gitlink 漂移")
+    tree = git.tree_entries(revision)
+    if set(tree) != {SELECTION_PATH, COLLECTION_PATHS[1]}:
+        raise CollectionError("authority tree 必须仅含两个固定 blob")
+    raw_values = {}
+    for prefix in ("selection", "config"):
+        path, oid = authority[prefix + "_path"], authority[prefix + "_blob_native_oid"]
+        if tree[path] != oid:
+            raise CollectionError("authority tree/blob 绑定漂移")
+        raw = git.blob_bytes(oid)
+        if not isinstance(raw, bytes) or _blob_oid(raw) != oid or _digest(raw) != authority[prefix + "_raw_sha256"]:
+            raise CollectionError("authority blob/raw bytes 漂移")
+        raw_values[prefix] = raw
+    config_raw = raw_values["config"]
     try:
         config, _ = validate_config(json.loads(config_raw))
         if _canonical(config) != config_raw:
             raise CollectionError("authority config bytes 不是 canonical JSON")
     except (AuditFailure, ValueError, TypeError, UnicodeError) as exc:
         raise CollectionError("authority config 无效") from exc
-    entries = tuple(_entry(root_fd, paths[name], i) for i, name in enumerate(SOURCE_PATHS))
+    try:
+        selection = json.loads(raw_values["selection"])
+        if (not isinstance(selection, dict) or set(selection) != {"schema", "source_kind", "entries"}
+                or selection["schema"] != "immutable_source_selection_request_v1"
+                or selection["source_kind"] != "checkpoint_source_manifest_v1"
+                or _canonical(selection) != raw_values["selection"]):
+            raise CollectionError("selection schema/canonical bytes 无效")
+        selected = selection["entries"]
+        if not isinstance(selected, list) or not selected:
+            raise CollectionError("selection entries 必须非空")
+        ordered = []
+        for ordinal, entry in enumerate(selected):
+            if (not isinstance(entry, dict) or set(entry) != {"ordinal", "relative_path"}
+                    or type(entry["ordinal"]) is not int or entry["ordinal"] != ordinal):
+                raise CollectionError("selection ordinal/key 无效")
+            path = entry["relative_path"]
+            if (not isinstance(path, str) or "\0" in path
+                    or any(component in ("", ".", "..") for component in path.split("/"))):
+                raise CollectionError("selection 路径不规范")
+            ordered.append(path)
+        if ordered != sorted(set(ordered), key=lambda path: path.encode("utf-8")):
+            raise CollectionError("selection 路径顺序或唯一性漂移")
+        if len(paths) != len(ordered) or set(paths.values()) != set(ordered):
+            raise CollectionError("source transport 与 selection 不一致")
+    except (ValueError, TypeError, UnicodeError) as exc:
+        raise CollectionError("selection 无效") from exc
+    return tuple(ordered), config_raw
+
+
+def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str], paths: Mapping[str, str], git: GitTransaction, root_fd: RootFdOpener, sink: EvidenceSink) -> dict[str, object]:
+    ordered, config_raw = _bound_source_inputs(authority, lineage, paths, git)
+    entries = tuple(_entry(root_fd, path, i) for i, path in enumerate(ordered))
     activation = object()
     handoff = _source_handoff(authority, tuple(entries), config_raw, activation)
     payload = handoff.take(activation)
