@@ -147,6 +147,13 @@ class AuthorityBinding:
 _CAPABILITY_TOKEN = object()
 
 
+class _FinalizerActivation:
+    __slots__ = ("active",)
+
+    def __init__(self) -> None:
+        self.active = True
+
+
 class PublicationWitness(_NonSerializable):
     __slots__ = (
         "revision", "local_created", "remote_created", "_request", "_candidate",
@@ -159,7 +166,7 @@ class PublicationWitness(_NonSerializable):
         request: AuthorityRequest,
         candidate: AuthorityCandidate,
         binding: AuthorityBinding,
-        activation: object,
+        activation: _FinalizerActivation,
         token: object,
     ) -> None:
         if token is not _CAPABILITY_TOKEN:
@@ -175,10 +182,15 @@ class EvidenceCommit(_NonSerializable):
     __slots__ = (
         "_witness", "_activation", "_sealed", "_committed", "_guard",
         "_evidence_path", "_evidence_sha256", "_guard_identity",
-        "_evidence_identity", "_record_sha256", "_token",
+        "_evidence_identity", "_record_sha256", "_pre_unlink", "_token",
     )
 
-    def __init__(self, witness: PublicationWitness, token: object) -> None:
+    def __init__(
+        self,
+        witness: PublicationWitness,
+        pre_unlink: Callable[[], None],
+        token: object,
+    ) -> None:
         if token is not _CAPABILITY_TOKEN:
             raise AuthorityRootError("evidence commit 不可重建")
         self._witness, self._activation, self._token = witness, witness._activation, token
@@ -189,6 +201,7 @@ class EvidenceCommit(_NonSerializable):
         self._guard_identity: tuple[int, int] | None = None
         self._evidence_identity: tuple[int, int] | None = None
         self._record_sha256: str | None = None
+        self._pre_unlink = pre_unlink
 
     @property
     def committed(self) -> bool:
@@ -206,6 +219,7 @@ class EvidenceCommit(_NonSerializable):
             or self._committed
             or witness is not self._witness
             or witness._activation is not self._activation
+            or not self._activation.active
             or witness._token is not _CAPABILITY_TOKEN
             or not isinstance(guard, Path)
             or not isinstance(evidence_path, Path)
@@ -262,6 +276,7 @@ class EvidenceCommit(_NonSerializable):
             or self._guard_identity is None
             or self._evidence_identity is None
             or self._record_sha256 is None
+            or not self._activation.active
         ):
             raise AuthorityRootError("evidence commit 未seal或已消费")
         try:
@@ -294,6 +309,10 @@ class EvidenceCommit(_NonSerializable):
             or hashlib.sha256(raw).hexdigest() != self._record_sha256
         ):
             raise AuthorityRootError("evidence commit identity/digest 漂移")
+        try:
+            self._pre_unlink()
+        except Exception as error:
+            raise AuthorityRootError("evidence commit fixed ref 漂移") from error
         os.unlink(self._guard)
         self._committed = True
 
@@ -582,18 +601,29 @@ def publish_candidate(
         if verify_candidate(request, candidate, git).as_mapping() != expected:
             raise AuthorityRootError("committed binding drift")
         binding_reverified = True
+        activation = _FinalizerActivation()
         witness = PublicationWitness(
-            revision, request, candidate, binding, object(), _CAPABILITY_TOKEN
+            revision, request, candidate, binding, activation, _CAPABILITY_TOKEN
         )
         if finalizer is None:
             return witness
         phase = "evidence_write"
-        commit = EvidenceCommit(witness, _CAPABILITY_TOKEN)
+        def pre_unlink() -> None:
+            local, remote, local_error, remote_error = _observe_refs(git)
+            if (
+                local_error is not None or remote_error is not None
+                or local != revision or remote != revision
+            ):
+                raise AuthorityRootError("evidence commit fixed ref drift")
+
+        commit = EvidenceCommit(witness, pre_unlink, _CAPABILITY_TOKEN)
         callback_error: BaseException | None = None
         try:
             finalizer(witness, commit)
         except BaseException as error:
             callback_error = error
+        finally:
+            activation.active = False
         if not commit.committed:
             raise _PreCommitFinalizerError(callback_error)
         post_commit_error = callback_error

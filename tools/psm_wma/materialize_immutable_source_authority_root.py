@@ -900,13 +900,32 @@ def _write_all(descriptor: int, payload: bytes) -> None:
         offset += written
 
 
-def _cleanup_pending_evidence(paths: tuple[Path, ...], directory: Path) -> None:
+def _path_identity(path: Path) -> tuple[int, int]:
+    info = path.lstat()
+    if not stat.S_ISREG(info.st_mode):
+        raise NativeGitError("evidence owned path 必须为regular file")
+    return info.st_dev, info.st_ino
+
+
+def _unlink_owned(path: Path, identity: tuple[int, int]) -> bool:
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return False
+    if (info.st_dev, info.st_ino) != identity:
+        return False
+    path.unlink()
+    return True
+
+
+def _cleanup_pending_evidence(
+    paths: tuple[tuple[Path, tuple[int, int]], ...], directory: Path
+) -> None:
     failed = False
-    for stale in paths:
+    for stale, identity in paths:
         try:
-            stale.unlink()
-        except FileNotFoundError:
-            pass
+            if not _unlink_owned(stale, identity):
+                failed = True
         except OSError:
             failed = True
     try:
@@ -938,6 +957,7 @@ def write_pending_evidence(
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW | os.O_CLOEXEC
     temporary = path.with_name(path.name + ".tmp")
     guard_owned = temporary_owned = final_owned = False
+    guard_identity = temporary_identity = final_identity = None
     try:
         fd = os.open(guard, flags, 0o600)
         guard_owned = True
@@ -945,6 +965,7 @@ def write_pending_evidence(
             os.fsync(fd)
         finally:
             os.close(fd)
+        guard_identity = _path_identity(guard)
         _fsync_directory(directory)
         fd = os.open(temporary, flags, 0o600)
         temporary_owned = True
@@ -953,9 +974,12 @@ def write_pending_evidence(
             os.fsync(fd)
         finally:
             os.close(fd)
+        temporary_identity = _path_identity(temporary)
         os.link(temporary, path)
         final_owned = True
-        temporary.unlink()
+        final_identity = _path_identity(path)
+        if not _unlink_owned(temporary, temporary_identity):
+            raise EvidenceCleanupIncomplete("evidence temporary identity 漂移")
         temporary_owned = False
         _fsync_directory(directory)
         if verify_evidence_bytes(_read_regular_evidence(path)) != verified:
@@ -966,9 +990,11 @@ def write_pending_evidence(
     except BaseException:
         _cleanup_pending_evidence(
             tuple(
-                candidate for candidate, owned in (
-                    (temporary, temporary_owned), (path, final_owned), (guard, guard_owned)
-                ) if owned
+                (candidate, identity) for candidate, identity, owned in (
+                    (temporary, temporary_identity, temporary_owned),
+                    (path, final_identity, final_owned),
+                    (guard, guard_identity, guard_owned),
+                ) if owned and identity is not None
             ),
             directory,
         )
@@ -980,9 +1006,10 @@ def write_pending_evidence(
             raise
         _cleanup_pending_evidence(
             tuple(
-                candidate for candidate, owned in (
-                    (temporary, temporary_owned), (path, final_owned), (guard, guard_owned)
-                ) if owned
+                (candidate, identity) for candidate, identity, owned in (
+                    (temporary, temporary_identity, temporary_owned),
+                    (path, final_identity, final_owned), (guard, guard_identity, guard_owned),
+                ) if owned and identity is not None
             ),
             directory,
         )
@@ -1000,6 +1027,7 @@ def write_failure_evidence(path: Path, record: Mapping[str, object]) -> None:
     temporary = path.with_name(path.name + ".tmp")
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW | os.O_CLOEXEC
     owned = False
+    temporary_identity = None
     try:
         descriptor = os.open(temporary, flags, 0o600)
         owned = True
@@ -1008,18 +1036,20 @@ def write_failure_evidence(path: Path, record: Mapping[str, object]) -> None:
             os.fsync(descriptor)
         finally:
             os.close(descriptor)
+        temporary_identity = _path_identity(temporary)
         os.link(temporary, path)
         path_info = path.lstat()
         if not stat.S_ISREG(path_info.st_mode) or verify_evidence_bytes(
             _read_regular_evidence(path)
         ) != verified:
             raise NativeGitError("failure evidence publication drift")
-        temporary.unlink()
+        if not _unlink_owned(temporary, temporary_identity):
+            raise EvidenceCleanupIncomplete("failure evidence temporary identity 漂移")
         owned = False
         _fsync_directory(directory)
     except BaseException:
-        if owned:
-            _cleanup_pending_evidence((temporary,), directory)
+        if owned and temporary_identity is not None:
+            _cleanup_pending_evidence(((temporary, temporary_identity),), directory)
         raise
 class NativeAuthorityGit:
     """Explicit-identity Git transaction; callers must provide a temporary repository."""

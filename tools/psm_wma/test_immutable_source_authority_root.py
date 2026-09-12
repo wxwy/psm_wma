@@ -320,11 +320,11 @@ class AuthorityRootTest(unittest.TestCase):
         self.assertNotIn(AUTHORITY_REF, self.git.remote)
 
     def test_stale_commit_cannot_seal_current_activation_guard(self):
-        stale: list[EvidenceCommit] = []
+        stale: list[tuple[object, EvidenceCommit]] = []
         candidate, binding = self.candidate()
 
-        def retain(_witness, commit):
-            stale.append(commit)
+        def retain(witness, commit):
+            stale.append((witness, commit))
 
         with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
             publish_candidate(self.request, candidate, binding, self.git, finalizer=retain)
@@ -332,13 +332,28 @@ class AuthorityRootTest(unittest.TestCase):
 
         def finalizer(witness, commit):
             with self.assertRaises(AuthorityRootError):
-                self._seal_commit(witness, stale[0])
+                self._seal_commit(stale[0][0], stale[0][1])
             self._seal_commit(witness, commit)
             commit.consume_by_unlink()
 
         publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
         self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
         self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+
+    def test_ref_drift_after_seal_cannot_unlink_guard(self):
+        candidate, binding = self.candidate()
+        foreign = "f" * 40
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            self.git.remote[AUTHORITY_REF] = foreign
+            with self.assertRaises(AuthorityRootError):
+                commit.consume_by_unlink()
+            self.assertTrue(guard.exists())
+
+        with self.assertRaises(RollbackIncomplete):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], foreign)
 
     def test_guard_replacement_cannot_commit_or_delete_foreign_guard(self):
         candidate, binding = self.candidate()

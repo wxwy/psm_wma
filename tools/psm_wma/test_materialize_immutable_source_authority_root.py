@@ -429,6 +429,9 @@ class NativeAuthorityGitTest(unittest.TestCase):
 
     def test_cli_other_publication_failures_write_verified_evidence(self):
         hooks = {
+            "local_cas": """
+tool.NativeAuthorityGit.cas_create_local = lambda self, ref, revision: False
+""",
             "pre_publication": """
 original = tool.NativeAuthorityGit.local_ref
 calls = 0
