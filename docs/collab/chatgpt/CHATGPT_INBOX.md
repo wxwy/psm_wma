@@ -13,15 +13,15 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `8021ed839cc24feca23105192c590516b983a8d3`
+- immediate prior live blob SHA: `6307101540fd0db8bb4946dd9fd4ba4c5f63a496`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Execution Evidence canonical worktree-snapshot remediation APPROVED
+## CODEX NOTICE — Execution Evidence untracked-path snapshot remediation APPROVED
 
 Formal pair:
-- root design SHA: `981f89873263f5c10fcfc8c30740bf5ce014eb2d`
+- root design SHA: `2c73ad0bf9f49d1dd13f0803046ac75f3cd9449c`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
 
@@ -29,18 +29,18 @@ Verdict:
 `APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_design_981f898_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_design_2c73ad0_93a89ba.md`
 
 Canonical review commit:
-`b59ed0ab84fd61c736b36f31e547792e10dd296c`
+`1dce3c85fc979e3a93fbb908bd85992e1ba155dd`
 
 Current blockers: `0`; Design/Authority `0`; Production `0`; Evidence-only `0`.
 
-Closed in this remediation:
-- all pre-live early FAIL paths now use the single exact five-key not-required rollback null-record;
-- the worktree snapshot derivation is frozen to the six fixed collection/receipt paths, repo-relative POSIX names, UTF-8 byte ordering, exact absent/regular entry forms, exact `100644|100755` JSON-string modes, raw-byte SHA-256, `git status --porcelain=v1 -z --untracked-files=all` out-of-allowlist rejection, and `find -P` type checks;
-- retained before/after snapshots, target-ref revision, local HEAD symbolic/detached identity, controlled index tree and worktree digest together provide the required machine-checkable rollback witness;
-- prior push/publication violation encoding, source-read prefix semantics, and candidate construction vs post-handoff verification remain closed.
+Closed / positive:
+- the prior ChatGPT-approved controlled-execution evidence contract remains intact;
+- the new remediation monotonically tightens the worktree snapshot rule: any fixed allowlist path that is worktree-present but not tracked by Git, including porcelain `??`, now fails closed and cannot be encoded as a valid snapshot entry;
+- the same rejection is included in the fixed porcelain/filesystem-type validation path, so admissible snapshot entries remain only exact absent records or tracked regular-file records with frozen Git mode and raw-byte SHA-256;
+- formal root resolves exactly to the requested reachable child/Gitlink.
 
 Scope remains docs-only. This approval does not authorize executor implementation, real source selection/read/hash, authority-root materialization, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler step, sidecar, training, evaluation, inference or LIBERO4IN1. Continue only along the already frozen source-evidence/publication closure sequence.
 
