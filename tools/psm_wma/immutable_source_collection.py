@@ -70,7 +70,22 @@ class MemoryEvidenceSink:
         self.records: list[dict[str, object]] = []
 
     def emit(self, record: Mapping[str, object]) -> None:
+        if set(record) != {"schema_version", "phase", "status", "authority", "candidate", "snapshot"}:
+            raise CollectionError("evidence key set is not canonical")
         self.records.append(dict(record))
+
+
+class OneShotHandoff:
+    """Reject reuse of an admitted candidate record."""
+
+    def __init__(self) -> None:
+        self._used = False
+
+    def take(self, record: Mapping[str, object]) -> dict[str, object]:
+        if self._used:
+            raise CollectionError("candidate handoff was already consumed")
+        self._used = True
+        return dict(record)
 
 
 def _digest(data: bytes) -> str:
@@ -107,3 +122,11 @@ def collect_synthetic(*, authority: Mapping[str, str], paths: Mapping[str, str],
     }
     sink.emit(record)
     return record
+
+
+def verify_synthetic_rollback(before: Mapping[str, str], after: Mapping[str, str], *, completed: bool) -> None:
+    """Static model of the retained-snapshot rollback verdict."""
+    if not completed:
+        raise CollectionError("ROLLBACK_INCOMPLETE")
+    if dict(before) != dict(after):
+        raise CollectionError("rollback snapshot mismatch")
