@@ -2420,3 +2420,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`8534ae8d5a0979a6dd7e90cedf45f6ad33a14ae5`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；申请已append到canonical live Inbox并由ledger=`37c7b4e6578633db27e6c9c9b5de3966915bb909`推送（ledger非formal target）。冻结名册不变：ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`。
 - MM、Kimi均以完整文本`send-keys -l`写入后等待至少1秒并独立Enter；MM capture显示申请已进入会话并开始处理。Kimi第一次Enter后仍为输入框，已按失败闭锁立即独立重送Enter并capture，现显示完整申请作为已提交会话消息、输入框为空。三方均已送达；正式verdict仍待ChatGPT exact-pair review及两个pane final token。下一轮三分钟后执行完整远端锁定观察。本记录未提交。
+
+### PASS lifecycle recovery remediation 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`8534ae8d5a0979a6dd7e90cedf45f6ad33a14ae5`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=5f3d3826310e9e2a1dfc6b5a858b4d1aeac46217`；fetch成功，advertised/origin/local-after均=`5f3d3826310e9e2a1dfc6b5a858b4d1aeac46217`，新增范围为空，祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT：exact root+child review检索无匹配，处理中。Kimi `kimi:0.0` capture：确认新pair已开始解析formal tree/diff，尚无最终verdict，处理中。MM `mm:0.0` capture：完成技术核查并写“准予close”，但未提供该pair要求的完整最终verdict token，处理中（不得以技术文字计为批准）。
+- 本轮三方final未齐，无推进令牌；不得整改、实现、执行或训练。下一轮按三分钟间隔重新完整锁定。本记录未提交。
+
+### PASS lifecycle recovery remediation 审核观察凭证 #2（2026-09-12 CST，REVIEW）
+
+- formal/child不变；`before_head=5f3d3826310e9e2a1dfc6b5a858b4d1aeac46217`；fetch成功，advertised/origin/local-after均为同一SHA，新增范围为空，祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT：exact root+child review检索无匹配，处理中。MM `mm:0.0`：same pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。Kimi `kimi:0.0`：已完成formal diff及3 HIGH逐项分析，capture仍为`thinking`且无final token，处理中。
+- 三方final未齐、无推进令牌；禁止整改、实现、执行及训练。下一轮三分钟后重新完整锁定。本记录未提交。
