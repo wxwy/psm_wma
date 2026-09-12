@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.6第2轮观察（2026-09-12 14:52:15 CST，REVIEW）
+
+- formal root=`944c1305bcaef818e178c781b5cf2ce8aebbc9a8`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head`、远端 advertised SHA、`origin/V2`与ff-only后HEAD均=`4414ac93def39eed50de7a2bbf4fa7a4522537b9`；新增范围空，fetch/ls-remote/ff-only均成功。
+- ChatGPT exact-root扫描仍无正式 review。Kimi `kimi:0.0` capture现含同pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`；MM `mm:0.0` capture已含相同final。
+- 冻结名册中仅ChatGPT尚未回复，无推进令牌；保持`REVIEW`，禁止四文件实现、真实I-O/GPU/训练。待提交。
+
 ## Real adapter design v0.6第1轮观察（2026-09-12 14:51:31 CST，REVIEW）
 
 - formal root=`944c1305bcaef818e178c781b5cf2ce8aebbc9a8`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head`、远端 advertised SHA、`origin/V2`与ff-only后HEAD均=`3d69d78d843265fe1fcd3d8ac72faefffeaee692`；新增范围空，fetch/ls-remote/ff-only均成功。
