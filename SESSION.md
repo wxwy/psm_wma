@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design第1轮观察（2026-09-12 13:45:49 CST）
+
+- formal root=`7c17c90a3b25182436fef89fbe063de9fcf1d67e`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；before_head、advertised/origin V2、ff-only后HEAD均=`0eef33db0837f4cd071274bb5f8d8f0b9a50e1e0`，新增范围空，ChatGPT exact review无匹配。
+- MM与Kimi同pair均`REQUEST_CHANGES(...:38)`：raw bytes长度和SHA256正确，但设计中blob OID计算把NUL误成反斜杠序列；正确selection OID=`9f03614b691bca3ba834e16e65ee983fe95af74c`，config OID=`89b12047c50a3a924521200d1897b13bf30aacfe`。建议v0.2更正并加入raw→SHA/OID独立测试。
+- ChatGPT尚未回复；遵守同SHA三方齐后才合并整改，保持REVIEW并继续三分钟轮询。未提交。
+
 ## Authority-root real adapter/execution request设计 v0.1（2026-09-12，REVIEW）
 
 - 只读发现确认现production仅有injected protocol、无真实Git adapter/CLI，故不能直接执行materialization。新增docs-only设计，将剩余路线压缩为：两文件real adapter CPU/static implementation closure → exact execution request三方批准 → 一次真实materialization/binding；不插入其他横向Gate。
