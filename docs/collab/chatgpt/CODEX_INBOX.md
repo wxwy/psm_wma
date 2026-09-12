@@ -985,3 +985,9 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.3.md`。相对`81f752...`只落实三方同pair整改令：内联2,427-byte parser argv JSON/digest；分离并冻结带leading `--`的2,432-byte bootstrap argv digest、182-byte bootstrap contract JSON；内联471-byte `NativeAuthorityGit.env`（含`GIT_INDEX_FILE`和六author/committer键）与digest，message仅为commit-tree stdin。
 - 标准库重canonicalization/length/SHA与`git diff --check`均PASS；仅docs/ledger。禁止materialization、source/checkpoint I/O、JSON/worktree/index/candidate/ref/evidence、collection/receipt/publication、child、GPU、训练、评测、推理和LIBERO4IN1。
 - 请求唯一 verdict：`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST` 或 `REQUEST_CHANGES(file:line)`；批准仍不授权materialization。
+
+## 审核申请：Authority-root one-shot materialization execution request v0.3（2026-09-12）
+
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`；formal root：`3b67d317de595ac8df2529eabfb239efbf988733`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.3.md`。仅收敛三方已批准annex v0.3的唯一authority为一次事务、preflight、PASS/FAIL、ownership rollback和停止条件；不新增runtime字段。
+- 请求唯一 verdict：`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` 或 `REQUEST_CHANGES(file:line)`。批准范围仅一次authority-root materialization；不授权source/checkpoint I/O、collection/receipt/publication、child、GPU、训练、评测、推理或LIBERO4IN1。
