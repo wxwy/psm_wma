@@ -157,7 +157,12 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                                       git=git, root_fd=self.fd, sink=sink)
                 self.assertEqual(git.snapshot(), before)
                 self.assertEqual(git.resolve(self.lineage["target_ref"]), self.lineage["expected_base_root_revision"])
-                self.assertEqual(sink.records, [])
+                self.assertEqual(len(sink.records), 1)
+                failure = sink.records[0]
+                self.assertEqual(failure["status"], "FAIL")
+                self.assertEqual(failure["execution"]["phase"], "collection" if failed_paths == COLLECTION_PATHS else "receipt")
+                self.assertTrue(failure["rollback"]["verified"])
+                verify_evidence(failure)
 
     def test_incomplete_rollback_fail_stops(self) -> None:
         class FailedRollback(TemporaryGitFixture):
@@ -167,9 +172,33 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             def rollback(self, snapshot):
                 return self.snapshot()
         git = FailedRollback(**deepcopy(vars(self.git)))
+        sink = MemoryEvidenceSink()
         with self.assertRaisesRegex(CollectionError, "ROLLBACK_INCOMPLETE"):
             collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
-                              git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
+                              git=git, root_fd=self.fd, sink=sink)
+        failure = sink.records[0]
+        self.assertEqual(failure["execution"]["phase"], "collection")
+        self.assertEqual(failure["execution"]["failure_code"], "ROLLBACK_INCOMPLETE")
+        self.assertIs(failure["rollback"]["verified"], False)
+        verify_evidence(failure)
+
+    def test_source_failure_emits_completed_prefix_without_paths(self) -> None:
+        files = dict(self.fd.files)
+        del files[self.paths["manifest"]]
+        sink = MemoryEvidenceSink()
+        with self.assertRaises(CollectionError):
+            collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                              git=self.git, root_fd=SyntheticRootFd(files), sink=sink)
+        failure = sink.records[0]
+        self.assertEqual(failure["execution"]["phase"], "source_read")
+        self.assertEqual([row["ordinal"] for row in failure["source_entries"]], [0, 1])
+        self.assertTrue(all(value is None for value in failure["candidates"].values()))
+        self.assertTrue(all(value is None for value in failure["rollback"].values()))
+        self.assertEqual(self.git.commits, [])
+        verify_evidence(failure)
+        serialized = json.dumps(failure)
+        for path in self.paths.values():
+            self.assertNotIn(path, serialized)
 
     def test_frozen_candidate_paths_and_raw_byte_chain(self) -> None:
         entries = ({"ordinal": 0, "byte_length": 3, "sha256": hashlib.sha256(b"abc").hexdigest()},)

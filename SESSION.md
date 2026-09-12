@@ -1,5 +1,14 @@
 # 当前协作状态
 
+## 实际 FAIL evidence 生成切片（2026-09-12，IN_PROGRESS）
+
+- 前一事务切片已提交/推送 `21d7a5be354eb09dabe8248092a4b63a355afad1`。本次仍只改两工具文件及本记录。
+- 主流程按 phase 积累记录，authority/lineage 分段到达，source 逐条保留成功 prefix；candidate/handoff 完成后进入 verification；collection/receipt 完成后才填写 commit metadata。异常经 sink 输出 canonical FAIL 后重新抛出，不以异常替代 evidence。
+- live rollback 记录 before/after retained snapshot 与各自摘要；ROLLBACK_INCOMPLETE 保留 collection/receipt 主失败 phase。测试直接检查真实失败调用输出，而不是仅手工拼接 FAIL mapping。
+- executor 的 tool/environment 固定零摘要移入并替换为测试依赖提供的合成 metadata；尚未实现 approved-vs-observed metadata 的独立核对，不能称 interpreter/tool provenance 已完成。metadata acquisition 自身失败也尚未产生 tool_identity/environment FAIL。
+- 根目录 `python3 -B -m unittest tools.psm_wma.test_immutable_source_collection -v` 与最终 `-q`：22/22 PASS；`git diff --check` PASS。仅 CPU/内存 fixture；source-failure prefix 不包含 source transport 路径，rollback 失败输出保持 primary phase。
+- 下一步：执行 identity 的批准/观察绑定和早期 FAIL；final post-check 与 publication state 的真实依赖观测（当前 success 路径这两 section 仍由固定值填充）；sink 错误与不可读取 rollback snapshot 的失败语义，随后完整自审/送审。Gate 未关闭，未训练。提交：待本次提交。
+
 ## 原始 blob 事务整改切片（2026-09-12，IN_PROGRESS）
 
 - 前一 evidence phase 校验切片已提交/推送 `410242ae7b7ed5804d3a72f7f6aba33428929764`。本次仍仅两工具文件及 SESSION。

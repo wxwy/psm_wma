@@ -52,6 +52,7 @@ class EntryHandle(Protocol):
 class RootFdOpener(Protocol):
     def open_regular(self, relative_path: str) -> EntryHandle: ...
 class GitTransaction(Protocol):
+    def execution_metadata(self) -> Mapping[str, object]: ...
     def resolve(self, revision: str) -> str: ...
     def parent(self, revision: str) -> str: ...
     def tree_entries(self, revision: str) -> Mapping[str, str]: ...
@@ -112,6 +113,16 @@ class TemporaryGitFixture:
     trees: Mapping[str, Mapping[str, str]] = field(default_factory=dict)
     blobs: Mapping[str, bytes] = field(default_factory=dict)
     gitlinks: Mapping[str, str] = field(default_factory=dict)
+
+    def execution_metadata(self) -> Mapping[str, object]:
+        # 仅测试替身提供合成身份，executor 自身不再填入零摘要。
+        tool = b"synthetic executor identity"
+        return {"execution": {"approval_formal_root": "d" * 40, "command_argv": ["synthetic"],
+                              "interpreter": "fixture-python"},
+                "tool": {"path": "tools/psm_wma/immutable_source_collection.py",
+                         "blob_native_oid": _blob_oid(tool), "raw_sha256": _digest(tool)},
+                "environment": {"workdir": "/synthetic", "python_executable": "/synthetic/python",
+                                "cpu_only": True, "no_network": True, "sanitized_env_sha256": _sha({})}}
 
     def __post_init__(self) -> None:
         if not self.state and self.revisions:
@@ -528,7 +539,8 @@ def _blob_oid(raw: bytes) -> str:
 
 
 def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str],
-                         paths: Mapping[str, str], git: GitTransaction) -> tuple[tuple[str, ...], bytes]:
+                         paths: Mapping[str, str], git: GitTransaction,
+                         record: dict[str, object]) -> tuple[tuple[str, ...], bytes]:
     """只从指定 commit tree/blob 复算 authority，再绑定 source transport。"""
     authority_keys = ("root_revision", "selection_path", "selection_blob_native_oid", "selection_raw_sha256", "config_path", "config_blob_native_oid", "config_raw_sha256")
     lineage_keys = ("target_ref", "expected_base_root_revision", "expected_child_gitlink", "authority_approval_formal_root_revision")
@@ -545,10 +557,6 @@ def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str
     revision = authority["root_revision"]
     if git.parent(revision) != lineage["authority_approval_formal_root_revision"]:
         raise CollectionError("authority parent 漂移")
-    if git.resolve(lineage["target_ref"]) != lineage["expected_base_root_revision"]:
-        raise CollectionError("target ref/base 漂移")
-    if git.gitlink_at(lineage["expected_base_root_revision"]) != lineage["expected_child_gitlink"]:
-        raise CollectionError("base child Gitlink 漂移")
     tree = git.tree_entries(revision)
     if set(tree) != {SELECTION_PATH, COLLECTION_PATHS[1]}:
         raise CollectionError("authority tree 必须仅含两个固定 blob")
@@ -594,6 +602,13 @@ def _bound_source_inputs(authority: Mapping[str, str], lineage: Mapping[str, str
             raise CollectionError("source transport 与 selection 不一致")
     except (ValueError, TypeError, UnicodeError) as exc:
         raise CollectionError("selection 无效") from exc
+    record["authority"] = dict(authority)
+    record["execution"]["phase"] = "lineage"
+    if git.resolve(lineage["target_ref"]) != lineage["expected_base_root_revision"]:
+        raise CollectionError("target ref/base 漂移")
+    if git.gitlink_at(lineage["expected_base_root_revision"]) != lineage["expected_child_gitlink"]:
+        raise CollectionError("base child Gitlink 漂移")
+    record["lineage"] = dict(lineage)
     return tuple(ordered), config_raw
 
 
@@ -631,7 +646,7 @@ def _receipt_from_collection(git: GitTransaction, revision: str,
 
 
 def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
-                       lineage: Mapping[str, str]) -> tuple[dict[str, str], dict[str, str], str]:
+                       lineage: Mapping[str, str], record: dict[str, object]) -> tuple[dict[str, str], dict[str, str], str]:
     blobs = dict(payload.artifact_bytes)
     before = _snapshot(git.snapshot())
     base = lineage["expected_base_root_revision"]
@@ -643,6 +658,7 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
     if git.resolve(lineage["target_ref"]) != base or git.gitlink_at(base) != lineage["expected_child_gitlink"]:
         raise CollectionError("preflight 后 lineage 漂移")
     try:
+        record["execution"]["phase"] = "collection"
         collection = dict(git.commit(COLLECTION_PATHS, base, blobs))
         if (dict(git.lookup(collection["revision"])) != collection or collection["parent_revision"] != base
                 or collection["tree_native_oid"] != candidate_tree):
@@ -652,6 +668,8 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
         if set(tree) - set(parent_tree) != set(COLLECTION_PATHS) or any(tree.get(p) != oid for p, oid in parent_tree.items()):
             raise CollectionError("collection delta 超出五路径")
         receipt_raw = _receipt_from_collection(git, collection["revision"], blobs)
+        record["collection"] = {**collection, "delta_paths": list(COLLECTION_PATHS)}
+        record["execution"]["phase"] = "receipt"
         receipt_blobs = {RECEIPT_PATH: receipt_raw}
         receipt_tree = git.preflight((RECEIPT_PATH,), collection["revision"], receipt_blobs)
         receipt = dict(git.commit((RECEIPT_PATH,), collection["revision"], receipt_blobs))
@@ -665,27 +683,55 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
         if (oid != _blob_oid(receipt_raw) or git.blob_bytes(oid) != receipt_raw
                 or _receipt_from_collection(git, receipt["parent_revision"], blobs) != receipt_raw):
             raise CollectionError("receipt committed blob 漂移")
+        record["receipt"] = {**receipt, "delta_paths": [RECEIPT_PATH], "blob_native_oid": oid}
         return collection, receipt, oid
     except Exception:
         try:
             git.rollback(before)
-            verify_synthetic_rollback(before, git.snapshot(), completed=True)
+            record["rollback"] = verify_synthetic_rollback(before, git.snapshot(), completed=True)
             if git.resolve(lineage["target_ref"]) != base:
                 raise CollectionError("rollback target ref 未恢复")
         except Exception as rollback_error:
+            after = git.snapshot()
+            record["rollback"] = {"before_snapshot": before, "after_snapshot": after,
+                                  "before_snapshot_sha256": _sha(before), "after_snapshot_sha256": _sha(after),
+                                  "verified": False}
             raise CollectionError("ROLLBACK_INCOMPLETE") from rollback_error
         raise
 
 
 def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str], paths: Mapping[str, str], git: GitTransaction, root_fd: RootFdOpener, sink: EvidenceSink) -> dict[str, object]:
-    ordered, config_raw = _bound_source_inputs(authority, lineage, paths, git)
-    entries = tuple(_entry(root_fd, path, i) for i, path in enumerate(ordered))
-    activation = object()
-    handoff = _source_handoff(authority, tuple(entries), config_raw, activation)
-    payload = handoff.take(activation)
-    candidates = dict(payload.candidates)
-    collection, receipt, receipt_oid = _commit_candidates(git, payload, lineage)
-    handoff_bytes = json.loads(handoff._logical_bytes)
-    record: dict[str, object] = {"schema": SCHEMA, "status": "PASS", "execution": {"approval_formal_root": authority["root_revision"], "command_argv": ["synthetic"], "interpreter": "test", "phase": "complete"}, "tool": {"path": "tools/psm_wma/immutable_source_collection.py", "blob_native_oid": "0"*40, "raw_sha256": "0"*64}, "environment": {"workdir": "synthetic", "python_executable": "test", "cpu_only": True, "no_network": True, "sanitized_env_sha256": "0"*64}, "authority": dict(authority), "lineage": dict(lineage), "source_entries": list(entries), "handoff": {"candidate_handoff_sha256": _sha(handoff_bytes), "consumed_once": True}, "candidates": candidates, "collection": {**collection, "delta_paths": list(COLLECTION_PATHS)}, "receipt": {**receipt, "delta_paths": [RECEIPT_PATH], "blob_native_oid": "0"*40}, "post_checks": {key: True for key in ("authority", "lineage", "derivation", "collection", "receipt")}, "push_publication": {"pushed": False, "published": False}, "rollback": _null_rollback()}
-    record["receipt"]["blob_native_oid"] = receipt_oid
-    record["evidence_sha256"] = _sha(record); sink.emit(record); return record
+    metadata = git.execution_metadata()
+    record = {name: {key: None for key in keys} for name, keys in SECTION_KEYS.items()}
+    record.update(schema=SCHEMA, status="FAIL", source_entries=[],
+                  execution={**metadata["execution"], "phase": "authority", "failure_code": "UNFINISHED"},
+                  tool=dict(metadata["tool"]), environment=dict(metadata["environment"]),
+                  collection=_null_collection(), receipt=_null_receipt())
+    try:
+        ordered, config_raw = _bound_source_inputs(authority, lineage, paths, git, record)
+        record["execution"]["phase"] = "source_read"
+        for i, path in enumerate(ordered):
+            record["source_entries"].append(_entry(root_fd, path, i))
+        record["execution"]["phase"] = "candidate_construction"
+        activation = object()
+        handoff = _source_handoff(authority, tuple(record["source_entries"]), config_raw, activation)
+        record["candidates"] = dict(handoff._digests)
+        record["handoff"] = {"candidate_handoff_sha256": handoff.digest, "consumed_once": False}
+        record["execution"]["phase"] = "candidate_verification"
+        payload = handoff.take(activation)
+        record["handoff"]["consumed_once"] = True
+        _commit_candidates(git, payload, lineage, record)
+        record["post_checks"] = {key: True for key in SECTION_KEYS["post_checks"]}
+        record["push_publication"] = {"pushed": False, "published": False}
+        record["status"] = "PASS"
+        record["execution"]["phase"] = "complete"
+        del record["execution"]["failure_code"]
+    except Exception as error:
+        record["execution"]["failure_code"] = ("ROLLBACK_INCOMPLETE" if str(error) == "ROLLBACK_INCOMPLETE"
+                                                   else record["execution"]["phase"].upper() + "_FAILED")
+        record["evidence_sha256"] = _sha(record)
+        sink.emit(record)
+        raise
+    record["evidence_sha256"] = _sha(record)
+    sink.emit(record)
+    return record
