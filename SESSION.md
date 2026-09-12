@@ -1,5 +1,19 @@
 # 当前协作状态
 
+## Authority-root materialization/binding design v0.1（2026-09-12，IN_PROGRESS）
+
+- 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_binding_design_v0.1.md`，严格承接 controlled-execution v0.2 的既有顺序，不新增横向 provenance Gate。只冻结 docs-only authority root 构造/核验/binding；未创建 selection/config JSON 或 authority commit/ref，未运行项目代码或真实 I/O/GPU/训练。
+- 设计冻结 exact canonical selection/config raw-byte contract、materialization formal root 作为唯一 parent、full tree exact two-path delta 与完整 mode/type/OID 继承、固定 `100644/blob`、非循环字段、detached candidate、固定一次性 CAS ref `refs/heads/authority/r09-b-ttt-v035-immutable-source-v1`、独立 verifier 和 reviewed 七字段 tuple。V2/review/ledger head 不得替代 authority parent/root。
+- 后续仍需独立三方批准本设计；批准只允许 root-only materializer/verifier CPU/static implementation design，不授权 materialize/source read/collection/receipt/publication/child/GPU/训练。验证：`git diff --check` PASS；纯文档未运行测试。预计本阶段仅修改该设计、SESSION、TODO；提交前确认训练/他人遗留不纳入。未提交。
+
+## 两 HIGH 复审第 12 轮推进令牌 / CPU-static closure（2026-09-12 11:48:23 CST）
+
+- formal root=`d281d6f3079602632000b1576c47fd4546de22e6`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
+- before_head=`06a2de8f1b0f914d65746222ddac725f9e2631c3`；fetch 后 advertised V2 与 origin/V2=`931b8bf7251b55b9541e2bc5d767b155376393f7`，新增提交依次为 `19ca98b0 review: approve d281d6f CPU static executor remediation`、`931b8bf7 docs: publish ChatGPT approval for d281d6f pair`；祖先检查成功并 ff-only 到 advertised SHA。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_d281d6f_93a89ba.md`，完整 pair 一致，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC`，blockers=0。Kimi、MM 本轮独立 capture 同样含完整 pair 与相同 final。
+- 三方同 pair final 全部批准，形成仅限本 CPU/static implementation Gate 的推进令牌；两项 HIGH 均关闭。本令牌不授权真实 authority-root materialization、source I/O、collection/receipt/source-evidence/publication、child、GPU 或训练。
+- 按 controlled-execution v0.2 已冻结顺序，下一步仅认领既有闭环中的 authority-root materialization/binding docs-only design；不得横向新增 provenance Gate。未提交。
+
 ## 两 HIGH 复审第 11 轮观察（2026-09-12 11:44:09 CST）
 
 - formal root=`d281d6f3079602632000b1576c47fd4546de22e6`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。
