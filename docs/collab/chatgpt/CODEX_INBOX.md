@@ -573,3 +573,17 @@ v0.6只关闭“post-unlink finalizer exception”遗漏。authority把整个fin
 - 验收：两模块unittest=36/36 PASS；`py_compile`、`git diff --check` PASS。覆盖one-shot commit、pre/post-unlink outcome、exact CAS lease/foreign保留、Evidence v1 ABI/digest/failure rows、guard/cleanup fail-stop。
 
 请求完整 exact pair 唯一 final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。仅审CPU/static implementation；不授权真实JSON/candidate/ref/origin/source/collection/child/runtime/checkpoint/data/cache、CUDA/GPU、训练、评测或推理。
+
+## 审核申请：Authority Root Real Adapter CPU/static implementation remediation（2026-09-12）
+
+- formal root SHA：`64db875135addac644c96d0028ab5c08a1dddf54`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- 前轮结论：`166e5f5f6470bcc7c77f8c3326914e1281e922b6`/同child三方final已齐；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_cpu_static_implementation_166e5f5_93a89ba.md`提出4 HIGH，Kimi提出F401，MM批准。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+整改范围仍严格限于批准的四个root文件及正常记账。新增实际CLI argv surface：两个regular FD的raw-SHA与canonical preflight，formal-root完整tree/Gitlink、adapter/authority module blob+raw、Python/Git absolute path+raw+version、双端fixed ref absent均在candidate object/ref mutation前验证；随后唯一调用既有`prepare_candidate→verify_candidate→publish_candidate`。CAS要求本次Git命令成功和fresh post-observation；remote还要求`--porcelain`中有本次`*`创建或`-`删除，从而拒绝same-candidate up-to-date与concurrent-delete误归因。commit-tree使用显式冻结author/committer/date/message；Evidence v1拒绝primary=`rollback`与ordinary FAIL secondary rollback。
+
+证据：`python -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root`=`44/44 PASS`；四文件`py_compile` PASS；Ruff=`All checks passed!`；`git diff --check` PASS。CLI tests仅使用temporary working repository与local bare remote，覆盖CLI PASS、raw/canonical/formal-root/Gitlink/module/tool/ref drift pre-mutation rejection、local/remote same-candidate create与concurrent-delete races、冻结metadata不受ambient Git config/time影响。
+
+请求完整exact pair唯一final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。本申请不授权真实JSON/candidate/ref/origin/source/collection、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
