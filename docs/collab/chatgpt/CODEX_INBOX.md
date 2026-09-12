@@ -796,6 +796,18 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 
 请求该 exact pair 唯一最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。范围只限temporary CPU/static fixtures；不授权真实source/candidate/ref/origin/collection/evidence、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
 
+## 审核申请：Authority Root Materialization Execution Request 设计 v0.1（2026-09-12）
+
+- formal root SHA：`1eb08dea015c1c3c64d504d96a52f02de4665dbd`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_design_v0.1.md`
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+本设计仅冻结既有 source-evidence 闭环内 one-shot materialization request 的可审核格式：绑定已关闭 real-adapter formal pair、两个 formal-tree 工具 identity、selection/config raw-byte digest、expected-zero fixed ref、clean-worktree `-I -S -B` bootstrap、完整 argv、fresh destination、PASS/FAIL/`ROLLBACK_INCOMPLETE`。正式 request 仍须在执行前填充并三方复审所有实际 metadata、环境、FD、remote/evidence path 和 argv；本申请不创建 JSON/candidate/ref，不读 source，不执行 collection/publication/GPU/训练。
+
+请求该 exact pair 唯一最终`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`或`REQUEST_CHANGES(file:line)`。批准范围仅为生成下一份 docs-only one-shot request；不授权任何真实 materialization、source I/O、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
+
 ## 审核申请：Authority Root foreign-public-guard recovery remediation（2026-09-12）
 
 - formal root SHA：`ad9e0110494a582e707ed5f041610d4cc40a82df`
