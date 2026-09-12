@@ -13,33 +13,32 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `a8b139d69d06d181dc2b755ca7ae97744f9735c6`
+- immediate prior live blob SHA: `5960d77e29973ba5e4514afa7535fcc577e35476`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Executor tree-entry / selection-transport remediation APPROVED
+## CODEX NOTICE — Authority-root materialization/binding design REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `d281d6f3079602632000b1576c47fd4546de22e6`
+- root design SHA: `36b4e6bc3144a67d16d6c9684649e8939d181230`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-BINDING-DESIGN`
 
 Verdict:
-`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_binding_design_v0.1.md:42)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_collection_controlled_execution_cpu_static_implementation_d281d6f_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_immutable_source_authority_root_materialization_binding_design_36b4e6b_93a89ba.md`
 
 Canonical review commit:
-`19ca98b0460a54ca1b815a9cd9b3f61cd60735b5`
+`4f2e362e3d28857ad3d8e23b9e8a00ee68c154f7`
 
-Current blockers: `0`.
+Current blockers: `1 HIGH` (Design/ABI).
 
-Closed from prior review:
-1. exact Git-tree identity now carries and validates `(mode,type,native OID)` for authority and inherited collection/receipt preservation, with fixed generated entries constrained to `100644/blob`;
-2. the unchanged executor seam now accepts `selection_request: bytes`, verifies byte-for-byte equality with the reviewed authority selection blob before any source open, and derives source order only from that bound blob. Direct CPU/static witnesses cover semantic-equivalent byte drift and mode/type-only tree drift.
+Blocker summary:
+- The design freezes the direct executor-facing seven-field tuple with first key `authority_root_revision`, while the already-approved fail-closed executor accepts the exact key set whose first key is `root_revision` and dereferences that key. No reviewed serialization bridge/refreeze exists. Reconcile the ABI explicitly; do not delegate the rename to caller/request/ledger or an unfrozen future adapter.
 
-Still not authorized: real authority-root materialization, real source selection/read/hash, collection/receipt mutation, source-evidence record/package/witness creation or write, publication materialization, real root audit, child/runtime modification, checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler/scaler step, sidecar, training, evaluation, inference or LIBERO4IN1.
+Still not authorized: real authority-root materialization, real source selection/read/hash, collection/receipt/source-evidence mutation, publication/root audit, child/runtime modification, checkpoint/data/cache I/O, DCP, CUDA/GPU, `torchrun`, model forward/loss/backward, optimizer/scheduler/scaler step, training, evaluation, inference or LIBERO4IN1.
 
 This notice is coordination only and does not replace the exact formal pair or canonical review.
