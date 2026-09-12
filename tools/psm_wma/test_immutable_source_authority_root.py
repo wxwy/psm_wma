@@ -344,6 +344,39 @@ class AuthorityRootTest(unittest.TestCase):
         self.assertNotIn(AUTHORITY_REF, self.git.local)
         self.assertNotIn(AUTHORITY_REF, self.git.remote)
 
+    def test_unsealed_or_duplicate_seal_commit_rolls_back(self):
+        for operation in ("unsealed", "duplicate_seal"):
+            with self.subTest(operation=operation):
+                candidate, binding = self.candidate()
+
+                def finalizer(_witness, commit, kind=operation):
+                    if kind == "unsealed":
+                        commit.consume_by_unlink()
+                    else:
+                        commit.seal_for_guard(lambda: None)
+                        commit.seal_for_guard(lambda: None)
+
+                with self.assertRaises(AuthorityRootError):
+                    publish_candidate(
+                        self.request, candidate, binding, self.git, finalizer=finalizer
+                    )
+                self.assertNotIn(AUTHORITY_REF, self.git.local)
+                self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
+    def test_replayed_commit_after_unlink_preserves_refs(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(_witness, commit):
+            commit.seal_for_guard(lambda: None)
+            commit.consume_by_unlink()
+            commit.consume_by_unlink()
+
+        with self.assertRaises(PostCommitFinalizerError) as raised:
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertIsInstance(raised.exception.__cause__, AuthorityRootError)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+
     def test_all_typed_boundaries_reject_copy_and_pickle(self):
         candidate, binding = self.candidate()
         witness = publish_candidate(self.request, candidate, binding, self.git)
