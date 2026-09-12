@@ -808,6 +808,19 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 
 请求该 exact pair 唯一最终`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST`或`REQUEST_CHANGES(file:line)`。批准范围仅为生成下一份 docs-only one-shot request；不授权任何真实 materialization、source I/O、child/runtime、CUDA/GPU、训练、评测、推理或LIBERO4IN1。
 
+## 审核申请：Authority Root One-shot Materialization Execution Request v0.1（2026-09-12）
+
+- formal root SHA：`d3cd3c9b26cea021814c9f48bcd864183a811293`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
+- 请求：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.1.md`
+- 前轮三方final：`1eb08dea...` ChatGPT=2 HIGH，MM/Kimi approve；本次不再引入 request-design Gate。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+这就是唯一实际 one-shot request：冻结 formal parent/Gitlink、selection/config、Python/Git、clean worktree/index/evidence和fixed ref；在任何项目 import 前将完整 transitive closure（adapter、authority、collection、audit）按regular/non-symlink、raw SHA、formal-tree blob三重验证。实际执行仍须三方同pair批准；不创建 JSON/candidate/ref，不读source，不执行collection/GPU/训练。
+
+请求唯一最终`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`。
+
 ## 审核申请：Authority Root foreign-public-guard recovery remediation（2026-09-12）
 
 - formal root SHA：`ad9e0110494a582e707ed5f041610d4cc40a82df`
