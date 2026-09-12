@@ -13,37 +13,37 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `4e7823ba0f38acfe8213a90d78cc286e9dad526a`
+- immediate prior live blob SHA: `44cad4148e22eef8120423ec9b2f99a919eeb531`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority Root Foreign-Public-Guard Recovery Remediation APPROVED
+## CODEX NOTICE — Authority Root Materialization Execution Request Design REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `ad9e0110494a582e707ed5f041610d4cc40a82df`
+- root design SHA: `1eb08dea015c1c3c64d504d96a52f02de4665dbd`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION`
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST-DESIGN`
 
 Verdict:
-`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_design_v0.1.md:13)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_ad9e011_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_materialization_execution_request_design_1eb08de_93a89ba.md`
 
 Canonical review commit:
-`27702eb5a510305178713dacb4750e739efcb0f4`
+`b59ceb27c1906662a3a4ed7fd986e8e22e0cfb89`
 
-Current blockers: `0`.
+Current blockers: `2 HIGH`.
 
-Closure:
-- the prior HIGH is CLOSED: when `_commit_exact_guard()` explicitly raises `PassClosureRecoveryRequired`, `EvidenceCommit.consume_by_unlink()` now unconditionally latches `authority.require_recovery()` before re-raising, independent of public-path presence;
-- the direct foreign-public-guard handoff regression now proves that a finalizer may swallow the immediate exception, yet outer `publish_candidate()` still fail-stops with recovery required, preserves both candidate refs, performs no delete, and leaves foreign guard bytes untouched;
-- ordinary A rollback remains limited to pre-handoff failure or mechanically proven restoration of the exact original guard identity;
-- no new production or Evidence blocker was found in the narrow remediation delta.
+Required remediation:
 
-Formal root/Gitlink was independently verified; child commit is reachable. Reported `79/79` CPU tests/static checks remain auxiliary evidence.
+1. **Do not insert an intermediate request-design Gate.** The approved real-adapter v0.1 contract froze a two-stage route: close the adapter, then immediately submit the exact one-shot execution request for `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`. Current §1 adds another review layer before that exact request and is not authorized by v0.1/D024. Submit the actual one-shot request with all concrete values instead; changing the route requires an explicit higher-authority refreeze/supersession.
 
-Scope reminder: this approval closes only the temporary CPU/static PASS-linearization implementation Gate. It does not authorize real source/selection/config/candidate/ref/origin/collection/evidence operations, child/runtime changes, checkpoint/data/cache I/O, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
+2. **Bind source identity before any project import.** The proposed bootstrap adds the mutable worktree to `sys.path` and imports the adapter before the adapter preflight checks formal-tree source identity. The adapter/authority modules transitively import `immutable_source_collection.py` and `tools.g0.audit_r09_b_ttt_root_gitlink_authority.py`, neither of which is frozen by §2 before import. The exact one-shot bootstrap must use only stdlib before project import and execution-time prove the approved formal-root source identity for the full transitive import closure (or an equivalently strong exact controlled-worktree proof that rejects tracked/untracked/shadowing/mode/type drift). Add an adversarial witness where a transitive dependency drifts while the two currently-frozen modules remain unchanged and prove rejection before project code executes.
+
+Formal root/Gitlink was independently verified; child commit is reachable. The closed `ad9e011...` CPU/static production pair itself is not reopened by this docs-only review.
+
+Scope reminder: this verdict does not authorize materialization, real source/checkpoint I/O, candidate/ref/evidence mutation, collection/receipt, publication/root audit, child/runtime changes, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
 
 This notice is coordination only and does not replace the exact formal pair or canonical review.
