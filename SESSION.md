@@ -2572,3 +2572,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal=`ad9e0110494a582e707ed5f041610d4cc40a82df`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT申请已 append 并由 ledger=`7e919e8fabc3ca7393b05a3fdced7aa6517fe50b` 推送（ledger非formal target）。冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
 - MM/Kimi均以完整文本→间隔至少1秒→独立Enter发送；随后 capture：MM `mm:0.0` 显示新申请并进入处理，Kimi `kimi:0.0` 显示新申请且输入框为空。三方正式 verdict 尚待按同一 exact pair回收；三分钟后开始第1轮远端锁定检查。
+
+### foreign-public-guard recovery remediation 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`ad9e0110494a582e707ed5f041610d4cc40a82df`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before=4ba3536d06cb4959992504439776a6d2117dc45a`，fetch成功；advertised/origin=`1a55e8999f1a921548f0958ff25991412828ca07`一致；新增提交=`27702eb5 review: approve ad9e011 PASS linearization remediation`、`1a55e899 chatgpt: record approval for ad9e011 PASS remediation`；祖先检查成功并已`merge --ff-only`至`1a55e899...`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_ad9e011_93a89ba.md`，final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`；MM `mm:0.0` capture 同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`；Kimi `kimi:0.0` capture 同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。冻结名册三方同pair全批准，形成仅关闭本temporary CPU/static Gate的推进令牌。
+
+### foreign-public-guard recovery remediation 关闭（2026-09-12 CST，DONE）
+
+- `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-CPU-STATIC-IMPLEMENTATION` 已由 `ad9e011.../93a89ba...` 三方全批准关闭。最终实现只处理foreign public guard后的sticky recovery；79/79 CPU/static、py_compile、Ruff与diff-check已PASS。未运行或授权真实source/candidate/ref/evidence、child/runtime、GPU、训练、评测、推理或LIBERO4IN1。
+- 后续依D024不得横向新增provenance Gate；进入已定义的 single-GPU TTT smoke 设计阶段，先冻结真实 optimizer/scaler、1 batch GPU和20--100 step边界的设计与独立三方审核，未获该新Gate批准前不得执行。
