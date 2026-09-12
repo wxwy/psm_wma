@@ -2715,3 +2715,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root execution-authority implementation closure 审核观察凭证 #6（2026-09-12 22:26:50 CST，REVIEW）
 
 - formal/child及冻结名册不变；`before=c81ed755ef62e8d506b29137a0b56b39ca482971`；fetch成功；advertised/origin/local-after均为`c81ed755ef62e8d506b29137a0b56b39ca482971`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact-pair检索仍无匹配；MM/Kimi capture均保持same-pair最终批准。无推进令牌，保持REVIEW。
+
+### Bootstrap common-config identity remediation 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- 冻结 formal pair=`817191c91ae8c8eb7e1a66f15055d2286d0b76c4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。本轮 `before=825c1664e39ce9802130865bbe9744c24c13edc6`；`git fetch origin V2`成功；`git ls-remote` advertised、`origin/V2`均为`bca8c0cbb917eda240ffc6512adeee70bacdfd84`；新增提交为`35aa349a`、`bca8c0cb`；祖先检查成功，`git merge --ff-only origin/V2`已快进，local-after=`bca8c0cbb917eda240ffc6512adeee70bacdfd84`。
+- ChatGPT exact-pair正式 review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_817191c_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:177)`；MM capture 给出该 exact pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`；Kimi capture 给出该 exact pair final=`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:181)`。三方 final 已齐，推进令牌仅授权汇总共同整改：实际 linked-worktree `git_dir/config.worktree`、经 `commondir` 绑定且受 root containment 限制的 common dir、每个 Git observation 前后 config identity/bytes 重验，以及对应直接 isolated-bootstrap 对抗 witness。禁止真实 materialization/source/ref/evidence、child、GPU、训练。
+
+### Bootstrap linked-worktree/config-observation remediation（2026-09-12，IN_PROGRESS）
+
+- 基于上述同轮推进令牌，仅修改 `tools/psm_wma/materialize_immutable_source_authority_root.py` 与其既有 stdlib 测试：linked `.git` marker 通过 no-follow FD 读取；`git_dir/gitdir` 回指必须精确绑定该 marker，`git_dir/commondir` 通过 no-follow FD 解析，且 `git_dir` 必须是该 common dir 的后代；实际 per-worktree `git_dir/config.worktree` 缺失才可继续。`grun()` 每次 native Git 观测前后均对 common config 的 pathname identity 与 retained-FD bytes 重验。
+- 新增 direct isolated-bootstrap temporary-fixture 负例：实际 detached linked worktree 的 `config.worktree`、伪造 gitdir escape，以及 wrapper 在 Git precheck 后替换 common config。定向 `55/55`、组合 root stdlib `100/100`、两文件 `py_compile`、`git diff --check` 均 PASS；不执行真实 materialization/source/ref/evidence、child、GPU、数据或训练。下一步：更新待办、提交并推送该最小整改，重新对新 formal SHA 三方审核。提交：未提交。

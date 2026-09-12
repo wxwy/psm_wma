@@ -571,6 +571,15 @@ class NativeAuthorityGitTest(unittest.TestCase):
         ]
         return git, root, remote, selection_path, config_path, argv
 
+    @staticmethod
+    def _relocate_bootstrap_argv(argv, root: Path, destination: Path):
+        source = str(root)
+        target = str(destination)
+        return [
+            target + value[len(source):] if value.startswith(source) else value
+            for value in argv
+        ]
+
     def test_cli_preflight_then_authority_flow_uses_only_temporary_git(self):
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
@@ -699,6 +708,97 @@ class NativeAuthorityGitTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
             (root / ".git/config.worktree").write_text("[core]\n fsmonitor = /bin/false\n")
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "evidence.json").exists(), result.stderr)
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_common_config_symlink_before_git_or_import(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            config_path = root / ".git/config"
+            target = root.parent / "foreign-config"
+            target.write_bytes(config_path.read_bytes())
+            config_path.unlink()
+            config_path.symlink_to(target)
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "evidence.json").exists(), result.stderr)
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_linked_worktree_config_before_git_or_import(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            linked = root.parent / "linked"
+            subprocess.run(
+                [str(git), "-C", str(root), "worktree", "add", "--detach", "-q", str(linked), "HEAD"],
+                check=True,
+            )
+            marker = (linked / ".git").read_text().strip()
+            self.assertTrue(marker.startswith("gitdir: "))
+            git_dir = Path(marker[8:])
+            if not git_dir.is_absolute():
+                git_dir = (linked / git_dir).resolve()
+            (git_dir / "config.worktree").write_text("[core]\n fsmonitor = /bin/false\n")
+            linked_argv = self._relocate_bootstrap_argv(argv, root, linked)
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(
+                    linked, selection_handle, config_handle, linked_argv
+                )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((linked / "evidence.json").exists(), result.stderr)
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_linked_worktree_gitdir_escape_before_import(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            linked = root.parent / "linked"
+            subprocess.run(
+                [str(git), "-C", str(root), "worktree", "add", "--detach", "-q", str(linked), "HEAD"],
+                check=True,
+            )
+            foreign = root.parent / "foreign-admin"
+            foreign.mkdir()
+            (foreign / "gitdir").write_text(str(root.parent / "not-linked"))
+            (foreign / "commondir").write_text(str(root / ".git"))
+            (linked / ".git").write_text(f"gitdir: {foreign}\n")
+            linked_argv = self._relocate_bootstrap_argv(argv, root, linked)
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(
+                    linked, selection_handle, config_handle, linked_argv
+                )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((linked / "evidence.json").exists(), result.stderr)
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_config_replacement_after_git_precheck(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            config_path = root / ".git/config"
+            replacement = root.parent / "replacement-config"
+            replacement.write_bytes(config_path.read_bytes())
+            wrapper = root.parent / "git-replaces-config"
+            wrapper.write_text(
+                "#!" + str(Path(sys.executable).resolve()) + "\n"
+                "import os, sys\n"
+                f"replacement = {str(replacement)!r}\n"
+                f"config = {str(config_path)!r}\n"
+                f"git = {str(git)!r}\n"
+                "if sys.argv[1:] != ['--version'] and os.path.exists(replacement):\n"
+                "    os.replace(replacement, config)\n"
+                "os.execv(git, [git, *sys.argv[1:]])\n"
+            )
+            wrapper.chmod(0o755)
+            position = argv.index("--git")
+            argv[position + 1] = str(wrapper)
+            argv[argv.index("--git-raw-sha256") + 1] = hashlib.sha256(wrapper.read_bytes()).hexdigest()
+            argv[argv.index("--git-version") + 1] = _tool_version(wrapper)
             with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
                 result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
             self.assertNotEqual(result.returncode, 0)
