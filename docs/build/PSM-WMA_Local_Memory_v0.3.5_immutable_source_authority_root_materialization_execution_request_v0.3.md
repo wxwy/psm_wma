@@ -20,6 +20,17 @@ formal parent=`9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`、Gitlink=
 CAS，并写唯一 canonical evidence。启动不得使用 shell、PATH、remote alias、stdin、caller mapping、
 ambient environment、credential/proxy、额外 FD 或 argv。
 
+launcher 的固定 pre-adapter 顺序：以 annex frozen Git/env 对 clean root 做 no-follow absent
+check；以 detached formal parent 创建该 exact clean worktree；在其内创建三个 exclusive regular
+non-symlink backing objects，写入并复读已冻结 selection/config/contract bytes；以
+`O_RDONLY|O_NOFOLLOW|O_CLOEXEC` 打开并绑定 FD 3/4/5，关闭其余 inherited FD；最终以 frozen
+Python、bootstrap raw、literal `--`、actual argv 和六键 launcher env 进行 `execve`。不得引入新值。
+
+adapter 获控制权前，launcher 对其创建的 worktree/admin metadata 与 backing objects 负 ownership。
+任一 pre-adapter failure 仅可删除 identity 未漂移的自有对象并移除自有 worktree，随后重新证明 clean
+root/backing paths均 absent；不能证明则终态 `ROLLBACK_INCOMPLETE`，不得尝试 ref/materialization。
+adapter 控制后 candidate/ref/evidence rollback 仍只由 frozen adapter state machine 负责。
+
 执行前必须重新验证 clean root/index/evidence/.pending freshness、formal tree/Gitlink、四模块/
 interpreter/Git identity、selection/config/contract bytes、两种 environment、FD no-follow regular-file
 contract、routing authority及 local/remote ref expected-zero。任一漂移均为零 mutation FAIL。
