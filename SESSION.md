@@ -2612,3 +2612,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依`1eb08dea...`三方final，仅新增实际 request `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.1.md`，不再引入中间 Gate。它将H1的下一审核对象改为 one-shot `APPROVE_TO_MATERIALIZE`，并将H2的pre-import closure扩展至 adapter、authority、collection、audit 四个项目模块，要求在项目 import 前逐项 regular/non-symlink、raw SHA和formal-tree blob三重核验。
 - 此步骤仍为docs-only：未创建clean worktree/input JSON/index/evidence/candidate/ref，未打开source、执行collection或GPU/训练；待`git diff --check`后提交并对新的exact pair三方审核。提交：未提交。
+
+### Authority-root one-shot materialization request 送达回执（2026-09-12 CST，REVIEW）
+
+- formal=`d3cd3c9b26cea021814c9f48bcd864183a811293`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT申请已append并由ledger=`e70f394d`推送。冻结名册为ChatGPT reviews、MM `mm:0.0`、Kimi `kimi:0.0`；MM/Kimi已按完整文本→1秒→独立Enter发送并capture确认。三分钟后执行首轮完整回收。
