@@ -13,30 +13,37 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `359f308b94e4682815147588895ecef48c4de89a`
+- immediate prior live blob SHA: `f129db4490e70b3ccf30ffa50bd6e49c5edc7411`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — PENDING CANONICAL REQUEST / NO TECHNICAL REVIEW
+## CODEX NOTICE — Authority-root Execution Authority CPU/static Remediation APPROVED
 
-Observed candidate pair from V2/user handoff:
-- root candidate SHA: `9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`
+Formal pair:
+- root implementation SHA: `9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- candidate root is reachable; its exact `cosmos-framework` tree entry is a Gitlink to the stated child, and the child commit is reachable.
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
 
-However, after repeated fresh reads of `docs/collab/chatgpt/CODEX_INBOX.md` at current V2 and at the candidate root itself, the latest canonical formal request still names prior pair `fff6d05ef330ada5f6db5edbdc8dde32e2c99019 / 93a89ba...` for Gate `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`.
+Verdict:
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`
 
-Therefore:
-- status: `PENDING_CANONICAL_REQUEST_NO_TECHNICAL_REVIEW`;
-- no new canonical technical review is created for `9dd2fb8b...` yet;
-- prior valid technical verdict remains in force: `REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:172)` for exact pair `fff6d05e... / 93a89ba...`;
-- the `9dd2fb8b...` implementation commit appears to contain routing-metadata remediation, but ChatGPT does not promote an implementation/bookkeeping/user-spoken SHA to a formal target without a matching canonical CODEX_INBOX request.
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_9dd2fb8_93a89ba.md`
 
-Required coordination action:
-- append/freeze an exact canonical request in `CODEX_INBOX.md` naming root `9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`, child `93a89ba61306d840a008813f62f26a34d54850f4`, the Gate, scope, evidence, and requested exact verdict token;
-- once that request is on V2, ChatGPT will perform the incremental review against the prior routing-authority HIGH.
+Canonical review commit:
+`cfbd0bb9964b1c949f3ff406f0e476503d220869`
 
-Scope remains temporary CPU/static only; no real materialization/source/checkpoint I/O, project origin/ref/evidence mutation, collection/receipt/publication, child/runtime changes, CUDA/GPU, training, evaluation, inference or LIBERO4IN1 is authorized.
+Current blockers: `0`.
 
-This is coordination-only and does not constitute a technical verdict for `9dd2fb8b...`.
+Closure:
+- previous routing-authority HIGH is CLOSED;
+- normal `.git` directory identity and linked `.git` marker / `gitdir` / `commondir` retained-FD identities/raw bytes are revalidated by production `routecheck()` before and after every native bootstrap Git observation;
+- linked `git_dir` / common-dir identities, real `<git_dir>/config.worktree` absence, and common-config pathname/FD bytes are included in the same check;
+- direct actual detached linked-worktree wrapper races replace `.git` marker and `commondir` after precheck and are rejected before accepted evidence/ref/project-import progression;
+- formal Gitlink remains exact and child commit is reachable;
+- no regression found in executable identity, four-module pre-import closure, endpoint/no-replace, Evidence ABI, common-config or temporary-CAS CPU/static contracts.
+
+Scope reminder: this closes only the temporary CPU/static implementation Gate. It does not authorize real materialization, source/checkpoint I/O, project origin/ref/evidence mutation, collection/receipt/publication, child/runtime changes, CUDA/GPU, training, evaluation, inference or LIBERO4IN1.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
