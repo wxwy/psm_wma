@@ -2819,3 +2819,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 基于同pair三方final仅作docs整改，新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.2.md`，显式supersede v0.1；冻结selection/config raw JSON、sanitized-env canonical JSON和digest、FD=3/4/5、candidate metadata、bootstrap extraction identity/length/digest与complete argv tuple/digest。后续execution request只可复现，不得引入新runtime字段。
 - `git diff --check` PASS；未执行project module、未创建任何真实输入/worktree/index/candidate/ref/evidence，未访问source/checkpoint、child、GPU或训练。下一步：提交推送该docs-only新formal SHA，并以新pair重新发起三方审核。
+
+### Authority-root execution snapshot annex v0.2 审核送达回执（2026-09-12 CST，REVIEW）
+
+- formal=`81f7526881dc4f93cf03da13988e2b74dda7d0de`/child=`93a89ba61306d840a008813f62f26a34d54850f4`，已推送且远端 advertised 同为该formal root。canonical Inbox在118848 bytes基础上append八行，不触发128KiB rollover；ChatGPT正式结论仍只认`reviews/` exact pair。
+- MM `mm:0.0` 与 Kimi `kimi:0.0` 均执行完整消息写入→至少1秒→独立Enter→capture：文本已离开输入框，MM进入处理，Kimi显示已收到新pair。冻结名册不变。三分钟后必须先完整远端锁定，再收回三方结论；在此之前禁止任何materialization或真实I/O。
