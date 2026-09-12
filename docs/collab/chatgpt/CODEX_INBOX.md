@@ -997,3 +997,10 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - formal root：`17767c0c52cb2e5856a9c98baf29f520ce27fc5b`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
 - 相对`3b67d317...`仅整改ChatGPT HIGH：冻结launcher pre-adapter worktree/backing-object/FD/execve顺序及其ownership cleanup/`ROLLBACK_INCOMPLETE`语义；仍不执行。
 - 请求：`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` 或 `REQUEST_CHANGES(file:line)`；禁止source I/O、collection、child、GPU、训练。
+
+## 审核申请：Authority-root launcher procedure v0.4（2026-09-13）
+
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`；formal root：`11950c953d7c3e781f821ab648d45af83e60d340`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.4.md` 与 replacement request v0.4。相对`17767c0...`仅按三方 final（ChatGPT/Kimi request changes、MM approve）补齐同 Gate launcher authority：2,144-byte canonical procedure descriptor（SHA-256=`4de774a525b183261b7e89b7351ffe605e1fc21f0461897732e18a5bab0709c4`）、absolute frozen Git worktree add/remove argv/env、三份 backing path/identity/fsync/re-read、FD 3/4/5 dup2/seek/CLOEXEC/close set、从 v0.3 bootstrap observation 派生的 final execve，以及 pre-adapter cleanup/reproof。
+- 标准库 descriptor JSON/digest/字段断言与`git diff --check` PASS；仅docs/ledger。禁止任何materialization、source/checkpoint I/O、JSON/worktree/index/candidate/ref/evidence、collection/receipt/publication/root audit、child、GPU、训练、评测、推理及LIBERO4IN1。
+- 请求唯一 final：`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` 或 `REQUEST_CHANGES(file:line)`；请完整声明 exact root/child，重点核对 launcher 是否已无 post-approval authority-bearing choice。
