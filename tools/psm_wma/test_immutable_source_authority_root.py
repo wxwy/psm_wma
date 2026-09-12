@@ -292,6 +292,58 @@ class AuthorityRootTest(unittest.TestCase):
         self.assertNotIn(AUTHORITY_REF, self.git.local)
         self.assertNotIn(AUTHORITY_REF, self.git.remote)
 
+    def test_committed_finalizer_ordinary_returns_preserve_refs(self):
+        for returned in (None, object(), {"ignored": True}):
+            with self.subTest(returned=type(returned).__name__):
+                candidate, binding = self.candidate()
+
+                def finalizer(_witness, commit, result=returned):
+                    commit.seal_for_guard(lambda: None)
+                    commit.consume_by_unlink()
+                    return result
+
+                witness = publish_candidate(
+                    self.request, candidate, binding, self.git, finalizer=finalizer
+                )
+                self.assertEqual(witness.revision, candidate.revision)
+                self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+                self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+                self.git.local.clear()
+                self.git.remote.clear()
+
+    def test_committed_custom_base_exception_preserves_refs(self):
+        class Cancellation(BaseException):
+            pass
+
+        candidate, binding = self.candidate()
+
+        def finalizer(_witness, commit):
+            commit.seal_for_guard(lambda: None)
+            commit.consume_by_unlink()
+            raise Cancellation("after commit")
+
+        with self.assertRaises(PostCommitFinalizerError) as raised:
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertIsInstance(raised.exception.__cause__, Cancellation)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+
+    def test_precommit_finalizer_base_exception_rolls_back(self):
+        class Cancellation(BaseException):
+            pass
+
+        candidate, binding = self.candidate()
+        with self.assertRaises(Cancellation):
+            publish_candidate(
+                self.request,
+                candidate,
+                binding,
+                self.git,
+                finalizer=lambda _witness, _commit: (_ for _ in ()).throw(Cancellation()),
+            )
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
     def test_all_typed_boundaries_reject_copy_and_pickle(self):
         candidate, binding = self.candidate()
         witness = publish_candidate(self.request, candidate, binding, self.git)
