@@ -677,6 +677,58 @@ class NativeAuthorityGitTest(unittest.TestCase):
             with self.assertRaisesRegex(NativeGitError, "config.worktree"):
                 transaction.verify_configuration_authority()
 
+    def test_common_config_authority_rejects_symlink_and_git_view_drift(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            config_path = root / ".git/config"
+            config_raw = config_path.read_bytes()
+            escape = root / "escape-config"
+            escape.write_bytes(config_raw)
+            config_path.unlink()
+            config_path.symlink_to(escape)
+            with self.assertRaisesRegex(NativeGitError, "non-symlink"):
+                transaction.verify_configuration_authority()
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            original = transaction._run_bytes
+            def drift(*args, **kwargs):
+                if args[:1] == ("config",):
+                    return b"core.bare\nfalse\0"
+                return original(*args, **kwargs)
+            with patch.object(transaction, "_run_bytes", side_effect=drift):
+                with self.assertRaisesRegex(NativeGitError, "raw/Git view"):
+                    transaction.verify_configuration_authority()
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            config_path = root / ".git/config"
+            original_raw = config_path.read_bytes()
+            original = transaction._run_bytes
+            def replace_after_view(*args, **kwargs):
+                value = original(*args, **kwargs)
+                if args[:1] == ("config",):
+                    config_path.unlink()
+                    config_path.write_bytes(original_raw)
+                return value
+            with patch.object(transaction, "_run_bytes", side_effect=replace_after_view):
+                with self.assertRaisesRegex(NativeGitError, "bytes 在Git view期间漂移"):
+                    transaction.verify_configuration_authority()
+
+    def test_linked_worktree_common_config_rejects_forbidden_remote(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            linked = root.parent / "linked"
+            subprocess.run([str(git), "-C", str(root), "worktree", "add", "--detach", "-q", str(linked), "HEAD"], check=True)
+            (root / ".git/config").write_text(
+                (root / ".git/config").read_text()
+                + "\n[remote \"origin\"]\n url = https://example.invalid/rewrite\n"
+            )
+            transaction = NativeAuthorityGit(git, linked, str(remote), linked / "read.index", COMMIT_METADATA)
+            with self.assertRaises(NativeGitError):
+                transaction.verify_configuration_authority()
+
     def test_cli_preflight_rejects_input_and_identity_drift_before_mutation(self):
         cases = (
             ("--selection-raw-sha256", "0" * 64),

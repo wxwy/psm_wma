@@ -1458,10 +1458,16 @@ class NativeAuthorityGit:
         if worktree_config.exists() or worktree_config.is_symlink():
             raise NativeGitError("worktree config.worktree 必须absent")
         raw = _read_regular_path(config_path)
+        config_identity = _path_identity(config_path)
         allowlist = _parse_config_raw(raw, self.cwd)
         git_view = _parse_git_config_output(
             self._run_bytes("config", "--no-includes", "--local", "--null", "--list")
         )
+        if (
+            _path_identity(config_path) != config_identity
+            or _read_regular_path(config_path) != raw
+        ):
+            raise NativeGitError("common config bytes 在Git view期间漂移")
         if git_view != allowlist:
             raise NativeGitError("common config raw/Git view 漂移")
         if allowlist.get("extensions.worktreeconfig") not in (None, "false"):
