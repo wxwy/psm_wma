@@ -916,5 +916,11 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 前条 `aa48efebfcd54767e43c9156d3d0ce8301ddf9c4` 仅为 SESSION 送达记录，非实现 formal root，作废。
 - 正确 formal root：`5efcbdf8954f65da9c7dfd1d0f34c96204c5ddf6`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。该 root 的父提交 `08de3f89` 同属本整改序列；审核范围为 `cc36db3a..5efcbdf8` 的两项 root tooling/test 修改。
 - 请求：仅对正确 pair 回复 `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`；禁止真实 I/O、child、GPU、训练。
+
+## 审核申请：Bootstrap executable/worktreeConfig remediation closure
+
+- formal root：`a564e953aadc646daeed66e46115ecdb614e80b8`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 整改 ChatGPT 两项 HIGH：项目 import 前验证 interpreter/Git regular、non-symlink、raw SHA 与 version；bootstrap 禁止 `extensions.worktreeConfig=true`；新增 version/path/hash 与 worktreeConfig isolated-bootstrap 拒绝 witnesses。
+- 证据：50/50 CPU unittest、py_compile、diff-check PASS。请求 `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`；禁止真实 I/O、child、GPU、训练。
 - 证据：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`92/92 PASS`；py_compile、Ruff、diff-check PASS。只使用temporary repo/local bare remote；不含真实source/materialization、child、GPU、训练。
 - 请求：仅对exact pair回复`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。
