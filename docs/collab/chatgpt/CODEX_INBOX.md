@@ -535,3 +535,16 @@ v0.3 仅整改 evidence transaction 合同：allowlist从两文件扩至 authori
 v0.4 把guard成功`unlink`定义为 writer visibility、sealed EvidenceCommit与authority transaction共同的唯一PASS linearization；所有fallible fsync/re-read/validator均留在guard存在的pre-commit阶段，unlink后禁止异常回流rollback。failure改为exact primary/rollback双字段；rollback-required仅允许verified authority/candidate与concrete pre-observation，并按四个primary origin冻结ownership与终态。
 
 请求完整pair唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。仅授权四文件temporary CPU/static implementation/tests；不授权真实JSON/candidate/ref/origin/source/collection/GPU/训练。
+
+## 审核申请：Authority Root Real Adapter设计 v0.5整改（2026-09-12）
+
+- formal root SHA：`066de7052310dc889074632981cc3cdec880ab41`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-EXECUTION-REQUEST-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.5.md`
+- 证据：前轮 ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_be833f8_93a89ba.md`；该 pair 三方 final 已齐（ChatGPT 2 HIGH，MM/Kimi批准）；`git diff --check` PASS。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+
+v0.5逐项整改前轮两项 HIGH。第一项：authority在finalizer前创建并预验证同activation的opaque `PublicationWitness`/`EvidenceCommit`；所有identity/type/token/replay/seal检查在guard存在时完成；`consume_by_unlink()`是唯一one-shot消费操作；authority仅作total state dispatch，unlink后任何callback-return/report异常统一为preserve-refs `POST_COMMIT_CAPABILITY_VIOLATION`，绝不回到rollback。第二项：将`rollback.required`严格定义为owned delete需求，并新增`entered`表达无owned的恢复/终态证明；完整冻结`pre_publication`、`local_cas`、`remote_cas`、`post_publication`、`binding_reverify`、`evidence_write`的真实可达矩阵，收紧post_publication为local/remote六bit均true。新增针对callback坏返回、foreign/unreadable、lost-race与impossible evidence的CPU/static验收。
+
+请核验两项 HIGH 是否关闭，并给完整 exact pair 的唯一 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。本申请仅请求 v0.3 四个root文件的temporary CPU/static implementation及temporary local bare-remote tests；不授权真实JSON/candidate/ref/origin/source/collection、child/runtime、checkpoint/data/cache、CUDA/GPU、训练、评测或推理。
