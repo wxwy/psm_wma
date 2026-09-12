@@ -2773,3 +2773,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root materialization request v0.2 送达回执（2026-09-12 CST，REVIEW）
 
 - canonical Inbox 已append；MM `mm:0.0`与Kimi `kimi:0.0`均已完整文本→至少1秒→独立`C-m`→capture，消息离开输入框并开始核验。ChatGPT申请以Inbox为送达，正式结果只认`reviews/` exact pair。下一轮三分钟后完整远端锁定回收；期间禁止materialization。
+
+### Authority-root materialization request v0.2 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`cfdd2fc79142b500910613759d316b283bfe372a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before/advertised/origin/local-after=02d5216b08b0833f1312276be9254091b130c5e6`；fetch成功、新增范围为空、祖先检查成功且`merge --ff-only`=`Already up to date`。
+- ChatGPT exact-pair正式review未找到；MM `mm:0.0` capture已给same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT`；Kimi `kimi:0.0` capture显示已完成pair/范围/文档读取并在重算四模块identity，尚未给final。无推进令牌，保持REVIEW，禁止生成snapshot annex或真实materialization；三分钟后重新完整锁定。
