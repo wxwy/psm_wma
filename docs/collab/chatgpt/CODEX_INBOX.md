@@ -1033,3 +1033,9 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 证据：payload `py_compile` PASS；inline inputs为`516/8fe458...`、`508/43b3b...`、`2427/72777...`；payload raw=`15756`、SHA-256=`fb73f934cacf72931353e64fd89d7f5b18c2d18d4e660cc899650ab06ca084fd`；`git diff --check` PASS；temporary-only same/different FD handoff PASS。未运行payload main，未创建真实worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未改child/GPU/训练。
 - 禁止：materialization、source/checkpoint I/O、JSON/worktree/index/candidate/ref/evidence、collection/receipt/publication/root audit、child、CUDA/GPU、训练、评测、推理及LIBERO4IN1。
 - 请求唯一 final：`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`；请完整声明 exact root/child。
+
+## 审核申请：Authority-root launcher v0.7 static closure（2026-09-13）
+
+- formal root：`bf852c233b2c2e31eb33dc859188a9a4b41c50df`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 仅审v0.7 payload/annex/request及temporary witness：`commondir` fail-closed、path/0600 identity、first-add `ROLLBACK_INCOMPLETE`、临时native-Git add/remove。payload=`16524` bytes / `0fd25fbf20f6d458b3cc6c41caabe4fe6fd476197d320a6049356d45f7f7b0fd`；CPU/native=6/6、py_compile、diff-check PASS。
+- 禁止真实materialization/source/checkpoint I/O、child、GPU、训练。请回复`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`。

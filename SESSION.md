@@ -3118,3 +3118,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 增加真实临时 Git repo 的 `commondir` insertion witness；v0.7 witness现为5/5 PASS，仍仅临时目录，未调用payload `main()`。
 - 新增临时 Git 实际`worktree add --detach`/`remove --force` witness，并在每条Git命令前后调用payload的`check_route`；6/6 PASS。修正payload Git identity读取句柄关闭；`py_compile`和`git diff --check` PASS。仍未调用payload `main()`或真实路径。
 - v0.7 final payload raw=`16524` bytes、SHA-256=`0fd25fbf20f6d458b3cc6c41caabe4fe6fd476197d320a6049356d45f7f7b0fd`已冻结进annex；下一步将此annex更新和前述payload/witness提交为单一新formal root，三方审核仅限docs-only launcher/static witness，不申请真实materialization。
+
+### Authority-root launcher v0.7 审核申请名册（2026-09-13，REVIEW）
+
+- formal=`bf852c233b2c2e31eb33dc859188a9a4b41c50df`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。live Inbox append后=`129760 < 131072` bytes，未触发rollover；仅审static closure，不运行payload且不请求真实materialization。
