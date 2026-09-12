@@ -389,3 +389,17 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 证据为 formal tree 的 `tools/psm_wma/immutable_source_collection.py`、对应 unittest、SESSION。标准库 unittest 32/32 PASS；两文件临时目录 py_compile PASS；git diff --check PASS。无真实 source/checkpoint/cache I/O、authority/collection/receipt/publication、child、GPU 或训练。
 
 请求 final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明 exact pair，逐项核验上述两 acceptance。不请求真实执行授权，不新增横向 provenance Gate；ChatGPT 正式结果仅写 reviews/。三方 final 齐后才合并整改或推进。
+
+## 审核申请：Immutable Source Authority Root Materialization/Binding 设计 v0.1（2026-09-12）
+
+- formal root SHA：`36b4e6bc3144a67d16d6c9684649e8939d181230`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-BINDING-DESIGN`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_binding_design_v0.1.md`
+
+前置 CPU/static executor formal `d281d6f3079602632000b1576c47fd4546de22e6` 已获 ChatGPT/MM/Kimi 同 pair批准并关闭。本申请仅承接 controlled-execution v0.2 已冻结的 authority-root materialization/binding 步骤，不新增横向 provenance Gate。
+
+请重点审核：selection/config exact canonical raw bytes 与 schema；materialization formal root 作为唯一 parent；相对 parent 恰好两 fixed `100644/blob` path 的 full `(mode,type,OID)` delta 与 Gitlink/继承项保持；authority payload无自引用；candidate 不推进 V2；固定 `refs/heads/authority/r09-b-ttt-v035-immutable-source-v1` expected-zero CAS；独立 verifier 不信任自报 tuple；三方 review 明示绑定七字段 tuple，collection executor source-open 前重算全部字段与远端 ref。
+
+批准仅允许下一步 root-only materializer/verifier CPU/static implementation design。当前不创建 selection/config JSON、authority commit/ref，不执行 source I/O、collection/receipt/source-evidence/publication、child、GPU或训练。请给唯一 final：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_MATERIALIZATION_BINDING_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；完整声明 exact pair。ChatGPT 正式回复仅写 `docs/collab/chatgpt/reviews/`。

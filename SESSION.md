@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root design v0.1 复审准备（2026-09-12）
+
+- formal root=`36b4e6bc3144a67d16d6c9684649e8939d181230` 已推送；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。formal diff仅新设计、SESSION、TODO；`git diff --check` PASS，未运行项目测试（docs-only）。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。请求仅审核 authority-root materialization/binding 设计，不请求真实 materialization/source I/O/GPU/训练。
+- live Inbox 追加前45004 bytes、追加后46816 bytes，未达128KiB；申请完整声明 pair、设计、验收、允许/禁止范围与唯一 verdict。下一步先提交推送 ledger，再逐 pane 按文本→至少1秒→Enter→capture送达；本段不提前声明送达。未提交。
+
 ## Authority-root materialization/binding design v0.1（2026-09-12，IN_PROGRESS）
 
 - 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_binding_design_v0.1.md`，严格承接 controlled-execution v0.2 的既有顺序，不新增横向 provenance Gate。只冻结 docs-only authority root 构造/核验/binding；未创建 selection/config JSON 或 authority commit/ref，未运行项目代码或真实 I/O/GPU/训练。
