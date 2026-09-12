@@ -51,6 +51,15 @@ class RollbackOutcome:
     complete: bool
 
 
+@dataclass(frozen=True)
+class PublicationFailure:
+    phase: str
+    error: BaseException
+    local_created: bool
+    remote_created: bool
+    rollback: RollbackOutcome | None
+
+
 class EvidenceCleanupIncomplete(AuthorityRootError):
     """A writer cannot prove that pre-commit evidence cleanup completed."""
 
@@ -507,6 +516,7 @@ def publish_candidate(
     git: AuthorityGitTransaction,
     *,
     finalizer: Callable[[PublicationWitness, EvidenceCommit], object] | None = None,
+    failure_reporter: Callable[[PublicationFailure], None] | None = None,
 ) -> PublicationWitness:
     if (
         binding._request is not request
@@ -522,19 +532,24 @@ def publish_candidate(
     local_created = remote_created = False
     witness: PublicationWitness | None = None
     post_commit_error: BaseException | None = None
+    phase = "pre_publication"
     try:
         local_before, remote_before = _observe_refs(git)
         if local_before is not None or remote_before is not None:
             raise AuthorityRootError("fixed ref 必须预先absent")
+        phase = "local_cas"
         if not git.cas_create_local(AUTHORITY_REF, revision):
             raise AuthorityRootError("local CAS conflict")
         local_created = True
+        phase = "remote_cas"
         if not git.cas_create_remote(AUTHORITY_REF, revision):
             raise AuthorityRootError("remote CAS conflict")
         remote_created = True
+        phase = "post_publication"
         local_after, remote_after = _observe_refs(git)
         if local_after != revision or remote_after != revision:
             raise AuthorityRootError("post-CAS ref drift")
+        phase = "binding_reverify"
         if verify_candidate(request, candidate, git).as_mapping() != expected:
             raise AuthorityRootError("committed binding drift")
         witness = PublicationWitness(
@@ -542,6 +557,7 @@ def publish_candidate(
         )
         if finalizer is None:
             return witness
+        phase = "evidence_write"
         commit = EvidenceCommit(witness, _CAPABILITY_TOKEN)
         callback_error: BaseException | None = None
         try:
@@ -552,10 +568,20 @@ def publish_candidate(
             raise _PreCommitFinalizerError(callback_error)
         post_commit_error = callback_error
     except Exception as error:
+        outcome: RollbackOutcome | None = None
         try:
-            _rollback(git, revision, local_created, remote_created)
-        except RollbackIncomplete:
+            outcome = _rollback(git, revision, local_created, remote_created)
+        except RollbackIncomplete as rollback_error:
+            outcome = rollback_error.outcome
+            if failure_reporter is not None:
+                failure_reporter(PublicationFailure(
+                    phase, error, local_created, remote_created, outcome
+                ))
             raise
+        if failure_reporter is not None:
+            failure_reporter(PublicationFailure(
+                phase, error, local_created, remote_created, outcome
+            ))
         callback_error = (
             error.callback_error
             if isinstance(error, _PreCommitFinalizerError)

@@ -558,8 +558,15 @@ class AuthorityRootTest(unittest.TestCase):
                 git.remote[AUTHORITY_REF] = foreign
 
         self.git.hook = hook
+        reports = []
         with self.assertRaises(RollbackIncomplete) as raised:
-            publish_candidate(self.request, candidate, binding, self.git)
+            publish_candidate(
+                self.request, candidate, binding, self.git,
+                failure_reporter=reports.append,
+            )
+        self.assertEqual(len(reports), 1)
+        self.assertEqual(reports[0].phase, "remote_cas")
+        self.assertIs(reports[0].rollback, raised.exception.outcome)
         self.assertTrue(raised.exception.outcome.entered)
         self.assertTrue(raised.exception.outcome.required)
         self.assertEqual(raised.exception.outcome.final_remote, foreign)
