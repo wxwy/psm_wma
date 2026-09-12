@@ -2689,3 +2689,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Execution-authority v0.2 审核观察（2026-09-12，三方final齐）
 
 - 正确pair=`e69d78c02bd946d44a3a00e455668e83a639917c`/`93a89ba61306d840a008813f62f26a34d54850f4`：ChatGPT review=`2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_implementation_design_e69d78c_93a89ba.md` final REQUEST_CHANGES（HIGH：未冻结local-config完整allowlist/值约束或typed config digest/allowlist ABI，且Git-dir config路径解析与accepted/rejected direct witness未定义）；MM/Kimi同pair批准。推进令牌仅允许v0.3 docs-only补齐该合同；禁止实现。
+
+### Authority-root execution-authority implementation closure 审核观察凭证 #1（2026-09-12 22:16:37 CST，REVIEW）
+
+- formal=`aa48efebfcd54767e43c9156d3d0ce8301ddf9c4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已由live Inbox ledger=`a9b2c18efca1b145fc7f532499aac5d8665bacfc`推送；MM/Kimi均已按完整文本→间隔至少1秒→独立Enter投递，capture确认MM同pair已final、Kimi开始复核且输入框为空。
+- `before=a9b2c18efca1b145fc7f532499aac5d8665bacfc`；`git fetch origin V2`成功；advertised/origin/local-after均为`a9b2c18efca1b145fc7f532499aac5d8665bacfc`；新增范围为空；祖先检查成功且`merge --ff-only`=`Already up to date`。ChatGPT exact-pair检索无匹配；MM capture same-pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`；Kimi capture显示正在核验整改diff，尚无same-pair final。无推进令牌，保持REVIEW；禁止整改、真实materialization、child、GPU与训练。
