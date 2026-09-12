@@ -907,6 +907,18 @@ def verify_evidence_path(path: Path) -> Mapping[str, object]:
         return verify_evidence_bytes(raw)
 
 
+def classify_pass_restart(path: Path) -> str:
+    """Classify only the safe restart branch; never reconstruct acceptance from paths."""
+    guard = path.with_name(path.name + ".pending")
+    if guard.exists() or guard.is_symlink():
+        return "PENDING_GUARD_VISIBLE"
+    try:
+        verify_evidence_path(path)
+    except NativeGitError as error:
+        raise NativeGitError("PASS_CLOSURE_RECOVERY_REQUIRED") from error
+    raise NativeGitError("PASS_CLOSURE_RECOVERY_REQUIRED")
+
+
 def _fsync_directory(directory: Path) -> None:
     descriptor = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
     try:

@@ -19,6 +19,8 @@ from tools.psm_wma.immutable_source_authority_root import (
     AuthorityCandidate,
     EvidenceCleanupIncomplete,
     EvidenceCommit,
+    _ACCEPTED_TERMINAL_STATE,
+    _PENDING_TERMINAL_STATE,
     _commit_exact_guard,
     _evidence_guard_lock,
     AuthorityRequest,
@@ -169,9 +171,13 @@ class AuthorityRootTest(unittest.TestCase):
         candidate = prepare_candidate(self.request, self.git)
         return candidate, verify_candidate(self.request, candidate, self.git)
 
+    def _accepted_finalizer(self, witness, commit):
+        self._seal_commit(witness, commit)
+        commit.consume_by_unlink()
+
     def test_prepare_verify_and_publish(self):
         candidate, binding = self.candidate()
-        result = publish_candidate(self.request, candidate, binding, self.git)
+        result = publish_candidate(self.request, candidate, binding, self.git, finalizer=self._accepted_finalizer)
         self.assertEqual(result.revision, candidate.revision)
         self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
         self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
@@ -281,7 +287,7 @@ class AuthorityRootTest(unittest.TestCase):
             AuthorityBinding(self.request, candidate, binding.as_mapping(), object())
         with self.assertRaises(TypeError):
             binding._mapping["root_revision"] = "f" * 40
-        publish_candidate(self.request, candidate, binding, self.git)
+        publish_candidate(self.request, candidate, binding, self.git, finalizer=self._accepted_finalizer)
         with self.assertRaises(AuthorityRootError):
             publish_candidate(self.request, candidate, binding, self.git)
 
@@ -328,6 +334,25 @@ class AuthorityRootTest(unittest.TestCase):
             )
         self.assertNotIn(AUTHORITY_REF, self.git.local)
         self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
+    def test_terminal_states_and_accepted_pass_are_immutable_and_private(self):
+        with self.assertRaises(Exception):
+            _PENDING_TERMINAL_STATE.accepted = True
+        with self.assertRaises(Exception):
+            _ACCEPTED_TERMINAL_STATE.preserve_refs = False
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            accepted_pass = commit._accepted_pass
+            for operation in (lambda: copy(accepted_pass), lambda: pickle.dumps(accepted_pass)):
+                with self.assertRaises(AuthorityRootError):
+                    operation()
+            with self.assertRaises(AuthorityRootError):
+                accepted_pass.consume(witness)
+            self._seal_commit(witness, commit)
+            commit.consume_by_unlink()
+
+        publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
 
     def test_stale_commit_cannot_seal_current_activation_guard(self):
         stale: list[tuple[object, EvidenceCommit]] = []
@@ -394,6 +419,27 @@ class AuthorityRootTest(unittest.TestCase):
         publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
         self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
         self.assertEqual(self.git.remote[AUTHORITY_REF], foreign)
+
+    def test_guard_transition_interruptions_remain_pending_and_rollback(self):
+        class Cancellation(BaseException):
+            pass
+
+        for error in (OSError("ordinary"), Cancellation("base")):
+            with self.subTest(error=type(error).__name__):
+                candidate, binding = self.candidate()
+
+                def finalizer(witness, commit, raised=error):
+                    self._seal_commit(witness, commit)
+                    with patch(
+                        "tools.psm_wma.immutable_source_authority_root._commit_exact_guard",
+                        side_effect=raised,
+                    ):
+                        commit.consume_by_unlink()
+
+                with self.assertRaises(type(error)):
+                    publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+                self.assertNotIn(AUTHORITY_REF, self.git.local)
+                self.assertNotIn(AUTHORITY_REF, self.git.remote)
 
     def test_guard_replacement_cannot_commit_or_delete_foreign_guard(self):
         candidate, binding = self.candidate()
@@ -688,7 +734,7 @@ class AuthorityRootTest(unittest.TestCase):
 
     def test_all_typed_boundaries_reject_copy_and_pickle(self):
         candidate, binding = self.candidate()
-        witness = publish_candidate(self.request, candidate, binding, self.git)
+        witness = publish_candidate(self.request, candidate, binding, self.git, finalizer=self._accepted_finalizer)
         for value in (self.request, candidate, witness):
             with self.subTest(kind=type(value).__name__):
                 with self.assertRaises(AuthorityRootError):
@@ -698,7 +744,7 @@ class AuthorityRootTest(unittest.TestCase):
 
     def test_verifier_mapping_enters_real_collection_executor(self):
         candidate, binding = self.candidate()
-        publish_candidate(self.request, candidate, binding, self.git)
+        publish_candidate(self.request, candidate, binding, self.git, finalizer=self._accepted_finalizer)
         authority = binding.as_mapping()
         base = "b" * 40
         lineage = {
@@ -796,6 +842,7 @@ class AuthorityRootTest(unittest.TestCase):
         with self.assertRaises(RollbackIncomplete) as raised:
             publish_candidate(
                 self.request, candidate, binding, self.git,
+                finalizer=self._accepted_finalizer,
                 failure_reporter=reports.append,
             )
         self.assertEqual(len(reports), 1)
@@ -827,7 +874,7 @@ class AuthorityRootTest(unittest.TestCase):
         binding = verify_candidate(request, candidate, git)
         reports = []
         with self.assertRaises(RollbackIncomplete):
-            publish_candidate(request, candidate, binding, git, failure_reporter=reports.append)
+            publish_candidate(request, candidate, binding, git, finalizer=self._accepted_finalizer, failure_reporter=reports.append)
         self.assertEqual(git.events[-2:], ["read_local", "read_remote"])
         self.assertEqual(len(reports), 1)
         self.assertEqual(reports[0].phase, "pre_publication")
@@ -860,7 +907,7 @@ class AuthorityRootTest(unittest.TestCase):
         binding = verify_candidate(request, candidate, git)
         reports = []
         with self.assertRaises(RollbackIncomplete):
-            publish_candidate(request, candidate, binding, git, failure_reporter=reports.append)
+            publish_candidate(request, candidate, binding, git, finalizer=self._accepted_finalizer, failure_reporter=reports.append)
         self.assertEqual(len(reports), 1)
         self.assertEqual(reports[0].phase, "post_publication")
         self.assertEqual(reports[0].post_remote_error, "OSERROR")
@@ -882,7 +929,7 @@ class AuthorityRootTest(unittest.TestCase):
 
             git.hook = hook
             with self.subTest(endpoint=endpoint), self.assertRaises(RollbackIncomplete):
-                publish_candidate(request, candidate, binding, git)
+                publish_candidate(request, candidate, binding, git, finalizer=self._accepted_finalizer)
             self.assertEqual(getattr(git, endpoint)[AUTHORITY_REF], foreign)
 
     def test_rollback_time_drift_preserves_foreign(self):
@@ -897,7 +944,7 @@ class AuthorityRootTest(unittest.TestCase):
 
         self.git.hook = hook
         with self.assertRaises(RollbackIncomplete):
-            publish_candidate(self.request, candidate, binding, self.git)
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=self._accepted_finalizer)
         self.assertEqual(self.git.remote[AUTHORITY_REF], foreign)
         self.assertNotIn(AUTHORITY_REF, self.git.local)
 

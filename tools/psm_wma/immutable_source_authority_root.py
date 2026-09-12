@@ -260,21 +260,12 @@ class _FinalizerActivation:
         self.active = True
 
 
+@dataclass(frozen=True)
 class _AuthorityTerminalState:
-    __slots__ = ("accepted", "rollback_enabled", "preserve_refs", "witness_returnable")
-
-    def __init__(
-        self,
-        *,
-        accepted: bool,
-        rollback_enabled: bool,
-        preserve_refs: bool,
-        witness_returnable: bool,
-    ) -> None:
-        self.accepted = accepted
-        self.rollback_enabled = rollback_enabled
-        self.preserve_refs = preserve_refs
-        self.witness_returnable = witness_returnable
+    accepted: bool
+    rollback_enabled: bool
+    preserve_refs: bool
+    witness_returnable: bool
 
 
 _PENDING_TERMINAL_STATE = _AuthorityTerminalState(
@@ -296,6 +287,26 @@ class _AuthorityTerminalCell:
 
     def __init__(self) -> None:
         self.state = _PENDING_TERMINAL_STATE
+
+
+class _AcceptedPass(_NonSerializable):
+    __slots__ = ("_witness", "_activation", "_terminal", "_token")
+
+    def __init__(self, witness: "PublicationWitness", token: object) -> None:
+        if token is not _CAPABILITY_TOKEN:
+            raise AuthorityRootError("accepted pass 不可重建")
+        self._witness = witness
+        self._activation = witness._activation
+        self._terminal = witness._terminal
+        self._token = token
+
+    def consume(self, witness: "PublicationWitness") -> None:
+        if (
+            witness is not self._witness
+            or not self._activation.active
+            or not self._terminal.state.accepted
+        ):
+            raise AuthorityRootError("accepted pass 无效")
 
 
 class PublicationWitness(_NonSerializable):
@@ -334,12 +345,14 @@ class EvidenceCommit(_NonSerializable):
         self,
         witness: PublicationWitness,
         pre_unlink: Callable[[], None],
+        accepted_pass: _AcceptedPass,
         token: object,
     ) -> None:
         if token is not _CAPABILITY_TOKEN:
             raise AuthorityRootError("evidence commit 不可重建")
         self._witness, self._activation = witness, witness._activation
         self._terminal, self._token = witness._terminal, token
+        self._accepted_pass = accepted_pass
         self._sealed = False
         self._guard: Path | None = None
         self._evidence_path: Path | None = None
@@ -459,6 +472,7 @@ class EvidenceCommit(_NonSerializable):
             if not _commit_exact_guard(self._guard, self._guard_identity):
                 raise AuthorityRootError("evidence commit guard identity 漂移")
             self._terminal.state = _ACCEPTED_TERMINAL_STATE
+            self._accepted_pass.consume(self._witness)
 
 
 class PostCommitFinalizerError(AuthorityRootError):
@@ -705,6 +719,8 @@ def publish_candidate(
         or binding._used
     ):
         raise AuthorityRootError("verified capability identity/replay失败")
+    if finalizer is None:
+        raise AuthorityRootError("publication 必须提供accepted pass finalizer")
     binding._used = True
     expected = verify_candidate(request, candidate, git).as_mapping()
     if binding.as_mapping() != expected:
@@ -750,8 +766,6 @@ def publish_candidate(
         witness = PublicationWitness(
             revision, request, candidate, binding, activation, terminal, _CAPABILITY_TOKEN
         )
-        if finalizer is None:
-            return witness
         phase = "evidence_write"
         def pre_unlink() -> None:
             local, remote, local_error, remote_error = _observe_refs(git)
@@ -761,7 +775,8 @@ def publish_candidate(
             ):
                 raise AuthorityRootError("evidence commit fixed ref drift")
 
-        commit = EvidenceCommit(witness, pre_unlink, _CAPABILITY_TOKEN)
+        accepted_pass = _AcceptedPass(witness, _CAPABILITY_TOKEN)
+        commit = EvidenceCommit(witness, pre_unlink, accepted_pass, _CAPABILITY_TOKEN)
         callback_error: BaseException | None = None
         try:
             finalizer(witness, commit)

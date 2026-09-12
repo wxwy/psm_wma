@@ -23,6 +23,7 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     _tool_version,
     verify_evidence_bytes,
     verify_evidence_path,
+    classify_pass_restart,
     write_pending_evidence,
     write_failure_evidence,
     _read_input_fd,
@@ -242,6 +243,17 @@ def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
 
 
 class NativeAuthorityGitTest(unittest.TestCase):
+    def test_pass_restart_never_reconstructs_acceptance_from_evidence(self):
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "evidence.json"
+            guard = path.with_name(path.name + ".pending")
+            guard.write_bytes(b"pending")
+            self.assertEqual(classify_pass_restart(path), "PENDING_GUARD_VISIBLE")
+            guard.unlink()
+            path.write_bytes(_redigest(_pass_evidence()))
+            with self.assertRaisesRegex(NativeGitError, "PASS_CLOSURE_RECOVERY_REQUIRED"):
+                classify_pass_restart(path)
+
     def test_cleanup_preserves_replaced_foreign_path(self):
         with tempfile.TemporaryDirectory() as raw:
             directory = Path(raw)
