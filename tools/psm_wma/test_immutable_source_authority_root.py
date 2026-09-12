@@ -391,7 +391,6 @@ class AuthorityRootTest(unittest.TestCase):
 
     def test_accepted_pass_binds_evidence_binding_and_final_ref_witness(self):
         for field, value in (
-            ("_binding_sha256", "0" * 64),
             ("_evidence_identity", (0, 0)),
             ("_evidence_sha256", "0" * 64),
             ("_record_sha256", "0" * 64),
@@ -411,6 +410,49 @@ class AuthorityRootTest(unittest.TestCase):
                     )
                 self.git.local.clear()
                 self.git.remote.clear()
+
+    def test_callback_cannot_replace_authority_ref_observer_or_binding_source(self):
+        candidate, binding = self.candidate()
+        foreign = "f" * 40
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            self.git.remote[AUTHORITY_REF] = foreign
+            with self.assertRaises(AttributeError):
+                commit._pre_unlink = lambda: (candidate.revision, candidate.revision)
+            with self.assertRaises(AttributeError):
+                commit._binding_sha256 = "0" * 64
+            with self.assertRaises(AttributeError):
+                witness._binding = object()
+            with self.assertRaises(AuthorityRootError):
+                commit.consume_by_unlink()
+            self.assertTrue(guard.exists())
+
+        with self.assertRaises(RollbackIncomplete):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], foreign)
+
+    def test_b_window_recovery_is_sticky_when_callback_swallows_exception(self):
+        class Cancellation(BaseException):
+            pass
+
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            self._seal_commit(witness, commit)
+            with patch(
+                "tools.psm_wma.immutable_source_authority_root._accept_terminal",
+                side_effect=Cancellation("B window"),
+            ):
+                with self.assertRaises(PassClosureRecoveryRequired):
+                    commit.consume_by_unlink()
+
+        with self.assertRaises(PassClosureRecoveryRequired):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertEqual(self.git.local[AUTHORITY_REF], candidate.revision)
+        self.assertEqual(self.git.remote[AUTHORITY_REF], candidate.revision)
+        self.assertNotIn("delete_local", self.git.events)
+        self.assertNotIn("delete_remote", self.git.events)
 
     def test_b_window_after_guard_transition_is_recovery_not_rollback(self):
         class Cancellation(BaseException):

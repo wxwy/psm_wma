@@ -320,15 +320,70 @@ def _accept_terminal(key: object, token: object) -> None:
         raise AuthorityRootError("authority terminal 不可用") from error
 
 
-class _AcceptedPass(_NonSerializable):
-    __slots__ = ("__witness", "__activation", "__terminal_key", "__facts", "__token")
+class _AcceptanceAuthority(_NonSerializable):
+    __slots__ = (
+        "__witness", "__activation", "__terminal_key", "__revision",
+        "__binding_sha256", "__pre_unlink", "__recovery_required",
+    )
 
-    def __init__(self, witness: "PublicationWitness", token: object) -> None:
+    def __init__(
+        self,
+        witness: "PublicationWitness",
+        binding_sha256: str,
+        pre_unlink: Callable[[], tuple[str, str]],
+        token: object,
+    ) -> None:
+        if token is not _CAPABILITY_TOKEN:
+            raise AuthorityRootError("acceptance authority 不可重建")
+        object.__setattr__(self, "_AcceptanceAuthority__witness", witness)
+        object.__setattr__(self, "_AcceptanceAuthority__activation", witness._activation)
+        object.__setattr__(self, "_AcceptanceAuthority__terminal_key", witness._terminal_key)
+        object.__setattr__(self, "_AcceptanceAuthority__revision", witness.revision)
+        object.__setattr__(self, "_AcceptanceAuthority__binding_sha256", binding_sha256)
+        object.__setattr__(self, "_AcceptanceAuthority__pre_unlink", pre_unlink)
+        object.__setattr__(self, "_AcceptanceAuthority__recovery_required", False)
+
+    def __setattr__(self, _name: str, _value: object) -> None:
+        raise AttributeError("acceptance authority 不可改写")
+
+    def require(self, witness: "PublicationWitness") -> None:
+        if (
+            witness is not self.__witness
+            or witness._activation is not self.__activation
+            or witness._terminal_key is not self.__terminal_key
+            or not self.__activation.active
+        ):
+            raise AuthorityRootError("acceptance authority 无效")
+
+    @property
+    def revision(self) -> str:
+        return self.__revision
+
+    @property
+    def binding_sha256(self) -> str:
+        return self.__binding_sha256
+
+    def observe_final_refs(self) -> tuple[str, str]:
+        try:
+            return self.__pre_unlink()
+        except Exception as error:
+            raise AuthorityRootError("evidence commit fixed ref 漂移") from error
+
+    def require_recovery(self) -> None:
+        object.__setattr__(self, "_AcceptanceAuthority__recovery_required", True)
+
+    @property
+    def recovery_required(self) -> bool:
+        return self.__recovery_required
+
+
+class _AcceptedPass(_NonSerializable):
+    __slots__ = ("__authority", "__facts", "__token")
+
+    def __init__(self, authority: _AcceptanceAuthority, token: object) -> None:
         if token is not _CAPABILITY_TOKEN:
             raise AuthorityRootError("accepted pass 不可重建")
-        object.__setattr__(self, "_AcceptedPass__witness", witness)
-        object.__setattr__(self, "_AcceptedPass__activation", witness._activation)
-        object.__setattr__(self, "_AcceptedPass__terminal_key", witness._terminal_key)
+        object.__setattr__(self, "_AcceptedPass__authority", authority)
         object.__setattr__(self, "_AcceptedPass__facts", None)
         object.__setattr__(self, "_AcceptedPass__token", token)
 
@@ -337,7 +392,7 @@ class _AcceptedPass(_NonSerializable):
 
     def bind(
         self,
-        witness: "PublicationWitness",
+        authority: _AcceptanceAuthority,
         candidate_revision: str,
         binding_sha256: str,
         evidence_identity: tuple[int, int],
@@ -346,18 +401,12 @@ class _AcceptedPass(_NonSerializable):
         final_ref_witness: tuple[str, str],
         token: object,
     ) -> None:
-        expected_binding = hashlib.sha256(
-            canonical_json_bytes(witness._binding.as_mapping())
-        ).hexdigest()
         if (
             self.__facts is not None
             or token is not self.__token
-            or witness is not self.__witness
-            or witness._activation is not self.__activation
-            or witness._terminal_key is not self.__terminal_key
-            or not self.__activation.active
-            or candidate_revision != witness.revision
-            or binding_sha256 != expected_binding
+            or authority is not self.__authority
+            or candidate_revision != authority.revision
+            or binding_sha256 != authority.binding_sha256
             or not all(isinstance(value, int) for value in evidence_identity)
             or not all(
                 isinstance(value, str)
@@ -375,14 +424,11 @@ class _AcceptedPass(_NonSerializable):
 
     def consume(self, witness: "PublicationWitness") -> None:
         if (
-            witness is not self.__witness
-            or witness._activation is not self.__activation
-            or witness._terminal_key is not self.__terminal_key
-            or not self.__activation.active
-            or not _terminal_state(self.__terminal_key).accepted
+            _terminal_state(witness._terminal_key).accepted is False
             or self.__facts is None
         ):
             raise AuthorityRootError("accepted pass 无效")
+        self.__authority.require(witness)
 
 
 class PublicationWitness(_NonSerializable):
@@ -410,7 +456,9 @@ class PublicationWitness(_NonSerializable):
         self._token = token
 
     def __setattr__(self, name: str, value: object) -> None:
-        if name in {"_activation", "_terminal_key", "_token"} and hasattr(self, name):
+        if name in {
+            "revision", "_candidate", "_binding", "_activation", "_terminal_key", "_token",
+        } and hasattr(self, name):
             raise AttributeError("publication witness authority binding不可改写")
         object.__setattr__(self, name, value)
 
@@ -419,13 +467,12 @@ class EvidenceCommit(_NonSerializable):
     __slots__ = (
         "_witness", "_activation", "_terminal_key", "_sealed", "_guard",
         "_evidence_path", "_evidence_sha256", "_guard_identity",
-        "_evidence_identity", "_record_sha256", "_binding_sha256", "_pre_unlink", "_token",
+        "_evidence_identity", "_record_sha256", "_token",
     )
 
     def __init__(
         self,
         witness: PublicationWitness,
-        pre_unlink: Callable[[], None],
         token: object,
     ) -> None:
         if token is not _CAPABILITY_TOKEN:
@@ -439,10 +486,6 @@ class EvidenceCommit(_NonSerializable):
         self._guard_identity: tuple[int, int] | None = None
         self._evidence_identity: tuple[int, int] | None = None
         self._record_sha256: str | None = None
-        self._binding_sha256 = hashlib.sha256(
-            canonical_json_bytes(witness._binding.as_mapping())
-        ).hexdigest()
-        self._pre_unlink = pre_unlink
 
     def __setattr__(self, name: str, value: object) -> None:
         if name in {"_witness", "_activation", "_terminal_key", "_token"} and hasattr(self, name):
@@ -561,17 +604,16 @@ class EvidenceCommit(_NonSerializable):
                 or evidence_value.get("evidence_sha256") != self._evidence_sha256
             ):
                 raise AuthorityRootError("evidence commit evidence digest 漂移")
-            try:
-                final_ref_witness = self._pre_unlink()
-            except Exception as error:
-                raise AuthorityRootError("evidence commit fixed ref 漂移") from error
+            authority = _ACCEPTANCE_AUTHORITIES[self]
+            authority.require(self._witness)
+            final_ref_witness = authority.observe_final_refs()
             if not isinstance(final_ref_witness, tuple) or len(final_ref_witness) != 2:
                 raise AuthorityRootError("evidence commit fixed ref witness 无效")
             accepted_pass = _ACCEPTED_PASSES[self]
             accepted_pass.bind(
-                self._witness,
-                self._witness.revision,
-                self._binding_sha256,
+                authority,
+                authority.revision,
+                authority.binding_sha256,
                 self._evidence_identity,
                 self._evidence_sha256,
                 self._record_sha256,
@@ -582,6 +624,7 @@ class EvidenceCommit(_NonSerializable):
                 guard_committed = _commit_exact_guard(self._guard, self._guard_identity)
             except BaseException as error:
                 if not self._guard.exists() and not self._guard.is_symlink():
+                    authority.require_recovery()
                     raise PassClosureRecoveryRequired() from error
                 raise
             if not guard_committed:
@@ -589,11 +632,13 @@ class EvidenceCommit(_NonSerializable):
             try:
                 _accept_terminal(self._terminal_key, _CAPABILITY_TOKEN)
             except BaseException as error:
+                authority.require_recovery()
                 raise PassClosureRecoveryRequired() from error
             accepted_pass.consume(self._witness)
 
 
 _ACCEPTED_PASSES: dict[EvidenceCommit, _AcceptedPass] = {}
+_ACCEPTANCE_AUTHORITIES: dict[EvidenceCommit, _AcceptanceAuthority] = {}
 
 
 class PostCommitFinalizerError(AuthorityRootError):
@@ -905,9 +950,16 @@ def publish_candidate(
                 raise AuthorityRootError("evidence commit fixed ref drift")
             return local, remote
 
-        accepted_pass = _AcceptedPass(witness, _CAPABILITY_TOKEN)
-        commit = EvidenceCommit(witness, pre_unlink, _CAPABILITY_TOKEN)
+        binding_sha256 = hashlib.sha256(
+            canonical_json_bytes(binding.as_mapping())
+        ).hexdigest()
+        commit = EvidenceCommit(witness, _CAPABILITY_TOKEN)
+        authority = _AcceptanceAuthority(
+            witness, binding_sha256, pre_unlink, _CAPABILITY_TOKEN
+        )
+        accepted_pass = _AcceptedPass(authority, _CAPABILITY_TOKEN)
         _ACCEPTED_PASSES[commit] = accepted_pass
+        _ACCEPTANCE_AUTHORITIES[commit] = authority
         callback_error: BaseException | None = None
         try:
             finalizer(witness, commit)
@@ -915,6 +967,8 @@ def publish_candidate(
             callback_error = error
         finally:
             activation.active = False
+        if authority.recovery_required:
+            raise PassClosureRecoveryRequired()
         if not commit.committed:
             raise _PreCommitFinalizerError(callback_error)
         post_commit_error = callback_error

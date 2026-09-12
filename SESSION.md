@@ -2462,3 +2462,21 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 仅改批准的四个root tooling/test文件：`PublicationWitness`与`EvidenceCommit`的authority identity slots在初始化后不可改写；`_AcceptedPass`改为不可改写的私有identity/facts，且通过authority-private `_ACCEPTED_PASSES` registry取得，不再以`commit._accepted_pass`暴露给callback。stale accepted key无法rebind新commit。
 - `consume_by_unlink()`将`_commit_exact_guard()`置于B-window恢复边界：helper抛出`BaseException`后若guard已消失，立即稳定转换为`PASS_CLOSURE_RECOVERY_REQUIRED`，跳过ordinary rollback；guard仍存在则保持A窗口普通失败语义。
 - 新增stale terminal-key substitution与“真实helper完成durable guard移除后再抛BaseException”对抗回归。`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=76/76 PASS；四文件`py_compile`、Ruff、`git diff --check` PASS。未运行真实Git/source/candidate/ref/evidence、child、GPU或训练。下一步：更新TODO、提交/推送并对新formal SHA重审。提交：未提交。
+
+### PASS lifecycle identity/B-window remediation 审核观察凭证 #1（2026-09-12 CST，REVIEW）
+
+- formal=`074d0a0f036ac6a107a693a3b9903d17e2565e10`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。本轮`before/advertised/origin/local-after=b4b04da742afdf9e16cc9f1463c606c25e42f977`，fetch成功、范围为空、ff-only=`Already up to date`。
+- ChatGPT exact review检索无匹配，处理中；MM `mm:0.0` final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`；Kimi `kimi:0.0`同pair正式`APPROVE_TO_CLOSE...`，formal-tree复跑76/76 PASS。
+- ChatGPT final缺件，无推进令牌，禁止后续实现/执行/训练。本记录未提交。
+
+### PASS lifecycle identity/B-window remediation 审核观察凭证 #2（2026-09-12 CST，REVIEW）
+
+- formal=`074d0a0f036ac6a107a693a3b9903d17e2565e10`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before=b4b04da742afdf9e16cc9f1463c606c25e42f977`。`git fetch origin V2`成功，advertised/origin=`cc6253bc49df0061b0ce0c53d513d9fab85fb80a`，新增`b5346dcb`、`cc6253bc`，祖先检查成功并`merge --ff-only`至同一SHA。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_pass_linearization_cpu_static_implementation_074d0a0_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_authority_root.py:444)`，2 HIGH：callback仍可替换最终ref观察/绑定输入；B窗口recovery可被callback吞掉后落入ordinary rollback。Kimi `kimi:0.0`及MM `mm:0.0`均为same-pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_PASS_LINEARIZATION_CPU_STATIC_IMPLEMENTATION`。
+- 三方final已齐；推进令牌仅授权汇总ChatGPT两项HIGH，并在既批准的四个root tooling/test文件、temporary CPU/static范围内最小整改。未授权真实source/candidate/ref/evidence、child、GPU或训练。本记录未提交。
+
+### PASS lifecycle authority-input/sticky-B remediation（2026-09-12，IN_PROGRESS）
+
+- 针对`074d0a0f`三方final（ChatGPT=2 HIGH，MM/Kimi=APPROVE），只修改两个已批准root文件：新增authority-private `_AcceptanceAuthority`，在callback前冻结revision、binding SHA-256和最终ref observer；`EvidenceCommit`/`PublicationWitness`不可替换这些authority输入。新增对抗回归证明finalizer无法伪造observer/binding，drift保留foreign ref。
+- guard已durable移除而accept失败时，authority粘滞记录`recovery_required`；`publish_candidate()`在callback返回后优先fail-stop，即使callback吞掉`PassClosureRecoveryRequired`也不进入ordinary rollback。新增该吞异常回归。
+- 验证：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`78/78 PASS`；四文件`py_compile`、Ruff、`git diff --check` PASS。未运行真实Git/source/candidate/ref/evidence、child、GPU、数据或训练。下一步：提交/推送并对新formal SHA重新三方审核。提交：未提交。
