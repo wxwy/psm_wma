@@ -2748,3 +2748,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 仅在上述推进令牌范围内修改两个root CPU/static文件：normal worktree 对`.git` directory的 no-follow directory-FD identity 重验；linked worktree 对`.git` marker、`gitdir`、`commondir` retained-FD raw bytes/identity以及`git_dir`/common-dir no-follow directory identity重验；`config.worktree` absent及common config FD/path identity纳入同一 `routecheck()`，每个 native Git observation 前后执行。
 - 新增实际 detached linked-worktree wrapper-race witness，分别在bootstrap precheck后替换`.git` marker和`commondir`，均要求无evidence/ref；保留前轮 config-replacement witness。定向=56/56、组合root stdlib=101/101、两文件py_compile与diff-check PASS。未执行真实materialization/source/ref/evidence、child、GPU、数据或训练。下一步：提交并推送新formal SHA，重新三方审核。提交：未提交。
+
+### Bootstrap routing-authority race remediation 审核送达准备（2026-09-12 CST，REVIEW）
+
+- formal=`9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；已推送，远端 advertised 同为该formal root。冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。Inbox容量114496 bytes，追加申请不会越过128KiB；待append后以完整文本、至少1秒、单独Enter、capture送达两pane。范围仅root CPU/static，禁止真实materialization/source/ref/evidence、child、GPU、训练。
+
+### Bootstrap routing-authority race remediation 送达回执（2026-09-12 CST，REVIEW）
+
+- canonical Inbox申请已append。MM `mm:0.0` 和Kimi `kimi:0.0`均完成完整文本→至少1秒→独立`C-m`→capture，申请已离开输入框：MM开始定位申请，Kimi显示新申请进入处理。ChatGPT正式结果仍只认`reviews/`的exact pair。下一轮三分钟后按完整远端锁定、精确检索与两pane capture回收。

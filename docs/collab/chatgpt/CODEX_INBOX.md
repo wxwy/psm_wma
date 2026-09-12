@@ -939,3 +939,12 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 范围：仅 `tools/psm_wma/materialize_immutable_source_authority_root.py`、既有 stdlib test、`SESSION.md` 与 `TODO.md`；formal tree Gitlink 不变。linked `.git` marker、`gitdir` reciprocal 与 `commondir` 均以 no-follow FD 绑定；实际 `<git_dir>/config.worktree` 必须不存在；每次 native Git bootstrap observation 前后均重验 common config pathname identity 与 retained-FD bytes。
 - 直接 isolated-bootstrap temporary-fixture 负例覆盖：actual detached linked worktree `config.worktree`、伪造 gitdir escape、Git precheck 后 common-config replacement；定向=55/55、组合root stdlib=100/100、py_compile、diff-check PASS。仅临时目录/local bare remote；不含真实source/materialization/ref/evidence/collection/receipt/publication、child、GPU、数据、训练、评测、推理或LIBERO4IN1。
 - 请求：请仅对该 exact pair 给出 `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
+
+## 审核申请：Bootstrap routing-authority race remediation closure（2026-09-12）
+
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`。
+- formal root：`9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 前轮 exact pair：`fff6d05ef330ada5f6db5edbdc8dde32e2c99019`/同一Gitlink；ChatGPT=`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:172)`，MM/Kimi=`APPROVE_TO_CLOSE`。本轮仅整改其routing-authority HIGH。
+- 范围：仅 root adapter、既有 stdlib test、`SESSION.md`；formal Gitlink未变。normal `.git` directory 和 linked `.git` marker/`gitdir`/`commondir` 的 no-follow FD identities/raw bytes、linked `git_dir`/common-dir identities、`config.worktree` absent 与 common config identity/FD bytes均进入`routecheck()`，每个 native Git observation 前后执行。
+- 直接 actual detached linked-worktree wrapper-race witness分别在precheck后替换`.git` marker和`commondir`，均证明拒绝且无 project import/evidence/ref；保留config replacement、config.worktree、gitdir escape及symlink见证。定向=56/56、组合root stdlib=101/101、py_compile、diff-check PASS。只用临时目录/local bare remote；不授权真实materialization/source/ref/evidence/child/GPU/训练。
+- 请求：请仅对该 exact pair回复 `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。
