@@ -2756,3 +2756,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Bootstrap routing-authority race remediation 送达回执（2026-09-12 CST，REVIEW）
 
 - canonical Inbox申请已append。MM `mm:0.0` 和Kimi `kimi:0.0`均完成完整文本→至少1秒→独立`C-m`→capture，申请已离开输入框：MM开始定位申请，Kimi显示新申请进入处理。ChatGPT正式结果仍只认`reviews/`的exact pair。下一轮三分钟后按完整远端锁定、精确检索与两pane capture回收。
+
+### Bootstrap routing-authority race remediation 审核观察凭证 #1（2026-09-12 CST，DONE）
+
+- formal=`9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before=77ba29484563e06cb8a208861dec017ba22ee1d2`；fetch成功；advertised/origin/local-after均为`cfbd0bb9964b1c949f3ff406f0e476503d220869`；新增`772f75d9`及`cfbd0bb9`，祖先检查成功且已`merge --ff-only`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_9dd2fb8_93a89ba.md` final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`；MM `mm:0.0`与Kimi `kimi:0.0` capture均为同一exact pair、同一final token。三方同pair全批准推进令牌成立，仅关闭temporary root CPU/static authority implementation；不授权真实materialization/source/ref/evidence、child、GPU、训练。下一步应按既有source-evidence路线确定单次真实 materialization request 的独立审批资产，不能以本批准直接执行。
