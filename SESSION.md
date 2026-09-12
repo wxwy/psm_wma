@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Real adapter design v0.4审核申请送达（2026-09-12，REVIEW）
+
+- formal root=`be833f807e50a9a1d433c8fdf7f341e7ad3544f6`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox申请ledger=`c2070a747da3e995480624b59841ad14175ef854`已push。
+- MM/Kimi均按`send-keys -l`→等待≥1秒→独立Enter→capture送达。MM capture 已显示读取v0.4；Kimi capture 显示申请已提交，尚无处理/最终回执。ChatGPT待reviews exact pair。无最终令牌，禁止实现/真实I-O/GPU/训练。未提交。
+
 ## Real adapter design v0.4 已提交、待三方复审（2026-09-12，REVIEW）
 
 - formal root=`be833f807e50a9a1d433c8fdf7f341e7ad3544f6`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。v0.4 将guard成功unlink设为唯一PASS linearization；此前完成全部fallible fsync/re-read，之后禁止异常回流rollback；failure改为primary/rollback双字段，rollback-required按四个真实primary origin收紧。
