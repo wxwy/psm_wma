@@ -485,3 +485,15 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 前轮formal `ae52cb3...`三方final齐：ChatGPT 1 HIGH、MM/Kimi批准。本次真实collection `GitTransaction`增加exact `commit_parents()->tuple`，`_authority_tree()`要求精确单parent等于approval formal root并在delta前拒绝parent预含任一fixed path；direct `collect_synthetic()` adversarial tests覆盖selection/config预含、zero/two parent、Unopened sentinel与零commit。47/47 PASS；新文件Ruff、四文件py_compile、diff-check PASS。
 
 请求完整pair唯一final `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_CPU_STATIC_IMPLEMENTATION` 或 `REQUEST_CHANGES(file:line)`。不授权真实I/O/ref/remote/GPU/训练。
+
+## 审核申请：Authority Root Real Adapter / Execution Request 设计 v0.1（2026-09-12）
+
+- formal root SHA：`7c17c90a3b25182436fef89fbe063de9fcf1d67e`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-EXECUTION-REQUEST-DESIGN`
+- 设计：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.1.md`
+- 冻结名册：ChatGPT reviews/、MM mm:0.0、Kimi kimi:0.0。
+
+synthetic implementation formal `0b18620f...`已三方关闭。当前无真实Git adapter/CLI，故设计冻结最短两阶段：两文件real adapter CPU/static implementation closure；随后立即以formal-tree tool identity发一次exact materialization execution request，不增加其他横向Gate。已冻结8-entry selection与15-key config exact canonical raw bytes/SHA/blob OID；adapter必须复用既有三阶段算法、absolute identity-bound Git argv、temporary index/plumbing、expected-zero fixed-ref与ownership rollback。当前仅请求adapter CPU/static implementation授权，不请求真实JSON/candidate/ref/source/remote/GPU/训练。
+
+请求唯一final `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`，完整声明exact pair。
