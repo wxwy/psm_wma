@@ -3117,3 +3117,4 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `py_compile` PASS；temporary witness=4/4 PASS；payload raw=`16479` bytes、SHA-256=`c8d6611369d3eef6eb09c8030def5c95df1277099b521d81f94d9fbe29de954a`；`git diff --check` PASS。未运行payload main、未创建真实worktree/backing/index/candidate/ref/evidence，未读source/checkpoint，未改child/GPU/训练。下一步提交、推送；native-Git full causal witness仍未完成，故不得申请或执行materialization。
 - 增加真实临时 Git repo 的 `commondir` insertion witness；v0.7 witness现为5/5 PASS，仍仅临时目录，未调用payload `main()`。
 - 新增临时 Git 实际`worktree add --detach`/`remove --force` witness，并在每条Git命令前后调用payload的`check_route`；6/6 PASS。修正payload Git identity读取句柄关闭；`py_compile`和`git diff --check` PASS。仍未调用payload `main()`或真实路径。
+- v0.7 final payload raw=`16524` bytes、SHA-256=`0fd25fbf20f6d458b3cc6c41caabe4fe6fd476197d320a6049356d45f7f7b0fd`已冻结进annex；下一步将此annex更新和前述payload/witness提交为单一新formal root，三方审核仅限docs-only launcher/static witness，不申请真实materialization。

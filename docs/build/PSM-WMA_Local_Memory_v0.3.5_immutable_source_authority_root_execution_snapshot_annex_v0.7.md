@@ -3,7 +3,8 @@
 v0.7 supersedes only the v0.6 launcher artifact.  The candidate parent, Gitlink, input bytes, bootstrap, argv,
 environment and all prohibitions remain unchanged.
 
-- New payload: `...authority_root_launcher_payload_v0.7.py`; its formal raw length/SHA are verified after commit.
+- New payload: `...authority_root_launcher_payload_v0.7.py`; formal raw=`16524` bytes、SHA-256=
+  `0fd25fbf20f6d458b3cc6c41caabe4fe6fd476197d320a6049356d45f7f7b0fd`。
 - Ordinary `.git` accepts neither `config.worktree` nor `commondir`; both absence predicates are retained and
   rechecked before/after every native Git command.
 - Backing handoff checks non-symlink regular `0600` pathname identity after reader-open and after target handoff.
