@@ -24,6 +24,7 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     main,
     NativeGitError,
     AuthorityAdapterInvocation,
+    BootstrapIdentity,
     ExecutableIdentity,
     GitConfigurationAuthority,
     ModuleIdentity,
@@ -63,6 +64,12 @@ def _pass_evidence() -> dict[str, object]:
         "cwd": "/temporary/fixture",
         "sanitized_env_sha256": _sha("environment"),
         "argv_sha256": _sha("argv"),
+        "bootstrap": {
+            "declared_raw_sha256": _sha("bootstrap-raw"),
+            "declared_argv_sha256": _sha("bootstrap-argv"),
+            "observed_raw_sha256": _sha("bootstrap-raw"),
+            "observed_argv_sha256": _sha("bootstrap-argv"),
+        },
         "git_dir": "/temporary/fixture/.git",
         "git_common_dir": "/temporary/fixture/.git",
         "git_config_path": "/temporary/fixture/.git/config",
@@ -397,6 +404,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
             "import sys; "
             "import tools.psm_wma.materialize_immutable_source_authority_root as tool; "
             "tool._validate_https_endpoint = lambda remote: None; "
+            "tool._bootstrap_identity_from_runtime = lambda args, actual: tool.BootstrapIdentity('a'*64, 'b'*64, 'a'*64, 'b'*64); "
             "tool.NativeAuthorityGit._prefix = property(lambda self: (*tool._GIT_PREFIX[:-1], 'protocol.file.allow=always')); "
             f"exec({hook!r}); "
             "raise SystemExit(tool.main(sys.argv[1:]))"
@@ -414,6 +422,39 @@ class NativeAuthorityGitTest(unittest.TestCase):
             text=True,
             check=False,
         )
+
+    def _run_bootstrap_cli(self, root: Path, selection, config, argv, *, contract_payload=None):
+        payload = __import__(
+            "tools.psm_wma.materialize_immutable_source_authority_root",
+            fromlist=["bootstrap_payload"],
+        ).bootstrap_payload()
+        contract_path = root / "bootstrap-contract.json"
+        with contract_path.open("w+b") as contract:
+            position = argv.index("--bootstrap-contract-fd")
+            argv[position + 1] = str(contract.fileno())
+            adapter_argv = [
+                "--selection-fd", str(selection.fileno()), "--config-fd",
+                str(config.fileno()), *argv,
+            ]
+            original = [
+                str(Path(sys.executable).resolve()), "-I", "-S", "-B", "-c",
+                payload, "--", *adapter_argv,
+            ]
+            contract.write(json.dumps({
+                "bootstrap_raw_sha256": hashlib.sha256(
+                    (payload if contract_payload is None else contract_payload).encode()
+                ).hexdigest(),
+                "bootstrap_argv_sha256": hashlib.sha256(json.dumps(
+                    original[6:], sort_keys=True, separators=(",", ":"),
+                    ensure_ascii=False,
+                ).encode()).hexdigest(),
+            }, sort_keys=True, separators=(",", ":")).encode())
+            contract.flush()
+            return subprocess.run(
+                original,
+                cwd=root, pass_fds=(selection.fileno(), config.fileno(), contract.fileno()),
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False,
+            )
     def _cli_fixture(self, directory: Path):
         git = Path(shutil.which("git") or "").resolve()
         root, remote = directory / "root", directory / "remote.git"
@@ -491,6 +532,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
             "--evidence-path", str(root / "evidence.json"),
             "--git", str(git), "--git-raw-sha256", hashlib.sha256(git.read_bytes()).hexdigest(), "--git-version", _tool_version(git),
             "--interpreter", str(interpreter), "--interpreter-raw-sha256", hashlib.sha256(interpreter.read_bytes()).hexdigest(), "--interpreter-version", _tool_version(interpreter),
+            "--bootstrap-contract-fd", "-1", "--bootstrap-project-root", str(root),
+            "--bootstrap-module", "tools.psm_wma.materialize_immutable_source_authority_root",
             "--adapter-path", identities[0], "--adapter-blob-oid", identities[1], "--adapter-raw-sha256", identities[2],
             "--authority-module-path", identities[3], "--authority-module-blob-oid", identities[4], "--authority-module-raw-sha256", identities[5],
             "--collection-module-path", identities[6], "--collection-module-blob-oid", identities[7], "--collection-module-raw-sha256", identities[8],
@@ -512,22 +555,36 @@ class NativeAuthorityGitTest(unittest.TestCase):
             self.assertIsNotNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNotNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
-    def test_production_cli_rejects_non_https_endpoint_before_authority_action(self):
+    def test_bootstrap_validates_before_non_https_endpoint_preflight(self):
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
             with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
-                result = subprocess.run(
-                    [
-                        str(Path(sys.executable).resolve()), "-m",
-                        "tools.psm_wma.materialize_immutable_source_authority_root",
-                        "--selection-fd", str(selection_handle.fileno()),
-                        "--config-fd", str(config_handle.fileno()), *argv,
-                    ],
-                    cwd=root, pass_fds=(selection_handle.fileno(), config_handle.fileno()),
-                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False,
-                )
+                result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
             self.assertNotEqual(result.returncode, 0)
+            self.assertTrue((root / "evidence.json").exists(), result.stderr)
             self.assertEqual(verify_evidence_path(root / "evidence.json")["status"], "FAIL")
+            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+            self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+            self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_rejects_tampered_c_payload_before_evidence(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            original_payload = __import__(
+                "tools.psm_wma.materialize_immutable_source_authority_root",
+                fromlist=["bootstrap_payload"],
+            ).bootstrap_payload()
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                with patch(
+                    "tools.psm_wma.materialize_immutable_source_authority_root.bootstrap_payload",
+                    return_value=original_payload + "\n# tampered\n",
+                ):
+                    result = self._run_bootstrap_cli(
+                        root, selection_handle, config_handle, argv,
+                        contract_payload=original_payload,
+                    )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "evidence.json").exists())
             transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))

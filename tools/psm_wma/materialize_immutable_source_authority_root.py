@@ -81,6 +81,14 @@ class GitConfigurationAuthority:
 
 
 @dataclass(frozen=True)
+class BootstrapIdentity:
+    declared_raw_sha256: str
+    declared_argv_sha256: str
+    observed_raw_sha256: str
+    observed_argv_sha256: str
+
+
+@dataclass(frozen=True)
 class AuthorityAdapterInvocation:
     request: AuthorityRequest
     selection_raw_sha256: str
@@ -94,6 +102,7 @@ class AuthorityAdapterInvocation:
     evidence_path: Path
     argv_sha256: str
     git_configuration: GitConfigurationAuthority | None = None
+    bootstrap: BootstrapIdentity | None = None
 
 
 def _is_sha1(value: str) -> bool:
@@ -124,7 +133,77 @@ _CONFIG_ALLOWLIST = frozenset((
 
 
 def _canonical_json(value: object) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+    return json.dumps(
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    ).encode()
+
+
+def bootstrap_payload() -> str:
+    """Return the import-free payload required by the frozen launcher ABI."""
+    return (
+        "import hashlib,json,os,stat,sys,runpy\n"
+        "a=sys.orig_argv\n"
+        "def fail(): raise SystemExit('bootstrap invocation invalid')\n"
+        "if len(a)<8 or a[1:5]!=['-I','-S','-B','-c'] or a[6]!='--': fail()\n"
+        "def one(flag):\n"
+        " q=[a[i+8] for i,x in enumerate(a[7:]) if x==flag and i+8<len(a)]\n"
+        " if len(q)!=1: fail()\n"
+        " return q[0]\n"
+        "try: fd=int(one('--bootstrap-contract-fd'))\n"
+        "except ValueError: fail()\n"
+        "s=os.fstat(fd)\n"
+        "if not stat.S_ISREG(s.st_mode): fail()\n"
+        "raw=os.pread(fd,s.st_size,0)\n"
+        "try: c=json.loads(raw); canon=json.dumps(c,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()\n"
+        "except (TypeError,ValueError,UnicodeError): fail()\n"
+        "if raw!=canon or set(c)!={'bootstrap_raw_sha256','bootstrap_argv_sha256'}: fail()\n"
+        "if any(not isinstance(c[k],str) or len(c[k])!=64 for k in c): fail()\n"
+        "obs_raw=hashlib.sha256(a[5].encode('utf-8')).hexdigest()\n"
+        "obs_argv=hashlib.sha256(json.dumps(a[6:],sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()\n"
+        "if (obs_raw,obs_argv)!=(c['bootstrap_raw_sha256'],c['bootstrap_argv_sha256']): fail()\n"
+        "root=one('--bootstrap-project-root'); module=one('--bootstrap-module')\n"
+        "if not os.path.isabs(root) or not module or '/' in module: fail()\n"
+        "sys.path.insert(0,root);sys.argv=[module,*a[7:]];runpy.run_module(module,run_name='__main__')\n"
+    )
+
+
+def _bootstrap_identity_from_runtime(
+    args: argparse.Namespace, actual_argv: Sequence[str]
+) -> BootstrapIdentity:
+    original = tuple(sys.orig_argv)
+    if (
+        len(original) != len(actual_argv) + 7
+        or tuple(original[1:5]) != ("-I", "-S", "-B", "-c")
+        or original[6] != "--"
+        or tuple(original[7:]) != tuple(actual_argv)
+        or Path(original[0]).resolve() != args.interpreter.resolve()
+    ):
+        raise NativeGitError("bootstrap sys.orig_argv 与冻结ABI不一致")
+    raw = _read_input_fd(args.bootstrap_contract_fd)
+    try:
+        contract = json.loads(raw)
+    except (TypeError, ValueError) as error:
+        raise NativeGitError("bootstrap contract JSON 无效") from error
+    if _canonical_json(contract) != raw or set(contract) != {
+        "bootstrap_raw_sha256", "bootstrap_argv_sha256",
+    }:
+        raise NativeGitError("bootstrap contract ABI 无效")
+    declared_raw, declared_argv = (
+        contract["bootstrap_raw_sha256"], contract["bootstrap_argv_sha256"]
+    )
+    if not _is_sha256(declared_raw) or not _is_sha256(declared_argv):
+        raise NativeGitError("bootstrap contract SHA-256 无效")
+    observed_raw = sha256_digest(original[5].encode("utf-8"))
+    observed_argv = sha256_digest(_canonical_json(original[6:]))
+    if (declared_raw, declared_argv) != (observed_raw, observed_argv):
+        raise NativeGitError("bootstrap declaration/observation 漂移")
+    if args.bootstrap_project_root.resolve() != args.cwd.resolve():
+        raise NativeGitError("bootstrap project root 与cwd不一致")
+    if args.bootstrap_module != "tools.psm_wma.materialize_immutable_source_authority_root":
+        raise NativeGitError("bootstrap module 无效")
+    return BootstrapIdentity(
+        declared_raw, declared_argv, observed_raw, observed_argv
+    )
 
 
 def _validate_https_endpoint(remote: str) -> None:
@@ -397,6 +476,12 @@ def _pass_evidence_record(
             "cwd": str(transaction.cwd),
             "sanitized_env_sha256": sha256_digest(json.dumps(transaction.env, sort_keys=True, separators=(",", ":")).encode()),
             "argv_sha256": invocation.argv_sha256,
+            "bootstrap": {
+                "declared_raw_sha256": invocation.bootstrap.declared_raw_sha256,
+                "declared_argv_sha256": invocation.bootstrap.declared_argv_sha256,
+                "observed_raw_sha256": invocation.bootstrap.observed_raw_sha256,
+                "observed_argv_sha256": invocation.bootstrap.observed_argv_sha256,
+            },
             "git_dir": str(invocation.git_configuration.git_dir),
             "git_common_dir": str(invocation.git_configuration.git_common_dir),
             "git_config_path": str(invocation.git_configuration.config_path),
@@ -474,6 +559,12 @@ def _no_mutation_failure_record(
             "cwd": str(transaction.cwd),
             "sanitized_env_sha256": sha256_digest(json.dumps(transaction.env, sort_keys=True, separators=(",", ":")).encode()),
             "argv_sha256": invocation.argv_sha256,
+            "bootstrap": None if invocation.bootstrap is None else {
+                "declared_raw_sha256": invocation.bootstrap.declared_raw_sha256,
+                "declared_argv_sha256": invocation.bootstrap.declared_argv_sha256,
+                "observed_raw_sha256": invocation.bootstrap.observed_raw_sha256,
+                "observed_argv_sha256": invocation.bootstrap.observed_argv_sha256,
+            },
             "git_dir": None if invocation.git_configuration is None else str(invocation.git_configuration.git_dir),
             "git_common_dir": None if invocation.git_configuration is None else str(invocation.git_configuration.git_common_dir),
             "git_config_path": None if invocation.git_configuration is None else str(invocation.git_configuration.config_path),
@@ -685,7 +776,7 @@ _EVIDENCE_KEYS = frozenset((
 _EXECUTION_KEYS = frozenset((
     "formal_root_revision", "child_gitlink", "adapter", "authority_module", "collection_module", "audit_module",
     "interpreter", "git_executable", "cwd", "sanitized_env_sha256",
-    "argv_sha256", "git_dir", "git_common_dir", "git_config_path",
+    "argv_sha256", "bootstrap", "git_dir", "git_common_dir", "git_config_path",
     "git_config_raw_sha256", "git_config_allowlist", "git_isolation_fingerprint",
     "commit_metadata", "remote_identity_sha256", "fixed_ref",
 ))
@@ -780,6 +871,20 @@ def _validate_execution(value: object) -> Mapping[str, object]:
     for field in ("sanitized_env_sha256", "argv_sha256", "remote_identity_sha256"):
         if not _is_sha256(execution[field]):
             raise NativeGitError(f"evidence execution {field} 无效")
+    bootstrap = execution["bootstrap"]
+    if bootstrap is not None:
+        bootstrap = _exact_mapping(bootstrap, (
+            "declared_raw_sha256", "declared_argv_sha256",
+            "observed_raw_sha256", "observed_argv_sha256",
+        ), "bootstrap")
+        if not all(_is_sha256(bootstrap[field]) for field in bootstrap):
+            raise NativeGitError("evidence execution bootstrap SHA-256 无效")
+        if (
+            bootstrap["declared_raw_sha256"], bootstrap["declared_argv_sha256"]
+        ) != (
+            bootstrap["observed_raw_sha256"], bootstrap["observed_argv_sha256"]
+        ):
+            raise NativeGitError("evidence execution bootstrap declaration 漂移")
     configuration = tuple(execution[field] for field in (
         "git_dir", "git_common_dir", "git_config_path", "git_config_raw_sha256",
         "git_config_allowlist", "git_isolation_fingerprint",
@@ -1426,6 +1531,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--interpreter", type=Path, required=True)
     parser.add_argument("--interpreter-raw-sha256", required=True)
     parser.add_argument("--interpreter-version", required=True)
+    parser.add_argument("--bootstrap-contract-fd", type=int, required=True)
+    parser.add_argument("--bootstrap-project-root", type=Path, required=True)
+    parser.add_argument("--bootstrap-module", required=True)
     for name in ("adapter", "authority-module", "collection-module", "audit-module"):
         parser.add_argument(f"--{name}-path", required=True)
         parser.add_argument(f"--{name}-blob-oid", required=True)
@@ -1444,6 +1552,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     """Run only an explicitly-identified authority-root invocation."""
     actual_argv = tuple(sys.argv[1:] if argv is None else argv)
     args = _parser().parse_args(actual_argv)
+    bootstrap = _bootstrap_identity_from_runtime(args, actual_argv)
     metadata = CommitMetadata(
         args.author_name,
         args.author_email,
@@ -1484,6 +1593,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         ExecutableIdentity(args.git, args.git_raw_sha256, args.git_version),
         args.evidence_path,
         sha256_digest(json.dumps(actual_argv, separators=(",", ":")).encode()),
+        bootstrap=bootstrap,
     )
     try:
         request = request_from_input_fds(
