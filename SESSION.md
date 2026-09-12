@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Real adapter design v0.3第1轮观察（2026-09-12 14:26:04 CST）
+
+- formal root=`c4133389f856f5ab7a5ad01923f71c0c3892ce09`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head`、远端 advertised SHA、`origin/V2` 与 ff-only 后 HEAD 均为`1368b616da00ecc459505761134a6a7838ceeaba`；完整新增范围为空，fetch/ls-remote/ff-only均成功。
+- ChatGPT：exact-root 扫描无匹配正式 review。Kimi：capture 含同pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`，逐项确认两项HIGH关闭。MM：capture 显示正在逐项检查 HIGH-1/HIGH-2，但该截面未含本pair final，不能视为批准。
+- 冻结名册未变，ChatGPT与MM尚缺；无推进令牌，保持`REVIEW`，三分钟后继续原生轮询。禁止实现 adapter/真实I-O/GPU/训练。未提交。
+
 ## Real adapter design v0.3审核申请送达（2026-09-12 14:22:11 CST，REVIEW）
 
 - formal root=`c4133389f856f5ab7a5ad01923f71c0c3892ce09`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；canonical Inbox 已 append 且 ledger=`a006b1c1e7c7ce9a81e426780912e1bd80463dea`已 push，live Inbox 申请前为59375 bytes，未触发 rollover。
