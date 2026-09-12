@@ -289,6 +289,23 @@ def _write_all(descriptor: int, payload: bytes) -> None:
         offset += written
 
 
+def _cleanup_pending_evidence(paths: tuple[Path, ...], directory: Path) -> None:
+    failed = False
+    for stale in paths:
+        try:
+            stale.unlink()
+        except FileNotFoundError:
+            pass
+        except OSError:
+            failed = True
+    try:
+        _fsync_directory(directory)
+    except OSError:
+        failed = True
+    if failed:
+        raise NativeGitError("evidence pre-commit cleanup 无法证明完成")
+
+
 def write_pending_evidence(path: Path, record: Mapping[str, object], commit) -> None:
     """Write a verified PASS record; guard unlink is the final operation."""
     if path.exists() or path.is_symlink():
@@ -303,39 +320,35 @@ def write_pending_evidence(path: Path, record: Mapping[str, object], commit) -> 
     directory = path.parent
     directory.mkdir(parents=True, exist_ok=True)
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW | os.O_CLOEXEC
-    fd = os.open(guard, flags, 0o600)
-    try:
-        os.fsync(fd)
-    finally:
-        os.close(fd)
-    _fsync_directory(directory)
     temporary = path.with_name(path.name + ".tmp")
     try:
-        fd = os.open(temporary, flags, 0o600)
-    except BaseException:
-        guard.unlink()
+        fd = os.open(guard, flags, 0o600)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
         _fsync_directory(directory)
-        raise
-    try:
-        _write_all(fd, payload)
-        os.fsync(fd)
-    finally:
-        os.close(fd)
-    try:
+        fd = os.open(temporary, flags, 0o600)
+        try:
+            _write_all(fd, payload)
+            os.fsync(fd)
+        finally:
+            os.close(fd)
         os.replace(temporary, path)
         _fsync_directory(directory)
         if verify_evidence_bytes(_read_regular_evidence(path)) != verified:
             raise NativeGitError("evidence re-read drift")
         commit.seal_for_guard(lambda: os.unlink(guard))
     except BaseException:
-        for stale in (temporary, path, guard):
-            try:
-                stale.unlink()
-            except FileNotFoundError:
-                pass
-        _fsync_directory(directory)
+        _cleanup_pending_evidence((temporary, path, guard), directory)
         raise
-    commit.consume_by_unlink()
+    try:
+        commit.consume_by_unlink()
+    except BaseException:
+        if getattr(commit, "committed", False):
+            raise
+        _cleanup_pending_evidence((temporary, path, guard), directory)
+        raise
 
 
 class NativeAuthorityGit:

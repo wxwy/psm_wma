@@ -10,6 +10,7 @@ import hashlib
 import json
 from copy import deepcopy
 from pathlib import Path
+from unittest.mock import patch
 
 from tools.psm_wma.materialize_immutable_source_authority_root import (
     NativeAuthorityGit,
@@ -142,6 +143,49 @@ class NativeAuthorityGitTest(unittest.TestCase):
         }
         with self.assertRaises(NativeGitError):
             verify_evidence_bytes(_redigest(missing_rollback))
+
+    def test_writer_cleans_precommit_files_after_directory_fsync_or_rename_failure(self):
+        class Commit:
+            def seal_for_guard(self, _callback):
+                raise AssertionError("seal must not be reached")
+
+        for failure in ("directory_fsync", "rename"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as raw:
+                path = Path(raw) / "evidence.json"
+                if failure == "directory_fsync":
+                    with patch(
+                        "tools.psm_wma.materialize_immutable_source_authority_root._fsync_directory",
+                        side_effect=(OSError("fixture"), None),
+                    ):
+                        with self.assertRaises(OSError):
+                            write_pending_evidence(path, _pass_evidence(), Commit())
+                else:
+                    with patch(
+                        "tools.psm_wma.materialize_immutable_source_authority_root.os.replace",
+                        side_effect=OSError("fixture"),
+                    ):
+                        with self.assertRaises(OSError):
+                            write_pending_evidence(path, _pass_evidence(), Commit())
+                self.assertFalse(path.exists())
+                self.assertFalse(path.with_name("evidence.json.pending").exists())
+                self.assertFalse(path.with_name("evidence.json.tmp").exists())
+
+    def test_writer_cleans_when_unlink_commit_does_not_happen(self):
+        class Commit:
+            committed = False
+
+            def seal_for_guard(self, _callback):
+                pass
+
+            def consume_by_unlink(self):
+                raise OSError("fixture")
+
+        with tempfile.TemporaryDirectory() as raw:
+            path = Path(raw) / "evidence.json"
+            with self.assertRaises(OSError):
+                write_pending_evidence(path, _pass_evidence(), Commit())
+            self.assertFalse(path.exists())
+            self.assertFalse(path.with_name("evidence.json.pending").exists())
 
     def test_temporary_index_commit_and_exact_ref_cas(self):
         git = Path(shutil.which("git") or "")
