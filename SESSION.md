@@ -1,5 +1,13 @@
 # 当前协作状态
 
+## Evidence phase 矩阵整改切片（2026-09-12，IN_PROGRESS）
+
+- 前一 authority 对象绑定切片已提交/推送 `a1360d0d35693fe3c05c7a59742ebbdd013f1672`。本次仍只改两工具文件及本记录。
+- 新增各 nested section exact keys、identity 字段基础类型、source entry 非 bool 整数/长度/SHA、candidate 有序前缀和 phase 到达状态、handoff null/concrete、collection/receipt exact null 与 concrete delta、post-check 首 false 前缀、push/publication bool、live rollback 内嵌 snapshot/digest/equality 检查。
+- 旧 authority-FAIL 测试带有不应存在的候选与 post-check 数据，现修为冻结 null 后缀。新增全部 11 phase 的合法 fixture 与重签名矛盾 fixture；新增 PASS 的 bool/int、OID/SHA、delta path 漂移负例。
+- 根目录 `python3 -B -m unittest tools.psm_wma.test_immutable_source_collection -v`：17/17 PASS（含 phase 子测试）；`git diff --check` PASS。CPU-only 内存记录，无真实 I/O/GPU/训练。
+- 仍待完成 executor FAIL 生成、绑定 tool/environment identity、带 raw blob 的 isolated transaction/receipt/rollback；本切片不关闭 HIGH-1 或 HIGH-5，不发新审核申请。提交：待本次提交。
+
 ## Authority 对象绑定整改切片（2026-09-12，IN_PROGRESS）
 
 - 延续 `fb9c5e04` 同 pair 三方意见的两文件整改范围；前一可运行切片已提交/推送为 `fbdb30ae6b8afb8e470be607251dd1917e1067f7`。

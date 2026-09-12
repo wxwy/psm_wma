@@ -246,8 +246,81 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
     def test_fail_phase_nullability_is_checked(self) -> None:
         record = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths, git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
         record["status"] = "FAIL"; record["execution"] = {**record["execution"], "phase": "authority", "failure_code": "AUTHORITY_DRIFT"}; record["source_entries"] = []; record["collection"] = _null_collection(); record["receipt"] = _null_receipt(); record["evidence_sha256"] = _sha({key: value for key, value in record.items() if key != "evidence_sha256"})
+        for name in ("authority", "lineage", "handoff", "candidates", "post_checks", "push_publication"):
+            record[name] = {key: None for key in record[name]}
+        record["evidence_sha256"] = _sha({key: value for key, value in record.items() if key != "evidence_sha256"})
         verify_evidence(record)
         record["source_entries"] = [{"ordinal": 0}]; record["evidence_sha256"] = _sha({key: value for key, value in record.items() if key != "evidence_sha256"})
         with self.assertRaises(CollectionError): verify_evidence(record)
+
+    def test_all_failure_phases_follow_frozen_reachability(self) -> None:
+        passed = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                                   git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        phases = ("tool_identity", "environment", "authority", "lineage", "source_read",
+                  "candidate_construction", "candidate_verification", "collection", "receipt",
+                  "post_check", "push_publication")
+        worktree = [{"path": path, "mode": None, "kind": "absent", "sha256": None}
+                    for path in sorted((*COLLECTION_PATHS, RECEIPT_PATH))]
+        snapshot = {"target_ref": "refs/heads/fixture", "target_ref_revision": "b" * 40,
+                    "head_mode": "symbolic", "head_symbolic_ref": "refs/heads/fixture",
+                    "head_revision": "b" * 40, "index_tree_native_oid": "c" * 40,
+                    "worktree_entries": worktree, "worktree_sha256": _sha(worktree)}
+        for index, phase in enumerate(phases):
+            with self.subTest(phase=phase):
+                value = deepcopy(passed)
+                value["status"] = "FAIL"
+                value["execution"].update(phase=phase, failure_code="INJECTED_FAILURE")
+                for i, section in enumerate(("tool", "environment", "authority", "lineage")):
+                    if index <= i:
+                        value[section] = {key: None for key in value[section]}
+                if index < 4:
+                    value["source_entries"] = []
+                if index < 6:
+                    value["handoff"] = {key: None for key in value["handoff"]}
+                    value["candidates"] = {key: None for key in value["candidates"]}
+                if index <= 7:
+                    value["collection"] = _null_collection()
+                if index <= 8:
+                    value["receipt"] = _null_receipt()
+                if index < 9:
+                    value["post_checks"] = {key: None for key in value["post_checks"]}
+                if index == 9:
+                    value["post_checks"] = {"authority": True, "lineage": False,
+                                            "derivation": None, "collection": None, "receipt": None}
+                if index < 10:
+                    value["push_publication"] = {"pushed": None, "published": None}
+                else:
+                    value["push_publication"] = {"pushed": True, "published": False}
+                if index >= 7:
+                    value["rollback"] = verify_synthetic_rollback(snapshot, snapshot, completed=True)
+                value["evidence_sha256"] = _sha({key: item for key, item in value.items() if key != "evidence_sha256"})
+                verify_evidence(json.loads(json.dumps(value, sort_keys=True)))
+                # 外层摘要重新签名也不能掩盖不允许的后续状态或缺失 key。
+                bad = deepcopy(value)
+                if index < 6:
+                    bad["handoff"]["consumed_once"] = True
+                elif index < 9:
+                    bad["post_checks"]["authority"] = True
+                elif index == 9:
+                    bad["post_checks"]["lineage"] = 0
+                else:
+                    bad["push_publication"]["pushed"] = 1
+                bad["evidence_sha256"] = _sha({key: item for key, item in bad.items() if key != "evidence_sha256"})
+                with self.assertRaises(CollectionError):
+                    verify_evidence(bad)
+
+    def test_resigned_pass_nested_type_drift_is_rejected(self) -> None:
+        passed = collect_synthetic(authority=self.authority, lineage=self.lineage, paths=self.paths,
+                                   git=self.git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        for section, field_name, replacement in (("environment", "cpu_only", 1),
+                ("tool", "raw_sha256", "X" * 64), ("handoff", "consumed_once", 1),
+                ("post_checks", "authority", 1), ("collection", "delta_paths", ["wrong"]),
+                ("receipt", "blob_native_oid", "q" * 40)):
+            with self.subTest(section=section, field=field_name):
+                value = deepcopy(passed)
+                value[section][field_name] = replacement
+                value["evidence_sha256"] = _sha({key: item for key, item in value.items() if key != "evidence_sha256"})
+                with self.assertRaises(CollectionError):
+                    verify_evidence(value)
 
 if __name__ == "__main__": unittest.main()

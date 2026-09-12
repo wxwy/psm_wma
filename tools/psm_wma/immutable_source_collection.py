@@ -273,6 +273,7 @@ def verify_evidence(record: Mapping[str, object]) -> None:
     if set(record) != EVIDENCE_KEYS or record.get("schema") != SCHEMA or record.get("status") not in {"PASS", "FAIL"}: raise CollectionError("evidence key set or status is not canonical")
     unsigned = dict(record); digest = unsigned.pop("evidence_sha256")
     if not isinstance(digest, str) or digest != _sha(unsigned): raise CollectionError("evidence digest drift")
+    _verify_evidence_sections(record)
     execution = record["execution"]
     if record["status"] == "PASS":
         if not isinstance(execution, Mapping) or set(execution) != {"approval_formal_root", "command_argv", "interpreter", "phase"} or execution["phase"] != "complete": raise CollectionError("PASS execution drift")
@@ -316,6 +317,139 @@ def verify_evidence(record: Mapping[str, object]) -> None:
             raise CollectionError("push-publication observation drift")
         if phase in {"collection", "receipt"} and record["rollback"] == _null_rollback():
             raise CollectionError("live FAIL requires rollback witness")
+
+EVIDENCE_PHASES = ("tool_identity", "environment", "authority", "lineage", "source_read",
+                   "candidate_construction", "candidate_verification", "collection", "receipt",
+                   "post_check", "push_publication", "complete")
+SECTION_KEYS = {
+    "tool": ("path", "blob_native_oid", "raw_sha256"),
+    "environment": ("workdir", "python_executable", "cpu_only", "no_network", "sanitized_env_sha256"),
+    "authority": ("root_revision", "selection_path", "selection_blob_native_oid", "selection_raw_sha256",
+                  "config_path", "config_blob_native_oid", "config_raw_sha256"),
+    "lineage": ("target_ref", "expected_base_root_revision", "expected_child_gitlink", "authority_approval_formal_root_revision"),
+    "handoff": ("candidate_handoff_sha256", "consumed_once"),
+    "candidates": CANDIDATE_KEYS,
+    "collection": tuple(_null_collection()), "receipt": tuple(_null_receipt()),
+    "post_checks": ("authority", "lineage", "derivation", "collection", "receipt"),
+    "push_publication": ("pushed", "published"), "rollback": tuple(_null_rollback()),
+}
+
+
+def _exact_section(value: object, keys: tuple[str, ...]) -> Mapping[str, object]:
+    if not isinstance(value, Mapping) or set(value) != set(keys):
+        raise CollectionError("evidence nested key 集合不符合合同")
+    return value
+
+
+def _null_section(value: Mapping[str, object]) -> bool:
+    return all(item is None for item in value.values())
+
+
+def _verify_evidence_sections(record: Mapping[str, object]) -> None:
+    """由首个失败 phase 导出每个 section 的已到达/未到达状态。"""
+    passed = record["status"] == "PASS"
+    execution_keys = ("approval_formal_root", "command_argv", "interpreter", "phase")
+    execution = _exact_section(record["execution"], execution_keys if passed else execution_keys + ("failure_code",))
+    phase = execution["phase"]
+    if phase not in EVIDENCE_PHASES or passed != (phase == "complete"):
+        raise CollectionError("evidence status/phase 矛盾")
+    stage = EVIDENCE_PHASES.index(phase)
+    argv = execution["command_argv"]
+    if not isinstance(argv, list) or any(not isinstance(arg, str) for arg in argv):
+        raise CollectionError("execution command_argv 类型错误")
+    if not passed:
+        code = execution["failure_code"]
+        if not isinstance(code, str) or not code or any(c not in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_" for c in code):
+            raise CollectionError("failure_code 必须是稳定标识符")
+    sections = {name: _exact_section(record[name], keys) for name, keys in SECTION_KEYS.items()}
+    for index, name in enumerate(("tool", "environment", "authority", "lineage")):
+        value = sections[name]
+        if stage <= index:
+            if not _null_section(value):
+                raise CollectionError("未到达的 identity section 必须为 null")
+            continue
+        for key, item in value.items():
+            if key.endswith("sha256"):
+                valid = _is_sha(item)
+            elif key.endswith(("oid", "revision", "gitlink")):
+                valid = isinstance(item, str) and len(item) == 40 and all(c in "0123456789abcdef" for c in item)
+            elif key in ("cpu_only", "no_network"):
+                valid = item is True
+            else:
+                valid = isinstance(item, str) and bool(item)
+            if not valid:
+                raise CollectionError("已到达的 identity section 类型无效")
+    entries = record["source_entries"]
+    if not isinstance(entries, list) or (stage < 4 and entries) or (stage > 4 and not entries):
+        raise CollectionError("source_entries 到达状态错误")
+    for ordinal, entry in enumerate(entries):
+        entry = _exact_section(entry, ("ordinal", "byte_length", "sha256"))
+        if (type(entry["ordinal"]) is not int or entry["ordinal"] != ordinal
+                or type(entry["byte_length"]) is not int or entry["byte_length"] <= 0
+                or not _is_sha(entry["sha256"])):
+            raise CollectionError("source_entries 类型/前缀错误")
+    candidates = [sections["candidates"][key] for key in CANDIDATE_KEYS]
+    if stage < 5:
+        valid_candidates = all(value is None for value in candidates)
+    elif stage == 5:
+        count = next((i for i, value in enumerate(candidates) if value is None), 6)
+        valid_candidates = count < 6 and all(_is_sha(v) for v in candidates[:count]) and all(v is None for v in candidates[count:])
+    else:
+        valid_candidates = all(_is_sha(v) for v in candidates)
+    if not valid_candidates:
+        raise CollectionError("candidate construction 前缀或到达状态错误")
+    handoff = sections["handoff"]
+    if stage < 6:
+        valid_handoff = _null_section(handoff)
+    else:
+        valid_handoff = _is_sha(handoff["candidate_handoff_sha256"]) and type(handoff["consumed_once"]) is bool
+    if not valid_handoff or (passed and handoff["consumed_once"] is not True):
+        raise CollectionError("handoff 到达状态错误")
+    for index, name, paths in ((7, "collection", COLLECTION_PATHS), (8, "receipt", (RECEIPT_PATH,))):
+        value = sections[name]
+        if stage <= index:
+            expected = _null_collection() if name == "collection" else _null_receipt()
+            if dict(value) != expected:
+                raise CollectionError("未完成 commit 必须为 exact null record")
+        else:
+            for key, item in value.items():
+                if key == "delta_paths":
+                    valid = item == list(paths)
+                else:
+                    valid = isinstance(item, str) and len(item) == 40 and all(c in "0123456789abcdef" for c in item)
+                if not valid:
+                    raise CollectionError("commit record 类型或 delta_paths 无效")
+    checks = [sections["post_checks"][key] for key in SECTION_KEYS["post_checks"]]
+    if stage < 9:
+        valid_checks = all(v is None for v in checks)
+    elif stage == 9:
+        failures = [i for i, v in enumerate(checks) if v is False]
+        valid_checks = len(failures) == 1 and all(v is True for v in checks[:failures[0]]) and all(v is None for v in checks[failures[0] + 1:])
+    else:
+        valid_checks = all(v is True for v in checks)
+    if not valid_checks:
+        raise CollectionError("post_checks 前缀或到达状态错误")
+    push = list(sections["push_publication"].values())
+    if stage < 10:
+        valid_push = all(v is None for v in push)
+    else:
+        valid_push = all(type(v) is bool for v in push) and (not any(push) if passed else any(push))
+    if not valid_push:
+        raise CollectionError("push/publication 观测错误")
+    rollback = sections["rollback"]
+    if passed or stage < 7:
+        if not _null_section(rollback):
+            raise CollectionError("无需 rollback 时必须为 exact null record")
+    else:
+        before, after = _snapshot(rollback["before_snapshot"]), _snapshot(rollback["after_snapshot"])
+        if rollback["before_snapshot_sha256"] != _sha(before) or rollback["after_snapshot_sha256"] != _sha(after):
+            raise CollectionError("rollback snapshot digest 漂移")
+        verified = rollback["verified"]
+        if type(verified) is not bool or (verified and before != after):
+            raise CollectionError("rollback equality witness 无效")
+        if not verified and execution["failure_code"] != "ROLLBACK_INCOMPLETE":
+            raise CollectionError("未完成 rollback 必须 fail-stop")
+
 
 def _entry(opener: RootFdOpener, path: str, ordinal: int) -> dict[str, int | str]:
     handle = opener.open_regular(path)
