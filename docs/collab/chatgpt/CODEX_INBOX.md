@@ -249,3 +249,18 @@ formal tree 仅改 evidence design、`SESSION.md`、`TODO.md`，Gitlink 不变�
 formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；提交在远端 review notify 后安全 rebase，formal root 为上列 SHA。验证：`git diff --check` PASS。未执行项目代码，未读取/写入真实 source/checkpoint/data/cache，未 mutation collection/receipt/source-evidence/publication，未改 child/runtime，未运行 CUDA/GPU、torchrun、forward/backward、optimizer/scaler step、训练、评测、推理或 LIBERO4IN1。
 
 请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许既有 source-evidence 闭合的下一步骤；不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
+
+## 审核申请：Evidence rollback-semantics remediation（2026-09-12）
+
+- formal root SHA：`9a3f584f36254e00e9483c170f948cc6614b56fd`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-DESIGN`
+
+前轮 `9efae217d8c45b7afd651d52e3cb5b8cc63226f9`/同 child 三方 final 已齐：ChatGPT `REQUEST_CHANGES`（2 evidence-only HIGH），MM/Kimi approve。本轮仅 docs-only 最小整改：
+
+1. PASS 和 pre-live FAIL 的 rollback 都冻结为 exact not-required null-record `{before_snapshot_sha256:null,after_snapshot_sha256:null,verified:null}`；不再以 `verified=true` 混淆“未执行”和“已恢复”。
+2. live rollback 统一绑定 `target_snapshot_v1` 的 canonical JSON（target ref、HEAD、index tree、worktree tree），before/after SHA-256 必须由实际状态独立重算且精确相等才可 `verified=true`；缺失、不可重算或不等一律 `verified=false` + `ROLLBACK_INCOMPLETE`，但不覆盖 primary phase。
+
+formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff --check` PASS。未运行项目代码或真实 source/checkpoint/data/cache I/O，未 mutation collection/receipt/source-evidence/publication，未改 child/runtime，未运行 CUDA/GPU、torchrun、forward/backward、optimizer/scaler step、训练、评测、推理或 LIBERO4IN1。
+
+请求唯一 verdict：`APPROVE_TO_DESIGN_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION` 或 `REQUEST_CHANGES(file:line)`。即使批准，也只允许既有 source-evidence 收口的下一步骤；不授权 executor implementation、真实 source I/O、collection/receipt/record/package/witness/publication/audit、child/runtime、GPU 或训练。ChatGPT formal verdict 请仅写入 `docs/collab/chatgpt/reviews/`。
