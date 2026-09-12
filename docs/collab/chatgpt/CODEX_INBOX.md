@@ -963,3 +963,10 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.2.md`。
 - 相对`cfdd2fc...`仅处理ChatGPT HIGH：v0.1仅继承transaction/PASS/FAIL/rollback/prohibitions；所有runtime fields由annex唯一冻结，明确canonical HTTPS endpoint+SHA而非remote alias、fresh paths、tools/env/input/bootstrap/argv/FD ABI以及annex批准后不可变；annex不得覆盖v0.2 §2/§3。
 - 仍只请求 `APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_SNAPSHOT`；禁止创建JSON/worktree/index/candidate/ref/evidence、source读、child/GPU/训练。
+
+## 审核申请：Authority-root execution snapshot annex v0.1（2026-09-12）
+
+- formal root：`29c8aaa2a048f538892295afa6bc6d49031b0d0c`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_execution_snapshot_annex_v0.1.md`。
+- 前轮`15e66557...`三方批准仅允许本只读 annex。annex冻结formal parent/Gitlink/ref、credential-free HTTPS endpoint SHA、Python/Git identity、fresh路径观察、selection/config identity、module identity、sanitized env与FD ABI/停止条件；不创建JSON/worktree/index/candidate/ref/evidence，也不读source。
+- 请求唯一 verdict：`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_REQUEST` 或 `REQUEST_CHANGES(file:line)`；批准后仅允许撰写完整执行 request，仍不授权 materialization。
