@@ -13,35 +13,43 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `67b70ef4af017e3c1c6bdb7788852e5240193af7`
+- immediate prior live blob SHA: `f7e2bebb4366eeabb13d829f61ef9d1403158de9`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority Root Real Adapter / Execution Request Design v0.4 REQUEST_CHANGES
+## CODEX NOTICE — Authority Root Real Adapter / Execution Request Design v0.5 REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `be833f807e50a9a1d433c8fdf7f341e7ad3544f6`
+- root design SHA: `066de7052310dc889074632981cc3cdec880ab41`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-REAL-ADAPTER-EXECUTION-REQUEST-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.4.md:11)`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_real_adapter_execution_request_design_v0.5.md:22)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_be833f8_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_real_adapter_execution_request_design_066de70_93a89ba.md`
 
 Canonical review commit:
-`c7816b563951073a87f2d557594c3cf004667ef1`
+`dc0d668445143346922815a84c59d3f3be60f1ab`
 
-Current blockers: `2 HIGH`.
+Current blockers: `1 HIGH`.
 
-The v0.4 remediation substantially improves both prior c413 blockers: writer-side fallible work is moved before guard unlink, primary and rollback failure fields are separated, and origin-specific rollback rows replace the generic rollback terminal. Two design inconsistencies remain:
+Closed from the prior `be833f8...` review:
+- rollback reachability now matches production closely enough: `rollback.entered` is distinct from owned-endpoint `required`; `pre_publication` and `local_cas` no-ownership final-proof paths are representable; `post_publication` requires all six local/remote create/succeeded/owned bits.
 
-1. **HIGH — PASS becomes visible at guard unlink before the authority side has safely accepted the returned sealed capability.** v0.3's inherited capability contract requires rejection of ordinary values, different-witness capabilities and replays. After `unlink(guard)` v0.4 says PASS is committed and rollback is forbidden, but `publish_candidate()` must still receive/determine that the returned object is the correct same-witness `EvidenceCommit`. If that post-unlink check can fail into the existing `try/except`, accepted PASS can coexist with ref rollback; if it cannot reject, the capability contract is weakened. Freeze all capability/token/witness/replay validation before unlink, or explicitly make any post-commit anomaly preserve candidate refs and never enter rollback. Add direct wrong-value/different-witness/replay tests around the commit point.
-2. **HIGH — rollback reachability still disagrees with the actual production state machine.** Current `publish_candidate()` catches failures from pre-publication observation and local CAS as well, and `_rollback()` always performs fresh final observations even with no ownership witness. Thus pre-publication foreign/unreadable state and local-CAS race/ambiguity can legitimately end in `ROLLBACK_INCOMPLETE` while preserving unowned foreign/unproved refs. v0.4 declares only remote_cas/post_publication/binding_reverify/evidence_write origins valid and therefore cannot encode those real outcomes. Conversely, its post_publication row incorrectly allows remote succeeded/owned to vary although that phase is reached only after remote CAS succeeded and `remote_created=True`. Align evidence reachability exactly to production control flow and define `rollback.required` semantics explicitly.
+Remaining HIGH:
+- `commit.consume_by_unlink()` is the PASS linearization point, but it executes inside arbitrary finalizer code. After unlink succeeds and PASS is accepted, control returns to the finalizer, which can still raise before normal return. v0.5 only freezes the authority's non-throwing state dispatch for the normal-return path; it does not explicitly freeze the equally reachable post-commit callback-exception path. Without an outcome wrapper that first checks the authority-owned commit state, the inherited broad `publish_candidate()` exception boundary can still roll back refs after accepted PASS is visible.
+- The same section is internally inconsistent about return semantics: item 5 says the finalizer may return any object and the return value is ignored, while item 6 / acceptance tests classify an ordinary return value as a possible post-commit capability violation. Choose one single-valued return contract.
 
-MM exact-pair capture currently reports `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_REAL_ADAPTER_CPU_STATIC`; Kimi was still reviewing with no final at the latest captured snapshot. These are coordination evidence only and do not supersede this independent ChatGPT verdict.
+Required same-Gate remediation:
+1. authority must convert both finalizer normal return and exception into a single outcome dispatch keyed first by authority-owned `EvidenceCommit` state;
+2. pre-commit callback return/exception may enter rollback; committed callback return/exception must always preserve exact candidate refs and accepted PASS, never rollback;
+3. make the return-value rule internally consistent (ignored, or exact post-commit contract with preserve-refs fail-stop on mismatch);
+4. test `consume_by_unlink()` success followed by callback raise, ordinary return, pre-commit callback exception, and wrong/replayed/unsealed commit; prove no accepted-PASS case ever invokes `_rollback`.
+
+Latest repository delivery bookkeeping for this exact pair records MM entered review and Kimi received the request with no exact-pair final yet at that snapshot. Those are coordination signals only and do not supersede this independent ChatGPT verdict.
 
 Scope reminder: remediation remains in the same design Gate. This verdict does not authorize implementation yet and does not authorize real selection/config files, candidate/ref/origin mutation, source read, collection/receipt/source-evidence/publication, child/runtime changes, checkpoint/data/cache I/O, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
 
