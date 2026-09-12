@@ -13,7 +13,7 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `20e90b94028fcba434342dd2fe72c7c07255470d`
+- immediate prior live blob SHA: `b2e76bb28bed623e4571926c3298fb4f4b3154e5`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
@@ -21,42 +21,41 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 ## CODEX NOTICE — Authority-root Execution Authority CPU/static Remediation REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `817191c91ae8c8eb7e1a66f15055d2286d0b76c4`
+- root implementation SHA: `fff6d05ef330ada5f6db5edbdc8dde32e2c99019`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
 
 Verdict:
-`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:177)`
+`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:172)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_817191c_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_fff6d05_93a89ba.md`
 
 Canonical review commit:
-`35aa349a24916b0fd301e870ebc8070347bc4651`
+`0c8bb944c76725ca70d3da4805d0911101474f3b`
 
 Current blockers: `1 HIGH`.
 
 Closure/progress:
-- executable identity is CLOSED: interpreter/Git type, non-symlink, raw SHA and exact version are all checked before project import;
-- common config now uses an `O_NOFOLLOW` retained FD, frozen `(dev,ino,size)` and raw bytes, and those bytes drive the bootstrap allowlist;
-- the config pathname identity/FD bytes are rechecked before each bootstrap Git call;
-- a pre-existing normal-worktree `.git/config.worktree` witness is present;
-- formal root/Gitlink is valid and the child commit is independently reachable.
+- prior linked-worktree `config.worktree` path bug is CLOSED: bootstrap now resolves the actual per-worktree admin dir and rejects `<git_dir>/config.worktree`;
+- linked `.git` marker, reciprocal `gitdir`, and `commondir` are opened with no-follow semantics and checked for basic consistency;
+- common config uses retained no-follow FD bytes and pathname identity, with before/after revalidation around each native Git observation;
+- actual detached linked-worktree, forged gitdir escape, and common-config replacement witnesses are present;
+- formal root/Gitlink is valid and child commit is independently reachable.
 
-Remaining HIGH — linked-worktree/effective common-config authority is still incomplete:
-- when `.git` is a linked-worktree marker file, the resolved per-worktree Git dir is `gd`, but bootstrap checks `wcfg = os.path.join(admin,'config.worktree')`; `admin` is the marker file path, so this does not inspect the real `<git_dir>/config.worktree`;
-- linked-worktree common dir is assumed as `dirname(dirname(gd))` instead of being bound through the actual `commondir` authority or an exact equivalent;
-- `grun()` checks config identity/bytes only before `subprocess.run`; Git then reopens the config path and there is no post-call identity/bytes revalidation, leaving a replacement window between admission and effective Git consumption;
-- the new `config.worktree` witness covers only a normal worktree and therefore does not prove the v0.4 linked/detached-worktree contract.
+Remaining HIGH — repository-routing metadata is not frozen across native Git observation:
+- linked-worktree `.git` marker, `<git_dir>/gitdir`, and `<git_dir>/commondir` are read once but their pathname identities/retained-FD bytes are not revalidated before/after `rev-parse` / `status` / `ls-tree`;
+- native Git re-resolves those routing files from `cwd`, so they can be swapped after bootstrap admission while the old common config remains unchanged; Git may then jump to a different admin/common directory and consume a different local-config/object authority without tripping the current common-config check;
+- `git_dir` / `git_common_dir` directory identities and `config.worktree` absence are likewise not revalidated across each observation.
 
 Exact remediation:
-1. in linked worktrees, bind the real worktree Git dir separately from the `.git` marker and derive the common Git dir through the authoritative `commondir` relation (or an equally exact no-config-dependent mechanism), with absolute existing non-symlink directory checks;
-2. require the actual `<git_dir>/config.worktree` absent before the first bootstrap Git observation and add a direct linked/detached-worktree witness for it;
-3. retain the no-follow common-config FD but revalidate pathname identity and FD bytes after each native Git bootstrap observation as well as before it, or otherwise guarantee Git can consume only the admitted immutable config bytes;
-4. add a direct race witness replacing common config after the precheck but before/during Git consumption and prove rejection before project import/ref/evidence/callback;
-5. preserve all closed executable/module/endpoint/no-replace/Evidence/CAS/CPU-static contracts.
+1. retain accepted `(dev,ino,size)` + raw bytes for the linked worktree `.git` marker, `<git_dir>/gitdir`, and `<git_dir>/commondir`, plus accepted directory identities for `git_dir` and `git_common_dir`;
+2. immediately before and after every native bootstrap Git observation, revalidate all routing paths/files/directories against those accepted identities/bytes and keep `<git_dir>/config.worktree` absent;
+3. for the primary worktree, retain/revalidate the `.git` directory identity across the observations as well;
+4. add direct actual-linked-worktree witnesses replacing either the `.git` marker or `commondir` after precheck but before the real Git process, proving rejection before project import/ref/evidence/callback;
+5. preserve all already-closed common-config, executable identity, four-module closure, endpoint/no-replace, Evidence ABI and temporary-CAS contracts.
 
-Reported test/static passes remain supportive only; they do not replace the missing linked-worktree and post-consumption causal witnesses.
+Reported `55/55` targeted and `100/100` combined stdlib passes plus static checks are supportive, but do not replace this missing routing-metadata causal witness.
 
 Scope reminder: no real materialization, source/checkpoint I/O, project origin/ref/evidence mutation, collection/receipt/publication, child/runtime changes, CUDA/GPU, training, evaluation, inference or LIBERO4IN1 is authorized.
 
