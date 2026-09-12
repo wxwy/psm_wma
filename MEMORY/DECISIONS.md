@@ -180,7 +180,7 @@
 
 - 日期：2026-09-11
 - 状态：生效（用户要求）
-- 决策：审核状态只能由同一轮、可复核的远端锁定和三方 exact-pair 证据得出。每轮必须记录 CST 时间、`before_head`、远端 advertised SHA、fetch/fast-forward、完整新增提交范围、formal root/child、ChatGPT review 精确检索、MM/Kimi capture 与逐方状态；任一检查失败即为“状态未知”，不可表述为无回复或审核齐全。审核固定五分钟轮询，收到用户回复提示时立即额外检查。ChatGPT 的正式事实仅来自 `docs/collab/chatgpt/reviews/` 的 exact formal pair；MM/Kimi 仅来自已提交且锚定该 pair 的 tmux 最终 verdict。
+- 决策：审核状态只能由同一轮、可复核的远端锁定和三方 exact-pair 证据得出。每轮必须记录 CST 时间、`before_head`、远端 advertised SHA、fetch/fast-forward、完整新增提交范围、formal root/child、ChatGPT review 精确检索、MM/Kimi capture 与逐方状态；任一检查失败即为“状态未知”，不可表述为无回复或审核齐全。审核固定三分钟轮询，收到用户回复提示时立即额外检查。ChatGPT 的正式事实仅来自 `docs/collab/chatgpt/reviews/` 的 exact formal pair；MM/Kimi 仅来自已提交且锚定该 pair 的 tmux 最终 verdict。
 - 覆盖范围：覆盖所有依赖旧轮询结果、远端提交线索、Inbox 文本或输入框内容进行审核状态判断的做法；项目 `AGENTS.md` 与治理技能需保持同一节奏和字段。
 - 原因：此前出现未在本轮 fetch/精确扫描/回读完成前就断言“无新审核”或“审核已齐”的失真；把判断前提、失败语义和审计字段固定下来，才能让 Gate 推进可追溯且不可由记忆替代。
 
