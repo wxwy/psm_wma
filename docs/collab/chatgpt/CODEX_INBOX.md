@@ -902,6 +902,13 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 
 - Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`。
 - formal root：`cc36db3a6b863d86d57f5eb0e3fcefb5aef3376d`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+
+## 审核申请：Bootstrap local-config remediation closure
+
+- formal root：`aa48efebfcd54767e43c9156d3d0ce8301ddf9c4`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 整改：bootstrap module symlink拒绝；首个Git命令前stdlib common config allowlist并拒绝fsmonitor/include。
+- 证据：94/94 CPU tests、py_compile、Ruff、diff-check PASS；禁止真实I/O/GPU/训练。
+- 请求：`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。
 - 相对前轮`bb17774...`整改：bootstrap 在`sys.path/runpy`前以stdlib frozen Git验证HEAD/formal与四模块raw/formal-tree closure；collection/audit drift import-sentinel反例；endpoint grammar、replace-ref、hostile parent Git config、Evidence remote digest witnesses。
 - 证据：`python -B -m unittest tools.psm_wma.test_immutable_source_authority_root tools.psm_wma.test_materialize_immutable_source_authority_root -q`=`92/92 PASS`；py_compile、Ruff、diff-check PASS。只使用temporary repo/local bare remote；不含真实source/materialization、child、GPU、训练。
 - 请求：仅对exact pair回复`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。
