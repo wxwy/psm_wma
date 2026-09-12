@@ -872,3 +872,11 @@ v0.10选择并完整落实ChatGPT推荐Option A：最后一次双端exact observ
 - Gate/设计/范围/verdict 请求与上一条相同：仅审 v0.2 docs-only 两root文件CPU/static路线。
 
 请对这个 exact reachable pair 重新审核，唯一`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；不授权真实执行、child、GPU或训练。
+
+## 审核申请：Execution-authority implementation 设计 v0.3
+
+- formal root：`65836016ebc4fbcb73c50dc055cae206a690bc4f`
+- child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`
+- 文件：`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_execution_authority_implementation_design_v0.3.md`
+
+仅审v0.2 ChatGPT local-config HIGH整改：冻结typed config ABI、实际Git-dir/config路径、完整allowlist与值约束、production isolation fingerprint、accepted/rejected native temporary-repo witnesses。请求唯一`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；仅两root文件CPU/static，不授权真实执行、child、GPU或训练。
