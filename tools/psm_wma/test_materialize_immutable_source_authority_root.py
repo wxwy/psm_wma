@@ -462,6 +462,27 @@ class NativeAuthorityGitTest(unittest.TestCase):
             self.assertEqual(record["failure"]["primary_phase"], "remote_cas")
             self.assertTrue(record["rollback"]["complete"])
 
+    def test_cli_pass_writer_preserves_replaced_foreign_final(self):
+        hook = """
+original = tool.os.link
+def replace_then_fail(source, destination, *args, **kwargs):
+    original(source, destination, *args, **kwargs)
+    if str(destination).endswith('evidence.json'):
+        tool.os.unlink(destination)
+        with open(destination, 'wb') as handle:
+            handle.write(b'foreign')
+        raise OSError('final replacement fixture')
+tool.os.link = replace_then_fail
+"""
+        with tempfile.TemporaryDirectory() as raw:
+            _git, root, _remote, selection, config, argv = self._cli_fixture(Path(raw))
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_cli_with_hook(
+                    root, selection_handle, config_handle, argv, hook
+                )
+            self.assertNotEqual(result.returncode, 0, result.stderr)
+            self.assertEqual((root / "evidence.json").read_bytes(), b"foreign")
+
     def test_cli_other_publication_failures_write_verified_evidence(self):
         hooks = {
             "verify": """
