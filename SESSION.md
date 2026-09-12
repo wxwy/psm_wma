@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## 累计整改复审准备（2026-09-12）
+
+- 实现提交已推送：formal root=`1db0d539fd3d52fa7d521962a47204b578e0f94f`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。26/26 CPU tests PASS；formal diff 四文件，不含 child 或训练遗留。
+- 冻结名册：ChatGPT `docs/collab/chatgpt/reviews/`；MM `mm:0.0`；Kimi `kimi:0.0`。同 Gate 累计重审 5 HIGH；披露 sink/不可读取 snapshot 边界，不宣称全关闭，不新增 Gate。
+- Inbox append 前 38026 bytes，追加后低于 128 KiB；申请先提交/推送再向两个 pane 发送。当前仅准备，不构成送达回执；新 pair 三方 final 前禁止继续修改审核对象和真实执行。
+
 ## 整改复核第 1 轮（2026-09-12 10:00 CST）
 
 - formal root=`fb9c5e04e811865247e2ed44072af59acc8b93c9`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 ChatGPT reviews/、MM `mm:0.0`、Kimi `kimi:0.0`。

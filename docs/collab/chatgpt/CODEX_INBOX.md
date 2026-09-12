@@ -341,3 +341,18 @@ formal tree 仅改 evidence design、`SESSION.md`，Gitlink 不变；`git diff -
 依批准 design 新增唯一 executor 与 stdlib tests：显式 DI 的 Git/root-FD/evidence sink、exact authority/five-path allowlist、同 FD re-read drift、single-use handoff、retained snapshot rollback/ROLLBACK_INCOMPLETE。仅内存 synthetic bytes。验证：5/5 unittest、py_compile、diff-check PASS。
 
 请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；不授权真实 source I/O、collection/receipt/publication、child、GPU 或训练。正式 verdict 请仅写入 reviews/。
+
+## 审核申请：Executor CPU/static 累计整改复审（2026-09-12）
+
+- formal root SHA：`1db0d539fd3d52fa7d521962a47204b578e0f94f`
+- child/Gitlink SHA：`93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-CONTROLLED-EXECUTION-IMPLEMENTATION-DESIGN`
+- 冻结名册：ChatGPT（reviews/）、MM（mm:0.0）、Kimi（kimi:0.0）。
+
+请相对首轮 `fb9c5e04e811865247e2ed44072af59acc8b93c9` 复审累计两文件整改，不只看最后一个 commit。证据为 formal tree 的 `tools/psm_wma/immutable_source_collection.py`、`tools/psm_wma/test_immutable_source_collection.py` 和 SESSION。累计加入 exact evidence ABI/phase/FAIL、authority parent/tree/blob/raw-byte/lineage 查询、单 handle stat/rewind 双 hash、五 artifact canonical derivation/one-shot handoff、隔离 preflight 与五加一 raw blob transaction/receipt relookup/rollback、approved-vs-observed identity 和最终 postchecks。本次又补 sink 拒绝后的恢复与内存记录深拷贝。
+
+验证：根仓 `python3 -B -m unittest tools.psm_wma.test_immutable_source_collection -v` 26/26 PASS；`git diff --check` PASS。仅 CPU 标准库/内存 fixtures；没有真实 source/checkpoint/cache I/O、collection/receipt/publication、child 改动、GPU 或训练。
+
+请逐一复核前轮 5 HIGH 的 acceptance，给出已关闭项与剩余 file:line，不能以 tests 数量替代生产算法覆盖。特别明确仍需审查的失败边界：sink 保存后抛异常时持久化状态未知；snapshot 无法重取时不能编造 exact live rollback witness。当前 sink 拒绝后恢复 ref/index/worktree 并抛 EVIDENCE_SINK_FAILED，恢复失败抛 ROLLBACK_INCOMPLETE，不宣称 FAIL 已落盘；这不构成新增 phase/schema。请判断是否满足现有冻结合同；如不满足，请在同一 implementation Gate 给最小整改，不新开横向 provenance Gate。真实适配器/运行未获批准，合成 tree/commit 标识不冒充生产证据。
+
+请求唯一 final verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_CONTROLLED_EXECUTION_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。不请求真实执行授权。ChatGPT 正式结果仅放 `docs/collab/chatgpt/reviews/`，写清完整 pair。等待三方同 pair final 后才合并整改，source-evidence 既有闭环后直接 single-GPU smoke。
