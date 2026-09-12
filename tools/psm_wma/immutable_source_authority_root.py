@@ -6,6 +6,7 @@ import json
 import os
 import hashlib
 import stat
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from types import MappingProxyType
@@ -74,6 +75,42 @@ class PublicationFailure:
 
 class EvidenceCleanupIncomplete(AuthorityRootError):
     """A writer cannot prove that pre-commit evidence cleanup completed."""
+
+
+def _unlink_exact_regular(path: Path, identity: tuple[int, int]) -> bool:
+    """Remove only an identity-bound regular file via a private same-directory handoff."""
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return False
+    if not stat.S_ISREG(info.st_mode) or (info.st_dev, info.st_ino) != identity:
+        return False
+    parking = Path(tempfile.mkdtemp(prefix=f".{path.name}.unlink-", dir=path.parent))
+    parked = parking / "owned"
+    restored = False
+    try:
+        os.rename(path, parked)
+        parked_info = parked.lstat()
+        if (
+            not stat.S_ISREG(parked_info.st_mode)
+            or (parked_info.st_dev, parked_info.st_ino) != identity
+        ):
+            try:
+                path.lstat()
+            except FileNotFoundError:
+                os.rename(parked, path)
+                restored = True
+            return False
+        os.unlink(parked)
+        return True
+    finally:
+        if parked.exists() or parked.is_symlink():
+            if not restored:
+                raise AuthorityRootError("evidence owned path 无法安全恢复")
+        try:
+            parking.rmdir()
+        except OSError:
+            pass
 
 
 class AuthorityGitTransaction(Protocol):
@@ -314,7 +351,8 @@ class EvidenceCommit(_NonSerializable):
             self._pre_unlink()
         except Exception as error:
             raise AuthorityRootError("evidence commit fixed ref 漂移") from error
-        os.unlink(self._guard)
+        if not _unlink_exact_regular(self._guard, self._guard_identity):
+            raise AuthorityRootError("evidence commit guard identity 漂移")
         self._committed = True
 
 

@@ -27,6 +27,7 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     write_failure_evidence,
     _read_input_fd,
     _cleanup_pending_evidence,
+    _unlink_owned,
     _path_identity,
     _fd_identity,
 )
@@ -266,6 +267,30 @@ class NativeAuthorityGitTest(unittest.TestCase):
             path.write_bytes(b"foreign")
             with self.assertRaises(EvidenceCleanupIncomplete):
                 _cleanup_pending_evidence(((path, identity),), directory)
+            self.assertEqual(path.read_bytes(), b"foreign")
+
+    def test_cleanup_handoff_preserves_boundary_foreign_replacement(self):
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            path = directory / "evidence.json.pending"
+            path.write_bytes(b"owned")
+            identity = _path_identity(path)
+            original_rename = os.rename
+            replaced = False
+
+            def replace_before_handoff(source, destination):
+                nonlocal replaced
+                if Path(source) == path and not replaced:
+                    replaced = True
+                    path.unlink()
+                    path.write_bytes(b"foreign")
+                return original_rename(source, destination)
+
+            with patch(
+                "tools.psm_wma.immutable_source_authority_root.os.rename",
+                side_effect=replace_before_handoff,
+            ):
+                self.assertFalse(_unlink_owned(path, identity))
             self.assertEqual(path.read_bytes(), b"foreign")
 
     def test_failure_writer_preserves_replaced_foreign_temporary(self):

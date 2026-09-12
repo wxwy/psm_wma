@@ -3,12 +3,14 @@
 from __future__ import annotations
 import hashlib
 import json
+import os
 import pickle
 import shutil
 import tempfile
 import unittest
 from copy import copy, deepcopy
 from pathlib import Path
+from unittest.mock import patch
 
 from tools.psm_wma.immutable_source_authority_root import (
     AuthorityBinding,
@@ -369,6 +371,51 @@ class AuthorityRootTest(unittest.TestCase):
             guard.unlink()
             guard.write_bytes(b"foreign")
             with self.assertRaises(AuthorityRootError):
+                commit.consume_by_unlink()
+            self.assertEqual(guard.read_bytes(), b"foreign")
+
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
+    def test_altered_record_after_seal_cannot_commit_or_delete_guard(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            evidence = guard.with_name("evidence.json")
+            evidence.write_bytes(b'{"evidence_sha256":"' + b"b" * 64 + b'"}')
+            with self.assertRaises(AuthorityRootError):
+                commit.consume_by_unlink()
+            self.assertTrue(guard.exists())
+            self.assertEqual(evidence.read_bytes(), b'{"evidence_sha256":"' + b"b" * 64 + b'"}')
+
+        with self.assertRaisesRegex(AuthorityRootError, "FINALIZER_DID_NOT_COMMIT"):
+            publish_candidate(self.request, candidate, binding, self.git, finalizer=finalizer)
+        self.assertNotIn(AUTHORITY_REF, self.git.local)
+        self.assertNotIn(AUTHORITY_REF, self.git.remote)
+
+    def test_guard_handoff_preserves_boundary_foreign_replacement(self):
+        candidate, binding = self.candidate()
+
+        def finalizer(witness, commit):
+            guard = self._seal_commit(witness, commit)
+            original_rename = os.rename
+            replaced = False
+
+            def replace_before_handoff(source, destination):
+                nonlocal replaced
+                if Path(source) == guard and not replaced:
+                    replaced = True
+                    guard.unlink()
+                    guard.write_bytes(b"foreign")
+                return original_rename(source, destination)
+
+            with patch(
+                "tools.psm_wma.immutable_source_authority_root.os.rename",
+                side_effect=replace_before_handoff,
+            ), self.assertRaises(AuthorityRootError):
                 commit.consume_by_unlink()
             self.assertEqual(guard.read_bytes(), b"foreign")
 

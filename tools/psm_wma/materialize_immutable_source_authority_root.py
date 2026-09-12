@@ -18,6 +18,7 @@ from tools.psm_wma.immutable_source_authority_root import (
     AuthorityRequest,
     EvidenceCommit,
     EvidenceCleanupIncomplete,
+    _unlink_exact_regular,
     PublicationFailure,
     prepare_candidate,
     publish_candidate,
@@ -928,14 +929,7 @@ def _fd_identity(descriptor: int) -> tuple[int, int]:
 
 
 def _unlink_owned(path: Path, identity: tuple[int, int]) -> bool:
-    try:
-        info = path.lstat()
-    except FileNotFoundError:
-        return False
-    if (info.st_dev, info.st_ino) != identity:
-        return False
-    path.unlink()
-    return True
+    return _unlink_exact_regular(path, identity)
 
 
 def _cleanup_pending_evidence(
