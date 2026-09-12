@@ -28,6 +28,7 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     _read_input_fd,
     _cleanup_pending_evidence,
     _path_identity,
+    _fd_identity,
 )
 
 
@@ -246,6 +247,21 @@ class NativeAuthorityGitTest(unittest.TestCase):
             path = directory / "evidence.json.pending"
             path.write_bytes(b"owned")
             identity = _path_identity(path)
+            path.unlink()
+            path.write_bytes(b"foreign")
+            with self.assertRaises(EvidenceCleanupIncomplete):
+                _cleanup_pending_evidence(((path, identity),), directory)
+            self.assertEqual(path.read_bytes(), b"foreign")
+
+    def test_fd_identity_preserves_replaced_foreign_path(self):
+        with tempfile.TemporaryDirectory() as raw:
+            directory = Path(raw)
+            path = directory / "evidence.json.pending"
+            descriptor = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+            try:
+                identity = _fd_identity(descriptor)
+            finally:
+                os.close(descriptor)
             path.unlink()
             path.write_bytes(b"foreign")
             with self.assertRaises(EvidenceCleanupIncomplete):
