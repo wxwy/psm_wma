@@ -4036,3 +4036,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 整改formal root=`e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree经`git diff-tree --no-commit-id --name-status -r`确认为仅`docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_design_v0.1.md`，将FAIL谓词精确改为`world_size != 1`。当前设计 SHA-256=`de480cdf3f9b742a0b69cbe4d3d3a0c00d6fdf68858ac60ce9b2698153e76d1e`；`git diff --check`通过。
 - 审核申请前观察凭证 #0：`before_head=e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`；fetch成功；advertised/origin均为`e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`；新增范围为空；祖先检查=0，ff-only=`Already up to date`。ChatGPT精确检索`rg -l 'e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8' docs/collab/chatgpt/reviews || true`为空。Kimi=`kimi:0.0`、MM=`mm:0.0` capture均只有旧pair的final，不能跨SHA复用；新pair无final。
 - 新pair冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。下一步仅允许将整改申请 append/push至live Inbox，并以`send-keys -l`→等待至少1秒→独立Enter→capture送达MM/Kimi；完成前无送达回执或推进令牌，禁止编写runbook、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke world-size predicate remediation 送达回执（2026-09-13 19:02 CST，REVIEW）
+
+- ChatGPT申请已写入canonical live Inbox；追加后大小为`22255` bytes，低于`131072` bytes，且ledger=`37096962`已推送（ledger不是formal target）。冻结名册保持ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
+- MM=`mm:0.0`：已执行完整`send-keys -l`，等待≥1秒，独立Enter；首次capture仅显示输入，第二次独立Enter后capture显示完整 exact-pair 申请已进入消息流、空输入框与`Leavening…`处理状态。Kimi=`kimi:0.0`：同样执行完整`send-keys -l`，等待≥1秒，独立Enter；首次capture仅显示输入，第二次独立Enter后capture显示完整 exact-pair 申请已进入消息流、空输入框与处理指示。两者送达双回执完整。
+- 新pair尚无final verdict或推进令牌；三分钟后从审核观察凭证#1开始完整fetch/ls-remote/ff-only→exact review scan→Kimi/MM capture。批准前禁止runbook、真实I/O、child、GPU、训练。
