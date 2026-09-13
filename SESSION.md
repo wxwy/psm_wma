@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root execution-authority remediation closure 第2轮观察（2026-09-13 11:28:25 CST，检查失败/状态未知）
+
+- formal root=`cc36db3a6b863d86d57f5eb0e3fcefb5aef3376d`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册仍为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
+- 本轮凭证：`before_head=cc9152c668f4e9718a5f58924489175d6451af22`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2`与`origin/V2`均为`cc9152c668f4e9718a5f58924489175d6451af22`；新增范围为空；`git merge-base --is-ancestor`返回0且`git merge --ff-only origin/V2`为`Already up to date`。
+- ChatGPT精确检索命中`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_cc36db3_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:165)`，含HIGH-1/HIGH-2。Kimi与MM分别成功capture，但各自5000行窗口中均未出现本formal root；可见末尾均只含旧pair `de1d12f.../93a89ba...` 的结论。因此本轮无法从两pane取得本pair最终verdict或可复核送达状态；按fail-closed规则三方状态为检查失败/状态未知，无推进令牌，禁止整改、编码、真实I/O、GPU和训练。
+
 ## Authority-root execution-authority CPU/static 实现（2026-09-12，REVIEW）
 
 - 已批准 formal design=`9aba4460469ddab4640e90694e78968d497a9273`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；三方批准范围仅`tools/psm_wma/materialize_immutable_source_authority_root.py`及其stdlib CPU测试，禁止真实物化、source I/O、child、GPU与训练。
