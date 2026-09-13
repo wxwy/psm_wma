@@ -5051,3 +5051,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `before_head=cfb98fea5b96f1b2b1d334efca7b5a62c593ebed`；fetch成功；advertised/tracking均=`cfb98fea5b96f1b2b1d334efca7b5a62c593ebed`；新增范围为空；祖先判定=0，ff-only成功（Already up to date）。
 - exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`APPROVE_TO_CLOSE...`；Kimi=`REQUEST_CHANGES`（5项 witness缺口）。两 pane capture成功、未截断。
 - ChatGPT仍缺件且已有REQUEST_CHANGES，无推进令牌；保持REVIEW，禁止整改、真实I/O、GPU或训练。
+
+### Collection adapter 整改复核观察凭证 #97（2026-09-14 02:25 CST，REVIEW）
+
+- `before_head=e2477c131d403e78e07050f8afd8b386161102e5`；fetch成功；advertised/tracking均=`e2477c131d403e78e07050f8afd8b386161102e5`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
+- exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi=`REQUEST_CHANGES`（5项 witness缺口）；两 pane capture成功、未截断。
+- ChatGPT缺件且Kimi为REQUEST_CHANGES，无推进令牌；保持`REVIEW`，禁止整改、真实I/O、GPU或训练。
