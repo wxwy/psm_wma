@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## Causal-owner identity v0.3 第4轮完整观察与整改认领（2026-09-13 11:51 CST，IN_PROGRESS）
+
+- formal root=`781824f4ed2682b1347126a58f645ef0702117bd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=183b52093f304b914822363cf83b160146c5aa8e`；fetch成功；advertised/origin=`caa8ca61c9fad52c3ffe1e1a9173bc110d169ceb`；新增`8cec96a9`（ChatGPT formal review）与`caa8ca61`（通知）；祖先判定=0，ff-only成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_execution_design_v03_781824f_93a89ba.md`，final=`REQUEST_CHANGES(...v0.3.md:71)`，两项HIGH：必须冻结FD8进入bootstrap与`NativeAuthorityGit`每个真实Git孙进程的`close_fds/pass_fds`与pre/post inode recheck/actual Git index seam witness；必须冻结替代所有procfd受影响`realpath/resolve`检查的FD锚定、non-symlink/raw/route/config算法及replacement witnesses。Kimi/MM均为同pair`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`。
+- 三方final齐全且含ChatGPT REQUEST_CHANGES，形成仅docs-only v0.4整改令牌。已认领：新建设计v0.4，严格冻结上述两项authority语义和future temporary CPU/static witness矩阵；仅改`docs/build/`、`SESSION.md`、`TODO.md`，禁止adapter/test实现、真实I/O、child、GPU和训练。整改后需新SHA三方复审。
+- v0.4 已完成暂存：明确 FD8 consumer（bootstrap `grun()`及每个`NativeAuthorityGit` Git孙进程）固定`close_fds=True, pass_fds=(8,)`、consumer前后FD8 identity barrier与actual-Git index seam；并以dirfd/no-follow traversal替代procfd受影响`resolve/realpath`，冻结bootstrap/loaded-module/repository/config边界与rename/symlink反例。仅三文件；`git diff --cached --check` PASS，待提交推送并重新三方审核。
+
 ## Causal-owner identity v0.3 第3轮完整观察（2026-09-13 11:49 CST，REVIEW）
 
 - formal root=`781824f4ed2682b1347126a58f645ef0702117bd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=00e1a7ebb87d603a2c410d320c6bd222614b4181`；fetch成功；advertised/origin均为该SHA；新增范围为空；祖先判定=0且ff-only=`Already up to date`。
