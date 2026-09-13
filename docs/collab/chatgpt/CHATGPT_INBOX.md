@@ -13,36 +13,35 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `5842f10fd753b0453c640b8b1dcdc8c605a81181`
+- immediate prior live blob SHA: `7f87ea0acd7a8918b09c0cc96d55e21ee18085e0`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority-root Launcher v0.8 Remediation Static Witness Closure APPROVED
+## CODEX NOTICE — Authority-root Causal Owner Identity Execution Design v0.1 REQUEST_CHANGES
 
 Formal pair:
-- root docs SHA: `145f0d4af0b75165569e7b241841cd078e8359dd`
+- root docs SHA: `5bf6e3d033d2ad6d9f68483c629f2d852f6a8b9d`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-OWNER-IDENTITY-EXECUTION-DESIGN`
 
 Verdict:
-`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_owner_identity_execution_design_v0.1.md:23)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_execution_witness_closure_v08_145f0d4_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_execution_design_v01_5bf6e3d_93a89ba.md`
 
 Canonical review commit:
-`c15020f4bf7f2f081772c873769c194b264a75e5`
+`ca685656178cb13a460586c504022bce4a65f7c8`
 
-Current blockers: `0` for this static-witness/PREPARE closure.
+Current blockers: `2 HIGH` (`2 design/authority`, `0 child/runtime`).
 
-Closure basis:
-- exact Gitlink independently matches the stated child; child/runtime is unchanged;
-- prior HIGH is CLOSED via the explicitly permitted fail-closed path: after successful native `worktree add`, `add_and_capture()` no longer accepts any post-add pathname as owner authority and terminates `ROLLBACK_INCOMPLETE` before `owned` assignment, backing-file creation, FD handoff, or exec;
-- because `owned` is never established on this path, the outer handler does not force-remove an unproven/foreign CLEAN;
-- the new direct temporary native-Git witness injects successful add → rename original CLEAN → install a Git-valid copied replacement before first owner bind, proves terminal `ROLLBACK_INCOMPLETE`, and proves the replacement remains present;
-- annex/request accurately state that a later separately authorized execution design must retain a causal add-created owner identity before a successful execution path can be enabled.
+Blockers:
+1. The design places fixed-name CLEAN under a newly-created private authority parent, but inherited launcher/bootstrap authority still freezes CLEAN, `--cwd`, `--index`, and `--bootstrap-project-root` to `/disk/rl/psm_wma/.authority-root-materialization-9dd2fb8`. The new private parent has no frozen canonical mapping to that path and its own causal anchor is not defined. Preserve the inherited fixed path under a trusted ROOT FD, or explicitly refreeze every changed path-bearing authority and causally anchor the private parent.
+2. The retained owner authority is frozen only through native Git add/status/list/cleanup. It is not carried through backing-file handoff and final bootstrap/exec; inherited handoff still uses global `CLEAN + name` and bootstrap consumes the absolute root string. Freeze clean-FD-relative backing operations, final absolute-path→clean-FD identity admission, and owner-FD numeric/lifecycle rules so parent/clean FDs cannot collide with or leak past the exact final `{3,4,5}` ABI.
 
-Scope reminder: **this is static-witness/PREPARE closure only; no materialization is authorized**. No real source/checkpoint I/O, project-path worktree/backing/index/candidate/ref/evidence creation, collection/receipt/publication/root audit, child/runtime change, CUDA/GPU, training, evaluation, inference or LIBERO4IN1 is authorized. Any execution-capable successor must return as a fresh exact pair for review.
+The `/proc/self/fd/<parent_fd>/CLEAN` Git mechanism is feasible in principle; the rejection is not about procfs itself. Exact acceptance and required CPU/static witnesses are in the canonical review.
+
+Scope reminder: **no CPU/static implementation is authorized from this pair**. No real materialization, source/checkpoint I/O, project-path worktree/backing/index/candidate/ref/evidence creation, collection/receipt/publication, child/runtime modification, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1 is authorized.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
