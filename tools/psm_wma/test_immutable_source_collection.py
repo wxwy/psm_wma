@@ -4,11 +4,14 @@ import unittest
 import hashlib
 import json
 import pickle
+import tempfile
+import subprocess
+from pathlib import Path
 from dataclasses import replace
 import stat
 from copy import deepcopy
 from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff
-from tools.psm_wma.immutable_source_collection import COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
+from tools.psm_wma.immutable_source_collection import AtomicFileEvidenceSink, COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, NativeCollectionGit, NativeRootFd, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
 class ImmutableSourceCollectionTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -54,6 +57,32 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
     def test_exact_pass_evidence(self) -> None:
         sink = MemoryEvidenceSink(); record = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=sink)
         self.assertEqual(record["status"], "PASS"); self.assertEqual(record["execution"]["phase"], "complete"); self.assertEqual(sink.records, [record])
+
+    def test_native_root_fd_rejects_escape_and_reads_regular_file(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); (root / "entry").write_bytes(b"abc")
+            descriptor = __import__("os").open(root, __import__("os").O_RDONLY)
+            try:
+                opener = NativeRootFd(descriptor)
+                handle = opener.open_regular("entry")
+                self.assertEqual(handle.read(8), b"abc")
+                handle.rewind(); self.assertEqual(handle.stat().size, 3); handle.close()
+                with self.assertRaises(CollectionError): opener.open_regular("../escape")
+            finally:
+                __import__("os").close(descriptor)
+
+    def test_native_git_commits_temporary_collection_tree(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            def git(*args, input=None):
+                return subprocess.run(["/usr/bin/git", *args], cwd=root, input=input, check=True, stdout=subprocess.PIPE).stdout.decode().strip()
+            git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
+            (root / "seed").write_text("x"); git("add", "seed"); git("commit", "-qm", "seed")
+            parent = git("rev-parse", "HEAD")
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", root / "index", {})
+            row = adapter.commit((RECEIPT_PATH,), parent, {RECEIPT_PATH: b"{}"})
+            self.assertEqual(adapter.commit_parents(row["revision"]), (parent,))
+            self.assertEqual(adapter.blob_bytes(adapter.tree_entries(row["revision"])[RECEIPT_PATH][2]), b"{}")
     def test_retained_evidence_does_not_alias_returned_record(self) -> None:
         sink = MemoryEvidenceSink()
         record = collect_synthetic(authority=self.authority, lineage=self.lineage,

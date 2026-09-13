@@ -3,9 +3,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import stat
+import subprocess
 from dataclasses import dataclass, field
 from threading import Lock
+from pathlib import Path
 from typing import Mapping, Protocol
 
 from tools.g0.audit_r09_b_ttt_root_gitlink_authority import AuditFailure, validate_config
@@ -135,6 +138,182 @@ class SyntheticRootFd:
         if isinstance(value, bytes): return SyntheticEntry(value)
         if isinstance(value, SyntheticEntry): return value
         raise CollectionError("source path is absent or non-regular")
+
+
+class NativeRootFd:
+    """以目录 capability 打开 normal relative regular files；供受控 adapter 注入。"""
+
+    def __init__(self, root_fd: int) -> None:
+        info = os.fstat(root_fd)
+        if not stat.S_ISDIR(info.st_mode):
+            raise CollectionError("source root FD 不是目录")
+        self._root_fd = root_fd
+
+    def open_regular(self, path: str) -> EntryHandle:
+        if (not isinstance(path, str) or not path or path.startswith("/")
+                or any(part in {"", ".", ".."} for part in path.split("/"))):
+            raise CollectionError("source path escapes root FD")
+        flags = os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW
+        try:
+            descriptor = os.open(path, flags, dir_fd=self._root_fd)
+        except OSError as exc:
+            raise CollectionError("source path 打开失败") from exc
+        try:
+            info = os.fstat(descriptor)
+            if not stat.S_ISREG(info.st_mode):
+                raise CollectionError("source path 不是 regular file")
+            return _NativeEntry(descriptor, info)
+        except BaseException:
+            os.close(descriptor)
+            raise
+
+
+class _NativeEntry:
+    def __init__(self, descriptor: int, info: os.stat_result) -> None:
+        self._descriptor, self._initial, self._closed = descriptor, info, False
+
+    def stat(self) -> EntryStat:
+        info = os.fstat(self._descriptor)
+        if (not stat.S_ISREG(info.st_mode) or info.st_dev != self._initial.st_dev
+                or info.st_ino != self._initial.st_ino):
+            raise CollectionError("source FD identity drift")
+        return EntryStat(info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns, info.st_mode)
+
+    def read(self, size: int) -> bytes:
+        if self._closed:
+            raise CollectionError("source FD 已关闭")
+        return os.read(self._descriptor, size)
+
+    def rewind(self) -> None:
+        os.lseek(self._descriptor, 0, os.SEEK_SET)
+
+    def close(self) -> None:
+        if not self._closed:
+            os.close(self._descriptor)
+            self._closed = True
+
+
+class AtomicFileEvidenceSink:
+    """仅向新路径原子发布已经过 canonical validation 的 evidence。"""
+
+    def __init__(self, destination: Path) -> None:
+        self._destination = destination
+        if destination.exists() or destination.is_symlink():
+            raise CollectionError("evidence destination 必须 fresh")
+
+    def emit(self, record: Mapping[str, object]) -> None:
+        verify_evidence(record)
+        raw = _canonical(record)
+        temporary = self._destination.with_name(self._destination.name + ".pending")
+        if temporary.exists() or temporary.is_symlink():
+            raise CollectionError("evidence temporary path 必须 fresh")
+        try:
+            descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC, 0o600)
+            with os.fdopen(descriptor, "wb") as handle:
+                handle.write(raw)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temporary, self._destination)
+        except BaseException:
+            try:
+                temporary.unlink(missing_ok=True)
+            except OSError:
+                pass
+            raise
+
+
+class NativeCollectionGit:
+    """受控 native Git adapter；只实现既有 collection seam。"""
+
+    def __init__(self, git: Path, cwd: Path, remote: str, index: Path, metadata: Mapping[str, str]) -> None:
+        if not all(path.is_absolute() for path in (git, cwd, index)):
+            raise CollectionError("git/cwd/index 必须为绝对路径")
+        self.git, self.cwd, self.remote, self.index = git, cwd, remote, index
+        self._metadata = dict(metadata)
+        self._env = {"GIT_INDEX_FILE": str(index), "GIT_NO_REPLACE_OBJECTS": "1",
+                     "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
+                     "GIT_CONFIG_SYSTEM": "/dev/null", "LC_ALL": "C", "LANG": "C",
+                     **self._metadata}
+
+    def _run(self, *args: str, input: bytes | None = None, check: bool = True) -> bytes:
+        result = subprocess.run([str(self.git), *args], cwd=self.cwd, env=self._env, input=input,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False)
+        if check and result.returncode:
+            raise CollectionError(result.stderr.decode("utf-8", "replace").strip() or "native Git 失败")
+        return result.stdout
+
+    def resolve(self, revision: str) -> str:
+        return self._run("rev-parse", "--verify", revision).decode().strip()
+
+    def commit_parents(self, revision: str) -> tuple[str, ...]:
+        return tuple(self._run("show", "-s", "--format=%P", revision).decode().split())
+
+    def tree_entries(self, revision: str) -> Mapping[str, TreeEntry]:
+        result: dict[str, TreeEntry] = {}
+        for item in self._run("ls-tree", "-r", "-z", revision).decode().split("\0"):
+            if item:
+                meta, path = item.split("\t", 1); mode, kind, oid = meta.split(); result[path] = (mode, kind, oid)
+        return result
+
+    def blob_bytes(self, oid: str) -> bytes:
+        return self._run("cat-file", "blob", oid)
+
+    def gitlink_at(self, revision: str) -> str:
+        return self.tree_entries(revision)["cosmos-framework"][2]
+
+    def local_ref(self, ref: str) -> str | None:
+        value = self._run("rev-parse", "--verify", "-q", ref, check=False).decode().strip()
+        return value or None
+
+    def remote_ref(self, ref: str) -> str | None:
+        value = self._run("ls-remote", self.remote, ref).decode().split()
+        return value[0] if value else None
+
+    def snapshot(self) -> Mapping[str, object]:
+        head = self.resolve("HEAD")
+        symbolic = self._run("symbolic-ref", "-q", "HEAD", check=False).decode().strip() or None
+        target = symbolic or "HEAD"
+        entries = []
+        for path in SNAPSHOT_PATHS:
+            candidate = self.cwd / path
+            if candidate.is_file() and not candidate.is_symlink():
+                raw = candidate.read_bytes()
+                entries.append({"path": path, "mode": "100644", "kind": "regular", "sha256": _digest(raw)})
+            else:
+                entries.append({"path": path, "mode": None, "kind": "absent", "sha256": None})
+        return {"target_ref": target, "target_ref_revision": head, "head_mode": "symbolic" if symbolic else "detached",
+                "head_symbolic_ref": symbolic, "head_revision": head,
+                "index_tree_native_oid": self._run("write-tree").decode().strip(),
+                "worktree_entries": entries, "worktree_sha256": _sha(entries)}
+
+    def preflight(self, paths: tuple[str, ...], parent: str, blobs: Mapping[str, bytes]) -> str:
+        if paths not in (COLLECTION_PATHS, (RECEIPT_PATH,)) or set(paths) != set(blobs):
+            raise CollectionError("transaction allowlist drift")
+        self._run("read-tree", parent)
+        for path, raw in blobs.items():
+            oid = self._run("hash-object", "-w", "--stdin", input=raw).decode().strip()
+            self._run("update-index", "--add", "--cacheinfo", f"100644,{oid},{path}")
+        return self._run("write-tree").decode().strip()
+
+    def commit(self, paths: tuple[str, ...], parent: str, blobs: Mapping[str, bytes]) -> Mapping[str, str]:
+        before = self.snapshot()
+        if before["target_ref_revision"] != parent:
+            raise CollectionError("commit parent 与当前 target 不一致")
+        tree = self.preflight(paths, parent, blobs)
+        revision = self._run("commit-tree", tree, "-p", parent, input=b"chore: immutable source collection\n").decode().strip()
+        self._run("update-ref", str(before["target_ref"]), revision, parent)
+        return {"revision": revision, "tree_native_oid": tree, "parent_revision": parent}
+
+    def lookup(self, revision: str) -> Mapping[str, str]:
+        return {"revision": revision, "tree_native_oid": self._run("show", "-s", "--format=%T", revision).decode().strip(),
+                "parent_revision": self.commit_parents(revision)[0]}
+
+    def rollback(self, snapshot: Mapping[str, object]) -> Mapping[str, object]:
+        value = _snapshot(snapshot)
+        target = str(value["target_ref"]); revision = str(value["target_ref_revision"])
+        self._run("update-ref", target, revision)
+        self._run("read-tree", str(value["index_tree_native_oid"]))
+        return self.snapshot()
 @dataclass
 class TemporaryGitFixture:
     revisions: Mapping[str, str]
