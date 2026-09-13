@@ -3984,3 +3984,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`ee5d895043222763849ab60aa17d782f3c1596fd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=1175a1376e28187296f36db9abaef56d15a27a18`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2` advertised=`1175a1376e28187296f36db9abaef56d15a27a18`且与`origin/V2`一致；完整新增范围为空；祖先检查返回0，`git merge --ff-only origin/V2`=`Already up to date`，local-after同为`1175a1376e28187296f36db9abaef56d15a27a18`。
 - ChatGPT独立精确检索命令`rg -l 'ee5d895043222763849ab60aa17d782f3c1596fd' docs/collab/chatgpt/reviews || true`无输出，故本轮没有exact-pair formal review。Kimi=`kimi:0.0`独立capture为same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`；MM=`mm:0.0`独立capture为same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`（18:23:11）。
 - 逐方：ChatGPT=处理中（缺formal review）；Kimi=已回复(APPROVE，`kimi:0.0`)；MM=已回复(APPROVE，`mm:0.0`)。缺ChatGPT final，未形成推进令牌；保持REVIEW，禁止编写 execution runbook、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke design v0.1 审核观察凭证 #2（2026-09-13 18:29 CST，REVIEW）
+
+- formal root/child及冻结名册不变。`before_head=c2f9791daa48efc05f6062b5acb8619c2c06c3b5`；fetch成功；advertised/origin同为`c2f9791daa48efc05f6062b5acb8619c2c06c3b5`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。
+- ChatGPT精确检索仍无输出；Kimi=`kimi:0.0`与MM=`mm:0.0`独立capture均保持same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`。逐方：ChatGPT=处理中（缺formal review），Kimi/MM=已回复(APPROVE)。无推进令牌，保持REVIEW，禁止编写 execution runbook、真实I/O、child、GPU和训练。
