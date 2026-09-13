@@ -3966,3 +3966,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 已重新锁定 `origin/V2=17d2f2161bb7187b66c08ded942c29b7ada11b47`，本地 fast-forward 无新增；当前 authority-root CPU/static closure已完成，但不构成 GPU 或训练授权。
 - 新建 root docs-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_design_v0.1.md`，并认领 `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-DESIGN`。设计把 source-evidence post-commit receipt 定义为实际输入的硬前置，闭合后直接进入 single-GPU execution request，不再新开 provenance 子Gate；冻结 `world_size=1`、`num_workers=0`、无 torchrun/resume、≤100步、canonical chronology/GA failure transaction、产物与 stop 条件。
 - 尚未提交、未发审核、未运行代码/GPU/真实 I/O/child/训练。下一步：`git diff --check` 后提交该 docs-only design，并以该新的 formal root/Gitlink 申请三方审核。
+
+### Single-GPU smoke design v0.1 formal review roster（2026-09-13，REVIEW）
+
+- formal root=`ee5d895043222763849ab60aa17d782f3c1596fd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。formal tree只含本设计、SESSION与TODO；Gitlink未变；设计 SHA-256=`40b50a1f9384b78115167cd8bc3702166098ba3d3d3dc6c41099c5cfa30adc19`。
+- 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。请求唯一 verdict=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`或`REQUEST_CHANGES(file:line)`。
+- 批准范围仅为下一份 docs-only single-GPU smoke execution runbook/command design；明确不授权真实 source/checkpoint/manifest/data/cache I/O、source-evidence record/receipt/publication、child修改、GPU/CUDA/torchrun、训练、评测、推理或LIBERO4IN1。当前申请记录待独立 ledger 提交推送并向MM/Kimi发送；送达前不存在审核观察或推进令牌。

@@ -121,3 +121,13 @@
 - Formal-tree scope: exactly `SESSION.md`, `TODO.md`, the adapter, and its direct test; `cosmos-framework` remains mode `160000` at the exact child above. Evidence: `py_compile`, `python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root` = `68/68 PASS`, and `git diff --check` PASS. Fixtures use only `TemporaryDirectory` and local/bare Git; no external network.
 - Exact final verdict requested: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: production/main execution; real materialization; source/checkpoint I/O; project worktree/backing/index/candidate/ref/evidence creation; collection/receipt/publication; child/runtime changes; GPU, training, evaluation, inference, and LIBERO4IN1.
+
+## Design review request — v0.3.5 single-GPU smoke execution path
+
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-DESIGN`
+- Formal root: `ee5d895043222763849ab60aa17d782f3c1596fd`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Formal scope: exactly the new root docs-only design `docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_design_v0.1.md` plus `SESSION.md` and `TODO.md`; formal Gitlink is unchanged. Design SHA-256: `40b50a1f9384b78115167cd8bc3702166098ba3d3d3dc6c41099c5cfa30adc19`.
+- Review focus: verify that source-evidence post-commit receipt is the sole real-input prerequisite (with no new horizontal provenance Gate), that the canonical chronology/GA-window transaction is unambiguous, and that world-size-1/no-torchrun/no-resume/num_workers=0 admission, bounded ≤100-step scope, artifacts, PASS and stop conditions are sufficient before a later execution-runbook Gate.
+- Exact verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: writing/reading real source, checkpoint, manifest, data or cache; source-evidence record/receipt/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference or LIBERO4IN1. An approval authorizes only the next docs-only single-GPU smoke execution runbook/command design.
