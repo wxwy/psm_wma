@@ -3317,3 +3317,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root=`de1d12f194030067a4afa656379378713b151734`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=fa1429807cc7a35db2b386e8a5224fd993c3c8dd`；fetch成功；advertised/origin同为`fa1429807cc7a35db2b386e8a5224fd993c3c8dd`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。
 - ChatGPT exact-root检索无输出，状态=处理中。Kimi=`kimi:0.0` 为same-pair最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`。MM先给出无pair批准，已按send→等待≥1秒→Enter→capture补问；其后capture显式锚定same-pair并重申同一`APPROVE_TO_IMPLEMENT...`，状态=已回复(APPROVE)。ChatGPT final缺失，无推进令牌，保持REVIEW，禁止temporary implementation、真实I/O、child、GPU与训练。
+
+### Causal owner identity v0.2 exec-continuity refreeze 审核观察凭证 #2（2026-09-13 10:10 CST，REVIEW）
+
+- formal root/child及冻结名册不变。`before_head=dd03a8c599b214cce47ac36c88076f0b2acb3e06`；fetch成功；advertised/origin同为`dd03a8c599b214cce47ac36c88076f0b2acb3e06`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT exact-root检索仍无输出，状态=处理中。Kimi/MM均仍为same-pair显式`APPROVE_TO_IMPLEMENT...`。ChatGPT final缺失，无推进令牌，保持REVIEW，禁止temporary implementation、真实I/O、child、GPU与训练。
