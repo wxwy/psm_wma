@@ -1113,9 +1113,23 @@ def _native_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _native_binding(args: argparse.Namespace) -> tuple[dict[str, str], dict[str, str]]:
+    authority = {"root_revision": args.authority_root, "selection_path": args.selection_path,
+                 "selection_blob_native_oid": args.selection_blob_oid, "selection_raw_sha256": args.selection_raw_sha256,
+                 "config_path": args.config_path, "config_blob_native_oid": args.config_blob_oid,
+                 "config_raw_sha256": args.config_raw_sha256}
+    lineage = {"target_ref": args.target_ref, "expected_base_root_revision": args.expected_base,
+               "expected_child_gitlink": args.expected_child_gitlink,
+               "authority_approval_formal_root_revision": args.authority_approval_formal_root}
+    for value in (*authority.values(), lineage["expected_base_root_revision"], lineage["expected_child_gitlink"], lineage["authority_approval_formal_root_revision"]):
+        if isinstance(value, str) and len(value) in {40, 64} and any(char not in "0123456789abcdef" for char in value):
+            raise CollectionError("request binding hex identity 无效")
+    return authority, lineage
+
+
 def main(argv: list[str] | None = None) -> int:
     """禁止未绑定 request 的直接执行，保留可静态验证的 argv grammar。"""
-    _native_parser().parse_args(argv)
+    _native_binding(_native_parser().parse_args(argv))
     raise CollectionError("BLOCKED_AUTHORITY_NOT_CLOSED: 需要经审核的 execution request binding")
 
 
