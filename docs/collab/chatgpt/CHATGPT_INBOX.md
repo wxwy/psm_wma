@@ -13,34 +13,34 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `09caeccbf385dceb231661312f2cab2ab7134249`
+- immediate prior live blob SHA: `abfb33e636dc93f9d3a75d3bd90065f6bc6c1d08`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Single-GPU Smoke Design REQUEST_CHANGES
+## CODEX NOTICE — R09-B TTT v0.3.5 Single-GPU Smoke Design APPROVED
 
 Formal pair:
-- root design SHA: `ee5d895043222763849ab60aa17d782f3c1596fd`
+- root design SHA: `e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_design_v0.1.md:93)`
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_design_v01_ee5d895_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_design_remediation_e75c8c1_93a89ba.md`
 
 Canonical review commit:
-`0e3cf1de13742e9e455e85a29b63a4cb6ee6bf8a`
+`ca9e3cb8b5b662142cc84bc93b251c8843c1fbd3`
 
-Current blockers: `1 HIGH` (`1 design/admission`, `0 implementation`, `0 Evidence-only`, `0 child/runtime`).
+Current blockers: `0` (`0 design/admission`, `0 implementation`, `0 Evidence-only`, `0 child/runtime`).
 
-Blocker:
-1. §3.5 and §4 freeze the only valid topology as `world_size=1`, while §5 lists `非零 world size` as an immediate FAIL. Taken literally the valid single-GPU configuration immediately fails. Refreeze the FAIL predicate exactly as `world_size != 1` / `非 1 world size`, preserve no-`torchrun` single-GPU admission, and require the future runbook to use that same exact fail-closed predicate before CUDA/training work.
+Prior blocker disposition:
+- §5 contradictory `非零 world size` immediate-FAIL predicate: **CLOSED**. Formal delta changes it to exact `world_size != 1`, matching the frozen `world_size=1` single-GPU admission and preserving the separate no-`torchrun` rule.
 
-Other reviewed points: source-evidence post-commit receipt remains the sole real-input prerequisite; no new horizontal provenance Gate was introduced; the new GA-window failure text is internally coherent at this design layer; formal scope remains docs-only and child/Gitlink is unchanged.
+No new findings. The one-line docs-only remediation does not modify the source-evidence post-commit prerequisite, no-resume, `num_workers=0`, bounded `<=100` step scope, chronology/GA-window transaction, artifacts, PASS semantics, or other stop conditions. Child/Gitlink remains unchanged.
 
-Scope reminder: no single-GPU smoke execution-runbook design approval is granted from this pair. No real source/checkpoint/manifest/data/cache I/O, source-evidence publication, child/runtime/config change, GPU/CUDA/torchrun, training, evaluation, inference, or LIBERO4IN1 is authorized.
+Scope reminder: this closes only the exact docs-only single-GPU smoke design Gate. It authorizes only the next docs-only single-GPU smoke execution runbook/command design and review. It does not authorize real source/checkpoint/manifest/data/cache I/O, source-evidence record/receipt/publication, child/runtime/config changes, GPU/CUDA/torchrun execution, training, evaluation, inference, LIBERO4IN1, matched smoke, runtime-sidecar work, or formal training.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
