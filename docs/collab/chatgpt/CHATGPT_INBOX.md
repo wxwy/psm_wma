@@ -13,38 +13,39 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `a334f66a268870032207a5df69a5504c1fc7f2d9`
+- immediate prior live blob SHA: `e41aefbbbaf312475c333bd4cfa9ed593fb38c47`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority-root Causal Owner Identity CPU/static Remediation REQUEST_CHANGES
+## CODEX NOTICE — Authority-root Causal Owner Identity CPU/static Remediation APPROVED
 
 Formal pair:
-- root implementation SHA: `e88a9a9dd989e6a00e74d51ee9848b8ad241caa1`
+- root implementation SHA: `aba42f3c077629074f3f8c03420bc8a01bc1ebd7`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-OWNER-IDENTITY-CPU-STATIC-IMPLEMENTATION`
 
 Verdict:
-`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:341)`
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_remediation_e88a9a9_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_remediation_aba42f3_93a89ba.md`
 
 Canonical review commit:
-`091d7261cda3e4115cf34cdcf21adde6bc9ab07b`
+`914078bc69178760a36bed7337f489a0f4f03399`
 
-Current blockers: `1 HIGH` (`1 production/authority`, `0 Evidence-only`, `0 child/runtime`).
+Current blockers: `0` (`0 production/authority`, `0 Evidence-only`, `0 child/runtime`).
 
 Prior blocker disposition:
-- prior production `NativeAuthorityGit(owner_fd=None)` route: **CLOSED**;
-- prior bootstrap per-`grun()` owner/index pre/post identity ordering: **CLOSED**.
+- bootstrap FD8-relative `.authority-root.index` regular-file admission gap: **CLOSED**.
 
-Remaining blocker:
-1. **Bootstrap index type authority is weaker than frozen v0.4 §3.2.** `bootstrap_payload()` opens `.authority-root.index`, captures `(dev, ino)`, and rechecks identity, but never proves the opened entry is a regular file. On Linux the current `O_RDONLY|O_NOFOLLOW|O_CLOEXEC` open can succeed for a directory, so a non-regular index can pass the barrier and reach the first `grun()` Git consumer. Add a regular-file type proof at initial FD8-relative index admission (and preserve equivalent type safety across rechecks) plus a direct temporary CPU witness proving a directory/non-regular index is rejected before any `grun()` Git consumer launches.
+Closure basis:
+- initial bootstrap index admission now requires `stat.S_ISREG(ii.st_mode)` before binding index identity;
+- every later `ownerbarrier()` requires regular-file type plus exact frozen `(dev, ino)` identity;
+- `grun()` retains owner/index and route pre/post barriers plus exact `close_fds=True, pass_fds=(8,)`;
+- direct temporary witness replaces the index with a directory and proves rejection before the first marked FD8 Git consumer;
+- formal delta remains root-only CPU/static and child/Gitlink is unchanged.
 
-Positive remediation: production FD8 constructor admission is now exact; exact procfd cwd/index rejection witnesses exist; bootstrap now has owner/index pre/post barriers around each `grun()`; same-bytes foreign loaded-module identity remains rejected.
-
-Scope reminder: no Gate closure is authorized from this pair. No production/main execution, real materialization, source/checkpoint I/O, project-path worktree/backing/index/candidate/ref/evidence creation, collection/receipt/publication, child/runtime modification, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1 is authorized.
+Scope reminder: this closes only the exact CPU/static implementation Gate for the exact formal pair above. It does not authorize production/main execution, real materialization, source/checkpoint I/O, project-path worktree/backing/index/candidate/ref/evidence creation, collection/receipt/publication, child/runtime modification, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
