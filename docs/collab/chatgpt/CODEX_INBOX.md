@@ -162,3 +162,13 @@
 - Remediation: resolves ChatGPT HIGH at prior runbook line 127 by freezing terminal statuses `PASS|FAIL|BLOCKED|MANUAL_STOP`, defining `MANUAL_STOP` as a distinct non-PASS terminal, requiring `failure.json` for `FAIL|BLOCKED|MANUAL_STOP`, freezing its exact key set and summary-status equality, and requiring the final committed transaction identity for manual stop.
 - Exact verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: creation or execution of an execution request; real source/checkpoint/manifest/data/cache I/O; collection/receipt/source-evidence/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, matched smoke, sidecar, checkpoint write, or formal training.
+
+## Design review request — receipt-bound smoke execution request instance
+
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-REQUEST-DESIGN`
+- Formal root: `86c3276f5fd08c9a028e549c27ce7fe2989d0f4d`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Scope: root-only docs design `PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_request_design_v0.1.md` and session record; Gitlink unchanged. SHA-256: `a288956c535c145b30c830efc1640fd4edcc60281adde1d72a8e6992791d6806`.
+- Review focus: receipt-only authority derivation, exact canonical request schema and self-hash, non-shell argv, bind-before-read ordering, fixed single-GPU runtime, terminal ABI inheritance, and the explicit prohibition on creating/using a request instance at this Gate.
+- Verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`, or `REQUEST_CHANGES(file:line)`.
+- Prohibited: request creation/execution, real I/O, child/runtime/config changes, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1, sidecar, checkpoint write, or formal training.

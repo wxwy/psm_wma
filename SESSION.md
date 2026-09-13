@@ -4138,3 +4138,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 已新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_request_design_v0.1.md`；仅冻结receipt-derived authority、canonical request schema、non-shell argv、bind-before-read preflight 与终态继承，明确本Gate不创建实例/不真实I-O/GPU。新文件`git diff --no-index --check`通过，SHA-256=`a288956c535c145b30c830efc1640fd4edcc60281adde1d72a8e6992791d6806`。
 - 下一步：提交/推送此docs-only formal root，三方申请`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`；批准前禁止创建request、真实I/O、child、GPU或训练。
+
+### Single-GPU smoke execution request design 审核申请准备（2026-09-13，REVIEW）
+
+- formal root=`86c3276f5fd08c9a028e549c27ce7fe2989d0f4d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。申请已append Inbox，待ledger提交/push后两pane送达；新pair无final/令牌，禁止request、真实I/O、child、GPU、训练。
