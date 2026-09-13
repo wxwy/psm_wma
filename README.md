@@ -1,1 +1,1 @@
-repair pending exact restore
+STOP
