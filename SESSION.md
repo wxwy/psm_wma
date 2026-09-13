@@ -4475,3 +4475,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox ledger已推送（bookkeeping）。
 - MM=`mm:0.0` 与 Kimi=`kimi:0.0` 均完成 `send-keys -l`、至少1秒后独立 Enter、独立 capture；两 pane 均显示完整同 pair 申请已离开输入框并进入审核处理/消息流。ChatGPT正式结果仍只认 exact-pair review 文件。
 - 当前新 pair 尚无 final；保持REVIEW，按三分钟轮询，禁止越权动作。
+
+### Collection adapter 整改复核观察凭证 #1（2026-09-14，REVIEW）
+
+- `before_head=6684184d87206e6e49bf002164ebec307f73c704`；fetch成功；advertised/tracking均=`6684184d87206e6e49bf002164ebec307f73c704`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`mm:0.0` final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi=`kimi:0.0` final=`REQUEST_CHANGES`，要求补齐5项 witness（actual NativeCollectionGit 经 collect_synthetic 端到端、preflight 泄漏负例、tracked mode 绑定、symlink/directory replacement、rollback exact equality）。独立证据成功、未截断。
+- ChatGPT缺件且已有Kimi REQUEST_CHANGES，无推进令牌；保持REVIEW，禁止整改，等待ChatGPT同 pair final。
