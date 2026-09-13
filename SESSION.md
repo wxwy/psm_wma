@@ -3372,3 +3372,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 已阅读当前 root adapter 的`bootstrap_payload()`、`_bootstrap_identity_from_runtime()`、`_parser()`与`NativeAuthorityGit`构造：现source确实要求`--cwd`/`--index`/`--bootstrap-project-root`且以`Path.resolve()`比较，故v0.2不能只改bootstrap root。按三方整改令牌新建v0.3 docs-only，明确预mutation FD3--9 reservation、root=7/Git=6/owner=9/bootstrap=8、owner source-rebind/close顺序，以及FD8派生`cwd/index/bootstrap-root`和adapter raw-argv/FD8验证所需的未来root-only source refreeze。
 - 当前预计修改仅v0.3、TODO、SESSION；不得实现或运行代码、不得真实I/O/child/GPU/训练。待`git diff --check`后提交新root三方复审。
+
+### Causal owner identity v0.3 collision-free adapter-argv refreeze 审核申请准备（2026-09-13，REVIEW）
+
+- formal root=`781824f4ed2682b1347126a58f645ef0702117bd`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree仅改v0.3设计、SESSION和TODO，已由`git diff-tree --no-commit-id --name-status -r`与`git ls-tree`核验。v0.3 design blob SHA-256=`7fc23178e07f060dc2cfb882bfbecfb52073d5ba13982cf81ee1e42d111760d6`。
+- canonical live Inbox当前`8064` bytes，追加本申请不会触发128KiB rollover；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。请求仅`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`，批准范围仅root-only stdlib temporary-fixture CPU/static launcher/adapter implementation/tests。
+- 本申请与记录待以独立ledger提交推送；之后才可按`send-keys -l`→等待至少1秒→独立Enter→capture向MM/Kimi送达。未取得同pair三方final前，禁止temporary实现、production/main、真实materialization/source-checkpoint I/O、child、GPU和训练。
