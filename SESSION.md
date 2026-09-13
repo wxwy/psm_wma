@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 送达回执（2026-09-13 16:01 CST，REVIEW）
+
+- formal root=`c8aafca005ff061788114281e47fd1a4e2b6a843`/child=`93a89ba61306d840a008813f62f26a34d54850f4`，冻结名册不变。ChatGPT申请已存在于live Inbox并由ledger=`d13c8e46fa98bca68680443bffdc0ebee0d218ac`推送。MM=`mm:0.0`与Kimi=`kimi:0.0`均执行同一完整申请的`send-keys -l`→等待≥1秒→独立`Enter`→独立capture；MM capture显示申请离开输入框并进入`Gitifying`，Kimi capture显示申请离开输入框并进入消息流。两pane送达后均处理中。
+- 新pair尚无三方final或推进令牌；三分钟后从第1轮完整fetch/ls-remote/ff-only→exact review scan→Kimi/MM capture开始。禁止整改、真实I/O、child/runtime、GPU、训练、评测、推理与LIBERO4IN1。
+
 ## Causal-owner identity FD8 remediation 审核申请（2026-09-13 15:59 CST，REVIEW）
 
 - formal root=`c8aafca005ff061788114281e47fd1a4e2b6a843`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；root已推送。formal tree仅`SESSION.md`、`TODO.md`、adapter与其direct stdlib CPU测试；child Gitlink未变。live Inbox从`14384` bytes追加本申请，未触发rollover。冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
