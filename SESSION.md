@@ -4390,3 +4390,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`782ad2a14dd67d40c84dcd8e4adf4e887ce081f0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=2aabcc5384c0d17488defbd54a8b9725603ff15b`；fetch成功；advertised/origin=`6a6add196dcfdf445fba7707d80c5180e63c51fb`；新增=`dabe4050 review: request changes collection real adapter design 782ad2a`、`6a6add19 review: notify Codex collection real adapter design changes 782ad2a`；祖先判定=0，ff-only成功。
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_immutable_source_collection_real_adapter_implementation_design_782ad2a_93a89ba.md`，same-pair final=`REQUEST_CHANGES(...real_adapter_implementation_design_v0.1.md:28)`，唯一HIGH为新增`execute_immutable_source_collection.py`违反已冻结唯一executor路径。Kimi/MM capture均为same-pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`。独立证据成功、未截断。
 - 三方final齐全且含REQUEST_CHANGES，形成仅限docs-only最小整改令牌：采用ChatGPT route 1，将real CLI/native Git/FD-root/evidence binding置于既有唯一`tools/psm_wma/immutable_source_collection.py`及其direct test，保留既有path/identity/allowlist，不执行真实I/O、child、GPU或训练。
+
+### Collection real-adapter v0.2 审核申请准备（2026-09-13，REVIEW）
+
+- formal root=`6ec9d2db564102c7546ceb1c44bc06ccb3c8de31`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT reviews、MM=`mm:0.0`、Kimi=`kimi:0.0`。v0.2仅新增显式override，保留唯一 executor `immutable_source_collection.py`与direct test allowlist；无新entrypoint、真实I/O、child、GPU或训练。

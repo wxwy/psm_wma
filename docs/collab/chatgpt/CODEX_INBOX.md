@@ -224,3 +224,10 @@
 - Review focus: confirm the two-file adapter/test allowlist, reuse-not-duplicate algorithm boundary, FD/no-follow and same-FD failure closure, native Git/evidence transaction restrictions, import-free argv categories, rollback semantics, and that the subsequent request instance remains non-executing.
 - Exact final verdict requested: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; authority/collection/receipt/record/package/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, sidecar and checkpoint write. Approval only permits the listed root CPU/static adapter implementation and its temporary fixtures.
+
+## Remediation review request — preserve unique collection executor identity
+
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-IMPLEMENTATION-DESIGN`; formal root: `6ec9d2db564102c7546ceb1c44bc06ccb3c8de31`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only v0.2 docs remediation. It resolves ChatGPT HIGH by retaining `tools/psm_wma/immutable_source_collection.py` as the sole production executor and limiting future CPU/static changes to it and its direct test; no new entrypoint is allowed.
+- Request final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Prohibited: implementation/execution, real I/O, authority/collection/receipt/publication mutation, child/GPU/training.
