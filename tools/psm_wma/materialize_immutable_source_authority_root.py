@@ -176,6 +176,10 @@ def bootstrap_payload() -> str:
         " q=[a[i+8] for i,x in enumerate(a[7:]) if x==flag and i+8<len(a)]\n"
         " if len(q)!=1: fail()\n"
         " return q[0]\n"
+        "def optional(flag):\n"
+        " q=[a[i+8] for i,x in enumerate(a[7:]) if x==flag and i+8<len(a)]\n"
+        " if len(q)>1: fail()\n"
+        " return q[0] if q else None\n"
         "try: fd=int(one('--bootstrap-contract-fd'))\n"
         "except ValueError: fail()\n"
         "s=os.fstat(fd)\n"
@@ -189,6 +193,11 @@ def bootstrap_payload() -> str:
         "obs_argv=hashlib.sha256(json.dumps(a[6:],sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()\n"
         "if (obs_raw,obs_argv)!=(c['bootstrap_raw_sha256'],c['bootstrap_argv_sha256']): fail()\n"
         "root=one('--bootstrap-project-root'); module=one('--bootstrap-module'); git=one('--git'); interp=one('--interpreter')\n"
+        "owner=optional('--bootstrap-owner-root-fd')\n"
+        "if owner is not None:\n"
+        " try: ownerfd=int(owner); owners=os.fstat(ownerfd)\n"
+        " except (ValueError,OSError): fail()\n"
+        " if not stat.S_ISDIR(owners.st_mode) or root!='/proc/self/fd/'+str(ownerfd): fail()\n"
         "if not os.path.isabs(root) or not module or '/' in module or not os.path.isabs(interp) or os.path.realpath(a[0])!=os.path.realpath(interp): fail()\n"
         "ip=os.lstat(interp)\n"
         "if not stat.S_ISREG(ip.st_mode) or stat.S_ISLNK(ip.st_mode) or hashlib.sha256(open(interp,'rb').read()).hexdigest()!=one('--interpreter-raw-sha256'): fail()\n"
@@ -265,7 +274,8 @@ def bootstrap_payload() -> str:
         " if (z.st_dev,z.st_ino,z.st_size)!=(cs.st_dev,cs.st_ino,cs.st_size) or os.pread(cfd,cs.st_size,0)!=rawcfg: fail()\n"
         "def grun(*v):\n"
         " routecheck()\n"
-        " p=subprocess.run([*prefix,*v],cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE)\n"
+        " kw={} if owner is None else {'close_fds':True,'pass_fds':(ownerfd,)}\n"
+        " p=subprocess.run([*prefix,*v],cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,**kw)\n"
         " routecheck()\n"
         " if p.returncode: fail()\n"
         " return p.stdout\n"
@@ -1685,6 +1695,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--interpreter-version", required=True)
     parser.add_argument("--bootstrap-contract-fd", type=int, required=True)
     parser.add_argument("--bootstrap-project-root", type=Path, required=True)
+    parser.add_argument("--bootstrap-owner-root-fd", type=int)
     parser.add_argument("--bootstrap-module", required=True)
     for name in ("adapter", "authority-module", "collection-module", "audit-module"):
         parser.add_argument(f"--{name}-path", required=True)
@@ -1715,7 +1726,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         args.commit_message,
     )
     transaction = NativeAuthorityGit(
-        args.git, args.cwd, args.remote, args.index, metadata, production=True
+        args.git, args.cwd, args.remote, args.index, metadata, production=True,
+        owner_fd=args.bootstrap_owner_root_fd,
     )
     invocation = AuthorityAdapterInvocation(
         AuthorityRequest(args.formal_root, args.child_gitlink, b"", b""),
