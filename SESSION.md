@@ -4204,3 +4204,138 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依据已关闭 smoke-request design 的推进令牌与当前仓内未发现 collection/source-evidence receipt 的事实，认领`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-DESIGN`；预计修改仅为`docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_execution_request_design_v0.1.md`、`TODO.md`、`SESSION.md`。
 - 新设计将既批准的 authority materializer、collection/receipt、producer/record/receipt/publication verifier/root audit 收敛为一份future受控 request 的连续闭环，不开横向 provenance 子Gate。当前仅docs-only；禁止真实source/checkpoint/manifest/data/cache I/O、collection/receipt/publication、child、GPU或训练。下一步：静态核验、提交推送并对新formal pair申请三方设计审核。
+
+### Source-evidence closure execution request design 审核申请准备（2026-09-13，REVIEW）
+
+- formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。ChatGPT live Inbox申请已在ledger commit=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`推送；append前/后字节数=`29131/30769`，低于131072上限。
+- 新pair尚无final或推进令牌；下一步仅以`send-keys -l`→等待至少一秒→独立Enter→capture向MM/Kimi送达，然后三分钟完整轮询。禁止任何真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU和训练。
+
+### Source-evidence closure execution request design 审核送达回执（2026-09-13，REVIEW）
+
+- ChatGPT申请已在canonical live Inbox并随ledger=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`推送。MM=`mm:0.0`和Kimi=`kimi:0.0`均执行完整`send-keys -l`写入exact-pair申请→等待至少一秒→独立Enter→独立capture。MM capture显示消息进入会话并开始`Diff scope between prior approved and new commit`；Kimi capture显示申请离开输入框进入消息流、新输入框为空。
+- formal pair与冻结名册不变；送达双回执完整。新pair尚无三方final或推进令牌，保持REVIEW；三分钟后完整fetch/remote锁定/review scan/两pane回收。禁止真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。
+
+### Source-evidence closure execution request design 审核观察凭证 #1（2026-09-13 20:37 CST，REVIEW）
+
+- formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture=同pair最终`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`；MM `mm:0.0` capture=同pair最终相同批准。
+- ChatGPT formal review缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #2（2026-09-13 20:40 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #3（2026-09-13 20:44 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #4（2026-09-13 20:48 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #5（2026-09-13 20:53 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #6（2026-09-13 20:57 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #7（2026-09-13 21:01 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #8（2026-09-13 21:06 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #9（2026-09-13 21:10 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #10（2026-09-13 21:15 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #11（2026-09-13 21:19 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #12（2026-09-13 21:24 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #13（2026-09-13 21:28 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture保持同pair最终批准；MM `mm:0.0` capture保持同pair最终批准。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #14（2026-09-13 21:44 CST，REVIEW）
+
+- formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；`git fetch origin V2`成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture=同pair最终`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`；MM `mm:0.0` capture=同pair最终相同批准。各独立证据均成功、未截断。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #15（2026-09-13 21:47 CST，REVIEW）
+
+- formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；`git fetch origin V2`成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture=同pair最终`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`；MM `mm:0.0` capture=同pair最终相同批准。各独立证据均成功、未截断。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #16（2026-09-13 21:49 CST，REVIEW）
+
+- formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；`git fetch origin V2`成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture=同pair最终`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`；MM `mm:0.0` capture=同pair最终相同批准。各独立证据均成功、未截断。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #17（2026-09-13 21:52 CST，REVIEW）
+
+- formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；`git fetch origin V2`成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture=同pair最终`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`；MM `mm:0.0` capture=同pair最终相同批准。各独立证据均成功、未截断。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #18（2026-09-13 21:54 CST，REVIEW）
+
+- formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；`git fetch origin V2`成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '88d11170db2cd058567af175c69152231917360a' docs/collab/chatgpt/reviews/ || true`结果为空；Kimi `kimi:0.0` capture=同pair最终`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`；MM `mm:0.0` capture=同pair最终相同批准。各独立证据均成功、未截断。
+- ChatGPT formal review仍缺件，无推进令牌；保持REVIEW，禁止整改、request构造/执行、真实source I/O、authority/collection/receipt/record/package/publication mutation、child、GPU及训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure execution request design 审核观察凭证 #19（2026-09-13 21:58 CST，REVIEW）
+
+- formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT精确检索为空；Kimi与MM capture均保持同pair最终`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`，独立证据成功且未截断。
+- ChatGPT formal review缺件，无推进令牌；保持REVIEW，禁止后续执行。
+
+### Source-evidence closure execution request design 审核观察凭证 #20（2026-09-13 22:02 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`054473cce72553a49d3f3cc3f9cd86b90bd4743f`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT exact-pair检索为空；Kimi/MM capture均保持同pair最终批准。ChatGPT缺件，仍无推进令牌；保持REVIEW。
+
+### Source-evidence closure execution request design 审核观察凭证 #21（2026-09-13 22:17 CST，三方 final 齐全）
+
+- formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`4f38bd8eda70089528c43a58cc14bd326b115ed9`；新增=`4f38bd8e review: request changes source evidence closure execution design 88d1117`；祖先判定=0，ff-only成功至`4f38bd8e`。
+- ChatGPT exact-match review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_source_evidence_closure_execution_request_design_88d1117_93a89ba.md`，最终`REQUEST_CHANGES`（HIGH：v0.1 §3将既冻结的独立 post-commit receipt-root review 边界错误折叠为单 activation direct handoff）；Kimi `kimi:0.0`=同pair最终批准；MM `mm:0.0`=同pair最终批准。独立证据均成功、未截断。
+- 三方final已齐，形成仅允许汇总该一项HIGH并进行docs-only最小整改的`REQUEST_CHANGES`推进令牌；整改须要求：未来闭环执行在source-evidence formal root与next independent receipt root机器核验后停止、不释放receipt triple；另行审核精确receipt root（绑定parent、path、blob）后才允许进入smoke instance构造。仍不授权真实I/O、child、GPU或训练。
