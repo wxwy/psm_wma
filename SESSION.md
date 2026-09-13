@@ -4362,3 +4362,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 阅读`tools/psm_wma/immutable_source_collection.py`确认其模块 docstring 为`CPU/static ... under injected seams`，唯一公共执行入口为`collect_synthetic(...)`；没有`argparse`/`main`/production CLI，也没有 native Git transaction、FD-root opener 或 controlled evidence sink。现有`immutable_source_collection_executor_implementation_design_v0.1.md`也明确 CPU/static only，future real execution 需以同一源码绑定 real Git/FD/evidence。
 - 因此当前不能在不虚构执行入口或真实I/O路径的前提下，构造满足 source-evidence v0.2 §2--§3 的 exact non-shell closure request instance。该事实不改变已获批准的闭环路线；最小补件是`PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_real_adapter_implementation_design_v0.1.md`，仅设计两个root adapter/test文件的CPU/static实现，不新增横向 provenance Gate。
 - 预计修改：仅该设计、`TODO.md`、`SESSION.md`；未创建请求实例，未打开真实source/checkpoint/manifest/data/cache，未执行任何Git mutation、child、GPU或训练。
+
+### Collection real-adapter implementation design 审核申请准备（2026-09-13，REVIEW）
+
+- formal root=`782ad2a14dd67d40c84dcd8e4adf4e887ce081f0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree仅为该design、`SESSION.md`、`TODO.md`，Gitlink未变；design SHA-256=`b954c60850e4302cffe094f29976a40fe14f966b61b43454d2403d14622726c9`，`git diff --check`与new-file no-index diff-check均PASS。
+- 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。live Inbox append前为`32035` bytes，申请内容与现有live ledger合计低于`131072` bytes上限。该pair尚无final或推进令牌；仅允许提交/push ledger并按三联回执发送两pane，禁止实现/执行、真实I/O、child、GPU或训练。

@@ -214,3 +214,13 @@
 - Evidence: `git diff --check` PASS; no project code, real I/O, child, GPU, or training executed.
 - Exact final verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: construction/execution of the request; real source/checkpoint/manifest/data/cache I/O; authority/collection/receipt/record/package/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, sidecar and checkpoint write.
+
+## Design review request — immutable-source collection real adapter
+
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-IMPLEMENTATION-DESIGN`.
+- Formal root: `782ad2a14dd67d40c84dcd8e4adf4e887ce081f0`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs design `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_real_adapter_implementation_design_v0.1.md` plus task/session records; formal tree leaves the child unchanged. The design SHA-256 is `b954c60850e4302cffe094f29976a40fe14f966b61b43454d2403d14622726c9`.
+- Rationale: read-only instance-preflight confirmed the existing `immutable_source_collection.py` exposes only injected `collect_synthetic` and has no production CLI, native Git transaction, FD-root opener or controlled evidence sink. This design supplies the minimal real-adapter CPU/static implementation route for that already-frozen seam; it does not add a provenance branch.
+- Review focus: confirm the two-file adapter/test allowlist, reuse-not-duplicate algorithm boundary, FD/no-follow and same-FD failure closure, native Git/evidence transaction restrictions, import-free argv categories, rollback semantics, and that the subsequent request instance remains non-executing.
+- Exact final verdict requested: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; authority/collection/receipt/record/package/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, sidecar and checkpoint write. Approval only permits the listed root CPU/static adapter implementation and its temporary fixtures.
