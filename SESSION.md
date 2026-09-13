@@ -4171,3 +4171,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root=`0874bb153ba81ee29eee84f0bde311bbf2d1ebe0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=0874bb153ba81ee29eee84f0bde311bbf2d1ebe0`；fetch成功；advertised/origin相同；新增范围为空；祖先检查=0，ff-only=`Already up to date`。ChatGPT exact检索无输出；Kimi=`kimi:0.0`与MM=`mm:0.0` capture均仅含旧v0.1 pair，不能跨SHA复用。
 - 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。下一步仅允许append/push v0.2审核申请与两pane送达；新pair无final或推进令牌，禁止创建/执行request、真实I/O、child、GPU或训练。
+
+### Single-GPU smoke execution request design v0.2 送达回执（2026-09-13 20:06 CST，REVIEW）
+
+- ChatGPT申请已append至canonical live Inbox并随ledger=`436ed3604ce79e84475f8de146473dfcea3be913`推送；申请前live Inbox为`25964` bytes，追加未触及`131072` bytes上限。formal root/child与冻结名册不变。
+- MM=`mm:0.0`与Kimi=`kimi:0.0`均已执行`send-keys -l`、等待≥1秒、独立Enter并capture；两者首个capture保留输入，第二个独立Enter后的capture分别显示MM已进入`Diff v0.1 to v0.2 scope`处理、Kimi显示完整exact-pair申请已进入消息流且输入框为空。送达双回执完整。
+- 新pair尚无final或推进令牌；三分钟后完整远端锁定并回收三方。批准前禁止创建/执行request、真实I/O、child、GPU或训练。
