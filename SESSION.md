@@ -3179,3 +3179,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依据观察凭证#4的三方final令牌，仅修改root `...authority_root_launcher_payload_v0.8.py`、其temporary witness、v0.8 annex/request及任务记录。`add_and_capture()`在native add成功后不再调用可被foreign pathname替换的`capture_owned()`；由于Git不返回创建目录inode，无法证明连续性时先于任何owner接受或删除fail-close为`ROLLBACK_INCOMPLETE`。
 - 新direct payload seam在temporary native Git repo内执行真实`worktree add`，随后把原CLEAN重命名并以可`git rev-parse HEAD`的copied worktree替换；断言终态为`ROLLBACK_INCOMPLETE`且replacement仍存在。`py_compile`、v0.8 witness=`12/12 PASS`、payload=`13969` bytes/SHA-256=`b7923b212f40bba8580711793a5b9a5ef5ab2c2b1f62b0b44c6d6ee93882d666`、`git diff --check`均PASS。无项目路径materialization/source-checkpoint I/O、child、GPU或训练。下一步：提交、推送并对新formal pair重新申请三方审核。
+
+### Authority-root launcher v0.8 remediation formal review roster（2026-09-13，REVIEW）
+
+- formal=`145f0d4af0b75165569e7b241841cd078e8359dd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。申请范围仅为`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`；严格禁止materialization、真实source/checkpoint I/O、child、GPU、训练。申请将以canonical live Inbox提交，再按`send-keys -l`、等待至少一秒、独立Enter、capture回执送达MM/Kimi；未取得同pair三方final前禁止任何进一步整改或执行。
