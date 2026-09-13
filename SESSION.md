@@ -4142,3 +4142,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Single-GPU smoke execution request design 审核申请准备（2026-09-13，REVIEW）
 
 - formal root=`86c3276f5fd08c9a028e549c27ce7fe2989d0f4d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。申请已append Inbox，待ledger提交/push后两pane送达；新pair无final/令牌，禁止request、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke execution request design 审核观察凭证 #1（2026-09-13 19:57 CST，REVIEW）
+
+- 本轮先纠正 formal root：申请和上条准备记录误写为不可解析的`86c3276f5fd08c9a028e549c27ce7fe2989d0f4d`；经本轮`git cat-file -t`与`git show -s`核验，可解析的实际 design commit 是`86c3276f1f8a6071659316e8c190f97fd622c0a7`（`docs: design smoke execution request instance`），child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。冻结名册不变：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`；此前错误 pair 的任何申请或结论均不可产生推进令牌。
+- `before_head=8ee27d5ac852054052cecb5cc06073a528cee96c`；`git fetch origin V2`成功；advertised/origin均为`8ee27d5ac852054052cecb5cc06073a528cee96c`；`before_head..origin/V2`新增范围为空；祖先检查=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索命令`rg -l '86c3276f1f8a6071659316e8c190f97fd622c0a7' docs/collab/chatgpt/reviews || true`无输出，故截至本轮未取得同pair formal review。Kimi=`kimi:0.0` capture为same-pair final=`REQUEST_CHANGES`，阻断项为request schema未显式 supersede 已批准runbook §3及实例化/创建授权措辞冲突（design:39）；MM=`mm:0.0` capture为same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`。
+- 本轮三方final未齐，且Kimi为`REQUEST_CHANGES`，无推进令牌；保持REVIEW，禁止整改、提交、创建/执行request、真实I/O、child、GPU或训练。下一步仅能在收到ChatGPT同一更正 pair formal review后，按三方final同轮汇总意见并决定docs-only最小整改。

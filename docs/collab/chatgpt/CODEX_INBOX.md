@@ -172,3 +172,11 @@
 - Review focus: receipt-only authority derivation, exact canonical request schema and self-hash, non-shell argv, bind-before-read ordering, fixed single-GPU runtime, terminal ABI inheritance, and the explicit prohibition on creating/using a request instance at this Gate.
 - Verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`, or `REQUEST_CHANGES(file:line)`.
 - Prohibited: request creation/execution, real I/O, child/runtime/config changes, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1, sidecar, checkpoint write, or formal training.
+
+## Correction — exact formal root for receipt-bound smoke execution request instance
+
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-REQUEST-DESIGN`.
+- The immediately preceding request contains a root-SHA transcription error and is superseded for review routing only: `86c3276f5fd08c9a028e549c27ce7fe2989d0f4d` is not a Git object. The sole correct formal root is `86c3276f1f8a6071659316e8c190f97fd622c0a7` (`docs: design smoke execution request instance`); child/Gitlink remains `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope and evidence are unchanged: root-only docs design `docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_request_design_v0.1.md`, its task record, unchanged Gitlink, and design SHA-256 `a288956c535c145b30c830efc1640fd4edcc60281adde1d72a8e6992791d6806`.
+- Request an exact-pair formal final verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`, or `REQUEST_CHANGES(file:line)`.
+- Prohibited: request creation/execution, real source/checkpoint/manifest/data/cache I/O, child/runtime/config changes, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1, sidecar, checkpoint write, and formal training. This correction does not authorize any execution.
