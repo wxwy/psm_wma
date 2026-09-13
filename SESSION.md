@@ -4439,3 +4439,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `before_head=9aaa6822e3e22a3cf9a74760a34cf5f67114b612`；fetch成功后`git ls-remote`与tracking均锁定`2f05476ac96c172bf30eeed5b005a22fb012d144`；新增=`2f05476a review: notify Codex collection real adapter CPU static changes 34cedc9`、`c88a3867 review: request changes collection real adapter CPU static 34cedc9`；祖先判定=0，`merge --ff-only`成功至`2f05476a`。
 - exact pair=`34cedc9ff227c35b387666ae824d282b14d2b1f5`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT正式review命中`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_immutable_source_collection_real_adapter_cpu_static_34cedc9_93a89ba.md`，final=`REQUEST_CHANGES`，指出NativeCollectionGit.preflight污染snapshot、NativeRootFd中间组件跟随symlink、native snapshot不满足target_snapshot_v1、AtomicFileEvidenceSink竞态覆盖（含file:line）。Kimi capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；MM capture已收申请但仍未出现该pair final，处理中。
 - 三方final尚未齐且含REQUEST_CHANGES；无整改推进令牌，保持REVIEW，禁止修改/真实I/O/GPU/训练，先等待MM同pair最终结论。
+
+### Collection adapter CPU/static implementation 审核观察凭证 #3（2026-09-13 23:32 CST，REVIEW）
+
+- `before_head=7e6d6d8aa48b7ddba4971f0969feae3048dcd60b`；fetch成功；advertised/tracking均=`7e6d6d8aa48b7ddba4971f0969feae3048dcd60b`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT exact-pair review仍为同一文件、final=`REQUEST_CHANGES`（3 HIGH+1 MEDIUM）；Kimi capture仍为同 pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；MM capture仍仅显示申请文本与旧 verdict，未出现新 pair final，处理中。独立证据成功、未截断。
+- 缺MM同pair final且已有REQUEST_CHANGES，无推进令牌；继续REVIEW，不执行整改或越权动作。
