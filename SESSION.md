@@ -3307,3 +3307,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - docs-only整改已提交并推送为formal root=`de1d12f194030067a4afa656379378713b151734`，child/Gitlink仍=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree只含v0.2设计、SESSION、TODO。canonical live Inbox已追加申请（追加前`6404` bytes，未触发rollover）。冻结名册不变：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
 - 申请记账尚未提交，MM/Kimi尚未发送；无送达回执、final或推进令牌。下一步仅提交/推送申请记录，随后两pane各执行send→等待≥1秒→独立Enter→capture；批准前禁止temporary implementation、真实I/O、child、GPU与训练。
+
+### Causal owner identity v0.2 exec-continuity refreeze 送达回执（2026-09-13 10:01 CST，REVIEW）
+
+- replacement Inbox由ledger=`b29633cb019c9894b84ea8a217bcd6267f774f9c`推送（ledger不是formal target）。Kimi=`kimi:0.0`与MM=`mm:0.0`均对exact pair执行`send-keys -l`→等待≥1秒→独立`Enter`→独立capture；两份capture均显示完整申请已离开输入框、进入消息流，MM进入`Wrangling`。两pane均已送达/处理中；ChatGPT最终结果仅以reviews目录的exact-pair formal verdict计。
+- 新pair无final或推进令牌；三分钟后从第1轮完整fetch/ls-remote/ff-only→exact review scan→Kimi/MM capture开始，禁止temporary implementation、真实I/O、child、GPU与训练。
