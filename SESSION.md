@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Causal-owner identity v0.4 第26轮完整观察与实现认领（2026-09-13 13:50 CST，IN_PROGRESS）
+
+- formal root=`76210e7bcbdc606e39775e2dae258542cf3c0d38`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=dcd21ccd3530024a8472947a9d5b0f1d3476741a`；fetch成功；advertised/origin=`6c09b81a901abb22a37caa831596560eb014db8f`；新增提交为`886d1263`（ChatGPT v0.4 formal review）与`6c09b81a`（通知）；祖先判定=0，ff-only成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_execution_design_v04_76210e7_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`；Kimi=`kimi:0.0`及MM=`mm:0.0` capture均为同pair同一正式批准。三方同轮final齐全，形成推进令牌。
+- 已认领下一步 root-only stdlib temporary-fixture CPU/static launcher/adapter/tests 实现；将阅读既有root adapter及tests后，以最小改动实现FD8 Git-child inheritance、identity barrier及FD8 no-follow traversal。禁止production/main、真实materialization/source/checkpoint I/O、项目路径authority artifacts、child/runtime、GPU、训练、评测、推理和LIBERO4IN1。
+
 ## Causal-owner identity v0.4 第25轮完整观察（2026-09-13 13:46 CST，REVIEW）
 
 - formal root=`76210e7bcbdc606e39775e2dae258542cf3c0d38`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=dd648bdd4b79aa9578077c51088ff5f99b5123b6`；fetch成功；advertised/origin均为该SHA；新增范围为空；祖先判定=0且ff-only=`Already up to date`。
