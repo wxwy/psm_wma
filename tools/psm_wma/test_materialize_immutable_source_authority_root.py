@@ -40,6 +40,7 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     _path_identity,
     _fd_identity,
     _validate_https_endpoint,
+    _read_regular_relative,
 )
 
 
@@ -266,6 +267,21 @@ def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
 
 
 class NativeAuthorityGitTest(unittest.TestCase):
+    def test_no_follow_relative_module_reader_rejects_component_symlink(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "root"
+            root.mkdir()
+            (root / "safe").mkdir()
+            (root / "safe" / "module.py").write_bytes(b"safe")
+            self.assertEqual(_read_regular_relative(root, "safe/module.py"), b"safe")
+            foreign = Path(raw) / "foreign"
+            foreign.mkdir()
+            (foreign / "module.py").write_bytes(b"foreign")
+            (root / "safe").rename(root / "safe-real")
+            (root / "safe").symlink_to(foreign, target_is_directory=True)
+            with self.assertRaises(NativeGitError):
+                _read_regular_relative(root, "safe/module.py")
+
     def test_fd_owner_git_consumer_inherits_only_owner_fd_and_rechecks_index(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "root"

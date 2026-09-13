@@ -83,6 +83,46 @@ def _fd8_index_identity(descriptor: int) -> tuple[int, int]:
         os.close(index)
 
 
+def _read_regular_relative(root: Path, repo_path: str) -> bytes:
+    """Read a repository file through no-follow component traversal."""
+    if not _is_repo_path(repo_path):
+        raise NativeGitError("repository relative path 无效")
+    try:
+        directory = os.open(
+            root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+        )
+    except OSError as error:
+        raise NativeGitError("repository root 无法安全打开") from error
+    try:
+        parts = repo_path.split("/")
+        for part in parts[:-1]:
+            next_directory = os.open(
+                part,
+                os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                dir_fd=directory,
+            )
+            os.close(directory)
+            directory = next_directory
+        leaf = os.open(
+            parts[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
+            dir_fd=directory,
+        )
+        try:
+            info = os.fstat(leaf)
+            if not stat.S_ISREG(info.st_mode):
+                raise NativeGitError("repository module 必须为regular file")
+            raw = os.pread(leaf, info.st_size, 0)
+            if len(raw) != info.st_size:
+                raise NativeGitError("repository module truncated")
+            return raw
+        finally:
+            os.close(leaf)
+    except OSError as error:
+        raise NativeGitError("repository module 无法安全打开") from error
+    finally:
+        os.close(directory)
+
+
 @dataclass(frozen=True)
 class ModuleIdentity:
     repo_path: str
@@ -434,11 +474,7 @@ def _verify_module_identity(
         or tree.get(identity.repo_path) != ("100644", "blob", identity.blob_native_oid)
     ):
         raise NativeGitError("formal module identity 无效")
-    path = cwd / identity.repo_path
-    info = path.lstat()
-    if not stat.S_ISREG(info.st_mode) or stat.S_ISLNK(info.st_mode):
-        raise NativeGitError("adapter module 必须为regular non-symlink file")
-    raw = path.read_bytes()
+    raw = _read_regular_relative(cwd, identity.repo_path)
     if (
         sha256_digest(raw) != identity.raw_sha256
         or git_blob_oid(raw) != identity.blob_native_oid

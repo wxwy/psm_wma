@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Causal-owner identity CPU/static implementation：module no-follow traversal（2026-09-13 13:56 CST，IN_PROGRESS）
+
+- 修改：新增`_read_regular_relative()`，从指定根以`dir_fd`与逐组件`O_NOFOLLOW`读取regular module；`_verify_module_identity()`改用该primitive，不再通过`cwd / path`后`lstat/read_bytes`取得module bytes。
+- 验证：py_compile、FD8 consumer与component-symlink拒绝定向unittest 2/2、diff-check PASS。未运行production/main、真实materialization/source/checkpoint I/O、child/GPU/训练。
+- 下一步：接入final fixture/launcher的固定FD8与actual local/bare Git witness，并将loaded-module/config/repository检查替换为同类owner-FD traversal；当前修改未提交。
+
 ## Causal-owner identity CPU/static implementation：bootstrap owner-FD ABI（2026-09-13 13:54 CST，IN_PROGRESS）
 
 - 修改：bootstrap payload新增可选`--bootstrap-owner-root-fd`单值ABI；提供时强制`--bootstrap-project-root=/proc/self/fd/<ownerfd>`及directory FD，`grun()`以`close_fds=True, pass_fds=(ownerfd,)`启动Git。adapter parser/main将该capability传给`NativeAuthorityGit`。
