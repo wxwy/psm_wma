@@ -232,6 +232,15 @@
 - Request final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Prohibited: implementation/execution, real I/O, authority/collection/receipt/publication mutation, child/GPU/training.
 
+## Remediation implementation review request — collection adapter CPU/static
+
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`.
+- Formal root: `24253e0c3789d46c0807944ec75d6dff108824f3`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Remediation scope: only existing `tools/psm_wma/immutable_source_collection.py` and its direct stdlib test. It closes ChatGPT findings on isolated preflight index, descriptor-safe intermediate no-follow traversal, exact `target_snapshot_v1` tracked/mode/porcelain/type semantics, and no-replace evidence publication.
+- Evidence: `python3 -m unittest tools.psm_wma.test_immutable_source_collection`=`44/44 PASS`; `python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py`; `git diff --check` PASS.
+- Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
 ## Implementation review request — collection adapter CPU/static
 
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`.

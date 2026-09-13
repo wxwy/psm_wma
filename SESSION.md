@@ -4463,3 +4463,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 按观察凭证 #5 的 `REQUEST_CHANGES` 令牌，仅修改既有 executor/direct test 两文件：preflight 使用独立临时 index；NativeRootFd 逐组件 `O_DIRECTORY|O_NOFOLLOW`；snapshot 绑定 index mode、porcelain/type/no-follow 语义；AtomicFileEvidenceSink 使用 no-replace hard-link 发布。
 - 新增直接 CPU witness：中间 symlink 拒绝、preflight snapshot 不变、untracked/allowlist 外 residue 拒绝、destination race 不覆盖；测试 `44/44 PASS`，py_compile 与 diff-check PASS。
 - 尚未提交/推送；下一步提交新 formal pair 并重新申请三方同 SHA 复核。仍禁止真实 source/receipt/publication、GPU、训练。
+
+### Collection adapter 整改复核申请（2026-09-14，REVIEW）
+
+- 新 formal root=`24253e0c3789d46c0807944ec75d6dff108824f3`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；实现已推送。
+- 验证证据：`python3 -m unittest tools.psm_wma.test_immutable_source_collection`=`44/44 PASS`；py_compile、git diff-check PASS。整改严格限既有两文件，未执行真实 I/O、GPU或训练。
+- 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。申请待追加 Inbox 并发送两 pane，随后按三分钟轮询。
