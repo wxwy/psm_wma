@@ -4042,3 +4042,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT申请已写入canonical live Inbox；追加后大小为`22255` bytes，低于`131072` bytes，且ledger=`37096962`已推送（ledger不是formal target）。冻结名册保持ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
 - MM=`mm:0.0`：已执行完整`send-keys -l`，等待≥1秒，独立Enter；首次capture仅显示输入，第二次独立Enter后capture显示完整 exact-pair 申请已进入消息流、空输入框与`Leavening…`处理状态。Kimi=`kimi:0.0`：同样执行完整`send-keys -l`，等待≥1秒，独立Enter；首次capture仅显示输入，第二次独立Enter后capture显示完整 exact-pair 申请已进入消息流、空输入框与处理指示。两者送达双回执完整。
 - 新pair尚无final verdict或推进令牌；三分钟后从审核观察凭证#1开始完整fetch/ls-remote/ff-only→exact review scan→Kimi/MM capture。批准前禁止runbook、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke world-size predicate remediation 审核观察凭证 #1（2026-09-13 19:06 CST，三方final齐全）
+
+- formal root=`e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=254212284558e134a52bdba0623a216f1a258c67`；fetch成功；advertised/origin=`0a7b6d8d04c863ba6c092b0c3b358b1985082f97`；完整新增提交为`ca9e3cb8 review: approve single GPU smoke design remediation`、`0a7b6d8d docs: notify Codex of single GPU smoke design approval`；祖先检查=0，ff-only成功，local-after=`0a7b6d8d04c863ba6c092b0c3b358b1985082f97`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_design_remediation_e75c8c1_93a89ba.md`，same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`，blockers=0。Kimi=`kimi:0.0` capture为same-pair明确final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`；MM=`mm:0.0` capture为same-pair明确final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`（19:03:54）。
+- 三方同一exact pair均为APPROVE，形成仅授权下一份docs-only single-GPU smoke execution runbook/command design/review的推进令牌。设计Gate关闭；不授权真实source/checkpoint/manifest/data/cache I/O、source-evidence receipt/publication、child/runtime/config、GPU/CUDA/torchrun、训练、评测、推理或LIBERO4IN1。
+
+### Single-GPU smoke execution runbook design（2026-09-13 19:06 CST，IN_PROGRESS）
+
+- 已认领`G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-RUNBOOK-DESIGN`。下一步先只读阅读已批准source-evidence controlled closure与native runtime/feature contracts，列出runbook必须绑定的authority输入、不可覆盖命令形状、预检、最小产物、PASS/FAIL与停止条件；预计仅新建一份版本化`docs/build/`设计并更新`SESSION.md`/`TODO.md`，随后新SHA三方审核。
+- 当前禁止执行真实I/O、读取真实输入、修改child、申请/启动GPU、torchrun、训练、评测、推理或LIBERO4IN1。
