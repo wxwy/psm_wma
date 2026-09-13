@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import sys
+import tools.psm_wma.materialize_immutable_source_authority_root as adapter_module
 from copy import deepcopy
 from pathlib import Path
 from unittest.mock import patch
@@ -523,13 +524,16 @@ class NativeAuthorityGitTest(unittest.TestCase):
 
     def _run_bootstrap_cli(
         self, root: Path, selection, config, argv, *, contract_payload=None,
-        mutate_adapter_argv=None, mutate_bootstrap_argv=None, mutate_contract=None,
-        owner_fd: int | None = None, mutate_root=None,
+        prepare_adapter_argv=None, mutate_adapter_argv=None,
+        mutate_bootstrap_argv=None, mutate_contract=None,
+        owner_fd: int | None = None, mutate_root=None, payload_override=None,
     ):
         payload = __import__(
             "tools.psm_wma.materialize_immutable_source_authority_root",
             fromlist=["bootstrap_payload"],
         ).bootstrap_payload()
+        if payload_override is not None:
+            payload = payload_override(payload)
         contract_path = root.parent / "bootstrap-contract.json"
         with contract_path.open("w+b") as contract:
             opened_owner_fd = None
@@ -552,6 +556,8 @@ class NativeAuthorityGitTest(unittest.TestCase):
             if "--bootstrap-owner-root-fd" not in adapter_argv:
                 adapter_argv.extend(("--bootstrap-owner-root-fd", "8"))
             (root / ".authority-root.index").write_bytes(b"")
+            if prepare_adapter_argv is not None:
+                prepare_adapter_argv(adapter_argv)
             original = [
                 str(Path(sys.executable).resolve()), "-I", "-S", "-B", "-c",
                 payload, "--", *adapter_argv,
@@ -758,6 +764,94 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 index.write_bytes(b"foreign index")
                 with self.assertRaisesRegex(NativeGitError, "identity 漂移"):
                     transaction._run("rev-parse", "HEAD")
+            finally:
+                os.close(descriptor)
+
+    def test_production_transaction_requires_exact_fd8_constructor_abi(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            expected = Path("/proc/self/fd/8")
+            for owner_fd, cwd, index in (
+                (None, root, root / "temporary.index"),
+                (7, root, root / "temporary.index"),
+                (8, root, expected / ".authority-root.index"),
+                (8, expected, root / "temporary.index"),
+            ):
+                with self.subTest(owner_fd=owner_fd, cwd=cwd, index=index):
+                    with self.assertRaises(NativeGitError):
+                        NativeAuthorityGit(
+                            git, cwd, str(remote), index, COMMIT_METADATA,
+                            production=True, owner_fd=owner_fd,
+                        )
+
+    def test_bootstrap_rejects_exact_fd8_abi_field_mismatches_before_import(self):
+        def replace(flag, value):
+            def mutate(adapter_argv):
+                adapter_argv[adapter_argv.index(flag) + 1] = value
+            return mutate
+
+        for flag, value in (
+            ("--bootstrap-owner-root-fd", "7"),
+            ("--cwd", "/proc/self/fd/8/foreign"),
+            ("--index", "/proc/self/fd/8/foreign.index"),
+            ("--bootstrap-project-root", "/proc/self/fd/8/foreign"),
+        ):
+            with self.subTest(flag=flag), tempfile.TemporaryDirectory() as raw:
+                _git, root, _remote, selection, config, argv = self._cli_fixture(Path(raw))
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    result = self._run_bootstrap_cli(
+                        root, selection_handle, config_handle, argv,
+                        prepare_adapter_argv=replace(flag, value),
+                    )
+                self.assertNotEqual(result.returncode, 0, result.stderr)
+                self.assertFalse((root / "evidence.json").exists(), result.stderr)
+
+    def test_bootstrap_git_consumer_rejects_index_replacement_after_first_probe(self):
+        with tempfile.TemporaryDirectory() as raw:
+            _git, root, _remote, selection, config, argv = self._cli_fixture(Path(raw))
+            marker = root / ".bootstrap-index-mutated"
+
+            def inject_after_git(payload):
+                needle = " p=subprocess.run([*prefix,*v],cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,**kw)\n"
+                replacement = (
+                    needle
+                    + " if not os.path.exists('.bootstrap-index-mutated'):\n"
+                    + "  open('.bootstrap-index-mutated','wb').close(); open('.authority-root.index.foreign','wb').write(b'foreign'); os.replace('.authority-root.index.foreign','.authority-root.index')\n"
+                )
+                self.assertIn(needle, payload)
+                return payload.replace(needle, replacement, 1)
+
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(
+                    root, selection_handle, config_handle, argv,
+                    payload_override=inject_after_git,
+                )
+            self.assertNotEqual(result.returncode, 0, result.stderr)
+            self.assertTrue(marker.exists(), result.stderr)
+            self.assertFalse((root / "evidence.json").exists(), result.stderr)
+
+    def test_verify_loaded_identity_rejects_same_bytes_foreign_adapter(self):
+        with tempfile.TemporaryDirectory() as raw:
+            _git, root, _remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            adapter_relative = "tools/psm_wma/materialize_immutable_source_authority_root.py"
+            authority_relative = "tools/psm_wma/immutable_source_authority_root.py"
+            foreign = root.parent / "foreign-adapter.py"
+            foreign.write_bytes((root / adapter_relative).read_bytes())
+            invocation = AuthorityAdapterInvocation(
+                AuthorityRequest("a" * 40, "b" * 40, b"{}", b"{}"),
+                "c" * 64, "d" * 64,
+                ModuleIdentity(adapter_relative, "e" * 40, hashlib.sha256((root / adapter_relative).read_bytes()).hexdigest()),
+                ModuleIdentity(authority_relative, "f" * 40, hashlib.sha256((root / authority_relative).read_bytes()).hexdigest()),
+                None, None,
+                ExecutableIdentity(Path(sys.executable).resolve(), hashlib.sha256(Path(sys.executable).resolve().read_bytes()).hexdigest(), _tool_version(Path(sys.executable).resolve())),
+                ExecutableIdentity(Path(shutil.which("git") or "").resolve(), "a" * 64, "git fixture"),
+                root / "evidence.json", "b" * 64,
+            )
+            descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                with patch.object(adapter_module, "__file__", str(foreign)):
+                    with self.assertRaisesRegex(NativeGitError, "不属于authority owner"):
+                        adapter_module._verify_loaded_identity(invocation, descriptor)
             finally:
                 os.close(descriptor)
 
@@ -1355,7 +1449,7 @@ tool.NativeAuthorityGit.remote_ref = failing
                         )
                     self.assertIsNotNone(record["candidate"]["revision"])
 
-    def test_cli_rejects_pristine_formal_copy_when_loaded_adapter_differs(self):
+    def test_cli_rejects_missing_owner_fd_before_authority_flow(self):
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
             with selection.open("rb") as selection_handle, config.open("rb") as config_handle:

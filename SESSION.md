@@ -1,5 +1,21 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 第二轮最小实现（2026-09-13 16:12 CST，IN_PROGRESS）
+
+- 依据紧邻的观察凭证 #6 推进令牌，复用 `bootstrap_payload()`、`NativeAuthorityGit` 与 `_verify_loaded_identity()`；仅修改 root adapter 和其直接 stdlib CPU test。production `NativeAuthorityGit` 现在在接纳任何路径 authority 前拒绝 `owner_fd != 8`；bootstrap 捕获 FD8 owner/index `(dev,ino)`，每个 `grun()` 前后执行 no-follow owner/index barrier。
+- 直接 witnesses：production 的 `None`、non-8、cwd/index mismatch；bootstrap 的 non-8/cwd/index/root procfd ABI mismatch；将 test-only payload 在首个 Git probe 返回后替换 FD8-relative index，证明 post-consumer barrier 在下一外来消费前终止；同字节 foreign adapter 的 loaded inode 被拒绝；旧缺 owner flag 测试改名为实际所测 seam。测试夹具仅 TemporaryDirectory/local Git，不含真实 materialization/source/checkpoint I/O、child、GPU、训练。
+- 命令=`python3 -m py_compile tools/psm_wma/materialize_immutable_source_authority_root.py tools/psm_wma/test_materialize_immutable_source_authority_root.py && python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root && git diff --check`；结果=py_compile PASS、67/67 PASS、diff-check PASS。下一步=复读 formal diff/状态与审核规范自检，再以单一 root-only commit 提交并推送；当前未提交。
+
+## Causal-owner identity FD8 remediation 审核观察凭证 #6（2026-09-13 16:12 CST，三方 final 齐全）
+
+- formal root=`c8aafca005ff061788114281e47fd1a4e2b6a843`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。`before_head=fda333938657790429d5294db412f7db6ec5cc25`；`git fetch origin V2`成功；advertised/origin均=`fda333938657790429d5294db412f7db6ec5cc25`；新增范围=`fda33393..origin/V2`为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT 精确检索命中 `docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_remediation_c8aafca_93a89ba.md`，最终=`REQUEST_CHANGES(...:1614)`：production `owner_fd=None` 必拒，bootstrap 每个 `grun()` 需 owner/index pre/post barrier 与 direct index-replacement witness。Kimi `kimi:0.0` capture=同 pair 最终 `REQUEST_CHANGES(test_materialize_immutable_source_authority_root.py:1358)`：需 non-8/cwd-index-root mismatch ABI witnesses、same-bytes foreign loaded-module witness，且恢复该空转测试的真实 seam 或改名。MM `mm:0.0` capture=同 pair 最终 `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`。
+- 三方同 pair final 齐全，形成仅限汇总与最小 root-only CPU/static 整改的推进令牌；允许补上述 adapter/bootstrap 与直接 unittest witnesses，禁止真实 materialization/source/checkpoint I/O、child/runtime、GPU、训练、评测、推理及 LIBERO4IN1。
+
+## Causal-owner identity FD8 remediation 三方final汇总（2026-09-13，REVIEW）
+
+- exact pair=`c8aafca005ff061788114281e47fd1a4e2b6a843`/`93a89ba61306d840a008813f62f26a34d54850f4`：ChatGPT review=`2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_remediation_c8aafca_93a89ba.md`最终`REQUEST_CHANGES(...:1614)`；Kimi=`kimi:0.0`最终`REQUEST_CHANGES`；MM=`mm:0.0`最终`APPROVE_TO_CLOSE...`。形成仅限最小root-only整改令牌：拒绝production owner=None并为bootstrap每个grun加FD8/index pre/post barrier及direct witnesses，同时补Kimi列出的ABI与foreign-loaded-module witnesses；禁止真实I/O、child、GPU、训练。
+
 ## Causal-owner identity FD8 remediation 审核观察凭证 #5（2026-09-13 16:20 CST，REVIEW）
 
 - formal root=`c8aafca005ff061788114281e47fd1a4e2b6a843`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=d4a2279250f49da2b1b7225651ee4593044753b4`；fetch成功；advertised/origin均为`d4a2279250f49da2b1b7225651ee4593044753b4`；新增范围为空；祖先判定=0且ff-only=`Already up to date`。

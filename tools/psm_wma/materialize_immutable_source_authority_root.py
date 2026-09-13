@@ -338,6 +338,10 @@ def bootstrap_payload() -> str:
         "if not stat.S_ISREG(g.st_mode) or stat.S_ISLNK(g.st_mode) or hashlib.sha256(open(git,'rb').read()).hexdigest()!=one('--git-raw-sha256'): fail()\n"
         "if subprocess.run([git,'--version'],env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout.decode().strip()!=one('--git-version'): fail()\n"
         "prefix=[git,'--no-replace-objects','-c','core.hooksPath=/dev/null','-c','core.attributesFile=/dev/null','-c','filter.lfs.process=','-c','protocol.file.allow=never']\n"
+        "ownid=(owners.st_dev,owners.st_ino); ifd=os.open('.authority-root.index',os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=ownerfd); ii=os.fstat(ifd); indexid=(ii.st_dev,ii.st_ino); os.close(ifd)\n"
+        "def ownerbarrier():\n"
+        " x=os.fstat(ownerfd); j=os.open('.authority-root.index',os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=ownerfd); y=os.fstat(j); os.close(j)\n"
+        " if (x.st_dev,x.st_ino)!=ownid or (y.st_dev,y.st_ino)!=indexid: fail()\n"
         "def routecheck():\n"
         " for path,rfd,rs,expected in routefiles:\n"
         "  z=os.lstat(path)\n"
@@ -349,10 +353,10 @@ def bootstrap_payload() -> str:
         " z=os.lstat(cfg)\n"
         " if (z.st_dev,z.st_ino,z.st_size)!=(cs.st_dev,cs.st_ino,cs.st_size) or os.pread(cfd,cs.st_size,0)!=rawcfg: fail()\n"
         "def grun(*v):\n"
-        " routecheck()\n"
+        " ownerbarrier(); routecheck()\n"
         " kw={'close_fds':True,'pass_fds':(ownerfd,)}\n"
         " p=subprocess.run([*prefix,*v],cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,**kw)\n"
-        " routecheck()\n"
+        " ownerbarrier(); routecheck()\n"
         " if p.returncode: fail()\n"
         " return p.stdout\n"
         "formal=one('--formal-root')\n"
@@ -1612,10 +1616,10 @@ class NativeAuthorityGit:
         self.production = production
         self.owner_fd = owner_fd
         self._owner_identity = self._index_identity = None
+        if self.production and owner_fd != 8:
+            raise NativeGitError("production FD8 consumer 必须使用FD8")
         if owner_fd is not None:
             expected_cwd = Path(f"/proc/self/fd/{owner_fd}")
-            if self.production and owner_fd != 8:
-                raise NativeGitError("production FD8 consumer 必须使用FD8")
             if cwd != expected_cwd or index != expected_cwd / ".authority-root.index":
                 raise NativeGitError("FD8 consumer 必须使用冻结的procfd cwd/index")
             self._owner_identity = _directory_fd_identity(owner_fd)
