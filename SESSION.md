@@ -4394,3 +4394,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Collection real-adapter v0.2 审核申请准备（2026-09-13，REVIEW）
 
 - formal root=`6ec9d2db564102c7546ceb1c44bc06ccb3c8de31`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT reviews、MM=`mm:0.0`、Kimi=`kimi:0.0`。v0.2仅新增显式override，保留唯一 executor `immutable_source_collection.py`与direct test allowlist；无新entrypoint、真实I/O、child、GPU或训练。
+
+### Collection real-adapter v0.2 审核观察凭证 #1（2026-09-13，REVIEW）
+
+- `before_head=f0e4480d4ca7d74ffda477292bb5b0da67f75190`；fetch/advertised/origin均成功且相同；新增范围为空，ff-only=`Already up to date`。ChatGPT exact review检索无输出；MM=`mm:0.0`同pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi=`kimi:0.0`显示正在核验，无final。无推进令牌，禁止实现/执行。
