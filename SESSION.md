@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Causal-owner identity CPU/static implementation：复审名册冻结（2026-09-13，REVIEW）
+
+- formal root=`5a2a3207853cdbbe4dc8135080cd5fe5050b7787`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结审核名册为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
+- formal tree仅`SESSION.md`、`TODO.md`、root adapter和其stdlib tests；Gitlink未变。复审请求已写入canonical live Inbox，待完成Inbox ledger提交/推送与MM/Kimi三联送达回执后进入每三分钟原生轮询。请求范围仅temporary CPU/static，禁止真实I/O、child/runtime、GPU、训练、评测、推理和LIBERO4IN1。
+
 ## Causal-owner identity CPU/static implementation：FD8 final ABI 与 owner config seam（2026-09-13，IN_PROGRESS）
 
 - 修改：temporary bootstrap harness 将保留的临时仓目录能力在独立 exec harness 中绑定为FD8；最终adapter argv固定`--cwd=/proc/self/fd/8`、`--index=/proc/self/fd/8/.authority-root.index`、`--bootstrap-project-root=/proc/self/fd/8`与`--bootstrap-owner-root-fd=8`。module/loaded-module no-follow reader在owner模式直接以保留FD作为`dir_fd`起点，避免对procfs symlink重复加`O_NOFOLLOW`；bootstrap owner分支不再以`realpath`将FD8路径反解为global CLEAN。`NativeAuthorityGit.verify_configuration_authority()`的owner分支以FD identity barrier保留cwd边界，不再`cwd.resolve()`。
