@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root execution-authority remediation closure 送达修复（2026-09-13 11:30:51 CST，REVIEW）
+
+- formal root=`cc36db3a6b863d86d57f5eb0e3fcefb5aef3376d`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。canonical live Inbox 已补齐 repair delivery request 并由根仓提交`8dada115`推送。
+- Kimi=`kimi:0.0`：以`send-keys -l`写入完整exact-pair申请，等待≥1秒后独立Enter；首次capture仍在输入框，未计送达；再次等待≥1秒后仅发送Enter，capture显示完整申请进入消息流、输入框为空并显示处理标识，送达/处理中。MM=`mm:0.0`：同样按`send-keys -l`、等待≥1秒、独立Enter；首次capture仍在输入框，第二次仅Enter后capture显示完整申请进入消息流、输入框为空且`Harmonizing…`，送达/处理中。
+- ChatGPT exact review仍为`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_cc36db3_93a89ba.md`的`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:165)`。MM/Kimi尚未对本pair产生final verdict；无推进令牌。下一步仅三分钟后完整远端锁定、exact review扫描及两pane capture；禁止整改、编码、真实I/O、GPU和训练。
+
 ## Authority-root execution-authority remediation closure 第2轮观察（2026-09-13 11:28:25 CST，检查失败/状态未知）
 
 - formal root=`cc36db3a6b863d86d57f5eb0e3fcefb5aef3376d`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册仍为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
