@@ -4149,3 +4149,20 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `before_head=8ee27d5ac852054052cecb5cc06073a528cee96c`；`git fetch origin V2`成功；advertised/origin均为`8ee27d5ac852054052cecb5cc06073a528cee96c`；`before_head..origin/V2`新增范围为空；祖先检查=0，`git merge --ff-only origin/V2`=`Already up to date`。
 - ChatGPT exact检索命令`rg -l '86c3276f1f8a6071659316e8c190f97fd622c0a7' docs/collab/chatgpt/reviews || true`无输出，故截至本轮未取得同pair formal review。Kimi=`kimi:0.0` capture为same-pair final=`REQUEST_CHANGES`，阻断项为request schema未显式 supersede 已批准runbook §3及实例化/创建授权措辞冲突（design:39）；MM=`mm:0.0` capture为same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`。
 - 本轮三方final未齐，且Kimi为`REQUEST_CHANGES`，无推进令牌；保持REVIEW，禁止整改、提交、创建/执行request、真实I/O、child、GPU或训练。下一步仅能在收到ChatGPT同一更正 pair formal review后，按三方final同轮汇总意见并决定docs-only最小整改。
+
+### Single-GPU smoke execution request design 审核观察凭证 #2（2026-09-13 20:00 CST，REVIEW）
+
+- formal root=`86c3276f1f8a6071659316e8c190f97fd622c0a7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`，冻结名册不变。`before_head=7325faee8525eef0f00a225537c45a791b1ba7e4`；fetch成功；advertised/origin均为`7325faee8525eef0f00a225537c45a791b1ba7e4`；新增范围为空；祖先检查=0，ff-only=`Already up to date`。
+- ChatGPT exact检索命令`rg -l '86c3276f1f8a6071659316e8c190f97fd622c0a7' docs/collab/chatgpt/reviews || true`无输出，故本轮没有同pair formal review。Kimi=`kimi:0.0` capture仍为same-pair `REQUEST_CHANGES`（HIGH：§3 schema与5053ed40 runbook §3未显式衔接；MEDIUM：§1/§6实例化授权措辞冲突）；MM=`mm:0.0` capture仍为same-pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`。
+- 三方final未齐且存在REQUEST_CHANGES，无推进令牌；保持REVIEW。ChatGPT更正申请的ledger=`7325faee8525eef0f00a225537c45a791b1ba7e4`已推送；不得整改、提交、创建/执行request、真实I/O、child、GPU或训练。
+
+### Single-GPU smoke execution request design 审核观察凭证 #3（2026-09-13 20:03 CST，三方final齐全）
+
+- formal root=`86c3276f1f8a6071659316e8c190f97fd622c0a7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`，冻结名册不变。`before_head=7325faee8525eef0f00a225537c45a791b1ba7e4`；fetch成功；advertised/origin=`3e432ef46842195b13dc06a662a82be974b19fe4`；完整新增提交=`439728a2 docs: review smoke execution request design`、`3e432ef4 docs: notify Codex of smoke execution request design review`；祖先检查=0，ff-only成功，local-after=`3e432ef46842195b13dc06a662a82be974b19fe4`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_execution_request_design_v01_86c3276_93a89ba.md`，same-pair final=`REQUEST_CHANGES(...execution_request_design_v0.1.md:39)`，两项HIGH：(1) §3新schema与已批准runbook §3精确schema没有显式supersede/兼容规则；(2) §1/§6对下一Gate是否允许创建instance自相矛盾。Kimi=`kimi:0.0` capture同pair `REQUEST_CHANGES`，同样要求schema唯一化与消除实例化授权矛盾；MM=`mm:0.0` capture同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`。
+- 三方同pair final齐全且含REQUEST_CHANGES，形成仅限docs-only最小整改推进令牌：将request ABI显式refreeze为唯一兼容schema，并将下一Gate边界统一为“仅在receipt闭环后实例化并审核一个request、仍不执行”或明确design-only二选一；不得创建/执行真实request、真实I/O、child、GPU或训练。
+
+### Single-GPU smoke execution request design v0.2 docs-only整改（2026-09-13，REVIEW）
+
+- 新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_request_design_v0.2.md`，仅落实同pair三方final中的两项契约整改：§1显式声明v2只替代已批准runbook §3并保留其余条款；§3冻结唯一v2 canonical ABI及authority/fixed-runtime/command/artifact/terminal/approval子结构；§1/§4/§5统一为当前Gate仅design-only、后续独立instance-construction-and-review Gate在receipt闭环后才可创建一份instance且仍不执行。
+- 未创建request、未读取真实输入、未改child、未申请GPU或执行训练。`git diff --check`及新文件no-index diff-check通过；v0.2 SHA-256=`bead03f9e5959674393b21b9d77fb359bd46b40e4e0d9a0dd7a00748f9f9c8e6`。下一步仅可提交/推送该docs-only新formal root，并重新三方审核。
