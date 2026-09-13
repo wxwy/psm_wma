@@ -511,13 +511,19 @@ def _verify_executable_identity(identity: ExecutableIdentity) -> None:
 def _verify_loaded_identity(
     invocation: AuthorityAdapterInvocation, cwd: Path
 ) -> None:
-    expected_adapter = (cwd / invocation.adapter.repo_path).resolve()
-    expected_authority = (cwd / invocation.authority_module.repo_path).resolve()
     if Path(sys.executable).resolve() != invocation.interpreter.path.resolve():
         raise NativeGitError("actual interpreter identity 漂移")
-    if Path(__file__).resolve() != expected_adapter:
+    expected_adapter = _read_regular_relative(cwd, invocation.adapter.repo_path)
+    expected_authority = _read_regular_relative(
+        cwd, invocation.authority_module.repo_path
+    )
+    if sha256_digest(expected_adapter) != invocation.adapter.raw_sha256:
+        raise NativeGitError("authority adapter bytes 漂移")
+    if sha256_digest(expected_authority) != invocation.authority_module.raw_sha256:
+        raise NativeGitError("authority module bytes 漂移")
+    if sha256_digest(Path(__file__).read_bytes()) != invocation.adapter.raw_sha256:
         raise NativeGitError("actual adapter module identity 漂移")
-    if Path(authority_module.__file__).resolve() != expected_authority:
+    if sha256_digest(Path(authority_module.__file__).read_bytes()) != invocation.authority_module.raw_sha256:
         raise NativeGitError("actual authority module identity 漂移")
 
 
