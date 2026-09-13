@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Causal-owner identity CPU/static implementation：第3轮完整观察（2026-09-13 14:25 CST，REVIEW）
+
+- formal root=`5a2a3207853cdbbe4dc8135080cd5fe5050b7787`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=d9091d2c0b94e8b6c393c50e749d20ad9d416d92`；fetch成功；advertised/origin均为`d9091d2c0b94e8b6c393c50e749d20ad9d416d92`；新增范围为空；祖先判定=0且ff-only=`Already up to date`。
+- ChatGPT精确检索仍无命中；MM=`mm:0.0`保持同pair正式`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`；Kimi=`kimi:0.0`正式`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:1747)`，HIGH：`--bootstrap-owner-root-fd`不应optional、必须拒绝missing/mismatched FD8与legacy absolute CLEAN argv，并补强相应witness；同时指出owner模式跳过admin global path realpath的等价检查缺口。
+- 三方final仍缺ChatGPT；按冻结名册与互锁规则，不得先行整改Kimi意见。保持REVIEW，禁止编码、真实I/O、child/runtime、GPU、训练、评测、推理和LIBERO4IN1。
+
 ## Causal-owner identity CPU/static implementation：第2轮完整观察（2026-09-13 14:22 CST，REVIEW）
 
 - formal root=`5a2a3207853cdbbe4dc8135080cd5fe5050b7787`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=508657db56cf023cee2710360ca9ca57e270d842`；fetch成功；advertised/origin均为`508657db56cf023cee2710360ca9ca57e270d842`；新增范围为空；祖先判定=0且ff-only=`Already up to date`。
