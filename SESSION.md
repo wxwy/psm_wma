@@ -4356,3 +4356,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`9a8ef4195ebf3e6a0bf5f1a76f6a8f819e5db546`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=a6a5fd07509a173204b0075f53db8b6207a7fb12`；`git fetch origin V2`成功；advertised/origin均=`a6a5fd07509a173204b0075f53db8b6207a7fb12`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
 - ChatGPT精确检索命中`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_source_evidence_closure_execution_request_design_v02_9a8ef41_93a89ba.md`，same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`。Kimi=`kimi:0.0` capture=同pair最终相同批准；MM=`mm:0.0` capture=同pair最终相同批准。全部独立证据成功、未截断。
 - 三方同pair全批准，形成仅授权后续`SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`的推进令牌：仅构造并审核一份 exact closure request instance；不授权其执行、真实 source/checkpoint/manifest/data/cache I/O、authority/collection/receipt/record/package/publication mutation、child/runtime/config 修改、GPU/CUDA/torchrun、训练、评测、推理、LIBERO4IN1、sidecar 或 checkpoint 写入。
+
+### Closure request instance 构造前只读缺口核验（2026-09-13，IN_PROGRESS）
+
+- 阅读`tools/psm_wma/immutable_source_collection.py`确认其模块 docstring 为`CPU/static ... under injected seams`，唯一公共执行入口为`collect_synthetic(...)`；没有`argparse`/`main`/production CLI，也没有 native Git transaction、FD-root opener 或 controlled evidence sink。现有`immutable_source_collection_executor_implementation_design_v0.1.md`也明确 CPU/static only，future real execution 需以同一源码绑定 real Git/FD/evidence。
+- 因此当前不能在不虚构执行入口或真实I/O路径的前提下，构造满足 source-evidence v0.2 §2--§3 的 exact non-shell closure request instance。该事实不改变已获批准的闭环路线；最小补件是`PSM-WMA_Local_Memory_v0.3.5_immutable_source_collection_real_adapter_implementation_design_v0.1.md`，仅设计两个root adapter/test文件的CPU/static实现，不新增横向 provenance Gate。
+- 预计修改：仅该设计、`TODO.md`、`SESSION.md`；未创建请求实例，未打开真实source/checkpoint/manifest/data/cache，未执行任何Git mutation、child、GPU或训练。
