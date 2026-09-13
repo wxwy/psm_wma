@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 审核观察凭证 #5（2026-09-13 16:20 CST，REVIEW）
+
+- formal root=`c8aafca005ff061788114281e47fd1a4e2b6a843`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=d4a2279250f49da2b1b7225651ee4593044753b4`；fetch成功；advertised/origin均为`d4a2279250f49da2b1b7225651ee4593044753b4`；新增范围为空；祖先判定=0且ff-only=`Already up to date`。
+- ChatGPT exact-pair检索无输出，状态=处理中。Kimi=`kimi:0.0`保持same-pair最终`REQUEST_CHANGES`，MM=`mm:0.0`保持same-pair最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`。无三方final推进令牌，保持REVIEW；禁止整改、真实I/O、child/runtime、GPU、训练、评测、推理与LIBERO4IN1。
+
 ## Causal-owner identity FD8 remediation 审核观察凭证 #4（2026-09-13 16:16 CST，REVIEW）
 
 - formal root=`c8aafca005ff061788114281e47fd1a4e2b6a843`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=d67d1223afd9b3cc2d72273151d0678fb163e61c`；fetch成功；advertised/origin均为`d67d1223afd9b3cc2d72273151d0678fb163e61c`；新增范围为空；祖先判定=0且ff-only=`Already up to date`。
