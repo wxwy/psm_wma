@@ -4199,3 +4199,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`aad59ce762c694d77aab646ae72cfa8c6ef27cdd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。`before_head=ef9598a4ece69d2e3e4dd6d37ba42067e01180f8`；`git fetch origin V2`成功；advertised/origin均=`ef9598a4ece69d2e3e4dd6d37ba42067e01180f8`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
 - ChatGPT精确检索=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_execution_request_design_v03_aad59ce_93a89ba.md`，same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`；Kimi `kimi:0.0` capture=同pair最终相同批准（仅非阻断观察为design文件:3尾随空白）；MM `mm:0.0` capture=同pair最终相同批准。三项独立证据均成功、未截断。
 - 三方同pair全批准，形成仅授权后续独立`INSTANCE-CONSTRUCTION-AND-REVIEW` Gate 的推进令牌：在receipt闭环后，按v0.3 §2仅只读receipt blob、root tree、child Gitlink identity，创建恰好一份request instance并重新三方审核；不授权该instance执行、真实payload I/O、child修改、GPU/CUDA/torchrun、训练、评测、推理、LIBERO4IN1、sidecar或checkpoint写入。
+
+### Source-evidence closure execution request design（2026-09-13，IN_PROGRESS）
+
+- 依据已关闭 smoke-request design 的推进令牌与当前仓内未发现 collection/source-evidence receipt 的事实，认领`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-DESIGN`；预计修改仅为`docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_execution_request_design_v0.1.md`、`TODO.md`、`SESSION.md`。
+- 新设计将既批准的 authority materializer、collection/receipt、producer/record/receipt/publication verifier/root audit 收敛为一份future受控 request 的连续闭环，不开横向 provenance 子Gate。当前仅docs-only；禁止真实source/checkpoint/manifest/data/cache I/O、collection/receipt/publication、child、GPU或训练。下一步：静态核验、提交推送并对新formal pair申请三方设计审核。
