@@ -195,3 +195,13 @@
 - Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-REQUEST-DESIGN`; formal root: `aad59ce762c694d77aab646ae72cfa8c6ef27cdd`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
 - Scope: root-only docs v0.3. It moves exact-instance reviews outside hashed request bytes, and authorizes only receipt-blob/root-tree/Gitlink read-only lookup for later construction. No execution or payload I/O.
 - Request final verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
+## Design review request — consolidated source-evidence closure execution request
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-DESIGN`.
+- Formal root: `88d11170db2cd058567af175c69152231917360a`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs design `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_execution_request_design_v0.1.md`, plus task/session records; Gitlink unchanged. It consolidates the already-approved authority materializer, collection/receipt, source-evidence producer/record/receipt, publication verifier and root-audit sequence into one future controlled request, without opening another provenance branch.
+- Review focus: no-worktree-discovery input binding; one activation's ordered materialize→collection/receipt→source-evidence/publication→root-audit transaction; pre-bind/post-commit checks; rollback fail-stop; release of only the receipt triple; and the boundary that this Gate designs, but does not create or execute, the request.
+- Evidence: staged root-only diff-check PASS; no project code, real source/checkpoint/manifest/data/cache I/O, child change, GPU or training was run.
+- Exact final verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: construction/execution of the request; real source/checkpoint/manifest/data/cache I/O; authority/collection/receipt/record/package/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, sidecar and checkpoint write.
