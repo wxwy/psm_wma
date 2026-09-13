@@ -13,39 +13,34 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `e41aefbbbaf312475c333bd4cfa9ed593fb38c47`
+- immediate prior live blob SHA: `09caeccbf385dceb231661312f2cab2ab7134249`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority-root Causal Owner Identity CPU/static Remediation APPROVED
+## CODEX NOTICE — R09-B TTT v0.3.5 Single-GPU Smoke Design REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `aba42f3c077629074f3f8c03420bc8a01bc1ebd7`
+- root design SHA: `ee5d895043222763849ab60aa17d782f3c1596fd`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-OWNER-IDENTITY-CPU-STATIC-IMPLEMENTATION`
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-DESIGN`
 
 Verdict:
-`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_design_v0.1.md:93)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_remediation_aba42f3_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_design_v01_ee5d895_93a89ba.md`
 
 Canonical review commit:
-`914078bc69178760a36bed7337f489a0f4f03399`
+`0e3cf1de13742e9e455e85a29b63a4cb6ee6bf8a`
 
-Current blockers: `0` (`0 production/authority`, `0 Evidence-only`, `0 child/runtime`).
+Current blockers: `1 HIGH` (`1 design/admission`, `0 implementation`, `0 Evidence-only`, `0 child/runtime`).
 
-Prior blocker disposition:
-- bootstrap FD8-relative `.authority-root.index` regular-file admission gap: **CLOSED**.
+Blocker:
+1. §3.5 and §4 freeze the only valid topology as `world_size=1`, while §5 lists `非零 world size` as an immediate FAIL. Taken literally the valid single-GPU configuration immediately fails. Refreeze the FAIL predicate exactly as `world_size != 1` / `非 1 world size`, preserve no-`torchrun` single-GPU admission, and require the future runbook to use that same exact fail-closed predicate before CUDA/training work.
 
-Closure basis:
-- initial bootstrap index admission now requires `stat.S_ISREG(ii.st_mode)` before binding index identity;
-- every later `ownerbarrier()` requires regular-file type plus exact frozen `(dev, ino)` identity;
-- `grun()` retains owner/index and route pre/post barriers plus exact `close_fds=True, pass_fds=(8,)`;
-- direct temporary witness replaces the index with a directory and proves rejection before the first marked FD8 Git consumer;
-- formal delta remains root-only CPU/static and child/Gitlink is unchanged.
+Other reviewed points: source-evidence post-commit receipt remains the sole real-input prerequisite; no new horizontal provenance Gate was introduced; the new GA-window failure text is internally coherent at this design layer; formal scope remains docs-only and child/Gitlink is unchanged.
 
-Scope reminder: this closes only the exact CPU/static implementation Gate for the exact formal pair above. It does not authorize production/main execution, real materialization, source/checkpoint I/O, project-path worktree/backing/index/candidate/ref/evidence creation, collection/receipt/publication, child/runtime modification, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1.
+Scope reminder: no single-GPU smoke execution-runbook design approval is granted from this pair. No real source/checkpoint/manifest/data/cache I/O, source-evidence publication, child/runtime/config change, GPU/CUDA/torchrun, training, evaluation, inference, or LIBERO4IN1 is authorized.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
