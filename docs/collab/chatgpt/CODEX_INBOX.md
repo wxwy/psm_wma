@@ -205,3 +205,12 @@
 - Evidence: staged root-only diff-check PASS; no project code, real source/checkpoint/manifest/data/cache I/O, child change, GPU or training was run.
 - Exact final verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: construction/execution of the request; real source/checkpoint/manifest/data/cache I/O; authority/collection/receipt/record/package/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, sidecar and checkpoint write.
+
+## Remediation review request — preserve independent receipt-root authority
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-DESIGN`.
+- Formal root: `9a8ef4195ebf3e6a0bf5f1a76f6a8f819e5db546`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs remediation `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_execution_request_design_v0.2.md` plus task/session records; unchanged child. It resolves ChatGPT v0.1 HIGH by requiring activation to stop after machine-verifying the next independent receipt root; exact receipt-root review must bind parent source-evidence root and receipt path/blob before receipt triple may enter smoke-instance construction.
+- Evidence: `git diff --check` PASS; no project code, real I/O, child, GPU, or training executed.
+- Exact final verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: construction/execution of the request; real source/checkpoint/manifest/data/cache I/O; authority/collection/receipt/record/package/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, sidecar and checkpoint write.
