@@ -3341,3 +3341,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Causal owner identity v0.2 exec-continuity refreeze 审核观察凭证 #7（2026-09-13 10:30 CST，REVIEW）
 
 - formal root/child及冻结名册不变。`before_head=7957dd91872ed5cde9c7dc6b7a4ebf07d2cfc6a0`；fetch成功；advertised/origin同为`7957dd91872ed5cde9c7dc6b7a4ebf07d2cfc6a0`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT exact-root检索仍无输出，状态=处理中。Kimi/MM均仍为same-pair显式`APPROVE_TO_IMPLEMENT...`。ChatGPT final缺失，无推进令牌，保持REVIEW，禁止temporary implementation、真实I/O、child、GPU与训练。
+
+### Causal owner identity v0.2 exec-continuity refreeze 审核观察凭证 #8（2026-09-13 10:34 CST，REVIEW）
+
+- formal root/child及冻结名册不变。`before_head=d35faa6a9bdc9924743be397247755fcf11e0095`；fetch成功；advertised/origin同为`d35faa6a9bdc9924743be397247755fcf11e0095`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT exact-root检索仍无输出，状态=处理中。Kimi/MM均仍为same-pair显式`APPROVE_TO_IMPLEMENT...`。ChatGPT final缺失，无推进令牌，保持REVIEW，禁止temporary implementation、真实I/O、child、GPU与训练。
