@@ -3378,3 +3378,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`781824f4ed2682b1347126a58f645ef0702117bd`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree仅改v0.3设计、SESSION和TODO，已由`git diff-tree --no-commit-id --name-status -r`与`git ls-tree`核验。v0.3 design blob SHA-256=`7fc23178e07f060dc2cfb882bfbecfb52073d5ba13982cf81ee1e42d111760d6`。
 - canonical live Inbox当前`8064` bytes，追加本申请不会触发128KiB rollover；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。请求仅`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`，批准范围仅root-only stdlib temporary-fixture CPU/static launcher/adapter implementation/tests。
 - 本申请与记录待以独立ledger提交推送；之后才可按`send-keys -l`→等待至少1秒→独立Enter→capture向MM/Kimi送达。未取得同pair三方final前，禁止temporary实现、production/main、真实materialization/source-checkpoint I/O、child、GPU和训练。
+
+### Causal owner identity v0.3 审核送达链路失败（2026-09-13，REVIEW）
+
+- Inbox申请已由ledger=`a3968df1`推送，formal pair不变。MM=`mm:0.0`与Kimi=`kimi:0.0`各自已实际尝试`send-keys -l`→等待至少1秒→独立Enter→独立capture（MM另尝试一次`C-u`后重发）；两者capture均未出现本次`781824f4...`申请文本，仍仅显示旧`de1d12f...`上下文。因此没有任一pane的送达双回执，状态只能为发送失败，不能进入审核轮询或声称已送达。
+- 下一步仅修复tmux消息送达链路并重新取得两pane的发送三联回执；ChatGPT Inbox已提交但正式review尚未检索，暂不生成审核观察凭证。无推进令牌，禁止整改、temporary实现、production/main、真实I/O、child、GPU和训练。
