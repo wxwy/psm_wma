@@ -3296,3 +3296,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Causal owner identity remediation replacement 审核观察凭证 #11（2026-09-13 09:56 CST，REVIEW）
 
 - formal root/child及冻结名册不变。`before_head=6acefe0c7592915c8e4c38b57d76593bd13621a4`；fetch成功；advertised/origin同为`6acefe0c7592915c8e4c38b57d76593bd13621a4`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT精确检索仍无输出，状态=处理中。Kimi仍为same-pair `REQUEST_CHANGES(...design...:72)`；MM仍为same-pair显式锚定`APPROVE_TO_IMPLEMENT...`。三方final未齐，无推进令牌，保持REVIEW并继续三分钟轮询；禁止整改、实现、materialization、真实I/O、child、GPU或训练。
+
+### Causal owner identity remediation replacement 审核观察凭证 #12（2026-09-13 10:00 CST，三方final齐全）
+
+- formal root=`64b706b7b97451fd90cb6e9292100e512952f28a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。初次同步因本地轮询记录与远端ChatGPT review提交并发而无法快进：远端新增`68c0666c`（review）和`f2684fef`（review ledger），本地仅SESSION记录经两次无冲突rebase后以`74ed16ad`推送；随后重新执行完整检查：`before_head=74ed16adebf8eb6371c8dbd91ac74af65a3b9a02`，fetch成功，advertised/origin同为该SHA，新增范围为空，祖先检查=0，ff-only=`Already up to date`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_execution_design_v01_64b706b_93a89ba.md`，final=`REQUEST_CHANGES(...design...:27)`，两项HIGH：root/clean authority FD命名/dup/close/cleanup语义未冻结且root_fd生命周期矛盾；owner authority在execve前消失，绝对bootstrap root仍可被替换。Kimi=`kimi:0.0`为same-pair `REQUEST_CHANGES(...design...:72)`，同样要求一致的长期root authority FD与移除`parent_fd`残留。MM=`mm:0.0`为same-pair显式锚定`APPROVE_TO_IMPLEMENT...`。
+- 三方final均为同一pair，且含两方`REQUEST_CHANGES`，形成仅限docs-only最小整改令牌：新建版本化设计，冻结长寿命root authority FD与临时Git FD6 duplicate、CLEAN-only cleanup、不重建路径authority，以及跨exec/bootstrap的procfd owner-root ABI/无fallback/真实seam临时fixture。不得实现、materialization、真实I/O、child、GPU或训练。
