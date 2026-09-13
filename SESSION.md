@@ -3183,3 +3183,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Authority-root launcher v0.8 remediation formal review roster（2026-09-13，REVIEW）
 
 - formal=`145f0d4af0b75165569e7b241841cd078e8359dd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。申请范围仅为`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`；严格禁止materialization、真实source/checkpoint I/O、child、GPU、训练。申请将以canonical live Inbox提交，再按`send-keys -l`、等待至少一秒、独立Enter、capture回执送达MM/Kimi；未取得同pair三方final前禁止任何进一步整改或执行。
+
+### Authority-root launcher v0.8 remediation 送达回执（2026-09-13 08:30:07 CST，REVIEW）
+
+- formal=`145f0d4af0b75165569e7b241841cd078e8359dd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT申请已append到canonical live Inbox并由ledger=`ce719fa2c1e50fcedd1c1ebf769af7bd6d2a857a`推送；该ledger不是formal target。MM=`mm:0.0`已按`send-keys -l`写入、等待≥1秒、独立Enter；首次capture仍显示输入框，已再次独立Enter并capture确认申请进入消息流且会话为`Verifying Round 128 SHA pair`。Kimi=`kimi:0.0`同序列执行，首次capture仍显示输入框，第二次独立Enter后capture确认完整申请进入消息流且输入框为空。两pane均已送达/处理中；ChatGPT结果仅以`docs/collab/chatgpt/reviews/` exact-pair formal review为准。下一轮三分钟后先完整fetch/ls-remote/ff-only，再独立扫描review并capture两pane。
