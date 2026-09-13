@@ -189,3 +189,9 @@
 - Evidence: no real I/O/child/GPU execution; `git diff --check` and new-file no-index diff-check PASS; design SHA-256 `bead03f9e5959674393b21b9d77fb359bd46b40e4e0d9a0dd7a00748f9f9c8e6`.
 - Exact final verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: instance creation/execution; real source/checkpoint/manifest/data/cache I/O; child/runtime/config changes; GPU/CUDA/torchrun; training/evaluation/inference/LIBERO4IN1; sidecar; checkpoint write; formal training.
+
+## Remediation review request — v0.3 acyclic request approval
+
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-REQUEST-DESIGN`; formal root: `aad59ce762c694d77aab646ae72cfa8c6ef27cdd`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs v0.3. It moves exact-instance reviews outside hashed request bytes, and authorizes only receipt-blob/root-tree/Gitlink read-only lookup for later construction. No execution or payload I/O.
+- Request final verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
