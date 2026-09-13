@@ -4378,3 +4378,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`782ad2a14dd67d40c84dcd8e4adf4e887ce081f0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=4f9e52ba622c141a949d28587bc9674487ce7736`；初次fetch后远端继续推进，重新fetch与`ls-remote`锁定后advertised/origin均=`9e8eb843525ce5edb8823d635994ce38a0baf5a7`；新增范围完整为`7d874d35 x`、`baa109c3 repair accidental README overwrite`、`8a2e4dad repair staging accidental README overwrite`、`76af64aa temporary marker`、`db1bed76 temporary marker 2`、`db0affc9 temporary`、`bc1b79d5 temporary2`、`78fad5f1 temporary3`、`9e8eb843 temporary4`；祖先判定=0，ff-only成功。
 - ChatGPT exact检索命令`rg -l -F '782ad2a14dd67d40c84dcd8e4adf4e887ce081f0' docs/collab/chatgpt/reviews | sort`无输出。Kimi=`kimi:0.0` capture=同pair最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；MM=`mm:0.0` capture=同pair最终相同批准。全部独立证据成功、未截断。
 - ChatGPT same-pair formal review缺件，故无推进令牌；保持REVIEW，禁止实现/执行、真实I/O、child、GPU或训练。下一轮仅按三分钟完整远端锁定与三方精确回收。
+
+### Collection real-adapter implementation design 审核观察凭证 #2（2026-09-13 22:51 CST，REVIEW）
+
+- formal root=`782ad2a14dd67d40c84dcd8e4adf4e887ce081f0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=48ea6d7154b68b2e4dd9cd6185d786b9df172853`；fetch成功；advertised/origin均=`48ea6d7154b68b2e4dd9cd6185d786b9df172853`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令`rg -l -F '782ad2a14dd67d40c84dcd8e4adf4e887ce081f0' docs/collab/chatgpt/reviews | sort`无输出。Kimi=`kimi:0.0` capture保持同pair最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；MM=`mm:0.0` capture保持同pair最终相同批准。独立证据均成功、未截断。
+- ChatGPT same-pair formal review缺件，无推进令牌；保持REVIEW，禁止实现/执行、真实I/O、child、GPU或训练。
