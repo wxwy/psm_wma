@@ -84,6 +84,18 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             self.assertEqual(adapter.commit_parents(row["revision"]), (parent,))
             self.assertEqual(adapter.blob_bytes(adapter.tree_entries(row["revision"])[RECEIPT_PATH][2]), b"{}")
 
+    def test_native_git_rolls_back_temporary_ref(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            def git(*args):
+                return subprocess.run(["/usr/bin/git", *args], cwd=root, check=True, stdout=subprocess.PIPE).stdout.decode().strip()
+            git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
+            (root / "seed").write_text("x"); git("add", "seed"); git("commit", "-qm", "seed")
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", root / "index", {})
+            before = adapter.snapshot(); adapter.commit((RECEIPT_PATH,), before["target_ref_revision"], {RECEIPT_PATH: b"{}"})
+            adapter.rollback(before)
+            self.assertEqual(adapter.resolve("HEAD"), before["target_ref_revision"])
+
     def test_atomic_file_evidence_sink_requires_fresh_destination(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             destination = Path(raw) / "evidence.json"
