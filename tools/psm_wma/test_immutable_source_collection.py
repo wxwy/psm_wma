@@ -84,6 +84,16 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             self.assertEqual(adapter.commit_parents(row["revision"]), (parent,))
             self.assertEqual(adapter.blob_bytes(adapter.tree_entries(row["revision"])[RECEIPT_PATH][2]), b"{}")
 
+    def test_atomic_file_evidence_sink_requires_fresh_destination(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            destination = Path(raw) / "evidence.json"
+            sink = AtomicFileEvidenceSink(destination)
+            record = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                       selection_request=self.selection_raw, git=self.git,
+                                       root_fd=self.fd, sink=sink)
+            self.assertEqual(json.loads(destination.read_text()), record)
+            with self.assertRaises(CollectionError): AtomicFileEvidenceSink(destination)
+
     def test_native_parser_requires_full_binding_categories(self) -> None:
         with self.assertRaises(SystemExit):
             _native_parser().parse_args(["--formal-root", "a" * 40])
