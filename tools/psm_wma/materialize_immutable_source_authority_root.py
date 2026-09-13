@@ -83,14 +83,20 @@ def _fd8_index_identity(descriptor: int) -> tuple[int, int]:
         os.close(index)
 
 
-def _read_regular_relative(root: Path, repo_path: str) -> bytes:
+def _read_regular_relative(root: Path | int, repo_path: str) -> bytes:
     """Read a repository file through no-follow component traversal."""
     if not _is_repo_path(repo_path):
         raise NativeGitError("repository relative path 无效")
     try:
-        directory = os.open(
-            root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+        directory = (
+            os.dup(root)
+            if isinstance(root, int)
+            else os.open(
+                root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+            )
         )
+        if not stat.S_ISDIR(os.fstat(directory).st_mode):
+            raise NativeGitError("repository root 必须为directory")
     except OSError as error:
         raise NativeGitError("repository root 无法安全打开") from error
     try:
@@ -259,7 +265,7 @@ def bootstrap_payload() -> str:
         " lineraw=os.pread(afd,ass.st_size,0); line=lineraw.decode('utf-8').strip()\n"
         " if not line.startswith('gitdir: '): fail()\n"
         " gd=line[8:]; gd=gd if os.path.isabs(gd) else os.path.abspath(os.path.join(root,gd)); gi=os.lstat(gd)\n"
-        " if stat.S_ISLNK(gi.st_mode) or not stat.S_ISDIR(gi.st_mode) or os.path.realpath(gd)!=gd: fail()\n"
+        " if stat.S_ISLNK(gi.st_mode) or not stat.S_ISDIR(gi.st_mode) or (owner is None and os.path.realpath(gd)!=gd): fail()\n"
         " try: bfd=os.open(os.path.join(gd,'gitdir'),os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC); cfd0=os.open(os.path.join(gd,'commondir'),os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC)\n"
         " except OSError: fail()\n"
         " bs=os.fstat(bfd); cs0=os.fstat(cfd0)\n"
@@ -268,7 +274,7 @@ def bootstrap_payload() -> str:
         " if not back or not relcommon: fail()\n"
         " back=back if os.path.isabs(back) else os.path.abspath(os.path.join(gd,back))\n"
         " common=relcommon if os.path.isabs(relcommon) else os.path.abspath(os.path.join(gd,relcommon))\n"
-        " if os.path.realpath(back)!=os.path.realpath(admin) or os.path.commonpath((common,gd))!=common: fail()\n"
+        " if (owner is None and os.path.realpath(back)!=os.path.realpath(admin)) or os.path.commonpath((common,gd))!=common: fail()\n"
         " try: gdfd=os.open(gd,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC); cmfd=os.open(common,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC)\n"
         " except OSError: fail()\n"
         " gds=os.fstat(gdfd); cms=os.fstat(cmfd)\n"
@@ -276,7 +282,7 @@ def bootstrap_payload() -> str:
         " routefiles=[(admin,afd,ass,lineraw),(os.path.join(gd,'gitdir'),bfd,bs,backraw),(os.path.join(gd,'commondir'),cfd0,cs0,commonraw)]; routedirs=[(gd,gdfd,gds),(common,cmfd,cms)]\n"
         " wbase=gd\n"
         "else: fail()\n"
-        "if not os.path.isabs(common) or os.path.realpath(common)!=common or not stat.S_ISDIR(os.lstat(common).st_mode): fail()\n"
+        "if not os.path.isabs(common) or (owner is None and os.path.realpath(common)!=common) or not stat.S_ISDIR(os.lstat(common).st_mode): fail()\n"
         "wcfg=os.path.join(wbase,'config.worktree')\n"
         "if os.path.lexists(wcfg): fail()\n"
         "cfg=os.path.join(common,'config')\n"
@@ -308,7 +314,7 @@ def bootstrap_payload() -> str:
         "  if not stat.S_ISREG(z.st_mode) or stat.S_ISLNK(z.st_mode) or (z.st_dev,z.st_ino,z.st_size)!=(rs.st_dev,rs.st_ino,rs.st_size) or os.pread(rfd,rs.st_size,0)!=expected: fail()\n"
         " for path,rfd,rs in routedirs:\n"
         "  z=os.lstat(path); f=os.fstat(rfd)\n"
-        "  if not stat.S_ISDIR(z.st_mode) or stat.S_ISLNK(z.st_mode) or os.path.realpath(path)!=path or (z.st_dev,z.st_ino)!=(rs.st_dev,rs.st_ino) or (f.st_dev,f.st_ino)!=(rs.st_dev,rs.st_ino): fail()\n"
+        "  if not stat.S_ISDIR(z.st_mode) or stat.S_ISLNK(z.st_mode) or (owner is None and os.path.realpath(path)!=path) or (z.st_dev,z.st_ino)!=(rs.st_dev,rs.st_ino) or (f.st_dev,f.st_ino)!=(rs.st_dev,rs.st_ino): fail()\n"
         " if os.path.lexists(wcfg): fail()\n"
         " z=os.lstat(cfg)\n"
         " if (z.st_dev,z.st_ino,z.st_size)!=(cs.st_dev,cs.st_ino,cs.st_size) or os.pread(cfd,cs.st_size,0)!=rawcfg: fail()\n"
@@ -330,7 +336,7 @@ def bootstrap_payload() -> str:
         " path=one('--'+n+'-path'); oid=one('--'+n+'-blob-oid'); digest=one('--'+n+'-raw-sha256'); full=os.path.abspath(os.path.join(root,path))\n"
         " if os.path.commonpath((os.path.abspath(root),full))!=os.path.abspath(root): fail()\n"
         " z=os.lstat(full)\n"
-        " if not stat.S_ISREG(z.st_mode) or stat.S_ISLNK(z.st_mode) or os.path.realpath(full)!=full or tree.get(path)!=('100644','blob',oid) or hashlib.sha256(open(full,'rb').read()).hexdigest()!=digest: fail()\n"
+        " if not stat.S_ISREG(z.st_mode) or stat.S_ISLNK(z.st_mode) or (owner is None and os.path.realpath(full)!=full) or tree.get(path)!=('100644','blob',oid) or hashlib.sha256(open(full,'rb').read()).hexdigest()!=digest: fail()\n"
         "sys.path.insert(0,root);sys.argv=[module,*a[7:]];runpy.run_module(module,run_name='__main__')\n"
     )
 
@@ -465,7 +471,7 @@ def _verify_module_identity(
     identity: ModuleIdentity,
     tree: Mapping[str, TreeEntry],
     transaction: AuthorityGitTransaction,
-    cwd: Path,
+    cwd: Path | int,
 ) -> None:
     if (
         not _is_repo_path(identity.repo_path)
@@ -509,7 +515,7 @@ def _verify_executable_identity(identity: ExecutableIdentity) -> None:
 
 
 def _verify_loaded_identity(
-    invocation: AuthorityAdapterInvocation, cwd: Path
+    invocation: AuthorityAdapterInvocation, cwd: Path | int
 ) -> None:
     if Path(sys.executable).resolve() != invocation.interpreter.path.resolve():
         raise NativeGitError("actual interpreter identity 漂移")
@@ -566,14 +572,15 @@ def preflight_authority_invocation(
         "160000", "commit", request.expected_child_gitlink,
     ):
         raise NativeGitError("formal root Gitlink 漂移")
-    _verify_module_identity(invocation.adapter, tree, transaction, cwd)
-    _verify_module_identity(invocation.authority_module, tree, transaction, cwd)
+    owner_root: Path | int = getattr(transaction, "owner_fd", None) or cwd
+    _verify_module_identity(invocation.adapter, tree, transaction, owner_root)
+    _verify_module_identity(invocation.authority_module, tree, transaction, owner_root)
     for identity in (invocation.collection_module, invocation.audit_module):
         if identity is not None:
-            _verify_module_identity(identity, tree, transaction, cwd)
+            _verify_module_identity(identity, tree, transaction, owner_root)
     _verify_executable_identity(invocation.interpreter)
     _verify_executable_identity(invocation.git_executable)
-    _verify_loaded_identity(invocation, cwd)
+    _verify_loaded_identity(invocation, owner_root)
     if transaction.production:
         _validate_https_endpoint(transaction.remote)
     configuration = transaction.verify_configuration_authority()
@@ -1630,8 +1637,7 @@ class NativeAuthorityGit:
         path = Path(value)
         if not path.is_absolute() or path.is_symlink() or not path.is_dir():
             raise NativeGitError(f"{name} 必须为absolute non-symlink directory")
-        resolved = path.resolve()
-        return resolved
+        return path
 
     def verify_configuration_authority(self) -> GitConfigurationAuthority:
         git_dir = self._repository_directory(
@@ -1644,7 +1650,8 @@ class NativeAuthorityGit:
         # administrative directory remains below the common Git directory.
         repository_root = common_dir.parent.parent
         try:
-            self.cwd.resolve().relative_to(repository_root)
+            if self.owner_fd is None:
+                self.cwd.relative_to(repository_root)
             git_dir.relative_to(repository_root)
             common_dir.relative_to(repository_root)
         except ValueError as error:

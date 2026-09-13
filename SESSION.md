@@ -1,5 +1,19 @@
 # 当前协作状态
 
+## Causal-owner identity CPU/static implementation：FD8 final ABI 与 owner config seam（2026-09-13，IN_PROGRESS）
+
+- 修改：temporary bootstrap harness 将保留的临时仓目录能力在独立 exec harness 中绑定为FD8；最终adapter argv固定`--cwd=/proc/self/fd/8`、`--index=/proc/self/fd/8/.authority-root.index`、`--bootstrap-project-root=/proc/self/fd/8`与`--bootstrap-owner-root-fd=8`。module/loaded-module no-follow reader在owner模式直接以保留FD作为`dir_fd`起点，避免对procfs symlink重复加`O_NOFOLLOW`；bootstrap owner分支不再以`realpath`将FD8路径反解为global CLEAN。`NativeAuthorityGit.verify_configuration_authority()`的owner分支以FD identity barrier保留cwd边界，不再`cwd.resolve()`。
+- 验证：临时local/bare Git fixture的FD8 bootstrap测试在完成本地Git预检后，于生产HTTPS endpoint边界预期fail-close，证明没有CLEAN pathname fallback；owner-FD config test PASS。定向unittest 2/2、两文件`py_compile`、`git diff --check` PASS。未运行production/main、真实materialization/source/checkpoint I/O、child/GPU/训练。
+- 补充见证：保留directory FD后将全局root替换为foreign symlink，FD-relative reader仍只读held inode；actual native Git `rev-parse`后将`.authority-root.index`替换为foreign file，下一Git consumer在启动前identity barrier fail-close。完整`python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root`为62/62 PASS；两文件`py_compile`、`git diff --check` PASS。
+- 下一步：提交本FD8/no-follow/config最小实现，随后以新root SHA按三方流程复审；当前修改未提交。
+
+## Causal-owner identity CPU/static implementation：第27轮实施前观察（2026-09-13，IN_PROGRESS）
+
+- formal root=`76210e7bcbdc606e39775e2dae258542cf3c0d38`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
+- 本轮凭证：`before_head=6eba1409346bd18a8317045eb86190247aba9152`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2`与`origin/V2`均为`6eba1409346bd18a8317045eb86190247aba9152`；新增范围为空；`git merge-base --is-ancestor`返回0且`git merge --ff-only origin/V2`为`Already up to date`。
+- ChatGPT精确检索命中`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_execution_design_v04_76210e7_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`；Kimi=`kimi:0.0`、MM=`mm:0.0` capture均为同pair同一正式最终批准。三方同轮final齐全，推进令牌有效。
+- 继续范围仅 root-only stdlib temporary-fixture CPU/static launcher/adapter/tests：已完成FD owner Git consumer、bootstrap owner-FD ABI、module no-follow 与loaded-identity bytes binding；下一步固定final fixture/launcher为FD8并添加temporary local/bare Git seam，同时消除repository/config中的`resolve`。禁止production/main、真实materialization/source/checkpoint I/O、child/runtime、GPU、训练、评测、推理与LIBERO4IN1。
+
 ## Causal-owner identity CPU/static implementation：module no-follow traversal（2026-09-13 13:56 CST，IN_PROGRESS）
 
 - 修改：新增`_read_regular_relative()`，从指定根以`dir_fd`与逐组件`O_NOFOLLOW`读取regular module；`_verify_module_identity()`改用该primitive，不再通过`cwd / path`后`lstat/read_bytes`取得module bytes。

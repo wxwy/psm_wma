@@ -282,6 +282,27 @@ class NativeAuthorityGitTest(unittest.TestCase):
             with self.assertRaises(NativeGitError):
                 _read_regular_relative(root, "safe/module.py")
 
+    def test_fd_root_reader_survives_global_root_replacement(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "root"
+            root.mkdir()
+            (root / "safe").mkdir()
+            (root / "safe" / "module.py").write_bytes(b"held owner bytes")
+            descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                foreign = Path(raw) / "foreign"
+                foreign.mkdir()
+                (foreign / "safe").mkdir()
+                (foreign / "safe" / "module.py").write_bytes(b"foreign bytes")
+                root.rename(Path(raw) / "root-held")
+                root.symlink_to(foreign, target_is_directory=True)
+                self.assertEqual(
+                    _read_regular_relative(descriptor, "safe/module.py"),
+                    b"held owner bytes",
+                )
+            finally:
+                os.close(descriptor)
+
     def test_fd_owner_git_consumer_inherits_only_owner_fd_and_rechecks_index(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "root"
@@ -489,6 +510,7 @@ class NativeAuthorityGitTest(unittest.TestCase):
     def _run_bootstrap_cli(
         self, root: Path, selection, config, argv, *, contract_payload=None,
         mutate_adapter_argv=None, mutate_bootstrap_argv=None, mutate_contract=None,
+        owner_fd: int | None = None,
     ):
         payload = __import__(
             "tools.psm_wma.materialize_immutable_source_authority_root",
@@ -524,9 +546,16 @@ class NativeAuthorityGitTest(unittest.TestCase):
             if mutate_contract is not None:
                 mutate_contract(contract)
                 contract.flush()
+            pass_fds = (selection.fileno(), config.fileno(), contract.fileno())
+            if owner_fd is not None:
+                pass_fds += (owner_fd,)
+                original = [
+                    str(Path(sys.executable).resolve()), "-c",
+                    "import os,sys; os.dup2(int(sys.argv[1]),8); os.set_inheritable(8,True); os.execv(sys.argv[2],sys.argv[2:])",
+                    str(owner_fd), *original,
+                ]
             return subprocess.run(
-                original,
-                cwd=root, pass_fds=(selection.fileno(), config.fileno(), contract.fileno()),
+                original, cwd=root, pass_fds=pass_fds,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False,
             )
     def _cli_fixture(self, directory: Path):
@@ -637,6 +666,67 @@ class NativeAuthorityGitTest(unittest.TestCase):
             transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNotNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNotNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
+
+    def test_bootstrap_fd8_uses_procfd_owner_argv_with_temporary_git(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                procfd = "/proc/self/fd/8"
+                for option, value in (
+                    ("--cwd", procfd),
+                    ("--index", procfd + "/.authority-root.index"),
+                    ("--bootstrap-project-root", procfd),
+                ):
+                    argv[argv.index(option) + 1] = value
+                argv.extend(("--bootstrap-owner-root-fd", "8"))
+                (root / ".authority-root.index").write_bytes(b"")
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    result = self._run_bootstrap_cli(
+                        root, selection_handle, config_handle, argv, owner_fd=descriptor,
+                    )
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("production remote 必须为canonical HTTPS endpoint", result.stderr)
+                self.assertEqual(verify_evidence_path(root / "evidence.json")["status"], "FAIL")
+            finally:
+                os.close(descriptor)
+
+    def test_fd_owner_configuration_does_not_resolve_procfd_cwd(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            index = root / ".authority-root.index"
+            index.write_bytes(b"")
+            descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                procfd = Path(f"/proc/self/fd/{descriptor}")
+                transaction = NativeAuthorityGit(
+                    git, procfd, str(remote), procfd / ".authority-root.index",
+                    COMMIT_METADATA, owner_fd=descriptor,
+                )
+                authority = transaction.verify_configuration_authority()
+                self.assertEqual(authority.config_path, root / ".git/config")
+            finally:
+                os.close(descriptor)
+
+    def test_fd_owner_actual_git_rejects_replaced_index_before_consumer(self):
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
+            index = root / ".authority-root.index"
+            index.write_bytes(b"")
+            descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                procfd = Path(f"/proc/self/fd/{descriptor}")
+                transaction = NativeAuthorityGit(
+                    git, procfd, str(remote), procfd / ".authority-root.index",
+                    COMMIT_METADATA, owner_fd=descriptor,
+                )
+                self.assertTrue(transaction._run("rev-parse", "--is-inside-work-tree"))
+                index.unlink()
+                index.write_bytes(b"foreign index")
+                with self.assertRaisesRegex(NativeGitError, "identity 漂移"):
+                    transaction._run("rev-parse", "HEAD")
+            finally:
+                os.close(descriptor)
 
     def test_bootstrap_validates_before_non_https_endpoint_preflight(self):
         with tempfile.TemporaryDirectory() as raw:
