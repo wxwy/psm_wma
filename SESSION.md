@@ -4177,3 +4177,25 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT申请已append至canonical live Inbox并随ledger=`436ed3604ce79e84475f8de146473dfcea3be913`推送；申请前live Inbox为`25964` bytes，追加未触及`131072` bytes上限。formal root/child与冻结名册不变。
 - MM=`mm:0.0`与Kimi=`kimi:0.0`均已执行`send-keys -l`、等待≥1秒、独立Enter并capture；两者首个capture保留输入，第二个独立Enter后的capture分别显示MM已进入`Diff v0.1 to v0.2 scope`处理、Kimi显示完整exact-pair申请已进入消息流且输入框为空。送达双回执完整。
 - 新pair尚无final或推进令牌；三分钟后完整远端锁定并回收三方。批准前禁止创建/执行request、真实I/O、child、GPU或训练。
+
+### Single-GPU smoke execution request design v0.2 审核观察凭证 #1（2026-09-13 20:09 CST，REVIEW）
+
+- formal root=`0874bb153ba81ee29eee84f0bde311bbf2d1ebe0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=1518f776976c5d446bc6e16e11bfe1e78d759bf6`，fetch成功，advertised/origin相同，新增范围为空，祖先检查=0、ff-only=`Already up to date`。ChatGPT exact检索无输出。
+- Kimi=`kimi:0.0` final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`；MM=`mm:0.0`同一final。ChatGPT缺同pair formal review；无推进令牌，保持REVIEW，禁止创建/执行request、真实I/O、child、GPU或训练。
+
+### Single-GPU smoke execution request design v0.3 审核观察凭证 #1（2026-09-13 20:24 CST，检查链路修复）
+
+- formal root=`aad59ce762c694d77aab646ae72cfa8c6ef27cdd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册应为ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=a457738eea2074fe4e4601ccb40ef384dfe93828`；`git fetch origin V2`成功；advertised/origin均=`ef9598a4ece69d2e3e4dd6d37ba42067e01180f8`；新增提交完整范围=`5b817ddc docs: review smoke execution request v0.3`、`ef9598a4 docs: notify Codex of smoke request v0.3 approval`；祖先判定=0，ff-only成功至`ef9598a4ece69d2e3e4dd6d37ba42067e01180f8`。
+- ChatGPT精确检索命令=`rg -l -F 'aad59ce762c694d77aab646ae72cfa8c6ef27cdd' docs/collab/chatgpt/reviews/ || true`命中`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_execution_request_design_v03_aad59ce_93a89ba.md`，其same-pair最终 verdict=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`。Kimi=`kimi:0.0`独立capture只含v0.1/v0.2 pair final，未见v0.3申请或same-pair final；MM=`mm:0.0`独立capture底部仍是v0.3申请输入草稿，未证明消息已提交，未见same-pair final。
+- 本轮只取得ChatGPT同pair final；MM/Kimi v0.3送达回执缺失，故本轮无推进令牌，状态为审核链路待修复。下一动作仅为向冻结两pane重发v0.3申请并取得`send-keys -l`→至少一秒→独立Enter→capture三联回执；禁止整改、实现、创建/执行request、真实I/O、child、GPU或训练。
+
+### Single-GPU smoke execution request design v0.3 审核送达回执（2026-09-13 20:25 CST，REVIEW）
+
+- ChatGPT申请已存在于canonical live Inbox 的`Remediation review request — v0.3 acyclic request approval`条目（formal root/child与本pair一致），并已由本轮远端快进后的formal review确认其处理结果。MM=`mm:0.0`本轮先清除未提交草稿，再执行完整`send-keys -l`写入v0.3申请、等待至少1秒、独立Enter；独立capture显示申请消息已进入会话且MM进入`Diff v0.2 to v0.3 scope`处理，输入框为空。Kimi=`kimi:0.0`同样执行完整`send-keys -l`→等待至少1秒→独立Enter；独立capture显示v0.3 exact-pair申请已离开输入框并进入会话消息流，新输入框为空。
+- 冻结名册已对齐本pair：ChatGPT=`docs/collab/chatgpt/reviews/`，MM=`mm:0.0`，Kimi=`kimi:0.0`。ChatGPT已取得same-pair最终批准；MM/Kimi正在处理。此时无三方推进令牌；保持REVIEW，禁止整改、实现、创建/执行request、真实I/O、child、GPU或训练。下一轮在三分钟后按完整远端锁定和三方精确回收执行。
+
+### Single-GPU smoke execution request design v0.3 审核观察凭证 #2（2026-09-13 20:28 CST，三方 final 齐全）
+
+- formal root=`aad59ce762c694d77aab646ae72cfa8c6ef27cdd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。`before_head=ef9598a4ece69d2e3e4dd6d37ba42067e01180f8`；`git fetch origin V2`成功；advertised/origin均=`ef9598a4ece69d2e3e4dd6d37ba42067e01180f8`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_execution_request_design_v03_aad59ce_93a89ba.md`，same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`；Kimi `kimi:0.0` capture=同pair最终相同批准（仅非阻断观察为design文件:3尾随空白）；MM `mm:0.0` capture=同pair最终相同批准。三项独立证据均成功、未截断。
+- 三方同pair全批准，形成仅授权后续独立`INSTANCE-CONSTRUCTION-AND-REVIEW` Gate 的推进令牌：在receipt闭环后，按v0.3 §2仅只读receipt blob、root tree、child Gitlink identity，创建恰好一份request instance并重新三方审核；不授权该instance执行、真实payload I/O、child修改、GPU/CUDA/torchrun、训练、评测、推理、LIBERO4IN1、sidecar或checkpoint写入。
