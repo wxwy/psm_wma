@@ -3383,3 +3383,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - Inbox申请已由ledger=`a3968df1`推送，formal pair不变。MM=`mm:0.0`与Kimi=`kimi:0.0`各自已实际尝试`send-keys -l`→等待至少1秒→独立Enter→独立capture（MM另尝试一次`C-u`后重发）；两者capture均未出现本次`781824f4...`申请文本，仍仅显示旧`de1d12f...`上下文。因此没有任一pane的送达双回执，状态只能为发送失败，不能进入审核轮询或声称已送达。
 - 下一步仅修复tmux消息送达链路并重新取得两pane的发送三联回执；ChatGPT Inbox已提交但正式review尚未检索，暂不生成审核观察凭证。无推进令牌，禁止整改、temporary实现、production/main、真实I/O、child、GPU和训练。
+
+### Causal owner identity v0.3 送达阻塞复核（2026-09-13，REVIEW）
+
+- 已连续三次独立检查`kimi:0.0`与`mm:0.0`：两个pane均`dead=0`、进程仍存活，但Kimi持续显示`goal paused`且MM持续停留旧`de1d12f...`输入提示；本次`781824f4...`申请文本从未出现在任一capture中。该结果与先前两次`send-keys -l`→等待≥1秒→Enter→capture失败一致。
+- 不存在能证明送达的双回执，因而不能将ChatGPT Inbox条目升级为三方申请、不能启动轮询或修改实现。需要外部恢复两审核会话的输入能力后，重新完整送达本pair；恢复前保持REVIEW、禁止temporary实现、production/main、真实I/O、child、GPU和训练。
