@@ -3264,3 +3264,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root/child及冻结名册不变。`before_head=7555aa7882c9a223598f3b32ee50a3896e0cd336`；fetch成功；advertised/origin同为`7555aa7882c9a223598f3b32ee50a3896e0cd336`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT exact-root检索仍无输出，状态=处理中。Kimi仍为exact-pair `REQUEST_CHANGES(...design...:72)`。
 - MM补充capture现显式锚定相同root/child，并给出`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`，状态=已回复(APPROVE)。ChatGPT final仍缺；三方final未齐且已有Kimi REQUEST_CHANGES，无推进令牌，保持REVIEW，禁止整改、实现、materialization、真实I/O、child、GPU或训练；下一轮最早09:27 CST。
+
+### Causal owner identity remediation replacement 审核观察凭证 #4（2026-09-13 09:28 CST，REVIEW）
+
+- formal root/child及冻结名册不变。`before_head=85c62b905aa3db538346c5731f7081aea5f260bb`；fetch成功；advertised/origin同为`85c62b905aa3db538346c5731f7081aea5f260bb`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT精确检索仍无输出，状态=处理中。Kimi仍为same-pair `REQUEST_CHANGES(...design...:72)`；MM仍为same-pair显式锚定的`APPROVE_TO_IMPLEMENT...`。三方final未齐，无推进令牌，保持REVIEW并继续三分钟轮询；禁止整改、实现、materialization、真实I/O、child、GPU或训练。
