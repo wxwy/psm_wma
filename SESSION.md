@@ -4339,3 +4339,20 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`88d11170db2cd058567af175c69152231917360a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=054473cce72553a49d3f3cc3f9cd86b90bd4743f`；fetch成功；advertised/origin均=`4f38bd8eda70089528c43a58cc14bd326b115ed9`；新增=`4f38bd8e review: request changes source evidence closure execution design 88d1117`；祖先判定=0，ff-only成功至`4f38bd8e`。
 - ChatGPT exact-match review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_source_evidence_closure_execution_request_design_88d1117_93a89ba.md`，最终`REQUEST_CHANGES`（HIGH：v0.1 §3将既冻结的独立 post-commit receipt-root review 边界错误折叠为单 activation direct handoff）；Kimi `kimi:0.0`=同pair最终批准；MM `mm:0.0`=同pair最终批准。独立证据均成功、未截断。
 - 三方final已齐，形成仅允许汇总该一项HIGH并进行docs-only最小整改的`REQUEST_CHANGES`推进令牌；整改须要求：未来闭环执行在source-evidence formal root与next independent receipt root机器核验后停止、不释放receipt triple；另行审核精确receipt root（绑定parent、path、blob）后才允许进入smoke instance构造。仍不授权真实I/O、child、GPU或训练。
+
+### Source-evidence closure design v0.2 审核申请送达（2026-09-13，REVIEW）
+
+- remediation formal root=`9a8ef4195ebf3e6a0bf5f1a76f6a8f819e5db546`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ledger commit=`e3a3a1bd`已推送，Inbox append后仍低于128KiB。冻结名册保持ChatGPT reviews、MM=`mm:0.0`、Kimi=`kimi:0.0`。
+- MM已送达并进入处理。Kimi首次发送时其pane显示idle恢复选择框，不能算送达；恢复后capture显示完整申请已进入消息流且输入框为空，送达回执成立。三方均尚未对新pair给出final；三分钟后完整回收。
+
+### Source-evidence closure design v0.2 审核观察凭证 #1（2026-09-13 22:24 CST，REVIEW）
+
+- formal root=`9a8ef4195ebf3e6a0bf5f1a76f6a8f819e5db546`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT reviews、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=e3a3a1bdd4bdde1cc80e373bffeed1368d32ca3a`；fetch成功；advertised/origin均同`e3a3a1bd...`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT exact-pair检索为空；Kimi capture=同pair最终批准；MM capture=同pair最终批准。三项独立证据均成功、未截断。
+- ChatGPT formal review缺件，无推进令牌；保持REVIEW，禁止实施/执行/真实I/O、child、GPU与训练。下一轮三分钟后完整检查。
+
+### Source-evidence closure design v0.2 审核观察凭证 #2（2026-09-13 22:41 CST，三方 final 齐全）
+
+- formal root=`9a8ef4195ebf3e6a0bf5f1a76f6a8f819e5db546`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=a6a5fd07509a173204b0075f53db8b6207a7fb12`；`git fetch origin V2`成功；advertised/origin均=`a6a5fd07509a173204b0075f53db8b6207a7fb12`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命中`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_source_evidence_closure_execution_request_design_v02_9a8ef41_93a89ba.md`，same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_EXECUTION_REQUEST`。Kimi=`kimi:0.0` capture=同pair最终相同批准；MM=`mm:0.0` capture=同pair最终相同批准。全部独立证据成功、未截断。
+- 三方同pair全批准，形成仅授权后续`SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`的推进令牌：仅构造并审核一份 exact closure request instance；不授权其执行、真实 source/checkpoint/manifest/data/cache I/O、authority/collection/receipt/record/package/publication mutation、child/runtime/config 修改、GPU/CUDA/torchrun、训练、评测、推理、LIBERO4IN1、sidecar 或 checkpoint 写入。
