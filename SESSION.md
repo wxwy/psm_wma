@@ -3972,3 +3972,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`ee5d895043222763849ab60aa17d782f3c1596fd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。formal tree只含本设计、SESSION与TODO；Gitlink未变；设计 SHA-256=`40b50a1f9384b78115167cd8bc3702166098ba3d3d3dc6c41099c5cfa30adc19`。
 - 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。请求唯一 verdict=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`或`REQUEST_CHANGES(file:line)`。
 - 批准范围仅为下一份 docs-only single-GPU smoke execution runbook/command design；明确不授权真实 source/checkpoint/manifest/data/cache I/O、source-evidence record/receipt/publication、child修改、GPU/CUDA/torchrun、训练、评测、推理或LIBERO4IN1。当前申请记录待独立 ledger 提交推送并向MM/Kimi发送；送达前不存在审核观察或推进令牌。
+
+### Single-GPU smoke design v0.1 送达回执（2026-09-13 18:22:48 CST，REVIEW）
+
+- formal root=`ee5d895043222763849ab60aa17d782f3c1596fd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT申请已追加至 canonical live Inbox，并由根仓 ledger=`51641b0de899e6dc5f49a3932e045e50e3ea14bf`推送（ledger不是formal target）。
+- MM=`mm:0.0`：已执行`send-keys -l`，等待≥1秒、独立Enter；首次capture仍有输入，第二次独立Enter后的capture显示完整申请进入消息流、空输入框并处于`Composing…`。Kimi=`kimi:0.0`同序列，第二次独立Enter后的capture显示完整申请在消息流、空输入框。两pane送达回执完整。
+- 三方最终结论尚未检查；此刻无推进令牌。下一次审核观察必须先完整执行 fetch/ls-remote/ff-only，再单独扫描 exact ChatGPT review、capture Kimi、capture MM；审核间隔三分钟。
