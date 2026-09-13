@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 第三轮审核申请准备（2026-09-13 17:51 CST，REVIEW）
+
+- formal root=`aba42f3c077629074f3f8c03420bc8a01bc1ebd7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。live Inbox追加前=17582 bytes，追加后仍低于131072-byte上限；请求仅`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`。
+- 下一步=提交并推送此申请 ledger，以`send-keys -l`→等待至少1秒→独立Enter→capture向冻结 MM/Kimi panes送达；三方对新pair final未齐前保持 REVIEW，禁止真实 I/O、child/runtime、GPU、训练、评测、推理与LIBERO4IN1。
+
 ## Causal-owner identity FD8 remediation 第三轮最小实现（2026-09-13 17:51 CST，IN_PROGRESS）
 
 - 依据紧邻观察凭证 #18 的同pair三方 final 汇总令牌，仅修改 root `bootstrap_payload()`及其 direct unittest：initial FD8-relative `.authority-root.index` capture 与每次 `ownerbarrier()`都要求`stat.S_ISREG`；新增目录型 index 临时 fixture，注入 Git-consumer marker 并证明首个`grun()`前拒绝。
