@@ -3280,3 +3280,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Causal owner identity remediation replacement 审核观察凭证 #7（2026-09-13 09:40 CST，REVIEW）
 
 - formal root/child及冻结名册不变。`before_head=cf1f1b807cdc92f6a4751e1aa2cb9f2f7c97b916`；fetch成功；advertised/origin同为`cf1f1b807cdc92f6a4751e1aa2cb9f2f7c97b916`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT精确检索仍无输出，状态=处理中。Kimi仍为same-pair `REQUEST_CHANGES(...design...:72)`；MM仍为same-pair显式锚定`APPROVE_TO_IMPLEMENT...`。三方final未齐，无推进令牌，保持REVIEW并继续三分钟轮询；禁止整改、实现、materialization、真实I/O、child、GPU或训练。
+
+### Causal owner identity remediation replacement 审核观察凭证 #8（2026-09-13 09:44 CST，REVIEW）
+
+- formal root/child及冻结名册不变。`before_head=d73490a37bd96257154b7474e113415ccc755759`；fetch成功；advertised/origin同为`d73490a37bd96257154b7474e113415ccc755759`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT精确检索仍无输出，状态=处理中。Kimi仍为same-pair `REQUEST_CHANGES(...design...:72)`；MM仍为same-pair显式锚定`APPROVE_TO_IMPLEMENT...`。三方final未齐，无推进令牌，保持REVIEW并继续三分钟轮询；禁止整改、实现、materialization、真实I/O、child、GPU或训练。
