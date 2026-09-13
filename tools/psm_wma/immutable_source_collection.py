@@ -7,6 +7,7 @@ import json
 import os
 import stat
 import subprocess
+import tempfile
 from dataclasses import dataclass, field
 from threading import Lock
 from pathlib import Path
@@ -155,10 +156,19 @@ class NativeRootFd:
                 or any(part in {"", ".", ".."} for part in path.split("/"))):
             raise CollectionError("source path escapes root FD")
         flags = os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW
+        components = path.split("/")
+        current = os.dup(self._root_fd)
         try:
-            descriptor = os.open(path, flags, dir_fd=self._root_fd)
+            for component in components[:-1]:
+                next_fd = os.open(component, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW,
+                                  dir_fd=current)
+                os.close(current)
+                current = next_fd
+            descriptor = os.open(components[-1], flags, dir_fd=current)
         except OSError as exc:
             raise CollectionError("source path 打开失败") from exc
+        finally:
+            os.close(current)
         try:
             info = os.fstat(descriptor)
             if not stat.S_ISREG(info.st_mode):
@@ -214,7 +224,11 @@ class AtomicFileEvidenceSink:
                 handle.write(raw)
                 handle.flush()
                 os.fsync(handle.fileno())
-            os.replace(temporary, self._destination)
+            parent = self._destination.parent
+            if parent.is_symlink() or not parent.is_dir():
+                raise CollectionError("evidence parent 必须为受控目录")
+            os.link(temporary, self._destination)
+            os.unlink(temporary)
         except BaseException:
             try:
                 temporary.unlink(missing_ok=True)
@@ -253,6 +267,15 @@ class NativeCollectionGit:
             raise CollectionError(result.stderr.decode("utf-8", "replace").strip() or "native Git 失败")
         return result.stdout
 
+    def _run_isolated(self, index: Path, *args: str, input: bytes | None = None) -> bytes:
+        env = dict(self._env)
+        env["GIT_INDEX_FILE"] = str(index)
+        result = subprocess.run([str(self.git), *args], cwd=self.cwd, env=env, input=input,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False)
+        if result.returncode:
+            raise CollectionError(result.stderr.decode("utf-8", "replace").strip() or "native Git 失败")
+        return result.stdout
+
     def resolve(self, revision: str) -> str:
         return self._run("rev-parse", "--verify", revision).decode().strip()
 
@@ -284,14 +307,42 @@ class NativeCollectionGit:
         head = self.resolve("HEAD")
         symbolic = self._run("symbolic-ref", "-q", "HEAD", check=False).decode().strip() or None
         target = symbolic or "HEAD"
+        tracked: dict[str, str] = {}
+        for row in self._run("ls-files", "--stage", "-z", "--", *SNAPSHOT_PATHS).decode().split("\0"):
+            if not row:
+                continue
+            head, path = row.split("\t", 1)
+            mode, _oid, _stage = head.split()
+            if mode not in {"100644", "100755"} or path in tracked:
+                raise CollectionError("snapshot index mode/path 无效")
+            tracked[path] = mode
+        status = self._run("status", "--porcelain=v1", "-z", "--untracked-files=all").decode()
+        for row in status.split("\0"):
+            if not row:
+                continue
+            path = row[3:] if len(row) >= 3 else ""
+            if path not in SNAPSHOT_PATHS:
+                raise CollectionError("snapshot 存在 allowlist 外 porcelain residue")
+            if row[:2] == "??":
+                raise CollectionError("snapshot allowlist path 未 tracked")
         entries = []
         for path in SNAPSHOT_PATHS:
             candidate = self.cwd / path
-            if candidate.is_file() and not candidate.is_symlink():
-                raw = candidate.read_bytes()
-                entries.append({"path": path, "mode": "100644", "kind": "regular", "sha256": _digest(raw)})
-            else:
+            current = self.cwd
+            for component in Path(path).parts[:-1]:
+                current = current / component
+                if current.is_symlink():
+                    raise CollectionError("snapshot 路径组件是 symlink")
+            try:
+                info = os.lstat(candidate)
+            except FileNotFoundError:
+                info = None
+            if info is None:
                 entries.append({"path": path, "mode": None, "kind": "absent", "sha256": None})
+            elif not stat.S_ISREG(info.st_mode) or candidate.is_symlink() or path not in tracked:
+                raise CollectionError("snapshot worktree 类型或 tracked 状态无效")
+            else:
+                entries.append({"path": path, "mode": tracked[path], "kind": "regular", "sha256": _digest(candidate.read_bytes())})
         return {"target_ref": target, "target_ref_revision": head, "head_mode": "symbolic" if symbolic else "detached",
                 "head_symbolic_ref": symbolic, "head_revision": head,
                 "index_tree_native_oid": self._run("write-tree").decode().strip(),
@@ -300,11 +351,18 @@ class NativeCollectionGit:
     def preflight(self, paths: tuple[str, ...], parent: str, blobs: Mapping[str, bytes]) -> str:
         if paths not in (COLLECTION_PATHS, (RECEIPT_PATH,)) or set(paths) != set(blobs):
             raise CollectionError("transaction allowlist drift")
-        self._run("read-tree", parent)
-        for path, raw in blobs.items():
-            oid = self._run("hash-object", "-w", "--stdin", input=raw).decode().strip()
-            self._run("update-index", "--add", "--cacheinfo", f"100644,{oid},{path}")
-        return self._run("write-tree").decode().strip()
+        fd, raw_index = tempfile.mkstemp(prefix="psm-wma-preflight-")
+        os.close(fd)
+        isolated = Path(raw_index)
+        isolated.unlink()
+        try:
+            self._run_isolated(isolated, "read-tree", parent)
+            for path, raw in blobs.items():
+                oid = self._run_isolated(isolated, "hash-object", "-w", "--stdin", input=raw).decode().strip()
+                self._run_isolated(isolated, "update-index", "--add", "--cacheinfo", f"100644,{oid},{path}")
+            return self._run_isolated(isolated, "write-tree").decode().strip()
+        finally:
+            isolated.unlink(missing_ok=True)
 
     def commit(self, paths: tuple[str, ...], parent: str, blobs: Mapping[str, bytes]) -> Mapping[str, str]:
         before = self.snapshot()

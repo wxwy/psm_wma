@@ -12,6 +12,7 @@ from pathlib import Path
 from dataclasses import replace
 import stat
 from copy import deepcopy
+from unittest.mock import patch
 from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff
 from tools.psm_wma.immutable_source_collection import AtomicFileEvidenceSink, COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, NativeCollectionGit, NativeRootFd, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _native_binding, _native_parser, _null_collection, _null_receipt, _read_regular_fd, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
@@ -73,6 +74,17 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             finally:
                 __import__("os").close(descriptor)
 
+    def test_native_root_fd_rejects_intermediate_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as raw, tempfile.TemporaryDirectory() as outside_raw:
+            root, outside = Path(raw), Path(outside_raw)
+            (outside / "payload").write_bytes(b"outside")
+            (root / "link").symlink_to(outside, target_is_directory=True)
+            descriptor = __import__("os").open(root, __import__("os").O_RDONLY)
+            try:
+                with self.assertRaises(CollectionError): NativeRootFd(descriptor).open_regular("link/payload")
+            finally:
+                __import__("os").close(descriptor)
+
     def test_native_git_commits_temporary_collection_tree(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -81,7 +93,10 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
             (root / "seed").write_text("x"); git("add", "seed"); git("commit", "-qm", "seed")
             parent = git("rev-parse", "HEAD")
-            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", root / "index", {})
+            index = root.parent / (root.name + "-index")
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", index, {})
+            subprocess.run(["/usr/bin/git", "read-tree", "HEAD"], cwd=root,
+                           env={**__import__("os").environ, "GIT_INDEX_FILE": str(index)}, check=True)
             row = adapter.commit((RECEIPT_PATH,), parent, {RECEIPT_PATH: b"{}"})
             self.assertEqual(adapter.commit_parents(row["revision"]), (parent,))
             self.assertEqual(adapter.blob_bytes(adapter.tree_entries(row["revision"])[RECEIPT_PATH][2]), b"{}")
@@ -93,10 +108,64 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 return subprocess.run(["/usr/bin/git", *args], cwd=root, check=True, stdout=subprocess.PIPE).stdout.decode().strip()
             git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
             (root / "seed").write_text("x"); git("add", "seed"); git("commit", "-qm", "seed")
-            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", root / "index", {})
+            index = root.parent / (root.name + "-index")
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", index, {})
+            subprocess.run(["/usr/bin/git", "read-tree", "HEAD"], cwd=root,
+                           env={**__import__("os").environ, "GIT_INDEX_FILE": str(index)}, check=True)
             before = adapter.snapshot(); adapter.commit((RECEIPT_PATH,), before["target_ref_revision"], {RECEIPT_PATH: b"{}"})
             adapter.rollback(before)
             self.assertEqual(adapter.resolve("HEAD"), before["target_ref_revision"])
+
+    def test_native_git_preflight_keeps_live_snapshot_unchanged(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            def git(*args, input=None):
+                return subprocess.run(["/usr/bin/git", *args], cwd=root, input=input, check=True,
+                                      stdout=subprocess.PIPE).stdout.decode().strip()
+            git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
+            (root / "seed").write_text("x"); git("add", "seed"); git("commit", "-qm", "seed")
+            index = root.parent / (root.name + "-index")
+            subprocess.run(["/usr/bin/git", "read-tree", "HEAD"], cwd=root,
+                           env={**__import__("os").environ, "GIT_INDEX_FILE": str(index)}, check=True)
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", index, {})
+            before = adapter.snapshot()
+            tree = adapter.preflight((RECEIPT_PATH,), before["target_ref_revision"], {RECEIPT_PATH: b"{}"})
+            self.assertEqual(adapter.snapshot(), before)
+            self.assertEqual(len(tree), 40)
+
+    def test_native_snapshot_rejects_untracked_and_out_of_allowlist_residue(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            def git(*args):
+                return subprocess.run(["/usr/bin/git", *args], cwd=root, check=True,
+                                      stdout=subprocess.PIPE).stdout.decode().strip()
+            git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
+            git("commit", "--allow-empty", "-qm", "seed")
+            index = root.parent / (root.name + "-index")
+            subprocess.run(["/usr/bin/git", "read-tree", "HEAD"], cwd=root,
+                           env={**__import__("os").environ, "GIT_INDEX_FILE": str(index)}, check=True)
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", index, {})
+            (root / COLLECTION_PATHS[0]).parent.mkdir(parents=True, exist_ok=True)
+            (root / COLLECTION_PATHS[0]).write_bytes(b"untracked")
+            with self.assertRaises(CollectionError): adapter.snapshot()
+            (root / COLLECTION_PATHS[0]).unlink()
+            (root / "outside").write_bytes(b"dirty")
+            with self.assertRaises(CollectionError): adapter.snapshot()
+
+    def test_atomic_sink_does_not_replace_destination_race(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            destination = Path(raw) / "evidence.json"
+            sink = AtomicFileEvidenceSink(destination)
+            record = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                       selection_request=self.selection_raw, git=self.git,
+                                       root_fd=self.fd, sink=MemoryEvidenceSink())
+            original_link = __import__("tools.psm_wma.immutable_source_collection", fromlist=["os"]).os.link
+            def race(source, target):
+                destination.write_bytes(b"foreign")
+                return original_link(source, target)
+            with patch("tools.psm_wma.immutable_source_collection.os.link", side_effect=race):
+                with self.assertRaises(FileExistsError): sink.emit(record)
+            self.assertEqual(destination.read_bytes(), b"foreign")
 
     def test_atomic_file_evidence_sink_requires_fresh_destination(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

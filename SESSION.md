@@ -4451,3 +4451,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `before_head=d6fe953a7d1aebcbec16d132ac5ab89ab8ce9966`；fetch成功；advertised/tracking均=`d6fe953a7d1aebcbec16d132ac5ab89ab8ce9966`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
 - ChatGPT exact pair final仍为`REQUEST_CHANGES`；Kimi capture仍为同 pair `APPROVE_TO_CLOSE...`；MM capture仍无`34cedc9.../93a89ba...`新 final，仅旧结论与已送达申请，处理中。独立证据成功、未截断。
 - 三方未齐，无推进令牌；继续REVIEW，禁止整改与后续执行。
+
+### Collection adapter CPU/static implementation 审核观察凭证 #5（2026-09-13 23:40 CST，REQUEST_CHANGES 汇总）
+
+- `before_head=ae44dd6fcd6e7c662916118341b9c83995f4a769`；fetch成功；advertised/tracking均=`ae44dd6fcd6e7c662916118341b9c83995f4a769`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- exact pair=`34cedc9ff227c35b387666ae824d282b14d2b1f5`/`93a89ba61306d840a008813f62f26a34d54850f4`：ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_immutable_source_collection_real_adapter_cpu_static_34cedc9_93a89ba.md`，final=`REQUEST_CHANGES`（HIGH-1 preflight index 污染 canonical snapshot；HIGH-2 中间 symlink 跟随；HIGH-3 native snapshot 不满足 target_snapshot_v1；MEDIUM-1 sink final replace 竞态）；Kimi=`kimi:0.0` final=`APPROVE_TO_CLOSE...`；MM=`mm:0.0` final=`APPROVE_TO_CLOSE...`。独立证据成功、未截断。
+- 三方 final 齐全，推进令牌仅允许汇总并在既有两文件 allowlist内修复上述4项，再验证、提交新 formal pair 复审；不授权真实I/O、child、GPU、训练。
+
+### Collection adapter 复核整改与验证（2026-09-14，待提交）
+
+- 按观察凭证 #5 的 `REQUEST_CHANGES` 令牌，仅修改既有 executor/direct test 两文件：preflight 使用独立临时 index；NativeRootFd 逐组件 `O_DIRECTORY|O_NOFOLLOW`；snapshot 绑定 index mode、porcelain/type/no-follow 语义；AtomicFileEvidenceSink 使用 no-replace hard-link 发布。
+- 新增直接 CPU witness：中间 symlink 拒绝、preflight snapshot 不变、untracked/allowlist 外 residue 拒绝、destination race 不覆盖；测试 `44/44 PASS`，py_compile 与 diff-check PASS。
+- 尚未提交/推送；下一步提交新 formal pair 并重新申请三方同 SHA 复核。仍禁止真实 source/receipt/publication、GPU、训练。
