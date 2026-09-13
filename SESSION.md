@@ -1,5 +1,16 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 第三轮最小实现（2026-09-13 17:51 CST，IN_PROGRESS）
+
+- 依据紧邻观察凭证 #18 的同pair三方 final 汇总令牌，仅修改 root `bootstrap_payload()`及其 direct unittest：initial FD8-relative `.authority-root.index` capture 与每次 `ownerbarrier()`都要求`stat.S_ISREG`；新增目录型 index 临时 fixture，注入 Git-consumer marker 并证明首个`grun()`前拒绝。
+- 命令=`python3 -m py_compile tools/psm_wma/materialize_immutable_source_authority_root.py tools/psm_wma/test_materialize_immutable_source_authority_root.py && python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root && git diff --check`；结果=py_compile PASS、68/68 PASS、diff-check PASS。fixture仅TemporaryDirectory/local Git；未执行真实 materialization/source/checkpoint I/O、child/runtime、GPU、训练、评测、推理或LIBERO4IN1。下一步=复读 formal diff与状态，提交 root-only remediation并重新申请同一冻结名册审核。
+
+## Causal-owner identity FD8 remediation 第二轮审核观察凭证 #18（2026-09-13 17:51 CST，三方 final 齐全）
+
+- formal root=`e88a9a9dd989e6a00e74d51ee9848b8ad241caa1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。`before_head=f5eabe3178dd4e0a97b053fb6a139efdfa7e911b`；fetch成功；advertised/origin均=`6102b765076f0c3584351d08ff4c6caa82b9573c`；新增提交=`091d7261 docs: review FD8 index type authority remediation`、`6102b765 docs: notify Codex of FD8 index type review`；祖先判定=0，ff-only成功至`6102b765`。
+- ChatGPT exact-pair review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_remediation_e88a9a9_93a89ba.md`，最终`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:341)`：bootstrap initial/repeated FD8-relative `.authority-root.index`只绑定 inode，未在首个`grun()`前要求 regular file。Kimi `kimi:0.0` capture=同pair最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`；MM `mm:0.0` capture=同pair最终相同批准。
+- 三方同pair final 齐全，形成仅限汇总和最小 root-only CPU/static 整改的推进令牌：bootstrap initial 与后续 barrier 必须拒绝 non-regular index，新增临时 fixture direct witness 证明 directory index 在任一 Git consumer 前拒绝；不得改弱 FD8/pass_fds/barrier/ABI，禁止真实 I/O、child/runtime、GPU、训练、评测、推理与 LIBERO4IN1。
+
 ## Causal-owner identity FD8 remediation 第二轮审核观察凭证 #17（2026-09-13 17:46 CST，REVIEW）
 
 - formal root=`e88a9a9dd989e6a00e74d51ee9848b8ad241caa1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。`before_head=8d465d69e4bd5bb585bf2d60f48d5e9e8a1d997b`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2`与`origin/V2`均为`8d465d69e4bd5bb585bf2d60f48d5e9e8a1d997b`；新增范围=`8d465d69..origin/V2`为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。

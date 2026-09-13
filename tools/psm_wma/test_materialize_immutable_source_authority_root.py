@@ -830,6 +830,31 @@ class NativeAuthorityGitTest(unittest.TestCase):
             self.assertTrue(marker.exists(), result.stderr)
             self.assertFalse((root / "evidence.json").exists(), result.stderr)
 
+    def test_bootstrap_rejects_directory_index_before_git_consumer(self):
+        with tempfile.TemporaryDirectory() as raw:
+            _git, root, _remote, selection, config, argv = self._cli_fixture(Path(raw))
+            marker = root / ".bootstrap-git-consumer-ran"
+
+            def inject_git_marker(payload):
+                needle = " p=subprocess.run([*prefix,*v],cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,**kw)\n"
+                replacement = " open('.bootstrap-git-consumer-ran','wb').close()\n" + needle
+                self.assertIn(needle, payload)
+                return payload.replace(needle, replacement, 1)
+
+            def replace_index_with_directory():
+                (root / ".authority-root.index").unlink()
+                (root / ".authority-root.index").mkdir()
+
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(
+                    root, selection_handle, config_handle, argv,
+                    mutate_root=replace_index_with_directory,
+                    payload_override=inject_git_marker,
+                )
+            self.assertNotEqual(result.returncode, 0, result.stderr)
+            self.assertFalse(marker.exists(), result.stderr)
+            self.assertFalse((root / "evidence.json").exists(), result.stderr)
+
     def test_verify_loaded_identity_rejects_same_bytes_foreign_adapter(self):
         with tempfile.TemporaryDirectory() as raw:
             _git, root, _remote, _selection, _config, _argv = self._cli_fixture(Path(raw))
