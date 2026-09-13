@@ -11,7 +11,7 @@ from dataclasses import replace
 import stat
 from copy import deepcopy
 from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff
-from tools.psm_wma.immutable_source_collection import AtomicFileEvidenceSink, COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, NativeCollectionGit, NativeRootFd, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _native_parser, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
+from tools.psm_wma.immutable_source_collection import AtomicFileEvidenceSink, COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, NativeCollectionGit, NativeRootFd, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _native_binding, _native_parser, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
 class ImmutableSourceCollectionTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -109,6 +109,21 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
     def test_native_parser_requires_full_binding_categories(self) -> None:
         with self.assertRaises(SystemExit):
             _native_parser().parse_args(["--formal-root", "a" * 40])
+
+    def test_native_binding_rejects_non_lowercase_identity(self) -> None:
+        parser = _native_parser()
+        values = ["--formal-root", "a" * 40, "--child-gitlink", "b" * 40, "--authority-root", "c" * 40,
+                  "--selection-path", SELECTION_PATH, "--selection-blob-oid", "d" * 40,
+                  "--selection-raw-sha256", "e" * 64, "--config-path", COLLECTION_PATHS[1],
+                  "--config-blob-oid", "f" * 40, "--config-raw-sha256", "1" * 64,
+                  "--target-ref", "refs/heads/fixture", "--expected-base", "2" * 40,
+                  "--expected-child-gitlink", "3" * 40, "--authority-approval-formal-root", "4" * 40,
+                  "--source-root-fd", "3", "--selection-fd", "4", "--evidence-path", "/tmp/e",
+                  "--git", "/usr/bin/git", "--cwd", "/tmp", "--index", "/tmp/i", "--remote", "origin"]
+        authority, lineage = _native_binding(parser.parse_args(values))
+        self.assertEqual(authority["root_revision"], "c" * 40); self.assertEqual(lineage["target_ref"], "refs/heads/fixture")
+        values[values.index("--selection-blob-oid") + 1] = "D" * 40
+        with self.assertRaises(CollectionError): _native_binding(parser.parse_args(values))
     def test_retained_evidence_does_not_alias_returned_record(self) -> None:
         sink = MemoryEvidenceSink()
         record = collect_synthetic(authority=self.authority, lineage=self.lineage,
