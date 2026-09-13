@@ -3147,3 +3147,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - payload删除inert第三base64 argv，改为唯一 lexical JSON authority；`capture_owned()`将可能成功的native add之后的missing/replacement/lookup失败统一映射为`ROLLBACK_INCOMPLETE`；`close_to_keep()`以list后`fstat`确认durable FD集合，排除`/proc/self/fd`枚举瞬态FD，并仍要求exec前仅`{3,4,5}`。
 - 已执行：`python -m py_compile ...payload_v0.8.py ...witness_test.py && python ...witness_test.py -q`，CPU temporary fixtures=10/10 PASS；其中直接`run() -> capture_owned() -> cleanup()`覆盖 temporary native-Git verified cleanup 与foreign-CLEAN replacement=`ROLLBACK_INCOMPLETE`。无GPU/外网、未运行payload `main()`、未访问真实source/checkpoint、未创建任何项目worktree/backing/index/candidate/ref/evidence。v0.8 raw=`13802` bytes、SHA-256=`546c24890618f43aff2f5af09d30c2de12c68ed7e632f79c426baa5012a13342`；`git diff --check` PASS。
 - 未完成：partial/nonzero add与post-add route drift的payload级因果注入见证；未完成前不得申请materialization verdict或启动真实执行。提交：未提交。
+
+### Authority-root launcher v0.8 add-boundary witness补充（2026-09-13，IN_PROGRESS）
+
+- v0.8 已提交并推送为根仓`cf48b5b3e34a56e7e4017c663d32fcc9a2c735ad`，子模块/Gitlink仍为`93a89ba61306d840a008813f62f26a34d54850f4`；未形成formal pair或发送审核申请。
+- `add_and_capture()`将exact native `worktree add`与ownership capture作为同一边界：native nonzero、route drift或capture失败均为`ROLLBACK_INCOMPLETE`。temporary Git fixture新增目标非空导致的实际 nonzero add，以及成功add后注入`.git/commondir`并由`check_route()`拒绝；二者直接调用payload seam并均PASS。
+- `python ...payload_v0.8_witness_test.py -q`=11/11 PASS，`git diff --check` PASS。无真实项目路径、source/checkpoint I/O、materialization、child、GPU或训练。下一步：更新v0.8 digest/annex并复核所有payload级 witness；未完成前不申请审核。

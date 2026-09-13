@@ -96,6 +96,10 @@ def bind_owned():
 def capture_owned():
     try: return bind_owned()
     except BaseException as error: raise Stop("ROLLBACK_INCOMPLETE") from error
+def add_and_capture(s):
+    try: run(s,"worktree","add","--detach",CLEAN,FORMAL)
+    except BaseException as error: raise Stop("ROLLBACK_INCOMPLETE") from error
+    return capture_owned()
 def assert_worktree(s, owned):
     value,fd=owned; current=os.lstat(CLEAN); bound=os.fstat(fd)
     if (not stat.S_ISDIR(current.st_mode) or (current.st_dev,current.st_ino)!=(value.st_dev,value.st_ino) or (bound.st_dev,bound.st_ino)!=(value.st_dev,value.st_ino)): fail("clean-root ownership")
@@ -154,14 +158,7 @@ def main():
         for path in paths: absent(path)
         actual=json.loads(RAW[2]); b=boot(s); contract=json.dumps({"bootstrap_argv_sha256":digest(json.dumps(["--",*actual],separators=(",",":"),ensure_ascii=False).encode()),"bootstrap_raw_sha256":digest(b.encode())},sort_keys=True,separators=(",",":")).encode(); data=(RAW[0],RAW[1],contract)
         if tuple(digest(x) for x in data)!=tuple(x[2] for x in EXPECTED): fail("contract identity")
-        try:
-            run(s,"worktree","add","--detach",CLEAN,FORMAL)
-        except BaseException as error:
-            # The native command may have changed admin state even when CLEAN
-            # is absent; without a retained post-mutation ownership witness,
-            # ordinary failure would be unsound.
-            raise Stop("ROLLBACK_INCOMPLETE") from error
-        owned=capture_owned()
+        owned=add_and_capture(s)
         assert_worktree(s,owned)
         for raw,(name,target,expected) in zip(data,EXPECTED): handoff(raw,name,target,expected)
         close_to_keep({3,4,5})

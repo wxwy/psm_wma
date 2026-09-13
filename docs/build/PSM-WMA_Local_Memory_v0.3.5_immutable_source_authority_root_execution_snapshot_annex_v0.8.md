@@ -4,8 +4,8 @@ v0.8 is a docs-only replacement of the v0.7 launcher artifact.  Candidate parent
 bytes, bootstrap, argv, environment and every execution prohibition are unchanged.
 
 - Payload: `PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py`; exact UTF-8 raw length is
-  `13802` bytes and SHA-256 is
-  `546c24890618f43aff2f5af09d30c2de12c68ed7e632f79c426baa5012a13342`.
+  `13620` bytes and SHA-256 is
+  `8103e504d3e0e7398e487227466e247e6e96d3a70f8fe688d01b749344d3cb9a`.
 - The inert third base64 argv copy is removed.  The sole third `RAW` value is its frozen compact JSON lexical
   bytes, so the raw payload, `-c` program bytes and actual argv all have one authority source.
 - Post-add ownership capture is an explicit no-follow directory-FD bind.  Any disappearance, replacement or
@@ -18,6 +18,9 @@ bytes, bootstrap, argv, environment and every execution prohibition are unchange
   `run() -> capture_owned() -> cleanup()` against temporary native Git worktrees for both verified cleanup and
   foreign-CLEAN replacement; the existing temporary native Git, handoff and route witnesses remain in the same
   test file.
+- `add_and_capture()` is the exact first-mutation boundary.  Temporary native-Git fixtures prove both a nonempty
+  target's nonzero `worktree add` and a successful add followed by injected parent `commondir` drift terminate as
+  `ROLLBACK_INCOMPLETE`.
 
 This annex requests no materialization verdict.  It neither runs the launcher nor authorizes real source or
 checkpoint I/O, collection, receipt, publication, child changes, GPU, training, evaluation, inference or

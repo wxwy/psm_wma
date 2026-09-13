@@ -152,6 +152,39 @@ class WitnessTest(unittest.TestCase):
             finally:
                 P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
 
+    def test_payload_add_nonzero_and_post_add_route_drift_are_rollback_incomplete(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "repo"; clean = Path(raw) / "clean"
+            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            (root / "x").write_text("x")
+            env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
+            subprocess.run(["/usr/bin/git", "-C", str(root), "add", "x"], check=True)
+            subprocess.run(["/usr/bin/git", "-C", str(root), "commit", "-qm", "x"], check=True, env=env)
+            old_root, old_clean, old_formal, old_run = P.ROOT, P.CLEAN, P.FORMAL, P.run
+            try:
+                P.ROOT, P.CLEAN = str(root), str(clean)
+                P.FORMAL = subprocess.check_output(["/usr/bin/git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+                snapshot = P.route_snapshot()
+                clean.mkdir()
+                (clean / "occupied").write_text("x")
+                with self.assertRaisesRegex(P.Stop, "ROLLBACK_INCOMPLETE"):
+                    P.add_and_capture(snapshot)
+                (clean / "occupied").unlink()
+                clean.rmdir()
+                def add_then_drift(state, *argv, **kwargs):
+                    result = old_run(state, *argv, **kwargs)
+                    (root / ".git" / "commondir").write_text("../foreign\n")
+                    P.check_route(state)
+                    return result
+                P.run = add_then_drift
+                with self.assertRaisesRegex(P.Stop, "ROLLBACK_INCOMPLETE"):
+                    P.add_and_capture(snapshot)
+                (root / ".git" / "commondir").unlink()
+                subprocess.run([*P.PREFIX, "-C", P.ROOT, "worktree", "remove", "--force", P.CLEAN], check=True, env=P.ENV)
+            finally:
+                P.run = old_run
+                P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
+
     def test_fd_and_cleanup_classifiers(self) -> None:
         W.require_exact_fd_set({3, 4, 5})
         with self.assertRaises(W.WitnessFailure): W.require_exact_fd_set({0, 3, 4, 5})
