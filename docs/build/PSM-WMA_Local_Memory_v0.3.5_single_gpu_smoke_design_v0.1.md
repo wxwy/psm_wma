@@ -90,7 +90,7 @@ planned denominator开始下一个 window；不得重放、resample 或重写已
 
 以下任一事件是立即停止并保留最小日志/JSON证据的 FAIL：NaN/Inf、OOM、CUDA error、
 source/config/manifest identity drift、planned/actual count mismatch、跨 episode W leak、
-非法 PAD/Local token、非零 world size、任何 resume 尝试、超出批准步数，或任意未声明的
+非法 PAD/Local token、`world_size != 1`、任何 resume 尝试、超出批准步数，或任意未声明的
 文件写入。FAIL 后不得自动重跑或扩大步数。
 
 ## 6. 最小产物与 PASS
