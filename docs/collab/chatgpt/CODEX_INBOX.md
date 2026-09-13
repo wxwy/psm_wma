@@ -152,3 +152,13 @@
 - Review focus: verify receipt-derived authority tuple, non-overridable request schema, no-shell command grammar, exactly-one-GPU/no-torchrun admission, v0.3.5 chronology/GA failure transaction, bounded 1..100 steps, write allowlist, PASS/FAIL/MANUAL_STOP, and that no real I/O or execution is authorized by this design.
 - Exact verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: creation or execution of an execution request; real source/checkpoint/manifest/data/cache I/O; collection/receipt/source-evidence/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, matched smoke, sidecar, checkpoint write, or formal training. Approval authorizes only a later receipt-bound execution-request design/review.
+
+## Remediation review request — smoke runbook terminal-status ABI
+
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-RUNBOOK-DESIGN`
+- Formal root: `5053ed40065bfa0b8e1d755756b0565bd2d5ef31`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Formal scope: root-only docs remediation of the runbook and session record; Gitlink unchanged. Runbook SHA-256: `b348d43053903697d62d81ecb979d7c5604ea0b2f9acc821baa0aebed156c4a1`.
+- Remediation: resolves ChatGPT HIGH at prior runbook line 127 by freezing terminal statuses `PASS|FAIL|BLOCKED|MANUAL_STOP`, defining `MANUAL_STOP` as a distinct non-PASS terminal, requiring `failure.json` for `FAIL|BLOCKED|MANUAL_STOP`, freezing its exact key set and summary-status equality, and requiring the final committed transaction identity for manual stop.
+- Exact verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: creation or execution of an execution request; real source/checkpoint/manifest/data/cache I/O; collection/receipt/source-evidence/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, matched smoke, sidecar, checkpoint write, or formal training.

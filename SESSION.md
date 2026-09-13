@@ -4117,3 +4117,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Single-GPU smoke execution runbook design terminal-status remediation（2026-09-13，REVIEW）
 
 - 已按唯一HIGH最小修改runbook：冻结四种terminal status，`failure.json`对`FAIL|BLOCKED|MANUAL_STOP`必需，并冻结其key set和与summary一致性；MANUAL_STOP被定义为独立non-PASS status。`git diff --check`通过。下一步提交、推送并以新formal root重新三方审核；未执行任何真实I/O、child、GPU或训练。
+
+### Single-GPU smoke execution runbook terminal-status remediation 审核申请准备（2026-09-13，REVIEW）
+
+- formal root=`5053ed40065bfa0b8e1d755756b0565bd2d5ef31`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree仅修改runbook和SESSION，Gitlink未变，runbook SHA-256=`b348d43053903697d62d81ecb979d7c5604ea0b2f9acc821baa0aebed156c4a1`。live Inbox追加前为`23623` bytes，低于128KiB阈值。
+- 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。下一步提交/push ledger后送达两pane；新pair无final或推进令牌，禁止request、真实I/O、child、GPU、训练。
