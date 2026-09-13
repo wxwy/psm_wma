@@ -3302,3 +3302,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`64b706b7b97451fd90cb6e9292100e512952f28a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。初次同步因本地轮询记录与远端ChatGPT review提交并发而无法快进：远端新增`68c0666c`（review）和`f2684fef`（review ledger），本地仅SESSION记录经两次无冲突rebase后以`74ed16ad`推送；随后重新执行完整检查：`before_head=74ed16adebf8eb6371c8dbd91ac74af65a3b9a02`，fetch成功，advertised/origin同为该SHA，新增范围为空，祖先检查=0，ff-only=`Already up to date`。
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_execution_design_v01_64b706b_93a89ba.md`，final=`REQUEST_CHANGES(...design...:27)`，两项HIGH：root/clean authority FD命名/dup/close/cleanup语义未冻结且root_fd生命周期矛盾；owner authority在execve前消失，绝对bootstrap root仍可被替换。Kimi=`kimi:0.0`为same-pair `REQUEST_CHANGES(...design...:72)`，同样要求一致的长期root authority FD与移除`parent_fd`残留。MM=`mm:0.0`为same-pair显式锚定`APPROVE_TO_IMPLEMENT...`。
 - 三方final均为同一pair，且含两方`REQUEST_CHANGES`，形成仅限docs-only最小整改令牌：新建版本化设计，冻结长寿命root authority FD与临时Git FD6 duplicate、CLEAN-only cleanup、不重建路径authority，以及跨exec/bootstrap的procfd owner-root ABI/无fallback/真实seam临时fixture。不得实现、materialization、真实I/O、child、GPU或训练。
+
+### Causal owner identity v0.2 exec-continuity refreeze 申请准备（2026-09-13 10:00 CST，REVIEW）
+
+- docs-only整改已提交并推送为formal root=`de1d12f194030067a4afa656379378713b151734`，child/Gitlink仍=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree只含v0.2设计、SESSION、TODO。canonical live Inbox已追加申请（追加前`6404` bytes，未触发rollover）。冻结名册不变：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
+- 申请记账尚未提交，MM/Kimi尚未发送；无送达回执、final或推进令牌。下一步仅提交/推送申请记录，随后两pane各执行send→等待≥1秒→独立Enter→capture；批准前禁止temporary implementation、真实I/O、child、GPU与训练。
