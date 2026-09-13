@@ -4133,3 +4133,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`5053ed40065bfa0b8e1d755756b0565bd2d5ef31`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=2987a57c08dca919587e594e0e9c44c105481f74`；fetch成功；advertised/origin=`910a5071a4291bd0d345f88ca3181fd23fe7181a`；新增`36a9e46e`（ChatGPT review）与`910a5071`（notify）；祖先检查=0，ff-only成功。
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_execution_runbook_design_terminal_status_remediation_5053ed4_93a89ba.md`，final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`，blockers=0。Kimi=`kimi:0.0`和MM=`mm:0.0`均为same-pair明确同一APPROVE。
 - 三方同pair全APPROVE，形成仅授权后续receipt-bound execution-request design/review的推进令牌；runbook design Gate关闭，不授权创建/执行request、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke execution request design v0.1（2026-09-13，REVIEW）
+
+- 已新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_request_design_v0.1.md`；仅冻结receipt-derived authority、canonical request schema、non-shell argv、bind-before-read preflight 与终态继承，明确本Gate不创建实例/不真实I-O/GPU。新文件`git diff --no-index --check`通过，SHA-256=`a288956c535c145b30c830efc1640fd4edcc60281adde1d72a8e6992791d6806`。
+- 下一步：提交/推送此docs-only formal root，三方申请`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`；批准前禁止创建request、真实I/O、child、GPU或训练。
