@@ -4415,3 +4415,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修改：`NativeCollectionGit` 保留嵌套 metadata 仅作 execution identity 校验，不注入子字典环境；新增 fail-closed metadata accessor 与静态 publication 状态。
 - 验证：`python3 -m unittest tools.psm_wma.test_immutable_source_collection`=`40/40 PASS`；`py_compile`与`git diff --check` PASS。未执行真实 source I/O、receipt/publication、GPU 或训练。
 - 下一步：提交并推送后，以新 formal root/child 重新申请三方审核；批准前不进入后续 Gate。
+
+### Collection adapter CPU/static implementation 复核申请（2026-09-13，REVIEW）
+
+- formal root=`34cedc9ff227c35b387666ae824d282b14d2b1f5`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；实现提交已推送，范围为既有 executor/direct test 两文件及必要状态记录。
+- 验收证据：`python3 -m unittest tools.psm_wma.test_immutable_source_collection`=`40/40 PASS`；`py_compile`、`git diff --check` PASS；无真实 source/receipt/publication I/O、GPU 或训练。
+- 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。已准备同一 exact pair 复核申请，等待三方 final；未获推进令牌前保持REVIEW。
