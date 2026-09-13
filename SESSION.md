@@ -4680,6 +4680,18 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`APPROVE_TO_CLOSE...`；Kimi=`REQUEST_CHANGES`（要求5项 witness：collect_synthetic 端到端、preflight泄漏负例、100755/100644 mode、symlink/directory replacement、rollback快照精确相等）。两 pane capture成功、未截断。
 - ChatGPT仍缺件且已有REQUEST_CHANGES，无推进令牌；保持REVIEW，禁止整改、真实I/O、GPU或训练。
 
+### Collection adapter 整改复核观察凭证 #95（2026-09-14 02:14:24 CST，REVIEW）
+
+- `before_head=c2cec72a2a974415389fc6e0d78bd75e613e43a7`；fetch成功；advertised/tracking均=`c2cec72a2a974415389fc6e0d78bd75e613e43a7`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
+- exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi=`REQUEST_CHANGES`（5项 witness缺口：native collect_synthetic端到端、index/tree泄漏负例、100755/100644 mode正例、allowlist替换拒绝、native rollback快照相等）；两 pane capture成功、未截断。
+- ChatGPT缺件且Kimi为REQUEST_CHANGES，无推进令牌；保持`REVIEW`，禁止整改、真实I/O、GPU或训练。
+
+### Collection adapter 整改复核观察凭证 #94（2026-09-14 02:14:24 CST，REVIEW）
+
+- `before_head=c2cec72a2a974415389fc6e0d78bd75e613e43a7`；`git fetch origin V2`成功；advertised/tracking均=`c2cec72a2a974415389fc6e0d78bd75e613e43a7`；`before_head..origin/V2`为空；祖先判定=0；`git merge --ff-only origin/V2`成功（Already up to date）。
+- exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索命令 `rg -l -F '24253e0c3789d46c0807944ec75d6dff108824f3' docs/collab/chatgpt/reviews/ | sort` 无输出；MM pane `mm:0.0` capture成功，最终 verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi pane `kimi:0.0` capture成功，最终 verdict=`REQUEST_CHANGES`，要求补5项 witness（native collect_synthetic端到端、index/tree泄漏负例、100755/100644 mode正例、allowlist替换拒绝、native rollback快照相等）。两 pane capture均未截断。
+- ChatGPT缺件且Kimi为REQUEST_CHANGES，无推进令牌；保持`REVIEW`，禁止整改、真实I/O、GPU或训练。
+
 ### Collection adapter 整改复核观察凭证 #35（2026-09-14，REVIEW）
 
 - `before_head=b902d507901f33f79dd5e1dadf5595f330fc2a65`；fetch成功；advertised/tracking均=`b902d507901f33f79dd5e1dadf5595f330fc2a65`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
