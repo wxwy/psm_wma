@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -181,6 +182,46 @@ class WitnessTest(unittest.TestCase):
                     P.add_and_capture(snapshot)
                 (root / ".git" / "commondir").unlink()
                 subprocess.run([*P.PREFIX, "-C", P.ROOT, "worktree", "remove", "--force", P.CLEAN], check=True, env=P.ENV)
+            finally:
+                P.run = old_run
+                P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
+
+    def test_payload_add_then_git_valid_foreign_replacement_is_never_owned(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "repo"
+            clean = Path(raw) / "clean"
+            displaced = Path(raw) / "displaced"
+            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            (root / "x").write_text("x")
+            env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
+            subprocess.run(["/usr/bin/git", "-C", str(root), "add", "x"], check=True)
+            subprocess.run(["/usr/bin/git", "-C", str(root), "commit", "-qm", "x"], check=True, env=env)
+            old_root, old_clean, old_formal, old_run = P.ROOT, P.CLEAN, P.FORMAL, P.run
+            try:
+                P.ROOT, P.CLEAN = str(root), str(clean)
+                P.FORMAL = subprocess.check_output(
+                    ["/usr/bin/git", "-C", str(root), "rev-parse", "HEAD"], text=True
+                ).strip()
+                snapshot = P.route_snapshot()
+
+                def add_then_replace(state, *argv, **kwargs):
+                    result = old_run(state, *argv, **kwargs)
+                    if argv[:2] == ("worktree", "add"):
+                        os.rename(clean, displaced)
+                        shutil.copytree(displaced, clean)
+                        self.assertEqual(
+                            subprocess.check_output(
+                                ["/usr/bin/git", "-C", str(clean), "rev-parse", "HEAD"], text=True
+                            ).strip(),
+                            P.FORMAL,
+                        )
+                    return result
+
+                P.run = add_then_replace
+                with self.assertRaisesRegex(P.Stop, "ROLLBACK_INCOMPLETE"):
+                    P.add_and_capture(snapshot)
+                self.assertTrue(clean.is_dir())
+                self.assertTrue((clean / ".git").exists())
             finally:
                 P.run = old_run
                 P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal

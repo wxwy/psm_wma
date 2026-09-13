@@ -97,9 +97,14 @@ def capture_owned():
     try: return bind_owned()
     except BaseException as error: raise Stop("ROLLBACK_INCOMPLETE") from error
 def add_and_capture(s):
+    check_route(s)
     try: run(s,"worktree","add","--detach",CLEAN,FORMAL)
     except BaseException as error: raise Stop("ROLLBACK_INCOMPLETE") from error
-    return capture_owned()
+    # Native Git reports no created-directory identity.  A pathname bind after its
+    # return cannot prove continuity with the object Git created, so do not accept
+    # it as owner authority.  A later execution design must retain that identity
+    # during the mutation; this static launcher fails closed meanwhile.
+    raise Stop("ROLLBACK_INCOMPLETE")
 def assert_worktree(s, owned):
     value,fd=owned; current=os.lstat(CLEAN); bound=os.fstat(fd)
     if (not stat.S_ISDIR(current.st_mode) or (current.st_dev,current.st_ino)!=(value.st_dev,value.st_ino) or (bound.st_dev,bound.st_ino)!=(value.st_dev,value.st_ino)): fail("clean-root ownership")

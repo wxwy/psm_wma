@@ -3159,3 +3159,23 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal=`5ff4df58cc8e17644aab945de3de6d74b8b2967c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已写入完成rollover后的canonical live Inbox，ledger=`ba18b5ca6a67b002d91c01d51f1a6b544061539a`已推送且不是formal target。
 - 请求仅为`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`或`REQUEST_CHANGES(file:line)`；禁止materialization、真实source/checkpoint I/O、child、GPU、训练。等待MM/Kimi按send-keys/Enter/capture完成送达回执。
 - 送达回执：MM=`mm:0.0`、Kimi=`kimi:0.0`均已按完整`send-keys -l`→等待≥1秒→独立Enter（初次capture仍显示输入时各重按一次Enter）→独立capture；两条申请均已离开输入框并进入会话流。下一轮三分钟后必须先完整fetch/ls-remote/ff-only，再读取ChatGPT exact review并分别capture两pane。
+
+### Authority-root launcher v0.8 审核观察凭证 #2（2026-09-13 CST，REVIEW）
+
+- formal=`5ff4df58cc8e17644aab945de3de6d74b8b2967c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。本轮`before_head=2e344b34f6e29be9aac8bb60c79ac8e42ed70276`；fetch成功；advertised/origin/local-after均为`2e344b34f6e29be9aac8bb60c79ac8e42ed70276`；新增范围为空；祖先判定成功，ff-only=`Already up to date`。
+- ChatGPT exact-pair检索无匹配正式review；Kimi=`kimi:0.0` capture成功，已读取v0.8 payload/test并继续抽取旧 witness/完整范围，尚无final verdict；MM=`mm:0.0` capture成功，已实际复跑11/11并阅读annex v0.8，尚无final verdict。无推进令牌，Gate保持REVIEW；禁止整改、materialization、真实I/O、child、GPU、训练。
+
+### Authority-root launcher v0.8 审核观察凭证 #3（2026-09-13 08:19:42 CST，REVIEW）
+
+- formal=`5ff4df58cc8e17644aab945de3de6d74b8b2967c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=2e344b34f6e29be9aac8bb60c79ac8e42ed70276`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2` advertised=`2e344b34f6e29be9aac8bb60c79ac8e42ed70276`且与`origin/V2`一致；`before_head..origin/V2`新增范围为空；祖先检查返回0，`git merge --ff-only origin/V2`=`Already up to date`，local-after仍为`2e344b34f6e29be9aac8bb60c79ac8e42ed70276`。
+- ChatGPT精确检索命令`rg -l '5ff4df58cc8e17644aab945de3de6d74b8b2967c' docs/collab/chatgpt/reviews`无输出，故没有exact-pair正式review。Kimi=`kimi:0.0`独立capture为same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`；MM=`mm:0.0`独立capture为same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`（08:13:12）。逐方：ChatGPT=处理中（缺formal review）、Kimi=已回复(APPROVE，`kimi:0.0`)、MM=已回复(APPROVE，`mm:0.0`)；缺ChatGPT final，未形成推进令牌，Gate保持REVIEW，禁止整改、materialization、真实I/O、child、GPU与训练。
+
+### Authority-root launcher v0.8 审核观察凭证 #4（2026-09-13 08:24:03 CST，REVIEW）
+
+- formal=`5ff4df58cc8e17644aab945de3de6d74b8b2967c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=2e344b34f6e29be9aac8bb60c79ac8e42ed70276`；fetch成功；advertised/origin=`36a47c3e8874a300e9757bd10bceb59c7f234745`一致；完整新增范围为`36a47c3e chatgpt: record launcher v0.8 review 5ff4df5`、`913f73bc chatgpt: review launcher v0.8 5ff4df5`；祖先检查=0，`git merge --ff-only origin/V2`成功，local-after=`36a47c3e8874a300e9757bd10bceb59c7f234745`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_execution_witness_closure_v08_5ff4df5_93a89ba.md`，same-pair final=`REQUEST_CHANGES(...authority_root_launcher_payload_v0.8.py:90)`：成功`worktree add`返回与首次`bind_owned()`之间可将CLEAN替换为语义Git-valid的foreign inode，须建立与该次add创建对象连续的owner identity，或在不能证明连续性时`ROLLBACK_INCOMPLETE`，并补 exact direct temporary-native-Git replacement-before-first-bind witness。Kimi=`kimi:0.0` same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`；MM=`mm:0.0` same-pair final=`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`。三方final齐全，形成仅限当前root v0.8 payload/temporary CPU witness/annex-request 最小整改令牌；不授权materialization、真实source/checkpoint I/O、child、GPU或训练。
+
+### Authority-root launcher v0.8 HIGH-1 最小整改（2026-09-13，待提交）
+
+- 依据观察凭证#4的三方final令牌，仅修改root `...authority_root_launcher_payload_v0.8.py`、其temporary witness、v0.8 annex/request及任务记录。`add_and_capture()`在native add成功后不再调用可被foreign pathname替换的`capture_owned()`；由于Git不返回创建目录inode，无法证明连续性时先于任何owner接受或删除fail-close为`ROLLBACK_INCOMPLETE`。
+- 新direct payload seam在temporary native Git repo内执行真实`worktree add`，随后把原CLEAN重命名并以可`git rev-parse HEAD`的copied worktree替换；断言终态为`ROLLBACK_INCOMPLETE`且replacement仍存在。`py_compile`、v0.8 witness=`12/12 PASS`、payload=`13969` bytes/SHA-256=`b7923b212f40bba8580711793a5b9a5ef5ab2c2b1f62b0b44c6d6ee93882d666`、`git diff --check`均PASS。无项目路径materialization/source-checkpoint I/O、child、GPU或训练。下一步：提交、推送并对新formal pair重新申请三方审核。

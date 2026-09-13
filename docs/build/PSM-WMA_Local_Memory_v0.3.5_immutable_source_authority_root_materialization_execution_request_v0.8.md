@@ -1,6 +1,9 @@
 # Authority-root launcher v0.8 static-witness closure request
 
-Review only the immutable v0.8 launcher, its annex and the CPU-only temporary witness test.  Requested verdict:
+Review only the immutable v0.8 launcher, its annex and the CPU-only temporary witness test.  This remediation
+fails closed after a native add because Git exposes no causal created-directory identity: no post-add pathname is
+accepted as owner authority, and the new temporary native-Git witness replaces the just-created CLEAN with a
+Git-valid foreign worktree before the first bind.  Requested verdict:
 `APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`, or
 `REQUEST_CHANGES(file:line)`.
 
