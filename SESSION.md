@@ -4071,3 +4071,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT申请已追加至canonical live Inbox；追加后大小为`23623` bytes，低于`131072` bytes，ledger=`410880d7`已推送（ledger不是formal target）。冻结名册保持ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
 - MM=`mm:0.0`、Kimi=`kimi:0.0`均已执行完整`send-keys -l`→等待≥1秒→独立Enter→capture。两者首次capture仍显示输入，第二次独立Enter后的capture均显示完整exact-pair申请已进入消息流且输入框为空；MM显示`Verifying SHA pair + scope`，Kimi显示处理指示。送达双回执完整。
 - 新pair尚无final verdict或推进令牌；三分钟后从审核观察凭证#1开始完整远端锁定和三方回收。批准前禁止创建execution request、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke execution runbook design 审核观察凭证 #1（2026-09-13，REVIEW）
+
+- formal root=`5912e7d06c53e8a0cf650d4b2886f10cd72e3311`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=d957edab1523d8da7e60c77e104239f2aa29717f`；fetch成功；advertised/origin同为`d957edab1523d8da7e60c77e104239f2aa29717f`；新增范围为空；祖先检查=0，ff-only=`Already up to date`。
+- ChatGPT exact检索`rg -l '5912e7d06c53e8a0cf650d4b2886f10cd72e3311' docs/collab/chatgpt/reviews || true`为空，故本轮无同pair formal review。Kimi=`kimi:0.0` capture为same-pair明确final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`；MM=`mm:0.0` capture为same-pair明确final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`（19:25:42）。
+- 逐方：ChatGPT=处理中（缺formal review）；Kimi=已回复(APPROVE，`kimi:0.0`)；MM=已回复(APPROVE，`mm:0.0`)。三方final未齐，无推进令牌；保持REVIEW，禁止创建execution request、真实I/O、child、GPU、训练。
