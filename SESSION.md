@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Causal-owner identity v0.4 审核送达（2026-09-13 11:53 CST，REVIEW）
+
+- formal root=`76210e7bcbdc606e39775e2dae258542cf3c0d38`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。canonical live Inbox申请已由ledger提交`9b59ef8a297381907c670705a2a182931410fe66`推送。
+- Kimi与MM均按`send-keys -l`→等待≥1秒→独立Enter发送；首次capture仍在输入框，均未计送达；再次等待≥1秒后仅Enter，Kimi capture显示完整申请进入消息流、输入框为空及处理标识，MM capture显示完整申请进入消息流、输入框为空及`Unravelling…`，均为送达/处理中。ChatGPT正式结果仅等待`reviews/` exact pair文件。
+- 无推进令牌；满三分钟后开始第1轮完整观察。禁止adapter/test实现、真实materialization/source I/O、child、GPU和训练。
+
 ## Causal-owner identity v0.3 第4轮完整观察与整改认领（2026-09-13 11:51 CST，IN_PROGRESS）
 
 - formal root=`781824f4ed2682b1347126a58f645ef0702117bd`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=183b52093f304b914822363cf83b160146c5aa8e`；fetch成功；advertised/origin=`caa8ca61c9fad52c3ffe1e1a9173bc110d169ceb`；新增`8cec96a9`（ChatGPT formal review）与`caa8ca61`（通知）；祖先判定=0，ff-only成功。
