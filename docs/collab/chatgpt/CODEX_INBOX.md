@@ -76,3 +76,12 @@
 - Scope: incremental root-only remediation limited to `tools/psm_wma/materialize_immutable_source_authority_root.py`, its direct stdlib temporary-fixture CPU tests, and task records. It moves the four-project-module formal-tree/raw identity closure ahead of `sys.path.insert()` and `runpy`, and adds isolated-interpreter import-side-effect, endpoint, replace-ref, ambient-config, and Evidence remote-identity witnesses. Formal verification reported 92/92 CPU tests, `py_compile`, Ruff, and `git diff --check` PASS.
 - Exact final verdict requested: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: all real materialization; source/checkpoint I/O; project worktree/backing/index/candidate/ref/evidence creation; collection/receipt/publication; child/runtime changes; GPU, training, evaluation, inference, and LIBERO4IN1.
+
+## Remediation review request — causal owner identity v0.4 consumer authority
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-OWNER-IDENTITY-EXECUTION-DESIGN`
+- Formal root: `76210e7bcbdc606e39775e2dae258542cf3c0d38`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: docs-only v0.4 replacement for v0.3. It closes ChatGPT's two HIGH requirements by freezing every post-exec FD8 consumer (bootstrap Git probes plus each `NativeAuthorityGit` Git subprocess) to `close_fds=True, pass_fds=(8,)`, with pre/post FD8 identity barriers and an actual temporary-Git FD8-index replacement seam. It also freezes no-follow, dirfd-anchored replacement semantics for every procfd-affected bootstrap/module/loaded-module/repository/config check, preserving raw/blob, anti-symlink, route and common-config authority without canonicalizing back to global CLEAN pathnames.
+- Evidence: exact formal diff only changes v0.4 design, `SESSION.md`, and `TODO.md`; exact Gitlink remains `93a89ba...`; `git diff --cached --check` passed before formal commit.
+- Exact verdict requested: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: production/main execution; all real materialization; source/checkpoint I/O; project worktree/backing/index/candidate/ref/evidence creation; collection/receipt/publication; child/runtime changes; GPU, training, evaluation, inference, and LIBERO4IN1.
