@@ -1,6 +1,8 @@
 """CPU-only regressions for the injected immutable collection seam."""
 from __future__ import annotations
 import unittest
+import contextlib
+import io
 import hashlib
 import json
 import pickle
@@ -107,8 +109,9 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             with self.assertRaises(CollectionError): AtomicFileEvidenceSink(destination)
 
     def test_native_parser_requires_full_binding_categories(self) -> None:
-        with self.assertRaises(SystemExit):
-            _native_parser().parse_args(["--formal-root", "a" * 40])
+        with contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaises(SystemExit):
+                _native_parser().parse_args(["--formal-root", "a" * 40])
 
     def test_native_binding_rejects_non_lowercase_identity(self) -> None:
         parser = _native_parser()
