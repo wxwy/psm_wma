@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 审核申请（2026-09-13 15:59 CST，REVIEW）
+
+- formal root=`c8aafca005ff061788114281e47fd1a4e2b6a843`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；root已推送。formal tree仅`SESSION.md`、`TODO.md`、adapter与其direct stdlib CPU测试；child Gitlink未变。live Inbox从`14384` bytes追加本申请，未触发rollover。冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
+- 待提交此Inbox/状态ledger并取得MM/Kimi send→等待≥1秒→Enter→capture双回执；其后从第1轮开始每三分钟三方完整审核检查。未有新pair三方final前禁止真实I/O、child/runtime、GPU、训练、评测、推理与LIBERO4IN1。
+
 ## Causal-owner identity CPU/static implementation：第25轮整改实现（2026-09-13 15:58 CST，IN_PROGRESS）
 
 - 依据第25轮同pair三方final（ChatGPT/Kimi=`REQUEST_CHANGES`、MM=`APPROVE`）的最小整改令牌，修改仅限`tools/psm_wma/materialize_immutable_source_authority_root.py`与其直接stdlib临时夹具测试。实现：adapter parser要求`--bootstrap-owner-root-fd`；bootstrap仅接收live FD8与精确`/proc/self/fd/8` root ABI；四个project module在`sys.path`/`runpy`前由FD8起点逐component `O_DIRECTORY|O_NOFOLLOW`和leaf `O_NOFOLLOW`读取并校验；runtime bootstrap移除FD-derived `Path.resolve()`；loaded adapter/authority按FD8 no-follow读取的dev/inode核对；production `NativeAuthorityGit`拒绝非FD8 owner。

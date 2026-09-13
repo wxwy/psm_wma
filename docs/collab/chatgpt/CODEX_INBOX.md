@@ -95,3 +95,11 @@
 - Evidence: root formal tree is exactly the four files above; Gitlink is unchanged. Temporary-only witnesses cover FD8 bootstrap with local/bare Git preflight, global root replacement while reading through held FD, actual Git pre-consumer index replacement rejection, and owner configuration. `python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root` = 62/62 PASS; `py_compile` and `git diff --check` PASS.
 - Exact verdict requested: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: production/main execution; all real materialization; source/checkpoint I/O; project worktree/backing/index/candidate/ref/evidence creation; collection/receipt/publication; child/runtime changes; GPU, training, evaluation, inference, and LIBERO4IN1.
+
+## Remediation review request — mandatory FD8 admission and bootstrap closure
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-OWNER-IDENTITY-CPU-STATIC-IMPLEMENTATION`
+- Formal root: `c8aafca005ff061788114281e47fd1a4e2b6a843`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only remediation of the same adapter and direct stdlib temporary-fixture CPU tests, plus task records. It makes the owner argument mandatory; production admission accepts only FD8 and exact `/proc/self/fd/8` cwd/index/bootstrap-root fields; bootstrap verifies all formal project modules by FD8-started component-by-component no-follow traversal before `sys.path`/`runpy`; and loaded adapter/authority module identities are checked against FD8-relative object identities rather than SHA alone. A real bootstrap witness replaces an intermediate project-module directory with an external symlink and must fail before import.
+- Evidence: `python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root` = 63/63 PASS; `py_compile` and `git diff --check` PASS. Formal Gitlink remains exact child above. Scope excludes all real materialization/source-checkpoint I/O, project artifacts, collection/receipt/publication, child/runtime changes, GPU, training, evaluation, inference and LIBERO4IN1.
+- Exact final verdict requested: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`, or `REQUEST_CHANGES(file:line)`.
