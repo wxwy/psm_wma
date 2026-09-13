@@ -1,5 +1,12 @@
 # 当前协作状态
 
+## Causal-owner identity CPU/static implementation：FD8 consumer foundation（2026-09-13 13:52 CST，IN_PROGRESS）
+
+- 目的：落实已批准 v0.4 的 post-exec Git consumer 基础合同；已阅读并复用`materialize_immutable_source_authority_root.py::NativeAuthorityGit`及其临时fixture测试。
+- 修改：新增FD目录/index identity primitive；`NativeAuthorityGit(owner_fd=...)`启用时仅接受`/proc/self/fd/<fd>` cwd 与`.authority-root.index`，每次Git调用前后重验identity，并固定`close_fds=True, pass_fds=(owner_fd,)`。新增临时目录单测，覆盖FD8 consumer继承集与foreign index replacement fail-close。
+- 验证：`python3 -m py_compile tools/psm_wma/materialize_immutable_source_authority_root.py` PASS；定向unittest 1/1 PASS；`git diff --check` PASS。未运行production/main、真实materialization/source/checkpoint I/O、child/GPU/训练。
+- 下一步：将同一FD8 contract接入bootstrap `grun()`、final ABI/launcher并用no-follow traversal替换module/route/config的`resolve/realpath`；当前修改未提交。
+
 ## Causal-owner identity v0.4 第26轮完整观察与实现认领（2026-09-13 13:50 CST，IN_PROGRESS）
 
 - formal root=`76210e7bcbdc606e39775e2dae258542cf3c0d38`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=dcd21ccd3530024a8472947a9d5b0f1d3476741a`；fetch成功；advertised/origin=`6c09b81a901abb22a37caa831596560eb014db8f`；新增提交为`886d1263`（ChatGPT v0.4 formal review）与`6c09b81a`（通知）；祖先判定=0，ff-only成功。

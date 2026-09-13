@@ -56,6 +56,33 @@ def _read_input_fd(descriptor: int) -> bytes:
     return os.pread(descriptor, info.st_size, 0)
 
 
+def _directory_fd_identity(descriptor: int) -> tuple[int, int]:
+    """Return the stable identity of a retained directory capability."""
+    info = os.fstat(descriptor)
+    if not stat.S_ISDIR(info.st_mode):
+        raise NativeGitError("authority owner FD 必须为directory")
+    return info.st_dev, info.st_ino
+
+
+def _fd8_index_identity(descriptor: int) -> tuple[int, int]:
+    """Validate the owned index without resolving an FD-derived pathname."""
+    try:
+        index = os.open(
+            ".authority-root.index",
+            os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
+            dir_fd=descriptor,
+        )
+    except OSError as error:
+        raise NativeGitError("authority owner index 无法安全打开") from error
+    try:
+        info = os.fstat(index)
+        if not stat.S_ISREG(info.st_mode):
+            raise NativeGitError("authority owner index 必须为regular file")
+        return info.st_dev, info.st_ino
+    finally:
+        os.close(index)
+
+
 @dataclass(frozen=True)
 class ModuleIdentity:
     repo_path: str
@@ -1463,6 +1490,7 @@ class NativeAuthorityGit:
     def __init__(
         self, git: Path, cwd: Path, remote: str, index: Path,
         metadata: CommitMetadata, *, production: bool = False,
+        owner_fd: int | None = None,
     ) -> None:
         if not git.is_absolute() or not cwd.is_absolute() or not index.is_absolute():
             raise NativeGitError("git/cwd/index 必须为绝对路径")
@@ -1470,6 +1498,14 @@ class NativeAuthorityGit:
         self.env = {"GIT_INDEX_FILE": str(index), "GIT_NO_REPLACE_OBJECTS": "1", "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_SYSTEM": "/dev/null", "LC_ALL": "C", "LANG": "C", "GIT_AUTHOR_NAME": metadata.author_name, "GIT_AUTHOR_EMAIL": metadata.author_email, "GIT_AUTHOR_DATE": metadata.author_date, "GIT_COMMITTER_NAME": metadata.committer_name, "GIT_COMMITTER_EMAIL": metadata.committer_email, "GIT_COMMITTER_DATE": metadata.committer_date}
         self.metadata = metadata
         self.production = production
+        self.owner_fd = owner_fd
+        self._owner_identity = self._index_identity = None
+        if owner_fd is not None:
+            expected_cwd = Path(f"/proc/self/fd/{owner_fd}")
+            if cwd != expected_cwd or index != expected_cwd / ".authority-root.index":
+                raise NativeGitError("FD8 consumer 必须使用冻结的procfd cwd/index")
+            self._owner_identity = _directory_fd_identity(owner_fd)
+            self._index_identity = _fd8_index_identity(owner_fd)
 
     @property
     def _prefix(self) -> tuple[str, ...]:
@@ -1477,11 +1513,28 @@ class NativeAuthorityGit:
             return _GIT_PREFIX
         return (*_GIT_PREFIX[:-1], "protocol.file.allow=always")
 
+    def _verify_owner_barrier(self) -> None:
+        if self.owner_fd is None:
+            return
+        if (
+            _directory_fd_identity(self.owner_fd) != self._owner_identity
+            or _fd8_index_identity(self.owner_fd) != self._index_identity
+        ):
+            raise NativeGitError("FD8 consumer authority identity 漂移")
+
+    def _git_consumer_kwargs(self) -> dict[str, object]:
+        self._verify_owner_barrier()
+        if self.owner_fd is None:
+            return {"close_fds": True}
+        return {"close_fds": True, "pass_fds": (self.owner_fd,)}
+
     def _run_bytes(self, *args: str, input: bytes | None = None, check: bool = True) -> bytes:
         completed = subprocess.run(
             [str(self.git), *self._prefix, *args], cwd=self.cwd, env=self.env, input=input,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False,
+            **self._git_consumer_kwargs(),
         )
+        self._verify_owner_barrier()
         if check and completed.returncode:
             raise NativeGitError(completed.stderr.decode("utf-8", "replace").strip())
         return completed.stdout
@@ -1493,7 +1546,9 @@ class NativeAuthorityGit:
         completed = subprocess.run(
             [str(self.git), *self._prefix, *args], cwd=self.cwd, env=self.env,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False,
+            **self._git_consumer_kwargs(),
         )
+        self._verify_owner_barrier()
         if completed.returncode:
             return False
         if porcelain_flag is None:

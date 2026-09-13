@@ -266,6 +266,37 @@ def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
 
 
 class NativeAuthorityGitTest(unittest.TestCase):
+    def test_fd_owner_git_consumer_inherits_only_owner_fd_and_rechecks_index(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "root"
+            root.mkdir()
+            index = root / ".authority-root.index"
+            index.write_bytes(b"temporary index")
+            descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                transaction = NativeAuthorityGit(
+                    Path(shutil.which("git") or "").resolve(),
+                    Path(f"/proc/self/fd/{descriptor}"),
+                    "https://example.invalid/authority/root",
+                    Path(f"/proc/self/fd/{descriptor}/.authority-root.index"),
+                    COMMIT_METADATA,
+                    owner_fd=descriptor,
+                )
+                completed = subprocess.CompletedProcess([], 0, b"ok\n", b"")
+                with patch(
+                    "tools.psm_wma.materialize_immutable_source_authority_root.subprocess.run",
+                    return_value=completed,
+                ) as run:
+                    self.assertEqual(transaction._run("rev-parse", "HEAD"), "ok")
+                self.assertEqual(run.call_args.kwargs["pass_fds"], (descriptor,))
+                self.assertTrue(run.call_args.kwargs["close_fds"])
+                index.unlink()
+                index.write_bytes(b"foreign index")
+                with self.assertRaisesRegex(NativeGitError, "identity 漂移"):
+                    transaction._run("rev-parse", "HEAD")
+            finally:
+                os.close(descriptor)
+
     def test_https_endpoint_grammar_is_canonical_and_direct(self):
         _validate_https_endpoint("https://example.invalid/authority/root")
         for value in (
