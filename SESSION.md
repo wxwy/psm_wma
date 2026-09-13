@@ -3960,3 +3960,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 已连续三次独立检查`kimi:0.0`与`mm:0.0`：两个pane均`dead=0`、进程仍存活，但Kimi持续显示`goal paused`且MM持续停留旧`de1d12f...`输入提示；本次`781824f4...`申请文本从未出现在任一capture中。该结果与先前两次`send-keys -l`→等待≥1秒→Enter→capture失败一致。
 - 不存在能证明送达的双回执，因而不能将ChatGPT Inbox条目升级为三方申请、不能启动轮询或修改实现。需要外部恢复两审核会话的输入能力后，重新完整送达本pair；恢复前保持REVIEW、禁止temporary实现、production/main、真实I/O、child、GPU和训练。
+
+### Single-GPU smoke design v0.1（2026-09-13，IN_PROGRESS）
+
+- 已重新锁定 `origin/V2=17d2f2161bb7187b66c08ded942c29b7ada11b47`，本地 fast-forward 无新增；当前 authority-root CPU/static closure已完成，但不构成 GPU 或训练授权。
+- 新建 root docs-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_design_v0.1.md`，并认领 `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-DESIGN`。设计把 source-evidence post-commit receipt 定义为实际输入的硬前置，闭合后直接进入 single-GPU execution request，不再新开 provenance 子Gate；冻结 `world_size=1`、`num_workers=0`、无 torchrun/resume、≤100步、canonical chronology/GA failure transaction、产物与 stop 条件。
+- 尚未提交、未发审核、未运行代码/GPU/真实 I/O/child/训练。下一步：`git diff --check` 后提交该 docs-only design，并以该新的 formal root/Gitlink 申请三方审核。
