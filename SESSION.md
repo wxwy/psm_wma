@@ -3210,3 +3210,32 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Causal owner identity execution-capable design v0.1 送达回执（2026-09-13，REVIEW）
 
 - formal=`5bf6e3d033d2ad6d9f68483c629f2d852f6a8b9d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT申请已append到canonical live Inbox并由ledger=`d80d5d6b`推送，ledger不是formal target。MM=`mm:0.0`、Kimi=`kimi:0.0`均按`send-keys -l`、等待≥1秒、独立Enter发送；各自首次capture仍显示输入框，第二次独立Enter后的capture确认申请进入消息流且输入框为空。二者均已送达/处理中；ChatGPT最终结果只以reviews内same-pair formal verdict计。下一轮三分钟后完整fetch/ls-remote/ff-only并独立扫描/capture。
+
+### Causal owner identity execution-capable design v0.1 审核观察凭证 #1（2026-09-13 08:43:55 CST，REVIEW）
+
+- formal=`5bf6e3d033d2ad6d9f68483c629f2d852f6a8b9d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=a07a3bd550e52d373be5154e0a0385358a58799e`；fetch成功；advertised/origin/local-after均为`a07a3bd550e52d373be5154e0a0385358a58799e`；新增范围为空；祖先检查=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令`rg -l '5bf6e3d033d2ad6d9f68483c629f2d852f6a8b9d' docs/collab/chatgpt/reviews`无输出，故无exact-pair正式review。Kimi=`kimi:0.0` capture显示已开始读取新design、未有formal final verdict；MM=`mm:0.0` capture显示正在审FD6/pass_fds/route衔接、未有formal final verdict。逐方=处理中；无推进令牌，保持REVIEW，禁止实现、materialization、真实I/O、child、GPU与训练。
+
+### Causal owner identity execution-capable design v0.1 审核观察凭证 #2（2026-09-13 08:48:02 CST，REVIEW）
+
+- formal=`5bf6e3d033d2ad6d9f68483c629f2d852f6a8b9d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=a07a3bd550e52d373be5154e0a0385358a58799e`；fetch成功；advertised/origin/local-after均为`a07a3bd550e52d373be5154e0a0385358a58799e`；新增范围为空；祖先检查=0，`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索无exact-pair正式review。Kimi=`kimi:0.0` same-pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`；MM=`mm:0.0` same-pair final为同一token（08:43:35）。Kimi非阻断建议：implementation显式冻结parent/clean FD与3/4/5不相交及关闭顺序，并冻结Git对`/proc/self/fd/<parent_fd>/CLEAN`的worktree-list路径形态。逐方：ChatGPT=处理中、Kimi/MM=已回复(APPROVE)；缺ChatGPT final，无推进令牌，禁止实现、materialization、真实I/O、child、GPU与训练。
+
+### Causal owner identity execution-capable design v0.1 审核观察凭证 #3（2026-09-13 08:52 CST，REVIEW）
+
+- formal=`5bf6e3d033d2ad6d9f68483c629f2d852f6a8b9d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=a07a3bd550e52d373be5154e0a0385358a58799e`；fetch成功；advertised/origin/local-after均为`a07a3bd550e52d373be5154e0a0385358a58799e`；新增范围为空；祖先检查=0、ff-only=`Already up to date`。ChatGPT exact-pair review检索无输出；Kimi/MM pane成功capture且仍为same-pair approve token，无新final。逐方：ChatGPT=处理中、Kimi/MM=已回复(APPROVE)；无推进令牌，保持REVIEW。
+
+### Causal owner identity execution-capable design v0.1 审核观察凭证 #4（2026-09-13 08:56 CST，REVIEW）
+
+- formal pair不变；`before_head=a07a3bd550e52d373be5154e0a0385358a58799e`，fetch、advertised/origin、ff-only均成功且同SHA，新增范围为空。ChatGPT exact-pair review检索无输出；Kimi/MM pane capture均成功且仍为same-pair approve token。ChatGPT=处理中、Kimi/MM=已回复(APPROVE)；无推进令牌，保持REVIEW。
+
+### Causal owner identity remediation 审核观察凭证 #1（2026-09-13 09:12:25 CST，检查失败/状态未知）
+
+- 申请 ledger 所写 formal root=`64b706b7d8dc3fd470a27c5ea093426c84f2df15`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。本轮 `before_head=6bb965a7f927fb46b750a74f1d9ac15a7914957d`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2` advertised=`6bb965a7f927fb46b750a74f1d9ac15a7914957d`，与`origin/V2`一致；新增范围为空；祖先检查=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- 对 ledger 所写 full root 的 ChatGPT 精确检索 `rg -l '64b706b7d8dc3fd470a27c5ea093426c84f2df15' docs/collab/chatgpt/reviews/ || true` 无输出。随后本地 `git rev-parse 64b706b7` 证明实际 commit 为`64b706b7b97451fd90cb6e9292100e512952f28a`，与申请所写 full SHA 不同。Kimi=`kimi:0.0` capture 同样报告原 full SHA不可解析，后发现实际 commit为该`...b974...`对象，尚在核验；MM=`mm:0.0` capture 显示正在读取实际`...b974...`对象，未有最终verdict。
+- formal root 不一致使本轮 ChatGPT exact-pair 检索和两pane申请锚点均无效；按审核事实互锁，本轮唯一结论为检查失败/状态未知。不得把该申请计为已送达或继续等待，禁止实施、整改、materialization、真实I/O、child、GPU与训练。下一步仅可先以正确 full root 修复 canonical Inbox 申请，并按冻结名册重新完成 MM/Kimi send→等待≥1秒→Enter→capture 三联回执，再从第1轮观察重新开始。
+
+### Causal owner identity remediation replacement 申请准备（2026-09-13 09:12 CST，REVIEW）
+
+- 已追加 replacement request 到 canonical live Inbox；追加前大小`4876` bytes，远低于`131072` bytes上限。正式pair冻结为root=`64b706b7b97451fd90cb6e9292100e512952f28a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。本root formal tree仅改该docs/build设计文件，Gitlink由`git ls-tree`核验为上述child。
+- replacement Inbox与本记录尚未提交，MM/Kimi尚未按正确pair重新发送；当前不存在送达回执、最终verdict或推进令牌。下一步：只提交/push该申请记账，然后依次完成两个pane的send→等待≥1秒→独立Enter→独立capture；未完成前不得称申请发出或进入轮询。

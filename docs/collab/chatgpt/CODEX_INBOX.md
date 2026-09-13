@@ -42,3 +42,11 @@
 - Resolves prior HIGHs by preserving frozen ROOT/CLEAN/argv paths, rooting identity in ROOT FD, freezing FD6 vs `{3,4,5}`, requiring clean-FD-relative handoff and final absolute-path identity revalidation.
 - Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - No real materialization/source I-O/child/GPU/training.
+
+## Replacement review request — causal owner identity v0.1 (correct formal SHA)
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-OWNER-IDENTITY-EXECUTION-DESIGN`
+- Supersedes only the malformed full root in the immediately preceding request (`64b706b7d8dc3fd470a27c5ea093426c84f2df15` does not resolve). The formal root is exactly `64b706b7b97451fd90cb6e9292100e512952f28a`; child/Gitlink is exactly `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Formal scope: this root changes only `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_owner_identity_execution_design_v0.1.md`. It resolves the prior ChatGPT HIGHs by retaining the frozen `ROOT`/`CLEAN` absolute-path and argv contract; using inherited `root_fd=6` only for native Git while reserving `{3,4,5}` for the frozen backing ABI; requiring every backing operation relative to non-inherited `clean_fd`; and revalidating the root-FD absolute CLEAN entry against `clean_fd` before handoff and exec. It additionally requires a fixture proof for the post-validation-before-handoff replacement.
+- Evidence/requested scope: docs-only remediation review. On unanimous approval, the next action is limited to root-only stdlib temporary-fixture CPU/static implementation and tests. No actual materialization/source or checkpoint I/O/project authority artifacts/child changes/GPU/training/evaluation/inference/LIBERO4IN1.
+- Exact verdict requested: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
