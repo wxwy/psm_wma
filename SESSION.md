@@ -3312,3 +3312,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - replacement Inbox由ledger=`b29633cb019c9894b84ea8a217bcd6267f774f9c`推送（ledger不是formal target）。Kimi=`kimi:0.0`与MM=`mm:0.0`均对exact pair执行`send-keys -l`→等待≥1秒→独立`Enter`→独立capture；两份capture均显示完整申请已离开输入框、进入消息流，MM进入`Wrangling`。两pane均已送达/处理中；ChatGPT最终结果仅以reviews目录的exact-pair formal verdict计。
 - 新pair无final或推进令牌；三分钟后从第1轮完整fetch/ls-remote/ff-only→exact review scan→Kimi/MM capture开始，禁止temporary implementation、真实I/O、child、GPU与训练。
+
+### Causal owner identity v0.2 exec-continuity refreeze 审核观察凭证 #1（2026-09-13 10:06 CST，REVIEW）
+
+- formal root=`de1d12f194030067a4afa656379378713b151734`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=fa1429807cc7a35db2b386e8a5224fd993c3c8dd`；fetch成功；advertised/origin同为`fa1429807cc7a35db2b386e8a5224fd993c3c8dd`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。
+- ChatGPT exact-root检索无输出，状态=处理中。Kimi=`kimi:0.0` 为same-pair最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`。MM先给出无pair批准，已按send→等待≥1秒→Enter→capture补问；其后capture显式锚定same-pair并重申同一`APPROVE_TO_IMPLEMENT...`，状态=已回复(APPROVE)。ChatGPT final缺失，无推进令牌，保持REVIEW，禁止temporary implementation、真实I/O、child、GPU与训练。
