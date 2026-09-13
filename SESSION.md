@@ -1,5 +1,17 @@
 # 当前协作状态
 
+## Causal-owner identity v0.3 复审送达修复（2026-09-13 11:36:25 CST，REVIEW）
+
+- 当前未决 Gate 回归`G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-OWNER-IDENTITY-EXECUTION-DESIGN`，formal root=`781824f4ed2682b1347126a58f645ef0702117bd`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。本轮先只读确认此前回收的`cc36db3...`仅为已被后续`08de3f89`、`5efcbdf8`、`a564e953`、`817191c9`、`fff6d05`、`9dd2fb8`覆盖的旧CPU/static整改链，`9dd2fb8...`已有ChatGPT closure，故不对旧pair重复整改。
+- ChatGPT reviews 对`781824...`精确检索目前无命中。Kimi=`kimi:0.0`与MM=`mm:0.0`均已重新按`send-keys -l`写入本pair申请、等待≥1秒、独立Enter；首次capture均仍显示输入框，未计送达；第二次等待≥1秒后仅Enter，Kimi capture显示完整申请进入消息流、输入框为空且处理标识，MM capture显示完整申请进入消息流、输入框为空且`Billowing…`，两方均送达/处理中。
+- 该pair的canonical live Inbox条目已存在于`docs/collab/chatgpt/CODEX_INBOX.md`。无final三方推进令牌；下轮满三分钟后按完整远端锁定、ChatGPT exact scan、Kimi/MM capture回收。批准前禁止temporary实现、真实materialization/source I/O、child、GPU和训练。
+
+## Authority-root execution-authority remediation closure 第1轮完整观察（2026-09-13 11:34 CST，REVIEW）
+
+- formal root=`cc36db3a6b863d86d57f5eb0e3fcefb5aef3376d`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=58f962918bf61dc5c8c4ba0df3c64216c257a8c9`；fetch成功；advertised/origin均为该SHA；新增范围为空；祖先判定=0且ff-only=`Already up to date`。
+- ChatGPT exact search命中`docs/collab/chatgpt/reviews/2026-09-12_R09_B_TTT_v035_authority_root_execution_authority_cpu_static_implementation_cc36db3_93a89ba.md`，final=`REQUEST_CHANGES(...materialize_immutable_source_authority_root.py:165)`，要求import前补interpreter/Git/module的non-symlink/raw/version identity及module-symlink witness，并在bootstrap首个Git观察前fail-close common local config authority和hostile local config witness。Kimi=`kimi:0.0`同pair正式`REQUEST_CHANGES(...materialize_immutable_source_authority_root.py:165)`，独立确认两项HIGH；MM=`mm:0.0`同pair正式`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`。
+- 三方final齐全且含两个`REQUEST_CHANGES`，形成仅用于汇总/整改的推进令牌，不构成关闭或执行批准。下一步先只读核验这些exact要求是否已在本pair后的正式代码提交中覆盖；在得出范围结论前禁止真实I/O、GPU和训练。
+
 ## Authority-root execution-authority remediation closure 送达修复（2026-09-13 11:30:51 CST，REVIEW）
 
 - formal root=`cc36db3a6b863d86d57f5eb0e3fcefb5aef3376d`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。canonical live Inbox 已补齐 repair delivery request 并由根仓提交`8dada115`推送。
