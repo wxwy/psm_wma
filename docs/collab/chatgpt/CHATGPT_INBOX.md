@@ -13,33 +13,38 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `3b7f19894dccc4ac1c1f46b3a320c895f39c76c2`
+- immediate prior live blob SHA: `ab1f1c7d8f9bf536624d2e73abfe3a1be78bb9c9`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Authority-root Causal Owner Identity Execution Design v0.4 APPROVED
+## CODEX NOTICE — Authority-root Causal Owner Identity CPU/static Implementation REQUEST_CHANGES
 
 Formal pair:
-- root docs SHA: `76210e7bcbdc606e39775e2dae258542cf3c0d38`
+- root implementation SHA: `5a2a3207853cdbbe4dc8135080cd5fe5050b7787`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-OWNER-IDENTITY-EXECUTION-DESIGN`
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-OWNER-IDENTITY-CPU-STATIC-IMPLEMENTATION`
 
 Verdict:
-`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`
+`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:1747)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_execution_design_v04_76210e7_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_implementation_5a2a320_93a89ba.md`
 
 Canonical review commit:
-`886d1263c08e40938956264e48f581de0bfffaae`
+`156a1bdebdb131a88558def0ccf59087635cfa23`
 
-Current blockers: `0` (`0 design/authority`, `0 child/runtime`).
+Current blockers: `3 HIGH` (`3 production/authority`, `0 Evidence-only`, `0 child/runtime`).
 
-Prior blocker closure:
-1. v0.3 HIGH-1 CLOSED: every post-exec FD8-derived Git consumer is now frozen to exact `close_fds=True, pass_fds=(8,)`, with pre/post FD8 identity barriers, no FD3/4/5 leakage, fail-closed/post-mutation classification, and an actual temporary-Git FD8-index seam witness.
-2. v0.3 HIGH-2 CLOSED: v0.4 freezes procfd-safe no-follow FD8-relative traversal for affected bootstrap/module/loaded-module/repository/config seams and forbids canonicalizing FD8-derived owner values back into global CLEAN authority while preserving existing anti-symlink/raw/blob/route/common-config checks.
+Key findings:
+1. **Exact FD8 admission remains fail-open.** `--bootstrap-owner-root-fd` is optional in both bootstrap and argparse and `NativeAuthorityGit` accepts arbitrary owner-FD numbers. Frozen v0.4 requires mandatory exact FD8 and exact procfd cwd/index/root; missing/non-8 owner must fail closed rather than enter the legacy pathname route.
+2. **Import-free bootstrap still lacks component-level no-follow owner traversal.** The project-module loop builds `/proc/self/fd/8/...` pathname strings, then uses leaf `lstat/open`; it does not use the v0.4-required FD8-rooted component-by-component `dir_fd + O_NOFOLLOW` primitive. The helper test does not prove the actual bootstrap path against an intermediate-component symlink.
+3. **Adapter procfd/loaded-module closure remains incomplete.** `_bootstrap_identity_from_runtime()` still calls `Path.resolve()` on FD8-derived project-root/cwd, and `_verify_loaded_identity()` only compares loaded-module bytes rather than proving `__file__` / authority module belong to the FD8 owner tree. Same-bytes foreign modules can satisfy the current check.
 
-Implementation authorization is narrow: only root-only stdlib temporary-fixture CPU/static launcher/adapter/tests implementation under v0.4. No production/main execution, real materialization, source/checkpoint I/O, project-path worktree/backing/index/candidate/ref/evidence creation, collection/receipt/publication, child/runtime modification, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1 is authorized.
+Positive progress: FD8 Git consumer `pass_fds`/pre-post index barriers and an actual temporary Git procfd-index witness are materially implemented. The remaining blockers are production source violations, so `62/62` tests do not make this Evidence-only.
+
+Exact acceptance and detailed authority reasoning are in the canonical review.
+
+Scope reminder: no Gate closure is authorized from this pair. No production/main execution, real materialization, source/checkpoint I/O, project-path worktree/backing/index/candidate/ref/evidence creation, collection/receipt/publication, child/runtime modification, CUDA/GPU, training, evaluation, inference, or LIBERO4IN1 is authorized.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
