@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 第二轮审核申请准备（2026-09-13 16:12 CST，REVIEW）
+
+- formal root=`e88a9a9dd989e6a00e74d51ee9848b8ad241caa1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree仅`SESSION.md`、`TODO.md`、adapter及其direct stdlib CPU test，Gitlink未变。live Inbox追加前=`15860` bytes，追加后未超过128KiB；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM `mm:0.0`、Kimi `kimi:0.0`。
+- 申请请求仅`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`；范围只限root-only CPU/static。下一步=将这条ledger推送后，按`send-keys -l`→等待至少1秒→独立Enter→capture向MM与Kimi送达；在新pair三方final前禁止真实I/O、child/runtime、GPU、训练、评测、推理与LIBERO4IN1。
+
 ## Causal-owner identity FD8 remediation 第二轮最小实现（2026-09-13 16:12 CST，IN_PROGRESS）
 
 - 依据紧邻的观察凭证 #6 推进令牌，复用 `bootstrap_payload()`、`NativeAuthorityGit` 与 `_verify_loaded_identity()`；仅修改 root adapter 和其直接 stdlib CPU test。production `NativeAuthorityGit` 现在在接纳任何路径 authority 前拒绝 `owner_fd != 8`；bootstrap 捕获 FD8 owner/index `(dev,ino)`，每个 `grun()` 前后执行 no-follow owner/index barrier。
