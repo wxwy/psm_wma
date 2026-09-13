@@ -4402,3 +4402,16 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Collection real-adapter CPU/static implementation（2026-09-13，IN_PROGRESS）
 
 - 三方对formal=`6ec9d2db564102c7546ceb1c44bc06ccb3c8de31`/child=`93a89ba61306d840a008813f62f26a34d54850f4`同pair批准，授权仅`tools/psm_wma/immutable_source_collection.py`及`tools/psm_wma/test_immutable_source_collection.py`的temporary CPU/static实现。已修改这两个文件：NativeRootFd、AtomicFileEvidenceSink、NativeCollectionGit、fail-closed CLI grammar/binding及temporary-Git回归；不执行真实source I/O或训练。
+
+### Collection real-adapter CPU/static implementation 审核观察凭证 #2（2026-09-13 23:17 CST，当前实现未提交）
+
+- 本轮硬检查：`before_head=9cadf836dd71585b6262335fc36d9cda620f30a1`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2`与`git rev-parse origin/V2`均为`9cadf836dd71585b6262335fc36d9cda620f30a1`；新增范围为空；`git merge-base --is-ancestor`返回0，`git merge --ff-only origin/V2`=`Already up to date`。
+- formal pair=`6ec9d2db564102c7546ceb1c44bc06ccb3c8de31`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索命中`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_immutable_source_collection_real_adapter_implementation_design_v02_6ec9d2d_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi=`kimi:0.0` capture同pair同verdict；MM=`mm:0.0` capture同pair同verdict。三项证据均独立成功、未截断。
+- 该推进令牌仅覆盖已批准设计对应的两文件CPU/static实现；当前实现提交尚未形成新的formal pair，禁止据此进入真实source/receipt/publication、GPU、训练或下一个Gate。
+
+### Collection adapter 最小验证步骤（2026-09-13，待提交）
+
+- 目的/Gate：完成已批准 real-adapter CPU/static 的 metadata/publication seam，仍限两文件。
+- 修改：`NativeCollectionGit` 保留嵌套 metadata 仅作 execution identity 校验，不注入子字典环境；新增 fail-closed metadata accessor 与静态 publication 状态。
+- 验证：`python3 -m unittest tools.psm_wma.test_immutable_source_collection`=`40/40 PASS`；`py_compile`与`git diff --check` PASS。未执行真实 source I/O、receipt/publication、GPU 或训练。
+- 下一步：提交并推送后，以新 formal root/child 重新申请三方审核；批准前不进入后续 Gate。

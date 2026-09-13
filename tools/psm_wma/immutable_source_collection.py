@@ -226,15 +226,25 @@ class AtomicFileEvidenceSink:
 class NativeCollectionGit:
     """受控 native Git adapter；只实现既有 collection seam。"""
 
-    def __init__(self, git: Path, cwd: Path, remote: str, index: Path, metadata: Mapping[str, str]) -> None:
+    def __init__(self, git: Path, cwd: Path, remote: str, index: Path, metadata: Mapping[str, object]) -> None:
         if not all(path.is_absolute() for path in (git, cwd, index)):
             raise CollectionError("git/cwd/index 必须为绝对路径")
         self.git, self.cwd, self.remote, self.index = git, cwd, remote, index
         self._metadata = dict(metadata)
         self._env = {"GIT_INDEX_FILE": str(index), "GIT_NO_REPLACE_OBJECTS": "1",
                      "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
-                     "GIT_CONFIG_SYSTEM": "/dev/null", "LC_ALL": "C", "LANG": "C",
-                     **self._metadata}
+                     "GIT_CONFIG_SYSTEM": "/dev/null", "LC_ALL": "C", "LANG": "C"}
+
+    def approved_execution_metadata(self) -> Mapping[str, object]:
+        if set(self._metadata) != {"execution", "tool", "environment"}:
+            raise CollectionError("native Git metadata key set 无效")
+        return json.loads(_canonical(self._metadata))
+
+    def execution_metadata(self) -> Mapping[str, object]:
+        return self.approved_execution_metadata()
+
+    def publication_state(self) -> Mapping[str, bool]:
+        return {"pushed": False, "published": False}
 
     def _run(self, *args: str, input: bytes | None = None, check: bool = True) -> bytes:
         result = subprocess.run([str(self.git), *args], cwd=self.cwd, env=self._env, input=input,
