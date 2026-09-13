@@ -4427,3 +4427,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 申请 formal pair=`34cedc9ff227c35b387666ae824d282b14d2b1f5`/child=`93a89ba61306d840a008813f62f26a34d54850f4` 已追加 canonical Inbox；ledger随后提交并推送（bookkeeping，不改变 formal target）。
 - MM=`mm:0.0`：`send-keys -l`完整文本→间隔至少1秒→独立Enter→capture，文本离开输入框并进入会话；Kimi=`kimi:0.0`同三联回执，文本进入消息流且输入框为空。ChatGPT以Inbox送达，正式结论仍只认 exact-pair review 文件。
 - 当前三方对新 pair 均尚无最终结论；状态保持REVIEW，按三分钟原生轮询，禁止实现外动作、真实I/O、GPU或训练。
+
+### Collection adapter CPU/static implementation 审核观察凭证 #1（2026-09-13 23:24 CST，REVIEW）
+
+- `before_head=b42aa7506ced6161332ad9dace2f85d510f21071`；`git fetch origin V2`成功；advertised/tracking均=`b42aa7506ced6161332ad9dace2f85d510f21071`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- exact pair=`34cedc9ff227c35b387666ae824d282b14d2b1f5`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索命令`rg -l -F '34cedc9ff227c35b387666ae824d282b14d2b1f5' docs/collab/chatgpt/reviews | sort`无输出；Kimi=`kimi:0.0` capture已回复同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；MM=`mm:0.0` capture已收到申请但未出现新pair final，处理中。证据均独立成功、未截断。
+- 缺ChatGPT与MM final，无推进令牌；继续REVIEW，禁止汇总整改、真实I/O、GPU或训练。
