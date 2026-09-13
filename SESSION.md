@@ -4398,3 +4398,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Collection real-adapter v0.2 审核观察凭证 #1（2026-09-13，REVIEW）
 
 - `before_head=f0e4480d4ca7d74ffda477292bb5b0da67f75190`；fetch/advertised/origin均成功且相同；新增范围为空，ff-only=`Already up to date`。ChatGPT exact review检索无输出；MM=`mm:0.0`同pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi=`kimi:0.0`显示正在核验，无final。无推进令牌，禁止实现/执行。
+
+### Collection real-adapter CPU/static implementation（2026-09-13，IN_PROGRESS）
+
+- 三方对formal=`6ec9d2db564102c7546ceb1c44bc06ccb3c8de31`/child=`93a89ba61306d840a008813f62f26a34d54850f4`同pair批准，授权仅`tools/psm_wma/immutable_source_collection.py`及`tools/psm_wma/test_immutable_source_collection.py`的temporary CPU/static实现。已修改这两个文件：NativeRootFd、AtomicFileEvidenceSink、NativeCollectionGit、fail-closed CLI grammar/binding及temporary-Git回归；不执行真实source I/O或训练。
