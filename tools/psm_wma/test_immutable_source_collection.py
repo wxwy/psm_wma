@@ -11,7 +11,7 @@ from dataclasses import replace
 import stat
 from copy import deepcopy
 from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff
-from tools.psm_wma.immutable_source_collection import AtomicFileEvidenceSink, COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, NativeCollectionGit, NativeRootFd, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
+from tools.psm_wma.immutable_source_collection import AtomicFileEvidenceSink, COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, NativeCollectionGit, NativeRootFd, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _native_parser, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
 class ImmutableSourceCollectionTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -83,6 +83,10 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             row = adapter.commit((RECEIPT_PATH,), parent, {RECEIPT_PATH: b"{}"})
             self.assertEqual(adapter.commit_parents(row["revision"]), (parent,))
             self.assertEqual(adapter.blob_bytes(adapter.tree_entries(row["revision"])[RECEIPT_PATH][2]), b"{}")
+
+    def test_native_parser_requires_full_binding_categories(self) -> None:
+        with self.assertRaises(SystemExit):
+            _native_parser().parse_args(["--formal-root", "a" * 40])
     def test_retained_evidence_does_not_alias_returned_record(self) -> None:
         sink = MemoryEvidenceSink()
         record = collect_synthetic(authority=self.authority, lineage=self.lineage,

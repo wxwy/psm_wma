@@ -1,5 +1,6 @@
 """CPU/static immutable source-collection algorithm under injected seams."""
 from __future__ import annotations
+import argparse
 
 import hashlib
 import json
@@ -1084,3 +1085,31 @@ def collect_synthetic(*, authority: Mapping[str, str], lineage: Mapping[str, str
             raise CollectionError("ROLLBACK_INCOMPLETE") from rollback_error
         raise CollectionError("EVIDENCE_SINK_FAILED") from error
     return record
+
+
+def _native_parser() -> argparse.ArgumentParser:
+    """Production argv grammar；执行绑定仍必须来自独立 request。"""
+    parser = argparse.ArgumentParser(description="immutable source collection adapter")
+    parser.add_argument("--formal-root", required=True)
+    parser.add_argument("--child-gitlink", required=True)
+    parser.add_argument("--authority-root", required=True)
+    parser.add_argument("--target-ref", required=True)
+    parser.add_argument("--expected-base", required=True)
+    parser.add_argument("--source-root-fd", type=int, required=True)
+    parser.add_argument("--selection-fd", type=int, required=True)
+    parser.add_argument("--evidence-path", type=Path, required=True)
+    parser.add_argument("--git", type=Path, required=True)
+    parser.add_argument("--cwd", type=Path, required=True)
+    parser.add_argument("--index", type=Path, required=True)
+    parser.add_argument("--remote", required=True)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    """禁止未绑定 request 的直接执行，保留可静态验证的 argv grammar。"""
+    _native_parser().parse_args(argv)
+    raise CollectionError("BLOCKED_AUTHORITY_NOT_CLOSED: 需要经审核的 execution request binding")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
