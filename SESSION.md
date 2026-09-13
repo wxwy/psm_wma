@@ -4,6 +4,7 @@
 
 - formal root=`5a2a3207853cdbbe4dc8135080cd5fe5050b7787`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结审核名册为 ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。
 - formal tree仅`SESSION.md`、`TODO.md`、root adapter和其stdlib tests；Gitlink未变。复审请求已写入canonical live Inbox，待完成Inbox ledger提交/推送与MM/Kimi三联送达回执后进入每三分钟原生轮询。请求范围仅temporary CPU/static，禁止真实I/O、child/runtime、GPU、训练、评测、推理和LIBERO4IN1。
+- 送达回执：Inbox ledger=`fd909a74ca503a9714ac099fe035d605f94fd17e`已推送。MM=`mm:0.0`与Kimi=`kimi:0.0`均按`send-keys -l`→等待≥1秒→独立Enter→capture完成；MM capture显示完整申请离开输入框并进入`Nebulizing…`处理，Kimi capture显示完整申请进入消息流且输入框为空。下轮在三分钟后按远端锁定、exact review scan、Kimi/MM capture收回；无final推进令牌，禁止实施/真实I-O/child/GPU/训练。
 
 ## Causal-owner identity CPU/static implementation：FD8 final ABI 与 owner config seam（2026-09-13，IN_PROGRESS）
 
