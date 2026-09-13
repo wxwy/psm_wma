@@ -4097,3 +4097,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root/child及冻结名册不变。`before_head=d5876171f890c831d6b086ef40e153cb23224586`；fetch成功；advertised/origin同为`d5876171f890c831d6b086ef40e153cb23224586`；新增范围为空；祖先检查=0，ff-only=`Already up to date`。
 - ChatGPT exact检索仍为空。Kimi=`kimi:0.0`、MM=`mm:0.0` capture均保持same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`。逐方：ChatGPT=处理中（缺formal review）；Kimi/MM=已回复(APPROVE)。无推进令牌，保持REVIEW，禁止创建execution request、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke execution runbook design 审核观察凭证 #6（2026-09-13，REVIEW）
+
+- formal root/child及冻结名册不变。`before_head=20649de69105fc361072183201a7d35b051b97ec`；fetch成功；advertised/origin同为`20649de69105fc361072183201a7d35b051b97ec`；新增范围为空；祖先检查=0，ff-only=`Already up to date`。
+- ChatGPT exact检索仍为空。Kimi=`kimi:0.0`、MM=`mm:0.0` capture均保持same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`。逐方：ChatGPT=处理中（缺formal review）；Kimi/MM=已回复(APPROVE)。无推进令牌，保持REVIEW，禁止创建execution request、真实I/O、child、GPU、训练。
