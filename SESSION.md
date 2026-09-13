@@ -3153,3 +3153,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - v0.8 已提交并推送为根仓`cf48b5b3e34a56e7e4017c663d32fcc9a2c735ad`，子模块/Gitlink仍为`93a89ba61306d840a008813f62f26a34d54850f4`；未形成formal pair或发送审核申请。
 - `add_and_capture()`将exact native `worktree add`与ownership capture作为同一边界：native nonzero、route drift或capture失败均为`ROLLBACK_INCOMPLETE`。temporary Git fixture新增目标非空导致的实际 nonzero add，以及成功add后注入`.git/commondir`并由`check_route()`拒绝；二者直接调用payload seam并均PASS。
 - `python ...payload_v0.8_witness_test.py -q`=11/11 PASS，`git diff --check` PASS。无真实项目路径、source/checkpoint I/O、materialization、child、GPU或训练。下一步：更新v0.8 digest/annex并复核所有payload级 witness；未完成前不申请审核。
+
+### Authority-root launcher v0.8 formal review roster（2026-09-13，REVIEW）
+
+- formal=`5ff4df58cc8e17644aab945de3de6d74b8b2967c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。ChatGPT申请已写入完成rollover后的canonical live Inbox，ledger=`ba18b5ca6a67b002d91c01d51f1a6b544061539a`已推送且不是formal target。
+- 请求仅为`APPROVE_TO_PREPARE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT_EXECUTION_WITNESS_CLOSURE`或`REQUEST_CHANGES(file:line)`；禁止materialization、真实source/checkpoint I/O、child、GPU、训练。等待MM/Kimi按send-keys/Enter/capture完成送达回执。
+- 送达回执：MM=`mm:0.0`、Kimi=`kimi:0.0`均已按完整`send-keys -l`→等待≥1秒→独立Enter（初次capture仍显示输入时各重按一次Enter）→独立capture；两条申请均已离开输入框并进入会话流。下一轮三分钟后必须先完整fetch/ls-remote/ff-only，再读取ChatGPT exact review并分别capture两pane。
