@@ -4384,3 +4384,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`782ad2a14dd67d40c84dcd8e4adf4e887ce081f0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=48ea6d7154b68b2e4dd9cd6185d786b9df172853`；fetch成功；advertised/origin均=`48ea6d7154b68b2e4dd9cd6185d786b9df172853`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
 - ChatGPT精确检索命令`rg -l -F '782ad2a14dd67d40c84dcd8e4adf4e887ce081f0' docs/collab/chatgpt/reviews | sort`无输出。Kimi=`kimi:0.0` capture保持同pair最终`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；MM=`mm:0.0` capture保持同pair最终相同批准。独立证据均成功、未截断。
 - ChatGPT same-pair formal review缺件，无推进令牌；保持REVIEW，禁止实现/执行、真实I/O、child、GPU或训练。
+
+### Collection real-adapter implementation design 审核观察凭证 #3（2026-09-13 22:55 CST，三方 final 齐全）
+
+- formal root=`782ad2a14dd67d40c84dcd8e4adf4e887ce081f0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=2aabcc5384c0d17488defbd54a8b9725603ff15b`；fetch成功；advertised/origin=`6a6add196dcfdf445fba7707d80c5180e63c51fb`；新增=`dabe4050 review: request changes collection real adapter design 782ad2a`、`6a6add19 review: notify Codex collection real adapter design changes 782ad2a`；祖先判定=0，ff-only成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_immutable_source_collection_real_adapter_implementation_design_782ad2a_93a89ba.md`，same-pair final=`REQUEST_CHANGES(...real_adapter_implementation_design_v0.1.md:28)`，唯一HIGH为新增`execute_immutable_source_collection.py`违反已冻结唯一executor路径。Kimi/MM capture均为same-pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`。独立证据成功、未截断。
+- 三方final齐全且含REQUEST_CHANGES，形成仅限docs-only最小整改令牌：采用ChatGPT route 1，将real CLI/native Git/FD-root/evidence binding置于既有唯一`tools/psm_wma/immutable_source_collection.py`及其direct test，保留既有path/identity/allowlist，不执行真实I/O、child、GPU或训练。
