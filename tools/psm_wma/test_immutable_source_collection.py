@@ -11,7 +11,7 @@ from dataclasses import replace
 import stat
 from copy import deepcopy
 from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff
-from tools.psm_wma.immutable_source_collection import AtomicFileEvidenceSink, COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, NativeCollectionGit, NativeRootFd, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _native_binding, _native_parser, _null_collection, _null_receipt, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
+from tools.psm_wma.immutable_source_collection import AtomicFileEvidenceSink, COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, NativeCollectionGit, NativeRootFd, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _native_binding, _native_parser, _null_collection, _null_receipt, _read_regular_fd, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
 class ImmutableSourceCollectionTest(unittest.TestCase):
     def setUp(self) -> None:
@@ -124,6 +124,15 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         self.assertEqual(authority["root_revision"], "c" * 40); self.assertEqual(lineage["target_ref"], "refs/heads/fixture")
         values[values.index("--selection-blob-oid") + 1] = "D" * 40
         with self.assertRaises(CollectionError): _native_binding(parser.parse_args(values))
+
+    def test_read_regular_fd_uses_same_open_file(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            source = Path(raw) / "selection"; source.write_bytes(b"payload")
+            descriptor = __import__("os").open(source, __import__("os").O_RDONLY)
+            try:
+                self.assertEqual(_read_regular_fd(descriptor), b"payload")
+            finally:
+                __import__("os").close(descriptor)
     def test_retained_evidence_does_not_alias_returned_record(self) -> None:
         sink = MemoryEvidenceSink()
         record = collect_synthetic(authority=self.authority, lineage=self.lineage,

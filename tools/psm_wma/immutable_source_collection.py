@@ -1127,6 +1127,23 @@ def _native_binding(args: argparse.Namespace) -> tuple[dict[str, str], dict[str,
     return authority, lineage
 
 
+def _read_regular_fd(descriptor: int) -> bytes:
+    info = os.fstat(descriptor)
+    if not stat.S_ISREG(info.st_mode):
+        raise CollectionError("transport FD 必须为regular file")
+    os.lseek(descriptor, 0, os.SEEK_SET)
+    chunks: list[bytes] = []
+    while True:
+        part = os.read(descriptor, 1024 * 1024)
+        if not part:
+            break
+        chunks.append(part)
+    after = os.fstat(descriptor)
+    if (after.st_dev, after.st_ino, after.st_size, after.st_mtime_ns, after.st_ctime_ns) != (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns):
+        raise CollectionError("transport FD identity drift")
+    return b"".join(chunks)
+
+
 def main(argv: list[str] | None = None) -> int:
     """禁止未绑定 request 的直接执行，保留可静态验证的 argv grammar。"""
     _native_binding(_native_parser().parse_args(argv))
