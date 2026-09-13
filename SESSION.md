@@ -4166,3 +4166,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_request_design_v0.2.md`，仅落实同pair三方final中的两项契约整改：§1显式声明v2只替代已批准runbook §3并保留其余条款；§3冻结唯一v2 canonical ABI及authority/fixed-runtime/command/artifact/terminal/approval子结构；§1/§4/§5统一为当前Gate仅design-only、后续独立instance-construction-and-review Gate在receipt闭环后才可创建一份instance且仍不执行。
 - 未创建request、未读取真实输入、未改child、未申请GPU或执行训练。`git diff --check`及新文件no-index diff-check通过；v0.2 SHA-256=`bead03f9e5959674393b21b9d77fb359bd46b40e4e0d9a0dd7a00748f9f9c8e6`。下一步仅可提交/推送该docs-only新formal root，并重新三方审核。
+
+### Single-GPU smoke execution request design v0.2 审核申请前观察凭证 #0（2026-09-13 20:05 CST，REVIEW）
+
+- formal root=`0874bb153ba81ee29eee84f0bde311bbf2d1ebe0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=0874bb153ba81ee29eee84f0bde311bbf2d1ebe0`；fetch成功；advertised/origin相同；新增范围为空；祖先检查=0，ff-only=`Already up to date`。ChatGPT exact检索无输出；Kimi=`kimi:0.0`与MM=`mm:0.0` capture均仅含旧v0.1 pair，不能跨SHA复用。
+- 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。下一步仅允许append/push v0.2审核申请与两pane送达；新pair无final或推进令牌，禁止创建/执行request、真实I/O、child、GPU或训练。

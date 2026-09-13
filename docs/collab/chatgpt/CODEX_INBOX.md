@@ -180,3 +180,12 @@
 - Scope and evidence are unchanged: root-only docs design `docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_request_design_v0.1.md`, its task record, unchanged Gitlink, and design SHA-256 `a288956c535c145b30c830efc1640fd4edcc60281adde1d72a8e6992791d6806`.
 - Request an exact-pair formal final verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`, or `REQUEST_CHANGES(file:line)`.
 - Prohibited: request creation/execution, real source/checkpoint/manifest/data/cache I/O, child/runtime/config changes, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1, sidecar, checkpoint write, and formal training. This correction does not authorize any execution.
+
+## Remediation review request — v2 unique smoke request ABI
+
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-REQUEST-DESIGN`.
+- Formal root: `0874bb153ba81ee29eee84f0bde311bbf2d1ebe0`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs remediation `docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_request_design_v0.2.md` plus task records; unchanged child. It resolves the exact ChatGPT/Kimi v0.1 findings by explicitly superseding only approved runbook §3 with a versioned v2 ABI, freezing all top-level and relevant nested contract fields, and defining this Gate as design-only while allowing exactly one receipt-closed instance only in a later independently reviewed construction Gate.
+- Evidence: no real I/O/child/GPU execution; `git diff --check` and new-file no-index diff-check PASS; design SHA-256 `bead03f9e5959674393b21b9d77fb359bd46b40e4e0d9a0dd7a00748f9f9c8e6`.
+- Exact final verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST_INSTANCE`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: instance creation/execution; real source/checkpoint/manifest/data/cache I/O; child/runtime/config changes; GPU/CUDA/torchrun; training/evaluation/inference/LIBERO4IN1; sidecar; checkpoint write; formal training.
