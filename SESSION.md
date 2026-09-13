@@ -3202,3 +3202,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_owner_identity_execution_design_v0.1.md`：选择executor在Git mutation前创建并持有empty CLEAN directory FD，Git仅通过继承`parent_fd`的`/proc/self/fd/<parent_fd>/CLEAN`填充该 inode；用parent-entry与clean FD双重重验取代所有post-add pathname ownership推断。该设计仍为docs-only，禁止真实项目物化/I-O/child/GPU/训练。
 - 已用一次纯临时本地Git fixture验证当前Git可接受existing empty directory：`git worktree add --detach <precreated-clean> HEAD` exit=0，`worktree list --porcelain`列出该CLEAN。fixture=`/tmp/tmp.MRxrpSphIv`由安全`mktemp -d`生成；未进入项目路径，未访问外网。实现时必须以temporary fixture重复此验收，不得把该探针当作真实执行授权。
+
+### Causal owner identity execution-capable design v0.1 formal review roster（2026-09-13，REVIEW）
+
+- formal=`5bf6e3d033d2ad6d9f68483c629f2d852f6a8b9d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。申请范围仅为`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；先三方审核design，后续才可root-only temporary CPU/static implementation。禁止真实materialization/source I-O/child/GPU/训练。
