@@ -20,18 +20,20 @@ v0.8 launcher 因而故意在成功 add 后 `ROLLBACK_INCOMPLETE`，不接受或
 不再要求证明“Git 创建了哪个 inode”。executor 在任何 native Git mutation 前按以下顺序建立唯一
 owner capability：
 
-1. 对 authority parent 取得 `O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC` FD，并重验其 `(st_dev, st_ino)`；
-   parent 是本次 executor 新建的 mode `0700` 私有目录，且其所有后续 child 操作均使用此 FD 的
-   `dir_fd` 形式，不重新由全局 pathname 取得 parent authority。
+1. authority parent 固定为既有 frozen `ROOT=/disk/rl/psm_wma`，以 `O_DIRECTORY|O_NOFOLLOW|O_CLOEXEC`
+   取得 `root_fd` 并重验其 `(st_dev, st_ino)`；CLEAN 固定为既有 child
+   `.authority-root-materialization-9dd2fb8`。不得新建私有 parent，因而 `CLEAN`、`--cwd`、`--index`
+   与 `--bootstrap-project-root` 的既有绝对路径字节不变；所有 child 操作使用 `root_fd` 的 `dir_fd`。
 2. 仅以 `mkdir(..., mode=0o700, dir_fd=parent_fd)` 创建名称固定的空 CLEAN；以
    `open(..., O_DIRECTORY|O_NOFOLLOW, dir_fd=parent_fd)` 立即取得 `clean_fd`，并以 `fstat` 与
    `stat(..., dir_fd=parent_fd, follow_symlinks=False)` 绑定同一 `(dev, ino)`。此时它是 executor
    自己创建并持有的空目录，不依赖 Git 的返回值。
-3. 把 `parent_fd` 作为唯一继承 FD（固定 FD number 和 `pass_fds`），使 native Git 的 target 使用
-   `/proc/self/fd/<parent_fd>/CLEAN`。当前项目 Git `2.34.1` 的 temporary fixture 已验证：预创建的
+3. 把 `root_fd` 固定为 FD 6 并作为唯一 Git 继承 FD（`pass_fds=(6,)`），使 native Git 的 target 使用
+   `/proc/self/fd/6/CLEAN`。FD 6 不得与冻结 backing ABI `{3,4,5}` 重叠；`clean_fd` 不继承给 Git。
+   当前项目 Git `2.34.1` 的 temporary fixture 已验证：预创建的
    空目录可接受 `git worktree add --detach <existing-empty-dir> HEAD`。实现必须再次在测试中覆盖该
    事实；若任何受支持 Git 拒绝它，直接 FAIL，不回退到 post-add pathname bind。
-4. Git 返回后，必须同时重验 `clean_fd` 与 `stat(CLEAN, dir_fd=parent_fd)` identity 相等、CLEAN 仍为
+4. Git 返回后，必须同时重验 `clean_fd` 与 `stat(CLEAN, dir_fd=root_fd)` identity 相等、CLEAN 仍为
    directory 且 parent FD identity 未漂移；随后才允许 `rev-parse/status/worktree-list`，且 Git cwd
    也必须通过 `/proc/self/fd/<parent_fd>/CLEAN`。任一不等、symlink、missing、Git nonzero 或 route
    drift 都是 `ROLLBACK_INCOMPLETE`，禁止 backing handoff、FD 3/4/5 或 `execve`。
@@ -42,7 +44,7 @@ owner capability：
 ## 3. 清理与失败语义
 
 - 只有仍由 `clean_fd`/`parent_fd` 双重验证的 CLEAN 才可走 native `git worktree remove --force`；remove
-  target 同样经 `/proc/self/fd/<parent_fd>/CLEAN` 表达。之后以 `unlink/rmdir` 的 `dir_fd` 形式重验空
+  target 同样经 `/proc/self/fd/6/CLEAN` 表达。之后以 `unlink/rmdir` 的 `dir_fd` 形式重验空
   parent。不得以全局 CLEAN pathname 删除。
 - 任何 replacement、parent drift、Git status/list 不一致、关闭前不为空，或 cleanup native failure 都是
   `ROLLBACK_INCOMPLETE`。不得删除 foreign inode，不得把失败降格为普通 PASS/FAIL。
@@ -63,10 +65,13 @@ owner capability：
 | add 中 Git nonzero | 仅仍为空且 identity 未漂移的 executor CLEAN 可移除；否则 fail-stop |
 | cleanup 前/中 replacement | 无 force remove foreign，`ROLLBACK_INCOMPLETE` |
 | inherited FD/proc target 篡改 | 在 Git 前拒绝；没有 cwd/pathname fallback |
+| Git validation后至handoff/exec前替换 | backing file所有 create/open/readback 均相对 `clean_fd`；exec前绝对CLEAN与`clean_fd`重验，不等即`ROLLBACK_INCOMPLETE` |
 | raw/config/route 已有反例 | 全部保留，不因 owner mechanism 弱化 |
 
 必须额外验证实际 Git invocation 的 argv、`pass_fds`、`close_fds`、fixed environment 以及 parent/clean
-FD 的 `FD_CLOEXEC` 状态。任何 test 只能触碰 fixture，不能创建项目 authority artifacts。
+FD 的 `FD_CLOEXEC` 状态。`root_fd=6`只在Git阶段继承，Git完成后关闭；`clean_fd`仅用于owner-relative
+handoff，且在final `{3,4,5}` descriptor-set proof前关闭。每次handoff与exec admission前都须以`root_fd`
+重验absolute CLEAN的同一inode；任何漂移不创建/不消费foreign inode。任何 test只触碰fixture，不能创建项目authority artifacts。
 
 ## 5. 明确禁止与下一步
 
