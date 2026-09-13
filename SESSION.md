@@ -1,5 +1,16 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 第三轮审核观察凭证 #2（2026-09-13 18:03 CST，三方 final 齐全）
+
+- formal root=`aba42f3c077629074f3f8c03420bc8a01bc1ebd7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=1bd7bc54d8092783419d01278eabcd3d1175114e`；fetch成功；advertised/origin均=`51e9e0e3ee174b811848ee595e1c3d71a6220290`；新增提交=`914078bc docs: approve FD8 bootstrap index type remediation`、`51e9e0e3 docs: notify Codex of FD8 bootstrap index approval`；祖先判定=0，ff-only成功至`51e9e0e3`。
+- ChatGPT exact-pair review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_remediation_aba42f3_93a89ba.md`最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`；Kimi `kimi:0.0` capture=同pair最终相同批准；MM `mm:0.0` capture=同pair最终相同批准。
+- 三方同pair final全批准，形成仅关闭本 root-only stdlib temporary-fixture CPU/static implementation Gate 的推进令牌；不授权 production/main、真实 materialization/source/checkpoint I/O、collection/receipt/publication、child/runtime、GPU、训练、评测、推理或LIBERO4IN1。
+
+## Causal-owner identity FD8 remediation 第三轮三方final汇总（2026-09-13，DONE）
+
+- exact pair=`aba42f3c077629074f3f8c03420bc8a01bc1ebd7`/`93a89ba61306d840a008813f62f26a34d54850f4`：ChatGPT review=`2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_remediation_aba42f3_93a89ba.md`、Kimi=`kimi:0.0`、MM=`mm:0.0`均最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`。68/68 CPU/static、py_compile、diff-check已核验；当前 Gate关闭。
+- 后续必须先取得独立 Gate 的 design/approval；仍禁止真实 authority materialization、source/checkpoint I/O、child/runtime、GPU与训练。
+
 ## Causal-owner identity FD8 remediation 第三轮审核观察凭证 #1（2026-09-13 17:59 CST，REVIEW）
 
 - formal root=`aba42f3c077629074f3f8c03420bc8a01bc1ebd7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=0d6ed7cdc54dc20c45c985bf62a76ae2ff52e9da`；fetch成功；advertised/origin均为`0d6ed7cdc54dc20c45c985bf62a76ae2ff52e9da`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
