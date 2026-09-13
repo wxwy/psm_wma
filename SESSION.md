@@ -4445,3 +4445,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `before_head=7e6d6d8aa48b7ddba4971f0969feae3048dcd60b`；fetch成功；advertised/tracking均=`7e6d6d8aa48b7ddba4971f0969feae3048dcd60b`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
 - ChatGPT exact-pair review仍为同一文件、final=`REQUEST_CHANGES`（3 HIGH+1 MEDIUM）；Kimi capture仍为同 pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；MM capture仍仅显示申请文本与旧 verdict，未出现新 pair final，处理中。独立证据成功、未截断。
 - 缺MM同pair final且已有REQUEST_CHANGES，无推进令牌；继续REVIEW，不执行整改或越权动作。
+
+### Collection adapter CPU/static implementation 审核观察凭证 #4（2026-09-13 23:36 CST，REVIEW）
+
+- `before_head=d6fe953a7d1aebcbec16d132ac5ab89ab8ce9966`；fetch成功；advertised/tracking均=`d6fe953a7d1aebcbec16d132ac5ab89ab8ce9966`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- ChatGPT exact pair final仍为`REQUEST_CHANGES`；Kimi capture仍为同 pair `APPROVE_TO_CLOSE...`；MM capture仍无`34cedc9.../93a89ba...`新 final，仅旧结论与已送达申请，处理中。独立证据成功、未截断。
+- 三方未齐，无推进令牌；继续REVIEW，禁止整改与后续执行。
