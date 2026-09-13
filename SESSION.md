@@ -4122,3 +4122,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root=`5053ed40065bfa0b8e1d755756b0565bd2d5ef31`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree仅修改runbook和SESSION，Gitlink未变，runbook SHA-256=`b348d43053903697d62d81ecb979d7c5604ea0b2f9acc821baa0aebed156c4a1`。live Inbox追加前为`23623` bytes，低于128KiB阈值。
 - 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。下一步提交/push ledger后送达两pane；新pair无final或推进令牌，禁止request、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke execution runbook terminal-status remediation 送达回执（2026-09-13，REVIEW）
+
+- ChatGPT申请已写入canonical live Inbox，ledger=`35fc0cb7`已推送（ledger不是formal target）。MM=`mm:0.0`与Kimi=`kimi:0.0`均按`send-keys -l`→等待≥1秒→独立Enter→capture完成送达；首次capture仍为输入，第二次Enter后MM输入框为空并进入处理，Kimi显示exact-pair审核执行中。
+- 新pair无final或推进令牌；三分钟后开始完整远端锁定、exact review scan和两pane回收。批准前禁止request、真实I/O、child、GPU、训练。
