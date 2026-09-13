@@ -3133,3 +3133,17 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - same formal/child；`before=c2b6ea81...`，fetch/advertised/origin/local-after=`55d9547c24b39581d4e75cd152607765a2bd9506`，新增`9a787333` ChatGPT formal review与`55d9547c` ledger，ff-only成功。ChatGPT exact review=`...launcher_v07_bf852c2_93a89ba.md` final=`REQUEST_CHANGES(...payload_v0.7.py:152)`；Kimi=`REQUEST_CHANGES(...execution_request_v0.7.md:3)`；MM=`APPROVE_TO_MATERIALIZE...`，三pane/review均绑定同pair。
 - 含REQUEST_CHANGES的同Gate docs-only整改令牌：删除inert base64；request不提前请求materialization；直接payload seam补齐same/different FD、extra FD、post-add drift、foreign clean-root与cleanup成功/失败native witnesses。禁止真实materialization、真实I/O、child、GPU、训练。
+
+### Authority-root launcher 后续提交与 formal-pair 重新锁定观察（2026-09-13 CST，REVIEW）
+
+- 本轮因“GPT所见并非最新 formal pair”重新锁定：`before_head=9816dd95d630f50de921f7611bb061a464a5415c`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2` advertised=`9816dd95d630f50de921f7611bb061a464a5415c`且与`origin/V2`一致；`before_head..origin/V2`新增范围为空；`git merge-base --is-ancestor`返回0；`git merge --ff-only origin/V2`=`Already up to date`，本地after同为`9816dd95d630f50de921f7611bb061a464a5415c`。
+- ChatGPT独立精确检索命令：`rg -l '9816dd95d630f50de921f7611bb061a464a5415c|bf852c233b2c2e31eb33dc859188a9a4b41c50df|11950c953d7c3e781f821ab648d45af83e60d340' docs/collab/chatgpt/reviews`。唯一最新相关正式文件是`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_materialization_execution_request_launcher_v07_bf852c2_93a89ba.md`，其明确final=`REQUEST_CHANGES(...launcher_payload_v0.7.py:152)`且只绑定旧formal=`bf852c233b2c2e31eb33dc859188a9a4b41c50df`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；未找到`9816dd95...`的exact-pair正式review。
+- Kimi=`kimi:0.0`独立capture成功：旧pair final=`REQUEST_CHANGES(...execution_request_v0.7.md:3)`；MM=`mm:0.0`独立capture成功：旧pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`。二者均非`9816dd95...`的新formal verdict。冻结名册保持ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`，但本轮不存在`9816dd95...`的审核申请送达回执或推进令牌。
+- 结论：`9816dd95...`不能由旧pair verdict覆盖；在按Inbox容量规则建立新申请、向三方送达并重启完整轮询前，Gate保持REVIEW。禁止继续整改、materialization、真实I/O、child、GPU和训练；仅可进行申请链路/正式范围的只读核验。
+
+### Authority-root launcher v0.8 docs-only整改（2026-09-13，IN_PROGRESS）
+
+- 依据：v0.7同pair三方final齐全的docs-only整改令牌；预计修改仅根仓`docs/build/`、`SESSION.md`、`TODO.md`。新增 v0.8 immutable payload、annex、request 与其CPU temporary witness；未改child。
+- payload删除inert第三base64 argv，改为唯一 lexical JSON authority；`capture_owned()`将可能成功的native add之后的missing/replacement/lookup失败统一映射为`ROLLBACK_INCOMPLETE`；`close_to_keep()`以list后`fstat`确认durable FD集合，排除`/proc/self/fd`枚举瞬态FD，并仍要求exec前仅`{3,4,5}`。
+- 已执行：`python -m py_compile ...payload_v0.8.py ...witness_test.py && python ...witness_test.py -q`，CPU temporary fixtures=10/10 PASS；其中直接`run() -> capture_owned() -> cleanup()`覆盖 temporary native-Git verified cleanup 与foreign-CLEAN replacement=`ROLLBACK_INCOMPLETE`。无GPU/外网、未运行payload `main()`、未访问真实source/checkpoint、未创建任何项目worktree/backing/index/candidate/ref/evidence。v0.8 raw=`13802` bytes、SHA-256=`546c24890618f43aff2f5af09d30c2de12c68ed7e632f79c426baa5012a13342`；`git diff --check` PASS。
+- 未完成：partial/nonzero add与post-add route drift的payload级因果注入见证；未完成前不得申请materialization verdict或启动真实执行。提交：未提交。
