@@ -131,3 +131,14 @@
 - Review focus: verify that source-evidence post-commit receipt is the sole real-input prerequisite (with no new horizontal provenance Gate), that the canonical chronology/GA-window transaction is unambiguous, and that world-size-1/no-torchrun/no-resume/num_workers=0 admission, bounded ≤100-step scope, artifacts, PASS and stop conditions are sufficient before a later execution-runbook Gate.
 - Exact verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: writing/reading real source, checkpoint, manifest, data or cache; source-evidence record/receipt/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference or LIBERO4IN1. An approval authorizes only the next docs-only single-GPU smoke execution runbook/command design.
+
+## Remediation review request — v0.3.5 single-GPU smoke world-size predicate
+
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-DESIGN`
+- Formal root: `e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Formal scope: exactly one root docs-only line in `docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_design_v0.1.md`; its SHA-256 is `de480cdf3f9b742a0b69cbe4d3d3a0c00d6fdf68858ac60ce9b2698153e76d1e`. The Gitlink is unchanged.
+- Remediation: ChatGPT's original exact-pair review identified the contradictory STOP wording “非零 world size” while §§3--4 require `world_size=1`. §5 now says precisely ``world_size != 1``; thus the only permitted single-GPU value passes admission and every other value fails. No other design semantics changed.
+- Review focus: verify this correction completely resolves that HIGH and does not weaken the no-torchrun/no-resume/`num_workers=0`, bounded ≤100-step, source-evidence prerequisite, chronology, artifact, PASS, or stop-condition boundaries.
+- Exact verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: writing/reading real source, checkpoint, manifest, data or cache; source-evidence record/receipt/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference or LIBERO4IN1. Approval authorizes only the next docs-only single-GPU smoke execution runbook/command design.

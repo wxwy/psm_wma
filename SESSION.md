@@ -4029,3 +4029,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root/child及冻结名册不变。`before_head=b1fafaf341d5f78644cce3bec7d7660bb12e8465`；fetch成功；advertised/origin同为`b1fafaf341d5f78644cce3bec7d7660bb12e8465`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。
 - ChatGPT精确检索仍无输出；Kimi=`kimi:0.0`与MM=`mm:0.0`独立capture均保持same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`。逐方：ChatGPT=处理中（缺formal review），Kimi/MM=已回复(APPROVE)。无推进令牌，保持REVIEW，禁止编写 execution runbook、真实I/O、child、GPU和训练。
+
+### Single-GPU smoke design v0.1 world-size predicate remediation（2026-09-13 19:02 CST，REVIEW）
+
+- 原formal pair=`ee5d895043222763849ab60aa17d782f3c1596fd`/`93a89ba61306d840a008813f62f26a34d54850f4`的 ChatGPT exact formal review 已提出唯一 HIGH：文件第93行“非零 world size”与单卡准入 `world_size=1` 矛盾。其余两方同pair final均为 `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`。该三方同轮意见只授权最小 docs-only 整改。
+- 整改formal root=`e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree经`git diff-tree --no-commit-id --name-status -r`确认为仅`docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_design_v0.1.md`，将FAIL谓词精确改为`world_size != 1`。当前设计 SHA-256=`de480cdf3f9b742a0b69cbe4d3d3a0c00d6fdf68858ac60ce9b2698153e76d1e`；`git diff --check`通过。
+- 审核申请前观察凭证 #0：`before_head=e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`；fetch成功；advertised/origin均为`e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`；新增范围为空；祖先检查=0，ff-only=`Already up to date`。ChatGPT精确检索`rg -l 'e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8' docs/collab/chatgpt/reviews || true`为空。Kimi=`kimi:0.0`、MM=`mm:0.0` capture均只有旧pair的final，不能跨SHA复用；新pair无final。
+- 新pair冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。下一步仅允许将整改申请 append/push至live Inbox，并以`send-keys -l`→等待至少1秒→独立Enter→capture送达MM/Kimi；完成前无送达回执或推进令牌，禁止编写runbook、真实I/O、child、GPU、训练。
