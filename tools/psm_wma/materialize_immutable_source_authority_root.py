@@ -129,6 +129,42 @@ def _read_regular_relative(root: Path | int, repo_path: str) -> bytes:
         os.close(directory)
 
 
+def _regular_relative_identity(root: Path | int, repo_path: str) -> tuple[int, int]:
+    """Return the no-follow identity of a regular repository file."""
+    if not _is_repo_path(repo_path):
+        raise NativeGitError("repository relative path 无效")
+    try:
+        directory = (
+            os.dup(root)
+            if isinstance(root, int)
+            else os.open(
+                root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+            )
+        )
+        for part in repo_path.split("/")[:-1]:
+            next_directory = os.open(
+                part,
+                os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
+                dir_fd=directory,
+            )
+            os.close(directory)
+            directory = next_directory
+        leaf = os.open(
+            repo_path.split("/")[-1], os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC,
+            dir_fd=directory,
+        )
+    except OSError as error:
+        raise NativeGitError("repository module 无法安全打开") from error
+    try:
+        info = os.fstat(leaf)
+        if not stat.S_ISREG(info.st_mode):
+            raise NativeGitError("repository module 必须为regular file")
+        return info.st_dev, info.st_ino
+    finally:
+        os.close(leaf)
+        os.close(directory)
+
+
 @dataclass(frozen=True)
 class ModuleIdentity:
     repo_path: str
@@ -222,10 +258,6 @@ def bootstrap_payload() -> str:
         " q=[a[i+8] for i,x in enumerate(a[7:]) if x==flag and i+8<len(a)]\n"
         " if len(q)!=1: fail()\n"
         " return q[0]\n"
-        "def optional(flag):\n"
-        " q=[a[i+8] for i,x in enumerate(a[7:]) if x==flag and i+8<len(a)]\n"
-        " if len(q)>1: fail()\n"
-        " return q[0] if q else None\n"
         "try: fd=int(one('--bootstrap-contract-fd'))\n"
         "except ValueError: fail()\n"
         "s=os.fstat(fd)\n"
@@ -239,11 +271,9 @@ def bootstrap_payload() -> str:
         "obs_argv=hashlib.sha256(json.dumps(a[6:],sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()\n"
         "if (obs_raw,obs_argv)!=(c['bootstrap_raw_sha256'],c['bootstrap_argv_sha256']): fail()\n"
         "root=one('--bootstrap-project-root'); module=one('--bootstrap-module'); git=one('--git'); interp=one('--interpreter')\n"
-        "owner=optional('--bootstrap-owner-root-fd')\n"
-        "if owner is not None:\n"
-        " try: ownerfd=int(owner); owners=os.fstat(ownerfd)\n"
-        " except (ValueError,OSError): fail()\n"
-        " if not stat.S_ISDIR(owners.st_mode) or root!='/proc/self/fd/'+str(ownerfd): fail()\n"
+        "try: ownerfd=int(one('--bootstrap-owner-root-fd')); owners=os.fstat(ownerfd)\n"
+        "except (ValueError,OSError): fail()\n"
+        "if ownerfd!=8 or not stat.S_ISDIR(owners.st_mode) or root!='/proc/self/fd/8': fail()\n"
         "if not os.path.isabs(root) or not module or '/' in module or not os.path.isabs(interp) or os.path.realpath(a[0])!=os.path.realpath(interp): fail()\n"
         "ip=os.lstat(interp)\n"
         "if not stat.S_ISREG(ip.st_mode) or stat.S_ISLNK(ip.st_mode) or hashlib.sha256(open(interp,'rb').read()).hexdigest()!=one('--interpreter-raw-sha256'): fail()\n"
@@ -265,7 +295,7 @@ def bootstrap_payload() -> str:
         " lineraw=os.pread(afd,ass.st_size,0); line=lineraw.decode('utf-8').strip()\n"
         " if not line.startswith('gitdir: '): fail()\n"
         " gd=line[8:]; gd=gd if os.path.isabs(gd) else os.path.abspath(os.path.join(root,gd)); gi=os.lstat(gd)\n"
-        " if stat.S_ISLNK(gi.st_mode) or not stat.S_ISDIR(gi.st_mode) or (owner is None and os.path.realpath(gd)!=gd): fail()\n"
+        " if stat.S_ISLNK(gi.st_mode) or not stat.S_ISDIR(gi.st_mode): fail()\n"
         " try: bfd=os.open(os.path.join(gd,'gitdir'),os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC); cfd0=os.open(os.path.join(gd,'commondir'),os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC)\n"
         " except OSError: fail()\n"
         " bs=os.fstat(bfd); cs0=os.fstat(cfd0)\n"
@@ -274,7 +304,7 @@ def bootstrap_payload() -> str:
         " if not back or not relcommon: fail()\n"
         " back=back if os.path.isabs(back) else os.path.abspath(os.path.join(gd,back))\n"
         " common=relcommon if os.path.isabs(relcommon) else os.path.abspath(os.path.join(gd,relcommon))\n"
-        " if (owner is None and os.path.realpath(back)!=os.path.realpath(admin)) or os.path.commonpath((common,gd))!=common: fail()\n"
+        " if os.path.commonpath((common,gd))!=common: fail()\n"
         " try: gdfd=os.open(gd,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC); cmfd=os.open(common,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC)\n"
         " except OSError: fail()\n"
         " gds=os.fstat(gdfd); cms=os.fstat(cmfd)\n"
@@ -282,7 +312,7 @@ def bootstrap_payload() -> str:
         " routefiles=[(admin,afd,ass,lineraw),(os.path.join(gd,'gitdir'),bfd,bs,backraw),(os.path.join(gd,'commondir'),cfd0,cs0,commonraw)]; routedirs=[(gd,gdfd,gds),(common,cmfd,cms)]\n"
         " wbase=gd\n"
         "else: fail()\n"
-        "if not os.path.isabs(common) or (owner is None and os.path.realpath(common)!=common) or not stat.S_ISDIR(os.lstat(common).st_mode): fail()\n"
+        "if not os.path.isabs(common) or not stat.S_ISDIR(os.lstat(common).st_mode): fail()\n"
         "wcfg=os.path.join(wbase,'config.worktree')\n"
         "if os.path.lexists(wcfg): fail()\n"
         "cfg=os.path.join(common,'config')\n"
@@ -314,13 +344,13 @@ def bootstrap_payload() -> str:
         "  if not stat.S_ISREG(z.st_mode) or stat.S_ISLNK(z.st_mode) or (z.st_dev,z.st_ino,z.st_size)!=(rs.st_dev,rs.st_ino,rs.st_size) or os.pread(rfd,rs.st_size,0)!=expected: fail()\n"
         " for path,rfd,rs in routedirs:\n"
         "  z=os.lstat(path); f=os.fstat(rfd)\n"
-        "  if not stat.S_ISDIR(z.st_mode) or stat.S_ISLNK(z.st_mode) or (owner is None and os.path.realpath(path)!=path) or (z.st_dev,z.st_ino)!=(rs.st_dev,rs.st_ino) or (f.st_dev,f.st_ino)!=(rs.st_dev,rs.st_ino): fail()\n"
+        "  if not stat.S_ISDIR(z.st_mode) or stat.S_ISLNK(z.st_mode) or (z.st_dev,z.st_ino)!=(rs.st_dev,rs.st_ino) or (f.st_dev,f.st_ino)!=(rs.st_dev,rs.st_ino): fail()\n"
         " if os.path.lexists(wcfg): fail()\n"
         " z=os.lstat(cfg)\n"
         " if (z.st_dev,z.st_ino,z.st_size)!=(cs.st_dev,cs.st_ino,cs.st_size) or os.pread(cfd,cs.st_size,0)!=rawcfg: fail()\n"
         "def grun(*v):\n"
         " routecheck()\n"
-        " kw={} if owner is None else {'close_fds':True,'pass_fds':(ownerfd,)}\n"
+        " kw={'close_fds':True,'pass_fds':(ownerfd,)}\n"
         " p=subprocess.run([*prefix,*v],cwd=root,env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,**kw)\n"
         " routecheck()\n"
         " if p.returncode: fail()\n"
@@ -333,10 +363,16 @@ def bootstrap_payload() -> str:
         " if row:\n"
         "  meta,name=row.split(b'\\t',1); mode,kind,oid=meta.decode().split(); tree[name.decode()]=(mode,kind,oid)\n"
         "for n in ('adapter','authority-module','collection-module','audit-module'):\n"
-        " path=one('--'+n+'-path'); oid=one('--'+n+'-blob-oid'); digest=one('--'+n+'-raw-sha256'); full=os.path.abspath(os.path.join(root,path))\n"
-        " if os.path.commonpath((os.path.abspath(root),full))!=os.path.abspath(root): fail()\n"
-        " z=os.lstat(full)\n"
-        " if not stat.S_ISREG(z.st_mode) or stat.S_ISLNK(z.st_mode) or (owner is None and os.path.realpath(full)!=full) or tree.get(path)!=('100644','blob',oid) or hashlib.sha256(open(full,'rb').read()).hexdigest()!=digest: fail()\n"
+        " path=one('--'+n+'-path'); oid=one('--'+n+'-blob-oid'); digest=one('--'+n+'-raw-sha256')\n"
+        " if not path or path.startswith('/') or any(x in ('','.','..') for x in path.split('/')): fail()\n"
+        " d=os.dup(ownerfd)\n"
+        " try:\n"
+        "  ps=path.split('/')\n"
+        "  for x in ps[:-1]:\n"
+        "   nd=os.open(x,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=d); os.close(d); d=nd\n"
+        "  mf=os.open(ps[-1],os.O_RDONLY|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=d); ms=os.fstat(mf); mr=os.pread(mf,ms.st_size,0); os.close(mf)\n"
+        " finally: os.close(d)\n"
+        " if not stat.S_ISREG(ms.st_mode) or tree.get(path)!=('100644','blob',oid) or hashlib.sha256(mr).hexdigest()!=digest: fail()\n"
         "sys.path.insert(0,root);sys.argv=[module,*a[7:]];runpy.run_module(module,run_name='__main__')\n"
     )
 
@@ -371,8 +407,16 @@ def _bootstrap_identity_from_runtime(
     observed_argv = sha256_digest(_canonical_json(original[6:]))
     if (declared_raw, declared_argv) != (observed_raw, observed_argv):
         raise NativeGitError("bootstrap declaration/observation 漂移")
-    if args.bootstrap_project_root.resolve() != args.cwd.resolve():
-        raise NativeGitError("bootstrap project root 与cwd不一致")
+    owner_fd = args.bootstrap_owner_root_fd
+    expected_owner_root = Path("/proc/self/fd/8")
+    if (
+        owner_fd != 8
+        or args.cwd != expected_owner_root
+        or args.bootstrap_project_root != expected_owner_root
+        or args.index != expected_owner_root / ".authority-root.index"
+        or _directory_fd_identity(8) != _directory_fd_identity(owner_fd)
+    ):
+        raise NativeGitError("bootstrap FD8 procfd ABI 不一致")
     if args.bootstrap_module != "tools.psm_wma.materialize_immutable_source_authority_root":
         raise NativeGitError("bootstrap module 无效")
     return BootstrapIdentity(
@@ -527,10 +571,19 @@ def _verify_loaded_identity(
         raise NativeGitError("authority adapter bytes 漂移")
     if sha256_digest(expected_authority) != invocation.authority_module.raw_sha256:
         raise NativeGitError("authority module bytes 漂移")
-    if sha256_digest(Path(__file__).read_bytes()) != invocation.adapter.raw_sha256:
+    adapter_path = Path(__file__)
+    authority_path = Path(authority_module.__file__)
+    if sha256_digest(adapter_path.read_bytes()) != invocation.adapter.raw_sha256:
         raise NativeGitError("actual adapter module identity 漂移")
-    if sha256_digest(Path(authority_module.__file__).read_bytes()) != invocation.authority_module.raw_sha256:
+    if sha256_digest(authority_path.read_bytes()) != invocation.authority_module.raw_sha256:
         raise NativeGitError("actual authority module identity 漂移")
+    if isinstance(cwd, int) and (
+        (adapter_path.stat().st_dev, adapter_path.stat().st_ino)
+        != _regular_relative_identity(cwd, invocation.adapter.repo_path)
+        or (authority_path.stat().st_dev, authority_path.stat().st_ino)
+        != _regular_relative_identity(cwd, invocation.authority_module.repo_path)
+    ):
+        raise NativeGitError("actual loaded module 不属于authority owner")
 
 
 def request_from_input_fds(
@@ -1561,6 +1614,8 @@ class NativeAuthorityGit:
         self._owner_identity = self._index_identity = None
         if owner_fd is not None:
             expected_cwd = Path(f"/proc/self/fd/{owner_fd}")
+            if self.production and owner_fd != 8:
+                raise NativeGitError("production FD8 consumer 必须使用FD8")
             if cwd != expected_cwd or index != expected_cwd / ".authority-root.index":
                 raise NativeGitError("FD8 consumer 必须使用冻结的procfd cwd/index")
             self._owner_identity = _directory_fd_identity(owner_fd)
@@ -1744,7 +1799,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--interpreter-version", required=True)
     parser.add_argument("--bootstrap-contract-fd", type=int, required=True)
     parser.add_argument("--bootstrap-project-root", type=Path, required=True)
-    parser.add_argument("--bootstrap-owner-root-fd", type=int)
+    parser.add_argument("--bootstrap-owner-root-fd", type=int, required=True)
     parser.add_argument("--bootstrap-module", required=True)
     for name in ("adapter", "authority-module", "collection-module", "audit-module"):
         parser.add_argument(f"--{name}-path", required=True)

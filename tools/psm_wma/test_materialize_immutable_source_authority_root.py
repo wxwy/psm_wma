@@ -490,27 +490,41 @@ class NativeAuthorityGitTest(unittest.TestCase):
             "tool._validate_https_endpoint = lambda remote: None; "
             "tool._bootstrap_identity_from_runtime = lambda args, actual: tool.BootstrapIdentity('a'*64, 'b'*64, 'a'*64, 'b'*64); "
             "tool.NativeAuthorityGit._prefix = property(lambda self: (*tool._GIT_PREFIX[:-1], 'protocol.file.allow=always')); "
+            "tool.NativeAuthorityGit._verify_owner_barrier = lambda self: None; "
             f"exec({hook!r}); "
             "raise SystemExit(tool.main(sys.argv[1:]))"
         )
-        return subprocess.run(
-            [
-                str(Path(sys.executable).resolve()), "-c", harness,
+        owner_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            procfd = "/proc/self/fd/8"
+            owner_argv = list(argv)
+            for option, value in (
+                ("--cwd", procfd),
+                ("--index", procfd + "/.authority-root.index"),
+                ("--bootstrap-project-root", procfd),
+            ):
+                owner_argv[owner_argv.index(option) + 1] = value
+            owner_argv.extend(("--bootstrap-owner-root-fd", "8"))
+            (root / ".authority-root.index").write_bytes(b"")
+            command = [
+                str(Path(sys.executable).resolve()), "-c",
+                "import os,sys; os.dup2(int(sys.argv[1]),8); os.set_inheritable(8,True); os.execv(sys.argv[2],sys.argv[2:])",
+                str(owner_fd), str(Path(sys.executable).resolve()), "-c", harness,
                 "--selection-fd", str(selection.fileno()),
-                "--config-fd", str(config.fileno()), *argv,
-            ],
-            cwd=root,
-            pass_fds=(selection.fileno(), config.fileno()),
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=False,
-        )
+                "--config-fd", str(config.fileno()), *owner_argv,
+            ]
+            return subprocess.run(
+                command, cwd=root,
+                pass_fds=(selection.fileno(), config.fileno(), owner_fd),
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False,
+            )
+        finally:
+            os.close(owner_fd)
 
     def _run_bootstrap_cli(
         self, root: Path, selection, config, argv, *, contract_payload=None,
         mutate_adapter_argv=None, mutate_bootstrap_argv=None, mutate_contract=None,
-        owner_fd: int | None = None,
+        owner_fd: int | None = None, mutate_root=None,
     ):
         payload = __import__(
             "tools.psm_wma.materialize_immutable_source_authority_root",
@@ -518,12 +532,26 @@ class NativeAuthorityGitTest(unittest.TestCase):
         ).bootstrap_payload()
         contract_path = root.parent / "bootstrap-contract.json"
         with contract_path.open("w+b") as contract:
+            opened_owner_fd = None
+            if owner_fd is None:
+                opened_owner_fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+                owner_fd = opened_owner_fd
             position = argv.index("--bootstrap-contract-fd")
             argv[position + 1] = str(contract.fileno())
             adapter_argv = [
                 "--selection-fd", str(selection.fileno()), "--config-fd",
                 str(config.fileno()), *argv,
             ]
+            procfd = "/proc/self/fd/8"
+            for option, value in (
+                ("--cwd", procfd),
+                ("--index", procfd + "/.authority-root.index"),
+                ("--bootstrap-project-root", procfd),
+            ):
+                adapter_argv[adapter_argv.index(option) + 1] = value
+            if "--bootstrap-owner-root-fd" not in adapter_argv:
+                adapter_argv.extend(("--bootstrap-owner-root-fd", "8"))
+            (root / ".authority-root.index").write_bytes(b"")
             original = [
                 str(Path(sys.executable).resolve()), "-I", "-S", "-B", "-c",
                 payload, "--", *adapter_argv,
@@ -546,18 +574,23 @@ class NativeAuthorityGitTest(unittest.TestCase):
             if mutate_contract is not None:
                 mutate_contract(contract)
                 contract.flush()
+            if mutate_root is not None:
+                mutate_root()
             pass_fds = (selection.fileno(), config.fileno(), contract.fileno())
-            if owner_fd is not None:
-                pass_fds += (owner_fd,)
-                original = [
-                    str(Path(sys.executable).resolve()), "-c",
-                    "import os,sys; os.dup2(int(sys.argv[1]),8); os.set_inheritable(8,True); os.execv(sys.argv[2],sys.argv[2:])",
-                    str(owner_fd), *original,
-                ]
-            return subprocess.run(
-                original, cwd=root, pass_fds=pass_fds,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False,
-            )
+            pass_fds += (owner_fd,)
+            original = [
+                str(Path(sys.executable).resolve()), "-c",
+                "import os,sys; os.dup2(int(sys.argv[1]),8); os.set_inheritable(8,True); os.execv(sys.argv[2],sys.argv[2:])",
+                str(owner_fd), *original,
+            ]
+            try:
+                return subprocess.run(
+                    original, cwd=root, pass_fds=pass_fds,
+                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=False,
+                )
+            finally:
+                if opened_owner_fd is not None:
+                    os.close(opened_owner_fd)
     def _cli_fixture(self, directory: Path):
         git = Path(shutil.which("git") or "").resolve()
         root, remote = directory / "root", directory / "remote.git"
@@ -1026,7 +1059,25 @@ class NativeAuthorityGitTest(unittest.TestCase):
                     )
             self.assertNotEqual(result.returncode, 0)
             self.assertFalse((root / "evidence.json").exists())
-            transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
+
+    def test_bootstrap_rejects_intermediate_module_symlink_before_import(self):
+        with tempfile.TemporaryDirectory() as raw:
+            _git, root, _remote, selection, config, argv = self._cli_fixture(Path(raw))
+            foreign = root.parent / "foreign-tools"
+            foreign.mkdir()
+
+            def replace_component():
+                (root / "tools").rename(root.parent / "held-tools")
+                (root / "tools").symlink_to(foreign, target_is_directory=True)
+
+            with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                result = self._run_bootstrap_cli(
+                    root, selection_handle, config_handle, argv,
+                    mutate_root=replace_component,
+                )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertFalse((root / "evidence.json").exists())
+            transaction = NativeAuthorityGit(_git, root, str(_remote), root / "read.index", COMMIT_METADATA)
             self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
             self.assertIsNone(transaction.remote_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
@@ -1308,7 +1359,7 @@ tool.NativeAuthorityGit.remote_ref = failing
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
             with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
-                with self.assertRaises(NativeGitError):
+                with self.assertRaises(SystemExit):
                     main([
                         "--selection-fd", str(selection_handle.fileno()),
                         "--config-fd", str(config_handle.fileno()), *argv,

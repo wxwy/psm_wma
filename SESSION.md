@@ -1,5 +1,17 @@
 # 当前协作状态
 
+## Causal-owner identity CPU/static implementation：第25轮整改实现（2026-09-13 15:58 CST，IN_PROGRESS）
+
+- 依据第25轮同pair三方final（ChatGPT/Kimi=`REQUEST_CHANGES`、MM=`APPROVE`）的最小整改令牌，修改仅限`tools/psm_wma/materialize_immutable_source_authority_root.py`与其直接stdlib临时夹具测试。实现：adapter parser要求`--bootstrap-owner-root-fd`；bootstrap仅接收live FD8与精确`/proc/self/fd/8` root ABI；四个project module在`sys.path`/`runpy`前由FD8起点逐component `O_DIRECTORY|O_NOFOLLOW`和leaf `O_NOFOLLOW`读取并校验；runtime bootstrap移除FD-derived `Path.resolve()`；loaded adapter/authority按FD8 no-follow读取的dev/inode核对；production `NativeAuthorityGit`拒绝非FD8 owner。
+- 新增bootstrap真实中间目录替换为外部symlink的拒绝夹具，并使临时CPU launcher显式提供FD8 ABI；完整命令`python3 -m py_compile tools/psm_wma/materialize_immutable_source_authority_root.py tools/psm_wma/test_materialize_immutable_source_authority_root.py && python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root && git diff --check`：63/63 PASS、py_compile PASS、diff-check PASS。测试仅CPU、TemporaryDirectory与本地Git fixture；无GPU、外网、真实materialization/source-checkpoint I/O、child或训练。
+- 当前尚未提交；下一步先复读正式diff和审核规范自检，再提交本root-only remediation并推送，以新formal root重新发起三方审核。
+
+## Causal-owner identity CPU/static implementation：第25轮完整观察（2026-09-13 15:51 CST，REVIEW）
+
+- formal root=`5a2a3207853cdbbe4dc8135080cd5fe5050b7787`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=66ca4a3a0d04de27f911fb21e7647ee654ecf23c`；`git fetch origin V2`成功；advertised/origin均为`66ca4a3a0d04de27f911fb21e7647ee654ecf23c`；新增范围为空；祖先判定=0且ff-only=`Already up to date`。此前本地轮询记录已无冲突rebase并推送为`66ca4a3a`，未触及子模块或用户训练遗留。
+- ChatGPT精确检索=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_cpu_static_implementation_5a2a320_93a89ba.md`，最终=`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:1747)`：HIGH-1要求FD8 ABI强制/精确且无legacy fallback；HIGH-2要求bootstrap project-module closure实际采用FD8 dirfd component-by-component no-follow；HIGH-3要求移除procfd `resolve()`及以FD8对象身份验证loaded modules。Kimi=`kimi:0.0` capture为same-pair最终`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:1747)`，要求mandatory FD8、拒绝missing/mismatched/legacy absolute CLEAN argv的witness，并关注admin路径检查。MM=`mm:0.0` capture为same-pair最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`。
+- 三方final均为同一pair，含ChatGPT与Kimi `REQUEST_CHANGES`，形成仅限汇总与最小整改的推进令牌；不得关闭Gate，禁止真实I/O、child/runtime、GPU、训练、评测、推理与LIBERO4IN1。下一步：对三项HIGH和Kimi补充项形成最小root-only CPU/static整改范围，再实现、验证、提交并以新SHA重新三方审核。
+
 ## Causal-owner identity CPU/static implementation：第24轮完整观察（2026-09-13 15:37 CST，REVIEW）
 
 - formal root=`5a2a3207853cdbbe4dc8135080cd5fe5050b7787`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=7c248c6be6675d87de21ff9192832476bf9e66e1`；fetch成功；advertised/origin均为`7c248c6be6675d87de21ff9192832476bf9e66e1`；新增范围为空；祖先判定=0且ff-only=`Already up to date`。
