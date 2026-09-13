@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 第二轮审核观察凭证 #9（2026-09-13 16:41 CST，REVIEW）
+
+- formal root=`e88a9a9dd989e6a00e74d51ee9848b8ad241caa1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ad860a9d15e145fd26c6fd4cd51c8578435c59a9`；fetch/advertised/origin均成功且为该SHA，新增范围为空，ff-only=`Already up to date`。
+- ChatGPT exact-pair检索为空；Kimi/MM captures 保持同pair最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`。ChatGPT仍处理中，无推进令牌；保持REVIEW并禁止整改、真实I/O、child、GPU与训练。
+
 ## Causal-owner identity FD8 remediation 第二轮审核观察凭证 #8（2026-09-13 16:40 CST，REVIEW）
 
 - formal root=`e88a9a9dd989e6a00e74d51ee9848b8ad241caa1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=cbd7114794462c1099a15ef79fb79eaf41064cd4`；`git fetch origin V2`成功；advertised/origin均=`cbd7114794462c1099a15ef79fb79eaf41064cd4`；新增范围为空；祖先判定=0，`git merge --ff-only origin/V2`=`Already up to date`。
