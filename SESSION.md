@@ -3361,3 +3361,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Causal owner identity v0.2 exec-continuity refreeze 审核观察凭证 #12（2026-09-13 10:50 CST，REVIEW）
 
 - formal root/child及冻结名册不变。`before_head=d0b52c5f59022a451dfb13f5106a931715c20590`；fetch成功；advertised/origin同为`d0b52c5f59022a451dfb13f5106a931715c20590`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT exact-root检索仍无输出，状态=处理中。Kimi/MM均仍为same-pair显式`APPROVE_TO_IMPLEMENT...`。ChatGPT final缺失，无推进令牌，保持REVIEW，禁止temporary implementation、真实I/O、child、GPU与训练。
+
+### Causal owner identity v0.2 exec-continuity refreeze 审核观察凭证 #13（2026-09-13 10:54 CST，三方final齐全）
+
+- formal root=`de1d12f194030067a4afa656379378713b151734`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=997e5eb180b2db2fde377fd44c558c31aebc130b`；fetch成功，advertised/origin=`f4f88997c3e03a01920a663628587a7db67ca770`；新增`1529f8e6`（ChatGPT review）与`f4f88997`（其ledger）；祖先检查=0，ff-only成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_authority_root_causal_owner_identity_execution_design_v02_de1d12f_93a89ba.md`，final=`REQUEST_CHANGES(...v0.2.md:36)`，两项HIGH：普通`clean_owner_fd`可被3/4/5/6/8的dup2覆盖；FD8仅保护bootstrap、adapter仍从post-exec absolute CLEAN的`--cwd/--index`重解路径。Kimi=`kimi:0.0`与MM=`mm:0.0`均为same-pair显式`APPROVE_TO_IMPLEMENT...`。
+- 三方final齐且含ChatGPT REQUEST_CHANGES，形成仅docs-only整改令牌：新版本须冻结collision-free owner FD及占用/dup/close witness，并对实际adapter冻结FD8派生的完整child argv (`--cwd`、`--index`、`--bootstrap-project-root`)及bootstrap→adapter seam；禁止temporary implementation、真实I/O、child、GPU与训练。
+
+### Causal owner identity v0.3 collision-free adapter-argv refreeze（2026-09-13，IN_PROGRESS）
+
+- 已阅读当前 root adapter 的`bootstrap_payload()`、`_bootstrap_identity_from_runtime()`、`_parser()`与`NativeAuthorityGit`构造：现source确实要求`--cwd`/`--index`/`--bootstrap-project-root`且以`Path.resolve()`比较，故v0.2不能只改bootstrap root。按三方整改令牌新建v0.3 docs-only，明确预mutation FD3--9 reservation、root=7/Git=6/owner=9/bootstrap=8、owner source-rebind/close顺序，以及FD8派生`cwd/index/bootstrap-root`和adapter raw-argv/FD8验证所需的未来root-only source refreeze。
+- 当前预计修改仅v0.3、TODO、SESSION；不得实现或运行代码、不得真实I/O/child/GPU/训练。待`git diff --check`后提交新root三方复审。
