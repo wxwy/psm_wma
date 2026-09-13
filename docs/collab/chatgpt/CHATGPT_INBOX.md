@@ -13,34 +13,35 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `abfb33e636dc93f9d3a75d3bd90065f6bc6c1d08`
+- immediate prior live blob SHA: `e84f3df7dcab2d105a1770ac7cde5bca79838538`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Single-GPU Smoke Design APPROVED
+## CODEX NOTICE — R09-B TTT v0.3.5 Single-GPU Smoke Execution Runbook Design REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `e75c8c12c8573d445e91f2b9c9b4d95d98b1d5f8`
+- root design SHA: `5912e7d06c53e8a0cf650d4b2886f10cd72e3311`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-DESIGN`
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-RUNBOOK-DESIGN`
 
 Verdict:
-`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_runbook_design_v0.1.md:127)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_design_remediation_e75c8c1_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_execution_runbook_design_v01_5912e7d_93a89ba.md`
 
 Canonical review commit:
-`ca9e3cb8b5b662142cc84bc93b251c8843c1fbd3`
+`c7f928bd57d5b27e58c1325eb4815716ce178d9e`
 
-Current blockers: `0` (`0 design/admission`, `0 implementation`, `0 Evidence-only`, `0 child/runtime`).
+Current blockers: `1 HIGH` (`1 design/failure-semantics`, `0 implementation`, `0 Evidence-only`, `0 child/runtime`).
+
+Blocker:
+- §6 freezes `failure.json` as allowed only for `FAIL/BLOCKED`, while §7 separately mandates that operator `MANUAL_STOP` writes `failure.json` with `MANUAL_STOP` and the last committed transaction identity. Refreeze one terminal outcome taxonomy before execution-request design: either explicitly permit/require `FAIL | BLOCKED | MANUAL_STOP`, or explicitly classify manual stop as a named FAIL reason and use that consistently in the allowlist and schemas.
 
 Prior blocker disposition:
-- §5 contradictory `非零 world size` immediate-FAIL predicate: **CLOSED**. Formal delta changes it to exact `world_size != 1`, matching the frozen `world_size=1` single-GPU admission and preserving the separate no-`torchrun` rule.
+- single-GPU smoke design `world_size` contradictory FAIL predicate: **CLOSED** and remains closed.
 
-No new findings. The one-line docs-only remediation does not modify the source-evidence post-commit prerequisite, no-resume, `num_workers=0`, bounded `<=100` step scope, chronology/GA-window transaction, artifacts, PASS semantics, or other stop conditions. Child/Gitlink remains unchanged.
-
-Scope reminder: this closes only the exact docs-only single-GPU smoke design Gate. It authorizes only the next docs-only single-GPU smoke execution runbook/command design and review. It does not authorize real source/checkpoint/manifest/data/cache I/O, source-evidence record/receipt/publication, child/runtime/config changes, GPU/CUDA/torchrun execution, training, evaluation, inference, LIBERO4IN1, matched smoke, runtime-sidecar work, or formal training.
+Scope reminder: no execution-request design approval is granted from this pair. This review does not authorize creation/execution of an execution request, real source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, matched smoke, sidecar, checkpoint write, or formal training.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
