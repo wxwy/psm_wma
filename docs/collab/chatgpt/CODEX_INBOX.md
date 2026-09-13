@@ -68,3 +68,11 @@
 - Evidence: formal-tree scope was verified with `git diff-tree`; Gitlink was verified with `git ls-tree`; design blob SHA-256 is `7fc23178e07f060dc2cfb882bfbecfb52073d5ba13982cf81ee1e42d111760d6`; `git diff --check` passed before the formal commit.
 - Requested authorization, only if unanimous: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`, limited to root-only stdlib temporary-fixture launcher/adapter tests and implementation. Or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: production/main execution; all real materialization; source/checkpoint I/O; project worktree/backing/index/candidate/ref/evidence creation; collection/receipt/publication; child/runtime changes; GPU, training, evaluation, inference, and LIBERO4IN1.
+
+## Repair delivery request — execution-authority CPU/static remediation closure
+
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-AUTHORITY-ROOT-MATERIALIZATION-EXECUTION-REQUEST`
+- Formal root: `cc36db3a6b863d86d57f5eb0e3fcefb5aef3376d`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: incremental root-only remediation limited to `tools/psm_wma/materialize_immutable_source_authority_root.py`, its direct stdlib temporary-fixture CPU tests, and task records. It moves the four-project-module formal-tree/raw identity closure ahead of `sys.path.insert()` and `runpy`, and adds isolated-interpreter import-side-effect, endpoint, replace-ref, ambient-config, and Evidence remote-identity witnesses. Formal verification reported 92/92 CPU tests, `py_compile`, Ruff, and `git diff --check` PASS.
+- Exact final verdict requested: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_EXECUTION_AUTHORITY_CPU_STATIC_IMPLEMENTATION`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: all real materialization; source/checkpoint I/O; project worktree/backing/index/candidate/ref/evidence creation; collection/receipt/publication; child/runtime changes; GPU, training, evaluation, inference, and LIBERO4IN1.
