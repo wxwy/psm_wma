@@ -4053,3 +4053,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 已认领`G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-RUNBOOK-DESIGN`。下一步先只读阅读已批准source-evidence controlled closure与native runtime/feature contracts，列出runbook必须绑定的authority输入、不可覆盖命令形状、预检、最小产物、PASS/FAIL与停止条件；预计仅新建一份版本化`docs/build/`设计并更新`SESSION.md`/`TODO.md`，随后新SHA三方审核。
 - 当前禁止执行真实I/O、读取真实输入、修改child、申请/启动GPU、torchrun、训练、评测、推理或LIBERO4IN1。
+
+### Single-GPU smoke execution runbook design v0.1（2026-09-13，REVIEW）
+
+- 已新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_runbook_design_v0.1.md`。它复用已批准smoke设计和source-evidence闭环，将receipt tuple、不可覆盖request schema、non-shell command grammar、单卡预检、v0.3.5 chronology/GA transaction、仅七个输出文件、PASS/FAIL/MANUAL_STOP写为后续execution request必须绑定的合同。
+- 改动仅该新design、`SESSION.md`、`TODO.md`；未读取真实source/checkpoint/manifest/data/cache，未改child，未执行GPU/训练。新文件的`git diff --no-index --check /dev/null`通过，SHA-256=`94db5f6a2572b994f70b2c09ab8da2ed76e6a64240c2504bc87f6f3d8774a024`。
+- 下一步：`git diff --check`后提交/推送此docs-only formal root，随后按冻结名册向ChatGPT/MM/Kimi申请`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`；批准前禁止创建request、真实I/O、child、GPU、训练。
