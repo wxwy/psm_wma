@@ -3206,3 +3206,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Causal owner identity execution-capable design v0.1 formal review roster（2026-09-13，REVIEW）
 
 - formal=`5bf6e3d033d2ad6d9f68483c629f2d852f6a8b9d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。申请范围仅为`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；先三方审核design，后续才可root-only temporary CPU/static implementation。禁止真实materialization/source I-O/child/GPU/训练。
+
+### Causal owner identity execution-capable design v0.1 送达回执（2026-09-13，REVIEW）
+
+- formal=`5bf6e3d033d2ad6d9f68483c629f2d852f6a8b9d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT申请已append到canonical live Inbox并由ledger=`d80d5d6b`推送，ledger不是formal target。MM=`mm:0.0`、Kimi=`kimi:0.0`均按`send-keys -l`、等待≥1秒、独立Enter发送；各自首次capture仍显示输入框，第二次独立Enter后的capture确认申请进入消息流且输入框为空。二者均已送达/处理中；ChatGPT最终结果只以reviews内same-pair formal verdict计。下一轮三分钟后完整fetch/ls-remote/ff-only并独立扫描/capture。
