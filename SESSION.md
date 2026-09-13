@@ -5052,6 +5052,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`APPROVE_TO_CLOSE...`；Kimi=`REQUEST_CHANGES`（5项 witness缺口）。两 pane capture成功、未截断。
 - ChatGPT仍缺件且已有REQUEST_CHANGES，无推进令牌；保持REVIEW，禁止整改、真实I/O、GPU或训练。
 
+### Collection adapter 整改复核观察凭证 #123（2026-09-14 06:30 CST，REVIEW）
+
+- `before_head=a294adbbdcee55defdac3cb6c3088da24bd5d304`；fetch成功；advertised/tracking均=`a294adbbdcee55defdac3cb6c3088da24bd5d304`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
+- exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi exact-pair最终结论要求补5项 witness（REQUEST_CHANGES）；两 pane capture成功、未截断。
+- ChatGPT缺件且 Kimi 为 REQUEST_CHANGES，无推进令牌；保持`REVIEW`，禁止整改、真实I/O、GPU或训练。
+
 ### Collection adapter 整改复核观察凭证 #122（2026-09-14 06:10 CST，REVIEW）
 
 - `before_head=c87b4b9f6db54628e2b85090fd2124fe1666f988`；fetch成功；advertised/tracking均=`c87b4b9f6db54628e2b85090fd2124fe1666f988`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
