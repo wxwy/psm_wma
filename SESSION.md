@@ -4367,3 +4367,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root=`782ad2a14dd67d40c84dcd8e4adf4e887ce081f0`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree仅为该design、`SESSION.md`、`TODO.md`，Gitlink未变；design SHA-256=`b954c60850e4302cffe094f29976a40fe14f966b61b43454d2403d14622726c9`，`git diff --check`与new-file no-index diff-check均PASS。
 - 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。live Inbox append前为`32035` bytes，申请内容与现有live ledger合计低于`131072` bytes上限。该pair尚无final或推进令牌；仅允许提交/push ledger并按三联回执发送两pane，禁止实现/执行、真实I/O、child、GPU或训练。
+
+### Collection real-adapter implementation design 送达回执（2026-09-13，REVIEW）
+
+- ChatGPT申请已append到canonical live Inbox，ledger=`8bb08420a046384909d5bf46079cf1a7800ca040`已推送；该ledger不是formal target。MM=`mm:0.0`于本轮以`send-keys -l`写入完整申请、等待至少1秒、独立Enter后capture，申请已离开输入框并进入处理（`Blanching…`）。Kimi=`kimi:0.0`同样以`send-keys -l`、等待至少1秒、独立Enter后capture，完整申请已进入消息流且输入框为空。
+- formal root/child与冻结名册不变；新pair无final或推进令牌。三分钟后按完整远端锁定、exact review scan与两pane capture回收；批准前禁止实现/执行、真实I/O、child、GPU或训练。
