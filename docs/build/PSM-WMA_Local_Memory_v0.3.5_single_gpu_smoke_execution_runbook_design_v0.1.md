@@ -115,7 +115,9 @@ backward 前必须断言 `planned_N_valid_mu == actual_gathered_consumer_count`�
 
 ## 6. 唯一允许产物及 schema
 
-执行成功或失败时只可在 `output_root` 写入：
+执行终态只可为 `PASS`、`FAIL`、`BLOCKED` 或 `MANUAL_STOP`；其中 `MANUAL_STOP` 是
+独立的 non-PASS terminal status，不是未分类异常。执行成功或任一终态时只可在
+`output_root` 写入：
 
 ```text
 resolved_smoke_config.toml
@@ -124,10 +126,13 @@ environment.json
 segment_chronology.jsonl
 optimizer_scaler.jsonl
 smoke_summary.json
-failure.json                 # 仅 FAIL/BLOCKED 时
+failure.json                 # FAIL、BLOCKED 或 MANUAL_STOP 时必需
 ```
 
-`authority_binding.json` 必须含 §2 全 tuple、request/config raw SHA-256、actual root/child/receipt
+`failure.json` 的精确 key set 必须是 `schema_version`、`terminal_status`、`reason`、
+`last_committed_transaction_identity`、`authority_tuple_sha256`、`request_sha256`；其
+`terminal_status` 只能为 `FAIL`、`BLOCKED` 或 `MANUAL_STOP`，且与`smoke_summary.json.status`
+一致。`authority_binding.json` 必须含 §2 全 tuple、request/config raw SHA-256、actual root/child/receipt
 lookup 值和 exact command digest。`segment_chronology.jsonl` 每段必须含 stream/episode identity、
 consumer index range、S0 status、evidence range、planned/actual valid count、PAD count、fast state
 commit/disposition。`optimizer_scaler.jsonl` 必须含每个 GA window 的 planned denominator、actual
@@ -145,8 +150,9 @@ evidence、stream-major gather、tail/PAD、commit 全满足 §5；planned/actua
 
 任一 FAIL 只保留最小 §6 证据，不扩大步数、不换输入、不改变配置、不自动恢复或重跑。PASS 不得声称
 收敛、success rate、checkpoint reload、部署或正式训练完成；它只允许进入 runtime-sidecar
-design/CPU-static/resume smoke Gate。操作者可在任何时刻人工停止；停止同样不得自动重跑，且必须写
-`failure.json` 的 `MANUAL_STOP` 与最后已提交 transaction identity。
+design/CPU-static/resume smoke Gate。操作者可在任何时刻人工停止；该终态必须令
+`smoke_summary.json.status`和`failure.json.terminal_status`均为`MANUAL_STOP`，并写入最后已提交
+transaction identity。它不得自动重跑、改写输入或被解释为 PASS、FAIL 或 BLOCKED。
 
 ## 8. 审核请求
 

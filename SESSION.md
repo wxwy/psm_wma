@@ -4107,3 +4107,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root/child及冻结名册不变。`before_head=082fd723f73e9cf505dd525440bffa4b5db84223`；fetch成功；advertised/origin同为`082fd723f73e9cf505dd525440bffa4b5db84223`；新增范围为空；祖先检查=0，ff-only=`Already up to date`。
 - ChatGPT exact检索仍为空。Kimi=`kimi:0.0`、MM=`mm:0.0` capture均保持same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`。逐方：ChatGPT=处理中（缺formal review）；Kimi/MM=已回复(APPROVE)。无推进令牌，保持REVIEW，禁止创建execution request、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke execution runbook design 审核观察凭证 #8（2026-09-13，三方final齐全）
+
+- formal root=`5912e7d06c53e8a0cf650d4b2886f10cd72e3311`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。此前本地observation提交与远端ChatGPT review并发，`before_head=83fd16ef96d3b7b77dcb3817a0a0650da1c8978b`，advertised/origin=`493b8af921ccc3aac3fb1233a581a29ff29e707d`，远端为本地祖先，ff-only=`Already up to date`；已无冲突rebase并保留本地observation，当前检查可读取远端review。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_execution_runbook_design_v01_5912e7d_93a89ba.md`，final=`REQUEST_CHANGES(...runbook...v0.1.md:127)`，唯一HIGH：§6只允许FAIL/BLOCKED的`failure.json`与§7要求MANUAL_STOP写该文件相矛盾。Kimi=`kimi:0.0`与MM=`mm:0.0`均为same-pair明确final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`。
+- 三方final同pair齐全且含ChatGPT REQUEST_CHANGES，形成仅限docs-only最小整改令牌：明确`MANUAL_STOP`为独立non-PASS terminal status，统一§6/§7与future request schema中的`failure.json`允许/要求条件、status和transaction identity；不得创建/执行request、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke execution runbook design terminal-status remediation（2026-09-13，REVIEW）
+
+- 已按唯一HIGH最小修改runbook：冻结四种terminal status，`failure.json`对`FAIL|BLOCKED|MANUAL_STOP`必需，并冻结其key set和与summary一致性；MANUAL_STOP被定义为独立non-PASS status。`git diff --check`通过。下一步提交、推送并以新formal root重新三方审核；未执行任何真实I/O、child、GPU或训练。
