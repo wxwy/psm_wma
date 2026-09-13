@@ -142,3 +142,13 @@
 - Review focus: verify this correction completely resolves that HIGH and does not weaken the no-torchrun/no-resume/`num_workers=0`, bounded ≤100-step, source-evidence prerequisite, chronology, artifact, PASS, or stop-condition boundaries.
 - Exact verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION`, or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: writing/reading real source, checkpoint, manifest, data or cache; source-evidence record/receipt/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference or LIBERO4IN1. Approval authorizes only the next docs-only single-GPU smoke execution runbook/command design.
+
+## Design review request — v0.3.5 single-GPU smoke execution runbook
+
+- Gate: `G0-R09-B-TTT-V035-SINGLE-GPU-SMOKE-EXECUTION-RUNBOOK-DESIGN`
+- Formal root: `5912e7d06c53e8a0cf650d4b2886f10cd72e3311`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Formal scope: root-only docs design `docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_runbook_design_v0.1.md` plus task records; Gitlink unchanged. Design SHA-256: `94db5f6a2572b994f70b2c09ab8da2ed76e6a64240c2504bc87f6f3d8774a024`.
+- Review focus: verify receipt-derived authority tuple, non-overridable request schema, no-shell command grammar, exactly-one-GPU/no-torchrun admission, v0.3.5 chronology/GA failure transaction, bounded 1..100 steps, write allowlist, PASS/FAIL/MANUAL_STOP, and that no real I/O or execution is authorized by this design.
+- Exact verdict requested: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`, or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: creation or execution of an execution request; real source/checkpoint/manifest/data/cache I/O; collection/receipt/source-evidence/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference, LIBERO4IN1, matched smoke, sidecar, checkpoint write, or formal training. Approval authorizes only a later receipt-bound execution-request design/review.

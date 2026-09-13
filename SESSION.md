@@ -4059,3 +4059,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 已新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_single_gpu_smoke_execution_runbook_design_v0.1.md`。它复用已批准smoke设计和source-evidence闭环，将receipt tuple、不可覆盖request schema、non-shell command grammar、单卡预检、v0.3.5 chronology/GA transaction、仅七个输出文件、PASS/FAIL/MANUAL_STOP写为后续execution request必须绑定的合同。
 - 改动仅该新design、`SESSION.md`、`TODO.md`；未读取真实source/checkpoint/manifest/data/cache，未改child，未执行GPU/训练。新文件的`git diff --no-index --check /dev/null`通过，SHA-256=`94db5f6a2572b994f70b2c09ab8da2ed76e6a64240c2504bc87f6f3d8774a024`。
 - 下一步：`git diff --check`后提交/推送此docs-only formal root，随后按冻结名册向ChatGPT/MM/Kimi申请`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`；批准前禁止创建request、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke execution runbook design 审核申请前观察凭证 #0（2026-09-13，REVIEW）
+
+- formal root=`5912e7d06c53e8a0cf650d4b2886f10cd72e3311`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=5912e7d06c53e8a0cf650d4b2886f10cd72e3311`；fetch成功；advertised/origin同为该SHA；新增范围为空；祖先检查=0，ff-only=`Already up to date`。formal tree仅新增runbook design并更新SESSION/TODO，Gitlink未变。
+- ChatGPT精确检索`rg -l '5912e7d06c53e8a0cf650d4b2886f10cd72e3311' docs/collab/chatgpt/reviews || true`为空。Kimi=`kimi:0.0`与MM=`mm:0.0` capture均为旧pair `e75c8c12...`，不可跨SHA复用；新pair无final。
+- 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。允许的下一写操作仅为append/push审核申请及两pane送达；尚无推进令牌，禁止创建execution request、真实I/O、child、GPU或训练。
