@@ -3250,3 +3250,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`64b706b7b97451fd90cb6e9292100e512952f28a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT reviews、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=7e5ee9344326cc21890c1f3ac5e4d0f7a15fae18`；fetch成功；advertised/origin=`7e5ee9344326cc21890c1f3ac5e4d0f7a15fae18`一致；新增范围为空；祖先检查=0；ff-only=`Already up to date`。
 - ChatGPT精确检索`rg -l '64b706b7b97451fd90cb6e9292100e512952f28a' docs/collab/chatgpt/reviews/ || true`无输出，状态=处理中。Kimi capture重申此exact pair最终`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_owner_identity_execution_design_v0.1.md:72)`：root_fd Git后关闭与随后handoff/exec/cleanup的root_fd重验冲突，且`:27/:28/:38/:53`残留未定义`parent_fd`；状态=已回复(REQUEST_CHANGES)。MM capture确认replacement申请已离开输入框、会话仍在审阅，未含此exact-pair final token，状态=处理中。
 - 三方final未齐，无推进令牌。保持`REVIEW`，不得整改、实现、materialization、真实I/O、child、GPU或训练；下一次原生完整轮询最早于09:19 CST。
+
+### Causal owner identity remediation replacement 审核观察凭证 #2（2026-09-13 09:20 CST，REVIEW）
+
+- formal root/child与冻结名册不变。`before_head=59eec76b7666ab71bbb30c935efe94a701b04334`；fetch成功；advertised/origin同为`59eec76b7666ab71bbb30c935efe94a701b04334`；新增范围为空；祖先检查=0；ff-only=`Already up to date`。ChatGPT exact-root检索无输出，状态=处理中。Kimi capture仍为exact-pair `REQUEST_CHANGES(...design...:72)`。
+- MM capture可见批准token，但该截面没有formal root/child；按exact-pair证据规则不能计为final。故MM状态=处理中/需补锚定token；将仅补发“请针对exact pair重申final”的消息，不修改审核对象。三方final未齐，无推进令牌，保持REVIEW，禁止整改、实现、materialization、真实I/O、child、GPU或训练。
+
+### MM exact-pair token 补发回执（2026-09-13 09:20 CST）
+
+- 已向`mm:0.0`发送只要求重申正式token的补充消息：明确formal root=`64b706b7b97451fd90cb6e9292100e512952f28a`与child=`93a89ba61306d840a008813f62f26a34d54850f4`必须同一消息出现。执行`send-keys -l`→等待1秒→独立`Enter`→capture；capture显示消息离开输入框且会话进入`Moonwalking`。该回执只证明补问送达，MM尚未输出合格final；不产生推进令牌。
