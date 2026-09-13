@@ -3239,3 +3239,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 已追加 replacement request 到 canonical live Inbox；追加前大小`4876` bytes，远低于`131072` bytes上限。正式pair冻结为root=`64b706b7b97451fd90cb6e9292100e512952f28a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册为ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`。本root formal tree仅改该docs/build设计文件，Gitlink由`git ls-tree`核验为上述child。
 - replacement Inbox与本记录尚未提交，MM/Kimi尚未按正确pair重新发送；当前不存在送达回执、最终verdict或推进令牌。下一步：只提交/push该申请记账，然后依次完成两个pane的send→等待≥1秒→独立Enter→独立capture；未完成前不得称申请发出或进入轮询。
+
+### Causal owner identity remediation replacement 送达回执（2026-09-13 09:14 CST，REVIEW）
+
+- replacement Inbox已由ledger=`7e5ee9344326cc21890c1f3ac5e4d0f7a15fae18`推送（ledger不是formal target）；本地SESSION跟踪记录尚未提交。Kimi=`kimi:0.0`：对正确pair执行`send-keys -l`，等待1秒，再独立`Enter`；后续独立capture显示完整申请已离开输入框、进入消息流。MM=`mm:0.0`完成相同三联步骤，capture也显示完整申请已离开输入框、会话进入`Germinating`。两pane均有送达回执，进入处理。
+- 同一Kimi capture已包含实际pair=`64b706b7b97451fd90cb6e9292100e512952f28a`的最终`REQUEST_CHANGES`：文档对`root_fd` Git后关闭与handoff/exec/cleanup仍需root_fd重验自相矛盾，且残留未定义`parent_fd`；MM capture仅含此前错误SHA的`REQUEST_CHANGES`与replacement申请后的处理中状态，不能作为正确pair final。ChatGPT尚未按正确full root重新完成精确检索。本条是送达回执，下一步须对正确pair从第1轮完整fetch/ls-remote/ff-only→review scan→Kimi/MM capture开始；无推进令牌，禁止整改/实施/真实I-O/child/GPU/训练。
+
+### Causal owner identity remediation replacement 审核观察凭证 #1（2026-09-13 09:16 CST，REVIEW）
+
+- formal root=`64b706b7b97451fd90cb6e9292100e512952f28a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT reviews、MM=`mm:0.0`、Kimi=`kimi:0.0`。`before_head=7e5ee9344326cc21890c1f3ac5e4d0f7a15fae18`；fetch成功；advertised/origin=`7e5ee9344326cc21890c1f3ac5e4d0f7a15fae18`一致；新增范围为空；祖先检查=0；ff-only=`Already up to date`。
+- ChatGPT精确检索`rg -l '64b706b7b97451fd90cb6e9292100e512952f28a' docs/collab/chatgpt/reviews/ || true`无输出，状态=处理中。Kimi capture重申此exact pair最终`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_owner_identity_execution_design_v0.1.md:72)`：root_fd Git后关闭与随后handoff/exec/cleanup的root_fd重验冲突，且`:27/:28/:38/:53`残留未定义`parent_fd`；状态=已回复(REQUEST_CHANGES)。MM capture确认replacement申请已离开输入框、会话仍在审阅，未含此exact-pair final token，状态=处理中。
+- 三方final未齐，无推进令牌。保持`REVIEW`，不得整改、实现、materialization、真实I/O、child、GPU或训练；下一次原生完整轮询最早于09:19 CST。
