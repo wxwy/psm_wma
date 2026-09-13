@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Causal-owner identity FD8 remediation 审核观察凭证 #1（2026-09-13 16:04 CST，REVIEW）
+
+- formal root=`c8aafca005ff061788114281e47fd1a4e2b6a843`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=163c6a13bf578a2c26b05331d35baefb230ba18e`；fetch成功；advertised/origin均为`163c6a13bf578a2c26b05331d35baefb230ba18e`；新增范围为空；祖先判定=0且ff-only=`Already up to date`。
+- ChatGPT exact-pair检索命令`rg -l -F 'c8aafca005ff061788114281e47fd1a4e2b6a843' docs/collab/chatgpt/reviews`无输出，状态=处理中。Kimi=`kimi:0.0` capture显示已开始对same-pair核验、正在检查三项HIGH的negative witness，无最终verdict，状态=处理中。MM=`mm:0.0` capture为same-pair最终`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_OWNER_IDENTITY_CPU_STATIC_IMPLEMENTATION`。
+- 无三方final推进令牌，保持REVIEW；禁止整改、真实I/O、child/runtime、GPU、训练、评测、推理与LIBERO4IN1。
+
 ## Causal-owner identity FD8 remediation 送达回执（2026-09-13 16:01 CST，REVIEW）
 
 - formal root=`c8aafca005ff061788114281e47fd1a4e2b6a843`/child=`93a89ba61306d840a008813f62f26a34d54850f4`，冻结名册不变。ChatGPT申请已存在于live Inbox并由ledger=`d13c8e46fa98bca68680443bffdc0ebee0d218ac`推送。MM=`mm:0.0`与Kimi=`kimi:0.0`均执行同一完整申请的`send-keys -l`→等待≥1秒→独立`Enter`→独立capture；MM capture显示申请离开输入框并进入`Gitifying`，Kimi capture显示申请离开输入框并进入消息流。两pane送达后均处理中。
