@@ -4487,3 +4487,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `before_head=e7d767cda78ec159ecff17003f29bdad9e0baad4`；fetch成功；advertised/tracking均=`e7d767cda78ec159ecff17003f29bdad9e0baad4`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
 - exact pair仍为`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM capture同 pair final=`APPROVE_TO_CLOSE...`；Kimi capture同 pair final=`REQUEST_CHANGES`（5 witness缺口）。证据成功、未截断。
 - ChatGPT缺件，已有REQUEST_CHANGES，无推进令牌；保持REVIEW，禁止整改。
+
+### Collection adapter 整改复核观察凭证 #3（2026-09-14，REVIEW）
+
+- `before_head=0ef556ead526a79d1618a7ad4fe647834717ba3c`；fetch成功；advertised/tracking均=`0ef556ead526a79d1618a7ad4fe647834717ba3c`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM capture final=`APPROVE_TO_CLOSE...`；Kimi capture final=`REQUEST_CHANGES`（同前5项 witness）。证据成功、未截断。
+- 缺ChatGPT final且已有REQUEST_CHANGES，无推进令牌；保持REVIEW，继续三分钟轮询。
