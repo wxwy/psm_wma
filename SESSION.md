@@ -4481,3 +4481,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `before_head=6684184d87206e6e49bf002164ebec307f73c704`；fetch成功；advertised/tracking均=`6684184d87206e6e49bf002164ebec307f73c704`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
 - exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`mm:0.0` final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi=`kimi:0.0` final=`REQUEST_CHANGES`，要求补齐5项 witness（actual NativeCollectionGit 经 collect_synthetic 端到端、preflight 泄漏负例、tracked mode 绑定、symlink/directory replacement、rollback exact equality）。独立证据成功、未截断。
 - ChatGPT缺件且已有Kimi REQUEST_CHANGES，无推进令牌；保持REVIEW，禁止整改，等待ChatGPT同 pair final。
+
+### Collection adapter 整改复核观察凭证 #2（2026-09-14，REVIEW）
+
+- `before_head=e7d767cda78ec159ecff17003f29bdad9e0baad4`；fetch成功；advertised/tracking均=`e7d767cda78ec159ecff17003f29bdad9e0baad4`；新增范围为空；祖先判定=0，ff-only=`Already up to date`。
+- exact pair仍为`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM capture同 pair final=`APPROVE_TO_CLOSE...`；Kimi capture同 pair final=`REQUEST_CHANGES`（5 witness缺口）。证据成功、未截断。
+- ChatGPT缺件，已有REQUEST_CHANGES，无推进令牌；保持REVIEW，禁止整改。
