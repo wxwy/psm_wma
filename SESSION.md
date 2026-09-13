@@ -4127,3 +4127,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT申请已写入canonical live Inbox，ledger=`35fc0cb7`已推送（ledger不是formal target）。MM=`mm:0.0`与Kimi=`kimi:0.0`均按`send-keys -l`→等待≥1秒→独立Enter→capture完成送达；首次capture仍为输入，第二次Enter后MM输入框为空并进入处理，Kimi显示exact-pair审核执行中。
 - 新pair无final或推进令牌；三分钟后开始完整远端锁定、exact review scan和两pane回收。批准前禁止request、真实I/O、child、GPU、训练。
+
+### Single-GPU smoke execution runbook terminal-status remediation 审核观察凭证 #1（2026-09-13，三方final齐全）
+
+- formal root=`5053ed40065bfa0b8e1d755756b0565bd2d5ef31`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=2987a57c08dca919587e594e0e9c44c105481f74`；fetch成功；advertised/origin=`910a5071a4291bd0d345f88ca3181fd23fe7181a`；新增`36a9e46e`（ChatGPT review）与`910a5071`（notify）；祖先检查=0，ff-only成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-13_R09_B_TTT_v035_single_gpu_smoke_execution_runbook_design_terminal_status_remediation_5053ed4_93a89ba.md`，final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SINGLE_GPU_SMOKE_EXECUTION_REQUEST`，blockers=0。Kimi=`kimi:0.0`和MM=`mm:0.0`均为same-pair明确同一APPROVE。
+- 三方同pair全APPROVE，形成仅授权后续receipt-bound execution-request design/review的推进令牌；runbook design Gate关闭，不授权创建/执行request、真实I/O、child、GPU、训练。
