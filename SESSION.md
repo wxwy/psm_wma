@@ -4469,3 +4469,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新 formal root=`24253e0c3789d46c0807944ec75d6dff108824f3`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；实现已推送。
 - 验证证据：`python3 -m unittest tools.psm_wma.test_immutable_source_collection`=`44/44 PASS`；py_compile、git diff-check PASS。整改严格限既有两文件，未执行真实 I/O、GPU或训练。
 - 冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`；MM=`mm:0.0`；Kimi=`kimi:0.0`。申请待追加 Inbox 并发送两 pane，随后按三分钟轮询。
+
+### Collection adapter 整改复核申请送达回执（2026-09-14，REVIEW）
+
+- formal pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox ledger已推送（bookkeeping）。
+- MM=`mm:0.0` 与 Kimi=`kimi:0.0` 均完成 `send-keys -l`、至少1秒后独立 Enter、独立 capture；两 pane 均显示完整同 pair 申请已离开输入框并进入审核处理/消息流。ChatGPT正式结果仍只认 exact-pair review 文件。
+- 当前新 pair 尚无 final；保持REVIEW，按三分钟轮询，禁止越权动作。
