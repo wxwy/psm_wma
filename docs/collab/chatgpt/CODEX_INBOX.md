@@ -379,3 +379,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `py_compile`, verbose direct witness=`16 tests OK`, and `git diff --check` PASS. New witnesses assert FD6 absent before/after each of the two validation child leases, and that pre-exec FD preparation preserves FD7/FD9 for fail-close cleanup. Temporary local fixtures only; no real project I/O, child, GPU, or training.
 - Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication, child/runtime/config, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
+
+## Witness-only remediation review request — real handoff before forced exec failure
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-CPU-STATIC-IMPLEMENTATION`.
+- Formal root: `b3595395427114f73ff53a19a0c2b9180e39905f`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: direct root witness only; child unchanged. The existing forked pre-exec test now completes real fixture `handoff()` for all backing FD3/4/5, prepares pre-exec FDs, calls a deliberately nonexistent `execve`, catches `FileNotFoundError`, verifies retained FD7/FD9 identity/non-inheritance, then observes non-destructive `ROLLBACK_INCOMPLETE` cleanup.
+- Evidence: `py_compile`, full witness suite=`16 tests OK`, `git diff --check` PASS; only temporary fixture paths/fork, no project source/data/cache/GPU/child/training.
+- Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Prohibited: all real materialization/source/checkpoint/manifest/data/cache I/O, collection/publication, child/runtime/config, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
