@@ -644,6 +644,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: formal Gitlink unchanged; `git diff --check` PASS. No helper execution, Git/remote/filesystem I/O, request construction, materialization, launcher, source/checkpoint/manifest/data/cache access, child/runtime, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
 - Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-14 — Implementation close review: projection preflight
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`.
+- Formal root: `b85584e18b9b4ebaf85d4a07f63a9d87908e0c98`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only approved root pure-stdlib module/test. Evidence: `py_compile`, direct unittest `3/3`, and `git diff --check` PASS; no Git/network/filesystem in helper/test, no request construction or runtime execution.
+- Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-14 — Remediation design review: projection preflight v0.3
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`.
