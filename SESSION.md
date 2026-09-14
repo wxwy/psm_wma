@@ -6,6 +6,7 @@
 - 三方同pair final齐全，形成含REQUEST_CHANGES的整改令牌：仅可评估并实施docs-only replacement request remediation；不得执行Stage-1 materialization/retry/launcher，禁止source/checkpoint/manifest/data/cache I/O、child/runtime、GPU、训练、评测、推理与LIBERO4IN1。下一步先对v0.4 §34与v0.2 JSON闭包逐字段比对，确定是否需要独立docs-only design override；不得静默弱化self-identity或freshness契约。
 - 认领`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`的docs-only澄清：预计仅新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.5.md`，并更新`SESSION.md`/`TODO.md`。目标是把数学上不可自嵌的whole-file SHA明确替换为可机械验证的canonical-JSON/Markdown-sidecar pair binding，不缩小任何完整closure、same-round freshness或one-attempt边界；完成后静态核验、提交并重新三方审核设计。
 - v0.5已完成最小docs-only修订：明确canonical JSON raw bytes与formal-tree Markdown sidecar的五项绑定，保留所有v0.3/v0.4 closure字段及fresh snapshot要求；`git diff --check` PASS。未执行项目代码、remote查询、launcher/materializer、真实I/O、child/GPU或训练；待仅这三份root文档提交后申请设计重审。
+- v0.5审核送达回执（2026-09-14 18:53 CST）：formal pair=root=`6af03900ab4080c6437a4aa4154ebec50b6617ef`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已append至live Inbox（前=`99821` bytes、追加后低于128KiB）并由ledger=`40fa1bf5e59ad9538c319f4322c1c48aed640db3`推送；MM/DS均以`send-keys -l → ≥1秒 → 独立Enter → 独立capture`送达，capture显示完整申请离开输入框并进入会话处理。MM早先一次非分离Enter的尝试不作为送达回执；其后已完成上述唯一有效三联回执，后续不得重复发送。下一步=每三分钟完整远端锁定、exact review scan与MM/DS capture；同pair三方final前保持REVIEW，禁止request构造、materialization、真实I/O、child、GPU及训练。
 
 ## Stage-1 v1.7 launcher replay 已关闭；request-instance design 准备（2026-09-14，IN_PROGRESS）
 
