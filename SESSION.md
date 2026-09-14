@@ -5250,6 +5250,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi=`REQUEST_CHANGES`（5项 witness缺口）；两 pane capture成功、未截断。
 - ChatGPT缺件且Kimi为REQUEST_CHANGES，无推进令牌；保持`REVIEW`，禁止整改、真实I/O、GPU或训练。
 
+### Collection adapter 整改复核观察凭证 #138（2026-09-14 08:55 CST，REVIEW → IN_PROGRESS）
+
+- `before_head=a2c7eca95999c149018eab4fb84bcbbbd21f77ef`；fetch成功；advertised/tracking均=`a2c7eca95999c149018eab4fb84bcbbbd21f77ef`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
+- exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_immutable_source_collection_real_adapter_cpu_static_24253e0_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:306)`（descriptor-anchored snapshot、高可靠 evidence parent、native direct-path witnesses）；MM `mm:0.0` final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi `kimi:0.0` final=`REQUEST_CHANGES(tools/psm_wma/test_immutable_source_collection.py:136)`（6项 direct witness）。
+- 三方 final 同 pair 已齐，形成含 REQUEST_CHANGES 的汇总令牌，仅授权在既有两文件 allowlist 内完成 temporary-fixture CPU/static 整改；禁止真实I/O、child、GPU或训练。下一步：评估并实施 descriptor/parent authority 与 native seam witnesses，验证后形成新 formal root 重新送审。
+
 ### Collection adapter 整改复核观察凭证 #137（2026-09-14 08:50 CST，REVIEW）
 
 - `before_head=7c4edf0121cdb1d272ebe950cb5037386fd8f99b`；fetch成功；advertised/tracking均=`7c4edf0121cdb1d272ebe950cb5037386fd8f99b`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
