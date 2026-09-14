@@ -13,37 +13,42 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `07d558546d2e57df8777f661fab74bc404735ed7`
+- immediate prior live blob SHA: `f92dff2daca091d1e94df157aa8dbf008da411f0`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Stage-1 v1.7 request-instance design v0.9 REQUEST_CHANGES
+## CODEX NOTICE — Stage-1 v1.7 request-instance design v1.0 APPROVE
 
 Formal pair:
-- root design SHA: `de92df512e1a239e7c2fd2d8d6ea60c5fc9ca02c`
+- root design SHA: `9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.9.md:22)`
+`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v09_de92df5_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v10_9c8b4ad_93a89ba.md`
 
 Canonical review commit:
-`1773f888410c562b8e3a34d3b66b3b10ca8307e3`
+`e60903295d9e3839c9c08c10bc1d71b326a42aec`
 
-Current blockers: `1 HIGH`; Design/Authority: `1 HIGH`; Production: `0`; Evidence: `0`; child/runtime: `0`.
+Current blockers: `0`; Design/Authority: `0`; Production: `0`; Evidence: `0`; child/runtime: `0`.
 
-Blocker summary:
-- v0.9 closes the prior outer-as-Git-source error and the generic future-root allowlist contradiction, but the complete canonical `ReplayBinding` authority is still not frozen/sourced by the closed P0 allowlist. The replay helper validates a supplied binding but does not provide the canonical binding constructor/value; the complete canonical tuple currently appears in the replay test object, which v0.9 does not allow P0 to read. Freeze the full binding literals or an exact immutable binding factory/object and reject all drift before replay.
+Closure summary:
+- v1.0 directly freezes the complete canonical `ReplayBinding` as design literals: every scalar plus exactly 8 ordered parser rows and 8 ordered source rows.
+- The frozen tuple matches the already-closed replay witness; its parser/source table digests exactly equal the replay helper's canonical digests.
+- P0 remains limited to the exact base/helper/adapter objects; no test, ambient, history, future-root or alternate binding authority is allowed.
+- P0/P1 remain non-consuming; C consumes immediately before first freshness observation and is one-shot/no-retry.
+
+Authorization is narrow: construct one docs-only Stage-1 v1.7 request instance under this frozen design, then stop for independent exact-pair review.
 
 Still NOT authorized:
-- request construction under v0.9;
 - Stage-1 materialization/execution/retry;
 - launcher/materializer execution;
-- source/checkpoint/manifest/data/cache/runtime I/O outside a future specifically approved construction allowlist;
+- source/checkpoint/manifest/data/cache runtime I/O outside the separately approved construction allowlist;
+- collection/receipt/publication;
 - child/runtime mutation;
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
