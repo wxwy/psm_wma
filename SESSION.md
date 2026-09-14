@@ -5248,6 +5248,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 已检查 live Inbox 容量=`50439 bytes`，本次 request 约 2 KiB，低于 `131072 bytes` 上限；request 已 append。待将 Inbox/本回执提交推送后，严格按 `send-keys -l -> >=1s -> Enter -> capture` 向 MM/Kimi 送达，随后开始三分钟审核轮询。
 - 本 pair 未获三方 final 前禁止 launcher/witness implementation、真实 Git/worktree/materialization、source/checkpoint/manifest/data/cache I/O、GPU 与训练。
 
+### Authority-root causal-worktree identity v0.5 送达回执（2026-09-14 10:48:36 CST，REVIEW）
+
+- ChatGPT：request 已 append 至 canonical live Inbox，并随 ledger `c5190ec5054737da12c7438121e4eb8260ea2127` 推送；formal target 仍为 `019643a9b17ebdda8f74b5c5fac90cb37c23f18f`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM：`mm:0.0` 通过 `send-keys -l` 写入完整同-pair申请，间隔 >=1 秒后独立 Enter；capture 显示申请已离开输入框，会话进入 `Enchanting…` 处理。
+- Kimi：`kimi:0.0` 同样经 `send-keys -l -> >=1s -> Enter`；capture 显示完整申请作为会话消息并进入 `thinking`，输入框为空。
+- 两 pane 均已送达；下一轮最早三分钟后按完整远端锁定、exact review 扫描和两 pane capture 重查。该 pair 未获三方 final 前，禁止实施、真实 I/O、GPU 与训练。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
