@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Stage-1 v1.7 recovery design v1.2 完整观察凭证 #1（2026-09-14 23:10 CST，REVIEW）
+
+- Formal pair=root=`19181644aa7d8f08abfdc9c206f24d2dfc9acb1e`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=19fb522c8ea51201ec37af7d62215878a68669c6`；fetch成功；advertised/tracking均=`19fb522c8ea51201ec37af7d62215878a68669c6`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索=`rg -l -F '19181644aa7d8f08abfdc9c206f24d2dfc9acb1e' docs/collab/chatgpt/reviews/ || true`无输出；MM=`mm:0.0` final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`（附非阻塞措辞精度建议）；DS=`ds:0.0` final同为`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`（附LOW措辞建议）。独立命令均成功且未截断。
+- ChatGPT formal review缺件，三方final未齐且无推进令牌；保持REVIEW，禁止P0/P1/C、request构造、materialization、真实I/O、child、GPU和训练。
+
 ## Stage-1 v1.7 recovery design v1.1 完整观察凭证 #5 / docs-only整改令牌（2026-09-14 23:04:15 CST，IN_PROGRESS）
 
 - Formal pair=root=`7b528dc2fb754d9f27cab6ae157c15abaec654bc`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=8a1faef753138e1a619cd161778f1ead6c51f281`；fetch成功；advertised/tracking=`27cbc73239ed8d9ba588bbcaa2c6de36d539c146`；新增完整范围=`0f95c242 docs: add ChatGPT review for stage1 v17 recovery design v11`、`27cbc732 docs: publish ChatGPT stage1 recovery design approval`；祖先判定=0；ff-only成功。
