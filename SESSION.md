@@ -5950,3 +5950,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=11e493e1f309a0833a34db7ef6acc724d8c685a9`；fetch成功；advertised/tracking均=`11e493e1f309a0833a34db7ef6acc724d8c685a9`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
 - ChatGPT exact检索`rg -l -F '9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a' docs/collab/chatgpt/reviews/`无命中。MM=`mm:0.0` capture在已提交 v1.0 application 后给出`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`（2026-09-14 22:16:33）；结合其紧邻的v1.0 literal-binding分析，计为该pair批准。DS=`ds:0.0` capture成功但当前尾部只有与用户的全链路回溯审核讨论，未出现v1.0 final verdict，DS=处理中。
 - 全部独立命令成功且未截断；ChatGPT/DS final缺失，无推进令牌，禁止request构造、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance v1.0 完整观察凭证 #2（2026-09-14 22:23:47 CST，REVIEW）
+
+- Formal pair与冻结名册不变。`before_head=1b79bea99706269c632069d15be967ddad40d5aa`；fetch成功；advertised/tracking均=`1b79bea99706269c632069d15be967ddad40d5aa`；新增范围为空；祖先判定=0；ff-only=`Already up to date`；ChatGPT exact review检索仍无命中。
+- MM=`mm:0.0` capture维持已提交v1.0后的目标`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。DS=`ds:0.0`本轮起始capture无v1.0 final；已按未完成送达的恢复节奏发送一次含完整pair的提醒，完成`send-keys -l → >=1秒 → 独立Enter → capture`，capture显示提醒离开输入框且会话busy。DS仍处理中。
+- 全部独立检查成功且未截断；ChatGPT/DS final缺失，无推进令牌，禁止request构造、materialization、真实I/O、child、GPU和训练。
