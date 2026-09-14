@@ -6,6 +6,10 @@
 
 - v0.6送达回执（2026-09-14 20:25 CST，REVIEW）：ChatGPT申请已由live Inbox ledger=`a09f758e`推送；MM=`mm:0.0`、DS=`ds:0.0`均完成`send-keys -l → ≥1秒 → 独立Enter → capture`，capture分别显示`Inspecting v0.6 design`及完整申请进入transcript。后续三分钟完整轮询；同pair final前保持REVIEW。
 
+- request-instance v0.6完整观察凭证 #1 / 整改令牌（2026-09-14 20:28 CST）：formal pair=root=`76307bb65c08c1f9f35e3832be89c9cc617953eb`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=65ffdb6c9e5e2c159e53a3162d227302c5353395`；fetch成功；advertised/tracking均=`66818c7edb267045f057e58bf76e1aa3239c666b`；新增=`c00ac2e3 review: request v0.6 construction design fixes`、`66818c7e review: notify Codex v0.6 construction design blockers`；祖先判定=0；ff-only成功。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v06_76307bb_93a89ba.md` final=`REQUEST_CHANGES(...v0.6.md:27)`，HIGH为Phase C消费点矛盾、Phase P outer/adapter来源未授权；MM=`mm:0.0` final=`APPROVE_TO_CONSTRUCT...`；DS=`ds:0.0` final=`REQUEST_CHANGES`，同意上述两项并附replay binding MEDIUM。三方final同pair齐全，形成仅docs-only v0.7整改令牌；禁止request构造、真实I/O、child、GPU和训练。
+
+- v0.7 docs-only最小整改：新增v0.7，定义P0只读formal Git-object acquisition/replay binding（不消费）、P1 injected-byte pure projection（不消费）、C于首freshness observation前唯一消费；C内任一失败no-retry。未执行项目代码/真实I-O/request构造/child/GPU/训练；待diff-check、提交及独立三方设计审核。
+
 - 认领`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN` v0.6 docs-only replacement design：预计新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.6.md`并更新`SESSION.md`/`TODO.md`。范围是将已关闭的pure projection helper纳入新construction authority的Phase P precondition，冻结与唯一Phase C构造attempt的隔离；不修改运行代码、不执行I/O或构造request。
 
 - request-instance design v0.6已完成（2026-09-14，REVIEW准备）：新增v0.6，明确已关闭`0791677...` projection helper只能作为不消费authority的Phase P；Phase C仅在同轮allowlist freshness成功后开始并消费唯一construct authority，任何失败无retry。保留two-query success/absence、request Markdown/JSON detached identity及所有真实I/O/child/GPU/训练禁令。`git diff --check` PASS；未执行项目代码、request构造、真实I/O、child、GPU或训练。下一步=提交仅docs/coordination文件，以新formal pair三方审核`APPROVE_TO_CONSTRUCT`。
