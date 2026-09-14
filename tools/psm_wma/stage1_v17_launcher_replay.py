@@ -1,6 +1,7 @@
 """Pure Stage-1 v1.7 launcher payload replay; intentionally no I/O entrypoint."""
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import re
@@ -50,15 +51,31 @@ _GUARDS = {
     "2427": ("len(RAW[2])!=", " or tuple(digest(x) for x in RAW)!="),
     "72777bd7305c760c48c069eafd068f1a538383a6fdb8d40258acf3d8fc3b7ae2": ("+(\"", "\",): fail(\"embedded authority\")"),
 }
+_BOOT_ROWS = frozenset(("7538", "7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8"))
+
+
+def _function_span(raw: str, name: str) -> tuple[int, int]:
+    try:
+        tree = ast.parse(raw)
+    except SyntaxError:
+        _fail("source_target")
+    node = next((item for item in tree.body if isinstance(item, ast.FunctionDef) and item.name == name), None)
+    if node is None or node.end_lineno is None:
+        _fail("source_target")
+    lines = raw.splitlines(keepends=True)
+    return sum(map(len, lines[:node.lineno - 1])), sum(map(len, lines[:node.end_lineno]))
 
 
 def _replace_once(raw: str, old: str, new: str) -> str:
     guard = _GUARDS.get(old)
     if guard is not None:
         token = guard[0] + old + guard[1]
-        if raw.count(token) != 1:
+        start, end = _function_span(raw, "boot" if old in _BOOT_ROWS else "main")
+        region = raw[start:end]
+        if raw.count(token) != 1 or region.count(token) != 1:
             _fail("source_target")
-        return raw.replace(token, guard[0] + new + guard[1], 1)
+        changed = region.replace(token, guard[0] + new + guard[1], 1)
+        return raw[:start] + changed + raw[end:]
     if raw.count(old) != 1:
         _fail("source_target")
     return raw.replace(old, new, 1)
