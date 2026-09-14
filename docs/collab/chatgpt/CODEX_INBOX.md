@@ -842,3 +842,13 @@ The immediately preceding v1.4 ledger entry's full root was transcribed incorrec
 ### Canonical correction — v1.4 formal-root and prior correction placement
 
 For the immediately preceding v1.4 request, replace the displayed root with the only valid formal root `cb80b88c86b2af19c6d677e630a0615c5b451626`; child/Gitlink remains `93a89ba61306d840a008813f62f26a34d54850f4`. The earlier `### Correction — v1.4 formal-root transcription` block was inserted before the v1.4 entry by mistake; it is superseded by this trailing correction. No review may use `cb80b88c69e9f477d8ec08fa6c6f8a4bb57a4a0a`.
+
+## 2026-09-15 — Stage-1 v1.7 request-instance recovery design v1.5
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V15`
+- Formal root: `b9a460330a2dc4ff1b9d034ae4986fa490e74ad7`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Evidence: `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.5.md`; only docs/status changes.
+- Review scope: strict single `bytes → UTF-8 str` consumer seam, bound byte/text identities, and no-CR/exact-LF/empty-line round-trip witness for the deterministic two-file patch encoder.
+- Requested verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: all C/request construction before approval, materialization, runtime, source I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
