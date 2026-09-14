@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Stage-1 v1.7 recovery design v1.1 完整观察凭证 #1（2026-09-14 22:46:08 CST，REVIEW）
+
+- Formal pair=root=`7b528dc2fb754d9f27cab6ae157c15abaec654bc`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=772dbc8d3c3144de285df7763dd25e53a3e26ca8`；fetch成功；advertised/tracking均=`772dbc8d3c3144de285df7763dd25e53a3e26ca8`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索命令=`rg -l -F '7b528dc2fb754d9f27cab6ae157c15abaec654bc' docs/collab/chatgpt/reviews/ || true`，无命中；MM=`mm:0.0` capture final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；DS=`ds:0.0` capture final=`REQUEST_CHANGES`：future request formal parent/child未显式冻结，要求显式固定parent/Gitlink或声明与v1.0 `ReplayBinding.formal_parent`同一。独立命令均成功且未截断。
+- ChatGPT缺正式review且三方final未齐，无整改令牌；保持REVIEW，禁止基于DS单方意见修改既有审核对象、构造request、materialization、真实I/O、child、GPU和训练。
+
 ## Stage-1 v1.7 request-instance v1.0 construction fail-close（2026-09-14 22:40 CST，BLOCKED）
 
 - 已批准的v1.0推进令牌下，P0/P1先成功完成：冻结base/replay/adapter/projection身份匹配，parser=`2336/1a9543ec3e7ef4f37b4948dde2a6a9532b13a8415291cceafd90b9692c028333`、outer=`18875/658e9b9e6f34964310d6e2a5519c3b70243971b5ef535d753192e3d59d1960b8`，且`writes=0`、`freshness_observations=0`。
