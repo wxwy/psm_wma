@@ -5898,3 +5898,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`de92df512e1a239e7c2fd2d8d6ea60c5fc9ca02c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`，用户指定替代 Kimi）。仅请求`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`。
 - 本轮只读远端锁定：`before_head=fd160149604c4d81de955858026a0f77473707fb`；fetch成功；advertised/tracking均=`fd160149604c4d81de955858026a0f77473707fb`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。exact ChatGPT检索`rg -l -F 'de92df512e1a239e7c2fd2d8d6ea60c5fc9ca02c' docs/collab/chatgpt/reviews/`无命中；MM capture只见短SHA旧申请的无pair verdict，DS capture只见v0.8 pair verdict。旧送达记录不足，不能作为v0.9送达/最终意见。
 - 已发现原 v0.9 Inbox 条目位于 live ledger 中段且使用短SHA；本次仅以追加式 canonical correction 补齐完整pair。下一步=提交/推送此ledger与名册修复，随后对MM/DS按`send-keys -l → >=1秒 → 独立Enter → capture`重新送达；三方同pair final前禁止整改、request构造、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance v0.9 审核送达回执（2026-09-14，REVIEW）
+
+- ChatGPT：canonical live Inbox的完整 formal-pair 追加申请已由 ledger=`2900bb88805a2c62823ab92efffec80c669ecc23`推送。DS=`ds:0.0`：已完成完整 `send-keys -l → 间隔>=1秒 → 独立Enter → 独立capture`；capture显示完整pair申请离开输入框并进入会话，当前busy。
+- MM=`mm:0.0`：pane保留一条先前不含完整pair的未发送澄清草稿；本轮多种清空控制键均未使该草稿离开输入框，故没有伪造新申请回执，状态=送达恢复中。不得把旧短SHA `APPROVE` 计作 v0.9 final。下一步仅恢复MM的可核验完整pair送达，再以三分钟间隔作完整三方审核观察；禁止整改、request构造、materialization、真实I/O、child、GPU和训练。
