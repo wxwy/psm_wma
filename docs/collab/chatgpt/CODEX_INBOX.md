@@ -823,3 +823,22 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Allowed if approved: one future docs-only request-pair construction followed by independent request review.
 - Prohibited: materialization, launcher/runtime, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
 - Requested verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
+### Correction — v1.4 formal-root transcription
+
+The immediately preceding v1.4 ledger entry's full root was transcribed incorrectly after the correct short prefix `cb80b88c`. The only authoritative v1.4 formal root is `cb80b88c86b2af19c6d677e630a0615c5b451626`; its child/Gitlink remains `93a89ba61306d840a008813f62f26a34d54850f4`. All other scope and verdict text in that v1.4 entry is unchanged. The incorrect full SHA is not a review target.
+
+## 2026-09-15 — Stage-1 v1.7 request-instance recovery design v1.4
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V14`
+- Formal root: `cb80b88c69e9f477d8ec08fa6c6f8a4bb57a4a0a`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Evidence: `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.4.md`; formal tree only changes that design and coordination records.
+- Remediation scope: one literal Gate identity and the byte-exact, opaque producer `patch_raw` → one `apply_patch(patch_raw)` consumer seam, including fixed encoder, patch length/SHA, post-write byte equality, canonical/sidecar verification and terminal partial-residue policy.
+- Allowed if approved: exactly one future docs-only request pair construction, then independent request review.
+- Prohibited: materialization, launcher/runtime, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+- Requested verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
+### Canonical correction — v1.4 formal-root and prior correction placement
+
+For the immediately preceding v1.4 request, replace the displayed root with the only valid formal root `cb80b88c86b2af19c6d677e630a0615c5b451626`; child/Gitlink remains `93a89ba61306d840a008813f62f26a34d54850f4`. The earlier `### Correction — v1.4 formal-root transcription` block was inserted before the v1.4 entry by mistake; it is superseded by this trailing correction. No review may use `cb80b88c69e9f477d8ec08fa6c6f8a4bb57a4a0a`.
