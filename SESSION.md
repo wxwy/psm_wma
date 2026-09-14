@@ -8,6 +8,8 @@
 
 - v1.2已新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.2.md`：仅冻结上述parent/child与v0.3 JSON/Markdown pair的四元literal，明确P0 object source、P1 closure、future request JSON/Markdown均逐字绑定该tuple。`git diff --check` PASS；SHA-256=`10c81a9b7e79c7ff69d0fad50c17bad233858820f1d9b40a0355c38e5c8fda80`；未执行项目代码/真实I-O/request/materialization/child/GPU/训练。下一步=提交该最小docs/coordination step并以新formal pair重审。
 
+- v1.2审核名册冻结：formal pair=root=`19181644aa7d8f08abfdc9c206f24d2dfc9acb1e`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。仅请求`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`；三方同pair final前禁止request构造、materialization、真实I/O、child、GPU和训练。
+
 ## Stage-1 v1.7 recovery design v1.1 完整观察凭证 #4（2026-09-14 22:59:43 CST，REVIEW）
 
 - Formal pair/root-child及冻结名册不变。`before_head=06ecb47687349a441d966990e19f99aed6e81e87`；fetch成功；advertised/tracking均=`06ecb47687349a441d966990e19f99aed6e81e87`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。

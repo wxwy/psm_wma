@@ -802,3 +802,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `git diff --check` PASS. No request construction, materialization, launcher/materializer execution, source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 - Forbidden before a same-pair final approval: request construction, materialization/retry, launcher/materializer execution, all real source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-14 — Recovery design remediation review: Stage-1 v1.7 request-instance v1.2
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN`.
+- Formal root: `19181644aa7d8f08abfdc9c206f24d2dfc9acb1e`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only docs remediation `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.2.md` plus task records; formal tree is exactly these three paths, no child/runtime code change. Design SHA-256: `10c81a9b7e79c7ff69d0fad50c17bad233858820f1d9b40a0355c38e5c8fda80`.
+- Remediation: resolves DS v1.1 `REQUEST_CHANGES` by freezing future request formal parent=`08d5828cdb4c12afa3b798ff01826c91ceb8755a` and child Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`, requiring byte-for-byte equality to v1.0 `ReplayBinding.formal_parent` and `--child-gitlink`. The same literal tuple is required in P0 object source and future JSON/Markdown. v0.3 output pair and P0/P1/C lifecycle are otherwise unchanged.
+- Evidence: `git diff --check` PASS. No request construction, materialization, launcher/materializer execution, source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+- Forbidden before same-pair final approval: request construction, materialization/retry, launcher/materializer execution, all real source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
