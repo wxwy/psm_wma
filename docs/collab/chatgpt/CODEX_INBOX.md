@@ -755,3 +755,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Review focus: v0.5's one construction authority was consumed at zero-output AST failure. v0.6 makes closed projection root `079167743685247d6aae62a671436e834411a3cb` a non-consuming Phase-P precondition, isolates exactly one Phase-C construction attempt, retains the two-query fresh allowlist, detached JSON/Markdown whole identity, zero-mutation fail-close, and no-retry hard stop. Approval must authorize only construction of one future docs-only request pair, which itself needs a new exact-pair review.
 - Evidence: formal tree contains only the three listed root docs/coordination paths; Gitlink unchanged; `git diff --check` PASS. No project code, request construction, Git/network/filesystem runtime I/O, materialization, child, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1 occurred.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Design remediation review: Stage-1 v1.7 request-instance construction v0.8
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`.
+- Formal root: `6a2f52d6adc641edb0ac9215c72481a7dfca620a`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only docs `PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.8.md` plus `SESSION.md`/`TODO.md`; no project or child code changes. The formal tree contains only these three paths.
+- Exact remediation: v0.7 P0 failed before C because it asked formal parent `08d5828…` for the later helper path. v0.8 proves and freezes the actual replay base as parent path `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py`, blob `af19a9eb66ecaf8bd0b92a48ab1867f105026658`, 18966 bytes, SHA-256 `8b0fad39857fb72e3a3eb317f4acf6f2d6e94e196935f52f07d6170e79c678dd`; it separately binds the replay helper to implementation root `50b0bff…`. No P1, C, freshness observation, output, materialization, or request occurred, so v0.7 construction authority was not consumed.
+- Evidence: parent-tree blob lookup, raw-byte SHA/length and formal Gitlink were independently checked; `git diff --check` PASS. The P0/P1 non-consuming versus C-before-first-observation one-attempt/no-retry semantics are unchanged.
+- Forbidden: request construction before same-pair approval; materialization/retry; launcher/materializer execution; source/checkpoint/manifest/data/cache I/O; child/runtime mutation; GPU/CUDA/torchrun; training/evaluation/inference/LIBERO4IN1.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
