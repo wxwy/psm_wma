@@ -5701,3 +5701,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM：`mm:0.0`使用`send-keys -l`写入完整 pair，等待≥1秒后独立`Enter`；capture显示完整申请已进入transcript且输入框为空，pane为`Leavening`处理中。
 - DS：`ds:0.0`使用相同`send-keys -l -> >=1s -> Enter`；capture显示完整申请已进入transcript，pane busy。两条消息均明确请求literal verdict并重申docs-only禁止边界。
 - 冻结名册不变。现有构造令牌仍仅来自 #1 已齐的same-pair final；补正送达仅修复审阅中发现的canonical/完整SHA回执缺口。下一实际构造动作前必须重新读取本凭证、TODO与formal design，并保持docs-only范围。
+
+### Rebound Stage-1 request v1.4 构造与静态验证（2026-09-14，REVIEW准备）
+
+- 依据rebind design #1 的全批准构造令牌，新增docs-only v1.4 Markdown/JSON；formal parent=`08d5828cdb4c12afa3b798ff01826c91ceb8755a`，child=`93a89ba61306d840a008813f62f26a34d54850f4`。JSON显式冻结new-parent launcher base=`af19a9eb66ecaf8bd0b92a48ab1867f105026658`/`8b0fad39857fb72e3a3eb317f4acf6f2d6e94e196935f52f07d6170e79c678dd`/`18966`，且唯一FD8 pair、parser/bootstrap/contract/payload identities均重算。
+- stdlib canonical verifier PASS：JSON=`8482 bytes`、SHA-256=`831f9d8a246029333c07621debd197ff0ac8bdf1ccf7c9da4215ce8bf7c14b85`；formal parent/base字段与single owner-FD断言PASS；`git diff --check` PASS。未执行materializer，未创建clean root/index/ref/evidence，未读checkpoint/manifest/data/cache，未改child/GPU/训练。
+- 下一步仅可提交该root docs-only request，formal-tree/Gitlink复核后以新exact pair三方审核；无新pair全批准前禁止其执行。
