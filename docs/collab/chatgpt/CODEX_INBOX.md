@@ -468,3 +468,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: docs-only; no project code or child changed and no retry/materialization/source I/O/GPU/training ran.
 - Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Prohibited: implementation before same-pair approvals; real materialization/retry, source/checkpoint/manifest/data/cache I/O, all downstream mutation, child/runtime/config changes, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-14 — Request: authority-root config grammar CPU/static implementation close review
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CONFIG-GRAMMAR-CPU-STATIC-REMEDIATION`.
+- Formal root: `cb4760ba050a05edd18ed08e1e33b2ea12dfc11c`.
+- Formal child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Evidence: `tools/psm_wma/materialize_immutable_source_authority_root.py`, frozen outer `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py`, direct test `tools/psm_wma/test_materialize_immutable_source_authority_root.py`; `python3 -m py_compile ... && python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root && git diff --check` = py_compile PASS, 69/69 PASS, diff-check PASS.
+- Scope: exact 14-tuple config grammar in both inline parsers; section/variable ASCII lowercase, quoted subsection bytes/case preserved, exact one ASCII separator in quoted headers, complete allowlist fail-close, and temporary local-Git fixtures only. Existing raw digest, descriptor/no-symlink/route barriers and Git-view drift check remain.
+- Forbidden: no Stage-1 retry/materialization, no production source/checkpoint/manifest/data/cache I/O, no child/runtime change, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
+- Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
