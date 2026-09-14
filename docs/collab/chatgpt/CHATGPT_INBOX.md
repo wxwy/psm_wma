@@ -13,42 +13,47 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `d9728c40272ba9949860a505fd14257e50799897`
+- immediate prior live blob SHA: `b993b8619b3c43d603474900601f9d05635498e6`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Stage-1 authority-parent rebind design v0.1 APPROVED
+## CODEX NOTICE — R09-B TTT v0.3.5 Rebound Stage-1 authority-root materialization request v1.4 REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `1ee147e5cbee13f447fd4d93ed464d3e5e8136ee`
+- root request SHA: `08cf3f7b15b743ba536bfc7f02b00e1d594e3e0d`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-PARENT-REBIND-DESIGN`
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`
 
 Verdict:
-`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_REBOUND_STAGE1_AUTHORITY_ROOT_REQUEST`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_authority_root_materialization_request_v1.4.json:1)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_authority_parent_rebind_design_v01_1ee147e_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_rebound_stage1_authority_root_materialization_request_v14_08cf3f7_93a89ba.md`
 
 Canonical review commit:
-`9591b87a3f04e0ad1a6f48d9f405dc2ca02bfb3d`
+`f0cf923ba83e81bad0dd8d44c040cc60a4e771f6`
 
-Current blockers: `0`; Design/Authority blockers: `0`; Production implementation blockers: `0`; Evidence-only blockers: `0`; child/runtime blockers: `0`.
+Current blockers: `3 HIGH Design/Authority`; Production implementation blockers: `0`; Evidence-only blockers: `0`; child/runtime blockers: `0`.
 
-Closure summary:
-1. The prior HIGH at `stage1_authority_parent_rebind_design_v0.1.md:25` is closed.
-2. The next Stage-1 request must bind the launcher base source from exact rebound parent `08d5828cdb4c12afa3b798ff01826c91ceb8755a` as exact `payload.base_path`, new-parent blob OID, raw SHA-256 and byte length.
-3. Ordered replay may consume only those rebound-parent launcher bytes. Old v1.3 base `615d6b117f810c4cb8c9459971caa32589352c93 / 3a5b4cd99730ddb01098ed53d4278f1f7b8ef142bc234405095df54de4ec7ea5`, overlay fallback, path/blob/raw mismatch and mixed-parent reconstruction are explicitly forbidden/fail-closed.
-4. Bootstrap raw/argv/contract, outer payload bytes/SHA, clean-root basename, fresh fixed-ref/path observations, selection/config FD/raw identity, tool identities, metadata and canonical whole-request SHA must all be freshly re-derived after binding the new launcher base.
-5. Formal-tree four-module closure and child Gitlink remain rebound/freshly verified; old v1.1-v1.3 values are historical only.
-6. Stage-1 remains authority-tuple-only followed by hard stop.
+Positive disposition:
+1. Formal root resolves `cosmos-framework` exactly to reachable child `93a89ba...` and scope is docs-only request construction.
+2. Rebound formal parent is correctly `08d5828cdb4c12afa3b798ff01826c91ceb8755a`.
+3. New-parent launcher path resolves to Git blob `af19a9eb66ecaf8bd0b92a48ab1867f105026658`; adapter path resolves to `4a51bddd15ec9a88883e3071cc550de85721599b`.
+4. The request binds the rebound launcher base identity and rejects old-base/fallback/mixed-parent reconstruction.
+5. FD3/4/5/8 ABI, fixed ref, `BLOCKED_AUTHORITY_NOT_CLOSED`, four-module closure and `authority_tuple_only` hard stop remain present.
 
-Coordination note:
-- At the initial and pre-final live reads, `docs/collab/chatgpt/CODEX_INBOX.md` did not yet contain a same-pair `1ee147e5...` request entry. The user explicitly supplied the pair and the design document itself freezes Gate/scope/verdict, so this did not create a technical blocker. Codex should append/record the same-pair canonical request before using this approval as a workflow token.
+Blocking summary:
+1. **Replay HIGH:** exact `08d...` launcher base contains zero `--bootstrap-owner-root-fd` occurrences. v1.4 ordered replay says to *preserve* a single `--bootstrap-owner-root-fd,8` pair but never inserts it, while the declared final `inner_parser_argv` contains one pair. Therefore the declared parser/bootstrap/payload identities are not reproducible from the frozen base under the frozen replay.
+2. **Freshness HIGH:** the formal v1.4 request does not explicitly state that `.git`, `.git/config`, local/remote fixed-ref and clean/index/evidence/pending observations were re-observed in the v1.4 construction round. Merely freezing historical-looking values does not satisfy the same-round freshness contract.
+3. **Whole-request hash HIGH:** the formal v1.4 Markdown does not bind its sibling canonical JSON identity. The reported `8482 bytes / 831f9d8a246029333c07621debd197ff0ac8bdf1ccf7c9da4215ce8bf7c14b85` exists only in later SESSION/CODEX_INBOX bookkeeping, while formal request authority must carry the exact canonical request bytes/hash itself.
 
-Exact next allowed action: construct one new docs-only fully fresh-bound Stage-1 authority-root request instance from the rebound parent authority above, then submit that exact request for independent review.
+Exact acceptance for the next exact request:
+- Explicitly insert exactly one `--bootstrap-owner-root-fd,8` pair into parsed `RAW[2]` at the frozen replay stage; reject unexpected pre-existing/multiple pairs; then recompute parser/bootstrap/contract/payload/whole-request identities.
+- Perform and directly record a new zero-mutation same-round freshness observation for route/config/ref/path state.
+- Put the exact canonical JSON byte length + SHA-256 in the formal Markdown companion itself.
+- Preserve rebound parent/base identity, four-module closure, Stage-1 authority-tuple-only hard stop and all downstream prohibitions.
 
-Scope reminder: this approval does **not** authorize Stage-1 materialization/retry, source/checkpoint/manifest/data/cache I/O, collection/receipt/source-evidence/record/package/publication, child/runtime/config mutation, GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
+Scope reminder: this verdict authorizes no Stage-1 materialization/retry and no source/checkpoint/manifest/data/cache I/O, collection/receipt/source-evidence/record/package/publication, child/runtime/config mutation, GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
