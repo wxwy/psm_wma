@@ -24,6 +24,8 @@
 
 - v0.8 完整观察凭证 #8（2026-09-14 21:13 CST，REVIEW）：formal pair/root-child及冻结名册不变；`before_head=037db74d3040a5514b4de7e1b8b6dda71304f0bb`；fetch成功；advertised/tracking均=`037db74d3040a5514b4de7e1b8b6dda71304f0bb`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact检索无输出；MM=`mm:0.0`无新已提交 final，仍缺 literal-pair verdict；DS=`ds:0.0`维持#2的 exact-pair APPROVE。所有独立证据成功且未截断；无新可复核事实，保持 REVIEW，未重复发送申请、澄清或用户状态消息。
 
+- v0.8 完整观察凭证 #9（2026-09-14 21:18 CST，REVIEW）：formal pair/root-child及冻结名册不变；`before_head=859b5dbfda0db2a18ce239b2b1f94c4729c1e50a`；fetch成功；advertised/tracking均=`859b5dbfda0db2a18ce239b2b1f94c4729c1e50a`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact检索无输出；MM=`mm:0.0`无新已提交 final，仍缺 literal-pair verdict；DS=`ds:0.0`维持#2的 exact-pair APPROVE。所有独立证据成功且未截断；无新可复核事实，保持 REVIEW，未重复发送申请、澄清或用户状态消息。
+
 - request-instance v0.7审核准备（2026-09-14，REVIEW）：formal pair=root=`6361fdbcfded999e43a4efb86861f75734cef100`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`。范围仅v0.7 docs/coordination，申请`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`；禁止构造、真实I/O、child、GPU与训练。
 
 - v0.7完整观察凭证 #1（2026-09-14 20:31 CST，REVIEW）：formal pair/root-child与冻结名册不变；`before_head=e9c5b11f086f45c07e494982805a3dbea94c11ad`；fetch成功；advertised/tracking相同；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact检索=`rg -l -F '6361fdbcfded999e43a4efb86861f75734cef100' docs/collab/chatgpt/reviews/ || true`无输出；MM/DS pane均给出目标`APPROVE_TO_CONSTRUCT`，DS含v0.7技术核验，但当前final行均未逐字锚定full pair。证据均成功且未截断；无推进令牌，保持REVIEW。
