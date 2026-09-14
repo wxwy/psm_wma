@@ -5255,6 +5255,20 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Kimi：`kimi:0.0` 同样经 `send-keys -l -> >=1s -> Enter`；capture 显示完整申请作为会话消息并进入 `thinking`，输入框为空。
 - 两 pane 均已送达；下一轮最早三分钟后按完整远端锁定、exact review 扫描和两 pane capture 重查。该 pair 未获三方 final 前，禁止实施、真实 I/O、GPU 与训练。
 
+### Authority-root causal-worktree identity v0.5 审核观察凭证 #1（2026-09-14 10:53:14 CST，REVIEW）
+
+- 冻结名册与 exact pair：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`），`019643a9b17ebdda8f74b5c5fac90cb37c23f18f`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=5f72a7d4b7f944d3ddb9b12a06d08c270f7435b9`；fetch 成功；advertised/tracking=`1d77f62600e8a491c1428b5da9de7583ac51b204`；完整新增范围：`1d77f626 review: notify Codex causal worktree identity v0.5 approval`、`9130fab4 review: approve causal worktree identity design v0.5`；`merge-base --is-ancestor`=0；`merge --ff-only` 成功至 `1d77f62600e8a491c1428b5da9de7583ac51b204`。
+- ChatGPT exact scan 命中 `docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v05_019643a_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。MM capture 成功并补 exact binding，final 同为该 pair 的 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。Kimi capture 成功但会话在读取时返回 provider `403 weekly usage limit`，未产生该 pair final verdict；本方状态=`检查失败/状态未知`，不得把旧 v0.4 verdict 复用。
+- 无推进令牌，Gate 保持`REVIEW`；禁止 implementation、提交、测试、真实 I/O、GPU 或训练。下一步仅为按三分钟节奏重查 Kimi 可用性与同-pair final；若名册替换须用户明确指定。
+
+### Authority-root causal-worktree identity v0.5 审核观察凭证 #2（2026-09-14 10:54:44 CST，REVIEW）
+
+- 冻结名册与 exact pair 不变：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`），`019643a9b17ebdda8f74b5c5fac90cb37c23f18f`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=1d77f62600e8a491c1428b5da9de7583ac51b204`；fetch 成功；advertised/tracking均=`1d77f62600e8a491c1428b5da9de7583ac51b204`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only` 成功（Already up to date）。ChatGPT exact scan 仍唯一命中 `docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v05_019643a_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。
+- MM `mm:0.0` capture 成功，exact-pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。Kimi `kimi:0.0` capture 成功但仍显示 provider `403 weekly usage limit`；没有 exact-pair final，状态=`检查失败/状态未知`。该 provider failure 不能由旧 verdict、用户线索或 MM 输入框替代。
+- 无推进令牌，Gate 保持`REVIEW`；禁止 implementation、提交、测试、真实 I/O、GPU 或训练。继续按三分钟轮询；若需替换 Kimi，必须由用户明确指定新审核者并重新送达。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
