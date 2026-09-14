@@ -13,54 +13,47 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `9190aefd85ca9657235331db50768cd62eca3475`
+- immediate prior live blob SHA: `bed4ab28cbaf1737d0776a55c8677a421c416878`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Stage-1 v1.7 request-instance design v0.3 REQUEST_CHANGES
+## CODEX NOTICE — R09-B TTT v0.3.5 Stage-1 v1.7 request-instance design v0.4 APPROVED
 
 Formal pair:
-- root design SHA: `0fc7965d9d1b55a99d0b1a384764f68464b02949`
+- root design SHA: `2ccd42fadc325c10d072f236b9b5805c732446b3`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.3.md:20)`
+`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v03_0fc7965_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v04_2ccd42f_93a89ba.md`
 
 Canonical review commit:
-`19d75e5cc7afc9a6fe8dc6a0eac68c32950b5631`
+`bbb9770d16a900f41e7b68487ef80320b5928828`
 
-Current blockers: `1 HIGH`; Design/Authority: `1 HIGH`; Production/Authority: `0`; Evidence/Scope: `0`; child/runtime: `0`.
+Current blockers: `0`; Design/Authority: `0`; Production/Authority: `0`; Evidence/Scope: `0`; child/runtime: `0`.
 
-Closed in v0.3:
-1. v0.2's read-only construction I/O allowlist remains explicit and closed.
-2. The prior DS remote-ref finding is substantively fixed: exactly two remote queries are allowed, one for advertised `V2` identity and one for fixed authority-ref absence.
-3. Local fixed authority-ref absence and remote fixed authority-ref absence are separately bound; the latter is sourced only from the exact fixed-ref remote query.
-4. Formal parent/base/replay identities remain frozen; v1.6 remains consumed/non-reusable; the design remains construction-only and requires a new exact request review before any Stage-1 attempt.
-5. Formal root Gitlink resolves exactly to reachable child `93a89ba...`; child/runtime production bytes are unchanged.
+Closure summary:
+1. v0.4 closes the sole v0.3 HIGH. Both permitted exact `git ls-remote` observations must complete within the frozen timeout with `returncode == 0`; empty stdout alone is never treated as success.
+2. The future canonical request must bind, separately for both remote queries, the exact command, return code, stdout raw-byte length/SHA-256 and stderr raw-byte length/SHA-256.
+3. Fixed authority-ref remote absence is established only by the exact second query succeeding with zero stdout bytes, zero result lines and zero stderr bytes. Nonzero return code, timeout, transport/auth/DNS error, diagnostics, malformed response or nonempty stdout fail closed as `BLOCKED_AUTHORITY_NOT_CLOSED` and cannot establish absence.
+4. The V2 query likewise only becomes advertised-identity authority after successful completion.
+5. Previously closed construction boundaries remain intact: exactly two remote queries; zero mutation; frozen formal parent/base/replay identities; fixed docs-only output paths; v1.6 consumed/non-reusable; one future request only; and independent same-pair three-party review of that exact request before any Stage-1 attempt can be authorized.
+6. Formal root Gitlink resolves exactly to reachable child `93a89ba...`; child/runtime production bytes are unchanged.
 
-Remaining HIGH — empty remote stdout is not sufficient absence authority:
-- v0.3 line 20 says the exact fixed-ref `git ls-remote` query establishes remote absence when its output is empty, and binds command/output bytes/length/SHA.
-- It does not require or bind a successful command return code.
-- A transport/DNS/auth/remote-access failure can also leave stdout empty. That is observation failure, not proof that the authority ref is absent.
+Authorized consequence:
+- construct exactly one fresh root docs-only Stage-1 v1.7 request-instance Markdown/JSON pair under the frozen v0.4 construction allowlist.
 
-Exact remediation:
-1. Keep the exact two-query network allowlist and all current zero-mutation boundaries.
-2. Require both remote queries to complete successfully (`return code == 0`) before their stdout is authority, and bind each return code into the future canonical request.
-3. Define fixed authority-ref remote absence as exactly successful exact query + zero stdout bytes/zero result lines. Nonzero exit, timeout, transport/auth error, malformed result, or nonempty stdout must fail `BLOCKED_AUTHORITY_NOT_CLOSED` and must not be interpreted as absence.
-4. Prefer binding stderr bytes/length/SHA too, or freeze an equivalent explicit successful-query diagnostic contract.
-5. Preserve one-request-only construction, frozen output paths and identities, and independent same-pair request review before any execution authority.
-
-Still NOT authorized:
-- request construction under this unresolved design;
-- Stage-1 retry/materialization/execution;
+Still NOT authorized by this design approval:
+- Stage-1 materialization/execution/retry;
 - launcher/materializer execution;
-- source/checkpoint/manifest/data/cache/runtime I/O outside the approved construction allowlist;
+- reuse or revival of consumed v1.6 authority;
+- source/checkpoint/manifest/data/cache/runtime I/O outside the construction allowlist;
+- downstream collection/receipt/record/package/publication;
 - child/runtime mutation;
-- GPU/CUDA/torchrun, training, evaluation, inference, or LIBERO4IN1.
+- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
