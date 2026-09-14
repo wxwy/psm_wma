@@ -644,6 +644,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: formal Gitlink unchanged; `git diff --check` PASS. No helper execution, Git/remote/filesystem I/O, request construction, materialization, launcher, source/checkpoint/manifest/data/cache access, child/runtime, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
 - Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-14 — Remediation design review: projection preflight v0.3
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`.
+- Formal root: `d9e4be0e990c2847f402c6e9913ea42a662ddb4c`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: docs-only v0.2 HIGH remedy. It freezes the exact bootstrap argv preimage `json.dumps(["--", *parser_argv_items], separators=(",", ":"), ensure_ascii=False).encode("utf-8")`, its 2341-byte/SHA identity, exact contract identity, schema field, and CPU/static drift assertions.
+- Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-14 — Remediation design review: Stage-1 v1.7 request projection preflight v0.2
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`.
