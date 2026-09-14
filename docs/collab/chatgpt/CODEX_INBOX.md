@@ -652,3 +652,11 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Exact remediation: construction may issue exactly two remote queries: `refs/heads/V2` only to bind advertised V2 identity, and `refs/heads/authority/r09-b-ttt-v035-immutable-source-v1` only to prove the fixed remote authority ref has empty output. Both complete raw outputs/lengths/SHA bind into the future request; the latter is the sole remote-absence authority. No fetch/push/other ref/network/service query is permitted.
 - Forbidden: request construction before approval; materialization/retry; launcher/materializer execution; source/checkpoint/manifest/data/cache content I/O; collection/receipt/record/package/publication; directory/ref/artifact creation; child/runtime mutation; GPU/CUDA/torchrun; training/evaluation/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Remediation design review: Stage-1 v1.7 request-instance construction v0.4
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`.
+- Formal root: `2ccd42fadc325c10d072f236b9b5805c732446b3`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs v0.4 plus coordination records; no request construction/execution.
+- Exact remediation: both permitted `git ls-remote` observations must bind returncode/stdout/stderr identities; authority-ref absence means exactly successful exit, zero stdout bytes/lines and zero stderr bytes. Timeout, nonzero exit, diagnostics, malformed/nonempty response fail-close and cannot prove absence.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
