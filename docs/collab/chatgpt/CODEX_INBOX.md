@@ -504,3 +504,11 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `python3 -m py_compile tools/psm_wma/materialize_immutable_source_authority_root.py tools/psm_wma/test_materialize_immutable_source_authority_root.py && python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root && python3 docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8_witness_test.py && git diff --check` = py_compile PASS, root unittest 70/70 PASS, frozen outer witness 17/17 PASS, diff-check PASS. Formal tree changes only `SESSION.md`, `TODO.md`, and the direct root test; Gitlink unchanged.
 - Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: no Stage-1 retry/materialization, production source/checkpoint/manifest/data/cache I/O, child/runtime change, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
+
+## 2026-09-14 — Stage-1 authority parent rebind design review
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-PARENT-REBIND-DESIGN`.
+- Formal root: `3e0c1657644b2b3c03f93c25ad910fa5d50a9ebd`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: docs-only v0.1 design. It records that old Stage-1 parent `b359...` contains adapter blob `70b292...` and old bootstrap grammar, whereas closed grammar root `08d...` is its descendant with blob `4a51bd...`; therefore a new Stage-1 request must rebind its parent and freshly rederive all parent-dependent identities. No request is constructed or executed.
+- Request: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_REBOUND_STAGE1_AUTHORITY_ROOT_REQUEST` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: materialization/retry, real source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
