@@ -5341,6 +5341,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal pair=`85a39d6243bb4bcc3e260ba3eb4279c52508d79f`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册保持 ChatGPT（live Inbox/reviews）、MM（`mm:0.0`）、DS（`ds:0.0`）。live Inbox整改申请已追加（54168 bytes，低于128KiB）；根提交已推送。下一步按 `send-keys -l -> >=1s -> Enter -> capture` 向MM/DS送达；未获同-pair三方final前禁止真实I-O、child、GPU或训练。
 
+### Authority-root causal-worktree identity 固定FD ABI 整改送达回执（2026-09-14，REVIEW）
+
+- ChatGPT：canonical live Inbox 的整改申请已随提交 `0841d8eb4a319a254bbd4741179a3c112820f066` 推送，formal target仍为`85a39d6243bb4bcc3e260ba3eb4279c52508d79f`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM：`mm:0.0` 已 `send-keys -l -> >=1s -> Enter`，后续capture显示完整申请进入会话并显示 `Sautéing…`。DS：`ds:0.0` 相同三联送达，capture显示已执行 root/Gitlink/commit 核对。二者均以该pair请求literal final verdict。
+- 下一轮最早三分钟后按 ChatGPT/MM/DS 完整远端锁定、exact-pair scan 与pane capture重查；Gate保持`REVIEW`，禁止真实materialization/source I-O、child、GPU或训练。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
