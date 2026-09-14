@@ -479,6 +479,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Forbidden: no Stage-1 retry/materialization, no production source/checkpoint/manifest/data/cache I/O, no child/runtime change, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-14 — Bootstrap witness remediation close review
+
+- Formal root: `8aa5e519d9778a94f228a1050433327c00433020`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only direct bootstrap config-category witness for the prior exact ChatGPT HIGH; it drives temporary fixture `v2` and escaped subsection config through the isolated bootstrap payload and compares its frozen `config-*` stderr category to runtime parser output.
+- Evidence: adapter 70/70 PASS; outer witness 17/17 PASS; py_compile/diff-check PASS. No real I/O, child, GPU, or training.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-14 — Remediation request: authority-root config grammar CPU/static implementation close review
 
 - Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CONFIG-GRAMMAR-CPU-STATIC-REMEDIATION`.
