@@ -596,3 +596,10 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: only the two approved root paths. Addresses prior HIGHs: context-aware four self-check source guards, ordered parser targets, canonical v1.6 Git-blob injected CPU witness with exact parser/outer identities, and four self-check drift negatives.
 - Evidence: py_compile, direct unittest=8/8, diff-check PASS. No main/production I/O, request/retry, child, GPU, or training.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — No-I/O remediation close review: Stage-1 v1.7 launcher replay
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`; root=`467e6665b95be450ca5900c6aa6ce14e94f759d5`; child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only approved two root files. Removes test `git show`/path I/O by embedded gzip/base64 frozen 18966-byte base with SHA assertion; source self-check rows now replace exact surrounding spans, not naked global strings.
+- Evidence: py_compile, unittest=8/8, diff-check PASS; no real I/O/request/retry/child/GPU/training.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
