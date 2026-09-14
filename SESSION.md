@@ -5211,6 +5211,17 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Kimi：`kimi:0.0` 同样 `send-keys -l -> >=1s -> Enter`；capture 显示完整申请作为会话消息，输入框为空。
 - 下一轮最早三分钟后；该 pair 的三方 final 未齐，禁止实施。
 
+### Authority-root causal-worktree identity v0.3 审核观察凭证 #1 / 推进令牌（2026-09-14 10:29:05 CST）
+
+- exact pair=`56acad8f39241c8c03fa770aa39468a3e71a2349`/`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=01bc7d4217b9bffa5b8c3c2e544202c71f63e2fe`。fetch 成功并发现 advertised/tracking=`16cce221761f79991c1a166ab7f38fedb189e2a1`；新增范围：`16cce221 review: notify Codex causal worktree identity v0.3 approval`、`e3c5bd2b review: approve causal worktree identity design v0.3`；祖先判定=0；ff-only 成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v03_56acad8_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`；MM `mm:0.0` capture final 同上；Kimi `kimi:0.0` capture final 同上。三项均精确锚定此 pair。
+- 全 APPROVE 推进令牌成立，仅授权既有 authority-root launcher/payload root allowlist 的 temporary-fixture CPU/static implementation/tests。真实 Git/worktree/materialization、source/checkpoint/manifest/data/cache I/O、collection/receipt/publication、child、GPU 与训练仍禁止。
+
+### Authority-root causal-worktree identity v0.4 probe-led docs-only redesign（2026-09-14，IN_PROGRESS）
+
+- v0.3 实现前 temporary local-Git probe 发现：leaf target `/proc/self/fd/6/.` 可保持 no-`clean_name` leaf entry semantics，且 `worktree list` 注册 canonical clean、native `worktree remove --force <clean>` 成功；无 `/.` spelling 的 administrative cleanup seam 不足以接受。probe 仅使用 `mktemp` fixture，未进入项目路径/远端/数据/GPU。
+- 新建 `...causal_worktree_identity_design_v0.4.md`，只替换 exact argv spelling及 metadata acceptance；现有 v0.8 launcher/witness implementation 草稿保持未提交，禁止混入 docs formal commit，等待新 pair三方批准后再实施。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
