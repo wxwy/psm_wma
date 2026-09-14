@@ -236,8 +236,20 @@ _GIT_PREFIX = (
     "-c", "protocol.file.allow=never",
 )
 _CONFIG_ALLOWLIST = frozenset((
-    "core.repositoryformatversion", "core.filemode", "core.bare",
-    "core.logallrefupdates", "core.worktree", "extensions.worktreeconfig",
+    ("core", None, "repositoryformatversion", "0"),
+    ("core", None, "filemode", "true"),
+    ("core", None, "bare", "false"),
+    ("core", None, "logallrefupdates", "true"),
+    ("remote", "origin", "url", "https://github.com/wxwy/psm_wma.git"),
+    ("remote", "origin", "fetch", "+refs/heads/*:refs/remotes/origin/*"),
+    ("branch", "main", "remote", "origin"),
+    ("branch", "main", "merge", "refs/heads/main"),
+    ("submodule", "cosmos-framework", "active", "true"),
+    ("submodule", "cosmos-framework", "url", "https://ghfast.top/github.com/wxwy/cosmos-framework.git"),
+    ("branch", "V2", "vscode-merge-base", "origin/main"),
+    ("branch", "V2", "remote", "origin"),
+    ("branch", "V2", "merge", "refs/heads/V2"),
+    ("rerere", None, "enabled", "true"),
 ))
 
 
@@ -321,19 +333,29 @@ def bootstrap_payload() -> str:
         "cs=os.fstat(cfd)\n"
         "if not stat.S_ISREG(cs.st_mode): fail()\n"
         "rawcfg=os.pread(cfd,cs.st_size,0)\n"
-        "section=None; seen=set(); allowed={'core.repositoryformatversion','core.filemode','core.bare','core.logallrefupdates','core.worktree','extensions.worktreeconfig'}\n"
+        "allowed={('core',None,'repositoryformatversion','0'),('core',None,'filemode','true'),('core',None,'bare','false'),('core',None,'logallrefupdates','true'),('remote','origin','url','https://github.com/wxwy/psm_wma.git'),('remote','origin','fetch','+refs/heads/*:refs/remotes/origin/*'),('branch','main','remote','origin'),('branch','main','merge','refs/heads/main'),('submodule','cosmos-framework','active','true'),('submodule','cosmos-framework','url','https://ghfast.top/github.com/wxwy/cosmos-framework.git'),('branch','V2','vscode-merge-base','origin/main'),('branch','V2','remote','origin'),('branch','V2','merge','refs/heads/V2'),('rerere',None,'enabled','true')}; section=None; subsection=None; seen=set(); entries=[]\n"
         "for line in rawcfg.decode('utf-8').splitlines():\n"
         " s=line.strip()\n"
         " if not s or s.startswith(('#',';')): continue\n"
         " if s.startswith('[') and s.endswith(']'):\n"
-        "  section=s[1:-1].strip().lower()\n"
-        "  if not section or '\"' in section or '.' in section: fail()\n"
+        "  h=s[1:-1]\n"
+        "  if h!=h.strip(): fail()\n"
+        "  if '\"' in h:\n"
+        "   section,sep,q=h.partition(' ')\n"
+        "   if sep!=' ' or not q.startswith('\"') or not q.endswith('\"') or '\"' in q[1:-1]: fail()\n"
+        "   subsection=q[1:-1]\n"
+        "   if not subsection or not subsection.isascii() or any(not(c.isalnum() or c in '_-') for c in subsection): fail()\n"
+        "  else: section,subsection=h,None\n"
+        "  if not section or not section.isascii() or not section[0].isalpha() or any(not(c.isalnum() or c=='-') for c in section): fail()\n"
+        "  section=section.lower()\n"
         "  continue\n"
         " if section is None or '=' not in s: fail()\n"
-        " key,value=(x.strip() for x in s.split('=',1)); key=section+'.'+key.lower()\n"
-        " if key in seen or key not in allowed: fail()\n"
-        " seen.add(key)\n"
-        " if (key=='core.repositoryformatversion' and value!='0') or (key=='core.bare' and value!='false') or (key in ('core.filemode','core.logallrefupdates') and value not in ('true','false')) or (key=='extensions.worktreeconfig' and value!='false') or (key=='core.worktree' and value!=root): fail()\n"
+        " key,value=(x.strip() for x in s.split('=',1))\n"
+        " if not key or not key.isascii() or not key[0].isalpha() or any(not(c.isalnum() or c=='-') for c in key): fail()\n"
+        " entry=(section,subsection,key.lower(),value)\n"
+        " if entry[:3] in seen: fail()\n"
+        " seen.add(entry[:3]); entries.append(entry)\n"
+        "if frozenset(entries)!=allowed or len(entries)!=len(allowed): fail()\n"
         "g=os.lstat(git)\n"
         "if not stat.S_ISREG(g.st_mode) or stat.S_ISLNK(g.st_mode) or hashlib.sha256(open(git,'rb').read()).hexdigest()!=one('--git-raw-sha256'): fail()\n"
         "if subprocess.run([git,'--version'],env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout.decode().strip()!=one('--git-version'): fail()\n"
@@ -465,41 +487,71 @@ def _read_regular_path(path: Path) -> bytes:
         os.close(descriptor)
 
 
-def _parse_config_raw(raw: bytes, cwd: Path) -> dict[str, str]:
+def _config_identifier(value: str) -> bool:
+    return bool(value) and value.isascii() and value[0].isalpha() and all(
+        character.isalnum() or character == "-" for character in value
+    )
+
+
+def _config_subsection(value: str) -> bool:
+    return bool(value) and value.isascii() and all(
+        character.isalnum() or character in "_-" for character in value
+    )
+
+
+def _parse_config_raw(raw: bytes) -> tuple[tuple[str, str | None, str, str], ...]:
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError as error:
         raise NativeGitError("Git config 必须为UTF-8") from error
     section: str | None = None
-    result: dict[str, str] = {}
+    subsection: str | None = None
+    result: list[tuple[str, str | None, str, str]] = []
+    seen: set[tuple[str, str | None, str]] = set()
     for line in text.splitlines():
         stripped = line.strip()
         if not stripped or stripped.startswith(("#", ";")):
             continue
         if stripped.startswith("[") and stripped.endswith("]"):
-            section = stripped[1:-1].strip().lower()
-            if not section or '"' in section or "." in section:
+            header = stripped[1:-1]
+            if header != header.strip():
                 raise NativeGitError("Git config section 无效")
+            if '"' in header:
+                section, separator, quoted = header.partition(" ")
+                if separator != " " or not quoted.startswith('"') or not quoted.endswith('"') or '"' in quoted[1:-1]:
+                    raise NativeGitError("Git config section 无效")
+                subsection = quoted[1:-1]
+                if not _config_subsection(subsection):
+                    raise NativeGitError("Git config section 无效")
+            else:
+                section, subsection = header, None
+            if not _config_identifier(section):
+                raise NativeGitError("Git config section 无效")
+            section = section.lower()
             continue
         if section is None or "=" not in stripped:
             raise NativeGitError("Git config syntax 无效")
         key, value = (item.strip() for item in stripped.split("=", 1))
-        canonical_key = f"{section}.{key.lower()}"
-        if canonical_key in result:
+        if not _config_identifier(key):
+            raise NativeGitError("Git config key 无效")
+        canonical = (section, subsection, key.lower())
+        if canonical in seen:
             raise NativeGitError("Git config 不允许duplicate key")
-        result[canonical_key] = value
-    for key, value in result.items():
-        if key not in _CONFIG_ALLOWLIST:
-            raise NativeGitError("Git config 含未授权 key")
-        if key == "core.repositoryformatversion" and value != "0":
-            raise NativeGitError("Git config repositoryformatversion 无效")
-        if key in {"core.filemode", "core.logallrefupdates", "extensions.worktreeconfig"} and value not in {"true", "false"}:
-            raise NativeGitError("Git config boolean 无效")
-        if key == "core.bare" and value != "false":
-            raise NativeGitError("Git config bare 无效")
-        if key == "core.worktree" and value != str(cwd):
-            raise NativeGitError("Git config worktree 漂移")
-    return result
+        seen.add(canonical)
+        result.append((*canonical, value))
+    ordered = tuple(result)
+    if frozenset(ordered) != _CONFIG_ALLOWLIST or len(ordered) != len(_CONFIG_ALLOWLIST):
+        raise NativeGitError("Git config 含未授权或缺失 tuple")
+    return ordered
+
+
+def _config_projection(entries: Sequence[tuple[str, str | None, str, str]]) -> dict[str, str]:
+    return {
+        ".".join(
+            (section, variable) if subsection is None else (section, subsection, variable)
+        ): value
+        for section, subsection, variable, value in entries
+    }
 
 
 def _parse_git_config_output(raw: bytes) -> dict[str, str]:
@@ -1134,7 +1186,7 @@ def _validate_execution(value: object) -> Mapping[str, object]:
         if not _is_sha256(execution["git_config_raw_sha256"]) or not _is_sha256(execution["git_isolation_fingerprint"]):
             raise NativeGitError("evidence execution Git config digest 无效")
         allowlist = execution["git_config_allowlist"]
-        if not isinstance(allowlist, dict) or set(allowlist) - _CONFIG_ALLOWLIST or not all(isinstance(key, str) and isinstance(value, str) for key, value in allowlist.items()):
+        if not isinstance(allowlist, dict) or set(allowlist) - set(_config_projection(_CONFIG_ALLOWLIST)) or not all(isinstance(key, str) and isinstance(value, str) for key, value in allowlist.items()):
             raise NativeGitError("evidence execution Git config allowlist 无效")
     for field in ("adapter", "authority_module", "collection_module", "audit_module"):
         identity = _exact_mapping(execution[field], ("path", "blob_native_oid", "raw_sha256"), field)
@@ -1725,7 +1777,8 @@ class NativeAuthorityGit:
             raise NativeGitError("worktree config.worktree 必须absent")
         raw = _read_regular_path(config_path)
         config_identity = _path_identity(config_path)
-        allowlist = _parse_config_raw(raw, self.cwd)
+        config_entries = _parse_config_raw(raw)
+        allowlist = _config_projection(config_entries)
         git_view = _parse_git_config_output(
             self._run_bytes("config", "--no-includes", "--local", "--null", "--list")
         )

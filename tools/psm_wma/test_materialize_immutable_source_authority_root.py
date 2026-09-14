@@ -268,6 +268,21 @@ def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
 
 
 class NativeAuthorityGitTest(unittest.TestCase):
+    def test_config_grammar_accepts_exact_real_table_and_rejects_subsection_drift(self):
+        raw = (
+            b"[core]\nrepositoryformatversion = 0\nfilemode = true\nbare = false\nlogallrefupdates = true\n"
+            b"[remote \"origin\"]\nurl = https://github.com/wxwy/psm_wma.git\nfetch = +refs/heads/*:refs/remotes/origin/*\n"
+            b"[branch \"main\"]\nremote = origin\nmerge = refs/heads/main\n"
+            b"[submodule \"cosmos-framework\"]\nactive = true\nurl = https://ghfast.top/github.com/wxwy/cosmos-framework.git\n"
+            b"[branch \"V2\"]\nvscode-merge-base = origin/main\nremote = origin\nmerge = refs/heads/V2\n"
+            b"[rerere]\nenabled = true\n"
+        )
+        entries = adapter_module._parse_config_raw(raw)
+        self.assertIn(("branch", "V2", "merge", "refs/heads/V2"), entries)
+        for replacement in (b'[branch "v2"]', b'[branch "V\\2"]', b'[branch "V.2"]', b'[branch "V/2"]'):
+            with self.assertRaises(NativeGitError):
+                adapter_module._parse_config_raw(raw.replace(b'[branch "V2"]', replacement))
+
     def test_no_follow_relative_module_reader_rejects_component_symlink(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "root"
@@ -625,6 +640,28 @@ class NativeAuthorityGitTest(unittest.TestCase):
             "-c", "user.email=fixture@example.invalid", "commit", "-qm", "formal root",
         ], check=True)
         subprocess.run([str(git), "init", "--bare", "-q", str(remote)], check=True)
+        (root / ".git/config").write_text(
+            "[core]\n"
+            "\trepositoryformatversion = 0\n"
+            "\tfilemode = true\n"
+            "\tbare = false\n"
+            "\tlogallrefupdates = true\n"
+            "[remote \"origin\"]\n"
+            "\turl = https://github.com/wxwy/psm_wma.git\n"
+            "\tfetch = +refs/heads/*:refs/remotes/origin/*\n"
+            "[branch \"main\"]\n"
+            "\tremote = origin\n"
+            "\tmerge = refs/heads/main\n"
+            "[submodule \"cosmos-framework\"]\n"
+            "\tactive = true\n"
+            "\turl = https://ghfast.top/github.com/wxwy/cosmos-framework.git\n"
+            "[branch \"V2\"]\n"
+            "\tvscode-merge-base = origin/main\n"
+            "\tremote = origin\n"
+            "\tmerge = refs/heads/V2\n"
+            "[rerere]\n"
+            "\tenabled = true\n"
+        )
         formal_root = subprocess.run(
             [str(git), "-C", str(root), "rev-parse", "HEAD"], check=True, stdout=subprocess.PIPE, text=True,
         ).stdout.strip()

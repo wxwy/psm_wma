@@ -52,20 +52,30 @@ def route_snapshot():
     adfd = os.open(admin, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC); ads = os.fstat(adfd)
     cfd, cs, raw = nofollow(admin + "/config")
     if os.path.lexists(admin + "/config.worktree") or os.path.lexists(admin + "/commondir"): fail("parent route file")
-    allowed = {"core.repositoryformatversion":"0", "core.bare":"false", "extensions.worktreeconfig":"false", "core.worktree":ROOT}
-    bools = {"core.filemode", "core.logallrefupdates"}; section = None; seen = set()
+    allowed = {("core",None,"repositoryformatversion","0"),("core",None,"filemode","true"),("core",None,"bare","false"),("core",None,"logallrefupdates","true"),("remote","origin","url","https://github.com/wxwy/psm_wma.git"),("remote","origin","fetch","+refs/heads/*:refs/remotes/origin/*"),("branch","main","remote","origin"),("branch","main","merge","refs/heads/main"),("submodule","cosmos-framework","active","true"),("submodule","cosmos-framework","url","https://ghfast.top/github.com/wxwy/cosmos-framework.git"),("branch","V2","vscode-merge-base","origin/main"),("branch","V2","remote","origin"),("branch","V2","merge","refs/heads/V2"),("rerere",None,"enabled","true")}
+    section = subsection = None; seen = set(); entries = []
     for line in raw.decode("utf-8").splitlines():
         line = line.strip()
         if not line or line.startswith(("#", ";")): continue
         if line.startswith("[") and line.endswith("]"):
-            section = line[1:-1].strip().lower()
-            if not section or '"' in section or "." in section: fail("config section")
+            header = line[1:-1]
+            if header != header.strip(): fail("config section")
+            if '"' in header:
+                section, separator, quoted = header.partition(" ")
+                if separator != " " or not quoted.startswith('"') or not quoted.endswith('"') or '"' in quoted[1:-1]: fail("config section")
+                subsection = quoted[1:-1]
+                if not subsection or not subsection.isascii() or any(not (character.isalnum() or character in "_-") for character in subsection): fail("config section")
+            else: section, subsection = header, None
+            if not section or not section.isascii() or not section[0].isalpha() or any(not (character.isalnum() or character == "-") for character in section): fail("config section")
+            section = section.lower()
             continue
         if section is None or "=" not in line: fail("config grammar")
-        key, value = (item.strip() for item in line.split("=", 1)); key = section + "." + key.lower()
-        if key in seen or (key not in allowed and key not in bools): fail("config allowlist")
-        seen.add(key)
-        if (key in allowed and value != allowed[key]) or (key in bools and value not in ("true", "false")): fail("config value")
+        key, value = (item.strip() for item in line.split("=", 1))
+        if not key or not key.isascii() or not key[0].isalpha() or any(not (character.isalnum() or character == "-") for character in key): fail("config grammar")
+        entry = (section, subsection, key.lower(), value)
+        if entry[:3] in seen: fail("config allowlist")
+        seen.add(entry[:3]); entries.append(entry)
+    if frozenset(entries) != allowed or len(entries) != len(allowed): fail("config allowlist")
     return (admin, adfd, ads, cfd, cs, raw)
 
 def check_route(s):
