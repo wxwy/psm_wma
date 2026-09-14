@@ -287,3 +287,13 @@
 - Evidence: `python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py && python3 -m unittest tools.psm_wma.test_immutable_source_collection && git diff --check` = `55/55 PASS`, py_compile PASS, diff-check PASS. Fixtures use only TemporaryDirectory/local Git.
 - Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation implementation review request — final leaf validation path continuity
+
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`.
+- Formal root: `d806a9c8bcd04a57fe705c5716fe79e554e4d590`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only `tools/psm_wma/immutable_source_collection.py` and direct stdlib test. After final retained-parent leaf inode/byte validation, the sink now performs the final global frozen-parent continuity check immediately before success.
+- Direct witness: relocates/replaces the parent after the final leaf is opened for validation; emit must fail and leave no evidence under either the replacement or relocated parent.
+- Evidence: `python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py && python3 -m unittest tools.psm_wma.test_immutable_source_collection && git diff --check` = `56/56 PASS`, py_compile PASS, diff-check PASS; fixtures only TemporaryDirectory/local Git.
+- Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
