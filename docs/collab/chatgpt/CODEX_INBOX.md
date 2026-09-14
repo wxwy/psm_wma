@@ -651,6 +651,11 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: only approved root pure-stdlib module/test. Evidence: `py_compile`, direct unittest `3/3`, and `git diff --check` PASS; no Git/network/filesystem in helper/test, no request construction or runtime execution.
 - Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-14 — Correction: projection remediation formal SHA
+
+- The immediately preceding remediation request's expanded root SHA was transcribed incorrectly and is void. Its correct formal root is `5580e20ca918ec3287f77c17cdfe485dd890b440`; child/Gitlink remains `93a89ba61306d840a008813f62f26a34d54850f4`.
+- This correction changes no code, scope, evidence, or requested verdict. Please review only the corrected exact pair and reply `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-14 — Remediation design review: projection preflight v0.3
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`.
