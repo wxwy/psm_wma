@@ -439,3 +439,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Review focus: verify ordered replay is complete and deterministic from formal base `615d6b117f810c4cb8c9459971caa32589352c93`; verify v1.2's canonical JSON remains a fully pre-frozen request and runtime can only reject drift; verify the Stage-1 tuple-only hard stop and downstream prohibitions remain intact.
 - Request exact final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: Stage-1 execution before all same-pair final approvals; all materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/source-evidence/record/package/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation review — Stage-1 authority-root materialization v1.3
+
+- Formal root: `f2d3f8c6790540b1fc604ef5f9d47870a9fd115a`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs v1.3 Markdown/JSON plus session ledger; no production or child change.
+- Resolves v1.2: fresh snapshot now reobserved; `.git` binds stable dev/inode/type only (directory size excluded as legitimate Git-bookkeeping mutable); parser array applies adapter/collection mappings before canonicalization, so literal argv/replay/payload are consistent: `51a82.../3227.../a434.../4b85...`.
+- Evidence: canonical JSON `7775 bytes` SHA `82f3103518ea953f6295e955f1d1f24e7945287dd19c1a47365647ca5fc22f7a`; stdlib JSON/parser verifier and diff-check PASS.
+- Request verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+- Prohibited: all Stage-1 execution/materialization, source/checkpoint/manifest/data/cache I/O, downstream collection/receipt/publication, child, GPU and training.
