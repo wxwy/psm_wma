@@ -13,42 +13,40 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `179c27f40bb839cb35e8858a318399da4a8552a4`
+- immediate prior live blob SHA: `54882b386adf723b67d502cf79f14fca49db8597`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Authority-root causal worktree identity design v0.2 REQUEST_CHANGES
+## CODEX NOTICE — R09-B TTT v0.3.5 Authority-root causal worktree identity design v0.3 APPROVED
 
 Formal pair:
-- root design SHA: `c6ac4639d2abb6bb19263e1ee923902419844fd5`
+- root design SHA: `56acad8f39241c8c03fa770aa39468a3e71a2349`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-DESIGN`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.2.md:26)`
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v02_c6ac463_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v03_56acad8_93a89ba.md`
 
 Canonical review commit:
-`dbd591d4088f2dc7b13c0f2aafda8990597f0266`
+`e3c5bd2bf37c4f49cc5dfc14d60ec439e8216cdf`
 
-Current blockers: `1 HIGH Design/Authority`; child/runtime blockers: `0`.
+Current blockers: `0`; child/runtime blockers: `0`.
 
-Blocking summary:
-1. v0.2 correctly removes the mutable global absolute CLEAN target and freezes an inherited parent FD6, exact `close_fds=True` / `pass_fds=(6,)`, CLOEXEC handling, and `/proc/self/fd/6/<clean_name>` with no global fallback. This closes global-parent-path redirection.
-2. However `/proc/self/fd/6/<clean_name>` still re-resolves the mutable `clean_name` entry inside the retained parent. If that entry is replaced after the pre-call identity check but before Git resolves the target, Git can populate a foreign replacement B while retained `clean_fd` still names owner A; post-Git triple revalidation only detects the mutation afterwards.
-3. This directly contradicts v0.2's own required `target-resolution race` witness, which requires clean-entry replacement to leave the foreign inode untouched.
+Closure summary:
+1. The v0.2 HIGH is closed at design level: Git no longer receives parent-FD + mutable `clean_name`; v0.3 duplicates the retained `clean_fd` itself to exact FD6 and makes the worktree target exactly `/proc/self/fd/6`.
+2. The Git child inheritance contract is frozen to `close_fds=True`, `pass_fds=(6,)`, exact FD6 identity/CLOEXEC/collision rules, with no parent-derived or global-path fallback.
+3. Required CPU/static witnesses explicitly cover same-parent clean-leaf replacement before Git target resolution, global parent replacement, exact FD inheritance, post-Git drift and owner-limited cleanup. Foreign replacement must never be read/written/deleted; unsupported procfd/Git semantics fail closed.
+4. Administrative worktree metadata must remain provable through retained owner capability and existing no-follow/raw-byte/route checks; neither global CLEAN nor an ephemeral procfd string may become substitute ownership authority.
 
-Exact acceptance:
-- Bind Git's actual mutation target to the retained clean-root **leaf inode**, not only to its parent directory. Prefer a dedicated inherited duplicate of `clean_fd` with an exact procfd leaf target if temporary real-Git fixtures prove it works, or another primitive with equivalent immutable-leaf semantics.
-- Freeze exact inherited-FD lifetime, `close_fds` / `pass_fds`, CLOEXEC, collision rules, and no fallback to parent+name/global CLEAN.
-- Add an actual temporary local-Git race witness that replaces `parent_fd/clean_name` within the same retained parent before Git target resolution and proves Git either populates only the retained owner inode or fails before touching the foreign replacement.
-- Separately retain the global-parent replacement witness, owner-limited cleanup, and administrative metadata validation without dependence on ephemeral procfd names after the target capability lifetime.
+Implementation cautions for the next Gate:
+- actual temporary Git must prove that `/proc/self/fd/6` safely targets the pre-created owner inode and that worktree metadata remains valid under the frozen capability contract;
+- any reintroduction of `clean_name`, global CLEAN, path-canonicalized ownership, extra inherited FDs, or fallback target is outside this approval;
+- cleanup Git must re-dup retained `clean_fd` to FD6 and re-establish the same child contract rather than reuse a stale procfd pathname.
 
-Positive retained points: docs-only scope, `mkdirat` + immediate no-follow `clean_fd`, FD6 exact inheritance constraints, no PATH/shell/ambient fallback, and `ROLLBACK_INCOMPLETE` for unprovable ownership are directionally correct and should be preserved.
-
-Scope reminder: this verdict authorizes only another docs-only redesign. No real Git/worktree/materialization, source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, sidecar, or checkpoint write is authorized.
+Scope reminder: this approval authorizes only the next root-only temporary-fixture CPU/static implementation/tests within the frozen authority-root allowlist. It does not authorize real Git/worktree/materialization, real source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, or any real materialization request.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
