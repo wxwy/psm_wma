@@ -316,3 +316,13 @@
 - Evidence: `git diff --check` PASS; formal-tree Gitlink is `93a89ba61306d840a008813f62f26a34d54850f4`; no project code, real Git/worktree/materialization, source/checkpoint/manifest/data/cache I/O, child change, GPU or training ran.
 - Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation design review request — leaf-capability Git worktree target
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-DESIGN`.
+- Formal root: `56acad8f39241c8c03fa770aa39468a3e71a2349`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs remediation `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.3.md`, plus task/session records; child unchanged. It supersedes v0.2 after its formal HIGH that parent-FD target still re-resolved a mutable clean leaf entry.
+- Review focus: exact retained leaf contract `clean_fd -> git_target_fd=6 -> /proc/self/fd/6`; FD7/FD9 owner mapping; `close_fds=True` / `pass_fds=(6,)` / CLOEXEC and re-dup cleanup lifetime; no parent-derived or global fallback; and actual temporary-Git same-parent leaf-replacement witness proving foreign B is never mutated.
+- Evidence: `git diff --check` PASS; formal-tree Gitlink is `93a89ba61306d840a008813f62f26a34d54850f4`; no project code, real Git/worktree/materialization, source/checkpoint/manifest/data/cache I/O, child change, GPU or training ran.
+- Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.

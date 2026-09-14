@@ -5199,6 +5199,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - v0.3 将 Git consumer target 从 parent FD6 加 leaf name 改为 `clean_fd -> git_target_fd=6 -> /proc/self/fd/6`；冻结 FD7/FD9 owner 映射、Git child 精确 inherited set、FD6 close point、later cleanup re-dup contract，及 same-parent leaf replacement 的 actual temporary-Git witness。
 - 未执行任何项目代码、真实 Git/worktree/source/checkpoint/data/cache I/O、GPU 或训练。下一步：diff-check、提交、推送、重新申请 docs-only三方审核。
 
+### Authority-root causal-worktree identity v0.3 审核名册与送达准备（2026-09-14，REVIEW）
+
+- formal pair=`56acad8f39241c8c03fa770aa39468a3e71a2349`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT（live Inbox/reviews）、MM（`mm:0.0`）、Kimi（`kimi:0.0`）。
+- 已向 live Inbox append request；Inbox size check=`47764 bytes + 本请求 < 131072 bytes`。下一步提交/push ledger，再按 `send-keys -l -> >=1s -> Enter -> capture` 发送 MM/Kimi；新 pair 未获三方批准前不得实施。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
