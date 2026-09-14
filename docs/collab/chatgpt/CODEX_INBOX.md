@@ -675,3 +675,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Formal root: `ca4df2bd9e01139b6f9e9abf507e6cf086726d63`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
 - Scope: root-only v0.2 docs-only request replacement. It addresses v0.1 V2 provenance, complete closure/stream hashes and one-attempt semantics.
 - Requested final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_V17_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Design remediation review: Stage-1 v1.7 request-instance construction v0.5
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`.
+- Formal root: `6af03900ab4080c6437a4aa4154ebec50b6617ef`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs v0.5 plus `SESSION.md`/`TODO.md`; no exact request is constructed or executed. It addresses the v0.2 same-pair final findings by replacing mathematically impossible JSON self-SHA embedding with a mandatory formal-tree Markdown-sidecar binding of the canonical JSON raw bytes, byte length, SHA-256 and blob OID. It retains all v0.3/v0.4 complete-closure and fresh same-round observation requirements.
+- Evidence: formal Gitlink unchanged; `git diff --check` PASS. No remote observation, launcher/materializer, Stage-1 materialization/retry, source/checkpoint/manifest/data/cache/runtime I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
+- Review focus: confirm the detached pair binding is mechanically verifiable and does not weaken whole-request identity; confirm complete JSON closure and the two exact remote-query success contracts remain required; confirm approval authorizes only future docs-only construction of one replacement request, followed by independent exact-pair review.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
