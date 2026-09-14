@@ -388,3 +388,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `py_compile`, full witness suite=`16 tests OK`, `git diff --check` PASS; only temporary fixture paths/fork, no project source/data/cache/GPU/child/training.
 - Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Prohibited: all real materialization/source/checkpoint/manifest/data/cache I/O, collection/publication, child/runtime/config, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
+
+## Exact execution request review — immutable authority-root materialization v0.9
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`.
+- Formal root: `57ef3d32452d990af98fda5edfe485376b772723`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs request `docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.9.md`, with `SESSION.md` and `TODO.md`; child unchanged. The request binds the closed b359 authority parent, FD8 bootstrap ABI, four-module pre-import closure, parser/bootstrap/contract SHA identities and a byte-addressed v0.8 launcher-payload overlay. It adds no design/provenance Gate and does not execute anything.
+- Evidence: v0.9 raw SHA-256=`eb21ba3d47bf2675a4bfddb9de5aea9478d0d344929193604114e1cdf92ad57e`; `git diff --check` and new-file no-index diff-check PASS. No worktree/backing/index/candidate/ref/evidence was created; no real source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime change, GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1 ran.
+- Review focus: confirm the exact request is the controlling two-stage progression's immediate request (not another Gate); formal b359/child and full pre-import closure are bound; byte overlay is sufficient to derive one unambiguous launcher; expected-zero/freshness, one-shot stop and downstream prohibitions remain fail-closed.
+- Request exact final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited before/without that approval: all real materialization/source/checkpoint/manifest/data/cache I/O, authority/collection/receipt/source-evidence/publication mutation, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference and LIBERO4IN1.
