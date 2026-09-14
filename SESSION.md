@@ -5939,3 +5939,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 ### Stage-1 v1.7 request-instance v1.0 审核名册与送达准备（2026-09-14，REVIEW）
 
 - Formal pair=root=`9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`，用户指定替代 Kimi）。仅请求`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`；无同pair三方final前禁止request构造、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance v1.0 审核送达回执（2026-09-14，REVIEW）
+
+- ChatGPT：canonical live Inbox完整申请已随ledger=`06fccf31c8e33b4c37beb88d21529250849c6a09`推送。DS=`ds:0.0`已完成`send-keys -l → 间隔>=1秒 → 独立Enter → capture`，capture显示完整pair申请已离开输入框并进入会话、当前busy。
+- MM=`mm:0.0`已完成同一三联回执：完整 v1.0 formal root/child申请离开输入框，capture显示`Herding…thinking`且新空prompt。该申请替代旧v0.9草稿，不重复发送。下一步=三分钟完整远端锁定、exact ChatGPT review scan、MM/DS独立capture；无三方同pairfinal前禁止request构造、materialization、真实I/O、child、GPU和训练。
