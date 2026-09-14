@@ -297,3 +297,12 @@
 - Evidence: `python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py && python3 -m unittest tools.psm_wma.test_immutable_source_collection && git diff --check` = `56/56 PASS`, py_compile PASS, diff-check PASS; fixtures only TemporaryDirectory/local Git.
 - Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Design review request — authority-root causal worktree identity
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-DESIGN`.
+- Formal root: `0dedec97f1d5e2c62ec980b6daffb7f9da472cda`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs design `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.1.md`. It resolves v0.8's native-Git post-add directory identity gap by precreating an empty clean root through a retained parent FD, retaining clean FD identity through Git fill, and requiring parent-FD/clean-FD/path identity agreement before any later stage.
+- Review focus: whether precreated-empty-directory Git semantics, retained FD continuity, ownership-limited cleanup, replacement/symlink/nonempty/metadata-drift rejection, and legacy v0.8 negative-route preservation are sufficient; confirm no materialization execution is implied.
+- Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
