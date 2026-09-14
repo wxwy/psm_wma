@@ -6102,3 +6102,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=root=`cb80b88c86b2af19c6d677e630a0615c5b451626`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。live Inbox的初次v1.4 full-SHA转录错误已追加canonical correction并以ledger=`592787cf`推送；任何旧错误SHA均不是审核目标。
 - MM与DS完成`send-keys -l → ≥1秒 → 独立Enter → capture`。MM capture显示完整正确pair申请离开输入框并开始`Verifying v1.4 SHA pair`；DS capture显示完整正确pair申请进入transcript且正在处理。不得重复发送。
 - 三方final前保持REVIEW；每三分钟完整远端锁定与pane/review检查，禁止future C、request、materialization、真实I/O、child、GPU与训练。
+
+### Stage-1 v1.7 request-instance recovery design v1.4 审核观察凭证 #1（2026-09-15 00:17 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=cf23a81df9ce27d5a82a89cfd7e05db435d53f19`；fetch成功；advertised/tracking均=`cf23a81df9ce27d5a82a89cfd7e05db435d53f19`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact检索`rg -l -F 'cb80b88c86b2af19c6d677e630a0615c5b451626' docs/collab/chatgpt/reviews/`无命中。
+- MM capture显示construct approval；DS capture显示`REQUEST_CHANGES`，新增要求为冻结`patch_raw` bytes/str API seam及允许的一次UTF-8无条件转换，并证明`encode_add`对恰一末尾LF/空行的round-trip。两pane可见final尚未同时逐字锚定完整pair；故均待literal-pair回执，ChatGPT处理中。无推进令牌，禁止整改、C、request、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance recovery design v1.5（2026-09-15，REVIEW准备）
+
+- 根据v1.4三方final（ChatGPT/MM approve，DS request changes）的docs-only整改令牌，提交并推送`b9a460330a2dc4ff1b9d034ae4986fa490e74ad7`；child Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。新增v1.5仅冻结`patch_raw: bytes`到一次strict UTF-8 `patch_text`转换、双identity绑定与line encoder inverse round-trip witness。
+- `git diff --check` PASS；未运行C、未构造request、未执行materialization/真实I-O/child/GPU/训练。下一步=append Inbox、送达MM/DS并三方审核；未送审。
