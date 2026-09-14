@@ -582,3 +582,10 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: root docs-only v0.3 High remedy. v0.4 appends exactly four missing source self-check replacements: bootstrap bytes/SHA and parser bytes/SHA; it requires exact surrounding-literal targeting, canonical outer bytes/SHA witness, and per-literal drift negatives. No implementation or real I/O.
 - Evidence: formal tree only `SESSION.md`/`TODO.md`/v0.4; Gitlink unchanged; diff-check PASS. Forbidden: request construction, Stage-1 retry/materialization, source/checkpoint/data/cache I/O, child/runtime, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Implementation close review: Stage-1 v1.7 launcher replay
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`; formal root=`97020af908d55d39349c9a7426b960e63a72f4eb`; child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only approved root paths `tools/psm_wma/stage1_v17_launcher_replay.py` and `tools/psm_wma/test_stage1_v17_launcher_replay.py`, plus SESSION record. Pure injected-bytes replay; no main/Git/path/FD/network/exec I/O.
+- Evidence: `python3 -m py_compile ... && python3 -m unittest tools.psm_wma.test_stage1_v17_launcher_replay && git diff --check` PASS; unittest=5/5. No request construction, retry/materialization, real source/checkpoint/data/cache I/O, child/runtime, GPU or training.
+- Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
