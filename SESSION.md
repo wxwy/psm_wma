@@ -6079,3 +6079,20 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=root=`1db75ffad55a5ab7f29a9bf3a8701842ca4c3807`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已append到live Inbox并由后续ledger提交推送。
 - MM与DS均完成`send-keys -l → 间隔≥1秒 → 独立Enter → capture`：MM capture显示完整申请离开输入框并进入`Verifying v1.3 SHA pair`；DS capture显示完整申请进入transcript且pane busy。申请仅请求construct verdict，未授权任何真实执行。
 - 后续每三分钟按完整远端锁定、exact review扫描与两pane capture轮询；三方同pairfinal前保持REVIEW，禁止future C、request、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance recovery design v1.3 审核观察凭证 #1（2026-09-15 00:04 CST，REVIEW）
+
+- formal pair/root-child及冻结名册不变。`before_head=1a9d6ceb844828f3afeb2f7ea6f857b4b0257bb8`；fetch成功；advertised/tracking均=`1a9d6ceb844828f3afeb2f7ea6f857b4b0257bb8`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。ChatGPT exact检索`rg -l -F '1db75ffad55a5ab7f29a9bf3a8701842ca4c3807' docs/collab/chatgpt/reviews/`无命中。
+- MM capture已显示construct approval，DS capture已显示`REQUEST_CHANGES`（要求定义可审计的受控raw-write机制、逐字节handoff及显式授权关系），但两者当前可见final均未同时逐字锚定完整formal root/child。按协议，本轮MM/DS均为待补literal-pair final，ChatGPT处理中；无推进令牌，禁止整改/实施。
+- 下一步仅各发一次既有申请的literal-pair verdict重述请求，不能把上述线索作为最终审核事实或提前处理DS意见。
+
+### Stage-1 v1.7 request-instance recovery design v1.3 审核观察凭证 #2 / 整改令牌（2026-09-15 00:10 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`1db75ffad55a5ab7f29a9bf3a8701842ca4c3807`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=1a9d6ceb844828f3afeb2f7ea6f857b4b0257bb8`；fetch成功；advertised/tracking=`0c01afc1e6602f99b71e01b9ff84ca0205eedeea`；新增完整范围=`e38657d7 docs: add ChatGPT review for stage1 recovery design v13`、`0c01afc1 docs: publish ChatGPT stage1 recovery design v13 verdict`；祖先判定=0；ff-only成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v13_1db75ff_93a89ba.md`，final=`REQUEST_CHANGES`，HIGH两项：formal Gate literal不一致；producer→`apply_patch` handoff缺无人工重构的byte-exact consumer seam。MM capture在本Agent已提交完整pair重述请求后final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；DS capture逐字锚定本pair且final=`REQUEST_CHANGES(file:line)`，同样要求consumer byte-exact写入语义。所有独立证据成功、未截断。
+- 三方final同pair齐全，形成仅docs-only整改令牌：统一Gate literal；冻结deterministic patch encoder、其input identity、single consumer invocation、post-write byte equality与partial-residue terminal policy。禁止request构造、materialization、真实I/O、child、GPU及训练；整改完成后新formal pair重新三方审核。
+
+### Stage-1 v1.7 request-instance recovery design v1.4（2026-09-15，IN_PROGRESS）
+
+- 依据紧邻v1.3整改令牌，新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.4.md`，Gate统一为`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V14`。仅冻结future P0/P1/C的`patch_raw`确定性encoder、`len/SHA/raw` opaque handoff、唯一`apply_patch(patch_raw)` consumer、post-write逐字节等值与terminal partial-residue政策。
+- 未构造request、未执行P0/P1/C、未读真实source/checkpoint/manifest/data/cache、未改child、未使用GPU或训练。下一步=静态核验、formal范围复核、提交并以新formal pair三方审核；未提交。
