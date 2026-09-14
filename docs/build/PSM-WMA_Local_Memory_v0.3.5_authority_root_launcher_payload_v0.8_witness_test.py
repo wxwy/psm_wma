@@ -33,7 +33,7 @@ class WitnessTest(unittest.TestCase):
 
     def test_native_git_worktree_add_remove_witness(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw) / "repo"; clean = Path(raw) / "clean"
+            root = Path(raw) / "repo"; clean = root / "clean"
             subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
             (root / "x").write_text("x")
             subprocess.run(["/usr/bin/git", "-C", str(root), "add", "x"], check=True)
@@ -124,9 +124,9 @@ class WitnessTest(unittest.TestCase):
         self.assertTrue(os.WIFEXITED(status))
         self.assertEqual(os.WEXITSTATUS(status), 0)
 
-    def test_payload_cleanup_success_and_foreign_replacement(self) -> None:
+    def test_payload_cleanup_is_non_destructive_for_owner_and_foreign_replacement(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw) / "repo"; clean = Path(raw) / "clean"
+            root = Path(raw) / "repo"; clean = root / "clean"
             subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
             (root / "x").write_text("x")
             env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
@@ -138,24 +138,51 @@ class WitnessTest(unittest.TestCase):
                 P.FORMAL = subprocess.check_output(["/usr/bin/git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
                 snapshot = P.route_snapshot()
                 paths = (P.CLEAN, P.CLEAN + "/.authority-root.index", str(root / "evidence"), str(root / "pending"))
-                P.run(snapshot, "worktree", "add", "--detach", P.CLEAN, P.FORMAL, cwd=P.ROOT)
-                owned = P.capture_owned()
-                P.cleanup(snapshot, owned, paths)
-                self.assertFalse(clean.exists())
-                P.run(snapshot, "worktree", "add", "--detach", P.CLEAN, P.FORMAL, cwd=P.ROOT)
-                owned = P.capture_owned()
+                owned = P.add_and_capture(snapshot)
+                with self.assertRaisesRegex(P.Stop, "ROLLBACK_INCOMPLETE"):
+                    P.cleanup(snapshot, owned, paths)
+                self.assertTrue(clean.is_dir())
+                self.assertIn("worktree " + str(clean), P.run(snapshot, "worktree", "list", "--porcelain").decode().splitlines())
                 displaced = Path(raw) / "displaced"
                 os.rename(clean, displaced)
                 clean.mkdir()
+                (clean / "foreign-marker").write_text("B")
                 with self.assertRaisesRegex(P.Stop, "ROLLBACK_INCOMPLETE"):
                     P.cleanup(snapshot, owned, paths)
-                subprocess.run([*P.PREFIX, "-C", P.ROOT, "worktree", "prune", "--expire=now"], check=True, env=P.ENV)
+                self.assertEqual((clean / "foreign-marker").read_text(), "B")
+            finally:
+                P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
+
+    def test_leaf_remove_behavior_is_diagnostic_fixture_only(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "repo"; clean = root / "clean"
+            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            (root / "x").write_text("x")
+            env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
+            subprocess.run(["/usr/bin/git", "-C", str(root), "add", "x"], check=True)
+            subprocess.run(["/usr/bin/git", "-C", str(root), "commit", "-qm", "x"], check=True, env=env)
+            old_root, old_clean, old_formal = P.ROOT, P.CLEAN, P.FORMAL
+            try:
+                P.ROOT, P.CLEAN = str(root), str(clean)
+                P.FORMAL = subprocess.check_output(["/usr/bin/git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+                owned = P.add_and_capture(P.route_snapshot())
+                _, fd, _, _, _ = owned
+                try: saved = os.dup(6)
+                except OSError: saved = None
+                try:
+                    os.dup2(fd, 6); os.set_inheritable(6, True)
+                    result = subprocess.run([*P.PREFIX, "-C", P.ROOT, "worktree", "remove", "--force", "/proc/self/fd/6/."], env=P.ENV, close_fds=True, pass_fds=(6,))
+                finally:
+                    if saved is None: os.close(6)
+                    else: os.dup2(saved, 6); os.close(saved)
+                self.assertIn(result.returncode, (0, 128))
+                self.assertEqual(clean.exists(), result.returncode != 0)
             finally:
                 P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
 
     def test_payload_add_nonzero_and_post_add_route_drift_are_rollback_incomplete(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
-            root = Path(raw) / "repo"; clean = Path(raw) / "clean"
+            root = Path(raw) / "repo"; clean = root / "clean"
             subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
             (root / "x").write_text("x")
             env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
@@ -170,6 +197,7 @@ class WitnessTest(unittest.TestCase):
                 (clean / "occupied").write_text("x")
                 with self.assertRaisesRegex(P.Stop, "ROLLBACK_INCOMPLETE"):
                     P.add_and_capture(snapshot)
+                self.assertEqual((clean / "occupied").read_text(), "x")
                 (clean / "occupied").unlink()
                 clean.rmdir()
                 def add_then_drift(state, *argv, **kwargs):
@@ -180,7 +208,9 @@ class WitnessTest(unittest.TestCase):
                 P.run = add_then_drift
                 with self.assertRaisesRegex(P.Stop, "ROLLBACK_INCOMPLETE"):
                     P.add_and_capture(snapshot)
-                (root / ".git" / "commondir").unlink()
+                commondir = root / ".git" / "commondir"
+                if commondir.exists() or commondir.is_symlink():
+                    commondir.unlink()
                 subprocess.run([*P.PREFIX, "-C", P.ROOT, "worktree", "remove", "--force", P.CLEAN], check=True, env=P.ENV)
             finally:
                 P.run = old_run
@@ -189,7 +219,7 @@ class WitnessTest(unittest.TestCase):
     def test_payload_add_then_git_valid_foreign_replacement_is_never_owned(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "repo"
-            clean = Path(raw) / "clean"
+            clean = root / "clean"
             displaced = Path(raw) / "displaced"
             subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
             (root / "x").write_text("x")

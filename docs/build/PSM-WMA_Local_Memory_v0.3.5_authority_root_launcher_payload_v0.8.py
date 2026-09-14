@@ -35,6 +35,7 @@ class Stop(RuntimeError): pass
 def fail(reason): raise Stop(reason)
 def digest(raw): return hashlib.sha256(raw).hexdigest()
 def ident(value): return (value.st_dev, value.st_ino, value.st_size)
+def dir_ident(value): return (value.st_dev, value.st_ino, stat.S_IFMT(value.st_mode))
 def nofollow(path, flags=os.O_RDONLY):
     fd = os.open(path, flags | os.O_NOFOLLOW | os.O_CLOEXEC)
     value = os.fstat(fd)
@@ -70,9 +71,9 @@ def check_route(s):
     admin, adfd, ads, cfd, cs, raw = s; a = os.lstat(admin); af = os.fstat(adfd); c = os.lstat(admin + "/config"); cf = os.fstat(cfd)
     if (stat.S_ISLNK(a.st_mode) or not stat.S_ISDIR(a.st_mode) or (a.st_dev,a.st_ino)!=(ads.st_dev,ads.st_ino) or (af.st_dev,af.st_ino)!=(ads.st_dev,ads.st_ino) or stat.S_ISLNK(c.st_mode) or not stat.S_ISREG(c.st_mode) or ident(c)!=ident(cs) or ident(cf)!=ident(cs) or os.pread(cfd,cs.st_size,0)!=raw or os.path.lexists(admin + "/config.worktree") or os.path.lexists(admin + "/commondir")): fail("route drift")
 
-def run(s, *argv, cwd=None):
+def run(s, *argv, cwd=None, pass_fds=()):
     if cwd is None: cwd=ROOT
-    check_route(s); p = subprocess.run([*PREFIX, "-C", cwd, *argv], env=ENV, stdout=subprocess.PIPE, stderr=subprocess.PIPE); check_route(s)
+    check_route(s); p = subprocess.run([*PREFIX, "-C", cwd, *argv], env=ENV, stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True, pass_fds=pass_fds); check_route(s)
     if p.returncode: fail("native git")
     return p.stdout
 
@@ -97,15 +98,42 @@ def capture_owned():
     try: return bind_owned()
     except BaseException as error: raise Stop("ROLLBACK_INCOMPLETE") from error
 def add_and_capture(s):
-    check_route(s)
-    try: run(s,"worktree","add","--detach",CLEAN,FORMAL)
-    except BaseException as error: raise Stop("ROLLBACK_INCOMPLETE") from error
-    # Native Git reports no created-directory identity.  A pathname bind after its
-    # return cannot prove continuity with the object Git created, so do not accept
-    # it as owner authority.  A later execution design must retain that identity
-    # during the mutation; this static launcher fails closed meanwhile.
-    raise Stop("ROLLBACK_INCOMPLETE")
+    name=os.path.basename(CLEAN); parent=-1; clean=-1
+    if os.path.dirname(CLEAN)!=ROOT or not name: fail("clean-root grammar")
+    try:
+        parent=os.open(ROOT,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC)
+        parent_value=os.fstat(parent); os.mkdir(name,0o700,dir_fd=parent)
+        clean=os.open(name,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=parent)
+        value=os.fstat(clean); entry=os.stat(name,dir_fd=parent,follow_symlinks=False)
+        if dir_ident(entry)!=dir_ident(value) or os.listdir(clean): fail("clean-root ownership")
+        try: saved=os.dup(6)
+        except OSError: saved=None
+        try:
+            os.dup2(clean,6); os.set_inheritable(6,True)
+            if ident(os.fstat(6))!=ident(value): fail("git target identity")
+            run(s,"worktree","add","--detach","/proc/self/fd/6/.",FORMAL,pass_fds=(6,))
+        finally:
+            if saved is None: os.close(6)
+            else: os.dup2(saved,6); os.close(saved)
+        current=os.stat(name,dir_fd=parent,follow_symlinks=False)
+        if dir_ident(current)!=dir_ident(value) or dir_ident(os.fstat(clean))!=dir_ident(value) or dir_ident(os.fstat(parent))!=dir_ident(parent_value): fail("clean-root ownership")
+        return (value,clean,parent,name,parent_value)
+    except BaseException as error:
+        if clean>=0: os.close(clean)
+        if parent>=0: os.close(parent)
+        raise Stop("ROLLBACK_INCOMPLETE") from error
+def assert_owned_identity(owned):
+    if len(owned)==5:
+        value,fd,parent,name,parent_value=owned; current=os.stat(name,dir_fd=parent,follow_symlinks=False)
+        if (not stat.S_ISDIR(current.st_mode) or dir_ident(current)!=dir_ident(value) or dir_ident(os.fstat(fd))!=dir_ident(value) or dir_ident(os.fstat(parent))!=dir_ident(parent_value)): fail("clean-root ownership")
+        return value,fd,parent,name,parent_value
+    fail("clean-root ownership")
 def assert_worktree(s, owned):
+    if len(owned)==5:
+        value,fd,parent,name,parent_value=assert_owned_identity(owned)
+        target="/proc/self/fd/"+str(fd)
+        if run(s,"rev-parse","HEAD",cwd=target,pass_fds=(fd,)).decode().strip()!=FORMAL or run(s,"status","--porcelain","--untracked-files=no","--ignore-submodules=all",cwd=target,pass_fds=(fd,)): fail("worktree postcondition")
+        return
     value,fd=owned; current=os.lstat(CLEAN); bound=os.fstat(fd)
     if (not stat.S_ISDIR(current.st_mode) or (current.st_dev,current.st_ino)!=(value.st_dev,value.st_ino) or (bound.st_dev,bound.st_ino)!=(value.st_dev,value.st_ino)): fail("clean-root ownership")
     if run(s,"rev-parse","HEAD",cwd=CLEAN).decode().strip()!=FORMAL or run(s,"status","--porcelain","--untracked-files=no","--ignore-submodules=all",cwd=CLEAN): fail("worktree postcondition")
@@ -114,11 +142,10 @@ def assert_worktree(s, owned):
 
 def cleanup(s, owned, paths):
     try:
-        assert_worktree(s, owned); run(s,"worktree","remove","--force",CLEAN)
-        if any(os.path.lexists(x) for x in paths): fail("cleanup residue")
-        if ("worktree "+CLEAN) in run(s,"worktree","list","--porcelain").decode().splitlines(): fail("cleanup listing")
+        assert_owned_identity(owned)
     except BaseException as error:
         raise Stop("ROLLBACK_INCOMPLETE") from error
+    raise Stop("ROLLBACK_INCOMPLETE")
 
 def durable_fds():
     candidates=os.listdir("/proc/self/fd"); durable=set()

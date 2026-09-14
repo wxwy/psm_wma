@@ -5298,6 +5298,23 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS：`ds:0.0` 已通过 `send-keys -l` 写入完整同-pair审核申请，间隔 >=1 秒后独立 Enter；capture 显示完整消息已经进入会话而非留在输入框。DS 为唯一替代的第三审核者；Kimi 不再属于本 pair 冻结名册。
 - ChatGPT request 仍以 canonical live Inbox 中已推送的 `c5190ec5054737da12c7438121e4eb8260ea2127` 为送达依据；MM v0.5 exact-pair final 需要在新名册每轮继续回读。下一轮最早三分钟后执行 ChatGPT/MM/DS 完整检查；禁止 implementation、测试、真实 I/O、GPU 或训练。
 
+### Authority-root causal-worktree identity v0.5 新名册审核观察凭证 #1 / 推进令牌（2026-09-14 11:21:30 CST）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；exact pair=`019643a9b17ebdda8f74b5c5fac90cb37c23f18f`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=20d8af491dca89f0e97510ae2c2b8f99f2898c5d`；fetch 成功；advertised/tracking均=`20d8af491dca89f0e97510ae2c2b8f99f2898c5d`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only` 成功（Already up to date）。ChatGPT exact scan 命中 `docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v05_019643a_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。MM `mm:0.0` exact-pair final 同为该批准。DS `ds:0.0` capture 经补充 exact binding，final 同为该批准。
+- DS LOW（非阻塞）：native leaf-remove 是诊断性 fixture，生产 cleanup 不 spawn remove；add 调用前的失败路径也应冻结为非破坏性 fail-close。全 APPROVE 推进令牌成立，仅授权既有 root-only launcher/payload allowlist 与 direct temporary-fixture CPU/static implementation/tests；不授权真实 worktree/materialization、source/checkpoint/manifest/data/cache I/O、collection/receipt/publication、child、GPU 或训练。
+
+### Authority-root causal-worktree identity v0.5 CPU/static implementation（2026-09-14，IN_PROGRESS）
+
+- 依据：新名册推进令牌。预计仅修改既有 `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py` 和 `..._witness_test.py`；将 add target 固定为 `/proc/self/fd/6/.`，把 post-add cleanup 改为无 destructive Git/path cleanup 的 `ROLLBACK_INCOMPLETE`，并增加 v0.5 所需 temporary-fixture witnesses。
+- 验收：direct witness test、`py_compile`、`git diff --check`；仅 local `TemporaryDirectory`/Git fixture，无项目 origin/source/checkpoint/data/cache/child/GPU/训练访问。未提交。
+
+### Authority-root causal-worktree identity v0.5 CPU/static implementation 验证（2026-09-14，REVIEW）
+
+- 修改仅在已批准 allowlist：launcher 将 add target 固定为 `/proc/self/fd/6/.`，增加 directory `(st_dev,st_ino,S_IFMT)` identity（目录合法填充不再因 `st_size` 变化误判），将 cleanup 收紧为 retained-FD identity revalidation 后无条件 `ROLLBACK_INCOMPLETE`，不再 spawn `worktree remove` 或使用任何 global cleanup path。witness 改为验证 owner residue 和 foreign-B marker 均保留，并把 native leaf-remove 行为隔离为诊断 fixture。
+- 调试事实：首次 13-test 运行在合法 Git fill 后因 directory `st_size` 改变而 FAIL；修正 directory identity 后，诊断 fixture 发现 leaf-add registration 下 native leaf remove 可成功（此前 128 是另一注册前提）。生产 cleanup 仍按 v0.5 设计不调用 remove；该诊断差异不扩大本 Gate 权限。
+- 验证：`python3 -m py_compile ...v0.8.py ...v0.8_witness_test.py && python3 ...v0.8_witness_test.py && git diff --check` PASS，`13 tests OK`。未访问项目 origin/source/checkpoint/manifest/data/cache、未修改 child、未使用 GPU/训练。下一步：提交、formal-tree scope/Gitlink核验并以新 root重新三方审核。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
