@@ -644,6 +644,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: formal Gitlink unchanged; `git diff --check` PASS. No helper execution, Git/remote/filesystem I/O, request construction, materialization, launcher, source/checkpoint/manifest/data/cache access, child/runtime, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
 - Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-14 — Remediation design review: Stage-1 v1.7 request projection preflight v0.2
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`.
+- Formal root: `ec12f296a321d22f52d9de652a4007a0a1f5d35b`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: docs-only v0.1 remediation. It supplies injected verified adapter source for bootstrap extraction, exact implementation paths, frozen result dataclasses, strict boot AST whitelist, and flag-aware parser validation that permits canonical duplicate values.
+- Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-14 — Remediation design review: Stage-1 v1.7 request-instance construction v0.2
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`.
