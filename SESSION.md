@@ -5935,3 +5935,7 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v1.0.md`。它将全部`ReplayBinding` scalar、8条有序parser rows与8条有序source rows直接冻结为canonical literal，不读取test source/环境/历史副本；P0只读三项exact object，P1仅复用已关闭projection helper，derived outer与P0/P1/C边界不变。
 - `git diff --check` PASS；文档SHA-256=`f99c14ddd500368bd6c8f28f9fe5c3a3beae5469b69dc4256e07299e0c3f776f`。未执行项目代码、Git/network/source I/O、request构造、materialization、child、GPU或训练。下一步=只提交docs/status，推送后以新formal pair申请三方`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`审核。
+
+### Stage-1 v1.7 request-instance v1.0 审核名册与送达准备（2026-09-14，REVIEW）
+
+- Formal pair=root=`9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`，用户指定替代 Kimi）。仅请求`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`；无同pair三方final前禁止request构造、materialization、真实I/O、child、GPU和训练。

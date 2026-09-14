@@ -781,3 +781,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: formal `git diff-tree --no-commit-id --name-only -r` contains only the v0.9 design; formal Gitlink is the child above. No request construction, materialization, launcher/runtime execution, source/checkpoint/manifest/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1 occurred.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 - Forbidden before same-pair final approval: request construction, materialization/retry, launcher/materializer execution, all real source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-14 — Remediation design review: Stage-1 v1.7 request-instance v1.0
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`.
+- Formal root: `9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v1.0.md` with Session/TODO coordination; no project or child code change.
+- Exact remediation: the entire canonical `ReplayBinding` is directly frozen as literals: all scalars, all 8 ordered parser rows and all 8 ordered source rows. P0 may read only the three exact base/helper/adapter objects; it neither reads the replay test nor takes binding values from ambient/history. P1 only reuses the already-closed injected-byte projection helper. All field/count/order/object identity drift fails before replay.
+- Evidence: document SHA-256=`f99c14ddd500368bd6c8f28f9fe5c3a3beae5469b69dc4256e07299e0c3f776f`; `git diff --check` PASS. P0/P1 remain non-consuming; C remains immediately before first freshness observation and no-retry. No request construction/materialization/runtime/source I-O/child/GPU/training ran.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: request construction before same-pair approval; all materialization/retry, launcher/materializer execution, source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
