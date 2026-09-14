@@ -108,6 +108,34 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             finally:
                 os.close(descriptor)
 
+    def test_native_snapshot_rejects_ancestor_disappearance_after_open(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            def git(*args):
+                return subprocess.run(["/usr/bin/git", *args], cwd=root, check=True,
+                                      stdout=subprocess.PIPE).stdout.decode().strip()
+            git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
+            target = root / COLLECTION_PATHS[0]
+            target.parent.mkdir(parents=True); target.write_bytes(b"bound")
+            git("add", COLLECTION_PATHS[0]); git("commit", "-qm", "seed")
+            index = root.parent / (root.name + "-index")
+            subprocess.run(["/usr/bin/git", "read-tree", "HEAD"], cwd=root,
+                           env={**os.environ, "GIT_INDEX_FILE": str(index)}, check=True)
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", index, {})
+            original_open = os.open
+            switched = False
+            def remove_after_docs_open(path, flags, *args, **kwargs):
+                nonlocal switched
+                opened = original_open(path, flags, *args, **kwargs)
+                if path == "docs" and not switched:
+                    switched = True
+                    (root / "docs").rename(root / "detached-docs")
+                return opened
+            with patch("tools.psm_wma.immutable_source_collection.os.open", side_effect=remove_after_docs_open):
+                with self.assertRaises(CollectionError):
+                    adapter.snapshot()
+            self.assertTrue((root / "detached-docs" / "build" / Path(COLLECTION_PATHS[0]).name).is_file())
+
     def test_native_git_commits_temporary_collection_tree(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -370,9 +398,27 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                 parent.mkdir()
                 return original_link(source, target, **kwargs)
             with patch("tools.psm_wma.immutable_source_collection.os.link", side_effect=replace_parent):
-                AtomicFileEvidenceSink(destination).emit(record)
+                with self.assertRaises(CollectionError): AtomicFileEvidenceSink(destination).emit(record)
             self.assertFalse(destination.exists())
-            self.assertEqual(json.loads((relocated / "evidence.json").read_text()), record)
+            self.assertFalse((relocated / "evidence.json").exists())
+            self.assertFalse((relocated / "evidence.json.pending").exists())
+
+    def test_atomic_sink_rejects_staged_entry_replacement_without_final_residue(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            parent = Path(raw); destination = parent / "evidence.json"
+            record = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                       selection_request=self.selection_raw, git=self.git,
+                                       root_fd=self.fd, sink=MemoryEvidenceSink())
+            original_link = __import__("tools.psm_wma.immutable_source_collection", fromlist=["os"]).os.link
+            def replace_staged(source, target, **kwargs):
+                staged = parent / "evidence.json.pending"
+                staged.unlink()
+                staged.write_bytes(b"foreign")
+                return original_link(source, target, **kwargs)
+            with patch("tools.psm_wma.immutable_source_collection.os.link", side_effect=replace_staged):
+                with self.assertRaises(CollectionError): AtomicFileEvidenceSink(destination).emit(record)
+            self.assertFalse(destination.exists())
+            self.assertFalse((parent / "evidence.json.pending").exists())
 
     def test_native_parser_requires_full_binding_categories(self) -> None:
         with contextlib.redirect_stderr(io.StringIO()):
@@ -610,6 +656,20 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         git = FailedPreflight(**deepcopy(vars(self.git)))
         before = git.snapshot()
         with self.assertRaisesRegex(CollectionError, "INJECTED_PREFLIGHT_FAILURE"):
+            collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
+                              git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
+        self.assertEqual(git.snapshot(), before)
+        self.assertEqual(git.commits, [])
+
+    def test_preflight_visible_snapshot_leak_fails_and_rolls_back(self) -> None:
+        class LeakingPreflight(TemporaryGitFixture):
+            def preflight(self, paths, parent, blobs):
+                tree = super().preflight(paths, parent, blobs)
+                self.state = {**self.state, "index_tree_native_oid": "f" * 40}
+                return tree
+        git = LeakingPreflight(**deepcopy(vars(self.git)))
+        before = git.snapshot()
+        with self.assertRaisesRegex(CollectionError, "isolated preflight"):
             collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw,
                               git=git, root_fd=self.fd, sink=MemoryEvidenceSink())
         self.assertEqual(git.snapshot(), before)

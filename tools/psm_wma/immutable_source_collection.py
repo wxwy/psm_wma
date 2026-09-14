@@ -160,6 +160,7 @@ class NativeRootFd:
         current = os.dup(self._root_fd)
         guards: list[tuple[int, str, os.stat_result]] = []
         descriptor = -1
+        continuity_verified = False
         try:
             for component in components[:-1]:
                 next_fd = os.open(component, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW,
@@ -178,8 +179,22 @@ class NativeRootFd:
                         raise CollectionError("source ancestor path continuity drift")
                 finally:
                     os.close(check_fd)
+            continuity_verified = True
         except FileNotFoundError:
-            if allow_absent:
+            if allow_absent and descriptor < 0:
+                try:
+                    for parent_fd, component, expected in guards:
+                        check_fd = os.open(component, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW,
+                                           dir_fd=parent_fd)
+                        try:
+                            observed = os.fstat(check_fd)
+                            if (observed.st_dev, observed.st_ino, stat.S_IFMT(observed.st_mode)) != (
+                                    expected.st_dev, expected.st_ino, stat.S_IFMT(expected.st_mode)):
+                                raise CollectionError("source ancestor path continuity drift")
+                        finally:
+                            os.close(check_fd)
+                except OSError as exc:
+                    raise CollectionError("source ancestor path continuity drift") from exc
                 return None
             raise CollectionError("source path 打开失败") from None
         except OSError as exc:
@@ -188,6 +203,8 @@ class NativeRootFd:
             os.close(current)
             for parent_fd, _component, _expected in guards:
                 os.close(parent_fd)
+            if descriptor >= 0 and not continuity_verified:
+                os.close(descriptor)
         try:
             info = os.fstat(descriptor)
             if not stat.S_ISREG(info.st_mode):
@@ -246,6 +263,8 @@ class AtomicFileEvidenceSink:
         parent_fd = -1
         parent_identity: tuple[int, int] | None = None
         staged_identity: tuple[int, int] | None = None
+        published_identity: tuple[int, int] | None = None
+        linked = False
         try:
             parent_fd = os.open(self._destination.parent,
                                 os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW)
@@ -270,24 +289,41 @@ class AtomicFileEvidenceSink:
             staged = os.open(temporary_name, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW, dir_fd=parent_fd)
             try:
                 info = os.fstat(staged)
+                if not stat.S_ISREG(info.st_mode):
+                    raise CollectionError("evidence staging 不是 regular file")
                 staged_identity = (info.st_dev, info.st_ino)
             finally:
                 os.close(staged)
             current_parent = os.stat(self._destination.parent, follow_symlinks=False)
-            if (current_parent.st_dev, current_parent.st_ino) != parent_identity:
+            if (not stat.S_ISDIR(current_parent.st_mode)
+                    or (current_parent.st_dev, current_parent.st_ino) != parent_identity):
                 raise CollectionError("evidence parent authority drift")
             os.link(temporary_name, self._destination.name, src_dir_fd=parent_fd,
                     dst_dir_fd=parent_fd, follow_symlinks=False)
+            linked = True
             published = os.open(self._destination.name, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW,
                                 dir_fd=parent_fd)
             try:
                 info = os.fstat(published)
-                if (info.st_dev, info.st_ino) != staged_identity or os.read(published, len(raw) + 1) != raw:
+                published_identity = (info.st_dev, info.st_ino)
+                if (not stat.S_ISREG(info.st_mode) or published_identity != staged_identity
+                        or os.read(published, len(raw) + 1) != raw):
                     raise CollectionError("evidence publication identity drift")
             finally:
                 os.close(published)
+            current_parent = os.stat(self._destination.parent, follow_symlinks=False)
+            if (not stat.S_ISDIR(current_parent.st_mode)
+                    or (current_parent.st_dev, current_parent.st_ino) != parent_identity):
+                raise CollectionError("evidence parent authority drift")
             os.unlink(temporary_name, dir_fd=parent_fd)
         except BaseException:
+            try:
+                if parent_fd >= 0 and linked and published_identity is not None:
+                    current = os.stat(self._destination.name, dir_fd=parent_fd, follow_symlinks=False)
+                    if (current.st_dev, current.st_ino) == published_identity:
+                        os.unlink(self._destination.name, dir_fd=parent_fd)
+            except OSError:
+                pass
             try:
                 if parent_fd >= 0:
                     os.unlink(temporary_name, dir_fd=parent_fd)
@@ -1078,6 +1114,12 @@ def _commit_candidates(git: GitTransaction, payload: CandidateHandoff,
         raise CollectionError("preflight target snapshot 漂移")
     candidate_tree = git.preflight(COLLECTION_PATHS, base, blobs)
     if _snapshot(git.snapshot()) != before:
+        try:
+            git.rollback(before)
+            if _snapshot(git.snapshot()) != before:
+                raise CollectionError("rollback snapshot mismatch")
+        except Exception as rollback_error:
+            raise CollectionError("ROLLBACK_INCOMPLETE") from rollback_error
         raise CollectionError("isolated preflight 修改了 live snapshot")
     if git.resolve(lineage["target_ref"]) != base or git.gitlink_at(base) != lineage["expected_child_gitlink"]:
         raise CollectionError("preflight 后 lineage 漂移")
