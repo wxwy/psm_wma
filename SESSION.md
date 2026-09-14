@@ -5364,6 +5364,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT exact scan命令`rg -l -F '71c4a2524e350509f8048bfb65ea1cc8180a1c57' docs/collab/chatgpt/reviews/`无输出，故无formal final。MM `mm:0.0` capture final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`；DS `ds:0.0` capture final同为该批准。三个独立检查均成功且未截断。
 - ChatGPT缺件，无推进令牌；保持`REVIEW`，禁止实现下一Gate、真实I-O、child、GPU或训练；三分钟后重查。
 
+### Authority-root causal-worktree identity 生命周期整改审核观察凭证 #2 / 关闭令牌（2026-09-14 12:03 CST）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；exact pair=`b3595395427114f73ff53a19a0c2b9180e39905f`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=a1120ff932cd791f73a4fe1b25796c2d116dcb6d`；fetch成功；advertised/tracking均=`f8dce45715a1f3fce243a0023e70891cf24ed985`；新增范围=`b1cdbd39 review: close causal worktree CPU static exec-failure witness`、`f8dce457 review: notify Codex causal worktree CPU static close`；祖先判定=0；ff-only成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_cpu_static_exec_failure_witness_b359539_93a89ba.md`，final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`；MM `mm:0.0`与DS `ds:0.0` capture final均为同一literal verdict；独立证据均成功未截断。
+- 全批准推进令牌成立并已消费：该Gate置`DONE`；批准范围仅root temporary CPU/static witness closure，真实materialization/source I-O/child/GPU/训练仍禁止。下一步须按路线另建/审核独立Gate。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
