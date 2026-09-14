@@ -13,48 +13,54 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `e04c84628cef8756f5f8a1b7c94af7f87564d051`
+- immediate prior live blob SHA: `9190aefd85ca9657235331db50768cd62eca3475`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Stage-1 v1.7 request-instance design v0.2 APPROVED
+## CODEX NOTICE — R09-B TTT v0.3.5 Stage-1 v1.7 request-instance design v0.3 REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `0831e0ba2dcb5c93e9069d2d20aca1790095dc97`
+- root design SHA: `0fc7965d9d1b55a99d0b1a384764f68464b02949`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`
 
 Verdict:
-`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.3.md:20)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v02_0831e0b_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v03_0fc7965_93a89ba.md`
 
 Canonical review commit:
-`293cfe5461d6f34593a5bec1fd46d46519b0eea5`
+`19d75e5cc7afc9a6fe8dc6a0eac68c32950b5631`
 
-Current blockers: `0`; Design/Authority: `0`; Production/Authority: `0`; Evidence/Scope: `0`; child/runtime: `0`.
+Current blockers: `1 HIGH`; Design/Authority: `1 HIGH`; Production/Authority: `0`; Evidence/Scope: `0`; child/runtime: `0`.
 
-Closure summary:
-1. v0.2 explicitly supersedes v0.1's contradictory construction-time I/O wording.
-2. After unanimous same-pair design approval, construction may perform only the closed read-only provenance/freshness allowlist: frozen formal-parent commit/tree/blob plus launcher base bytes; local `.git` identity and `.git/config` raw bytes; frozen local ref; exactly one `git ls-remote origin refs/heads/V2` query with command and complete raw result/length/SHA bound into the request; and designated path-absence checks.
-3. All non-allowlisted network/service/filesystem content I/O remains prohibited, including source/checkpoint/manifest/data/cache content, runtime/service I/O, collection/receipt/record/package/publication, launcher/materializer execution, child/runtime mutation, GPU/CUDA/torchrun, training, evaluation, inference and LIBERO4IN1.
-4. Frozen dependencies remain exact: formal parent `08d5828...`, launcher base `18966 / 8b0fad...`, closed replay root `50b0bff...`, parser `2336 / 1a9543ec...`, outer `18875 / 658e9b9e...`.
-5. Construction output is limited to one fresh root docs-only Markdown/JSON pair at the frozen v0.1 request-instance paths. The request must bind the complete same-round allowlisted snapshot plus parser/environment/owner-FD/replay/target and whole canonical JSON identities.
-6. Fallback/mixed parent/stale/inferred/reordered/duplicate/request-byte/missing-or-extra-observation/non-allowlisted-I/O conditions remain `BLOCKED_AUTHORITY_NOT_CLOSED` before `os.execve`.
-7. The resulting exact request must undergo a new independent same-pair three-party request review before it can grant a single Stage-1 attempt.
+Closed in v0.3:
+1. v0.2's read-only construction I/O allowlist remains explicit and closed.
+2. The prior DS remote-ref finding is substantively fixed: exactly two remote queries are allowed, one for advertised `V2` identity and one for fixed authority-ref absence.
+3. Local fixed authority-ref absence and remote fixed authority-ref absence are separately bound; the latter is sourced only from the exact fixed-ref remote query.
+4. Formal parent/base/replay identities remain frozen; v1.6 remains consumed/non-reusable; the design remains construction-only and requires a new exact request review before any Stage-1 attempt.
+5. Formal root Gitlink resolves exactly to reachable child `93a89ba...`; child/runtime production bytes are unchanged.
 
-Authorized consequence:
-- construct exactly one fresh docs-only Stage-1 v1.7 exact request instance using the v0.2 allowlist and frozen output paths.
+Remaining HIGH — empty remote stdout is not sufficient absence authority:
+- v0.3 line 20 says the exact fixed-ref `git ls-remote` query establishes remote absence when its output is empty, and binds command/output bytes/length/SHA.
+- It does not require or bind a successful command return code.
+- A transport/DNS/auth/remote-access failure can also leave stdout empty. That is observation failure, not proof that the authority ref is absent.
 
-Still NOT authorized by this design approval:
-- Stage-1 materialization/execution/retry;
+Exact remediation:
+1. Keep the exact two-query network allowlist and all current zero-mutation boundaries.
+2. Require both remote queries to complete successfully (`return code == 0`) before their stdout is authority, and bind each return code into the future canonical request.
+3. Define fixed authority-ref remote absence as exactly successful exact query + zero stdout bytes/zero result lines. Nonzero exit, timeout, transport/auth error, malformed result, or nonempty stdout must fail `BLOCKED_AUTHORITY_NOT_CLOSED` and must not be interpreted as absence.
+4. Prefer binding stderr bytes/length/SHA too, or freeze an equivalent explicit successful-query diagnostic contract.
+5. Preserve one-request-only construction, frozen output paths and identities, and independent same-pair request review before any execution authority.
+
+Still NOT authorized:
+- request construction under this unresolved design;
+- Stage-1 retry/materialization/execution;
 - launcher/materializer execution;
-- reuse or revival of consumed v1.6 authority;
-- any non-allowlisted source/checkpoint/manifest/data/cache/runtime I/O;
-- downstream collection/receipt/record/package/publication;
+- source/checkpoint/manifest/data/cache/runtime I/O outside the approved construction allowlist;
 - child/runtime mutation;
-- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
+- GPU/CUDA/torchrun, training, evaluation, inference, or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
