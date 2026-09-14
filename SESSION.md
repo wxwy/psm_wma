@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Stage-1 v1.7 recovery design v1.1 完整观察凭证 #2（2026-09-14 22:51:00 CST，REVIEW）
+
+- Formal pair/root-child及冻结名册不变。`before_head=a3d4dec524bad511dfd2ee27918244e087d07fcc`；fetch成功；advertised/tracking均=`a3d4dec524bad511dfd2ee27918244e087d07fcc`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索=`rg -l -F '7b528dc2fb754d9f27cab6ae157c15abaec654bc' docs/collab/chatgpt/reviews/ || true`无输出；MM=`mm:0.0` capture维持`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；DS=`ds:0.0` capture维持`REQUEST_CHANGES`（future request formal parent/child freeze）。所有独立证据成功且未截断；没有新的可复核最终事实。
+- ChatGPT缺件且三方final未齐，无整改令牌；保持REVIEW，未重复发送申请或修改审核对象。
+
 ## Stage-1 v1.7 recovery design v1.1 完整观察凭证 #1（2026-09-14 22:46:08 CST，REVIEW）
 
 - Formal pair=root=`7b528dc2fb754d9f27cab6ae157c15abaec654bc`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=772dbc8d3c3144de285df7763dd25e53a3e26ca8`；fetch成功；advertised/tracking均=`772dbc8d3c3144de285df7763dd25e53a3e26ca8`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。
