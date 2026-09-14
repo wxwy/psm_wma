@@ -45,16 +45,21 @@ def _sha(raw: bytes) -> str:
 
 
 _GUARDS = {
-    "7538": "if len(raw)!=7538 or digest(raw)!=" ,
-    "7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8": "digest(raw)!=\"",
-    "2427": "len(RAW[2])!=2427",
-    "72777bd7305c760c48c069eafd068f1a538383a6fdb8d40258acf3d8fc3b7ae2": "tuple(digest(x) for x in RAW)!=",
+    "7538": ("if len(raw)!=", " or digest(raw)!="),
+    "7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8": ("if len(raw)!=9406 or digest(raw)!=\"", "\": fail(\"bootstrap identity\")"),
+    "2427": ("len(RAW[2])!=", " or tuple(digest(x) for x in RAW)!="),
+    "72777bd7305c760c48c069eafd068f1a538383a6fdb8d40258acf3d8fc3b7ae2": ("+(\"", "\",): fail(\"embedded authority\")"),
 }
 
 
 def _replace_once(raw: str, old: str, new: str) -> str:
     guard = _GUARDS.get(old)
-    if raw.count(old) != 1 or (guard is not None and guard not in raw):
+    if guard is not None:
+        token = guard[0] + old + guard[1]
+        if raw.count(token) != 1:
+            _fail("source_target")
+        return raw.replace(token, guard[0] + new + guard[1], 1)
+    if raw.count(old) != 1:
         _fail("source_target")
     return raw.replace(old, new, 1)
 
