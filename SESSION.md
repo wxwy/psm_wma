@@ -4,6 +4,8 @@
 
 - request-instance design v0.6审核准备（2026-09-14，REVIEW）：formal pair=root=`76307bb65c08c1f9f35e3832be89c9cc617953eb`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。formal tree仅`SESSION.md`、`TODO.md`与v0.6；Gitlink不变。请求仅`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`；三方同pair final前禁止request构造、materialization、真实I/O、child、GPU和训练。
 
+- v0.6送达回执（2026-09-14 20:25 CST，REVIEW）：ChatGPT申请已由live Inbox ledger=`a09f758e`推送；MM=`mm:0.0`、DS=`ds:0.0`均完成`send-keys -l → ≥1秒 → 独立Enter → capture`，capture分别显示`Inspecting v0.6 design`及完整申请进入transcript。后续三分钟完整轮询；同pair final前保持REVIEW。
+
 - 认领`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN` v0.6 docs-only replacement design：预计新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.6.md`并更新`SESSION.md`/`TODO.md`。范围是将已关闭的pure projection helper纳入新construction authority的Phase P precondition，冻结与唯一Phase C构造attempt的隔离；不修改运行代码、不执行I/O或构造request。
 
 - request-instance design v0.6已完成（2026-09-14，REVIEW准备）：新增v0.6，明确已关闭`0791677...` projection helper只能作为不消费authority的Phase P；Phase C仅在同轮allowlist freshness成功后开始并消费唯一construct authority，任何失败无retry。保留two-query success/absence、request Markdown/JSON detached identity及所有真实I/O/child/GPU/训练禁令。`git diff --check` PASS；未执行项目代码、request构造、真实I/O、child、GPU或训练。下一步=提交仅docs/coordination文件，以新formal pair三方审核`APPROVE_TO_CONSTRUCT`。
