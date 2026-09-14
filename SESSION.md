@@ -3,6 +3,7 @@
 ## Authority-root config grammar CPU/static remediation design（2026-09-14，REVIEW）
 
 - 目的/Gate：`G0-R09-B-TTT-V035-AUTHORITY-ROOT-CONFIG-GRAMMAR-CPU-STATIC-REMEDIATION-DESIGN`。formal pair=root=`bf34641f2451b43c3c335bb747ef3c842768a382`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；范围仅新 root docs design，child不变。冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、DS=`ds:0.0`（用户指定 DS 替代 Kimi）。申请送达前不得修改 parser/payload、不得重试 Stage-1，不得真实 source I/O/child/GPU/训练。
+- 送达回执（2026-09-14 CST）：ChatGPT申请已append canonical live Inbox并随 ledger=`2384b85d12f6b5d0f7026de9dc5548b5df94e8db`推送；MM=`mm:0.0`与DS=`ds:0.0`均执行`send-keys -l`→等待≥1秒→独立Enter→独立capture。MM capture显示exact-pair申请离开输入框并进入处理；DS capture显示exact-pair申请离开输入框、会话处于busy处理。下一步从第1轮起每三分钟完整远端锁定、exact review scan和MM/DS capture；三方同pair final前保持REVIEW，禁止修改 parser/payload、重试或任何真实I/O/child/GPU/训练。
 
 ## Stage-1 authority-root materialization request v1.2 payload-binding correction（2026-09-14，IN_PROGRESS）
 
