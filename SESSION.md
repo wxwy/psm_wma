@@ -6096,3 +6096,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依据紧邻v1.3整改令牌，新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.4.md`，Gate统一为`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V14`。仅冻结future P0/P1/C的`patch_raw`确定性encoder、`len/SHA/raw` opaque handoff、唯一`apply_patch(patch_raw)` consumer、post-write逐字节等值与terminal partial-residue政策。
 - 未构造request、未执行P0/P1/C、未读真实source/checkpoint/manifest/data/cache、未改child、未使用GPU或训练。下一步=静态核验、formal范围复核、提交并以新formal pair三方审核；未提交。
+
+### Stage-1 v1.7 request-instance recovery design v1.4 审核送达回执（2026-09-15 00:14 CST，REVIEW）
+
+- formal pair=root=`cb80b88c86b2af19c6d677e630a0615c5b451626`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。live Inbox的初次v1.4 full-SHA转录错误已追加canonical correction并以ledger=`592787cf`推送；任何旧错误SHA均不是审核目标。
+- MM与DS完成`send-keys -l → ≥1秒 → 独立Enter → capture`。MM capture显示完整正确pair申请离开输入框并开始`Verifying v1.4 SHA pair`；DS capture显示完整正确pair申请进入transcript且正在处理。不得重复发送。
+- 三方final前保持REVIEW；每三分钟完整远端锁定与pane/review检查，禁止future C、request、materialization、真实I/O、child、GPU与训练。
