@@ -1,5 +1,11 @@
 # 当前协作状态
 
+## Authority-root exact execution request v0.9（2026-09-14，IN_PROGRESS）
+
+- Gate：`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`；只构造 future request，未运行 payload、创建 worktree/backing/index/ref/evidence，未触及 source/checkpoint/data/cache、child、GPU或训练。
+- 新增 request 复用 v0.8 launcher payload 的 parent-tree blob，并按 b359 formal root/FD8 ABI 形成唯一 byte overlay；派生 payload SHA-256=`4b85f226f3de63821fcaa922cc353d3917983bcf00adfeff1bade448914b599a`。
+- 修改文件：新增 v0.9 request、更新 `TODO.md`；`git diff --check` 与 new-file no-index diff-check 均 PASS，v0.9 raw SHA-256=`eb21ba3d47bf2675a4bfddb9de5aea9478d0d344929193604114e1cdf92ad57e`；待提交。后续仅可申请三方 `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`；未获同 pair 三方批准前禁止 execution。
+
 ## Immutable Source Collection real-adapter 审核整改（2026-09-14，IN_PROGRESS）
 
 - 目的/Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`；依据观察凭证 #138 的同 pair `REQUEST_CHANGES` 汇总令牌，仅整改 `tools/psm_wma/immutable_source_collection.py` 与 `tools/psm_wma/test_immutable_source_collection.py`。
