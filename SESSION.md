@@ -1,5 +1,14 @@
 # 当前协作状态
 
+## Stage-1 authority-root materialization request v1.2 payload-binding correction（2026-09-14，IN_PROGRESS）
+
+- 本轮只读观察凭证（2026-09-14 13:30:55 CST）：formal pair=`3802c51bb156636d53842cefa8e4519f6dfabe81`/`93a89ba61306d840a008813f62f26a34d54850f4`，冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=479db88bd66e164e8f8b8cf17554d57ab02e194e`；fetch成功；advertised/tracking均=`479db88bd66e164e8f8b8cf17554d57ab02e194e`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_authority_root_materialization_request_v11_3802c51_93a89ba.md`，final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；MM `mm:0.0` capture 和 DS `ds:0.0` capture均锚定同 pair 且 final为相同 verdict。该旧 pair 的推进令牌只授权其冻结 v1.1 bytes；其预执行审计 fail-close 后不能授权 v1.2 或任何 materialization。
+- 目的/Gate：`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`。v1.1 exact pair 的三方批准只授权其冻结 bytes；在零 mutation pre-exec audit 发现 payload binding 不可重现后，本步骤仅生成独立 docs-only v1.2 replacement，未执行 launcher、未创建 worktree/backing/index/ref/evidence，未读取 source/checkpoint/manifest/data/cache，未触及 child、GPU或训练。
+- 复用：formal parent `b3595395427114f73ff53a19a0c2b9180e39905f` 的 launcher payload base blob `615d6b117f810c4cb8c9459971caa32589352c93`（17,480 bytes / `3a5b4cd99730ddb01098ed53d4278f1f7b8ef142bc234405095df54de4ec7ea5`）及 v1.1 的同一 candidate/child/FD/closure/route inputs。
+- 实际修改：新增 v1.2 Markdown 和 compact canonical JSON。v1.2 把 ordered replay 固定为 parser-first splice、再 literal mappings 的唯一顺序，并把实测 parser=`2336/f50e925c...`、bootstrap observed argv=`2341/2b4fa860...`、contract=`182/2b8ccfa6...`、payload=`17389/f3171fc6...`写入 request；它显式 supersede v0.9/v1.1 的不可重现 `51a82.../3227.../a434.../4b85...` bindings。
+- 验证：只读 stdlib replay verifier 通过，逐项复现上述四个 byte/SHA pair；JSON canonicalization=`8427 bytes` / `56780b494ed03cc15a07d0b16690ef6f9434fb2621a0659420a0ebd5a1e365b3`；`git diff --check` PASS。未执行项目代码；未运行 GPU/训练。
+- 下一步：复读 formal scope/dirty residue 与 docs-only 自检，提交并推送 v1.2，再对新的 root/同一 child 重新冻结 ChatGPT/MM/DS 名册、追加 Inbox 和 tmux 三联送达。新 pair 未获同轮三方 final 前，`BLOCKED_AUTHORITY_NOT_CLOSED` 保持，禁止 Stage-1 materialization 和全部后续真实 I/O/child/GPU/训练。
+
 ## Authority-root exact execution request v0.9（2026-09-14，IN_PROGRESS）
 
 - Gate：`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`；只构造 future request，未运行 payload、创建 worktree/backing/index/ref/evidence，未触及 source/checkpoint/data/cache、child、GPU或训练。
