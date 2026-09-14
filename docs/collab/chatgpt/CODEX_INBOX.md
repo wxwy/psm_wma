@@ -624,3 +624,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: approved two root files. Canonical base SHA now mandates frozen formal parent before table digests; direct noncanonical-parent bypass negative added.
 - Evidence: py_compile, unittest=13/13, diff-check PASS; no I/O/request/retry/child/GPU/training.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Design review: Stage-1 v1.7 request-instance construction
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`.
+- Formal root: `218f5f6254e7e926ae2d9ad8fb8206d037a9cadf`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs `PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.1.md`, plus coordination records. The design is only for constructing one future docs-only exact request instance; it is not that request and cannot execute it.
+- Frozen dependencies: formal parent `08d5828cdb4c12afa3b798ff01826c91ceb8755a`; verified launcher base `af19a9eb66ecaf8bd0b92a48ab1867f105026658` / `8b0fad39857fb72e3a3eb317f4acf6f2d6e94e196935f52f07d6170e79c678dd` / `18966`; closed pure replay implementation root `50b0bffeb4c94b0994d7c7bf705077fb51a9e48f` with module/test raw SHA recorded in the design.
+- Review focus: require a same-round zero-mutation freshness snapshot, canonical request bytes/SHA, all replay/config/parser/environment/owner-FD closures, no fallback/stale inference, and `BLOCKED_AUTHORITY_NOT_CLOSED` before any exec. Confirm the requested design verdict authorizes only docs-only request construction followed by a new exact-pair review.
+- Forbidden: request construction before this design is approved; all materialization/retry, launcher execution, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
