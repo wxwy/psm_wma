@@ -326,3 +326,11 @@
 - Evidence: `git diff --check` PASS; formal-tree Gitlink is `93a89ba61306d840a008813f62f26a34d54850f4`; no project code, real Git/worktree/materialization, source/checkpoint/manifest/data/cache I/O, child change, GPU or training ran.
 - Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation design review request — leaf capability metadata spelling
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-DESIGN`.
+- Formal root: `bfa10d34a130a3616e351ccd1aaecaa6a3dc0e95`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs v0.4. It narrows v0.3 target spelling to `/proc/self/fd/6/.`; an isolated temporary local-Git probe showed this preserves leaf entry authority and canonical `worktree list/remove` metadata behavior. No implementation draft is in formal scope.
+- Request exact verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime/config, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
