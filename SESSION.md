@@ -15,6 +15,7 @@
 - 三方final同pair齐全，形成含DS `REQUEST_CHANGES`的整改令牌：仅授权docs-only v0.3补齐fixed authority-ref remote absence observation并明确V2查询用途；禁止request construction、materialization/retry、source/checkpoint/manifest/data/cache content I/O、child/runtime、GPU及训练。整改后须以新formal pair重新三方审核。
 - v0.3整改（2026-09-14，待提交）：新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.3.md`，不改写v0.2。它明确只允许两条remote query：V2 advertised identity和fixed authority ref `refs/heads/authority/r09-b-ttt-v035-immutable-source-v1` 的空输出；后者为remote absence唯一事实并绑定raw bytes/SHA。其余边界与one-request/no-retry保持不变。
 - v0.3审核准备（2026-09-14，REVIEW）：formal pair=root=`0fc7965d9d1b55a99d0b1a384764f68464b02949`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册维持ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）。formal tree仅`SESSION.md`、`TODO.md`和v0.3；Gitlink不变。待Inbox ledger与MM/DS三联送达后每三分钟轮询。
+- v0.3送达回执（2026-09-14 18:16 CST）：ChatGPT申请已append并随ledger=`215280acf59c2d4d0a1482c514d2f32852871341`推送。MM首次Enter与capture未分离，已立即按`send-keys -l -> 1.1s -> Enter -> capture`重发完整pair，capture显示会话`Verifying SHA pair`；DS按同一三联步骤送达，capture显示完整申请进入transcript且pane busy。冻结名册不变；本Gate保持`REVIEW`，三分钟后完整轮询。
 
 ## Stage-1 v1.6 consumed / v1.7 launcher freeze design（2026-09-14，IN_PROGRESS）
 
