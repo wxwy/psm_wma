@@ -635,6 +635,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Forbidden: request construction before this design is approved; all materialization/retry, launcher execution, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-14 — v0.9 request-instance remediation review
+
+- Formal root: `de92df51`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only v0.9 docs. Closes v0.8 HIGHs with an explicit existing-object P0 allowlist and derived-only outer payload (`18875` / `658e...`); no request/materialization/runtime/GPU/training.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-14 — Remediation design review: Stage-1 request-instance v0.7
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`; root=`6361fdbcfded999e43a4efb86861f75734cef100`; child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`.
