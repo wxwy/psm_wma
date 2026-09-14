@@ -370,3 +370,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `python3 -m py_compile ...v0.8.py ...v0.8_witness_test.py && python3 ...v0.8_witness_test.py -v && git diff --check` PASS; `14 tests OK`. Fixtures are only `TemporaryDirectory`/local Git or forked descriptor checks. No project origin/source/checkpoint/manifest/data/cache, child, GPU or training access.
 - Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation implementation review request — per-child FD6 and pre-exec owner lifetime
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-CPU-STATIC-IMPLEMENTATION`.
+- Formal root: `71c4a2524e350509f8048bfb65ea1cc8180a1c57`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: existing root payload and direct temporary stdlib/local-Git witness only; child unchanged. Each `assert_worktree()` Git call now independently leases `FD9 -> FD6 -> child(pass_fds=(6,)) -> close FD6`; `prepare_exec_fds()` preserves non-inheritable owners FD7/FD9 through `execve`, so a failed exec reaches non-destructive cleanup with retained identity proof.
+- Evidence: `py_compile`, verbose direct witness=`16 tests OK`, and `git diff --check` PASS. New witnesses assert FD6 absent before/after each of the two validation child leases, and that pre-exec FD preparation preserves FD7/FD9 for fail-close cleanup. Temporary local fixtures only; no real project I/O, child, GPU, or training.
+- Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication, child/runtime/config, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
