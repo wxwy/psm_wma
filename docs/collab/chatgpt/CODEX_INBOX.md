@@ -350,3 +350,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: formal-tree scope is only this design plus `SESSION.md`/`TODO.md`; `git ls-tree` confirms child Gitlink unchanged; `git diff --check` PASS. The probe used only an isolated `mktemp` local Git repository and did not access project origin/source/checkpoint/manifest/data/cache, child, GPU or training.
 - Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Implementation review request — fail-closed leaf worktree witness
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-CPU-STATIC-IMPLEMENTATION`.
+- Formal root: `94103f9e3b464541a027594f7858b87dc0110538`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py`, its direct witness, and task/session records; child unchanged. The launcher now precreates/retains leaf A, uses exact add target `/proc/self/fd/6/.` with inherited FD6 only, compares directory identity by `(st_dev,st_ino,S_IFMT)`, and turns all cleanup paths into retained-FD revalidation plus non-destructive `ROLLBACK_INCOMPLETE` (no `worktree remove`, global path, or namespace mutation).
+- Review focus: exact FD inheritance/target, directory proof that permits legitimate Git fill but rejects replacement, normal residue and same-parent foreign-B preservation, no production cleanup Git consumer, and diagnostic-only native leaf-remove fixture. Note: leaf-remove can succeed when registration was created by leaf add; implementation does not use that fact as cleanup authority and retains the approved fail-closed production contract.
+- Evidence: `python3 -m py_compile ...v0.8.py ...v0.8_witness_test.py && python3 ...v0.8_witness_test.py && git diff --check` PASS; `13 tests OK`. All fixtures are local `TemporaryDirectory`/Git only; no project origin/source/checkpoint/manifest/data/cache, child, GPU or training access.
+- Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.

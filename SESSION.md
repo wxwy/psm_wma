@@ -5315,6 +5315,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 调试事实：首次 13-test 运行在合法 Git fill 后因 directory `st_size` 改变而 FAIL；修正 directory identity 后，诊断 fixture 发现 leaf-add registration 下 native leaf remove 可成功（此前 128 是另一注册前提）。生产 cleanup 仍按 v0.5 设计不调用 remove；该诊断差异不扩大本 Gate 权限。
 - 验证：`python3 -m py_compile ...v0.8.py ...v0.8_witness_test.py && python3 ...v0.8_witness_test.py && git diff --check` PASS，`13 tests OK`。未访问项目 origin/source/checkpoint/manifest/data/cache、未修改 child、未使用 GPU/训练。下一步：提交、formal-tree scope/Gitlink核验并以新 root重新三方审核。
 
+### Authority-root causal-worktree identity CPU/static implementation 审核准备（2026-09-14，REVIEW）
+
+- formal pair=`94103f9e3b464541a027594f7858b87dc0110538`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册延续 ChatGPT（live Inbox/reviews）、MM（`mm:0.0`）、DS（`ds:0.0`）。Inbox size=`52272 bytes`，本请求低于128KiB上限且已 append；待提交推送 ledger 后向 MM/DS 送达。
+- 请求范围仅 root docs-build launcher/witness temporary CPU/static implementation；未获同-pair三方 final 前禁止真实 materialization/source I-O/child/GPU/训练。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
