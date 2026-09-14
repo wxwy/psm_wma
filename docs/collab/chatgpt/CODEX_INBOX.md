@@ -533,6 +533,15 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Requested verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
 - Prohibited: execution before all same-pair approvals; even then Stage-1 PASS is authority-tuple-only hard stop. No downstream mutation, child, GPU or training is authorized.
 
+## 2026-09-14 — Remediation request review: rebound Stage-1 authority-root materialization v1.6
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`.
+- Formal root: `ea6d75f659cfbc978f0180ffcfc266792f85854e`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only v1.6 Markdown/JSON and records; child unchanged. This is a docs-only fix for the v1.5 post-approval execution-boundary ambiguity.
+- Delta: §5 now grants only after unanimous same-pair approval exactly one Stage-1 attempt for this exact request; pre-mutation request/base/freshness/FD/path/ref drift is `BLOCKED_AUTHORITY_NOT_CLOSED` with zero mutation; PASS emits only authority tuple then hard-stops; failed/consumed attempt needs a new request and approval. Retry/second attempt, Stage-2/downstream, child, GPU and training remain prohibited.
+- Evidence: canonical JSON=`8622 bytes / 2a82314c9b8594230229ef2c875b0611e2131377bbe267b589c762a588fd4421`; JSON static canonicalization and diff-check PASS. No execution, real I/O, child/runtime change, GPU or training occurred.
+- Requested verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-14 — Remediation request review: rebound Stage-1 authority-root materialization v1.5
 
 - Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`.
