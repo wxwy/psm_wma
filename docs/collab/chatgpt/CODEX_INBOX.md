@@ -660,3 +660,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: root-only docs v0.4 plus coordination records; no request construction/execution.
 - Exact remediation: both permitted `git ls-remote` observations must bind returncode/stdout/stderr identities; authority-ref absence means exactly successful exit, zero stdout bytes/lines and zero stderr bytes. Timeout, nonzero exit, diagnostics, malformed/nonempty response fail-close and cannot prove absence.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Exact request review: Stage-1 v1.7 request instance v0.1
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`.
+- Formal root: `ad758f9589f4712ee97a169e1f4236aa59f158e6`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only exact docs request `PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.1.{md,json}` plus records. Review fresh formal/base/replay closure, successful two-query remote observations, local/remote authority-ref absence, output identity and execution boundaries.
+- Evidence: JSON=`3054 bytes / 2fffb82a905f5e53d950c5cb3fc8235d6e58726a1144ca26a107a011d7c5a59d`; JSON parse and diff-check PASS.
+- Requested final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_V17_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: before same-pair approval, all launcher/materializer/Stage-1 execution, source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
