@@ -5919,3 +5919,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - Formal pair与冻结名册不变。`before_head=295b312670945cc835dfbdec71141b36ff279f16`；fetch成功；advertised/tracking均=`295b312670945cc835dfbdec71141b36ff279f16`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
 - ChatGPT exact review仍为`REQUEST_CHANGES(...v0.9.md:22)`（canonical `ReplayBinding` authority未冻结）；DS=`ds:0.0`仍为本pair literal `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；MM=`mm:0.0` capture仍为旧短SHA申请的无pair批准、下方未发送澄清草稿。全部独立证据成功且未截断；MM完整pair送达/最终意见缺失，无推进令牌，禁止整改、request构造、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance v0.9 完整观察凭证 #4（2026-09-14 22:08:24 CST，REVIEW）
+
+- Formal pair与冻结名册不变。`before_head=12a52692852a451c703311fb531b971fad3b21b4`；fetch成功；advertised/tracking均=`12a52692852a451c703311fb531b971fad3b21b4`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact review仍为`REQUEST_CHANGES(...v0.9.md:22)`；DS=`ds:0.0`仍为同pair literal `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；MM=`mm:0.0` capture仍没有任何新已提交消息或同pair literal verdict，显示的仍是旧短SHA申请与未发送澄清草稿。全部独立证据成功且未截断；无推进令牌，禁止整改、request构造、materialization、真实I/O、child、GPU和训练。
