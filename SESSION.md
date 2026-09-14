@@ -1,5 +1,22 @@
 # 当前协作状态
 
+## Stage-1 v1.7 request-instance v1.0 construction fail-close（2026-09-14 22:40 CST，BLOCKED）
+
+- 已批准的v1.0推进令牌下，P0/P1先成功完成：冻结base/replay/adapter/projection身份匹配，parser=`2336/1a9543ec3e7ef4f37b4948dde2a6a9532b13a8415291cceafd90b9692c028333`、outer=`18875/658e9b9e6f34964310d6e2a5519c3b70243971b5ef535d753192e3d59d1960b8`，且`writes=0`、`freshness_observations=0`。
+- 随后为确定旧request schema执行的`rg --files docs/build | rg 'stage1_v17.*request|request_instance'`暴露了v0.3固定designated output路径`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.1.{md,json}`已经存在。该路径枚举发生在P1成功之后，按v0.7 "C begins immediately before first ... path-absence observation" 已进入C；它不是完整同轮C snapshot，未写Markdown/JSON、未执行materializer、未读真实source/checkpoint/manifest/data/cache，亦未动child/GPU/训练。
+- 因C已由该首次path observation消费，v1.0 one-shot/no-retry authority永久耗尽；不得继续C或重试。下一步仅可新建docs-only恢复设计，明确新request输出命名/路径选择必须在future P0/P1前冻结，从而不在已消费C内再发现占用路径；该新设计须独立三方审核后才能产生新construction authority。
+
+## Stage-1 v1.7 request-instance recovery design v1.1（2026-09-14，IN_PROGRESS）
+
+- 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.1.md`：不触碰已消费v1.0 authority；冻结唯一future pair为`...request_instance_v0.3.{md,json}`，并把path selection固定在design literal而非P1后discovery。保留v1.0 complete literal binding、P0/P1 non-consuming、C-before-first-observation、one-shot/no-retry、detached JSON/Markdown identity及全部禁止范围。
+- 验证：`git diff --check` PASS；design SHA-256=`931a4336cd2760961dc36716d8fd73ad9cde7e3f189d4ddb83d96f7c54bedd1e`。未运行项目代码、未创建request、未访问真实source/checkpoint/manifest/data/cache、未改child/GPU/训练。下一步=仅提交本docs/coordination step并按新formal pair申请三方设计审核。
+
+## Stage-1 v1.7 request-instance v1.0 当前完整观察凭证 #4 / construct 推进令牌复核（2026-09-14 22:37:23 CST，IN_PROGRESS）
+
+- Formal pair=root=`9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`，用户指定替代 Kimi）。`before_head=439aaae37ffd409e8d6189c04e6c15f0c429671a`；`git fetch origin V2`成功；advertised/tracking均=`439aaae37ffd409e8d6189c04e6c15f0c429671a`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索=`rg -l -F '9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a' docs/collab/chatgpt/reviews/`，命中`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v10_9c8b4ad_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；DS=`ds:0.0` capture逐字锚定root/child并给出同一final；MM=`mm:0.0` capture保留已提交v1.0申请后的唯一root-prefix同一target final，按用户明确认可规则计为同pairfinal。三项独立证据均成功、未截断。
+- 三方同pair全批准，现有推进令牌仅授权：严格按v1.0/v0.7执行一次P0/P1后，才在C首个freshness观察前消费唯一构造权并构造一份docs-only request pair。P0/P1不消费；禁止materialization、launcher/runtime、真实source I/O、child、GPU和训练。
+
 ## Stage-1 v1.7 request-instance v0.2 三方最终观察与整改范围（2026-09-14，IN_PROGRESS）
 
 - v0.7 P0 read-only object-resolution 失败与 v0.8 修订（2026-09-14，IN_PROGRESS）：P0 的 `git show 08d5828cdb4c12afa3b798ff01826c91ceb8755a:tools/psm_wma/stage1_v17_launcher_replay.py` 失败，原因是该 helper 不在 formal parent。独立 `git ls-tree -r 08d5828cdb4c12afa3b798ff01826c91ceb8755a` 已精确定位 replay base 为 `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py`，blob=`af19a9eb66ecaf8bd0b92a48ab1867f105026658`，18966 bytes，SHA-256=`8b0fad39857fb72e3a3eb317f4acf6f2d6e94e196935f52f07d6170e79c678dd`；helper 仍独立来自 implementation root `50b0bffeb4c94b0994d7c7bf705077fb51a9e48f`。P0 未运行 P1、未开始 C、未作 freshness observation、零 request 输出，因此 v0.7 authority 未消耗。新增 v0.8 仅冻结该对象映射与既有 P0/P1/C 语义，待静态核验、提交并三方审核；禁止 request 构造、materialization、真实 I/O、child、GPU 与训练。
