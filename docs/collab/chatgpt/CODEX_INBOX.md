@@ -669,3 +669,9 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: JSON=`3054 bytes / 2fffb82a905f5e53d950c5cb3fc8235d6e58726a1144ca26a107a011d7c5a59d`; JSON parse and diff-check PASS.
 - Requested final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_V17_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: before same-pair approval, all launcher/materializer/Stage-1 execution, source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-14 — Exact request remediation review: Stage-1 v1.7 v0.2
+
+- Formal root: `ca4df2bd9e01139b6f9e9abf507e6cf086726d63`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only v0.2 docs-only request replacement. It addresses v0.1 V2 provenance, complete closure/stream hashes and one-attempt semantics.
+- Requested final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_V17_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
