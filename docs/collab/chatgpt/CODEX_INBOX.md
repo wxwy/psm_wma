@@ -241,6 +241,15 @@
 - Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
 
+## Remediation implementation review request — fail-closed authority races
+
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`.
+- Formal root: `a0e9d294320ad37cb127d45118b3f67107bfef7f`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only `tools/psm_wma/immutable_source_collection.py` and its direct stdlib test; Gitlink unchanged. This remediation closes prior findings with component-by-component ancestor continuity revalidation, staged/published inode+byte verification, request-parent authority drift fail-close, and a native intermediate-directory replacement witness.
+- Evidence: `python3 -m unittest tools.psm_wma.test_immutable_source_collection`=`51/51 PASS`; `python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py` PASS; `git diff --check` PASS. All fixtures use TemporaryDirectory/local Git only.
+- Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
 ## Implementation review request — collection adapter CPU/static
 
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`.
