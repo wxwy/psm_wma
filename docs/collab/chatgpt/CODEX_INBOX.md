@@ -398,3 +398,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Review focus: confirm the exact request is the controlling two-stage progression's immediate request (not another Gate); formal b359/child and full pre-import closure are bound; byte overlay is sufficient to derive one unambiguous launcher; expected-zero/freshness, one-shot stop and downstream prohibitions remain fail-closed.
 - Request exact final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited before/without that approval: all real materialization/source/checkpoint/manifest/data/cache I/O, authority/collection/receipt/source-evidence/publication mutation, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference and LIBERO4IN1.
+
+## Design-refreeze review request — source-evidence closure stage split v0.3
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-DESIGN-REFREEZE`.
+- Formal root: `5a668ad8871798a0c252ce9c05dbf167c36ba839`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_execution_request_design_v0.3.md`, `SESSION.md`, `TODO.md`; child unchanged. It responds to the exact v0.9 formal HIGH: current root has materializer and collection executors but no production source-evidence producer/record/receipt/publication/root-audit entrypoint, so a stage-1-only request cannot be represented as v0.2's complete transaction.
+- Review focus: verify v0.3 explicitly and narrowly supersedes v0.2 activation granularity; Stage 1 authority-root materialization hard-stops after independent tuple binding; Stage 2 keeps the v0.2 collection→producer→receipt→audit semantics and cannot begin before required production entrypoints plus independent approvals. Confirm this is the necessary explicit refreeze allowed by the v0.9 ChatGPT exact acceptance, not a silent provenance expansion.
+- Evidence: docs-only; `git diff --check` and new-file no-index diff-check PASS; document SHA-256=`339a0cf827cca4f6a0e037459e369818741e4fa1b432147175ce8b4dd97f0c16`. No real I/O, authority/ref/evidence mutation, child/runtime change, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1 ran.
+- Request exact final verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT_MATERIALIZATION_REQUEST` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: Stage-1/Stage-2 request construction or execution; real source/checkpoint/manifest/data/cache I/O; authority/collection/receipt/source-evidence/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
