@@ -5892,3 +5892,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT：canonical live Inbox申请已随ledger=`a04dd579f1bce6fbc3d1cd247e2ed74f821e203f`推送，formal target=`5580e20c7e406d7ceade9222353f355fe0a4a15d`/`93a89ba61306d840a008813f62f26a34d54850f4`。
 - MM：`mm:0.0`已执行`send-keys -l -> >=1s -> Enter -> capture`，capture显示完整申请已离开输入框并进入`thinking`。DS：`ds:0.0`执行相同三联步骤，capture显示完整申请进入transcript且pane busy。冻结名册保持ChatGPT/MM/DS。
 - 下一轮三分钟后必须按完整远端锁定、exact-pair review scan和两pane capture重查；Gate保持`REVIEW`，无三方final前禁止整改、真实I/O、child、GPU及训练。
+
+### Stage-1 v1.7 request-instance v0.9 审核名册与送达修复准备（2026-09-14，REVIEW）
+
+- Formal pair=root=`de92df512e1a239e7c2fd2d8d6ea60c5fc9ca02c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`，用户指定替代 Kimi）。仅请求`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`。
+- 本轮只读远端锁定：`before_head=fd160149604c4d81de955858026a0f77473707fb`；fetch成功；advertised/tracking均=`fd160149604c4d81de955858026a0f77473707fb`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。exact ChatGPT检索`rg -l -F 'de92df512e1a239e7c2fd2d8d6ea60c5fc9ca02c' docs/collab/chatgpt/reviews/`无命中；MM capture只见短SHA旧申请的无pair verdict，DS capture只见v0.8 pair verdict。旧送达记录不足，不能作为v0.9送达/最终意见。
+- 已发现原 v0.9 Inbox 条目位于 live ledger 中段且使用短SHA；本次仅以追加式 canonical correction 补齐完整pair。下一步=提交/推送此ledger与名册修复，随后对MM/DS按`send-keys -l → >=1秒 → 独立Enter → capture`重新送达；三方同pair final前禁止整改、request构造、materialization、真实I/O、child、GPU和训练。

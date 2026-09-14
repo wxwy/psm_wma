@@ -771,3 +771,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: parent-tree blob lookup, raw-byte SHA/length and formal Gitlink were independently checked; `git diff --check` PASS. The P0/P1 non-consuming versus C-before-first-observation one-attempt/no-retry semantics are unchanged.
 - Forbidden: request construction before same-pair approval; materialization/retry; launcher/materializer execution; source/checkpoint/manifest/data/cache I/O; child/runtime mutation; GPU/CUDA/torchrun; training/evaluation/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Canonical remediation design review: Stage-1 v1.7 request-instance v0.9
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`.
+- Formal root: `de92df512e1a239e7c2fd2d8d6ea60c5fc9ca02c`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- This append-only application supersedes the earlier short-SHA v0.9 ledger line. Scope is the root-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.9.md`; the formal tree contains that file only, with no child/runtime change.
+- Review focus: verify P0 is a closed immutable-object allowlist (base, replay helper, adapter and projection helper), not a generic Git-source rule; verify the outer is derived solely by replay and then matches exactly `18875` bytes / SHA-256 `658e9b9e6f34964310d6e2a5519c3b70243971b5ef535d753192e3d59d1960b8`, never a Git object. Confirm P0/P1 remain non-consuming and C alone begins before the first freshness observation, consumes the sole authority and is no-retry.
+- Evidence: formal `git diff-tree --no-commit-id --name-only -r` contains only the v0.9 design; formal Gitlink is the child above. No request construction, materialization, launcher/runtime execution, source/checkpoint/manifest/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1 occurred.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+- Forbidden before same-pair final approval: request construction, materialization/retry, launcher/materializer execution, all real source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
