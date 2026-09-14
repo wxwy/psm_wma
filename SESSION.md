@@ -5347,6 +5347,17 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM：`mm:0.0` 已 `send-keys -l -> >=1s -> Enter`，后续capture显示完整申请进入会话并显示 `Sautéing…`。DS：`ds:0.0` 相同三联送达，capture显示已执行 root/Gitlink/commit 核对。二者均以该pair请求literal final verdict。
 - 下一轮最早三分钟后按 ChatGPT/MM/DS 完整远端锁定、exact-pair scan 与pane capture重查；Gate保持`REVIEW`，禁止真实materialization/source I-O、child、GPU或训练。
 
+### Authority-root causal-worktree identity 固定FD ABI 审核观察凭证 #1 / 整改令牌（2026-09-14 11:45 CST）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；exact pair=`85a39d6243bb4bcc3e260ba3eb4279c52508d79f`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=4a955a85bdc843b23e370523ae87f5e058e65c9c`；首次fetch后advertised=`e4c6e24a679cb67f6b3ff17aa644fe718c4e246f`而tracking旧，按闭锁规则重新fetch；第二次fetch后advertised/tracking均=`e4c6e24a679cb67f6b3ff17aa644fe718c4e246f`；新增提交完整范围=`e4c6e24a review: audit fixed owner capability remediation`；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`成功至`e4c6e24a679cb67f6b3ff17aa644fe718c4e246f`。
+- ChatGPT exact scan命中`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_cpu_static_remediation_85a39d6_93a89ba.md`，final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py:176)`，HIGH-1：post-add两个Git consumer必须各自FD9→FD6→child→close，且pre-exec应保留非继承FD7/FD9至execve结果已知。MM `mm:0.0` capture final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`；DS `ds:0.0` capture final同为该批准；三项独立证据成功、未截断。
+- 三方同pair final齐全，形成含ChatGPT `REQUEST_CHANGES`整改令牌：只授权既有payload/witness root CPU/static allowlist内完成FD6逐child生命周期、execve失败时保留owner FDs以及direct witnesses；禁止真实I-O、child、GPU或训练。
+
+### Authority-root causal-worktree identity 生命周期整改（2026-09-14，REVIEW 准备）
+
+- 仅修改既有payload/witness：`assert_worktree()`两次Git validation现各自独立`consume_leaf(FD9)`，所以每个 child 后均关闭FD6；`prepare_exec_fds()`保留`{3,4,5,7,9}`并验证owner非继承，`main()`在`execve`前不再关闭FD7/FD9，故exec失败仍可由cleanup以retained owner identity fail-close。
+- direct witnesses新增：两post-add consumer各自进入与返回均观测FD6关闭；forked pre-exec failure seam在`prepare_exec_fds()`后仍以FD7/FD9完成`assert_owned_identity`并得到`ROLLBACK_INCOMPLETE`。验证：`py_compile`、`...witness_test.py -v`=`16 tests OK`、`git diff --check` PASS；只使用temporary local Git/fork，无项目真实I-O、child、GPU或训练。下一步更新TODO、提交新formal并重新三方审核；未提交。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。

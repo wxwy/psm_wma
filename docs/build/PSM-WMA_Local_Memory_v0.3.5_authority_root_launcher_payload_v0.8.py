@@ -170,10 +170,8 @@ def assert_owned_identity(owned):
 def assert_worktree(s, owned):
     if len(owned)==5:
         value,fd,parent,name,parent_value=assert_owned_identity(owned)
-        def validate(target):
-            if run(s,"rev-parse","HEAD",cwd=target,pass_fds=(GIT_TARGET_FD,)).decode().strip()!=FORMAL: fail("worktree postcondition")
-            if run(s,"status","--porcelain","--untracked-files=no","--ignore-submodules=all",cwd=target,pass_fds=(GIT_TARGET_FD,)): fail("worktree postcondition")
-        consume_leaf(fd,validate)
+        if consume_leaf(fd,lambda target: run(s,"rev-parse","HEAD",cwd=target,pass_fds=(GIT_TARGET_FD,))).decode().strip()!=FORMAL: fail("worktree postcondition")
+        if consume_leaf(fd,lambda target: run(s,"status","--porcelain","--untracked-files=no","--ignore-submodules=all",cwd=target,pass_fds=(GIT_TARGET_FD,))): fail("worktree postcondition")
         return
     value,fd=owned; current=os.lstat(CLEAN); bound=os.fstat(fd)
     if (not stat.S_ISDIR(current.st_mode) or (current.st_dev,current.st_ino)!=(value.st_dev,value.st_ino) or (bound.st_dev,bound.st_ino)!=(value.st_dev,value.st_ino)): fail("clean-root ownership")
@@ -201,6 +199,10 @@ def close_to_keep(keep):
         try: os.close(fd)
         except OSError: pass
     if durable_fds()!=keep: fail("fd closure")
+
+def prepare_exec_fds():
+    close_to_keep(BACKING_FDS | {PARENT_OWNER_FD, CLEAN_OWNER_FD})
+    if os.get_inheritable(PARENT_OWNER_FD) or os.get_inheritable(CLEAN_OWNER_FD): fail("owner fd inheritance")
 
 def regular_mode(path):
     value=os.lstat(path)
@@ -235,7 +237,7 @@ def main():
         owned=add_and_capture(s)
         assert_worktree(s,owned)
         for raw,(name,target,expected) in zip(data,EXPECTED): handoff(raw,name,target,expected)
-        close_to_keep({3,4,5})
+        prepare_exec_fds()
         os.execve(PYTHON,[PYTHON,"-I","-S","-B","-c",b,"--",*actual],ENV)
     except BaseException:
         if 'owned' in locals(): cleanup(s,owned,paths)

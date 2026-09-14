@@ -134,6 +134,68 @@ class WitnessTest(unittest.TestCase):
         self.assertTrue(os.WIFEXITED(status))
         self.assertEqual(os.WEXITSTATUS(status), 0)
 
+    def test_payload_post_add_validation_releases_fd6_per_git_child(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); old_root, old_clean, old_run, old_consume = P.ROOT, P.CLEAN, P.run, P.consume_leaf
+            parent = clean = -1
+            try:
+                P.ROOT, P.CLEAN = str(root), str(root / "clean")
+                for fd in (P.GIT_TARGET_FD, P.PARENT_OWNER_FD, P.BOOTSTRAP_FD, P.CLEAN_OWNER_FD):
+                    if P.fd_is_open(fd): os.close(fd)
+                parent = P.bind_owner(os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC), P.PARENT_OWNER_FD)
+                os.mkdir("clean", 0o700, dir_fd=parent)
+                clean = P.bind_owner(os.open("clean", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC, dir_fd=parent), P.CLEAN_OWNER_FD)
+                value = os.fstat(clean); owned = (value, clean, parent, "clean", os.fstat(parent))
+                leases = []
+                def observe(fd, action):
+                    leases.append(("before", P.fd_is_open(P.GIT_TARGET_FD)))
+                    result = old_consume(fd, action)
+                    leases.append(("after", P.fd_is_open(P.GIT_TARGET_FD)))
+                    return result
+                def fake_run(_s, *argv, **_kwargs):
+                    self.assertTrue(P.fd_is_open(P.GIT_TARGET_FD))
+                    return (P.FORMAL + "\n").encode() if argv[0] == "rev-parse" else b""
+                P.consume_leaf, P.run = observe, fake_run
+                P.assert_worktree(None, owned)
+                self.assertEqual(leases, [("before", False), ("after", False), ("before", False), ("after", False)])
+            finally:
+                P.consume_leaf, P.run = old_consume, old_run
+                for fd in (clean, parent):
+                    if fd >= 0 and P.fd_is_open(fd): os.close(fd)
+                P.ROOT, P.CLEAN = old_root, old_clean
+
+    def test_payload_preexec_failure_retains_owner_identity_for_cleanup(self) -> None:
+        pid = os.fork()
+        if pid == 0:
+            try:
+                with tempfile.TemporaryDirectory() as raw:
+                    for fd in range(3, 10):
+                        if P.fd_is_open(fd): os.close(fd)
+                    for target in P.BACKING_FDS:
+                        source = os.open("/dev/null", os.O_RDONLY | os.O_CLOEXEC)
+                        if source != target:
+                            os.dup2(source, target, inheritable=True); os.close(source)
+                    parent = P.bind_owner(os.open(raw, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC), P.PARENT_OWNER_FD)
+                    os.mkdir("clean", 0o700, dir_fd=parent)
+                    clean = P.bind_owner(os.open("clean", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC, dir_fd=parent), P.CLEAN_OWNER_FD)
+                    owned = (os.fstat(clean), clean, parent, "clean", os.fstat(parent))
+                    try: P.prepare_exec_fds()
+                    except P.Stop: os._exit(34)
+                    try: P.assert_owned_identity(owned)
+                    except P.Stop: os._exit(35)
+                    try:
+                        P.cleanup(None, owned, ())
+                    except P.Stop as error:
+                        ok = str(error) == "ROLLBACK_INCOMPLETE"
+                    else:
+                        ok = False
+                    os._exit(0 if ok and not os.get_inheritable(7) and not os.get_inheritable(9) else 31)
+            except BaseException:
+                os._exit(32)
+        _, status = os.waitpid(pid, 0)
+        self.assertTrue(os.WIFEXITED(status))
+        self.assertEqual(os.WEXITSTATUS(status), 0)
+
     def test_payload_close_to_keep_ignores_proc_enumeration_fd(self) -> None:
         pid = os.fork()
         if pid == 0:
