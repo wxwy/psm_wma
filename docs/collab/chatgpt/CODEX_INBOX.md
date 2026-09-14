@@ -812,3 +812,14 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `git diff --check` PASS. No request construction, materialization, launcher/materializer execution, source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 - Forbidden before same-pair final approval: request construction, materialization/retry, launcher/materializer execution, all real source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Stage-1 v1.7 request-instance recovery design v1.3
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V13`
+- Formal root: `1db75ffad55a5ab7f29a9bf3a8701842ca4c3807`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Evidence: `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.3.md`; formal tree contains only this design plus `SESSION.md`/`TODO.md`; v1.2 C was consumed with zero request files and is not reused.
+- Request: review the future P0/P1/C handoff: in-memory canonical producer, the only permitted same-C `apply_patch` consumer for the two frozen paths, immediate detached-sidecar identity verification, and terminal no-retry semantics.
+- Allowed if approved: one future docs-only request-pair construction followed by independent request review.
+- Prohibited: materialization, launcher/runtime, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+- Requested verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
