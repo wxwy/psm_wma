@@ -531,6 +531,14 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Authority: formal parent is `08d5828cdb4c12afa3b798ff01826c91ceb8755a`; new-parent launcher base is path `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py`, blob `af19a9eb66ecaf8bd0b92a48ab1867f105026658`, SHA-256 `8b0fad39857fb72e3a3eb317f4acf6f2d6e94e196935f52f07d6170e79c678dd`, bytes `18966`. Ordered replay permits only that base, requires one owner-FD pair, and rejects old-base/fallback/mixed-parent input.
 - Evidence: canonical JSON `8482 bytes`, SHA-256 `831f9d8a246029333c07621debd197ff0ac8bdf1ccf7c9da4215ce8bf7c14b85`; stdlib canonical-field/single-FD verifier and `git diff --check` PASS. No materializer, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 ran.
 - Requested verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Design review: Stage-1 v1.7 launcher freeze
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`.
+- Formal root: `47801113f90348304a2843ff215d48240a490d7e`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs design. It proposes a SHA-verified stdlib launcher-replay module and temporary CPU/static tests after v1.6's pre-exec wrapper SHA mismatch; no implementation or retry.
+- Review focus: fixed formal Git-blob replay, zero preexisting owner-FD, unique adjacent insertion, outer-payload verification before exec, drift test matrix, and strict no-real-I/O boundary.
+- Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Prohibited: execution before all same-pair approvals; even then Stage-1 PASS is authority-tuple-only hard stop. No downstream mutation, child, GPU or training is authorized.
 
 ## 2026-09-14 — Remediation request review: rebound Stage-1 authority-root materialization v1.6
