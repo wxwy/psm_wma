@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Stage-1 v1.6 consumed / v1.7 launcher freeze design（2026-09-14，IN_PROGRESS）
+
+- v1.6 exact pair=`ea6d75f659cfbc978f0180ffcfc266792f85854e`/`93a89ba61306d840a008813f62f26a34d54850f4`获ChatGPT/MM/DS同pair `APPROVE_TO_MATERIALIZE`；外层临时wrapper在重演outer payload阶段因手写adapter SHA截断触发`BLOCKED_AUTHORITY_NOT_CLOSED`，未进入launcher、未创建clean root/index/ref/evidence、未读source/checkpoint/data/cache且无GPU/训练。v1.6一次authority按§5耗尽，禁止直接重试。
+- 新任务=`G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`：docs-only v0.1冻结root-only stdlib launcher-replay implementation设计；它将从formal Git blob机械重演并验证outer payload，direct tests覆盖identity/drift，随后独立审核实现；不授权新request或真实I/O。
+
 ## Stage-1 authority-root materialization request v1.4 三方最终观察与 v1.5 最小整改（2026-09-14，IN_PROGRESS）
 
 - 第1轮完整观察凭证 / `REQUEST_CHANGES` 汇总令牌（2026-09-14 15:59 CST）：formal pair=root=`08cf3f7b15b743ba536bfc7f02b00e1d594e3e0d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、DS=`ds:0.0`（用户指定 DS 替代 Kimi）。`before_head=18afa7b017081006e05142898fc212011f7663b8`；`git fetch origin V2`成功；advertised/tracking均=`18afa7b017081006e05142898fc212011f7663b8`；`18afa7b..origin/V2`新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_rebound_stage1_authority_root_materialization_request_v14_08cf3f7_93a89ba.md`，final=`REQUEST_CHANGES`：HIGH-1，new-parent RAW[2]没有既存 owner-FD pair，必须拒绝既存 pair、指定在bootstrap-root值后插入唯一`--bootstrap-owner-root-fd,8`并重算全部派生 identity；HIGH-2，须明确本轮新观测`.git`、`.git/config`、local/remote fixed ref及clean/index/evidence/pending absence；HIGH-3，formal Markdown须直接绑定 sibling canonical JSON whole bytes/SHA。MM=`mm:0.0` capture锚定同pair、final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0` capture锚定同pair、final=`REQUEST_CHANGES`，要求直接声明canonical JSON=`8482 bytes / 831f9d8a246029333c07621debd197ff0ac8bdf1ccf7c9da4215ce8bf7c14b85`并要求runtime重算后才进freshness/FD检查。三方same-pair final齐全，形成仅限一份docs-only v1.5 request的最小整改汇总令牌；禁止Stage-1 materialization/retry、任何真实source/checkpoint/manifest/data/cache I/O、child/runtime、GPU/CUDA/torchrun、训练/评测/推理/LIBERO4IN1。
