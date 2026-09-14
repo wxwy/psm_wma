@@ -852,3 +852,11 @@ For the immediately preceding v1.4 request, replace the displayed root with the 
 - Review scope: strict single `bytes → UTF-8 str` consumer seam, bound byte/text identities, and no-CR/exact-LF/empty-line round-trip witness for the deterministic two-file patch encoder.
 - Requested verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: all C/request construction before approval, materialization, runtime, source I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Independent review: constructed Stage-1 v1.7 request instance v0.3
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`.
+- Formal root: `696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: exactly `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.3.json` and `.md`; no child/runtime change. The pair was constructed under V15's single strict UTF-8 `patch_raw` consumer contract, then read back byte-for-byte: JSON `3281` bytes / SHA-256 `de5273e45f300b63c8b1548acc93c8dac1143c72cb8c21f41ccc95a0b470b773`; Markdown `588` bytes / SHA-256 `5b373694d4d40195a48d273eee0a83d087490d5f9e60073048e73cefaa8b9029`; canonical JSON and sidecar JSON SHA/Git-blob identity PASS.
+- Review focus: verify the fresh P0/P1 identities and allowed C snapshot are complete/fail-closed, the two documents are detached identity-consistent, and the request remains docs-only. This request does not seek or imply approval for materialization, launcher/runtime execution, source/checkpoint/manifest/data/cache I/O beyond the already performed construction allowlist, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+- Requested final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
