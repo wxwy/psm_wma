@@ -5924,3 +5924,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - Formal pair与冻结名册不变。`before_head=12a52692852a451c703311fb531b971fad3b21b4`；fetch成功；advertised/tracking均=`12a52692852a451c703311fb531b971fad3b21b4`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
 - ChatGPT exact review仍为`REQUEST_CHANGES(...v0.9.md:22)`；DS=`ds:0.0`仍为同pair literal `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；MM=`mm:0.0` capture仍没有任何新已提交消息或同pair literal verdict，显示的仍是旧短SHA申请与未发送澄清草稿。全部独立证据成功且未截断；无推进令牌，禁止整改、request构造、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance v0.9 完整观察凭证 #5 / 整改令牌（2026-09-14 22:10:44 CST，REVIEW → IN_PROGRESS）
+
+- Formal pair=root=`de92df512e1a239e7c2fd2d8d6ea60c5fc9ca02c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=e732cd89d32c94201ab531c86ce7b063de801a28`；fetch成功；advertised/tracking均=`e732cd89d32c94201ab531c86ce7b063de801a28`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v09_de92df5_93a89ba.md`，final=`REQUEST_CHANGES(...v0.9.md:22)`，唯一HIGH=canonical `ReplayBinding` authority未被P0 allowlist完整冻结。DS=`ds:0.0`为同pair literal `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。MM=`mm:0.0`已提交的v0.9消息明确含短前缀`de92df51`（唯一解析至formal root）、完整child与该目标verdict；按用户明确澄清，该回复计为同pair `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`，其后未发送草稿不改变已提交final。
+- 三方final同pair齐全，形成含`REQUEST_CHANGES`的整改令牌：仅允许docs-only最小v1.0冻结一个完整canonical `ReplayBinding` authority并保持P0/P1/C/禁止边界；禁止request构造、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance v1.0 docs-only 整改验证（2026-09-14，REVIEW准备）
+
+- 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v1.0.md`。它将全部`ReplayBinding` scalar、8条有序parser rows与8条有序source rows直接冻结为canonical literal，不读取test source/环境/历史副本；P0只读三项exact object，P1仅复用已关闭projection helper，derived outer与P0/P1/C边界不变。
+- `git diff --check` PASS；文档SHA-256=`f99c14ddd500368bd6c8f28f9fe5c3a3beae5469b69dc4256e07299e0c3f776f`。未执行项目代码、Git/network/source I/O、request构造、materialization、child、GPU或训练。下一步=只提交docs/status，推送后以新formal pair申请三方`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`审核。
