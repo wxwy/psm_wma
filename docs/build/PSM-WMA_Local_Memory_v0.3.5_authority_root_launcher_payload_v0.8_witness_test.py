@@ -179,10 +179,16 @@ class WitnessTest(unittest.TestCase):
                     os.mkdir("clean", 0o700, dir_fd=parent)
                     clean = P.bind_owner(os.open("clean", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC, dir_fd=parent), P.CLEAN_OWNER_FD)
                     owned = (os.fstat(clean), clean, parent, "clean", os.fstat(parent))
+                    P.CLEAN = raw
+                    for raw_bytes, name, target in ((b"a", ".a", 3), (b"b", ".b", 4), (b"c", ".c", 5)):
+                        P.handoff(raw_bytes, name, target, P.digest(raw_bytes))
                     try: P.prepare_exec_fds()
                     except P.Stop: os._exit(34)
                     try: P.assert_owned_identity(owned)
                     except P.Stop: os._exit(35)
+                    try: os.execve("/definitely/not/a/psm-executable", ["x"], {})
+                    except FileNotFoundError: pass
+                    else: os._exit(36)
                     try:
                         P.cleanup(None, owned, ())
                     except P.Stop as error:
