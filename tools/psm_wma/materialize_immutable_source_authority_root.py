@@ -41,6 +41,14 @@ class NativeGitError(RuntimeError):
     pass
 
 
+class ConfigParseError(NativeGitError):
+    """Frozen, cross-parser config rejection category."""
+
+    def __init__(self, category: str) -> None:
+        super().__init__(category)
+        self.category = category
+
+
 class InvocationFailure(NativeGitError):
     def __init__(
         self, phase: str, error: BaseException, candidate=None
@@ -264,7 +272,7 @@ def bootstrap_payload() -> str:
     return (
         "import hashlib,json,os,stat,subprocess,sys,runpy\n"
         "a=sys.orig_argv\n"
-        "def fail(): raise SystemExit('bootstrap invocation invalid line='+str(sys._getframe(1).f_lineno))\n"
+        "def fail(reason='bootstrap-invocation'): raise SystemExit(reason)\n"
         "if len(a)<8 or a[1:5]!=['-I','-S','-B','-c'] or a[6]!='--': fail()\n"
         "def one(flag):\n"
         " q=[a[i+8] for i,x in enumerate(a[7:]) if x==flag and i+8<len(a)]\n"
@@ -334,28 +342,30 @@ def bootstrap_payload() -> str:
         "if not stat.S_ISREG(cs.st_mode): fail()\n"
         "rawcfg=os.pread(cfd,cs.st_size,0)\n"
         "allowed={('core',None,'repositoryformatversion','0'),('core',None,'filemode','true'),('core',None,'bare','false'),('core',None,'logallrefupdates','true'),('remote','origin','url','https://github.com/wxwy/psm_wma.git'),('remote','origin','fetch','+refs/heads/*:refs/remotes/origin/*'),('branch','main','remote','origin'),('branch','main','merge','refs/heads/main'),('submodule','cosmos-framework','active','true'),('submodule','cosmos-framework','url','https://ghfast.top/github.com/wxwy/cosmos-framework.git'),('branch','V2','vscode-merge-base','origin/main'),('branch','V2','remote','origin'),('branch','V2','merge','refs/heads/V2'),('rerere',None,'enabled','true')}; section=None; subsection=None; seen=set(); entries=[]\n"
-        "for line in rawcfg.decode('utf-8').splitlines():\n"
+        "try: textcfg=rawcfg.decode('utf-8')\n"
+        "except UnicodeDecodeError: fail('config-utf8')\n"
+        "for line in textcfg.splitlines():\n"
         " s=line.strip()\n"
         " if not s or s.startswith(('#',';')): continue\n"
         " if s.startswith('[') and s.endswith(']'):\n"
         "  h=s[1:-1]\n"
-        "  if h!=h.strip(): fail()\n"
+        "  if h!=h.strip(): fail('config-section')\n"
         "  if '\"' in h:\n"
         "   section,sep,q=h.partition(' ')\n"
-        "   if sep!=' ' or not q.startswith('\"') or not q.endswith('\"') or '\"' in q[1:-1]: fail()\n"
+        "   if sep!=' ' or not q.startswith('\"') or not q.endswith('\"') or '\"' in q[1:-1]: fail('config-section')\n"
         "   subsection=q[1:-1]\n"
-        "   if not subsection or not subsection.isascii() or any(not(c.isalnum() or c in '_-') for c in subsection): fail()\n"
+        "   if not subsection or not subsection.isascii() or any(not(c.isalnum() or c in '_-') for c in subsection): fail('config-section')\n"
         "  else: section,subsection=h,None\n"
-        "  if not section or not section.isascii() or not section[0].isalpha() or any(not(c.isalnum() or c=='-') for c in section): fail()\n"
+        "  if not section or not section.isascii() or not section[0].isalpha() or any(not(c.isalnum() or c=='-') for c in section): fail('config-section')\n"
         "  section=section.lower()\n"
         "  continue\n"
-        " if section is None or '=' not in s: fail()\n"
+        " if section is None or '=' not in s: fail('config-grammar')\n"
         " key,value=(x.strip() for x in s.split('=',1))\n"
-        " if not key or not key.isascii() or not key[0].isalpha() or any(not(c.isalnum() or c=='-') for c in key): fail()\n"
+        " if not key or not key.isascii() or not key[0].isalpha() or any(not(c.isalnum() or c=='-') for c in key): fail('config-grammar')\n"
         " entry=(section,subsection,key.lower(),value)\n"
-        " if entry[:3] in seen: fail()\n"
+        " if entry[:3] in seen: fail('config-duplicate')\n"
         " seen.add(entry[:3]); entries.append(entry)\n"
-        "if frozenset(entries)!=allowed or len(entries)!=len(allowed): fail()\n"
+        "if frozenset(entries)!=allowed or len(entries)!=len(allowed): fail('config-allowlist')\n"
         "g=os.lstat(git)\n"
         "if not stat.S_ISREG(g.st_mode) or stat.S_ISLNK(g.st_mode) or hashlib.sha256(open(git,'rb').read()).hexdigest()!=one('--git-raw-sha256'): fail()\n"
         "if subprocess.run([git,'--version'],env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout.decode().strip()!=one('--git-version'): fail()\n"
@@ -503,7 +513,7 @@ def _parse_config_raw(raw: bytes) -> tuple[tuple[str, str | None, str, str], ...
     try:
         text = raw.decode("utf-8")
     except UnicodeDecodeError as error:
-        raise NativeGitError("Git config 必须为UTF-8") from error
+        raise ConfigParseError("config-utf8") from error
     section: str | None = None
     subsection: str | None = None
     result: list[tuple[str, str | None, str, str]] = []
@@ -515,33 +525,33 @@ def _parse_config_raw(raw: bytes) -> tuple[tuple[str, str | None, str, str], ...
         if stripped.startswith("[") and stripped.endswith("]"):
             header = stripped[1:-1]
             if header != header.strip():
-                raise NativeGitError("Git config section 无效")
+                raise ConfigParseError("config-section")
             if '"' in header:
                 section, separator, quoted = header.partition(" ")
                 if separator != " " or not quoted.startswith('"') or not quoted.endswith('"') or '"' in quoted[1:-1]:
-                    raise NativeGitError("Git config section 无效")
+                    raise ConfigParseError("config-section")
                 subsection = quoted[1:-1]
                 if not _config_subsection(subsection):
-                    raise NativeGitError("Git config section 无效")
+                    raise ConfigParseError("config-section")
             else:
                 section, subsection = header, None
             if not _config_identifier(section):
-                raise NativeGitError("Git config section 无效")
+                raise ConfigParseError("config-section")
             section = section.lower()
             continue
         if section is None or "=" not in stripped:
-            raise NativeGitError("Git config syntax 无效")
+            raise ConfigParseError("config-grammar")
         key, value = (item.strip() for item in stripped.split("=", 1))
         if not _config_identifier(key):
-            raise NativeGitError("Git config key 无效")
+            raise ConfigParseError("config-grammar")
         canonical = (section, subsection, key.lower())
         if canonical in seen:
-            raise NativeGitError("Git config 不允许duplicate key")
+            raise ConfigParseError("config-duplicate")
         seen.add(canonical)
         result.append((*canonical, value))
     ordered = tuple(result)
     if frozenset(ordered) != _CONFIG_ALLOWLIST or len(ordered) != len(_CONFIG_ALLOWLIST):
-        raise NativeGitError("Git config 含未授权或缺失 tuple")
+        raise ConfigParseError("config-allowlist")
     return ordered
 
 

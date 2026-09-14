@@ -5,12 +5,15 @@ import importlib.util
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parents[1]))
+from tools.psm_wma import materialize_immutable_source_authority_root as ADAPTER
 SPEC = importlib.util.spec_from_file_location("witness", HERE / "PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.7_witness_core.py")
 assert SPEC and SPEC.loader
 W = importlib.util.module_from_spec(SPEC)
@@ -21,11 +24,40 @@ P = importlib.util.module_from_spec(PAYLOAD_SPEC)
 PAYLOAD_SPEC.loader.exec_module(P)
 
 
+def _init_exact_config(root: Path) -> None:
+    subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+    (root / ".git/config").write_text(
+        "[core]\nrepositoryformatversion = 0\nfilemode = true\nbare = false\nlogallrefupdates = true\n"
+        "[remote \"origin\"]\nurl = https://github.com/wxwy/psm_wma.git\nfetch = +refs/heads/*:refs/remotes/origin/*\n"
+        "[branch \"main\"]\nremote = origin\nmerge = refs/heads/main\n"
+        "[submodule \"cosmos-framework\"]\nactive = true\nurl = https://ghfast.top/github.com/wxwy/cosmos-framework.git\n"
+        "[branch \"V2\"]\nvscode-merge-base = origin/main\nremote = origin\nmerge = refs/heads/V2\n"
+        "[rerere]\nenabled = true\n"
+    )
+
 class WitnessTest(unittest.TestCase):
+    def test_outer_and_adapter_config_parser_are_byte_equivalent(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "repo"; _init_exact_config(root)
+            exact = (root / ".git/config").read_bytes()
+            self.assertEqual(
+                repr(P.parse_config_raw(exact)).encode(),
+                repr(ADAPTER._parse_config_raw(exact)).encode(),
+            )
+            for replacement in (b'[branch "v2"]', b'[branch "V\\2"]', b'[branch "V.2"]', b'[branch "V/2"]'):
+                candidate = exact.replace(b'[branch "V2"]', replacement)
+                try: P.parse_config_raw(candidate)
+                except P.Stop as error: outer = str(error)
+                else: self.fail("outer parser accepted invalid config")
+                try: ADAPTER._parse_config_raw(candidate)
+                except ADAPTER.ConfigParseError as error: adapter = error.category
+                else: self.fail("adapter parser accepted invalid config")
+                self.assertEqual(outer, adapter)
+
     def test_native_git_commondir_witness(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "repo"
-            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            _init_exact_config(root)
             admin = root / ".git"
             W.require_commondir_absent(admin)
             (admin / "commondir").write_text("../common\n")
@@ -34,7 +66,7 @@ class WitnessTest(unittest.TestCase):
     def test_native_git_worktree_add_remove_witness(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "repo"; clean = root / "clean"
-            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            _init_exact_config(root)
             (root / "x").write_text("x")
             subprocess.run(["/usr/bin/git", "-C", str(root), "add", "x"], check=True)
             env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
@@ -225,7 +257,7 @@ class WitnessTest(unittest.TestCase):
     def test_payload_cleanup_is_non_destructive_for_owner_and_foreign_replacement(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "repo"; clean = root / "clean"
-            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            _init_exact_config(root)
             (root / "x").write_text("x")
             env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
             subprocess.run(["/usr/bin/git", "-C", str(root), "add", "x"], check=True)
@@ -260,7 +292,7 @@ class WitnessTest(unittest.TestCase):
     def test_leaf_remove_behavior_is_diagnostic_fixture_only(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "repo"; clean = root / "clean"
-            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            _init_exact_config(root)
             (root / "x").write_text("x")
             env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
             subprocess.run(["/usr/bin/git", "-C", str(root), "add", "x"], check=True)
@@ -294,7 +326,7 @@ class WitnessTest(unittest.TestCase):
     def test_payload_add_nonzero_and_post_add_route_drift_are_rollback_incomplete(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw) / "repo"; clean = root / "clean"
-            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            _init_exact_config(root)
             (root / "x").write_text("x")
             env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
             subprocess.run(["/usr/bin/git", "-C", str(root), "add", "x"], check=True)
@@ -335,7 +367,7 @@ class WitnessTest(unittest.TestCase):
             root = Path(raw) / "repo"
             clean = root / "clean"
             displaced = Path(raw) / "displaced"
-            subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True)
+            _init_exact_config(root)
             (root / "x").write_text("x")
             env = {**os.environ, "GIT_AUTHOR_NAME": "w", "GIT_AUTHOR_EMAIL": "w@x", "GIT_COMMITTER_NAME": "w", "GIT_COMMITTER_EMAIL": "w@x"}
             subprocess.run(["/usr/bin/git", "-C", str(root), "add", "x"], check=True)

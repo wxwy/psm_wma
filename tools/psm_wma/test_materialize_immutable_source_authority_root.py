@@ -24,6 +24,7 @@ from tools.psm_wma.materialize_immutable_source_authority_root import (
     CommitMetadata,
     main,
     NativeGitError,
+    ConfigParseError,
     AuthorityAdapterInvocation,
     ExecutableIdentity,
     GitConfigurationAuthority,
@@ -279,9 +280,10 @@ class NativeAuthorityGitTest(unittest.TestCase):
         )
         entries = adapter_module._parse_config_raw(raw)
         self.assertIn(("branch", "V2", "merge", "refs/heads/V2"), entries)
-        for replacement in (b'[branch "v2"]', b'[branch "V\\2"]', b'[branch "V.2"]', b'[branch "V/2"]'):
-            with self.assertRaises(NativeGitError):
+        for replacement, expected in ((b'[branch "v2"]', "config-allowlist"), (b'[branch "V\\2"]', "config-section"), (b'[branch "V.2"]', "config-section"), (b'[branch "V/2"]', "config-section")):
+            with self.assertRaises(ConfigParseError) as caught:
                 adapter_module._parse_config_raw(raw.replace(b'[branch "V2"]', replacement))
+            self.assertEqual(caught.exception.category, expected)
 
     def test_no_follow_relative_module_reader_rejects_component_symlink(self):
         with tempfile.TemporaryDirectory() as raw:
