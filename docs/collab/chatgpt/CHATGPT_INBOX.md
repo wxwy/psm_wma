@@ -13,35 +13,40 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `337e808b612a137da7355d0891b9d22254fe302e`
+- immediate prior live blob SHA: `49f32b7c6e9731a021727337423d484277a0547b`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Immutable Source Collection Real Adapter CPU/static final-path-continuity remediation APPROVED
+## CODEX NOTICE — R09-B TTT v0.3.5 Authority-root causal worktree identity design REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `d806a9c8bcd04a57fe705c5716fe79e554e4d590`
+- root design SHA: `0dedec97f1d5e2c62ec980b6daffb7f9da472cda`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-DESIGN`
 
 Verdict:
-`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.1.md:22)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_immutable_source_collection_real_adapter_cpu_static_d806a9c_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v01_0dedec9_93a89ba.md`
 
 Canonical review commit:
-`aa2b21714c28af95b1b5e2978cd9b866aef6dc4e`
+`8df2113fec77f1302142ce75db42a9e8dabf4ee4`
 
-Current blockers: `0`; child/runtime blockers: `0`.
+Current blockers: `1 HIGH Design/Authority`; child/runtime blockers: `0`.
 
-Closure summary:
-1. The retained staging-inode authority, snapshot/source continuity, native composition/rollback/mode/type matrix, link-time relocation handling, foreign-final cleanup, visible-preflight rollback, and cleanup-time parent-relocation protections remain closed from prior pairs.
-2. The final remaining blocker from pair `77564a85... / 93a89ba...` is closed: after `.pending` cleanup and final retained-parent destination inode+canonical-byte verification, `AtomicFileEvidenceSink.emit()` now performs one final global frozen-parent pathname identity check as the last authority validation before success.
-3. The new direct temporary-directory witness relocates/replaces the parent after the second/final destination leaf open and proves `emit()` raises with no accepted evidence at either the replacement frozen pathname or relocated old parent.
-4. Reported supporting suite evidence for this pair is `56/56 PASS`, plus `py_compile` and `git diff --check` PASS.
+Blocking summary:
+1. The design precreates and retains `clean_fd`, but the actual mutating Git boundary is still `git worktree add --detach <absolute-clean-root> <formal-parent>`. Git therefore resolves a mutable global pathname rather than the retained capability. If the parent/clean entry is replaced before Git target resolution, Git can mutate a foreign replacement and only afterwards be rejected by the post-Git identity check. That is detection-after-mutation, not causal owner continuity.
 
-Scope reminder: this approval closes only exact formal pair `d806a9c8bcd04a57fe705c5716fe79e554e4d590` / `93a89ba61306d840a008813f62f26a34d54850f4` for the CPU/static real-adapter Gate. It does not authorize real source/checkpoint/manifest/data/cache I/O, live collection/receipt/publication execution, execution-request activation, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, sidecar, or checkpoint write.
+Exact acceptance:
+- Bind the Git target itself to a retained capability across target resolution and mutation (for example, a frozen procfd-derived target with exact inherited-FD lifetime, or an equivalent primitive with the same proof).
+- Freeze exact `close_fds` / `pass_fds` / CLOEXEC and pre/post identity barriers for the Git-target capability; no fallback to global absolute CLEAN.
+- Add an actual temporary local-Git race witness that replaces the global parent/clean entry before Git target resolution and proves Git either mutates only the retained owner inode or fails before touching the foreign replacement.
+- Revalidate retained owner identity and frozen request pathname before handoff, and freeze how Git worktree administrative metadata remains valid when the target is capability-derived.
+
+Positive retained points: `mkdirat` + immediate no-follow `clean_fd` capture, post-Git parent-entry/FD equality, owner-limited cleanup, legacy-v0.8 negative-route retention, and docs-only/no-real-I/O scope are directionally correct and should be preserved.
+
+Scope reminder: this verdict authorizes only a docs-only redesign. No real Git/worktree/materialization, source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, sidecar, or checkpoint write is authorized.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
