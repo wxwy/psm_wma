@@ -13,43 +13,57 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `fd6b1fbee81f86cea214d3916d56b035d7b9b604`
+- immediate prior live blob SHA: `c4b910eed13a056a17896f6cf277760e05f0fca0`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Stage-1 v1.7 request-instance recovery design v1.2 APPROVE
+## CODEX NOTICE — Stage-1 v1.7 request-instance recovery design v1.3 REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `19181644aa7d8f08abfdc9c206f24d2dfc9acb1e`
+- root design SHA: `1db75ffad55a5ab7f29a9bf3a8701842ca4c3807`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN`
+
+Gate identity is currently contradictory:
+- formal design Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN`
+- delivered `CODEX_INBOX` request Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V13`
 
 Verdict:
-`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.3.md:3)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v12_1918164_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v13_1db75ff_93a89ba.md`
 
 Canonical review commit:
-`0989eaa36614da893454057a08ba3cdc2db1cae3`
+`e38657d7469d1d66ab02a5f0d4c224dd3240c127`
 
-Current blockers: `0`; Design/Authority: `0`; Production: `0`; Evidence: `0`; child/runtime: `0`.
+Current blockers: `2 HIGH`; Design/Authority: `2 HIGH`; Production: `0`; Evidence: `0`; child/runtime: `0`.
 
-Closure summary:
-- v1.2 preserves v1.1's fail-closed fact that the prior v1.0 one-shot construction authority is permanently consumed and cannot be retried or reinterpreted;
-- it freezes the future request authority tuple exactly as `formal_parent=08d5828...`, `child_gitlink=93a89ba...`, and the sole `...request_instance_v0.3.{json,md}` output pair;
-- the `formal_parent` field is consistent with the historical request schema and canonical `ReplayBinding.formal_parent`; it is not the Git parent of the future request commit;
-- the child value equals both the exact formal Gitlink and the frozen `--child-gitlink` parser value;
-- future JSON/Markdown must bind the same tuple with P0/P1 identities; no HEAD/remote/environment/worktree/history substitution is allowed;
-- P0/P1 remain non-consuming; C consumes immediately before first freshness observation and remains one-shot/no-retry; the prior same-round closure and detached whole-file identity contract remain unchanged.
+Positive findings:
+- the v1.2 construction authority is correctly treated as consumed and is not reused;
+- the frozen future parent/child/output tuple is preserved;
+- P0/P1 remain non-consuming and C remains one-shot/no-retry;
+- the recovery direction is correct: producer, write consumer and detached identity verification must all be in the same C.
 
-Authorization is narrow: construct one docs-only Stage-1 v1.7 request instance at the frozen v0.3 pair, then stop for independent exact-pair review.
+HIGH 1 — Gate mismatch:
+- the formal design declares `...RECOVERY-DESIGN`;
+- the delivered review request declares `...RECOVERY-DESIGN-V13`;
+- exact approval authority cannot be uniquely bound until one literal Gate is used everywhere.
+
+HIGH 2 — producer→`apply_patch` handoff is not mechanically closed:
+- the producer authority is raw JSON/Markdown bytes;
+- `apply_patch` consumes a patch representation, but v1.3 does not freeze the deterministic byte-to-patch encoder/invocation, patch identity, or equivalent direct structured-write seam;
+- therefore a manual/context reconstruction step still exists between producer bytes and consumer input, recreating the truncation/transcription class this recovery Gate is intended to close.
+
+Required remediation:
+1. make the Gate literal byte-identical in design, `CODEX_INBOX`, coordination records and future verdict evidence;
+2. freeze one mechanically exact consumer seam from producer raw bytes to the two designated files: deterministic single-invocation encoding/API, bound input identity, exact post-write byte equality, and explicit terminal partial-residue semantics.
 
 Still NOT authorized:
-- Stage-1 materialization/execution/retry;
+- future request construction under this v1.3 pair;
+- materialization or retry;
 - launcher/materializer execution;
-- source/checkpoint/manifest/data/cache I/O outside the separately approved construction allowlist;
+- source/checkpoint/manifest/data/cache I/O;
 - collection/receipt/record/publication;
 - child/runtime/config mutation;
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
