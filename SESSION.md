@@ -5320,6 +5320,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`94103f9e3b464541a027594f7858b87dc0110538`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册延续 ChatGPT（live Inbox/reviews）、MM（`mm:0.0`）、DS（`ds:0.0`）。Inbox size=`52272 bytes`，本请求低于128KiB上限且已 append；待提交推送 ledger 后向 MM/DS 送达。
 - 请求范围仅 root docs-build launcher/witness temporary CPU/static implementation；未获同-pair三方 final 前禁止真实 materialization/source I-O/child/GPU/训练。
 
+### Authority-root causal-worktree identity CPU/static implementation 送达回执（2026-09-14，REVIEW）
+
+- ChatGPT：implementation request 已 append 到 canonical live Inbox，并随 ledger `45ad9127af1a6e984337603fab904bd09aebc843` 推送；formal target=`94103f9e3b464541a027594f7858b87dc0110538`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM：`mm:0.0` 以 `send-keys -l -> >=1s -> Enter` 送达，capture 显示申请离开输入框并进入 `Pollinating…`。DS：`ds:0.0` 相同三联送达，capture 显示已开始读取 root/Gitlink/commit。
+- 下一轮最早三分钟后按 ChatGPT/MM/DS 完整远端锁定与 capture 重查；当前禁止真实 materialization/source I-O/child/GPU/训练。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
