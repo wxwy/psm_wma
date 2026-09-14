@@ -575,3 +575,10 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: docs-only minimal remedy to v0.2 same-pair final findings. v0.3 supersedes v0.2 and freezes the two exact allowed future paths, a flag/adjacent-value-aware parser table (so `--cwd` and `--bootstrap-project-root` independently replace their equal old values), the full canonical parser/source replacement tables, pure API and fail-close contract.
 - Evidence: formal tree only changes `SESSION.md`, `TODO.md`, v0.2 supersession notice and v0.3; Gitlink unchanged; `git diff --check` PASS. No module/test implementation, request construction, Stage-1 retry/materialization, real source/checkpoint/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1 occurred.
 - Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Remediation design review: Stage-1 v1.7 launcher freeze v0.4
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`; formal root=`5acb0bdadcc5ecbc22b720e5eeac6a3c95780bdc`; child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root docs-only v0.3 High remedy. v0.4 appends exactly four missing source self-check replacements: bootstrap bytes/SHA and parser bytes/SHA; it requires exact surrounding-literal targeting, canonical outer bytes/SHA witness, and per-literal drift negatives. No implementation or real I/O.
+- Evidence: formal tree only `SESSION.md`/`TODO.md`/v0.4; Gitlink unchanged; diff-check PASS. Forbidden: request construction, Stage-1 retry/materialization, source/checkpoint/data/cache I/O, child/runtime, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
+- Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
