@@ -738,3 +738,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `python3 -m py_compile tools/psm_wma/stage1_v17_request_projection.py tools/psm_wma/test_stage1_v17_request_projection.py && python3 -m unittest tools.psm_wma.test_stage1_v17_request_projection && git diff --check` PASS (`9/9`). Helper/tests remain injected-byte-only and perform no Git/network/filesystem/path/subprocess/launcher/materializer/request/runtime I/O.
 - Forbidden: request construction, materialization/retry, source/checkpoint/manifest/data/cache access, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Design review: Stage-1 v1.7 request-instance construction v0.6
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`.
+- Formal root: `76307bb65c08c1f9f35e3832be89c9cc617953eb`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only docs `PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.6.md` plus coordination records; no runtime code or child change.
+- Review focus: v0.5's one construction authority was consumed at zero-output AST failure. v0.6 makes closed projection root `079167743685247d6aae62a671436e834411a3cb` a non-consuming Phase-P precondition, isolates exactly one Phase-C construction attempt, retains the two-query fresh allowlist, detached JSON/Markdown whole identity, zero-mutation fail-close, and no-retry hard stop. Approval must authorize only construction of one future docs-only request pair, which itself needs a new exact-pair review.
+- Evidence: formal tree contains only the three listed root docs/coordination paths; Gitlink unchanged; `git diff --check` PASS. No project code, request construction, Git/network/filesystem runtime I/O, materialization, child, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1 occurred.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
