@@ -5694,3 +5694,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_authority_parent_rebind_design_v01_1ee147e_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_REBOUND_STAGE1_AUTHORITY_ROOT_REQUEST`；MM `mm:0.0` capture为同一literal final；DS `ds:0.0` capture为同一literal final（附LOW建议：request instance显式写新base数值）。三项独立证据均成功、未截断。
 - formal-tree scope仅rebind design文件；Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。三方同pair全批准构成构造令牌，仅授权生成并静态核验一份rebound-parent docs-only Stage-1 request instance，随后以新exact pair重新三方审核；不授权materialization/retry、真实source/checkpoint/manifest/data/cache I/O、collection/receipt/record/package/publication、child/runtime、GPU或训练。
 - ChatGPT review同时指出其审阅时live Inbox缺同pair条目；本次将先append canonical delivery record并推送ledger，再按full SHA向MM/DS重发规范送达回执。该bookkeeping不改变formal target或扩大令牌范围。
+
+### Stage-1 authority parent rebind design 送达回执补正（2026-09-14 15:39 CST，IN_PROGRESS）
+
+- ChatGPT：canonical live Inbox 已追加 exact pair delivery record，并以 ledger `cbfd39d3c5e36b4eec2807377c27560cd4685bc1` 推送；formal target保持=`1ee147e5cbee13f447fd4d93ed464d3e5e8136ee`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM：`mm:0.0`使用`send-keys -l`写入完整 pair，等待≥1秒后独立`Enter`；capture显示完整申请已进入transcript且输入框为空，pane为`Leavening`处理中。
+- DS：`ds:0.0`使用相同`send-keys -l -> >=1s -> Enter`；capture显示完整申请已进入transcript，pane busy。两条消息均明确请求literal verdict并重申docs-only禁止边界。
+- 冻结名册不变。现有构造令牌仍仅来自 #1 已齐的same-pair final；补正送达仅修复审阅中发现的canonical/完整SHA回执缺口。下一实际构造动作前必须重新读取本凭证、TODO与formal design，并保持docs-only范围。
