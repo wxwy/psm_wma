@@ -634,3 +634,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Review focus: require a same-round zero-mutation freshness snapshot, canonical request bytes/SHA, all replay/config/parser/environment/owner-FD closures, no fallback/stale inference, and `BLOCKED_AUTHORITY_NOT_CLOSED` before any exec. Confirm the requested design verdict authorizes only docs-only request construction followed by a new exact-pair review.
 - Forbidden: request construction before this design is approved; all materialization/retry, launcher execution, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Remediation design review: Stage-1 v1.7 request-instance construction v0.2
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`.
+- Formal root: `0831e0ba2dcb5c93e9069d2d20aca1790095dc97`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs v0.2 plus coordination records; v0.2 explicitly supersedes v0.1 construction-time I/O wording. It remains a design only: no request is constructed or executed.
+- Exact remediation: after unanimous same-pair design approval, construction has a closed read-only allowlist: formal Git object/tree/base bytes; local `.git` identity/config bytes; frozen local ref; one `git ls-remote origin refs/heads/V2` query whose complete raw result is bound into the request; and designated path-absence checks. It fixes future Markdown/JSON output paths and required canonical JSON closures. All other network, filesystem content and runtime I/O remain prohibited.
+- Forbidden: request construction before approval; materialization/retry; launcher/materializer execution; source/checkpoint/manifest/data/cache content I/O; collection/receipt/record/package/publication; directory/ref/artifact creation; child/runtime mutation; GPU/CUDA/torchrun; training/evaluation/inference/LIBERO4IN1.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
