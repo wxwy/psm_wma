@@ -610,3 +610,10 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: only approved test path. Adds direct canonical base identity/raw-shape negatives and each source table rows 0–3 drift; prior 4–7 drift, relocation, order, owner and adjacent-value coverage remain.
 - Evidence: py_compile, unittest=11/11, diff-check PASS; no real I/O/request/retry/child/GPU/training.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Table-authority close review: Stage-1 v1.7 launcher replay
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`; root=`64ffa794042ba866339446706e37c51335827d31`; child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: approved two root files. Canonical parent now requires immutable parser/source table digests before mutation; direct negatives cover parser extra no-op and source reorder.
+- Evidence: py_compile, unittest=12/12, diff-check PASS; no I/O/request/retry/child/GPU/training.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
