@@ -5281,6 +5281,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `before_head=86c83071fe2af6ef0e11cfe4141f2978f09d6dc1`；fetch 成功；advertised/tracking均=`86c83071fe2af6ef0e11cfe4141f2978f09d6dc1`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only` 成功（Already up to date）。ChatGPT exact review 与 MM exact-pair final 均继续为 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。
 - Kimi `kimi:0.0` 第三次连续 capture 仍为 provider `403 weekly usage limit`，无 exact-pair final，状态=`检查失败/状态未知`。这不是可由旧 Kimi verdict 解决的等待；冻结名册下已无安全本地动作。Gate 维持`REVIEW`，禁止 implementation、提交、测试、真实 I/O、GPU 与训练；需用户明确决定继续等待 Kimi 恢复或指定替换审核者并重新送达。
 
+### Authority-root causal-worktree identity v0.5 审核观察凭证 #5（2026-09-14 11:05:19 CST，REVIEW）
+
+- 冻结名册与 exact pair 不变：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`），`019643a9b17ebdda8f74b5c5fac90cb37c23f18f`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=1585630391d826ad2ccb7aba39a686004ac5291a`；fetch 成功；advertised/tracking均=`1585630391d826ad2ccb7aba39a686004ac5291a`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only` 成功（Already up to date）。ChatGPT exact review 与 MM exact-pair final均继续为 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。
+- Kimi `kimi:0.0` 第四次连续 capture仍为 provider `403 weekly usage limit`，无 exact-pair final，状态=`检查失败/状态未知`。已无不依赖用户授权的安全动作；冻结名册阻止自动替换。Gate 必须保持`REVIEW`，禁止 implementation、提交、测试、真实 I/O、GPU 或训练；等待用户明确指定继续等待或替换审核者。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
