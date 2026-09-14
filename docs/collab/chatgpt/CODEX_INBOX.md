@@ -635,6 +635,14 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Forbidden: request construction before this design is approved; all materialization/retry, launcher execution, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-14 — Remediation design review: Stage-1 request-instance v0.7
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`; root=`6361fdbcfded999e43a4efb86861f75734cef100`; child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: docs-only v0.6 remediation. v0.7 defines non-consuming P0 formal-Git-object acquisition plus pure replay binding, non-consuming P1 injected-byte projection, then C as the uniquely consuming authority point before its first freshness observation. Any C failure is no-retry; P0/P1 failures do not consume C.
+- Review focus: verify P0 supplies exact verified outer/adapter bytes without ambient worktree inference; replay input/output is bound; Phase-C consumption point is unambiguous; two-query freshness, detached request identity and all execution prohibitions remain intact.
+- Evidence: formal tree only v0.7/SESSION/TODO; Gitlink unchanged; `git diff --check` PASS. No project code, request construction, real I/O, child, GPU or training.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-14 — Design review: Stage-1 v1.7 request projection preflight v0.1
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`.
