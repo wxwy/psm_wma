@@ -13,50 +13,65 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `a5bf495a78ca006537134fa633d4c1afd7a367e2`
+- immediate prior live blob SHA: `f5c3f4d15f6f4a5510d23c972e830a0093256a50`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Stage-1 v1.7 request projection preflight implementation APPROVED TO CLOSE
+## CODEX NOTICE — Stage-1 v1.7 request-instance design v0.6 REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `079167743685247d6aae62a671436e834411a3cb`
+- root design SHA: `76307bb65c08c1f9f35e3832be89c9cc617953eb`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`
 
 Verdict:
-`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.6.md:27)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_projection_preflight_implementation_second_remediation_0791677_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v06_76307bb_93a89ba.md`
 
 Canonical review commit:
-`eff72b5fd3cc98445636db7c8499133c1d1ec56f`
+`c00ac2e3ba88d119ffe15759d95127d141bdbcab`
 
-Current blockers: `0`; Production/Authority: `0`; Evidence: `0`; Design/Authority: `0`; child/runtime: `0`.
+Current blockers: `2 HIGH`; Design/Authority: `2 HIGH`; Production: `0`; Evidence: `0`; child/runtime: `0`.
 
-Closure summary:
-1. The prior outer-RAW grammar HIGH is closed: `RAW[0]` / `RAW[1]` base64 arguments and `RAW[2]` parser JSON now use `_single_literal()` and accept only a single `ast.Constant(str|bytes)`; recursive `BinOp(Add)` remains isolated to the adapter `bootstrap_payload()` return expression.
-2. The direct embedded-fixture matrix closes the prior evidence HIGH: all three outer concatenation variants fail, malformed base64 and malformed parser JSON fail, and the canonical public helper still runs directly against the frozen in-memory outer and adapter bytes.
-3. Every returned `ProjectedBytes` field is directly checked for `byte_length == len(raw)` and `sha256 == sha256(raw)`.
-4. Bootstrap argv remains frozen to exact `["--", *parser_argv_items]`; wrong no-prefix/parser-byte substitution is forced through the production identity guard and fails `projection_identity`.
-5. Previously closed production controls remain intact: adapter native Git blob OID + raw SHA revalidation; exact ordered parser flag/value table and compact JSON; strict bootstrap signature/body/return AST; exact parser/bootstrap-argv/contract identities; no partial return path.
-6. Formal delta from prior ChatGPT notification head is limited to the approved projection module/test plus `SESSION.md` / `TODO.md`; Gitlink resolves exactly to reachable child `93a89ba...`; child/runtime bytes are unchanged.
-7. Helper/tests remain pure stdlib, injected-byte-only and no Git/network/filesystem/path/subprocess/launcher/materializer/request/runtime I/O.
+Positive findings:
+1. Formal root immediate delta is docs-only: v0.6 design plus `SESSION.md` / `TODO.md`.
+2. Gitlink resolves exactly to reachable child `93a89ba...`; child/runtime bytes are unchanged.
+3. v0.6 correctly treats the v0.5 construction authority as permanently consumed and does not revive/retry it.
+4. Closed projection implementation `079167743685247d6aae62a671436e834411a3cb / 93a89ba...` is correctly a prerequisite, not request/materialization authority.
+5. Detached canonical JSON / Markdown sidecar identity, two-query allowlist, one-request/no-retry goal and independent exact-pair request review remain directionally correct.
+6. Non-conflicting v0.5 rules remain applicable, including moving remote `V2` as construction provenance rather than runtime equality.
 
-Authorized consequence:
-- close only `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC` implementation.
+HIGH 1 — Phase C start / authority-consumption boundary is contradictory:
+- §2 says Phase C begins only after Phase P succeeds **and all same-round zero-mutation observations are completed**;
+- §3 defines those Git/.git/local-ref/two-remote-query/path-absence/environment observations as **Phase C reads**, and says observation failure is non-retry because Phase C has already begun;
+- therefore the same observation is simultaneously before and inside the consuming attempt.
+
+Required remediation:
+- freeze one unique consumption point consistently in all sections;
+- recommended: `P0 input acquisition -> P1 pure projection -> C consuming construction`; entering `C` occurs before the first freshness/remote/path/env observation and consumes the authority; any failure thereafter permanently exhausts it and forbids retry.
+
+HIGH 2 — Phase P has no authorized source for its formal-tree outer/adapter bytes:
+- Phase P requires injected frozen outer/adapter bytes but forbids Git/filesystem/path/subprocess I/O;
+- the only explicit permission to read formal Git commit/tree/blob and outer/adapter bytes is in Phase C;
+- Phase C cannot begin until Phase P succeeds, creating a circular authority dependency.
+
+Required remediation:
+- add a closed, non-consuming Phase-P input-acquisition substage that allows only immutable reads needed to obtain and independently verify exact frozen formal outer/adapter objects/bytes, with no network, mutation, output or request construction;
+- or freeze those bytes as externally supplied invocation inputs with a mechanically verifiable source/identity contract.
+
+Recommended structure:
+`P0 immutable local formal-object acquisition (non-consuming) -> P1 pure projection (non-consuming) -> C one consuming construction attempt`.
 
 Still NOT authorized:
-- any new request construction authority;
-- revival/retry of the consumed v0.5 construction authority;
+- request construction under v0.6;
+- revival/retry of v0.5 construction authority;
 - Stage-1 materialization/execution/retry;
 - launcher/materializer execution;
-- source/checkpoint/manifest/data/cache/runtime I/O;
+- source/checkpoint/manifest/data/cache/runtime I/O outside any future explicitly approved construction allowlist;
 - child/runtime mutation;
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
-
-A future request-construction attempt requires a new construction design/authority and a fresh exact-pair review chain.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
