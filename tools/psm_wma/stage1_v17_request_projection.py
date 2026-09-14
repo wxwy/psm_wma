@@ -93,17 +93,29 @@ def _literal(node: ast.AST) -> bytes:
     _fail("literal")
 
 
+def _single_literal(node: ast.AST) -> bytes:
+    if not isinstance(node, ast.Constant) or not isinstance(node.value, (str, bytes)):
+        _fail("raw_literal")
+    return node.value.encode() if isinstance(node.value, str) else node.value
+
+
 def _decode(node: ast.AST) -> bytes:
     if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
             and isinstance(node.func.value, ast.Name) and node.func.value.id == "base64"
             and node.func.attr == "b64decode" and len(node.args) == 1 and not node.keywords):
         _fail("raw_target")
     try:
-        raw = _literal(node.args[0])
+        raw = _single_literal(node.args[0])
         if any(value > 127 for value in raw): _fail("raw_target")
         return base64.b64decode(raw, validate=True)
+    except AuthorityReplayError:
+        raise
     except Exception:
         _fail("base64")
+
+
+def _bootstrap_argv(items: list[str]) -> bytes:
+    return json.dumps(["--", *items], separators=(",", ":"), ensure_ascii=False).encode()
 
 
 def project_request_closure(outer_payload_bytes: bytes, adapter_source_bytes: bytes) -> ProjectedRequestClosure:
@@ -113,12 +125,12 @@ def project_request_closure(outer_payload_bytes: bytes, adapter_source_bytes: by
         tree = ast.parse(outer_payload_bytes.decode())
         raw_nodes = [n.value for n in tree.body if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "RAW" for t in n.targets)]
         if len(raw_nodes) != 1 or not isinstance(raw_nodes[0], ast.Tuple) or len(raw_nodes[0].elts) != 3: _fail("raw_shape")
-        selection, config, parser_raw = _decode(raw_nodes[0].elts[0]), _decode(raw_nodes[0].elts[1]), _literal(raw_nodes[0].elts[2])
+        selection, config, parser_raw = _decode(raw_nodes[0].elts[0]), _decode(raw_nodes[0].elts[1]), _single_literal(raw_nodes[0].elts[2])
         items = json.loads(parser_raw)
         canonical = json.dumps(items, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
         if (not isinstance(items, list) or any(not isinstance(x, str) for x in items)
                 or canonical != parser_raw or len(items) % 2 or tuple(zip(items[::2], items[1::2])) != FLAG_VALUES): _fail("argv")
-        bootstrap_argv = json.dumps(["--", *items], separators=(",", ":"), ensure_ascii=False).encode()
+        bootstrap_argv = _bootstrap_argv(items)
         adapter = ast.parse(adapter_source_bytes.decode())
         funcs = [n for n in adapter.body if isinstance(n, ast.FunctionDef) and n.name == "bootstrap_payload"]
         if len(funcs) != 1: _fail("bootstrap")

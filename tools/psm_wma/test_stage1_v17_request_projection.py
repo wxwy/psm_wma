@@ -1,5 +1,6 @@
 import ast
 import base64
+import copy
 import dataclasses
 import gzip
 import hashlib
@@ -323,6 +324,30 @@ def replace_after(raw, marker, old, new):
     return before + after.replace(old, new, 1)
 
 
+def outer_with_raw_mutation(index, mutate):
+    tree = ast.parse(OUTER_RAW.decode())
+    raw = next(node.value for node in tree.body if isinstance(node, ast.Assign)
+               and any(isinstance(target, ast.Name) and target.id == "RAW" for target in node.targets))
+    raw.elts[index] = mutate(copy.deepcopy(raw.elts[index]))
+    return ast.unparse(tree).encode()
+
+
+def concatenate_raw_literal(node):
+    if isinstance(node, ast.Call):
+        node.args[0] = ast.BinOp(node.args[0], ast.Add(), ast.Constant(""))
+    else:
+        node = ast.BinOp(node, ast.Add(), ast.Constant(""))
+    return node
+
+
+def malformed_raw_literal(node, raw):
+    if isinstance(node, ast.Call):
+        node.args[0] = ast.Constant(raw)
+    else:
+        node = ast.Constant(raw)
+    return node
+
+
 class ProjectionTest(unittest.TestCase):
     def assert_projection_fails(self, outer, adapter, category, **values):
         expected_outer = (len(outer), sha(outer))
@@ -341,6 +366,12 @@ class ProjectionTest(unittest.TestCase):
         self.assertEqual((result.parser_argv.byte_length, result.parser_argv.sha256), projection.PARSER_ARGV)
         self.assertEqual((result.bootstrap_argv.byte_length, result.bootstrap_argv.sha256), projection.BOOTSTRAP_ARGV)
         self.assertEqual((result.bootstrap_contract.byte_length, result.bootstrap_contract.sha256), projection.BOOTSTRAP_CONTRACT)
+        for field in dataclasses.fields(result):
+            if field.name == "parser_argv_items":
+                continue
+            projected = getattr(result, field.name)
+            self.assertEqual(projected.byte_length, len(projected.raw))
+            self.assertEqual(projected.sha256, sha(projected.raw))
         self.assertEqual(result.parser_argv.raw, json.dumps(list(result.parser_argv_items), separators=(",", ":"), ensure_ascii=False).encode())
         self.assertEqual(tuple(zip(result.parser_argv_items[::2], result.parser_argv_items[1::2])), projection.FLAG_VALUES)
         self.assertEqual(result.bootstrap_argv.raw, json.dumps(["--", *result.parser_argv_items], separators=(",", ":"), ensure_ascii=False).encode())
@@ -359,6 +390,15 @@ class ProjectionTest(unittest.TestCase):
         self.assert_projection_fails(OUTER_RAW.replace(b"base64.b64decode", b"base64.decode", 1), ADAPTER_RAW, "raw_target")
         self.assert_projection_fails(replace_once(OUTER_RAW, b"RAW = (", b"RAW = (b'', "), ADAPTER_RAW, "raw_shape")
 
+    def test_outer_raw_requires_single_literals_and_valid_encodings(self):
+        for index in range(3):
+            self.assert_projection_fails(
+                outer_with_raw_mutation(index, concatenate_raw_literal), ADAPTER_RAW, "raw_literal")
+        self.assert_projection_fails(
+            outer_with_raw_mutation(0, lambda node: malformed_raw_literal(node, b"!")), ADAPTER_RAW, "base64")
+        self.assert_projection_fails(
+            outer_with_raw_mutation(2, lambda node: malformed_raw_literal(node, b"{")), ADAPTER_RAW, "parse")
+
     def test_parser_canonical_order_and_adjacency_fail_closed(self):
         result = projection.project_request_closure(OUTER_RAW, ADAPTER_RAW)
         raw = result.parser_argv.raw
@@ -374,6 +414,22 @@ class ProjectionTest(unittest.TestCase):
         self.assert_projection_fails(OUTER_RAW, replace_once(ADAPTER_RAW, b"def bootstrap_payload()", b"def bootstrap_payload(value)"), "bootstrap")
         self.assert_projection_fails(OUTER_RAW, replace_after(ADAPTER_RAW, b"def bootstrap_payload()", b"return (", b"return value #"), "parse")
         self.assert_projection_fails(OUTER_RAW, replace_once(ADAPTER_RAW, b"import hashlib,json", b"import hashes,json"), "identity")
+
+    def test_bootstrap_argv_prefix_and_parser_substitution_fail_closed(self):
+        result = projection.project_request_closure(OUTER_RAW, ADAPTER_RAW)
+        without_prefix = json.dumps(list(result.parser_argv_items), separators=(",", ":"), ensure_ascii=False).encode()
+        for invalid in (without_prefix, result.parser_argv.raw):
+            with patch.object(projection, "_bootstrap_argv", return_value=invalid):
+                with self.assertRaisesRegex(projection.AuthorityReplayError, "projection_identity"):
+                    projection.project_request_closure(OUTER_RAW, ADAPTER_RAW)
+
+    def test_failed_projection_exposes_no_partial_result(self):
+        partial = None
+        try:
+            projection.project_request_closure(OUTER_RAW + b"# drift", ADAPTER_RAW)
+        except projection.AuthorityReplayError:
+            pass
+        self.assertIsNone(partial)
 
     def test_literal_rejects_name_and_call(self):
         for expression in ("value", "f()"):
