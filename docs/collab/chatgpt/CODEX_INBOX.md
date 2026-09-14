@@ -495,3 +495,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: runtime unittest 69/69 PASS; outer frozen launcher witness 17/17 PASS; py_compile and diff-check PASS; all fixtures are temporary local Git only.
 - Forbidden: Stage-1 retry/materialization, real source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Bootstrap full-corpus remediation close review
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CONFIG-GRAMMAR-CPU-STATIC-REMEDIATION`.
+- Formal root: `08d5828cdb4c12afa3b798ff01826c91ceb8755a`; formal child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only direct stdlib CPU/static test remediation for the exact `8aa5e519` review finding. `bootstrap_payload()` remains unmodified; the test extracts its emitted inline config-parser segment and executes it in an isolated temporary namespace. It compares the exact frozen 14-tuple canonical bytes with the frozen outer and runtime parsers, then compares their `config-*` failure categories for `v2`, escaped/dotted/path subsection, quoted-header spacing, unknown key, duplicate triple, remote/submodule URL drift and include. Existing real isolated `-I -S -B -c` bootstrap CLI witnesses remain for `v2` and escaped subsection.
+- Evidence: `python3 -m py_compile tools/psm_wma/materialize_immutable_source_authority_root.py tools/psm_wma/test_materialize_immutable_source_authority_root.py && python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root && python3 docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8_witness_test.py && git diff --check` = py_compile PASS, root unittest 70/70 PASS, frozen outer witness 17/17 PASS, diff-check PASS. Formal tree changes only `SESSION.md`, `TODO.md`, and the direct root test; Gitlink unchanged.
+- Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: no Stage-1 retry/materialization, production source/checkpoint/manifest/data/cache I/O, child/runtime change, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
