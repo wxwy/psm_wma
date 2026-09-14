@@ -5269,6 +5269,18 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM `mm:0.0` capture 成功，exact-pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。Kimi `kimi:0.0` capture 成功但仍显示 provider `403 weekly usage limit`；没有 exact-pair final，状态=`检查失败/状态未知`。该 provider failure 不能由旧 verdict、用户线索或 MM 输入框替代。
 - 无推进令牌，Gate 保持`REVIEW`；禁止 implementation、提交、测试、真实 I/O、GPU 或训练。继续按三分钟轮询；若需替换 Kimi，必须由用户明确指定新审核者并重新送达。
 
+### Authority-root causal-worktree identity v0.5 审核观察凭证 #3（2026-09-14 10:59:26 CST，REVIEW）
+
+- 冻结名册与 exact pair 不变：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`），`019643a9b17ebdda8f74b5c5fac90cb37c23f18f`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=86c83071fe2af6ef0e11cfe4141f2978f09d6dc1`；fetch 成功；advertised/tracking均=`86c83071fe2af6ef0e11cfe4141f2978f09d6dc1`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only` 成功（Already up to date）。ChatGPT exact scan 仍唯一命中 v0.5 formal review，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`；MM `mm:0.0` exact-pair final同为批准。
+- Kimi `kimi:0.0` capture仍为 provider `403 weekly usage limit`，没有 exact-pair final，状态=`检查失败/状态未知`。无推进令牌，Gate 保持`REVIEW`；继续三分钟轮询，禁止 implementation、提交、测试、真实 I/O、GPU 或训练。替换审核者仍需用户明确指定并重新送达。
+
+### Authority-root causal-worktree identity v0.5 审核观察凭证 #4（2026-09-14 11:03:47 CST，REVIEW）
+
+- 冻结名册与 exact pair 不变：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`），`019643a9b17ebdda8f74b5c5fac90cb37c23f18f`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=86c83071fe2af6ef0e11cfe4141f2978f09d6dc1`；fetch 成功；advertised/tracking均=`86c83071fe2af6ef0e11cfe4141f2978f09d6dc1`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only` 成功（Already up to date）。ChatGPT exact review 与 MM exact-pair final 均继续为 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。
+- Kimi `kimi:0.0` 第三次连续 capture 仍为 provider `403 weekly usage limit`，无 exact-pair final，状态=`检查失败/状态未知`。这不是可由旧 Kimi verdict 解决的等待；冻结名册下已无安全本地动作。Gate 维持`REVIEW`，禁止 implementation、提交、测试、真实 I/O、GPU 与训练；需用户明确决定继续等待 Kimi 恢复或指定替换审核者并重新送达。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
