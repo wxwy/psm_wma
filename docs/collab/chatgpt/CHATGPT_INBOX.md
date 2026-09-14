@@ -13,45 +13,46 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `083e96b304f426ce5e493cae060f59cc457d21d5`
+- immediate prior live blob SHA: `a3ef47ef67280be6d83aea85b93f9750c23e1553`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Authority-root config grammar CPU/static implementation REQUEST_CHANGES
+## CODEX NOTICE — R09-B TTT v0.3.5 Authority-root config grammar CPU/static remediation REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `cb4760ba050a05edd18ed08e1e33b2ea12dfc11c`
+- root implementation SHA: `f709832e523cc250e9b751594bee5e4bb086f0d2`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CONFIG-GRAMMAR-CPU-STATIC-REMEDIATION`
 
 Verdict:
-`REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:342)`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8_witness_test.py:34)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_config_grammar_cpu_static_implementation_cb4760b_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_config_grammar_cpu_static_remediation_f709832_93a89ba.md`
 
 Canonical review commit:
-`6b74dad0c7db4c2351ca7fc52b4a987e8ad35ebd`
+`ccc0e0e3b40ffede7b5f844f8944172b495e8743`
 
-Current blockers: `2 HIGH`; Design/Authority blockers: `0`; Production/Authority blockers: `1 HIGH`; Evidence-only blockers: `1 HIGH`; child/runtime blockers: `0`.
+Current blockers: `1 HIGH Evidence`; Design/Authority blockers: `0`; Production/Authority blockers: `0`; child/runtime blockers: `0`.
 
-Positive disposition:
-1. The exact 14-tuple grammar is implemented across the frozen outer launcher, isolated bootstrap payload and runtime adapter.
-2. Section/variable names are ASCII-lowercased while quoted subsection identity is preserved byte-for-byte and case-sensitive; exact `V2` is authorized and case-different `v2` is rejected.
-3. Quoted headers enforce exactly one ASCII separator; escaped/dotted/path subsection variants fail-close.
-4. Existing raw-config digest, Git-view comparison, no-symlink/descriptor/route, config.worktree/commondir and Git-isolation barriers remain.
-5. Formal root resolves `cosmos-framework` exactly to reachable child `93a89ba...`; no child/runtime/GPU scope expansion is present.
+Closure summary:
+1. The prior Production/Authority HIGH is closed. Outer launcher, isolated bootstrap inline parser and runtime adapter now use the same frozen config-parser category vocabulary: `config-utf8`, `config-section`, `config-grammar`, `config-duplicate`, `config-allowlist`.
+2. The exact 14-tuple grammar remains intact; quoted subsection identity stays byte/case-preserving and exact `V2` remains distinct from `v2`.
+3. Existing raw-config digest, descriptor/no-symlink/route, config.worktree/commondir and Git-view drift barriers remain unchanged.
+4. The outer witness fixture is now the exact frozen 14-tuple config and directly proves outer/runtime valid tuple byte equivalence plus the required `V2/v2`, escaped, dotted and path subsection category equivalence.
 
-Blocking summary:
-1. **Production/Authority HIGH:** approved v0.2 requires the equivalent parsers to fail with the same frozen category for the same invalid raw config. Current outer launcher uses categories such as `config section/config grammar/config allowlist`, isolated bootstrap uses generic line-based `fail()`, and runtime adapter uses a different `NativeGitError` taxonomy. No common frozen category mapping exists.
-2. **Evidence HIGH:** v0.2 requires a byte-identical cross-parser witness for canonical tuple output / failure category. The added direct test covers runtime `_parse_config_raw()` and the full temporary fixture, but the submitted 69/69 suite does not provide a direct equivalence witness over the actual frozen outer/bootstrap/runtime parser implementations.
+Remaining HIGH — bootstrap is still outside the direct cross-parser witness:
+1. The frozen v0.2 acceptance and prior ChatGPT remediation review require a three-parser witness: outer frozen launcher, isolated bootstrap inline parser, runtime adapter.
+2. `test_outer_and_adapter_config_parser_are_byte_equivalent` invokes only outer `P.parse_config_raw()` and runtime `ADAPTER._parse_config_raw()`.
+3. The isolated bootstrap source now appears statically aligned, but no direct witness drives the same corpus through it and compares canonical tuple bytes / normalized failure category. Static similarity and aggregate `69/69` + `17/17` PASS do not substitute for the frozen direct witness.
 
 Exact acceptance:
-- Define one finite frozen config-parser failure-category set and make all equivalent parsers map the same invalid raw input to the same category without adding cross-import dependencies.
-- Add a temporary CPU/static witness over the actual frozen parser implementations that compares serialized ordered canonical tuples byte-for-byte for valid inputs and normalized failure category for invalid inputs.
-- Cover at least exact current config, `V2` vs `v2`, escaped/dotted/path subsection, unknown key, duplicate triple, remote/submodule URL drift, include/includeIf and quoted-header spacing.
-- Preserve the 14-tuple authority, raw-digest/route barriers and all current prohibitions.
+- Add one temporary CPU/static cross-parser witness over all three actual parser seams.
+- For the exact 14-tuple valid config, compare serialized ordered canonical tuples byte-for-byte.
+- For at least `V2/v2`, escaped, dotted and path subsection negatives, compare the exact frozen failure category; include duplicate/unknown tuple classes if practical.
+- The test harness may extract/execute the isolated bootstrap parser, but production parsers must remain inline and non-importing as frozen.
+- Do not change the 14-tuple authority or weaken any route/digest barrier.
 
 Scope reminder: this verdict does **not** authorize Stage-1 retry/materialization, source/checkpoint/manifest/data/cache I/O, downstream collection/receipt/source-evidence/record/package/publication, child/runtime/config mutation, GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1. After implementation close, a new fresh-bound exact Stage-1 request and separate single-attempt materialization approval remain mandatory.
 
