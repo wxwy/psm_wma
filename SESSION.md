@@ -6,6 +6,8 @@
 
 - v0.8 审核名册与申请准备（2026-09-14，REVIEW）：formal pair=root=`6a2f52d6adc641edb0ac9215c72481a7dfca620a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。请求仅 `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` 或 `REQUEST_CHANGES(file:line)`；未获三方同pair final前禁止 P0 重试、P1、C、request、materialization、真实 I/O、child、GPU 与训练。
 
+- v0.8 送达回执（2026-09-14，REVIEW）：ChatGPT 申请已 append 至 canonical live Inbox 并由 ledger root=`75a95a42eb2572a1b7abcffdeacae81d8d631975` 推送；MM=`mm:0.0`与DS=`ds:0.0`均完成 `send-keys -l → 间隔≥1秒 → 独立 Enter → capture`。MM capture 显示该 exact-pair 申请离开输入框并进入 `Verifying v0.8 SHA pair`；DS capture 显示完整申请进入 transcript 且会话正在处理。下一轮按三分钟完整远端锁定、exact ChatGPT review scan、MM/DS 独立 capture；三方 final 前保持 REVIEW。
+
 - request-instance v0.7审核准备（2026-09-14，REVIEW）：formal pair=root=`6361fdbcfded999e43a4efb86861f75734cef100`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`。范围仅v0.7 docs/coordination，申请`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`；禁止构造、真实I/O、child、GPU与训练。
 
 - v0.7完整观察凭证 #1（2026-09-14 20:31 CST，REVIEW）：formal pair/root-child与冻结名册不变；`before_head=e9c5b11f086f45c07e494982805a3dbea94c11ad`；fetch成功；advertised/tracking相同；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact检索=`rg -l -F '6361fdbcfded999e43a4efb86861f75734cef100' docs/collab/chatgpt/reviews/ || true`无输出；MM/DS pane均给出目标`APPROVE_TO_CONSTRUCT`，DS含v0.7技术核验，但当前final行均未逐字锚定full pair。证据均成功且未截断；无推进令牌，保持REVIEW。
