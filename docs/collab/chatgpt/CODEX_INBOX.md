@@ -277,3 +277,13 @@
 - Evidence: `python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py && python3 -m unittest tools.psm_wma.test_immutable_source_collection && git diff --check` = `54/54 PASS`, py_compile PASS, diff-check PASS. Fixtures use only TemporaryDirectory/local Git.
 - Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation implementation review request — retained staging authority and final cleanup continuity
+
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`.
+- Formal root: `77564a85c07a6c936c52fd0b63810994a879b5fc`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only `tools/psm_wma/immutable_source_collection.py` and its direct stdlib test; Gitlink unchanged. Staging identity is now captured from the original `O_CREAT|O_EXCL` write/fsync FD, retained through publication verification; pending cleanup is followed by the final frozen-parent and published-leaf identity/bytes validation.
+- Direct temporary-fixture witnesses: same-byte foreign hardlink replacement between write-FD close and pathname identity capture fails with no destination residue; parent relocation during final `.pending` cleanup fails with no accepted destination at replacement or relocated paths.
+- Evidence: `python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py && python3 -m unittest tools.psm_wma.test_immutable_source_collection && git diff --check` = `55/55 PASS`, py_compile PASS, diff-check PASS. Fixtures use only TemporaryDirectory/local Git.
+- Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
