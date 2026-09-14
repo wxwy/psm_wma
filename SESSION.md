@@ -5956,3 +5956,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair与冻结名册不变。`before_head=1b79bea99706269c632069d15be967ddad40d5aa`；fetch成功；advertised/tracking均=`1b79bea99706269c632069d15be967ddad40d5aa`；新增范围为空；祖先判定=0；ff-only=`Already up to date`；ChatGPT exact review检索仍无命中。
 - MM=`mm:0.0` capture维持已提交v1.0后的目标`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。DS=`ds:0.0`本轮起始capture无v1.0 final；已按未完成送达的恢复节奏发送一次含完整pair的提醒，完成`send-keys -l → >=1秒 → 独立Enter → capture`，capture显示提醒离开输入框且会话busy。DS仍处理中。
 - 全部独立检查成功且未截断；ChatGPT/DS final缺失，无推进令牌，禁止request构造、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance v1.0 完整观察凭证 #3 / construct 推进令牌（2026-09-14 22:28:16 CST，REVIEW → IN_PROGRESS）
+
+- Formal pair=root=`9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=1094ad60b112620e0833a55fb71e84bebd883d3e`；fetch成功；advertised/tracking=`7a6a98e11aebaa3b76e9a2b5f9b43a6b37673237`；新增=`e6090329 docs: add ChatGPT review for stage1 v17 request design v10`、`7a6a98e1 docs: publish ChatGPT v10 request design approval`；祖先判定=0；ff-only成功至`7a6a98e11aebaa3b76e9a2b5f9b43a6b37673237`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v10_9c8b4ad_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；DS=`ds:0.0` capture逐字锚定本pair并给出同一final；MM=`mm:0.0` capture在已提交v1.0申请分析后给出同一target verdict（2026-09-14 22:16:33），按用户已明确认可的同一消息/唯一root-prefix规则计为同pairfinal。
+- 三方同pair全批准，构成仅授权构造一份docs-only request instance的推进令牌。P0/P1 non-consuming；C在首freshness前唯一消费/no-retry；本令牌不授权materialization、launcher/runtime、真实source I/O、child、GPU或训练。下一步=严格按v1.0/v0.7 contract只构造并独立审核该request instance。
