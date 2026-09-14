@@ -6,6 +6,8 @@
 
 - v0.7完整观察凭证 #1（2026-09-14 20:31 CST，REVIEW）：formal pair/root-child与冻结名册不变；`before_head=e9c5b11f086f45c07e494982805a3dbea94c11ad`；fetch成功；advertised/tracking相同；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact检索=`rg -l -F '6361fdbcfded999e43a4efb86861f75734cef100' docs/collab/chatgpt/reviews/ || true`无输出；MM/DS pane均给出目标`APPROVE_TO_CONSTRUCT`，DS含v0.7技术核验，但当前final行均未逐字锚定full pair。证据均成功且未截断；无推进令牌，保持REVIEW。
 
+- v0.7 closure推进令牌（2026-09-14 20:33 CST）：formal pair=root=`6361fdbcfded999e43a4efb86861f75734cef100`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT exact review=`2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v07_6361fdb_93a89ba.md` final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；MM在紧邻full-pair澄清后给出同一literal verdict；DS capture逐字锚定同pair并给出同一literal verdict。授权仅一份docs-only request pair构造；P0/P1 non-consuming，C开始即消费且无retry；禁止materialization、真实I/O、child、GPU与训练。
+
 - request-instance design v0.6审核准备（2026-09-14，REVIEW）：formal pair=root=`76307bb65c08c1f9f35e3832be89c9cc617953eb`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。formal tree仅`SESSION.md`、`TODO.md`与v0.6；Gitlink不变。请求仅`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`；三方同pair final前禁止request构造、materialization、真实I/O、child、GPU和训练。
 
 - v0.6送达回执（2026-09-14 20:25 CST，REVIEW）：ChatGPT申请已由live Inbox ledger=`a09f758e`推送；MM=`mm:0.0`、DS=`ds:0.0`均完成`send-keys -l → ≥1秒 → 独立Enter → capture`，capture分别显示`Inspecting v0.6 design`及完整申请进入transcript。后续三分钟完整轮询；同pair final前保持REVIEW。
