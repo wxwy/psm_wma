@@ -5173,6 +5173,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`c6ac4639d2abb6bb19263e1ee923902419844fd5`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT（live Inbox/reviews）、MM（`mm:0.0`）、Kimi（`kimi:0.0`）。
 - 已向 live Inbox append remediation request；Inbox size check=`46235 bytes + 本请求 < 131072 bytes`。下一步：提交/push ledger，随后以 `send-keys -l -> >=1s -> Enter -> capture` 向 MM/Kimi 送达；再开始三分钟审核轮询。任何真实 I/O/GPU/训练继续禁止。
 
+### Authority-root causal-worktree identity v0.2 送达回执（2026-09-14，REVIEW）
+
+- ChatGPT：request 已 append 至 live Inbox，并随 ledger `2286102c3b40b551900baf88919eed983dd38fac` 推送；formal target 仍为 `c6ac4639d2abb6bb19263e1ee923902419844fd5`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM：`mm:0.0` 于 10:13 CST 通过 `send-keys -l` 写入，间隔 >=1 秒后独立 Enter；capture 显示申请已离开输入框且会话进入 `Effecting`。
+- Kimi：`kimi:0.0` 于 10:13 CST 同样 `send-keys -l -> >=1s -> Enter`；capture 显示完整申请作为会话消息，输入框为空。
+- 两 pane 均已送达、尚无此新 pair 的最终 verdict；下一轮在三分钟后按审核硬检查重新 fetch/remote-lock/review-scan/capture。不得依据旧 pair 结论实施。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
