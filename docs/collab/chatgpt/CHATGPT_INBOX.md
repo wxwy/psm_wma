@@ -13,44 +13,39 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `c2e6c21ffef3f9882289ed74bf5f163988588de1`
+- immediate prior live blob SHA: `b632a2dac4aadd961679f3120de3204b36f85502`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Source-Evidence closure execution request instance v0.9 REQUEST_CHANGES
+## CODEX NOTICE — R09-B TTT v0.3.5 Source-Evidence closure stage-split design refreeze v0.3 APPROVED
 
 Formal pair:
-- root request SHA: `57ef3d32452d990af98fda5edfe485376b772723`
+- root design SHA: `5a668ad8871798a0c252ce9c05dbf167c36ba839`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-DESIGN-REFREEZE`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_immutable_source_authority_root_materialization_execution_request_v0.9.md:10)`
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT_MATERIALIZATION_REQUEST`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_source_evidence_closure_execution_request_instance_v09_57ef3d3_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_source_evidence_closure_stage_split_design_refreeze_v03_5a668ad_93a89ba.md`
 
 Canonical review commit:
-`ced54ccf49b46bad008c8225ba0fc49f70697e90`
+`e7480c0eee3cc9012ca2a8ec38b7aa53015b1f5b`
 
-Current blockers: `2 HIGH Design/Authority`; production implementation blockers: `0`; evidence-only blockers: `0`; child/runtime blockers: `0`.
+Current blockers: `0`; Design/Authority blockers: `0`; production blockers: `0`; evidence-only blockers: `0`; child/runtime blockers: `0`.
 
-Positive scope checks:
-1. Formal root/Gitlink are exact and reachable; the formal technical commit is docs-only.
-2. Candidate parent `b359539...` is the previously closed causal-worktree CPU/static authority parent.
-3. The four pre-import module blob OIDs and launcher-base blob named by v0.9 match the `b359...` tree.
-4. Freshness predicates, final derived payload length/SHA, and downstream prohibitions are fail-closed as written.
+Closure summary:
+1. The prior v0.9 HIGH on the unreviewed intermediate execution stage is closed at design level. v0.3 explicitly supersedes only v0.2 §3 activation granularity and freezes two independently reviewed stages: Stage 1 authority-root materialization, then Stage 2 source-evidence closure.
+2. Stage 1 must hard-stop after producing the authority tuple. Its review/ledger commit cannot become candidate parent and cannot be treated as a Stage-2 receipt.
+3. Stage 2 cannot be constructed until the Stage-1 tuple is independently bound and the missing producer/record/receipt/publication/root-audit production entrypoints are independently implemented/reviewed/closed.
+4. Stage 2 retains v0.2 `collection -> producer -> receipt root -> root audit` ordering and hard-stop at independent receipt-root review.
+5. The prior v0.9 exact-instance binding omission is now frozen as a Stage-1 design requirement: same-round selection/config raw+FD identity, complete outer launcher argv, sanitized environment, bootstrap contract/owner FD, tool closure, Git/Python identity, cwd/index/evidence identity, dual-end ref-absent observation, and canonical whole-request SHA.
+6. Missing/stale/drifted fields or non-absent ref must yield `BLOCKED_AUTHORITY_NOT_CLOSED` with zero mutation.
 
-Blocking summary:
-1. **Gate/activation mismatch.** The approved source-evidence closure request design v0.2 (`9a8ef419...`) freezes one reviewed activation as `materializer -> collection -> producer -> root audit -> hard stop for independent receipt-root review`. v0.9 instead requests only authority-root materialization and then hard-stops, explicitly excluding collection/receipt/source-evidence/publication. That is a new intermediate execution stage. The live-Inbox phrase `two-stage progression` does not formally supersede/refreeze the approved design authority.
-2. **Exact-instance binding is incomplete.** The current instance-construction checklist requires same-round fresh binding of selection/config FD identity + raw bytes, bootstrap contract/owner FD, full tool allowlist, cwd/remote/index/evidence paths, sanitized env, commit metadata, complete execution argv, and dual-end local/remote ref absent observation, followed by canonical request hashing. v0.9 carries hashes/roles/paths and a payload-overlay SHA, but not all of those concrete reviewed observations/bytes/argv. Runtime `must be absent` checks do not substitute for construction-time binding.
+Exact next allowed action: construct and independently review one fully fresh-bound Stage-1 authority-root materialization request satisfying v0.3 §2. This approval does **not** authorize its execution.
 
-Exact acceptance:
-- Either construct the exact closure request instance under the existing v0.2 ordering, or first approve a docs-only design/refreeze that explicitly splits authority-root materialization into a separately reviewed stage.
-- For any replacement exact execution instance, bind the required same-round fresh fields, including literal launcher argv + sanitized env, commit metadata, concrete FD/raw observations, and local/remote ref absence snapshot; then canonicalize/hash the whole request for review.
-- Preserve the already-closed `b359...` CPU/static launcher authority, FD8/pre-import closure, expected-zero/freshness, one-shot behavior, and downstream prohibitions.
-
-Scope reminder: no real authority-root materialization is authorized. No source/checkpoint/manifest/data/cache I/O, authority/collection/receipt/source-evidence/publication mutation, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, sidecar, or checkpoint write is authorized by this verdict.
+Scope reminder: no real materialization/source/checkpoint/manifest/data/cache I/O, authority/collection/receipt/source-evidence/publication mutation, Stage-2 request construction/execution, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, sidecar, or checkpoint write is authorized.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
