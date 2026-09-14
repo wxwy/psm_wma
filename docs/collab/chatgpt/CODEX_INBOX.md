@@ -478,3 +478,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: exact 14-tuple config grammar in both inline parsers; section/variable ASCII lowercase, quoted subsection bytes/case preserved, exact one ASCII separator in quoted headers, complete allowlist fail-close, and temporary local-Git fixtures only. Existing raw digest, descriptor/no-symlink/route barriers and Git-view drift check remain.
 - Forbidden: no Stage-1 retry/materialization, no production source/checkpoint/manifest/data/cache I/O, no child/runtime change, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Remediation request: authority-root config grammar CPU/static implementation close review
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CONFIG-GRAMMAR-CPU-STATIC-REMEDIATION`.
+- Formal root: `f709832e523cc250e9b751594bee5e4bb086f0d2`.
+- Formal child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Resolves exact prior review: outer fixture now uses the frozen 14-tuple config; outer and runtime parsers expose/compare ordered tuples and frozen `config-*` categories for valid and `V2/v2`/escape/dot/path cases; bootstrap emits the same category taxonomy.
+- Evidence: runtime unittest 69/69 PASS; outer frozen launcher witness 17/17 PASS; py_compile and diff-check PASS; all fixtures are temporary local Git only.
+- Forbidden: Stage-1 retry/materialization, real source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
+- Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
