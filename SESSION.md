@@ -5606,3 +5606,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal pair=`3802c51bb156636d53842cefa8e4519f6dfabe81`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）。formal-tree scope仅`SESSION.md`、v1.1 request Markdown与canonical JSON；`git ls-tree`确认Gitlink不变。
 - live Inbox=`64,029 bytes`，本次申请低于128KiB上限，待append、ledger push后以 `send-keys -l -> >=1s -> Enter -> capture` 向 MM/DS 送达。该 pair请求仅审查 docs-only exact request replacement；无同-pair全批准前禁止 materialization、真实 I/O、collection/receipt/publication、child、GPU或训练。
+
+### Stage-1 authority-root materialization request v1.1 送达回执（2026-09-14，REVIEW）
+
+- ChatGPT：canonical live Inbox remediation申请已随 ledger `7c009dbe1af58d9ce565753ae6f42de0ba41e977` 推送；formal target=`3802c51bb156636d53842cefa8e4519f6dfabe81`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM：`mm:0.0` 使用 `send-keys -l -> >=1s -> Enter` 提交完整申请；Enter后capture显示申请已离开输入框并进入 `Verifying v1.1 remediation SHA pair`。DS：`ds:0.0`同样以三联步骤提交；capture显示完整申请进入会话且 pane busy。
+- 冻结名册保持 ChatGPT/MM/DS；下一轮三分钟后执行完整远端锁定、exact review scan与两pane capture。Gate保持`REVIEW`，禁止 materialization、真实I/O、collection/receipt/publication、child、GPU及训练。
