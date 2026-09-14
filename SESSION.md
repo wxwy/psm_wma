@@ -5601,3 +5601,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增 root-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_authority_root_materialization_request_v1.1.md` 及同名 `.json` canonical instance；v1.1 显式 supersede v1.0 HIGH-1，JSON承载 literal selection/config/bootstrap raw bytes、完整 parser argv、FD ABI、payload byte address、六键环境、commit metadata、tool closure、route/absence snapshot 和 one-shot stop。
 - 验证：stdlib JSON/static verifier PASS；canonical file=`7,262 bytes`、SHA-256=`7ba87345383657884024f9c0dd0c60489aac1ae7d6436df9340df8d3f08a95c1`；三份 embedded raw SHA、parser argv SHA、four-module cardinality均 PASS；`git diff --check` PASS。未运行项目模块、未创建 authority source/evidence、未修改 child、未使用GPU或训练。
 - 下一步：提交该独立 docs-only remediation formal root，核验 formal-tree/Gitlink后重新三方审核；在新 pair全批准前持续禁止 materialization、真实 I/O、child、GPU及训练。
+
+### Stage-1 authority-root materialization request v1.1 审核准备（2026-09-14，REVIEW）
+
+- formal pair=`3802c51bb156636d53842cefa8e4519f6dfabe81`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）。formal-tree scope仅`SESSION.md`、v1.1 request Markdown与canonical JSON；`git ls-tree`确认Gitlink不变。
+- live Inbox=`64,029 bytes`，本次申请低于128KiB上限，待append、ledger push后以 `send-keys -l -> >=1s -> Enter -> capture` 向 MM/DS 送达。该 pair请求仅审查 docs-only exact request replacement；无同-pair全批准前禁止 materialization、真实 I/O、collection/receipt/publication、child、GPU或训练。

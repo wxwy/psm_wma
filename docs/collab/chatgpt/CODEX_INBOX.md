@@ -418,3 +418,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Review focus: verify that v1.0 is a fully fresh-bound, fail-closed Stage-1-only request under the approved v0.3 split; identify any field that must be explicit in the reviewable formal request rather than deferred to pre-exec binding; verify a PASS creates only an authority tuple then hard-stops.
 - Request exact final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: execution before all same-pair final approvals; all collection/receipt/source-evidence/record/package/publication; real source/checkpoint/manifest/data/cache I/O; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation request review — Stage-1 authority-root materialization v1.1
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`.
+- Formal root: `3802c51bb156636d53842cefa8e4519f6dfabe81`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only v1.1 request Markdown plus its canonical JSON instance and session record; Gitlink unchanged. This is the exact remediation for ChatGPT v1.0 HIGH-1, not an execution.
+- Evidence: canonical JSON `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_authority_root_materialization_request_v1.1.json` is 7,262 bytes with SHA-256 `7ba87345383657884024f9c0dd0c60489aac1ae7d6436df9340df8d3f08a95c1`; stdlib static verifier confirms canonical JSON, literal selection/config/bootstrap raw hashes, full parser argv SHA and four-module closure; diff-check PASS.
+- Review focus: confirm the formal instance now itself carries the immutable raw inputs, FD3/4/5/8 contract, complete parser argv, outer isolated prefix/payload byte address, six-key environment, metadata, closure, route/absence snapshot and whole request bytes/SHA; runtime checks may only reject this instance. Confirm Stage-1 hard-stop and all downstream prohibitions remain intact.
+- Request exact final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: execution before all same-pair final approvals; all materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/source-evidence/record/package/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
