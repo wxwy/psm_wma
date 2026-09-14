@@ -1,4 +1,7 @@
-# Stage-1 v1.7 launcher freeze design v0.1
+# Stage-1 v1.7 launcher freeze design v0.1（已被 v0.2 supersede）
+
+> 历史设计。Gate/API 不完整，正式实现与后续审核必须以
+> `PSM-WMA_Local_Memory_v0.3.5_stage1_v17_launcher_freeze_design_v0.2.md` 为准。
 
 **Gate**：`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`
 
