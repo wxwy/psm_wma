@@ -249,3 +249,12 @@
 - Evidence: `python3 -m unittest tools.psm_wma.test_immutable_source_collection`=`40/40 PASS`; `python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py`; `git diff --check` PASS.
 - Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1. Approval is limited to this root CPU/static implementation review.
+
+## Remediation implementation review request — descriptor-stable collection adapter
+
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`.
+- Formal root: `99bafeb060054da29052fcc4bd1121f075e85ad5`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only `tools/psm_wma/immutable_source_collection.py` and `tools/psm_wma/test_immutable_source_collection.py`; Gitlink unchanged. `NativeCollectionGit.snapshot()` now opens the worktree root and every present allowlisted file through retained no-follow directory/file FDs, deriving type/identity/bytes from the same FD. `AtomicFileEvidenceSink` binds its parent directory FD before staging and publishes/cleans up exclusively relative to that FD.
+- Evidence: `python3 -m unittest tools.psm_wma.test_immutable_source_collection` = `50/50 PASS`; `python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py` PASS; `git diff --check` PASS. Temporary-only witnesses cover 100644/100755, intermediate/final symlink and directory rejection, replacement after FD open, evidence-parent symlink/replacement, and direct `NativeCollectionGit` + `NativeRootFd` `collect_synthetic()` PASS plus native rollback equality.
+- Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; request execution; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.

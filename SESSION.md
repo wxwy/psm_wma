@@ -1,5 +1,13 @@
 # 当前协作状态
 
+## Immutable Source Collection real-adapter 审核整改（2026-09-14，IN_PROGRESS）
+
+- 目的/Gate：`G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`；依据观察凭证 #138 的同 pair `REQUEST_CHANGES` 汇总令牌，仅整改 `tools/psm_wma/immutable_source_collection.py` 与 `tools/psm_wma/test_immutable_source_collection.py`。
+- 已复用 `NativeRootFd` 的 component-wise `O_NOFOLLOW` traversal；`NativeCollectionGit.snapshot()` 现以保留的 worktree root/entry FD 取得 type、identity 与 bytes，`AtomicFileEvidenceSink.emit()` 在任何 staging 前绑定父目录 FD，并以相对 FD 完成 staging/no-replace publication/cleanup。
+- 新增临时 fixture CPU/static witness：中间/最终 symlink、directory、路径替换、100644/100755、evidence parent symlink/replacement；真实临时 Git + `NativeRootFd` 的 `collect_synthetic()` PASS 与 native rollback snapshot equality。未触及真实 source/checkpoint/manifest/data/cache、collection/receipt/publication、child、GPU 或训练。
+- 验证：`python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py && python3 -m unittest tools.psm_wma.test_immutable_source_collection && git diff --check`，结果 `50/50 PASS`、`py_compile PASS`、`diff-check PASS`。formal root=`99bafeb060054da29052fcc4bd1121f075e85ad5` 已推送；下一步为按冻结名册重新申请审核。
+- 新申请冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`；申请 ledger 已追加，待提交推送后按 `send-keys -l`→等待至少 1 秒→独立 Enter→capture 向 MM/Kimi 送达。三方同 pair final 前 Gate 转为 `REVIEW`，禁止任何真实 I/O、child、GPU 或训练。
+
 ## Causal-owner identity FD8 remediation 第三轮审核观察凭证 #2（2026-09-13 18:03 CST，三方 final 齐全）
 
 - formal root=`aba42f3c077629074f3f8c03420bc8a01bc1ebd7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=1bd7bc54d8092783419d01278eabcd3d1175114e`；fetch成功；advertised/origin均=`51e9e0e3ee174b811848ee595e1c3d71a6220290`；新增提交=`914078bc docs: approve FD8 bootstrap index type remediation`、`51e9e0e3 docs: notify Codex of FD8 bootstrap index approval`；祖先判定=0，ff-only成功至`51e9e0e3`。
