@@ -77,6 +77,11 @@ class ReplayTest(unittest.TestCase):
         rows = tuple(reversed(binding.source_replacements))
         changed = ReplayBinding(binding.formal_parent, binding.base_path, binding.base_blob_oid, binding.base_raw_sha256, binding.base_bytes, binding.parser_replacements, rows, binding.owner_fd_flag, binding.owner_fd_value, binding.expected_parser_bytes, binding.expected_parser_sha256, binding.expected_outer_bytes, binding.expected_outer_sha256)
         with self.assertRaisesRegex(AuthorityReplayError, "source_target"): replay_outer_payload(base_source=source, binding=changed)
+
+    def test_canonical_parent_bypass_fails(self):
+        source, binding = self.canonical()
+        changed = ReplayBinding("not-canonical", binding.base_path, binding.base_blob_oid, binding.base_raw_sha256, binding.base_bytes, binding.parser_replacements, binding.source_replacements, binding.owner_fd_flag, binding.owner_fd_value, binding.expected_parser_bytes, binding.expected_parser_sha256, binding.expected_outer_bytes, binding.expected_outer_sha256)
+        with self.assertRaisesRegex(AuthorityReplayError, "base_identity"): replay_outer_payload(base_source=source, binding=changed)
     def binding(self, source, parser, outer, replacements=(("--cwd", "/old", "/new"),)):
         return ReplayBinding("p", "x", "o", sha(source), len(source), replacements,
             (("FORMAL=old", "FORMAL=new"),), "--bootstrap-owner-root-fd", "8",

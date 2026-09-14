@@ -57,6 +57,7 @@ _GUARDS = {
 }
 _BOOT_ROWS = frozenset(("7538", "7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8"))
 _CANONICAL_PARENT = "08d5828cdb4c12afa3b798ff01826c91ceb8755a"
+_CANONICAL_BASE_SHA = "8b0fad39857fb72e3a3eb317f4acf6f2d6e94e196935f52f07d6170e79c678dd"
 _CANONICAL_TABLE_DIGESTS = ("961985b47da32e589cfab7c3c064bd336f853fd319c701be3361ba6c129da707", "24d287620936fd334526b30745839527ce3720e2be3e55ea09de8309ffa71b05")
 
 
@@ -91,7 +92,8 @@ def replay_outer_payload(*, base_source: bytes, binding: ReplayBinding) -> Repla
     """Rebuild frozen payload bytes from injected source without filesystem or process I/O."""
     if len(base_source) != binding.base_bytes or _sha(base_source) != binding.base_raw_sha256:
         _fail("base_identity")
-    if binding.formal_parent == _CANONICAL_PARENT:
+    if binding.base_raw_sha256 == _CANONICAL_BASE_SHA:
+        if binding.formal_parent != _CANONICAL_PARENT: _fail("base_identity")
         if _table_digest(binding.parser_replacements) != _CANONICAL_TABLE_DIGESTS[0]: _fail("parser_target")
         if _table_digest(binding.source_replacements) != _CANONICAL_TABLE_DIGESTS[1]: _fail("source_target")
     try:
