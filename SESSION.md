@@ -5222,6 +5222,26 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - v0.3 实现前 temporary local-Git probe 发现：leaf target `/proc/self/fd/6/.` 可保持 no-`clean_name` leaf entry semantics，且 `worktree list` 注册 canonical clean、native `worktree remove --force <clean>` 成功；无 `/.` spelling 的 administrative cleanup seam 不足以接受。probe 仅使用 `mktemp` fixture，未进入项目路径/远端/数据/GPU。
 - 新建 `...causal_worktree_identity_design_v0.4.md`，只替换 exact argv spelling及 metadata acceptance；现有 v0.8 launcher/witness implementation 草稿保持未提交，禁止混入 docs formal commit，等待新 pair三方批准后再实施。
 
+### Authority-root causal-worktree identity v0.4 审核观察凭证 #1（2026-09-14 10:42:59 CST，REVIEW）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`）；exact pair=`bfa10d345f2003a3a123f69dc836462fe05959d9`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=2a3b4f76114efa462779a754789d755644c83de9`；`git fetch origin V2` 成功；advertised/tracking 均=`2cbba881c98ea1be2d381ee0aec03cad82b5d5c9`；完整新增范围：`2cbba881 review: notify Codex causal worktree v0.4 corrected-pair verdict`、`bb39854b review: audit causal worktree identity design v0.4 corrected pair`；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2` 成功至 `2cbba881c98ea1be2d381ee0aec03cad82b5d5c9`。
+- ChatGPT 精确检索命令 `rg -l -F 'bfa10d345f2003a3a123f69dc836462fe05959d9' docs/collab/chatgpt/reviews/` 命中 `docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v04_bfa10d3_93a89ba.md`，final=`REQUEST_CHANGES(...v0.4.md:31)`（HIGH-1：cleanup 以可替换全局 `<clean>` 为 destructive Git target；需保持 leaf-capability cleanup、fail-close，并加入 remove-resolution race witness）。Kimi `kimi:0.0` capture 成功，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`，且明确锚定该 exact pair。MM `mm:0.0` capture 成功但其 displayed final verdict 未写明 corrected exact pair，输入框仍有“请补一行 exact binding”；按协议只能计为处理中，不能与 Kimi 或旧 pair 拼接。
+- 三方 final 未齐且 ChatGPT 为 `REQUEST_CHANGES`，无推进令牌；当前 Gate=`REVIEW`。禁止修改既有 implementation 草稿、真实 Git/worktree/materialization、source/checkpoint/manifest/data/cache I/O、GPU 与训练；下一动作仅为回收 MM exact binding，待三方同 pair final 齐后再汇总 docs-only 设计意见。
+
+### Authority-root causal-worktree identity v0.4 审核观察凭证 #2 / 汇总令牌（2026-09-14 10:43 CST，REVIEW）
+
+- 冻结名册与 exact pair 不变：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`），`bfa10d345f2003a3a123f69dc836462fe05959d9`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=2cbba881c98ea1be2d381ee0aec03cad82b5d5c9`；fetch 成功；advertised/tracking 均=`2cbba881c98ea1be2d381ee0aec03cad82b5d5c9`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2` 成功（Already up to date）。ChatGPT 精确检索仍唯一命中 `docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v04_bfa10d3_93a89ba.md`，final=`REQUEST_CHANGES(...v0.4.md:31)`。
+- MM `mm:0.0` capture 成功，补充 exact binding：`formal pair=bfa10d345f2003a3a123f69dc836462fe05959d9/93a89ba61306d840a008813f62f26a34d54850f4；verdict=APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。Kimi `kimi:0.0` capture 成功，final 同为该 exact pair 的 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。
+- 三方 final 已齐，形成含 ChatGPT `REQUEST_CHANGES` 的汇总令牌；只授权评估并完成 ChatGPT HIGH-1 的 docs-only redesign。不得实施、提交或测试现有 launcher/witness 草稿；真实 Git/worktree/materialization、source/checkpoint/manifest/data/cache I/O、GPU 与训练继续禁止。
+
+### Authority-root causal-worktree identity v0.5 docs-only 整改（2026-09-14，IN_PROGRESS）
+
+- 依据：v0.4 观察凭证 #2 的同-pair汇总令牌。隔离 temporary local-Git probe 先因 relative target 错位判为无效；absolute-target 重做后，Git 2.34.1 对 `git worktree remove --force /proc/self/fd/6/.` 返回 128，A 未删除、foreign B marker 保留。该事实否定 native leaf remove seam，不能用 global `<clean>` 回退。
+- 修改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.5.md`，仅 supersede v0.4 cleanup：保留 add 的 `/.` leaf target；post-add error cleanup 只做 retained-FD identity proof/descriptor closure 并返回 `ROLLBACK_INCOMPLETE`，不 spawn Git remove、也不进行 namespace mutation；未来 recovery 需独立 Gate。新增 normal-failure 与 cleanup-resolution-race temporary fixture 验收条件。
+- 验证：`git diff --check` PASS。未执行项目代码、未触及 `cosmos-framework` 与训练遗留；v0.8 launcher/witness 草稿仍未提交且不得混入本次 docs formal commit。下一步：提交/推送此 docs-only formal root，重新三方申请审核。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
