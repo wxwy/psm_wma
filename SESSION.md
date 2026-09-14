@@ -1,5 +1,9 @@
 # 当前协作状态
 
+## Stage-1 v1.7 recovery design v1.2 完整观察凭证 #3（2026-09-14 23:19 CST，REVIEW）
+
+- `before_head=ea12b33ec437a420fa33e9fc9a73e20fd434a7b3`；fetch、advertised/tracking=`ea12b33ec437a420fa33e9fc9a73e20fd434a7b3`、空新增范围、ff-only均成功。ChatGPT exact-pair检索无输出；MM/DS均维持同pair `APPROVE_TO_CONSTRUCT`。ChatGPT formal review仍缺件，无推进令牌，保持REVIEW。
+
 ## Stage-1 v1.7 recovery design v1.2 完整观察凭证 #2（2026-09-14 23:15 CST，REVIEW）
 
 - Formal pair/root-child及冻结名册不变。`before_head=3b4467b0f1f51e117b726b899324def4ad1bce53`；fetch成功；advertised/tracking均=`3b4467b0f1f51e117b726b899324def4ad1bce53`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。
