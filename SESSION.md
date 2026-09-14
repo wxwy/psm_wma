@@ -5570,3 +5570,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - `before_head=6b729f86751cdbbe3ed3cc28b2d5fb75380596a1`；`git fetch origin V2`、advertised/tracking SHA 核对、空新增范围、祖先判定=0 与 ff-only 均成功（Already up to date）。首次祖先判定命令因引号错误失败，已在同轮以独立无截断命令重做成功。
 - exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT 精确检索无输出；MM `mm:0.0` capture 成功，最终 verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi `kimi:0.0` 已 compaction/reset，capture 不含 final verdict，故状态=`检查失败/状态未知`。
 - 审核链路修复：于 08:14 CST 以 `tmux send-keys -l` 向冻结 pane `kimi:0.0` 重发同一 exact-pair 申请，间隔至少1秒后独立 Enter；后续 capture 显示完整申请已离开输入框进入会话。Kimi 现为处理中，等待新的 exact-pair final verdict。无推进令牌，保持`REVIEW`，禁止整改、真实I/O、GPU或训练。
+
+### Stage-1 authority-root materialization exact request 审核准备（2026-09-14，REVIEW）
+
+- Gate=`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`；formal pair=`d474849d7bf3bf556886f2887b2325aaab36a868`/`93a89ba61306d840a008813f62f26a34d54850f4`。冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`，用户指定替代 Kimi）。
+- 本轮送审前远端锁定：`before_head=d474849d7bf3bf556886f2887b2325aaab36a868`；`git fetch origin V2`成功；advertised/tracking均为`d474849d7bf3bf556886f2887b2325aaab36a868`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only`成功（Already up to date）。精确 ChatGPT scan 尚未命中该 root；MM/DS capture 仅含前一 stage-split pair 的结果，不能作为本 pair verdict。
+- 已阅读 `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_authority_root_materialization_request_v1.0.md` 与 v0.3 stage split/v0.9 冻结来源。下一步仅可写入 Inbox、提交 ledger 并以完整同-pair申请送达三方；严禁执行 materialization、任何 source/checkpoint/manifest/data/cache I/O、collection/receipt/publication、child、GPU或训练。

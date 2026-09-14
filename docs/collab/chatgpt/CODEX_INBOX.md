@@ -408,3 +408,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: docs-only; `git diff --check` and new-file no-index diff-check PASS; document SHA-256=`339a0cf827cca4f6a0e037459e369818741e4fa1b432147175ce8b4dd97f0c16`. No real I/O, authority/ref/evidence mutation, child/runtime change, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1 ran.
 - Request exact final verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT_MATERIALIZATION_REQUEST` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: Stage-1/Stage-2 request construction or execution; real source/checkpoint/manifest/data/cache I/O; authority/collection/receipt/source-evidence/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Exact request review — Stage-1 authority-root materialization v1.0
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`.
+- Formal root: `d474849d7bf3bf556886f2887b2325aaab36a868`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only request `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_authority_root_materialization_request_v1.0.md`; Gitlink unchanged. It is the v0.3-approved Stage-1 request construction, not a new design Gate and not an execution.
+- Exact bindings: closed parent `b3595395427114f73ff53a19a0c2b9180e39905f`, fixed ref `refs/heads/authority/r09-b-ttt-v035-immutable-source-v1`, selection/config raw SHA pair, Git/Python raw SHA pair, local/remote fixed-ref absence snapshot, and the inherited v0.9 FD3/4/5/8, pre-import closure, argv/bootstrap/contract and canonical whole-request fail-close contract.
+- Review focus: verify that v1.0 is a fully fresh-bound, fail-closed Stage-1-only request under the approved v0.3 split; identify any field that must be explicit in the reviewable formal request rather than deferred to pre-exec binding; verify a PASS creates only an authority tuple then hard-stops.
+- Request exact final verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: execution before all same-pair final approvals; all collection/receipt/source-evidence/record/package/publication; real source/checkpoint/manifest/data/cache I/O; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
