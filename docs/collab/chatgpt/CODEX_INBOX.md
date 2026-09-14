@@ -532,3 +532,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: canonical JSON `8482 bytes`, SHA-256 `831f9d8a246029333c07621debd197ff0ac8bdf1ccf7c9da4215ce8bf7c14b85`; stdlib canonical-field/single-FD verifier and `git diff --check` PASS. No materializer, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 ran.
 - Requested verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
 - Prohibited: execution before all same-pair approvals; even then Stage-1 PASS is authority-tuple-only hard stop. No downstream mutation, child, GPU or training is authorized.
+
+## 2026-09-14 — Remediation request review: rebound Stage-1 authority-root materialization v1.5
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`.
+- Formal root: `29f6c6a5120fa1d0397a0a21ea9e37024e79768a`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs `PSM-WMA_Local_Memory_v0.3.5_stage1_authority_root_materialization_request_v1.5.{md,json}` plus task/session record; child unchanged. This is an exact docs-only v1.4 remediation request, not execution.
+- Resolves all v1.4 blockers: (1) exact new-parent RAW[2] must contain zero owner-FD flags, then inserts exactly one adjacent `--bootstrap-owner-root-fd,8` after bootstrap-project-root value and replays parser byte-identically; (2) records a new 2026-09-14 15:59 CST zero-mutation observation of `.git`, `.git/config`, local/remote fixed ref and four absence paths; (3) formal Markdown directly binds sibling canonical JSON=`8618 bytes / 6579bca17667803ddcd14cc49a5522ef0b9538753dd3ca3e872258a5848d1f30` and requires runtime recomputation before freshness/FD checks.
+- Evidence: `json.tool`, canonical JSON + owner-FD static assertions, parser replay byte-identity (`2336 / 1a9543ec...`), and `git diff --check` PASS. No launcher/materializer, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 ran.
+- Requested verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+- Prohibited: execution before all same-pair approvals; even then Stage-1 PASS is authority-tuple-only hard stop. No downstream mutation, child, GPU or training is authorized.
