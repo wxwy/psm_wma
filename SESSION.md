@@ -5155,6 +5155,19 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi exact-pair最终结论要求补5项 witness（REQUEST_CHANGES）；两 pane capture成功、未截断。
 - ChatGPT缺件且 Kimi 为 REQUEST_CHANGES，无推进令牌；保持`REVIEW`，禁止整改、真实I/O、GPU或训练。
 
+### Authority-root causal-worktree identity 审核观察凭证 #1（2026-09-14 10:09:53 CST，REVIEW）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`）；exact pair=`0dedec97f1d5e2c62ec980b6daffb7f9da472cda`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=ddc63f24167018704d440b36f0c4db8cd10d30c8`；`git fetch origin V2` 成功；advertised/tracking 均=`ddc63f24167018704d440b36f0c4db8cd10d30c8`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only` 成功（Already up to date）。
+- ChatGPT 精确检索命令 `rg -l -F '0dedec97f1d5e2c62ec980b6daffb7f9da472cda' docs/collab/chatgpt/reviews/` 命中 `docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v01_0dedec9_93a89ba.md`，final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.1.md:22)`：Git target 仍是可替换全局绝对路径，需冻结 capability-derived target 和真实 Git seam witness。MM `mm:0.0` capture 成功，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。Kimi `kimi:0.0` capture 成功，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。
+- 三方 final 对同 pair 已齐，形成含 ChatGPT `REQUEST_CHANGES` 的汇总令牌；只授权合并该 docs-only 设计意见。当前 Gate 保持 `REVIEW`；禁止编码、真实 Git/worktree/materialization、source/checkpoint/manifest/data/cache I/O、GPU 与训练。
+
+### Authority-root causal-worktree identity v0.2 docs-only 整改（2026-09-14，IN_PROGRESS）
+
+- 依据：观察凭证 #1 的同-pair 汇总令牌；ChatGPT HIGH-1 指出 v0.1 `...v0.1.md:24` 将 Git target 交给可替换 global absolute CLEAN。
+- 修改：新建 `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.2.md`，显式 supersede v0.1；冻结 `mkdirat -> clean_fd -> inherited parent FD6 -> /proc/self/fd/6/<clean_name>`，以及 `close_fds=True`、`pass_fds=(6,)`、FD6 lifetime、无 global fallback、cleanup fail-close 和 target-resolution race local-Git witness。
+- 未执行项目代码、真实 Git/worktree/source/checkpoint/data/cache I/O、GPU 或训练。下一步：docs diff/格式核验，提交并以新 formal root/同 Gitlink 重新三方审核。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
