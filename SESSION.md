@@ -5817,3 +5817,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 两文件整改完成：test现将`18875/658e...` outer与`91814/4a51.../87e...` adapter作为gzip/base64冻结常量内嵌，运行时只解压内存字节，未使用Git、路径、network、subprocess或任何project runtime入口。direct canonical witness调用`project_request_closure()`，逐项断言输入双identity、schema顺序、parser=`2336/1a9543...`、bootstrap argv=`2341/85ac...`、contract=`182/bec6...`及canonical preimage；负例覆盖input drift、RAW count/arity、decode target、noncanonical/reordered/duplicate/missing parser flags、bootstrap signature/return与raw drift、literal Name/Call。
 - production补齐adapter blob preimage SHA-1、canonical parser JSON、冻结ordered flag/value pairs、严格adapter AST与三条输出identity。命令=`python3 -m py_compile tools/psm_wma/stage1_v17_request_projection.py tools/psm_wma/test_stage1_v17_request_projection.py && python3 -m unittest tools.psm_wma.test_stage1_v17_request_projection && git diff --check`，结果=`6/6 PASS`、py_compile PASS、diff-check PASS。未访问真实authority/request/source/checkpoint/manifest/data/cache、未改child、未用GPU或训练。
 - 下一步：复核formal范围/工作树、提交本root-only整改，并以新exact pair重新三方close review；未提交。
+
+### Stage-1 v1.7 request-projection preflight implementation 整改送审准备（2026-09-14，REVIEW）
+
+- formal pair=`5580e20c7e406d7ceade9222353f355fe0a4a15d`/`93a89ba61306d840a008813f62f26a34d54850f4`；formal-tree仅`SESSION.md`、`TODO.md`和已批准的projection module/test，Gitlink保持不变。live Inbox原始大小=`104673 bytes`，本次申请低于`131072 bytes`上限且已append；待ledger推送后向冻结名册ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`送达。
+- 本申请仅审查root pure-stdlib CPU/static整改；未获新exact-pair三方final前，禁止request构造、materialization、真实source/checkpoint/manifest/data/cache I/O、child、GPU及训练。

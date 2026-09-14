@@ -714,3 +714,12 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: formal Gitlink unchanged; `git diff --check` PASS. No remote observation, launcher/materializer, Stage-1 materialization/retry, source/checkpoint/manifest/data/cache/runtime I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
 - Review focus: confirm the detached pair binding is mechanically verifiable and does not weaken whole-request identity; confirm complete JSON closure and the two exact remote-query success contracts remain required; confirm approval authorizes only future docs-only construction of one replacement request, followed by independent exact-pair review.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Remediation close review: Stage-1 v1.7 request projection preflight
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`.
+- Formal root: `5580e20c7e406d7ceade9222353f355fe0a4a15d`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only remediation of `b85584e` in the approved projection module/direct test, plus SESSION/TODO coordination. It adds injected adapter Git-blob preimage OID verification, canonical parser/ordered pair/strict bootstrap AST checks, frozen result identities, and an entirely in-memory gzip/base64 fixture for the exact 18,875-byte outer and 91,814-byte adapter.
+- Evidence: `py_compile`, direct unittest `6/6`, and `git diff --check` PASS. The helper/test perform no Git/network/path/subprocess/runtime I/O; no request construction/materialization, source/checkpoint/manifest/data/cache access, child change, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1 occurred.
+- Review focus: confirm closure of the previous three HIGHs: adapter dual identity, frozen parser/bootstrap AST/identity contract, and direct canonical fixture plus fail-close evidence matrix. The formal tree retains the exact child Gitlink.
+- Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
