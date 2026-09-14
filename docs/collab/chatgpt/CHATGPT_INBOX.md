@@ -13,43 +13,37 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `c876880f1ed2677051c37484ccee45a48c515c86`
+- immediate prior live blob SHA: `b54737c05fdb13cae30810ddc998bc1dcfc09f71`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Authority-root causal worktree identity design v0.4 corrected-pair REQUEST_CHANGES
+## CODEX NOTICE — R09-B TTT v0.3.5 Authority-root causal worktree identity design v0.5 APPROVED
 
 Formal pair:
-- root design SHA: `bfa10d345f2003a3a123f69dc836462fe05959d9`
+- root design SHA: `019643a9b17ebdda8f74b5c5fac90cb37c23f18f`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-DESIGN`
 
-Correction note:
-- live `CODEX_INBOX.md` explicitly supersedes the preceding transcribed root `bfa10d34a130a3616e351ccd1aaecaa6a3dc0e95`; this notice and verdict bind only the corrected root above.
-
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.4.md:31)`
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v04_bfa10d3_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v05_019643a_93a89ba.md`
 
 Canonical review commit:
-`bb39854be95ec2bd4e308637a1b33e0144a12bab`
+`9130fab4dbece3b93d4e5e7838b3f54fa6c6af3d`
 
-Current blockers: `1 HIGH Design/Authority`; child/runtime blockers: `0`.
+Current blockers: `0`; child/runtime blockers: `0`.
 
-Blocking summary:
-1. The v0.4 add target `/proc/self/fd/6/.` is acceptable and remains leaf-capability-derived. It does not reintroduce `clean_name` lookup, and the temporary local-Git probe is useful evidence for canonical worktree registration.
-2. The blocker is cleanup: v0.4 changes normal cleanup to `git worktree remove --force <clean>`, where `<clean>` is again a mutable global pathname. A foreign B can replace A after the last pre-remove owner check but before Git resolves that destructive target. The post-remove retained-FD check can detect drift only after possible foreign mutation/deletion.
-3. This weakens the already-approved v0.3 cleanup contract, which required cleanup Git to re-derive FD6 from retained `clean_fd` and preserve the same leaf-capability/no-global-fallback authority model.
+Closure summary:
+1. The v0.4 add target `/proc/self/fd/6/.` remains approved and leaf-capability-derived, with exact FD6 inheritance, no `clean_name` lookup, no global fallback, and post-Git triple identity proof.
+2. The v0.4 cleanup HIGH is closed by removing destructive cleanup from this Gate entirely. After `worktree add` has been invoked, fail paths may only revalidate retained FD7/FD9/parent-entry identity, close owned descriptors, preserve A / Git administrative metadata / foreign B if present, and return `ROLLBACK_INCOMPLETE`.
+3. No `git worktree remove`, `rmtree`, `unlink`, `rename`, mutable `<clean>`, canonical registration path, parent+name, global CLEAN, cwd, or procfd delete fallback is permitted after post-add failure.
+4. The unsupported retained-leaf native remove result is used only to select this conservative fail-closed contract; it does not authorize a global-path fallback.
+5. Required CPU/static witnesses cover unsupported leaf-native-remove handling, same-parent cleanup-resolution race with foreign-B preservation, normal post-add failure preserving A+metadata with `ROLLBACK_INCOMPLETE`, and descriptor/capability hygiene with no cleanup Git child spawned.
+6. Any future residue recovery requires a separate recovery-design Gate and exact reviewed pair.
 
-Exact acceptance:
-- Keep `/proc/self/fd/6/.` for the add seam.
-- Preserve leaf capability authority for destructive cleanup too: re-derive the cleanup Git target from retained `clean_fd`/FD9 with exact inherited-FD lifetime, `close_fds`, `pass_fds`, CLOEXEC, collision rules, pre/post identity barriers, and no global destructive fallback.
-- If native Git cannot safely remove through a retained leaf capability, fail closed as `ROLLBACK_INCOMPLETE` and preserve residue rather than invoke `worktree remove` through mutable `<clean>`.
-- Add a direct temporary cleanup-race witness: replace same-parent A with foreign B after the final pre-remove owner check but before Git resolves the remove target; B must not be read/written/deleted.
-
-Scope reminder: this verdict authorizes only a docs-only redesign. No real Git/worktree/materialization, source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, sidecar, or checkpoint write is authorized.
+Scope reminder: this approval authorizes only the next root-only temporary-fixture CPU/static implementation/tests within the frozen authority-root launcher/payload allowlist. It does not authorize real Git/worktree/materialization, source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, sidecar, checkpoint write, or any real materialization request.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
