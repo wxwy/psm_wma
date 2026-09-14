@@ -23,9 +23,12 @@
 `08d5828cdb4c12afa3b798ff01826c91ceb8755a` 与上述不变 Gitlink，而不得绑定 `b359...`。
 
 request 构造时必须重新、同轮冻结所有依赖 parent 的字段：formal-tree 四模块 closure、adapter
-blob/raw SHA、bootstrap raw/argv/contract、outer payload replay、clean-root basename、fixed ref
-freshness、selection/config FD/raw bytes、Git/Python identity、sanitized environment、metadata 与
-whole-request canonical SHA。旧 v1.1--v1.3 中任何这类数值均只作历史证据，不能复制到新 request。
+blob/raw SHA，以及`docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py`
+在`08d...` formal tree的精确`payload.base_path`、blob OID、raw SHA-256及字节长度；ordered replay
+只能消费这组新-parent base bytes，任何path/blob/raw不符必须fail-close，禁止旧`615d6b.../3a5b4cd...`
+base、overlay fallback或混合-parent重建。其后重新计算bootstrap raw/argv/contract、outer payload
+bytes/SHA、clean-root basename、fixed ref freshness、selection/config FD/raw bytes、Git/Python identity、
+sanitized environment、metadata 与whole-request canonical SHA。旧v1.1--v1.3数值仅作历史证据，不能复制。
 
 ## 3. 保持不变的约束
 
