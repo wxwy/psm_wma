@@ -791,3 +791,14 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: document SHA-256=`f99c14ddd500368bd6c8f28f9fe5c3a3beae5469b69dc4256e07299e0c3f776f`; `git diff --check` PASS. P0/P1 remain non-consuming; C remains immediately before first freshness observation and no-retry. No request construction/materialization/runtime/source I-O/child/GPU/training ran.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: request construction before same-pair approval; all materialization/retry, launcher/materializer execution, source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-14 — Recovery design review: Stage-1 v1.7 request-instance v1.1
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN`.
+- Formal root: `7b528dc2fb754d9f27cab6ae157c15abaec654bc`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only docs recovery `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.1.md` plus `SESSION.md`/`TODO.md`; no child/runtime code change. Formal tree contains exactly these three paths. Design SHA-256: `931a4336cd2760961dc36716d8fd73ad9cde7e3f189d4ddb83d96f7c54bedd1e`.
+- Recovery fact: v1.0 P0/P1 passed, but a subsequent designated-output path enumeration was the first P1-after freshness observation; under the approved C-before-first-observation / one-shot / no-retry rule it consumed that authority at zero output. This design records it faithfully and does not retry or reinterpret it.
+- Review focus: verify v1.1 freezes the only future request pair path as `...request_instance_v0.3.{md,json}` in the design literal, excludes historic v0.1/v0.2 pairs from discovery/input/output, keeps P0/P1 non-consuming, makes C begin immediately before its first freshness observation, preserves canonical detached JSON/Markdown identity and all two-query/absence closure requirements, and authorizes only one future docs-only construction after a new exact-pair approval.
+- Evidence: `git diff --check` PASS. No request construction, materialization, launcher/materializer execution, source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+- Forbidden before a same-pair final approval: request construction, materialization/retry, launcher/materializer execution, all real source/checkpoint/manifest/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
