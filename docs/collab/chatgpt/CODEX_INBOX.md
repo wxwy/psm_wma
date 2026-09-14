@@ -728,3 +728,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `py_compile`, direct unittest `6/6`, and `git diff --check` PASS. The helper/test perform no Git/network/path/subprocess/runtime I/O; no request construction/materialization, source/checkpoint/manifest/data/cache access, child change, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1 occurred.
 - Review focus: confirm closure of the previous three HIGHs: adapter dual identity, frozen parser/bootstrap AST/identity contract, and direct canonical fixture plus fail-close evidence matrix. The formal tree retains the exact child Gitlink.
 - Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Second remediation close review: projection preflight
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-PROJECTION-PREFLIGHT-CPU-STATIC`.
+- Formal root: `079167743685247d6aae62a671436e834411a3cb`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: only the already-approved root pure-stdlib paths `tools/psm_wma/stage1_v17_request_projection.py` and `tools/psm_wma/test_stage1_v17_request_projection.py`, plus `SESSION.md`/`TODO.md` coordination. No child/runtime change.
+- Remediation: outer `RAW[0]`/`RAW[1]` base64 arguments and `RAW[2]` parser JSON now require a single `ast.Constant(str|bytes)` via `_single_literal()`; recursive concatenation remains available only to the adapter `bootstrap_payload()` return. The frozen bootstrap argv construction is isolated as `["--", *items]` and covered by direct wrong-prefix/parser-substitution negatives. The embedded gzip/base64 fixture matrix now directly covers all three outer concatenation rejections, malformed base64 and JSON, every `ProjectedBytes` raw-length/SHA identity, and failed-call no-partial-result behavior.
+- Evidence: `python3 -m py_compile tools/psm_wma/stage1_v17_request_projection.py tools/psm_wma/test_stage1_v17_request_projection.py && python3 -m unittest tools.psm_wma.test_stage1_v17_request_projection && git diff --check` PASS (`9/9`). Helper/tests remain injected-byte-only and perform no Git/network/filesystem/path/subprocess/launcher/materializer/request/runtime I/O.
+- Forbidden: request construction, materialization/retry, source/checkpoint/manifest/data/cache access, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+- Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
