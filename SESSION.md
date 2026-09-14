@@ -5204,6 +5204,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`56acad8f39241c8c03fa770aa39468a3e71a2349`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT（live Inbox/reviews）、MM（`mm:0.0`）、Kimi（`kimi:0.0`）。
 - 已向 live Inbox append request；Inbox size check=`47764 bytes + 本请求 < 131072 bytes`。下一步提交/push ledger，再按 `send-keys -l -> >=1s -> Enter -> capture` 发送 MM/Kimi；新 pair 未获三方批准前不得实施。
 
+### Authority-root causal-worktree identity v0.3 送达回执（2026-09-14，REVIEW）
+
+- ChatGPT：request 已 append 至 live Inbox；formal target=`56acad8f39241c8c03fa770aa39468a3e71a2349`/`93a89ba61306d840a008813f62f26a34d54850f4`，ledger 将随本回执提交推送。
+- MM：`mm:0.0` 通过 `send-keys -l` 写入，间隔 >=1 秒后独立 Enter；capture 显示申请已离开输入框且会话进入 `Channeling`。
+- Kimi：`kimi:0.0` 同样 `send-keys -l -> >=1s -> Enter`；capture 显示完整申请作为会话消息，输入框为空。
+- 下一轮最早三分钟后；该 pair 的三方 final 未齐，禁止实施。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
