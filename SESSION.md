@@ -8,6 +8,7 @@
 - 实际修改：新增 v1.2 Markdown 和 compact canonical JSON。v1.2 把 ordered replay 固定为 parser-first splice、再 literal mappings 的唯一顺序，并把实测 parser=`2336/f50e925c...`、bootstrap observed argv=`2341/2b4fa860...`、contract=`182/2b8ccfa6...`、payload=`17389/f3171fc6...`写入 request；它显式 supersede v0.9/v1.1 的不可重现 `51a82.../3227.../a434.../4b85...` bindings。
 - 验证：只读 stdlib replay verifier 通过，逐项复现上述四个 byte/SHA pair；JSON canonicalization=`8427 bytes` / `56780b494ed03cc15a07d0b16690ef6f9434fb2621a0659420a0ebd5a1e365b3`；`git diff --check` PASS。未执行项目代码；未运行 GPU/训练。
 - 下一步：复读 formal scope/dirty residue 与 docs-only 自检，提交并推送 v1.2，再对新的 root/同一 child 重新冻结 ChatGPT/MM/DS 名册、追加 Inbox 和 tmux 三联送达。新 pair 未获同轮三方 final 前，`BLOCKED_AUTHORITY_NOT_CLOSED` 保持，禁止 Stage-1 materialization 和全部后续真实 I/O/child/GPU/训练。
+- v1.2 审核准备：formal pair=root=`08917d6dba3bde5ab284fd57d00b35b337fd1ea1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、DS=`ds:0.0`（用户指定 DS 替代 Kimi）。formal-tree scope仅`SESSION.md`、`TODO.md`和 v1.2 Markdown/JSON；`git ls-tree`确认 Gitlink 不变。live Inbox 当前=65,703 bytes，后续申请 append 前仍须机械核验不超过128KiB；送达前禁止 materialization、真实 I/O、child、GPU与训练。
 
 ## Authority-root exact execution request v0.9（2026-09-14，IN_PROGRESS）
 
