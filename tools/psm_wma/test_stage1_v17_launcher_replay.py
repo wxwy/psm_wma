@@ -50,6 +50,24 @@ class ReplayTest(unittest.TestCase):
         raw = 'def boot(s):\n    pass\ndef main():\n    if len(raw)!=7538 or digest(raw)!="x": fail("bootstrap identity")\n'
         with self.assertRaisesRegex(AuthorityReplayError, "source_target"):
             _replace_once(raw, "7538", "9406")
+
+    def test_canonical_identity_and_shape_failures(self):
+        source, binding = self.canonical()
+        bad_sha = ReplayBinding(binding.formal_parent, binding.base_path, binding.base_blob_oid, "0" * 64, binding.base_bytes, binding.parser_replacements, binding.source_replacements, binding.owner_fd_flag, binding.owner_fd_value, binding.expected_parser_bytes, binding.expected_parser_sha256, binding.expected_outer_bytes, binding.expected_outer_sha256)
+        with self.assertRaisesRegex(AuthorityReplayError, "base_identity"):
+            replay_outer_payload(base_source=source, binding=bad_sha)
+        raw = source.replace(b"RAW =", b"BROKEN =", 1)
+        bad = ReplayBinding(binding.formal_parent, binding.base_path, binding.base_blob_oid, sha(raw), len(raw), binding.parser_replacements, binding.source_replacements, binding.owner_fd_flag, binding.owner_fd_value, binding.expected_parser_bytes, binding.expected_parser_sha256, binding.expected_outer_bytes, binding.expected_outer_sha256)
+        with self.assertRaisesRegex(AuthorityReplayError, "raw_shape"):
+            replay_outer_payload(base_source=raw, binding=bad)
+
+    def test_canonical_source_rows_zero_through_three_fail(self):
+        source, binding = self.canonical()
+        for offset in range(4):
+            rows = list(binding.source_replacements); old, new = rows[offset]; rows[offset] = ("missing-" + old, new)
+            changed = ReplayBinding(binding.formal_parent, binding.base_path, binding.base_blob_oid, binding.base_raw_sha256, binding.base_bytes, binding.parser_replacements, tuple(rows), binding.owner_fd_flag, binding.owner_fd_value, binding.expected_parser_bytes, binding.expected_parser_sha256, binding.expected_outer_bytes, binding.expected_outer_sha256)
+            with self.assertRaisesRegex(AuthorityReplayError, "source_target"):
+                replay_outer_payload(base_source=source, binding=changed)
     def binding(self, source, parser, outer, replacements=(("--cwd", "/old", "/new"),)):
         return ReplayBinding("p", "x", "o", sha(source), len(source), replacements,
             (("FORMAL=old", "FORMAL=new"),), "--bootstrap-owner-root-fd", "8",
