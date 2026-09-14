@@ -567,3 +567,11 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: root-only docs-only remediation of the v0.1 design findings. v0.2 supersedes v0.1, corrects the formal Gate, explicitly requests the positive CPU/static implementation verdict, and freezes a no-I/O pure `replay_outer_payload(base_source, binding)` API, ordered substitution inputs, output bytes/SHA records, and `AuthorityReplayError("BLOCKED_AUTHORITY_NOT_CLOSED:<category>")` failure contract. It also records the complete v1.6 base/parser/outer identities and mandates fresh v1.7 observation.
 - Evidence: formal tree is only `SESSION.md`, `TODO.md`, v0.1 supersession notice and v0.2; Gitlink unchanged; `git diff --check` PASS. No launcher module/test implementation, request construction, Stage-1 retry/materialization, real source/checkpoint/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1 occurred.
 - Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Remediation design review: Stage-1 v1.7 launcher freeze v0.3
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`.
+- Formal root: `cb00b8ae9702a8c8739673bc90ae287d1282ced6`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: docs-only minimal remedy to v0.2 same-pair final findings. v0.3 supersedes v0.2 and freezes the two exact allowed future paths, a flag/adjacent-value-aware parser table (so `--cwd` and `--bootstrap-project-root` independently replace their equal old values), the full canonical parser/source replacement tables, pure API and fail-close contract.
+- Evidence: formal tree only changes `SESSION.md`, `TODO.md`, v0.2 supersession notice and v0.3; Gitlink unchanged; `git diff --check` PASS. No module/test implementation, request construction, Stage-1 retry/materialization, real source/checkpoint/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1 occurred.
+- Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
