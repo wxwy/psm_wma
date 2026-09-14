@@ -306,3 +306,13 @@
 - Review focus: whether precreated-empty-directory Git semantics, retained FD continuity, ownership-limited cleanup, replacement/symlink/nonempty/metadata-drift rejection, and legacy v0.8 negative-route preservation are sufficient; confirm no materialization execution is implied.
 - Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation design review request — capability-derived Git worktree target
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-DESIGN`.
+- Formal root: `c6ac4639d2abb6bb19263e1ee923902419844fd5`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs remediation `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.2.md`, plus task/session records; child unchanged. It supersedes v0.1 after the formal HIGH that Git consumed a mutable absolute CLEAN target.
+- Review focus: exact `mkdirat -> clean_fd -> inherited parent FD6 -> /proc/self/fd/6/<clean_name>` target chain; `close_fds=True` / `pass_fds=(6,)` / CLOEXEC and descendant lifetime; no global-path fallback; administrative metadata and cleanup fail-close; and the actual temporary-Git target-resolution race witness proving foreign replacement is not mutated.
+- Evidence: `git diff --check` PASS; formal-tree Gitlink is `93a89ba61306d840a008813f62f26a34d54850f4`; no project code, real Git/worktree/materialization, source/checkpoint/manifest/data/cache I/O, child change, GPU or training ran.
+- Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.

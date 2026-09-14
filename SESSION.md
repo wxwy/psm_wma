@@ -5168,6 +5168,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修改：新建 `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.2.md`，显式 supersede v0.1；冻结 `mkdirat -> clean_fd -> inherited parent FD6 -> /proc/self/fd/6/<clean_name>`，以及 `close_fds=True`、`pass_fds=(6,)`、FD6 lifetime、无 global fallback、cleanup fail-close 和 target-resolution race local-Git witness。
 - 未执行项目代码、真实 Git/worktree/source/checkpoint/data/cache I/O、GPU 或训练。下一步：docs diff/格式核验，提交并以新 formal root/同 Gitlink 重新三方审核。
 
+### Authority-root causal-worktree identity v0.2 审核名册与送达准备（2026-09-14，REVIEW）
+
+- formal pair=`c6ac4639d2abb6bb19263e1ee923902419844fd5`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT（live Inbox/reviews）、MM（`mm:0.0`）、Kimi（`kimi:0.0`）。
+- 已向 live Inbox append remediation request；Inbox size check=`46235 bytes + 本请求 < 131072 bytes`。下一步：提交/push ledger，随后以 `send-keys -l -> >=1s -> Enter -> capture` 向 MM/Kimi 送达；再开始三分钟审核轮询。任何真实 I/O/GPU/训练继续禁止。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
