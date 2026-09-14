@@ -86,6 +86,28 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             finally:
                 __import__("os").close(descriptor)
 
+    def test_native_root_fd_rejects_intermediate_directory_replacement_during_traversal(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); original = root / "dir"; original.mkdir(); (original / "payload").write_bytes(b"old")
+            descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY)
+            original_open = os.open
+            switched = False
+            def replace_after_directory_open(path, flags, *args, **kwargs):
+                nonlocal switched
+                opened = original_open(path, flags, *args, **kwargs)
+                if path == "dir" and not switched:
+                    switched = True
+                    original.rename(root / "detached")
+                    replacement = root / "dir"; replacement.mkdir(); (replacement / "payload").write_bytes(b"new")
+                return opened
+            try:
+                with patch("tools.psm_wma.immutable_source_collection.os.open", side_effect=replace_after_directory_open):
+                    with self.assertRaises(CollectionError): NativeRootFd(descriptor).open_regular("dir/payload")
+                self.assertEqual((root / "detached" / "payload").read_bytes(), b"old")
+                self.assertEqual((root / "dir" / "payload").read_bytes(), b"new")
+            finally:
+                os.close(descriptor)
+
     def test_native_git_commits_temporary_collection_tree(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
