@@ -458,3 +458,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: v1.3 attempt fail-close was recorded at root `0dd79aee`; post-failure inspection showed no clean root, index, ref, evidence or pending evidence. This formal commit is docs-only; `git diff --check` and no-index diff-check PASS. No retry, source/checkpoint/manifest/data/cache I/O, child/runtime/config edit, GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1 ran.
 - Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real materialization/retry; source/checkpoint/manifest/data/cache I/O; collection/receipt/record/package/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation design review request — authority-root config grammar v0.2
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CONFIG-GRAMMAR-CPU-STATIC-REMEDIATION-DESIGN`.
+- Formal root: `9a0d48efc59d6e50e3d0ed2e80f670779d3fad64`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only v0.2 docs design. It closes all same-pair v0.1 findings: explicit case-preserving `(section, subsection, variable, value)` tuples; the exact 14 frozen real-config triples, including `[branch "V2"]` and the ghfast submodule URL; independently inline-equivalent outer/bootstrap parsers plus byte-identical canonical-output/failure witnesses.
+- Review focus: verify that exact tuple preservation avoids case-collapsing authority, the table is complete/no broader than frozen config, and no import, route-defense weakening, retry or production activity is implied.
+- Evidence: docs-only; no project code or child changed and no retry/materialization/source I/O/GPU/training ran.
+- Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Prohibited: implementation before same-pair approvals; real materialization/retry, source/checkpoint/manifest/data/cache I/O, all downstream mutation, child/runtime/config changes, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
