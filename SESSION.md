@@ -5671,3 +5671,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依据紧邻观察凭证 #1 的同pair整改令牌，仅修改`tools/psm_wma/test_materialize_immutable_source_authority_root.py`。测试从`bootstrap_payload()`返回的实际inline payload按`allowed={`至`g=os.lstat(git)`精确截取config parser片段，在临时namespace内执行；有效真实14-tuple与outer/runtime ordered tuple的`repr(...).encode()`逐字相等。负例覆盖`v2`、escaped/dotted/path subsection、quoted-header spacing、unknown key、duplicate triple、remote/submodule URL drift、include，并逐项断言bootstrap/outer/runtime的`config-*`类别一致；保留真实`_run_bootstrap_cli`两条分类witness。
 - 命令=`python3 -m py_compile tools/psm_wma/materialize_immutable_source_authority_root.py tools/psm_wma/test_materialize_immutable_source_authority_root.py && python3 -m unittest tools.psm_wma.test_materialize_immutable_source_authority_root && python3 docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8_witness_test.py && git diff --check`；结果=py_compile PASS、70/70 PASS、outer 17/17 PASS、diff-check PASS。仅CPU TemporaryDirectory/local Git fixture；无真实I/O、child、GPU或训练。下一步=复核diff/状态和规范自检后提交root-only整改并重新三方审核；未提交。
+
+### Authority-root config grammar bootstrap corpus 送达回执（2026-09-14 15:18 CST，REVIEW）
+
+- ChatGPT：canonical live Inbox申请已随ledger=`cf4fafade6ce6dbc255a1dc833a029df0ce029ff`推送；formal target=`08d5828cdb4c12afa3b798ff01826c91ceb8755a`/`93a89ba61306d840a008813f62f26a34d54850f4`。MM：`mm:0.0`执行`send-keys -l`、等待≥1秒、独立Enter与独立capture；capture显示完整申请进入transcript并开始`Verifying SHA pair and scope`。DS：`ds:0.0`同样完成三联步骤；capture显示申请进入transcript且已开始读取formal tree。
+- 冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。本Gate保持`REVIEW`；下次审核检查最早三分钟后，且必须先完成远端锁定、exact review scan和两个独立pane capture。无同pair三方final前禁止整改、真实I/O、child、GPU及训练。
