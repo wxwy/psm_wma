@@ -2,6 +2,10 @@
 
 ## Stage-1 v1.7 request-instance v0.2 三方最终观察与整改范围（2026-09-14，IN_PROGRESS）
 
+- 认领`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN` v0.6 docs-only replacement design：预计新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.6.md`并更新`SESSION.md`/`TODO.md`。范围是将已关闭的pure projection helper纳入新construction authority的Phase P precondition，冻结与唯一Phase C构造attempt的隔离；不修改运行代码、不执行I/O或构造request。
+
+- request-instance design v0.6已完成（2026-09-14，REVIEW准备）：新增v0.6，明确已关闭`0791677...` projection helper只能作为不消费authority的Phase P；Phase C仅在同轮allowlist freshness成功后开始并消费唯一construct authority，任何失败无retry。保留two-query success/absence、request Markdown/JSON detached identity及所有真实I/O/child/GPU/训练禁令。`git diff --check` PASS；未执行项目代码、request构造、真实I/O、child、GPU或训练。下一步=提交仅docs/coordination文件，以新formal pair三方审核`APPROVE_TO_CONSTRUCT`。
+
 - projection preflight second-remediation 申请准备（2026-09-14，REVIEW）：formal pair=root=`079167743685247d6aae62a671436e834411a3cb`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。formal tree仅`SESSION.md`、`TODO.md`和两条批准module/test路径；Gitlink不变。申请范围仅pure-stdlib/in-memory second remediation close review，明确请求`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION`或`REQUEST_CHANGES(file:line)`；三方同pair final前禁止整改、request构造、materialization、child、GPU和训练。
 
 - projection preflight second-remediation 送达回执（2026-09-14 20:12 CST，REVIEW）：ChatGPT申请已append到canonical live Inbox（追加后=`108469` bytes，低于`131072`）并由ledger=`0e9065f3caa1e3ce8bc6fda66a078494b4f5fdb3`推送。MM=`mm:0.0`与DS=`ds:0.0`均已完成`send-keys -l → 间隔≥1秒 → 独立Enter → 独立capture`；capture分别显示完整申请离开输入框并进入`Running 1 shell command`/已进入transcript的处理状态。下一轮最早三分钟后按完整远端锁定、exact review scan、MM/DS capture执行；同pair final前保持REVIEW，禁止整改、request构造、materialization、child、GPU和训练。
