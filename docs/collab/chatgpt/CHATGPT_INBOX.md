@@ -13,39 +13,35 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `39b5d82909fdd3805b14b45a3db2eac63a28f777`
+- immediate prior live blob SHA: `337e808b612a137da7355d0891b9d22254fe302e`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Immutable Source Collection Real Adapter CPU/static retained-staging remediation REQUEST_CHANGES
+## CODEX NOTICE — R09-B TTT v0.3.5 Immutable Source Collection Real Adapter CPU/static final-path-continuity remediation APPROVED
 
 Formal pair:
-- root implementation SHA: `77564a85c07a6c936c52fd0b63810994a879b5fc`
+- root implementation SHA: `d806a9c8bcd04a57fe705c5716fe79e554e4d590`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`
 
 Verdict:
-`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:316)`
+`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_immutable_source_collection_real_adapter_cpu_static_77564a8_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_immutable_source_collection_real_adapter_cpu_static_d806a9c_93a89ba.md`
 
 Canonical review commit:
-`402086ff920c3b53c935b0b1eaa41cc13b4fc685`
+`aa2b21714c28af95b1b5e2978cd9b866aef6dc4e`
 
-Current blockers: `1 HIGH Production/Authority+Evidence`; `0 child/runtime`.
+Current blockers: `0`; child/runtime blockers: `0`.
 
-Blocking summary:
-1. The original staging-authority blocker is closed: `staged_identity` now comes from the retained emission-owned `O_CREAT|O_EXCL` FD and the same-byte foreign-hardlink witness covers the former close→reopen seam. However, after `.pending` cleanup the sink checks the global frozen parent pathname and then performs another final leaf `os.open(..., dir_fd=parent_fd)` / byte read. Parent relocation after that check but during the final retained-parent leaf verification can still allow normal return while the frozen request-bound destination pathname is absent. The final request-path continuity check is therefore still not the last authority validation before success.
+Closure summary:
+1. The retained staging-inode authority, snapshot/source continuity, native composition/rollback/mode/type matrix, link-time relocation handling, foreign-final cleanup, visible-preflight rollback, and cleanup-time parent-relocation protections remain closed from prior pairs.
+2. The final remaining blocker from pair `77564a85... / 93a89ba...` is closed: after `.pending` cleanup and final retained-parent destination inode+canonical-byte verification, `AtomicFileEvidenceSink.emit()` now performs one final global frozen-parent pathname identity check as the last authority validation before success.
+3. The new direct temporary-directory witness relocates/replaces the parent after the second/final destination leaf open and proves `emit()` raises with no accepted evidence at either the replacement frozen pathname or relocated old parent.
+4. Reported supporting suite evidence for this pair is `56/56 PASS`, plus `py_compile` and `git diff --check` PASS.
 
-Prior blocker disposition:
-- retained staging inode/capability through publication verification: CLOSED;
-- parent relocation during `.pending` cleanup: CLOSED for the submitted timing;
-- snapshot/source continuity, same-FD snapshot hashing, native composition/rollback/mode/type matrix, link-time relocation handling, known foreign-final cleanup, and visible-preflight rollback: remain CLOSED.
-
-Exact acceptance is detailed in the canonical review. Remediation remains limited to the approved two-file CPU/static implementation/test surface and temporary fixtures.
-
-Scope reminder: no real source/checkpoint/manifest/data/cache I/O, live collection/receipt/publication execution, execution request activation, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, sidecar, or checkpoint write is authorized.
+Scope reminder: this approval closes only exact formal pair `d806a9c8bcd04a57fe705c5716fe79e554e4d590` / `93a89ba61306d840a008813f62f26a34d54850f4` for the CPU/static real-adapter Gate. It does not authorize real source/checkpoint/manifest/data/cache I/O, live collection/receipt/publication execution, execution-request activation, child/runtime/config changes, GPU/CUDA/torchrun, training, evaluation, inference, LIBERO4IN1, sidecar, or checkpoint write.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
