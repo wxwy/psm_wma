@@ -5944,3 +5944,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT：canonical live Inbox完整申请已随ledger=`06fccf31c8e33b4c37beb88d21529250849c6a09`推送。DS=`ds:0.0`已完成`send-keys -l → 间隔>=1秒 → 独立Enter → capture`，capture显示完整pair申请已离开输入框并进入会话、当前busy。
 - MM=`mm:0.0`已完成同一三联回执：完整 v1.0 formal root/child申请离开输入框，capture显示`Herding…thinking`且新空prompt。该申请替代旧v0.9草稿，不重复发送。下一步=三分钟完整远端锁定、exact ChatGPT review scan、MM/DS独立capture；无三方同pairfinal前禁止request构造、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance v1.0 完整观察凭证 #1（2026-09-14 22:19:09 CST，REVIEW）
+
+- Formal pair=root=`9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=11e493e1f309a0833a34db7ef6acc724d8c685a9`；fetch成功；advertised/tracking均=`11e493e1f309a0833a34db7ef6acc724d8c685a9`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索`rg -l -F '9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a' docs/collab/chatgpt/reviews/`无命中。MM=`mm:0.0` capture在已提交 v1.0 application 后给出`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`（2026-09-14 22:16:33）；结合其紧邻的v1.0 literal-binding分析，计为该pair批准。DS=`ds:0.0` capture成功但当前尾部只有与用户的全链路回溯审核讨论，未出现v1.0 final verdict，DS=处理中。
+- 全部独立命令成功且未截断；ChatGPT/DS final缺失，无推进令牌，禁止request构造、materialization、真实I/O、child、GPU和训练。
