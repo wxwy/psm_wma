@@ -559,3 +559,11 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `json.tool`, canonical JSON + owner-FD static assertions, parser replay byte-identity (`2336 / 1a9543ec...`), and `git diff --check` PASS. No launcher/materializer, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 ran.
 - Requested verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
 - Prohibited: execution before all same-pair approvals; even then Stage-1 PASS is authority-tuple-only hard stop. No downstream mutation, child, GPU or training is authorized.
+
+## 2026-09-14 — Remediation design review: Stage-1 v1.7 launcher freeze v0.2
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`.
+- Formal root: `699e8567669187faadf1c46b36bff02eabb0206e`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only docs-only remediation of the v0.1 design findings. v0.2 supersedes v0.1, corrects the formal Gate, explicitly requests the positive CPU/static implementation verdict, and freezes a no-I/O pure `replay_outer_payload(base_source, binding)` API, ordered substitution inputs, output bytes/SHA records, and `AuthorityReplayError("BLOCKED_AUTHORITY_NOT_CLOSED:<category>")` failure contract. It also records the complete v1.6 base/parser/outer identities and mandates fresh v1.7 observation.
+- Evidence: formal tree is only `SESSION.md`, `TODO.md`, v0.1 supersession notice and v0.2; Gitlink unchanged; `git diff --check` PASS. No launcher module/test implementation, request construction, Stage-1 retry/materialization, real source/checkpoint/data/cache I/O, child/runtime mutation, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1 occurred.
+- Requested final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
