@@ -69,3 +69,44 @@ Still NOT authorized:
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 v1.7 request-instance recovery design v1.4 APPROVE
+
+Formal pair:
+- root design SHA: `cb80b88c86b2af19c6d677e630a0615c5b451626`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V14`
+
+Verdict:
+`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v14_cb80b88_93a89ba.md`
+
+Canonical review commit:
+`ff76ff919a8f9b551f88c2aad422c58bf6fae23b`
+
+Current blockers: `0`; Design/Authority: `0`; Production: `0`; Evidence: `0`; child/runtime: `0`.
+
+Closure summary:
+- the only authoritative v1.4 formal root is `cb80b88c86b2af19c6d677e630a0615c5b451626`; the earlier malformed full SHA is superseded and is not a review target;
+- the Gate literal is now exact and identical as `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V14` across the formal design and coordination authority;
+- the producer now deterministically encodes the two frozen files into one `patch_raw`, binding its exact length/SHA/raw value before the sole consumer invocation;
+- exactly one `apply_patch(patch_raw)` consumer is allowed, with no manual/context reconstruction, alternate grammar, shell/Python/temp-file write path or second write;
+- post-write verification requires byte-for-byte equality to the original producer JSON/Markdown bytes plus canonical/sidecar/blob identity checks;
+- any zero-file/one-file/consumer/equality/identity failure is terminal no-retry, and partial residue is preserved untouched as failure evidence;
+- P0/P1 remain non-consuming; a future C is still one-shot and PASS creates only the frozen docs-only v0.3 request pair before hard stop for independent request review.
+
+Authorization is narrow: after the required same-pair multi-review approval condition is satisfied, this design permits exactly one future docs-only request-pair construction under the frozen V14 contract, followed by independent exact-pair request review.
+
+Still NOT authorized:
+- materialization or Stage-1 execution/retry;
+- launcher/materializer execution;
+- source/checkpoint/manifest/data/cache I/O outside the separately approved construction allowlist;
+- collection/receipt/record/publication;
+- child/runtime/config mutation;
+- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
