@@ -5788,3 +5788,32 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 依据rebind design #1 的全批准构造令牌，新增docs-only v1.4 Markdown/JSON；formal parent=`08d5828cdb4c12afa3b798ff01826c91ceb8755a`，child=`93a89ba61306d840a008813f62f26a34d54850f4`。JSON显式冻结new-parent launcher base=`af19a9eb66ecaf8bd0b92a48ab1867f105026658`/`8b0fad39857fb72e3a3eb317f4acf6f2d6e94e196935f52f07d6170e79c678dd`/`18966`，且唯一FD8 pair、parser/bootstrap/contract/payload identities均重算。
 - stdlib canonical verifier PASS：JSON=`8482 bytes`、SHA-256=`831f9d8a246029333c07621debd197ff0ac8bdf1ccf7c9da4215ce8bf7c14b85`；formal parent/base字段与single owner-FD断言PASS；`git diff --check` PASS。未执行materializer，未创建clean root/index/ref/evidence，未读checkpoint/manifest/data/cache，未改child/GPU/训练。
 - 下一步仅可提交该root docs-only request，formal-tree/Gitlink复核后以新exact pair三方审核；无新pair全批准前禁止其执行。
+
+### Stage-1 v1.7 request-projection preflight implementation 审核观察凭证 #1（2026-09-14 19:32 CST，REVIEW）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；formal pair=`b85584e18b9b4ebaf85d4a07f63a9d87908e0c98`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=9faac7cb70e4c34eec486bd41213ebad9691e3ff`；fetch成功；advertised/tracking均=`f06bac2a3fb9fa527cfaaf27154b92501956ec9b`；新增完整范围=`db294f2b review: request projection preflight implementation fixes`、`f06bac2a review: notify Codex projection implementation blockers`；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`成功至`f06bac2a3fb9fa527cfaaf27154b92501956ec9b`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_projection_preflight_implementation_b85584e_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_request_projection.py:70)`，包含adapter Git blob OID校验、完整parser/bootstrap结构校验与direct end-to-end fixture matrix三个HIGH。MM `mm:0.0` capture成功，显示`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION`，但本次pane可见片段未包含完整formal pair；DS `ds:0.0` capture成功，显示`REQUEST_CHANGES`及投影fixture/identity缺口，但同样未显示完整formal pair。因此两pane均不能作为本轮exact-pair最终verdict。
+- 由于MM/DS exact-pair锚定证据不完整，本轮状态=`检查失败/状态未知`，无推进令牌；不得整改、提交、执行、真实I/O、child、GPU或训练。下一步仅可恢复两位pane的exact-pair可核验证据或等待其明确重述该pair verdict。
+
+### Stage-1 v1.7 request-projection preflight implementation 审核观察凭证 #2（2026-09-14 19:35 CST，REVIEW）
+
+- 冻结名册与formal pair不变：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`），`b85584e18b9b4ebaf85d4a07f63a9d87908e0c98`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=f06bac2a3fb9fa527cfaaf27154b92501956ec9b`；fetch成功；advertised/tracking均=`f06bac2a3fb9fa527cfaaf27154b92501956ec9b`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only`成功（Already up to date）。
+- ChatGPT exact review仍为`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_projection_preflight_implementation_b85584e_93a89ba.md`，final=`REQUEST_CHANGES`。为修复pane滚动区缺完整pair，向MM/DS各发出一次既有申请的verdict重述请求（不是新审核）：MM已通过`send-keys -l -> >=1s -> Enter -> capture`回显该完整pair与`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION`；DS完成同样三联送达，capture显示完整pair重述请求已离开输入框且pane正在处理，尚未产生重述结果。
+- 本轮ChatGPT/ MM final可核验，DS仍处理中；无推进令牌，Gate保持`REVIEW`。禁止整改、提交、执行、真实I/O、child、GPU及训练；仅继续三分钟审核轮询。
+
+### Stage-1 v1.7 request-projection preflight implementation 审核观察凭证 #3 / 整改令牌（2026-09-14 19:36 CST，REVIEW → IN_PROGRESS）
+
+- 冻结名册与formal pair不变：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`），`b85584e18b9b4ebaf85d4a07f63a9d87908e0c98`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=f06bac2a3fb9fa527cfaaf27154b92501956ec9b`；fetch成功；advertised/tracking均=`f06bac2a3fb9fa527cfaaf27154b92501956ec9b`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only`成功（Already up to date）。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_projection_preflight_implementation_b85584e_93a89ba.md`，final=`REQUEST_CHANGES`（3个HIGH）；MM `mm:0.0` capture通过同pair重述回执，final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_REQUEST_PROJECTION_PREFLIGHT_CPU_STATIC_IMPLEMENTATION`；DS `ds:0.0` capture回显`formal root=b85584e18b9b4ebaf85d4a07f63a9d87908e0c98；child/Gitlink=93a89ba61306d840a008813f62f26a34d54850f4；verdict=REQUEST_CHANGES`。独立证据均成功、未截断。
+- 三方final同pair齐全，形成含`REQUEST_CHANGES`的整改令牌：仅授权在既有`tools/psm_wma/stage1_v17_request_projection.py`及`tools/psm_wma/test_stage1_v17_request_projection.py`完成纯stdlib、嵌入fixture的AST/identity/direct-test整改、验证、提交并对新pair重新三方审核。严禁Git/网络/路径I/O、request构造、materialization、child、GPU及训练。
+
+### Stage-1 v1.7 request-projection preflight implementation 整改中间验证（2026-09-14 19:45 CST，IN_PROGRESS）
+
+- 已在批准两文件内补充production层的Git blob preimage OID、canonical JSON、完整ordered flag/value table、严格`bootstrap_payload()`签名/body/return AST约束，及parser/bootstrap argv/contract三条冻结identity。以纯内存canonical replay bytes和已核验adapter bytes执行直接调用，三条identity均PASS；`py_compile`、direct unittest=`6/6`、`git diff --check`均PASS。
+- 尚未提交：当前unittest的合成fixture通过patch冻结常量覆盖逻辑分支，不能代替ChatGPT/DS要求的、完全内嵌真实`18875`字节outer与`91814`字节adapter gzip/base64 fixture。这一缺口未关闭前不得提交或重新申请close review。下一步只在同两文件中将真实冻结fixture改为内嵌直接witness，并补齐完整negative matrix；保持无Git/路径I/O、request构造、child、GPU或训练。
+
+### Stage-1 v1.7 request-projection preflight implementation 整改验证（2026-09-14 19:55 CST，REVIEW准备）
+
+- 两文件整改完成：test现将`18875/658e...` outer与`91814/4a51.../87e...` adapter作为gzip/base64冻结常量内嵌，运行时只解压内存字节，未使用Git、路径、network、subprocess或任何project runtime入口。direct canonical witness调用`project_request_closure()`，逐项断言输入双identity、schema顺序、parser=`2336/1a9543...`、bootstrap argv=`2341/85ac...`、contract=`182/bec6...`及canonical preimage；负例覆盖input drift、RAW count/arity、decode target、noncanonical/reordered/duplicate/missing parser flags、bootstrap signature/return与raw drift、literal Name/Call。
+- production补齐adapter blob preimage SHA-1、canonical parser JSON、冻结ordered flag/value pairs、严格adapter AST与三条输出identity。命令=`python3 -m py_compile tools/psm_wma/stage1_v17_request_projection.py tools/psm_wma/test_stage1_v17_request_projection.py && python3 -m unittest tools.psm_wma.test_stage1_v17_request_projection && git diff --check`，结果=`6/6 PASS`、py_compile PASS、diff-check PASS。未访问真实authority/request/source/checkpoint/manifest/data/cache、未改child、未用GPU或训练。
+- 下一步：复核formal范围/工作树、提交本root-only整改，并以新exact pair重新三方close review；未提交。
