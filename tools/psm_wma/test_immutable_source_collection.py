@@ -450,6 +450,29 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             self.assertFalse((relocated / "evidence.json").exists())
             self.assertFalse((relocated / "evidence.json.pending").exists())
 
+    def test_atomic_sink_rejects_parent_relocation_during_final_leaf_validation(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); parent = root / "parent"; parent.mkdir()
+            relocated = root / "relocated"; destination = parent / "evidence.json"
+            record = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                       selection_request=self.selection_raw, git=self.git,
+                                       root_fd=self.fd, sink=MemoryEvidenceSink())
+            original_open = __import__("tools.psm_wma.immutable_source_collection", fromlist=["os"]).os.open
+            leaf_opens = 0
+            def relocate_during_final_leaf(path, flags, *args, **kwargs):
+                nonlocal leaf_opens
+                opened = original_open(path, flags, *args, **kwargs)
+                if path == "evidence.json":
+                    leaf_opens += 1
+                    if leaf_opens == 2:
+                        parent.rename(relocated)
+                        parent.mkdir()
+                return opened
+            with patch("tools.psm_wma.immutable_source_collection.os.open", side_effect=relocate_during_final_leaf):
+                with self.assertRaises(CollectionError): AtomicFileEvidenceSink(destination).emit(record)
+            self.assertFalse(destination.exists())
+            self.assertFalse((relocated / "evidence.json").exists())
+
     def test_native_parser_requires_full_binding_categories(self) -> None:
         with contextlib.redirect_stderr(io.StringIO()):
             with self.assertRaises(SystemExit):

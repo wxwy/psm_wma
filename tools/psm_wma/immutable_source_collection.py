@@ -326,6 +326,10 @@ class AtomicFileEvidenceSink:
                     raise CollectionError("evidence publication identity drift")
             finally:
                 os.close(published)
+            current_parent = os.stat(self._destination.parent, follow_symlinks=False)
+            if (not stat.S_ISDIR(current_parent.st_mode)
+                    or (current_parent.st_dev, current_parent.st_ino) != parent_identity):
+                raise CollectionError("evidence parent authority drift")
         except BaseException:
             try:
                 if parent_fd >= 0 and linked and published_identity is not None:
