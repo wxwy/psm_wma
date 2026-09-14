@@ -13,45 +13,66 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `bed4ab28cbaf1737d0776a55c8677a421c416878`
+- immediate prior live blob SHA: `ece188343791b237e6230626f85151dab689743f`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — R09-B TTT v0.3.5 Stage-1 v1.7 request-instance design v0.4 APPROVED
+## CODEX NOTICE — R09-B TTT v0.3.5 Stage-1 v1.7 exact request instance v0.1 REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `2ccd42fadc325c10d072f236b9b5805c732446b3`
+- root request SHA: `ad758f9589f4712ee97a169e1f4236aa59f158e6`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-DESIGN`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`
 
 Verdict:
-`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.1.md:13)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v04_2ccd42f_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_v01_ad758f9_93a89ba.md`
 
 Canonical review commit:
-`bbb9770d16a900f41e7b68487ef80320b5928828`
+`b9388f0c0d07f3d48bee2bd9b43a13fa067839e0`
 
-Current blockers: `0`; Design/Authority: `0`; Production/Authority: `0`; Evidence/Scope: `0`; child/runtime: `0`.
+Current blockers: `3 HIGH`; Request/Authority: `3 HIGH`; Production implementation: `0`; Evidence-only: `0`; child/runtime: `0`.
 
-Closure summary:
-1. v0.4 closes the sole v0.3 HIGH. Both permitted exact `git ls-remote` observations must complete within the frozen timeout with `returncode == 0`; empty stdout alone is never treated as success.
-2. The future canonical request must bind, separately for both remote queries, the exact command, return code, stdout raw-byte length/SHA-256 and stderr raw-byte length/SHA-256.
-3. Fixed authority-ref remote absence is established only by the exact second query succeeding with zero stdout bytes, zero result lines and zero stderr bytes. Nonzero return code, timeout, transport/auth/DNS error, diagnostics, malformed response or nonempty stdout fail closed as `BLOCKED_AUTHORITY_NOT_CLOSED` and cannot establish absence.
-4. The V2 query likewise only becomes advertised-identity authority after successful completion.
-5. Previously closed construction boundaries remain intact: exactly two remote queries; zero mutation; frozen formal parent/base/replay identities; fixed docs-only output paths; v1.6 consumed/non-reusable; one future request only; and independent same-pair three-party review of that exact request before any Stage-1 attempt can be authorized.
-6. Formal root Gitlink resolves exactly to reachable child `93a89ba...`; child/runtime production bytes are unchanged.
+HIGH 1 — moving V2 freshness self-invalidates the request:
+- construction bound remote `V2` exactly to `bb99c6df4cf6ba615e09e3ff4c8c065509b4dc6e`;
+- the request says any observation drift is `BLOCKED_AUTHORITY_NOT_CLOSED`;
+- committing the request necessarily advanced V2 to formal root `ad758f...`, and review persistence advances it further;
+- therefore runtime equality to construction-time remote V2 is already stale before any approved attempt can begin.
+- Remediation: treat V2 as construction provenance only, or freeze a relation that survives request/review commits. Keep fixed local/remote authority-ref absence and designated path absence as runtime freshness facts.
 
-Authorized consequence:
-- construct exactly one fresh root docs-only Stage-1 v1.7 request-instance Markdown/JSON pair under the frozen v0.4 construction allowlist.
+HIGH 2 — canonical JSON does not implement the frozen v0.2/v0.3/v0.4 closure:
+- missing observation time;
+- missing local V2 observation;
+- missing closed replay module/test blob+raw identities;
+- missing actual canonical parser argv;
+- only six environment key names are present, not exact values;
+- missing frozen remote-query timeout;
+- remote V2 lacks stderr SHA;
+- fixed remote authority-ref lacks stdout SHA and stderr SHA;
+- whole canonical JSON bytes/SHA are not represented in the request closure; the Markdown only states `3054 / 2fffb82a...` externally.
+The submitted JSON therefore cannot mechanically reconstruct/authenticate the complete authority program required by the approved design.
 
-Still NOT authorized by this design approval:
+HIGH 3 — post-approval execution authority is contradictory and incomplete:
+- Markdown says same-pair approval may authorize one Stage-1 attempt, then says `此前及此后均禁止 launcher/materializer执行`;
+- JSON has `one_request_only`, not a one-attempt execution authority;
+- it does not freeze the v1.6-style semantics: one exact post-approval attempt, zero-mutation preflight fail-close, success hard-stop at authority tuple, failure/consumption exhausts authority, no retry/second attempt, and a new exact request + fresh review required for another attempt.
+- Remediation: make the formal request itself state the exact positive verdict and explicit one-shot consumption/no-retry semantics.
+
+Preserved controls:
+- formal parent `08d5828...`, child `93a89ba...`, launcher base `18966 / 8b0fad...`, closed replay root `50b0bff...`, parser `2336 / 1a9543ec...`, outer `18875 / 658e9b9e...` remain correct;
+- fixed local authority ref was observed absent;
+- fixed remote authority query reported `returncode=0`, empty stdout and empty stderr;
+- designated clean/index/evidence/pending paths were observed absent;
+- formal Gitlink resolves exactly to reachable child `93a89ba...`; child/runtime bytes unchanged.
+
+Still NOT authorized:
 - Stage-1 materialization/execution/retry;
 - launcher/materializer execution;
-- reuse or revival of consumed v1.6 authority;
-- source/checkpoint/manifest/data/cache/runtime I/O outside the construction allowlist;
+- reuse/revival of consumed v1.6 authority;
+- source/checkpoint/manifest/data/cache I/O;
 - downstream collection/receipt/record/package/publication;
 - child/runtime mutation;
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
