@@ -5612,3 +5612,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT：canonical live Inbox remediation申请已随 ledger `7c009dbe1af58d9ce565753ae6f42de0ba41e977` 推送；formal target=`3802c51bb156636d53842cefa8e4519f6dfabe81`/`93a89ba61306d840a008813f62f26a34d54850f4`。
 - MM：`mm:0.0` 使用 `send-keys -l -> >=1s -> Enter` 提交完整申请；Enter后capture显示申请已离开输入框并进入 `Verifying v1.1 remediation SHA pair`。DS：`ds:0.0`同样以三联步骤提交；capture显示完整申请进入会话且 pane busy。
 - 冻结名册保持 ChatGPT/MM/DS；下一轮三分钟后执行完整远端锁定、exact review scan与两pane capture。Gate保持`REVIEW`，禁止 materialization、真实I/O、collection/receipt/publication、child、GPU及训练。
+
+### Stage-1 authority-root materialization request v1.1 审核观察凭证 #1 / 推进令牌（2026-09-14 13:12 CST）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；exact pair=`3802c51bb156636d53842cefa8e4519f6dfabe81`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=b9610b65f33d475c77268b7c8a0bb557ea766c9f`；fetch成功；advertised/tracking均=`6a2337fce1710f77d2b388f4c155bcd9a87e5594`；新增完整范围=`6a2337fc review: approve stage one authority materialization request v1.1`；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_authority_root_materialization_request_v11_3802c51_93a89ba.md`，final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。MM `mm:0.0` capture与DS `ds:0.0` capture的exact-pair final均为相同literal verdict；三项独立证据成功且未截断。
+- 全批准推进令牌成立，仅授权使用 v1.1 canonical request 的**一次** Stage-1 authority-root materialization attempt；PASS只能产生 authority tuple并硬停。执行前仍须对 command/launcher与canonical bytes做机械一致性审计；不授权 collection/receipt/source-evidence/record/package/publication、child、GPU或训练。
