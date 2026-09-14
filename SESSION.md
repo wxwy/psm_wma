@@ -6033,3 +6033,43 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`9c8b4adc71b92caad5ecaf6fb044f5c01a4f9d9a`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=1094ad60b112620e0833a55fb71e84bebd883d3e`；fetch成功；advertised/tracking=`7a6a98e11aebaa3b76e9a2b5f9b43a6b37673237`；新增=`e6090329 docs: add ChatGPT review for stage1 v17 request design v10`、`7a6a98e1 docs: publish ChatGPT v10 request design approval`；祖先判定=0；ff-only成功至`7a6a98e11aebaa3b76e9a2b5f9b43a6b37673237`。
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v10_9c8b4ad_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；DS=`ds:0.0` capture逐字锚定本pair并给出同一final；MM=`mm:0.0` capture在已提交v1.0申请分析后给出同一target verdict（2026-09-14 22:16:33），按用户已明确认可的同一消息/唯一root-prefix规则计为同pairfinal。
 - 三方同pair全批准，构成仅授权构造一份docs-only request instance的推进令牌。P0/P1 non-consuming；C在首freshness前唯一消费/no-retry；本令牌不授权materialization、launcher/runtime、真实source I/O、child、GPU或训练。下一步=严格按v1.0/v0.7 contract只构造并独立审核该request instance。
+
+### Stage-1 v1.7 request-instance recovery design v1.2 审核观察凭证 #1 / construct 推进令牌（2026-09-14 23:23:03 CST，REVIEW → IN_PROGRESS）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`，用户指定替代 Kimi）；exact pair=root=`19181644aa7d8f08abfdc9c206f24d2dfc9acb1e`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=489e28d96e541bbc6136d0b6ce903994b1ea59b1`；`git fetch origin V2`成功；advertised/tracking均=`489e28d96e541bbc6136d0b6ce903994b1ea59b1`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`成功（Already up to date）。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v12_1918164_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；MM `mm:0.0` capture为同一literal final（附非阻塞措辞建议）；DS `ds:0.0` capture为同一literal final（附LOW非阻塞显式绑定建议）。三项独立证据成功且未截断。
+- 三方同pair全批准，构成仅授权一次P0/P1/C的construct推进令牌：P0/P1只读、非消费；C于首次freshness前唯一消费/no-retry，PASS仅允许写入冻结的docs-only v0.3 request JSON/Markdown pair并硬停等待独立审核。禁止materialization、launcher/runtime、真实source/checkpoint/manifest/data/cache I/O、child、GPU或训练。
+
+### Stage-1 v1.7 request-instance recovery construction 预检与审核观察凭证 #2（2026-09-14 23:33 CST，IN_PROGRESS）
+
+- P0/P1：前两次纯内存预检分别因脚本中 tuple/list 比较及 keyword-only replay 调用错误而零输出停止，均发生在任何C freshness观察之前，不消费authority；随后以四个冻结Git blob和完整literal `ReplayBinding`重跑成功。对象与closure identities为：outer=`18875/658e9b9e6f34964310d6e2a5519c3b70243971b5ef535d753192e3d59d1960b8`、parser=`2336/1a9543ec3e7ef4f37b4948dde2a6a9532b13a8415291cceafd90b9692c028333`、selection=`516/8fe4585f...`、config=`508/43b3b77b...`、bootstrap=`9406/ccd8ee27...`、contract=`182/bec6a57a...`、adapter=`91814/87e22fac...`；`writes=0`、`freshness_observations=0`。
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；exact pair=root=`19181644aa7d8f08abfdc9c206f24d2dfc9acb1e`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=489e28d96e541bbc6136d0b6ce903994b1ea59b1`；fetch成功；advertised/tracking均=`489e28d96e541bbc6136d0b6ce903994b1ea59b1`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`成功（Already up to date）。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v12_1918164_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；MM `mm:0.0`和DS `ds:0.0` capture均为同一literal final，附建议均为非阻塞。三项独立证据成功且未截断；构造推进令牌有效。预计仅写`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.3.json`与`.md`，C尚未开始。
+
+### Stage-1 v1.7 request-instance recovery design v1.2 审核观察凭证 #2（2026-09-14 23:49 CST，REVIEW）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`；formal pair=root=`19181644aa7d8f08abfdc9c206f24d2dfc9acb1e`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=489e28d96e541bbc6136d0b6ce903994b1ea59b1`；`git fetch origin V2`成功；advertised/tracking均=`489e28d96e541bbc6136d0b6ce903994b1ea59b1`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索命中`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v12_1918164_93a89ba.md`，其完整 pair 与final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`可核验。MM与DS独立capture成功，但各自当前转录中的最终verdict未同时逐字包含完整 root/child；对2000行转录作exact SHA/verdict检索均为空。按审核事实协议，MM/DS本轮均为待补 literal-pair 回执，未形成推进令牌；P0/P1/C、request写入、materialization、真实I/O、child、GPU和训练全部闭锁。
+- 下一步仅向MM/DS发送一次既有申请的literal-pair verdict重述请求（不是新审核申请），完成三联送达后再按三分钟节奏完整检查；不得据旧SESSION或旧capture推进。
+
+### Stage-1 v1.7 request-instance recovery design v1.2 literal-pair 回执补全送达（2026-09-14 23:50 CST，REVIEW）
+
+- MM=`mm:0.0`：先清除本Agent遗留的未发送草稿，后以`send-keys -l`写入既有申请的完整pair重述请求，间隔至少1秒后独立`Enter`；capture显示完整文本已离开输入框并进入会话，pane=`thinking`。DS=`ds:0.0`：同一三联完成，capture显示完整文本进入transcript且pane busy。
+- 这不是新审核申请、不改变冻结名册或formal pair，且不重复既有审核内容；仅恢复新规范要求的“最终verdict与完整pair同一可见回执”。下次完整审核观察不早于2026-09-14 23:53 CST；此前不推进C。
+
+### Stage-1 v1.7 request-instance recovery design v1.2 审核观察凭证 #3 / construct 推进令牌（2026-09-14 23:53 CST，REVIEW → IN_PROGRESS）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`；formal pair=root=`19181644aa7d8f08abfdc9c206f24d2dfc9acb1e`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=489e28d96e541bbc6136d0b6ce903994b1ea59b1`；fetch成功；advertised/tracking均=`489e28d96e541bbc6136d0b6ce903994b1ea59b1`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-match review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v12_1918164_93a89ba.md`，行4--6完整pair且final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。MM capture中本Agent的完整pair重述请求已提交，紧邻最终回复=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；DS capture逐字回复root、child与相同final。全部独立命令成功、未截断。
+- 三方同pair全批准，形成唯一construct推进令牌：只授权本次P0/P1结果后的单次C，同轮写出冻结`docs/build/...request_instance_v0.3.{json,md}`并机械核验，随后硬停独立审核。禁止materialization、launcher/runtime、真实source/checkpoint/manifest/data/cache I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance recovery construction C fail-close（2026-09-14 23:57 CST，BLOCKED_AUTHORITY_CONSUMED）
+
+- 依据上述构造令牌，C 在首次 designated-path absence observation 前开始；P0/P1 closure、`.git` identity、`config` raw identity、local V2、两条允许的remote query、local/remote authority absence、六项环境、owner-FD 与六个 designated absence 均成功。生成的canonical JSON候选为`27376` bytes、SHA-256=`bff7377172e72229c11daa3f7c4a250c8134c57daea5a3bce630bd5e00f92ffc`，Markdown sidecar候选绑定JSON blob OID=`262a36c2db9565a13fcb81a4047d26a8263be7c3`。
+- 该候选仅存在于命令标准输出，未在同一C操作中以受允许的`apply_patch`写入冻结JSON/Markdown路径；没有实际 request pair、Git ref、authority root、candidate、record、receipt或publication输出。按v0.7/v1.2 one-shot/no-retry，C authority已经消费，禁止基于该输出补写、重跑snapshot或重试构造。
+- 下一步仅可新建docs-only recovery design，显式把canonical pair的受允许写入机制纳入C原子性合同并重新取得三方 exact-pair approval；继续禁止materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance recovery design v1.3（2026-09-15，IN_PROGRESS）
+
+- 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.3.md`：不复用已消费v1.2 authority，保留future formal parent/child/output tuple；新增future C producer→受控`apply_patch` consumer→同轮canonical/sidecar identity验证的显式交接合同，拒绝stdout-only候选、shell redirection、Python文件写入、临时文件和任何非allowlist I/O。
+- 已执行`git diff --check` PASS；未构造request、未改child、未执行materialization/launcher/GPU/训练。下一步=复核formal diff与状态、提交本docs/status step、推送后以新formal pair申请ChatGPT/MM/DS设计审核；未提交。
