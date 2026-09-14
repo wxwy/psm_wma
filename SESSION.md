@@ -12,6 +12,7 @@
 - 验证：`git diff --check` PASS；design SHA-256=`931a4336cd2760961dc36716d8fd73ad9cde7e3f189d4ddb83d96f7c54bedd1e`。未运行项目代码、未创建request、未访问真实source/checkpoint/manifest/data/cache、未改child/GPU/训练。下一步=仅提交本docs/coordination step并按新formal pair申请三方设计审核。
 
 - 审核名册冻结：formal pair=root=`7b528dc2fb754d9f27cab6ae157c15abaec654bc`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。申请仅请求`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`；同pair三方final前禁止future request构造、materialization、真实I/O、child、GPU和训练。
+- 送达回执（2026-09-14 22:43 CST）：ChatGPT申请已append至canonical live Inbox并由ledger commit待下次同步定位；MM=`mm:0.0`已执行`send-keys -l → 间隔≥1秒 → Enter → capture`，capture显示申请离开输入框并进入`Verifying v1.1 SHA pair and chain`；DS=`ds:0.0`完成同一三联，capture显示完整申请已进入transcript并处于处理状态。不得重复发送；后续每三分钟按远端锁定、exact review scan、MM/DS capture轮询。
 
 ## Stage-1 v1.7 request-instance v1.0 当前完整观察凭证 #4 / construct 推进令牌复核（2026-09-14 22:37:23 CST，IN_PROGRESS）
 
