@@ -1,5 +1,13 @@
 # 当前协作状态
 
+## Stage-1 v1.7 recovery design v1.1 完整观察凭证 #5 / docs-only整改令牌（2026-09-14 23:04:15 CST，IN_PROGRESS）
+
+- Formal pair=root=`7b528dc2fb754d9f27cab6ae157c15abaec654bc`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=8a1faef753138e1a619cd161778f1ead6c51f281`；fetch成功；advertised/tracking=`27cbc73239ed8d9ba588bbcaa2c6de36d539c146`；新增完整范围=`0f95c242 docs: add ChatGPT review for stage1 v17 recovery design v11`、`27cbc732 docs: publish ChatGPT stage1 recovery design approval`；祖先判定=0；ff-only成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v11_7b528dc_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；MM=`mm:0.0`同pair final相同；DS=`ds:0.0` final=`REQUEST_CHANGES`，唯一要求为future request formal parent/child freeze。所有独立证据成功且未截断。
+- 三方final已齐，形成仅docs-only最小整改令牌：新增版本显式冻结future request formal parent=`08d5828cdb4c12afa3b798ff01826c91ceb8755a`及child=`93a89ba61306d840a008813f62f26a34d54850f4`，并规定两者与继承的v1.0 `ReplayBinding`同一；不得构造request、materialization、真实I/O、child、GPU或训练。整改后须新formal pair三方审核。
+
+- v1.2已新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.2.md`：仅冻结上述parent/child与v0.3 JSON/Markdown pair的四元literal，明确P0 object source、P1 closure、future request JSON/Markdown均逐字绑定该tuple。`git diff --check` PASS；SHA-256=`10c81a9b7e79c7ff69d0fad50c17bad233858820f1d9b40a0355c38e5c8fda80`；未执行项目代码/真实I-O/request/materialization/child/GPU/训练。下一步=提交该最小docs/coordination step并以新formal pair重审。
+
 ## Stage-1 v1.7 recovery design v1.1 完整观察凭证 #4（2026-09-14 22:59:43 CST，REVIEW）
 
 - Formal pair/root-child及冻结名册不变。`before_head=06ecb47687349a441d966990e19f99aed6e81e87`；fetch成功；advertised/tracking均=`06ecb47687349a441d966990e19f99aed6e81e87`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。
