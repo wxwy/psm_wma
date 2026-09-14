@@ -1032,6 +1032,21 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 transaction = NativeAuthorityGit(git, root, str(remote), root / "read.index", COMMIT_METADATA)
                 self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
+    def test_bootstrap_config_categories_match_runtime_parser(self):
+        replacements = ((b'[branch "v2"]', "config-allowlist"), (b'[branch "V\\2"]', "config-section"))
+        for replacement, category in replacements:
+            with self.subTest(replacement=replacement), tempfile.TemporaryDirectory() as raw:
+                git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+                config_path = root / ".git/config"
+                config_path.write_bytes(config_path.read_bytes().replace(b'[branch "V2"]', replacement))
+                with selection.open("rb") as selection_handle, config.open("rb") as config_handle:
+                    result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(category, result.stderr)
+                with self.assertRaises(ConfigParseError) as caught:
+                    adapter_module._parse_config_raw(config_path.read_bytes())
+                self.assertEqual(caught.exception.category, category)
+
     def test_bootstrap_rejects_preexisting_worktree_config_before_git_or_import(self):
         with tempfile.TemporaryDirectory() as raw:
             git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
