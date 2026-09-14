@@ -5576,3 +5576,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Gate=`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-EXECUTION-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`；formal pair=`d474849d7bf3bf556886f2887b2325aaab36a868`/`93a89ba61306d840a008813f62f26a34d54850f4`。冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`，用户指定替代 Kimi）。
 - 本轮送审前远端锁定：`before_head=d474849d7bf3bf556886f2887b2325aaab36a868`；`git fetch origin V2`成功；advertised/tracking均为`d474849d7bf3bf556886f2887b2325aaab36a868`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only`成功（Already up to date）。精确 ChatGPT scan 尚未命中该 root；MM/DS capture 仅含前一 stage-split pair 的结果，不能作为本 pair verdict。
 - 已阅读 `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_authority_root_materialization_request_v1.0.md` 与 v0.3 stage split/v0.9 冻结来源。下一步仅可写入 Inbox、提交 ledger 并以完整同-pair申请送达三方；严禁执行 materialization、任何 source/checkpoint/manifest/data/cache I/O、collection/receipt/publication、child、GPU或训练。
+
+### Stage-1 authority-root materialization exact request 送达回执（2026-09-14 12:52:43 CST，REVIEW）
+
+- ChatGPT：canonical live Inbox 新申请已随 ledger `36c34d6e1e651254f06524e96a7ec2077b50fddd` 推送；formal target=`d474849d7bf3bf556886f2887b2325aaab36a868`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM：`mm:0.0` 先清除前一未发送输入，再以 `send-keys -l -> >=1s -> Enter` 写入并提交完整 exact-pair 申请；Enter 后 capture 显示消息已离开输入框，pane 已进入 `Coalescing…`。
+- DS：`ds:0.0` 以 `send-keys -l -> >=1s -> Enter` 写入并提交同一完整申请；Enter 后 capture 显示完整消息在会话 transcript 中且 pane busy，未停留输入框。
+- 冻结名册维持 ChatGPT/MM/DS。下一轮最早三分钟后必须按完整远端锁定、exact-pair review scan 与两 pane capture 重新观察；本 Gate 保持`REVIEW`，禁止 materialization、真实 source/checkpoint/manifest/data/cache I/O、collection/receipt/publication、child、GPU及训练。
