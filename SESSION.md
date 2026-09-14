@@ -5242,6 +5242,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修改：新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.5.md`，仅 supersede v0.4 cleanup：保留 add 的 `/.` leaf target；post-add error cleanup 只做 retained-FD identity proof/descriptor closure 并返回 `ROLLBACK_INCOMPLETE`，不 spawn Git remove、也不进行 namespace mutation；未来 recovery 需独立 Gate。新增 normal-failure 与 cleanup-resolution-race temporary fixture 验收条件。
 - 验证：`git diff --check` PASS。未执行项目代码、未触及 `cosmos-framework` 与训练遗留；v0.8 launcher/witness 草稿仍未提交且不得混入本次 docs formal commit。下一步：提交/推送此 docs-only formal root，重新三方申请审核。
 
+### Authority-root causal-worktree identity v0.5 审核名册与送达准备（2026-09-14，REVIEW）
+
+- formal pair=`019643a9b17ebdda8f74b5c5fac90cb37c23f18f`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册：ChatGPT（canonical live Inbox + `docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、Kimi（`kimi:0.0`）。
+- 已检查 live Inbox 容量=`50439 bytes`，本次 request 约 2 KiB，低于 `131072 bytes` 上限；request 已 append。待将 Inbox/本回执提交推送后，严格按 `send-keys -l -> >=1s -> Enter -> capture` 向 MM/Kimi 送达，随后开始三分钟审核轮询。
+- 本 pair 未获三方 final 前禁止 launcher/witness implementation、真实 Git/worktree/materialization、source/checkpoint/manifest/data/cache I/O、GPU 与训练。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。

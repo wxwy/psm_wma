@@ -340,3 +340,13 @@
 The preceding request's root SHA was transcribed incorrectly. Its sole valid formal root is
 `bfa10d345f2003a3a123f69dc836462fe05959d9`; child/Gitlink remains
 `93a89ba61306d840a008813f62f26a34d54850f4`. Please bind any verdict only to this corrected pair.
+
+## Remediation design review request — non-destructive leaf cleanup fail-close
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-DESIGN`.
+- Formal root: `019643a9b17ebdda8f74b5c5fac90cb37c23f18f`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs remediation `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.5.md`, plus task/session records; child unchanged. It supersedes v0.4 cleanup after HIGH-1: global `<clean>` is no longer a permitted destructive native-Git target. Add remains exact retained-leaf `/proc/self/fd/6/.`; if post-add failure needs cleanup, no Git remove or namespace mutation may occur and result is `ROLLBACK_INCOMPLETE` with A/metadata/B preserved.
+- Review focus: confirm that the native fixture fact (`git worktree remove --force /proc/self/fd/6/.` rejected by Git 2.34.1) makes this fail-close contract preferable to any global fallback; verify retained-FD-only proof, no destructive cleanup consumer, explicit future recovery Gate, and required same-parent cleanup-resolution-race witness preserving foreign B.
+- Evidence: formal-tree scope is only this design plus `SESSION.md`/`TODO.md`; `git ls-tree` confirms child Gitlink unchanged; `git diff --check` PASS. The probe used only an isolated `mktemp` local Git repository and did not access project origin/source/checkpoint/manifest/data/cache, child, GPU or training.
+- Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
