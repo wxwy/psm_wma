@@ -5687,3 +5687,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 只读 formal-tree 对比确认`08d5828cdb4c12afa3b798ff01826c91ceb8755a`为`b3595395427114f73ff53a19a0c2b9180e39905f`后继；child Gitlink均为`93a89ba61306d840a008813f62f26a34d54850f4`，adapter blob从`70b292...`变为修复后的`4a51bd...`。旧Stage-1 request继续绑定b359会在materialized tree回到旧bootstrap parser，不能消费已关闭config grammar。
 - 新增docs-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_authority_parent_rebind_design_v0.1.md`，仅提出将下一份Stage-1 request formal parent重绑至08d并同轮重冻所有派生字段。未运行materializer、未读checkpoint/manifest/data/cache、未改child/GPU/训练；待静态核验、提交并三方设计审核。
+
+### Stage-1 authority parent rebind design 审核观察凭证 #1 / 构造令牌（2026-09-14 15:37 CST，REVIEW → IN_PROGRESS）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`，用户指定替代 Kimi）；exact pair=`1ee147e5cbee13f447fd4d93ed464d3e5e8136ee`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=1ee147e5cbee13f447fd4d93ed464d3e5e8136ee`；第一次fetch后advertised=`cf0c411717c619b6a7b1cf08680c36770c8abfde`而tracking=`9591b87a3f04e0ad1a6f48d9f405dc2ca02bfb3d`，故立即重新fetch；第二次fetch后advertised/tracking均=`cf0c411717c619b6a7b1cf08680c36770c8abfde`。新增完整范围=`9591b87a review: approve rebound stage one parent design`、`cf0c4117 review: notify Codex rebound stage one parent approval`；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_authority_parent_rebind_design_v01_1ee147e_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_REBOUND_STAGE1_AUTHORITY_ROOT_REQUEST`；MM `mm:0.0` capture为同一literal final；DS `ds:0.0` capture为同一literal final（附LOW建议：request instance显式写新base数值）。三项独立证据均成功、未截断。
+- formal-tree scope仅rebind design文件；Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。三方同pair全批准构成构造令牌，仅授权生成并静态核验一份rebound-parent docs-only Stage-1 request instance，随后以新exact pair重新三方审核；不授权materialization/retry、真实source/checkpoint/manifest/data/cache I/O、collection/receipt/record/package/publication、child/runtime、GPU或训练。
+- ChatGPT review同时指出其审阅时live Inbox缺同pair条目；本次将先append canonical delivery record并推送ledger，再按full SHA向MM/DS重发规范送达回执。该bookkeeping不改变formal target或扩大令牌范围。

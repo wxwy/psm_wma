@@ -512,3 +512,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: docs-only v0.1 design. It records that old Stage-1 parent `b359...` contains adapter blob `70b292...` and old bootstrap grammar, whereas closed grammar root `08d...` is its descendant with blob `4a51bd...`; therefore a new Stage-1 request must rebind its parent and freshly rederive all parent-dependent identities. No request is constructed or executed.
 - Request: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_REBOUND_STAGE1_AUTHORITY_ROOT_REQUEST` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: materialization/retry, real source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
+
+## 2026-09-14 — Remediation delivery record: Stage-1 authority parent rebind design review
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-PARENT-REBIND-DESIGN`.
+- Formal root: `1ee147e5cbee13f447fd4d93ed464d3e5e8136ee`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs-only amendment to `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_authority_parent_rebind_design_v0.1.md`; child unchanged. It closes the prior design HIGH by requiring the next request to bind the rebound `08d5828cdb4c12afa3b798ff01826c91ceb8755a` tree's launcher `payload.base_path`, blob OID, raw SHA-256 and byte length, with ordered replay consuming only those base bytes and fail-closing on mismatch. Old-parent base, overlay fallback and mixed-parent reconstruction are prohibited.
+- Evidence: formal-tree scope is exactly the design document; Gitlink resolves to the stated child. This is documentation only; no request construction or execution, materialization/retry, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 occurred.
+- Review focus: confirm the rebound-parent launcher base is now first-class authority; all parent-dependent values must be freshly rederived rather than copied; Stage-1 PASS remains tuple-only/hard-stop; approval authorizes only construction of one new docs-only request instance, followed by independent review.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_REBOUND_STAGE1_AUTHORITY_ROOT_REQUEST` or `REQUEST_CHANGES(file:line)`.
+- This append repairs the missing canonical same-pair Inbox delivery record noted by ChatGPT's formal review; it does not alter that review's formal target or authorize execution.
