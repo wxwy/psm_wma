@@ -151,7 +151,7 @@ class NativeRootFd:
             raise CollectionError("source root FD 不是目录")
         self._root_fd = root_fd
 
-    def open_regular(self, path: str) -> EntryHandle:
+    def _open_regular(self, path: str, *, allow_absent: bool) -> EntryHandle | None:
         if (not isinstance(path, str) or not path or path.startswith("/")
                 or any(part in {"", ".", ".."} for part in path.split("/"))):
             raise CollectionError("source path escapes root FD")
@@ -165,6 +165,10 @@ class NativeRootFd:
                 os.close(current)
                 current = next_fd
             descriptor = os.open(components[-1], flags, dir_fd=current)
+        except FileNotFoundError:
+            if allow_absent:
+                return None
+            raise CollectionError("source path 打开失败") from None
         except OSError as exc:
             raise CollectionError("source path 打开失败") from exc
         finally:
@@ -177,6 +181,14 @@ class NativeRootFd:
         except BaseException:
             os.close(descriptor)
             raise
+
+    def open_regular(self, path: str) -> EntryHandle:
+        handle = self._open_regular(path, allow_absent=False)
+        assert handle is not None
+        return handle
+
+    def open_optional_regular(self, path: str) -> EntryHandle | None:
+        return self._open_regular(path, allow_absent=True)
 
 
 class _NativeEntry:
@@ -209,32 +221,46 @@ class AtomicFileEvidenceSink:
 
     def __init__(self, destination: Path) -> None:
         self._destination = destination
-        if destination.exists() or destination.is_symlink():
-            raise CollectionError("evidence destination 必须 fresh")
+        if not destination.name or destination.name in {".", ".."}:
+            raise CollectionError("evidence destination 名称无效")
 
     def emit(self, record: Mapping[str, object]) -> None:
         verify_evidence(record)
         raw = _canonical(record)
-        temporary = self._destination.with_name(self._destination.name + ".pending")
-        if temporary.exists() or temporary.is_symlink():
-            raise CollectionError("evidence temporary path 必须 fresh")
+        temporary_name = self._destination.name + ".pending"
+        parent_fd = -1
         try:
-            descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC, 0o600)
+            parent_fd = os.open(self._destination.parent,
+                                os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW)
+        except OSError as exc:
+            raise CollectionError("evidence parent 必须为受控目录") from exc
+        try:
+            try:
+                os.stat(self._destination.name, dir_fd=parent_fd, follow_symlinks=False)
+            except FileNotFoundError:
+                pass
+            else:
+                raise CollectionError("evidence destination 必须 fresh")
+            descriptor = os.open(temporary_name,
+                                 os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW,
+                                 0o600, dir_fd=parent_fd)
             with os.fdopen(descriptor, "wb") as handle:
                 handle.write(raw)
                 handle.flush()
                 os.fsync(handle.fileno())
-            parent = self._destination.parent
-            if parent.is_symlink() or not parent.is_dir():
-                raise CollectionError("evidence parent 必须为受控目录")
-            os.link(temporary, self._destination)
-            os.unlink(temporary)
+            os.link(temporary_name, self._destination.name, src_dir_fd=parent_fd,
+                    dst_dir_fd=parent_fd, follow_symlinks=False)
+            os.unlink(temporary_name, dir_fd=parent_fd)
         except BaseException:
             try:
-                temporary.unlink(missing_ok=True)
+                if parent_fd >= 0:
+                    os.unlink(temporary_name, dir_fd=parent_fd)
             except OSError:
                 pass
             raise
+        finally:
+            if parent_fd >= 0:
+                os.close(parent_fd)
 
 
 class NativeCollectionGit:
@@ -325,24 +351,29 @@ class NativeCollectionGit:
                 raise CollectionError("snapshot 存在 allowlist 外 porcelain residue")
             if row[:2] == "??":
                 raise CollectionError("snapshot allowlist path 未 tracked")
-        entries = []
-        for path in SNAPSHOT_PATHS:
-            candidate = self.cwd / path
-            current = self.cwd
-            for component in Path(path).parts[:-1]:
-                current = current / component
-                if current.is_symlink():
-                    raise CollectionError("snapshot 路径组件是 symlink")
-            try:
-                info = os.lstat(candidate)
-            except FileNotFoundError:
-                info = None
-            if info is None:
-                entries.append({"path": path, "mode": None, "kind": "absent", "sha256": None})
-            elif not stat.S_ISREG(info.st_mode) or candidate.is_symlink() or path not in tracked:
-                raise CollectionError("snapshot worktree 类型或 tracked 状态无效")
-            else:
-                entries.append({"path": path, "mode": tracked[path], "kind": "regular", "sha256": _digest(candidate.read_bytes())})
+        try:
+            root_fd = os.open(self.cwd, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW)
+        except OSError as exc:
+            raise CollectionError("snapshot worktree root 打开失败") from exc
+        try:
+            opener = NativeRootFd(root_fd)
+            entries = []
+            for path in SNAPSHOT_PATHS:
+                handle = opener.open_optional_regular(path)
+                if handle is None:
+                    entries.append({"path": path, "mode": None, "kind": "absent", "sha256": None})
+                    continue
+                try:
+                    before = handle.stat()
+                    size, digest = _hash_handle(handle)
+                    after = handle.stat()
+                    if before != after or size != before.size or path not in tracked:
+                        raise CollectionError("snapshot worktree 类型、identity 或 tracked 状态无效")
+                    entries.append({"path": path, "mode": tracked[path], "kind": "regular", "sha256": digest})
+                finally:
+                    handle.close()
+        finally:
+            os.close(root_fd)
         return {"target_ref": target, "target_ref_revision": head, "head_mode": "symbolic" if symbolic else "detached",
                 "head_symbolic_ref": symbolic, "head_revision": head,
                 "index_tree_native_oid": self._run("write-tree").decode().strip(),

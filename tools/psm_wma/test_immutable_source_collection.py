@@ -8,6 +8,7 @@ import json
 import pickle
 import tempfile
 import subprocess
+import os
 from pathlib import Path
 from dataclasses import replace
 import stat
@@ -133,6 +134,75 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             self.assertEqual(adapter.snapshot(), before)
             self.assertEqual(len(tree), 40)
 
+    def test_native_git_and_root_fd_collect_synthetic_pass_and_rollback(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw) / "repo"; remote = Path(raw) / "remote.git"; source = Path(raw) / "source"
+            root.mkdir(); source.mkdir()
+            child = root / "cosmos-framework"; child.mkdir()
+            subprocess.run(["/usr/bin/git", "init", "-q"], cwd=child, check=True)
+            subprocess.run(["/usr/bin/git", "config", "user.name", "test"], cwd=child, check=True)
+            subprocess.run(["/usr/bin/git", "config", "user.email", "test@example.invalid"], cwd=child, check=True)
+            (child / "seed").write_bytes(b"child")
+            subprocess.run(["/usr/bin/git", "add", "seed"], cwd=child, check=True)
+            subprocess.run(["/usr/bin/git", "commit", "-qm", "child"], cwd=child, check=True)
+            child_revision = subprocess.run(["/usr/bin/git", "rev-parse", "HEAD"], cwd=child, check=True,
+                                            stdout=subprocess.PIPE).stdout.decode().strip()
+            def git(*args, input=None):
+                return subprocess.run(["/usr/bin/git", *args], cwd=root, input=input, check=True,
+                                      stdout=subprocess.PIPE).stdout.decode().strip()
+            subprocess.run(["/usr/bin/git", "init", "--bare", "-q", remote], check=True)
+            git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
+            git("update-index", "--add", "--cacheinfo", "160000," + child_revision + ",cosmos-framework")
+            git("commit", "-qm", "base"); base = git("rev-parse", "HEAD")
+            git("checkout", "-qb", "authority-work")
+            (root / SELECTION_PATH).parent.mkdir(parents=True, exist_ok=True)
+            (root / SELECTION_PATH).write_bytes(self.selection_raw)
+            (root / COLLECTION_PATHS[1]).write_bytes(self.config_raw)
+            git("add", SELECTION_PATH, COLLECTION_PATHS[1]); git("commit", "-qm", "authority")
+            authority_root = git("rev-parse", "HEAD")
+            git("update-ref", AUTHORITY_REF, authority_root); git("remote", "add", "origin", str(remote))
+            git("push", "-q", "origin", AUTHORITY_REF); git("checkout", "-q", "master")
+            index = Path(raw) / "index"
+            subprocess.run(["/usr/bin/git", "read-tree", "HEAD"], cwd=root,
+                           env={**os.environ, "GIT_INDEX_FILE": str(index)}, check=True)
+            metadata = {"execution": {"approval_formal_root": "d" * 40, "command_argv": ["fixture"],
+                                       "interpreter": {"executable_path": "/fixture/python",
+                                                       "executable_raw_sha256": _sha("fixture-python"), "version": "fixture"}},
+                        "tool": {"path": "fixture", "blob_native_oid": "e" * 40, "raw_sha256": _sha("fixture-tool")},
+                        "environment": {"workdir": "/fixture", "python_executable": "/fixture/python",
+                                        "cpu_only": True, "no_network": True, "sanitized_env_sha256": _sha({})}}
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", index, metadata)
+            authority = {"root_revision": authority_root, "selection_path": SELECTION_PATH,
+                         "selection_blob_native_oid": git("rev-parse", authority_root + ":" + SELECTION_PATH),
+                         "selection_raw_sha256": hashlib.sha256(self.selection_raw).hexdigest(),
+                         "config_path": COLLECTION_PATHS[1],
+                         "config_blob_native_oid": git("rev-parse", authority_root + ":" + COLLECTION_PATHS[1]),
+                         "config_raw_sha256": hashlib.sha256(self.config_raw).hexdigest()}
+            lineage = {"target_ref": "refs/heads/master", "expected_base_root_revision": base,
+                       "expected_child_gitlink": child_revision, "authority_approval_formal_root_revision": base}
+            for path in self.paths.values():
+                (source / path).parent.mkdir(parents=True, exist_ok=True); (source / path).write_bytes(path.encode())
+            descriptor = os.open(source, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                self.assertEqual(git("status", "--porcelain", "--untracked-files=all"), "")
+                before = adapter.snapshot()
+                class RejectingSink:
+                    def emit(self, record):
+                        verify_evidence(record)
+                        raise OSError("fixture sink failure")
+                with self.assertRaisesRegex(CollectionError, "EVIDENCE_SINK_FAILED"):
+                    collect_synthetic(authority=authority, lineage=lineage, selection_request=self.selection_raw,
+                                      git=adapter, root_fd=NativeRootFd(descriptor), sink=RejectingSink())
+                self.assertEqual(adapter.snapshot(), before)
+                destination = Path(raw) / "evidence" / "record.json"; destination.parent.mkdir()
+                record = collect_synthetic(authority=authority, lineage=lineage, selection_request=self.selection_raw,
+                                           git=adapter, root_fd=NativeRootFd(descriptor),
+                                           sink=AtomicFileEvidenceSink(destination))
+                self.assertEqual(record["status"], "PASS")
+                self.assertEqual(json.loads(destination.read_text()), record)
+            finally:
+                os.close(descriptor)
+
     def test_native_snapshot_rejects_untracked_and_out_of_allowlist_residue(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)
@@ -152,6 +222,82 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             (root / "outside").write_bytes(b"dirty")
             with self.assertRaises(CollectionError): adapter.snapshot()
 
+    def test_native_snapshot_rejects_symlink_or_directory_after_index_binding(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            def git(*args):
+                return subprocess.run(["/usr/bin/git", *args], cwd=root, check=True,
+                                      stdout=subprocess.PIPE).stdout.decode().strip()
+            git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
+            target = root / COLLECTION_PATHS[0]
+            target.parent.mkdir(parents=True); target.write_bytes(b"tracked")
+            git("add", COLLECTION_PATHS[0]); git("commit", "-qm", "seed")
+            index = root.parent / (root.name + "-index")
+            subprocess.run(["/usr/bin/git", "read-tree", "HEAD"], cwd=root,
+                           env={**os.environ, "GIT_INDEX_FILE": str(index)}, check=True)
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", index, {})
+            for replacement in ("symlink", "directory"):
+                with self.subTest(replacement=replacement):
+                    target.unlink()
+                    if replacement == "symlink":
+                        target.symlink_to(root / "foreign")
+                    else:
+                        target.mkdir()
+                    with self.assertRaises(CollectionError): adapter.snapshot()
+                    if target.is_dir():
+                        target.rmdir()
+                    else:
+                        target.unlink()
+                    target.write_bytes(b"tracked")
+
+    def test_native_snapshot_preserves_tracked_regular_modes(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            def git(*args):
+                return subprocess.run(["/usr/bin/git", *args], cwd=root, check=True,
+                                      stdout=subprocess.PIPE).stdout.decode().strip()
+            git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
+            plain, executable = (root / COLLECTION_PATHS[0]), (root / COLLECTION_PATHS[1])
+            plain.parent.mkdir(parents=True); plain.write_bytes(b"plain"); executable.write_bytes(b"exec")
+            executable.chmod(0o755)
+            git("add", COLLECTION_PATHS[0], COLLECTION_PATHS[1]); git("commit", "-qm", "modes")
+            index = root.parent / (root.name + "-index")
+            subprocess.run(["/usr/bin/git", "read-tree", "HEAD"], cwd=root,
+                           env={**os.environ, "GIT_INDEX_FILE": str(index)}, check=True)
+            snapshot = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", index, {}).snapshot()
+            modes = {entry["path"]: entry["mode"] for entry in snapshot["worktree_entries"]}
+            self.assertEqual(modes[COLLECTION_PATHS[0]], "100644")
+            self.assertEqual(modes[COLLECTION_PATHS[1]], "100755")
+
+    def test_native_snapshot_hashes_retained_fd_when_path_is_replaced(self) -> None:
+        with tempfile.TemporaryDirectory() as raw, tempfile.TemporaryDirectory() as outside_raw:
+            root, outside = Path(raw), Path(outside_raw)
+            def git(*args):
+                return subprocess.run(["/usr/bin/git", *args], cwd=root, check=True,
+                                      stdout=subprocess.PIPE).stdout.decode().strip()
+            git("init", "-q"); git("config", "user.name", "test"); git("config", "user.email", "test@example.invalid")
+            target = root / COLLECTION_PATHS[0]
+            target.parent.mkdir(parents=True); target.write_bytes(b"bound")
+            git("add", COLLECTION_PATHS[0]); git("commit", "-qm", "seed")
+            index = root.parent / (root.name + "-index")
+            subprocess.run(["/usr/bin/git", "read-tree", "HEAD"], cwd=root,
+                           env={**os.environ, "GIT_INDEX_FILE": str(index)}, check=True)
+            adapter = NativeCollectionGit(Path("/usr/bin/git"), root, "origin", index, {})
+            original_hash = __import__("tools.psm_wma.immutable_source_collection", fromlist=["_hash_handle"])._hash_handle
+            switched = False
+            def replace_after_open(handle):
+                nonlocal switched
+                if not switched:
+                    switched = True
+                    target.rename(target.with_name("original"))
+                    (outside / "foreign").write_bytes(b"foreign")
+                    target.symlink_to(outside / "foreign")
+                return original_hash(handle)
+            with patch("tools.psm_wma.immutable_source_collection._hash_handle", side_effect=replace_after_open):
+                with self.assertRaises(CollectionError):
+                    adapter.snapshot()
+            self.assertEqual((outside / "foreign").read_bytes(), b"foreign")
+
     def test_atomic_sink_does_not_replace_destination_race(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
             destination = Path(raw) / "evidence.json"
@@ -160,9 +306,9 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                                        selection_request=self.selection_raw, git=self.git,
                                        root_fd=self.fd, sink=MemoryEvidenceSink())
             original_link = __import__("tools.psm_wma.immutable_source_collection", fromlist=["os"]).os.link
-            def race(source, target):
+            def race(source, target, **kwargs):
                 destination.write_bytes(b"foreign")
-                return original_link(source, target)
+                return original_link(source, target, **kwargs)
             with patch("tools.psm_wma.immutable_source_collection.os.link", side_effect=race):
                 with self.assertRaises(FileExistsError): sink.emit(record)
             self.assertEqual(destination.read_bytes(), b"foreign")
@@ -175,7 +321,36 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                                        selection_request=self.selection_raw, git=self.git,
                                        root_fd=self.fd, sink=sink)
             self.assertEqual(json.loads(destination.read_text()), record)
-            with self.assertRaises(CollectionError): AtomicFileEvidenceSink(destination)
+            with self.assertRaises(CollectionError): AtomicFileEvidenceSink(destination).emit(record)
+
+    def test_atomic_sink_rejects_symlink_parent_before_staging(self) -> None:
+        with tempfile.TemporaryDirectory() as raw, tempfile.TemporaryDirectory() as outside_raw:
+            root, outside = Path(raw), Path(outside_raw)
+            parent = root / "parent"; parent.symlink_to(outside, target_is_directory=True)
+            record = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                       selection_request=self.selection_raw, git=self.git,
+                                       root_fd=self.fd, sink=MemoryEvidenceSink())
+            with self.assertRaises(CollectionError):
+                AtomicFileEvidenceSink(parent / "evidence.json").emit(record)
+            self.assertFalse((outside / "evidence.json").exists())
+            self.assertFalse((outside / "evidence.json.pending").exists())
+
+    def test_atomic_sink_parent_replacement_cannot_redirect_publication(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); parent = root / "parent"; parent.mkdir()
+            relocated = root / "relocated"; destination = parent / "evidence.json"
+            record = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                       selection_request=self.selection_raw, git=self.git,
+                                       root_fd=self.fd, sink=MemoryEvidenceSink())
+            original_link = __import__("tools.psm_wma.immutable_source_collection", fromlist=["os"]).os.link
+            def replace_parent(source, target, **kwargs):
+                parent.rename(relocated)
+                parent.mkdir()
+                return original_link(source, target, **kwargs)
+            with patch("tools.psm_wma.immutable_source_collection.os.link", side_effect=replace_parent):
+                AtomicFileEvidenceSink(destination).emit(record)
+            self.assertFalse(destination.exists())
+            self.assertEqual(json.loads((relocated / "evidence.json").read_text()), record)
 
     def test_native_parser_requires_full_binding_categories(self) -> None:
         with contextlib.redirect_stderr(io.StringIO()):
