@@ -5358,6 +5358,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 仅修改既有payload/witness：`assert_worktree()`两次Git validation现各自独立`consume_leaf(FD9)`，所以每个 child 后均关闭FD6；`prepare_exec_fds()`保留`{3,4,5,7,9}`并验证owner非继承，`main()`在`execve`前不再关闭FD7/FD9，故exec失败仍可由cleanup以retained owner identity fail-close。
 - direct witnesses新增：两post-add consumer各自进入与返回均观测FD6关闭；forked pre-exec failure seam在`prepare_exec_fds()`后仍以FD7/FD9完成`assert_owned_identity`并得到`ROLLBACK_INCOMPLETE`。验证：`py_compile`、`...witness_test.py -v`=`16 tests OK`、`git diff --check` PASS；只使用temporary local Git/fork，无项目真实I-O、child、GPU或训练。下一步更新TODO、提交新formal并重新三方审核；未提交。
 
+### Authority-root causal-worktree identity 生命周期整改审核观察凭证 #1（2026-09-14 11:52 CST，REVIEW）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；exact pair=`71c4a2524e350509f8048bfb65ea1cc8180a1c57`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=3c379635431e43146975fec7c5900f132d7a0e88`；fetch成功；advertised/tracking均=`3c379635431e43146975fec7c5900f132d7a0e88`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only`成功（Already up to date）。
+- ChatGPT exact scan命令`rg -l -F '71c4a2524e350509f8048bfb65ea1cc8180a1c57' docs/collab/chatgpt/reviews/`无输出，故无formal final。MM `mm:0.0` capture final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`；DS `ds:0.0` capture final同为该批准。三个独立检查均成功且未截断。
+- ChatGPT缺件，无推进令牌；保持`REVIEW`，禁止实现下一Gate、真实I-O、child、GPU或训练；三分钟后重查。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
