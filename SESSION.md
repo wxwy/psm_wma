@@ -5370,6 +5370,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_cpu_static_exec_failure_witness_b359539_93a89ba.md`，final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`；MM `mm:0.0`与DS `ds:0.0` capture final均为同一literal verdict；独立证据均成功未截断。
 - 全批准推进令牌成立并已消费：该Gate置`DONE`；批准范围仅root temporary CPU/static witness closure，真实materialization/source I-O/child/GPU/训练仍禁止。下一步须按路线另建/审核独立Gate。
 
+### Immutable source collection real-adapter CPU/static 关闭令牌（2026-09-14 12:10 CST）
+
+- 冻结名册 ChatGPT/MM/DS；exact pair=`d806a9c8bcd04a57fe705c5716fe79e554e4d590`/`93a89ba61306d840a008813f62f26a34d54850f4`。本轮`before_head=11cc924ac7a6d734c20413973671fe625c6659ea`；fetch、advertised/tracking核对、空新增范围、祖先判定=0和ff-only均成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_immutable_source_collection_real_adapter_cpu_static_d806a9c_93a89ba.md`，MM `mm:0.0`、DS `ds:0.0` capture均为`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`。三方同pair final齐全；56/56 CPU、py_compile、diff-check已复验PASS。
+- Gate关闭；仅授权结论为root两文件temporary CPU/static adapter closure。source-evidence request instance、真实source/collection/receipt/publication、child/GPU/训练仍须独立Gate。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
