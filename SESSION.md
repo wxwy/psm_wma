@@ -5822,3 +5822,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal pair=`5580e20c7e406d7ceade9222353f355fe0a4a15d`/`93a89ba61306d840a008813f62f26a34d54850f4`；formal-tree仅`SESSION.md`、`TODO.md`和已批准的projection module/test，Gitlink保持不变。live Inbox原始大小=`104673 bytes`，本次申请低于`131072 bytes`上限且已append；待ledger推送后向冻结名册ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`送达。
 - 本申请仅审查root pure-stdlib CPU/static整改；未获新exact-pair三方final前，禁止request构造、materialization、真实source/checkpoint/manifest/data/cache I/O、child、GPU及训练。
+
+### Stage-1 v1.7 request-projection preflight implementation 整改送达回执（2026-09-14，REVIEW）
+
+- ChatGPT：canonical live Inbox申请已随ledger=`a04dd579f1bce6fbc3d1cd247e2ed74f821e203f`推送，formal target=`5580e20c7e406d7ceade9222353f355fe0a4a15d`/`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM：`mm:0.0`已执行`send-keys -l -> >=1s -> Enter -> capture`，capture显示完整申请已离开输入框并进入`thinking`。DS：`ds:0.0`执行相同三联步骤，capture显示完整申请进入transcript且pane busy。冻结名册保持ChatGPT/MM/DS。
+- 下一轮三分钟后必须按完整远端锁定、exact-pair review scan和两pane capture重查；Gate保持`REVIEW`，无三方final前禁止整改、真实I/O、child、GPU及训练。
