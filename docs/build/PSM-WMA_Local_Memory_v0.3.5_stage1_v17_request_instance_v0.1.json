@@ -1,0 +1,24 @@
+{
+  "schema": "r09_b_ttt_v035_stage1_v17_docs_only_request_instance_v0_1",
+  "formal_parent": "08d5828cdb4c12afa3b798ff01826c91ceb8755a",
+  "child_gitlink": "93a89ba61306d840a008813f62f26a34d54850f4",
+  "authority": {"construction_design_root": "2ccd42fadc325c10d072f236b9b5805c732446b3", "failure": "BLOCKED_AUTHORITY_NOT_CLOSED", "one_request_only": true, "stop": "authority_tuple_only"},
+  "payload": {"base_path": "docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py", "base_blob": "af19a9eb66ecaf8bd0b92a48ab1867f105026658", "base_bytes": 18966, "base_sha256": "8b0fad39857fb72e3a3eb317f4acf6f2d6e94e196935f52f07d6170e79c678dd", "closed_replay_root": "50b0bffeb4c94b0994d7c7bf705077fb51a9e48f", "parser_bytes": 2336, "parser_sha256": "1a9543ec3e7ef4f37b4948dde2a6a9532b13a8415291cceafd90b9692c028333", "outer_bytes": 18875, "outer_sha256": "658e9b9e6f34964310d6e2a5519c3b70243971b5ef535d753192e3d59d1960b8"},
+  "execution_closure": {
+    "selection": {"bytes": 516, "sha256": "8fe4585f366cb69ad9181e30c25b5f4e99040c83d8ffe66426897bfa9d331edd"},
+    "config": {"bytes": 508, "sha256": "43b3b77b5934107c54b8bee157b46d07cb17b85ca89305ad6fb7405237e42d1d"},
+    "bootstrap": {"bytes": 9406, "sha256": "ccd8ee2772d666707c919e6a20376c997771b9ff068fe0432fdaa96c686ab097", "argv_bytes": 2341, "argv_sha256": "85ac67c8a062399dfbface5f9c42867401ffab45320f802697c704061be8df9d"},
+    "bootstrap_contract": {"bytes": 182, "sha256": "bec6a57aab61fd888ef0eedce37adce227a38a299a9faded53b252c8b5901702"},
+    "environment_keys": ["GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_SYSTEM", "GIT_NO_REPLACE_OBJECTS", "LANG", "LC_ALL"],
+    "owner_fd": {"fd": 8, "flag": "--bootstrap-owner-root-fd", "value": "8", "exactly_once": true},
+    "output_targets": {"cwd": "/proc/self/fd/8", "index": "/proc/self/fd/8/.authority-root.index", "evidence": "artifacts/g0/r09/authority_root_materialization_evidence_v1.json"}
+  },
+  "fresh_snapshot": {
+    "git_config": {"bytes": 477, "sha256": "f15e655f21ecf517b9074fbf99b6ebccd4aff99489735776769ecb510cb8b611"},
+    "git_dir": {"kind": "directory", "dev": 1048655, "ino": 9223372050462812349},
+    "authority_local_ref": {"command": "git show-ref --verify --quiet refs/heads/authority/r09-b-ttt-v035-immutable-source-v1", "returncode": 1},
+    "remote_v2": {"command": "git ls-remote origin refs/heads/V2", "returncode": 0, "stdout_bytes": 55, "stdout_sha256": "4f15ef60aa3158fafcb4842e9fbc8bec6d904652640ebd5e01c7986c53a80a99", "stderr_bytes": 0, "value": "bb99c6df4cf6ba615e09e3ff4c8c065509b4dc6e\trefs/heads/V2\n"},
+    "remote_authority_ref": {"command": "git ls-remote origin refs/heads/authority/r09-b-ttt-v035-immutable-source-v1", "returncode": 0, "stdout_bytes": 0, "stdout_lines": 0, "stderr_bytes": 0},
+    "absent_paths": [".authority-root-materialization-08d5828", ".authority-root-materialization-08d5828/.authority-root.index", "artifacts/g0/r09/authority_root_materialization_evidence_v1.json", "artifacts/g0/r09/authority_root_materialization_evidence_v1.json.pending"]
+  }
+}
