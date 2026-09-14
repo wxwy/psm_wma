@@ -5682,3 +5682,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；exact pair=`08d5828cdb4c12afa3b798ff01826c91ceb8755a`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=6cfc700f01a7d8a5473d1b194251551af0c0c72b`；`git fetch origin V2`成功；advertised/tracking均=`862580adf5b480d40ee3b2914e31f9ba3a9762ce`；新增完整范围=`63c7eef4 review: close config grammar bootstrap full corpus remediation`、`862580ad review: notify Codex config grammar implementation closure`；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`成功。
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_config_grammar_bootstrap_full_corpus_08d5828_93a89ba.md` final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION`；MM `mm:0.0`与DS `ds:0.0`独立capture均为同一literal final。DS的片段锚点完整性断言建议标注LOW且非阻塞；三项证据均成功、未截断。
 - 同pair全批准关闭令牌成立，只关闭该root CPU/static config-grammar remediation Gate。它不授权Stage-1 retry/materialization、真实source/checkpoint/manifest/data/cache I/O、child、GPU或训练；下一步必须在新的独立source-evidence request/refreeze Gate中重新冻结并三方审核。
+
+### Stage-1 authority parent rebind design（2026-09-14，REVIEW准备）
+
+- 只读 formal-tree 对比确认`08d5828cdb4c12afa3b798ff01826c91ceb8755a`为`b3595395427114f73ff53a19a0c2b9180e39905f`后继；child Gitlink均为`93a89ba61306d840a008813f62f26a34d54850f4`，adapter blob从`70b292...`变为修复后的`4a51bd...`。旧Stage-1 request继续绑定b359会在materialized tree回到旧bootstrap parser，不能消费已关闭config grammar。
+- 新增docs-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_authority_parent_rebind_design_v0.1.md`，仅提出将下一份Stage-1 request formal parent重绑至08d并同轮重冻所有派生字段。未运行materializer、未读checkpoint/manifest/data/cache、未改child/GPU/训练；待静态核验、提交并三方设计审核。
