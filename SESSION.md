@@ -5250,6 +5250,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT精确检索无输出；MM=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi=`REQUEST_CHANGES`（5项 witness缺口）；两 pane capture成功、未截断。
 - ChatGPT缺件且Kimi为REQUEST_CHANGES，无推进令牌；保持`REVIEW`，禁止整改、真实I/O、GPU或训练。
 
+### Collection adapter 整改复核观察凭证 #131（2026-09-14 08:20 CST，REVIEW）
+
+- `before_head=cf181af6aa6edea596ac1650ac31aa7bbd0e5786`；fetch成功；advertised/tracking均=`cf181af6aa6edea596ac1650ac31aa7bbd0e5786`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
+- exact pair=`24253e0c3789d46c0807944ec75d6dff108824f3`/`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT 精确检索无输出；MM `mm:0.0` capture 成功，最终 verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；Kimi `kimi:0.0` capture 成功，显示已验证同 pair 并正在思考，尚无最终 verdict，状态=处理中。
+- ChatGPT缺件、Kimi处理中，无推进令牌；保持`REVIEW`，禁止整改、真实I/O、GPU或训练。
+
 ### Collection adapter 整改复核观察凭证 #130（2026-09-14 08:14 CST，REVIEW）
 
 - `before_head=6b729f86751cdbbe3ed3cc28b2d5fb75380596a1`；`git fetch origin V2`、advertised/tracking SHA 核对、空新增范围、祖先判定=0 与 ff-only 均成功（Already up to date）。首次祖先判定命令因引号错误失败，已在同轮以独立无截断命令重做成功。
