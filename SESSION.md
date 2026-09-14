@@ -5337,6 +5337,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 基于上述整改令牌，仅修改既有 payload 与其 direct stdlib/local-Git witness：新增固定常量 backing=`{3,4,5}`、Git consumer=`6`、parent owner=`7`、bootstrap=`8`、clean owner=`9`；`bind_owner()`先临时复制到>=10再关闭原FD、`dup2`到固定owner FD并以 directory identity/CLOEXEC复核；`consume_leaf()`只从FD9派生FD6，精确目标`/proc/self/fd/6/.`，返回后关闭FD6。`assert_worktree()`同样经每次临时FD6 consumer验证，绝不把FD9直接传给Git。
 - witnesses增加低FD `{3,4,5}` 占用下的固定FD7/FD9映射、FD6仅消费期存在和消费后关闭；已有 add/cleanup fixtures断言FD7/FD9且释放临时fixture descriptor，保持cleanup非破坏性。验证：`python3 -m py_compile ...v0.8.py ...v0.8_witness_test.py && python3 ...v0.8_witness_test.py -v && git diff --check`，14 tests OK；未访问项目origin/source/checkpoint/manifest/data/cache、child、GPU或训练。下一步：记录TODO并提交本整改 root formal，再重新三方送审；未提交。
 
+### Authority-root causal-worktree identity 固定FD ABI 整改审核准备（2026-09-14，REVIEW）
+
+- formal pair=`85a39d6243bb4bcc3e260ba3eb4279c52508d79f`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册保持 ChatGPT（live Inbox/reviews）、MM（`mm:0.0`）、DS（`ds:0.0`）。live Inbox整改申请已追加（54168 bytes，低于128KiB）；根提交已推送。下一步按 `send-keys -l -> >=1s -> Enter -> capture` 向MM/DS送达；未获同-pair三方final前禁止真实I-O、child、GPU或训练。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。

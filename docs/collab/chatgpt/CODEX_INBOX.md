@@ -360,3 +360,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: `python3 -m py_compile ...v0.8.py ...v0.8_witness_test.py && python3 ...v0.8_witness_test.py && git diff --check` PASS; `13 tests OK`. All fixtures are local `TemporaryDirectory`/Git only; no project origin/source/checkpoint/manifest/data/cache, child, GPU or training access.
 - Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
+
+## Remediation implementation review request — fixed causal owner capability ABI
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CAUSAL-WORKTREE-IDENTITY-CPU-STATIC-IMPLEMENTATION`.
+- Formal root: `85a39d6243bb4bcc3e260ba3eb4279c52508d79f`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only the existing root payload, its direct temporary stdlib/local-Git witness, `SESSION.md` and `TODO.md`; child unchanged. This remediation addresses the exact HIGH-1 in the prior review: retained parent is now fixed FD7; retained clean leaf is FD9; each Git consumer derives transient FD6 only from FD9 with exact `/proc/self/fd/6/.`, `close_fds=True`, `pass_fds=(6,)`, identity/CLOEXEC proof and closure after return. Owner binding is temporary-open → `F_DUPFD_CLOEXEC` ≥10 → source close → `dup2` fixed owner → identity proof; backing FD3/4/5 is constrained separately.
+- Review focus: fixed FD7/FD9 ABI and collision handling; FD6 child-only lifecycle including post-add validation; no direct FD9 inheritance; handoff cannot target owner FDs; direct low-FD occupancy witness; preservation of the approved non-destructive `ROLLBACK_INCOMPLETE` cleanup and foreign-B safety.
+- Evidence: `python3 -m py_compile ...v0.8.py ...v0.8_witness_test.py && python3 ...v0.8_witness_test.py -v && git diff --check` PASS; `14 tests OK`. Fixtures are only `TemporaryDirectory`/local Git or forked descriptor checks. No project origin/source/checkpoint/manifest/data/cache, child, GPU or training access.
+- Request exact final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O; collection/receipt/publication mutation; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
