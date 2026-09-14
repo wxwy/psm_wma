@@ -6073,3 +6073,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.3.md`：不复用已消费v1.2 authority，保留future formal parent/child/output tuple；新增future C producer→受控`apply_patch` consumer→同轮canonical/sidecar identity验证的显式交接合同，拒绝stdout-only候选、shell redirection、Python文件写入、临时文件和任何非allowlist I/O。
 - 已执行`git diff --check` PASS；未构造request、未改child、未执行materialization/launcher/GPU/训练。下一步=复核formal diff与状态、提交本docs/status step、推送后以新formal pair申请ChatGPT/MM/DS设计审核；未提交。
+
+### Stage-1 v1.7 request-instance recovery design v1.3 审核送达回执（2026-09-15 00:01 CST，REVIEW）
+
+- formal pair=root=`1db75ffad55a5ab7f29a9bf3a8701842ca4c3807`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已append到live Inbox并由后续ledger提交推送。
+- MM与DS均完成`send-keys -l → 间隔≥1秒 → 独立Enter → capture`：MM capture显示完整申请离开输入框并进入`Verifying v1.3 SHA pair`；DS capture显示完整申请进入transcript且pane busy。申请仅请求construct verdict，未授权任何真实执行。
+- 后续每三分钟按完整远端锁定、exact review扫描与两pane capture轮询；三方同pairfinal前保持REVIEW，禁止future C、request、materialization、真实I/O、child、GPU和训练。
