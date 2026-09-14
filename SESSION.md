@@ -9,6 +9,7 @@
 - v1.2已新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.2.md`：仅冻结上述parent/child与v0.3 JSON/Markdown pair的四元literal，明确P0 object source、P1 closure、future request JSON/Markdown均逐字绑定该tuple。`git diff --check` PASS；SHA-256=`10c81a9b7e79c7ff69d0fad50c17bad233858820f1d9b40a0355c38e5c8fda80`；未执行项目代码/真实I-O/request/materialization/child/GPU/训练。下一步=提交该最小docs/coordination step并以新formal pair重审。
 
 - v1.2审核名册冻结：formal pair=root=`19181644aa7d8f08abfdc9c206f24d2dfc9acb1e`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。仅请求`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`或`REQUEST_CHANGES(file:line)`；三方同pair final前禁止request构造、materialization、真实I/O、child、GPU和训练。
+- v1.2送达回执（2026-09-14 23:07 CST）：ChatGPT申请已append至canonical live Inbox并由ledger commit待下次同步定位；MM=`mm:0.0`完成`send-keys -l → 间隔≥1秒 → Enter → capture`，capture显示完整申请离开输入框且会话进入thinking；DS=`ds:0.0`完成同一三联，capture显示完整申请进入transcript并处于处理状态。不得重复发送；后续每三分钟完整远端锁定、exact review scan、MM/DS capture。
 
 ## Stage-1 v1.7 recovery design v1.1 完整观察凭证 #4（2026-09-14 22:59:43 CST，REVIEW）
 
