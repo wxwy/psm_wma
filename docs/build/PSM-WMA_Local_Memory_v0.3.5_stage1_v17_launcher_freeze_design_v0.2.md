@@ -1,8 +1,11 @@
-# Stage-1 v1.7 launcher freeze design v0.2
+# Stage-1 v1.7 launcher freeze design v0.2（已被 v0.3 supersede）
 
 **Gate**：`G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`
 
 **请求的正向 verdict**：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC`。
+
+> 历史设计。flag/position-aware parser contract、exact replacement tables 和具体 allowlist
+> 以 `PSM-WMA_Local_Memory_v0.3.5_stage1_v17_launcher_freeze_design_v0.3.md` 为准。
 
 ## 目的与边界
 
