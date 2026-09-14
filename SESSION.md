@@ -7,6 +7,7 @@
 - 新增临时 fixture CPU/static witness：中间/最终 symlink、directory、路径替换、100644/100755、evidence parent symlink/replacement；真实临时 Git + `NativeRootFd` 的 `collect_synthetic()` PASS 与 native rollback snapshot equality。未触及真实 source/checkpoint/manifest/data/cache、collection/receipt/publication、child、GPU 或训练。
 - 验证：`python3 -m py_compile tools/psm_wma/immutable_source_collection.py tools/psm_wma/test_immutable_source_collection.py && python3 -m unittest tools.psm_wma.test_immutable_source_collection && git diff --check`，结果 `50/50 PASS`、`py_compile PASS`、`diff-check PASS`。formal root=`99bafeb060054da29052fcc4bd1121f075e85ad5` 已推送；下一步为按冻结名册重新申请审核。
 - 新申请冻结名册：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、Kimi=`kimi:0.0`；申请 ledger 已追加，待提交推送后按 `send-keys -l`→等待至少 1 秒→独立 Enter→capture 向 MM/Kimi 送达。三方同 pair final 前 Gate 转为 `REVIEW`，禁止任何真实 I/O、child、GPU 或训练。
+- 送达回执（2026-09-14 CST）：ChatGPT=canonical live Inbox 条目已随 ledger commit=`4d81d82031124c388409263d38473869c90f12c0` 推送；MM=`mm:0.0`首次 Enter 后输入仍在 prompt，已立即独立重送 Enter 并等待后 capture，消息离开输入框、会话进入 `Bunning…` 审阅；Kimi=`kimi:0.0`完整 `send-keys -l` 后等待≥1秒、独立 Enter、等待后 capture，消息已离开输入框。下一步从第1轮开始，每三分钟执行完整远端锁定与三方 exact-pair 观察；新 pair 未齐前保持 `REVIEW`。
 
 ## Causal-owner identity FD8 remediation 第三轮审核观察凭证 #2（2026-09-13 18:03 CST，三方 final 齐全）
 
