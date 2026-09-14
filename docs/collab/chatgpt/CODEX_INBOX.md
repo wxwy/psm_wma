@@ -589,3 +589,10 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Scope: only approved root paths `tools/psm_wma/stage1_v17_launcher_replay.py` and `tools/psm_wma/test_stage1_v17_launcher_replay.py`, plus SESSION record. Pure injected-bytes replay; no main/Git/path/FD/network/exec I/O.
 - Evidence: `python3 -m py_compile ... && python3 -m unittest tools.psm_wma.test_stage1_v17_launcher_replay && git diff --check` PASS; unittest=5/5. No request construction, retry/materialization, real source/checkpoint/data/cache I/O, child/runtime, GPU or training.
 - Requested final verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-14 — Remediation close review: Stage-1 v1.7 launcher replay
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LAUNCHER-FREEZE-DESIGN`; root=`56ea8c7cfc36375a784aff2e30c07c2516e0adfe`; child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: only the two approved root paths. Addresses prior HIGHs: context-aware four self-check source guards, ordered parser targets, canonical v1.6 Git-blob injected CPU witness with exact parser/outer identities, and four self-check drift negatives.
+- Evidence: py_compile, direct unittest=8/8, diff-check PASS. No main/production I/O, request/retry, child, GPU, or training.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LAUNCHER_FREEZE_CPU_STATIC_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
