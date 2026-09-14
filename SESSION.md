@@ -5180,6 +5180,25 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Kimi：`kimi:0.0` 于 10:13 CST 同样 `send-keys -l -> >=1s -> Enter`；capture 显示完整申请作为会话消息，输入框为空。
 - 两 pane 均已送达、尚无此新 pair 的最终 verdict；下一轮在三分钟后按审核硬检查重新 fetch/remote-lock/review-scan/capture。不得依据旧 pair 结论实施。
 
+### Authority-root causal-worktree identity v0.2 审核观察凭证 #1（2026-09-14 10:16:22 CST，REVIEW）
+
+- exact pair=`c6ac4639d2abb6bb19263e1ee923902419844fd5`/`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册仍为 ChatGPT/reviews、MM `mm:0.0`、Kimi `kimi:0.0`。
+- `before_head=75d2998c3a2346fe42f1e9df5f24d87fdc4e868a`；fetch 成功；advertised/tracking 均=`75d2998c3a2346fe42f1e9df5f24d87fdc4e868a`；新增范围为空；祖先判定=0；ff-only 成功（Already up to date）。
+- ChatGPT exact scan `rg -l -F 'c6ac4639d2abb6bb19263e1ee923902419844fd5' docs/collab/chatgpt/reviews/` 无输出。MM capture 成功，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。Kimi capture 成功，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`。
+- 两个批准已回收，ChatGPT 尚缺 exact-pair formal review；无推进令牌，保持 `REVIEW`，禁止编码、真实 I/O、GPU 或训练。下一轮最早 10:19 CST。
+
+### Authority-root causal-worktree identity v0.2 审核观察凭证 #2（2026-09-14 10:20:42 CST，REVIEW）
+
+- exact pair=`c6ac4639d2abb6bb19263e1ee923902419844fd5`/`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=75d2998c3a2346fe42f1e9df5f24d87fdc4e868a`。fetch 成功并发现远端推进至 advertised/tracking=`cac3b0a4abee29976935fe5a032551f423806dce`；完整新增范围：`cac3b0a4 review: notify Codex causal worktree identity v0.2 verdict`、`dbd591d4 review: audit causal worktree identity design v0.2`；祖先判定=0，ff-only 成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_design_v02_c6ac463_93a89ba.md`，final=`REQUEST_CHANGES(...v0.2.md:26)`：FD6 仅锚定 parent，`<clean_name>` 仍在 Git resolve 时可被同一 parent 内的 foreign leaf replacement 重定向；需冻结 inherited leaf `clean_fd` capability target 及 actual-Git witness。MM `mm:0.0` capture final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`；Kimi `kimi:0.0` capture final 同上。
+- 三方 final 已齐，形成含 ChatGPT `REQUEST_CHANGES` 的汇总令牌；仅授权 docs-only v0.3 redesign。Gate 保持 `REVIEW`，禁止编码、真实 Git/worktree/materialization、source/checkpoint/manifest/data/cache I/O、GPU 与训练。
+
+### Authority-root causal-worktree identity v0.3 docs-only 整改（2026-09-14，IN_PROGRESS）
+
+- 依据：观察凭证 #2 的同-pair 汇总令牌。新建 `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_causal_worktree_identity_design_v0.3.md`，显式 supersede v0.1/v0.2。
+- v0.3 将 Git consumer target 从 parent FD6 加 leaf name 改为 `clean_fd -> git_target_fd=6 -> /proc/self/fd/6`；冻结 FD7/FD9 owner 映射、Git child 精确 inherited set、FD6 close point、later cleanup re-dup contract，及 same-parent leaf replacement 的 actual temporary-Git witness。
+- 未执行任何项目代码、真实 Git/worktree/source/checkpoint/data/cache I/O、GPU 或训练。下一步：diff-check、提交、推送、重新申请 docs-only三方审核。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。
