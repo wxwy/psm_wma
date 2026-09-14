@@ -5903,3 +5903,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT：canonical live Inbox的完整 formal-pair 追加申请已由 ledger=`2900bb88805a2c62823ab92efffec80c669ecc23`推送。DS=`ds:0.0`：已完成完整 `send-keys -l → 间隔>=1秒 → 独立Enter → 独立capture`；capture显示完整pair申请离开输入框并进入会话，当前busy。
 - MM=`mm:0.0`：pane保留一条先前不含完整pair的未发送澄清草稿；本轮多种清空控制键均未使该草稿离开输入框，故没有伪造新申请回执，状态=送达恢复中。不得把旧短SHA `APPROVE` 计作 v0.9 final。下一步仅恢复MM的可核验完整pair送达，再以三分钟间隔作完整三方审核观察；禁止整改、request构造、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 request-instance v0.9 完整观察凭证 #1（2026-09-14 21:55:12 CST，REVIEW）
+
+- Formal pair=root=`de92df512e1a239e7c2fd2d8d6ea60c5fc9ca02c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）。`before_head=7ce684e0e382e7e1623ed4e1cd34065de0f05c74`；fetch成功；advertised/tracking均=`7ce684e0e382e7e1623ed4e1cd34065de0f05c74`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_v17_request_instance_design_v09_de92df5_93a89ba.md`，final=`REQUEST_CHANGES(...v0.9.md:22)`，HIGH=canonical `ReplayBinding` authority未在P0 closed allowlist中冻结。DS=`ds:0.0` capture逐字锚定本pair，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。MM=`mm:0.0` capture成功但仍为旧短SHA申请后的无literal-pair approval与未发送澄清草稿；MM=送达恢复中，不能计入final。
+- 独立证据均成功且未截断；三方final不齐，无推进令牌。下一步只恢复MM完整pair送达并按三分钟原生轮询；不得整改、request构造、materialization、真实I/O、child、GPU和训练。
