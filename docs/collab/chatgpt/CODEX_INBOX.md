@@ -334,3 +334,9 @@
 - Scope: root-only docs v0.4. It narrows v0.3 target spelling to `/proc/self/fd/6/.`; an isolated temporary local-Git probe showed this preserves leaf entry authority and canonical `worktree list/remove` metadata behavior. No implementation draft is in formal scope.
 - Request exact verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Prohibited: real worktree/materialization/source/checkpoint/manifest/data/cache I/O, collection/receipt/publication, child/runtime/config, GPU/CUDA/torchrun, training/eval/inference/LIBERO4IN1.
+
+### Formal-root correction
+
+The preceding request's root SHA was transcribed incorrectly. Its sole valid formal root is
+`bfa10d345f2003a3a123f69dc836462fe05959d9`; child/Gitlink remains
+`93a89ba61306d840a008813f62f26a34d54850f4`. Please bind any verdict only to this corrected pair.
