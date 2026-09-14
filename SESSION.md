@@ -5326,6 +5326,17 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM：`mm:0.0` 以 `send-keys -l -> >=1s -> Enter` 送达，capture 显示申请离开输入框并进入 `Pollinating…`。DS：`ds:0.0` 相同三联送达，capture 显示已开始读取 root/Gitlink/commit。
 - 下一轮最早三分钟后按 ChatGPT/MM/DS 完整远端锁定与 capture 重查；当前禁止真实 materialization/source I-O/child/GPU/训练。
 
+### Authority-root causal-worktree identity CPU/static implementation 审核观察凭证 #1 / 整改令牌（2026-09-14 11:31:12 CST）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；exact pair=`94103f9e3b464541a027594f7858b87dc0110538`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=32ad99dbe446056c960b9422c9bea104c1487258`；fetch成功；advertised/tracking均=`93db43d655101208e5dd68463d318f66a1ffae5b`；新增提交完整范围=`01141304 review: audit causal worktree identity CPU static implementation`、`93db43d6 review: notify Codex causal worktree CPU static implementation verdict`；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`成功至`93db43d655101208e5dd68463d318f66a1ffae5b`。
+- ChatGPT exact scan 命中 `docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_causal_worktree_identity_cpu_static_implementation_94103f9_93a89ba.md`，final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py:104)`：HIGH-1 要求固定 owner ABI（parent FD7、clean FD9，FD6仅每次Git child临时派生）、低 FD碰撞防护与direct witnesses。MM `mm:0.0` capture final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CAUSAL_WORKTREE_IDENTITY_CPU_STATIC`；DS `ds:0.0` capture final同为该批准。三个独立证据均成功且未截断。
+- 三方同 pair final 已齐，形成含 ChatGPT `REQUEST_CHANGES` 的整改令牌：仅授权在已批准 root-only launcher/payload及direct temporary-fixture CPU/static witness allowlist内完成固定FD ABI整改、验证、提交并对新 pair重新送审；禁止真实 worktree/materialization、source/checkpoint/manifest/data/cache I/O、collection/receipt/publication、child、GPU或训练。
+
+### Authority-root causal-worktree identity 固定FD ABI 整改（2026-09-14，REVIEW 准备）
+
+- 基于上述整改令牌，仅修改既有 payload 与其 direct stdlib/local-Git witness：新增固定常量 backing=`{3,4,5}`、Git consumer=`6`、parent owner=`7`、bootstrap=`8`、clean owner=`9`；`bind_owner()`先临时复制到>=10再关闭原FD、`dup2`到固定owner FD并以 directory identity/CLOEXEC复核；`consume_leaf()`只从FD9派生FD6，精确目标`/proc/self/fd/6/.`，返回后关闭FD6。`assert_worktree()`同样经每次临时FD6 consumer验证，绝不把FD9直接传给Git。
+- witnesses增加低FD `{3,4,5}` 占用下的固定FD7/FD9映射、FD6仅消费期存在和消费后关闭；已有 add/cleanup fixtures断言FD7/FD9且释放临时fixture descriptor，保持cleanup非破坏性。验证：`python3 -m py_compile ...v0.8.py ...v0.8_witness_test.py && python3 ...v0.8_witness_test.py -v && git diff --check`，14 tests OK；未访问项目origin/source/checkpoint/manifest/data/cache、child、GPU或训练。下一步：记录TODO并提交本整改 root formal，再重新三方送审；未提交。
+
 ### Collection adapter 整改复核观察凭证 #117（2026-09-14 05:00 CST，REVIEW）
 
 - `before_head=4f1161f6b732ddf839e98862808c2ff33aefe6fa`；fetch成功；advertised/tracking均=`4f1161f6b732ddf839e98862808c2ff33aefe6fa`；新增范围为空；祖先判定=0；ff-only成功（Already up to date）。

@@ -1,6 +1,7 @@
 """Frozen stdlib-only authority-root launcher v0.8; executed only from reviewed ``-c`` bytes."""
 import ast
 import base64
+import fcntl
 import hashlib
 import json
 import os
@@ -97,24 +98,62 @@ def bind_owned():
 def capture_owned():
     try: return bind_owned()
     except BaseException as error: raise Stop("ROLLBACK_INCOMPLETE") from error
+
+BACKING_FDS = frozenset((3, 4, 5))
+GIT_TARGET_FD = 6
+PARENT_OWNER_FD = 7
+BOOTSTRAP_FD = 8
+CLEAN_OWNER_FD = 9
+
+def fd_is_open(fd):
+    try:
+        os.fstat(fd)
+    except OSError:
+        return False
+    return True
+
+def require_closed(*fds):
+    occupied=tuple(fd for fd in fds if fd_is_open(fd))
+    if occupied: fail("reserved fd collision:"+",".join(str(fd) for fd in occupied))
+
+def bind_owner(fd, target):
+    """Move a just-opened descriptor onto its frozen owner ABI without aliasing it."""
+    if target not in (PARENT_OWNER_FD, CLEAN_OWNER_FD): fail("owner fd target")
+    require_closed(target)
+    value = os.fstat(fd)
+    temporary = fcntl.fcntl(fd, fcntl.F_DUPFD_CLOEXEC, 10)
+    os.close(fd)
+    try:
+        os.dup2(temporary, target, inheritable=False)
+    finally:
+        os.close(temporary)
+    bound = os.fstat(target)
+    if dir_ident(bound) != dir_ident(value) or os.get_inheritable(target): fail("owner fd bind")
+    return target
+
+def consume_leaf(clean_fd, action):
+    """Expose FD9 only through the one-child FD6 capability, then close FD6."""
+    require_closed(GIT_TARGET_FD)
+    value = os.fstat(clean_fd)
+    os.dup2(clean_fd, GIT_TARGET_FD, inheritable=True)
+    try:
+        if dir_ident(os.fstat(GIT_TARGET_FD)) != dir_ident(value) or not os.get_inheritable(GIT_TARGET_FD): fail("git target identity")
+        return action("/proc/self/fd/6/.")
+    finally:
+        os.close(GIT_TARGET_FD)
+        if fd_is_open(GIT_TARGET_FD): fail("git target lifetime")
+
 def add_and_capture(s):
     name=os.path.basename(CLEAN); parent=-1; clean=-1
     if os.path.dirname(CLEAN)!=ROOT or not name: fail("clean-root grammar")
     try:
-        parent=os.open(ROOT,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC)
+        require_closed(GIT_TARGET_FD,PARENT_OWNER_FD,BOOTSTRAP_FD,CLEAN_OWNER_FD)
+        parent=bind_owner(os.open(ROOT,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC),PARENT_OWNER_FD)
         parent_value=os.fstat(parent); os.mkdir(name,0o700,dir_fd=parent)
-        clean=os.open(name,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=parent)
+        clean=bind_owner(os.open(name,os.O_RDONLY|os.O_DIRECTORY|os.O_NOFOLLOW|os.O_CLOEXEC,dir_fd=parent),CLEAN_OWNER_FD)
         value=os.fstat(clean); entry=os.stat(name,dir_fd=parent,follow_symlinks=False)
         if dir_ident(entry)!=dir_ident(value) or os.listdir(clean): fail("clean-root ownership")
-        try: saved=os.dup(6)
-        except OSError: saved=None
-        try:
-            os.dup2(clean,6); os.set_inheritable(6,True)
-            if ident(os.fstat(6))!=ident(value): fail("git target identity")
-            run(s,"worktree","add","--detach","/proc/self/fd/6/.",FORMAL,pass_fds=(6,))
-        finally:
-            if saved is None: os.close(6)
-            else: os.dup2(saved,6); os.close(saved)
+        consume_leaf(clean,lambda target: run(s,"worktree","add","--detach",target,FORMAL,pass_fds=(GIT_TARGET_FD,)))
         current=os.stat(name,dir_fd=parent,follow_symlinks=False)
         if dir_ident(current)!=dir_ident(value) or dir_ident(os.fstat(clean))!=dir_ident(value) or dir_ident(os.fstat(parent))!=dir_ident(parent_value): fail("clean-root ownership")
         return (value,clean,parent,name,parent_value)
@@ -125,14 +164,16 @@ def add_and_capture(s):
 def assert_owned_identity(owned):
     if len(owned)==5:
         value,fd,parent,name,parent_value=owned; current=os.stat(name,dir_fd=parent,follow_symlinks=False)
-        if (not stat.S_ISDIR(current.st_mode) or dir_ident(current)!=dir_ident(value) or dir_ident(os.fstat(fd))!=dir_ident(value) or dir_ident(os.fstat(parent))!=dir_ident(parent_value)): fail("clean-root ownership")
+        if (fd != CLEAN_OWNER_FD or parent != PARENT_OWNER_FD or not stat.S_ISDIR(current.st_mode) or dir_ident(current)!=dir_ident(value) or dir_ident(os.fstat(fd))!=dir_ident(value) or dir_ident(os.fstat(parent))!=dir_ident(parent_value)): fail("clean-root ownership")
         return value,fd,parent,name,parent_value
     fail("clean-root ownership")
 def assert_worktree(s, owned):
     if len(owned)==5:
         value,fd,parent,name,parent_value=assert_owned_identity(owned)
-        target="/proc/self/fd/"+str(fd)
-        if run(s,"rev-parse","HEAD",cwd=target,pass_fds=(fd,)).decode().strip()!=FORMAL or run(s,"status","--porcelain","--untracked-files=no","--ignore-submodules=all",cwd=target,pass_fds=(fd,)): fail("worktree postcondition")
+        def validate(target):
+            if run(s,"rev-parse","HEAD",cwd=target,pass_fds=(GIT_TARGET_FD,)).decode().strip()!=FORMAL: fail("worktree postcondition")
+            if run(s,"status","--porcelain","--untracked-files=no","--ignore-submodules=all",cwd=target,pass_fds=(GIT_TARGET_FD,)): fail("worktree postcondition")
+        consume_leaf(fd,validate)
         return
     value,fd=owned; current=os.lstat(CLEAN); bound=os.fstat(fd)
     if (not stat.S_ISDIR(current.st_mode) or (current.st_dev,current.st_ino)!=(value.st_dev,value.st_ino) or (bound.st_dev,bound.st_ino)!=(value.st_dev,value.st_ino)): fail("clean-root ownership")
@@ -167,6 +208,7 @@ def regular_mode(path):
     return ident(value)
 
 def handoff(raw, name, target, expected):
+    if target not in BACKING_FDS or target in (PARENT_OWNER_FD, CLEAN_OWNER_FD): fail("backing fd target")
     path=CLEAN+"/"+name; w=os.open(path,os.O_CREAT|os.O_EXCL|os.O_WRONLY|os.O_NOFOLLOW|os.O_CLOEXEC,0o600)
     try:
         offset=0

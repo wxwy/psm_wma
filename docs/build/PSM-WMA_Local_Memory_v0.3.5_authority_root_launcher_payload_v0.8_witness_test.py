@@ -52,6 +52,9 @@ class WitnessTest(unittest.TestCase):
                 P.check_route(snapshot)
                 self.assertFalse(clean.exists())
             finally:
+                if "snapshot" in locals():
+                    for fd in (snapshot[1], snapshot[3]):
+                        if P.fd_is_open(fd): os.close(fd)
                 P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
     def test_path_identity_and_mode(self) -> None:
         with tempfile.TemporaryDirectory() as raw:
@@ -67,13 +70,13 @@ class WitnessTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as raw:
             old = P.CLEAN; P.CLEAN = raw
             try:
-                os.close(3)
+                if P.fd_is_open(3): os.close(3)
                 P.handoff(b"same", ".same", 3, P.digest(b"same"))
                 self.assertEqual(os.pread(3, 4, 0), b"same")
-                other = os.open("/dev/null", os.O_RDONLY)
-                P.handoff(b"other", ".other", other, P.digest(b"other"))
-                self.assertEqual(os.pread(other, 5, 0), b"other")
-                os.close(3); os.close(other)
+                if P.fd_is_open(4): os.close(4)
+                P.handoff(b"other", ".other", 4, P.digest(b"other"))
+                self.assertEqual(os.pread(4, 5, 0), b"other")
+                os.close(3); os.close(4)
             finally: P.CLEAN = old
 
     def test_replacement_and_commondir(self) -> None:
@@ -103,6 +106,33 @@ class WitnessTest(unittest.TestCase):
                     P.capture_owned()
             finally:
                 P.CLEAN = old
+
+    def test_payload_fixed_owner_abi_survives_low_fd_occupancy(self) -> None:
+        pid = os.fork()
+        if pid == 0:
+            try:
+                with tempfile.TemporaryDirectory() as raw:
+                    for target in (*P.BACKING_FDS, P.GIT_TARGET_FD, P.PARENT_OWNER_FD, P.BOOTSTRAP_FD, P.CLEAN_OWNER_FD):
+                        if P.fd_is_open(target): os.close(target)
+                    for target in P.BACKING_FDS:
+                        source = os.open("/dev/null", os.O_RDONLY | os.O_CLOEXEC)
+                        if source != target:
+                            os.dup2(source, target, inheritable=False); os.close(source)
+                    parent = P.bind_owner(os.open(raw, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC), P.PARENT_OWNER_FD)
+                    os.mkdir("leaf", 0o700, dir_fd=parent)
+                    clean = P.bind_owner(os.open("leaf", os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC, dir_fd=parent), P.CLEAN_OWNER_FD)
+                    seen = []
+                    def consume(target):
+                        seen.append((target, P.fd_is_open(P.GIT_TARGET_FD), P.fd_is_open(P.PARENT_OWNER_FD), P.fd_is_open(P.CLEAN_OWNER_FD)))
+                    P.consume_leaf(clean, consume)
+                    ok = (parent == 7 and clean == 9 and seen == [("/proc/self/fd/6/.", True, True, True)] and not P.fd_is_open(6))
+                    os.close(clean); os.close(parent)
+                    os._exit(0 if ok else 21)
+            except BaseException:
+                os._exit(22)
+        _, status = os.waitpid(pid, 0)
+        self.assertTrue(os.WIFEXITED(status))
+        self.assertEqual(os.WEXITSTATUS(status), 0)
 
     def test_payload_close_to_keep_ignores_proc_enumeration_fd(self) -> None:
         pid = os.fork()
@@ -139,6 +169,8 @@ class WitnessTest(unittest.TestCase):
                 snapshot = P.route_snapshot()
                 paths = (P.CLEAN, P.CLEAN + "/.authority-root.index", str(root / "evidence"), str(root / "pending"))
                 owned = P.add_and_capture(snapshot)
+                self.assertEqual(owned[1:3], (P.CLEAN_OWNER_FD, P.PARENT_OWNER_FD))
+                self.assertFalse(P.fd_is_open(P.GIT_TARGET_FD))
                 with self.assertRaisesRegex(P.Stop, "ROLLBACK_INCOMPLETE"):
                     P.cleanup(snapshot, owned, paths)
                 self.assertTrue(clean.is_dir())
@@ -151,6 +183,10 @@ class WitnessTest(unittest.TestCase):
                     P.cleanup(snapshot, owned, paths)
                 self.assertEqual((clean / "foreign-marker").read_text(), "B")
             finally:
+                for fd in (P.CLEAN_OWNER_FD, P.PARENT_OWNER_FD):
+                    if P.fd_is_open(fd): os.close(fd)
+                for fd in (snapshot[1], snapshot[3]):
+                    if P.fd_is_open(fd): os.close(fd)
                 P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
 
     def test_leaf_remove_behavior_is_diagnostic_fixture_only(self) -> None:
@@ -165,7 +201,10 @@ class WitnessTest(unittest.TestCase):
             try:
                 P.ROOT, P.CLEAN = str(root), str(clean)
                 P.FORMAL = subprocess.check_output(["/usr/bin/git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
-                owned = P.add_and_capture(P.route_snapshot())
+                snapshot = P.route_snapshot()
+                owned = P.add_and_capture(snapshot)
+                self.assertEqual(owned[1:3], (P.CLEAN_OWNER_FD, P.PARENT_OWNER_FD))
+                self.assertFalse(P.fd_is_open(P.GIT_TARGET_FD))
                 _, fd, _, _, _ = owned
                 try: saved = os.dup(6)
                 except OSError: saved = None
@@ -178,6 +217,10 @@ class WitnessTest(unittest.TestCase):
                 self.assertIn(result.returncode, (0, 128))
                 self.assertEqual(clean.exists(), result.returncode != 0)
             finally:
+                for fd in (P.CLEAN_OWNER_FD, P.PARENT_OWNER_FD):
+                    if P.fd_is_open(fd): os.close(fd)
+                for fd in (snapshot[1], snapshot[3]):
+                    if P.fd_is_open(fd): os.close(fd)
                 P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
 
     def test_payload_add_nonzero_and_post_add_route_drift_are_rollback_incomplete(self) -> None:
@@ -211,8 +254,11 @@ class WitnessTest(unittest.TestCase):
                 commondir = root / ".git" / "commondir"
                 if commondir.exists() or commondir.is_symlink():
                     commondir.unlink()
-                subprocess.run([*P.PREFIX, "-C", P.ROOT, "worktree", "remove", "--force", P.CLEAN], check=True, env=P.ENV)
             finally:
+                for fd in (P.CLEAN_OWNER_FD, P.PARENT_OWNER_FD):
+                    if P.fd_is_open(fd): os.close(fd)
+                for fd in (snapshot[1], snapshot[3]):
+                    if P.fd_is_open(fd): os.close(fd)
                 P.run = old_run
                 P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
 
@@ -253,6 +299,10 @@ class WitnessTest(unittest.TestCase):
                 self.assertTrue(clean.is_dir())
                 self.assertTrue((clean / ".git").exists())
             finally:
+                for fd in (P.CLEAN_OWNER_FD, P.PARENT_OWNER_FD):
+                    if P.fd_is_open(fd): os.close(fd)
+                for fd in (snapshot[1], snapshot[3]):
+                    if P.fd_is_open(fd): os.close(fd)
                 P.run = old_run
                 P.ROOT, P.CLEAN, P.FORMAL = old_root, old_clean, old_formal
 
