@@ -5676,3 +5676,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT：canonical live Inbox申请已随ledger=`cf4fafade6ce6dbc255a1dc833a029df0ce029ff`推送；formal target=`08d5828cdb4c12afa3b798ff01826c91ceb8755a`/`93a89ba61306d840a008813f62f26a34d54850f4`。MM：`mm:0.0`执行`send-keys -l`、等待≥1秒、独立Enter与独立capture；capture显示完整申请进入transcript并开始`Verifying SHA pair and scope`。DS：`ds:0.0`同样完成三联步骤；capture显示申请进入transcript且已开始读取formal tree。
 - 冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。本Gate保持`REVIEW`；下次审核检查最早三分钟后，且必须先完成远端锁定、exact review scan和两个独立pane capture。无同pair三方final前禁止整改、真实I/O、child、GPU及训练。
+
+### Authority-root config grammar bootstrap corpus 审核观察凭证 #1 / 关闭令牌（2026-09-14 15:21 CST，DONE）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）；exact pair=`08d5828cdb4c12afa3b798ff01826c91ceb8755a`/`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=6cfc700f01a7d8a5473d1b194251551af0c0c72b`；`git fetch origin V2`成功；advertised/tracking均=`862580adf5b480d40ee3b2914e31f9ba3a9762ce`；新增完整范围=`63c7eef4 review: close config grammar bootstrap full corpus remediation`、`862580ad review: notify Codex config grammar implementation closure`；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_authority_root_config_grammar_bootstrap_full_corpus_08d5828_93a89ba.md` final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC_IMPLEMENTATION`；MM `mm:0.0`与DS `ds:0.0`独立capture均为同一literal final。DS的片段锚点完整性断言建议标注LOW且非阻塞；三项证据均成功、未截断。
+- 同pair全批准关闭令牌成立，只关闭该root CPU/static config-grammar remediation Gate。它不授权Stage-1 retry/materialization、真实source/checkpoint/manifest/data/cache I/O、child、GPU或训练；下一步必须在新的独立source-evidence request/refreeze Gate中重新冻结并三方审核。
