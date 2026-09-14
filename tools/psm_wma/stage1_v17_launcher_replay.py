@@ -44,8 +44,17 @@ def _sha(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
+_GUARDS = {
+    "7538": "if len(raw)!=7538 or digest(raw)!=" ,
+    "7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8": "digest(raw)!=\"",
+    "2427": "len(RAW[2])!=2427",
+    "72777bd7305c760c48c069eafd068f1a538383a6fdb8d40258acf3d8fc3b7ae2": "tuple(digest(x) for x in RAW)!=",
+}
+
+
 def _replace_once(raw: str, old: str, new: str) -> str:
-    if raw.count(old) != 1:
+    guard = _GUARDS.get(old)
+    if raw.count(old) != 1 or (guard is not None and guard not in raw):
         _fail("source_target")
     return raw.replace(old, new, 1)
 
@@ -67,13 +76,15 @@ def replay_outer_payload(*, base_source: bytes, binding: ReplayBinding) -> Repla
     if binding.owner_fd_flag in argv:
         _fail("owner_fd")
     seen: set[str] = set()
+    previous_index = -1
     for flag, old, new in binding.parser_replacements:
         if flag in seen or argv.count(flag) != 1:
             _fail("parser_target")
         seen.add(flag)
         index = argv.index(flag)
-        if index + 1 >= len(argv) or argv[index + 1] != old:
+        if index <= previous_index or index + 1 >= len(argv) or argv[index + 1] != old:
             _fail("parser_target")
+        previous_index = index
         argv[index + 1] = new
     root_flag = "--bootstrap-project-root"
     if argv.count(root_flag) != 1:
