@@ -1,5 +1,9 @@
 # 当前协作状态
 
+## Authority-root config grammar CPU/static remediation design（2026-09-14，REVIEW）
+
+- 目的/Gate：`G0-R09-B-TTT-V035-AUTHORITY-ROOT-CONFIG-GRAMMAR-CPU-STATIC-REMEDIATION-DESIGN`。formal pair=root=`bf34641f2451b43c3c335bb747ef3c842768a382`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；范围仅新 root docs design，child不变。冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、DS=`ds:0.0`（用户指定 DS 替代 Kimi）。申请送达前不得修改 parser/payload、不得重试 Stage-1，不得真实 source I/O/child/GPU/训练。
+
 ## Stage-1 authority-root materialization request v1.2 payload-binding correction（2026-09-14，IN_PROGRESS）
 
 - 本轮只读观察凭证（2026-09-14 13:30:55 CST）：formal pair=`3802c51bb156636d53842cefa8e4519f6dfabe81`/`93a89ba61306d840a008813f62f26a34d54850f4`，冻结名册=ChatGPT `docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=479db88bd66e164e8f8b8cf17554d57ab02e194e`；fetch成功；advertised/tracking均=`479db88bd66e164e8f8b8cf17554d57ab02e194e`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-14_R09_B_TTT_v035_stage1_authority_root_materialization_request_v11_3802c51_93a89ba.md`，final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；MM `mm:0.0` capture 和 DS `ds:0.0` capture均锚定同 pair 且 final为相同 verdict。该旧 pair 的推进令牌只授权其冻结 v1.1 bytes；其预执行审计 fail-close 后不能授权 v1.2 或任何 materialization。

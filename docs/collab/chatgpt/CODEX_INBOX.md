@@ -448,3 +448,13 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Evidence: canonical JSON `7775 bytes` SHA `82f3103518ea953f6295e955f1d1f24e7945287dd19c1a47365647ca5fc22f7a`; stdlib JSON/parser verifier and diff-check PASS.
 - Request verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
 - Prohibited: all Stage-1 execution/materialization, source/checkpoint/manifest/data/cache I/O, downstream collection/receipt/publication, child, GPU and training.
+
+## Design review request — authority-root config grammar CPU/static remediation v0.1
+
+- Gate: `G0-R09-B-TTT-V035-AUTHORITY-ROOT-CONFIG-GRAMMAR-CPU-STATIC-REMEDIATION-DESIGN`.
+- Formal root: `bf34641f2451b43c3c335bb747ef3c842768a382`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs design `docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_config_grammar_cpu_static_remediation_design_v0.1.md`; child unchanged. It responds to the one approved v1.3 Stage-1 attempt failing before any mutation at `route_snapshot()` because its parser rejected the same frozen real `.git/config` quoted subsections it was intended to validate.
+- Review focus: verify the proposed lexical grammar accepts only explicit ordinary/quoted Git sections needed by the frozen route, preserves raw-digest/descriptor/anti-symlink/config.worktree/commondir checks, and limits exact allowlisted section/key/value semantics rather than broadening Git config authority. Confirm both outer payload and bootstrap parser must share it, and that all tests are temporary CPU/static witnesses.
+- Evidence: v1.3 attempt fail-close was recorded at root `0dd79aee`; post-failure inspection showed no clean root, index, ref, evidence or pending evidence. This formal commit is docs-only; `git diff --check` and no-index diff-check PASS. No retry, source/checkpoint/manifest/data/cache I/O, child/runtime/config edit, GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1 ran.
+- Request exact final verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_AUTHORITY_ROOT_CONFIG_GRAMMAR_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Explicitly prohibited: real materialization/retry; source/checkpoint/manifest/data/cache I/O; collection/receipt/record/package/publication; child/runtime/config changes; GPU/CUDA/torchrun; training, evaluation, inference and LIBERO4IN1.
