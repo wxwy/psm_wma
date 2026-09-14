@@ -7,6 +7,7 @@
 - 修改文件：新增 v0.9 request、更新 `TODO.md`；`git diff --check` 与 new-file no-index diff-check 均 PASS，v0.9 raw SHA-256=`eb21ba3d47bf2675a4bfddb9de5aea9478d0d344929193604114e1cdf92ad57e`；待提交。后续仅可申请三方 `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`；未获同 pair 三方批准前禁止 execution。
 - 审核冻结名册（待 ledger 推送及 tmux 三联送达）：ChatGPT=`docs/collab/chatgpt/reviews/`、MM=`mm:0.0`、DS=`ds:0.0`（用户已明确以 DS 替代 Kimi）。formal pair=`57ef3d32452d990af98fda5edfe485376b772723`/`93a89ba61306d840a008813f62f26a34d54850f4`。
 - 送达回执（2026-09-14 CST）：ChatGPT request 已 append 至 live Inbox 并随 ledger=`d6c7e1db830d065d01caac01bff27ddd2aa5d801` 推送；MM=`mm:0.0`、DS=`ds:0.0`均已 `send-keys -l` 写入完整摘要、等待≥1秒、独立 Enter、capture 回读。MM capture 显示 exact request 已离开输入框且进入 thinking；DS capture 显示 exact request 已提交并开始 `git` 检查。第1轮审核观察须先完整远端锁定，再 scan exact ChatGPT review、capture MM/DS；三方同 pair final 前禁止 execution。
+- 第1轮观察凭证（2026-09-14 CST，REVIEW）：`before_head=51f7a3377b3e26070cadbce1f12d193bdd7db326`；fetch成功；advertised/tracking均=`51f7a3377b3e26070cadbce1f12d193bdd7db326`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact scan=`rg -l -F '57ef3d32452d990af98fda5edfe485376b772723' docs/collab/chatgpt/reviews/ || true`，无输出，故处理中。MM=`mm:0.0` capture 已锚定 pair、仍为思考/派生 overlay，故处理中。DS=`ds:0.0` capture 已锚定同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_IMMUTABLE_SOURCE_AUTHORITY_ROOT`（LOW: 建议补完整旧→新 overlay mapping，不阻塞）。无三方推进令牌；保持 REVIEW，禁止 execution、真实 I/O、child、GPU与训练。
 
 ## Immutable Source Collection real-adapter 审核整改（2026-09-14，IN_PROGRESS）
 
