@@ -45,6 +45,10 @@ def _sha(raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
+def _table_digest(rows: object) -> str:
+    return _sha(json.dumps(rows, separators=(",", ":"), ensure_ascii=False).encode())
+
+
 _GUARDS = {
     "7538": ("if len(raw)!=", " or digest(raw)!="),
     "7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8": ("if len(raw)!=9406 or digest(raw)!=\"", "\": fail(\"bootstrap identity\")"),
@@ -52,6 +56,8 @@ _GUARDS = {
     "72777bd7305c760c48c069eafd068f1a538383a6fdb8d40258acf3d8fc3b7ae2": ("+(\"", "\",): fail(\"embedded authority\")"),
 }
 _BOOT_ROWS = frozenset(("7538", "7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8"))
+_CANONICAL_PARENT = "08d5828cdb4c12afa3b798ff01826c91ceb8755a"
+_CANONICAL_TABLE_DIGESTS = ("961985b47da32e589cfab7c3c064bd336f853fd319c701be3361ba6c129da707", "24d287620936fd334526b30745839527ce3720e2be3e55ea09de8309ffa71b05")
 
 
 def _function_span(raw: str, name: str) -> tuple[int, int]:
@@ -85,6 +91,9 @@ def replay_outer_payload(*, base_source: bytes, binding: ReplayBinding) -> Repla
     """Rebuild frozen payload bytes from injected source without filesystem or process I/O."""
     if len(base_source) != binding.base_bytes or _sha(base_source) != binding.base_raw_sha256:
         _fail("base_identity")
+    if binding.formal_parent == _CANONICAL_PARENT:
+        if _table_digest(binding.parser_replacements) != _CANONICAL_TABLE_DIGESTS[0]: _fail("parser_target")
+        if _table_digest(binding.source_replacements) != _CANONICAL_TABLE_DIGESTS[1]: _fail("source_target")
     try:
         source = base_source.decode("utf-8")
         match = re.search(r"RAW\s*=\s*\(.*?b'''(\[.*?\])'''", source, re.S)

@@ -68,6 +68,15 @@ class ReplayTest(unittest.TestCase):
             changed = ReplayBinding(binding.formal_parent, binding.base_path, binding.base_blob_oid, binding.base_raw_sha256, binding.base_bytes, binding.parser_replacements, tuple(rows), binding.owner_fd_flag, binding.owner_fd_value, binding.expected_parser_bytes, binding.expected_parser_sha256, binding.expected_outer_bytes, binding.expected_outer_sha256)
             with self.assertRaisesRegex(AuthorityReplayError, "source_target"):
                 replay_outer_payload(base_source=source, binding=changed)
+
+    def test_canonical_table_extra_and_reorder_fail(self):
+        source, binding = self.canonical()
+        parser = binding.parser_replacements + (("--remote", "https://github.com/wxwy/psm_wma.git", "https://github.com/wxwy/psm_wma.git"),)
+        changed = ReplayBinding(binding.formal_parent, binding.base_path, binding.base_blob_oid, binding.base_raw_sha256, binding.base_bytes, parser, binding.source_replacements, binding.owner_fd_flag, binding.owner_fd_value, binding.expected_parser_bytes, binding.expected_parser_sha256, binding.expected_outer_bytes, binding.expected_outer_sha256)
+        with self.assertRaisesRegex(AuthorityReplayError, "parser_target"): replay_outer_payload(base_source=source, binding=changed)
+        rows = tuple(reversed(binding.source_replacements))
+        changed = ReplayBinding(binding.formal_parent, binding.base_path, binding.base_blob_oid, binding.base_raw_sha256, binding.base_bytes, binding.parser_replacements, rows, binding.owner_fd_flag, binding.owner_fd_value, binding.expected_parser_bytes, binding.expected_parser_sha256, binding.expected_outer_bytes, binding.expected_outer_sha256)
+        with self.assertRaisesRegex(AuthorityReplayError, "source_target"): replay_outer_payload(base_source=source, binding=changed)
     def binding(self, source, parser, outer, replacements=(("--cwd", "/old", "/new"),)):
         return ReplayBinding("p", "x", "o", sha(source), len(source), replacements,
             (("FORMAL=old", "FORMAL=new"),), "--bootstrap-owner-root-fd", "8",
