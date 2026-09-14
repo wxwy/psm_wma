@@ -7,6 +7,7 @@ import subprocess
 import tempfile
 import unittest
 import hashlib
+import importlib.util
 import json
 import os
 import sys
@@ -1033,9 +1034,64 @@ class NativeAuthorityGitTest(unittest.TestCase):
                 self.assertIsNone(transaction.local_ref("refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"))
 
     def test_bootstrap_config_categories_match_runtime_parser(self):
-        replacements = ((b'[branch "v2"]', "config-allowlist"), (b'[branch "V\\2"]', "config-section"))
-        for replacement, category in replacements:
-            with self.subTest(replacement=replacement), tempfile.TemporaryDirectory() as raw:
+        class BootstrapConfigFailure(Exception):
+            pass
+
+        payload = adapter_module.bootstrap_payload()
+        parser_start = payload.index("allowed={")
+        parser_end = payload.index("g=os.lstat(git)")
+        parser_source = payload[parser_start:parser_end]
+
+        def bootstrap_parse(raw_config: bytes):
+            def fail(category="bootstrap-invocation"):
+                raise BootstrapConfigFailure(category)
+
+            namespace = {"rawcfg": raw_config, "fail": fail}
+            exec(parser_source, namespace)
+            return tuple(namespace["entries"])
+
+        with tempfile.TemporaryDirectory() as raw:
+            git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
+            config_path = root / ".git/config"
+            exact = config_path.read_bytes()
+            payload_path = Path(__file__).resolve().parents[2] / "docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py"
+            specification = importlib.util.spec_from_file_location("outer_payload", payload_path)
+            self.assertIsNotNone(specification)
+            self.assertIsNotNone(specification.loader)
+            outer_payload = importlib.util.module_from_spec(specification)
+            specification.loader.exec_module(outer_payload)
+            expected = outer_payload.parse_config_raw(exact)
+            self.assertEqual(repr(bootstrap_parse(exact)).encode(), repr(expected).encode())
+            self.assertEqual(
+                repr(adapter_module._parse_config_raw(exact)).encode(), repr(expected).encode()
+            )
+
+        invalid_cases = (
+            ("lowercase subsection", exact.replace(b'[branch "V2"]', b'[branch "v2"]'), "config-allowlist"),
+            ("escaped subsection", exact.replace(b'[branch "V2"]', b'[branch "V\\2"]'), "config-section"),
+            ("dotted subsection", exact.replace(b'[branch "V2"]', b'[branch "V2.extra"]'), "config-section"),
+            ("path subsection", exact.replace(b'[branch "V2"]', b'[branch "V2/path"]'), "config-section"),
+            ("quoted header spacing", exact.replace(b'[branch "V2"]', b'[branch  "V2"]'), "config-section"),
+            ("unknown key", exact + b"\n[unknown]\nkey = value\n", "config-allowlist"),
+            ("duplicate triple", exact + b"\n[core]\nfilemode = true\n", "config-duplicate"),
+            ("remote url drift", exact.replace(b"https://github.com/wxwy/psm_wma.git", b"https://example.invalid/psm_wma.git"), "config-allowlist"),
+            ("submodule url drift", exact.replace(b"https://ghfast.top/github.com/wxwy/cosmos-framework.git", b"https://example.invalid/cosmos-framework.git"), "config-allowlist"),
+            ("include", exact + b"\n[include]\npath = /tmp/forbidden\n", "config-allowlist"),
+        )
+        for label, raw_config, category in invalid_cases:
+            with self.subTest(label=label):
+                with self.assertRaises(BootstrapConfigFailure) as bootstrap:
+                    bootstrap_parse(raw_config)
+                with self.assertRaises(ConfigParseError) as runtime:
+                    adapter_module._parse_config_raw(raw_config)
+                with self.assertRaises(outer_payload.Stop) as outer:
+                    outer_payload.parse_config_raw(raw_config)
+                self.assertEqual(bootstrap.exception.args[0], category)
+                self.assertEqual(runtime.exception.category, category)
+                self.assertEqual(str(outer.exception), category)
+
+        for replacement, category in ((b'[branch "v2"]', "config-allowlist"), (b'[branch "V\\2"]', "config-section")):
+            with self.subTest(real_bootstrap=replacement), tempfile.TemporaryDirectory() as raw:
                 git, root, remote, selection, config, argv = self._cli_fixture(Path(raw))
                 config_path = root / ".git/config"
                 config_path.write_bytes(config_path.read_bytes().replace(b'[branch "V2"]', replacement))
@@ -1043,9 +1099,6 @@ class NativeAuthorityGitTest(unittest.TestCase):
                     result = self._run_bootstrap_cli(root, selection_handle, config_handle, argv)
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(category, result.stderr)
-                with self.assertRaises(ConfigParseError) as caught:
-                    adapter_module._parse_config_raw(config_path.read_bytes())
-                self.assertEqual(caught.exception.category, category)
 
     def test_bootstrap_rejects_preexisting_worktree_config_before_git_or_import(self):
         with tempfile.TemporaryDirectory() as raw:
