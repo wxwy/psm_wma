@@ -409,16 +409,46 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
             record = collect_synthetic(authority=self.authority, lineage=self.lineage,
                                        selection_request=self.selection_raw, git=self.git,
                                        root_fd=self.fd, sink=MemoryEvidenceSink())
-            original_link = __import__("tools.psm_wma.immutable_source_collection", fromlist=["os"]).os.link
-            def replace_staged(source, target, **kwargs):
+            canonical = json.dumps(record, sort_keys=True, separators=(",", ":")).encode()
+            foreign = parent / "foreign"
+            foreign.write_bytes(canonical)
+            original_fstat = __import__("tools.psm_wma.immutable_source_collection", fromlist=["os"]).os.fstat
+            switched = False
+            def replace_staged_before_identity(fd):
+                nonlocal switched
                 staged = parent / "evidence.json.pending"
-                staged.unlink()
-                staged.write_bytes(b"foreign")
-                return original_link(source, target, **kwargs)
-            with patch("tools.psm_wma.immutable_source_collection.os.link", side_effect=replace_staged):
+                if staged.exists() and not switched:
+                    switched = True
+                    staged.unlink()
+                    os.link(foreign, staged)
+                return original_fstat(fd)
+            with patch("tools.psm_wma.immutable_source_collection.os.fstat", side_effect=replace_staged_before_identity):
                 with self.assertRaises(CollectionError): AtomicFileEvidenceSink(destination).emit(record)
             self.assertFalse(destination.exists())
             self.assertFalse((parent / "evidence.json.pending").exists())
+            self.assertEqual(foreign.read_bytes(), canonical)
+
+    def test_atomic_sink_rejects_parent_relocation_during_staging_cleanup(self) -> None:
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw); parent = root / "parent"; parent.mkdir()
+            relocated = root / "relocated"; destination = parent / "evidence.json"
+            record = collect_synthetic(authority=self.authority, lineage=self.lineage,
+                                       selection_request=self.selection_raw, git=self.git,
+                                       root_fd=self.fd, sink=MemoryEvidenceSink())
+            original_unlink = __import__("tools.psm_wma.immutable_source_collection", fromlist=["os"]).os.unlink
+            switched = False
+            def relocate_during_cleanup(path, *args, **kwargs):
+                nonlocal switched
+                if path == "evidence.json.pending" and not switched:
+                    switched = True
+                    parent.rename(relocated)
+                    parent.mkdir()
+                return original_unlink(path, *args, **kwargs)
+            with patch("tools.psm_wma.immutable_source_collection.os.unlink", side_effect=relocate_during_cleanup):
+                with self.assertRaises(CollectionError): AtomicFileEvidenceSink(destination).emit(record)
+            self.assertFalse(destination.exists())
+            self.assertFalse((relocated / "evidence.json").exists())
+            self.assertFalse((relocated / "evidence.json.pending").exists())
 
     def test_native_parser_requires_full_binding_categories(self) -> None:
         with contextlib.redirect_stderr(io.StringIO()):

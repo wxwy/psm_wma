@@ -264,6 +264,7 @@ class AtomicFileEvidenceSink:
         parent_identity: tuple[int, int] | None = None
         staged_identity: tuple[int, int] | None = None
         published_identity: tuple[int, int] | None = None
+        staged_descriptor = -1
         linked = False
         try:
             parent_fd = os.open(self._destination.parent,
@@ -279,21 +280,17 @@ class AtomicFileEvidenceSink:
                 pass
             else:
                 raise CollectionError("evidence destination 必须 fresh")
-            descriptor = os.open(temporary_name,
-                                 os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW,
-                                 0o600, dir_fd=parent_fd)
-            with os.fdopen(descriptor, "wb") as handle:
+            staged_descriptor = os.open(temporary_name,
+                                        os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW,
+                                        0o600, dir_fd=parent_fd)
+            with os.fdopen(os.dup(staged_descriptor), "wb") as handle:
                 handle.write(raw)
                 handle.flush()
                 os.fsync(handle.fileno())
-            staged = os.open(temporary_name, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW, dir_fd=parent_fd)
-            try:
-                info = os.fstat(staged)
-                if not stat.S_ISREG(info.st_mode):
-                    raise CollectionError("evidence staging 不是 regular file")
-                staged_identity = (info.st_dev, info.st_ino)
-            finally:
-                os.close(staged)
+            info = os.fstat(staged_descriptor)
+            if not stat.S_ISREG(info.st_mode):
+                raise CollectionError("evidence staging 不是 regular file")
+            staged_identity = (info.st_dev, info.st_ino)
             current_parent = os.stat(self._destination.parent, follow_symlinks=False)
             if (not stat.S_ISDIR(current_parent.st_mode)
                     or (current_parent.st_dev, current_parent.st_ino) != parent_identity):
@@ -316,6 +313,19 @@ class AtomicFileEvidenceSink:
                     or (current_parent.st_dev, current_parent.st_ino) != parent_identity):
                 raise CollectionError("evidence parent authority drift")
             os.unlink(temporary_name, dir_fd=parent_fd)
+            current_parent = os.stat(self._destination.parent, follow_symlinks=False)
+            if (not stat.S_ISDIR(current_parent.st_mode)
+                    or (current_parent.st_dev, current_parent.st_ino) != parent_identity):
+                raise CollectionError("evidence parent authority drift")
+            published = os.open(self._destination.name, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW,
+                                dir_fd=parent_fd)
+            try:
+                info = os.fstat(published)
+                if (not stat.S_ISREG(info.st_mode) or (info.st_dev, info.st_ino) != published_identity
+                        or os.read(published, len(raw) + 1) != raw):
+                    raise CollectionError("evidence publication identity drift")
+            finally:
+                os.close(published)
         except BaseException:
             try:
                 if parent_fd >= 0 and linked and published_identity is not None:
@@ -331,6 +341,8 @@ class AtomicFileEvidenceSink:
                 pass
             raise
         finally:
+            if staged_descriptor >= 0:
+                os.close(staged_descriptor)
             if parent_fd >= 0:
                 os.close(parent_fd)
 
