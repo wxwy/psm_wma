@@ -10,6 +10,7 @@
 - 三方final同pair齐全，形成含`REQUEST_CHANGES`的整改令牌：仅授权docs-only v0.2最小澄清construction-time read-only provenance/freshness allowlist、remote-ref authority与zero-mutation边界；禁止request construction、materialization/retry、source/checkpoint/manifest/data/cache content I/O、child/runtime、GPU及训练。整改后须新formal pair重新三方审核。
 - v0.2整改（2026-09-14，待提交）：新建`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_design_v0.2.md`，不改写v0.1。它将construction后的唯一可读Git/filesystem观察逐项allowlist化，并把`git ls-remote origin refs/heads/V2`限定为唯一允许网络查询、要求绑定其完整raw result；固定future Markdown/JSON输出路径和字段集合，保留zero mutation、one-request、no-retry及全部运行边界。下一步仅静态核验、提交并以新pair重新三方审核。
 - v0.2审核准备（2026-09-14，REVIEW）：formal pair=root=`0831e0ba2dcb5c93e9069d2d20aca1790095dc97`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册维持ChatGPT（`docs/collab/chatgpt/reviews/`）、MM（`mm:0.0`）、DS（`ds:0.0`）。formal tree仅`SESSION.md`、`TODO.md`和v0.2；Gitlink不变。申请请求同一construction verdict；待Inbox ledger与MM/DS三联送达后进入三分钟审核轮询。
+- v0.2送达回执（2026-09-14 18:08 CST）：ChatGPT申请已append至live Inbox（append后=`96200` bytes）并随ledger=`a3f1d3c1f560fe938703140a2cbbe8bb4071f5df`推送；MM=`mm:0.0`和DS=`ds:0.0`均已执行`send-keys -l -> 1.1s -> Enter -> capture`，完整申请离开输入框并分别显示`Crunching`/busy。下一轮最早三分钟后完成远端锁定、exact review scan与两pane capture；本Gate保持`REVIEW`。
 
 ## Stage-1 v1.6 consumed / v1.7 launcher freeze design（2026-09-14，IN_PROGRESS）
 
