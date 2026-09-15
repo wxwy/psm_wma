@@ -51,3 +51,43 @@ Required closure:
 No real pre-C/C, request-pair construction/write, materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — V25 sealing/triple-binding remediation still REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `0a36cdd85a97289ec6a2ff6ce0e62d8fe7419090`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25-REMEDIATION`
+
+Verdict:
+`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:435)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_remediation_0a36cdd_93a89ba.md`
+
+Canonical review commit:
+`41a6781960775ff0ee0583e30abda2b5bb9a6605`
+
+Current blockers: `3`; Design/Authority document: `0`; Production/implementation: `2 HIGH`; Evidence: `1 MEDIUM`; Scope/child/runtime: `0`.
+
+Positive closure:
+- `_locked` authority switches and dead `_LIVE_TOKENS` are removed;
+- creation-time session/plan/lease digest exists and is checked by `resume_once()`;
+- normal set/delete, deepcopy/pickle and digest-drift negative witnesses are present.
+
+Remaining blockers:
+1. HIGH — `object.__setattr__` remains a direct approval bypass. A caller can set session `_approval` and `_state="APPROVED"` without invoking `approve()`, while the triple binding remains unchanged; `resume_once()` then enters C.
+2. HIGH — the binding proves only session/plan/lease object ids + token digest, not equality of current plan/capability/guard/verifier authority to the exact V24 review record. `audit_record()` is also still incomplete versus the frozen V24 field set and is not compared at resume.
+3. MEDIUM — tests cover normal mutation and inconsistent digest drift, but not the actual `object.__setattr__` approval forgery, coherent authority-content drift with stable outer ids, complete review-record equality, or zero-apply causality for those paths.
+
+Required closure:
+- make resume authorization non-forgeable through caller writes to session state/approval;
+- bind and revalidate the complete inherited V24 exact-review authority surface before ownership release, not only outer object ids;
+- add causal tests for base-mutation approval forgery and plan/capability/guard/verifier drift, proving freshness/consumer/apply count remains `0` on every rejection;
+- preserve single C entrypoint, exact approved same-instance success, terminal invalidation/no-retry and pure-memory scope.
+
+No real pre-C/C, request-pair construction/write, materialization/source-evidence, real host/consumer/guard/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
