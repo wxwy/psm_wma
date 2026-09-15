@@ -138,6 +138,13 @@ class PreCRehearsalTest(unittest.TestCase):
             session.resume_once(session.lease, session.approval_identity)
         self.assertEqual(calls, [])
 
+    def test_live_session_close_and_duplicate_owner_fail_closed(self):
+        value, _ = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
+        with self.assertRaisesRegex(PreCRehearsalError, "continuation_owner"): LivePlanSessionV1(plan)
+        record = session.audit_record(); self.assertEqual(record[1], id(plan)); self.assertEqual(record[5], DescriptorV1().paths)
+        session.close()
+        with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan)
+
     def test_every_terminal_result_consumes_plan(self):
         for outcome in ("REJECTED_NO_WRITE", "PARTIAL_OR_UNKNOWN", "OTHER"):
             value, calls = self.fixture(outcome); plan = rehearse_v05(value)

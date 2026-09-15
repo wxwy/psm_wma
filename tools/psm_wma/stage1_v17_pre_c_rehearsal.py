@@ -357,18 +357,29 @@ class LivePlanSessionV1:
     """Pure-memory owner for one review-pending plan and its opaque lease."""
     __slots__ = ("_plan", "_lease", "_approval", "_closed")
     def __init__(self, plan: SealedPreCPlanV1) -> None:
+        if id(plan) in _LIVE_PLANS: _fail("continuation_owner")
         self._plan, self._lease, self._approval, self._closed = plan, ContinuationLeaseV1(), object(), False
         _LIVE_PLANS.add(id(plan))
     @property
     def lease(self) -> ContinuationLeaseV1: return self._lease
     @property
     def approval_identity(self) -> object: return self._approval
+    def audit_record(self) -> tuple[object, ...]:
+        """Read-only identity witness; never a plan reconstruction input."""
+        return (id(self), id(self._plan), id(self._lease), self._plan.identities,
+                self._plan.freshness_identities, PATHS, ENV,
+                self._plan.capability.provider, self._plan.capability.module,
+                self._plan.capability.path, self._plan.capability.blob_sha256,
+                self._plan.freshness_guard.provider, self._plan.freshness_guard.module,
+                self._plan.freshness_guard.path, self._plan.freshness_guard.blob_sha256,
+                self._plan.post_write_qualname)
     def close(self) -> None:
-        self._closed = True; _LIVE_PLANS.discard(id(self._plan))
+        self._closed = True; self._plan._retirement.consumed = True
+        _LIVE_PLANS.discard(id(self._plan))
     def resume_once(self, lease: ContinuationLeaseV1, approval_identity: object) -> str:
         if self._closed or lease is not self._lease or approval_identity is not self._approval:
             self.close(); _fail("continuation_identity")
-        self.close()
+        self._closed = True; _LIVE_PLANS.discard(id(self._plan))
         return _consume_once_v05(self._plan)
 
 
