@@ -13,7 +13,7 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `8dba26638b67dd35e5c261256785a9e87b19abc1`
+- immediate prior live blob SHA: `62ca0ea6d501f07e1b1d78fbc8878932a403999a`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
@@ -92,5 +92,52 @@ Required remediation — close this state/ownership class in one pass:
 6. preserve pure-memory scope and all previously closed freshness/closure/exactly-once/readback/no-retry guarantees.
 
 This review does not authorize real pre-C/C, request-pair write, materialization/source-evidence, child/runtime/config mutation, GPU or training.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 live-plan continuity CPU/static V25 remediation still REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `079186e4c9b6ce1c221447119397c03ae11a8188`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25`
+
+Verdict:
+`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:366)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_079186e_93a89ba.md`
+
+Canonical review commit:
+`d6518629220d17fccebbeb76fcf8ef66159e3ffa`
+
+Current blockers: `1 HIGH`; Design/Authority: `0`; Production/implementation: `1 HIGH`; Evidence/Scope: `0`; child/runtime: `0`.
+
+Positive closure:
+- formal root resolves and its root tree binds `cosmos-framework` mode `160000`, type `commit`, exactly to the declared reachable child;
+- duplicate live-owner creation now fails `continuation_owner`;
+- `close()` now permanently retires the plan, so invalidation cannot reopen the public consume path;
+- a read-only `audit_record()` witness was added without becoming a reconstruction input;
+- implementation remains pure-memory and stays inside the authorized root CPU/static scope.
+
+HIGH 1 — the required independent approval transition is still absent:
+- session construction still creates `_approval = object()` immediately;
+- `approval_identity` still exposes that usable object while the session is only review-pending;
+- there is still no explicit PENDING→APPROVED transition/state field;
+- `resume_once()` still accepts the construction-time `approval_identity` and immediately invokes `_consume_once_v05(self._plan)`.
+
+Therefore `session.resume_once(session.lease, session.approval_identity)` remains a valid pending→C path before any independent approval event. The remediation closes owner multiplicity and close retirement but does not close the primary V25 approval-state blocker.
+
+Required remediation:
+1. encode an explicit `PENDING -> APPROVED -> CONSUMED` state machine plus terminal `INVALID/CLOSED`;
+2. session creation must expose no credential that can satisfy resume while PENDING;
+3. add a separate approval transition that binds the independently supplied exact approval identity to the already-live session/plan/lease;
+4. PENDING resume must fail before `_consume_once_v05` with apply count zero; only APPROVED may resume exactly once;
+5. preserve duplicate-owner rejection, public consume blocking for live owners, terminal retirement on close/mismatch/loss, same live-plan handoff and no reconstruction;
+6. add direct tests for pending resume apply=0, explicit approval then one same-plan resume, foreign/repeated approval rejection, duplicate-owner rejection and invalidation without bypass.
+
+No real pre-C/C, request-pair write, materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
