@@ -7027,6 +7027,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT精确检索命令=`rg -l -F 27f188c6cd13db2e257dc2951b0b744b2ff3dd64 docs/collab/chatgpt/reviews/`无命中。DS=`ds:0.0`独立capture同pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC`；MM=`mm:0.0`独立capture同pair final相同（16:05:11）。
 - Git锁定、exact review扫描及两个pane capture均成功且未截断；ChatGPT final缺件，未形成推进令牌。保持REVIEW，仅继续三分钟轮询；禁止freshness-guard实现、真实pre-C/C、request pair、materialization、source-evidence、child、GPU与训练。
 
+### Stage-1 v1.7 request-instance recovery design V21 审核观察凭证 #2（2026-09-15 16:10 CST，DONE）
+
+- 先前ledger推送被远端review推进拒绝；本轮以`before_head=685008576c9e6e5e3c00bae826c7869cac4f956f`重做锁定。首次fetch tracking=`84bbada6`但advertised已推进至`6f0fffc9`，立即重新fetch后tracking/advertised一致=`6f0fffc9da79451584ee9150e9a0e4d26ea8c9c8`；新增=`84bbada6 docs: add ChatGPT V21 freshness guard design review`、`6f0fffc9 docs: publish ChatGPT V21 freshness guard design verdict`。本地ledger仅为未审状态记录，安全rebase至远端后为当前HEAD的parent；无formal root被rebase。
+- Formal pair=root=`27f188c6cd13db2e257dc2951b0b744b2ff3dd64`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v21_27f188c_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC`。DS=`ds:0.0`、MM=`mm:0.0`独立capture均为同pair同final。
+- 三方同pair全批准，形成仅授权已有纯内存freshness-guard module/unittest一次性CPU/static implementation的推进令牌；真实pre-C/C、request pair、I/O、child、GPU与训练仍禁止。
+
 ### Stage-1 v1.7 ContractV05 fixed-ref 审核观察凭证 #3（2026-09-15 15:52 CST，DONE）
 
 - Formal pair=root=`c99506295fed887a87670fc80fbdaf639baf5444`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；`git fetch origin V2`成功；advertised/tracking均=`3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
