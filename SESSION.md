@@ -1,5 +1,10 @@
 # 当前协作状态
 
+### v3.0 unified pre-C rehearsal implementation design 审核名册与送达准备（2026-09-15 13:04 CST，REVIEW）
+
+- formal pair=root=`6677343ff7bcc931d2c141ada46ced11de2fc318`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。formal-tree仅v3.0 design、`SESSION.md`和`TODO.md`；Gitlink未变。
+- live Inbox原始=`7358` bytes，完整申请追加后低于`131072` bytes；待ledger提交推送后向MM/DS作一次三联送达。无三方同pairfinal前禁止CPU/static implementation、v0.5 construction、consumer调用、P0/P1/C、materialization、真实I/O、child、GPU或训练。
+
 ### v3.0 pre-C rehearsal implementation design 验证（2026-09-15 13:00 CST，REVIEW准备）
 
 - 引用v2.1观察凭证#21的implementation-design推进令牌。新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_pre_c_rehearsal_consumer_implementation_design_v3.0.md`：将capability/callable identity、final canonical bytes、output paths、six-key环境、`.git`/local V2/remote V2/authority ref/designated absence、dry-run seam和post-write verifier合并入一次non-consuming opaque sealed plan；C只做freshness compare、一次opaque写入、byte equality和hard stop。

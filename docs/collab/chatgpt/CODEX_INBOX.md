@@ -50,3 +50,12 @@
 - Review focus: confirm the v0.5 freshness/non-overlap closes that issue without weakening the pre-C no-I/O `PatchConsumerV1` probe, explicit descriptor, same-object opaque handoff, one add-only invocation, exhaustive result semantics, byte-exact postcondition or terminal no-retry.
 - Requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.3/v0.4 repair/retry/reuse; v0.5 construction; consumer implementation/invocation; P0/P1/C; materialization, launcher/runtime, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: Stage-1 v0.5 unified pre-C rehearsal implementation design v3.0
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-IMPLEMENTATION-DESIGN`.
+- Formal root: `6677343ff7bcc931d2c141ada46ced11de2fc318`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only v3.0 implementation design with `SESSION.md`/`TODO.md`; no child/runtime code. `git diff --check` PASS; design SHA-256=`352b6f48e41c50d559bda0b8b8f5a4cfa2dca961fbccf460d051f16496fde237`.
+- Review focus: it deliberately collapses all future C failure points into one non-consuming `rehearse_v05()`—unique host capability/callable identity, canonical JSON/Markdown/patch bytes, v0.5 paths, six-key environment, `.git`/local V2/two remote queries/authority ref/designated absences, dry-run patch seam and post-write verifier—then seals them. C has only freshness compare → one opaque add-only write → byte equality → hard stop. Verify v0.3/v0.4 remain forbidden and no hidden C-time resolution remains.
+- Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.5 construction or consumer invocation; P0/P1/C; materialization, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
