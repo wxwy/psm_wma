@@ -231,3 +231,9 @@
 - Scope: root-only existing pre-C module and its stdlib unittest. Implements `LivePlanSessionV1` / opaque lease, pending direct-consume rejection, same live-plan resume-only handoff and terminal identity failure. `unittest=14/14`, `py_compile`, `git diff --check` PASS; no I/O.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C/request pair/materialization/source evidence, child/runtime/config, GPU/CUDA/torchrun/training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: V25 live-plan continuity remediation closure
+
+- Formal root: `079186e4c9b6ce1c221447119397c03ae11a8188`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only two-file remediation of all V25 final feedback: terminal retirement on close/invalidation, duplicate live-owner rejection, read-only audit witness. `15/15` stdlib tests, py_compile and diff-check PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
