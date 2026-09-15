@@ -248,6 +248,15 @@
 - Review focus: verify that the trust model, lifecycle and complete record close both V25 HIGHs in one pass: no caller-reachable mutable authority; approval only through orchestration attestation; detached full consumer/guard/verifier/C01--C15/freshness/query/absence/replay record; all client tamper paths terminalize before freshness/consumer/apply. Confirm staged implementation starts only with a fake-host CPU/static protocol and that real host/IPC integration remains a separate review.
 - Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C, request pair/materialization/source-evidence, real host process/IPC/apply_patch, child/runtime/config change, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: V27 host-owned continuation boundary remediation
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-HOST-OWNED-CONTINUATION-BOUNDARY-DESIGN-V27`.
+- Formal root: `94c436d50d2caded43410052e720fbdbf3f37b7b`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only V27 docs design, SESSION/TODO; no code/child/runtime. V26 complete three-party review authorized one docs-only remediation. `git diff --check` PASS.
+- Remediation: explicitly maps V24 continuity to host-private `HostSession/LivePlanEnvelope/HostLease`; makes ReviewRecord non-reconstructive; binds ReviewApproval to host generation/session/plan/lease/binding/nonce/counter; freezes atomic serial `PENDING_REVIEW -> APPROVED -> CONSUMING -> TERMINAL` before freshness/apply.
+- Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: fake-host/real host/IPC/pre-C/C/request pair/materialization/source-evidence/child/GPU/training.
 - Forbidden: real pre-C/C/request pair/materialization/source evidence, child/runtime/config, GPU/CUDA/torchrun/training/evaluation/inference/LIBERO4IN1.
 
 ## 2026-09-15 — Review request: V25 live-plan continuity remediation closure

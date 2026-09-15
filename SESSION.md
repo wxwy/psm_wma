@@ -45,6 +45,10 @@
 - 依据紧邻 V26 整改令牌，一次性新增 V27：V24 same-live authority 由同 generation 的 HostSession/LivePlanEnvelope/HostLease 三元组等价承接；ReviewRecord 改为 detached non-reconstructive identity witness；ReviewApproval 绑定 generation/session/plan/lease/binding/nonce/counter；host 单锁状态机原子 `PENDING_REVIEW -> APPROVED -> CONSUMING -> TERMINAL`。
 - 预计改动仅 V27 design、SESSION、TODO；禁止 fake-host/真实 host/IPC、pre-C/C、request pair、materialization/source-evidence、child、GPU与训练。下一步静态核验、提交、三方重审。
 
+### V27 审核名册与送达准备（2026-09-15 CST，REVIEW）
+
+- formal pair=root=`94c436d50d2caded43410052e720fbdbf3f37b7b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。待 ledger 推送后按三联送达；同pair三方 final 前禁止一切实现与下游动作。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
