@@ -1,5 +1,11 @@
 # 当前协作状态
 
+### v1.7 审核申请送达回执（2026-09-15 10:21 CST，REVIEW）
+
+- ChatGPT：canonical `docs/collab/chatgpt/CODEX_INBOX.md`在独立ledger commit=`c85031c2c1e1e103f27bf1617ef2a8a07a8bfa57`追加v1.7申请并已推送；formal target仍为root=`d03cb28ca138090f50adc09d4e810713457353af`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM=`mm:0.0`与DS=`ds:0.0`均完成`tmux send-keys -l`→独立间隔1秒→`tmux send-keys Enter`→独立capture。MM capture显示完整申请已离开输入框并进入`Blanching`审阅；DS capture显示完整申请已离开输入框并进入`Thinking`审阅。两者仅为已送达、尚无final verdict。
+- 新名册=ChatGPT/MM/DS；自下一轮起每三分钟执行远端锁定、ChatGPT exact-review scan及两个pane capture；无same-pair三方final前禁止v0.4 construction、真实I/O、child/GPU/训练。
+
 ## Stage-1 v1.7 recovery design v1.7 独立审核名册（2026-09-15 10:21 CST，REVIEW）
 
 - Gate=`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V17`；formal pair=root=`d03cb28ca138090f50adc09d4e810713457353af`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。冻结名册=ChatGPT（正式结果仅`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定DS替代Kimi）。
