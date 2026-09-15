@@ -6861,3 +6861,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`1bf4dc5315ac37a360e850dc5d0baf799287b58c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=c17c0db1cfc17e196ad33aaa6b2da87d28d19c84`；fetch成功；advertised/tracking均=`c17c0db1cfc17e196ad33aaa6b2da87d28d19c84`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
 - ChatGPT exact检索`rg -l -F '1bf4dc5315ac37a360e850dc5d0baf799287b58c' docs/collab/chatgpt/reviews/`无命中。MM=`mm:0.0` capture逐字锚定同pair，final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture逐字锚定同pair，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:138)`：P1 exact raw identities与parser argv items未pin，且`ReplayBindingV1`只形状校验、未逐值比对冻结SHA/8+8 rows。
 - 四项独立证据均成功且未截断；ChatGPT final缺失，未形成整改令牌。禁止处理DS意见或修改实现；继续三分钟审核监控，禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #3 审核观察凭证 #2（2026-09-15 15:03 CST，REVIEW）
+
+- Formal pair/root-child与冻结名册不变。`before_head=135f9ae8ddd4421a861af68470200451206f68b4`；fetch成功；advertised/tracking均=`135f9ae8ddd4421a861af68470200451206f68b4`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索仍无匹配 formal review；MM capture维持同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`；DS capture维持同pair `REQUEST_CHANGES(...py:138)`，完整意见不变。四项独立证据成功且未截断；ChatGPT final仍缺失，无整改令牌，禁止实现及下游执行。
