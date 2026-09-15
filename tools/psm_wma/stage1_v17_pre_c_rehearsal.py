@@ -355,15 +355,16 @@ class SealedPreCPlanV1:
 
 class LivePlanSessionV1:
     """Pure-memory owner for one review-pending plan and its opaque lease."""
-    __slots__ = ("_plan", "_lease", "_approval", "_closed")
+    __slots__ = ("_plan", "_lease", "_approval", "_state")
     def __init__(self, plan: SealedPreCPlanV1) -> None:
         if id(plan) in _LIVE_PLANS: _fail("continuation_owner")
-        self._plan, self._lease, self._approval, self._closed = plan, ContinuationLeaseV1(), object(), False
+        self._plan, self._lease, self._approval, self._state = plan, ContinuationLeaseV1(), None, "PENDING"
         _LIVE_PLANS.add(id(plan))
     @property
     def lease(self) -> ContinuationLeaseV1: return self._lease
-    @property
-    def approval_identity(self) -> object: return self._approval
+    def approve(self, approval_identity: object) -> None:
+        if self._state != "PENDING" or approval_identity is None: self.close(); _fail("continuation_approval")
+        self._approval, self._state = approval_identity, "APPROVED"
     def audit_record(self) -> tuple[object, ...]:
         """Read-only identity witness; never a plan reconstruction input."""
         return (id(self), id(self._plan), id(self._lease), self._plan.identities,
@@ -374,12 +375,12 @@ class LivePlanSessionV1:
                 self._plan.freshness_guard.path, self._plan.freshness_guard.blob_sha256,
                 self._plan.post_write_qualname)
     def close(self) -> None:
-        self._closed = True; self._plan._retirement.consumed = True
+        self._state = "INVALID"; self._plan._retirement.consumed = True
         _LIVE_PLANS.discard(id(self._plan))
     def resume_once(self, lease: ContinuationLeaseV1, approval_identity: object) -> str:
-        if self._closed or lease is not self._lease or approval_identity is not self._approval:
+        if self._state != "APPROVED" or lease is not self._lease or approval_identity is not self._approval:
             self.close(); _fail("continuation_identity")
-        self._closed = True; _LIVE_PLANS.discard(id(self._plan))
+        self._state = "CONSUMED"; _LIVE_PLANS.discard(id(self._plan))
         return _consume_once_v05(self._plan)
 
 

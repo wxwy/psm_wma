@@ -124,18 +124,21 @@ class PreCRehearsalTest(unittest.TestCase):
     def test_live_session_only_resumes_same_plan_once(self):
         value, calls = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
         with self.assertRaisesRegex(PreCRehearsalError, "continuation_pending"): consume_once_v05(plan)
+        value, calls = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
+        approval = object()
+        session.approve(approval)
         self.assertEqual(calls, [])
-        self.assertEqual(session.resume_once(session.lease, session.approval_identity), "HARD_STOP_PENDING_INDEPENDENT_REVIEW")
+        self.assertEqual(session.resume_once(session.lease, approval), "HARD_STOP_PENDING_INDEPENDENT_REVIEW")
         with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
-            session.resume_once(session.lease, session.approval_identity)
+            session.resume_once(session.lease, approval)
 
     def test_live_session_foreign_or_closed_lease_is_terminal(self):
         value, calls = self.fixture(); session = LivePlanSessionV1(rehearse_v05(value))
         other = LivePlanSessionV1(rehearse_v05(self.fixture()[0]))
         with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
-            session.resume_once(other.lease, session.approval_identity)
+            session.resume_once(other.lease, object())
         with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
-            session.resume_once(session.lease, session.approval_identity)
+            session.resume_once(session.lease, object())
         self.assertEqual(calls, [])
 
     def test_live_session_close_and_duplicate_owner_fail_closed(self):
