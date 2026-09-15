@@ -6928,3 +6928,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root=`8bc6e93547a5a3f7db541f3843a6d36a32d23181`已推送至`V2`；cumulative scope包括紧邻`1d44e995`冻结fixture与本formal的`ContractV05`/C01--C15 matrix/drift，formal tree仅=`SESSION.md`、`TODO.md`、matrix、pre-C core及其测试；child Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`未变。canonical live Inbox容量=`18389/131072` bytes，已append新申请，待ledger推送和MM/DS送达三联回执。
 - 冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。新formal完全替换`6c4e395f`，旧pair verdict不可复用；收到同pair三方final前保持REVIEW，禁止v0.5 request/C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C ContractV05 审核送达回执（2026-09-15 15:10 CST，REVIEW）
+
+- ChatGPT申请已在canonical live Inbox并由ledger=`edd88d4c1edc9bcd6d05fdd90cc4b0914ef7c1df`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成同pair完整`send-keys -l → 间隔>=1秒 → 独立Enter → capture`；MM capture显示申请进入`Gusting`，DS capture显示申请离开输入框并进入`Build`处理。
+- formal pair=root=`8bc6e93547a5a3f7db541f3843a6d36a32d23181`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；三方同pair final前保持REVIEW，按三分钟原生完整远端锁定、exact review scan和独立pane capture；禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
