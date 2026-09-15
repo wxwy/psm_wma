@@ -181,3 +181,11 @@
 - Scope: root-only pre-C module/test plus SESSION; no child/runtime/config change. This is the complete same-pair ChatGPT HIGH remediation: lease domain now deterministically binds git/config/local-V2, two output absences and four designated absences by name/path/predicate/length/SHA. `unittest=12/12 PASS`; `py_compile` and `git diff --check` PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C, request pair, materialization, source-evidence, real I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: causal absence-drift remediation closure
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-FRESHNESS-GUARD-CPU-STATIC`.
+- Formal root: `37eca204a2144d9e191c4f995d881749a9a9d218`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only unittest evidence remediation; no production/child/runtime/config change. The fake guard now derives FRESH/STALE from sealed-vs-simulated-live domain comparison. It sweeps both output and all four designated absence identities, proves consumer count zero before apply, and proves a second call is `already_consumed`. `unittest=12/12 PASS`; py_compile/diff-check PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C, request pair, materialization, source-evidence, real I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
