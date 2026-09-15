@@ -6722,3 +6722,27 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal pair=root=`b9a460330a2dc4ff1b9d034ae4986fa490e74ad7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。远端已快进至`21a1d5afb16e8e04cc052bc5993cabc4a52a2905`并合并；ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v15_b9a4603_93a89ba.md` final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。MM/DS capture均给出同一construct verdict；DS确认无HIGH/MEDIUM。
 - 三方同pair批准仅授权一次future P0/P1/C docs-only pair construction，完成后必须硬停独立request review；不授权materialization、真实I/O、child、GPU或训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer design v3.1 审核观察凭证 #1（2026-09-15 13:16:18 CST，REVIEW）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）；formal pair=root=`e4764a3c7bf8f99bf8726e011b6ea779c779aeef`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=0b1c887dfbfac57d5ea29988ad70873a9ee929a9`；`git fetch origin V2`成功；advertised/tracking均=`0b1c887dfbfac57d5ea29988ad70873a9ee929a9`；新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-pair 检索以逐文件双 SHA 条件执行，结果为0个匹配；MM=`mm:0.0` capture逐字锚定本pair并给出`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`；DS=`ds:0.0` capture逐字锚定本pair并给出同一final。全部独立命令成功且未截断。
+- ChatGPT final缺失，尚无推进令牌；禁止整改、编码、提交、构造v0.5 request pair、materialization、source-evidence、child、GPU和训练。下一步仅按三分钟节奏重做完整检查。
+
+### Stage-1 v1.7 pre-C rehearsal consumer design v3.1 审核观察凭证 #2（2026-09-15 13:20:37 CST，REVIEW）
+
+- 冻结名册与formal pair不变。`before_head=0b1c887dfbfac57d5ea29988ad70873a9ee929a9`；fetch成功；advertised/tracking均=`0b1c887dfbfac57d5ea29988ad70873a9ee929a9`；新增范围为空；祖先判定=0；`merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT逐文件双 SHA exact-pair 检索仍为0个匹配；MM=`mm:0.0`与DS=`ds:0.0`的独立未截断capture均维持同一完整pair、同一`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` final。
+- ChatGPT final仍缺失，尚无推进令牌；仅可继续审核监控，禁止实现、request pair、materialization、source-evidence、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer design v3.1 审核观察凭证 #3 / CPU-static implementation 推进令牌（2026-09-15 13:24:40 CST，REVIEW → IN_PROGRESS）
+
+- 冻结名册与formal pair=root=`e4764a3c7bf8f99bf8726e011b6ea779c779aeef`/child=`93a89ba61306d840a008813f62f26a34d54850f4`不变。`before_head=0b1c887dfbfac57d5ea29988ad70873a9ee929a9`；fetch成功；advertised/tracking=`29a328a4bcccf00ba8583500cc86b7fd6ea0a66d`；新增完整范围=`26bd84d0 docs: add ChatGPT stage1 pre-c rehearsal v31 review`、`29a328a4 docs: publish ChatGPT stage1 pre-c rehearsal v31 verdict`；祖先判定=0；ff-only成功至`29a328a4bcccf00ba8583500cc86b7fd6ea0a66d`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_design_v31_e4764a3_93a89ba.md`，完整pair与final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`逐字可核验；MM=`mm:0.0`、DS=`ds:0.0`独立未截断capture均为同一完整pair、同一final。
+- 三方同pair全批准，构成仅授权一次root-only、纯内存、标准库 CPU/static rehearsal implementation与测试的推进令牌。严禁真实consumer/Git/network/source/data/cache I/O、v0.5 request pair/C、materialization、source-evidence、child、GPU与训练。预计修改根仓tooling/test文件和`SESSION.md`/`TODO.md`，完成后必须独立审核实现SHA。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 实现（2026-09-15 13:26:56 CST，IN_PROGRESS）
+
+- 新增根仓`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`与`test_stage1_v17_pre_c_rehearsal.py`：仅纯内存、注入式`OpaquePatchCapabilityV1`；`rehearse_v05()`封存capability identity、descriptor/JSON/Markdown/patch bytes、唯一strict UTF-8 text、两路径、six-key环境、snapshot/absence与post-write verifier，且拒绝`v0.3`/`v0.4`。`consume_once_v05()`只执行冻结snapshot比较→一次opaque fake callback→byte verifier→hard-stop；无文件、Git、网络、动态导入或真实consumer入口。
+- 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`5/5 PASS`；`python -m py_compile tools/psm_wma/stage1_v17_pre_c_rehearsal.py tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py` PASS；`git diff --check` PASS。未执行v0.5 pair/C、materialization、真实I/O、child、GPU或训练。
+- 下一步=仅精确暂存本步骤四个文件、提交/推送，按实现formal SHA申请ChatGPT/MM/DS独立审核；未提交。
