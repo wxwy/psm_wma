@@ -260,6 +260,7 @@ def rebuild_launcher(base_source: bytes, adapter_source: bytes, inputs: Launcher
         "--child-gitlink": inputs.child_gitlink,
         "--cwd": "/proc/self/fd/8",
         "--index": "/proc/self/fd/8/.authority-root.index",
+        "--evidence-path": f"/disk/rl/psm_wma/artifacts/g0/r09/authority_root_materialization_evidence_{inputs.clean_suffix}.json",
         "--bootstrap-project-root": "/proc/self/fd/8",
         "--interpreter": "/opt/conda/bin/python3.11",
         "--adapter-path": inputs.adapter.path,
@@ -276,7 +277,7 @@ def rebuild_launcher(base_source: bytes, adapter_source: bytes, inputs: Launcher
         "--audit-module-raw-sha256": inputs.audit.raw_sha256,
     }
     for flag, value in values.items():
-        if flag == "--interpreter" and flag not in items:
+        if flag in ("--interpreter", "--evidence-path") and flag not in items:
             continue
         _set_flag(items, flag, value)
     source = source.replace('PYTHON = "/opt/conda/bin/python3"', 'PYTHON = "/opt/conda/bin/python3.11"', 1)
