@@ -1,5 +1,46 @@
 # 当前协作状态
 
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 整改验证（2026-09-15 14:20 CST，REVIEW准备）
+
+- 依据紧邻#7的同pair三方整改令牌，root-only更新`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`及其stdlib unittest：固定exact v0.5 JSON/Markdown路径、逐字six-key环境、typed closure与两个有序query argv/predicate、canonical JSON/五字段Markdown/line inverse witness、descriptor/capability/verifier identity、不可copy/pickle，以及C入场前消费的exact-once三态terminal策略。
+- 验证=`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal` 6/6 PASS；`python -m py_compile ...` PASS；`git diff --check` PASS；静态扫描未命中真实I/O、Git、network、torch或subprocess入口。未构造v0.5 pair、未调用真实consumer，未执行materialization/source-evidence/child/GPU/训练。下一步=复核、提交、推送并对新implementation SHA三方审核；未提交。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 审核完整观察凭证 #7 / 整改令牌（2026-09-15 14:15 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`034cbc43f0178e2e472bd642991311cc6116ee49`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；fetch成功并发现远端推进；advertised/tracking=`af06acaa2113a70716fa7f29eb53b2c192ddd336`；新增完整范围=`d3ca8ed1 docs: add ChatGPT review for stage1 pre-c rehearsal CPU static`、`af06acaa docs: publish ChatGPT stage1 pre-c rehearsal CPU static verdict`；祖先判定=0；`git merge --ff-only origin/V2`成功至`af06acaa2113a70716fa7f29eb53b2c192ddd336`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_cpu_static_034cbc4_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`：exact v0.5 output-pair/six-key/live-closure schema、internal exact-once、capability/callback identity及canonical bytes/witness不得信任任意boolean callback。MM=`mm:0.0`为同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`；DS=`ds:0.0`为同pair `REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`。
+- 全部独立证据成功且未截断，形成含`REQUEST_CHANGES`的整改令牌。只允许在root纯内存CPU/static范围一次性整改ChatGPT与DS全部意见：`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`及其stdlib unittest，并做静态验证、记录、提交后以新formal pair重审；仍禁止v0.5 pair/C、真实consumer/Git/network/source/data/cache I/O、materialization/source-evidence、child、GPU与训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 审核完整观察凭证 #6（2026-09-15 14:11 CST，REVIEW）
+
+- formal pair=root=`034cbc43f0178e2e472bd642991311cc6116ee49`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`git fetch origin V2`成功；advertised/tracking均=`3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`before_head..origin/V2`为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-pair逐文件检索=`exact_pair_match_count=0`。MM=`mm:0.0` capture为同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture为同pair `REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`，意见与#2一致。
+- 全部独立证据成功且未截断；ChatGPT final仍缺件，未形成推进令牌，Gate保持`REVIEW`。未修改实现、未执行authority/materialization/source-evidence/GPU步骤。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 审核完整观察凭证 #5（2026-09-15 14:06 CST，REVIEW）
+
+- formal pair=root=`034cbc43f0178e2e472bd642991311cc6116ee49`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`git fetch origin V2`成功；advertised/tracking均=`3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`before_head..origin/V2`为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-pair逐文件检索=`exact_pair_match_count=0`。MM=`mm:0.0` capture为同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture为同pair `REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`，意见与#2一致。
+- 全部独立证据成功且未截断；ChatGPT final仍缺件，未形成推进令牌，Gate保持`REVIEW`。未修改实现、未执行authority/materialization/source-evidence/GPU步骤。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 审核完整观察凭证 #4（2026-09-15 14:02 CST，REVIEW）
+
+- formal pair=root=`034cbc43f0178e2e472bd642991311cc6116ee49`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`git fetch origin V2`成功；advertised/tracking均=`3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`before_head..origin/V2`为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-pair逐文件检索=`exact_pair_match_count=0`。MM=`mm:0.0` capture为同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture为同pair `REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`，意见与#2一致。
+- 全部独立证据成功且未截断；ChatGPT final仍缺件，未形成推进令牌，Gate保持`REVIEW`。未修改实现、未执行authority/materialization/source-evidence/GPU步骤。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 审核完整观察凭证 #3（2026-09-15 13:59 CST，REVIEW）
+
+- formal pair=root=`034cbc43f0178e2e472bd642991311cc6116ee49`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`git fetch origin V2`成功；advertised/tracking均=`3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`before_head..origin/V2`为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-pair逐文件检索=`exact_pair_match_count=0`。MM=`mm:0.0` capture为同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture为同pair `REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`，意见与#2一致。
+- 全部独立证据成功且未截断；ChatGPT final仍缺件，未形成推进令牌，Gate保持`REVIEW`。未修改实现、未执行authority/materialization/source-evidence/GPU步骤。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 审核完整观察凭证 #2（2026-09-15 13:56 CST，REVIEW）
+
+- formal pair=root=`034cbc43f0178e2e472bd642991311cc6116ee49`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`git fetch origin V2`成功；advertised/tracking均=`3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；`before_head..origin/V2`为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-pair检索逐文件同时匹配完整root/child，`exact_pair_match_count=0`，尚未取得正式review。MM=`mm:0.0` capture为同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture为同pair `REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`：缺 line encoder/inverse witness、Markdown五字段绑定、预封存query argv/顺序/predicate、不可复制/序列化capability、显式三态及相应fail-close测试。
+- 本轮所有独立Git/review/pane证据均成功且未截断；ChatGPT final缺件，尚无推进令牌，Gate保持`REVIEW`。不得整改或运行任何实现/authority/materialization/source-evidence/GPU步骤；待ChatGPT同pair正式final后一次性合并MM/DS/ChatGPT意见。
+
 ### v3.1 lifecycle-refreeze pre-C rehearsal design 审核送达回执（2026-09-15 13:26 CST，REVIEW）
 
 - ChatGPT：canonical live Inbox完整申请已随ledger=`3872f7a1`推送；formal pair=root=`e4764a3c7bf8f99bf8726e011b6ea779c779aeef`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
@@ -6746,3 +6787,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增根仓`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`与`test_stage1_v17_pre_c_rehearsal.py`：仅纯内存、注入式`OpaquePatchCapabilityV1`；`rehearse_v05()`封存capability identity、descriptor/JSON/Markdown/patch bytes、唯一strict UTF-8 text、两路径、six-key环境、snapshot/absence与post-write verifier，且拒绝`v0.3`/`v0.4`。`consume_once_v05()`只执行冻结snapshot比较→一次opaque fake callback→byte verifier→hard-stop；无文件、Git、网络、动态导入或真实consumer入口。
 - 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`5/5 PASS`；`python -m py_compile tools/psm_wma/stage1_v17_pre_c_rehearsal.py tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py` PASS；`git diff --check` PASS。未执行v0.5 pair/C、materialization、真实I/O、child、GPU或训练。
 - 下一步=仅精确暂存本步骤四个文件、提交/推送，按实现formal SHA申请ChatGPT/MM/DS独立审核；未提交。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 审核送达（2026-09-15 13:28 CST，REVIEW）
+
+- Formal pair=root=`034cbc43f0178e2e472bd642991311cc6116ee49`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已append至`CODEX_INBOX.md`并以ledger=`3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`推送。
+- MM完成`send-keys -l → ≥1秒 → 独立Enter → capture`，capture显示申请已离开输入框并进入`Submodule, ancestry, changed files`审核；DS同一三联完成，capture显示正在读取formal root的实现文件。两者均为已送达、处理中，未重复发送。
+- 每三分钟按完整远端锁定、exact ChatGPT review扫描和两pane capture轮询；三方同pair final前禁止下游request pair、materialization、source-evidence、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 审核观察凭证 #1（2026-09-15 13:31 CST，REVIEW）
+
+- Formal pair=root=`034cbc43f0178e2e472bd642991311cc6116ee49`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；fetch成功；advertised/tracking均=`3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT逐文件双SHA exact-pair检索无命中；MM=`mm:0.0` capture为同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`；DS=`ds:0.0` capture为同pair `REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`，要求补齐encoder/Markdown/query/capability不可复制、三态结果与对应测试。
+- 三方final未齐，无整改令牌；不得处理DS意见或修改实现，继续等待ChatGPT同pair正式review。
