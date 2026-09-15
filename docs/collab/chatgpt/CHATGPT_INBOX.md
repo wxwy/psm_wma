@@ -55,3 +55,37 @@ Still NOT authorized:
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 v0.5 pre-C rehearsal consumer CPU/static REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `034cbc43f0178e2e472bd642991311cc6116ee49`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`
+
+Verdict:
+`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_cpu_static_034cbc4_93a89ba.md`
+
+Canonical review commit:
+`d3ca8ed1860f277712997f3ab3675f93015d0e23`
+
+Current blockers: `3 HIGH`; Design/Authority: `0`; Production/implementation: `3 HIGH`; Evidence/identity: `0`; child/runtime: `0`.
+
+Blocker summary:
+- the implementation's `_SIX_KEYS` are semantic placeholders, not the frozen six Git-isolation environment keys; it also accepts arbitrary two-path tuples and underspecified snapshot/absence closure instead of the exact v0.5/provenance schema;
+- `consume_once_v05()` has no consumed/retired state, so the same sealed plan can invoke the opaque capability repeatedly after success or terminal failure, violating exact-once/no-retry;
+- capability/callable identity, non-copyable/non-serializable semantics, canonical JSON/Markdown binding, line witness and verifier identity are not actually validated/sealed; arbitrary boolean callbacks can make foreign/non-canonical inputs PASS.
+
+Required remediation:
+- implement the exact v0.5 paths, exact six environment keys/values, complete typed provenance/freshness/query/absence closure and strict fail-close schema;
+- enforce intrinsic one-shot admission/retirement before the only opaque call and reject every second invocation after every terminal result;
+- freeze/validate full capability+callable identity and implement/freeze canonical byte/binding/witness/verifier invariants rather than trusting unconstrained callbacks; extend direct CPU/static tests accordingly.
+
+No CPU/static closure is granted for this pair. Still NOT authorized: v0.5 request-pair construction/C, real consumer invocation, materialization, source-evidence, real Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
