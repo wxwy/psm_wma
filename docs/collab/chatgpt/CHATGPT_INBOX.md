@@ -59,3 +59,51 @@ Required remediation — close the whole direct-C-entry class in one pass:
 No real pre-C/C, request-pair write, materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 live-plan continuity CPU/static V25 token remediation still REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `14d059d940b1b9a6d1af59105e2a38c90c97c78a`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25`
+
+Verdict:
+`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:518)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_14d059d_93a89ba.md`
+
+Canonical review commit:
+`00d79f3ae2f4b8793a72acc044f5fcb0f40b3e4d`
+
+Current blockers: `1 HIGH`; Design/Authority: `0`; Production/implementation: `1 HIGH`; Evidence/Scope: `0`; child/runtime: `0`.
+
+Positive closure:
+- the prior approval-state remediation remains correct: session starts `PENDING`, `approve(external_identity)` creates the separate `APPROVED` state, and `resume_once()` requires the exact live lease plus bound approval identity;
+- duplicate live-owner rejection, close/invalidation retirement, read-only audit witness and public `consume_once_v05(plan)` live-owner blocking remain intact;
+- the prior plan-only internal bypass is now rejected when `_consume_once_v05(plan)` is called without a continuation token;
+- formal root tree binds `cosmos-framework` mode `160000`, type `commit`, exactly to the declared independently reachable child;
+- implementation remains root-only pure-memory CPU/static with no real pre-C/C or downstream execution.
+
+HIGH 1 — the continuation token used to authorize the module-level C primitive is directly readable from the public lease:
+- `ContinuationLeaseV1` stores its bearer object as ordinary attribute `_token`;
+- `LivePlanSessionV1.lease` returns that exact lease object;
+- `_LIVE_TOKENS[id(plan)]` is set to `self._lease._token`;
+- `_consume_once_v05(plan, _lease_token)` treats equality with that raw token as sufficient authority;
+- therefore a caller can execute `pre_c._consume_once_v05(plan, session.lease._token)` while the session is still `PENDING`, bypassing both `approve(...)` and `resume_once(...)`.
+
+The new unittest only proves `_consume_once_v05(plan)` without the token is blocked; it does not exercise the directly obtainable correct token.
+
+Required remediation:
+1. no module-level C primitive may accept a continuation credential extractable from the public session/lease object graph;
+2. the only route for an owned live plan into C must remain verified same-session resume after `APPROVED`;
+3. prefer a non-extractable one-shot authorization internal to `resume_once`/`consume_once_v05`, or an equivalent closure/capability design rather than a caller-readable bearer token;
+4. add a direct witness that a caller with the module object, plan, public session and public lease still cannot enter freshness/consumer before approved resume; apply count must remain `0`;
+5. then prove approved same-plan resume succeeds exactly once and terminal semantics remain intact;
+6. preserve approval state, unique ownership, invalidation, no reconstruction, C01-C15, nine-entry freshness, exactly-once/readback/no-retry and pure-memory scope.
+
+No real pre-C/C, request-pair write, materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
