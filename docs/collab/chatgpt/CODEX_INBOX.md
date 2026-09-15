@@ -249,3 +249,9 @@
 - Formal root: `14d059d940b1b9a6d1af59105e2a38c90c97c78a`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
 - Scope: root-only rebased V25 internal-entry remediation; adds live lease-token verification to the C primitive and direct bypass witness. `15/15` tests, py_compile, diff-check PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-15 — Review request: V25 module-entry removal closure
+
+- Formal root: `1e1e2909476dc6b154a37e5ec8592355031ab74a`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only removal of module-level internal C callable; session resume now uses the sole public route after releasing live ownership. `15/15` tests, py_compile, diff-check PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
