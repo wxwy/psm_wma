@@ -289,6 +289,14 @@ def rebuild_launcher(base_source: bytes, adapter_source: bytes, inputs: Launcher
     parser = json.dumps(items, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     source = _replace_one(source, parser_literal, parser.decode("utf-8"), "parser literal")
     source = source.replace(old_root, inputs.formal_root)
+    source = source.replace(
+        'ROOT+"/artifacts/g0/r09/authority_root_materialization_evidence_v1.json"',
+        f'ROOT+"/artifacts/g0/r09/authority_root_materialization_evidence_{inputs.clean_suffix}.json"',
+    )
+    source = source.replace(
+        'ROOT+"/artifacts/g0/r09/authority_root_materialization_evidence_v1.json.pending"',
+        f'ROOT+"/artifacts/g0/r09/authority_root_materialization_evidence_{inputs.clean_suffix}.json.pending"',
+    )
     clean_pattern = r'CLEAN = ROOT \+ "/\.authority-root-materialization-[0-9a-f]+"'
     if len(re.findall(clean_pattern, source)) != 1:
         raise ValueError("launcher clean declaration")
