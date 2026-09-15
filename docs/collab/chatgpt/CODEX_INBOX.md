@@ -261,3 +261,12 @@
 - Formal root: `23087f8274567a99ee9751a63ba105f48c2f1845`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
 - Scope: root-only session sealing remediation: immutable live bindings plus copy/serialize/mutation negative witnesses; `16/16` CPU tests, py_compile, diff-check PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-15 — Review request: V25 sealing and triple-binding remediation closure
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25-REMEDIATION`.
+- Formal root: `0a36cdd85a97289ec6a2ff6ce0e62d8fe7419090`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only `tools/psm_wma/stage1_v17_pre_c_rehearsal.py`, its stdlib unittest, `SESSION.md`, and `TODO.md`; no child/runtime/config change. This is the complete response to V25 ChatGPT `REQUEST_CHANGES`: removes caller-writable/deletable `_locked` and dead `_LIVE_TOKENS`; creates a non-copyable, ordinary-set/delete sealed creation-time session/plan/lease binding with token-backed SHA-256 digest; exposes triple identities plus digest in the read-only audit record; and verifies the binding before `resume_once()` releases the original plan to the sole C primitive.
+- Evidence: all capability/guard/lease/continuation/retirement authority fields are ordinary-set/delete fail-close; tests cover unlock/rebind/delete, plan/lease/session binding drift, deepcopy/serialization, audit digest, and zero apply before rejected resume. `python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal` = `18/18 PASS`; `py_compile` and `git diff --check` PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C, request pair, materialization, source-evidence, real host/consumer/guard/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.

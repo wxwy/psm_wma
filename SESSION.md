@@ -7132,3 +7132,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 依据V25完整三方整改令牌，仅修改`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`与其stdlib unittest：移除可变`_locked`开关及未验证的`_LIVE_TOKENS`镜像；创建时生成不可复制/不可普通set/delete的`_ContinuationBindingV1`，冻结session/plan/lease identity与token-backed SHA-256 digest；`audit_record()`公开三元identity+digest，`resume_once()`在释放owner前强制匹配binding。
 - 同时使capability/freshness guard/freshness lease/continuation lease/retirement均无可解锁位、普通set/delete fail-close；补充unlock/字段替换/删除/deepcopy/serialize、三元digest drift及零apply因果负例。验证=`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`18/18 PASS`；`python -m py_compile`与`git diff --check` PASS。
 - 未执行真实pre-C/C、request pair、I/O、child、GPU或训练；未触碰`cosmos-framework`与既有训练遗留。下一步=复读formal diff，更新TODO/SESSION、仅提交此整改并推送后申请新pair三方审核。
+
+### V25 sealing/binding remediation 审核名册（2026-09-15 18:14 CST，REVIEW）
+
+- Formal pair=root=`0a36cdd85a97289ec6a2ff6ce0e62d8fe7419090`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户明确以DS替代Kimi）。ChatGPT申请已append到canonical live Inbox，待仅将ledger与该申请推送。
+- 请求的唯一verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC`；同pair三方final前保持REVIEW，禁止真实pre-C/C、request pair、materialization、source-evidence、child、GPU和训练。
