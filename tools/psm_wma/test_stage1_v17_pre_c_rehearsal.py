@@ -8,7 +8,6 @@ import unittest
 from dataclasses import replace
 
 from tools.psm_wma import stage1_v17_request_projection as projection
-from tools.psm_wma import stage1_v17_pre_c_rehearsal as pre_c
 from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
     AUTHORITY_ARGV, AuthorityAbsenceV1, AbsenceObservationV1, ClosureV1, ContractV05,
     DESIGNATED_ABSENCES, DescriptorV1, ENV, FROZEN_TARGETS, FrozenTargetV1,
@@ -125,7 +124,6 @@ class PreCRehearsalTest(unittest.TestCase):
     def test_live_session_only_resumes_same_plan_once(self):
         value, calls = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
         with self.assertRaisesRegex(PreCRehearsalError, "continuation_pending"): consume_once_v05(plan)
-        with self.assertRaisesRegex(PreCRehearsalError, "continuation_pending"): pre_c._consume_once_v05(plan)
         session.close()
         value, calls = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
         approval = object()
