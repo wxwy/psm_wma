@@ -6876,3 +6876,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - Formal pair/root-child与冻结名册不变。`before_head=901d29b6d49890068bb835ddfdfc78ba4c34b233`；fetch成功；advertised/tracking均=`901d29b6d49890068bb835ddfdfc78ba4c34b233`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
 - ChatGPT exact检索仍无匹配 formal review；MM与DS独立capture的同pair final及DS逐值pin意见均未变化。四项独立证据成功且未截断；ChatGPT final仍缺失，无整改令牌，禁止实现及下游执行。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #3 审核观察凭证 #5（2026-09-15 15:04 CST，REVIEW）
+
+- Formal pair=root=`1bf4dc5315ac37a360e850dc5d0baf799287b58c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=02304c2f5e785559770dbc6a7be544f8bcf0f669`；fetch成功；advertised/tracking均=`aefa0dfeb1f9115e83310ed2f251a215fc663411`；新增提交=`05dee27c docs: add ChatGPT pre-c authority-binding review`、`aefa0dfe docs: publish ChatGPT pre-c authority-binding verdict`；祖先判定=0；`merge --ff-only`成功至`aefa0dfe`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_cpu_static_1bf4dc5_93a89ba.md`，同pair final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:116)`：P0 raw必须与冻结blob OID一致，P1必须逐项绑定冻结identity，ReplayBinding的SHA及8+8 rows必须逐值绑定。MM=`mm:0.0` capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture同pair final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:138)`，要求同为P1 literal pin、`parser_argv_items`及ReplayBinding逐值绑定。
+- 五项独立证据均成功且未截断；三方同pair final齐全，形成含ChatGPT/DS `REQUEST_CHANGES`的整改令牌。仅允许合并这些预C纯内存root-only静态整改、CPU/static测试及新SHA重新审核；禁止v0.5 request/C、materialization、真实Git/network/source/data/cache I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #4 authority identity 整改验证（2026-09-15 15:04 CST，IN_PROGRESS）
+
+- 依据观察凭证#5的同pair整改令牌，仅修改根仓`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`及其stdlib unittest：P0三对象增加冻结raw length/SHA且`SourceObjectV1`计算Git blob OID逐值对齐；P1八个injected object增加固定name/length/SHA；`ReplayBindingV1`逐字锁定base SHA、owner、8 parser rows、8 source rows，并增加由已锁定parser raw JSON解析且逐值比较的`parser_argv_items`。历史v0.3/v0.4仅允许作为已精确锁定的P0源码数据，不能作为外部request输入。
+- 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`9/9 PASS`；`python -m py_compile tools/psm_wma/stage1_v17_pre_c_rehearsal.py tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py` PASS；`git diff --check` PASS。新增foreign-but-self-consistent P0三项、P1八项与ReplayBinding SHA/items/rows矩阵，均断言consumer调用前`closure_inherited`失败。未运行v0.5 request/C、未进行真实Git/network/source/data/cache I/O、未改child、未使用GPU/训练。
+- 下一步=仅暂存`SESSION.md`、`TODO.md`及上述两份受控实现/测试文件，提交并以新formal SHA重新申请ChatGPT/MM/DS审核；未提交。

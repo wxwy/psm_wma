@@ -4,7 +4,9 @@ import json
 import pickle
 import unittest
 from dataclasses import replace
+from pathlib import Path
 
+from tools.psm_wma import stage1_v17_request_projection as projection
 from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
     AUTHORITY_ARGV, AuthorityAbsenceV1, AbsenceObservationV1, ClosureV1,
     DESIGNATED_ABSENCES, DescriptorV1, ENV, FROZEN_TARGETS, FrozenTargetV1,
@@ -12,6 +14,8 @@ from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
     QueryFactV1, ReadbackV1, RehearsalInputV1, consume_once_v05, rehearse_v05,
     RawFactV1, ReplayBindingV1, SourceObjectV1,
 )
+from tools.psm_wma.test_stage1_v17_launcher_replay import CANONICAL_BASE_GZIP_B64
+from tools.psm_wma.test_stage1_v17_request_projection import ADAPTER_RAW, OUTER_RAW
 
 
 class PreCRehearsalTest(unittest.TestCase):
@@ -44,13 +48,38 @@ class PreCRehearsalTest(unittest.TestCase):
                 len(raw_observation), hashlib.sha256(raw_observation).hexdigest())
         def raw_fact(name, raw):
             return RawFactV1(name, raw, len(raw), hashlib.sha256(raw).hexdigest())
-        p0 = tuple(SourceObjectV1(name, root, path, blob, raw_fact(name, name.encode()))
-                   for name, root, path, blob in P0_OBJECTS)
-        p1 = tuple(raw_fact(name, name.encode()) for name in P1_OBJECT_NAMES)
+        import base64
+        import gzip
+        base_source = gzip.decompress(base64.b64decode(CANONICAL_BASE_GZIP_B64))
+        replay_helper = Path("tools/psm_wma/stage1_v17_launcher_replay.py").read_bytes()
+        p0_raw = (base_source, replay_helper, ADAPTER_RAW)
+        p0 = tuple(SourceObjectV1(name, root, path, blob, raw_fact(name, source))
+                   for (name, root, path, blob), source in zip(P0_OBJECTS, p0_raw, strict=True))
+        projected = projection.project_request_closure(OUTER_RAW, ADAPTER_RAW)
+        p1 = tuple(raw_fact(name, getattr(projected, name).raw) for name in P1_OBJECT_NAMES)
         binding = ReplayBindingV1(P0_OBJECTS[0][1], P0_OBJECTS[0][2], P0_OBJECTS[0][3],
-            "a" * 64, 18966, "--bootstrap-owner-root-fd", 8,
-            tuple((f"--key-{index}", f"old-{index}", f"new-{index}") for index in range(8)),
-            tuple((f"old-{index}", f"new-{index}") for index in range(8)))
+            hashlib.sha256(base_source).hexdigest(), 18966, "--bootstrap-owner-root-fd", 8,
+            tuple(projected.parser_argv_items),
+            (
+                ("--formal-root", "9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5", "08d5828cdb4c12afa3b798ff01826c91ceb8755a"),
+                ("--cwd", "/disk/rl/psm_wma/.authority-root-materialization-9dd2fb8", "/proc/self/fd/8"),
+                ("--index", "/disk/rl/psm_wma/.authority-root-materialization-9dd2fb8/.authority-root.index", "/proc/self/fd/8/.authority-root.index"),
+                ("--bootstrap-project-root", "/disk/rl/psm_wma/.authority-root-materialization-9dd2fb8", "/proc/self/fd/8"),
+                ("--adapter-blob-oid", "da782754b8e8efa0f3cae973aa68602dcda1c237", "4a51bddd15ec9a88883e3071cc550de85721599b"),
+                ("--adapter-raw-sha256", "091ea62d0a8b48429c67100c1395e62a300dc47a8d8f65c7046ba00f8205b5e9", "87e22fac98e61ba9fbf5e0c1adaf3f620365f35a04a266576c5bce4b83e9e816"),
+                ("--collection-module-blob-oid", "eefde4e5b5a0965bbdcaa5390b9286a4c77f2665", "4e9f51a52e822e7e57b67aa6ff5eaab8613566c1"),
+                ("--collection-module-raw-sha256", "1b3353b0bd1342f1685062f962a7cbc1ba0dbf699bdc72c099ca470cb09cc340", "89eb3ee194f16665aea76ed4dcbaba803fc944d1e0b889d25be69d0831e68c67"),
+            ),
+            (
+                ("9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5", "08d5828cdb4c12afa3b798ff01826c91ceb8755a"),
+                (".authority-root-materialization-9dd2fb8", ".authority-root-materialization-08d5828"),
+                ("da782754b8e8efa0f3cae973aa68602dcda1c237", "4a51bddd15ec9a88883e3071cc550de85721599b"),
+                ("62a7bbf5fcb609e52931639001e6db01df81f0de2a33afd41c0080eb8e903f68", "bec6a57aab61fd888ef0eedce37adce227a38a299a9faded53b252c8b5901702"),
+                ("7538", "9406"),
+                ("7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8", "ccd8ee2772d666707c919e6a20376c997771b9ff068fe0432fdaa96c686ab097"),
+                ("2427", "2336"),
+                ("72777bd7305c760c48c069eafd068f1a538383a6fdb8d40258acf3d8fc3b7ae2", "1a9543ec3e7ef4f37b4948dde2a6a9532b13a8415291cceafd90b9692c028333"),
+            ))
         targets = tuple(FrozenTargetV1(name, path) for name, path in FROZEN_TARGETS)
         closure = ClosureV1(raw_fact("git_directory", b"git"), raw_fact("git_config", b"config"),
             raw_fact("local_v2", b"V2"),
@@ -147,9 +176,9 @@ class PreCRehearsalTest(unittest.TestCase):
             with self.assertRaisesRegex(PreCRehearsalError, "closure_inherited"):
                 rehearse_v05(replace(value, closure=foreign))
         for field in ("formal_parent", "base_path", "base_blob_oid", "base_raw_sha256", "base_bytes",
-                      "owner_fd_flag", "owner_fd_value", "parser_rows", "source_rows"):
+                      "owner_fd_flag", "owner_fd_value", "parser_argv_items", "parser_rows", "source_rows"):
             mutation = replace(value.closure.replay_binding, **{
-                field: (("x", "y", "z"),) if field == "parser_rows" else (("x", "y"),)
+                field: ("foreign",) if field == "parser_argv_items" else (("x", "y", "z"),) if field == "parser_rows" else (("x", "y"),)
                 if field == "source_rows" else 1 if field in ("base_bytes", "owner_fd_value") else "foreign"})
             foreign = replace(value.closure, replay_binding=mutation)
             with self.assertRaisesRegex(PreCRehearsalError, "closure_inherited"):
@@ -166,6 +195,28 @@ class PreCRehearsalTest(unittest.TestCase):
             foreign = replace(value.closure, **{field: value_to_mutate})
             with self.assertRaisesRegex(PreCRehearsalError, "closure_inherited"):
                 rehearse_v05(replace(value, closure=foreign))
+
+    def test_foreign_self_consistent_sources_and_literals_fail_before_consumer(self):
+        value, calls = self.fixture()
+        for index, item in enumerate(value.closure.p0_objects):
+            foreign_raw = RawFactV1(item.name, b"foreign", 7, hashlib.sha256(b"foreign").hexdigest())
+            p0 = list(value.closure.p0_objects)
+            p0[index] = replace(item, raw=foreign_raw)
+            with self.assertRaisesRegex(PreCRehearsalError, "closure_inherited"):
+                rehearse_v05(replace(value, closure=replace(value.closure, p0_objects=tuple(p0))))
+        for index, item in enumerate(value.closure.p1_objects):
+            foreign = RawFactV1(item.name, b"foreign", 7, hashlib.sha256(b"foreign").hexdigest())
+            p1 = list(value.closure.p1_objects); p1[index] = foreign
+            with self.assertRaisesRegex(PreCRehearsalError, "closure_inherited"):
+                rehearse_v05(replace(value, closure=replace(value.closure, p1_objects=tuple(p1))))
+        for field, foreign_value in (("base_raw_sha256", "0" * 64),
+                                     ("parser_argv_items", ("foreign",)),
+                                     ("parser_rows", value.closure.replay_binding.parser_rows[::-1]),
+                                     ("source_rows", value.closure.replay_binding.source_rows[::-1])):
+            binding = replace(value.closure.replay_binding, **{field: foreign_value})
+            with self.assertRaisesRegex(PreCRehearsalError, "closure_inherited"):
+                rehearse_v05(replace(value, closure=replace(value.closure, replay_binding=binding)))
+        self.assertEqual(calls, [])
 
 
 if __name__ == "__main__": unittest.main()

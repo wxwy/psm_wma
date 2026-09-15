@@ -51,8 +51,43 @@ P0_OBJECTS = (
      "tools/psm_wma/materialize_immutable_source_authority_root.py",
      "4a51bddd15ec9a88883e3071cc550de85721599b"),
 )
+P0_IDENTITIES = (
+    ("base_source", 18966, "8b0fad39857fb72e3a3eb317f4acf6f2d6e94e196935f52f07d6170e79c678dd"),
+    ("replay_helper", 5582, "8f55dc32a77810d848c10ac55501754f741d42bd3ef3fbc386f0814b2a6d5e82"),
+    ("adapter", 91814, "87e22fac98e61ba9fbf5e0c1adaf3f620365f35a04a266576c5bce4b83e9e816"),
+)
 P1_OBJECT_NAMES = ("selection", "config", "parser_argv", "bootstrap_argv", "bootstrap",
                    "bootstrap_contract", "outer", "adapter_source")
+P1_IDENTITIES = (
+    ("selection", 516, "8fe4585f366cb69ad9181e30c25b5f4e99040c83d8ffe66426897bfa9d331edd"),
+    ("config", 508, "43b3b77b5934107c54b8bee157b46d07cb17b85ca89305ad6fb7405237e42d1d"),
+    ("parser_argv", 2336, "1a9543ec3e7ef4f37b4948dde2a6a9532b13a8415291cceafd90b9692c028333"),
+    ("bootstrap_argv", 2341, "85ac67c8a062399dfbface5f9c42867401ffab45320f802697c704061be8df9d"),
+    ("bootstrap", 9406, "ccd8ee2772d666707c919e6a20376c997771b9ff068fe0432fdaa96c686ab097"),
+    ("bootstrap_contract", 182, "bec6a57aab61fd888ef0eedce37adce227a38a299a9faded53b252c8b5901702"),
+    ("outer", 18875, "658e9b9e6f34964310d6e2a5519c3b70243971b5ef535d753192e3d59d1960b8"),
+    ("adapter_source", 91814, "87e22fac98e61ba9fbf5e0c1adaf3f620365f35a04a266576c5bce4b83e9e816"),
+)
+PARSER_ROWS = (
+    ("--formal-root", "9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5", "08d5828cdb4c12afa3b798ff01826c91ceb8755a"),
+    ("--cwd", "/disk/rl/psm_wma/.authority-root-materialization-9dd2fb8", "/proc/self/fd/8"),
+    ("--index", "/disk/rl/psm_wma/.authority-root-materialization-9dd2fb8/.authority-root.index", "/proc/self/fd/8/.authority-root.index"),
+    ("--bootstrap-project-root", "/disk/rl/psm_wma/.authority-root-materialization-9dd2fb8", "/proc/self/fd/8"),
+    ("--adapter-blob-oid", "da782754b8e8efa0f3cae973aa68602dcda1c237", "4a51bddd15ec9a88883e3071cc550de85721599b"),
+    ("--adapter-raw-sha256", "091ea62d0a8b48429c67100c1395e62a300dc47a8d8f65c7046ba00f8205b5e9", "87e22fac98e61ba9fbf5e0c1adaf3f620365f35a04a266576c5bce4b83e9e816"),
+    ("--collection-module-blob-oid", "eefde4e5b5a0965bbdcaa5390b9286a4c77f2665", "4e9f51a52e822e7e57b67aa6ff5eaab8613566c1"),
+    ("--collection-module-raw-sha256", "1b3353b0bd1342f1685062f962a7cbc1ba0dbf699bdc72c099ca470cb09cc340", "89eb3ee194f16665aea76ed4dcbaba803fc944d1e0b889d25be69d0831e68c67"),
+)
+SOURCE_ROWS = (
+    ("9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5", "08d5828cdb4c12afa3b798ff01826c91ceb8755a"),
+    (".authority-root-materialization-9dd2fb8", ".authority-root-materialization-08d5828"),
+    ("da782754b8e8efa0f3cae973aa68602dcda1c237", "4a51bddd15ec9a88883e3071cc550de85721599b"),
+    ("62a7bbf5fcb609e52931639001e6db01df81f0de2a33afd41c0080eb8e903f68", "bec6a57aab61fd888ef0eedce37adce227a38a299a9faded53b252c8b5901702"),
+    ("7538", "9406"),
+    ("7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8", "ccd8ee2772d666707c919e6a20376c997771b9ff068fe0432fdaa96c686ab097"),
+    ("2427", "2336"),
+    ("72777bd7305c760c48c069eafd068f1a538383a6fdb8d40258acf3d8fc3b7ae2", "1a9543ec3e7ef4f37b4948dde2a6a9532b13a8415291cceafd90b9692c028333"),
+)
 FROZEN_TARGETS = (
     ("cwd", "/proc/self/fd/8"),
     ("index", "/proc/self/fd/8/.authority-root.index"),
@@ -114,7 +149,8 @@ class SourceObjectV1:
     raw: RawFactV1
 
     def identity_ok(self) -> bool:
-        return self.raw.name == self.name and self.raw.identity_ok()
+        return (self.raw.name == self.name and self.raw.identity_ok() and
+                _blob(self.raw.raw) == self.blob_oid)
 
 
 @dataclass(frozen=True)
@@ -132,16 +168,17 @@ class ReplayBindingV1:
     base_bytes: int
     owner_fd_flag: str
     owner_fd_value: int
+    parser_argv_items: tuple[str, ...]
     parser_rows: tuple[tuple[str, str, str], ...]
     source_rows: tuple[tuple[str, str], ...]
 
     def identity_ok(self) -> bool:
         return (self.formal_parent == P0_OBJECTS[0][1] and self.base_path == P0_OBJECTS[0][2] and
-                self.base_blob_oid == P0_OBJECTS[0][3] and len(self.base_raw_sha256) == 64 and
+                self.base_blob_oid == P0_OBJECTS[0][3] and self.base_raw_sha256 == P0_IDENTITIES[0][2] and
                 self.base_bytes == 18966 and self.owner_fd_flag == "--bootstrap-owner-root-fd" and
-                self.owner_fd_value == 8 and len(self.parser_rows) == 8 and len(self.source_rows) == 8 and
-                all(len(row) == 3 and all(value for value in row) for row in self.parser_rows) and
-                all(len(row) == 2 and all(value for value in row) for row in self.source_rows))
+                self.owner_fd_value == 8 and bool(self.parser_argv_items) and
+                all(isinstance(item, str) for item in self.parser_argv_items) and
+                self.parser_rows == PARSER_ROWS and self.source_rows == SOURCE_ROWS)
 
 
 @dataclass(frozen=True)
@@ -305,15 +342,20 @@ def _expected_patch(json_raw: bytes, markdown_raw: bytes) -> bytes:
 
 
 def _validate_closure(closure: ClosureV1) -> None:
-    _reject(closure)
+    # 冻结源码可保留历史 v0.3/v0.4 字面量；下方精确 identity 将其限定为数据。
     if not all((closure.git_identity.identity_ok(), closure.config_raw.identity_ok(),
                 closure.local_v2_raw.identity_ok(), closure.local_authority_absence.raw,
                 closure.remote_authority_absence.raw)):
         _fail("closure_empty")
+    try:
+        parser_argv_items = tuple(json.loads(closure.p1_objects[2].raw.decode("utf-8", "strict")))
+    except (IndexError, UnicodeDecodeError, json.JSONDecodeError, TypeError):
+        _fail("closure_inherited")
     if (tuple((item.name, item.root, item.path, item.blob_oid) for item in closure.p0_objects) != P0_OBJECTS or
-            tuple(item.name for item in closure.p1_objects) != P1_OBJECT_NAMES or
+            tuple((item.raw.name, item.raw.byte_length, item.raw.sha256) for item in closure.p0_objects) != P0_IDENTITIES or
+            tuple((item.name, item.byte_length, item.sha256) for item in closure.p1_objects) != P1_IDENTITIES or
             not all(item.identity_ok() for item in closure.p0_objects + closure.p1_objects) or
-            not closure.replay_binding.identity_ok() or
+            not closure.replay_binding.identity_ok() or closure.replay_binding.parser_argv_items != parser_argv_items or
             tuple((item.name, item.path) for item in closure.targets) != FROZEN_TARGETS):
         _fail("closure_inherited")
     if (tuple(item.path for item in closure.output_absences) != PATHS or
