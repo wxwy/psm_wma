@@ -294,6 +294,10 @@ def rebuild_launcher(base_source: bytes, adapter_source: bytes, inputs: Launcher
         source,
         count=1,
     )
+    owner_collision = "require_closed(GIT_TARGET_FD,PARENT_OWNER_FD,BOOTSTRAP_FD,CLEAN_OWNER_FD)"
+    if source.count(owner_collision) > 1:
+        raise ValueError("launcher owner collision guard")
+    source = source.replace(owner_collision, "require_closed(GIT_TARGET_FD,PARENT_OWNER_FD,CLEAN_OWNER_FD)", 1)
     bootstrap = bootstrap_payload(adapter_source)
     bootstrap_argv = json.dumps(["--", *items], separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     contract = json.dumps({"bootstrap_argv_sha256": sha256(bootstrap_argv), "bootstrap_raw_sha256": sha256(bootstrap)},
