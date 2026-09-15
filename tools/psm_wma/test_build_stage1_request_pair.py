@@ -27,6 +27,7 @@ def _launcher() -> bytes:
     digest = hashlib.sha256(parser.encode()).hexdigest()
     return ("FORMAL = \"" + "a" * 40 + "\"\n"
             "CLEAN = ROOT + \"/.authority-root-materialization-aaaaaaa\"\n"
+            "ADAPTER = (\"tools/adapter.py\",\n           \"" + "c" * 40 + "\")\n"
             "RAW = (b\"x\", b\"y\", b'''" + parser + "''')\n"
             "EXPECTED = ((\".authority-root.selection.json\", 3, \"x\"), (\".authority-root.config.json\", 4, \"y\"), (\".authority-root.bootstrap-contract.json\", 5, \"" + "0" * 64 + "\"))\n"
             "def boot():\n    raw=b\"bootstrap\"\n    if len(raw)!=7538 or digest(raw)!=\"" + "5" * 64 + "\": fail(\"bootstrap identity\")\n"
@@ -56,6 +57,7 @@ class BuildStage1RequestPairTest(unittest.TestCase):
         self.assertIn(b"9" * 40, result.outer)
         self.assertIn(b"--bootstrap-owner-root-fd\",\"8\"", result.parser_argv)
         self.assertEqual(result.parser_items.count("--bootstrap-owner-root-fd"), 1)
+        self.assertIn(b'ADAPTER = ("tools/new_adapter.py",\n           "' + b"7" * 40 + b'")', result.outer)
         self.assertIn(self.inputs.adapter.raw_sha256.encode(), result.parser_argv)
         self.assertIn(str(len(result.parser_argv)).encode(), result.outer)
         self.assertIn(builder.sha256(result.parser_argv).encode(), result.outer)

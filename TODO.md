@@ -3,7 +3,7 @@
 状态：`TODO`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`DONE`。
 
 | ID | 状态 | 负责人 | 前置条件 | 验收条件 |
-| G0-R09-B-TTT-V035-STAGE1-PRAGMATIC-REQUEST-PAIR | REVIEW | Codex | Owner Override；冻结 root=`db6c4f93473e7ef58a294cff3fb8c692b100badd` / child=`93a89ba61306d840a008813f62f26a34d54850f4` | emitter/unit test、non-consuming preflight、v0.5 pair 及 byte/SHA/blob/patch verification 已 PASS；待独立 exact-request review，才可 materialization |
+| G0-R09-B-TTT-V035-STAGE1-PRAGMATIC-REQUEST-PAIR | IN_PROGRESS | Codex | Owner Override；冻结 root=`db6c4f93473e7ef58a294cff3fb8c692b100badd` / child=`93a89ba61306d840a008813f62f26a34d54850f4` | MM 已 APPROVE；按 Owner 指令先完成最小 materialization 条件，DS 的 docs-only refreeze 要求不作为执行阻塞；GPT 审核延后至训练条件具备 |
 |---|---|---|---|---|
 | DOC-GOV-FETCH-FIRST | DONE | Codex | 用户要求审核结果获取必须先拉取最新 V2 | AGENTS 顶部已明确先同步再检测、禁止定时器跳过初检；治理技能同步并纠正 verdict 来源；diff-check PASS |
 | COLLAB-BOOTSTRAP | DONE | Codex | 无 | 根目录协作协议、会话状态、任务队列和长期决策文件可供所有 Agent 使用 |

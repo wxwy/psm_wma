@@ -285,6 +285,15 @@ def rebuild_launcher(base_source: bytes, adapter_source: bytes, inputs: Launcher
     source = _replace_one(source, parser_literal, parser.decode("utf-8"), "parser literal")
     source = source.replace(old_root, inputs.formal_root)
     source = source.replace(old_clean, f"/disk/rl/psm_wma/.authority-root-materialization-{inputs.clean_suffix}")
+    adapter_pattern = r'ADAPTER = \("[^\"]+",\n\s+"[0-9a-f]{40}"\)'
+    if len(re.findall(adapter_pattern, source)) != 1:
+        raise ValueError("launcher adapter declaration")
+    source = re.sub(
+        adapter_pattern,
+        f'ADAPTER = ("{inputs.adapter.path}",\n           "{inputs.adapter.blob_oid}")',
+        source,
+        count=1,
+    )
     bootstrap = bootstrap_payload(adapter_source)
     bootstrap_argv = json.dumps(["--", *items], separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     contract = json.dumps({"bootstrap_argv_sha256": sha256(bootstrap_argv), "bootstrap_raw_sha256": sha256(bootstrap)},
