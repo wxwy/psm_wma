@@ -331,3 +331,10 @@
 - Review focus: independently verify the request's exact root/child, four frozen tool blobs, mechanically retargeted launcher/argv/bootstrap identities, exact FD input bytes, six-key environment, same-round `.git`/config/remote V2/fixed-ref/absence preflight facts, and JSON/Markdown binding. Confirm it is reproducible and that its requested next authority is limited to exactly one Stage-1 materialization attempt.
 - Requested verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: source collection/receipt publication beyond the materialization receipt, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1. V25/V26/V27 host/session/IPC continuity is superseded by the Owner Override and out of scope.
+## 2026-09-16 — GPT runtime-failure diagnosis request
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-RUNTIME-FAILURE-DIAGNOSIS`。
+- Formal root: `5e59eb06dc323cdcf71fb4fbc3092071648dae30`；child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`。
+- 现象：MM/DS 已批准该 pair 的一次 materialization；执行时外层打印冻结 `bootstrap exec argv`，随后 bootstrap 以 `bootstrap-invocation`、退出码 1 终止；未生成 authority evidence/ref。CPU 静态测试 `24/24 PASS`。
+- 诊断边界：不得执行真实 materialization、source-evidence、GPU、torchrun、训练/评测/推理。请 GPT 审核失败证据与最小修复方案，重点判断 bootstrap ABI/FD 继承/解释器版本守卫的真实根因，并给出 `file:line` 修改建议及修复后验收条件。
+- 请求 verdict：`APPROVE_TO_DIAGNOSE_AND_REMEDIATE_STAGE1_RUNTIME` 或 `REQUEST_CHANGES(file:line)`。
