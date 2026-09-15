@@ -255,3 +255,9 @@
 - Formal root: `1e1e2909476dc6b154a37e5ec8592355031ab74a`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
 - Scope: root-only removal of module-level internal C callable; session resume now uses the sole public route after releasing live ownership. `15/15` tests, py_compile, diff-check PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-15 — Review request: rebased V25 session sealing closure
+
+- Formal root: `23087f8274567a99ee9751a63ba105f48c2f1845`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only session sealing remediation: immutable live bindings plus copy/serialize/mutation negative witnesses; `16/16` CPU tests, py_compile, diff-check PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
