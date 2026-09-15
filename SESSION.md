@@ -6898,3 +6898,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT申请已在canonical live Inbox并由ledger=`8abcd79dc6c60936b7c19f8f32512b718f4ec75f`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成同pair完整`send-keys -l → 间隔>=1秒 → 独立Enter → capture`：MM capture显示申请离开输入框并进入`Hyperspacing/thinking`，DS capture显示申请离开输入框并进入`Thinking`。
 - formal pair=root=`6c4e395f38591c4b27a5627c184fc739af968669`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；三方同pair final前保持REVIEW，按三分钟原生完整远端锁定、exact review scan和独立pane capture；禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #4 审核观察凭证 #1（2026-09-15 15:07 CST，REVIEW）
+
+- Formal pair=root=`6c4e395f38591c4b27a5627c184fc739af968669`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=f90edaeda6793c0a8e278092179521aebbf4c4d4`；fetch成功；advertised/tracking均=`f90edaeda6793c0a8e278092179521aebbf4c4d4`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索`rg -l -F '6c4e395f38591c4b27a5627c184fc739af968669' docs/collab/chatgpt/reviews/`无命中。MM=`mm:0.0` capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。
+- 五项独立证据均成功且未截断；ChatGPT final缺失，未形成关闭令牌，禁止实现及下游执行；继续三分钟审核监控。
