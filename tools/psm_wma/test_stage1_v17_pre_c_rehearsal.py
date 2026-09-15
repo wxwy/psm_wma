@@ -26,14 +26,18 @@ REPLAY_HELPER_GZIP_B64 = (
 
 class PreCRehearsalTest(unittest.TestCase):
     def fixture(self, outcome="APPLIED", verify=True, freshness="FRESH"):
-        calls = []
+        class CallLog(list):
+            pass
+        calls = CallLog()
         def apply(descriptor, patch_text):
             calls.append((descriptor, patch_text)); return outcome
         cap = OpaquePatchCapabilityV1("host", "host.patch", "host/patch.py", "a" * 64,
             f"{apply.__module__}.{apply.__qualname__}", "psm.stage1.request-patch-consumer/v1",
             "opaque-patch-text-handoff/v1", apply)
         def guard_check(lease, descriptor, identities):
-            return freshness
+            if freshness != "FRESH":
+                return freshness
+            return "FRESH" if calls.live_domain == identities == lease._domain else "STALE"
         guard = FreshnessGuardV1("host", "host.guard", "host/guard.py", "b" * 64,
             f"{guard_check.__module__}.{guard_check.__qualname__}",
             "psm.stage1.request-freshness-guard/v1", "opaque-sealed-freshness-guard/v1", guard_check)
@@ -107,6 +111,7 @@ class PreCRehearsalTest(unittest.TestCase):
                   for index, item in enumerate(closure.output_absences)) +
             tuple((f"designated_absence:{index}", item.path, item.predicate, item.byte_length, item.sha256)
                   for index, item in enumerate(closure.designated_absences)))
+        calls.live_domain = lease._domain
         return RehearsalInputV1(cap, DescriptorV1(), raw, md, patch, ENV, closure, guard, lease,
             verifier, f"{verifier.__module__}.{verifier.__qualname__}"), calls
 
@@ -249,10 +254,17 @@ class PreCRehearsalTest(unittest.TestCase):
         for index, item in enumerate(value.closure.designated_absences):
             self.assertIn((f"designated_absence:{index}", item.path, item.predicate,
                            item.byte_length, item.sha256), plan.freshness_identities)
-        stale, _ = self.fixture(freshness="STALE"); stale_plan = rehearse_v05(stale)
-        with self.assertRaisesRegex(PreCRehearsalError, "freshness"):
-            consume_once_v05(stale_plan)
-        self.assertEqual(calls, [])
+        for name in ("output_absence:0", "output_absence:1", "designated_absence:0",
+                     "designated_absence:1", "designated_absence:2", "designated_absence:3"):
+            value, drift_calls = self.fixture(); drift_plan = rehearse_v05(value)
+            drift_calls.live_domain = tuple(
+                (entry[0], entry[1], entry[2], entry[3], "0" * 64) if entry[0] == name else entry
+                for entry in drift_plan.freshness_identities)
+            with self.assertRaisesRegex(PreCRehearsalError, "freshness"):
+                consume_once_v05(drift_plan)
+            self.assertEqual(drift_calls, [])
+            with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"):
+                consume_once_v05(drift_plan)
 
     def test_foreign_self_consistent_authority_absences_fail_before_consumer(self):
         value, calls = self.fixture()
