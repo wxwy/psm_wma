@@ -1,10 +1,11 @@
 import copy
+import base64
+import gzip
 import hashlib
 import json
 import pickle
 import unittest
 from dataclasses import replace
-from pathlib import Path
 
 from tools.psm_wma import stage1_v17_request_projection as projection
 from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
@@ -16,6 +17,11 @@ from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
 )
 from tools.psm_wma.test_stage1_v17_launcher_replay import CANONICAL_BASE_GZIP_B64
 from tools.psm_wma.test_stage1_v17_request_projection import ADAPTER_RAW, OUTER_RAW
+
+
+REPLAY_HELPER_GZIP_B64 = (
+    "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"
+)
 
 
 class PreCRehearsalTest(unittest.TestCase):
@@ -48,10 +54,8 @@ class PreCRehearsalTest(unittest.TestCase):
                 len(raw_observation), hashlib.sha256(raw_observation).hexdigest())
         def raw_fact(name, raw):
             return RawFactV1(name, raw, len(raw), hashlib.sha256(raw).hexdigest())
-        import base64
-        import gzip
         base_source = gzip.decompress(base64.b64decode(CANONICAL_BASE_GZIP_B64))
-        replay_helper = Path("tools/psm_wma/stage1_v17_launcher_replay.py").read_bytes()
+        replay_helper = gzip.decompress(base64.b64decode(REPLAY_HELPER_GZIP_B64))
         p0_raw = (base_source, replay_helper, ADAPTER_RAW)
         p0 = tuple(SourceObjectV1(name, root, path, blob, raw_fact(name, source))
                    for (name, root, path, blob), source in zip(P0_OBJECTS, p0_raw, strict=True))

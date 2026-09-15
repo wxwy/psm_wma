@@ -6904,3 +6904,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`6c4e395f38591c4b27a5627c184fc739af968669`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=f90edaeda6793c0a8e278092179521aebbf4c4d4`；fetch成功；advertised/tracking均=`f90edaeda6793c0a8e278092179521aebbf4c4d4`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
 - ChatGPT exact检索`rg -l -F '6c4e395f38591c4b27a5627c184fc739af968669' docs/collab/chatgpt/reviews/`无命中。MM=`mm:0.0` capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。
 - 五项独立证据均成功且未截断；ChatGPT final缺失，未形成关闭令牌，禁止实现及下游执行；继续三分钟审核监控。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #4 审核观察凭证 #2（2026-09-15 15:10 CST，REVIEW）
+
+- 初始`before_head=4b06cb65a0fe31cd52f72d87e99ebd443e0afebb`推送观察ledger时被远端`3810d3be`拒绝；该ledger仅本地SESSION记录，已安全rebase到远端ChatGPT review后成为`3f759ef6`并推送。随后重做完整锁定：`before_head=3f759ef6f208c8768a14d422d1c7c531dab61345`；fetch成功；advertised/tracking均=`3f759ef6f208c8768a14d422d1c7c531dab61345`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- Formal pair=root=`6c4e395f38591c4b27a5627c184fc739af968669`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_cpu_static_6c4e395_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py:54)`：fixture以`Path(...).read_bytes()`读取真实replay-helper源码，违反纯内存/no-real-source-I/O验收。MM=`mm:0.0` capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`；DS=`ds:0.0` capture同pair final相同。
+- 五项独立证据成功且未截断；三方同pair final齐全，形成含ChatGPT `REQUEST_CHANGES`的整改令牌。仅允许将replay-helper bytes替换为冻结内存fixture、保持P0/P1/replay逐值绑定并重跑CPU/static测试，随后新SHA重新审核；禁止v0.5 request/C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #5 fixture scope 整改验证（2026-09-15 15:10 CST，IN_PROGRESS）
+
+- 依据观察凭证#2的同pair整改令牌，仅修改`tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py`：删除`Path(...).read_bytes()`和`pathlib`依赖，将已验证replay-helper的5582 bytes / SHA-256=`8f55dc32a77810d848c10ac55501754f741d42bd3ef3fbc386f0814b2a6d5e82`压缩为冻结的`REPLAY_HELPER_GZIP_B64`内存字面量，测试中仅标准库base64/gzip解压；不改production helper或任何执行路径。
+- 验证：fixture解压身份=`5582/8f55dc32...d5e82`；`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`9/9 PASS`；`py_compile` PASS；`git diff --check` PASS。未运行v0.5 request/C、未进行真实Git/network/source/data/cache I/O、未改child、未使用GPU/训练。
+- 下一步=仅暂存`SESSION.md`、`TODO.md`和该测试文件，提交/推送后以新formal SHA重新申请ChatGPT/MM/DS审核；未提交。
