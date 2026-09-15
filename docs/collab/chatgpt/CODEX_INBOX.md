@@ -223,3 +223,11 @@
 - Scope: root-only docs design; proposed future change is limited to existing pure-memory pre-C module/unittest. It implements V24’s approved session/plan/lease same-instance contract, pending quiescence, resume-only identity proof and terminal invalidation; no real host capability or I/O.
 - Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C/request pair/materialization/source evidence, child/runtime/config, GPU/CUDA/torchrun/training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: V25 live-plan continuity CPU/static closure
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25`.
+- Formal root: `9a3c9c3fb2f6184eff8d651fae4f48a624afe040`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only existing pre-C module and its stdlib unittest. Implements `LivePlanSessionV1` / opaque lease, pending direct-consume rejection, same live-plan resume-only handoff and terminal identity failure. `unittest=14/14`, `py_compile`, `git diff --check` PASS; no I/O.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C/request pair/materialization/source evidence, child/runtime/config, GPU/CUDA/torchrun/training/evaluation/inference/LIBERO4IN1.
