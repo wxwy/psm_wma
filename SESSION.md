@@ -1,5 +1,230 @@
 # 当前协作状态
 
+### v1.6 recovery design 起草（2026-09-15 09:33 CST，未提交）
+
+- 目的：在#26的三方汇总令牌范围内，只形成不依赖既有v0.3 authority的 docs-only 最小整改设计。
+- 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.6.md`：冻结未来仅可写v0.4 pair、完整C closure/frozen six-key environment、canonicalization/五字段 identity与one-shot fail-close。
+- 已执行`git diff --check`，PASS；未运行项目代码、未构造request、未修改child或训练资产。下一步：复读文档、更新TODO、提交该docs-only设计并以新exact pair申请三方审核。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #26（2026-09-15 09:31 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=beab05b3a21b7648a38b589589f0c1950ea629f1`；fetch成功；advertised/tracking均=`beab05b3a21b7648a38b589589f0c1950ea629f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT formal review=`2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_v03_696773a_93a89ba.md`，final=`REQUEST_CHANGES`（3 HIGH）。MM exact回执=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT｜root=696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd｜child=93a89ba61306d840a008813f62f26a34d54850f4`。DS exact final=`REQUEST_CHANGES`（machine回执同#20）。
+- 三方final同pair齐全，形成含`REQUEST_CHANGES`的汇总令牌，仅允许合并意见；不得立即修改、提交或执行。下一步在新会话完整读取两份`REQUEST_CHANGES`原文及相关冻结设计，形成最小整改方案后再动手。
+
+### MM 审阅链路最小恢复（2026-09-15 09:30 CST，REVIEW）
+
+- 引用观察凭证#25：MM的单一parent-tree枚举子任务持续等待，审核申请催结论文本虽经`send-keys -l`、等待1秒和独立Enter写入，但capture显示为queued，未离开输入队列，送达回执不足。
+- 为恢复既有审阅而非变更范围，向`mm:0.0`发送一次`C-c`仅中止该挂起只读子任务；随后capture显示`Interrupted`，已排队的最小“停止扩展检索并给出同pair final”消息进入会话且状态为`Blanching…`。未修改仓库、未执行下游动作；MM最终verdict仍待回收。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #25（2026-09-15 09:29:25 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=beab05b3a21b7648a38b589589f0c1950ea629f1`；fetch成功；advertised/tracking均=`beab05b3a21b7648a38b589589f0c1950ea629f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact review不变，final=`REQUEST_CHANGES`。MM=`mm:0.0`独立capture：P1 submodule blob核验任务已完成，但parent-tree P1 blob检索仍`Waiting for task`且主会话`Transmogrifying…`已11分26秒，没有same-pair final。DS exact final仍为`REQUEST_CHANGES`（machine回执同#20）。
+- MM处理延长但会话仍存活，未出现终态；无推进令牌，保持`REVIEW`。仅允许发送最小催结论消息，禁止整改、编码、提交、materialization、真实I/O、child、GPU/CUDA/torchrun、训练/评测/推理。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #24（2026-09-15 09:28:01 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=beab05b3a21b7648a38b589589f0c1950ea629f1`；fetch成功；advertised/tracking均=`beab05b3a21b7648a38b589589f0c1950ea629f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact review不变，final=`REQUEST_CHANGES`。MM=`mm:0.0`独立capture显示仍在处理：其P1 blob核验子任务已exit 0，另一个parent-tree P1 blob检索任务仍`Waiting for task`，无same-pair final。DS exact final仍为`REQUEST_CHANGES`（machine回执同#20）。
+- MM未完、ChatGPT/DS均`REQUEST_CHANGES`；无推进令牌，保持`REVIEW`。禁止整改、编码、提交、materialization、真实I/O、child、GPU/CUDA/torchrun、训练/评测/推理；继续三分钟原生轮询。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #23（2026-09-15 09:26:37 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=beab05b3a21b7648a38b589589f0c1950ea629f1`；fetch成功；advertised/tracking均=`beab05b3a21b7648a38b589589f0c1950ea629f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact review不变，final=`REQUEST_CHANGES`。MM=`mm:0.0`独立capture仍处于`Transmogrifying…`，其最新只读背景核验`Verify P1 blobs in submodule with correct gitdir`已exit 0，但还没有同pair final。DS exact final仍为`REQUEST_CHANGES`（machine回执同#20）。
+- MM仍处理，且ChatGPT/DS已`REQUEST_CHANGES`；无推进令牌，保持`REVIEW`。禁止整改、编码、提交、materialization、真实I/O、child、GPU/CUDA/torchrun、训练/评测/推理；继续三分钟原生轮询。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #22（2026-09-15 09:22:09 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=beab05b3a21b7648a38b589589f0c1950ea629f1`；fetch成功；advertised/tracking均=`beab05b3a21b7648a38b589589f0c1950ea629f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact review仍为`2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_v03_696773a_93a89ba.md`，final=`REQUEST_CHANGES`。MM=`mm:0.0`独立capture显示既有申请已在处理（`Transmogrifying…`），尚无同pair final。DS exact final仍为`REQUEST_CHANGES`（machine回执同#20）。
+- MM未完成，且ChatGPT/DS均为`REQUEST_CHANGES`；无推进令牌，保持`REVIEW`。禁止整改、编码、提交、materialization、真实I/O、child、GPU/CUDA/torchrun、训练/评测/推理；继续三分钟原生轮询。
+
+### MM 既有审核申请恢复送达回执（2026-09-15 09:18 CST，REVIEW）
+
+- 引用观察凭证#21、冻结 pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。因#21的MM exact-pair final缺失，对`mm:0.0`恢复发送同一既有申请，未新增范围、未重复写Inbox。
+- 送达三联：完整文本通过`tmux send-keys -l`写入，独立等待1秒后`tmux send-keys Enter`，独立capture显示申请已离开输入框、会话出现`Honking…`处理状态。回执请求的范围、禁止项和二选一final均在文本中；该送达不构成MM最终 verdict。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #21（2026-09-15 09:17:11 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch后advertised/tracking=`beab05b3a21b7648a38b589589f0c1950ea629f1`；新增提交完整范围为`37821dfb docs: add ChatGPT review for stage1 v17 request instance v03`、`beab05b3 docs: publish ChatGPT stage1 v17 request instance v03 verdict`；祖先判定=0；ff-only成功，当前HEAD=`beab05b3a21b7648a38b589589f0c1950ea629f1`。
+- ChatGPT exact formal review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_v03_696773a_93a89ba.md`，final=`REQUEST_CHANGES(...request_instance_v0.3.json:1)`，三个HIGH为完整C snapshot/closure authority缺失、frozen six-key environment被ambient metadata替代、JSON/Markdown canonicalization identity不完整。MM对本pair final精确capture为空。DS exact final=`REQUEST_CHANGES`（同pair完整machine回执已在#20记录）。
+- 三方未齐且已有ChatGPT/DS `REQUEST_CHANGES`，无推进令牌；保持`REVIEW`。依冻结名册规则，必须等待MM同pair最终结论后才能合并意见；在此之前禁止整改、编码、提交、materialization、真实I/O、child、GPU/CUDA/torchrun、训练/评测/推理。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #20（2026-09-15 09:12:28 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised/tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT精确检索为空。MM=`mm:0.0`将capture去换行空白后，对root起始至300字符内的指定final精确检索为空，故无本pair final。DS=`ds:0.0`独立capture去换行空白后的精确回执为`FINAL root=696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd child=93a89ba61306d840a008813f62f26a34d54850f4 verdict=REQUEST_CHANGES`；其同一回执的HIGH为环境/closure、post-approval one-shot/no-retry语义与sidecar canonicalization，另有Gate/P0 LOW澄清。
+- ChatGPT与MM缺件、且DS为`REQUEST_CHANGES`；无推进令牌，保持`REVIEW`，不得整改或执行下游动作。后续仅按三分钟原生轮询回收ChatGPT/MM同pair最终结论；三方齐前不得处理DS意见。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #19（2026-09-15 09:10:22 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised/tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索为空。MM对完整root/child/final的精确capture仅见未锚定本pair的2026-09-07历史`REQUEST_CHANGES`，不计入本pair。DS精确pair/verdict检索为空；其独立raw capture显示正在输出四项问题（环境六键、post-approval语义、sidecar canonicalization、Gate/P0澄清），但没有本pair完整root/child及规定二选一 literal final，故不计为最终 verdict。
+- 无推进令牌，保持`REVIEW`。下一动作仅为要求DS以同pair自包含格式重述最终 verdict；禁止整改、编码、提交、materialization、真实I/O、child、GPU/CUDA/torchrun、训练/评测/推理。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #18（2026-09-15 09:01:25 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户指定 DS 替代 Kimi）。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised/tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索命令=`rg -n -F '696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd' docs/collab/chatgpt/reviews/ || true`，输出为空。MM=`mm:0.0`对完整root/child/verdict的2000行精确capture为空。DS=`ds:0.0` capture成功，已消费规范并尝试只读仓库检查，但其 OpenCode 显示本地目录访问的`Permission required`等待选择，尚无final verdict。
+- 无三方同pair final、无推进令牌，保持`REVIEW`。仅可修复DS审阅访问/送达链路；禁止整改、编码、提交、materialization、真实I/O、child、GPU/CUDA/torchrun、训练/评测/推理。
+
+### DS 审核者规范恢复送达回执（2026-09-15 08:59 CST，REVIEW）
+
+- 引用观察凭证#17及冻结 pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。目标pane=`ds:0.0`；消息为独立审阅规范（非新的审核申请），要求只审阅、限定同pair final verdict、禁止实现及全部下游执行。
+- 送达三联：`tmux send-keys -l`写入完整规范后独立等待1秒；独立`tmux send-keys Enter`成功；随后独立`tmux capture-pane -p -t ds:0.0 -S -100`显示规范正文已离开输入框并出现`Thinking`。DS现处于处理状态；此回执不构成最终 verdict，也不改变既有审核范围。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #17（2026-09-15 08:58:54 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户指定 DS 替代 Kimi）。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2` advertised和`origin/V2`均为`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围`before..origin/V2`为空；祖先判定返回0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -n -F '696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd' docs/collab/chatgpt/reviews/ || true`，输出为空。MM=`mm:0.0`独立capture成功，但当前可见最终文本是未锚定本pair的历史`REQUEST_CHANGES`（2026-09-07），不得作为本pair verdict。DS=`ds:0.0`独立capture成功，显示全新空白 OpenCode 会话、无既有申请或最终 verdict；此前 DS 会话记录因会话重置失效。
+- 本轮无三方同pair final、无推进令牌；保持`REVIEW`。下一动作仅为向DS恢复发送审核者规范并取得送达回执；禁止整改、request修改、materialization、真实I/O、child、GPU/CUDA/torchrun、训练/评测/推理。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #16（2026-09-15 02:34 CST，REVIEW）
+
+- pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；名册=ChatGPT/MM=`mm:0.0`/DS=`ds:0.0`。fetch、advertised/tracking=`f0be58050caa414e27ca532aad1499f5081de66f`、空新增、祖先判定=0、ff-only均成功。
+- ChatGPT exact检索为空；MM=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`REQUEST_CHANGES`（环境六键 mismatch，timestamp LOW）。ChatGPT缺件，无推进令牌，保持`REVIEW`，不整改、不执行下游动作。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #15（2026-09-15 02:29 CST，REVIEW）
+
+- pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；名册=ChatGPT/MM=`mm:0.0`/DS=`ds:0.0`。fetch、advertised/tracking=`f0be58050caa414e27ca532aad1499f5081de66f`、空新增范围、祖先判定=0、ff-only均成功。
+- ChatGPT exact检索为空；MM=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`REQUEST_CHANGES`（环境六键 mismatch，timestamp LOW）。ChatGPT final缺件，无推进令牌，保持`REVIEW`；禁止整改/执行下游动作。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #14（2026-09-15 02:24 CST，REVIEW）
+
+- pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；名册=ChatGPT/MM=`mm:0.0`/DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch、advertised/tracking同SHA、空新增范围、祖先判定=0、ff-only均成功。
+- ChatGPT exact检索为空；MM=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`REQUEST_CHANGES`（环境六键 mismatch，timestamp LOW）。ChatGPT缺件，无推进令牌，保持`REVIEW`；禁止整改/执行下游动作。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #13（2026-09-15 02:20 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised/tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索为空；MM逐字同pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS逐字同pair `REQUEST_CHANGES`（环境六键 mismatch，timestamp LOW）。
+- ChatGPT final缺件，三方final未齐、无推进令牌；保持`REVIEW`，禁止整改、request修改、materialization、真实 I/O、child、GPU/CUDA/torchrun、训练/评测/推理；继续三分钟轮询。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #12（2026-09-15 02:15:53 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised/tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索为空；MM逐字同pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS逐字同pair `REQUEST_CHANGES`（环境六键 mismatch，timestamp LOW）。
+- ChatGPT final缺件，三方final未齐、无推进令牌；保持`REVIEW`，禁止整改、request修改、materialization、真实 I/O、child、GPU/CUDA/torchrun、训练/评测/推理；继续三分钟轮询。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #11（2026-09-15 02:11:24 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised和tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索为空；MM逐字同pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS逐字同pair `REQUEST_CHANGES`（环境六键 mismatch，LOW timestamp）。
+- ChatGPT final缺件，三方final未齐、无推进令牌；保持`REVIEW`，禁止整改、request修改、materialization、真实 I/O、child、GPU/CUDA/torchrun、训练/评测/推理；继续三分钟轮询。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #10（2026-09-15 02:06:50 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised和tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索为空；MM逐字同pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS逐字同pair `REQUEST_CHANGES`，环境六键 mismatch 为关键问题，timestamp 为 LOW。
+- ChatGPT final缺件，三方final未齐、无推进令牌；保持`REVIEW`，不得整改或执行下游动作；继续三分钟轮询。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #9（2026-09-15 02:02:09 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised和tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索=`rg -l -F '696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd' docs/collab/chatgpt/reviews/ || true`仍为空。MM=`mm:0.0`逐字同pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS=`ds:0.0` capture现逐字同pair final=`REQUEST_CHANGES`；其前述关键意见为JSON `freshness.environment`当前键集与冻结 launcher sanitized 六键`{GIT_CONFIG_GLOBAL,GIT_CONFIG_NOSYSTEM,GIT_CONFIG_SYSTEM,GIT_NO_REPLACE_OBJECTS,LANG,LC_ALL}`不一致，LOW为缺 observation timestamp。
+- ChatGPT final仍缺，三方final未齐、无推进令牌；即使DS已有`REQUEST_CHANGES`也不得提前整改。保持`REVIEW`，禁止request修改、materialization、真实 I/O、child、GPU/CUDA/torchrun、训练/评测/推理；继续三分钟轮询。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #8 与 DS formal-anchor 修复 #2（2026-09-15 01:57:41 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised和tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。ChatGPT exact检索为空；MM capture逐字同pair批准；DS capture仍无formal final。
+- DS 进程存活：`tmux list-panes -t ds`=`dead=0 ... command=opencode`。因已送达回执请求后连续多个完整轮次仍出现explicit formal-anchor failure，执行一次最小链路修复 #2：`send-keys -l`写入“仅回复一行”的完整 pair/`REQUEST_CHANGES`请求，间隔1.1秒后独立Enter，独立capture确认文本已进入会话、会话进入处理。不是新申请，不改变范围。
+- 无推进令牌；保持`REVIEW`。禁止整改、request修改、materialization、真实 I/O、child、GPU/CUDA/torchrun、训练/评测/推理；后续只按三分钟轮询回收结论。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #7（2026-09-15 01:52:50 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised和tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索为空。MM=`mm:0.0`逐字维持同pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS=`ds:0.0` capture成功但仍无同pair literal final，仅有环境六键 mismatch 的既有分析；不计为最终 verdict。
+- 三方final未齐、无推进令牌；保持`REVIEW`，继续三分钟轮询；禁止整改、request修改、materialization、真实 I/O、child、GPU/CUDA/torchrun、训练/评测/推理。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #6（2026-09-15 01:48:25 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised和tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索为空。MM capture继续逐字给出本pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS capture成功但仍仅显示其环境六键 mismatch 分析，未出现已送达formal-pair回执请求所需的自包含 root/child/final；本轮不能计为 DS final。
+- 三方final未齐、无推进令牌；保持`REVIEW`。不修改审核对象、request或执行下游动作；继续三分钟轮询。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #5（2026-09-15 01:44:02 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised和tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索`rg -l -F '696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd' docs/collab/chatgpt/reviews/ || true`为空。MM capture仍有逐字同pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS capture成功但只显示先前环境六键 mismatch 的分析；独立最近2000行检索formal root、child、`REQUEST_CHANGES`也为空，说明本轮尚未取得其已送达重述请求的最终回执。
+- 三方final未齐、无推进令牌，保持`REVIEW`；禁止整改、request修改、materialization、真实 I/O、child、GPU/CUDA/torchrun、训练/评测/推理；不重复发送已成功送达的DS请求。
+
+### Stage-1 v1.7 request instance v0.3 DS literal-pair 回执修复送达（2026-09-15 01:39:42 CST，REVIEW）
+
+- 对当前 formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`，先以`tmux capture-pane -p -t ds:0.0 -S -2000 | rg -n -F '请将刚才的 REQUEST_CHANGES' || true`确认先前回执重述没有进入 transcript，故其送达回执无效。
+- 已执行一次链路修复：DS=`ds:0.0`，`send-keys -l`写入自包含 formal root/child 和`REQUEST_CHANGES`重述请求，间隔1.1秒后独立`send-keys Enter`，再独立capture成功。capture显示文本已离开输入框、进入会话，DS处于处理状态。该操作仅恢复既有审核的formal-pair回执，不是新审核申请，不变更request或审核范围。
+- 仍无推进令牌；下一轮按三分钟完整远端锁定、ChatGPT exact review scan、MM/DS capture重新判定。禁止整改、request修改、materialization、真实 I/O、child、GPU/CUDA/torchrun、训练/评测/推理。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #4（2026-09-15 01:38:45 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（正式结果仅`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定 DS 替代 Kimi）。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；`ls-remote` advertised和`origin/V2`均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索`rg -l -F '696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd' docs/collab/chatgpt/reviews/ || true`输出为空。MM capture=`mm:0.0`仍逐字锚定本pair并给出`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS capture=`ds:0.0`成功但无本 pair literal final，仅保留先前环境六键 mismatch 的`REQUEST_CHANGES`分析和 LOW timestamp 建议；不能计为同pair final。
+- 三方final未齐，无推进令牌；保持`REVIEW`。不重复发送 DS 既有回执请求；禁止整改、request修改、materialization、真实 I/O、child、GPU/CUDA/torchrun及训练/评测/推理。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #3（2026-09-15 01:34:10 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（正式结果仅`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定 DS 替代 Kimi）。
+- `before_head=f0be58050caa414e27ca532aad1499f5081de66f`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2` advertised=`f0be58050caa414e27ca532aad1499f5081de66f`且`origin/V2`相同；`git log --oneline before..origin/V2`为空；`git merge-base --is-ancestor before origin/V2`返回0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT 精确检索命令=`rg -l -F '696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd' docs/collab/chatgpt/reviews/ || true`，输出为空，未有 exact-pair formal review。MM capture=`mm:0.0`逐字锚定同一 pair，final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS capture=`ds:0.0`成功，显示对 environment 六键 `{GIT_CONFIG_GLOBAL,GIT_CONFIG_NOSYSTEM,GIT_CONFIG_SYSTEM,GIT_NO_REPLACE_OBJECTS,LANG,LC_ALL}` 与当前 JSON 快照不一致的`REQUEST_CHANGES`分析、及 LOW timestamp 建议；但 capture 内没有该 formal root/child 的自包含最终 verdict，故 DS 仍不计同 pair final。
+- 三方最终结论未齐，无推进令牌；保持`REVIEW`。禁止整改、request修改、materialization、任何新增真实 I/O、child、GPU/CUDA/torchrun、训练/评测/推理。DS 的既有 literal-pair 回执重述请求保持待回复，不重复发送。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #2（2026-09-15 01:09 CST，REVIEW）
+
+- formal pair与冻结名册不变。`before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised/tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索仍无命中；MM exact-pair final维持`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS pane捕获成功并显示其环境六键绑定`REQUEST_CHANGES`分析及canonical/P0/P1核验，但对最近2000行作exact pair/verdict检索无命中，故DS本轮仍不计同pair final。
+- 无推进令牌；保持REVIEW，不修改request、不执行materialization、真实I/O、child、GPU或训练；等待ChatGPT formal review及DS已送达的literal-pair回执。
+
+### Stage-1 v1.7 request instance v0.3 完整观察凭证 #1（2026-09-15 01:06 CST，REVIEW）
+
+- formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT/MM/DS。`before_head=f0be58050caa414e27ca532aad1499f5081de66f`；fetch成功；advertised/tracking均=`f0be58050caa414e27ca532aad1499f5081de66f`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索无命中。MM=`mm:0.0` capture逐字锚定formal pair，final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS capture显示`REQUEST_CHANGES`及six environment key binding问题，但最近2000行中无该pair exact root/child命中，按协议不能计为同pair最终verdict。
+- 本轮证据命令均成功、未截断；ChatGPT处理中、DS待literal-pair回执，无推进令牌。保持REVIEW，禁止整改、materialization、真实I/O、child、GPU与训练。
+
+### Stage-1 v1.7 request instance v0.3 审核送达回执（2026-09-15 01:01 CST，REVIEW）
+
+- ChatGPT：canonical live Inbox已在`f0be5805`追加独立审核申请，formal target保持=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/`93a89ba61306d840a008813f62f26a34d54850f4`；该ledger已推送V2。
+- MM=`mm:0.0`、DS=`ds:0.0`均完成`send-keys -l`→间隔≥1秒→独立Enter→独立capture。MM capture显示完整申请已离开输入框并开始`Verifying v0.3 request instance SHA pair and files`；DS capture显示完整申请已进入transcript并开始远端fetch/formal-object与目标文件核验。两者均为已提交申请、尚无final verdict。
+- 新审核名册保持ChatGPT/MM/DS；自第1轮起每三分钟执行完整远端锁定、exact review scan与独立pane capture。无same-pair三方final前禁止materialization、真实I/O、child、GPU与训练。
+
+## Stage-1 v1.7 request instance v0.3 独立审核名册（2026-09-15 01:00 CST，REVIEW）
+
+- Gate=`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`；formal pair=root=`696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。冻结名册=ChatGPT（formal结果仅`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定DS替代Kimi）。
+- 范围仅已提交的v0.3 JSON/Markdown request pair；V15 C构造读回=`3281/de5273e45f300b63c8b1548acc93c8dac1143c72cb8c21f41ccc95a0b470b773`与`588/5b373694d4d40195a48d273eee0a83d087490d5f9e60073048e73cefaa8b9029`，canonical/sidecar identity PASS。请求三方仅作独立request审核，verdict=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`或`REQUEST_CHANGES(file:line)`；同pair三方final前禁止materialization、所有新增真实I/O、child、GPU和训练。
+
+## Stage-1 v1.7 request-instance recovery design v1.5 完整观察凭证 #2 / construct 推进令牌（2026-09-15 00:58 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`b9a460330a2dc4ff1b9d034ae4986fa490e74ad7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`。本轮沿用 #1 已完成的独立远端锁定：`before_head=21a1d5afb16e8e04cc052bc5993cabc4a52a2905`、fetch成功、advertised/tracking=`21a1d5afb16e8e04cc052bc5993cabc4a52a2905`、新增范围为空、祖先判定=0、ff-only=`Already up to date`；ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v15_b9a4603_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。
+- 为补齐本轮可见literal-pair回执，MM与DS均执行了既有审核的重述请求三联（`send-keys -l`→间隔≥1秒→独立Enter→capture），不是新审核申请。MM capture逐字为`formal root=b9a460330a2dc4ff1b9d034ae4986fa490e74ad7；child/Gitlink=93a89ba61306d840a008813f62f26a34d54850f4；verdict=APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；DS capture逐字为同一root、child与verdict。三项证据均成功且未截断。
+- 三方same-pair全批准，构成一次性construct推进令牌：只授权严格按v1.5（继承v1.4）的P0/P1/C，写入冻结的docs-only `...request_instance_v0.3.json`与`.md`，写后机械核验并硬停独立request审核。禁止materialization、launcher/runtime、真实source/checkpoint/manifest/data/cache I/O、child、GPU和训练。
+
+## Stage-1 v1.7 request-instance recovery design v1.5 完整观察凭证 #1（2026-09-15 00:57:11 CST，REVIEW）
+
+- 冻结名册：ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定 DS 替代 Kimi）；formal pair=root=`b9a460330a2dc4ff1b9d034ae4986fa490e74ad7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=21a1d5afb16e8e04cc052bc5993cabc4a52a2905`；`git fetch origin V2`成功；advertised/tracking均=`21a1d5afb16e8e04cc052bc5993cabc4a52a2905`；完整新增范围为空；`merge-base --is-ancestor`=0；`merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-match检索命中`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v15_b9a4603_93a89ba.md`，完整pair且final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。MM=`mm:0.0`、DS=`ds:0.0` capture均成功且各自显示同一construct批准文字；但对各自最近2000行转录执行exact root/child/verdict检索均无命中，不能将无完整pair锚定的片段计为该formal pair最终verdict。
+- 本轮独立Git/review/pane命令均成功且未截断；MM/DS均待一次literal-pair最终verdict重述，故无推进令牌，Gate保持`REVIEW`。禁止P0/P1/C、request写入、materialization、真实I/O、child、GPU及训练。下一步仅向MM/DS各发送一次既有审核的literal-pair重述请求，完成三联送达后依三分钟节奏重新完整检查。
+
 ## Stage-1 v1.7 recovery design v1.2 完整观察凭证 #3（2026-09-14 23:19 CST，REVIEW）
 
 - `before_head=ea12b33ec437a420fa33e9fc9a73e20fd434a7b3`；fetch、advertised/tracking=`ea12b33ec437a420fa33e9fc9a73e20fd434a7b3`、空新增范围、ff-only均成功。ChatGPT exact-pair检索无输出；MM/DS均维持同pair `APPROVE_TO_CONSTRUCT`。ChatGPT formal review仍缺件，无推进令牌，保持REVIEW。
@@ -6112,3 +6337,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 根据v1.4三方final（ChatGPT/MM approve，DS request changes）的docs-only整改令牌，提交并推送`b9a460330a2dc4ff1b9d034ae4986fa490e74ad7`；child Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。新增v1.5仅冻结`patch_raw: bytes`到一次strict UTF-8 `patch_text`转换、双identity绑定与line encoder inverse round-trip witness。
 - `git diff --check` PASS；未运行C、未构造request、未执行materialization/真实I-O/child/GPU/训练。下一步=append Inbox、送达MM/DS并三方审核；未送审。
+
+### Stage-1 v1.7 request-instance recovery design v1.5 审核观察凭证 / construct 推进令牌（2026-09-15 00:39 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`b9a460330a2dc4ff1b9d034ae4986fa490e74ad7`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。远端已快进至`21a1d5afb16e8e04cc052bc5993cabc4a52a2905`并合并；ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v15_b9a4603_93a89ba.md` final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。MM/DS capture均给出同一construct verdict；DS确认无HIGH/MEDIUM。
+- 三方同pair批准仅授权一次future P0/P1/C docs-only pair construction，完成后必须硬停独立request review；不授权materialization、真实I/O、child、GPU或训练。
