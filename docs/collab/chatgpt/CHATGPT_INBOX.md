@@ -99,3 +99,36 @@ Required remediation:
 This does not reopen the closed CPU/static freshness-guard Gate. Real C/request-pair write, materialization/source-evidence, child/runtime/config mutation, GPU and training remain forbidden.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 live-plan continuity authority V24 APPROVED FOR DESIGN
+
+Formal pair:
+- root implementation SHA: `936e0fb09a2fe529d5aec8b9e42c79ce54a6fec9`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-LIVE-PLAN-CONTINUITY-AUTHORITY-V24`
+
+Verdict:
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_authority_v24_936e0fb_93a89ba.md`
+
+Canonical review commit:
+`b6c8f7267249ed9a7158ac462be88d1b3735cab8`
+
+Current blockers: `0`; Design/Authority: `0`; Production/implementation: `0`; Evidence/Scope: `0`; child/runtime: `0`.
+
+Approval summary:
+- V24 closes the V23 same-instance continuity blocker at the requested design level by defining one host-owned session + one non-copyable live `SealedPreCPlanV1` + one opaque continuation lease as a same-lifetime triple;
+- the exact-plan review record binds session/plan/lease identities and a binding digest, is audit-only, and cannot be used to reconstruct a new plan;
+- while review is pending the live triple is quiescent and ordinary resume/direct-consume paths are forbidden;
+- only one resume-only entrypoint may accept the live lease after independent exact-plan approval, prove identity equality to the reviewed record, and pass the same in-memory plan to future C;
+- process/session/handle/lease loss, plan replacement, identity drift or binding failure invalidates authority and requires a fresh pre-C + exact-plan review cycle;
+- C01-C15, the nine-entry freshness domain, remote-pre-C-only, sealed bytes/paths, one-call/readback/hard-stop and terminal no-retry are preserved;
+- formal root tree binds `cosmos-framework` mode `160000` exactly to the declared reachable child.
+
+Scope reminder: this approval authorizes only further design of the live-plan continuity model. It does not authorize real pre-C/C, request-pair construction, materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training, evaluation, inference, or LIBERO4IN1.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
