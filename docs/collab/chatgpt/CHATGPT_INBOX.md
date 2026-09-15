@@ -91,3 +91,43 @@ Required closure:
 No real pre-C/C, request-pair construction/write, materialization/source-evidence, real host/consumer/guard/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — V25 approval/snapshot remediation still REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `9c027a346320b0cb8e8445ada1e1a277efb0b875`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25-REMEDIATION`
+
+Verdict:
+`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:484)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_remediation_9c027a3_93a89ba.md`
+
+Canonical review commit:
+`f10460186a800c9c2c2e6c6240ca22b2fde7361b`
+
+Current blockers: `3`; Design/Authority document: `0`; Production/implementation: `2 HIGH`; Evidence: `1 MEDIUM`; Scope/child/runtime: `0`.
+
+Positive closure:
+- the exact prior session-slot `object.__setattr__` approval forgery is closed because approval/state are no longer stored as session slots;
+- a broader creation-time authority snapshot now participates in binding verification;
+- capability callable drift and prior slot forgery have direct zero-apply witnesses.
+
+Remaining blockers:
+1. HIGH — live admission/approval/binding authority now resides in caller-mutable module registries `_LIVE_PLANS`, `_LIVE_AUTHORITIES`, `_LIVE_BINDINGS`. Clearing `_LIVE_PLANS` permits pending direct `consume_once_v05(plan)`; writing `_LIVE_AUTHORITIES[id(session)] = (approval, "APPROVED")` forges approval; replacing `_LIVE_BINDINGS` can coherently rewrite reviewed binding authority.
+2. HIGH — `_authority_snapshot` still is not the complete detached V24 exact-review record: verifier is only qualname+callable id; C01-C15 are not explicitly bound; authority absence target/predicate is omitted; descriptor/replay binding are live object references rather than detached canonical primitive identities.
+3. MEDIUM — tests do not attack the actual authoritative registries, do not clear `_LIVE_PLANS`, do not forge `_LIVE_AUTHORITIES`, do not coherently replace `_LIVE_BINDINGS`, and do not assert the complete V24 review-record field set.
+
+Required closure:
+- remove caller-reachable mutable registry state as admission/approval/binding authority; externally reachable bookkeeping must not be able to release a pending plan or forge approval/binding;
+- create one complete detached canonical V24 authority snapshot/review witness and verify exact equality before ownership release;
+- add causal tests for registry/bookkeeping tamper, pending direct-C attempts, approval forgery, coherent binding replacement and complete snapshot drift, with freshness/consumer/apply count `0` on every rejected path;
+- preserve exact approved same-instance success, single C entrypoint, terminal invalidation/no-retry and pure-memory scope.
+
+No real pre-C/C, request-pair construction/write, materialization/source-evidence, real host/consumer/guard/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
