@@ -197,3 +197,12 @@
 - Scope: root-only construction-authority design; no runtime/child/config change and no construction executed. It inherits the closed C01--C15/9-entry guard contract and freezes one full rehearsal followed only by `FRESH -> one opaque apply -> exact readback -> hard stop`.
 - Requested verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C/request pair before same-pair approval, materialization, source-evidence, real I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: V23 exact-plan non-consuming pre-C authority
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-EXACT-PLAN-PRE-C-AUTHORITY-V23`.
+- Formal root: `04fd92eea3506ffe1de0ef8cce12377f81e2e75f`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only v2.3 authority remediation plus `SESSION.md`/`TODO.md`; no real pre-C/C or request-pair construction executed. It directly addresses V22 ChatGPT HIGH by authorizing only one real non-consuming pre-C that seals the actual PatchConsumerV1, FreshnessGuardV1 and post-write verifier provider/module/path/blob/callable/ABI/transport identities. It then hard-stops for one exact sealed-plan review; it does not add field/path serial Gates.
+- Review focus: verify that the two-stage model closes the authority gap without weakening C01--C15, nine-entry freshness domain, remote-pre-C-only rule, canonical bytes/paths, same-object patch handoff, no-retry semantics, or the future four-step C. Confirm V23 cannot authorize C, materialization, source evidence, child mutation, GPU or training.
+- Requested verdict: `APPROVE_TO_EXECUTE_R09_B_TTT_V035_STAGE1_V17_EXACT_PLAN_PRE_C` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: C/request-pair write, materialization, source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
