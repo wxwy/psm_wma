@@ -9,7 +9,7 @@ from dataclasses import replace
 
 from tools.psm_wma import stage1_v17_request_projection as projection
 from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
-    AUTHORITY_ARGV, AuthorityAbsenceV1, AbsenceObservationV1, ClosureV1,
+    AUTHORITY_ARGV, AuthorityAbsenceV1, AbsenceObservationV1, ClosureV1, ContractV05,
     DESIGNATED_ABSENCES, DescriptorV1, ENV, FROZEN_TARGETS, FrozenTargetV1,
     OpaquePatchCapabilityV1, P0_OBJECTS, P1_OBJECT_NAMES, PreCRehearsalError,
     QueryFactV1, ReadbackV1, RehearsalInputV1, consume_once_v05, rehearse_v05,
@@ -99,7 +99,7 @@ class PreCRehearsalTest(unittest.TestCase):
             verifier, f"{verifier.__module__}.{verifier.__qualname__}"), calls
 
     def test_success_is_exactly_once(self):
-        value, calls = self.fixture(); plan = rehearse_v05(value)
+        value, calls = self.fixture(); self.assertIsInstance(value, ContractV05); plan = rehearse_v05(value)
         self.assertEqual(consume_once_v05(plan, value.closure), "HARD_STOP_PENDING_INDEPENDENT_REVIEW")
         with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan, value.closure)
         self.assertEqual(len(calls), 1)
@@ -221,6 +221,31 @@ class PreCRehearsalTest(unittest.TestCase):
             with self.assertRaisesRegex(PreCRehearsalError, "closure_inherited"):
                 rehearse_v05(replace(value, closure=replace(value.closure, replay_binding=binding)))
         self.assertEqual(calls, [])
+
+    def test_sealed_observation_identity_drifts_fail_before_consumer(self):
+        value, calls = self.fixture()
+        def foreign_raw(name):
+            return RawFactV1(name, b"foreign", 7, hashlib.sha256(b"foreign").hexdigest())
+        remote = replace(value.closure.remote_v2, stdout=b"foreign", advertised_v2=b"foreign",
+                         stdout_length=7, stdout_sha256=hashlib.sha256(b"foreign").hexdigest(),
+                         advertised_length=7, advertised_sha256=hashlib.sha256(b"foreign").hexdigest())
+        p0 = replace(value.closure.p0_objects[0], raw=foreign_raw("base_source"))
+        p1 = foreign_raw("selection")
+        cases = (
+            replace(value.closure, git_identity=foreign_raw("git_directory")),
+            replace(value.closure, config_raw=foreign_raw("git_config")),
+            replace(value.closure, local_v2_raw=foreign_raw("local_v2")),
+            replace(value.closure, remote_v2=remote),
+            replace(value.closure, p0_objects=(p0,) + value.closure.p0_objects[1:]),
+            replace(value.closure, p1_objects=(p1,) + value.closure.p1_objects[1:]),
+            replace(value.closure, replay_binding=replace(value.closure.replay_binding, owner_fd_value=9)),
+            replace(value.closure, targets=tuple(reversed(value.closure.targets))),
+        )
+        for current in cases:
+            plan = rehearse_v05(value)
+            with self.assertRaisesRegex(PreCRehearsalError, "freshness"):
+                consume_once_v05(plan, current)
+            self.assertEqual(calls, [])
 
 
 if __name__ == "__main__": unittest.main()

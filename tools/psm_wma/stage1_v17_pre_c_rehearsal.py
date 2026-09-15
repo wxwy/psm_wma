@@ -259,7 +259,8 @@ class OpaquePatchCapabilityV1:
 
 
 @dataclass(frozen=True)
-class RehearsalInputV1:
+class ContractV05:
+    """唯一的纯内存 pre-C 合同；C 只能消费由它密封的 plan。"""
     capability: OpaquePatchCapabilityV1
     descriptor: DescriptorV1
     json_raw: bytes
@@ -269,6 +270,10 @@ class RehearsalInputV1:
     closure: ClosureV1
     post_write_verify: Callable[[bytes, bytes, tuple[str, str]], ReadbackV1]
     post_write_qualname: str
+
+
+# 保留已冻结的测试/调用端名称，避免在本次收口中扩大接口变更。
+RehearsalInputV1 = ContractV05
 
 
 @dataclass
@@ -376,7 +381,7 @@ def _validate_closure(closure: ClosureV1) -> None:
         _fail("closure_query")
 
 
-def rehearse_v05(value: RehearsalInputV1) -> SealedPreCPlanV1:
+def rehearse_v05(value: ContractV05) -> SealedPreCPlanV1:
     """Seal all C inputs purely in memory, without invoking the capability."""
     cap = value.capability
     identity = f"{cap.apply_opaque_v1.__module__}.{cap.apply_opaque_v1.__qualname__}"

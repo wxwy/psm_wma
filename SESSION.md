@@ -6916,3 +6916,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 依据观察凭证#2的同pair整改令牌，仅修改`tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py`：删除`Path(...).read_bytes()`和`pathlib`依赖，将已验证replay-helper的5582 bytes / SHA-256=`8f55dc32a77810d848c10ac55501754f741d42bd3ef3fbc386f0814b2a6d5e82`压缩为冻结的`REPLAY_HELPER_GZIP_B64`内存字面量，测试中仅标准库base64/gzip解压；不改production helper或任何执行路径。
 - 验证：fixture解压身份=`5582/8f55dc32...d5e82`；`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`9/9 PASS`；`py_compile` PASS；`git diff --check` PASS。未运行v0.5 request/C、未进行真实Git/network/source/data/cache I/O、未改child、未使用GPU/训练。
 - 下一步=仅暂存`SESSION.md`、`TODO.md`和该测试文件，提交/推送后以新formal SHA重新申请ChatGPT/MM/DS审核；未提交。
+
+### Stage-1 v1.7 pre-C 收敛指令整合（2026-09-15 15:10 CST，IN_PROGRESS）
+
+- 远端新增并已读取用户指令`docs/collab/USER_DIRECTIVE_STAGE1_CONVERGENCE_2026-09-15.md`；它要求在下一次申请前一次性完成完整需求矩阵、machine-readable `ContractV05`、foreign-but-self-consistent drift matrix及完整non-consuming rehearsal，禁止为字段新增串行Gate。当前未推送fixture整改保留为基线，不单独申请审核。
+- 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_pre_c_contract_matrix_v1.0.md`，按C01--C15覆盖P0/P1/replay、observations/queries/absence、environment/targets、capability/verifier、canonical pair、exactly-once与纯内存边界。实现将`ContractV05`设为`rehearse_v05()`唯一输入并保留`RehearsalInputV1`兼容别名；增加sealed git/config/local-V2/query/P0/P1/binding/target foreign drift，全部在consumer前freshness fail-close。
+- 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`10/10 PASS`；`py_compile`及`git diff --check` PASS。未运行v0.5 request/C、未进行真实Git/network/source/data/cache I/O、未改child、未使用GPU/训练。
+- 下一步=复查C01--C15实现与矩阵一致后，将本次收敛（fixture+ContractV05+matrix+drift）作为单个新formal提交申请三方审核；未提交。
