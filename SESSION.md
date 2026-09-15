@@ -1,10 +1,15 @@
 # 当前协作状态
 
-### v1.8 pre-C closure remediation（2026-09-15 10:43 CST，未提交）
+### v1.8 pre-C closure remediation（2026-09-15 10:43 CST，formal root 已推送；审核送达待完成）
 
 - 引用 v1.7 观察凭证 #3 的窄授权；在任何 `.git`、path、environment、remote freshness observation 前停止，未进入 C。冻结对象的纯内存 P0/P1 核验最终 `PASS_P0_P1_NONCONSUMING`：base/replay/adapter/projection blob 与长度/SHA均匹配，replay parser=`2336/1a9543...`、outer=`18875/658e9b...`，projection closure 的 selection/config/bootstrap/contract identity均匹配。
 - 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.8.md`：修复 v1.7 把 candidate/record/receipt/publication absence 写为必需却未冻结 pathname/field mapping 的 fail-close 缺口；唯一允许的 Stage-1 absence set 是 clean_root、index、evidence、pending_evidence 四个精确路径，未来 Stage-2 语义不伪造为本 Gate 观察。
-- 更新 `TODO.md`：v1.7 design 关闭；v1.8 docs-only remediation 进入 IN_PROGRESS。未构造 v0.4 pair，未做 materialization、真实 I/O、child/GPU/训练。下一步：静态核验、提交/push v1.8，再以新 exact pair 申请 ChatGPT/MM/DS 审核。
+- 更新 `TODO.md`：v1.7 design 关闭；v1.8 docs-only remediation 进入 IN_PROGRESS。formal root=`6baadaf282bea673eb217c055bb7c837522e0267`已推送，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。未构造 v0.4 pair，未做 materialization、真实 I/O、child/GPU/训练。下一步：完成 v1.8 exact-pair 三方审核送达，之后按三分钟轮询。
+
+### v1.8 审核冻结名册（2026-09-15 10:48 CST，送达前）
+
+- Gate=`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V18`；formal pair=root=`6baadaf282bea673eb217c055bb7c837522e0267`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。冻结名册=ChatGPT（正式结果仅`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定DS替代Kimi）。
+- 申请内容已依 rollover 规则写入新的 canonical live Inbox；待该 ledger 提交/推送后向 MM/DS完成 `send-keys -l → 间隔≥1秒 → Enter → capture` 三联送达。三方同pair final前，v0.4 construction 和全部下游仍禁止。
 
 ### v1.7 审核完整观察凭证 #3（2026-09-15 10:35 CST，三方 APPROVE 推进令牌仍有效）
 
