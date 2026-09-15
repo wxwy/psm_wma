@@ -6823,3 +6823,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 依据紧邻#2整改令牌，仅修改根仓`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`与`test_stage1_v17_pre_c_rehearsal.py`：`QueryFactV1`现在冻结并验证stdout/stderr/advertised-V2各自raw length/SHA；`AbsenceObservationV1`把两output和四V18 designated paths逐项绑定为canonical `lexists=false` raw record、predicate、boolean、length/SHA；`AUTHORITY_ARGV`改为冻结literal authority ref；closure同时验证两query identity。
 - 验证已执行：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`7/7 PASS`；`python -m py_compile tools/psm_wma/stage1_v17_pre_c_rehearsal.py tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py` PASS；`git diff --check` PASS。新测试逐字段篡改六query identity字段及两类absence的全部identity字段，均在consumer invocation前fail-close。未运行v0.5 request/C、未进行真实I/O、未改child、未使用GPU或训练。
 - 下一步=只暂存这四个受控文件并提交/推送，随后以实现formal SHA重新申请ChatGPT/MM/DS closure审核；未提交。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #2 审核申请准备（2026-09-15 14:46 CST，REVIEW）
+
+- Formal pair=root=`c2174dd00e11b96f7ff1b187a2ea84853bfd8f42`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree只含`SESSION.md`、`TODO.md`、`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`、`tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py`，Gitlink未变。冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。
+- ChatGPT申请已append至canonical live `docs/collab/chatgpt/CODEX_INBOX.md`，append前live大小=`14226` bytes，远低于`131072` bytes上限。申请仅请求`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；下一步=提交/推送ledger，再向MM/DS完成完整pair三联送达，随后每三分钟三方完整观察。禁止v0.5 C、materialization、真实I/O、child、GPU和训练。

@@ -101,3 +101,12 @@
 - Scope: root-only CPU/static. Binds exact four V18 absence paths, output absence tuple, typed authority identities, and empty qualified authority-ref stdout semantics. Tests/py_compile/diff-check PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.5 C/materialization/source-evidence/real I/O/child/GPU/training.
+
+## 2026-09-15 — Review request: sealed typed pre-C observation remediation
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`.
+- Formal root: `c2174dd00e11b96f7ff1b187a2ea84853bfd8f42`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only `tools/psm_wma/stage1_v17_pre_c_rehearsal.py`, its stdlib unittest, `SESSION.md`, and `TODO.md`; no child/runtime code. `unittest=7/7 PASS`; `py_compile` and `git diff --check` PASS.
+- Remediation focus: closes the complete same-pair ChatGPT/DS findings in one static core. `QueryFactV1` freezes and verifies raw stdout/stderr/advertised-V2 values with individual length/SHA identities; both output absences and all four V18 designated absolute paths are ordered typed `lexists=false` canonical raw records with predicate/boolean/length/SHA; `AUTHORITY_ARGV` now uses the frozen `refs/heads/authority/r09-b-ttt-v035-immutable-source-v1` literal. New direct tests mutate every query and absence identity field and prove fail-close before consumer invocation.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
