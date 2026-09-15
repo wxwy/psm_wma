@@ -322,3 +322,12 @@
 - Remediation: each of the 12 detached ReviewRecord categories now has fixed field order/count/identity grammar, including full consumer/guard/verifier provenance, C01--C15, 9-entry freshness, query/absence/replay/targets and descriptor/source/argv identities. Host state stores an independent private immutable snapshot; client receives a detached audit copy. Privileged attestation schema-validates and recomputes canonical record digest against the private snapshot; resume consumes only private state. Tests causally cover every field drift, per-category malformed grammar, pre/post-attestation `object.__setattr__` mutation, replay, atomic parallel resume and consuming failures.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real Stage1Host/OS identity, process/IPC, real pre-C/C/request pair/materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: pragmatic immutable-commit Stage-1 v0.5 exact request
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-PRAGMATIC-REQUEST-PAIR` under `USER_OWNER_OVERRIDE_STAGE1_PRAGMATIC_EXECUTION_2026-09-15.md`.
+- Formal root: `44aa8760630751668a5ec340ef017575c65e311d`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only v0.5 JSON/Markdown request pair, pure byte emitter/unittest, and TODO. Candidate materialization root is explicitly `db6c4f93473e7ef58a294cff3fb8c692b100badd`, not historical `08d5828...`. `unittest=5/5 PASS`, `py_compile`, `diff --check`, pair byte/SHA/git-blob verification and unified-patch SHA all PASS.
+- Review focus: independently verify the request's exact root/child, four frozen tool blobs, mechanically retargeted launcher/argv/bootstrap identities, exact FD input bytes, six-key environment, same-round `.git`/config/remote V2/fixed-ref/absence preflight facts, and JSON/Markdown binding. Confirm it is reproducible and that its requested next authority is limited to exactly one Stage-1 materialization attempt.
+- Requested verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: source collection/receipt publication beyond the materialization receipt, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1. V25/V26/V27 host/session/IPC continuity is superseded by the Owner Override and out of scope.
