@@ -1,5 +1,10 @@
 # 当前协作状态
 
+### v1.9 审核冻结名册（2026-09-15 10:52 CST，送达前）
+
+- Gate=`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V19`；formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户指定DS替代Kimi）。
+- canonical live Inbox 已追加申请；待 ledger 提交/推送后按 `send-keys -l → 间隔≥1秒 → Enter → capture` 向 MM/DS送达。三方同pair final前禁止任何 future construction design以外的动作。
+
 ### v1.8 C terminal failure（2026-09-15 10:49 CST，零输出、禁止重试）
 
 - 引用 v1.8 观察凭证 #2 的窄 construction token。P0/P1 本轮成功后，C 在首次 freshness observation 前开始并永久消费；后续唯一 `patch_raw -> strict UTF-8 patch_text -> apply_patch(patch_text)` consumer 因六键隔离环境中无可解析 `apply_patch` executable，抛出 `FileNotFoundError: [Errno 2] No such file or directory: 'apply_patch'`。

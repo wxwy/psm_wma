@@ -16,3 +16,12 @@
 - Review focus: verify this does not weaken v1.7's `.git`/config/local V2/two-query/remote-advertised-V2/local+remote authority-ref closure, six-key environment, detached JSON/Markdown identity or one-shot/no-retry. Confirm P0/P1 PASS did not enter C, and that approval still grants at most one future docs-only v0.4 pair construction followed by independent exact-pair review.
 - Requested verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.4 construction before same-pair approval; materialization/retry, launcher/runtime, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: Stage-1 v1.7 consumer recovery design v1.9
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V19`.
+- Formal root: `13efbfde19a848aa44cfb5f0bfa0373523902ae4`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only v1.9 recovery design with SESSION/TODO coordination; no child/runtime code. v1.8 C is recorded as consumed: the exact consumer name `apply_patch` was unavailable in the frozen six-key environment, no second invocation occurred, and both v0.4 paths are absent.
+- Review focus: verify that v1.9 preserves no-retry/zero-output truth and requires any future construction design to freeze a C-before capability probe plus an explicit injected consumer/orchestration opaque-handoff ABI. It must forbid PATH inference, shell redirection, Python writes, temporary files and context-reconstructed patch contents.
+- Requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_RECOVERY` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.4 repair/retry, materialization, launcher/runtime, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
