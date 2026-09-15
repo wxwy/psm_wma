@@ -284,7 +284,15 @@ def rebuild_launcher(base_source: bytes, adapter_source: bytes, inputs: Launcher
     parser = json.dumps(items, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     source = _replace_one(source, parser_literal, parser.decode("utf-8"), "parser literal")
     source = source.replace(old_root, inputs.formal_root)
-    source = source.replace(old_clean, f"/disk/rl/psm_wma/.authority-root-materialization-{inputs.clean_suffix}")
+    clean_pattern = r'CLEAN = ROOT \+ "/\.authority-root-materialization-[0-9a-f]+"'
+    if len(re.findall(clean_pattern, source)) != 1:
+        raise ValueError("launcher clean declaration")
+    source = re.sub(
+        clean_pattern,
+        f'CLEAN = ROOT + "/.authority-root-materialization-{inputs.clean_suffix}"',
+        source,
+        count=1,
+    )
     adapter_pattern = r'ADAPTER = \("[^\"]+",\n\s+"[0-9a-f]{40}"\)'
     if len(re.findall(adapter_pattern, source)) != 1:
         raise ValueError("launcher adapter declaration")

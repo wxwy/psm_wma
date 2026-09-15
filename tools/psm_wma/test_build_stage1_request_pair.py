@@ -56,6 +56,7 @@ class BuildStage1RequestPairTest(unittest.TestCase):
     def test_rebuild_binds_every_target_and_dependent_hash(self) -> None:
         result = builder.rebuild_launcher(_launcher(), _adapter("new bootstrap"), self.inputs)
         self.assertIn(b"9" * 40, result.outer)
+        self.assertIn(b".authority-root-materialization-9999999", result.outer)
         self.assertIn(b"--bootstrap-owner-root-fd\",\"8\"", result.parser_argv)
         self.assertEqual(result.parser_items.count("--bootstrap-owner-root-fd"), 1)
         self.assertIn(b'ADAPTER = ("tools/new_adapter.py",\n           "' + b"7" * 40 + b'")', result.outer)
