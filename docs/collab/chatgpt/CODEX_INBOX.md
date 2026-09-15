@@ -68,3 +68,12 @@
 - User-directed remediation: V3.0 reviewers found inherited lifecycle placed live observations inside C. User explicitly required all future C risks be found by one non-consuming pre-C rehearsal. V3.1 makes a narrow v0.5-only lifecycle refreeze: the single rehearsal seals all live inputs and final bytes without writes/consumer; C remains freshness compare → one opaque write → byte verify → hard stop. It reasserts permanent v0.3/v0.4 prohibition across all roles.
 - Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: implementation, v0.5 construction/consumer/P0/P1/C, materialization, real source/checkpoint/manifest/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: pre-C rehearsal consumer CPU/static implementation
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`.
+- Formal root: `034cbc43f0178e2e472bd642991311cc6116ee49`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only `tools/psm_wma/stage1_v17_pre_c_rehearsal.py`, its stdlib unittest, `SESSION.md`, and `TODO.md`; no child/runtime code. CPU test=`5/5 PASS`; `py_compile` and `git diff --check` PASS.
+- Review focus: `rehearse_v05()` must seal injected capability identity, raw bytes/strict UTF-8 patch text, output pair, six-key environment, frozen snapshot/absence and fake verifier without I/O or consumer invocation. `consume_once_v05()` must have only frozen freshness comparison → exactly one opaque fake callback → post-write byte verification → hard-stop. Confirm v0.3/v0.4 are rejected and no filesystem/Git/network/dynamic-import/real consumer entrypoint exists.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
