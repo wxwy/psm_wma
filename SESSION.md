@@ -6828,3 +6828,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - Formal pair=root=`c2174dd00e11b96f7ff1b187a2ea84853bfd8f42`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；formal tree只含`SESSION.md`、`TODO.md`、`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`、`tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py`，Gitlink未变。冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。
 - ChatGPT申请已append至canonical live `docs/collab/chatgpt/CODEX_INBOX.md`，append前live大小=`14226` bytes，远低于`131072` bytes上限。申请仅请求`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`或`REQUEST_CHANGES(file:line)`；下一步=提交/推送ledger，再向MM/DS完成完整pair三联送达，随后每三分钟三方完整观察。禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #2 审核送达回执（2026-09-15 14:48 CST，REVIEW）
+
+- ChatGPT：canonical live Inbox申请已随ledger=`8e6efe73c12e7df83f15d0c16e5a6ee96582f121`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成完整formal pair的`send-keys -l → 间隔>=1秒 → 独立Enter → capture`；两份capture均显示申请已离开输入框，MM=`thinking`，DS=`Thinking`。消息摘要、目标pane和发送时间均为本段所列。
+- 冻结名册不变。三方final前保持REVIEW；下次完整观察须先fetch/ls-remote/ff-only、exact ChatGPT review扫描及MM/DS独立capture。禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
