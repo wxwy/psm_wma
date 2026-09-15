@@ -299,6 +299,14 @@ class FreshnessGuardV1:
     def __reduce_ex__(self, protocol): _fail("guard_serialize")
 
 
+class ContinuationLeaseV1:
+    __slots__ = ("_token",)
+    def __init__(self) -> None: self._token = object()
+    def __copy__(self): _fail("continuation_copy")
+    def __deepcopy__(self, memo): _fail("continuation_copy")
+    def __reduce_ex__(self, protocol): _fail("continuation_serialize")
+
+
 @dataclass(frozen=True)
 class ContractV05:
     """唯一的纯内存 pre-C 合同；C 只能消费由它密封的 plan。"""
@@ -343,6 +351,28 @@ class SealedPreCPlanV1:
     def __copy__(self): _fail("plan_copy")
     def __deepcopy__(self, memo): _fail("plan_copy")
     def __reduce_ex__(self, protocol): _fail("plan_serialize")
+
+
+class LivePlanSessionV1:
+    """Pure-memory owner for one review-pending plan and its opaque lease."""
+    __slots__ = ("_plan", "_lease", "_approval", "_closed")
+    def __init__(self, plan: SealedPreCPlanV1) -> None:
+        self._plan, self._lease, self._approval, self._closed = plan, ContinuationLeaseV1(), object(), False
+        _LIVE_PLANS.add(id(plan))
+    @property
+    def lease(self) -> ContinuationLeaseV1: return self._lease
+    @property
+    def approval_identity(self) -> object: return self._approval
+    def close(self) -> None:
+        self._closed = True; _LIVE_PLANS.discard(id(self._plan))
+    def resume_once(self, lease: ContinuationLeaseV1, approval_identity: object) -> str:
+        if self._closed or lease is not self._lease or approval_identity is not self._approval:
+            self.close(); _fail("continuation_identity")
+        self.close()
+        return _consume_once_v05(self._plan)
+
+
+_LIVE_PLANS: set[int] = set()
 
 
 def _reject(*values: object) -> None:
@@ -465,6 +495,11 @@ def rehearse_v05(value: ContractV05) -> SealedPreCPlanV1:
 
 def consume_once_v05(plan: SealedPreCPlanV1) -> str:
     """Fixed C: freshness, exactly one opaque call, byte verification, hard stop."""
+    if id(plan) in _LIVE_PLANS: _fail("continuation_pending")
+    return _consume_once_v05(plan)
+
+
+def _consume_once_v05(plan: SealedPreCPlanV1) -> str:
     if plan._retirement.consumed: _fail("already_consumed")
     plan._retirement.consumed = True
     try:

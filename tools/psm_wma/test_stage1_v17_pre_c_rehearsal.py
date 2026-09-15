@@ -12,7 +12,7 @@ from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
     AUTHORITY_ARGV, AuthorityAbsenceV1, AbsenceObservationV1, ClosureV1, ContractV05,
     DESIGNATED_ABSENCES, DescriptorV1, ENV, FROZEN_TARGETS, FrozenTargetV1,
     FreshnessGuardV1, FreshnessLeaseV1, OpaquePatchCapabilityV1, P0_OBJECTS, P1_OBJECT_NAMES, PreCRehearsalError,
-    QueryFactV1, ReadbackV1, RehearsalInputV1, consume_once_v05, rehearse_v05,
+    LivePlanSessionV1, QueryFactV1, ReadbackV1, RehearsalInputV1, consume_once_v05, rehearse_v05,
     RawFactV1, ReplayBindingV1, SourceObjectV1,
 )
 from tools.psm_wma.test_stage1_v17_launcher_replay import CANONICAL_BASE_GZIP_B64
@@ -120,6 +120,23 @@ class PreCRehearsalTest(unittest.TestCase):
         self.assertEqual(consume_once_v05(plan), "HARD_STOP_PENDING_INDEPENDENT_REVIEW")
         with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan)
         self.assertEqual(len(calls), 1)
+
+    def test_live_session_only_resumes_same_plan_once(self):
+        value, calls = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
+        with self.assertRaisesRegex(PreCRehearsalError, "continuation_pending"): consume_once_v05(plan)
+        self.assertEqual(calls, [])
+        self.assertEqual(session.resume_once(session.lease, session.approval_identity), "HARD_STOP_PENDING_INDEPENDENT_REVIEW")
+        with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
+            session.resume_once(session.lease, session.approval_identity)
+
+    def test_live_session_foreign_or_closed_lease_is_terminal(self):
+        value, calls = self.fixture(); session = LivePlanSessionV1(rehearse_v05(value))
+        other = LivePlanSessionV1(rehearse_v05(self.fixture()[0]))
+        with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
+            session.resume_once(other.lease, session.approval_identity)
+        with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
+            session.resume_once(session.lease, session.approval_identity)
+        self.assertEqual(calls, [])
 
     def test_every_terminal_result_consumes_plan(self):
         for outcome in ("REJECTED_NO_WRITE", "PARTIAL_OR_UNKNOWN", "OTHER"):
