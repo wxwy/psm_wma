@@ -298,6 +298,22 @@ def rebuild_launcher(base_source: bytes, adapter_source: bytes, inputs: Launcher
     if source.count(owner_collision) > 1:
         raise ValueError("launcher owner collision guard")
     source = source.replace(owner_collision, "require_closed(GIT_TARGET_FD,PARENT_OWNER_FD,CLEAN_OWNER_FD)", 1)
+    route_admin = "adfd = os.open(admin, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC); ads = os.fstat(adfd)"
+    route_config = "cfd, cs, raw = nofollow(admin + \"/config\")"
+    if source.count(route_admin) > 1 or source.count(route_config) > 1:
+        raise ValueError("launcher route fd allocation")
+    if route_admin in source:
+        source = source.replace(
+            route_admin,
+            "adfd0 = os.open(admin, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC); adfd = fcntl.fcntl(adfd0, fcntl.F_DUPFD_CLOEXEC, 10); os.close(adfd0); ads = os.fstat(adfd)",
+            1,
+        )
+    if route_config in source:
+        source = source.replace(
+            route_config,
+            "cfd, cs, raw = nofollow(admin + \"/config\"); cfd0 = fcntl.fcntl(cfd, fcntl.F_DUPFD_CLOEXEC, 10); os.close(cfd); cfd = cfd0",
+            1,
+        )
     bootstrap = bootstrap_payload(adapter_source)
     bootstrap_argv = json.dumps(["--", *items], separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     contract = json.dumps({"bootstrap_argv_sha256": sha256(bootstrap_argv), "bootstrap_raw_sha256": sha256(bootstrap)},
