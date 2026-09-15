@@ -56,3 +56,43 @@ Required closure:
 No real Stage1Host process/OS identity, real IPC, privileged real attestation transport, real envelope/pre-C/C, real consumer or `apply_patch`, request pair/materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — V27 fake-host canonical-record remediation still REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `517bb9790985a2001f6778ad64ccfbe7fe5bce3d`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-HOST-OWNED-CONTINUATION-CPU-STATIC`
+
+Verdict:
+`REQUEST_CHANGES(tools/psm_wma/stage1_host_boundary.py:17)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_host_owned_continuation_cpu_static_canonical_record_517bb97_93a89ba.md`
+
+Canonical review commit:
+`3a4ca9dbe6137d944034e986800476e35c8a4f65`
+
+Current blockers: `2`; Design/Authority: `0`; Production/implementation: `1 HIGH`; Evidence: `1 MEDIUM`; Scope/child/runtime: `0`.
+
+Positive closure from the prior pair:
+- host authority is now kept in detached private `_HostSnapshotV27`; returned ReviewRecord objects are audit copies and privileged attestation revalidates them against the private snapshot;
+- exact Gate/root/child/session/binding/nonce/counter approval remains enforced;
+- `RLock` continues to serialize `APPROVED -> CONSUMING` before freshness/apply;
+- base-mutation, approval/replay, parallel resume and terminal-failure evidence is materially stronger.
+
+Remaining blockers:
+1. HIGH — the fixed `_SCHEMA` is still not the inherited exact authority schema. V24 requires the six-key ENV, two output paths and remote facts; current schema has no environment category, collapses query facts to `stdout/stderr/predicate`, substitutes synthetic descriptor/target/source/argv counts, and forces all semantic fields through one generic `identity:<token>` string grammar. `create()` also still accepts one free-form string and manufactures the entire record through `_default_rows()`.
+2. MEDIUM — the `8/8` suite proves snapshot isolation and protocol behavior, but its fixtures still come from `host.create("review-a")`. It therefore validates the synthetic schema rather than proving fidelity to the frozen V24/V27 authority surface; it lacks explicit six-key ENV, exact DescriptorV1, both query-fact and real nested replay/target/source/argv schema witnesses.
+
+Required closure:
+- derive the fake ReviewRecord schema directly from the frozen authority surface, including ENV, exact paths/query facts/provenance/C01--C15/freshness/absence/replay/targets/descriptor/source/argv identities;
+- freeze the correct primitive type/format for each field, or use named sub-record digests with an explicit canonical sub-schema instead of one generic identity string grammar;
+- move/remove the free-form-string shortcut from the host-facing `create()` contract, or confine it to a test fixture builder that emits the exact schema;
+- add at least one explicit exact-schema fixture and malformed/partial/type-format tests that fail when any inherited required field/category is omitted or collapsed.
+
+No real Stage1Host process/OS identity, real IPC, privileged real attestation transport, real envelope/pre-C/C, real consumer or `apply_patch`, request pair/materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
