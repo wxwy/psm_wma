@@ -6845,3 +6845,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 依据紧邻整改令牌，仅修改根仓`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`及其stdlib unittest：新增并封存typed `.git`/config/local-V2 raw identity；P0三对象的root/path/blob/raw identity；P1 ordered eight injected source records（selection/config/parser argv/bootstrap argv/bootstrap/bootstrap contract/outer/adapter source）；完整 `ReplayBindingV1` scalar、eight parser/source rows及owner-FD；五个冻结cwd/index/evidence/output targets。所有记录在`rehearse_v05()`且consumer调用前完整fail-close。
 - 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`8/8 PASS`；`python -m py_compile tools/psm_wma/stage1_v17_pre_c_rehearsal.py tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py` PASS；`git diff --check` PASS。新增直接逐字段漂移矩阵覆盖所有新raw、P0/P1、binding与target字段，均在consumer前停止。未运行v0.5 request/C、未进行真实Git/network/source/data/cache I/O、未改child、未使用GPU/训练。
 - 下一步=仅暂存这四个受控文件、提交并以新formal SHA重新申请ChatGPT/MM/DS审核；未提交。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #3 rebase/push（2026-09-15 14:56 CST，REVIEW）
+
+- `git push`首次因远端新增`ce321297`拒绝；fetch/ls-remote确认remote=`ce321297a8bbb6f25955e92c8a69145f6549d039`，其仅新增ChatGPT的`c2174dd`正式review ledger。为保留该远端提交，对本root-only整改提交执行`git rebase origin/V2`，新formal root=`1bf4dc5315ac37a360e850dc5d0baf799287b58c`，随后已push；child Gitlink仍=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 该rebase改变formal root，先前`c2174dd`审核不能复用。冻结名册保持ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`；下一步=canonical Inbox append、送达MM/DS，并对`1bf4dc53`重新三方审核。仍禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
