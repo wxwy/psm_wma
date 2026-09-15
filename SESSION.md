@@ -6850,3 +6850,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - `git push`首次因远端新增`ce321297`拒绝；fetch/ls-remote确认remote=`ce321297a8bbb6f25955e92c8a69145f6549d039`，其仅新增ChatGPT的`c2174dd`正式review ledger。为保留该远端提交，对本root-only整改提交执行`git rebase origin/V2`，新formal root=`1bf4dc5315ac37a360e850dc5d0baf799287b58c`，随后已push；child Gitlink仍=`93a89ba61306d840a008813f62f26a34d54850f4`。
 - 该rebase改变formal root，先前`c2174dd`审核不能复用。冻结名册保持ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`；下一步=canonical Inbox append、送达MM/DS，并对`1bf4dc53`重新三方审核。仍禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #3 审核送达回执（2026-09-15 14:58 CST，REVIEW）
+
+- ChatGPT申请已append至canonical live Inbox并随ledger=`69c1d29733cde5b4841840840ec37f9174a6d948`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成完整pair的`send-keys -l → 间隔>=1秒 → 独立Enter → capture`；capture均确认消息离开输入框并进入会话，MM=`thinking`、DS=`Thinking`。
+- formal pair/root=`1bf4dc5315ac37a360e850dc5d0baf799287b58c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`，名册不变。三方final前保持REVIEW，按三分钟完整远端锁定、exact review scan和独立pane capture；禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
