@@ -100,8 +100,13 @@ class PreCRehearsalTest(unittest.TestCase):
             tuple(absence(path) for path in DESIGNATED_ABSENCES), p0, p1, binding, targets)
         def verifier(json_raw, markdown_raw, paths):
             return ReadbackV1(json_raw, markdown_raw) if verify else ReadbackV1(b"bad\n", markdown_raw)
-        lease = FreshnessLeaseV1(tuple((item.name, item.byte_length, item.sha256)
-                                       for item in (closure.git_identity, closure.config_raw, closure.local_v2_raw)))
+        lease = FreshnessLeaseV1(
+            tuple((item.name, "", "", item.byte_length, item.sha256)
+                  for item in (closure.git_identity, closure.config_raw, closure.local_v2_raw)) +
+            tuple((f"output_absence:{index}", item.path, item.predicate, item.byte_length, item.sha256)
+                  for index, item in enumerate(closure.output_absences)) +
+            tuple((f"designated_absence:{index}", item.path, item.predicate, item.byte_length, item.sha256)
+                  for index, item in enumerate(closure.designated_absences)))
         return RehearsalInputV1(cap, DescriptorV1(), raw, md, patch, ENV, closure, guard, lease,
             verifier, f"{verifier.__module__}.{verifier.__qualname__}"), calls
 
@@ -234,6 +239,20 @@ class PreCRehearsalTest(unittest.TestCase):
             value, calls = self.fixture(freshness=freshness); plan = rehearse_v05(value)
             with self.assertRaisesRegex(PreCRehearsalError, category): consume_once_v05(plan)
             self.assertEqual(calls, [])
+
+    def test_output_and_designated_absence_identity_are_in_guard_domain(self):
+        value, calls = self.fixture(); plan = rehearse_v05(value)
+        self.assertEqual(len(plan.freshness_identities), 9)
+        for index, item in enumerate(value.closure.output_absences):
+            self.assertIn((f"output_absence:{index}", item.path, item.predicate,
+                           item.byte_length, item.sha256), plan.freshness_identities)
+        for index, item in enumerate(value.closure.designated_absences):
+            self.assertIn((f"designated_absence:{index}", item.path, item.predicate,
+                           item.byte_length, item.sha256), plan.freshness_identities)
+        stale, _ = self.fixture(freshness="STALE"); stale_plan = rehearse_v05(stale)
+        with self.assertRaisesRegex(PreCRehearsalError, "freshness"):
+            consume_once_v05(stale_plan)
+        self.assertEqual(calls, [])
 
     def test_foreign_self_consistent_authority_absences_fail_before_consumer(self):
         value, calls = self.fixture()

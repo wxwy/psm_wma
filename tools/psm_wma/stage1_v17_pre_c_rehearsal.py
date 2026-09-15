@@ -264,7 +264,7 @@ class FreshnessLeaseV1:
     """Host-bound local freshness lease; it exposes no closure reconstruction input."""
     __slots__ = ("_domain", "_locked")
 
-    def __init__(self, domain: tuple[tuple[str, int, str], ...]) -> None:
+    def __init__(self, domain: tuple[tuple[str, str, str, int, str], ...]) -> None:
         self._domain = domain; self._locked = True
 
     def __setattr__(self, name, value):
@@ -284,7 +284,7 @@ class FreshnessGuardV1:
     def __init__(self, provider: str, module: str, path: str, blob_sha256: str,
                  callable_qualname: str, abi: str, transport: str,
                  guard_opaque_v1: Callable[[FreshnessLeaseV1, DescriptorV1,
-                                            tuple[tuple[str, int, str], ...]], str]) -> None:
+                                            tuple[tuple[str, str, str, int, str], ...]], str]) -> None:
         self.provider, self.module, self.path = provider, module, path
         self.blob_sha256, self.callable_qualname = blob_sha256, callable_qualname
         self.abi, self.transport, self.guard_opaque_v1 = abi, transport, guard_opaque_v1
@@ -334,7 +334,7 @@ class SealedPreCPlanV1:
     closure: ClosureV1
     freshness_guard: FreshnessGuardV1
     freshness_lease: FreshnessLeaseV1
-    freshness_identities: tuple[tuple[str, int, str], ...]
+    freshness_identities: tuple[tuple[str, str, str, int, str], ...]
     post_write_verify: Callable[[bytes, bytes, tuple[str, str]], ReadbackV1]
     post_write_qualname: str
     identities: tuple[tuple[str, int, str], ...]
@@ -450,7 +450,11 @@ def rehearse_v05(value: ContractV05) -> SealedPreCPlanV1:
                                                "opaque-sealed-freshness-guard/v1") or
             not all((guard.provider, guard.module, guard.path))): _fail("guard_identity")
     local = (value.closure.git_identity, value.closure.config_raw, value.closure.local_v2_raw)
-    lease_domain = tuple((item.name, item.byte_length, item.sha256) for item in local)
+    lease_domain = tuple((item.name, "", "", item.byte_length, item.sha256) for item in local) + tuple(
+        (f"output_absence:{index}", item.path, item.predicate, item.byte_length, item.sha256)
+        for index, item in enumerate(value.closure.output_absences)) + tuple(
+        (f"designated_absence:{index}", item.path, item.predicate, item.byte_length, item.sha256)
+        for index, item in enumerate(value.closure.designated_absences))
     if value.freshness_lease._domain != lease_domain: _fail("lease_domain")
     identities = tuple((name, len(raw), _sha(raw)) for name, raw in (
         ("json_raw", value.json_raw), ("markdown_raw", value.markdown_raw), ("patch_raw", value.patch_raw)))

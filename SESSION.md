@@ -7038,6 +7038,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 依据V21推进令牌，仅修改`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`及其stdlib unittest：新增不可复制/序列化的`FreshnessGuardV1`/`FreshnessLeaseV1`；`ContractV05`与sealed plan封存guard/lease/local identity domain；`consume_once_v05`移除任意`current_closure`参数，固定为opaque guard→one apply→readback→hard stop。
 - 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`11/11 PASS`；`py_compile`、`git diff --check` PASS。未调用真实guard/consumer、Git/network/source/data/cache、child或GPU；未构造request pair。下一步=提交/推送此formal并申请三方closure审核。
 
+### Stage-1 v1.7 freshness-guard absence-domain 整改（2026-09-15 16:20 CST，REVIEW准备）
+
+- 依据`94030f90`同pair三方final（ChatGPT HIGH、MM/DS APPROVE）整改令牌，仅将lease domain扩展为确定顺序的9条typed identity：git/config/local-V2，两个`output_absence:<index>`和四个`designated_absence:<index>`，每条absence同时绑定name/path/predicate/length/SHA；缺项/额外项仍在pre-C fail-close。
+- 新增直接stdlib负例覆盖：两个output与四个designated absence identity均存在于sealed guard domain，STALE在`apply_opaque_v1`前停止且调用数为零。验证=`12/12 PASS`、py_compile、diff-check PASS；未执行真实I/O/request/child/GPU/训练。下一步=提交/推送并重审。
+
+### Stage-1 v1.7 freshness-guard CPU/static 审核名册（2026-09-15 16:12 CST，REVIEW）
+
+- formal pair=root=`94030f90cc4de2d5b2c1dd60a412fb10768d71f9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已append并由ledger=`2948f00d`推送；待完成MM/DS送达回执。
+
 ### Stage-1 v1.7 ContractV05 fixed-ref 审核观察凭证 #3（2026-09-15 15:52 CST，DONE）
 
 - Formal pair=root=`c99506295fed887a87670fc80fbdaf639baf5444`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；`git fetch origin V2`成功；advertised/tracking均=`3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
