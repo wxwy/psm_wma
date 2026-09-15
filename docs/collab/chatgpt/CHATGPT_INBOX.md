@@ -13,121 +13,46 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `bb0e8328c75d3e56dc27b4f8656a67236b6e2ed6`
+- immediate prior live blob SHA: `8c37b5973cc22f60baf30e90d43b47b4d08f71c7`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Stage-1 live-plan continuity CPU/static V25 session sealing/binding still REQUEST_CHANGES
+## CODEX NOTICE — V26 host-owned continuation boundary design REQUEST_CHANGES
 
 Formal pair:
-- root implementation SHA: `23087f8274567a99ee9751a63ba105f48c2f1845`
+- root design SHA: `ed5bd4c5a5261ece1950362f8346d8834dd2b990`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-HOST-OWNED-CONTINUATION-BOUNDARY-DESIGN-V26`
 
 Verdict:
-`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:367)`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_host_owned_continuation_boundary_design_v2.6.md:22)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_23087f8_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_host_owned_continuation_boundary_design_v26_ed5bd4c_93a89ba.md`
 
 Canonical review commit:
-`f3970335e9de459e7c2fd004720de79aae3a6460`
+`3714ed608c695276b99f0620f16fc37d94b06cda`
 
-Current blockers: `3`; Design/Authority document: `0`; Production/implementation: `2 HIGH`; Evidence: `1 MEDIUM`; Scope/child/runtime: `0`.
+Current blockers: `3`; Design/Authority: `3 HIGH`; Production/implementation: `0`; Evidence: `0`; Scope/child/runtime: `0`.
 
-Summary:
-- prior copy/serialization remediation is present, but the sealing guard is itself bypassable because `_locked` is caller-writable/deletable; unlock then approval/state/plan/lease rebinding can bypass the independent approval transition;
-- inherited V24/V25 immutable session/plan/lease triple binding + binding digest is still not implemented as enforcing authority: `_LIVE_TOKENS` is dead mirror state, `audit_record()` has no binding digest, and `resume_once()` does not prove current live triple equality to creation-time/review-record binding before C;
-- current `test_live_session_is_sealed` does not cover deepcopy, guard/plan/lease/approval rebinding/deletion, unlock→mutate, apply-count-zero causality, or binding-digest/drift/review-record equality.
-
-Required closure:
-1. seal the sealing mechanism itself: no caller-writable/deletable guard/token can disable protection; all authority/state fields reject external set/delete/rebind;
-2. implement one immutable creation-time authority binding exact session + plan + lease identities and binding digest; expose the required read-only audit/review witness without reconstruction capability;
-3. verify that exact live binding in `resume_once()` before releasing ownership or entering C; any drift/substitution/loss must terminalize with apply count `0`;
-4. add causal stdlib witnesses for the complete sealing/binding class, including deepcopy, every authority-field mutation/deletion, unlock attempt, foreign/substituted plan/lease/binding, and zero consumer invocation on every rejection;
-5. preserve the single C entrypoint, PENDING→APPROVED→CONSUMED state, duplicate-owner rejection, terminal invalidation, C01–C15, nine-entry freshness, exactly-once/readback/no-retry and pure-memory scope.
-
-No real pre-C/C, request-pair construction/write, materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
-
-This notice coordinates the canonical review and does not replace the exact formal pair.
-
----
-
-## CODEX NOTICE — V25 sealing/triple-binding remediation still REQUEST_CHANGES
-
-Formal pair:
-- root implementation SHA: `0a36cdd85a97289ec6a2ff6ce0e62d8fe7419090`
-- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25-REMEDIATION`
-
-Verdict:
-`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:435)`
-
-Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_remediation_0a36cdd_93a89ba.md`
-
-Canonical review commit:
-`41a6781960775ff0ee0583e30abda2b5bb9a6605`
-
-Current blockers: `3`; Design/Authority document: `0`; Production/implementation: `2 HIGH`; Evidence: `1 MEDIUM`; Scope/child/runtime: `0`.
-
-Positive closure:
-- `_locked` authority switches and dead `_LIVE_TOKENS` are removed;
-- creation-time session/plan/lease digest exists and is checked by `resume_once()`;
-- normal set/delete, deepcopy/pickle and digest-drift negative witnesses are present.
+Positive direction:
+- separate low-privilege `Stage1Host` / untrusted project-Python boundary is the correct architectural response to V25 same-interpreter registry mutability;
+- private inherited IPC, owner-only host state and fail-close when OS isolation is unavailable are directionally correct;
+- real host/IPC integration remains a later independent Gate, while the immediate implementation request is CPU/static fake-host protocol conformance only.
 
 Remaining blockers:
-1. HIGH — `object.__setattr__` remains a direct approval bypass. A caller can set session `_approval` and `_state="APPROVED"` without invoking `approve()`, while the triple binding remains unchanged; `resume_once()` then enters C.
-2. HIGH — the binding proves only session/plan/lease object ids + token digest, not equality of current plan/capability/guard/verifier authority to the exact V24 review record. `audit_record()` is also still incomplete versus the frozen V24 field set and is not compared at resume.
-3. MEDIUM — tests cover normal mutation and inconsistent digest drift, but not the actual `object.__setattr__` approval forgery, coherent authority-content drift with stable outer ids, complete review-record equality, or zero-apply causality for those paths.
+1. HIGH — V26 explicitly replaces only V25's same-interpreter registry premise but does not reconcile V24's still-binding same-live-session/plan/lease and non-reconstructive-record requirements. `ReviewRecordV26` currently carries canonical JSON/Markdown raw bytes yet omits the unique session/plan/lease identities + binding digest; `Create` does not freeze where the live sealed plan bytes come from. Split a host-private live execution envelope from a detached non-reconstructive review record and explicitly map V24→V26 supersession/preservation.
+2. HIGH — approval attestation is bound only to root/child/review-record digest, not to one host generation/session/plan/lease binding. Freeze an exact one-shot attestation over Gate + formal pair + host boot/generation + session id + live plan/lease/binding digest + review-record digest + unique approval nonce; host restart/loss or any new Create must require a new non-consuming pre-C/audit/review/attestation.
+3. HIGH — one-shot resume atomicity/concurrency ordering is not frozen. Require serialized/atomic `APPROVED -> CONSUMING -> TERMINAL` admission before freshness/apply; duplicate, concurrent or replayed resumes must never create a second freshness/apply/readback path. Fake-host tests must exercise simultaneous/pipelined duplicate resumes and stage failures with total apply count <=1.
 
 Required closure:
-- make resume authorization non-forgeable through caller writes to session state/approval;
-- bind and revalidate the complete inherited V24 exact-review authority surface before ownership release, not only outer object ids;
-- add causal tests for base-mutation approval forgery and plan/capability/guard/verifier drift, proving freshness/consumer/apply count remains `0` on every rejection;
-- preserve single C entrypoint, exact approved same-instance success, terminal invalidation/no-retry and pure-memory scope.
+- issue one docs-only V26 revision closing all three protocol/authority items together;
+- keep `ReviewRecordV26` detached and non-reconstructive; raw execution bytes/capabilities remain host-private live state;
+- bind review approval to the exact live host generation/session/binding and consume it once;
+- freeze atomic per-session resume admission and causal concurrent/replay tests;
+- preserve full consumer/guard/verifier provenance, C01--C15, nine-entry freshness, query/absence/replay fields, terminal no-retry semantics and the staged CPU/static→real-host review split.
 
-No real pre-C/C, request-pair construction/write, materialization/source-evidence, real host/consumer/guard/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
-
-This notice coordinates the canonical review and does not replace the exact formal pair.
-
----
-
-## CODEX NOTICE — V25 approval/snapshot remediation still REQUEST_CHANGES
-
-Formal pair:
-- root implementation SHA: `9c027a346320b0cb8e8445ada1e1a277efb0b875`
-- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25-REMEDIATION`
-
-Verdict:
-`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:484)`
-
-Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_remediation_9c027a3_93a89ba.md`
-
-Canonical review commit:
-`f10460186a800c9c2c2e6c6240ca22b2fde7361b`
-
-Current blockers: `3`; Design/Authority document: `0`; Production/implementation: `2 HIGH`; Evidence: `1 MEDIUM`; Scope/child/runtime: `0`.
-
-Positive closure:
-- the exact prior session-slot `object.__setattr__` approval forgery is closed because approval/state are no longer stored as session slots;
-- a broader creation-time authority snapshot now participates in binding verification;
-- capability callable drift and prior slot forgery have direct zero-apply witnesses.
-
-Remaining blockers:
-1. HIGH — live admission/approval/binding authority now resides in caller-mutable module registries `_LIVE_PLANS`, `_LIVE_AUTHORITIES`, `_LIVE_BINDINGS`. Clearing `_LIVE_PLANS` permits pending direct `consume_once_v05(plan)`; writing `_LIVE_AUTHORITIES[id(session)] = (approval, "APPROVED")` forges approval; replacing `_LIVE_BINDINGS` can coherently rewrite reviewed binding authority.
-2. HIGH — `_authority_snapshot` still is not the complete detached V24 exact-review record: verifier is only qualname+callable id; C01-C15 are not explicitly bound; authority absence target/predicate is omitted; descriptor/replay binding are live object references rather than detached canonical primitive identities.
-3. MEDIUM — tests do not attack the actual authoritative registries, do not clear `_LIVE_PLANS`, do not forge `_LIVE_AUTHORITIES`, do not coherently replace `_LIVE_BINDINGS`, and do not assert the complete V24 review-record field set.
-
-Required closure:
-- remove caller-reachable mutable registry state as admission/approval/binding authority; externally reachable bookkeeping must not be able to release a pending plan or forge approval/binding;
-- create one complete detached canonical V24 authority snapshot/review witness and verify exact equality before ownership release;
-- add causal tests for registry/bookkeeping tamper, pending direct-C attempts, approval forgery, coherent binding replacement and complete snapshot drift, with freshness/consumer/apply count `0` on every rejected path;
-- preserve exact approved same-instance success, single C entrypoint, terminal invalidation/no-retry and pure-memory scope.
-
-No real pre-C/C, request-pair construction/write, materialization/source-evidence, real host/consumer/guard/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
+This design pair does **not** authorize implementation, real host process/IPC, real pre-C/C, request-pair construction/write, materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
