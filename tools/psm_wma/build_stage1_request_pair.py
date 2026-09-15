@@ -261,6 +261,7 @@ def rebuild_launcher(base_source: bytes, adapter_source: bytes, inputs: Launcher
         "--cwd": "/proc/self/fd/8",
         "--index": "/proc/self/fd/8/.authority-root.index",
         "--bootstrap-project-root": "/proc/self/fd/8",
+        "--interpreter": "/opt/conda/bin/python3.11",
         "--adapter-path": inputs.adapter.path,
         "--adapter-blob-oid": inputs.adapter.blob_oid,
         "--adapter-raw-sha256": inputs.adapter.raw_sha256,
@@ -275,7 +276,10 @@ def rebuild_launcher(base_source: bytes, adapter_source: bytes, inputs: Launcher
         "--audit-module-raw-sha256": inputs.audit.raw_sha256,
     }
     for flag, value in values.items():
+        if flag == "--interpreter" and flag not in items:
+            continue
         _set_flag(items, flag, value)
+    source = source.replace('PYTHON = "/opt/conda/bin/python3"', 'PYTHON = "/opt/conda/bin/python3.11"', 1)
     owner_flag = "--bootstrap-owner-root-fd"
     if owner_flag in items:
         raise ValueError("launcher already owns FD")
