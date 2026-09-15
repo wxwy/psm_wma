@@ -48,8 +48,25 @@ class DescriptorV1:
 @dataclass(frozen=True)
 class QueryFactV1:
     argv: tuple[str, ...]
+    timeout_s: int
+    return_code: int
+    stdout: bytes
+    stderr: bytes
+    predicate: str
+    advertised_v2: bytes = b""
+
+
+@dataclass(frozen=True)
+class AuthorityAbsenceV1:
+    target: str
     raw: bytes
     predicate: str
+
+
+@dataclass(frozen=True)
+class ReadbackV1:
+    json_raw: bytes
+    markdown_raw: bytes
 
 
 @dataclass(frozen=True)
@@ -59,15 +76,16 @@ class ClosureV1:
     local_v2_raw: bytes
     remote_v2: QueryFactV1
     authority_ref: QueryFactV1
-    local_authority_absence: bytes
-    remote_authority_absence: bytes
-    designated_absences: tuple[str, str]
+    local_authority_absence: AuthorityAbsenceV1
+    remote_authority_absence: AuthorityAbsenceV1
+    output_absences: tuple[str, str]
+    designated_absences: tuple[str, str, str, str]
 
 
 class OpaquePatchCapabilityV1:
     """Host-injected capability; neither copyable nor serializable."""
     __slots__ = ("provider", "module", "path", "blob_sha256", "callable_qualname", "abi",
-                 "transport", "apply_opaque_v1", "_token")
+                 "transport", "apply_opaque_v1", "_token", "_locked")
 
     def __init__(self, provider: str, module: str, path: str, blob_sha256: str,
                  callable_qualname: str, abi: str, transport: str,
@@ -75,7 +93,11 @@ class OpaquePatchCapabilityV1:
         self.provider, self.module, self.path = provider, module, path
         self.blob_sha256, self.callable_qualname = blob_sha256, callable_qualname
         self.abi, self.transport, self.apply_opaque_v1 = abi, transport, apply_opaque_v1
-        self._token = object()
+        self._token = object(); self._locked = True
+
+    def __setattr__(self, name, value):
+        if getattr(self, "_locked", False): _fail("capability_mutation")
+        object.__setattr__(self, name, value)
 
     def __copy__(self): _fail("capability_copy")
     def __deepcopy__(self, memo): _fail("capability_copy")
@@ -91,11 +113,16 @@ class RehearsalInputV1:
     patch_raw: bytes
     environment: tuple[tuple[str, str], ...]
     closure: ClosureV1
-    post_write_verify: Callable[[bytes, bytes, tuple[str, str]], bool]
+    post_write_verify: Callable[[bytes, bytes, tuple[str, str]], ReadbackV1]
     post_write_qualname: str
 
 
 @dataclass
+class _RetirementV1:
+    consumed: bool = False
+
+
+@dataclass(frozen=True)
 class SealedPreCPlanV1:
     capability: OpaquePatchCapabilityV1
     descriptor: DescriptorV1
@@ -103,10 +130,10 @@ class SealedPreCPlanV1:
     markdown_raw: bytes
     patch_text: str
     closure: ClosureV1
-    post_write_verify: Callable[[bytes, bytes, tuple[str, str]], bool]
+    post_write_verify: Callable[[bytes, bytes, tuple[str, str]], ReadbackV1]
     post_write_qualname: str
     identities: tuple[tuple[str, int, str], ...]
-    _consumed: bool = field(default=False, init=False, repr=False)
+    _retirement: _RetirementV1 = field(default_factory=_RetirementV1, init=False, repr=False, compare=False)
 
     def __copy__(self): _fail("plan_copy")
     def __deepcopy__(self, memo): _fail("plan_copy")
@@ -153,15 +180,30 @@ def _validate_patch(raw: bytes) -> str:
     return text
 
 
+def _expected_patch(json_raw: bytes, markdown_raw: bytes) -> bytes:
+    def add(raw: bytes) -> bytes:
+        return b"".join(b"+" + line for line in raw.splitlines(keepends=True))
+    return (b"--- /dev/null\n+++ b/" + PATHS[0].encode() + b"\n" + add(json_raw) +
+            b"--- /dev/null\n+++ b/" + PATHS[1].encode() + b"\n" + add(markdown_raw))
+
+
 def _validate_closure(closure: ClosureV1) -> None:
     _reject(closure)
     if not all((closure.git_identity, closure.config_raw, closure.local_v2_raw,
-                closure.local_authority_absence, closure.remote_authority_absence)):
+                closure.local_authority_absence.raw, closure.remote_authority_absence.raw)):
         _fail("closure_empty")
-    if closure.designated_absences != PATHS: _fail("closure_absence")
-    if ((closure.remote_v2.argv, closure.remote_v2.predicate) != (REMOTE_V2_ARGV, "remote_v2_ancestor") or
-            (closure.authority_ref.argv, closure.authority_ref.predicate) != (AUTHORITY_ARGV, "authority_absent") or
-            not closure.remote_v2.raw or not closure.authority_ref.raw):
+    if closure.output_absences != PATHS or len(set(closure.designated_absences)) != 4:
+        _fail("closure_absence")
+    if ((closure.remote_v2.argv, closure.remote_v2.timeout_s, closure.remote_v2.return_code, closure.remote_v2.predicate) !=
+            (REMOTE_V2_ARGV, 30, 0, "remote_v2_ancestor") or
+            (closure.authority_ref.argv, closure.authority_ref.timeout_s, closure.authority_ref.return_code,
+             closure.authority_ref.predicate) != (AUTHORITY_ARGV, 30, 0, "authority_absent") or
+            not closure.remote_v2.stdout or not closure.remote_v2.advertised_v2 or
+            closure.remote_v2.stderr or closure.authority_ref.stderr or
+            not closure.authority_ref.stdout or
+            closure.local_authority_absence.predicate != "authority_absent" or
+            closure.remote_authority_absence.predicate != "authority_absent" or
+            not closure.local_authority_absence.target or not closure.remote_authority_absence.target):
         _fail("closure_query")
 
 
@@ -180,7 +222,9 @@ def rehearse_v05(value: RehearsalInputV1) -> SealedPreCPlanV1:
         _fail("verifier_identity")
     _reject(value.descriptor, value.json_raw, value.markdown_raw, value.patch_raw)
     _validate_json(value.json_raw); _validate_markdown(value.markdown_raw, value.json_raw)
-    patch_text = _validate_patch(value.patch_raw); _validate_closure(value.closure)
+    patch_text = _validate_patch(value.patch_raw)
+    if value.patch_raw != _expected_patch(value.json_raw, value.markdown_raw): _fail("patch_inverse")
+    _validate_closure(value.closure)
     identities = tuple((name, len(raw), _sha(raw)) for name, raw in (
         ("json_raw", value.json_raw), ("markdown_raw", value.markdown_raw), ("patch_raw", value.patch_raw)))
     return SealedPreCPlanV1(cap, value.descriptor, value.json_raw, value.markdown_raw, patch_text,
@@ -189,13 +233,16 @@ def rehearse_v05(value: RehearsalInputV1) -> SealedPreCPlanV1:
 
 def consume_once_v05(plan: SealedPreCPlanV1, current_closure: ClosureV1) -> str:
     """Fixed C: freshness, exactly one opaque call, byte verification, hard stop."""
-    if plan._consumed: _fail("already_consumed")
+    if plan._retirement.consumed: _fail("already_consumed")
+    plan._retirement.consumed = True
     if current_closure != plan.closure: _fail("freshness")
-    plan._consumed = True
     try: outcome = plan.capability.apply_opaque_v1(plan.descriptor, plan.patch_text)
     except Exception: _fail("consumer_exception")
     if outcome == "REJECTED_NO_WRITE": _fail("rejected_no_write")
     if outcome == "PARTIAL_OR_UNKNOWN": _fail("partial_or_unknown")
     if outcome != "APPLIED": _fail("consumer_outcome")
-    if not plan.post_write_verify(plan.json_raw, plan.markdown_raw, PATHS): _fail("post_write")
+    readback = plan.post_write_verify(plan.json_raw, plan.markdown_raw, PATHS)
+    if not isinstance(readback, ReadbackV1) or (readback.json_raw, readback.markdown_raw) != (plan.json_raw, plan.markdown_raw):
+        _fail("post_write")
+    _validate_json(readback.json_raw); _validate_markdown(readback.markdown_raw, readback.json_raw)
     return "HARD_STOP_PENDING_INDEPENDENT_REVIEW"

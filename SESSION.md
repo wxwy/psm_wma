@@ -1,5 +1,17 @@
 # 当前协作状态
 
+### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
+- ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_cpu_static_e870b90_93a89ba.md`，`REQUEST_CHANGES(...:48)`：完整query/authority-absence schema、immutable sealed plan/readback bytes、freshness失败亦消耗。MM=`mm:0.0`=`APPROVE_TO_CLOSE...`；DS=`ds:0.0`=`REQUEST_CHANGES(...:36)`：patch inverse必须由producer raws重建、四条designated absences必须封存。
+- 三方final同pair齐全，整改令牌仅授权一次root纯内存CPU/static合并整改；禁止真实I/O、v0.5 C/materialization、child/GPU/训练。
+
+### Stage-1 v1.7 pre-C rehearsal remediation 审核名册与送达回执（2026-09-15 14:22 CST，REVIEW）
+
+- formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已作为ledger=`ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`推送。
+- MM/DS均完成`send-keys -l → 间隔≥1秒 → 独立Enter → capture`；capture显示申请已离开输入框，MM已开始运行静态测试，DS已开始读取formal tree。尚无同pair final。
+- 下轮起按三分钟完整远端锁定及三路核验；三方同pairfinal前不得修改本整改或执行v0.5/真实I/O/materialization/source-evidence/child/GPU/训练。
+
 ### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 整改验证（2026-09-15 14:20 CST，REVIEW准备）
 
 - 依据紧邻#7的同pair三方整改令牌，root-only更新`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`及其stdlib unittest：固定exact v0.5 JSON/Markdown路径、逐字six-key环境、typed closure与两个有序query argv/predicate、canonical JSON/五字段Markdown/line inverse witness、descriptor/capability/verifier identity、不可copy/pickle，以及C入场前消费的exact-once三态terminal策略。
