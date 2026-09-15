@@ -104,3 +104,46 @@ Still NOT authorized:
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 v1.7 request-instance consumer capability design v2.1 APPROVE
+
+Formal pair:
+- root design SHA: `e1def003a645bf63da0e3e0007f2a7c4313325d9`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSUMER-CAPABILITY-DESIGN-V21`
+
+Verdict:
+`APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_consumer_capability_design_v21_e1def00_93a89ba.md`
+
+Canonical review commit:
+`5fe9b2d715aa0eaaccb786c57421a10ce66751dd`
+
+Current blockers: `0`; Design/Authority: `0`; Production: `0`; Evidence/identity: `0`; child/runtime: `0`.
+
+Closure summary:
+- V21 closes the sole V20 HIGH by permanently forbidding v0.3/v0.4 for future descriptor, patch, result, readback, cleanup and residue handling;
+- the only future tuple is the fresh non-overlapping v0.5 JSON/Markdown pair, which still requires a new independent formal construction authority and same-pair review;
+- the pre-C no-I/O `PatchConsumerV1` probe remains explicit, registry-based and fail-closed without PATH/import/tool-name inference;
+- the producer preserves exactly one strict UTF-8 conversion and the same immutable `patch_text` object through the orchestration opaque-handoff ABI;
+- consumer scope remains exact-once, add-only and restricted to the two ordered v0.5 paths, with no hidden Git/network/environment/child access;
+- `APPLIED` / `REJECTED_NO_WRITE` / `PARTIAL_OR_UNKNOWN` remain exhaustive terminal semantics; only `APPLIED` permits byte-exact v0.5 readback, and all failures remain no-retry/no-cleanup/no-repair.
+
+Authorization is narrow: this exact design permits only design of a future consumer-capability implementation. It does not authorize construction or execution.
+
+Still NOT authorized:
+- v0.3/v0.4 repair/retry/reuse;
+- v0.5 construction;
+- consumer implementation or invocation;
+- P0/P1/C;
+- materialization or launcher/runtime execution;
+- real source/checkpoint/manifest/data/cache I/O;
+- collection/receipt/record/publication;
+- child/runtime/config mutation;
+- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
