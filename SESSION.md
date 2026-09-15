@@ -7288,3 +7288,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 实际修改仅为`tools/psm_wma/stage1_host_boundary.py`与其stdlib unittest：12个review category均改为固定category/field order/field count/`identity:<token>` grammar；明确包含三类完整provenance、C01--C15、九项freshness、query stdout/stderr/predicate、local/remote/designated absence、replay、targets、descriptor/source/argv rows。host保存独立`_HostSnapshotV27`，返回的是复制的audit record；privileged attestation对返回record重新验证schema、canonical digest与private snapshot；resume只读private snapshot。
 - 新测试逐字段drift、missing/extra/reordered/malformed schema、`object.__setattr__`在attestation前/approval后篡改returned audit record、完整approval drift、replay、parallel admission和terminal failure matrix。验证命令=`python -m unittest tools.psm_wma.test_stage1_host_boundary && python -m py_compile tools/psm_wma/stage1_host_boundary.py tools/psm_wma/test_stage1_host_boundary.py && git diff --check`，结果=`8/8 PASS`、py_compile/diff-check PASS。
 - 未执行真实host/IPC/pre-C/C/request pair/materialization/source-evidence/child/GPU或训练；下一步=提交/推送并申请新formal pair三方closure审核。
+
+### V27 fake-host canonical-record remediation 审核名册（2026-09-15 20:06 CST，REVIEW）
+
+- Formal pair=root=`517bb9790985a2001f6778ad64ccfbe7fe5bce3d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户明确以DS替代Kimi）。ChatGPT申请已append至canonical live Inbox，待将ledger推送后完成MM/DS送达回执。
+- 请求唯一verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`；无同pair三方final前禁止真实host/IPC/pre-C/C/request pair/materialization/source-evidence、child、GPU和训练。
