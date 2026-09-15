@@ -17,6 +17,12 @@
 - MM=`mm:0.0`、DS=`ds:0.0`均完成 `send-keys -l → 间隔≥1秒 → 独立 Enter → capture`；两份 capture 均显示完整申请已离开输入框并进入会话。此回执不是 final verdict。
 - 后续仅按三分钟完整远端锁定与三方 exact-pair 核验；未有三方同 pair final 前，禁止 CPU fake-host 实现、真实 host/IPC 与所有下游动作。
 
+### V26 审核完整观察凭证 #1（2026-09-15 CST，REVIEW）
+
+- formal pair=root=`ed5bd4c5a5261ece1950362f8346d8834dd2b990`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=d627f8ec26f25151238cae19faeaeca460917b4b`；fetch成功；advertised/tracking=`aa2ac1c355e56c98fee237e97539fec374633df7`；新增完整范围=`3714ed60 docs: add ChatGPT V26 host boundary design review ed5bd4c`、`aa2ac1c3 docs: publish ChatGPT V26 host boundary design verdict ed5bd4c`；祖先判定=0；`git merge --ff-only origin/V2`成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_host_owned_continuation_boundary_design_v26_ed5bd4c_93a89ba.md`，final=`REQUEST_CHANGES(...v2.6.md:22)`，要求一次性补齐：V24→V26 live-envelope/non-reconstructive supersession、session/generation/binding/nonce-bound one-shot approval、原子串行 `APPROVED -> CONSUMING -> TERMINAL`。MM capture显示正审阅并给出方向性结论，但未出现锚定同 pair 的 self-contained FINAL，故仍处理中；DS=`ds:0.0` capture为同 pair `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`。
+- 三方 final 尚未齐备，无推进令牌；禁止处理 ChatGPT 整改、实现 fake-host/真实 host/IPC 或下游动作。下一轮继续完整核验。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
