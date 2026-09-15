@@ -8,6 +8,7 @@ import unittest
 from dataclasses import replace
 
 from tools.psm_wma import stage1_v17_request_projection as projection
+from tools.psm_wma import stage1_v17_pre_c_rehearsal as rehearsal
 from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
     AUTHORITY_ARGV, AuthorityAbsenceV1, AbsenceObservationV1, ClosureV1, ContractV05,
     DESIGNATED_ABSENCES, DescriptorV1, ENV, FROZEN_TARGETS, FrozenTargetV1,
@@ -148,7 +149,7 @@ class PreCRehearsalTest(unittest.TestCase):
         record = session.audit_record()
         self.assertEqual(record[:3], (id(session), id(plan), id(session.lease)))
         self.assertRegex(record[3], r"^[0-9a-f]{64}$")
-        self.assertEqual(record[6], DescriptorV1().paths)
+        self.assertEqual(record[4][3], DescriptorV1().paths)
         session.close()
         with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan)
 
@@ -172,19 +173,34 @@ class PreCRehearsalTest(unittest.TestCase):
     def test_binding_drift_is_terminal_before_consumer(self):
         value, calls = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
         approval = object(); session.approve(approval)
-        object.__setattr__(session._binding, "_digest", "0" * 64)
+        object.__setattr__(rehearsal._LIVE_BINDINGS[id(session)], "_digest", "0" * 64)
         with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
             session.resume_once(session.lease, approval)
         self.assertEqual(calls, [])
         with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"):
             consume_once_v05(plan)
 
+    def test_base_mutation_cannot_forge_approval_or_authority_snapshot(self):
+        value, calls = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
+        approval = object()
+        for name, forged in (("_approval", approval), ("_state", "APPROVED")):
+            with self.assertRaises(AttributeError): object.__setattr__(session, name, forged)
+        with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
+            session.resume_once(session.lease, approval)
+        self.assertEqual(calls, [])
+        value, calls = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
+        approval = object(); session.approve(approval)
+        object.__setattr__(plan.capability, "apply_opaque_v1", lambda *_: "APPLIED")
+        with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
+            session.resume_once(session.lease, approval)
+        self.assertEqual(calls, [])
+
     def test_capability_guard_lease_and_binding_reject_mutation_or_deletion(self):
         value, _ = self.fixture(); session = LivePlanSessionV1(rehearse_v05(value))
         for owner, name in ((value.capability, "apply_opaque_v1"),
                             (value.freshness_guard, "guard_opaque_v1"),
                             (value.freshness_lease, "_domain"),
-                            (session._binding, "_digest"),
+                            (rehearsal._LIVE_BINDINGS[id(session)], "_digest"),
                             (session.lease, "_token")):
             with self.assertRaises(PreCRehearsalError): setattr(owner, name, object())
             with self.assertRaises(PreCRehearsalError): delattr(owner, name)

@@ -318,17 +318,20 @@ class ContinuationLeaseV1:
 
 class _ContinuationBindingV1:
     """Creation-time, non-reconstructive authority for one live triple."""
-    __slots__ = ("_session_id", "_plan_id", "_lease_id", "_token", "_digest")
+    __slots__ = ("_session_id", "_plan_id", "_lease_id", "_token", "_snapshot", "_digest")
 
     def __init__(self, session: object, plan: SealedPreCPlanV1,
                  lease: ContinuationLeaseV1) -> None:
         token = object()
         session_id, plan_id, lease_id, token_id = id(session), id(plan), id(lease), id(token)
-        payload = f"psm.stage1.live-plan-binding/v1:{session_id}:{plan_id}:{lease_id}:{token_id}".encode()
+        snapshot = _authority_snapshot(plan)
+        payload = repr(("psm.stage1.live-plan-binding/v2", session_id, plan_id, lease_id,
+                        token_id, snapshot)).encode()
         object.__setattr__(self, "_session_id", session_id)
         object.__setattr__(self, "_plan_id", plan_id)
         object.__setattr__(self, "_lease_id", lease_id)
         object.__setattr__(self, "_token", token)
+        object.__setattr__(self, "_snapshot", snapshot)
         object.__setattr__(self, "_digest", _sha(payload))
 
     def __setattr__(self, name, value): _fail("continuation_binding_mutation")
@@ -339,14 +342,15 @@ class _ContinuationBindingV1:
 
     def matches(self, session: object, plan: SealedPreCPlanV1,
                 lease: ContinuationLeaseV1) -> bool:
-        payload = (f"psm.stage1.live-plan-binding/v1:{id(session)}:{id(plan)}:{id(lease)}:"
-                   f"{id(self._token)}").encode()
+        snapshot = _authority_snapshot(plan)
+        payload = repr(("psm.stage1.live-plan-binding/v2", id(session), id(plan), id(lease),
+                        id(self._token), snapshot)).encode()
         return ((id(session), id(plan), id(lease)) ==
                 (self._session_id, self._plan_id, self._lease_id) and
-                _sha(payload) == self._digest)
+                snapshot == self._snapshot and _sha(payload) == self._digest)
 
-    def audit_fields(self) -> tuple[int, int, int, str]:
-        return self._session_id, self._plan_id, self._lease_id, self._digest
+    def audit_fields(self) -> tuple[object, ...]:
+        return self._session_id, self._plan_id, self._lease_id, self._digest, self._snapshot
 
 
 @dataclass(frozen=True)
@@ -407,20 +411,42 @@ class SealedPreCPlanV1:
     def __reduce_ex__(self, protocol): _fail("plan_serialize")
 
 
+def _authority_snapshot(plan: SealedPreCPlanV1) -> tuple[object, ...]:
+    """Identity-only reviewed surface; never contains raw bytes or reconstruction inputs."""
+    cap, guard, closure = plan.capability, plan.freshness_guard, plan.closure
+    facts = lambda values: tuple((item.name, item.byte_length, item.sha256) for item in values)
+    query = lambda item: (item.argv, item.timeout_s, item.return_code, item.predicate,
+                          item.stdout_length, item.stdout_sha256, item.stderr_length,
+                          item.stderr_sha256, item.advertised_length, item.advertised_sha256)
+    absence = lambda values: tuple((item.path, item.predicate, item.byte_length, item.sha256)
+                                   for item in values)
+    return (plan.identities, plan.freshness_identities, plan.descriptor, PATHS, ENV,
+            (cap.provider, cap.module, cap.path, cap.blob_sha256, cap.callable_qualname,
+             cap.abi, cap.transport, id(cap.apply_opaque_v1)),
+            (guard.provider, guard.module, guard.path, guard.blob_sha256, guard.callable_qualname,
+             guard.abi, guard.transport, id(guard.guard_opaque_v1)),
+            (plan.post_write_qualname, id(plan.post_write_verify)),
+            facts((closure.git_identity, closure.config_raw, closure.local_v2_raw)),
+            query(closure.remote_v2), query(closure.authority_ref),
+            (closure.local_authority_absence.byte_length, closure.local_authority_absence.sha256,
+             closure.remote_authority_absence.byte_length, closure.remote_authority_absence.sha256),
+            absence(closure.output_absences), absence(closure.designated_absences),
+            facts(tuple(item.raw for item in closure.p0_objects)), facts(closure.p1_objects),
+            closure.replay_binding, tuple((item.name, item.path) for item in closure.targets))
+
+
 class LivePlanSessionV1:
     """Pure-memory owner for one review-pending plan and its opaque lease."""
-    __slots__ = ("_plan", "_lease", "_approval", "_state", "_binding")
+    __slots__ = ("_plan", "_lease")
     def __init__(self, plan: SealedPreCPlanV1) -> None:
         if id(plan) in _LIVE_PLANS: _fail("continuation_owner")
         lease = ContinuationLeaseV1()
         object.__setattr__(self, "_plan", plan)
         object.__setattr__(self, "_lease", lease)
-        object.__setattr__(self, "_approval", None)
-        object.__setattr__(self, "_state", "PENDING")
-        object.__setattr__(self, "_binding", _ContinuationBindingV1(self, plan, lease))
-        _LIVE_PLANS.add(id(plan))
+        _LIVE_PLANS.add(id(plan)); _LIVE_BINDINGS[id(self)] = _ContinuationBindingV1(self, plan, lease)
+        _LIVE_AUTHORITIES[id(self)] = (None, "PENDING")
     def __del__(self):
-        if getattr(self, "_state", "INVALID") in ("PENDING", "APPROVED"):
+        if id(self) in _LIVE_AUTHORITIES:
             self.close()
     def __setattr__(self, name, value):
         _fail("continuation_mutation")
@@ -431,30 +457,32 @@ class LivePlanSessionV1:
     @property
     def lease(self) -> ContinuationLeaseV1: return self._lease
     def approve(self, approval_identity: object) -> None:
-        if self._state != "PENDING" or approval_identity is None: self.close(); _fail("continuation_approval")
-        object.__setattr__(self, "_approval", approval_identity); object.__setattr__(self, "_state", "APPROVED")
+        current = _LIVE_AUTHORITIES.get(id(self))
+        if current is None or current[1] != "PENDING" or approval_identity is None:
+            self.close(); _fail("continuation_approval")
+        _LIVE_AUTHORITIES[id(self)] = (approval_identity, "APPROVED")
     def audit_record(self) -> tuple[object, ...]:
         """Read-only identity witness; never a plan reconstruction input."""
-        return (*self._binding.audit_fields(), self._plan.identities,
-                self._plan.freshness_identities, PATHS, ENV,
-                self._plan.capability.provider, self._plan.capability.module,
-                self._plan.capability.path, self._plan.capability.blob_sha256,
-                self._plan.freshness_guard.provider, self._plan.freshness_guard.module,
-                self._plan.freshness_guard.path, self._plan.freshness_guard.blob_sha256,
-                self._plan.post_write_qualname)
+        binding = _LIVE_BINDINGS.get(id(self))
+        if binding is None: _fail("continuation_identity")
+        return binding.audit_fields()
     def close(self) -> None:
-        object.__setattr__(self, "_state", "INVALID"); self._plan._retirement.consume()
-        _LIVE_PLANS.discard(id(self._plan))
+        _LIVE_AUTHORITIES.pop(id(self), None); _LIVE_BINDINGS.pop(id(self), None)
+        self._plan._retirement.consume(); _LIVE_PLANS.discard(id(self._plan))
     def resume_once(self, lease: ContinuationLeaseV1, approval_identity: object) -> str:
-        if (self._state != "APPROVED" or lease is not self._lease or
-                approval_identity is not self._approval or
-                not self._binding.matches(self, self._plan, self._lease)):
+        current = _LIVE_AUTHORITIES.get(id(self))
+        binding = _LIVE_BINDINGS.get(id(self))
+        if (current is None or current[1] != "APPROVED" or lease is not self._lease or
+                approval_identity is not current[0] or
+                binding is None or not binding.matches(self, self._plan, self._lease)):
             self.close(); _fail("continuation_identity")
-        object.__setattr__(self, "_state", "CONSUMED"); _LIVE_PLANS.discard(id(self._plan))
+        _LIVE_AUTHORITIES.pop(id(self), None); _LIVE_BINDINGS.pop(id(self), None); _LIVE_PLANS.discard(id(self._plan))
         return consume_once_v05(self._plan)
 
 
 _LIVE_PLANS: set[int] = set()
+_LIVE_AUTHORITIES: dict[int, tuple[object | None, str]] = {}
+_LIVE_BINDINGS: dict[int, _ContinuationBindingV1] = {}
 
 
 def _reject(*values: object) -> None:

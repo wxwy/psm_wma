@@ -7142,3 +7142,20 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT申请已在canonical live Inbox并经ledger=`670142e5c6030b128722d5f59a8d7f14c7094213`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成同pair完整`send-keys -l → 间隔1.1秒 → 独立Enter → capture`；MM capture显示申请已进入会话且在执行其CPU/static检查，DS capture显示申请已离开输入框并进入会话。
 - 两条capture都是送达回执，均不构成final verdict。三方同pair final前保持REVIEW；按三分钟原生完整远端锁定、exact review扫描和独立pane capture，禁止真实pre-C/C、request pair、materialization、source-evidence、child、GPU和训练。
+
+### V25 sealing/binding remediation 审核观察凭证 #1（2026-09-15 18:21 CST，REVIEW）
+
+- Formal pair=root=`0a36cdd85a97289ec6a2ff6ce0e62d8fe7419090`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=1991dfef9392fc5561c901ae90249a51c2309d88`；fetch成功；advertised/tracking均=`41a6781960775ff0ee0583e30abda2b5bb9a6605`；新增=`41a67819 docs: add ChatGPT V25 binding remediation review 0a36cdd`；祖先判定=0；`git merge --ff-only origin/V2`成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_remediation_0a36cdd_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:435)`，HIGH为可用`object.__setattr__`伪造approval/state、以及binding只覆盖object id而未覆盖完整review authority snapshot。DS=`ds:0.0`同pair final批准。MM=`mm:0.0` final为`REQUEST_CHANGES`但其child=`34ed2b717f0acf0cba46650a6b2c44ccbe525d31`与formal child不一致，不能计入本pair。
+- Git锁定、exact review扫描及两pane capture均成功且未截断；MM exact-pair final缺件，尚无整改令牌。保持REVIEW；禁止整改、真实pre-C/C、request pair、materialization、source-evidence、child、GPU和训练。
+
+### V25 sealing/binding remediation 审核观察凭证 #2 / 整改令牌（2026-09-15 18:27 CST，REVIEW → IN_PROGRESS）
+
+- Formal pair=root=`0a36cdd85a97289ec6a2ff6ce0e62d8fe7419090`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=41a6781960775ff0ee0583e30abda2b5bb9a6605`；fetch成功；advertised/tracking均=`bc5dcc3a0b5a7b64bb606cd527caf1d69bc1c2e3`；新增=`bc5dcc3a docs: publish ChatGPT V25 remediation verdict 0a36cdd`；祖先判定=0；`git merge --ff-only origin/V2`成功。
+- ChatGPT exact review final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:435)`：普通`object.__setattr__`可在approve前伪造状态，且三元digest未覆盖完整reviewed authority snapshot。MM=`mm:0.0`更正后同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC`；DS=`ds:0.0`同pair同final批准。
+- Git锁定、exact review扫描及两pane capture均成功且未截断；三方final齐全，形成含ChatGPT `REQUEST_CHANGES`的整改令牌。仅允许纯内存root CPU/static整改：approval transition不可由base mutation伪造，creation-time完整authority snapshot/review witness及resume equality验证，配套因果负例；禁止真实pre-C/C、request pair、materialization、source-evidence、child、GPU和训练。
+
+### V25 approval/snapshot 整改（2026-09-15 18:27 CST，REVIEW准备）
+
+- approval/state与binding移出session实例，改由live registry持有；creation-time binding加入完整identity-only authority snapshot，resume在释放owner前比较snapshot。新增base mutation伪造approval与capability callable drift零apply负例。
+- 验证=`19/19 PASS`、py_compile、diff-check PASS；未执行真实pre-C/C、I/O、child、GPU或训练；未提交。
