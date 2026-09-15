@@ -1,5 +1,11 @@
 # 当前协作状态
 
+### V26 host-owned continuation boundary design（2026-09-15 CST，IN_PROGRESS）
+
+- 用户明确选择方案 1：不再试图以同一 Python interpreter 内的 module/session registries 保证 authority；改由独立、低权限 Stage1Host 进程持有 approval、binding、review record 与 one-shot latch。
+- 预计修改仅新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_host_owned_continuation_boundary_design_v2.6.md`，以及本条 `SESSION.md`、`TODO.md`；不修改现有 V25 code，不执行 real pre-C/C、request pair、materialization、source-evidence、child、GPU 或训练。
+- 下一步：静态复读、diff-check、提交并以新的 root/同一 child 三方审核。V25 的纯内存 registry 不再作为可执行 authority 继续整改。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
