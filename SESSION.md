@@ -7222,3 +7222,37 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - approval/state与binding移出session实例，改由live registry持有；creation-time binding加入完整identity-only authority snapshot，resume在释放owner前比较snapshot。新增base mutation伪造approval与capability callable drift零apply负例。
 - 验证=`19/19 PASS`、py_compile、diff-check PASS；未执行真实pre-C/C、I/O、child、GPU或训练；未提交。
+
+### V27 fake-host CPU/static implementation 审核观察凭证 #1（2026-09-15 19:35 CST，REVIEW）
+
+- Formal pair=root=`2b7429f2a1eb6cd50f5c5da15e3691a5128f50c1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户已明确以DS替代Kimi）。`before_head=5a299c9e530f3148a71833e3246d19589fe12b1c`；`git fetch origin V2`成功；advertised/tracking均=`5a299c9e530f3148a71833e3246d19589fe12b1c`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date.`。
+- ChatGPT精确检索命令=`rg -l -F '2b7429f2a1eb6cd50f5c5da15e3691a5128f50c1' docs/collab/chatgpt/reviews/`，结果为空。DS=`ds:0.0`独立capture给出同pair final=`REQUEST_CHANGES(tools/psm_wma/test_stage1_host_boundary.py:6)`：approval未比对root/child，且`apply_ok=False`分支仍递增apply计数。MM=`mm:0.0`独立capture为审阅结论正文，未含该pair的`FINAL`/明确verdict，故未取得最终结论。
+- Git锁定、exact review扫描及两pane capture均成功且未截断；ChatGPT与MM final缺件，尚无整改令牌。保持REVIEW；禁止修改fake-host实现、真实pre-C/C、request pair、materialization、source-evidence、child、GPU和训练。下一步仅继续三分钟审核轮询；若MM仍无final，仅补发final格式提醒。
+
+### V27 fake-host CPU/static implementation 审核观察凭证 #2（2026-09-15 19:39 CST，REVIEW）
+
+- Formal pair=root=`2b7429f2a1eb6cd50f5c5da15e3691a5128f50c1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=5a299c9e530f3148a71833e3246d19589fe12b1c`；fetch成功；advertised/tracking均=`be57d575344f73c79c88ee17b74c265181d7efcf`；新增=`2a21a71f docs: add ChatGPT fake-host CPU static review 2b7429f`、`be57d575 docs: publish ChatGPT fake-host CPU static verdict 2b7429f`；祖先判定=0；`git merge --ff-only origin/V2`成功至`be57d575`。
+- ChatGPT精确review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_host_owned_continuation_cpu_static_2b7429f_93a89ba.md`，同pair final=`REQUEST_CHANGES(tools/psm_wma/stage1_host_boundary.py:54)`，4项：完整typed/canonical ReviewRecord、exact Gate/root/child与privileged attestation隔离、atomic admission/concurrent witness、全矩阵CPU/static证据。DS=`ds:0.0`同pair final=`REQUEST_CHANGES(tools/psm_wma/test_stage1_host_boundary.py:6)`，指出record类别未覆盖、root/child未比对、apply reject计数语义不清。MM=`mm:0.0`capture仍只有审阅正文，未含同pair最终verdict。
+- Git锁定、exact review扫描及两个pane capture均成功且未截断；MM final缺件，尚无整改令牌。保持REVIEW；禁止修改fake-host实现、真实pre-C/C、request pair、materialization、source-evidence、child、GPU和训练。允许仅向MM补发一次严格final格式提醒。
+
+### V27 fake-host CPU/static implementation MM final 格式提醒送达回执（2026-09-15 19:40 CST，REVIEW）
+
+- 对冻结审核者MM=`mm:0.0`完成一次非重复申请的final格式提醒：消息摘要要求其仅补同pair `FINAL root=... child=... verdict=APPROVE_TO_CLOSE...` 或 `REQUEST_CHANGES(file:line)`；已执行`send-keys -l`，间隔1.1秒后独立`Enter`，随后独立capture。
+- capture显示提醒已离开输入框并进入会话，pane处于`Undulating`处理状态；此为送达回执而非最终verdict。保持REVIEW，禁止任何整改或下游执行。
+
+### V27 fake-host CPU/static implementation 审核观察凭证 #3 / 整改令牌（2026-09-15 19:43 CST，REVIEW → IN_PROGRESS）
+
+- Formal pair=root=`2b7429f2a1eb6cd50f5c5da15e3691a5128f50c1`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=be57d575344f73c79c88ee17b74c265181d7efcf`；fetch成功；advertised/tracking均=`be57d575344f73c79c88ee17b74c265181d7efcf`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date.`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_host_owned_continuation_cpu_static_2b7429f_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/stage1_host_boundary.py:54)`，要求完整canonical typed record、exact approval authority与privileged attestation隔离、serialized admission/concurrency witness、全失败矩阵。DS=`ds:0.0`同pair final=`REQUEST_CHANGES(tools/psm_wma/test_stage1_host_boundary.py:6)`，要求record类别、formal root/child校验和失败分支apply语义闭合。MM=`mm:0.0`同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`。
+- Git锁定、exact review扫描及两pane capture均成功且未截断；三方final齐全，形成含ChatGPT/DS `REQUEST_CHANGES`的整改令牌。仅允许根仓纯内存stdlib fake-host模块/测试的一次性最小整改；禁止真实host/IPC/pre-C/C/request pair/materialization/source-evidence、child、GPU和训练。
+
+### V27 fake-host CPU/static 一次性整改认领（2026-09-15 19:43 CST，IN_PROGRESS）
+
+- 依据紧邻的整改令牌，预计仅修改`tools/psm_wma/stage1_host_boundary.py`与`tools/psm_wma/test_stage1_host_boundary.py`，以及本会话的`SESSION.md`/`TODO.md`记录。
+- 收口范围：canonical typed ReviewRecord、host-owned exact gate/root/child/record attestation与受限privileged harness、stdlib lock保护的`APPROVED -> CONSUMING`临界段、所有terminal失败分支和direct causal CPU/static矩阵。不得引入真实进程、IPC、文件系统、consumer或下游动作。
+
+### V27 fake-host CPU/static 一次性整改完成（2026-09-15 19:47 CST，REVIEW准备）
+
+- 实际修改仅为`tools/psm_wma/stage1_host_boundary.py`与`tools/psm_wma/test_stage1_host_boundary.py`：`ReviewRecordV27`以12类固定顺序canonical authority rows绑定consumer/guard/verifier、C01--C15、freshness/query/absence/replay/target及descriptor/source/argv identity；host冻结exact Gate/root/child；公开client API不再提供approval mint，测试专用privileged orchestration harness单独持有attestation路径；`RLock`将approval与`APPROVED -> CONSUMING` admission串行化。
+- 单测扩至8项：每类record drift、missing/extra/reordered schema、所有approval字段漂移、prior session/generation、并发resume、freshness/apply/readback失败及foreign lease，均验证terminal和零/至多一次apply。验证命令=`python -m unittest tools.psm_wma.test_stage1_host_boundary && python -m py_compile tools/psm_wma/stage1_host_boundary.py tools/psm_wma/test_stage1_host_boundary.py && git diff --check`，结果=`8/8 PASS`、py_compile/diff-check PASS。
+- 未执行真实host/IPC/pre-C/C/request pair/materialization/source-evidence/child/GPU或训练；下一步=复读formal范围，提交推送，并对新的formal pair三方申请closure审核。
