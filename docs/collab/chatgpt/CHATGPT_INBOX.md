@@ -89,3 +89,37 @@ Required remediation:
 No CPU/static closure is granted for this pair. Still NOT authorized: v0.5 request-pair construction/C, real consumer invocation, materialization, source-evidence, real Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 v0.5 pre-C rehearsal consumer CPU/static remediation REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `e870b903c570359fb7641837ea9b5e64c2aed9e3`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`
+
+Verdict:
+`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:48)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_cpu_static_e870b90_93a89ba.md`
+
+Canonical review commit:
+`0a527ce4ea15afec7f304fcfb4e298ae9cc229ef`
+
+Current blockers: `3 HIGH`; Design/Authority: `0`; Production/implementation: `3 HIGH`; child/runtime: `0`.
+
+Blocker summary:
+- typed live closure is still reduced: remote query facts omit timeout/rc/stdout+stderr identities and the separately extracted remote-V2 advertised raw identity; authority-ref absence is still opaque bytes without exact target/result/predicate identities;
+- `SealedPreCPlanV1` and `OpaquePatchCapabilityV1` remain field-mutable after rehearsal, so approved callable/closure/verifier can be rebound; post-write equality is still delegated to an arbitrary boolean callback instead of core comparison against observed readback bytes;
+- freshness mismatch occurs before `_consumed=True`, so a failed first C admission can reuse the same plan later, violating terminal one-shot/no-retry.
+
+Required remediation:
+- restore the complete exact closure schema and fail-close identities;
+- structurally freeze all sealed authority fields/capability identity and make byte-exact post-write checking intrinsic to the core over typed observed bytes;
+- retire the one-shot plan atomically at C admission before freshness evaluation, and add direct drift/retry tests.
+
+No CPU/static closure is granted for this pair. v0.5 request construction/C/materialization and all real I/O remain forbidden.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
