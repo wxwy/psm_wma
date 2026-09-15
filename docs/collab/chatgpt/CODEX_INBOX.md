@@ -137,3 +137,12 @@
 - Consolidated acceptance: follows `USER_DIRECTIVE_STAGE1_CONVERGENCE_2026-09-15.md` without adding a lateral Gate. `ContractV05` is the sole `rehearse_v05()` input; C01--C15 matrix covers P0/P1/replay literals, observations/query/absence/environment/targets, capability/verifier/canonical pair, exactly-once and zero-real-source-I/O. The replay-helper fixture is frozen in-memory gzip/base64 bytes and verifies `5582/8f55dc32...d5e82`; no `Path.read_bytes`, Git, network, source/data/cache or consumer call occurs. New sealed foreign-but-self-consistent drift matrix proves git/config/local-V2/query/P0/P1/binding/target freshness fails before consumer invocation.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: fixed authority-absence ContractV05 closure
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`.
+- Formal root: `c99506295fed887a87670fc80fbdaf639baf5444`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only pre-C core/test/C01--C15 matrix plus state ledger; no child/runtime code. `unittest=11/11 PASS`; `py_compile` and `git diff --check` PASS.
+- Remediation focus: closes the same-pair ChatGPT C08/C15 fixed-authority-ref finding in one class-wide pass. `AUTHORITY_REF` freezes `refs/heads/authority/r09-b-ttt-v035-immutable-source-v1`; both local and remote `AuthorityAbsenceV1` require exact target and predicate before their raw identity may be accepted. Tests mutate each target/raw/length/SHA into a foreign-but-self-consistent record and prove pre-consumer `closure_query` fail-close. Matrix C01--C15 now has exact expected and positive/negative witness columns.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.

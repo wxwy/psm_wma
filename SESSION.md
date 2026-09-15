@@ -6951,3 +6951,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 依据观察凭证#2整改令牌，仅修改pre-C core、其stdlib unittest和C01--C15 matrix：新增冻结`AUTHORITY_REF=refs/heads/authority/r09-b-ttt-v035-immutable-source-v1`；`AuthorityAbsenceV1.identity_ok()`要求target与predicate逐值等于该fixed literal；fixture两条local/remote authority absence均改用该target；新增双路foreign target+raw+length+SHA自洽漂移，断言在`rehearse_v05()`/consumer前`closure_query`停止。矩阵C01--C15逐行补足exact expected与positive/foreign witness。
 - 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`11/11 PASS`；`py_compile`及`git diff --check` PASS。未运行v0.5 request/C、未进行真实Git/network/source/data/cache I/O、未改child、未使用GPU/训练。
 - 下一步=仅暂存`SESSION.md`、`TODO.md`、pre-C core/test/matrix，提交/推送后以新formal SHA重审；未提交。
+
+### Stage-1 v1.7 pre-C ContractV05 fixed-ref formal（2026-09-15 15:35 CST，REVIEW）
+
+- formal root=`c99506295fed887a87670fc80fbdaf639baf5444`已推送至`V2`；formal tree仅=`SESSION.md`、`TODO.md`、matrix、pre-C core及其测试；child Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`未变。canonical live Inbox容量=`20023/131072` bytes，已append新申请，待ledger推送和MM/DS送达三联回执。
+- 冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。新formal完全替换`8bc6e935`，旧pair verdict不可复用；收到同pair三方final前保持REVIEW，禁止v0.5 request/C、materialization、真实I/O、child、GPU和训练。
