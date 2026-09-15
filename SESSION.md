@@ -6956,3 +6956,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - formal root=`c99506295fed887a87670fc80fbdaf639baf5444`已推送至`V2`；formal tree仅=`SESSION.md`、`TODO.md`、matrix、pre-C core及其测试；child Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`未变。canonical live Inbox容量=`20023/131072` bytes，已append新申请，待ledger推送和MM/DS送达三联回执。
 - 冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。新formal完全替换`8bc6e935`，旧pair verdict不可复用；收到同pair三方final前保持REVIEW，禁止v0.5 request/C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C ContractV05 fixed-ref 审核送达回执（2026-09-15 15:39 CST，REVIEW）
+
+- ChatGPT申请已在canonical live Inbox并由ledger=`a5959bea50a3b3570f68b89e2a7a34e30d0a5a37`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成同pair完整`send-keys -l → 间隔>=1秒 → 独立Enter → capture`；MM capture显示申请进入`Manifesting`，DS capture显示申请离开输入框并正在检查formal commit。
+- formal pair=root=`c99506295fed887a87670fc80fbdaf639baf5444`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；三方同pair final前保持REVIEW，按三分钟原生完整远端锁定、exact review scan和独立pane capture；禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
