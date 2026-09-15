@@ -6939,3 +6939,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`8bc6e93547a5a3f7db541f3843a6d36a32d23181`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=57417af0662a7f684f1c3d26c120d8fba7bd95e9`；fetch成功；advertised/tracking均=`57417af0662a7f684f1c3d26c120d8fba7bd95e9`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
 - ChatGPT exact检索`rg -l -F '8bc6e93547a5a3f7db541f3843a6d36a32d23181' docs/collab/chatgpt/reviews/`无命中。MM=`mm:0.0` capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture同pair final相同。
 - 五项独立证据均成功且未截断；ChatGPT final缺失，未形成关闭令牌，禁止实现及下游执行；继续三分钟审核监控。
+
+### Stage-1 v1.7 pre-C ContractV05 审核观察凭证 #2（2026-09-15 15:35 CST，REVIEW）
+
+- Formal pair=root=`8bc6e93547a5a3f7db541f3843a6d36a32d23181`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。`before_head=ab9fc53c78661d31d9ee37ffecad6ea1d17501f7`；fetch成功；advertised/tracking均=`c4529f6dfd957caedeb4add6d282f9bed60c18fb`；新增提交=`ca3fcec6 docs: add ChatGPT ContractV05 fixed-ref review`、`c4529f6d docs: publish ChatGPT ContractV05 fixed-ref verdict`；祖先判定=0；ff-only成功至`c4529f6d`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_contract_v05_pre_c_cpu_static_8bc6e93_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:379)`：C08/C15的local/remote authority-ref absence target/raw可foreign-but-self-consistent，必须绑定固定ref并增加双路负例，矩阵逐行列出exact expected与witness。MM=`mm:0.0` capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`；DS=`ds:0.0` capture同pair final相同。
+- 五项独立证据成功且未截断；三方同pair final齐全，形成含ChatGPT `REQUEST_CHANGES`的整改令牌。仅允许该authority-fixed absence类别收口、matrix exact-value/witness补全及CPU/static测试，随后新SHA重审；禁止v0.5 request/C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C ContractV05 fixed-ref 整改验证（2026-09-15 15:35 CST，IN_PROGRESS）
+
+- 依据观察凭证#2整改令牌，仅修改pre-C core、其stdlib unittest和C01--C15 matrix：新增冻结`AUTHORITY_REF=refs/heads/authority/r09-b-ttt-v035-immutable-source-v1`；`AuthorityAbsenceV1.identity_ok()`要求target与predicate逐值等于该fixed literal；fixture两条local/remote authority absence均改用该target；新增双路foreign target+raw+length+SHA自洽漂移，断言在`rehearse_v05()`/consumer前`closure_query`停止。矩阵C01--C15逐行补足exact expected与positive/foreign witness。
+- 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`11/11 PASS`；`py_compile`及`git diff --check` PASS。未运行v0.5 request/C、未进行真实Git/network/source/data/cache I/O、未改child、未使用GPU/训练。
+- 下一步=仅暂存`SESSION.md`、`TODO.md`、pre-C core/test/matrix，提交/推送后以新formal SHA重审；未提交。

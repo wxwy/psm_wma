@@ -41,6 +41,7 @@ DESIGNATED_ABSENCES = (
 REMOTE_V2_ARGV = ("git", "ls-remote", "origin", "refs/heads/V2")
 AUTHORITY_ARGV = ("git", "ls-remote", "origin",
                   "refs/heads/authority/r09-b-ttt-v035-immutable-source-v1")
+AUTHORITY_REF = AUTHORITY_ARGV[-1]
 P0_OBJECTS = (
     ("base_source", "08d5828cdb4c12afa3b798ff01826c91ceb8755a",
      "docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py",
@@ -190,7 +191,8 @@ class AuthorityAbsenceV1:
     sha256: str
 
     def identity_ok(self) -> bool:
-        return self.byte_length == len(self.raw) and self.sha256 == _sha(self.raw)
+        return (self.target == AUTHORITY_REF and self.predicate == "authority_absent" and
+                self.byte_length == len(self.raw) and self.sha256 == _sha(self.raw))
 
 
 @dataclass(frozen=True)
@@ -374,9 +376,6 @@ def _validate_closure(closure: ClosureV1) -> None:
             not closure.remote_v2.identity_ok() or not closure.authority_ref.identity_ok() or
             not closure.remote_v2.advertised_v2 or closure.authority_ref.advertised_v2 or
             closure.remote_v2.stderr or closure.authority_ref.stderr or closure.authority_ref.stdout or
-            closure.local_authority_absence.predicate != "authority_absent" or
-            closure.remote_authority_absence.predicate != "authority_absent" or
-            not closure.local_authority_absence.target or not closure.remote_authority_absence.target or
             not closure.local_authority_absence.identity_ok() or not closure.remote_authority_absence.identity_ok()):
         _fail("closure_query")
 

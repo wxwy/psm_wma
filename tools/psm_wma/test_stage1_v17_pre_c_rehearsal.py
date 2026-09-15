@@ -89,8 +89,8 @@ class PreCRehearsalTest(unittest.TestCase):
             raw_fact("local_v2", b"V2"),
             query(("git", "ls-remote", "origin", "refs/heads/V2"), b"v2", "remote_v2_ancestor", b"V2"),
             query(AUTHORITY_ARGV, b"", "authority_absent"),
-            AuthorityAbsenceV1("refs/local-authority", b"local-absent", "authority_absent", 12, hashlib.sha256(b"local-absent").hexdigest()),
-            AuthorityAbsenceV1("refs/remote-authority", b"remote-absent", "authority_absent", 13, hashlib.sha256(b"remote-absent").hexdigest()),
+            AuthorityAbsenceV1(AUTHORITY_ARGV[-1], b"local-absent", "authority_absent", 12, hashlib.sha256(b"local-absent").hexdigest()),
+            AuthorityAbsenceV1(AUTHORITY_ARGV[-1], b"remote-absent", "authority_absent", 13, hashlib.sha256(b"remote-absent").hexdigest()),
             tuple(absence(path) for path in DescriptorV1().paths),
             tuple(absence(path) for path in DESIGNATED_ABSENCES), p0, p1, binding, targets)
         def verifier(json_raw, markdown_raw, paths):
@@ -246,6 +246,17 @@ class PreCRehearsalTest(unittest.TestCase):
             with self.assertRaisesRegex(PreCRehearsalError, "freshness"):
                 consume_once_v05(plan, current)
             self.assertEqual(calls, [])
+
+    def test_foreign_self_consistent_authority_absences_fail_before_consumer(self):
+        value, calls = self.fixture()
+        for field in ("local_authority_absence", "remote_authority_absence"):
+            raw = b"foreign-absence"
+            foreign = AuthorityAbsenceV1("refs/heads/foreign", raw, "authority_absent", len(raw),
+                hashlib.sha256(raw).hexdigest())
+            closure = replace(value.closure, **{field: foreign})
+            with self.assertRaisesRegex(PreCRehearsalError, "closure_query"):
+                rehearse_v05(replace(value, closure=closure))
+        self.assertEqual(calls, [])
 
 
 if __name__ == "__main__": unittest.main()
