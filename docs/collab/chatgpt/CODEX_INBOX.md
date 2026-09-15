@@ -635,6 +635,16 @@ The preceding request's root SHA was transcribed incorrectly. Its sole valid for
 - Forbidden: request construction before this design is approved; all materialization/retry, launcher execution, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/package/publication, child/runtime mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
 - Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-15 — Recovery design review: Stage-1 v1.7 request-instance v1.7
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V17`.
+- Formal root: `d03cb28ca138090f50adc09d4e810713457353af`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.7.md` plus `SESSION.md`/`TODO.md`; no child/runtime code change. This is the minimal docs-only remediation of the v1.6 same-pair ChatGPT/DS `REQUEST_CHANGES` findings.
+- Review focus: confirm V17 preserves v1.6's unique future v0.4 pair, one-shot/no-retry, six-key isolation and detached JSON/Markdown identity, while explicitly restoring every v0.5 inherited same-round zero-mutation authority field: `.git` identity, local V2 raw identity, both exact remote records plus separately extracted advertised V2 raw identity, and local/remote fixed authority-ref absence. These facts must be non-inferable, fail-closed and serialized before output.
+- Evidence: formal scope is the stated design and coordination records only; `git diff --cached --check` PASS before the design commit; root Gitlink is the stated child. No request construction, materialization/retry, launcher/runtime, source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1 occurred.
+- Requested final verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+- Forbidden before same-pair final approval: v0.4 construction, all materialization/retry, launcher/materializer execution, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
 ### Correction — v1.6 formal-root transcription
 
 The immediately preceding v1.6 application transcribed the root incorrectly. Its only authoritative formal root is `0a229ce3dfe5f6fbfb799b5813f09616d32088a4`; child/Gitlink remains `93a89ba61306d840a008813f62f26a34d54850f4`. All scope and verdict text is unchanged.

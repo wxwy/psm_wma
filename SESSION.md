@@ -1,5 +1,10 @@
 # 当前协作状态
 
+## Stage-1 v1.7 recovery design v1.7 独立审核名册（2026-09-15 10:21 CST，REVIEW）
+
+- Gate=`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V17`；formal pair=root=`d03cb28ca138090f50adc09d4e810713457353af`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。冻结名册=ChatGPT（正式结果仅`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定DS替代Kimi）。
+- 范围仅root docs-only v1.7 recovery design及协调记录；请求审核v0.5 inherited same-round Git/V2/fixed-authority-ref closure恢复、v1.6 v0.4 unique path、six-key、detached identity与one-shot/no-retry。三方同pair final前禁止v0.4 construction、materialization、真实I/O、child/GPU/训练。
+
 ### v1.7 docs-only 最小整改（2026-09-15 10:21 CST，未提交）
 
 - 引用v1.6观察凭证#7的含`REQUEST_CHANGES`汇总令牌；阅读复用`...request_instance_design_v0.5.md`完整closure与v1.6设计。
