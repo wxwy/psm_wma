@@ -1,5 +1,11 @@
 # 当前协作状态
 
+### v3.0 unified pre-C rehearsal implementation design 审核送达回执（2026-09-15 13:07 CST，REVIEW）
+
+- ChatGPT：canonical live Inbox完整申请已随ledger=`aa00d80e`推送；formal target=root=`6677343ff7bcc931d2c141ada46ced11de2fc318`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM=`mm:0.0`、DS=`ds:0.0`均完成`send-keys -l → 间隔≥1秒 → 独立Enter → capture`三联；MM capture显示申请离开输入框、已开始shell核验，DS capture显示完整申请进入transcript且`Thinking`。二者尚非final。
+- 下一轮起按三分钟完整审核观察；三方同pairfinal前，pre-C实现、v0.5 pair、materialization、receipt和GPU均不得启动。
+
 ### v3.0 unified pre-C rehearsal implementation design 审核名册与送达准备（2026-09-15 13:04 CST，REVIEW）
 
 - formal pair=root=`6677343ff7bcc931d2c141ada46ced11de2fc318`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。formal-tree仅v3.0 design、`SESSION.md`和`TODO.md`；Gitlink未变。
