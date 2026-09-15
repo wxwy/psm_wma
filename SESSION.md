@@ -6833,3 +6833,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT：canonical live Inbox申请已随ledger=`8e6efe73c12e7df83f15d0c16e5a6ee96582f121`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成完整formal pair的`send-keys -l → 间隔>=1秒 → 独立Enter → capture`；两份capture均显示申请已离开输入框，MM=`thinking`，DS=`Thinking`。消息摘要、目标pane和发送时间均为本段所列。
 - 冻结名册不变。三方final前保持REVIEW；下次完整观察须先fetch/ls-remote/ff-only、exact ChatGPT review扫描及MM/DS独立capture。禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #2 审核观察凭证 #1 / 整改令牌（2026-09-15 14:49:57 CST，REVIEW → IN_PROGRESS）
+
+- Formal pair=root=`c2174dd00e11b96f7ff1b187a2ea84853bfd8f42`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=b5de6d44aaf25b9e6c0e9e77e68b6f9037ce0310`；fetch成功；advertised/tracking均=`0d7a2bfe3bf9d3f73f24615eda811dcc4a841902`；新增完整范围=`0d7a2bfe docs: add ChatGPT pre-c rehearsal full-closure review`；祖先判定=0；ff-only成功至`0d7a2bfe3bf9d3f73f24615eda811dcc4a841902`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_cpu_static_c2174dd_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:118)`，HIGH=ClosureV1未覆盖继承的`.git`/config/V2 typed identities、selection/config/bootstrap/bootstrap_contract/replay outer/parser argv/raw、V1.0 P0 root/path/blob/P1 injected object/owner-FD、cwd/index/evidence targets及V31 complete source objects/ReplayBinding。MM=`mm:0.0` final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`；DS=`ds:0.0`逐字锚定同pair，final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_STATIC`。
+- 五项独立证据均成功且未截断；三方同pair final齐全，形成含ChatGPT `REQUEST_CHANGES`的整改令牌。仅允许合并该完整closure意见，纯内存标准库 root-only整改、CPU/static测试及重新审核；禁止v0.5 request/C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #3 full-closure 整改验证（2026-09-15 14:54 CST，IN_PROGRESS）
+
+- 依据紧邻整改令牌，仅修改根仓`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`及其stdlib unittest：新增并封存typed `.git`/config/local-V2 raw identity；P0三对象的root/path/blob/raw identity；P1 ordered eight injected source records（selection/config/parser argv/bootstrap argv/bootstrap/bootstrap contract/outer/adapter source）；完整 `ReplayBindingV1` scalar、eight parser/source rows及owner-FD；五个冻结cwd/index/evidence/output targets。所有记录在`rehearse_v05()`且consumer调用前完整fail-close。
+- 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`8/8 PASS`；`python -m py_compile tools/psm_wma/stage1_v17_pre_c_rehearsal.py tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py` PASS；`git diff --check` PASS。新增直接逐字段漂移矩阵覆盖所有新raw、P0/P1、binding与target字段，均在consumer前停止。未运行v0.5 request/C、未进行真实Git/network/source/data/cache I/O、未改child、未使用GPU/训练。
+- 下一步=仅暂存这四个受控文件、提交并以新formal SHA重新申请ChatGPT/MM/DS审核；未提交。

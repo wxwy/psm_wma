@@ -41,6 +41,25 @@ DESIGNATED_ABSENCES = (
 REMOTE_V2_ARGV = ("git", "ls-remote", "origin", "refs/heads/V2")
 AUTHORITY_ARGV = ("git", "ls-remote", "origin",
                   "refs/heads/authority/r09-b-ttt-v035-immutable-source-v1")
+P0_OBJECTS = (
+    ("base_source", "08d5828cdb4c12afa3b798ff01826c91ceb8755a",
+     "docs/build/PSM-WMA_Local_Memory_v0.3.5_authority_root_launcher_payload_v0.8.py",
+     "af19a9eb66ecaf8bd0b92a48ab1867f105026658"),
+    ("replay_helper", "50b0bffeb4c94b0994d7c7bf705077fb51a9e48f",
+     "tools/psm_wma/stage1_v17_launcher_replay.py", "74455fce6ca90ede8d9935d893a7a74f5667c687"),
+    ("adapter", "08d5828cdb4c12afa3b798ff01826c91ceb8755a",
+     "tools/psm_wma/materialize_immutable_source_authority_root.py",
+     "4a51bddd15ec9a88883e3071cc550de85721599b"),
+)
+P1_OBJECT_NAMES = ("selection", "config", "parser_argv", "bootstrap_argv", "bootstrap",
+                   "bootstrap_contract", "outer", "adapter_source")
+FROZEN_TARGETS = (
+    ("cwd", "/proc/self/fd/8"),
+    ("index", "/proc/self/fd/8/.authority-root.index"),
+    ("evidence", "/disk/rl/psm_wma/artifacts/g0/r09/authority_root_materialization_evidence_v1.json"),
+    ("json_output", PATHS[0]),
+    ("markdown_output", PATHS[1]),
+)
 
 
 @dataclass(frozen=True)
@@ -73,6 +92,56 @@ class QueryFactV1:
                 self.stdout_length == len(self.stdout) and self.stdout_sha256 == _sha(self.stdout) and
                 self.stderr_length == len(self.stderr) and self.stderr_sha256 == _sha(self.stderr) and
                 self.advertised_length == len(self.advertised_v2) and self.advertised_sha256 == _sha(self.advertised_v2))
+
+
+@dataclass(frozen=True)
+class RawFactV1:
+    name: str
+    raw: bytes
+    byte_length: int
+    sha256: str
+
+    def identity_ok(self) -> bool:
+        return bool(self.name) and self.byte_length == len(self.raw) and self.sha256 == _sha(self.raw)
+
+
+@dataclass(frozen=True)
+class SourceObjectV1:
+    name: str
+    root: str
+    path: str
+    blob_oid: str
+    raw: RawFactV1
+
+    def identity_ok(self) -> bool:
+        return self.raw.name == self.name and self.raw.identity_ok()
+
+
+@dataclass(frozen=True)
+class FrozenTargetV1:
+    name: str
+    path: str
+
+
+@dataclass(frozen=True)
+class ReplayBindingV1:
+    formal_parent: str
+    base_path: str
+    base_blob_oid: str
+    base_raw_sha256: str
+    base_bytes: int
+    owner_fd_flag: str
+    owner_fd_value: int
+    parser_rows: tuple[tuple[str, str, str], ...]
+    source_rows: tuple[tuple[str, str], ...]
+
+    def identity_ok(self) -> bool:
+        return (self.formal_parent == P0_OBJECTS[0][1] and self.base_path == P0_OBJECTS[0][2] and
+                self.base_blob_oid == P0_OBJECTS[0][3] and len(self.base_raw_sha256) == 64 and
+                self.base_bytes == 18966 and self.owner_fd_flag == "--bootstrap-owner-root-fd" and
+                self.owner_fd_value == 8 and len(self.parser_rows) == 8 and len(self.source_rows) == 8 and
+                all(len(row) == 3 and all(value for value in row) for row in self.parser_rows) and
+                all(len(row) == 2 and all(value for value in row) for row in self.source_rows))
 
 
 @dataclass(frozen=True)
@@ -115,15 +184,19 @@ class ReadbackV1:
 
 @dataclass(frozen=True)
 class ClosureV1:
-    git_identity: bytes
-    config_raw: bytes
-    local_v2_raw: bytes
+    git_identity: RawFactV1
+    config_raw: RawFactV1
+    local_v2_raw: RawFactV1
     remote_v2: QueryFactV1
     authority_ref: QueryFactV1
     local_authority_absence: AuthorityAbsenceV1
     remote_authority_absence: AuthorityAbsenceV1
     output_absences: tuple[AbsenceObservationV1, AbsenceObservationV1]
     designated_absences: tuple[AbsenceObservationV1, AbsenceObservationV1, AbsenceObservationV1, AbsenceObservationV1]
+    p0_objects: tuple[SourceObjectV1, SourceObjectV1, SourceObjectV1]
+    p1_objects: tuple[RawFactV1, RawFactV1, RawFactV1, RawFactV1, RawFactV1, RawFactV1, RawFactV1, RawFactV1]
+    replay_binding: ReplayBindingV1
+    targets: tuple[FrozenTargetV1, FrozenTargetV1, FrozenTargetV1, FrozenTargetV1, FrozenTargetV1]
 
 
 class OpaquePatchCapabilityV1:
@@ -233,9 +306,16 @@ def _expected_patch(json_raw: bytes, markdown_raw: bytes) -> bytes:
 
 def _validate_closure(closure: ClosureV1) -> None:
     _reject(closure)
-    if not all((closure.git_identity, closure.config_raw, closure.local_v2_raw,
-                closure.local_authority_absence.raw, closure.remote_authority_absence.raw)):
+    if not all((closure.git_identity.identity_ok(), closure.config_raw.identity_ok(),
+                closure.local_v2_raw.identity_ok(), closure.local_authority_absence.raw,
+                closure.remote_authority_absence.raw)):
         _fail("closure_empty")
+    if (tuple((item.name, item.root, item.path, item.blob_oid) for item in closure.p0_objects) != P0_OBJECTS or
+            tuple(item.name for item in closure.p1_objects) != P1_OBJECT_NAMES or
+            not all(item.identity_ok() for item in closure.p0_objects + closure.p1_objects) or
+            not closure.replay_binding.identity_ok() or
+            tuple((item.name, item.path) for item in closure.targets) != FROZEN_TARGETS):
+        _fail("closure_inherited")
     if (tuple(item.path for item in closure.output_absences) != PATHS or
             tuple(item.path for item in closure.designated_absences) != DESIGNATED_ABSENCES or
             not all(item.identity_ok() for item in closure.output_absences + closure.designated_absences)):
