@@ -66,3 +66,44 @@ Still NOT authorized:
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 v1.7 request-instance recovery design v1.7 APPROVE
+
+Formal pair:
+- root design SHA: `d03cb28ca138090f50adc09d4e810713457353af`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V17`
+
+Verdict:
+`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v17_d03cb28_93a89ba.md`
+
+Canonical review commit:
+`aa0e8a4945a08a70ea7cf612b728e24e4baa1d73`
+
+Current blockers: `0`; Design/Authority: `0`; Production: `0`; Evidence/identity: `0`; child/runtime: `0`.
+
+Closure summary:
+- formal root scope is docs/status-only and its formal tree binds `cosmos-framework` exactly to the declared reachable child `93a89ba61306d840a008813f62f26a34d54850f4`;
+- V17 closes the sole V16 HIGH by restoring the full inherited same-round zero-mutation provenance/freshness fields: `.git` identity, local `V2` raw/value identity, separately extracted remote `V2` advertised raw identity, and local/remote fixed authority-ref absence;
+- those facts are explicitly non-inferable from query blobs, ambient state, prior rounds or later reconstruction and must fail closed before producer output on omission/drift;
+- the two permitted remote queries remain fully bound by argv/timeout/return code/raw streams/length/SHA, while remote `V2` is construction provenance only and is not turned into runtime moving-branch equality;
+- V16's non-overlapping v0.4 future pair, exact six-key environment, canonical JSON/five-field sidecar identity, P0/P1 non-consuming lifecycle, and one-shot/no-retry semantics remain intact;
+- V15's strict UTF-8 single patch-consumer seam and terminal partial-residue policy remain inherited;
+- no new design contradiction or scope crossing was found.
+
+Authorization is narrow: after the required same-pair multi-review approval condition is satisfied, this exact design permits exactly one future docs-only v0.4 request-pair construction, followed by independent exact-pair request review.
+
+Still NOT authorized:
+- Stage-1 materialization/execution/retry;
+- launcher/materializer execution;
+- real source/checkpoint/manifest/data/cache I/O outside the separately frozen construction observation allowlist;
+- collection/receipt/record/package/publication;
+- child/runtime/config mutation;
+- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
