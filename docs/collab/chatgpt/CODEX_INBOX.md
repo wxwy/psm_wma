@@ -238,6 +238,16 @@
 - Formal root: `9a3c9c3fb2f6184eff8d651fae4f48a624afe040`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
 - Scope: root-only existing pre-C module and its stdlib unittest. Implements `LivePlanSessionV1` / opaque lease, pending direct-consume rejection, same live-plan resume-only handoff and terminal identity failure. `unittest=14/14`, `py_compile`, `git diff --check` PASS; no I/O.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-15 — Review request: V26 host-owned continuation boundary design
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-HOST-OWNED-CONTINUATION-BOUNDARY-DESIGN-V26`.
+- Formal root: `ed5bd4c5a5261ece1950362f8346d8834dd2b990`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_host_owned_continuation_boundary_design_v2.6.md`, `SESSION.md`, and `TODO.md`; no child/runtime/code change. `git diff --check` PASS.
+- Context: user explicitly chose an independent host-owned capability boundary after the V25 review proved that same-interpreter module registries are caller-mutable. V26 replaces that implementation premise with a distinct low-privilege Stage1Host, private anonymous IPC, host-only approval/binding/latch and a detached complete ReviewRecordV26. It explicitly rejects a same-interpreter fallback if OS isolation is unavailable.
+- Review focus: verify that the trust model, lifecycle and complete record close both V25 HIGHs in one pass: no caller-reachable mutable authority; approval only through orchestration attestation; detached full consumer/guard/verifier/C01--C15/freshness/query/absence/replay record; all client tamper paths terminalize before freshness/consumer/apply. Confirm staged implementation starts only with a fake-host CPU/static protocol and that real host/IPC integration remains a separate review.
+- Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C, request pair/materialization/source-evidence, real host process/IPC/apply_patch, child/runtime/config change, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
 - Forbidden: real pre-C/C/request pair/materialization/source evidence, child/runtime/config, GPU/CUDA/torchrun/training/evaluation/inference/LIBERO4IN1.
 
 ## 2026-09-15 — Review request: V25 live-plan continuity remediation closure
