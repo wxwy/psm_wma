@@ -7266,3 +7266,25 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT申请已在canonical live Inbox并由ledger=`f169096e9ad9dbd7131e20db8f0c9c716877bfb6`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成同pair`send-keys -l → 间隔1.1秒 → 独立Enter → capture`；MM capture显示申请离开输入框并处于`Noodling`，DS capture显示申请进入会话且处于`Thinking`。
 - 两条capture均为送达回执，不构成final verdict。保持REVIEW；三方同pair final前禁止任何整改、真实host/IPC/pre-C/C和下游。
+
+### V27 fake-host CPU/static remediation 审核观察凭证 #1（2026-09-15 19:54 CST，REVIEW）
+
+- Formal pair=root=`c4a3b985cfd8a576ab114431f8ee2ae4df6f2681`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=68eee730b5541057f27d294464192829cf03df56`；fetch成功；advertised/tracking均=`68eee730b5541057f27d294464192829cf03df56`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date.`。
+- ChatGPT精确检索命令=`rg -l -F 'c4a3b985cfd8a576ab114431f8ee2ae4df6f2681' docs/collab/chatgpt/reviews/`，结果为空。DS=`ds:0.0`独立capture给出同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`。MM=`mm:0.0`capture含审阅结论正文但未含同pair`FINAL`/明确verdict，故未取得最终结论。
+- Git锁定、exact review扫描及两个pane capture均成功且未截断；ChatGPT与MM final缺件，未形成推进令牌。保持REVIEW；禁止真实host/IPC/pre-C/C/request pair/materialization/source-evidence、child、GPU和训练。允许仅向MM补发一次final格式提醒。
+
+### V27 fake-host CPU/static remediation MM final 格式提醒送达回执（2026-09-15 19:55 CST，REVIEW）
+
+- 对冻结审核者MM=`mm:0.0`完成一次非重复申请的final格式提醒：`send-keys -l`写入exact root/child与二选一verdict，间隔1.1秒后独立`Enter`并独立capture。capture显示提醒已离开输入框并进入会话，pane处于`Deliberating`处理状态；该回执不构成final verdict。
+
+### V27 fake-host CPU/static remediation 审核观察凭证 #2 / 整改令牌（2026-09-15 20:00 CST，REVIEW → IN_PROGRESS）
+
+- Formal pair=root=`c4a3b985cfd8a576ab114431f8ee2ae4df6f2681`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=68eee730b5541057f27d294464192829cf03df56`；fetch成功；advertised/tracking均=`d999f610a012615d9464d01de878d250911c121f`；新增=`625268b4 docs: add ChatGPT fake-host remediation review c4a3b98`、`d999f610 docs: publish ChatGPT fake-host remediation verdict c4a3b98`；祖先判定=0；`git merge --ff-only origin/V2`成功至`d999f610`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_host_owned_continuation_cpu_static_remediation_c4a3b98_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/stage1_host_boundary.py:42)`：每类record须有exact field grammar，host不得alias client-visible record，approval/resume须revalidate private snapshot/digest，并补base mutation与causal schema tests。DS=`ds:0.0`同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`；MM=`mm:0.0`同pair同final批准。
+- Git锁定、exact review扫描及两个pane capture均成功且未截断；三方final齐全，形成含ChatGPT `REQUEST_CHANGES`整改令牌。仅允许根仓纯内存fake-host module/unittest一次性收口canonical per-category grammar和private snapshot aliasing；禁止真实host/IPC/pre-C/C/request pair/materialization/source-evidence、child、GPU和训练。
+
+### V27 fake-host canonical schema/private snapshot 整改完成（2026-09-15 20:05 CST，REVIEW准备）
+
+- 实际修改仅为`tools/psm_wma/stage1_host_boundary.py`与其stdlib unittest：12个review category均改为固定category/field order/field count/`identity:<token>` grammar；明确包含三类完整provenance、C01--C15、九项freshness、query stdout/stderr/predicate、local/remote/designated absence、replay、targets、descriptor/source/argv rows。host保存独立`_HostSnapshotV27`，返回的是复制的audit record；privileged attestation对返回record重新验证schema、canonical digest与private snapshot；resume只读private snapshot。
+- 新测试逐字段drift、missing/extra/reordered/malformed schema、`object.__setattr__`在attestation前/approval后篡改returned audit record、完整approval drift、replay、parallel admission和terminal failure matrix。验证命令=`python -m unittest tools.psm_wma.test_stage1_host_boundary && python -m py_compile tools/psm_wma/stage1_host_boundary.py tools/psm_wma/test_stage1_host_boundary.py && git diff --check`，结果=`8/8 PASS`、py_compile/diff-check PASS。
+- 未执行真实host/IPC/pre-C/C/request pair/materialization/source-evidence/child/GPU或训练；下一步=提交/推送并申请新formal pair三方closure审核。
