@@ -34,6 +34,12 @@
 - 引用 V26 冻结 pair 与观察凭证 #2。MM 已完成正文审阅但缺 self-contained FINAL；因此仅发送一次不重审、不扩范围的 exact-pair final 格式请求。
 - `mm:0.0` 已完成 `send-keys -l → 间隔≥1秒 → 独立 Enter → capture`，capture 显示请求离开输入框并进入 `Creating`；不是新审核申请，不替换名册或正式范围。
 
+### V26 审核完整观察凭证 #3 / 整改令牌（2026-09-15 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`ed5bd4c5a5261ece1950362f8346d8834dd2b990`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=4f017269c22308b4061cf64dbab13b209568bfd0`；fetch成功；advertised/tracking同为`4f017269c22308b4061cf64dbab13b209568bfd0`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact review为`REQUEST_CHANGES(...v2.6.md:22)`，三项 HIGH：V24→V26 live-envelope/non-reconstructive continuity、session/generation/binding/nonce one-shot approval、原子串行 one-shot resume state machine。MM=`mm:0.0` exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`；DS=`ds:0.0`为同pair同literal final。全部独立证据成功且未截断。
+- 三方 final 齐备，形成含 `REQUEST_CHANGES` 的整改令牌：仅允许一次 root docs-only V26 合并整改；不授权 fake-host、真实 host/IPC、pre-C/C、request pair、materialization/source-evidence、child/GPU/训练。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
