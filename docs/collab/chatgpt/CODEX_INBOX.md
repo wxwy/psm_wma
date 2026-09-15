@@ -94,3 +94,10 @@
 - Scope: root-only static core/test/SESSION. It closes all current ChatGPT+DS items: typed two-query records with timeout/rc/stdout/stderr/advertised value; typed authority absences and four designated paths; sealed structures, C admission consumption before freshness, typed byte readback verified internally, and producer-raw inverse patch witness. `unittest=6/6`, `py_compile`, `diff-check` PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.5 C/materialization/source-evidence/real I/O/child/GPU/training.
+
+## 2026-09-15 — Review request: exact absence-closure remediation
+
+- Formal root: `08a4dee0e85084a110f1c642513dd32583efb72e`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only CPU/static. Binds exact four V18 absence paths, output absence tuple, typed authority identities, and empty qualified authority-ref stdout semantics. Tests/py_compile/diff-check PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.5 C/materialization/source-evidence/real I/O/child/GPU/training.
