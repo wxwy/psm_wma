@@ -224,6 +224,14 @@
 - Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C/request pair/materialization/source evidence, child/runtime/config, GPU/CUDA/torchrun/training/evaluation/inference/LIBERO4IN1.
 
+## 2026-09-15 — Review request: V25 approval/snapshot remediation closure
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25-REMEDIATION`.
+- Formal root: `9c027a346320b0cb8e8445ada1e1a277efb0b875`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only pure-memory module/unittest plus SESSION. Approval/state and binding moved out of the session object into live registries; binding freezes an identity-only full authority snapshot and resume verifies it before owner release. Tests include base-mutation approval forgery and capability callable drift, both zero-apply. `19/19 PASS`; py_compile/diff-check PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C, request pair, materialization, source-evidence, I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
 ## 2026-09-15 — Review request: V25 live-plan continuity CPU/static closure
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25`.
