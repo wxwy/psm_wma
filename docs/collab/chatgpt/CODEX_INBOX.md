@@ -119,3 +119,12 @@
 - Remediation focus: one static closure now includes typed `.git`/config/local-V2 raw identities; all P0 root/path/blob/raw identities; ordered P1 injected records (`selection`, `config`, parser/bootstrap argv, bootstrap, bootstrap contract, outer, adapter); complete literal `ReplayBindingV1` plus ordered rows and owner-FD; and frozen cwd/index/evidence/output targets. Direct drift tests cover every added raw/source/binding/target field and fail before consumer invocation.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: exact authority-object binding remediation
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`.
+- Formal root: `6c4e395f38591c4b27a5627c184fc739af968669`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only `tools/psm_wma/stage1_v17_pre_c_rehearsal.py`, its stdlib unittest, `SESSION.md`, and `TODO.md`; no child/runtime code. `unittest=9/9 PASS`; `py_compile` and `git diff --check` PASS.
+- Remediation focus: resolves the complete same-pair ChatGPT/DS request changes. P0 now pins each raw length/SHA and requires computed Git blob OID equality; P1 pins all eight ordered source identities. `ReplayBindingV1` pins base SHA, owner pair, the exact ordered 8 parser and 8 source rows, plus `parser_argv_items` derived from and compared to the already pinned parser raw JSON. Foreign-but-self-consistent drift coverage exercises every P0/P1 category and binding literals, all before consumer invocation.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
