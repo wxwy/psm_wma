@@ -11,6 +11,12 @@
 - formal pair=root=`ed5bd4c5a5261ece1950362f8346d8834dd2b990`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代Kimi）。
 - 范围仅 V26 docs design、SESSION/TODO；无 child、runtime 或 code。live Inbox 追加申请前=`38025` bytes，新增正文低于 128KiB 上限。待 ledger 提交推送后，向 MM/DS执行一次 `send-keys -l → 间隔≥1秒 → Enter → capture` 送达；三方同 pair final 前禁止 V26 实现、真实 host/IPC 或所有下游动作。
 
+### V26 审核送达回执（2026-09-15 CST，REVIEW）
+
+- ChatGPT：canonical live Inbox 申请已随 ledger=`eac8dcb9bad2d783e2ef94f25033b32698d76895`推送；formal pair 不变。
+- MM=`mm:0.0`、DS=`ds:0.0`均完成 `send-keys -l → 间隔≥1秒 → 独立 Enter → capture`；两份 capture 均显示完整申请已离开输入框并进入会话。此回执不是 final verdict。
+- 后续仅按三分钟完整远端锁定与三方 exact-pair 核验；未有三方同 pair final 前，禁止 CPU fake-host 实现、真实 host/IPC 与所有下游动作。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
