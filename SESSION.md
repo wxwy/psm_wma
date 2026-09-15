@@ -58,6 +58,11 @@
 - root=`94c436d50d2caded43410052e720fbdbf3f37b7b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`：ChatGPT review `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`；MM=`mm:0.0`与DS=`ds:0.0`同pair同literal final。令牌仅授权 root stdlib fake-host protocol conformance；不授权真实 host/IPC/pre-C/C或下游。
 - 下一步预计新增独立 fake-host module 与 unittest；验证 serial approval/resume、session-generation replay、drift和at-most-one apply。
 
+### V27 fake-host CPU/static implementation（2026-09-15 CST，REVIEW准备）
+
+- 新增 `tools/psm_wma/stage1_host_boundary.py` 与 unittest：host-private session record/state/nonce/applies，exact approval、generation replay、foreign lease、stale、repeat resume，均以 zero/at-most-one apply 检验。
+- `python -m unittest tools.psm_wma.test_stage1_host_boundary`=`4/4 PASS`；py_compile、diff-check PASS。无进程、IPC、filesystem、真实 consumer 或下游执行。下一步提交、三方 closure review。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
