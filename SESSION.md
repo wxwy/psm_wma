@@ -7261,3 +7261,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - Formal pair=root=`c4a3b985cfd8a576ab114431f8ee2ae4df6f2681`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户已明确以DS替代Kimi）。ChatGPT申请已append至canonical live Inbox，待将ledger提交推送，再完成MM/DS的`send-keys -l → 间隔>=1秒 → 独立Enter → capture`送达回执。
 - 请求唯一verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`；无三方同pair推进令牌前，禁止真实host/IPC/pre-C/C/request pair/materialization/source-evidence、child、GPU和训练。
+
+### V27 fake-host CPU/static remediation 审核送达回执（2026-09-15 19:50 CST，REVIEW）
+
+- ChatGPT申请已在canonical live Inbox并由ledger=`f169096e9ad9dbd7131e20db8f0c9c716877bfb6`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成同pair`send-keys -l → 间隔1.1秒 → 独立Enter → capture`；MM capture显示申请离开输入框并处于`Noodling`，DS capture显示申请进入会话且处于`Thinking`。
+- 两条capture均为送达回执，不构成final verdict。保持REVIEW；三方同pair final前禁止任何整改、真实host/IPC/pre-C/C和下游。
