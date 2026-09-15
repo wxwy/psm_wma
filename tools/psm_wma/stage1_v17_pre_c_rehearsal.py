@@ -359,7 +359,10 @@ class LivePlanSessionV1:
     def __init__(self, plan: SealedPreCPlanV1) -> None:
         if id(plan) in _LIVE_PLANS: _fail("continuation_owner")
         self._plan, self._lease, self._approval, self._state = plan, ContinuationLeaseV1(), None, "PENDING"
-        _LIVE_PLANS.add(id(plan))
+        _LIVE_PLANS.add(id(plan)); _LIVE_TOKENS[id(plan)] = self._lease._token
+    def __del__(self):
+        if getattr(self, "_state", "INVALID") in ("PENDING", "APPROVED"):
+            self.close()
     @property
     def lease(self) -> ContinuationLeaseV1: return self._lease
     def approve(self, approval_identity: object) -> None:
@@ -376,15 +379,16 @@ class LivePlanSessionV1:
                 self._plan.post_write_qualname)
     def close(self) -> None:
         self._state = "INVALID"; self._plan._retirement.consumed = True
-        _LIVE_PLANS.discard(id(self._plan))
+        _LIVE_PLANS.discard(id(self._plan)); _LIVE_TOKENS.pop(id(self._plan), None)
     def resume_once(self, lease: ContinuationLeaseV1, approval_identity: object) -> str:
         if self._state != "APPROVED" or lease is not self._lease or approval_identity is not self._approval:
             self.close(); _fail("continuation_identity")
-        self._state = "CONSUMED"; _LIVE_PLANS.discard(id(self._plan))
-        return _consume_once_v05(self._plan)
+        self._state = "CONSUMED"; _LIVE_PLANS.discard(id(self._plan)); _LIVE_TOKENS.pop(id(self._plan), None)
+        return _consume_once_v05(self._plan, self._lease._token)
 
 
 _LIVE_PLANS: set[int] = set()
+_LIVE_TOKENS: dict[int, object] = {}
 
 
 def _reject(*values: object) -> None:
@@ -511,7 +515,8 @@ def consume_once_v05(plan: SealedPreCPlanV1) -> str:
     return _consume_once_v05(plan)
 
 
-def _consume_once_v05(plan: SealedPreCPlanV1) -> str:
+def _consume_once_v05(plan: SealedPreCPlanV1, _lease_token: object | None = None) -> str:
+    if id(plan) in _LIVE_PLANS and _LIVE_TOKENS.get(id(plan)) is not _lease_token: _fail("continuation_pending")
     if plan._retirement.consumed: _fail("already_consumed")
     plan._retirement.consumed = True
     try:
