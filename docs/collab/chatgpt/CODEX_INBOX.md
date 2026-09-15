@@ -237,3 +237,9 @@
 - Formal root: `079186e4c9b6ce1c221447119397c03ae11a8188`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
 - Scope: root-only two-file remediation of all V25 final feedback: terminal retirement on close/invalidation, duplicate live-owner rejection, read-only audit witness. `15/15` stdlib tests, py_compile and diff-check PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-15 — Review request: V25 approval-state remediation closure
+
+- Formal root: `ccada85a50be8e541d8c618752986e2cf088f05e`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only state-machine remediation: explicit pending/approved/consumed states and `approve(identity)` transition; pending public consume remains blocked; no I/O. `15/15` stdlib tests, py_compile, diff-check PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
