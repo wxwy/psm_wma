@@ -215,3 +215,11 @@
 - Review focus: verify this proves reviewed-record to live-plan continuity without weakening C01--C15, nine-entry freshness, immutable bytes/paths, future C atomicity, or terminal no-retry. Confirm it remains docs-only and does not authorize real pre-C/C.
 - Requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C/request-pair write, materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: V25 live-plan continuity CPU/static implementation design
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-LIVE-PLAN-CONTINUITY-CPU-STATIC-V25`.
+- Formal root: `d1a25398d1a5ea563c862c4e6ebbf7f702f1d051`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only docs design; proposed future change is limited to existing pure-memory pre-C module/unittest. It implements V24’s approved session/plan/lease same-instance contract, pending quiescence, resume-only identity proof and terminal invalidation; no real host capability or I/O.
+- Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C/request pair/materialization/source evidence, child/runtime/config, GPU/CUDA/torchrun/training/evaluation/inference/LIBERO4IN1.
