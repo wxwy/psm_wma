@@ -40,3 +40,13 @@
 
 - The immediately preceding v2.0 request transcribed the full root SHA incorrectly. Its **only** valid formal root is `f01628aad9775cfb327822c038a5b49e1a393ea9`; the formal child/Gitlink remains `93a89ba61306d840a008813f62f26a34d54850f4`.
 - All review focus, requested verdict and forbidden scope in that request are unchanged. The invalid string `f01628aa5527bda31f6d97e488eff3550aa46fdc` is not an object and must not be reviewed.
+
+## 2026-09-15 — Review request: Stage-1 orchestration consumer-capability design v2.1
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSUMER-CAPABILITY-DESIGN-V21`.
+- Formal root: `e1def003a645bf63da0e3e0007f2a7c4313325d9`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only v2.1 design with `SESSION.md` and `TODO.md`; no child/runtime code. `git diff --check` PASS; v2.1 SHA-256=`826c8160569b82311f4f8642971fe1ff4427c518e14b7ba6cf17ca86fce64369`.
+- Remediation: ChatGPT v2.0 HIGH correctly found that a future construction cannot reuse terminal v0.4. v2.1 makes v0.4 permanently forbidden as input/output/readback/cleanup and binds every future descriptor/consumer/result/readback only to fresh non-overlapping v0.5 JSON/Markdown paths.
+- Review focus: confirm the v0.5 freshness/non-overlap closes that issue without weakening the pre-C no-I/O `PatchConsumerV1` probe, explicit descriptor, same-object opaque handoff, one add-only invocation, exhaustive result semantics, byte-exact postcondition or terminal no-retry.
+- Requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.3/v0.4 repair/retry/reuse; v0.5 construction; consumer implementation/invocation; P0/P1/C; materialization, launcher/runtime, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.

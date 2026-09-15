@@ -1,5 +1,10 @@
 # 当前协作状态
 
+### v2.1 consumer-capability design 审核名册与送达准备（2026-09-15 11:47 CST，REVIEW）
+
+- formal pair=root=`e1def003a645bf63da0e3e0007f2a7c4313325d9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。formal-tree仅v2.1 design、`SESSION.md`、`TODO.md`；Gitlink未变。
+- live Inbox原始=`5819` bytes，追加完整申请后低于`131072` bytes硬上限；待ledger提交推送后向MM/DS按`send-keys -l → 间隔≥1秒 → 独立Enter → capture`送达。三方同pairfinal前，禁止v0.3/v0.4复用、v0.5 construction、consumer实现/调用、P0/P1/C、materialization、真实I/O、child、GPU及训练。
+
 ### v2.1 consumer-capability design 最小整改验证（2026-09-15 11:44 CST，REVIEW准备）
 
 - 引用紧邻v2.0观察凭证#1的docs-only整改令牌。新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_consumer_capability_design_v2.1.md`：v0.4 pair作为已消费C的永久terminal名称，future consumer descriptor、patch、result及readback唯一允许新鲜不重叠的v0.5 JSON/Markdown pair；保留无I/O probe、不可复制capability、同一`patch_text` opaque handoff、exact-once、三态结果、byte equality和no-retry。
