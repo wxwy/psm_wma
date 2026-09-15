@@ -1,5 +1,16 @@
 # 当前协作状态
 
+### v3.1 lifecycle-refreeze pre-C rehearsal design 验证（2026-09-15 13:18 CST，REVIEW准备）
+
+- 依据用户明确的non-consuming完整pre-C rehearsal路线及v3.0整改令牌，新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_pre_c_rehearsal_consumer_implementation_design_v3.1.md`：窄覆盖旧的C-before-first-live-observation边界，仅允许v0.5在一次rehearsal封存全部live风险；C固定为freshness→一次opaque write→byte verify→hard stop；v0.3/v0.4永久禁止被显式恢复。
+- 预计仅修改v3.1 design、`TODO.md`和`SESSION.md`；未执行implementation、v0.5、consumer/P0/P1/C、materialization、真实I/O、child/GPU或训练。下一步=静态核验、提交并对新formal pair三方审核；未提交。
+
+### v3.0 pre-C rehearsal implementation design 审核完整观察凭证 #1 / 整改令牌（2026-09-15 13:12 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`6677343ff7bcc931d2c141ada46ced11de2fc318`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=2fb25b24fa69fe409bdc98945435e1507c057791`；fetch成功并发现远端推进；advertised/tracking=`333145e262e17d18f9575b136fa8620fc6e7473a`；新增完整范围=`9b27f2f8 docs: add ChatGPT stage1 pre-c rehearsal v30 review`、`333145e2 docs: publish ChatGPT stage1 pre-c rehearsal v30 verdict`；祖先判定=0；`git merge --ff-only origin/V2`成功至`333145e262e17d18f9575b136fa8620fc6e7473a`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_design_v30_6677343_93a89ba.md`，final=`REQUEST_CHANGES(...v3.0.md:24)`，HIGH：将live freshness observations标为non-consuming与既有C-before-first-observation边界冲突。MM=`mm:0.0`为同pair `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`；DS=`ds:0.0`为同pair `REQUEST_CHANGES(...v3.0.md:43)`，要求显式承接v0.3/v0.4永久禁止。全部独立证据成功、未截断。
+- 三方final齐全，形成仅docs-only整改令牌。用户已明确要求所有live问题在non-consuming pre-C一次暴露；若采用该路线，v3.1必须把它作为显式 user-directed lifecycle refreeze，精确覆盖旧C-before-first-freshness边界，并在同一文档恢复v0.3/v0.4永久禁止的静态验收。仍禁止implementation、v0.5、consumer/P0/P1/C、materialization、真实I/O、child、GPU及训练。
+
 ### v3.0 unified pre-C rehearsal implementation design 审核送达回执（2026-09-15 13:07 CST，REVIEW）
 
 - ChatGPT：canonical live Inbox完整申请已随ledger=`aa00d80e`推送；formal target=root=`6677343ff7bcc931d2c141ada46ced11de2fc318`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
