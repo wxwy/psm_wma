@@ -150,3 +150,43 @@ Still NOT authorized:
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 v1.7 request instance v0.3 REQUEST_CHANGES
+
+Formal pair:
+- root request SHA: `696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.3.json:1)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_v03_696773a_93a89ba.md`
+
+Canonical review commit:
+`37821dfbea0a3a4c8ef1ec6cc6ad697aaeee6d0c`
+
+Current blockers: `3 HIGH`; Design/Authority: `2 HIGH`; Production: `0`; Evidence/identity: `1 HIGH`; child/runtime: `0`.
+
+Closure summary:
+- the formal target is docs-only and changes exactly the frozen v0.3 JSON/Markdown pair; the child Gitlink remains exact and reachable;
+- the Markdown-declared JSON formal-tree blob matches the actual JSON blob, but the request authority is not complete enough to authorize materialization;
+- the canonical JSON shrinks the inherited v0.5–v1.0 C snapshot/closure: it omits required raw config/closure/argv facts, remote timeout/stream lengths, full source root/path identities, owner-FD insertion, cwd/index/evidence targets and inherited absence authority;
+- `freshness.environment` incorrectly substitutes ambient `LANG/LC_ALL/PWD/SHELL/TZ/USER` values for the frozen launcher environment `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_SYSTEM=/dev/null`, `GIT_NO_REPLACE_OBJECTS=1`, `LANG=C`, `LC_ALL=C`;
+- JSON lacks the mandatory `canonicalization` field and Markdown omits the corresponding canonicalization literal, so the detached five-field whole-file identity contract is incomplete;
+- because the construction authority was one-shot/no-retry, this v0.3 pair must not be patched or completed under the consumed authority; a replacement requires newly reviewed docs-only recovery/construction authority and a newly frozen output pair.
+
+No materialization authority is granted for this exact request pair.
+
+Still NOT authorized:
+- Stage-1 materialization/execution/retry;
+- launcher/materializer execution;
+- real source/checkpoint/manifest/data/cache I/O;
+- collection/receipt/record/package/publication;
+- child/runtime/config mutation;
+- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
