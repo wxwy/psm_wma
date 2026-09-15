@@ -6923,3 +6923,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_pre_c_contract_matrix_v1.0.md`，按C01--C15覆盖P0/P1/replay、observations/queries/absence、environment/targets、capability/verifier、canonical pair、exactly-once与纯内存边界。实现将`ContractV05`设为`rehearse_v05()`唯一输入并保留`RehearsalInputV1`兼容别名；增加sealed git/config/local-V2/query/P0/P1/binding/target foreign drift，全部在consumer前freshness fail-close。
 - 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`10/10 PASS`；`py_compile`及`git diff --check` PASS。未运行v0.5 request/C、未进行真实Git/network/source/data/cache I/O、未改child、未使用GPU/训练。
 - 下一步=复查C01--C15实现与矩阵一致后，将本次收敛（fixture+ContractV05+matrix+drift）作为单个新formal提交申请三方审核；未提交。
+
+### Stage-1 v1.7 pre-C ContractV05 收敛formal（2026-09-15 15:10 CST，REVIEW）
+
+- formal root=`8bc6e93547a5a3f7db541f3843a6d36a32d23181`已推送至`V2`；cumulative scope包括紧邻`1d44e995`冻结fixture与本formal的`ContractV05`/C01--C15 matrix/drift，formal tree仅=`SESSION.md`、`TODO.md`、matrix、pre-C core及其测试；child Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`未变。canonical live Inbox容量=`18389/131072` bytes，已append新申请，待ledger推送和MM/DS送达三联回执。
+- 冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。新formal完全替换`6c4e395f`，旧pair verdict不可复用；收到同pair三方final前保持REVIEW，禁止v0.5 request/C、materialization、真实I/O、child、GPU和训练。

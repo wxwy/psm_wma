@@ -128,3 +128,12 @@
 - Remediation focus: resolves the complete same-pair ChatGPT/DS request changes. P0 now pins each raw length/SHA and requires computed Git blob OID equality; P1 pins all eight ordered source identities. `ReplayBindingV1` pins base SHA, owner pair, the exact ordered 8 parser and 8 source rows, plus `parser_argv_items` derived from and compared to the already pinned parser raw JSON. Foreign-but-self-consistent drift coverage exercises every P0/P1 category and binding literals, all before consumer invocation.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: consolidated ContractV05 pre-C closure
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`.
+- Formal root: `8bc6e93547a5a3f7db541f3843a6d36a32d23181`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: cumulative root-only fixture/contract closure at `1d44e995` + `8bc6e935`: `tools/psm_wma/stage1_v17_pre_c_rehearsal.py`, its stdlib unittest, `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_pre_c_contract_matrix_v1.0.md`, `SESSION.md`, and `TODO.md`; no child/runtime code. `unittest=10/10 PASS`; `py_compile` and `git diff --check` PASS.
+- Consolidated acceptance: follows `USER_DIRECTIVE_STAGE1_CONVERGENCE_2026-09-15.md` without adding a lateral Gate. `ContractV05` is the sole `rehearse_v05()` input; C01--C15 matrix covers P0/P1/replay literals, observations/query/absence/environment/targets, capability/verifier/canonical pair, exactly-once and zero-real-source-I/O. The replay-helper fixture is frozen in-memory gzip/base64 bytes and verifies `5582/8f55dc32...d5e82`; no `Path.read_bytes`, Git, network, source/data/cache or consumer call occurs. New sealed foreign-but-self-consistent drift matrix proves git/config/local-V2/query/P0/P1/binding/target freshness fails before consumer invocation.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
