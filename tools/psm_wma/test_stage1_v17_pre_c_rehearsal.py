@@ -3,9 +3,11 @@ import hashlib
 import json
 import pickle
 import unittest
+from dataclasses import replace
 
 from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
-    AuthorityAbsenceV1, ClosureV1, DESIGNATED_ABSENCES, DescriptorV1, ENV, OpaquePatchCapabilityV1, PreCRehearsalError,
+    AUTHORITY_ARGV, AuthorityAbsenceV1, AbsenceObservationV1, ClosureV1,
+    DESIGNATED_ABSENCES, DescriptorV1, ENV, OpaquePatchCapabilityV1, PreCRehearsalError,
     QueryFactV1, ReadbackV1, RehearsalInputV1, consume_once_v05, rehearse_v05,
 )
 
@@ -27,12 +29,24 @@ class PreCRehearsalTest(unittest.TestCase):
         def add(payload): return b"".join(b"+" + line for line in payload.splitlines(keepends=True))
         patch = (b"--- /dev/null\n+++ b/docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json\n" + add(raw) +
                  b"--- /dev/null\n+++ b/docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.md\n" + add(md))
+        def query(argv, stdout, predicate, advertised=b""):
+            return QueryFactV1(argv, 30, 0, stdout, b"", predicate, advertised,
+                len(stdout), hashlib.sha256(stdout).hexdigest(), 0,
+                hashlib.sha256(b"").hexdigest(), len(advertised),
+                hashlib.sha256(advertised).hexdigest())
+        def absence(path):
+            raw_observation = json.dumps(
+                {"lexists": False, "path": path, "predicate": "lexists_false"},
+                sort_keys=True, separators=(",", ":")).encode() + b"\n"
+            return AbsenceObservationV1(path, False, raw_observation, "lexists_false",
+                len(raw_observation), hashlib.sha256(raw_observation).hexdigest())
         closure = ClosureV1(b"git", b"config", b"V2",
-            QueryFactV1(("git", "ls-remote", "origin", "refs/heads/V2"), 30, 0, b"v2", b"", "remote_v2_ancestor", b"V2"),
-            QueryFactV1(("git", "ls-remote", "origin", "refs/heads/stage1-authority"), 30, 0, b"", b"", "authority_absent"),
+            query(("git", "ls-remote", "origin", "refs/heads/V2"), b"v2", "remote_v2_ancestor", b"V2"),
+            query(AUTHORITY_ARGV, b"", "authority_absent"),
             AuthorityAbsenceV1("refs/local-authority", b"local-absent", "authority_absent", 12, hashlib.sha256(b"local-absent").hexdigest()),
             AuthorityAbsenceV1("refs/remote-authority", b"remote-absent", "authority_absent", 13, hashlib.sha256(b"remote-absent").hexdigest()),
-            DescriptorV1().paths, DESIGNATED_ABSENCES)
+            tuple(absence(path) for path in DescriptorV1().paths),
+            tuple(absence(path) for path in DESIGNATED_ABSENCES))
         def verifier(json_raw, markdown_raw, paths):
             return ReadbackV1(json_raw, markdown_raw) if verify else ReadbackV1(b"bad\n", markdown_raw)
         return RehearsalInputV1(cap, DescriptorV1(), raw, md, patch, ENV, closure,
@@ -65,7 +79,8 @@ class PreCRehearsalTest(unittest.TestCase):
         foreign = ClosureV1(value.closure.git_identity, value.closure.config_raw,
             value.closure.local_v2_raw, value.closure.remote_v2, value.closure.authority_ref,
             value.closure.local_authority_absence, value.closure.remote_authority_absence,
-            ("foo", "bar"), value.closure.designated_absences)
+            tuple(replace(item, path="foo") for item in value.closure.output_absences),
+            value.closure.designated_absences)
         with self.assertRaisesRegex(PreCRehearsalError, "closure_absence"):
             rehearse_v05(RehearsalInputV1(value.capability, value.descriptor, value.json_raw, value.markdown_raw,
                 value.patch_raw, ENV, foreign, value.post_write_verify, value.post_write_qualname))
@@ -81,6 +96,25 @@ class PreCRehearsalTest(unittest.TestCase):
         with self.assertRaisesRegex(PreCRehearsalError, "post_write"): consume_once_v05(plan, value.closure)
         with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan, value.closure)
         self.assertEqual(len(calls), 1)
+
+    def test_query_and_absence_identity_drifts_fail_closed(self):
+        value, _ = self.fixture()
+        for field in ("stdout_length", "stdout_sha256", "stderr_length", "stderr_sha256",
+                      "advertised_length", "advertised_sha256"):
+            foreign_query = replace(value.closure.remote_v2, **{
+                field: 1 if field.endswith("length") else "0" * 64})
+            foreign_closure = replace(value.closure, remote_v2=foreign_query)
+            with self.assertRaisesRegex(PreCRehearsalError, "closure_query"):
+                rehearse_v05(replace(value, closure=foreign_closure))
+        for observations_field in ("output_absences", "designated_absences"):
+            observations = getattr(value.closure, observations_field)
+            for field in ("lexists", "raw", "predicate", "byte_length", "sha256"):
+                mutation = {field: (True if field == "lexists" else b"foreign" if field == "raw"
+                                    else "foreign" if field in ("predicate", "sha256") else 1)}
+                foreign = (replace(observations[0], **mutation),) + observations[1:]
+                foreign_closure = replace(value.closure, **{observations_field: foreign})
+                with self.assertRaisesRegex(PreCRehearsalError, "closure_absence"):
+                    rehearse_v05(replace(value, closure=foreign_closure))
 
 
 if __name__ == "__main__": unittest.main()

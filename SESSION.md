@@ -6811,3 +6811,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`034cbc43f0178e2e472bd642991311cc6116ee49`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；fetch成功；advertised/tracking均=`3b2efdaa72098cca2b3c5f7951e12a1fa74ba5cf`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
 - ChatGPT逐文件双SHA exact-pair检索无命中；MM=`mm:0.0` capture为同pair `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`；DS=`ds:0.0` capture为同pair `REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:70)`，要求补齐encoder/Markdown/query/capability不可复制、三态结果与对应测试。
 - 三方final未齐，无整改令牌；不得处理DS意见或修改实现，继续等待ChatGPT同pair正式review。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static 审核观察凭证 #2 / 整改令牌（2026-09-15 14:42:24 CST，REVIEW → IN_PROGRESS）
+
+- Formal pair=root=`08a4dee0e85084a110f1c642513dd32583efb72e`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（`docs/collab/chatgpt/reviews/`）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代 Kimi）。`before_head=f6a379876baefeb2c922afe21f8fd876bd240366`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2` advertised与`origin/V2`均为`f6a379876baefeb2c922afe21f8fd876bd240366`；新增范围为空；`git merge-base --is-ancestor`=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-match review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_cpu_static_08a4dee_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:55)`：补齐两remote-query及advertised-v2的raw/length/SHA typed identity、两output及四designated `lexists=false` typed absence observation raw identity，和各identity drift的fail-close测试。MM=`mm:0.0` capture逐字锚定同一root/child，final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture逐字锚定同一root/child，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:42)`：`AUTHORITY_ARGV`必须为冻结的`refs/heads/authority/r09-b-ttt-v035-immutable-source-v1`。
+- 四项独立证据均成功且未截断；三方同pair final齐全，形成仅限root-only纯内存标准库CPU/static的整改令牌。预计仅修改`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`、`tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py`、`SESSION.md`、`TODO.md`；禁止v0.5 request/C、materialization、真实Git/network/source/data/cache I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #2 整改验证（2026-09-15 14:44 CST，IN_PROGRESS）
+
+- 依据紧邻#2整改令牌，仅修改根仓`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`与`test_stage1_v17_pre_c_rehearsal.py`：`QueryFactV1`现在冻结并验证stdout/stderr/advertised-V2各自raw length/SHA；`AbsenceObservationV1`把两output和四V18 designated paths逐项绑定为canonical `lexists=false` raw record、predicate、boolean、length/SHA；`AUTHORITY_ARGV`改为冻结literal authority ref；closure同时验证两query identity。
+- 验证已执行：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`7/7 PASS`；`python -m py_compile tools/psm_wma/stage1_v17_pre_c_rehearsal.py tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py` PASS；`git diff --check` PASS。新测试逐字段篡改六query identity字段及两类absence的全部identity字段，均在consumer invocation前fail-close。未运行v0.5 request/C、未进行真实I/O、未改child、未使用GPU或训练。
+- 下一步=只暂存这四个受控文件并提交/推送，随后以实现formal SHA重新申请ChatGPT/MM/DS closure审核；未提交。

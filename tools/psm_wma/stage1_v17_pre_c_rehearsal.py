@@ -39,7 +39,8 @@ DESIGNATED_ABSENCES = (
     "/disk/rl/psm_wma/artifacts/g0/r09/authority_root_materialization_evidence_v1.json.pending",
 )
 REMOTE_V2_ARGV = ("git", "ls-remote", "origin", "refs/heads/V2")
-AUTHORITY_ARGV = ("git", "ls-remote", "origin", "refs/heads/stage1-authority")
+AUTHORITY_ARGV = ("git", "ls-remote", "origin",
+                  "refs/heads/authority/r09-b-ttt-v035-immutable-source-v1")
 
 
 @dataclass(frozen=True)
@@ -60,9 +61,18 @@ class QueryFactV1:
     stderr: bytes
     predicate: str
     advertised_v2: bytes = b""
+    stdout_length: int = 0
+    stdout_sha256: str = ""
+    stderr_length: int = 0
+    stderr_sha256: str = ""
+    advertised_length: int = 0
+    advertised_sha256: str = ""
 
     def identity_ok(self) -> bool:
-        return all((self.stdout, self.timeout_s == 30, self.return_code == 0))
+        return (self.timeout_s == 30 and self.return_code == 0 and
+                self.stdout_length == len(self.stdout) and self.stdout_sha256 == _sha(self.stdout) and
+                self.stderr_length == len(self.stderr) and self.stderr_sha256 == _sha(self.stderr) and
+                self.advertised_length == len(self.advertised_v2) and self.advertised_sha256 == _sha(self.advertised_v2))
 
 
 @dataclass(frozen=True)
@@ -75,6 +85,26 @@ class AuthorityAbsenceV1:
 
     def identity_ok(self) -> bool:
         return self.byte_length == len(self.raw) and self.sha256 == _sha(self.raw)
+
+
+@dataclass(frozen=True)
+class AbsenceObservationV1:
+    path: str
+    lexists: bool
+    raw: bytes
+    predicate: str
+    byte_length: int
+    sha256: str
+
+    def identity_ok(self) -> bool:
+        return (not self.lexists and self.predicate == "lexists_false" and
+                self.raw == _absence_raw(self.path) and
+                self.byte_length == len(self.raw) and self.sha256 == _sha(self.raw))
+
+
+def _absence_raw(path: str) -> bytes:
+    return json.dumps({"lexists": False, "path": path, "predicate": "lexists_false"},
+                      sort_keys=True, separators=(",", ":")).encode() + b"\n"
 
 
 @dataclass(frozen=True)
@@ -92,8 +122,8 @@ class ClosureV1:
     authority_ref: QueryFactV1
     local_authority_absence: AuthorityAbsenceV1
     remote_authority_absence: AuthorityAbsenceV1
-    output_absences: tuple[str, str]
-    designated_absences: tuple[str, str, str, str]
+    output_absences: tuple[AbsenceObservationV1, AbsenceObservationV1]
+    designated_absences: tuple[AbsenceObservationV1, AbsenceObservationV1, AbsenceObservationV1, AbsenceObservationV1]
 
 
 class OpaquePatchCapabilityV1:
@@ -206,13 +236,16 @@ def _validate_closure(closure: ClosureV1) -> None:
     if not all((closure.git_identity, closure.config_raw, closure.local_v2_raw,
                 closure.local_authority_absence.raw, closure.remote_authority_absence.raw)):
         _fail("closure_empty")
-    if closure.output_absences != PATHS or closure.designated_absences != DESIGNATED_ABSENCES:
+    if (tuple(item.path for item in closure.output_absences) != PATHS or
+            tuple(item.path for item in closure.designated_absences) != DESIGNATED_ABSENCES or
+            not all(item.identity_ok() for item in closure.output_absences + closure.designated_absences)):
         _fail("closure_absence")
     if ((closure.remote_v2.argv, closure.remote_v2.timeout_s, closure.remote_v2.return_code, closure.remote_v2.predicate) !=
             (REMOTE_V2_ARGV, 30, 0, "remote_v2_ancestor") or
             (closure.authority_ref.argv, closure.authority_ref.timeout_s, closure.authority_ref.return_code,
              closure.authority_ref.predicate) != (AUTHORITY_ARGV, 30, 0, "authority_absent") or
-            not closure.remote_v2.identity_ok() or not closure.remote_v2.advertised_v2 or
+            not closure.remote_v2.identity_ok() or not closure.authority_ref.identity_ok() or
+            not closure.remote_v2.advertised_v2 or closure.authority_ref.advertised_v2 or
             closure.remote_v2.stderr or closure.authority_ref.stderr or closure.authority_ref.stdout or
             closure.local_authority_absence.predicate != "authority_absent" or
             closure.remote_authority_absence.predicate != "authority_absent" or
