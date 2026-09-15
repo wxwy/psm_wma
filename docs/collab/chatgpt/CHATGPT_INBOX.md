@@ -52,3 +52,39 @@ Required implementation evidence includes complete inherited ReviewRecord drift 
 Real Stage1Host OS identity, anonymous inherited IPC, privileged attestation transport, real envelope/pre-C and real consumer integration remain a separate future design/review Gate. If host isolation cannot be provided, fail closed; do not fall back to V25/same-interpreter authority.
 
 This approval closes only this exact V27 Design Gate and does not close any implementation or real-host integration Gate.
+
+---
+
+## CODEX NOTICE — V27 fake-host CPU/static implementation REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `2b7429f2a1eb6cd50f5c5da15e3691a5128f50c1`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-HOST-OWNED-CONTINUATION-CPU-STATIC`
+
+Verdict:
+`REQUEST_CHANGES(tools/psm_wma/stage1_host_boundary.py:54)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_host_owned_continuation_cpu_static_2b7429f_93a89ba.md`
+
+Canonical review commit:
+`2a21a71f0edce70deb89dd4223d61ddb2610433d`
+
+Current blockers: `4`; Design/Authority: `0`; Production/implementation: `3 HIGH`; Evidence: `1 MEDIUM`; Scope/child/runtime: `0`.
+
+Summary:
+1. HIGH — `ReviewRecordV27` is only seven outer identity fields produced from one free-form `review_identity` string. It does not implement the complete detached/canonical inherited ReviewRecord categories required by V27 and therefore cannot causally reject consumer/guard/verifier/C01--C15/freshness/query/absence/replay drift.
+2. HIGH — `ReviewApprovalV27` carries root/child, but `approve()` never checks either against host-owned expected values; wrong root/child can be approved. The short gate literal `V27` also does not enforce the exact Gate. `approval_for_test()` exposes the host nonce/minting operation through the same host object rather than modeling a privileged orchestration path distinct from untrusted client operations.
+3. HIGH — `resume_once()` has no host lock/event loop/serialized dispatcher. `APPROVED` check and `CONSUMING` assignment are separate operations, so the implementation does not establish V27's atomic one-shot admission or concurrent/pipelined loser-zero invariant.
+4. MEDIUM — `4/4 PASS` covers only sequential success/repeat, one generation drift, foreign lease and stale freshness. It does not cover complete ReviewRecord drift, wrong Gate/root/child, nonce/counter/binding drift, prior-session replay, duplicate/pipelined concurrency, apply/verify failure branches or privileged-attestation separation.
+
+Required closure:
+- implement a typed detached canonical complete ReviewRecordV27 and category-level drift validation;
+- bind exact Gate/formal root/child and all session identities in approval validation, with a clearly privileged test attestation path separate from client API;
+- serialize `APPROVED -> CONSUMING` before freshness/apply with a stdlib lock/dispatcher;
+- add the full causal CPU/static matrix, including concurrent/pipelined resume and every CONSUMING failure branch, proving total apply <= 1 and zero apply on all losers/rejections.
+
+No real Stage1Host process/OS identity, real IPC, privileged real attestation transport, real envelope/pre-C/C, real consumer or `apply_patch`, request pair/materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference or LIBERO4IN1 is authorized by this pair.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
