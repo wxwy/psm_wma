@@ -13,48 +13,47 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `7bafee8660d5dd0e85923115187407e96b5343ba`
+- immediate prior live blob SHA: `4258b19ee4770c82494e9e3cf50fc96b8e3ba14e`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Stage-1 freshness-guard CPU/static implementation REQUEST_CHANGES
+## CODEX NOTICE — Stage-1 freshness-guard absence-domain remediation still needs direct drift witness
 
 Formal pair:
-- root implementation SHA: `94030f90cc4de2d5b2c1dd60a412fb10768d71f9`
+- root implementation SHA: `db6c4f93473e7ef58a294cff3fb8c692b100badd`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
 - Gate: `G0-R09-B-TTT-V035-STAGE1-V17-FRESHNESS-GUARD-CPU-STATIC`
 
 Verdict:
-`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:452)`
+`REQUEST_CHANGES(tools/psm_wma/test_stage1_v17_pre_c_rehearsal.py:243)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_freshness_guard_cpu_static_94030f9_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_freshness_guard_cpu_static_db6c4f9_93a89ba.md`
 
 Canonical review commit:
-`eb749facb594ad7f0512b997a26be263f1521569`
+`f2d2156405da7e82769016e7e55641729e21e7eb`
 
-Current blockers: `1 HIGH`; Design/Authority: `0`; Production/implementation: `1 HIGH`; Evidence/Scope: `0`; child/runtime: `0`.
+Current blockers: `1 HIGH`; Design/Authority: `0`; Production/implementation: `0`; Evidence/Scope: `1 HIGH`; child/runtime: `0`.
 
 Positive closure:
-- formal root resolves and its `cosmos-framework` Gitlink exactly matches the declared reachable child;
-- `FreshnessGuardV1`/`FreshnessLeaseV1` are sealed and reject mutation/copy/serialization;
-- the production C API no longer accepts arbitrary external `ClosureV1` and is `consume_once_v05(plan)`;
-- guard `STALE`/`UNKNOWN` stop before consumer apply; FRESH retains one opaque apply, byte-exact readback and terminal no-retry;
-- the implementation stays in pure CPU/static scope with no real guard/consumer/Git/network/source/data/cache/child/GPU execution.
+- the previous production blocker is closed: the sealed freshness domain is now deterministic and complete with 9 ordered identities: git/config/local-V2, 2 output absences and 4 designated absences;
+- absence identities carry synthetic name plus exact path, predicate, byte length and SHA-256; rehearsal requires exact lease-domain equality, so missing/extra/reordered/foreign domain tuples fail pre-C;
+- `consume_once_v05(plan)` still accepts no external Closure, STALE/UNKNOWN terminate before apply, and FRESH preserves one-write/readback/hard-stop and terminal no-retry;
+- formal root tree binds `cosmos-framework` mode `160000` exactly to the declared reachable child;
+- implementation remains pure CPU/static with no real I/O/request/C/child/GPU execution.
 
-HIGH 1 — freshness lease comparison domain is narrower than the controlling V21 design:
-- V21 requires the lease comparison domain to cover all mutable local records: `.git`/config/local-V2 **plus designated local absences and output absences**; missing or extra comparison-domain entries must fail pre-C;
-- implementation line 452 constructs the lease domain only from `closure.git_identity`, `closure.config_raw`, and `closure.local_v2_raw`;
-- `closure.output_absences` and `closure.designated_absences` therefore contribute no sealed freshness identities to `guard_opaque_v1`, so post-pre-C path/absence drift cannot be detected by the guard before apply;
-- the reported 11/11 suite proves generic STALE/UNKNOWN behavior but has no direct witness that output/designated-absence drift is represented in the lease domain and causes consumer-pre fail-close.
+HIGH 1 — the new absence-domain test is not a direct causal behavioral witness:
+- `test_output_and_designated_absence_identity_are_in_guard_domain` proves the six absence identities are present in `plan.freshness_identities`;
+- it then constructs a separate fixture whose fake guard returns constant `STALE`, independently of any output/designated-absence drift;
+- therefore it does not prove that an actual simulated absence change after pre-C causes the sealed guard/lease comparison to return STALE before apply;
+- it also does not retry the same stale plan and prove `already_consumed` after the freshness failure.
 
 Required remediation:
-- extend the sealed lease domain to include deterministic exact typed identities for all V21 mutable-local classes: `.git`/config/local-V2, both output absences, and all designated local absences;
-- preserve exact path/predicate semantics together with raw identity so absence records cannot collide or be represented by an ambiguous bare name;
-- reject missing/extra/reordered/foreign domain entries during rehearsal;
-- add direct CPU/static tests where output-absence and designated-absence drift after pre-C yields STALE before `apply_opaque_v1`, consumer call count remains zero, and the plan remains terminal/no-retry;
-- preserve the no-external-Closure ABI, remote-pre-C-only rule, one-write/readback/hard-stop sequence and pure-memory scope.
+- make the pure-memory fake guard derive FRESH/STALE from a simulated current local state compared against the sealed lease/domain, not from a free constant;
+- after rehearsal, mutate at least one output-absence and one designated-absence simulated current identity (preferably sweep all six), call public `consume_once_v05(plan)`, and prove freshness failure before apply with consumer call count `0`;
+- call `consume_once_v05(plan)` again and prove `already_consumed`;
+- preserve the current 9-entry exact domain, no-external-Closure ABI, remote-pre-C-only rule, pure-memory scope, and existing terminal outcome/readback tests.
 
 No real pre-C/C, request pair, materialization, source-evidence, real I/O, child mutation, GPU or training is authorized for this pair.
 
