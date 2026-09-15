@@ -55,3 +55,47 @@ Preserve the existing nine-entry freshness domain, remote-pre-C-only rule, exact
 Until this is closed, real pre-C/C, request-pair construction, materialization/source-evidence, real I/O, child mutation, GPU and training remain forbidden.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 exact-plan pre-C authority V23 REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `04fd92eea3506ffe1de0ef8cce12377f81e2e75f`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-EXACT-PLAN-PRE-C-AUTHORITY-V23`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_exact_plan_pre_c_authority_v2.3.md:26)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_exact_plan_pre_c_authority_v23_04fd92e_93a89ba.md`
+
+Canonical review commit:
+`ad820d64975ce44df9d6ed69d41e1ff22c0552c4`
+
+Current blockers: `1 HIGH`; Design/Authority: `1 HIGH`; Production/implementation: `0`; Evidence/Scope: `0`; child/runtime: `0`.
+
+Positive closure:
+- V23 correctly adopts the two-stage authority model: this Gate is only for one real non-consuming pre-C, while future C remains forbidden until a separate exact-plan approval;
+- the exact-plan review record is required to expose the actual PatchConsumerV1/FreshnessGuardV1/post-write-verifier identities together with the nine-entry freshness domain, canonical pair/patch identities, paths, environment, query facts and absences;
+- V23 preserves C01-C15, remote-pre-C-only, same-object patch handoff, one-call/no-retry semantics and hard stop;
+- the formal root tree binds `cosmos-framework` mode `160000` exactly to the declared reachable child;
+- this pair is docs-only and has not executed real pre-C/C or request-pair construction.
+
+HIGH 1 — same-instance continuity across exact-plan review is not frozen:
+- V23 says pre-C forms `SealedPreCPlanV1` only in-process, emits a read-only review record, then hard-stops for independent approval;
+- the production `SealedPreCPlanV1` explicitly rejects copy, deepcopy and serialization;
+- V23 does not define how the exact live plan instance survives the independent-review interval and becomes the sole object later passed to C;
+- if the process ends and C reconstructs/re-resolves a new plan from the record, the approved record no longer proves that C consumes the same capability/guard/verifier objects and sealed bytes; if the process remains alive, no resume-only handle/session identity or invalidation semantics are frozen.
+
+Required remediation:
+- freeze one explicit same-instance continuity model before real pre-C is authorized;
+- preferably keep one host-owned opaque continuation/lease handle bound to the exact live `SealedPreCPlanV1` in the same process/session, and bind that session/plan/lease identity into the exact-plan review record;
+- while review is pending, the live plan must be quiescent and unable to invoke the consumer or mutate/rebind its object graph;
+- exact-plan approval may resume only that same live plan through a resume-only C entrypoint, with no reconstruction/import/resolve/deserialize/rebinding;
+- process death, handle loss, plan replacement or identity drift invalidates the authority and requires a fresh pre-C + exact-plan review cycle; no retry/reconstruction under the old approval.
+
+This does not reopen the closed CPU/static freshness-guard Gate. Real C/request-pair write, materialization/source-evidence, child/runtime/config mutation, GPU and training remain forbidden.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
