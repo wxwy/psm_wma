@@ -1,5 +1,62 @@
 # 当前协作状态
 
+### v1.9 审核完整观察凭证 #10 / consumer-recovery design 推进令牌（2026-09-15 11:29 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；首次fetch成功并发现远端推进；advertised/tracking=`98fee67f414b119c7c9d5e414a477fcfab3919bb`；新增完整范围=`d1944255 docs: add ChatGPT review for stage1 v17 recovery v19`、`98fee67f docs: publish ChatGPT stage1 v17 recovery v19 verdict`；祖先判定=0；`git merge --ff-only origin/V2`成功至`98fee67f414b119c7c9d5e414a477fcfab3919bb`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v19_13efbfd_93a89ba.md`，完整pair、final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_RECOVERY`。MM=`mm:0.0` capture含同pair同literal final；DS=`ds:0.0` capture含同pair同literal final。全部独立Git/review/pane证据成功、未截断。
+- 三方同pair全批准，构成推进令牌：仅授权撰写新的 docs-only future consumer-recovery design；该设计必须在任何新construction授权前冻结capability probe和无人工重构的orchestration opaque-handoff ABI。仍禁止v0.4补写或重试、materialization、真实I/O、child/runtime修改、GPU和训练。
+
+### v1.9 审核完整观察凭证 #9（2026-09-15 11:25 CST，REVIEW）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；首次`git fetch origin V2`因`gnutls_handshake()`失败，随即重试成功；advertised/tracking均=`8a4765e9e9d952fee6071e909605cbcc353b46b7`；新增范围为空；`git merge-base --is-ancestor`=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索=`rg -l -F '13efbfde19a848aa44cfb5f0bfa0373523902ae4' docs/collab/chatgpt/reviews/ || true`无输出，未找到 exact-pair formal review。MM=`mm:0.0` capture含同pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_RECOVERY`；DS=`ds:0.0` capture含同pair同literal final。重试后的全部独立证据成功、未截断。
+- ChatGPT final缺件，无推进令牌；Gate保持`REVIEW`。禁止构造/补写v0.4、materialization、真实I/O、child、GPU或训练；继续三分钟完整轮询。
+
+### v1.9 审核完整观察凭证 #8（2026-09-15 11:21 CST，REVIEW）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；`git fetch origin V2`成功；advertised/tracking均=`8a4765e9e9d952fee6071e909605cbcc353b46b7`；新增范围=`git log --oneline 8a4765e9e9d952fee6071e909605cbcc353b46b7..origin/V2`为空；`git merge-base --is-ancestor`=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '13efbfde19a848aa44cfb5f0bfa0373523902ae4' docs/collab/chatgpt/reviews/ || true`，本轮无输出，未找到 exact-pair formal review。MM=`mm:0.0`独立capture含同pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_RECOVERY`；DS=`ds:0.0`独立capture含同pair同literal final。三项审核证据与Git同步命令均成功、未截断。
+- ChatGPT final缺件，无推进令牌；Gate保持`REVIEW`。不得构造/补写v0.4，不得materialize、真实I/O、child、GPU或训练；下一轮仍按三分钟完整轮询。
+
+### v1.9 审核完整观察凭证 #7（2026-09-15 11:13 CST，REVIEW）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；fetch成功；advertised/tracking均=`8a4765e9e9d952fee6071e909605cbcc353b46b7`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索无输出；MM/DS capture未见新文本，保留同pair批准 final。ChatGPT final缺件，Gate保持 REVIEW。
+
+### v1.9 审核完整观察凭证 #6（2026-09-15 11:10 CST，REVIEW）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；fetch成功；advertised/tracking均=`8a4765e9e9d952fee6071e909605cbcc353b46b7`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索无输出；MM/DS capture未见新文本，保留同pair批准 final。ChatGPT final缺件，Gate保持 REVIEW。
+
+### v1.9 审核完整观察凭证 #5（2026-09-15 11:07 CST，REVIEW）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；fetch成功；advertised/tracking均=`8a4765e9e9d952fee6071e909605cbcc353b46b7`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索无输出；MM/DS capture未见新文本，保留同pair批准 final。ChatGPT final缺件，Gate保持 REVIEW。
+
+### v1.9 审核完整观察凭证 #4（2026-09-15 11:04 CST，REVIEW）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；fetch成功；advertised/tracking均=`8a4765e9e9d952fee6071e909605cbcc353b46b7`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索无输出；MM、DS独立capture均未出现新文本，保留已记录的同pair批准 final。
+- 本轮无新增可复核事实；ChatGPT final缺件，Gate保持 REVIEW。
+
+### v1.9 审核完整观察凭证 #3（2026-09-15 11:01 CST，REVIEW）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；fetch成功；advertised/tracking均=`8a4765e9e9d952fee6071e909605cbcc353b46b7`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索=`rg -l -F '13efbfde19a848aa44cfb5f0bfa0373523902ae4' docs/collab/chatgpt/reviews/ || true`无输出。MM、DS capture均为已记录的同pair APPROVE final，未出现新文本。
+- 本轮无新增可复核事实；ChatGPT final仍缺件，无推进令牌，Gate保持 REVIEW。
+
+### v1.9 审核完整观察凭证 #2（2026-09-15 10:58 CST，REVIEW）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；fetch成功；advertised/tracking均=`8a4765e9e9d952fee6071e909605cbcc353b46b7`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索命令仍为`rg -l -F '13efbfde19a848aa44cfb5f0bfa0373523902ae4' docs/collab/chatgpt/reviews/ || true`，无输出。MM/DS两个独立capture均保留同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_RECOVERY` final，未见新意见。
+- 本轮没有新增可复核事实；ChatGPT final仍缺件，无推进令牌，Gate保持 REVIEW。
+
+### v1.9 审核完整观察凭证 #1（2026-09-15 10:56 CST，REVIEW）
+
+- formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；fetch成功；advertised/tracking均=`8a4765e9e9d952fee6071e909605cbcc353b46b7`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '13efbfde19a848aa44cfb5f0bfa0373523902ae4' docs/collab/chatgpt/reviews/ || true`，本轮无输出、尚无 exact-pair formal review。MM=`mm:0.0`独立capture有 same-pair final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_RECOVERY`。DS=`ds:0.0`独立capture有同pair同literal final。
+- ChatGPT final缺件，无推进令牌；保持 REVIEW。不得构造/补写 v0.4，不得 materialize、真实 I/O、child/GPU/训练；继续三分钟完整轮询。
+
 ### v1.9 审核送达回执（2026-09-15 10:54 CST，REVIEW）
 
 - formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT申请已在 canonical live Inbox 追加并随 ledger commit=`722d8f368cdcbfb94c24b33a0355b5721f8d7946`推送。
