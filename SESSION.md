@@ -40,6 +40,11 @@
 - ChatGPT exact review为`REQUEST_CHANGES(...v2.6.md:22)`，三项 HIGH：V24→V26 live-envelope/non-reconstructive continuity、session/generation/binding/nonce one-shot approval、原子串行 one-shot resume state machine。MM=`mm:0.0` exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`；DS=`ds:0.0`为同pair同literal final。全部独立证据成功且未截断。
 - 三方 final 齐备，形成含 `REQUEST_CHANGES` 的整改令牌：仅允许一次 root docs-only V26 合并整改；不授权 fake-host、真实 host/IPC、pre-C/C、request pair、materialization/source-evidence、child/GPU/训练。
 
+### V27 host-owned boundary docs-only 合并整改（2026-09-15 CST，IN_PROGRESS）
+
+- 依据紧邻 V26 整改令牌，一次性新增 V27：V24 same-live authority 由同 generation 的 HostSession/LivePlanEnvelope/HostLease 三元组等价承接；ReviewRecord 改为 detached non-reconstructive identity witness；ReviewApproval 绑定 generation/session/plan/lease/binding/nonce/counter；host 单锁状态机原子 `PENDING_REVIEW -> APPROVED -> CONSUMING -> TERMINAL`。
+- 预计改动仅 V27 design、SESSION、TODO；禁止 fake-host/真实 host/IPC、pre-C/C、request pair、materialization/source-evidence、child、GPU与训练。下一步静态核验、提交、三方重审。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
