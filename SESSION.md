@@ -1,5 +1,11 @@
 # 当前协作状态
 
+### v3.1 lifecycle-refreeze pre-C rehearsal design 审核送达回执（2026-09-15 13:26 CST，REVIEW）
+
+- ChatGPT：canonical live Inbox完整申请已随ledger=`3872f7a1`推送；formal pair=root=`e4764a3c7bf8f99bf8726e011b6ea779c779aeef`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM=`mm:0.0`、DS=`ds:0.0`均完成`send-keys -l → 间隔≥1秒 → 独立Enter → capture`；MM capture显示申请已离开输入框且正在审阅，DS capture显示完整申请进入transcript并正在只读检查。尚非final。
+- Gate保持`REVIEW`；三方同pairfinal前禁止implementation、v0.5、consumer/P0/P1/C、materialization、真实I/O、child、GPU及训练。
+
 ### v3.1 lifecycle-refreeze pre-C rehearsal design 审核名册与送达准备（2026-09-15 13:23 CST，REVIEW）
 
 - formal pair=root=`e4764a3c7bf8f99bf8726e011b6ea779c779aeef`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。formal-tree仅v3.1 design、`SESSION.md`和`TODO.md`；Gitlink未变。
