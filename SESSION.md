@@ -7021,6 +7021,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - ChatGPT申请已在canonical live Inbox并由ledger=`7051b6f149e713b6d5a80299b4ebf5be59166a6f`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成同pair完整`send-keys -l → 间隔>=1秒 → 独立Enter → capture`：MM capture显示申请进入会话并处于`Sprouting`处理；DS capture显示申请离开输入框、进入会话且处于处理状态。两条消息均请求同一严格final verdict。
 - formal pair=root=`27f188c6cd13db2e257dc2951b0b744b2ff3dd64`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。三方同pair final前保持REVIEW；按三分钟原生完整远端锁定、exact review scan和独立pane capture，禁止freshness-guard实现及全部真实pre-C/C、request pair、materialization、source-evidence、child、GPU和训练。
 
+### Stage-1 v1.7 request-instance recovery design V21 审核观察凭证 #1（2026-09-15 16:09 CST，REVIEW）
+
+- Formal pair=root=`27f188c6cd13db2e257dc2951b0b744b2ff3dd64`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=66632b4ac98f05e7c6a84cd70aac379a3e8127cb`；fetch成功；advertised/tracking均=`66632b4ac98f05e7c6a84cd70aac379a3e8127cb`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F 27f188c6cd13db2e257dc2951b0b744b2ff3dd64 docs/collab/chatgpt/reviews/`无命中。DS=`ds:0.0`独立capture同pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC`；MM=`mm:0.0`独立capture同pair final相同（16:05:11）。
+- Git锁定、exact review扫描及两个pane capture均成功且未截断；ChatGPT final缺件，未形成推进令牌。保持REVIEW，仅继续三分钟轮询；禁止freshness-guard实现、真实pre-C/C、request pair、materialization、source-evidence、child、GPU与训练。
+
 ### Stage-1 v1.7 ContractV05 fixed-ref 审核观察凭证 #3（2026-09-15 15:52 CST，DONE）
 
 - Formal pair=root=`c99506295fed887a87670fc80fbdaf639baf5444`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；`git fetch origin V2`成功；advertised/tracking均=`3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
