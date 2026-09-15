@@ -7256,3 +7256,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 实际修改仅为`tools/psm_wma/stage1_host_boundary.py`与`tools/psm_wma/test_stage1_host_boundary.py`：`ReviewRecordV27`以12类固定顺序canonical authority rows绑定consumer/guard/verifier、C01--C15、freshness/query/absence/replay/target及descriptor/source/argv identity；host冻结exact Gate/root/child；公开client API不再提供approval mint，测试专用privileged orchestration harness单独持有attestation路径；`RLock`将approval与`APPROVED -> CONSUMING` admission串行化。
 - 单测扩至8项：每类record drift、missing/extra/reordered schema、所有approval字段漂移、prior session/generation、并发resume、freshness/apply/readback失败及foreign lease，均验证terminal和零/至多一次apply。验证命令=`python -m unittest tools.psm_wma.test_stage1_host_boundary && python -m py_compile tools/psm_wma/stage1_host_boundary.py tools/psm_wma/test_stage1_host_boundary.py && git diff --check`，结果=`8/8 PASS`、py_compile/diff-check PASS。
 - 未执行真实host/IPC/pre-C/C/request pair/materialization/source-evidence/child/GPU或训练；下一步=复读formal范围，提交推送，并对新的formal pair三方申请closure审核。
+
+### V27 fake-host CPU/static remediation 审核名册（2026-09-15 19:49 CST，REVIEW）
+
+- Formal pair=root=`c4a3b985cfd8a576ab114431f8ee2ae4df6f2681`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户已明确以DS替代Kimi）。ChatGPT申请已append至canonical live Inbox，待将ledger提交推送，再完成MM/DS的`send-keys -l → 间隔>=1秒 → 独立Enter → capture`送达回执。
+- 请求唯一verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`；无三方同pair推进令牌前，禁止真实host/IPC/pre-C/C/request pair/materialization/source-evidence、child、GPU和训练。

@@ -304,3 +304,12 @@
 - Evidence: all capability/guard/lease/continuation/retirement authority fields are ordinary-set/delete fail-close; tests cover unlock/rebind/delete, plan/lease/session binding drift, deepcopy/serialization, audit digest, and zero apply before rejected resume. `python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal` = `18/18 PASS`; `py_compile` and `git diff --check` PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C, request pair, materialization, source-evidence, real host/consumer/guard/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: V27 fake-host CPU/static remediation closure
+
+- Gate: `G0-R09-B-TTT-V035-HOST-OWNED-CONTINUATION-CPU-STATIC`.
+- Formal root: `c4a3b985cfd8a576ab114431f8ee2ae4df6f2681`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only `tools/psm_wma/stage1_host_boundary.py`, its stdlib unittest, `SESSION.md`, and `TODO.md`; no real process, IPC, filesystem, consumer, child/runtime/config, GPU or training change. CPU=`8/8 PASS`; `py_compile` and `git diff --check` PASS.
+- Remediation: complete V27 fake-host conformance in one pass. The detached `ReviewRecordV27` now has exact ordered typed identity categories for consumer/guard/verifier, C01--C15, freshness/query/absence/replay/targets and descriptor/source/argv rows; its canonical digest binds exact Gate/root/child. Exact session-bound approval is only minted through a clearly separate test-only privileged orchestration harness. `RLock` serializes approval and `APPROVED -> CONSUMING`; tests cover every category drift, malformed/reordered records, all attestation fields, session/generation replay, parallel resumes and consuming terminal branches.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real Stage1Host/OS identity, process/IPC, real pre-C/C/request pair/materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
