@@ -86,3 +86,11 @@
 - Remediation focus: closes ChatGPT/DS same-pair findings in one static core: exact v0.5 pair; exact six key/value environment; typed closure with required raw facts and ordered query argv/predicates; canonical JSON, Markdown five-field sibling and line inverse witnesses; descriptor/capability/verifier identity and non-copy/serialization; C-admission latch consumed before the single fake opaque call, with explicit APPLIED/REJECTED_NO_WRITE/PARTIAL_OR_UNKNOWN terminal behavior.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: complete pre-C closure remediation
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`.
+- Formal root: `bc7857492dec64a629ecb7684e6d307d146aca24`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only static core/test/SESSION. It closes all current ChatGPT+DS items: typed two-query records with timeout/rc/stdout/stderr/advertised value; typed authority absences and four designated paths; sealed structures, C admission consumption before freshness, typed byte readback verified internally, and producer-raw inverse patch witness. `unittest=6/6`, `py_compile`, `diff-check` PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.5 C/materialization/source-evidence/real I/O/child/GPU/training.
