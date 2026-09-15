@@ -1,5 +1,23 @@
 # 当前协作状态
 
+### v1.8 pre-C closure remediation（2026-09-15 10:43 CST，未提交）
+
+- 引用 v1.7 观察凭证 #3 的窄授权；在任何 `.git`、path、environment、remote freshness observation 前停止，未进入 C。冻结对象的纯内存 P0/P1 核验最终 `PASS_P0_P1_NONCONSUMING`：base/replay/adapter/projection blob 与长度/SHA均匹配，replay parser=`2336/1a9543...`、outer=`18875/658e9b...`，projection closure 的 selection/config/bootstrap/contract identity均匹配。
+- 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.8.md`：修复 v1.7 把 candidate/record/receipt/publication absence 写为必需却未冻结 pathname/field mapping 的 fail-close 缺口；唯一允许的 Stage-1 absence set 是 clean_root、index、evidence、pending_evidence 四个精确路径，未来 Stage-2 语义不伪造为本 Gate 观察。
+- 更新 `TODO.md`：v1.7 design 关闭；v1.8 docs-only remediation 进入 IN_PROGRESS。未构造 v0.4 pair，未做 materialization、真实 I/O、child/GPU/训练。下一步：静态核验、提交/push v1.8，再以新 exact pair 申请 ChatGPT/MM/DS 审核。
+
+### v1.7 审核完整观察凭证 #3（2026-09-15 10:35 CST，三方 APPROVE 推进令牌仍有效）
+
+- formal pair=root=`d03cb28ca138090f50adc09d4e810713457353af`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户指定DS替代Kimi）。
+- `before_head=ab30e11ef6f6b276136b5661ccb74b8665455bcc`；`git fetch origin V2`成功；advertised/tracking均=`ab30e11ef6f6b276136b5661ccb74b8665455bcc`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v17_d03cb28_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。MM=`mm:0.0`与DS=`ds:0.0`独立capture均逐字锚定同pair并给出相同final。
+- 推进令牌仅授权一次 future docs-only v0.4 request-pair construction。当前正复读v1.7/v1.0/v0.5 contract及既有v0.1--v0.3 schema，先冻结一次性构造前的P0/P1/C观察清单；尚未写入v0.4 pair，未做materialization、真实I/O、child/GPU/训练。
+
+### v1.7 审核完整观察凭证 #2（2026-09-15 10:26 CST，三方 APPROVE 推进令牌）
+
+- formal pair=root=`d03cb28ca138090f50adc09d4e810713457353af`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。
+- `before_head=3fa337bfa399580962e1daab35f06a160aeee0d7`；fetch后advertised/tracking=`ab30e11ef6f6b276136b5661ccb74b8665455bcc`；新增=`aa0e8a49`、`ab30e11e`；祖先判定=0；ff-only成功。ChatGPT exact review=`2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v17_d03cb28_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。MM和DS capture均为同pair同literal final。
+- 三方全批准推进令牌成立，仅授权冻结规则下的一次 future docs-only v0.4 request-pair construction；仍禁止materialization、runtime、真实下游I/O、child/GPU/训练。下一步先复读v1.7的one-shot construction contract并形成精确执行记录。
+
 ### v1.7 审核申请送达回执（2026-09-15 10:21 CST，REVIEW）
 
 - ChatGPT：canonical `docs/collab/chatgpt/CODEX_INBOX.md`在独立ledger commit=`c85031c2c1e1e103f27bf1617ef2a8a07a8bfa57`追加v1.7申请并已推送；formal target仍为root=`d03cb28ca138090f50adc09d4e810713457353af`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
