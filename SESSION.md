@@ -29,6 +29,11 @@
 - ChatGPT exact review仍为 V26 `REQUEST_CHANGES(...v2.6.md:22)`；MM=`mm:0.0` capture未出现要求的 exact-pair self-contained FINAL；DS=`ds:0.0`保持同pair `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`。所有独立检查成功且未截断。
 - 无推进令牌，不改实现或处理单方意见；继续三分钟轮询。
 
+### V26 MM final 格式恢复送达（2026-09-15 CST，REVIEW）
+
+- 引用 V26 冻结 pair 与观察凭证 #2。MM 已完成正文审阅但缺 self-contained FINAL；因此仅发送一次不重审、不扩范围的 exact-pair final 格式请求。
+- `mm:0.0` 已完成 `send-keys -l → 间隔≥1秒 → 独立 Enter → capture`，capture 显示请求离开输入框并进入 `Creating`；不是新审核申请，不替换名册或正式范围。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
