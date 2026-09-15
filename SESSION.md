@@ -1,5 +1,11 @@
 # 当前协作状态
 
+### v2.0 consumer-capability design 审核送达回执（2026-09-15 11:36 CST，REVIEW）
+
+- ChatGPT：canonical live Inbox完整申请及SHA修正已随ledger=`70116c9e`推送；formal target仅为root=`f01628aad9775cfb327822c038a5b49e1a393ea9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM=`mm:0.0`、DS=`ds:0.0`均已按`send-keys -l → 间隔≥1秒 → 独立Enter → 独立capture`完成同一正确pair送达；MM capture显示申请已离开输入框并进入`Thundering`，DS capture显示完整申请已进入transcript且pane busy。两者尚非最终verdict。
+- Gate保持`REVIEW`；下一轮不早于三分钟后按完整远端锁定、ChatGPT exact review检索及MM/DS capture检查。无三方同pairfinal前禁止consumer实现/调用、P0/P1/C、v0.4补写或retry、materialization、真实I/O、child、GPU和训练。
+
 ### v2.0 consumer-capability design formal-pair 修正（2026-09-15 11:34 CST，REVIEW）
 
 - ledger=`6b9be02d`中的初始申请将formal root完整SHA误录为不可解析字符串，尚未向MM/DS发送。canonical live Inbox已追加修正：唯一有效pair=root=`f01628aad9775cfb327822c038a5b49e1a393ea9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。修正提交推送后才可送达；旧字符串不得作为审核对象。
