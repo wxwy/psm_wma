@@ -6978,3 +6978,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 已读取V19 recovery design：v1.8 C因shell `apply_patch`名称解析失败而永久消费、零输出；future C只能使用受控injected opaque capability，禁止PATH/临时文件/stdout/人工复制替代。C995的三方批准只关闭root CPU/static pre-C，不能外推执行。
 - 新建`G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V20`，作为唯一真实construction authority boundary：以当前`ContractV05`/C01--C15为base，一次性冻结real non-consuming rehearsal、capability ABI、freshness snapshot、canonical pair和`freshness → one opaque write → byte readback → hard stop`事务；不新增字段级横向Gate。仍禁止真实I/O、child/GPU/训练。
+
+### Stage-1 v1.7 request-instance recovery design V20 静态核验（2026-09-15 15:45 CST，IN_PROGRESS）
+
+- 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v2.0.md`：明确future capability ABI、完整non-consuming pre-C顺序、C四步原子事务、same-object patch handoff、terminal/no-retry与hard stop；将所有C前冻结项映射到C995 ContractV05 C01--C15。`git diff --check` PASS。
+- 下一步=提交/推送本docs-only V20 formal，三方审核请求`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；不执行真实pre-C/C或任何下游。
+
+### Stage-1 v1.7 ContractV05 fixed-ref 审核观察凭证 #3（2026-09-15 15:52 CST，DONE）
+
+- Formal pair=root=`c99506295fed887a87670fc80fbdaf639baf5444`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；`git fetch origin V2`成功；advertised/tracking均=`3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F c99506295fed887a87670fc80fbdaf639baf5444 docs/collab/chatgpt/reviews/`，命中`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_contract_v05_pre_c_cpu_static_c995062_93a89ba.md`，同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。MM=`mm:0.0`独立capture同pair final相同（15:41:36）；DS=`ds:0.0`独立capture同pair final相同。
+- Git锁定、exact review及两pane capture均成功且未截断；三方全批准的推进令牌仅关闭ContractV05 root CPU/static pre-C rehearsal/consumer Gate。它不授权V20真实pre-C/C、request pair、materialization、source-evidence、child、GPU或训练；当前只继续V20 docs-only construction-authority design。
