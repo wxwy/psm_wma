@@ -7052,3 +7052,20 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`c99506295fed887a87670fc80fbdaf639baf5444`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；`git fetch origin V2`成功；advertised/tracking均=`3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
 - ChatGPT精确检索命令=`rg -l -F c99506295fed887a87670fc80fbdaf639baf5444 docs/collab/chatgpt/reviews/`，命中`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_contract_v05_pre_c_cpu_static_c995062_93a89ba.md`，同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。MM=`mm:0.0`独立capture同pair final相同（15:41:36）；DS=`ds:0.0`独立capture同pair final相同。
 - Git锁定、exact review及两pane capture均成功且未截断；三方全批准的推进令牌仅关闭ContractV05 root CPU/static pre-C rehearsal/consumer Gate。它不授权V20真实pre-C/C、request pair、materialization、source-evidence、child、GPU或训练；当前只继续V20 docs-only construction-authority design。
+
+### Stage-1 v1.7 request-instance construction authority V22 审核观察凭证 #1（2026-09-15 16:40 CST，REVIEW）
+
+- Formal pair=root=`36f5216428a28027ac4d33c17ba4456fb93eb359`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户明确以DS替代Kimi）。`before_head=c990daa46918ebd85cedb93eb680e1078280c770`；`git fetch origin V2`成功；advertised/tracking均=`c990daa46918ebd85cedb93eb680e1078280c770`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '36f5216428a28027ac4d33c17ba4456fb93eb359' docs/collab/chatgpt/reviews`，结果为空。MM=`mm:0.0`独立capture给出同pair final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`（16:39:36）；DS=`ds:0.0`独立capture给出同pair final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。
+- Git锁定、exact review扫描及两个pane capture均成功且未截断；ChatGPT final缺失，未形成推进令牌。保持REVIEW；禁止真实pre-C/C、request pair、materialization、source-evidence、child、GPU与训练。
+
+### Stage-1 v1.7 request-instance construction authority V22 审核观察凭证 #2 / 整改令牌（2026-09-15 16:44 CST，REVIEW）
+
+- Formal pair=root=`36f5216428a28027ac4d33c17ba4456fb93eb359`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=c990daa46918ebd85cedb93eb680e1078280c770`；fetch成功；advertised/tracking均=`5bbbc83264a471226796628c9f30a3f8cf0a8070`；新增提交=`02a76f87 docs: add ChatGPT V22 construction authority review`、`5bbbc832 docs: publish ChatGPT V22 construction authority verdict`；祖先判定=0；`git merge --ff-only origin/V2`成功至`5bbbc832`。
+- ChatGPT精确review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_construction_authority_v22_36f5216_93a89ba.md`，同pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_construction_authority_v2.2.md:11)`：真实不可逆C依赖的provider/module/path/blob/callable与transport未在审核边界内冻结；须二选一收敛为reviewed literal single-stage，或仅授权真实non-consuming pre-C后再独立exact-plan审核。MM=`mm:0.0` capture同pair final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；DS=`ds:0.0` capture同pair final相同。
+- Git锁定、exact review扫描和两个pane capture均成功且未截断；三方final齐全，形成含ChatGPT `REQUEST_CHANGES`的整改令牌。仅允许按该HIGH一次性收敛新的docs-only authority路径；真实pre-C/C、request pair、materialization、source-evidence、child、GPU与训练继续禁止。
+
+### Stage-1 v1.7 exact-plan pre-C authority V23（2026-09-15 16:45 CST，IN_PROGRESS）
+
+- 依据V22整改令牌，新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_exact_plan_pre_c_authority_v2.3.md`；选择ChatGPT建议的two-stage authority，但仅增加不可合并的实质边界：一次真实non-consuming pre-C取得三组host callable的provider/module/path/blob/callable/ABI/transport literals，随后只对同一个sealed plan作一次独立审核。
+- v2.3 保持C01--C15、九条freshness domain、remote-pre-C-only、strict pair bytes/paths、same-object handoff及C四步原子事务；没有按字段或路径拆成更多 Gate。实际修改=该新设计、`SESSION.md`、`TODO.md`；`git diff --check` PASS；未提交。下一步=复读并提交/push V23 docs-only formal，再请求同pair三方 `APPROVE_TO_EXECUTE_R09_B_TTT_V035_STAGE1_V17_EXACT_PLAN_PRE_C`；真实pre-C/C及下游仍禁止。
