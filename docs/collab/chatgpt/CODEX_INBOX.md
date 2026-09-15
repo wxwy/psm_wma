@@ -77,3 +77,12 @@
 - Review focus: `rehearse_v05()` must seal injected capability identity, raw bytes/strict UTF-8 patch text, output pair, six-key environment, frozen snapshot/absence and fake verifier without I/O or consumer invocation. `consume_once_v05()` must have only frozen freshness comparison → exactly one opaque fake callback → post-write byte verification → hard-stop. Confirm v0.3/v0.4 are rejected and no filesystem/Git/network/dynamic-import/real consumer entrypoint exists.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: pre-C rehearsal CPU/static remediation
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`.
+- Formal root: `e870b903c570359fb7641837ea9b5e64c2aed9e3`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only `tools/psm_wma/stage1_v17_pre_c_rehearsal.py`, its stdlib unittest, `SESSION.md`, and `TODO.md`; no child/runtime change. `unittest=6/6 PASS`; `py_compile` and `git diff --check` PASS.
+- Remediation focus: closes ChatGPT/DS same-pair findings in one static core: exact v0.5 pair; exact six key/value environment; typed closure with required raw facts and ordered query argv/predicates; canonical JSON, Markdown five-field sibling and line inverse witnesses; descriptor/capability/verifier identity and non-copy/serialization; C-admission latch consumed before the single fake opaque call, with explicit APPLIED/REJECTED_NO_WRITE/PARTIAL_OR_UNKNOWN terminal behavior.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
