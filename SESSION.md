@@ -6984,6 +6984,16 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v2.0.md`：明确future capability ABI、完整non-consuming pre-C顺序、C四步原子事务、same-object patch handoff、terminal/no-retry与hard stop；将所有C前冻结项映射到C995 ContractV05 C01--C15。`git diff --check` PASS。
 - 下一步=提交/推送本docs-only V20 formal，三方审核请求`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；不执行真实pre-C/C或任何下游。
 
+### Stage-1 v1.7 request-instance recovery design V20 审核名册（2026-09-15 15:52 CST，REVIEW）
+
+- formal pair=root=`0ed2be7e27d7219f29f7d3601e6a3a0399ae6bfa`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户已明确以DS替代Kimi）。ChatGPT申请已append并通过ledger=`f9bdf515`推送；待完成MM/DS的`send-keys -l → 间隔>=1秒 → 独立Enter → capture`回执。
+- 请求的唯一verdict=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`；无三方同pair推进令牌前，禁止真实pre-C/C、request pair或下游。
+
+### Stage-1 v1.7 request-instance recovery design V20 审核送达回执（2026-09-15 15:52 CST，REVIEW）
+
+- ChatGPT申请已在canonical live Inbox并由ledger=`f9bdf515df89c3f421e5235c814c9876dc5a92b3`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成同pair完整`send-keys -l → 间隔>=1秒 → 独立Enter → capture`：MM capture显示申请进入会话并正在`Compacting conversation`；DS capture显示申请离开输入框、进入会话且会话处于处理状态。两条消息均请求同一严格final verdict。
+- formal pair=root=`0ed2be7e27d7219f29f7d3601e6a3a0399ae6bfa`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。三方同pair final前保持REVIEW；按三分钟原生完整远端锁定、exact review scan和独立pane capture，禁止真实pre-C/C、request pair、materialization、source-evidence、child、GPU和训练。
+
 ### Stage-1 v1.7 ContractV05 fixed-ref 审核观察凭证 #3（2026-09-15 15:52 CST，DONE）
 
 - Formal pair=root=`c99506295fed887a87670fc80fbdaf639baf5444`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；`git fetch origin V2`成功；advertised/tracking均=`3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
