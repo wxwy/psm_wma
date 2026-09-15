@@ -11,7 +11,7 @@ from tools.psm_wma import stage1_v17_request_projection as projection
 from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
     AUTHORITY_ARGV, AuthorityAbsenceV1, AbsenceObservationV1, ClosureV1, ContractV05,
     DESIGNATED_ABSENCES, DescriptorV1, ENV, FROZEN_TARGETS, FrozenTargetV1,
-    OpaquePatchCapabilityV1, P0_OBJECTS, P1_OBJECT_NAMES, PreCRehearsalError,
+    FreshnessGuardV1, FreshnessLeaseV1, OpaquePatchCapabilityV1, P0_OBJECTS, P1_OBJECT_NAMES, PreCRehearsalError,
     QueryFactV1, ReadbackV1, RehearsalInputV1, consume_once_v05, rehearse_v05,
     RawFactV1, ReplayBindingV1, SourceObjectV1,
 )
@@ -25,13 +25,18 @@ REPLAY_HELPER_GZIP_B64 = (
 
 
 class PreCRehearsalTest(unittest.TestCase):
-    def fixture(self, outcome="APPLIED", verify=True):
+    def fixture(self, outcome="APPLIED", verify=True, freshness="FRESH"):
         calls = []
         def apply(descriptor, patch_text):
             calls.append((descriptor, patch_text)); return outcome
         cap = OpaquePatchCapabilityV1("host", "host.patch", "host/patch.py", "a" * 64,
             f"{apply.__module__}.{apply.__qualname__}", "psm.stage1.request-patch-consumer/v1",
             "opaque-patch-text-handoff/v1", apply)
+        def guard_check(lease, descriptor, identities):
+            return freshness
+        guard = FreshnessGuardV1("host", "host.guard", "host/guard.py", "b" * 64,
+            f"{guard_check.__module__}.{guard_check.__qualname__}",
+            "psm.stage1.request-freshness-guard/v1", "opaque-sealed-freshness-guard/v1", guard_check)
         raw = json.dumps({"a": 1}, sort_keys=True, separators=(",", ":")).encode() + b"\n"
         blob = hashlib.sha1(f"blob {len(raw)}\0".encode() + raw).hexdigest()
         md = ("json_filename: docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json\n"
@@ -95,20 +100,22 @@ class PreCRehearsalTest(unittest.TestCase):
             tuple(absence(path) for path in DESIGNATED_ABSENCES), p0, p1, binding, targets)
         def verifier(json_raw, markdown_raw, paths):
             return ReadbackV1(json_raw, markdown_raw) if verify else ReadbackV1(b"bad\n", markdown_raw)
-        return RehearsalInputV1(cap, DescriptorV1(), raw, md, patch, ENV, closure,
+        lease = FreshnessLeaseV1(tuple((item.name, item.byte_length, item.sha256)
+                                       for item in (closure.git_identity, closure.config_raw, closure.local_v2_raw)))
+        return RehearsalInputV1(cap, DescriptorV1(), raw, md, patch, ENV, closure, guard, lease,
             verifier, f"{verifier.__module__}.{verifier.__qualname__}"), calls
 
     def test_success_is_exactly_once(self):
         value, calls = self.fixture(); self.assertIsInstance(value, ContractV05); plan = rehearse_v05(value)
-        self.assertEqual(consume_once_v05(plan, value.closure), "HARD_STOP_PENDING_INDEPENDENT_REVIEW")
-        with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan, value.closure)
+        self.assertEqual(consume_once_v05(plan), "HARD_STOP_PENDING_INDEPENDENT_REVIEW")
+        with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan)
         self.assertEqual(len(calls), 1)
 
     def test_every_terminal_result_consumes_plan(self):
         for outcome in ("REJECTED_NO_WRITE", "PARTIAL_OR_UNKNOWN", "OTHER"):
             value, calls = self.fixture(outcome); plan = rehearse_v05(value)
-            with self.assertRaises(PreCRehearsalError): consume_once_v05(plan, value.closure)
-            with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan, value.closure)
+            with self.assertRaises(PreCRehearsalError): consume_once_v05(plan)
+            with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan)
             self.assertEqual(len(calls), 1)
 
     def test_copy_and_pickle_are_rejected(self):
@@ -121,12 +128,12 @@ class PreCRehearsalTest(unittest.TestCase):
         value, _ = self.fixture()
         with self.assertRaisesRegex(PreCRehearsalError, "six_key_environment"):
             rehearse_v05(RehearsalInputV1(value.capability, value.descriptor, value.json_raw, value.markdown_raw,
-                value.patch_raw, ENV[:-1], value.closure, value.post_write_verify, value.post_write_qualname))
+                value.patch_raw, ENV[:-1], value.closure, value.freshness_guard, value.freshness_lease, value.post_write_verify, value.post_write_qualname))
         foreign = replace(value.closure,
             output_absences=tuple(replace(item, path="foo") for item in value.closure.output_absences))
         with self.assertRaisesRegex(PreCRehearsalError, "closure_absence"):
             rehearse_v05(RehearsalInputV1(value.capability, value.descriptor, value.json_raw, value.markdown_raw,
-                value.patch_raw, ENV, foreign, value.post_write_verify, value.post_write_qualname))
+                value.patch_raw, ENV, foreign, value.freshness_guard, value.freshness_lease, value.post_write_verify, value.post_write_qualname))
 
     def test_canonical_witnesses_and_forbidden_values_fail_closed(self):
         value, _ = self.fixture()
@@ -136,8 +143,8 @@ class PreCRehearsalTest(unittest.TestCase):
 
     def test_post_write_failure_is_terminal(self):
         value, calls = self.fixture(verify=False); plan = rehearse_v05(value)
-        with self.assertRaisesRegex(PreCRehearsalError, "post_write"): consume_once_v05(plan, value.closure)
-        with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan, value.closure)
+        with self.assertRaisesRegex(PreCRehearsalError, "post_write"): consume_once_v05(plan)
+        with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan)
         self.assertEqual(len(calls), 1)
 
     def test_query_and_absence_identity_drifts_fail_closed(self):
@@ -222,29 +229,10 @@ class PreCRehearsalTest(unittest.TestCase):
                 rehearse_v05(replace(value, closure=replace(value.closure, replay_binding=binding)))
         self.assertEqual(calls, [])
 
-    def test_sealed_observation_identity_drifts_fail_before_consumer(self):
-        value, calls = self.fixture()
-        def foreign_raw(name):
-            return RawFactV1(name, b"foreign", 7, hashlib.sha256(b"foreign").hexdigest())
-        remote = replace(value.closure.remote_v2, stdout=b"foreign", advertised_v2=b"foreign",
-                         stdout_length=7, stdout_sha256=hashlib.sha256(b"foreign").hexdigest(),
-                         advertised_length=7, advertised_sha256=hashlib.sha256(b"foreign").hexdigest())
-        p0 = replace(value.closure.p0_objects[0], raw=foreign_raw("base_source"))
-        p1 = foreign_raw("selection")
-        cases = (
-            replace(value.closure, git_identity=foreign_raw("git_directory")),
-            replace(value.closure, config_raw=foreign_raw("git_config")),
-            replace(value.closure, local_v2_raw=foreign_raw("local_v2")),
-            replace(value.closure, remote_v2=remote),
-            replace(value.closure, p0_objects=(p0,) + value.closure.p0_objects[1:]),
-            replace(value.closure, p1_objects=(p1,) + value.closure.p1_objects[1:]),
-            replace(value.closure, replay_binding=replace(value.closure.replay_binding, owner_fd_value=9)),
-            replace(value.closure, targets=tuple(reversed(value.closure.targets))),
-        )
-        for current in cases:
-            plan = rehearse_v05(value)
-            with self.assertRaisesRegex(PreCRehearsalError, "freshness"):
-                consume_once_v05(plan, current)
+    def test_guard_stale_or_unknown_stops_before_consumer(self):
+        for freshness, category in (("STALE", "freshness"), ("UNKNOWN", "freshness_unknown")):
+            value, calls = self.fixture(freshness=freshness); plan = rehearse_v05(value)
+            with self.assertRaisesRegex(PreCRehearsalError, category): consume_once_v05(plan)
             self.assertEqual(calls, [])
 
     def test_foreign_self_consistent_authority_absences_fail_before_consumer(self):

@@ -260,6 +260,45 @@ class OpaquePatchCapabilityV1:
     def __reduce_ex__(self, protocol): _fail("capability_serialize")
 
 
+class FreshnessLeaseV1:
+    """Host-bound local freshness lease; it exposes no closure reconstruction input."""
+    __slots__ = ("_domain", "_locked")
+
+    def __init__(self, domain: tuple[tuple[str, int, str], ...]) -> None:
+        self._domain = domain; self._locked = True
+
+    def __setattr__(self, name, value):
+        if getattr(self, "_locked", False): _fail("lease_mutation")
+        object.__setattr__(self, name, value)
+
+    def __copy__(self): _fail("lease_copy")
+    def __deepcopy__(self, memo): _fail("lease_copy")
+    def __reduce_ex__(self, protocol): _fail("lease_serialize")
+
+
+class FreshnessGuardV1:
+    """Pre-C injected opaque guard; no path, query or ClosureV1 is accepted by C."""
+    __slots__ = ("provider", "module", "path", "blob_sha256", "callable_qualname", "abi",
+                 "transport", "guard_opaque_v1", "_locked")
+
+    def __init__(self, provider: str, module: str, path: str, blob_sha256: str,
+                 callable_qualname: str, abi: str, transport: str,
+                 guard_opaque_v1: Callable[[FreshnessLeaseV1, DescriptorV1,
+                                            tuple[tuple[str, int, str], ...]], str]) -> None:
+        self.provider, self.module, self.path = provider, module, path
+        self.blob_sha256, self.callable_qualname = blob_sha256, callable_qualname
+        self.abi, self.transport, self.guard_opaque_v1 = abi, transport, guard_opaque_v1
+        self._locked = True
+
+    def __setattr__(self, name, value):
+        if getattr(self, "_locked", False): _fail("guard_mutation")
+        object.__setattr__(self, name, value)
+
+    def __copy__(self): _fail("guard_copy")
+    def __deepcopy__(self, memo): _fail("guard_copy")
+    def __reduce_ex__(self, protocol): _fail("guard_serialize")
+
+
 @dataclass(frozen=True)
 class ContractV05:
     """唯一的纯内存 pre-C 合同；C 只能消费由它密封的 plan。"""
@@ -270,6 +309,8 @@ class ContractV05:
     patch_raw: bytes
     environment: tuple[tuple[str, str], ...]
     closure: ClosureV1
+    freshness_guard: FreshnessGuardV1
+    freshness_lease: FreshnessLeaseV1
     post_write_verify: Callable[[bytes, bytes, tuple[str, str]], ReadbackV1]
     post_write_qualname: str
 
@@ -291,6 +332,9 @@ class SealedPreCPlanV1:
     markdown_raw: bytes
     patch_text: str
     closure: ClosureV1
+    freshness_guard: FreshnessGuardV1
+    freshness_lease: FreshnessLeaseV1
+    freshness_identities: tuple[tuple[str, int, str], ...]
     post_write_verify: Callable[[bytes, bytes, tuple[str, str]], ReadbackV1]
     post_write_qualname: str
     identities: tuple[tuple[str, int, str], ...]
@@ -398,17 +442,33 @@ def rehearse_v05(value: ContractV05) -> SealedPreCPlanV1:
     patch_text = _validate_patch(value.patch_raw)
     if value.patch_raw != _expected_patch(value.json_raw, value.markdown_raw): _fail("patch_inverse")
     _validate_closure(value.closure)
+    guard = value.freshness_guard
+    guard_identity = f"{guard.guard_opaque_v1.__module__}.{guard.guard_opaque_v1.__qualname__}"
+    if (not callable(guard.guard_opaque_v1) or guard.callable_qualname != guard_identity or
+            len(guard.blob_sha256) != 64 or any(char not in "0123456789abcdef" for char in guard.blob_sha256) or
+            (guard.abi, guard.transport) != ("psm.stage1.request-freshness-guard/v1",
+                                               "opaque-sealed-freshness-guard/v1") or
+            not all((guard.provider, guard.module, guard.path))): _fail("guard_identity")
+    local = (value.closure.git_identity, value.closure.config_raw, value.closure.local_v2_raw)
+    lease_domain = tuple((item.name, item.byte_length, item.sha256) for item in local)
+    if value.freshness_lease._domain != lease_domain: _fail("lease_domain")
     identities = tuple((name, len(raw), _sha(raw)) for name, raw in (
         ("json_raw", value.json_raw), ("markdown_raw", value.markdown_raw), ("patch_raw", value.patch_raw)))
     return SealedPreCPlanV1(cap, value.descriptor, value.json_raw, value.markdown_raw, patch_text,
-                             value.closure, value.post_write_verify, value.post_write_qualname, identities)
+                             value.closure, guard, value.freshness_lease, lease_domain,
+                             value.post_write_verify, value.post_write_qualname, identities)
 
 
-def consume_once_v05(plan: SealedPreCPlanV1, current_closure: ClosureV1) -> str:
+def consume_once_v05(plan: SealedPreCPlanV1) -> str:
     """Fixed C: freshness, exactly one opaque call, byte verification, hard stop."""
     if plan._retirement.consumed: _fail("already_consumed")
     plan._retirement.consumed = True
-    if current_closure != plan.closure: _fail("freshness")
+    try:
+        freshness = plan.freshness_guard.guard_opaque_v1(
+            plan.freshness_lease, plan.descriptor, plan.freshness_identities)
+    except Exception: _fail("freshness_unknown")
+    if freshness == "STALE": _fail("freshness")
+    if freshness != "FRESH": _fail("freshness_unknown")
     try: outcome = plan.capability.apply_opaque_v1(plan.descriptor, plan.patch_text)
     except Exception: _fail("consumer_exception")
     if outcome == "REJECTED_NO_WRITE": _fail("rejected_no_write")

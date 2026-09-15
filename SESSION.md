@@ -7033,6 +7033,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`27f188c6cd13db2e257dc2951b0b744b2ff3dd64`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v21_27f188c_93a89ba.md`，final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC`。DS=`ds:0.0`、MM=`mm:0.0`独立capture均为同pair同final。
 - 三方同pair全批准，形成仅授权已有纯内存freshness-guard module/unittest一次性CPU/static implementation的推进令牌；真实pre-C/C、request pair、I/O、child、GPU与训练仍禁止。
 
+### Stage-1 v1.7 freshness-guard CPU/static implementation（2026-09-15 16:10 CST，REVIEW准备）
+
+- 依据V21推进令牌，仅修改`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`及其stdlib unittest：新增不可复制/序列化的`FreshnessGuardV1`/`FreshnessLeaseV1`；`ContractV05`与sealed plan封存guard/lease/local identity domain；`consume_once_v05`移除任意`current_closure`参数，固定为opaque guard→one apply→readback→hard stop。
+- 验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`11/11 PASS`；`py_compile`、`git diff --check` PASS。未调用真实guard/consumer、Git/network/source/data/cache、child或GPU；未构造request pair。下一步=提交/推送此formal并申请三方closure审核。
+
 ### Stage-1 v1.7 ContractV05 fixed-ref 审核观察凭证 #3（2026-09-15 15:52 CST，DONE）
 
 - Formal pair=root=`c99506295fed887a87670fc80fbdaf639baf5444`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；`git fetch origin V2`成功；advertised/tracking均=`3b5ff0579ef7eaf28e73e0e7fa2d415ec7baa2d2`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
