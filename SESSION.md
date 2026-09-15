@@ -7069,3 +7069,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依据V22整改令牌，新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_exact_plan_pre_c_authority_v2.3.md`；选择ChatGPT建议的two-stage authority，但仅增加不可合并的实质边界：一次真实non-consuming pre-C取得三组host callable的provider/module/path/blob/callable/ABI/transport literals，随后只对同一个sealed plan作一次独立审核。
 - v2.3 保持C01--C15、九条freshness domain、remote-pre-C-only、strict pair bytes/paths、same-object handoff及C四步原子事务；没有按字段或路径拆成更多 Gate。实际修改=该新设计、`SESSION.md`、`TODO.md`；`git diff --check` PASS；未提交。下一步=复读并提交/push V23 docs-only formal，再请求同pair三方 `APPROVE_TO_EXECUTE_R09_B_TTT_V035_STAGE1_V17_EXACT_PLAN_PRE_C`；真实pre-C/C及下游仍禁止。
+
+### V23 审核名册与送达回执（2026-09-15 16:47 CST，REVIEW）
+
+- Formal pair=root=`04fd92eea3506ffe1de0ef8cce12377f81e2e75f`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已append并由ledger=`f9b1d7c4`推送。
+- MM/DS均完成同pair `send-keys -l → 间隔>=1秒 → 独立Enter → capture`；两条capture均显示V23申请已离开输入框进入会话。申请请求`APPROVE_TO_EXECUTE_R09_B_TTT_V035_STAGE1_V17_EXACT_PLAN_PRE_C`或带file:line的`REQUEST_CHANGES`。三方同pair final前保持REVIEW，禁止真实pre-C/C与下游。
+
+### V23 审核观察凭证 #1 / 整改令牌（2026-09-15 16:51 CST，REVIEW）
+
+- Formal pair=root=`04fd92eea3506ffe1de0ef8cce12377f81e2e75f`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=f9b1d7c4f19dbc85c4a22a608876edfe8b54cd24`；fetch成功；advertised/tracking均=`e65039347dc2e63ed354915a322df0c7abbe751b`；新增=`ad820d64 docs: add ChatGPT V23 exact-plan pre-C authority review`、`e6503934 docs: publish ChatGPT V23 exact-plan pre-C verdict`；祖先判定=0；ff-only成功至`e6503934`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_exact_plan_pre_c_authority_v23_04fd92e_93a89ba.md`，final=`REQUEST_CHANGES(...v2.3.md:26)`：exact-plan record须与未来C实际消费的同一非复制`SealedPreCPlanV1`通过host continuation/lease/session保持live绑定，loss/replace/drift必须失效，禁止重建。MM/DS capture均为同pair `APPROVE_TO_EXECUTE_R09_B_TTT_V035_STAGE1_V17_EXACT_PLAN_PRE_C`。
+- 所有独立证据成功未截断；三方final齐全，含ChatGPT HIGH整改令牌。仅可一次性新建docs-only continuity authority；真实pre-C/C及下游继续禁止。
