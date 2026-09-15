@@ -189,3 +189,11 @@
 - Scope: root-only unittest evidence remediation; no production/child/runtime/config change. The fake guard now derives FRESH/STALE from sealed-vs-simulated-live domain comparison. It sweeps both output and all four designated absence identities, proves consumer count zero before apply, and proves a second call is `already_consumed`. `unittest=12/12 PASS`; py_compile/diff-check PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C, request pair, materialization, source-evidence, real I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: V22 future request-pair construction authority
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSTRUCTION-AUTHORITY-V22`.
+- Formal root: `36f5216428a28027ac4d33c17ba4456fb93eb359`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only construction-authority design; no runtime/child/config change and no construction executed. It inherits the closed C01--C15/9-entry guard contract and freezes one full rehearsal followed only by `FRESH -> one opaque apply -> exact readback -> hard stop`.
+- Requested verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C/request pair before same-pair approval, materialization, source-evidence, real I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
