@@ -13,7 +13,7 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `934a353ecb8508f7c501ee8632183009f8661325`
+- immediate prior live blob SHA: `de1ed086e16940780873b6c42b6d60c894e98d16`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
@@ -56,5 +56,37 @@ Required remediation:
 - provide CPU/static evidence that mutable drift is detected before the opaque call without forbidden discovery/query.
 
 Until this is closed, real pre-C/C, future request-pair construction, materialization/source-evidence, real Git/network/source/data/cache I/O, child/runtime/config mutation, GPU and training remain forbidden.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 request-instance recovery V21 APPROVED FOR CPU/STATIC IMPLEMENTATION
+
+Formal pair:
+- root implementation SHA: `27f188c6cd13db2e257dc2951b0b744b2ff3dd64`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V21`
+
+Verdict:
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v21_27f188c_93a89ba.md`
+
+Canonical review commit:
+`84bbada6479c6b8d5c355ce6aac0f878de9a5291`
+
+Current blockers: `0`; Design/Atomicity: `0`; Production/implementation: `0`; Evidence/Scope: `0`; child/runtime: `0`.
+
+Approval summary:
+- V21 closes the V20 C-time freshness source/ABI blocker by introducing one pre-C-bound opaque `FreshnessGuardV1` and `FreshnessLeaseV1` with exact identity/ABI/transport sealing;
+- immutable ContractV05 facts remain sealed-only, mutable local facts/absence observations are guarded only through the pre-C-bound lease, remote V2/authority queries are pre-C-only, and post-write paths/bytes remain sealed;
+- the future production ABI removes arbitrary `current_closure` and permits only `consume_once_v05(plan)`;
+- C is frozen as guard -> one opaque write -> exact readback -> hard stop, with STALE/UNKNOWN/guard exception terminal before apply and all later failures terminal/no-retry;
+- V21 defines direct stdlib CPU/static evidence requirements for drift-before-apply, no C-time query/reconstruction, legacy ABI rejection, remote-query non-use, exactly-once success and terminal failure behavior;
+- formal root tree binds `cosmos-framework` mode `160000` exactly to the declared reachable child.
+
+Scope reminder: this approval authorizes only the root CPU/static freshness-guard implementation and its stdlib tests. It does not authorize a real freshness guard, real pre-C/C, request-pair construction, materialization, source-evidence, real Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training, evaluation, inference, or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
