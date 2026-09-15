@@ -23,6 +23,12 @@
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_host_owned_continuation_boundary_design_v26_ed5bd4c_93a89ba.md`，final=`REQUEST_CHANGES(...v2.6.md:22)`，要求一次性补齐：V24→V26 live-envelope/non-reconstructive supersession、session/generation/binding/nonce-bound one-shot approval、原子串行 `APPROVED -> CONSUMING -> TERMINAL`。MM capture显示正审阅并给出方向性结论，但未出现锚定同 pair 的 self-contained FINAL，故仍处理中；DS=`ds:0.0` capture为同 pair `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`。
 - 三方 final 尚未齐备，无推进令牌；禁止处理 ChatGPT 整改、实现 fake-host/真实 host/IPC 或下游动作。下一轮继续完整核验。
 
+### V26 审核完整观察凭证 #2（2026-09-15 CST，REVIEW）
+
+- formal pair 与冻结名册不变；`before_head=5befe5669f7b901ab4ab52debf858a46019a32e7`；fetch成功；advertised/tracking同为`5befe5669f7b901ab4ab52debf858a46019a32e7`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact review仍为 V26 `REQUEST_CHANGES(...v2.6.md:22)`；MM=`mm:0.0` capture未出现要求的 exact-pair self-contained FINAL；DS=`ds:0.0`保持同pair `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`。所有独立检查成功且未截断。
+- 无推进令牌，不改实现或处理单方意见；继续三分钟轮询。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
