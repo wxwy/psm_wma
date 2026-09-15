@@ -206,3 +206,12 @@
 - Review focus: verify that the two-stage model closes the authority gap without weakening C01--C15, nine-entry freshness domain, remote-pre-C-only rule, canonical bytes/paths, same-object patch handoff, no-retry semantics, or the future four-step C. Confirm V23 cannot authorize C, materialization, source evidence, child mutation, GPU or training.
 - Requested verdict: `APPROVE_TO_EXECUTE_R09_B_TTT_V035_STAGE1_V17_EXACT_PLAN_PRE_C` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: C/request-pair write, materialization, source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: V24 live-plan continuity authority
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-LIVE-PLAN-CONTINUITY-AUTHORITY-V24`.
+- Formal root: `936e0fb09a2fe529d5aec8b9e42c79ce54a6fec9`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only v2.4 docs remediation plus `SESSION.md`; no execution. This answers V23 ChatGPT HIGH: the non-copyable sealed plan, opaque lease and host session are a same-lifetime triple; the review record binds all three identities; only a resume-only entrypoint can pass that same live object to C; death/loss/replacement/drift invalidates authority, with no reconstruction.
+- Review focus: verify this proves reviewed-record to live-plan continuity without weakening C01--C15, nine-entry freshness, immutable bytes/paths, future C atomicity, or terminal no-retry. Confirm it remains docs-only and does not authorize real pre-C/C.
+- Requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C/request-pair write, materialization/source-evidence, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
