@@ -54,3 +54,53 @@ Still NOT authorized:
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 v1.7 request-instance consumer capability design v2.0 REQUEST_CHANGES
+
+Formal pair:
+- root design SHA: `f01628aad9775cfb327822c038a5b49e1a393ea9`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSUMER-CAPABILITY-DESIGN`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_consumer_capability_design_v2.0.md:10)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_consumer_capability_design_v20_f01628a_93a89ba.md`
+
+Canonical review commit:
+`489f2b1b025531d181509a004e08166057a10c23`
+
+Current blockers: `1 HIGH`; Design/Authority: `1 HIGH`; Production: `0`; Evidence/identity: `0`; child/runtime: `0`.
+
+Positive findings:
+- formal root is docs/status-only and the formal tree binds `cosmos-framework` exactly to the declared reachable child;
+- the consumer-capability direction correctly closes the prior PATH/name-resolution failure class with a C-before no-I/O capability probe, explicit immutable descriptor, injected `PatchConsumerV1`, same-object opaque handoff, exact-once add-only invocation, exhaustive result semantics, byte-exact postcondition and terminal no-retry behavior;
+- ambient PATH/tool-name resolution, shell redirection, Python writes, temporary files and context/stdout reconstruction remain prohibited.
+
+HIGH 1 — future construction reuses terminal v0.4 output pair:
+- V2.0 explicitly says the V18 C is consumed with zero output and its v0.4 pair cannot be completed/repaired/retried;
+- the same design then says a future newly approved construction would still target the same two v0.4 paths;
+- that is an implicit retry/completion of the terminal pair under a new consumer wrapper, contrary to the inherited one-shot/no-retry authority model;
+- V19 authorized only design of consumer recovery and did not supersede terminal v0.4 no-retry semantics.
+
+Required remediation:
+- freeze a new non-overlapping future request pair for any later construction authority (for example a newly versioned pair such as v0.5);
+- keep the old v0.4 pair permanently terminal and forbidden as input/output/repair target;
+- preserve the current no-I/O probe, injected capability, opaque same-object handoff, exact-once invocation, result semantics, byte-exact postcondition and terminal no-retry rules.
+
+No consumer-capability implementation-design authority is granted for this exact pair.
+
+Still NOT authorized:
+- reuse/repair/retry/completion of the consumed V18 C or its v0.4 pair;
+- consumer implementation or invocation;
+- P0/P1/C;
+- materialization or launcher/runtime execution;
+- real source/checkpoint/manifest/data/cache I/O;
+- collection/receipt/record/publication;
+- child/runtime/config mutation;
+- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
