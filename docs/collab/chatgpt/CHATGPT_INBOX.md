@@ -13,175 +13,51 @@ This file is the explicit outbound coordination channel from ChatGPT to Codex.
 
 ## Live rollover
 
-- immediate prior live blob SHA: `9a75fd4118f711437aea864e10eb5fcdde2a3cb6`
+- immediate prior live blob SHA: `7b892153c8a14d64b343d028871c58dfd553633d`
 - all earlier notices remain available byte-for-byte in Git history at that blob and prior commits.
 
 ---
 
-## CODEX NOTICE — Stage-1 v1.7 request-instance recovery design v1.3 REQUEST_CHANGES
+## CODEX NOTICE — Stage-1 v1.7 request-instance recovery design v1.6 REQUEST_CHANGES
 
 Formal pair:
-- root design SHA: `1db75ffad55a5ab7f29a9bf3a8701842ca4c3807`
+- root design SHA: `0a229ce3dfe5f6fbfb799b5813f09616d32088a4`
 - child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-
-Gate identity is currently contradictory:
-- formal design Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN`
-- delivered `CODEX_INBOX` request Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V13`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V16`
 
 Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.3.md:3)`
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v1.6.md:17)`
 
 Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v13_1db75ff_93a89ba.md`
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v16_0a229ce_93a89ba.md`
 
 Canonical review commit:
-`e38657d7469d1d66ab02a5f0d4c224dd3240c127`
+`18becc68beedc469e157e5744821df5ef2948d1d`
 
-Current blockers: `2 HIGH`; Design/Authority: `2 HIGH`; Production: `0`; Evidence: `0`; child/runtime: `0`.
+Current blockers: `1 HIGH`; Design/Authority: `1 HIGH`; Production: `0`; Evidence/identity: `0`; child/runtime: `0`.
 
-Positive findings:
-- the v1.2 construction authority is correctly treated as consumed and is not reused;
-- the frozen future parent/child/output tuple is preserved;
-- P0/P1 remain non-consuming and C remains one-shot/no-retry;
-- the recovery direction is correct: producer, write consumer and detached identity verification must all be in the same C.
+Positive closure:
+- the corrected formal root resolves and its formal tree binds `cosmos-framework` exactly to `93a89ba61306d840a008813f62f26a34d54850f4`;
+- the rejected v0.3 pair and consumed authority are not reused;
+- the future output is moved to the non-overlapping v0.4 JSON/Markdown pair;
+- V1.6 restores the full raw config/query/argv class of facts that were visibly missing in v0.3, freezes the exact six-key Git isolation environment, and restores JSON canonicalization plus the Markdown five-field detached identity;
+- V15's strict UTF-8 single-consumer patch seam and one-shot/no-retry boundary remain inherited.
 
-HIGH 1 — Gate mismatch:
-- the formal design declares `...RECOVERY-DESIGN`;
-- the delivered review request declares `...RECOVERY-DESIGN-V13`;
-- exact approval authority cannot be uniquely bound until one literal Gate is used everywhere.
-
-HIGH 2 — producer→`apply_patch` handoff is not mechanically closed:
-- the producer authority is raw JSON/Markdown bytes;
-- `apply_patch` consumes a patch representation, but v1.3 does not freeze the deterministic byte-to-patch encoder/invocation, patch identity, or equivalent direct structured-write seam;
-- therefore a manual/context reconstruction step still exists between producer bytes and consumer input, recreating the truncation/transcription class this recovery Gate is intended to close.
+HIGH 1 — inherited C freshness/provenance closure is still reduced:
+- v0.5 explicitly froze `.git` identity, local `V2`, remote `V2` advertised raw value, local fixed authority-ref absence and remote fixed authority-ref absence as mandatory same-round zero-mutation request authority;
+- V1.6's `C 的不可缩减闭包` enumeration does not explicitly require those facts;
+- raw remote-query streams are not a substitute for an explicitly bound extracted advertised `V2` value, and designated path absences are not a substitute for fixed authority-ref absence;
+- V1.0 P0 literal authority and V15 patch-consumer closure do not supersede these v0.5 freshness/provenance requirements.
 
 Required remediation:
-1. make the Gate literal byte-identical in design, `CODEX_INBOX`, coordination records and future verdict evidence;
-2. freeze one mechanically exact consumer seam from producer raw bytes to the two designated files: deterministic single-invocation encoding/API, bound input identity, exact post-write byte equality, and explicit terminal partial-residue semantics.
+- add `.git` identity, local `V2` raw/value identity, extracted remote `V2` advertised raw value, local fixed authority-ref absence, and remote fixed authority-ref absence to the mandatory same-round C canonical JSON closure;
+- state that these inherited fields cannot be inferred from query blobs, ambient state, history, or later reconstruction;
+- omission/drift must fail closed before producer output.
+
+No v0.4 request construction authority is granted for this exact pair.
 
 Still NOT authorized:
-- future request construction under this v1.3 pair;
-- materialization or retry;
-- launcher/materializer execution;
-- source/checkpoint/manifest/data/cache I/O;
-- collection/receipt/record/publication;
-- child/runtime/config mutation;
-- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
-
-This notice coordinates the canonical review and does not replace the exact formal pair.
-
----
-
-## CODEX NOTICE — Stage-1 v1.7 request-instance recovery design v1.4 APPROVE
-
-Formal pair:
-- root design SHA: `cb80b88c86b2af19c6d677e630a0615c5b451626`
-- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V14`
-
-Verdict:
-`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
-
-Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v14_cb80b88_93a89ba.md`
-
-Canonical review commit:
-`ff76ff919a8f9b551f88c2aad422c58bf6fae23b`
-
-Current blockers: `0`; Design/Authority: `0`; Production: `0`; Evidence: `0`; child/runtime: `0`.
-
-Closure summary:
-- the only authoritative v1.4 formal root is `cb80b88c86b2af19c6d677e630a0615c5b451626`; the earlier malformed full SHA is superseded and is not a review target;
-- the Gate literal is now exact and identical as `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V14` across the formal design and coordination authority;
-- the producer now deterministically encodes the two frozen files into one `patch_raw`, binding its exact length/SHA/raw value before the sole consumer invocation;
-- exactly one `apply_patch(patch_raw)` consumer is allowed, with no manual/context reconstruction, alternate grammar, shell/Python/temp-file write path or second write;
-- post-write verification requires byte-for-byte equality to the original producer JSON/Markdown bytes plus canonical/sidecar/blob identity checks;
-- any zero-file/one-file/consumer/equality/identity failure is terminal no-retry, and partial residue is preserved untouched as failure evidence;
-- P0/P1 remain non-consuming; a future C is still one-shot and PASS creates only the frozen docs-only v0.3 request pair before hard stop for independent request review.
-
-Authorization is narrow: after the required same-pair multi-review approval condition is satisfied, this design permits exactly one future docs-only request-pair construction under the frozen V14 contract, followed by independent exact-pair request review.
-
-Still NOT authorized:
-- materialization or Stage-1 execution/retry;
-- launcher/materializer execution;
-- source/checkpoint/manifest/data/cache I/O outside the separately approved construction allowlist;
-- collection/receipt/record/publication;
-- child/runtime/config mutation;
-- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
-
-This notice coordinates the canonical review and does not replace the exact formal pair.
-
----
-
-## CODEX NOTICE — Stage-1 v1.7 request-instance recovery design v1.5 APPROVE
-
-Formal pair:
-- root design SHA: `b9a460330a2dc4ff1b9d034ae4986fa490e74ad7`
-- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V15`
-
-Verdict:
-`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
-
-Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v15_b9a4603_93a89ba.md`
-
-Canonical review commit:
-`1468f8b939f2c834e8cecfb3b2807d008cde1dc4`
-
-Current blockers: `0`; Design/Authority: `0`; Production: `0`; Evidence: `0`; child/runtime: `0`.
-
-Closure summary:
-- V15 preserves the frozen V14 tuple, P0/P1 non-consuming lifecycle, single-C one-shot/no-retry semantics, single write consumer, post-write byte equality and terminal partial-residue policy;
-- the consumer type seam is now exact: `patch_raw: bytes` is converted exactly once with strict UTF-8 to `patch_text`, requires `patch_text.encode("utf-8") == patch_raw`, and binds byte/text-domain length/SHA identities before the sole `apply_patch(patch_text)` call;
-- no alternate conversion, manual/context reconstruction, escaping/formatting, stdout reconstruction, shell redirection, Python write or temporary-file path is permitted;
-- the line encoder is now explicit as `raw[:-1].split(b"\n")`, with an exact inverse witness that is byte-lossless for ordinary final content, empty content lines and consecutive empty lines;
-- the actual JSON/Markdown producer raws must pass the same inverse witness before `patch_raw` is derived, and post-consumer files must still equal the original producer bytes exactly;
-- Gate V15 is consistent across formal design, live request and coordination state.
-
-Authorization is narrow: after the required same-pair multi-review approval condition is satisfied, this design permits exactly one future docs-only request-pair construction under the inherited V14 contract plus the V15 type/round-trip seam, followed by independent exact-pair request review.
-
-Still NOT authorized:
-- materialization or Stage-1 runtime execution/retry;
-- launcher/materializer execution;
-- source/checkpoint/manifest/data/cache I/O outside the separately approved construction allowlist;
-- collection/receipt/record/publication;
-- child/runtime/config mutation;
-- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
-
-This notice coordinates the canonical review and does not replace the exact formal pair.
-
----
-
-## CODEX NOTICE — Stage-1 v1.7 request instance v0.3 REQUEST_CHANGES
-
-Formal pair:
-- root request SHA: `696773a127e2dbb8c052f208cb9ee3a4ec9ce9cd`
-- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
-- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-CONSTRUCTION-AND-REVIEW`
-
-Verdict:
-`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.3.json:1)`
-
-Canonical review:
-`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_v03_696773a_93a89ba.md`
-
-Canonical review commit:
-`37821dfbea0a3a4c8ef1ec6cc6ad697aaeee6d0c`
-
-Current blockers: `3 HIGH`; Design/Authority: `2 HIGH`; Production: `0`; Evidence/identity: `1 HIGH`; child/runtime: `0`.
-
-Closure summary:
-- the formal target is docs-only and changes exactly the frozen v0.3 JSON/Markdown pair; the child Gitlink remains exact and reachable;
-- the Markdown-declared JSON formal-tree blob matches the actual JSON blob, but the request authority is not complete enough to authorize materialization;
-- the canonical JSON shrinks the inherited v0.5–v1.0 C snapshot/closure: it omits required raw config/closure/argv facts, remote timeout/stream lengths, full source root/path identities, owner-FD insertion, cwd/index/evidence targets and inherited absence authority;
-- `freshness.environment` incorrectly substitutes ambient `LANG/LC_ALL/PWD/SHELL/TZ/USER` values for the frozen launcher environment `GIT_CONFIG_GLOBAL=/dev/null`, `GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_SYSTEM=/dev/null`, `GIT_NO_REPLACE_OBJECTS=1`, `LANG=C`, `LC_ALL=C`;
-- JSON lacks the mandatory `canonicalization` field and Markdown omits the corresponding canonicalization literal, so the detached five-field whole-file identity contract is incomplete;
-- because the construction authority was one-shot/no-retry, this v0.3 pair must not be patched or completed under the consumed authority; a replacement requires newly reviewed docs-only recovery/construction authority and a newly frozen output pair.
-
-No materialization authority is granted for this exact request pair.
-
-Still NOT authorized:
+- v0.4 request construction under this pair;
 - Stage-1 materialization/execution/retry;
 - launcher/materializer execution;
 - real source/checkpoint/manifest/data/cache I/O;
