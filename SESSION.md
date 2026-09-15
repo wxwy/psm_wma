@@ -1,5 +1,10 @@
 # 当前协作状态
 
+### v2.0 consumer-capability design 审核名册与送达准备（2026-09-15 11:33 CST，REVIEW）
+
+- formal pair=root=`f01628aa5527bda31f6d97e488eff3550aa46fdc`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代Kimi）。formal-tree仅`SESSION.md`、`TODO.md`与v2.0 design；Gitlink未变。
+- canonical live Inbox原始=`3606` bytes，本次完整申请追加后低于`131072` bytes硬上限；待ledger提交推送后向MM/DS完成`send-keys -l → 间隔≥1秒 → 独立Enter → capture`三联送达。无同pair三方final前，不得实现或调用consumer、执行P0/P1/C、补写/重试v0.4，或进行materialization、真实I/O、child、GPU及训练。
+
 ### v1.9 审核完整观察凭证 #10 / consumer-recovery design 推进令牌（2026-09-15 11:29 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`13efbfde19a848aa44cfb5f0bfa0373523902ae4`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=8a4765e9e9d952fee6071e909605cbcc353b46b7`；首次fetch成功并发现远端推进；advertised/tracking=`98fee67f414b119c7c9d5e414a477fcfab3919bb`；新增完整范围=`d1944255 docs: add ChatGPT review for stage1 v17 recovery v19`、`98fee67f docs: publish ChatGPT stage1 v17 recovery v19 verdict`；祖先判定=0；`git merge --ff-only origin/V2`成功至`98fee67f414b119c7c9d5e414a477fcfab3919bb`。
