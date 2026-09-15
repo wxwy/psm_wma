@@ -216,9 +216,7 @@ def close_to_keep(keep):
     if durable_fds()!=keep: fail("fd closure")
 
 def prepare_exec_fds():
-    if fd_is_open(BOOTSTRAP_FD): fail("bootstrap fd collision")
-    os.dup2(CLEAN_OWNER_FD, BOOTSTRAP_FD, inheritable=True)
-    if not stat.S_ISDIR(os.fstat(BOOTSTRAP_FD).st_mode): fail("bootstrap owner identity")
+    if not fd_is_open(BOOTSTRAP_FD) or not stat.S_ISDIR(os.fstat(BOOTSTRAP_FD).st_mode): fail("bootstrap owner identity")
     close_to_keep(BACKING_FDS | {PARENT_OWNER_FD, BOOTSTRAP_FD, CLEAN_OWNER_FD})
     if os.get_inheritable(PARENT_OWNER_FD) or os.get_inheritable(CLEAN_OWNER_FD): fail("owner fd inheritance")
 
