@@ -1,5 +1,136 @@
 # 当前协作状态
 
+### v3.0 pre-C rehearsal implementation design 验证（2026-09-15 13:00 CST，REVIEW准备）
+
+- 引用v2.1观察凭证#21的implementation-design推进令牌。新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_pre_c_rehearsal_consumer_implementation_design_v3.0.md`：将capability/callable identity、final canonical bytes、output paths、six-key环境、`.git`/local V2/remote V2/authority ref/designated absence、dry-run seam和post-write verifier合并入一次non-consuming opaque sealed plan；C只做freshness compare、一次opaque写入、byte equality和hard stop。
+- 预计改动仅v3.0 design、`SESSION.md`、`TODO.md`。未创建v0.5、未调用consumer、未执行P0/P1/C、materialization、真实I/O、child/GPU或训练。下一步=static核验、提交并以新formal pair申请一个整合的CPU/static implementation审核；未提交。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #21 / implementation-design 推进令牌（2026-09-15 12:55 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`e1def003a645bf63da0e3e0007f2a7c4313325d9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功并发现远端推进；advertised/tracking=`2a77757cd8cba847b99544b7dbfb10aedb5fc4f9`；新增完整范围=`5fe9b2d7 docs: add ChatGPT stage1 consumer capability v21 review`、`2a77757c docs: publish ChatGPT stage1 consumer capability v21 verdict`；祖先判定=0；`git merge --ff-only origin/V2`成功至`2a77757cd8cba847b99544b7dbfb10aedb5fc4f9`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_consumer_capability_design_v21_e1def00_93a89ba.md`，final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION`。MM=`mm:0.0` capture及DS=`ds:0.0` capture均为同pair同literal final。全部独立证据成功、未截断。
+- 三方同pair全批准，推进令牌仅授权撰写一份整合的 docs-only consumer-capability implementation design。该设计应把用户指定的完整 non-consuming pre-C rehearsal 与 future C 最小路径一次性冻结；仍禁止v0.5 construction、consumer实现/调用、P0/P1/C、materialization、真实I/O、child、GPU和训练。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #20（2026-09-15 12:50 CST，REVIEW）
+
+- formal pair=root=`e1def003a645bf63da0e3e0007f2a7c4313325d9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #19（2026-09-15 12:46 CST，REVIEW）
+
+- formal pair=root=`e1def003a645bf63da0e3e0007f2a7c4313325d9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #18（2026-09-15 12:43 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #17（2026-09-15 12:40 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #16（2026-09-15 12:37 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #15（2026-09-15 12:34 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #14（2026-09-15 12:31 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #13（2026-09-15 12:28 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #12（2026-09-15 12:25 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #11（2026-09-15 12:22 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #10（2026-09-15 12:19 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #9（2026-09-15 12:16 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #8（2026-09-15 12:13 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #7（2026-09-15 12:10 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #6（2026-09-15 12:07 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #5（2026-09-15 12:04 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #4（2026-09-15 12:01 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #3（2026-09-15 11:58 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #2（2026-09-15 11:55 CST，REVIEW）
+
+- formal pair/root-child与冻结名册不变。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索无输出。MM=`mm:0.0`和DS=`ds:0.0`独立capture均保持同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` final；没有新意见。全部独立证据成功、未截断。
+- ChatGPT final仍缺件，无推进令牌；Gate保持`REVIEW`，下游均闭锁。
+
+### v2.1 consumer-capability design 审核完整观察凭证 #1（2026-09-15 11:52 CST，REVIEW）
+
+- formal pair=root=`e1def003a645bf63da0e3e0007f2a7c4313325d9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=bef3817136fcedcb275aebd4019c3acf4036a77f`；fetch成功；advertised/tracking均=`bef3817136fcedcb275aebd4019c3acf4036a77f`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact检索=`rg -l -F 'e1def003a645bf63da0e3e0007f2a7c4313325d9' docs/collab/chatgpt/reviews/ || true`无输出，尚无 exact-pair formal review。MM=`mm:0.0` capture为同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION`；DS=`ds:0.0` capture为同pair同literal final。全部独立证据成功、未截断。
+- ChatGPT final缺件，无推进令牌；Gate保持`REVIEW`。禁止v0.3/v0.4复用、v0.5 construction、consumer实现/调用、P0/P1/C、materialization、真实I/O、child、GPU及训练。
+
 ### v2.1 consumer-capability design 审核名册与送达准备（2026-09-15 11:47 CST，REVIEW）
 
 - formal pair=root=`e1def003a645bf63da0e3e0007f2a7c4313325d9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。formal-tree仅v2.1 design、`SESSION.md`、`TODO.md`；Gitlink未变。
