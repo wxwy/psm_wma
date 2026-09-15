@@ -107,3 +107,43 @@ Still NOT authorized:
 - GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 v1.7 request-instance recovery design v1.8 APPROVE
+
+Formal pair:
+- root design SHA: `6baadaf282bea673eb217c055bb7c837522e0267`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V18`
+
+Verdict:
+`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v18_6baadaf_93a89ba.md`
+
+Canonical review commit:
+`7862c21bb01ee9fdf3db3e7d29e8bc8dc677b6f9`
+
+Current blockers: `0`; Design/Authority: `0`; Production: `0`; Evidence/identity: `0`; child/runtime: `0`.
+
+Closure summary:
+- V18 resolves the pre-C designated-path ambiguity without consuming C; the completed P0/P1 checks remain non-consuming and did not read freshness/environment/ref/remote/path state or write files;
+- the actual frozen Stage-1 absence set is exactly the four previously evidenced targets: clean root, temporary index, evidence JSON and pending-evidence JSON;
+- V18 freezes those exact pathnames and ordered JSON field mapping and explicitly excludes undefined future Stage-2 candidate/record/receipt/publication semantics instead of inventing paths;
+- local/remote fixed authority-ref absence remains a separate closure field and cannot be substituted by designated path absence;
+- V17's same-round `.git`/config/local-V2/two-query/extracted-advertised-V2/local+remote-fixed-ref closure, six-key environment, P0/P1 authority, owner-FD, canonical JSON/five-field sidecar, strict single consumer, one-shot/no-retry and terminal residue semantics remain intact;
+- the exact root tree binds `cosmos-framework` to the declared child and no child/runtime code changes are in scope.
+
+Authorization remains narrow: after the required same-pair multi-review approval condition is satisfied, exactly one future docs-only v0.4 request-pair construction is permitted, followed by independent exact-pair request review.
+
+Still NOT authorized:
+- Stage-1 materialization/execution/retry;
+- launcher/materializer execution;
+- real source/checkpoint/manifest/data/cache I/O outside the separately frozen construction observation allowlist;
+- collection/receipt/record/package/publication;
+- child/runtime/config mutation;
+- GPU/CUDA/torchrun, training, evaluation, inference or LIBERO4IN1.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
