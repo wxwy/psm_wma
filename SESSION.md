@@ -1,5 +1,16 @@
 # 当前协作状态
 
+### v2.1 consumer-capability design 最小整改验证（2026-09-15 11:44 CST，REVIEW准备）
+
+- 引用紧邻v2.0观察凭证#1的docs-only整改令牌。新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_consumer_capability_design_v2.1.md`：v0.4 pair作为已消费C的永久terminal名称，future consumer descriptor、patch、result及readback唯一允许新鲜不重叠的v0.5 JSON/Markdown pair；保留无I/O probe、不可复制capability、同一`patch_text` opaque handoff、exact-once、三态结果、byte equality和no-retry。
+- 预计修改仅v2.1 design、`TODO.md`与`SESSION.md`；未执行consumer、P0/P1/C、真实source/checkpoint/manifest/data/cache I/O、child/GPU/训练。下一步=static复读、`git diff --check`、formal范围复核、提交并对新的formal pair三方审核；未提交。
+
+### v2.0 consumer-capability design 审核完整观察凭证 #1 / 整改令牌（2026-09-15 11:40 CST，REVIEW → IN_PROGRESS）
+
+- formal pair=root=`f01628aad9775cfb327822c038a5b49e1a393ea9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=0ccbdee7531c75ab300a9acc08059010bf545d70`；fetch成功并发现远端推进；advertised/tracking=`96e0edd640af79a8e2434eba6de538381ddb10f1`；新增完整范围=`489f2b1b docs: add ChatGPT stage1 consumer capability v20 review`、`96e0edd6 docs: publish ChatGPT stage1 consumer capability v20 verdict`；祖先判定=0；`git merge --ff-only origin/V2`成功至`96e0edd640af79a8e2434eba6de538381ddb10f1`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_consumer_capability_design_v20_f01628a_93a89ba.md`，final=`REQUEST_CHANGES(...v2.0.md:10)`，HIGH：任何未来construction不得复用已terminal的v0.4 pair，必须冻结新的不重叠输出pair。MM=`mm:0.0` capture为同pair `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION`；DS=`ds:0.0` capture为同pair同literal final。全部独立Git/review/pane证据成功、未截断。
+- 三方final同pair齐全，形成含`REQUEST_CHANGES`的整改令牌：仅允许docs-only最小整改，将所有future construction输出改为新的、不与terminal v0.4重叠的pair，同时保留probe、opaque handoff、exact-once、三态和no-retry。严禁consumer实现/调用、P0/P1/C、v0.4补写或retry、materialization、真实I/O、child、GPU和训练。
+
 ### v2.0 consumer-capability design 审核送达回执（2026-09-15 11:36 CST，REVIEW）
 
 - ChatGPT：canonical live Inbox完整申请及SHA修正已随ledger=`70116c9e`推送；formal target仅为root=`f01628aad9775cfb327822c038a5b49e1a393ea9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
