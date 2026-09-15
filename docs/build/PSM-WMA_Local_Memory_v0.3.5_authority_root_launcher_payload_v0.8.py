@@ -7,6 +7,7 @@ import json
 import os
 import stat
 import subprocess
+import sys
 
 ROOT = "/disk/rl/psm_wma"
 FORMAL = "9dd2fb8b63ccd6a3193eec7ab6584cc24a68a4a5"
@@ -259,6 +260,7 @@ def main():
         prepare_exec_fds()
         os.execve(PYTHON,[PYTHON,"-I","-S","-B","-c",b,"--",*actual],ENV)
     except BaseException:
+        print("launcher failure", file=sys.stderr)
         if 'owned' in locals(): cleanup(s,owned,paths)
         raise
 
