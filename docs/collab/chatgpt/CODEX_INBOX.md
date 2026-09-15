@@ -35,3 +35,8 @@
 - Review focus: verify the explicit no-I/O pre-C `PatchConsumerV1` capability probe; immutable descriptor and two-path allowlist; host-owned `opaque-patch-text-handoff/v1` preserving the producer's same `patch_text` object; exact-once add-only invocation; exhaustive `APPLIED` / `REJECTED_NO_WRITE` / `PARTIAL_OR_UNKNOWN` result semantics; byte-exact postcondition and terminal no-retry. Reject ambient PATH/tool-name resolution, shell/Python/tempfile/stdout reconstruction or hidden consumer I/O.
 - Requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE_CONSUMER_CAPABILITY_IMPLEMENTATION` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.4 repair/retry, consumer implementation or invocation, P0/P1/C, materialization, launcher/runtime, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+### Canonical correction — formal root SHA
+
+- The immediately preceding v2.0 request transcribed the full root SHA incorrectly. Its **only** valid formal root is `f01628aad9775cfb327822c038a5b49e1a393ea9`; the formal child/Gitlink remains `93a89ba61306d840a008813f62f26a34d54850f4`.
+- All review focus, requested verdict and forbidden scope in that request are unchanged. The invalid string `f01628aa5527bda31f6d97e488eff3550aa46fdc` is not an object and must not be reviewed.

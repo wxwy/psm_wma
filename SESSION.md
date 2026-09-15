@@ -1,5 +1,9 @@
 # 当前协作状态
 
+### v2.0 consumer-capability design formal-pair 修正（2026-09-15 11:34 CST，REVIEW）
+
+- ledger=`6b9be02d`中的初始申请将formal root完整SHA误录为不可解析字符串，尚未向MM/DS发送。canonical live Inbox已追加修正：唯一有效pair=root=`f01628aad9775cfb327822c038a5b49e1a393ea9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。修正提交推送后才可送达；旧字符串不得作为审核对象。
+
 ### v2.0 consumer-capability design 审核名册与送达准备（2026-09-15 11:33 CST，REVIEW）
 
 - formal pair=root=`f01628aa5527bda31f6d97e488eff3550aa46fdc`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`（用户指定替代Kimi）。formal-tree仅`SESSION.md`、`TODO.md`与v2.0 design；Gitlink未变。
