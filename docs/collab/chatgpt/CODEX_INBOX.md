@@ -173,3 +173,11 @@
 - Review focus: `FreshnessGuardV1`/`FreshnessLeaseV1` are sealed and non-copyable; `consume_once_v05(plan)` no longer accepts arbitrary `ClosureV1`; guard `STALE`/`UNKNOWN` terminate before apply; FRESH retains one opaque apply, byte readback and no retry. No real I/O is present.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C, request pair, materialization, source-evidence, real guard/consumer/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: freshness absence-domain remediation closure
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-FRESHNESS-GUARD-CPU-STATIC`.
+- Formal root: `db6c4f93473e7ef58a294cff3fb8c692b100badd`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only pre-C module/test plus SESSION; no child/runtime/config change. This is the complete same-pair ChatGPT HIGH remediation: lease domain now deterministically binds git/config/local-V2, two output absences and four designated absences by name/path/predicate/length/SHA. `unittest=12/12 PASS`; `py_compile` and `git diff --check` PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C, request pair, materialization, source-evidence, real I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
