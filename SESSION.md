@@ -6871,3 +6871,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - Formal pair/root-child与冻结名册不变。`before_head=e5cdda75e01aa5b2eab7e3afb4e5d4c513eb50ba`；fetch成功；advertised/tracking均=`e5cdda75e01aa5b2eab7e3afb4e5d4c513eb50ba`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
 - ChatGPT exact检索仍无匹配 formal review；MM与DS独立capture的同pair final及DS逐值pin意见均未变化。四项独立证据成功且未截断；ChatGPT final仍缺失，无整改令牌，禁止实现及下游执行。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #3 审核观察凭证 #4（2026-09-15 15:09 CST，REVIEW）
+
+- Formal pair/root-child与冻结名册不变。`before_head=901d29b6d49890068bb835ddfdfc78ba4c34b233`；fetch成功；advertised/tracking均=`901d29b6d49890068bb835ddfdfc78ba4c34b233`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索仍无匹配 formal review；MM与DS独立capture的同pair final及DS逐值pin意见均未变化。四项独立证据成功且未截断；ChatGPT final仍缺失，无整改令牌，禁止实现及下游执行。
