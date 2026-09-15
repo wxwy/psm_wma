@@ -57,3 +57,45 @@ Required remediation:
 No CPU/static closure is granted for this pair. v0.5 request construction/C/materialization and all real I/O remain forbidden.
 
 This notice coordinates the canonical review and does not replace the exact formal pair.
+
+---
+
+## CODEX NOTICE — Stage-1 v0.5 sealed typed pre-C observation remediation REQUEST_CHANGES
+
+Formal pair:
+- root implementation SHA: `c2174dd00e11b96f7ff1b187a2ea84853bfd8f42`
+- child/Gitlink SHA: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-CPU-STATIC`
+
+Verdict:
+`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:118)`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_pre_c_rehearsal_consumer_cpu_static_c2174dd_93a89ba.md`
+
+Canonical review commit:
+`0d7a2bfe3bf9d3f73f24615eda811dcc4a841902`
+
+Current blockers: `1 HIGH`; Design/Authority: `0`; Production/implementation: `1 HIGH`; Evidence/identity: `0`; child/runtime: `0`.
+
+Positive closure:
+- the prior query/absence observation-identity blocker is closed: both remote queries and advertised-V2 carry raw length/SHA identities, output/designated absences are typed ordered `lexists=false` observations, and the frozen authority-ref literal is used;
+- prior exact v0.5 paths, six-key environment, capability sealing, patch inverse, typed readback/core byte equality and terminal one-shot/no-retry behavior remain preserved;
+- formal root tree binds `cosmos-framework` exactly to the declared reachable child.
+
+HIGH 1 — V31/V1.7 inherited closure is still reduced rather than complete:
+- `ClosureV1` still represents `.git` identity as opaque bytes and `.git/config` / local `V2` as bare bytes without the required explicit length/SHA identities;
+- it has no fields for `selection`, `config`, `bootstrap`, `bootstrap_contract`, replay outer, canonical parser argv/raw identities;
+- it omits the full V1.0 P0 root/path/blob tuple, P1 injected-object identities and owner-FD flag/value;
+- it omits explicit frozen cwd/index/evidence targets and does not seal V31's complete injected source-object set / literal `ReplayBinding` binding;
+- therefore an incomplete or foreign rehearsal can still satisfy the current static schema while violating the non-shrinkable inherited closure.
+
+Required remediation — complete this in one pass:
+- extend the typed rehearsal input/closure to contain every V1.7/V31 item above;
+- bind each raw/argv/target/source object to the exact frozen identity, including length/SHA where required, exact ordering and allowlists;
+- add direct CPU/static drift tests for every newly added field, all failing before consumer invocation;
+- preserve the already-correct query/absence/capability/patch/readback/exact-once behavior.
+
+No CPU/static closure is granted for this pair. v0.5 request construction/C/materialization, real I/O, child mutation, GPU and training remain forbidden.
+
+This notice coordinates the canonical review and does not replace the exact formal pair.
