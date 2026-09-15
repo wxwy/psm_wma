@@ -149,6 +149,13 @@ class PreCRehearsalTest(unittest.TestCase):
         session.close()
         with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan)
 
+    def test_live_session_is_sealed(self):
+        value, _ = self.fixture(); session = LivePlanSessionV1(rehearse_v05(value))
+        for operation in (lambda: setattr(session, "_state", "APPROVED"),
+                          lambda: copy.copy(session), lambda: pickle.dumps(session)):
+            with self.assertRaises(PreCRehearsalError): operation()
+        session.close()
+
     def test_every_terminal_result_consumes_plan(self):
         for outcome in ("REJECTED_NO_WRITE", "PARTIAL_OR_UNKNOWN", "OTHER"):
             value, calls = self.fixture(outcome); plan = rehearse_v05(value)

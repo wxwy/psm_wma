@@ -355,19 +355,26 @@ class SealedPreCPlanV1:
 
 class LivePlanSessionV1:
     """Pure-memory owner for one review-pending plan and its opaque lease."""
-    __slots__ = ("_plan", "_lease", "_approval", "_state")
+    __slots__ = ("_plan", "_lease", "_approval", "_state", "_locked")
     def __init__(self, plan: SealedPreCPlanV1) -> None:
         if id(plan) in _LIVE_PLANS: _fail("continuation_owner")
-        self._plan, self._lease, self._approval, self._state = plan, ContinuationLeaseV1(), None, "PENDING"
+        self._plan, self._lease, self._approval, self._state, self._locked = plan, ContinuationLeaseV1(), None, "PENDING", True
         _LIVE_PLANS.add(id(plan)); _LIVE_TOKENS[id(plan)] = self._lease._token
     def __del__(self):
         if getattr(self, "_state", "INVALID") in ("PENDING", "APPROVED"):
             self.close()
+    def __setattr__(self, name, value):
+        if getattr(self, "_locked", False) and name in ("_plan", "_lease", "_approval", "_state"):
+            _fail("continuation_mutation")
+        object.__setattr__(self, name, value)
+    def __copy__(self): _fail("continuation_copy")
+    def __deepcopy__(self, memo): _fail("continuation_copy")
+    def __reduce_ex__(self, protocol): _fail("continuation_serialize")
     @property
     def lease(self) -> ContinuationLeaseV1: return self._lease
     def approve(self, approval_identity: object) -> None:
         if self._state != "PENDING" or approval_identity is None: self.close(); _fail("continuation_approval")
-        self._approval, self._state = approval_identity, "APPROVED"
+        object.__setattr__(self, "_approval", approval_identity); object.__setattr__(self, "_state", "APPROVED")
     def audit_record(self) -> tuple[object, ...]:
         """Read-only identity witness; never a plan reconstruction input."""
         return (id(self), id(self._plan), id(self._lease), self._plan.identities,
@@ -378,12 +385,12 @@ class LivePlanSessionV1:
                 self._plan.freshness_guard.path, self._plan.freshness_guard.blob_sha256,
                 self._plan.post_write_qualname)
     def close(self) -> None:
-        self._state = "INVALID"; self._plan._retirement.consumed = True
+        object.__setattr__(self, "_state", "INVALID"); self._plan._retirement.consumed = True
         _LIVE_PLANS.discard(id(self._plan)); _LIVE_TOKENS.pop(id(self._plan), None)
     def resume_once(self, lease: ContinuationLeaseV1, approval_identity: object) -> str:
         if self._state != "APPROVED" or lease is not self._lease or approval_identity is not self._approval:
             self.close(); _fail("continuation_identity")
-        self._state = "CONSUMED"; _LIVE_PLANS.discard(id(self._plan)); _LIVE_TOKENS.pop(id(self._plan), None)
+        object.__setattr__(self, "_state", "CONSUMED"); _LIVE_PLANS.discard(id(self._plan)); _LIVE_TOKENS.pop(id(self._plan), None)
         return consume_once_v05(self._plan)
 
 
