@@ -1,5 +1,23 @@
 # 当前协作状态
 
+### v1.8 C terminal failure（2026-09-15 10:49 CST，零输出、禁止重试）
+
+- 引用 v1.8 观察凭证 #2 的窄 construction token。P0/P1 本轮成功后，C 在首次 freshness observation 前开始并永久消费；后续唯一 `patch_raw -> strict UTF-8 patch_text -> apply_patch(patch_text)` consumer 因六键隔离环境中无可解析 `apply_patch` executable，抛出 `FileNotFoundError: [Errno 2] No such file or directory: 'apply_patch'`。
+- 未发起第二个 consumer 或任何重试。随后独立核验 `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.4.json` 与 `.md`均 absent；无 partial residue。v0.4 pair 永不得补写。
+- 新增 v1.9 docs-only recovery design：future consumer 必须以 C 前明确、可验证的 injected capability/orchestration opaque handoff ABI 冻结；禁止 PATH 推断、shell redirection、Python write、temporary file 或 context reconstruction。下一步仅静态核验、提交并申请新的三方 design review。
+
+### v1.8 审核完整观察凭证 #2（2026-09-15 10:48 CST，三方 APPROVE 推进令牌）
+
+- formal pair=root=`6baadaf282bea673eb217c055bb7c837522e0267`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=9402cd1ff67c452b2ccf4fdcf56296bc77c8dab9`；fetch后advertised/tracking=`12bec3f53d28c6ee854e7307837c6ebb2d46bdba`；新增完整范围=`7862c21b docs: add ChatGPT review for stage1 v17 recovery v18`、`12bec3f5 docs: publish ChatGPT stage1 v17 recovery v18 verdict`；祖先判定=0；`git merge --ff-only origin/V2`成功。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_recovery_design_v18_6baadaf_93a89ba.md`，final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。MM=`mm:0.0`独立capture有同pair同literal final；DS=`ds:0.0`独立capture有同pair同literal final。
+- 三方全批准推进令牌成立：仅授权一次 future docs-only v0.4 request-pair construction，之后必须独立 exact-pair review。不得 materialize、真实下游I/O、child/runtime、GPU或训练。下一步先以 v1.8 的四条 exact path mapping 复核 single-C producer/consumer 命令，不通过则 C 前停止。
+
+### v1.8 审核完整观察凭证 #1（2026-09-15 10:52 CST，REVIEW）
+
+- formal pair=root=`6baadaf282bea673eb217c055bb7c837522e0267`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=9402cd1ff67c452b2ccf4fdcf56296bc77c8dab9`；fetch成功；advertised/tracking均=`9402cd1ff67c452b2ccf4fdcf56296bc77c8dab9`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '6baadaf282bea673eb217c055bb7c837522e0267' docs/collab/chatgpt/reviews/ || true`，本轮无输出，尚无 exact-pair formal review。MM=`mm:0.0`独立capture显示正在逐项审阅 v1.8 的四条 path mapping，未见同pair self-contained FINAL。DS=`ds:0.0`独立capture有同pair self-contained final=`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE`。
+- 仅 DS final 已具备，无推进令牌；Gate 保持 REVIEW。下一轮须完整重做远端锁定、ChatGPT精确检索及 MM/DS capture；不得构造 v0.4 或执行下游动作。
+
 ### v1.8 审核送达回执（2026-09-15 10:50 CST，REVIEW）
 
 - formal pair=root=`6baadaf282bea673eb217c055bb7c837522e0267`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已在 rollover 后 canonical live Inbox 写入并由 ledger commit=`0b2698d0fed0d6f61c863fab31dd56b4d2c292b0`推送。
