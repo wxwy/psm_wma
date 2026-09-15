@@ -258,7 +258,9 @@ def main():
         assert_worktree(s,owned)
         for raw,(name,target,expected) in zip(data,EXPECTED): handoff(raw,name,target,expected)
         prepare_exec_fds()
-        os.execve(PYTHON,[PYTHON,"-I","-S","-B","-c",b,"--",*actual],ENV)
+        exec_argv=[PYTHON,"-I","-S","-B","-c",b,"--",*actual]
+        print("bootstrap exec argv", repr(exec_argv), file=sys.stderr)
+        os.execve(PYTHON,exec_argv,ENV)
     except BaseException:
         print("launcher failure", file=sys.stderr)
         if 'owned' in locals(): cleanup(s,owned,paths)
