@@ -7080,3 +7080,55 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Formal pair=root=`04fd92eea3506ffe1de0ef8cce12377f81e2e75f`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=f9b1d7c4f19dbc85c4a22a608876edfe8b54cd24`；fetch成功；advertised/tracking均=`e65039347dc2e63ed354915a322df0c7abbe751b`；新增=`ad820d64 docs: add ChatGPT V23 exact-plan pre-C authority review`、`e6503934 docs: publish ChatGPT V23 exact-plan pre-C verdict`；祖先判定=0；ff-only成功至`e6503934`。
 - ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_request_instance_exact_plan_pre_c_authority_v23_04fd92e_93a89ba.md`，final=`REQUEST_CHANGES(...v2.3.md:26)`：exact-plan record须与未来C实际消费的同一非复制`SealedPreCPlanV1`通过host continuation/lease/session保持live绑定，loss/replace/drift必须失效，禁止重建。MM/DS capture均为同pair `APPROVE_TO_EXECUTE_R09_B_TTT_V035_STAGE1_V17_EXACT_PLAN_PRE_C`。
 - 所有独立证据成功未截断；三方final齐全，含ChatGPT HIGH整改令牌。仅可一次性新建docs-only continuity authority；真实pre-C/C及下游继续禁止。
+
+### V24 审核名册与送达回执（2026-09-15 16:54 CST，REVIEW）
+
+- Formal pair=root=`936e0fb09a2fe529d5aec8b9e42c79ce54a6fec9`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已append，并由ledger=`92f1dcf8`推送。
+- MM/DS均完成`send-keys -l → 间隔>=1秒 → 独立Enter → capture`；capture显示V24申请已经进入会话并开始处理。三方同pair final前保持REVIEW；禁止真实pre-C/C、request pair及下游。
+
+### V25 rebased session sealing closure 审核观察凭证 #1（2026-09-15 17:52 CST，REVIEW）
+
+- Formal pair=root=`23087f8274567a99ee9751a63ba105f48c2f1845`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。`before_head=de47344793aeca38751b74b5d9e63527610a0ad3`；`git fetch origin V2`成功；advertised/tracking均=`de47344793aeca38751b74b5d9e63527610a0ad3`；新增范围为空；祖先判定=0；`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命令=`rg -l -F '23087f8274567a99ee9751a63ba105f48c2f1845' docs/collab/chatgpt/reviews`，结果为空。DS=`ds:0.0`独立capture给出同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC`。MM=`mm:0.0`独立capture只含本轮代码分析摘要，`-S -1200`对formal root及`APPROVE_TO_CLOSE`/`REQUEST_CHANGES`精确检索均无命中，故未取得同pair final verdict。
+- Git锁定、exact review扫描及两个pane capture均成功且未截断；ChatGPT与MM final缺件，未形成推进令牌。保持REVIEW；禁止整改、真实pre-C/C、request pair、materialization、source-evidence、child、GPU与训练。
+
+### V25 rebased session sealing closure 审核观察凭证 #2 / 整改令牌（2026-09-15 17:56 CST，REVIEW）
+
+- Formal pair=root=`23087f8274567a99ee9751a63ba105f48c2f1845`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=de47344793aeca38751b74b5d9e63527610a0ad3`；fetch成功；advertised/tracking均=`5d4ff173669efe691a001136528661760f22da0c`；新增=`f3970335 docs: add ChatGPT V25 session sealing review 23087f8`、`5d4ff173 docs: publish ChatGPT V25 session sealing verdict 23087f8`；祖先判定=0；`git merge --ff-only origin/V2`成功至`5d4ff173669efe691a001136528661760f22da0c`。
+- ChatGPT精确review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_23087f8_93a89ba.md`，同pair final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:367)`，含两个HIGH（可写/可删`_locked`导致unlock后篡改；无creation-time三元binding digest且`_LIVE_TOKENS`不参与验证）及一个MEDIUM（密封/绑定负例不完整）。DS=`ds:0.0`独立capture同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC`。MM=`mm:0.0`独立capture及`-S -1200`精确检索均未出现同pair final。
+- Git锁定、exact review扫描及两个pane capture均成功且未截断；三方final未齐，尚无整改令牌。保持REVIEW；禁止按ChatGPT意见整改、真实pre-C/C、request pair、materialization、source-evidence、child、GPU与训练。
+
+### V25 rebased session sealing closure 审核观察凭证 #3（2026-09-15 18:01 CST，REVIEW）
+
+- Formal pair=root=`23087f8274567a99ee9751a63ba105f48c2f1845`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=5d4ff173669efe691a001136528661760f22da0c`；fetch成功；advertised/tracking均=`5d4ff173669efe691a001136528661760f22da0c`；新增范围为空；祖先判定=0；独立`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT精确检索命中既有review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_23087f8_93a89ba.md`，独立verdict检索为`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:367)`。DS=`ds:0.0`独立capture仍为同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC`。MM=`mm:0.0`独立capture及`-S -1200`精确检索仍未出现同pair final。
+- 所有本轮独立证据成功且未截断；MM final缺件，尚无整改令牌。保持REVIEW；禁止整改、真实pre-C/C、request pair、materialization、source-evidence、child、GPU与训练。
+
+### V25 rebased session sealing closure 审核观察凭证 #4（2026-09-15 18:05 CST，REVIEW）
+
+- Formal pair=root=`23087f8274567a99ee9751a63ba105f48c2f1845`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=5d4ff173669efe691a001136528661760f22da0c`；fetch成功；advertised/tracking均=`5d4ff173669efe691a001136528661760f22da0c`；新增范围为空；祖先判定=0；独立`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-pair review扫描仍命中`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_23087f8_93a89ba.md`，final仍为`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:367)`。DS=`ds:0.0`独立capture仍为同pair final批准；MM=`mm:0.0`独立capture和精确检索仍无同pair final。
+- 所有本轮独立证据成功且未截断；MM final缺件，尚无整改令牌。保持REVIEW；禁止整改、真实pre-C/C、request pair、materialization、source-evidence、child、GPU与训练。
+
+### V25 rebased session sealing closure 审核观察凭证 #5（2026-09-15 18:10 CST，REVIEW）
+
+- Formal pair=root=`23087f8274567a99ee9751a63ba105f48c2f1845`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=5d4ff173669efe691a001136528661760f22da0c`；fetch成功；advertised/tracking均=`5d4ff173669efe691a001136528661760f22da0c`；新增范围为空；祖先判定=0；独立`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact-pair review扫描仍命中`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_23087f8_93a89ba.md`，final仍为`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:367)`。DS=`ds:0.0`独立capture仍为同pair final批准。MM=`mm:0.0`完整capture有代码结论摘要但无`FINAL`或明确verdict；`-S -1200` exact root/verdict检索亦无命中，故未取得final。
+- 所有本轮独立证据成功且未截断；MM final缺件，尚无整改令牌。保持REVIEW；禁止整改、真实pre-C/C、request pair、materialization、source-evidence、child、GPU与训练；下一步仅可向MM请求补发既有申请的严格同pair final。
+
+### V25 MM final 格式提醒送达回执（2026-09-15 18:10 CST，REVIEW）
+
+- 对冻结审核者MM=`mm:0.0`，已完成一次非重复申请的final格式提醒：`send-keys -l`写入exact root/child及二选一verdict格式，间隔1.1秒后独立`Enter`，随后独立capture。
+- capture显示提醒已离开输入框并进入会话，pane处于`Noodling`处理状态；该回执不构成final verdict。仍禁止整改及任何真实pre-C/C/request pair/下游。
+
+### V25 rebased session sealing closure 审核观察凭证 #6 / 整改令牌（2026-09-15 18:14 CST，REVIEW → IN_PROGRESS）
+
+- Formal pair=root=`23087f8274567a99ee9751a63ba105f48c2f1845`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=5d4ff173669efe691a001136528661760f22da0c`；fetch成功；advertised/tracking均=`5d4ff173669efe691a001136528661760f22da0c`；新增范围为空；祖先判定=0；独立`git merge --ff-only origin/V2`=`Already up to date`。
+- ChatGPT exact review=`docs/collab/chatgpt/reviews/2026-09-15_R09_B_TTT_v035_stage1_v17_live_plan_continuity_cpu_static_v25_23087f8_93a89ba.md`，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:367)`，须修复可变/可删locking bit，以及creation-time三元binding digest强制验证和完整负例。MM=`mm:0.0` capture的Gate ledger同pair终局=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC`；DS=`ds:0.0` exact-pair capture同final批准。
+- Git锁定、exact review扫描及两pane capture均成功且未截断；三方final齐全，形成含ChatGPT `REQUEST_CHANGES`的整改令牌。仅允许最小root-only纯内存CPU/static整改：不可调用者重绑/删除的三元binding authority/digest、resume强制验证、死镜像移除或转实用，以及因果负例。禁止真实pre-C/C、request pair、materialization、source-evidence、child、GPU和训练。
+
+### V25 session sealing/binding 整改（2026-09-15 18:14 CST，REVIEW准备）
+
+- 依据V25完整三方整改令牌，仅修改`tools/psm_wma/stage1_v17_pre_c_rehearsal.py`与其stdlib unittest：移除可变`_locked`开关及未验证的`_LIVE_TOKENS`镜像；创建时生成不可复制/不可普通set/delete的`_ContinuationBindingV1`，冻结session/plan/lease identity与token-backed SHA-256 digest；`audit_record()`公开三元identity+digest，`resume_once()`在释放owner前强制匹配binding。
+- 同时使capability/freshness guard/freshness lease/continuation lease/retirement均无可解锁位、普通set/delete fail-close；补充unlock/字段替换/删除/deepcopy/serialize、三元digest drift及零apply因果负例。验证=`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal`=`18/18 PASS`；`python -m py_compile`与`git diff --check` PASS。
+- 未执行真实pre-C/C、request pair、I/O、child、GPU或训练；未触碰`cosmos-framework`与既有训练遗留。下一步=复读formal diff，更新TODO/SESSION、仅提交此整改并推送后申请新pair三方审核。

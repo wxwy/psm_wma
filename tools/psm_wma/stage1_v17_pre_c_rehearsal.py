@@ -241,19 +241,23 @@ class ClosureV1:
 class OpaquePatchCapabilityV1:
     """Host-injected capability; neither copyable nor serializable."""
     __slots__ = ("provider", "module", "path", "blob_sha256", "callable_qualname", "abi",
-                 "transport", "apply_opaque_v1", "_token", "_locked")
+                 "transport", "apply_opaque_v1")
 
     def __init__(self, provider: str, module: str, path: str, blob_sha256: str,
                  callable_qualname: str, abi: str, transport: str,
                  apply_opaque_v1: Callable[[DescriptorV1, str], str]) -> None:
-        self.provider, self.module, self.path = provider, module, path
-        self.blob_sha256, self.callable_qualname = blob_sha256, callable_qualname
-        self.abi, self.transport, self.apply_opaque_v1 = abi, transport, apply_opaque_v1
-        self._token = object(); self._locked = True
+        object.__setattr__(self, "provider", provider)
+        object.__setattr__(self, "module", module)
+        object.__setattr__(self, "path", path)
+        object.__setattr__(self, "blob_sha256", blob_sha256)
+        object.__setattr__(self, "callable_qualname", callable_qualname)
+        object.__setattr__(self, "abi", abi)
+        object.__setattr__(self, "transport", transport)
+        object.__setattr__(self, "apply_opaque_v1", apply_opaque_v1)
 
     def __setattr__(self, name, value):
-        if getattr(self, "_locked", False): _fail("capability_mutation")
-        object.__setattr__(self, name, value)
+        _fail("capability_mutation")
+    def __delattr__(self, name): _fail("capability_mutation")
 
     def __copy__(self): _fail("capability_copy")
     def __deepcopy__(self, memo): _fail("capability_copy")
@@ -262,14 +266,14 @@ class OpaquePatchCapabilityV1:
 
 class FreshnessLeaseV1:
     """Host-bound local freshness lease; it exposes no closure reconstruction input."""
-    __slots__ = ("_domain", "_locked")
+    __slots__ = ("_domain",)
 
     def __init__(self, domain: tuple[tuple[str, str, str, int, str], ...]) -> None:
-        self._domain = domain; self._locked = True
+        object.__setattr__(self, "_domain", domain)
 
     def __setattr__(self, name, value):
-        if getattr(self, "_locked", False): _fail("lease_mutation")
-        object.__setattr__(self, name, value)
+        _fail("lease_mutation")
+    def __delattr__(self, name): _fail("lease_mutation")
 
     def __copy__(self): _fail("lease_copy")
     def __deepcopy__(self, memo): _fail("lease_copy")
@@ -279,20 +283,24 @@ class FreshnessLeaseV1:
 class FreshnessGuardV1:
     """Pre-C injected opaque guard; no path, query or ClosureV1 is accepted by C."""
     __slots__ = ("provider", "module", "path", "blob_sha256", "callable_qualname", "abi",
-                 "transport", "guard_opaque_v1", "_locked")
+                 "transport", "guard_opaque_v1")
 
     def __init__(self, provider: str, module: str, path: str, blob_sha256: str,
                  callable_qualname: str, abi: str, transport: str,
                  guard_opaque_v1: Callable[[FreshnessLeaseV1, DescriptorV1,
                                             tuple[tuple[str, str, str, int, str], ...]], str]) -> None:
-        self.provider, self.module, self.path = provider, module, path
-        self.blob_sha256, self.callable_qualname = blob_sha256, callable_qualname
-        self.abi, self.transport, self.guard_opaque_v1 = abi, transport, guard_opaque_v1
-        self._locked = True
+        object.__setattr__(self, "provider", provider)
+        object.__setattr__(self, "module", module)
+        object.__setattr__(self, "path", path)
+        object.__setattr__(self, "blob_sha256", blob_sha256)
+        object.__setattr__(self, "callable_qualname", callable_qualname)
+        object.__setattr__(self, "abi", abi)
+        object.__setattr__(self, "transport", transport)
+        object.__setattr__(self, "guard_opaque_v1", guard_opaque_v1)
 
     def __setattr__(self, name, value):
-        if getattr(self, "_locked", False): _fail("guard_mutation")
-        object.__setattr__(self, name, value)
+        _fail("guard_mutation")
+    def __delattr__(self, name): _fail("guard_mutation")
 
     def __copy__(self): _fail("guard_copy")
     def __deepcopy__(self, memo): _fail("guard_copy")
@@ -300,11 +308,45 @@ class FreshnessGuardV1:
 
 
 class ContinuationLeaseV1:
-    __slots__ = ("_token",)
-    def __init__(self) -> None: self._token = object()
+    __slots__ = ()
+    def __setattr__(self, name, value): _fail("continuation_mutation")
+    def __delattr__(self, name): _fail("continuation_mutation")
     def __copy__(self): _fail("continuation_copy")
     def __deepcopy__(self, memo): _fail("continuation_copy")
     def __reduce_ex__(self, protocol): _fail("continuation_serialize")
+
+
+class _ContinuationBindingV1:
+    """Creation-time, non-reconstructive authority for one live triple."""
+    __slots__ = ("_session_id", "_plan_id", "_lease_id", "_token", "_digest")
+
+    def __init__(self, session: object, plan: SealedPreCPlanV1,
+                 lease: ContinuationLeaseV1) -> None:
+        token = object()
+        session_id, plan_id, lease_id, token_id = id(session), id(plan), id(lease), id(token)
+        payload = f"psm.stage1.live-plan-binding/v1:{session_id}:{plan_id}:{lease_id}:{token_id}".encode()
+        object.__setattr__(self, "_session_id", session_id)
+        object.__setattr__(self, "_plan_id", plan_id)
+        object.__setattr__(self, "_lease_id", lease_id)
+        object.__setattr__(self, "_token", token)
+        object.__setattr__(self, "_digest", _sha(payload))
+
+    def __setattr__(self, name, value): _fail("continuation_binding_mutation")
+    def __delattr__(self, name): _fail("continuation_binding_mutation")
+    def __copy__(self): _fail("continuation_copy")
+    def __deepcopy__(self, memo): _fail("continuation_copy")
+    def __reduce_ex__(self, protocol): _fail("continuation_serialize")
+
+    def matches(self, session: object, plan: SealedPreCPlanV1,
+                lease: ContinuationLeaseV1) -> bool:
+        payload = (f"psm.stage1.live-plan-binding/v1:{id(session)}:{id(plan)}:{id(lease)}:"
+                   f"{id(self._token)}").encode()
+        return ((id(session), id(plan), id(lease)) ==
+                (self._session_id, self._plan_id, self._lease_id) and
+                _sha(payload) == self._digest)
+
+    def audit_fields(self) -> tuple[int, int, int, str]:
+        return self._session_id, self._plan_id, self._lease_id, self._digest
 
 
 @dataclass(frozen=True)
@@ -327,9 +369,21 @@ class ContractV05:
 RehearsalInputV1 = ContractV05
 
 
-@dataclass
 class _RetirementV1:
-    consumed: bool = False
+    __slots__ = ("_consumed",)
+
+    def __init__(self) -> None:
+        object.__setattr__(self, "_consumed", False)
+
+    @property
+    def consumed(self) -> bool:
+        return self._consumed
+
+    def consume(self) -> None:
+        object.__setattr__(self, "_consumed", True)
+
+    def __setattr__(self, name, value): _fail("retirement_mutation")
+    def __delattr__(self, name): _fail("retirement_mutation")
 
 
 @dataclass(frozen=True)
@@ -355,18 +409,22 @@ class SealedPreCPlanV1:
 
 class LivePlanSessionV1:
     """Pure-memory owner for one review-pending plan and its opaque lease."""
-    __slots__ = ("_plan", "_lease", "_approval", "_state", "_locked")
+    __slots__ = ("_plan", "_lease", "_approval", "_state", "_binding")
     def __init__(self, plan: SealedPreCPlanV1) -> None:
         if id(plan) in _LIVE_PLANS: _fail("continuation_owner")
-        self._plan, self._lease, self._approval, self._state, self._locked = plan, ContinuationLeaseV1(), None, "PENDING", True
-        _LIVE_PLANS.add(id(plan)); _LIVE_TOKENS[id(plan)] = self._lease._token
+        lease = ContinuationLeaseV1()
+        object.__setattr__(self, "_plan", plan)
+        object.__setattr__(self, "_lease", lease)
+        object.__setattr__(self, "_approval", None)
+        object.__setattr__(self, "_state", "PENDING")
+        object.__setattr__(self, "_binding", _ContinuationBindingV1(self, plan, lease))
+        _LIVE_PLANS.add(id(plan))
     def __del__(self):
         if getattr(self, "_state", "INVALID") in ("PENDING", "APPROVED"):
             self.close()
     def __setattr__(self, name, value):
-        if getattr(self, "_locked", False) and name in ("_plan", "_lease", "_approval", "_state"):
-            _fail("continuation_mutation")
-        object.__setattr__(self, name, value)
+        _fail("continuation_mutation")
+    def __delattr__(self, name): _fail("continuation_mutation")
     def __copy__(self): _fail("continuation_copy")
     def __deepcopy__(self, memo): _fail("continuation_copy")
     def __reduce_ex__(self, protocol): _fail("continuation_serialize")
@@ -377,7 +435,7 @@ class LivePlanSessionV1:
         object.__setattr__(self, "_approval", approval_identity); object.__setattr__(self, "_state", "APPROVED")
     def audit_record(self) -> tuple[object, ...]:
         """Read-only identity witness; never a plan reconstruction input."""
-        return (id(self), id(self._plan), id(self._lease), self._plan.identities,
+        return (*self._binding.audit_fields(), self._plan.identities,
                 self._plan.freshness_identities, PATHS, ENV,
                 self._plan.capability.provider, self._plan.capability.module,
                 self._plan.capability.path, self._plan.capability.blob_sha256,
@@ -385,17 +443,18 @@ class LivePlanSessionV1:
                 self._plan.freshness_guard.path, self._plan.freshness_guard.blob_sha256,
                 self._plan.post_write_qualname)
     def close(self) -> None:
-        object.__setattr__(self, "_state", "INVALID"); self._plan._retirement.consumed = True
-        _LIVE_PLANS.discard(id(self._plan)); _LIVE_TOKENS.pop(id(self._plan), None)
+        object.__setattr__(self, "_state", "INVALID"); self._plan._retirement.consume()
+        _LIVE_PLANS.discard(id(self._plan))
     def resume_once(self, lease: ContinuationLeaseV1, approval_identity: object) -> str:
-        if self._state != "APPROVED" or lease is not self._lease or approval_identity is not self._approval:
+        if (self._state != "APPROVED" or lease is not self._lease or
+                approval_identity is not self._approval or
+                not self._binding.matches(self, self._plan, self._lease)):
             self.close(); _fail("continuation_identity")
-        object.__setattr__(self, "_state", "CONSUMED"); _LIVE_PLANS.discard(id(self._plan)); _LIVE_TOKENS.pop(id(self._plan), None)
+        object.__setattr__(self, "_state", "CONSUMED"); _LIVE_PLANS.discard(id(self._plan))
         return consume_once_v05(self._plan)
 
 
 _LIVE_PLANS: set[int] = set()
-_LIVE_TOKENS: dict[int, object] = {}
 
 
 def _reject(*values: object) -> None:
@@ -520,7 +579,7 @@ def consume_once_v05(plan: SealedPreCPlanV1) -> str:
     """Fixed C: freshness, exactly one opaque call, byte verification, hard stop."""
     if id(plan) in _LIVE_PLANS: _fail("continuation_pending")
     if plan._retirement.consumed: _fail("already_consumed")
-    plan._retirement.consumed = True
+    plan._retirement.consume()
     try:
         freshness = plan.freshness_guard.guard_opaque_v1(
             plan.freshness_lease, plan.descriptor, plan.freshness_identities)

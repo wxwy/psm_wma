@@ -145,15 +145,49 @@ class PreCRehearsalTest(unittest.TestCase):
     def test_live_session_close_and_duplicate_owner_fail_closed(self):
         value, _ = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
         with self.assertRaisesRegex(PreCRehearsalError, "continuation_owner"): LivePlanSessionV1(plan)
-        record = session.audit_record(); self.assertEqual(record[1], id(plan)); self.assertEqual(record[5], DescriptorV1().paths)
+        record = session.audit_record()
+        self.assertEqual(record[:3], (id(session), id(plan), id(session.lease)))
+        self.assertRegex(record[3], r"^[0-9a-f]{64}$")
+        self.assertEqual(record[6], DescriptorV1().paths)
         session.close()
         with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"): consume_once_v05(plan)
 
-    def test_live_session_is_sealed(self):
-        value, _ = self.fixture(); session = LivePlanSessionV1(rehearse_v05(value))
-        for operation in (lambda: setattr(session, "_state", "APPROVED"),
-                          lambda: copy.copy(session), lambda: pickle.dumps(session)):
+    def test_live_session_authority_fields_are_sealed_before_consumer(self):
+        value, calls = self.fixture(); session = LivePlanSessionV1(rehearse_v05(value))
+        foreign_plan = rehearse_v05(self.fixture()[0])
+        for name, foreign in (("_plan", foreign_plan), ("_lease", object()),
+                              ("_approval", object()), ("_state", "APPROVED"),
+                              ("_binding", object()), ("_locked", False)):
+            with self.assertRaisesRegex(PreCRehearsalError, "continuation_mutation"):
+                setattr(session, name, foreign)
+            with self.assertRaisesRegex(PreCRehearsalError, "continuation_mutation"):
+                delattr(session, name)
+            self.assertEqual(calls, [])
+        for operation in (lambda: copy.copy(session), lambda: copy.deepcopy(session),
+                          lambda: pickle.dumps(session)):
             with self.assertRaises(PreCRehearsalError): operation()
+            self.assertEqual(calls, [])
+        session.close()
+
+    def test_binding_drift_is_terminal_before_consumer(self):
+        value, calls = self.fixture(); plan = rehearse_v05(value); session = LivePlanSessionV1(plan)
+        approval = object(); session.approve(approval)
+        object.__setattr__(session._binding, "_digest", "0" * 64)
+        with self.assertRaisesRegex(PreCRehearsalError, "continuation_identity"):
+            session.resume_once(session.lease, approval)
+        self.assertEqual(calls, [])
+        with self.assertRaisesRegex(PreCRehearsalError, "already_consumed"):
+            consume_once_v05(plan)
+
+    def test_capability_guard_lease_and_binding_reject_mutation_or_deletion(self):
+        value, _ = self.fixture(); session = LivePlanSessionV1(rehearse_v05(value))
+        for owner, name in ((value.capability, "apply_opaque_v1"),
+                            (value.freshness_guard, "guard_opaque_v1"),
+                            (value.freshness_lease, "_domain"),
+                            (session._binding, "_digest"),
+                            (session.lease, "_token")):
+            with self.assertRaises(PreCRehearsalError): setattr(owner, name, object())
+            with self.assertRaises(PreCRehearsalError): delattr(owner, name)
         session.close()
 
     def test_every_terminal_result_consumes_plan(self):
