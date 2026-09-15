@@ -257,6 +257,13 @@
 - Remediation: explicitly maps V24 continuity to host-private `HostSession/LivePlanEnvelope/HostLease`; makes ReviewRecord non-reconstructive; binds ReviewApproval to host generation/session/plan/lease/binding/nonce/counter; freezes atomic serial `PENDING_REVIEW -> APPROVED -> CONSUMING -> TERMINAL` before freshness/apply.
 - Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: fake-host/real host/IPC/pre-C/C/request pair/materialization/source-evidence/child/GPU/training.
+
+## 2026-09-15 — Review request: V27 fake-host CPU/static implementation
+
+- Formal root: `2b7429f2a1eb6cd50f5c5da15e3691a5128f50c1`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only `tools/psm_wma/stage1_host_boundary.py` and unittest plus SESSION/TODO. CPU=4/4, py_compile/diff-check PASS. No process/IPC/filesystem/consumer.
+- Review focus: host-private state, generation-bound approval, atomic terminal resume and at-most-one apply fake-host conformance.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C/request pair/materialization/source evidence, child/runtime/config, GPU/CUDA/torchrun/training/evaluation/inference/LIBERO4IN1.
 
 ## 2026-09-15 — Review request: V25 live-plan continuity remediation closure
