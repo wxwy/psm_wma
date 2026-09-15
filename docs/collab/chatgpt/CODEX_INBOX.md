@@ -146,3 +146,12 @@
 - Remediation focus: closes the same-pair ChatGPT C08/C15 fixed-authority-ref finding in one class-wide pass. `AUTHORITY_REF` freezes `refs/heads/authority/r09-b-ttt-v035-immutable-source-v1`; both local and remote `AuthorityAbsenceV1` require exact target and predicate before their raw identity may be accepted. Tests mutate each target/raw/length/SHA into a foreign-but-self-consistent record and prove pre-consumer `closure_query` fail-close. Matrix C01--C15 now has exact expected and positive/negative witness columns.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.5 request pair/C, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: request-instance recovery construction authority V20
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-REQUEST-INSTANCE-RECOVERY-DESIGN-V20`.
+- Formal root: `0ed2be7e27d7219f29f7d3601e6a3a0399ae6bfa`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_recovery_design_v2.0.md` and `SESSION.md`; no runtime/child/config change. The prior ContractV05 root CPU/static Gate was closed separately at `c99506295fed887a87670fc80fbdaf639baf5444`; V20 neither reuses v1.8's permanently consumed C authority nor authorizes execution.
+- Review focus: whether one future v0.5 request pair can be safely governed by a single full non-consuming pre-C rehearsal: injected opaque `PatchConsumerV1` ABI/no-call proof; C995 ContractV05 C01--C15 typed live snapshot; canonical JSON/Markdown/patch bytes and same-object strict-UTF-8 handoff; simulated capability/readback; and sealed plan. Verify C is exactly `freshness equality -> one opaque apply -> byte-for-byte readback -> hard stop`, with no C-time discovery/generation and terminal no-retry after any call. This is the user's requested consolidated recovery boundary, not a lateral field Gate.
+- Requested verdict: `APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C, future request pair write, materialization, source-evidence, real consumer/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
