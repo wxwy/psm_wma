@@ -1,5 +1,11 @@
 # 当前协作状态
 
+### v1.8 审核送达回执（2026-09-15 10:50 CST，REVIEW）
+
+- formal pair=root=`6baadaf282bea673eb217c055bb7c837522e0267`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。ChatGPT申请已在 rollover 后 canonical live Inbox 写入并由 ledger commit=`0b2698d0fed0d6f61c863fab31dd56b4d2c292b0`推送。
+- MM=`mm:0.0`：完整申请经`send-keys -l`写入，独立间隔1秒后发送Enter，独立capture显示正文已离开输入框并出现`Shimmying`处理状态。DS=`ds:0.0`：同一三联完成，独立capture显示针对`6baadaf.../93a89ba...`的只读 Git 检查已经开始。
+- 这是送达回执，不是最终 verdict。v0.4 construction、materialization、真实 I/O、child/GPU/训练继续禁止；自此每三分钟完整远端锁定后检查 ChatGPT exact review、MM及DS final。
+
 ### v1.8 pre-C closure remediation（2026-09-15 10:43 CST，formal root 已推送；审核送达待完成）
 
 - 引用 v1.7 观察凭证 #3 的窄授权；在任何 `.git`、path、environment、remote freshness observation 前停止，未进入 C。冻结对象的纯内存 P0/P1 核验最终 `PASS_P0_P1_NONCONSUMING`：base/replay/adapter/projection blob 与长度/SHA均匹配，replay parser=`2336/1a9543...`、outer=`18875/658e9b...`，projection closure 的 selection/config/bootstrap/contract identity均匹配。
