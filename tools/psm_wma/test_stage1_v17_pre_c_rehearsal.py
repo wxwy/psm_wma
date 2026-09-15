@@ -5,7 +5,7 @@ import pickle
 import unittest
 
 from tools.psm_wma.stage1_v17_pre_c_rehearsal import (
-    AuthorityAbsenceV1, ClosureV1, DescriptorV1, ENV, OpaquePatchCapabilityV1, PreCRehearsalError,
+    AuthorityAbsenceV1, ClosureV1, DESIGNATED_ABSENCES, DescriptorV1, ENV, OpaquePatchCapabilityV1, PreCRehearsalError,
     QueryFactV1, ReadbackV1, RehearsalInputV1, consume_once_v05, rehearse_v05,
 )
 
@@ -29,10 +29,10 @@ class PreCRehearsalTest(unittest.TestCase):
                  b"--- /dev/null\n+++ b/docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.md\n" + add(md))
         closure = ClosureV1(b"git", b"config", b"V2",
             QueryFactV1(("git", "ls-remote", "origin", "refs/heads/V2"), 30, 0, b"v2", b"", "remote_v2_ancestor", b"V2"),
-            QueryFactV1(("git", "ls-remote", "origin", "refs/heads/stage1-authority"), 30, 0, b"absent", b"", "authority_absent"),
-            AuthorityAbsenceV1("refs/local-authority", b"local-absent", "authority_absent"),
-            AuthorityAbsenceV1("refs/remote-authority", b"remote-absent", "authority_absent"),
-            DescriptorV1().paths, ("clean_root", "index", "evidence", "pending_evidence"))
+            QueryFactV1(("git", "ls-remote", "origin", "refs/heads/stage1-authority"), 30, 0, b"", b"", "authority_absent"),
+            AuthorityAbsenceV1("refs/local-authority", b"local-absent", "authority_absent", 12, hashlib.sha256(b"local-absent").hexdigest()),
+            AuthorityAbsenceV1("refs/remote-authority", b"remote-absent", "authority_absent", 13, hashlib.sha256(b"remote-absent").hexdigest()),
+            DescriptorV1().paths, DESIGNATED_ABSENCES)
         def verifier(json_raw, markdown_raw, paths):
             return ReadbackV1(json_raw, markdown_raw) if verify else ReadbackV1(b"bad\n", markdown_raw)
         return RehearsalInputV1(cap, DescriptorV1(), raw, md, patch, ENV, closure,
