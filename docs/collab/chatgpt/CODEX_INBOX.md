@@ -59,3 +59,12 @@
 - Review focus: it deliberately collapses all future C failure points into one non-consuming `rehearse_v05()`—unique host capability/callable identity, canonical JSON/Markdown/patch bytes, v0.5 paths, six-key environment, `.git`/local V2/two remote queries/authority ref/designated absences, dry-run patch seam and post-write verifier—then seals them. C has only freshness compare → one opaque add-only write → byte equality → hard stop. Verify v0.3/v0.4 remain forbidden and no hidden C-time resolution remains.
 - Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: v0.5 construction or consumer invocation; P0/P1/C; materialization, real source/checkpoint/manifest/data/cache I/O, collection/receipt/record/publication, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: v0.5 lifecycle-refreeze pre-C rehearsal design v3.1
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-PRE-C-REHEARSAL-CONSUMER-IMPLEMENTATION-DESIGN-V31`.
+- Formal root: `e4764a3c7bf8f99bf8726e011b6ea779c779aeef`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Formal scope: root-only v3.1 docs/status; no child/runtime code. `git diff --check` PASS; v3.1 SHA-256=`ae0fa7dc5380e6e33c01ed9deb11952c3ed1390505eed90bbee270f4c399e4b8`.
+- User-directed remediation: V3.0 reviewers found inherited lifecycle placed live observations inside C. User explicitly required all future C risks be found by one non-consuming pre-C rehearsal. V3.1 makes a narrow v0.5-only lifecycle refreeze: the single rehearsal seals all live inputs and final bytes without writes/consumer; C remains freshness compare → one opaque write → byte verify → hard stop. It reasserts permanent v0.3/v0.4 prohibition across all roles.
+- Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: implementation, v0.5 construction/consumer/P0/P1/C, materialization, real source/checkpoint/manifest/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.

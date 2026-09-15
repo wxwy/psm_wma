@@ -1,5 +1,10 @@
 # 当前协作状态
 
+### v3.1 lifecycle-refreeze pre-C rehearsal design 审核名册与送达准备（2026-09-15 13:23 CST，REVIEW）
+
+- formal pair=root=`e4764a3c7bf8f99bf8726e011b6ea779c779aeef`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT（canonical live Inbox）、MM=`mm:0.0`、DS=`ds:0.0`。formal-tree仅v3.1 design、`SESSION.md`和`TODO.md`；Gitlink未变。
+- live Inbox原始=`8810` bytes，追加申请后低于`131072` bytes；待ledger提交推送后向MM/DS送达。无同pair三方final前，禁止CPU/static implementation、v0.5 construction、consumer/P0/P1/C、materialization、真实I/O、child/GPU及训练。
+
 ### v3.1 lifecycle-refreeze pre-C rehearsal design 验证（2026-09-15 13:18 CST，REVIEW准备）
 
 - 依据用户明确的non-consuming完整pre-C rehearsal路线及v3.0整改令牌，新增`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_pre_c_rehearsal_consumer_implementation_design_v3.1.md`：窄覆盖旧的C-before-first-live-observation边界，仅允许v0.5在一次rehearsal封存全部live风险；C固定为freshness→一次opaque write→byte verify→hard stop；v0.3/v0.4永久禁止被显式恢复。
