@@ -6855,3 +6855,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - ChatGPT申请已append至canonical live Inbox并随ledger=`69c1d29733cde5b4841840840ec37f9174a6d948`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成完整pair的`send-keys -l → 间隔>=1秒 → 独立Enter → capture`；capture均确认消息离开输入框并进入会话，MM=`thinking`、DS=`Thinking`。
 - formal pair/root=`1bf4dc5315ac37a360e850dc5d0baf799287b58c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`，名册不变。三方final前保持REVIEW，按三分钟完整远端锁定、exact review scan和独立pane capture；禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
+
+### Stage-1 v1.7 pre-C rehearsal consumer CPU/static #3 审核观察凭证 #1（2026-09-15 15:00 CST，REVIEW）
+
+- Formal pair=root=`1bf4dc5315ac37a360e850dc5d0baf799287b58c`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册不变。`before_head=c17c0db1cfc17e196ad33aaa6b2da87d28d19c84`；fetch成功；advertised/tracking均=`c17c0db1cfc17e196ad33aaa6b2da87d28d19c84`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact检索`rg -l -F '1bf4dc5315ac37a360e850dc5d0baf799287b58c' docs/collab/chatgpt/reviews/`无命中。MM=`mm:0.0` capture逐字锚定同pair，final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_PRE_C_REHEARSAL_CONSUMER_CPU_STATIC`。DS=`ds:0.0` capture逐字锚定同pair，final=`REQUEST_CHANGES(tools/psm_wma/stage1_v17_pre_c_rehearsal.py:138)`：P1 exact raw identities与parser argv items未pin，且`ReplayBindingV1`只形状校验、未逐值比对冻结SHA/8+8 rows。
+- 四项独立证据均成功且未截断；ChatGPT final缺失，未形成整改令牌。禁止处理DS意见或修改实现；继续三分钟审核监控，禁止v0.5 C、materialization、真实I/O、child、GPU和训练。
