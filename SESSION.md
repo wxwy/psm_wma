@@ -49,6 +49,10 @@
 
 - formal pair=root=`94c436d50d2caded43410052e720fbdbf3f37b7b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`。待 ledger 推送后按三联送达；同pair三方 final 前禁止一切实现与下游动作。
 
+### V27 审核送达回执（2026-09-15 CST，REVIEW）
+
+- ChatGPT canonical Inbox 申请已随 ledger=`d42cfe04`推送；MM/DS 均完成 `send-keys -l → 间隔≥1秒 → Enter → capture`，capture 显示申请进入会话。后续按三分钟完整核验；三方 final 前禁止实现。
+
 ### Stage-1 v1.7 pre-C rehearsal remediation 审核完整观察凭证 / 整改令牌（2026-09-15 14:28 CST，REVIEW → IN_PROGRESS）
 
 - formal pair=root=`e870b903c570359fb7641837ea9b5e64c2aed9e3`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=ab0e4e22f1e8a08e1f2306d35b9b1678f0bd5e3e`；fetch后远端锁定至`95b13f92f04b1c716eade17c818e335ef69df424`，新增=`0a527ce4`/`95b13f92`，ff-only成功。
