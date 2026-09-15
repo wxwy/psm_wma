@@ -164,3 +164,12 @@
 - Review focus: verify `FreshnessGuardV1`/opaque `FreshnessLeaseV1` resolve the exact V20 blocker without a lateral field Gate. Immutable facts stay sealed; mutable local facts/output absences are checked only by a pre-C-bound host guard; remote V2/authority queries are explicitly pre-C-only. Future `consume_once_v05(plan)` accepts no externally reconstructed `ClosureV1` and is strictly guard -> one opaque apply -> byte readback -> hard stop. Confirm the planned standard-library tests prove drift stops before apply, no C-time query/reconstruction occurs, and terminal no-retry is retained.
 - Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 - Forbidden: real pre-C/C, future request pair, materialization, source-evidence, real guard/consumer/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
+
+## 2026-09-15 — Review request: V21 freshness-guard CPU/static closure
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-V17-FRESHNESS-GUARD-CPU-STATIC`.
+- Formal root: `94030f90cc4de2d5b2c1dd60a412fb10768d71f9`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4` (unchanged).
+- Scope: root-only `tools/psm_wma/stage1_v17_pre_c_rehearsal.py`, its stdlib unittest, `SESSION.md`, and `TODO.md`; no child/runtime/config change. `unittest=11/11 PASS`; `py_compile` and `git diff --check` PASS.
+- Review focus: `FreshnessGuardV1`/`FreshnessLeaseV1` are sealed and non-copyable; `consume_once_v05(plan)` no longer accepts arbitrary `ClosureV1`; guard `STALE`/`UNKNOWN` terminate before apply; FRESH retains one opaque apply, byte readback and no retry. No real I/O is present.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_FRESHNESS_GUARD_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- Forbidden: real pre-C/C, request pair, materialization, source-evidence, real guard/consumer/Git/network/source/data/cache I/O, child/runtime/config mutation, GPU/CUDA/torchrun, training/evaluation/inference/LIBERO4IN1.
