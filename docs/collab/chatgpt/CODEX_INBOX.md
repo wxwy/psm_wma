@@ -243,3 +243,9 @@
 - Formal root: `ccada85a50be8e541d8c618752986e2cf088f05e`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
 - Scope: root-only state-machine remediation: explicit pending/approved/consumed states and `approve(identity)` transition; pending public consume remains blocked; no I/O. `15/15` stdlib tests, py_compile, diff-check PASS.
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-15 — Review request: rebased V25 internal-entry remediation closure
+
+- Formal root: `14d059d940b1b9a6d1af59105e2a38c90c97c78a`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- Scope: root-only rebased V25 internal-entry remediation; adds live lease-token verification to the C primitive and direct bypass witness. `15/15` tests, py_compile, diff-check PASS.
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_STAGE1_V17_LIVE_PLAN_CONTINUITY_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
