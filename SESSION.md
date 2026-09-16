@@ -10503,3 +10503,32 @@ P1/P2: CATALOG_SHA256=f465db8e661a6fc4bfa79196c07d61238a073c23446c2ae5997150f06c
 **三、DeviceMonitor 目录为空的原因更正**
 
 此前把空目录归因于 `every_n=200`，**是错的**：per-iteration CSV 落盘被包在 `if self.save_s3 and self.rank == 0:` 内（`callbacks/device_monitor.py:160`），而 `save_s3="${upload_reproducible_setup}"`（`configs/base/defaults/callbacks.py:137`）且 `upload_reproducible_setup` 默认 False（`configs/base/config.py:70`），active TOML 未覆盖 ⟹ **任何** `every_n` 下都不会写 CSV。但 `log.info(f"{self.name} Stats:\n{summary_df.to_string()}")`（`:179`）**无条件执行**（rank 0），故 `PSM_R08_GATE_A_DEVICE_MONITOR_EVERY_N=1` 仍能把 `cpu_mem_gb`/`nvml_used_gpu_mem_gb` 逐迭代打进训练日志——这正是长跑要用的遥测通道。已隔离验证该 env 钩子在 active 路线生效：`device_monitor = {'every_n': 1, 'log_memory_detail': True, 'save_s3': False, 'step_size': 1, 'upload_every_n_mul': 5}`，`save_s3=False` + TOML 的 `wandb_mode="disabled"` ⟹ 该回调**不触网**。
+
+### catalog 容量换算：现有 catalog 只够 112 个优化步，而计划是 5000 步（2026-09-17）
+
+**怎么发现的**：复核 slot rotation 送审件时，注意到「饿死 slot 独占 7190/14430 = 49.83% block……**可达唯一 block 上限 7240 ≈ 56.6 window**，而正式训练计划约 5000 步」这句话里含一个此前被读过去的换算——`7240 / 56.6 = 128`，即**一个 window 消耗 128 个 block**。于是不再依赖转述，直接实测 catalog 的总容量。
+
+**结论**：生产 catalog 的**总** block 容量 = `14430`，一个 window 消耗 `grad_accum_iter = 128` 个 block ⟹ **整个 catalog 只够 112.73 个 optimizer step**。正式计划 `max_iter = 5000` ⟹ **缺口 44.4 倍**。第 113 个窗口的 `freeze_window()` 会 `raise RuntimeError("active Local window exhausted every segment stream")`（`active_local_memory_driver.py:230-231`）。
+
+**证据（直接实测，CPU-only）**：探针 `tools/g0/probe_block_capacity.py`，产物 `artifacts/g0/active_static_probe/probe_block_capacity.json`（`result="PASS"`，同参数独立复跑读数逐位一致；该探针参考 `probe_r09_b_active_static.py` 的形态，root 同样取自环境变量）。
+
+| 项 | 读数 |
+|---|---|
+| streams / slots | 1676 / 8 |
+| `per_slot_blocks` | `{0:2865, 1:1255, 2:1741, 3:1329, 4:2855, 5:1333, 6:1739, 7:1313}` |
+| `per_category_blocks` | `{libero_10:5720, libero_goal:2588, libero_object:3480, libero_spatial:2642}` |
+| `total_blocks` / `windows_served` | 14430 / **112.73** |
+| `per_category_windows` | `{libero_10:178.75, libero_goal:80.88, libero_object:108.75, libero_spatial:82.56}` |
+| `windows_until_first_slot_drained` | **78.44**（slot 1 = libero_goal，1255 block） |
+
+**换算依据经代码核实，非推断**：① 一个 member 恰好消耗一个 block——`_peek_block` 每 member 推进一格 cursor、走满 `blocks-1` 才换下一 episode（`active_local_memory_driver.py:258-280`），`_commit_block` 只增不减（`:282-286`），**永不回收**；② `block_count = valid_start_count // ttt_tbptt_steps`（`canonical_local_memory_producer.py:113-115`），即一个 block = 一个 T=16 训练段；③ catalog 全程只建一次——`_by_slot` 在 `__init__` 构建（`:99-106`），`on_train_start` 建完 driver 后 `iteration > 0` 直接 raise、重复建也 raise（`active_local_memory_launch.py:223-289`），**无 epoch 重建、无绕回**；④ slot↔suite 映射为 `slot % len(categories)`（`active_local_memory_launch.py:166`），与 `probe_full_window_postfix.json` 的 `per_category`（375/424/449/428）及本次 block 数逐项吻合。
+
+**如实标注本项新意**：`14430` 这一总数仓库内**早有记录**（`SESSION.md:9332`「1676 streams / 8 slots / 14430 whole blocks」、`SESSION.md:10426`「可达唯一 block 7240 → 14430」），但**从未有人把它换算成可服务的训练步数**。本项的新内容是 `14430 / 128 = 112.73 步` 这一换算，以及它与 `max_iter=5000` 的 44.4 倍缺口。
+
+**为何至今未暴露**：D8a 25 步、soak45 45 步均 < 112。**与已结案两项的关系**：① slot 饥饿修复把可用量由 7240 提高到 14430（翻倍），是必要的，但不充分；② resume 恢复的是数据进度、不增加容量，故 resume 落地后 5000 步依然跑不完。
+
+**为何旧记录未点明**：`SLOT-STARVATION-ACTIVE-WINDOW` 行内「各 slot 至少可支撑 41 个 window ≈ 5200 步」把 window 当成了 member（与 `REBIND-COVERAGE-D8A` **同源**的错误前提），41 window 实为 **41 步**——正是这个错误前提让人以为容量够用。
+
+**已记录**：`TODO.md` 新增 `CATALOG-CAPACITY-VS-5000-STEP`（状态 TODO）。**已通知三方**：`docs/collab/chatgpt/CODEX_INBOX.md` 末尾「catalog 容量换算」条目，请审核者校正对「5000 步」的理解；两个在审 Gate 的送审件 SHA 均未改动。
+
+**可能解法（均需设计+三方 Gate，未自行实现）**：(a) **catalog 多 epoch 复用**——唯一能真正填平缺口的方向，也是常规训练语义（5000 步需要每段复用约 44 次），但 `local_memory_segment.py:322-323` 的守卫含 `identity in self.committed_identities`，复用同一 block 会因 identity 重复被 fail-closed 拒绝 ⟹ 触及 `SegmentIdentity` 唯一性语义（resume 设计 §7 明令不得改该 ABI）；(b) 缩短训练计划——112 步不足以训练；(c) 降低 `ttt_tbptt_steps`（16→8 使 block 数翻倍至 225 窗口）——仍不够且改变 TBPTT 语义；(d) 扩充数据集。**在此之前不得启动 D8b 长跑**（会在第 113 步 crash，白耗约 8 小时）。

@@ -787,3 +787,25 @@ P2: CATALOG_SHA256=f465db8e661a6fc4bfa79196c07d61238a073c23446c2ae5997150f06c9fd
 **据此向审核者提一项建议**：§6 删去 BLOCKED 后少一条把关，建议把「**跨进程重建 catalog 的 digest 逐位一致**」补为 PASS 判据第 6 项（证据已附上）；否则 §4.3 第 1 项 fail-closed 校验（`_by_slot` 重建确定性）在验收侧没有对应判据。
 
 **本文档在 verdict 到达前不改**——避免送审件 SHA 漂移使审核引用失效。若裁定要求把上述内容并入 §6，我在实现记录（§9）中一并落。
+
+---
+
+## 2026-09-17 — catalog 容量换算：现有 catalog 只够 112 个优化步，两个在审 Gate 的共同前提需据此校正
+
+**不改变任何送审件的 SHA，也不改变已提交的代码。** 本条是对 `G0-R09-B-TTT-V035-ACTIVE-WINDOW-SLOT-ROTATION` 与 `G0-R09-B-TTT-V035-ACTIVE-ROUTE-RESUME` 两个在审事项的**共同前提补充**，请三方审核者据此校正对「5000 步」的理解。
+
+**新事实**：生产 catalog 的**总** block 容量 = `14430`，而一个 window 消耗 `grad_accum_iter = 128` 个 block，且 catalog 全程只建一次、只消耗不回收 ⟹ **整个 catalog 只够 112.73 个 optimizer step**。正式计划 `max_iter = 5000` ⟹ **缺口 44.4 倍**；第 113 个窗口的 `freeze_window()` 会 `raise RuntimeError("active Local window exhausted every segment stream")`（`active_local_memory_driver.py:230-231`）。
+
+**证据**：探针 `tools/g0/probe_block_capacity.py` → 产物 `artifacts/g0/active_static_probe/probe_block_capacity.json`（CPU-only，真实 dataset+producer，同参数独立复跑读数逐位一致）。换算依据经代码核实，非推断：一个 member 恰好消耗一个 block（`_peek_block` 每 member 推进一格 cursor、走满 `blocks-1` 才换 episode，`_commit_block` 只增不减，`active_local_memory_driver.py:258-286`）；`block_count = valid_start_count // ttt_tbptt_steps`（`canonical_local_memory_producer.py:113-115`）；catalog 只在 `on_train_start` 建一次、`iteration > 0` 与重复建均 raise（`active_local_memory_launch.py:223-289`），**无 epoch 重建、无绕回**。`14430` 这一总数仓库内早有记录，但从未换算成可服务的训练步数。
+
+**对 slot rotation Gate 的影响 —— 修复的正确性判定不变，但请勿以「够 5000 步」为前提**：
+- 送审件原文「可达唯一 block 上限 7240 ≈ 56.6 window，而正式训练计划约 5000 步」所用的 window/步换算与本次一致；修复把可用量由 7240 提到 **14430（翻倍）**，**方向与判据均不变**。
+- 但请一并注意：**14430 仍只够 112 步**，故该修复是必要而非充分条件。请勿据此认为修复落地后即可支撑正式训练。
+- 送审的四步证据（`per_slot_members` 各 16、`slots_starved=[]`、`per_category_members` 各 32、`ga_effective=128`）**不依赖容量问题**，仍请按其本身裁定。
+
+**对 resume Gate 的影响 —— 设计主体不变，但动机表述需修正**：
+- 设计 §1 以「5000 步 ≈11.9 天，必然中断」论证 resume 必要性；在容量问题解决前，**5000 步计划本身不成立**，实际可跑上限是 112 步。
+- resume 仍然必需（112 步亦可能中断；且容量方案落地后 resume 更必需），故**这一修正不推翻设计**，只是把「为 5000 步长跑而做」改述为「为任何超过单次会话长度的跑动而做」。
+- §6 验收判据 4（GPU 端到端 resume 短跑至 `save_iter`）**不受影响**：生产 `save_iter=50 < 112`，对照跑与中断跑都在容量内。
+
+**新增并行议题（尚未设计，仅提请知悉）**：使 `max_iter` 可被完整服务需要「catalog 多 epoch 复用」。当前 `local_memory_segment.py:322-323` 的守卫含 `identity in self.committed_identities`，复用同一 block 会因 identity 重复被 fail-closed 拒绝 ⟹ 触及 `SegmentIdentity` 唯一性语义（resume 设计 §7 明令不得改该 ABI）。此项将另出设计，**不在本次两个 Gate 的裁定范围内**。

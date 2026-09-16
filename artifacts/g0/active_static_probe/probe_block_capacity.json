@@ -1,0 +1,45 @@
+{
+  "b_stream": 8,
+  "ga": 16,
+  "min_slot_blocks": 1255,
+  "per_category_blocks": {
+    "libero_10": 5720,
+    "libero_goal": 2588,
+    "libero_object": 3480,
+    "libero_spatial": 2642
+  },
+  "per_category_windows": {
+    "libero_10": 178.75,
+    "libero_goal": 80.88,
+    "libero_object": 108.75,
+    "libero_spatial": 82.56
+  },
+  "per_slot_blocks": {
+    "0": 2865,
+    "1": 1255,
+    "2": 1741,
+    "3": 1329,
+    "4": 2855,
+    "5": 1333,
+    "6": 1739,
+    "7": 1313
+  },
+  "per_slot_streams": {
+    "0": 188,
+    "1": 212,
+    "2": 225,
+    "3": 214,
+    "4": 187,
+    "5": 212,
+    "6": 224,
+    "7": 214
+  },
+  "result": "PASS",
+  "slots": 8,
+  "streams": 1676,
+  "total_blocks": 14430,
+  "ttt_tbptt_steps": 16,
+  "window_members": 128,
+  "windows_served": 112.73,
+  "windows_until_first_slot_drained": 78.44
+}
