@@ -576,6 +576,14 @@
 - forbidden in this request: training, GPU/CUDA/torchrun, child modification, retry, source payload publication beyond the approved closure sequence.
 - DS-only per user instruction. requested verdict: `APPROVE_TO_WRITE_SOURCE_EVIDENCE` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — fixed-path writer closure re-delivery (DS-only)
+
+- formal root: `152562f8ce50062169fa8644a4856bb2997966ad`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Scope: fixed-path publisher CPU/static implementation only; 7/7 writer tests, py_compile and diff-check PASS.
+- Request DS-only final `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+- No real instance write, source I/O, GPU/CUDA/torchrun, or training.
+
 ## 2026-09-16 — fixed-path publisher remediation DS review
 
 - formal root: `152562f8ce50062169fa8644a4856bb2997966ad`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
