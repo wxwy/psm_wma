@@ -809,3 +809,25 @@ P2: CATALOG_SHA256=f465db8e661a6fc4bfa79196c07d61238a073c23446c2ae5997150f06c9fd
 - §6 验收判据 4（GPU 端到端 resume 短跑至 `save_iter`）**不受影响**：生产 `save_iter=50 < 112`，对照跑与中断跑都在容量内。
 
 **新增并行议题（尚未设计，仅提请知悉）**：使 `max_iter` 可被完整服务需要「catalog 多 epoch 复用」。当前 `local_memory_segment.py:322-323` 的守卫含 `identity in self.committed_identities`，复用同一 block 会因 identity 重复被 fail-closed 拒绝 ⟹ 触及 `SegmentIdentity` 唯一性语义（resume 设计 §7 明令不得改该 ABI）。此项将另出设计，**不在本次两个 Gate 的裁定范围内**。
+
+> **上段的定性已于同日更正**：核实后判定该议题**不触及 `SegmentIdentity` ABI**，且**不是发明新机制而是接线**——详见下一条送审条目。
+
+---
+
+## 2026-09-17 — active 路线 catalog 多 epoch 复用（设计，送审）
+
+- formal root: `bae3964776d3138d2a60d1b03cbabe0062fef75c`
+- child/Gitlink: `525f5066393cba044f00f1104b83f5eb424a9c49`
+- 设计路径：`docs/build/PSM-WMA_Local_Memory_v0.3.5_active_route_catalog_epoch_reuse_design_v0.1.md`（blob `c686ff3bf43a5e3b8cd36910ae8756d605c9e621`）
+- Gate：`G0-R09-B-TTT-V035-ACTIVE-CATALOG-EPOCH-REUSE`
+- **状态：设计，尚无对应代码改动。** 当前 operative 行为是 `freeze_window` 在 catalog 耗尽时 fail-closed `raise`（`active_local_memory_driver.py:230-231`）。
+- **缺陷**：生产 catalog 总 block 容量 `14430`，一个 window 消耗 `grad_accum_iter = 128` ⟹ **只够 112.73 个 optimizer step**，而正式计划 `max_iter = 5000` ⟹ **缺口 44.4 倍**，第 113 个窗口即 `raise`。这与另两个在审项的关系：slot 轮转修复（7240→14430）**必要但不充分**；resume 恢复进度、**不增容量**。故本项是「具备正式训练条件」的独立且更靠前的阻塞。**不可靠参数绕开**：`block_count = valid_start_count // ttt_tbptt_steps`，总容量是「数据集 × TBPTT 宽度」的固有属性；`ttt_tbptt_steps` 16→8 只提到 225 步且改变语义，增大 `b_stream` 不改变总 block 数。
+- **判定：不是新机制，而是接线**（与 resume 设计同性质）——五件部件均已存在并已冻结，缺 active 生产路线的调用：① epoch 快照契约 `QueueEpochSnapshot(queue_seed, epoch, catalog_digest, positions, permutations)`（`canonical_segment_adapter_scheduler.py:57-67`）；② 确定性排列 `queue_digest_preimage`/`queue_permutation`（同文件 `:76-110`，带 `PSM-WMA/queue/v1` 版本标记）；③ epoch 边界规则 `rollover_projected_if_safe`（同文件 `:546-549`）；④ `RankLocalSegmentScheduler.configure_queue(seed, epoch, permutation, provenance)`（`local_memory_segment.py:331-337`）**已实现但全仓零生产调用点**（仅 `local_memory_segment_test.py:113`）；⑤ `snapshot()`/`rebuild()` 已含 `queue_seed`/`queue_epoch`/`queue_permutation`/`segment_provenance`（`:362-365`、`:378-381`）。**单位已核实对齐**：契约 `_queue_for(category)` 以 episode 为单位（取 `cursor == 0 and consumer_step_start == 0`，`:471-477`），而 `canonical_segment_streams` 为每个 episode 建一个 stream（`active_local_memory_launch.py:169-182`），`_by_slot[slot]` 即该 suite 的 episode 列表 ⟹ epoch 重排 = 按新 epoch 排列重排 `_by_slot[slot]`。
+- **epoch 边界定义（直接采用契约，不重新发明）**：两条**同时**成立才推进——① 每个 category 的游标都到达其 catalog 末尾；② **所有 stable slot 都处于 terminal**（无跨 epoch 的半截 episode）。动作：`epoch+1` + 对每个 category 生成 `queue_permutation(seed, epoch+1, category, size)` + positions 重置。
+- **关键设计选择**：① **触发点在窗口边界（`_arm_initial`）而非 `freeze_window` 的 raise 点**——后者在循环内逐 member `_commit_block`（`:234`），中途 raise 时 `_stream_index`/`_active_stream`/`_active_cursor` 已被部分推进，即该函数**不是原子的**，在 raise 点重置会留下半推进状态；② **`cumulative_valid_consumer_exposure` 不清零**（`freeze_window` 用其**比例** `:226`，累计不清零时比例仍稳定收敛于 `target_distribution`；清零反而破坏该字段语义）；③ **不需给 identity 加 epoch 维度**——`_is_admissible` 在 `stable_slots` 无该 slot 时只要求 `cursor == 0`（`:309-311`），`terminal_rebind` 删除该条目（`:343`），故 epoch 边界重置守卫容器后，复用同一 identity 天然可准入，**不触及 `SegmentIdentity` ABI**；跨 epoch 产生的 identity **值**相等是刻意的（identity 描述数据段身份，复用同一段本就该是同一身份），由边界重置而非 identity 维度来管理守卫。④ `canonical_segment_runtime.py:181-182` 的一致性校验因 `admission_order` 与 `committed_identities` **同时**清空而保持成立。
+- **与 resume 的顺序**：本设计的 `_catalog_epoch`（driver）与 `queue_epoch`/`queue_permutation`（scheduler）都必须入 checkpoint。scheduler 侧三个字段**已在 `snapshot()` 就位**，driver 侧只增 `_catalog_epoch` 一个字段 ⟹ **建议先落地 resume 接线，再落地本设计**；本设计不阻塞于 resume 的 verdict（设计与证据可先行），但**实现应在 resume 之后**。本设计**不修改 resume 设计 §6 的任何判据**（其判据 4 的 GPU 短跑至生产 `save_iter = 50 < 112`，落在单 epoch 内，与本设计正交）。
+- **验收判据**：① CPU 契约一致性——重排结果与独立调用 `queue_permutation` 逐位一致、`queue_epoch` 恰好 +1；② CPU 纯规划层——连续推演越过 epoch 边界，断言可规划出 **> 112.73** 个窗口而不再 raise、第 113 个窗口成功规划、跨 epoch 无 identity 被 `commit` 拒绝；③ 原子性——窗口边界的探测**不修改** driver 状态，且探测与实际 `freeze_window` 共用同一选择规则（防两处规则漂移）；④ 边界条件两条各有独立用例（某 category 未到末尾 → 不推进；存在非 terminal 的 stable slot → 不推进）；⑤ GPU 短跑越过一个 epoch 边界，断言无 raise、loss 有限、每窗口 8 slot 仍均衡、`exposure` 单调不减；⑥ resume 交叉（resume 落地后）在 epoch ≥ 1 处存盘并 resume，断言 `_catalog_epoch`/`queue_epoch` 一致恢复、续跑窗口序列与不中断跑一致。
+- **BLOCKED 判据**：若 §3 条件 2（所有 stable slot 均为 terminal）在真实链路**无法同时成立**，则 epoch 边界不可达，本设计不落地，须改为「按 slot 独立推进 epoch」的更强语义——那将触及 `GAWindowPlan` 的跨 member 一致性，属另一项设计。
+- **请裁定三点**：① §3 采用契约既有的 epoch 边界条件是否正确，尤其**条件 2 在 b_stream=8 / 4 categories 的生产形态下是否恒可满足**（直接决定上述 BLOCKED 判据是否触发）；② §4.3 的重置清单是否完备——是否还有第四处状态会跨窗口残留、从而在第二个 epoch 造成**静默错误**（特别请审 `_rebind_terminal`（driver `:190-195`）在 epoch 边界的时序，以及 `owner` 的 `phase`/`transaction` 是否有未列出的残留）；③ §5 的顺序判断是否成立（实现排在 resume 之后，且 resume §6 判据无需因本设计修改）。
+- 范围：设计文档 + 后续 `active_local_memory_driver.py` 最小改动（`local_memory_segment.py` 侧维持 `configure_queue` 的签名与语义不变，重排由 driver 执行）。不改 `SegmentIdentity`/`GAWindowPlan`/`SegmentBatch` ABI，不改 admit/commit/terminal_rebind 的守卫条件本身（只重置其所依赖的状态容器），不改 `queue_permutation` 字节序，不新增 DCP 顶层 key，不重建 catalog、不改 `on_train_start` 构建路径。
+- 请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE` 或 `REQUEST_CHANGES(file:line)`。
