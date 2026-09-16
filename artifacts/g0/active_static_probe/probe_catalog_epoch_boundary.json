@@ -1,0 +1,76 @@
+{
+  "admissible_episodes": {
+    "libero_10": 375,
+    "libero_goal": 424,
+    "libero_object": 449,
+    "libero_spatial": 428
+  },
+  "b_stream": 8,
+  "boundary_conditions": {
+    "both_true_boundaries": [],
+    "condition1_boundaries": [],
+    "condition1_true_count": 0,
+    "condition2_boundaries": [],
+    "condition2_true_count": 0,
+    "reachable": false
+  },
+  "boundary_error": "active Local window exhausted every segment stream",
+  "final_state": {
+    "admission_order": 14336,
+    "committed_identities": 14336,
+    "condition1_all_categories_drained": false,
+    "condition2_all_stable_terminal": false,
+    "cumulative_exposure": {
+      "libero_10": 90016,
+      "libero_goal": 41408,
+      "libero_object": 55680,
+      "libero_spatial": 42272
+    },
+    "remaining_blocks": {
+      "0": 50,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 44,
+      "5": 0,
+      "6": 0,
+      "7": 0
+    },
+    "remaining_blocks_by_category": {
+      "libero_10": 94,
+      "libero_goal": 0,
+      "libero_object": 0,
+      "libero_spatial": 0
+    },
+    "stable_but_not_terminal": [
+      4
+    ],
+    "stable_slots": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "stranded_blocks": 94,
+    "terminal_slots": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      7
+    ]
+  },
+  "ga": 16,
+  "result": "PASS",
+  "streams": 1676,
+  "total_blocks": 14430,
+  "window_members": 128,
+  "windows_completed": 112,
+  "windows_from_capacity": 112.73
+}

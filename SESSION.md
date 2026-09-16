@@ -10532,3 +10532,32 @@ P1/P2: CATALOG_SHA256=f465db8e661a6fc4bfa79196c07d61238a073c23446c2ae5997150f06c
 **已记录**：`TODO.md` 新增 `CATALOG-CAPACITY-VS-5000-STEP`（状态 TODO）。**已通知三方**：`docs/collab/chatgpt/CODEX_INBOX.md` 末尾「catalog 容量换算」条目，请审核者校正对「5000 步」的理解；两个在审 Gate 的送审件 SHA 均未改动。
 
 **可能解法（(a) 已出设计送审；其余未自行实现）**：(a) **catalog 多 epoch 复用**——唯一能真正填平缺口的方向，也是常规训练语义（5000 步需要每段复用约 44 次）。**核实后判定：不是发明新机制，而是接线**——epoch 快照契约 `QueueEpochSnapshot`、确定性排列 `queue_permutation`（`PSM-WMA/queue/v1` 版本标记）、epoch 边界规则 `rollover_projected_if_safe`（`canonical_segment_adapter_scheduler.py:57-67`/`:76-110`/`:546-549`）**均已冻结**；`RankLocalSegmentScheduler.configure_queue`（`local_memory_segment.py:331-337`）**已预留接口、全仓零生产调用点**；`snapshot()`/`rebuild()` 已含 `queue_seed`/`queue_epoch`/`queue_permutation`。单位也对齐（契约 `_queue_for` 与 active 的 `_by_slot[slot]` 同以 episode 为单位）。**且不需给 identity 加 epoch 维度**：`_is_admissible` 在 `stable_slots` 无该 slot 时只要求 `cursor == 0`（`:309-311`），`terminal_rebind` 删除该条目（`:343`），故重置守卫容器后复用同一 identity 天然可准入，**不触及 `SegmentIdentity` ABI**（此前记的「触及 ABI」是未核实的判断，此处更正）。设计文档 `docs/build/PSM-WMA_Local_Memory_v0.3.5_active_route_catalog_epoch_reuse_design_v0.1.md`，Gate `G0-R09-B-TTT-V035-ACTIVE-CATALOG-EPOCH-REUSE`，已送三方。**建议顺序：resume 先落地，再多 epoch**。(b) 缩短训练计划——112 步不足以训练；(c) 降低 `ttt_tbptt_steps`（16→8 使 block 数翻倍至 225 窗口）——仍不够且改变 TBPTT 语义；(d) 扩充数据集。**在此之前不得启动 D8b 长跑**（会在第 113 步 crash，白耗约 8 小时）。
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          完全部 112 个窗口。在每个**窗口边界**上评估契约的两条条件本身。设计上两个判断：① `freeze_window` 要么返回完整 128-member 计划要么 raise，故「能否再冻结」无需额外探测；② `freeze_window` **非原子**（循环内逐 member `_commit_block`，`:234`），故 raise 后用 `_save_cursors`/`_restore_cursors` 恢复游标。
+
+**读数**（产物 `artifacts/g0/active_static_probe/probe_catalog_epoch_boundary.json`）：
+
+| 项 | 读数 |
+|---|---|
+| `windows_completed` | 112 |
+| `boundary_error` | `active Local window exhausted every segment stream` |
+| 条件 1 成立次数 / 112 个边界 | **0** |
+| 条件 2 成立次数 / 112 个边界 | **0** |
+| `both_true_boundaries` / `reachable` | `[]` / **false** |
+| `stranded_blocks` | **94**（slot 0 = 50，slot 4 = 44） |
+| `remaining_blocks_by_category` | libero_10 = 94，其余三个 = **0** |
+| `admissible_episodes` | 375 / 424 / 449 / 428（合计 1676 = streams，无零 block episode） |
+| `terminal_slots` / `stable_but_not_terminal` | `{0,1,2,3,5,6,7}` / `[4]` |
+
+**结论：契约的 epoch 边界在 active 路线上永久不可达**（是证明，不是推断）。第 112 窗口后总剩余 94 < 128 = `window_members`，此后每个 `freeze_window` 必在其 128 轮之一找不到有 block 的 slot 而 raise（`:230-231`）⟹ 第 14336 个之后的 block 永不提交、游标永久冻结 ⟹ slot 0 的下一个 episode（持 50 个残留 block）永不被 admit（条件 1 永久假）；slot 4（中途，持 44 个残留 block）永不到 terminal（条件 2 永久假）。
+
+**根因（结构性）**：契约的窗口成员是**弹性的**——`derive_member(*, member_index, slot_ids)` 由调用方给出本 member 参与哪些 slot（`:522-530`）；active 路线的窗口**定长 128**（`_arm_initial` 断言 `window_members == trainer.config.trainer.grad_accum_iter`，`:158-160`）。契约模型允许「最后一个窗口短一点」，本路线不允许。
+
+**设计修订（v0.1 → v0.2，blob `c686ff3b` → `8a1dbec3`）**：
+1. **触发条件改用界条件**：窗口边界上当且仅当「下一个窗口填不满」（`Σ_slot remaining_blocks < window_members`）时推进 epoch。它恰好在「catalog 再也供不起整窗口」时触发，在 catalog 可被整窗口整除时与契约条件 1 **重合**，是本路线唯一可达的触发点。每 epoch 因此为 **112** 个窗口（非 112.73），`max_iter=5000` ⟹ **45 个 epoch**；每 epoch 推迟 94 个尾块（0.65%），因新 epoch 从位置 0 按新排列重走全部 catalog，**不永久丢失**（v0.2 §6 判据 5 专门断言）。
+2. **契约条件 2 在本路线是多余约束，v0.1 的回退无收益**：契约的 rollover 会清空守卫容器——`rollover_projected_if_safe` 构造新状态时**不传** `stable_slots`/`terminal_slots`（`:564-569`），而二者默认 `()`（`:434-435`），故 mid-episode 的延续会**静默消失**，这才是条件 2 在契约里承重的原因；而本设计 §4.3 的重置既清容器**又归零每个 slot 的游标**，尾部是被**显式推迟**并在下一 epoch 完整重走 ⟹ 条件 2 不必要。v0.1 §6 的「按 slot 独立推进 epoch」回退会引入逐 slot epoch 记账与「一个 category 的排列跨两个 slot」的额外语义，无收益。
+3. **§2 判定降级**：v0.1 称「不是新机制，而是接线」——**部分成立**。快照契约 / 排列函数 / scheduler 接口确为复用；但**边界规则必须为 active 路线新定**，契约的规则在本路线不可表达。
+4. **§4.4 新增，消除 v0.1 「重排 `_by_slot[slot]`」的歧义**：排列是 category 级、以 episode 为单位，而 `_by_slot[slot]` 是该 category 的 episode 在 2 个 slot 上的**划分**。规则：按 `(source_digest, episode_id)` 排序得参照序（**必须与 `_queue_for` 的排序 `:477` 逐位一致**）→ 应用 `queue_permutation` → 每个 slot 取自身 episode 的**保序子序列**。**注意参照序是字符串比较**（`episode_id = str(stream.episode_index)`，`"10" < "2"`），实现若按数值排序会与契约偏离。
+
+**探针自身的一处更正（如实记录）**：初版把条件 1 算成了 **block 级**（「该 category 还有没有整块」），而契约的条件 1 是 **episode 级**（已核实：`_admit_free_slot` 用 `positions[category]` 索引 `_queue_for` 的排列 `:512-517`、`_commit_admission` 每 admit 一个 episode 才 +1 `:589-590`、`_queue_for` 每 episode 一行 `:471-480`）。block 级是更强的谓词，两者在边界附近会给出不同答案；初版读数「`condition1_all_categories_drained=false`」因而**依据不成立**（方向虽同）。初版产物已被修正版覆盖、未提交；上表全部为修正版读数，且修正版额外记录了逐边界的条件轨迹。
+
+**已记录 / 已通知**：`TODO.md` 的 `CATALOG-CAPACITY-VS-5000-STEP` 已追加本节结论与两处易错点；`docs/collab/chatgpt/CODEX_INBOX.md` 末尾已追加 v0.2 修订说明（取代 v0.1 的 §2/§3/§6/§8，请裁定四点）。**无代码改动**：`active_local_memory_driver.py` 未被修改，`freeze_window` 的 fail-closed `raise` 仍是当前 operative 行为，**D8b 长跑仍不得启动**。
