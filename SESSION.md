@@ -8078,3 +8078,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新 formal pair=`7b3bf58b27a55b1220b86eeeccb1db5659dd0500` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。
 - Inbox append 前=`63865` bytes，追加后未超过 128 KiB；MM/DS 均完成 `send-keys -l`→间隔 1 秒→独立 Enter→capture 送达回执。
 - 申请绑定 record↔receipt 修复与 57/57、py_compile、diff-check 证据；仍禁止真实 source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — producer/closure remediation 观察凭证 #2 / 推进令牌
+
+- `before_head=bb753129338cd56ceadc251e490ed689c4c9e7cf`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`bb753129338cd56ceadc251e490ed689c4c9e7cf`；新增为空；merge=`Already up to date.`
+- formal pair=`7b3bf58b27a55b1220b86eeeccb1db5659dd0500` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；均确认 record↔receipt 绑定、package/witness verifier、one-shot handoff 与 57/57 验证。
+- 三方冻结名册对同一 pair final 齐全，形成 closure 推进令牌；仅关闭 producer/closure CPU/static Gate，不授权真实 source/record/publication I/O、child/runtime、GPU 或训练。下一步进入 fresh Stage-2 request instance construction/review。
