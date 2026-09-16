@@ -408,3 +408,14 @@
 - v1.5 `REQUEST_CHANGES` 已采纳：v1.5 的 launcher 是半重建状态；v1.6 改由真实 `rebuild_launcher()` 从 formal tree bytes 重建。
 - Pair: `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v1.6.json` / `.md`；JSON SHA=`cf72d5be120923dec093fcdea56b5c130563efc9f4a40fd71674c09b1080419`; MD SHA=`228e534ddb521b53cf37eeb7c58a54ab1ab82ef3ffa53f48c13bba09f03d5e18`; suffix=`e8c7b2a6`。
 - Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`；批准仅限一次 authority-root materialization，禁止 retry、child/runtime/config、source-evidence、GPU/训练/评测/推理。
+
+## 2026-09-16 — Stage-1 v1.7 materialization review request
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-ROOT-MATERIALIZATION-V17`；ChatGPT advice-only，本轮冻结 MM=`mm:0.0`、DS=`ds:0.0`。
+- Formal root: `7d7ba235ec5be0208aedac2f9b2ed11f755d9ca6`；child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`。
+- v1.6 已在 `remote_cas` 因 thin-pack 上传失败并完整回滚；只读诊断证明同一对象使用 `git push --no-thin` 可创建并删除 authority ref。最小修复已写入 formal root 的 `tools/psm_wma/materialize_immutable_source_authority_root.py`，push/delete 均显式使用 `--no-thin`。
+- v1.7 pair: `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v1.7.json` / `.md`；JSON SHA-256=`10eaa1f209633bb6830d7678c305aa422b9ec558e8c1264f8dba065d36ed625b`；MD SHA-256=`3cdb5480823ac2d385468e927fc133cec5cd38ca8ca715b66296bf80c9ead986`；clean suffix=`e8c7b2a7`。
+- 已通过 pair producer/launcher 重建、JSON/Markdown identity 与当前 formal tree 绑定；请求仅批准一次 Stage-1 authority-root materialization。
+- 允许范围：按 exact pair 执行一次 authority-root/local CAS 与固定 authority ref 事务，生成 materialization evidence。禁止 retry、child/runtime/config 修改、source-evidence、GPU/CUDA、torchrun、训练/评测/推理；失败必须保留证据并回滚。
+- 审核重点：确认 `--no-thin` 对 remote CAS push/delete 的最小修复、lease/readback/rollback 不变、exact root/child/pair 绑定及 one-shot 边界。
+- Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`。
