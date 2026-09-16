@@ -1,16 +1,28 @@
-# PSM-WMA Local Memory v0.3.5 — active 路线 catalog 多 epoch 复用设计 v0.4
+# PSM-WMA Local Memory v0.3.5 — active 路线 catalog 多 epoch 复用设计 v0.5
 
-- 状态：**设计，送审（v0.4，修订 v0.3；v0.3 修订 v0.2；v0.2 修订 v0.1）**。尚无对应代码改动；当前 operative 行为是 `freeze_window` 在 catalog 耗尽时 fail-closed `raise`。
+- 状态：**设计，送审（v0.5，修订 v0.4；v0.4 修订 v0.3；v0.3 修订 v0.2；v0.2 修订 v0.1）**。尚无对应代码改动；当前 operative 行为是 `freeze_window` 在 catalog 耗尽时 fail-closed `raise`。
 - 上游证据：
   - `tools/g0/probe_block_capacity.py` → `artifacts/g0/active_static_probe/probe_block_capacity.json`（容量）
   - `tools/g0/probe_catalog_epoch_boundary.py` → `artifacts/g0/active_static_probe/probe_catalog_epoch_boundary.json`（边界可达性，§10.1）
   - `tools/g0/probe_epoch_reuse_planning.py` → `artifacts/g0/active_static_probe/probe_epoch_reuse_planning.json`（规划层容量解除，§10.3/§10.4）
-- 相关 Gate：`G0-R09-B-TTT-V035-ACTIVE-ROUTE-RESUME`（resume 接线，已送审）、`G0-R09-B-TTT-V035-ACTIVE-WINDOW-SLOT-ROTATION`（slot 轮转修复，已送审）
+  - `tools/g0/probe_epoch_reuse_planning.py --max-epochs 1` → `artifacts/g0/active_static_probe/probe_epoch_reuse_planning_epoch0.json`（**epoch 0 单独基线**，§10.4）
+- 相关 Gate：`G0-R09-B-TTT-V035-ACTIVE-ROUTE-RESUME`（resume 接线）、`G0-R09-B-TTT-V035-ACTIVE-WINDOW-SLOT-ROTATION`（slot 轮转修复）。**2026-09-17 01:49 核查更正**：两者此前记为「已送审」，但前置硬检查（SESSION.md「审核前置硬检查（第 1 轮）」）显示其 formal root（`8bb48f35`、`5d527f3e`）**只在本地、不在远端**，故诚实状态是**未送达**，不是「等待回复」。
 - 建议 Gate：`G0-R09-B-TTT-V035-ACTIVE-CATALOG-EPOCH-REUSE`
 
 ---
 
 ## 0. 修订记录
+
+### v0.4 → v0.5
+
+v0.4 已提交（blob `219355d3`）但**从未推送、从未送达任何审核者**。v0.5 是**对 v0.4 自己留下的一个未决项的闭合**：v0.4 判定「§6 判据 6 的更正形式是否在今天就已为假」无法由 45 epoch 的全局值判定，须补单 epoch 基线；该基线已跑出，结论是**今天就已为假**，故该判据形式整体撤回。
+
+| 项 | v0.4 的说法 | v0.5 的修正 | 依据 |
+|---|---|---|---|
+| §6 判据 6 | 把「同类两 slot 成员数之差 ≤ 1」**降级为记录量**，待单 epoch 基线判定 | **整体撤回**（不再作为判据，也不再是候选通过条件）。单 epoch 基线实测 epoch 0 的 `max_within_category_slot_skew = **32**`，该形式在今天就已为假 | `probe_epoch_reuse_planning_epoch0.json` |
+| §10.4 | 「epochs 1–44 与 epoch 0 构成相反」，但 epoch 0 的量化基线缺 | 补 epoch 0 单跑基线表：单 suite 窗口 **14.3%（epoch 0）vs 77.3%（epochs 1–44）**，**相差 5.4 倍** | 同上 |
+
+v0.4 的 §1–§4、§5、§7–§9 在 v0.5 中**逐字未改动**；改动集中在 §6 的一条、§10.4 的一节、§0 与标题。
 
 ### v0.3 → v0.4
 
@@ -278,9 +290,13 @@ epoch rollover 是这套代码里**第一个在记录仍存活时把 slot 倒回
 
    **措辞更正（v0.3）**：本判据 v0.2 原文写作「`per_slot_members` 在每个窗口内仍为 8 个 slot 均衡」。**该措辞在今天就已为假，与本设计无关**：`freeze_window` 只按 category 的 exposure 赤字挑选，而每个 category 的 block 供给量不同，因此**任何 category 一旦抽干，其两个 slot 就从该窗口消失**。实测（§10.4）：epoch 0 自第 **80** 个窗口起就不再覆盖全部 8 个 slot。
 
-   **第二处更正（v0.4）**：v0.3 给出的替代形式是「对**在该窗口实际被服务**的 category，其两个 slot 的成员数之差 ≤ 1」（§10.4 的 `max_within_category_slot_skew`），并拟把它升为**通过条件**。45 epoch 满跑实测该量为 **64**（上限 128）——但它是**全局最大值，未按 epoch 分离**，故**不能据此判断 epoch 0 单独的偏斜是否 ≤ 1**。**若该形式在 epoch 0 上就已为假，它与刚更正掉的原文属同一类缺陷**（把今天不成立的性质写成判据）。故在跑出单 epoch 基线之前，该项**只是记录量，不得作为 PASS 条件**；本判据的 GPU 部分暂只保留「loss 有限」与「`cumulative_valid_consumer_exposure` 单调不减」两条可判定的断言。
+   **第二处更正（v0.4）**：v0.3 给出的替代形式是「对**在该窗口实际被服务**的 category，其两个 slot 的成员数之差 ≤ 1」（§10.4 的 `max_within_category_slot_skew`），并拟把它升为**通过条件**。
 
-   **v0.4 新增的记录量（非通过条件）**：`windows_by_distinct_slots` / `windows_by_distinct_categories` / `all_slots_windows` / `all_categories_windows`。45 epoch 读数与含义见 §10.4——其中 epoch 0 与 epochs ≥1 的窗口构成**相反**，这是本设计当前最大的未决技术问题（§8 第 7 点）。
+   **第三处更正（v0.5，实测判定：该形式已撤回）**：v0.4 只把该项**降级为记录量**，理由是「全局值 `64` 未按 epoch 分离，无法判断 epoch 0 单独是否 ≤ 1」。现已跑出单 epoch 基线（`probe_epoch_reuse_planning_epoch0.json`，`--max-epochs 1`）：**epoch 0 的 `max_within_category_slot_skew = 32`**（上限 128）。⟹ **该形式在今天就已为假**，若升为 PASS 条件，则会成为一条「今天的生产行为就已经不满足」的判据——**与 v0.2 原文属同一类缺陷**（把今天不成立的性质写成判据）。故**该形式整体撤回，不再作为判据，也不再作为 v0.3 意义上的「候选通过条件」**；`max_within_category_slot_skew` 仅作为**记录量**保留。
+
+   本判据的 GPU 部分因此只保留两条**已核实可判定**的断言：「loss 有限」与「`cumulative_valid_consumer_exposure` 单调不减」。
+
+   **v0.4 新增的记录量（非通过条件）**：`windows_by_distinct_slots` / `windows_by_distinct_categories` / `all_slots_windows` / `all_categories_windows`。45 epoch 读数、epoch 0 基线读数与两者对照见 §10.4——其中 epoch 0 与 epochs ≥1 的窗口构成**相反**，这是本设计当前最大的未决技术问题（§8 第 7 点）。
 7. **resume 交叉（在 resume 落地后）**：在 epoch ≥ 1 处存盘并 resume，断言 `_catalog_epoch` 与 `queue_epoch` 一致恢复、续跑窗口序列与不中断跑一致。
 8. **sidecar 重置（v0.3 新增，CPU）**：构造一个「slot 末次 commit 非 terminal」的边界（即 `probe_catalog_epoch_boundary.json` 中 slot 4 的形态），断言 rollover 后 `adapter.sidecar` 对**每个 slot** 的 `read` 都返回 `None`（而非抛 `ValueError`）；并断言重置只经既有 API（§4.7 的裁定结果）。**该判据必须在取张量之前可跑**——因为失败形态是 `scan` 内的 `read` 抛错，等到取张量时才发现代价过高。
 
@@ -435,7 +451,7 @@ LIBERO_LATENT_CACHE_ROOT=/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_sha
 2. **每个 epoch 都是恰好 112 个窗口、残留恰好 94 块**，45 个 epoch 无一例外。这说明 §3.2 的界条件在真实 catalog 上稳定可复现，不是「碰巧第一次成立」。
 3. **复用不引入新的调度开销**：`admit`/`commit` 的守卫成员检查是 **list 线性扫描**（`local_memory_segment.py:322-323`），单次 `commit` 成本随 `len(admission_order)` 线性增长。实测（真实 `RankLocalSegmentScheduler`）：N=2000 时 415 µs，N=14336 时 1261 µs，单 epoch 累计约 **9 s**。因 rollover **清空** `admission_order`/`committed_identities`，该 O(n²) 的 n 上界**恰好等于今天单 epoch 的值**——45 个 epoch 合计约 6.8 min，相对 5000 步训练的墙钟可忽略。**这是「清空守卫容器」这一设计的附带收益**，也是本设计不新增接口、不改 `commit` 的代价上界。
 
-### 10.4 窗口构成：复用**不是**「epoch 0 重复 45 次」（v0.4 重写）
+### 10.4 窗口构成：复用**不是**「epoch 0 重复 45 次」（v0.4 重写；v0.5 补 epoch 0 单独基线）
 
 **本节 v0.4 重写的原因**：v0.3 的 §10.4 依据 2 epoch / 224 窗口的冒烟数据写下了两处推断，45 epoch 满跑（`probe_epoch_reuse_planning.json`，5040 窗口）**将其证伪**。两处推断及其推翻依据如下，一并保留以示修订链条：
 
@@ -476,4 +492,20 @@ LIBERO_LATENT_CACHE_ROOT=/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_sha
 
 **这对本设计的意义（送 Gate 的新问题）**：v0.3 把 39.2% 的偏斜定性为「**既有性质被复用放大**」，据此建议可「作为既有行为接受、单独开 Gate」。**实测推翻了该定性的前提**——epochs ≥1 与 epoch 0 的窗口构成相反，故这不是把既有行为重复 45 次，而是**让 44/45 的训练步运行在一个今天从未运行过的 regime 里**（75.3% 的 batch 只含一个 suite）。一个自然的候选修法是：**保留累计字段作为报告量，但让 `freeze_window` 的赤字改用 per-epoch 的 observed**（即 rollover 时另起一个 epoch 内计数器）——这样 epochs ≥1 的形态会与 epoch 0 相同（每 epoch 79 个满 slot 窗口）。**该修法触及 `freeze_window` 的选择键，属 §7 的改动面之外，故本设计不擅自纳入，请 Gate 裁定**（§8 第 7 点）。
 
-**尚未测的边界（如实标注）**：`max_within_category_slot_skew = 64` 是 **45 epoch 的全局最大值，未按 epoch 分离**，因此**无法据此判断 epoch 0 单独的偏斜是否 ≤ 1**。这一点很关键：§6 判据 6 的更正形式（「窗口内 `used` 轮转，同类两 slot 成员数之差 ≤ 1」）若在 epoch 0 上就已为假，则它与我刚更正掉的原文属于**同一类缺陷**（把今天不成立的性质写成判据）。**故在该形式被用作 PASS 条件之前，须先跑一次单 epoch 基线把 epoch 0 的偏斜单独测出来**；在测出之前它只是**记录量**，不得作为通过条件。
+**epoch 0 单独基线与它的对照（v0.5 补测）**：上表最末一项曾被标为「未按 epoch 分离，无法判断 epoch 0 单独是否 ≤ 1」。现已单跑 epoch 0（`probe_epoch_reuse_planning_epoch0.json`，`--max-epochs 1`，`result=PASS`，`windows_total=112`）：
+
+| 项 | epoch 0 单独 | 45 epoch 全体 |
+|---|---|---|
+| `max_within_category_slot_skew` | **32** | 64 |
+| `windows_by_distinct_categories` | `{1: 16, 2: 13, 3: 2, 4: 81}` | `{1: 3826, 2: 1070, 3: 63, 4: 81}` |
+| `windows_by_distinct_slots` | `{2: 16, 4: 13, 5: 1, 6: 1, 7: 2, 8: 79}` | `{2: 3826, 3: 51, 4: 1019, 5: 7, 6: 56, 7: 2, 8: 79}` |
+| `all_slots_windows` / `all_categories_windows` | 79 / 81（共 112） | 79 / 81（共 5040） |
+| `first_partial_window` / `first_partial_category_window` | 80 / 82 | 80（epoch 0）→ 1（epochs ≥1） |
+| `remaining_by_category_at_epoch_end` | `{libero_10: 94, 其余: 0}` | 同（45 个 epoch 全部） |
+
+**两项决定性读数**：
+
+1. **`max_within_category_slot_skew = 32` 在 epoch 0 单独就已成立**（不是 1）。⟹ §6 判据 6 的更正形式（「同类两 slot 成员数之差 ≤ 1」）**在今天就已为假**，故已整体撤回（§6 第三处更正）。
+2. **单 suite 窗口占比：epoch 0 = 16/112 = 14.3%，epochs 1–44 = (3826 − 16)/44 = 86.6/epoch = 77.3%**（后者的分母 112，分子取全体 1-category 窗口数 3826 减去 epoch 0 的 16）。**同一指标相差 5.4 倍**，且 epoch 0 有 81 个「4 类并存」窗口而 epochs ≥1 为 0。这以最直接的方式量化了「复用改变了训练 regime」，而非「重复了同一个 regime」。
+
+**尚未测的边界（如实标注，v0.5 更新）**：`epochs 1–44` 内部的逐 epoch 差异尚未分离（上表把它们合并计数）；`tail_structure` 只保留前 5 个 epoch。若 Gate 需要「epochs ≥1 是否彼此一致」作为判据，需把 `tail_structure` 的全量（或逐 epoch 直方图）落盘再跑一次——本轮未做。

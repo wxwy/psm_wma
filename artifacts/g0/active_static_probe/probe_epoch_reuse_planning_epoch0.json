@@ -1,0 +1,69 @@
+{
+  "b_stream": 8,
+  "catalogue_blocks": 14430,
+  "committed_identities": 14336,
+  "criterion1_mismatches": [],
+  "criterion1_slot_order_matches_permutation": true,
+  "criterion2_exceeds_single_epoch": false,
+  "criterion2_meets_target": true,
+  "criterion2_target_windows": 112,
+  "criterion3_probe_is_pure": true,
+  "criterion4_window_index_not_reset": true,
+  "criterion5_deferred_tail": {
+    "deferred_after_epoch0": 94,
+    "missing_from_epoch1": null,
+    "recovered_in_epoch1": null
+  },
+  "criterion6_slot_coverage": {
+    "all_categories_windows": 81,
+    "all_slots_windows": 79,
+    "max_within_category_slot_skew": 32,
+    "total_categories": 4,
+    "total_slots": 8,
+    "windows_by_distinct_categories": {
+      "1": 16,
+      "2": 13,
+      "3": 2,
+      "4": 81
+    },
+    "windows_by_distinct_slots": {
+      "2": 16,
+      "4": 13,
+      "5": 1,
+      "6": 1,
+      "7": 2,
+      "8": 79
+    }
+  },
+  "cumulative_exposure": {
+    "libero_10": 90016,
+    "libero_goal": 41408,
+    "libero_object": 55680,
+    "libero_spatial": 42272
+  },
+  "epochs_planned": 1,
+  "ga": 16,
+  "queue_seed": 0,
+  "result": "PASS",
+  "rollovers": [],
+  "single_epoch_limit": 112.73,
+  "tail_structure": [
+    {
+      "epoch": 0,
+      "first_partial_category_window": 82,
+      "first_partial_window": 80,
+      "remaining_by_category_at_epoch_end": {
+        "libero_10": 94,
+        "libero_goal": 0,
+        "libero_object": 0,
+        "libero_spatial": 0
+      }
+    }
+  ],
+  "window_index": 112,
+  "window_members": 128,
+  "windows_per_epoch": [
+    112
+  ],
+  "windows_total": 112
+}

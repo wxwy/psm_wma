@@ -10677,3 +10677,71 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 **本窗口另完成**：① 把 soak45 的验收判据**预先登记**到上文（内存统计量在迭代 8/45 时登记，早于终值）；② 登记后核实**判据 3（slot 轮转）在 soak45 日志中不可验证**（`grep -icE "slot|window"` 得 2，两处命中均在启动配置 dump 内；`PSM_DIAG_EVIDENCE` 未设置）⟹ 已如实改为 **N/A**，并注明登记时的说法建立在未核实的假设上。
 
 **设计文档已修订为 v0.4**（blob `219355d3d5dda1407e5602218d6ab1c7bb79ad47`），改动集中在 §4.3 一条、§6 一条、§8 一条、§10.4 全节、§0 与标题；v0.3 的 §1–§3、§4.1–§4.2、§4.4–§4.7、§5、§7、§9 **逐字未改动**。
+
+### 审核前置硬检查（第 1 轮）——检查结果：**三个在审 Gate 的 formal root 不在远端，未送达**（2026-09-17 01:49 CST）
+
+**本轮性质**：这是对 `G0-R09-B-TTT-V035-ACTIVE-WINDOW-SLOT-ROTATION`、`G0-R09-B-TTT-V035-ACTIVE-ROUTE-RESUME`、`G0-R09-B-TTT-V035-ACTIVE-CATALOG-EPOCH-REUSE` 三个 Gate 的**首次完整前置检查**，不是「续等已检查过的同一计时句柄」。所有步骤均成功执行，故结论**不是**「检查失败/状态未知」。
+
+| 凭证字段 | 本轮实测 |
+|---|---|
+| 轮次 / 时间 | 第 1 轮，2026-09-17 01:49:37 CST |
+| `before_head` | `661b54f3c2616f55b2fff8adf386252e3f8dbe22` |
+| 远端 advertised SHA | `f63ee3c5ab8da0855aea1ca2d9e47f5b5d4eb28c`（`git ls-remote origin refs/heads/V2`） |
+| `git fetch origin V2` | 成功（`* branch V2 -> FETCH_HEAD`） |
+| `git log before_head..origin/V2` | **空** ⟹ 远端无新增提交 |
+| ff 判定 | `merge-base --is-ancestor <before_head> origin/V2` 返回**非 0**；但 `f63ee3c5` 是 `HEAD` 的**祖先** ⟹ 远端**纯落后**，非分叉，无需 ff |
+| 本地领先量 | `V2 [origin/V2: ahead 29]` |
+| 子模块 Gitlink | `HEAD` 的 `cosmos-framework` = `525f5066393cba044f00f1104b83f5eb424a9c49`；工作树另有 ` M cosmos-framework`（**dirty，单独报告，不污染审核范围**） |
+| ChatGPT exact-pair 检索 | `grep -rl <root> docs/collab/chatgpt/reviews/`，对 `5d527f3e`/`8bb48f35`/`bae39647`/`f6d3ae26`/`661b54f3` **命中文件数均为 0**；`reviews/` 最新文件为 `2026-09-16_stage1_pragmatic_pair_producer_advice_b57ad44_93a89ba.md`（2026-09-16 11:52），锚定 `b57ad44`/`93a89ba` |
+| pane capture 1：`ds:0.0` | 成功。显示的是**旧 pair** `formal root=3324b3a0a4dc92b36882e23b4d9b42052554965c` / `child=93a89ba61306d840a008813f62f26a34d54850f4` 的 `REQUEST_CHANGES`（针对 `source_evidence_production_entrypoints_implementation_design_v0.1.md:64`）。**未出现任何当前 Gate 的 pair** |
+| pane capture 2：`mm:0.0` | 成功，但显示 **Claude Code 进程已退出**——`pane_current_command = zsh`，pane 停在裸 shell，末行为 `Resume this session with: claude --resume a34005ee-6e0d-46c3-be87-d0bce4d661ff`。**MM 审核进程不可用** |
+
+**核心事实（本轮最重要的发现）**：`INBOX` 引用过的 root 的远端可达性**分成截然两段**——
+
+| root | 对应 Gate | 远端 |
+|---|---|---|
+| `3bf72e49` / `a58bdb90` / `187768e4` / `786538f8` / `3324b3a0` | 历史已获批各 Gate | **在远端** ✓ |
+| `5d527f3e` | ACTIVE-WINDOW-SLOT-ROTATION | **仅本地** ✗ |
+| `8bb48f35` | ACTIVE-ROUTE-RESUME | **仅本地** ✗ |
+| `bae39647`（及修订 `f6d3ae26`、`661b54f3`） | ACTIVE-CATALOG-EPOCH-REUSE | **仅本地** ✗ |
+
+远端最后一次推送为 **`f63ee3c5` @ 2026-09-16 21:21:45**；此后 29 个提交（含三个 Gate 的全部送审件与设计文档）**从未推送**。历史上每个可审核的 Gate 其 formal root 都在远端，故「root 可达」是本项目审核送达的既有前提。
+
+**逐方状态（严格由本轮凭证导出）**：
+- **ChatGPT（`ds:0.0`）**：处理中——但其手上的 pair 是 `3324b3a0`，**当前三个 Gate 的 pair 未送达**。`reviews/` 中无任一当前 root 的 exact formal review。
+- **MM（`mm:0.0`）**：**不可用**——审核进程已退出，pane 停在 shell。
+- **Kimi**：**未检查**——本轮冻结名册中未登记其 pane（`fz`/`fq` 会话存在但从未在 SESSION 中 capture 过）。
+
+**结论**：三个 Gate 的诚实状态是 **「未送达 / 链路不完整」**，不是「尚未回复」。因此**不存在推进令牌**，三个 Gate 全部保持 `REVIEW`；按治理规则，无令牌时**禁止整改、编码、提交、执行、训练或关闭 Gate**，仅可修复审核链路、记录失败、或撰写不依赖既有审核结论的 docs-only 设计。
+
+**链路修复所需的动作（需用户决定，本回合未执行）**：推送本地 29 个提交使三个 Gate 的 formal root 在远端可达；并恢复 MM 的审核会话（`claude --resume a34005ee-6e0d-46c3-be87-d0bce4d661ff`）。**推送属「外网访问」，按 CLAUDE.md 确认规则须取得用户明确许可**，故本回合**未推送**，仅如实记录。
+
+---
+
+### 复用设计修订为 v0.5——单 epoch 基线跑出，§6 判据 6 的更正形式**整体撤回**（2026-09-17 02:05 CST）
+
+**触发**：v0.4 把 §6 判据 6 的更正形式（「对在该窗口实际被服务的 category，其两 slot 成员数之差 ≤ 1」）降级为记录量，理由是 45 epoch 全局 `max_within_category_slot_skew = 64` **未按 epoch 分离**，**无法判断 epoch 0 单独是否 ≤ 1**，并明确写下「若为假则与刚更正掉的 v0.2 原文属同一类缺陷；须先跑单 epoch 基线」。该基线已跑出，**结论是该形式应整体撤回**。
+
+**新证据**：`artifacts/g0/active_static_probe/probe_epoch_reuse_planning_epoch0.json`（`tools/g0/probe_epoch_reuse_planning.py --max-epochs 1 --target-windows 112`；`result=PASS`、`windows_total=112`、`window_index=112`、`rollovers=[]`、`epochs_planned=1`）。
+
+| 项 | epoch 0 单独 | 45 epoch 全体 |
+|---|---|---|
+| `max_within_category_slot_skew` | **32**（上限 128） | 64 |
+| `windows_by_distinct_categories` | `{1: 16, 2: 13, 3: 2, 4: 81}` | `{1: 3826, 2: 1070, 3: 63, 4: 81}` |
+| `windows_by_distinct_slots` | `{2: 16, 4: 13, 5: 1, 6: 1, 7: 2, 8: 79}` | `{2: 3826, 3: 51, 4: 1019, 5: 7, 6: 56, 7: 2, 8: 79}` |
+| `all_categories_windows` / `all_slots_windows` | 81 / 79 | 81 / 79 |
+| `first_partial_window` / `first_partial_category_window` | 80 / 82 | 80（epoch 0）→ 1（epochs ≥ 1） |
+| `remaining_by_category_at_epoch_end` | `{libero_10: 94, 其余: 0}` | 每 epoch 均为 94 |
+| `cumulative_exposure` | `{libero_10: 90016, libero_goal: 41408, libero_object: 55680, libero_spatial: 42272}`（libero_10 = 39.2%） | 45× 同比例 |
+
+**判定 1（判据 6）**：`max_within_category_slot_skew = 32 ≠ 1`，**在 epoch 0 单独就已成立**。故该判据形式**在今天就已为假**——若升为 PASS 条件，它是一条「今天的生产行为就已经不满足」的判据，**与 v0.2 原文属同一类缺陷**。⟹ **整体撤回**（不再作判据、不再作候选通过条件），该项仅作**记录量**保留。§6 的 GPU 部分因此只保留两条已核实可判定的断言：「loss 有限」与「`cumulative_valid_consumer_exposure` 单调不减」。
+
+**判定 2（量化 v0.4 的核心结论）**：单 suite 窗口占比 **epoch 0 = 16/112 = 14.3%**；**epochs 1–44 = (3826 − 16)/44 = 86.6/epoch = 77.3%**——**相差 5.4 倍**。且 epoch 0 有 **81** 个「4 类并存」窗口，epochs ≥ 1 为 **0**。这以最直接的方式量化了「复用改变了训练 regime」而非「重复了同一 regime」，把 v0.4 的定性判断落成两个可复算的数字。
+
+**顺带确认（epoch 0 单独也成立的两项）**：`first_partial_window = 80` 与 `first_partial_category_window = 82` 在单 epoch 与 45 epoch 下**逐位相同**（epoch 0 段），与供给侧交叉验证（最小值 `1255 ÷ 16 = 78.44`）一致；`remaining_by_category_at_epoch_end` 的 `libero_10 = 94` 即每 epoch 推迟的尾块数，与 `probe_catalog_epoch_boundary.json` 的 `stranded_blocks = 94` **吻合**。
+
+**范围声明**：**无生产代码改动**（同 v0.3/v0.4）；探针中的 rollover 是**探针内参考实现**。设计文档修订为 **v0.5**（blob `e22b6543ee3d2c0874dc2be9f60dcca6e89ca37c`），改动集中在 §0 / §6 的一条 / §10.4 的一节 / 标题，§1–§5、§7–§9 逐字未改；v0.4 的实质内容全部保留。INBOX 已追加「第四次修订」条目（重建后的精简 live Inbox 中，`## 未决 Gate 索引` 的 epoch reuse 行本已写明「以本文件末尾『第四次修订』为准」，该节现已存在，指引不再指向空处）。
+
+**自守声明**：本次撤回**不是**放宽标准——它把一条**在今天就已为假**的候选判据撤掉，避免重演 v0.2 原文的缺陷类；判据总数减少，但保留的两条均为已核实可判定项。
+
+**未决不变**：§8 第 7 问 (a)/(b) 仍待三方裁定；(c) 已由本次基线闭合。三个 Gate 状态仍为**未送达**（见上节），**无推进令牌**。
