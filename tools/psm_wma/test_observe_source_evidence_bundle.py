@@ -77,7 +77,7 @@ class ObservationTests(unittest.TestCase):
         result = observe_and_assemble(
             root=root, files={"module": root / "AGENTS.md"}, target_paths=[], argv=[], env={},
             env_allowlist=[], git_repo=root, git_ref="HEAD", git_paths=["AGENTS.md"],
-            bundle_builder=lambda _observation: bundle())
+            bundle_template=bundle(), formal_root="a" * 40, child_gitlink="b" * 40)
         self.assertEqual(result["schema"], "root_source_evidence_closure_request_instance_v1")
 
     def test_observe_and_assemble_requires_git_observation(self):
@@ -85,7 +85,8 @@ class ObservationTests(unittest.TestCase):
             with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
                 observe_and_assemble(root=Path(root), files={}, target_paths=[], argv=[], env={},
                                      env_allowlist=[], git_repo=Path(root), git_ref="HEAD",
-                                     git_paths=[], bundle_builder=lambda _observation: bundle())
+                                     git_paths=[], bundle_template=bundle(), formal_root="a" * 40,
+                                     child_gitlink="b" * 40)
 
 
 if __name__ == "__main__":

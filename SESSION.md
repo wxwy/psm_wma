@@ -8503,6 +8503,33 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/rl/psm_wma/observe_source_evidence_bundle.py:105)`（实际路径 `tools/psm_wma/...`）：要求 provider→十 section→assemble_constructor_bundle→valid instance 唯一端到端链，read_git_metadata 接入证据，以及缺 Git 事实时 fail-closed。
 - 评估决定选择 DS 方案 (a)，补唯一端到端入口和负例；不将十 section 合成推迟到后续 Gate。当前未写真实 instance、未执行 source I/O、GPU 或训练。
 
+## 2026-09-16 — ObservationBundle provider end-to-end assembly DS review 观察凭证 #1
+
+- `before_head=941ea55efd2724e87265555506759c70275d19bf`；fetch 成功；advertised/tracking=`941ea55efd2724e87265555506759c70275d19bf`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`78fdacb18578222cfc8f6fb794f61cacf253d455` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，已核对 root/HEAD/child、diff 与测试命令，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider end-to-end assembly DS review 观察凭证 #2
+
+- `before_head=941ea55efd2724e87265555506759c70275d19bf`；fetch 成功；advertised/tracking=`941ea55efd2724e87265555506759c70275d19bf`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`78fdacb18578222cfc8f6fb794f61cacf253d455` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，正在检查端到端测试与 `bundle_builder` 装配记录，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider end-to-end assembly DS review 观察凭证 #3
+
+- `before_head=941ea55efd2724e87265555506759c70275d19bf`；fetch 成功；advertised/tracking=`941ea55efd2724e87265555506759c70275d19bf`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`78fdacb18578222cfc8f6fb794f61cacf253d455` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/observe_source_evidence_bundle.py:158)`：映射仍委派给 callback，fixture 与 observation 无关，未证明各 section 字段来自观测事实；另建议独立负例和更严格 Git identity/clean 语义。
+- 经评估接受；下一步将确定性 observations→十 section 合成移入 provider，并补真实 observation fixture；当前未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — provider-owned observation mapping
+
+- 新增 `observation_to_bundle`：provider 内部将 root/files/Git/argv/env observation 确定性绑定到 flat constructor bundle；`observe_and_assemble` 不再接受任意 callback。
+- 测试覆盖 provider-owned 正例和缺 Git 负例；17/17 联合 unittest PASS、py_compile PASS、git diff-check PASS。
+- 未读取真实 source/cache payload、未写真实 instance、未执行 GPU 或训练；待提交新 formal root 后申请 DS-only review。
+
 ## 2026-09-16 — ObservationBundle provider CPU/static closure review 观察凭证 #2
 
 - `before_head=03991d413b70384b09c3333fd14e236ffe0b1460`；fetch 成功；advertised/tracking=`03991d413b70384b09c3333fd14e236ffe0b1460`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。

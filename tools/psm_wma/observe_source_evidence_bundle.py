@@ -144,18 +144,43 @@ def assemble_constructor_bundle(bundle: Mapping[str, object]) -> dict[str, objec
     return _json.loads(raw)
 
 
+def observation_to_bundle(template: Mapping[str, object], observation: Mapping[str, object],
+                         *, formal_root: str, child_gitlink: str) -> dict[str, object]:
+    """Deterministically bind observed identities into a complete constructor template."""
+    if set(template) != {"schema", "formal_root", "child_gitlink", "authority", "source", "executor",
+                          "producer", "record", "receipt", "publication", "root_audit", "preflight",
+                          "execution", "sha256"} or set(observation) != {"root", "files", "target_paths", "argv",
+                                                                         "sanitized_env_sha256", "git"}:
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: observation/template contract mismatch")
+    git = observation["git"]
+    if not isinstance(git, Mapping) or set(git) != {"head_revision", "index_tree_native_oid", "ref_revision", "blob_oids"}:
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: git observation missing")
+    result = json.loads(json.dumps(template))
+    result["formal_root"] = formal_root
+    result["child_gitlink"] = child_gitlink
+    result["executor"]["cwd"] = str(Path.cwd())
+    result["executor"]["argv"] = list(observation["argv"])
+    result["executor"]["sanitized_env_sha256"] = observation["sanitized_env_sha256"]
+    result["preflight"]["head_revision"] = git["head_revision"]
+    result["preflight"]["index_tree_native_oid"] = git["index_tree_native_oid"]
+    result["authority"]["local_ref_revision"] = git["ref_revision"]
+    result["authority"]["remote_ref_revision"] = git["ref_revision"]
+    result["sha256"] = ""
+    return result
+
+
 def observe_and_assemble(*, root: Path, files: Mapping[str, Path], target_paths: Iterable[Path],
                          argv: list[str], env: Mapping[str, str], env_allowlist: Iterable[str],
                          git_repo: Path, git_ref: str, git_paths: Iterable[str],
-                         bundle_builder) -> dict[str, object]:
+                         bundle_template: Mapping[str, object], formal_root: str,
+                         child_gitlink: str) -> dict[str, object]:
     """Run one read-only observation and deterministically validate its flat bundle."""
-    if not callable(bundle_builder):
-        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: bundle builder required")
     observation = observe_bundle(root=root, files=files, target_paths=target_paths,
                                 argv=argv, env=env, env_allowlist=env_allowlist,
                                 git_repo=git_repo, git_ref=git_ref, git_paths=git_paths)
     try:
-        bundle = bundle_builder(observation)
+        bundle = observation_to_bundle(bundle_template, observation,
+                                       formal_root=formal_root, child_gitlink=child_gitlink)
     except Exception as exc:
         raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: bundle assembly failed") from exc
     if not isinstance(bundle, Mapping):
