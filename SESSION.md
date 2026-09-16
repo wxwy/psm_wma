@@ -8685,3 +8685,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修改：`observe_source_evidence_bundle.py` 增加独立 `git_remote_ref` 只读观测；local/remote ref 分开写入，远端缺失编码为 `ABSENT`，并绑定 `preflight.absent_refs`。
 - 测试：新增远端正例；provider/constructor `16/16 PASS`，py_compile、diff-check PASS。
 - 下一步：提交新 formal root，申请 DS closure review；未执行 instance 写入、source I/O 或训练。
+
+## 2026-09-16 — remote ref closure review 送达回执
+
+- formal root=`78231622d5071cb12f8a711cd51461e0da008317`；child=`93a89ba61306d840a008813f62f26a34d54850f4`；申请已追加 Inbox 并推送。
+- DS=`ds:0.0` 已完成 send-keys-l→间隔 1 秒→独立 Enter→capture；capture 显示正确 pair 的完整申请已进入会话。
+- 当前状态：DS 已送达、处理中；无 final verdict。未执行 instance 写入、source I/O 或训练。
