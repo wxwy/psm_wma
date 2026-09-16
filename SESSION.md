@@ -8060,3 +8060,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新 formal pair=`ec6fd6b1650d9372034c6cb386c74748e51a6326` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。
 - Inbox append 前=`63025` bytes，追加后约=`64300` bytes，未触发 rollover；MM/DS 均完成 `send-keys -l`、间隔 1 秒、独立 Enter、capture 送达回执。
 - 申请范围为整改后的 CPU/static closure；未授权真实 source/record/publication I/O、GPU 或训练。下一步重新执行完整 exact-pair 观察。
+
+## 2026-09-16 — producer/closure remediation 观察凭证 #3 / REQUEST_CHANGES
+
+- `before_head=580d698adea58508b289bd0274425a418a975446`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`580d698adea58508b289bd0274425a418a975446`；新增为空；merge=`Already up to date.`
+- formal pair=`ec6fd6b1650d9372034c6cb386c74748e51a6326` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:726)`，复现 record↔receipt digest 漂移未被拒绝。
+- 本轮无 closure 推进令牌；仅允许针对该意见最小修复后新 root 重审；未执行真实 I/O、publication、GPU 或训练。
