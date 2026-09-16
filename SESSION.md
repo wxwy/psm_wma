@@ -7836,3 +7836,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM/DS 均完成新申请的 send-keys-l、独立 Enter、capture 送达回执。
 - DS 当前 capture 中的 `REQUEST_CHANGES` 仍明确锚定旧 v1.2 root=`7796d054...`，不能升级为 v1.3 结论；v1.3 尚无 DS final。MM 当前也尚无 v1.3 final。
 - 未物化、未写 authority ref、未启动 GPU/训练；继续等待 v1.3 exact-pair final。
+
+## 2026-09-16 — v1.3 materialization review 观察凭证 #2
+
+- `before_head=1fc819960e433e594b67d9f92ed8e01d5c03477e`；fetch/ls-remote 成功，advertised/tracking 一致；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 无 v1.3 root 命中。
+- MM=`mm:0.0` capture 成功并给出 `APPROVE_TO_MATERIALIZE`，确认 v1.3 JSON/MD identity、launcher/bootstrap/tool closure、helper environment、四项当前 suffix absence 与 10/10 测试均通过；指出 preflight 第 5/6 项仍引用 v1.1，为文档瑕疵。
+- DS=`ds:0.0` capture 成功：v1.3 JSON/MD byte-identical 重算、helper environment accepted、adapter barrier fix present、10/10 测试 PASS；截至 capture 尚未出现 v1.3 literal final verdict。
+- 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 GPU/训练。
