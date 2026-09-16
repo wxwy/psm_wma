@@ -540,6 +540,13 @@
 - DS-only per user instruction; forbidden: real instance write, source I/O, GPU/CUDA/torchrun and training.
 - requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_PROVIDER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — ObservationBundle provider remediation DS review
+
+- formal root: `134a1f44e80bd1d359f81cd156872b8ea4623d6c`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- remediation: added ten-section contract, `BLOCKED_AUTHORITY_NOT_CLOSED`, read-only Git metadata (HEAD/clean index tree/ref/blob OID), and fail-closed metadata combination.
+- evidence: 12/12 joint unittest PASS, py_compile PASS, git diff --check PASS; no real source/cache reads or instance writes.
+- DS-only per user instruction. requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_PROVIDER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — source-evidence real-output write authorization DS review
 
 - implementation authority: writer closure `944c8119b9fda15d4edc7475e7384cbb0712253f`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
