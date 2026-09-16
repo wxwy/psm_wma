@@ -7831,6 +7831,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS=`ds:0.0` capture 成功，已读取 v1.5 pair 并处理中，未出现 final literal verdict。
 - 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 child/runtime/config、GPU、训练、评测或推理。
 
+## 2026-09-16 — v1.6 materialization review 观察凭证 #2
+
+- `before_head=fe87836ce7a30c1fbb346a219547a56c49478f1e`；fetch/ls-remote 成功，advertised/tracking 均为 `fe87836ce7a30c1fbb346a219547a56c49478f1e`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 检索 `rg -l -F 'cb6b675edc2ef4b019c1be4901c062a598fec271' docs/collab/chatgpt/reviews`，结果为空。
+- 冻结 pair：root=`cb6b675edc2ef4b019c1be4901c062a598fec271`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a6`；JSON SHA=`cf72d5be120923dec093fcdea56b5c130563efc9f4a40fd71674c09b1080419`；MD SHA=`228e534ddb521b53cf37eeb7c58a54ab1ab82ef3ffa53f48c13bba09f03d5e18`。
+- MM=`mm:0.0` capture 成功，已读取 v1.6 并处理中，未出现 final literal verdict；DS=`ds:0.0` capture 成功，已读取 v1.6 并处理中，未出现 final literal verdict。
+- 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 child/runtime/config、GPU、训练、评测或推理。
+
 ## 2026-09-16 — v1.3 materialization review 观察凭证 #3
 
 - `before_head=4b314800a6ec2d8e8254a54d9b634e1e24de2d3e`；`git fetch origin V2`、`git ls-remote origin refs/heads/V2` 成功，advertised/tracking 均为 `4b314800a6ec2d8e8254a54d9b634e1e24de2d3e`；`before_head..origin/V2` 为空；正向 ancestor=0；`git merge --ff-only origin/V2`=`Already up to date.`
