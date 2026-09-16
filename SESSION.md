@@ -9732,6 +9732,89 @@ bash examples/launch_sft_action_policy_libero_edge_all.sh
 
 **D8b（全程 5000 步，≈11.8 天）待 D8a 通过后再议。**
 
+### D8a 已暂停 + 发现 `DISABLE_AUTO_RESUME=1` 是假开关（2026-09-16 20:55）
+
+**状态修正（重要）**：上一段的 D8a **已于 20:49 主动终止**（用户决定暂停，
+交 Codex 审核并继续构建）。当前 **GPU 空闲、无训练进程**（exit 137 = SIGKILL）。
+⟹ 上一段「已启动」不再描述现状，D8a **尚未真正完成**。
+
+#### 缺陷：`DISABLE_AUTO_RESUME=1` 从未生效
+
+**现象**：D8a 带 `DISABLE_AUTO_RESUME=1` 启动，launcher 打印了
+`>>> FRESH start (DISABLE_AUTO_RESUME=1; ignoring .../checkpoints)`，
+但训练**实际从输出目录 resume**，第一条日志是 `iteration=2` 而非 1。
+
+**证据**（`outputs/train/logs/action_policy_libero_edge_all_localmem_active_sft.log`）：
+
+```
+2845 dcp.py:787 Resuming ckpt .../checkpoints/iter_000000001 (same-job, local)
+     with keys: ['dataloader', 'model', 'optim', 'scheduler', 'trainer']
+2855 dcp.py:861 - Loading the optimizer...
+2861 dcp.py:887 - Loading the trainer...
+2862 dcp.py:944 Loaded checkpoint from .../iter_000000001 (same-job, local) in iteration 1
+2876 grad_clip: 32.50000 (iteration 2)
+2877 iteration=2 | train/loss=1.720772 | ... | perf/microbatches=128
+```
+
+**根因（两层，互相独立）**：
+
+1. **launcher 层**：`examples/launch_sft_action_policy_libero_edge_all.sh:104-106`
+   的 `DISABLE_AUTO_RESUME=1` 分支**只有一行 `echo`** —— 不清 `CHECKPOINT_ROOT`、
+   不改写 `checkpoint.load_path`、不关 `load_training_state`。对比 `else`
+   （auto-resume）分支会 `TAIL_OVERRIDES+=("checkpoint.load_path=..."
+   "checkpoint.load_training_state=True")`。**⟹ 该开关从未起过作用。**
+
+2. **框架层**：`cosmos_framework/checkpoint/dcp.py:711-735`
+   `keys_to_resume_during_load()` 的优先级：
+   - **优先级 1**：`latest_checkpoint.txt` 存在 ⟹ `_same_job_load_source()`，
+     `resume_keys.extend(self.CHECKPOINT_KEYS)` —— **无条件加载全部 5 个 keys，
+     完全绕过 `load_training_state`**（注释原文：`# 1. Resume training from the
+     latest checkpoint of the same model.`）
+   - **优先级 2**：否则才走 `load_path` warm-start，**此时 `load_training_state`
+     才起作用**。
+
+   ⟹ `config.yaml:29` 的 `load_training_state: false` 在优先级 1 下**无效**；
+   `config.yaml:28` 的 `load_path=.../Cosmos3-Edge-Policy-DROID-dcp` 根本没被走到。
+   **唯一控制点是 `save_dirname/latest_checkpoint.txt`。**
+
+**为何 D7 诊断跑"看似生效"**：它用 `OUTPUT_ROOT=outputs/train_diag2`（新目录，
+无 `latest_checkpoint.txt`）⟹ **巧合 fresh，不是开关起作用**。
+
+**影响**：
+- 本次：`iteration` 从 2 起（只跑 99 步）；optimizer/scheduler/warm-up 进度继承自
+  旧 1 步 ckpt。科学影响 ≈ 1 步，但**不可复现**（依赖旧产物存在）。
+- 通用：任何"想 fresh 重跑"的实验都会**静默 resume**，且 launcher 打印**误导性**的
+  `FRESH start`。判定依据若只看 launcher 输出会被骗。
+- **不影响 D8b**：D8b 本应从 D8a 产物续训，same-job resume 正是期望行为。
+
+**修复方向（3 选 1，待 Codex 决策；改前须先确认未与用户对 `outputs` 的禁改约束冲突）**：
+- A. launcher 在 `DISABLE_AUTO_RESUME=1` 时把 `$CHECKPOINT_ROOT/latest_checkpoint.txt`
+  改名（可逆、不删）；首次 save 会重新写该文件 ⟹ 自愈。
+- B. 框架加配置键（如 `checkpoint.ignore_same_job_latest: bool`），在
+  `keys_to_resume_during_load()` 优先级 1 之前短路（改动面最大、最彻底）。
+- C. 不改代码，靠换 `OUTPUT_ROOT` 规避，并把该约束写进 launcher 注释/文档。
+
+#### 未提交的工作区修改（供 Codex 识别）
+
+`cosmos-framework/cosmos_framework/model/generator/mot/local_memory_segment_adapter.py`
+有**未提交**修改：`PSM_DIAG_EVIDENCE=1` 门控的临时诊断探针
+（`_psm_diag_probe` / `_psm_diag_hook`，含 `PSM_DIAG_EVIDENCE` 检查）。
+**不设该变量则零行为改变**（D8a 启动时即未设）。用户 2026-09-16 决定**保留**。
+本文件「判据 2 决定性证据」段的全部数据即由它产出。
+
+#### 现状清单（供接手方核对）
+
+| 项 | 状态 |
+|---|---|
+| GPU | 空闲（0 MiB） |
+| 训练进程 | 无 |
+| D8a | **未完成**，需在干净起点重跑 100 步 |
+| 判据 2 | **PASS**（已提交 `64924b21`） |
+| bug 9 修复 | 已提交（子模块 `0babcd6`） |
+| 探针 | 保留、未提交、门控关闭 |
+| 未跟踪遗留 | `.authority-root-materialization-*`、`artifacts/g0/*_probe`、`outputs/*`、`results/*`、`examples/eval_libero_*` 等 —— **禁 add/reset/delete** |
+
+
 
 
 
