@@ -365,6 +365,15 @@
 - 修复：builder 现将 `--evidence-path` 绑定到全新 `authority_root_materialization_evidence_a1c4e7f.json`，并以 `fd2feba7…` 候选根重建 pair；保留 FD8 inheritable 修复。
 - CPU static builder tests 5/5 PASS；请求 MM/DS exact-pair final verdict。ChatGPT 暂停，禁止 materialization/GPU/training。
 
+## 2026-09-16 — Stage-1 pair construction approval request
+
+- Gate：`G0-R09-B-TTT-V035-STAGE1-REQUEST-PAIR-CONSTRUCTION`。
+- Formal root：`8f170771e7a351ba99a3d656d2dc8d100e0f61e6`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 已完成：独立 producer CLI、事务发布核心、环境 allowlist；producer+builder `10/10 PASS`，`py_compile` 与 `git diff --check` PASS。
+- 请求范围：仅批准一次使用明确冻结 payload 生成并验证一份新的 JSON/Markdown request pair；不批准 materialization、authority ref、source-evidence、GPU、torchrun、训练、评测或推理。
+- 验收重点：producer 不修改 builder 纯函数合同；拒绝 divergent/symlink/secret environment；发布失败回滚；输出 byte/SHA/blob/pair identity 可复核。
+- 请求 verdict：`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` 或 `REQUEST_CHANGES(file:line)`。
+
 ## 2026-09-16 — GPT 建议请求：恢复 Stage-1 推进路径
 
 - 当前根仓提交：`b57ad447c90317d48a21132f2d249ce9608c48e9`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
