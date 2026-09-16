@@ -9870,3 +9870,40 @@ diag2 的三次启动（`:132`、`:699`、`:832`）全部为 `keys: ['model']` +
 补充证据：主日志 `:2519`（20:06:08）已是 `(same-job, local)` 全 5 key ⟹ 该故障早于 D7 的 1 步跑，非 D8a 特有。
 
 **仍未验证的一点**：site 2（`omni_mot_model.load_pretrained_model_if_needed` 的 HF seed 分支）没有对应日志行，其判据仅由代码路径推断；但 diag2 能到达 `iteration 0` 且 loss 正常下降，说明 warm-start 整体路径工作正常。
+
+### D8a 干净起点已就绪：`latest_checkpoint.txt` 已改名（2026-09-16 21:22，用户授权）
+
+用户决策：**只改名，暂不启动**（训练启动权保留给 Codex/后续指令）。
+
+执行（可逆，未删任何数据）：
+
+```bash
+cd cosmos-framework/outputs/train/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints
+mv latest_checkpoint.txt latest_checkpoint.txt.pre_d8a
+```
+
+核验：
+
+| 项 | 结果 |
+|---|---|
+| `latest_checkpoint.txt` | **已不存在** ✓ ⟹ 两处判据同时翻转（`dcp.py:724` 落到 warm-start 分支；`base.py:202 has_resumable_checkpoint()=False`） |
+| `latest_checkpoint.txt.pre_d8a` | 内容保留 = `iter_000000001` ✓ |
+| `iter_000000001/` | 完好（model/optim/scheduler/trainer）✓ |
+| `iter_000000001_prefix9/` | 未动 ✓ |
+| GPU / 进程 | 执行前已核对：空闲、无训练进程 ✓ |
+
+**恢复方法**：`mv latest_checkpoint.txt.pre_d8a latest_checkpoint.txt`
+
+**注意**：一旦启动训练并在 `save_iter` 存了 ckpt，`_write_latest_checkpoint_file()`
+（`base.py:206` / `dcp.py:1078`）会**重新生成** `latest_checkpoint.txt` —— 这是正确行为
+（后续真 resume 需要它），但意味着**下次想再要干净起点需再次改名**。
+
+**训练未启动**：本步只做准备，未执行任何 torchrun/GPU 操作。
+
+#### 顺带发现（待查，不阻塞，超出本次授权范围）
+
+active 与 baseline 的 ckpt 目录里**都没有 `dataloader/`**（active = model/optim/scheduler/trainer；
+baseline `edge_libero_4in1/checkpoints/iter_000000200` = model/scheduler/trainer），但
+`dcp.py:787` 每次 resume 都**请求**了 `'dataloader'` key。说明该 key 缺失时加载被容忍或跳过。
+若属实，则 resume 不恢复 dataloader 位置（对 warm-start 语义无影响，但真 resume 会有数据顺序差异）。
+**未进一步核实**，仅记录观察。
