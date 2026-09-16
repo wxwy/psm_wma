@@ -7748,3 +7748,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增 `produce_pair()` 薄封装：校验非密 environment，复用 `build_pair()`/`verify_pair()`，再调用已验证发布事务；不复制 canonical 构造逻辑。
 - producer+builder 测试共 10/10 PASS；`py_compile`、`git diff --check` PASS。
 - 仍未生成正式 request pair；没有 materialization 或训练授权。
+
+## 2026-09-16 — producer orchestrator 入口
+
+- 新增 CLI：`produce_stage1_request_pair.py --payload <冻结JSON> --json <输出JSON> --markdown <输出MD>`；只读取调用者提供的 payload，复用 `produce_pair()`，不访问 Git/网络/凭据。
+- 验证：producer+builder 10/10 PASS，`py_compile`、`git diff --check` PASS。
+- 该入口仍只负责 pair 发布，不授权 materialization、authority ref 或训练。

@@ -6,6 +6,8 @@
 from __future__ import annotations
 
 import hashlib
+import argparse
+import json
 import os
 import stat
 import tempfile
@@ -54,6 +56,22 @@ def produce_pair(
     verify_pair(json_path, json_raw, markdown_raw)
     publish_verified_pair(json_path, markdown_path, json_raw, markdown_raw)
     return json_raw, markdown_raw
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="publish one frozen Stage-1 request pair")
+    parser.add_argument("--payload", type=Path, required=True)
+    parser.add_argument("--json", dest="json_path", type=Path, required=True)
+    parser.add_argument("--markdown", dest="markdown_path", type=Path, required=True)
+    args = parser.parse_args()
+    payload = json.loads(args.payload.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise PairPublicationError("payload must be an object")
+    produce_pair(args.json_path, args.markdown_path, payload)
+
+
+if __name__ == "__main__":
+    main()
 
 
 def _digest(raw: bytes) -> str:
