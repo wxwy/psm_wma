@@ -419,3 +419,13 @@
 - 允许范围：按 exact pair 执行一次 authority-root/local CAS 与固定 authority ref 事务，生成 materialization evidence。禁止 retry、child/runtime/config 修改、source-evidence、GPU/CUDA、torchrun、训练/评测/推理；失败必须保留证据并回滚。
 - 审核重点：确认 `--no-thin` 对 remote CAS push/delete 的最小修复、lease/readback/rollback 不变、exact root/child/pair 绑定及 one-shot 边界。
 - Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`。
+
+## 2026-09-16 — Stage-1 v1.8 materialization review request
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-ROOT-MATERIALIZATION-V18`；ChatGPT advice-only；冻结 MM=`mm:0.0`、DS=`ds:0.0`。
+- Formal root: `35837c584b48315f8cda2c346d7e40ec08470942`；child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`。
+- v1.7 唯一物化已在 `remote_cas` 失败并完整回滚。根因已定位为 bootstrap 丢失 `GIT_CONFIG_COUNT/GIT_CONFIG_KEY_0/GIT_CONFIG_VALUE_0`，导致已授权 `gh auth git-credential` 未传入 adapter；v1.8 将该三项纳入 bootstrap 冻结 ENV，同时保留 `--no-thin`。
+- v1.8 pair: `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v1.8.json` / `.md`；JSON SHA-256=`6e16e0736a45f1061ed5f1bc8b895bbe13e4115d65b185536c37b7741b8bd0df`；MD SHA-256=`a1fb9079f3b6d7db3881f95d3941289f0d61c7f55b1689f45b2b045b647be476`；clean suffix=`e8c7b2a8`。
+- 请求范围：仅批准一次 v1.8 authority-root/local CAS 与固定 authority ref 事务；失败保留 evidence 并回滚。禁止 retry、child/runtime/config 修改、source-evidence、GPU/CUDA、torchrun、训练/评测/推理。
+- 审核重点：exact root/child/pair 绑定、bootstrap helper 环境传递、`--no-thin`、lease/readback/rollback 与 one-shot 边界。
+- Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`。
