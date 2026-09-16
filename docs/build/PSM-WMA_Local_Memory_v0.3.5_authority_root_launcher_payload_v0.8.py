@@ -100,7 +100,7 @@ def boot(s):
     source = run(s, "cat-file", "blob", oid).decode(); tree = ast.parse(source); node = next((x for x in tree.body if isinstance(x,ast.FunctionDef) and x.name=="bootstrap_payload"),None)
     if node is None or not isinstance(node.body[-1],ast.Return): fail("bootstrap AST")
     value=node.body[-1].value; raw=(value.value if isinstance(value,ast.Constant) else "".join(x.value for x in value.elts)).encode()
-    if len(raw)!=7538 or digest(raw)!="7e1c0ecc2161984a88ea0d0eae82f9f7ced709ca919f0302f74a3a068e08c9b8": fail("bootstrap identity")
+    if len(raw)!=9661 or digest(raw)!="dac034ef323b4f5b9e7f3c9a64e000f94d1db789e0c08c33383e14c7a0784faf": fail("bootstrap identity")
     return raw.decode()
 
 def absent(path):

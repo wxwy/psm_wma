@@ -137,7 +137,7 @@ def build_request_payload(
             "outer_bytes": len(launcher.outer),
             "outer_sha256": sha256(launcher.outer),
             "outer_git_blob_oid": git_blob_oid(launcher.outer),
-            "argv_prefix": ["/opt/conda/bin/python3", "-I", "-S", "-B", "-c"],
+            "argv_prefix": ["/opt/conda/bin/python3.11", "-I", "-S", "-B", "-c"],
             "inner_parser_argv": list(launcher.parser_items),
             "inner_parser_bytes": len(launcher.parser_argv),
             "inner_parser_sha256": sha256(launcher.parser_argv),
