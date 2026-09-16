@@ -7831,6 +7831,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS=`ds:0.0` capture 成功，已读取 v1.5 pair 并处理中，未出现 final literal verdict。
 - 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 child/runtime/config、GPU、训练、评测或推理。
 
+## 2026-09-16 — v1.6 materialization review 观察凭证 #3
+
+- `before_head=3161e433385b502cb029081515b106191d12de7b`；fetch/ls-remote 成功，advertised/tracking 均为 `3161e433385b502cb029081515b106191d12de7b`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 检索 `rg -l -F 'cb6b675edc2ef4b019c1be4901c062a598fec271' docs/collab/chatgpt/reviews` 结果为空；按本 Gate 冻结范围 ChatGPT advice-only，不作为 MM/DS materialization final。
+- 冻结 pair：root=`cb6b675edc2ef4b019c1be4901c062a598fec271`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a6`；JSON SHA=`cf72d5be120923dec093fcdea56b5c130563efc9f4a40fd71674c09b1080419`；MD SHA=`228e534ddb521b53cf37eeb7c58a54ab1ab82ef3ffa53f48c13bba09f03d5e18`。
+- MM=`mm:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`；DS=`ds:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`；两者均锚定上述 exact pair。
+- 本轮形成 MM/DS 执行令牌，仅授权一次 v1.6 authority-root materialization；未授权 retry、child/runtime/config、source-evidence、GPU、训练、评测或推理。
+
 ## 2026-09-16 — v1.6 materialization review 观察凭证 #2
 
 - `before_head=fe87836ce7a30c1fbb346a219547a56c49478f1e`；fetch/ls-remote 成功，advertised/tracking 均为 `fe87836ce7a30c1fbb346a219547a56c49478f1e`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
