@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import stat
 import tempfile
 from pathlib import Path
 
@@ -21,7 +22,7 @@ def _digest(raw: bytes) -> str:
 
 def _regular(path: Path) -> None:
     value = path.lstat()
-    if not value.is_file() or value.is_symlink():
+    if stat.S_ISLNK(value.st_mode) or not stat.S_ISREG(value.st_mode):
         raise PairPublicationError(f"unsafe pair path: {path}")
 
 

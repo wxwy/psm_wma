@@ -7734,4 +7734,5 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依据 GPT 建议新增 `tools/psm_wma/produce_stage1_request_pair.py`；保持 builder 无 I/O。
 - 当前实现仅接收已构造 bytes，拒绝 divergent existing pair，临时文件 fsync、发布后回读校验，并在失败时恢复旧 pair或清理新路径；不访问 Git/网络/凭据。
-- 验证：`py_compile` 与 `git diff --check` PASS；专用 producer failure-injection 测试尚未补齐，当前不具备 pair 生成或物化授权。
+- 首轮测试发现 `_regular()` 错用 `os.stat_result.is_file()`；已改为 `stat.S_ISREG/S_ISLNK`，修复后 producer+builder 共 8/8 PASS，`py_compile` 与 `git diff --check` PASS。
+- 当前仍未具备完整 pair 生成或物化授权；还需补齐失败注入、secret redaction、环境 allowlist 和实际 producer orchestrator。
