@@ -8092,3 +8092,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`7b3bf58b27a55b1220b86eeeccb1db5659dd0500` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
 - MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`。
 - 本轮确认 closure 推进令牌仍有效；Stage-2 request instance 尚未构造，未执行真实 source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — Stage-2 request instance schema design v0.1
+
+- 认领 Gate=`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-REQUEST-INSTANCE-SCHEMA-DESIGN`；预计修改仅为新增 docs/build schema 文件、`TODO.md`、`SESSION.md`。
+- 目的：冻结 Stage‑2 instance 的 exact 顶层 keys、authority/source/executor/producer/record/receipt/publication/root-audit/preflight/execution 字段来源与禁止范围；不创建 instance、不读取 source payload。
+- `git diff --check` 待提交前验证；下一步提交并申请 MM/DS/ChatGPT exact-pair docs review。
