@@ -7715,3 +7715,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修改范围：`tools/psm_wma/materialize_immutable_source_authority_root.py` 与对应 CPU 单测；隔离 env 增加 `GIT_CONFIG_COUNT/KEY_0/VALUE_0`，固定调用 `/usr/bin/gh auth git-credential`。
 - 验证：71/71 unittest PASS；py_compile PASS。首次 `-I -S` discover 因隔离 import path 报错，随后以 `PYTHONPATH=/disk/rl/psm_wma` 的等价 stdlib unittest 命令复验通过；子进程内部的 usage 输出为既有测试 fixture 行为，不影响 unittest 结果。
 - 下一步：提交该最小修复并以新 formal root、新 request pair 重新申请 MM/DS 审核；批准前不重试 materialization，不启动 source-evidence、GPU 或训练。
+
+## 2026-09-16 — request payload environment 绑定修复
+
+- 发现：`build_stage1_request_pair.py` 生成的 canonical `environment` 未同步 helper 的三项配置，直接重建会与实现环境不一致。
+- 修改：加入 `GIT_CONFIG_COUNT=1`、`GIT_CONFIG_KEY_0=credential.helper`、`GIT_CONFIG_VALUE_0=!/usr/bin/gh auth git-credential`；未写入任何凭据。
+- 验证：`test_build_stage1_request_pair` 5/5 PASS；`py_compile` PASS。
+- 下一步：提交并推送后，以新 formal root 重新生成 request pair、申请 MM/DS 审核；旧 pair 不再适用。

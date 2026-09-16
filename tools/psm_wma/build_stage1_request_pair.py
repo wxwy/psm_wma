@@ -124,9 +124,12 @@ def build_request_payload(
         "formal_root": inputs.formal_root,
         "child_gitlink": inputs.child_gitlink,
         "environment": {
+            "GIT_CONFIG_COUNT": "1",
             "GIT_CONFIG_GLOBAL": "/dev/null",
+            "GIT_CONFIG_KEY_0": "credential.helper",
             "GIT_CONFIG_NOSYSTEM": "1",
             "GIT_CONFIG_SYSTEM": "/dev/null",
+            "GIT_CONFIG_VALUE_0": "!/usr/bin/gh auth git-credential",
             "GIT_NO_REPLACE_OBJECTS": "1",
             "LANG": "C",
             "LC_ALL": "C",
