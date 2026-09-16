@@ -8067,3 +8067,8 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`ec6fd6b1650d9372034c6cb386c74748e51a6326` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
 - MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:726)`，复现 record↔receipt digest 漂移未被拒绝。
 - 本轮无 closure 推进令牌；仅允许针对该意见最小修复后新 root 重审；未执行真实 I/O、publication、GPU 或训练。
+
+## 2026-09-16 — record↔receipt 绑定整改完成
+
+- 在 `produce_source_package()` 内加入 `verify_source_evidence_record(record_raw, receipt)`，并补充伪造 `immutable_source_identifier` 的 fail-closed 测试；修正 fixture 使 descriptor digest 与 receipt/record 一致。
+- 验证：`/opt/conda/bin/python3 -m unittest tools.psm_wma.test_immutable_source_collection -q`=`57 tests, OK`；未提交。下一步提交新 formal root，重新申请 closure review。

@@ -737,6 +737,7 @@ def produce_source_package(*, receipt: Mapping[str, object], config_raw: bytes,
         raise CollectionError("source-evidence sibling 非 canonical bytes")
     if set(record) != set(SOURCE_EVIDENCE_RECORD_KEYS) or record.get("schema") != SOURCE_RECORD_SCHEMA:
         raise CollectionError("source-evidence record schema/key drift")
+    verify_source_evidence_record(record_raw, receipt)
     if not isinstance(formal_root, str) or len(formal_root) != 40 or any(char not in "0123456789abcdef" for char in formal_root):
         raise CollectionError("source-evidence formal root 无效")
     if not isinstance(child_gitlink, str) or len(child_gitlink) != 40 or any(char not in "0123456789abcdef" for char in child_gitlink):

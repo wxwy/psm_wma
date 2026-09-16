@@ -65,8 +65,6 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
     def test_source_evidence_record_package_witness_are_byte_bound(self) -> None:
         receipt = {"immutable_source_identifier": "a" * 64, "source_manifest_sha256": "b" * 64,
                    "source_input_sha256": "c" * 64, "checkpoint_source_descriptor_sha256": "d" * 64}
-        record_raw = produce_source_evidence_record(receipt)
-        verify_source_evidence_record(record_raw, receipt)
         config_raw = self.config_raw
         descriptor_raw = json.dumps({"schema": "root_gitlink_checkpoint_source_descriptor_v1",
                                      "source_kind": "checkpoint_source_manifest_v1",
@@ -76,6 +74,8 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
                                      "checkpoint_source_descriptor_sha256": "d" * 64}, sort_keys=True, separators=(",", ":")).encode()
         receipt = {**receipt, "canonical_model_config_sha256": hashlib.sha256(config_raw).hexdigest(),
                    "checkpoint_source_descriptor_sha256": hashlib.sha256(descriptor_raw).hexdigest()}
+        record_raw = produce_source_evidence_record(receipt)
+        verify_source_evidence_record(record_raw, receipt)
         package_raw, witness_raw = produce_source_package(receipt=receipt, config_raw=config_raw, descriptor_raw=descriptor_raw,
                                                           formal_root="e" * 40, child_gitlink="f" * 40, record_raw=record_raw)
         verify_source_package_and_witness(package_raw=package_raw, witness_raw=witness_raw, receipt=receipt,
@@ -86,6 +86,11 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
         with self.assertRaises(CollectionError):
             produce_source_package(receipt=receipt, config_raw=config_raw, descriptor_raw=descriptor_raw,
                                    formal_root="E" * 40, child_gitlink="f" * 40, record_raw=record_raw)
+        bad_record = json.loads(record_raw); bad_record["immutable_source_identifier"] = "9" * 64
+        with self.assertRaises(CollectionError):
+            produce_source_package(receipt=receipt, config_raw=config_raw, descriptor_raw=descriptor_raw,
+                                   formal_root="e" * 40, child_gitlink="f" * 40,
+                                   record_raw=json.dumps(bad_record, sort_keys=True, separators=(",", ":")).encode())
         activation = object(); handoff = produce_source_closure(receipt=receipt, config_raw=config_raw,
             descriptor_raw=descriptor_raw, formal_root="e" * 40, child_gitlink="f" * 40,
             record_raw=record_raw, activation=activation)
