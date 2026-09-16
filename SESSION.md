@@ -7928,3 +7928,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 根因定位：bootstrap 的隔离 `ENV` 丢失已授权的 `GIT_CONFIG_COUNT/GIT_CONFIG_KEY_0/GIT_CONFIG_VALUE_0`，导致 adapter 的 gh credential helper 未传入 Git 子进程；`--no-thin` 已保留但不足以认证远端。
 - 最小修复：`bootstrap_payload()` 将三项 helper 环境纳入冻结 ENV；提交=`6e8946e1`，已推送 `origin/V2`。py_compile 与 diff-check PASS；71 项测试首轮有一项 inode 时序失败，单测重跑 PASS。
 - v1.7 pair 已消耗，不得重试；下一步基于新 formal root 生成 v1.8 pair，重新取得 MM/DS exact-pair 审核后再物化。训练仍未启动。
+
+## 2026-09-16 — v1.8 materialization review 观察凭证 #1
+
+- `before_head=b0e11442f8be1e76e1fd496199b99b521a75286b`；fetch/ls-remote 成功，advertised/tracking 均为 `b0e11442f8be1e76e1fd496199b99b521a75286b`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 检索 formal root=`35837c584b48315f8cda2c346d7e40ec08470942`，结果 0 个匹配；本 Gate ChatGPT advice-only。
+- 冻结 pair：root=`35837c584b48315f8cda2c346d7e40ec08470942`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a8`。
+- MM=`mm:0.0` capture 成功，exact v1.8 申请已进入核验，尚无 v1.8 final literal verdict；DS=`ds:0.0` capture 成功，exact v1.8 申请已提交/处理中，尚无 v1.8 final literal verdict。
+- 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 source-evidence、GPU 或训练。
