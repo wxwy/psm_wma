@@ -79,6 +79,10 @@ class ObservationTests(unittest.TestCase):
             env_allowlist=[], git_repo=root, git_ref="HEAD", git_paths=["AGENTS.md"],
             bundle_template=bundle(), formal_root="a" * 40, child_gitlink="b" * 40)
         self.assertEqual(result["schema"], "root_source_evidence_closure_request_instance_v1")
+        self.assertEqual(result["executor"]["module_path"], str(root / "AGENTS.md"))
+        self.assertEqual(result["producer"]["module_path"], str(root / "AGENTS.md"))
+        self.assertEqual(result["root_audit"]["module_path"], str(root / "AGENTS.md"))
+        self.assertEqual(result["executor"]["cwd"], str(root))
 
     def test_observe_and_assemble_requires_git_observation(self):
         with tempfile.TemporaryDirectory() as root:

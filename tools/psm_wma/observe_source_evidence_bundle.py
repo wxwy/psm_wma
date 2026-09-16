@@ -110,6 +110,7 @@ def observe_bundle(*, root: Path, files: Mapping[str, Path], target_paths: Itera
     return {"root": {"path": str(root), "dev": root_stat.st_dev, "ino": root_stat.st_ino,
                       "mode": stat.S_IMODE(root_stat.st_mode), "uid": root_stat.st_uid, "gid": root_stat.st_gid},
             "files": identities, "target_paths": targets, "argv": list(argv),
+            "cwd": str(Path.cwd()),
             "sanitized_env_sha256": _env_digest(env, env_allowlist), "git": git_metadata}
 
 
@@ -150,21 +151,54 @@ def observation_to_bundle(template: Mapping[str, object], observation: Mapping[s
     if set(template) != {"schema", "formal_root", "child_gitlink", "authority", "source", "executor",
                           "producer", "record", "receipt", "publication", "root_audit", "preflight",
                           "execution", "sha256"} or set(observation) != {"root", "files", "target_paths", "argv",
-                                                                         "sanitized_env_sha256", "git"}:
+                                                                         "cwd", "sanitized_env_sha256", "git"}:
         raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: observation/template contract mismatch")
     git = observation["git"]
     if not isinstance(git, Mapping) or set(git) != {"head_revision", "index_tree_native_oid", "ref_revision", "blob_oids"}:
         raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: git observation missing")
     result = json.loads(json.dumps(template))
+    files = observation["files"]
+    if not isinstance(files, Mapping):
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: file observation missing")
+
+    def identity(*names: str) -> dict[str, object]:
+        for name in names:
+            value = files.get(name)
+            if isinstance(value, Mapping):
+                return dict(value)
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: observed file missing: {names[0]}")
+
+    def blob_for(file_identity: Mapping[str, object]) -> str:
+        path = str(file_identity["path"])
+        blobs = git["blob_oids"]
+        if path in blobs:
+            return str(blobs[path])
+        basename = Path(path).name
+        if basename in blobs:
+            return str(blobs[basename])
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: observed blob missing: {path}")
+
+    module = identity("module")
+    result["executor"]["module_path"] = module["path"]
+    result["executor"]["module_raw_sha256"] = module["raw_sha256"]
+    result["producer"]["module_path"] = module["path"]
+    result["producer"]["module_raw_sha256"] = module["raw_sha256"]
+    result["root_audit"]["module_path"] = module["path"]
+    result["root_audit"]["module_raw_sha256"] = module["raw_sha256"]
+    for section in ("executor", "producer", "root_audit"):
+        result[section]["module_blob_native_oid"] = blob_for(module)
+    result["executor"]["cwd"] = observation["cwd"]
+    result["executor"]["argv"] = list(observation["argv"])
+    result["executor"]["sanitized_env_sha256"] = observation["sanitized_env_sha256"]
     result["formal_root"] = formal_root
     result["child_gitlink"] = child_gitlink
-    result["executor"]["cwd"] = str(Path.cwd())
     result["executor"]["argv"] = list(observation["argv"])
     result["executor"]["sanitized_env_sha256"] = observation["sanitized_env_sha256"]
     result["preflight"]["head_revision"] = git["head_revision"]
     result["preflight"]["index_tree_native_oid"] = git["index_tree_native_oid"]
     result["authority"]["local_ref_revision"] = git["ref_revision"]
     result["authority"]["remote_ref_revision"] = git["ref_revision"]
+    result["preflight"]["absent_paths"] = list(observation["target_paths"])
     result["sha256"] = ""
     return result
 
