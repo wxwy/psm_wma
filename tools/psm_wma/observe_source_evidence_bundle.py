@@ -187,13 +187,35 @@ def observation_to_bundle(template: Mapping[str, object], observation: Mapping[s
     result["root_audit"]["module_raw_sha256"] = module["raw_sha256"]
     for section in ("executor", "producer", "root_audit"):
         result[section]["module_blob_native_oid"] = blob_for(module)
+
+    def bind_file(section: str, path_key: str, raw_key: str, oid_key: str, *names: str) -> None:
+        value = identity(*names)
+        result[section][path_key] = value["path"]
+        result[section][raw_key] = value["raw_sha256"]
+        result[section][oid_key] = blob_for(value)
+
+    if any(name in files for name in ("selection", "selection_path")):
+        selection = identity("selection", "selection_path")
+        result["authority"]["selection_path"] = selection["path"]
+        result["authority"]["selection_raw_sha256"] = selection["raw_sha256"]
+        result["authority"]["selection_blob_native_oid"] = blob_for(selection)
+        result["source"]["selection_raw_sha256"] = selection["raw_sha256"]
+    if any(name in files for name in ("config", "config_path")):
+        bind_file("authority", "config_path", "config_raw_sha256", "config_blob_native_oid",
+                  "config", "config_path")
+    if any(name in files for name in ("interpreter", "interpreter_path")):
+        interpreter = identity("interpreter", "interpreter_path")
+        result["executor"]["interpreter_path"] = interpreter["path"]
+        result["executor"]["interpreter_raw_sha256"] = interpreter["raw_sha256"]
+    if "git" in files:
+        git_file = identity("git")
+        result["executor"]["git_path"] = git_file["path"]
+        result["executor"]["git_raw_sha256"] = git_file["raw_sha256"]
     result["executor"]["cwd"] = observation["cwd"]
     result["executor"]["argv"] = list(observation["argv"])
     result["executor"]["sanitized_env_sha256"] = observation["sanitized_env_sha256"]
     result["formal_root"] = formal_root
     result["child_gitlink"] = child_gitlink
-    result["executor"]["argv"] = list(observation["argv"])
-    result["executor"]["sanitized_env_sha256"] = observation["sanitized_env_sha256"]
     result["preflight"]["head_revision"] = git["head_revision"]
     result["preflight"]["index_tree_native_oid"] = git["index_tree_native_oid"]
     result["authority"]["local_ref_revision"] = git["ref_revision"]
