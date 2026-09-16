@@ -10098,3 +10098,33 @@ setsid nohup env PATH="$PWD/.venv/bin:$PATH" \
 
 **预计**：100 步 × 202.6 s ≈ **5.6 小时**；4 ckpt ≈ 25 GB（`/disk/rl` 余 137 T，不阻塞）。
 **D8b（全程 5000 步）待 D8a 通过后再议。**
+
+#### D8a 首行判据 PASS（2026-09-16 22:32，启动后 5 分钟）
+
+**这是本项目第一次 clean 起步的 active 训练**（20:43 那次因
+`DISABLE_AUTO_RESUME=1` 是假开关，静默 resume 成 `iteration=2`）。
+
+```
+22:28:24  dcp.py:787  Resuming ckpt .../Cosmos3-Edge-Policy-DROID-dcp
+                      (warm-start, local) with keys: ['model']
+22:28:31  dcp.py:944  Loaded checkpoint ... (warm-start, local) in iteration 0
+22:32:03  grad_clip.py:436  clip_grad_norm/video/global: 34.50000 (iteration 1)
+22:32:03  stdout_loss_logger.py:103  iteration=1 | train/loss=1.674389 |
+          perf/dataloader_wait_s=3.202487 | perf/model_compute_s=157.209019 |
+          perf/step_wall_s=206.343366 | perf/microbatches=128
+```
+
+| 判据 | 期望 | 实测 |
+|---|---|---|
+| 首行 iteration | `1` | **`1`** ✓ |
+| dcp 加载模式 | `(warm-start, local) keys: ['model']` | **完全一致** ✓ |
+| 起始迭代 | `iteration 0` | **`0`** ✓ |
+| 路线生效 | `microbatches=128` | **`128`** ✓ |
+| loss / grad_norm | finite | `1.674389` / `34.5` ✓ |
+
+**副产物：config dump 独立证实 `local_history_evidence_dim = 256`** —— 即上一段
+43,200 差额的根因，不再只依赖 tensor 形状反推。同批 dump 另确认
+`local_memory_dim = 32`（旧脚本这一项是对的）、`local_history_backend =
+'ttt_fast_weight'`、`load_vision_tokenizer = True`。
+
+`perf/step_wall_s = 206.34` ⟹ 100 步 ≈ **5.73 小时**，预计 **04:16 前后**完成。
