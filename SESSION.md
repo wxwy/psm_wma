@@ -7822,6 +7822,15 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 通过已授权的 GitHub 只读 API 核验：仓库 `wxwy/psm_wma` 当前账号 permissions=`admin/maintain/push`；`V2` branch protection 返回 `404 Branch not protected`；repository rulesets 为空。
 - 结论：v1.3 remote-CAS 失败不是当前账号无 push 权限，也不是 V2 branch protection/ruleset 拒绝；未执行任何远端写入。仍需新 pair/新一次性授权，并捕获真实 push 服务端响应后继续。
 
+## 2026-09-16 — v1.5 materialization review 观察凭证 #1
+
+- `before_head=458027da6ce0b693b8072642ff3089ecf3568b98`；fetch/ls-remote 成功，advertised/tracking 均为 `458027da6ce0b693b8072642ff3089ecf3568b98`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 检索命令 `rg -l -F 'cb6b675edc2ef4b019c1be4901c062a598fec271' docs/collab/chatgpt/reviews`，结果为空。
+- 冻结 pair：root=`cb6b675edc2ef4b019c1be4901c062a598fec271`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a5`；JSON SHA=`4553e21d5211d36aeb3a7020250fe2fa8e8f6c3350466377d40034c8391bf814`；MD SHA=`f57ea3a60b72321b1756c62d349371aa7d1ac5d5b9c3af324be267ffdd15c261`。
+- MM=`mm:0.0` capture 成功，已读取 v1.5 pair 并处理中，未出现 final literal verdict。
+- DS=`ds:0.0` capture 成功，已读取 v1.5 pair 并处理中，未出现 final literal verdict。
+- 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 child/runtime/config、GPU、训练、评测或推理。
+
 ## 2026-09-16 — v1.3 materialization review 观察凭证 #3
 
 - `before_head=4b314800a6ec2d8e8254a54d9b634e1e24de2d3e`；`git fetch origin V2`、`git ls-remote origin refs/heads/V2` 成功，advertised/tracking 均为 `4b314800a6ec2d8e8254a54d9b634e1e24de2d3e`；`before_head..origin/V2` 为空；正向 ancestor=0；`git merge --ff-only origin/V2`=`Already up to date.`
