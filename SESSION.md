@@ -8016,3 +8016,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Inbox append 前=`61949` bytes，当前=`63257` bytes，未触发 rollover；申请已绑定完整 root/child、证据、范围和 verdict。
 - MM 与 DS 均完成 `send-keys -l`→间隔 1 秒→独立 Enter→独立 capture；两 pane capture 均显示申请已离开输入框并进入审核会话。
 - 本申请仅请求 implementation closure；在同 pair 三方 final 前，不执行真实 source I/O、record/publication、GPU 或训练。
+
+## 2026-09-16 — producer/closure CPU/static implementation closure 观察凭证 #1
+
+- `before_head=de821aa9b68f042f2f8045bc702ba87a51dc67d0`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`de821aa9b68f042f2f8045bc702ba87a51dc67d0`；新增为空；merge=`Already up to date.`
+- formal pair=`3bf2427c28e69bb97c2bb2d192bee8c963471fc5` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 检索未找到；本 Gate ChatGPT advice-only。
+- MM=`mm:0.0` capture 成功，已逐项核验代码范围、blob identity、schema/key/digest、non-circular package/witness、one-shot handoff 与 57/57 测试事实；capture 截至本轮尚未出现 exact pair final verdict，状态为处理中。
+- DS=`ds:0.0` capture 成功，已进入 formal diff 核验；截至本轮尚未出现 exact pair final verdict，状态为处理中。
+- 本轮无 implementation closure 推进令牌；禁止接入 native main、真实 source I/O、record/publication、GPU 或训练。
