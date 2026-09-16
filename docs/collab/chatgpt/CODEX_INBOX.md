@@ -523,6 +523,15 @@
 - evidence: `git diff --check` PASS; no instance created; no checkpoint/manifest/data/cache payload read; no source/record/publication I/O; no GPU/CUDA/torchrun/training.
 - requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — request instance construction CPU/static implementation closure review
+
+- formal root: `32678cfa35fbc285b0aa2c53f000eb171c2fea8b`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- implementation: added `tools/psm_wma/build_source_evidence_closure_request_instance.py` and its stdlib test; constructor is in-memory only and verifies exact top-level schema, canonical terminal-LF JSON, self-excluding SHA-256, and fail-closed bytes.
+- evidence: 3/3 unittest PASS, py_compile PASS, git diff --check PASS.
+- forbidden: real instance/output writes, checkpoint/manifest/data/cache payload, source/record/publication I/O, GPU/CUDA/torchrun, training.
+- requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — construction implementation design remediation review
 
 - formal root: `3b2f3a70` (full root is the submitted commit); child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
