@@ -752,3 +752,18 @@
 - **测试缺口说明**：既有唯一涉及 slot 轮转的用例 `active_local_memory_driver_test.py:138` 用两个**不同** category（slots 0/1 分属 a/b），deficit 不等故 tie 不发生；生产形态 `b_stream=8`/4 categories 使同 category 恒有两条 slot，该分支此前从未被覆盖。
 - 范围：CPU-only，无 GPU/torchrun/训练/checkpoint 写入。子模块 `uv.lock` 为遗留 dirty 文件，未纳入提交。
 - 请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_WINDOW_SLOT_ROTATION` 或 `REQUEST_CHANGES(file:line)`。
+                                              设计（设计，送审）
+
+- formal root: `8bb48f3507dda24090de41bbc4208dfc9e4538aa`
+- child/Gitlink: `525f5066393cba044f00f1104b83f5eb424a9c49`
+- 设计路径：`docs/build/PSM-WMA_Local_Memory_v0.3.5_active_route_resume_wiring_design_v0.1.md`
+- Gate：`G0-R09-B-TTT-V035-ACTIVE-ROUTE-RESUME`
+- **状态：设计，尚无对应代码改动。** 当前 operative 行为是已落地的 fail-closed 守卫（见下）。
+- **缺口**：active 路线的数据进度状态完全不入 checkpoint —— driver 的 `_stream_index`/`_active_stream`/`_active_cursor`/`_window_index` 与 scheduler 的 `cumulative_valid_consumer_exposure`/`stable_slots`/`terminal_slots`/`admission_order`/`committed_identities`/queue 系列，在 `on_train_start` 里全部从零重建。而 model(597 keys)/optim(180)/LR-scheduler(6)/trainer(7) 均正常恢复 ⟹ **数据回退、模型前进**的语义错乱。对 5000 步（≈11.9 天，必然中断）不可接受。
+- **本次判定（推翻此前记录）**：本项**不是「机制未知需重新设计」，而是「接缝已完整建好、只差持久化接线」**。grep 核实：`CanonicalSegmentRuntimeOwner.snapshot()`（`canonical_segment_runtime.py:173-190`）与 `RankLocalSegmentScheduler.rebuild()`（`local_memory_segment.py:351-364`）**均已完整实现，但全仓零生产调用点**（`dcp.py:585`/`distributed.py:755` 的同名 `_rebuild` 是无关函数）。
+- **同时更正两条此前的错误判断**：① `on_load_checkpoint(model, state_dict={})`（`dcp.py:943`）拿到的是**空 dict**，源码注释明言该回调从未被使用；② 在 `on_save_checkpoint` 往 `to_save_dict` 新增顶层 key 会让 resume 直接 `raise ValueError(f"Invalid key: {key}. not support to resume.")`（`dcp.py:939`）。**真正机制**是 `_DataloaderWrapper`（`dcp.py:112-153`）的 `checkpoint_component="dataloader"` 槽；该槽在 action/libero 配置链上**为空**（`DataLoaderStateCallback` 只注册于 reasoner 系列），本设计将是它的第一个占用者。wrapper 在**存/取盘时**构造（`dcp.py:1120`/`:934`）并每次重新遍历 callbacks，故 driver 只需在 `attach()` 后具备该接口。
+- **无界列表的修剪证明**：`admission_order`/`committed_identities` 从不修剪，128 member/步 × 5000 步 = 每 rank 64 万条。此前记录的选项 (a)「排除二者（判定其为审计轨迹）」**已被证伪**——二者是活的守卫状态（`local_memory_segment.py:322-323`、`local_memory_segment_adapter.py:79`、`canonical_segment_runtime.py:86`/`:224` 均做成员判断）。**修剪安全的依据来自 `owner.snapshot()` 自身**：它只在 IDLE（窗口边界）可调用，`:181` 以 `committed_by_slot`（后写覆盖 = **每 slot 最近一条**）派生，`:182` 断言 `admission_order ⊆ committed_identities`，`:183-186` 要求 `committed_by_slot[slot]` 与 `stable_slots[slot]` 恰为 sidecar 的该 slot 已提交 identity ⟹ **resume 路径只咨询「每 slot 最近一条」，更早条目无任何读取点**。修剪只作用于 snapshot 输出，运行期活列表不修剪（`:86`/`:224` 的 skip/retry 守卫要求成员判断，而这些路径的 `_skipped_plan`/`_retry_plan` 均为内存态、resume 后为 None）。
+- **请裁定三点**：① §3 的修剪证明是否成立；② §4.3 的三项 fail-closed 校验（`_by_slot` 重建确定性、恢复点须为窗口边界、`window_index` 单调）是否充分、是否还有「半对半错」的静默通道未被拒绝；③ §4.4 —— 本设计落地后 `iteration > 0` 应从「一律拒绝」收敛为「load 成功则放行、失败则拒绝」，是否正确。
+- **验收判据**含 GPU 端到端 resume 短跑（跑至 `save_iter` → 杀进程 → auto-resume → 断言首窗 identity 序列与不中断跑的对应窗口一致、exposure 连续不归零）。
+- 范围：设计文档 + 后续 `active_local_memory_driver.py`/`local_memory_segment.py` 最小改动。不改 `GAWindowPlan`/`SegmentIdentity`/`SegmentBatch` ABI，不改 admit/commit/terminal_rebind 守卫，不新增 DCP 顶层 key。
+- 请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME` 或 `REQUEST_CHANGES(file:line)`。
