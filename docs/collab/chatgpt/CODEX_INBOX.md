@@ -532,6 +532,15 @@
 - forbidden: real instance/output writes, checkpoint/manifest/data/cache payload, source/record/publication I/O, GPU/CUDA/torchrun, training.
 - requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — construction CPU/static v0.2 amendment closure review
+
+- formal root: `0fc4217ba22dc31ed0ffaa131123cfc961755b3b`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- amendment: versioned v0.2 records memory-only construction boundary; implementation enforces nested exact keys/types, lowercase identities, ordered arrays, fixed package/witness keys, fixed execution order, and four-field `RECORD_KEYS[2:]` mapping.
+- evidence: 3/3 unittest PASS, py_compile PASS, git diff-check PASS; root pushed to origin/V2.
+- scope: CPU/static in-memory only; no instance/output write, source I/O, GPU or training.
+- requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — construction CPU/static remediation closure review
 
 - formal root: `9efafe212cda7ac38531503f1599a3c48deb94e4`
