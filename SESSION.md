@@ -8009,3 +8009,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 按 formal design `b1ae3b9685631204680f03eb421c85bff5d8cffa` 的批准范围，修改 `tools/psm_wma/immutable_source_collection.py` 与 `tools/psm_wma/test_immutable_source_collection.py`；新增 record/package/witness canonical bytes 构造、校验与 byte-bound 定向测试；未接入 native main，未执行真实 I/O。
 - 验证：`/opt/conda/bin/python3 -m unittest tools.psm_wma.test_immutable_source_collection -q`=`57 tests, OK`；目标文件 `py_compile` PASS；`git diff --check` PASS。
 - 当前状态：实现完成，准备提交新 formal root 并申请 implementation closure review；预计本步提交文件为上述两个 tools 文件、`TODO.md`、`SESSION.md`。
+
+## 2026-09-16 — producer/closure CPU/static implementation closure 审核送达
+
+- formal root=`3bf2427c28e69bb97c2bb2d192bee8c963471fc5`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。
+- Inbox append 前=`61949` bytes，当前=`63257` bytes，未触发 rollover；申请已绑定完整 root/child、证据、范围和 verdict。
+- MM 与 DS 均完成 `send-keys -l`→间隔 1 秒→独立 Enter→独立 capture；两 pane capture 均显示申请已离开输入框并进入审核会话。
+- 本申请仅请求 implementation closure；在同 pair 三方 final 前，不执行真实 source I/O、record/publication、GPU 或训练。

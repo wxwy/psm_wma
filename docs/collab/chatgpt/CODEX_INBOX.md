@@ -463,3 +463,14 @@
 - Acceptance: exact schema/key/digest/non-circular binding、raw-byte identity、one-shot handoff 与 fail-closed 矩阵；后续实现仅限 `tools/psm_wma/immutable_source_collection.py` 及其测试。
 - Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 - Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
+
+# 2026-09-16 — Source-evidence producer/closure CPU/static implementation closure review
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-CPU-STATIC-IMPLEMENTATION`
+- Formal root: `3bf2427c28e69bb97c2bb2d192bee8c963471fc5`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Changed files: `tools/psm_wma/immutable_source_collection.py`, `tools/psm_wma/test_immutable_source_collection.py`；bookkeeping `TODO.md`/`SESSION.md`。
+- Evidence: 57/57 collection tests PASS；target files `py_compile` PASS；`git diff --check` PASS。
+- Scope: record/package/witness canonical-byte construction and validation、digest/identity/non-circular binding、one-shot in-memory handoff；未接入 native main，未打开 source FD，未写 record/publication，未修改 authority ref/child/runtime，未使用 GPU/训练。
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+- Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
