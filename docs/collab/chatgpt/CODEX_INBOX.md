@@ -523,6 +523,14 @@
 - evidence: `git diff --check` PASS; no instance created; no checkpoint/manifest/data/cache payload read; no source/record/publication I/O; no GPU/CUDA/torchrun/training.
 - requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — real-output execution design v0.3 amendment review
+
+- formal root: `32e0486353754ff975c24f979076baf95f0d038a`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- amendment: replaces overwrite-prone publication with `os.link(..., follow_symlinks=False)` no-overwrite/EEXIST; staged and target modes are both `0644`; JSON then Markdown order and partial-publish terminal semantics are frozen.
+- scope: design-only; no instance write, source I/O, GPU or training.
+- requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_EXECUTION` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — real-output execution design v0.2 amendment review
 
 - formal root: `0ffe9597cdb8095ee9e9e0bb75a63aa3b66a7a2a`
