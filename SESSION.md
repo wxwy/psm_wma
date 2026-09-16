@@ -9379,3 +9379,57 @@ auto-resume 的 `CHECKPOINT_ROOT` 都写死成基线。后果有两层：
 
 已改为 `: "${TOML_FILE:=<基线>}"` 与 `: "${RUN_NAME:=edge_libero_4in1}"`，未设时行为
 逐字不变（DRY_RUN 已验证默认路径产出的 torchrun 命令与改动前一致）。
+
+## D7 训练有效性缺陷：TTT Local Memory 参数从未初始化（bug 9，2026-09-16）
+
+**现象**：D7 单窗口训练的工程维度全通过（128 成员 = `B_stream`8 × GA16、1 次
+optimizer update、`iter_000000001` 落盘、exit 0、无边界告警/Traceback/OOM），
+但 `iter_000000001/optim` 的 DCP 实测显示 20 个 slow 参数中 **18 个 `exp_avg` 恰为零**，
+只有 `local_memory2llm.bias` 与 `local_memory_modality_embed` 被更新，
+且两者 `exp_avg` 数值逐位相同（6.298830e-03）。
+
+**判据链**（Adam 只在该参数 `p.grad is not None` 时创建 state）：
+`local_memory2llm.weight.grad ≡ 0` 而同一 `Linear` 的 `.bias.grad ≠ 0`
+⟹ `∂L/∂W = grad_out ⊗ token ≡ 0` 且 `grad_out ≠ 0` ⟹ **token 逐元素恒为零**。
+权重与 bias 的 `exp_avg` 逐位相同是第二个独立签名（`hidden = projector(token) + embed`
+里两者受同一个 `Σgrad_out`）。
+
+**根因**：`Cosmos3VFMNetwork.init_weights` 只处理 `local_history_runtime`
+（`cosmos3_vfm_network.py:293`），而 active TTT 路线挂的是 `local_memory_runtime`
+（`omni_mot_model.py:441`，原为裸 `torch.nn.Module()` 容器）。该容器没有
+`reset_parameters`，`init_weights` 里的 `hasattr` 探针也命不中它。
+模型在 meta 上构造（`__init__` 里的 kaiming/zeros 在 meta device 上是 no-op），
+紧接着 `net.to_empty(device=DEVICE)` 故意丢弃 meta 初始化 —— 于是
+`evidence_encoder`(6) + `ttt_core`(11) 共 17 个参数停留在未初始化内存
+（本次运行实测恰为精确全零）。参数全零 ⟹ `key/query/value_proj` 输出全零、
+`_w0` 全零、`_fast_mlp(0, 0) = 0` ⟹ token ≡ 0 ⟹ 这 17 个参数的梯度恒为零。
+
+**为什么 `local_memory2llm.weight` 全零却不是缺陷**：`init_weights:284-291` 对
+`local_memory2llm.{weight,bias}` 与 `local_memory_modality_embed` 显式做**零初始化**，
+注释自述为 function-preserving 的「新引入干净条件」设计。该设计**要求 token ≠ 0**，
+否则 `∂L/∂W = grad_out ⊗ token` 永远为零、W 永远学不到 —— 这正是 bug 9 破坏的东西。
+
+**修复**（框架仓 3 文件）：
+- `local_evidence.py`：新增 `LocalMemoryRuntime` 容器，带与 `LocalHistoryRuntime`
+  对称的递归 `reset_parameters`（不引入新依赖、不新增接口）。
+- `omni_mot_model.py:441`：裸 `torch.nn.Module()` → `LocalMemoryRuntime(encoder, local_backend)`；
+  注册名 `evidence_encoder` / `ttt_core` 逐字不变，checkpoint 键名不受影响。
+- `cosmos3_vfm_network.py:296`：补 `if hasattr(self, "local_memory_runtime"): reset_parameters()`。
+
+**CPU 对照验证**（`/tmp/probe_bug9.py`，复现 meta → `to_empty` → `scan`）：
+修复前 token 0/16 步非零、17 个参数中 15 个零梯度；修复后 token 15/16 步非零
+（第 0 步是 S0 的 zero-fill，正确），17/17 参数有非零梯度（如
+`ttt_core.w0_fast_in_weight.grad` 4.697e+00、`evidence_encoder.visual_proj.weight.grad`
+1.505e+00）。仅 `evidence_encoder.norm.bias`（LayerNorm 标准 zero-init）与
+`ttt_core.slot_queries`（`k_local==1` 时显式 `zeros_`，设计如此）保持零。
+
+**回归**：相关 CPU 测试 222 passed / 5 failed；5 项全在 `ttt_lifecycle_test.py`，
+为既有陈旧断言（`runtime_evidence_steps` 字段已移除、`SELECTORS` 已改名为
+`local_memory_runtime.*`），与本次修复无关。其中
+`test_recipe_r09_b_ttt_selects_four_slow_groups_and_callback` 的实际值恰为
+`local_memory_runtime.evidence_encoder.`，反证修复方向正确。
+
+**教训**：`omni_mot_model.py:489` 的 `if DEVICE == Device.CUDA:` 门控意味着
+**D6 的 CPU/static smoke 根本走不到 `init_weights`** —— 纯 CPU 冒烟覆盖不到
+「仅 CUDA 执行」的初始化路径。此后任何新增子模块都必须在 CPU smoke 与
+CUDA init 两条路径上分别验证非零初始化。
