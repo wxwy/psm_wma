@@ -8402,6 +8402,53 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增临时 fixture 测试，确认批准文件名、JSON→Markdown 顺序及 staging 清理；未写真实 `docs/build` 产物、未执行 source I/O、GPU 或训练。
 - 验证：7/7 unittest PASS；py_compile PASS；git diff-check PASS。当前整改未提交，待新 formal root 申请 DS 复核。
 
+## 2026-09-16 — fixed-path publisher DS review 观察凭证 #1
+
+- `before_head=bb4f11fe6122bf5ac565a7284b05398c3208918e`；fetch 成功；advertised/tracking=`bb4f11fe6122bf5ac565a7284b05398c3208918e`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`152562f8ce50062169fa8644a4856bb2997966ad` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，已读取 fixed-path publisher diff，仍在复核，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 `docs/build` 产物、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — fixed-path publisher DS review 观察凭证 #2
+
+- `before_head=bb4f11fe6122bf5ac565a7284b05398c3208918e`；fetch 成功；advertised/tracking=`bb4f11fe6122bf5ac565a7284b05398c3208918e`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`152562f8ce50062169fa8644a4856bb2997966ad` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_real_output_execution_design_v0.1.md:6)`；要求先实现/审核 ObservationBundle provider（或已审等价只读程序）、消歧 pair-only 授权字面量、冻结 exact instance SHA/目标权限，并补真实路径 non-consuming preflight。
+- 经评估接受上述整改要求；当前不写真实产物、不执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — fixed-path publisher DS review 观察凭证 #2
+
+- `before_head=bb4f11fe6122bf5ac565a7284b05398c3208918e`；fetch 成功；advertised/tracking=`bb4f11fe6122bf5ac565a7284b05398c3208918e`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`152562f8ce50062169fa8644a4856bb2997966ad` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，正在核对 Inbox、SESSION 与授权范围，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 `docs/build` 产物、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider design DS review 观察凭证 #1
+
+- `before_head=83be5379783bed38573148c1f92a7043846b776e`；fetch 成功；advertised/tracking=`83be5379783bed38573148c1f92a7043846b776e`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`83be5379783bed38573148c1f92a7043846b776e` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，已核对 root/log/HEAD/child 与设计文件，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；provider 未实现，未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider design DS review 观察凭证 #2 / 推进令牌
+
+- `before_head=83be5379783bed38573148c1f92a7043846b776e`；fetch 成功；advertised/tracking=`83be5379783bed38573148c1f92a7043846b776e`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`83be5379783bed38573148c1f92a7043846b776e` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）；DS=`ds:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_PROVIDER`。
+- DS 非阻塞建议：显式引用 schema exact nested constraints；冻结只读 Git 接口及 fail-closed；明确 secret-free sanitized environment SHA。推进令牌仅授权 provider CPU/static implementation，不授权 request-instance 写入、source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider CPU/static implementation
+
+- 新增 `tools/psm_wma/observe_source_evidence_bundle.py` 及 stdlib 测试；实现 no-follow regular-file identity、fd read/hash、root/target snapshot、sanitized environment SHA 与 fail-closed 异常。
+- 测试覆盖 regular-file metadata、symlink 拒绝、existing target 拒绝、secret 不进入输出；仅 temporary fixture，不读取真实 source/cache，不写真实 instance。
+- 验证：10/10 联合 unittest PASS；py_compile PASS；git diff-check PASS。待提交新 formal root 后申请 DS-only implementation review。
+
+## 2026-09-16 — fixed-path publisher DS review 观察凭证 #3
+
+- `before_head=bb4f11fe6122bf5ac565a7284b05398c3208918e`；fetch 成功；advertised/tracking=`bb4f11fe6122bf5ac565a7284b05398c3208918e`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`152562f8ce50062169fa8644a4856bb2997966ad` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，正在检查 ObservationBundle/provider 与授权边界，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 `docs/build` 产物、未执行 source I/O、GPU 或训练。
+
 ## 2026-09-16 — real-output execution design v0.2 观察凭证 #1
 
 - `before_head=fefc06687ba101b0c5b599b1b225a866e9d7a7d7`；fetch 成功；advertised/tracking=`4f9f30015b3037d3caa83f2b5f24fbdd6be30bdb`；新增范围为空；本地包含远端，无分叉，未执行 merge。
