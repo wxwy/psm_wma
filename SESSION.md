@@ -7988,3 +7988,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM 送达回执：目标 pane=`mm:0.0`；使用 `send-keys -l`、间隔 1 秒、独立 Enter、独立 capture；capture 显示消息已离开输入框并进入会话。
 - DS 送达回执：目标 pane=`ds:0.0`；使用 `send-keys -l`、间隔 1 秒、独立 Enter、独立 capture；capture 显示消息已提交并保留在会话处理中。
 - 本申请等待 exact-pair 三方 final；未授权 producer/closure 实现、真实 I/O、publication、GPU 或训练。下一步按每三分钟原生轮询规则检查并记录完整观察凭证。
+
+## 2026-09-16 — producer/closure implementation design 观察凭证 #1
+
+- `before_head=18c5f1bfafbd548729c7882a8d9746c5eff2acce`；`git fetch origin V2`、`git ls-remote`、advertised/tracking 核对、完整 range、正向 ancestor 与 `merge --ff-only` 均成功；advertised=`18c5f1bfafbd548729c7882a8d9746c5eff2acce`；新增提交为空；merge=`Already up to date.`
+- formal pair=`b1ae3b9685631204680f03eb421c85bff5d8cffa` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 检索未找到匹配文件（ChatGPT advice-only）。
+- MM=`mm:0.0` capture 成功，exact pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`。
+- DS=`ds:0.0` capture 成功，已读取并核验设计内容，当前尚未出现该 exact pair 的 final verdict，状态为处理中。
+- 本轮无推进令牌；禁止修改 producer/closure 代码、真实 source I/O、record/publication、GPU 或训练。按三分钟原生轮询继续。
