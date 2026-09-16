@@ -8145,3 +8145,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC`。
 - DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_construction_implementation_design_v0.1.md:15)`；要求冻结 JSON/Markdown 输出路径、构造模块/入口与白名单、ObservationBundle 注入边界，以及 schema formal root/child 引用。
 - 本轮无推进令牌；依据同轮三方意见仅进行 docs-only 最小整改；未创建 instance，未执行 source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — construction implementation design remediation 审核送达
+
+- formal pair=3b2f3a7059f93b0a90d5ad7b101474b3a2c4cfb8 / child=93a89ba61306d840a008813f62f26a34d54850f4；冻结名册 MM=mm:0.0、DS=ds:0.0、ChatGPT（advice-only）。
+- Inbox 申请已提交；MM 与 DS 均完成 send-keys -l、间隔 1 秒、独立 Enter、capture。MM capture 显示更正后的 exact root 已进入 Working；DS capture 显示更正申请已提交并开始核验。
+- 首次发送文本含错误的非完整 root，已按送达失败恢复协议核对 Git 对象并只重发一次正确 full root；错误文本不计入审核 pair。
+- 当前仅等待该 exact pair final verdict；未创建 instance，未执行 source/record/publication I/O、GPU 或训练。
