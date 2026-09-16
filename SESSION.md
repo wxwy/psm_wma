@@ -10134,3 +10134,23 @@ CUDA context**。此前的「激活 ≈ 3.92 GiB」由此从跨跑推算升级�
 'ttt_fast_weight'`、`load_vision_tokenizer = True`。
 
 `perf/step_wall_s = 206.34` ⟹ 100 步 ≈ **5.73 小时**，预计 **04:16 前后**完成。
+
+#### TODO（阶段 B，待 D8a 完成后）：把 4012 MiB 再拆一层
+
+现状：`DeviceMonitor/` 目录**为空**（18:40 创建至今无文件），再次确认它不落盘
+（`device_monitor.py` 的 `log_prof_data` 整段包在 `if wandb.run:` 内，配置
+`wandb_mode="disabled"` ⟹ 无产物；且 `every_n=200` > 已跑步数）。
+
+三条可行手段，按侵入性排序：
+
+1. **让 `DeviceMonitor` 在 `wandb.run` 为 None 时也把同一份数据落盘到 `local_dir`
+   的 jsonl**（约 5 行，纯观测增强、不改训练语义）。**但需重启训练才生效**，
+   故不打断当前已健康推进的 D8a。
+2. **独立探针**：复用 `profile_r09_b_memory_phases.py` 的构造路径 + 真实 dataloader
+   取 1 个 batch，执行 1 次 forward/backward/step，逐子阶段记
+   allocated/reserved/peak。要拆出**纯前向激活**这是唯一干净口径。
+3. `torch.cuda.memory._record_memory_history()` + `_dump_snapshot()` 按调用栈聚合
+   （能进一步区分激活 / 临时 buffer / 库 workspace）。
+
+**判据**：手段 2 的 PASS = 同配置下 `max_memory_allocated` 增量 + 静态 7.605 GiB
+与 nvidia-smi 实测 11800 MiB 之差可解释（残差落在 CUDA context 的已知量级内）。
