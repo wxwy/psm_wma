@@ -110,12 +110,22 @@ class ObservationTests(unittest.TestCase):
         self.assertEqual(result["authority"]["selection_blob_native_oid"],
                          observation["git"]["blob_oids"]["AGENTS.md"])
 
+    def test_remote_ref_observation_is_separate_from_local_ref(self):
+        root = Path.cwd()
+        result = observe_and_assemble(
+            root=root, files={"module": root / "AGENTS.md"}, target_paths=[], argv=[], env={},
+            env_allowlist=[], git_repo=root, git_ref="HEAD", git_remote_ref="HEAD",
+            git_paths=["AGENTS.md"], bundle_template=bundle(), formal_root="a" * 40,
+            child_gitlink="b" * 40)
+        self.assertEqual(result["authority"]["local_ref_revision"], result["preflight"]["head_revision"])
+        self.assertNotEqual(result["authority"]["remote_ref_revision"], "ABSENT")
+
     def test_missing_observed_blob_fails_closed(self):
         observation = {"root": {}, "files": {"module": {"path": "module.py", "raw_sha256": "a" * 64}},
                        "target_paths": [], "argv": [], "cwd": "/tmp",
                        "sanitized_env_sha256": "b" * 64,
                        "git": {"head_revision": "c" * 40, "index_tree_native_oid": "d" * 40,
-                               "ref_revision": "e" * 40, "blob_oids": {}}}
+                       "ref_revision": "e" * 40, "remote_ref_revision": "ABSENT", "blob_oids": {}}}
         with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
             observation_to_bundle(bundle(), observation, formal_root="f" * 40, child_gitlink="0" * 40)
 

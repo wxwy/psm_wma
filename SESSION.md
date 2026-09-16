@@ -8665,3 +8665,23 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 目标 pane：DS=`ds:0.0`；发送时间：CST 2026-09-16；消息摘要：exact pair `decd2dd4`/`93a89ba6`、provider 整改、15/15 PASS、请求 APPROVE 或 REQUEST_CHANGES。
 - 已完成 `send-keys -l` → 间隔 1 秒 → 独立 Enter → `capture-pane`；capture 显示完整申请已离开输入框并进入 DS 会话处理。
 - 当前 pair 状态：DS 已送达、处理中；尚无最终 verdict。保持 REVIEW，禁止 instance 写入与训练。
+
+## 2026-09-16 — closure review 轮询观察凭证
+
+- `before_head=d934117513f3ed0ce4c2ecf5c962e8e4155116d5`；fetch 成功；advertised=`d934117513f3ed0ce4c2ecf5c962e8e4155116d5`，`origin/V2` 相同；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`decd2dd45dfe1e5a462ae4884abf2d9ab6387f4e` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 检索未找到。
+- DS=`ds:0.0` capture 成功，已看到当前 pair 的代码核对命令，状态为处理中，尚无 final verdict；ChatGPT advice-only 未找到；MM 已剔除。
+- 本轮无推进令牌；保持 REVIEW，未启动 instance 写入或训练。
+
+## 2026-09-16 — closure review 轮询观察凭证 2
+
+- `before_head=d934117513f3ed0ce4c2ecf5c962e8e4155116d5`；fetch 成功；advertised/`origin/V2`=`d934117513f3ed0ce4c2ecf5c962e8e4155116d5`；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`decd2dd45dfe1e5a462ae4884abf2d9ab6387f4e` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
+- DS=`ds:0.0` capture 成功，当前 pair 最终 verdict=`REQUEST_CHANGES`：remote ref 使用本地值伪造，且 `preflight.absent_refs` 未绑定；要求显式远端只读观测及正负 fixture。
+- ChatGPT advice-only 未找到；MM 已剔除。本轮未启动 source I/O、instance 写入或训练。
+
+## 2026-09-16 — remote ref 整改步骤
+
+- 修改：`observe_source_evidence_bundle.py` 增加独立 `git_remote_ref` 只读观测；local/remote ref 分开写入，远端缺失编码为 `ABSENT`，并绑定 `preflight.absent_refs`。
+- 测试：新增远端正例；provider/constructor `16/16 PASS`，py_compile、diff-check PASS。
+- 下一步：提交新 formal root，申请 DS closure review；未执行 instance 写入、source I/O 或训练。

@@ -51,7 +51,7 @@ def _env_digest(env: Mapping[str, str], allowed: Iterable[str]) -> str:
     return hashlib.sha256(json.dumps(safe, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
-def read_git_metadata(repo: Path, *, ref: str, paths: Iterable[str]) -> dict[str, object]:
+def read_git_metadata(repo: Path, *, ref: str, paths: Iterable[str], remote_ref: str | None = None) -> dict[str, object]:
     """Read fixed Git identities without fetch, mutation, or network access."""
     repo = Path(repo)
 
@@ -81,13 +81,26 @@ def read_git_metadata(repo: Path, *, ref: str, paths: Iterable[str]) -> dict[str
         if len(fields) != 4 or fields[1] != "blob":
             raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: blob identity missing: {path}")
         blobs[path] = fields[2]
+    try:
+        local_ref = run("rev-parse", ref)
+    except ObservationError:
+        local_ref = "ABSENT"
+    remote_revision = "ABSENT"
+    if remote_ref is not None:
+        try:
+            remote_output = run("ls-remote", str(repo), remote_ref)
+            remote_revision = remote_output.split()[0] if remote_output else "ABSENT"
+            if remote_revision != "ABSENT" and len(remote_revision) != 40:
+                raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: invalid remote ref identity")
+        except ObservationError:
+            remote_revision = "ABSENT"
     return {"head_revision": head, "index_tree_native_oid": index_tree,
-            "ref_revision": run("rev-parse", ref), "blob_oids": blobs}
+            "ref_revision": local_ref, "remote_ref_revision": remote_revision, "blob_oids": blobs}
 
 
 def observe_bundle(*, root: Path, files: Mapping[str, Path], target_paths: Iterable[Path],
                    argv: list[str], env: Mapping[str, str], env_allowlist: Iterable[str],
-                   git_repo: Path | None = None, git_ref: str = "HEAD",
+                   git_repo: Path | None = None, git_ref: str = "HEAD", git_remote_ref: str | None = None,
                    git_paths: Iterable[str] = ()) -> dict[str, object]:
     """Return an in-memory, payload-free observation bundle; never writes or mutates."""
     root = Path(root)
@@ -106,7 +119,7 @@ def observe_bundle(*, root: Path, files: Mapping[str, Path], target_paths: Itera
         raise ObservationError("root identity drift")
     git_metadata = None
     if git_repo is not None:
-        git_metadata = read_git_metadata(git_repo, ref=git_ref, paths=git_paths)
+        git_metadata = read_git_metadata(git_repo, ref=git_ref, remote_ref=git_remote_ref, paths=git_paths)
     return {"root": {"path": str(root), "dev": root_stat.st_dev, "ino": root_stat.st_ino,
                       "mode": stat.S_IMODE(root_stat.st_mode), "uid": root_stat.st_uid, "gid": root_stat.st_gid},
             "files": identities, "target_paths": targets, "argv": list(argv),
@@ -154,7 +167,7 @@ def observation_to_bundle(template: Mapping[str, object], observation: Mapping[s
                                                                          "cwd", "sanitized_env_sha256", "git"}:
         raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: observation/template contract mismatch")
     git = observation["git"]
-    if not isinstance(git, Mapping) or set(git) != {"head_revision", "index_tree_native_oid", "ref_revision", "blob_oids"}:
+    if not isinstance(git, Mapping) or set(git) != {"head_revision", "index_tree_native_oid", "ref_revision", "remote_ref_revision", "blob_oids"}:
         raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: git observation missing")
     result = json.loads(json.dumps(template))
     files = observation["files"]
@@ -219,7 +232,8 @@ def observation_to_bundle(template: Mapping[str, object], observation: Mapping[s
     result["preflight"]["head_revision"] = git["head_revision"]
     result["preflight"]["index_tree_native_oid"] = git["index_tree_native_oid"]
     result["authority"]["local_ref_revision"] = git["ref_revision"]
-    result["authority"]["remote_ref_revision"] = git["ref_revision"]
+    result["authority"]["remote_ref_revision"] = git["remote_ref_revision"]
+    result["preflight"]["absent_refs"] = [] if git["remote_ref_revision"] != "ABSENT" else ["remote"]
     result["preflight"]["absent_paths"] = list(observation["target_paths"])
     result["sha256"] = ""
     return result
@@ -228,12 +242,13 @@ def observation_to_bundle(template: Mapping[str, object], observation: Mapping[s
 def observe_and_assemble(*, root: Path, files: Mapping[str, Path], target_paths: Iterable[Path],
                          argv: list[str], env: Mapping[str, str], env_allowlist: Iterable[str],
                          git_repo: Path, git_ref: str, git_paths: Iterable[str],
+                         git_remote_ref: str | None = None,
                          bundle_template: Mapping[str, object], formal_root: str,
                          child_gitlink: str) -> dict[str, object]:
     """Run one read-only observation and deterministically validate its flat bundle."""
     observation = observe_bundle(root=root, files=files, target_paths=target_paths,
                                 argv=argv, env=env, env_allowlist=env_allowlist,
-                                git_repo=git_repo, git_ref=git_ref, git_paths=git_paths)
+                                git_repo=git_repo, git_ref=git_ref, git_remote_ref=git_remote_ref, git_paths=git_paths)
     try:
         bundle = observation_to_bundle(bundle_template, observation,
                                        formal_root=formal_root, child_gitlink=child_gitlink)
