@@ -8203,4 +8203,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依据 DS 对 `9efafe212cda7ac38531503f1599a3c48deb94e4` 的 REQUEST_CHANGES，补充 digest/revision lowercase hex、ordered string array、固定 execution order、package/witness key 集合及正确的四项 record mapping（含 immutable_source_identifier）校验。
 - 设计中的写盘延后已明确，但该变更仍需以版本化 amendment 记录后再申请审核；当前未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — construction CPU/static v0.2 amendment
+
+- 新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_construction_implementation_design_v0.2.md`，版本化记录 v0.1 写盘步骤延后至独立 real-output Gate。
+- 明确 `RECORD_KEYS[2:]` 四项 mapping、嵌套 exact/type/identity/array/order 校验与当前 implementation 白名单；未创建 instance，未执行真实写盘、source I/O、GPU 或训练。
 - 验证：3/3 unittest PASS、py_compile PASS、git diff --check PASS；下一步提交新 formal root并重新申请 closure review。
