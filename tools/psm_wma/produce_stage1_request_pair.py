@@ -29,7 +29,7 @@ _GH_ENV = {"GH_CONFIG_DIR": "/root/.config/gh"}
 def validate_pair_environment(environment: dict[str, str]) -> None:
     """验证 pair 中可公开记录的 Git 环境描述，不接收任何凭据。"""
     keys = frozenset(environment)
-    if _FORBIDDEN_ENV & keys or not _BASE_ENV <= keys or not keys <= _BASE_ENV | _HELPER_ENV:
+    if _FORBIDDEN_ENV & keys or not _BASE_ENV <= keys or not keys <= _BASE_ENV | _HELPER_ENV | _GH_ENV.keys():
         raise PairPublicationError("pair environment allowlist")
     if keys & _HELPER_ENV:
         descriptor = {
