@@ -10055,3 +10055,46 @@ P3 recurrent 的 314 逐位一致，证明两侧用的是同一套匹配逻辑
 
 20 个 tensor 的名字/形状/元素数明细存于
 `artifacts/g0/r09/b/memory_phases/memory_phases_selected_v1_active_vision0.json`。
+
+### D8a 重新启动（2026-09-16 22:27，用户授权「开启后续的构建和验证」）
+
+**前置自检（全部通过）**：
+
+1. **干净起点** —— `checkpoints/` 下**无** `latest_checkpoint.txt`，只有两个改名存档
+   （`latest_checkpoint.txt.pre_d8a` / `.prefix9`）。`iter_000000001/` 仍在，但会被
+   `DISABLE_AUTO_RESUME=1` 忽略。
+2. **dry-run 实证** —— `>>> FRESH start (DISABLE_AUTO_RESUME=1; ignoring .../checkpoints)`；
+   `>>> DRY_RUN overrides: trainer.max_iter=100 checkpoint.save_iter=25`，**不含**
+   `checkpoint.load_path=`；`torchrun --nproc_per_node=1 --master_port=50012`（单卡锁定）。
+   `DRY_RUN=1` 只把命令构造进 `TORCHRUN_COMMAND` 数组后 printf 并 `exit 0`，**不拉起
+   torchrun**（`_sft_launcher_common.sh:74-96`）。
+3. **GA 守卫已生效** —— active toml + `PSM_R09_B_TTT_ACTIVE_GA=16` 走 `grad_accum_iter=128`。
+
+**启动命令**（`setsid nohup` 脱离会话独立存活，stdout 落 `/tmp/d8a_launch_stdout.log`）：
+
+```bash
+cd /disk/rl/psm_wma/cosmos-framework
+setsid nohup env PATH="$PWD/.venv/bin:$PATH" \
+  LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
+  TOML_FILE=examples/toml/sft_config/action_policy_libero_edge_all_localmem_active.toml \
+  RUN_NAME=edge_libero_4in1_localmem_active \
+  OUTPUT_ROOT=outputs/train DISABLE_AUTO_RESUME=1 \
+  PSM_R09_B_TTT_ACTIVE=1 PSM_R09_B_TTT_ENABLED=1 \
+  PSM_R08_LOCAL_HISTORY_ENABLED=1 PSM_R09_B_TTT_ACTIVE_GA=16 \
+  EXTRA_TAIL_OVERRIDES="trainer.max_iter=100 checkpoint.save_iter=25" \
+  bash examples/launch_sft_action_policy_libero_edge_all.sh
+```
+
+启动后核实：launcher pid 898477、torchrun pid 898551、`--nproc_per_node=1`、
+`>>> FRESH start` 已打印、日志
+`outputs/train/logs/action_policy_libero_edge_all_localmem_active_sft.log`（基数 2877 行，
+`tee -a` 追加；**末尾那条 `iteration=2` 是 20:43 那次 resume 泄漏的遗留行，非本次**）。
+
+**判据** —— PASS：首行 `iteration=1` 且 dcp 打 `(warm-start, local) with keys: ['model']`；
+`perf/microbatches=128`；loss finite 且下降；`iter_000000025/50/75/100` 四目录齐全；
+显存 < 24 GiB；`clip_grad_norm` finite。FAIL：首行 `iteration=2` 或 `(same-job, local)`；
+`perf/microbatches=1`（路线静默降级）；OOM；loss NaN。BLOCKED：`latest_checkpoint.txt`
+重新出现；GPU 被占。
+
+**预计**：100 步 × 202.6 s ≈ **5.6 小时**；4 ckpt ≈ 25 GB（`/disk/rl` 余 137 T，不阻塞）。
+**D8b（全程 5000 步）待 D8a 通过后再议。**
