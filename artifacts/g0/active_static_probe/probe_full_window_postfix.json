@@ -1,0 +1,154 @@
+{
+  "b_stream": 8,
+  "clear_local_slow_grads": {
+    "cleared": 20,
+    "leftover": 0
+  },
+  "evidence": {
+    "action_abs_sum": 71.19012451171875,
+    "action_dim": 10,
+    "valid_steps": 15,
+    "visual_abs_sum": 254.1315460205078,
+    "visual_dim": 96
+  },
+  "ga": 16,
+  "grads": {
+    "groups": {
+      "local_memory2llm.": {
+        "missing": 0,
+        "nonzero": 2,
+        "params": 2
+      },
+      "local_memory_modality_embed": {
+        "missing": 0,
+        "nonzero": 1,
+        "params": 1
+      },
+      "local_memory_runtime.evidence_encoder.": {
+        "missing": 0,
+        "nonzero": 6,
+        "params": 6
+      },
+      "local_memory_runtime.ttt_core.": {
+        "missing": 0,
+        "nonzero": 11,
+        "params": 11
+      }
+    }
+  },
+  "latent_cache_root": "/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1",
+  "libero_root": "/disk/rl/data/LIBERO_LeRobot_v3",
+  "owner": {
+    "actual_n_valid": 16,
+    "locals_present": 15,
+    "member_index": 0,
+    "payloads": 16,
+    "phase": "PREPARED"
+  },
+  "result": "PASS",
+  "slow_inventory": {
+    "local_memory2llm.": 2,
+    "local_memory_modality_embed": 1,
+    "local_memory_runtime.evidence_encoder.": 6,
+    "local_memory_runtime.ttt_core.": 11
+  },
+  "stream_catalog": {
+    "per_category": {
+      "libero_10": 375,
+      "libero_goal": 424,
+      "libero_object": 449,
+      "libero_spatial": 428
+    },
+    "slots_used": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "streams": 1676
+  },
+  "suites": {
+    "libero_10": {
+      "action_dim": 10,
+      "episodes": 375,
+      "latent_cache_root": "/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_10",
+      "valid_samples": 94250
+    },
+    "libero_goal": {
+      "action_dim": 10,
+      "episodes": 424,
+      "latent_cache_root": "/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_goal",
+      "valid_samples": 44669
+    },
+    "libero_object": {
+      "action_dim": 10,
+      "episodes": 449,
+      "latent_cache_root": "/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_object",
+      "valid_samples": 59050
+    },
+    "libero_spatial": {
+      "action_dim": 10,
+      "episodes": 428,
+      "latent_cache_root": "/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_spatial",
+      "valid_samples": 45641
+    }
+  },
+  "ttt_tbptt_steps": 16,
+  "walk": {
+    "evidence_free_members": [],
+    "loss_first": 82.63216400146484,
+    "loss_last": 71.8981704711914,
+    "members": 128,
+    "phase_after_walk": "MEMBER_COMMITTED",
+    "rss_gb": 3.45947265625
+  },
+  "window": {
+    "attempt": 0,
+    "ga_effective": 128,
+    "per_category": {
+      "libero_10": 32,
+      "libero_goal": 32,
+      "libero_object": 32,
+      "libero_spatial": 32
+    },
+    "per_slot_blocks": {
+      "0": 16,
+      "1": 16,
+      "2": 16,
+      "3": 16,
+      "4": 16,
+      "5": 16,
+      "6": 16,
+      "7": 16
+    },
+    "plan_chain_id": "active-local-window-1",
+    "planned_n_valid": [
+      16
+    ],
+    "rebind_count": 12,
+    "rebind_positions": [
+      40,
+      50,
+      57,
+      60,
+      69,
+      70,
+      88,
+      99,
+      100,
+      113,
+      114,
+      125
+    ]
+  },
+  "window_closed": {
+    "scheduler_committed": 128,
+    "slow_grads_cleared": false,
+    "slow_optimizer_steps": 1
+  },
+  "window_members": 128
+}
