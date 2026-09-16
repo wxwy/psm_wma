@@ -7817,3 +7817,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功并给出 `APPROVE_TO_MATERIALIZE`，同时指出 pair `preflight.absent_paths` 的四项路径仍有旧 suffix `e8c7b2a2`，需修正/重新冻结。
 - DS=`ds:0.0` capture 成功：re-derived JSON/MD 均 byte-identical、helper environment accepted，但见证脚本在 adapter 检查处发生 `TypeError: 'in <string>' requires string as left operand, not bytes`，因此本轮 DS 状态为检查失败/状态未知，未形成 final verdict。
 - 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 GPU/训练。下一步修复 pair preflight suffix 与 DS witness 类型错误后重新生成新 pair并重审。
+
+## 2026-09-16 — preflight suffix 绑定修复
+
+- 修改 `build_stage1_request_pair.py`：根据 `inputs.clean_suffix` 机械重写 preflight 的四个运行时 absence 路径，且缺失四项时 fail-closed。
+- 更新 builder fixture 以覆盖该合同；builder+producer 测试 `10/10 PASS`，`py_compile`、`git diff --check` PASS。
+- 该修改使 v1.2 pair 失效；下一步提交新 root 后重新生成 pair并重审，未物化、未启动训练。

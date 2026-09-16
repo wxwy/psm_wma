@@ -116,6 +116,17 @@ def build_request_payload(
     """Build the complete reviewable payload from already-frozen bytes/facts."""
     if not preflight:
         raise ValueError("missing non-consuming preflight")
+    preflight = dict(preflight)
+    absent_paths = list(preflight.get("absent_paths", ()))
+    if len(absent_paths) < 4:
+        raise ValueError("missing preflight absence paths")
+    absent_paths[:4] = [
+        f"/disk/rl/psm_wma/.authority-root-materialization-{inputs.clean_suffix}",
+        f"/disk/rl/psm_wma/.authority-root-materialization-{inputs.clean_suffix}/.authority-root.index",
+        f"/disk/rl/psm_wma/artifacts/g0/r09/authority_root_materialization_evidence_{inputs.clean_suffix}.json",
+        f"/disk/rl/psm_wma/artifacts/g0/r09/authority_root_materialization_evidence_{inputs.clean_suffix}.json.pending",
+    ]
+    preflight["absent_paths"] = absent_paths
     base_identity = _identity(base, base_source)
     adapter_identity = _identity(inputs.adapter, adapter_source)
     outer = launcher.outer.decode("utf-8", "strict")

@@ -85,7 +85,7 @@ class BuildStage1RequestPairTest(unittest.TestCase):
                                         adapter, self.inputs.authority, self.inputs.collection, self.inputs.audit)
         launcher = builder.rebuild_launcher(base_raw, adapter_raw, inputs)
         payload = builder.build_request_payload(inputs, base, base_raw, adapter_raw, launcher,
-                                                b'{"selection":1}', b'{"config":1}', {"candidate_clean": True})
+                                                b'{"selection":1}', b'{"config":1}', {"candidate_clean": True, "absent_paths": ["a", "b", "c", "d"]})
         raw, markdown = builder.build_pair(Path("docs/build/request.json"), payload)
         builder.verify_pair(Path("docs/build/request.json"), raw, markdown)
         self.assertEqual(payload["formal_root"], "9" * 40)
