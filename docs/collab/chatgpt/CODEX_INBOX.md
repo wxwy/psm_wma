@@ -523,6 +523,15 @@
 - evidence: `git diff --check` PASS; no instance created; no checkpoint/manifest/data/cache payload read; no source/record/publication I/O; no GPU/CUDA/torchrun/training.
 - requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — construction CPU/static v0.3 amendment closure review
+
+- formal root: `e33c1c05013284039f82cd411a3398dceb45d781`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- amendment: adds five omitted 40-hex identity checks and freezes absent fixed-ref encoding as `ABSENT`.
+- evidence: 3/3 unittest PASS, py_compile PASS, git diff-check PASS; root pushed to origin/V2.
+- scope: CPU/static memory-only; no instance/output write, source I/O, GPU or training.
+- requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — request instance construction CPU/static implementation closure review
 
 - formal root: `32678cfa35fbc285b0aa2c53f000eb171c2fea8b`
