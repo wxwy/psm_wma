@@ -1338,9 +1338,26 @@ def _read_regular_fd(descriptor: int) -> bytes:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """禁止未绑定 request 的直接执行，保留可静态验证的 argv grammar。"""
-    _native_binding(_native_parser().parse_args(argv))
-    raise CollectionError("BLOCKED_AUTHORITY_NOT_CLOSED: 需要经审核的 execution request binding")
+    """执行已完整绑定的 source-evidence request；缺少任一绑定时 fail-closed。"""
+    args = _native_parser().parse_args(argv)
+    authority, lineage = _native_binding(args)
+    selection_raw = _read_regular_fd(args.selection_fd)
+    source_info = os.fstat(args.source_root_fd)
+    if not stat.S_ISDIR(source_info.st_mode):
+        raise CollectionError("source root FD 不是目录")
+    metadata = {
+        "execution": {"argv": list(argv if argv is not None else os.sys.argv[1:])},
+        "tool": {"git": str(args.git), "interpreter": os.sys.executable},
+        "environment": {"GIT_CONFIG_GLOBAL": "/dev/null", "GIT_CONFIG_NOSYSTEM": "1",
+                         "GIT_CONFIG_SYSTEM": "/dev/null", "GIT_NO_REPLACE_OBJECTS": "1",
+                         "LANG": "C", "LC_ALL": "C"},
+    }
+    git = NativeCollectionGit(args.git, args.cwd, args.remote, args.index, metadata)
+    root_fd = NativeRootFd(args.source_root_fd)
+    sink = AtomicFileEvidenceSink(args.evidence_path)
+    collect_synthetic(authority=authority, lineage=lineage, selection_request=selection_raw,
+                      git=git, root_fd=root_fd, sink=sink)
+    return 0
 
 
 if __name__ == "__main__":
