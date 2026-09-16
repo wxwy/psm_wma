@@ -13,7 +13,7 @@ def bundle():
     for name, keys in SECTION_KEYS.items():
         result[name] = {key: (["collection", "producer", "record", "receipt", "root_audit"] if name == "execution" and key == "order" else [] if key in ("keys", "callables", "argv", "order", "absent_paths", "absent_refs", "selected_paths", "package_keys", "witness_keys")
                         else False if key in ("zero_mutation", "one_shot", "no_retry", "pass_hard_stop")
-                        else {} if key == "source_digest_receipt_mapping" else ("a" * 64 if "sha256" in key else "b" * 40 if key in ("module_blob_native_oid", "selection_blob_native_oid", "candidate_revision", "parent_root_revision", "child_gitlink") else key))
+                        else {} if key == "source_digest_receipt_mapping" else ("a" * 64 if "sha256" in key else "b" * 40 if key.endswith("revision") or key.endswith("native_oid") or key in ("child_gitlink",) else key))
                            for key in keys}
     result["record"]["keys"] = list(RECORD_KEYS)
     result["record"]["source_digest_receipt_mapping"] = {key: key for key in RECORD_KEYS[2:]}

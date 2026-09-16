@@ -60,8 +60,10 @@ def _validate_sections(obj):
                     raise ValueError(f"{name}.{key}: boolean required")
             elif not isinstance(value, (str, bool, int, dict)):
                 raise ValueError(f"{name}.{key}: invalid value type")
-            elif isinstance(value, str) and ("sha256" in key or key in ("module_blob_native_oid", "selection_blob_native_oid", "candidate_revision", "parent_root_revision", "child_gitlink")):
+            elif isinstance(value, str) and ("sha256" in key or key in ("module_blob_native_oid", "selection_blob_native_oid", "config_blob_native_oid", "candidate_revision", "parent_root_revision", "child_gitlink", "local_ref_revision", "remote_ref_revision", "head_revision", "index_tree_native_oid")):
                 size = 64 if "sha256" in key else 40
+                if key in ("local_ref_revision", "remote_ref_revision") and value == "ABSENT":
+                    continue
                 if not re.fullmatch(r"[0-9a-f]{%d}" % size, value):
                     raise ValueError(f"{name}.{key}: lowercase hex identity required")
         if name == "publication" and (tuple(section["package_keys"]) != SOURCE_PACKAGE_KEYS or tuple(section["witness_keys"]) != SOURCE_WITNESS_KEYS):
