@@ -8948,3 +8948,83 @@ bind_active_local_memory_registry    -> 仅 trainer/__init__.py:764（定义）�
 （`:309`）恰好抑制了被 supersede 的 `TTTLifecycleCallback`——active 路线的装配
 callback 应注册在同一位置。可用钩子为 `Callback.on_train_start(model, iteration=0)`
 （`utils/callback.py:134`，trainer `:400` 调用），它带 model。
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ��么 slow 参数必须是全 4 组**：owner 在 scaler-skip 与全部 abort 路径上调用
+`clear_local_slow_grads()`（`canonical_segment_runtime.py:137/164/198/210`）。
+漏掉任何一组，该组会带着陈旧梯度进入下一个 window。
+
+**为什么每次调用都要重新校验绑定**：adapter 缓存挂在 `model._canonical_segment_adapter` 上，
+若注册模块在训练中被换掉，缓存会让训练静默继续用陈旧副本。重新校验使该情形 fail-closed
+（有对应单测 `test_adapter_rejects_a_swapped_registered_module`）。
+
+**为什么 window 大小现读而非构造期传入**：`on_train_start` 内直接读
+`trainer.config.trainer.grad_accum_iter`，与 trainer 两端夹逼的是同一个数，
+结构上不可能漂移。
+
+### config 侧接线（`action_policy_libero_edge_all.py`）
+
+- `_action_policy_libero_edge_dataloader()` 改为返回 `(loader, active_datasets)`。
+  **不能经 trainer 取数据集**：`dataloader_train` 是 `ImaginaireTrainer.train` 的局部变量
+  （`trainer/__init__.py:363`），不是属性，callback 拿不到。故在 config 期就把
+  **独立构造**的 dataset 节点（不与 loader 共享 OmegaConf 节点）交给 callback。
+- ACTIVE 下 `num_workers` 强制为 0：外层 batch 内容在 active 路线上不被消费
+  （`max_samples_per_batch=1`），12 个 fork worker 只会各持一份用不到的 suite 索引。
+- ACTIVE 分支（`grad_accum_iter` 之后）注册 `r09_b_active_wiring` callback。
+- `CanonicalLocalMemorySegmentProducer` 在 `on_train_start` 内**局部 import**，
+  避免 model → data 的 import 环。
+
+**provenance 现状（如实记录，非存证）**：callback 的 3 个 digest 由**真实输入派生**
+（`source_digest` 即 latent cache 根路径），是**可读标识而非哈希存证**。
+依据 2026-09-16 路线决策，provenance 已降级为并行/训练后补，此处记为欠账。
+
+### 回归结果与失败归类
+
+`cosmos_framework/model/generator/mot/` + `cosmos_framework/trainer/` 全量：
+
+| 轮次 | 结果 |
+|---|---|
+| 修复前 | 7 failed, 553 passed, 15 skipped, 327.16s |
+| 修复后（复跑中） | 预期 6 failed, 554 passed |
+
+**唯一真实回归**（本 Gate 早前改动引入，已修）：基类 `training_step` 现向 `_optimizer_step`
+传 `active_seal`（`trainer/__init__.py:636`），而 `DistillationTrainer` 的覆写签名未跟上
+→ `TypeError: unexpected keyword argument 'active_seal'`。修法为补齐形参并 fail-closed：
+蒸馏走 phase 循环，不持有 canonical Local-Memory window，**既不能 resolve 也不能 retire
+owner seal**；静默接受再丢弃会把 owner 永久留在 `SLOW_RESOLUTION_PENDING`。
+`distillation_test.py` = 29 passed。
+
+**6 项既存失败（不在授权范围，不修改，仅记录）**：
+
+```
+context_parallel_test.py::test_local_memory_packing_preserves_native_mrope_and_stays_clean
+ttt_lifecycle_test.py::test_recipe_r09_b_ttt_selects_four_slow_groups_and_callback
+ttt_lifecycle_test.py::test_recipe_r09_b_ttt_selector_covers_continual_core_not_readout
+ttt_lifecycle_test.py::test_model_config_ttt_field_defaults
+ttt_lifecycle_test.py::test_model_config_ttt_validators
+ttt_lifecycle_test.py::test_model_config_ttt_post_init_mutual_exclusion
+```
+
+**判定为 pre-existing 的依据**（非推断，为 git 取证）：这两个测试文件与其依赖的源码
+（`ttt_lifecycle.py`、`context_parallel.py`）最后一次改动均为
+`80aec09 feat: R09-B TTT v0.3.2 active wiring implementation`，
+而本 Gate 的 D 系列提交（`c85fecf` → `23252a4`）**从未触碰**这些文件。
+其中 `context_parallel_test.py:107` 断言的 `present.local_memory` 是被 v0.3.5 §18 /
+v0.3.6 显式 supersede 的 legacy row-wise 字段。
+
+### 新增测试
+
+`active_local_memory_launch_test.py` = **10 passed**（CPU-only、只读、未触发真实 I/O）。
+覆盖：runtime 缺失 fail-closed、adapter 绑定+缓存、非 canonical `feature_config` 拒绝、
+换掉注册模块后拒绝、slow 参数覆盖 4 组、router 按 category 派发+未知 suite 拒绝、
+router 拒绝宽度不一致、streams 轮询铺开+跳过过短 episode、`on_train_start` 装配
+（`window_members == 24`、`_callbacks == [driver]`、phase `IDLE`、二次调用 raise）、
+未绑定 trainer raise。
+
+`active_local_memory_driver_test.py` = **11 passed**（本 Gate 修复 driver 无法作为
+callback group 成员的缺陷时新增 1 项）。
+
+**该缺陷值得记下**：`CallBackGroup.__getattr__` 对每个成员硬断言
+`assert hasattr(callback, method_name)`，而 `ActiveLocalMemoryWindowDriver` 原为裸类、
+只实现 `on_training_step_batch_start`。`attach()` 后同一 `on_train_start` 循环即
+`AssertionError`。driver 自身单测用 `SimpleNamespace(_callbacks=[])` 故未暴露。
+修法：继承 `Callback` + `super().__init__()`，并加回归测试
+`test_driver_satisfies_every_callback_group_hook`。
