@@ -9851,3 +9851,22 @@ bash examples/launch_sft_action_policy_libero_edge_all.sh
 **未实测声明**：以上全部为**代码路径分析**（判据与行号已逐一 grep 核对），**没有实跑验证**。最小实证方式：干净起点启动后，`dcp.py:787` 打印的 keys 应为 `['model']` 而非 5 个，且首行日志为 `iteration=1`。
 
 **这也解释了为什么单独设 `load_training_state=false` 无效**：site1 的 same-job 分支根本不读它，而 site2 只看 latest_checkpoint.txt。
+
+### 方向 A 已获实证：D7 诊断跑日志即对照实验（2026-09-16 21:15）
+
+上一段的代码路径分析**已被本仓库既有日志实证**，无需再跑 GPU 验证：
+
+| 场景 | 日志证据 | 实际打印 |
+|---|---|---|
+| **有** `latest_checkpoint.txt`（当前故障态） | 主日志 `:2845` / `:2862` | `(same-job, local) with keys: ['dataloader','model','optim','scheduler','trainer']`，`in iteration 1` |
+| **无** `latest_checkpoint.txt`（= 方向 A 的预期态） | `outputs/train_diag2/logs/action_policy_libero_edge_all_localmem_active_sft.log:132` / `:141` | `.../Cosmos3-Edge-Policy-DROID-dcp (warm-start, local) with keys: ['model']`，`in iteration 0` |
+
+diag2 的三次启动（`:132`、`:699`、`:832`）全部为 `keys: ['model']` + `iteration 0`，**正是方向 A 想要的确切语义**：只载 `model`（warm-start），optim/scheduler/trainer/dataloader 全新，iteration 从 0 起。
+
+⟹ 判定升级：**方向 A 由「代码路径分析」升级为「本仓库日志实证」**。diag2 与目标态的唯一差别就是 save 目录里有没有 `latest_checkpoint.txt`，与两处判据（`dcp.py:724`、`base.py:202`）完全吻合。
+
+⟹ **并且方向 A 不需要改任何代码**：只需在启动前把 `$CHECKPOINT_ROOT/latest_checkpoint.txt` **改名**（如加 `.pre_d8a` 后缀），launcher 与 `dcp.py` 都无需改动。因此 B/C 的框架设计决策**不再阻塞 D8a**。
+
+补充证据：主日志 `:2519`（20:06:08）已是 `(same-job, local)` 全 5 key ⟹ 该故障早于 D7 的 1 步跑，非 D8a 特有。
+
+**仍未验证的一点**：site 2（`omni_mot_model.load_pretrained_model_if_needed` 的 HF seed 分支）没有对应日志行，其判据仅由代码路径推断；但 diag2 能到达 `iteration 0` 且 loss 正常下降，说明 warm-start 整体路径工作正常。
