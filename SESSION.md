@@ -8032,3 +8032,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`。
 - DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:726)`；意见为：producer/package 必须校验 receipt-bound config/descriptor digest，补 package/witness 对称 verifier 与 formal-root/child identity，补不可复制/不可序列化 one-shot producer handoff 及 fixture。
 - 本轮无 APPROVE 推进令牌；仅允许在同一 pair final 已齐后评估并最小整改，整改后必须生成新 formal root 重新审核；未执行真实 I/O、publication、GPU 或训练。
+
+## 2026-09-16 — producer/closure REQUEST_CHANGES 最小整改完成
+
+- 依据 DS `REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:726)`，补充 receipt-bound config/descriptor digest 校验、package/witness 对称 verifier，以及不可复制/不可序列化 `SourceEvidenceHandoff` 与 one-shot fixture；未接入 native main，未执行真实 I/O。
+- 修改文件：`tools/psm_wma/immutable_source_collection.py`、`tools/psm_wma/test_immutable_source_collection.py`。
+- 验证：57/57 tests PASS；目标文件 `py_compile` PASS；`git diff --check` PASS。未提交；下一步提交新 formal root 并重新申请三方 exact-pair closure review。

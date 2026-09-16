@@ -723,10 +723,11 @@ def verify_source_evidence_record(raw: bytes, receipt: Mapping[str, object]) -> 
         raise CollectionError("source-evidence record authority drift")
 
 
-def produce_source_package(*, config_raw: bytes, descriptor_raw: bytes, formal_root: str,
+def produce_source_package(*, receipt: Mapping[str, object], config_raw: bytes,
+                           descriptor_raw: bytes, formal_root: str, child_gitlink: str,
                            record_raw: bytes) -> tuple[bytes, bytes]:
     """从 sibling raw bytes 生成非循环 package 与 derived-only witness。"""
-    if not all(isinstance(value, bytes) for value in (config_raw, descriptor_raw, record_raw)):
+    if not isinstance(receipt, Mapping) or not all(isinstance(value, bytes) for value in (config_raw, descriptor_raw, record_raw)):
         raise CollectionError("source-evidence sibling 必须是 bytes")
     try:
         config = json.loads(config_raw); descriptor = json.loads(descriptor_raw); record = json.loads(record_raw)
@@ -738,6 +739,10 @@ def produce_source_package(*, config_raw: bytes, descriptor_raw: bytes, formal_r
         raise CollectionError("source-evidence record schema/key drift")
     if not isinstance(formal_root, str) or len(formal_root) != 40 or any(char not in "0123456789abcdef" for char in formal_root):
         raise CollectionError("source-evidence formal root 无效")
+    if not isinstance(child_gitlink, str) or len(child_gitlink) != 40 or any(char not in "0123456789abcdef" for char in child_gitlink):
+        raise CollectionError("source-evidence child Gitlink 无效")
+    if receipt.get("canonical_model_config_sha256") != _digest(config_raw) or receipt.get("checkpoint_source_descriptor_sha256") != _digest(descriptor_raw):
+        raise CollectionError("source-evidence receipt sibling digest 漂移")
     package = {"schema": SOURCE_PACKAGE_SCHEMA, "canonical_model_config": config,
                "checkpoint_source_descriptor": descriptor, "source_evidence_root_revision": formal_root,
                "source_evidence_record_path": SOURCE_RECORD_PATH,
@@ -751,6 +756,57 @@ def produce_source_package(*, config_raw: bytes, descriptor_raw: bytes, formal_r
                "source_evidence_record_sha256": _digest(record_raw),
                "source_evidence_record_schema": SOURCE_RECORD_SCHEMA}
     return package_raw, _canonical(witness)
+
+
+class SourceEvidenceHandoff:
+    """producer 输出的不可复制、不可序列化的一次性 raw-byte handoff。"""
+
+    def __init__(self) -> None:
+        raise CollectionError("source-evidence handoff 只能由 producer 创建")
+
+    def __reduce_ex__(self, protocol: int) -> object:
+        raise CollectionError("source-evidence handoff 不允许序列化或复制")
+
+    def take(self, activation: object) -> tuple[bytes, bytes]:
+        if activation is not self._activation or self._used:
+            raise CollectionError("source-evidence handoff activation 无效或已消费")
+        self._used = True
+        return self._package_raw, self._witness_raw
+
+
+def produce_source_closure(*, receipt: Mapping[str, object], config_raw: bytes,
+                           descriptor_raw: bytes, formal_root: str, child_gitlink: str,
+                           record_raw: bytes, activation: object) -> SourceEvidenceHandoff:
+    package_raw, witness_raw = produce_source_package(receipt=receipt, config_raw=config_raw,
+                                                       descriptor_raw=descriptor_raw,
+                                                       formal_root=formal_root,
+                                                       child_gitlink=child_gitlink,
+                                                       record_raw=record_raw)
+    handoff = object.__new__(SourceEvidenceHandoff)
+    handoff._activation = activation
+    handoff._used = False
+    handoff._package_raw = package_raw
+    handoff._witness_raw = witness_raw
+    return handoff
+
+
+def verify_source_package_and_witness(*, package_raw: bytes, witness_raw: bytes,
+                                      receipt: Mapping[str, object], config_raw: bytes,
+                                      descriptor_raw: bytes, formal_root: str,
+                                      child_gitlink: str, record_raw: bytes) -> None:
+    expected_package, expected_witness = produce_source_package(
+        receipt=receipt, config_raw=config_raw, descriptor_raw=descriptor_raw,
+        formal_root=formal_root, child_gitlink=child_gitlink, record_raw=record_raw)
+    if package_raw != expected_package or witness_raw != expected_witness:
+        raise CollectionError("source-evidence package/witness identity drift")
+    for raw, keys, schema in ((package_raw, SOURCE_PACKAGE_KEYS, SOURCE_PACKAGE_SCHEMA),
+                              (witness_raw, SOURCE_WITNESS_KEYS, SOURCE_WITNESS_SCHEMA)):
+        try:
+            value = json.loads(raw)
+        except (TypeError, ValueError, UnicodeError) as exc:
+            raise CollectionError("source-evidence closure JSON 无效") from exc
+        if set(value) != set(keys) or value.get("schema") != schema or _canonical(value) != raw:
+            raise CollectionError("source-evidence closure schema/key drift")
 class OneShotHandoff:
     """同一次 executor activation 内的一次性能力；不提供公共 payload 构造入口。"""
 
