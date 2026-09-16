@@ -10204,3 +10204,39 @@ CUDA context**。此前的「激活 ≈ 3.92 GiB」由此从跨跑推算升级�
 active 是 09-16 —— **不是同一次对照实验**。同环境（`PWD`/`IMAGINAIRE_OUTPUT_ROOT`/
 `.venv`/输出目录完全一致）、同卡型、同为单卡是强证据，但不足以排除机器负载差异。
 **要坐实 1.77 这个数，需在 D8a 完成后做一次 baseline 短跑同机对照。**
+
+#### 每 microbatch 样本数 = 16，且 16 就是 `ttt_tbptt_steps`（2026-09-16 23:29，代码核实）
+
+**问题**：active 的 `perf/microbatches=128` 与 `ttt_tbptt_steps=16` 是什么关系？
+（曾误推为 `128/16 = 8`。）
+
+**结论：是乘法不是除法，每 microbatch = 16 样本，且这 16 正是 `ttt_tbptt_steps`。**
+
+代码证据链（三行定论）：
+
+```python
+# active_local_memory_driver.py:206     每 member 的样本数 = ttt_tbptt_steps
+planned = int(self.producer.ttt_tbptt_steps)
+# active_local_memory_driver.py:244     所有 members 同值
+planned_n_valid=tuple(planned for _ in identities),
+# active_local_memory_launch.py:246     members 数 = grad_accum_iter
+window_members = int(trainer.config.trainer.grad_accum_iter)
+```
+
+支撑定义：`local_memory_segment.py:130` `ga_effective = len(self.members)`；
+`:126` `n_window = sum(planned_n_valid)`（**整步总样本数**，权威口径）；
+`:136` loss 按 `planned_n_valid[index] / n_window` 加权。
+`canonical_segment_adapter_scheduler.py:37` `planned_n_valid =
+consumer_step_stop_exclusive - consumer_step_start`。
+`local_evidence.py:647` `segment length must be in [1, ttt_tbptt_steps]`
+（16 是上限，driver 每步用满）。
+
+| 量 | active | baseline | 来源 |
+|---|---:|---:|---|
+| microbatch 次数 / 步 | 128 | 16 | `grad_accum_iter` |
+| **样本 / microbatch** | **16** | **128** | `ttt_tbptt_steps` / `max_samples_per_batch` |
+| **样本 / 步** | **2048** | **2048** | 128 × 16 / 16 × 128 |
+
+⟹ 印证了 GA 守卫注释的 `128 members x 16 consumers`。**「128/16=8」没有对应物理量**
+—— 两个量是同一乘积的两项。**上表第一行与第二行不可跨路线直接相除**，只有归一化到
+每样本（76.8 vs 43.4 ms）才可比。
