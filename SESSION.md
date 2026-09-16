@@ -7722,3 +7722,16 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修改：加入 `GIT_CONFIG_COUNT=1`、`GIT_CONFIG_KEY_0=credential.helper`、`GIT_CONFIG_VALUE_0=!/usr/bin/gh auth git-credential`；未写入任何凭据。
 - 验证：`test_build_stage1_request_pair` 5/5 PASS；`py_compile` PASS。
 - 下一步：提交并推送后，以新 formal root 重新生成 request pair、申请 MM/DS 审核；旧 pair 不再适用。
+
+## 2026-09-16 — GPT 处理建议回收
+
+- 远端同步后收到正式建议：`docs/collab/chatgpt/reviews/2026-09-16_stage1_pragmatic_pair_producer_advice_b57ad44_93a89ba.md`，状态明确为 `ADVICE ONLY / NON-APPROVAL`。
+- 建议评估：采纳新增独立 `produce_stage1_request_pair.py` 与独立 producer CPU/static witness；保留 `build_stage1_request_pair.py` 纯字节、无 I/O 合同。采纳 helper 的 canonical key 为 `credential.https://github.com.helper`，冻结 `/usr/bin/gh` 非密身份，不记录凭据字节。
+- 不采纳/禁止：把 I/O 写入 builder、把 token 或 `gh auth` 原始输出写入 pair/evidence/log、将该建议当作 materialization 或训练批准。
+- 下一步：实现 producer 与测试，验证事务回滚、no-follow、secret redaction、环境 allowlist 和 bootstrap/native-Git 环境分裂；随后以新 formal root/pair 重新申请物化审核。
+
+## 2026-09-16 — producer 事务核心实现
+
+- 依据 GPT 建议新增 `tools/psm_wma/produce_stage1_request_pair.py`；保持 builder 无 I/O。
+- 当前实现仅接收已构造 bytes，拒绝 divergent existing pair，临时文件 fsync、发布后回读校验，并在失败时恢复旧 pair或清理新路径；不访问 Git/网络/凭据。
+- 验证：`py_compile` 与 `git diff --check` PASS；专用 producer failure-injection 测试尚未补齐，当前不具备 pair 生成或物化授权。
