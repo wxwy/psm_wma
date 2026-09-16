@@ -7823,3 +7823,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修改 `build_stage1_request_pair.py`：根据 `inputs.clean_suffix` 机械重写 preflight 的四个运行时 absence 路径，且缺失四项时 fail-closed。
 - 更新 builder fixture 以覆盖该合同；builder+producer 测试 `10/10 PASS`，`py_compile`、`git diff --check` PASS。
 - 该修改使 v1.2 pair 失效；下一步提交新 root 后重新生成 pair并重审，未物化、未启动训练。
+
+## 2026-09-16 — v1.3 request pair 构造完成
+
+- 绑定 formal root=`0fd4f179e49943718cd484f2bb7a74d26619e8ad`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a4`。
+- JSON 38852 bytes，SHA-256=`174463aa6f26628e0af4c380a5635fdc1b070e1a3425572d856d987fb0bb53b4`；Markdown 340 bytes，SHA-256=`8d3eb29cab670ddafa80b261553a5418d7513d123ca1fc8c42823b895fbd2340`。
+- 使用完整 40 位 root 通过 `rebuild_launcher`，`produce_pair` 与 `verify_pair` PASS；未物化、未写 authority ref、未启动 GPU/训练。
