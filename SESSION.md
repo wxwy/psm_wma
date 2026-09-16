@@ -7966,3 +7966,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - exact ChatGPT review 检索命令：`rg -l -F 'e2c8337bcfb43b4aa53e697d58cefa8e3c6c6b78' docs/collab/chatgpt/reviews/`；结果未找到匹配 formal review；本 Gate ChatGPT advice-only。
 - MM=`mm:0.0` capture 成功，exact pair literal verdict=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；DS=`ds:0.0` capture 成功，锚定同一 exact pair 的 literal verdict=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`，并提出非阻塞的 main 入口测试建议。
 - 三方冻结名册对同一 pair 的最终结果齐全，形成推进令牌；仅授权该审核申请明确的 CPU/static real-binding implementation 范围，不授权真实 source I/O、publication、GPU、训练、评测或推理。此前实现已完成，下一步构造独立 Stage-2 source-evidence execution request；本轮未执行 source I/O 或训练。
+
+## 2026-09-16 — real-binding CPU/static 观察凭证 #2
+
+- 冻结名册：MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）；formal root=`e2c8337bcfb43b4aa53e697d58cefa8e3c6c6b78`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- `before_head=56ab9b35b086a18a35df2bf08f18cb06332e3f70`；fetch、advertised/tracking 核对、完整新增提交范围、正向 ancestor 与 ff-only 均成功；advertised=`56ab9b35b086a18a35df2bf08f18cb06332e3f70`；无新增提交；merge=`Already up to date.`
+- exact ChatGPT review 检索未找到匹配 formal root；本 Gate ChatGPT advice-only。
+- MM=`mm:0.0` capture 成功，exact pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`，MEDIUM 建议不构成阻塞。
+- 本轮复验命令 `/opt/conda/bin/python3 -m unittest tools.psm_wma.test_immutable_source_collection -q`，`Ran 56 tests ... OK`。推进令牌仍仅限 CPU/static implementation；未执行真实 source I/O、publication、GPU 或训练。
