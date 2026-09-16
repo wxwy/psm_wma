@@ -666,3 +666,12 @@
 - evidence: 5/5 unittest PASS, py_compile PASS, git diff --check PASS.
 - scope: temporary fixture only; no real instance, source I/O, GPU/CUDA/torchrun or training.
 - requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+## 2026-09-16 — observation bundle provider closure review (DS-only)
+
+- Gate/task: Local Memory source-evidence closure request-instance provider整改。
+- formal root: `decd2dd45dfe1e5a462ae4884abf2d9ab6387f4`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Changes: provider binds observed cwd/module/selection/config/interpreter/git identities, Git metadata and absent targets; added real multi-file observation fixture and missing-blob fail-closed negative test.
+- Evidence: provider and constructor tests `15/15 PASS`; py_compile and git diff-check PASS.
+- Review scope: DS-only per user authorization; MM removed; ChatGPT advice-only. No source I/O, request-instance write, GPU/CUDA/torchrun, or training.
+- Request: review exact formal root/child and return final `APPROVE` or `REQUEST_CHANGES` with `file:line`; approve only the described provider/test scope.

@@ -8530,6 +8530,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 测试覆盖 provider-owned 正例和缺 Git 负例；17/17 联合 unittest PASS、py_compile PASS、git diff-check PASS。
 - 未读取真实 source/cache payload、未写真实 instance、未执行 GPU 或训练；待提交新 formal root 后申请 DS-only review。
 
+## 2026-09-16 — provider-owned observation mapping DS review 观察凭证 #1
+
+- `before_head=3ad2e32cd1159a850acb282d947db6717d67f39b`；fetch 成功；advertised/tracking=`3ad2e32cd1159a850acb282d947db6717d67f39b`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`fef695229ea32b85e6841a0fdf7f656feec526ca` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，正在核对 provider-owned mapping 的 diff、测试与 root/child，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
 ## 2026-09-16 — ObservationBundle provider CPU/static closure review 观察凭证 #2
 
 - `before_head=03991d413b70384b09c3333fd14e236ffe0b1460`；fetch 成功；advertised/tracking=`03991d413b70384b09c3333fd14e236ffe0b1460`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
@@ -8608,3 +8615,47 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 依据 DS 对 `0fc4217ba22dc31ed0ffaa131123cfc961755b3b` 的 REQUEST_CHANGES，补齐 config blob、local/remote ref、HEAD、index tree 五项 40-hex 校验，并冻结 absence 编码为 `ABSENT`（存在时为 lowercase 40-hex）。
 - 新增 v0.3 amendment；验证 3/3 unittest、py_compile、git diff-check PASS。当前未创建 instance、未写盘、未执行 source I/O、GPU 或训练；待提交新 root 后重审。
+
+## 2026-09-16 — observation bundle provider 当前 DS 观察凭证
+
+- 轮次：当前恢复检查；CST 2026-09-16；`before_head=3ad2e32cd1159a850acb282d947db6717d67f39b`。
+- `git fetch origin V2` 成功；`git ls-remote origin refs/heads/V2` advertised=`3ad2e32cd1159a850acb282d947db6717d67f39b`；`origin/V2` 相同；`before_head..origin/V2` 为空；`git merge-base --is-ancestor before_head origin/V2` 返回 0；`git merge --ff-only origin/V2` 返回 Already up to date。
+- formal pair=`fef695229ea32b85e6841a0fdf7f656feec526ca` / child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。精确检索命令 `rg -l 'fef695229ea32b85e6841a0fdf7f656feec526ca' docs/collab/chatgpt/reviews/`：未找到；ChatGPT advice-only。
+- 冻结审核名册按用户授权为 DS-only：DS=`ds:0.0`；`tmux capture-pane -t ds:0.0 -p -S -80` 成功。DS 已回复 `REQUEST_CHANGES`，锚定上述 exact pair，意见集中于 observation files/blob_oids/cwd 未由 provider 观测绑定，以及缺真实观测驱动端到端/负例 fixture，并要求远端 ref 缺失、文件缺失/漂移、未绑定字段 fail-closed。
+- 本轮无推进令牌；状态保持 REVIEW。尚未整改、提交、写 instance、执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — observation bundle provider 当前恢复观察凭证
+
+- `before_head=3ad2e32cd1159a850acb282d947db6717d67f39b`；`git fetch origin V2` 成功；advertised 与 `origin/V2` 均为 `3ad2e32cd1159a850acb282d947db6717d67f39b`；新增范围为空；ancestor 返回 0；`merge --ff-only` 为 Already up to date。
+- formal pair=`fef695229ea32b85e6841a0fdf7f656feec526ca` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；精确 review 检索未找到。
+- 冻结名册：DS=`ds:0.0`，capture 成功；当前 pair 最终 verdict=`REQUEST_CHANGES`，意见仍为字段未由真实 observation 绑定、cwd 来源错误、缺少真实观测端到端及负例 fail-closed 覆盖。
+- ChatGPT：advice-only，未找到 exact-pair formal review；MM：按用户授权剔除，不计入名册与结论。
+- 本轮无推进令牌；保持 REVIEW。未修改代码、未写 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — observation bundle provider 继续检查凭证
+
+- `before_head=3ad2e32cd1159a850acb282d947db6717d67f39b`；fetch 成功；advertised SHA 与 `origin/V2` 均为 `3ad2e32cd1159a850acb282d947db6717d67f39b`；新增范围为空；ancestor 返回 0；ff-only merge 为 Already up to date。
+- formal root/child=`fef695229ea32b85e6841a0fdf7f656feec526ca` / `93a89ba61306d840a008813f62f26a34d54850f4`；exact review 检索未找到；DS=`ds:0.0` capture 成功并显示该 pair 的 `REQUEST_CHANGES`；ChatGPT advice-only 未找到；MM 已剔除。
+- 结论：无推进令牌；保持 REVIEW，未修改、未执行代码或训练。
+
+## 2026-09-16 — observation provider 整改步骤 1
+
+- 目的：处理 DS 对 observation→bundle 字段来源和 cwd 的整改意见。
+- 修改：`tools/psm_wma/observe_source_evidence_bundle.py`；观测结果新增 cwd；provider 将 module 的路径、raw SHA、Git blob OID 绑定到 executor/producer/root_audit，并绑定观测 argv/env/cwd、Git ref/head/index、absent target paths；缺观测文件/blob 时 fail-closed。
+- 验证：`python -m unittest tools/psm_wma/test_observe_source_evidence_bundle.py` 与 `python -m py_compile tools/psm_wma/observe_source_evidence_bundle.py`；结果 `10/10 PASS`、语法通过。
+- 当前未提交；仍需补齐 selection/config/interpreter/git 等字段真实绑定及端到端/负例断言，再提交新 formal pair 申请 DS closure review。
+
+## 2026-09-16 — observation provider 整改步骤 2
+
+- 目的：验证第一步真实字段绑定不破坏构造器契约。
+- 修改：`tools/psm_wma/test_observe_source_evidence_bundle.py`；增加 executor/producer/root_audit module path 与 executor cwd 的字段级断言。
+- 验证：provider 与构造器共 `13/13 PASS`；`py_compile`、`git diff --check` PASS。
+- 下一步：提交当前实现并继续补齐非 module 身份字段绑定及负例覆盖；当前尚未提交。
+- 实际提交：`7b50434e`（代码/测试 formal commit）；SESSION bookkeeping 尚待单独记录。
+
+## 2026-09-16 — observation provider closure review 送达准备
+
+- formal root=`decd2dd45dfe1e5a462ae4884abf2d9ab6387f4`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 变更提交：`7ca4ea04`、`decd2dd4`；证据为 provider/constructor `15/15 PASS`、py_compile、diff-check PASS。
+- 冻结名册按用户授权为 DS-only：DS=`ds:0.0`；MM 已剔除，ChatGPT advice-only。
+- Inbox 已追加 closure review 申请；尚未发送 pane、尚未推送。
