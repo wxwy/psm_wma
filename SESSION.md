@@ -8172,3 +8172,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=32678cfa35fbc285b0aa2c53f000eb171c2fea8b / child=93a89ba61306d840a008813f62f26a34d54850f4；该 formal root 已随提交 038f0bb2 推送至 origin/V2。
 - MM=mm:0.0、DS=ds:0.0 均完成 send-keys -l、间隔 1 秒、独立 Enter、capture；MM 进入处理，DS 已提交并等待其对 exact implementation pair 的复核。
 - 申请范围为两个 root-only 构造/测试文件与 3/3 unittest、py_compile、diff-check 证据；未创建真实 instance，未执行 source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — construction CPU/static implementation 观察凭证 #1
+
+- `before_head=37788de7586da3e917edaffae5ddbb04ab8f0114`；fetch 成功；advertised/tracking=`038f0bb27592135c3f5b4c6d0ed32f934e199a73`；`before_head..origin/V2` 新增为空；正向 ancestor 返回 1（本地包含远端，无分叉，未执行 merge）。
+- formal pair=`32678cfa35fbc285b0aa2c53f000eb171c2fea8b` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，当前针对 exact implementation pair 处理中，尚未出现新的 final verdict；DS=`ds:0.0` capture 成功，已读取实现并核验，当前处理中，尚未出现新的 final verdict。
+- 本轮无 closure 推进令牌；保持 REVIEW，不创建真实 instance，不执行 source/record/publication I/O、GPU 或训练。
