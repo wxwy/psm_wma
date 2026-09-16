@@ -8659,3 +8659,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 变更提交：`7ca4ea04`、`decd2dd4`；证据为 provider/constructor `15/15 PASS`、py_compile、diff-check PASS。
 - 冻结名册按用户授权为 DS-only：DS=`ds:0.0`；MM 已剔除，ChatGPT advice-only。
 - Inbox 已追加 closure review 申请；尚未发送 pane、尚未推送。
+
+## 2026-09-16 — observation provider closure review 送达回执
+
+- 目标 pane：DS=`ds:0.0`；发送时间：CST 2026-09-16；消息摘要：exact pair `decd2dd4`/`93a89ba6`、provider 整改、15/15 PASS、请求 APPROVE 或 REQUEST_CHANGES。
+- 已完成 `send-keys -l` → 间隔 1 秒 → 独立 Enter → `capture-pane`；capture 显示完整申请已离开输入框并进入 DS 会话处理。
+- 当前 pair 状态：DS 已送达、处理中；尚无最终 verdict。保持 REVIEW，禁止 instance 写入与训练。
