@@ -10121,6 +10121,12 @@ setsid nohup env PATH="$PWD/.venv/bin:$PATH" \
 | 起始迭代 | `iteration 0` | **`0`** ✓ |
 | 路线生效 | `microbatches=128` | **`128`** ✓ |
 | loss / grad_norm | finite | `1.674389` / `34.5` ✓ |
+| 显存（22:33 实测） | < 24 GiB | **11800 MiB = 11.52 GiB** ✓ |
+
+**显存 11800 MiB 与 D7/D8 的记录逐 MiB 一致**（独立复现）。它同时给出一个
+**同配置**的激活锚点：静态部分 7788 MiB（= active/vision1 的 7.605 GiB，本次
+profile 实测），峰值 11800 MiB ⟹ **差 4012 MiB = 激活 + 分配器 reserved 余量 +
+CUDA context**。此前的「激活 ≈ 3.92 GiB」由此从跨跑推算升级为同配置实测。
 
 **副产物：config dump 独立证实 `local_history_evidence_dim = 256`** —— 即上一段
 43,200 差额的根因，不再只依赖 tensor 形状反推。同批 dump 另确认
