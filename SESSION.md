@@ -8131,3 +8131,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 认领 Gate=`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-REQUEST-INSTANCE-CONSTRUCTION-IMPLEMENTATION-DESIGN`；新增 docs-only 设计 `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_construction_implementation_design_v0.1.md`。
 - 设计冻结一次性同轮 identity observation、exact schema canonicalization、JSON/Markdown byte readback、partial-residue terminal policy 与 hard-stop；未创建 instance，未读取 checkpoint/manifest/data/cache payload，未执行 source/record/publication I/O、GPU 或训练。
 - 下一步：执行静态文档核验并提交新 formal root，申请 MM/DS/ChatGPT 对 construction implementation design 审核。
+
+## 2026-09-16 — construction implementation design 审核送达
+
+- formal pair=7e587e1f00150ba74558e818ebac9ed036d2e42f / child=93a89ba61306d840a008813f62f26a34d54850f4；冻结名册 MM=mm:0.0、DS=ds:0.0、ChatGPT（advice-only）。
+- Inbox 已包含完整申请，提交回执为 695b6716；MM 发送使用 send-keys -l、间隔 1 秒、独立 Enter、capture，capture 显示消息已提交并进入 Working；DS 同样完成三联回执，capture 显示消息已提交。
+- 申请范围仅为 docs-only construction implementation design；未创建 instance，未执行 source/record/publication I/O、GPU 或训练。下一步按三分钟节奏获取 exact-pair final verdict。
