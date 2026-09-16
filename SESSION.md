@@ -8072,3 +8072,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 在 `produce_source_package()` 内加入 `verify_source_evidence_record(record_raw, receipt)`，并补充伪造 `immutable_source_identifier` 的 fail-closed 测试；修正 fixture 使 descriptor digest 与 receipt/record 一致。
 - 验证：`/opt/conda/bin/python3 -m unittest tools.psm_wma.test_immutable_source_collection -q`=`57 tests, OK`；未提交。下一步提交新 formal root，重新申请 closure review。
+
+## 2026-09-16 — record↔receipt remediation closure review 送达
+
+- 新 formal pair=`7b3bf58b27a55b1220b86eeeccb1db5659dd0500` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。
+- Inbox append 前=`63865` bytes，追加后未超过 128 KiB；MM/DS 均完成 `send-keys -l`→间隔 1 秒→独立 Enter→capture 送达回执。
+- 申请绑定 record↔receipt 修复与 57/57、py_compile、diff-check 证据；仍禁止真实 source/record/publication I/O、GPU 或训练。

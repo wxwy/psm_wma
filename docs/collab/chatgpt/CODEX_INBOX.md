@@ -484,3 +484,13 @@
 - Evidence: 57/57 tests PASS；py_compile PASS；git diff-check PASS；native main unchanged；no real source I/O/publication/GPU/training。
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 - Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
+
+# 2026-09-16 — Source-evidence producer/closure final remediation review
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-CPU-STATIC-IMPLEMENTATION`
+- Formal root: `7b3bf58b27a55b1220b86eeeccb1db5659dd0500`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Remediation: `produce_source_package()` now invokes `verify_source_evidence_record(record_raw, receipt)`；added negative fixture rejecting record↔receipt digest drift；57/57 tests PASS；py_compile/diff-check PASS。
+- Scope remains CPU/static only；no native-main integration、source/record/publication I/O、authority ref、child/runtime、GPU or training。
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+- Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
