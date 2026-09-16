@@ -111,15 +111,6 @@ class ObservationTests(unittest.TestCase):
         self.assertEqual(result["authority"]["selection_blob_native_oid"],
                          observation["git"]["blob_oids"]["AGENTS.md"])
 
-    def test_remote_ref_observation_is_separate_from_local_ref(self):
-        root = Path.cwd()
-        with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
-            observe_and_assemble(
-                root=root, files={"module": root / "AGENTS.md"}, target_paths=[], argv=[], env={},
-                env_allowlist=[], git_repo=root, git_ref="HEAD", git_remote_url="https://example.invalid/repo.git",
-                git_remote_ref="HEAD", git_paths=["AGENTS.md"], bundle_template=bundle(),
-                formal_root="a" * 40, child_gitlink="b" * 40)
-
     def test_remote_ref_positive_uses_independent_remote_target(self):
         root = Path.cwd()
         completed = type("Completed", (), {"returncode": 0, "stdout": "f" * 40 + "\tHEAD\n"})()

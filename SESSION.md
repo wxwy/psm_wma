@@ -8711,9 +8711,27 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS=`ds:0.0` capture 成功，正在核对 remote read/ABSENT 实现，尚无 final verdict；ChatGPT advice-only 未找到；MM 已剔除。
 - 保持 REVIEW；未执行 instance 写入或训练。
 
+## 2026-09-16 — provider closure v5 收尾
+
+- DS 对 v4 指出 HIGH：旧 `test_remote_ref_observation_is_separate_from_local_ref` 仍真实访问 `example.invalid`。已删除该冗余测试；保留三条 mock 的存在/缺失/不可达覆盖。
+- 验证：provider/constructor `18/18 PASS`，py_compile、diff-check PASS；未执行 instance 写入或训练。
+
 ## 2026-09-16 — remote ref closure review 轮询观察凭证 2
 
 - `before_head=665429dfd75ea9c19672ed667d6dcdfb542e567f`；fetch 成功；advertised/`origin/V2`=`665429dfd75ea9c19672ed667d6dcdfb542e567f`；新增范围为空；ancestor=0；ff-only=Already up to date。
 - formal pair=`78231622d5071cb12f8a711cd51461e0da008317` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
 - DS=`ds:0.0` capture 成功，最终 verdict=`REQUEST_CHANGES`：`git -C repo ls-remote repo ref` 仍读取本地对象库而非 canonical remote；远端异常与缺失均编码 ABSENT；要求独立 remote URL、异常 fail-closed、存在/缺失/不可达三类 fixture。
 - ChatGPT advice-only 未找到；MM 已剔除。未执行 instance 写入或训练。
+
+## 2026-09-16 — provider closure v4 送达回执
+
+- formal root=`187768e4169bc98839b7d848e2d8ffc74a3fafe9`；child=`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox v4 已提交并推送。
+- DS=`ds:0.0` 已完成 send-keys-l→间隔 1 秒→独立 Enter→capture；正确 pair 的申请已进入会话。
+- 当前状态：DS 已送达、处理中；无新 final verdict。未执行 instance 写入或训练。
+
+## 2026-09-16 — provider closure v4 轮询观察凭证
+
+- `before_head=0c1ab8eba2b692dfadc87ca9b98fdec540821032`；fetch 成功；advertised/`origin/V2` 同为 `0c1ab8eba2b692dfadc87ca9b98fdec540821032`；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`187768e4169bc98839b7d848e2d8ffc74a3fafe9` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
+- DS=`ds:0.0` capture 成功，正在核对 v4 测试是否仍存在真实网络尝试，尚无当前 pair final verdict；ChatGPT advice-only 未找到；MM 已剔除。
+- 保持 REVIEW；未执行 instance 写入或训练。
