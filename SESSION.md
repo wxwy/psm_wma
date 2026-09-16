@@ -7809,3 +7809,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，已执行 v1.2 canonical/identity 检查，尚未出现 final literal verdict，状态为处理中。
 - DS=`ds:0.0` capture 成功，已核对 v1.2 identity 与 builder/producer/helper 字段，尚未出现 final literal verdict，状态为处理中。
 - 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 GPU/训练。
+
+## 2026-09-16 — v1.2 materialization review 观察凭证 #2
+
+- `before_head=d222e985e6aaecd2e744d4d051763721bea4e797`；fetch/ls-remote 成功，advertised/tracking 一致；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 仍无当前 pair 命中。
+- MM=`mm:0.0` capture 成功并给出 `APPROVE_TO_MATERIALIZE`，同时指出 pair `preflight.absent_paths` 的四项路径仍有旧 suffix `e8c7b2a2`，需修正/重新冻结。
+- DS=`ds:0.0` capture 成功：re-derived JSON/MD 均 byte-identical、helper environment accepted，但见证脚本在 adapter 检查处发生 `TypeError: 'in <string>' requires string as left operand, not bytes`，因此本轮 DS 状态为检查失败/状态未知，未形成 final verdict。
+- 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 GPU/训练。下一步修复 pair preflight suffix 与 DS witness 类型错误后重新生成新 pair并重审。
