@@ -8278,6 +8278,20 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC`；DS=`ds:0.0` capture 成功，正在核验当前 pair，尚无 final verdict。
 - 本轮无推进令牌；保持 REVIEW，未实现 writer、未写 instance、未执行 source I/O、GPU 或训练。
 
+## 2026-09-16 — real-output writer implementation design 观察凭证 #2 / 推进令牌
+
+- `before_head=d193b9fa7adb375d314d1f780683be21e56cc45c`；fetch 成功；advertised/tracking=`4d7dc547298831cba1e140b9807b3821804e1424`；`before_head..origin/V2` 为空；远端为本地祖先，无分叉，未执行 merge。
+- formal pair=`f13c6f79d9257c742c167534e3b57a6b881e7607` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC`；DS=`ds:0.0` capture 成功，同 exact final；DS 另给出测试文件名、exact pair/canonical SHA 前置断言及 self-bound SHA readback 的非阻塞建议。
+- 三方冻结名册对同一 pair final 齐全，形成 writer CPU/static implementation 推进令牌；允许实现 writer 及临时 fixture 测试，不授权真实 instance、source I/O、GPU 或训练。
+
+## 2026-09-16 — writer CPU/static implementation
+
+- 按推进令牌实现 `tools/psm_wma/write_source_evidence_closure_request_instance.py` 及同名测试；入口仅接收已验证 bytes，执行 no-overwrite link、fsync、readback 与结构化失败返回，并校验 exact formal root/child 与 instance self-bound SHA。
+- 测试使用 temporary fixture；未写真实固定路径，未执行 source I/O、GPU 或训练。
+- 验证：`python -m unittest tools.psm_wma.test_write_source_evidence_closure_request_instance tools.psm_wma.test_build_source_evidence_closure_request_instance`：5/5 PASS；`py_compile` PASS；`git diff --check` PASS。
+- 当前变更未提交；下一步为只读规范自检、提交 implementation formal root，并以新 exact pair 申请 CPU/static closure review。
+
 ## 2026-09-16 — real-output execution design v0.2 观察凭证 #1
 
 - `before_head=fefc06687ba101b0c5b599b1b225a866e9d7a7d7`；fetch 成功；advertised/tracking=`4f9f30015b3037d3caa83f2b5f24fbdd6be30bdb`；新增范围为空；本地包含远端，无分叉，未执行 merge。

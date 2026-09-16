@@ -1,0 +1,101 @@
+"""Atomically publish an already validated request-instance pair."""
+
+import hashlib
+import json
+import os
+import stat
+from pathlib import Path
+
+from tools.psm_wma.build_source_evidence_closure_request_instance import verify_instance_bytes
+
+
+class RealOutputWriteError(RuntimeError):
+    """The request-instance pair could not be published safely."""
+
+
+def _parent_fd(directory: Path) -> int:
+    return os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW)
+
+
+def _readback(fd: int, parent_fd: int, raw: bytes, parent_identity: tuple[int, int], expected_sha: str,
+              *, self_bound: bool = False) -> None:
+    info = os.fstat(fd)
+    if (not stat.S_ISREG(info.st_mode) or (info.st_mode & 0o777) != 0o644
+            or (info.st_dev, info.st_ino) == (0, 0) or info.st_size != len(raw)):
+        raise RealOutputWriteError("readback identity/mode/size failed")
+    parent = os.fstat(parent_fd)
+    if (parent.st_dev, parent.st_ino) != parent_identity:
+        raise RealOutputWriteError("readback parent identity failed")
+    os.lseek(fd, 0, os.SEEK_SET)
+    if os.read(fd, len(raw) + 1) != raw:
+        raise RealOutputWriteError("readback bytes/self-bound SHA failed")
+    if (verify_instance_bytes(raw) if self_bound else hashlib.sha256(raw).hexdigest()) != expected_sha:
+        raise RealOutputWriteError("readback bytes/self-bound SHA failed")
+
+
+def _stage(parent_fd: int, name: str, raw: bytes) -> None:
+    fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW,
+                 0o644, dir_fd=parent_fd)
+    try:
+        os.write(fd, raw)
+        os.fsync(fd)
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode) or (info.st_mode & 0o777) != 0o644:
+            raise RealOutputWriteError("staging mode/type failed")
+    finally:
+        os.close(fd)
+
+
+def write_request_pair(json_bytes: bytes, markdown_bytes: bytes, directory: Path,
+                       *, expected_formal_root: str | None = None,
+                       expected_child_gitlink: str | None = None,
+                       expected_instance_sha256: str | None = None) -> dict[str, object]:
+    """Publish JSON then Markdown, returning only structured residue on failure."""
+    digest = verify_instance_bytes(json_bytes)
+    value = json.loads(json_bytes)
+    if expected_formal_root is not None and value["formal_root"] != expected_formal_root:
+        raise RealOutputWriteError("formal root drift")
+    if expected_child_gitlink is not None and value["child_gitlink"] != expected_child_gitlink:
+        raise RealOutputWriteError("child gitlink drift")
+    if expected_instance_sha256 is not None and digest != expected_instance_sha256:
+        raise RealOutputWriteError("instance SHA drift")
+    directory = Path(directory)
+    directory.mkdir(mode=0o700, parents=False, exist_ok=False)
+    names = ("request_instance.json", "request_instance.md")
+    raws = (json_bytes, markdown_bytes)
+    fd = _parent_fd(directory)
+    staged = tuple(name + ".staged" for name in names)
+    published: list[str] = []
+    try:
+        parent = os.fstat(fd)
+        parent_identity = (parent.st_dev, parent.st_ino)
+        for stage, raw in zip(staged, raws):
+            _stage(fd, stage, raw)
+        for name, stage, raw in zip(names, staged, raws):
+            try:
+                os.link(stage, name, src_dir_fd=fd, dst_dir_fd=fd, follow_symlinks=False)
+            except OSError as exc:
+                raise RealOutputWriteError(f"publish {name} failed") from exc
+            os.fsync(fd)
+            check = os.open(name, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW, dir_fd=fd)
+            try:
+                _readback(check, fd, raw, parent_identity,
+                          digest if name.endswith("json") else hashlib.sha256(raw).hexdigest(),
+                          self_bound=name.endswith("json"))
+            finally:
+                os.close(check)
+            published.append(name)
+        for stage in staged:
+            os.unlink(stage, dir_fd=fd)
+        os.fsync(fd)
+        os.close(fd)
+        fd = -1
+        return {"terminal": "PASS", "published": list(names), "instance_sha256": digest}
+    except BaseException as exc:
+        return {"terminal": "REAL_OUTPUT_WRITE_FAILED", "published": published,
+                "stage_paths": [str(directory / name) for name in staged],
+                "target_paths": [str(directory / name) for name in names],
+                "failure": str(exc)}
+    finally:
+        if fd >= 0:
+            os.close(fd)
