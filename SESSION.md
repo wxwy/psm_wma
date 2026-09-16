@@ -7974,3 +7974,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - exact ChatGPT review 检索未找到匹配 formal root；本 Gate ChatGPT advice-only。
 - MM=`mm:0.0` capture 成功，exact pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC`，MEDIUM 建议不构成阻塞。
 - 本轮复验命令 `/opt/conda/bin/python3 -m unittest tools.psm_wma.test_immutable_source_collection -q`，`Ran 56 tests ... OK`。推进令牌仍仅限 CPU/static implementation；未执行真实 source I/O、publication、GPU 或训练。
+
+## 2026-09-16 — Stage-2 producer/closure implementation design v0.1
+
+- 认领 Gate=`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-IMPLEMENTATION-DESIGN`；预计修改文件为新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_producer_closure_implementation_design_v0.1.md` 与 `TODO.md`，后续获批后才可修改 `tools/psm_wma/immutable_source_collection.py` 及测试。
+- 新设计仅冻结已有 collection seam 上的 record/package/witness canonical-bytes、identity、one-shot handoff CPU/static helpers；不授权真实 source I/O、record/publication 写入、GPU 或训练。
+- 本步为 docs-only，`git diff --check` PASS；尚未提交。下一步提交该设计并申请 MM/DS/ChatGPT exact-pair 审核。
