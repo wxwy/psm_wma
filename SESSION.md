@@ -7904,3 +7904,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功并给出 `APPROVE_TO_MATERIALIZE`，确认 v1.3 JSON/MD identity、launcher/bootstrap/tool closure、helper environment、四项当前 suffix absence 与 10/10 测试均通过；指出 preflight 第 5/6 项仍引用 v1.1，为文档瑕疵。
 - DS=`ds:0.0` capture 成功：v1.3 JSON/MD byte-identical 重算、helper environment accepted、adapter barrier fix present、10/10 测试 PASS；截至 capture 尚未出现 v1.3 literal final verdict。
 - 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 GPU/训练。
+
+## 2026-09-16 — v1.7 materialization review 观察凭证 #1
+
+- 冻结名册：MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。formal root=`7d7ba235ec5be0208aedac2f9b2ed11f755d9ca6`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；suffix=`e8c7b2a7`；JSON SHA=`10eaa1f209633bb6830d7678c305aa422b9ec558e8c1264f8dba065d36ed625b`；MD SHA=`3cdb5480823ac2d385468e927fc133cec5cd38ca8ca715b66296bf80c9ead986`。
+- `before_head=2e39dc362bb01349dd449dff6c1cd1c6d0668fab`；`git fetch origin V2` 成功；`git ls-remote origin refs/heads/V2` advertised=`2e39dc362bb01349dd449dff6c1cd1c6d0668fab`，与 `origin/V2` 一致；`before_head..origin/V2` 无新增；正向 ancestor=0；`git merge --ff-only origin/V2`=`Already up to date.`
+- exact ChatGPT review 检索命令：`rg -l --glob '*.md' --glob '*.json' '7d7ba235ec5be0208aedac2f9b2ed11f755d9ca6' docs/collab/chatgpt/reviews/`；结果 0 个匹配。
+- MM=`mm:0.0` capture 成功，exact v1.7 申请已离开输入框并进入会话，当前未出现 v1.7 final literal verdict，状态为处理中。
+- DS=`ds:0.0` capture 成功，exact v1.7 申请已提交并进入当前检查，当前 capture 未出现 v1.7 final literal verdict，状态为处理中。
+- 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 child/runtime/config、source-evidence、GPU、训练、评测或推理。
