@@ -8729,9 +8729,45 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS=`ds:0.0` 已完成 send-keys-l→间隔 1 秒→独立 Enter→capture；正确 pair 的申请已进入会话。
 - 当前状态：DS 已送达、处理中；无新 final verdict。未执行 instance 写入或训练。
 
+## 2026-09-16 — 分支状态复核
+
+- `before_head=15bc38ccb0a543f20df17ff8354fef220a7ce4f4`；fetch 成功；advertised/`origin/V2` 同为 `15bc38ccb0a543f20df17ff8354fef220a7ce4f4`；新增范围为空；ancestor=0；ff-only=Already up to date。
+- 当前远端不包含此前 v5 provider closure 提交 `786538f8` 及其后 bookkeeping；DS pane 仍显示旧 pair `786538f8` 的批准结论，不能作为当前远端 HEAD 的结论。
+- writer exact-pair review 未找到；当前不得依据旧 v5 结论推进 request-instance、真实 I/O 或训练。该共享分支状态需由下一 Agent 先核对并恢复正确 formal history。
+
+## 2026-09-16 — 分支回退结论更正
+
+- 后续检查确认 `15bc38ccb0a543f20df17ff8354fef220a7ce4f4` 是 v5 closure 申请的 bookkeeping commit，不是回退；`786538f8f475d0f5a2708fda6be2c0b44a76ace0` 仍为其祖先，v5 formal history 未丢失。
+- 本地与 `origin/V2` 均为 `15bc38ccb0a543f20df17ff8354fef220a7ce4f4`，fetch/ls-remote/ancestor/ff-only 均成功。旧“远端已回退、需恢复 history”结论作废。
+
+## 2026-09-16 — provider closure v5 最终观察凭证
+
+- `before_head=15bc38ccb0a543f20df17ff8354fef220a7ce4f4`；fetch 成功；advertised/`origin/V2`=`15bc38ccb0a543f20df17ff8354fef220a7ce4f4`；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`786538f8f475d0f5a2708fda6be2c0b44a76ace0` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到（DS pane 为正式来源）。
+- DS=`ds:0.0` capture 成功，最终 verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_CPU_STATIC`；确认真实网络用例已删除，三类 remote mock fixture 存在，provider/constructor 合计 `18/18 PASS`。
+- ChatGPT advice-only 未找到；MM 已剔除。provider CPU/static Gate 已关闭；未执行 source I/O、instance 写入、GPU/CUDA/torchrun 或训练。
+
+## 2026-09-16 — provider closure v5 送达回执
+
+- formal root=`786538f8f475d0f5a2708fda6be2c0b44a76ace0`；child=`93a89ba61306d840a008813f62f26a34d54850f4`；申请已推送。
+- DS=`ds:0.0` 完成 send-keys-l→间隔 1 秒→独立 Enter→capture；正确 pair 申请已进入会话，当前处理中；尚无 final verdict。
+
 ## 2026-09-16 — provider closure v4 轮询观察凭证
 
 - `before_head=0c1ab8eba2b692dfadc87ca9b98fdec540821032`；fetch 成功；advertised/`origin/V2` 同为 `0c1ab8eba2b692dfadc87ca9b98fdec540821032`；新增范围为空；ancestor=0；ff-only=Already up to date。
 - formal pair=`187768e4169bc98839b7d848e2d8ffc74a3fafe9` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
 - DS=`ds:0.0` capture 成功，正在核对 v4 测试是否仍存在真实网络尝试，尚无当前 pair final verdict；ChatGPT advice-only 未找到；MM 已剔除。
 - 保持 REVIEW；未执行 instance 写入或训练。
+-
+## 2026-09-16 — fixed-path writer closure 轮询观察凭证
+
+- `before_head=3b1ebbd17103b77766d51a45917c85b42af70177`；fetch 成功；advertised/`origin/V2` 同为该 SHA；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`152562f8ce50062169fa8644a4856bb2997966ad` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
+- DS=`ds:0.0` capture 成功，正在核对 writer module 与该 pair 的差异，尚无 final verdict；ChatGPT advice-only 未找到；MM 已剔除。
+- 保持 REVIEW；未执行真实 instance 写入、source I/O、GPU 或训练。
+
+## 2026-09-16 — writer 整改步骤
+
+- DS 对 writer pair `152562f8ce50062169fa8644a4856bb2997966ad` 返回 `REQUEST_CHANGES`：补 link/EEXIST、fsync、readback mismatch、JSON-only partial fixture；校验 owner；staging parent fsync。
+- 已修改 `tools/psm_wma/write_source_evidence_closure_request_instance.py` 与测试：新增 uid/gid 校验、staging parent fsync、四类失败/partial fixture。
+- 验证：writer/constructor `11/11 PASS`，py_compile、diff-check PASS；当前未提交，未执行真实写入、source I/O、GPU 或训练。

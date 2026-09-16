@@ -27,6 +27,8 @@ def _readback(fd: int, parent_fd: int, raw: bytes, parent_identity: tuple[int, i
     if (not stat.S_ISREG(info.st_mode) or (info.st_mode & 0o777) != 0o644
             or (info.st_dev, info.st_ino) == (0, 0) or info.st_size != len(raw)):
         raise RealOutputWriteError("readback identity/mode/size failed")
+    if info.st_uid != os.getuid() or info.st_gid != os.getgid():
+        raise RealOutputWriteError("readback owner failed")
     parent = os.fstat(parent_fd)
     if (parent.st_dev, parent.st_ino) != parent_identity:
         raise RealOutputWriteError("readback parent identity failed")
@@ -53,6 +55,7 @@ def _stage(parent_fd: int, name: str, raw: bytes) -> None:
             raise RealOutputWriteError("staging mode/type failed")
     finally:
         os.close(fd)
+    os.fsync(parent_fd)
 
 
 def write_request_pair(json_bytes: bytes, markdown_bytes: bytes, directory: Path,
