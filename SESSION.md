@@ -7996,3 +7996,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，exact pair final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`。
 - DS=`ds:0.0` capture 成功，已读取并核验设计内容，当前尚未出现该 exact pair 的 final verdict，状态为处理中。
 - 本轮无推进令牌；禁止修改 producer/closure 代码、真实 source I/O、record/publication、GPU 或训练。按三分钟原生轮询继续。
+
+## 2026-09-16 — producer/closure implementation design 观察凭证 #2 / 推进令牌
+
+- `before_head=97ea46e4899520a2eed54755abbad2473339abc6`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor、ff-only 均成功；advertised=`97ea46e4899520a2eed54755abbad2473339abc6`；新增为空；merge=`Already up to date.`
+- formal pair=`b1ae3b9685631204680f03eb421c85bff5d8cffa` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`，含三条非阻塞澄清建议。
+- 三方冻结名册对同一 pair final 齐全，形成推进令牌；仅授权 `immutable_source_collection.py` 及其测试的 CPU/static producer/closure helpers。执行前认领预计修改文件；禁止真实 source I/O、record/publication 写入、GPU 或训练。
