@@ -8017,6 +8017,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM 与 DS 均完成 `send-keys -l`→间隔 1 秒→独立 Enter→独立 capture；两 pane capture 均显示申请已离开输入框并进入审核会话。
 - 本申请仅请求 implementation closure；在同 pair 三方 final 前，不执行真实 source I/O、record/publication、GPU 或训练。
 
+## 2026-09-16 — producer/closure remediation 观察凭证 #1
+
+- `before_head=cfe24b740827b6209a2135fae545d370129776e0`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`cfe24b740827b6209a2135fae545d370129776e0`；新增为空；merge=`Already up to date.`
+- formal pair=`ec6fd6b1650d9372034c6cb386c74748e51a6326` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，当前复审内容仍沿用旧 pair final，尚未出现新 pair final verdict。
+- DS=`ds:0.0` capture 成功，发现具体问题：`produce_source_package()` 尚未验证 `record_raw` 与 receipt authority 一致，导致伪造 record 可能被接受；当前仍在复审，尚未出现新 pair final verdict。
+- 本轮无推进令牌；在 DS 给出该 pair final 前不修改、不提交、不执行真实 I/O 或训练。
+
 ## 2026-09-16 — producer/closure CPU/static implementation closure 观察凭证 #1
 
 - `before_head=de821aa9b68f042f2f8045bc702ba87a51dc67d0`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`de821aa9b68f042f2f8045bc702ba87a51dc67d0`；新增为空；merge=`Already up to date.`
