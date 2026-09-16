@@ -9907,3 +9907,35 @@ baseline `edge_libero_4in1/checkpoints/iter_000000200` = model/scheduler/trainer
 `dcp.py:787` 每次 resume 都**请求**了 `'dataloader'` key。说明该 key 缺失时加载被容忍或跳过。
 若属实，则 resume 不恢复 dataloader 位置（对 warm-start 语义无影响，但真 resume 会有数据顺序差异）。
 **未进一步核实**，仅记录观察。
+
+### D8a 启动前 dry-run 实证：launcher 不会把 resume 目标指回旧 ckpt（2026-09-16 21:30）
+
+用 D8a **完全相同**的环境变量 + `DRY_RUN=1` 实跑 launcher（`_sft_launcher_common.sh:85-97`
+在 torchrun 之前 `exit 0`，不碰 GPU、不写日志、不建 LOG_DIR）：
+
+```
+>>> FRESH start (DISABLE_AUTO_RESUME=1; ignoring .../edge_libero_4in1_localmem_active/checkpoints)
+>>> DRY_RUN torchrun command: env IMAGINAIRE_OUTPUT_ROOT=outputs/train PYTHONPATH=. torchrun
+    --nproc_per_node=1 --master_port=50012 -m cosmos_framework.scripts.train
+    --sft-toml=.../action_policy_libero_edge_all_localmem_active.toml
+    -- trainer.max_iter=100 checkpoint.save_iter=25
+>>> DRY_RUN overrides: trainer.max_iter=100 checkpoint.save_iter=25
+```
+
+**关键点：overrides 里没有 `checkpoint.load_path=`，也没有 `checkpoint.load_training_state=True`。**
+
+⟹ 排除一个曾经的风险设想：launcher 只有在 **else 分支**才
+`TAIL_OVERRIDES+=("checkpoint.load_path=$SELECTED_CHECKPOINT" "checkpoint.load_training_state=True")`，
+而 `DISABLE_AUTO_RESUME=1` 走的是**第一分支、跳过整个 else**。因此即使
+`iter_000000001/` 仍在目录里、`find -name 'iter_*'` 能扫到，launcher 侧也**不会**把
+resume 目标指回旧 ckpt：`load_path` 保持 TOML 的 DROID-dcp warm-start、
+`load_training_state` 保持 `false`。
+
+**D8a 干净起点配置现已双重实证：**
+
+| 侧 | 证据 | 结论 |
+|---|---|---|
+| launcher | 本次 DRY_RUN 输出 | 无 same-job override，`load_path` 不被改写 |
+| dcp | diag2 日志 `:132`/`:141`（配置相同、仅 save 目录状态不同） | `(warm-start, local) with keys: ['model']`，`in iteration 0` |
+
+⟹ **前提全部就绪，启动只剩执行**（本步未启动任何训练）。
