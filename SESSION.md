@@ -8191,3 +8191,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=9efafe212cda7ac38531503f1599a3c48deb94e4 / child=93a89ba61306d840a008813f62f26a34d54850f4；formal root 已推送 origin/V2。
 - Inbox 申请已提交；MM=mm:0.0 完成 send-keys -l→间隔 1 秒→独立 Enter→capture，已进入处理；DS=ds:0.0 完成同一送达三联，当前 capture 尚显示上一轮 REQUEST_CHANGES，新的 exact pair 尚无 final verdict。
 - 当前 Gate 保持 REVIEW；未创建 instance，未执行真实写盘、source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — construction CPU/static remediation 观察凭证 #2
+
+- `before_head=589c506ded0e73b3f0522ed91a2aecd9dbf6255d`；fetch 成功；advertised/tracking=`9efafe212cda7ac38531503f1599a3c48deb94e4`；新增范围为空；本地包含远端，无分叉，未执行 merge。
+- formal pair=`9efafe212cda7ac38531503f1599a3c48deb94e4` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，已给出 exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC`；DS=`ds:0.0` capture 成功，正在核验新 implementation pair，尚未出现 final verdict。
+- 本轮尚无三方推进令牌；保持 REVIEW，未创建 instance，未执行真实写盘、source/record/publication I/O、GPU 或训练。
