@@ -400,3 +400,11 @@
 - Evidence: prior v1.3 execution failed at `remote_cas` and rolled back; GitHub permission/ruleset read-only checks passed. v1.5 is a fresh pair and must be treated as one-shot.
 - Requested verdict: `APPROVE_TO_MATERIALIZE` or `REQUEST_CHANGES(file:line)` for exactly one Stage-1 authority-root materialization. If approved, allow only the authority-root/local and fixed-ref transaction; forbid retry, child/runtime/config mutation, source-evidence, GPU/CUDA, training/evaluation/inference.
 - Reviewers: frozen MM=`mm:0.0`, DS=`ds:0.0`, ChatGPT via exact formal-pair review file.
+
+## 2026-09-16 — Stage-1 v1.6 materialization review request
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-ROOT-MATERIALIZATION-V16`
+- Formal root: `cb6b675edc2ef4b019c1be4901c062a598fec271`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- v1.5 `REQUEST_CHANGES` 已采纳：v1.5 的 launcher 是半重建状态；v1.6 改由真实 `rebuild_launcher()` 从 formal tree bytes 重建。
+- Pair: `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v1.6.json` / `.md`；JSON SHA=`cf72d5be120923dec093fcdea56b5c130563efc9f4a40fd71674c09b1080419`; MD SHA=`228e534ddb521b53cf37eeb7c58a54ab1ab82ef3ffa53f48c13bba09f03d5e18`; suffix=`e8c7b2a6`。
+- Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`；批准仅限一次 authority-root materialization，禁止 retry、child/runtime/config、source-evidence、GPU/训练/评测/推理。
