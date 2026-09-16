@@ -125,3 +125,20 @@ def build_observation_bundle(*, sections: Mapping[str, Mapping[str, object]],
         raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: metadata contract mismatch")
     return {"sections": {name: dict(sections[name]) for name in OBSERVATION_SECTIONS},
             "metadata": dict(metadata)}
+
+
+def assemble_constructor_bundle(bundle: Mapping[str, object]) -> dict[str, object]:
+    """Validate and return the flat constructor bundle without performing I/O."""
+    from tools.psm_wma.build_source_evidence_closure_request_instance import (
+        TOP_LEVEL_KEYS, build_request_instance,
+    )
+    if not isinstance(bundle, Mapping) or set(bundle) != set(TOP_LEVEL_KEYS):
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: flat schema bundle required")
+    candidate = dict(bundle)
+    candidate["sha256"] = ""
+    try:
+        raw = build_request_instance(candidate)
+    except (TypeError, ValueError) as exc:
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: constructor contract failed") from exc
+    import json as _json
+    return _json.loads(raw)

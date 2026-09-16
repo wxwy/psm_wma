@@ -5,8 +5,9 @@ from pathlib import Path
 
 from tools.psm_wma.observe_source_evidence_bundle import (
     BLOCKED_AUTHORITY_NOT_CLOSED, OBSERVATION_SECTIONS, ObservationError,
-    build_observation_bundle, observe_bundle,
+    assemble_constructor_bundle, build_observation_bundle, observe_bundle,
 )
+from tools.psm_wma.test_build_source_evidence_closure_request_instance import bundle
 
 
 class ObservationTests(unittest.TestCase):
@@ -59,6 +60,17 @@ class ObservationTests(unittest.TestCase):
                                 git_paths=["AGENTS.md"])
         self.assertEqual(len(result["git"]["head_revision"]), 40)
         self.assertEqual(len(result["git"]["blob_oids"]["AGENTS.md"]), 40)
+
+    def test_assembles_flat_constructor_bundle(self):
+        result = assemble_constructor_bundle(bundle())
+        self.assertEqual(result["schema"], "root_source_evidence_closure_request_instance_v1")
+        self.assertEqual(len(result["sha256"]), 64)
+
+    def test_flat_bundle_missing_field_is_blocked(self):
+        value = bundle()
+        value.pop("executor")
+        with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
+            assemble_constructor_bundle(value)
 
 
 if __name__ == "__main__":

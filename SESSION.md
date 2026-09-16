@@ -8470,6 +8470,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增真实仓库只读 Git 正例测试；未执行网络 fetch、source/cache payload 读取、instance 写入、GPU 或训练。
 - 验证：13/13 联合 unittest PASS；py_compile PASS；git diff-check PASS。下一步补完整扁平 schema bundle 装配与 constructor 端到端 fixture。
 
+## 2026-09-16 — ObservationBundle provider constructor assembly
+
+- 新增 `assemble_constructor_bundle`：要求完整 flat top-level schema，强制 `sha256=""` 后调用既有 constructor，返回 canonical parsed object；缺字段/constructor 失败统一 `BLOCKED_AUTHORITY_NOT_CLOSED`。
+- 新增 provider→constructor 正负 fixture；验证 15/15 联合 unittest PASS、py_compile PASS、git diff-check PASS。
+- 仍未读取真实 source/cache payload、未写真实 instance、未执行 GPU 或训练；待提交新 formal root 后申请 DS-only review。
+
 ## 2026-09-16 — ObservationBundle provider CPU/static closure review 观察凭证 #2
 
 - `before_head=03991d413b70384b09c3333fd14e236ffe0b1460`；fetch 成功；advertised/tracking=`03991d413b70384b09c3333fd14e236ffe0b1460`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
