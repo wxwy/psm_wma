@@ -561,6 +561,13 @@
 - evidence: 12/12 joint unittest PASS, py_compile PASS, git diff --check PASS; no real source/cache reads or instance writes.
 - DS-only per user instruction. requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_PROVIDER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — provider-owned observation mapping DS review
+
+- formal root: `fef695229ea32b85e6841a0fdf7f656feec526ca`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- remediation: moved observations→flat bundle mapping into provider-owned `observation_to_bundle`; `observe_and_assemble` no longer accepts arbitrary callback. Root/files/Git/argv/env facts are deterministically bound, then existing constructor validates the result.
+- evidence: 17/17 joint unittest PASS, py_compile PASS, git diff --check PASS; no real source/cache payload reads or instance writes.
+- DS-only per user instruction. requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — source-evidence real-output write authorization DS review
 
 - implementation authority: writer closure `944c8119b9fda15d4edc7475e7384cbb0712253f`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
