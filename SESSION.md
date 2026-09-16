@@ -7736,3 +7736,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 当前实现仅接收已构造 bytes，拒绝 divergent existing pair，临时文件 fsync、发布后回读校验，并在失败时恢复旧 pair或清理新路径；不访问 Git/网络/凭据。
 - 首轮测试发现 `_regular()` 错用 `os.stat_result.is_file()`；已改为 `stat.S_ISREG/S_ISLNK`，修复后 producer+builder 共 8/8 PASS，`py_compile` 与 `git diff --check` PASS。
 - 当前仍未具备完整 pair 生成或物化授权；还需补齐失败注入、secret redaction、环境 allowlist 和实际 producer orchestrator。
+
+## 2026-09-16 — producer 环境 allowlist
+
+- 新增 `validate_pair_environment()`：要求六项基础 Git 环境，helper 仅接受 canonical `credential.https://github.com.helper` 三项描述，拒绝 `HOME`、`GH_TOKEN`、`GITHUB_TOKEN`、`GIT_ASKPASS`。
+- producer+builder 测试共 9/9 PASS；`py_compile`、`git diff --check` PASS。
+- 仍未生成 request pair；该模块尚未授权 materialization 或训练。
