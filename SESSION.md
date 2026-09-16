@@ -9697,5 +9697,41 @@ vs 本轮（active 11.5 GiB）。
 
 **⟹ 实际推论：active 路线单张 4090 24G 即可正式训练；基线必须 40G+。**
 
+### D8a 正式训练已启动（2026-09-16 20:42，用户授权）
+
+**用户决策（2026-09-16）**：① **先跑 100 步验证**再决定全程；② **沿用**
+`RUN_NAME=edge_libero_4in1_localmem_active`（覆盖 20:10 的 1 步诊断 ckpt）；
+③ **保留** `PSM_DIAG_EVIDENCE` 探针（门控默认关闭，不设即零行为改变）。
+
+启动命令（与 D7 诊断跑的差异：**不带** `PSM_DIAG_EVIDENCE` 与
+`trainer.logging_iter`，**带** `max_iter=100` + `save_iter=25`）：
+
+```bash
+cd /disk/rl/psm_wma/cosmos-framework
+export PATH="$PWD/.venv/bin:$PATH"
+LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
+TOML_FILE=examples/toml/sft_config/action_policy_libero_edge_all_localmem_active.toml \
+RUN_NAME=edge_libero_4in1_localmem_active \
+OUTPUT_ROOT=outputs/train DISABLE_AUTO_RESUME=1 \
+PSM_R09_B_TTT_ACTIVE=1 PSM_R09_B_TTT_ENABLED=1 \
+PSM_R08_LOCAL_HISTORY_ENABLED=1 PSM_R09_B_TTT_ACTIVE_GA=16 \
+EXTRA_TAIL_OVERRIDES="trainer.max_iter=100 checkpoint.save_iter=25" \
+bash examples/launch_sft_action_policy_libero_edge_all.sh
+```
+
+**启动核实（全部通过）**：`>>> FRESH start (DISABLE_AUTO_RESUME=1; ignoring
+.../checkpoints)`；`TOML`/`checkpoint` 路径正确；torchrun `--nproc_per_node=1`
+（单卡锁定）；cmdline 实含 `trainer.max_iter=100` 与 `checkpoint.save_iter=25`。
+
+**预计**：100 步 × 202.6 s ≈ **5.6 小时**；4 个 ckpt（iter 25/50/75/100）
+约 **25 GB**。日志 `outputs/train/logs/action_policy_libero_edge_all_localmem_active_sft.log`
+（基数 2762 行，`tee -a` 追加）。
+
+**PASS 判据**：`perf/microbatches=128`（路线生效，=1 即静默降级需立即停）、
+`loss` finite 且呈下降、`iter_*` 四目录齐全、显存 < 24 GiB、`clip_grad_norm` finite。
+
+**D8b（全程 5000 步，≈11.8 天）待 D8a 通过后再议。**
+
+
 
 
