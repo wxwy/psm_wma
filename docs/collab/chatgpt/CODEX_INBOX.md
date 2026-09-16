@@ -514,3 +514,11 @@
 - Scope remains CPU/static only；no native-main integration、source/record/publication I/O、authority ref、child/runtime、GPU or training。
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 - Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
+## 2026-09-16 — G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-REQUEST-INSTANCE-CONSTRUCTION-IMPLEMENTATION-DESIGN
+
+- formal root: `7e587e1f00150ba74558e818ebac9ed036d2e42f`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_construction_implementation_design_v0.1.md`
+- scope: docs-only implementation design review. It freezes same-round identity observation, exact-schema canonicalization, JSON/Markdown byte readback, terminal partial-residue policy, and hard stop.
+- evidence: `git diff --check` PASS; no instance created; no checkpoint/manifest/data/cache payload read; no source/record/publication I/O; no GPU/CUDA/torchrun/training.
+- requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
