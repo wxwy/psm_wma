@@ -7,7 +7,7 @@ from pathlib import Path
 from tools.psm_wma.observe_source_evidence_bundle import (
     BLOCKED_AUTHORITY_NOT_CLOSED, OBSERVATION_SECTIONS, ObservationError,
     assemble_constructor_bundle, build_observation_bundle, observation_to_bundle,
-    observe_and_assemble, observe_bundle,
+    observe_and_assemble, observe_bundle, read_git_metadata,
 )
 from tools.psm_wma.test_build_source_evidence_closure_request_instance import bundle
 
@@ -135,6 +135,32 @@ class ObservationTests(unittest.TestCase):
             result = read_git_metadata(root, ref="HEAD", paths=[],
                                        remote_url="https://example.invalid/repo.git", remote_ref="HEAD")
         self.assertEqual(result["remote_ref_revision"], "f" * 40)
+
+    def test_remote_ref_missing_is_absent(self):
+        root = Path.cwd()
+        with patch("tools.psm_wma.observe_source_evidence_bundle.subprocess.run",
+                   side_effect=[
+                       type("Completed", (), {"stdout": "a" * 40 + "\n"})(), None,
+                       type("Completed", (), {"stdout": "b" * 40 + "\n"})(),
+                       type("Completed", (), {"stdout": "c" * 40 + "\n"})(),
+                       type("Completed", (), {"returncode": 2, "stdout": ""})(),
+                   ]):
+            result = read_git_metadata(root, ref="HEAD", paths=[],
+                                       remote_url="https://example.invalid/repo.git", remote_ref="HEAD")
+        self.assertEqual(result["remote_ref_revision"], "ABSENT")
+
+    def test_remote_ref_unreachable_fails_closed_without_network(self):
+        root = Path.cwd()
+        failed = type("Completed", (), {"returncode": 1, "stdout": ""})()
+        with patch("tools.psm_wma.observe_source_evidence_bundle.subprocess.run",
+                   side_effect=[
+                       type("Completed", (), {"stdout": "a" * 40 + "\n"})(), None,
+                       type("Completed", (), {"stdout": "b" * 40 + "\n"})(),
+                       type("Completed", (), {"stdout": "c" * 40 + "\n"})(), failed,
+                   ]):
+            with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
+                read_git_metadata(root, ref="HEAD", paths=[],
+                                  remote_url="https://example.invalid/repo.git", remote_ref="HEAD")
 
     def test_missing_observed_blob_fails_closed(self):
         observation = {"root": {}, "files": {"module": {"path": "module.py", "raw_sha256": "a" * 64}},

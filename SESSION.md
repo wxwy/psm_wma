@@ -8666,6 +8666,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 已完成 `send-keys -l` → 间隔 1 秒 → 独立 Enter → `capture-pane`；capture 显示完整申请已离开输入框并进入 DS 会话处理。
 - 当前 pair 状态：DS 已送达、处理中；尚无最终 verdict。保持 REVIEW，禁止 instance 写入与训练。
 
+## 2026-09-16 — observation provider DS closure 结果与收尾
+
+- 本轮 DS=`ds:0.0` capture 给出 `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_CPU_STATIC`，锚定 formal root=`3bf72e49593f1c21e61f783e724213c262df1a04` / child=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- DS 指出两项非阻塞收尾：补 `rc=2` 缺失 ref→`ABSENT` 断言；不可达测试不得真实出网。已采纳并改为 mock。
+- 验证：provider/constructor `19/19 PASS`，py_compile、diff-check PASS。测试收尾尚未提交。
+
 ## 2026-09-16 — closure review 轮询观察凭证
 
 - `before_head=d934117513f3ed0ce4c2ecf5c962e8e4155116d5`；fetch 成功；advertised=`d934117513f3ed0ce4c2ecf5c962e8e4155116d5`，`origin/V2` 相同；新增范围为空；ancestor=0；ff-only=Already up to date。
