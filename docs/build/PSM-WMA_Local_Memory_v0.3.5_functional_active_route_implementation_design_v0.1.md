@@ -320,3 +320,82 @@ P5/P6 执行前必须按 AGENTS.md §72 向用户展示目的与 Gate、完整�
 - 不重试旧 v0.6 materialization/request，不复用旧 evidence。
 - 不把本设计解释为 source-evidence / authority-root provenance 的替代；provenance 按用户授权
   降级为并行或训练后补。
+
+---
+
+## 10. 精确集成图（v0.2 取证补充，剩余工作清单）
+
+### 10.1 现状：enablement 开关是陷阱
+
+`cosmos_framework/configs/base/experiment/action/posttrain_config/action_policy_libero_edge_all.py`
+**已有** env 驱动的 Local Memory 启用路径，但它指向已被 supersede 的 legacy row-wise 路线：
+
+- `:98` `cfg["local_ttt_enabled"] = r09_b_ttt_enabled`（`PSM_R09_B_TTT_ENABLED=1`）
+- `:245` `keys_to_select = list(TTT_SLOW_GROUP_SELECTORS)` —— 这部分**正确**
+  （`config_checkpoint_contract.py:68` 的 `SELECTORS` 已是 canonical 名
+  `local_memory_runtime.evidence_encoder.` / `local_memory_runtime.ttt_core.` /
+  `local_memory2llm.` / `local_memory_modality_embed`）
+- `:303-306` 在同开关下注册 `TTTLifecycleCallback()` —— **这是 legacy row-wise 路线**
+  （v0.3.5:12 明令禁止与 segment-level 混用）
+- 同时 `local_ttt_enabled=True` 会让 `_canonical_production_request_from_batch`
+  对每个缺 canonical mode 声明的普通 batch 直接 `raise`（HIGH-3 冻结）
+
+**结论：直接 `PSM_R09_B_TTT_ENABLED=1` 启动会立刻崩，且走的是被废弃的路线。**
+必须新增一个独立开关（建议 `PSM_R09_B_TTT_ACTIVE=1`）选择 canonical active 路线，
+且**不得**注册 `TTTLifecycleCallback`。
+
+### 10.2 driver 完全缺失（已核实）
+
+全仓 grep（排除定义与 `_test.py`）：
+
+```text
+arm_active_local_memory_initial / continuation 的生产调用点：0 个
+bind_active_local_memory_registry 的生产调用点：            0 个
+唯一命中：trainer/__init__.py:696（retry 路径内部自调用）
+```
+
+即 `ProductionActiveWiringRegistry` 在生产训练循环中**从未被构造、绑定或 arm**。
+
+### 10.3 trainer 接缝的硬约束（决定 driver 形状）
+
+`trainer/__init__.py:709-727` `arm_active_local_memory_initial` 要求：
+
+```python
+grad_accum_iter == 0  and  plan.ga_effective == self.config.trainer.grad_accum_iter
+```
+
+`:728-741` `prepare_continuation` 要求 `trainer_grad_accum_iter == len(transaction.completed_members)`。
+
+结合 (B) 裁决（一个 member = 1 条 stream × `T` steps），得到唯一自洽的映射：
+
+```text
+config.trainer.grad_accum_iter（toml）= 8 * GA = plan.ga_effective = member 数
+max_samples_per_batch                = T = 16        # 一次 dataloader 迭代 = 一个 member 的 rows
+member i 的 slot                      = slot[i % B_stream]
+```
+
+即：**把 `max_samples_per_batch` 从 128 降到 16**，使「一次 dataloader 迭代 ↔ 一个 member」一一对应；
+`grad_accum_iter` 相应设为 `8 * GA`。普通 dataloader 仍会产出 batch，但在 active 路线上
+其内容**被忽略**（`_active_local_memory_forward` 只读 `psm_local_memory_*` 两个键），
+所以 `max_samples_per_batch` 只影响取数与显存上界，不影响数值。
+
+### 10.4 剩余实现清单（按依赖顺序）
+
+| # | 工作 | 文件 | 判据 |
+|---|---|---|---|
+| D1 | producer：从 LIBERO 行 + `exact_window_v1` cache 构造 `SegmentBatch`（B=1, T≤16） | 新模块（`data/generator/action/` 下） | `SegmentBatch.validate(16)` 通过；真实 cache 上跑通 |
+| D2 | 消除逐 consumer 循环：collate member 的 payloads → 一次 `training_step`，`x0_tokens_local_memory=[p0..p_{B-1}]` | `omni_mot_model.py:1438-1443` | CPU：`_get_training_inputs` 产出 B 个 per-sample `x0_tokens_vision`；local prefix 逐样本对齐 |
+| D3 | driver：构造 adapter/wiring/scheduler/owner/registry → `bind_active_local_memory_registry`；每 window 冻结 `GAWindowPlan(8*GA members)`；迭代 0 arm initial、其后 arm continuation | 新模块 + trainer 主循环接缝 | CPU：一个 window 的 `8*GA` 次 arm/forward/backward 走完，`finish_window` + `retire_resolved_window` |
+| D4 | 配置：新增 `PSM_R09_B_TTT_ACTIVE=1` 开关（走 canonical active、不注册 legacy callback） | `action_policy_libero_edge_all.py` | 组合出的 config 通过 `model_config.__attrs_post_init__`；无 `TTTLifecycleCallback` |
+| D5 | 训练 toml 的 dataset/dataloader 规模调整（`max_samples_per_batch=16`、`grad_accum_iter=8*GA`） | experiment config / toml | 与 §4.4 的 scale 决定一致 |
+| D6 | CPU/static smoke：1 个 member 的 forward+backward，slow 参数 `.grad` 非零 | — | CPU，只读 cache |
+| D7 | GPU smoke：1 optimizer update | 1×A100 | loss 有限、无 NaN、不 OOM |
+| D8 | 正式训练启动 | 1×A100 | `logging_iter=1` 可见 loss |
+
+D6–D8 执行前按 AGENTS.md §72 展示完整命令、资源、输入输出与 PASS/FAIL/BLOCKED 判据。
+
+### 10.5 未决用户决策（阻塞 D5）
+
+`GA` 取值决定训练规模：`consumers/update = 128 * GA`。与基线 2048 samples/update 等量需 `GA=16`
+（每 update `128` 次 member forward+backward）；降低 `GA` 可换吞吐但降低每 update 的 exposure。
+**本设计不擅自降低训练规模**，该决定留给用户。
