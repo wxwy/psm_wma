@@ -8025,6 +8025,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS=`ds:0.0` capture 成功，发现具体问题：`produce_source_package()` 尚未验证 `record_raw` 与 receipt authority 一致，导致伪造 record 可能被接受；当前仍在复审，尚未出现新 pair final verdict。
 - 本轮无推进令牌；在 DS 给出该 pair final 前不修改、不提交、不执行真实 I/O 或训练。
 
+## 2026-09-16 — producer/closure remediation 观察凭证 #2 / REQUEST_CHANGES
+
+- `before_head=5783e08ddf2aa0eea7296b9b6a547d32f52ec508`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`5783e08ddf2aa0eea7296b9b6a547d32f52ec508`；新增为空；merge=`Already up to date.`
+- formal pair=`ec6fd6b1650d9372034c6cb386c74748e51a6326` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，exact pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`。
+- DS=`ds:0.0` capture 成功，exact pair final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:726)`；复现确认 record_raw 可携带与 receipt 矛盾的四项 digest 而被接受，要求在 package/closure 内调用 record↔receipt 绑定校验并补负例。
+- 本轮无 closure 推进令牌；仅允许在同一 pair final 已齐后评估该具体整改，之后必须以新 formal root 重审；未执行真实 I/O、publication、GPU 或训练。
+
 ## 2026-09-16 — producer/closure CPU/static implementation closure 观察凭证 #1
 
 - `before_head=de821aa9b68f042f2f8045bc702ba87a51dc67d0`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`de821aa9b68f042f2f8045bc702ba87a51dc67d0`；新增为空；merge=`Already up to date.`
