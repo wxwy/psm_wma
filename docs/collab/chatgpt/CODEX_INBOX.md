@@ -374,6 +374,15 @@
 - 验收重点：producer 不修改 builder 纯函数合同；拒绝 divergent/symlink/secret environment；发布失败回滚；输出 byte/SHA/blob/pair identity 可复核。
 - 请求 verdict：`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` 或 `REQUEST_CHANGES(file:line)`。
 
+## 2026-09-16 — Stage-1 v1.2 exact pair construction review
+
+- Gate：`G0-R09-B-TTT-V035-STAGE1-REQUEST-PAIR-CONSTRUCTION`。
+- Formal root：`7796d054daac2d99713e57df6ebc870cf9be37e3`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- Pair：`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v1.2.json`（38852 bytes，SHA-256 `cfd3c1de8f265d15d9b88a38c58ee079475fa3fed2a21691368fac1f5d202833`）及对应 Markdown（340 bytes，SHA-256 `d21da348d36fd168803b382dfbb72cbf31edc2c8f8c29376b78a274387cc260e`）。
+- 已通过 `verify_pair`、Git blob identity、helper environment 非密校验；producer/builder CPU 测试 10/10 PASS。
+- 请求范围：仅审核该 exact pair 的构造完整性并批准一次 pair construction follow-up；不授权 materialization、authority ref、source-evidence、GPU、torchrun、训练、评测或推理。
+- 请求 verdict：`APPROVE_TO_CONSTRUCT_R09_B_TTT_V035_STAGE1_V17_REQUEST_INSTANCE` 或 `REQUEST_CHANGES(file:line)`。
+
 ## 2026-09-16 — GPT 建议请求：恢复 Stage-1 推进路径
 
 - 当前根仓提交：`b57ad447c90317d48a21132f2d249ce9608c48e9`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
