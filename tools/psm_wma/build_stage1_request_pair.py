@@ -142,6 +142,7 @@ def build_request_payload(
             "GIT_CONFIG_SYSTEM": "/dev/null",
             "GIT_CONFIG_VALUE_0": "!/usr/bin/gh auth git-credential",
             "GIT_NO_REPLACE_OBJECTS": "1",
+            "GH_CONFIG_DIR": "/root/.config/gh",
             "LANG": "C",
             "LC_ALL": "C",
         },
