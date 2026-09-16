@@ -142,3 +142,22 @@ def assemble_constructor_bundle(bundle: Mapping[str, object]) -> dict[str, objec
         raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: constructor contract failed") from exc
     import json as _json
     return _json.loads(raw)
+
+
+def observe_and_assemble(*, root: Path, files: Mapping[str, Path], target_paths: Iterable[Path],
+                         argv: list[str], env: Mapping[str, str], env_allowlist: Iterable[str],
+                         git_repo: Path, git_ref: str, git_paths: Iterable[str],
+                         bundle_builder) -> dict[str, object]:
+    """Run one read-only observation and deterministically validate its flat bundle."""
+    if not callable(bundle_builder):
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: bundle builder required")
+    observation = observe_bundle(root=root, files=files, target_paths=target_paths,
+                                argv=argv, env=env, env_allowlist=env_allowlist,
+                                git_repo=git_repo, git_ref=git_ref, git_paths=git_paths)
+    try:
+        bundle = bundle_builder(observation)
+    except Exception as exc:
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: bundle assembly failed") from exc
+    if not isinstance(bundle, Mapping):
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: flat bundle required")
+    return assemble_constructor_bundle(bundle)

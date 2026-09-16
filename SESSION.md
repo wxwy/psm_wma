@@ -8476,6 +8476,33 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增 provider→constructor 正负 fixture；验证 15/15 联合 unittest PASS、py_compile PASS、git diff-check PASS。
 - 仍未读取真实 source/cache payload、未写真实 instance、未执行 GPU 或训练；待提交新 formal root 后申请 DS-only review。
 
+## 2026-09-16 — ObservationBundle provider end-to-end assembly
+
+- 新增 `observe_and_assemble` 唯一入口：强制同轮只读 Git observation，调用显式 bundle builder，并立即通过既有 constructor 完整校验；builder 缺失、异常或非 Mapping 统一 `BLOCKED_AUTHORITY_NOT_CLOSED`。
+- 新增 provider→constructor 正例和无 Git 事实负例；验证 17/17 联合 unittest PASS、py_compile PASS、git diff-check PASS。
+- 未读取真实 source/cache payload、未写真实 instance、未执行 GPU 或训练；待提交新 formal root 后申请 DS-only review。
+
+## 2026-09-16 — ObservationBundle provider constructor assembly DS review 观察凭证 #1
+
+- `before_head=0e0a7159d2a095a213849a785ac3a5b5b0a187b8`；fetch 成功；advertised/tracking=`0e0a7159d2a095a213849a785ac3a5b5b0a187b8`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`57aef1eafa636ece55f68aa05c6e3db85e51ea51` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，已核对 root/log/HEAD/child 并运行实现 diff/测试检查，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider constructor assembly DS review 观察凭证 #2
+
+- `before_head=0e0a7159d2a095a213849a785ac3a5b5b0a187b8`；fetch 成功；advertised/tracking=`0e0a7159d2a095a213849a785ac3a5b5b0a187b8`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`57aef1eafa636ece55f68aa05c6e3db85e51ea51` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，仍在核对 implementation diff 与测试，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider constructor assembly DS review 观察凭证 #3
+
+- `before_head=0e0a7159d2a095a213849a785ac3a5b5b0a187b8`；fetch 成功；advertised/tracking=`0e0a7159d2a095a213849a785ac3a5b5b0a187b8`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`57aef1eafa636ece55f68aa05c6e3db85e51ea51` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/rl/psm_wma/observe_source_evidence_bundle.py:105)`（实际路径 `tools/psm_wma/...`）：要求 provider→十 section→assemble_constructor_bundle→valid instance 唯一端到端链，read_git_metadata 接入证据，以及缺 Git 事实时 fail-closed。
+- 评估决定选择 DS 方案 (a)，补唯一端到端入口和负例；不将十 section 合成推迟到后续 Gate。当前未写真实 instance、未执行 source I/O、GPU 或训练。
+
 ## 2026-09-16 — ObservationBundle provider CPU/static closure review 观察凭证 #2
 
 - `before_head=03991d413b70384b09c3333fd14e236ffe0b1460`；fetch 成功；advertised/tracking=`03991d413b70384b09c3333fd14e236ffe0b1460`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。

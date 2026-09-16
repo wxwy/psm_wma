@@ -5,7 +5,7 @@ from pathlib import Path
 
 from tools.psm_wma.observe_source_evidence_bundle import (
     BLOCKED_AUTHORITY_NOT_CLOSED, OBSERVATION_SECTIONS, ObservationError,
-    assemble_constructor_bundle, build_observation_bundle, observe_bundle,
+    assemble_constructor_bundle, build_observation_bundle, observe_and_assemble, observe_bundle,
 )
 from tools.psm_wma.test_build_source_evidence_closure_request_instance import bundle
 
@@ -71,6 +71,21 @@ class ObservationTests(unittest.TestCase):
         value.pop("executor")
         with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
             assemble_constructor_bundle(value)
+
+    def test_observe_and_assemble_end_to_end(self):
+        root = Path.cwd()
+        result = observe_and_assemble(
+            root=root, files={"module": root / "AGENTS.md"}, target_paths=[], argv=[], env={},
+            env_allowlist=[], git_repo=root, git_ref="HEAD", git_paths=["AGENTS.md"],
+            bundle_builder=lambda _observation: bundle())
+        self.assertEqual(result["schema"], "root_source_evidence_closure_request_instance_v1")
+
+    def test_observe_and_assemble_requires_git_observation(self):
+        with tempfile.TemporaryDirectory() as root:
+            with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
+                observe_and_assemble(root=Path(root), files={}, target_paths=[], argv=[], env={},
+                                     env_allowlist=[], git_repo=Path(root), git_ref="HEAD",
+                                     git_paths=[], bundle_builder=lambda _observation: bundle())
 
 
 if __name__ == "__main__":
