@@ -1905,6 +1905,7 @@ tool.NativeAuthorityGit.remote_ref = failing
             self.assertNotIn("GIT_REPLACE_REF_BASE", transaction.env)
             self.assertEqual(transaction.env["GIT_CONFIG_GLOBAL"], "/dev/null")
             self.assertEqual(transaction.env["GIT_CONFIG_SYSTEM"], "/dev/null")
+            self.assertEqual(transaction.env["GIT_CONFIG_VALUE_0"], "!/usr/bin/gh auth git-credential")
 
     def test_temporary_index_commit_and_exact_ref_cas(self):
         git = Path(shutil.which("git") or "")

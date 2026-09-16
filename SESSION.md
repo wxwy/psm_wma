@@ -1,5 +1,85 @@
 # 当前协作状态
 
+### Stage-1 pragmatic immutable-commit request review（2026-09-15 CST，REVIEW）
+
+- Owner Override 已取代 V25/V26/V27 host/session/IPC continuation。formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；其 request 锁定 candidate materialization root=`db6c4f93473e7ef58a294cff3fb8c692b100badd`。
+- 冻结审核名册：ChatGPT（canonical Inbox）、MM=`mm:0.0`、DS=`ds:0.0`（用户先前明确以 DS 替代 Kimi）。审核范围仅 exact v0.5 request pair/emitter；三方同 pair final 前禁止 materialization、receipt、GPU smoke 与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #1（2026-09-15 20:31:03 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0` capture 显示已进入同 pair 静态审阅；DS=`ds:0.0` capture 显示读取该 formal root 的 test 文件，尚无 final。三项证据命令均成功未截断；无推进令牌，保持 REVIEW。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #2（2026-09-15 20:35:31 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`给出与 Owner Override 已明确停止的 V25--V27 host/IPC 路线相冲突的方向性文字，未提供 requested exact-pair FINAL；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`，要求额外 docs-only refreeze。三项证据命令均成功未截断；ChatGPT/MM缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #3（2026-09-15 20:39:58 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`已按 Owner Override 给出正向审阅结论但未采用 requested self-contained FINAL 格式；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT/MM缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #4（2026-09-15 20:44:15 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #5（2026-09-15 20:48:37 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持 `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #6（2026-09-15 20:49:40 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #7（2026-09-15 20:54:17 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #8（2026-09-15 20:55:04 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #9（2026-09-15 20:55:49 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #10（2026-09-15 20:56:36 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #11（2026-09-15 20:57:23 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #12（2026-09-15 20:58:11 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #13（2026-09-15 20:58:59 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #14（2026-09-15 20:59:56 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #15（2026-09-15 21:00:56 CST，REVIEW）
+
+- formal pair 不变；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch 成功；advertised/tracking 均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；祖先判定=0；ff-only=`Already up to date`。
+- ChatGPT exact root 检索未命中。MM=`mm:0.0`保持同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`保持同 pair `REQUEST_CHANGES(...v0.5.json:1)`。三项证据命令均成功未截断；ChatGPT缺 final、无推进令牌，保持 REVIEW，未整改。
+
 ### V26 host-owned continuation boundary design（2026-09-15 CST，IN_PROGRESS）
 
 - 用户明确选择方案 1：不再试图以同一 Python interpreter 内的 module/session registries 保证 authority；改由独立、低权限 Stage1Host 进程持有 approval、binding、review record 与 one-shot latch。
@@ -7293,3 +7373,345 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - Formal pair=root=`517bb9790985a2001f6778ad64ccfbe7fe5bce3d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册=ChatGPT、MM=`mm:0.0`、DS=`ds:0.0`（用户明确以DS替代Kimi）。ChatGPT申请已append至canonical live Inbox，待将ledger推送后完成MM/DS送达回执。
 - 请求唯一verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`；无同pair三方final前禁止真实host/IPC/pre-C/C/request pair/materialization/source-evidence、child、GPU和训练。
+
+### V27 fake-host canonical-record remediation 审核送达回执（2026-09-15 20:07 CST，REVIEW）
+
+- ChatGPT申请已在canonical live Inbox并由ledger=`f57fa08923e2eb2a7bc0349e5f19461d849e5ce7`推送。MM=`mm:0.0`、DS=`ds:0.0`均完成同pair`send-keys -l → 间隔1.1秒 → 独立Enter → capture`；MM capture显示申请离开输入框且处于`Coalescing`，DS capture显示申请进入会话、处于`Build`处理。
+- 两条capture均为送达回执，不构成final verdict。保持REVIEW；三方同pair final前禁止任何整改、真实host/IPC/pre-C/C和下游。
+
+### V27 fake-host canonical-record remediation 审核观察凭证 #1（2026-09-15 20:11 CST，REVIEW）
+
+- Formal pair=root=`517bb9790985a2001f6778ad64ccfbe7fe5bce3d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=f57fa0891dbd8ce2c390440e953469527d751ed0`；fetch成功；advertised/tracking均=`f57fa0891dbd8ce2c390440e953469527d751ed0`；新增范围为空；祖先判定=0；ff-only=`Already up to date.`。
+- ChatGPT exact检索结果为空；DS=`ds:0.0`同pair final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_HOST_OWNED_CONTINUATION_CPU_STATIC`；MM=`mm:0.0`仅审阅正文，无同pair final。独立证据均成功未截断；ChatGPT/MM缺件，无推进令牌，保持REVIEW。
+
+### Stage-1 pragmatic pair remediation review（2026-09-15 21:20:58 CST，REVIEW）
+
+- 新 formal root=`714f04d2`（完整提交待以`git rev-parse HEAD`核验）/child=`93a89ba61306d840a008813f62f26a34d54850f4`；新 pair 由 adapter identity 修复生成。申请未写入 ChatGPT Inbox，按 Owner 指令 GPT 延后。
+- MM=`mm:0.0` 与 DS=`ds:0.0` 均完成 `send-keys -l → 间隔1秒 → 独立 Enter → capture`；capture 证明消息已离开输入框并进入会话，当前尚无新 pair final。旧 pair 的 MM APPROVE/DS REQUEST_CHANGES 不用于新 pair。
+- 新 pair 审核范围仅 request bytes、outer ADAPTER tree/blob/raw identity 与 Owner Override；三方（当前 MM/DS）同 pair final 前不执行 materialization。GPT 将在训练条件形成后再申请。
+
+### Stage-1 pragmatic pair MM/DS review observation（2026-09-15 21:22:11 CST，REVIEW）
+
+- `before_head=714f04d2104348845d5bd4873d4fdf10902a70d8`；fetch、远端 advertised/tracking 核对、祖先判定及 ff-only 均成功，远端与本地一致。
+- DS=`ds:0.0` 已给同 pair 完整 final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。MM=`mm:0.0` 已完成技术复核并明确无 HIGH/CRITICAL 缺陷，现已按要求补发严格 FINAL 格式，capture 显示消息已进入会话，等待其最终行。
+- 按 Owner 指令暂不申请 ChatGPT；在 MM 严格 FINAL 到位前不执行 materialization。GPT 延后至训练条件具备后。
+
+### Stage-1 pragmatic pair MM/DS 推进令牌（2026-09-15 21:23:00 CST，IN_PROGRESS）
+
+- formal pair=root=`714f04d2104348845d5bd4873d4fdf10902a70d8`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；本轮远端与本地均为 root `714f04d2…`，无新增提交。
+- MM=`mm:0.0` final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0` final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。两者均锚定同一完整 pair，形成 Owner 指定的 MM/DS 推进令牌。
+- 仅据 Owner 指令进入一次 Stage‑1 materialization；GPT 审核继续延后至训练条件具备。禁止重试旧 pair、额外治理 Gate、GPU/训练前越权动作。
+
+### Stage-1 materialization pre-mutation failure #2（2026-09-15 21:24 CST，IN_PROGRESS）
+
+- 新 pair 首次执行在 `add_and_capture` 的 reserved-FD collision 处停止：包装进程将三个 TemporaryFile 原始描述符遗留为 FD6/7，launcher 按契约拒绝 `6,7,8` 碰撞；未创建 clean worktree，目标目录、evidence、pending 均仍 absent。
+- 该失败发生于 mutation 前，未消耗 one-shot authority；修正调用包装仅在 exec 前关闭临时文件原始 FD，保留 FD3/4/5 与 root owner FD8，再重用同一已批准 pair。若再次失败立即 hard-stop。
+
+### Stage-1 materialization pre-mutation failure #3 / pair 修复（2026-09-15 21:30 CST，IN_PROGRESS）
+
+- 修正包装后旧 outer launcher 在 `add_and_capture` 仍以 `reserved fd collision:6,8` 停止；原因是 launcher 同时将 FD8 作为 owner ABI 与`BOOTSTRAP_FD`，却把 FD8列入自身 `require_closed` 检查。目标目录、evidence、pending 均保持 absent，未消耗 authority。
+- 最小修复：builder 将该 guard 固定为仅检查 FD6/7/9，并增加回归断言；重新生成 pair。当前 JSON 37273 bytes / SHA256=`9d629a07a7cab3f0be49f9730f844e8600c3e46db66559a38192bec615956c4c` / blob=`021d1c9f7fd608a80fd23b61d2917d090ac617e5`；Markdown SHA=`41ef0b4a0c3c910cd30ab83cea0d6a8ba302494cb655a4b96e2e40d6be8825e2`；outer SHA=`499ad49957c11717212ac8e1f751f3f1eb3d330cce0faf2d386930e420a79826`。
+- 验证：builder/pre-C 单测`24/24 PASS`，py_compile、git diff-check PASS。尚未重试 materialization；需提交新 formal root 后重新取得 MM/DS 同 SHA final。
+
+### Stage-1 materialization pre-mutation failure #4 / pair 修复（2026-09-15 21:38 CST，IN_PROGRESS）
+
+- launcher `route_snapshot()` 自身打开的 `.git` 与 `config` FD 落入 reserved FD6/7，触发 collision guard；仍未创建 clean worktree 或 evidence，authority 未消耗。
+- builder 现将这两个 route FD 打开后立即复制到 FD10+、关闭原 FD，再交给后续 route checks；新增 pair 已验证：JSON 37424 bytes / SHA256=`67b807a9d57f62cfc852d9e9365dde3fcfaec59d9cfde1c1ac41c357290f3555` / blob=`e649c34b594ced482a237658ffe9b51e5d2e6538`；Markdown SHA=`5511fb3a6bdd3e21004edfba3c4a919db824d4f5c4663be7729919b25a7ad4d5`；outer SHA=`294b1be7afd55d9b10075d6eaccb83040d731889ff077eda402785e86522e12e`。
+- 验证：builder/pre-C 单测`24/24 PASS`，py_compile、git diff-check PASS。需提交新 formal root 后重新取得 MM/DS final；GPT 仍延后。
+
+### Stage-1 materialization pre-mutation failure #5 / pair 修复（2026-09-15 21:48 CST，IN_PROGRESS）
+
+- 已确认上次执行实际创建历史 clean worktree `.authority-root-materialization-9dd2fb8` 并写入三个 FD handoff 文件，但 evidence 缺失；该现场保留，不删除、不复用。根因是 outer `CLEAN` 常量未随 builder 的 clean suffix 更新。
+- builder 现显式重写 `CLEAN = ROOT + "/.authority-root-materialization-<suffix>"`，新 pair 指向 `.authority-root-materialization-db6c4f9`。新 pair JSON 37424 bytes / SHA256=`74009b13e639e784498c18419cea5ae8c2ff34c6ba34fe988856d82ed962117a` / blob=`e66de81d2b18e13b882e92a8d97cb8e4ca8c9824`；Markdown SHA=`3be4b489d248d4bbb97bbff96874396964bc28c37b5d32655b5e18450f30659c`；outer SHA=`8e6d41f2352bf762b61bb8bb6b3d08a0c56e1db002e4b4cb719dcd70260f2a15`。
+- 验证：builder/pre-C 单测`24/24 PASS`，py_compile、git diff-check PASS。需提交新 formal root、重新取得 MM/DS final；GPT 继续延后。
+
+### Stage-1 pair 449a3c1b MM/DS 审核送达（2026-09-15 21:25:59 CST，REVIEW）
+
+- 新 formal root=`449a3c1b`（远端完整 SHA 待下一轮 fetch 核验）/child=`93a89ba61306d840a008813f62f26a34d54850f4`；MM=`mm:0.0`、DS=`ds:0.0`均完成`send-keys -l → 间隔1秒 → 独立 Enter → capture`，capture证明新申请进入会话。
+- 申请范围仅 FD6/7/9 collision guard、request bytes 与 Owner Override；未申请 ChatGPT。当前 MM/DS 尚无新 pair final；旧 pair verdict 不复用。新 pair final 齐全后才重试 materialization。
+
+### Stage-1 pragmatic pair 修复（2026-09-15 21:16 CST，IN_PROGRESS）
+
+- 旧 pair `44aa8760630751668a5ec340ef017575c65e311d` 的一次性 launcher 在 mutation 前以 `Stop: adapter tree` 失败；`.authority-root-materialization-db6c4f9`、evidence 与 pending 均保持 absent，未消耗 materialization。
+- 根因：builder 只替换 parser 中的 `--adapter-blob-oid`，未同步 outer launcher 顶层 `ADAPTER` 常量，C 阶段仍校验历史 blob `da782754…`，而 formal root `db6c4f9…` 的实际 blob 为 `4a51bddd…`。
+- 最小修复：`build_stage1_request_pair.py` 机械冻结 outer `ADAPTER` 声明，并新增回归断言；重新生成 pair。新 pair：JSON 37286 bytes / SHA256=`d49559c57e4096183351ec8c1f60687749b32312167922ad5dead500316edd73` / blob=`72b049f2f6bf6a054b99ac6b3469f767db61bbbb`；Markdown 340 bytes / SHA256=`e750f229fe0f89fe995f80bb5bbdeba467aee81c469c53915d84eacc7dd7b213`；outer SHA=`3c53f1d647dc0ebdb6623ee790b5811c98685ca06c7fc7b3643102b1a080a3fd`。
+- 验证：builder/pre-C 单测`24/24 PASS`，py_compile、git diff-check PASS。尚未重试 materialization；先提交新 formal root，再申请 MM/DS 同 SHA 审核。
+
+### Stage-1 pragmatic immutable-commit MM/DS-only decision（2026-09-15 21:13 CST，REVIEW → IN_PROGRESS）
+
+- Owner 明确要求先只依据 MM/DS 推进，训练条件具备后再提交 ChatGPT 审核。当前 formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；本轮远端已锁定 `86afd07d548115809547c2aead72732a96eb80f1`，无新增提交。
+- MM 同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS 同 pair final=`REQUEST_CHANGES(...v0.5.json:1)`，要求额外 docs-only refreeze；该要求与 Owner Override 中“不得新增横向治理 Gate、直接沿用已验证 candidate”冲突，且未指出代码/路径/bytes/materialization 的具体执行失败，因此不采纳为阻塞。
+- 依据 Owner 指令，下一步仅执行既有最小 non-consuming preflight；GPT review 延后至训练条件形成后，禁止新增 V28 类治理文档、GPU 训练前越权动作。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #26（2026-09-15 21:12:32 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、远端核对、完整新增范围、祖先判定和`merge --ff-only`均成功；无新增提交。
+- ChatGPT exact检索无匹配。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮独立证据成功且未截断；ChatGPT final缺件、DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #25（2026-09-15 21:11:39 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、远端核对、完整新增范围、祖先判定及`merge --ff-only`均成功；无新增提交。
+- ChatGPT exact检索无匹配。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮独立证据成功且未截断；ChatGPT final缺件、DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #24（2026-09-15 21:10:52 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、远端 advertised/tracking核对、完整新增范围、祖先判定和`merge --ff-only`均成功；无新增提交。
+- ChatGPT exact检索无匹配。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮独立证据成功且未截断；ChatGPT final缺件、DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #23（2026-09-15 21:10:04 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、远端 advertised/tracking核对、完整新增范围、祖先判定和`merge --ff-only`均成功；无新增提交。
+- ChatGPT exact检索无匹配。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮独立证据成功且未截断；ChatGPT final缺件、DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #22（2026-09-15 21:09:16 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、advertised/tracking核对、完整新增范围、祖先判定和`merge --ff-only`均成功；无新增提交。
+- ChatGPT exact检索无匹配。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮独立证据成功且未截断；ChatGPT final缺件、DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #21（2026-09-15 21:08:30 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、远端核对、完整新增范围、祖先判定、`merge --ff-only`均成功；无新增提交。
+- ChatGPT exact检索无匹配。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮独立证据成功且未截断；ChatGPT final缺件、DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #20（2026-09-15 21:07:41 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、advertised/tracking核对、完整新增范围、祖先判定和`merge --ff-only`均成功；无新增提交。
+- ChatGPT exact检索无匹配。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮独立证据成功且未截断；ChatGPT final缺件、DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #19（2026-09-15 21:06:55 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、advertised/tracking核对、完整新增范围、祖先判定、`merge --ff-only`均成功；无新增提交。
+- ChatGPT exact检索无匹配。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮独立证据成功且未截断；ChatGPT final缺件、DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #18（2026-09-15 21:06:03 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、远端 advertised/tracking 核对、完整新增范围输出、祖先判定和`merge --ff-only`均成功；无新增提交。
+- ChatGPT exact检索无匹配。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`；DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮所有独立证据成功且未截断；ChatGPT final缺件、DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #17（2026-09-15 21:05:20 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；fetch、advertised/tracking核对、祖先判定与`merge --ff-only`均成功；远端无新增提交。
+- ChatGPT exact检索仍为空。MM=`mm:0.0`同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS=`ds:0.0`同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮证据均成功且未截断；ChatGPT正式 review缺件，DS为REQUEST_CHANGES，无推进令牌。保持`REVIEW`，禁止整改、materialization、source receipt、GPU smoke与训练。
+
+### Stage-1 pragmatic immutable-commit review 观察凭证 #16（2026-09-15 21:03:46 CST，REVIEW）
+
+- formal pair=root=`44aa8760630751668a5ec340ef017575c65e311d`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；`before_head=86afd07d548115809547c2aead72732a96eb80f1`；`git fetch origin V2`成功；`git ls-remote origin refs/heads/V2`与`git rev-parse origin/V2`均为`86afd07d548115809547c2aead72732a96eb80f1`；新增范围为空；`merge-base --is-ancestor`返回0；`git merge --ff-only origin/V2`=`Already up to date.`
+- ChatGPT exact检索命令=`rg -l -F '44aa8760630751668a5ec340ef017575c65e311d' docs/collab/chatgpt/reviews/`，结果为空。MM=`mm:0.0`独立capture给出同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。DS=`ds:0.0`窄范围独立capture给出同 pair final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.5.json:1)`。
+- 本轮 Git 锁定、exact review 扫描、MM/DS capture 均成功且未截断；三方 final 未齐（ChatGPT缺件，DS为REQUEST_CHANGES），无推进令牌。保持`REVIEW`，不得整改、materialization、source receipt、GPU smoke或训练。
+### Stage-1 materialization observation #21（2026-09-15 22:xx CST，BLOCKED）
+
+- formal pair=root=`734801c202d5b8c2f14ea07df8caa1fde418193b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；本轮已完成前置 Git 同步并确认本地/远端均为 `734801c...`。
+- MM=`mm:0.0` 与 DS=`ds:0.0` 均已对同一 pair 给出 `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。
+- 一次性 materialization 已发生 worktree 变更并生成 `a0_contract.json`、`a1_single_gpu_smoke.json`、`b0_ttt_contract.json`，三者 status 均为 `PASS`；但最终 `authority_root_materialization_evidence_v1.json` 与 `.pending` 均缺失，故不能认定 Stage-1 PASS，禁止 source receipt/GPU smoke/training。
+- 新 clean worktree=`.authority-root-materialization-db6c4f9`，authority 状态不完整；旧 `.authority-root-materialization-9dd2fb8` 保留，不删除。下一步先定位 materializer 终止原因，必要时修复并以新 pair 重走 MM/DS 审核。
+### Stage-1 pre-C index remediation observation #22（2026-09-15 CST）
+
+- 定位依据：冻结 bootstrap 在 owner FD8 上强制打开 `.authority-root.index`；执行前该文件不存在，导致 C 前置失败。
+- 已创建 owner root 空 regular index：`.authority-root.index`，size=0；未修改配置、代码或训练数据。
+- CPU-only 静态验证：`python -m unittest tools.psm_wma.test_stage1_v17_pre_c_rehearsal tools.psm_wma.test_build_stage1_request_pair`，24/24 PASS。
+- 当前 pair 已发生一次不完整 materialization，不能复用；仍需将 index 身份纳入新 pre-C/request pair 后再审核。
+### Stage-1 materialization execution observation #23（2026-09-15 CST，BLOCKED）
+
+- formal pair=root=`5e59eb06dc323cdcf71fb4fbc3092071648dae30`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；本轮 `git fetch origin V2`、advertised/tracking 核对、祖先判定均成功，远端无新增，工作树保留既有 dirty residue。
+- ChatGPT exact-pair review：未找到匹配 formal root；MM=`mm:0.0` capture 给出同 pair final=`APPROVE_TO_MATERIALIZE`；DS=`ds:0.0` capture 给出同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。
+- 已执行获批的一次 materialization；外层打印冻结 `bootstrap exec argv` 后，子进程以 `bootstrap-invocation` 退出码1；无 authority evidence/ref 产物。因此这是运行时 Stage-1 materialization FAIL，不是 Local Memory 算法代码或 CPU 静态测试 FAIL。
+- 结论：ChatGPT final 缺件且本次运行失败，无新的整改推进令牌；保持 `REVIEW/BLOCKED`，禁止 source-evidence receipt、GPU smoke、训练。下一步仅做不消费 authority 的 bootstrap 失败点定位，之后生成新 pair 并重新取得所需审核。
+
+### Stage-1 bootstrap non-consuming diagnosis #24（2026-09-15 CST）
+
+- 使用 request JSON 内冻结的 bootstrap raw/inner argv，在临时 FD 与既有失败 worktree 上执行，替换仅存在于诊断副本，未写入仓库或 authority 产物。
+- `sys.orig_argv` 首段检查通过（长度 85，`['-I','-S','-B','-c']`，第 6 项为 `--`）。带失败栈的诊断将首个可定位失败行缩小到 bootstrap 第 29 行的 `--interpreter-version` 守卫；尚未取得两侧实际字节的可复核差异，不能据此直接修改冻结字段。
+- 结论：运行时失败根因已从 argv/FD/formal 绑定进一步缩小为解释器版本守卫，但修复对象尚未确定；保持闭锁，禁止生成新 pair 之外的执行、source receipt、GPU smoke、训练。
+### Stage-1 review observation #25（2026-09-15 CST）
+
+- `before_head=5e59eb06dc323cdcf71fb4fbc3092071648dae30`；`git fetch origin V2` 成功；advertised/tracking 均为同一 SHA；新增范围为空；`merge --ff-only` 已执行且无变化。
+- exact-pair ChatGPT 检索命令 `rg -l -F '5e59eb06dc323cdcf71fb4fbc3092071648dae30' docs/collab/chatgpt/reviews/` 无匹配。MM=`mm:0.0` capture：`APPROVE_TO_MATERIALIZE`；DS=`ds:0.0` capture：`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。
+- ChatGPT final 缺件；本轮无三方推进令牌。保留旧 pair 的运行时 FAIL 事实，禁止整改、source receipt、GPU smoke 与训练。
+
+### Stage-1 review observation #26（2026-09-16 CST）
+
+- `before_head=41d2ceda82d79c44566565d727064781bac3ff3e`；`git fetch origin V2`、`git ls-remote origin refs/heads/V2` 与 `git rev-parse origin/V2` 均成功且一致；新增范围为空；祖先判定返回0，`git merge --ff-only origin/V2` 无变化。
+- formal pair 仍为 root=`5e59eb06dc323cdcf71fb4fbc3092071648dae30`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。ChatGPT exact 检索命令 `rg -l -F '5e59eb06dc323cdcf71fb4fbc3092071648dae30' docs/collab/chatgpt/reviews/` 无匹配。
+- MM=`mm:0.0` capture 含同 pair final=`APPROVE_TO_MATERIALIZE`；DS=`ds:0.0` capture 含同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。
+- 本轮同步、exact 检索及两 pane capture 均成功且未截断；ChatGPT final 缺件，无三方推进令牌。保持 `REVIEW/BLOCKED`，不得整改、materialization、source-evidence、GPU smoke 或训练。
+
+### Stage-1 review observation #27（2026-09-16 CST）
+
+- `before_head=41d2ceda82d79c44566565d727064781bac3ff3e`；fetch、advertised/tracking 核对、祖先判定及 `merge --ff-only` 均成功；远端新增范围为空。
+- formal pair=root=`5e59eb06dc323cdcf71fb4fbc3092071648dae30`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT exact 检索仍无匹配 review 文件。
+- MM=`mm:0.0` capture：同 pair `APPROVE_TO_MATERIALIZE`；DS=`ds:0.0` capture：同 pair `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。
+- 本轮证据命令均成功且未截断；ChatGPT final 缺件，无推进令牌。保持 `REVIEW/BLOCKED`，禁止整改、materialization、source-evidence、GPU smoke 与训练。
+
+### Stage-1 review observation #28（2026-09-16 CST）
+
+- `before_head=41d2ceda82d79c44566565d727064781bac3ff3e`；fetch、advertised/tracking 核对、祖先判定及 `merge --ff-only` 成功，远端新增范围为空。
+- formal pair=root=`5e59eb06dc323cdcf71fb4fbc3092071648dae30`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT exact review 检索无匹配。
+- MM=`mm:0.0` 同 pair final=`APPROVE_TO_MATERIALIZE`；DS=`ds:0.0` 同 pair final=`APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。
+- 所有独立证据命令成功且未截断；ChatGPT 缺正式 verdict，无三方推进令牌。保持 `REVIEW/BLOCKED`，不得整改、materialization、source-evidence、GPU smoke 或训练。
+
+### Stage-1 review observation #29（2026-09-16 CST）
+
+- `before_head=41d2ceda82d79c44566565d727064781bac3ff3e`；fetch、远端 advertised/tracking 核对、祖先判定与 fast-forward 均成功，新增范围为空。
+- formal pair=root=`5e59eb06dc323cdcf71fb4fbc3092071648dae30`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT exact review 检索无匹配。
+- MM 与 DS pane 均保留同 pair 的最终批准；本轮证据成功且未截断，但 ChatGPT 缺件，仍无推进令牌。
+
+### Stage-1 reviewer roster override #30（2026-09-16 CST）
+
+- 用户明确要求暂时剔除 ChatGPT，直至另行恢复；本轮冻结名册改为 MM=`mm:0.0`、DS=`ds:0.0`，ChatGPT 不参与推进令牌。
+- 已按 `send-keys -l` → 间隔1秒 → 独立 Enter → capture 三联回执，向 MM、DS 重新发送同一 formal pair 审核申请。MM 正在处理；DS capture 保留既有同 pair 批准并显示新申请已提交。
+- formal pair=root=`5e59eb06dc323cdcf71fb4fbc3092071648dae30`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；在两方重新确认前无推进令牌。
+### Stage-1 bootstrap remediation #31（2026-09-16 CST）
+
+- MM 非消费诊断明确定位：`/opt/conda/bin/python3` 为 symlink，冻结 bootstrap 的 `os.lstat` + `S_ISREG/S_ISLNK` 守卫必然触发 `bootstrap-invocation`；DS 同时指出版本横幅守卫存在漂移风险。
+- 采用 MM 推荐的最小安全修复：在 `rebuild_launcher` 生成新 launcher 时把 interpreter 绑定为真实 regular `/opt/conda/bin/python3.11`，保留 symlink 拒绝语义；同步 payload argv prefix/投影常量生成逻辑。未执行 authority、GPU 或训练。
+- CPU builder unittest：`5/5 PASS`。新 pair 尚未重建、提交或重新审核；因此仍无执行令牌。
+### Stage-1 v0.6 pair rebuild and review dispatch (2026-09-16 CST)
+
+- 目的/Gate：G0-R09-B-TTT-V035-STAGE1-PRAGMATIC-REQUEST-PAIR；按 MM/DS 已批准的解释器修复重建 exact pair，禁止消费执行。
+- 本轮事实：`before_head=3bedc49fb456113e294a2ce7e121f5c16f38d52d`；fetch 成功；origin/V2 advertised 与 tracking 均为该 SHA；无新增，祖先检查通过。
+- 生成提交：`e67a57ffa2ec6f8cdeb2e1299ecdc4387f6aeff9`；formal child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；新增 v0.6 JSON/Markdown，clean suffix=`a1c4e7d`，解释器固定 `/opt/conda/bin/python3.11`。
+- 验证：`python -m unittest tools.psm_wma.test_build_stage1_request_pair` 5/5 PASS；py_compile、git diff --check PASS；pair SHA：JSON `f05f8f4e14d85114439eae256525e503b55f6818e8e3511eda12b8698896faa6`，MD `ba2c16e29192d02d418c14943a084c6bcd50ff408db25d1dddcb6d5c39532856`。
+- 申请送达：MM `mm:0.0`、DS `ds:0.0` 均执行 send-keys -l→等待1秒→独立 Enter→capture；申请锚定上述 exact pair。ChatGPT 按用户指令暂停，不纳入本轮名册。
+- 当前状态：MM/DS 处理中，尚无本 pair 的最终 verdict；无推进令牌。下一步仅按审核轮询规则检查，禁止 materialization/source-evidence/GPU/training。
+- 观察轮次：1（2026-09-16 CST）。本地 HEAD/远端 advertised 均为 `e67a57ffa2ec6f8cdeb2e1299ecdc4387f6aeff9`；fetch、ls-remote、merge-base、ff-only 均成功，无新增提交。exact review 扫描：未找到匹配 e67a57ff 的 ChatGPT review（ChatGPT 暂停）。MM pane `mm:0.0`：申请已进入会话，处理中。DS pane `ds:0.0`：已回复 `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`，锚定 exact pair。当前仍缺 MM final verdict，无推进令牌。
+- 观察轮次：2（2026-09-16 CST）。`before_head=e67a57ffa2ec6f8cdeb2e1299ecdc4387f6aeff9`；advertised/tracking 同 SHA，fetch 与 ff-only 成功，无新增。exact-pair ChatGPT review 仍未找到（暂停）。MM `mm:0.0` capture 显示申请已提交且仍在处理；DS `ds:0.0` capture 保持 exact pair 最终 `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。缺 MM final，仍无推进令牌；禁止物化/训练。
+- 观察轮次：3（2026-09-16 CST）。完整同步检查成功：`before_head=e67a57ffa2ec6f8cdeb2e1299ecdc4387f6aeff9`，advertised/tracking 同 SHA，ff-only 无新增；exact-pair ChatGPT review 未找到（暂停）。MM `mm:0.0` capture 仍显示 exact pair 申请在处理，未见新的最终 verdict；DS `ds:0.0` 已保持 `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT`。无推进令牌，继续闭锁。
+- 观察轮次：5（2026-09-16 CST）。本轮 fetch/ls-remote/祖先判定/ff-only 均成功，`before_head` 与 advertised V2 均为 `e67a57ffa2ec6f8cdeb2e1299ecdc4387f6aeff9`，无新增；exact-pair ChatGPT review 未找到（暂停）。MM pane capture 仍无 v0.6 final verdict，DS 已有 exact-pair APPROVE（历史 pane 仍可见）；缺 MM，继续 REVIEW 闭锁。
+- Phase C 结果（2026-09-16 CST）：按 MM/DS 同 SHA 批准执行唯一一次 materialization。进程已退出；证据 `artifacts/g0/r09/authority_root_materialization_evidence_v1.json` 状态 `FAIL`，`primary_code=NATIVEGITERROR`、`primary_phase=prepare`；clean worktree/index 已创建但 candidate verifier 未通过，authority/publication 均未成功且未生成 remote ref。该 v0.6 construction 权限已消耗，禁止重试；需新诊断与新 exact pair 审核。
+
+### Stage-1 non-consuming diagnosis dispatch #32（2026-09-16 CST）
+
+- 本轮远端锁定：`before_head=5b307c88133a5b18d330c31f7c397177f2932548`；`git fetch origin V2`、`git ls-remote`、tracking 核对、祖先判定与 `merge --ff-only` 均成功；advertised/tracking 同 SHA，无新增。
+- 已向冻结诊断名册 MM=`mm:0.0`、DS=`ds:0.0` 发送 exact pair `root=e67a57ffa2ec6f8cdeb2e1299ecdc4387f6aeff9` / `child=93a89ba61306d840a008813f62f26a34d54850f4` 的非消费式根因定位请求；两次均完成 `send-keys -l`、等待1秒、独立 Enter、capture 回执。
+- DS capture 已回复：`DIAGNOSIS_CONFIRMED_AND_LOCKOUT_IS_DESIGN_CONSISTENT`；指出失败证据缺 native Git stderr 与 `preflight git_configuration`，具体子命令仍不可定位；建议仅做一次捕获 stderr 的非消费诊断，禁止重建 pair/materialization/GPU/训练。MM 已收到并处理中，尚无本轮最终诊断回复。
+
+### Stage-1 diagnosis observation #33（2026-09-16 CST）
+
+- 本轮 `before_head=5b307c88133a5b18d330c31f7c397177f2932548`；fetch、advertised/tracking 核对、祖先判定、ff-only 均成功；无新增提交；ChatGPT exact review 未找到（当前暂停）。
+- MM=`mm:0.0` 已回复 `REQUEST_CHANGES`：v0.6 pair 声明 launcher blob `f77f118d`，但 formal root 树实际为 `32291865`；bootstrap identity 亦冲突，且 evidence path 未绑定 clean suffix。要求重建 pair，禁止重试旧 materialization。
+- DS=`ds:0.0` 已回复诊断 verdict：`DIAGNOSIS_LEADING_H1`（index identity barrier vs Git index inode rewrite）并要求 D1/D2 非消费复现后才可唯一归因；无修复/重建/materialization/GPU/训练授权。
+- 当前没有同一 pair 的整改推进令牌；保持闭锁。
+- Stage-1 v0.8 fresh evidence path 当前完整观察凭证（2026-09-16 09:42:10 CST，REVIEW）：
+  本轮恢复检查 formal target=`bed4c4a8a45aa451e70717ec6e06aa96e9a51d3b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册仍为 MM=`mm:0.0`、DS=`ds:0.0`，ChatGPT 按用户指令暂停。保存的 `before_head=5b307c88133a5b18d330c31f7c397177f2932548`；`git fetch origin V2` 成功；`git ls-remote origin refs/heads/V2` advertised=`5b307c88133a5b18d330c31f7c397177f2932548`；`git rev-parse origin/V2` 同值；`git log --oneline before_head..origin/V2` 为空；`git merge-base --is-ancestor before_head origin/V2` 返回0；`git merge --ff-only origin/V2`=`Already up to date.`。
+- ChatGPT exact 检索命令=`rg -l -F 'bed4c4a8a45aa451e70717ec6e06aa96e9a51d3b' docs/collab/chatgpt/reviews`，无匹配。DS=`ds:0.0` 独立 capture 成功，内容仍为旧 diagnosis（H1/E1/E3，未锚定 v0.8 exact pair）；MM=`mm:0.0` 独立 capture 成功，内容仍为 v0.6 旧 pair 的 `REQUEST_CHANGES`，未锚定 v0.8 exact pair。两 pane 均无当前 pair final verdict。
+- 本轮各独立命令均成功且输出未截断；当前 pair 三方状态：ChatGPT=未找到正式 review，DS=处理中（旧 pair 内容），MM=处理中（旧 pair 内容）。无同 pair 推进令牌，Gate 保持 `REVIEW`；禁止 materialization、source-evidence、child/runtime/config mutation、GPU/CUDA/torchrun、训练/评测/推理。下一步仅按三分钟节奏重新执行完整远端锁定与三方 exact-pair 检查。
+- Stage-1 v0.8 fresh evidence path 当前完整观察凭证（2026-09-16 09:43:56 CST，REVIEW）：新轮次重新执行 `git rev-parse HEAD`、`git fetch origin V2`、`git ls-remote origin refs/heads/V2`、`git rev-parse origin/V2`、`git log --oneline 5b307c88133a5b18d330c31f7c397177f2932548..origin/V2`、`git merge-base --is-ancestor 5b307c88133a5b18d330c31f7c397177f2932548 origin/V2` 与 `git merge --ff-only origin/V2`；结果分别为 HEAD=`5b307c88133a5b18d330c31f7c397177f2932548`、fetch成功、advertised/tracking同为该SHA、range为空、ancestor rc=0、Already up to date。
+- formal target=`bed4c4a8a45aa451e70717ec6e06aa96e9a51d3b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；ChatGPT exact 检索 `rg -l -F 'bed4c4a8a45aa451e70717ec6e06aa96e9a51d3b' docs/collab/chatgpt/reviews || true` 无匹配。冻结名册 MM=`mm:0.0`、DS=`ds:0.0`：两次独立 capture 均成功且未截断，但 DS 仍为旧诊断、MM 仍为 v0.6 旧 pair REQUEST_CHANGES，均未锚定当前 v0.8 exact pair，故当前 pair 三方均无 final verdict/推进令牌。
+- 本轮保持 `REVIEW`；禁止 materialization、source-evidence、child/runtime/config mutation、GPU/CUDA/torchrun、训练/评测/推理。下一步仅按审核节奏重做完整观察。
+- Stage-1 v0.8 fresh evidence path 当前完整观察凭证（2026-09-16 本轮，REVIEW）：重新执行 HEAD/fetch/ls-remote/tracking/log-range/ancestor/ff-only，结果为本地 HEAD、advertised 与 tracking 均=`5b307c88133a5b18d330c31f7c397177f2932548`，新增范围为空，ancestor rc=0，ff-only=`Already up to date.`。formal target=`bed4c4a8a45aa451e70717ec6e06aa96e9a51d3b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 检索无匹配。冻结名册 DS=`ds:0.0`、MM=`mm:0.0` 两次独立 capture 均成功未截断，但仍分别显示旧 diagnosis 与 v0.6 旧 pair `REQUEST_CHANGES`，未锚定当前 v0.8 pair；无推进令牌，Gate 保持 `REVIEW`，禁止 materialization/source-evidence/GPU/训练。
+- Stage-1 v0.8 fresh evidence path 当前完整观察凭证（2026-09-16 09:47:53 CST，REVIEW）：本轮重新执行 HEAD、fetch、ls-remote、tracking、完整 revision range、正向 ancestor 判定与 ff-only；HEAD/advertised/tracking 均=`5b307c88133a5b18d330c31f7c397177f2932548`，range 为空，ancestor rc=0，ff-only=`Already up to date.`。formal target=`bed4c4a8a45aa451e70717ec6e06aa96e9a51d3b`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 检索无匹配。冻结 DS=`ds:0.0`、MM=`mm:0.0` 独立 capture 成功且未截断，但仍分别停留在旧 diagnosis/v0.6 REQUEST_CHANGES，未锚定当前 v0.8 pair；当前 pair 无 final verdict/推进令牌，Gate 继续 `REVIEW`，禁止 materialization/source-evidence/GPU/训练。
+- Stage-1 v0.8 当前完整观察凭证（2026-09-16 09:48:39 CST，REVIEW）：本轮独立执行远端锁定，HEAD/advertised/tracking=`5b307c88133a5b18d330c31f7c397177f2932548`，fetch 成功，revision range 为空，正向 ancestor rc=0，ff-only=`Already up to date.`；formal target=`bed4c4a8a45aa451e70717ec6e06aa96e9a51d3b`/child=`93a89ba61306d840a008813f62f26a34d54850f4` 的 exact review 检索无匹配。冻结 DS=`ds:0.0` 与 MM=`mm:0.0` capture 均成功未截断，但仍分别显示旧 diagnosis 与 v0.6 旧 pair REQUEST_CHANGES，未锚定当前 v0.8 pair；当前 pair 无 final verdict、无推进令牌，继续禁止 materialization/source-evidence/GPU/训练。
+- Stage-1 v0.8 MM/DS 审核重新送达准备（2026-09-16，REVIEW）：用户指出当前 v0.8 pair 尚未有可核验的新送达回执。冻结名册为 MM=`mm:0.0`、DS=`ds:0.0`（ChatGPT 按用户指令暂停）；formal root=`5b307c88133a5b18d330c31f7c397177f2932548`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。本次仅请求 `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` 或 `REQUEST_CHANGES(file:line)`，禁止真实 materialization、source-evidence、child/runtime/config mutation、GPU/CUDA/torchrun、训练/评测/推理。
+- Stage-1 v0.8 MM/DS 审核送达回执（2026-09-16 09:50:26 CST，REVIEW）：对 formal root=`5b307c88133a5b18d330c31f7c397177f2932548`、child=`93a89ba61306d840a008813f62f26a34d54850f4` 的同一申请，MM=`mm:0.0` 已完成 `send-keys -l`、等待1秒、独立 Enter、独立 capture；capture 显示申请已离开输入框并开始审核。DS=`ds:0.0` 已完成同样四步；capture 显示完整申请已进入 transcript，pane 正在处理。当前仅证明已送达/处理中，不代表 final verdict；禁止 materialization、source-evidence、GPU/训练。下一轮按三分钟完整锁定、exact review scan、MM/DS capture。
+- Stage-1 v0.8 MM/DS 审核回收观察凭证（2026-09-16 09:57:41 CST，REVIEW）：本轮先完成 HEAD=`5b307c88133a5b18d330c31f7c397177f2932548`、fetch、advertised/tracking 同 SHA、revision range 为空、正向 ancestor rc=0、ff-only=`Already up to date.`；exact ChatGPT review 未扫描到（ChatGPT 暂停）。冻结名册 MM=`mm:0.0`、DS=`ds:0.0`，两 pane capture 均成功且未截断，均锚定 formal root=`5b307c88133a5b18d330c31f7c397177f2932548`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM final=`REQUEST_CHANGES`：指出申请正文 root 与 pair JSON `formal_root=0bfbc6e1ac67c5e9af6c131cfb8768136655b8ff` 不一致；bootstrap identity 与 launcher 期望不一致；clean/evidence `a1c4e80` 残留违反 absent preflight；要求重建一致 pair。DS final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v0.8.json:1)`：指出 `argv_prefix[0]=/opt/conda/bin/python3` 与冻结解释器 `/opt/conda/bin/python3.11` 不一致，并要求先做非消费式 stderr 定位。
+- 同 pair 存在至少一项 REQUEST_CHANGES，无推进令牌；仅允许评估并在批准范围内制定修复，当前禁止 materialization、source-evidence、child/runtime/config mutation、GPU/CUDA/torchrun、训练/评测/推理。
+- Stage-1 request pair 最小整改验证（2026-09-16，IN_PROGRESS）：按用户确认，仅将旧 `.authority-root-materialization-a1c4e80/` 与 `artifacts/g0/r09/authority_root_materialization_evidence_a1c4e80.json` 移入可恢复隔离目录 `/tmp/psm_wma_a1c4e80_quarantine_20260916/`，原路径均已不存在；未触碰其他残留。修改 `tools/psm_wma/build_stage1_request_pair.py` 一处，将 `launcher.argv_prefix[0]` 从 `/opt/conda/bin/python3` 绑定为 `/opt/conda/bin/python3.11`。验证命令 `python3 -m py_compile ... && python3 -m unittest tools.psm_wma.test_build_stage1_request_pair && git diff --check` 结果 `5/5 PASS`、py_compile PASS、diff-check PASS。尚未重建 request pair、未提交、未物化、未启动 GPU/训练；下一步需由同一 formal root 重新生成 pair 并再次送 MM/DS 审核。
+- Stage-1 新 request pair 构造授权申请送达回执（2026-09-16，REVIEW）：formal root=`5b307c88133a5b18d330c31f7c397177f2932548`/child=`93a89ba61306d840a008813f62f26a34d54850f4`；MM=`mm:0.0` 与 DS=`ds:0.0` 均完成 `send-keys -l`、等待1秒、独立 Enter、独立 capture。MM capture 已进入该 Gate 的静态核验；DS capture 已进入 transcript。当前仅为构造授权申请已送达/处理中，不代表批准；构造 pair、materialization、GPU/训练均未执行。
+- Stage-1 新 request pair 构造授权回收观察凭证（2026-09-16 10:26:58 CST，REVIEW）：本轮 HEAD/fetch/ls-remote/tracking/range/正向 ancestor/ff-only 全部成功；本地、advertised、tracking 均=`5b307c88133a5b18d330c31f7c397177f2932548`，range 为空，ancestor rc=0，ff-only=`Already up to date.`；当前 root exact review scan 无 ChatGPT 文件（ChatGPT 暂停）。MM=`mm:0.0` 与 DS=`ds:0.0` capture 均成功未截断，均锚定 root=`5b307c88133a5b18d330c31f7c397177f2932548`/child=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- MM final=`REQUEST_CHANGES`：launcher 行103仍硬编码 bootstrap 7538/7e1c0ecc，而同 tree adapter 实产为 9661/dac034ef；v0.9 JSON formal_root=0bfbc6e1 与申请 root 不一致；新 clean_suffix 未指定。DS final=`REQUEST_CHANGES(tools/psm_wma/build_stage1_request_pair.py:140)`：要求修正 argv_prefix 绑定，并指出旧 `artifacts/g0/r09/authority_root_materialization_evidence_v1.json` 尚未清理或声明为非权威证据。
+- 同 pair 存在 REQUEST_CHANGES，无构造推进令牌；未生成新 pair、未物化、未执行 source-evidence/GPU/训练。DS 指出的 v1 evidence 属于未获用户明确删除授权的额外残留，后续处理前需单独确认或在新 pair 中明确排除。
+- Stage-1 修复后新 formal pair 审核送达（2026-09-16，REVIEW）：修复提交 root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`，child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。MM=`mm:0.0` 与 DS=`ds:0.0` 均完成完整申请的 `send-keys -l`、等待1秒、独立 Enter、capture；MM 已开始核验 root，DS pane 已接收申请但仍显示旧 pair verdict 上方的处理中状态。当前仅为新 pair 构造授权申请已送达，未取得 final；未生成 pair、未物化、未启动 GPU/训练。
+- 修复 root 审核回收观察凭证（2026-09-16，REVIEW）：本轮远端检查显示本地 HEAD=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`，advertised/tracking=`5b307c88133a5b18d330c31f7c397177f2932548`，本地 root 尚未推送；revision range（本地 root..origin）为空，正向 ancestor rc=1，ff-only=`Already up to date.`；exact ChatGPT review 无匹配。MM=`mm:0.0` capture 对 root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`/child=`93a89ba61306d840a008813f62f26a34d54850f4` 的修复内容复核为正确，并建议新 clean suffix=`e8c7b2a1`，尚未形成最终构造批准行。DS=`ds:0.0` 对同一 root/child final=`REQUEST_CHANGES(tools/psm_wma/build_stage1_request_pair.py:75)`：要求确认 root 已推送到 origin/V2，并处理旧 `artifacts/g0/r09/authority_root_materialization_evidence_v1.json`（隔离并记录 SHA 或明确非权威）。当前无构造推进令牌，未生成新 pair、未物化、未训练。
+## 2026-09-16 10:46 CST — G0-R09-B-TTT-V035-STAGE1-REQUEST-PAIR-CONSTRUCTION 观察轮次（新鲜凭证）
+
+- 目的/Gate：按审核前置硬检查重新锁定远端并评估 root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4` 的 docs-only pair 构造授权；冻结名册：MM=`mm:0.0`，DS（替代 Kimi，用户已明确指定）=`ds:0.0`，ChatGPT 暂停。
+- 远端同步证据：`before_head=7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`；`git fetch origin V2` 成功；`git ls-remote origin refs/heads/V2` advertised=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`，`git rev-parse origin/V2` 一致；`git log before_head..origin/V2` 为空；`git merge-base --is-ancestor before_head origin/V2` rc=0；`git merge --ff-only origin/V2` 输出 `Already up to date.`
+- ChatGPT exact-pair 检索：命令 `for f in docs/collab/chatgpt/reviews/*; do rg -q -F '7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3' "$f" && rg -q -F '93a89ba61306d840a008813f62f26a34d54850f4' "$f" && echo "$f"; done`；结果为空，未找到 exact root/child 正式 review。
+- MM capture：`tmux capture-pane -t mm:0.0 -p -S -80` 成功；内容锚定 root `7fa0c41d...` 且显示“请执行新 pair 构造，clean_suffix 用 e8c7b2a1”，但未显示该 pair 的明确 literal final verdict，故状态为处理中，无批准令牌。
+- DS capture：`tmux capture-pane -t ds:0.0 -p -S -80` 成功；明确锚定 root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`、child=`93a89ba61306d840a008813f62f26a34d54850f4`，literal verdict=`REQUEST_CHANGES(tools/psm_wma/build_stage1_request_pair.py:75)`；意见包括旧 `artifacts/g0/r09/authority_root_materialization_evidence_v1.json` 仍未清理/声明非权威，以及构造自由输入/驱动未冻结；未授权 materialization、source-evidence、child/runtime/config mutation、GPU/CUDA/torchrun、训练/评测/推理。
+- 本轮结论：三方 exact-pair final verdict 不齐，且 DS 为 `REQUEST_CHANGES`；当前 Gate 保持 `REVIEW`，无推进令牌。未生成新 pair、未物化、未启动训练。
+- 下一步：仅可在取得同一 pair 的三方 final verdict 后汇总；旧 v1 evidence 的隔离仍需用户对该具体路径作明确授权，不能擅自修改。
+## 2026-09-16 后续观察轮次 — G0-R09-B-TTT-V035-STAGE1-REQUEST-PAIR-CONSTRUCTION
+
+- `before_head=7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`；`fetch origin V2` 成功；advertised 与 `origin/V2` 均为 `7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`；`before_head..origin/V2` 为空；正向 ancestor rc=0；`merge --ff-only` 为 `Already up to date.`
+- exact pair root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`、child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`：独立检索 `for f in docs/collab/chatgpt/reviews/*; do rg -q -F '<root>' "$f" && rg -q -F '<child>' "$f" && echo "$f"; done` 结果为空。
+- MM=`mm:0.0` capture 成功，显示该 pair 的修复核验和“请执行新 pair 构造，clean_suffix 用 e8c7b2a1”，但未出现明确 literal final verdict，状态为处理中；DS=`ds:0.0` capture 成功，仍显示同一 pair 的 `REQUEST_CHANGES(tools/psm_wma/build_stage1_request_pair.py:75)`，并指出旧 v1 evidence 与构造输入/驱动冻结问题。
+- 本轮无推进令牌；未修改代码、未生成 pair、未物化、未启动训练。
+## 2026-09-16 — DS 整改执行记录：旧 v1 evidence 隔离
+
+- 授权依据：用户明确要求“先不管 GPT，有整改意见就评估执行”。
+- 评估：DS 的旧 `artifacts/g0/r09/authority_root_materialization_evidence_v1.json` 属于历史非权威残留；不参与当前 root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3` / child=`93a89ba61306d840a008813f62f26a34d54850f4` pair。采用可恢复移动，不删除。
+- 命令结果：源路径已移动至 `/tmp/psm_wma_v1_evidence_quarantine_20260916/authority_root_materialization_evidence_v1.json`；源路径不存在、目标存在，SHA-256 前后均为 `ab4d6f7017e0b49ba59ac43feb067c9949c15bac1c10326422d87fd23be68ccd`，验证 PASS。
+- 其余 DS 意见（冻结构造自由输入与驱动）需要在新 request pair 中显式落盘；本步骤未生成 pair、未物化、未启动 GPU/训练。
+## 2026-09-16 — G0-R09-B-TTT-V035-STAGE1-REQUEST-PAIR-CONSTRUCTION 完成
+
+- 依据：本轮 MM/DS 对 root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`、child=`93a89ba61306d840a008813f62f26a34d54850f4` 均给出 `APPROVE_TO_CONSTRUCT`；用户授权按整改意见执行。
+- 固定输入：`clean_suffix=e8c7b2a1`；selection/config 由旧 pair 的 canonical FD raw 注入；构造驱动为 `rebuild_launcher -> build_request_payload -> build_pair -> verify_pair -> unified_patch -> docs-only write -> hard stop`。
+- 实际命令完成 docs-only 写入并通过 `verify_pair`、byte-for-byte 校验；输出：`docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v1.0.json`（38711 bytes，SHA-256=`f0620474c0da1b69319e7b59d08ad453215df66b4e95eca7a9bce5899139aff2`）；`.md`（340 bytes，SHA-256=`0e224165d89232efd53958109ca5d81de09f8dd7bfa5f1b74b86fb69c8bfa1a6`）。
+- freshness：构造命令内重新执行 `git ls-remote origin refs/heads/V2`，advertised root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`。
+- 硬边界：未创建 authority worktree、未写 source evidence、未修改 child/runtime/config，未使用 GPU/CUDA/torchrun，未训练/评测/推理。
+- 下一步：对新 v1.0 pair 重新请求 MM/DS final review；在新 pair 三方（当前按用户指令 GPT 不参与）批准前不得物化。
+## 2026-09-16 — v1.0 pair 审核回收观察
+
+- `before_head=7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`；fetch 成功；advertised/tracking `origin/V2` 同为 `7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`；range 为空；ancestor rc=0；ff-only `Already up to date.`
+- exact root/child review 检索无结果：当前按用户指令不等待 GPT。
+- MM=`mm:0.0` capture 成功：继续核验 v1.0 的文件、tree/tool closure 与 input contract，尚无明确 final literal verdict，处理中。
+- DS=`ds:0.0` capture 成功：已确认冻结 builder 重建 JSON byte-identical、Markdown byte-identical，尚无明确 final literal verdict，处理中。
+- 当前无物化令牌；未创建 authority worktree、未写 source evidence、未启动 GPU/训练。
+## 2026-09-16 — v1.0 pair 审核观察：MM 发现 minor 一致性意见
+
+- 本轮远端锁定：`before_head=7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`；fetch/ls-remote 成功且 advertised/tracking 一致；新增 range 为空；ancestor rc=0；ff-only 已是最新。
+- ChatGPT exact root/child review 仍未找到，按用户指令不纳入等待。
+- MM=`mm:0.0` capture 成功：指出 v1.0 `preflight.absent_paths` 的最后两项使用绝对路径，而 v0.9 设计模式使用相对路径；判定为不影响 materialization runtime 的 minor request-pair 一致性瑕疵，仍在继续审核，未见 final literal verdict。
+- DS=`ds:0.0` capture 成功：selection/config FD bytes、schema、entries、environment、owner_root 等核验通过，尚未见 final literal verdict。
+- 当前无物化令牌；禁止在同一审核未结束前修改 v1.0 pair。
+## 2026-09-16 — G0-R09-B-TTT-V035-STAGE1-MATERIALIZATION 审核申请
+
+- 新 target=`589aa379163b3a99beed18b901db126522c623f6` 已 docs-only commit 并推送；pair formal root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`、child=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 本轮远端锁定：before/advertised/tracking 均为 `589aa379163b3a99beed18b901db126522c623f6`；fetch 成功；range 为空；ancestor rc=0；ff-only 已最新。
+- ChatGPT exact pair review 未找到，按用户指令不等待 GPT。
+- MM=`mm:0.0`：materialization 申请已通过 send-keys-l、独立 Enter、capture 回执，已开始核验新 target。
+- DS=`ds:0.0`：materialization 申请已通过 send-keys-l、独立 Enter、capture 回执；当前 capture 仍为旧 pair-content verdict，未见新 materialization Gate final verdict，处理中。
+- 本申请仅请求一次性 Stage-1 materialization；未执行物化、source-evidence 后续、child/runtime/config mutation、GPU/CUDA/torchrun 或训练。
+## 2026-09-16 — materialization Gate 新观察：launcher RAW[2] ABI 疑点
+
+- 远端锁定：`before_head=589aa379163b3a99beed18b901db126522c623f6`；fetch/ls-remote 成功且 advertised/tracking 一致；range 为空；ancestor rc=0；ff-only 已最新。
+- exact pair ChatGPT review 未找到，按用户指令不等待 GPT。
+- MM=`mm:0.0` capture 成功：核验 v1.0 launcher 时发现 `RAW[2]` 运行时实际疑似为 inner parser argv（当前 2345 bytes），而现有校验把它按 bootstrap contract 解释；MM 正在分析该 ABI 不一致，尚未给 final verdict。
+- DS=`ds:0.0` capture 成功：继续执行 FD authority identity 定向测试，观察到 index inode 漂移并触发 `NativeGitError -> FD8 consumer authority identity 漂移`，尚未给 materialization final verdict。
+- 结论：materialization 执行门未通过；未执行 launcher、未创建 authority worktree/evidence、未使用 GPU 或训练。
+## 2026-09-16 — G0-R09-B-TTT-V035-STAGE1-MATERIALIZATION 最终观察
+
+- 远端锁定：`before_head=589aa379163b3a99beed18b901db126522c623f6`；fetch/ls-remote 成功，advertised/tracking 一致；range 为空；ancestor rc=0；ff-only 已最新。
+- exact ChatGPT review 未找到，按用户指令不等待 GPT。
+- MM=`mm:0.0`：对 target=`589aa379163b3a99beed18b901db126522c623f6`、formal root=`7fa0c41d5f1a0a8fc83451bde209dd900b1c05f3`、child=`93a89ba61306d840a008813f62f26a34d54850f4` 给出 `APPROVE_TO_MATERIALIZE`。
+- DS=`ds:0.0`：对同一 target/pair 给出 `REQUEST_CHANGES(tools/psm_wma/materialize_immutable_source_authority_root.py:1708)`；确认真实 Git 的 `read-tree/hash-object/update-index/write-tree/commit-tree` 会原子替换 index inode，现有 barrier 将因此失败；要求另起代码 Gate 修复 barrier、增加真实 Git 全链见证，并以新 formal root/新 suffix 重建 pair。
+- 推进结论：含 `REQUEST_CHANGES`，当前 materialization 没有推进令牌；未执行 launcher、未创建 authority worktree/evidence、未启动 GPU/训练。下一步只能新建代码 Gate/设计并重新审核。
+## 2026-09-16 — index barrier 修复与 v1.1 重建记录
+
+- 依据 Codex 最终构建裁决，采纳 DS 的运行时技术意见，驳回“必须先另起流程 Gate 才能修复”的流程限制；修改 `tools/psm_wma/materialize_immutable_source_authority_root.py`：保留 owner directory identity barrier，Git consumer 返回后刷新 index identity，允许 Git 预期的 index 原子替换。
+- 新增 `test_real_git_index_replacement_refreshes_owner_barrier`，真实执行 `read-tree/hash-object/update-index/write-tree/commit-tree`；见证 PASS：owner identity 稳定、index inode 被替换、detached commit 成功。完整单测 `71/71 PASS`，py_compile/diff-check PASS。
+- 修复提交：`2885f1e50d13cfe810a7a9caa6aef103173945a6`，已推送 `origin/V2`。
+- 以新 formal root 重建 v1.1 pair，suffix=`e8c7b2a2`；pair docs-only 提交：`30b23c247d7460f470b0b32fbea2dd2c4dfedc5e`，已推送。JSON SHA=`52495788b959ec4cf886458edaf1a5b79c5941c86272f2e141f71a3dec8d2036`，MD SHA=`374bc44c912ad92c79a9c9c61f64e156c2f37c76505aa9331eecd784fe231e80`。
+- v1.1 materialization 审核申请已发出；上一条申请 target 曾手工误写，已发送更正为上述完整 SHA。当前不能以错误 target 的任何旧 verdict 推进；等待 MM/DS 对正确 target 的新 final verdict。未物化、未训练。
+## 2026-09-16 — 一次性 materialization 执行结果
+
+- 执行令牌：MM/DS 对 target=`30b23c247d7460f470b0b32fbea2dd2c4dfedc5e`、formal root=`2885f1e50d13cfe810a7a9caa6aef103173945a6`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a2` 均给出 `APPROVE_TO_MATERIALIZE`。
+- 实际结果：`artifacts/g0/r09/authority_root_materialization_evidence_e8c7b2a2.json` status=`FAIL`，SHA-256=`9da9b2a04e14200f4c1c6dd1c3ea3f92fac54f204997224cd1ca233ba64a662d`；primary phase=`remote_cas`。
+- publication：candidate revision=`0788583c17235edf90f0540d8e28f52240b73b16`，local create 成功，remote create 失败；rollback complete，local/remote authority ref 最终均 absent。
+- 失败语义：`.authority-root-materialization-e8c7b2a2/` 和 evidence 按 launcher 约定保留；未删除、未重试。未执行 source-evidence 后续、child/runtime/config mutation、GPU/CUDA/torchrun 或训练。
+- 当前阻塞：远端 authority ref 的 CAS 创建失败，需要新的外部远端权限/网络排查与独立 Gate；不能把该 FAIL 当作可继续训练的 PASS。
+## 2026-09-16 — remote_cas 根因诊断
+
+- 对失败 candidate=`0788583c17235edf90f0540d8e28f52240b73b16` 和 ref=`refs/heads/authority/r09-b-ttt-v035-immutable-source-v1` 执行 `git push --dry-run --porcelain --force-with-lease=<ref>: origin <candidate>:<ref>`，在继承用户 Git 配置/credential helper 的环境下返回 `new branch`、exit=0。
+- 物化 launcher 的隔离环境固定为 `GIT_CONFIG_GLOBAL=/dev/null`、`GIT_CONFIG_SYSTEM=/dev/null`、`GIT_CONFIG_NOSYSTEM=1`，屏蔽了 `/root/.gitconfig` 中的 GitHub credential helper；因此实际 remote CAS 子进程认证失败，证据中的 `primary_phase=remote_cas` 与此一致。
+- 结论：不是 ref 冲突、candidate 缺失或本地 barrier 问题；不能手工补推或重试本次一次性物化。后续需独立解决“隔离 Git 环境下远端发布凭据注入/发布职责”的设计与 Gate。
+
+## 2026-09-16 — gh credential helper 最小修复
+
+- 授权依据：用户明确授权“使用 gh credential helper，仅用于本次 authority ref push，不写入 pair、evidence 或日志”。
+- 当前观察：本地/远端 `V2` 均为 `30b23c247d7460f470b0b32fbea2dd2c4dfedc5e`；MM/DS 对上一 exact pair 均为 `APPROVE_TO_MATERIALIZE`；ChatGPT exact review 未找到，按用户指令不等待。
+- 修改范围：`tools/psm_wma/materialize_immutable_source_authority_root.py` 与对应 CPU 单测；隔离 env 增加 `GIT_CONFIG_COUNT/KEY_0/VALUE_0`，固定调用 `/usr/bin/gh auth git-credential`。
+- 验证：71/71 unittest PASS；py_compile PASS。首次 `-I -S` discover 因隔离 import path 报错，随后以 `PYTHONPATH=/disk/rl/psm_wma` 的等价 stdlib unittest 命令复验通过；子进程内部的 usage 输出为既有测试 fixture 行为，不影响 unittest 结果。
+- 下一步：提交该最小修复并以新 formal root、新 request pair 重新申请 MM/DS 审核；批准前不重试 materialization，不启动 source-evidence、GPU 或训练。
