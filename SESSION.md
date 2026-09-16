@@ -8230,6 +8230,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM capture 成功但 verdict 锚定旧 pair `0fc421…`；DS capture 成功但 verdict 锚定旧 pair `0fc421…`；当前 pair 均未审核。
 - 本轮无推进令牌；仅允许提交 v0.3 新 pair 审核申请；未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
 
+## 2026-09-16 — construction CPU/static v0.3 amendment closure review 送达
+
+- formal pair=e33c1c05013284039f82cd411a3398dceb45d781 / child=93a89ba61306d840a008813f62f26a34d54850f4；申请已提交并推送，bookkeeping commit=b56d502e。
+- MM 与 DS 均完成 send-keys -l→间隔 1 秒→独立 Enter→capture；MM 已收到当前 pair，DS 已收到当前 pair，均尚未给出当前 pair final verdict。
+- 当前 Gate 保持 REVIEW；未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
+
 ## 2026-09-16 — construction CPU/static v0.3 amendment
 
 - 依据 DS 对 `0fc4217ba22dc31ed0ffaa131123cfc961755b3b` 的 REQUEST_CHANGES，补齐 config blob、local/remote ref、HEAD、index tree 五项 40-hex 校验，并冻结 absence 编码为 `ABSENT`（存在时为 lowercase 40-hex）。
