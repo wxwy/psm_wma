@@ -7763,3 +7763,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM capture 成功，已看到 exact construction 请求并执行 docs/build 状态检查，未出现 final literal verdict，状态为处理中。
 - DS capture 成功，仍在读取旧 materialization evidence 与新 producer 文件，未出现 exact construction final literal verdict，状态为处理中。
 - 本轮无 construction 推进令牌；未生成正式 pair、未物化、未写 authority ref、未启动 GPU/训练。
+
+## 2026-09-16 — construction review 观察凭证 #2
+
+- `before_head=40a2ded02090e6995c9d349b6ae7f7fab8d44dc1`；fetch/ls-remote 成功，advertised/tracking 一致；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 检索仍无 `8f170771e7a351ba99a3d656d2dc8d100e0f61e6` 命中；按申请范围不等待 ChatGPT final。
+- MM=`mm:0.0` capture 成功，仍在执行 docs/build 状态检查，未出现 construction final literal verdict。
+- DS=`ds:0.0` capture 成功，已读取 producer/builder blob 与 environment 区域，仍在处理中，未出现 construction final literal verdict。
+- 本轮仍无 construction 推进令牌；未生成正式 pair、未物化、未写 authority ref、未启动 GPU/训练。
