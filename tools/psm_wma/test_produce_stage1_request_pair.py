@@ -6,12 +6,22 @@ from pathlib import Path
 
 from tools.psm_wma.produce_stage1_request_pair import (
     PairPublicationError,
+    produce_pair,
     publish_verified_pair,
     validate_pair_environment,
 )
 
 
 class PairPublicationTest(unittest.TestCase):
+    def test_produce_pair_reuses_canonical_builder(self) -> None:
+        environment = {key: "1" for key in ("GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_SYSTEM", "GIT_NO_REPLACE_OBJECTS", "LANG", "LC_ALL")}
+        payload = {"environment": environment, "schema": "test"}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            raw, markdown = produce_pair(root / "pair.json", root / "pair.md", payload)
+            self.assertEqual((root / "pair.json").read_bytes(), raw)
+            self.assertEqual((root / "pair.md").read_bytes(), markdown)
+
     def test_environment_allowlist_accepts_helper_without_secrets(self) -> None:
         base = {key: "1" for key in ("GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_SYSTEM", "GIT_NO_REPLACE_OBJECTS", "LANG", "LC_ALL")}
         validate_pair_environment({**base, "GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "credential.https://github.com.helper", "GIT_CONFIG_VALUE_0": "!/usr/bin/gh auth git-credential"})

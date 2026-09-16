@@ -7742,3 +7742,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增 `validate_pair_environment()`：要求六项基础 Git 环境，helper 仅接受 canonical `credential.https://github.com.helper` 三项描述，拒绝 `HOME`、`GH_TOKEN`、`GITHUB_TOKEN`、`GIT_ASKPASS`。
 - producer+builder 测试共 9/9 PASS；`py_compile`、`git diff --check` PASS。
 - 仍未生成 request pair；该模块尚未授权 materialization 或训练。
+
+## 2026-09-16 — producer 可调用入口
+
+- 新增 `produce_pair()` 薄封装：校验非密 environment，复用 `build_pair()`/`verify_pair()`，再调用已验证发布事务；不复制 canonical 构造逻辑。
+- producer+builder 测试共 10/10 PASS；`py_compile`、`git diff --check` PASS。
+- 仍未生成正式 request pair；没有 materialization 或训练授权。

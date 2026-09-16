@@ -11,6 +11,8 @@ import stat
 import tempfile
 from pathlib import Path
 
+from tools.psm_wma.build_stage1_request_pair import build_pair, verify_pair
+
 
 class PairPublicationError(RuntimeError):
     """pair 发布或回读校验失败。"""
@@ -33,6 +35,25 @@ def validate_pair_environment(environment: dict[str, str]) -> None:
         "GIT_CONFIG_VALUE_0": "!/usr/bin/gh auth git-credential",
     }:
         raise PairPublicationError("pair credential helper descriptor")
+
+
+def produce_pair(
+    json_path: Path,
+    markdown_path: Path,
+    payload: dict[str, object],
+) -> tuple[bytes, bytes]:
+    """构造并发布一个已通过 canonical 校验的 request pair。"""
+    environment = payload.get("environment")
+    if not isinstance(environment, dict) or not all(
+        isinstance(key, str) and isinstance(value, str)
+        for key, value in environment.items()
+    ):
+        raise PairPublicationError("pair environment descriptor")
+    validate_pair_environment(environment)
+    json_raw, markdown_raw = build_pair(json_path, payload)
+    verify_pair(json_path, json_raw, markdown_raw)
+    publish_verified_pair(json_path, markdown_path, json_raw, markdown_raw)
+    return json_raw, markdown_raw
 
 
 def _digest(raw: bytes) -> str:
