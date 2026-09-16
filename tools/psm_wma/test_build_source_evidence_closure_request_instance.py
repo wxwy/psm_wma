@@ -2,13 +2,23 @@ import json
 import unittest
 
 from tools.psm_wma.build_source_evidence_closure_request_instance import (
-    TOP_LEVEL_KEYS, SCHEMA, build_request_instance, verify_instance_bytes,
+    TOP_LEVEL_KEYS, SCHEMA, SECTION_KEYS, RECORD_KEYS, RECEIPT_KEYS,
+    build_request_instance, verify_instance_bytes,
 )
 
 
 def bundle():
-    return {key: ({"value": key} if key not in ("schema", "sha256") else (SCHEMA if key == "schema" else ""))
-            for key in TOP_LEVEL_KEYS}
+    result = {"schema": SCHEMA, "formal_root": "a" * 40,
+              "child_gitlink": "b" * 40, "sha256": ""}
+    for name, keys in SECTION_KEYS.items():
+        result[name] = {key: ([] if key in ("keys", "callables", "argv", "order", "absent_paths", "absent_refs", "selected_paths")
+                        else False if key in ("zero_mutation", "one_shot", "no_retry", "pass_hard_stop")
+                        else {} if key == "source_digest_receipt_mapping" else key)
+                           for key in keys}
+    result["record"]["keys"] = list(RECORD_KEYS)
+    result["record"]["source_digest_receipt_mapping"] = {key: key for key in RECORD_KEYS[3:]}
+    result["receipt"]["keys"] = list(RECEIPT_KEYS)
+    return result
 
 
 class ConstructionTests(unittest.TestCase):

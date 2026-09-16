@@ -8179,3 +8179,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`32678cfa35fbc285b0aa2c53f000eb171c2fea8b` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
 - MM=`mm:0.0` capture 成功，当前针对 exact implementation pair 处理中，尚未出现新的 final verdict；DS=`ds:0.0` capture 成功，已读取实现并核验，当前处理中，尚未出现新的 final verdict。
 - 本轮无 closure 推进令牌；保持 REVIEW，不创建真实 instance，不执行 source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — construction CPU/static remediation
+
+- 依据 DS 对 formal pair `32678cfa35fbc285b0aa2c53f000eb171c2fea8b` 的 REQUEST_CHANGES，补充所有十个嵌套 section 的 exact key 集合校验、record 六键、receipt 十三键及四项 digest mapping fail-closed 校验。
+- 将固定 JSON/Markdown 原子写入明确拆出本 Gate，当前实现只返回并验证内存 canonical bytes；真实写入另需独立 execution Gate。
+- 验证：3/3 unittest PASS、py_compile PASS、git diff --check PASS；尚未提交，下一步提交新 formal root 并重新申请 closure review。

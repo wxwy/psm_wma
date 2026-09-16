@@ -27,8 +27,8 @@ observation 产生的 authority/source/executor/producer/record/receipt/publicat
    lowercase identity。`record`/`receipt` 的 key 列表与四项 digest mapping 必须来自已关闭 producer/closure 合同。
 3. 删除顶层 `sha256` 后用 canonical JSON（递归排序、紧凑分隔符、单 terminal LF）计算 SHA-256，再写入顶层
    `sha256`；重新序列化并逐字节验证 canonical round-trip 与 digest。
-4. 仅在同一原子写操作中生成固定 JSON 与 detached Markdown sibling；写后立即逐字节读取验证路径、bytes、SHA，
-   任一失败即保留明确 partial-residue 事实并终止，禁止 retry、补写或执行。
+4. 本 CPU/static Gate 只返回并验证内存中的 JSON bytes；固定 JSON/Markdown 的原子写入、写后逐字节读取和
+   partial-residue terminal policy 延后到独立的 real-output execution Gate，须另行设计并审核。本 Gate 不写盘。
 5. 构造成功后 hard stop，并以新 instance 的 exact formal root/child/SHA 申请三方审核；该审核不授权 source
    collection、record/publication 写入、receipt-root 生成、child 修改、GPU 或训练。
 
