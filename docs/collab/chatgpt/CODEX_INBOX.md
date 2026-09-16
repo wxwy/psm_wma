@@ -420,6 +420,14 @@
 - 审核重点：确认 `--no-thin` 对 remote CAS push/delete 的最小修复、lease/readback/rollback 不变、exact root/child/pair 绑定及 one-shot 边界。
 - Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`。
 
+## 2026-09-16 — Source collection real-binding CPU/static review request
+
+- Gate: `G0-R09-B-TTT-V035-IMMUTABLE-SOURCE-COLLECTION-REAL-ADAPTER-CPU-STATIC`；冻结 MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT advice-only。
+- Formal root: `e2c8337b`（完整 SHA 以远端 exact tree 为准）；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 最小修改：`tools/psm_wma/immutable_source_collection.py` 的 `main()` 将已绑定 argv/FD/authority/lineage 接入既有 `collect_synthetic()` injected seam；`NativeCollectionGit` 纳入同一 scoped `gh auth git-credential` 与 `GH_CONFIG_DIR`，供 fixed-ref lookup。缺少绑定仍 fail-closed。
+- 验证：collection unittest `56/56 PASS`、py_compile、diff-check PASS。请求仅审核 CPU/static binding 与 identity/禁止范围；不授权真实 source/checkpoint I/O、collection/receipt publication、child、GPU、训练或评测。
+- Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_IMMUTABLE_SOURCE_COLLECTION_REAL_ADAPTER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
 ## 2026-09-16 — Stage-1 v2.0 materialization review request
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-ROOT-MATERIALIZATION-V20`；ChatGPT advice-only；冻结 MM=`mm:0.0`、DS=`ds:0.0`。
