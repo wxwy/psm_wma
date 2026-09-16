@@ -8436,6 +8436,33 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`83be5379783bed38573148c1f92a7043846b776e` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）；DS=`ds:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_PROVIDER`。
 - DS 非阻塞建议：显式引用 schema exact nested constraints；冻结只读 Git 接口及 fail-closed；明确 secret-free sanitized environment SHA。推进令牌仅授权 provider CPU/static implementation，不授权 request-instance 写入、source I/O、GPU 或训练。
 
+## 2026-09-16 — ObservationBundle provider CPU/static closure review 观察凭证 #1
+
+- `before_head=03991d413b70384b09c3333fd14e236ffe0b1460`；fetch 成功；advertised/tracking=`03991d413b70384b09c3333fd14e236ffe0b1460`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`7786d2cdb8e54e3baebc9b887b02a99f6ccb3a98` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，已检查 root/log/HEAD/child 并读取 provider，实现验证仍在进行，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider CPU/static closure review 观察凭证 #2
+
+- `before_head=03991d413b70384b09c3333fd14e236ffe0b1460`；fetch 成功；advertised/tracking=`03991d413b70384b09c3333fd14e236ffe0b1460`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`7786d2cdb8e54e3baebc9b887b02a99f6ccb3a98` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，正在检查 provider 是否输出十 section、HEAD/index/ref 等构造所需字段，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider CPU/static closure review 观察凭证 #3
+
+- `before_head=03991d413b70384b09c3333fd14e236ffe0b1460`；fetch 成功；advertised/tracking=`03991d413b70384b09c3333fd14e236ffe0b1460`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`7786d2cdb8e54e3baebc9b887b02a99f6ccb3a98` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/observe_source_evidence_bundle.py:65)`：当前实现缺十 section、HEAD/index/ref、formal pair、cwd/interpreter/Git/module identity 与 Git blob OID；失败码未对齐 `BLOCKED_AUTHORITY_NOT_CLOSED`，只读 Git 接口未落地。
+- 经评估接受该意见；当前 provider 不可作为 request-instance 输入。未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider remediation implementation
+
+- 扩展 provider：新增十 section contract、`BLOCKED_AUTHORITY_NOT_CLOSED` fail-closed 终态、只读 Git metadata（HEAD、clean index tree、ref、blob OID）与 metadata contract 组合入口。
+- 未执行真实 Git/source/cache 读取；测试覆盖十 section 正例与缺 section 拒绝，全部 temporary fixture。
+- 验证：12/12 联合 unittest PASS；py_compile PASS；git diff-check PASS。当前整改未提交，待新 formal root 申请 DS-only review。
+
 ## 2026-09-16 — ObservationBundle provider CPU/static implementation
 
 - 新增 `tools/psm_wma/observe_source_evidence_bundle.py` 及 stdlib 测试；实现 no-follow regular-file identity、fd read/hash、root/target snapshot、sanitized environment SHA 与 fail-closed 异常。

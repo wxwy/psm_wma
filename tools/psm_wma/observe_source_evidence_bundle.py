@@ -4,12 +4,18 @@ import hashlib
 import json
 import os
 import stat
+import subprocess
 from collections.abc import Iterable, Mapping
 from pathlib import Path
 
 
 class ObservationError(RuntimeError):
     """Observation failed closed."""
+
+
+BLOCKED_AUTHORITY_NOT_CLOSED = "BLOCKED_AUTHORITY_NOT_CLOSED"
+OBSERVATION_SECTIONS = ("authority", "source", "executor", "producer", "record",
+                        "receipt", "publication", "root_audit", "preflight", "execution")
 
 
 def _file_identity(path: Path) -> dict[str, object]:
@@ -45,6 +51,40 @@ def _env_digest(env: Mapping[str, str], allowed: Iterable[str]) -> str:
     return hashlib.sha256(json.dumps(safe, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
+def read_git_metadata(repo: Path, *, ref: str, paths: Iterable[str]) -> dict[str, object]:
+    """Read fixed Git identities without fetch, mutation, or network access."""
+    repo = Path(repo)
+
+    def run(*args: str) -> str:
+        try:
+            result = subprocess.run(("git", "-C", str(repo), *args), check=True,
+                                    capture_output=True, text=True, timeout=10)
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: git read failed") from exc
+        return result.stdout.strip()
+
+    head = run("rev-parse", "HEAD")
+    try:
+        subprocess.run(("git", "-C", str(repo), "diff", "--cached", "--quiet"),
+                       check=True, capture_output=True, timeout=10)
+    except subprocess.CalledProcessError as exc:
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: dirty index") from exc
+    except (OSError, subprocess.SubprocessError) as exc:
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: index read failed") from exc
+    index_tree = run("rev-parse", "HEAD^{tree}")
+    if len(head) != 40 or len(index_tree) != 40:
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: invalid git identity")
+    blobs = {}
+    for path in paths:
+        line = run("ls-tree", head, "--", path)
+        fields = line.split()
+        if len(fields) != 4 or fields[1] != "blob":
+            raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: blob identity missing: {path}")
+        blobs[path] = fields[2]
+    return {"head_revision": head, "index_tree_native_oid": index_tree,
+            "ref_revision": run("rev-parse", ref), "blob_oids": blobs}
+
+
 def observe_bundle(*, root: Path, files: Mapping[str, Path], target_paths: Iterable[Path],
                    argv: list[str], env: Mapping[str, str], env_allowlist: Iterable[str]) -> dict[str, object]:
     """Return an in-memory, payload-free observation bundle; never writes or mutates."""
@@ -66,3 +106,17 @@ def observe_bundle(*, root: Path, files: Mapping[str, Path], target_paths: Itera
                       "mode": stat.S_IMODE(root_stat.st_mode), "uid": root_stat.st_uid, "gid": root_stat.st_gid},
             "files": identities, "target_paths": targets, "argv": list(argv),
             "sanitized_env_sha256": _env_digest(env, env_allowlist)}
+
+
+def build_observation_bundle(*, sections: Mapping[str, Mapping[str, object]],
+                             metadata: Mapping[str, object]) -> dict[str, object]:
+    """Combine provider observations into the exact ten-section in-memory contract."""
+    if tuple(sections) != OBSERVATION_SECTIONS or any(not isinstance(value, Mapping)
+                                                       for value in sections.values()):
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: ten sections required")
+    required = {"head_revision", "index_tree_native_oid", "formal_root", "child_gitlink",
+                "cwd", "interpreter", "git", "sanitized_env_sha256", "argv"}
+    if set(metadata) != required:
+        raise ObservationError(f"{BLOCKED_AUTHORITY_NOT_CLOSED}: metadata contract mismatch")
+    return {"sections": {name: dict(sections[name]) for name in OBSERVATION_SECTIONS},
+            "metadata": dict(metadata)}
