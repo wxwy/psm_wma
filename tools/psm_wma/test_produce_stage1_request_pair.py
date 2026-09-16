@@ -15,6 +15,7 @@ from tools.psm_wma.produce_stage1_request_pair import (
 class PairPublicationTest(unittest.TestCase):
     def test_produce_pair_reuses_canonical_builder(self) -> None:
         environment = {key: "1" for key in ("GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_SYSTEM", "GIT_NO_REPLACE_OBJECTS", "LANG", "LC_ALL")}
+        environment.update({"GIT_CONFIG_COUNT": "1", "GIT_CONFIG_KEY_0": "credential.https://github.com.helper", "GIT_CONFIG_VALUE_0": "!/usr/bin/gh auth git-credential"})
         payload = {"environment": environment, "schema": "test"}
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

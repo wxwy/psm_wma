@@ -7779,3 +7779,18 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，已检查新 root 的 docs/build 变更，未出现 construction final literal verdict，状态为处理中。
 - DS=`ds:0.0` capture 成功并给出同 pair `REQUEST_CHANGES(tools/psm_wma/produce_stage1_request_pair.py:36)`：要求统一 builder/adapter/producer helper environment 语义，并增加将 builder 真实 environment 送入 `produce_pair()` 的端到端见证；未授权物化、authority ref、source-evidence、child/runtime/config mutation、GPU/训练。
 - 本轮无 construction 推进令牌；因 MM final 缺件，暂不整改；未生成正式 pair、未物化、未启动训练。
+
+## 2026-09-16 — construction review 观察凭证 #4
+
+- `before_head=275e6083f7f4cdc30fd0c530d1d2d846734355fb`；fetch/ls-remote 成功，advertised/tracking 一致；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 无当前 construction root 命中；按申请范围不等待 ChatGPT final。
+- MM=`mm:0.0` 与 DS=`ds:0.0` 均 capture 成功，并对 exact pair 给出 `REQUEST_CHANGES`。
+- MM 意见：缺实际 v1.2（或更新版）JSON/Markdown pair、clean suffix、四项 absence preflight、builder PASS 证据、launcher witness PASS 证据；要求 pair bytes/SHA/identity 与 root launcher/adapter 互锁。
+- DS 意见：builder environment 为 9 键而 launcher 外层为 6 键，要求统一 helper key/语义，并将 builder 真实 environment 送入 `produce_pair()` 完成端到端见证；要求新 formal root 后重审。
+- 本轮无 construction 推进令牌；未物化、未写 authority ref、未启动 GPU/训练。下一步仅允许按上述意见整改并重新申请 construction review。
+
+## 2026-09-16 — construction REQUEST_CHANGES 整改完成
+
+- 采纳 MM/DS 技术意见：adapter 与 builder 的 helper key 统一为 `credential.https://github.com.helper`；producer 端到端测试改用 builder 真实 helper environment。
+- 验证：相关测试 `81/81 PASS`；`py_compile`、`git diff --check` PASS。测试内部既有 launcher fixture usage 输出不影响 unittest 成功结果。
+- 当前仍未生成正式 pair；整改后需新 formal root、新 suffix、新 pair，并重新申请 construction review；未物化、未启动训练。
