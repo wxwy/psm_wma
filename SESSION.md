@@ -7829,3 +7829,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 绑定 formal root=`0fd4f179e49943718cd484f2bb7a74d26619e8ad`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a4`。
 - JSON 38852 bytes，SHA-256=`174463aa6f26628e0af4c380a5635fdc1b070e1a3425572d856d987fb0bb53b4`；Markdown 340 bytes，SHA-256=`8d3eb29cab670ddafa80b261553a5418d7513d123ca1fc8c42823b895fbd2340`。
 - 使用完整 40 位 root 通过 `rebuild_launcher`，`produce_pair` 与 `verify_pair` PASS；未物化、未写 authority ref、未启动 GPU/训练。
+
+## 2026-09-16 — v1.3 materialization review 送达与观察
+
+- 新 pair exact root=`0fd4f179e49943718cd484f2bb7a74d26619e8ad`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a4`；JSON SHA=`174463aa6f26628e0af4c380a5635fdc1b070e1a3425572d856d987fb0bb53b4`，MD SHA=`8d3eb29cab670ddafa80b261553a5418d7513d123ca1fc8c42823b895fbd2340`。
+- MM/DS 均完成新申请的 send-keys-l、独立 Enter、capture 送达回执。
+- DS 当前 capture 中的 `REQUEST_CHANGES` 仍明确锚定旧 v1.2 root=`7796d054...`，不能升级为 v1.3 结论；v1.3 尚无 DS final。MM 当前也尚无 v1.3 final。
+- 未物化、未写 authority ref、未启动 GPU/训练；继续等待 v1.3 exact-pair final。
