@@ -11,13 +11,15 @@ def bundle():
     result = {"schema": SCHEMA, "formal_root": "a" * 40,
               "child_gitlink": "b" * 40, "sha256": ""}
     for name, keys in SECTION_KEYS.items():
-        result[name] = {key: ([] if key in ("keys", "callables", "argv", "order", "absent_paths", "absent_refs", "selected_paths")
+        result[name] = {key: (["collection", "producer", "record", "receipt", "root_audit"] if name == "execution" and key == "order" else [] if key in ("keys", "callables", "argv", "order", "absent_paths", "absent_refs", "selected_paths", "package_keys", "witness_keys")
                         else False if key in ("zero_mutation", "one_shot", "no_retry", "pass_hard_stop")
-                        else {} if key == "source_digest_receipt_mapping" else key)
+                        else {} if key == "source_digest_receipt_mapping" else ("a" * 64 if "sha256" in key else "b" * 40 if key in ("module_blob_native_oid", "selection_blob_native_oid", "candidate_revision", "parent_root_revision", "child_gitlink") else key))
                            for key in keys}
     result["record"]["keys"] = list(RECORD_KEYS)
-    result["record"]["source_digest_receipt_mapping"] = {key: key for key in RECORD_KEYS[3:]}
+    result["record"]["source_digest_receipt_mapping"] = {key: key for key in RECORD_KEYS[2:]}
     result["receipt"]["keys"] = list(RECEIPT_KEYS)
+    result["publication"]["package_keys"] = list(__import__("tools.psm_wma.immutable_source_collection", fromlist=["SOURCE_PACKAGE_KEYS"]).SOURCE_PACKAGE_KEYS)
+    result["publication"]["witness_keys"] = list(__import__("tools.psm_wma.immutable_source_collection", fromlist=["SOURCE_WITNESS_KEYS"]).SOURCE_WITNESS_KEYS)
     return result
 
 

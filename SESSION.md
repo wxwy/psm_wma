@@ -8198,3 +8198,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`9efafe212cda7ac38531503f1599a3c48deb94e4` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
 - MM=`mm:0.0` capture 成功，已给出 exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC`；DS=`ds:0.0` capture 成功，正在核验新 implementation pair，尚未出现 final verdict。
 - 本轮尚无三方推进令牌；保持 REVIEW，未创建 instance，未执行真实写盘、source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — construction CPU/static remediation #2
+
+- 依据 DS 对 `9efafe212cda7ac38531503f1599a3c48deb94e4` 的 REQUEST_CHANGES，补充 digest/revision lowercase hex、ordered string array、固定 execution order、package/witness key 集合及正确的四项 record mapping（含 immutable_source_identifier）校验。
+- 设计中的写盘延后已明确，但该变更仍需以版本化 amendment 记录后再申请审核；当前未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
+- 验证：3/3 unittest PASS、py_compile PASS、git diff --check PASS；下一步提交新 formal root并重新申请 closure review。

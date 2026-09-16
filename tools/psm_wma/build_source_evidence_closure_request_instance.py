@@ -2,7 +2,9 @@
 
 import hashlib
 import json
+import re
 from collections.abc import Mapping
+from tools.psm_wma.immutable_source_collection import SOURCE_PACKAGE_KEYS, SOURCE_WITNESS_KEYS
 
 
 TOP_LEVEL_KEYS = (
@@ -46,11 +48,26 @@ def _validate_sections(obj):
         if name == "receipt" and tuple(section["keys"]) != RECEIPT_KEYS:
             raise ValueError("receipt: fixed keys required")
         if name == "record" and section["source_digest_receipt_mapping"] != {
-            key: key for key in RECORD_KEYS[3:]
+            key: key for key in RECORD_KEYS[2:]
         }:
             raise ValueError("record: digest mapping required")
-        if any(not isinstance(value, (str, bool, int, list, dict)) for value in section.values()):
-            raise ValueError(f"{name}: invalid value type")
+        for key, value in section.items():
+            if key in ("keys", "callables", "argv", "order", "absent_paths", "absent_refs", "selected_paths", "package_keys", "witness_keys"):
+                if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+                    raise ValueError(f"{name}.{key}: ordered string array required")
+            elif key in ("zero_mutation", "one_shot", "no_retry", "pass_hard_stop"):
+                if not isinstance(value, bool):
+                    raise ValueError(f"{name}.{key}: boolean required")
+            elif not isinstance(value, (str, bool, int, dict)):
+                raise ValueError(f"{name}.{key}: invalid value type")
+            elif isinstance(value, str) and ("sha256" in key or key in ("module_blob_native_oid", "selection_blob_native_oid", "candidate_revision", "parent_root_revision", "child_gitlink")):
+                size = 64 if "sha256" in key else 40
+                if not re.fullmatch(r"[0-9a-f]{%d}" % size, value):
+                    raise ValueError(f"{name}.{key}: lowercase hex identity required")
+        if name == "publication" and (tuple(section["package_keys"]) != SOURCE_PACKAGE_KEYS or tuple(section["witness_keys"]) != SOURCE_WITNESS_KEYS):
+            raise ValueError("publication: fixed package/witness keys required")
+        if name == "execution" and tuple(section["order"]) != ("collection", "producer", "record", "receipt", "root_audit"):
+            raise ValueError("execution: fixed order required")
 
 
 def build_request_instance(bundle):
