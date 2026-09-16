@@ -485,6 +485,16 @@
 - Requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_SCHEMA` 或 `REQUEST_CHANGES(file:line)`。
 - Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
 
+# 2026-09-16 — Stage-2 request instance schema remediation review
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-REQUEST-INSTANCE-SCHEMA-DESIGN`
+- Formal root: `771633764096d7d2af2ff12d828bebc174daa6d1`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Remediation: 补齐 authority/source/executor/producer/record/receipt/publication/root_audit/preflight/execution 的 exact keys 与类型；定义顶层 sha256 排除自身的 preimage；引用既有批准 schema/formal roots；明确 producer 绑定已关闭 CPU/static helper identity。
+- Scope: docs-only；不创建 instance，不执行 source/record/publication I/O，不启用 GPU/训练。
+- Requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_SCHEMA` 或 `REQUEST_CHANGES(file:line)`。
+- Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
+
 # 2026-09-16 — Source-evidence producer/closure remediation closure review
 
 - Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-CPU-STATIC-IMPLEMENTATION`

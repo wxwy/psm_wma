@@ -8105,6 +8105,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - Inbox append 前=`64752` bytes，未触发 rollover；MM/DS 均完成 `send-keys -l`→间隔 1 秒→独立 Enter→capture 送达回执。
 - 申请仅审核 docs-only instance schema；未创建 instance，未执行 source/record/publication I/O、GPU 或训练。
 
+## 2026-09-16 — Stage-2 request instance schema remediation 审核送达
+
+- 新 formal pair=`771633764096d7d2af2ff12d828bebc174daa6d1` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。
+- Inbox append 前=`65601` bytes，未触发 rollover；MM/DS 均完成 `send-keys -l`→间隔 1 秒→独立 Enter→capture 送达回执。
+- 申请仅审核 docs-only schema remediation；未创建 instance，未执行 source/record/publication I/O、GPU 或训练。
+
 ## 2026-09-16 — Stage-2 request instance schema 观察凭证 #1 / REQUEST_CHANGES
 
 - `before_head=8e3bf30d195c6fc1d812dd8b791503e5b8f47d92`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`8e3bf30d195c6fc1d812dd8b791503e5b8f47d92`；新增为空；merge=`Already up to date.`
