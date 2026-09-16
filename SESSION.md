@@ -7810,6 +7810,27 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS=`ds:0.0` capture 成功，已核对 v1.2 identity 与 builder/producer/helper 字段，尚未出现 final literal verdict，状态为处理中。
 - 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 GPU/训练。
 
+## 2026-09-16 — v1.3 一次性 materialization 执行结果
+
+- 使用同轮推进令牌执行冻结 v1.3 launcher；目标 pair root=`0fd4f179e49943718cd484f2bb7a74d26619e8ad`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a4`。
+- 本地 owner directory/index 已创建；publication 阶段 `local_create_succeeded=true`、`remote_create_succeeded=false`；最终 evidence `artifacts/g0/r09/authority_root_materialization_evidence_e8c7b2a4.json` 状态=`FAIL`。
+- 失败证据：`failure.primary_phase=remote_cas`、`primary_code=AUTHORITYROOTERROR`；rollback 完成，local/remote fixed ref 均保持 absent；未写 authority ref，未启动 child/runtime/config mutation、source-evidence、GPU、训练、评测或推理。
+- 该 one-shot 授权已消耗；禁止使用同一 pair 重试。下一步需针对 remote CAS 失败原因做最小整改，生成新 formal root/new pair并重新申请 materialization 审核。
+
+## 2026-09-16 — remote-CAS 权限只读核验
+
+- 通过已授权的 GitHub 只读 API 核验：仓库 `wxwy/psm_wma` 当前账号 permissions=`admin/maintain/push`；`V2` branch protection 返回 `404 Branch not protected`；repository rulesets 为空。
+- 结论：v1.3 remote-CAS 失败不是当前账号无 push 权限，也不是 V2 branch protection/ruleset 拒绝；未执行任何远端写入。仍需新 pair/新一次性授权，并捕获真实 push 服务端响应后继续。
+
+## 2026-09-16 — v1.3 materialization review 观察凭证 #3
+
+- `before_head=4b314800a6ec2d8e8254a54d9b634e1e24de2d3e`；`git fetch origin V2`、`git ls-remote origin refs/heads/V2` 成功，advertised/tracking 均为 `4b314800a6ec2d8e8254a54d9b634e1e24de2d3e`；`before_head..origin/V2` 为空；正向 ancestor=0；`git merge --ff-only origin/V2`=`Already up to date.`
+- exact ChatGPT review 扫描未找到当前 v1.3 formal root；当前 materialization 门仅要求冻结名册 MM/DS，ChatGPT advice 仍为 advice-only。
+- 冻结 pair：root=`0fd4f179e49943718cd484f2bb7a74d26619e8ad`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a4`。
+- DS=`ds:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`，范围仅限一次 v1.3 stage1 runtime materialize；禁止 authority-ref/source-evidence 后续操作、child/runtime/config mutation、GPU/训练/评测/推理。
+- MM=`mm:0.0` 本轮独立 capture 成功并证明 exact pair 追问已提交，当前状态为处理中；未取得本轮 literal final verdict。
+- 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 GPU/训练。
+
 ## 2026-09-16 — v1.2 materialization review 观察凭证 #2
 
 - `before_head=d222e985e6aaecd2e744d4d051763721bea4e797`；fetch/ls-remote 成功，advertised/tracking 一致；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
