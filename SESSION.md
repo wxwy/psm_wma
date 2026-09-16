@@ -8185,3 +8185,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 依据 DS 对 formal pair `32678cfa35fbc285b0aa2c53f000eb171c2fea8b` 的 REQUEST_CHANGES，补充所有十个嵌套 section 的 exact key 集合校验、record 六键、receipt 十三键及四项 digest mapping fail-closed 校验。
 - 将固定 JSON/Markdown 原子写入明确拆出本 Gate，当前实现只返回并验证内存 canonical bytes；真实写入另需独立 execution Gate。
 - 验证：3/3 unittest PASS、py_compile PASS、git diff --check PASS；尚未提交，下一步提交新 formal root 并重新申请 closure review。
+
+## 2026-09-16 — construction CPU/static remediation closure review 送达
+
+- formal pair=9efafe212cda7ac38531503f1599a3c48deb94e4 / child=93a89ba61306d840a008813f62f26a34d54850f4；formal root 已推送 origin/V2。
+- Inbox 申请已提交；MM=mm:0.0 完成 send-keys -l→间隔 1 秒→独立 Enter→capture，已进入处理；DS=ds:0.0 完成同一送达三联，当前 capture 尚显示上一轮 REQUEST_CHANGES，新的 exact pair 尚无 final verdict。
+- 当前 Gate 保持 REVIEW；未创建 instance，未执行真实写盘、source/record/publication I/O、GPU 或训练。
