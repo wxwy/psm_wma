@@ -361,7 +361,10 @@ class NativeCollectionGit:
         self._metadata = dict(metadata)
         self._env = {"GIT_INDEX_FILE": str(index), "GIT_NO_REPLACE_OBJECTS": "1",
                      "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
-                     "GIT_CONFIG_SYSTEM": "/dev/null", "LC_ALL": "C", "LANG": "C"}
+                     "GIT_CONFIG_SYSTEM": "/dev/null", "GIT_CONFIG_COUNT": "1",
+                     "GIT_CONFIG_KEY_0": "credential.https://github.com.helper",
+                     "GIT_CONFIG_VALUE_0": "!/usr/bin/gh auth git-credential",
+                     "GH_CONFIG_DIR": "/root/.config/gh", "LC_ALL": "C", "LANG": "C"}
 
     def approved_execution_metadata(self) -> Mapping[str, object]:
         if set(self._metadata) != {"execution", "tool", "environment"}:
