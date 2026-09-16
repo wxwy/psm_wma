@@ -8292,6 +8292,82 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 验证：`python -m unittest tools.psm_wma.test_write_source_evidence_closure_request_instance tools.psm_wma.test_build_source_evidence_closure_request_instance`：5/5 PASS；`py_compile` PASS；`git diff --check` PASS。
 - 当前变更未提交；下一步为只读规范自检、提交 implementation formal root，并以新 exact pair 申请 CPU/static closure review。
 
+## 2026-09-16 — writer CPU/static closure review 观察凭证 #1
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，正在核验并运行 HEAD 测试，尚无当前 pair final verdict；DS=`ds:0.0` capture 成功，申请已提交进入会话，尚无当前 pair final verdict。
+- 三方 final 未齐，无推进令牌；保持 REVIEW，未整改、未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — writer CPU/static closure review 观察凭证 #2
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，正在运行 writer tests，尚无当前 pair final verdict；DS=`ds:0.0` capture 成功，已读取 writer 实现与测试，尚无当前 pair final verdict。
+- 三方 final 未齐，无推进令牌；保持 REVIEW，未整改、未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — writer CPU/static closure review 观察凭证 #3
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，仍在运行测试，尚无当前 pair final verdict；DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/write_source_evidence_closure_request_instance.py:64)`，要求固定路径/版本化文件名、必填 exact root/child/SHA 重验、失败 fixture/residue 证据及异常路径修正。
+- 三方 final 未齐且 DS 已 REQUEST_CHANGES，无推进令牌；保持 REVIEW，未整改、未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — writer CPU/static closure review 观察凭证 #4
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，仍在运行 writer tests，尚无当前 pair final verdict；DS=`ds:0.0` capture 成功，exact final 仍为 `REQUEST_CHANGES(tools/psm_wma/write_source_evidence_closure_request_instance.py:64)`。
+- 三方 final 未齐且 DS 已 REQUEST_CHANGES，无推进令牌；保持 REVIEW，未整改、未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — writer CPU/static closure review 观察凭证 #5
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，但会话因 Token Plan 用量上限反复重试，未产生当前 pair final verdict；DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/write_source_evidence_closure_request_instance.py:64)`。
+- 三方 final 未齐且 DS 已 REQUEST_CHANGES，无推进令牌；保持 REVIEW，未整改、未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — writer CPU/static closure review 观察凭证 #6
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，会话明确返回 API 429 / Token Plan 用量上限，未产生当前 pair final verdict；DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/write_source_evidence_closure_request_instance.py:64)`。
+- 三方 final 未齐且 DS 已 REQUEST_CHANGES，无推进令牌；保持 REVIEW，未整改、未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — writer CPU/static closure review 观察凭证 #7 / 外部阻塞
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` 连续返回 API 429 / Token Plan 用量上限，未产生 final verdict；DS exact final 仍为 `REQUEST_CHANGES(tools/psm_wma/write_source_evidence_closure_request_instance.py:64)`。
+- 同一外部审核服务限制已连续多轮重复，且无三方推进令牌；未整改、未写真实 instance、未执行 source I/O、GPU 或训练。等待 MM 服务恢复或用户明确指定替代审核者。
+
+## 2026-09-16 — writer CPU/static closure review 观察凭证 #8 / 名册变更
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- 用户明确要求剔除 MM；自本凭证起冻结名册记录为：MM=`REMOVED_BY_USER`，DS=`ds:0.0`，ChatGPT=`advice-only`。DS pane capture 成功但本轮未见当前 pair 的 final verdict；MM 不再作为当前申请审核者。
+- 名册变更使旧推进凭证失效；当前缺少正式替代审核者，仍无推进令牌。未整改、未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — DS 意见单独评估观察凭证 #9
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；DS=`ds:0.0` capture 成功，exact verdict=`REQUEST_CHANGES`。
+- DS 意见评估：HIGH-3 要求失败 residue 具备 terminal/paths/存在性/size/raw SHA/published_side 并写入 SESSION；MEDIUM 要求 root/child/SHA 参数必填 fail-closed；另要求修复短写、mkdir 异常路径及补齐 EEXIST/link-fsync/readback/JSON-only partial fixtures。该意见仅作技术评估，未升级为三方推进令牌。
+- 当前仍未整改、未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — DS 意见单独评估观察凭证 #10
+
+- `before_head=f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；fetch 成功；advertised/tracking=`f815c36cda20c1f7cbce62a08ef046d1b6ecd593`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`1c12964511070ff1568a0e7391daaed9eb6f0bb6` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到；DS pane capture 成功，意见无新变化，仍为前述 `REQUEST_CHANGES`。
+- 本轮仅完成意见复核；未整改、未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — DS 意见评估与整改
+
+- 用户明确要求评估后整改。采纳 DS：exact formal root/child/SHA 改为必填 fail-closed；补充短写循环；目录创建异常结构化返回；失败 residue 增加 `published_side`、路径、存在性、size、raw SHA；Markdown sibling 校验 instance SHA。
+- 驳回 DS 两项：writer 直接写 `SESSION.md`（保持 writer 发布边界，调用方负责记录 residue）；将当前显式目标目录入口强制改为真实固定路径（固定路径属于后续真实写入 Gate，不属于 CPU/static writer）。
+- 修复测试夹具缩进与 Markdown SHA 夹具；验证 `python -m unittest tools.psm_wma.test_write_source_evidence_closure_request_instance tools.psm_wma.test_build_source_evidence_closure_request_instance`：6/6 PASS；py_compile PASS；git diff-check PASS。
+- 当前整改尚未提交；仍未写真实 instance、未执行 source I/O、GPU 或训练。
+
 ## 2026-09-16 — real-output execution design v0.2 观察凭证 #1
 
 - `before_head=fefc06687ba101b0c5b599b1b225a866e9d7a7d7`；fetch 成功；advertised/tracking=`4f9f30015b3037d3caa83f2b5f24fbdd6be30bdb`；新增范围为空；本地包含远端，无分叉，未执行 merge。

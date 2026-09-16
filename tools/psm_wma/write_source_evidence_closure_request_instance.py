@@ -37,7 +37,12 @@ def _stage(parent_fd: int, name: str, raw: bytes) -> None:
     fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_CLOEXEC | os.O_NOFOLLOW,
                  0o644, dir_fd=parent_fd)
     try:
-        os.write(fd, raw)
+        offset = 0
+        while offset < len(raw):
+            written = os.write(fd, raw[offset:])
+            if written <= 0:
+                raise RealOutputWriteError("staging short write")
+            offset += written
         os.fsync(fd)
         info = os.fstat(fd)
         if not stat.S_ISREG(info.st_mode) or (info.st_mode & 0o777) != 0o644:
@@ -47,26 +52,38 @@ def _stage(parent_fd: int, name: str, raw: bytes) -> None:
 
 
 def write_request_pair(json_bytes: bytes, markdown_bytes: bytes, directory: Path,
-                       *, expected_formal_root: str | None = None,
-                       expected_child_gitlink: str | None = None,
-                       expected_instance_sha256: str | None = None) -> dict[str, object]:
+                       *, expected_formal_root: str,
+                       expected_child_gitlink: str,
+                       expected_instance_sha256: str) -> dict[str, object]:
     """Publish JSON then Markdown, returning only structured residue on failure."""
     digest = verify_instance_bytes(json_bytes)
     value = json.loads(json_bytes)
-    if expected_formal_root is not None and value["formal_root"] != expected_formal_root:
+    if value["formal_root"] != expected_formal_root:
         raise RealOutputWriteError("formal root drift")
-    if expected_child_gitlink is not None and value["child_gitlink"] != expected_child_gitlink:
+    if value["child_gitlink"] != expected_child_gitlink:
         raise RealOutputWriteError("child gitlink drift")
-    if expected_instance_sha256 is not None and digest != expected_instance_sha256:
+    if digest != expected_instance_sha256:
         raise RealOutputWriteError("instance SHA drift")
+    if digest.encode("ascii") not in markdown_bytes:
+        raise RealOutputWriteError("markdown sibling SHA drift")
     directory = Path(directory)
-    directory.mkdir(mode=0o700, parents=False, exist_ok=False)
+    residue = {"terminal": "REAL_OUTPUT_WRITE_FAILED", "published": [],
+               "stage_paths": [], "target_paths": [], "published_side": [],
+               "failure": ""}
     names = ("request_instance.json", "request_instance.md")
     raws = (json_bytes, markdown_bytes)
-    fd = _parent_fd(directory)
+    try:
+        directory.mkdir(mode=0o700, parents=False, exist_ok=False)
+    except OSError as exc:
+        residue["failure"] = str(exc)
+        return residue
+    fd = -1
     staged = tuple(name + ".staged" for name in names)
+    residue["stage_paths"] = [str(directory / name) for name in staged]
+    residue["target_paths"] = [str(directory / name) for name in names]
     published: list[str] = []
     try:
+        fd = _parent_fd(directory)
         parent = os.fstat(fd)
         parent_identity = (parent.st_dev, parent.st_ino)
         for stage, raw in zip(staged, raws):
@@ -92,10 +109,15 @@ def write_request_pair(json_bytes: bytes, markdown_bytes: bytes, directory: Path
         fd = -1
         return {"terminal": "PASS", "published": list(names), "instance_sha256": digest}
     except BaseException as exc:
-        return {"terminal": "REAL_OUTPUT_WRITE_FAILED", "published": published,
-                "stage_paths": [str(directory / name) for name in staged],
-                "target_paths": [str(directory / name) for name in names],
-                "failure": str(exc)}
+        residue["published"] = published
+        residue["published_side"] = list(published)
+        residue["failure"] = str(exc)
+        residue["residue"] = [{"path": path, "exists": Path(path).exists(),
+                               "size": Path(path).stat().st_size if Path(path).is_file() else None,
+                               "raw_sha256": hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                               if Path(path).is_file() else None}
+                              for path in residue["stage_paths"] + residue["target_paths"]]
+        return residue
     finally:
         if fd >= 0:
             os.close(fd)
