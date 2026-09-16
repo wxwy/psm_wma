@@ -10532,7 +10532,12 @@ P1/P2: CATALOG_SHA256=f465db8e661a6fc4bfa79196c07d61238a073c23446c2ae5997150f06c
 **已记录**：`TODO.md` 新增 `CATALOG-CAPACITY-VS-5000-STEP`（状态 TODO）。**已通知三方**：`docs/collab/chatgpt/CODEX_INBOX.md` 末尾「catalog 容量换算」条目，请审核者校正对「5000 步」的理解；两个在审 Gate 的送审件 SHA 均未改动。
 
 **可能解法（(a) 已出设计送审；其余未自行实现）**：(a) **catalog 多 epoch 复用**——唯一能真正填平缺口的方向，也是常规训练语义（5000 步需要每段复用约 44 次）。**核实后判定：不是发明新机制，而是接线**——epoch 快照契约 `QueueEpochSnapshot`、确定性排列 `queue_permutation`（`PSM-WMA/queue/v1` 版本标记）、epoch 边界规则 `rollover_projected_if_safe`（`canonical_segment_adapter_scheduler.py:57-67`/`:76-110`/`:546-549`）**均已冻结**；`RankLocalSegmentScheduler.configure_queue`（`local_memory_segment.py:331-337`）**已预留接口、全仓零生产调用点**；`snapshot()`/`rebuild()` 已含 `queue_seed`/`queue_epoch`/`queue_permutation`。单位也对齐（契约 `_queue_for` 与 active 的 `_by_slot[slot]` 同以 episode 为单位）。**且不需给 identity 加 epoch 维度**：`_is_admissible` 在 `stable_slots` 无该 slot 时只要求 `cursor == 0`（`:309-311`），`terminal_rebind` 删除该条目（`:343`），故重置守卫容器后复用同一 identity 天然可准入，**不触及 `SegmentIdentity` ABI**（此前记的「触及 ABI」是未核实的判断，此处更正）。设计文档 `docs/build/PSM-WMA_Local_Memory_v0.3.5_active_route_catalog_epoch_reuse_design_v0.1.md`，Gate `G0-R09-B-TTT-V035-ACTIVE-CATALOG-EPOCH-REUSE`，已送三方。**建议顺序：resume 先落地，再多 epoch**。(b) 缩短训练计划——112 步不足以训练；(c) 降低 `ttt_tbptt_steps`（16→8 使 block 数翻倍至 225 窗口）——仍不够且改变 TBPTT 语义；(d) 扩充数据集。**在此之前不得启动 D8b 长跑**（会在第 113 步 crash，白耗约 8 小时）。
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          完全部 112 个窗口。在每个**窗口边界**上评估契约的两条条件本身。设计上两个判断：① `freeze_window` 要么返回完整 128-member 计划要么 raise，故「能否再冻结」无需额外探测；② `freeze_window` **非原子**（循环内逐 member `_commit_block`，`:234`），故 raise 后用 `_save_cursors`/`_restore_cursors` 恢复游标。
+
+### 契约的 epoch 边界在 active 路线上经实测不可达——多 epoch 复用设计由 v0.1 修订为 v0.2（2026-09-17）
+
+**目的**：为「catalog 多 epoch 复用」设计（Gate `G0-R09-B-TTT-V035-ACTIVE-CATALOG-EPOCH-REUSE`）实测其最关键前提——契约 `rollover_projected_if_safe`（`canonical_segment_adapter_scheduler.py:542-549`）的两条边界条件在 b_stream=8 / 4 categories 的生产形态下是否可满足。设计文档 §6 把「条件 2 恒不成立」列为不落地的 BLOCKED 判据。
+
+**方法**：新建 `tools/g0/probe_catalog_epoch_boundary.py`，走**真实 driver + 真实 scheduler**（`ActiveLocalMemoryWindowDriver` + `RankLocalSegmentScheduler` + `CanonicalSegmentRuntimeOwner` + `SuiteRoutedSegmentProducer`，与 `probe_r09_b_active_static.py` 同一套搭建），**不调用 `producer.produce`**、不取任何张量，故能走完全部 112 个窗口。在每个**窗口边界**上评估契约的两条条件本身。设计上两个判断：① `freeze_window` 要么返回完整 128-member 计划要么 raise，故「能否再冻结」无需额外探测；② `freeze_window` **非原子**（循环内逐 member `_commit_block`，`:234`），故 raise 后用 `_save_cursors`/`_restore_cursors` 恢复游标。
 
 **读数**（产物 `artifacts/g0/active_static_probe/probe_catalog_epoch_boundary.json`）：
 
@@ -10561,3 +10566,114 @@ P1/P2: CATALOG_SHA256=f465db8e661a6fc4bfa79196c07d61238a073c23446c2ae5997150f06c
 **探针自身的一处更正（如实记录）**：初版把条件 1 算成了 **block 级**（「该 category 还有没有整块」），而契约的条件 1 是 **episode 级**（已核实：`_admit_free_slot` 用 `positions[category]` 索引 `_queue_for` 的排列 `:512-517`、`_commit_admission` 每 admit 一个 episode 才 +1 `:589-590`、`_queue_for` 每 episode 一行 `:471-480`）。block 级是更强的谓词，两者在边界附近会给出不同答案；初版读数「`condition1_all_categories_drained=false`」因而**依据不成立**（方向虽同）。初版产物已被修正版覆盖、未提交；上表全部为修正版读数，且修正版额外记录了逐边界的条件轨迹。
 
 **已记录 / 已通知**：`TODO.md` 的 `CATALOG-CAPACITY-VS-5000-STEP` 已追加本节结论与两处易错点；`docs/collab/chatgpt/CODEX_INBOX.md` 末尾已追加 v0.2 修订说明（取代 v0.1 的 §2/§3/§6/§8，请裁定四点）。**无代码改动**：`active_local_memory_driver.py` 未被修改，`freeze_window` 的 fail-closed `raise` 仍是当前 operative 行为，**D8b 长跑仍不得启动**。
+
+### 多 epoch 复用设计修订为 v0.3——自查发现 §4.3 重置清单缺 adapter sidecar；规划层满跑 PASS（2026-09-17）
+
+**目的**：在等 45 epoch 满跑的同时，复核 v0.2 §8 第 3 问（「§4.3 的重置清单是否完备——是否还有第四处状态会跨窗口残留」）。**该问由本设计自查给出了答案，且答案是「有」。**
+
+**发现 1：rollover 缺 adapter 的 `LocalMemorySegmentSidecar` 重置，后果是必然抛错（不是概率事件）**
+
+- `sidecar.commit` 只在该 identity `training_stream_end` 为真时 pop（`local_memory_segment_adapter.py:39-43`），否则存下该 slot 的 fast-state；`sidecar.read`（`:29-37`）在「不是前一身份 + 1 个 cursor」时**抛 `ValueError`（不是返回 `None`）**。
+- **为何今天不暴露**：不改 epoch 时，slot 换 episode 只发生在上一 episode 已 terminal 时，而 terminal 的那次 `commit` 已把记录 pop 掉——即不变量「slot 换 episode 时 sidecar 必无该 slot 记录」。**`sidecar.reset` 因此是死代码（生产与测试零调用点）。** 而 **epoch rollover 是这套代码里第一个在记录仍存活时把 slot 倒回 cursor 0 的操作**，它打破了这个不变量。
+- **为何必然抛错**：新 epoch 的 slot 首块 `cursor == 0`，而 `_active_stream` 已被清空 ⟹ `_peek_block` 的 `rebind = stream is not None` 为 **False**（`active_local_memory_driver.py:264-280`）⟹ 运行时**不会**调用 `_rebind_terminal`；且 `_rebind_terminal` 本身只对 terminal slot 生效（`:190-194`，`terminal_slots.get(slot_id)` 为 None 时直接返回）、**完全不触碰 sidecar**。于是 `read` 要求 `0 == previous.cursor + 1`，在 `previous.cursor ≥ 0` 时**不可能成立**——**与重排结果无关**。
+- **边界处记录确实存在**：`probe_catalog_epoch_boundary.json` 的 `stable_but_not_terminal = [4]` ⟹ slot 4 的末次 commit `training_stream_end == False` ⟹ 记录存活。
+- **最小复现（真实类，无需数据集/张量，2026-09-17 01:27 实测）**：commit 一个非 terminal 的 `(episode "7", cursor 3)`，再 `read` 同 episode 的 cursor 0 → `ValueError: segment sidecar identity is not a canonical continuation.`；`read` 不同 episode 的 cursor 0 → 同一条 `ValueError`；`reset` 后 `read` → `None`。
+- **丢弃 carry 在语义上也正确**：rollover 把该 slot 倒回其首 episode 的 cursor 0，该 episode 会**从头重放**，其首块本应继承**初始**状态，而非上一 epoch 中途留下的 carry。
+
+**发现 2：§6 判据 6 的措辞在今天就已为假（与本设计无关）**
+
+原文写「`per_slot_members` 在每个窗口内仍为 8 个 slot 均衡」。但 `freeze_window` 的选择键是 `(target[category] - observed, category, -used)`（`:227-232`），**只看 exposure 赤字、不看该 category 还剩多少 block**；四个 category 的 block 供给量不等（5720 / 2588 / 3480 / 2642），故任一 category 抽干后，其两个 slot 就从 `choices` 中消失（`:222-224` 的 `if view is None: continue`）。**实测（2 epoch / 224 窗口冒烟）**：`windows_by_distinct_slots = {2:51, 4:49, 5:4, 6:39, 7:2, 8:79}`，**仅 79/224 覆盖全 8 slot**；epoch 0 自第 **80** 个窗口起不再覆盖 8 slot，**epoch 1 无一窗口覆盖 8 slot**。故判据改为可测的正确形式：对在该窗口**实际被服务**的 category，其两 slot 成员数之差 ≤ 1（`max_within_category_slot_skew`），覆盖度作为记录量而非通过条件。
+
+**发现 3：复用把既有的类别偏斜放大为全 run 稳态**
+
+`cumulative_valid_consumer_exposure` 45 epoch 后为 `libero_10=4050720 / libero_goal=1863360 / libero_object=2505600 / libero_spatial=1902240` ⟹ **libero_10 占 39.2%，而 `target_distribution` 是 25%**。成因是每 epoch 尾部（另三类已抽干、只剩 libero_10 的 slot 0/4）窗口 100% 给 libero_10。**epoch 0 与之后 44 个 epoch 逐位相同**（`windows_per_epoch` 全 112、`remaining_blocks_at_rollover` 全 94）⟹ **不是本设计引入，而是本设计让它每 epoch 重复一次**。已作为 §8 第 7 问送审：是否需先修 `freeze_window` 的供给感知。
+
+**发现 4：规划层满跑 PASS（判据 2 的完整证明）**
+
+探针 `tools/g0/probe_epoch_reuse_planning.py`（rollover 是**探针内参考实现**，生产文件未被改动）→ `artifacts/g0/active_static_probe/probe_epoch_reuse_planning.json`：
+
+| 项 | 读数 |
+|---|---|
+| `result` | **PASS** |
+| `windows_total` | **5040**（= 45 × 112，正是 §3.4 的容量换算） |
+| `windows_per_epoch` | 45 项，**唯一值 = 112** |
+| `criterion1_slot_order_matches_permutation` | **true**（`mismatches = []`） |
+| `criterion2_meets_target` / `exceeds_single_epoch` | **true** / true |
+| `criterion3_probe_is_pure` | **true** |
+| `criterion4_window_index_not_reset` | **true**（`window_index = 5040 = windows_total`） |
+| `criterion5_deferred_tail` | `deferred_after_epoch0 = 94`、`recovered_in_epoch1 = 94`、`missing_from_epoch1 = []` |
+| `rollovers` | 44 次，`remaining_blocks_at_rollover` **唯一值 = 94**，`queue_epoch` 单调 1→44 |
+
+**附带定量结论（复用不引入新的调度开销）**：`admit`/`commit` 的守卫成员检查是 **list 线性扫描**（`local_memory_segment.py:322-323` 的 `identity not in self.admission_order` / `identity in self.committed_identities`）。实测真实 `RankLocalSegmentScheduler`：N=2000 时 415 µs、N=14336 时 1261 µs，单 epoch 累计约 **9 s**。因 rollover **清空**这两个容器，该 O(n²) 的 n 上界**恰好等于今天单 epoch 的值**（45 epoch 合计约 6.8 min，相对 5000 步墙钟可忽略）。**这是「清空守卫容器」这一设计的附带收益。**
+
+**设计修订（v0.2 → v0.3）**：§4.3 补 adapter 侧重置；新增 §4.7（sidecar 重置的归属与可达路径，三候选，建议 (b)）；§6 新增判据 8、更正判据 6 措辞；§5 补一处 resume 语义（边界处 sidecar **刻意清空**，resume 不得当数据缺失回填）；§8 收敛第 3 问（已答：**有且只有 sidecar 一处**）、新增第 6/7 问；§10 补 10.2/10.3/10.4。v0.2 的 §1–§3、§4.1–§4.2、§4.4、§7 **逐字未改**。
+
+**§8 第 3 问的复核结论（供三方核对）**：v0.2 担心的另两处经复核**不构成残留**——`_rebind_terminal` 只对 terminal slot 生效且被 §4.3 的清空取代；`owner` 的 `phase`/`transaction`/`forward`/`_retry_plan`/`_completed_transaction`/`_sealed_slow_window` 全是**按 window** 的能力，窗口结束即归 `IDLE`（`canonical_segment_runtime.py:157-171`、`:173-179`），`wiring` 只持有 adapter 与 slow 参数（`production_segment_wiring.py:36-37`），`registry` 只持有四个按 window 的能力（`production_active_wiring.py:62-66`）。故按 slot 的持久状态**全清单为四处**：driver 的四个游标容器、scheduler 的两个守卫容器 + 两个序列表、`cumulative_valid_consumer_exposure`（刻意不清零）、sidecar。
+
+**无代码改动**：`active_local_memory_driver.py`、`local_memory_segment.py`、`local_memory_segment_adapter.py`、`canonical_segment_runtime.py` **均未被修改**；`freeze_window` 的 fail-closed `raise` 仍是当前 operative 行为，**D8b 长跑仍不得启动**。
+
+### soak45 的验收判据（预先登记，2026-09-17 01:33，迭代 8/45）
+
+**为何登记**：`active_soak45` 这次 45 步 GPU 短跑此前**只在对话里说过判据、未落到文档**。未登记的验收判据容易被事后合理化，故本节点把它写死。**内存判据的统计量在迭代 8/45 时登记——早于看到终值；登记后不再修改，若终值不满足即记 FAIL。**
+
+**运行参数**（`RUN_NAME=edge_libero_4in1_localmem_active`，`OUTPUT_ROOT=/disk/rl/psm_wma/artifacts/g0/active_soak45`，训练进程 pid **1205406**）：
+
+```
+PSM_R09_B_TTT_ACTIVE=1 PSM_R09_B_TTT_ENABLED=1 PSM_R08_LOCAL_HISTORY_ENABLED=1 \
+PSM_R09_B_TTT_ACTIVE_GA=16 PSM_R08_GATE_A_DEVICE_MONITOR_EVERY_N=1 \
+EXTRA_TAIL_OVERRIDES="trainer.max_iter=45 checkpoint.save_iter=15"
+```
+
+**判据**：
+
+1. **完成性**：45 步全部走完，无 `Traceback` / `CUDA out of memory` / `Killed`。（注意：配置 dump 中的回调名 `skip_nan_step` 含 "nan" 字样，**不是失败信号**，勿误判。）
+2. **数值健康**：每步 `train/loss` 有限（非 nan/inf）。
+3. **slot 轮转修复生效**：**本次运行不可验证——登记者须如实标注，不得记为 PASS。**
+   - **登记时的判断依据**（2026-09-17 01:34 实测，非推测）：`grep -icE "slot|window" /tmp/active_soak45.log` 得 **2**，且两处命中**都在启动时的配置 dump 内**（其一为 `'plan_chain_id': 'active-local-window'` 的 `window` 字样），**运行时无任何逐 member 的 slot 证据**；`grep -icE "PSM_DIAG_EVIDENCE|psm_diag"` 得 **0**，即逐 member 诊断探针（`local_memory_segment_adapter.py:104-157`）**本次未启用**。
+   - 叠加的规模约束：45 步 < 128 member ⟹ **连一个完整窗口都没走完**（与 D8a 25 步同理）。
+   - **因此判据 3 在本运行记为 N/A（不是 PASS，也不是 FAIL）。** slot 轮转修复的实证须另跑：设 `PSM_DIAG_EVIDENCE=1` 并跑到 ≥1 个完整窗口，参照基线为修复前实测 `window_per_slot_members={4:32,5:32,6:32,7:32}`、`slot 0/1/2/3 恒为 0`。
+   - **本条为登记后修订**（01:3x 登记 → 01:34 核实后改）：登记时我写的是「只能用窗口内前 45 个 member 的 slot 覆盖来验证」，该说法**建立在日志含逐 member slot 信息这一未核实的假设上**；核实后发现假设为假。修订只把**不可验证**如实标出，**未放宽**任何通过条件。
+4. **exposure 单调性**：`cumulative_valid_consumer_exposure` 单调不减。
+5. **内存判据（本次预先登记的统计量）**：取 DeviceMonitor 的 `cpu_mem_gb` 逐迭代序列（`every_n=1`）。
+   - **丢弃前 2 个样本**作为 warmup。理由：迭代 1 含 allocator / latent cache 首次填充，实测存在一次性台阶（4.834 → 6.593）。
+   - 对剩余样本定义带宽 **B = max − min**，最小二乘斜率 **s（GB / 100 迭代）**。
+   - **PASS 条件：`|s| < B / 2`**——即趋势幅度不超过噪声带宽的一半。理由（为何该阈值非任意）：若存在真实泄漏，趋势将随时间主导带宽，`|s|×100` 会超过 B；若只是振荡，斜率不可从噪声中分辨。该式自带标度，不需额外的绝对阈值。
+   - 同时记录**最后 20 个样本**的 B 与 s 作为稳健性对照（长跑泄漏在尾部更易显现）。
+6. **显存**：`nvml_used_gpu_mem_gb` 不随迭代单调上升（同一条 `|s| < B/2` 统计量）。
+
+**登记时的快照（迭代 8/45，未参与判定，仅供追溯起点）**：`cpu_mem_gb` = 4.820（预跑）、4.834、6.593、6.146、6.147、6.173、6.470、6.120、6.121；`nvml_used_gpu_mem_gb` 稳定 **12.281**。
+
+**已知与本次运行无关的既有事实**：`cpu_mem_gb` 由 psutil 求**当前进程 + 全部子进程** RSS 之和（`device_monitor.py:116-123`），而训练进程 `num_workers=0` ⟹ 无子进程，故该值就是训练进程自身 RSS。轨迹中的 1.76 GB 跳变经查**不是** latent 缓存 LRU（上界 8 个 episode，实测文件均值 32.2 MB / 最大 108.1 MB ⟹ 至多 0.86 GB，**假说不成立**），也**不是** page cache（psutil 的 RSS 不含它）。
+
+### 45 epoch 满跑把复用设计 v0.3 的两处推断证伪，设计修订为 v0.4（2026-09-17 01:47）
+
+run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`result=PASS`，产出最终产物 `artifacts/g0/active_static_probe/probe_epoch_reuse_planning.json`（9711 字节）。判据 1/2/3/4/5 与 run-1 **逐位一致**：`windows_total=5040`、`windows_per_epoch` 45 项唯一值 112、44 次 rollover 残留唯一值 94 且 `queue_epoch` 单调 1→44、`criterion1_mismatches=[]`、`criterion3_probe_is_pure=true`、`criterion4_window_index_not_reset=true`（`window_index=5040`）、`criterion5_deferred_tail={deferred:94, recovered:94, missing:[]}`、`committed_identities=14336`。
+
+**新度量推翻了 v0.3 §10.4 的两处表述**（这是本次复用设计至今最重要的技术发现）：
+
+| v0.3 的表述 | 实测 |
+|---|---|
+| 「epoch 0 与之后 44 个 epoch **逐位相同**」 | **假**。只有聚合量相同（112 窗 / 残留 94）；**窗口内部构成相反**：epoch 0 有 81/112 个窗口服务全部 4 类（`all_categories_windows=81`、`all_slots_windows=79`），**epochs 1–44 的 `first_partial_category_window` 恒为 1** ⟹ 无一窗口覆盖全部 category |
+| 「51 个 2-slot 窗口来自尾部只剩 libero_10」 | **算术上不可能**：51 × 128 = 6528 > libero_10 每 epoch 全部消耗 5626。该推断把「2 个 slot」等同于「1 个 category」 |
+
+**严格下界（由直方图推出，非估计）**：被服务 category 实例数 = 1×3826 + 2×1070 + 3×63 + 4×81 = **6479**；实际 distinct slot 实例数 = 2×3826 + 3×51 + 4×1019 + 5×7 + 6×56 + 7×2 + 8×79 = **12898**；若每 category 出满 2 slot 应为 12958 ⟹ **缺口 60**，与**奇数 slot 窗口数 51+7+2 = 60** 精确吻合（互为交叉验证）。2-slot 窗口若为「2 category × 1 slot」每个耗 2 个缺口 ⟹ 至多 30 个；直方图不含 1-slot 窗口故 1-category 窗口全落在 2-slot 桶内 ⟹
+
+> **单 suite 窗口 ≥ 3826 − 30 = 3796，即 ≥ 3796/5040 = 75.3% 的窗口只服务 1 个 suite。**
+
+对照 epoch 0（= 今天的单 epoch 行为）：**72.3% 的窗口服务全部 4 个 suite**。两者是**相反的构成**。
+
+`windows_by_distinct_categories = {1:3826, 2:1070, 3:63, 4:81}`、`windows_by_distinct_slots = {2:3826, 3:51, 4:1019, 5:7, 6:56, 7:2, 8:79}`、`max_within_category_slot_skew = 64`。`tail_structure`：epoch 0 = `{first_partial_window: 80, first_partial_category_window: 82}`，epochs 1–4 均 = `{1, 1}`，五者的 `remaining_by_category_at_epoch_end` 全为 `{libero_10: 94, 其余: 0}`。
+
+**根因（已核实，非推测）**：`cumulative_valid_consumer_exposure` **同时是 `freeze_window` 的控制输入**（选择键 `target - observed`，`active_local_memory_driver.py:227-232`），而它在 rollover 时被**刻意保留**（v0.3 §4.3）⟹ epochs ≥1 开局即继承 epoch 0 末的偏斜赤字（libero_10 占 39.2%、赤字深度为负；另三类为正），`freeze_window` 连续服务赤字为正者直到其抽干，**窗口塌缩到单一 category 的 2 个 slot**。故 v0.3 的「偏差成因是供给约束而非不清零」**只对 epoch 0 成立**。
+
+**对设计定性的影响**：v0.3 曾把 39.2% 偏斜定性为「既有性质被复用放大」，据此建议「可作既有行为接受、单独开 Gate」。**该定性的前提已被推翻**——这不是把既有行为重复 45 次，而是**让 44/45 的训练步运行在今天从未运行过的 regime 里**。候选修法（保留累计字段作报告量、赤字改用 per-epoch observed）**触及 §7 改动面之外的选择键，本设计未擅自纳入**，已升级为 §8 第 7 问（三选一）。
+
+**§6 判据 6 的第二次更正**：v0.3 把「同类两 slot 成员数之差 ≤ 1」拟升为**通过条件**，实测全局 `max_within_category_slot_skew = 64`（上限 128）；但该值**未按 epoch 分离**，**无法判断 epoch 0 单独是否 ≤ 1**——若为假则与刚更正掉的原文属**同一类缺陷**（把今天不成立的性质写成判据）⟹ **降级为记录量**，跑出单 epoch 基线前不得作 PASS 条件。
+
+**供给侧交叉验证（新增，可复算）**：`per_slot_blocks` 显示**同类两 slot 的供给本身就不等**（goal 1255/1333 差 78、spatial 1329/1313、object 1741/1739、libero_10 2865/2855）。最小值 **1255 ÷ 16**（每 slot 每窗口成员数）= **78.44**，与容量探针的 `windows_until_first_slot_drained = 78.44` **逐位吻合** ⟹ epoch 0 的 `first_partial_window = 80` 是**由供给推出来的**（第 79 窗仍用掉该 slot 剩余的 7 块，第 80 窗起为 0），不是观测巧合。
+
+**无代码改动**：`active_local_memory_driver.py`、`local_memory_segment.py`、`local_memory_segment_adapter.py`、`canonical_segment_runtime.py` **均未被修改**；探针中的 rollover 是**探针内参考实现**，生产改动仍等 Gate 授权。`freeze_window` 的 fail-closed `raise` 仍是当前 operative 行为，**D8b 长跑仍不得启动**。
+
+**本窗口另完成**：① 把 soak45 的验收判据**预先登记**到上文（内存统计量在迭代 8/45 时登记，早于终值）；② 登记后核实**判据 3（slot 轮转）在 soak45 日志中不可验证**（`grep -icE "slot|window"` 得 2，两处命中均在启动配置 dump 内；`PSM_DIAG_EVIDENCE` 未设置）⟹ 已如实改为 **N/A**，并注明登记时的说法建立在未核实的假设上。
+
+**设计文档已修订为 v0.4**（blob `219355d3d5dda1407e5602218d6ab1c7bb79ad47`），改动集中在 §4.3 一条、§6 一条、§8 一条、§10.4 全节、§0 与标题；v0.3 的 §1–§3、§4.1–§4.2、§4.4–§4.7、§5、§7、§9 **逐字未改动**。

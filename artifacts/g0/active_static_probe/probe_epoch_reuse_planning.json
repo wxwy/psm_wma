@@ -1,0 +1,423 @@
+{
+  "b_stream": 8,
+  "catalogue_blocks": 14430,
+  "committed_identities": 14336,
+  "criterion1_mismatches": [],
+  "criterion1_slot_order_matches_permutation": true,
+  "criterion2_exceeds_single_epoch": true,
+  "criterion2_meets_target": true,
+  "criterion2_target_windows": 5040,
+  "criterion3_probe_is_pure": true,
+  "criterion4_window_index_not_reset": true,
+  "criterion5_deferred_tail": {
+    "deferred_after_epoch0": 94,
+    "missing_from_epoch1": [],
+    "recovered_in_epoch1": 94
+  },
+  "criterion6_slot_coverage": {
+    "all_categories_windows": 81,
+    "all_slots_windows": 79,
+    "max_within_category_slot_skew": 64,
+    "total_categories": 4,
+    "total_slots": 8,
+    "windows_by_distinct_categories": {
+      "1": 3826,
+      "2": 1070,
+      "3": 63,
+      "4": 81
+    },
+    "windows_by_distinct_slots": {
+      "2": 3826,
+      "3": 51,
+      "4": 1019,
+      "5": 7,
+      "6": 56,
+      "7": 2,
+      "8": 79
+    }
+  },
+  "cumulative_exposure": {
+    "libero_10": 4050720,
+    "libero_goal": 1863360,
+    "libero_object": 2505600,
+    "libero_spatial": 1902240
+  },
+  "epochs_planned": 45,
+  "ga": 16,
+  "queue_seed": 0,
+  "result": "PASS",
+  "rollovers": [
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 1,
+      "to_epoch": 1,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 2,
+      "to_epoch": 2,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 3,
+      "to_epoch": 3,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 4,
+      "to_epoch": 4,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 5,
+      "to_epoch": 5,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 6,
+      "to_epoch": 6,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 7,
+      "to_epoch": 7,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 8,
+      "to_epoch": 8,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 9,
+      "to_epoch": 9,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 10,
+      "to_epoch": 10,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 11,
+      "to_epoch": 11,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 12,
+      "to_epoch": 12,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 13,
+      "to_epoch": 13,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 14,
+      "to_epoch": 14,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 15,
+      "to_epoch": 15,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 16,
+      "to_epoch": 16,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 17,
+      "to_epoch": 17,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 18,
+      "to_epoch": 18,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 19,
+      "to_epoch": 19,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 20,
+      "to_epoch": 20,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 21,
+      "to_epoch": 21,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 22,
+      "to_epoch": 22,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 23,
+      "to_epoch": 23,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 24,
+      "to_epoch": 24,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 25,
+      "to_epoch": 25,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 26,
+      "to_epoch": 26,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 27,
+      "to_epoch": 27,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 28,
+      "to_epoch": 28,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 29,
+      "to_epoch": 29,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 30,
+      "to_epoch": 30,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 31,
+      "to_epoch": 31,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 32,
+      "to_epoch": 32,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 33,
+      "to_epoch": 33,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 34,
+      "to_epoch": 34,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 35,
+      "to_epoch": 35,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 36,
+      "to_epoch": 36,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 37,
+      "to_epoch": 37,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 38,
+      "to_epoch": 38,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 39,
+      "to_epoch": 39,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 40,
+      "to_epoch": 40,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 41,
+      "to_epoch": 41,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 42,
+      "to_epoch": 42,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 43,
+      "to_epoch": 43,
+      "windows_in_previous_epoch": 112
+    },
+    {
+      "remaining_blocks_at_rollover": 94,
+      "scheduler_queue_epoch": 44,
+      "to_epoch": 44,
+      "windows_in_previous_epoch": 112
+    }
+  ],
+  "single_epoch_limit": 112.73,
+  "tail_structure": [
+    {
+      "epoch": 0,
+      "first_partial_category_window": 82,
+      "first_partial_window": 80,
+      "remaining_by_category_at_epoch_end": {
+        "libero_10": 94,
+        "libero_goal": 0,
+        "libero_object": 0,
+        "libero_spatial": 0
+      }
+    },
+    {
+      "epoch": 1,
+      "first_partial_category_window": 1,
+      "first_partial_window": 1,
+      "remaining_by_category_at_epoch_end": {
+        "libero_10": 94,
+        "libero_goal": 0,
+        "libero_object": 0,
+        "libero_spatial": 0
+      }
+    },
+    {
+      "epoch": 2,
+      "first_partial_category_window": 1,
+      "first_partial_window": 1,
+      "remaining_by_category_at_epoch_end": {
+        "libero_10": 94,
+        "libero_goal": 0,
+        "libero_object": 0,
+        "libero_spatial": 0
+      }
+    },
+    {
+      "epoch": 3,
+      "first_partial_category_window": 1,
+      "first_partial_window": 1,
+      "remaining_by_category_at_epoch_end": {
+        "libero_10": 94,
+        "libero_goal": 0,
+        "libero_object": 0,
+        "libero_spatial": 0
+      }
+    },
+    {
+      "epoch": 4,
+      "first_partial_category_window": 1,
+      "first_partial_window": 1,
+      "remaining_by_category_at_epoch_end": {
+        "libero_10": 94,
+        "libero_goal": 0,
+        "libero_object": 0,
+        "libero_spatial": 0
+      }
+    }
+  ],
+  "window_index": 5040,
+  "window_members": 128,
+  "windows_per_epoch": [
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112,
+    112
+  ],
+  "windows_total": 5040
+}
