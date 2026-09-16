@@ -532,6 +532,13 @@
 - scope: DS-only review per user instruction; temporary fixture only; no real instance, source I/O, GPU/CUDA/torchrun or training.
 - requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — ObservationBundle provider end-to-end remediation DS review
+
+- formal root: `78fdacb18578222cfc8f6fb794f61cacf253d455`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- remediation: added unique `observe_and_assemble` entry; it requires same-round read-only Git observation, invokes explicit bundle builder, and immediately validates the flat bundle through the existing constructor; missing/failed Git or builder is `BLOCKED_AUTHORITY_NOT_CLOSED`.
+- evidence: 17/17 joint unittest PASS, py_compile PASS, git diff --check PASS; no real source/cache payload reads or instance writes.
+- DS-only per user instruction. requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — ObservationBundle provider CPU/static implementation DS review
 
 - formal root: `7786d2cdb8e54e3baebc9b887b02a99f6ccb3a98`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
