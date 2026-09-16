@@ -8125,3 +8125,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`771633764096d7d2af2ff12d828bebc174daa6d1` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 检索命令 `rg -l -F '771633764096d7d2af2ff12d828bebc174daa6d1' docs/collab/chatgpt/reviews` 未找到（本 Gate advice-only）。
 - 冻结名册 MM=`mm:0.0`、DS=`ds:0.0`；两 pane capture 均成功。MM exact final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_SCHEMA`；DS exact final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_SCHEMA`，另含 publication 七键和 array 类型的非阻塞建议。
 - 三方冻结名册对同一 pair final 齐全，形成 docs-only schema design 推进令牌；仅授权进入下一阶段 request instance construction/implementation review 准备，不授权创建 instance、真实 source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — Stage-2 request instance construction implementation design
+
+- 认领 Gate=`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-REQUEST-INSTANCE-CONSTRUCTION-IMPLEMENTATION-DESIGN`；新增 docs-only 设计 `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_construction_implementation_design_v0.1.md`。
+- 设计冻结一次性同轮 identity observation、exact schema canonicalization、JSON/Markdown byte readback、partial-residue terminal policy 与 hard-stop；未创建 instance，未读取 checkpoint/manifest/data/cache payload，未执行 source/record/publication I/O、GPU 或训练。
+- 下一步：执行静态文档核验并提交新 formal root，申请 MM/DS/ChatGPT 对 construction implementation design 审核。
