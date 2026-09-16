@@ -8098,3 +8098,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 认领 Gate=`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-REQUEST-INSTANCE-SCHEMA-DESIGN`；预计修改仅为新增 docs/build schema 文件、`TODO.md`、`SESSION.md`。
 - 目的：冻结 Stage‑2 instance 的 exact 顶层 keys、authority/source/executor/producer/record/receipt/publication/root-audit/preflight/execution 字段来源与禁止范围；不创建 instance、不读取 source payload。
 - `git diff --check` 待提交前验证；下一步提交并申请 MM/DS/ChatGPT exact-pair docs review。
+
+## 2026-09-16 — Stage-2 request instance schema design 审核送达
+
+- formal pair=`0442c66f82450fd94f4aa027f4a31b3a05f2a24f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。
+- Inbox append 前=`64752` bytes，未触发 rollover；MM/DS 均完成 `send-keys -l`→间隔 1 秒→独立 Enter→capture 送达回执。
+- 申请仅审核 docs-only instance schema；未创建 instance，未执行 source/record/publication I/O、GPU 或训练。

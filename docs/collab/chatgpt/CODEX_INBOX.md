@@ -475,6 +475,16 @@
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 - Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
 
+# 2026-09-16 — Stage-2 source-evidence request instance schema design review
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-REQUEST-INSTANCE-SCHEMA-DESIGN`
+- Formal root: `0442c66f82450fd94f4aa027f4a31b3a05f2a24f`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_schema_v0.1.md`
+- Scope: 仅审核 Stage-2 instance exact top-level keys、资产字段来源、same-round identity 与 execution/禁止范围；不创建 instance，不执行 source/record/publication I/O，不启用 GPU 或训练。
+- Requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_SCHEMA` 或 `REQUEST_CHANGES(file:line)`。
+- Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
+
 # 2026-09-16 — Source-evidence producer/closure remediation closure review
 
 - Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-CPU-STATIC-IMPLEMENTATION`
