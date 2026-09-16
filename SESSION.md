@@ -8038,3 +8038,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 依据 DS `REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:726)`，补充 receipt-bound config/descriptor digest 校验、package/witness 对称 verifier，以及不可复制/不可序列化 `SourceEvidenceHandoff` 与 one-shot fixture；未接入 native main，未执行真实 I/O。
 - 修改文件：`tools/psm_wma/immutable_source_collection.py`、`tools/psm_wma/test_immutable_source_collection.py`。
 - 验证：57/57 tests PASS；目标文件 `py_compile` PASS；`git diff --check` PASS。未提交；下一步提交新 formal root 并重新申请三方 exact-pair closure review。
+
+## 2026-09-16 — producer/closure remediation closure review 送达
+
+- 新 formal pair=`ec6fd6b1650d9372034c6cb386c74748e51a6326` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。
+- Inbox append 前=`63025` bytes，追加后约=`64300` bytes，未触发 rollover；MM/DS 均完成 `send-keys -l`、间隔 1 秒、独立 Enter、capture 送达回执。
+- 申请范围为整改后的 CPU/static closure；未授权真实 source/record/publication I/O、GPU 或训练。下一步重新执行完整 exact-pair 观察。

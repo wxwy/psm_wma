@@ -474,3 +474,13 @@
 - Scope: record/package/witness canonical-byte construction and validation、digest/identity/non-circular binding、one-shot in-memory handoff；未接入 native main，未打开 source FD，未写 record/publication，未修改 authority ref/child/runtime，未使用 GPU/训练。
 - Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
 - Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
+
+# 2026-09-16 — Source-evidence producer/closure remediation closure review
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-CPU-STATIC-IMPLEMENTATION`
+- Formal root: `ec6fd6b1650d9372034c6cb386c74748e51a6326`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Remediation: receipt-bound config/descriptor digest checks；package/witness symmetric verifier；non-copyable/non-serializable one-shot `SourceEvidenceHandoff` and fixture。
+- Evidence: 57/57 tests PASS；py_compile PASS；git diff-check PASS；native main unchanged；no real source I/O/publication/GPU/training。
+- Requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+- Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
