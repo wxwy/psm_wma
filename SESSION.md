@@ -8253,6 +8253,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=mm:0.0 capture 成功，exact final=APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_EXECUTION；DS=ds:0.0 capture 成功，正在核验当前 pair，尚无 final verdict。
 - 本轮无推进令牌；保持 REVIEW，未实现 writer、未写 instance、未执行 source I/O、GPU 或训练。
 
+## 2026-09-16 — real-output execution design v0.3 观察凭证 #2 / 推进令牌
+
+- `before_head=ff73480d46f77d858f021ab3a7006113a49f185e`；fetch 成功；advertised/tracking=`8c7d7c025a1acbca77589ffe74d00106d0d728d0`；新增范围为空；本地包含远端，无分叉，未执行 merge。
+- formal pair=`32e0486353754ff975c24f979076baf95f0d038a` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_EXECUTION`；DS=`ds:0.0` capture 成功，同 exact final；DS 建议成功后移除 staged link/空目录并在 link 后 parent fsync，均为后续实现建议。
+- 三方冻结名册对同一 pair final 齐全，形成 design 推进令牌；仅关闭 real-output design，下一步可准备 writer implementation design，不授权真实写入、source I/O、GPU 或训练。
+
 ## 2026-09-16 — real-output execution design v0.2 观察凭证 #1
 
 - `before_head=fefc06687ba101b0c5b599b1b225a866e9d7a7d7`；fetch 成功；advertised/tracking=`4f9f30015b3037d3caa83f2b5f24fbdd6be30bdb`；新增范围为空；本地包含远端，无分叉，未执行 merge。
