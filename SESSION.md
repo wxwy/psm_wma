@@ -8118,3 +8118,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_SCHEMA`。
 - DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_schema_v0.1.md:17)`；要求冻结嵌套 exact key/type/digest、顶层 sha256 计算域、已批准 schema/formal 引用，以及 executor/producer 的具体 blob/raw identity。
 - 本轮无 schema design 推进令牌；仅允许针对该意见最小 docs-only 整改后以新 formal root 重审；未创建 instance、未执行 source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — Stage-2 request instance schema 观察凭证 #2 / 推进令牌
+
+- `before_head=0ac74490a0ce0fae9ea038ebe04ed19fd4a76f48`；`git fetch origin V2` 成功；`git ls-remote origin refs/heads/V2` advertised 与 `git rev-parse origin/V2` 均为 `0ac74490a0ce0fae9ea038ebe04ed19fd4a76f48`；`git log --oneline before_head..origin/V2` 新增为空；正向 ancestor 返回 0，`git merge --ff-only origin/V2` 无需合并（Already up to date）。
+- formal pair=`771633764096d7d2af2ff12d828bebc174daa6d1` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 检索命令 `rg -l -F '771633764096d7d2af2ff12d828bebc174daa6d1' docs/collab/chatgpt/reviews` 未找到（本 Gate advice-only）。
+- 冻结名册 MM=`mm:0.0`、DS=`ds:0.0`；两 pane capture 均成功。MM exact final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_SCHEMA`；DS exact final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_SCHEMA`，另含 publication 七键和 array 类型的非阻塞建议。
+- 三方冻结名册对同一 pair final 齐全，形成 docs-only schema design 推进令牌；仅授权进入下一阶段 request instance construction/implementation review 准备，不授权创建 instance、真实 source/record/publication I/O、GPU 或训练。
