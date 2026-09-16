@@ -727,6 +727,28 @@
 - Follow-up to v4 REQUEST_CHANGES: deleted the remaining real `example.invalid` network test; retained mocked remote-present, rc=2 absent, and unreachable fail-closed fixtures.
 - Evidence: provider/constructor `18/18 PASS`; py_compile and git diff-check PASS.
 - Request DS-only final `APPROVE` or `REQUEST_CHANGES(file:line)` for exact pair. No source I/O, instance write, GPU/CUDA/torchrun, or training.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ��派、任一绑定缺失 fail-closed。
+
+## 2026-09-16 — source-evidence production entrypoints 实现设计 v0.1 (DS-only)
+
+- formal root: `3324b3a0a4dc92b36882e23b4d9b42052554965c`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- 回应 `source_evidence_closure_execution_request_design_v0.3` HIGH-1：Stage-2 exact request 需 production producer/record/receipt/root-audit entrypoints 实现并关闭后才可构造。
+- 设计路径：`docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_production_entrypoints_implementation_design_v0.1.md`
+- 内容：把已关闭 producer/closure library helper（produce_source_evidence_record/package/closure/verify）与 collect_synthetic 的 receipt/commit/post-check seam 提升为 producer/record/receipt/root-audit 四个 production entrypoint，argv 子命令分派、任一绑定缺失 fail-closed。
 - 范围：只改 tools/psm_wma/immutable_source_collection.py 与其单元测试；不接线、不真实 I/O、不 GPU、不训练。
 - 请求 DS-only 最终 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCTION_ENTRYPOINTS_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+
+## 2026-09-17 — active window slot rotation 修复（已实现，送审）
+
+- formal root: `5d527f3ea8db25f23482c9a3e13b5c7ca2fd6a99`
+- child/Gitlink: `6dc25e0f8c3ba39525c8ba994b8d0c38c2ce5461`
+- 设计路径：`docs/build/PSM-WMA_Local_Memory_v0.3.5_active_window_slot_rotation_fix_design_v0.1.md`
+- Gate：`G0-R09-B-TTT-V035-ACTIVE-WINDOW-SLOT-ROTATION`
+- **缺陷**：`active_local_memory_driver.py` 的 `freeze_window` 按 category 计算 deficit，同一 category 的两条 slot deficit 恒等，tie-break 落到 `slot_id` 且恒取较大者。`canonical_segment_streams:166,176` 把每个 suite 的 episode round-robin 对半分给该 suite 的两条 slot，故 **slot 0/1/2/3 在任何 window 都不被选中，每个 suite 恰有一半 episode 永不参与训练**。真实生产链路（真实 dataset/producer/driver，CPU-only）实测：`window_slots_starved=[0,1,2,3]`、饿死 slot 独占 7190/14430 = **49.83% block**；每 suite episode 覆盖率 **50%**。可达唯一 block 上限 7240 ≈ 56.6 window，而正式训练计划约 5000 步 ⟹ **不会崩溃、不报错、loss 正常，静默用一半 episode 训完**。
+- **改动**：`freeze_window` tie-break 第三项 `slot_id` → `-used[slot_id]`（本 window 内该 slot 已被选中次数）；同 category 内交替入选，跨 category 仍由 deficit 决定。仅改 `active_local_memory_driver.py` 与其 `_test.py`。
+- **四步证据**：①新增 2 例 CPU fixture 在补丁前**失败**（`assert [4,5,6,7] == [0..7]`，与生产实测一致），证明非空转断言；②补丁后 driver 测试 `13 passed`、ruff/py_compile/`git diff --check` 全过；③生产链路复验 `window_slots_starved [0,1,2,3] → []`、`per_slot_members {4:32,5:32,6:32,7:32} → 8 slot 各 16`、`per_category_members` 各 32 与 `ga_effective` 128 **均不变**；④相邻契约测试 `production_active_wiring_test` + `local_memory_segment_test` + `canonical_segment_runtime_test` + `active_local_memory_launch_test` = `58 passed`。
+- **为何判定为实现缺陷而非冻结语义**：①规范只把 deficit 定义为 category 级配额（`v0.3.5_canonical_segment_production_adapter_scheduler_design_v0.2.md:86`、`detailed_design_addendum_v0.3.5.md:229`），从未定义同 category 内 tie-break，更未授权 slot 永久饿死；②`production_active_wiring.py:88` 走 singleton 候选 `admit_next((identity,))`，`canonical_segment_runtime.py:105-108` 只校验候选等于冻结计划成员，故 `scheduler.admit()` 的多候选 tie-break **在 active 路径上不被行使**，`freeze_window` 顺序即唯一权威 ⟹ 修复自包含，不触及 owner/scheduler/sidecar/`GAWindowPlan` 任何接口。
+- **请一并裁定**：设计文档 §2.3 的解读——现实现下 8 个连续 member 为 `[7,6,5,4,7,6,5,4]`（只跨 4 条 slot），是否已不满足 `functional_active_route_implementation_design_v0.1.md:129-138` 裁决 (B) 理由 #1「(A)/(B) 数值等价」所依赖的前提（(A) 的一个 member 持 `B_stream` 行 = 8 条不同 slot）。若裁定 (B) 只要求 member 数为 `8*GA`，则本缺陷定性降为「数据覆盖缺陷」，**修复动作与判据不变**。
+- **测试缺口说明**：既有唯一涉及 slot 轮转的用例 `active_local_memory_driver_test.py:138` 用两个**不同** category（slots 0/1 分属 a/b），deficit 不等故 tie 不发生；生产形态 `b_stream=8`/4 categories 使同 category 恒有两条 slot，该分支此前从未被覆盖。
+- 范围：CPU-only，无 GPU/torchrun/训练/checkpoint 写入。子模块 `uv.lock` 为遗留 dirty 文件，未纳入提交。
+- 请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_WINDOW_SLOT_ROTATION` 或 `REQUEST_CHANGES(file:line)`。
