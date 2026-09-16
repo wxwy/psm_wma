@@ -8166,3 +8166,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 构造器仅消费内存 bundle，执行 exact top-level schema、canonical JSON terminal LF、self-excluding SHA-256 与 fail-closed bytes verifier；未实现真实写盘。
 - 验证：3/3 unittest PASS；py_compile PASS；git diff --check PASS。首轮测试发现并修复 canonical 排序与插入顺序校验冲突。
 - 当前进入 implementation closure review；未创建 instance，未执行 source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — construction CPU/static implementation closure 审核送达
+
+- formal pair=32678cfa35fbc285b0aa2c53f000eb171c2fea8b / child=93a89ba61306d840a008813f62f26a34d54850f4；该 formal root 已随提交 038f0bb2 推送至 origin/V2。
+- MM=mm:0.0、DS=ds:0.0 均完成 send-keys -l、间隔 1 秒、独立 Enter、capture；MM 进入处理，DS 已提交并等待其对 exact implementation pair 的复核。
+- 申请范围为两个 root-only 构造/测试文件与 3/3 unittest、py_compile、diff-check 证据；未创建真实 instance，未执行 source/record/publication I/O、GPU 或训练。
