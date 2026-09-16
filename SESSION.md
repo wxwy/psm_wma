@@ -8813,3 +8813,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal root=`3324b3a0a4dc92b36882e23b4d9b42052554965c` / child=`93a89ba61306d840a008813f62f26a34d54850f4`（提交已生成）。
 - 下一步：推送后 append Inbox，向 DS=`ds:0.0` 申请 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCTION_ENTRYPOINTS_CPU_STATIC`。
 - 未执行真实 instance 写入、source I/O、GPU 或训练。
+
+## 2026-09-16 — production entrypoints 设计送达回执
+
+- formal root=`3324b3a0a4dc92b36882e23b4d9b42052554965c`；child=`93a89ba61306d840a008813f62f26a34d54850f4`；Inbox 已提交（HEAD=`bedccd924080eda52bb6b2d0a3b65b27f0a98791`）并推送。
+- DS=`ds:0.0` 已完成 send-keys-l → 间隔 1 秒 → 独立 Enter → capture-pane；capture 回读确认完整申请已进入会话（formal root/child/Gate/verdict/设计路径/范围逐字一致）。
+- 当前状态：DS 已送达、处理中；无 final verdict。
+- 未执行真实 instance 写入、source I/O、GPU/CUDA/torchrun 或训练。
