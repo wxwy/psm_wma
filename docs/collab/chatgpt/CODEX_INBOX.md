@@ -420,6 +420,14 @@
 - 审核重点：确认 `--no-thin` 对 remote CAS push/delete 的最小修复、lease/readback/rollback 不变、exact root/child/pair 绑定及 one-shot 边界。
 - Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`。
 
+## 2026-09-16 — Stage-1 v2.0 materialization review request
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-ROOT-MATERIALIZATION-V20`；ChatGPT advice-only；冻结 MM=`mm:0.0`、DS=`ds:0.0`。
+- Formal root: `342b7ccb3abe36462ad5eb233f50ce979aab5207`；child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`。
+- v1.9 已按 DS 意见废止：其 pair 手工注入 `GH_CONFIG_DIR`，但 canonical builder 未包含该字段，造成 builder/file identity 不一致。v2.0 已将 `GH_CONFIG_DIR=/root/.config/gh` 纳入 builder 正式 environment contract，并由 producer allowlist 校验；bootstrap、adapter env 与 `--no-thin` 同步保留。
+- v2.0 pair JSON SHA-256=`b377972c540790a5b95baa5a950684d56d027f69a11960c3e54acdfb2fae40e6`；MD SHA-256=`3b7d69c6be9cdf9b56d9ea3e2aecf3159191360fb994776e447e6881d9fc8cc1`；suffix=`e8c7b2b0`。
+- 已通过 builder/producer `10/10`、py_compile、diff-check；请求仅批准一次 materialization，禁止 retry、source-evidence、child/runtime/config、GPU、训练/评测/推理。Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`。
+
 ## 2026-09-16 — Stage-1 v1.9 materialization review request
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-ROOT-MATERIALIZATION-V19`；ChatGPT advice-only；冻结 MM=`mm:0.0`、DS=`ds:0.0`。
