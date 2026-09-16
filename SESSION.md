@@ -8214,6 +8214,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=0fc4217ba22dc31ed0ffaa131123cfc961755b3b / child=93a89ba61306d840a008813f62f26a34d54850f4；amendment 与实现已推送 origin/V2，申请 bookkeeping 提交=1b343cb8。
 - MM 与 DS 均完成 send-keys -l→间隔 1 秒→独立 Enter→capture；MM 已收到新 pair 并处理中，DS 已收到新 pair，旧 REQUEST_CHANGES 不计入新 pair verdict。
 - 当前 Gate 保持 REVIEW；未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — construction CPU/static v0.3 amendment 观察凭证 #2
+
+- `before_head=ac4d6d515b63051359c03d1bb15cfb64a0898348`；fetch 成功；advertised/tracking=`b56d502e80596f149438042f4b67c1afc0ae981e`；新增范围为空；本地包含远端，无分叉，未执行 merge。
+- formal pair=`e33c1c05013284039f82cd411a3398dceb45d781` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM capture 成功，针对 v0.3 正在完成 40-hex/ABSENT 边界复核，尚无 final verdict；DS capture 成功，正在逐行核对 v0.3 amendment 与实现，尚无 final verdict。
+- 本轮无推进令牌；保持 REVIEW，未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
 - 验证：3/3 unittest PASS、py_compile PASS、git diff --check PASS；下一步提交新 formal root并重新申请 closure review。
 
 ## 2026-09-16 — construction CPU/static v0.2 amendment 观察凭证 #1
