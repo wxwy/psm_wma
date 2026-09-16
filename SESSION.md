@@ -7936,3 +7936,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 冻结 pair：root=`35837c584b48315f8cda2c346d7e40ec08470942`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a8`。
 - MM=`mm:0.0` capture 成功，exact v1.8 申请已进入核验，尚无 v1.8 final literal verdict；DS=`ds:0.0` capture 成功，exact v1.8 申请已提交/处理中，尚无 v1.8 final literal verdict。
 - 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 source-evidence、GPU 或训练。
+
+## 2026-09-16 — v1.8 materialization review 观察凭证 #2
+
+- `before_head=267f6033e4da249056279774cfed7dfc0515d39f`；fetch/ls-remote 成功，advertised/tracking 均为 `267f6033e4da249056279774cfed7dfc0515d39f`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 检索 formal root=`35837c584b48315f8cda2c346d7e40ec08470942`，结果 0 个匹配。
+- MM=`mm:0.0` capture 成功，v1.8 exact pair 正在核验，未出现 v1.8 final literal verdict；DS=`ds:0.0` capture 成功，v1.8 exact pair 正在核验，未出现 v1.8 final literal verdict。
+- 本轮独立 pair/builder 测试 `10/10 PASS`；无 materialization 推进令牌，未物化、未写 authority ref、未启动训练。
