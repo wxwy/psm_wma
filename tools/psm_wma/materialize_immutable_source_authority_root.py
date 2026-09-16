@@ -297,7 +297,7 @@ def bootstrap_payload() -> str:
         "if not os.path.isabs(root) or not module or '/' in module or not os.path.isabs(interp) or os.path.realpath(a[0])!=os.path.realpath(interp): fail()\n"
         "ip=os.lstat(interp)\n"
         "if not stat.S_ISREG(ip.st_mode) or stat.S_ISLNK(ip.st_mode) or hashlib.sha256(open(interp,'rb').read()).hexdigest()!=one('--interpreter-raw-sha256'): fail()\n"
-        "env={'GIT_NO_REPLACE_OBJECTS':'1','GIT_CONFIG_NOSYSTEM':'1','GIT_CONFIG_GLOBAL':'/dev/null','GIT_CONFIG_SYSTEM':'/dev/null','LC_ALL':'C','LANG':'C'}\n"
+        "env={'GIT_NO_REPLACE_OBJECTS':'1','GIT_CONFIG_NOSYSTEM':'1','GIT_CONFIG_GLOBAL':'/dev/null','GIT_CONFIG_SYSTEM':'/dev/null','GIT_CONFIG_COUNT':'1','GIT_CONFIG_KEY_0':'credential.https://github.com.helper','GIT_CONFIG_VALUE_0':'!/usr/bin/gh auth git-credential','LC_ALL':'C','LANG':'C'}\n"
         "if subprocess.run([interp,'--version'],env=env,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).stdout.decode().strip()!=one('--interpreter-version'): fail()\n"
         "admin=os.path.join(root,'.git'); ai=os.lstat(admin)\n"
         "if stat.S_ISLNK(ai.st_mode): fail()\n"
