@@ -7839,6 +7839,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`；DS=`ds:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`；两者均锚定上述 exact pair。
 - 本轮形成 MM/DS 执行令牌，仅授权一次 v1.6 authority-root materialization；未授权 retry、child/runtime/config、source-evidence、GPU、训练、评测或推理。
 
+## 2026-09-16 — v1.6 一次性 materialization 执行结果
+
+- 使用 v1.6 执行唯一一次 materialization；evidence=`artifacts/g0/r09/authority_root_materialization_evidence_e8c7b2a6.json`，状态=`FAIL`。
+- 失败事实：`failure.primary_phase=remote_cas`、`primary_code=AUTHORITYROOTERROR`、`publication.remote_create_succeeded=false`；rollback=`complete=true`，fixed authority ref 未创建，远端与本地均 absent。
+- 未启动 child/runtime/config mutation、source-evidence、GPU、训练、评测或推理；v1.6 授权已消耗，不得重试。
+
 ## 2026-09-16 — v1.6 materialization review 观察凭证 #2
 
 - `before_head=fe87836ce7a30c1fbb346a219547a56c49478f1e`；fetch/ls-remote 成功，advertised/tracking 均为 `fe87836ce7a30c1fbb346a219547a56c49478f1e`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
