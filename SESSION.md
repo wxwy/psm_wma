@@ -8368,6 +8368,27 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 修复测试夹具缩进与 Markdown SHA 夹具；验证 `python -m unittest tools.psm_wma.test_write_source_evidence_closure_request_instance tools.psm_wma.test_build_source_evidence_closure_request_instance`：6/6 PASS；py_compile PASS；git diff-check PASS。
 - 当前整改尚未提交；仍未写真实 instance、未执行 source I/O、GPU 或训练。
 
+## 2026-09-16 — writer remediation DS review 观察凭证 #1
+
+- `before_head=05e21bbebae9cc530730082d1d5809668c34e235`；fetch 成功；advertised/tracking=`05e21bbebae9cc530730082d1d5809668c34e235`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`944c8119b9fda15d4edc7475e7384cbb0712253f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，已读取 implementation/test diff，仍在复核，尚无该 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无 DS 推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — writer remediation DS review 观察凭证 #2
+
+- `before_head=05e21bbebae9cc530730082d1d5809668c34e235`；fetch 成功；advertised/tracking=`05e21bbebae9cc530730082d1d5809668c34e235`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`944c8119b9fda15d4edc7475e7384cbb0712253f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，当前仍在读取大量上下文，未出现该 pair 的新 final verdict；MM=`REMOVED_BY_USER`。
+- 本轮无新审核结论；保持 DS-only REVIEW，未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — writer remediation DS review 观察凭证 #3 / 推进令牌
+
+- `before_head=05e21bbebae9cc530730082d1d5809668c34e235`；fetch 成功；advertised/tracking=`05e21bbebae9cc530730082d1d5809668c34e235`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`944c8119b9fda15d4edc7475e7384cbb0712253f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）；DS=`ds:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC`。
+- DS 另列三项 MEDIUM：真实写入 Gate 需绑定批准版本化路径、`published_side` 宜采用枚举、Markdown sibling 宜结构化校验。经评估均不阻塞当前 CPU/static closure；后续真实写入前纳入收口。
+- DS-only 推进令牌仅关闭当前 CPU/static writer Gate，不授权真实 instance、source I/O、GPU 或训练。
+
 ## 2026-09-16 — real-output execution design v0.2 观察凭证 #1
 
 - `before_head=fefc06687ba101b0c5b599b1b225a866e9d7a7d7`；fetch 成功；advertised/tracking=`4f9f30015b3037d3caa83f2b5f24fbdd6be30bdb`；新增范围为空；本地包含远端，无分叉，未执行 merge。
