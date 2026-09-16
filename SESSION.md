@@ -7921,3 +7921,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 冻结 pair：root=`7d7ba235ec5be0208aedac2f9b2ed11f755d9ca6`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a7`。
 - MM=`mm:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`，锚定上述 exact pair；DS=`ds:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`，锚定上述 exact pair。
 - 形成推进令牌：仅授权一次 v1.7 authority-root materialization；禁止 retry、child/runtime/config、source-evidence、GPU、训练、评测或推理。下一动作：执行冻结 v1.7 launcher 并核验 evidence/ref/rollback。
+
+## 2026-09-16 — v1.7 materialization FAIL 根因与新修复
+
+- v1.7 唯一物化已执行并失败：`remote_cas`；evidence=`artifacts/g0/r09/authority_root_materialization_evidence_e8c7b2a7.json`；local/remote ref 均 absent；rollback=`complete=true`。
+- 根因定位：bootstrap 的隔离 `ENV` 丢失已授权的 `GIT_CONFIG_COUNT/GIT_CONFIG_KEY_0/GIT_CONFIG_VALUE_0`，导致 adapter 的 gh credential helper 未传入 Git 子进程；`--no-thin` 已保留但不足以认证远端。
+- 最小修复：`bootstrap_payload()` 将三项 helper 环境纳入冻结 ENV；提交=`6e8946e1`，已推送 `origin/V2`。py_compile 与 diff-check PASS；71 项测试首轮有一项 inode 时序失败，单测重跑 PASS。
+- v1.7 pair 已消耗，不得重试；下一步基于新 formal root 生成 v1.8 pair，重新取得 MM/DS exact-pair 审核后再物化。训练仍未启动。
