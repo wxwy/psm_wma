@@ -8246,6 +8246,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM 与 DS 均完成 send-keys -l→间隔 1 秒→独立 Enter→capture；当前 pair 已送达，等待最终 verdict。
 - 当前仅审核 no-overwrite design；未实现 writer、未写 instance、未执行 source I/O、GPU 或训练。
 
+## 2026-09-16 — real-output execution design v0.3 观察凭证 #1
+
+- before_head=ab61a5bb65d54cb4fa4d6496c9fe3a78fff5237c；fetch 成功；advertised/tracking=8c7d7c025a1acbca77589ffe74d00106d0d728d0；新增范围为空；本地包含远端，无分叉，未执行 merge。
+- formal pair=32e0486353754ff975c24f979076baf95f0d038a / child=93a89ba61306d840a008813f62f26a34d54850f4；exact ChatGPT review 未找到（advice-only）。
+- MM=mm:0.0 capture 成功，exact final=APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_EXECUTION；DS=ds:0.0 capture 成功，正在核验当前 pair，尚无 final verdict。
+- 本轮无推进令牌；保持 REVIEW，未实现 writer、未写 instance、未执行 source I/O、GPU 或训练。
+
 ## 2026-09-16 — real-output execution design v0.2 观察凭证 #1
 
 - `before_head=fefc06687ba101b0c5b599b1b225a866e9d7a7d7`；fetch 成功；advertised/tracking=`4f9f30015b3037d3caa83f2b5f24fbdd6be30bdb`；新增范围为空；本地包含远端，无分叉，未执行 merge。
