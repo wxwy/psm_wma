@@ -597,3 +597,12 @@
 - remediation: fixed JSON/Markdown output paths, constructor module/entrypoint and file allowlist, external read-only `ObservationBundle` provider boundary, and approved schema formal root/child reference.
 - scope: docs-only design; no instance, source payload, record/publication I/O, GPU or training.
 - requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-16 — request-instance real-output writer CPU/static implementation closure review
+
+- formal root: `1c12964511070ff1568a0e7391daaed9eb6f0bb6`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- implementation: added `tools/psm_wma/write_source_evidence_closure_request_instance.py` and its stdlib test; writer verifies constructor bytes, exact formal root/child when supplied, self-bound JSON SHA, staged exclusive files, no-overwrite link, fsync, readback and structured residue.
+- evidence: 5/5 unittest PASS, py_compile PASS, git diff --check PASS.
+- scope: temporary fixture only; no real instance, source I/O, GPU/CUDA/torchrun or training.
+- requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
