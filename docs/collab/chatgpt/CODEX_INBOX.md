@@ -390,3 +390,13 @@
 - 当前卡点：需要基于新 root 重新生成 byte-exact request pair，但仓库没有可直接执行的受控 pair producer；交接要求禁止手工拼接、临时脚本写入或复用旧 pair。
 - 请 GPT 仅提供处理建议，不修改代码、不执行 materialization、不写 authority ref、不启动 GPU/训练。请明确回答：应如何在现有详细设计下补齐 producer；如何冻结 helper 环境而不泄露凭据；需要哪些 CPU/static witness、pair 字段和审核门，才能恢复 materialization→source evidence→LIBERO4IN1 latent cache 训练。
 - 建议请给出可执行的最小步骤、涉及文件/行号、失败回滚语义和验收证据；不要给出绕过审核或 no-retry 约束的方案。
+# 2026-09-16 — Stage-1 v1.5 materialization review request
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-ROOT-MATERIALIZATION-V15`
+- Formal root: `cb6b675edc2ef4b019c1be4901c062a598fec271`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Request pair: `docs/build/PSM-WMA_Local_Memory_v0.3.5_stage1_v17_request_instance_v1.5.json` / `.md`
+- Pair SHA-256: JSON=`4553e21d5211d36aeb3a7020250fe2fa8e8f6c3350466377d40034c8391bf814`; MD=`f57ea3a60b72321b1756c62d349371aa7d1ac5d5b9c3af324be267ffdd15c261`; clean suffix=`e8c7b2a5`.
+- Evidence: prior v1.3 execution failed at `remote_cas` and rolled back; GitHub permission/ruleset read-only checks passed. v1.5 is a fresh pair and must be treated as one-shot.
+- Requested verdict: `APPROVE_TO_MATERIALIZE` or `REQUEST_CHANGES(file:line)` for exactly one Stage-1 authority-root materialization. If approved, allow only the authority-root/local and fixed-ref transaction; forbid retry, child/runtime/config mutation, source-evidence, GPU/CUDA, training/evaluation/inference.
+- Reviewers: frozen MM=`mm:0.0`, DS=`ds:0.0`, ChatGPT via exact formal-pair review file.
