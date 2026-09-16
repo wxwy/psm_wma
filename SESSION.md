@@ -7754,3 +7754,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 新增 CLI：`produce_stage1_request_pair.py --payload <冻结JSON> --json <输出JSON> --markdown <输出MD>`；只读取调用者提供的 payload，复用 `produce_pair()`，不访问 Git/网络/凭据。
 - 验证：producer+builder 10/10 PASS，`py_compile`、`git diff --check` PASS。
 - 该入口仍只负责 pair 发布，不授权 materialization、authority ref 或训练。
+
+## 2026-09-16 — construction review 观察凭证 #1
+
+- 本轮 `before_head=689a002b0670666e503b31461ebfaddd30b6f67d`；fetch 成功；advertised/tracking `V2` 均为该 SHA；新增 range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 检索：`rg -l -F '8f170771e7a351ba99a3d656d2dc8d100e0f61e6' docs/collab/chatgpt/reviews`，无命中；本申请不等待 ChatGPT final。
+- 冻结名册：MM=`mm:0.0`、DS=`ds:0.0`，ChatGPT=`docs/collab/chatgpt/reviews/`。
+- MM capture 成功，已看到 exact construction 请求并执行 docs/build 状态检查，未出现 final literal verdict，状态为处理中。
+- DS capture 成功，仍在读取旧 materialization evidence 与新 producer 文件，未出现 exact construction final literal verdict，状态为处理中。
+- 本轮无 construction 推进令牌；未生成正式 pair、未物化、未写 authority ref、未启动 GPU/训练。
