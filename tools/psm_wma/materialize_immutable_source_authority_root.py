@@ -1701,11 +1701,15 @@ class NativeAuthorityGit:
     def _verify_owner_barrier(self) -> None:
         if self.owner_fd is None:
             return
-        if (
-            _directory_fd_identity(self.owner_fd) != self._owner_identity
-            or _fd8_index_identity(self.owner_fd) != self._index_identity
-        ):
+        if _directory_fd_identity(self.owner_fd) != self._owner_identity:
             raise NativeGitError("FD8 consumer authority identity 漂移")
+        index_identity = _fd8_index_identity(self.owner_fd)
+        if index_identity != self._index_identity:
+            raise NativeGitError("FD8 consumer authority identity 漂移")
+
+    def _refresh_owner_index(self) -> None:
+        if self.owner_fd is not None:
+            self._index_identity = _fd8_index_identity(self.owner_fd)
 
     def _git_consumer_kwargs(self) -> dict[str, object]:
         self._verify_owner_barrier()
@@ -1719,7 +1723,7 @@ class NativeAuthorityGit:
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=False, check=False,
             **self._git_consumer_kwargs(),
         )
-        self._verify_owner_barrier()
+        self._refresh_owner_index()
         if check and completed.returncode:
             raise NativeGitError(completed.stderr.decode("utf-8", "replace").strip())
         return completed.stdout

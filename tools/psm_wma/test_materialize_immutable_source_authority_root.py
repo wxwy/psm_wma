@@ -270,6 +270,61 @@ def _post_publication_failure_evidence(phase: str) -> dict[str, object]:
 
 
 class NativeAuthorityGitTest(unittest.TestCase):
+    def test_real_git_index_replacement_refreshes_owner_barrier(self):
+        env = {
+            **os.environ,
+            "GIT_CONFIG_GLOBAL": "/dev/null",
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_SYSTEM": "/dev/null",
+        }
+        saved_fd = None
+        try:
+            try:
+                saved_fd = os.dup(8)
+            except OSError:
+                saved_fd = None
+            with tempfile.TemporaryDirectory() as raw:
+                root = Path(raw)
+                subprocess.run(["/usr/bin/git", "init", "-q", str(root)], check=True, env=env)
+                (root / "base.txt").write_text("base\n")
+                subprocess.run(["/usr/bin/git", "-C", str(root), "add", "base.txt"], check=True, env=env)
+                subprocess.run(
+                    ["/usr/bin/git", "-C", str(root), "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "base"],
+                    check=True,
+                    env=env,
+                )
+                parent = subprocess.check_output(
+                    ["/usr/bin/git", "-C", str(root), "rev-parse", "HEAD"], text=True, env=env
+                ).strip()
+                index = root / ".authority-root.index"
+                index.write_bytes(b"")
+                fd = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC)
+                os.dup2(fd, 8)
+                os.close(fd)
+                owner_before = (os.fstat(8).st_dev, os.fstat(8).st_ino)
+                index_before = os.stat(index).st_ino
+                tx = NativeAuthorityGit(
+                    Path("/usr/bin/git"),
+                    Path("/proc/self/fd/8"),
+                    "https://example.invalid/repo.git",
+                    Path("/proc/self/fd/8/.authority-root.index"),
+                    CommitMetadata("t", "t@t", "2026-01-01T00:00:00+00:00", "t", "t@t", "2026-01-01T00:00:00+00:00", "real-git-smoke"),
+                    production=True,
+                    owner_fd=8,
+                )
+                revision = tx.create_detached_commit(parent, {"added.txt": b"added\n"})
+                self.assertTrue(revision)
+                self.assertEqual(owner_before, (os.fstat(8).st_dev, os.fstat(8).st_ino))
+                self.assertNotEqual(index_before, os.stat(index).st_ino)
+        finally:
+            try:
+                os.close(8)
+            except OSError:
+                pass
+            if saved_fd is not None:
+                os.dup2(saved_fd, 8)
+                os.close(saved_fd)
+
     def test_config_grammar_accepts_exact_real_table_and_rejects_subsection_drift(self):
         raw = (
             b"[core]\nrepositoryformatversion = 0\nfilemode = true\nbare = false\nlogallrefupdates = true\n"
