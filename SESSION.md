@@ -8215,3 +8215,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM 与 DS 均完成 send-keys -l→间隔 1 秒→独立 Enter→capture；MM 已收到新 pair 并处理中，DS 已收到新 pair，旧 REQUEST_CHANGES 不计入新 pair verdict。
 - 当前 Gate 保持 REVIEW；未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
 - 验证：3/3 unittest PASS、py_compile PASS、git diff --check PASS；下一步提交新 formal root并重新申请 closure review。
+
+## 2026-09-16 — construction CPU/static v0.2 amendment 观察凭证 #1
+
+- `before_head=8899fc6fce864142a8fec42be98d8076229645fb`；fetch 成功；advertised/tracking=`1b343cb88a3b8b0f9b7084bb2e26b5ce4425ec55`；新增范围为空；本地包含远端，无分叉，未执行 merge。
+- formal pair=`0fc4217ba22dc31ed0ffaa131123cfc961755b3b` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0`、DS=`ds:0.0` capture 均成功，均正在读取 amendment/实现，尚未出现新 pair final verdict。
+- 本轮无推进令牌；保持 REVIEW，未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
