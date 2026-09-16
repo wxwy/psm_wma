@@ -7943,3 +7943,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - exact ChatGPT review 检索 formal root=`35837c584b48315f8cda2c346d7e40ec08470942`，结果 0 个匹配。
 - MM=`mm:0.0` capture 成功，v1.8 exact pair 正在核验，未出现 v1.8 final literal verdict；DS=`ds:0.0` capture 成功，v1.8 exact pair 正在核验，未出现 v1.8 final literal verdict。
 - 本轮独立 pair/builder 测试 `10/10 PASS`；无 materialization 推进令牌，未物化、未写 authority ref、未启动训练。
+
+## 2026-09-16 — v2.0 materialization review 观察凭证 #3 / 推进令牌
+
+- `before_head=39e0a154d97b208a089d4c371067d13d75123aa8`；fetch/ls-remote 成功，advertised/tracking 均为 `39e0a154d97b208a089d4c371067d13d75123aa8`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 检索 formal root=`342b7ccb3abe36462ad5eb233f50ce979aab5207`，结果 0 个匹配；ChatGPT advice-only。
+- 冻结 pair：root=`342b7ccb3abe36462ad5eb233f50ce979aab5207`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2b0`。
+- MM=`mm:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`；DS=`ds:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`；均锚定上述 exact pair。
+- 推进令牌成立：仅授权一次 v2.0 authority-root materialization；禁止 retry、source-evidence、child/runtime/config、GPU、训练、评测或推理。下一动作：执行冻结 v2.0 launcher并核验 evidence/ref/rollback。
