@@ -1,11 +1,20 @@
-# Local Memory v0.3.5 Functional Active-Route Implementation 设计 v0.1
+# Local Memory v0.3.5 Functional Active-Route Implementation 设计 v0.2
 
 **日期**：2026-09-16
 **Gate**：`G0-R09-B-TTT-V035-FUNCTIONAL-ACTIVE-ROUTE-IMPLEMENTATION`
 **性质**：docs-only 设计；由用户 2026-09-16 明确授权的「功能优先」路线驱动。
 **目标**：按 v0.3.5 segment-level Local Memory 路线实现真实数据侧 producer/packer ABI、
-trainer driver 与训练配置启用，最终在 `/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1`
-latent cache 上启动训练。
+trainer driver 与训练配置启用，最终在
+`/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1` latent cache 上启动训练。
+
+**修订记录**：
+- v0.1（本轮初稿）：提出成员形状裁决为「一 member = `B_stream` 行、打包一次 forward」，并判断
+  sidecar/owner 需新扩展为 per-row batched state。
+- **v0.2（本轮修正）**：只读取证发现 v0.3.5 的 batched ABI（`MicrobatchPlanMember` /
+  `CanonicalBatchScheduler` / `CanonicalProductionFastStateFrontier`）**已存在**于
+  canonical-production 家族，v0.1 的「需新扩展」判断方向错误。§4.1 据此**改判为 (B)**：
+  一 member = 1 条 stream，`B_stream=8` 由同 window 内 8 个连续 member 实现；
+  该方案数值等价且不改动任何已冻结契约。§4.4 同步给出 GA 映射与代价。
 
 ---
 
@@ -90,33 +99,59 @@ CPU/static 证据：`production_active_wiring_test.py` **26 passed**。
 
 ## 4. 必须冻结的 ABI 决策（本轮新发现，设计缺口）
 
-### 4.1 成员形状：一个 member = `B_stream` 条 stream 还是 1 条？（**必须裁决**）
+### 4.1 成员形状：一个 member = `B_stream` 条 stream 还是 1 条？（**已裁决，v0.2 修正**）
 
-- v0.3.5 冻结：microbatch 为 `B_stream=8` 条 stream × `T=16` 个 consumer position =
-  **128 nominal consumers**（v0.3.5:36,46-47），`segments/update = B_stream * GA`（v0.3.5:404）。
-  该 128 与现有基线 toml 的 `max_samples_per_batch = 128/rank` 完全一致，
-  即 v0.3.5 的 microbatch 就是现有 Cosmos microbatch 的 chronology 因式分解。
-- 现有 CPU/static active ABI 是**单 identity** 准备：`CanonicalSegmentRuntimeOwner.identity`
-  单值、`LocalMemorySegmentSidecar.read(identity)` 返回单 state、
-  `adapter.scan` 只做一次 `sidecar.read(identity)`。
-- 但 core **支持** batched state：`scan_segment_masked_encoded_many` 的
-  `initial_state(batch,...)` / `_select_rows` / `_scatter_rows`（`local_evidence.py:743,754,764`）
-  均按 batch 维操作。
+**取证补充（本轮新发现，修正 v0.1 结论）**：v0.3.5 的 batched ABI **已经存在**，位于
+canonical-production 家族而非 active 家族：
 
-**裁决（依据 AGENTS.md §151，构建者决策）**：采用 v0.3.5 冻结语义——
-**一个 member = `B_stream=8` 条 stream × `T=16` steps = 128 consumers，并打包为一次 native forward**。
-理由：
+- `MicrobatchPlanMember`（`canonical_segment_adapter_scheduler.py:114`）持有
+  `row_identities: tuple[SegmentIdentity, ...]`、`row_chronology`、`row_planned_n_valid`，
+  即**一个 member = `B_stream` 行，每行一个 (slot, episode, cursor)**；
+  `planned_n_valid = sum(row_planned_n_valid)`。
+- `ProjectedSchedulerState.derive_member(member_index, slot_ids)`（`:522`）完成 slot→episode 绑定、
+  stable slot 续接、queue admission 与 epoch rollover。
+- `CanonicalBatchScheduler.freeze_plan(slot_groups, plan_chain_id)`（`:641`）一次冻结整个 GA plan。
+- `NativeConsumerBatch.from_segment`（`:402`）做 stream-major gather 并与冻结 member 逐项核对。
+- `CanonicalProductionFastStateFrontier.state_for/commit`（`canonical_segment_production_adapter.py:457,478`）
+  **已实现 per-row batched fast state 组装**：逐行取 cursor-1 的已提交状态（cursor==0 取 fresh），
+  沿 dim 0 stack 成 `[B]` 状态。
 
-1. v0.3.5 是权威设计，且其 128 与基线 microbatch 规模一致；若改为「一个 member = 1 条 stream」，
-   则每次 forward 仅 16 samples，比基线慢 8×，且与 `segments/update = B_stream*GA` 矛盾。
-2. 打包语义（一次 forward 承载 128 个 consumer，每个 consumer 携带自己的 Local prefix）是
-   `packers.py:246` + `x0_tokens_local_memory` dense-per-sample 列表的既定契约所支持的，
-   也是 baseline 吞吐等价的前提。
-3. 因此 `LocalMemorySegmentSidecar` 与 `CanonicalSegmentRuntimeOwner` 必须扩展为
-   **per-row batched fast state**（按 slot 组装 `[B]` 行状态），core 侧无需改动。
+因此 v0.1 中「sidecar/owner 必须新扩展为 per-row batched state」的判断**方向错误**：
+该能力已存在，只是存在于另一套 plan 家族。
 
-> 该裁决推翻了 `_run_active_local_memory_native_forward` 当前「每个 consumer 一次 forward」的
-> 退化实现。后者语义正确但比基线慢 128×，不可用于真实训练。
+**两套 plan 家族的实际形状**：
+
+| 家族 | plan 单元 | 每 member 行数 | 状态 | DDP |
+|---|---|---|---|---|
+| canonical-production | `CanonicalGAWindowPlan` / `MicrobatchPlanMember` | `B_stream` | `CanonicalProductionFastStateFrontier`（已 batched） | 明确 raise |
+| active | `GAWindowPlan` / `SegmentIdentity`（单值三元组） | 1 | `LocalMemorySegmentSidecar`（单 slot） | 支持 |
+
+**裁决（AGENTS.md §151，构建者决策）**：本 Gate 采用 **(B) 一个 member = 1 条 stream × `T` steps**
+（`B=1`），把 `B_stream=8` 实现为**同一 GA window 内 8 个连续 member**；
+`GAWindowPlan.members` 因此有 `8 * GA` 项，`trainer.grad_accum_iter = 8 * GA`。
+
+理由（按权重排序）：
+
+1. **(A)/(B) 数值等价。** core 的 batched scan 逐行独立
+   （`_select_rows`/`_scatter_rows` 按行 mask 处理，`local_evidence.py:664,668`），
+   且 packed forward 中每个 sample 携带自己的 Local prefix、互不 attend；
+   故 8 行 batched 与 8 次单行在数值上一致。差别只在吞吐，不在语义。
+2. **(B) 不需要改动任何已冻结契约。** active 家族的 owner/scheduler/sidecar/plan 已完整实现
+   且支持 DDP；选 (A) 等于把 canonical-production 的 batched 元数据权威移植进 active 家族，
+   属于大规模改写（`SegmentIdentity`→per-row、`RankLocalSegmentScheduler.admit` 单选→per-row 准入、
+   sidecar→batched、`GAWindowPlan.members`→`MicrobatchPlanMember`），风险与工期都远超本 Gate。
+3. **`GAWindowPlan.objective` 在 (B) 下自动正确**：`planned_n_valid[i]/n_window` 中
+   `n_window = sum = B_stream*GA*T`，逐 member 累加后与 (A) 的总和一致。
+4. 代价明确：每 member 的 native forward 只承载 `T` 个 sample 而非 128 个，
+   吞吐低于基线。这是**已知且可接受**的代价，作为后续独立吞吐 Gate（切换到 (A)）的输入，
+   不阻塞「在 latent cache 上开启训练」这一目标。
+
+**推论（附带修正，仍是待办）**：`_run_active_local_memory_native_forward`
+（`omni_mot_model.py:1438-1443`）当前**逐 consumer 递归调用 `self.training_step`**，
+即一个 member 要发起 `valid_count` 次完整 `training_step`。这在 (B) 下是每个 member 16 次，
+是**必须消除的吞吐缺陷**：应立即改为对该 member 的 `valid_count` 个 payload 做一次 collate，
+配合一次 `training_step` 调用（`_psm_local_override` 传 per-sample Local prefix 列表）。
+该修改不改变数值语义，仅消除循环开销。
 
 ### 4.2 生产者 raw-row / model-sample ABI
 
@@ -138,14 +173,23 @@ flat(b,t) = b*T + t                                      # 仅派生 expected.lo
 - 与 v0.3.5:109 一致：fresh episode 第一个 `T=16` scan block 有 16 个 valid consumer，
   但只有 **15** 次有效 inner update。
 
-### 4.4 GA 映射
+### 4.4 GA 映射（**(B) 裁决后**）
 
-active 路线中 `trainer.grad_accum_iter` 计的是 **segment 数**，不是 micro-batch 数：
+active 路线中 `trainer.grad_accum_iter` 计的是 **member 数**，不是 micro-batch 数：
 `arm_active_local_memory_initial` 要求 `grad_accum_iter == 0`，
 `prepare_continuation` 要求 `grad_accum_iter == len(transaction.completed_members)`。
-故 `grad_accum_iter = B_stream * GA = 8 * GA`。基线 `grad_accum_iter=16` 时，
-若要保持 `consumers/update` 不变，需显式冻结新的 `GA`（训练 toml 与 baseline 的差异必须在
-命令说明中显式列出）。
+在 (B) 下一个 member = 1 条 stream × `T` steps，故
+
+```text
+grad_accum_iter（member 数）= B_stream * GA = 8 * GA
+consumers/update            = B_stream * GA * T = 128 * GA
+```
+
+基线为 `max_samples_per_batch=128` × `grad_accum_iter=16` = **2048 samples/update**。
+若要与基线保持同一 consumers/update，则 `GA = 16`，即每个 optimizer update 需要
+**128 次 member forward+backward**。这是 (B) 的直接代价，必须在启动命令说明中显式列出，
+并由用户在「与基线等量」与「降低 consumers/update 换取吞吐」之间作出选择；
+本设计**不擅自降低**训练规模。
 
 ---
 
