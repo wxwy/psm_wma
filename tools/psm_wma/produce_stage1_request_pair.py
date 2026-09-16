@@ -23,6 +23,7 @@ class PairPublicationError(RuntimeError):
 _BASE_ENV = frozenset(("GIT_CONFIG_GLOBAL", "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_SYSTEM", "GIT_NO_REPLACE_OBJECTS", "LANG", "LC_ALL"))
 _HELPER_ENV = frozenset(("GIT_CONFIG_COUNT", "GIT_CONFIG_KEY_0", "GIT_CONFIG_VALUE_0"))
 _FORBIDDEN_ENV = frozenset(("HOME", "GH_TOKEN", "GITHUB_TOKEN", "GIT_ASKPASS"))
+_GH_ENV = {"GH_CONFIG_DIR": "/root/.config/gh"}
 
 
 def validate_pair_environment(environment: dict[str, str]) -> None:
@@ -30,13 +31,15 @@ def validate_pair_environment(environment: dict[str, str]) -> None:
     keys = frozenset(environment)
     if _FORBIDDEN_ENV & keys or not _BASE_ENV <= keys or not keys <= _BASE_ENV | _HELPER_ENV:
         raise PairPublicationError("pair environment allowlist")
-    if keys & _HELPER_ENV and environment != {
-        **{key: environment[key] for key in _BASE_ENV},
-        "GIT_CONFIG_COUNT": "1",
-        "GIT_CONFIG_KEY_0": "credential.https://github.com.helper",
-        "GIT_CONFIG_VALUE_0": "!/usr/bin/gh auth git-credential",
-    }:
-        raise PairPublicationError("pair credential helper descriptor")
+    if keys & _HELPER_ENV:
+        descriptor = {
+            **{key: environment[key] for key in _BASE_ENV},
+            "GIT_CONFIG_COUNT": "1",
+            "GIT_CONFIG_KEY_0": "credential.https://github.com.helper",
+            "GIT_CONFIG_VALUE_0": "!/usr/bin/gh auth git-credential",
+        }
+        if environment not in (descriptor, {**descriptor, **_GH_ENV}):
+            raise PairPublicationError("pair credential helper descriptor")
 
 
 def produce_pair(
