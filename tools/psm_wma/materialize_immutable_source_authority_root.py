@@ -1844,13 +1844,13 @@ class NativeAuthorityGit:
         return self._mutation_succeeded("update-ref", ref, revision, "0" * 40) and self.local_ref(ref) == revision
 
     def cas_create_remote(self, ref: str, revision: str) -> bool:
-        return self._mutation_succeeded("push", "--porcelain", f"--force-with-lease={ref}:", self.remote, f"{revision}:{ref}", porcelain_flag="*") and self.remote_ref(ref) == revision
+        return self._mutation_succeeded("push", "--no-thin", "--porcelain", f"--force-with-lease={ref}:", self.remote, f"{revision}:{ref}", porcelain_flag="*") and self.remote_ref(ref) == revision
 
     def cas_delete_local(self, ref: str, revision: str) -> bool:
         return self._mutation_succeeded("update-ref", "-d", ref, revision) and self.local_ref(ref) is None
 
     def cas_delete_remote(self, ref: str, revision: str) -> bool:
-        return self._mutation_succeeded("push", "--porcelain", f"--force-with-lease={ref}:{revision}", self.remote, f":{ref}", porcelain_flag="-") and self.remote_ref(ref) is None
+        return self._mutation_succeeded("push", "--no-thin", "--porcelain", f"--force-with-lease={ref}:{revision}", self.remote, f":{ref}", porcelain_flag="-") and self.remote_ref(ref) is None
 
 
 def _parser() -> argparse.ArgumentParser:

@@ -7845,6 +7845,14 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 失败事实：`failure.primary_phase=remote_cas`、`primary_code=AUTHORITYROOTERROR`、`publication.remote_create_succeeded=false`；rollback=`complete=true`，fixed authority ref 未创建，远端与本地均 absent。
 - 未启动 child/runtime/config mutation、source-evidence、GPU、训练、评测或推理；v1.6 授权已消耗，不得重试。
 
+## 2026-09-16 — remote-CAS thin-pack 根因与最小修复
+
+- 诊断 push：普通 thin-pack push 未被 GitHub 接收；同一 candidate 使用 `--no-thin --porcelain` 成功创建 authority ref，随后按 lease 删除并核验 remote ref absent。
+- 根因判断：失败发生于远端对象 pack 上传兼容性，而非账号权限、branch protection 或 ref lease；`--no-thin` 是可复核的最小修复。
+- 修改 `tools/psm_wma/materialize_immutable_source_authority_root.py`：远端 CAS create/delete 均加入 `--no-thin`，其余 lease、porcelain、readback 和 rollback 语义不变。
+- 验证：NativeAuthorityGit `71/71` PASS；`py_compile`、`git diff --check` PASS。尚未重新生成 pair、审核或物化；未启动 GPU/训练。
+- 下一步：以包含该修复的新 formal root 生成新 pair，重新取得三方 exact-pair 审核后执行一次 materialization。
+
 ## 2026-09-16 — v1.6 materialization review 观察凭证 #2
 
 - `before_head=fe87836ce7a30c1fbb346a219547a56c49478f1e`；fetch/ls-remote 成功，advertised/tracking 均为 `fe87836ce7a30c1fbb346a219547a56c49478f1e`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
