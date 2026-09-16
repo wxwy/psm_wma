@@ -8085,3 +8085,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`7b3bf58b27a55b1220b86eeeccb1db5659dd0500` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
 - MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；均确认 record↔receipt 绑定、package/witness verifier、one-shot handoff 与 57/57 验证。
 - 三方冻结名册对同一 pair final 齐全，形成 closure 推进令牌；仅关闭 producer/closure CPU/static Gate，不授权真实 source/record/publication I/O、child/runtime、GPU 或训练。下一步进入 fresh Stage-2 request instance construction/review。
+
+## 2026-09-16 — producer/closure final remediation 观察凭证 #3
+
+- `before_head=bb753129338cd56ceadc251e490ed689c4c9e7cf`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`bb753129338cd56ceadc251e490ed689c4c9e7cf`；新增为空；merge=`Already up to date.`
+- formal pair=`7b3bf58b27a55b1220b86eeeccb1db5659dd0500` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`。
+- 本轮确认 closure 推进令牌仍有效；Stage-2 request instance 尚未构造，未执行真实 source/record/publication I/O、GPU 或训练。
