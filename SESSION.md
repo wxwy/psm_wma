@@ -8240,6 +8240,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM 与 DS 均完成 send-keys -l→间隔 1 秒→独立 Enter→capture，当前已送达并等待各自 final verdict。
 - 该 Gate 仅审核 real-output 设计，不授权写 instance、source I/O、GPU 或训练。
 
+## 2026-09-16 — real-output execution design v0.2 审核送达
+
+- formal pair=0ffe9597cdb8095ee9e9e0bb75a63aa3b66a7a2a / child=93a89ba61306d840a008813f62f26a34d54850f4；amendment 已推送，申请 bookkeeping commit=4f9f3001。
+- MM 与 DS 均完成 send-keys -l→间隔 1 秒→独立 Enter→capture；MM 已收到并处理中，DS 已收到并处理中；旧 v0.1 REQUEST_CHANGES 不计入当前 pair。
+- 当前仅等待设计 verdict；未写 instance、未执行 source I/O、GPU 或训练。
+
 ## 2026-09-16 — real-output execution design 观察凭证 #1
 
 - `before_head=4e2913df2a7a02cfc5c6e45e1907d014392f2306`；fetch 成功；advertised/tracking=`dcf3023d48ab8a9eedf036a4bef9c20547e16674`；新增范围为空；本地包含远端，无分叉，未执行 merge。
