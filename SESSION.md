@@ -8223,6 +8223,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0`、DS=`ds:0.0` capture 均成功，均正在读取 amendment/实现，尚未出现新 pair final verdict。
 - 本轮无推进令牌；保持 REVIEW，未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
 
+## 2026-09-16 — construction CPU/static v0.3 amendment 观察凭证 #1
+
+- `before_head=7d16e8abb4599c4828cfa1136a55cd81636dfaf5`；fetch 成功；advertised/tracking=`e33c1c05013284039f82cd411a3398dceb45d781`；新增范围为空；正向 ancestor 返回 0，merge 已是最新。
+- formal pair=`e33c1c05013284039f82cd411a3398dceb45d781` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM capture 成功但 verdict 锚定旧 pair `0fc421…`；DS capture 成功但 verdict 锚定旧 pair `0fc421…`；当前 pair 均未审核。
+- 本轮无推进令牌；仅允许提交 v0.3 新 pair 审核申请；未创建 instance、未写盘、未执行 source I/O、GPU 或训练。
+
 ## 2026-09-16 — construction CPU/static v0.3 amendment
 
 - 依据 DS 对 `0fc4217ba22dc31ed0ffaa131123cfc961755b3b` 的 REQUEST_CHANGES，补齐 config blob、local/remote ref、HEAD、index tree 五项 40-hex 校验，并冻结 absence 编码为 `ABSENT`（存在时为 lowercase 40-hex）。
