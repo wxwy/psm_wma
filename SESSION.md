@@ -9939,3 +9939,25 @@ resume 目标指回旧 ckpt：`load_path` 保持 TOML 的 DROID-dcp warm-start�
 | dcp | diag2 日志 `:132`/`:141`（配置相同、仅 save 目录状态不同） | `(warm-start, local) with keys: ['model']`，`in iteration 0` |
 
 ⟹ **前提全部就绪，启动只剩执行**（本步未启动任何训练）。
+
+#### ⚠️ 启动硬约束（D8a 干净起点的唯一正确启动方式）
+
+**「改名」+「必须带 `DISABLE_AUTO_RESUME=1`」，两者缺一不可。**
+
+- **只改名、不带 `DISABLE_AUTO_RESUME=1`** ⟹ launcher 走 else 分支扫到**仍在的**
+  `iter_000000001/`，执行 `TAIL_OVERRIDES+=("checkpoint.load_path=.../iter_000000001"
+  "checkpoint.load_training_state=True")`；因 `latest_checkpoint.txt` 已不在，dcp 改走
+  warm-start 分支且 `load_training_state=True` ⟹ 加载**全部 5 个 key** ⟹
+  **iteration 仍从 2 起，静默失败**
+- **带 `DISABLE_AUTO_RESUME=1`** ⟹ 第一分支跳过整个 else，`load_path` 保持 TOML 的
+  DROID-dcp warm-start、`load_training_state` 保持 `false`；配合改名 ⟹
+  `keys: ['model']`、`iteration 0` ✓（diag2 日志 `:132`/`:141` 实证）
+
+**启动前自检（约 10 秒，不启动训练）**：用同一条命令加 `DRY_RUN=1`，确认
+`>>> FRESH start (DISABLE_AUTO_RESUME=1; ...)` 且 `>>> DRY_RUN overrides:` **不含**
+`checkpoint.load_path=`。
+
+**PASS 首行判据**：日志出现 `iteration=1`，且 `dcp.py:787` 打印
+`(warm-start, local) with keys: ['model']`（而非 `(same-job, local)` 5 个 key）。
+
+**FAIL 判据**：出现 `(same-job, local)`，或首行 iteration 从 2 起。
