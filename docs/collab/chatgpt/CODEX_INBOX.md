@@ -687,3 +687,11 @@
 ### Correction
 
 - The preceding v2 entry contained a typographical formal-root SHA. It is superseded by this exact pair: formal root `78231622d5071cb12f8a711cd51461e0da008317`; child/Gitlink `93a89ba61306d840a008813f62f26a34d54850f4`.
+
+## 2026-09-16 — observation bundle provider closure review v3 (DS-only)
+
+- formal root: `3bf72e49593f1c21e61f783e724213c262df1a04`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Follow-up: explicit independent `git_remote_url`; `ls-remote --exit-code`; missing remote ref=`ABSENT`; read failure=`BLOCKED_AUTHORITY_NOT_CLOSED`; `preflight.absent_refs` bound.
+- Evidence: provider/constructor `17/17 PASS`; py_compile and git diff-check PASS; positive/missing/unreachable remote fixtures.
+- Request DS-only final `APPROVE` or `REQUEST_CHANGES(file:line)` for exact pair. No source I/O, instance write, GPU/CUDA/torchrun, or training.
