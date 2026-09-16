@@ -532,6 +532,14 @@
 - scope: DS-only review per user instruction; temporary fixture only; no real instance, source I/O, GPU/CUDA/torchrun or training.
 - requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — source-evidence real-output write authorization DS review
+
+- implementation authority: writer closure `944c8119b9fda15d4edc7475e7384cbb0712253f`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- request: review whether to authorize one controlled real source-evidence closure execution under the approved v0.2/v0.3 designs; exact formal root/child and canonical instance SHA must be preflight-bound, fixed versioned JSON/Markdown sibling paths used, and any failure must hard-stop with residue.
+- verified read-only inputs: four LIBERO suites under `/disk/rl/data/LIBERO_LeRobot_v3`, latent cache `/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1` (54G), Edge checkpoint and Wan VAE present.
+- forbidden in this request: training, GPU/CUDA/torchrun, child modification, retry, source payload publication beyond the approved closure sequence.
+- DS-only per user instruction. requested verdict: `APPROVE_TO_WRITE_SOURCE_EVIDENCE` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — real-output writer implementation design review
 
 - formal root: `f13c6f79d9257c742c167534e3b57a6b881e7607`
