@@ -7951,3 +7951,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 冻结 pair：root=`342b7ccb3abe36462ad5eb233f50ce979aab5207`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2b0`。
 - MM=`mm:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`；DS=`ds:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`；均锚定上述 exact pair。
 - 推进令牌成立：仅授权一次 v2.0 authority-root materialization；禁止 retry、source-evidence、child/runtime/config、GPU、训练、评测或推理。下一动作：执行冻结 v2.0 launcher并核验 evidence/ref/rollback。
+
+## 2026-09-16 — v2.0 authority-root materialization PASS
+
+- 使用 v2.0 推进令牌执行唯一一次 materialization；evidence=`artifacts/g0/r09/authority_root_materialization_evidence_e8c7b2b0.json`，`status=PASS`。
+- candidate revision=`69c2d436195297962f30f79f829dc9b4bfec581b`，parent=`342b7ccb3abe36462ad5eb233f50ce979aab5207`，verifier=`true`。
+- local 与 remote fixed ref 均成功创建并回读为 candidate：`refs/heads/authority/r09-b-ttt-v035-immutable-source-v1 -> 69c2d436195297962f30f79f829dc9b4bfec581b`；`committed_binding_reverified=true`；remote CAS、post-publication 与 rollback 均无错误。
+- 本 Gate 仅完成 authority-root materialization；未执行 source-evidence、child/runtime/config mutation、GPU、训练、评测或推理。下一步按独立审核 Gate 申请 source-evidence closure，再按批准范围推进 LIBERO4IN1 latent-cache 训练。
