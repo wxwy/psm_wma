@@ -523,6 +523,14 @@
 - evidence: `git diff --check` PASS; no instance created; no checkpoint/manifest/data/cache payload read; no source/record/publication I/O; no GPU/CUDA/torchrun/training.
 - requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — real-output instance construction execution design review
+
+- formal root: `59074d234a5c22e59efb316c3e515905eea0a6b8`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- design: freezes fixed JSON/Markdown paths, preflight absence, one-shot staged pair write, byte readback, partial-residue terminal policy and hard stop.
+- scope: design-only; no instance write, source I/O, GPU or training.
+- requested verdict: `APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_EXECUTION` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — construction CPU/static v0.3 amendment closure review
 
 - formal root: `e33c1c05013284039f82cd411a3398dceb45d781`
