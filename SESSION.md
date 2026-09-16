@@ -8159,3 +8159,10 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`3b2f3a7059f93b0a90d5ad7b101474b3a2c4cfb8` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
 - MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC`；DS=`ds:0.0` capture 成功，同 exact final。
 - 三方冻结名册对同一 pair final 齐全，形成 CPU/static implementation 推进令牌；仅授权构造模块与 stdlib 测试，禁止真实 instance/output/source I/O、GPU 或训练。
+
+## 2026-09-16 — request instance construction CPU/static implementation
+
+- 按 formal design `3b2f3a7059f93b0a90d5ad7b101474b3a2c4cfb8` 的批准范围，新增 `tools/psm_wma/build_source_evidence_closure_request_instance.py` 与 `tools/psm_wma/test_build_source_evidence_closure_request_instance.py`。
+- 构造器仅消费内存 bundle，执行 exact top-level schema、canonical JSON terminal LF、self-excluding SHA-256 与 fail-closed bytes verifier；未实现真实写盘。
+- 验证：3/3 unittest PASS；py_compile PASS；git diff --check PASS。首轮测试发现并修复 canonical 排序与插入顺序校验冲突。
+- 当前进入 implementation closure review；未创建 instance，未执行 source/record/publication I/O、GPU 或训练。
