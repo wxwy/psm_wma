@@ -338,3 +338,37 @@
 - 现象：MM/DS 已批准该 pair 的一次 materialization；执行时外层打印冻结 `bootstrap exec argv`，随后 bootstrap 以 `bootstrap-invocation`、退出码 1 终止；未生成 authority evidence/ref。CPU 静态测试 `24/24 PASS`。
 - 诊断边界：不得执行真实 materialization、source-evidence、GPU、torchrun、训练/评测/推理。请 GPT 审核失败证据与最小修复方案，重点判断 bootstrap ABI/FD 继承/解释器版本守卫的真实根因，并给出 `file:line` 修改建议及修复后验收条件。
 - 请求 verdict：`APPROVE_TO_DIAGNOSE_AND_REMEDIATE_STAGE1_RUNTIME` 或 `REQUEST_CHANGES(file:line)`。
+
+## 2026-09-16 — Review request: Stage-1 v0.6 rebuilt exact pair (MM/DS active roster)
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-PRAGMATIC-REQUEST-PAIR`；ChatGPT 暂停，不纳入本轮推进门。
+- Formal root: `e67a57ffa2ec6f8cdeb2e1299ecdc4387f6aeff9`；child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`。
+- Scope: new v0.6 JSON/Markdown pair rebuilt by the approved regular-interpreter fix (`/opt/conda/bin/python3.11`), fresh clean suffix `a1c4e7d`; CPU static tests 5/5, py_compile and diff-check PASS.
+- Review focus: exact pair identity, all launcher/parser/bootstrap/contract and preflight bindings, fresh suffix/absence facts, and one-shot materialization boundary. No materialization, source-evidence, GPU or training is authorized by this request.
+- Requested verdict: `APPROVE_TO_MATERIALIZE_R09_B_TTT_V035_STAGE1_AUTHORITY_ROOT` or `REQUEST_CHANGES(file:line)`。
+
+## 2026-09-16 — Review request: Stage-1 v0.6 candidate-root correction
+
+- Formal review commit: `7ca2ecf7966c09489f17f993f88963c12995943d`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`。
+- 修复 MM 指出的 `formal_root` 绑定错误：pair 内候选物化根恢复为冻结值 `d5df7ef0988a9277bc657384fe8462dcdce2bca1`；仅更新 JSON/Markdown identity。
+- CPU static builder tests 5/5 PASS；请求 MM/DS 重新核验 exact pair。ChatGPT 暂停；禁止 materialization/source-evidence/GPU/training。
+
+## 2026-09-16 — Review request: Stage-1 v0.7 FD8 inheritance fix
+
+- Formal review commit: `68fc12c45cb85bd3acbf7e59c03419c203b78ca4`；child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`。
+- Root cause fix commit `e52e14b9…` makes bootstrap owner FD8 inheritable across `execve`; v0.7 pair rebuilt with candidate root `e52e14b9…`, clean suffix `a1c4e7e`.
+- CPU static builder tests 5/5 PASS；请求 MM/DS exact-pair final verdict。ChatGPT 暂停；禁止 materialization/source-evidence/GPU/training。
+
+## 2026-09-16 — Review request: Stage-1 v0.8 fresh evidence path
+
+- Formal review commit: `bed4c4a8a45aa451e70717ec6e06aa96e9a51d3b`；child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`。
+- 修复：builder 现将 `--evidence-path` 绑定到全新 `authority_root_materialization_evidence_a1c4e7f.json`，并以 `fd2feba7…` 候选根重建 pair；保留 FD8 inheritable 修复。
+- CPU static builder tests 5/5 PASS；请求 MM/DS exact-pair final verdict。ChatGPT 暂停，禁止 materialization/GPU/training。
+
+## 2026-09-16 — GPT 建议请求：恢复 Stage-1 推进路径
+
+- 当前根仓提交：`b57ad447c90317d48a21132f2d249ce9608c48e9`；child/Gitlink：`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 背景：旧 authority materialization 因隔离 Git 子进程缺少凭据在 `remote_cas` 失败；随后已提交 `/usr/bin/gh auth git-credential` 的最小环境绑定，并同步 request-pair builder 的 canonical environment。旧 pair 不能复用。
+- 当前卡点：需要基于新 root 重新生成 byte-exact request pair，但仓库没有可直接执行的受控 pair producer；交接要求禁止手工拼接、临时脚本写入或复用旧 pair。
+- 请 GPT 仅提供处理建议，不修改代码、不执行 materialization、不写 authority ref、不启动 GPU/训练。请明确回答：应如何在现有详细设计下补齐 producer；如何冻结 helper 环境而不泄露凭据；需要哪些 CPU/static witness、pair 字段和审核门，才能恢复 materialization→source evidence→LIBERO4IN1 latent cache 训练。
+- 建议请给出可执行的最小步骤、涉及文件/行号、失败回滚语义和验收证据；不要给出绕过审核或 no-retry 约束的方案。
