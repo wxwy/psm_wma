@@ -8104,3 +8104,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`0442c66f82450fd94f4aa027f4a31b3a05f2a24f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。
 - Inbox append 前=`64752` bytes，未触发 rollover；MM/DS 均完成 `send-keys -l`→间隔 1 秒→独立 Enter→capture 送达回执。
 - 申请仅审核 docs-only instance schema；未创建 instance，未执行 source/record/publication I/O、GPU 或训练。
+
+## 2026-09-16 — Stage-2 request instance schema 观察凭证 #1 / REQUEST_CHANGES
+
+- `before_head=8e3bf30d195c6fc1d812dd8b791503e5b8f47d92`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`8e3bf30d195c6fc1d812dd8b791503e5b8f47d92`；新增为空；merge=`Already up to date.`
+- formal pair=`0442c66f82450fd94f4aa027f4a31b3a05f2a24f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_DESIGN_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_SCHEMA`。
+- DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_schema_v0.1.md:17)`；要求冻结嵌套 exact key/type/digest、顶层 sha256 计算域、已批准 schema/formal 引用，以及 executor/producer 的具体 blob/raw identity。
+- 本轮无 schema design 推进令牌；仅允许针对该意见最小 docs-only 整改后以新 formal root 重审；未创建 instance、未执行 source/record/publication I/O、GPU 或训练。
