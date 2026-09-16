@@ -9433,3 +9433,269 @@ optimizer update、`iter_000000001` 落盘、exit 0、无边界告警/Traceback/
 **D6 的 CPU/static smoke 根本走不到 `init_weights`** —— 纯 CPU 冒烟覆盖不到
 「仅 CUDA 执行」的初始化路径。此后任何新增子模块都必须在 CPU smoke 与
 CUDA init 两条路径上分别验证非零初始化。
+
+### D7-FIX 判据 2 复核：初始化修复必要但不充分（2026-09-16）
+
+修复落盘后重跑单窗口训练，读 `iter_000000001/optim` 的 DCP 实测（`/tmp/dbg_optim_fix9.py`）：
+**判据 2 仍 FAIL** —— 20 个 slow 参数中 17 个 `local_memory_runtime.*` 的 `exp_avg`
+仍恰为零，只有 `local_memory2llm.{weight,bias}` 与 `local_memory_modality_embed`
+获得更新（`bias` 与 `modality_embed` 的 `exp_avg` 逐位相同 = 6.689455e-03，
+`weight` = 1.446534e-03）。**⟹ 初始化全零是 bug 9 的一个原因，但不是唯一原因。**
+
+**判据 2 的第二原因定位（真实损失路径上的梯度探针）**：在
+`_run_active_local_memory_native_forward` 的 return 前用
+`torch.autograd.grad(primary, params, allow_unused=True, retain_graph=True)`
+逐参数探测真实 member loss（`_psm_reduced_loss(_PSM_CONSUMER_LOSS_KEYS)`）上的梯度：
+
+- **17 个 `local_memory_runtime.*` 全部返回张量（非 `UNUSED`）但值为 `0.000e+00`**
+  ⟹ autograd 图在这些参数与真实 loss 之间**是连通的**，梯度是数值零，
+  **不是断图** —— 这一条排除了「打包链路 detach」这一整类假设。
+- **`local_memory2llm.weight` = `4.941e-01` 非零**。由 `memory_prefix.py:75`
+  `hidden = projector(token.to(dtype)) + modality_embed` 得
+  `∂L/∂W = grad_out ⊗ token` ⟹ **token 数值非零**，且 token 确实进入了真实损失。
+
+**方法学副作用（已回退）**：`retain_graph=True` 的额外 backward 与
+selective activation checkpoint 冲突，抛
+`RuntimeError: Trying to backward an extra time. You are only allowed to backward
+once on any region computed under selective activation checkpoint.`（exitcode 1）。
+该诊断已从 `omni_mot_model.py` 完整回退；替代探针改为**非侵入式**：在
+`local_memory_segment_adapter.py` 的 `scan` 出口打印 evidence 数值 / `valid` 比例 /
+参数数值，并 `tokens.register_hook(...)` 回传 `∂L/∂token`（hook 不触发二次 backward）。
+
+**已静态排除的断图嫌疑点（active canonical 路径全链路）**：
+`scan_segment_masked_encoded_many:743-769`（`initial_state` / `index_select` /
+`index_copy` 保图，`step_projected_many` 未传 `emit_prewrite_tokens` 故 token 走
+`updated` 分支）、`step_projected_many:549-574`（`autograd.grad(create_graph=True)`
++ 纯算子）、`_fast_mlp`（纯 `F.linear`/`F.silu`）、`project_evidence:428-433`、
+`project_queries:445`（加 `slot_queries`，无 detach）、`_select_rows`/`_scatter_rows`、
+`gather_consumers`、`LocalMemorySegmentSidecar.commit:43`（detach 只用于 sidecar 快照，
+下一块经 `:552-553` 重新 `requires_grad_(True)`）、`_psm_local_override` 块
+（`omni_mot_model.py:1655-1658` 纯赋值）、`memery_prefix` 的 `torch.cat`。
+`local_evidence.py` 中仅存的三处 detach 均在**旧路线**（`:276-278,293-304`
+`step_many`）或 TBPTT boundary（`:843-847`），与 active 无关。
+
+**D6 证据链的两处覆盖缺口（本轮确认）**：
+1. `tools/g0/probe_r09_b_active_static.py:183-194` 的 `_projector_loss` 直接对
+   `net.local_memory2llm(token)` 求和，**完全绕过 attention** ⟹ D6 的
+   「all slow groups reached the graph」只证明 `token → projector` 段，
+   从未证明 token 参与真实训练损失。
+2. `probe_r09_b_active_static.py:6x` 的 `LOCAL_HISTORY_EVIDENCE_DIM = 96`
+   与生产 `config.yaml:400 local_history_evidence_dim: 256` 不符
+   （其 docstring 自称「production passes evidence_dim=96」是错的），
+   ⟹ D6 构造的 encoder 形状与生产不同，对生产路径只是名义覆盖。
+
+### 判据 2 第二原因已闭合：零初始化的冷启动恒等式（非缺陷）（2026-09-16）
+
+非侵入探针（`PSM_DIAG_EVIDENCE=1`）在真实生产的第 1 个 segment 上给出：
+
+| 探测量 | 实测 | 判定 |
+|---|---|---|
+| `evidence_visual_summary_prev` | max=7.798e-01，1440/1536 非零 | 正常 |
+| `evidence_executed_action_prev` | max=1.000e+00，150/160 非零 | 正常 |
+| `evidence_valid` / `present` | 15/16、15 | 正常（frame 0 无 evidence 是设计，`:201-202`） |
+| `tokens` | `requires_grad=True`，max=2.577e-01 | 非零且带图 |
+| `state_in` | `None` | 首块，符合预期（`:743`） |
+| 17 个 slow 参数 | 全 bf16、非零、`rg=True` | **bug 9 初始化修复已生效** |
+| `norm.bias` / `slot_queries` | 0 | 设计如此（LayerNorm 标准零初始化 / `k_local==1`） |
+| **`dL/dtoken`** | **0.000e+00（0/512 非零）** | ★ 真实 loss 对 token 的梯度恒为零 ★ |
+
+**根因是数学恒等式，不是断图，也不是第二个缺陷**：
+
+`memory_prefix.py:75` 为 `hidden = projector(token) + modality_embed`，而
+`local_memory2llm.weight` 被 `init_weights` **显式零初始化**（function-preserving
+的「新引入干净条件」设计）。于是第 1 个 optimizer step 时 `W ≡ 0`：
+
+```
+∂L/∂token = (∂L/∂hidden) · W = grad_out · 0 = 0   ⟹ 17 个 runtime 参数
+                                                      (∂L/∂token · ∂token/∂params) 恰为零
+∂L/∂W     = grad_out ⊗ token ≠ 0                   ⟹ W 有梯度（实测 4.941e-01）
+```
+
+Adam 在这些参数上仍创建 state（`p.grad is not None`，值为 0，因为默认
+`set_to_none=True` 只在 grad 为 None 时才不建 state）⟹ `exp_avg` 恰为 0。
+**这与 `iter_000000001/optim` 的实测完全自洽**（17 个零 + W/bias/embed 非零）。
+
+**⟹ 判据 2 在 iter 1 上的 FAIL 是零初始化的必然冷启动行为；真正的判据是 iter ≥ 2**
+（W 离开零之后 17 个参数才开始接收梯度）。**⟹ 修复 bug 9 依然必要**（否则 W 恒零 +
+token 恒零，双双锁死），但它单独不足以让判据 2 在 iter 1 通过。
+
+**第 1 步后的权重实测（`iter_000000001/model`，`/tmp/read_projector.py`）**：
+
+| 参数 | 实测 | 判定 |
+|---|---|---|
+| `net.local_memory2llm.weight` | max=**5.002221e-11**，65535/65536 非零 | **W 已离开零** |
+| `net.local_memory2llm.bias` | max=**5.002221e-11** | 与 W 逐位同值 |
+| `net.local_memory_modality_embed` | max=**5.002221e-11** | 与 W 逐位同值 |
+| `net.local_memory_runtime.ttt_core.w0_fast_in_weight` | max=1.250000e-01，8192/8192 非零 | bug 9 修复生效（第三独立证据） |
+
+**三者位移完全相等是 Adam 第 1 步的数学必然**：`m̂ = g`、`v̂ = g²` ⟹
+`m̂/√v̂ = sign(g)` ⟹ `|Δθ| = lr_eff`，**与梯度幅度无关**。这同时反证三者梯度均非零，
+并**精确测出第 1 步 `lr_eff = 5.002221e-11`**。
+
+**该值完全符合设计（本人一度误判，此处更正）**：warm-up 不是从 0 线性起步。
+`lr_scheduler.py:130-133` 的公式为
+
+```
+f = (f_max - f_start) / warm_up_steps * n + f_start
+```
+
+而 `lambdalinear` recipe 的默认 `f_start=[1.0e-6]`（`optimizer.py:173`；toml 只覆盖
+了 `cycle_lengths=[16000]` 与 `warm_up_steps=[200]`）。故第 0 步
+`lr_eff = lr × f_start = 5e-5 × 1e-6 = 5e-11`，与实测 `5.002221e-11` 吻合到 0.04%
+（余差来自 `n` 的步进起点）。**先前「与 2.5e-7 差 5000 倍」的算法（假设线性从 0 起）
+是错的，不是训练异常。**
+
+**⟹ 结论：既非死锁也非缺陷。** warm-up 期间 `f(n) ≈ n/200`，故
+`lr_n ≈ 5e-5 × n/200`，W 在 200 步内累计增长约 `Σ 5e-5·n/200 ≈ 5e-3` —— 到 warm-up
+结束时 W 达到有意义的量级，17 个 slow 参数随之获得有意义的梯度。
+**判据 2 的正确表述：iter 1 因 `W≡0` 必然为零（冷启动恒等式）；
+iter ≥ 2 起非零且随 warm-up 增长。**
+
+**方法学教训（与判据 2 同源，第二次犯）**：把**设计行为**误判为缺陷。前一次是
+「backbone 不在优化器内」（`SELECTORS` 设计），这次是 warm-up 起点。**判定异常前
+必须先读实现，而不是先按常见约定推算期望值。**
+
+**单窗口吞吐实测（决定 D8 时长，2026-09-16）**：从正式跑 `stdout_loss_logger` 的
+`iteration=1` 行读到（两次跑一致）：
+
+```
+perf/microbatches=128              ← 确认 active 路线
+perf/model_compute_mean_s=1.2327   ← 每 member 1.23 s
+perf/model_compute_s=157.786       ← 128 members 合计
+perf/dataloader_wait_s=2.485
+perf/other_s=42.325                ← 约 21% 非计算开销
+perf/step_wall_s=202.596           ← 1 个 optimizer step = 3.4 分钟
+```
+
+**⟹ 1 optimizer step ≈ 3.4 分钟，`max_iter=5000` 约需 11.8 天**（GPU 利用率仅
+~33–78%，瓶颈在数据侧；`other_s` 占 21% 有优化空间）。
+
+**诊断跑 #3 的开销分离（20:33:28 `iteration=1`，更正上段的「优化空间」估算）**：
+
+```
+perf/model_compute_mean_s=1.320415   ← 比基线 1.2327 高 7%（探针 hook 开销）
+perf/model_compute_s=169.013080
+perf/dataloader_wait_s=3.685651
+perf/other_s=53.018074               ← 比基线 42.325 高 10.7 s
+perf/step_wall_s=225.716805
+```
+
+`other_s` 的增量已定位：同一秒的日志行
+`Checkpoint save completed: Time taken: 8.73 seconds` ——
+**是本次诊断设的 `checkpoint.save_iter=1` 造成每步存 ckpt**。8.73 s 属 `other_s`，
+与框架固有开销无关。
+
+**⟹ 上段 11.8 天的估算不变**：D8 用 `save_iter=50` 且不带 `PSM_DIAG_EVIDENCE`
+（探针默认关闭），单步应回到 ~202.6 s 水平。**不要把本次 225.7 s 当作 D8 的真实
+单步耗时**，否则会把 11.8 天误算成 13.1 天。
+
+**教训（第三次误算）**：不得用「进程启动到第一个输出」的总时长除以 member 数 ——
+那会把模型构造、数据集加载、checkpoint 反序列化（合计约 90 s）全部计入，
+导致把 1.23 s/member 高估成 15 s/member（12 倍）。**吞吐必须取自框架自身的
+`perf/*` 日志，而不是端到端观测。**
+
+**环境变量陷阱（诊断跑 #1 无效的根因）**：`PSM_R09_B_TTT_ACTIVE` 等四个变量由
+`_strict_bool_env(name, default="0")` 读取，**launcher 不设置它们**。漏设时
+`local_ttt_enabled=False`，训练**静默降级为基线路线**（`perf/microbatches=1`），
+`_run_active_local_memory_native_forward` 从不被调用、无任何报错。
+判据：`perf/microbatches=128`（= `B_stream`8 × GA16）且
+`config.yaml` 出现 `local_history_horizon: 0` + `grad_accum_iter: 128`。
+
+**有效 bs 与 11 GiB 显存的关系（D8 关键参数，2026-09-16 核实）**：
+
+- **有效 bs = 2048 samples / optimizer update**。构成：`grad_accum_iter` = `8 × GA16`
+  = 128 members（`action_policy_libero_edge_all.py:319`），每 member = 1 个 16 帧
+  segment = 16 consumers（`ttt_tbptt_steps=16`）⟹ 128 × 16 = 2048。
+  与基线 2048 逐字相同，`:317-318` 注释原文：
+  `# GA=16 reproduces the baseline 2048 samples/update (128 members x 16 consumers).`
+- **11 GiB 的原因是梯度累积，不是模型小**：`:230` `max_samples_per_batch = 1 if _active
+  else 128`，`:249` 注释点明该键是 **"peak-mem bound"**。每 iteration 只 forward
+  1 个 member，`:934` 每 member 一次 `backward()` 累加，`:946-947` 累满 128 才
+  `finish_window` ⟹ **峰值激活只对应 16 samples**，叠加 selective AC 后为 11 GiB。
+
+| 跑法 | 外层 batch | 累积次数 | 有效 bs | 峰值激活 |
+|---|---|---|---|---|
+| 基线 | 128 samples | 16 | 2048 | 128 samples |
+| active | 1 sample | 128 | 2048 | 16 samples |
+
+（`:249` 注释的 `128 x 1 x grad_accum 16 = 2048` 是**基线**算式，其 128 是
+`batch_size`；active 的 128 是 member 数。数值巧合相同、路径不同，勿混用。）
+
+**⟹ D8 提速不能靠加 batch**：`max_samples_per_batch` 被 active 路线钉死在 1，
+显存并非瓶颈（11/24 GiB），要提速只能动 `perf/other_s`。
+
+**判据 2 决定性证据：冷启动闸门确实在 `optimizer.step()` 后打开（2026-09-16 20:34）**：
+
+`max_iter=2` 验证跑（`outputs/train_diag2`，`PSM_DIAG_EVIDENCE=1`）的
+`dL/dtoken` 采样，横跨两个 window：
+
+```
+[DIAG-EV] scan#1   dL/dtoken max=0.000e+00 nonzero=0/512     ┐
+[DIAG-EV] scan#32  dL/dtoken max=0.000e+00 nonzero=0/512     │ 第 1 窗：W ≡ 0
+[DIAG-EV] scan#64  dL/dtoken max=0.000e+00 nonzero=0/512     │ （iteration=1
+[DIAG-EV] scan#96  dL/dtoken max=0.000e+00 nonzero=0/512     │  loss=1.674389）
+[DIAG-EV] scan#128 dL/dtoken max=0.000e+00 nonzero=0/512     ┘
+[DIAG-EV] scan#160 dL/dtoken max=9.049e-11 nonzero=512/512   ← 第 2 窗：闸门打开
+```
+
+**量级自洽性校验**：`9.049e-11 / 5.002e-11 = 1.81` —— 即
+`dL/dtoken = grad_out · W` 中 `grad_out` 的有效量级 ≈ 1.8，与同窗 `train/loss=1.67`
+吻合到同一量级。**两个独立测量（ckpt 里的 W 与 hook 里的 dL/dtoken）互证。**
+
+**⟹ 零初始化冷启动恒等式完整确证，判据 2 通过**：
+- 第 1 窗 `W ≡ 0` ⟹ `∂L/∂token = grad_out · W ≡ 0` ⟹ 17 个 runtime 参数无梯度，
+  **这是设计的必然，不是缺陷**；
+- 第 2 窗 `W ≈ 5e-11 ≠ 0` ⟹ `∂L/∂token ≠ 0`（512/512 全非零）⟹ 闸门打开；
+- bug 9 的修复（TTT 参数初始化）**充分且必要**：它保证 `g_W = grad_out ⊗ token ≠ 0`，
+  使 W 能离开零；而 W 离开零是 runtime 参数获得梯度的**唯一**前提。
+
+**Adam 归一化使极小梯度不构成障碍**：`Δθ = -lr·m̂/(√v̂+eps)`，当 `|g| >> eps` 时
+`|Δθ| = lr_eff`，**与梯度幅度无关**（只取符号）。故 W 每步位移 `lr_eff(n)`，200 步
+warm-up 后累计到 ~5e-3 量级，正常参与学习。**「梯度极小」不等于「学不动」。**
+
+### 判据 2 终审 PASS（optim exp_avg 全非零，2026-09-16 20:37）
+
+`max_iter=2` 跑正常收尾（`Done with training.`，exit 0）。读
+`outputs/train_diag2/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000002/optim`
+的 20 个 `exp_avg`：
+
+```
+summary: nonzero=20 zero=0 of 20
+VERDICT: PASS (all slow params updated)
+```
+
+| 参数组 | exp_avg 峰值 | 语义 |
+|---|---|---|
+| `local_memory2llm.weight` | 2.699585e-03 | 同窗 `|g|`≈0.494 ⟹ 正常量级 |
+| `local_memory2llm.bias`、`local_memory_modality_embed` | 1.319825e-02 | 三者在第 1 步逐位同值（Adam sign 语义） |
+| `local_memory_runtime.*`（17 个） | 5.593394e-12 ~ 1.353328e-10 | 经 W 闸门回传，与 `∂L/∂token≈1e-11` × O(1) 吻合 |
+
+`iteration=2 train/loss=1.645335`（自 1.674389 下降）。对照 bug 9 修复前：
+20 个里 **18 个恰为零**。**⟹ bug 9 修复的充分性确证，判据 2 通过。**
+
+### 基线 vs active 显存（用户 2026-09-16 提问核对）
+
+用户记忆「baseline 需要 40+G」**有据**：
+
+| 记录 | 数值 | 出处 |
+|---|---|---|
+| R04 20 步正式 Gate | GPU 峰值 34270.6 MiB | `SESSION.md:3335` |
+| R04 单步（40G 卡） | 40192/40488 MiB（99.3% 打满） | `SESSION.md:3342` |
+| Probe 1（在线 VAE，5 步） | 33.1 GiB | `SESSION.md:3384` |
+| 4090 24G 基线 | **OOM**（`optimizer.step()` 建 FP32 Adam 二阶状态，23.45/23.51 GiB） | `SESSION.md:3315` |
+| `tmux sft_4in1` | 100% / 54 GiB | `SESSION.md:3546` |
+| **active（本轮实测）** | **11800 MiB** | 本次 |
+
+机制与本文件 `:9122-9124` 一致：基线 `max_samples_per_batch=128`（一次 forward
+128 样本的激活全在图上），active=1（一次只 forward 16 样本）。**差 3.4 倍而非 8 倍**
+的原因是固定项（参数+FP32 master+Adam 状态+CUDA context）不随 batch 变，反推
+`F + A = 40192`、`F + A/8 = 11800` ⟹ `A≈32.4 GiB`、`F≈7.6 GiB`。
+
+**标注**：40192 那次是 2026-08-15 task0 早期配置（loss 16.5→13.65），非当前 4in1
+toml，该分解仅为量级估算；同机可比的硬边界是 `:3315`（基线过不了 24G）
+vs 本轮（active 11.5 GiB）。
+
+**⟹ 实际推论：active 路线单张 4090 24G 即可正式训练；基线必须 40G+。**
+
+
+
