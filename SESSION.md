@@ -8735,6 +8735,13 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 当前远端不包含此前 v5 provider closure 提交 `786538f8` 及其后 bookkeeping；DS pane 仍显示旧 pair `786538f8` 的批准结论，不能作为当前远端 HEAD 的结论。
 - writer exact-pair review 未找到；当前不得依据旧 v5 结论推进 request-instance、真实 I/O 或训练。该共享分支状态需由下一 Agent 先核对并恢复正确 formal history。
 
+## 2026-09-16 — fixed-path writer closure 轮询观察凭证 2
+
+- `before_head=e29b44f4bb663f4b68b3233a95a2ebc90c2b0b0c`；fetch 成功；advertised/`origin/V2` 同为该 SHA；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`a58bdb905d189c8f141cf356abdbba6c5aee101f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
+- DS=`ds:0.0` capture 成功，正在核对新增 4 类 writer fixture，尚无 final verdict；ChatGPT advice-only 未找到；MM 已剔除。
+- 保持 REVIEW；未执行真实 instance 写入或训练。
+
 ## 2026-09-16 — 分支回退结论更正
 
 - 后续检查确认 `15bc38ccb0a543f20df17ff8354fef220a7ce4f4` 是 v5 closure 申请的 bookkeeping commit，不是回退；`786538f8f475d0f5a2708fda6be2c0b44a76ace0` 仍为其祖先，v5 formal history 未丢失。
@@ -8766,8 +8773,42 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS=`ds:0.0` capture 成功，正在核对 writer module 与该 pair 的差异，尚无 final verdict；ChatGPT advice-only 未找到；MM 已剔除。
 - 保持 REVIEW；未执行真实 instance 写入、source I/O、GPU 或训练。
 
+## 2026-09-16 — fixed-path writer closure 最终观察凭证 2
+
+- `before_head=e29b44f4bb663f4b68b3233a95a2ebc90c2b0b0c`；fetch 成功；advertised/`origin/V2` 同为该 SHA；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`a58bdb905d189c8f141cf356abdbba6c5aee101f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
+- DS=`ds:0.0` capture 成功，最终 verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC`；确认四类 fixture、owner 校验和 parent fsync 已闭合。
+- 该批准仅覆盖 writer CPU/static；下一步冻结真实 request-instance exact SHA/目标路径并单独申请真实写入授权，未执行真实 I/O 或训练。
+
+## 2026-09-16 — fixed-path writer closure 最终观察凭证
+
+- `before_head=e29b44f4bb663f4b68b3233a95a2ebc90c2b0b0c`；fetch 成功；advertised/`origin/V2` 同为该 SHA；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`a58bdb905d189c8f141cf356abdbba6c5aee101f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
+- DS=`ds:0.0` capture 成功，最终 verdict=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC`；确认四类 fixture、owner 校验、staging parent fsync 均已闭合；建议仅在后续真实写入 Gate 明确 `published_side` 语义。
+- ChatGPT advice-only 未找到；MM 已剔除。该批准仅覆盖 writer CPU/static，不授权真实 instance 写入、source I/O、GPU 或训练。
+
 ## 2026-09-16 — writer 整改步骤
 
 - DS 对 writer pair `152562f8ce50062169fa8644a4856bb2997966ad` 返回 `REQUEST_CHANGES`：补 link/EEXIST、fsync、readback mismatch、JSON-only partial fixture；校验 owner；staging parent fsync。
 - 已修改 `tools/psm_wma/write_source_evidence_closure_request_instance.py` 与测试：新增 uid/gid 校验、staging parent fsync、四类失败/partial fixture。
 - 验证：writer/constructor `11/11 PASS`，py_compile、diff-check PASS；当前未提交，未执行真实写入、source I/O、GPU 或训练。
+
+## 2026-09-16 — ds_pro 接手：request-instance 生成前置缺口复核
+
+- 硬检查：本地 HEAD=`e29b44f4bb663f4b68b3233a95a2ebc90c2b0b0c`，与 `origin/V2` 相同，ff-only clean；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`。
+- 库模块链路：constructor/provider/writer 三模块 `26/26 PASS`（pytest）；真实只读观察冒烟成功——module/interpreter/git 身份与 Stage-1 evidence 一致，authority ref local/remote 均=`69c2d436195297962f30f79f829dc9b4bfec581b`。
+- 关键缺口 1：selection/config blob 位于 authority root `69c2d436` tree（`git ls-tree HEAD` 无这两文件），当前 provider 只查询 HEAD tree，无法直接观察其 blob/raw identity。
+- 关键缺口 2：execution-bound 字段未冻结——`source.root_fd/root_identity`（真实 source root 目录 stat）、`executor.index_path/evidence_path/argv`、`root_audit.argv/pass_predicate`、`receipt.parent_root_revision`（= collection root，待生成）、`preflight.worktree_snapshot_sha256`、`publication.package_path/witness_path/verifier_identity`、`producer.one_shot_abi` 均无冻结来源。
+- 已可确定固定值：schema、authority（fixed_ref/candidate_revision/selection/config 的 path/blob/raw）、`source.source_kind`=`checkpoint_source_manifest_v1`、`source.selected_paths`（selection blob 8 项 relative_path：model/optim/scheduler/trainer 的 .metadata 与 __0_0.distcp）、record/receipt/publication 的 path/schema/keys、producer.callables（4 helper）、execution.order。
+- 判断：v0.3 要求 production producer/record/receipt/audit entrypoints 实现并关闭后才可构造 Stage-2 exact request；当前仅 library helper 存在。完整、正确、可审核的 instance 尚不能生成；下一步需先冻结 execution-bound 值（新 driver/设计）或实现 production entrypoints。
+- 未执行真实 instance 写入、source I/O、collection/receipt/publication、GPU 或训练。
+
+## 2026-09-16 — production entrypoints 实现设计（回应 v0.3 HIGH-1，路线 A）
+
+- 用户确认走路线 A：补齐 production entrypoints，严格 v0.3 合规（不采用 schema v0.1 直构 instance 的路线 B）。
+- 已撰写 docs-only 设计 `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_production_entrypoints_implementation_design_v0.1.md`。
+- 设计内容：把已关闭 producer/closure library helper（produce_source_evidence_record/package/closure/verify）与 collect_synthetic 的 receipt/commit/post-check seam 提升为 producer/record/receipt/root-audit 四个 production entrypoint，argv 子命令分派、任一绑定缺失 fail-closed。
+- 缺口 3（production entrypoints）由本设计认领解决；缺口 1（authority root blob 观察）与缺口 2（execution-bound 值冻结）留待后续 CPU/static implementation 与 request-instance driver 阶段解决。
+- 禁止范围：不接线、不构造 instance、不真实 I/O、不 GPU、不训练。
+- 下一步：提交设计 + TODO 更新，推送后 append Inbox，向 DS=`ds:0.0` 申请 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCTION_ENTRYPOINTS_CPU_STATIC`。
+- 未提交；未执行真实 instance 写入、source I/O、GPU 或训练。

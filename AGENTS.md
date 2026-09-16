@@ -146,6 +146,10 @@
 6. **快进方向机械判定**：fetch 后只可用 `git merge-base --is-ancestor "$before_head" origin/V2` 判断远端是否可从本轮开始 HEAD 快进；返回 0 时必须执行 `git merge --ff-only origin/V2`，而不是反向测试 `origin/V2` 是否为本地祖先。若两端分叉或 merge 失败，本轮为“检查失败/状态未知”，不得跳过远端 review、手工 merge 或把远端提交当作已合并。
 7. **formal commit 范围隔离**：审核 formal commit 的变更范围只能用 `git diff-tree --no-commit-id --name-only -r <formal-root>`（必要时对其 parent tree 作 `git diff-tree`）和 `git ls-tree <formal-root> <submodule>` 得出；禁止用未指定 commit 的 `git diff <parent>`，因为它会把共享工作树的未提交 child/训练遗留混入结果。工作树状态只能单独作为 dirty-residue 事实，绝不能作为 formal diff 或 Gitlink drift 结论。
 
+### 职责分工说明
+
+- 审核者意见仅作技术参考；Codex 是构建者、执行者和最终技术决策主体。Codex 可以基于可复核的代码、测试和运行证据采纳、部分采纳或驳回审核意见；驳回时必须在 `SESSION.md` 记录具体依据、影响范围和回归验证，不得无理由忽略意见。审核者不拥有代码修改权或强制整改权。该职责分工不改变上文关于事实记录、名册冻结、远端同步和执行边界的要求；若 Codex 驳回 `REQUEST_CHANGES`，该意见不得单独阻止已明确授权范围内的后续推进，但仍不得越过未获得授权的 Gate。
+
 ### 审核证据完整性与失效语义（强制，杜绝“检查过但没拿到结果”）
 
 1. **工具输出截断即失败**：任何用于审核状态、远端同步、tmux 送达/回复或 formal-pair 结论的命令，只要工具报告 `truncated`、输出缺页、命令超时、退出码非零，或结果无法逐字段读取，本步骤即失败。不得从已显示的片段、上一轮结果或命令意图补推结果；本轮只能记录“检查失败/状态未知”，随后将缺失检查拆成更小的独立只读命令重做。
