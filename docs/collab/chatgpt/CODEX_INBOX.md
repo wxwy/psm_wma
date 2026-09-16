@@ -695,3 +695,11 @@
 - Follow-up: explicit independent `git_remote_url`; `ls-remote --exit-code`; missing remote ref=`ABSENT`; read failure=`BLOCKED_AUTHORITY_NOT_CLOSED`; `preflight.absent_refs` bound.
 - Evidence: provider/constructor `17/17 PASS`; py_compile and git diff-check PASS; positive/missing/unreachable remote fixtures.
 - Request DS-only final `APPROVE` or `REQUEST_CHANGES(file:line)` for exact pair. No source I/O, instance write, GPU/CUDA/torchrun, or training.
+
+## 2026-09-16 — observation bundle provider closure review v4 (DS-only)
+
+- formal root: `187768e4169bc98839b7d848e2d8ffc74a3fafe9`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Follow-up to DS `APPROVE_TO_CLOSE`: added mocked `rc=2` remote-ref absence assertion and mocked unreachable-ref fail-closed assertion; removed real network attempt from CPU/static tests.
+- Evidence: provider/constructor `19/19 PASS`; py_compile and git diff-check PASS.
+- Request DS-only final verdict for exact pair. No source I/O, instance write, GPU/CUDA/torchrun, or training.
