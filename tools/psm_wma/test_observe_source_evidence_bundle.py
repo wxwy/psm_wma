@@ -5,7 +5,8 @@ from pathlib import Path
 
 from tools.psm_wma.observe_source_evidence_bundle import (
     BLOCKED_AUTHORITY_NOT_CLOSED, OBSERVATION_SECTIONS, ObservationError,
-    assemble_constructor_bundle, build_observation_bundle, observe_and_assemble, observe_bundle,
+    assemble_constructor_bundle, build_observation_bundle, observation_to_bundle,
+    observe_and_assemble, observe_bundle,
 )
 from tools.psm_wma.test_build_source_evidence_closure_request_instance import bundle
 
@@ -91,6 +92,32 @@ class ObservationTests(unittest.TestCase):
                                      env_allowlist=[], git_repo=Path(root), git_ref="HEAD",
                                      git_paths=[], bundle_template=bundle(), formal_root="a" * 40,
                                      child_gitlink="b" * 40)
+
+    def test_real_observation_binds_available_file_identities(self):
+        root = Path.cwd()
+        names = {"module": "AGENTS.md", "selection": "AGENTS.md", "config": "AGENTS.md",
+                 "interpreter": "AGENTS.md", "git": "AGENTS.md"}
+        observation = observe_bundle(
+            root=root, files={name: root / path for name, path in names.items()}, target_paths=[],
+            argv=["python", "-m", "x"], env={}, env_allowlist=[], git_repo=root,
+            git_ref="HEAD", git_paths=["AGENTS.md"])
+        result = observation_to_bundle(bundle(), observation,
+                                       formal_root="c" * 40, child_gitlink="d" * 40)
+        self.assertEqual(result["authority"]["selection_path"], str(root / "AGENTS.md"))
+        self.assertEqual(result["authority"]["config_path"], str(root / "AGENTS.md"))
+        self.assertEqual(result["executor"]["interpreter_path"], str(root / "AGENTS.md"))
+        self.assertEqual(result["executor"]["git_path"], str(root / "AGENTS.md"))
+        self.assertEqual(result["authority"]["selection_blob_native_oid"],
+                         observation["git"]["blob_oids"]["AGENTS.md"])
+
+    def test_missing_observed_blob_fails_closed(self):
+        observation = {"root": {}, "files": {"module": {"path": "module.py", "raw_sha256": "a" * 64}},
+                       "target_paths": [], "argv": [], "cwd": "/tmp",
+                       "sanitized_env_sha256": "b" * 64,
+                       "git": {"head_revision": "c" * 40, "index_tree_native_oid": "d" * 40,
+                               "ref_revision": "e" * 40, "blob_oids": {}}}
+        with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
+            observation_to_bundle(bundle(), observation, formal_root="f" * 40, child_gitlink="0" * 40)
 
 
 if __name__ == "__main__":
