@@ -540,6 +540,13 @@
 - DS-only per user instruction; forbidden: real instance write, source I/O, GPU/CUDA/torchrun and training.
 - requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_PROVIDER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — ObservationBundle provider constructor assembly DS review
+
+- formal root: `57aef1eafa636ece55f68aa05c6e3db85e51ea51`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- remediation: connected `assemble_constructor_bundle` to the existing constructor; it requires the complete flat top-level bundle, forces `sha256=""`, returns canonical parsed output, and maps missing/invalid contract to `BLOCKED_AUTHORITY_NOT_CLOSED`.
+- evidence: 15/15 joint unittest PASS, py_compile PASS, git diff --check PASS; no real source/cache payload reads or instance writes.
+- DS-only per user instruction. requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — ObservationBundle provider remediation DS review
 
 - formal root: `134a1f44e80bd1d359f81cd156872b8ea4623d6c`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
