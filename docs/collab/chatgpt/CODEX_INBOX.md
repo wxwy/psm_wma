@@ -540,6 +540,13 @@
 - forbidden in this request: training, GPU/CUDA/torchrun, child modification, retry, source payload publication beyond the approved closure sequence.
 - DS-only per user instruction. requested verdict: `APPROVE_TO_WRITE_SOURCE_EVIDENCE` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — fixed-path publisher remediation DS review
+
+- formal root: `152562f8ce50062169fa8644a4856bb2997966ad`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- remediation: added `write_approved_request_pair` with separate target/staging directory fds, approved versioned JSON/Markdown sibling names, cross-directory no-overwrite link, ordered fsync/readback and structured residue.
+- evidence: 7/7 unittest PASS, py_compile PASS, git diff --check PASS; all tests use temporary fixtures and do not write real `docs/build` outputs.
+- DS-only per user instruction. requested verdict: `APPROVE_TO_WRITE_SOURCE_EVIDENCE` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — real-output writer implementation design review
 
 - formal root: `f13c6f79d9257c742c167534e3b57a6b881e7607`
