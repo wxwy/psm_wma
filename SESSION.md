@@ -8024,3 +8024,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，已逐项核验代码范围、blob identity、schema/key/digest、non-circular package/witness、one-shot handoff 与 57/57 测试事实；capture 截至本轮尚未出现 exact pair final verdict，状态为处理中。
 - DS=`ds:0.0` capture 成功，已进入 formal diff 核验；截至本轮尚未出现 exact pair final verdict，状态为处理中。
 - 本轮无 implementation closure 推进令牌；禁止接入 native main、真实 source I/O、record/publication、GPU 或训练。
+
+## 2026-09-16 — producer/closure implementation closure 观察凭证 #2 / REQUEST_CHANGES
+
+- `before_head=d11d239a92bb67ec5f8f2e1654135aa076842734`；fetch、ls-remote advertised/tracking 核对、完整 range、正向 ancestor 与 ff-only 均成功；advertised=`d11d239a92bb67ec5f8f2e1654135aa076842734`；新增为空；merge=`Already up to date.`
+- formal pair=`3bf2427c28e69bb97c2bb2d192bee8c963471fc5` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`。
+- DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/immutable_source_collection.py:726)`；意见为：producer/package 必须校验 receipt-bound config/descriptor digest，补 package/witness 对称 verifier 与 formal-root/child identity，补不可复制/不可序列化 one-shot producer handoff 及 fixture。
+- 本轮无 APPROVE 推进令牌；仅允许在同一 pair final 已齐后评估并最小整改，整改后必须生成新 formal root 重新审核；未执行真实 I/O、publication、GPU 或训练。
