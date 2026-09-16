@@ -335,14 +335,29 @@ def main() -> int:
     missing = [suite for suite in SUITES if distribution.get(suite, 0) <= 0]
     if missing:
         raise RuntimeError(f"frozen window never visits suites: {missing}")
+    # The freeze is the authority on rebind duty: ``_peek_block`` sets
+    # ``rebind_before_admit`` on the one member per finished episode that has to
+    # retire the slot's terminal stream before its successor can be admitted.
+    # Tallying it here is what turns "the walk finished" into "the walk finished
+    # having actually exercised the rebind seam" -- a window that never rebinds
+    # would reach the same final phase without touching it.
+    rebind_positions = [index for index, member in enumerate(freeze.members) if member.rebind_before_admit]
+    per_slot_blocks = Counter(int(identity.slot_id) for identity in freeze.identities)
     report["window"] = {
         "ga_effective": plan.ga_effective,
         "attempt": plan.attempt,
         "plan_chain_id": plan.plan_chain_id,
         "per_category": {suite: distribution.get(suite, 0) for suite in SUITES},
         "planned_n_valid": sorted(set(plan.planned_n_valid)),
+        "rebind_count": len(rebind_positions),
+        "rebind_positions": rebind_positions,
+        "per_slot_blocks": {slot: per_slot_blocks[slot] for slot in sorted(per_slot_blocks)},
     }
-    print(f"[4] frozen window: ga_effective={plan.ga_effective} per_category={report['window']['per_category']}")
+    print(
+        f"[4] frozen window: ga_effective={plan.ga_effective} per_category={report['window']['per_category']} "
+        f"rebinds={len(rebind_positions)} at {rebind_positions}"
+    )
+    print(f"    per-slot blocks: {report['window']['per_slot_blocks']}")
 
     # ---- 5..7. stream the window: produce -> backward -> successful_backward
     #            -> owner.commit, one member at a time ------------------------
