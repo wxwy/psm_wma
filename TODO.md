@@ -249,6 +249,7 @@
 | ROOT-CAUSE-ITER2800-SPATIAL | DONE | Kimi | 用户两次质疑 acceptance_4090/iter_2800 spatial 0.48 是错的 | 按 MP4 _success/_fail 后缀重算 → **0.96**（95/99）；bug 仅影响 spatial suite，object/goal/libero_10 summary.json 可信；MEMORY/mp4-suffix-is-truth.md + iter2800-spatial-sr-dirty-data.md 已固化 |
 | VERIFY-SERVER-LOADS-NEW-CKPT | DONE | Kimi | 用户要求确认 server 切 ckpt 正确性 | 6 个 server log 全部 `checkpoint_path=iter_*/model` 与 ps 启动时间、端口探活、driver trap+stop_server 三重保险对得上；不留残留 |
 | ROOT-CAUSE-EVAL-DIR-ROLES | DONE | Kimi | 多次查 SR 数据错位 | MEMORY/eval-result-directory-roles.md 固化 8 个父目录的角色/参数/启动时间全景表 + 查 SR 强制流程（先父目录 → 再参数 → 再判定可靠性）|
+| PERF-ACTIVE-BSTREAM-PARALLEL | TODO | Codex | 用户 2026-09-16 提出「8 个 episode 互不干扰、可并行计算」；需先完成 D8a 收尾与 baseline 同机短跑对照 | 提案把 active 路线 8 条 slot 流合成 B=8 的 `SegmentBatch`，即 `G0-R09-B-TTT-V035-FUNCTIONAL-ACTIVE-ROUTE-IMPLEMENTATION` 已裁决否决的选项 **(A)**。现状 B=1、并行度 1、128 member/步。可行性依据：`active_local_memory_driver.py:216-222` 已能一次遍历全部 8 个 slot 收集候选，`_peek_block:251` 是「commits no driver state」的纯视图，而 `:225 max()` 每轮只取 1 个、`:227 _commit_block` 提交 1 个；`window_members` 来自 `active_local_memory_launch.py:246` = `grad_accum_iter`。**收益**：并行度 1→8（上限即 `b_stream=8`，slot 内 T=16 为 state 依赖不可并行）；每步 `training_step` 128→16，`other_s`（D8a 实测 42.9 s/步、占 21%）随之下降；每样本慢 1.77× 有望缓解。**代价**：激活粗估 ×~8（峰值或达 24 GiB 上下，**未实测**）；需改 `SegmentBatch` ABI、`:225 max()`→`sorted()[:8]`、`grad_accum_iter` 由 `8*_active_ga` 改回 `_active_ga`。**阻塞**：该 ABI 已随 v0.3.5 冻结，走 (A) 须重开冻结契约并经三方 Gate；且须先有 baseline 同机短跑对照才能定增量。 |
 
 ## 新增任务规则
 
