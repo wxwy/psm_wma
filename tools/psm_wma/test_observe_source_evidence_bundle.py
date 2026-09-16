@@ -1,6 +1,7 @@
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from tools.psm_wma.observe_source_evidence_bundle import (
@@ -112,13 +113,28 @@ class ObservationTests(unittest.TestCase):
 
     def test_remote_ref_observation_is_separate_from_local_ref(self):
         root = Path.cwd()
-        result = observe_and_assemble(
-            root=root, files={"module": root / "AGENTS.md"}, target_paths=[], argv=[], env={},
-            env_allowlist=[], git_repo=root, git_ref="HEAD", git_remote_ref="HEAD",
-            git_paths=["AGENTS.md"], bundle_template=bundle(), formal_root="a" * 40,
-            child_gitlink="b" * 40)
-        self.assertEqual(result["authority"]["local_ref_revision"], result["preflight"]["head_revision"])
-        self.assertNotEqual(result["authority"]["remote_ref_revision"], "ABSENT")
+        with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
+            observe_and_assemble(
+                root=root, files={"module": root / "AGENTS.md"}, target_paths=[], argv=[], env={},
+                env_allowlist=[], git_repo=root, git_ref="HEAD", git_remote_url="https://example.invalid/repo.git",
+                git_remote_ref="HEAD", git_paths=["AGENTS.md"], bundle_template=bundle(),
+                formal_root="a" * 40, child_gitlink="b" * 40)
+
+    def test_remote_ref_positive_uses_independent_remote_target(self):
+        root = Path.cwd()
+        completed = type("Completed", (), {"returncode": 0, "stdout": "f" * 40 + "\tHEAD\n"})()
+        with patch("tools.psm_wma.observe_source_evidence_bundle.subprocess.run",
+                   side_effect=[
+                       type("Completed", (), {"stdout": "a" * 40 + "\n"})(),
+                       None,
+                       type("Completed", (), {"stdout": "b" * 40 + "\n"})(),
+                       type("Completed", (), {"stdout": "c" * 40 + "\n"})(),
+                       completed,
+                   ]):
+            from tools.psm_wma.observe_source_evidence_bundle import read_git_metadata
+            result = read_git_metadata(root, ref="HEAD", paths=[],
+                                       remote_url="https://example.invalid/repo.git", remote_ref="HEAD")
+        self.assertEqual(result["remote_ref_revision"], "f" * 40)
 
     def test_missing_observed_blob_fails_closed(self):
         observation = {"root": {}, "files": {"module": {"path": "module.py", "raw_sha256": "a" * 64}},

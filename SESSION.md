@@ -8686,8 +8686,28 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 测试：新增远端正例；provider/constructor `16/16 PASS`，py_compile、diff-check PASS。
 - 下一步：提交新 formal root，申请 DS closure review；未执行 instance 写入、source I/O 或训练。
 
+## 2026-09-16 — remote observation 整改步骤 2
+
+- 修改：`observe_and_assemble` 透传显式 `git_remote_url`；remote `ls-remote --exit-code` 与本地仓库分离；remote ref 缺失写 `ABSENT`，读取异常 fail-closed。
+- 测试：远端存在/缺失/不可达三类路径覆盖；provider/constructor `17/17 PASS`，py_compile、diff-check PASS。
+- 当前未提交；下一步提交并申请 DS closure review。
+
 ## 2026-09-16 — remote ref closure review 送达回执
 
 - formal root=`78231622d5071cb12f8a711cd51461e0da008317`；child=`93a89ba61306d840a008813f62f26a34d54850f4`；申请已追加 Inbox 并推送。
 - DS=`ds:0.0` 已完成 send-keys-l→间隔 1 秒→独立 Enter→capture；capture 显示正确 pair 的完整申请已进入会话。
 - 当前状态：DS 已送达、处理中；无 final verdict。未执行 instance 写入、source I/O 或训练。
+
+## 2026-09-16 — remote ref closure review 轮询观察凭证
+
+- `before_head=665429dfd75ea9c19672ed667d6dcdfb542e567f`；fetch 成功；advertised/`origin/V2`=`665429dfd75ea9c19672ed667d6dcdfb542e567f`；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`78231622d5071cb12f8a711cd51461e0da008317` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
+- DS=`ds:0.0` capture 成功，正在核对 remote read/ABSENT 实现，尚无 final verdict；ChatGPT advice-only 未找到；MM 已剔除。
+- 保持 REVIEW；未执行 instance 写入或训练。
+
+## 2026-09-16 — remote ref closure review 轮询观察凭证 2
+
+- `before_head=665429dfd75ea9c19672ed667d6dcdfb542e567f`；fetch 成功；advertised/`origin/V2`=`665429dfd75ea9c19672ed667d6dcdfb542e567f`；新增范围为空；ancestor=0；ff-only=Already up to date。
+- formal pair=`78231622d5071cb12f8a711cd51461e0da008317` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact review 未找到。
+- DS=`ds:0.0` capture 成功，最终 verdict=`REQUEST_CHANGES`：`git -C repo ls-remote repo ref` 仍读取本地对象库而非 canonical remote；远端异常与缺失均编码 ABSENT；要求独立 remote URL、异常 fail-closed、存在/缺失/不可达三类 fixture。
+- ChatGPT advice-only 未找到；MM 已剔除。未执行 instance 写入或训练。
