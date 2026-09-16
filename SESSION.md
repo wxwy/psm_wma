@@ -8810,5 +8810,6 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 设计内容：把已关闭 producer/closure library helper（produce_source_evidence_record/package/closure/verify）与 collect_synthetic 的 receipt/commit/post-check seam 提升为 producer/record/receipt/root-audit 四个 production entrypoint，argv 子命令分派、任一绑定缺失 fail-closed。
 - 缺口 3（production entrypoints）由本设计认领解决；缺口 1（authority root blob 观察）与缺口 2（execution-bound 值冻结）留待后续 CPU/static implementation 与 request-instance driver 阶段解决。
 - 禁止范围：不接线、不构造 instance、不真实 I/O、不 GPU、不训练。
-- 下一步：提交设计 + TODO 更新，推送后 append Inbox，向 DS=`ds:0.0` 申请 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCTION_ENTRYPOINTS_CPU_STATIC`。
-- 未提交；未执行真实 instance 写入、source I/O、GPU 或训练。
+- formal root=`3324b3a0a4dc92b36882e23b4d9b42052554965c` / child=`93a89ba61306d840a008813f62f26a34d54850f4`（提交已生成）。
+- 下一步：推送后 append Inbox，向 DS=`ds:0.0` 申请 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCTION_ENTRYPOINTS_CPU_STATIC`。
+- 未执行真实 instance 写入、source I/O、GPU 或训练。
