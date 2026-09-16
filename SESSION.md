@@ -7771,3 +7771,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，仍在执行 docs/build 状态检查，未出现 construction final literal verdict。
 - DS=`ds:0.0` capture 成功，已读取 producer/builder blob 与 environment 区域，仍在处理中，未出现 construction final literal verdict。
 - 本轮仍无 construction 推进令牌；未生成正式 pair、未物化、未写 authority ref、未启动 GPU/训练。
+
+## 2026-09-16 — construction review 观察凭证 #3
+
+- `before_head=275e6083f7f4cdc30fd0c530d1d2d846734355fb`；fetch/ls-remote 成功，advertised/tracking 一致；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 仍无 `8f170771e7a351ba99a3d656d2dc8d100e0f61e6` 命中；按申请范围不等待 ChatGPT final。
+- MM=`mm:0.0` capture 成功，已检查新 root 的 docs/build 变更，未出现 construction final literal verdict，状态为处理中。
+- DS=`ds:0.0` capture 成功并给出同 pair `REQUEST_CHANGES(tools/psm_wma/produce_stage1_request_pair.py:36)`：要求统一 builder/adapter/producer helper environment 语义，并增加将 builder 真实 environment 送入 `produce_pair()` 的端到端见证；未授权物化、authority ref、source-evidence、child/runtime/config mutation、GPU/训练。
+- 本轮无 construction 推进令牌；因 MM final 缺件，暂不整改；未生成正式 pair、未物化、未启动训练。
