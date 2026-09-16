@@ -52,6 +52,14 @@ class ObservationTests(unittest.TestCase):
         with self.assertRaisesRegex(ObservationError, BLOCKED_AUTHORITY_NOT_CLOSED):
             build_observation_bundle(sections={}, metadata={})
 
+    def test_reads_git_metadata_through_observe_bundle(self):
+        root = Path.cwd()
+        result = observe_bundle(root=root, files={"module": root / "AGENTS.md"}, target_paths=[],
+                                argv=[], env={}, env_allowlist=[], git_repo=root,
+                                git_paths=["AGENTS.md"])
+        self.assertEqual(len(result["git"]["head_revision"]), 40)
+        self.assertEqual(len(result["git"]["blob_oids"]["AGENTS.md"]), 40)
+
 
 if __name__ == "__main__":
     unittest.main()

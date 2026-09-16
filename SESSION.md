@@ -8443,6 +8443,33 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS=`ds:0.0` capture 成功，已检查 root/log/HEAD/child 并读取 provider，实现验证仍在进行，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
 - 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
 
+## 2026-09-16 — ObservationBundle provider remediation DS review 观察凭证 #1
+
+- `before_head=e7ccddd734d76cc358922a6e5c6839d4902d058b`；fetch 成功；advertised/tracking=`e7ccddd734d76cc358922a6e5c6839d4902d058b`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`134a1f44e80bd1d359f81cd156872b8ea4623d6c` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，正在读取实现、测试和 diff，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider remediation DS review 观察凭证 #2
+
+- `before_head=e7ccddd734d76cc358922a6e5c6839d4902d058b`；fetch 成功；advertised/tracking=`e7ccddd734d76cc358922a6e5c6839d4902d058b`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`134a1f44e80bd1d359f81cd156872b8ea4623d6c` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，正在检查实现是否被 request-instance constructor/调用方消费，尚无当前 pair final verdict；MM=`REMOVED_BY_USER`。
+- 当前无推进令牌；未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider remediation DS review 观察凭证 #3
+
+- `before_head=e7ccddd734d76cc358922a6e5c6839d4902d058b`；fetch 成功；advertised/tracking=`e7ccddd734d76cc358922a6e5c6839d4902d058b`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`134a1f44e80bd1d359f81cd156872b8ea4623d6c` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
+- DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/rl/psm_wma/observe_source_evidence_bundle.py:105)`（DS pane 实际路径为 `tools/psm_wma/observe_source_evidence_bundle.py:105`）；指出 read_git_metadata 未接入、无 Git 测试，且缺与 constructor 对齐的扁平十 section bundle/端到端 fixture。
+- 经评估接受；provider 当前不可作为 request-instance 输入。未写真实 instance、未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — ObservationBundle provider Git-read wiring
+
+- `observe_bundle` 现已接入 `read_git_metadata`，在显式只读参数下采集 HEAD、clean-index 等价 tree、ref revision 与 blob OID；Git 读取失败统一 fail-closed。
+- 新增真实仓库只读 Git 正例测试；未执行网络 fetch、source/cache payload 读取、instance 写入、GPU 或训练。
+- 验证：13/13 联合 unittest PASS；py_compile PASS；git diff-check PASS。下一步补完整扁平 schema bundle 装配与 constructor 端到端 fixture。
+
 ## 2026-09-16 — ObservationBundle provider CPU/static closure review 观察凭证 #2
 
 - `before_head=03991d413b70384b09c3333fd14e236ffe0b1460`；fetch 成功；advertised/tracking=`03991d413b70384b09c3333fd14e236ffe0b1460`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。

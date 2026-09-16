@@ -86,7 +86,9 @@ def read_git_metadata(repo: Path, *, ref: str, paths: Iterable[str]) -> dict[str
 
 
 def observe_bundle(*, root: Path, files: Mapping[str, Path], target_paths: Iterable[Path],
-                   argv: list[str], env: Mapping[str, str], env_allowlist: Iterable[str]) -> dict[str, object]:
+                   argv: list[str], env: Mapping[str, str], env_allowlist: Iterable[str],
+                   git_repo: Path | None = None, git_ref: str = "HEAD",
+                   git_paths: Iterable[str] = ()) -> dict[str, object]:
     """Return an in-memory, payload-free observation bundle; never writes or mutates."""
     root = Path(root)
     root_stat = root.stat()
@@ -102,10 +104,13 @@ def observe_bundle(*, root: Path, files: Mapping[str, Path], target_paths: Itera
     current_root = root.stat()
     if (root_stat.st_dev, root_stat.st_ino) != (current_root.st_dev, current_root.st_ino):
         raise ObservationError("root identity drift")
+    git_metadata = None
+    if git_repo is not None:
+        git_metadata = read_git_metadata(git_repo, ref=git_ref, paths=git_paths)
     return {"root": {"path": str(root), "dev": root_stat.st_dev, "ino": root_stat.st_ino,
                       "mode": stat.S_IMODE(root_stat.st_mode), "uid": root_stat.st_uid, "gid": root_stat.st_gid},
             "files": identities, "target_paths": targets, "argv": list(argv),
-            "sanitized_env_sha256": _env_digest(env, env_allowlist)}
+            "sanitized_env_sha256": _env_digest(env, env_allowlist), "git": git_metadata}
 
 
 def build_observation_bundle(*, sections: Mapping[str, Mapping[str, object]],
