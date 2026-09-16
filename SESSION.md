@@ -7794,3 +7794,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 采纳 MM/DS 技术意见：adapter 与 builder 的 helper key 统一为 `credential.https://github.com.helper`；producer 端到端测试改用 builder 真实 helper environment。
 - 验证：相关测试 `81/81 PASS`；`py_compile`、`git diff --check` PASS。测试内部既有 launcher fixture usage 输出不影响 unittest 成功结果。
 - 当前仍未生成正式 pair；整改后需新 formal root、新 suffix、新 pair，并重新申请 construction review；未物化、未启动训练。
+
+## 2026-09-16 — v1.2 request pair 构造完成
+
+- 绑定 formal root=`7796d054daac2d99713e57df6ebc870cf9be37e3`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a3`。
+- 生成 JSON 38852 bytes，SHA-256=`cfd3c1de8f265d15d9b88a38c58ee079475fa3fed2a21691368fac1f5d202833`，Git blob=`0e61c9a3c19e502d9ad1149e2a37f83462d55bfe`；Markdown 340 bytes，SHA-256=`d21da348d36fd168803b382dfbb72cbf31edc2c8f8c29376b78a274387cc260e`，Git blob=`8c6c3e3e308002dd7fd02b2e7d8e4bcda10ab4af`。
+- `verify_pair` PASS；environment helper 为 `credential.https://github.com.helper`，未包含凭据字节；未物化、未写 authority ref、未启动 GPU/训练。
