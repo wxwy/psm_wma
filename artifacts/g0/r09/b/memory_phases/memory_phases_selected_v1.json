@@ -1,0 +1,399 @@
+{
+  "combination_count": 1,
+  "completed_count": 1,
+  "results": {
+    "active_vision0": {
+      "backend": "active",
+      "keys_to_select": [
+        "local_memory_runtime.evidence_encoder.",
+        "local_memory_runtime.ttt_core.",
+        "local_memory2llm.",
+        "local_memory_modality_embed"
+      ],
+      "load_vision_tokenizer": false,
+      "model_state_dict_key_count": 597,
+      "observed_load_vision_tokenizer": {
+        "after": false,
+        "before": true
+      },
+      "optimizer_state_dict_root_keys": [
+        "param_groups.net.local_memory2llm.bias.betas",
+        "param_groups.net.local_memory2llm.bias.bias_correction",
+        "param_groups.net.local_memory2llm.bias.eps",
+        "param_groups.net.local_memory2llm.bias.lr",
+        "param_groups.net.local_memory2llm.bias.step",
+        "param_groups.net.local_memory2llm.bias.weight_decay",
+        "param_groups.net.local_memory2llm.weight.betas",
+        "param_groups.net.local_memory2llm.weight.bias_correction",
+        "param_groups.net.local_memory2llm.weight.eps",
+        "param_groups.net.local_memory2llm.weight.lr",
+        "param_groups.net.local_memory2llm.weight.step",
+        "param_groups.net.local_memory2llm.weight.weight_decay",
+        "param_groups.net.local_memory_modality_embed.betas",
+        "param_groups.net.local_memory_modality_embed.bias_correction",
+        "param_groups.net.local_memory_modality_embed.eps",
+        "param_groups.net.local_memory_modality_embed.lr",
+        "param_groups.net.local_memory_modality_embed.step",
+        "param_groups.net.local_memory_modality_embed.weight_decay",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.bias.betas",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.bias.bias_correction",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.bias.eps",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.bias.lr",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.bias.step",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.bias.weight_decay",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.weight.betas",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.weight.bias_correction",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.weight.eps",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.weight.lr",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.weight.step",
+        "param_groups.net.local_memory_runtime.evidence_encoder.action_proj.weight.weight_decay",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.bias.betas",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.bias.bias_correction",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.bias.eps",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.bias.lr",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.bias.step",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.bias.weight_decay",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.weight.betas",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.weight.bias_correction",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.weight.eps",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.weight.lr",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.weight.step",
+        "param_groups.net.local_memory_runtime.evidence_encoder.norm.weight.weight_decay",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.bias.betas",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.bias.bias_correction",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.bias.eps",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.bias.lr",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.bias.step",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.bias.weight_decay",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.weight.betas",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.weight.bias_correction",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.weight.eps",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.weight.lr",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.weight.step",
+        "param_groups.net.local_memory_runtime.evidence_encoder.visual_proj.weight.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.bias.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.bias.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.bias.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.bias.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.bias.step",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.bias.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.weight.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.weight.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.weight.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.weight.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.weight.step",
+        "param_groups.net.local_memory_runtime.ttt_core.key_proj.weight.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.bias.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.bias.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.bias.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.bias.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.bias.step",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.bias.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.weight.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.weight.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.weight.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.weight.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.weight.step",
+        "param_groups.net.local_memory_runtime.ttt_core.query_proj.weight.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.slot_queries.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.slot_queries.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.slot_queries.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.slot_queries.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.slot_queries.step",
+        "param_groups.net.local_memory_runtime.ttt_core.slot_queries.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.bias.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.bias.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.bias.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.bias.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.bias.step",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.bias.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.weight.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.weight.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.weight.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.weight.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.weight.step",
+        "param_groups.net.local_memory_runtime.ttt_core.value_proj.weight.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_bias.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_bias.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_bias.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_bias.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_bias.step",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_bias.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_weight.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_weight.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_weight.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_weight.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_weight.step",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_in_weight.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_bias.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_bias.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_bias.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_bias.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_bias.step",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_bias.weight_decay",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_weight.betas",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_weight.bias_correction",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_weight.eps",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_weight.lr",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_weight.step",
+        "param_groups.net.local_memory_runtime.ttt_core.w0_fast_out_weight.weight_decay",
+        "state.net.local_memory2llm.bias.exp_avg",
+        "state.net.local_memory2llm.bias.exp_avg_sq",
+        "state.net.local_memory2llm.weight.exp_avg",
+        "state.net.local_memory2llm.weight.exp_avg_sq",
+        "state.net.local_memory_modality_embed.exp_avg",
+        "state.net.local_memory_modality_embed.exp_avg_sq",
+        "state.net.local_memory_runtime.evidence_encoder.action_proj.bias.exp_avg",
+        "state.net.local_memory_runtime.evidence_encoder.action_proj.bias.exp_avg_sq",
+        "state.net.local_memory_runtime.evidence_encoder.action_proj.weight.exp_avg",
+        "state.net.local_memory_runtime.evidence_encoder.action_proj.weight.exp_avg_sq",
+        "state.net.local_memory_runtime.evidence_encoder.norm.bias.exp_avg",
+        "state.net.local_memory_runtime.evidence_encoder.norm.bias.exp_avg_sq",
+        "state.net.local_memory_runtime.evidence_encoder.norm.weight.exp_avg",
+        "state.net.local_memory_runtime.evidence_encoder.norm.weight.exp_avg_sq",
+        "state.net.local_memory_runtime.evidence_encoder.visual_proj.bias.exp_avg",
+        "state.net.local_memory_runtime.evidence_encoder.visual_proj.bias.exp_avg_sq",
+        "state.net.local_memory_runtime.evidence_encoder.visual_proj.weight.exp_avg",
+        "state.net.local_memory_runtime.evidence_encoder.visual_proj.weight.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.key_proj.bias.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.key_proj.bias.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.key_proj.weight.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.key_proj.weight.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.query_proj.bias.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.query_proj.bias.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.query_proj.weight.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.query_proj.weight.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.slot_queries.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.slot_queries.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.value_proj.bias.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.value_proj.bias.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.value_proj.weight.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.value_proj.weight.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.w0_fast_in_bias.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.w0_fast_in_bias.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.w0_fast_in_weight.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.w0_fast_in_weight.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.w0_fast_out_bias.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.w0_fast_out_bias.exp_avg_sq",
+        "state.net.local_memory_runtime.ttt_core.w0_fast_out_weight.exp_avg",
+        "state.net.local_memory_runtime.ttt_core.w0_fast_out_weight.exp_avg_sq"
+      ],
+      "parameter_count": 597,
+      "peak_allocated_bytes": 6741901312,
+      "peak_reserved_bytes": 6754926592,
+      "schema_version": "r09_b_memory_phases_v1",
+      "selected_dtype_bytes": {
+        "torch.bfloat16": 2
+      },
+      "selected_dtypes": [
+        "torch.bfloat16"
+      ],
+      "selected_element_count": 151424,
+      "selected_parameter_count": 20,
+      "selected_parameters": [
+        {
+          "name": "local_memory_modality_embed",
+          "numel": 2048,
+          "shape": [
+            2048
+          ]
+        },
+        {
+          "name": "local_memory2llm.weight",
+          "numel": 65536,
+          "shape": [
+            2048,
+            32
+          ]
+        },
+        {
+          "name": "local_memory2llm.bias",
+          "numel": 2048,
+          "shape": [
+            2048
+          ]
+        },
+        {
+          "name": "local_memory_runtime.evidence_encoder.visual_proj.weight",
+          "numel": 24576,
+          "shape": [
+            256,
+            96
+          ]
+        },
+        {
+          "name": "local_memory_runtime.evidence_encoder.visual_proj.bias",
+          "numel": 256,
+          "shape": [
+            256
+          ]
+        },
+        {
+          "name": "local_memory_runtime.evidence_encoder.action_proj.weight",
+          "numel": 2560,
+          "shape": [
+            256,
+            10
+          ]
+        },
+        {
+          "name": "local_memory_runtime.evidence_encoder.action_proj.bias",
+          "numel": 256,
+          "shape": [
+            256
+          ]
+        },
+        {
+          "name": "local_memory_runtime.evidence_encoder.norm.weight",
+          "numel": 256,
+          "shape": [
+            256
+          ]
+        },
+        {
+          "name": "local_memory_runtime.evidence_encoder.norm.bias",
+          "numel": 256,
+          "shape": [
+            256
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.slot_queries",
+          "numel": 64,
+          "shape": [
+            1,
+            64
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.w0_fast_in_weight",
+          "numel": 8192,
+          "shape": [
+            128,
+            64
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.w0_fast_in_bias",
+          "numel": 128,
+          "shape": [
+            128
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.w0_fast_out_weight",
+          "numel": 4096,
+          "shape": [
+            32,
+            128
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.w0_fast_out_bias",
+          "numel": 32,
+          "shape": [
+            32
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.key_proj.weight",
+          "numel": 16384,
+          "shape": [
+            64,
+            256
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.key_proj.bias",
+          "numel": 64,
+          "shape": [
+            64
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.query_proj.weight",
+          "numel": 16384,
+          "shape": [
+            64,
+            256
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.query_proj.bias",
+          "numel": 64,
+          "shape": [
+            64
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.value_proj.weight",
+          "numel": 8192,
+          "shape": [
+            32,
+            256
+          ]
+        },
+        {
+          "name": "local_memory_runtime.ttt_core.value_proj.bias",
+          "numel": 32,
+          "shape": [
+            32
+          ]
+        }
+      ],
+      "stage_trace": [
+        {
+          "allocated_bytes": 0,
+          "delta_allocated_bytes": 0,
+          "peak_allocated_bytes": 0,
+          "peak_reserved_bytes": 0,
+          "reserved_bytes": 0,
+          "stage": "cuda_init"
+        },
+        {
+          "allocated_bytes": 0,
+          "delta_allocated_bytes": 0,
+          "peak_allocated_bytes": 0,
+          "peak_reserved_bytes": 0,
+          "reserved_bytes": 0,
+          "stage": "processor"
+        },
+        {
+          "allocated_bytes": 6739757056,
+          "delta_allocated_bytes": 6739757056,
+          "peak_allocated_bytes": 6739758592,
+          "peak_reserved_bytes": 6752829440,
+          "reserved_bytes": 6752829440,
+          "stage": "model_build"
+        },
+        {
+          "allocated_bytes": 6739758080,
+          "delta_allocated_bytes": 1024,
+          "peak_allocated_bytes": 6739758592,
+          "peak_reserved_bytes": 6752829440,
+          "reserved_bytes": 6752829440,
+          "stage": "optimizer_build"
+        },
+        {
+          "allocated_bytes": 6739758080,
+          "delta_allocated_bytes": 0,
+          "peak_allocated_bytes": 6739758592,
+          "peak_reserved_bytes": 6752829440,
+          "reserved_bytes": 6752829440,
+          "stage": "model_state_dict"
+        },
+        {
+          "allocated_bytes": 6741580288,
+          "delta_allocated_bytes": 1822208,
+          "peak_allocated_bytes": 6741901312,
+          "peak_reserved_bytes": 6754926592,
+          "reserved_bytes": 6754926592,
+          "stage": "optimizer_state_dict"
+        }
+      ],
+      "status": "PASS"
+    }
+  },
+  "schema_version": "r09_b_memory_phases_v1",
+  "status": "PASS"
+}
