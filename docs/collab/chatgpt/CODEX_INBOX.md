@@ -675,3 +675,15 @@
 - Evidence: provider and constructor tests `15/15 PASS`; py_compile and git diff-check PASS.
 - Review scope: DS-only per user authorization; MM removed; ChatGPT advice-only. No source I/O, request-instance write, GPU/CUDA/torchrun, or training.
 - Request: review exact formal root/child and return final `APPROVE` or `REQUEST_CHANGES` with `file:line`; approve only the described provider/test scope.
+
+## 2026-09-16 — observation bundle provider closure review v2 (DS-only)
+
+- formal root: `78231622c0ea1e3daaf5af7f5420dbf81701d5cf`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Follow-up: separate local/remote ref observation via explicit `git_remote_ref`; encode missing remote as `ABSENT`; bind `preflight.absent_refs`; add remote positive fixture.
+- Evidence: provider/constructor `16/16 PASS`; py_compile and git diff-check PASS.
+- Request DS-only final `APPROVE` or `REQUEST_CHANGES(file:line)` for this exact pair. No source I/O, instance write, GPU/CUDA/torchrun, or training.
+
+### Correction
+
+- The preceding v2 entry contained a typographical formal-root SHA. It is superseded by this exact pair: formal root `78231622d5071cb12f8a711cd51461e0da008317`; child/Gitlink `93a89ba61306d840a008813f62f26a34d54850f4`.
