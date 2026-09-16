@@ -13,6 +13,10 @@ class RealOutputWriteError(RuntimeError):
     """The request-instance pair could not be published safely."""
 
 
+APPROVED_JSON_NAME = "PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_v1.json"
+APPROVED_MARKDOWN_NAME = APPROVED_JSON_NAME[:-5] + ".md"
+APPROVED_STAGE_NAME = ".request_instance_stage"
+
 def _parent_fd(directory: Path) -> int:
     return os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC | os.O_NOFOLLOW)
 
@@ -121,3 +125,79 @@ def write_request_pair(json_bytes: bytes, markdown_bytes: bytes, directory: Path
     finally:
         if fd >= 0:
             os.close(fd)
+
+
+def write_approved_request_pair(json_bytes: bytes, markdown_bytes: bytes, build_directory: Path,
+                               *, expected_formal_root: str,
+                               expected_child_gitlink: str,
+                               expected_instance_sha256: str) -> dict[str, object]:
+    """Publish the approved versioned siblings using a separate staging directory."""
+    digest = verify_instance_bytes(json_bytes)
+    value = json.loads(json_bytes)
+    if (value["formal_root"] != expected_formal_root
+            or value["child_gitlink"] != expected_child_gitlink
+            or digest != expected_instance_sha256
+            or digest.encode("ascii") not in markdown_bytes):
+        raise RealOutputWriteError("approved identity or Markdown SHA drift")
+    build_directory = Path(build_directory)
+    names = (APPROVED_JSON_NAME, APPROVED_MARKDOWN_NAME)
+    targets = tuple(build_directory / name for name in names)
+    stage_dir = build_directory / APPROVED_STAGE_NAME
+    residue: dict[str, object] = {"terminal": "REAL_OUTPUT_WRITE_FAILED", "published": [],
+                                  "published_side": [], "target_paths": [str(path) for path in targets],
+                                  "stage_paths": [str(stage_dir / (name + ".staged")) for name in names]}
+    if not build_directory.is_dir() or any(path.exists() or path.is_symlink() for path in targets):
+        residue["failure"] = "approved target directory/targets preflight failed"
+        return residue
+    try:
+        stage_dir.mkdir(mode=0o700, exist_ok=False)
+    except OSError as exc:
+        residue["failure"] = str(exc)
+        return residue
+    target_fd = stage_fd = -1
+    published: list[str] = []
+    try:
+        target_fd = _parent_fd(build_directory)
+        stage_fd = _parent_fd(stage_dir)
+        stage_names = tuple(name + ".staged" for name in names)
+        for stage_name, raw in zip(stage_names, (json_bytes, markdown_bytes)):
+            _stage(stage_fd, stage_name, raw)
+        for name, stage_name, raw in zip(names, stage_names, (json_bytes, markdown_bytes)):
+            try:
+                os.link(stage_name, name, src_dir_fd=stage_fd, dst_dir_fd=target_fd,
+                        follow_symlinks=False)
+            except OSError as exc:
+                raise RealOutputWriteError(f"publish {name} failed") from exc
+            os.fsync(target_fd)
+            check = os.open(name, os.O_RDONLY | os.O_CLOEXEC | os.O_NOFOLLOW, dir_fd=target_fd)
+            try:
+                parent = os.fstat(target_fd)
+                _readback(check, target_fd, raw, (parent.st_dev, parent.st_ino),
+                          digest if name.endswith("json") else hashlib.sha256(raw).hexdigest(),
+                          self_bound=name.endswith("json"))
+            finally:
+                os.close(check)
+            published.append(name)
+        for stage_name in stage_names:
+            os.unlink(stage_name, dir_fd=stage_fd)
+        os.fsync(stage_fd)
+        os.close(stage_fd)
+        stage_fd = -1
+        stage_dir.rmdir()
+        return {"terminal": "PASS", "published": list(names), "published_side": "both",
+                "instance_sha256": digest}
+    except BaseException as exc:
+        residue["published"] = published
+        residue["published_side"] = ("none" if not published else "json" if len(published) == 1 else "both")
+        residue["failure"] = str(exc)
+        residue["residue"] = [{"path": path, "exists": Path(path).exists(),
+                               "size": Path(path).stat().st_size if Path(path).is_file() else None,
+                               "raw_sha256": hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                               if Path(path).is_file() else None}
+                              for path in residue["stage_paths"] + residue["target_paths"]]
+        return residue
+    finally:
+        if stage_fd >= 0:
+            os.close(stage_fd)
+        if target_fd >= 0:
+            os.close(target_fd)

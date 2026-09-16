@@ -8389,6 +8389,19 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - DS 另列三项 MEDIUM：真实写入 Gate 需绑定批准版本化路径、`published_side` 宜采用枚举、Markdown sibling 宜结构化校验。经评估均不阻塞当前 CPU/static closure；后续真实写入前纳入收口。
 - DS-only 推进令牌仅关闭当前 CPU/static writer Gate，不授权真实 instance、source I/O、GPU 或训练。
 
+## 2026-09-16 — source-evidence write authorization DS review 观察凭证 #1
+
+- `before_head=cc1cfb950438cefd3660702caa2429bc3b34bdec`；fetch 成功；advertised/tracking=`cc1cfb950438cefd3660702caa2429bc3b34bdec`；新增范围为空；正向 ancestor 返回 0，已是最新，无需 merge。
+- formal pair=`944c8119b9fda15d4edc7475e7384cbb0712253f` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）；DS=`ds:0.0` capture 成功，exact final=`REQUEST_CHANGES(tools/psm_wma/write_source_evidence_closure_request_instance.py:64)`。
+- DS HIGH-1：当前 writer 无法落到批准的固定版本化 sibling 路径；HIGH-2：授权对象、ref/commit、是否提交边界未消歧；HIGH-3：真实路径 preflight/发布/residue 尚无审核证据；MEDIUM：缺 exact instance SHA、目标路径、权限及 residue 位置绑定。
+- 评估决定：接受 H1/H2/H3 与 MEDIUM；此前“固定路径不阻塞”的判断撤回。当前不执行真实写入、source I/O、GPU 或训练；下一步实现固定路径 wrapper/新 formal root 后重审。
+
+## 2026-09-16 — fixed-path publisher remediation
+
+- 新增 `write_approved_request_pair`：target directory fd 与 `.request_instance_stage` fd 分离；staged 文件按 `O_CREAT|O_EXCL|O_NOFOLLOW` 创建，跨目录 no-overwrite link 到批准的版本化 JSON/Markdown sibling，成功后清理 staging，失败返回结构化 residue。
+- 新增临时 fixture 测试，确认批准文件名、JSON→Markdown 顺序及 staging 清理；未写真实 `docs/build` 产物、未执行 source I/O、GPU 或训练。
+- 验证：7/7 unittest PASS；py_compile PASS；git diff-check PASS。当前整改未提交，待新 formal root 申请 DS 复核。
+
 ## 2026-09-16 — real-output execution design v0.2 观察凭证 #1
 
 - `before_head=fefc06687ba101b0c5b599b1b225a866e9d7a7d7`；fetch 成功；advertised/tracking=`4f9f30015b3037d3caa83f2b5f24fbdd6be30bdb`；新增范围为空；本地包含远端，无分叉，未执行 merge。
