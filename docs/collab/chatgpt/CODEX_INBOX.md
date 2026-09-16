@@ -522,3 +522,10 @@
 - scope: docs-only implementation design review. It freezes same-round identity observation, exact-schema canonicalization, JSON/Markdown byte readback, terminal partial-residue policy, and hard stop.
 - evidence: `git diff --check` PASS; no instance created; no checkpoint/manifest/data/cache payload read; no source/record/publication I/O; no GPU/CUDA/torchrun/training.
 - requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
+## 2026-09-16 — construction implementation design remediation review
+
+- formal root: `3b2f3a70` (full root is the submitted commit); child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- remediation: fixed JSON/Markdown output paths, constructor module/entrypoint and file allowlist, external read-only `ObservationBundle` provider boundary, and approved schema formal root/child reference.
+- scope: docs-only design; no instance, source payload, record/publication I/O, GPU or training.
+- requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
