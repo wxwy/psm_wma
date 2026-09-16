@@ -10154,3 +10154,53 @@ CUDA context**。此前的「激活 ≈ 3.92 GiB」由此从跨跑推算升级�
 
 **判据**：手段 2 的 PASS = 同配置下 `max_memory_allocated` 增量 + 静态 7.605 GiB
 与 nvidia-smi 实测 11800 MiB 之差可解释（残差落在 CUDA context 的已知量级内）。
+
+### 速度对比：同工作量下 active 是 baseline 的 1.82 倍（2026-09-16 23:27）
+
+**可比性依据（两条路线每步样本数相同，故可直接比墙钟）**：
+
+- baseline `:249` 注释原文：`global = 128 x 1 x grad_accum 16 = 2048`
+- active GA 守卫注释原文：`GA=16 reproduces the baseline 2048 samples/update
+  (128 members x 16 consumers)`
+
+| 指标 | baseline | active | 比 |
+|---|---:|---:|---:|
+| `perf/step_wall_s` | 110.0 | 200.1 | **1.82×** |
+| `perf/model_compute_s` | 88.98 | 157.21 | **1.77×** |
+| `perf/dataloader_wait_s` | 19.52 | 3.20 | 0.16× |
+| `perf/microbatches` | 16 | 128 | 8× |
+| 样本 / microbatch | 128 | 16 | 1/8 |
+| **样本 / step** | **2048** | **2048** | **1×** |
+| 每 microbatch 计算 | 5.56 s | 1.23 s | 0.22× |
+| **每样本纯计算** | **43.4 ms** | **76.8 ms** | **1.77×** |
+
+`perf/microbatches` 的来源已核实为 `stdout_loss_logger.py:99` 的
+`timing['microbatch_count']`，等于该步的 forward/backward 次数（即
+`grad_accum_iter`）：88.98/16 = 5.56 与 157.21/128 = 1.228 分别对上
+`model_compute_mean_s`。
+
+**结论**：
+1. 同工作量下 active 每步 **110 s → 200 s**。单 microbatch 看似快 4.5 倍
+   （1.23 vs 5.56 s），那是样本数少 8 倍的假象，归一化到每样本后反向。
+2. **差距全部来自模型计算，不是 I/O** —— active 几乎不等数据（3.2 s vs 19.5 s）：
+   `max_samples_per_batch=1` 且 `_num_workers=0`，该 loader 只喂一个**不被消费**的
+   样本（`:222-225` 原文 "this loader's batch content is never consumed"），
+   真正的样本走 window driver。
+3. 成因是 Local-Memory 的额外前向图（`ttt_tbptt_steps=16` 的 TTT 展开 +
+   evidence encoder + local memory attention）。**参数少（151K）不等于算得少**。
+
+**与显存的权衡（本次路线选择的真正取舍）**：
+
+| | baseline | active |
+|---|---:|---:|
+| 静态显存 | 23.51 GiB | 7.61 GiB |
+| 每步墙钟 | 110 s | 200 s |
+| 全程各 5000 步 | **6.4 天** | **11.6 天** |
+
+⟹ **省 2/3 显存，代价是 1.82 倍时间（多 5.2 天）。**
+
+**Caveat（不得省略）**：baseline 的 perf 取自 **08-24** 的跑
+（`action_policy_libero_edge_all_sft.log` 的 iter 2751–2812，tee 截断后的残留 82 行），
+active 是 09-16 —— **不是同一次对照实验**。同环境（`PWD`/`IMAGINAIRE_OUTPUT_ROOT`/
+`.venv`/输出目录完全一致）、同卡型、同为单卡是强证据，但不足以排除机器负载差异。
+**要坐实 1.77 这个数，需在 D8a 完成后做一次 baseline 短跑同机对照。**
