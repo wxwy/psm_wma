@@ -523,6 +523,15 @@
 - evidence: `git diff --check` PASS; no instance created; no checkpoint/manifest/data/cache payload read; no source/record/publication I/O; no GPU/CUDA/torchrun/training.
 - requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — request-instance writer remediation DS review
+
+- formal root: `944c8119b9fda15d4edc7475e7384cbb0712253f`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- remediation: evaluated DS feedback; accepted fail-closed exact identity checks, short-write handling, structured mkdir failure, residue fields and Markdown sibling SHA; rejected writer-owned SESSION writes and fixed-path enforcement for the CPU/static writer boundary.
+- evidence: 6/6 unittest PASS, py_compile PASS, git diff --check PASS.
+- scope: DS-only review per user instruction; temporary fixture only; no real instance, source I/O, GPU/CUDA/torchrun or training.
+- requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — real-output writer implementation design review
 
 - formal root: `f13c6f79d9257c742c167534e3b57a6b881e7607`
