@@ -420,6 +420,14 @@
 - 审核重点：确认 `--no-thin` 对 remote CAS push/delete 的最小修复、lease/readback/rollback 不变、exact root/child/pair 绑定及 one-shot 边界。
 - Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`。
 
+## 2026-09-16 — Stage-1 v1.9 materialization review request
+
+- Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-ROOT-MATERIALIZATION-V19`；ChatGPT advice-only；冻结 MM=`mm:0.0`、DS=`ds:0.0`。
+- Formal root: `a5d15f5e27d0d7268aec2f2a020baa2df5dd9f34`；child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`。
+- v1.8 被 DS `REQUEST_CHANGES`：bootstrap ENV 修复不影响实际 remote CAS 的 adapter env，且未验证无 HOME 时 helper。诊断已证实：无 `HOME/GH_CONFIG_DIR` 时 helper 返回 1；`GH_CONFIG_DIR=/root/.config/gh` 时返回 0；同 argv/`--no-thin` 本地 bare remote 成功。
+- v1.9 最小修复：adapter bootstrap 与 `NativeAuthorityGit.env` 绑定非秘密 `GH_CONFIG_DIR=/root/.config/gh`；pair producer allowlist 接受该固定路径；保留 `--no-thin`。pair JSON SHA-256=`2c5c43cdefd47ac8935e26c2c2c5521ce45569e1206350237f9fb057066c8e9c`；MD SHA-256=`beddb5c5f4c2aeba98a7edd7ce4b3e3e87cf5e96947d553b034684f23046fd60`；suffix=`e8c7b2a9`。
+- 请求仅批准一次 authority-root materialization；禁止 retry、source-evidence、child/runtime/config、GPU、CUDA、torchrun、训练/评测/推理。Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`。
+
 ## 2026-09-16 — Stage-1 v1.8 materialization review request
 
 - Gate: `G0-R09-B-TTT-V035-STAGE1-AUTHORITY-ROOT-MATERIALIZATION-V18`；ChatGPT advice-only；冻结 MM=`mm:0.0`、DS=`ds:0.0`。
