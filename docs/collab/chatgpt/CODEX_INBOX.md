@@ -523,6 +523,14 @@
 - evidence: `git diff --check` PASS; no instance created; no checkpoint/manifest/data/cache payload read; no source/record/publication I/O; no GPU/CUDA/torchrun/training.
 - requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_CONSTRUCTION_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — real-output writer implementation design review
+
+- formal root: `f13c6f79d9257c742c167534e3b57a6b881e7607`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_real_output_writer_implementation_design_v0.1.md`
+- scope: writer CPU/static implementation design only; freezes entrypoint, staging/link/fsync/readback/cleanup and partial-residue tests. No real instance write, source I/O, GPU or training.
+- requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — real-output execution design v0.3 amendment review
 
 - formal root: `32e0486353754ff975c24f979076baf95f0d038a`
