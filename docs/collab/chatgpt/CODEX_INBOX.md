@@ -704,6 +704,14 @@
 - Evidence: provider/constructor `17/17 PASS`; py_compile and git diff-check PASS; positive/missing/unreachable remote fixtures.
 - Request DS-only final `APPROVE` or `REQUEST_CHANGES(file:line)` for exact pair. No source I/O, instance write, GPU/CUDA/torchrun, or training.
 
+## 2026-09-16 — fixed-path writer closure review v2 (DS-only)
+
+- formal root: `a58bdb905d189c8f141cf356abdbba6c5aee101f`
+- child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- 整改：补 link/EEXIST、fsync、readback mismatch、JSON-only partial residue fixtures；增加 owner 校验与 staging parent fsync。
+- 证据：writer/constructor `11/11 PASS`，py_compile、git diff-check PASS。
+- 请求 DS-only 最终 `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`；禁止真实 instance 写入、source I/O、GPU/CUDA/torchrun、训练。
+
 ## 2026-09-16 — observation bundle provider closure review v4 (DS-only)
 
 - formal root: `187768e4169bc98839b7d848e2d8ffc74a3fafe9`
