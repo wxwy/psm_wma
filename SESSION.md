@@ -7913,3 +7913,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - MM=`mm:0.0` capture 成功，exact v1.7 申请已离开输入框并进入会话，当前未出现 v1.7 final literal verdict，状态为处理中。
 - DS=`ds:0.0` capture 成功，exact v1.7 申请已提交并进入当前检查，当前 capture 未出现 v1.7 final literal verdict，状态为处理中。
 - 本轮无 materialization 推进令牌；未物化、未写 authority ref、未启动 child/runtime/config、source-evidence、GPU、训练、评测或推理。
+
+## 2026-09-16 — v1.7 materialization review 观察凭证 #2 / 推进令牌
+
+- `before_head=5174a78df47ce25dd35473a50d925099daada53a`；fetch/ls-remote 成功，advertised/tracking 均为 `5174a78df47ce25dd35473a50d925099daada53a`；range 为空；正向 ancestor=0；ff-only=`Already up to date.`
+- exact ChatGPT review 检索 formal root=`7d7ba235ec5be0208aedac2f9b2ed11f755d9ca6`，结果 0 个匹配；本 Gate 按冻结范围 ChatGPT advice-only。
+- 冻结 pair：root=`7d7ba235ec5be0208aedac2f9b2ed11f755d9ca6`、child=`93a89ba61306d840a008813f62f26a34d54850f4`、suffix=`e8c7b2a7`。
+- MM=`mm:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`，锚定上述 exact pair；DS=`ds:0.0` capture 成功，literal verdict=`APPROVE_TO_MATERIALIZE`，锚定上述 exact pair。
+- 形成推进令牌：仅授权一次 v1.7 authority-root materialization；禁止 retry、child/runtime/config、source-evidence、GPU、训练、评测或推理。下一动作：执行冻结 v1.7 launcher 并核验 evidence/ref/rollback。
