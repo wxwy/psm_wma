@@ -532,6 +532,14 @@
 - scope: DS-only review per user instruction; temporary fixture only; no real instance, source I/O, GPU/CUDA/torchrun or training.
 - requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_CLOSURE_REQUEST_INSTANCE_REAL_OUTPUT_WRITER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
 
+## 2026-09-16 — ObservationBundle provider CPU/static implementation DS review
+
+- formal root: `7786d2cdb8e54e3baebc9b887b02a99f6ccb3a98`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
+- implementation: `observe_source_evidence_bundle.py` provides no-follow file identity/fd hash, root/target snapshot, sanitized environment SHA and fail-closed errors; no payload reads or writes.
+- evidence: 10/10 joint unittest PASS, py_compile PASS, git diff --check PASS; temporary fixtures only.
+- DS-only per user instruction; forbidden: real instance write, source I/O, GPU/CUDA/torchrun and training.
+- requested verdict: `APPROVE_TO_CLOSE_R09_B_TTT_V035_SOURCE_EVIDENCE_OBSERVATION_BUNDLE_PROVIDER_CPU_STATIC` or `REQUEST_CHANGES(file:line)`.
+
 ## 2026-09-16 — source-evidence real-output write authorization DS review
 
 - implementation authority: writer closure `944c8119b9fda15d4edc7475e7384cbb0712253f`; child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`.
