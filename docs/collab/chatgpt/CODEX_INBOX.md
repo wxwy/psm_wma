@@ -752,7 +752,8 @@
 - **测试缺口说明**：既有唯一涉及 slot 轮转的用例 `active_local_memory_driver_test.py:138` 用两个**不同** category（slots 0/1 分属 a/b），deficit 不等故 tie 不发生；生产形态 `b_stream=8`/4 categories 使同 category 恒有两条 slot，该分支此前从未被覆盖。
 - 范围：CPU-only，无 GPU/torchrun/训练/checkpoint 写入。子模块 `uv.lock` 为遗留 dirty 文件，未纳入提交。
 - 请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_WINDOW_SLOT_ROTATION` 或 `REQUEST_CHANGES(file:line)`。
-                                              设计（设计，送审）
+
+## 2026-09-17 — active 路线 resume 接线设计（设计，送审）
 
 - formal root: `8bb48f3507dda24090de41bbc4208dfc9e4538aa`
 - child/Gitlink: `525f5066393cba044f00f1104b83f5eb424a9c49`
@@ -767,3 +768,22 @@
 - **验收判据**含 GPU 端到端 resume 短跑（跑至 `save_iter` → 杀进程 → auto-resume → 断言首窗 identity 序列与不中断跑的对应窗口一致、exposure 连续不归零）。
 - 范围：设计文档 + 后续 `active_local_memory_driver.py`/`local_memory_segment.py` 最小改动。不改 `GAWindowPlan`/`SegmentIdentity`/`SegmentBatch` ABI，不改 admit/commit/terminal_rebind 守卫，不新增 DCP 顶层 key。
 - 请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME` 或 `REQUEST_CHANGES(file:line)`。
+
+### 附注（2026-09-17）——§6 的 BLOCKED 判据已由独立证据证伪，请按「无 BLOCKED 风险」阅读
+
+**送审件未变，无需重新取件**：设计文档 blob 仍为 `a8dd24ca16d1b164ea54c1be9a4cbf0ee81617c5`，child/Gitlink 仍为 `525f5066393cba044f00f1104b83f5eb424a9c49`。父仓库根由 `8bb48f35` 前进至 `c48c0169`，但 `8bb48f35..c48c0169` 的 6 个提交**不含任何代码改动**（`git diff --name-only` 在排除 `docs/`、`artifacts/`、`SESSION.md`、`TODO.md` 后为空），故审核者手上的代码态与送审时一致。
+
+**证伪内容**：§6 原写「**BLOCKED**：`_by_slot` 的重建被证明不确定（同 dataset 同 seed 下逐次不同）⟹ 本设计不落地」。该条件**不成立**，故本设计无 BLOCKED 分支。
+
+**证据（直接观测，跨进程）**：两个独立进程各建一遍生产 producer 集合（`CanonicalLocalMemorySegmentProducer` × 4 suite，`ttt_tbptt_steps=16`），对**完整 stream 元组 + 每条 stream 的 `block_count` + `frame_source._ep_vals`/`_ep_starts`/`_valid_cum` 原始字节**求 SHA256：
+
+```
+P1: CATALOG_SHA256=f465db8e661a6fc4bfa79196c07d61238a073c23446c2ae5997150f06c9fd67c SLOTS=8 STREAMS=1676
+P2: CATALOG_SHA256=f465db8e661a6fc4bfa79196c07d61238a073c23446c2ae5997150f06c9fd67c SLOTS=8 STREAMS=1676
+```
+
+逐位相同。代码层依据：`canonical_segment_streams`（`active_local_memory_launch.py:146-180`）只读 `frame_source._ep_vals`/`_ep_starts`/`_valid_cum`（`libero_lerobot_dataset.py:203-214`，`np.unique` + **seeded** 的 per-episode train/val split）与 `block_count`，不涉 RNG、不涉进程态；`ActionIterableShuffleDataset` 只打乱 block 迭代顺序，而 active 路线实测 `iterable_shuffle=False`（D8a 的 callback config dump）。
+
+**据此向审核者提一项建议**：§6 删去 BLOCKED 后少一条把关，建议把「**跨进程重建 catalog 的 digest 逐位一致**」补为 PASS 判据第 6 项（证据已附上）；否则 §4.3 第 1 项 fail-closed 校验（`_by_slot` 重建确定性）在验收侧没有对应判据。
+
+**本文档在 verdict 到达前不改**——避免送审件 SHA 漂移使审核引用失效。若裁定要求把上述内容并入 §6，我在实现记录（§9）中一并落。
