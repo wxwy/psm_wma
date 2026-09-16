@@ -399,3 +399,67 @@ D6–D8 执行前按 AGENTS.md §72 展示完整命令、资源、输入输出�
 `GA` 取值决定训练规模：`consumers/update = 128 * GA`。与基线 2048 samples/update 等量需 `GA=16`
 （每 update `128` 次 member forward+backward）；降低 `GA` 可换吞吐但降低每 update 的 exposure。
 **本设计不擅自降低训练规模**，该决定留给用户。
+
+---
+
+## 11. 真实运行才会暴露的隐式阻塞（v0.2 续，重要）
+
+### 11.1 CPU/static 测试并未走真实模型路径
+
+`production_active_wiring_test.py` 使用 `_ActiveTestOmniMoTModel`，其覆写
+`_run_active_local_memory_native_forward` 去调 `run_native_forward_for_test`
+（`production_segment_wiring.py` 自述为「Pure tensor spy; never invokes a model」），
+且 fixture payload 是 `{"opaque": "payload"}`。
+
+**结论：`26 passed` 不证明真实路径可用。** 真实 `training_step` 从未被这些测试驱动过。
+
+### 11.2 `_inject_local_history`：任何真实运行的硬阻塞
+
+`omni_mot_model.py:1085-1105`（`_inject_local_history`，在 `_get_training_inputs` →
+`_prepare_training_data` 链内被调用）：
+
+- `local_ttt_enabled=True` 时它会取 `net.local_memory_runtime`（:1088-1089）。
+- 若 `local_history_horizon == 0` 且 batch 无 `history_*` 字段 → **无条件覆写**
+  `data_batch["local_memory"] = [None]*B` 并把 `has_local_memory` 全置 False。
+  这会**丢掉 producer 产出的 canonical prefix**。
+- 若 `local_history_horizon != 0` 且 batch 无完整 `history_*` 字段集 → **直接 raise
+  `ValueError("local_history_enabled requires the complete causal history field set.")`**。
+- 若 `history_*` 字段齐全 → 走 `:1132` 的 `_ttt_local_memory_tokens`，**即 legacy row-wise TTT 路线**，
+  正是 v0.3.5:12 禁止混用的路线。
+
+而 canonical active 路线的 member payload 是「raw row → model sample」，**不带** `history_*` 字段，
+且 producer 自己提供 `local_memory`。因此**无论采用逐 consumer 循环还是 packed forward，
+真实运行都会撞上上述分支**。这是被 CPU/static 测试完全掩盖的隐式阻塞。
+
+### 11.3 已实施的最小修复（D2a）
+
+`omni_mot_model.py` `_inject_local_history`：在 `local_history_horizon == 0` 且无 history 字段的
+早返回分支内，改为**仅在该 case 下不存在 producer 已提供的 `local_memory` 时才合成空 payload**：
+
+```python
+if "local_memory" not in data_batch:
+    data_batch["local_memory"] = [None] * len(sequence_plans)
+    for plan in sequence_plans:
+        plan.has_local_memory = False
+return
+```
+
+向后兼容：无 `local_memory` 键时行为逐字节不变。配合 canonical active 路线设置
+`PSM_R08_LOCAL_HISTORY_HORIZON=0`，即可绕开 legacy TTT 分支与 `ValueError`，
+同时保留 producer 提供的 canonical prefix。
+
+### 11.4 packed forward 的正确接缝（已查明，D2b 待实现）
+
+`local_memory` 的批语义（`omni_mot_model.py:4655-4680`）：
+
+```text
+data_batch["local_memory"] : list[Tensor | None]，与 sequence_plan 1:1 对齐
+  -> None 的样本 plan.has_local_memory = False
+  -> x0_tokens_local_memory = [仅非 None 的 payload]（dense）
+packer（packers.py:246）按 idx_local_memory（只数 has_local_memory 的样本）索引 -> 对齐自洽
+```
+
+因此 **packed member forward 的正确做法**是：producer/driver 把该 member 的 per-row
+canonical prefix 放进 `data_batch["local_memory"]`（`list[Tensor|None]`，与 `sequence_plan` 对齐），
+然后**一次** `training_step` 调用即可——比 `_psm_local_override` 的事后注入更干净。
+`_psm_local_override` 仅保留给单样本 CPU/static 测试路径。
