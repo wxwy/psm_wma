@@ -8003,3 +8003,9 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - formal pair=`b1ae3b9685631204680f03eb421c85bff5d8cffa` / child=`93a89ba61306d840a008813f62f26a34d54850f4`；exact ChatGPT review 未找到（advice-only）。
 - MM=`mm:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`；DS=`ds:0.0` capture 成功，exact final=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC`，含三条非阻塞澄清建议。
 - 三方冻结名册对同一 pair final 齐全，形成推进令牌；仅授权 `immutable_source_collection.py` 及其测试的 CPU/static producer/closure helpers。执行前认领预计修改文件；禁止真实 source I/O、record/publication 写入、GPU 或训练。
+
+## 2026-09-16 — producer/closure CPU/static implementation
+
+- 按 formal design `b1ae3b9685631204680f03eb421c85bff5d8cffa` 的批准范围，修改 `tools/psm_wma/immutable_source_collection.py` 与 `tools/psm_wma/test_immutable_source_collection.py`；新增 record/package/witness canonical bytes 构造、校验与 byte-bound 定向测试；未接入 native main，未执行真实 I/O。
+- 验证：`/opt/conda/bin/python3 -m unittest tools.psm_wma.test_immutable_source_collection -q`=`57 tests, OK`；目标文件 `py_compile` PASS；`git diff --check` PASS。
+- 当前状态：实现完成，准备提交新 formal root 并申请 implementation closure review；预计本步提交文件为上述两个 tools 文件、`TODO.md`、`SESSION.md`。

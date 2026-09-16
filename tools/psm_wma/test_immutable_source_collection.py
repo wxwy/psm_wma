@@ -14,7 +14,7 @@ from dataclasses import replace
 import stat
 from copy import deepcopy
 from unittest.mock import patch
-from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff
+from tools.psm_wma.immutable_source_collection import AUTHORITY_REF, EntryStat, RollbackUnavailable, SELECTION_PATH, derive_candidates, _source_handoff, produce_source_evidence_record, produce_source_package, verify_source_evidence_record
 from tools.psm_wma.immutable_source_collection import AtomicFileEvidenceSink, COLLECTION_PATHS, RECEIPT_PATH, CandidateHandoff, CollectionError, MemoryEvidenceSink, NativeCollectionGit, NativeRootFd, OneShotHandoff, SOURCE_PATHS, SyntheticEntry, SyntheticRootFd, TemporaryGitFixture, _native_binding, _native_parser, _null_collection, _null_receipt, _read_regular_fd, _sha, collect_synthetic, verify_evidence, verify_synthetic_rollback
 
 class ImmutableSourceCollectionTest(unittest.TestCase):
@@ -61,6 +61,25 @@ class ImmutableSourceCollectionTest(unittest.TestCase):
     def test_exact_pass_evidence(self) -> None:
         sink = MemoryEvidenceSink(); record = collect_synthetic(authority=self.authority, lineage=self.lineage, selection_request=self.selection_raw, git=self.git, root_fd=self.fd, sink=sink)
         self.assertEqual(record["status"], "PASS"); self.assertEqual(record["execution"]["phase"], "complete"); self.assertEqual(sink.records, [record])
+
+    def test_source_evidence_record_package_witness_are_byte_bound(self) -> None:
+        receipt = {"immutable_source_identifier": "a" * 64, "source_manifest_sha256": "b" * 64,
+                   "source_input_sha256": "c" * 64, "checkpoint_source_descriptor_sha256": "d" * 64}
+        record_raw = produce_source_evidence_record(receipt)
+        verify_source_evidence_record(record_raw, receipt)
+        config_raw = self.config_raw
+        descriptor_raw = json.dumps({"schema": "root_gitlink_checkpoint_source_descriptor_v1",
+                                     "source_kind": "checkpoint_source_manifest_v1",
+                                     "immutable_source_identifier": "a" * 64,
+                                     "source_manifest_sha256": "b" * 64,
+                                     "source_input_sha256": "c" * 64,
+                                     "checkpoint_source_descriptor_sha256": "d" * 64}, sort_keys=True, separators=(",", ":")).encode()
+        package_raw, witness_raw = produce_source_package(config_raw=config_raw, descriptor_raw=descriptor_raw,
+                                                          formal_root="e" * 40, record_raw=record_raw)
+        self.assertEqual(json.loads(package_raw)["source_evidence_record_sha256"], hashlib.sha256(record_raw).hexdigest())
+        self.assertEqual(json.loads(witness_raw)["input_package_sha256"], hashlib.sha256(package_raw).hexdigest())
+        with self.assertRaises(CollectionError):
+            produce_source_package(config_raw=config_raw, descriptor_raw=descriptor_raw, formal_root="E" * 40, record_raw=record_raw)
 
     def test_native_root_fd_rejects_escape_and_reads_regular_file(self) -> None:
         with tempfile.TemporaryDirectory() as raw:

@@ -29,6 +29,14 @@ SELECTION_PATH = "docs/build/PSM-WMA_immutable_source_selection_request_v1.json"
 AUTHORITY_REF = "refs/heads/authority/r09-b-ttt-v035-immutable-source-v1"
 EVIDENCE_KEYS = frozenset(("schema", "status", "execution", "tool", "environment", "authority", "lineage", "source_entries", "handoff", "candidates", "collection", "receipt", "post_checks", "push_publication", "rollback", "evidence_sha256"))
 CANDIDATE_KEYS = ("input_descriptor_sha256", "manifest_sha256", "identifier_sha256", "checkpoint_descriptor_sha256", "collection_sha256", "config_sha256")
+SOURCE_EVIDENCE_RECORD_KEYS = ("schema", "source_kind", "immutable_source_identifier", "source_manifest_sha256", "source_input_sha256", "checkpoint_source_descriptor_sha256")
+SOURCE_PACKAGE_KEYS = ("schema", "canonical_model_config", "checkpoint_source_descriptor", "source_evidence_root_revision", "source_evidence_record_path", "source_evidence_record_sha256", "source_evidence_record_schema")
+SOURCE_WITNESS_KEYS = ("schema", "input_package_sha256", "canonical_model_config_sha256", "checkpoint_source_descriptor_sha256", "source_evidence_root_revision", "source_evidence_record_sha256", "source_evidence_record_schema")
+SOURCE_RECORD_SCHEMA = "root_checkpoint_source_evidence_record_v1"
+SOURCE_PACKAGE_SCHEMA = "root_publication_input_package_v1"
+SOURCE_WITNESS_SCHEMA = "root_publication_input_witness_v1"
+SOURCE_KIND = "checkpoint_source_manifest_v1"
+SOURCE_RECORD_PATH = "docs/build/PSM-WMA_root_checkpoint_source_evidence_record_v1.json"
 
 class CollectionError(ValueError): pass
 class RollbackUnavailable(CollectionError):
@@ -685,6 +693,64 @@ def derive_candidates(entries: tuple[Mapping[str, object], ...], config_raw: byt
     digests = dict(zip(CANDIDATE_KEYS, (input_sha, manifest_sha, identifier, _digest(descriptor_raw),
                                       _digest(collection_raw), config_sha)))
     return artifacts, digests
+
+
+def _require_digest(value: object, name: str) -> str:
+    if not _is_sha(value):
+        raise CollectionError(f"{name} 必须是 lowercase SHA-256")
+    return value
+
+
+def produce_source_evidence_record(receipt: Mapping[str, object]) -> bytes:
+    """只从已验证 receipt 的字段生成 source-evidence record raw bytes。"""
+    required = {"immutable_source_identifier", "source_manifest_sha256", "source_input_sha256",
+                "checkpoint_source_descriptor_sha256"}
+    if not isinstance(receipt, Mapping) or not required.issubset(receipt):
+        raise CollectionError("receipt 缺少 source-evidence authority")
+    record = {"schema": SOURCE_RECORD_SCHEMA, "source_kind": SOURCE_KIND,
+              **{key: _require_digest(receipt[key], key) for key in sorted(required)}}
+    return _canonical(record)
+
+
+def verify_source_evidence_record(raw: bytes, receipt: Mapping[str, object]) -> None:
+    if not isinstance(raw, bytes) or _canonical(json.loads(raw)) != raw:
+        raise CollectionError("source-evidence record 不是 canonical bytes")
+    value = json.loads(raw)
+    if set(value) != set(SOURCE_EVIDENCE_RECORD_KEYS) or value.get("schema") != SOURCE_RECORD_SCHEMA or value.get("source_kind") != SOURCE_KIND:
+        raise CollectionError("source-evidence record schema/key drift")
+    expected = json.loads(produce_source_evidence_record(receipt))
+    if value != expected:
+        raise CollectionError("source-evidence record authority drift")
+
+
+def produce_source_package(*, config_raw: bytes, descriptor_raw: bytes, formal_root: str,
+                           record_raw: bytes) -> tuple[bytes, bytes]:
+    """从 sibling raw bytes 生成非循环 package 与 derived-only witness。"""
+    if not all(isinstance(value, bytes) for value in (config_raw, descriptor_raw, record_raw)):
+        raise CollectionError("source-evidence sibling 必须是 bytes")
+    try:
+        config = json.loads(config_raw); descriptor = json.loads(descriptor_raw); record = json.loads(record_raw)
+    except (TypeError, ValueError, UnicodeError) as exc:
+        raise CollectionError("source-evidence sibling JSON 无效") from exc
+    if any(_canonical(value) != raw for value, raw in ((config, config_raw), (descriptor, descriptor_raw), (record, record_raw))):
+        raise CollectionError("source-evidence sibling 非 canonical bytes")
+    if set(record) != set(SOURCE_EVIDENCE_RECORD_KEYS) or record.get("schema") != SOURCE_RECORD_SCHEMA:
+        raise CollectionError("source-evidence record schema/key drift")
+    if not isinstance(formal_root, str) or len(formal_root) != 40 or any(char not in "0123456789abcdef" for char in formal_root):
+        raise CollectionError("source-evidence formal root 无效")
+    package = {"schema": SOURCE_PACKAGE_SCHEMA, "canonical_model_config": config,
+               "checkpoint_source_descriptor": descriptor, "source_evidence_root_revision": formal_root,
+               "source_evidence_record_path": SOURCE_RECORD_PATH,
+               "source_evidence_record_sha256": _digest(record_raw),
+               "source_evidence_record_schema": SOURCE_RECORD_SCHEMA}
+    package_raw = _canonical(package)
+    witness = {"schema": SOURCE_WITNESS_SCHEMA, "input_package_sha256": _digest(package_raw),
+               "canonical_model_config_sha256": _digest(config_raw),
+               "checkpoint_source_descriptor_sha256": _digest(descriptor_raw),
+               "source_evidence_root_revision": formal_root,
+               "source_evidence_record_sha256": _digest(record_raw),
+               "source_evidence_record_schema": SOURCE_RECORD_SCHEMA}
+    return package_raw, _canonical(witness)
 class OneShotHandoff:
     """同一次 executor activation 内的一次性能力；不提供公共 payload 构造入口。"""
 
