@@ -8233,6 +8233,12 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 
 - 认领 Gate=`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-CLOSURE-REQUEST-INSTANCE-REAL-OUTPUT-EXECUTION-DESIGN`；新增 docs-only 设计 `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_closure_request_instance_real_output_execution_design_v0.1.md`。
 - 设计冻结固定 JSON/Markdown 输出路径、preflight absence、一次性 staged pair 写入、逐字节 readback、partial-residue terminal policy 与 hard-stop；未写 instance，未执行 source I/O、GPU 或训练。
+
+## 2026-09-16 — real-output execution design 审核送达
+
+- formal pair=59074d234a5c22e59efb316c3e515905eea0a6b8 / child=93a89ba61306d840a008813f62f26a34d54850f4；设计已推送，申请 bookkeeping commit=dcf3023d。
+- MM 与 DS 均完成 send-keys -l→间隔 1 秒→独立 Enter→capture，当前已送达并等待各自 final verdict。
+- 该 Gate 仅审核 real-output 设计，不授权写 instance、source I/O、GPU 或训练。
 - 验证：3/3 unittest PASS、py_compile PASS、git diff --check PASS；下一步提交新 formal root并重新申请 closure review。
 
 ## 2026-09-16 — construction CPU/static v0.2 amendment 观察凭证 #1
