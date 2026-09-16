@@ -7980,3 +7980,11 @@ Codex 审查结论 `REQUEST_CHANGES`，已按 HIGH/MEDIUM/LOW 修复：
 - 认领 Gate=`G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-IMPLEMENTATION-DESIGN`；预计修改文件为新增 `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_producer_closure_implementation_design_v0.1.md` 与 `TODO.md`，后续获批后才可修改 `tools/psm_wma/immutable_source_collection.py` 及测试。
 - 新设计仅冻结已有 collection seam 上的 record/package/witness canonical-bytes、identity、one-shot handoff CPU/static helpers；不授权真实 source I/O、record/publication 写入、GPU 或训练。
 - 本步为 docs-only，`git diff --check` PASS；尚未提交。下一步提交该设计并申请 MM/DS/ChatGPT exact-pair 审核。
+
+## 2026-09-16 — producer/closure implementation design 审核送达回执
+
+- formal root=`b1ae3b9685631204680f03eb421c85bff5d8cffa`；child/Gitlink=`93a89ba61306d840a008813f62f26a34d54850f4`；冻结名册 MM=`mm:0.0`、DS=`ds:0.0`、ChatGPT exact review（advice-only）。
+- Inbox 已 append，append 前字节数=`60790`，当前字节数=`61982`，未触发 rollover；申请内容绑定完整 formal root/child、设计路径、批准范围与 verdict 请求。
+- MM 送达回执：目标 pane=`mm:0.0`；使用 `send-keys -l`、间隔 1 秒、独立 Enter、独立 capture；capture 显示消息已离开输入框并进入会话。
+- DS 送达回执：目标 pane=`ds:0.0`；使用 `send-keys -l`、间隔 1 秒、独立 Enter、独立 capture；capture 显示消息已提交并保留在会话处理中。
+- 本申请等待 exact-pair 三方 final；未授权 producer/closure 实现、真实 I/O、publication、GPU 或训练。下一步按每三分钟原生轮询规则检查并记录完整观察凭证。

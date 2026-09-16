@@ -453,3 +453,13 @@
 - 请求范围：仅批准一次 v1.8 authority-root/local CAS 与固定 authority ref 事务；失败保留 evidence 并回滚。禁止 retry、child/runtime/config 修改、source-evidence、GPU/CUDA、torchrun、训练/评测/推理。
 - 审核重点：exact root/child/pair 绑定、bootstrap helper 环境传递、`--no-thin`、lease/readback/rollback 与 one-shot 边界。
 - Requested verdict: `APPROVE_TO_MATERIALIZE` 或 `REQUEST_CHANGES(file:line)`。
+# 2026-09-16 — Source-evidence producer/closure implementation design review
+
+- Gate: `G0-R09-B-TTT-V035-SOURCE-EVIDENCE-PRODUCER-CLOSURE-IMPLEMENTATION-DESIGN`
+- Formal root: `b1ae3b9685631204680f03eb421c85bff5d8cffa`
+- Child/Gitlink: `93a89ba61306d840a008813f62f26a34d54850f4`
+- Design: `docs/build/PSM-WMA_Local_Memory_v0.3.5_source_evidence_producer_closure_implementation_design_v0.1.md`
+- Scope: 仅审核既有 collection seam 上 record/package/witness canonical bytes、identity、one-shot handoff 的 CPU/static implementation 设计；不得授权真实 source/checkpoint/manifest/data/cache I/O、record/publication 写入、child/runtime 修改、GPU、CUDA、torchrun、训练、评测或推理。
+- Acceptance: exact schema/key/digest/non-circular binding、raw-byte identity、one-shot handoff 与 fail-closed 矩阵；后续实现仅限 `tools/psm_wma/immutable_source_collection.py` 及其测试。
+- Requested verdict: `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_SOURCE_EVIDENCE_PRODUCER_CLOSURE_CPU_STATIC` 或 `REQUEST_CHANGES(file:line)`。
+- Reviewers: frozen MM=`mm:0.0`、DS=`ds:0.0`；ChatGPT exact formal-pair review（advice-only）。
