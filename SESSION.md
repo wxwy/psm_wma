@@ -11032,6 +11032,20 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - **GPT**：用户所提供的 review commit `c8fb3846` 是 HEAD 的祖先（17:50 已 merge），其两份 review 针对**旧 pair**（`dae010c`/`5f29e35`），均已整改；GPT 若审当前 state 需针对 `463d649e` 重审。
 - **下一步**：Gate 3 设计已三方批准 → 可进入 **Gate 3 实现**（逐 slot 复用 + `_slot_epoch` + queue authority supersession）。
 
+### GPT 最新两份 verdict（2026-09-17 20:25 CST，root df332f27..5b3a7c6a 已 ff）
+
+- **Gate 3 v0.8 @ 463d649 = `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE`** —— authority-chain / capacity-evidence / chronology / cumulative 全部闭合；**四方 APPROVE（DS/MM/Kimi/ChatGPT）**。非阻塞 implementation 要求：①实现须持久化 `_slot_epoch` + 重放 queue identity；②探针用 `queue_seed=0`，生产 §4.6 用 catalog 派生 seed，实现/evidence closure 须用生产 seed 重跑（或证 seed 无关）；③Gate 3 实现不得用 Gate 2 closure token（因 Gate 2 未闭合）；④§3.2 历史「45 边界」措辞待实现同步；⑤§10.4 旧 regime 数字保持历史。
+- **Gate 2 closure @ 04ab6f9 = `REQUEST_CHANGES(driver.py:407-418)`**：restore-atomicity **closed in direction**（两阶段 + 零突变 fixtures 正确）。
+  - **HIGH-1**：`_stage_runtime` 的 terminal 检查用 `by_slot`（全部 committed_identities），但 owner 语义是 `terminal_slots ∩ sidecar records == ∅`——合法的「terminal slot 仍在 committed_identities、sidecar 已 pop」IDLE checkpoint 被误拒（checkpoint 常在刚 terminalize 未 rebind 的窗口边界取）。
+  - **HIGH-2**：`_stage_runtime` 用 slot_id 取 canonical identity 后直接 re-tag checkpoint fast state，**未校验 serialized sidecar identity 与 canonical scheduler identity 值相等**——malformed checkpoint 可静默 re-tag。
+  - **EVIDENCE-1**：GPU witness 缺「resumed 首窗 identity 序列 == 不中断对照」+「`cumulative_valid_consumer_exposure` 连续」的机器可核证据。
+- **整改方向**：①terminal 检查改 `terminal_slots ∩ records`；②canonicalize 前要求值相等（全字段）+ mutation fixture；③GPU witness 补 identity 序列对照 + exposure 连续。
+
+### Gate 2 GPT HIGH-1/HIGH-2 整改 + EVIDENCE-1 witness（2026-09-17 20:40 CST）
+
+- **HIGH-1/HIGH-2 已整改**（子模块 `1ba127a` / 根仓 `38a67075`）：①`_stage_runtime` 的 terminal 检查改为 `terminal_slots ∩ records == ∅`（不再用全 committed 的 `by_slot`），接受「terminal slot 仍在 committed_identities、sidecar 已 pop」的合法 IDLE checkpoint；②canonicalize 前要求 serialized sidecar identity **值相等**（`identity != canonical` 即拒），防静默 re-tag。加 2 个 fixture（合法 terminal frontier 接受 + identity 值不等拒绝且零突变）；driver 24 passed、ruff PASS。
+- **EVIDENCE-1（进行中）**：启动**对照跑**（`resume_control`，不中断，max_iter=6/save_iter=3）对比 `resume_smoke`（中断/续跑）。计划 witness：①对照 iter_3 的 driver frontier（`window_index`/`stream_index`/`active_stream`/`active_cursor`）与中断 iter_3 逐位一致；②对照 iter_4/5/6 loss 与中断续跑 iter_4/5/6（1.644157/1.556571/…）一致；③`cumulative_valid_consumer_exposure` 从 iter_3 到 iter_6 连续（不归零）。
+
 ### Gate 2 closure 两方 APPROVE（2026-09-17 14:28 CST）
 
 - **DS**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`。非阻塞 residual（判据 5 完整 launch 集成、判据 7④ sidecar.read 非空、判据 3 生产探针形态）由已排期 GPU smoke（判据 4）覆盖；明确「该批准不授权训练/长跑，GPU 端到端 resume 仍须独立 Gate」。
