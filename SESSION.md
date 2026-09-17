@@ -10745,3 +10745,68 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 **自守声明**：本次撤回**不是**放宽标准——它把一条**在今天就已为假**的候选判据撤掉，避免重演 v0.2 原文的缺陷类；判据总数减少，但保留的两条均为已核实可判定项。
 
 **未决不变**：§8 第 7 问 (a)/(b) 仍待三方裁定；(c) 已由本次基线闭合。三个 Gate 状态仍为**未送达**（见上节），**无推进令牌**。
+
+---
+
+### 审核前置硬检查（第 2 轮，用户询问「正式训练条件 / 昨晚情况」触发）——结论：状态与昨晚一致，仍「未送达 / 链路不完整」（2026-09-17 09:34 CST）
+
+| 凭证字段 | 本轮实测 |
+|---|---|
+| 轮次 / 时间 | 第 2 轮，2026-09-17 09:34:05 CST |
+| `before_head` | `4cdedf68f6e0f302b0d46343c82965b7ffafefbd` |
+| `git fetch origin V2` | 成功 |
+| 远端 advertised SHA | `f63ee3c5ab8da0855aea1ca2d9e47f5b5d4eb28c`（`git ls-remote origin refs/heads/V2`），与 tracking `origin/V2` 一致 |
+| `git log before_head..origin/V2` | **空** ⟹ 远端无新增提交 |
+| ff 方向 | `merge-base --is-ancestor origin/V2 HEAD` 返回 **0** ⟹ 远端 `f63ee3c5` 是本地 `HEAD` 的**祖先**，远端**纯落后**，非分叉，无需 ff |
+| 本地领先量 | `git rev-list --count origin/V2..HEAD` = **30**（较昨晚第 1 轮的 29 多 1，即 v0.5 提交 `4cdedf68`） |
+| ChatGPT exact-pair 检索 | 对 `5d527f3e`/`8bb48f35`/`bae39647`/`f6d3ae26`/`661b54f3`/`4cdedf68` 逐一 `grep -rl`，**命中文件数均为 0**；`reviews/` 最新文件仍为 `2026-09-16_stage1_pragmatic_pair_producer_advice_b57ad44_93a89ba.md`（2026-09-16 11:52），锚定 `b57ad44`/`93a89ba` |
+| pane capture：`mm:0.0` | 成功。内容为**旧 pair** 的 SegmentBatch/loss 接缝设计 review（`REQUEST_CHANGES`，日期 Sep 7），**未出现当前三个 Gate 任一 pair** |
+| pane capture：`ds:0.0` | 成功。内容为**旧 pair** 的 HIGH-1..HIGH-5 `REQUEST_CHANGES`（DeepSeek V4 Pro），**未出现当前三个 Gate 任一 pair** |
+
+**本轮结论**：远端自 `2026-09-16 21:21:45`（`f63ee3c5`）后**仍无任何新推送**；三个在审 Gate（`ACTIVE-WINDOW-SLOT-ROTATION` / `ACTIVE-ROUTE-RESUME` / `ACTIVE-CATALOG-EPOCH-REUSE`）的 formal root **仍不在远端**，`reviews/` 中无 exact formal review，MM/DS 两个 pane 的 capture 均非当前 pair。⟹ 状态仍为 **「未送达 / 链路不完整」**，**不存在推进令牌**，三个 Gate 保持 `REVIEW`。
+
+**逐方状态（由本轮凭证导出）**：ChatGPT=`未送达`（pair 不在远端、无 exact review）；MM=`未送达`（pane 内容非当前 pair）；Kimi=`未检查`（冻结名册未登记其 pane，本会话 `kimi`/`fq` 存在但从未在 SESSION capture 过）。
+
+**正式训练条件仍未具备**，阻塞不变：①三个 Gate 未送达、无令牌；②catalog 容量仅 112.73 步（缺口 44.4 倍，依赖 epoch-reuse 裁定）；③resume 未接线（fail-closed `iteration>0` 直接 raise，D8b 长跑不能在该防线下跑）；④slot 饥饿修复待 Gate 授权落地。链路修复仍须用户许可：推送本地 30 个提交（外网访问）+ 恢复 MM 审核会话。
+
+---
+
+### 审核链路修复 + 三 Gate 重新送达（2026-09-17 09:54 CST，REVIEW）
+
+**目标（用户 /goal）**：按项目规范持续推进，只到实现具备 local mem 训练条件。
+
+**链路修复（已执行，推送成功）**：
+- 子模块 `cosmos-framework` v2 推送 `5d24528 → 525f506`（3 个提交：`81fa342`/`6dc25e0`/`525f506`）。
+- 根仓 `V2` 推送 `f63ee3c5 → 4cdedf68`（30 个提交）。
+- 推送后 `git ls-remote`：根仓 `V2=4cdedf68`，子模块 `v2=525f506`；`git rev-list --count origin/V2..HEAD = 0`，本地与远端同步。
+
+**三个 Gate 的 formal pair（以 archive `CODEX_INBOX_2026-09-17_661b54f.md` 的 canonical 声明为准，现已全部远端可达）**：
+| Gate | formal root | child/Gitlink | 设计文档 blob |
+|---|---|---|---|
+| ACTIVE-WINDOW-SLOT-ROTATION | `5d527f3ea8db25f23482c9a3e13b5c7ca2fd6a99` | `6dc25e0f8c3ba39525c8ba994b8d0c38c2ce5461` | `8556b0a5` |
+| ACTIVE-ROUTE-RESUME | `8bb48f3507dda24090de41bbc4208dfc9e4538aa`（附注前进至 `c48c0169`，送审件未变） | `525f5066393cba044f00f1104b83f5eb424a9c49` | `a8dd24ca` |
+| ACTIVE-CATALOG-EPOCH-REUSE | `bae3964776d3138d2a60d1b03cbabe0062fef75c`（修订至 v0.5，最终 commit `4cdedf68`） | `525f5066393cba044f00f1104b83f5eb424a9c49` | `e22b6543` |
+
+**送达回执（三联：send-keys -l → ≥1s → 独立 Enter → capture）**：
+- ChatGPT：canonical live Inbox 已随根仓 `4cdedf68` 推送；未决 Gate 索引 + archive 完整正文均远端可达。
+- MM=`mm:0.0`（pane 进程 `claude`）：送达成功，capture 显示完整三 Gate 申请进入会话、底部 `✽ Computing…`（开始处理）。
+- DS=`ds:0.0`（pane 进程 `opencode`）：送达成功，capture 显示完整申请进入会话、底部 `Thinking`（DeepSeek 开始处理）。
+
+**状态**：三个 Gate 全部 `REVIEW`，三方 final 未齐、无推进令牌。下一步按三分钟完整远端锁定 + 三方 exact-pair 核验轮询，至少连续三十轮。
+
+### 三 Gate 审核轮询（第 1 轮，2026-09-17 09:59:07 CST，REVIEW）
+
+- `before_head=4cdedf68`；fetch 成功；advertised/tracking=`4cdedf68`；新增范围为空；祖先判定=0；ff=`Already up to date`。
+- ChatGPT exact-pair 检索（`5d527f3e`/`8bb48f35`/`bae39647`/`4cdedf68`/`6dc25e0f`/`525f506`）**命中数均 0**，`reviews/` 无新增。
+- MM=`mm:0.0` capture：显示针对 epoch-reuse 的意见（`probe_epoch_reuse_planning.json` 判据 1-5 全 PASS、无 HIGH/CRITICAL，但 §8 第 7 问 (a)/(b) 不可悬置、75.3% 单 suite = 5.4 倍 regime 变化应实现前裁定），**尚未给出 self-contained 同 pair FINAL**；pane 内有用户输入「选 (a)，出 v0.6」。
+- DS=`ds:0.0` capture：`Thinking`（处理中），尚无 final。
+- 无推进令牌，三个 Gate 保持 REVIEW，继续轮询。
+
+### 轮询 #2（10:03:26 CST）：fetch 无新增（advertised=`4cdedf68`）；ChatGPT reviews/ 0 命中；MM 显示 epoch-reuse 第 7 问 (a)/(b) 裁定中（pane 内用户输入「选 (a)，出 v0.6」，MM 输出 v0.6 修订措辞），无 self-contained FINAL；DS 正读 `canonical_segment_adapter_scheduler.py`（configure_queue 审核中）。无令牌，继续。
+
+### 轮询 #3（10:08:10 CST）：fetch 无新增（advertised=`4cdedf68`）；ChatGPT reviews/ 0 命中。**DS=`ds:0.0` 已给出三 Gate literal verdicts**（Build 13m56s）：
+- Gate 1 `ACTIVE-WINDOW-SLOT-ROTATION`：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_WINDOW_SLOT_ROTATION`（内容层面；§2.3(B) 解读成立；**须改正设计头部 stale root/child**）。
+- Gate 2 `ACTIVE-ROUTE-RESUME`：`REQUEST_CHANGES` —— HIGH：`resume_wiring_design_v0.1.md:59,148-150`（load 时序使 `_DataloaderWrapper` 永不命中 driver）。
+- Gate 3 `ACTIVE-CATALOG-EPOCH-REUSE`：`REQUEST_CHANGES` —— 主因：`catalog_epoch_reuse_design_v0.1.md:191-197,485-493`（不清零 exposure 控制输入，静默改变 44/45 epoch regime，不应作为已知代价接受）；其他 `:136-146`/`:222-231`/`:199-202,249-262`/`:268`/`:237-247`。
+- DS 另附「未决送达事实」：基于旧 ledger `CODEX_INBOX.md:10-23` 称三 root 不在远端、无令牌，**未意识到已推送**；并指 exact-pair identity 需改正（stale root/child）。DS 声明「在链路与 exact-pair identity 改正前，本结果不能作为正式三方同 SHA 闭批」。
+- MM=`mm:0.0`：仍停在「选 (a)，出 v0.6」输入，无新 FINAL。ChatGPT 未回复。无推进令牌，继续。

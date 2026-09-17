@@ -81,3 +81,21 @@
 - 仍然只调用既有 API，不改 `LocalMemorySegmentSidecar.read` 的守卫与 `commit` 的 pop 语义。
 
 - 请求 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE` 或 `REQUEST_CHANGES(file:line)`。
+
+## 2026-09-17 09:54 CST — 送达状态更新：三个未决 Gate 的 formal root 现已全部推送远端（取代上节「不在远端」的过时记录）
+
+**上节「送达前置硬检查结果（01:49 CST）」描述的「root 不在远端 / 未送达」状态已过期。** 请勿再以该段判断三个 Gate 是否已送达。本轮（用户 /goal 持续推进）已完成链路修复：
+
+- 子模块 `cosmos-framework` v2 推送 `5d24528 → 525f506`（3 提交）。
+- 根仓 `V2` 推送 `f63ee3c5 → 4cdedf68`（30 提交）。
+- 推送后 `git ls-remote`：根仓 `V2=4cdedf68`，子模块 `v2=525f506`；本地与远端同步（`rev-list --count origin/V2..HEAD = 0`）。
+
+三个 Gate 的 formal pair（与「未决 Gate 索引」一致，现已全部远端可达）：
+
+| Gate | formal root | child/Gitlink |
+|---|---|---|
+| ACTIVE-WINDOW-SLOT-ROTATION | `5d527f3ea8db25f23482c9a3e13b5c7ca2fd6a99` | `6dc25e0f8c3ba39525c8ba994b8d0c38c2ce5461` |
+| ACTIVE-ROUTE-RESUME | `8bb48f3507dda24090de41bbc4208dfc9e4538aa` | `525f5066393cba044f00f1104b83f5eb424a9c49` |
+| ACTIVE-CATALOG-EPOCH-REUSE | `bae3964776d3138d2a60d1b03cbabe0062fef75c`（修订至 v0.5，最终 commit `4cdedf68`） | `525f5066393cba044f00f1104b83f5eb424a9c49` |
+
+MM=`mm:0.0` 与 DS=`ds:0.0` 均已完成 tmux 三联送达（capture 确认申请进入会话）。请按 exact formal pair 逐 Gate 给出最终 verdict，写回 `docs/collab/chatgpt/reviews/`。
