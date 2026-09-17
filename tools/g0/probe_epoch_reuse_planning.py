@@ -165,7 +165,7 @@ def main() -> int:
     parser.add_argument("--b-stream", type=int, default=8)
     parser.add_argument("--ga", type=int, default=16, help="window size = b_stream * ga")
     parser.add_argument("--queue-seed", type=int, default=0, help="no production source yet (design 4.6)")
-    parser.add_argument("--max-epochs", type=int, default=3)
+    parser.add_argument("--max-epochs", type=int, default=100, help="upper bound on reuse boundaries (target-windows is the real stop)")
     parser.add_argument("--target-windows", type=int, default=5040, help="45 epochs x 112 windows")
     parser.add_argument("--max-episodes", type=int, default=None, help="cap per suite (smoke speed)")
     args = parser.parse_args()
@@ -260,7 +260,7 @@ def main() -> int:
     rotation_skew: list[int] = []
     tail_structure: list[dict] = []
 
-    while epochs_planned < args.max_epochs:
+    while windows_total < args.target_windows and epochs_planned < args.max_epochs:
         blocks = blocks_by_epoch.setdefault(epoch, set())
         windows_in_epoch = 0
         first_partial_window: int | None = None
@@ -297,7 +297,7 @@ def main() -> int:
             }
         )
         epochs_planned += 1
-        if epochs_planned >= args.max_epochs:
+        if windows_total >= args.target_windows or epochs_planned >= args.max_epochs:
             break
         before = {slot: driver._by_slot[slot] for slot in all_slots}
         # v0.7 逐 slot 复用：每个 slot 独立判定（non-terminal 继续 / terminal 复用）。
@@ -332,12 +332,13 @@ def main() -> int:
     epoch0 = blocks_by_epoch.get(0, set())
     deferred = catalogue_blocks - epoch0
     epoch1 = blocks_by_epoch.get(1)
+    capacity_ok = windows_total >= args.target_windows
+    result_pass = (
+        capacity_ok and not order_mismatches and probe_is_pure and driver._window_index == windows_total
+    )
     report = {
-        "result": (
-            "PASS"
-            if not order_mismatches and probe_is_pure and driver._window_index == windows_total
-            else "FAIL"
-        ),
+        "result": "PASS" if result_pass else "FAIL",
+        "capacity_target_met": capacity_ok,
         "b_stream": args.b_stream,
         "ga": args.ga,
         "window_members": window_members,
@@ -383,7 +384,7 @@ def main() -> int:
         args.output_json.parent.mkdir(parents=True, exist_ok=True)
         args.output_json.write_text(json.dumps(report, indent=2, sort_keys=True, default=str) + "\n")
         print(f"[out] wrote {args.output_json}")
-    return 0
+    return 0 if result_pass else 1
 
 
 if __name__ == "__main__":

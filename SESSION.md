@@ -10904,3 +10904,93 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - 验证：driver 15 passed（+2）、launch 11 passed、segment 10 passed；ruff、py_compile、`git diff --check` 全 PASS。
 - 提交：子模块 `7ca3b20`（推 v2）、根仓 Gitlink `eb15c3e5`（推 V2）。新 formal pair：root=`eb15c3e5`/child=`7ca3b20`。
 - 下一步：更新 Inbox 并向三方申请 closure review（`APPROVE_TO_CLOSE_..._ACTIVE_ROUTE_RESUME`）。§6 判据 4（GPU save/kill/auto-resume 连续性）与判据 7（runtime round-trip 对象同一性）尚未测，须在 closure 前或 GPU smoke 阶段补齐。
+
+### Gate 2 closure 整改（2026-09-17 14:20 CST，REVIEW）
+
+- DS 第 1 轮 closure `REQUEST_CHANGES`：4 个 LOW/MEDIUM（`window_index` 漏 `max_iter` 上限、空转断言 `str(episode_index)`、`_restore_runtime` 的 `by_slot[...]` KeyError、`catalog_digest or source_digest` 回落）+ 要求 closure 内补齐判据 1/2/5/6/7 CPU 测试（判据 4 GPU 留待独立 GPU smoke Gate）。
+- 整改（子模块 `7bb507f`/根仓 `ffeb6aa2`）：4 个 LOW/MEDIUM 已修；补判据 1（segment snapshot 修剪 round-trip）、判据 2/6（driver 不可复现 + 0/≥2 边界）、判据 5（launch load 早于 on_train_start 暂存）、判据 7（committed round-trip + `is` 断言 + re-snapshot 不抛错）。41 passed、ruff/diff-check PASS。
+- 重新送审 DS（closure v2）。继续轮询 Gate 2 closure + Gate 3 v0.7。
+
+### GPU smoke（判据 4 resume 验证，2026-09-17 16:28 CST，执行中）
+
+- 用户授权 GPU smoke（单卡 A100-80GB）。
+- **Phase 1 首次跑（max_iter=55/save_iter=50）**：环境就绪（LIBERO_ROOT/cache/checkpoint/VAE 全部确认）；启动后 iteration 1 `train/loss=1.611394` **与 D8a 逐位一致**——证明 resume 接线代码未改变训练语义。但机器负载高（load 21）致 catalog 构建约 22 分钟、每步 forward 约 4 分钟，`save_iter=50` 需 200 分钟太慢。
+- **调整方案**：kill 后重跑 `max_iter=6 / save_iter=3`（3 步存盘、6 步结束），快速验证 kill+auto-resume。已重启（16:28），产物 `artifacts/g0/resume_smoke/`。
+- 判据：Phase 1 第 3 步存 DCP → kill → Phase 2 auto-resume 不再抛 `cannot resume`、续跑 finite。
+
+### DS 对 Gate 3 v0.7 的 4 项 REQUEST_CHANGES（2026-09-17 16:28 CST）
+
+- DS 确认 ChatGPT HIGH-1（逐 slot 继续/复用）与 HIGH-2（撤回 per-epoch、恢复 cumulative）**已闭合**，但独立提出 4 项未处理，维持 `REQUEST_CHANGES`：
+  1. `:442-475` §10.3 容量证据仍是 v0.6 全局重置参考实现（`criterion5_deferred_tail`、`committed_identities=14336`、复杂度上界均不对应 v0.7 逐 slot），须按 v0.7 重跑更新。
+  2. `:171-173,183,218,227` 逐 slot `_slot_epoch` 与 scheduler 单值 `queue_epoch`/`queue_permutation`（`local_memory_segment.py:288-291`）、`configure_queue` 的关系/持久化/`_by_slot` 重放未定义；及与冻结 category 级 `QueueEpochSnapshot` 的偏离说明。
+  3. `:170-173` 边界「全 non-terminal、无可复用 slot」情形未处理。
+  4. `:361-364,370` 未把 D8b 长跑显式 gate 在独立 scheduler-refreeze Gate 之后。
+- 整改方向：v0.8 补 §3/§4 的 `_slot_epoch`↔`queue_epoch` 关系与持久化、§3.2 补全 non-terminal 边界、§8/§9 显式 gate D8b、重跑 probe 更新 §10.3 证据。
+
+### Gate 3 v0.8 整改（2026-09-17 16:54 CST，进行中）
+
+- 已改 v0.8 docs：①§3.2 补「全 non-terminal、无可复用 slot」边界（复用空 → freeze_window 诚实 fail-closed）；②§3.3/§4.2/§4.4 明确 `_slot_epoch`（driver 逐 slot）与 `queue_epoch`/`queue_permutation`（scheduler 单值 category 级）关系——driver 直接调冻结 `queue_permutation(queue_seed, _slot_epoch[slot], category)`，不经过 `configure_queue`；③§8 第 8 点 + §9 显式 gate「D8b 长跑须在独立 scheduler-refreeze Gate 之后」。
+- 探针 `probe_epoch_reuse_planning.py` 改为 v0.7 逐 slot 复用参考实现（`_rollover_slot`：non-terminal 继续 / terminal 复用 + 逐 slot 清守卫 + `_slot_epoch` 计数）。smoke（max-episodes 20）PASS：criterion1 重排顺序 True、slot_epochs 快照显示 slot 0/4 non-terminal 继续。
+- 完整 45-epoch 探针后台运行中（PID 1505062，产物 `artifacts/g0/active_static_probe/probe_epoch_reuse_planning.json`）。GPU smoke 并行（iteration 1 loss=1.611394 与 D8a 一致，等 iteration 3 存盘）。
+
+### ChatGPT 两份新 review（2026-09-17 17:10 CST，REQUEST_CHANGES）
+
+远端 `ffeb6aa2..ccd5ba36`（3 个 ChatGPT review commit）已 merge。两份 verdict：
+
+**Gate 2 resume closure**（`active_route_resume_closure_ffeb6aa_7bb507f.md`）= `REQUEST_CHANGES / DO_NOT_CLOSE`：
+- 确认实现架构正确（load-before-on_train_start、fail-closed identity、rebuild+rebind、trimming），「close to closure」。
+- **HIGH-1**：GPU save→kill→auto-resume 连续性证据仍缺失（v0.4 显式 PASS 判据，非可选）。——**正在跑的 GPU smoke 就是补这个**。
+- **MEDIUM-1**：`load_state_dict` 独立恢复 `active_stream`/`stream_index`/`active_cursor`，缺跨字段一致性校验（stream_index 位置、cursor 范围、无 active stream 的 frontier、scheduler stable/terminal 与 driver frontier 一致），须 fail-closed。
+
+**Gate 3 epoch-reuse v0.7**（`active_catalog_epoch_reuse_v07_05fbd778_525f506.md`）= `REQUEST_CHANGES`：
+- 确认 v0.7 关闭了之前的 HIGH-1（chronology reset）+ HIGH-2（scheduler authority replacement）。
+- **HIGH-1**（同 DS 意见 2）：per-slot `_slot_epoch` 无法用 scheduler 现有标量 queue identity（`queue_seed`/`queue_epoch`/`queue_permutation`/`segment_provenance`）表示。要求 Option A（scheduler ABI 改 per-slot）或 Option B（声明 scheduler 标量非权威，driver 持久化完整 per-slot 身份 + 交叉校验）。
+- **MEDIUM-1**（同 DS 意见 1）：§10 旧证据不验证 v0.7 状态机，要求加 v0.7 算法 CPU 探针记录（first boundary、_slot_epoch trajectory、no cursor discontinuity、no sidecar reset、>113 窗、no admission rejection、full coverage）。
+
+**整改顺序**：①Gate 2 MEDIUM-1 跨字段校验（代码）→ ②Gate 2 HIGH-1 GPU resume（GPU smoke 进行中）→ ③Gate 3 HIGH-1 authority model（v0.8 选 Option A/B）→ ④Gate 3 MEDIUM-1 §10 证据（探针已重跑 3704 窗）。
+
+### GPU smoke 判据 4 进展（2026-09-17 17:29 CST）
+
+- **① Gate 2 MEDIUM-1 已整改**：`load_state_dict` 加跨字段一致性校验（active_stream/active_cursor key 集一致、stream_index 对齐 active_stream 位置、cursor 在 block 范围、idle slot frontier 有效）+ 2 个 mutation 测试（misaligned stream_index / out-of-range cursor）。driver 20 passed、ruff/py_compile PASS。子模块 `631a95a`、根仓 `dae010c7`。
+- **② GPU smoke Phase 1**：`max_iter=6/save_iter=3`，iteration 1/2/3 loss=1.611394/1.710646/1.662216（iter1 与 D8a 逐位一致）；**第 3 步存出完整 DCP + `dataloader/rank_0.pkl`**（Gate 2 HIGH-1 要求验证的 dataloader 状态文件已写入）。kill 进程模拟中断。
+- **Phase 2 auto-resume**：重启后 **`Loaded checkpoint .../iter_000000003 (same-job, local) in iteration 3`**——auto-resume 从 iter_3 加载成功。等 driver 构建（catalog 约 22 分钟）后验证 `load_state_dict` 不抛 `cannot resume`、训练从 iter_4 续跑、`_stream_index`/`_active_cursor` 连续。
+
+### ChatGPT 两份新 verdict（2026-09-17 17:50 CST，均 REQUEST_CHANGES）
+
+远端 `2b654ae4..c8fb3846`（3 commit）已 ff。两份 review：
+
+**Gate 2 closure re-review**（`active_route_resume_closure_dae010c_631a95a.md`）= `REQUEST_CHANGES`：
+- 上轮 frontier-coherence 问题 **CLOSED in substance**（跨字段校验 + mutation fixtures 是正确 invariant）。
+- **HIGH-1（production/atomicity）**：`load_state_dict` 在 `_restore_runtime`（会 mutate live owner/scheduler/sidecar）**之后**才校验 frontier。违反项目「decode/stage → full validate → runtime admission → first live mutation」原子性规则。要求两阶段：① pure staging/validation（旁路 rebuild candidate scheduler + stage sidecar，校验 committed↔scheduler 身份/所有 frontier/key-set，不 mutate live）；② atomic apply。加 causal mutation fixtures 断言**失败时零 live mutation**。
+- **HIGH-2（Evidence-only）**：真实 GPU/DCP resume witness 仍缺（resume v0.4 §6 判据 4）——**正在跑的 GPU smoke 就是补这个**。
+
+**Gate 3 epoch-reuse v0.8**（`active_catalog_epoch_reuse_v08_5f29e35_631a95a.md`）= `REQUEST_CHANGES`：
+- v0.6 chronology reset / cumulative authority **CLOSED by direction**；v0.7 stale evidence **CLOSED as stale-evidence issue**（探针已重写）。
+- **HIGH-1（authority 冲突）**：Option B 同时声称「scheduler queue/QueueEpochSnapshot 仍冻结」+「对 active 路线非权威 + bypass configure_queue」——两说法不能并存（upstream `canonical_segment_production_adapter_scheduler_design_v0.2.md` §5 冻结 global QueueEpochSnapshot + safe rollover「epoch 仅当无 non-terminal slot 残留时才推进」）。要求选 **A（显式 active-route queue refreeze/supersession：明确 supersede v0.2 §5 哪些 clause、driver `_slot_epoch` 为 canonical queue-identity authority、typed lifecycle/persistence/resume/guard cleanup）** 或 **B（conform global QueueEpochSnapshot：不 re-admit terminal slot while old-epoch slot non-terminal）**。选 A 则本 Gate 须显式框定为 active-route queue-semantics refreeze。
+- **HIGH-2（capacity 判据自相矛盾）**：§6 criterion 2 要求 ≥5040 窗口，但 `windows_total=3704`、`criterion2_meets_target=false`，而探针 `result=PASS`（PASS 不含 criterion2，exit 0 无条件）。要求：探针 result+exit 在任一 mandatory criterion false 时 fail；跑到 `windows_total>=5040`（非固定 45 边界）；保留「无 all-non-terminal 死路/raise」直接证据；到不了目标则标 BLOCKED 而非 PASS；不得把 criterion2 降为 ">112"。
+- **MEDIUM-1**：§5/§6 判据 7/10 仍留两个 authority（`_slot_epoch` + scheduler queue epoch 都「必须」restore），违背 Option B 单一 authority。
+
+**整改顺序**：①Gate 2 HIGH-1 两阶段重构（代码）→ ②Gate 2 HIGH-2 GPU witness（GPU smoke 进行中）→ ③Gate 3 HIGH-1 选 A + supersession（设计）→ ④Gate 3 HIGH-2 探针结果判据 + 跑到 5040 → ⑤Gate 3 MEDIUM-1 §5/§6 统一 authority。
+
+### Gate 2 两项整改完成（2026-09-17 18:00 CST）
+
+- **HIGH-1（两阶段 restore）已整改**：`load_state_dict` 改为 ① pure staging/validation（`_stage_active_stream`/`_stage_frontier`/`_stage_runtime`：旁路 rebuild scheduler + stage sidecar records + 手动词组复现 `owner.snapshot():181-188` 校验，**不 mutate live**）→ ② atomic apply（`_apply_runtime` swap scheduler/sidecar + 应用 frontier，无 remaining fallible 检查）。加 4 个 causal mutation fixtures（misaligned stream_index / out-of-range cursor / bad key set / runtime 无 scheduler counterpart），每个断言**失败时零 live mutation**（`_live_identity` 前后相等）。driver 22 passed、ruff/py_compile PASS。子模块 `c9a0111`、根仓 `982a089a`。
+- **HIGH-2（GPU resume witness）已验证**：
+  - Phase 1（max_iter=6/save_iter=3）：iter_1/2/3 loss=`1.611394`/`1.710646`/`1.662216`；**iter_3 存出完整 DCP + `dataloader/rank_0.pkl`**。
+  - kill 进程（模拟中断）。
+  - Phase 2 auto-resume：**`Loaded checkpoint .../iter_000000003 (same-job, local) in iteration 3`** → 训练**从 iteration 4 继续**（`iteration=4 | train/loss=1.644157`，finite），**不抛 `cannot resume`**。
+  - 即：save→kill→auto-resume 端到端工作，驱动状态从 iter_3 恢复并续跑（非从头重放）。**这是 v0.4 §6 判据 4 的核心 witness**。
+- 待补（ChatGPT HIGH-2 的完整清单）：Phase 2 续跑对照（restart 后 iter_4 的 loss/identity 与「不中断跑」的同窗对照）+ `_stream_index`/`_active_cursor`/`exposure` 连续性显式断言 + 「不 fallback 到 fresh catalog」验证。
+
+### Gate 3 v0.8 二次整改（2026-09-17 18:10 CST，进行中）
+
+- **HIGH-1（authority）选 ChatGPT option A（显式 active-route queue-semantics refreeze）**：§3.3 重写——显式 supersede `canonical_segment_production_adapter_scheduler_design_v0.2.md:86` 的 global rollover clause（「无 bound non-terminal slot 才推进 epoch」，严格限于 active 路线）；`_slot_epoch` 为 canonical queue-identity authority；scheduler 单值字段降为兼容性元数据；本 Gate 显式框定为 active-route queue-semantics refreeze。
+- **MEDIUM-1 / DS LOW 统一 authority**：§4.1/§4.3/§5/§8 判据 5/§6 判据 7 全部改为「单一 authority（driver `_slot_epoch` + 重放一致为唯一 witness）」；§2.1 configure_queue 标为「本设计不调用」；判据 7 并入判据 10。
+- **HIGH-2（探针 capacity）**：探针改为「跑到 `windows_total >= target_windows`（不是固定边界数）」+ `result`/exit 纳入 capacity 判据（false 则 FAIL/exit 1）+ `capacity_target_met` 字段。后台跑 `--max-epochs 100 --target-windows 5040`（PID 1754748）；§10.3 待其结果更新。
+- 待提交：design 整改 + 探针结果（等 5040 跑完）。
+
+### Gate 2 closure 两方 APPROVE（2026-09-17 14:28 CST）
+
+- **DS**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`。非阻塞 residual（判据 5 完整 launch 集成、判据 7④ sidecar.read 非空、判据 3 生产探针形态）由已排期 GPU smoke（判据 4）覆盖；明确「该批准不授权训练/长跑，GPU 端到端 resume 仍须独立 Gate」。
+- **MM**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`（「可推进 §6 判据 4 / 判据 7 的 GPU smoke 验收，仍需 GPU 授权」）；输入行提示「推动 Gate 1 / Gate 3 closure 送审」。
+- ChatGPT 待观察（Inbox 已含 closure 申请）。Gate 1 已三方 approve（design+实现）。Gate 3 v0.7 仍待 DS/MM/ChatGPT 三方 verdict。

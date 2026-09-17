@@ -1,11 +1,12 @@
 {
   "b_stream": 8,
+  "capacity_target_met": true,
   "catalogue_blocks": 14430,
-  "committed_identities": 14371,
+  "committed_identities": 14322,
   "criterion1_mismatches": [],
   "criterion1_slot_order_matches_permutation": true,
   "criterion2_exceeds_single_epoch": true,
-  "criterion2_meets_target": false,
+  "criterion2_meets_target": true,
   "criterion2_target_windows": 5040,
   "criterion3_probe_is_pure": true,
   "criterion4_window_index_not_reset": true,
@@ -15,35 +16,35 @@
     "recovered_in_epoch1": 94
   },
   "criterion6_slot_coverage": {
-    "all_categories_windows": 385,
-    "all_slots_windows": 122,
+    "all_categories_windows": 394,
+    "all_slots_windows": 131,
     "max_within_category_slot_skew": 128,
     "total_categories": 4,
     "total_slots": 8,
     "windows_by_distinct_categories": {
-      "1": 822,
-      "2": 1438,
-      "3": 1059,
-      "4": 385
+      "1": 1397,
+      "2": 2153,
+      "3": 1163,
+      "4": 394
     },
     "windows_by_distinct_slots": {
-      "1": 142,
-      "2": 684,
-      "3": 395,
-      "4": 1049,
-      "5": 267,
-      "6": 795,
+      "1": 190,
+      "2": 1212,
+      "3": 610,
+      "4": 1548,
+      "5": 275,
+      "6": 891,
       "7": 250,
-      "8": 122
+      "8": 131
     }
   },
   "cumulative_exposure": {
-    "libero_10": 1964336,
-    "libero_goal": 1842032,
-    "libero_object": 1919456,
-    "libero_spatial": 1859968
+    "libero_10": 2649872,
+    "libero_goal": 2587376,
+    "libero_object": 2643296,
+    "libero_spatial": 2578592
   },
-  "epochs_planned": 45,
+  "epochs_planned": 63,
   "ga": 16,
   "queue_seed": 0,
   "result": "PASS",
@@ -707,6 +708,96 @@
       },
       "to_epoch": 44,
       "windows_in_previous_epoch": 99
+    },
+    {
+      "remaining_blocks_at_rollover": 59,
+      "slot_epochs_snapshot": {
+        "0": 22,
+        "1": 45,
+        "2": 34,
+        "3": 44,
+        "4": 20,
+        "5": 44,
+        "6": 35,
+        "7": 44
+      },
+      "to_epoch": 45,
+      "windows_in_previous_epoch": 90
+    },
+    {
+      "remaining_blocks_at_rollover": 104,
+      "slot_epochs_snapshot": {
+        "0": 23,
+        "1": 46,
+        "2": 35,
+        "3": 45,
+        "4": 20,
+        "5": 45,
+        "6": 36,
+        "7": 45
+      },
+      "to_epoch": 46,
+      "windows_in_previous_epoch": 90
+    },
+    {
+      "remaining_blocks_at_rollover": 31,
+      "slot_epochs_snapshot": {
+        "0": 23,
+        "1": 47,
+        "2": 36,
+        "3": 46,
+        "4": 21,
+        "5": 46,
+        "6": 37,
+        "7": 46
+      },
+      "to_epoch": 47,
+      "windows_in_previous_epoch": 91
+    },
+    {
+      "remaining_blocks_at_rollover": 76,
+      "slot_epochs_snapshot": {
+        "0": 24,
+        "1": 48,
+        "2": 37,
+        "3": 47,
+        "4": 21,
+        "5": 47,
+        "6": 38,
+        "7": 47
+      },
+      "to_epoch": 48,
+      "windows_in_previous_epoch": 90
+    },
+    {
+      "remaining_blocks_at_rollover": 3,
+      "slot_epochs_snapshot": {
+        "0": 24,
+        "1": 49,
+        "2": 38,
+        "3": 48,
+        "4": 22,
+        "5": 48,
+        "6": 39,
+        "7": 48
+      },
+      "to_epoch": 49,
+      "windows_in_previous_epoch": 91
+    },
+    {
+      "remaining_blocks_at_rollover": 48,
+      "slot_epochs_snapshot": {
+        "0": 25,
+        "1": 50,
+        "2": 38,
+        "3": 49,
+        "4": 23,
+        "5": 49,
+        "6": 39,
+        "7": 49
+      },
+      "to_epoch": 50,
+      "windows_in_previous_epoch": 90
     }
   ],
   "single_epoch_limit": 112.73,
@@ -767,7 +858,7 @@
       }
     }
   ],
-  "window_index": 3704,
+  "window_index": 5107,
   "window_members": 128,
   "windows_per_epoch": [
     112,
@@ -814,7 +905,25 @@
     90,
     91,
     99,
+    90,
+    90,
+    91,
+    90,
+    91,
+    90,
+    85,
+    68,
+    41,
+    68,
+    86,
+    68,
+    41,
+    68,
+    85,
+    68,
+    93,
+    90,
     90
   ],
-  "windows_total": 3704
+  "windows_total": 5107
 }
