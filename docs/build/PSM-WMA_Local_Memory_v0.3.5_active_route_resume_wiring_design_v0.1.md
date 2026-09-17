@@ -1,14 +1,27 @@
-# Local Memory v0.3.5 Active-Route Resume 接线设计 v0.2
+# Local Memory v0.3.5 Active-Route Resume 接线设计 v0.3
 
 - Gate：`G0-R09-B-TTT-V035-ACTIVE-ROUTE-RESUME`
-- formal root：`8bb48f3507dda24090de41bbc4208dfc9e4538aa`
+- formal root：`1ba933c15375f3d77341b69b5c707f81ce5a9904`
 - child/Gitlink：`525f5066393cba044f00f1104b83f5eb424a9c49`
 - 目标文件：`active_local_memory_driver.py`、`active_local_memory_launch.py`
-- 状态：**设计，送审（v0.2；修订 v0.1）**。本文不含已落地代码改动；当前 operative 行为是 §9 的 fail-closed 守卫。
+- 状态：**设计，送审（v0.3；修订 v0.2；v0.2 修订 v0.1）**。本文不含已落地代码改动；当前 operative 行为是 §9 的 fail-closed 守卫。
 
 ---
 
 ## 0. 修订记录
+
+### v0.2 → v0.3
+
+v0.2 已送审（blob `ab65f3c8`）。v0.3 是对 DS 第 2 轮 `REQUEST_CHANGES` 的 MEDIUM 意见（`resume_wiring_design_v0.1.md:4,198,163-177,194-200`「头部陈旧 / 同一性判定未钉死 / 重建·同一性·版本 fail-closed 完备性」）的一次性整改。
+
+| 项 | v0.2 的说法 | v0.3 的修正 | 依据 |
+|---|---|---|---|
+| 头部 formal root | `8bb48f35` | 改正为整改提交 `1ba933c1`（同其余两 Gate） | DS `:4` |
+| §4.3 第 1 项「同一性」 | 「按 `(episode_index, episode_position, category)` 找到同一个对象」未钉死判定标准 | 钉死：以**值相等**匹配（`slot_id` + `episode_id` + `category` 三元组逐位相等，在重建的 `_by_slot[slot]` 中定位到唯一的 `CanonicalSegmentStream`），且要求**恰好命中一个**（0 个或 ≥2 个均 `raise`） | DS `:198` |
+| §4.3 校验项数 | 三项（重建确定性 / 窗口边界 / window_index 单调） | 增补**第 4 项「版本/身份一致性」**：`state_dict` 持久化 `source_digest`/`plan_chain_id`，load 时校验与当前 run 逐位一致，否则 `raise`（防止 catalog/config 变更后被静默误 load） | DS `:163-177,194-200` |
+| §4.1 `state_dict` | 无版本字段 | 增补 `source_digest`/`plan_chain_id` 两个字段入 `state_dict` | 同上 |
+
+v0.2 的 §1–§4.2、§5、§6（判据 1–4）、§7、§9 逐字未改动；改动集中在头部、§0、§4.1 `state_dict`、§4.3、§6（判据 5）与标题。
 
 ### v0.1 → v0.2
 
@@ -162,6 +175,8 @@ class ActiveLocalMemoryLaunchCallback(Callback):
 ```python
 def state_dict(self) -> dict[str, Any]:
     return {
+        "source_digest": self.producer.source_digest,        # v0.3 增补：版本/身份
+        "plan_chain_id": self.plan_chain_id,                 # v0.3 增补：版本/身份
         "window_index": self._window_index,
         "stream_index": dict(self._stream_index),
         "active_stream": {
@@ -191,19 +206,20 @@ def load_state_dict(self, state_dict: dict[str, Any]) -> None:
 
 `_last_per_slot` 定义为 `tuple({i.slot_id: i for i in items}.values())` —— 与 `canonical_segment_runtime.py:181` **同一个派生式**，故与 resume 路径唯一消费者逐位一致。`rebuild()` 无需改动（它已 `list(snapshot[...])`）。
 
-### 4.3 load 侧必须 fail-closed 的三项校验
+### 4.3 load 侧必须 fail-closed 的四项校验（v0.3 增补第 4 项）
 
 resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot 与 episode），故 load 必须拒绝而非猜测：
 
-1. **`_by_slot` 重建确定性**：`canonical_segment_streams` 依赖 dataset `_ep_vals` 与 `episode_shuffle_seed`。恢复的 `active_stream` 必须能在重建后的 `_by_slot[slot]` 中**按 `(episode_index, episode_position, category)` 找到同一个对象**；否则 `raise RuntimeError`（slot→episode 绑定错位）。
+1. **`_by_slot` 重建确定性（v0.3 钉死「同一性」判定）**：`canonical_segment_streams` 依赖 dataset `_ep_vals` 与 `episode_shuffle_seed`。恢复的 `active_stream[slot]` 是标量元组 `(slot_id, episode_index, episode_position, category)`，**按值相等**（四元组逐位相等）在重建后的 `_by_slot[slot]` 中定位 `CanonicalSegmentStream`；要求**恰好命中一个**（命中 0 个或 ≥2 个均 `raise RuntimeError`），并校验命中对象的 `episode_id == str(episode_index)`（字符串语义，与 `freeze_window` 的 identity 构造一致）。slot→episode 绑定错位即拒绝。
 2. **恢复点必须是窗口边界**：`owner.snapshot()` 的输出只在 IDLE 时产生；load 时若 `_window` 非空或 owner 非 IDLE，拒绝。
 3. **`window_index` 单调**：恢复值必须 ≥ 0 且小于当前配置的 `max_iter`。
+4. **版本/身份一致性（v0.3 增补）**：`state_dict` 里的 `source_digest` 与 `plan_chain_id` 必须与当前 run 的 `self.producer.source_digest` / `self.plan_chain_id` **逐位一致**，否则 `raise RuntimeError`（防止 catalog/config 变更后被静默误 load——这是「半对半错」里最隐蔽的一类：游标对上、但数据身份已变）。
 
 ### 4.4 与 `on_train_start` 守卫的关系（v0.2 更正）
 
 `active_local_memory_launch.py:234` 的 fail-closed 守卫（`if iteration > 0: raise RuntimeError`）在本设计落地后**改为**：`iteration > 0` 时，若 `_pending_resume_state is not None`（load 已把 driver 状态灌入 buffer）则应用之并放行；若为 `None`（checkpoint 无 `dataloader` key，即本设计的 checkpoint 接口尚未在该 run 生效过）则保持拒绝。**不取消该守卫**——本设计未落地前它必须继续生效。
 
-**load/守卫的时序链（v0.2 修正后，可核实）**：`checkpointer.load()`（`trainer/__init__.py:383`）→ `_DataloaderWrapper` 绑定 launch callback → `load_state_dict()` 灌入 `_pending_resume_state`；随后 `callbacks.on_train_start()`（`:400`）构建 driver 并 `load_state_dict(_pending_resume_state)` 应用到 driver（触发 §4.3 三项 fail-closed 校验）。故「load 成功」的判据是 `_pending_resume_state is not None`，而非 v0.1 误写的「`load_state_dict` 在 `on_train_start` 时尝试」。
+**load/守卫的时序链（v0.2 修正后，可核实）**：`checkpointer.load()`（`trainer/__init__.py:383`）→ `_DataloaderWrapper` 绑定 launch callback → `load_state_dict()` 灌入 `_pending_resume_state`；随后 `callbacks.on_train_start()`（`:400`）构建 driver 并 `load_state_dict(_pending_resume_state)` 应用到 driver（触发 §4.3 四项 fail-closed 校验）。故「load 成功」的判据是 `_pending_resume_state is not None`，而非 v0.1 误写的「`load_state_dict` 在 `on_train_start` 时尝试」。
 
 ---
 
@@ -230,6 +246,7 @@ resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot �
 3. 生产链路（`tools/g0/probe_r09_b_active_static.py` 形态，CPU-only）：走满一个窗口后取 `state_dict()`，在**新建的 driver** 上 `load_state_dict()`，断言 `_stream_index`/`_active_cursor` 逐位相同。
 4. GPU 端到端 resume 短跑：跑到 `save_iter` 存盘 → 杀进程 → 以 auto-resume 重启 → 断言 ①不再抛 `cannot resume`；②重启后首窗的 `SegmentIdentity` 序列**与不中断跑的对应窗口一致**；③`cumulative_valid_consumer_exposure` 连续（不归零）。
 5. 既有 launch 测试改为断言 resume **被接受**而非被拒绝；并新增 CPU 单测验证 **load 时序**（v0.2 新增）：driver 未构建时 `launch_callback.load_state_dict(state)` 正确暂存到 `_pending_resume_state`，随后 `on_train_start` 构建 driver 并把暂存状态应用，断言 `_stream_index`/`_active_cursor`/`window_index` 与保存值逐位一致；再断言 `state_dict()` 在 driver 为 `None` 时 `raise`（save 侧 fail-closed）。
+6. **版本/身份一致性 fail-closed（v0.3 新增）**：CPU 单测构造 `state_dict` 的 `source_digest`（或 `plan_chain_id`）与当前 driver 不一致，断言 `load_state_dict` `raise RuntimeError`；再构造「`active_stream` 命中 0 个 / ≥2 个对象」的边界，断言 `raise`（第 1 项「恰好命中一个」）。
 
 **FAIL**：任一校验被绕过而 resume 成功；或 resume 后首窗 identity 序列与对照不一致。
 
@@ -252,7 +269,7 @@ resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot �
 请就以下三点裁定（第 3 点已由 v0.2 按 DS HIGH 意见修正，请复核而非首答）：
 
 1. **§3 的修剪证明是否成立** —— 按 slot 取最后一条是否确实不改变 resume 路径读取的信息（依据是 `owner.snapshot()` 的 `:181-186` 校验）。
-2. **§4.3 的三项 fail-closed 校验是否充分** —— 是否还有「半对半错」的静默通道未被拒绝。
+2. **§4.3 的四项 fail-closed 校验是否充分（v0.3 已按 DS 意见增补第 4 项「版本/身份一致性」并钉死第 1 项「同一性」判定）** —— 是否还有「半对半错」的静默通道未被拒绝。
 3. **§4.4 的守卫收敛方式（v0.2 已修正）** —— DS 指出的「load 时序使 `_DataloaderWrapper` 永不命中 driver」已在本版修正（接口移到 launch callback + `_pending_resume_state` 暂存 + `has_checkpoint_state()` 恒 `True`，见 §2.1/§4.1/§4.4）。故守卫收敛为「`iteration > 0` 且 `_pending_resume_state is not None` 则应用放行，否则拒绝」，请复核该收敛是否成立、是否仍有 load 早于 attach 的静默通道。
 
 ---
