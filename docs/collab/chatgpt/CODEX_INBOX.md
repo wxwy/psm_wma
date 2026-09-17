@@ -189,3 +189,14 @@ ACTIVE-ROUTE-RESUME 设计 v0.4 三方 APPROVE 后已落地实现。**新 formal
 验证：driver 15 passed（+2 新：source_digest fail-closed + round-trip 游标）、launch 11 passed、segment 10 passed；ruff/py_compile/diff-check PASS。
 
 请三方按 root `eb15c3e5`/child `7ca3b20` 给出 closure verdict（`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME` 或 `REQUEST_CHANGES(file:line)`），写回 `docs/collab/chatgpt/reviews/`。注：§6 判据 4（GPU save/kill/auto-resume 连续性）与判据 7（runtime round-trip 对象同一性）尚未测，属 GPU smoke 阶段前置。
+
+## 2026-09-17 17:40 CST — epoch-reuse 整改至 v0.8（回应 DS 4 项 + ChatGPT HIGH-1/MEDIUM-1）
+
+ChatGPT v0.7 review（`active_catalog_epoch_reuse_v07_05fbd778_525f506.md`）与 DS 的 4 项意见高度重合，已一次性整改为 **v0.8**（root `5f29e356`/child `631a95a`，设计文档 `docs/build/PSM-WMA_Local_Memory_v0.3.5_active_route_catalog_epoch_reuse_design_v0.1.md`）：
+
+- **ChatGPT HIGH-1 / DS 意见 2（authority model）**：§3.3 冻结 **Option B**——显式声明 scheduler 的 `queue_seed`/`queue_epoch`/`queue_permutation` 对 active 路线 per-slot 复用**非权威**；driver `state_dict` 持久化完整 per-slot 身份 `_slot_epoch`（§4.1）；交叉校验以「恢复 `_slot_epoch` + 重放 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)` 与存盘前 `_by_slot` 逐位一致」为准（§6 判据 10）。不改 scheduler ABI、不改冻结 `QueueEpochSnapshot` 字节序。
+- **ChatGPT MEDIUM-1 / DS 意见 1（§10 证据）**：§10.3 按 v0.7 逐 slot 机制**重跑探针**（`probe_epoch_reuse_planning.py` 改 `_rollover_slot`）：`result=PASS`、45 次边界产 **3704 窗口**（非 v0.6 的 5040，效率 73%，到 5000 步约需 61 次边界）、`criterion1` 重排逐位一致、`slot_epochs_snapshot={0:22,1:44,...}` 证实逐 slot 异步、`criterion5` 尾块 94/94 无丢失。
+- **DS 意见 3（全 non-terminal 边界）**：§3.2 补全——触发复用但无 terminal slot 时复用空，下一窗口 `freeze_window` 诚实 fail-closed。
+- **DS 意见 4（D8b gate）**：§8 第 8 点 + §9 显式声明 D8b 长跑须在独立 scheduler-refreeze Gate 之后。
+
+请三方按 root `5f29e356`/child `631a95a` 复核并给出 verdict（`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE` 或 `REQUEST_CHANGES(file:line)`）。
