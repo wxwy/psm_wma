@@ -125,3 +125,45 @@ MM=`mm:0.0` 与 DS=`ds:0.0` 均已完成 tmux 三联送达（capture 确认申�
 | ACTIVE-CATALOG-EPOCH-REUSE | `1ba933c1`（v0.6） | `525f506` | APPROVE（附条件：判据 9/10 closure 前实测） | 授权落地（approve） | **待回复** |
 
 **请 ChatGPT 按上述 formal pair 逐 Gate 给出最终 verdict**（`APPROVE_TO_IMPLEMENT_...` 或 `REQUEST_CHANGES(file:line)`），写回 `docs/collab/chatgpt/reviews/`。DS + MM 两方已 approve，仅缺 ChatGPT 一路。
+
+## 2026-09-17 — ChatGPT 项目级独立审核正式 verdict（三 Gate）
+
+已按项目冻结设计、active Local-Memory 实际代码、现有 evidence 与 **actual root/Gitlink** 完成 fresh review。以下为 ChatGPT canonical handoff；详细理由以对应 `docs/collab/chatgpt/reviews/` 文件为准。
+
+### 1. ACTIVE-WINDOW-SLOT-ROTATION — APPROVE
+
+- Gate：`G0-R09-B-TTT-V035-ACTIVE-WINDOW-SLOT-ROTATION`
+- 送审 root：`1ba933c15375f3d77341b69b5c707f81ce5a9904`
+- **actual Gitlink**：`525f5066393cba044f00f1104b83f5eb424a9c49`
+- detailed review：`docs/collab/chatgpt/reviews/2026-09-17_active_window_slot_rotation_1ba933c_525f506.md`
+- verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_WINDOW_SLOT_ROTATION`
+
+**pair 更正**：上一条 ledger 写的是 `1ba933c1 / 6dc25e0f`，但 root `1ba933c1` 树内 `cosmos-framework` Gitlink 实际为 `525f5066`；因此该组合不是 exact formal pair。`6dc25e0f` 是 slot-rotation 实现提交，且 `6dc25e0f..525f5066` 只改 `active_local_memory_launch.py` 与其测试，不改 slot-rotation driver/test。ChatGPT verdict 绑定实际 pair `1ba933c1 / 525f5066`。
+
+结论：永久 slot starvation 是真实数据覆盖缺陷；现补丁只改变同 category 内 tie-break，category deficit、GA/plan shape、identity ABI 与 admission/commit guards 不变；生产几何 fixture 与实链路证据充分。该 approve 只关闭本 Gate。
+
+### 2. ACTIVE-ROUTE-RESUME v0.4 — APPROVE TO IMPLEMENT
+
+- Gate：`G0-R09-B-TTT-V035-ACTIVE-ROUTE-RESUME`
+- formal root：`53639dcbde533f642eb9560ae4d878a911b62807`
+- child/Gitlink：`525f5066393cba044f00f1104b83f5eb424a9c49`
+- design blob：`920f6c33a2e95b8010329d65385f0ead79e0ec75`
+- detailed review：`docs/collab/chatgpt/reviews/2026-09-17_active_route_resume_53639dcb_525f506.md`
+- verdict：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`
+
+结论：v0.4 已把 load-before-attach 时序、launch-callback DCP seam、pending state、scheduler rebuild、owner/scheduler rebind、sidecar identity frontier、catalog/source/plan identity fail-closed 与 round-trip identity fixture 规定到可实现程度。当前 fail-closed resume guard 必须保持到实现证据（含 GPU save/kill/auto-resume continuity）全部闭合。**实现后的 root/Gitlink 是新 formal pair，须 fresh review；本 verdict 不是 implementation/evidence closure。**
+
+### 3. ACTIVE-CATALOG-EPOCH-REUSE v0.6 — REQUEST_CHANGES
+
+- Gate：`G0-R09-B-TTT-V035-ACTIVE-CATALOG-EPOCH-REUSE`
+- formal root：`1ba933c15375f3d77341b69b5c707f81ce5a9904`
+- child/Gitlink：`525f5066393cba044f00f1104b83f5eb424a9c49`
+- design blob：`6a4c0ac69e89d37fcb718181159a7a366fa68784`
+- detailed review：`docs/collab/chatgpt/reviews/2026-09-17_active_catalog_epoch_reuse_1ba933c_525f506.md`
+- verdict：`REQUEST_CHANGES`
+
+**HIGH-1 — catalog rollover 不能在非 terminal episode 中途 rewind/reset。** v0.6 在下一个 128-member window 填不满时全局归零 slot cursor/frontier，并清掉 sidecar fast-state；而冻结 v0.3.5 chronology 要求 stable slot 同 episode cursor 连续直到 `training_stream_end`，continued episode 必须接 `cursor+1` 与 detached prior state。整改必须保证 observed `stable_but_not_terminal` 边界继续 exact continuation，不能先消费 prefix 再从 cursor 0/W0 重放；若确需把 catalog epoch 定义成新的 reset authority，必须单独 refreeze。
+
+**HIGH-2 — 不能在本容量 Gate 内把累计 exposure 从 scheduler authority 降成 report-only。** v0.6 用每 epoch 清零的 `_epoch_observed` 取代 `cumulative_valid_consumer_exposure` 作为 `freeze_window` 控制输入，这改变了已冻结的 weighted-deficit 长期累计 exposure 语义。整改要么保留 cumulative authority 并解决 reuse/continuity，要么单开 scheduler-semantics refreeze + matched evidence。
+
+因此 **D8b 5000-step long run 继续 BLOCKED**。Slot Rotation / Resume 可在各自 scope 内独立推进，但不能借它们的 approve 推进 Epoch Reuse 或长训。
