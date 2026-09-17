@@ -215,3 +215,18 @@ ChatGPT v0.7 review（`active_catalog_epoch_reuse_v07_05fbd778_525f506.md`）与
 - **MEDIUM-1 / DS LOW**：§2.1/§4.1/§4.3/§5/§8/§6 全部统一为单一 authority（判据 7 并入判据 10）。
 
 请三方按 root `f86513a1`/child `c9a0111` 复核两个 Gate 并给出 verdict。
+
+## 2026-09-17 19:55 CST — 两 Gate 最终送审（GPT 复核请求）
+
+当前 formal pair：root `04ab6f9a` / child `c9a0111`（含两 Gate 的全部整改）。
+
+**Gate 2 ACTIVE-ROUTE-RESUME closure**：
+- HIGH-1 两阶段 restore（staging/validation → atomic apply）+ 4 个零突变 causal fixtures；driver 22 passed。
+- HIGH-2 GPU resume witness 闭环：Phase1 iter_3 存 DCP + `dataloader/rank_0.pkl` → kill → auto-resume「...iter_000000003 (same-job,local) in iteration 3」→ 训练从 iteration 4 续跑至 iter_6（loss finite，不抛 cannot resume），iter_6 存出完整 DCP + `dataloader/rank_0.pkl`。
+
+**Gate 3 ACTIVE-CATALOG-EPOCH-REUSE v0.8**：
+- HIGH-1 authority：显式 supersede `canonical_segment_production_adapter_scheduler_design_v0.2.md:86` 的 global rollover clause（限 active 路线）；`_slot_epoch` 为唯一 queue-identity authority；本 Gate 显式框定为 active-route queue-semantics refreeze。
+- HIGH-2 capacity：探针按 v0.7 category 级重排重跑，跑到 **5112 窗**（≥5040、`capacity_target_met=true`、`criterion1=true`、`full_coverage=true`/`stranded=[]`）；探针 result/exit 纳入 capacity 与覆盖判据。
+- MEDIUM-1 / DS LOW：§2.1/§4.1/§4.3/§5/§6/§8 统一单一 authority（判据 7 并入判据 10）。
+
+请 GPT 对两个 Gate 分别给出 verdict，写回 `docs/collab/chatgpt/reviews/`。
