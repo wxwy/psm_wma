@@ -11108,3 +11108,23 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - **MM=`mm:0.0`**：三联完成；capture 显示申请离开输入框，处理中（`Gate 3 ACTIVE-CATALOG-EPOCH-REUSE closure verdict`）。
 - **Kimi=`kimi:0.0`**：三联完成；capture 显示申请离开输入框（输入框清空）、进入处理。
 - 此回执不是 final verdict。三方同 pair final 前保持 `REVIEW`，禁止 D8b 长跑/GPU 短跑越权；下一轮起按三分钟完整远端锁定 + 三路核验。
+
+### Gate 3 closure 审核观察凭证 #1（2026-09-17 23:04 CST，REVIEW，用户提示「GPT 也在审核」触发）
+
+- formal pair=root=`54aa90a03b60e05e00324b50e127926e7ba1f8cd`/child=`827c1cbda912de90d6d6a34696d40214dcae78b3`；冻结名册=DS=`ds:0.0`、MM=`mm:0.0`、Kimi=`kimi:0.0`（+GPT 按需，本轮用户提示加入）。
+- `before_head=69b14bc29019d18d336672b0aafb7767944e1497`；`git fetch origin V2` 成功；`git ls-remote` advertised=`7fc97081b7d9ba63bc36368f39f35ee96163caff`，与 `origin/V2` 一致；`before_head..origin/V2` 新增范围=**空**；祖先判定：`origin/V2` 是 `before_head` 的祖先（本地领先 2 个未推送提交 `54aa90a0`/`69b14bc2`），无需 merge。
+- **ChatGPT** exact-pair review=`docs/collab/chatgpt/reviews/2026-09-17_PSM_WMA_project_audit_gate3_54aa90a0_827c1cbd.md`（**未跟踪 `??`**，非经 origin V2 推送），formal root/child 逐字匹配，final=`REQUEST_CHANGES_BEFORE_LONG_RUN`：
+  - 结论：Gate 3 实现**无重写级 blocker、方向可继续 closure**；「正式长跑：暂不建议启动」。GPT 独立跑 5 套测试 73 passed。
+  - HIGH-1：workspace 污染（`.authority-root-materialization-*` worktree 约 20 个、artifacts/outputs/dirty submodule）须新增 hygiene 方案（不删 residue）。
+  - HIGH-2：Gate 3 需 production-seed 的真实边界/恢复交叉 witness（第 113 窗越界、terminal/non-terminal 各一、`_slot_epoch` 与重放 `_by_slot` 一致、save→kill→resume 跨 rollover 边界、exposure 单调不归零）。
+  - MEDIUM-1/2/3：SESSION 超 11k 行须 archive 收敛、TODO zombie 须 normalize、加 pretrain acceptance command。
+- **DS**=`ds:0.0`：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE（CPU/static 实现范围）`；明确边界：判据 6/7（GPU）须独立 Gate、D8b 长跑受 §8/§9 scheduler-refreeze 约束、§3.3 refreeze 严格限 active；LOW：判据 2 生产 driver 120 窗结果目前仅 SESSION，建议补 `artifacts/g0/active_static_probe/` JSON 产物。
+- **MM**=`mm:0.0`：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE`（closure 完整、判据 1/3/4/5/8/9/10 由 7 fixture 实证、与 Gate 2 兼容、§7 全守）。
+- **Kimi**=`kimi:0.0`：处理中（待办：核实 SHA 对+推送状态、审 driver/owner/launch diff、亲跑 31+42 测试、核实证据、给 verdict），尚无 final。
+- 当前：DS/MM 已 APPROVE，Kimi 未 final，GPT 为「长跑前变更」（非 closure 拒绝）。推进令牌未齐（缺 Kimi）；继续三分钟轮询。
+
+### DS LOW 已补 + GPT HIGH-2 规划层（2026-09-17 23:10 CST）
+
+- 新增 `tools/g0/probe_epoch_reuse_production_driver.py`：用**生产 queue_seed**（`int(sha256(manifest|config|source)[:16],16)`，实算 `11350389524172359973`）+ **生产 driver** `_maybe_rollover`（非探针参考实现）在真实全量 catalog 上规划 120 窗。
+- 产物 `artifacts/g0/active_static_probe/probe_epoch_reuse_production_driver.json`：`result=PASS`、`windows_total=120`、`boundary_crossed_113=true`、`rollover_boundaries=1`（第 112 窗边界）、`slot_epoch={0:1,1:1,2:1,3:1,4:0,5:1,6:1,7:1}`（slot 4 non-terminal continue、其余 7 terminal reuse，对应 §10.1）、`committed_identities=3835`、`criterion10_replay_mismatches=[]`（epoch>0 slot 重放逐位一致）。
+- 满足 DS LOW + GPT HIGH-2 规划层（production seed + 边界 + terminal/nonterminal 形态 + replay 一致）。GPU 短跑（判据 6/7）仍是独立 Gate。
