@@ -11077,3 +11077,18 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - **DS**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`。非阻塞 residual（判据 5 完整 launch 集成、判据 7④ sidecar.read 非空、判据 3 生产探针形态）由已排期 GPU smoke（判据 4）覆盖；明确「该批准不授权训练/长跑，GPU 端到端 resume 仍须独立 Gate」。
 - **MM**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`（「可推进 §6 判据 4 / 判据 7 的 GPU smoke 验收，仍需 GPU 授权」）；输入行提示「推动 Gate 1 / Gate 3 closure 送审」。
 - ChatGPT 待观察（Inbox 已含 closure 申请）。Gate 1 已三方 approve（design+实现）。Gate 3 v0.7 仍待 DS/MM/ChatGPT 三方 verdict。
+
+### Gate 3 catalog epoch-reuse 实现完成（2026-09-17 22:40 CST，未提交）
+
+- **依据**：Gate 3 v0.8 设计四方 APPROVE（DS/MM/Kimi/ChatGPT，root `463d649e`/child `c9a0111`）。按 §4 实现逐 slot 复用 + `_slot_epoch` + active-route queue-semantics refreeze。
+- **改动文件（子模块 cosmos-framework，全部未提交）**：
+  - `active_local_memory_driver.py`：构造函数新增 `queue_seed` 参数 + `_slot_epoch`/`_slot_category`/`_queue_seed` 状态；新增纯探测 `_remaining_blocks`、边界触发 `_maybe_rollover`（§3.2 `Σ remaining < window_members`）、逐 slot `_rollover_slot`（non-terminal 继续 / terminal 复用 + 清守卫 + sidecar discard）、category 级 `_reordered_by_slot`（§4.4 字符串比较 + `queue_permutation(queue_seed, _slot_epoch[slot], category, size)`）；`_arm_initial` 在 `freeze_window()` 前插入 `_maybe_rollover()`；`state_dict`/`load_state_dict` 增补 `slot_epoch` 字段并重排 `_by_slot`（判据 10 重放 witness）。
+  - `canonical_segment_runtime.py`：新增 `discard_committed_carry(slot_id)`（§4.7 裁定 b，owner 调用 `adapter.sidecar`）。
+  - `active_local_memory_launch.py`：新增 `_queue_seed()`（§4.6 裁定 b：`int(sha256(manifest|config|source).hexdigest()[:16], 16)`）并传入 driver。
+  - `active_local_memory_driver_test.py`：新增 7 个 CPU 测试。
+- **验证结果**：
+  - driver 测试 **31 passed**（原 24 + 新增 7）；相邻 4 个测试文件（launch/runtime/segment/adapter）**42 passed**；改动文件 ruff PASS、py_compile PASS（`canonical_segment_runtime.py` 的 21 个 E701/E702 为 HEAD 既有，非本步引入）。
+  - **判据覆盖**：1（`test_reordered_by_slot_matches_category_permutation`，字符串比较 "1"<"10"<"2"）、3（`test_remaining_blocks_probe_is_pure`）、4（`test_rollover_triggers_only_below_window_members`）、5（`test_non_terminal_slot_is_not_reset_by_rollover`）、8（`test_rollover_discards_sidecar_carry_only_for_terminal_slot`）、9（`test_terminal_slot_reuse_prunes_guards_and_replays_fresh_episode`）、10（`test_slot_epoch_round_trips_through_state_dict`）。
+  - **判据 2 容量解除**：探针参考实现产物 `probe_epoch_reuse_planning.json`（`result=PASS`、`windows_total=5112`、`capacity_target_met=true`、`committed_identities=14349`）；另用**生产 driver** 的 `_maybe_rollover` 在真实全量 catalog 上规划 **120 窗 PASS**（越过 112 边界、第 113 窗成功），`slot_epoch={0:1,1:1,2:1,3:1,4:0,5:1,6:1,7:1}` 与设计 §10.1「slot 4 = stable_but_not_terminal、其余 7 terminal」逐位吻合；smoke（max_episodes=20）300 窗 PASS、各 slot epoch 各异（`{0:32,1:72,2:65,3:79,4:32,5:74,6:61,7:79}`）。
+- **未验证**：判据 6（GPU 单边界短跑）、判据 7（GPU resume 交叉）——属独立 GPU Gate，未执行；D8b 长跑仍受 §8/§9 独立 scheduler-refreeze Gate 约束。
+- **下一步**：提交子模块（排除 `uv.lock`）+ 根仓 gitlink，送 DS/MM/Kimi closure review。
