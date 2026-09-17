@@ -11092,3 +11092,19 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
   - **判据 2 容量解除**：探针参考实现产物 `probe_epoch_reuse_planning.json`（`result=PASS`、`windows_total=5112`、`capacity_target_met=true`、`committed_identities=14349`）；另用**生产 driver** 的 `_maybe_rollover` 在真实全量 catalog 上规划 **120 窗 PASS**（越过 112 边界、第 113 窗成功），`slot_epoch={0:1,1:1,2:1,3:1,4:0,5:1,6:1,7:1}` 与设计 §10.1「slot 4 = stable_but_not_terminal、其余 7 terminal」逐位吻合；smoke（max_episodes=20）300 窗 PASS、各 slot epoch 各异（`{0:32,1:72,2:65,3:79,4:32,5:74,6:61,7:79}`）。
 - **未验证**：判据 6（GPU 单边界短跑）、判据 7（GPU resume 交叉）——属独立 GPU Gate，未执行；D8b 长跑仍受 §8/§9 独立 scheduler-refreeze Gate 约束。
 - **下一步**：提交子模块（排除 `uv.lock`）+ 根仓 gitlink，送 DS/MM/Kimi closure review。
+
+### Gate 3 catalog epoch-reuse closure 审核名册与送达准备（2026-09-17 22:54 CST，REVIEW）
+
+- **formal pair**=root=`54aa90a03b60e05e00324b50e127926e7ba1f8cd`/child=`827c1cbda912de90d6d6a34696d40214dcae78b3`（子模块 cosmos-framework v2）。
+- **冻结名册**=DS=`ds:0.0`、MM=`mm:0.0`、Kimi=`kimi:0.0`（用户规则：GPT 按需，本次不送 ChatGPT；Inbox 不 append）。
+- **范围**：仅 Gate 3 v0.8 §4 active 逐 slot 复用实现（driver/runtime/launch 三文件 + driver test +7）。
+- **请求 verdict**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE` 或 `REQUEST_CHANGES`（逐方 exact-pair final）。
+- 待向 DS/MM/Kimi 执行一次 `send-keys -l → 间隔≥1秒 → Enter → capture` 送达；三方同 pair final 前保持 `REVIEW`，禁止 D8b 长跑/GPU 短跑越权。
+
+### Gate 3 closure 审核送达回执（2026-09-17 22:55 CST，REVIEW）
+
+- ChatGPT：未送（用户规则 GPT 按需，不 append Inbox）。
+- **DS=`ds:0.0`**：三联（`send-keys -l → 间隔≥1秒 → Enter → capture`）完成；capture 显示申请已进入会话，DS 已开始 git 核验（`git rev-parse 54aa90a0`/`git cat-file -t 54aa90a0`/`git ls-tree 54aa90a0 cosmos-framework`/`git rev-parse 827c1cbd`/`git diff-tree --name-only -r 827c1cbd`）。
+- **MM=`mm:0.0`**：三联完成；capture 显示申请离开输入框，处理中（`Gate 3 ACTIVE-CATALOG-EPOCH-REUSE closure verdict`）。
+- **Kimi=`kimi:0.0`**：三联完成；capture 显示申请离开输入框（输入框清空）、进入处理。
+- 此回执不是 final verdict。三方同 pair final 前保持 `REVIEW`，禁止 D8b 长跑/GPU 短跑越权；下一轮起按三分钟完整远端锁定 + 三路核验。
