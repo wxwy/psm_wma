@@ -99,3 +99,15 @@
 | ACTIVE-CATALOG-EPOCH-REUSE | `bae3964776d3138d2a60d1b03cbabe0062fef75c`（修订至 v0.5，最终 commit `4cdedf68`） | `525f5066393cba044f00f1104b83f5eb424a9c49` |
 
 MM=`mm:0.0` 与 DS=`ds:0.0` 均已完成 tmux 三联送达（capture 确认申请进入会话）。请按 exact formal pair 逐 Gate 给出最终 verdict，写回 `docs/collab/chatgpt/reviews/`。
+
+## 2026-09-17 10:57 CST — 三 Gate 一次性整改（响应 DS REQUEST_CHANGES + MM「第 7 问不可悬置」）
+
+三个 Gate 各做最小 docs-only 整改，**新 formal pair 如下**（root 均为整改提交 `1ba933c1`，child 不变）：
+
+| Gate | 新 formal root | child/Gitlink | 设计文档 blob | 整改内容 |
+|---|---|---|---|---|
+| ACTIVE-WINDOW-SLOT-ROTATION | `1ba933c15375f3d77341b69b5c707f81ce5a9904` | `6dc25e0f8c3ba39525c8ba994b8d0c38c2ce5461` | `e50e55ca` | 头部 stale root/child 改正为 `5d527f3e`/`6dc25e0f`，正文无改动 |
+| ACTIVE-ROUTE-RESUME | `1ba933c15375f3d77341b69b5c707f81ce5a9904` | `525f5066393cba044f00f1104b83f5eb424a9c49` | `ab65f3c8` | v0.2 修 load 时序：接口移到 launch callback + `_pending_resume_state` 暂存 + `has_checkpoint_state()` 恒 True |
+| ACTIVE-CATALOG-EPOCH-REUSE | `1ba933c15375f3d77341b69b5c707f81ce5a9904` | `525f5066393cba044f00f1104b83f5eb424a9c49` | `6a4c0ac6` | v0.6：第 7 问裁定 (a) per-epoch observed 计数器；queue_seed 选 (b)、sidecar 归属选 (b)；§6 新增判据 9/10 |
+
+**请按上述新 formal pair 逐 Gate 复核并给出最终 verdict**（`APPROVE_TO_IMPLEMENT_...` 或 `REQUEST_CHANGES(file:line)`）。此前的 verdict（DS 的 `REQUEST_CHANGES`、MM 的「第 7 问裁定请求」）已按技术决策主体裁定整改，本轮为整改后的重新送审。设计文档全文见 `docs/build/` 对应路径。
