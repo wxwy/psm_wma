@@ -492,22 +492,22 @@ LIBERO_LATENT_CACHE_ROOT=/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_sha
 | `epochs_planned` | 63（跑到 target 5112 窗所需边界数） |
 | `windows_total` | **5112**（**≥ 5040 target**，覆盖 5000 步；见下含义 2） |
 | `capacity_target_met` | **true** |
-| `windows_per_epoch` | 63 项，**非恒定**（`{41, 48, 54, 55, 58, 68, 69, 85, …}`）——与 v0.6 恒定 112 形成对照 |
+| `windows_per_epoch` | 63 项，**非恒定**（`{40, 41, 48, 63, 68, 69, 85, 86, 90, 91, 99, 102, 112}`）——与 v0.6 恒定 112 形成对照 |
 | `single_epoch_limit` | 112.73 |
 | `criterion1_slot_order_matches_permutation` | **true**（`criterion1_mismatches = []`，逐 slot 重排与 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)` 逐位一致） |
 | `criterion2_meets_target` / `criterion2_exceeds_single_epoch` | **true** / **true**（5112 ≥ 5040 且 > 112） |
 | `criterion3_probe_is_pure` | **true**（探测前后 `_stream_index`/`_active_stream`/`_active_cursor` 逐位相同） |
 | `criterion4_window_index_not_reset` | **true** |
 | `criterion5_block_coverage` | `catalogue_blocks = 14430`、`covered_blocks = 14430`、`deferred_after_epoch0 = 94`、`recovered_after_epoch0 = 94`、`stranded_blocks = []`、`full_coverage = true`（**全部 block 最终被覆盖、无 permanent stranding**；v0.8 从 v0.6 的「epoch 1 恢复」改为「最终全覆盖」，对齐 v0.7 语义） |
-| `rollovers` | 记录 50 条（上限）；`remaining_blocks_at_rollover` **非恒定**；末次 `slot_epochs_snapshot = {0:25, 1:50, 2:38, 3:49, 4:23, 5:49, 6:39, 7:49}` |
-| `committed_identities` | 14322 |
+| `rollovers` | 记录 50 条（上限）；`remaining_blocks_at_rollover` **非恒定**；末次 `slot_epochs_snapshot = {0:23, 1:50, 2:39, 3:50, 4:23, 5:50, 6:39, 7:50}` |
+| `committed_identities` | 14349 |
 
 **该表的四点含义**：
 
 1. **判据 2 成立（capacity 直接见证）**：第 113 个窗口不再是边界（§10.1 的 `raise` 不再出现），连续 **5112** 个窗口全部规划成功且 `capacity_target_met = true`——**容量缺口被解除、覆盖 5000 步目标**（直接实测，非外推）。
 2. **逐 slot 复用的容量换算**：v0.6 全局重置下 45 epoch = 5040 窗口；v0.7 逐 slot 复用下到 5112 窗需 **63 次边界**（vs 45）。差异来自 non-terminal slot 在边界「继续」而非「复用」，故 `windows_per_epoch`/`remaining_blocks_at_rollover` **不再恒定**。这是 active-route queue-semantics refreeze（§3.3）的容量代价，已由本次直接实测覆盖。
-3. **`slot_epochs_snapshot` 直接证实逐 slot**：末次快照各 slot 遍数不同（slot 0 = 25 vs slot 1 = 50），证明同 category 两 slot 可处于不同遍数（§3.3 supersession 的前提），且这是 v0.6 全局重置无法表达的。
-4. **`committed_identities = 14322`**：逐 slot 清守卫（§4.3）不再「每 epoch 全局清空」，故容器随复用累积（vs v0.6 的 14336 = 单 epoch 上界）；§6 判据 9 断言逐 slot 清理后 `canonical_segment_runtime.py:181-182` 一致性保持。
+3. **`slot_epochs_snapshot` 直接证实逐 slot**：末次快照各 slot 遍数不同（slot 0 = 23 vs slot 1 = 50），证明同 category 两 slot 可处于不同遍数（§3.3 supersession 的前提），且这是 v0.6 全局重置无法表达的。
+4. **`committed_identities = 14349`**：逐 slot 清守卫（§4.3）不再「每 epoch 全局清空」，故容器随复用累积（vs v0.6 的 14336 = 单 epoch 上界）；§6 判据 9 断言逐 slot 清理后 `canonical_segment_runtime.py:181-182` 一致性保持。
 
 ### 10.4 窗口构成：复用**不是**「epoch 0 重复 45 次」（v0.4 重写；v0.5 补 epoch 0 单独基线）
 
