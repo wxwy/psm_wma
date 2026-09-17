@@ -26,9 +26,6 @@ Advice anchor:
 Canonical advice:
 `docs/collab/chatgpt/reviews/2026-09-16_stage1_pragmatic_pair_producer_advice_b57ad44_93a89ba.md`
 
-Canonical advice commit:
-`cd1072d76dd9d84e9119e5fcde644b75ddc4de79`
-
 Recommended next step:
 1. Keep `tools/psm_wma/build_stage1_request_pair.py` pure-byte/no-I/O.
 2. Add a separate thin controlled producer (suggested `tools/psm_wma/produce_stage1_request_pair.py`) that binds exact root/child/preflight, calls the pure builder, stages and post-verifies both v0.5 files, and fails closed on any partial publication.
@@ -131,3 +128,46 @@ Blockers:
 The v0.6 chronology-reset and cumulative-exposure replacement issues remain closed by direction. The v0.7 stale-probe problem was replaced with a relevant per-slot probe, but that new probe itself demonstrates the target is not yet met.
 
 `D8b` remains **BLOCKED**.
+
+---
+
+## 2026-09-17 current-pair fresh review handoff
+
+### ACTIVE-CATALOG-EPOCH-REUSE v0.8 — APPROVE TO IMPLEMENT
+
+Formal pair reviewed:
+- root: `463d649e7d0a6417095b7d694a17b2ed28a8a886`
+- exact child/Gitlink: `c9a01116e8d48a13d1f38fffafcf72461c2352c3`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-17_active_catalog_epoch_reuse_v08_463d649_c9a0111.md`
+
+Verdict:
+`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE`
+
+What changed relative to the old ChatGPT request-changes pair:
+- authority is now an explicit, active-route-scoped queue-semantics refreeze/supersession; `_slot_epoch[slot]` is the single per-slot queue-identity authority;
+- the planning probe now uses category-level reference ordering, independently derives criterion 1, includes capacity/full-coverage in PASS/exit, and the committed artifact reaches 5112 windows with 14430/14430 block coverage and no stranded blocks.
+
+Residual requirements are implementation/closure items, not blockers to design implementation: persist/replay `_slot_epoch` exactly, rerun with production-derived queue seed (current artifact uses seed 0), clean stale historical 45-boundary wording, and do not treat old global-reset §10.4 regime numbers as current-v0.8 evidence.
+
+This approval does not authorize D8b long run.
+
+### ACTIVE-ROUTE-RESUME closure — REQUEST_CHANGES
+
+Formal pair reviewed:
+- root: `04ab6f9adf6ef023c3b6f15d361a0b8f3824aa8f`
+- exact child/Gitlink: `c9a01116e8d48a13d1f38fffafcf72461c2352c3`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-17_active_route_resume_closure_04ab6f9_c9a0111.md`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/active_local_memory_driver.py:407-418)`
+
+Blockers:
+1. **HIGH terminal-frontier false rejection** — `_stage_runtime()` checks `terminal_slots` against all `scheduler.committed_identities` via `by_slot`; legitimate terminal identities remain committed while sidecar carry is intentionally absent. This rejects valid IDLE terminal-frontier checkpoints. Mirror `owner.snapshot()` and check terminal slots against staged sidecar-record slots instead.
+2. **HIGH sidecar identity retagging** — `runtime.committed` fast state is canonicalized by slot without first requiring the serialized sidecar identity to be value-equal to the scheduler latest identity. An inconsistent checkpoint can silently attach the wrong fast state to a canonical identity. Require value equality before object-identity rebinding.
+3. **Evidence gap** — the retained GPU witness proves real DCP save/kill/auto-resume and continuation from iter 4, but the repository evidence available to this reviewer does not retain the frozen criterion-4 uninterrupted-control `SegmentIdentity` sequence comparison and cumulative-exposure continuity values.
+
+The previous atomicity blocker itself is closed by the new two-phase staging/apply structure.
