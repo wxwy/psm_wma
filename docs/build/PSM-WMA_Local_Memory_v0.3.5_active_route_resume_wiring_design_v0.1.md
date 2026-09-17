@@ -1,10 +1,27 @@
-# Local Memory v0.3.5 Active-Route Resume 接线设计 v0.1
+# Local Memory v0.3.5 Active-Route Resume 接线设计 v0.2
 
 - Gate：`G0-R09-B-TTT-V035-ACTIVE-ROUTE-RESUME`
 - formal root：`8bb48f3507dda24090de41bbc4208dfc9e4538aa`
 - child/Gitlink：`525f5066393cba044f00f1104b83f5eb424a9c49`
 - 目标文件：`active_local_memory_driver.py`、`active_local_memory_launch.py`
-- 状态：**设计，待审**。本文不含已落地代码改动；当前 operative 行为是 §9 的 fail-closed 守卫。
+- 状态：**设计，送审（v0.2；修订 v0.1）**。本文不含已落地代码改动；当前 operative 行为是 §9 的 fail-closed 守卫。
+
+---
+
+## 0. 修订记录
+
+### v0.1 → v0.2
+
+v0.1 已送审（blob `a8dd24ca`）。v0.2 是对 DS `REQUEST_CHANGES` HIGH 意见（`resume_wiring_design_v0.1.md:59,148-150`「load 时序使 `_DataloaderWrapper` 永不命中 driver」）的一次性整改，经代码核实该意见成立。
+
+| 项 | v0.1 的说法 | v0.2 的修正 | 依据 |
+|---|---|---|---|
+| §2.1 第 4 条 | 「构造时机无约束，driver 只需在 `attach()` 之后具备该接口即可」 | **错误**。`checkpointer.load()`（`trainer/__init__.py:383`）早于 `callbacks.on_train_start()`（`:400`，driver 在此 attach）⟹ load 时 driver 不存在，wrapper 永远绑定不到 | `trainer/__init__.py:383,400` |
+| §4.1 接口位置 | 把 `checkpoint_component`/`has_checkpoint_state`/`state_dict`/`load_state_dict` 加在 **driver** 上 | 移到 **`ActiveLocalMemoryLaunchCallback`**（callback group 成员；`_DataloaderWrapper` 遍历的是 `callbacks._callbacks`，不是 driver） | `dcp.py:132-141` |
+| §4.1 load 时序 | 无「driver 未构建时如何 load」的处理 | 新增 `_pending_resume_state` buffer：load 时 driver 未构建则暂存，`on_train_start` 构建 driver 后应用 | 同上 |
+| §4.1 `has_checkpoint_state` | `return self._trainer is not None`（依赖 attach） | 改为 `return True`（launch callback 始终声明可 checkpoint，不依赖 driver 是否构建；冷启动无 `dataloader` key 时 load 自动 skip） | `dcp.py:914-926` |
+
+v0.1 的 §1、§3、§5、§6（判据 1–4）、§7、§9 逐字未改动；改动集中在 §2.1、§4.1、§4.4、§6（判据 5）与 §0、标题。
 
 ---
 
@@ -56,7 +73,7 @@ local_memory_segment.py:351:    def rebuild(cls, snapshot: dict[str, object]) ->
 1. **`on_load_checkpoint` 不可用**：`dcp.py:943` 的 `on_load_checkpoint(model, state_dict={})` 拿到的是**空 dict**，源码注释明言「this callback is never used in the codebase」。
 2. **不能新增顶层 key**：在 `on_save_checkpoint` 往 `to_save_dict`（`dcp.py:1114-1125`）新增顶层 key 会让 resume 直接 `raise ValueError(f"Invalid key: {key}. not support to resume.")`（`dcp.py:939`）。
 3. **真正被认可的机制**是 `_DataloaderWrapper`（`dcp.py:112-153`）：回调声明类属性 `checkpoint_component = "dataloader"` 并提供 `has_checkpoint_state()` / `state_dict()` / `load_state_dict()`，即被持久化到既有的 `"dataloader"` key 并在 load 时回灌。参考实现：`callbacks/cosmos_dataloader_state.py:150+`。
-4. **构造时机无约束**：`_DataloaderWrapper` 在**存/取盘时**构造（`dcp.py:1120`、`:934`），每次重新遍历 `callbacks._callbacks`。故 driver 只需在 `attach()`（`on_train_start`）之后具备该接口即可。
+4. **构造时机是关键约束（v0.2 更正，推翻 v0.1 的「无约束」判断）**：`_DataloaderWrapper` 在**存/取盘时**构造（`dcp.py:1120`、`:934`），每次重新遍历 `callbacks._callbacks`。**load 早于 `on_train_start`**（`trainer/__init__.py:383` load，`:400` 才 `callbacks.on_train_start`），而 driver 在 `on_train_start` 里才构建 + attach ⟹ **load 时 driver 不存在，若接口挂在 driver 上则 wrapper 永远绑定不到**。故接口必须挂在**始终存在于 callback group 的 `ActiveLocalMemoryLaunchCallback`** 上，且 `has_checkpoint_state()` 不得依赖 driver 是否已构建（§4.1）。
 5. **该槽当前为空**：`DataLoaderStateCallback` 只注册于 reasoner 系列配置；`action_policy_libero_edge_all.py` 及其 callbacks 链均未注册。注意 wrapper **只看第一个** tag 为 `dataloader` 的回调，若将来 action 链引入同类回调会静默抢占。
 
 ---
@@ -98,16 +115,51 @@ local_memory_segment.py:351:    def rebuild(cls, snapshot: dict[str, object]) ->
 
 ## 4. 实现方案（最小改动）
 
-### 4.1 driver 侧（`active_local_memory_driver.py`）
+### 4.1 checkpoint 接口挂在 launch callback（`active_local_memory_launch.py`，v0.2 更正）
 
-新增四个成员，形态对齐 `callbacks/cosmos_dataloader_state.py:150+`：
+`_DataloaderWrapper` 遍历的是 `callbacks._callbacks`（`dcp.py:136`），**不是 driver**。故四个成员必须加在 `ActiveLocalMemoryLaunchCallback` 上（它是 callback group 成员），由它**委托 driver**；driver 只需提供 `state_dict()` / `load_state_dict()` 供委托，不声明 `checkpoint_component`。
 
 ```python
-checkpoint_component: str = "dataloader"
+class ActiveLocalMemoryLaunchCallback(Callback):
+    checkpoint_component: str = "dataloader"
 
-def has_checkpoint_state(self) -> bool:
-    return self._trainer is not None      # 未 attach 时不得被 wrapper 绑定
+    def __init__(self, ...):
+        ...
+        self.driver: ActiveLocalMemoryWindowDriver | None = None
+        self._pending_resume_state: dict[str, Any] | None = None   # v0.2 新增
 
+    def has_checkpoint_state(self) -> bool:
+        return True    # 始终声明可 checkpoint；不依赖 driver 是否构建
+
+    def state_dict(self) -> dict[str, Any]:
+        # save 发生在迭代结束，driver 必已构建（on_train_start 已过）
+        if self.driver is None:
+            raise RuntimeError("active Local-Memory cannot save: driver not attached")
+        return self.driver.state_dict()
+
+    def load_state_dict(self, state_dict: dict[str, Any]) -> None:
+        # load 早于 on_train_start（trainer/__init__.py:383 vs :400），driver 可能未构建
+        if self.driver is None:
+            self._pending_resume_state = state_dict   # 暂存，on_train_start 后应用
+        else:
+            self.driver.load_state_dict(state_dict)
+```
+
+`on_train_start` 构建并 attach driver 后，应用暂存状态：
+
+```python
+    def on_train_start(self, model, iteration=0) -> None:
+        ...  # 构建 driver（同 v0.1）
+        driver.attach(trainer, model)
+        self.driver = driver
+        if self._pending_resume_state is not None:
+            driver.load_state_dict(self._pending_resume_state)   # 见 §4.3 的 fail-closed 校验
+            self._pending_resume_state = None
+```
+
+**driver 侧**（`active_local_memory_driver.py`）只新增 `state_dict()` / `load_state_dict()`（不声明 `checkpoint_component`）：
+
+```python
 def state_dict(self) -> dict[str, Any]:
     return {
         "window_index": self._window_index,
@@ -125,6 +177,8 @@ def load_state_dict(self, state_dict: dict[str, Any]) -> None:
 ```
 
 `CanonicalSegmentStream`（`canonical_local_memory_producer.py:49-63`）的四个字段全为标量，可直接序列化。
+
+**冷启动安全性**：`has_checkpoint_state()` 始终 `True` 意味着冷启动（`iteration==0`）时 wrapper 也会在 save 时绑定本 callback，但 save 在 `on_train_start` 之后、driver 已构建，`state_dict()` 正常；load 侧冷启动时 checkpoint 无 `dataloader` key（从未 save 过），`dcp.py:915-926` 因文件不存在而 `continue`，不会误 load。
 
 ### 4.2 scheduler 快照的修剪
 
@@ -145,9 +199,11 @@ resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot �
 2. **恢复点必须是窗口边界**：`owner.snapshot()` 的输出只在 IDLE 时产生；load 时若 `_window` 非空或 owner 非 IDLE，拒绝。
 3. **`window_index` 单调**：恢复值必须 ≥ 0 且小于当前配置的 `max_iter`。
 
-### 4.4 与 `on_train_start` 守卫的关系
+### 4.4 与 `on_train_start` 守卫的关系（v0.2 更正）
 
-`active_local_memory_launch.py:234` 的 fail-closed 守卫（`if iteration > 0: raise RuntimeError`）在本设计落地后**改为**：先尝试 `load_state_dict`，成功则放行，失败则保持拒绝。**不取消该守卫**——本设计未落地前它必须继续生效。
+`active_local_memory_launch.py:234` 的 fail-closed 守卫（`if iteration > 0: raise RuntimeError`）在本设计落地后**改为**：`iteration > 0` 时，若 `_pending_resume_state is not None`（load 已把 driver 状态灌入 buffer）则应用之并放行；若为 `None`（checkpoint 无 `dataloader` key，即本设计的 checkpoint 接口尚未在该 run 生效过）则保持拒绝。**不取消该守卫**——本设计未落地前它必须继续生效。
+
+**load/守卫的时序链（v0.2 修正后，可核实）**：`checkpointer.load()`（`trainer/__init__.py:383`）→ `_DataloaderWrapper` 绑定 launch callback → `load_state_dict()` 灌入 `_pending_resume_state`；随后 `callbacks.on_train_start()`（`:400`）构建 driver 并 `load_state_dict(_pending_resume_state)` 应用到 driver（触发 §4.3 三项 fail-closed 校验）。故「load 成功」的判据是 `_pending_resume_state is not None`，而非 v0.1 误写的「`load_state_dict` 在 `on_train_start` 时尝试」。
 
 ---
 
@@ -161,7 +217,7 @@ resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot �
 | 4 | `_is_admissible` 的 cursor 连续性 | 不触碰 |
 | 5 | weighted-deficit 选取 | 不触碰（slot 轮转修复是独立 Gate） |
 | 6 | `_DataloaderWrapper` 的既有占用者 | action/libero 链上该槽为空；本设计是它的**第一个**占用者 |
-| 7 | 不 resume 时的行为 | `has_checkpoint_state()` 在未 attach 时返回 False；冷启动路径零改动 |
+| 7 | 不 resume 时的行为 | `has_checkpoint_state()` 始终 `True`；冷启动无 `dataloader` key，load 自动 skip（`dcp.py:915-926`），冷启动路径零改动 |
 
 ---
 
@@ -173,7 +229,7 @@ resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot �
 2. CPU 单测：`load_state_dict` 在 `_by_slot` 不可复现时 fail-closed（构造一个 episode 顺序被改动的 catalog）。
 3. 生产链路（`tools/g0/probe_r09_b_active_static.py` 形态，CPU-only）：走满一个窗口后取 `state_dict()`，在**新建的 driver** 上 `load_state_dict()`，断言 `_stream_index`/`_active_cursor` 逐位相同。
 4. GPU 端到端 resume 短跑：跑到 `save_iter` 存盘 → 杀进程 → 以 auto-resume 重启 → 断言 ①不再抛 `cannot resume`；②重启后首窗的 `SegmentIdentity` 序列**与不中断跑的对应窗口一致**；③`cumulative_valid_consumer_exposure` 连续（不归零）。
-5. 既有 launch 测试改为断言 resume **被接受**而非被拒绝。
+5. 既有 launch 测试改为断言 resume **被接受**而非被拒绝；并新增 CPU 单测验证 **load 时序**（v0.2 新增）：driver 未构建时 `launch_callback.load_state_dict(state)` 正确暂存到 `_pending_resume_state`，随后 `on_train_start` 构建 driver 并把暂存状态应用，断言 `_stream_index`/`_active_cursor`/`window_index` 与保存值逐位一致；再断言 `state_dict()` 在 driver 为 `None` 时 `raise`（save 侧 fail-closed）。
 
 **FAIL**：任一校验被绕过而 resume 成功；或 resume 后首窗 identity 序列与对照不一致。
 
@@ -193,11 +249,11 @@ resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot �
 
 ## 8. 请求 verdict
 
-请就以下三点裁定：
+请就以下三点裁定（第 3 点已由 v0.2 按 DS HIGH 意见修正，请复核而非首答）：
 
 1. **§3 的修剪证明是否成立** —— 按 slot 取最后一条是否确实不改变 resume 路径读取的信息（依据是 `owner.snapshot()` 的 `:181-186` 校验）。
 2. **§4.3 的三项 fail-closed 校验是否充分** —— 是否还有「半对半错」的静默通道未被拒绝。
-3. **§4.4 的守卫收敛方式** —— 本设计落地后，`iteration > 0` 应从「一律拒绝」变为「load 成功则放行、失败则拒绝」，是否正确。
+3. **§4.4 的守卫收敛方式（v0.2 已修正）** —— DS 指出的「load 时序使 `_DataloaderWrapper` 永不命中 driver」已在本版修正（接口移到 launch callback + `_pending_resume_state` 暂存 + `has_checkpoint_state()` 恒 `True`，见 §2.1/§4.1/§4.4）。故守卫收敛为「`iteration > 0` 且 `_pending_resume_state is not None` 则应用放行，否则拒绝」，请复核该收敛是否成立、是否仍有 load 早于 attach 的静默通道。
 
 ---
 

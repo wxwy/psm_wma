@@ -1,10 +1,11 @@
 # Local Memory v0.3.5 Active-Window Slot Rotation 修复设计 v0.1
 
 - Gate：`G0-R09-B-TTT-V035-ACTIVE-WINDOW-SLOT-ROTATION`
-- formal root：`3065bc8a93cd086f6abd108ca6d330424fb715ef`
-- child/Gitlink：`81fa342d341ed519d128c820b338651cdb4d15c9`
+- formal root：`5d527f3ea8db25f23482c9a3e13b5c7ca2fd6a99`
+- child/Gitlink：`6dc25e0f8c3ba39525c8ba994b8d0c38c2ce5461`
 - 目标文件：`cosmos_framework/model/generator/mot/active_local_memory_driver.py:214-229`
 - 状态：**已实现，待审**。实现先经「fixture 先证伪 → 再落地 → 生产链路复验」，全部证据见 §9。
+- 修订（v0.1 → 本文头部校正，2026-09-17）：头部早前误写 `formal root=3065bc8a` / `child=81fa342d`（设计定稿时的会话 HEAD 与修复前 Gitlink），已按 DS 意见改正为送审件实际提交 `5d527f3e` / child `6dc25e0f`；设计正文 §1–§9 无改动。
 
 ---
 

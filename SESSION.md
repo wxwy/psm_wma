@@ -10810,3 +10810,15 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - Gate 3 `ACTIVE-CATALOG-EPOCH-REUSE`：`REQUEST_CHANGES` —— 主因：`catalog_epoch_reuse_design_v0.1.md:191-197,485-493`（不清零 exposure 控制输入，静默改变 44/45 epoch regime，不应作为已知代价接受）；其他 `:136-146`/`:222-231`/`:199-202,249-262`/`:268`/`:237-247`。
 - DS 另附「未决送达事实」：基于旧 ledger `CODEX_INBOX.md:10-23` 称三 root 不在远端、无令牌，**未意识到已推送**；并指 exact-pair identity 需改正（stale root/child）。DS 声明「在链路与 exact-pair identity 改正前，本结果不能作为正式三方同 SHA 闭批」。
 - MM=`mm:0.0`：仍停在「选 (a)，出 v0.6」输入，无新 FINAL。ChatGPT 未回复。无推进令牌，继续。
+
+### 三 Gate 一次性整改（2026-09-17 10:57 CST，REVIEW → 整改中）
+
+**技术决策（Codex 主体，非用户裁定）**：采纳 DS `REQUEST_CHANGES` 与 MM「第 7 问不可悬置」意见，三个 Gate 各做最小 docs-only 整改：
+
+1. **Gate 1 `ACTIVE-WINDOW-SLOT-ROTATION`**：设计头部 stale `formal root/child`（`3065bc8a`/`81fa342d`）改正为送审件实际提交 `5d527f3e`/child `6dc25e0f`，附修订说明；正文 §1–§9 无改动。
+2. **Gate 2 `ACTIVE-ROUTE-RESUME` → v0.2**：经代码核实 DS HIGH 意见成立（`trainer/__init__.py:383` load 早于 `:400` on_train_start，driver 在后者才 attach）。修正：checkpoint 接口从 driver 移到 `ActiveLocalMemoryLaunchCallback`（`_DataloaderWrapper` 遍历的是 callbacks），新增 `_pending_resume_state` 暂存 buffer（load 时 driver 未构建则暂存、on_train_start 后应用），`has_checkpoint_state()` 恒 `True`。
+3. **Gate 3 `ACTIVE-CATALOG-EPOCH-REUSE` → v0.6**：§8 第 7 问**裁定 (a)**——引入 per-epoch observed 计数器 `_epoch_observed`，`freeze_window` 选择键改用之、累计字段 `cumulative_valid_consumer_exposure` 保留仅作报告量；同步闭合其余六问（queue_seed 选 (b)、sidecar 归属选 (b)）；§7 显式放宽「改选择键 observed 来源」一条；§6 新增判据 9/10。
+
+**待办（Kimi 8 条建议，空闲处理）**：覆盖不变量一等公民测试、tie-break 纪律入设计模板、容量探针标准化、尾巴截断量化入 epoch-reuse Gate、清理 v0.13/D018 §4 僵尸任务、三 Gate 并行送审（已在做）、resume 范围框死（边界重启 vs 状态续传，需评估是否改 v0.2）、T 循环吞吐地板微基准。详见 TODO。
+
+下一步：静态核验（已 `git diff --check` PASS）→ 提交 → 推送 → 以新 formal pair 重新送审三 Gate。
