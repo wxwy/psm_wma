@@ -111,3 +111,17 @@ MM=`mm:0.0` 与 DS=`ds:0.0` 均已完成 tmux 三联送达（capture 确认申�
 | ACTIVE-CATALOG-EPOCH-REUSE | `1ba933c15375f3d77341b69b5c707f81ce5a9904` | `525f5066393cba044f00f1104b83f5eb424a9c49` | `6a4c0ac6` | v0.6：第 7 问裁定 (a) per-epoch observed 计数器；queue_seed 选 (b)、sidecar 归属选 (b)；§6 新增判据 9/10 |
 
 **请按上述新 formal pair 逐 Gate 复核并给出最终 verdict**（`APPROVE_TO_IMPLEMENT_...` 或 `REQUEST_CHANGES(file:line)`）。此前的 verdict（DS 的 `REQUEST_CHANGES`、MM 的「第 7 问裁定请求」）已按技术决策主体裁定整改，本轮为整改后的重新送审。设计文档全文见 `docs/build/` 对应路径。
+
+## 2026-09-17 12:15 CST — resume 迭代至 v0.4 + 三方 verdict 状态更新（DS/MM 已齐，待 ChatGPT）
+
+**resume 设计迭代至 v0.4**：DS 第 2/3 轮对 ACTIVE-ROUTE-RESUME 的 REQUEST_CHANGES 已逐条整改——v0.2 修 load 时序（HIGH）→ v0.3 补版本/身份一致性（MEDIUM）→ v0.4 补 §4.3 第 5 项「CanonicalRuntimeSnapshot 重建落地」（rebuild + sidecar 回填 + identity 对象同一性）+ round-trip fixture + catalog_digest。DS 已于 12:15 给出 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`（root `53639dcb`/child `525f506`，blob `920f6c33`）。
+
+**三 Gate 当前有效 formal pair 与已收 verdict**：
+
+| Gate | 当前 formal root | child | DS verdict | MM verdict | ChatGPT |
+|---|---|---|---|---|---|
+| ACTIVE-WINDOW-SLOT-ROTATION | `1ba933c1` | `6dc25e0f` | APPROVE | 复审 done（倾向 approve） | **待回复** |
+| ACTIVE-ROUTE-RESUME | `53639dcb`（v0.4） | `525f506` | APPROVE | 复审 v0.2 done / v0.3 复审中 | **待回复** |
+| ACTIVE-CATALOG-EPOCH-REUSE | `1ba933c1`（v0.6） | `525f506` | APPROVE（附条件：判据 9/10 closure 前实测） | 授权落地（approve） | **待回复** |
+
+**请 ChatGPT 按上述 formal pair 逐 Gate 给出最终 verdict**（`APPROVE_TO_IMPLEMENT_...` 或 `REQUEST_CHANGES(file:line)`），写回 `docs/collab/chatgpt/reviews/`。DS + MM 两方已 approve，仅缺 ChatGPT 一路。
