@@ -86,3 +86,48 @@ Not closed because:
 2. restored `active_stream` / `stream_index` / `active_cursor` are not cross-validated as one coherent per-slot frontier, leaving a silent skip/replay channel for internally inconsistent checkpoint state.
 
 Required next action: add cross-field frontier validation + mutation fixtures, then run and retain the exact GPU/DCP resume witness on the resulting pair. Only then request `APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`.
+
+---
+
+## 2026-09-17 fresh re-review handoff
+
+### ACTIVE-ROUTE-RESUME closure — REQUEST_CHANGES
+
+Formal pair reviewed:
+- root: `dae010c7b51bbc1e42c5e1af188b2cc2ebf66d9b`
+- exact child/Gitlink: `631a95af0aff28b03a93df320c179bfb9d10f607`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-17_active_route_resume_closure_dae010c_631a95a.md`
+
+Verdict:
+`REQUEST_CHANGES(cosmos_framework/model/generator/mot/active_local_memory_driver.py:350)`
+
+Blockers:
+1. **HIGH production / restore atomicity** — child `631a95a` correctly adds frontier cross-field validation, but `load_state_dict()` still calls `_restore_runtime()` first. `_restore_runtime()` swaps `owner.scheduler`, clears/repopulates live sidecar, and performs a fallible `owner.snapshot()` before the new frontier validation runs. Malformed checkpoint rejection can therefore leave live runtime partially mutated. Stage and validate the complete runtime+driver candidate first; only then perform one no-more-fallible apply. Add mutation fixtures asserting zero live mutation on rejected state.
+2. **HIGH Evidence-only** — mandatory real GPU/DCP `save → kill → auto-resume → uninterrupted-control identity/exposure continuity` witness from resume v0.4 §6 is still absent.
+
+Previous frontier-coherence issue is **closed in substance**; the new blocker is ordering/atomicity, not the invariant itself.
+
+No closure token. D8b not authorized by this Gate.
+
+### ACTIVE-CATALOG-EPOCH-REUSE v0.8 — REQUEST_CHANGES
+
+Formal pair reviewed:
+- root: `5f29e356f5b2b756f035b70433827e307dcc156b`
+- exact child/Gitlink: `631a95af0aff28b03a93df320c179bfb9d10f607`
+
+Canonical review:
+`docs/collab/chatgpt/reviews/2026-09-17_active_catalog_epoch_reuse_v08_5f29e35_631a95a.md`
+
+Verdict:
+`REQUEST_CHANGES(docs/build/PSM-WMA_Local_Memory_v0.3.5_active_route_catalog_epoch_reuse_design_v0.1.md:190)`
+
+Blockers:
+1. **HIGH authority-chain contradiction** — v0.8 Option B says frozen scheduler `QueueEpochSnapshot` remains part of the contract while active-route per-slot reuse declares it non-authoritative and bypasses `configure_queue`. Upstream canonical scheduler design v0.2 §5 freezes global queue-epoch authority and forbids new-epoch re-admission while old-epoch bound/non-terminal slots remain. Either explicitly refreeze/supersede that active-route queue semantics or conform to the global authority; “still frozen but bypassed/non-authoritative” is not coherent.
+2. **HIGH capacity evidence** — §6 criterion 2 still requires ≥5040 windows, but committed artifact has `windows_total=3704`, `criterion2_meets_target=false`, while top-level `result="PASS"`. Probe PASS logic does not include criterion 2 and returns exit 0 unconditionally. Run the actual per-slot state machine to ≥5040/≥5000 target and make mandatory criterion failure fail the probe; otherwise Gate remains BLOCKED.
+3. **MEDIUM resume wording** — Option B declares scheduler queue epoch/permutation non-authoritative, but retained §5/§6 wording still asks them to participate in resume consistency. After authority is fixed, leave exactly one queue-identity authority/witness.
+
+The v0.6 chronology-reset and cumulative-exposure replacement issues remain closed by direction. The v0.7 stale-probe problem was replaced with a relevant per-slot probe, but that new probe itself demonstrates the target is not yet met.
+
+`D8b` remains **BLOCKED**.
