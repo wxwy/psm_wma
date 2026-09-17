@@ -10989,6 +10989,17 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - **HIGH-2（探针 capacity）**：探针改为「跑到 `windows_total >= target_windows`（不是固定边界数）」+ `result`/exit 纳入 capacity 判据（false 则 FAIL/exit 1）+ `capacity_target_met` 字段。后台跑 `--max-epochs 100 --target-windows 5040`（PID 1754748）；§10.3 待其结果更新。
 - 待提交：design 整改 + 探针结果（等 5040 跑完）。
 
+### GPU resume witness 完整闭环（2026-09-17 18:50 CST）
+
+- **探针完成**：跑到 **5107 窗**（`capacity_target_met=true`、`criterion2_meets_target=true`、63 边界、`slot_epochs_snapshot={0:25,1:50,...}`）；§10.3 据实更新；提交 `f86513a1`（root）。
+- **Gate 3 v0.8 二次整改已送审**：显式 supersession（§3.3）+ 单一 authority（§2.1/§4.1/§4.3/§5/§6/§8）+ 探针 5107。
+- **Gate 2 GPU witness 完整闭环**：
+  - Phase 1：`max_iter=6/save_iter=3` → iter_3 存出完整 DCP **+ `dataloader/rank_0.pkl`**。
+  - kill 进程（模拟中断）。
+  - Phase 2 auto-resume：`Loaded checkpoint .../iter_000000003 (same-job, local) in iteration 3` → 训练 **从 iter_4 续跑到 iter_6**（loss=1.644157/1.556571/…），最终存出 **`iter_000000006`（完整 DCP：dataloader/model/optim/scheduler/trainer）+ `dataloader/rank_0.pkl`（456567 B）**；`latest_checkpoint.txt = iter_000000006`。
+  - 即 save→kill→auto-resume 端到端工作，driver 状态经 `dataloader` 槽写入/加载，续跑非重放。**Gate 2 HIGH-2 witness 完成**。
+- 两 Gate 整改已重新送审 DS/MM/ChatGPT（root `f86513a1`/child `c9a0111`）。等三方 verdict。
+
 ### Gate 2 closure 两方 APPROVE（2026-09-17 14:28 CST）
 
 - **DS**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`。非阻塞 residual（判据 5 完整 launch 集成、判据 7④ sidecar.read 非空、判据 3 生产探针形态）由已排期 GPU smoke（判据 4）覆盖；明确「该批准不授权训练/长跑，GPU 端到端 resume 仍须独立 Gate」。
