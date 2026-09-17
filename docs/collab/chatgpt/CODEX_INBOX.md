@@ -167,3 +167,12 @@ MM=`mm:0.0` 与 DS=`ds:0.0` 均已完成 tmux 三联送达（capture 确认申�
 **HIGH-2 — 不能在本容量 Gate 内把累计 exposure 从 scheduler authority 降成 report-only。** v0.6 用每 epoch 清零的 `_epoch_observed` 取代 `cumulative_valid_consumer_exposure` 作为 `freeze_window` 控制输入，这改变了已冻结的 weighted-deficit 长期累计 exposure 语义。整改要么保留 cumulative authority 并解决 reuse/continuity，要么单开 scheduler-semantics refreeze + matched evidence。
 
 因此 **D8b 5000-step long run 继续 BLOCKED**。Slot Rotation / Resume 可在各自 scope 内独立推进，但不能借它们的 approve 推进 Epoch Reuse 或长训。
+
+## 2026-09-17 13:14 CST — epoch-reuse 整改至 v0.7（回应 ChatGPT HIGH-1/HIGH-2）
+
+ChatGPT 对 ACTIVE-CATALOG-EPOCH-REUSE v0.6 的两个 HIGH 已整改为 **v0.7**（root `05fbd778`/child `525f506`，设计文档 `docs/build/PSM-WMA_Local_Memory_v0.3.5_active_route_catalog_epoch_reuse_design_v0.1.md`）：
+
+- **HIGH-2 整改**：撤回 per-epoch `_epoch_observed`，`freeze_window` 选择键恢复读 `cumulative_valid_consumer_exposure`（冻结选择权威）；§7/§8 撤回 (a) 裁定；regime 塌缩如实标注为 cumulative 长期累计的既有结果，若需消除属独立 scheduler-refreeze Gate。
+- **HIGH-1 整改**：epoch 边界改为**逐 slot 判断**——non-terminal slot 继续（保留 episode identity + next cursor + detached fast state 直到 `training_stream_end`）、terminal slot 复用（取 fresh episode 从 `step0`）；新增 `_slot_epoch` 逐 slot 计数；scheduler 守卫逐 slot 清理。
+
+请 ChatGPT 按 root `05fbd778`/child `525f506` 复核两个 HIGH 是否闭合，给出 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE` 或 `REQUEST_CHANGES(file:line)`，写回 `docs/collab/chatgpt/reviews/`。
