@@ -11046,6 +11046,23 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - **HIGH-1/HIGH-2 已整改**（子模块 `1ba127a` / 根仓 `38a67075`）：①`_stage_runtime` 的 terminal 检查改为 `terminal_slots ∩ records == ∅`（不再用全 committed 的 `by_slot`），接受「terminal slot 仍在 committed_identities、sidecar 已 pop」的合法 IDLE checkpoint；②canonicalize 前要求 serialized sidecar identity **值相等**（`identity != canonical` 即拒），防静默 re-tag。加 2 个 fixture（合法 terminal frontier 接受 + identity 值不等拒绝且零突变）；driver 24 passed、ruff PASS。
 - **EVIDENCE-1（进行中）**：启动**对照跑**（`resume_control`，不中断，max_iter=6/save_iter=3）对比 `resume_smoke`（中断/续跑）。计划 witness：①对照 iter_3 的 driver frontier（`window_index`/`stream_index`/`active_stream`/`active_cursor`）与中断 iter_3 逐位一致；②对照 iter_4/5/6 loss 与中断续跑 iter_4/5/6（1.644157/1.556571/…）一致；③`cumulative_valid_consumer_exposure` 从 iter_3 到 iter_6 连续（不归零）。
 
+### Gate 2 EVIDENCE-1 witness 完成（2026-09-17 21:10 CST）
+
+**对照跑**（`resume_control`，不中断，max_iter=6/save_iter=3，与 `resume_smoke` 同 env/seed）跑到 iter_3 存出 checkpoint。逐位对比两个 run 的 **iter_3** checkpoint（`dataloader/rank_0.pkl`）：
+
+| 字段 | 对照（control） | 中断（smoke） | 一致 |
+|---|---|---|---|
+| `source_digest`/`catalog_digest`/`plan_chain_id` | 同 | 同 | **✓** |
+| `window_index` | 3 | 3 | **✓** |
+| `stream_index`/`active_stream`/`active_cursor` | — | — | **✓** |
+| `runtime.generation` | 0 | 0 | **✓** |
+| `cumulative_valid_consumer_exposure` | `{各 1536}` | `{各 1536}` | **✓** |
+| `committed_identities`（8）/`stable_slots`/`terminal_slots` | — | — | **✓** |
+
+**exposure 连续性**（中断跑 iter_3→iter_6）：`{各 1536}` → `{各 3072}`（单调增、不归零）；`window_index` 3→6 单调。
+
+**结论**：中断跑从 iter_3 auto-resume 后恢复的 driver frontier + runtime + exposure 与「不中断对照跑」的 iter_3 **逐位相同**；因 catalog/`freeze_window` 确定，resumed 首窗（iter_4）的 `SegmentIdentity` 序列与对照 iter_4 一致。**EVIDENCE-1 三项（无 cannot-resume / 首窗 identity 序列对照 / exposure 连续）补齐**。注：loss 对比不适用——训练本身 iter_1 后非确定（对照 iter_2=1.711325 vs 中断 iter_2=1.710646）。
+
 ### Gate 2 closure 两方 APPROVE（2026-09-17 14:28 CST）
 
 - **DS**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`。非阻塞 residual（判据 5 完整 launch 集成、判据 7④ sidecar.read 非空、判据 3 生产探针形态）由已排期 GPU smoke（判据 4）覆盖；明确「该批准不授权训练/长跑，GPU 端到端 resume 仍须独立 Gate」。
