@@ -200,3 +200,18 @@ ChatGPT v0.7 review（`active_catalog_epoch_reuse_v07_05fbd778_525f506.md`）与
 - **DS 意见 4（D8b gate）**：§8 第 8 点 + §9 显式声明 D8b 长跑须在独立 scheduler-refreeze Gate 之后。
 
 请三方按 root `5f29e356`/child `631a95a` 复核并给出 verdict（`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE` 或 `REQUEST_CHANGES(file:line)`）。
+
+## 2026-09-17 18:45 CST — Gate 2 closure 整改 + Gate 3 v0.8 二次整改（回应 ChatGPT/DS 最新 verdict）
+
+新 formal pair：root `f86513a1` / child `c9a0111`（两 Gate 整改后同一 root）。
+
+**Gate 2 ACTIVE-ROUTE-RESUME closure 整改**（回应 ChatGPT `active_route_resume_closure_dae010c_631a95a.md`）：
+- **HIGH-1（两阶段 restore）**：`load_state_dict` 改为 ① pure staging/validation（`_stage_active_stream`/`_stage_frontier`/`_stage_runtime` 旁路 rebuild + stage sidecar + 手动词组复现 `owner.snapshot():181-188` 校验，不 mutate live）→ ② atomic apply（`_apply_runtime`）。加 4 个 causal mutation fixtures，每个断言**失败时零 live mutation**。driver 22 passed。
+- **HIGH-2（GPU/DCP witness）已验证**：Phase 1 跑到 iter_3 存出完整 DCP + `dataloader/rank_0.pkl` → kill → auto-resume `Loaded checkpoint .../iter_000000003 (same-job, local) in iteration 3` → **训练从 iteration 4 续跑**（loss=1.644157，不抛 cannot resume）。
+
+**Gate 3 ACTIVE-CATALOG-EPOCH-REUSE v0.8 二次整改**（回应 ChatGPT `..._v08_5f29e35_631a95a.md` + DS）：
+- **HIGH-1（authority）选 option A**：§3.3 显式 supersede `canonical_segment_production_adapter_scheduler_design_v0.2.md:86` 的 global rollover clause（严格限于 active 路线）；`_slot_epoch` 为 canonical queue-identity authority；scheduler 单值字段降为兼容性元数据、不作 resume witness；本 Gate 显式框定为 active-route queue-semantics refreeze。
+- **HIGH-2（capacity）**：探针改为跑到 `windows_total >= target`（非固定边界）+ `result`/exit 纳入 capacity 判据。**实测跑到 5107 窗**（`capacity_target_met=true`、`criterion2_meets_target=true`、63 边界、`slot_epochs_snapshot={0:25,1:50,...}` 证实逐 slot 异步）；§10.3 用该直接实测更新。
+- **MEDIUM-1 / DS LOW**：§2.1/§4.1/§4.3/§5/§8/§6 全部统一为单一 authority（判据 7 并入判据 10）。
+
+请三方按 root `f86513a1`/child `c9a0111` 复核两个 Gate 并给出 verdict。
