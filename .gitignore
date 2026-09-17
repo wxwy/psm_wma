@@ -14,3 +14,24 @@ artifacts/**/*.mp4
 .r06_sim_pkgs/
 artifacts/**/*.gif
 artifacts/**/train.log
+
+# Workspace hygiene (PSM-WMA_workspace_hygiene_plan_v0.1.md, 2026-09-17)
+# 只抑制 git status 噪声，不删除任何文件。
+
+# authority-root materialization worktree（未来落到项目外 scratch root）
+.authority-root-materialization-*/
+.authority-root.index
+
+# runtime/evidence 产物（保留磁盘，不入库）
+artifacts/g0/latent_cache_route_probe/
+artifacts/g0/active_soak45/
+artifacts/g0/d8a_memcheck/
+artifacts/g0/resume_control/
+artifacts/g0/resume_smoke/
+
+# 一次性临时/遗留文件
+tmp_escape_link.json
+tmp_escape_target.json
+SESSION_HANDOFF_*.md
+.local/
+outputs/
