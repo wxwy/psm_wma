@@ -11016,6 +11016,12 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - 文档 LOW：§10.3 命令改 `--max-epochs 100`；判据 2 括注「45 遍 × 112」→「63 边界产 5107 窗」+ 纳入 result/exit。
 - 重跑中（PID 1909172，`--max-epochs 100 --target-windows 5040`）；§10.3 待其结果更新。
 
+### 审核范围规则调整 + 探针最终整改（2026-09-17 19:50 CST）
+
+- **审核范围（用户 2026-09-17 明确）**：GPT 的审核只在用户明确提示时检查；默认**只看 DS + MM**，可加 Kimi。后续轮询以 `ds:0.0` / `mm:0.0`（+ `kimi:0.0`）为准，ChatGPT `reviews/` 仅在用户提示时扫描。
+- **探针最终整改**（root `04ab6f9a`/child `c9a0111`）：① category 级重排（§4.4 正确语义，原 slot 级）；② criterion1 独立推导；③ criterion5 改「最终全覆盖」——实测 `catalogue_blocks=14430`、`covered_blocks=14430`、`stranded=[]`、`full_coverage=true`（那 9 条 `missing_from_epoch1` 是后续 epoch 消费、非丢失）；④ LOW（命令 + 判据 2 措辞）。实测 `result=PASS`、`windows_total=5112`（≥5040）、`criterion1=true`。
+- 已送审 `ds:0.0` / `mm:0.0` / `kimi:0.0`。等三方 verdict。
+
 ### Gate 2 closure 两方 APPROVE（2026-09-17 14:28 CST）
 
 - **DS**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`。非阻塞 residual（判据 5 完整 launch 集成、判据 7④ sidecar.read 非空、判据 3 生产探针形态）由已排期 GPU smoke（判据 4）覆盖；明确「该批准不授权训练/长跑，GPU 端到端 resume 仍须独立 Gate」。
