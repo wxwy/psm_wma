@@ -10893,3 +10893,14 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
   - **HIGH-2 整改**：整体撤回 v0.6 的 per-epoch `_epoch_observed`，`freeze_window` 选择键恢复读 `scheduler.cumulative_valid_consumer_exposure`（冻结选择权威，长期累计）；§7 撤回「改选择键 observed 来源」放宽；§8 第 7 问撤回 (a) 裁定；regime 塌缩如实标注为「cumulative 长期累计的既有结果」，若需消除属独立 scheduler-refreeze Gate。
   - **HIGH-1 整改**：epoch 边界从「全局重置」改为「逐 slot 判断」——non-terminal slot 继续（保留 episode identity + next cursor + detached fast state 直到 `training_stream_end`）、terminal slot 复用（取 fresh episode 从 `step0`）；新增 `_slot_epoch`（逐 slot 复用计数）；scheduler 守卫改为逐 slot 清理（非全局清空）；§6 判据 5/8/9 重写（non-terminal 继续 + sidecar 范围 + 逐 slot 清守卫）。
 - 新 formal pair：root=`05fbd778`/child=`525f506`。待重新送审 ChatGPT（确认 2 HIGH 闭合）+ DS + MM。Gate 1/2 已三方 APPROVE，不受本 Gate 影响，可独立推进实现。
+
+### Gate 2 resume 接线实现（2026-09-17 13:55 CST，REVIEW 准备 closure）
+
+- 按 resume v0.4 三方 APPROVE 落地实现（子模块 4 文件 +185/-8）：
+  - `active_local_memory_launch.py`：`ActiveLocalMemoryLaunchCallback` 加 `checkpoint_component="dataloader"` / `has_checkpoint_state()`（恒 True）/ `state_dict()`（委托 driver）/ `load_state_dict()`（`_pending_resume_state` 暂存）；`on_train_start` 守卫改为「`iteration>0` 且 pending 为 None 才拒绝」；driver 构建后应用 pending；新增 `_catalog_digest()`（sha256(manifest|config|source)）。
+  - `active_local_memory_driver.py`：`__init__` 加 `catalog_digest`；新增 `state_dict()`/`load_state_dict()`（§4.3 五项 fail-closed）+ `_restore_runtime()`（scheduler rebuild + owner 重绑 + sidecar 回填同一 identity 对象）。
+  - `local_memory_segment.py`：`snapshot()` 的 `admission_order`/`committed_identities` 改为 `_last_per_slot` 修剪；新增 `_last_per_slot`。
+  - `active_local_memory_driver_test.py`：`_FakeStream` 补 `episode_position`；新增 2 测（source_digest 不匹配 fail-closed + round-trip 游标）。
+- 验证：driver 15 passed（+2）、launch 11 passed、segment 10 passed；ruff、py_compile、`git diff --check` 全 PASS。
+- 提交：子模块 `7ca3b20`（推 v2）、根仓 Gitlink `eb15c3e5`（推 V2）。新 formal pair：root=`eb15c3e5`/child=`7ca3b20`。
+- 下一步：更新 Inbox 并向三方申请 closure review（`APPROVE_TO_CLOSE_..._ACTIVE_ROUTE_RESUME`）。§6 判据 4（GPU save/kill/auto-resume 连续性）与判据 7（runtime round-trip 对象同一性）尚未测，须在 closure 前或 GPU smoke 阶段补齐。

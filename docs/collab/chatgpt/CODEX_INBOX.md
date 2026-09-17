@@ -176,3 +176,16 @@ ChatGPT 对 ACTIVE-CATALOG-EPOCH-REUSE v0.6 的两个 HIGH 已整改为 **v0.7**
 - **HIGH-1 整改**：epoch 边界改为**逐 slot 判断**——non-terminal slot 继续（保留 episode identity + next cursor + detached fast state 直到 `training_stream_end`）、terminal slot 复用（取 fresh episode 从 `step0`）；新增 `_slot_epoch` 逐 slot 计数；scheduler 守卫逐 slot 清理。
 
 请 ChatGPT 按 root `05fbd778`/child `525f506` 复核两个 HIGH 是否闭合，给出 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE` 或 `REQUEST_CHANGES(file:line)`，写回 `docs/collab/chatgpt/reviews/`。
+
+## 2026-09-17 13:55 CST — Gate 2 resume 接线实现完成，申请 closure review
+
+ACTIVE-ROUTE-RESUME 设计 v0.4 三方 APPROVE 后已落地实现。**新 formal pair：root `eb15c3e5` / child `7ca3b20`**（子模块 4 文件 +185/-8）。
+
+实现内容（对应 v0.4 设计）：
+- `active_local_memory_launch.py`：`ActiveLocalMemoryLaunchCallback` 加 `checkpoint_component="dataloader"` + `has_checkpoint_state()`（恒 True）+ `state_dict()`（委托 driver）+ `load_state_dict()`（`_pending_resume_state` 暂存）；`on_train_start` 守卫改「iteration>0 且 pending 为 None 才拒绝」；`_catalog_digest()`（sha256(manifest|config|source)）。
+- `active_local_memory_driver.py`：`catalog_digest` 成员 + `state_dict()`/`load_state_dict()`（§4.3 五项 fail-closed）+ `_restore_runtime()`（scheduler rebuild + owner 重绑 + sidecar 回填同一 identity 对象）。
+- `local_memory_segment.py`：`snapshot()` 按 slot 修剪（`_last_per_slot`）。
+
+验证：driver 15 passed（+2 新：source_digest fail-closed + round-trip 游标）、launch 11 passed、segment 10 passed；ruff/py_compile/diff-check PASS。
+
+请三方按 root `eb15c3e5`/child `7ca3b20` 给出 closure verdict（`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME` 或 `REQUEST_CHANGES(file:line)`），写回 `docs/collab/chatgpt/reviews/`。注：§6 判据 4（GPU save/kill/auto-resume 连续性）与判据 7（runtime round-trip 对象同一性）尚未测，属 GPU smoke 阶段前置。
