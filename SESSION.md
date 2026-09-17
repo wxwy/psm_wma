@@ -11022,6 +11022,16 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - **探针最终整改**（root `04ab6f9a`/child `c9a0111`）：① category 级重排（§4.4 正确语义，原 slot 级）；② criterion1 独立推导；③ criterion5 改「最终全覆盖」——实测 `catalogue_blocks=14430`、`covered_blocks=14430`、`stranded=[]`、`full_coverage=true`（那 9 条 `missing_from_epoch1` 是后续 epoch 消费、非丢失）；④ LOW（命令 + 判据 2 措辞）。实测 `result=PASS`、`windows_total=5112`（≥5040）、`criterion1=true`。
 - 已送审 `ds:0.0` / `mm:0.0` / `kimi:0.0`。等三方 verdict。
 
+### Gate 3 v0.8 设计层三方 APPROVE + Gate 2 closure 送审（2026-09-17 20:20 CST）
+
+- **Gate 3 v0.8 §10.3 resync 后三方 APPROVE**（root `463d649e`/child `c9a0111`）：
+  - DS：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE`（授权实现 active 逐 slot 复用 + 探针；D8b 长跑仍受 §8/§9 约束；§4.7(b) 与 resume 设计对 `canonical_segment_runtime.py` 的改动须同一协调 commit）。
+  - MM：`APPROVE_TO_IMPLEMENT_...`（resync 一致）。
+  - Kimi：设计层通过（非阻塞备注：`:502`「末次」宜作「末次记录的」）。
+- **Gate 2 ACTIVE-ROUTE-RESUME closure**：MM APPROVE；DS/Kimi 已明确送审（请求 `APPROVE_TO_CLOSE_...` 或 `REQUEST_CHANGES`），等 verdict。
+- **GPT**：用户所提供的 review commit `c8fb3846` 是 HEAD 的祖先（17:50 已 merge），其两份 review 针对**旧 pair**（`dae010c`/`5f29e35`），均已整改；GPT 若审当前 state 需针对 `463d649e` 重审。
+- **下一步**：Gate 3 设计已三方批准 → 可进入 **Gate 3 实现**（逐 slot 复用 + `_slot_epoch` + queue authority supersession）。
+
 ### Gate 2 closure 两方 APPROVE（2026-09-17 14:28 CST）
 
 - **DS**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`。非阻塞 residual（判据 5 完整 launch 集成、判据 7④ sidecar.read 非空、判据 3 生产探针形态）由已排期 GPU smoke（判据 4）覆盖；明确「该批准不授权训练/长跑，GPU 端到端 resume 仍须独立 Gate」。
