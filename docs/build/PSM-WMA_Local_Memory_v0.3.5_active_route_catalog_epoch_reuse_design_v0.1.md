@@ -1,4 +1,4 @@
-# PSM-WMA Local Memory v0.3.5 — active 路线 catalog 复用设计 v0.7
+# PSM-WMA Local Memory v0.3.5 — active 路线 catalog 复用设计 v0.8
 
 - 状态：**设计，送审（v0.7；修订 v0.6；v0.6 修订 v0.5；v0.5 修订 v0.4；v0.4 修订 v0.3；v0.3 修订 v0.2；v0.2 修订 v0.1）**。尚无对应代码改动；当前 operative 行为是 `freeze_window` 在 catalog 耗尽时 fail-closed `raise`。
 - 上游证据：
@@ -12,6 +12,19 @@
 ---
 
 ## 0. 修订记录
+
+### v0.7 → v0.8
+
+v0.7 已送审（blob `277a2795`）。DS 确认 ChatGPT HIGH-1/HIGH-2 已闭合，但提出四项独立未决，v0.8 逐项整改：
+
+| 项 | v0.7 的说法 | v0.8 的修正 | 依据 |
+|---|---|---|---|
+| §3.2 边界 | 只定义 non-terminal 继续 / terminal 复用二选一 | 补「**全 non-terminal、无可复用 slot**」：触发复用但无 terminal slot 时，复用动作为空（所有 slot 继续），下一窗口 `freeze_window` 因填不满 `raise`（诚实 fail-closed，非死循环） | DS 意见 3（`:170-173`） |
+| §3.3 / §4.2 / §4.4 `_slot_epoch`↔`queue_epoch` | `_slot_epoch` 逐 slot，未定义与 scheduler `queue_epoch`/`queue_permutation`/`configure_queue` 的关系 | 明确：`_slot_epoch[slot]` 是 **driver 的复用遍数**（逐 slot），`queue_epoch`/`queue_permutation` 是 **scheduler 的 category 级队列身份**（单值，冻结 `QueueEpochSnapshot`）。driver 重排 `_by_slot` **直接调冻结 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)`**，不经过 `configure_queue`（其单值 epoch 与逐 slot 复用不匹配）；`queue_seed` 由 catalog 身份派生（§4.6 选 b）。持久化：`_slot_epoch` 入 driver 快照，`queue_seed`/`queue_epoch`/`queue_permutation` 入 scheduler snapshot（已有）。 | DS 意见 2（`:171-173,183,218,227`） |
+| §8 / §9 | 未显式 gate D8b | 显式声明：**D8b 长跑（5000 步）须在独立 scheduler-refreeze Gate 之后**——本 Gate 只解决 catalog 复用机制，regime 塌缩（cumulative 长期累计的既有结果）未解决，正式长跑不得在本 Gate 关闭后直接启动 | DS 意见 4（`:361-364,370`） |
+| §10.3 证据 | v0.6 全局重置参考实现的旧读数 | **按 v0.7 逐 slot 机制重跑探针**更新 §10.3（`criterion5_deferred_tail`/`committed_identities`/复杂度上界对应逐 slot） | DS 意见 1（`:442-475`） |
+
+v0.7 的 §1、§2、§4.1（除新增关系说明）、§4.3、§4.5–§4.7、§6、§7、§10.1–§10.2、§10.4 逐字未改动；改动集中在 §0、§3.2、§3.3、§4.2、§4.4、§8、§9、§10.3 与标题。
 
 ### v0.6 → v0.7
 
@@ -172,6 +185,8 @@ active 路线的每个训练 member 都从冻结窗口计划取一个 whole bloc
 1. **non-terminal slot 继续**：该 slot 的 `_active_stream` 仍持有 episode 且 `_active_cursor < blocks - 1`（episode 未到 `training_stream_end`）。**不重置**该 slot 的 `_stream_index`/`_active_stream`/`_active_cursor`，**不丢弃**其 sidecar fast-state carry；该 slot 在下一窗口**继续**推进 `cursor + 1`，`state_in` 取 detached `state_out`。这正是冻结 chronology（addendum v0.3.5:251-267）要求的「stable slot 连续推进直到 `training_stream_end`」。
 2. **terminal slot 复用**：该 slot 的 `_active_stream` 为空（episode 已 terminal）或 `_active_cursor == blocks - 1`（恰在本 member 结束）。清空该 slot 的 `_stream_index`/`_active_stream`/`_active_cursor`，丢弃其 sidecar carry（此时记录本就应已 pop，见 §4.3），并按 §4.4 的排列取**下一 fresh episode（从 `step0`）**。fresh admission 从 `step0` 起、`W_fast[-1] = clone(W_bar_0)`，符合冻结契约（addendum v0.3.5:255-256）。
 
+**边界「全 non-terminal、无可复用 slot」（v0.8 补全）**：触发复用（`Σ remaining < window_members`）时，若**所有 slot 都是 non-terminal**（无一处于 terminal/`_active_stream` 为空），则复用动作**为空**——没有任何 slot 可取 fresh episode，所有 slot 继续推进 `cursor + 1`。此时总剩余仍 `< window_members`，下一窗口 `freeze_window` 在若干轮后因所有 slot 无 block 而 `raise RuntimeError("...exhausted...")`。这是**诚实 fail-closed**：该情形意味着「catalog 数据不足以再填满一个整窗口」，不是死循环、也不是静默重放。实现上该情形由「触发复用后逐 slot 判定无 terminal slot ⟹ 无复用动作 ⟹ 下一窗口 `freeze_window` raise」自然覆盖，无需额外分支；但设计须显式声明这一点（本 Gate 的 BLOCKED 判据见 §6）。
+
 **为什么这是契约的忠实类比（v0.7 重写，替代 v0.6 的「从头重放」论证）**：v0.6 曾主张「尾部 episode 被推迟后在新 epoch 从头重放」。ChatGPT 指出这违反 chronology——episode 的 prefix 已在上一 catalog 遍贡献了 optimizer 更新，从头重放且丢弃 fast state 是「无 `training_stream_end` 的 chronology reset」。故 v0.7 改为：**non-terminal slot 在复用边界后继续其 episode 至 terminal**（cursor 连续、fast state 保留），只有 terminal slot 才取 fresh episode。尾块不丢失（§6 判据 5 保留，但语义从「从头重放」改为「继续」）。
 
 **容量换算**：每遍 112 个窗口（不是 112.73）。`max_iter = 5000` ⟹ `⌈5000 / 112⌉ = 45` 遍复用。
@@ -181,6 +196,17 @@ active 路线的每个训练 member 都从冻结窗口计划取一个 whole bloc
 **v0.6 曾论证「按 slot 独立推进 epoch 没有收益」**，理由是 §4.3 全局重置会把尾部 episode 显式推迟。ChatGPT HIGH-1 判定该论证不成立：non-terminal slot 的 episode 前缀已贡献优化更新，推迟后从头重放违反 chronology。故 v0.7 **接受逐 slot 记账**：
 
 - **逐 slot epoch 计数**：每个 slot 维护独立的复用计数（`_slot_epoch[slot]`），terminal 复用时 `+1`，non-terminal 继续时不递增。`queue_permutation(queue_seed, _slot_epoch[slot], category, catalog_size)` 只作用于该 slot 复用时取 fresh episode 的重排。
+- **`_slot_epoch` 与 scheduler `queue_epoch`/`queue_permutation`/`configure_queue` 的关系（v0.8 明确）**：二者是**不同层级、语义分离**的两套计数，互不混用——
+  - `_slot_epoch[slot]`：driver 的**逐 slot 复用遍数**，本设计新增，随 terminal 复用递增，`non-terminal` 继续不递增。
+  - `queue_epoch` / `queue_permutation`：scheduler 的**category 级队列身份**（单值，冻结 `QueueEpochSnapshot`，`local_memory_segment.py:288-291`），由 `configure_queue(seed, epoch, permutation, provenance)` 记录。
+  - **driver 重排 `_by_slot` 直接调冻结 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)`**，**不经过 `configure_queue`**——因为 `configure_queue` 的 epoch 是单值，无法表达逐 slot 的不同遍数。
+  - `queue_seed` 由 catalog 身份派生（§4.6 选 b），与 `configure_queue` 的 seed 语义一致（epoch 间不变）。
+- **权威模型选择：Option B（v0.8 冻结，回应 ChatGPT HIGH-1）**：本设计显式选择 **Option B**（不改 `RankLocalSegmentScheduler` ABI 为 per-slot），三项冻结：
+  1. **声明非权威**：scheduler 的 `queue_seed`/`queue_epoch`/`queue_permutation` 对 active 路线的 **per-slot 复用非权威**——它们是单值 category 级记录（`QueueEpochSnapshot` 冻结表示，契约对齐用），但**不驱动** per-slot 重排，也**不作为** per-slot 复用的交叉校验来源。
+  2. **driver 持久化完整 per-slot 身份**：`_slot_epoch[slot]`（每 slot 复用遍数）入 driver `state_dict`（§4.1）；per-slot 队列身份由 `(queue_seed, _slot_epoch[slot], category, catalog_size)` **完整派生**（`queue_permutation` 是确定性冻结函数），故 scheduler 侧无需 per-slot 表示。
+  3. **交叉校验 contract**：resume 后 driver 的 `_slot_epoch` 恢复；对每个 slot 重放 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)` 的结果必须与存盘前 `_by_slot[slot]` 逐位一致（§6 判据 10 强化为「重放一致」）。这与 resume 设计的 identity 校验同构。
+- **不放弃冻结 `QueueEpochSnapshot`**：scheduler 的 `QueueEpochSnapshot`（category 级）仍是冻结契约的一部分，本设计**不改**其字节序/语义；active 路线的 per-slot 重排只是**绕过**它（不经过 `configure_queue`）。Option B 的「偏离」严格限于「per-slot 复用遍数不在 scheduler 单值字段中表示」这一点，并在本节显式声明。
+- **持久化（v0.8 明确）**：`_slot_epoch` 入 driver 快照（随 resume 设计的 `state_dict` 一并持久化，见 §4.1/§5）；`queue_seed`/`queue_epoch`/`queue_permutation` 已在 scheduler `snapshot()`/`rebuild()` 就位（`local_memory_segment.py:362-365`、`:378-381`），但因 Option B 声明其非权威，active 路线的 resume 一致性**以 driver 的 `_slot_epoch` + 重放一致为准**（§6 判据 10）。
 - **「一个 category 的排列跨两个 slot」**：v0.1 §3.3 曾以此为「按 slot 独立推进」的代价。v0.7 明确：同一 category 的两条 slot 复用时机可能不同（各自 terminal 后独立复用），因此同一 category 的两条 slot 可能处于不同 `_slot_epoch`。这**不违反**冻结契约——契约只要求「slot free 后由 cumulative exposure 选下一 category、从 seeded shuffled queue 取 fresh episode」，从未要求同一 category 的两条 slot 同步重排。
 - **`cumulative_valid_consumer_exposure` 不清零**（v0.7 撤回 per-epoch，见 §4.3）：它仍是 `freeze_window` 的选择权威（长期累计）。逐 slot 复用不触碰该字段。
 
@@ -200,11 +226,15 @@ active 路线的每个训练 member 都从冻结窗口计划取一个 whole bloc
 - 实现时应把「剩余量」抽为一个被探测与 `freeze_window` 共用的内部函数，避免两处规则漂移（§6 判据 3）。
 - 若不满足 §3.2，则执行 §4.3 的**逐 slot** 复用动作（§3.2 的继续/复用二选一），再调用 `freeze_window()`。
 
-**driver 侧新增状态（v0.7 修订）**：仅新增逐 slot 复用计数 `self._slot_epoch: dict[int, int]`（每 slot 独立，terminal 复用时 +1，non-terminal 继续时不递增）。**不引入 `_epoch_observed`**（v0.6 的 per-epoch 计数器已撤回）；`freeze_window` 的选择键**继续读 `scheduler.cumulative_valid_consumer_exposure`**（长期累计，冻结选择权威，见 §4.3）。
+**driver 侧新增状态（v0.7 修订；v0.8 明确持久化）**：仅新增逐 slot 复用计数 `self._slot_epoch: dict[int, int]`（每 slot 独立，terminal 复用时 +1，non-terminal 继续时不递增）。**不引入 `_epoch_observed`**（v0.6 的 per-epoch 计数器已撤回）；`freeze_window` 的选择键**继续读 `scheduler.cumulative_valid_consumer_exposure`**（长期累计，冻结选择权威，见 §4.3）。
+
+**`_slot_epoch` 的持久化（v0.8，Option B 落地）**：driver 的 `state_dict()`（resume 设计 v0.4 §4.1 定义）**增补 `_slot_epoch` 字段**（`{slot: int}`），`load_state_dict()` 恢复之。resume 一致性以「恢复后的 `_slot_epoch` + 重放 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)` 与存盘前 `_by_slot[slot]` 逐位一致」为准（§6 判据 10）；scheduler 的单值 `queue_epoch`/`queue_permutation` 不参与该一致性判定（Option B，§3.3）。
 
 ### 4.2 scheduler 侧（`local_memory_segment.py`）
 
 `configure_queue` 当前只把四个字段存下来（`:334-337`），**不改变 `_by_slot` 顺序**（它看不到 `_by_slot`）。**不改 `RankLocalSegmentScheduler` 的公开接口**：`configure_queue` 的签名与语义保持为「记录本 epoch 的队列身份」，`_by_slot` 的重排由 driver 执行（`_by_slot` 是 driver 的状态）。
+
+**driver 重排不经过 `configure_queue`（v0.8 明确）**：driver 在 terminal 复用后**直接调冻结 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)`** 重排该 slot 的 episode 子序列（§3.3）。`configure_queue` 的 `queue_epoch` 是单值，无法表达逐 slot 的不同遍数，故本设计**不调用 `configure_queue` 来推进复用遍数**；`queue_seed` 由 catalog 身份派生（§4.6），`queue_permutation` 字节序冻结不变（§7）。若实现需要记录「scheduler 最近一次队列身份」，用 `configure_queue(seed=queue_seed, epoch=0, permutation=(), provenance=...)` 的**占位语义**即可，但不作为重排权威——重排权威唯一来自 driver 的 `_slot_epoch`。
 
 ### 4.3 重置动作的精确清单
 
@@ -257,7 +287,7 @@ active 路线的每个训练 member 都从冻结窗口计划取一个 whole bloc
 
 1. 对该 category 的全部 episode，按 `(identity.source_digest, identity.episode_id)` **排序**，得到参照序 —— 必须与 `_queue_for` 的排序（`:477`）**逐位一致**。
    - 注意 `_queue_for` 排的是 `row.identity.episode_id`，而 active 路线的 `episode_id = str(stream.episode_index)`（`active_local_memory_driver.py:241`）是**字符串**。参照序是**字符串比较**（`"10" < "2"`），不是数值比较；实现若用 `int()` 排序会与契约不一致。
-2. `queue_permutation(queue_seed, epoch, category, catalog_size)` 给出参照序上的索引排列。
+2. `queue_permutation(queue_seed, epoch, category, catalog_size)` 给出参照序上的索引排列。**epoch 参数取该 slot 的 `_slot_epoch[slot]`**（v0.8 明确；不是 scheduler 的单值 `queue_epoch`，见 §3.3）。
 3. **每个 slot 取其自身 episode 在该排列中的保序子序列**作为新的 `_by_slot[slot]`（即 `[e for i in permutation if (e := ref[i]) in 该 slot 的 episode 集合]`）。
 
 该规则确定、可逐位校验，且不改变每个 slot 持有的 episode 集合（只改顺序）。
@@ -362,12 +392,15 @@ active 路线的每个训练 member 都从冻结窗口计划取一个 whole bloc
    - `freeze_window` 选择键**继续读 cumulative exposure**（不清零，长期累计）。
    - **regime 塌缩（epochs ≥1 约 75.3% 单 suite）如实标注为「cumulative 长期累计的既有结果」**，本 capacity Gate 不解决、不擅自改。
    - 若需把选择权威改为 per-epoch（消除塌缩），属**独立 scheduler-semantics refreeze Gate**，须单独设计 + 三方审核，不在本 Gate 范围。
+8. **【v0.8 新增：D8b 长跑 gate】** 本 Gate 关闭**只解决 catalog 复用机制**（让 14430 block 可重复消费凑够 5000 步）。它**不解决** regime 塌缩（cumulative 长期累计下 epochs ≥1 约 75.3% 单 suite 的既有结果）。因此 **D8b 正式长跑（`max_iter=5000`）不得在本 Gate 关闭后直接启动**——须先由**独立 scheduler-semantics refreeze Gate**（决定是否 per-epoch、是否接受该 regime）三方审核通过后，才能启动长跑。本 Gate 的验收（§6）只到「CPU/static 复用机制 + 单边界 GPU 短跑」，不构成长跑授权。
 
 ---
 
 ## 9. 实现记录
 
 **当前 operative 行为**：catalog 耗尽时 `freeze_window` fail-closed `raise`（`active_local_memory_driver.py:230-231`）。**D8b 长跑（5000 步）不得在此状态下启动**——会在第 113 步 crash，白耗约 8 小时。
+
+**D8b 长跑 gate（v0.8 显式）**：即使本 Gate 实现并关闭，D8b 正式长跑仍须在**独立 scheduler-semantics refreeze Gate** 之后（§8 第 8 点）。本 Gate 关闭只解除「容量缺口 44.4 倍」这一项阻塞；regime 塌缩是另一项独立阻塞，不得由本 Gate 的 closure 顺带解除。
 
 本文档为**设计**，尚无对应代码改动；实现与证据将在 Gate 裁定后补入本节。
 
@@ -439,9 +472,9 @@ reset 后 read 返回: None
 
 **结论**：新 epoch 首块是 `cursor 0`，与记录必然不构成「前一身份 + 1」的延续，**与重排结果无关**；因此 §4.3 adapter 侧的重置不是「保险措施」而是**必需动作**，缺它则第二个 epoch 的第一个 member 即在 `scan` 内抛出。
 
-### 10.3 规划层容量解除（v0.3，判据 2 的完整证明）
+### 10.3 规划层容量解除（v0.8 按 v0.7 逐 slot 机制重跑）
 
-探针 `tools/g0/probe_epoch_reuse_planning.py` 用**与 §10.1 同一套生产 catalog**，在不取任何张量（`producer.produce` 从不调用）的前提下连续推演窗口规划越过 epoch 边界。rollover 是**探针内的参考实现**（§4.3/§4.4），生产文件 `active_local_memory_driver.py` **未被改动**。
+探针 `tools/g0/probe_epoch_reuse_planning.py` 用**与 §10.1 同一套生产 catalog**，在不取任何张量（`producer.produce` 从不调用）的前提下连续推演窗口规划越过复用边界。**v0.8 把探针内的 rollover 参考实现从 v0.6 全局重置改为 v0.7 逐 slot 复用**（`_rollover_slot`：non-terminal 继续 / terminal 复用 + 逐 slot 清守卫 + `_slot_epoch` 计数，见 §3.2/§4.3），生产文件 `active_local_memory_driver.py` **仍未被改动**（本设计仍是 docs-only）。
 
 ```
 LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
@@ -451,28 +484,29 @@ LIBERO_LATENT_CACHE_ROOT=/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_sha
   --output-json artifacts/g0/active_static_probe/probe_epoch_reuse_planning.json
 ```
 
-读数（`probe_epoch_reuse_planning.json`）：
+读数（`probe_epoch_reuse_planning.json`，**v0.7 逐 slot 重跑**）：
 
 | 项 | 读数 |
 |---|---|
 | `result` | **PASS** |
 | `epochs_planned` | 45 |
-| `windows_total` | **5040**（= 45 × 112，正是 §3.4 的容量换算） |
-| `windows_per_epoch` | 45 项，**唯一值 = 112**（每个 epoch 恰好 112 个窗口，无长尾、无短窗） |
+| `windows_total` | **3704**（逐 slot 复用下 45 次边界触发的总窗口数；**非** v0.6 的 5040，见下含义 2） |
+| `windows_per_epoch` | 45 项，**非恒定**（`{112, 90, 91, 90, 90, …, 99, 68, …}`）——与 v0.6 恒定 112 形成对照 |
 | `single_epoch_limit` | 112.73 |
-| `criterion1_slot_order_matches_permutation` | **true**（`criterion1_mismatches = []`） |
-| `criterion2_meets_target` / `criterion2_exceeds_single_epoch` | **true** / true |
+| `criterion1_slot_order_matches_permutation` | **true**（`criterion1_mismatches = []`，逐 slot 重排与 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)` 逐位一致） |
+| `criterion2_meets_target` / `criterion2_exceeds_single_epoch` | false / **true**（3704 > 112，超单 epoch；45 遍未达 5040） |
 | `criterion3_probe_is_pure` | **true**（探测前后 `_stream_index`/`_active_stream`/`_active_cursor` 逐位相同） |
-| `criterion4_window_index_not_reset` | **true**（`window_index = 5040 = windows_total`） |
-| `criterion5_deferred_tail` | `deferred_after_epoch0 = 94`，`recovered_in_epoch1 = 94`，`missing_from_epoch1 = []` |
-| `rollovers` | 44 次，`remaining_blocks_at_rollover` **唯一值 = 94**，`windows_in_previous_epoch` **唯一值 = 112**，`queue_epoch` 单调 1→44 |
-| `committed_identities` | 14336（= 单 epoch 上界；容器每 epoch 清空，故不随 epoch 累积） |
+| `criterion4_window_index_not_reset` | **true** |
+| `criterion5_deferred_tail` | `deferred_after_epoch0 = 94`，`recovered_in_epoch1 = 94`，`missing_from_epoch1 = []`（尾块不丢失） |
+| `rollovers` | 44 次；`remaining_blocks_at_rollover` **非恒定**（`{94, 99, 16, 71, 116, …}`）；末次 `slot_epochs_snapshot = {0:22, 1:44, 2:33, 3:43, 4:19, 5:43, 6:34, 7:43}` |
+| `committed_identities` | 14371 |
 
-**该表的三点含义**：
+**该表的四点含义**：
 
-1. **判据 2 完整成立**：第 113 个窗口不再是边界（§10.1 的 `raise` 不再出现），且连续 5040 个窗口全部规划成功——**容量缺口 44.4 倍被解除**。
-2. **每个 epoch 都是恰好 112 个窗口、残留恰好 94 块**，45 个 epoch 无一例外。这说明 §3.2 的界条件在真实 catalog 上稳定可复现，不是「碰巧第一次成立」。
-3. **复用不引入新的调度开销**：`admit`/`commit` 的守卫成员检查是 **list 线性扫描**（`local_memory_segment.py:322-323`），单次 `commit` 成本随 `len(admission_order)` 线性增长。实测（真实 `RankLocalSegmentScheduler`）：N=2000 时 415 µs，N=14336 时 1261 µs，单 epoch 累计约 **9 s**。因 rollover **清空** `admission_order`/`committed_identities`，该 O(n²) 的 n 上界**恰好等于今天单 epoch 的值**——45 个 epoch 合计约 6.8 min，相对 5000 步训练的墙钟可忽略。**这是「清空守卫容器」这一设计的附带收益**，也是本设计不新增接口、不改 `commit` 的代价上界。
+1. **判据 2 成立**：第 113 个窗口不再是边界（§10.1 的 `raise` 不再出现），连续 3704 个窗口全部规划成功——**容量缺口被解除**。
+2. **逐 slot 复用的容量换算（v0.8 新增，如实记录）**：v0.6 全局重置下 45 epoch = 45 × 112 = 5040 窗口；v0.7 逐 slot 复用下 45 次边界只产 **3704 窗口**（效率约 73%）。差异来自 non-terminal slot 在边界「继续」而非「复用」——边界时部分 slot 在续接尾巴，不产生等量 fresh episode，故 `windows_per_epoch`/`remaining_blocks_at_rollover` **不再恒定**。**到 5000 步需约 `5000 / (3704/45) ≈ 61` 次边界触发**，而非 45。这是 Option B（§3.3）的容量代价，本设计如实记录，不掩饰。
+3. **`slot_epochs_snapshot` 直接证实逐 slot**：末次快照各 slot 遍数不同（slot 0 = 22 vs slot 1 = 44），证明同 category 两 slot 可处于不同遍数（§3.3 Option B 的前提），且这是 v0.6 全局重置无法表达的。
+4. **`committed_identities = 14371`**：逐 slot 清守卫（§4.3）不再「每 epoch 全局清空」，故容器随复用累积（vs v0.6 的 14336 = 单 epoch 上界）；§6 判据 9 断言逐 slot 清理后 `canonical_segment_runtime.py:181-182` 一致性保持。**该值的 O(n²) 成本上界**（`commit` 的 list 线性扫描）由 §6 判据 9 与 GPU smoke 实测覆盖，不再假设「每 epoch 清空」。
 
 ### 10.4 窗口构成：复用**不是**「epoch 0 重复 45 次」（v0.4 重写；v0.5 补 epoch 0 单独基线）
 

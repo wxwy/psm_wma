@@ -1,11 +1,11 @@
 {
   "b_stream": 8,
   "catalogue_blocks": 14430,
-  "committed_identities": 14336,
+  "committed_identities": 14371,
   "criterion1_mismatches": [],
   "criterion1_slot_order_matches_permutation": true,
   "criterion2_exceeds_single_epoch": true,
-  "criterion2_meets_target": true,
+  "criterion2_meets_target": false,
   "criterion2_target_windows": 5040,
   "criterion3_probe_is_pure": true,
   "criterion4_window_index_not_reset": true,
@@ -15,32 +15,33 @@
     "recovered_in_epoch1": 94
   },
   "criterion6_slot_coverage": {
-    "all_categories_windows": 81,
-    "all_slots_windows": 79,
-    "max_within_category_slot_skew": 64,
+    "all_categories_windows": 385,
+    "all_slots_windows": 122,
+    "max_within_category_slot_skew": 128,
     "total_categories": 4,
     "total_slots": 8,
     "windows_by_distinct_categories": {
-      "1": 3826,
-      "2": 1070,
-      "3": 63,
-      "4": 81
+      "1": 822,
+      "2": 1438,
+      "3": 1059,
+      "4": 385
     },
     "windows_by_distinct_slots": {
-      "2": 3826,
-      "3": 51,
-      "4": 1019,
-      "5": 7,
-      "6": 56,
-      "7": 2,
-      "8": 79
+      "1": 142,
+      "2": 684,
+      "3": 395,
+      "4": 1049,
+      "5": 267,
+      "6": 795,
+      "7": 250,
+      "8": 122
     }
   },
   "cumulative_exposure": {
-    "libero_10": 4050720,
-    "libero_goal": 1863360,
-    "libero_object": 2505600,
-    "libero_spatial": 1902240
+    "libero_10": 1964336,
+    "libero_goal": 1842032,
+    "libero_object": 1919456,
+    "libero_spatial": 1859968
   },
   "epochs_planned": 45,
   "ga": 16,
@@ -49,267 +50,663 @@
   "rollovers": [
     {
       "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 1,
+      "slot_epochs_snapshot": {
+        "0": 1,
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 0,
+        "5": 1,
+        "6": 1,
+        "7": 1
+      },
       "to_epoch": 1,
       "windows_in_previous_epoch": 112
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 2,
+      "remaining_blocks_at_rollover": 99,
+      "slot_epochs_snapshot": {
+        "0": 1,
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 1,
+        "5": 2,
+        "6": 2,
+        "7": 2
+      },
       "to_epoch": 2,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 3,
+      "remaining_blocks_at_rollover": 16,
+      "slot_epochs_snapshot": {
+        "0": 2,
+        "1": 3,
+        "2": 3,
+        "3": 3,
+        "4": 1,
+        "5": 3,
+        "6": 3,
+        "7": 3
+      },
       "to_epoch": 3,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 91
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 4,
+      "remaining_blocks_at_rollover": 71,
+      "slot_epochs_snapshot": {
+        "0": 2,
+        "1": 4,
+        "2": 4,
+        "3": 4,
+        "4": 2,
+        "5": 4,
+        "6": 4,
+        "7": 4
+      },
       "to_epoch": 4,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 5,
+      "remaining_blocks_at_rollover": 116,
+      "slot_epochs_snapshot": {
+        "0": 3,
+        "1": 5,
+        "2": 4,
+        "3": 5,
+        "4": 3,
+        "5": 5,
+        "6": 4,
+        "7": 5
+      },
       "to_epoch": 5,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 6,
+      "remaining_blocks_at_rollover": 58,
+      "slot_epochs_snapshot": {
+        "0": 3,
+        "1": 6,
+        "2": 5,
+        "3": 6,
+        "4": 3,
+        "5": 6,
+        "6": 5,
+        "7": 6
+      },
       "to_epoch": 6,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 86
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 7,
+      "remaining_blocks_at_rollover": 64,
+      "slot_epochs_snapshot": {
+        "0": 3,
+        "1": 7,
+        "2": 6,
+        "3": 7,
+        "4": 3,
+        "5": 7,
+        "6": 5,
+        "7": 7
+      },
       "to_epoch": 7,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 68
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 8,
+      "remaining_blocks_at_rollover": 123,
+      "slot_epochs_snapshot": {
+        "0": 3,
+        "1": 8,
+        "2": 6,
+        "3": 8,
+        "4": 3,
+        "5": 8,
+        "6": 6,
+        "7": 8
+      },
       "to_epoch": 8,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 54
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 9,
+      "remaining_blocks_at_rollover": 52,
+      "slot_epochs_snapshot": {
+        "0": 4,
+        "1": 9,
+        "2": 7,
+        "3": 9,
+        "4": 4,
+        "5": 9,
+        "6": 6,
+        "7": 9
+      },
       "to_epoch": 9,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 55
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 10,
+      "remaining_blocks_at_rollover": 71,
+      "slot_epochs_snapshot": {
+        "0": 4,
+        "1": 10,
+        "2": 8,
+        "3": 10,
+        "4": 4,
+        "5": 10,
+        "6": 7,
+        "7": 10
+      },
       "to_epoch": 10,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 99
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 11,
+      "remaining_blocks_at_rollover": 77,
+      "slot_epochs_snapshot": {
+        "0": 5,
+        "1": 11,
+        "2": 8,
+        "3": 11,
+        "4": 5,
+        "5": 11,
+        "6": 8,
+        "7": 11
+      },
       "to_epoch": 11,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 68
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 12,
+      "remaining_blocks_at_rollover": 39,
+      "slot_epochs_snapshot": {
+        "0": 5,
+        "1": 12,
+        "2": 9,
+        "3": 12,
+        "4": 5,
+        "5": 12,
+        "6": 9,
+        "7": 12
+      },
       "to_epoch": 12,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 99
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 13,
+      "remaining_blocks_at_rollover": 45,
+      "slot_epochs_snapshot": {
+        "0": 6,
+        "1": 13,
+        "2": 9,
+        "3": 13,
+        "4": 6,
+        "5": 13,
+        "6": 9,
+        "7": 13
+      },
       "to_epoch": 13,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 68
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 14,
+      "remaining_blocks_at_rollover": 115,
+      "slot_epochs_snapshot": {
+        "0": 6,
+        "1": 14,
+        "2": 10,
+        "3": 14,
+        "4": 6,
+        "5": 14,
+        "6": 10,
+        "7": 14
+      },
       "to_epoch": 14,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 85
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 15,
+      "remaining_blocks_at_rollover": 121,
+      "slot_epochs_snapshot": {
+        "0": 6,
+        "1": 15,
+        "2": 11,
+        "3": 14,
+        "4": 6,
+        "5": 15,
+        "6": 11,
+        "7": 14
+      },
       "to_epoch": 15,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 68
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 16,
+      "remaining_blocks_at_rollover": 45,
+      "slot_epochs_snapshot": {
+        "0": 7,
+        "1": 16,
+        "2": 11,
+        "3": 15,
+        "4": 7,
+        "5": 16,
+        "6": 12,
+        "7": 15
+      },
       "to_epoch": 16,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 48
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 17,
+      "remaining_blocks_at_rollover": 39,
+      "slot_epochs_snapshot": {
+        "0": 7,
+        "1": 17,
+        "2": 12,
+        "3": 16,
+        "4": 7,
+        "5": 17,
+        "6": 13,
+        "7": 16
+      },
       "to_epoch": 17,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 99
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 18,
+      "remaining_blocks_at_rollover": 45,
+      "slot_epochs_snapshot": {
+        "0": 8,
+        "1": 18,
+        "2": 13,
+        "3": 17,
+        "4": 8,
+        "5": 18,
+        "6": 13,
+        "7": 17
+      },
       "to_epoch": 18,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 68
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 19,
+      "remaining_blocks_at_rollover": 49,
+      "slot_epochs_snapshot": {
+        "0": 8,
+        "1": 19,
+        "2": 14,
+        "3": 18,
+        "4": 8,
+        "5": 19,
+        "6": 14,
+        "7": 18
+      },
       "to_epoch": 19,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 99
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 20,
+      "remaining_blocks_at_rollover": 55,
+      "slot_epochs_snapshot": {
+        "0": 9,
+        "1": 20,
+        "2": 14,
+        "3": 19,
+        "4": 9,
+        "5": 20,
+        "6": 14,
+        "7": 19
+      },
       "to_epoch": 20,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 68
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 21,
+      "remaining_blocks_at_rollover": 125,
+      "slot_epochs_snapshot": {
+        "0": 9,
+        "1": 21,
+        "2": 15,
+        "3": 20,
+        "4": 9,
+        "5": 21,
+        "6": 15,
+        "7": 20
+      },
       "to_epoch": 21,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 85
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 22,
+      "remaining_blocks_at_rollover": 3,
+      "slot_epochs_snapshot": {
+        "0": 10,
+        "1": 22,
+        "2": 16,
+        "3": 21,
+        "4": 9,
+        "5": 22,
+        "6": 16,
+        "7": 21
+      },
       "to_epoch": 22,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 69
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 23,
+      "remaining_blocks_at_rollover": 58,
+      "slot_epochs_snapshot": {
+        "0": 10,
+        "1": 23,
+        "2": 17,
+        "3": 22,
+        "4": 10,
+        "5": 23,
+        "6": 17,
+        "7": 22
+      },
       "to_epoch": 23,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 24,
+      "remaining_blocks_at_rollover": 103,
+      "slot_epochs_snapshot": {
+        "0": 11,
+        "1": 24,
+        "2": 18,
+        "3": 23,
+        "4": 10,
+        "5": 24,
+        "6": 18,
+        "7": 23
+      },
       "to_epoch": 24,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 25,
+      "remaining_blocks_at_rollover": 30,
+      "slot_epochs_snapshot": {
+        "0": 12,
+        "1": 25,
+        "2": 18,
+        "3": 24,
+        "4": 11,
+        "5": 25,
+        "6": 18,
+        "7": 24
+      },
       "to_epoch": 25,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 91
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 26,
+      "remaining_blocks_at_rollover": 100,
+      "slot_epochs_snapshot": {
+        "0": 12,
+        "1": 26,
+        "2": 19,
+        "3": 25,
+        "4": 11,
+        "5": 26,
+        "6": 19,
+        "7": 25
+      },
       "to_epoch": 26,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 85
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 27,
+      "remaining_blocks_at_rollover": 106,
+      "slot_epochs_snapshot": {
+        "0": 12,
+        "1": 27,
+        "2": 20,
+        "3": 26,
+        "4": 11,
+        "5": 26,
+        "6": 20,
+        "7": 26
+      },
       "to_epoch": 27,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 68
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 28,
+      "remaining_blocks_at_rollover": 59,
+      "slot_epochs_snapshot": {
+        "0": 13,
+        "1": 28,
+        "2": 20,
+        "3": 27,
+        "4": 12,
+        "5": 27,
+        "6": 20,
+        "7": 27
+      },
       "to_epoch": 28,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 58
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 29,
+      "remaining_blocks_at_rollover": 1,
+      "slot_epochs_snapshot": {
+        "0": 14,
+        "1": 29,
+        "2": 21,
+        "3": 28,
+        "4": 12,
+        "5": 28,
+        "6": 21,
+        "7": 28
+      },
       "to_epoch": 29,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 86
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 30,
+      "remaining_blocks_at_rollover": 56,
+      "slot_epochs_snapshot": {
+        "0": 14,
+        "1": 30,
+        "2": 22,
+        "3": 29,
+        "4": 13,
+        "5": 29,
+        "6": 22,
+        "7": 29
+      },
       "to_epoch": 30,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 31,
+      "remaining_blocks_at_rollover": 101,
+      "slot_epochs_snapshot": {
+        "0": 15,
+        "1": 31,
+        "2": 23,
+        "3": 30,
+        "4": 14,
+        "5": 30,
+        "6": 23,
+        "7": 30
+      },
       "to_epoch": 31,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
       "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 32,
+      "slot_epochs_snapshot": {
+        "0": 15,
+        "1": 32,
+        "2": 24,
+        "3": 31,
+        "4": 14,
+        "5": 31,
+        "6": 24,
+        "7": 31
+      },
       "to_epoch": 32,
       "windows_in_previous_epoch": 112
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 33,
+      "remaining_blocks_at_rollover": 100,
+      "slot_epochs_snapshot": {
+        "0": 15,
+        "1": 33,
+        "2": 25,
+        "3": 32,
+        "4": 14,
+        "5": 32,
+        "6": 24,
+        "7": 32
+      },
       "to_epoch": 33,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 68
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 34,
+      "remaining_blocks_at_rollover": 31,
+      "slot_epochs_snapshot": {
+        "0": 16,
+        "1": 34,
+        "2": 25,
+        "3": 33,
+        "4": 15,
+        "5": 33,
+        "6": 25,
+        "7": 33
+      },
       "to_epoch": 34,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 55
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 35,
+      "remaining_blocks_at_rollover": 48,
+      "slot_epochs_snapshot": {
+        "0": 16,
+        "1": 35,
+        "2": 26,
+        "3": 34,
+        "4": 15,
+        "5": 34,
+        "6": 26,
+        "7": 34
+      },
       "to_epoch": 35,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 99
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 36,
+      "remaining_blocks_at_rollover": 54,
+      "slot_epochs_snapshot": {
+        "0": 16,
+        "1": 36,
+        "2": 27,
+        "3": 35,
+        "4": 15,
+        "5": 35,
+        "6": 26,
+        "7": 35
+      },
       "to_epoch": 36,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 68
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 37,
+      "remaining_blocks_at_rollover": 113,
+      "slot_epochs_snapshot": {
+        "0": 17,
+        "1": 37,
+        "2": 27,
+        "3": 36,
+        "4": 16,
+        "5": 36,
+        "6": 27,
+        "7": 36
+      },
       "to_epoch": 37,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 54
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 38,
+      "remaining_blocks_at_rollover": 2,
+      "slot_epochs_snapshot": {
+        "0": 18,
+        "1": 38,
+        "2": 28,
+        "3": 37,
+        "4": 16,
+        "5": 37,
+        "6": 28,
+        "7": 37
+      },
       "to_epoch": 38,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 100
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 39,
+      "remaining_blocks_at_rollover": 57,
+      "slot_epochs_snapshot": {
+        "0": 18,
+        "1": 39,
+        "2": 29,
+        "3": 38,
+        "4": 17,
+        "5": 38,
+        "6": 29,
+        "7": 38
+      },
       "to_epoch": 39,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 40,
+      "remaining_blocks_at_rollover": 102,
+      "slot_epochs_snapshot": {
+        "0": 19,
+        "1": 40,
+        "2": 30,
+        "3": 39,
+        "4": 17,
+        "5": 39,
+        "6": 30,
+        "7": 39
+      },
       "to_epoch": 40,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 41,
+      "remaining_blocks_at_rollover": 29,
+      "slot_epochs_snapshot": {
+        "0": 19,
+        "1": 41,
+        "2": 31,
+        "3": 40,
+        "4": 18,
+        "5": 40,
+        "6": 31,
+        "7": 40
+      },
       "to_epoch": 41,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 91
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 42,
+      "remaining_blocks_at_rollover": 74,
+      "slot_epochs_snapshot": {
+        "0": 20,
+        "1": 42,
+        "2": 32,
+        "3": 41,
+        "4": 18,
+        "5": 41,
+        "6": 32,
+        "7": 41
+      },
       "to_epoch": 42,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 90
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 43,
+      "remaining_blocks_at_rollover": 1,
+      "slot_epochs_snapshot": {
+        "0": 21,
+        "1": 43,
+        "2": 32,
+        "3": 42,
+        "4": 19,
+        "5": 42,
+        "6": 33,
+        "7": 42
+      },
       "to_epoch": 43,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 91
     },
     {
-      "remaining_blocks_at_rollover": 94,
-      "scheduler_queue_epoch": 44,
+      "remaining_blocks_at_rollover": 18,
+      "slot_epochs_snapshot": {
+        "0": 22,
+        "1": 44,
+        "2": 33,
+        "3": 43,
+        "4": 19,
+        "5": 43,
+        "6": 34,
+        "7": 43
+      },
       "to_epoch": 44,
-      "windows_in_previous_epoch": 112
+      "windows_in_previous_epoch": 99
     }
   ],
   "single_epoch_limit": 112.73,
@@ -330,7 +727,7 @@
       "first_partial_category_window": 1,
       "first_partial_window": 1,
       "remaining_by_category_at_epoch_end": {
-        "libero_10": 94,
+        "libero_10": 99,
         "libero_goal": 0,
         "libero_object": 0,
         "libero_spatial": 0
@@ -341,7 +738,7 @@
       "first_partial_category_window": 1,
       "first_partial_window": 1,
       "remaining_by_category_at_epoch_end": {
-        "libero_10": 94,
+        "libero_10": 16,
         "libero_goal": 0,
         "libero_object": 0,
         "libero_spatial": 0
@@ -352,7 +749,7 @@
       "first_partial_category_window": 1,
       "first_partial_window": 1,
       "remaining_by_category_at_epoch_end": {
-        "libero_10": 94,
+        "libero_10": 71,
         "libero_goal": 0,
         "libero_object": 0,
         "libero_spatial": 0
@@ -363,61 +760,61 @@
       "first_partial_category_window": 1,
       "first_partial_window": 1,
       "remaining_by_category_at_epoch_end": {
-        "libero_10": 94,
+        "libero_10": 0,
         "libero_goal": 0,
-        "libero_object": 0,
+        "libero_object": 116,
         "libero_spatial": 0
       }
     }
   ],
-  "window_index": 5040,
+  "window_index": 3704,
   "window_members": 128,
   "windows_per_epoch": [
     112,
+    90,
+    91,
+    90,
+    90,
+    86,
+    68,
+    54,
+    55,
+    99,
+    68,
+    99,
+    68,
+    85,
+    68,
+    48,
+    99,
+    68,
+    99,
+    68,
+    85,
+    69,
+    90,
+    90,
+    91,
+    85,
+    68,
+    58,
+    86,
+    90,
+    90,
     112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112,
-    112
+    68,
+    55,
+    99,
+    68,
+    54,
+    100,
+    90,
+    90,
+    91,
+    90,
+    91,
+    99,
+    90
   ],
-  "windows_total": 5040
+  "windows_total": 3704
 }

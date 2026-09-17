@@ -129,48 +129,34 @@ def _all_admissible_blocks(driver, slots: tuple[int, ...]) -> set[tuple[int, int
     return blocks
 
 
-def _rollover(driver, scheduler, *, epoch: int, queue_seed: int, slot_categories: dict) -> dict:
-    """Reference implementation of design v0.2 sections 4.3 and 4.4.
+def _rollover_slot(driver, scheduler, *, slot: int, epoch: int, queue_seed: int, category: str) -> tuple[int, ...] | None:
+    """v0.7 逐 slot 复用：non-terminal 继续（返回 None），terminal 复用（返回 permutation）。
 
-    Returns the permutation applied per category, so criterion 1 can be
-    recomputed from the pre-rollover lists rather than trusted from here.
+    terminal 判定（design v0.8 §3.2）：``_active_stream`` 为空，或 ``_active_cursor == blocks - 1``。
     """
-    applied: dict[str, tuple[int, ...]] = {}
-    for category in sorted(set(slot_categories.values())):
-        reference = _reference_order(
-            [s for slot in _slots_of(slot_categories, category) for s in driver._by_slot[slot]],
-            driver.producer.source_digest,
-        )
-        permutation = queue_permutation(
-            queue_seed=queue_seed, epoch=epoch, category=category, catalog_size=len(reference)
-        )
-        ordered = [reference[index] for index in permutation]
-        for slot in _slots_of(slot_categories, category):
-            own = {_key(stream) for stream in driver._by_slot[slot]}
-            driver._by_slot[slot] = tuple(s for s in ordered if _key(s) in own)
-        applied[category] = permutation
-        scheduler.configure_queue(
-            seed=queue_seed,
-            epoch=epoch,
-            permutation=permutation,
-            provenance=SegmentProvenance(
-                manifest_digest=f"epoch-reuse-probe/{category}",
-                config_digest="epoch-reuse-probe",
-                source_digest=driver.producer.source_digest,
-                segment_id=epoch,
-            ),
-        )
-    # 4.3 driver side: zero every cursor so each slot restarts at its first episode.
-    driver._stream_index = {slot: 0 for slot in driver._by_slot}
-    driver._active_stream.clear()
-    driver._active_cursor.clear()
-    # 4.3 scheduler side: the guard containers are reset together, which is what
-    # keeps the runtime's commit-in-admission-order check true.
-    scheduler.stable_slots.clear()
-    scheduler.terminal_slots.clear()
-    scheduler.admission_order.clear()
-    scheduler.committed_identities.clear()
-    return applied
+    stream = driver._active_stream.get(slot)
+    cursor = driver._active_cursor.get(slot)
+    blocks = int(driver.producer.block_count(stream)) if stream is not None else 0
+    terminal = stream is None or (cursor is not None and blocks > 0 and cursor >= blocks - 1)
+    if not terminal:
+        return None  # non-terminal：继续，不重置
+    # terminal slot 复用：重排该 slot 的 episode 子序列，游标归零，取 fresh（step0）
+    reference = _reference_order(list(driver._by_slot[slot]), driver.producer.source_digest)
+    permutation = queue_permutation(
+        queue_seed=queue_seed, epoch=epoch, category=category, catalog_size=len(reference)
+    )
+    ordered = [reference[index] for index in permutation]
+    own = {_key(s) for s in driver._by_slot[slot]}
+    driver._by_slot[slot] = tuple(s for s in ordered if _key(s) in own)
+    driver._stream_index[slot] = 0
+    driver._active_stream.pop(slot, None)
+    driver._active_cursor.pop(slot, None)
+    # 逐 slot 清守卫（仅该 slot 的旧条目，保持 admission_order ⊆ committed_identities）
+    scheduler.admission_order[:] = [i for i in scheduler.admission_order if i.slot_id != slot]
+    scheduler.committed_identities[:] = [i for i in scheduler.committed_identities if i.slot_id != slot]
+    scheduler.stable_slots.pop(slot, None)
+    scheduler.terminal_slots.pop(slot, None)
+    return permutation
 
 
 def main() -> int:
@@ -263,6 +249,7 @@ def main() -> int:
     epoch = 0
     epochs_planned = 0
     windows_total = 0
+    slot_epochs: dict[int, int] = {slot: 0 for slot in all_slots}
     epoch_window_counts: list[int] = []
     rollovers: list[dict] = []
     blocks_by_epoch: dict[int, set[tuple[int, int, int]]] = {}
@@ -313,28 +300,30 @@ def main() -> int:
         if epochs_planned >= args.max_epochs:
             break
         before = {slot: driver._by_slot[slot] for slot in all_slots}
-        applied = _rollover(
-            driver, scheduler, epoch=epoch + 1, queue_seed=args.queue_seed, slot_categories=slot_categories
-        )
-        # Criterion 1: recompute the expected order from the pre-rollover lists.
-        for category in categories:
-            slots = _slots_of(slot_categories, category)
-            reference = _reference_order(
-                [s for slot in slots for s in before[slot]], router.source_digest
+        # v0.7 逐 slot 复用：每个 slot 独立判定（non-terminal 继续 / terminal 复用）。
+        for slot in all_slots:
+            next_epoch = slot_epochs.get(slot, 0) + 1
+            perm = _rollover_slot(
+                driver, scheduler, slot=slot, epoch=next_epoch,
+                queue_seed=args.queue_seed, category=slot_categories[slot],
             )
-            expected = [reference[index] for index in applied[category]]
-            for slot in slots:
-                own = {_key(s) for s in before[slot]}
-                want = tuple(_key(s) for s in expected if _key(s) in own)
-                got = tuple(_key(s) for s in driver._by_slot[slot])
-                if want != got:
-                    order_mismatches.append({"epoch": epoch + 1, "slot": slot, "want": want[:4], "got": got[:4]})
+            if perm is None:
+                continue  # non-terminal：继续，无重排
+            slot_epochs[slot] = next_epoch
+            # Criterion 1: recompute the expected order from the pre-rollover list.
+            reference = _reference_order(list(before[slot]), router.source_digest)
+            expected = [reference[index] for index in perm]
+            own = {_key(s) for s in before[slot]}
+            want = tuple(_key(s) for s in expected if _key(s) in own)
+            got = tuple(_key(s) for s in driver._by_slot[slot])
+            if want != got:
+                order_mismatches.append({"epoch": next_epoch, "slot": slot, "want": want[:4], "got": got[:4]})
         if len(rollovers) < _MAX_RECORDED_ROLLOVERS:
             rollovers.append(
                 {
                     "to_epoch": epoch + 1,
                     "windows_in_previous_epoch": windows_in_epoch,
-                    "scheduler_queue_epoch": scheduler.queue_epoch,
+                    "slot_epochs_snapshot": dict(slot_epochs),
                     "remaining_blocks_at_rollover": remaining,
                 }
             )
