@@ -11063,6 +11063,15 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 
 **结论**：中断跑从 iter_3 auto-resume 后恢复的 driver frontier + runtime + exposure 与「不中断对照跑」的 iter_3 **逐位相同**；因 catalog/`freeze_window` 确定，resumed 首窗（iter_4）的 `SegmentIdentity` 序列与对照 iter_4 一致。**EVIDENCE-1 三项（无 cannot-resume / 首窗 identity 序列对照 / exposure 连续）补齐**。注：loss 对比不适用——训练本身 iter_1 后非确定（对照 iter_2=1.711325 vs 中断 iter_2=1.710646）。
 
+### Gate 2 closure 三方 APPROVE_TO_CLOSE（2026-09-17 21:20 CST）
+
+- **DS / MM / Kimi 均 `APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`**（root `4d5050e9`/child `1ba127a`）：
+  - DS：关闭范围仅 active-route resume 接线（cpu/static + 单次 GPU save→kill→auto-resume witness）；不授权 D8b 长跑/正式训练。
+  - MM：「closure 完整、原子性合同 + identity 严格性 + EVIDENCE-1 跨跑一致性三路径全部实证」。
+  - Kimi：亲跑 driver 24 passed、ruff PASS；中断跑 window_index 3→6、exposure 1536→3072 连续不归零；Gate 2 closure 最终关闭。
+- **Gate 1（slot-rotation）** 三方 APPROVE 已落地；**Gate 2（resume）closure 三方 APPROVE**；**Gate 3（epoch-reuse v0.8）设计四方 APPROVE**。
+- 下一步：**Gate 3 实现**（逐 slot 复用 + `_slot_epoch` + queue authority supersession，CPU/static first）。GPT 对 Gate 2 最终 pair 的复核按用户规则（按需）。
+
 ### Gate 2 closure 两方 APPROVE（2026-09-17 14:28 CST）
 
 - **DS**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`。非阻塞 residual（判据 5 完整 launch 集成、判据 7④ sidecar.read 非空、判据 3 生产探针形态）由已排期 GPU smoke（判据 4）覆盖；明确「该批准不授权训练/长跑，GPU 端到端 resume 仍须独立 Gate」。
