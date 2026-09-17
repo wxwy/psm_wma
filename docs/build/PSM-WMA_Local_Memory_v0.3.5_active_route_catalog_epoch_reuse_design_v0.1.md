@@ -22,7 +22,7 @@ v0.7 已送审（blob `277a2795`）。DS 确认 ChatGPT HIGH-1/HIGH-2 已闭合�
 | §3.2 边界 | 只定义 non-terminal 继续 / terminal 复用二选一 | 补「**全 non-terminal、无可复用 slot**」：触发复用但无 terminal slot 时，复用动作为空（所有 slot 继续），下一窗口 `freeze_window` 因填不满 `raise`（诚实 fail-closed，非死循环） | DS 意见 3（`:170-173`） |
 | §3.3 / §4.2 / §4.4 `_slot_epoch`↔`queue_epoch` | `_slot_epoch` 逐 slot，未定义与 scheduler `queue_epoch`/`queue_permutation`/`configure_queue` 的关系 | **选定显式 active-route queue-semantics refreeze**：`_slot_epoch[slot]` 是 driver 的逐 slot 复用遍数（**canonical queue-identity authority**）；显式 supersede `canonical_segment_production_adapter_scheduler_design_v0.2.md:86` 的 global rollover clause（**严格限于 active 路线**）；driver 重排 `_by_slot` 直接调冻结 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)`，不经过 `configure_queue`；scheduler 单值字段降为兼容性元数据、不作 resume witness。`_slot_epoch` 入 driver 快照。 | ChatGPT HIGH-1 / DS 意见 2 |
 | §8 / §9 | 未显式 gate D8b | 显式声明：**D8b 长跑（5000 步）须在独立 scheduler-refreeze Gate 之后**——本 Gate 只解决 catalog 复用机制，regime 塌缩（cumulative 长期累计的既有结果）未解决，正式长跑不得在本 Gate 关闭后直接启动 | DS 意见 4（`:361-364,370`） |
-| §10.3 证据 | v0.6 全局重置参考实现的旧读数 | **按 v0.7 逐 slot 机制重跑探针**更新 §10.3（`criterion5_deferred_tail`/`committed_identities`/复杂度上界对应逐 slot） | DS 意见 1（`:442-475`） |
+| §10.3 证据 | v0.6 全局重置参考实现的旧读数 | **按 v0.7 逐 slot、category 级重排重跑探针**更新 §10.3（`criterion5_block_coverage` 最终全覆盖 / `committed_identities` / 复杂度上界对应逐 slot；跑到 5112 窗 ≥ 5040） | DS 意见 1（`:442-475`）+ v0.8 二次整改 |
 
 v0.7 的 §1、§2、§4.1（除新增关系说明）、§4.3、§4.5–§4.7、§6、§7、§10.1–§10.2、§10.4 逐字未改动；改动集中在 §0、§3.2、§3.3、§4.2、§4.4、§8、§9、§10.3 与标题。
 
@@ -344,7 +344,7 @@ active 路线的每个训练 member 都从冻结窗口计划取一个 whole bloc
 **PASS**（全部满足）：
 
 1. **契约一致性（CPU）**：terminal slot 复用后，该 slot 的 `_by_slot[slot]` 等于「按 `(source_digest, episode_id)` 排序 → 应用 `queue_permutation(queue_seed, _slot_epoch[slot], category, catalog_size)` → 取该 slot 子序列」的结果，**逐位一致**；`_slot_epoch[slot]` 恰好 +1；且参照序与 `_queue_for`（含其**字符串**比较语义）一致。
-2. **容量解除（CPU，纯规划层）**：用 `probe_block_capacity.py` 的 producer 搭建同一套 catalog，在**不取任何张量**的前提下连续推演窗口规划越过复用边界，断言：①可连续规划出 **≥ 5040** 个窗口（45 遍 × 112）而不再 `raise`；②第 113 个窗口成功规划；③跨复用边界无 identity 被 `commit` 的守卫拒绝。
+2. **容量解除（CPU，纯规划层）**：用 `probe_block_capacity.py` 的 producer 搭建同一套 catalog，在**不取任何张量**的前提下连续推演窗口规划越过复用边界，断言：①可连续规划出 **≥ 5040** 个窗口（逐 slot 复用下 63 边界产 **5112** 窗，§10.3）而不再 `raise`；②第 113 个窗口成功规划；③跨复用边界无 identity 被 `commit` 的守卫拒绝。探针顶层的 `result`/exit 必须纳入本判据（`capacity_target_met` false 即 FAIL/非零退出）。
 3. **原子性**：断言窗口边界的探测**不修改** driver 状态（探测前后 `_stream_index`/`_active_stream`/`_active_cursor` 逐位相同），且探测所用的剩余量规则与实际 `freeze_window` 共用同一实现。
 4. **触发规则的两侧**：①剩余 ≥ `window_members` 时**不**触发复用；②剩余 < `window_members` 时触发；③触发后 `_window_index` **不**重置（递增值连续）。
 5. **non-terminal 跨边界继续（v0.7 替换原「尾块不丢失」）**：构造 `stable_but_not_terminal` 边界（`probe_catalog_epoch_boundary.json` 的 slot 4 形态），断言该 slot 跨复用边界后**继续**当前 episode：`_active_cursor` 连续（`cursor + 1`）、`_active_stream` 的 `episode_id`/`category`/`source_digest` 不变、sidecar 的 fast-state carry 保留且下一 `read` 返回 `state_in == detached state_out`；该 slot 直至 `training_stream_end` 才 terminal 复用。按 slot 分别统计的 `committed_identities` 覆盖全部 14430 个 block 身份至少一次。
@@ -472,7 +472,7 @@ reset 后 read 返回: None
 
 **结论**：新 epoch 首块是 `cursor 0`，与记录必然不构成「前一身份 + 1」的延续，**与重排结果无关**；因此 §4.3 adapter 侧的重置不是「保险措施」而是**必需动作**，缺它则第二个 epoch 的第一个 member 即在 `scan` 内抛出。
 
-### 10.3 规划层容量解除（v0.8 按 v0.7 逐 slot 机制跑到 5107 窗）
+### 10.3 规划层容量解除（v0.8 按 v0.7 逐 slot 机制跑到 5112 窗）
 
 探针 `tools/g0/probe_epoch_reuse_planning.py` 用**与 §10.1 同一套生产 catalog**，在不取任何张量（`producer.produce` 从不调用）的前提下连续推演窗口规划越过复用边界。**v0.8 把探针内的 rollover 参考实现从 v0.6 全局重置改为 v0.7 逐 slot 复用**（`_rollover_slot`：non-terminal 继续 / terminal 复用 + 逐 slot 清守卫 + `_slot_epoch` 计数，见 §3.2/§4.3），生产文件 `active_local_memory_driver.py` **仍未被改动**（本设计仍是 docs-only）。
 
@@ -480,7 +480,7 @@ reset 后 read 返回: None
 LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
 LIBERO_LATENT_CACHE_ROOT=/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1 \
   cosmos-framework/.venv/bin/python tools/g0/probe_epoch_reuse_planning.py \
-  --max-epochs 45 --target-windows 5040 \
+  --max-epochs 100 --target-windows 5040 \
   --output-json artifacts/g0/active_static_probe/probe_epoch_reuse_planning.json
 ```
 
@@ -489,23 +489,23 @@ LIBERO_LATENT_CACHE_ROOT=/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_sha
 | 项 | 读数 |
 |---|---|
 | `result` | **PASS** |
-| `epochs_planned` | 63（跑到 target 5107 窗所需边界数） |
-| `windows_total` | **5107**（**≥ 5040 target**，覆盖 5000 步；见下含义 2） |
+| `epochs_planned` | 63（跑到 target 5112 窗所需边界数） |
+| `windows_total` | **5112**（**≥ 5040 target**，覆盖 5000 步；见下含义 2） |
 | `capacity_target_met` | **true** |
 | `windows_per_epoch` | 63 项，**非恒定**（`{41, 48, 54, 55, 58, 68, 69, 85, …}`）——与 v0.6 恒定 112 形成对照 |
 | `single_epoch_limit` | 112.73 |
 | `criterion1_slot_order_matches_permutation` | **true**（`criterion1_mismatches = []`，逐 slot 重排与 `queue_permutation(queue_seed, _slot_epoch[slot], category, size)` 逐位一致） |
-| `criterion2_meets_target` / `criterion2_exceeds_single_epoch` | **true** / **true**（5107 ≥ 5040 且 > 112） |
+| `criterion2_meets_target` / `criterion2_exceeds_single_epoch` | **true** / **true**（5112 ≥ 5040 且 > 112） |
 | `criterion3_probe_is_pure` | **true**（探测前后 `_stream_index`/`_active_stream`/`_active_cursor` 逐位相同） |
 | `criterion4_window_index_not_reset` | **true** |
-| `criterion5_deferred_tail` | `deferred_after_epoch0 = 94`，`recovered_in_epoch1 = 94`，`missing_from_epoch1 = []`（尾块不丢失） |
+| `criterion5_block_coverage` | `catalogue_blocks = 14430`、`covered_blocks = 14430`、`deferred_after_epoch0 = 94`、`recovered_after_epoch0 = 94`、`stranded_blocks = []`、`full_coverage = true`（**全部 block 最终被覆盖、无 permanent stranding**；v0.8 从 v0.6 的「epoch 1 恢复」改为「最终全覆盖」，对齐 v0.7 语义） |
 | `rollovers` | 记录 50 条（上限）；`remaining_blocks_at_rollover` **非恒定**；末次 `slot_epochs_snapshot = {0:25, 1:50, 2:38, 3:49, 4:23, 5:49, 6:39, 7:49}` |
 | `committed_identities` | 14322 |
 
 **该表的四点含义**：
 
-1. **判据 2 成立（capacity 直接见证）**：第 113 个窗口不再是边界（§10.1 的 `raise` 不再出现），连续 **5107** 个窗口全部规划成功且 `capacity_target_met = true`——**容量缺口被解除、覆盖 5000 步目标**（直接实测，非外推）。
-2. **逐 slot 复用的容量换算**：v0.6 全局重置下 45 epoch = 5040 窗口；v0.7 逐 slot 复用下到 5107 窗需 **63 次边界**（vs 45）。差异来自 non-terminal slot 在边界「继续」而非「复用」，故 `windows_per_epoch`/`remaining_blocks_at_rollover` **不再恒定**。这是 active-route queue-semantics refreeze（§3.3）的容量代价，已由本次直接实测覆盖。
+1. **判据 2 成立（capacity 直接见证）**：第 113 个窗口不再是边界（§10.1 的 `raise` 不再出现），连续 **5112** 个窗口全部规划成功且 `capacity_target_met = true`——**容量缺口被解除、覆盖 5000 步目标**（直接实测，非外推）。
+2. **逐 slot 复用的容量换算**：v0.6 全局重置下 45 epoch = 5040 窗口；v0.7 逐 slot 复用下到 5112 窗需 **63 次边界**（vs 45）。差异来自 non-terminal slot 在边界「继续」而非「复用」，故 `windows_per_epoch`/`remaining_blocks_at_rollover` **不再恒定**。这是 active-route queue-semantics refreeze（§3.3）的容量代价，已由本次直接实测覆盖。
 3. **`slot_epochs_snapshot` 直接证实逐 slot**：末次快照各 slot 遍数不同（slot 0 = 25 vs slot 1 = 50），证明同 category 两 slot 可处于不同遍数（§3.3 supersession 的前提），且这是 v0.6 全局重置无法表达的。
 4. **`committed_identities = 14322`**：逐 slot 清守卫（§4.3）不再「每 epoch 全局清空」，故容器随复用累积（vs v0.6 的 14336 = 单 epoch 上界）；§6 判据 9 断言逐 slot 清理后 `canonical_segment_runtime.py:181-182` 一致性保持。
 

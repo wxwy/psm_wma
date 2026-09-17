@@ -11000,6 +11000,22 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
   - 即 save→kill→auto-resume 端到端工作，driver 状态经 `dataloader` 槽写入/加载，续跑非重放。**Gate 2 HIGH-2 witness 完成**。
 - 两 Gate 整改已重新送审 DS/MM/ChatGPT（root `f86513a1`/child `c9a0111`）。等三方 verdict。
 
+### DS/MM 对两 Gate 二次整改的 verdict（2026-09-17 19:00 CST）
+
+- **MM**：Gate 3 v0.8 二次整改 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE`；提示「两 Gate 整改都已 APPROVE」。
+- **DS**：Gate 3 v0.8 二次整改 **REQUEST_CHANGES**（探针精度问题，设计层已接受）：
+  - **探针重排规则是 slot 级，与 §4.4/判据 1 的 category 级不一致**：设计 :288（§4.4）/ :346（判据 1）要求「对该 category 的**全部** episode 排序得参照序 → `queue_permutation(..., catalog_size=category 全集)` → 取 slot 子序列」；而 `tools/g0/probe_epoch_reuse_planning.py:144-146` 用**该 slot 自身列表**作参照序、`catalog_size=len(该 slot 列表)`，顺序不同。**最小整改**：探针改为 category 级参照序 + category 级 catalog_size（两 slot 合并再过滤）。
+  - **criterion1 是自证式**（`:314-318`）：用同一 perm/reference 重算 want 再比 got；须用**独立推导**校验 §4.4 规则。
+  - LOW：`:483` 命令仍写 `--max-epochs 45`（只到 3704，无法复现 5107/63）；`:347` 判据 2 括注「45 遍 × 112」、`:93`「5040 窗口 PASS」为陈旧措辞。
+- 整改方向：修探针为 category 级重排 + criterion1 独立推导 + LOW，重跑（≥63 边界）并更新 §10.3。
+
+### 探针 category 级整改 + 重跑（2026-09-17 19:10 CST）
+
+- `_rollover_slot` 改为 **category 级**参照序（`_slots_of(slot_categories, category)` 取该 category 全部 episode，两 slot 合并排序 → `queue_permutation(..., catalog_size=category 全集)` → 取该 slot 保序子序列），与 §4.4/判据 1 一致。
+- criterion1 改为**独立推导**（循环内用 pre-rollover 快照独立重算 category 级期望序，不复用 `_rollover_slot` 内部）。
+- 文档 LOW：§10.3 命令改 `--max-epochs 100`；判据 2 括注「45 遍 × 112」→「63 边界产 5107 窗」+ 纳入 result/exit。
+- 重跑中（PID 1909172，`--max-epochs 100 --target-windows 5040`）；§10.3 待其结果更新。
+
 ### Gate 2 closure 两方 APPROVE（2026-09-17 14:28 CST）
 
 - **DS**：`APPROVE_TO_CLOSE_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`。非阻塞 residual（判据 5 完整 launch 集成、判据 7④ sidecar.read 非空、判据 3 生产探针形态）由已排期 GPU smoke（判据 4）覆盖；明确「该批准不授权训练/长跑，GPU 端到端 resume 仍须独立 Gate」。

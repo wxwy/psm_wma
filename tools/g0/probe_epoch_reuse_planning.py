@@ -129,10 +129,12 @@ def _all_admissible_blocks(driver, slots: tuple[int, ...]) -> set[tuple[int, int
     return blocks
 
 
-def _rollover_slot(driver, scheduler, *, slot: int, epoch: int, queue_seed: int, category: str) -> tuple[int, ...] | None:
+def _rollover_slot(driver, scheduler, *, slot: int, epoch: int, queue_seed: int, category: str, slot_categories: dict) -> tuple[int, ...] | None:
     """v0.7 逐 slot 复用：non-terminal 继续（返回 None），terminal 复用（返回 permutation）。
 
     terminal 判定（design v0.8 §3.2）：``_active_stream`` 为空，或 ``_active_cursor == blocks - 1``。
+    重排按 §4.4 的 **category 级**参照序：对该 category 的全部 episode（两条 slot 合并）排序，
+    应用 ``queue_permutation(..., catalog_size=category 全集)``，再取该 slot 的保序子序列。
     """
     stream = driver._active_stream.get(slot)
     cursor = driver._active_cursor.get(slot)
@@ -140,8 +142,12 @@ def _rollover_slot(driver, scheduler, *, slot: int, epoch: int, queue_seed: int,
     terminal = stream is None or (cursor is not None and blocks > 0 and cursor >= blocks - 1)
     if not terminal:
         return None  # non-terminal：继续，不重置
-    # terminal slot 复用：重排该 slot 的 episode 子序列，游标归零，取 fresh（step0）
-    reference = _reference_order(list(driver._by_slot[slot]), driver.producer.source_digest)
+    # terminal slot 复用：**category 级**参照序（两 slot 合并），再取该 slot 子序列。
+    category_slots = _slots_of(slot_categories, category)
+    reference = _reference_order(
+        [s for other in category_slots for s in driver._by_slot[other]],
+        driver.producer.source_digest,
+    )
     permutation = queue_permutation(
         queue_seed=queue_seed, epoch=epoch, category=category, catalog_size=len(reference)
     )
@@ -306,15 +312,24 @@ def main() -> int:
             perm = _rollover_slot(
                 driver, scheduler, slot=slot, epoch=next_epoch,
                 queue_seed=args.queue_seed, category=slot_categories[slot],
+                slot_categories=slot_categories,
             )
             if perm is None:
                 continue  # non-terminal：继续，无重排
             slot_epochs[slot] = next_epoch
-            # Criterion 1: recompute the expected order from the pre-rollover list.
-            reference = _reference_order(list(before[slot]), router.source_digest)
-            expected = [reference[index] for index in perm]
+            # Criterion 1: **独立**重算 category 级期望序（不复用 _rollover_slot 内部），
+            # 用 pre-rollover 快照的该 category 全部 episode（两 slot 合并）作参照序。
+            category_slots = _slots_of(slot_categories, slot_categories[slot])
+            category_reference = _reference_order(
+                [s for other in category_slots for s in before[other]], router.source_digest
+            )
+            category_perm = queue_permutation(
+                queue_seed=args.queue_seed, epoch=next_epoch,
+                category=slot_categories[slot], catalog_size=len(category_reference),
+            )
+            category_ordered = [category_reference[index] for index in category_perm]
             own = {_key(s) for s in before[slot]}
-            want = tuple(_key(s) for s in expected if _key(s) in own)
+            want = tuple(_key(s) for s in category_ordered if _key(s) in own)
             got = tuple(_key(s) for s in driver._by_slot[slot])
             if want != got:
                 order_mismatches.append({"epoch": next_epoch, "slot": slot, "want": want[:4], "got": got[:4]})
@@ -331,10 +346,15 @@ def main() -> int:
 
     epoch0 = blocks_by_epoch.get(0, set())
     deferred = catalogue_blocks - epoch0
-    epoch1 = blocks_by_epoch.get(1)
+    covered = set().union(*blocks_by_epoch.values()) if blocks_by_epoch else set()
+    stranded = catalogue_blocks - covered
     capacity_ok = windows_total >= args.target_windows
     result_pass = (
-        capacity_ok and not order_mismatches and probe_is_pure and driver._window_index == windows_total
+        capacity_ok
+        and not order_mismatches
+        and probe_is_pure
+        and driver._window_index == windows_total
+        and not stranded
     )
     report = {
         "result": "PASS" if result_pass else "FAIL",
@@ -356,10 +376,13 @@ def main() -> int:
         "criterion3_probe_is_pure": probe_is_pure,
         "criterion4_window_index_not_reset": driver._window_index == windows_total,
         "window_index": driver._window_index,
-        "criterion5_deferred_tail": {
+        "criterion5_block_coverage": {
             "deferred_after_epoch0": len(deferred),
-            "recovered_in_epoch1": len(deferred & epoch1) if epoch1 is not None else None,
-            "missing_from_epoch1": sorted(deferred - epoch1)[:10] if epoch1 is not None else None,
+            "recovered_after_epoch0": len(deferred & covered),
+            "catalogue_blocks": len(catalogue_blocks),
+            "covered_blocks": len(covered),
+            "stranded_blocks": sorted(stranded)[:10],
+            "full_coverage": not stranded,
         },
         "committed_identities": len(scheduler.committed_identities),
         "rollovers": rollovers,
