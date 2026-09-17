@@ -10822,3 +10822,74 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 **待办（Kimi 8 条建议，空闲处理）**：覆盖不变量一等公民测试、tie-break 纪律入设计模板、容量探针标准化、尾巴截断量化入 epoch-reuse Gate、清理 v0.13/D018 §4 僵尸任务、三 Gate 并行送审（已在做）、resume 范围框死（边界重启 vs 状态续传，需评估是否改 v0.2）、T 循环吞吐地板微基准。详见 TODO。
 
 下一步：静态核验（已 `git diff --check` PASS）→ 提交 → 推送 → 以新 formal pair 重新送审三 Gate。
+
+### 三 Gate 整改后重新送审（2026-09-17 11:04 CST，REVIEW）
+
+- 整改提交 `1ba933c1`（三文档 + SESSION）已推送；Inbox 更新提交 `a1477862` 已推送。远端 `V2=a1477862`。
+- **新 formal pair**（root 均为整改提交 `1ba933c1`，child 不变）：slot-rotation=`1ba933c1`/`6dc25e0f`；resume=`1ba933c1`/`525f506`；epoch-reuse=`1ba933c1`/`525f506`。设计文档 blob：`e50e55ca`/`ab65f3c8`/`6a4c0ac6`。
+- 送达回执：ChatGPT=Inbox 已推送（`a1477862`）；MM=`mm:0.0` 已送达（`Moonwalking…` 处理中）；DS=`ds:0.0` 已送达（capture 显示其正以 `git rev-parse`/`ls-tree`/`log` 核实新 root `1ba933c1`，处理中）。
+- 三方 final 未齐，无推进令牌；三 Gate 保持 REVIEW，进入三分钟轮询。
+
+### 轮询 #4（整改后第 1 轮，2026-09-17 11:10:32 CST）：fetch 无新增（advertised=`de999520`）；ChatGPT reviews/ 0 命中。**DS 第 2 轮 verdict + MM 第 2 轮 verdict 已出**：
+
+**DS=`ds:0.0`（Build 3m57s）literal verdicts**：
+- Gate 1：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_WINDOW_SLOT_ROTATION`（无附加条件）。
+- Gate 2：`REQUEST_CHANGES(file:line)` —— `resume_wiring_design_v0.1.md:198`（同一性判定位置未钉死）、`:163-177,194-200`（重建/同一性/版本 fail-closed 完备性）、`:4`（头部 formal root 陈旧，仍 `8bb48f35`，应改整改提交）。DS 附注「HIGH 已闭合，仅余 fail-closed 完备性 MEDIUM」。
+- Gate 3：`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_CATALOG_EPOCH_REUSE`（附条件：判据 9/10 必须在 closure 前实测通过；Q5 seed 注入需确认 manifest/config/source digest、Q6 sidecar 归属须与 Gate 2 实现顺序绑定，余项「实现前补入」）。DS 附注「第 7 问 (a) 主因已闭合」。
+
+**MM=`mm:0.0`（Brewed 1m16s）**：对 Gate 3 v0.6 结论「未发现 HIGH/CRITICAL/MEDIUM 缺陷，授权按 §4.1/§4.3/§4.6/§4.7/§6 判据 9-10 落地，按 §5 顺序（Gate 2 v0.2 先落地 → 本设计后落地），`discard_committed_carry()` 与 Gate 2 `snapshot()/rebuild()` 以一次协调 commit 完成」。**任务清单 3 项（Gate 1 头部校正 / Gate 2 v0.2 load 时序 / Gate 3 v0.6）仍 0 done**，pane 输入行待「发送三方 verdict 通知并登记台账」。
+
+三方 final 仍未齐（ChatGPT 未回复；MM Gate 1/2 复审中；DS Gate 2 余 REQUEST_CHANGES MEDIUM）。继续轮询。
+
+### 轮询 #5/#6（11:17/11:21 CST）：无实质变化。fetch 无新增（advertised=`de999520`）；ChatGPT reviews/ 0 命中；MM 停滞于「3 tasks 0 done」（Gate 1/2 复审未出 verdict，输入行「发送三方 verdict 通知并登记台账」未提交）；DS 无新输出。继续轮询。
+
+### Gate 2 resume v0.3 整改 + 重新送审（2026-09-17 11:45 CST，REVIEW）
+
+- 用户「在等什么」催促后，作为技术决策主体直接采纳 DS 第 2 轮 Gate 2 `REQUEST_CHANGES(MEDIUM)` 并整改为 **v0.3**：①`:4` 头部 formal root 改正为 `1ba933c1`；②`:198` §4.3 第 1 项「同一性」钉死（值相等、恰好命中一个）；③`:163-177,194-200` 增补第 4 项「版本/身份一致性」（`state_dict` 持久化 `source_digest`/`plan_chain_id`，load 校验逐位一致）；§6 新增判据 6。
+- 提交推送 `168f9fc7`（仅 resume 文档）。新 formal pair：root=`168f9fc7`/child=`525f506`，blob 待确认。
+- 重新送审 Gate 2：DS/MM 均 `send-keys -l → Enter` 送达（请求复核 MEDIUM 是否闭合，verdict=`APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME` 或 `REQUEST_CHANGES`）。
+- 其余状态不变：Gate 1 DS approve / MM 复审中 / ChatGPT 未回复；Gate 3 DS approve(附条件) / MM approve / ChatGPT 未回复。继续三分钟轮询。
+
+### Gate 2 resume v0.4 整改 + 重新送审（2026-09-17 12:11 CST，REVIEW）
+
+- DS 第 3 轮（11:45 送达后）回 `REQUEST_CHANGES`：唯一剩余 MEDIUM 半项 =「load 侧未规定 `CanonicalRuntimeSnapshot` 重建落地（scheduler rebuild + sidecar 回填 + identity 对象同一性）」，两条 LOW（`:4` 头部 root 应 `168f9fc7`、`:213` 建议 catalog_digest）；DS 明言「补一段 §4.3 第 5 项 + 一条 CPU fixture 即可，预期下一轮 APPROVE」。
+- 整改为 **v0.4**：①§4.3 新增第 5 项「`CanonicalRuntimeSnapshot` 重建落地」（scheduler `rebuild()` + sidecar 回填用 scheduler 同一 identity 对象满足 `:184-186` 的 `is` 校验 + 一致性自检）；②§6 新增判据 7 round-trip fixture；③第 4 项增补 `catalog_digest`；④头部 root 改 `168f9fc7`。
+- 提交推送 `53639dcb`（仅 resume 文档）。新 formal pair：root=`53639dcb`/child=`525f506`。重新送审 DS（请求确认闭合、给出 APPROVE/REQUEST_CHANGES）。MM/ChatGPT 待观察。继续三分钟轮询。
+
+### DS 三 Gate 全 APPROVE + MM 复审完成（2026-09-17 12:15 CST，REVIEW）
+
+- **DS 第 4 轮（12:15）**：Gate 2 v0.4 `APPROVE_TO_IMPLEMENT_R09_B_TTT_V035_ACTIVE_ROUTE_RESUME`（root `53639dcb`/blob `920f6c33` 已核验承载本设计；「上轮唯一剩余 MEDIUM 已由第 5 项 + 判据 7 实质闭合，余项均为非阻塞 LOW」）。至此 **DS 对三 Gate 全部 APPROVE**：Gate 1 `APPROVE_TO_IMPLEMENT_..._ACTIVE_WINDOW_SLOT_ROTATION`、Gate 2 `APPROVE_TO_IMPLEMENT_..._ACTIVE_ROUTE_RESUME`、Gate 3 `APPROVE_TO_IMPLEMENT_..._ACTIVE_CATALOG_EPOCH_REUSE`（附条件：判据 9/10 closure 前实测）。
+- **MM**：任务清单 `4 tasks (3 done, 1 open)`——Gate 1 头部校正 / Gate 2 v0.2 load 时序 / Gate 3 v0.6 复审均 done；Gate 2 v0.3 MEDIUM 整改复审 open（尚未覆盖 v0.4）。MM 对 Gate 3 已「授权落地」，Gate 1/2 复审 done（倾向 approve）。MM 输入行提示「推送 v0.3 commit 到远端」——其视角还停在 v0.3，未及 v0.4。
+- **ChatGPT**：仍未回复（reviews/ 无 exact-pair 命中，约 2h）。
+- 结论：**DS + MM 两方已 approve 三 Gate，仅 ChatGPT 缺件**。按 AGENTS.md「三方 final 齐备才推进」，但 DS+MM 意见已充分；下一步待用户决定是否按 Owner override 推进实现，或继续等 ChatGPT。
+
+### MM 三 Gate 全 APPROVE（2026-09-17 12:27 CST，REVIEW）
+
+- MM（12:25 Churned 52s）对 Gate 2 v0.4 复审完成：**「未发现 HIGH/CRITICAL/MEDIUM 缺陷，授权按 §4.1（含 catalog_digest）+ §4.3 第 5 项（scheduler 重建 + 双向绑定 + sidecar 回填 + 一致性自检）+ §6 判据 7 落地」**；逐条确认 DS 第 3 轮三处意见闭合（主因 `:176-191,209-216` ✓、LOW `:4` ✓、LOW `:213` ✓）。输入行汇总「Gate 3 v0.6 已 APPROVE，可落地」。
+- **MM 对三 Gate 全部 APPROVE**：Gate 1 头部校正 / Gate 2 v0.4 / Gate 3 v0.6 均授权落地。
+- 至此 **DS + MM 两方对三 Gate 全部 APPROVE，仅 ChatGPT 缺件**（reviews/ 无 exact-pair 命中）。
+
+### ChatGPT 三份 formal review 到齐 → 三方 verdict 汇总（2026-09-17 12:34 CST）
+
+远端推进 `942ed15c..6a4e5580`（4 个 review commit），`git merge --ff-only` 成功。ChatGPT 三份正式 review：
+
+| Gate | DS | MM | ChatGPT | 结论 |
+|---|---|---|---|---|
+| ACTIVE-WINDOW-SLOT-ROTATION | APPROVE | 复审 done（approve） | **APPROVE**（`...ACTIVE_WINDOW_SLOT_ROTATION`） | **三方全 APPROVE** ✅ |
+| ACTIVE-ROUTE-RESUME（v0.4） | APPROVE | 授权落地 | **APPROVE**（`...ACTIVE_ROUTE_RESUME`，3 条 non-blocking notes） | **三方全 APPROVE** ✅ |
+| ACTIVE-CATALOG-EPOCH-REUSE（v0.6） | APPROVE（附条件） | 授权落地 | **REQUEST_CHANGES**（HIGH-1 + HIGH-2） | **含 REQUEST_CHANGES** ⚠️ |
+
+**ChatGPT Gate 1 pair correction**：root `1ba933c1` 的实际 Gitlink 是 `525f5066`，不是 `6dc25e0f`（后者是 slot-rotation 实现 commit，是 `525f5066` 的祖先；`6dc25e0f..525f5066` 只改 `active_local_memory_launch.py` 及其 test，不触及 slot-rotation 文件）。canonical ledger 应记 child `525f5066`。
+
+**ChatGPT Gate 3 两个 HIGH（REQUEST_CHANGES，需改设计而非仅 evidence）**：
+- **HIGH-1**（`:166-170,196-210,216-235`）：全局 epoch rollover 会回绕 non-terminal episode 并丢弃其 fast state，违反冻结 chronology（addendum v0.3.5:217-231,251-267「stable slot 连续推进 cursor 直到 `training_stream_end`，续跑须 `cursor+1`、同 episode、保留 `state_out`」）。要求：non-terminal slot 不得回绕/重置，须保留 episode identity、next cursor、fast state 至 terminal；或作为显式 refreeze Gate。
+- **HIGH-2**（`:188-210,330-365`）：v0.6 把冻结的 cumulative-exposure 调度权威替换为 per-epoch `_epoch_observed`（cumulative 变 report-only），违反冻结 scheduler 契约。要求：保留 cumulative 作选择权威，或开显式 scheduler-semantics refreeze。
+
+**下一步**：Gate 1/2 三方全 APPROVE，形成推进令牌，可进入实现；Gate 3 需按 ChatGPT 2 HIGH 重新设计（v0.7）。
+
+### Gate 3 epoch-reuse v0.7 整改 + 重新送审（2026-09-17 13:14 CST，REVIEW）
+
+- 按 ChatGPT 两个 HIGH 整改为 **v0.7**（提交 `05fbd778`，仅设计文档）：
+  - **HIGH-2 整改**：整体撤回 v0.6 的 per-epoch `_epoch_observed`，`freeze_window` 选择键恢复读 `scheduler.cumulative_valid_consumer_exposure`（冻结选择权威，长期累计）；§7 撤回「改选择键 observed 来源」放宽；§8 第 7 问撤回 (a) 裁定；regime 塌缩如实标注为「cumulative 长期累计的既有结果」，若需消除属独立 scheduler-refreeze Gate。
+  - **HIGH-1 整改**：epoch 边界从「全局重置」改为「逐 slot 判断」——non-terminal slot 继续（保留 episode identity + next cursor + detached fast state 直到 `training_stream_end`）、terminal slot 复用（取 fresh episode 从 `step0`）；新增 `_slot_epoch`（逐 slot 复用计数）；scheduler 守卫改为逐 slot 清理（非全局清空）；§6 判据 5/8/9 重写（non-terminal 继续 + sidecar 范围 + 逐 slot 清守卫）。
+- 新 formal pair：root=`05fbd778`/child=`525f506`。待重新送审 ChatGPT（确认 2 HIGH 闭合）+ DS + MM。Gate 1/2 已三方 APPROVE，不受本 Gate 影响，可独立推进实现。
