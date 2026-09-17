@@ -1,14 +1,27 @@
-# Local Memory v0.3.5 Active-Route Resume 接线设计 v0.3
+# Local Memory v0.3.5 Active-Route Resume 接线设计 v0.4
 
 - Gate：`G0-R09-B-TTT-V035-ACTIVE-ROUTE-RESUME`
-- formal root：`1ba933c15375f3d77341b69b5c707f81ce5a9904`
+- formal root：`168f9fc7`（上一版本 v0.3 提交；本版本正式 root 由 SESSION/Inbox 在提交后回填）
 - child/Gitlink：`525f5066393cba044f00f1104b83f5eb424a9c49`
 - 目标文件：`active_local_memory_driver.py`、`active_local_memory_launch.py`
-- 状态：**设计，送审（v0.3；修订 v0.2；v0.2 修订 v0.1）**。本文不含已落地代码改动；当前 operative 行为是 §9 的 fail-closed 守卫。
+- 状态：**设计，送审（v0.4；修订 v0.3；v0.3 修订 v0.2；v0.2 修订 v0.1）**。本文不含已落地代码改动；当前 operative 行为是 §9 的 fail-closed 守卫。
 
 ---
 
 ## 0. 修订记录
+
+### v0.3 → v0.4
+
+v0.3 已送审（blob `待回填`）。v0.4 是对 DS 第 3 轮 `REQUEST_CHANGES` 的**唯一剩余 MEDIUM 半项**（`resume_wiring_design_v0.1.md:176-191,209-216`「load 侧未规定 `CanonicalRuntimeSnapshot` 的重建落地」）与两条 LOW（`:4` 头部 root、`:213` catalog_digest）的一次性整改。
+
+| 项 | v0.3 的说法 | v0.4 的修正 | 依据 |
+|---|---|---|---|
+| §4.3 第 5 项（新增） | 无「runtime snapshot 重建落地」规定 | 新增第 5 项：`state_dict["runtime"]`（`CanonicalRuntimeSnapshot`）的**重建落地**——scheduler `rebuild()` + sidecar 回填 + identity 对象同一性，保证 resume 后 `canonical_segment_runtime.py:184-186` 的 `is` 校验与后续 `scan` 读取成立 | DS `:176-191,209-216` |
+| §6 判据 7（新增） | 无 round-trip fixture | 新增 CPU fixture：round-trip 后断言 `committed_by_slot[slot] is stable_slots[slot]`（对象同一性）、sidecar 记录身份与 scheduler 一致、`owner.snapshot()` 可再次调用不抛错、`scan` 读到非空 `state_in` | DS fixture 要求 |
+| §4.3 第 4 项 | 版本校验用 `source_digest`/`plan_chain_id` | 增补 `catalog_digest`（钉 catalog 顺序的 identity） | DS LOW `:213` |
+| 头部 formal root | `1ba933c1` | 改为 `168f9fc7`（上一版本提交；本版本 root 由 SESSION/Inbox 回填） | DS LOW `:4` |
+
+v0.3 的 §1–§4.2、§5、§7、§9 逐字未改动；改动集中在头部、§0、§4.3（第 4/5 项）、§6（判据 7）与标题。
 
 ### v0.2 → v0.3
 
@@ -176,6 +189,7 @@ class ActiveLocalMemoryLaunchCallback(Callback):
 def state_dict(self) -> dict[str, Any]:
     return {
         "source_digest": self.producer.source_digest,        # v0.3 增补：版本/身份
+        "catalog_digest": self.catalog_digest,               # v0.4 增补：catalog 顺序身份
         "plan_chain_id": self.plan_chain_id,                 # v0.3 增补：版本/身份
         "window_index": self._window_index,
         "stream_index": dict(self._stream_index),
@@ -213,7 +227,12 @@ resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot �
 1. **`_by_slot` 重建确定性（v0.3 钉死「同一性」判定）**：`canonical_segment_streams` 依赖 dataset `_ep_vals` 与 `episode_shuffle_seed`。恢复的 `active_stream[slot]` 是标量元组 `(slot_id, episode_index, episode_position, category)`，**按值相等**（四元组逐位相等）在重建后的 `_by_slot[slot]` 中定位 `CanonicalSegmentStream`；要求**恰好命中一个**（命中 0 个或 ≥2 个均 `raise RuntimeError`），并校验命中对象的 `episode_id == str(episode_index)`（字符串语义，与 `freeze_window` 的 identity 构造一致）。slot→episode 绑定错位即拒绝。
 2. **恢复点必须是窗口边界**：`owner.snapshot()` 的输出只在 IDLE 时产生；load 时若 `_window` 非空或 owner 非 IDLE，拒绝。
 3. **`window_index` 单调**：恢复值必须 ≥ 0 且小于当前配置的 `max_iter`。
-4. **版本/身份一致性（v0.3 增补）**：`state_dict` 里的 `source_digest` 与 `plan_chain_id` 必须与当前 run 的 `self.producer.source_digest` / `self.plan_chain_id` **逐位一致**，否则 `raise RuntimeError`（防止 catalog/config 变更后被静默误 load——这是「半对半错」里最隐蔽的一类：游标对上、但数据身份已变）。
+4. **版本/身份一致性（v0.3 增补；v0.4 增补 catalog_digest）**：`state_dict` 里的 `source_digest`、`catalog_digest` 与 `plan_chain_id` 必须与当前 run 的 `self.producer.source_digest` / catalog 身份 / `self.plan_chain_id` **逐位一致**，否则 `raise RuntimeError`（防止 catalog/config 变更后被静默误 load——这是「半对半错」里最隐蔽的一类：游标对上、但数据身份已变）。`catalog_digest` 钉 catalog 顺序身份（manifest/config/source 三身份派生），与 §4.3 第 1 项的 `_by_slot` 重建确定性互为交叉验证。
+5. **`CanonicalRuntimeSnapshot` 重建落地（v0.4 新增）**：`state_dict["runtime"]`（`owner.snapshot()` 的输出）在 load 时必须完整重建，且满足 `canonical_segment_runtime.py:184-186` 的 **`is`（对象同一性）校验**与后续 `scan` 读取：
+   - **scheduler 重建**：`RankLocalSegmentScheduler.rebuild(runtime.scheduler)` 得到恢复后的 scheduler（其 `committed_identities`/`stable_slots` 里的 `SegmentIdentity` 是反序列化对象），并把它重绑到 owner（`owner.scheduler = scheduler`、`scheduler._canonical_runtime_owner = owner`，保持双向绑定）。
+   - **sidecar 回填（identity 对象同一性）**：对 `runtime.committed` 的每条 `(identity, fast_state)`，**不得**直接把它写回 `sidecar`（那是反序列化的新对象，与 scheduler 里的不是同一对象，会使 `:184-186` 的 `is` 校验失败）；必须**用 scheduler 里同一 slot 的 identity 对象**（`scheduler.committed_identities` 中该 slot 最近一条）作为 sidecar 记录的 identity，`fast_state` 照搬：`sidecar._records[slot] = (scheduler_identity, ContinualTTTFastState(*fast_state))`。
+   - **一致性自检**：回填后调用 `owner.snapshot()` 必须**不抛错**（`:182` 的 `admission_order ⊆ committed_identities`、`:184-186` 的 `is` 校验、`:188` 的 terminal-slot 无 sidecar 状态均通过）；且 `sidecar.read(identity)` 返回**非空** `state_in`（scan 可继续）。
+   - 若任一自检失败，视为「半对半错」，`raise RuntimeError` 拒绝 resume。
 
 ### 4.4 与 `on_train_start` 守卫的关系（v0.2 更正）
 
@@ -247,6 +266,7 @@ resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot �
 4. GPU 端到端 resume 短跑：跑到 `save_iter` 存盘 → 杀进程 → 以 auto-resume 重启 → 断言 ①不再抛 `cannot resume`；②重启后首窗的 `SegmentIdentity` 序列**与不中断跑的对应窗口一致**；③`cumulative_valid_consumer_exposure` 连续（不归零）。
 5. 既有 launch 测试改为断言 resume **被接受**而非被拒绝；并新增 CPU 单测验证 **load 时序**（v0.2 新增）：driver 未构建时 `launch_callback.load_state_dict(state)` 正确暂存到 `_pending_resume_state`，随后 `on_train_start` 构建 driver 并把暂存状态应用，断言 `_stream_index`/`_active_cursor`/`window_index` 与保存值逐位一致；再断言 `state_dict()` 在 driver 为 `None` 时 `raise`（save 侧 fail-closed）。
 6. **版本/身份一致性 fail-closed（v0.3 新增）**：CPU 单测构造 `state_dict` 的 `source_digest`（或 `plan_chain_id`）与当前 driver 不一致，断言 `load_state_dict` `raise RuntimeError`；再构造「`active_stream` 命中 0 个 / ≥2 个对象」的边界，断言 `raise`（第 1 项「恰好命中一个」）。
+7. **`CanonicalRuntimeSnapshot` round-trip（v0.4 新增）**：CPU 单测走满一个窗口 → `state_dict()` → 在新建 driver 上 `load_state_dict()`，断言：①`committed_by_slot[slot] is stable_slots[slot]`（对象同一性，非值相等）；②sidecar 记录身份与 scheduler 对应 slot 的 identity 是**同一对象**；③`owner.snapshot()` 可再次调用不抛错；④`sidecar.read(identity)` 读到非空 `state_in`。
 
 **FAIL**：任一校验被绕过而 resume 成功；或 resume 后首窗 identity 序列与对照不一致。
 
@@ -269,7 +289,7 @@ resume 状态**半对半错比不做 resume 更危险**（会静默错配 slot �
 请就以下三点裁定（第 3 点已由 v0.2 按 DS HIGH 意见修正，请复核而非首答）：
 
 1. **§3 的修剪证明是否成立** —— 按 slot 取最后一条是否确实不改变 resume 路径读取的信息（依据是 `owner.snapshot()` 的 `:181-186` 校验）。
-2. **§4.3 的四项 fail-closed 校验是否充分（v0.3 已按 DS 意见增补第 4 项「版本/身份一致性」并钉死第 1 项「同一性」判定）** —— 是否还有「半对半错」的静默通道未被拒绝。
+2. **§4.3 的五项 fail-closed 校验是否充分（v0.4 已按 DS 第 3 轮意见增补第 5 项「`CanonicalRuntimeSnapshot` 重建落地」并补第 4 项 catalog_digest）** —— 是否还有「半对半错」的静默通道未被拒绝。
 3. **§4.4 的守卫收敛方式（v0.2 已修正）** —— DS 指出的「load 时序使 `_DataloaderWrapper` 永不命中 driver」已在本版修正（接口移到 launch callback + `_pending_resume_state` 暂存 + `has_checkpoint_state()` 恒 `True`，见 §2.1/§4.1/§4.4）。故守卫收敛为「`iteration > 0` 且 `_pending_resume_state is not None` 则应用放行，否则拒绝」，请复核该收敛是否成立、是否仍有 load 早于 attach 的静默通道。
 
 ---
