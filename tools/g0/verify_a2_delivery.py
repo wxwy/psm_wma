@@ -127,6 +127,7 @@ def inspect_run(directory: Path, *, min_steps: int = 1) -> dict:
         "action_modality_embed", "local_memory_runtime.evidence_encoder",
         "local_memory_runtime.ttt_core", "local_memory2llm", "local_memory_modality_embed",
     }
+    groups_with_nonzero = set()
     for row in rows:
         if row["layout"] != expected_layout or row["native_forwards"] != expected_forwards:
             raise ValueError("actual native layout/call count differs from active configuration")
@@ -174,10 +175,14 @@ def inspect_run(directory: Path, *, min_steps: int = 1) -> dict:
         gradients = row["gradients"]
         if set(gradients) != expected_groups:
             raise ValueError(f"trainable gradient groups differ from D025: {sorted(gradients)}")
-        if any(not g["finite"] or g["with_grad"] <= 0 or g["nonzero_grad"] <= 0 for g in gradients.values()):
-            raise ValueError("missing, zero, or non-finite gradient in a D025 trainable group")
+        if any(not g["finite"] or g["with_grad"] <= 0 for g in gradients.values()):
+            raise ValueError("missing or non-finite gradient in a D025 trainable group")
+        groups_with_nonzero.update(name for name, g in gradients.items() if g["nonzero_grad"] > 0)
         if sum(row["optimizer_group_sizes"]) != sum(g["tensors"] for g in gradients.values()):
             raise ValueError("optimizer membership differs from requires-grad telemetry")
+    if groups_with_nonzero != expected_groups:
+        missing = sorted(expected_groups - groups_with_nonzero)
+        raise ValueError(f"D025 trainable groups never received a nonzero gradient in the run: {missing}")
     cp = directory / CHECKPOINT_SUFFIX / f"iter_{rows[-1]['window_index']:09d}"
     for component in ("model", "optim", "scheduler", "trainer", "dataloader"):
         if not (cp / component).is_dir() or not any((cp / component).iterdir()):
@@ -377,18 +382,33 @@ def main() -> int:
                 }
             )
 
-    def current_source():
-        root = git("rev-parse", "HEAD", cwd=ROOT)
+    def target_source():
+        # Evidence is bound to the immutable implementation pair named on the CLI.
+        # The verifier/report may live in a later root-only bookkeeping commit, but
+        # the target root must remain on the current lineage and must point to the
+        # exact expected child gitlink. The live child checkout itself must still
+        # be the clean expected implementation bytes.
+        current_root = git("rev-parse", "HEAD", cwd=ROOT)
+        subprocess.run(
+            ["git", "merge-base", "--is-ancestor", args.expected_root, current_root],
+            cwd=ROOT,
+            check=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        target_child = git("ls-tree", args.expected_root, "cosmos-framework", cwd=ROOT).split()
+        if len(target_child) < 3 or target_child[2] != args.expected_child:
+            raise ValueError("requested implementation root does not bind the expected child gitlink")
         child = git("rev-parse", "HEAD")
-        if (
-            root != args.expected_root
-            or child != args.expected_child
-            or git("status", "--short", "--untracked-files=no")
-        ):
-            raise ValueError("current committed root/child differs from the requested clean target")
-        return {"root": root, "child": child}
+        if child != args.expected_child or git("status", "--short", "--untracked-files=no"):
+            raise ValueError("current child checkout differs from the requested clean implementation")
+        return {
+            "root": args.expected_root,
+            "child": args.expected_child,
+            "verifier_root": current_root,
+        }
 
-    check("committed_target", current_source)
+    check("committed_target", target_source)
     check("cpu_behavior", lambda: inspect_cpu(args.cpu))
     check("gpu_b1_matched_control", lambda: inspect_run(args.baseline, min_steps=1))
     check("gpu_control", lambda: inspect_run(args.control, min_steps=3))

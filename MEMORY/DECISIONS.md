@@ -231,3 +231,22 @@
 - 决策：active 路线的 optimizer `keys_to_select` 由「仅 local-mem 四组（R09-B 原 `=` 覆盖）」改为「继承自 `action_policy_libero_all_nano` 的 baseline 生成+动作头 allowlist（`moe_gen/time_embedder/vae2llm/llm2vae/action2llm/llm2action/action_modality_embed`）**追加** `TTT_SLOW_GROUP_SELECTORS`」（`action_policy_libero_edge_all.py:303-310`）。训练范围 = baseline 生成+动作头 **+** local-mem。本决策**显式取代** R09-B active-wiring 的「仅四组」覆盖语义（旧 `keys_to_select = list(TTT_SLOW_GROUP_SELECTORS)`）。
 - 边界：`config_checkpoint_contract.py` 的 `SELECTORS` / `_validate_selector_cover` / `validate_optimizer_membership` 只界定 **local-memory slow inventory（四组）**，**不**界定完整 optimizer allowlist；完整 optimizer 范围以 config 的 `keys_to_select` 为唯一权威。生产训练路径只用 `validate_slow_inventory`/`canonical_slow_inventory`（校验 local owner），不受本决策影响。
 - 原因：用户指出 R09-B 的 `=` 覆盖把 baseline 生成+动作头冻结，与同文件 `:279` 注释「保留全部原生选择，仅在启用时加入 R07 Local 参数」直接矛盾。合并后 selected tensors 20→314（≈1.4B 参数）、2 个 param group；`max_iter=2` 与 20 步短跑零 OOM。
+
+## D026 active A2 member-shape：Owner refreeze 为 stable-slot synchronized `[B_stream,T]`
+
+- 日期：2026-09-18
+- 状态：生效（用户明确重申实现目标并授权执行）
+- 决策：active A2 不再以旧 v0.1 的 scalar member 选择顺序作为 correctness authority。每个 native microbatch 固定由 `B_stream` 个 stable slot 各贡献一个 next T-block；默认 `B_stream=8`、`T=16`，TTT 沿 T 维串行、slot/B 维并行，得到 128 consumer + Local Prefix 后执行一次 Transformer/MoT native forward。一个 group 内禁止重复 slot；episode terminal 只在 group/microbatch 边界后 rebind fresh episode。
+- 覆盖关系：本条显式 supersede `active_route_member_shape_refreeze_design_v0.1` 中“保留 scalar freeze_window 原始选择序列 / grouped 与 scalar payload identity 逐位等价 / 只改性能形状”的约束。旧 B=1 路线保留为吞吐、显存和 loss-scale control，不再要求 consumer identity 顺序一致。
+- 保留不变：TTT 数学、past-only evidence、update-then-read、T=16 TBPTT、valid-consumer weighted outer objective、outer backward 后原子 fast-state commit、D025 optimizer scope、slot-local episode continuity 与 resume fail-closed。
+- 新验收：每个 A2 group 必须解析为稳定 slot 顺序 `0..B_stream-1`，每 slot 恰好 T 个连续 consumer；`dependency_waves=1`；默认每 update `16 forwards × 128 consumers = 2048`。梯度目标等价由同数据 grouped-vs-scalar native parity 验证，而不是由旧 scalar scheduler identity 顺序验证。
+- 原因：用户明确要求“所有 slot 内同步计算，TTT 时间串行，形成 8×16=128 sample 的 microbatch 进行 Transformer 前向”；该形状也与 canonical `PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.5.md` 的 `B_stream × T` 训练单位一致。DS_PRO 对旧 v0.1 批准边界的流程质疑成立，因此通过本 durable Owner refreeze 消除 authority 冲突，而非静默继承旧批准。
+## D026 A2 canonical member packing：同步 stable-slot × T
+
+- 日期：2026-09-18
+- 状态：生效（用户明确 owner override）
+- 决策：Local Memory 当前 canonical A2 packing 不再保留 B=1 scalar member 的全序逐位等价。每个 native microbatch 由当前 B_stream 个 stable slots 各自的 next chronological segment 组成；默认 B_stream=8、T=16，TTT 在每个 slot 内沿 T 串行、slot 之间并行，随后 flatten/gather 为最多 128 consumers，执行一次 Transformer/MoT native forward。GA=16 时为 16 forwards / 2048 consumers per optimizer update。
+- 覆盖：本决策显式取代 `active_route_member_shape_refreeze_design_v0.2.md` §1 中“保留 scalar freeze_window 选择顺序、连续 B_stream scalar members 分组”的 A2 packing 语义。旧 v0.2 作为历史过渡设计保留，不再作为当前 member-order acceptance。
+- 新验收：每 group stable-slot coverage 无重复且完整；每 slot chronology / terminal / rebind 正确；vectorized TTT 与相同 [B,T] 输入的逐-row算法数值/梯度等价；outer objective 维持 valid-consumer mean；backward 后才原子 commit；resume 恢复 per-slot frontier/fast-state；真实 GPU 必须证明 128 consumers/forward、有限 loss/gradient 与预算。
+- 边界：本次只冻结当前 LIBERO4IN1 canonical smoke 的 packing 语义，不声称解决任意 task 数下的通用 weighted-deficit scheduler；RoboCasa 等 task 数大于 B_stream 的 generic scheduler 另起 Gate。
+- 原因：用户再次确认最终实现目标为“所有 slot 同步计算，slot 内 TTT 串行，8×16=128 sample microbatch 后一次 Transformer 前向”，并明确要求执行；该指令晚于且覆盖 v0.2 的 scalar-order-preservation 过渡约束。

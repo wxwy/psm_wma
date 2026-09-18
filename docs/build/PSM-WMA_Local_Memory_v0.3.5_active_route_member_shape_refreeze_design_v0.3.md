@@ -52,3 +52,13 @@ B=1 只保留为吞吐/显存 control。梯度目标等价由同数据 grouped-v
 - CUDA：vectorized inner update / slow gradient 与独立 per-row 算法数值等价。
 - Real GPU：每 update `native_forwards=16`、`valid_consumers=2048`。
 - Real GPU telemetry：每个 128-consumer group 必须解析为 8 个 stream-major 16-consumer chunk，slot 顺序 0..7，`dependency_waves=[1]*16`。
+## 6. Owner override / authority note
+
+本 v0.3 是用户 2026-09-18 最新明确实现目标的 durable refreeze：
+“所有 slot 同步计算；slot 内 TTT 沿 T 串行；8×16=128 samples 后一次 Transformer 前向”。
+因此它显式覆盖 v0.2 的 scalar-order-preservation 过渡约束；DS_PRO 对旧批准边界的流程质疑成立，
+但通过本 owner refreeze 解决，不回退到 scalar grouping。
+
+当前适用范围仅为 LIBERO4IN1 canonical smoke 的 member packing；
+未来 RoboCasa 等 task 数大于 B_stream 的通用 weighted-deficit scheduler 仍需独立 Gate，
+不得把当前 static stable-slot/category allocation 解释为通用采样算法。
