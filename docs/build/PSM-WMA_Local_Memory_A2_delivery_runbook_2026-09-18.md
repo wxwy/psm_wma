@@ -2,13 +2,16 @@
 
 ## 当前状态
 
-代码已在隔离分支 `chatgpt/a2-delivery-20260918` 实现。代码候选 child：
-`22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e`。
-工作区：`/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918`。
-原 `/disk/rl/psm_wma` 有另一执行会话同时修改代码并运行 GPU，不自动覆盖/合并其 WIP。
-**当前验收状态为 BLOCKED，不是 READY_FOR_LONG_RUN。**
+代码已在隔离分支 `chatgpt/a2-delivery-20260918` 完成工程交付。canonical implementation pair：
+- root `2a9df880713da179aee141dd97c6b20a2b1d8c2e`
+- child `22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e`
 
-当前 synchronized-A2 代码定向验证：grouped/launch/driver/TTT/model 相邻 CPU 184 passed；stable-slot 核心 26 passed；CUDA vectorized-vs-scalar TTT/gradient 1 passed；verifier 负例 6 passed。真实模型 GPU 证据必须在当前 fixed child 上重新生成，旧 child 的 20-step 仅作历史性能参考，不继承为 release evidence。
+工作区：`/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918`。后续 root-only review/verifier bookkeeping 已到 `dd6c30dce13a55747f871c54b877594919409a2b`，不改变 implementation pair。
+
+**当前工程验收状态：PASS；独立技术复核：PASS；5000-step 长训授权：FALSE。**
+本 PASS 只表示当前 A2 训练/恢复/证据链工程闭合，不代表 LIBERO SR 提升、真实机器人结论或长训结果。
+
+最终证据：CPU 244 passed / 0 failed；B=1 matched control 2-step PASS；A2 3-step GPU control PASS；exact resume PASS；native grouped-vs-scalar loss/gradient parity PASS；RGB→visual96 parity PASS；online action-path PASS；full-catalog 20-step budget PASS；final verifier `artifacts/g0/sync_a2_final_verification_2a9df880_v3.json` 为 10/10 PASS。A2 默认每 update 16 native forwards / 2048 consumers，20-step 平均约 176.06 s/step，CUDA peak allocated 约 45.05 GiB。
 
 ## 已实现的链路
 
@@ -19,7 +22,7 @@ D025：pristine Nano 7 selectors + canonical TTT 4 selectors，合计11项，不
 在线接口：`OnlineLocalMemorySession` + `generate_with_local_memory`，输入前一观测 visual96 与实际执行 action10。
 在线状态只在真实生成成功后提交；重复请求同字节重放、失败回滚、显式 episode reset。
 
-## 一次执行全部剩余验证
+## 复现全部验收
 
 仅在唯一 GPU 空闲时执行；脚本不抢占其他训练、不安装依赖、不访问外网、不覆盖旧输出。
 ```bash
@@ -44,6 +47,8 @@ bash tools/g0/run_a2_delivery_validation.sh artifacts/g0/a2_acceptance_NEW
 
 ## 独立审核处理
 
-DS 对 `a09b6f19/ab2e3fb3` 未确认HIGH；其完整意见见 `docs/collab/chatgpt/reviews/2026-09-18_DS_independent_A2_ab2e3fb3.md`。
-已补whole-T拒绝fixture、speculative rebind零突变fixture、原始异常保留fixture和全trainable参数的构造期校验。
-native对照代码已准备，真实结果仍待GPU。新child不能自动继承旧pair审核结论；作者不自授APPROVE。
+最终 exact implementation pair `2a9df880/22acb13c` 已由独立 DS 给出 `APPROVE`：工程代码、真实 GPU 证据与 exact-pair binding 无 concrete blocker。DS_PRO 首轮指出两项 root-only blocker：D026 决策编号歧义，以及 zero-init 梯度 verifier 判据过宽；二者已在 `dd6c30dc` 关闭，DS_PRO 复核确认 B1/B2 已关闭。MM 最终复核因外部 429/token quota 未完成，不作为本次 closure 的必要条件。
+
+最终 verifier `sync_a2_final_verification_2a9df880_v3.json` 保持 `independent_review_approval=false`，因为该字段由纯证据校验器保守固定，不把 reviewer 结果写回原始 verifier JSON；当前交付状态文件另行记录独立 review 已通过。
+
+仍有两个非阻塞 residue：child 源码中两处旧 scalar-order docstring 与 D026/D027 当前语义不一致；child 工作树存在未跟踪运行残留。二者不改变 formal child tree、训练实现或 evidence binding，本轮为避免制造新 implementation SHA 不再修改。
