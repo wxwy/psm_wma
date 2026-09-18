@@ -36,6 +36,11 @@ export PSM_R09_B_TTT_MEMBER_LAYOUT=a2 PSM_R09_B_TTT_B_STREAM="${PSM_R09_B_TTT_B_
 export PSM_R09_B_TTT_ACTIVE_GA="${PSM_R09_B_TTT_ACTIVE_GA:-16}"
 export PSM_ACTIVE_PREFETCH_DEPTH="${PSM_ACTIVE_PREFETCH_DEPTH:-4}"
 export PSM_ACTIVE_METRICS_PATH="$OUT/metrics.jsonl"
+if [[ "${PSM_A2_NATIVE_VALIDATION:-0}" = 1 ]]; then
+  export PSM_A2_POSTTRAIN_VALIDATION_PATH="$OUT/native_validation.json"
+else
+  unset PSM_A2_POSTTRAIN_VALIDATION_PATH
+fi
 export TOML_FILE=examples/toml/sft_config/action_policy_libero_edge_all_localmem_active.toml
 export RUN_NAME=edge_libero_4in1_localmem_active
 export OUTPUT_ROOT="$OUT" IMAGINAIRE_OUTPUT_ROOT="$OUT"
@@ -61,7 +66,7 @@ if record['dirty']:
 keys=['LIBERO_ROOT','LIBERO_LATENT_CACHE_ROOT','EDGE_POLICY_CHECKPOINT','BASE_CHECKPOINT_PATH',
       'WAN_VAE_PATH','LIBERO_MAX_EPISODES','PSM_R09_B_TTT_MEMBER_LAYOUT','PSM_R09_B_TTT_B_STREAM',
       'PSM_R09_B_TTT_ACTIVE_GA','PSM_ACTIVE_PREFETCH_DEPTH','OMP_NUM_THREADS','MKL_NUM_THREADS',
-      'PSM_R09_B_TTT_ACTIVE','PSM_R09_B_TTT_ENABLED','PSM_R08_LOCAL_HISTORY_ENABLED','EXTRA_TAIL_OVERRIDES']
+      'PSM_R09_B_TTT_ACTIVE','PSM_R09_B_TTT_ENABLED','PSM_R08_LOCAL_HISTORY_ENABLED','EXTRA_TAIL_OVERRIDES','PSM_A2_NATIVE_VALIDATION','PSM_A2_POSTTRAIN_VALIDATION_PATH']
 record['environment']={k:os.environ.get(k) for k in keys}
 from importlib.metadata import version
 record['packages']={k:version(k) for k in ['torch','transformers','numpy','omegaconf','hydra-core']}
