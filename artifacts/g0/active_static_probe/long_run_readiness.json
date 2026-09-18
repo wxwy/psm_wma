@@ -1,16 +1,18 @@
 {
-  "result": "PASS",
-  "verdict": "READY_FOR_LONG_RUN",
+  "result": "BLOCKED",
+  "verdict": "BLOCKED",
   "formal_pair": {
     "root": "802d9e841720ef5572740538b9dbadbfb0adec91",
-    "child": "ac28e5d9917de8e298c7554ad7dc52c67527183b"
+    "child": "ac28e5d9917de8e298c7554ad7dc52c67527183b",
+    "scope": "Previous implementation only; working tree now under ChatGPT construction"
   },
   "gates": {
     "slot_rotation": "DONE",
     "route_resume": "DONE",
     "catalog_epoch_reuse": "DONE",
     "produce_prefetch": "DONE",
-    "scheduler_semantics_refreeze": "WITHDRAWN_USER_DECISION (regime accepted: single_suite_window_ratio=0.5288, exposure~25% each; registered in scheduler_semantics_refreeze design \u00a78)"
+    "scheduler_semantics_refreeze": "WITHDRAWN_USER_DECISION (regime accepted: single_suite_window_ratio=0.5288, exposure~25% each; registered in scheduler_semantics_refreeze design §8)",
+    "member_shape_a2": "IN_PROGRESS"
   },
   "acceptance": "PASS (tools/g0/verify_active_local_memory_pretrain_gate.py, 6/6 hardened)",
   "capacity": {
@@ -29,21 +31,25 @@
   },
   "disk": {
     "free_TiB": 130,
-    "ckpt_each_GiB": 6.3,
+    "ckpt_each_GiB": 16.889198303222656,
     "ckpt_count": 100,
-    "needed_GiB": 630,
+    "needed_GiB": 1688.9198303222656,
     "ok": true
   },
   "estimate": {
     "min_per_window": 4.2,
     "planned_steps": 5000,
-    "wall_days": 14.6
+    "wall_days": 14.6,
+    "scope": "Historical B=1 estimate; not an A2 performance claim"
   },
   "regime": {
     "single_suite_window_ratio": 0.5288,
     "accepted_by_user": true
   },
-  "blockers": [],
+  "blockers": [
+    "A2 implementation and real GPU verification in progress",
+    "Fresh A2 resume/budget/inference evidence not completed"
+  ],
   "training_scope": {
     "baseline_heads": true,
     "local_memory_branch": true,
@@ -58,6 +64,7 @@
     "step_wall_mean_s": 251.8,
     "gpu_mem_MiB": 31371,
     "train_rss_GB": 20.2,
-    "projected_days_5000": 14.6
+    "projected_days_5000": 14.6,
+    "scope": "Historical B=1 only; not transferable to A2"
   }
 }

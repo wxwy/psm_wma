@@ -269,8 +269,8 @@
 | ACCEPTANCE-HARDENING-HIGH3 | DONE | Codex | GPT HIGH-3；`tools/g0/verify_active_local_memory_pretrain_gate.py` | 把 `formal_identity` 改为与证据内记录的 root/child + 输入 digest 比对（stale 即 fail）；`criterion5_block_coverage.full_coverage` 入 PASS 布尔；`production_queue_seed` 按当前 catalog 身份（manifest|config|source sha256[:16]）核验而非 `!=0`。 |
 | B1-VS-BATCHED-DECISION | DONE | 用户 | 用户 2026-09-18 明确：active 仅为测试路线、绘图仅示意 | 已裁决：保持 active B=1 串行 member 语义，无需架构变更；不加 refreeze。 |
 | G0-R09-B-TTT-V035-ACTIVE-TRAINING-SCOPE-BASELINE-PLUS-LOCAL | DONE | Codex | 用户 2026-09-18 选「合并」；MM `APPROVE_TO_CLOSE`、DS 条件式 `REQUEST_CHANGES`（pair root=`5e49475b`/child=`60dd814a`） | config `action_policy_libero_edge_all.py:303-310` 由 `=` 改为**追加** baseline 生成+动作头 allowlist；selected 20→314（≈1.4B 参数）；D025 已登记；DS ①②③ 已闭合，**剩「`config_checkpoint_contract.py` scope 界定」**（`SELECTORS`/`_validate_selector_cover`/`validate_optimizer_membership` 只界定 local 四组、仅测试用；生产只用 `validate_slow_inventory`）。20 步预算证据 `d8_trial_20step.json`。 |
-| G0-R09-B-TTT-V035-ACTIVE-MEMBER-SHAPE-REFREEZE | IN_PROGRESS | Codex | 用户 2026-09-18 选 option (A) | 设计 `docs/build/..._active_route_member_shape_refreeze_design_v0.1.md`（root=`a22167c5`/child=`60dd814a`）：同 T-index 跨 slot 组批，MoT 前向 128→16、batch 16→128，对齐 baseline；请求裁定 (A1)/(A2) + 授权。未改代码。 |
-| B_STREAM-CONFIGURABLE | TODO | Codex | 用户 2026-09-18：slot 数应可设置 | `b_stream` 现硬编码三处：`active_local_memory_launch.DEFAULT_B_STREAM=8`、config `b_stream=8`（`:348`）、`grad_accum_iter = 8 * GA`（`:332`）；无 env 覆盖。应改为可配置字段/env 并让 `grad_accum_iter = b_stream * GA` 派生；与 member-shape refreeze 强相关，须同 Gate 设计（slot 数影响 `canonical_segment_streams` 几何与复用）。 |
+| G0-R09-B-TTT-V035-ACTIVE-MEMBER-SHAPE-REFREEZE | IN_PROGRESS | ChatGPT（用户接手授权 2026-09-18） | 用户 2026-09-18 选 option (A) | 设计 `docs/build/..._active_route_member_shape_refreeze_design_v0.1.md`（root=`a22167c5`/child=`60dd814a`）：同 T-index 跨 slot 组批，MoT 前向 128→16、batch 16→128，对齐 baseline；请求裁定 (A1)/(A2) + 授权。未改代码。 |
+| B_STREAM-CONFIGURABLE | IN_PROGRESS | ChatGPT（用户接手授权 2026-09-18） | 用户 2026-09-18：slot 数应可设置 | `b_stream` 现硬编码三处：`active_local_memory_launch.DEFAULT_B_STREAM=8`、config `b_stream=8`（`:348`）、`grad_accum_iter = 8 * GA`（`:332`）；无 env 覆盖。应改为可配置字段/env 并让 `grad_accum_iter = b_stream * GA` 派生；与 member-shape refreeze 强相关，须同 Gate 设计（slot 数影响 `canonical_segment_streams` 几何与复用）。 |
 | COVERAGE-INVARIANT-TESTS | TODO | 待认领 | Kimi 建议 1（2026-09-17）：slot 饥饿 49.83% 是生产链路实测才发现的，单测抓不到 | 把「选择系统全局不变量」固化为标准 fixture，每次 freeze_window 改动必跑：①每 window 8 slot 全用、每条恰 16 次；②每 suite 两 slot 长期曝光差有界（轮转生效断言，非「不崩溃」）；③单 epoch 全 catalog 每 episode block 消费恰好一次 |
 | TAIL-TRUNCATION-QUANTIFY | TODO | 待认领 | Kimi 建议 4（2026-09-17）：block_count 整除每 episode 丢 ≤15 帧 + 整段丢弃 sub-16 episode | 量化「全 catalog 可用帧 vs 实际入块帧 %」（粗估 10-15%），附进 epoch-reuse Gate；若损失显著，「恢复 terminal remainder 语义」须与复用裁决一起定，不得事后 patch |
 | RESUME-SCOPE-BOUNDARY | TODO | 待认领 | Kimi 建议 7（2026-09-17）：resume 范围先框死 | 评估 resume 语义是否应为「slow checkpoint 冷启动 + catalog 从确定性位置（manifest ordinal）重流式消费 = epoch 边界重启」而非状态续传（对照现 v0.2 的 cursor 级精确续传）；结论写进 resume 设计第一行 |
@@ -284,3 +284,9 @@
 - 编码前先认领并列出预计修改文件。
 - 验证完成后先转 `REVIEW`，独立检查通过后才转 `DONE`。
 - 阻塞必须写明缺少的资产、权限或上游结果，不使用笼统描述。
+
+## ChatGPT 接手：Local Memory 可运行交付
+
+| ID | 状态 | 负责人 | 前置条件 | 验收条件 |
+|---|---|---|---|---|
+| LOCAL-A2-DELIVERY | IN_PROGRESS | ChatGPT | 用户明确交接；ds_pro 已确认只读 | A2 + 可配置 B_stream；selector 精确；CPU 等价/原子性/恢复；真实 GPU smoke/恢复；绑定运行证据与训练入口；未验证项不得标完成 |
