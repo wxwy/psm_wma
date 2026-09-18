@@ -104,3 +104,12 @@ per-epoch 计数），使 `freeze_window` 的 `observed` 在每个 epoch 内独�
 
 **保留**：HIGH-3（acceptance command 硬化）与本设计无关，另行处理。
 **取代范围**：v0.8 §8 第 7/8 点、§9 中「D8b 长跑须先经独立 scheduler-refreeze Gate」的前置**被本次裁决解除**（接受当前 regime）。
+
+**regime 正式的接受登记（DS 要求，2026-09-18 用户批准）**：active 路线在 catalog 复用后的窗口构成偏斜，**以当前 committed 证据为准**：
+
+- `artifacts/g0/active_static_probe/probe_epoch_reuse_planning.json`（`windows_total=5112`）：
+  `windows_by_distinct_categories={1:2703, 2:1893, 3:367, 4:149}` ⟹ **单 suite 窗占比 = 2703/5112 = 52.88%**（**不是**设计 v0.1 初稿引用的旧 77.3%；该旧读数属过时前提，见 HIGH-1）。
+- `cumulative_valid_consumer_exposure` 四类终值 ≈ **25.29% / 24.92% / 24.96% / 24.83%** ⟹ 总用量已均衡。
+- **用户裁决（2026-09-18）**：active 路线为**测试路线**，接受上述 regime，不做 per-epoch 复位；本 Gate withdrawn。
+
+该登记即 active 路线「单 suite 窗 52.88%、四类总用量各 ≈25%」的正式接受记录，D8b runbook 直接引用本段，不再另开 Gate。
