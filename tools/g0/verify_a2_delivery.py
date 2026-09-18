@@ -112,17 +112,26 @@ def inspect_run(directory: Path, *, min_steps: int = 1) -> dict:
     slots = int(env["PSM_R09_B_TTT_B_STREAM"])
     ga = int(env["PSM_R09_B_TTT_ACTIVE_GA"])
     n = slots * 16 * ga
+    expected_groups = {
+        "moe_gen", "time_embedder", "vae2llm", "llm2vae", "action2llm", "llm2action",
+        "action_modality_embed", "local_memory_runtime.evidence_encoder",
+        "local_memory_runtime.ttt_core", "local_memory2llm", "local_memory_modality_embed",
+    }
     for row in rows:
-        if row["member_layout"] != "active_a2_v1" or row["native_forward_calls"] != ga:
-            raise ValueError(
-                "actual native layout/call count differs from A2 configuration"
-            )
-        if row["consumers"] != n or row["member_valid_counts"] != [slots * 16] * ga:
+        if row["layout"] != "active_a2_v1" or row["native_forwards"] != ga:
+            raise ValueError("actual native layout/call count differs from A2 configuration")
+        if row["valid_consumers"] != n or row["group_counts"] != [slots * 16] * ga:
             raise ValueError("actual consumers/GA scale differs from configuration")
-        if len(row["losses"]) != ga or not all(math.isfinite(v) for v in row["losses"]):
-            raise ValueError("non-finite or missing native losses")
-        if not all(g["finite"] for g in row["local_gradients"].values()):
-            raise ValueError("non-finite Local gradients")
+        losses = (row["loss_min"], row["loss_mean"], row["loss_max"])
+        if not all(math.isfinite(v) for v in losses) or not losses[0] <= losses[1] <= losses[2]:
+            raise ValueError("non-finite or inconsistent native losses")
+        gradients = row["gradients"]
+        if set(gradients) != expected_groups:
+            raise ValueError(f"trainable gradient groups differ from D025: {sorted(gradients)}")
+        if any(not g["finite"] or g["with_grad"] <= 0 or g["nonzero_grad"] <= 0 for g in gradients.values()):
+            raise ValueError("missing, zero, or non-finite gradient in a D025 trainable group")
+        if sum(row["optimizer_group_sizes"]) != sum(g["tensors"] for g in gradients.values()):
+            raise ValueError("optimizer membership differs from requires-grad telemetry")
     cp = directory / CHECKPOINT_SUFFIX / f"iter_{rows[-1]['window_index']:09d}"
     for component in ("model", "optim", "scheduler", "trainer", "dataloader"):
         if not (cp / component).is_dir() or not any((cp / component).iterdir()):
@@ -144,7 +153,7 @@ def inspect_run(directory: Path, *, min_steps: int = 1) -> dict:
         "native_forwards_per_update": ga,
         "last_checkpoint": str(cp),
         "step_wall_mean_s": sum(walls) / len(walls),
-        "cuda_peak_allocated_GiB": max(r["cuda_peak_allocated"] for r in rows) / 2**30,
+        "cuda_peak_allocated_GiB": max(r["peak_allocated_bytes"] for r in rows) / 2**30,
         "data_max_episodes_per_suite": env["LIBERO_MAX_EPISODES"],
         "rows": rows,
     }
@@ -166,6 +175,9 @@ def inspect_cpu(directory: Path) -> dict:
         "grouped_active_runtime_test",
         "grouped_active_model_test",
         "local_memory_online_test",
+        "local_memory_policy_test",
+        "local_memory_client_test",
+        "closed_loop_local_memory_test",
         "local_evidence_test",
         "active_local_memory_launch_test",
         "production_active_wiring_test",
@@ -188,12 +200,12 @@ def inspect_cpu(directory: Path) -> dict:
 def compare_resume(control: dict, resumed: dict) -> dict:
     original = {r["window_index"]: r for r in control["rows"]}
     keys = (
-        "identities",
+        "actual_consumer_identity_sha256",
         "slot_epoch",
         "stream_index",
         "active_cursor",
         "exposure",
-        "member_valid_counts",
+        "group_counts",
     )
     compared, mismatches = [], []
     for row in resumed["rows"]:
@@ -228,6 +240,9 @@ def compare_resume(control: dict, resumed: dict) -> dict:
 def inspect_native(path: Path) -> dict:
     report = json.loads(path.read_text())
     parity, online = report["native_group_parity"], report["online_generation"]
+    visual = report["rgb_visual96_parity"]
+    if report.get("result") != "PASS" or visual.get("result") != "PASS":
+        raise ValueError("native validation or raw-RGB visual96 parity failed")
     if not (
         parity["consumers"] == 128
         and parity["grouped_forwards"] == 1
@@ -247,6 +262,8 @@ def inspect_native(path: Path) -> dict:
         and online["actions_finite"]
         and math.isfinite(online["local_token_max_abs"])
         and online["local_token_max_abs"] > 0
+        and math.isfinite(online["local_on_off_action_max_difference"])
+        and online["local_on_off_action_max_difference"] > 1e-8
     ):
         raise ValueError("real Local-memory generation invariants failed")
     return {
@@ -254,6 +271,7 @@ def inspect_native(path: Path) -> dict:
         "sha256": sha(path),
         "parity": parity,
         "online_generation": online,
+        "rgb_visual96_parity": visual,
     }
 
 
