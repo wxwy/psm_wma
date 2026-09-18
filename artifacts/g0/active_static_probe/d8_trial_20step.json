@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "steps": 20,
+  "loss_min": 1.528495,
+  "loss_max": 1.902846,
+  "step_wall_mean_s": 251.8,
+  "model_compute_mean_s": 230.1,
+  "other_mean_s": 15.0,
+  "dataloader_wait_mean_s": 6.7,
+  "gpu_mem_MiB": 31371,
+  "gpu_util_range": "7-62%",
+  "train_rss_GB": 20.2,
+  "ram_used_GB": 75,
+  "disk_free": "130T",
+  "projected_days_5000": 14.6
+}
