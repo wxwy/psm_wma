@@ -2,7 +2,7 @@
   "result": "PASS",
   "verdict": "READY_FOR_LONG_RUN",
   "formal_pair": {
-    "root": "3642ffd141f3e49bd4d5c7b8ad3798d1b656674f",
+    "root": "5e49475ba2318184f296f5a005dc04025aa53946",
     "child": "60dd814ac13656f8afa369ff20b0822bfe500728"
   },
   "gates": {
@@ -10,7 +10,7 @@
     "route_resume": "DONE",
     "catalog_epoch_reuse": "DONE",
     "produce_prefetch": "DONE",
-    "scheduler_semantics_refreeze": "WITHDRAWN_USER_DECISION"
+    "scheduler_semantics_refreeze": "WITHDRAWN_USER_DECISION (regime accepted: single_suite_window_ratio=0.5288, exposure~25% each; registered in scheduler_semantics_refreeze design \u00a78)"
   },
   "acceptance": "PASS (tools/g0/verify_active_local_memory_pretrain_gate.py, 6/6 hardened)",
   "capacity": {
@@ -37,8 +37,7 @@
   "estimate": {
     "min_per_window": 4.2,
     "planned_steps": 5000,
-    "wall_days": 14.6,
-    "note": "1 optimizer step = 1 window = 128 members (prefetch 3.2x applied)"
+    "wall_days": 14.6
   },
   "regime": {
     "single_suite_window_ratio": 0.5288,
@@ -49,7 +48,16 @@
     "baseline_heads": true,
     "local_memory_branch": true,
     "selected_tensors": 314,
-    "trainable_params": 1415072832,
-    "note": "baseline gen+action heads + local-mem combined (user decision 2026-09-18)"
+    "trainable_params": 1415072832
+  },
+  "budget_evidence": {
+    "artifact": "artifacts/g0/active_static_probe/d8_trial_20step.json",
+    "result": "PASS",
+    "steps": 20,
+    "no_oom": true,
+    "step_wall_mean_s": 251.8,
+    "gpu_mem_MiB": 31371,
+    "train_rss_GB": 20.2,
+    "projected_days_5000": 14.6
   }
 }
