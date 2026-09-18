@@ -132,6 +132,31 @@ def inspect_run(directory: Path, *, min_steps: int = 1) -> dict:
             raise ValueError("actual native layout/call count differs from active configuration")
         if row["valid_consumers"] != n or row["group_counts"] != [expected_member_valid] * expected_forwards:
             raise ValueError("actual consumers/GA scale differs from configuration")
+        if layout == "a2":
+            if row.get("dependency_waves") != [1] * ga:
+                raise ValueError("A2 group required repeated-slot dependency waves")
+            identities = row.get("actual_consumer_identities", [])
+            offset = 0
+            expected_slots = list(range(slots))
+            for count in row["group_counts"]:
+                group = identities[offset : offset + count]
+                if len(group) != slots * 16:
+                    raise ValueError("A2 group consumer identity count is not B_stream*T")
+                slot_order = []
+                for slot_index in range(slots):
+                    chunk = group[slot_index * 16 : (slot_index + 1) * 16]
+                    chunk_slots = {int(identity[0]) for identity in chunk}
+                    if len(chunk_slots) != 1:
+                        raise ValueError("A2 stream-major chunk mixes stable slots")
+                    slot_order.append(next(iter(chunk_slots)))
+                    steps = [int(identity[2]) for identity in chunk]
+                    if steps != list(range(steps[0], steps[0] + 16)):
+                        raise ValueError("A2 per-slot consumer chronology is not contiguous T=16")
+                if slot_order != expected_slots:
+                    raise ValueError(f"A2 group is not synchronized stable-slot order: {slot_order}")
+                offset += count
+            if offset != len(identities):
+                raise ValueError("A2 consumer identities contain data outside grouped members")
         raw_losses = (
             row["raw_native_loss_min"],
             row["raw_native_loss_mean"],
@@ -263,29 +288,26 @@ def compare_resume(control: dict, resumed: dict) -> dict:
 def compare_layouts(baseline: dict, grouped: dict) -> dict:
     left = baseline["rows"][0]
     right = grouped["rows"][0]
-    fields = (
-        "actual_consumer_identity_sha256",
-        "slot_epoch",
-        "stream_index",
-        "active_cursor",
-        "exposure",
-    )
-    mismatch = [key for key in fields if left[key] != right[key]]
-    if mismatch:
-        raise ValueError(f"B=1/A2 first-window source/frontier mismatch: {mismatch}")
+    if baseline["consumers_per_update"] != grouped["consumers_per_update"]:
+        raise ValueError("B=1/A2 controls do not use the same consumer budget")
+    left_ids = {tuple(value) for value in left.get("actual_consumer_identities", [])}
+    right_ids = {tuple(value) for value in right.get("actual_consumer_identities", [])}
+    union = left_ids | right_ids
+    overlap = 1.0 if not union else len(left_ids & right_ids) / len(union)
     b1_wall = float(baseline["step_wall_mean_s"])
     a2_wall = float(grouped["step_wall_mean_s"])
     if not math.isfinite(b1_wall) or not math.isfinite(a2_wall) or min(b1_wall, a2_wall) <= 0:
         raise ValueError("invalid B=1/A2 wall-time evidence")
     return {
-        "matched_fields": list(fields),
+        "consumer_identity_set_overlap": overlap,
+        "identity_order_match_required": False,
         "b1_native_forwards": baseline["native_forwards_per_update"],
         "a2_native_forwards": grouped["native_forwards_per_update"],
         "b1_step_wall_s": b1_wall,
         "a2_step_wall_s": a2_wall,
         "observed_wall_speedup": b1_wall / a2_wall,
-        "same_2048_consumer_window": True,
-        "loss_comparison_note": "raw train/loss is not used for gradient-scale equivalence; real native parity is authoritative",
+        "same_consumer_budget": True,
+        "loss_comparison_note": "B=1 is a throughput control; stable-slot A2 intentionally changes member order. Same-data grouped/scalar native parity is the gradient-equivalence authority.",
     }
 
 def inspect_native(path: Path) -> dict:

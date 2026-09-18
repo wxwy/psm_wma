@@ -143,27 +143,25 @@ def test_native_requires_action_path_difference_and_rgb_parity(tmp_path):
         verify.inspect_native(path)
 
 
-def test_compare_layouts_requires_same_scalar_window_and_reports_speedup():
-    common = {
-        "actual_consumer_identity_sha256": "same",
-        "slot_epoch": {"0": 0},
-        "stream_index": {"0": 0},
-        "active_cursor": {"0": 15},
-        "exposure": {"suite": 2048},
-    }
+def test_compare_layouts_is_throughput_control_not_scalar_order_authority():
     baseline = {
-        "rows": [dict(common)],
+        "rows": [{"actual_consumer_identities": [[0, "e", 0], [1, "e", 0]]}],
         "step_wall_mean_s": 240.0,
         "native_forwards_per_update": 128,
+        "consumers_per_update": 2048,
     }
     grouped = {
-        "rows": [dict(common)],
+        # Stable-slot A2 may intentionally reorder the same consumer population.
+        "rows": [{"actual_consumer_identities": [[1, "e", 0], [0, "e", 0]]}],
         "step_wall_mean_s": 180.0,
         "native_forwards_per_update": 16,
+        "consumers_per_update": 2048,
     }
     result = verify.compare_layouts(baseline, grouped)
-    assert result["same_2048_consumer_window"]
+    assert result["same_consumer_budget"]
+    assert not result["identity_order_match_required"]
+    assert result["consumer_identity_set_overlap"] == 1.0
     assert result["observed_wall_speedup"] == pytest.approx(4 / 3)
-    grouped["rows"][0]["active_cursor"] = {"0": 14}
-    with pytest.raises(ValueError, match="source/frontier"):
+    grouped["consumers_per_update"] = 1024
+    with pytest.raises(ValueError, match="consumer budget"):
         verify.compare_layouts(baseline, grouped)

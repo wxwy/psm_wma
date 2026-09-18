@@ -3,21 +3,16 @@
 ## 当前状态
 
 代码已在隔离分支 `chatgpt/a2-delivery-20260918` 实现。代码候选 child：
-`de84a5675d029ef96d1b2d1fcb2ef3281242ca6e`。
+`22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e`。
 工作区：`/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918`。
 原 `/disk/rl/psm_wma` 有另一执行会话同时修改代码并运行 GPU，不自动覆盖/合并其 WIP。
 **当前验收状态为 BLOCKED，不是 READY_FOR_LONG_RUN。**
 
-已验证：217 项 CPU 测试通过；证据校验器 4 个负例测试通过；定向 Ruff 与 diff-check 通过。
-首个真实 GPU 尝试跑过首个 optimizer update，但因指标回调不支持 OptimizersContainer 而失败。
-容器适配已修复并纳入回归；修复后真实 GPU 重跑尚被另一会话的 20-step 作业阻塞。
-没有把别的会话的控制跑、20-step 或 checkpoint 归为本分支证据。
+当前 synchronized-A2 代码定向验证：grouped/launch/driver/TTT/model 相邻 CPU 184 passed；stable-slot 核心 26 passed；CUDA vectorized-vs-scalar TTT/gradient 1 passed；verifier 负例 6 passed。真实模型 GPU 证据必须在当前 fixed child 上重新生成，旧 child 的 20-step 仅作历史性能参考，不继承为 release evidence。
 
 ## 已实现的链路
 
-A2：保留 scalar 调度顺序 → 每 B_stream 条 segment 成组 → 独立 slot 并行 TTT scan →
-同组重复 slot 按依赖层先后处理并在 T 边界 detach → 合并 Local-prefix consumers →
-一次 native forward → 原生加权 loss → 一次 grouped backward → 原子发布全部 row 状态。
+A2：`B_stream` 个 stable slot 同步取各自 next T-block → `[B_stream,T]`；T 维严格串行、slot/B 维并行 TTT scan → 合并 Local-prefix consumers → 一次 native forward → 原生加权 loss → 一次 grouped backward → 原子发布全部 row 状态。一个 group 禁止重复 slot，不再使用 scalar-selection grouping / repeated-slot dependency waves。
 默认 B_stream=8、T=16、GA=16：每次 optimizer update 16 次 native forward，2048 consumers。
 D025：pristine Nano 7 selectors + canonical TTT 4 selectors，合计11项，不含 legacy runtime。
 恢复校验：member layout、group size、GA、T、实际 source catalog 几何与旧有 digest/frontier。
@@ -32,8 +27,7 @@ cd /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918
 bash tools/g0/run_a2_delivery_validation.sh artifacts/g0/a2_acceptance_NEW
 ```
 
-执行顺序：绑定源码的完整 CPU 回归 → 3-step真实控制跑 → 真实模型 regrouping loss/梯度对照 →
-两个连续观测的真实动作生成 → 从iter2新进程恢复至iter3并比较身份/fast-state → 全catalog 20-step预算 → 统一验收JSON。
+执行顺序：绑定源码的完整 CPU 回归 → 3-step synchronized-A2 真实控制跑 → 验证每 group 为 8×16 stable-slot stream-major identities → 真实模型 regrouping loss/梯度对照 → 两个连续观测的真实动作生成 → 从iter2新进程恢复至iter3并比较 frontier/fast-state → 全catalog 20-step预算 → 统一验收JSON。
 新进程恢复不冒充 abrupt-kill witness；本脚本不故意杀其他进程。
 固定sigma/epsilon的native对照验证数学/批处理路径，不声明随机数流或GPU训练逐位等价。
 若任一步失败，保留原始日志/输出并返回非零；使用新的输出目录再次验证，禁止覆盖证据。
