@@ -51,3 +51,24 @@ MM 的批准条件亦含「**grouped vs scalar 同计划同数据：payload 身�
 - CPU release `fb386c7a`：244 passed；`b1_control`（真 B=1）exit 0；A2 `control` exit 1（`Memory Prefix does not support native MemoryState KV cache`）。
 - 新增 `5a33453d`（GPU mutex on tmpfs）、`a5991d94`（bind final correctness child）、`2a9df880`（synchronized stable-slot）。
 - `peak` A2 ~44.9–45.1 GiB（<60 预算）；`other_s` A2 偏高（~33–40s vs B=1 ~15s）。
+
+---
+
+## 6. 定向改回 α 的具体落点（**不需整段 git 回退**）
+
+**不要** `git revert`/`reset` 整段——那会连带丢掉好成果：`7ef6aa2` 的 grouped 机制 / vectorized TTT / exact native objective，以及 `fb386c7a`/`a5991d94` 的证据绑定。
+
+**α 其实就是你改 β 之前的行为**（`7ef6aa2` 那版 `grouped_active_driver.py`）：
+- `_plan_groups(self, freeze)` 用 `freeze.identities[start:start + group_size]` → **按 scalar 顺序组批**；
+- `freeze_window` **未覆写** → 直接用基类 `ActiveLocalMemoryWindowDriver.freeze_window` 的 category-deficit 调度（保留 scalar 选择顺序 + slot 轮转）；
+- `dependency_waves` / `take_rows` / `stack_segments` 负责同组重复 slot 的依赖分层。
+
+**只需在 `grouped_active_driver.py` 定向改回（4 点）**：
+1. 恢复「基类 `freeze_window()` 产出 128 个成员的**原始 scalar 序** → 连续 8 个成员组批」；
+2. **删掉 `2a9df880` 新增的 `freeze_window` 覆写**里「stable slot id 排序 / scalar order deliberately not reused」的选择逻辑；
+3. **放宽** `grouped_active_driver.py:92` 的 `A2 group_size must equal the stable slot count`——α 的组内**允许重复 slot**（scalar 序偶发同 slot 连续），该断言与 α 直接冲突；
+4. 保留 `dependency_waves` 的依赖分层与逐 T 步 TBPTT 截断语义（这是 α 可行的关键，你已建好）。
+
+改后 `test_group_matches_scalar_tokens_gradients_and_rollover` 应能修绿（identity 序列与 scalar 逐位一致），并保住与 baseline 的可比性。
+
+**边界提醒**：若你坚持 β（同步 stable-slot），则**不是「回退到某提交」**，而是**新开 `v0.3` 语义 refreeze**——显式声明放弃逐位等价、给出替代判据（如只保证「2048 样本 + 梯度尺度等价」），并**重送 DS/MM 同 SHA 批准**；在此批准之前，`2a9df880` 不得当作既有 (A2) 的 delivery。
