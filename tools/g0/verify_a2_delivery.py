@@ -127,7 +127,10 @@ def inspect_run(directory: Path, *, min_steps: int = 1) -> dict:
         "action_modality_embed", "local_memory_runtime.evidence_encoder",
         "local_memory_runtime.ttt_core", "local_memory2llm", "local_memory_modality_embed",
     }
-    groups_with_nonzero = set()
+    local_runtime_groups = {
+        "local_memory_runtime.evidence_encoder",
+        "local_memory_runtime.ttt_core",
+    }
     for row in rows:
         if row["layout"] != expected_layout or row["native_forwards"] != expected_forwards:
             raise ValueError("actual native layout/call count differs from active configuration")
@@ -177,12 +180,28 @@ def inspect_run(directory: Path, *, min_steps: int = 1) -> dict:
             raise ValueError(f"trainable gradient groups differ from D025: {sorted(gradients)}")
         if any(not g["finite"] or g["with_grad"] <= 0 for g in gradients.values()):
             raise ValueError("missing or non-finite gradient in a D025 trainable group")
-        groups_with_nonzero.update(name for name, g in gradients.items() if g["nonzero_grad"] > 0)
+        # Function-preserving Local initialization sets local_memory2llm.weight to
+        # exactly zero. During the fresh first optimizer window this makes
+        # dL/d(Local token) = grad_out @ W exactly zero, so the evidence encoder
+        # and TTT core must have zero numeric gradients even though they remain in
+        # the graph. After optimizer step 1, the projection is nonzero and both
+        # runtime groups must receive nonzero gradients on every recorded window.
+        first_fresh_window = int(row["window_index"]) == 1
+        for name, grad in gradients.items():
+            nonzero = int(grad["nonzero_grad"])
+            if name in local_runtime_groups:
+                if first_fresh_window and nonzero != 0:
+                    raise ValueError(
+                        f"zero-initialized Local runtime unexpectedly received nonzero gradient in window1: {name}"
+                    )
+                if not first_fresh_window and nonzero <= 0:
+                    raise ValueError(
+                        f"Local runtime failed to receive nonzero gradient after window1: {name}"
+                    )
+            elif nonzero <= 0:
+                raise ValueError(f"D025 trainable group has zero gradient: {name}")
         if sum(row["optimizer_group_sizes"]) != sum(g["tensors"] for g in gradients.values()):
             raise ValueError("optimizer membership differs from requires-grad telemetry")
-    if groups_with_nonzero != expected_groups:
-        missing = sorted(expected_groups - groups_with_nonzero)
-        raise ValueError(f"D025 trainable groups never received a nonzero gradient in the run: {missing}")
     cp = directory / CHECKPOINT_SUFFIX / f"iter_{rows[-1]['window_index']:09d}"
     for component in ("model", "optim", "scheduler", "trainer", "dataloader"):
         if not (cp / component).is_dir() or not any((cp / component).iterdir()):

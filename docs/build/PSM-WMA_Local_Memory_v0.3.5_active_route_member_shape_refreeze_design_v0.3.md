@@ -62,3 +62,16 @@ B=1 只保留为吞吐/显存 control。梯度目标等价由同数据 grouped-v
 当前适用范围仅为 LIBERO4IN1 canonical smoke 的 member packing；
 未来 RoboCasa 等 task 数大于 B_stream 的通用 weighted-deficit scheduler 仍需独立 Gate，
 不得把当前 static stable-slot/category allocation 解释为通用采样算法。
+
+## 7. Final gradient acceptance after function-preserving zero initialization
+
+implementation root `2a9df880` 内的早期 verifier 采用“每个 optimizer window、每个 D025 group 都必须 `nonzero_grad > 0`”的过强判据。真实 B=1 与 A2 fresh run 都证明该判据在 window 1 必然不成立：`local_memory2llm.weight` 采用 function-preserving exact-zero 初始化，因此首个 optimizer window 中 `dL/d(Local token) = grad_out @ W = 0`；`local_memory_runtime.evidence_encoder` 与 `local_memory_runtime.ttt_core` 虽在图中且 `with_grad > 0`，数值梯度应精确为 0。完成第一个 optimizer step 后 projector 离开零点，从 window 2 开始两组均应持续收到非零梯度。
+
+最终 verifier 不采用“整段运行至少一次 nonzero”的宽松累计判据，而固定为逐 window 时序判据：
+
+- 所有 D025 group 在每个记录 window 都必须 `finite=true` 且 `with_grad>0`；
+- fresh `window_index==1` 时，仅 `local_memory_runtime.evidence_encoder` / `local_memory_runtime.ttt_core` 必须 `nonzero_grad==0`；其余 D025 group 仍必须 `nonzero_grad>0`；
+- `window_index>1`（含 resume 恢复后的后续 window）时，上述两个 Local runtime group 也必须 `nonzero_grad>0`；
+- optimizer membership tensor count 每个 window 仍必须与 requires-grad telemetry 完全一致。
+
+该收紧只修正 acceptance/verifier 对 zero-init 的解释，不改变 `2a9df880/22acb13c` 的训练实现、loss 定义或任何 GPU evidence bytes。后续 root-only verifier/report commit 可以验证这个 immutable implementation pair，但必须同时证明目标 root 是当前 lineage 的 ancestor、其 `cosmos-framework` gitlink 精确等于目标 child，且 live child tracked source 与目标 child 一致。

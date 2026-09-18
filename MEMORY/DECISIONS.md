@@ -241,10 +241,11 @@
 - 保留不变：TTT 数学、past-only evidence、update-then-read、T=16 TBPTT、valid-consumer weighted outer objective、outer backward 后原子 fast-state commit、D025 optimizer scope、slot-local episode continuity 与 resume fail-closed。
 - 新验收：每个 A2 group 必须解析为稳定 slot 顺序 `0..B_stream-1`，每 slot 恰好 T 个连续 consumer；`dependency_waves=1`；默认每 update `16 forwards × 128 consumers = 2048`。梯度目标等价由同数据 grouped-vs-scalar native parity 验证，而不是由旧 scalar scheduler identity 顺序验证。
 - 原因：用户明确要求“所有 slot 内同步计算，TTT 时间串行，形成 8×16=128 sample 的 microbatch 进行 Transformer 前向”；该形状也与 canonical `PSM-WMA_Local_Memory_detailed_design_addendum_v0.3.5.md` 的 `B_stream × T` 训练单位一致。DS_PRO 对旧 v0.1 批准边界的流程质疑成立，因此通过本 durable Owner refreeze 消除 authority 冲突，而非静默继承旧批准。
-## D026 A2 canonical member packing：同步 stable-slot × T
+## D027 A2 canonical member packing：同步 stable-slot × T
 
 - 日期：2026-09-18
-- 状态：生效（用户明确 owner override）
+- 状态：生效（用户明确 owner override；作为 D026 的执行细化）
+- 与 D026 的关系：D026 冻结 owner-level member-shape authority；D027 把同一裁决落实为 canonical packing / acceptance 口径，并进一步显式 supersede v0.2 的 scalar-order 过渡约束。两者不是两个竞争的 D026。
 - 决策：Local Memory 当前 canonical A2 packing 不再保留 B=1 scalar member 的全序逐位等价。每个 native microbatch 由当前 B_stream 个 stable slots 各自的 next chronological segment 组成；默认 B_stream=8、T=16，TTT 在每个 slot 内沿 T 串行、slot 之间并行，随后 flatten/gather 为最多 128 consumers，执行一次 Transformer/MoT native forward。GA=16 时为 16 forwards / 2048 consumers per optimizer update。
 - 覆盖：本决策显式取代 `active_route_member_shape_refreeze_design_v0.2.md` §1 中“保留 scalar freeze_window 选择顺序、连续 B_stream scalar members 分组”的 A2 packing 语义。旧 v0.2 作为历史过渡设计保留，不再作为当前 member-order acceptance。
 - 新验收：每 group stable-slot coverage 无重复且完整；每 slot chronology / terminal / rebind 正确；vectorized TTT 与相同 [B,T] 输入的逐-row算法数值/梯度等价；outer objective 维持 valid-consumer mean；backward 后才原子 commit；resume 恢复 per-slot frontier/fast-state；真实 GPU 必须证明 128 consumers/forward、有限 loss/gradient 与预算。
