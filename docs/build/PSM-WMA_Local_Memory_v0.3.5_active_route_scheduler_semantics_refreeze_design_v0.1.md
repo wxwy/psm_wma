@@ -87,3 +87,20 @@ per-epoch 计数），使 `freeze_window` 的 `observed` 在每个 epoch 内独�
 - 本 Gate 不改变「catalog 复用是否可行」（已由 epoch-reuse Gate 关闭），只决定**复用后每个窗口的
   数据混合是否与 epoch 0 同构**。
 - D8b 长跑（`max_iter=5000`）在本 Gate 关闭前不得启动（v0.8 §9）。
+
+---
+
+## 8. 状态裁决（2026-09-18，用户）
+
+**本设计 withdrawn（不落地）。** 理由：
+
+1. **HIGH-1（前提过时，已核实）**：本设计 §1 引用的旧读数（epochs≥1 单 suite ≈77.3%，仅 epoch 0 有四类窗）已不成立。当前 committed
+   `artifacts/g0/active_static_probe/probe_epoch_reuse_planning.json` 实测
+   `windows_by_distinct_categories={1:2703, 2:1893, 3:367, 4:149}`、单 suite=**52.88%**、
+   `cumulative_exposure` 四类各 ≈25%（25.29/24.92/24.96/24.83）——**总用量已均衡**。
+2. **用户裁决**：active 路线是**测试路线**（非正式训练），且总用量已均衡；不清零即可，
+   接受当前「约一半窗口单 suite、总体各 25%」的 regime。
+3. **随之 HIGH-2 消解**：不清零 ⇒ 无需定义异步 per-slot 下的 reset authority。
+
+**保留**：HIGH-3（acceptance command 硬化）与本设计无关，另行处理。
+**取代范围**：v0.8 §8 第 7/8 点、§9 中「D8b 长跑须先经独立 scheduler-refreeze Gate」的前置**被本次裁决解除**（接受当前 regime）。
