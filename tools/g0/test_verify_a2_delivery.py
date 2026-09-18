@@ -34,6 +34,7 @@ def test_source_receipt_rejects_modified_source_and_false_commit(tmp_path, monke
     ).strip()
     monkeypatch.setattr(verify, "CHILD", repo)
     receipt = {
+        "root": commit,
         "child": commit,
         "dirty": "",
         "tracked_code_sha256": {

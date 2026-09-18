@@ -35,7 +35,10 @@ def git(*args: str, cwd: Path = CHILD) -> str:
 def source_receipt(receipt: dict) -> dict:
     if receipt.get("dirty"):
         raise ValueError("evidence was captured from dirty tracked source")
+    root_commit = receipt.get("root")
     commit = receipt["child"]
+    if not re.fullmatch(r"[0-9a-f]{40}", root_commit or ""):
+        raise ValueError("receipt root is not an exact commit")
     if not re.fullmatch(r"[0-9a-f]{40}", commit):
         raise ValueError("receipt child is not an exact commit")
     code = receipt["tracked_code_sha256"]
@@ -69,6 +72,7 @@ def source_receipt(receipt: dict) -> dict:
         if not Path(name).is_file() or sha(Path(name)) != digest:
             raise ValueError(f"input metadata changed: {name}")
     return {
+        "root_at_capture": root_commit,
         "child_at_capture": commit,
         "checked_source_files": len(code),
         "input_metadata_files": len(receipt.get("input_metadata_sha256", {})),
@@ -330,6 +334,7 @@ def main() -> int:
     parser.add_argument("--resume", type=Path, required=True)
     parser.add_argument("--budget", type=Path)
     parser.add_argument("--require-budget", action="store_true")
+    parser.add_argument("--expected-root", required=True)
     parser.add_argument("--expected-child", required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
@@ -351,14 +356,15 @@ def main() -> int:
             )
 
     def current_source():
+        root = git("rev-parse", "HEAD", cwd=ROOT)
         child = git("rev-parse", "HEAD")
-        if child != args.expected_child or git(
-            "status", "--short", "--untracked-files=no"
+        if (
+            root != args.expected_root
+            or child != args.expected_child
+            or git("status", "--short", "--untracked-files=no")
         ):
-            raise ValueError(
-                "current committed child differs from the requested clean target"
-            )
-        return {"root": git("rev-parse", "HEAD", cwd=ROOT), "child": child}
+            raise ValueError("current committed root/child differs from the requested clean target")
+        return {"root": root, "child": child}
 
     check("committed_target", current_source)
     check("cpu_behavior", lambda: inspect_cpu(args.cpu))
@@ -405,6 +411,23 @@ def main() -> int:
                 "error": "no new-layout budget run",
             }
         )
+    def exact_receipt_pair():
+        named = ("cpu_behavior", "gpu_b1_matched_control", "gpu_control", "gpu_resume")
+        if args.budget:
+            named += ("twenty_step_budget",)
+        observed = {}
+        for name in named:
+            value = values.get(name)
+            if value is None:
+                raise FileNotFoundError(f"missing evidence for exact-pair check: {name}")
+            binding = value["binding"]
+            observed[name] = (binding["root_at_capture"], binding["child_at_capture"])
+            if observed[name] != (args.expected_root, args.expected_child):
+                raise ValueError(f"{name} was captured from another root/child pair: {observed[name]}")
+        return {"expected": [args.expected_root, args.expected_child], "observed": observed}
+
+    check("exact_pair_evidence_binding", exact_receipt_pair)
+
     for item in checks:
         if isinstance(item.get("detail"), dict):
             item["detail"].pop("rows", None)

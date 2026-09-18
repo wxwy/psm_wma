@@ -8,6 +8,7 @@ OUT="${1:?usage: run_a2_delivery_validation.sh NEW_OUTPUT_ROOT}"
 USED="$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | head -1 | tr -d ' ')"
 (( USED < 512 )) || { echo "BLOCKED_RESOURCE: GPU has $USED MiB allocated" >&2; exit 75; }
 cd "$ROOT"
+ROOT_SHA="$(git rev-parse HEAD)"
 CHILD_SHA="$(git -C cosmos-framework rev-parse HEAD)"
 bash tools/g0/run_a2_cpu_validation.sh "$OUT/cpu"
 # True matched B=1 control: same 8 slots, T=16, logical 2048 consumers/update,
@@ -28,5 +29,5 @@ LIBERO_MAX_EPISODES=100000 PSM_A2_NATIVE_VALIDATION=0 \
   bash tools/g0/launch_local_memory_a2.sh "$OUT/budget" 20 10 fresh
 cosmos-framework/.venv/bin/python tools/g0/verify_active_local_memory_pretrain_gate.py \
   --cpu "$OUT/cpu" --baseline "$OUT/b1_control" --control "$OUT/control" --resume "$OUT/resume" \
-  --budget "$OUT/budget" --require-budget --expected-child "$CHILD_SHA" \
+  --budget "$OUT/budget" --require-budget --expected-root "$ROOT_SHA" --expected-child "$CHILD_SHA" \
   --output "$OUT/delivery_status.json"
