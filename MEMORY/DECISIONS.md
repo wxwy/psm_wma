@@ -223,3 +223,11 @@
 - 决策：source-evidence 链按已批准顺序完成 immutable collection/receipt、controlled write、record/receipt、publication materializer/verifier 与 read-only root audit 的既有闭环，不再为 checkpoint authority、publication evidence 或相同 binding 横向增加闭环外 provenance Gate。该闭环后的下一设计固定为 single-GPU TTT smoke，依序处理真实 optimizer/scaler、1 batch GPU 与 20--100 step smoke；不得用新的 provenance 子 Gate 推迟该路线。
 - 边界：本决策不授权真实 collection、source-evidence record/publication、GPU、训练或绕过三方审核；它只限制后续 Gate 的路线与拆分方式。
 - 原因：现有 provenance 合同已经覆盖 source identity、collection/receipt 非循环绑定、失败回滚和 downstream package 输入；继续横向细分的边际收益低于尽快以受控 GPU smoke 验证 TTT 有效性的收益。
+
+## D025 active 路线优化器范围：baseline 生成+动作头 + local-mem 合并
+
+- 日期：2026-09-18
+- 状态：生效（用户 2026-09-18 明确选择「合并」；DS 审核要求 durable override 记录）
+- 决策：active 路线的 optimizer `keys_to_select` 由「仅 local-mem 四组（R09-B 原 `=` 覆盖）」改为「继承自 `action_policy_libero_all_nano` 的 baseline 生成+动作头 allowlist（`moe_gen/time_embedder/vae2llm/llm2vae/action2llm/llm2action/action_modality_embed`）**追加** `TTT_SLOW_GROUP_SELECTORS`」（`action_policy_libero_edge_all.py:303-310`）。训练范围 = baseline 生成+动作头 **+** local-mem。本决策**显式取代** R09-B active-wiring 的「仅四组」覆盖语义（旧 `keys_to_select = list(TTT_SLOW_GROUP_SELECTORS)`）。
+- 边界：`config_checkpoint_contract.py` 的 `SELECTORS` / `_validate_selector_cover` / `validate_optimizer_membership` 只界定 **local-memory slow inventory（四组）**，**不**界定完整 optimizer allowlist；完整 optimizer 范围以 config 的 `keys_to_select` 为唯一权威。生产训练路径只用 `validate_slow_inventory`/`canonical_slow_inventory`（校验 local owner），不受本决策影响。
+- 原因：用户指出 R09-B 的 `=` 覆盖把 baseline 生成+动作头冻结，与同文件 `:279` 注释「保留全部原生选择，仅在启用时加入 R07 Local 参数」直接矛盾。合并后 selected tensors 20→314（≈1.4B 参数）、2 个 param group；`max_iter=2` 与 20 步短跑零 OOM。
