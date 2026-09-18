@@ -2,8 +2,8 @@
   "result": "PASS",
   "verdict": "READY_FOR_LONG_RUN",
   "formal_pair": {
-    "root": "5e49475ba2318184f296f5a005dc04025aa53946",
-    "child": "60dd814ac13656f8afa369ff20b0822bfe500728"
+    "root": "802d9e841720ef5572740538b9dbadbfb0adec91",
+    "child": "ac28e5d9917de8e298c7554ad7dc52c67527183b"
   },
   "gates": {
     "slot_rotation": "DONE",
