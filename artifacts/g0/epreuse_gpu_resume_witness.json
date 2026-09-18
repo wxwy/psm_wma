@@ -1,0 +1,151 @@
+{
+  "result": "PASS",
+  "scope": "GPT HIGH-2 GPU half: save->kill->resume across a catalog rollover boundary",
+  "config": {
+    "LIBERO_MAX_EPISODES": 10,
+    "PSM_R09_B_TTT_ACTIVE_GA": 16,
+    "window_members": 128,
+    "max_iter": 3,
+    "save_iter": 2,
+    "prefetch_depth": 4
+  },
+  "boundary": "rollover fires at window 2->3 (save_iter=2 checkpoint sits before it)",
+  "control_losses": {
+    "iter1": 1.61586,
+    "iter2": 1.618234,
+    "iter3": 1.624629
+  },
+  "resume_losses": {
+    "iter3": 1.624593
+  },
+  "iter3_fields_match": [
+    "window_index",
+    "slot_epoch",
+    "stream_index",
+    "active_cursor",
+    "exposure",
+    "terminal_slots",
+    "stable_slots",
+    "committed_n"
+  ],
+  "iter3_fields_mismatch": [],
+  "control_iter3": {
+    "window_index": 3,
+    "slot_epoch": {
+      "0": 1,
+      "1": 0,
+      "2": 0,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 1
+    },
+    "stream_index": {
+      "0": 1,
+      "1": 4,
+      "2": 4,
+      "3": 4,
+      "4": 1,
+      "5": 4,
+      "6": 4,
+      "7": 3
+    },
+    "active_cursor": {
+      "2": 7,
+      "1": 14,
+      "6": 5,
+      "5": 3,
+      "3": 1,
+      "7": 6,
+      "0": 13,
+      "4": 8
+    },
+    "exposure": {
+      "libero_10": 1840,
+      "libero_goal": 1264,
+      "libero_object": 1184,
+      "libero_spatial": 1856
+    },
+    "terminal_slots": [
+      1,
+      2,
+      5,
+      6,
+      7
+    ],
+    "stable_slots": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "committed_n": 8
+  },
+  "resume_iter3": {
+    "window_index": 3,
+    "slot_epoch": {
+      "0": 1,
+      "1": 0,
+      "2": 0,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 1
+    },
+    "stream_index": {
+      "0": 1,
+      "1": 4,
+      "2": 4,
+      "3": 4,
+      "4": 1,
+      "5": 4,
+      "6": 4,
+      "7": 3
+    },
+    "active_cursor": {
+      "2": 7,
+      "1": 14,
+      "6": 5,
+      "5": 3,
+      "3": 1,
+      "7": 6,
+      "0": 13,
+      "4": 8
+    },
+    "exposure": {
+      "libero_10": 1840,
+      "libero_goal": 1264,
+      "libero_object": 1184,
+      "libero_spatial": 1856
+    },
+    "terminal_slots": [
+      1,
+      2,
+      5,
+      6,
+      7
+    ],
+    "stable_slots": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "committed_n": 8
+  },
+  "notes": [
+    "resume loaded checkpoint iter_000000002 (same-job, local) with the dataloader component",
+    "slot_epoch shows terminal reuse on slots 0/3/4/7 and non-terminal continuation on 1/2/5/6",
+    "iter3 loss differs by 0.000036 (GPU float non-determinism; user accepted approach (2))"
+  ]
+}
