@@ -1,0 +1,75 @@
+{
+  "result": "PASS",
+  "failed": [],
+  "checks": [
+    {
+      "check": "gate1_slot_rotation",
+      "ok": true,
+      "detail": {
+        "result": "PASS",
+        "per_slot": {
+          "0": 16,
+          "1": 16,
+          "2": 16,
+          "3": 16,
+          "4": 16,
+          "5": 16,
+          "6": 16,
+          "7": 16
+        }
+      }
+    },
+    {
+      "check": "gate3_planning_capacity",
+      "ok": true,
+      "detail": {
+        "result": "PASS",
+        "windows_total": 5112,
+        "capacity_target_met": true,
+        "full_coverage": true
+      }
+    },
+    {
+      "check": "gate3_production_driver",
+      "ok": true,
+      "detail": {
+        "result": "PASS",
+        "boundary_crossed_113": true,
+        "replay_mismatches": []
+      }
+    },
+    {
+      "check": "gpu_resume_cross_boundary",
+      "ok": true,
+      "detail": {
+        "result": "PASS",
+        "fields_matched": [
+          "window_index",
+          "slot_epoch",
+          "stream_index",
+          "active_cursor",
+          "exposure",
+          "terminal_slots",
+          "stable_slots",
+          "committed_n"
+        ],
+        "mismatch": []
+      }
+    },
+    {
+      "check": "production_queue_seed",
+      "ok": true,
+      "detail": {
+        "queue_seed": 11350389524172359973
+      }
+    },
+    {
+      "check": "formal_identity",
+      "ok": true,
+      "detail": {
+        "root": "70dc06c48d0d9f6da37f70edbaabb96d9ce032bd",
+        "submodule": "fca7eb589f455509e05e7c39659000343a36bad4"
+      }
+    }
+  ]
+}
