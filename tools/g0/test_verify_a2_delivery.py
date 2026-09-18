@@ -140,3 +140,29 @@ def test_native_requires_action_path_difference_and_rgb_parity(tmp_path):
     path.write_text(json.dumps(report))
     with pytest.raises(ValueError, match="visual96"):
         verify.inspect_native(path)
+
+
+def test_compare_layouts_requires_same_scalar_window_and_reports_speedup():
+    common = {
+        "actual_consumer_identity_sha256": "same",
+        "slot_epoch": {"0": 0},
+        "stream_index": {"0": 0},
+        "active_cursor": {"0": 15},
+        "exposure": {"suite": 2048},
+    }
+    baseline = {
+        "rows": [dict(common)],
+        "step_wall_mean_s": 240.0,
+        "native_forwards_per_update": 128,
+    }
+    grouped = {
+        "rows": [dict(common)],
+        "step_wall_mean_s": 180.0,
+        "native_forwards_per_update": 16,
+    }
+    result = verify.compare_layouts(baseline, grouped)
+    assert result["same_2048_consumer_window"]
+    assert result["observed_wall_speedup"] == pytest.approx(4 / 3)
+    grouped["rows"][0]["active_cursor"] = {"0": 14}
+    with pytest.raises(ValueError, match="source/frontier"):
+        verify.compare_layouts(baseline, grouped)

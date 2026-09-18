@@ -10,7 +10,12 @@ USED="$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | head 
 cd "$ROOT"
 CHILD_SHA="$(git -C cosmos-framework rev-parse HEAD)"
 bash tools/g0/run_a2_cpu_validation.sh "$OUT/cpu"
-PSM_A2_NATIVE_VALIDATION=1 bash tools/g0/launch_local_memory_a2.sh "$OUT/control" 3 2 fresh
+# True matched B=1 control: same 8 slots, T=16, logical 2048 consumers/update,
+# but serialized 128 native forwards instead of A2's 16 grouped forwards.
+PSM_R09_B_TTT_MEMBER_LAYOUT=single PSM_A2_NATIVE_VALIDATION=0 \
+  bash tools/g0/launch_local_memory_a2.sh "$OUT/b1_control" 1 1 fresh
+PSM_R09_B_TTT_MEMBER_LAYOUT=a2 PSM_A2_NATIVE_VALIDATION=1 \
+  bash tools/g0/launch_local_memory_a2.sh "$OUT/control" 3 2 fresh
 # New-process restore from the control's completed iter_2 checkpoint. This proves
 # checkpoint recovery, not an abrupt-kill witness; do not label it save/kill/resume.
 CP=cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints
@@ -22,6 +27,6 @@ PSM_A2_NATIVE_VALIDATION=0 bash tools/g0/launch_local_memory_a2.sh "$OUT/resume"
 LIBERO_MAX_EPISODES=100000 PSM_A2_NATIVE_VALIDATION=0 \
   bash tools/g0/launch_local_memory_a2.sh "$OUT/budget" 20 10 fresh
 cosmos-framework/.venv/bin/python tools/g0/verify_active_local_memory_pretrain_gate.py \
-  --cpu "$OUT/cpu" --control "$OUT/control" --resume "$OUT/resume" \
+  --cpu "$OUT/cpu" --baseline "$OUT/b1_control" --control "$OUT/control" --resume "$OUT/resume" \
   --budget "$OUT/budget" --require-budget --expected-child "$CHILD_SHA" \
   --output "$OUT/delivery_status.json"

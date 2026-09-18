@@ -111,20 +111,37 @@ def inspect_run(directory: Path, *, min_steps: int = 1) -> dict:
     env = receipt["environment"]
     slots = int(env["PSM_R09_B_TTT_B_STREAM"])
     ga = int(env["PSM_R09_B_TTT_ACTIVE_GA"])
+    layout = env["PSM_R09_B_TTT_MEMBER_LAYOUT"]
+    if layout not in {"single", "a2"}:
+        raise ValueError(f"unsupported active layout in receipt: {layout!r}")
     n = slots * 16 * ga
+    expected_forwards = ga if layout == "a2" else slots * ga
+    expected_member_valid = slots * 16 if layout == "a2" else 16
+    expected_layout = "active_a2_v1" if layout == "a2" else "single"
     expected_groups = {
         "moe_gen", "time_embedder", "vae2llm", "llm2vae", "action2llm", "llm2action",
         "action_modality_embed", "local_memory_runtime.evidence_encoder",
         "local_memory_runtime.ttt_core", "local_memory2llm", "local_memory_modality_embed",
     }
     for row in rows:
-        if row["layout"] != "active_a2_v1" or row["native_forwards"] != ga:
-            raise ValueError("actual native layout/call count differs from A2 configuration")
-        if row["valid_consumers"] != n or row["group_counts"] != [slots * 16] * ga:
+        if row["layout"] != expected_layout or row["native_forwards"] != expected_forwards:
+            raise ValueError("actual native layout/call count differs from active configuration")
+        if row["valid_consumers"] != n or row["group_counts"] != [expected_member_valid] * expected_forwards:
             raise ValueError("actual consumers/GA scale differs from configuration")
-        losses = (row["loss_min"], row["loss_mean"], row["loss_max"])
-        if not all(math.isfinite(v) for v in losses) or not losses[0] <= losses[1] <= losses[2]:
-            raise ValueError("non-finite or inconsistent native losses")
+        raw_losses = (
+            row["raw_native_loss_min"],
+            row["raw_native_loss_mean"],
+            row["raw_native_loss_max"],
+        )
+        objectives = row["backward_objective_members"]
+        if (
+            not all(math.isfinite(v) for v in raw_losses)
+            or not raw_losses[0] <= raw_losses[1] <= raw_losses[2]
+            or len(objectives) != expected_forwards
+            or not all(math.isfinite(v) for v in objectives)
+            or not math.isclose(sum(objectives), row["backward_objective_sum"], rel_tol=1e-7, abs_tol=1e-7)
+        ):
+            raise ValueError("non-finite or inconsistent native/backward objectives")
         gradients = row["gradients"]
         if set(gradients) != expected_groups:
             raise ValueError(f"trainable gradient groups differ from D025: {sorted(gradients)}")
@@ -150,7 +167,8 @@ def inspect_run(directory: Path, *, min_steps: int = 1) -> dict:
         "first_window": rows[0]["window_index"],
         "last_window": rows[-1]["window_index"],
         "consumers_per_update": n,
-        "native_forwards_per_update": ga,
+        "native_forwards_per_update": expected_forwards,
+        "member_layout": layout,
         "last_checkpoint": str(cp),
         "step_wall_mean_s": sum(walls) / len(walls),
         "cuda_peak_allocated_GiB": max(r["peak_allocated_bytes"] for r in rows) / 2**30,
@@ -237,6 +255,35 @@ def compare_resume(control: dict, resumed: dict) -> dict:
     }
 
 
+
+def compare_layouts(baseline: dict, grouped: dict) -> dict:
+    left = baseline["rows"][0]
+    right = grouped["rows"][0]
+    fields = (
+        "actual_consumer_identity_sha256",
+        "slot_epoch",
+        "stream_index",
+        "active_cursor",
+        "exposure",
+    )
+    mismatch = [key for key in fields if left[key] != right[key]]
+    if mismatch:
+        raise ValueError(f"B=1/A2 first-window source/frontier mismatch: {mismatch}")
+    b1_wall = float(baseline["step_wall_mean_s"])
+    a2_wall = float(grouped["step_wall_mean_s"])
+    if not math.isfinite(b1_wall) or not math.isfinite(a2_wall) or min(b1_wall, a2_wall) <= 0:
+        raise ValueError("invalid B=1/A2 wall-time evidence")
+    return {
+        "matched_fields": list(fields),
+        "b1_native_forwards": baseline["native_forwards_per_update"],
+        "a2_native_forwards": grouped["native_forwards_per_update"],
+        "b1_step_wall_s": b1_wall,
+        "a2_step_wall_s": a2_wall,
+        "observed_wall_speedup": b1_wall / a2_wall,
+        "same_2048_consumer_window": True,
+        "loss_comparison_note": "raw train/loss is not used for gradient-scale equivalence; real native parity is authoritative",
+    }
+
 def inspect_native(path: Path) -> dict:
     report = json.loads(path.read_text())
     parity, online = report["native_group_parity"], report["online_generation"]
@@ -278,6 +325,7 @@ def inspect_native(path: Path) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cpu", type=Path, required=True)
+    parser.add_argument("--baseline", type=Path, required=True)
     parser.add_argument("--control", type=Path, required=True)
     parser.add_argument("--resume", type=Path, required=True)
     parser.add_argument("--budget", type=Path)
@@ -314,7 +362,21 @@ def main() -> int:
 
     check("committed_target", current_source)
     check("cpu_behavior", lambda: inspect_cpu(args.cpu))
+    check("gpu_b1_matched_control", lambda: inspect_run(args.baseline, min_steps=1))
     check("gpu_control", lambda: inspect_run(args.control, min_steps=3))
+    if "gpu_b1_matched_control" in values and "gpu_control" in values:
+        check(
+            "b1_a2_same_window_and_performance",
+            lambda: compare_layouts(values["gpu_b1_matched_control"], values["gpu_control"]),
+        )
+    else:
+        checks.append(
+            {
+                "check": "b1_a2_same_window_and_performance",
+                "status": "BLOCKED",
+                "error": "missing valid B=1 or A2 control",
+            }
+        )
     check("gpu_resume", lambda: inspect_run(args.resume))
     if "gpu_control" in values and "gpu_resume" in values:
         check(
