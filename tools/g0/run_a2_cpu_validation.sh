@@ -14,6 +14,10 @@ TESTS=(
   cosmos_framework/model/generator/mot/grouped_active_runtime_test.py
   cosmos_framework/model/generator/mot/grouped_active_model_test.py
   cosmos_framework/model/generator/mot/local_memory_online_test.py
+  cosmos_framework/inference/local_memory_online_test.py
+  cosmos_framework/inference/local_memory_policy_test.py
+  cosmos_framework/simulation/libero/local_memory_client_test.py
+  cosmos_framework/simulation/libero/closed_loop_local_memory_test.py
   cosmos_framework/model/generator/mot/local_evidence_test.py
   cosmos_framework/model/generator/mot/ttt_lifecycle_test.py
   cosmos_framework/model/generator/mot/active_local_memory_driver_test.py
