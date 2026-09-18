@@ -15,7 +15,7 @@ if [[ "$MODE" = fresh && -e "$OUT" ]]; then
   echo "Fresh output already exists; refusing to overwrite: $OUT" >&2; exit 2
 fi
 [[ -x "$CHILD/.venv/bin/python" ]] || { echo 'Missing existing .venv' >&2; exit 2; }
-exec 9>/disk/rl/psm_wma_worktrees/chatgpt_a2_gpu.lock
+exec 9>/tmp/psm_wma_chatgpt_a2_gpu.lock
 flock -n 9 || { echo 'GPU already held by another A2 run' >&2; exit 2; }
 USED="$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | head -1 | tr -d ' ')"
 if (( USED >= 512 )); then
