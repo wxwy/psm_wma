@@ -1,3 +1,15 @@
+# A2 构建状态更新（ChatGPT，2026-09-18）
+
+代码候选 child=`de84a5675d029ef96d1b2d1fcb2ef3281242ca6e`，隔离分支 `chatgpt/a2-delivery-20260918`。
+CPU release：217 passed；校验器负例：4 passed。源码绑定receipt/JUnit位于 artifacts/g0/chatgpt_a2_delivery/。
+实现：A2 + 可配置B_stream、精确D025、native加权loss修正、原子多row状态、恢复几何、在线事务API。
+真实GPU首试在首个optimizer update后因指标容器适配失败；已修复并通过CPU，修复后GPU尚未执行。
+当前阻塞：另一Remote Desktop会话在原目录运行20-step，占用唯一GPU；不终止未知作业，不并发抢卡。
+验收状态 BLOCKED。准备好 tools/g0/run_a2_delivery_validation.sh；GPU处置确认/释放后继续真实控制/恢复/native/20-step验收。
+独立review与作者自测分离；未启动5000-step、未推送远端、未覆盖原工作树。
+
+---
+
 # ChatGPT 构建接手（2026-09-18）
 
 用户将构建任务交给 ChatGPT；原 ds_pro 构建者已确认只读，不再写入/启动训练。当前代码 root=e05ed2c5、child=ac28e5d；uv.lock 原有修改保留。

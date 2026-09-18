@@ -15,9 +15,14 @@ if [[ "$MODE" = fresh && -e "$OUT" ]]; then
   echo "Fresh output already exists; refusing to overwrite: $OUT" >&2; exit 2
 fi
 [[ -x "$CHILD/.venv/bin/python" ]] || { echo 'Missing existing .venv' >&2; exit 2; }
-mkdir -p "$OUT"
 exec 9>/disk/rl/psm_wma_worktrees/chatgpt_a2_gpu.lock
 flock -n 9 || { echo 'GPU already held by another A2 run' >&2; exit 2; }
+USED="$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits | head -1 | tr -d ' ')"
+if (( USED >= 512 )); then
+  echo "BLOCKED_RESOURCE: GPU has $USED MiB allocated; refusing to compete with another run." >&2
+  exit 75
+fi
+mkdir -p "$OUT"
 cd "$CHILD"
 export PATH="$CHILD/.venv/bin:$PATH" PYTHONPATH="$CHILD"
 export CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0}"
@@ -31,6 +36,7 @@ export BASE_CHECKPOINT_PATH="${BASE_CHECKPOINT_PATH:-$CHILD/examples/checkpoints
 export WAN_VAE_PATH="${WAN_VAE_PATH:-$CHILD/examples/checkpoints/wan22_vae/Wan2.2_VAE.pth}"
 export LIBERO_LATENT_CACHE_VERIFY_RATIO=0 LIBERO_NUM_WORKERS=0 LIBERO_PREFETCH_FACTOR=1
 export LIBERO_MAX_EPISODES="${LIBERO_MAX_EPISODES:-10}"
+export PSM_R09_B_TTT_TBPTT_STEPS=16
 export PSM_R08_LOCAL_HISTORY_ENABLED=1 PSM_R09_B_TTT_ENABLED=1 PSM_R09_B_TTT_ACTIVE=1
 export PSM_R09_B_TTT_MEMBER_LAYOUT=a2 PSM_R09_B_TTT_B_STREAM="${PSM_R09_B_TTT_B_STREAM:-8}"
 export PSM_R09_B_TTT_ACTIVE_GA="${PSM_R09_B_TTT_ACTIVE_GA:-16}"
