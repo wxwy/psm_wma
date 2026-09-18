@@ -60,15 +60,18 @@
       "check": "production_queue_seed",
       "ok": true,
       "detail": {
-        "queue_seed": 11350389524172359973
+        "queue_seed": 11350389524172359973,
+        "catalog_derived": 11350389524172359973
       }
     },
     {
       "check": "formal_identity",
       "ok": true,
       "detail": {
-        "root": "70dc06c48d0d9f6da37f70edbaabb96d9ce032bd",
-        "submodule": "fca7eb589f455509e05e7c39659000343a36bad4"
+        "root": "30afb750846903edf582aec3a9d27ae1dc504a14",
+        "submodule": "fca7eb589f455509e05e7c39659000343a36bad4",
+        "expected_root": null,
+        "expected_child": null
       }
     }
   ]

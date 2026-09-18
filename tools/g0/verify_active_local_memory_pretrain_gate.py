@@ -21,6 +21,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 from pathlib import Path
@@ -45,6 +46,8 @@ def _git(*args: str) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-json", type=Path, default=None)
+    parser.add_argument("--expected-root", default=None, help="fail if current root HEAD differs")
+    parser.add_argument("--expected-child", default=None, help="fail if current submodule HEAD differs")
     args = parser.parse_args()
 
     checks: list[dict] = []
@@ -64,17 +67,21 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001
         check("gate1_slot_rotation", False, {"error": repr(exc)})
 
-    # 2. Gate 3 planning capacity: > 5040 windows, full block coverage.
+    # 2. Gate 3 planning capacity: > 5040 windows **and** full block coverage.
     try:
         g3 = _load(PROBE_DIR / "probe_epoch_reuse_planning.json")
+        full_coverage = bool((g3.get("criterion5_block_coverage") or {}).get("full_coverage"))
         check(
             "gate3_planning_capacity",
-            g3.get("result") == "PASS" and bool(g3.get("capacity_target_met")) and int(g3.get("windows_total", 0)) >= 5040,
+            g3.get("result") == "PASS"
+            and bool(g3.get("capacity_target_met"))
+            and int(g3.get("windows_total", 0)) >= 5040
+            and full_coverage,
             {
                 "result": g3.get("result"),
                 "windows_total": g3.get("windows_total"),
                 "capacity_target_met": g3.get("capacity_target_met"),
-                "full_coverage": (g3.get("criterion5_block_coverage") or {}).get("full_coverage"),
+                "full_coverage": full_coverage,
             },
         )
     except Exception as exc:  # noqa: BLE001
@@ -112,19 +119,34 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001
         check("gpu_resume_cross_boundary", False, {"error": repr(exc)})
 
-    # 5. production queue_seed is catalog-derived (not the probe's fixed 0).
+    # 5. production queue_seed equals the catalog-derived value of the recorded digests.
     try:
-        seed = int(g3p["queue_seed"])
-        check("production_queue_seed", seed != 0, {"queue_seed": seed})
+        preimage = f"{g3p['manifest_digest']}|{g3p['config_digest']}|{g3p['source_digest']}"
+        derived = int(hashlib.sha256(preimage.encode("utf-8")).hexdigest()[:16], 16)
+        check(
+            "production_queue_seed",
+            int(g3p["queue_seed"]) == derived,
+            {"queue_seed": g3p["queue_seed"], "catalog_derived": derived},
+        )
     except Exception as exc:  # noqa: BLE001
         check("production_queue_seed", False, {"error": repr(exc)})
 
-    # 6. formal identity.
+    # 6. formal identity: the checkout must match the pair the evidence was produced for.
     try:
+        root, child = _git("rev-parse", "HEAD"), _git("-C", "cosmos-framework", "rev-parse", "HEAD")
+
+        def matches(current: str, expected: str | None) -> bool:
+            return expected is None or current == expected or current.startswith(expected) or expected.startswith(current)
+
         check(
             "formal_identity",
-            True,
-            {"root": _git("rev-parse", "HEAD"), "submodule": _git("-C", "cosmos-framework", "rev-parse", "HEAD")},
+            matches(root, args.expected_root) and matches(child, args.expected_child),
+            {
+                "root": root,
+                "submodule": child,
+                "expected_root": args.expected_root,
+                "expected_child": args.expected_child,
+            },
         )
     except Exception as exc:  # noqa: BLE001
         check("formal_identity", False, {"error": repr(exc)})
