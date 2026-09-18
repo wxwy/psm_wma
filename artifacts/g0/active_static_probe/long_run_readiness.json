@@ -2,8 +2,8 @@
   "result": "PASS",
   "verdict": "READY_FOR_LONG_RUN",
   "formal_pair": {
-    "root": "4c0841a46f750b22f501e9c4f8a774fe88c422cf",
-    "child": "228aca525437a9b0a3cc8f42ed712a19e8a3009b"
+    "root": "3642ffd141f3e49bd4d5c7b8ad3798d1b656674f",
+    "child": "60dd814ac13656f8afa369ff20b0822bfe500728"
   },
   "gates": {
     "slot_rotation": "DONE",
@@ -35,14 +35,21 @@
     "ok": true
   },
   "estimate": {
-    "min_per_window": 3.75,
+    "min_per_window": 4.2,
     "planned_steps": 5000,
-    "wall_days": 13.0,
+    "wall_days": 14.6,
     "note": "1 optimizer step = 1 window = 128 members (prefetch 3.2x applied)"
   },
   "regime": {
     "single_suite_window_ratio": 0.5288,
     "accepted_by_user": true
   },
-  "blockers": []
+  "blockers": [],
+  "training_scope": {
+    "baseline_heads": true,
+    "local_memory_branch": true,
+    "selected_tensors": 314,
+    "trainable_params": 1415072832,
+    "note": "baseline gen+action heads + local-mem combined (user decision 2026-09-18)"
+  }
 }
