@@ -8,10 +8,14 @@
 
 工作区：`/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918`。后续 root-only review/verifier bookkeeping 已到 `dd6c30dce13a55747f871c54b877594919409a2b`，不改变 implementation pair。
 
-**当前工程验收状态：PASS；独立技术复核：PASS；5000-step 长训授权：FALSE。**
-本 PASS 只表示当前 A2 训练/恢复/证据链工程闭合，不代表 LIBERO SR 提升、真实机器人结论或长训结果。
+**当前工程验收状态：PASS；long-run readiness：PASS / READY_FOR_LONG_RUN；5000-step 长训授权：TRUE；实际长训：尚未启动。**
+本 PASS 表示当前 A2 训练/恢复/数据生命周期/证据链已经满足启动长训的工程条件，不代表 LIBERO SR 提升、真实机器人结论或长训结果。
 
-最终证据：CPU 244 passed / 0 failed；B=1 matched control 2-step PASS；A2 3-step GPU control PASS；exact resume PASS；native grouped-vs-scalar loss/gradient parity PASS；RGB→visual96 parity PASS；online action-path PASS；full-catalog 20-step budget PASS；final verifier `artifacts/g0/sync_a2_final_verification_2a9df880_v3.json` 为 10/10 PASS。A2 默认每 update 16 native forwards / 2048 consumers，20-step 平均约 176.06 s/step，CUDA peak allocated 约 45.05 GiB。
+最终工程证据：CPU 244 passed / 0 failed；B=1 matched control 2-step PASS；A2 3-step GPU control PASS；exact resume PASS；native grouped-vs-scalar loss/gradient parity PASS；RGB→visual96 parity PASS；online action-path PASS；full-catalog 20-step budget PASS；delivery verifier `artifacts/g0/sync_a2_final_verification_2a9df880_v3.json` 为 10/10 PASS。
+
+D028 长训 readiness 追加证据：production `GroupedActiveLocalMemoryWindowDriver + GroupedSegmentRuntimeOwner` 在真实 full LIBERO4IN1 catalog 上 metadata-only 连续规划 5000 optimizer windows，`5000/5000` PASS；共 80,000 native groups、640,000 logical segments、10,240,000 consumers；每个 stable slot 恰好消费 80,000 segments；4 个 suite consumer exposure 均为 2,560,000；chronology/group-shape/queue-replay error 均为 0。最终 slot epoch 为 `{0:27,1:63,2:45,3:60,4:28,5:60,6:46,7:60}`。readiness verifier `artifacts/g0/a2_long_run_readiness_2a9df880/a2_long_run_readiness_v1.json` = `PASS / READY_FOR_LONG_RUN`，`long_run_authorization=true`。
+
+A2 full-catalog 20-step 实测平均 `176.059 s/step`、CUDA peak allocated `45.045 GiB`；5000-step 基础墙钟外推约 `10.19 days`，不含 eval/checkpoint 等额外开销。旧 B=1/scalar `14.6 days` 估计不再用于 A2；`1.369×` speedup 仅属于 10-episode/suite matched control，不外推到 full catalog。
 
 ## 已实现的链路
 
