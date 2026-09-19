@@ -295,8 +295,8 @@
 
 ## EVAL-LIBERO-PARALLEL-SERVERS
 
-- 状态：IN_PROGRESS
+- 状态：REVIEW
 - 负责人：ChatGPT
-- 目标：保持正式评测语义不变，将 4 suite 改为独立 server 并行；每 server 内继续 predict_batch；vectorized 路径按 wave 增量落盘 actions/predictions/partial summary。
+- 目标：保持正式评测语义不变，将 4 suite 改为独立 server 并行；每 server 内继续 predict_batch；vectorized 路径按 wave 增量落盘 actions/predictions/partial summary.
 - 不改：num_steps=30、action_horizon、Local-Memory prepare→generate→commit 原子事务、service._lock 语义。
 - 验收：server port 可参数化；4-suite acceptance 可并行启动 4 server/client；支持可配置 GPU/错峰；vectorized wave 产物可中途恢复/审计；静态语法/定向测试待执行环境验证。
