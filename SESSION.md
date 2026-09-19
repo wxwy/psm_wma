@@ -1049,3 +1049,8 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - 路线：4 suite × 4 独立 server 横向并行；每 server 内保留 /predict_batch；支持启动错峰；不移除 service._lock。
 - 预计修改子模块：examples/launch_action_server_libero_edge_all.sh、examples/eval_libero_4in1_acceptance_v2.sh、cosmos_framework/simulation/libero/closed_loop_eval.py，并新增/补充定向测试。
 - 评测语义冻结：NUM_STEPS=30、ACTION_HORIZON 保持现值；num_envs 先保留可配置，默认采用当前 4；不启动 GPU 评测，除非有可用执行设备与完整启动告知。
+
+- 实现完成：child=`a2ac4a161831a9cba78555f03e6a87b8ed6bbd3d`；root implementation=`03b74e2f4048781cd19a912afd5bb51e6e9fc87c`。
+- 实际变更：`closed_loop_eval.py` 增量保存 wave actions/predictions/partial_summary；`launch_action_server_libero_edge_all.sh` 参数化 SERVER_PORT/SERVER_OUTPUT_DIR；`eval_libero_4in1_acceptance_v2.sh` 改 4 server + 4 suite client 并行、GPU/端口/错峰/NUM_ENVS 可配置。
+- 静态仓库核对：V2 Gitlink 精确指向 child；child 仅改上述 3 文件；GitHub Actions 对该 child 无 workflow run。
+- 未执行验证：远程 Desktop Commander 设备当前 offline，因此未运行 bash -n/pytest/GPU 仿真；不得把本次提交当作 runtime PASS。
