@@ -291,3 +291,12 @@
 |---|---|---|---|---|
 | PROJECT-PRESENTATION-LAYER | DONE | ChatGPT | A2 工程交付与 long-run readiness 已闭合 | commit `e67796b1`：根 README / PROJECT_STATUS / docs current+index / canonical artifact manifest / train-resume-eval-verify facade 已完成；shell syntax、README/docs links、JSON、verify facade、fresh/resume dry-run 均 PASS。Git 只纳入小型 canonical evidence，34GB×3 raw GPU 目录显式 ignore；未改 child。 |
 | LOCAL-A2-DELIVERY | DONE | ChatGPT | 用户明确交接；D026/D027/D028 生效 | 工程交付与长训 readiness 均闭合：stable-slot 8×16 grouped training、CPU/CUDA/native parity、真实 GPU、exact resume、20-step full-catalog、online action-path、5000-window production-class capacity+multi-rollover reuse、source-bound verifier 全 PASS。`long_run_authorization=true`，但 5000-step 训练尚未启动；不代表 LIBERO SR 结论。 |
+
+
+## EVAL-LIBERO-PARALLEL-SERVERS
+
+- 状态：IN_PROGRESS
+- 负责人：ChatGPT
+- 目标：保持正式评测语义不变，将 4 suite 改为独立 server 并行；每 server 内继续 predict_batch；vectorized 路径按 wave 增量落盘 actions/predictions/partial summary。
+- 不改：num_steps=30、action_horizon、Local-Memory prepare→generate→commit 原子事务、service._lock 语义。
+- 验收：server port 可参数化；4-suite acceptance 可并行启动 4 server/client；支持可配置 GPU/错峰；vectorized wave 产物可中途恢复/审计；静态语法/定向测试待执行环境验证。
