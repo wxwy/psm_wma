@@ -1,0 +1,3 @@
+PWD: /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework
+job_local_path: /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/sync_b1_control_2a9df880/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active
+s3: s3:///cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/

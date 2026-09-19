@@ -1,0 +1,218 @@
+...........................F............................................ [ 29%]
+........................................................................ [ 59%]
+........................................................................ [ 88%]
+............................                                             [100%]
+=================================== FAILURES ===================================
+____ test_a2_and_scalar_window_objective_have_identical_consumer_mean_scale ____
+
+    def test_a2_and_scalar_window_objective_have_identical_consumer_mean_scale():
+        from .grouped_active_contract import GroupedGAWindowPlan, GroupedPlanMember
+        from .local_memory_segment import GAWindowPlan, SegmentIdentity
+    
+        # One window has the same 2048 consumers in both layouts.  Let each scalar
+        # 16-consumer segment have an arbitrary native mean.  Each A2 128-consumer
+        # group is the equal-size mean of eight consecutive scalar segments.
+        scalar_means = [torch.tensor(1.0 + index / 100.0) for index in range(128)]
+        scalar_plan = GAWindowPlan(
+            members=tuple((index % 8, f"e{index % 8}", index // 8) for index in range(128)),
+            planned_n_valid=(16,) * 128,
+        )
+        scalar_total = sum(
+            scalar_plan.objective(index, mean, torch.tensor(0.0), 16)
+            for index, mean in enumerate(scalar_means)
+        )
+    
+        identities = tuple(
+            SegmentIdentity(index % 8, f"e{index % 8}", "suite", index // 8, index, "source")
+            for index in range(128)
+        )
+        groups = tuple(
+            GroupedPlanMember(
+                identities[start : start + 8], (16,) * 8, 16, "manifest", "config", "source"
+            )
+            for start in range(0, 128, 8)
+        )
+        grouped_plan = GroupedGAWindowPlan(
+            members=groups, planned_n_valid=(128,) * 16, plan_chain_id="scale-parity"
+        )
+        grouped_means = [torch.stack(scalar_means[start : start + 8]).mean() for start in range(0, 128, 8)]
+        grouped_total = sum(
+            grouped_plan.objective(index, mean, torch.tensor(0.0), 128)
+            for index, mean in enumerate(grouped_means)
+        )
+>       torch.testing.assert_close(grouped_total, scalar_total, rtol=0, atol=1e-7)
+E       AssertionError: Scalars are not close!
+E       
+E       Expected 1.6349999904632568 but got 1.635000228881836.
+E       Absolute difference: 2.384185791015625e-07 (up to 1e-07 allowed)
+E       Relative difference: 1.458217617689463e-07 (up to 0 allowed)
+
+cosmos_framework/model/generator/mot/grouped_active_runtime_test.py:418: AssertionError
+---------------------------- Captured stdout setup -----------------------------
+[09-18 19:56:23|job=|INFO|cosmos_framework/inference/common/init.py:127:_init_log_files] Console log saved to /tmp/pytest-of-root/pytest-193/test_a2_and_scalar_window_obje0/console.log
+[09-18 19:56:23|job=|INFO|cosmos_framework/inference/common/init.py:128:_init_log_files] Debug log saved to /tmp/pytest-of-root/pytest-193/test_a2_and_scalar_window_obje0/debug.log
+=============================== warnings summary ===============================
+cosmos_framework/model/generator/mot/local_evidence_test.py:34
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:48
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:48: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:65
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:65: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:77
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:77: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:95
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:95: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:111
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:111: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:145
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:145: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:169
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:169: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:195
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:195: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:214
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:214: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:251
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:251: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:281
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:281: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:295
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:295: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:309
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:309: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:331
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:331: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:347
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:347: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:373
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:373: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:399
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:399: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:413
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:413: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:429
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:429: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:441
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:441: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:460
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:460: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:478
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:478: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:552
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:552: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:569
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:569: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:595
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:595: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:608
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:608: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:626
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:626: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:636
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:636: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:648
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:648: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:680
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:680: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:719
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:719: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:744
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:744: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:776
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:776: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:808
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:808: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:853
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:853: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:903
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:903: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:927
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:927: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:945
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:945: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+cosmos_framework/model/generator/mot/local_evidence_test.py:964
+  /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_evidence_test.py:964: PytestUnknownMarkWarning: Unknown pytest.mark.L0 - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.L0
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED cosmos_framework/model/generator/mot/grouped_active_runtime_test.py::test_a2_and_scalar_window_objective_have_identical_consumer_mean_scale
+1 failed, 243 passed, 40 warnings in 292.20s (0:04:52)

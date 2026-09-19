@@ -1,0 +1,410 @@
+2026-09-18 20:18:43.245 | DEBUG    | cosmos_framework.utils.config:_load_py_config:578 - get_config_module: took 16.96ms
+2026-09-18 20:19:11.541 | DEBUG    | cosmos_framework.utils.config:_load_py_config:583 - importlib.import_module: took 28295.68ms
+2026-09-18 20:19:12.284 | DEBUG    | cosmos_framework.utils.config:_load_py_config:588 - override: took 743.11ms
+2026-09-18 20:19:12.285 | DEBUG    | cosmos_framework.utils.config:load_config:567 - total time to load config: 29328.83ms
+[09-18 20:19:12|INFO|cosmos_framework/utils/training_telemetry/telemetry.py:63:wrapper] Heimdall telemetry is disabled, if using Heimdall,consider setting ENABLE_TELEMETRY=true to enable it
+[09-18 20:19:12|CRITICAL|cosmos_framework/utils/distributed.py:69:init] [RANK 0] Initialized distributed training with local rank 0 using nccl with timeout 1800
+[09-18 20:19:12|INFO|cosmos_framework/utils/distributed.py:81:init] Training with 1 GPUs.
+[09-18 20:19:12|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 0.65 s
+[09-18 20:19:12|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_distributed: 0.01 s
+Config is saved using pickle at /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/a2_acceptance_fb386c7a/control/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/config.pkl.
+Config is saved using omegaconf at /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/a2_acceptance_fb386c7a/control/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/config.yaml.
+/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[rank0]:[W918 20:19:13.395047968 ProcessGroupNCCL.cpp:5138] Guessing device ID based on global rank. This can cause a hang if rank to GPU mapping is heterogeneous. You can specify device_id in init_process_group()
+[09-18 20:19:13|WARNING|cosmos_framework/utils/misc.py:126:print_environ_variables] Environment variable HF_HOME not set!
+[09-18 20:19:13|INFO|cosmos_framework/utils/misc.py:124:print_environ_variables] Environment variable IMAGINAIRE_OUTPUT_ROOT: /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/a2_acceptance_fb386c7a/control
+[09-18 20:19:13|INFO|cosmos_framework/utils/misc.py:138:set_random_seed] Using random seed 42.
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback skip_nan_step: {'max_consecutive_nan': 100, '_target_': <class 'cosmos_framework.callbacks.skip_nan_step.SkipNaNStep'>}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback grad_clip: {'clip_norm': 1.0, 'force_finite': True, 'track_per_modality': True, '_target_': <class 'cosmos_framework.callbacks.grad_clip.GradClip'>}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback low_precision: {'update_iter': 1, 'config': None, 'trainer': None, '_target_': <class 'cosmos_framework.utils.callback.LowPrecisionCallback'>}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback heart_beat: {'step_size': 1, 'update_interval_in_minute': 20, 'save_s3': False, 'every_n': 200, '_target_': <class 'cosmos_framework.callbacks.heart_beat.HeartBeat'>}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback device_monitor: {'every_n': 200, 'step_size': 1, 'save_s3': False, 'upload_every_n_mul': 5, 'log_memory_detail': True, '_target_': <class 'cosmos_framework.callbacks.device_monitor.DeviceMonitor'>}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback termination_signal_checkpoint: {'min_save_fraction': 0.3333333333333333, '_target_': <class 'cosmos_framework.callbacks.termination_signal_checkpoint.TerminationSignalCheckpoint'>}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback dataloader_speed is missing the '_target_' field. 
+ SKip {'every_n': 100, 'save_s3': False, 'step_size': 1}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback iter_speed is missing the '_target_' field. 
+ SKip {'every_n': 1, 'hit_thres': 50, 'save_s3': False, 'save_s3_every_log_n': 500}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback manual_gc is missing the '_target_' field. 
+ SKip {'every_n': 5, 'gc_level': 1, 'warm_up': 1}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback param_count is missing the '_target_' field. 
+ SKip {'save_s3': False}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:66:__init__] Callback training_stats is missing the '_target_' field. 
+ SKip {'log_freq': 100}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback r09_b_active_wiring: {'b_stream': 8, 'ttt_tbptt_steps': 16, 'plan_chain_id': 'active-local-window', 'member_layout': 'a2', 'group_size': 8, 'suite_datasets': {'libero_spatial': {'fps': 20, 'chunk_length': 16, 'image_size': 256, 'mode': 'wam', 'camera_mode': 'concat_view', 'action_space': 'frame_wise_relative', 'rotation_space': '6d', 'pose_coordinate_frame': 'native', 'action_normalization': 'quantile_rot', 'action_stats_path': None, 'split': 'train', 'val_ratio': 0.01, 'seed': 0, 'resolution': None, 'max_action_dim': 64, 'tokenizer_config': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7f1d1d987240>, 'tokenizer_type': '/disk/rl/models/Cosmos3-Edge-Policy-DROID'}, 'cfg_dropout_rate': 0.1, 'append_viewpoint_info': True, 'append_duration_fps_timestamps': True, 'append_resolution_info': True, 'append_idle_frames': True, 'format_prompt_as_json': True, 'iterable_shuffle': False, 'episode_shuffle_seed': 42, 'latent_cache_root': '/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_spatial', 'latent_cache_verify_ratio': 0.0, 'max_episodes': 10, 'local_dummy_enabled': False, 'local_dummy_tokens': 1, 'local_dummy_dim': 32, 'local_dummy_mode': 'normal', 'local_history_horizon': 0, 'stream_manifest_path': None, 'stream_manifest_suite': None, 'root': '/disk/rl/data/LIBERO_LeRobot_v3/libero_spatial', '_target_': <function get_action_libero_sft_dataset at 0x7f1d1b1db920>}, 'libero_object': {'fps': 20, 'chunk_length': 16, 'image_size': 256, 'mode': 'wam', 'camera_mode': 'concat_view', 'action_space': 'frame_wise_relative', 'rotation_space': '6d', 'pose_coordinate_frame': 'native', 'action_normalization': 'quantile_rot', 'action_stats_path': None, 'split': 'train', 'val_ratio': 0.01, 'seed': 0, 'resolution': None, 'max_action_dim': 64, 'tokenizer_config': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7f1d1d987240>, 'tokenizer_type': '/disk/rl/models/Cosmos3-Edge-Policy-DROID'}, 'cfg_dropout_rate': 0.1, 'append_viewpoint_info': True, 'append_duration_fps_timestamps': True, 'append_resolution_info': True, 'append_idle_frames': True, 'format_prompt_as_json': True, 'iterable_shuffle': False, 'episode_shuffle_seed': 42, 'latent_cache_root': '/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_object', 'latent_cache_verify_ratio': 0.0, 'max_episodes': 10, 'local_dummy_enabled': False, 'local_dummy_tokens': 1, 'local_dummy_dim': 32, 'local_dummy_mode': 'normal', 'local_history_horizon': 0, 'stream_manifest_path': None, 'stream_manifest_suite': None, 'root': '/disk/rl/data/LIBERO_LeRobot_v3/libero_object', '_target_': <function get_action_libero_sft_dataset at 0x7f1d1b1db920>}, 'libero_goal': {'fps': 20, 'chunk_length': 16, 'image_size': 256, 'mode': 'wam', 'camera_mode': 'concat_view', 'action_space': 'frame_wise_relative', 'rotation_space': '6d', 'pose_coordinate_frame': 'native', 'action_normalization': 'quantile_rot', 'action_stats_path': None, 'split': 'train', 'val_ratio': 0.01, 'seed': 0, 'resolution': None, 'max_action_dim': 64, 'tokenizer_config': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7f1d1d987240>, 'tokenizer_type': '/disk/rl/models/Cosmos3-Edge-Policy-DROID'}, 'cfg_dropout_rate': 0.1, 'append_viewpoint_info': True, 'append_duration_fps_timestamps': True, 'append_resolution_info': True, 'append_idle_frames': True, 'format_prompt_as_json': True, 'iterable_shuffle': False, 'episode_shuffle_seed': 42, 'latent_cache_root': '/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_goal', 'latent_cache_verify_ratio': 0.0, 'max_episodes': 10, 'local_dummy_enabled': False, 'local_dummy_tokens': 1, 'local_dummy_dim': 32, 'local_dummy_mode': 'normal', 'local_history_horizon': 0, 'stream_manifest_path': None, 'stream_manifest_suite': None, 'root': '/disk/rl/data/LIBERO_LeRobot_v3/libero_goal', '_target_': <function get_action_libero_sft_dataset at 0x7f1d1b1db920>}, 'libero_10': {'fps': 20, 'chunk_length': 16, 'image_size': 256, 'mode': 'wam', 'camera_mode': 'concat_view', 'action_space': 'frame_wise_relative', 'rotation_space': '6d', 'pose_coordinate_frame': 'native', 'action_normalization': 'quantile_rot', 'action_stats_path': None, 'split': 'train', 'val_ratio': 0.01, 'seed': 0, 'resolution': None, 'max_action_dim': 64, 'tokenizer_config': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7f1d1d987240>, 'tokenizer_type': '/disk/rl/models/Cosmos3-Edge-Policy-DROID'}, 'cfg_dropout_rate': 0.1, 'append_viewpoint_info': True, 'append_duration_fps_timestamps': True, 'append_resolution_info': True, 'append_idle_frames': True, 'format_prompt_as_json': True, 'iterable_shuffle': False, 'episode_shuffle_seed': 42, 'latent_cache_root': '/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_10', 'latent_cache_verify_ratio': 0.0, 'max_episodes': 10, 'local_dummy_enabled': False, 'local_dummy_tokens': 1, 'local_dummy_dim': 32, 'local_dummy_mode': 'normal', 'local_history_horizon': 0, 'stream_manifest_path': None, 'stream_manifest_suite': None, 'root': '/disk/rl/data/LIBERO_LeRobot_v3/libero_10', '_target_': <function get_action_libero_sft_dataset at 0x7f1d1b1db920>}}, 'manifest_digest': 'libero4in1-4suite-manifest', 'config_digest': 'v035-frozen-local-ttt', 'source_digest': '/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1', '_target_': <class 'cosmos_framework.model.generator.mot.active_local_memory_launch.ActiveLocalMemoryLaunchCallback'>}
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/callback.py:70:__init__] Instantiating callback stdout_loss_logger: {'every_n': 1, 'sub_loss_keys': ['flow_matching_loss_vision', 'flow_matching_loss_action'], '_target_': <class 'cosmos_framework.callbacks.stdout_loss_logger.StdoutLossLogger'>}
+[09-18 20:19:13|WARNING|cosmos_framework/utils/launch.py:86:log_reproducible_setup] S3 credentials not found. Skipping easy_io S3 setup.
+[09-18 20:19:13|WARNING|cosmos_framework/utils/launch.py:88:log_reproducible_setup] Job path: cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active
+[09-18 20:19:13|CRITICAL|cosmos_framework/utils/launch.py:93:log_reproducible_setup] Job local path: /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/a2_acceptance_fb386c7a/control/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active
+[09-18 20:19:13|INFO|cosmos_framework/model/generator/omni_mot_model.py:224:__init__] OmniMoTModel: config {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/checkpoints/wan22_vae/Wan2.2_VAE.pth', 'chunk_duration': 93, 'keep_decoder_cache': False, 'use_streaming_encode': False, 'encode_chunk_frames': {'256': 68, '480': 24, '720': 8, '768': 8}, 'encode_exact_durations': [17, 61, 73], 'spatial_compression_factor': 16, 'temporal_compression_factor': 4, 'temporal_window': None, 'encode_bucket_multiple': None, 'causal': True, '_target_': <class 'cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16.Wan2pt2VAEInterface'>}, 'load_vision_tokenizer': True, 'net': None, 'ema': {'enabled': False, 'rate': 0.1, 'iteration_shift': 0}, 'parallelism': {'data_parallel_shard_degree': -1, 'data_parallel_replicate_degree': 1, 'context_parallel_shard_degree': 1, 'cfg_parallel_shard_degree': 1, 'enable_inference_mode': False, 'fsdp_master_dtype': 'float32', 'fsdp_reduce_dtype': None}, 'attention_io_layout': 'sequence_sharded', 'compile': {'enabled': False, 'compiled_region': 'language', 'compile_dynamic': True, 'use_cuda_graphs': False, 'ar_post_saturation_mode': 'default', 'max_autotune_pointwise': False, 'coordinate_descent_tuning': False}, 'quantization': {'method': None, 'fp8_granularity': 'per_row', 'include_regex': [], 'exclude_regex': [], 'modelopt_fp8_checkpoint_path': None, 'modelopt_fp8_target_fqns': []}, 'activation_checkpointing': {'mode': 'selective', 'save_ops_regex': ['fmha'], 'preserve_rng_state': True, 'determinism_check': 'default'}, 'precision': 'bfloat16', 'lora_enabled': False, 'lora_rank': 16, 'lora_alpha': 32, 'lora_target_modules': 'q_proj_moe_gen,k_proj_moe_gen,v_proj_moe_gen,o_proj_moe_gen', 'rectified_flow_training_config': {'shift': {'256': 3, '480': 5, '720': 10}, 'shift_image': None, 'use_dynamic_shift': False, 'train_time_image_distribution': 'logitnormal', 'train_time_video_distribution': 'waver', 'train_time_action_distribution': 'logitnormal', 'train_time_sound_distribution': 'logitnormal', 'train_time_weight': 'uniform', 'loss_scale': 10.0, 'image_loss_scale': None, 'sound_loss_scale': 2.0, 'use_discrete_rf': False, 'action_loss_weight': 10.0, 'independent_action_schedule': False, 'shift_action': None, 'independent_sound_schedule': False, 'shift_sound': None, 'normalize_loss_by_active': False, 'sample_level_loss_averaging': False}, 'rectified_flow_inference_config': {'scheduler_type': 'unipc', 'num_train_timesteps': 1000, 'shift': 1, 'use_dynamic_shifting': False}, 'fixed_step_sampler_config': None, 'vlm_config': {'model_name': 'nvidia/Cosmos3-Edge-Reasoner', 'safetensors_path': '', 'pretrained_weights': {'enabled': False, 'backbone_path': 's3://bucket/cosmos3/pretrained/huggingface/nvidia/Cosmos3-Edge-Reasoner-590c1c0/', 'credentials_path': '', 'enable_gcs_patch_in_boto3': True, 'checkpoint_format': None}, 'model_instance': {'config': {'base_config': {'json_file': 'cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/configs/Nemotron-2B-Dense-VL.json', '_target_': <bound method _MoTConfigBase.from_json_file of <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLMoTConfig'>>}, 'freeze_und': False, 'layer_module': 'MoTDecoderLayer', 'qk_norm_for_text': False, 'use_und_k_norm_for_gen': True, 'include_visual': None, 'tie_word_embeddings': True, '_target_': <function create_vlm_config at 0x7f1d82cfbf60>}, '_target_': <class 'cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLTextForCausalLM'>}, 'tokenizer': {'repository': None, 'revision': None, 'subdir': '', '_target_': <function build_processor_lazy at 0x7f1d1d987240>, 'tokenizer_type': '/disk/rl/models/Cosmos3-Edge-Policy-DROID'}, 'layer_module': None, 'qk_norm': False, 'tie_word_embeddings': False, 'use_system_prompt': False}, 'diffusion_expert_config': {'timestep_range': 1.0, 'load_weights_from_pretrained': False, 'enable_vision_modality_embeddings': False, 'enable_media_modality_embedding': False, 'patch_spatial': 2, 'max_vae_latent_side_after_patchify': 20, 'enable_fps_modulation': True, 'base_fps': 24, 'sound_base_temporal_compression_factor': None, 'vision_temporal_position_mode': 'latent_index', 'unified_3d_mrope_reset_spatial_ids': True, 'unified_3d_mrope_temporal_modality_margin': 15000}, 'input_video_key': 'video', 'input_image_key': 'images', 'input_caption_key': 'ai_caption', 'state_ch': 48, 'state_t': 300, 'latent_downsample_factor': 16, 'resolution': '480', 'max_num_tokens_after_packing': 74000, 'joint_attn_implementation': 'two_way', 'flex_attention': {'enabled': False, 'backend': 'auto', 'mask': {'noisy_attention_scope': 'all_views'}}, 'natten_parameter_list': None, 'video_temporal_causal': False, 'causal_training_strategy': 'none', 'lbl': {'method': 'local', 'coeff_und': None, 'coeff_gen': None}, 'vision_gen': True, 'action_gen': True, 'max_action_dim': 64, 'num_embodiment_domains': 32, 'sound_gen': False, 'sound_tokenizer': None, 'sound_dim': None, 'sound_latent_fps': 25, 'local_memory_enabled': True, 'local_memory_dim': 32, 'local_history_enabled': True, 'local_history_backend': 'ttt_fast_weight', 'local_history_horizon': 0, 'local_history_evidence_dim': 256, 'local_history_state_enabled': False, 'local_ttt_enabled': True, 'ttt_tbptt_steps': 16, 'ttt_inner_lr': 0.1, 'k_local': 1, 'local_evidence_feature_version': 'causal_visual96_executed_action10_v1', 'local_fast_state_dtype': 'fp32', 'local_runtime_resume_mode': 'slow_only_no_mid_episode_resume', 'enable_input_bias': True, 'log_enc_time_every_n': 100, 'exclude_reasoner_weights_from_checkpoint': False}
+[09-18 20:19:13|WARNING|cosmos_framework/model/generator/omni_mot_model.py:258:set_precision] OmniMoTModel: precision torch.bfloat16
+This processor does not use the `size` parameter. It will be ignored.
+[09-18 20:19:14|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[09-18 20:19:15|INFO|cosmos_framework/model/generator/tokenizers/wan2pt2_vae_4x16x16.py:1050:_video_vae] loading /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/checkpoints/wan22_vae/Wan2.2_VAE.pth
+[09-18 20:19:15|INFO|cosmos_framework/utils/distributed.py:520:sync_model_states] Synchronizing model states from rank 0 to all ranks in process group [0].
+[09-18 20:19:15|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_tokenizers: 2.08 s
+[09-18 20:19:15|INFO|cosmos_framework/utils/generator/parallelism.py:107:_validate] dp_shard auto-inferred to world_size = 1
+[09-18 20:19:15|INFO|cosmos_framework/utils/generator/parallelism.py:121:_validate] dp_replicate is set to -1, will be automatically determined based on world_size 1 // dp_shard 1.
+[09-18 20:19:15|INFO|cosmos_framework/utils/generator/parallelism.py:126:_validate] dp_replicate is set to 1.
+`torch_dtype` is deprecated! Use `dtype` instead!
+[09-18 20:19:16|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on meta to cuda and broadcast model states: 0.14 s
+[09-18 20:19:16|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on Creating PyTorch model and ema if enabled: 0.47 s
+[09-18 20:19:16|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on OmniMoTModel: set_up_model: 0.47 s
+[09-18 20:19:16|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_model: 2.54 s
+[09-18 20:19:16|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[09-18 20:19:17|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:222:__init__] Loaded LIBERO dataset root=/disk/rl/data/LIBERO_LeRobot_v3/libero_spatial split='train' camera_mode='concat_view' fps=20.0 kept_episodes=10/432 valid_indices=1078
+[09-18 20:19:17|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[09-18 20:19:18|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:222:__init__] Loaded LIBERO dataset root=/disk/rl/data/LIBERO_LeRobot_v3/libero_object split='train' camera_mode='concat_view' fps=20.0 kept_episodes=10/454 valid_indices=1272
+[09-18 20:19:19|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[09-18 20:19:19|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:222:__init__] Loaded LIBERO dataset root=/disk/rl/data/LIBERO_LeRobot_v3/libero_goal split='train' camera_mode='concat_view' fps=20.0 kept_episodes=10/428 valid_indices=1337
+[09-18 20:19:20|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[09-18 20:19:21|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:222:__init__] Loaded LIBERO dataset root=/disk/rl/data/LIBERO_LeRobot_v3/libero_10 split='train' camera_mode='concat_view' fps=20.0 kept_episodes=10/379 valid_indices=2598
+[09-18 20:19:21|INFO|cosmos_framework/data/generator/joint_dataloader.py:502:__init__] JointDataLoader: 4 streams
+  libero_spatial: ratio=1 (25.0%)
+  libero_object: ratio=1 (25.0%)
+  libero_goal: ratio=1 (25.0%)
+  libero_10: ratio=1 (25.0%)
+[09-18 20:19:21|INFO|cosmos_framework/data/generator/joint_dataloader.py:616:_prewarm_dataloader] [RANK 0] Pre-warm: dataloader 'libero_spatial' ready — 1 samples buffered in 0.2s
+[09-18 20:19:21|INFO|cosmos_framework/data/generator/joint_dataloader.py:616:_prewarm_dataloader] [RANK 0] Pre-warm: dataloader 'libero_object' ready — 1 samples buffered in 0.1s
+[09-18 20:19:21|INFO|cosmos_framework/data/generator/joint_dataloader.py:616:_prewarm_dataloader] [RANK 0] Pre-warm: dataloader 'libero_goal' ready — 1 samples buffered in 0.2s
+[09-18 20:19:21|INFO|cosmos_framework/data/generator/joint_dataloader.py:616:_prewarm_dataloader] [RANK 0] Pre-warm: dataloader 'libero_10' ready — 1 samples buffered in 0.3s
+[09-18 20:19:21|INFO|cosmos_framework/data/generator/joint_dataloader.py:660:_prewarm_dataloaders] Pre-warm: waiting at barrier for all ranks …
+/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/distributed/c10d_logger.py:83: UserWarning: barrier(): using the device under current context. You can specify `device_id` in `init_process_group` to mute this warning.
+  return func(*args, **kwargs)
+[09-18 20:19:21|INFO|cosmos_framework/data/generator/joint_dataloader.py:662:_prewarm_dataloaders] Pre-warm: all ranks ready
+[09-18 20:19:21|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on init_data_loader: 5.65 s
+[09-18 20:19:21|INFO|cosmos_framework/utils/generator/optimizer.py:247:_build_params_with_metadata] Total tensors: 597, trainable tensors: 597, selected tensors: 314
+[09-18 20:19:21|INFO|cosmos_framework/utils/generator/optimizer.py:433:__init__] Building optimizer for mesh 'default'
+[09-18 20:19:21|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=5e-05, WD=True): 309 tensors, 1,415,072,832 elements
+[09-18 20:19:21|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=0.00025, WD=False): 4 tensors, 8,456,192 elements
+[09-18 20:19:21|INFO|cosmos_framework/utils/generator/optimizer.py:289:_build_optimizer_internal] Param group (lr=0.00025, WD=True): 1 tensors, 2,048 elements
+[09-18 20:19:21|INFO|cosmos_framework/utils/generator/optimizer.py:100:_optimizer_cls] FusedAdam: master_weights=True (derived from parameter dtypes)
+[09-18 20:19:21|INFO|cosmos_framework/utils/generator/fused_adam.py:81:__init__] FusedAdam master_weights: True capturable: True
+[09-18 20:19:21|INFO|cosmos_framework/utils/generator/optimizer.py:441:__init__] Created 1 optimizers
+[09-18 20:19:21|INFO|cosmos_framework/utils/generator/optimizer.py:623:__init__] Created 1 schedulers
+[09-18 20:19:21|CRITICAL|cosmos_framework/checkpoint/dcp.py:787:load] Resuming ckpt /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/checkpoints/Cosmos3-Edge-Policy-DROID-dcp (warm-start, local) with keys: ['model']
+[09-18 20:19:21|CRITICAL|cosmos_framework/checkpoint/dcp.py:799:load] Start loading checkpoint from /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/checkpoints/Cosmos3-Edge-Policy-DROID-dcp/model
+[09-18 20:19:21|INFO|cosmos_framework/checkpoint/dcp.py:358:__init__] Skipping loading of keys that match the following patterns: ['net_ema.']
+[09-18 20:19:21|INFO|cosmos_framework/checkpoint/dcp.py:825:load] - Loading the model...
+/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+  return func(*args, **kwargs)
+[09-18 20:19:21|INFO|cosmos_framework/checkpoint/dcp.py:433:_skip_keys_if_found] [RANK 0] [DCP-LOAD-SKIP-KEYS] kept_keys=597 dropped_keys=0
+[09-18 20:19:21|INFO|cosmos_framework/checkpoint/dcp.py:408:_drop_non_reader_items] [RANK 0] [DCP-LOAD-DEDUP] kept_read_items=549 dropped_read_items=0
+[09-18 20:19:29|INFO|cosmos_framework/checkpoint/dcp.py:602:_broadcast_state_dict] [RANK 0] [DCP-LOAD-TIMING] broadcast: tensors=0.0s, objects=0.0s, rebuild=0.0s
+[09-18 20:19:29|INFO|cosmos_framework/checkpoint/dcp.py:944:load] Loaded checkpoint from /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/checkpoints/Cosmos3-Edge-Policy-DROID-dcp (warm-start, local) in iteration 0
+[09-18 20:19:29|INFO|cosmos_framework/utils/timer.py:138:_log] Time spent on checkpoint loading: 7.56 s
+[09-18 20:19:29|CRITICAL|cosmos_framework/trainer/__init__.py:387:train] Distributed parallelism mode: fsdp
+[09-18 20:19:29|INFO|cosmos_framework/trainer/__init__.py:395:train] Starting training...
+[09-18 20:19:29|INFO|cosmos_framework/callbacks/device_monitor.py:102:on_train_start] DeviceMonitor callback: local_dir: /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/a2_acceptance_fb386c7a/control/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/DeviceMonitor
+[09-18 20:19:29|INFO|cosmos_framework/callbacks/termination_signal_checkpoint.py:186:_install_termination_signal_handlers] [TerminationSignalCheckpoint] Installed SIGTERM handler.
+[09-18 20:19:30|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[09-18 20:19:30|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:222:__init__] Loaded LIBERO dataset root=/disk/rl/data/LIBERO_LeRobot_v3/libero_spatial split='train' camera_mode='concat_view' fps=20.0 kept_episodes=10/432 valid_indices=1078
+[09-18 20:19:31|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[09-18 20:19:31|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:222:__init__] Loaded LIBERO dataset root=/disk/rl/data/LIBERO_LeRobot_v3/libero_object split='train' camera_mode='concat_view' fps=20.0 kept_episodes=10/454 valid_indices=1272
+[09-18 20:19:32|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[09-18 20:19:33|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:222:__init__] Loaded LIBERO dataset root=/disk/rl/data/LIBERO_LeRobot_v3/libero_goal split='train' camera_mode='concat_view' fps=20.0 kept_episodes=10/428 valid_indices=1337
+[09-18 20:19:33|INFO|cosmos_framework/data/generator/processors/base.py:131:__init__] Successfully loaded processor from local cache
+[09-18 20:19:34|INFO|cosmos_framework/data/generator/action/datasets/libero_lerobot_dataset.py:222:__init__] Loaded LIBERO dataset root=/disk/rl/data/LIBERO_LeRobot_v3/libero_10 split='train' camera_mode='concat_view' fps=20.0 kept_episodes=10/379 valid_indices=2598
+[09-18 20:22:33|INFO|cosmos_framework/callbacks/grad_clip.py:436:on_training_step_end] [RANK 0] clip_grad_norm/video/global: 314.00000 (iteration 1)
+[09-18 20:22:33|INFO|cosmos_framework/callbacks/stdout_loss_logger.py:103:on_training_step_end] iteration=1 | train/loss=16.202442 | perf/dataloader_wait_s=0.678742 | perf/dataloader_wait_mean_s=0.042421 | perf/model_compute_s=155.443763 | perf/model_compute_mean_s=9.715235 | perf/other_s=22.707778 | perf/step_wall_s=178.830283 | perf/dataloader_wait_pct=0.38 | perf/model_compute_pct=86.92 | perf/microbatches=16
+[A2-EVIDENCE] iter=1 native=16 consumers=2048 raw_loss=16.468139 backward_objective=16.468139 peak_GiB=29.03
+[09-18 20:25:45|INFO|cosmos_framework/checkpoint/dcp.py:1054:_save_as_pkl] Saved state to /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/a2_acceptance_fb386c7a/control/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000002/dataloader/rank_0.pkl
+[09-18 20:25:45|INFO|cosmos_framework/checkpoint/dcp.py:1077:save_state_dict_worker] Saving last checkpoint file iter_000000002
+[09-18 20:25:45|INFO|cosmos_framework/checkpoint/dcp.py:1080:save_state_dict_worker] Saved checkpoint to /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/a2_acceptance_fb386c7a/control/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000002
+[09-18 20:25:45|INFO|cosmos_framework/checkpoint/dcp.py:1141:save] Checkpoint save completed: Time taken: 16.96 seconds
+[09-18 20:25:45|INFO|cosmos_framework/callbacks/grad_clip.py:436:on_training_step_end] [RANK 0] clip_grad_norm/video/global: 342.00000 (iteration 2)
+[09-18 20:25:45|INFO|cosmos_framework/callbacks/stdout_loss_logger.py:103:on_training_step_end] iteration=2 | train/loss=16.602554 | perf/dataloader_wait_s=0.945305 | perf/dataloader_wait_mean_s=0.059082 | perf/model_compute_s=154.164896 | perf/model_compute_mean_s=9.635306 | perf/other_s=20.450758 | perf/step_wall_s=175.560959 | perf/dataloader_wait_pct=0.54 | perf/model_compute_pct=87.81 | perf/microbatches=16
+[A2-EVIDENCE] iter=2 native=16 consumers=2048 raw_loss=16.488580 backward_objective=16.488580 peak_GiB=44.85
+[09-18 20:28:46|INFO|cosmos_framework/callbacks/grad_clip.py:436:on_training_step_end] [RANK 0] clip_grad_norm/video/global: 612.00000 (iteration 3)
+[09-18 20:28:46|INFO|cosmos_framework/callbacks/stdout_loss_logger.py:103:on_training_step_end] iteration=3 | train/loss=16.474201 | perf/dataloader_wait_s=1.105134 | perf/dataloader_wait_mean_s=0.069071 | perf/model_compute_s=158.137326 | perf/model_compute_mean_s=9.883583 | perf/other_s=21.527918 | perf/step_wall_s=180.770378 | perf/dataloader_wait_pct=0.61 | perf/model_compute_pct=87.48 | perf/microbatches=16
+[A2-EVIDENCE] iter=3 native=16 consumers=2048 raw_loss=16.472396 backward_objective=16.472396 peak_GiB=44.94
+[09-18 20:28:46|SUCCESS|cosmos_framework/trainer/__init__.py:501:train] Done with training.
+[09-18 20:28:57|INFO|cosmos_framework/checkpoint/dcp.py:1054:_save_as_pkl] Saved state to /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/a2_acceptance_fb386c7a/control/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000003/dataloader/rank_0.pkl
+[09-18 20:28:57|INFO|cosmos_framework/checkpoint/dcp.py:1077:save_state_dict_worker] Saving last checkpoint file iter_000000003
+[09-18 20:28:57|INFO|cosmos_framework/checkpoint/dcp.py:1080:save_state_dict_worker] Saved checkpoint to /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/a2_acceptance_fb386c7a/control/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000003
+[09-18 20:28:57|INFO|cosmos_framework/checkpoint/dcp.py:1141:save] Checkpoint save completed: Time taken: 10.35 seconds
+[09-18 20:29:31|INFO|cosmos_framework/model/generator/omni_mot_model.py:3755:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=2)
+Sampling:   0%|          | 0/2 [00:00<?, ?it/s]Sampling:  50%|█████     | 1/2 [00:00<00:00,  2.57it/s]Sampling: 100%|██████████| 2/2 [00:00<00:00,  4.39it/s]
+[09-18 20:29:32|INFO|cosmos_framework/model/generator/omni_mot_model.py:3755:generate_samples_from_batch] Using sampler: UniPC (shift=5.0, num_steps=2)
+Sampling:   0%|          | 0/2 [00:00<?, ?it/s]Sampling:   0%|          | 0/2 [00:00<?, ?it/s]
+2026-09-18 20:29:32.426 | ERROR    | __main__:<module>:299 - An error has been caught in function '<module>', process 'MainProcess' (1154359), thread 'MainThread' (139771534849856):
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+> File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+    launch(config, args)
+    │      │       └ Namespace(sft_toml='/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/toml/sft_config/action_...
+    │      └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/disk/r...
+    └ <function launch at 0x7f1d83f3f1a0>
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+    return func(config, *args, **kwargs)
+           │    │        │       └ {}
+           │    │        └ (Namespace(sft_toml='/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/toml/sft_config/action...
+           │    └ Config(model={'config': {'tokenizer': {'bucket_name': '', 'object_store_credential_path_pretrained': '', 'vae_path': '/disk/r...
+           └ <function launch at 0x7f1d83f1fd80>
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/scripts/train.py", line 221, in launch
+    trainer.train(
+    │       └ <function ImaginaireTrainer.train at 0x7f1d83ef7060>
+    └ <cosmos_framework.trainer.ImaginaireTrainer object at 0x7f1d83d0c050>
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/trainer/__init__.py", line 506, in train
+    self.callbacks.on_train_end(model, iteration=iteration)
+    │    │                      │                └ 3
+    │    │                      └ OmniMoTModel(
+    │    │                          (net): Cosmos3VFMNetwork(
+    │    │                            (language_model): Nemotron3DenseVLTextForCausalLM(
+    │    │                              (model): Nemotron3Dens...
+    │    └ <cosmos_framework.utils.callback.CallBackGroup object at 0x7f1d83d0fb60>
+    └ <cosmos_framework.trainer.ImaginaireTrainer object at 0x7f1d83d0c050>
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/utils/callback.py", line 101, in multi_callback_wrapper
+    _ = method(*args, **kwargs)
+        │       │       └ {'iteration': 3}
+        │       └ (OmniMoTModel(
+        │           (net): Cosmos3VFMNetwork(
+        │             (language_model): Nemotron3DenseVLTextForCausalLM(
+        │               (model): Nemotron3Den...
+        └ <bound method A2NativeValidation.on_train_end of <cosmos_framework.model.generator.mot.a2_native_validation.A2NativeValidatio...
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/a2_native_validation.py", line 263, in on_train_end
+    report["online_generation"] = native_online_probe(model, segments[0])
+    │                             │                   │      └ (SegmentBatch(consumer_visual_summary=tensor([[[ 0.7007,  0.4136,  0.2866,  ..., -0.5132, -0.3741, -0.3223],
+    │                             │                   │                 [ 0.696...
+    │                             │                   └ OmniMoTModel(
+    │                             │                       (net): Cosmos3VFMNetwork(
+    │                             │                         (language_model): Nemotron3DenseVLTextForCausalLM(
+    │                             │                           (model): Nemotron3Dens...
+    │                             └ <function native_online_probe at 0x7f1ce08cde40>
+    └ {'iteration': 3, 'result': 'FAIL', 'independent_review': False, 'native_group_parity': {'grouped_loss': 6.36564302444458, 'sc...
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/a2_native_validation.py", line 215, in native_online_probe
+    result = generate_with_local_memory(
+             └ <function generate_with_local_memory at 0x7f1ce08cc5e0>
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_online.py", line 182, in generate_with_local_memory
+    result = model.generate_samples_from_batch(batch, **kwargs)
+             │     │                           │        └ {'guidance': 1.0, 'seed': [0], 'num_steps': 2, 'has_negative_prompt': False}
+             │     │                           └ {'video_latent': [[tensor([[[[ 6.0156e-01,  5.1172e-01,  5.5859e-01,  ...,  3.5938e-01,
+             │     │                                         3.5742e-01,  3.2422e-01],...
+             │     └ <function OmniMoTModel.generate_samples_from_batch at 0x7f1d1d7b8180>
+             └ OmniMoTModel(
+                 (net): Cosmos3VFMNetwork(
+                   (language_model): Nemotron3DenseVLTextForCausalLM(
+                     (model): Nemotron3Dens...
+
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           │     │       └ {'guidance': 1.0, 'seed': [0], 'num_steps': 2, 'has_negative_prompt': False}
+           │     └ (OmniMoTModel(
+           │         (net): Cosmos3VFMNetwork(
+           │           (language_model): Nemotron3DenseVLTextForCausalLM(
+           │             (model): Nemotron3Den...
+           └ <function OmniMoTModel.generate_samples_from_batch at 0x7f1d1d7b80e0>
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 3767, in generate_samples_from_batch
+    latents = sampler(
+              └ UniPCSampler()
+
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'num_steps': 2, 'shift': 5.0, 'seed': [0]}
+           │    │           └ (<function OmniMoTModel.generate_samples_from_batch.<locals>.velocity_fn at 0x7f1d1ac2e160>, [tensor([0.6016, 0.5117, 0.5586,...
+           │    └ <function Module._call_impl at 0x7f1e454dcae0>
+           └ UniPCSampler()
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'num_steps': 2, 'shift': 5.0, 'seed': [0]}
+           │             └ (<function OmniMoTModel.generate_samples_from_batch.<locals>.velocity_fn at 0x7f1d1ac2e160>, [tensor([0.6016, 0.5117, 0.5586,...
+           └ <bound method UniPCSampler.forward of UniPCSampler()>
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           │     │       └ {'num_steps': 2, 'shift': 5.0, 'seed': [0]}
+           │     └ (UniPCSampler(), <function OmniMoTModel.generate_samples_from_batch.<locals>.velocity_fn at 0x7f1d1ac2e160>, [tensor([0.6016,...
+           └ <function UniPCSampler.forward at 0x7f1d1da3c360>
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/diffusion/samplers/unipc.py", line 84, in forward
+    velocity_pred = velocity_fn(latent, timestep.reshape(1, 1))
+                    │           │       │        └ <method 'reshape' of 'torch._C.TensorBase' objects>
+                    │           │       └ tensor(999, device='cuda:0')
+                    │           └ [tensor([0.6016, 0.5117, 0.5586,  ..., 0.0000, 0.0000, 0.0000], device='cuda:0')]
+                    └ <function OmniMoTModel.generate_samples_from_batch.<locals>.velocity_fn at 0x7f1d1ac2e160>
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 3689, in velocity_fn
+    return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+           │                   └ [[1010, 10, 25708, 1010, 11, 1010, 10, 3263, 1010, 19227, 9096, 24451, 7393, 2811, 16753, 1102, 5463, 1302, 2811, 1429, 4380,...
+           └ <function OmniMoTModel.generate_samples_from_batch.<locals>.velocity_fn.<locals>._single_velocity_fn at 0x7f1d1ac2db20>
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 3658, in _single_velocity_fn
+    return self._get_velocity(
+           │    └ <function OmniMoTModel._get_velocity at 0x7f1d1d797ec0>
+           └ OmniMoTModel(
+               (net): Cosmos3VFMNetwork(
+                 (language_model): Nemotron3DenseVLTextForCausalLM(
+                   (model): Nemotron3Dens...
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 3150, in _get_velocity
+    out = self.denoise(
+          │    └ <function OmniMoTModel.denoise at 0x7f1d1d7b9260>
+          └ OmniMoTModel(
+              (net): Cosmos3VFMNetwork(
+                (language_model): Nemotron3DenseVLTextForCausalLM(
+                  (model): Nemotron3Dens...
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 5493, in denoise
+    out_net = net(
+              └ Cosmos3VFMNetwork(
+                  (language_model): Nemotron3DenseVLTextForCausalLM(
+                    (model): Nemotron3DenseVLTextModel(
+                      (embed_...
+
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'packed_seq': PackedSequence(sample_lens=[431], split_lens=[165, 266], attn_modes=['causal', 'full'], is_image_batch=False, ...
+           │    │           └ ()
+           │    └ <function Module._call_impl at 0x7f1e454dcae0>
+           └ Cosmos3VFMNetwork(
+               (language_model): Nemotron3DenseVLTextForCausalLM(
+                 (model): Nemotron3DenseVLTextModel(
+                   (embed_...
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'packed_seq': PackedSequence(sample_lens=[431], split_lens=[165, 266], attn_modes=['causal', 'full'], is_image_batch=False, ...
+           │             └ ()
+           └ <bound method Cosmos3VFMNetwork.forward of Cosmos3VFMNetwork(
+               (language_model): Nemotron3DenseVLTextForCausalLM(
+                 (model...
+
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py", line 1067, in forward
+    raise ValueError("Memory Prefix does not support native MemoryState KV cache.")
+
+ValueError: Memory Prefix does not support native MemoryState KV cache.
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "<frozen runpy>", line 198, in _run_module_as_main
+[rank0]:   File "<frozen runpy>", line 88, in _run_code
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/scripts/train.py", line 299, in <module>
+[rank0]:     launch(config, args)
+[rank0]:     ~~~~~~^^^^^^^^^^^^^^
+[rank0]:   File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/loguru/_logger.py", line 1297, in catch_wrapper
+[rank0]:     return function(*args, **kwargs)
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/utils/training_telemetry/telemetry.py", line 65, in wrapper
+[rank0]:     return func(config, *args, **kwargs)
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/scripts/train.py", line 221, in launch
+[rank0]:     trainer.train(
+[rank0]:     ~~~~~~~~~~~~~^
+[rank0]:         model,
+[rank0]:         ^^^^^^
+[rank0]:         dataloader_train,
+[rank0]:         ^^^^^^^^^^^^^^^^^
+[rank0]:         dataloader_val,
+[rank0]:         ^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/trainer/__init__.py", line 506, in train
+[rank0]:     self.callbacks.on_train_end(model, iteration=iteration)
+[rank0]:     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/utils/callback.py", line 101, in multi_callback_wrapper
+[rank0]:     _ = method(*args, **kwargs)
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/a2_native_validation.py", line 263, in on_train_end
+[rank0]:     report["online_generation"] = native_online_probe(model, segments[0])
+[rank0]:                                   ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/a2_native_validation.py", line 215, in native_online_probe
+[rank0]:     result = generate_with_local_memory(
+[rank0]:         model, batch, [transition], session, guidance=1.0, seed=[0], num_steps=2, has_negative_prompt=False
+[rank0]:     )
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_online.py", line 182, in generate_with_local_memory
+[rank0]:     result = model.generate_samples_from_batch(batch, **kwargs)
+[rank0]:   File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 3767, in generate_samples_from_batch
+[rank0]:     latents = sampler(
+[rank0]:         velocity_fn,
+[rank0]:     ...<4 lines>...
+[rank0]:         **fixed_step_sampler_kwargs,
+[rank0]:     )
+[rank0]:   File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+[rank0]:     return func(*args, **kwargs)
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/diffusion/samplers/unipc.py", line 84, in forward
+[rank0]:     velocity_pred = velocity_fn(latent, timestep.reshape(1, 1))
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 3689, in velocity_fn
+[rank0]:     return _single_velocity_fn(cond_tokens, skip_text_tokens=False)
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 3658, in _single_velocity_fn
+[rank0]:     return self._get_velocity(
+[rank0]:            ~~~~~~~~~~~~~~~~~~^
+[rank0]:         net=net,
+[rank0]:         ^^^^^^^^
+[rank0]:     ...<8 lines>...
+[rank0]:         has_noisy_actions=has_noisy_actions,
+[rank0]:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:     )
+[rank0]:     ^
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 3150, in _get_velocity
+[rank0]:     out = self.denoise(
+[rank0]:         net=net,
+[rank0]:         data_batch_packed=packed_sequence,
+[rank0]:         memory=memory,
+[rank0]:     )
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/omni_mot_model.py", line 5493, in denoise
+[rank0]:     out_net = net(
+[rank0]:         packed_seq=data_batch_packed,
+[rank0]:         memory=memory,
+[rank0]:         video_temporal_causal=video_temporal_causal,
+[rank0]:     )
+[rank0]:   File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+[rank0]:   File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:   File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py", line 1067, in forward
+[rank0]:     raise ValueError("Memory Prefix does not support native MemoryState KV cache.")
+[rank0]: ValueError: Memory Prefix does not support native MemoryState KV cache.
+[rank0]:[W918 20:29:36.789059167 ProcessGroupNCCL.cpp:1553] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+E0918 20:29:42.939000 1154350 torch/distributed/elastic/multiprocessing/api.py:984] failed (exitcode: 1) local_rank: 0 (pid: 1154359) of binary: /disk/rl/psm_wma/cosmos-framework/.venv/bin/python
+Traceback (most recent call last):
+  File "/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/.venv/bin/torchrun", line 10, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 362, in wrapper
+    return f(*args, **kwargs)
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/distributed/run.py", line 991, in main
+    run(args)
+    ~~~^^^^^^
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/distributed/run.py", line 982, in run
+    elastic_launch(
+    ~~~~~~~~~~~~~~~
+        config=config,
+        ~~~~~~~~~~~~~~
+        entrypoint=cmd,
+        ~~~~~~~~~~~~~~~
+    )(*cmd_args)
+    ~^^^^^^^^^^^
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 170, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/disk/rl/psm_wma/cosmos-framework/.venv/lib/python3.13/site-packages/torch/distributed/launcher/api.py", line 317, in launch_agent
+    raise ChildFailedError(
+    ...<2 lines>...
+    )
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+cosmos_framework.scripts.train FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-09-18_20:29:42
+  host      : bitahub-a21211366044725248406028
+  rank      : 0 (local_rank: 0)
+  exitcode  : 1 (pid: 1154359)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================

@@ -35,3 +35,17 @@ tmp_escape_target.json
 SESSION_HANDOFF_*.md
 .local/
 outputs/
+results/
+
+# A2 process records are intentionally versioned: launch receipts, YAML configs,
+# metrics, logs, exit codes, JUnit and verifier reports. Heavy binary payloads are not.
+artifacts/**/config.pkl
+artifacts/**/*.pt
+artifacts/**/*.pth
+artifacts/**/*.safetensors
+artifacts/**/*.ckpt
+artifacts/**/*.distcp
+
+# Superseded verifier snapshots; keep only the final v3 verifier in Git.
+artifacts/g0/sync_a2_final_verification_2a9df880.json
+artifacts/g0/sync_a2_final_verification_2a9df880_v2.json

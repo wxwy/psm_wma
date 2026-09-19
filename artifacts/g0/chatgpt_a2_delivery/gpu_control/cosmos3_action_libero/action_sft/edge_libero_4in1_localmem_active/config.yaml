@@ -1,0 +1,928 @@
+checkpoint:
+  broadcast_via_filesystem: false
+  dcp_async_mode_enabled: false
+  dcp_load_dedup: true
+  enable_gcs_patch_in_boto3: true
+  hf_export:
+    enabled: false
+    export_every_n: 1
+    hf_repo_id: null
+    upload_to_object_store:
+      bucket: ''
+      credentials: ''
+      enabled: false
+  jit:
+    device: cuda
+    dtype: bfloat16
+    enabled: false
+    input_shape: null
+    strict: true
+  keys_not_to_resume: []
+  keys_to_skip_loading:
+  - net_ema.
+  load_ema_to_reg: false
+  load_from_object_store:
+    bucket: ''
+    credentials: ''
+    enabled: false
+  load_path: /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/checkpoints/Cosmos3-Edge-Policy-DROID-dcp
+  load_training_state: false
+  only_load_scheduler_state: false
+  save_iter: 2
+  save_to_object_store:
+    bucket: ''
+    credentials: ''
+    enabled: false
+  strict_resume: false
+  type:
+    _target_: cosmos_framework.checkpoint.dcp.DistributedCheckpointer
+    callbacks: null
+    disable_async: false
+  verbose: true
+data_setting:
+  qwen_max_video_token_length: 8192
+dataloader_train:
+  _target_: cosmos_framework.data.generator.joint_dataloader.IterativeJointDataLoader
+  async_batch_building_timeout_s: 1200.0
+  audio_sample_rate: 48000
+  dataloaders:
+    libero_10:
+      dataloader:
+        _target_: torch.utils.data.DataLoader
+        batch_sampler: null
+        batch_size: 1
+        collate_fn: null
+        dataset:
+          _target_: cosmos_framework.data.generator.action.datasets.action_sft_dataset.get_action_libero_sft_dataset
+          action_normalization: quantile_rot
+          action_space: frame_wise_relative
+          action_stats_path: null
+          append_duration_fps_timestamps: true
+          append_idle_frames: true
+          append_resolution_info: true
+          append_viewpoint_info: true
+          camera_mode: concat_view
+          cfg_dropout_rate: 0.1
+          chunk_length: 16
+          episode_shuffle_seed: 42
+          format_prompt_as_json: true
+          fps: 20
+          image_size: 256
+          iterable_shuffle: true
+          latent_cache_root: /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_10
+          latent_cache_verify_ratio: 0.0
+          local_dummy_dim: 32
+          local_dummy_enabled: false
+          local_dummy_mode: normal
+          local_dummy_tokens: 1
+          local_history_horizon: 0
+          max_action_dim: 64
+          max_episodes: 10
+          mode: wam
+          pose_coordinate_frame: native
+          resolution: null
+          root: /disk/rl/data/LIBERO_LeRobot_v3/libero_10
+          rotation_space: 6d
+          seed: 0
+          split: train
+          stream_manifest_path: null
+          stream_manifest_suite: null
+          tokenizer_config:
+            _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+            repository: null
+            revision: null
+            subdir: ''
+            tokenizer_type: /disk/rl/models/Cosmos3-Edge-Policy-DROID
+          val_ratio: 0.01
+        drop_last: false
+        generator: null
+        in_order: false
+        multiprocessing_context: null
+        num_workers: 0
+        persistent_workers: false
+        pin_memory: true
+        pin_memory_device: ''
+        prefetch_factor: null
+        sampler: null
+        shuffle: null
+        timeout: 0
+        worker_init_fn: null
+      ratio: 1
+    libero_goal:
+      dataloader:
+        _target_: torch.utils.data.DataLoader
+        batch_sampler: null
+        batch_size: 1
+        collate_fn: null
+        dataset:
+          _target_: cosmos_framework.data.generator.action.datasets.action_sft_dataset.get_action_libero_sft_dataset
+          action_normalization: quantile_rot
+          action_space: frame_wise_relative
+          action_stats_path: null
+          append_duration_fps_timestamps: true
+          append_idle_frames: true
+          append_resolution_info: true
+          append_viewpoint_info: true
+          camera_mode: concat_view
+          cfg_dropout_rate: 0.1
+          chunk_length: 16
+          episode_shuffle_seed: 42
+          format_prompt_as_json: true
+          fps: 20
+          image_size: 256
+          iterable_shuffle: true
+          latent_cache_root: /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_goal
+          latent_cache_verify_ratio: 0.0
+          local_dummy_dim: 32
+          local_dummy_enabled: false
+          local_dummy_mode: normal
+          local_dummy_tokens: 1
+          local_history_horizon: 0
+          max_action_dim: 64
+          max_episodes: 10
+          mode: wam
+          pose_coordinate_frame: native
+          resolution: null
+          root: /disk/rl/data/LIBERO_LeRobot_v3/libero_goal
+          rotation_space: 6d
+          seed: 0
+          split: train
+          stream_manifest_path: null
+          stream_manifest_suite: null
+          tokenizer_config:
+            _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+            repository: null
+            revision: null
+            subdir: ''
+            tokenizer_type: /disk/rl/models/Cosmos3-Edge-Policy-DROID
+          val_ratio: 0.01
+        drop_last: false
+        generator: null
+        in_order: false
+        multiprocessing_context: null
+        num_workers: 0
+        persistent_workers: false
+        pin_memory: true
+        pin_memory_device: ''
+        prefetch_factor: null
+        sampler: null
+        shuffle: null
+        timeout: 0
+        worker_init_fn: null
+      ratio: 1
+    libero_object:
+      dataloader:
+        _target_: torch.utils.data.DataLoader
+        batch_sampler: null
+        batch_size: 1
+        collate_fn: null
+        dataset:
+          _target_: cosmos_framework.data.generator.action.datasets.action_sft_dataset.get_action_libero_sft_dataset
+          action_normalization: quantile_rot
+          action_space: frame_wise_relative
+          action_stats_path: null
+          append_duration_fps_timestamps: true
+          append_idle_frames: true
+          append_resolution_info: true
+          append_viewpoint_info: true
+          camera_mode: concat_view
+          cfg_dropout_rate: 0.1
+          chunk_length: 16
+          episode_shuffle_seed: 42
+          format_prompt_as_json: true
+          fps: 20
+          image_size: 256
+          iterable_shuffle: true
+          latent_cache_root: /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_object
+          latent_cache_verify_ratio: 0.0
+          local_dummy_dim: 32
+          local_dummy_enabled: false
+          local_dummy_mode: normal
+          local_dummy_tokens: 1
+          local_history_horizon: 0
+          max_action_dim: 64
+          max_episodes: 10
+          mode: wam
+          pose_coordinate_frame: native
+          resolution: null
+          root: /disk/rl/data/LIBERO_LeRobot_v3/libero_object
+          rotation_space: 6d
+          seed: 0
+          split: train
+          stream_manifest_path: null
+          stream_manifest_suite: null
+          tokenizer_config:
+            _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+            repository: null
+            revision: null
+            subdir: ''
+            tokenizer_type: /disk/rl/models/Cosmos3-Edge-Policy-DROID
+          val_ratio: 0.01
+        drop_last: false
+        generator: null
+        in_order: false
+        multiprocessing_context: null
+        num_workers: 0
+        persistent_workers: false
+        pin_memory: true
+        pin_memory_device: ''
+        prefetch_factor: null
+        sampler: null
+        shuffle: null
+        timeout: 0
+        worker_init_fn: null
+      ratio: 1
+    libero_spatial:
+      dataloader:
+        _target_: torch.utils.data.DataLoader
+        batch_sampler: null
+        batch_size: 1
+        collate_fn: null
+        dataset:
+          _target_: cosmos_framework.data.generator.action.datasets.action_sft_dataset.get_action_libero_sft_dataset
+          action_normalization: quantile_rot
+          action_space: frame_wise_relative
+          action_stats_path: null
+          append_duration_fps_timestamps: true
+          append_idle_frames: true
+          append_resolution_info: true
+          append_viewpoint_info: true
+          camera_mode: concat_view
+          cfg_dropout_rate: 0.1
+          chunk_length: 16
+          episode_shuffle_seed: 42
+          format_prompt_as_json: true
+          fps: 20
+          image_size: 256
+          iterable_shuffle: true
+          latent_cache_root: /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_spatial
+          latent_cache_verify_ratio: 0.0
+          local_dummy_dim: 32
+          local_dummy_enabled: false
+          local_dummy_mode: normal
+          local_dummy_tokens: 1
+          local_history_horizon: 0
+          max_action_dim: 64
+          max_episodes: 10
+          mode: wam
+          pose_coordinate_frame: native
+          resolution: null
+          root: /disk/rl/data/LIBERO_LeRobot_v3/libero_spatial
+          rotation_space: 6d
+          seed: 0
+          split: train
+          stream_manifest_path: null
+          stream_manifest_suite: null
+          tokenizer_config:
+            _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+            repository: null
+            revision: null
+            subdir: ''
+            tokenizer_type: /disk/rl/models/Cosmos3-Edge-Policy-DROID
+          val_ratio: 0.01
+        drop_last: false
+        generator: null
+        in_order: false
+        multiprocessing_context: null
+        num_workers: 0
+        persistent_workers: false
+        pin_memory: true
+        pin_memory_device: ''
+        prefetch_factor: null
+        sampler: null
+        shuffle: null
+        timeout: 0
+        worker_init_fn: null
+      ratio: 1
+  default_lookahead_limit: 10
+  enable_async_batch_building: false
+  lazy_initialize_child_iterators: false
+  local_memory_shuffle: false
+  lookahead_limits: null
+  max_samples_per_batch: 1
+  max_sequence_length: null
+  patch_spatial: 2
+  prewarm: true
+  prewarm_concurrency: 1
+  seed: null
+  sound_latent_fps: 0
+  tokenizer_spatial_compression_factor: 16
+  tokenizer_temporal_compression_factor: 4
+  uniae_chunk_frames: null
+  uniae_pad_frames: null
+dataloader_val: null
+defaults:
+- _self_
+- model: mot_fsdp
+- data_train: null
+- data_val: null
+- optimizer: adamw
+- scheduler: warmup_cosine_lr
+- checkpoint: s3
+- callbacks:
+  - basic
+  - optimization
+  - job_monitor
+  - generation
+- ema: power
+- tokenizer: wan2pt2_tokenizer
+- sound_tokenizer: null
+- vlm_config: null
+- ckpt_type: dcp
+- experiment: null
+job:
+  cluster: null
+  group: action_sft
+  name: edge_libero_4in1_localmem_active
+  project: cosmos3_action_libero
+  wandb_mode: disabled
+model:
+  _recursive_: false
+  _target_: cosmos_framework.model.generator.omni_mot_model.OmniMoTModel
+  config:
+    action_gen: true
+    activation_checkpointing:
+      determinism_check: default
+      mode: selective
+      preserve_rng_state: true
+      save_ops_regex:
+      - fmha
+    attention_io_layout: sequence_sharded
+    causal_training_strategy: none
+    compile:
+      ar_post_saturation_mode: default
+      compile_dynamic: true
+      compiled_region: language
+      coordinate_descent_tuning: false
+      enabled: false
+      max_autotune_pointwise: false
+      use_cuda_graphs: false
+    diffusion_expert_config:
+      base_fps: 24
+      enable_fps_modulation: true
+      enable_media_modality_embedding: false
+      enable_vision_modality_embeddings: false
+      load_weights_from_pretrained: false
+      max_vae_latent_side_after_patchify: 20
+      patch_spatial: 2
+      sound_base_temporal_compression_factor: null
+      timestep_range: 1.0
+      unified_3d_mrope_reset_spatial_ids: true
+      unified_3d_mrope_temporal_modality_margin: 15000
+      vision_temporal_position_mode: latent_index
+    ema:
+      enabled: false
+      iteration_shift: 0
+      rate: 0.1
+    enable_input_bias: true
+    exclude_reasoner_weights_from_checkpoint: false
+    fixed_step_sampler_config: null
+    flex_attention:
+      backend: auto
+      enabled: false
+      mask:
+        noisy_attention_scope: all_views
+    input_caption_key: ai_caption
+    input_image_key: images
+    input_video_key: video
+    joint_attn_implementation: two_way
+    k_local: 1
+    latent_downsample_factor: 16
+    lbl:
+      coeff_gen: null
+      coeff_und: null
+      method: local
+    load_vision_tokenizer: true
+    local_evidence_feature_version: causal_visual96_executed_action10_v1
+    local_fast_state_dtype: fp32
+    local_history_backend: ttt_fast_weight
+    local_history_enabled: true
+    local_history_evidence_dim: 256
+    local_history_horizon: 0
+    local_history_state_enabled: false
+    local_memory_dim: 32
+    local_memory_enabled: true
+    local_runtime_resume_mode: slow_only_no_mid_episode_resume
+    local_ttt_enabled: true
+    log_enc_time_every_n: 100
+    lora_alpha: 32
+    lora_enabled: false
+    lora_rank: 16
+    lora_target_modules: q_proj_moe_gen,k_proj_moe_gen,v_proj_moe_gen,o_proj_moe_gen
+    max_action_dim: 64
+    max_num_tokens_after_packing: 74000
+    natten_parameter_list: null
+    net: null
+    num_embodiment_domains: 32
+    parallelism:
+      cfg_parallel_shard_degree: 1
+      context_parallel_shard_degree: 1
+      data_parallel_replicate_degree: 1
+      data_parallel_shard_degree: -1
+      enable_inference_mode: false
+      fsdp_master_dtype: float32
+      fsdp_reduce_dtype: null
+    precision: bfloat16
+    quantization:
+      exclude_regex: []
+      fp8_granularity: per_row
+      include_regex: []
+      method: null
+      modelopt_fp8_checkpoint_path: null
+      modelopt_fp8_target_fqns: []
+    rectified_flow_inference_config:
+      num_train_timesteps: 1000
+      scheduler_type: unipc
+      shift: 1
+      use_dynamic_shifting: false
+    rectified_flow_training_config:
+      action_loss_weight: 10.0
+      image_loss_scale: null
+      independent_action_schedule: false
+      independent_sound_schedule: false
+      loss_scale: 10.0
+      normalize_loss_by_active: false
+      sample_level_loss_averaging: false
+      shift:
+        '256': 3
+        '480': 5
+        '720': 10
+      shift_action: null
+      shift_image: null
+      shift_sound: null
+      sound_loss_scale: 2.0
+      train_time_action_distribution: logitnormal
+      train_time_image_distribution: logitnormal
+      train_time_sound_distribution: logitnormal
+      train_time_video_distribution: waver
+      train_time_weight: uniform
+      use_discrete_rf: false
+      use_dynamic_shift: false
+    resolution: '480'
+    sound_dim: null
+    sound_gen: false
+    sound_latent_fps: 25
+    sound_tokenizer: null
+    state_ch: 48
+    state_t: 300
+    tokenizer:
+      _target_: cosmos_framework.model.generator.tokenizers.wan2pt2_vae_4x16x16.Wan2pt2VAEInterface
+      bucket_name: ''
+      causal: true
+      chunk_duration: 93
+      encode_bucket_multiple: null
+      encode_chunk_frames:
+        '256': 68
+        '480': 24
+        '720': 8
+        '768': 8
+      encode_exact_durations:
+      - 17
+      - 61
+      - 73
+      keep_decoder_cache: false
+      object_store_credential_path_pretrained: ''
+      spatial_compression_factor: 16
+      temporal_compression_factor: 4
+      temporal_window: null
+      use_streaming_encode: false
+      vae_path: /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/checkpoints/wan22_vae/Wan2.2_VAE.pth
+    ttt_inner_lr: 0.1
+    ttt_tbptt_steps: 16
+    video_temporal_causal: false
+    vision_gen: true
+    vlm_config:
+      layer_module: null
+      model_instance:
+        _target_: cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLTextForCausalLM
+        config:
+          _target_: cosmos_framework.configs.base.defaults.reasoner.create_vlm_config
+          base_config:
+            _target_: cosmos_framework.model.generator.mot.unified_mot.Nemotron3DenseVLMoTConfig.from_json_file
+            json_file: cosmos_framework/model/generator/reasoner/nemotron_3_dense_vl/configs/Nemotron-2B-Dense-VL.json
+          freeze_und: false
+          include_visual: null
+          layer_module: MoTDecoderLayer
+          qk_norm_for_text: false
+          tie_word_embeddings: true
+          use_und_k_norm_for_gen: true
+      model_name: nvidia/Cosmos3-Edge-Reasoner
+      pretrained_weights:
+        backbone_path: s3://bucket/cosmos3/pretrained/huggingface/nvidia/Cosmos3-Edge-Reasoner-590c1c0/
+        checkpoint_format: null
+        credentials_path: ''
+        enable_gcs_patch_in_boto3: true
+        enabled: false
+      qk_norm: false
+      safetensors_path: ''
+      tie_word_embeddings: false
+      tokenizer:
+        _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+        repository: null
+        revision: null
+        subdir: ''
+        tokenizer_type: /disk/rl/models/Cosmos3-Edge-Policy-DROID
+      use_system_prompt: false
+model_parallel:
+  _cpu_offloading_context: null
+  async_tensor_model_parallel_allreduce: false
+  autocast_dtype: torch.float32
+  barrier_with_L1_time: true
+  batch_p2p_comm: true
+  batch_p2p_sync: true
+  bf16: false
+  context_parallel_size: 1
+  cpu_offloading: false
+  cpu_offloading_activations: true
+  cpu_offloading_double_buffering: false
+  cpu_offloading_num_layers: 0
+  cpu_offloading_weights: false
+  cross_entropy_fusion_impl: native
+  cross_entropy_loss_fusion: false
+  deallocate_pipeline_outputs: false
+  defer_embedding_wgrad_compute: false
+  delay_wgrad_compute: false
+  deterministic_mode: false
+  enable_autocast: false
+  ep_overlap_early_attn_memory_release: false
+  expert_model_parallel_size: 1
+  expert_tensor_parallel_size: 1
+  finalize_model_grads_func: null
+  fp16: false
+  grad_scale_func: null
+  grad_sync_func: null
+  gradient_accumulation_fusion: false
+  hierarchical_context_parallel_sizes: null
+  microbatch_group_size_per_vp_stage: 1
+  moe_extended_tp: false
+  no_sync_func: null
+  num_microbatches_with_partial_activation_checkpoints: null
+  overlap_moe_expert_parallel_comm: false
+  overlap_p2p_comm: false
+  overlap_p2p_comm_warmup_flush: false
+  param_sync_func: null
+  params_dtype: torch.float32
+  perform_initialization: true
+  pipeline_dtype: null
+  pipeline_model_parallel_comm_backend: null
+  pipeline_model_parallel_size: 1
+  sequence_parallel: false
+  tensor_model_parallel_size: 1
+  timers: null
+  tp_comm_atomic_ag: false
+  tp_comm_atomic_rs: false
+  tp_comm_bootstrap_backend: nccl
+  tp_comm_bulk_dgrad: true
+  tp_comm_bulk_wgrad: true
+  tp_comm_overlap: false
+  tp_comm_overlap_ag: true
+  tp_comm_overlap_disable_fc1: false
+  tp_comm_overlap_disable_qkv: false
+  tp_comm_overlap_rs: true
+  tp_comm_overlap_rs_dgrad: false
+  tp_comm_split_ag: true
+  tp_comm_split_rs: true
+  use_cpu_initialization: false
+  use_ring_exchange_p2p: false
+  use_te_rng_tracker: false
+  variable_seq_lengths: false
+  virtual_pipeline_model_parallel_size: null
+  wgrad_deferral_limit: 0
+optimizer:
+  _target_: cosmos_framework.utils.generator.optimizer.build_optimizer
+  betas:
+  - 0.9
+  - 0.99
+  disable_weight_decay_for_1d_params: false
+  eps: 1.0e-08
+  fused: true
+  keys_to_select:
+  - moe_gen
+  - time_embedder
+  - vae2llm
+  - llm2vae
+  - action2llm
+  - llm2action
+  - action_modality_embed
+  - local_memory_runtime.evidence_encoder.
+  - local_memory_runtime.ttt_core.
+  - local_memory2llm.
+  - local_memory_modality_embed
+  lr: 5.0e-05
+  lr_multipliers:
+    action2llm: 5.0
+    action_modality_embed: 5.0
+    llm2action: 5.0
+  model: null
+  optimizer_type: FusedAdam
+  weight_decay: 0.05
+  weight_decay_skip_patterns:
+  - action2llm\.(fc|bias)\.weight$
+  - llm2action\.(fc|bias)\.weight$
+scheduler:
+  _target_: cosmos_framework.utils.generator.optimizer.build_lr_scheduler
+  cycle_lengths:
+  - 16000
+  f_max:
+  - 1.0
+  f_min:
+  - 0.0
+  f_start:
+  - 1.0e-06
+  lr_scheduler_type: LambdaLinear
+  optimizer: null
+  verbosity_interval: 0
+  warm_up_steps:
+  - 200
+trainer:
+  callbacks:
+    dataloader_speed:
+      every_n: 100
+      save_s3: false
+      step_size: 1
+    device_monitor:
+      _target_: cosmos_framework.callbacks.device_monitor.DeviceMonitor
+      every_n: 200
+      log_memory_detail: true
+      save_s3: false
+      step_size: 1
+      upload_every_n_mul: 5
+    grad_clip:
+      _target_: cosmos_framework.callbacks.grad_clip.GradClip
+      clip_norm: 1.0
+      force_finite: true
+      track_per_modality: true
+    heart_beat:
+      _target_: cosmos_framework.callbacks.heart_beat.HeartBeat
+      every_n: 200
+      save_s3: false
+      step_size: 1
+      update_interval_in_minute: 20
+    iter_speed:
+      every_n: 1
+      hit_thres: 50
+      save_s3: false
+      save_s3_every_log_n: 500
+    low_precision:
+      _target_: cosmos_framework.utils.callback.LowPrecisionCallback
+      config: null
+      trainer: null
+      update_iter: 1
+    manual_gc:
+      every_n: 5
+      gc_level: 1
+      warm_up: 1
+    param_count:
+      save_s3: false
+    r09_b_active_wiring:
+      _target_: cosmos_framework.model.generator.mot.active_local_memory_launch.ActiveLocalMemoryLaunchCallback
+      b_stream: 8
+      config_digest: v035-frozen-local-ttt
+      group_size: 8
+      manifest_digest: libero4in1-4suite-manifest
+      member_layout: a2
+      plan_chain_id: active-local-window
+      source_digest: /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1
+      suite_datasets:
+        libero_10:
+          _target_: cosmos_framework.data.generator.action.datasets.action_sft_dataset.get_action_libero_sft_dataset
+          action_normalization: quantile_rot
+          action_space: frame_wise_relative
+          action_stats_path: null
+          append_duration_fps_timestamps: true
+          append_idle_frames: true
+          append_resolution_info: true
+          append_viewpoint_info: true
+          camera_mode: concat_view
+          cfg_dropout_rate: 0.1
+          chunk_length: 16
+          episode_shuffle_seed: 42
+          format_prompt_as_json: true
+          fps: 20
+          image_size: 256
+          iterable_shuffle: false
+          latent_cache_root: /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_10
+          latent_cache_verify_ratio: 0.0
+          local_dummy_dim: 32
+          local_dummy_enabled: false
+          local_dummy_mode: normal
+          local_dummy_tokens: 1
+          local_history_horizon: 0
+          max_action_dim: 64
+          max_episodes: 10
+          mode: wam
+          pose_coordinate_frame: native
+          resolution: null
+          root: /disk/rl/data/LIBERO_LeRobot_v3/libero_10
+          rotation_space: 6d
+          seed: 0
+          split: train
+          stream_manifest_path: null
+          stream_manifest_suite: null
+          tokenizer_config:
+            _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+            repository: null
+            revision: null
+            subdir: ''
+            tokenizer_type: /disk/rl/models/Cosmos3-Edge-Policy-DROID
+          val_ratio: 0.01
+        libero_goal:
+          _target_: cosmos_framework.data.generator.action.datasets.action_sft_dataset.get_action_libero_sft_dataset
+          action_normalization: quantile_rot
+          action_space: frame_wise_relative
+          action_stats_path: null
+          append_duration_fps_timestamps: true
+          append_idle_frames: true
+          append_resolution_info: true
+          append_viewpoint_info: true
+          camera_mode: concat_view
+          cfg_dropout_rate: 0.1
+          chunk_length: 16
+          episode_shuffle_seed: 42
+          format_prompt_as_json: true
+          fps: 20
+          image_size: 256
+          iterable_shuffle: false
+          latent_cache_root: /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_goal
+          latent_cache_verify_ratio: 0.0
+          local_dummy_dim: 32
+          local_dummy_enabled: false
+          local_dummy_mode: normal
+          local_dummy_tokens: 1
+          local_history_horizon: 0
+          max_action_dim: 64
+          max_episodes: 10
+          mode: wam
+          pose_coordinate_frame: native
+          resolution: null
+          root: /disk/rl/data/LIBERO_LeRobot_v3/libero_goal
+          rotation_space: 6d
+          seed: 0
+          split: train
+          stream_manifest_path: null
+          stream_manifest_suite: null
+          tokenizer_config:
+            _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+            repository: null
+            revision: null
+            subdir: ''
+            tokenizer_type: /disk/rl/models/Cosmos3-Edge-Policy-DROID
+          val_ratio: 0.01
+        libero_object:
+          _target_: cosmos_framework.data.generator.action.datasets.action_sft_dataset.get_action_libero_sft_dataset
+          action_normalization: quantile_rot
+          action_space: frame_wise_relative
+          action_stats_path: null
+          append_duration_fps_timestamps: true
+          append_idle_frames: true
+          append_resolution_info: true
+          append_viewpoint_info: true
+          camera_mode: concat_view
+          cfg_dropout_rate: 0.1
+          chunk_length: 16
+          episode_shuffle_seed: 42
+          format_prompt_as_json: true
+          fps: 20
+          image_size: 256
+          iterable_shuffle: false
+          latent_cache_root: /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_object
+          latent_cache_verify_ratio: 0.0
+          local_dummy_dim: 32
+          local_dummy_enabled: false
+          local_dummy_mode: normal
+          local_dummy_tokens: 1
+          local_history_horizon: 0
+          max_action_dim: 64
+          max_episodes: 10
+          mode: wam
+          pose_coordinate_frame: native
+          resolution: null
+          root: /disk/rl/data/LIBERO_LeRobot_v3/libero_object
+          rotation_space: 6d
+          seed: 0
+          split: train
+          stream_manifest_path: null
+          stream_manifest_suite: null
+          tokenizer_config:
+            _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+            repository: null
+            revision: null
+            subdir: ''
+            tokenizer_type: /disk/rl/models/Cosmos3-Edge-Policy-DROID
+          val_ratio: 0.01
+        libero_spatial:
+          _target_: cosmos_framework.data.generator.action.datasets.action_sft_dataset.get_action_libero_sft_dataset
+          action_normalization: quantile_rot
+          action_space: frame_wise_relative
+          action_stats_path: null
+          append_duration_fps_timestamps: true
+          append_idle_frames: true
+          append_resolution_info: true
+          append_viewpoint_info: true
+          camera_mode: concat_view
+          cfg_dropout_rate: 0.1
+          chunk_length: 16
+          episode_shuffle_seed: 42
+          format_prompt_as_json: true
+          fps: 20
+          image_size: 256
+          iterable_shuffle: false
+          latent_cache_root: /disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1/libero_spatial
+          latent_cache_verify_ratio: 0.0
+          local_dummy_dim: 32
+          local_dummy_enabled: false
+          local_dummy_mode: normal
+          local_dummy_tokens: 1
+          local_history_horizon: 0
+          max_action_dim: 64
+          max_episodes: 10
+          mode: wam
+          pose_coordinate_frame: native
+          resolution: null
+          root: /disk/rl/data/LIBERO_LeRobot_v3/libero_spatial
+          rotation_space: 6d
+          seed: 0
+          split: train
+          stream_manifest_path: null
+          stream_manifest_suite: null
+          tokenizer_config:
+            _target_: cosmos_framework.data.generator.processors.build_processor_lazy
+            repository: null
+            revision: null
+            subdir: ''
+            tokenizer_type: /disk/rl/models/Cosmos3-Edge-Policy-DROID
+          val_ratio: 0.01
+      ttt_tbptt_steps: 16
+    skip_nan_step:
+      _target_: cosmos_framework.callbacks.skip_nan_step.SkipNaNStep
+      max_consecutive_nan: 100
+    stdout_loss_logger:
+      _target_: cosmos_framework.callbacks.stdout_loss_logger.StdoutLossLogger
+      every_n: 1
+      sub_loss_keys:
+      - flow_matching_loss_vision
+      - flow_matching_loss_action
+    termination_signal_checkpoint:
+      _target_: cosmos_framework.callbacks.termination_signal_checkpoint.TerminationSignalCheckpoint
+      min_save_fraction: 0.3333333333333333
+    training_stats:
+      log_freq: 100
+  compile_config:
+    recompile_limit: 8
+    use_duck_shape: false
+  cp_input_direct_broadcast_min_bytes: 9223372036854775807
+  cudnn:
+    benchmark: false
+    deterministic: false
+  ddp:
+    broadcast_buffers: true
+    find_unused_parameters: false
+    static_graph: true
+  distributed_parallelism: fsdp
+  grad_accum_iter: 16
+  grad_scaler_args:
+    enabled: false
+  logging_iter: 1
+  max_iter: 3
+  max_val_iter: null
+  memory_format: torch.preserve_format
+  profiling:
+    enable_memory_snapshot: false
+    enable_nsys: false
+    enable_profiling: false
+    profile_active: 1
+    profile_freq: 1
+    profile_memory: false
+    profile_warmup: 3
+    record_shape: false
+    save_s3: false
+    target_ranks:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    with_modules: true
+    with_stack: true
+  run_validation: false
+  run_validation_on_start: false
+  save_zero_checkpoint: false
+  seed: 42
+  straggler_detection:
+    analyze_backward: true
+    analyze_dataloading: true
+    analyze_forward: true
+    analyze_optimizer: true
+    enabled: false
+    max_diff: 2.0
+    profile_freq: 1
+    raise_error: true
+    report_freq: 100
+    save_s3: false
+  timeout_period: 999999999
+  type: cosmos_framework.trainer.ImaginaireTrainer
+  validation_iter: 100
+upload_reproducible_setup: false
