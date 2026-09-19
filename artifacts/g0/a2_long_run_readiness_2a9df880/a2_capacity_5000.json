@@ -1,0 +1,48 @@
+{
+  "b_stream": 8,
+  "category_consumer_exposure": {
+    "libero_10": 2560000,
+    "libero_goal": 2560000,
+    "libero_object": 2560000,
+    "libero_spatial": 2560000
+  },
+  "chronology_errors": [],
+  "consumers_per_update": 2048,
+  "consumers_total": 10240000,
+  "driver_window_index": 5000,
+  "error": null,
+  "expected_consumers_per_category": 2560000,
+  "expected_consumers_total": 10240000,
+  "expected_logical_segments_total": 640000,
+  "expected_segments_per_slot": 80000,
+  "ga": 16,
+  "group_shape_errors": [],
+  "groups_completed": 80000,
+  "logical_segments_per_update": 128,
+  "logical_segments_total": 640000,
+  "native_forwards_per_update": 16,
+  "per_slot_catalog_blocks": {
+    "0": 2865,
+    "1": 1255,
+    "2": 1741,
+    "3": 1329,
+    "4": 2855,
+    "5": 1333,
+    "6": 1739,
+    "7": 1313
+  },
+  "per_slot_segments_consumed": {
+    "0": 80000,
+    "1": 80000,
+    "2": 80000,
+    "3": 80000,
+    "4": 80000,
+    "5": 80000,
+    "6": 80000,
+    "7": 80000
+  },
+  "result": "PASS",
+  "target_windows": 5000,
+  "ttt_tbptt_steps": 16,
+  "windows_completed": 5000
+}

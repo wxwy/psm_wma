@@ -1,0 +1,91 @@
+{
+  "checks": [
+    {
+      "check": "implementation_pair",
+      "detail": {
+        "implementation_child": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+        "implementation_root": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+        "verifier_root": "6143b1c549bd26e9c29646c3f0c42b6c9e08e1f6"
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "delivery_engineering",
+      "detail": {
+        "cuda_peak_allocated_GiB": 45.04514503479004,
+        "path": "artifacts/g0/sync_a2_final_verification_2a9df880_v3.json",
+        "projected_5000_days_base": 10.188610801504629,
+        "scope": "A2 full-catalog 20-step direct measurement; excludes eval/checkpoint overhead",
+        "sha256": "015bc7bf66a295168e3d774c5958415d324e1848413a4a9f460f8c7bbedaa9e6",
+        "step_wall_mean_s": 176.05919465,
+        "steps": 20
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "probe_source_binding",
+      "detail": {
+        "child_at_launch": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+        "path": "artifacts/g0/a2_long_run_readiness_2a9df880/probe_5000_receipt.json",
+        "probe_script_sha256": "be7f00fa48da78f1db9123aaf507d319261966165159764fb04edd56fd36a889",
+        "root_at_launch": "7d44276e17ca55a7a52b5d2bb6297accdc920057",
+        "sha256": "cd3bc094d081106fde28381b5ef7dc4b66fa1eebd1ed27f86fe133152e55a536"
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "capacity_and_epoch_reuse",
+      "detail": {
+        "capacity_path": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_capacity_5000.json",
+        "capacity_sha256": "c83e4a1a5ec1f55847b0eb97c72776e423e4292915af32dac0ce622bcb74799e",
+        "combined_path": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_stable_slot_long_run_5000.json",
+        "combined_sha256": "c41424595a24599ed551c55d20d9df2a683e2a77798eeb5349324472bab440bc",
+        "per_slot_rebinds": {
+          "0": 5249,
+          "1": 13510,
+          "2": 10338,
+          "3": 12881,
+          "4": 5240,
+          "5": 12723,
+          "6": 10304,
+          "7": 13039
+        },
+        "reuse_path": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_epoch_reuse_5000.json",
+        "reuse_sha256": "60b0716ec002ac47736d850814d3d6e0e5bca52f4ae1a29d6eed76bca60bd2ca",
+        "slot_epoch": {
+          "0": 27,
+          "1": 63,
+          "2": 45,
+          "3": 60,
+          "4": 28,
+          "5": 60,
+          "6": 46,
+          "7": 60
+        }
+      },
+      "status": "PASS"
+    }
+  ],
+  "estimate": {
+    "includes_eval_checkpoint_overhead": false,
+    "projected_5000_days_base": 10.188610801504629,
+    "step_wall_mean_s": 176.05919465
+  },
+  "implementation_pair": [
+    "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+    "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e"
+  ],
+  "long_run_authorization": true,
+  "long_run_started": false,
+  "owner_decision": {
+    "decision": "D028",
+    "full_catalog_b1_required": false,
+    "matched_b1_speedup_scope": "10-episode/suite control only; not a full-catalog speedup claim",
+    "mm_required": false
+  },
+  "policy_success_rate_claim": false,
+  "result": "PASS",
+  "schema": "a2_long_run_readiness_v1",
+  "verdict": "READY_FOR_LONG_RUN",
+  "verifier_sha256": "af368d07e1c369322cca522950e304ed0fca25889789a484473a08abdd04a159"
+}

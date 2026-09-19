@@ -1,0 +1,282 @@
+{
+  "schema": "a2_delivery_verification_v1",
+  "result": "PASS",
+  "checks": [
+    {
+      "check": "committed_target",
+      "status": "PASS",
+      "detail": {
+        "root": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+        "child": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+        "verifier_root": "dd6c30dce13a55747f871c54b877594919409a2b"
+      }
+    },
+    {
+      "check": "cpu_behavior",
+      "status": "PASS",
+      "detail": {
+        "tests": 244,
+        "errors_and_failures": 0,
+        "binding": {
+          "root_at_capture": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+          "child_at_capture": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+          "checked_source_files": 881,
+          "input_metadata_files": 0,
+          "scope": "exact captured source bytes; not an authorization for uncaptured code"
+        },
+        "junit_sha256": "1b3b26ded04861c89025adaf61ff8a5c6055b99697750c19ed8a205f9f251e36",
+        "directory": "artifacts/g0/sync_a2_cpu_2a9df880"
+      }
+    },
+    {
+      "check": "gpu_b1_matched_control",
+      "status": "PASS",
+      "detail": {
+        "directory": "artifacts/g0/sync_b1_control2_2a9df880",
+        "binding": {
+          "root_at_capture": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+          "child_at_capture": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+          "checked_source_files": 882,
+          "input_metadata_files": 8,
+          "scope": "exact captured source bytes; not an authorization for uncaptured code"
+        },
+        "launch_receipt": "artifacts/g0/sync_b1_control2_2a9df880/launch_20260918T155536Z.json",
+        "launch_sha256": "2f19aa24803701ff858b8d6b6c85812899e114f63a1114617bf9611d721a9073",
+        "metrics_sha256": "16e5b498788eb81ceae0f6033eed2a1e9b39377db934a2b5b3befcd294712896",
+        "steps_recorded": 2,
+        "first_window": 1,
+        "last_window": 2,
+        "consumers_per_update": 2048,
+        "native_forwards_per_update": 128,
+        "member_layout": "single",
+        "last_checkpoint": "artifacts/g0/sync_b1_control2_2a9df880/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000002",
+        "step_wall_mean_s": 248.93256350000001,
+        "cuda_peak_allocated_GiB": 28.613662719726562,
+        "data_max_episodes_per_suite": "10"
+      }
+    },
+    {
+      "check": "gpu_control",
+      "status": "PASS",
+      "detail": {
+        "directory": "artifacts/g0/sync_a2_gpu_control_2a9df880",
+        "binding": {
+          "root_at_capture": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+          "child_at_capture": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+          "checked_source_files": 882,
+          "input_metadata_files": 8,
+          "scope": "exact captured source bytes; not an authorization for uncaptured code"
+        },
+        "launch_receipt": "artifacts/g0/sync_a2_gpu_control_2a9df880/launch_20260918T141009Z.json",
+        "launch_sha256": "fa1cefea8de49cb414ac614210f37af07f06799509bde229ac804d3344d12a19",
+        "metrics_sha256": "3a98072f30e5a810980439a6f03180fe81fd144f9c2dca7077b4f7ef0eb04802",
+        "steps_recorded": 3,
+        "first_window": 1,
+        "last_window": 3,
+        "consumers_per_update": 2048,
+        "native_forwards_per_update": 16,
+        "member_layout": "a2",
+        "last_checkpoint": "artifacts/g0/sync_a2_gpu_control_2a9df880/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000003",
+        "step_wall_mean_s": 181.81521933333332,
+        "cuda_peak_allocated_GiB": 44.94711256027222,
+        "data_max_episodes_per_suite": "10"
+      }
+    },
+    {
+      "check": "b1_a2_same_window_and_performance",
+      "status": "PASS",
+      "detail": {
+        "consumer_identity_set_overlap": 1.0,
+        "identity_order_match_required": false,
+        "b1_native_forwards": 128,
+        "a2_native_forwards": 16,
+        "b1_step_wall_s": 248.93256350000001,
+        "a2_step_wall_s": 181.81521933333332,
+        "observed_wall_speedup": 1.3691514077466542,
+        "same_consumer_budget": true,
+        "loss_comparison_note": "B=1 is a throughput control; stable-slot A2 intentionally changes member order. Same-data grouped/scalar native parity is the gradient-equivalence authority."
+      }
+    },
+    {
+      "check": "gpu_resume",
+      "status": "PASS",
+      "detail": {
+        "directory": "artifacts/g0/sync_a2_gpu_resume_2a9df880",
+        "binding": {
+          "root_at_capture": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+          "child_at_capture": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+          "checked_source_files": 882,
+          "input_metadata_files": 8,
+          "scope": "exact captured source bytes; not an authorization for uncaptured code"
+        },
+        "launch_receipt": "artifacts/g0/sync_a2_gpu_resume_2a9df880/launch_20260918T142945Z.json",
+        "launch_sha256": "d7aa971724af11661bd4ec722c0f367676e3a139e093f6955255ce5b8b27c55c",
+        "metrics_sha256": "422056ca71e486c982b3eb2ed30a01e528184f383302026d853ed329a263868f",
+        "steps_recorded": 1,
+        "first_window": 3,
+        "last_window": 3,
+        "consumers_per_update": 2048,
+        "native_forwards_per_update": 16,
+        "member_layout": "a2",
+        "last_checkpoint": "artifacts/g0/sync_a2_gpu_resume_2a9df880/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000003",
+        "step_wall_mean_s": 176.472614,
+        "cuda_peak_allocated_GiB": 44.935904026031494,
+        "data_max_episodes_per_suite": "10"
+      }
+    },
+    {
+      "check": "resume_frontier_and_fast_state",
+      "status": "PASS",
+      "detail": {
+        "compared_windows": [
+          3
+        ],
+        "matched_fields": [
+          "actual_consumer_identity_sha256",
+          "slot_epoch",
+          "stream_index",
+          "active_cursor",
+          "exposure",
+          "group_counts"
+        ],
+        "restored_fast_state_matches_saved_bytes": true,
+        "gpu_post_update_bitwise_equivalence_claimed": false
+      }
+    },
+    {
+      "check": "real_native_parity_and_inference",
+      "status": "PASS",
+      "detail": {
+        "path": "artifacts/g0/sync_a2_gpu_control_2a9df880/native_validation.json",
+        "sha256": "af3401964102348217817f08c79b81ce7fad1703bcfe9f78624488e094bb116d",
+        "parity": {
+          "grouped_loss": 5.780586242675781,
+          "scalar_loss": 5.780760109424591,
+          "loss_relative_error": 3.0077701726206423e-05,
+          "gradient_relative_l2": 0.023932465357780673,
+          "local_gradient_relative_l2": 0.02394999587378261,
+          "gradient_tensors": 314,
+          "grouped_forwards": 1,
+          "scalar_forwards": 8,
+          "consumers": 128,
+          "fixture": "real model/data, eval dropout, sigma=0.5, epsilon=0; no optimizer step",
+          "tolerances": {
+            "loss_relative": 0.01,
+            "gradient_relative_l2": 0.05
+          },
+          "wall_seconds": 28.421946960501373,
+          "result": "PASS"
+        },
+        "online_generation": {
+          "result": "PASS",
+          "scope": "real cached-observation policy generation; not closed-loop success evaluation",
+          "consumer_steps": [
+            0,
+            1
+          ],
+          "denoise_steps": 2,
+          "action_shapes": [
+            [
+              16,
+              10
+            ],
+            [
+              16,
+              10
+            ]
+          ],
+          "actions_finite": true,
+          "local_token_max_abs": 0.2249813675880432,
+          "local_on_off_action_max_difference": 0.0032552778720855713,
+          "slow_weights_unchanged": true,
+          "no_slow_parameter_grads": true
+        },
+        "rgb_visual96_parity": {
+          "result": "PASS",
+          "episode_id": "0",
+          "raw_shape": [
+            3,
+            17,
+            192,
+            320
+          ],
+          "cache_shape": [
+            5,
+            48,
+            12,
+            20
+          ],
+          "full_latent_max_abs": 0.0,
+          "first_causal_latent_max_abs": 0.0,
+          "visual96_max_abs": 0.0,
+          "tolerance": 0.0002,
+          "scope": "same real raw 17-frame LIBERO window: cache vs full VAE and first-frame causal online visual96"
+        }
+      }
+    },
+    {
+      "check": "twenty_step_budget",
+      "status": "PASS",
+      "detail": {
+        "directory": "artifacts/g0/sync_a2_budget20_2a9df880",
+        "binding": {
+          "root_at_capture": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+          "child_at_capture": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+          "checked_source_files": 882,
+          "input_metadata_files": 8,
+          "scope": "exact captured source bytes; not an authorization for uncaptured code"
+        },
+        "launch_receipt": "artifacts/g0/sync_a2_budget20_2a9df880/launch_20260918T143533Z.json",
+        "launch_sha256": "56e059e17b0ddfca53a0f04ac83b459b7caabed1b0804ec86c11a3c7b07ca75c",
+        "metrics_sha256": "2da381fe018af373bcc3b65043b98f745bf8b32ca96248277c0d9a369fc7fb90",
+        "steps_recorded": 20,
+        "first_window": 1,
+        "last_window": 20,
+        "consumers_per_update": 2048,
+        "native_forwards_per_update": 16,
+        "member_layout": "a2",
+        "last_checkpoint": "artifacts/g0/sync_a2_budget20_2a9df880/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000020",
+        "step_wall_mean_s": 176.05919465,
+        "cuda_peak_allocated_GiB": 45.04514503479004,
+        "data_max_episodes_per_suite": "100000"
+      }
+    },
+    {
+      "check": "exact_pair_evidence_binding",
+      "status": "PASS",
+      "detail": {
+        "expected": [
+          "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+          "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e"
+        ],
+        "observed": {
+          "cpu_behavior": [
+            "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+            "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e"
+          ],
+          "gpu_b1_matched_control": [
+            "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+            "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e"
+          ],
+          "gpu_control": [
+            "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+            "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e"
+          ],
+          "gpu_resume": [
+            "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+            "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e"
+          ],
+          "twenty_step_budget": [
+            "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+            "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e"
+          ]
+        }
+      }
+    }
+  ],
+  "scope": "engineering validation of the named A2 source; not policy success-rate evidence",
+  "long_run_authorization": false,
+  "independent_review_approval": false,
+  "budget_required": true,
+  "verifier_sha256": "ad4199bf166646d2a8686f09b028b7f9b6349bcef17e41847045cd2971e4e078"
+}

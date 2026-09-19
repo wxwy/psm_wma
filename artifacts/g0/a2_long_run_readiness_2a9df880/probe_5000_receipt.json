@@ -1,0 +1,17 @@
+{
+  "b_stream": 8,
+  "child_at_launch": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+  "ga": 16,
+  "implementation_child": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+  "implementation_root": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+  "latent_cache_root": "/disk/rl/data/LIBERO_LeRobot_v3_cosmos_exact_window_shared_vae_v1",
+  "libero_root": "/disk/rl/data/LIBERO_LeRobot_v3",
+  "probe_script": "tools/g0/probe_a2_stable_slot_long_run.py",
+  "probe_script_sha256": "be7f00fa48da78f1db9123aaf507d319261966165159764fb04edd56fd36a889",
+  "root_at_launch": "7d44276e17ca55a7a52b5d2bb6297accdc920057",
+  "schema": "a2_long_run_probe_receipt_v1",
+  "target_windows": 5000,
+  "tracked_child_dirty": "",
+  "tracked_root_dirty": "",
+  "ttt_tbptt_steps": 16
+}
