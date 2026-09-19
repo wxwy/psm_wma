@@ -2,11 +2,11 @@
 
 ## 当前状态
 
-代码已在隔离分支 `chatgpt/a2-delivery-20260918` 完成工程交付。canonical implementation pair：
+A2 已完成工程交付并收敛回主仓 `/disk/rl/psm_wma` 的 `V2`。canonical implementation/evidence pair 保持：
 - root `2a9df880713da179aee141dd97c6b20a2b1d8c2e`
 - child `22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e`
 
-工作区：`/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918`。后续 root-only review/verifier bookkeeping 已到 `dd6c30dce13a55747f871c54b877594919409a2b`，不改变 implementation pair。
+V2 当前直接 pin 到 canonical child `22acb13c...`；此前 V2 child merge commit `ae2e9f7...` 与 `22acb13c...` 的 Git tree SHA 完全相同，因此该 pin 只统一 evidence identity，不改变任何模型代码字节。原隔离 worktree 已 merge 后退役，不再作为项目入口。
 
 **当前工程验收状态：PASS；long-run readiness：PASS / READY_FOR_LONG_RUN；5000-step 长训授权：TRUE；实际长训：尚未启动。**
 本 PASS 表示当前 A2 训练/恢复/数据生命周期/证据链已经满足启动长训的工程条件，不代表 LIBERO SR 提升、真实机器人结论或长训结果。
@@ -30,7 +30,7 @@ D025：pristine Nano 7 selectors + canonical TTT 4 selectors，合计11项，不
 
 仅在唯一 GPU 空闲时执行；脚本不抢占其他训练、不安装依赖、不访问外网、不覆盖旧输出。
 ```bash
-cd /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918
+cd /disk/rl/psm_wma
 bash tools/g0/run_a2_delivery_validation.sh artifacts/g0/a2_acceptance_NEW
 ```
 
@@ -47,7 +47,7 @@ bash tools/g0/run_a2_delivery_validation.sh artifacts/g0/a2_acceptance_NEW
 - `delivery_status.json` 即使为PASS，也不是独立review批准、长训启动授权或成功率提升证明。
 - 5000-step训练、真实机器人运行、LIBERO成功率/消融结果没有在本次短测中完成。
 - 当前在线API要求调用方提供前一观测visual96和**实际执行**的标准化action10；HTTP客户端的RGB/action适配并未被偷偷假定已完成。
-- root/child分支均只在服务器本地创建，未推送远端，未覆盖原V2工作区。
+- A2 已合并回本地 V2，并将 V2 gitlink 固定到 canonical child；本轮尚未执行远端 push。训练/测试过程记录可入 Git，checkpoint/模型权重与 config.pkl 二进制快照保持本地。
 
 ## 独立审核处理
 
@@ -55,4 +55,4 @@ bash tools/g0/run_a2_delivery_validation.sh artifacts/g0/a2_acceptance_NEW
 
 最终 verifier `sync_a2_final_verification_2a9df880_v3.json` 保持 `independent_review_approval=false`，因为该字段由纯证据校验器保守固定，不把 reviewer 结果写回原始 verifier JSON；当前交付状态文件另行记录独立 review 已通过。
 
-仍有两个非阻塞 residue：child 源码中两处旧 scalar-order docstring 与 D026/D027 当前语义不一致；child 工作树存在未跟踪运行残留。二者不改变 formal child tree、训练实现或 evidence binding，本轮为避免制造新 implementation SHA 不再修改。
+仍有一个非阻塞 residue：child 源码中两处旧 scalar-order docstring 与 D026/D027 当前语义不一致。它不改变 formal child tree、训练实现或 evidence binding，本轮为避免制造新 implementation SHA 不再修改。
