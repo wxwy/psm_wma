@@ -171,3 +171,21 @@ Blockers:
 3. **Evidence gap** — the retained GPU witness proves real DCP save/kill/auto-resume and continuation from iter 4, but the repository evidence available to this reviewer does not retain the frozen criterion-4 uninterrupted-control `SegmentIdentity` sequence comparison and cumulative-exposure continuity values.
 
 The previous atomicity blocker itself is closed by the new two-phase staging/apply structure.
+
+---
+
+## 2026-09-19 — LIBERO policy server torch.compile hotfix audit
+
+- scope: ad-hoc runtime hotfix audit; **not a formal R09-B Gate closure**
+- implementation root: `12f8af8870fe539aa321f6ef54e261dc9cf5a84d`
+- exact child/Gitlink: `6b09063657eb1b2235d6b058f90d53cdd5c9e89e`
+- verdict: **SOURCE_FIX_ACCEPTED / EVIDENCE_ONLY_RECHECK_REQUIRED**
+- production blocker count: **0**
+- evidence-only blocker count: **1**
+- canonical review: `docs/collab/chatgpt/reviews/2026-09-19_libero_policy_server_compile_12f8af8_6b09063.md`
+- canonical review commit: `1a616ccafeac909a0a9f995b0e430dd8072fdf08`
+
+Root cause independently verified: the standalone LIBERO server inherited inference `use_torch_compile=True` and `OmniInference._get_compile_config()` rebuilt `CompileConfig(enabled=True)`, overriding the experiment's `model.config.compile.enabled=false`. The child fix now mirrors the nested experiment flag into the flat setup arg before `OmniInference.create()`.
+
+Required DS recheck: remove the temporary `/tmp/eval_server_run.py` monkeypatch, launch the native server on this exact pair, confirm `use_torch_compile=False` is resolved from the experiment config, and run at least two same-episode Local-Memory predictions (preferably repeat the 220-step smoke). No closure token until the patched pair itself is witnessed.
+
