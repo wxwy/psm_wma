@@ -1054,3 +1054,5 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - 实际变更：`closed_loop_eval.py` 增量保存 wave actions/predictions/partial_summary；`launch_action_server_libero_edge_all.sh` 参数化 SERVER_PORT/SERVER_OUTPUT_DIR；`eval_libero_4in1_acceptance_v2.sh` 改 4 server + 4 suite client 并行、GPU/端口/错峰/NUM_ENVS 可配置。
 - 静态仓库核对：V2 Gitlink 精确指向 child；child 仅改上述 3 文件；GitHub Actions 对该 child 无 workflow run。
 - 未执行验证：远程 Desktop Commander 设备当前 offline，因此未运行 bash -n/pytest/GPU 仿真；不得把本次提交当作 runtime PASS。
+
+- 最终样式修订 child=`b79b1cb26c9ebbd469dcea3d586ffcc7e6ac02a1`（仅 helper 空行规范化）；root Gitlink update=`5090e7305a100b3dfa0beb9e3e5574b14d128b90`。当前功能语义与 `a2ac4a1` 相同。
