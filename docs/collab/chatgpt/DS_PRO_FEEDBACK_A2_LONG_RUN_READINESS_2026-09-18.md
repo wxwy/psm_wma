@@ -59,3 +59,17 @@ v3 自述 `long_run_authorization: false`、`independent_review_approval: false`
 ## 边界
 
 本反馈只针对 readiness 缺口；不涉及 `2a9df880/22acb13c` 的实现改动。任何实现改动都需新 SHA 并重新复核。
+
+---
+
+## Owner adjudication（记录，2026-09-18）
+
+1. 总体结论认可：工程交付已关闭；长训 readiness 仍需技术闭合。
+2. **缺口 ② 降级为非阻塞**：full-catalog B=1 只用于主张 full-catalog 的 B1→A2 加速比，不构成 A2 长训的硬阻塞。
+   A2 自身 full-catalog 20 步实测 `176.06 s/step` → 5000 步直接外推 ≈ **10.19 天**（880300 s，未计 eval/checkpoint 开销），取代旧 scalar 的 14.6 天估计。
+3. **缺口 ③（cascade）确认为真实阻塞**：将补 CPU-only、stable-slot A2、full-catalog 的
+   - **5000-window capacity probe**；
+   - **multi-rollover epoch-reuse probe**；
+   使用精确 pair `2a9df880/22acb13c`。resume 已关闭；探针聚焦 per-slot frontier / rebind / `_slot_epoch` / queue replay 与 5000-window 可服务性。
+4. **缺口 ④（MM 名册）由 owner 显式豁免**：本轮 readiness 关闭不以 MM 为 gating 前提；DS/DS_PRO 技术复核保持 advisory。
+5. 边界：除非探针暴露真实缺陷，否则不改实现；先出 root-only probe/docs 证据。
