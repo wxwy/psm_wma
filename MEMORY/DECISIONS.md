@@ -251,3 +251,12 @@
 - 新验收：每 group stable-slot coverage 无重复且完整；每 slot chronology / terminal / rebind 正确；vectorized TTT 与相同 [B,T] 输入的逐-row算法数值/梯度等价；outer objective 维持 valid-consumer mean；backward 后才原子 commit；resume 恢复 per-slot frontier/fast-state；真实 GPU 必须证明 128 consumers/forward、有限 loss/gradient 与预算。
 - 边界：本次只冻结当前 LIBERO4IN1 canonical smoke 的 packing 语义，不声称解决任意 task 数下的通用 weighted-deficit scheduler；RoboCasa 等 task 数大于 B_stream 的 generic scheduler 另起 Gate。
 - 原因：用户再次确认最终实现目标为“所有 slot 同步计算，slot 内 TTT 串行，8×16=128 sample microbatch 后一次 Transformer 前向”，并明确要求执行；该指令晚于且覆盖 v0.2 的 scalar-order-preservation 过渡约束。
+
+## D028 A2 long-run readiness：以 stable-slot production probe 为唯一技术前置，MM 本轮豁免
+
+- 日期：2026-09-19
+- 状态：生效（用户明确裁决）
+- 决策：`2a9df880.../22acb13c...` 的工程交付已经关闭；5000-step 长训 readiness 不再要求补 full-catalog B=1 对照。B=1 的 `1.369×` 只作为 10-episode/suite matched throughput control，不得外推成 full-catalog speedup。长训预算直接采用 A2 full-catalog 20-step 实测 `176.05919465 s/step`，基础外推 `5000 step ≈ 10.19 days`，不含 eval/checkpoint 等附加开销，旧 scalar/B=1 `14.6 days` 估计失效。
+- 唯一技术前置：用当前 production `GroupedActiveLocalMemoryWindowDriver + GroupedSegmentRuntimeOwner` 在真实 LIBERO4IN1 full catalog 上做 metadata-only stable-slot A2 规划，连续服务至少 5000 optimizer windows，并跨多次 slot-local catalog reuse；必须验证每 window `16 groups × 8 slots`、每 slot chronology/terminal/rebind 正确、`_slot_epoch` 单调、production `queue_permutation` 可独立 replay、无 capacity exhaustion / scheduler admission failure。
+- 治理 override：用户明确“不要管 MM”；因此本轮 long-run readiness 不以 MM exact-pair verdict 为 gating prerequisite。DS/DS_PRO 继续作为只读技术复核，但不拥有阻止 owner 已授权技术范围推进的否决权。
+- 授权翻转：只有上述 5000-window capacity + multi-rollover reuse 证据及其 exact-pair verifier 均 PASS 后，才允许新 readiness 产物写 `long_run_authorization=true` / `READY_FOR_LONG_RUN`。这只表示可启动长训，不表示已启动、不表示 LIBERO SR 提升或真实机器人结论。
