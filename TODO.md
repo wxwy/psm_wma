@@ -289,4 +289,5 @@
 
 | ID | 状态 | 负责人 | 前置条件 | 验收条件 |
 |---|---|---|---|---|
+| PROJECT-PRESENTATION-LAYER | DONE | ChatGPT | A2 工程交付与 long-run readiness 已闭合 | commit `e67796b1`：根 README / PROJECT_STATUS / docs current+index / canonical artifact manifest / train-resume-eval-verify facade 已完成；shell syntax、README/docs links、JSON、verify facade、fresh/resume dry-run 均 PASS。Git 只纳入小型 canonical evidence，34GB×3 raw GPU 目录显式 ignore；未改 child。 |
 | LOCAL-A2-DELIVERY | DONE | ChatGPT | 用户明确交接；D026/D027/D028 生效 | 工程交付与长训 readiness 均闭合：stable-slot 8×16 grouped training、CPU/CUDA/native parity、真实 GPU、exact resume、20-step full-catalog、online action-path、5000-window production-class capacity+multi-rollover reuse、source-bound verifier 全 PASS。`long_run_authorization=true`，但 5000-step 训练尚未启动；不代表 LIBERO SR 结论。 |

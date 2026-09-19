@@ -1029,3 +1029,15 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - 本轮执行：CPU 数值/梯度/原子性/恢复回归 → 单GPU 真实 cache/native forward → 短训/恢复 → 证据绑定/推理兼容。
 - 输出统一放 artifacts/g0/chatgpt_a2_delivery/；新建运行子目录，不覆盖旧训练。失败先保留日志再修复，不自动启动5000步长训。
 - 完成判据以真实测试/运行结果为准；代码作者不自授独立审核 APPROVE。
+
+### 项目 Presentation Layer 整理（2026-09-19，DONE）
+
+- 目的：不改模型实现、不移动历史文件，为当前已 READY_FOR_LONG_RUN 的 PSM-WMA 增加清晰的项目首页、current docs、公开脚本入口和 canonical artifact manifest，使新读者无需阅读 Gate/审计历史即可理解与复现。
+- canonical implementation pair 保持 root=2a9df880713da179aee141dd97c6b20a2b1d8c2e / child=22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e；当前 root bookkeeping head=6143b1c549bd26e9c29646c3f0c42b6c9e08e1f6。
+- 预计修改仅限根仓：README.md、PROJECT_STATUS.md、docs/INDEX.md、docs/current/{architecture,local_memory,training,evaluation,experiments}.md、artifacts/{README.md,CANONICAL.json}、scripts/{train,resume,eval,verify}.sh、TODO.md、SESSION.md。
+- 明确不做：不修改 cosmos-framework tracked source，不改 implementation SHA，不删除/移动 docs/build、docs/collab、tools/g0 或历史 artifacts，不启动 5000-step 长训。
+- 完成：commit `e67796b151cd07c13be384e884074b99cf981f1b` 新增根 README、PROJECT_STATUS、docs/INDEX、docs/current 5 份 current truth、artifacts/CANONICAL+README、train/resume/eval/verify facade，并把 34GB 级 raw GPU validation 目录加入 ignore；仅提交 compact canonical JSON/log（最大约 24KB）。
+- 验证：4 个 facade `bash -n` PASS；README/docs 本地链接 missing=0；`artifacts/CANONICAL.json` parse PASS；`scripts/verify.sh` => PASS / READY_FOR_LONG_RUN；fresh 5000-step train dry-run 与 iter_3 resume dry-run 均解析到正确 active TOML/GA16/auto-resume 命令；child tracked status clean。
+- Workspace cleanup：7 个历史 detached P1/P4/P5 worktree 的 HEAD 均已证明是 V2 与 A2 分支祖先后，以 `git worktree remove --force` 正规移除；两处未跟踪 artifact 先归档到 `/disk/rl/archive/psm_wma_legacy/20260919/` 并生成 SHA256 `MANIFEST.txt`；3 个旧 static-export/quarantine 非 Git 目录同样移入 archive；`git worktree prune` 清除失效注册。`/disk/rl` 顶层现保留主项目、当前 A2 worktree、data/models/RLinf/datasets 与独立 reference repo。
+- Git upload 边界：需要 push 的是 root presentation/ledger commits + `cosmos-framework` 中包含 canonical child `22acb13c...` 的分支；raw `sync_a2_gpu_control/resume/budget` 约 34GB×3、outputs/results/checkpoints、archive、数据集、模型权重均不进入 Git。当前本地 remote-tracking refs 尚不包含 root presentation HEAD，也不包含 child `22acb13c...`，故真正上传时必须先 push child，再 push root 分支/gitlink。
+- 主 V2=`b796db08` 与 presentation 分支已分叉，且 V2 当前 child=`ae2e9f7`；为保持长训 exact-pair 证据，本轮不把 presentation 分支硬 merge/cherry-pick 进 V2。长训仍从 canonical A2 分支执行。
