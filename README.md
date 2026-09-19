@@ -8,12 +8,12 @@ PSM-WMA 是面向移动操作的持续状态 / 记忆 / 世界模型研究项目
 
 ## Current status
 
-- Engineering delivery: **PASS**
-- Long-run readiness: **READY_FOR_LONG_RUN**
-- 5000-step authorization: **true**
+- Single-rank A2 reference evidence: **PASS / READY_FOR_LONG_RUN**
+- Current 8-rank A2 adaptation: **IMPLEMENTED**
+- 8×H100 runtime smoke: **pending on the new machine**
 - 5000-step training: **not started**
-- Canonical implementation root: `2a9df880713da179aee141dd97c6b20a2b1d8c2e`
-- Canonical Cosmos child: `22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e`
+- Current Cosmos child: `8c07e9ecf3c0815c9f54839c4474813fc3bcb0d7`
+- Historical single-rank evidence child: `22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e`
 
 机器可读状态见 [`PROJECT_STATUS.md`](PROJECT_STATUS.md) 与 [`artifacts/CANONICAL.json`](artifacts/CANONICAL.json)。
 ## Current architecture
@@ -37,15 +37,15 @@ past RGB / executed action
  native Flow-Matching action loss
 ```
 
-Canonical A2 training geometry:
+Canonical 8-rank A2 training geometry:
 
-- `B_stream = 8` stable episode streams
-- `T = 16` consecutive consumer positions per stream
-- one native microbatch = `8 × 16 = 128` consumers
-- `GA = 16` native microbatches per optimizer update
-- `2048` consumers / optimizer update
-- TTT is serial along `T`, parallel across stream rows
-- runtime fast state is committed only after successful outer backward
+- `world_size = 8`
+- per rank: `B_stream = 8`, `T = 16`, one native forward = `128` consumers
+- per rank: `GA = 2`, therefore `256` consumers / optimizer update
+- global: `8 × 256 = 2048` consumers / optimizer update
+- one global per-suite episode catalog is deterministically sharded across ranks
+- TTT is serial along `T`, parallel across stream rows and independent across ranks
+- runtime fast state is rank-local and committed only after successful outer backward
 ## Start here
 
 1. Architecture: [`docs/current/architecture.md`](docs/current/architecture.md)
@@ -62,7 +62,7 @@ scripts/train_local_memory_ttt.sh  # canonical Local Memory + TTT A2; auto-resum
 scripts/train.sh                   # compatibility alias to the canonical trainer
 scripts/resume.sh                  # strict-resume alias; fails if no checkpoint exists
 scripts/eval.sh                    # LIBERO closed-loop evaluation for one checkpoint
-scripts/verify.sh                  # engineering + long-run readiness verification
+scripts/verify.sh                  # current-source multi-rank capability preflight
 ```
 
 These wrappers delegate to the existing Cosmos / G0 implementation; `tools/g0/` remains the internal engineering toolbox.

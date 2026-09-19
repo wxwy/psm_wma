@@ -1,45 +1,40 @@
 {
-  "schema": "psm_wma_canonical_artifacts_v1",
+  "schema": "psm_wma_canonical_artifacts_v2",
   "updated": "2026-09-19",
-  "implementation": {
-    "root": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
-    "child": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+  "current_training": {
+    "child": "8c07e9ecf3c0815c9f54839c4474813fc3bcb0d7",
+    "topology": "8-rank single-node H100",
     "layout": "stable-slot synchronized A2",
-    "b_stream": 8,
+    "world_size": 8,
+    "b_stream_per_rank": 8,
     "ttt_tbptt_steps": 16,
-    "grad_accum_native_forwards": 16,
-    "consumers_per_update": 2048
+    "ga_per_rank": 2,
+    "consumers_per_rank_per_update": 256,
+    "global_consumers_per_update": 2048,
+    "catalog_policy": "global per-suite catalog -> deterministic disjoint rank shards -> rank-local stable slots",
+    "fixed_git_sha_required": false
   },
   "status": {
-    "engineering_delivery": "PASS",
-    "long_run_readiness": "READY_FOR_LONG_RUN",
-    "long_run_authorization": true,
+    "multirank_code_adaptation": "IMPLEMENTED",
+    "multirank_runtime_validation": "PENDING_ON_8XH100",
     "long_run_started": false,
     "policy_success_rate_claim": false
+  },
+  "single_rank_reference": {
+    "root": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+    "child": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e",
+    "engineering_delivery": "PASS",
+    "long_run_readiness": "READY_FOR_LONG_RUN",
+    "consumers_per_update": 2048
   },
   "tracked_evidence": {
     "delivery_verifier": "artifacts/g0/sync_a2_final_verification_2a9df880_v3.json",
     "long_run_readiness": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_long_run_readiness_v1.json",
     "capacity_5000": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_capacity_5000.json",
-    "epoch_reuse_5000": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_epoch_reuse_5000.json",
-    "combined_5000": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_stable_slot_long_run_5000.json",
-    "probe_receipt": "artifacts/g0/a2_long_run_readiness_2a9df880/probe_5000_receipt.json"
+    "epoch_reuse_5000": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_epoch_reuse_5000.json"
   },
-  "process_records": {
-    "cpu_validation": "artifacts/g0/sync_a2_cpu_2a9df880",
-    "b1_control_initial": "artifacts/g0/sync_b1_control_2a9df880",
-    "b1_control_final": "artifacts/g0/sync_b1_control2_2a9df880",
-    "gpu_control": "artifacts/g0/sync_a2_gpu_control_2a9df880",
-    "gpu_resume": "artifacts/g0/sync_a2_gpu_resume_2a9df880",
-    "budget_20step_full_catalog": "artifacts/g0/sync_a2_budget20_2a9df880"
-  },
-  "historical_process_records": [
-    "artifacts/g0/a2_acceptance_fb386c7a",
-    "artifacts/g0/a2_release_a5991d94",
-    "artifacts/g0/chatgpt_a2_delivery"
-  ],
-  "process_record_policy": "Text/JSON/XML/YAML/log records are tracked. Checkpoint trees, model weights and config.pkl binary snapshots are intentionally excluded.",
-  "measurements": {
+  "process_record_policy": "Training/testing text, JSON, XML, YAML and log records are tracked. Checkpoint trees, model weights and config.pkl remain excluded.",
+  "measurements_single_rank_reference": {
     "full_catalog_step_wall_mean_s": 176.05919465,
     "cuda_peak_allocated_gib": 45.04514503479004,
     "projected_5000_days_base": 10.188610801504629
