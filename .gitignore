@@ -37,16 +37,15 @@ SESSION_HANDOFF_*.md
 outputs/
 results/
 
-# Canonical A2 delivery: keep only compact machine-readable summaries in Git.
-# Raw GPU validation directories contain local logs/checkpoints (tens of GiB).
-artifacts/g0/a2_acceptance_*/
-artifacts/g0/a2_release_*/
-artifacts/g0/chatgpt_a2_delivery/
-artifacts/g0/sync_a2_cpu_2a9df880/
-artifacts/g0/sync_a2_gpu_control_2a9df880/
-artifacts/g0/sync_a2_gpu_resume_2a9df880/
-artifacts/g0/sync_a2_budget20_2a9df880/
-artifacts/g0/sync_b1_control_2a9df880/
-artifacts/g0/sync_b1_control2_2a9df880/
+# A2 process records are intentionally versioned: launch receipts, YAML configs,
+# metrics, logs, exit codes, JUnit and verifier reports. Heavy binary payloads are not.
+artifacts/**/config.pkl
+artifacts/**/*.pt
+artifacts/**/*.pth
+artifacts/**/*.safetensors
+artifacts/**/*.ckpt
+artifacts/**/*.distcp
+
+# Superseded verifier snapshots; keep only the final v3 verifier in Git.
 artifacts/g0/sync_a2_final_verification_2a9df880.json
 artifacts/g0/sync_a2_final_verification_2a9df880_v2.json

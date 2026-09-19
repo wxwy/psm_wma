@@ -25,11 +25,20 @@
     "combined_5000": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_stable_slot_long_run_5000.json",
     "probe_receipt": "artifacts/g0/a2_long_run_readiness_2a9df880/probe_5000_receipt.json"
   },
-  "local_raw_evidence": {
+  "process_records": {
+    "cpu_validation": "artifacts/g0/sync_a2_cpu_2a9df880",
+    "b1_control_initial": "artifacts/g0/sync_b1_control_2a9df880",
+    "b1_control_final": "artifacts/g0/sync_b1_control2_2a9df880",
     "gpu_control": "artifacts/g0/sync_a2_gpu_control_2a9df880",
     "gpu_resume": "artifacts/g0/sync_a2_gpu_resume_2a9df880",
     "budget_20step_full_catalog": "artifacts/g0/sync_a2_budget20_2a9df880"
   },
+  "historical_process_records": [
+    "artifacts/g0/a2_acceptance_fb386c7a",
+    "artifacts/g0/a2_release_a5991d94",
+    "artifacts/g0/chatgpt_a2_delivery"
+  ],
+  "process_record_policy": "Text/JSON/XML/YAML/log records are tracked. Checkpoint trees, model weights and config.pkl binary snapshots are intentionally excluded.",
   "measurements": {
     "full_catalog_step_wall_mean_s": 176.05919465,
     "cuda_peak_allocated_gib": 45.04514503479004,

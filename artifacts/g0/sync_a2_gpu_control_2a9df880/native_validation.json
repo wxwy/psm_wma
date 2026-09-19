@@ -1,0 +1,68 @@
+{
+  "iteration": 3,
+  "result": "PASS",
+  "independent_review": false,
+  "native_group_parity": {
+    "grouped_loss": 5.780586242675781,
+    "scalar_loss": 5.780760109424591,
+    "loss_relative_error": 3.0077701726206423e-05,
+    "gradient_relative_l2": 0.023932465357780673,
+    "local_gradient_relative_l2": 0.02394999587378261,
+    "gradient_tensors": 314,
+    "grouped_forwards": 1,
+    "scalar_forwards": 8,
+    "consumers": 128,
+    "fixture": "real model/data, eval dropout, sigma=0.5, epsilon=0; no optimizer step",
+    "tolerances": {
+      "loss_relative": 0.01,
+      "gradient_relative_l2": 0.05
+    },
+    "wall_seconds": 28.421946960501373,
+    "result": "PASS"
+  },
+  "online_generation": {
+    "result": "PASS",
+    "scope": "real cached-observation policy generation; not closed-loop success evaluation",
+    "consumer_steps": [
+      0,
+      1
+    ],
+    "denoise_steps": 2,
+    "action_shapes": [
+      [
+        16,
+        10
+      ],
+      [
+        16,
+        10
+      ]
+    ],
+    "actions_finite": true,
+    "local_token_max_abs": 0.2249813675880432,
+    "local_on_off_action_max_difference": 0.0032552778720855713,
+    "slow_weights_unchanged": true,
+    "no_slow_parameter_grads": true
+  },
+  "rgb_visual96_parity": {
+    "result": "PASS",
+    "episode_id": "0",
+    "raw_shape": [
+      3,
+      17,
+      192,
+      320
+    ],
+    "cache_shape": [
+      5,
+      48,
+      12,
+      20
+    ],
+    "full_latent_max_abs": 0.0,
+    "first_causal_latent_max_abs": 0.0,
+    "visual96_max_abs": 0.0,
+    "tolerance": 0.0002,
+    "scope": "same real raw 17-frame LIBERO window: cache vs full VAE and first-frame causal online visual96"
+  }
+}

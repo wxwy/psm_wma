@@ -2,7 +2,7 @@
 
 `artifacts/g0/` contains raw machine-readable evidence from many iterations of the project. Historical directories are intentionally retained and are not all equally authoritative.
 
-Use `CANONICAL.json` to locate the current accepted evidence. Its `tracked_evidence` entries are intentionally small and belong in Git; `local_raw_evidence` points to large local validation directories that are intentionally ignored by Git.
+Use `CANONICAL.json` to locate the current accepted evidence. Canonical summaries and training/testing process records belong in Git. Checkpoint trees, model weights and `config.pkl` binary snapshots stay local and are ignored.
 
 ## Current canonical evidence
 

@@ -1,0 +1,12 @@
+cmd: /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/cosmos_framework/scripts/train.py
+  --sft-toml=/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all_localmem_active.toml
+  -- trainer.max_iter=3 checkpoint.save_iter=2 trainer.logging_iter=1 checkpoint.load_path=/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/sync_a2_gpu_resume_2a9df880/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000002
+  checkpoint.load_training_state=True
+args_cfg_path: /disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/cosmos-framework/examples/toml/sft_config/action_policy_libero_edge_all_localmem_active.toml
+args_override:
+- --
+- trainer.max_iter=3
+- checkpoint.save_iter=2
+- trainer.logging_iter=1
+- checkpoint.load_path=/disk/rl/psm_wma_worktrees/chatgpt_a2_delivery_20260918/artifacts/g0/sync_a2_gpu_resume_2a9df880/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/checkpoints/iter_000000002
+- checkpoint.load_training_state=True

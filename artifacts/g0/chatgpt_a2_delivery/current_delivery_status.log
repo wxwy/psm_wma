@@ -1,0 +1,38 @@
+{
+  "result": "BLOCKED",
+  "checks": [
+    {
+      "check": "committed_target",
+      "status": "PASS"
+    },
+    {
+      "check": "cpu_behavior",
+      "status": "PASS"
+    },
+    {
+      "check": "gpu_control",
+      "status": "BLOCKED",
+      "error": "no launch receipt: artifacts/g0/chatgpt_a2_delivery/gpu_control_v2"
+    },
+    {
+      "check": "gpu_resume",
+      "status": "BLOCKED",
+      "error": "no launch receipt: artifacts/g0/chatgpt_a2_delivery/gpu_resume"
+    },
+    {
+      "check": "resume_frontier_and_fast_state",
+      "status": "BLOCKED",
+      "error": "missing valid runs"
+    },
+    {
+      "check": "real_native_parity_and_inference",
+      "status": "BLOCKED",
+      "error": "[Errno 2] No such file or directory: 'artifacts/g0/chatgpt_a2_delivery/gpu_control_v2/native_validation.json'"
+    },
+    {
+      "check": "twenty_step_budget",
+      "status": "BLOCKED",
+      "error": "no new-layout budget run"
+    }
+  ]
+}

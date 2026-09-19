@@ -1,0 +1,53 @@
+{
+  "schema": "a2_delivery_status_v3",
+  "result": "PASS",
+  "engineering_acceptance": "PASS",
+  "long_run_readiness": "READY_FOR_LONG_RUN",
+  "long_run_authorization": true,
+  "long_run_started": false,
+  "implementation_pair": {
+    "root": "2a9df880713da179aee141dd97c6b20a2b1d8c2e",
+    "child": "22acb13c1fdb4f146e51e3c26f1759c73e6d0d7e"
+  },
+  "bookkeeping_head": "6143b1c549bd26e9c29646c3f0c42b6c9e08e1f6",
+  "delivery_verifier": {
+    "report": "artifacts/g0/sync_a2_final_verification_2a9df880_v3.json",
+    "result": "PASS",
+    "checks": "10/10 PASS"
+  },
+  "long_run_verifier": {
+    "report": "artifacts/g0/a2_long_run_readiness_2a9df880/a2_long_run_readiness_v1.json",
+    "sha256": "153a0c801d1720deae9cc3890798ad1e6dd6e9e8abb332f4a6809c69b7b7a50d",
+    "result": "PASS",
+    "verdict": "READY_FOR_LONG_RUN",
+    "projected_5000_days_base": 10.188610801504629,
+    "includes_eval_checkpoint_overhead": false
+  },
+  "capacity_reuse": {
+    "windows": "5000/5000",
+    "native_groups": 80000,
+    "logical_segments": 640000,
+    "consumers": 10240000,
+    "queue_replay_mismatches": 0,
+    "chronology_errors": 0,
+    "group_shape_errors": 0,
+    "slot_epoch": {
+      "0": 27,
+      "1": 63,
+      "2": 45,
+      "3": 60,
+      "4": 28,
+      "5": 60,
+      "6": 46,
+      "7": 60
+    }
+  },
+  "owner_decision": "D028",
+  "mm_required": false,
+  "policy_success_rate_claim": false,
+  "notes": [
+    "Ready to start the 5000-step long run; it has not been started by this closure.",
+    "The 10.19-day estimate is a base projection from the A2 full-catalog 20-step run and excludes eval/checkpoint overhead.",
+    "The 1.369x B1-to-A2 speedup is scoped only to the 10-episode/suite matched control."
+  ]
+}

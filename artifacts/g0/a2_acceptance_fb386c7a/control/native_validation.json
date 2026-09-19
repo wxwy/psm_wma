@@ -1,0 +1,27 @@
+{
+  "iteration": 3,
+  "result": "FAIL",
+  "independent_review": false,
+  "native_group_parity": {
+    "grouped_loss": 6.36564302444458,
+    "scalar_loss": 6.365858554840088,
+    "loss_relative_error": 3.385838550483564e-05,
+    "gradient_relative_l2": 0.030122880176728234,
+    "local_gradient_relative_l2": 0.03013132716767352,
+    "gradient_tensors": 314,
+    "grouped_forwards": 1,
+    "scalar_forwards": 8,
+    "consumers": 128,
+    "fixture": "real model/data, eval dropout, sigma=0.5, epsilon=0; no optimizer step",
+    "tolerances": {
+      "loss_relative": 0.01,
+      "gradient_relative_l2": 0.05
+    },
+    "wall_seconds": 30.03578222543001,
+    "result": "PASS"
+  },
+  "error": {
+    "type": "ValueError",
+    "message": "Memory Prefix does not support native MemoryState KV cache."
+  }
+}
