@@ -39,28 +39,35 @@ WAN_VAE_PATH=cosmos-framework/examples/checkpoints/wan22_vae/Wan2.2_VAE.pth
 
 `LIBERO_ROOT` must contain `libero_spatial`, `libero_object`, `libero_goal`, and `libero_10`.
 
-## Fresh run
+## Train / auto-resume
 
-From the project root:
+From the project root, use the single canonical entrypoint:
 
 ```bash
-scripts/train.sh
+scripts/train_local_memory_ttt.sh
 ```
 
-The wrapper refuses to start into an existing non-empty run directory. Override paths or run length through environment variables such as `OUTPUT_ROOT`, `MAX_ITER`, `SAVE_ITER`, `CUDA_VISIBLE_DEVICES`, and the asset variables above.
+Default behavior is fail-safe auto-resume: if the run contains one or more `iter_*` checkpoints, the launcher resumes from the largest iteration; if no checkpoint exists, it starts a fresh run. Override paths or run length with `OUTPUT_ROOT`, `MAX_ITER`, `SAVE_ITER`, `CUDA_VISIBLE_DEVICES`, and the asset variables above.
 
-Current readiness evidence authorizes the canonical 5000-step geometry; it does not mean the wrapper silently starts training.
-## Resume
+For an explicitly fresh run, use a new output root:
 
-Use:
+```bash
+FRESH_START=1 OUTPUT_ROOT=/path/to/new/output scripts/train_local_memory_ttt.sh
+```
+
+`FRESH_START=1` refuses a non-empty existing run directory, so it cannot silently overwrite or mix with an old run.
+
+## Strict resume alias
 
 ```bash
 scripts/resume.sh
 ```
 
-The underlying unified launcher scans the run's checkpoint directory and resumes from the largest `iter_*` checkpoint. The Local Memory callback restores its data-progress state from the DCP `dataloader` component and fails closed if a resumed optimizer/model state lacks the required Local runtime frontier.
+This is only a compatibility convenience. It forwards to `train_local_memory_ttt.sh` with `REQUIRE_RESUME=1` and fails if no `iter_*` checkpoint exists. The Local Memory callback restores its data-progress state from the DCP `dataloader` component and fails closed if a resumed optimizer/model state lacks the required Local runtime frontier.
 
-Exact resume evidence is already included in the canonical delivery verifier.
+`scripts/train.sh` is also retained as a compatibility alias to the canonical Local Memory + TTT trainer.
+
+Exact resume evidence is included in the canonical delivery verifier.
 
 ## Expected resource envelope
 

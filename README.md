@@ -58,10 +58,11 @@ Canonical A2 training geometry:
 Public project entrypoints:
 
 ```bash
-scripts/train.sh      # fresh Local-Memory A2 training
-scripts/resume.sh     # auto-resume the same run
-scripts/eval.sh       # LIBERO closed-loop evaluation for one checkpoint
-scripts/verify.sh     # engineering + long-run readiness verification
+scripts/train_local_memory_ttt.sh  # canonical Local Memory + TTT A2; auto-resume by default
+scripts/train.sh                   # compatibility alias to the canonical trainer
+scripts/resume.sh                  # strict-resume alias; fails if no checkpoint exists
+scripts/eval.sh                    # LIBERO closed-loop evaluation for one checkpoint
+scripts/verify.sh                  # engineering + long-run readiness verification
 ```
 
 These wrappers delegate to the existing Cosmos / G0 implementation; `tools/g0/` remains the internal engineering toolbox.
