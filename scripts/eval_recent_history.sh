@@ -7,8 +7,8 @@ CHECKPOINT_PATH="${1:-}"
 
 export PSM_R08_LOCAL_HISTORY_ENABLED=1
 export PSM_E003_RECENT_HISTORY_CONTROL=1
-# Formal E003 evaluation is pinned to H=64 to match the training namespace.
-export PSM_R08_LOCAL_HISTORY_HORIZON=64
+# Formal E003 evaluation is pinned to H=16 to match ttt_tbptt_steps=16.
+export PSM_R08_LOCAL_HISTORY_HORIZON=16
 export PSM_R08_HISTORY_MODE=normal
 export PSM_LOCAL_DUMMY_ENABLED=0
 export PSM_R09_A1_ENABLED=0

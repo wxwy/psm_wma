@@ -50,7 +50,11 @@ the same one-token Local interface as Local TTT, but keeps only the most recent
 finite window. The recurrent replay is recomputed from zero state on every policy
 query; no GRU hidden state or TTT fast weight is carried across queries.
 
-The formal control uses `H=64`; `H=16` is smoke-only.
+The formal matched control uses `H=16`, equal to `ttt_tbptt_steps=16`.
+This isolates persistence while keeping the bounded raw-history window equal to one
+TTT segment. `H=32` is reserved as an optional stronger finite-history control
+only if the H16 result leaves a context-length ambiguity; H64 is not part of the
+current E003 plan.
 
 Train:
 
