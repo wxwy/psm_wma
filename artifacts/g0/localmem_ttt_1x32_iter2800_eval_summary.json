@@ -1,0 +1,306 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-09-20",
+  "method": "local_memory_ttt",
+  "memory_readout": {
+    "k_local": 1,
+    "local_dim": 32
+  },
+  "training_checkpoint": "iter_000002800",
+  "evaluation": {
+    "benchmark": "LIBERO",
+    "trials_per_task": 10,
+    "tasks_per_suite": 10,
+    "suites": 4,
+    "total_episodes": 400,
+    "total_successes": 331,
+    "overall_success_rate": 0.8275
+  },
+  "suite_results": {
+    "libero_spatial": {
+      "successes": 94,
+      "episodes": 100,
+      "success_rate": 0.94,
+      "tasks": [
+        {
+          "task_id": 0,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 1,
+          "successes": 9,
+          "episodes": 10,
+          "success_rate": 0.9
+        },
+        {
+          "task_id": 2,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 3,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 4,
+          "successes": 7,
+          "episodes": 10,
+          "success_rate": 0.7
+        },
+        {
+          "task_id": 5,
+          "successes": 9,
+          "episodes": 10,
+          "success_rate": 0.9
+        },
+        {
+          "task_id": 6,
+          "successes": 9,
+          "episodes": 10,
+          "success_rate": 0.9
+        },
+        {
+          "task_id": 7,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 8,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 9,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        }
+      ]
+    },
+    "libero_object": {
+      "successes": 97,
+      "episodes": 100,
+      "success_rate": 0.97,
+      "tasks": [
+        {
+          "task_id": 0,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 1,
+          "successes": 9,
+          "episodes": 10,
+          "success_rate": 0.9
+        },
+        {
+          "task_id": 2,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 3,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 4,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 5,
+          "successes": 9,
+          "episodes": 10,
+          "success_rate": 0.9
+        },
+        {
+          "task_id": 6,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 7,
+          "successes": 9,
+          "episodes": 10,
+          "success_rate": 0.9
+        },
+        {
+          "task_id": 8,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 9,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        }
+      ]
+    },
+    "libero_goal": {
+      "successes": 68,
+      "episodes": 100,
+      "success_rate": 0.68,
+      "tasks": [
+        {
+          "task_id": 0,
+          "successes": 1,
+          "episodes": 10,
+          "success_rate": 0.1
+        },
+        {
+          "task_id": 1,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 2,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 3,
+          "successes": 5,
+          "episodes": 10,
+          "success_rate": 0.5
+        },
+        {
+          "task_id": 4,
+          "successes": 9,
+          "episodes": 10,
+          "success_rate": 0.9
+        },
+        {
+          "task_id": 5,
+          "successes": 2,
+          "episodes": 10,
+          "success_rate": 0.2
+        },
+        {
+          "task_id": 6,
+          "successes": 7,
+          "episodes": 10,
+          "success_rate": 0.7
+        },
+        {
+          "task_id": 7,
+          "successes": 7,
+          "episodes": 10,
+          "success_rate": 0.7
+        },
+        {
+          "task_id": 8,
+          "successes": 8,
+          "episodes": 10,
+          "success_rate": 0.8
+        },
+        {
+          "task_id": 9,
+          "successes": 9,
+          "episodes": 10,
+          "success_rate": 0.9
+        }
+      ]
+    },
+    "libero_10": {
+      "successes": 72,
+      "episodes": 100,
+      "success_rate": 0.72,
+      "tasks": [
+        {
+          "task_id": 0,
+          "successes": 7,
+          "episodes": 10,
+          "success_rate": 0.7
+        },
+        {
+          "task_id": 1,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 2,
+          "successes": 9,
+          "episodes": 10,
+          "success_rate": 0.9
+        },
+        {
+          "task_id": 3,
+          "successes": 5,
+          "episodes": 10,
+          "success_rate": 0.5
+        },
+        {
+          "task_id": 4,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 5,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 6,
+          "successes": 8,
+          "episodes": 10,
+          "success_rate": 0.8
+        },
+        {
+          "task_id": 7,
+          "successes": 10,
+          "episodes": 10,
+          "success_rate": 1
+        },
+        {
+          "task_id": 8,
+          "successes": 0,
+          "episodes": 10,
+          "success_rate": 0
+        },
+        {
+          "task_id": 9,
+          "successes": 3,
+          "episodes": 10,
+          "success_rate": 0.3
+        }
+      ]
+    }
+  },
+  "native_cosmos_iter2800_baseline": {
+    "libero_spatial": 0.96,
+    "libero_object": 0.99,
+    "libero_goal": 0.76,
+    "libero_10": 0.58,
+    "overall": 0.8225
+  },
+  "comparison_delta_pp": {
+    "libero_spatial": -2,
+    "libero_object": -2,
+    "libero_goal": -8,
+    "libero_10": 14,
+    "overall": 0.5
+  },
+  "source_result_root": "/mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/outputs/train_local_memory_a2/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/sim_test/iter_000002800/sim_test/iter_000002800/",
+  "training_loss_figure": "artifacts/g0/localmem_ttt_1x32_training_loss_iter3288.webp",
+  "evidence_note": "Completed task-level summary supplied by the user; raw server-side per-episode files are not copied into this artifact."
+}
