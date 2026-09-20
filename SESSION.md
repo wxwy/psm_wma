@@ -1063,3 +1063,7 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - 用户要求解决仿真断点续测；DS_PRO 指出当前 partial_summary 只写不读。
 - 实现口径：episode-boundary resume；partial_summary 为唯一完成凭证；error=None 或 intentional skipped 才复用；transport/server error 重跑；无 partial 的 prediction/action 残留不复用。
 - 不恢复单 episode 中途的 Local Memory session/fast state；每个待补 episode 从 fresh episode session 开始。
+
+- 2026-09-20 纠正：根仓 `3ecbb940...` 当时 Gitlink 仍为 `3b9e1db...`，因此先前称“resume 已在 V2 合入”错误。child `12ae8cfe...` 虽已存在于 child v2，但未被 root 纳入。
+- 已补根仓 Gitlink：root `c8265532078283f674a02671599df380c4a7dd40` → child `12ae8cfe7593002ee4294ddf3584d45cf6e670cd`。
+- child delta 仅 3 文件：`closed_loop_eval.py`、`closed_loop_resume_test.py`、`eval_libero_4in1_acceptance_v2.sh`；当前状态=REVIEW，尚未声称 runtime PASS。
