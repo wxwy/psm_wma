@@ -1056,3 +1056,10 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - 未执行验证：远程 Desktop Commander 设备当前 offline，因此未运行 bash -n/pytest/GPU 仿真；不得把本次提交当作 runtime PASS。
 
 - 最终样式修订 child=`b79b1cb26c9ebbd469dcea3d586ffcc7e6ac02a1`（仅 helper 空行规范化）；root Gitlink update=`5090e7305a100b3dfa0beb9e3e5574b14d128b90`。当前功能语义与 `a2ac4a1` 相同。
+
+
+### EVAL-LIBERO-EPISODE-RESUME（2026-09-20）
+
+- 用户要求解决仿真断点续测；DS_PRO 指出当前 partial_summary 只写不读。
+- 实现口径：episode-boundary resume；partial_summary 为唯一完成凭证；error=None 或 intentional skipped 才复用；transport/server error 重跑；无 partial 的 prediction/action 残留不复用。
+- 不恢复单 episode 中途的 Local Memory session/fast state；每个待补 episode 从 fresh episode session 开始。
