@@ -42,3 +42,30 @@ This isolates the online Local conditioning path from checkpoint identity. It do
 The current repository has engineering evidence that the online Local path is finite, session-isolated and action-affecting. It does **not** yet contain the final 5000-step LIBERO success-rate conclusion.
 
 Evaluation outputs are experiment results, not authority documents. Record the checkpoint SHA/path, suite/task/trial coverage, denoising steps and Local Memory mode alongside every reported SR.
+
+## E003 bounded recent-history control
+
+E003 uses the same canonical `visual96 + executed_action10` evidence inventory and
+the same one-token Local interface as Local TTT, but keeps only the most recent
+finite window. The recurrent replay is recomputed from zero state on every policy
+query; no GRU hidden state or TTT fast weight is carried across queries.
+
+The formal control uses `H=64`; `H=16` is smoke-only.
+
+Train:
+
+```bash
+LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
+bash examples/launch_sft_action_policy_libero_edge_all_recent_history.sh
+```
+
+Evaluate the formal `iter_000002800` checkpoint:
+
+```bash
+TASK_SUITES="libero_goal libero_10" \
+scripts/eval_recent_history.sh /absolute/path/to/iter_000002800
+```
+
+The E003 launcher fail-closes against R09-A1 and all TTT routes. Training and
+inference both emit a single `1 x 32` Local token; the only episode memory kept
+by inference is the last `H` canonical evidence rows.
