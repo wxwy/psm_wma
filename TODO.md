@@ -300,3 +300,12 @@
 - 目标：保持正式评测语义不变，将 4 suite 改为独立 server 并行；每 server 内继续 predict_batch；vectorized 路径按 wave 增量落盘 actions/predictions/partial summary.
 - 不改：num_steps=30、action_horizon、Local-Memory prepare→generate→commit 原子事务、service._lock 语义。
 - 验收：server port 可参数化；4-suite acceptance 可并行启动 4 server/client；支持可配置 GPU/错峰；vectorized wave 产物可中途恢复/审计；静态语法/定向测试待执行环境验证。
+
+
+## EVAL-LIBERO-EPISODE-RESUME
+
+- 状态：IN_PROGRESS
+- 负责人：ChatGPT
+- 目标：closed_loop_eval 增加 episode-boundary resume；读取 partial_summary 跳过已完成 episode，仅补缺失/瞬态失败 episode；不做 mid-episode Local Memory fast-state 恢复。
+- 权威：partial_summary/task_xxx.json；只有 terminal episode result 可复用，只有 predictions/actions 不算完成。
+- 预计修改：cosmos-framework/cosmos_framework/simulation/libero/closed_loop_eval.py、定向 resume test、examples/eval_libero_4in1_acceptance_v2.sh。
