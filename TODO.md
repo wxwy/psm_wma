@@ -304,8 +304,9 @@
 
 ## EVAL-LIBERO-EPISODE-RESUME
 
-- 状态：IN_PROGRESS
+- 状态：REVIEW
 - 负责人：ChatGPT
 - 目标：closed_loop_eval 增加 episode-boundary resume；读取 partial_summary 跳过已完成 episode，仅补缺失/瞬态失败 episode；不做 mid-episode Local Memory fast-state 恢复。
 - 权威：partial_summary/task_xxx.json；只有 terminal episode result 可复用，只有 predictions/actions 不算完成。
-- 预计修改：cosmos-framework/cosmos_framework/simulation/libero/closed_loop_eval.py、定向 resume test、examples/eval_libero_4in1_acceptance_v2.sh。
+- 实现：child `12ae8cfe7593002ee4294ddf3584d45cf6e670cd`；root Gitlink integration `c8265532078283f674a02671599df380c4a7dd40`。
+- 验收：定向 resume tests + shell/static check + 同一 output_dir 的真实中断续跑 smoke；未完成前不标记 runtime PASS。
