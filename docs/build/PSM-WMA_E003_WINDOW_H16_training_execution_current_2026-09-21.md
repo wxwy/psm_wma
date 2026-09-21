@@ -196,7 +196,7 @@ PSM_HISTORY_MODE=window \
 NPROC_PER_NODE=8 \
 LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
 OUTPUT_ROOT="$WINDOW_OUTPUT_ROOT" \
-EXTRA_TAIL_OVERRIDES="trainer.grad_accum_iter=16 trainer.max_iter=5000 checkpoint.save_iter=50 trainer.logging_iter=1" \
+EXTRA_TAIL_OVERRIDES="trainer.grad_accum_iter=16 trainer.max_iter=5000 checkpoint.save_iter=100 trainer.logging_iter=1" \
 bash scripts/train_history.sh
 ```
 
