@@ -5,6 +5,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CHECKPOINT_PATH="${1:-}"
 [[ -n "$CHECKPOINT_PATH" ]] || { echo "usage: scripts/eval_recent_history.sh /absolute/path/to/iter_XXXXXXXXX" >&2; exit 2; }
 
+export PSM_HISTORY_MODE=gru
+export PSM_RECENT_HISTORY_HORIZON=16
 export PSM_R08_LOCAL_HISTORY_ENABLED=1
 export PSM_E003_RECENT_HISTORY_CONTROL=1
 # Formal E003 evaluation is pinned to H=16 to match ttt_tbptt_steps=16.
