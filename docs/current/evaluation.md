@@ -96,22 +96,18 @@ PSM_HISTORY_MODE=gru    bash scripts/train_history.sh
 PSM_HISTORY_MODE=ttt    bash scripts/train_history.sh
 ```
 
-Formal H16 bounded-control checkpoints use `iter_000002800`.
+The WINDOW-H16 formal training ceiling is `max_iter=5000`. This is a ceiling, not a required stopping point: the owner may manually stop at any checkpoint. Do not treat iter2800 or iter3000 as the formal training endpoint.
 
-The WINDOW recipe packs 16 samples/native forward with GA=128; the GRU recipe
-packs 128 samples/native forward with GA=16. Both therefore preserve 2048
-consumers per optimizer update.
+For 8-GPU FSDP WINDOW training, use 16 samples/rank/native-forward with `grad_accum_iter=16`, giving `16 × 8 × 16 = 2048` consumers/update. The single-GPU recipe keeps GA=128 for the same 2048-consumer update size.
 
 ### Evaluate
+
+Evaluation checkpoint selection is separate from the training stop condition. Use the owner-selected WINDOW checkpoint when requested; matched checkpoints such as iter2800 may still be used for historical comparison, but are not training endpoints.
 
 ```bash
 PSM_HISTORY_MODE=window \
 TASK_SUITES="libero_goal libero_10" \
-scripts/eval_history.sh /absolute/path/to/window/iter_000002800
-
-PSM_HISTORY_MODE=gru \
-TASK_SUITES="libero_goal libero_10" \
-scripts/eval_history.sh /absolute/path/to/gru/iter_000002800
+scripts/eval_history.sh /absolute/path/to/window/checkpoint
 ```
 
 For a trained history checkpoint, `LOCAL_MEMORY_MODE=off` can be used as a
