@@ -1,7 +1,7 @@
 # PSM-WMA R09-B TTT v0.3.2 — Memory Prefix Hot-Path Host-Sync Elimination Phase A Implementation Record
 
 - Date: 2026-09-21
-- Status: IMPLEMENTED / STATIC-REVIEWED / RUNTIME-PENDING
+- Status: IMPLEMENTED / STATIC-REVIEWED / RUNTIME-VERIFIED PASS
 - Scope: Phase A only. Text-KV reuse (Phase B) was intentionally not changed.
 - Source proposal: `Memory Prefix Hot-Path Host-Sync Elimination — 修复建议 v0.2`
 - Root baseline before implementation: `1a67d6570b7915a2bcbe9f92060ada23248e77b7`
@@ -158,3 +158,57 @@ Interpret the re-profile as follows:
 - no meaningful change -> reopen performance root-cause analysis before additional optimization
 
 Phase B must remain a separate change so host-sync and text-KV-reuse contributions stay identifiable.
+
+
+## 7. Runtime verification results (2026-09-21)
+
+Runtime verification completed on locked child commit `8f6d439df6088383e722ef5d2373306e03106653`.
+
+### 7.1 Unit tests
+
+| Test file | Result |
+| --- | --- |
+| `mot/memory_prefix_test.py` | 27 passed |
+| `mot/unified_mot_test.py` | 31 passed, 1 skipped |
+| `mot/attention_test.py` | 13 passed, 2 skipped |
+
+One FlexAttention case was flaky under GPU contention but passed standalone. It is unrelated to Phase A because the Memory Prefix route rejects FlexAttention.
+
+### 7.2 Single-episode profile
+
+Setup: iter_000003000, libero_10 task 0, UniPC 30, guidance=1.0, B=1.
+
+| Metric (steady p50) | pre-PhaseA `e1f3fc7` | post-PhaseA `8f6d439` | Delta |
+| --- | ---: | ---: | ---: |
+| server.total | 16483 ms | **3789 ms** | **-77%** |
+| model.diffusion_sampling | 15241 ms | **2791 ms** | **-82% / 5.5x faster** |
+| model.generate_total | 15280 ms | **2845 ms** | **-81%** |
+| episode wall-clock | 821 s / 394 steps | **183 s / 320 steps** | descriptive only; step counts differ |
+| SR | 1/1 | 1/1 | unchanged |
+| history_overhead_total | 1110 ms | 888 ms | -20% |
+
+Artifacts reported by runtime verification:
+
+- `results/libero_profile/ttt/iter_000003000/libero_10/profile/task_000/episode_000.json`
+- `results/libero_profile/ttt/iter_000003000/libero_10/summary.json`
+- server log: `/tmp/psm_profile_srv_ttt.log`
+
+### 7.3 Attribution gate
+
+Phase A gate: **PASS**.
+
+Host synchronization was the dominant source of the original TTT slowdown:
+
+- required diffusion p50: 15241 ms -> 2791 ms after Phase A
+- off baseline: 1445 ms
+- required/off residual ratio after Phase A: about **1.9x**
+
+The remaining gap is substantial enough to enter the next isolated optimization:
+
+> **Phase B — Memory Prefix + inference Text-KV reuse**
+
+Phase B must remain a separate child commit and profile gate so its contribution can be measured independently from Phase A.
+
+### 7.4 Final Phase A status
+
+`IMPLEMENTED / STATIC-REVIEWED / RUNTIME-VERIFIED PASS`
