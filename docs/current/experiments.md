@@ -57,7 +57,22 @@ For LIBERO closed-loop evaluation, record:
 - trials per task
 - rollout steps / failures where available
 - checkpoint iteration
-- Local Memory mode
+- history mode / Local Memory mode
+
+Every method (`none/window/gru/ttt`) must additionally run one matched single-GPU, single-model-process, single-env, single-episode action-only profile and report:
+
+- client end-to-end / HTTP / server total latency
+- cold-start first-query latency
+- steady-state mean / p50 / p95 policy-query latency
+- Cosmos `prepare_inference`, pack, diffusion-sampling and output-unpack latency
+- method-specific history overhead total
+- WINDOW / GRU / TTT internal history-stage latency
+- GPU baseline allocated, peak allocated, peak reserved and incremental peak
+- server/client RSS peak
+- MuJoCo env-step latency
+- completed-memory-record overhead
+
+Inference speed and resource consumption are first-class comparison axes beside SR. Report the performance/latency/VRAM trade-off rather than ranking methods by SR alone.
 
 Engineering metrics that should accompany training:
 
