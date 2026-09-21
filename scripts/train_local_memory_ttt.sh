@@ -34,6 +34,7 @@ if (( actual_global != PSM_R09_B_TTT_GLOBAL_CONSUMERS )) && [[ "${PSM_ALLOW_GLOB
   exit 2
 fi
 
+export PSM_HISTORY_MODE=ttt
 export PSM_R08_LOCAL_HISTORY_ENABLED=1
 export PSM_R09_B_TTT_ENABLED=1
 export PSM_R09_B_TTT_ACTIVE=1
