@@ -1,7 +1,7 @@
 # PSM-WMA R09-B TTT v0.3.2 — Memory Prefix + Text-KV Reuse Phase B Implementation Record
 
 - Date: 2026-09-21
-- Status: IMPLEMENTED / STATIC-REVIEWED / RUNTIME-PENDING
+- Status: IMPLEMENTED / STATIC-REVIEWED / RUNTIME-PROFILE-PASS / UNIT-CLOSURE-RETEST-PENDING
 - Scope: Phase B, single-sample inference only (B=1), matching the locked single-episode profile gate
 - Parent baseline: `5bd0d7544cb8ad18867b9e0b99e7ea3572a29960`
 - Child Phase A baseline: `8f6d439df6088383e722ef5d2373306e03106653`
@@ -167,3 +167,52 @@ Primary performance question:
 > Does required diffusion p50 move materially from the Phase A value 2791 ms toward the off baseline 1445 ms?
 
 Do not infer batched `num_envs=4` throughput from this B=1 Phase B gate.
+
+
+## 7. Runtime verification result
+
+Runtime verification was executed on production child `60be568e809786f94ae81ed8de668131b1083f6a`.
+
+Locked profile setup:
+
+- iter_000003000
+- libero_10 task 0
+- UniPC 30, shift=5.0
+- guidance=1.0
+- B=1
+- `--profile_inference`
+- action_horizon=8
+- max_steps=520
+- required / TTT mode
+
+Steady-state p50:
+
+| Metric | Phase A `8f6d439` | Phase B `60be568` | off baseline |
+| --- | ---: | ---: | ---: |
+| model.diffusion_sampling | 2791 ms | **1996 ms** | 1445 ms |
+| model.generate_total | 2845 ms | **2050 ms** | 2202 ms |
+| server.total | 3789 ms | **3032 ms** | 2235 ms |
+| model.prepare_inference | 24 ms | 25 ms | 526 ms |
+| model.pack_template | 19 ms | 19 ms | 18 ms |
+| history_overhead_total | 888 ms | 921 ms | — |
+| SR | 1/1 | **1/1** | 0/1 |
+
+Phase B reduced diffusion p50 by approximately **28%** relative to Phase A and moved the required/off residual ratio from about **1.9x to 1.38x**.
+
+Performance/functional runtime gate: **PASS**.
+
+### 7.1 Unit-test regression and closure
+
+Runtime executor found one Phase-B-only regression in:
+
+`memory_prefix_test.py::test_memory_prefix_owner_guards_fail_before_packed_attention_work[False-memory0-sequence_sharded-None-native MemoryState]`
+
+Cause: the test used bare `object()` as a fake MemoryState. Phase B production code correctly expects the MemoryState capability API and production MemoryState defaults fail-closed.
+
+A test-only closure commit was added:
+
+- child test-closure commit: `879c8e07f353836e8613d50a0cb9530805d7e97d`
+- change: replace bare `object()` fixture with a real `MemoryState` subclass inheriting `supports_memory_prefix() == False`
+- production Phase B code is unchanged from `60be568`
+
+The new child commit requires only targeted unit-test re-run for final suite closure. The Phase B runtime profile remains valid because production code did not change.
