@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-09-21",
+  "checkpoint": "iter_000003000",
+  "status": "complete",
+  "episodes_per_mode": 400,
+  "matched_settings": {
+    "num_steps": 30,
+    "guidance": 1,
+    "fps": 20,
+    "action_chunk": 16,
+    "action_horizon": 16,
+    "num_trials_per_task": 10,
+    "num_envs": 4
+  },
+  "modes": {
+    "required": {
+      "description": "online TTT fast-weight update enabled"
+    },
+    "init": {
+      "description": "checkpoint-learned W0 frozen; real evidence/query/readout preserved"
+    },
+    "off": {
+      "description": "Local Memory path disabled"
+    }
+  },
+  "suite_results": {
+    "libero_spatial": {
+      "required": 94,
+      "init": 98,
+      "off": 95
+    },
+    "libero_object": {
+      "required": 97,
+      "init": 99,
+      "off": 88
+    },
+    "libero_goal": {
+      "required": 79,
+      "init": 77,
+      "off": 59
+    },
+    "libero_10": {
+      "required": 88,
+      "init": 76,
+      "off": 38
+    },
+    "overall": {
+      "required": 358,
+      "init": 350,
+      "off": 280,
+      "episodes": 400
+    }
+  },
+  "delta_pp": {
+    "required_minus_init": {
+      "libero_spatial": -4,
+      "libero_object": -2,
+      "libero_goal": 2,
+      "libero_10": 12,
+      "overall": 2
+    },
+    "init_minus_off": {
+      "libero_spatial": 3,
+      "libero_object": 11,
+      "libero_goal": 18,
+      "libero_10": 38,
+      "overall": 17.5
+    }
+  },
+  "task_successes": {
+    "libero_spatial": {
+      "required": [
+        10,
+        10,
+        10,
+        10,
+        9,
+        10,
+        9,
+        6,
+        10,
+        10
+      ],
+      "init": [
+        10,
+        10,
+        9,
+        10,
+        10,
+        9,
+        10,
+        10,
+        10,
+        10
+      ],
+      "off": [
+        10,
+        9,
+        10,
+        10,
+        9,
+        10,
+        9,
+        8,
+        10,
+        10
+      ]
+    },
+    "libero_object": {
+      "required": [
+        10,
+        10,
+        9,
+        8,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10
+      ],
+      "init": [
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        10,
+        9
+      ],
+      "off": [
+        10,
+        3,
+        10,
+        10,
+        10,
+        10,
+        5,
+        10,
+        10,
+        10
+      ]
+    },
+    "libero_goal": {
+      "required": [
+        0,
+        10,
+        10,
+        10,
+        10,
+        10,
+        8,
+        3,
+        8,
+        10
+      ],
+      "init": [
+        0,
+        10,
+        10,
+        8,
+        9,
+        9,
+        8,
+        3,
+        10,
+        10
+      ],
+      "off": [
+        0,
+        10,
+        10,
+        5,
+        10,
+        2,
+        9,
+        3,
+        10,
+        0
+      ]
+    },
+    "libero_10": {
+      "required": [
+        10,
+        10,
+        10,
+        9,
+        10,
+        7,
+        10,
+        10,
+        4,
+        8
+      ],
+      "init": [
+        8,
+        10,
+        10,
+        8,
+        9,
+        5,
+        9,
+        10,
+        1,
+        6
+      ],
+      "off": [
+        6,
+        3,
+        0,
+        4,
+        8,
+        8,
+        0,
+        9,
+        0,
+        0
+      ]
+    }
+  },
+  "interpretation": {
+    "init_role": "learned W0 associative prior plus dynamic transition-conditioned retrieval; not a constant-token baseline",
+    "primary_measured_facts": [
+      "Init improves overall SR from 70.0% off to 87.5%.",
+      "Required improves overall SR from 87.5% init to 89.5%.",
+      "Required-init grows to +12 pp on LIBERO-10 while simple suites show no positive aggregate gain."
+    ],
+    "working_hypothesis": "online fast-weight writes become more valuable as task horizon, partial observability, and episode-specific state dependence increase",
+    "statistical_caution": "overall +2 pp is not treated as statistically established without paired episode-level analysis"
+  },
+  "next_comparison": [
+    "required",
+    "init",
+    "window_h16",
+    "off"
+  ],
+  "result_roots": {
+    "required": "outputs/train_local_memory_a2/cosmos3_action_libero/action_sft/edge_libero_4in1_localmem_active/sim_test/iter_000003000/",
+    "init": "results/libero_local_memory/iter_000003000/init/",
+    "off": "results/libero_local_memory/iter_000003000/off/"
+  }
+}
