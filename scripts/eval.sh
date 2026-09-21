@@ -29,6 +29,13 @@ MAX_STEPS="${MAX_STEPS:-700}"
 SERVER_PORT="${SERVER_PORT:-8000}"
 TASK_IDS="${TASK_IDS:-0,1,2,3,4,5,6,7,8,9}"
 TASK_SUITES="${TASK_SUITES:-libero_spatial libero_object libero_goal libero_10}"
+PROFILE_INFERENCE="${PROFILE_INFERENCE:-0}"
+[[ "$PROFILE_INFERENCE" = 0 || "$PROFILE_INFERENCE" = 1 ]] || { echo "ERROR: PROFILE_INFERENCE must be 0 or 1" >&2; exit 2; }
+if [[ "$PROFILE_INFERENCE" = 1 ]]; then
+  [[ "$NUM_TRIALS" = 1 ]] || { echo "ERROR: PROFILE_INFERENCE=1 requires NUM_TRIALS=1" >&2; exit 2; }
+  [[ "$TASK_IDS" != *,* ]] || { echo "ERROR: PROFILE_INFERENCE=1 requires exactly one TASK_ID" >&2; exit 2; }
+  [[ "$(wc -w <<<"$TASK_SUITES")" = 1 ]] || { echo "ERROR: PROFILE_INFERENCE=1 requires exactly one TASK_SUITE" >&2; exit 2; }
+fi
 CKPT_NAME="$(basename "$CHECKPOINT_PATH")"
 RESULT_ROOT="${OUTPUT_DIR:-$ROOT/results/libero_local_memory/$CKPT_NAME/$LOCAL_MEMORY_MODE}"
 mkdir -p "$RESULT_ROOT"
@@ -67,10 +74,14 @@ for suite in $TASK_SUITES; do
   suite_out="$RESULT_ROOT/$suite"
   mkdir -p "$suite_out"
   echo ">>> evaluating $suite"
+  PROFILE_ARGS=()
+  if [[ "$PROFILE_INFERENCE" = 1 ]]; then
+    PROFILE_ARGS+=(--profile_inference --num_envs 1 --video_samples_per_task 0)
+  fi
   SERVER_URL="http://localhost:$SERVER_PORT" \
   TASK_SUITE="$suite" TASK_IDS="$TASK_IDS" NUM_TRIALS="$NUM_TRIALS" \
   OUTPUT_DIR="$suite_out" \
-  bash examples/launch_closed_loop_eval_libero_task0.sh --max_steps "$MAX_STEPS"
+  bash examples/launch_closed_loop_eval_libero_task0.sh --max_steps "$MAX_STEPS" "${PROFILE_ARGS[@]}"
 done
 
 echo ">>> evaluation complete: $RESULT_ROOT"
