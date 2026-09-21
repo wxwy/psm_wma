@@ -40,6 +40,14 @@ Primary interpretation order:
 The TTT comparison is not a strict persistence-only ablation because its
 representation/update mechanism also differs. `ttt_tbptt_steps=16` is graph
 truncation only; TTT fast state persists across segments for the whole episode.
+
+## Current execution priority
+
+1. **E003-WINDOW-H16 first.** Run the native uncompressed sliding-window control before GRU-H16.
+2. Formal WINDOW training defaults to a **5000 optimizer-step ceiling**. The owner may manually interrupt earlier; 2800/3000 are checkpoints, not prescribed training endpoints.
+3. Formal WINDOW launch uses **8-GPU FSDP** with 16 samples/rank/native-forward and `grad_accum_iter=16`, preserving **2048 consumers/update**.
+4. GRU-H16 remains queued until WINDOW-H16 smoke/training is operationally healthy or the owner explicitly starts it.
+
 ## Primary metrics
 
 For LIBERO closed-loop evaluation, record:
