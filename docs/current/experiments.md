@@ -20,14 +20,26 @@ These runs are engineering acceptance evidence. They are not the final research 
 
 ## Main research comparisons
 
-The final result table should distinguish at least:
+The final result table should distinguish:
 
-| Variant | Current obs | short/recent memory | TTT fast state | Purpose |
-|---|---:|---:|---:|---|
-| Native Cosmos baseline | ✓ | — | — | no-memory baseline |
-| Short-history / recent-memory control | ✓ | ✓ | — | context-length control |
-| Local Memory TTT | ✓ | ✓ | ✓ | main Local Memory model |
-| Local Memory off at inference | ✓ | checkpoint-trained | off | action-path ablation |
+| Variant | History span | History representation | Local token | Persistent episode state | Purpose |
+|---|---|---|---:|---:|---|
+| Native Cosmos / `none` | none | current observation only | — | — | no-memory baseline |
+| E003-WINDOW-H16 / `window` | last 16 steps | native full-spatial clean vision latents + clean executed actions | — | — | strongest bounded-history control without extra learned compression |
+| E003-GRU-H16 / `gru` | last 16 steps | zero-state GRU replay -> `1 x 32` | ✓ | — | matched compact learned-history control |
+| Local Memory TTT / `ttt` | full episode | fast weights -> `1 x 32` readout | ✓ | ✓ | main persistent-memory model |
+| Same-checkpoint history off | checkpoint-trained | history path removed at inference | off/absent | off | direct action-path attribution |
+
+Primary interpretation order:
+
+1. `window` vs Native — benefit of bounded recent history without an extra compressor.
+2. `gru` vs `window` — effect of compressing the same bounded H16 history to one 32-D token.
+3. `ttt` vs `window` — whether episode-level persistent memory adds value beyond direct H16 history.
+4. same-checkpoint on/off — whether the trained history path actually changes action generation.
+
+The TTT comparison is not a strict persistence-only ablation because its
+representation/update mechanism also differs. `ttt_tbptt_steps=16` is graph
+truncation only; TTT fast state persists across segments for the whole episode.
 ## Primary metrics
 
 For LIBERO closed-loop evaluation, record:
