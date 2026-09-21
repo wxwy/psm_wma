@@ -1,7 +1,7 @@
 # PSM-WMA R09-B TTT v0.3.2 — Memory Prefix + Text-KV Reuse Phase B Implementation Record
 
 - Date: 2026-09-21
-- Status: IMPLEMENTED / STATIC-REVIEWED / RUNTIME-PROFILE-PASS / UNIT-CLOSURE-RETEST-PENDING
+- Status: IMPLEMENTED / STATIC-REVIEWED / RUNTIME-VERIFIED PASS / UNIT-CLOSURE-PASS
 - Scope: Phase B, single-sample inference only (B=1), matching the locked single-episode profile gate
 - Parent baseline: `5bd0d7544cb8ad18867b9e0b99e7ea3572a29960`
 - Child Phase A baseline: `8f6d439df6088383e722ef5d2373306e03106653`
@@ -215,4 +215,4 @@ A test-only closure commit was added:
 - change: replace bare `object()` fixture with a real `MemoryState` subclass inheriting `supports_memory_prefix() == False`
 - production Phase B code is unchanged from `60be568`
 
-The new child commit requires only targeted unit-test re-run for final suite closure. The Phase B runtime profile remains valid because production code did not change.
+Targeted retest on child `879c8e07f353836e8613d50a0cb9530805d7e97d` passed: `memory_prefix_test.py` 27 passed; combined `memory_prefix_test.py + inference_text_kv_memory_test.py + unified_mot_test.py` 63 passed, 1 skipped. The skipped end-to-end training test is by-design and unrelated. Phase B is fully closed; the runtime profile remains valid because production code did not change.
