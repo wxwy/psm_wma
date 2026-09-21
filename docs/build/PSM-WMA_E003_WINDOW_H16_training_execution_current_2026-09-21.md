@@ -1,9 +1,9 @@
 # PSM-WMA E003 WINDOW-H16 Training Execution — Current Lock
 
 - Date: 2026-09-21
-- Status: READY TO START WITH GATED SMOKE
-- Root lock: `51b2f6c00d60fa7dec92c9d1e7199f7c48debeaa`
-- Child lock: `879c8e07f353836e8613d50a0cb9530805d7e97d`
+- Status: READY TO RETEST GATED SMOKE AFTER ABI REMEDIATION
+- Code-bearing root lock: `fffe651b9fad0ef15772573da014b01042c93a4a`
+- Child lock: `d5de2b2f823a68bf7aab9b21d57f4610cd5a4429`
 - Method: E003 native sliding-window history, H=16
 - Owner directive: WINDOW-H16 may start now. GRU-H16 / H32 / TTT retraining are not part of this execution.
 
@@ -22,17 +22,9 @@ The formal ceiling is 5000 optimizer steps. It is a ceiling, not a required endp
 
 ## 2. Current implementation identity
 
-The WINDOW training implementation itself is unchanged from the earlier WINDOW execution task:
+The first FSDP8 smoke exposed a cached multi-vision ABI mismatch before iteration 1. The WINDOW transform has now been remediated in child `d5de2b2f823a68bf7aab9b21d57f4610cd5a4429` so every cached vision item carries exactly one latent as `[latent]`, while pixel placeholders remain bare tensors. See `docs/build/PSM-WMA_E003_WINDOW_H16_cached_multivision_ABI_remediation_2026-09-21.md`.
 
-- `examples/launch_sft_action_policy_libero_edge_all_window_history.sh`: unchanged
-- `examples/toml/sft_config/action_policy_libero_edge_all_window_history.toml`: unchanged
-- `action_policy_libero_edge_all.py`: unchanged
-- `libero_lerobot_dataset.py`: unchanged
-- `transforms.py`: unchanged
-
-Files changed since the old task lock are in the Memory Prefix inference/performance path. WINDOW-H16 does not use Local Memory Prefix / GRU / TTT fast weights during training.
-
-Therefore the current lock supersedes the old `DS_PRO_TASK_E003_H16_2026-09-21.md` SHA pair.
+WINDOW-H16 research semantics are unchanged. This current lock supersedes all earlier WINDOW task SHA pairs.
 
 ## 3. Frozen WINDOW-H16 semantics
 
@@ -67,11 +59,11 @@ git -C cosmos-framework rev-parse HEAD
 Expected:
 
 ```text
-root  = 51b2f6c00d60fa7dec92c9d1e7199f7c48debeaa
-child = 879c8e07f353836e8613d50a0cb9530805d7e97d
+code-bearing root = fffe651b9fad0ef15772573da014b01042c93a4a
+child             = d5de2b2f823a68bf7aab9b21d57f4610cd5a4429
 ```
 
-If either SHA differs, report the actual pair before starting training.
+The checked-out V2 HEAD may be a docs-only descendant of the code-bearing root. Require `git merge-base --is-ancestor fffe651b9fad0ef15772573da014b01042c93a4a HEAD` to exit 0 and require the child SHA to equal `d5de2b2f823a68bf7aab9b21d57f4610cd5a4429`. If the child differs, report before training.
 
 ## 5. Phase 0 — targeted checks
 
