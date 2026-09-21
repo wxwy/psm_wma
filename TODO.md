@@ -5,6 +5,7 @@
 | ID | 状态 | 负责人 | 前置条件 | 验收条件 |
 | G0-R09-B-TTT-V035-STAGE1-PRAGMATIC-REQUEST-PAIR | SUPERSEDED_BY=Owner-Override-active-route | Codex | Owner Override；冻结 root=`db6c4f93473e7ef58a294cff3fb8c692b100badd` / child=`93a89ba61306d840a008813f62f26a34d54850f4` | MM 已 APPROVE；按 Owner 指令先完成最小 materialization 条件，DS 的 docs-only refreeze 要求不作为执行阻塞；GPT 审核延后至训练条件具备 |
 |---|---|---|---|---|
+| E003-WINDOW-H16-FSDP8 | IN_PROGRESS | DS_PRO | formal pair root=`b915f9ac4460135cd760bc0ec5f572f5ffbc32e0` / child=`7210456c6cc453deefc2690d3d173c436ea024ef`；优先级高于 GRU-H16；8×GPU FSDP | 先完成 targeted CPU tests + 5-step FSDP8 smoke；正式训练 `max_iter=5000` 作为上限、owner 可手动中断；FSDP8 固定 `16 samples/rank × 8 ranks × GA16 = 2048 consumers/update`；不得把 iter2800/iter3000 当训练终点 |
 | DOC-GOV-FETCH-FIRST | DONE | Codex | 用户要求审核结果获取必须先拉取最新 V2 | AGENTS 顶部已明确先同步再检测、禁止定时器跳过初检；治理技能同步并纠正 verdict 来源；diff-check PASS |
 | COLLAB-BOOTSTRAP | DONE | Codex | 无 | 根目录协作协议、会话状态、任务队列和长期决策文件可供所有 Agent 使用 |
 | DOC-R01 | DONE | Codex | G0 Runtime Plan v0.6 | REVIEW-R01 的 H1/H2、M1-M3、L1/L2/L4 已修订并完成最小行为验证 |
