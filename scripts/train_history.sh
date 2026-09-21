@@ -18,13 +18,16 @@ case "$MODE" in
     export PSM_R09_B1_TTT_ENABLED=0
     export PSM_R09_B_TTT_ENABLED=0
     export PSM_R09_B_TTT_ACTIVE=0
-    exec bash "$CHILD/examples/launch_sft_action_policy_libero_edge_all.sh"
+    cd "$CHILD"
+    exec bash examples/launch_sft_action_policy_libero_edge_all.sh
     ;;
   window)
-    exec bash "$CHILD/examples/launch_sft_action_policy_libero_edge_all_window_history.sh"
+    cd "$CHILD"
+    exec bash examples/launch_sft_action_policy_libero_edge_all_window_history.sh
     ;;
   gru)
-    exec bash "$CHILD/examples/launch_sft_action_policy_libero_edge_all_recent_history.sh"
+    cd "$CHILD"
+    exec bash examples/launch_sft_action_policy_libero_edge_all_recent_history.sh
     ;;
   ttt)
     exec bash "$ROOT/scripts/train_local_memory_ttt.sh"
