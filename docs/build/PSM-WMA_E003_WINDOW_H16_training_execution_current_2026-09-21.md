@@ -1,9 +1,9 @@
 # PSM-WMA E003 WINDOW-H16 Training Execution — Current Lock
 
 - Date: 2026-09-21
-- Status: READY TO RETEST GATED SMOKE AFTER ABI REMEDIATION
-- Code-bearing root lock: `fffe651b9fad0ef15772573da014b01042c93a4a`
-- Child lock: `d5de2b2f823a68bf7aab9b21d57f4610cd5a4429`
+- Status: READY TO RETEST GATED SMOKE AFTER EPISODE-START ABI REMEDIATION
+- Code-bearing root lock: `340cc6d48a63b4841bcde57333fedc1e98addd61`
+- Child lock: `0ffbdebce5cdbf3b0a4ab2ded9ecaeed51f73af9`
 - Method: E003 native sliding-window history, H=16
 - Owner directive: WINDOW-H16 may start now. GRU-H16 / H32 / TTT retraining are not part of this execution.
 
@@ -22,9 +22,18 @@ The formal ceiling is 5000 optimizer steps. It is a ceiling, not a required endp
 
 ## 2. Current implementation identity
 
-The first FSDP8 smoke exposed a cached multi-vision ABI mismatch before iteration 1. The WINDOW transform has now been remediated in child `d5de2b2f823a68bf7aab9b21d57f4610cd5a4429` so every cached vision item carries exactly one latent as `[latent]`, while pixel placeholders remain bare tensors. See `docs/build/PSM-WMA_E003_WINDOW_H16_cached_multivision_ABI_remediation_2026-09-21.md`.
+The first remediation fixed the H>0 cached multi-vision latent container ABI. The second FSDP8 smoke exposed the remaining episode-start H=0 mixed-batch inconsistency.
 
-WINDOW-H16 research semantics are unchanged. This current lock supersedes all earlier WINDOW task SHA pairs.
+Current remediation in child `0ffbdebce5cdbf3b0a4ab2ded9ecaeed51f73af9` normalizes **every** WINDOW sample to an explicit multi-vision outer container:
+
+- H=0 episode start: `video=[main_video]`, `video_latent=[[main_latent]]`
+- H>0: history placeholders + main video, with one singleton cached latent per vision item
+
+No model or dataset semantics changed. See:
+
+`docs/build/PSM-WMA_E003_WINDOW_H16_episode_start_ABI_remediation_2026-09-21.md`
+
+This current lock supersedes all earlier WINDOW task SHA pairs.
 
 ## 3. Frozen WINDOW-H16 semantics
 
@@ -59,11 +68,11 @@ git -C cosmos-framework rev-parse HEAD
 Expected:
 
 ```text
-code-bearing root = fffe651b9fad0ef15772573da014b01042c93a4a
-child             = d5de2b2f823a68bf7aab9b21d57f4610cd5a4429
+code-bearing root = 340cc6d48a63b4841bcde57333fedc1e98addd61
+child             = 0ffbdebce5cdbf3b0a4ab2ded9ecaeed51f73af9
 ```
 
-The checked-out V2 HEAD may be a docs-only descendant of the code-bearing root. Require `git merge-base --is-ancestor fffe651b9fad0ef15772573da014b01042c93a4a HEAD` to exit 0 and require the child SHA to equal `d5de2b2f823a68bf7aab9b21d57f4610cd5a4429`. If the child differs, report before training.
+The checked-out V2 HEAD may be a docs-only descendant of the code-bearing root. Require `git merge-base --is-ancestor 340cc6d48a63b4841bcde57333fedc1e98addd61 HEAD` to exit 0 and require the child SHA to equal `0ffbdebce5cdbf3b0a4ab2ded9ecaeed51f73af9`. If the child differs, report before training.
 
 ## 5. Phase 0 — targeted checks
 
