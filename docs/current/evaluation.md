@@ -115,5 +115,58 @@ same-checkpoint inference-path ablation. For `window` this removes the native
 history prefix entirely; for `gru`/`ttt` it removes the Local conditioning
 path. This does not replace the separately trained Native Cosmos baseline.
 
+
+## Single-episode inference profiling
+
+Batch LIBERO evaluation and inference profiling are separate protocols:
+
+- **Batch evaluation**: measure SR / task breakdown / aggregate wall time.
+- **Profile evaluation**: one GPU, one model-server process, one serial LIBERO env, one task, one episode, action-only output.
+
+Every reported history method (`none`, `window`, `gru`, `ttt`) must run the same profiling protocol on the same hardware, task, initial-state seed, image resolution, action horizon, denoising steps and checkpoint-selection policy.
+
+Run:
+
+```bash
+PSM_HISTORY_MODE=window \
+PROFILE_GPU=0 \
+PROFILE_SUITE=libero_10 \
+PROFILE_TASK_ID=0 \
+NUM_STEPS=30 \
+ACTION_HORIZON=8 \
+bash scripts/profile_history.sh /absolute/path/to/checkpoint
+```
+
+Change only `PSM_HISTORY_MODE` and the corresponding checkpoint for the other methods.
+
+Profiling is action-only: Cosmos still performs vision encoding, MoT packing and denoising/action generation, but predicted future-video VAE decode and PNG encoding are disabled. If video output is explicitly enabled elsewhere, its decode/PNG costs remain separately measurable and must not be merged into core action latency.
+
+The profile output stores every policy-query timing in the episode prediction JSON and writes an aggregate profile JSON under:
+
+```text
+<output>/<suite>/profile/task_XXX/episode_000.json
+```
+
+Required comparison fields:
+
+| Category | Required fields |
+|---|---|
+| End-to-end | client total, HTTP roundtrip, server total |
+| Server | preprocess, batch build, lock wait, policy generation, action postprocess |
+| Cosmos model | prompt upsample, prepare inference, pack template, diffusion sampling, output unpack, total generation |
+| History common | history overhead total |
+| WINDOW | payload/history preprocessing, action normalization, prefix assembly, output trim |
+| GRU | raw-history visual-summary encoding, action normalization, request build, evidence encoder, window merge, GRU replay, Local inject/commit |
+| TTT | raw-history visual-summary encoding, action normalization, request build, validation, evidence encoder, K/Q/V projection, inner update+read, state detach, Local inject/commit |
+| Resources | GPU allocated before request, peak allocated, peak reserved, peak delta allocated, server RSS, client RSS |
+| Environment overhead | MuJoCo env-step time, client completed-memory record time |
+
+The first policy query is reported separately as **cold start**. The remaining policy queries are summarized independently as **steady state** with mean / p50 / p95 / min / max. Do not mix the empty-history first query into the steady-state history-cost comparison.
+
+Profiling uses explicit CUDA synchronization to make GPU stage timings observable. Therefore the profiling run is diagnostic and may add a small probe overhead. Deployment/batch throughput must still be reported from the normal non-profile evaluation path.
+
+Inference speed and resource use are first-class comparison metrics alongside SR; a method with higher SR but materially larger latency/VRAM must report that trade-off explicitly.
+
+
 H32 remains optional and should only be considered after the H16 results leave a
 context-length ambiguity.
