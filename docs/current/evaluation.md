@@ -43,36 +43,81 @@ The current repository has engineering evidence that the online Local path is fi
 
 Evaluation outputs are experiment results, not authority documents. Record the checkpoint SHA/path, suite/task/trial coverage, denoising steps and Local Memory mode alongside every reported SR.
 
-## E003 bounded recent-history control
+## Unified history controls
 
-E003 uses the same canonical `visual96 + executed_action10` evidence inventory and
-the same one-token Local interface as Local TTT, but keeps only the most recent
-finite window. The recurrent replay is recomputed from zero state on every policy
-query; no GRU hidden state or TTT fast weight is carried across queries.
-
-The formal bounded-history control uses `H=16`, numerically equal to
-`ttt_tbptt_steps=16`. This is a one-segment-scale recent-context control; it does
-**not** mean that Local TTT has a 16-step memory horizon. Local TTT carries its
-fast-weight state across detached segments for the full episode, while
-`ttt_tbptt_steps` only bounds the training graph. E003 therefore does not isolate
-persistence alone: the memory representation and update mechanism also differ.
-`H=32` is reserved as an optional stronger finite-history control only if the H16
-result leaves a context-length ambiguity; H64 is not part of the current E003 plan.
-
-Train:
+History selection now uses one user-facing switch:
 
 ```bash
-LIBERO_ROOT=/disk/rl/data/LIBERO_LeRobot_v3 \
-bash examples/launch_sft_action_policy_libero_edge_all_recent_history.sh
+PSM_HISTORY_MODE=none|window|gru|ttt
 ```
 
-Evaluate the formal `iter_000002800` checkpoint:
+The modes intentionally keep different history representations rather than forcing
+all controls through a Local token:
+
+| Mode | History span | Representation into MoT | Persistent state |
+|---|---|---|---|
+| `none` | none | current observation only | no |
+| `window` | last H=16 completed steps | native full-spatial clean vision latents + clean executed-action prefix | bounded window only |
+| `gru` | last H=16 completed steps | canonical `visual96 + executed_action10` -> zero-state GRU replay -> `1 x 32` Local token | bounded window only |
+| `ttt` | full episode | canonical evidence -> fast-weight updates -> `1 x 32` Local token | episode-level |
+
+For `window`, every historical observation is represented by the first causal
+latent of its exact-window VAE cache entry at full spatial latent resolution.
+There is no visual96 pooling, GRU, or learned history compressor. Historical
+executed actions are prepended as clean action conditions. The final WAM vision
+item keeps the native layout: current latent clean, future temporal latents noised
+and supervised. FPS-aware mRoPE positions align the history vision items and
+executed actions on the same source-frame clock.
+
+Fully-clean history vision items are excluded from the final vision scalar mean,
+so they do not dilute the native WAM target loss. The final WAM item's own
+current-clean/future-noised denominator remains unchanged.
+
+`gru` is the previous E003 bounded recent-history control. Its recurrent replay
+starts from zero on every policy query and carries no hidden state across queries.
+
+`ttt` is not H=16 memory. `ttt_tbptt_steps=16` only truncates the training
+graph; numerical fast weights carry across detached segments for the full episode.
+At a new episode, training initializes fast weights from the latest slow `W0`;
+inference initializes them from the checkpoint-saved `W0`.
+
+The bounded controls do not by themselves form a persistence-only ablation because
+TTT also changes the representation and update mechanism. The strongest bounded
+history comparison is `window` versus `ttt`: the window gives MoT the last 16
+steps without an extra learned compression bottleneck.
+
+### Train
+
+Unified entrypoint:
 
 ```bash
+PSM_HISTORY_MODE=window bash scripts/train_history.sh
+PSM_HISTORY_MODE=gru    bash scripts/train_history.sh
+PSM_HISTORY_MODE=ttt    bash scripts/train_history.sh
+```
+
+Formal H16 bounded-control checkpoints use `iter_000002800`.
+
+The WINDOW recipe packs 16 samples/native forward with GA=128; the GRU recipe
+packs 128 samples/native forward with GA=16. Both therefore preserve 2048
+consumers per optimizer update.
+
+### Evaluate
+
+```bash
+PSM_HISTORY_MODE=window \
 TASK_SUITES="libero_goal libero_10" \
-scripts/eval_recent_history.sh /absolute/path/to/iter_000002800
+scripts/eval_history.sh /absolute/path/to/window/iter_000002800
+
+PSM_HISTORY_MODE=gru \
+TASK_SUITES="libero_goal libero_10" \
+scripts/eval_history.sh /absolute/path/to/gru/iter_000002800
 ```
 
-The E003 launcher fail-closes against R09-A1 and all TTT routes. Training and
-inference both emit a single `1 x 32` Local token; the only episode memory kept
-by inference is the last `H` canonical evidence rows.
+For a trained history checkpoint, `LOCAL_MEMORY_MODE=off` can be used as a
+same-checkpoint inference-path ablation. For `window` this removes the native
+history prefix entirely; for `gru`/`ttt` it removes the Local conditioning
+path. This does not replace the separately trained Native Cosmos baseline.
+
+H32 remains optional and should only be considered after the H16 results leave a
+context-length ambiguity.
