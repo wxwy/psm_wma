@@ -20,26 +20,42 @@
 - iter2800 SR 331/400 = 82.75%
 - iter3000 SR 358/400 = 89.5%
 
-## Compute-comparison adjudication
+## Comparison-fairness adjudication
 
-Do not adopt the simplistic statement that A2 and WINDOW-H16 are incomparable merely because their microbatch counts differ.
+The primary E003 matching criterion is **training sample amount**.
 
-The current recipes are aligned at the effective consumer/update budget:
+Use this hierarchy:
 
 ```text
-A2        ~= 2048 consumers / optimizer update
-WINDOW-H16 = 2048 consumers / optimizer update
+1. effective consumers / optimizer update
+2. total consumers seen at compared checkpoint
+3. method-specific compute / latency / VRAM reported separately
 ```
 
-This makes them a reasonable matched training-scale comparison.
+Current recipes:
 
-At the same time, do not claim exact FLOP equality without measurement:
+```text
+A2         ~= 2048 consumers / optimizer update
+WINDOW-H16  = 2048 consumers / optimizer update
+```
 
-- A2 pays recurrent/TTT/driver overhead
-- WINDOW pays much larger transformer-context cost from full-spatial H16 history
+At a matched iter3000 checkpoint:
 
-Therefore use:
+```text
+both ~= 6,144,000 training consumers seen
+```
 
-> **training-budget/sample-count aligned; token/FLOP profile not strictly identical.**
+Do not let the different microbatch counts redefine the experiment:
 
-This is the preferred wording for future reviews and reports.
+```text
+A2 microbatches=2
+WINDOW microbatches=16
+```
+
+is an implementation difference caused by the methods' different internal compute structures, not the primary fairness axis.
+
+Preferred wording for future reviews:
+
+> **sample-count aligned first; compute cost reported separately.**
+
+Exact token-level FLOPs need not be forced equal. A2's TTT/driver overhead and WINDOW's longer native context are part of the actual cost of each method.

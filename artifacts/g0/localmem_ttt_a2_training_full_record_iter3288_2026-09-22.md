@@ -249,34 +249,66 @@ The owner reports:
 - errored episodes are rerun
 - Local Memory session state is not resumed mid-episode; resumed evaluation starts a fresh episode session
 
-## 11. A2 vs WINDOW-H16 compute-alignment note
+## 11. A2 vs WINDOW-H16 fairness / compute-alignment note
 
-The comparison should **not** be reduced to the statement “A2 uses 2 microbatches while WINDOW uses 16, therefore the compute is not aligned.”
+### Primary matching criterion: training sample amount
 
-At the optimizer-update/sample-budget level, both recipes are designed around approximately the same effective consumer count:
+For E003, the **primary fairness criterion is the amount of training data consumed**, not equality of microbatch count, wall time, or theoretical FLOPs.
+
+The comparison should be read in this order:
+
+1. **effective consumers / optimizer update**
+2. **total consumers seen at the compared checkpoint**
+3. same source data distribution / task mix as far as the method permits
+4. method-specific compute, wall time, and VRAM reported separately as cost
+
+Current recipes are designed around the same effective consumer budget:
 
 ```text
-A2 Local Memory: approximately 2048 consumers / optimizer update
-WINDOW-H16     : 16 samples/rank × 8 ranks × GA16 = 2048 consumers / optimizer update
+A2 Local Memory ~= 2048 consumers / optimizer update
+WINDOW-H16      = 2048 consumers / optimizer update
 ```
 
-Therefore they are meaningfully aligned in **effective training sample budget per optimizer update**.
+Therefore, when comparing both at the same optimizer iteration, the total training exposure is also aligned. For example:
 
-However, strict FLOP equivalence is not established:
+```text
+iter3000 × 2048 consumers/update = 6,144,000 consumers
+```
 
-- A2 carries extra TTT fast-state update / stream-driver overhead
-- WINDOW-H16 carries a substantially longer native transformer context by exposing up to 16 full-spatial historical vision items
+This is the main experimental matching condition.
 
-So the precise archival statement is:
+### Microbatch count is an implementation detail, not the fairness target
 
-> **A2 and WINDOW-H16 are aligned in effective consumer/update budget and experimental training scale, but they should not be claimed to have identical token-level FLOPs without a measured FLOP/token accounting.**
+A2 uses fewer/heavier active-route microbatches, while WINDOW-H16 uses more native microbatches because each WINDOW sample carries a longer Transformer context.
 
-Reported wall-time observations:
+The fact that:
+
+```text
+A2 microbatches     = 2
+WINDOW microbatches = 16
+```
+
+does **not** by itself make the experiment mismatched. The methods realize the same effective sample/update budget through different internal execution structures.
+
+### Compute cost is secondary and should be reported, not matched away
+
+Strict FLOP equivalence is neither established nor required for the primary ablation:
+
+- A2 pays TTT fast-state update, stream/window driver, inner-loss, and state-management overhead
+- WINDOW-H16 pays for a substantially longer native Transformer context by exposing up to 16 full-spatial historical vision items
+
+These are intrinsic costs of the methods being compared.
+
+Preferred report wording:
+
+> **A2 and WINDOW-H16 are matched primarily by effective training sample count (consumers per optimizer update and total consumers seen at the compared checkpoint). Method-specific token/FLOP, wall-time, and memory costs are reported separately rather than used as the primary matching criterion.**
+
+Reported wall-time observations remain useful as systems-cost measurements:
 
 - A2: ~16.4 s/update
 - WINDOW-H16: ~25 s/update when clean, ~34 s/update under eval-server contention
 
-These wall times measure the full systems path and should not be interpreted as pure model FLOPs.
+Do not reinterpret these wall times as the fairness criterion or as pure model FLOPs.
 
 ## 12. Artifact locations
 

@@ -92,9 +92,26 @@
     }
   },
   "compute_alignment": {
-    "effective_consumer_budget_per_optimizer_update_a2_approx": 2048,
-    "effective_consumer_budget_per_optimizer_update_window_h16": 2048,
-    "archival_conclusion": "aligned in effective consumer/update budget and experimental scale; strict token-level FLOP equivalence not established",
+    "primary_fairness_criterion": "training sample amount",
+    "matching_priority": [
+      "effective consumers per optimizer update",
+      "total consumers seen at compared checkpoint",
+      "method-specific compute, wall time and VRAM reported separately"
+    ],
+    "effective_consumers_per_optimizer_update": {
+      "a2_approx": 2048,
+      "window_h16": 2048
+    },
+    "total_consumers_at_iter3000": {
+      "a2_approx": 6144000,
+      "window_h16": 6144000
+    },
+    "microbatch_counts_are_not_primary_matching_axis": {
+      "a2": 2,
+      "window_h16": 16
+    },
+    "strict_flop_equivalence_required": false,
+    "preferred_wording": "sample-count aligned first; compute cost reported separately",
     "a2_step_wall_s_approx": 16.4,
     "window_h16_step_wall_clean_s_approx": 25,
     "window_h16_step_wall_contended_s_approx": 34
