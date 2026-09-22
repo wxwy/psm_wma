@@ -1,3 +1,5 @@
+> **SUPERSEDED — 2026-09-22:** RoboCasa production input has been switched to flat LeRobot v3 only. This document is retained as historical design context and must not be used as the current execution runbook. See `docs/build/PSM-WMA_RoboCasa365_v3_only_migration_2026-09-22.md`.
+
 # PSM-WMA RoboCasa365 Wan2.2 Cosmos-style Latent Encoding — Review
 
 - Date: 2026-09-22

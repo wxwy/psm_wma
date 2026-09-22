@@ -2,6 +2,8 @@
 
 Date: 2026-09-22
 
+Current child implementation: `01c0d1ef002dc1d707af83196b43741f61f32654`
+
 ## Decision
 
 RoboCasa input support is now intentionally v3-only.
@@ -67,3 +69,21 @@ Code capability defaults to ALL when --episode-limit is omitted; that is not the
 ## Download helper
 
 tools/g0/download_robocasa365_v3_target.sh downloads the three target v3 mirrors.
+
+
+## Runtime status
+
+Code migration is complete, but a real v3 dataset smoke has not been executed from this chat.
+
+The first runtime gate must verify:
+
+- v3 metadata loads through LeRobotDatasetMetadata
+- underlying task-class counts are 18 / 16 / 16
+- annotation.human.task_name resolves through meta/tasks.parquet
+- N=2 deterministic subset and resume
+- left_wrist source composition 256x512
+- post-VideoResize canvas 192x320
+- exact-window latent [5,48,12,20] float32 finite
+- no source-video decode during training when latent_cache_root is enabled
+
+Only after that gate should the current N=10/task-class conversion start.
