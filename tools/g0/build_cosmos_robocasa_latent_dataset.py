@@ -34,7 +34,10 @@ from lerobot.datasets.video_utils import decode_video_frames
 
 
 _TASK_CLASS_FEATURE = "annotation.human.task_name"
-_TARGET_TASK_COUNTS = {
+_ROBOCASA365_SUITE_TASK_COUNTS = {
+    "robocasa365_pretrain_atomic": 65,
+    "robocasa365_pretrain_mg": 60,
+    "robocasa365_pretrain_composite": 235,
     "robocasa365_target_atomic": 18,
     "robocasa365_target_composite_seen": 16,
     "robocasa365_target_composite_unseen": 16,
@@ -414,7 +417,7 @@ def main() -> None:
     parser.add_argument("--vae-path", type=Path, required=True)
     parser.add_argument(
         "--suite",
-        choices=tuple(_TARGET_TASK_COUNTS),
+        choices=tuple(_ROBOCASA365_SUITE_TASK_COUNTS),
         required=True,
     )
     parser.add_argument(
@@ -442,7 +445,7 @@ def main() -> None:
     _verify_v3_source(meta, args.source_root)
     _, class_to_episodes = _build_episode_task_catalog(meta, args.source_root)
 
-    expected_task_count = _TARGET_TASK_COUNTS[args.suite]
+    expected_task_count = _ROBOCASA365_SUITE_TASK_COUNTS[args.suite]
     if len(class_to_episodes) != expected_task_count:
         raise ValueError(
             f"{args.suite} expected {expected_task_count} underlying task classes, "
