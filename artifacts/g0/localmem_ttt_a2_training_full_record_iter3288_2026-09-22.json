@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-09-22",
+  "evidence_source": "owner_provided_remote_server_summary",
+  "raw_logs_in_repo": false,
+  "method": "local_memory_a2_active_ttt",
+  "run_name": "edge_libero_4in1_localmem_active",
+  "output_root": "outputs/train_local_memory_a2",
+  "hardware": {
+    "node_count": 1,
+    "gpus": "8x A100-80GB",
+    "fsdp_ranks": 8,
+    "seed": 42
+  },
+  "local_memory": {
+    "member_layout": "a2",
+    "b_stream": 8,
+    "ttt_tbptt_steps": 16,
+    "group_size": 8,
+    "active_groups": 2,
+    "ttt_inner_lr": 0.1
+  },
+  "trainer": {
+    "max_iter_configured": 5000,
+    "stopped_iter": 3288,
+    "last_checkpoint_iter": 3200,
+    "save_iter": 200,
+    "logging_iter": 1,
+    "grad_accum_iter": 2,
+    "microbatches": 2
+  },
+  "optimizer": {
+    "name": "FusedAdam/AdamW",
+    "lr": 0.00005,
+    "scheduler": "warmup_cosine_lr/LambdaLinear",
+    "clip_norm": 1
+  },
+  "timing": {
+    "main_run_start": "2026-09-19 09:24:37",
+    "main_run_stop": "2026-09-20 01:35:27",
+    "duration_hours_approx": 16,
+    "step_wall_mean_s_approx": 16.4,
+    "iterations_per_hour_approx": 220,
+    "model_compute_fraction_approx": 0.71,
+    "other_fraction_approx": 0.28,
+    "dataloader_wait_fraction_approx": 0.01
+  },
+  "loss": {
+    "metric": "raw_last_group_loss",
+    "iter1": 16.35,
+    "iter3288": 0.79,
+    "relative_drop_approx": 0.95,
+    "cumulative_train_loss_is_not_instantaneous": true,
+    "figure": "artifacts/g0/localmem_ttt_1x32_training_loss_iter3288.webp"
+  },
+  "checkpoints": [
+    200,
+    400,
+    600,
+    800,
+    1000,
+    1200,
+    1400,
+    1600,
+    1800,
+    2000,
+    2200,
+    2400,
+    2600,
+    2800,
+    3000,
+    3200
+  ],
+  "evaluation": {
+    "iter2800": {
+      "spatial": 94,
+      "object": 97,
+      "goal": 68,
+      "libero_10": 72,
+      "successes": 331,
+      "episodes": 400,
+      "success_rate": 0.8275
+    },
+    "iter3000": {
+      "spatial": 94,
+      "object": 97,
+      "goal": 79,
+      "libero_10": 88,
+      "successes": 358,
+      "episodes": 400,
+      "success_rate": 0.895
+    }
+  },
+  "compute_alignment": {
+    "effective_consumer_budget_per_optimizer_update_a2_approx": 2048,
+    "effective_consumer_budget_per_optimizer_update_window_h16": 2048,
+    "archival_conclusion": "aligned in effective consumer/update budget and experimental scale; strict token-level FLOP equivalence not established",
+    "a2_step_wall_s_approx": 16.4,
+    "window_h16_step_wall_clean_s_approx": 25,
+    "window_h16_step_wall_contended_s_approx": 34
+  },
+  "evidence_limitation": "Full raw logs remain on the remote server; this repository stores the owner-provided canonical summary and previously archived loss/evaluation artifacts."
+}
