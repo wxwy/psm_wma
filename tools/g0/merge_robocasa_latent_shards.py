@@ -32,6 +32,7 @@ _COMMON_KEYS = (
     "episode_selection_seed",
     "episode_selection_policy",
     "full_task_class_count",
+    "script_revision",
 )
 
 
