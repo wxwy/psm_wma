@@ -67,7 +67,11 @@ for ((rank=0; rank<NUM_GPUS; rank++)); do
   log="$OUTPUT_ROOT/logs/robocasa_cache_shard_$(printf '%04d' "$rank")_of_$(printf '%04d' "$NUM_GPUS").log"
   echo "[launch] shard=$rank/$NUM_GPUS gpu=$gpu log=$log"
   (
-    CUDA_VISIBLE_DEVICES="$gpu" "$PYTHON_BIN" "$BUILDER"       "${ARGS[@]}"       --device cuda:0       --task-shard "$rank"       --num-task-shards "$NUM_GPUS"
+    CUDA_VISIBLE_DEVICES="$gpu" "$PYTHON_BIN" "$BUILDER" \
+      "${ARGS[@]}" \
+      --device cuda:0 \
+      --task-shard "$rank" \
+      --num-task-shards "$NUM_GPUS"
   ) >"$log" 2>&1 &
   PIDS+=("$!")
 done
@@ -88,6 +92,8 @@ if (( failed != 0 )); then
   exit 1
 fi
 
-"$PYTHON_BIN" "$MERGER"   --output-root "$OUTPUT_ROOT"   --num-task-shards "$NUM_GPUS"
+"$PYTHON_BIN" "$MERGER" \
+  --output-root "$OUTPUT_ROOT" \
+  --num-task-shards "$NUM_GPUS"
 
 echo "[done] parallel RoboCasa cache build complete: $OUTPUT_ROOT"
