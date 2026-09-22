@@ -16,7 +16,7 @@ Do not start the full build exactly as drafted. Before the full run, fix/clarify
 3. v2.1 video path formatting with `episode_index`;
 4. deterministic per-task episode subset selection;
 5. the builder `--source-root` convention;
-6. initial episode limit chosen by **training sample/window budget**, not by disk capacity alone.
+6. full-by-default encoding with any `episode-limit` treated only as an optional staged/subset cap.
 
 ## 2. Camera / canvas / latent contract — APPROVED
 
@@ -90,7 +90,7 @@ Use a deterministic per-task permutation keyed by `(seed, task_id)`, then take i
 
 This also gives nested growth: N=10 can later extend to N=20 without invalidating the first subset.
 
-## 8. Initial N should be chosen by sample count
+## 8. Sample-count matching is an experiment-level choice, not the cache default
 
 For E003-style comparisons, the most important matching variable is training sample amount.
 
@@ -111,11 +111,11 @@ N = 10/task  -> ~288k windows
 N = 20/task  -> ~575k windows
 ```
 
-Recommendation: **build N=10/task first**. This is much closer to the existing LIBERO training-data scale, uses roughly ~65 GB under the draft's storage model, covers all 50 target tasks, and can be extended later.
+Those estimates remain useful when selecting a **training subset** or smoke budget. For example, N=10/task is roughly LIBERO-scale in window count.
 
-N=20 is storage-feasible (~130 GB) but should be treated as an expansion, not the default simply because disk permits it.
+However, the cache builder's formal/default corpus target is now **all episodes**. `--episode-limit N` is only an optional staging/subset control. A staged `N=10 -> N=20 -> all` workflow must resume by reusing valid cached episodes and encoding only the missing target episodes.
 
-After N=10, use the actual manifest `window_count` rather than averages to decide whether to extend.
+Use the actual manifest `window_count` to choose training subsets later; do not redefine the underlying encoded corpus to N=10 by default.
 
 ## 9. Storage / extraction — APPROVED
 
@@ -169,12 +169,12 @@ Freeze this camera layout before encoding. If a later experiment chooses upstrea
 - deterministic per-task episode sampling;
 - source-root convention.
 
-### Recommended first cache
+### Formal cache target
 
-`episode-limit = 10 per task`
+`episode-limit` omitted => **all episodes**.
 
-because the first-order goal is sample/window-count alignment with the existing LIBERO E003 scale.
+`episode-limit = N` is reserved for smoke tests, staged conversion, or deliberately sample-matched subset experiments.
 
 ## 13. Review verdict
 
-> **APPROVE WITH CHANGES.** Keep the current PSM-WMA branch, borrow upstream `c23e51f` semantics as reference, make the minimal compatibility fixes, encode a deterministic N=10/task subset, verify parity, then decide whether to expand to N=20.
+> **APPROVE WITH CHANGES.** Keep the current PSM-WMA branch, borrow upstream `c23e51f` semantics as reference, make the minimal compatibility fixes, verify a small deterministic smoke subset, then run/resume toward the full corpus by default.

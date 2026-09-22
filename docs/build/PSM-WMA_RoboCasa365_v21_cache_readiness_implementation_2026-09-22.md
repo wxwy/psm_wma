@@ -42,9 +42,11 @@ The legacy PSM-WMA name `robocasa_panda_omron` is kept as an alias to 30.
 
 No global RoboCasa raw-action dimension is registered. The source parquet happens to be 12D, but future model-side RoboCasa policy contracts may be 10/15/20D and must not be conflated with source width.
 
-### Deterministic per-task episode subset
+### Full-by-default encoding with optional deterministic per-task limit
 
-`--episode-limit N` no longer means first-N.
+**Formal/default target is the full dataset.** When `--episode-limit` is omitted, every source episode for every selected task is part of the encoding target.
+
+`--episode-limit N` is an optional cap for smoke tests, subset experiments, or staged resource use; it no longer means first-N.
 
 Each episode receives a stable task-aware score:
 
@@ -56,9 +58,12 @@ The N lowest-ranked episodes are selected, then sorted only for processing order
 
 Properties:
 
-- deterministic across runs;
+- **no limit => all episodes**;
+- deterministic across runs when a limit is set;
 - independent of filesystem/parquet order;
 - nested: the N=10 set is a strict subset of N=20 for the same seed/task;
+- staged resume is monotonic: `N=10 -> N=20 -> all` only fills missing target episodes;
+- if all episodes required by the current target already have valid matching cache files, the task performs no VAE encoding;
 - default `--episode-seed=42`;
 - selected IDs, digest, seed, source episode count and actual windows are recorded in manifests.
 
@@ -111,7 +116,7 @@ These tests are committed but have not been executed on the RoboCasa training se
 
 ## 6. Runtime gate still required
 
-Before N=10/task full encoding, run a real-data smoke on one task:
+Before the formal full encoding, run a real-data smoke on one task:
 
 ```text
 task: CloseBlenderLid
@@ -131,17 +136,30 @@ Required evidence:
 7. offline/online parity max_abs_diff <= 1e-6;
 8. manifest records selected episode IDs/digest and actual window count.
 
-Only after this smoke should the deterministic N=10/task cache be launched.
+After this smoke, the formal builder should be launched **without `--episode-limit`** when storage/time permit, so the target is the complete selected RoboCasa suite.
 
-## 7. First formal cache budget
+## 7. Formal cache target and staged resume
 
-Recommended first pass remains:
+Frozen owner decision:
 
 ```text
-50 target tasks
-x 10 deterministic episodes/task
-camera_set = left_wrist
-episode_seed = 42
+formal default:
+  --episode-limit omitted
+  => encode ALL episodes
+
+optional staged run:
+  --episode-limit 10
+  => encode deterministic N=10/task
+
+later:
+  --episode-limit 20
+  => reuse valid N10 files and only encode newly required/missing episodes
+
+final:
+  --episode-limit omitted
+  => reuse all valid existing files and encode the remaining episodes until complete
 ```
 
-The main reason is sample/window-count alignment with the LIBERO E003 corpus, not disk capacity.
+If the current target is already complete, the task is resume-skipped with no VAE work.
+
+`N=10` remains useful for smoke/subset experiments and for matching a specific training sample budget, but it is **not the default corpus definition**.
