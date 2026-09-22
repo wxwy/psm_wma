@@ -8,8 +8,11 @@ Current child implementation: `01c0d1ef002dc1d707af83196b43741f61f32654`
 
 RoboCasa input support is now intentionally v3-only.
 
-The canonical target sources are the three flat EMBER RoboCasa365 LeRobot v3 mirrors:
+The canonical sources are all six flat EMBER RoboCasa365 LeRobot v3 mirrors:
 
+- robocasa365-pretrain-atomic
+- robocasa365-pretrain-mg
+- robocasa365-pretrain-composite
 - robocasa365-target-atomic
 - robocasa365-target-composite-seen
 - robocasa365-target-composite-unseen
@@ -28,9 +31,12 @@ All deterministic episode limits are therefore per underlying task_class.
 
 One flat local LeRobot v3 root per suite:
 
+- pretrain atomic: expected 65 task classes
+- pretrain MG: expected 60 task classes
+- pretrain composite: expected 235 task classes
 - target atomic: expected 18 task classes
-- target composite seen: expected 16
-- target composite unseen: expected 16
+- target composite seen: expected 16 task classes
+- target composite unseen: expected 16 task classes
 
 The cache builder fails closed if the recovered class count differs.
 
@@ -66,9 +72,16 @@ The current planned first conversion remains N=10 per underlying task class, cam
 
 Code capability defaults to ALL when --episode-limit is omitted; that is not the current execution budget.
 
-## Download helper
+## Download helpers
 
-tools/g0/download_robocasa365_v3_target.sh downloads the three target v3 mirrors.
+`tools/g0/download_robocasa365_v3.sh` is the canonical all-suite helper. It supports:
+
+- `all` (default): all six v3 mirrors
+- `pretrain`: the three pretraining mirrors
+- `target`: the three target mirrors
+- explicit repo slugs for a selected subset
+
+`tools/g0/download_robocasa365_v3_target.sh` remains a target-only convenience helper.
 
 
 ## Runtime status
@@ -78,7 +91,7 @@ Code migration is complete, but a real v3 dataset smoke has not been executed fr
 The first runtime gate must verify:
 
 - v3 metadata loads through LeRobotDatasetMetadata
-- underlying task-class counts are 18 / 16 / 16
+- underlying task-class counts are 65 / 60 / 235 / 18 / 16 / 16 for pretrain-atomic / pretrain-mg / pretrain-composite / target-atomic / target-composite-seen / target-composite-unseen
 - annotation.human.task_name resolves through meta/tasks.parquet
 - N=2 deterministic subset and resume
 - left_wrist source composition 256x512
