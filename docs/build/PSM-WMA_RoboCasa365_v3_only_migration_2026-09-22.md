@@ -84,6 +84,38 @@ Code capability defaults to ALL when --episode-limit is omitted; that is not the
 `tools/g0/download_robocasa365_v3_target.sh` remains a target-only convenience helper.
 
 
+## Multi-GPU encoding
+
+The canonical parallel encoding path is one process per GPU with task-class sharding.
+
+Launcher:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 \
+bash tools/g0/launch_parallel_cache_build_robocasa.sh \
+  --source-root /path/to/robocasa365-target-atomic \
+  --output-root /path/to/cache/target_atomic_left_wrist \
+  --vae-path /path/to/Wan2.2_VAE.pth \
+  --suite robocasa365_target_atomic \
+  --camera-set left_wrist \
+  --episode-limit 10 \
+  --episode-seed 42
+```
+
+Semantics:
+
+- one visible GPU -> one Python process -> one Wan2.2 VAE instance;
+- sorted underlying task classes are distributed round-robin by `--task-shard/--num-task-shards`;
+- task directories are disjoint across processes, so episode writes do not race;
+- each process writes `dataset_manifest_shard_XXXX_of_YYYY.json`;
+- only after every process exits successfully does `merge_robocasa_latent_shards.py` atomically publish the canonical `dataset_manifest.json`;
+- any failed shard blocks global manifest publication;
+- reruns reuse valid per-episode cache files, so interrupted parallel builds remain resumable.
+
+`ROBOCASA_GPUS` may be used instead of `CUDA_VISIBLE_DEVICES` when a separate GPU list is desired for the launcher. If neither is set, the launcher enumerates GPUs with `nvidia-smi`.
+
+The single-process builder remains supported. Direct sharded execution is also available with `--task-shard N --num-task-shards K`, but normal users should prefer the launcher so manifest merge is not forgotten.
+
 ## Runtime status
 
 Code migration is complete, but a real v3 dataset smoke has not been executed from this chat.
