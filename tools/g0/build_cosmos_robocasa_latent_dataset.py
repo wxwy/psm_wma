@@ -93,6 +93,31 @@ def _selection_digest(episode_ids: list[int]) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
+def _select_task_classes(
+    task_classes: list[str],
+    *,
+    task_shard: int | None,
+    num_task_shards: int | None,
+) -> list[str]:
+    ordered = sorted(task_classes)
+    if task_shard is None and num_task_shards is None:
+        return ordered
+    if task_shard is None or num_task_shards is None:
+        raise ValueError("--task-shard and --num-task-shards must be provided together")
+    if num_task_shards <= 0:
+        raise ValueError(f"num_task_shards must be positive, got {num_task_shards}")
+    if not 0 <= task_shard < num_task_shards:
+        raise ValueError(f"task_shard must be in [0,{num_task_shards}), got {task_shard}")
+    return ordered[task_shard::num_task_shards]
+
+
+def _manifest_path(output_root: Path, *, task_shard: int | None, num_task_shards: int | None) -> Path:
+    if task_shard is None:
+        return output_root / "dataset_manifest.json"
+    assert num_task_shards is not None
+    return output_root / f"dataset_manifest_shard_{task_shard:04d}_of_{num_task_shards:04d}.json"
+
+
 def _metadata_column(meta: LeRobotDatasetMetadata, key: str, episode_index: int):
     if meta.episodes is None:
         raise ValueError("LeRobot v3 metadata has no episode table")
@@ -435,6 +460,18 @@ def main() -> None:
     parser.add_argument("--episode-seed", type=int, default=42)
     parser.add_argument("--tolerance-s", type=float, default=1e-4)
     parser.add_argument("--device", default="cuda")
+    parser.add_argument(
+        "--task-shard",
+        type=int,
+        default=None,
+        help="0-based task-class shard index for one-process-per-GPU parallel encoding.",
+    )
+    parser.add_argument(
+        "--num-task-shards",
+        type=int,
+        default=None,
+        help="Total number of task-class shards. Must be provided with --task-shard.",
+    )
     args = parser.parse_args()
 
     args.camera_set = normalize_robocasa_camera_set(args.camera_set)
@@ -450,6 +487,23 @@ def main() -> None:
         raise ValueError(
             f"{args.suite} expected {expected_task_count} underlying task classes, "
             f"found {len(class_to_episodes)}: {sorted(class_to_episodes)}"
+        )
+
+    selected_task_classes = _select_task_classes(
+        list(class_to_episodes),
+        task_shard=args.task_shard,
+        num_task_shards=args.num_task_shards,
+    )
+    if not selected_task_classes:
+        raise ValueError(
+            f"Task shard {args.task_shard}/{args.num_task_shards} is empty for "
+            f"{len(class_to_episodes)} task classes"
+        )
+    if args.task_shard is not None:
+        print(
+            f"[task-shard] shard={args.task_shard}/{args.num_task_shards} "
+            f"classes={len(selected_task_classes)}/{len(class_to_episodes)}",
+            flush=True,
         )
 
     existing_manifest_path = args.output_root / "dataset_manifest.json"
@@ -497,7 +551,7 @@ def main() -> None:
             vae_path=args.vae_path,
             revision=revision,
         )
-        for task_class in sorted(class_to_episodes)
+        for task_class in selected_task_classes
     ]
 
     episode_rows = [row for task in task_rows for row in task["episodes"]]
@@ -545,16 +599,26 @@ def main() -> None:
             "sha256(seed:task_class:episode_index) rank, prefix-N"
         ),
         "task_class_count": len(task_rows),
+        "full_task_class_count": expected_task_count,
+        "task_shard": args.task_shard,
+        "num_task_shards": args.num_task_shards,
         "episode_count": len(episode_rows),
         "window_count": sum(int(row["window_count"]) for row in episode_rows),
         "tasks": task_rows,
     }
 
     args.output_root.mkdir(parents=True, exist_ok=True)
-    existing_manifest_path.write_text(
+    manifest_path = _manifest_path(
+        args.output_root,
+        task_shard=args.task_shard,
+        num_task_shards=args.num_task_shards,
+    )
+    tmp_manifest_path = manifest_path.with_suffix(manifest_path.suffix + ".tmp")
+    tmp_manifest_path.write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+    tmp_manifest_path.replace(manifest_path)
     print(
         json.dumps(
             {
@@ -566,6 +630,9 @@ def main() -> None:
                 "window_count": manifest["window_count"],
                 "latent_shape": manifest["latent_shape"],
                 "episode_limit_per_task_class": args.episode_limit,
+                "task_shard": args.task_shard,
+                "num_task_shards": args.num_task_shards,
+                "manifest_path": str(manifest_path),
             },
             ensure_ascii=False,
         )
