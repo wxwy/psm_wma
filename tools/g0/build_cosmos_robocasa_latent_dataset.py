@@ -88,6 +88,53 @@ def _episode_selection_digest(episode_ids: list[int]) -> str:
     payload = ",".join(str(value) for value in episode_ids).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
 
+def _load_valid_cached_row(
+    output_path: Path,
+    *,
+    dataset: RoboCasaLeRobotDataset,
+    episode_index: int,
+) -> dict[str, object] | None:
+    """Return a reusable manifest row only for a complete matching episode cache."""
+    if not output_path.is_file():
+        return None
+    try:
+        cached = torch.load(output_path, map_location="cpu", weights_only=True)
+    except Exception as exc:
+        print(f"[resume-invalid] path={output_path} load_error={type(exc).__name__}: {exc}", flush=True)
+        return None
+    if not isinstance(cached, dict):
+        return None
+    if cached.get("format") != "exact_window_v1":
+        return None
+    if cached.get("task_id") != dataset.task_id:
+        return None
+    if int(cached.get("episode_index", -1)) != int(episode_index):
+        return None
+    metadata = cached.get("metadata")
+    if not isinstance(metadata, dict):
+        return None
+    cached_camera_set = metadata.get("camera_set", metadata.get("camera_layout"))
+    if not isinstance(cached_camera_set, str):
+        return None
+    try:
+        if normalize_robocasa_camera_set(cached_camera_set) != dataset.camera_set:
+            return None
+    except ValueError:
+        return None
+    windows = cached.get("windows")
+    if not isinstance(windows, dict) or not windows:
+        return None
+    manifest_row = metadata.get("manifest_row")
+    if not isinstance(manifest_row, dict):
+        return None
+    if int(manifest_row.get("episode_index", -1)) != int(episode_index):
+        return None
+    if int(manifest_row.get("window_count", -1)) != len(windows):
+        return None
+    if manifest_row.get("camera_set") != dataset.camera_set:
+        return None
+    return manifest_row
+
 
 def _build_task(
     dataset: RoboCasaLeRobotDataset,
@@ -112,25 +159,31 @@ def _build_task(
         episode_seed=episode_seed,
     )
     selection_digest = _episode_selection_digest(episode_ids)
+    valid_cached_rows: dict[int, dict[str, object]] = {}
     for episode_index in episode_ids:
         output_path = episodes_dir / f"episode_{episode_index:06d}.pt"
-        if output_path.is_file():
-            cached = torch.load(output_path, map_location="cpu", weights_only=True)
-            metadata = cached.get("metadata", {})
-            cached_camera_set = metadata.get("camera_set", metadata.get("camera_layout"))
-            camera_matches = False
-            if isinstance(cached_camera_set, str):
-                try:
-                    camera_matches = normalize_robocasa_camera_set(cached_camera_set) == dataset.camera_set
-                except ValueError:
-                    camera_matches = False
-            if (
-                cached.get("format") == "exact_window_v1"
-                and cached.get("task_id") == dataset.task_id
-                and camera_matches
-            ):
-                rows.append(metadata["manifest_row"])
-                continue
+        cached_row = _load_valid_cached_row(
+            output_path,
+            dataset=dataset,
+            episode_index=episode_index,
+        )
+        if cached_row is not None:
+            valid_cached_rows[episode_index] = cached_row
+
+    if len(valid_cached_rows) == len(episode_ids):
+        target = "ALL" if episode_limit is None else str(episode_limit)
+        print(
+            f"[resume-skip-task] task={dataset.task_id} target={target} "
+            f"complete={len(valid_cached_rows)}/{len(episode_ids)}",
+            flush=True,
+        )
+
+    for episode_index in episode_ids:
+        output_path = episodes_dir / f"episode_{episode_index:06d}.pt"
+        cached_row = valid_cached_rows.get(episode_index)
+        if cached_row is not None:
+            rows.append(cached_row)
+            continue
         row_indices = np.flatnonzero(dataset._row_episode == episode_index)
         timestamps = [float(value) for value in dataset._row_timestamp[row_indices]]
         video = dataset._load_video(dataset._episodes[episode_index], timestamps)
@@ -230,7 +283,15 @@ def main() -> None:
             "left_wrist_right=256x768 three full-resolution horizontal views."
         ),
     )
-    parser.add_argument("--episode-limit", type=int, default=None)
+    parser.add_argument(
+        "--episode-limit",
+        type=int,
+        default=None,
+        help=(
+            "Optional per-task cap for smoke/subset encoding. Default None encodes ALL episodes. "
+            "Resume is monotonic: N=10 -> N=20 -> all only encodes missing selected episodes."
+        ),
+    )
     parser.add_argument(
         "--episode-seed",
         type=int,
@@ -327,7 +388,10 @@ def main() -> None:
         "script_revision": revision,
         "episode_limit_per_task": args.episode_limit,
         "episode_selection_seed": args.episode_seed,
-        "episode_selection_policy": "sha256(seed:task_id:episode_index) rank, prefix-N, execution sorted",
+        "episode_selection_policy": (
+            "ALL episodes when episode_limit is null; otherwise "
+            "sha256(seed:task_id:episode_index) rank, prefix-N, execution sorted"
+        ),
         "task_count": len(task_rows),
         "episode_count": len(episode_rows),
         "window_count": sum(int(row["window_count"]) for row in episode_rows),
@@ -343,6 +407,7 @@ def main() -> None:
                 "task_count": len(task_rows),
                 "episode_count": len(episode_rows),
                 "episode_limit_per_task": args.episode_limit,
+                "episode_target": "all" if args.episode_limit is None else args.episode_limit,
                 "episode_selection_seed": args.episode_seed,
                 "window_count": manifest["window_count"],
                 "composed_output_size": manifest_composed_size,
