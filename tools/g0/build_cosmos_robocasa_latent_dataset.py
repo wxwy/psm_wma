@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 from pathlib import Path
@@ -32,10 +33,60 @@ def _revision() -> str:
 
 
 def _task_roots(source_root: Path, category: str) -> list[Path]:
-    roots = sorted(source_root.glob(f"{category}/*/*/lerobot"))
-    if not roots:
-        raise FileNotFoundError(f"No RoboCasa LeRobot task roots under {source_root / category}")
-    return roots
+    """Accept the RoboCasa root, target root, category root, or a single lerobot root."""
+    candidates: list[Path] = []
+    if source_root.name == "lerobot":
+        candidates = [source_root]
+    elif source_root.name == category:
+        candidates = sorted(source_root.glob("*/*/lerobot"))
+    else:
+        candidates = sorted(source_root.glob(f"{category}/*/*/lerobot"))
+        if not candidates:
+            candidates = sorted(source_root.glob(f"target/{category}/*/*/lerobot"))
+    if not candidates:
+        raise FileNotFoundError(
+            f"No RoboCasa LeRobot task roots for category={category!r} under {source_root}; "
+            "accepted roots include .../robocasa365, .../robocasa365/target, or the category directory"
+        )
+    return candidates
+
+
+def _episode_selection_score(*, seed: int, task_id: str, episode_index: int) -> bytes:
+    payload = f"{seed}:{task_id}:{episode_index}".encode("utf-8")
+    return hashlib.sha256(payload).digest()
+
+
+def _select_episode_ids(
+    episode_ids: list[int],
+    *,
+    task_id: str,
+    episode_limit: int | None,
+    episode_seed: int,
+) -> list[int]:
+    """Choose a deterministic, nested per-task episode subset.
+
+    Ranking every episode by a stable SHA256 score makes N=10 a strict subset
+    of N=20 for the same seed/task, independent of filesystem/parquet ordering.
+    Returned IDs are sorted only for deterministic processing/storage order.
+    """
+    unique_ids = sorted(set(int(value) for value in episode_ids))
+    if episode_limit is None:
+        return unique_ids
+    if episode_limit <= 0:
+        raise ValueError(f"episode_limit must be positive, got {episode_limit}")
+    ranked = sorted(
+        unique_ids,
+        key=lambda episode_index: (
+            _episode_selection_score(seed=episode_seed, task_id=task_id, episode_index=episode_index),
+            episode_index,
+        ),
+    )
+    return sorted(ranked[:episode_limit])
+
+
+def _episode_selection_digest(episode_ids: list[int]) -> str:
+    payload = ",".join(str(value) for value in episode_ids).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _build_task(
@@ -46,15 +97,21 @@ def _build_task(
     video_resize: VideoResize,
     *,
     episode_limit: int | None,
+    episode_seed: int,
     vae_path: Path,
     revision: str,
 ) -> dict[str, object]:
     episodes_dir = output_root / "tasks" / dataset.task_slug / "episodes"
     episodes_dir.mkdir(parents=True, exist_ok=True)
     rows: list[dict[str, object]] = []
-    episode_ids = [int(value) for value in dataset._ep_vals]
-    if episode_limit is not None:
-        episode_ids = episode_ids[:episode_limit]
+    all_episode_ids = [int(value) for value in dataset._ep_vals]
+    episode_ids = _select_episode_ids(
+        all_episode_ids,
+        task_id=dataset.task_id,
+        episode_limit=episode_limit,
+        episode_seed=episode_seed,
+    )
+    selection_digest = _episode_selection_digest(episode_ids)
     for episode_index in episode_ids:
         output_path = episodes_dir / f"episode_{episode_index:06d}.pt"
         if output_path.is_file():
@@ -149,6 +206,10 @@ def _build_task(
         "camera_set": dataset.camera_set,
         "camera_keys": list(dataset.camera_keys),
         "composed_output_size": [composed_h, composed_w],
+        "episode_selection_seed": episode_seed,
+        "selected_episode_ids": episode_ids,
+        "selected_episode_digest": selection_digest,
+        "source_episode_count": len(all_episode_ids),
         "episodes": rows,
     }
 
@@ -170,11 +231,33 @@ def main() -> None:
         ),
     )
     parser.add_argument("--episode-limit", type=int, default=None)
+    parser.add_argument(
+        "--episode-seed",
+        type=int,
+        default=42,
+        help="Stable per-task subset seed. The same seed gives nested N=10 -> N=20 subsets.",
+    )
     parser.add_argument("--device", default="cuda")
     args = parser.parse_args()
     if args.device.startswith("cuda") and not torch.cuda.is_available():
         raise RuntimeError("CUDA is required for RoboCasa latent encoding")
     category = args.suite.removeprefix("robocasa365_")
+    existing_manifest_path = args.output_root / "dataset_manifest.json"
+    if existing_manifest_path.is_file():
+        existing_manifest = json.loads(existing_manifest_path.read_text(encoding="utf-8"))
+        existing_camera_set = existing_manifest.get("camera_set", existing_manifest.get("camera_mode"))
+        if existing_manifest.get("suite") != args.suite:
+            raise ValueError(
+                f"Output root already contains suite={existing_manifest.get('suite')!r}; requested {args.suite!r}"
+            )
+        if isinstance(existing_camera_set, str):
+            existing_camera_set = normalize_robocasa_camera_set(existing_camera_set)
+            if existing_camera_set != args.camera_set:
+                raise ValueError(
+                    f"Output root already contains camera_set={existing_camera_set!r}; "
+                    f"requested {args.camera_set!r}. Use a separate output root per camera layout."
+                )
+
     device = torch.device(args.device)
     torch.backends.cudnn.benchmark = False
     tokenizer = Wan2pt2VAEInterface(vae_path=str(args.vae_path), encode_exact_durations=LIBERO_EXACT_WINDOW_ENCODE_EXACT_DURATIONS, encode_chunk_frames=LIBERO_EXACT_WINDOW_ENCODE_CHUNK_FRAMES)
@@ -190,6 +273,7 @@ def main() -> None:
             device,
             resize,
             episode_limit=args.episode_limit,
+            episode_seed=args.episode_seed,
             vae_path=args.vae_path,
             revision=revision,
         )
@@ -241,6 +325,9 @@ def main() -> None:
         },
         "cudnn_benchmark": False,
         "script_revision": revision,
+        "episode_limit_per_task": args.episode_limit,
+        "episode_selection_seed": args.episode_seed,
+        "episode_selection_policy": "sha256(seed:task_id:episode_index) rank, prefix-N, execution sorted",
         "task_count": len(task_rows),
         "episode_count": len(episode_rows),
         "window_count": sum(int(row["window_count"]) for row in episode_rows),
@@ -255,6 +342,8 @@ def main() -> None:
                 "camera_set": args.camera_set,
                 "task_count": len(task_rows),
                 "episode_count": len(episode_rows),
+                "episode_limit_per_task": args.episode_limit,
+                "episode_selection_seed": args.episode_seed,
                 "window_count": manifest["window_count"],
                 "composed_output_size": manifest_composed_size,
                 "vae_canvas_size": manifest_vae_canvas_size,
