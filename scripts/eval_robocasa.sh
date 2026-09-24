@@ -58,6 +58,20 @@ cd "$CHILD"
 export PYTHONPATH="$CHILD${PYTHONPATH:+:$PYTHONPATH}"
 export LD_LIBRARY_PATH="$CHILD/.venv/lib/python3.13/site-packages/nvidia/cu13/lib:${LD_LIBRARY_PATH:-}"
 
+.venv/bin/python - <<'PY'
+missing = []
+for module in ("gymnasium", "robocasa", "openpi_client"):
+    try:
+        __import__(module)
+    except Exception as exc:
+        missing.append(f"{module}: {type(exc).__name__}: {exc}")
+if missing:
+    raise SystemExit(
+        "RoboCasa eval runtime dependencies are unavailable:\n  - "
+        + "\n  - ".join(missing)
+    )
+PY
+
 SERVER_LOG="$RESULT_ROOT/action_server.log"
 CUDA_VISIBLE_DEVICES="$EVAL_GPU" .venv/bin/python -m cosmos_framework.scripts.action_policy_server_robolab   --checkpoint-path "$CHECKPOINT_PATH"   --allow-dcp-checkpoint   --no-use-ema-weights   --experiment action_policy_robocasa_edge_all   --domain-name robocasa   --action-space robocasa_ego   --action-dim 20   --action-chunk-size 16   --conditioning-fps 20   --resolution 256   --image-height 256   --image-width 512   --history-length 1   --format-prompt-as-json   --local-memory-mode "$LOCAL_MEMORY_MODE"   --port "$SERVER_PORT"   --num-steps "$NUM_STEPS"   --guidance "$GUIDANCE"   >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
