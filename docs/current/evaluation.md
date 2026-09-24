@@ -170,3 +170,43 @@ Inference speed and resource use are first-class comparison metrics alongside SR
 
 H32 remains optional and should only be considered after the H16 results leave a
 context-length ambiguity.
+
+
+## Closed-loop RoboCasa
+
+RoboCasa now has a separate closed-loop evaluation path for the current active Local-TTT training route:
+
+- server: `cosmos_framework/scripts/action_policy_server_robolab.py`
+- online Local-TTT adapter: `cosmos_framework/inference/local_memory_policy.py`
+- client completed-evidence ledger: `cosmos_framework/simulation/robocasa/local_memory_client.py`
+- rollout / SR aggregation: `cosmos_framework/simulation/robocasa/closed_loop_eval.py`
+- project launcher: `scripts/eval_robocasa.sh`
+
+The evaluator follows RoboCasa's native Gym task registry, task horizon, and `info["success"]` semantics. The current training/eval observation contract is `left_wrist` (agentview-left concatenated horizontally with wrist) plus the 16-D RoboCasa state.
+
+Evaluate a checkpoint:
+
+```bash
+LOCAL_MEMORY_MODE=required \
+ROBOCASA_SPLIT=target \
+TASK_SETS="atomic_seen" \
+NUM_TRIALS=10 \
+REPLAN_STEPS=5 \
+scripts/eval_robocasa.sh /absolute/path/to/checkpoint
+```
+
+First bounded smoke:
+
+```bash
+LOCAL_MEMORY_MODE=required \
+ROBOCASA_SPLIT=target \
+TASK_SETS="atomic_seen" \
+MAX_TASKS=1 \
+NUM_TRIALS=1 \
+REPLAN_STEPS=1 \
+scripts/eval_robocasa.sh /absolute/path/to/checkpoint
+```
+
+RoboCasa Local-TTT inference uses canonical completed evidence `causal_visual96_executed_action20_v1`. At each executed step the base component of the 20-D evidence is reconstructed from the observed pre/post base pose instead of copying an unexecuted model prediction.
+
+The only remaining runtime calibration item is the mobile-base decoder. Training represents base motion as an observed ego-frame state delta, while PandaOmron's simulator base part is velocity controlled. `BASE_DECODE_MODE=velocity` is the default; `delta` and `zero` are available for calibration/manipulation-only smoke. Do not report official navigation benchmark parity until a real simulator smoke validates the base-active path.
