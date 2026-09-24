@@ -33,6 +33,7 @@ NUM_TRIALS="${NUM_TRIALS:-10}"
 REPLAN_STEPS="${REPLAN_STEPS:-5}"
 BASE_DECODE_MODE="${BASE_DECODE_MODE:-velocity}"
 SAVE_VIDEOS="${SAVE_VIDEOS:-1}"
+SAVE_PRED_MP4="${SAVE_PRED_MP4:-0}"
 CKPT_NAME="$(basename "$CHECKPOINT_PATH")"
 RESULT_ROOT="${OUTPUT_DIR:-$ROOT/results/robocasa_local_ttt/$CKPT_NAME/$ROBOCASA_SPLIT/$LOCAL_MEMORY_MODE}"
 mkdir -p "$RESULT_ROOT"
@@ -54,6 +55,21 @@ case "$SAVE_VIDEOS" in
   1) VIDEO_ARG="--save-videos" ;;
   0) VIDEO_ARG="--no-save-videos" ;;
   *) echo "ERROR: SAVE_VIDEOS must be 0 or 1" >&2; exit 2 ;;
+esac
+
+SERVER_VIDEO_ARGS=()
+case "$SAVE_PRED_MP4" in
+  1)
+    PRED_VIDEO_ARG="--save-pred-mp4"
+    SERVER_VIDEO_ARGS+=(--decode-video)
+    ;;
+  0)
+    PRED_VIDEO_ARG="--no-save-pred-mp4"
+    ;;
+  *)
+    echo "ERROR: SAVE_PRED_MP4 must be 0 or 1" >&2
+    exit 2
+    ;;
 esac
 
 [[ -f "$ROBOCASA_ROOT/meta/info.json" ]] || {
@@ -99,6 +115,7 @@ CUDA_VISIBLE_DEVICES="$EVAL_GPU" \
   --history-length 1 \
   --format-prompt-as-json True \
   --local-memory-mode "$LOCAL_MEMORY_MODE" \
+  "${SERVER_VIDEO_ARGS[@]}" \
   --port "$SERVER_PORT" \
   --num-steps "$NUM_STEPS" \
   --guidance "$GUIDANCE" \
@@ -130,6 +147,7 @@ echo ">>> split/task_sets: $ROBOCASA_SPLIT / $TASK_SETS"
 echo ">>> Local-TTT mode: $LOCAL_MEMORY_MODE"
 echo ">>> trials/replan: $NUM_TRIALS / $REPLAN_STEPS"
 echo ">>> base decode: $BASE_DECODE_MODE"
+echo ">>> save videos/pred mp4: $SAVE_VIDEOS / $SAVE_PRED_MP4"
 echo ">>> results: $RESULT_ROOT"
 
 ARGS=(
@@ -147,6 +165,7 @@ ARGS+=(
   --base-decode-mode "$BASE_DECODE_MODE"
   "$EVAL_MEMORY_ARG"
   "$VIDEO_ARG"
+  "$PRED_VIDEO_ARG"
 )
 
 if [[ -n "$TASK_INDICES" ]]; then
