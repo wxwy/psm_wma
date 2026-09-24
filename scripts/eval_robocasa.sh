@@ -16,6 +16,8 @@ CHECKPOINT_PATH="${1:-}"
 
 export EDGE_POLICY_CHECKPOINT="${EDGE_POLICY_CHECKPOINT:-/disk/rl/models/Cosmos3-Edge-Policy-DROID}"
 export WAN_VAE_PATH="${WAN_VAE_PATH:-$CHILD/examples/checkpoints/wan22_vae/Wan2.2_VAE.pth}"
+export ROBOCASA_ROOT="${ROBOCASA_ROOT:-/mnt/data1/data_v2_0617/robocasa365_v3/robocasa365-target-atomic}"
+export ROBOCASA_SUITE="${ROBOCASA_SUITE:-robocasa365_target_atomic}"
 export MUJOCO_GL="${MUJOCO_GL:-egl}"
 
 SERVER_PORT="${SERVER_PORT:-8000}"
@@ -54,8 +56,16 @@ case "$SAVE_VIDEOS" in
   *) echo "ERROR: SAVE_VIDEOS must be 0 or 1" >&2; exit 2 ;;
 esac
 
+[[ -f "$ROBOCASA_ROOT/meta/info.json" ]] || {
+  echo "ERROR: ROBOCASA_ROOT must point to a flat RoboCasa365 v3 mirror: $ROBOCASA_ROOT" >&2
+  exit 2
+}
+
 cd "$CHILD"
-export PYTHONPATH="$CHILD${PYTHONPATH:+:$PYTHONPATH}"
+
+# Match LIBERO eval serving: keep the local server shim first so guardrail/model
+# imports do not silently fall back to network downloads during closed-loop eval.
+export PYTHONPATH="$CHILD/examples/_server_shim:$CHILD${PYTHONPATH:+:$PYTHONPATH}"
 export LD_LIBRARY_PATH="$CHILD/.venv/lib/python3.13/site-packages/nvidia/cu13/lib:${LD_LIBRARY_PATH:-}"
 
 .venv/bin/python - <<'PY'
@@ -73,7 +83,26 @@ if missing:
 PY
 
 SERVER_LOG="$RESULT_ROOT/action_server.log"
-CUDA_VISIBLE_DEVICES="$EVAL_GPU" .venv/bin/python -m cosmos_framework.scripts.action_policy_server_robolab   --checkpoint-path "$CHECKPOINT_PATH"   --allow-dcp-checkpoint   --no-use-ema-weights   --experiment action_policy_robocasa_edge_all   --domain-name robocasa   --action-space robocasa_ego   --action-dim 20   --action-chunk-size 16   --conditioning-fps 20   --resolution 256   --image-height 256   --image-width 512   --history-length 1   --format-prompt-as-json   --local-memory-mode "$LOCAL_MEMORY_MODE"   --port "$SERVER_PORT"   --num-steps "$NUM_STEPS"   --guidance "$GUIDANCE"   >"$SERVER_LOG" 2>&1 &
+CUDA_VISIBLE_DEVICES="$EVAL_GPU" \
+.venv/bin/python -m cosmos_framework.scripts.action_policy_server_robolab \
+  --checkpoint-path "$CHECKPOINT_PATH" \
+  --allow-dcp-checkpoint \
+  --experiment action_policy_robocasa_edge_all \
+  --domain-name robocasa \
+  --action-space robocasa_ego \
+  --action-dim 20 \
+  --action-chunk-size 16 \
+  --conditioning-fps 20 \
+  --resolution 256 \
+  --image-height 256 \
+  --image-width 512 \
+  --history-length 1 \
+  --format-prompt-as-json True \
+  --local-memory-mode "$LOCAL_MEMORY_MODE" \
+  --port "$SERVER_PORT" \
+  --num-steps "$NUM_STEPS" \
+  --guidance "$GUIDANCE" \
+  >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 
 cleanup() {
@@ -96,6 +125,7 @@ done
 }
 
 echo ">>> checkpoint: $CHECKPOINT_PATH"
+echo ">>> robocasa root: $ROBOCASA_ROOT"
 echo ">>> split/task_sets: $ROBOCASA_SPLIT / $TASK_SETS"
 echo ">>> Local-TTT mode: $LOCAL_MEMORY_MODE"
 echo ">>> trials/replan: $NUM_TRIALS / $REPLAN_STEPS"
