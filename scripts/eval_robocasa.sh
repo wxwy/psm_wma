@@ -175,6 +175,7 @@ if [[ -n "$MAX_TASKS" ]]; then
   ARGS+=(--max-tasks "$MAX_TASKS")
 fi
 
+CUDA_VISIBLE_DEVICES="$EVAL_GPU" \
 .venv/bin/python -m cosmos_framework.simulation.robocasa.closed_loop_eval "${ARGS[@]}"
 
 echo ">>> RoboCasa evaluation complete: $RESULT_ROOT"
