@@ -7,7 +7,7 @@
 - next Gate: `V3-P1-UPSTREAM-NATIVE-ROBOCASA-SMOKE`.
 - ds_pro/tmux ds is execution-validation only; no production edits/commits.
 - tmux cx is independent review-only for GPT diffs and ds evidence; no production edits/commits/training launches.
-- user-provided validation server GPU constraint: 24GB; training smoke must use GA=1.
+- V3 training-smoke constraint: GA=1 regardless of detected GPU capacity (connected host currently reports A100 80GB).
 - V2 launchers/configs inherited in root are not V3 authority until explicitly ported.
 
 ---
