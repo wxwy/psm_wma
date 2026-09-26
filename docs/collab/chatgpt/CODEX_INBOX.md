@@ -243,3 +243,18 @@ ChatGPT v0.7 review（`active_catalog_epoch_reuse_v07_05fbd778_525f506.md`）与
 - 审核依据：上述 formal root 中的 `SESSION.md`、`TODO.md`、`docs/build/PSM-WMA_V3_upstream_bootstrap_2026-09-26.md`，以及上述 formal child 中的 Edge recipe、server/wrapper 和对应 CPU contract tests；证据入口以该 formal pair 的既有记录为准。
 - 审核范围：按既有技术合同及可核验证据判断该 Gate 是否满足 closure 条件；本 request 不新增、放宽或替代验收条件，不声明 Gate 已关闭，不改 TODO/SESSION 技术合同，不授权新的生产代码、测试、GPU 或 artifacts 操作。
 - 请将正式结果写入 `docs/collab/chatgpt/reviews/`，明确记录 Gate、上述完整 formal root/child pair 和最终 verdict；若为 `REQUEST_CHANGES`，附具体依据及适用的 `file:line`。
+
+## 2026-09-26 — ChatGPT formal closure verdict: V3-STAGE-A-EDGE-RAW15
+
+- Gate: `V3-STAGE-A-EDGE-RAW15`
+- formal implementation root: `fb6a72c11aa5e7888b9425bb4a50817eab95e10c`
+- formal child/Gitlink: `196b93b70b579023ef008030b0c18a6fde353c82`
+- closure-request bookkeeping root: `8ff08edd350fc49df3d6ae60e549fa188b1928cd` (not part of the formal implementation pair)
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-26_V3_stage_a_edge_raw15_closure_fb6a72c_196b93b.md`
+- verdict: `APPROVE_TO_CLOSE_V3_STAGE_A_EDGE_RAW15`
+
+Closure basis: exact-pair CPU contract tests `26/26 PASS` with zero skips; one-step Edge raw15 training produced a complete finite DCP; the formal wrapper-launched server loaded that DCP with raw15/chunk32/fps20/state contract; official RoboCasa `CloseFridge` closed loop completed the full 900-step horizon with exit code 0; all 29 action chunks were `32x15` and finite.
+
+Capability boundary: the 1-step policy obtained `0/1` task success. This verdict therefore closes the **runtime/integration Gate only** and does not approve RoboCasa task capability, longer training, Local-TTT, persistent-memory behavior, or any later V3 Gate.
+
+No additional technical review was performed for the bookkeeping-only closure-request SHA because the formal implementation/design pair did not change.
