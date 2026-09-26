@@ -81,9 +81,9 @@ Multi-camera variants are not a V3 bootstrap priority.
 
 ## GPU smoke rule
 
-The user-provided new validation server has a 24GB GPU.
+The connected validation host currently reports an A100 80GB, but the user explicitly fixed the V3 smoke budget to `GA=1`.
 
-Any V3 training smoke on that server must set gradient accumulation to 1 (`GA=1`) unless the user explicitly changes this constraint.
+Any V3 training smoke must therefore set gradient accumulation to 1 (`GA=1`) regardless of detected GPU capacity unless the user explicitly changes this constraint.
 
 A smoke may reduce batch size, action/video decode, number of steps, and dataset coverage, but it must not silently change the action contract being validated.
 
