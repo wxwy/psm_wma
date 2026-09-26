@@ -1,3 +1,16 @@
+# V3 Upstream Bootstrap（ChatGPT，2026-09-26）
+
+- root branch: `V3`
+- child branch: `wxwy/cosmos-framework:v3-local-ttt`
+- pinned upstream child SHA: `cf5d68c00d97ccd2480a2320ed652b92dec63102`
+- current V3 policy: keep `V2/v2` frozen; first validate upstream-native RoboCasa raw15 before porting Local-TTT.
+- next Gate: `V3-P1-UPSTREAM-NATIVE-ROBOCASA-SMOKE`.
+- ds_pro/tmux ds is validation-only; no production edits/commits.
+- user-provided validation server GPU constraint: 24GB; training smoke must use GA=1.
+- V2 launchers/configs inherited in root are not V3 authority until explicitly ported.
+
+---
+
 # A2 构建状态更新（ChatGPT，2026-09-18）
 
 代码候选 child=`de84a5675d029ef96d1b2d1fcb2ef3281242ca6e`，隔离分支 `chatgpt/a2-delivery-20260918`。
