@@ -3,7 +3,7 @@
 状态：`TODO`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`DONE`。
 
 | ID | 状态 | 负责人 | 前置条件 | 验收条件 |
-| V3-P1-UPSTREAM-NATIVE-ROBOCASA-SMOKE | IN_PROGRESS | ChatGPT / ds_pro(validate-only) | root `V3`; child `v3-local-ttt` pinned to NVIDIA upstream `cf5d68c`; V2/v2 frozen | upstream-native RoboCasa raw15 train/inference/eval smoke runs without Local-TTT code changes; 24GB GPU training smoke uses GA=1; evidence recorded before P2 Edge/raw15 port |
+| V3-P1-UPSTREAM-NATIVE-ROBOCASA-SMOKE | IN_PROGRESS | ChatGPT / ds_pro(validate-only) | root `V3`; child `v3-local-ttt` pinned to NVIDIA release `850fdbe`; V2/v2 frozen | upstream-native RoboCasa raw15 train/inference/eval smoke runs without Local-TTT code changes; 24GB GPU training smoke uses GA=1; evidence recorded before P2 Edge/raw15 port |
 | G0-R09-B-TTT-V035-STAGE1-PRAGMATIC-REQUEST-PAIR | SUPERSEDED_BY=Owner-Override-active-route | Codex | Owner Override；冻结 root=`db6c4f93473e7ef58a294cff3fb8c692b100badd` / child=`93a89ba61306d840a008813f62f26a34d54850f4` | MM 已 APPROVE；按 Owner 指令先完成最小 materialization 条件，DS 的 docs-only refreeze 要求不作为执行阻塞；GPT 审核延后至训练条件具备 |
 |---|---|---|---|---|
 | E003-WINDOW-H16-FSDP8 | IN_PROGRESS | DS_PRO | formal pair root=`9d952f2f63fdde4587976d013f1b7fe7891089d0` / child=`d1d5cfd8cf287f8a34ef06dca4a008656d2c5916`；优先级高于 GRU-H16；8×GPU FSDP | 先完成 targeted CPU tests + 5-step FSDP8 smoke；正式训练 `max_iter=5000` 作为上限、owner 可手动中断；FSDP8 固定 `16 samples/rank × 8 ranks × GA16 = 2048 consumers/update`；不得把 iter2800/iter3000 当训练终点 |
