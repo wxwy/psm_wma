@@ -1,3 +1,18 @@
+# V3 Stage A server guardrails glue（2026-09-26）
+
+- 任务 V3-STAGE-A-SERVER-GUARDRAILS，REVIEW；基线 root `21a390b18672aaf6b268b6c463c402821e02b9a6` / child `edb922605281614c4df13c4c734c9082363e8a6b`。用户要求继续推进；ChatGPT 冻结该最小设计范围。CPU 验证完成，按 child 提交/push → root Gitlink/文档提交/push 交付，新 pair 待 fresh review。
+- 职责：ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
+- 根因：action server 的 predict_policy 路径不消费 generation text/video guardrail；ActionServerArgs 未暴露 common setup 的 guardrails，默认初始化把 gated Cosmos-Guardrail1 引入 action-only baseline 的无关启动依赖。
+- 实际修改仅 child `cosmos_framework/scripts/action_policy_server_robocasa.py`、`examples/psm_wma_robocasa_native.py`、对应现有测试（3文件 +29）；root 仅本文件、TODO 和 Gitlink。ActionServerArgs 新增 `guardrails: bool=True` 并透传给 OmniSetupOverrides，wrapper server 显式 `--no-guardrails`。不改 common inference、Edge recipe/TOML、raw15/ego20/data/action contract、Local-TTT；不运行 GPU。
+- 已读项目状态/约定、V3 bootstrap、server 参数/setup/predict 入口与 common args，复用既有 tyro_cli 与 OmniSetupOverrides；起始 child clean，root 仅未跟踪 artifacts/v3/（不纳入提交）。提交前只读规范自检：本轮按上述冻结范围实施，未推进 runtime Gate，未将旧审核结论套用到新 pair，协作规范未修改。
+- 环境纠正：最初 --help 误用旧 V2 venv；按本轮指令向自有 PID 28899 发送 SIGTERM，停止等待，不将旧诊断计入验证。后续统一使用 `/disk/rl/worktrees/cosmos-framework-v3/.venv/bin/python` 与同目录 Ruff，不再使用 V2 venv。
+- CPU：V3 child 工作目录，`CUDA_VISIBLE_DEVICES='' COSMOS_DEVICE=cpu HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 LD_LIBRARY_PATH='' PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. EDGE_POLICY_CHECKPOINT=/disk/rl/models/Cosmos3-Edge-Policy-DROID BASE_CHECKPOINT_PATH=/disk/rl/models/Cosmos3-Edge-Policy-DROID-dcp .venv/bin/python examples/psm_wma_robocasa_native_test.py -v`，26/26 PASS，无跳过，84.048秒；日志 `/tmp/cx_v3_guardrails_tests.log`。生产 main 的完整 tyro 解析接受 `--no-guardrails` 且 build_setup_overrides().guardrails=False；另测默认 True；raw15/chunk32/fps20、ego20 与既有合同通过。仅 mock serve，不加载模型或监听端口。
+- 静态：wrapper/test 完整 Ruff check/format PASS；server 完整 Ruff 命中基线已有 I001、format 命中基线已有两处折行（由 git show HEAD 同命令复核），保持无关源码不变；server `ruff check --ignore I001` PASS。两仓 diff-check PASS；未运行 GPU/runtime，由 ds 后续取证。
+- 本轮审核裁定的验收口径：targeted 26 tests PASS、wrapper/test Ruff clean、server 新增 diff 无新 lint violation、两仓 diff-check PASS；不清理 upstream 既有 lint debt，不扩大范围。
+- child 提交 `196b93b70b579023ef008030b0c18a6fde353c82`，3文件 +29/-0；已先推送 v3-local-ttt。root Gitlink 与嵌套 checkout 同步该 SHA；root 交付 SHA 为包含本记录的提交，推送后在交付报告核对远端 exact pair。仅纳入 SESSION/TODO/Gitlink，不纳入 artifacts/v3/。
+
+---
+
 # V3 Stage A Edge raw15 实施（2026-09-26）
 
 - 任务：V3-STAGE-A-EDGE-RAW15，REVIEW；静态实现经 ChatGPT 审核通过，待 ds runtime Evidence。用户本轮明确授权提交与推送：child 仅5个已审核 Edge 文件，root 更新 Gitlink 和状态；先 push child v3-local-ttt，再 push root V3；不运行 GPU。职责：ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
