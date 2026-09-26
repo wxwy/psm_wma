@@ -209,4 +209,23 @@ scripts/eval_robocasa.sh /absolute/path/to/checkpoint
 
 RoboCasa Local-TTT inference uses canonical completed evidence `causal_visual96_executed_action20_v1`. At each executed step the base component of the 20-D evidence is reconstructed from the observed pre/post base pose instead of copying an unexecuted model prediction.
 
-The only remaining runtime calibration item is the mobile-base decoder. Training represents base motion as an observed ego-frame state delta, while PandaOmron's simulator base part is velocity controlled. `BASE_DECODE_MODE=velocity` is the default; `delta` and `zero` are available for calibration/manipulation-only smoke. Do not report official navigation benchmark parity until a real simulator smoke validates the base-active path.
+The current formal 20-D evaluator uses `BASE_DECODE_MODE=calibrated` by default. The calibrated decoder preserves the ego-frame slot/sign contract, maps `[ego_dx, ego_dy, relative_yaw]` through the held-out fitted linear inverse, clamps native base commands to `[-1,1]`, forces `base_motion[3]=0`, and zeros all base commands when the predicted control channel selects arm mode. Legacy `velocity`, `delta`, and `zero` modes remain diagnostic only.
+
+Runtime validation status:
+
+- full `atomic_seen` smoke completed 18/18 tasks on checkpoint `iter_000003300`;
+- `LOCAL_MEMORY_MODE=required`, `BASE_DECODE_MODE=calibrated`, `REPLAN_STEPS=1`, `NUM_TRIALS=1`;
+- no infrastructure error;
+- `bm3_nonzero_steps == 0` across all 18 tasks;
+- `arm_active_nonzero_base_steps == 0` across all 18 tasks;
+- base-active execution was exercised by NavigateKitchen (450/450 steps) and CloseFridge (116/900 steps).
+
+Control-mode diagnostics show a strongly bimodal policy output rather than threshold jitter: 16/18 tasks stayed saturated near -1 and never activated the base; NavigateKitchen stayed near +1; CloseFridge switched between negative and positive modes. Do not change the zero threshold on this evidence.
+
+This 18-task run is a **runtime smoke**, not a RoboCasa SR benchmark: it uses one rollout per task and `REPLAN_STEPS=1`. Benchmark-style evaluation must use a separately declared rollout protocol; do not report the smoke's 0/18 successes as benchmark SR.
+
+See:
+
+- `docs/build/PSM-WMA_RoboCasa_atomic_seen_smoke_full_2026-09-26.md`
+- `docs/build/PSM-WMA_RoboCasa_base_decoder_calibration_closure_2026-09-24.md`
+- `docs/build/PSM-WMA_RoboCasa_base_physics_diagnostics_2026-09-25.md`
