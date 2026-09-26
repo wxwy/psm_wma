@@ -1,5 +1,15 @@
 # PSM-WMA Agent 协作约定
 
+> **V3 branch override (2026-09-26)**  
+> When the current root branch is `V3`, V3 rules override V2-specific branch names below:
+> - root sync/ref: `origin/V3` (not `origin/V2`);
+> - child branch: `v3-local-ttt`;
+> - child baseline provenance: NVIDIA/cosmos-framework `main` pinned at `cf5d68c00d97ccd2480a2320ed652b92dec63102`;
+> - V2/root `V2` and child `v2` are frozen historical baselines and must not be modified by V3 work;
+> - V2 launchers/configs inherited in the root tree are **not authoritative for V3** until explicitly ported and validated;
+> - `ds_pro` / tmux `ds` is validation-only: environment inspection, read-only source audit, smoke/test execution, logs/artifacts/reports; no production-code edits or commits;
+> - on the user-provided 24GB GPU server, every training smoke must use `GA=1` unless the user explicitly overrides it.
+
 ## 读取顺序
 
 每次开始工作前依次读取：
