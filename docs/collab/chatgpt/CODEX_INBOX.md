@@ -258,3 +258,19 @@ Closure basis: exact-pair CPU contract tests `26/26 PASS` with zero skips; one-s
 Capability boundary: the 1-step policy obtained `0/1` task success. This verdict therefore closes the **runtime/integration Gate only** and does not approve RoboCasa task capability, longer training, Local-TTT, persistent-memory behavior, or any later V3 Gate.
 
 No additional technical review was performed for the bookkeeping-only closure-request SHA because the formal implementation/design pair did not change.
+## 2026-09-27 — ChatGPT formal review: V3-STAGE-B1-LATENT-PRODUCER
+
+- Gate: `V3-STAGE-B1-LATENT-PRODUCER`
+- formal implementation root: `bedef75b6bc76cb167f2e27aeaecfe303865f9ab`
+- formal child/Gitlink: `5f9c39464761665843b0f08c5e1d578f72114b33`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b1_latent_producer_bedef75b_5f9c394.md`
+- verdict: `REQUEST_CHANGES`
+
+Independent exact-pair CPU rerun: 98/98 PASS. B0 files are unchanged.
+
+Current blockers are real-cache production-contract mismatches:
+1. HIGH — reader requires nonexistent H5 attr `source_video_frames`; real cache uses `frame_count`.
+2. HIGH — reader rejects legal terminal `F-1` endpoint used when the last frame is off the 4-frame grid.
+3. HIGH — camera authority is caller-selectable, while Stage A is frozen to `left_wrist`; B1 must deterministically use left + wrist and retain visual96 via parameter-free two-view latent-statistic fusion.
+
+This verdict only blocks B1 closure. Stage A and B0 conclusions are unchanged.
