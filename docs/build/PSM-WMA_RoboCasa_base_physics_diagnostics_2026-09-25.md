@@ -2,7 +2,7 @@
 
 Date: 2026-09-25
 
-Status: IMPLEMENTED / ds_pro runtime validation pending
+Status: IMPLEMENTED / RUNTIME DIAGNOSTICS VALIDATED ON 18-TASK SMOKE
 
 ## Ownership
 
@@ -94,3 +94,30 @@ Required checks:
 9. existing mp4/mp4_pred outputs remain intact.
 
 Do not optimize or change the decoder during validation. Return evidence and failure cases to GPT/ChatGPT for any code change.
+
+
+## 2026-09-26 full-smoke result
+
+The production evaluator with control-mode diagnostics completed all 18 `atomic_seen` tasks at one rollout per task.
+
+Hard counters:
+
+- `bm3_nonzero_steps = 0` for every task;
+- `arm_active_nonzero_base_steps = 0` for every task;
+- no assertion failure;
+- no infrastructure error.
+
+Control-mode output was strongly bimodal:
+
+- 16/18 tasks remained saturated near -1 and never activated the base;
+- NavigateKitchen remained saturated near +1 and was base-active for 450/450 steps;
+- CloseFridge switched between the two modes and was base-active for 116/900 steps;
+- no completed task showed control values hovering near the zero threshold.
+
+Therefore the diagnostic evidence does not support changing the control threshold.
+
+The main remaining question is model/training behavior: why only a subset of atomic tasks produce positive base control. This is not a decoder contract failure.
+
+This smoke validates the emitted diagnostic counters and runtime contract. It did not independently byte-compare Local-TTT evidence against a pre-diagnostics build, so do not reinterpret the diagnostic-only decontamination as part of training evidence.
+
+See `docs/build/PSM-WMA_RoboCasa_atomic_seen_smoke_full_2026-09-26.md`.
