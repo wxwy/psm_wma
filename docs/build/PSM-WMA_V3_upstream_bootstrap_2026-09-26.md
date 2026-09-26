@@ -31,9 +31,13 @@ Repository:
 
 `NVIDIA/cosmos-framework`
 
+Pinned release:
+
+`release/2026-09-25-358182a3`
+
 Pinned commit:
 
-`cf5d68c00d97ccd2480a2320ed652b92dec63102`
+`850fdbeacddabad138ed56df39cd6fb96e975078`
 
 The first V3 root Gitlink points exactly to that commit.
 
@@ -83,7 +87,7 @@ Any V3 training smoke on that server must set gradient accumulation to 1 (`GA=1`
 
 A smoke may reduce batch size, action/video decode, number of steps, and dataset coverage, but it must not silently change the action contract being validated.
 
-## ds_pro role
+## Assistant roles
 
 The tmux `ds` session is an execution/validation assistant only.
 
@@ -103,3 +107,5 @@ Forbidden:
 - merge or rebase V3.
 
 All production code changes are owned by GPT/ChatGPT.
+
+The tmux `cx` session is an independent reviewer only. It reviews GPT/ChatGPT formal diffs and tests, and cross-checks ds runtime evidence. It must not edit or commit production files, move branches/Gitlinks, or launch training.
