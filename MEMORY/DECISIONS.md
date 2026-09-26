@@ -1,5 +1,13 @@
 # 长期工程决策
 
+## V3 Stage A Edge raw15 override（2026-09-26）
+
+- 用户明确取消 Nano 验证路线：Stage A 直接使用 `nvidia/Cosmos3-Edge-Policy-DROID` DCP + upstream `850fdbeacddabad138ed56df39cd6fb96e975078` 的 RoboCasa raw15 合同；不改 V2/v2，不迁 Local-TTT，ego20 保留。
+- 模型维持 `max_action_dim=64`、`num_embodiment_domains=32`；raw15 通过既有 masking 生效。DROID 15fps → RoboCasa 20fps 是数据合同变更，chunk32/[33] 不变，不重建动作头。
+- `EDGE_POLICY_CHECKPOINT` 必须指向本地 `/disk/rl/models/Cosmos3-Edge-Policy-DROID`，不允许空值或 tokenizer Hub fallback；launcher 继承调用方网络环境。DCP warm-start 仅跳过 `net_ema.`，`strict_resume=True`；action projections 加 weight-decay skip 保护其余 domain rows。
+- 职责：ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。本轮只做静态/CPU 检查，用户明确不提交、不运行 GPU。
+- 本条取代下文旧 P1 Nano → P2 Edge 顺序；旧记录仅为历史。
+
 ## V3 P1 基线与角色 override（2026-09-26 用户明确指令）
 
 - canonical root 起点 `666ca58e7848ab55ab82b03ac7c2e11aa0d284df`；child/upstream `850fdbeacddabad138ed56df39cd6fb96e975078`。本地 `f5729bec`/`a5ffd57f` 是错误分叉，不携带其提交；V2/v2 禁止改动。

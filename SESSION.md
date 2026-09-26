@@ -1,4 +1,24 @@
-# V3 P1 实现交付（2026-09-26）
+# V3 Stage A Edge raw15 实施（2026-09-26）
+
+- 任务：V3-STAGE-A-EDGE-RAW15，REVIEW；静态实现经 ChatGPT 审核通过，待 ds runtime Evidence。用户本轮明确授权提交与推送：child 仅5个已审核 Edge 文件，root 更新 Gitlink 和状态；先 push child v3-local-ttt，再 push root V3；不运行 GPU。职责：ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
+- 工作区：root `/disk/rl/worktrees/psm_wma-v3`；child `/disk/rl/worktrees/cosmos-framework-v3`。嵌套 child 是另一个独立 checkout，仅同步至已提交 child SHA 以保持 Gitlink 与工作树一致；V2/v2 仅只读参考。
+- 实际修改：child 新增 `action_policy_robocasa_edge.py`，注册 `configs/base/config.py`，原位替换 `examples/psm_wma_robocasa_native.py`、对应测试及 smoke TOML（共5文件）；root 更新本文件、TODO、MEMORY/DECISIONS、V3 bootstrap 文档的显式 override（共4文件）。
+- 起始 child HEAD `6ee1efb1d48307f25b60e0e60e72da96aef327fa`，工作树 clean；既有 Nano glue 已提交，并非未提交残留。root 仅有其他执行者未跟踪 `artifacts/v3/`，不改动。
+- 已读：当前项目约定/会话/live Inbox/TODO/决策、V3 bootstrap、child AGENTS、upstream raw15 recipe、EDGE_MODEL_CONFIG、DCP planner、V2 Edge/libero warmstart（只读）。不迁 Local-TTT，不改 ego20。
+- 行为：Edge 模型整体替换 Nano 模型；raw15/64维/32domains、20fps/32chunk/[33]、left_wrist/state/no normalization 保持 upstream；ego20/data/loss 核心文件与 upstream 无差异。DROID warm-start `keys_to_skip_loading=['net_ema.']`、`strict_resume=True`，保留动作头；预检验证本地 HF 身份/文件及 DCP policy/动作头/视觉投影形状。metadata 有549键，无 action_pos_embed 参数。
+- 已落实用户转达的三项增量要求：launcher 不设置或清除 offline 变量（caller 未设置/0/1 均测试）；两组 domain-aware projections 的 weight decay skip patterns 进入实际合成配置；职责归因按上文统一。
+- 验证命令：已有 `/disk/rl/psm_wma/cosmos-framework/.venv/bin/ruff check --no-cache` 与 `ruff format --no-cache --check` 检查新增 recipe、wrapper/test，均 PASS；base config 由真实 Hydra 导入验证；两仓 `git diff --check` PASS。
+- CPU 命令：在 V3 child，`CUDA_VISIBLE_DEVICES='' COSMOS_DEVICE=cpu HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 LD_LIBRARY_PATH='' PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. EDGE_POLICY_CHECKPOINT=/disk/rl/models/Cosmos3-Edge-Policy-DROID BASE_CHECKPOINT_PATH=/disk/rl/models/Cosmos3-Edge-Policy-DROID-dcp /disk/rl/psm_wma/cosmos-framework/.venv/bin/python examples/psm_wma_robocasa_native_test.py -v`；24/24 PASS，无跳过，29.556秒；日志 `/tmp/cx_v3_edge_cpu_tests.log`。覆盖原15项升级版、真实 Hydra compose/YAML 往返、DCP planner skip、HF/DCP metadata、本地 processor、mask loss/gradient/unpad、ego20 与缺失资产负例。
+- 首轮22项测试的新增 loss fixture 将 mask 错写为 `[T]`，按当前 API 改为 `[T,1]` 并修正 weight mock 签名后重跑上述24项全部通过；未改生产 loss。
+- 官方 config dryrun：同上 CPU/离线环境，增加 `WAN_VAE_PATH=/disk/rl/models/wan22_vae/Wan2.2_VAE.pth ROBOCASA_ROOT=/disk/rl/data/robocasa_v30`，执行 `python examples/psm_wma_robocasa_native.py config --output-root /tmp/cx_v3_edge_config`，退出0；日志 `/tmp/cx_v3_edge_config.log`；YAML `/tmp/cx_v3_edge_config/psm_wma_v3/edge_robocasa/smoke/config.yaml`，实际 server raw15/Edge 预检 PASS，未实例化模型。
+- 提交前 root HEAD `3591743d651ab64270713fa6e6e00e579a83dc57`，child HEAD `6ee1efb1d48307f25b60e0e60e72da96aef327fa`。root 既有 `artifacts/v3/` 不纳入提交。静态/CPU 24/24、DCP/readiness（静态资产/配置准入）均 PASS；本轮仅 root 状态收尾，child production 与已审核 diff 保持一致，不重复 CPU 测试。
+- child 提交 `edb922605281614c4df13c4c734c9082363e8a6b`（仅5文件，+348/-12）；提交前完整 patch 与已审核 `/tmp/cx_v3_edge_child.patch` 经 `cmp` 逐字一致，staged diff-check PASS。root Gitlink 与嵌套 checkout 同步该 SHA；root 交付提交为包含本记录的提交。推送顺序按 child → root，最终远端 SHA 与 clean status 在本轮交付报告核验。
+- 提交前只读自检：V3 角色 override 与用户本轮提交授权适用，未弱化治理规范、未推进 runtime Gate；本节静态审核结论依据本轮明确指令，不拼接历史 pane/旧 pair。远端预检分别为 child `6ee1efb1d48307f25b60e0e60e72da96aef327fa`、root `3591743d651ab64270713fa6e6e00e579a83dc57`，与提交前本地一致。
+- 下一步：ds 执行1–3步训练/DCP reload/server/CloseFridge 1ep并提供 runtime Evidence；真实 GPU train/server/eval pending。本轮不执行这些 GPU/runtime 验证，不宣称 runtime PASS。
+
+---
+
+# 历史：V3 P1 实现交付（2026-09-26，已被上述 Edge 路线替代）
 
 - 任务 V3-P1-UPSTREAM-NATIVE-ROBOCASA-SMOKE：实现已完成；运行验证待 ds，P1 不宣称 runtime PASS。角色：ChatGPT 设计/总体规划/审核；用户项目 owner/最终裁决；cx 实现；ds 执行/测试。
 - ChatGPT 本轮独立复审结论（本轮对话）：production glue 无 blocker，CPU 15/15、raw15 compose、server/eval flags 与 upstream contract 核对通过；唯一 REQUEST_CHANGES 是 docs-only 提交/派发归因。

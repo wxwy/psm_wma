@@ -3,7 +3,8 @@
 状态：`TODO`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`DONE`。
 
 | ID | 状态 | 负责人 | 前置条件 | 验收条件 |
-| V3-P1-UPSTREAM-NATIVE-ROBOCASA-SMOKE | IN_PROGRESS | ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试 | canonical root `666ca58e`；upstream child `850fdbea`；V2/v2 冻结 | ChatGPT 复审确认 glue 无 blocker；docs-only 归因整改完成；child `6ee1efb1d48307f25b60e0e60e72da96aef327fa`；本轮 CPU 15/15、diff-check PASS；此前 Ruff/compose PASS；真实训练/server/闭环待 ds，运行证据通过后才进入 P2，当前不迁 Local-TTT |
+| V3-STAGE-A-EDGE-RAW15 | REVIEW | ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试 | 用户本轮明确替代 Nano 路线；upstream 850fdbea；V2/v2 只读 | 静态实现经 ChatGPT 审核通过；static/CPU 24/24 PASS、DCP/readiness PASS（静态资产/配置准入）；Hydra compose、Ruff/format、diff-check PASS；真实 GPU train/server/eval pending，待 ds runtime Evidence |
+| V3-P1-UPSTREAM-NATIVE-ROBOCASA-SMOKE | SUPERSEDED_BY=V3-STAGE-A-EDGE-RAW15 | ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试 | canonical root `666ca58e`；upstream child `850fdbea`；V2/v2 冻结 | 旧 Nano 路线被用户本轮明确取消，由 V3-STAGE-A-EDGE-RAW15 接替；不代表训练/server/闭环运行通过 |
 | G0-R09-B-TTT-V035-STAGE1-PRAGMATIC-REQUEST-PAIR | SUPERSEDED_BY=Owner-Override-active-route | Codex | Owner Override；冻结 root=`db6c4f93473e7ef58a294cff3fb8c692b100badd` / child=`93a89ba61306d840a008813f62f26a34d54850f4` | MM 已 APPROVE；按 Owner 指令先完成最小 materialization 条件，DS 的 docs-only refreeze 要求不作为执行阻塞；GPT 审核延后至训练条件具备 |
 |---|---|---|---|---|
 | E003-WINDOW-H16-FSDP8 | IN_PROGRESS | DS_PRO | formal pair root=`9d952f2f63fdde4587976d013f1b7fe7891089d0` / child=`d1d5cfd8cf287f8a34ef06dca4a008656d2c5916`；优先级高于 GRU-H16；8×GPU FSDP | 先完成 targeted CPU tests + 5-step FSDP8 smoke；正式训练 `max_iter=5000` 作为上限、owner 可手动中断；FSDP8 固定 `16 samples/rank × 8 ranks × GA16 = 2048 consumers/update`；不得把 iter2800/iter3000 当训练终点 |
