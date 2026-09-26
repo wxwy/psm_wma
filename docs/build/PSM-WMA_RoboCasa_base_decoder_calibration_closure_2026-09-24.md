@@ -2,7 +2,7 @@
 
 Date: 2026-09-24
 
-Status: IMPLEMENTED / runtime regression pending
+Status: IMPLEMENTED / RUNTIME-VALIDATED ON FULL 18-TASK SMOKE
 
 ## Evidence source
 
@@ -116,17 +116,20 @@ Added assertions that:
 
 ## Runtime acceptance
 
-Re-run one required-mode closed-loop episode with the calibrated decoder.
+Closed on 2026-09-26 by the full atomic_seen runtime smoke:
 
-PASS criteria:
+- 18/18 tasks completed;
+- `LOCAL_MEMORY_MODE=required`;
+- `BASE_DECODE_MODE=calibrated`;
+- `REPLAN_STEPS=1`;
+- `NUM_TRIALS=1`;
+- no infrastructure error;
+- `bm3_nonzero_steps == 0` across all completed tasks;
+- `arm_active_nonzero_base_steps == 0` across all completed tasks;
+- base-active execution was exercised by NavigateKitchen and CloseFridge.
 
-1. no infrastructure error;
-2. no Local-TTT shape/version error;
-3. action20 -> env12 remains finite;
-4. base commands remain within [-1,1];
-5. bm3 is always zero;
-6. arm-active frames carry zero base command;
-7. base-active rollout remains physically stable;
-8. mp4/mp4_pred artifacts use the LIBERO-aligned layout when enabled.
+This validates the calibrated decoder's runtime contract. It does not establish official RoboCasa SR because this was a one-rollout-per-task diagnostic smoke with replan=1.
 
-Success rate is not the calibration acceptance criterion for the smoke.
+See:
+
+`docs/build/PSM-WMA_RoboCasa_atomic_seen_smoke_full_2026-09-26.md`
