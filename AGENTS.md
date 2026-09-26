@@ -9,7 +9,7 @@
 > - V2 launchers/configs inherited in the root tree are **not authoritative for V3** until explicitly ported and validated;
 > - `ds_pro` / tmux `ds` is execution-validation only: environment inspection, smoke/test execution, logs/artifacts/reports; no production-code edits or commits;
 - tmux `cx` is independent review-only: inspect GPT/ChatGPT formal diffs, tests, and ds execution evidence; no production-code edits, commits, branch moves, Gitlink changes, or training launches;
-> - on the user-provided 24GB GPU server, every training smoke must use `GA=1` unless the user explicitly overrides it.
+> - for V3 training smoke, `GA=1` is mandatory regardless of detected GPU capacity unless the user explicitly overrides it.
 
 ## 读取顺序
 
