@@ -230,3 +230,16 @@ ChatGPT v0.7 review（`active_catalog_epoch_reuse_v07_05fbd778_525f506.md`）与
 - MEDIUM-1 / DS LOW：§2.1/§4.1/§4.3/§5/§6/§8 统一单一 authority（判据 7 并入判据 10）。
 
 请 GPT 对两个 Gate 分别给出 verdict，写回 `docs/collab/chatgpt/reviews/`。
+
+## 2026-09-26 — V3-STAGE-A-EDGE-RAW15 closure request（仅治理 bookkeeping）
+
+- Gate：`V3-STAGE-A-EDGE-RAW15`。
+- formal target root：`fb6a72c11aa5e7888b9425bb4a50817eab95e10c`。
+- formal target child/Gitlink：`196b93b70b579023ef008030b0c18a6fde353c82`。
+- 本次新增 root commit 仅追加本 request，属于治理 bookkeeping；不改变上述 formal implementation/design pair，不以 bookkeeping SHA 替代 formal target。
+- 本 Gate 唯一允许的 close literal：`APPROVE_TO_CLOSE_V3_STAGE_A_EDGE_RAW15`。
+- 另一个允许的 verdict：`REQUEST_CHANGES`。
+- 请仅使用上述两个 verdict 之一；通用 `APPROVE`、其他 Gate 的 close literal 或其缩写均不能关闭本 Gate。
+- 审核依据：上述 formal root 中的 `SESSION.md`、`TODO.md`、`docs/build/PSM-WMA_V3_upstream_bootstrap_2026-09-26.md`，以及上述 formal child 中的 Edge recipe、server/wrapper 和对应 CPU contract tests；证据入口以该 formal pair 的既有记录为准。
+- 审核范围：按既有技术合同及可核验证据判断该 Gate 是否满足 closure 条件；本 request 不新增、放宽或替代验收条件，不声明 Gate 已关闭，不改 TODO/SESSION 技术合同，不授权新的生产代码、测试、GPU 或 artifacts 操作。
+- 请将正式结果写入 `docs/collab/chatgpt/reviews/`，明确记录 Gate、上述完整 formal root/child pair 和最终 verdict；若为 `REQUEST_CHANGES`，附具体依据及适用的 `file:line`。
