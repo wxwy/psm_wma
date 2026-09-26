@@ -87,6 +87,10 @@ Any V3 training smoke must therefore set gradient accumulation to 1 (`GA=1`) reg
 
 A smoke may reduce batch size, action/video decode, number of steps, and dataset coverage, but it must not silently change the action contract being validated.
 
+P1 初审数据入口澄清：训练使用 `/disk/rl/data/robocasa_v30`；closed-loop eval 必须使用原始 v2.1 `/data/rl/datasets/robocasa365/v1.0/target/atomic/<task>/<date>/lerobot`，并包含 `extras/dataset_meta.json`，不得使用训练 v3.0 副本。
+
+Nano tokenizer 来自 `Qwen/Qwen3-VL-8B-Instruct`，当前未证明缓存完整。glue 继承调用方环境，不强制设置 `HF_HUB_OFFLINE`/`TRANSFORMERS_OFFLINE`；ds 在获准联网时预热并验证缓存后，可以显式开启 offline。
+
 ## Assistant roles
 
 The tmux `ds` session is an execution/validation assistant only.
@@ -106,6 +110,4 @@ Forbidden:
 - patch launchers/configs/tests in place;
 - merge or rebase V3.
 
-All production code changes are owned by GPT/ChatGPT.
-
-The tmux `cx` session is an independent reviewer only. It reviews GPT/ChatGPT formal diffs and tests, and cross-checks ds runtime evidence. It must not edit or commit production files, move branches/Gitlinks, or launch training.
+用户 2026-09-26 最新角色 override：ChatGPT 负责设计、总体规划和审核；用户为项目 owner/最终裁决；tmux `cx`/Codex 负责生产代码实现及静态/CPU 检查；tmux `ds` 负责执行/测试。此条显式取代旧 GPT implement / cx reviewer 分工，cx 不启动训练/GPU。技术顺序保持 P1 upstream-native raw15 → P2 Edge raw15 Native → P3+ Local-TTT。

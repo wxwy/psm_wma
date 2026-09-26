@@ -8,7 +8,7 @@
 > - V2/root `V2` and child `v2` are frozen historical baselines and must not be modified by V3 work;
 > - V2 launchers/configs inherited in the root tree are **not authoritative for V3** until explicitly ported and validated;
 > - `ds_pro` / tmux `ds` is execution-validation only: environment inspection, smoke/test execution, logs/artifacts/reports; no production-code edits or commits;
-- tmux `cx` is independent review-only: inspect GPT/ChatGPT formal diffs, tests, and ds execution evidence; no production-code edits, commits, branch moves, Gitlink changes, or training launches;
+> - 用户 2026-09-26 最新角色 override：ChatGPT 负责设计/总体规划/审核；用户为项目 owner/最终裁决；`cx`/Codex 负责代码实现及静态/CPU 检查；`ds` 负责执行/测试。此条取代旧 cx reviewer/GPT implement 分工及本次 P1 实施的旧三方准入要求；cx 不启动训练/GPU。
 > - for V3 training smoke, `GA=1` is mandatory regardless of detected GPU capacity unless the user explicitly overrides it.
 
 ## 读取顺序
@@ -97,8 +97,8 @@
 
 - `ds_pro` 仅负责：只读检查、运行验证、仿真实验、统计分析、生成 `artifacts/` 证据、独立报告与 `/tmp` 探针。
 - `ds_pro` **不得修改或提交生产代码**，包括但不限于：`cosmos-framework/` 源码、`scripts/` launcher、训练/评测 config、正式测试文件、Gitlink、生产文档中的实现结论。
-- 生产代码与正式测试的修改权归 GPT/ChatGPT 构建侧；ds_pro 的实验结果只作为证据输入，不具有代码权威。
-- 若发现 ds_pro 本地或远端改动了生产代码，必须先保留其实验产物/报告，再把生产代码恢复到 GPT/ChatGPT 的正式 root/child pair；不得把 ds_pro 的代码改动带入后续 formal pair。
+- V3 生产代码与正式测试的修改权归 cx/Codex 实现侧，ChatGPT 负责设计/审核，用户为项目 owner/最终裁决；ds_pro 的实验结果只作为证据输入，不具有代码权威。
+- 若发现 ds_pro 本地或远端改动了生产代码，必须先保留其实验产物/报告，再把生产代码恢复到经 ChatGPT 审核的正式 root/child pair；不得把 ds_pro 的代码改动带入后续 formal pair。
 - 本条优先于任何旧记录中可能暗示 ds_pro 可直接修代码的表述。
 
 - 只做当前任务所需的最小修改，优先新增项目模块，集中修改 Cosmos 核心扩展点。

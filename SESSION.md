@@ -1,3 +1,20 @@
+# V3 P1 实现交付（2026-09-26）
+
+- 任务 V3-P1-UPSTREAM-NATIVE-ROBOCASA-SMOKE：实现已完成；运行验证待 ds，P1 不宣称 runtime PASS。角色：ChatGPT 设计/总体规划/审核；用户项目 owner/最终裁决；cx 实现；ds 执行/测试。
+- ChatGPT 本轮独立复审结论（本轮对话）：production glue 无 blocker，CPU 15/15、raw15 compose、server/eval flags 与 upstream contract 核对通过；唯一 REQUEST_CHANGES 是 docs-only 提交/派发归因。
+- 归因已改正：提交/派发需经 ChatGPT 本轮审核后进行，不表述为用户禁止。用户本轮明确授权该窄整改后提交 child/root，并先 push child、再 push root；cx 不运行训练/GPU。
+- canonical root 起点=666ca58e7848ab55ab82b03ac7c2e11aa0d284df；upstream child 起点=850fdbeacddabad138ed56df39cd6fb96e975078；提交前本轮 ls-remote 确认两个远端分支仍分别指向该 pair。
+- child 实现提交=6ee1efb1d48307f25b60e0e60e72da96aef327fa；root Gitlink 同步到该提交。root 交付 SHA 为包含本节的提交；推送后以最终报告及远端 advertised SHA 核验。
+- child 仅新增 examples/psm_wma_robocasa_native.py、examples/psm_wma_robocasa_native_test.py、examples/toml/sft_config/psm_wma_robocasa_native_smoke.toml；production glue 与复审 diff byte-for-byte 一致。本轮只改 docs 归因及交付记录，不改官方 cosmos_framework/ 源码/raw15/ego20。
+- root 范围：AGENTS.md、MEMORY/DECISIONS.md、SESSION.md、TODO.md、docs/build/PSM-WMA_V3_upstream_bootstrap_2026-09-26.md 与 Gitlink；未纳入其他执行者的未跟踪 artifacts/v3/。
+- 本轮验证：15/15 CPU tests、两仓 diff-check PASS；日志 /tmp/cx_v3_p1_precommit_tests.log；使用已有 /disk/rl/psm_wma/cosmos-framework/.venv/bin/python，CUDA_VISIBLE_DEVICES 为空、测试调用方显式 offline。child 未修改，不重复重型 compose；此前 Ruff/格式/实际 overrides Hydra 合成/YAML raw15 预检均 PASS，完整命令 /tmp/cx_v3_p1_checks.sh，日志 /tmp/cx_v3_p1_checks.log。
+- 实施复用官方 action_policy_robocasa_nano、SFT TOML schema、DCP、policy server 与 closed-loop。glue 继承调用方网络环境；Nano Qwen/Qwen3-VL-8B-Instruct tokenizer 缓存完整性由 ds 核验。
+- 数据合同：训练 /disk/rl/data/robocasa_v30；eval 原始 v2.1 /data/rl/datasets/robocasa365/v1.0/target/atomic/<task>/<date>/lerobot，必须包含 extras/dataset_meta.json。
+- 运行交接命令和证据判据：/tmp/cx_v3_p1_commands.md；真实 1–3 step/GPU、checkpoint reload、server 与闭环未运行，后续由 ds 执行。当前不进入 P2 Edge raw15 或 P3+ Local-TTT。
+- 基线纠正记录：旧 WIP 已保存 /tmp/cx_v3_stage_a_wip.patch（SHA256 72f7f97c481e9d5e26e1969f95fcf23d494e15460a167164df95fe1178f1002d）；未携带 f5729bec/a5ffd57f 分叉提交。V2/v2 冻结引用=8ba88dfe8d4af1ffcb180ec274ddd1fee7c5face / ae2e9f72fdbc53a5acf1c1d81f5dcb437426e80a。
+
+---
+
 # V3 Upstream Bootstrap（ChatGPT，2026-09-26）
 
 - root branch: `V3`
@@ -6,7 +23,7 @@
 - current V3 policy: keep `V2/v2` frozen; first validate upstream-native RoboCasa raw15 before porting Local-TTT.
 - next Gate: `V3-P1-UPSTREAM-NATIVE-ROBOCASA-SMOKE`.
 - ds_pro/tmux ds is execution-validation only; no production edits/commits.
-- tmux cx is independent review-only for GPT diffs and ds evidence; no production edits/commits/training launches.
+- 用户最新角色 override：ChatGPT 设计/总体规划/审核；用户为项目 owner/最终裁决；cx/Codex 实现及静态/CPU 检查；ds 执行/测试；cx 不运行训练/GPU。
 - V3 training-smoke constraint: GA=1 regardless of detected GPU capacity (connected host currently reports A100 80GB).
 - V2 launchers/configs inherited in root are not V3 authority until explicitly ported.
 

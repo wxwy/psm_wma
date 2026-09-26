@@ -1,5 +1,11 @@
 # 长期工程决策
 
+## V3 P1 基线与角色 override（2026-09-26 用户明确指令）
+
+- canonical root 起点 `666ca58e7848ab55ab82b03ac7c2e11aa0d284df`；child/upstream `850fdbeacddabad138ed56df39cd6fb96e975078`。本地 `f5729bec`/`a5ffd57f` 是错误分叉，不携带其提交；V2/v2 禁止改动。
+- ChatGPT 负责设计/总体规划/审核；用户为项目 owner/最终裁决；cx/Codex 负责代码实现、静态/CPU 检查和提交；ds 负责执行/测试。取代旧 cx reviewer/GPT implement 分工。提交/派发需经 ChatGPT 本轮审核后进行；cx 不运行训练/GPU，真实执行由 ds 负责。
+- 顺序固定 P1 upstream-native raw15 → P2 Edge raw15 Native → P3+ Local-TTT；保留 ego20，禁止从 V2 merge/cherry-pick Local-TTT 大补丁。
+
 ## D001 文档分层
 
 - 日期：2026-08-12
