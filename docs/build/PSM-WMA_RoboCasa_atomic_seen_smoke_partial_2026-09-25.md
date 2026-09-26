@@ -1,5 +1,7 @@
 # PSM-WMA RoboCasa atomic_seen 18-task smoke — partial run
 
+> SUPERSEDED by `PSM-WMA_RoboCasa_atomic_seen_smoke_full_2026-09-26.md` (18/18 complete).
+
 Date: 2026-09-25
 
 Status: PARTIAL 11/18 COMPLETE / decoder runtime contract PASS on completed tasks / full 18-task closure pending
