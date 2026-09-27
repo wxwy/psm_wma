@@ -353,3 +353,13 @@ This was not OOM. Recorded peak was ~14.90 GB allocated / ~15.21 GB reserved bef
 Fresh review independently reran 205/205 CPU/static tests; ds independently reported 205/205 plus 26/26 verification with 0 blocker/hard-fail. The fix keeps Local parameters under root FSDP and routes B0 scan through registered model-owned `scan_local_memory`; unregistered DTensor Local ownership fails before scan. No .to_local/ignored-param/FSDP-disable shortcut was introduced.
 
 This approval authorizes one tiny R1-B RTX4090 FSDP lifecycle micro-smoke only. It does not authorize full B2-C run02. run01 remains immutable.
+
+## 2026-09-27 — ChatGPT Phase-1 approval: V3-STAGE-B2C-R1B-TINY-FSDP-MICRO-SMOKE
+
+- formal harness root: `5cc69c6fa9e5b4f13aa6b2e4b180ec329c874d61`
+- formal child/Gitlink: `8029b5ff002a350d22ee955db0463cc2e2d3665a`
+- design authority: `544bbe0976aa60e935eee431350b20f38c47f28c`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2c_r1b_phase1_harness_5cc69c6f_8029b5ff.md`
+- conclusion: **PASS — one exact RTX4090 R1-B micro-smoke is authorized.**
+
+ChatGPT: 216/216 CPU/static PASS + exact preflight PASS. ds: 216/216 + 22/22 independent checks, 0 blocker. Child adds only the tiny harness and its CPU/static tests. No retry is authorized. Full B2-C run02 remains blocked pending fresh review of the GPU Evidence.
