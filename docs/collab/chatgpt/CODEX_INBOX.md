@@ -327,3 +327,17 @@ Scope: CPU/static one-slot serial gradient relay only. It does not approve the r
 Fresh review basis: ChatGPT independently ran the exact-pair eight-file CPU suite (187/187 PASS) and real frozen-asset CPU preflight (PASS). ds independently obtained harness 12/12, production regressions 175/175, real preflight PASS and 16/16 harness checks with 0 blocker/hard-fail. The harness adds only two example files, reuses the closed B2-B relay, locks exact CloseFridge ep0/raw15/RGB and Stage-A DCP authority, selects exactly 165312 Local parameters, freezes the host, and records controlled failure/OOM Evidence without fallback.
 
 Phase-2 is authorized for one exact run only. Any code/config/formal-child change invalidates this execution authorization. Final B2-C closure still requires fresh review of the actual RTX4090 GPU Evidence.
+
+## 2026-09-27 — ChatGPT Phase-2 failure review: V3-STAGE-B2C-RTX4090-REAL-S1-SMOKE run01
+
+- design authority: `ced270eb07bbf9fac321e410f6d1992911d591cb`
+- reviewed harness formal pair: root `3c125a51af39bfcadeeeb02f83795784e23a1d66` / child `7de65c8e752c47359786e5ff2535a8d3cd5ddced`
+- execution review bookkeeping root: `7f76075fa51b76b006facd5c633e5caff55cc5fa`
+- run Evidence: `artifacts/v3/stage_b2c_4090_s1/run01/`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2c_phase2_run01_failure_7f76075f_7de65c8e.md`
+- verdict: `REQUEST_CHANGES`
+- no retry is authorized.
+
+run01 failed before native consumer work at `b0_scan`: B1/B0 evidence is a plain Tensor while the model-owned Local encoder/core parameters are FSDP2 DTensors, and direct `adapter.scan -> encoder/core` bypasses the root model FSDP unshard lifecycle. The DTensor state originates from training-mode root `fully_shard` during model build, not from the later DCP load; DCP correctly skipped 20 Local keys.
+
+This was not OOM. Recorded peak was ~14.90 GB allocated / ~15.21 GB reserved before consumer forward. The failed Evidence is retained unchanged. Required remediation is a narrow model-owned Local scan entrypoint registered with `register_fsdp_forward_method`, preserving exact B0/B2-B module identity and transaction semantics. Fresh implementation review and a new explicit execution authorization are required before any second 4090 run.
