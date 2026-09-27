@@ -387,3 +387,16 @@ Full S1 harness is unchanged from its original approved version. run02 must use 
 - no run02 retry authorized.
 
 run02 failed at `episode_source` because TorchCodec could not dlopen `libnppicc.so.13`. The library exists under the V3 venv CUDA13 lib directory; the run omitted that directory from `LD_LIBRARY_PATH`. This happened before model/B0/native-consumer work and is not OOM or a Local/FSDP regression. A dedicated environment preflight is required before any new full run.
+
+## 2026-09-27 — ChatGPT R2 closure + one B2-C run03 authorization
+
+- execution formal root: `5cc69c6fa9e5b4f13aa6b2e4b180ec329c874d61`
+- child/Gitlink: `8029b5ff002a350d22ee955db0463cc2e2d3665a`
+- R2 design authority: `f798a405de3717abfbbb13812f4db2f79d330224`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2c_r2_torchcodec_env_preflight_and_run03_authorization_5cc69c6f_8029b5ff.md`
+- verdict: `APPROVE_TO_CLOSE_V3_STAGE_B2C_R2_TORCHCODEC_RUNTIME_ENV`
+- execution authorization: **exactly one full B2-C RTX4090 S1 run03**.
+
+R2 preflight: 26/26 PASS. Frozen CUDA13 lib path resolves TorchCodec NPP dependencies; official exact CloseFridge ep0 TorchCodec decode succeeds with action [33,15], video [3,33,256,512], step0/step8 raw15 overlap max diff 0.0, no fallback.
+
+run03 must use the same formal pair and unchanged harness, new output `artifacts/v3/stage_b2c_4090_s1/run03`, and prepend the frozen CUDA13 lib path to LD_LIBRARY_PATH. No retry is authorized.
