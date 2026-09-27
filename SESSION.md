@@ -1,3 +1,10 @@
+# V3 Stage B2-A Native Memory Prefix（2026-09-27）
+
+- Gate `V3-STAGE-B2A-NATIVE-MEMORY-PREFIX-CPU-STATIC`，状态 REVIEW；设计 authority root `d57ef855404cabceed9c4190b13d435a98a30206`；资源口径为同提交 v0.2。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。Stage B1 closure child `1ecebf1ab2fa64bc1d5906959c4cb1fe1d1edc5a`。
+- cx 只改 V3 child 的 Local K/V prefix、配置/数据载体/packer、native two_way attention 与直接 CPU 测试；child `366501b3b4626f30f0739d2e5765139a52f2308f` 已推送 `v3-local-ttt`。root 本轮仅 Gitlink、B2-A implementation record 和本状态/TODO；现有 `artifacts/v3/` 未纳入。
+- 当前最终代码：V3 venv、CPU-only 六文件 suite 153/153 PASS（B2-A 21 + B0/B1 132）；Local optimizer allowlist 精确 165,312，host 冻结，fast state 不入 optimizer；BF16 target + FP32 bridge 梯度、tensorized K/V interleave、mixed S0、no-Local parity、CP/CUDA graphs/inference fail-closed 均有定向测试。新文件 Ruff/format clean；所有修改文件 Ruff（排除既有 I001）clean；已有 packers/omni format debt 的 HEAD 基线已核对，未整文件重排；两仓 diff-check PASS。
+- 本 Gate 未接 active driver/trainer、DCP、inference、GPU；没有 4090 smoke，也不声明 closure。下一步是 fresh review；仅获批准后进入 B2-B。
+
 # V3 Stage A server guardrails glue（2026-09-26）
 
 - 任务 V3-STAGE-A-SERVER-GUARDRAILS，REVIEW；基线 root `21a390b18672aaf6b268b6c463c402821e02b9a6` / child `edb922605281614c4df13c4c734c9082363e8a6b`。用户要求继续推进；ChatGPT 冻结该最小设计范围。CPU 验证完成，按 child 提交/push → root Gitlink/文档提交/push 交付，新 pair 待 fresh review。
