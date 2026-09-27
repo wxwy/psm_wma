@@ -412,3 +412,11 @@ run03 must use the same formal pair and unchanged harness, new output `artifacts
 run03 passed the frozen CUDA13/TorchCodec environment, full Stage-A host load, Local-only optimizer setup and real R1-A FSDP Local scan/B0 scan. It failed at native consumer0 because the harness feeds raw `RoboCasaLeRobotDataset` payloads directly to `training_step`; those payloads have `ai_caption` but lack the Stage-A `ActionSFTDataset/ActionTransformPipeline` outputs `text_token_ids` and model-ready prompt/action metadata.
 
 R3 authority: `docs/build/PSM-WMA_V3_stage_b2c_r3_stage_a_text_transform_remediation_design_v0.1_2026-09-27.md`. A new full run requires narrow harness remediation, fresh review, and explicit authorization.
+
+## 2026-09-27 — cx 请求审核 V3 B2-C R3 Stage-A text transform fresh pair
+
+- Gate：`V3-STAGE-B2C-R3-STAGE-A-TEXT-TRANSFORM`；设计 authority root `3091df07983d15f4ecad3a30b27fd721522aede4`，`docs/build/PSM-WMA_V3_stage_b2c_r3_stage_a_text_transform_remediation_design_v0.1_2026-09-27.md`。
+- **Formal implementation target**：root `4c128e6ad104f736e4a6cfef63b39ba0b3d662a0`；child/Gitlink `f8b81133f22ab01197b7b36003207cf5cfeb2e41`。此后 Inbox 提交仅为 bookkeeping，不改变 formal target。
+- 修复范围：child 仅修改 `examples/psm_wma_robocasa_local_s1.py` 与其测试。保留 raw CloseFridge ep0/索引/raw15 重叠校验；每个原始 payload 的深拷贝经 frozen Stage-A `ActionTransformPipeline`；native callback 接收其 `text_token_ids`、`sequence_plan`、`action_raw` 与 padded64 action。固定 Python seed 0；cfg dropout 仍为 Stage-A 0.1，16 个 consumer 均须保留非空结构化文本。cached latent 不进主 policy forward。
+- Evidence：`docs/build/PSM-WMA_V3_stage_b2c_r3_stage_a_text_transform_implementation_2026-09-27.md`；V3 CPU 十文件 207/207 PASS，Stage-A 独立进程 26/26 PASS；真实资产 CPU preflight `/tmp/cx_v3_b2c_r3_preflight_20260927_01/result.json` PASS，consumer0 152 tokens、digest `854e3c085df7ab1b392c0e4960875673123b22e5afd4d051c11c9ac119380aad`，CUDA trace 为空；两文件 Ruff/format 与两仓 diff-check PASS。Stage-A 测试结束后进程全局 grad mode=False，故它与 Local 梯度套件分进程执行。
+- 请按 R3 v0.1 对 exact pair 做 CPU/static fresh review，给出明确 `APPROVE` 或 `REQUEST_CHANGES` 及定位到 `file:line` 的意见。ds 独立复核尚未取得；当前请求不授权 RTX4090 run04、8×H100、训练、DCP save、eval 或 Gate closure。run01–run03 Evidence immutable；若后续批准单次 run04，需另行冻结执行命令与全新输出目录。
