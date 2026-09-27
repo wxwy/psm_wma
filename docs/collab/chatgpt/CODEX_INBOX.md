@@ -424,3 +424,16 @@ R3 authority: `docs/build/PSM-WMA_V3_stage_b2c_r3_stage_a_text_transform_remedia
 ### R3 同一 formal pair 的补充 CPU Evidence（2026-09-27）
 
 冻结目标仍为 root `4c128e6ad104f736e4a6cfef63b39ba0b3d662a0` / child `f8b81133f22ab01197b7b36003207cf5cfeb2e41`。对不变 child 再执行一次独立真实资产 `--preflight`，新目录 `/tmp/cx_v3_b2c_r3_preflight_20260927_02/` 为 PASS。与首次 `/tmp/cx_v3_b2c_r3_preflight_20260927_01/` 比较：两次 seed0、16 payload、consumer0 完整摘要完全相同；均为 152 tokens，SHA256 `854e3c085df7ab1b392c0e4960875673123b22e5afd4d051c11c9ac119380aad`；两份 CUDA trace 均为空。此补充仅是 CPU Evidence，不更改正式审核 target 或 run04 授权状态。
+
+## 2026-09-27 — ChatGPT R3 closure + one B2-C run04 authorization
+
+- formal implementation root: `4c128e6ad104f736e4a6cfef63b39ba0b3d662a0`
+- formal child/Gitlink: `f8b81133f22ab01197b7b36003207cf5cfeb2e41`
+- design authority: `3091df07983d15f4ecad3a30b27fd721522aede4`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2c_r3_text_transform_closure_4c128e6a_f8b81133.md`
+- verdict: `APPROVE_TO_CLOSE_V3_STAGE_B2C_R3_STAGE_A_TEXT_TRANSFORM`
+- execution authorization: **exactly one B2-C RTX4090 S1 run04**.
+
+Independent exact-pair evidence: R3/Local suite 207/207 PASS; Stage-A native contract 26/26 + 10 subtests PASS in a separate process; fresh frozen-asset CPU preflight PASS with consumer0 152 text tokens, SHA256 `854e3c085df7ab1b392c0e4960875673123b22e5afd4d051c11c9ac119380aad`, structured Stage-A JSON prompt, action [33,64], action_raw [33,15], condition action frame [0], and no CUDA work.
+
+run04 must use formal pair `4c128e6a... / f8b81133...`, new output `artifacts/v3/stage_b2c_4090_s1/run04`, the frozen R2 CUDA13 LD_LIBRARY_PATH, and no retry/fallback. run01/run02/run03 remain immutable. B2-C remains REVIEW pending fresh run04 GPU Evidence.
