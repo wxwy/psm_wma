@@ -314,3 +314,16 @@ Scope stops before segment transaction/backward integration, trainer, GPU, DCP, 
 Independent exact-pair review reran the seven-file suite at 175/175 PASS. ds independently reported B2-B 22/22, B0/B1/B2-A 153/153 and 27/27 independent numerical checks with 0 hard-fail/blocker. Serial relay matched monolithic Local gradients with max_abs_diff 7.451e-09; fast state/frontier remained unpublished until after Local-only optimizer.step; all tested failure paths produced zero new commit.
 
 Scope: CPU/static one-slot serial gradient relay only. It does not approve the real RTX4090 OmniMoT callback, trainer/DCP/inference, grouped GA, H100 formal training or SR claims.
+
+## 2026-09-27 — ChatGPT Phase-1 review: V3-STAGE-B2C-RTX4090-REAL-S1-SMOKE
+
+- design authority: `ced270eb07bbf9fac321e410f6d1992911d591cb`
+- formal harness root: `3c125a51af39bfcadeeeb02f83795784e23a1d66`
+- formal harness child/Gitlink: `7de65c8e752c47359786e5ff2535a8d3cd5ddced`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2c_phase1_harness_3c125a51_7de65c8e.md`
+- Phase-1 conclusion: **PASS — B2-C §10 harness precondition satisfied; ds is authorized to execute one exact Phase-2 RTX4090 S1 run.**
+- B2-C Gate remains `REVIEW`; this is not Gate closure.
+
+Fresh review basis: ChatGPT independently ran the exact-pair eight-file CPU suite (187/187 PASS) and real frozen-asset CPU preflight (PASS). ds independently obtained harness 12/12, production regressions 175/175, real preflight PASS and 16/16 harness checks with 0 blocker/hard-fail. The harness adds only two example files, reuses the closed B2-B relay, locks exact CloseFridge ep0/raw15/RGB and Stage-A DCP authority, selects exactly 165312 Local parameters, freezes the host, and records controlled failure/OOM Evidence without fallback.
+
+Phase-2 is authorized for one exact run only. Any code/config/formal-child change invalidates this execution authorization. Final B2-C closure still requires fresh review of the actual RTX4090 GPU Evidence.
