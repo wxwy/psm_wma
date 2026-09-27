@@ -1,6 +1,11 @@
 # V3 H3-E 8×H100 integration smoke（2026-09-27）
 
-- H3-E 已认领：root 本步新增短跑 runbook/状态，child 预计新增 `examples/psm_wma_robocasa_h100.py` 与测试，必要时只在 `GroupedLocalMemoryTrainer` 增加可选运行观测 seam。入口必须从 Stage-A one-step DCP warm-start，保留 Edge generation/action+全部 Local trainable、8 rank×8 slot×GA2×T16、raw15/chunk32/33 与严格 DCP resume；CPU preflight 由 cx，8×H100 fresh/resume 由 ds。起点 root `6ca3304a14190f44a0a1b0bcd1e432ad8249e148` / child `74fd78531ab77d4cea77903470f8ceb8ff136873`；未提交，GPU 未启动。
+- H3-E CPU harness child `6c7b1333c94773b2fb6940b530a63eb74b82a753` 已提交并推送；root 本步更新 Gitlink 与 `docs/build/PSM-WMA_V3_h3e_cpu_harness_implementation_2026-09-27.md`，root SHA 以本次提交为准。预计修改文件仅 SESSION、TODO、implementation record、Gitlink；`artifacts/v3/` 保持未跟踪且不纳入。
+- 复用 Stage-A TOML 官方 Hydra compose、one-step DCP 与 raw15 transform，H3-B 18 类 catalog/binder、H3-C grouped trainer、H3-D dataloader rank-pkl resume。child 新增 H100 launcher/test，trainer 只增加可选 observer；8 rank×8 slot×GA2×T16、Edge host+Local optimizer 与严格 DCP 不降级。读过上述入口及 H3-E v0.1 设计；未改 V2、B0/B1、policy forward 或 4090 relay。
+- CPU：H3-E 定向 8 项与 grouped trainer 合计 13/13；此前 13 文件 244/244 加三文件 23/23，相关回归合计 267 项，最后两项监控/DCP 小改的定向 13/13 PASS。真实资产预检（临时绕过未提交 pair 锁，仅用于诊断）PASS：18 类 9036 episode、manifest `a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df`、Stage-A DCP 549 键、CloseFridge ep0 8 consumer raw15/padded64 batch；日志 `/tmp/cx_v3_h3e_preflight.log`。child 三文件 Ruff/format、两仓 diff-check PASS。
+- 本步不运行 GPU、DCP save/reload 或 8×H100；runtime 尚无 PASS。下一步在本 root/child formal pair 上重新跑不绕过的 CLI preflight，再由 ds 执行 fresh 一窗口和同 job resume 第二窗口，保留原始每 rank JSON/JSONL 与 DCP。cx 对真实失败负责定位并修复；ChatGPT 仅不定期审核。状态仍 IN_PROGRESS，未授 closure。
+
+- H3-E 设计起点 root `6ca3304a14190f44a0a1b0bcd1e432ad8249e148` / child `74fd78531ab77d4cea77903470f8ceb8ff136873`；入口从 Stage-A one-step DCP warm-start，保留 Edge generation/action+全部 Local trainable、8 rank×8 slot×GA2×T16、raw15/chunk32/33 与严格 DCP resume；CPU harness 与实现状态以上述新记录为准，8×H100 fresh/resume 尚未启动。
 
 # V3 H3-D strict grouped resume（2026-09-27）
 
