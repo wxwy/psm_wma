@@ -1,3 +1,9 @@
+# V3 Stage B2-C R3 Stage-A text transform（2026-09-27）
+
+- Gate `V3-STAGE-B2C-R3-STAGE-A-TEXT-TRANSFORM` REVIEW；设计 authority root `3091df07983d15f4ecad3a30b27fd721522aede4` 的 R3 v0.1。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。root 已从 `887e1d68` 快进并确认 authority；run03 immutable，GPU 不在本轮范围。
+- child 仅改 `examples/psm_wma_robocasa_local_s1.py` 与 `_test.py`，提交 `f8b81133f22ab01197b7b36003207cf5cfeb2e41` 已推送 `v3-local-ttt`。保留原 raw episode/index/raw15 校验，按冻结 Stage-A config 对 16 个副本运行真实 ActionTransformPipeline，seed0 防文本 dropout；native callback 接转换后 RGB payload。root 仅 Gitlink、本状态、TODO 与 R3 implementation record。
+- V3 venv 十文件 CPU suite 207/207 PASS；Stage-A 合同独立进程 26/26 PASS；真实资产 CPU preflight `/tmp/cx_v3_b2c_r3_preflight_20260927_01/result.json` PASS（549 DCP keys、429 帧、16 payload、consumer0 152 tokens、raw15/padded64，CUDA trace 为空）。Stage-A 测试结束后进程级 grad mode 为 False，故两套测试分进程；混跑的 grad-mode 失败不作验收证据。两文件 Ruff/format 与 child/root diff-check PASS。未跑 GPU，待 fresh review；不自授 closure。
+
 # V3 Stage B2-C R1-B Tiny FSDP Micro-Smoke Harness（2026-09-27）
 
 - Gate `V3-STAGE-B2C-R1B-TINY-FSDP-MICRO-SMOKE` 状态 REVIEW；唯一 authority root `544bbe0976aa60e935eee431350b20f38c47f28c` 的 R1-B v0.1。R1-A formal pair root `cae1c4bf5d681f93228a9b1a5c74e14d1b5acee4` / child `558f364efaf6704c9d65037c17ec250a9331be8a` 已 closure。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
