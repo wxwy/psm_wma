@@ -1,6 +1,6 @@
 # V3 H3-D strict grouped resume（2026-09-27）
 
-- `V3-H3D-STRICT-GROUPED-RESUME` 已认领：本轮 root 新增 v0.1 设计并更新 TODO/SESSION；child 下一最小步骤预计新增 `cosmos_framework/trainer/local_memory_grouped_resume.py` 与测试，并仅在 `local_memory_grouped.py` 接入恢复回调/严格预检。复用现有 DCP `trainer` 的 per-rank Python/NumPy/Torch RNG 与 `dataloader/rank_<rank>.pkl` 回调组件；不改 common DCP、Edge recipe、Local 算法或 GPU。起点 root `a8eccf0bbaf32581e714baf8c41790ea1083caf8` / child `0dca391d2cb6e4a62b0fca0c39ebf0640e678dd9`；设计步骤未提交。
+- H3-D CPU/static 由 cx 依据 child `74fd78531ab77d4cea77903470f8ceb8ff136873` 技术关闭：新增 per-rank Local 状态回调、严格同 job DCP rank-pkl 预检，复用 upstream DCP `trainer` 组件的 GradScaler/iteration/Python/NumPy/Torch RNG；fast state 仍不进参数或优化器。恢复前验证 manifest/config/几何/rank/iteration/slot 与 terminal 身份，四个 fast tensor 必须 finite fp32；恢复失败后 trainer 实例禁止重试。中断与连续路径下一段 identity/evidence/loss/grad CPU 对照 PASS；16 文件 260/260、四文件 Ruff/format、双仓 diff-check PASS。未执行真实 DCP save/reload 或 GPU；H3-E 由 ds 验证 8×H100 跨 rank DCP 恢复。
 
 # V3 H3-C grouped trainer transaction（2026-09-27）
 
