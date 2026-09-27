@@ -1,6 +1,12 @@
+# V3 Stage B2-C R1-B Tiny FSDP Micro-Smoke Harness（2026-09-27）
+
+- Gate `V3-STAGE-B2C-R1B-TINY-FSDP-MICRO-SMOKE` 状态 REVIEW；唯一 authority root `544bbe0976aa60e935eee431350b20f38c47f28c` 的 R1-B v0.1。R1-A formal pair root `cae1c4bf5d681f93228a9b1a5c74e14d1b5acee4` / child `558f364efaf6704c9d65037c17ec250a9331be8a` 已 closure。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
+- child `8029b5ff002a350d22ee955db0463cc2e2d3665a` 已推送 `v3-local-ttt`，仅新增 `examples/psm_wma_local_fsdp_scan_micro_smoke.py` 与 `_test.py`；root 本次仅更新 Gitlink、implementation record、TODO/SESSION。tiny Local owner 使用 training-mode `ParallelDims(1)`、root FSDP2、BF16 compute/FP32 reduce、注册 scan；不加载 Edge/VAE/DCP/RoboCasa，不改 production 语义。
+- V3 venv 十一文件 CPU 隔离 suite 216/216 PASS，4 GPU 标记测试 deselected；独立 `--preflight` PASS：`/tmp/cx_v3_b2c_r1b_preflight_20260927_01/result.json`，Local 参数 165312，CUDA trace 为空。新增两文件 Ruff/format、child/root diff-check PASS。未运行 GPU，run01 原始 Evidence 未改、不重跑；R1-B GPU 待 fresh review 后由 ds 单次执行，B2-C run02 不自动授权，不自授 closure。
+
 # V3 Stage B2-C R1-A FSDP Local Scan（2026-09-27）
 
-- Gate `V3-STAGE-B2C-R1-FSDP-LOCAL-SCAN` 状态 REVIEW；唯一设计 authority root `b5404e9896892b2156e2cca11ef64db871b34def` 的 R1 v0.1。run01 `artifacts/v3/stage_b2c_4090_s1/run01/` 原始 Evidence 未改、未重跑；本轮仅 CPU/static，不自授 closure。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
+- Gate `V3-STAGE-B2C-R1-FSDP-LOCAL-SCAN` 状态 DONE；formal pair root `cae1c4bf5d681f93228a9b1a5c74e14d1b5acee4` / child `558f364efaf6704c9d65037c17ec250a9331be8a`，verdict `APPROVE_TO_CLOSE_V3_STAGE_B2C_R1_FSDP_LOCAL_SCAN`。设计 authority root `b5404e9896892b2156e2cca11ef64db871b34def`；run01 Evidence 未改、未重跑。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
 - child `558f364efaf6704c9d65037c17ec250a9331be8a` 已推送 `v3-local-ttt`：只改 `cosmos3_vfm_network.py`、`parallelize_vfm_network.py`、`local_memory_segment_adapter.py`、`local_memory_native_segment.py`，新增 `local_memory_fsdp_scan_test.py`。root 本次只更新 Gitlink、实施记录、TODO/SESSION。模型持有 scan 经 root FSDP forward method 注册；DTensor-owned Local 缺注册时 fail closed；复用同一 encoder/core、B0 transaction 与 B2-B relay。未改 trainer、checkpoint、inference 或 harness。
 - V3 venv 十文件 CPU 隔离 suite 205/205 PASS，4 GPU 标记测试 deselected；Local optimizer inventory 165312、S0/PAD、梯度与事务保持。五文件 Ruff format PASS，四文件 Ruff clean；network 的 I001 为 HEAD 既有 import 排序债务，排除该项后 clean；child/root diff-check PASS。未运行 GPU、R1-B micro-smoke 或完整 S1，等待 fresh review。
 
