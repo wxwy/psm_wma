@@ -301,3 +301,16 @@ Scope: this closes only cached RGB latent -> causal left+wrist visual96 -> B0 Se
 Fresh exact-pair review independently reran 153/153 CPU tests. ds independent checklist: 48/48 PASS, 0 hard-fail. Local-only optimizer inventory is exactly 165,312 params at Edge hidden=2048; Local is K/V-only for generation queries; native geometry/reasoner path remains unchanged; full encoder→TTT→bridge outer gradients are finite/non-zero; detach negative control removes those gradients; frozen host params have no grad and remain bitwise unchanged.
 
 Scope stops before segment transaction/backward integration, trainer, GPU, DCP, inference and H100 formal training.
+
+## 2026-09-27 — ChatGPT formal closure verdict: V3-STAGE-B2B-SINGLE-SEGMENT-GRADIENT-RELAY-CPU-STATIC
+
+- Gate: `V3-STAGE-B2B-SINGLE-SEGMENT-GRADIENT-RELAY-CPU-STATIC`
+- formal root: `81fa515593e7cd8e2d4f7d226efb915b17be3b5b`
+- formal child/Gitlink: `bf6c80e679812b7d2881d6a54aa0b518299e3869`
+- design authority: `bf5c8d134014d0023a03c25f95d8e971922f40fd`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2b_gradient_relay_closure_81fa5155_bf6c80e6.md`
+- verdict: `APPROVE_TO_CLOSE_V3_STAGE_B2B_SINGLE_SEGMENT_GRADIENT_RELAY_CPU_STATIC`
+
+Independent exact-pair review reran the seven-file suite at 175/175 PASS. ds independently reported B2-B 22/22, B0/B1/B2-A 153/153 and 27/27 independent numerical checks with 0 hard-fail/blocker. Serial relay matched monolithic Local gradients with max_abs_diff 7.451e-09; fast state/frontier remained unpublished until after Local-only optimizer.step; all tested failure paths produced zero new commit.
+
+Scope: CPU/static one-slot serial gradient relay only. It does not approve the real RTX4090 OmniMoT callback, trainer/DCP/inference, grouped GA, H100 formal training or SR claims.
