@@ -1,8 +1,14 @@
+# V3 Stage B2-C RTX4090 S1 harness（2026-09-27）
+
+- Gate `V3-STAGE-B2C-RTX4090-REAL-S1-SMOKE` 状态 REVIEW；authority root `ced270eb07bbf9fac321e410f6d1992911d591cb` 的设计 v0.1；B2-B 已关闭，formal pair root `81fa515593e7cd8e2d4f7d226efb915b17be3b5b` / child `bf6c80e679812b7d2881d6a54aa0b518299e3869`。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
+- cx 仅新增 V3 child `examples/psm_wma_robocasa_local_s1.py` 与 `_test.py`，child `7de65c8e752c47359786e5ff2535a8d3cd5ddced` 已推送 `v3-local-ttt`；root 本次仅更新 Gitlink、TODO/SESSION 和 B2-C implementation record。复用 B2-B serial relay，固定 CloseFridge ep0 cursor0 T16、Stage-A DCP、native RGB→Wan VAE、Local-only 165312 参数/LR 5e-5；无 GPU 运行。
+- 八文件 CPU 隔离 suite 187/187 PASS；新增两文件 Ruff check/format、child/root diff-check PASS。真实资产 CPU preflight PASS：`/tmp/cx_v3_b2c_preflight_20260927_05/result.json`，Stage-A DCP 549 keys、episode 429 frames、raw15、16 payloads。预检需 V3 venv 的 `nvidia/cu13/lib` 供 TorchCodec CPU 解码；未启动 CUDA。GPU smoke、DCP save、eval、server 均未执行；待 fresh review，不自授 closure。
+
 # V3 Stage B2-B Single-Segment Gradient Relay（2026-09-27）
 
-- Gate `V3-STAGE-B2B-SINGLE-SEGMENT-GRADIENT-RELAY-CPU-STATIC` 状态 REVIEW。B2-A closure pair root `21f20f2c436e9627a938148afca039da6023d145` / child `366501b3b4626f30f0739d2e5765139a52f2308f`，verdict `APPROVE_TO_CLOSE_V3_STAGE_B2A_NATIVE_MEMORY_PREFIX_CPU_STATIC`；B2-B authority root `bf5c8d134014d0023a03c25f95d8e971922f40fd` 的设计 v0.1 与资源 v0.3。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
+- Gate `V3-STAGE-B2B-SINGLE-SEGMENT-GRADIENT-RELAY-CPU-STATIC` 状态 DONE；formal pair root `81fa515593e7cd8e2d4f7d226efb915b17be3b5b` / child `bf6c80e679812b7d2881d6a54aa0b518299e3869` 已关闭。B2-A closure pair root `21f20f2c436e9627a938148afca039da6023d145` / child `366501b3b4626f30f0739d2e5765139a52f2308f`；B2-B authority root `bf5c8d134014d0023a03c25f95d8e971922f40fd` 的设计 v0.1 与资源 v0.3。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
 - child 仅新增 `cosmos_framework/model/generator/mot/local_memory_native_segment.py` 和对应 `_test.py`，提交 `bf6c80e679812b7d2881d6a54aa0b518299e3869` 已推送 `v3-local-ttt`；root 更新 Gitlink、本状态/TODO 与 B2-B implementation record。复用 B0 adapter/transaction/sidecar 与 model.net.local_memory_runtime 同一 encoder/core，单 slot/T16、一成员 serial exact-gradient relay；不接 trainer/launcher/DCP/inference/GPU。
-- V3 venv 定向 22/22、B0/B1/B2-A/B2-B 七文件 CPU 隔离 suite 175/175 PASS；新增两文件 Ruff check/format PASS，child staged diff-check 与 root diff-check PASS。测试使用 `CUDA_VISIBLE_DEVICES='' COSMOS_DEVICE=cpu LD_LIBRARY_PATH='' PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1`，无 GPU、外网、checkpoint 或数据集依赖；仅 B1 测试临时 H5 fixture。B2-B 待 fresh review，不自授 closure。
+- V3 venv 定向 22/22、B0/B1/B2-A/B2-B 七文件 CPU 隔离 suite 175/175 PASS；新增两文件 Ruff check/format PASS，child staged diff-check 与 root diff-check PASS。测试使用 `CUDA_VISIBLE_DEVICES='' COSMOS_DEVICE=cpu LD_LIBRARY_PATH='' PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1`，无 GPU、外网、checkpoint 或数据集依赖；仅 B1 测试临时 H5 fixture。B2-B 已按上述 formal pair 关闭。
 
 # V3 Stage B2-A Native Memory Prefix（2026-09-27）
 
