@@ -1,3 +1,9 @@
+# V3 Stage B2-C R1-A FSDP Local Scan（2026-09-27）
+
+- Gate `V3-STAGE-B2C-R1-FSDP-LOCAL-SCAN` 状态 REVIEW；唯一设计 authority root `b5404e9896892b2156e2cca11ef64db871b34def` 的 R1 v0.1。run01 `artifacts/v3/stage_b2c_4090_s1/run01/` 原始 Evidence 未改、未重跑；本轮仅 CPU/static，不自授 closure。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
+- child `558f364efaf6704c9d65037c17ec250a9331be8a` 已推送 `v3-local-ttt`：只改 `cosmos3_vfm_network.py`、`parallelize_vfm_network.py`、`local_memory_segment_adapter.py`、`local_memory_native_segment.py`，新增 `local_memory_fsdp_scan_test.py`。root 本次只更新 Gitlink、实施记录、TODO/SESSION。模型持有 scan 经 root FSDP forward method 注册；DTensor-owned Local 缺注册时 fail closed；复用同一 encoder/core、B0 transaction 与 B2-B relay。未改 trainer、checkpoint、inference 或 harness。
+- V3 venv 十文件 CPU 隔离 suite 205/205 PASS，4 GPU 标记测试 deselected；Local optimizer inventory 165312、S0/PAD、梯度与事务保持。五文件 Ruff format PASS，四文件 Ruff clean；network 的 I001 为 HEAD 既有 import 排序债务，排除该项后 clean；child/root diff-check PASS。未运行 GPU、R1-B micro-smoke 或完整 S1，等待 fresh review。
+
 # V3 Stage B2-C RTX4090 S1 harness（2026-09-27）
 
 - Gate `V3-STAGE-B2C-RTX4090-REAL-S1-SMOKE` 状态 REVIEW；authority root `ced270eb07bbf9fac321e410f6d1992911d591cb` 的设计 v0.1；B2-B 已关闭，formal pair root `81fa515593e7cd8e2d4f7d226efb915b17be3b5b` / child `bf6c80e679812b7d2881d6a54aa0b518299e3869`。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
