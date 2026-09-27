@@ -1,3 +1,8 @@
+# V3 Stage B2-C R5 DTensor witness（2026-09-27）
+
+- run05 formal pair root `f782f2cc351fabded26bab23588758f899e3256a` / child `8984ceb065df231da6fdf9708322b7eae29af08a`，ds 单次执行后终止 FAIL，原始 `artifacts/v3/stage_b2c_4090_s1/run05/` 保留。16 个 consumer forward/backward 与 relay_backward 已完成，失败于 harness `optimizer.step` wrapper 内的 `_witness`：`torch.count_nonzero(DTensor gradient)` 缺少 sharding strategy，尚未调用真实 optimizer step，也未发布 fast state；不是 OOM。任务 `V3-STAGE-B2C-R5-DTENSOR-WITNESS`：child `a9aca770fd39b8eed9c456fc2dbdb8867189e78e` 已推送，仅改 `examples/psm_wma_robocasa_local_s1.py` 与 `_test.py`；root 仅 Gitlink/本状态/TODO/实施记录。用户最新职责为 cx owner、ds 执行；不等待 ChatGPT 在线，cx 不跑 GPU。
+- R5 将 DTensor 梯度和参数诊断转为单 rank 本地 shard 后做 finite/nonzero/norm 与 host/Local 参数比较，未改真实 FusedAdam/Local 算法。V3 venv harness 定向 15/15、十文件 CPU 合并 209/209 PASS；真实 CPU/Gloo DTensor 用例覆盖 finite/nonzero/zero/NaN、冻结 host 与前后比较；两文件 Ruff/format、child/root diff-check PASS。R4 的真实资产 CPU preflight 仍为 PASS，run05 已实证 16 个 native consumer 和 relay。下一步 root 提交/push 新 Gitlink，再由 ds 在全新 run06 目录单次执行；run05 不重跑。
+
 # V3 Stage B2-C R4 native batch envelope（2026-09-27）
 
 - 用户最新职责调整：cx 负责判断与实现，ds 执行验证；ChatGPT 为非在线审核者，不将其即时回复作为修复的前置条件。任务 `V3-STAGE-B2C-R4-NATIVE-BATCH-ENVELOPE` 已认领。仅修改 V3 child `examples/psm_wma_robocasa_local_s1.py` 与 `_test.py`，child `8984ceb065df231da6fdf9708322b7eae29af08a` 已推送；root 仅本状态、TODO、MEMORY、实施记录与 Gitlink，构成本次 root 提交。旧 V2/v2、common dataloader/model、B0/B2-B、run01–run04 原始产物均不改。
