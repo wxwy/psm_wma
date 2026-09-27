@@ -400,3 +400,15 @@ run02 failed at `episode_source` because TorchCodec could not dlopen `libnppicc.
 R2 preflight: 26/26 PASS. Frozen CUDA13 lib path resolves TorchCodec NPP dependencies; official exact CloseFridge ep0 TorchCodec decode succeeds with action [33,15], video [3,33,256,512], step0/step8 raw15 overlap max diff 0.0, no fallback.
 
 run03 must use the same formal pair and unchanged harness, new output `artifacts/v3/stage_b2c_4090_s1/run03`, and prepend the frozen CUDA13 lib path to LD_LIBRARY_PATH. No retry is authorized.
+
+## 2026-09-27 — ChatGPT B2-C run03 failure review
+
+- execution pair: `5cc69c6fa9e5b4f13aa6b2e4b180ec329c874d61 / 8029b5ff002a350d22ee955db0463cc2e2d3665a`
+- run: `artifacts/v3/stage_b2c_4090_s1/run03/`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2c_run03_text_token_failure_5cc69c6f_8029b5ff.md`
+- verdict: `REQUEST_CHANGES`
+- no run03 retry authorized.
+
+run03 passed the frozen CUDA13/TorchCodec environment, full Stage-A host load, Local-only optimizer setup and real R1-A FSDP Local scan/B0 scan. It failed at native consumer0 because the harness feeds raw `RoboCasaLeRobotDataset` payloads directly to `training_step`; those payloads have `ai_caption` but lack the Stage-A `ActionSFTDataset/ActionTransformPipeline` outputs `text_token_ids` and model-ready prompt/action metadata.
+
+R3 authority: `docs/build/PSM-WMA_V3_stage_b2c_r3_stage_a_text_transform_remediation_design_v0.1_2026-09-27.md`. A new full run requires narrow harness remediation, fresh review, and explicit authorization.
