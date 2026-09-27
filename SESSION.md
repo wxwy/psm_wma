@@ -1,7 +1,6 @@
 # V3 H3-C grouped trainer transaction（2026-09-27）
 
-- `V3-H3C-GROUPED-TRAINER-TRANSACTION` 已认领：root 新增 v0.1 CPU/static 设计；child 第一最小步骤仅新增 `cosmos_framework/model/generator/mot/local_memory_grouped_window.py` 与测试。复用 H3-A joint autograd、H3-B candidate planner 和 B0 adapter；下一步最小接线官方 `ImaginaireTrainer` 生命周期。不改 Stage-A Edge recipe、B0/B1/4090 relay、checkpoint 或 GPU。起点 root `01200167a826cce1aa22a9b82a7c7a82bb5fbb56` / child `8d7ddd7b77cd204fda7d8cae1e81d591660cddd8`。
-- H3-C 第一最小步骤：child `1d32c7d95921110f0772789fa37a1421d7cb4fbe` 已推送，新增候选 grouped window 与 11 项 CPU 测试。两 member 共用私有 sidecar/scheduler，member1 的 detached fast state 可供 member2 继续；按同 index 有效 slot 数除以整窗 `N_valid`，仅 `finish()` 收到真实 optimizer 成功回执才单引用发布。terminal remainder、重绑 S0、native/backward/optimizer 失败不发布均覆盖；13 文件合并 CPU 238/238 PASS，新增文件 Ruff/format 与双仓 diff-check PASS。未运行 GPU 或真实 Edge native trainer，下一步接入 `ImaginaireTrainer` callback/GradScaler/optimizer 生命周期；H3-C 保持 IN_PROGRESS。
+- H3-C CPU/static 由 cx 依据 child `0dca391d2cb6e4a62b0fca0c39ebf0640e678dd9` 技术关闭：`GroupedLocalMemoryTrainer` 复用上游 `ImaginaireTrainer` train loop，在两次 GA 调用之间维持候选 grouped window；每 index 原生 batch 普通联合 autograd，按整窗有效数归一化一次；选中梯度 finite、GradScaler skip 与 optimizer 成功门后才发布 frontier/sidecar/scheduler。14 文件隔离 CPU 回归 243/243 PASS，新增两文件 Ruff/format、双仓 diff-check PASS；真实 CloseFridge ep0 前8 consumer 经 Stage-A transform 后 grouped native batch ABI PASS，日志 `/tmp/cx_v3_h3c_native_b8_preflight.log`。未执行 GPU、完整 Edge FSDP 或 DCP resume；H3-D 继续严格恢复，H3-E 由 ds 做 8×H100 短跑。
 
 # V3 H3-B grouped persistent producer（2026-09-27）
 
