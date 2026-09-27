@@ -289,3 +289,15 @@ Fresh exact-pair review independently reran 132/132 CPU tests in 7.25 s. The thr
 ds then directly exercised production reader/producer on 3 tasks × 3 real episodes. Future-endpoint, camera endpoint mismatch, invalid selected latent, cache/loader identity or length mismatch, raw15-source violation and policy-chunk/T16 reinterpretation were all 0. H5 native 12D action is not used; evidence action is V3-loader-derived raw15.
 
 Scope: this closes only cached RGB latent -> causal left+wrist visual96 -> B0 SegmentBatch. It does not authorize trainer integration, cached latent as main policy input, GPU training/eval, checkpoint/resume or SR claims.
+
+## 2026-09-27 — ChatGPT formal closure: V3-STAGE-B2A-NATIVE-MEMORY-PREFIX-CPU-STATIC
+
+- formal root: `21f20f2c436e9627a938148afca039da6023d145`
+- formal child/Gitlink: `366501b3b4626f30f0739d2e5765139a52f2308f`
+- design authority: `d57ef855404cabceed9c4190b13d435a98a30206`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2a_native_memory_prefix_closure_21f20f2c_366501b3.md`
+- verdict: `APPROVE_TO_CLOSE_V3_STAGE_B2A_NATIVE_MEMORY_PREFIX_CPU_STATIC`
+
+Fresh exact-pair review independently reran 153/153 CPU tests. ds independent checklist: 48/48 PASS, 0 hard-fail. Local-only optimizer inventory is exactly 165,312 params at Edge hidden=2048; Local is K/V-only for generation queries; native geometry/reasoner path remains unchanged; full encoder→TTT→bridge outer gradients are finite/non-zero; detach negative control removes those gradients; frozen host params have no grad and remain bitwise unchanged.
+
+Scope stops before segment transaction/backward integration, trainer, GPU, DCP, inference and H100 formal training.
