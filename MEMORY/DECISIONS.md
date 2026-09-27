@@ -1,5 +1,9 @@
 # 长期工程决策
 
+## V3 执行职责最新覆盖（2026-09-27）
+
+- 用户明确调整：cx/Codex 作为构建与技术判断 owner，主动解决实现问题；ds 负责执行验证；ChatGPT 是非在线审核者，由用户不定期激活。旧条目中“等待 ChatGPT 即时设计/审核才可修复”的职责口径不再适用于当前 V3 构建。GPU 验证仍交 ds，正式 8×H100 训练须依次满足 B2-C 与 H3 Gate 的实证条件。
+
 ## V3 Stage A Edge raw15 override（2026-09-26）
 
 - 用户明确取消 Nano 验证路线：Stage A 直接使用 `nvidia/Cosmos3-Edge-Policy-DROID` DCP + upstream `850fdbeacddabad138ed56df39cd6fb96e975078` 的 RoboCasa raw15 合同；不改 V2/v2，不迁 Local-TTT，ego20 保留。
