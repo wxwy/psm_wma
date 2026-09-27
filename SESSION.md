@@ -1,9 +1,15 @@
+# V3 Stage B2-B Single-Segment Gradient Relay（2026-09-27）
+
+- Gate `V3-STAGE-B2B-SINGLE-SEGMENT-GRADIENT-RELAY-CPU-STATIC` 状态 REVIEW。B2-A closure pair root `21f20f2c436e9627a938148afca039da6023d145` / child `366501b3b4626f30f0739d2e5765139a52f2308f`，verdict `APPROVE_TO_CLOSE_V3_STAGE_B2A_NATIVE_MEMORY_PREFIX_CPU_STATIC`；B2-B authority root `bf5c8d134014d0023a03c25f95d8e971922f40fd` 的设计 v0.1 与资源 v0.3。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
+- child 仅新增 `cosmos_framework/model/generator/mot/local_memory_native_segment.py` 和对应 `_test.py`，提交 `bf6c80e679812b7d2881d6a54aa0b518299e3869` 已推送 `v3-local-ttt`；root 更新 Gitlink、本状态/TODO 与 B2-B implementation record。复用 B0 adapter/transaction/sidecar 与 model.net.local_memory_runtime 同一 encoder/core，单 slot/T16、一成员 serial exact-gradient relay；不接 trainer/launcher/DCP/inference/GPU。
+- V3 venv 定向 22/22、B0/B1/B2-A/B2-B 七文件 CPU 隔离 suite 175/175 PASS；新增两文件 Ruff check/format PASS，child staged diff-check 与 root diff-check PASS。测试使用 `CUDA_VISIBLE_DEVICES='' COSMOS_DEVICE=cpu LD_LIBRARY_PATH='' PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1`，无 GPU、外网、checkpoint 或数据集依赖；仅 B1 测试临时 H5 fixture。B2-B 待 fresh review，不自授 closure。
+
 # V3 Stage B2-A Native Memory Prefix（2026-09-27）
 
-- Gate `V3-STAGE-B2A-NATIVE-MEMORY-PREFIX-CPU-STATIC`，状态 REVIEW；设计 authority root `d57ef855404cabceed9c4190b13d435a98a30206`；资源口径为同提交 v0.2。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。Stage B1 closure child `1ecebf1ab2fa64bc1d5906959c4cb1fe1d1edc5a`。
+- Gate `V3-STAGE-B2A-NATIVE-MEMORY-PREFIX-CPU-STATIC`，状态 DONE；formal pair root `21f20f2c436e9627a938148afca039da6023d145` / child `366501b3b4626f30f0739d2e5765139a52f2308f`，verdict `APPROVE_TO_CLOSE_V3_STAGE_B2A_NATIVE_MEMORY_PREFIX_CPU_STATIC`。设计 authority root `d57ef855404cabceed9c4190b13d435a98a30206`；资源口径为同提交 v0.2。ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试。
 - cx 只改 V3 child 的 Local K/V prefix、配置/数据载体/packer、native two_way attention 与直接 CPU 测试；child `366501b3b4626f30f0739d2e5765139a52f2308f` 已推送 `v3-local-ttt`。root 本轮仅 Gitlink、B2-A implementation record 和本状态/TODO；现有 `artifacts/v3/` 未纳入。
 - 当前最终代码：V3 venv、CPU-only 六文件 suite 153/153 PASS（B2-A 21 + B0/B1 132）；Local optimizer allowlist 精确 165,312，host 冻结，fast state 不入 optimizer；BF16 target + FP32 bridge 梯度、tensorized K/V interleave、mixed S0、no-Local parity、CP/CUDA graphs/inference fail-closed 均有定向测试。新文件 Ruff/format clean；所有修改文件 Ruff（排除既有 I001）clean；已有 packers/omni format debt 的 HEAD 基线已核对，未整文件重排；两仓 diff-check PASS。
-- 本 Gate 未接 active driver/trainer、DCP、inference、GPU；没有 4090 smoke，也不声明 closure。下一步是 fresh review；仅获批准后进入 B2-B。
+- 本 Gate 未接 active driver/trainer、DCP、inference、GPU；没有 4090 smoke。B2-A 已按上述 formal pair 关闭，后续 B2-B 另见本文件顶部记录。
 
 # V3 Stage A server guardrails glue（2026-09-26）
 
