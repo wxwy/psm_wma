@@ -363,3 +363,16 @@ This approval authorizes one tiny R1-B RTX4090 FSDP lifecycle micro-smoke only. 
 - conclusion: **PASS — one exact RTX4090 R1-B micro-smoke is authorized.**
 
 ChatGPT: 216/216 CPU/static PASS + exact preflight PASS. ds: 216/216 + 22/22 independent checks, 0 blocker. Child adds only the tiny harness and its CPU/static tests. No retry is authorized. Full B2-C run02 remains blocked pending fresh review of the GPU Evidence.
+
+## 2026-09-27 — ChatGPT R1-B closure + one B2-C run02 authorization
+
+- R1-B formal root: `5cc69c6fa9e5b4f13aa6b2e4b180ec329c874d61`
+- formal child/Gitlink: `8029b5ff002a350d22ee955db0463cc2e2d3665a`
+- design authority: `544bbe0976aa60e935eee431350b20f38c47f28c`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2c_r1b_micro_closure_and_run02_authorization_5cc69c6f_8029b5ff.md`
+- verdict: `APPROVE_TO_CLOSE_V3_STAGE_B2C_R1B_TINY_FSDP_MICRO_SMOKE`
+- execution authorization: **exactly one full B2-C RTX4090 S1 run02**.
+
+R1-B GPU run01 PASS: Local params were DTensors, B0 evidence remained ordinary Tensors, registered scan/backward completed, visual_proj and slot_queries gradients were finite/non-zero, process group destroyed cleanly. No retry occurred.
+
+Full S1 harness is unchanged from its original approved version. run02 must use execution pair `5cc69c6f... / 8029b5ff...`, new output `artifacts/v3/stage_b2c_4090_s1/run02`, and no retry/fallback. B2-C closure still requires fresh review of run02 Evidence.
