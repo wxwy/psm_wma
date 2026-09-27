@@ -1,3 +1,7 @@
+# V3 H3-D strict grouped resume（2026-09-27）
+
+- `V3-H3D-STRICT-GROUPED-RESUME` 已认领：本轮 root 新增 v0.1 设计并更新 TODO/SESSION；child 下一最小步骤预计新增 `cosmos_framework/trainer/local_memory_grouped_resume.py` 与测试，并仅在 `local_memory_grouped.py` 接入恢复回调/严格预检。复用现有 DCP `trainer` 的 per-rank Python/NumPy/Torch RNG 与 `dataloader/rank_<rank>.pkl` 回调组件；不改 common DCP、Edge recipe、Local 算法或 GPU。起点 root `a8eccf0bbaf32581e714baf8c41790ea1083caf8` / child `0dca391d2cb6e4a62b0fca0c39ebf0640e678dd9`；设计步骤未提交。
+
 # V3 H3-C grouped trainer transaction（2026-09-27）
 
 - H3-C CPU/static 由 cx 依据 child `0dca391d2cb6e4a62b0fca0c39ebf0640e678dd9` 技术关闭：`GroupedLocalMemoryTrainer` 复用上游 `ImaginaireTrainer` train loop，在两次 GA 调用之间维持候选 grouped window；每 index 原生 batch 普通联合 autograd，按整窗有效数归一化一次；选中梯度 finite、GradScaler skip 与 optimizer 成功门后才发布 frontier/sidecar/scheduler。14 文件隔离 CPU 回归 243/243 PASS，新增两文件 Ruff/format、双仓 diff-check PASS；真实 CloseFridge ep0 前8 consumer 经 Stage-A transform 后 grouped native batch ABI PASS，日志 `/tmp/cx_v3_h3c_native_b8_preflight.log`。未执行 GPU、完整 Edge FSDP 或 DCP resume；H3-D 继续严格恢复，H3-E 由 ds 做 8×H100 短跑。
