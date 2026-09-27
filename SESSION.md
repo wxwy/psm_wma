@@ -1,3 +1,8 @@
+# V3 H3-C grouped trainer transaction（2026-09-27）
+
+- `V3-H3C-GROUPED-TRAINER-TRANSACTION` 已认领：root 新增 v0.1 CPU/static 设计；child 第一最小步骤仅新增 `cosmos_framework/model/generator/mot/local_memory_grouped_window.py` 与测试。复用 H3-A joint autograd、H3-B candidate planner 和 B0 adapter；下一步最小接线官方 `ImaginaireTrainer` 生命周期。不改 Stage-A Edge recipe、B0/B1/4090 relay、checkpoint 或 GPU。起点 root `01200167a826cce1aa22a9b82a7c7a82bb5fbb56` / child `8d7ddd7b77cd204fda7d8cae1e81d591660cddd8`。
+- H3-C 第一最小步骤：child `1d32c7d95921110f0772789fa37a1421d7cb4fbe` 已推送，新增候选 grouped window 与 11 项 CPU 测试。两 member 共用私有 sidecar/scheduler，member1 的 detached fast state 可供 member2 继续；按同 index 有效 slot 数除以整窗 `N_valid`，仅 `finish()` 收到真实 optimizer 成功回执才单引用发布。terminal remainder、重绑 S0、native/backward/optimizer 失败不发布均覆盖；13 文件合并 CPU 238/238 PASS，新增文件 Ruff/format 与双仓 diff-check PASS。未运行 GPU 或真实 Edge native trainer，下一步接入 `ImaginaireTrainer` callback/GradScaler/optimizer 生命周期；H3-C 保持 IN_PROGRESS。
+
 # V3 H3-B grouped persistent producer（2026-09-27）
 
 - H3-B CPU/static 实现：child `8d7ddd7b77cd204fda7d8cae1e81d591660cddd8` 已提交并推送，仅新增 grouped producer 与测试；root 本步更新 Gitlink/TODO/SESSION。Stage-A 18 类训练 catalog 共 9036 episode，manifest digest `a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df`；8 rank 完整 epoch 逐段核对无重无漏，GA2×8 slot×T16 candidate-only，真实 CloseFridge raw15/64D Stage-A transform binder 与 18 类 latent H5 抽样 PASS。12 文件隔离 CPU 回归 227/227 PASS，Ruff/format、双仓 diff-check PASS；日志 `/tmp/cx_v3_h3b_full_epoch_chronology.log`、`/tmp/cx_v3_h3b_real_binder.log`、`/tmp/cx_v3_h3b_18_task_cache_preflight.log`。未跑 GPU；H3-C 继续实现 trainer transaction、speculative fast-state 和 GA2 原子发布。
