@@ -1,3 +1,7 @@
+# V3 H3-E 8×H100 integration smoke（2026-09-27）
+
+- H3-E 已认领：root 本步新增短跑 runbook/状态，child 预计新增 `examples/psm_wma_robocasa_h100.py` 与测试，必要时只在 `GroupedLocalMemoryTrainer` 增加可选运行观测 seam。入口必须从 Stage-A one-step DCP warm-start，保留 Edge generation/action+全部 Local trainable、8 rank×8 slot×GA2×T16、raw15/chunk32/33 与严格 DCP resume；CPU preflight 由 cx，8×H100 fresh/resume 由 ds。起点 root `6ca3304a14190f44a0a1b0bcd1e432ad8249e148` / child `74fd78531ab77d4cea77903470f8ceb8ff136873`；未提交，GPU 未启动。
+
 # V3 H3-D strict grouped resume（2026-09-27）
 
 - H3-D CPU/static 由 cx 依据 child `74fd78531ab77d4cea77903470f8ceb8ff136873` 技术关闭：新增 per-rank Local 状态回调、严格同 job DCP rank-pkl 预检，复用 upstream DCP `trainer` 组件的 GradScaler/iteration/Python/NumPy/Torch RNG；fast state 仍不进参数或优化器。恢复前验证 manifest/config/几何/rank/iteration/slot 与 terminal 身份，四个 fast tensor 必须 finite fp32；恢复失败后 trainer 实例禁止重试。中断与连续路径下一段 identity/evidence/loss/grad CPU 对照 PASS；16 文件 260/260、四文件 Ruff/format、双仓 diff-check PASS。未执行真实 DCP save/reload 或 GPU；H3-E 由 ds 验证 8×H100 跨 rank DCP 恢复。
