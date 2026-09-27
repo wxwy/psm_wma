@@ -1,6 +1,7 @@
 # V3 H3-B grouped persistent producer（2026-09-27）
 
 - H3-A CPU/static 已由 cx 依据 formal pair root `6a8cd45f534d261033a8ed872a34dd181b2df648` / child `4548f5ad666d8a50d244ba2d1e4decefafd570aa` 的 213/213 回归与官方 flow action loss 联合梯度证据关闭；root closure bookkeeping `16dc360221eca0b170d929968556564bab4c5a8c`。H3-B 已认领。本步预计仅新增 root `docs/build/PSM-WMA_V3_h3b_grouped_persistent_producer_design_v0.1_2026-09-27.md` 并更新 TODO/SESSION；child 生产改动待设计冻结后分步落地。源数据 `target/atomic` 实有 18 类，离线 latent 树同 18 类、`.h5` 9126 个；此文件数只作资产发现线索，未完成逐 episode 目录校验。本步未提交、不执行 GPU。
+- H3-B v0.1 design root `665b72b40ec3003300a04cc602cbcef9e388899e` 已推送；复核时发现 8-slot epoch barrier 在 rank episode 数非 8 倍数时可能永久停住，故新增 v0.2 显式 override：队列分配完即可跨 epoch，但新 UID 不能与 live/candidate slot 并发重复；队列/epoch/cursor 仍 candidate-only、成功 step 后发布。本修正为 docs-only，child/Gitlink 不变；本步提交前未提交。
 
 # V3 H3-A 联合梯度 CPU/static（2026-09-27）
 
