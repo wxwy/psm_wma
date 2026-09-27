@@ -341,3 +341,15 @@ Phase-2 is authorized for one exact run only. Any code/config/formal-child chang
 run01 failed before native consumer work at `b0_scan`: B1/B0 evidence is a plain Tensor while the model-owned Local encoder/core parameters are FSDP2 DTensors, and direct `adapter.scan -> encoder/core` bypasses the root model FSDP unshard lifecycle. The DTensor state originates from training-mode root `fully_shard` during model build, not from the later DCP load; DCP correctly skipped 20 Local keys.
 
 This was not OOM. Recorded peak was ~14.90 GB allocated / ~15.21 GB reserved before consumer forward. The failed Evidence is retained unchanged. Required remediation is a narrow model-owned Local scan entrypoint registered with `register_fsdp_forward_method`, preserving exact B0/B2-B module identity and transaction semantics. Fresh implementation review and a new explicit execution authorization are required before any second 4090 run.
+
+## 2026-09-27 — ChatGPT closure: V3-STAGE-B2C-R1-FSDP-LOCAL-SCAN
+
+- formal root: `cae1c4bf5d681f93228a9b1a5c74e14d1b5acee4`
+- formal child/Gitlink: `558f364efaf6704c9d65037c17ec250a9331be8a`
+- design authority: `b5404e9896892b2156e2cca11ef64db871b34def`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b2c_r1a_fsdp_local_scan_closure_cae1c4bf_558f364e.md`
+- verdict: `APPROVE_TO_CLOSE_V3_STAGE_B2C_R1_FSDP_LOCAL_SCAN`
+
+Fresh review independently reran 205/205 CPU/static tests; ds independently reported 205/205 plus 26/26 verification with 0 blocker/hard-fail. The fix keeps Local parameters under root FSDP and routes B0 scan through registered model-owned `scan_local_memory`; unregistered DTensor Local ownership fails before scan. No .to_local/ignored-param/FSDP-disable shortcut was introduced.
+
+This approval authorizes one tiny R1-B RTX4090 FSDP lifecycle micro-smoke only. It does not authorize full B2-C run02. run01 remains immutable.
