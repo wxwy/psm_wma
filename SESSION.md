@@ -1,3 +1,8 @@
+# V3 Stage B2-C RTX4090 S1 run06 closure（2026-09-27）
+
+- cx 作为当前 V3 技术 owner 依据 ds 独立执行结果判定 `V3-STAGE-B2C-RTX4090-REAL-S1-SMOKE` 达到冻结 §8 验收；正式 execution pair root `57413889e3466c767f22956d98edc8b843b463d2` / child/Gitlink `a9aca770fd39b8eed9c456fc2dbdb8867189e78e`。`artifacts/v3/stage_b2c_4090_s1/run06/result.json` 为 PASS，ds 记录 exit 0；16 个 finite native loss、五项非零 Local 梯度、165312 选中参数、一次真实 optimizer_step、fast_state_commit、host unchanged、无 OOM；41 条 CUDA phase trace 峰值 allocated 17005632000 B/reserved 17924358144 B。run01–run05 immutable，artifacts 仍不提交；closure 记录见 `docs/build/PSM-WMA_V3_stage_b2c_run06_closure_2026-09-27.md`。ChatGPT 是非在线审核者，此次技术判定不冒充其正式 verdict。
+- B2-C 仅证明 RTX4090 单段 Local-only 更新；未实现 8×H100 联合训练。下一步按已冻结 `PSM-WMA_V3_post_b2c_to_h100_gate_sequence_v0.1_2026-09-27.md` 依次推进 H3-A/B/C/D/E/F。R4/R5 两个 harness 整改任务随 run06 证据关闭，child production 无新改动。NCCL 在 exit 0 后报告 process group 未显式销毁；GPU 已释放，记录为后续运行生命周期清理项，不作为本次 S1 数值/资源失败。
+
 # V3 Stage B2-C R5 DTensor witness（2026-09-27）
 
 - run05 formal pair root `f782f2cc351fabded26bab23588758f899e3256a` / child `8984ceb065df231da6fdf9708322b7eae29af08a`，ds 单次执行后终止 FAIL，原始 `artifacts/v3/stage_b2c_4090_s1/run05/` 保留。16 个 consumer forward/backward 与 relay_backward 已完成，失败于 harness `optimizer.step` wrapper 内的 `_witness`：`torch.count_nonzero(DTensor gradient)` 缺少 sharding strategy，尚未调用真实 optimizer step，也未发布 fast state；不是 OOM。任务 `V3-STAGE-B2C-R5-DTENSOR-WITNESS`：child `a9aca770fd39b8eed9c456fc2dbdb8867189e78e` 已推送，仅改 `examples/psm_wma_robocasa_local_s1.py` 与 `_test.py`；root 仅 Gitlink/本状态/TODO/实施记录。用户最新职责为 cx owner、ds 执行；不等待 ChatGPT 在线，cx 不跑 GPU。
