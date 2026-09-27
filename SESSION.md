@@ -1,3 +1,9 @@
+# V3 H3-A 联合梯度 CPU/static（2026-09-27）
+
+- 当前责任：cx 为技术 owner，负责设计、实现与处理 blocker；ds 负责后续 GPU 执行验证；ChatGPT 是用户不定期激活的非在线审核者。B2-C 已按 run06 实证关闭，正式 RoboCasa 8×H100 训练仍未启动。
+- 任务 `V3-H3A-JOINT-AUTOGRAD-CPU-STATIC`：复用 `CanonicalLocalMemorySegmentAdapter.scan`、模型持有的 encoder/core、`OmniMoTModel.training_step` 现有 private prefix seam 和 two-way Memory Prefix。child 仅新增 `cosmos_framework/model/generator/mot/local_memory_joint_segment.py` 与其测试，提交 `7098d4d9fce0faf514a1e1ec1394c360362d8eea` 已推送；root 新增 H3-A v0.2 设计并更新本状态/TODO/Gitlink。不改 4090 relay、trainer、producer、配置、checkpoint 或 GPU 路径；root 本步提交前为未提交。
+- V3 venv 定向 4/4 PASS；B0/B1/B2-A/B2-B/B2-C/R1-A/R1-B/H3-A 11 文件隔离 CPU suite 213/213 PASS；新增两文件 Ruff check/format 与双仓 diff-check PASS。测试证明单 slot T16 中 S0 prefix=None，另外 15 个保持原始 scan graph；同一个 two-way native attention outer loss 一次 backward 同时产生 host 与全部 Local slow 参数有限梯度，代表参数非零；独立直接 scan 梯度相等；失败不改 sidecar/frontier。没有运行 GPU、真实资产或完整 Edge `training_step` 联合反传，故 H3-A 状态保持 REVIEW，下一步补真实 native loss 接线证据。
+
 # V3 Stage B2-C RTX4090 S1 run06 closure（2026-09-27）
 
 - cx 作为当前 V3 技术 owner 依据 ds 独立执行结果判定 `V3-STAGE-B2C-RTX4090-REAL-S1-SMOKE` 达到冻结 §8 验收；正式 execution pair root `57413889e3466c767f22956d98edc8b843b463d2` / child/Gitlink `a9aca770fd39b8eed9c456fc2dbdb8867189e78e`。`artifacts/v3/stage_b2c_4090_s1/run06/result.json` 为 PASS，ds 记录 exit 0；16 个 finite native loss、五项非零 Local 梯度、165312 选中参数、一次真实 optimizer_step、fast_state_commit、host unchanged、无 OOM；41 条 CUDA phase trace 峰值 allocated 17005632000 B/reserved 17924358144 B。run01–run05 immutable，artifacts 仍不提交；closure 记录见 `docs/build/PSM-WMA_V3_stage_b2c_run06_closure_2026-09-27.md`。ChatGPT 是非在线审核者，此次技术判定不冒充其正式 verdict。

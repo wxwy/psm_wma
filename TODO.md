@@ -3,6 +3,7 @@
 状态：`TODO`、`IN_PROGRESS`、`BLOCKED`、`REVIEW`、`DONE`。
 
 | ID | 状态 | 负责人 | 前置条件 | 验收条件 |
+| V3-H3A-JOINT-AUTOGRAD-CPU-STATIC | REVIEW | cx owner/实现；ds 仅后续 GPU 验证；ChatGPT 非在线审核 | B2-C run06 closure；H3-A 设计 v0.2 | 单段 T16 two-way native attention 的 host+完整 Local slow 参数联合梯度、S0 缺席、无 detached leaf/relay、失败不发布；11 文件 CPU 213/213、Ruff/format/diff-check PASS。完整 Edge `training_step` 联合梯度尚未验证，故不关闭 H3-A；不跑 GPU |
 | V3-STAGE-B2C-R5-DTENSOR-WITNESS | DONE | cx 判断/实现；ds 执行验证 | run05 原始 FAIL Evidence，root `f782f2cc` / child `8984ceb0` | child `a9aca770fd39b8eed9c456fc2dbdb8867189e78e` 的 witness 修复通过 CPU 十文件 209/209；ds run06 formal pair root `57413889e3466c767f22956d98edc8b843b463d2` / child 同上，GPU `result.json=PASS`、五项 Local 梯度 finite/nonzero、optimizer_step 与 fast_state_commit trace 各一次；run05 immutable |
 | V3-STAGE-B2C-R4-NATIVE-BATCH-ENVELOPE | DONE | cx 负责判断/实现；ds 执行验证；ChatGPT 非在线审核 | run04 原始 FAIL Evidence，root `4c128e6a` / child `f8b81133`；用户最新职责调整 | child `8984ceb065df231da6fdf9708322b7eae29af08a` 的 batch 修复在 run05/run06 真实 4090 完成 16/16 native forward/backward 与 relay，run04 的 text pack TypeError 不再出现；run04 immutable |
 | V3-STAGE-B2C-R3-STAGE-A-TEXT-TRANSFORM | DONE | ChatGPT 设计/审核；用户 owner/最终裁决；cx 实现；ds 执行/测试 | root 3091df07983d15f4ecad3a30b27fd721522aede4 的 R3 v0.1；run03 immutable | formal pair root `4c128e6ad104f736e4a6cfef63b39ba0b3d662a0` / child `f8b81133f22ab01197b7b36003207cf5cfeb2e41`；verdict `APPROVE_TO_CLOSE_V3_STAGE_B2C_R3_STAGE_A_TEXT_TRANSFORM`；仅授权 ds 单次 RTX4090 S1 run04，不授权 B2-C closure 或 8×H100 训练 |
