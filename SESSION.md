@@ -1,3 +1,7 @@
+# V3 H3-B grouped persistent producer（2026-09-27）
+
+- H3-A CPU/static 已由 cx 依据 formal pair root `6a8cd45f534d261033a8ed872a34dd181b2df648` / child `4548f5ad666d8a50d244ba2d1e4decefafd570aa` 的 213/213 回归与官方 flow action loss 联合梯度证据关闭；root closure bookkeeping `16dc360221eca0b170d929968556564bab4c5a8c`。H3-B 已认领。本步预计仅新增 root `docs/build/PSM-WMA_V3_h3b_grouped_persistent_producer_design_v0.1_2026-09-27.md` 并更新 TODO/SESSION；child 生产改动待设计冻结后分步落地。源数据 `target/atomic` 实有 18 类，离线 latent 树同 18 类、`.h5` 9126 个；此文件数只作资产发现线索，未完成逐 episode 目录校验。本步未提交、不执行 GPU。
+
 # V3 H3-A 联合梯度 CPU/static（2026-09-27）
 
 - cx 作为技术 owner 判定 H3-A CPU/static seam 已满足 v0.2 验收：formal implementation pair root `6a8cd45f534d261033a8ed872a34dd181b2df648` / child/Gitlink `4548f5ad666d8a50d244ba2d1e4decefafd570aa`。B2-C run06 已证明完整 Edge `training_step` 在 4090 detached-prefix Local-only 配置中可执行；H3-A 新测试证明同一框架 flow action loss 经 two-way Memory Prefix 普通图可同时给代表 host 与全部 Local slow 参数传梯度。两项证据不可外推为 8×H100 完整联合模型运行；后者必须由 H3-E ds 实证。ChatGPT 非在线，本次是 cx 技术判断，不冒充其 verdict。
