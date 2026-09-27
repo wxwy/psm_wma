@@ -274,3 +274,18 @@ Current blockers are real-cache production-contract mismatches:
 3. HIGH — camera authority is caller-selectable, while Stage A is frozen to `left_wrist`; B1 must deterministically use left + wrist and retain visual96 via parameter-free two-view latent-statistic fusion.
 
 This verdict only blocks B1 closure. Stage A and B0 conclusions are unchanged.
+
+## 2026-09-27 — ChatGPT formal closure verdict: V3-STAGE-B1-LATENT-PRODUCER
+
+- Gate: `V3-STAGE-B1-LATENT-PRODUCER`
+- formal implementation root: `93db96df841a14c4c3ef73bf6b4488142adcf567`
+- formal child/Gitlink: `1ecebf1ab2fa64bc1d5906959c4cb1fe1d1edc5a`
+- design authority: `65271367978537c5d7b5bae5fa50b1ee8056f356`
+- detailed review: `docs/collab/chatgpt/reviews/2026-09-27_V3_stage_b1_latent_producer_closure_93db96df_1ecebf1.md`
+- verdict: `APPROVE_TO_CLOSE_V3_STAGE_B1_LATENT_PRODUCER`
+
+Fresh exact-pair review independently reran 132/132 CPU tests in 7.25 s. The three blockers from the rejected pair are CLOSED: real H5 uses root `frame_count`; endpoint authority is 4-grid plus terminal `F-1` when needed; camera authority is fixed to Stage-A `left_wrist` and fuses left+wrist into parameter-free visual96.
+
+ds then directly exercised production reader/producer on 3 tasks × 3 real episodes. Future-endpoint, camera endpoint mismatch, invalid selected latent, cache/loader identity or length mismatch, raw15-source violation and policy-chunk/T16 reinterpretation were all 0. H5 native 12D action is not used; evidence action is V3-loader-derived raw15.
+
+Scope: this closes only cached RGB latent -> causal left+wrist visual96 -> B0 SegmentBatch. It does not authorize trainer integration, cached latent as main policy input, GPU training/eval, checkpoint/resume or SR claims.
