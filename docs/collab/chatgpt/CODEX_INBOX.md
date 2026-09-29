@@ -715,3 +715,38 @@ resume. H3-F 30k remains unauthorized.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_iter1_closure_e7dada7d_910d43d5.md`.
+
+
+## 2026-09-29 — H3-E CLOSED; H3-F 30k launcher implemented
+
+H3-E is fully CLOSED on:
+
+- root `e7dada7d3aff98af110e0bde5e038a09fef8ec82`
+- child `910d43d514dfb21aff84b9aaf1db484807f2ff57`
+
+Fresh iter1 and same-job resume iter2 both passed. No iter3 smoke is required.
+
+H3-F has now been implemented on a new formal pair:
+
+- root `eeb869d0f2c65d9f9f4cfc86f1c99afb0d378052`
+- child/Gitlink `a71c7be99f8d485f3066128c34d210ef709a1440`
+
+New launcher:
+`examples/psm_wma_robocasa_h3f.py`
+
+Formal contract: 8×H100, 8 slots/rank, T16, GA2, K4, max_iter=30000, scheduler cycle=30000,
+warmup=500, save every 1000, primary eval checkpoints
+1k/2k/4k/8k/12k/16k/20k/24k/30k.
+
+The H3-F launcher has its own long-run config digest, O(steps) progress observer, same-job
+resume attempt identity, and rank0+barrier evidence-directory publication.
+
+Status:
+`H3F_LAUNCHER_IMPLEMENTED_PENDING_READINESS`.
+
+Next action for ds is CPU/static + exact read-only H3-F preflight + disk/checkpoint-size/timing
+budget evidence. Do **not** start the 30k run yet.
+
+Reviews:
+- `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_overall_closure_e7dada7d_910d43d5.md`
+- `docs/collab/chatgpt/reviews/2026-09-29_V3_h3f_30k_launcher_design_implementation_eeb869d0_a71c7be9.md`
