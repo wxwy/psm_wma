@@ -1,8 +1,27 @@
 # PSM-WMA Current Project Status
 
-Updated: 2026-09-19
+Updated: 2026-09-29
 
-## Current training implementation
+## Current V3 H100 route
+
+| Item | Value |
+|---|---|
+| Formal root | `db08117786a2483ca5cc7f4b58a0c3518e78bccc` |
+| Cosmos child / Gitlink | `b43097c74982f13e67c071ece729c7b6929cad52` |
+| RoboCasa train catalog | `9036` target-atomic train episodes |
+| B1 H5 cache | `9036/9036` valid; manifest `a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df` |
+| H100 Stage-A | regenerated Edge/raw15 one-step authority; Stage 3D CLOSED |
+| H3-E | H100 asset-rebinding preflight; revalidation pending |
+| H3-E smoke budget | fresh iter1 + same-job resume iter2 only |
+| H3-F formal budget | **max_iter=30000** |
+| H3-F checkpoints/eval | `1000, 2000, 4000, 8000, 12000, 16000, 20000, 24000, 30000` |
+| H3-F long-run started | **false** |
+
+The 30k budget applies to the future RoboCasa H3-F formal Local-TTT training run. Historical
+LIBERO 5000-step planning/evidence below remains a historical snapshot and is not the current
+RoboCasa training budget.
+
+## Historical 2026-09-19 training implementation
 
 | Item | Value |
 |---|---|
@@ -14,7 +33,7 @@ Updated: 2026-09-19
 | Global consumers / update | `2048` |
 | Catalog policy | global per-suite catalog → deterministic disjoint rank shards → rank-local stable slots |
 
-## Validation status
+## Historical 2026-09-19 validation status
 
 | Gate | Status |
 |---|---|

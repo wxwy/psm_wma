@@ -553,3 +553,27 @@ that implementation is reviewed and its preflight evidence passes.
 
 Full closure:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_route_b_stage3d_closure_16f296cd_ba1996c8.md`.
+
+
+## 2026-09-29 — Stage 3E style blocker fixed; H3-F formal budget frozen at 30k
+
+New formal pair:
+
+- root `db08117786a2483ca5cc7f4b58a0c3518e78bccc`
+- child/Gitlink `b43097c74982f13e67c071ece729c7b6929cad52`
+
+The prior Stage-3E CPU blocker was only two Ruff-format hunks. Child `b43097c74982f13e67c071ece729c7b6929cad52` fixes
+those hunks without changing H100 authority/catalog/preflight semantics.
+
+At owner request, the future RoboCasa H3-F formal training budget is now frozen as:
+
+- `max_iter = 30000`
+- checkpoints/eval = `1k,2k,4k,8k,12k,16k,20k,24k,30k`
+
+Historical LIBERO 5000-step records are preserved unchanged. H3-E smoke remains fresh=1,
+resume-to-2 and must not be expanded to 30k.
+
+Stage 3E remains pending exact-pair revalidation; no 8×H100 run is authorized yet.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_stage3e_preflight_format_fix_h3f_30k_budget_db081177_b43097c7.md`.
