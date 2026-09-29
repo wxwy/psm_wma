@@ -11,7 +11,7 @@ Updated: 2026-09-29
 | RoboCasa train catalog | `9036` target-atomic train episodes |
 | B1 H5 cache | `9036/9036` valid; manifest `a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df` |
 | H100 Stage-A | regenerated Edge/raw15 one-step authority; Stage 3D CLOSED |
-| H3-E | H100 asset-rebinding preflight **CLOSED**; 8×H100 fresh iter0→iter1 authorized |
+| H3-E | preflight **CLOSED**; fresh iter0→iter1 **WAITING_FOR_GPU** (8 H100s currently occupied) |
 | H3-E smoke budget | fresh iter1 + same-job resume iter2 only |
 | H3-F formal budget | **max_iter=30000** |
 | H3-F checkpoints/eval | `1000, 2000, 4000, 8000, 12000, 16000, 20000, 24000, 30000` |

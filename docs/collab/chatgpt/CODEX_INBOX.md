@@ -598,3 +598,23 @@ same-job resume Gate. H3-F remains frozen at max_iter=30000 but is not authorize
 
 Full review:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_stage3e_preflight_closure_db081177_b43097c7.md`.
+
+
+## 2026-09-29 — H3-E 8×H100 fresh smoke WAITING_FOR_GPU
+
+Formal pair remains:
+
+- root `db08117786a2483ca5cc7f4b58a0c3518e78bccc`
+- child/Gitlink `b43097c74982f13e67c071ece729c7b6929cad52`
+
+Status: `H3E_8XH100_FRESH_WAITING_FOR_GPU`.
+
+At the GPU readiness check, all eight H100s were occupied by another user's active 8-rank
+training at high utilization. No process was preempted and no H3-E torchrun/output was created.
+
+Once all eight H100s are simultaneously available and authorized, continue directly with the
+already-approved fresh iter0→iter1 smoke. Do not rerun earlier Route-B stages or Stage-3E
+preflight. Resume iter1→iter2 remains unauthorized until fresh closes.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_waiting_for_gpu_db081177_b43097c7.md`.
