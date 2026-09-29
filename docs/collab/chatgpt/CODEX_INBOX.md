@@ -690,3 +690,28 @@ fresh3 OUT. Preserve both earlier failed OUTs. Same-job resume and H3-F 30k rema
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_grouped_trainer_optimizer_container_fix_e7dada7d_910d43d5.md`.
+
+
+## 2026-09-29 — H3-E fresh iter1 CLOSED; same-job resume iter1→iter2 authorized
+
+Formal pair remains:
+
+- root `e7dada7d3aff98af110e0bde5e038a09fef8ec82`
+- child/Gitlink `910d43d514dfb21aff84b9aaf1db484807f2ff57`
+
+Verdict: `H3E_8XH100_FRESH_ITER1_CLOSED`.
+
+Fresh3 completed 8/8 ranks with exact 32/32/1/1 events, finite losses/gradients, one optimizer
+step, one Local/frontier commit, and complete iter1 DCP including dataloader rank0..7 state.
+
+The rank4-7 zero local witness for `slot_queries` is accepted as an empty local shard artifact
+of sharding a 4-row tensor across 8 ranks; the global gradient is non-zero.
+
+Authorization:
+`APPROVE_TO_RUN_H3E_8XH100_SAME_JOB_RESUME_ITER1_TO_ITER2`.
+
+Resume must use the exact same fresh3 OUT/job and formal pair. Do not create a new job for
+resume. H3-F 30k remains unauthorized.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_iter1_closure_e7dada7d_910d43d5.md`.
