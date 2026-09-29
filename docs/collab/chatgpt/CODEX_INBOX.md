@@ -820,3 +820,22 @@ Do not start the 30k long-run yet.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_owner_launch_contract_a70fa27b_d7ee697d.md`.
+
+
+## 2026-09-30 — H3-F owner launch formatter blocker fixed
+
+New exact formal pair:
+
+- root `422899072dce46a1602ea76ef767d498c709f469`
+- child/Gitlink `00241445e17bccbec63f9c29ee75531712bc3de1`
+
+Previous pair already had 32 pytest PASS and Ruff check PASS. The only blocker was
+`ruff format --check` on the H3-F launcher and test file.
+
+This is formatter-only; no runtime/training semantics changed.
+
+Please re-run full CPU/static on the new pair. If green, continue the previously authorized
+owner-env preflight → 10-step readiness smoke → fail-closed matrix. Do not start the 30k run.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_owner_launch_format_fix_42289907_00241445.md`.
