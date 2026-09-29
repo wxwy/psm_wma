@@ -639,3 +639,29 @@ Only fresh iter0→iter1 is authorized. Resume and H3-F 30k remain unauthorized.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_co_resident_authorization_db081177_b43097c7.md`.
+
+
+## 2026-09-29 — H3-E fresh OptimizersContainer blocker fixed
+
+The co-resident fresh launch on the previous pair failed before the first optimizer step because
+the H3-E harness accessed `.param_groups` directly on the framework
+`OptimizersContainer`.
+
+New exact formal pair:
+
+- root `9bb0d9160f95a1df8081a7c18de3516f0273acfa`
+- child/Gitlink `b858106897c17b39888fc1df2b72b189bab5827a`
+
+Fix: unwrap `OptimizersContainer.optimizers`, union inner optimizer param groups, preserve all
+existing optimizer inventory checks. Added regression coverage for multi-inner-container,
+single optimizer, and empty-container fail-closed behavior.
+
+Status:
+`H3E_8XH100_FRESH_ITER1_BLOCKED_FIXED_PENDING_REVALIDATION`.
+
+ds must run the CPU/static + preflight checks on the new pair. If green, fresh iter0→iter1 is
+authorized again using a new OUT; preserve the prior failed OUT untouched. Resume remains
+unauthorized.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_optimizer_container_fix_9bb0d916_b8581068.md`.
