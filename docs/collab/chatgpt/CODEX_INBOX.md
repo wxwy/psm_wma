@@ -482,3 +482,27 @@ Formal status: `H3E_ROUTE_B_STAGE3C_BLOCKED`.
 
 Review and promotion conditions:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_route_b_stage3c_multifile_video_blocked_a707c803_55582980.md`.
+
+
+## 2026-09-29 — Stage 3C multi-file fix PROMOTED; full build resume authorized
+
+Formal Stage 3C recovery pair:
+
+- root `16f296cd959820c93ae36e9d8abf16546cd637ea`
+- child/Gitlink `ba1996c85cc4de41df2e8bd22c0289ea4deef736`
+
+The prior multi-file camera offset blocker is closed by exact CPU + targeted GPU evidence:
+ep461 uses wrist file1 local start 474 derived from per-camera timestamp, and candidate decode is
+bit-exact to the production loader.
+
+Verdict: `APPROVE_TO_RESUME_H3E_ROUTE_B_STAGE3C_FULL_B1_H5_BUILD`.
+
+Resume all eight original worker partitions against the existing formal cache output only after
+old 55582980 workers have finished or been stopped; never overlap old/new builders on the same
+partition/output. Preserve valid H5 files and rely on validation+skip.
+
+Stage 3C closure still requires full 9036 validation and exact manifest digest
+`a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df`.
+
+Full promotion review:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_route_b_stage3c_multifile_fix_promotion_16f296cd_ba1996c8.md`.
