@@ -750,3 +750,23 @@ budget evidence. Do **not** start the 30k run yet.
 Reviews:
 - `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_overall_closure_e7dada7d_910d43d5.md`
 - `docs/collab/chatgpt/reviews/2026-09-29_V3_h3f_30k_launcher_design_implementation_eeb869d0_a71c7be9.md`
+
+
+## 2026-09-29 — H3-F CPU Ruff I001 blocker fixed
+
+New exact H3-F formal pair:
+
+- root `7301046714d0adf2dc2ec5e612df5405a4c330d5`
+- child/Gitlink `e3e62b10b5939447bb6447a731187969853269e2`
+
+Previous CPU result: 27 pytest PASS; only blocker was Ruff I001 import ordering in
+`examples/psm_wma_robocasa_h3f.py`.
+
+The fix is style-only: `config_digest as h3e_config_digest` is moved into the separate import
+block Ruff requested. No training contract or runtime logic changed.
+
+Continue the H3-F readiness gate from CPU/static on this new pair. If CPU/static is green,
+continue with read-only preflight, storage budget, and timing budget. Do not launch 30k yet.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3f_cpu_import_order_fix_73010467_e3e62b10.md`.

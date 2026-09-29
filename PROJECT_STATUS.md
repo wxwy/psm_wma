@@ -6,14 +6,14 @@ Updated: 2026-09-29
 
 | Item | Value |
 |---|---|
-| Formal root | `eeb869d0f2c65d9f9f4cfc86f1c99afb0d378052` |
-| Cosmos child / Gitlink | `a71c7be99f8d485f3066128c34d210ef709a1440` |
+| Formal root | `7301046714d0adf2dc2ec5e612df5405a4c330d5` |
+| Cosmos child / Gitlink | `e3e62b10b5939447bb6447a731187969853269e2` |
 | RoboCasa train catalog | `9036` target-atomic train episodes |
 | B1 H5 cache | `9036/9036` valid; manifest `a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df` |
 | H100 Stage-A | regenerated Edge/raw15 one-step authority; Stage 3D CLOSED |
 | H3-E | **CLOSED**: 8×H100 fresh iter1 + same-job resume iter2 PASS |
 | H3-E smoke budget | fresh iter1 + same-job resume iter2 only |
-| H3-F formal launcher | **IMPLEMENTED / READINESS PENDING**, max_iter=30000 |
+| H3-F formal launcher | **IMPLEMENTED / CPU STYLE FIX PENDING REVALIDATION**, max_iter=30000 |
 | H3-F checkpoints/eval | `1000, 2000, 4000, 8000, 12000, 16000, 20000, 24000, 30000` |
 | H3-F long-run started | **false** |
 
