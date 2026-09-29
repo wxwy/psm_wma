@@ -506,3 +506,27 @@ Stage 3C closure still requires full 9036 validation and exact manifest digest
 
 Full promotion review:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_route_b_stage3c_multifile_fix_promotion_16f296cd_ba1996c8.md`.
+
+
+## 2026-09-29 — H3-E Route-B Stage 3C CLOSED; Stage 3D H100 Stage-A warmstart authorized
+
+Formal implementation pair remains:
+
+- root `16f296cd959820c93ae36e9d8abf16546cd637ea`
+- child/Gitlink `ba1996c85cc4de41df2e8bd22c0289ea4deef736`
+
+Stage 3C final evidence: 9036/9036 H5 valid, missing/extra/duplicate/invalid all zero, and production
+catalog manifest digest exactly
+`a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df`.
+
+Verdict: `H3E_ROUTE_B_STAGE3C_CLOSED`.
+
+Next authorization:
+`APPROVE_TO_RUN_H3E_ROUTE_B_STAGE3D_H100_STAGE_A_WARMSTART`.
+
+Stage 3D must use the existing `examples/psm_wma_robocasa_native.py` Stage-A entrypoint, one
+authorized H100, `CloseFridge`, one optimizer iteration, the frozen raw15 contract, and a fresh
+H100-local output root. It must stop after producing/validating config.yaml + iter_000000001 DCP.
+
+Full closure and Stage 3D conditions:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_route_b_stage3c_closure_16f296cd_ba1996c8.md`.
