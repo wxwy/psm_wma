@@ -770,3 +770,20 @@ continue with read-only preflight, storage budget, and timing budget. Do not lau
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3f_cpu_import_order_fix_73010467_e3e62b10.md`.
+
+
+## 2026-09-30 — H3-F CPU formatter round2 fixed
+
+New exact formal pair:
+
+- root `91c8d187074c9f7262d539688708bf9ed06f9f97`
+- child/Gitlink `b42e325be45a62b93c7c89d3d61af1045e4167a9`
+
+Previous pair already had 27/27 pytest PASS and Ruff check PASS. The only blocker was
+`ruff format --check` on two test function signatures. This is a style-only fix.
+
+Re-run full CPU/static. If all green, continue directly with H3-F read-only preflight, checkpoint
+storage sizing, and steady-step timing budget. Do not start the 30k GPU run yet.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_cpu_format_round2_fix_91c8d187_b42e325b.md`.
