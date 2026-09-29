@@ -787,3 +787,36 @@ storage sizing, and steady-step timing budget. Do not start the 30k GPU run yet.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_cpu_format_round2_fix_91c8d187_b42e325b.md`.
+
+
+## 2026-09-30 — H3-F owner launch facade implemented
+
+New exact formal pair:
+
+- root `a70fa27bfc4967462301e3ac13df03e9bb7b5c12`
+- child/Gitlink `d7ee697df5800be3c6fda90de23ea4014ff34a90`
+
+Owner-facing entry point now exists:
+
+`examples/launch_sft_action_policy_robocasa_edge_all_target_atomic.sh`
+
+It drives the current grouped H3-F trainer through 8-rank torchrun and supports same-job
+fresh/resume semantics.
+
+The owner environment variables are now first-class launch/preflight inputs, including
+ROBOCASA_ROOT, latent cache, BASE_CHECKPOINT_PATH, Edge, VAE, OUTPUT_ROOT, CUDA devices,
+ROBOCASA_NUM_WORKERS, SAVE_ITER and TTT_ACTIVE_GA.
+
+SAVE_ITER is now a real formal runtime input (default 500), is applied to checkpoint cadence and
+included in the config digest. No automatic retention was added.
+
+Owner OUTPUT_ROOT under the ignored root worktree `outputs/` subtree is explicitly supported.
+
+Status:
+`H3F_OWNER_LAUNCH_IMPLEMENTED_PENDING_REVALIDATION`.
+
+Next ds action: full CPU/static + bash -n + exact preflight + 10-step H3-F readiness smoke.
+Do not start the 30k long-run yet.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_owner_launch_contract_a70fa27b_d7ee697d.md`.

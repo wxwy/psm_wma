@@ -6,16 +6,16 @@ Updated: 2026-09-29
 
 | Item | Value |
 |---|---|
-| Formal root | `91c8d187074c9f7262d539688708bf9ed06f9f97` |
-| Cosmos child / Gitlink | `b42e325be45a62b93c7c89d3d61af1045e4167a9` |
+| Formal root | `a70fa27bfc4967462301e3ac13df03e9bb7b5c12` |
+| Cosmos child / Gitlink | `d7ee697df5800be3c6fda90de23ea4014ff34a90` |
 | RoboCasa train catalog | `9036` target-atomic train episodes |
 | B1 H5 cache | `9036/9036` valid; manifest `a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df` |
 | H100 Stage-A | regenerated Edge/raw15 one-step authority; Stage 3D CLOSED |
 | H3-E | **CLOSED**: 8×H100 fresh iter1 + same-job resume iter2 PASS |
 | H3-E smoke budget | fresh iter1 + same-job resume iter2 only |
-| H3-F formal launcher | **IMPLEMENTED / CPU FORMAT ROUND2 FIX PENDING REVALIDATION**, max_iter=30000 |
+| H3-F formal launcher | **OWNER FACADE IMPLEMENTED / REVALIDATION PENDING**, max_iter=30000, SAVE_ITER default=500 |
 | H3-F checkpoints/eval | `1000, 2000, 4000, 8000, 12000, 16000, 20000, 24000, 30000` |
-| H3-F long-run started | **false** |
+| H3-F long-run started | **false; 10-step readiness smoke pending** |
 
 The 30k budget applies to the future RoboCasa H3-F formal Local-TTT training run. Historical
 LIBERO 5000-step planning/evidence below remains a historical snapshot and is not the current
