@@ -463,3 +463,22 @@ A mismatch is fail-closed; do not re-freeze automatically.
 
 Full verdict and acceptance criteria:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_route_b_stage3b_closure_a707c803_55582980.md`.
+
+
+## 2026-09-29 — Stage 3C BLOCKED on multi-file camera video offsets
+
+Frozen formal pair remains:
+
+- root `a707c80393f927e8e30ace877473d475fd24c6cf`
+- child/Gitlink `55582980b992dac10481b0ba9e86cd8075cef33c`
+
+Stage 3C full B1 build exposed a builder-only bug for 43 train episodes in
+`SlideDishwasherRack/20250820`: global dataset row offsets were used inside camera video file 1.
+Production source/loader remain valid.
+
+Candidate child fix: `ba1996c85cc4de41df2e8bd22c0289ea4deef736` (not formal until CPU + targeted GPU regression passes).
+
+Formal status: `H3E_ROUTE_B_STAGE3C_BLOCKED`.
+
+Review and promotion conditions:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_route_b_stage3c_multifile_video_blocked_a707c803_55582980.md`.
