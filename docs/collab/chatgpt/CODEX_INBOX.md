@@ -618,3 +618,24 @@ preflight. Resume iter1→iter2 remains unauthorized until fresh closes.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_waiting_for_gpu_db081177_b43097c7.md`.
+
+
+## 2026-09-29 — Owner authorized co-resident 8×H100 fresh smoke
+
+Formal pair remains:
+
+- root `db08117786a2483ca5cc7f4b58a0c3518e78bccc`
+- child/Gitlink `b43097c74982f13e67c071ece729c7b6929cad52`
+
+The owner explicitly authorizes using all eight H100s concurrently with the currently resident
+wzy training job. Status changes from `WAITING_FOR_GPU` to
+`APPROVE_TO_RUN_H3E_8XH100_FRESH_ITER0_TO_ITER1_CORESIDENT`.
+
+Treat the run as a functional integration smoke, not a throughput/performance measurement.
+Take a fresh GPU snapshot immediately before launch, do not kill/pause other processes, do not
+change geometry, and stop on OOM/system instability.
+
+Only fresh iter0→iter1 is authorized. Resume and H3-F 30k remain unauthorized.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_co_resident_authorization_db081177_b43097c7.md`.
