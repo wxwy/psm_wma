@@ -839,3 +839,33 @@ owner-env preflight → 10-step readiness smoke → fail-closed matrix. Do not s
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_owner_launch_format_fix_42289907_00241445.md`.
+
+
+## 2026-09-30 — H3-F formal profile switched to Reasoner + Local-TTT
+
+New exact formal pair:
+
+- root `5c643045534fa080612239a6ba752a55226ef6c3`
+- child/Gitlink `69dcb48fa0e188f95d43590300dad7542b6a9ab5`
+
+H3-F no longer trains the H3-E generation/action host selector.
+
+Formal H3-F now trains exactly:
+
+- `net.language_model.*` excluding `*_moe_gen`;
+- `net.local_memory*`.
+
+The action/generation host path is frozen.
+
+The H3-F config digest binds this trainable profile, the optimizer inventory checks exact equality,
+and the readiness observer now requires a non-zero Reasoner gradient witness in addition to the
+Local gradient witness.
+
+Status:
+`H3F_REASONER_TTT_PROFILE_IMPLEMENTED_PENDING_REVALIDATION`.
+
+Please re-run CPU/static + owner-env preflight + short readiness smoke on this exact pair. Do not
+start the 30k long-run yet.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_reasoner_plus_ttt_trainable_profile_5c643045_69dcb48f.md`.
