@@ -577,3 +577,24 @@ Stage 3E remains pending exact-pair revalidation; no 8×H100 run is authorized y
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_stage3e_preflight_format_fix_h3f_30k_budget_db081177_b43097c7.md`.
+
+
+## 2026-09-29 — H3-E Stage 3E PREFLIGHT CLOSED; 8×H100 fresh smoke authorized
+
+Formal pair remains:
+
+- root `db08117786a2483ca5cc7f4b58a0c3518e78bccc`
+- child/Gitlink `b43097c74982f13e67c071ece729c7b6929cad52`
+
+Verdict: `H3E_ROUTE_B_STAGE3E_PREFLIGHT_CLOSED`.
+
+Static + real preflight evidence is fully green: 11 tests, Ruff/format/diff clean, exact H100
+Stage-A digests, 9036 catalog, exact manifest digest, and production grouped 8-slot native batch.
+
+Authorization: `APPROVE_TO_RUN_H3E_8XH100_FRESH_ITER0_TO_ITER1`.
+
+Only the fresh 8-rank smoke is authorized. Preserve its exact output for a separately authorized
+same-job resume Gate. H3-F remains frozen at max_iter=30000 but is not authorized to start.
+
+Full review:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_stage3e_preflight_closure_db081177_b43097c7.md`.
