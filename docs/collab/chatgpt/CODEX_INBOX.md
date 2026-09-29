@@ -437,3 +437,29 @@ R3 authority: `docs/build/PSM-WMA_V3_stage_b2c_r3_stage_a_text_transform_remedia
 Independent exact-pair evidence: R3/Local suite 207/207 PASS; Stage-A native contract 26/26 + 10 subtests PASS in a separate process; fresh frozen-asset CPU preflight PASS with consumer0 152 text tokens, SHA256 `854e3c085df7ab1b392c0e4960875673123b22e5afd4d051c11c9ac119380aad`, structured Stage-A JSON prompt, action [33,64], action_raw [33,15], condition action frame [0], and no CUDA work.
 
 run04 must use formal pair `4c128e6a... / f8b81133...`, new output `artifacts/v3/stage_b2c_4090_s1/run04`, the frozen R2 CUDA13 LD_LIBRARY_PATH, and no retry/fallback. run01/run02/run03 remain immutable. B2-C remains REVIEW pending fresh run04 GPU Evidence.
+
+
+## 2026-09-29 — H3-E Route-B Stage 3A/3B CLOSED; Stage 3C full B1 H5 build authorized
+
+**Formal implementation pair** (bookkeeping commits after this entry do not replace it):
+
+- root: `a707c80393f927e8e30ace877473d475fd24c6cf`
+- child/Gitlink: `55582980b992dac10481b0ba9e86cd8075cef33c`
+
+Verdict: `H3E_ROUTE_B_STAGE3B_CLOSED`.
+
+Evidence summary: Stage 3A CPU/static repository gate fully green; Stage 3B repository builder produced exactly
+the three authorized CloseFridge episodes with real Wan2.2 latent caches, passed frozen H5 schema,
+`RoboCasaLatentReader`, causality, finite-output and no-rewrite resume checks.
+
+**Authorization:** `APPROVE_TO_RUN_H3E_ROUTE_B_STAGE3C_FULL_B1_H5_BUILD`.
+
+Stage 3C must build exactly 9036 production-train H5 caches from
+`/mnt/data1/data_v2_0617/robocasa365_official_v30` into
+`/mnt/data1/data_v2_0617/robocasa365_official_v30_wan2.2vae_latent_b1`,
+then fully validate and recompute the frozen catalog digest. The expected digest remains
+`a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df`.
+A mismatch is fail-closed; do not re-freeze automatically.
+
+Full verdict and acceptance criteria:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_route_b_stage3b_closure_a707c803_55582980.md`.
