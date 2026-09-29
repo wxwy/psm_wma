@@ -665,3 +665,28 @@ unauthorized.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_optimizer_container_fix_9bb0d916_b8581068.md`.
+
+
+## 2026-09-29 — grouped trainer OptimizersContainer blocker fixed
+
+Fresh2 on `9bb0d916.../b8581068...` verified the harness fix and completed 32 native
+forward + 32 backward events per rank with finite losses and no OOM, then failed before the
+optimizer step because `GroupedLocalMemoryTrainer._require_finite_gradients` still accessed
+`optimizer.param_groups` directly.
+
+New exact formal pair:
+
+- root `e7dada7d3aff98af110e0bde5e038a09fef8ec82`
+- child/Gitlink `910d43d514dfb21aff84b9aaf1db484807f2ff57`
+
+The trainer now normalizes both plain optimizers and `OptimizersContainer.optimizers`, with
+fail-closed checks and trainer-level regression tests.
+
+Status:
+`H3E_8XH100_FRESH_ITER1_BLOCKED_FIXED_PENDING_REVALIDATION`.
+
+After CPU/static + exact preflight pass, fresh iter0->iter1 is authorized again using a new
+fresh3 OUT. Preserve both earlier failed OUTs. Same-job resume and H3-F 30k remain unauthorized.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-29_V3_h3e_8xh100_fresh_grouped_trainer_optimizer_container_fix_e7dada7d_910d43d5.md`.
