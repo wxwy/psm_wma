@@ -6,14 +6,14 @@ Updated: 2026-09-30
 
 | Item | Value |
 |---|---|
-| Formal root | `5c643045534fa080612239a6ba752a55226ef6c3` |
-| Cosmos child / Gitlink | `69dcb48fa0e188f95d43590300dad7542b6a9ab5` |
+| Formal root | `970c50c1d8cd1975c822f672afa823f2a8ea7573` |
+| Cosmos child / Gitlink | `b72c7bd1c53e3767d69dd10c2223fa5057259738` |
 | RoboCasa train catalog | `9036` target-atomic train episodes |
 | B1 H5 cache | `9036/9036` valid; manifest `a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df` |
 | H100 Stage-A | regenerated Edge/raw15 one-step authority; Stage 3D CLOSED |
 | H3-E | **CLOSED**: 8×H100 fresh iter1 + same-job resume iter2 PASS |
 | H3-E smoke budget | fresh iter1 + same-job resume iter2 only |
-| H3-F formal launcher | **Reasoner + Local-TTT profile implemented / revalidation pending**, max_iter=30000, SAVE_ITER default=500 |
+| H3-F formal launcher | **Reasoner + Local-TTT profile implemented / formatter fixed / revalidation pending**, max_iter=30000, SAVE_ITER default=500 |
 | H3-F trainable profile | `net.language_model.*` excluding `_moe_gen` + `net.local_memory*`; all other params frozen |
 | H3-F checkpoints/eval | `1000, 2000, 4000, 8000, 12000, 16000, 20000, 24000, 30000` |
 | H3-F old-profile readiness10 | **CLOSED** on `42289907/00241445`; retained as runtime/timing baseline only |

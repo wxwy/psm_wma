@@ -900,3 +900,20 @@ gradient.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_old_profile_readiness10_closure_and_current_revalidation_gate.md`.
+
+
+## 2026-09-30 — Reasoner+Local-TTT formatter blocker fixed
+
+New exact formal pair:
+
+- root `970c50c1d8cd1975c822f672afa823f2a8ea7573`
+- child/Gitlink `b72c7bd1c53e3767d69dd10c2223fa5057259738`
+
+Previous pair already had 34 pytest PASS, Ruff check PASS, bash -n PASS, diff-check PASS, and clean
+worktrees. The sole blocker was Ruff formatting of two set-comprehensions.
+
+This commit is formatter-only. Re-run full CPU/static; if green, continue owner preflight →
+Reasoner+Local-TTT readiness10 → fail-closed matrix. Do not start the 30k run.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_reasoner_ttt_format_fix_970c50c1_b72c7bd1.md`.
