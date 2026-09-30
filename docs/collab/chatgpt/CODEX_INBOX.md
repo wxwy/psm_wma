@@ -959,3 +959,20 @@ Do not start the 30k run.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_v2_semantic_generation_local_profile_759f04fe_fdde28b3.md`.
+
+
+## 2026-09-30 — generation+Local formatter blocker fixed
+
+New exact formal pair:
+
+- root `e272a589ce2204f5b4324e79c0f1227d855f3e97`
+- child/Gitlink `f89876a4bb013d9a48d622db776996ded295884b`
+
+Only three Ruff-formatting changes were made in the H3-F launcher. Previous pair already had 25
+pytest PASS, Ruff check PASS, bash-n PASS, diff-check PASS, and clean worktrees.
+
+Re-run complete CPU/static. If green, continue owner preflight -> generation+Local readiness10 ->
+fail-closed matrix. Do not start formal 30k yet.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_generation_local_formatter_fix_e272a589_f89876a4.md`.
