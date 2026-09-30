@@ -869,3 +869,34 @@ start the 30k long-run yet.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_reasoner_plus_ttt_trainable_profile_5c643045_69dcb48f.md`.
+
+
+## 2026-09-30 — old H3-F readiness10 accepted only for old trainable profile
+
+The evidence on:
+
+- root `422899072dce46a1602ea76ef767d498c709f469`
+- child `00241445e17bccbec63f9c29ee75531712bc3de1`
+
+is accepted as:
+
+`H3F_OWNER_LAUNCH_READINESS10_CLOSED_FOR_OLD_PROFILE`.
+
+It validated the owner facade, grouped runtime, 10-step execution, DCP, fail-closed matrix, and
+provided useful timing/memory evidence.
+
+However, that run still trained the old H3-E-derived generation/action + Local profile.
+
+The current formal H3-F pair is:
+
+- root `5c643045534fa080612239a6ba752a55226ef6c3`
+- child `69dcb48fa0e188f95d43590300dad7542b6a9ab5`
+
+and now trains Reasoner + Local-TTT only.
+
+Therefore the 30k run remains blocked. Re-run CPU/static + exact preflight + short readiness on
+the current pair, with explicit evidence for Reasoner optimizer inventory and non-zero Reasoner
+gradient.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_old_profile_readiness10_closure_and_current_revalidation_gate.md`.

@@ -16,7 +16,8 @@ Updated: 2026-09-30
 | H3-F formal launcher | **Reasoner + Local-TTT profile implemented / revalidation pending**, max_iter=30000, SAVE_ITER default=500 |
 | H3-F trainable profile | `net.language_model.*` excluding `_moe_gen` + `net.local_memory*`; all other params frozen |
 | H3-F checkpoints/eval | `1000, 2000, 4000, 8000, 12000, 16000, 20000, 24000, 30000` |
-| H3-F long-run started | **false; 10-step readiness smoke pending** |
+| H3-F old-profile readiness10 | **CLOSED** on `42289907/00241445`; retained as runtime/timing baseline only |
+| H3-F long-run started | **false; Reasoner+TTT readiness10 pending** |
 
 The 30k budget applies to the future RoboCasa H3-F formal Local-TTT training run. Historical
 LIBERO 5000-step planning/evidence below remains a historical snapshot and is not the current
