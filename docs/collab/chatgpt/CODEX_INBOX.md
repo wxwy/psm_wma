@@ -976,3 +976,32 @@ fail-closed matrix. Do not start formal 30k yet.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_generation_local_formatter_fix_e272a589_f89876a4.md`.
+
+
+## 2026-09-30 — H3-F generation+Local readiness10 CLOSED; formal 30k authorized
+
+Accepted exact formal pair:
+
+- root `e272a589ce2204f5b4324e79c0f1227d855f3e97`
+- child/Gitlink `f89876a4bb013d9a48d622db776996ded295884b`
+
+Verdict:
+
+`H3F_OWNER_LAUNCH_READINESS10_CLOSED_FOR_V2_SEMANTIC_GENERATION_LOCAL`
+
+Long-run Gate:
+
+`APPROVE_TO_START_H3F_FORMAL_30K_V2_SEMANTIC_GENERATION_LOCAL`
+
+The 8×H100 readiness passed 8/8 ranks with exact generation+Local inventory, selected Local
+params=165312, selected reasoner params=0, non-zero generation/action/Local gradient witnesses,
+finite losses, complete iter10 DCP, and full fail-closed matrix.
+
+The formal training contract remains official_v30/raw15, not V2 ego20D.
+
+Operationally, SAVE_ITER=500 remains owner-managed retention. The observed readiness median was
+~139.4 s/optimizer step, so the 30k job is a multi-week run; use the frozen milestone checkpoints
+as evaluation/recovery control points.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_v2_semantic_generation_local_readiness10_closure_and_30k_gate.md`.
