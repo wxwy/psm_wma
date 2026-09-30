@@ -6,18 +6,20 @@ Updated: 2026-09-30
 
 | Item | Value |
 |---|---|
-| Formal root | `6f9b693fe51882b02d4ac2a55bdfeeba9644d861` |
-| Cosmos child / Gitlink | `380ba039ea19f314dd1c7cd9e6b94fc01f131f59` |
+| Formal root | `759f04fe2321dae27ac02d07eb80df0e6bb5d138` |
+| Cosmos child / Gitlink | `fdde28b37b25fe29b1dd550b41ec7b37845ba371` |
 | RoboCasa train catalog | `9036` target-atomic train episodes |
 | B1 H5 cache | `9036/9036` valid; manifest `a8cad3f053232b348ea155f15bf79c2c9cf807dedcf39b89e246b17e43f283df` |
 | H100 Stage-A | regenerated Edge/raw15 one-step authority; Stage 3D CLOSED |
 | H3-E | **CLOSED**: 8×H100 fresh iter1 + same-job resume iter2 PASS |
 | H3-E smoke budget | fresh iter1 + same-job resume iter2 only |
-| H3-F formal launcher | **Reasoner + Local-TTT profile implemented / formatter round2 fixed / revalidation pending**, max_iter=30000, SAVE_ITER default=500 |
-| H3-F trainable profile | `net.language_model.*` excluding `_moe_gen` + `net.local_memory*`; all other params frozen |
+| H3-F formal launcher | **V2-semantic generation + Local-TTT implemented / revalidation pending**, max_iter=30000, SAVE_ITER default=500 |
+| H3-F trainable profile | V2 semantic generation/action + V3 Local four blocks; reasoner frozen |
+| H3-F data profile | official_v30 / 9036 / raw15 / current manifest; intentionally not V2 ego20D |
+| H3-F mesh profile | dp_shard8 for generation + Local slow params; intentionally not V2 Local replicated mesh |
 | H3-F checkpoints/eval | `1000, 2000, 4000, 8000, 12000, 16000, 20000, 24000, 30000` |
 | H3-F old-profile readiness10 | **CLOSED** on `42289907/00241445`; retained as runtime/timing baseline only |
-| H3-F long-run started | **false; Reasoner+TTT readiness10 pending** |
+| H3-F long-run started | **false; generation+Local readiness10 pending** |
 
 The 30k budget applies to the future RoboCasa H3-F formal Local-TTT training run. Historical
 LIBERO 5000-step planning/evidence below remains a historical snapshot and is not the current

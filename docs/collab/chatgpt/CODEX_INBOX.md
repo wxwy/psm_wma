@@ -932,3 +932,30 @@ had 34 pytest PASS and Ruff check PASS. Re-run full CPU/static; if green, contin
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_reasoner_ttt_format_round2_6f9b693f_380ba039.md`.
+
+
+## 2026-09-30 — H3-F switched to V2-semantic generation + Local-TTT
+
+New exact formal pair:
+
+- root `759f04fe2321dae27ac02d07eb80df0e6bb5d138`
+- child/Gitlink `fdde28b37b25fe29b1dd550b41ec7b37845ba371`
+
+Owner decision applied:
+
+- align trainable modules with V2 RoboCasa Local-TTT generation+local;
+- DO NOT align the dataset/action contract to V2.
+
+Formal trainables now use generation/action keys plus the V3-equivalent Local four blocks.
+Reasoner is frozen.
+
+The current V3 dataset remains official_v30 / 9036 / raw15 / manifest a8cad3f0..., and the current
+H100 dp_shard8 mesh remains unchanged.
+
+Previous Reasoner+Local readiness evidence is invalidated by this profile change.
+
+Please run CPU/static -> owner preflight -> readiness10 -> fail-closed matrix on this exact pair.
+Do not start the 30k run.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_v2_semantic_generation_local_profile_759f04fe_fdde28b3.md`.
