@@ -917,3 +917,18 @@ Reasoner+Local-TTT readiness10 → fail-closed matrix. Do not start the 30k run.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_reasoner_ttt_format_fix_970c50c1_b72c7bd1.md`.
+
+
+## 2026-09-30 — Reasoner+Local-TTT formatter round2 fixed
+
+New exact formal pair:
+
+- root `6f9b693fe51882b02d4ac2a55bdfeeba9644d861`
+- child/Gitlink `380ba039ea19f314dd1c7cd9e6b94fc01f131f59`
+
+Only the Ruff-stable multiline formatting of `forbidden_host` changed. Previous pair already
+had 34 pytest PASS and Ruff check PASS. Re-run full CPU/static; if green, continue owner preflight
+→ Reasoner+Local-TTT readiness10 → fail-closed matrix. Do not start formal 30k yet.
+
+Review:
+`docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_reasoner_ttt_format_round2_6f9b693f_380ba039.md`.
