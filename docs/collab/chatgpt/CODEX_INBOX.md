@@ -1005,3 +1005,42 @@ as evaluation/recovery control points.
 
 Review:
 `docs/collab/chatgpt/reviews/2026-09-30_V3_h3f_v2_semantic_generation_local_readiness10_closure_and_30k_gate.md`.
+
+
+## 2026-10-04 — V3 RoboCasa Local-TTT current-frame evidence remediation
+
+New exact formal implementation pair:
+
+- root `fc453ef7967cced3323ddf40ac480538c2a0ec19`
+- child/Gitlink `da6a9b972575af829af63e7747fad2fd73ae8157`
+
+ChatGPT fixed the V3 RoboCasa online Local-TTT evidence path.
+
+The previous implementation re-encoded the growing episode RGB prefix. The new implementation
+uses the existing model VAE authority and encodes only completed **current frames** with temporal
+length T=1. Future 4x4-frame training labels are not reconstructed at inference. Episode-long RGB
+history storage was removed; exact replay keeps only the last committed visual digest/summary and
+raw15 batch.
+
+Evidence protocol is now:
+
+- `current_frame_visual96_executed_action15_v4`
+- `robocasa_current_left_wrist_raw15_v2`
+
+Tests cover replan evidence counts 4 / 8 / 16.
+
+ds / ds_pro: **do not modify code**.
+
+Authorized execution only:
+
+1. sync this exact pair;
+2. run relevant CPU/static tests;
+3. run minimal iter500 RoboCasa required-mode smoke;
+4. verify adapted_steps for action_horizon/replan 4, 8 and 16;
+5. record GPU memory after server load and across replans to confirm it no longer grows with episode history;
+6. only if green, rerun the same 18 target-atomic x seed0 screening and preserve MP4s/task results.
+
+Do not continue long training before this Gate returns.
+
+Detailed review:
+`docs/collab/chatgpt/reviews/2026-10-04_V3_robocasa_current_frame_local_evidence_fc453ef7_da6a9b97.md`.
