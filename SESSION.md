@@ -1,3 +1,8 @@
+# V3 Corrected Phase 0 mapping（2026-10-05）
+
+- 任务 `V3-CORRECTED-PHASE0-MAPPING`：只读对照固定 root `380f886223bbf14ad8d133589aaf4a6bba750ecc`、child/Gitlink `c00a014444083c7c554fff7626f48cceaf5c5c31`、V2 donor `e3dc9ecce0a4a7223245dc4f5b5efde7b709fd92`、upstream `cf5d68c00d97ccd2480a2320ed652b92dec63102`。复用 v3.0 设计、官方 RoboCasa loader/state/decoder/server、V2 cache-hit/pool 与现有 Local/事务/DCP 入口；逐文件映射写入 `docs/build/PSM-WMA_V3_corrected_implementation_mapping_v0.1_2026-10-04.md`。本文列出 B1 视觉、raw dataset/chunk32、cache-hit 缺失、env.step 前 evidence 和 T/R 耦合等冲突及候选最小 seam，cache 真实 schema 和数值 parity 留后续只读/Gate 核验。
+- 本步实际修改：上述 mapping 文档、`TODO.md`、`SESSION.md`；后续仅 append live Inbox 审核申请。已执行 `git diff --check` PASS、root/child SHA 与 Gitlink 检查 PASS、child worktree clean；未执行项目测试/GPU/训练/仿真，因为 Phase 0 仅文档映射。当前状态 REVIEW，等待 GPT/Owner 对 mapping 与待裁决项审核；本段记录时未提交，commit SHA 待下步回填。
+
 # V3 H3-E 8×H100 integration smoke（2026-09-27）
 
 - H3-E CPU harness child `6c7b1333c94773b2fb6940b530a63eb74b82a753` 已提交并推送；root 本步更新 Gitlink 与 `docs/build/PSM-WMA_V3_h3e_cpu_harness_implementation_2026-09-27.md`，root SHA 以本次提交为准。预计修改文件仅 SESSION、TODO、implementation record、Gitlink；`artifacts/v3/` 保持未跟踪且不纳入。
