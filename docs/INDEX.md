@@ -5,6 +5,7 @@ This repository intentionally keeps historical design, Gate and review material.
 ## 1. Current truth — read these first
 
 - **Corrected V3 design authority:** `build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md` — Owner-confirmed latest Cosmos RoboCasa/raw15 host + V2 Local-TTT; cache-first shared composite latent; H_pred/R default16; implementation still pending.
+- **Current Corrected V3 Phase 1B authority:** `build/PSM-WMA_V3_phase1b_cache_source_binding_design_v0.4_2026-10-05.md` — GPT-frozen cache-to-flat-source binding design; supersedes uncommitted v0.2/v0.3 drafts; this design freeze does not authorize production changes, GPU, training or simulation.
 - **V3 supersession:** earlier migration v1.0/v1.1 and their B1/iter500/current-frame/streaming execution Gates are historical and superseded by v3.0. Publishing v3.0 does not approve the existing child implementation or authorize training/evaluation.
 - `../README.md` — project overview and entrypoints
 - `../PROJECT_STATUS.md` — current SHA, readiness and validated metrics
