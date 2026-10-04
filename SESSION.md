@@ -1294,3 +1294,7 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 - 2026-09-20 纠正：根仓 `3ecbb940...` 当时 Gitlink 仍为 `3b9e1db...`，因此先前称“resume 已在 V2 合入”错误。child `12ae8cfe...` 虽已存在于 child v2，但未被 root 纳入。
 - 已补根仓 Gitlink：root `c8265532078283f674a02671599df380c4a7dd40` → child `12ae8cfe7593002ee4294ddf3584d45cf6e670cd`。
 - child delta 仅 3 文件：`closed_loop_eval.py`、`closed_loop_resume_test.py`、`eval_libero_4in1_acceptance_v2.sh`；当前状态=REVIEW，尚未声称 runtime PASS。
+
+### V3 Phase3.5 design freeze（2026-10-05）
+
+- 目的：登记唯一 Phase3.5 parity 设计权威；已全文读取 v1.1，并只读对照 Phase3 closure `af7d1b7fb3b85a79df8d7f8edc00e6f24bde5874` / child `b6707e2c89fe6078e2a0bb4ff7266205b827825e`、current child 与历史 builder 流程。结论：文档冻结无 blocker；v1.1 取代未提交旧稿。本步仅提交 v1.1、`docs/INDEX.md` 与本条，TODO、child/Gitlink 不变；未执行 probe、真实资产或 GPU 验证。提交 SHA 以本次 docs root commit 为准；Phase4 仍需真实 parity Gate PASS。
