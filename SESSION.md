@@ -1298,3 +1298,9 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 ### V3 Phase3.5 design freeze（2026-10-05）
 
 - 目的：登记唯一 Phase3.5 parity 设计权威；已全文读取 v1.1，并只读对照 Phase3 closure `af7d1b7fb3b85a79df8d7f8edc00e6f24bde5874` / child `b6707e2c89fe6078e2a0bb4ff7266205b827825e`、current child 与历史 builder 流程。结论：文档冻结无 blocker；v1.1 取代未提交旧稿。本步仅提交 v1.1、`docs/INDEX.md` 与本条，TODO、child/Gitlink 不变；未执行 probe、真实资产或 GPU 验证。提交 SHA 以本次 docs root commit 为准；Phase4 仍需真实 parity Gate PASS。
+
+### V3 Phase3.5 parity probe implementation（2026-10-05）
+
+- 任务 `V3-REAL-CACHE-ONLINE-VAE-PARITY` 已认领；authority 为 design root `62cefe03d393005667192538c030e7fdcf4c35bc` 与 `/tmp/CX_PHASE3P5_REAL_PARITY_PROBE.md`。预计仅新增 child `tools/v3/verify_robocasa_exact_window_real_parity.py`、`tools/v3/verify_robocasa_exact_window_real_parity_test.py`；root 后续仅 Gitlink、TODO、SESSION、canonical Inbox。先 synthetic CPU/static，再 child→root 提交推送并请求 GPT fresh review；不运行真实 VAE/GPU/资产。未跟踪 `docs/build/.__dpc00000000cfccdeec00000338` 始终排除。当前未提交。
+- 实现步骤：阅读并复用 Phase3 closure、Phase3 v1.0、Phase3.5 v1.1、current Phase1A/1B/2 reader/contract、官方 composite/convert/resize、Wan tokenizer/normalizer/native crop；child `6feb9a13ba85b612f738bbb7c305e001722328ca` 已提交并推送 `v3-local-ttt`，相对 `b6707e2c89fe6078e2a0bb4ff7266205b827825e` 恰仅新增上述两文件。probe 只读整 episode source rows/timestamps 与视频，先验证 exact witnesses，再各 camera decode 一次、官方 composite/convert/VideoResize 一次，按选中窗口独立 normal full VAE encode；输出 pre-crop 五帧、native post-crop 与 z0 数值 JSON。dry-run 缺失 VAE 文件在 tokenizer 构造前 fail-closed；camera_keys 记录官方 feature strings。
+- 验证：合并新 probe、Phase1A/1B/2/3 五个相关测试文件，synthetic CPU `185 passed`；新文件 Ruff check、format --check、py_compile、child staged diff-check PASS；当前无真实 VAE/GPU/source/cache/checkpoint 执行，也无 ds 独立 Evidence。下一步 root Gitlink/TODO/SESSION formal commit，另以 canonical Inbox bookkeeping commit 请求 GPT fresh source review；当前 root 未提交，`.__dpc...` 排除。
