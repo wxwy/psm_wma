@@ -21,6 +21,7 @@ This repository intentionally keeps historical design, Gate and review material.
 - `build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.9.md`
 - `build/PSM-WMA_Local_Memory_v0.3.5_active_route_member_shape_refreeze_design_v0.3.md`
 - `build/PSM-WMA_Local_Memory_A2_delivery_runbook_2026-09-18.md`
+- `build/PSM-WMA_V3_migration_detailed_design_v1.1_2026-10-04.md` — current V3 migration / H3-F online Local-TTT / RoboCasa authority
 ## 3. Historical engineering record
 
 `build/` also contains superseded versions, implementation designs, source audits, remediation plans and Gate runbooks. They are retained for provenance. A newer frozen/refrozen document or an explicit durable decision in `../MEMORY/DECISIONS.md` supersedes older conflicting text.
