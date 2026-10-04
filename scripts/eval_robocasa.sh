@@ -44,9 +44,11 @@ TIMEOUT="${TIMEOUT:-600}"
 MUJOCO_GL="${MUJOCO_GL:-egl}"
 export MUJOCO_GL
 
-if [[ "$LOCAL_MEMORY_MODE" == "required" && "$ACTION_HORIZON" != "16" ]]; then
-  echo "ERROR: required V3 Local-TTT must use ACTION_HORIZON=16 (T=16)" >&2
-  exit 2
+if [[ "$LOCAL_MEMORY_MODE" == "required" ]]; then
+  if ! [[ "$ACTION_HORIZON" =~ ^[0-9]+$ ]] || (( ACTION_HORIZON < 1 || ACTION_HORIZON > 16 )); then
+    echo "ERROR: required V3 Local-TTT requires 1 <= ACTION_HORIZON <= 16 (Local TBPTT T=16)" >&2
+    exit 2
+  fi
 fi
 
 TASK_NAME="$(basename "$(dirname "$(dirname "$DATASET_DIR")")")"
