@@ -4,6 +4,8 @@ This repository intentionally keeps historical design, Gate and review material.
 
 ## 1. Current truth — read these first
 
+- **Corrected V3 design authority:** `build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md` — Owner-confirmed latest Cosmos RoboCasa/raw15 host + V2 Local-TTT; cache-first shared composite latent; H_pred/R default16; implementation still pending.
+- **V3 supersession:** earlier migration v1.0/v1.1 and their B1/iter500/current-frame/streaming execution Gates are historical and superseded by v3.0. Publishing v3.0 does not approve the existing child implementation or authorize training/evaluation.
 - `../README.md` — project overview and entrypoints
 - `../PROJECT_STATUS.md` — current SHA, readiness and validated metrics
 - `current/architecture.md` — current system architecture
@@ -11,6 +13,8 @@ This repository intentionally keeps historical design, Gate and review material.
 - `current/training.md` — train and resume workflow
 - `current/evaluation.md` — LIBERO evaluation workflow
 - `current/experiments.md` — current experiment matrix and evidence
+
+For Corrected V3, read v3.0 first; conflicting older operational summaries do not override the Owner-confirmed design or the newest exact-pair review/handoff.
 
 ## 2. Canonical design authority
 
@@ -21,7 +25,9 @@ This repository intentionally keeps historical design, Gate and review material.
 - `build/PSM-WMA_Local_Memory_canonical_training_runtime_contract_v0.3.9.md`
 - `build/PSM-WMA_Local_Memory_v0.3.5_active_route_member_shape_refreeze_design_v0.3.md`
 - `build/PSM-WMA_Local_Memory_A2_delivery_runbook_2026-09-18.md`
-- `build/PSM-WMA_V3_migration_detailed_design_v1.1_2026-10-04.md` — current V3 migration / H3-F online Local-TTT / RoboCasa authority
+- `build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md` — current Corrected V3 design authority; production conformance requires subsequent implementation and Evidence.
+- `build/PSM-WMA_V3_migration_detailed_design_v1.1_2026-10-04.md` — historical B1/iter500 migration design, superseded by v3.0; not an execution authority.
+
 ## 3. Historical engineering record
 
 `build/` also contains superseded versions, implementation designs, source audits, remediation plans and Gate runbooks. They are retained for provenance. A newer frozen/refrozen document or an explicit durable decision in `../MEMORY/DECISIONS.md` supersedes older conflicting text.
@@ -39,6 +45,6 @@ This repository intentionally keeps historical design, Gate and review material.
 - `../TODO.md` — current task queue
 - `../SESSION.md` — execution / handoff ledger
 - `../MEMORY/DECISIONS.md` — durable engineering decisions
-- `../AGENTS.md` — agent collaboration and execution governance
+- `../AGENTS.md` — agent collaboration and execution governance; Corrected V3 role overrides are recorded in v3.0 and the newest canonical handoff.
 
 These files are operational infrastructure, not the project introduction.
