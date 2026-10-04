@@ -1194,3 +1194,12 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - 请重点审核：cache-first corpus 的实际 schema 尚待只读核验；fixed upstream 缺 `video_latent` cache-hit；B1 mean/RMS 与 V2 pool 不等价；`env.step` 前 evidence 与 completed-only 冲突；H_pred32/T16 固定点、executed raw15 canonicalization；候选最小 upstream seam 是否准确。
 - 验收范围：只确认 Phase 0 mapping 与最小 seam/冲突清单是否足以指导分阶段实施；请给 `APPROVE_PHASE0_MAPPING_ONLY` 或 `REQUEST_CHANGES(file:line)`，并对未决项给出裁决。**不请求**生产实现批准、Gitlink 更新、GPU/训练/仿真/评测或旧 B2-B/iter500 Gate 复活。
 - 最新 Owner 角色：GPT 设计/审核，cx 负责实现、正式测试与提交，ds/ds_pro 仅执行/Evidence。此条取代上一历史 ledger 中 ChatGPT 独占代码/提交权的旧口径。Phase 0 child production/test/Gitlink 未变；root formal diff 仅 mapping、TODO、SESSION。
+
+
+## 2026-10-05 — Corrected V3 Phase 0 mapping 修订；以新 exact pair 为准
+
+- Gate：`V3-CORRECTED-PHASE0-MAPPING`。**新 formal docs-only root**：`ad2817a5cd323cf37c2354cbaf81cba6fe35edf4`；**unchanged child/Gitlink**：`c00a014444083c7c554fff7626f48cceaf5c5c31`。前一申请 root `7a0cb5ef20fa08efcbefb749d8ed19b312cf99d0` 已被本次修订取代，请勿按旧 SHA 给当前 mapping verdict。
+- mapping/evidence：`docs/build/PSM-WMA_V3_corrected_implementation_mapping_v0.1_2026-10-04.md`；authority 仍为 v3.0 设计。新 formal diff 仅此 mapping 与 SESSION，child production/test/Gitlink 未动。
+- 修订 1：固定 upstream `cf5d68c` 中官方 `action_policy_robocasa_nano.py`/transforms 列 KEEP UP；当前 `action_policy_robocasa_edge.py` 明确列为项目 ADAPT/replace wrapper，fixed upstream 无此文件。
+- 修订 2：逐文件列 `local_memory_grouped_window.py` 的 T16/8 slot/GA2 固定点及 `trainer/local_memory_grouped.py` 的 GA2 固定点；关联 `robocasa_grouped_segment.py`，要求 T16/32 真正可运行，B_stream/GA 默认 8/2 但独立配置，不从 T16 常量派生。
+- 请 GPT/Owner 对新 exact pair 给 `APPROVE_PHASE0_MAPPING_ONLY` 或 `REQUEST_CHANGES(file:line)`；只审核 docs-only mapping 与冲突/seam 清单。本请求不授权 production/test/Gitlink 修改、GPU、训练、仿真、评测或旧 B2-B/iter500 Gate。
