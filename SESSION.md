@@ -1,3 +1,8 @@
+# V3 Corrected Phase 2 设计输入（2026-10-05）
+
+- Phase1B 正式 closure：GPT review `docs/collab/chatgpt/reviews/2026-10-05_V3_phase1b_closure_d7aa5673_21e60d6e.md` 对 formal root `d7aa56730b8d04c50ed471179a0c08a038f3c07e` / child `21e60d6eb3a04846ffa7280aca18f6005399363e` 给 `APPROVE_PHASE1B_CACHE_SOURCE_BINDING_ONLY`；closure review 已作为单文件 bookkeeping root `a3156bb7927770c453719fc578e76ba23e78df87` 推送。ds 独立 Evidence 为 115 passed/Ruff/format/diff-check PASS，只覆盖 synthetic/local CPU/static。
+- 新任务 `V3-CORRECTED-PHASE2-DESIGN`：当前 V3 未见 Phase2 专项 frozen design。cx 只读核对 Phase1B raw12/state16 输出、官方 `RoboCasaLeRobotDataset` 转换/clean state 行、Case B sequence plan，以及 Edge/Nano/H100 旧 `[33]`/chunk32 冲突，写入 `docs/build/PSM-WMA_V3_phase2_source_seam_audit_v0.1_2026-10-05.md` 供 GPT 冻结设计；该审计不是设计 authority。预计/实际 root 仅该审计、TODO、SESSION，后续 append Inbox 请求 GPT Phase2 design；child/Gitlink 不动。未运行项目代码、测试、GPU、训练或仿真，未访问真实训练资产。本条落盘时尚未提交。
+
 # V3 Corrected Phase 1B cache-to-flat-source binding（2026-10-05）
 
 - GPT 对旧 formal pair root `610737dd841dd2cd6ef3a3661d323808d41b8ef7` / child `db2701554ae26c50e26d1854ef3b1182de37118d` 的 fresh source review `docs/collab/chatgpt/reviews/2026-10-05_V3_phase1b_source_review_610737dd_db270155.md` verdict=`REQUEST_CHANGES`；唯一 blocker 为 `summary().mismatch_counters` 空 dict。review 原文纳入本次 root formal commit，不改内容。另一用户提及的 `2026-10-05_V3_phase1b_design_v0_4_adoption_39258667_a40e8b78.md` 在当前树不存在；既有正式 adoption review `2026-10-05_V3_phase1b_design_adoption_39258667_a40e8b78.md` 已由 root `76341a03` 原样提交，授权 v0.4。
