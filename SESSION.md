@@ -2,6 +2,7 @@
 
 - 任务 `V3-CORRECTED-PHASE0-MAPPING`：只读对照固定 root `380f886223bbf14ad8d133589aaf4a6bba750ecc`、child/Gitlink `c00a014444083c7c554fff7626f48cceaf5c5c31`、V2 donor `e3dc9ecce0a4a7223245dc4f5b5efde7b709fd92`、upstream `cf5d68c00d97ccd2480a2320ed652b92dec63102`。复用 v3.0 设计、官方 RoboCasa loader/state/decoder/server、V2 cache-hit/pool 与现有 Local/事务/DCP 入口；逐文件映射写入 `docs/build/PSM-WMA_V3_corrected_implementation_mapping_v0.1_2026-10-04.md`。本文列出 B1 视觉、raw dataset/chunk32、cache-hit 缺失、env.step 前 evidence 和 T/R 耦合等冲突及候选最小 seam，cache 真实 schema 和数值 parity 留后续只读/Gate 核验。
 - 本步实际修改：上述 mapping 文档、`TODO.md`、`SESSION.md`；后续仅 append live Inbox 审核申请。已执行 `git diff --check` PASS、root/child SHA 与 Gitlink 检查 PASS、child worktree clean；未执行项目测试/GPU/训练/仿真，因为 Phase 0 仅文档映射。当前状态 REVIEW，等待 GPT/Owner 对 mapping 与待裁决项审核；本段记录时未提交，commit SHA 待下步回填。
+- Phase 0 formal docs-only root `7a0cb5ef20fa08efcbefb749d8ed19b312cf99d0` 已推送 origin/V3；formal child/Gitlink 仍为 `c00a014444083c7c554fff7626f48cceaf5c5c31`。提交范围由 `git diff-tree --no-commit-id --name-only -r 7a0cb5ef20fa08efcbefb749d8ed19b312cf99d0` 核对为 mapping、TODO、SESSION。live Inbox append 容量检查 73651+1754=75405 bytes，已追加 exact-pair GPT/Owner 审核申请；此处仅为 bookkeeping，不改变 formal pair、不自授 verdict。未送 MM/Kimi 旧 V2 三方审核，也未进入旧 B2-B Gate。
 
 # V3 H3-E 8×H100 integration smoke（2026-09-27）
 

@@ -1184,3 +1184,13 @@ Scope of this handoff:
   is authorized by this entry.
 
 This entry is append-only; earlier ledger history is preserved as historical evidence.
+
+
+## 2026-10-05 — Corrected V3 Phase 0 implementation mapping；请求 GPT/Owner 审核
+
+- Gate：`V3-CORRECTED-PHASE0-MAPPING`；**formal docs-only root**：`7a0cb5ef20fa08efcbefb749d8ed19b312cf99d0`；**unchanged child/Gitlink**：`c00a014444083c7c554fff7626f48cceaf5c5c31`。
+- 唯一设计 authority：`docs/build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md`；提交的 evidence/mapping：`docs/build/PSM-WMA_V3_corrected_implementation_mapping_v0.1_2026-10-04.md`。
+- 对照固定 official upstream `cf5d68c00d97ccd2480a2320ed652b92dec63102` 与 V2 donor `e3dc9ecce0a4a7223245dc4f5b5efde7b709fd92`。文档逐文件列 KEEP/ADAPT/RETIRE/ADD WRAPPER、现状、authority、改动原因、测试与 core seam，并列 A–J、阶段顺序、旧 B1/iter500 退出和待裁决冲突。
+- 请重点审核：cache-first corpus 的实际 schema 尚待只读核验；fixed upstream 缺 `video_latent` cache-hit；B1 mean/RMS 与 V2 pool 不等价；`env.step` 前 evidence 与 completed-only 冲突；H_pred32/T16 固定点、executed raw15 canonicalization；候选最小 upstream seam 是否准确。
+- 验收范围：只确认 Phase 0 mapping 与最小 seam/冲突清单是否足以指导分阶段实施；请给 `APPROVE_PHASE0_MAPPING_ONLY` 或 `REQUEST_CHANGES(file:line)`，并对未决项给出裁决。**不请求**生产实现批准、Gitlink 更新、GPU/训练/仿真/评测或旧 B2-B/iter500 Gate 复活。
+- 最新 Owner 角色：GPT 设计/审核，cx 负责实现、正式测试与提交，ds/ds_pro 仅执行/Evidence。此条取代上一历史 ledger 中 ChatGPT 独占代码/提交权的旧口径。Phase 0 child production/test/Gitlink 未变；root formal diff 仅 mapping、TODO、SESSION。
