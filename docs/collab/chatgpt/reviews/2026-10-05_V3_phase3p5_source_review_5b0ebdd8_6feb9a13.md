@@ -1,204 +1,58 @@
-# V3 Phase 3.5 real cache vs online Wan VAE parity probe — GPT fresh source review
+# V3 Phase3.5 real cache vs online Wan VAE parity — GPT fresh source review
 
 - 日期：2026-10-05
-- Gate：V3-REAL-CACHE-ONLINE-VAE-PARITY
-- formal root：5b0ebdd8394227e3d3f7966ce5bb99aecbfd3327
-- formal child/Gitlink：6feb9a13ba85b612f738bbb7c305e001722328ca
-- parent Phase3 child：b6707e2c89fe6078e2a0bb4ff7266205b827825e
-- design authority：docs/build/PSM-WMA_V3_phase3p5_real_cache_online_vae_parity_design_v1.1_2026-10-05.md
-- design root：62cefe03d393005667192538c030e7fdcf4c35bc
+- Gate：`V3-REAL-CACHE-ONLINE-VAE-PARITY`
+- formal root：`5b0ebdd8394227e3d3f7966ce5bb99aecbfd3327`
+- formal child/Gitlink：`6feb9a13ba85b612f738bbb7c305e001722328ca`
+- parent Phase3 child：`b6707e2c89fe6078e2a0bb4ff7266205b827825e`
+- design authority：`docs/build/PSM-WMA_V3_phase3p5_real_cache_online_vae_parity_design_v1.1_2026-10-05.md`
 
 ## Verdict
 
-APPROVE_TO_RUN_PHASE3P5_REAL_DRY_RUN_ONLY
+`REQUEST_CHANGES`
 
-这是 source-review + **真实资产 dry-run-only** 授权。
+不得授权 ds dry-run/observational。当前 parity 逻辑大部分通过 source review，但真实 Wan multi-device 初始化存在一个 HIGH blocker；synthetic fake tokenizer 没覆盖到。
 
-它不是：
-- VAE parity PASS；
-- observational real VAE encode授权；
-- threshold授权；
-- Phase4 Local-TTT授权。
+## PASS findings
 
-ds 只允许在能访问 matching real cache/source/VAE file 的执行环境上做 dry-run；如果资产路径不可用，必须返回 BLOCKED，禁止猜路径、下载、复制或修改资产。
+1. formal child scope 精确两份新 tool/test，无 production core 修改。
+2. exact identity：Phase1A/1B/2 catalog/source/contract 在视频/VAE前构造，selected window使用 exact key/start/global rows，无 nearest/floor。
+3. v1.1 chronology 正确：每 episode先完整 rows/timestamps，left/wrist各整 episode decode一次，official compose一次、official float->uint8一次、VideoResize整 episode一次，最后切每个17-frame window独立 full encode。
+4. decode timestamps 正确使用 `from_timestamp + episode timestamp`；current `decode_video_frames(path,timestamps,tolerance_s,backend)` API 匹配。
+5. active pixel path无 separate-camera VAE/B1/old vision_vae。
+6. VAE config从 Phase2 frozen manifest authority resolve，只覆盖 local `bucket_name/vae_path`；streaming/cached encoder均拒绝。
+7. pre-crop full5、temporal0..4、official post-crop、z0 metrics均存在；post-crop直接调用 `OmniMoTModel._remove_padding_from_latent`。
+8. thresholded run在 encode前强制 >=3 task classes / >=9 exact windows；observational无threshold只报告，不自判PASS。
+9. dry-run不构造 tokenizer、不encode；仍检查 exact identities、video files、resolved contract与static geometry。
+10. probe唯一文件写操作是 `--output-json`；无 cache/source/latent写入。
+11. cx self-test记录：relevant synthetic suite `185 passed`；Ruff/format/py_compile/diff-check PASS；尚无 ds Evidence。
 
-## Formal scope
+## HIGH blocker — Wan scale tensors 未跟随 requested device
 
-formal child 相对 Phase3 parent仅新增：
-1. tools/v3/verify_robocasa_exact_window_real_parity.py
-2. tools/v3/verify_robocasa_exact_window_real_parity_test.py
+- file:line：child `tools/v3/verify_robocasa_exact_window_real_parity.py:440-443`
+- current：
+  - `tokenizer = Wan2pt2VAEInterface(...)`
+  - 仅执行 `tokenizer.model.model.to(device).eval()`
+  - 没有移动 `tokenizer.model.scale=(mean, 1/std)`
+- current Wan implementation事实：
+  - `WanVAE.__init__` 将 `scale` tensor 创建在 constructor 的默认 `DEVICE`；
+  - `WanVAE.encode()` 调 `self.model.encode(videos, self.scale)`；
+  - `WanVAE` 本身不是 nn.Module，因此只对 inner `model.to(device)` 不会自动移动 `scale`。
+- repository precedent：
+  `tools/v3/build_robocasa_b1_h5_cache.py:329-331` 在 model.to(device) 后显式：
+  `scale_mean, scale_inv_std = vae.model.scale`
+  `vae.model.scale = (scale_mean.to(device), scale_inv_std.to(device))`
+- impact：
+  当 `--device cuda:1` 等不是 Wan constructor 默认 device 时，真实 encode可能出现 input/model/scale device mismatch；fake CPU tokenizer测试无法发现。
+- acceptance：
+  1. parity probe在 tokenizer构造后，将 inner model和 `model.scale` 两个 tensor都迁到 requested device，再 eval；
+  2. 不导入/调用旧 B1 parity/cache逻辑；只复用当前 Wan object contract；
+  3. 增 synthetic定向 test，用 fake tokenizer whose scale tensors起始在不同可判别 device/状态（CPU环境可用 meta/spy或封装可观测 `.to(device)`），证明 requested-device preparation 同时处理 model与scale；
+  4. test同时证明 no streaming/cached encoder仍保持；
+  5. 重新跑 Phase3.5 + relevant Phase1A/1B/2/3 synthetic tests、Ruff/format/py_compile/diff-check；
+  6. fresh child/root exact pair后再审。
 
-无 dataset/model/tokenizer/trainer/inference/simulator production修改。
+## Boundary
 
-formal root仅：
-- Gitlink -> 6feb9a13...
-- TODO/SESSION handoff
-
-untracked docs/build/.__dpc... 不属于 formal tree，任何后续提交也不得纳入。
-
-## Source review findings
-
-### 1. Builder-fidelity pixel route — PASS
-
-probe对每个 selected episode：
-- 精确读取 Phase1B bound source rows/timestamps；
-- cache global-row witness exact check；
-- left camera整 episode decode一次；
-- wrist camera整 episode decode一次；
-- current official RoboCasaLeRobotDataset._compose_left_wrist；
-- current official/inherited _convert_video；
-- VideoResize entire episode一次；
-- resize后才切 selected 17-frame windows。
-
-该组织顺序与历史 exact cache builder一致，避免 per-window video seek/backend差异混入 VAE parity。
-
-历史 compose_robocasa_video 已从 current child移除，但已审其旧实现：
-- native 256x256 left_wrist 分支就是 left|wrist pixel concat；
-- 与 current _compose_left_wrist 在本 Gate强制 native256 input 下逐值等价。
-
-### 2. Historical/current single-view encode semantic — PASS
-
-历史 cache helper的 single-view encode：
-uint8 -> fp32 -> /127.5 - 1 -> tokenizer.encode -> contiguous.float
-
-current active helper：
-normalize_uint8_item -> tokenizer.encode -> contiguous.float
-
-数学/布局一致。
-
-新 probe禁止：
-- old vision_vae import；
-- B1 evidence/cache；
-- streaming encode；
-- separate-camera VAE。
-
-### 3. Wan runtime contract — PASS
-
-- CorrectedRoboCasaPolicyContract.from_cache_catalog
-- full manifest encode_exact_durations保留
-- manifest-compatible encode_chunk_frames
-- runtime只覆盖 bucket_name="" 与 CLI vae_path
-- VAE path在 tokenizer构造前必须是 local file
-- use_streaming_encode=False
-- no cached encoder
-- cudnn.benchmark=False
-- tokenizer.model.model.to(device).eval()
-- torch.inference_mode()
-
-与原 cache builder关键 runtime设置一致。
-
-### 4. Compare layers — PASS
-
-每 window：
-- pre-crop full padded latent；
-- 5 temporal latent frame metrics；
-- native OmniMoTModel._remove_padding_from_latent post-crop；
-- post-crop z0。
-
-工具不复制 native crop公式。
-
-### 5. Gate semantics — PASS
-
-- dry-run => DRY_RUN_PASS, parity_gate_pass=null
-- no threshold real encode => OBSERVATIONAL_NO_THRESHOLD, parity_gate_pass=null
-- threshold模式在任何 encode前强制 >=3 task classes / >=9 windows
-- threshold只由外部参数给定，tool不自动拟合
-- threshold breach => FAIL/nonzero
-
-因此单 episode observational不能伪装 final PASS。
-
-### 6. Read-only contract — PASS
-
-正式 probe唯一 write path是 --output-json。
-source中无 torch.save/cache write/manifest rewrite/debug tensor dump。
-
-### 7. Test coverage — PASS for source authorization
-
-cx synthetic/offline作者自测：
-- combined Phase1A/1B/2/3 + Phase3.5：185 passed
-- Phase3.5 new tests：19 passed
-- Ruff check/format：PASS
-- py_compile：PASS
-- formal diff-check：PASS
-- exact scope：2 files
-
-正式 tests实际覆盖：
-- first/mid/terminal selection
-- final 3-task/9-window validator
-- whole-episode row/timestamp
-- exact witness
-- video path
-- per-episode/per-camera decode count
-- official compose/convert
-- real VideoResize geometry
-- current normalize
-- fake tokenizer encode count
-- pre/post/z0 metrics
-- shape/dtype/nonfinite
-- missing VAE path before tokenizer
-- run-level successful dry-run
-- run-level fake observational encode
-- no legacy/B1 import/write path
-
-作者自测不等于 real parity Evidence，但足够授权 dry-run。
-
-## Authorized ds dry-run
-
-前提：执行环境必须已有、且只读可访问：
-- exact cache root
-- matching flat LeRobot v3 source root
-- Wan VAE file
-
-不要从历史 manifest absolute path猜 runtime path。
-
-建议环境变量由 Owner/执行环境显式提供：
-- CACHE_ROOT
-- SOURCE_ROOT
-- WAN_VAE_PATH
-- PARITY_OUT
-
-若任一为空或本地不存在：
-- 返回 BLOCKED_ASSET_PATH
-- 不执行后续；
-- 不搜索整个机器；
-- 不下载。
-
-Exact pair lock:
-- root object 5b0ebdd8394227e3d3f7966ce5bb99aecbfd3327
-- gitlink 6feb9a13ba85b612f738bbb7c305e001722328ca
-- child HEAD/origin child必须相同
-- child formal scope必须精确两 parity files
-
-Dry-run command from child root：
-
-PYTHONPATH=. HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
-/disk/rl/worktrees/cosmos-framework-v3/.venv/bin/python \
-tools/v3/verify_robocasa_exact_window_real_parity.py \
-  --cache-root "$CACHE_ROOT" \
-  --source-root "$SOURCE_ROOT" \
-  --vae-path "$WAN_VAE_PATH" \
-  --output-json "$PARITY_OUT" \
-  --dry-run
-
-本次不要传：
-- --max-abs-threshold
-- --hash-vae
-- --device cuda（dry-run不需要）
-- --video-backend（保持 builder/current default语义）
-
-Evidence必须保存：
-- exact pair/gitlink/scope
-- env path existence/type（只展示路径，不改资产）
-- stdout/stderr
-- output JSON
-- command rc
-- repo status before/after
-
-PASS iff：
-- rc=0
-- status=DRY_RUN_PASS
-- parity_gate_pass=null
-- cache/source identity/witness/selected video path/resolved VAE contract/expected geometry全部成功
-- repo与资产均无修改
-
-dry-run PASS 后仍不得执行 observational VAE encode；把 JSON回 GPT审核后再下下一道授权。
+本 review 不否定 design v1.1，也不授权真实资产、VAE/GPU、训练、仿真或 Phase4。
+ds保持暂停；cx只修上述 device-preparation blocker及正式测试。
