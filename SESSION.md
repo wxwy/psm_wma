@@ -1,3 +1,7 @@
+# V3 Corrected Phase 2 design freeze（2026-10-05）
+
+- GPT 已重新生成并冻结 `docs/build/PSM-WMA_V3_phase2_raw15_state15_hpred16_design_v1.1_2026-10-05.md`，取代损坏且未提交的 v1.0。cx 全文只读复核 v1.1、Corrected V3 v3.0、Phase0 mapping、Phase1B closure 与 Phase2 source seam audit，并核对当前 child 官方 `_build_frame_wise_action`/`_build_initial_state`、WAM Case B 17/17、ActionProcessor、OmniMoT action mask/noising/loss、Phase1A `vae_encode_contract` 和 Edge tokenizer 配置；未发现 docs-only freeze blocker。v1.1 将 Phase2 限于官方 raw12→raw15/state16→state15 桥接、17 行 state/action CPU 合同与 manifest 驱动的 H_pred16/VAE 校验；旧 chunk32/[33] 必须 fail-closed，server/eval 与真实执行仍留后续 Gate。本步 root 仅提交 v1.1 原文、`docs/INDEX.md` 当前 Phase2 索引与本条 SESSION；child/Gitlink/TODO 不动。只执行只读文件/源码/Git 检查及文档 diff-check；未运行项目代码、测试、GPU、训练或仿真，未访问真实训练资产。design root SHA 以本次提交为准；Phase2 production 尚未实施。
+
 # V3 Corrected Phase 2 设计输入（2026-10-05）
 
 - Phase1B 正式 closure：GPT review `docs/collab/chatgpt/reviews/2026-10-05_V3_phase1b_closure_d7aa5673_21e60d6e.md` 对 formal root `d7aa56730b8d04c50ed471179a0c08a038f3c07e` / child `21e60d6eb3a04846ffa7280aca18f6005399363e` 给 `APPROVE_PHASE1B_CACHE_SOURCE_BINDING_ONLY`；closure review 已作为单文件 bookkeeping root `a3156bb7927770c453719fc578e76ba23e78df87` 推送。ds 独立 Evidence 为 115 passed/Ruff/format/diff-check PASS，只覆盖 synthetic/local CPU/static。
