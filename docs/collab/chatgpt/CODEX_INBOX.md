@@ -1131,3 +1131,56 @@ Do not continue/restart formal training under this Gate.
 Detailed review:
 
 `docs/collab/chatgpt/reviews/2026-10-04_V3_migration_iter500_b1_streaming_3e86f2b1_c00a0144.md`.
+
+
+## 2026-10-04 — Owner-confirmed Corrected V3 Detailed Design v3.0 published; old B1/iter500 Gates superseded
+
+Formal design target (not an implementation approval):
+
+- root design SHA: `32c02bf6e295bdecf333b89619a07ac213600f53`
+- unchanged child/Gitlink SHA: `c00a014444083c7c554fff7626f48cceaf5c5c31`
+- document: `docs/build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md`
+- review: `docs/collab/chatgpt/reviews/2026-10-04_V3_design_v3.0_review_32c02bf6_c00a0144.md`
+
+Owner has confirmed the design item-by-item and requested recheck/publication only.
+The v3.0 document retains all 61 items, clarifies H_pred/R/T, exact V2 visual96 pooling,
+pre-action/completed chronology, official env12 ordering/mode/clipping, cache corpus reporting,
+and the distinction between absent future ground truth and model-generated/noise future slots.
+
+Current operative contract:
+
+- latest official Cosmos RoboCasa/raw15 host; V2 Local-TTT functional donor;
+- training corpus is determined by the specified local latent cache, not raw-dataset enumeration;
+- one composite `[left|wrist] -> VAE` definition shared by Policy and Local;
+- cache default: 17 frames -> current latent + 4 future latents; Local consumes current only;
+- inference encodes only current observed frame (T_pixel=1), reuses the same z_t, no B1 streaming;
+- H_pred/chunk_length default16 and eval R/replan_steps default16; T independently configurable;
+- direct-DROID -> Local-TTT training, no native-training prerequisite;
+- iter500 is excluded from Corrected V3 initialization/evaluation; preserve all historical artifacts;
+- prefer zero modifications to cosmos-framework; enumerate any necessary minimal seam before implementation;
+- print and persist actual accepted corpus/task/episode/window/consumer statistics at startup;
++- W0 is model state; per-slot W_t is episode runtime and separate training-resume state.
+
+Supersession:
+
+All earlier B1 dual-camera/causal-endpoint/streaming and iter500 reuse execution instructions in this
+ledger are historical. In particular, the fc453ef7/da6a9b97 and 3e86f2b1/c00a0144 Gates MUST NOT be
+continued under their old design. Earlier statements that c00a0144 had only Evidence blockers do
+not apply under the newly confirmed v3.0 contract: its visual implementation still needs migration.
+
+Implementation-conformance verdict on the unchanged child: `REQUEST_CHANGES`.
+This does not reject publication of the Owner-confirmed design; it prevents mistaking documentation
+publication for production conformance, training approval, or an SR result.
+
+Scope of this handoff:
+
+- ChatGPT is the sole code/official-test/commit/push/gitlink modification authority; ds/ds_pro only execute
+  explicitly authorized tests and collect Evidence, never repair code.
+- No production code, child ref/gitlink, training data, checkpoints or experiment outputs are modified
+  by this design publication.
+- Next permitted planning work is exact V2/upstream file mapping and listing the required extension
+  seams. Actual implementation/execution remains subject to the Owner-aligned phase/Gate scope.
+- No GPU run, new long training, native ablation, cache rebuild, checkpoint deletion or iter500 retry
+  is authorized by this entry.
+
+This entry is append-only; earlier ledger history is preserved as historical evidence.
