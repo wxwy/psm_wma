@@ -59,7 +59,7 @@ mkdir -p "$RESULT_ROOT"
 export PYTHONPATH="$CHILD${PYTHONPATH:+:$PYTHONPATH}"
 
 SERVER_LOG="$RESULT_ROOT/action_server.log"
-CUDA_VISIBLE_DEVICES="$EVAL_GPU" "$SERVER_PYTHON" -m cosmos_framework.scripts.action_policy_server_robocasa   --checkpoint-path "$CHECKPOINT_PATH"   --config-file "$CONFIG_FILE"   --port "$SERVER_PORT"   --raw-action-dim 15   --local-memory-mode "$LOCAL_MEMORY_MODE"   --num-steps "$NUM_STEPS"   --guidance "$GUIDANCE"   --fps 20   --http-400-on-error   >"$SERVER_LOG" 2>&1 &
+CUDA_VISIBLE_DEVICES="$EVAL_GPU" "$SERVER_PYTHON" -m cosmos_framework.scripts.action_policy_server_robocasa   --checkpoint-path "$CHECKPOINT_PATH"   --config-file "$CONFIG_FILE"   --port "$SERVER_PORT"   --raw-action-dim 15   --local-memory-mode "$LOCAL_MEMORY_MODE"   --local-memory-max-sessions 1   --num-steps "$NUM_STEPS"   --guidance "$GUIDANCE"   --fps 20   --http-400-on-error   >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
 
 cleanup() {
