@@ -5,7 +5,8 @@ This repository intentionally keeps historical design, Gate and review material.
 ## 1. Current truth — read these first
 
 - **Corrected V3 design authority:** `build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md` — Owner-confirmed latest Cosmos RoboCasa/raw15 host + V2 Local-TTT; cache-first shared composite latent; H_pred/R default16; implementation still pending.
-- **Current Corrected V3 Phase 2 authority:** `build/PSM-WMA_V3_phase2_raw15_state15_hpred16_design_v1.1_2026-10-05.md` — GPT-frozen official raw15/state15 and H_pred16/VAE cache contract; supersedes the damaged, uncommitted v1.0. This docs-only freeze does not implement Phase 2 or authorize ds/GPU, training or simulation.
+- **Current Corrected V3 Phase 3 authority:** `build/PSM-WMA_V3_phase3_cached_latent_sft_model_cache_hit_design_v1.0_2026-10-05.md` — GPT-frozen cache-driven ActionSFT transport and optional OmniMoT cache-hit seam; inner collate Tensor and packed model list ABIs are distinct. This docs-only freeze does not implement Phase 3 or authorize ds/GPU, training or simulation.
+- **Closed Corrected V3 Phase 2 authority:** `build/PSM-WMA_V3_phase2_raw15_state15_hpred16_design_v1.1_2026-10-05.md` — official raw15/state15 and H_pred16/VAE cache contract; closure review: `collab/chatgpt/reviews/2026-10-05_V3_phase2_closure_471b7fec_ce07cb6f.md`.
 - **Closed Corrected V3 Phase 1B authority:** `build/PSM-WMA_V3_phase1b_cache_source_binding_design_v0.4_2026-10-05.md` — GPT-frozen cache-to-flat-source binding design; closure review: `collab/chatgpt/reviews/2026-10-05_V3_phase1b_closure_d7aa5673_21e60d6e.md`.
 - **V3 supersession:** earlier migration v1.0/v1.1 and their B1/iter500/current-frame/streaming execution Gates are historical and superseded by v3.0. Publishing v3.0 does not approve the existing child implementation or authorize training/evaluation.
 - `../README.md` — project overview and entrypoints
