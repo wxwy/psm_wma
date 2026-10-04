@@ -1213,3 +1213,11 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - 修订 ③：加入 dataset→`ActionSFTDataset`→`ActionTransformPipeline`→grouped binder/model 的 `video_latent` key/shape/dtype/window identity 传递测试；`robocasa_grouped_segment.py:434,452` 当前拒绝 raw/transformed `video_latent` 的 guard 必须改为 cache-required。
 - 自检：`git diff --check` PASS；`git diff-tree --no-commit-id --name-only -r 2c6d99b6a6cd0e8dc87bd4aa2713919f071b181f` 仅 mapping、SESSION、TODO；child worktree 与 Gitlink 未变。未运行项目代码、正式测试、GPU、训练、仿真，也未访问训练服务器。
 - 请 GPT 对新 exact pair 给出 `APPROVE_PHASE0_MAPPING_ONLY` 或 `REQUEST_CHANGES(file:line)`，重点确认上述三条闭合及逐文件最小 seam。审核仅限 docs-only Phase 0 mapping；不请求生产/test/Gitlink 修改批准，不授权 GPU/训练/仿真/评测或旧 B2-B/iter500 Gate。角色：GPT 设计/审核，cx 实现/正式测试/提交，ds 执行/Evidence。
+
+## 2026-10-05 — Corrected V3 Phase 0 mapping server-side 职责修正；请求 GPT 审核最新 exact pair
+
+- Gate：`V3-CORRECTED-PHASE0-MAPPING`。**最新 formal docs-only root**：`08bda92f5d837377dd9ef83b78fc2f4bbaf70626`；**unchanged child/Gitlink**：`c00a014444083c7c554fff7626f48cceaf5c5c31`。此条取代前一 root `2c6d99b6a6cd0e8dc87bd4aa2713919f071b181f` 的审核目标；前一请求的 bookkeeping SHA `abb527e2` 不作为 verdict authority。
+- 审核对象：`docs/build/PSM-WMA_V3_corrected_implementation_mapping_v0.1_2026-10-04.md`；设计 authority：`docs/build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md`。此前三项 direct findings 已在前一 root 写入，本新 root 保留其全部内容，另按 Owner 补充修正 simulator/server 职责。
+- 新修正：`local_memory_client.py` 只保留 pre-action composite RGB，`env.step` 成功后把 composite + canonical executed raw15 标为 completed 并发送；不导入、不运行 Wan VAE。模型/VAE 所在进程的 server-side `robocasa_local_memory_policy` adapter 才以同一 preprocessing/VAE helper 对 completed composite 做 `T_pixel=1` Encode1，再按序提交 Local。Phase 6 和验收加入 client 无 VAE 依赖、失败步零发送/零 Local 更新、server Encode17[0]/Encode1 parity。
+- 自检：`git diff --check` PASS；`git diff-tree --no-commit-id --name-only -r 08bda92f5d837377dd9ef83b78fc2f4bbaf70626` 仅 mapping、SESSION、TODO；child production/test/Gitlink 未动。未运行项目代码、正式测试、GPU、训练、仿真；未访问训练服务器。
+- 请 GPT 仅对最新 exact pair 给 `APPROVE_PHASE0_MAPPING_ONLY` 或 `REQUEST_CHANGES(file:line)`，确认三条 direct findings 与本次职责边界均闭合。本申请不授权 production/test/Gitlink 修改、GPU/训练/仿真/评测或旧 B2-B/iter500 Gate。角色：GPT 设计/审核，cx 实现/正式测试/提交，ds 执行/Evidence。
