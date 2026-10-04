@@ -1044,3 +1044,90 @@ Do not continue long training before this Gate returns.
 
 Detailed review:
 `docs/collab/chatgpt/reviews/2026-10-04_V3_robocasa_current_frame_local_evidence_fc453ef7_da6a9b97.md`.
+
+
+## 2026-10-04 — V3 migration authority refreeze; iter500 B1 causal streaming
+
+New exact formal implementation/design pair:
+
+- root `3e86f2b178b9f1e77603716217a487b18f0c4ee8`
+- child/Gitlink `c00a014444083c7c554fff7626f48cceaf5c5c31`
+
+Canonical design:
+
+`docs/build/PSM-WMA_V3_migration_detailed_design_v1.1_2026-10-04.md`
+
+Formal verdict:
+
+`REQUEST_CHANGES`
+
+This is **Evidence-only**. Current source review found no production semantic blocker.
+
+Important correction:
+
+- The previous pair `fc453ef7... / da6a9b97...` and its per-frame-T=1 execution Gate are superseded.
+- Do **not** run that old Gate.
+- iter500 remains the required checkpoint; **do not retrain**.
+- H3-F training ABI remains raw15 / T16 / K4 / generation+Local. No parameter/checkpoint ABI changed.
+
+The corrected online Local evidence now reproduces the B1 training distribution:
+
+- endpoint0 = one-frame prime;
+- endpoint4/8/12/... = four newly observed frames per camera through causal Wan streaming;
+- intermediate source steps reuse the latest endpoint visual96;
+- left and wrist are independent VAE streams batched on B;
+- no episode-length RGB history is retained;
+- VAE stream candidate + Local fast-state candidate are transactional with generation success.
+
+Shared authorities are now centralized for endpoint policy, visual96, normalization, wire protocol and
+Wan stream-state lifecycle.
+
+ds / ds_pro: **execution and Evidence only; do not modify code.**
+
+Run in this order on the exact pair above:
+
+1. CPU/static:
+   - `cosmos_framework/model/generator/mot/robocasa_latent_evidence_test.py`
+   - `cosmos_framework/model/generator/tokenizers/wan2pt2_vae_stream_state_test.py`
+   - `cosmos_framework/inference/robocasa_local_memory_policy_test.py`
+   - `cosmos_framework/inference/local_memory_online_test.py`
+   - `cosmos_framework/simulation/robocasa/local_memory_client_test.py`
+   - `cosmos_framework/simulation/robocasa/closed_loop_eval_contract_test.py`
+   - `tools/v3/build_robocasa_b1_h5_cache_test.py`
+   - Ruff check/format on changed files, root/child diff-check, and Python syntax check for
+     `scripts/eval_robocasa_18task_queue.py`.
+
+2. Real Wan observational parity:
+   - run `tools/v3/verify_robocasa_b1_streaming_parity.py` on one known frozen train episode;
+   - first run **without** `--max-fp16-abs`;
+   - return the report with per-endpoint fp16 and visual96 diffs;
+   - do not invent a threshold locally.
+
+3. After ChatGPT/owner freezes a numeric tolerance from that evidence, rerun parity with the frozen
+   threshold and obtain PASS.
+
+4. iter500 required-mode RoboCasa closed-loop smoke for `ACTION_HORIZON=4`, `8`, and `16`:
+   - adapted_steps equals newly completed evidence count;
+   - prefix present after cold start;
+   - fast_state_norm / inner_loss_mean finite;
+   - no replay/reset/chronology error;
+   - record server GPU memory across increasing replans and show a bounded plateau.
+
+5. Only after 1-4 are GREEN, run the 18 target-atomic × fixed seed0 screening with:
+   `scripts/eval_robocasa_18task_queue.py`
+   using 8 GPUs and the same iter500 checkpoint.
+
+Preserve:
+
+- all rollout MP4s;
+- per-task `results.json`;
+- queue `screening_summary.json`;
+- server/eval logs;
+- parity report;
+- GPU-memory observations.
+
+Do not continue/restart formal training under this Gate.
+
+Detailed review:
+
+`docs/collab/chatgpt/reviews/2026-10-04_V3_migration_iter500_b1_streaming_3e86f2b1_c00a0144.md`.
