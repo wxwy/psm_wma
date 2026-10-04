@@ -1203,3 +1203,13 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - 修订 1：固定 upstream `cf5d68c` 中官方 `action_policy_robocasa_nano.py`/transforms 列 KEEP UP；当前 `action_policy_robocasa_edge.py` 明确列为项目 ADAPT/replace wrapper，fixed upstream 无此文件。
 - 修订 2：逐文件列 `local_memory_grouped_window.py` 的 T16/8 slot/GA2 固定点及 `trainer/local_memory_grouped.py` 的 GA2 固定点；关联 `robocasa_grouped_segment.py`，要求 T16/32 真正可运行，B_stream/GA 默认 8/2 但独立配置，不从 T16 常量派生。
 - 请 GPT/Owner 对新 exact pair 给 `APPROVE_PHASE0_MAPPING_ONLY` 或 `REQUEST_CHANGES(file:line)`；只审核 docs-only mapping 与冲突/seam 清单。本请求不授权 production/test/Gitlink 修改、GPU、训练、仿真、评测或旧 B2-B/iter500 Gate。
+
+## 2026-10-05 — Corrected V3 Phase 0 mapping 第二轮修订；请求 GPT 审核新 exact pair
+
+- Gate：`V3-CORRECTED-PHASE0-MAPPING`。**新 formal docs-only root**：`2c6d99b6a6cd0e8dc87bd4aa2713919f071b181f`；**unchanged child/Gitlink**：`c00a014444083c7c554fff7626f48cceaf5c5c31`。本请求取代前一 mapping root `ad2817a5cd323cf37c2354cbaf81cba6fe35edf4` 的审核目标；正式 verdict 请只锚定新 exact pair。
+- 唯一设计 authority：`docs/build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md`；本轮证据/审核对象：`docs/build/PSM-WMA_V3_corrected_implementation_mapping_v0.1_2026-10-04.md`。Owner 指明先前三条 tmux 意见为 GPT 对旧 mapping 的 direct review findings，可直接作 docs-only 修订；正式 review 文件由 GPT 在本新 root 后处理。
+- 修订 ①：`local_memory_grouped_window.py` 当前逐 slot 完整 scan 已明确列为偏差；目标是同一局部 index 跨 `B_stream` slot 一次 batched fast-update、T 维串行、每行独立 W_t/PAD，保留 row-mean 后求和及有效 consumer reduction。验收加入 scalar-vs-batched 逐步 inner loss/W_t/token/outer loss 与 W0/KQV/encoder/host 梯度 parity。
+- 修订 ②：推理 correctness 默认对每个 completed pre-action composite 用同一 preprocessing 与同一 VAE helper 做 `T_pixel=1` Encode1；匹配 RGB 的 offline Encode17[0] parity 必验。暴露 policy current-z callback 仅是同值复用的 optional optimization。训练 `video_latent` cache-hit 仍是必要最小功能 seam，cache miss fail-closed。
+- 修订 ③：加入 dataset→`ActionSFTDataset`→`ActionTransformPipeline`→grouped binder/model 的 `video_latent` key/shape/dtype/window identity 传递测试；`robocasa_grouped_segment.py:434,452` 当前拒绝 raw/transformed `video_latent` 的 guard 必须改为 cache-required。
+- 自检：`git diff --check` PASS；`git diff-tree --no-commit-id --name-only -r 2c6d99b6a6cd0e8dc87bd4aa2713919f071b181f` 仅 mapping、SESSION、TODO；child worktree 与 Gitlink 未变。未运行项目代码、正式测试、GPU、训练、仿真，也未访问训练服务器。
+- 请 GPT 对新 exact pair 给出 `APPROVE_PHASE0_MAPPING_ONLY` 或 `REQUEST_CHANGES(file:line)`，重点确认上述三条闭合及逐文件最小 seam。审核仅限 docs-only Phase 0 mapping；不请求生产/test/Gitlink 修改批准，不授权 GPU/训练/仿真/评测或旧 B2-B/iter500 Gate。角色：GPT 设计/审核，cx 实现/正式测试/提交，ds 执行/Evidence。
