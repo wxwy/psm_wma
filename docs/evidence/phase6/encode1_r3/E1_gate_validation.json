@@ -1,0 +1,273 @@
+{
+  "schema": "robocasa_phase6_encode1_gate_validation_v1",
+  "status": "PASS",
+  "validated_at": "2026-10-05 16:19:08 ",
+  "role": "ds (execution/evidence only; no repo/cache/source write, no VAE rerun)",
+  "inputs": {
+    "pairlock": {
+      "path": "/tmp/psm_wma_v3_phase6_encode1_ds_evidence_r3/A1_pairlock.txt",
+      "sha256": "db2e52d2ead4281760caeaf08478045db8344d5a643833f45c55d34c3ec193fc"
+    },
+    "probe": {
+      "path": "/tmp/psm_wma_v3_phase6_encode1_ds_evidence_r3/B0_probe.py",
+      "sha256": "a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb"
+    },
+    "d1": {
+      "path": "/tmp/psm_wma_v3_phase6_encode1_ds_evidence_r3/D1_threshold_validation.json",
+      "sha256": "7e0f8b0df7075309c1ea4c6af0582904c7ffbc4704ebc7c500311d68f74ad571"
+    }
+  },
+  "expected": {
+    "scratch": "8c3800565f66cfbce2929264f1c2a7854137482e",
+    "probe_sha256": "a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb",
+    "review_commit": "b6c42088ae41904c0667d1066983c2829ae61c36",
+    "current_v3_head": "3f0d5e20a29922b40054c7d348eaba77675531f2",
+    "child_gitlink": "b673ceda5a9ff058abb31224b7006f2d87771ad2",
+    "d1_status": "PASS",
+    "d1_threshold": 0.0,
+    "d1_exact_required": true,
+    "d1_checks_failed": 0
+  },
+  "observed": {
+    "pairlock": {
+      "required_keys_found": {
+        "phase6a_scratch_target": {
+          "count": 1,
+          "values": [
+            "8c3800565f66cfbce2929264f1c2a7854137482e"
+          ]
+        },
+        "threshold_freeze_review_commit": {
+          "count": 1,
+          "values": [
+            "b6c42088ae41904c0667d1066983c2829ae61c36"
+          ]
+        },
+        "current_V3_bookkeeping_head": {
+          "count": 1,
+          "values": [
+            "3f0d5e20a29922b40054c7d348eaba77675531f2"
+          ]
+        },
+        "production_child_gitlink": {
+          "count": 1,
+          "values": [
+            "b673ceda5a9ff058abb31224b7006f2d87771ad2"
+          ]
+        },
+        "probe_sha256": {
+          "count": 1,
+          "values": [
+            "a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb"
+          ]
+        }
+      },
+      "key_value_conflicts": [],
+      "anchor_lines_with_foreign_sha": [],
+      "all_hex40_seen": [
+        "1403fa438bea58ea262f3b3e5123de93e72065f5",
+        "3f0d5e20a29922b40054c7d348eaba77675531f2",
+        "89e62662adde2c0f1f8c0e3605e0f99007632659",
+        "8c3800565f66cfbce2929264f1c2a7854137482e",
+        "b673ceda5a9ff058abb31224b7006f2d87771ad2",
+        "b6c42088ae41904c0667d1066983c2829ae61c36"
+      ],
+      "stale_lines": [
+        {
+          "key": "stale_prior_reference_89e62662",
+          "value": "89e62662adde2c0f1f8c0e3605e0f99007632659"
+        }
+      ]
+    },
+    "probe": {
+      "actual_sha256": "a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb",
+      "expected_sha256": "a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb",
+      "pairlock_reported": [
+        "a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb"
+      ]
+    },
+    "d1": {
+      "status": "PASS",
+      "threshold": 0.0,
+      "exact_required": true,
+      "checks_failed": 0,
+      "checks_total": 435,
+      "failures": [],
+      "source_observational_sha256": "dce68c34b82167a00ded963268f491d5ae0a62e0ec44391280ec7c1aaaddad90"
+    }
+  },
+  "checks_total": 33,
+  "checks_failed": 0,
+  "failures": [],
+  "checks": [
+    {
+      "name": "pairlock.key_present[phase6a_scratch_target]",
+      "ok": true,
+      "detail": "count=1"
+    },
+    {
+      "name": "pairlock.key_value[phase6a_scratch_target]",
+      "ok": true,
+      "detail": "expected=8c3800565f66cfbce2929264f1c2a7854137482e offending=[]"
+    },
+    {
+      "name": "pairlock.key_present[threshold_freeze_review_commit]",
+      "ok": true,
+      "detail": "count=1"
+    },
+    {
+      "name": "pairlock.key_value[threshold_freeze_review_commit]",
+      "ok": true,
+      "detail": "expected=b6c42088ae41904c0667d1066983c2829ae61c36 offending=[]"
+    },
+    {
+      "name": "pairlock.key_present[current_V3_bookkeeping_head]",
+      "ok": true,
+      "detail": "count=1"
+    },
+    {
+      "name": "pairlock.key_value[current_V3_bookkeeping_head]",
+      "ok": true,
+      "detail": "expected=3f0d5e20a29922b40054c7d348eaba77675531f2 offending=[]"
+    },
+    {
+      "name": "pairlock.key_present[production_child_gitlink]",
+      "ok": true,
+      "detail": "count=1"
+    },
+    {
+      "name": "pairlock.key_value[production_child_gitlink]",
+      "ok": true,
+      "detail": "expected=b673ceda5a9ff058abb31224b7006f2d87771ad2 offending=[]"
+    },
+    {
+      "name": "pairlock.key_present[probe_sha256]",
+      "ok": true,
+      "detail": "count=1"
+    },
+    {
+      "name": "pairlock.key_value[probe_sha256]",
+      "ok": true,
+      "detail": "expected=a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb offending=[]"
+    },
+    {
+      "name": "pairlock.derived[scratch_HEAD]",
+      "ok": true,
+      "detail": "expected_prefix=8c3800565f66cfbce2929264f1c2a7854137482e offending=[]"
+    },
+    {
+      "name": "pairlock.derived[r3_B0_probe_sha256]",
+      "ok": true,
+      "detail": "expected_prefix=a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb offending=[]"
+    },
+    {
+      "name": "pairlock.derived[r1_B0_probe_sha256]",
+      "ok": true,
+      "detail": "expected_prefix=a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb offending=[]"
+    },
+    {
+      "name": "pairlock.derived[pinned_in_review]",
+      "ok": true,
+      "detail": "expected_prefix=a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb offending=[]"
+    },
+    {
+      "name": "pairlock.derived[gitlink@origin/V3]",
+      "ok": true,
+      "detail": "expected_prefix=b673ceda5a9ff058abb31224b7006f2d87771ad2 offending=[]"
+    },
+    {
+      "name": "pairlock.derived[gitlink@b6c42088]",
+      "ok": true,
+      "detail": "expected_prefix=b673ceda5a9ff058abb31224b7006f2d87771ad2 offending=[]"
+    },
+    {
+      "name": "pairlock.derived[superseded_by]",
+      "ok": true,
+      "detail": "expected_prefix=b6c42088ae41904c0667d1066983c2829ae61c36 offending=[]"
+    },
+    {
+      "name": "pairlock.stale_line[stale_prior_reference_89e62662]",
+      "ok": true,
+      "detail": "value='89e62662adde2c0f1f8c0e3605e0f99007632659' known_stale=89e62662adde2c0f1f8c0e3605e0f99007632659"
+    },
+    {
+      "name": "pairlock.contains[8c3800565f66…]",
+      "ok": true,
+      "detail": "token 缺失"
+    },
+    {
+      "name": "pairlock.contains[a07e7fd1cbc9…]",
+      "ok": true,
+      "detail": "token 缺失"
+    },
+    {
+      "name": "pairlock.contains[b6c42088ae41…]",
+      "ok": true,
+      "detail": "token 缺失"
+    },
+    {
+      "name": "pairlock.contains[3f0d5e20a299…]",
+      "ok": true,
+      "detail": "token 缺失"
+    },
+    {
+      "name": "pairlock.contains[b673ceda5a9f…]",
+      "ok": true,
+      "detail": "token 缺失"
+    },
+    {
+      "name": "probe.actual_sha256_matches_frozen",
+      "ok": true,
+      "detail": "actual=a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb expected=a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb"
+    },
+    {
+      "name": "probe.pairlock_reported_matches_actual",
+      "ok": true,
+      "detail": "reported=['a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb'] actual=a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb"
+    },
+    {
+      "name": "d1.status_is_PASS",
+      "ok": true,
+      "detail": "status='PASS'"
+    },
+    {
+      "name": "d1.checks_failed_is_0",
+      "ok": true,
+      "detail": "checks_failed=0"
+    },
+    {
+      "name": "d1.threshold_is_0.0",
+      "ok": true,
+      "detail": "threshold=0.0"
+    },
+    {
+      "name": "d1.exact_required_is_true",
+      "ok": true,
+      "detail": "exact_required=True"
+    },
+    {
+      "name": "d1.checks_total_positive",
+      "ok": true,
+      "detail": "checks_total=435"
+    },
+    {
+      "name": "d1.failures_empty",
+      "ok": true,
+      "detail": "failures=[]"
+    },
+    {
+      "name": "d1.source_observational_sha256_is_sha256",
+      "ok": true,
+      "detail": "source_observational_sha256='dce68c34b82167a00ded963268f491d5ae0a62e0ec44391280ec7c1aaaddad90'"
+    },
+    {
+      "name": "d1.exit_code_semantics_present",
+      "ok": true,
+      "detail": "dict"
+    }
+  ],
+  "exit_code_semantics": {
+    "0": "PASS",
+    "1": "FAIL"
+  }
+}
