@@ -1364,3 +1364,12 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - 核心冻结：single pre-action left|wrist composite；shared spatial preprocess；server-side T=1 Encode1；B1 causal endpoint active route RETIRE；env.step成功后才 completed；Local action evidence 使用 post-decoder canonical raw15；required route only model-owned scan；N>T sequential chunk；R仅受H_pred约束；exact replay/reset/bounded state。
 - Phase6 real Encode1 parity / GPU / server smoke / simulator / 18-task SR **未授权**，实现 scratch fresh review 后另开 Gate。
 - Production promotion仍受 Phase3.5 thresholded REAL_PARITY Gate 阻塞；本 review 不 waiver。
+
+## 2026-10-05 — Corrected V3 Phase6A CPU/static debug scratch closure；GPT canonical verdict
+
+- Gate：`V3-CORRECTED-PHASE6A-DEBUG-SCRATCH`；Phase6 design root=`5c2435eaffc8565e54fe7fc780c75a00ff9675d9`；production child/Gitlink（unchanged）=`b673ceda5a9ff058abb31224b7006f2d87771ad2`；final scratch SHA=`8c3800565f66cfbce2929264f1c2a7854137482e`。
+- Detailed review：`docs/collab/chatgpt/reviews/2026-10-05_V3_phase6a_debug_scratch_closure_8c38005.md`。
+- GPT verdict：`APPROVE_TO_CLOSE_PHASE6A_DEBUG_SCRATCH`；next Gate仅 `APPROVE_TO_RUN_PHASE6_ENCODE1_OBSERVATIONAL_PARITY_ONLY`。
+- 已独立核对 corrected composite wire、shared preprocessing、Encode1 code contract、model-owned scan、N>T chunking、replay/reset、canonical executed raw15、post-env.step chronology、server transaction/off-mode、status telemetry；final Phase6 focused **49 passed**，静态检查全绿。
+- 本 closure 不改变 production child/Gitlink；Phase6 real parity先只允许 bounded observational A/B/C witness，不设 threshold、不自判 production PASS；server GPU/simulator/SR仍未授权。
+- Phase3.5 production thresholded parity仍单独 OPEN；本 verdict 不构成 waiver。
