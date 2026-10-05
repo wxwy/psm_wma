@@ -1373,3 +1373,15 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - 已独立核对 corrected composite wire、shared preprocessing、Encode1 code contract、model-owned scan、N>T chunking、replay/reset、canonical executed raw15、post-env.step chronology、server transaction/off-mode、status telemetry；final Phase6 focused **49 passed**，静态检查全绿。
 - 本 closure 不改变 production child/Gitlink；Phase6 real parity先只允许 bounded observational A/B/C witness，不设 threshold、不自判 production PASS；server GPU/simulator/SR仍未授权。
 - Phase3.5 production thresholded parity仍单独 OPEN；本 verdict 不构成 waiver。
+
+
+## 2026-10-05 — Corrected V3 Phase6 Encode1 observational parity accepted; exact threshold frozen
+
+- Gate: `PHASE6-ENCODE1-OBSERVATIONAL-PARITY`; scratch authority `8c3800565f66cfbce2929264f1c2a7854137482e`; production child/Gitlink remains `b673ceda5a9ff058abb31224b7006f2d87771ad2`.
+- ds fixed-probe Evidence: `/tmp/psm_wma_v3_phase6_encode1_ds_evidence_r1/`, fixed probe SHA256 `a07e7fd1cbc96d855785708e0e9c6ecc7ec89240f0fae045ed9bbd34942a3fcb`.
+- CloseFridge ep26 starts 0/128/257: A=cache Z_t[0], B=single-frame Encode1, C=repeated-current Policy first latent. padded z0 / native crop / visual96 的 A/B、B/C、A/C 全部 exact_equal=true，max_abs=mean_abs=RMSE=0；shared preprocessing 亦 exact。
+- GPT verdict: `ACCEPT_PHASE6_ENCODE1_OBSERVATIONAL_PARITY_FOR_THRESHOLD_FREEZE`.
+- Frozen next threshold: `exact_equal=true AND max_abs<=0.0`，并要求相同 selection / scratch SHA / probe SHA / geometry / preprocessing identity。
+- Authorization: `APPROVE_TO_RUN_PHASE6_ENCODE1_THRESHOLDED_VALIDATION_ONLY`. 必须 fresh rerun 后由独立 validator 判定；observational JSON 不 retroactive 自判 PASS。
+- server GPU/simulator/SR/promotion/training 仍未授权；Phase3.5 >=3 task / 9 window production Gate仍 OPEN。
+- Detailed review: `docs/collab/chatgpt/reviews/2026-10-05_V3_phase6_encode1_observational_threshold_freeze_8c38005.md`.
