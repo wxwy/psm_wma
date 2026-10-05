@@ -1,8 +1,26 @@
 # PSM-WMA Current Project Status
 
-Updated: 2026-09-30
+Updated: 2026-10-05
 
-## Current V3 H100 route
+## Current Corrected V3 route
+
+| Item | Value |
+|---|---|
+| Root / remote V3 | `678ae216e8b9656142da03d7be44ab639fa61b29` |
+| Production Cosmos child / Gitlink | `b673ceda5a9ff058abb31224b7006f2d87771ad2` |
+| Corrected policy contract | latest official Cosmos3 RoboCasa host; raw15/state15; H_pred=16; `left_wrist`; cache-driven policy latent |
+| Strict debug cache | `target_atomic_closefridge_left_wrist_snapshot10`: 1 task / 10 episodes / 3032 exact windows / fp32 `[5,48,12,20]` |
+| Phase3 cached-SFT/cache-hit | **CLOSED**; strict cache path is fail-closed with no online-VAE fallback |
+| Phase3.5 real parity | **OPEN production blocker**: CloseFridge episode26 starts 0/128/257 are exact (`global_max_abs=0.0`), but frozen thresholded Gate still requires >=3 task classes / >=9 exact windows |
+| Phase4 corrected Local-TTT | **CPU/static/debug scratch CLOSED** at `474ce9fd6ce848890a080ae9e2c568a0e2e0fb63` (validation marker `aeab1763a97472afff654041043de3dbbec52e3b`) |
+| Phase5 trainer/DCP/resume | **CPU/static/debug scratch CLOSED** at `afb9ca8d9f8ec080518a838f56a681073eb4b495` |
+| Phase5 validation | focused `72 passed, 1 skipped`; strict real snapshot10 preflight `1 passed`; comprehensive Phase4+5+Phase1A-3+Local+DCP `319 passed, 3 skipped`; static checks PASS |
+| Production promotion | **BLOCKED** until Phase3.5 thresholded `REAL_PARITY_PASS` or explicit Owner refreeze/waiver |
+| GPU readiness / formal training | **NOT AUTHORIZED**; after production promotion, use Phase5 staged Gate: fresh1 -> 3+save -> kill/resume -> readiness10 |
+
+The production child/Gitlink has intentionally **not** been replaced by the Phase4/5 scratch commits. The old H3/H3-F training route below is retained only as historical evidence and must not be relaunched as the current Corrected V3 route.
+
+## Historical pre-Corrected V3 H100 route
 
 | Item | Value |
 |---|---|
