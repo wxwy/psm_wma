@@ -1385,3 +1385,14 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Authorization: `APPROVE_TO_RUN_PHASE6_ENCODE1_THRESHOLDED_VALIDATION_ONLY`. 必须 fresh rerun 后由独立 validator 判定；observational JSON 不 retroactive 自判 PASS。
 - server GPU/simulator/SR/promotion/training 仍未授权；Phase3.5 >=3 task / 9 window production Gate仍 OPEN。
 - Detailed review: `docs/collab/chatgpt/reviews/2026-10-05_V3_phase6_encode1_observational_threshold_freeze_8c38005.md`.
+
+
+## 2026-10-05 — Corrected V3 Phase6 Encode1 thresholded parity CLOSED
+
+- Gate: `PHASE6-ENCODE1-THRESHOLDED-PARITY`; Phase6A scratch authority `8c3800565f66cfbce2929264f1c2a7854137482e`; production child/Gitlink remains `b673ceda5a9ff058abb31224b7006f2d87771ad2`.
+- Frozen threshold after observational run: exact_equal=true and max_abs<=0.0.
+- Fresh r3 Evidence: numerical validator 435 checks / 0 failed; authority finalizer 33 checks / 0 failed; A/B/C padded z0, native crop and visual96 all exact with max_abs=0.
+- GPT verdict: `PHASE6_ENCODE1_THRESHOLDED_PARITY_CLOSED`.
+- Next authorization: `APPROVE_TO_RUN_PHASE6_NO_POLICY_ONLINE_LOCAL_REAL_SMOKE_ONLY`.
+- Full Policy DCP/server GPU/simulator/SR/promotion/training remain unauthorized. Phase3.5 >=3 task/9 window production Gate remains OPEN.
+- Detailed review: `docs/collab/chatgpt/reviews/2026-10-05_V3_phase6_encode1_thresholded_parity_closure_8c38005.md`.
