@@ -6,7 +6,7 @@ Updated: 2026-10-05
 
 | Item | Value |
 |---|---|
-| Root / remote V3 | `678ae216e8b9656142da03d7be44ab639fa61b29` |
+| Root / remote V3 | `V3` branch HEAD; use `git rev-parse origin/V3` for the exact docs/status commit |
 | Production Cosmos child / Gitlink | `b673ceda5a9ff058abb31224b7006f2d87771ad2` |
 | Corrected policy contract | latest official Cosmos3 RoboCasa host; raw15/state15; H_pred=16; `left_wrist`; cache-driven policy latent |
 | Strict debug cache | `target_atomic_closefridge_left_wrist_snapshot10`: 1 task / 10 episodes / 3032 exact windows / fp32 `[5,48,12,20]` |
