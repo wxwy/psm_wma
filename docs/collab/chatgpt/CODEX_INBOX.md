@@ -1411,3 +1411,20 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Full Policy DCP/server GPU/simulator/SR/promotion/training remain unauthorized.
 - Phase3.5 >=3 task classes / >=9 exact windows production thresholded Gate remains the next production prerequisite and is not waived.
 - Detailed review: `docs/collab/chatgpt/reviews/2026-10-05_V3_phase6_no_policy_online_local_real_smoke_closure_8c38005.md`.
+
+
+## 2026-10-05 — Owner refreeze: Phase3.5 3-task/9-window coverage deferred
+
+- Owner explicitly approved refreezing the Phase3.5 promotion blocker.
+- Previous requirement `>=3 underlying task classes / >=9 exact windows` is no longer a blocker for production promotion of the exact reviewed Corrected V3 candidate.
+- It is deferred to a **pre-formal-training supplemental Evidence Gate**.
+- Accepted replacement promotion evidence:
+  - CloseFridge exact-window offline vs current Wan full-encode parity: exact / max_abs=0;
+  - Phase6 Encode1 A/B/C padded z0 + native crop + visual96 thresholded parity CLOSED with exact equality;
+  - Phase6 no-policy real Online Local fresh r2: 24/24 PASS.
+- Canonical decision: `docs/build/PSM-WMA_V3_phase3p5_owner_refreeze_v1.0_2026-10-05.md`.
+- Exact promotion candidate source: `8c3800565f66cfbce2929264f1c2a7854137482e`.
+- Remote candidate ref: `wxwy/cosmos-framework:v3-corrected-promotion-candidate-20261005`.
+- Candidate ancestry verified: base `b673ceda5...`, ahead 12 / behind 0, merge-base exactly `b673ceda5...`.
+- New canonical status: `PRODUCTION_PROMOTION_UNBLOCKED_FOR_EXACT_REVIEWED_CANDIDATE`.
+- Still required: fresh production-pair review after child branch + root Gitlink promotion.
