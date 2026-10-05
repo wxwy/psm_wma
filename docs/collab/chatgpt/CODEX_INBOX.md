@@ -1441,3 +1441,17 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Next authorization: `APPROVE_TO_RUN_CORRECTED_V3_GPU_READINESS_PRECHECK_ONLY`.
 - No optimizer step/checkpoint/server GPU/simulator/SR/formal training is authorized yet.
 - Review: `docs/collab/chatgpt/reviews/2026-10-05_V3_production_promotion_closure_b04fc2d4_8c380056.md`.
+
+
+## 2026-10-05 — Corrected V3 GPU readiness precheck CLOSED; current 24G host blocked for optimizer smoke
+
+- Formal pair remains root `b04fc2d4f1b2685bf9fb0e2b0f6277674bd2f93c` / child `8c3800565f66cfbce2929264f1c2a7854137482e`.
+- Production-pair strict snapshot10 preflight PASS; config digest `5d272cffcade65138cc9ebcb5014e1aeca0024888feb509b5a8f5a52da9335e7`.
+- DCP metadata: total 3.369657B BF16 params; generation+Local trainables about 1.423475B params.
+- Single-GPU lower-bound memory before activations is already ~20.98GB (BF16 weights + BF16 trainable grads + FP32 Adam moments), excluding activation/buffer/temp/master-weight overhead.
+- Current execution host is a single RTX 4090 24GB; optimizer smoke is therefore **not authorized** on this host.
+- GPT verdict: `CORRECTED_V3_GPU_READINESS_PRECHECK_CLOSED_CONTRACT_GREEN` and `GPU_OPTIMIZER_SMOKE_BLOCKED_ON_CURRENT_SINGLE_24G_HOST`.
+- Next authorization, once 8×H100 is available: `APPROVE_TO_RUN_CORRECTED_V3_8XH100_FRESH_ITER0_TO_ITER1_WHEN_AVAILABLE`.
+- Fresh Gate conditions: exact pair, H100-host preflight PASS, world_size8/T16/B8/GA2/K4, fresh namespace, exactly one optimizer iteration, finite losses/gradients, exact generation+Local optimizer inventory, one Local publish, then stop.
+- Resume/iter2+/readiness10/formal30k/server/simulator/SR remain unauthorized.
+- Detailed review: `docs/collab/chatgpt/reviews/2026-10-05_V3_gpu_readiness_precheck_b04fc2d4_8c380056.md`.
