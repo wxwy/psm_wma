@@ -1396,3 +1396,18 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Next authorization: `APPROVE_TO_RUN_PHASE6_NO_POLICY_ONLINE_LOCAL_REAL_SMOKE_ONLY`.
 - Full Policy DCP/server GPU/simulator/SR/promotion/training remain unauthorized. Phase3.5 >=3 task/9 window production Gate remains OPEN.
 - Detailed review: `docs/collab/chatgpt/reviews/2026-10-05_V3_phase6_encode1_thresholded_parity_closure_8c38005.md`.
+
+
+## 2026-10-05 — Corrected V3 Phase6 no-policy online Local real smoke CLOSED
+
+- Gate: `PHASE6-NO-POLICY-ONLINE-LOCAL-REAL-SMOKE`; Phase6A scratch authority `8c3800565f66cfbce2929264f1c2a7854137482e`; production child/Gitlink remains `b673ceda5a9ff058abb31224b7006f2d87771ad2`.
+- Final clean Evidence: `/tmp/psm_wma_v3_phase6_no_policy_online_local_ds_evidence_r2/`.
+- Fresh r2 result: exit code 0, `smoke_gate_pass=true`, **24/24 checks PASS**.
+- Real Wan + corrected composite + Local runtime only; no Policy DCP/server/simulator.
+- Cold S0 no prefix/state; 20 real completed rows -> finite K4x32 prefix/state; N>T scan blocks exactly 16 then 4; pre-commit live frontier unchanged; commit advances to 20.
+- Replay is zero Encode/zero scan/zero adapt with identical prefix/state; changed same-frontier bytes/action fail-closed; reset clears Local/replay state.
+- Local slow params bit-exact unchanged; Wan retained causal state absent: encoder/decoder caches all None before/after, stream shape None, streaming/decode call counts 0.
+- GPT verdict: `PHASE6_NO_POLICY_ONLINE_LOCAL_REAL_SMOKE_CLOSED`.
+- Full Policy DCP/server GPU/simulator/SR/promotion/training remain unauthorized.
+- Phase3.5 >=3 task classes / >=9 exact windows production thresholded Gate remains the next production prerequisite and is not waived.
+- Detailed review: `docs/collab/chatgpt/reviews/2026-10-05_V3_phase6_no_policy_online_local_real_smoke_closure_8c38005.md`.
