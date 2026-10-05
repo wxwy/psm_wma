@@ -1353,3 +1353,14 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - strict real Phase5 snapshot10 preflight：`1 passed`；strict real Phase4 B8/GA2/T16 probe：PASS；Ruff/format/py_compile/diff-check：PASS；forbidden-file diff为空。
 - 此 Evidence supersede 早期 `319 passed, 3 skipped` 的统计，但不改变 technical verdict。
 - Verdict 保持：`APPROVE_TO_CLOSE_PHASE5_DEBUG_SCRATCH`；`PRODUCTION_PROMOTION_STILL_BLOCKED_BY_PHASE3P5_THRESHOLDED_REAL_PARITY`；`GPU_READINESS_NOT_AUTHORIZED`。
+
+
+## 2026-10-05 — Corrected V3 Phase6 online inference/eval design v1.1 formal review
+
+- exact formal pair：root `5c2435eaffc8565e54fe7fc780c75a00ff9675d9` / production child-Gitlink `b673ceda5a9ff058abb31224b7006f2d87771ad2`。
+- authority：`docs/build/PSM-WMA_V3_phase6_online_inference_eval_design_v1.1_2026-10-05.md`；v1.1 supersedes v1.0 candidate `a05ac630...` before implementation authorization。
+- GPT verdict：`APPROVE_PHASE6_DESIGN_V1_1_FOR_SCRATCH_IMPLEMENTATION`。
+- cx 可从 clean scratch parent `afb9ca8d9f8ec080518a838f56a681073eb4b495` 开始 Phase6A CPU/static/debug implementation；production child/Gitlink 不动。
+- 核心冻结：single pre-action left|wrist composite；shared spatial preprocess；server-side T=1 Encode1；B1 causal endpoint active route RETIRE；env.step成功后才 completed；Local action evidence 使用 post-decoder canonical raw15；required route only model-owned scan；N>T sequential chunk；R仅受H_pred约束；exact replay/reset/bounded state。
+- Phase6 real Encode1 parity / GPU / server smoke / simulator / 18-task SR **未授权**，实现 scratch fresh review 后另开 Gate。
+- Production promotion仍受 Phase3.5 thresholded REAL_PARITY Gate 阻塞；本 review 不 waiver。
