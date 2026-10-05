@@ -1,0 +1,2211 @@
+{
+  "schema": "robocasa_phase6_encode1_threshold_validation_v1",
+  "status": "PASS",
+  "threshold": 0.0,
+  "exact_required": true,
+  "validated_at": "2026-10-05 16:16:59 ",
+  "source_observational_json": "/tmp/psm_wma_v3_phase6_encode1_ds_evidence_r3/C0_observational.json",
+  "source_observational_sha256": "dce68c34b82167a00ded963268f491d5ae0a62e0ec44391280ec7c1aaaddad90",
+  "source_schema": "robocasa_phase6_encode1_observational_parity_v1",
+  "checks_total": 435,
+  "checks_failed": 0,
+  "failures": [],
+  "criterion": {
+    "exact_equal_required": true,
+    "max_abs_max": 0.0,
+    "mean_abs_max": 0.0,
+    "rmse_max": 0.0,
+    "layers": [
+      "padded_z0",
+      "native_post_crop_z0",
+      "visual96"
+    ],
+    "pairs": [
+      "A_vs_B",
+      "B_vs_C",
+      "A_vs_C"
+    ],
+    "note": "阈值在观测后冻结，且由独立验证器施加；probe 自身未传阈值、未自判 PASS"
+  },
+  "checks": [
+    {
+      "name": "schema",
+      "ok": true,
+      "detail": "schema='robocasa_phase6_encode1_observational_parity_v1'"
+    },
+    {
+      "name": "authority.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "authority.threshold_is_none",
+      "ok": true,
+      "detail": "threshold=None"
+    },
+    {
+      "name": "authority.self_declared_pass_is_none",
+      "ok": true,
+      "detail": "self_declared_pass=None"
+    },
+    {
+      "name": "authority.read_only",
+      "ok": true,
+      "detail": "read_only=True"
+    },
+    {
+      "name": "authority.no_fallback",
+      "ok": true,
+      "detail": "no_fallback=True"
+    },
+    {
+      "name": "gate.present",
+      "ok": true,
+      "detail": "gate 缺失"
+    },
+    {
+      "name": "gate.status_observational_no_threshold",
+      "ok": true,
+      "detail": "status='OBSERVATIONAL_NO_THRESHOLD'"
+    },
+    {
+      "name": "gate.threshold_is_none",
+      "ok": true,
+      "detail": "threshold=None"
+    },
+    {
+      "name": "gate.parity_gate_pass_is_none",
+      "ok": true,
+      "detail": "parity_gate_pass=None"
+    },
+    {
+      "name": "authority.scratch_root",
+      "ok": true,
+      "detail": "scratch_root='/tmp/psm_wma_v3_phase6_cx'"
+    },
+    {
+      "name": "authority.cache_manifest_sha256",
+      "ok": true,
+      "detail": "'fa7e52256f177f1160aa431374d9e1da028579c78ca3cfb9c5e11084600d4006'"
+    },
+    {
+      "name": "authority.corpus_digest",
+      "ok": true,
+      "detail": "'aae2573c3b4b8123a060f737de49940259362e9b970111d0b60c2d89f8896df6'"
+    },
+    {
+      "name": "authority.source_binding_digest",
+      "ok": true,
+      "detail": "'dc56c44fa9feae8e7e534663ab1acfaa585f28410de7b983ea6cd87deddd35a4'"
+    },
+    {
+      "name": "authority.runtime_source_root",
+      "ok": true,
+      "detail": "'/disk/rl/data/robocasa_v30/CloseFridge/20250816/lerobot'"
+    },
+    {
+      "name": "authority.runtime_vae_path",
+      "ok": true,
+      "detail": "'/disk/rl/models/wan22_vae/Wan2.2_VAE.pth'"
+    },
+    {
+      "name": "authority.device",
+      "ok": true,
+      "detail": "device='cuda:0'"
+    },
+    {
+      "name": "authority.video_backend",
+      "ok": true,
+      "detail": "video_backend='pyav'"
+    },
+    {
+      "name": "authority.image_size",
+      "ok": true,
+      "detail": "image_size=256"
+    },
+    {
+      "name": "authority.cudnn_benchmark_false",
+      "ok": true,
+      "detail": "cudnn_benchmark=False"
+    },
+    {
+      "name": "authority.vae_contract.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "authority.vae_contract.use_streaming_encode_false",
+      "ok": true,
+      "detail": "use_streaming_encode=False"
+    },
+    {
+      "name": "authority.vae_contract.keep_decoder_cache_false",
+      "ok": true,
+      "detail": "keep_decoder_cache=False"
+    },
+    {
+      "name": "authority.vae_contract.vae_path",
+      "ok": true,
+      "detail": "'/disk/rl/models/wan22_vae/Wan2.2_VAE.pth'"
+    },
+    {
+      "name": "selection.present",
+      "ok": true,
+      "detail": "selection=list"
+    },
+    {
+      "name": "selection.task_class",
+      "ok": true,
+      "detail": "'CloseFridge'"
+    },
+    {
+      "name": "selection.episode_index",
+      "ok": true,
+      "detail": "26"
+    },
+    {
+      "name": "selection.starts",
+      "ok": true,
+      "detail": "starts=[0, 128, 257]"
+    },
+    {
+      "name": "episode.frame_count",
+      "ok": true,
+      "detail": "274"
+    },
+    {
+      "name": "episode.image_size",
+      "ok": true,
+      "detail": "[192, 320, 160, 320]"
+    },
+    {
+      "name": "episode.cached_padded_latent_shape",
+      "ok": true,
+      "detail": "[5, 48, 12, 20]"
+    },
+    {
+      "name": "episode.camera_keys",
+      "ok": true,
+      "detail": "['observation.images.robot0_agentview_left', 'observation.images.robot0_eye_in_hand']"
+    },
+    {
+      "name": "episode.shared_uint8_finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "windows.count",
+      "ok": true,
+      "detail": "num_windows=3"
+    },
+    {
+      "name": "window[0].geometry.composite_shape",
+      "ok": true,
+      "detail": "got=[3, 256, 512] want=[3, 256, 512]"
+    },
+    {
+      "name": "window[0].geometry.frame_uint8_shape",
+      "ok": true,
+      "detail": "got=[3, 256, 512] want=[3, 256, 512]"
+    },
+    {
+      "name": "window[0].geometry.prepared_source_uint8_shape",
+      "ok": true,
+      "detail": "got=[3, 256, 512] want=[3, 256, 512]"
+    },
+    {
+      "name": "window[0].geometry.padded_single_frame_shape",
+      "ok": true,
+      "detail": "got=[3, 1, 192, 320] want=[3, 1, 192, 320]"
+    },
+    {
+      "name": "window[0].geometry.padded_image_size",
+      "ok": true,
+      "detail": "got=[192, 320, 160, 320] want=[192, 320, 160, 320]"
+    },
+    {
+      "name": "window[0].geometry.video_padded_17_shape",
+      "ok": true,
+      "detail": "got=[3, 17, 192, 320] want=[3, 17, 192, 320]"
+    },
+    {
+      "name": "window[0].geometry.cached_padded_latent_shape",
+      "ok": true,
+      "detail": "got=[5, 48, 12, 20] want=[5, 48, 12, 20]"
+    },
+    {
+      "name": "window[0].geometry.encoded_17_latent_shape",
+      "ok": true,
+      "detail": "got=[5, 48, 12, 20] want=[5, 48, 12, 20]"
+    },
+    {
+      "name": "window[0].geometry.encoded_1_latent_shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[0].geometry.native_crop_shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[0].geometry.image_size_match",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].geometry.encoded_1_latent_device",
+      "ok": true,
+      "detail": "'cuda:0'"
+    },
+    {
+      "name": "window[0].shared_preprocessing.source_uint8_dtype",
+      "ok": true,
+      "detail": "'torch.uint8'"
+    },
+    {
+      "name": "window[0].shared_preprocessing.padded_single_frame_vs_episode_slice.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].shared_preprocessing.padded_single_frame_vs_episode_slice.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].shared_preprocessing.padded_single_frame_vs_episode_slice.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].shared_preprocessing.padded_single_frame_vs_episode_slice.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].shared_preprocessing.padded_single_frame_vs_episode_slice.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].tensors.A_padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].tensors.A_padded_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[0].tensors.A_padded_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[0].tensors.A_padded_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].tensors.B_padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].tensors.B_padded_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[0].tensors.B_padded_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[0].tensors.B_padded_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].tensors.C_padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].tensors.C_padded_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[0].tensors.C_padded_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[0].tensors.C_padded_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].tensors.A_native_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].tensors.A_native_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[0].tensors.A_native_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[0].tensors.A_native_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].tensors.B_native_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].tensors.B_native_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[0].tensors.B_native_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[0].tensors.B_native_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].tensors.C_native_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].tensors.C_native_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[0].tensors.C_native_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[0].tensors.C_native_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].tensors.A_visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].tensors.A_visual96.shape",
+      "ok": true,
+      "detail": "got=[96] want=[96]"
+    },
+    {
+      "name": "window[0].tensors.A_visual96.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[0].tensors.A_visual96.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].tensors.B_visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].tensors.B_visual96.shape",
+      "ok": true,
+      "detail": "got=[96] want=[96]"
+    },
+    {
+      "name": "window[0].tensors.B_visual96.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[0].tensors.B_visual96.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].tensors.C_visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].tensors.C_visual96.shape",
+      "ok": true,
+      "detail": "got=[96] want=[96]"
+    },
+    {
+      "name": "window[0].tensors.C_visual96.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[0].tensors.C_visual96.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_B.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_B.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_B.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_B.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_B.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.B_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.B_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.B_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.B_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.B_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].comparisons.padded_z0.A_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_B.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_B.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_B.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_B.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_B.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.B_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.B_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.B_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.B_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.B_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].comparisons.native_post_crop_z0.A_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].comparisons.visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_B.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_B.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_B.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_B.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_B.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].comparisons.visual96.B_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].comparisons.visual96.B_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].comparisons.visual96.B_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].comparisons.visual96.B_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].comparisons.visual96.B_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].comparisons.visual96.A_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.A_helper_vs_formula.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].phase4_formula.A_helper_vs_formula.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].phase4_formula.A_helper_vs_formula.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.A_helper_vs_formula.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.A_helper_vs_formula.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.B_helper_vs_formula.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].phase4_formula.B_helper_vs_formula.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].phase4_formula.B_helper_vs_formula.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.B_helper_vs_formula.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.B_helper_vs_formula.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.C_helper_vs_formula.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].phase4_formula.C_helper_vs_formula.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].phase4_formula.C_helper_vs_formula.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.C_helper_vs_formula.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.C_helper_vs_formula.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.B_returned_vs_helper_of_B_z0.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].phase4_formula.B_returned_vs_helper_of_B_z0.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].phase4_formula.B_returned_vs_helper_of_B_z0.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.B_returned_vs_helper_of_B_z0.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.B_returned_vs_helper_of_B_z0.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.C_returned_vs_helper_of_C_z0.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[0].phase4_formula.C_returned_vs_helper_of_C_z0.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[0].phase4_formula.C_returned_vs_helper_of_C_z0.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.C_returned_vs_helper_of_C_z0.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[0].phase4_formula.C_returned_vs_helper_of_C_z0.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].geometry.composite_shape",
+      "ok": true,
+      "detail": "got=[3, 256, 512] want=[3, 256, 512]"
+    },
+    {
+      "name": "window[128].geometry.frame_uint8_shape",
+      "ok": true,
+      "detail": "got=[3, 256, 512] want=[3, 256, 512]"
+    },
+    {
+      "name": "window[128].geometry.prepared_source_uint8_shape",
+      "ok": true,
+      "detail": "got=[3, 256, 512] want=[3, 256, 512]"
+    },
+    {
+      "name": "window[128].geometry.padded_single_frame_shape",
+      "ok": true,
+      "detail": "got=[3, 1, 192, 320] want=[3, 1, 192, 320]"
+    },
+    {
+      "name": "window[128].geometry.padded_image_size",
+      "ok": true,
+      "detail": "got=[192, 320, 160, 320] want=[192, 320, 160, 320]"
+    },
+    {
+      "name": "window[128].geometry.video_padded_17_shape",
+      "ok": true,
+      "detail": "got=[3, 17, 192, 320] want=[3, 17, 192, 320]"
+    },
+    {
+      "name": "window[128].geometry.cached_padded_latent_shape",
+      "ok": true,
+      "detail": "got=[5, 48, 12, 20] want=[5, 48, 12, 20]"
+    },
+    {
+      "name": "window[128].geometry.encoded_17_latent_shape",
+      "ok": true,
+      "detail": "got=[5, 48, 12, 20] want=[5, 48, 12, 20]"
+    },
+    {
+      "name": "window[128].geometry.encoded_1_latent_shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[128].geometry.native_crop_shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[128].geometry.image_size_match",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].geometry.encoded_1_latent_device",
+      "ok": true,
+      "detail": "'cuda:0'"
+    },
+    {
+      "name": "window[128].shared_preprocessing.source_uint8_dtype",
+      "ok": true,
+      "detail": "'torch.uint8'"
+    },
+    {
+      "name": "window[128].shared_preprocessing.padded_single_frame_vs_episode_slice.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].shared_preprocessing.padded_single_frame_vs_episode_slice.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].shared_preprocessing.padded_single_frame_vs_episode_slice.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].shared_preprocessing.padded_single_frame_vs_episode_slice.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].shared_preprocessing.padded_single_frame_vs_episode_slice.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].tensors.A_padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].tensors.A_padded_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[128].tensors.A_padded_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[128].tensors.A_padded_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].tensors.B_padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].tensors.B_padded_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[128].tensors.B_padded_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[128].tensors.B_padded_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].tensors.C_padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].tensors.C_padded_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[128].tensors.C_padded_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[128].tensors.C_padded_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].tensors.A_native_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].tensors.A_native_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[128].tensors.A_native_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[128].tensors.A_native_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].tensors.B_native_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].tensors.B_native_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[128].tensors.B_native_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[128].tensors.B_native_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].tensors.C_native_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].tensors.C_native_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[128].tensors.C_native_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[128].tensors.C_native_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].tensors.A_visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].tensors.A_visual96.shape",
+      "ok": true,
+      "detail": "got=[96] want=[96]"
+    },
+    {
+      "name": "window[128].tensors.A_visual96.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[128].tensors.A_visual96.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].tensors.B_visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].tensors.B_visual96.shape",
+      "ok": true,
+      "detail": "got=[96] want=[96]"
+    },
+    {
+      "name": "window[128].tensors.B_visual96.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[128].tensors.B_visual96.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].tensors.C_visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].tensors.C_visual96.shape",
+      "ok": true,
+      "detail": "got=[96] want=[96]"
+    },
+    {
+      "name": "window[128].tensors.C_visual96.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[128].tensors.C_visual96.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_B.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_B.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_B.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_B.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_B.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.B_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.B_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.B_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.B_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.B_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].comparisons.padded_z0.A_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_B.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_B.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_B.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_B.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_B.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.B_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.B_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.B_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.B_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.B_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].comparisons.native_post_crop_z0.A_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].comparisons.visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_B.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_B.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_B.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_B.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_B.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].comparisons.visual96.B_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].comparisons.visual96.B_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].comparisons.visual96.B_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].comparisons.visual96.B_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].comparisons.visual96.B_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].comparisons.visual96.A_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.A_helper_vs_formula.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].phase4_formula.A_helper_vs_formula.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].phase4_formula.A_helper_vs_formula.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.A_helper_vs_formula.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.A_helper_vs_formula.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.B_helper_vs_formula.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].phase4_formula.B_helper_vs_formula.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].phase4_formula.B_helper_vs_formula.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.B_helper_vs_formula.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.B_helper_vs_formula.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.C_helper_vs_formula.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].phase4_formula.C_helper_vs_formula.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].phase4_formula.C_helper_vs_formula.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.C_helper_vs_formula.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.C_helper_vs_formula.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.B_returned_vs_helper_of_B_z0.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].phase4_formula.B_returned_vs_helper_of_B_z0.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].phase4_formula.B_returned_vs_helper_of_B_z0.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.B_returned_vs_helper_of_B_z0.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.B_returned_vs_helper_of_B_z0.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.C_returned_vs_helper_of_C_z0.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[128].phase4_formula.C_returned_vs_helper_of_C_z0.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[128].phase4_formula.C_returned_vs_helper_of_C_z0.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.C_returned_vs_helper_of_C_z0.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[128].phase4_formula.C_returned_vs_helper_of_C_z0.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].geometry.composite_shape",
+      "ok": true,
+      "detail": "got=[3, 256, 512] want=[3, 256, 512]"
+    },
+    {
+      "name": "window[257].geometry.frame_uint8_shape",
+      "ok": true,
+      "detail": "got=[3, 256, 512] want=[3, 256, 512]"
+    },
+    {
+      "name": "window[257].geometry.prepared_source_uint8_shape",
+      "ok": true,
+      "detail": "got=[3, 256, 512] want=[3, 256, 512]"
+    },
+    {
+      "name": "window[257].geometry.padded_single_frame_shape",
+      "ok": true,
+      "detail": "got=[3, 1, 192, 320] want=[3, 1, 192, 320]"
+    },
+    {
+      "name": "window[257].geometry.padded_image_size",
+      "ok": true,
+      "detail": "got=[192, 320, 160, 320] want=[192, 320, 160, 320]"
+    },
+    {
+      "name": "window[257].geometry.video_padded_17_shape",
+      "ok": true,
+      "detail": "got=[3, 17, 192, 320] want=[3, 17, 192, 320]"
+    },
+    {
+      "name": "window[257].geometry.cached_padded_latent_shape",
+      "ok": true,
+      "detail": "got=[5, 48, 12, 20] want=[5, 48, 12, 20]"
+    },
+    {
+      "name": "window[257].geometry.encoded_17_latent_shape",
+      "ok": true,
+      "detail": "got=[5, 48, 12, 20] want=[5, 48, 12, 20]"
+    },
+    {
+      "name": "window[257].geometry.encoded_1_latent_shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[257].geometry.native_crop_shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[257].geometry.image_size_match",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].geometry.encoded_1_latent_device",
+      "ok": true,
+      "detail": "'cuda:0'"
+    },
+    {
+      "name": "window[257].shared_preprocessing.source_uint8_dtype",
+      "ok": true,
+      "detail": "'torch.uint8'"
+    },
+    {
+      "name": "window[257].shared_preprocessing.padded_single_frame_vs_episode_slice.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].shared_preprocessing.padded_single_frame_vs_episode_slice.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].shared_preprocessing.padded_single_frame_vs_episode_slice.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].shared_preprocessing.padded_single_frame_vs_episode_slice.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].shared_preprocessing.padded_single_frame_vs_episode_slice.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].tensors.A_padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].tensors.A_padded_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[257].tensors.A_padded_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[257].tensors.A_padded_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].tensors.B_padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].tensors.B_padded_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[257].tensors.B_padded_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[257].tensors.B_padded_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].tensors.C_padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].tensors.C_padded_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 12, 20] want=[48, 12, 20]"
+    },
+    {
+      "name": "window[257].tensors.C_padded_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[257].tensors.C_padded_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].tensors.A_native_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].tensors.A_native_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[257].tensors.A_native_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[257].tensors.A_native_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].tensors.B_native_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].tensors.B_native_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[257].tensors.B_native_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[257].tensors.B_native_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].tensors.C_native_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].tensors.C_native_z0.shape",
+      "ok": true,
+      "detail": "got=[48, 10, 20] want=[48, 10, 20]"
+    },
+    {
+      "name": "window[257].tensors.C_native_z0.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[257].tensors.C_native_z0.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].tensors.A_visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].tensors.A_visual96.shape",
+      "ok": true,
+      "detail": "got=[96] want=[96]"
+    },
+    {
+      "name": "window[257].tensors.A_visual96.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[257].tensors.A_visual96.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].tensors.B_visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].tensors.B_visual96.shape",
+      "ok": true,
+      "detail": "got=[96] want=[96]"
+    },
+    {
+      "name": "window[257].tensors.B_visual96.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[257].tensors.B_visual96.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].tensors.C_visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].tensors.C_visual96.shape",
+      "ok": true,
+      "detail": "got=[96] want=[96]"
+    },
+    {
+      "name": "window[257].tensors.C_visual96.dtype",
+      "ok": true,
+      "detail": "'torch.float32'"
+    },
+    {
+      "name": "window[257].tensors.C_visual96.finite",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_B.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_B.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_B.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_B.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_B.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.B_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.B_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.B_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.B_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.B_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].comparisons.padded_z0.A_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_B.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_B.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_B.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_B.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_B.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.B_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.B_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.B_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.B_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.B_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].comparisons.native_post_crop_z0.A_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].comparisons.visual96.present",
+      "ok": true,
+      "detail": "dict"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_B.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_B.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_B.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_B.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_B.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].comparisons.visual96.B_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].comparisons.visual96.B_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].comparisons.visual96.B_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].comparisons.visual96.B_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].comparisons.visual96.B_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_C.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_C.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_C.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_C.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].comparisons.visual96.A_vs_C.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.A_helper_vs_formula.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].phase4_formula.A_helper_vs_formula.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].phase4_formula.A_helper_vs_formula.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.A_helper_vs_formula.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.A_helper_vs_formula.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.B_helper_vs_formula.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].phase4_formula.B_helper_vs_formula.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].phase4_formula.B_helper_vs_formula.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.B_helper_vs_formula.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.B_helper_vs_formula.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.C_helper_vs_formula.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].phase4_formula.C_helper_vs_formula.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].phase4_formula.C_helper_vs_formula.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.C_helper_vs_formula.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.C_helper_vs_formula.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.B_returned_vs_helper_of_B_z0.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].phase4_formula.B_returned_vs_helper_of_B_z0.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].phase4_formula.B_returned_vs_helper_of_B_z0.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.B_returned_vs_helper_of_B_z0.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.B_returned_vs_helper_of_B_z0.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.C_returned_vs_helper_of_C_z0.finite",
+      "ok": true,
+      "detail": "finite=True"
+    },
+    {
+      "name": "window[257].phase4_formula.C_returned_vs_helper_of_C_z0.exact_equal",
+      "ok": true,
+      "detail": "exact_equal=True"
+    },
+    {
+      "name": "window[257].phase4_formula.C_returned_vs_helper_of_C_z0.max_abs<=threshold",
+      "ok": true,
+      "detail": "max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.C_returned_vs_helper_of_C_z0.mean_abs<=threshold",
+      "ok": true,
+      "detail": "mean_abs=0.0"
+    },
+    {
+      "name": "window[257].phase4_formula.C_returned_vs_helper_of_C_z0.rmse<=threshold",
+      "ok": true,
+      "detail": "rmse=0.0"
+    },
+    {
+      "name": "windows.start_frames",
+      "ok": true,
+      "detail": "start_frames=[0, 128, 257]"
+    },
+    {
+      "name": "aggregate.present",
+      "ok": true,
+      "detail": "aggregate 缺失"
+    },
+    {
+      "name": "aggregate.padded_z0.A_vs_B.all_exact_equal",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "aggregate.padded_z0.A_vs_B.worst_max_abs<=threshold",
+      "ok": true,
+      "detail": "worst_max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "aggregate.padded_z0.B_vs_C.all_exact_equal",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "aggregate.padded_z0.B_vs_C.worst_max_abs<=threshold",
+      "ok": true,
+      "detail": "worst_max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "aggregate.padded_z0.A_vs_C.all_exact_equal",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "aggregate.padded_z0.A_vs_C.worst_max_abs<=threshold",
+      "ok": true,
+      "detail": "worst_max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "aggregate.native_post_crop_z0.A_vs_B.all_exact_equal",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "aggregate.native_post_crop_z0.A_vs_B.worst_max_abs<=threshold",
+      "ok": true,
+      "detail": "worst_max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "aggregate.native_post_crop_z0.B_vs_C.all_exact_equal",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "aggregate.native_post_crop_z0.B_vs_C.worst_max_abs<=threshold",
+      "ok": true,
+      "detail": "worst_max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "aggregate.native_post_crop_z0.A_vs_C.all_exact_equal",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "aggregate.native_post_crop_z0.A_vs_C.worst_max_abs<=threshold",
+      "ok": true,
+      "detail": "worst_max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "aggregate.visual96.A_vs_B.all_exact_equal",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "aggregate.visual96.A_vs_B.worst_max_abs<=threshold",
+      "ok": true,
+      "detail": "worst_max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "aggregate.visual96.B_vs_C.all_exact_equal",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "aggregate.visual96.B_vs_C.worst_max_abs<=threshold",
+      "ok": true,
+      "detail": "worst_max_abs=0.0 threshold=0.0"
+    },
+    {
+      "name": "aggregate.visual96.A_vs_C.all_exact_equal",
+      "ok": true,
+      "detail": "True"
+    },
+    {
+      "name": "aggregate.visual96.A_vs_C.worst_max_abs<=threshold",
+      "ok": true,
+      "detail": "worst_max_abs=0.0 threshold=0.0"
+    }
+  ],
+  "exit_code_semantics": {
+    "0": "PASS",
+    "1": "FAIL"
+  }
+}
