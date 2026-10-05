@@ -1428,3 +1428,16 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Candidate ancestry verified: base `b673ceda5...`, ahead 12 / behind 0, merge-base exactly `b673ceda5...`.
 - New canonical status: `PRODUCTION_PROMOTION_UNBLOCKED_FOR_EXACT_REVIEWED_CANDIDATE`.
 - Still required: fresh production-pair review after child branch + root Gitlink promotion.
+
+
+## 2026-10-05 — Corrected V3 production promotion CLOSED
+
+- Formal pair: root `b04fc2d4f1b2685bf9fb0e2b0f6277674bd2f93c` / child-Gitlink `8c3800565f66cfbce2929264f1c2a7854137482e`.
+- Root promotion diff changed only `cosmos-framework` gitlink.
+- Child production branch `v3-local-ttt` and promotion-candidate branch both resolve to exact `8c380056...`.
+- Relative to old child `b673ceda...`: ahead 12 / behind 0 / merge-base exactly old child.
+- Owner refreeze removed Phase3.5 3-task/9-window coverage as a production-promotion blocker; it is deferred to pre-formal-training supplemental evidence.
+- GPT verdict: `V3_CORRECTED_PRODUCTION_PROMOTION_CLOSED`.
+- Next authorization: `APPROVE_TO_RUN_CORRECTED_V3_GPU_READINESS_PRECHECK_ONLY`.
+- No optimizer step/checkpoint/server GPU/simulator/SR/formal training is authorized yet.
+- Review: `docs/collab/chatgpt/reviews/2026-10-05_V3_production_promotion_closure_b04fc2d4_8c380056.md`.
