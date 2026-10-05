@@ -1344,3 +1344,12 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - 已独立核对：corrected exact-window trainer、dynamic GA、scaler/optimizer candidate-live transaction、actual-K optimizer inventory、incompatible resume v2 schema、two-phase zero-mutation restore、fresh vs same-job DCP、trigger resume offset、semantic config digest、full manifest tokenizer contract与 DictConfig round-trip。
 - Evidence：final Phase5 focused `72 passed, 1 skipped`；strict real snapshot10 Phase5 preflight 单独 `1 passed`；comprehensive Phase4+Phase5+Phase1A/1B/2/3+joint/native Local+DCP regression `319 passed, 3 skipped`；Ruff/format/py_compile/diff-check PASS；forbidden-file diff为空。3 skips均为未注入资产时的 optional smoke，对应真实 Phase4/Phase5 smoke已单独通过。
 - 本 closure 不改变 production child/Gitlink，不授权正式 GPU readiness、训练、sim/eval/SR。下一生产前置仍是 Phase3.5 至少3 task classes/9 exact windows 的 thresholded parity，或 Owner 对该 Gate 的显式重新冻结/豁免。
+
+
+## 2026-10-05 — Corrected V3 Phase5 debug scratch closure；final Evidence supplement
+
+- Formal scratch SHA 仍为 `afb9ca8d9f8ec080518a838f56a681073eb4b495`，production child/Gitlink 仍为 `b673ceda5a9ff058abb31224b7006f2d87771ad2`；formal pair 未变，因此**不重新技术审核**。
+- 对同一固定 SHA 补跑最终完整矩阵并显式注入 strict real assets：**334 passed, 0 failed, 0 skipped**。
+- strict real Phase5 snapshot10 preflight：`1 passed`；strict real Phase4 B8/GA2/T16 probe：PASS；Ruff/format/py_compile/diff-check：PASS；forbidden-file diff为空。
+- 此 Evidence supersede 早期 `319 passed, 3 skipped` 的统计，但不改变 technical verdict。
+- Verdict 保持：`APPROVE_TO_CLOSE_PHASE5_DEBUG_SCRATCH`；`PRODUCTION_PROMOTION_STILL_BLOCKED_BY_PHASE3P5_THRESHOLDED_REAL_PARITY`；`GPU_READINESS_NOT_AUTHORIZED`。

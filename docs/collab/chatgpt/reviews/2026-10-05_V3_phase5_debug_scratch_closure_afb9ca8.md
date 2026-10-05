@@ -134,3 +134,26 @@ CLOSED：
 - 先完成 Phase3.5 thresholded parity 或由 Owner 显式重新冻结该 production Gate；
 - Gate 关闭后，形成 production promotion candidate，再单独做 fresh review；
 - promotion 后才进入 Phase5 GPU readiness Gate。
+
+
+## Final Evidence Supplement — 2026-10-05
+
+Formal scratch target **未变化**：`afb9ca8d9f8ec080518a838f56a681073eb4b495`。按审核规范，本段仅补强 Evidence，**不重新进行技术审核，原 verdict 不变**。
+
+在固定 scratch SHA、显式注入 strict real assets 后，独立最终矩阵：
+
+- comprehensive Phase4 + Phase5 trainer/resume/launcher + Phase1A/1B/2/3 + joint/native Local + DCP regression：**334 passed, 0 failed, 0 skipped**；
+- strict real Phase5 snapshot10 preflight：**1 passed**；
+- strict real Phase4 B8 / GA2 / T16 probe：PASS（`member_counts=(128,128)`，`N_window=256`，`scan_calls=2`，member1 S0 无 prefix，member2 S0 continuation present，optimizer success 后才 publish）；
+- Ruff check / Ruff format --check / py_compile / git diff --check：PASS；
+- forbidden-file diff：空。
+
+因此此前 review 中的 `319 passed, 3 skipped` 为较早 evidence；本 supplement 以 **334 passed, 0 skipped** 作为更强最终 CPU/static/debug 证据。
+
+Verdict remains:
+
+`APPROVE_TO_CLOSE_PHASE5_DEBUG_SCRATCH`
+
+`PRODUCTION_PROMOTION_STILL_BLOCKED_BY_PHASE3P5_THRESHOLDED_REAL_PARITY`
+
+`GPU_READINESS_NOT_AUTHORIZED`
