@@ -1,0 +1,1494 @@
+{
+  "schema": "robocasa_phase6_no_policy_online_local_real_smoke_v1",
+  "gate": "PHASE6-NO-POLICY-ONLINE-LOCAL-REAL-SMOKE",
+  "role": "ds (execution/evidence only; no repo/cache/source/VAE write)",
+  "authority": {
+    "scratch_root": "/tmp/psm_wma_v3_phase6_cx",
+    "parity_tool_path": "/tmp/psm_wma_v3_phase6_cx/tools/v3/verify_robocasa_exact_window_real_parity.py",
+    "parity_tool_sha256": "cb886feb1049ad59c8643c9ac41570f788b77fd4203d387b1f71d9513663c046",
+    "adapter_module_path": "/tmp/psm_wma_v3_phase6_cx/cosmos_framework/inference/robocasa_local_memory_policy.py",
+    "adapter_module_sha256": "06be3e736e484e4262ac6f099029a19505284eb5a218697179c8b406ae7dd131",
+    "online_module_path": "/tmp/psm_wma_v3_phase6_cx/cosmos_framework/inference/local_memory_online.py",
+    "online_module_sha256": "9106eeaa2f9130002dcfb79f1a4c5d03c5179806fb449ac4d0e1d1dd737bc048",
+    "network_module_path": "/tmp/psm_wma_v3_phase6_cx/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py",
+    "network_module_sha256": "6c729444edceb6a69de8612bb5ac274446860342db99bd2e971d00f321e8ec08",
+    "wire_decoder": {
+      "provenance": "/tmp/psm_wma_v3_phase6_cx/cosmos_framework/scripts/action_policy_server_robocasa.py",
+      "provenance_symbol": "_decode_base64_png_to_rgb_uint8 / _b64decode_loose",
+      "imported_server_module": false,
+      "reason": "server 模块 import 时执行 init_script()，属本 Gate 禁止的 server 加载路径",
+      "mirror_sha256": "4aaa87c531a6851c9d328c801ce53f4bd73d77b9ce1935a09757ef4a05e7bf74"
+    },
+    "cache_manifest_sha256": "fa7e52256f177f1160aa431374d9e1da028579c78ca3cfb9c5e11084600d4006",
+    "corpus_digest": "aae2573c3b4b8123a060f737de49940259362e9b970111d0b60c2d89f8896df6",
+    "source_binding_digest": "dc56c44fa9feae8e7e534663ab1acfaa585f28410de7b983ea6cd87deddd35a4",
+    "runtime_source_root": "/disk/rl/data/robocasa_v30/CloseFridge/20250816/lerobot",
+    "runtime_vae_path": "/disk/rl/models/wan22_vae/Wan2.2_VAE.pth",
+    "vae_sha256": "20eb789667fa5e60e7516bf509512f6cb61f01b0aa0695eadaea930c13892b36",
+    "resolved_vae_contract": {
+      "bucket_name": "",
+      "chunk_duration": 93,
+      "encode_chunk_frames": {
+        "256": 68,
+        "480": 24,
+        "720": 8,
+        "768": 8
+      },
+      "encode_exact_durations": [
+        17,
+        61,
+        73
+      ],
+      "keep_decoder_cache": false,
+      "object_store_credential_path_pretrained": "",
+      "spatial_compression_factor": 16,
+      "temporal_compression_factor": 4,
+      "use_streaming_encode": false,
+      "vae_path": "/disk/rl/models/wan22_vae/Wan2.2_VAE.pth"
+    },
+    "torch_version": "2.10.0+cu130",
+    "cuda_version": "13.0",
+    "device": "cuda:0",
+    "video_backend": "pyav",
+    "cudnn_benchmark": false,
+    "image_size": 256,
+    "tolerance_s": 0.0001,
+    "read_only": true,
+    "no_fallback": true,
+    "no_policy": true,
+    "gripper_flip": false,
+    "manual_seed": 20261005,
+    "local_memory_geometry": {
+      "evidence_dim": 256,
+      "local_dim": 32,
+      "ttt_dim": 64,
+      "fast_hidden_dim": 256,
+      "inner_lr": 0.1,
+      "ttt_tbptt_steps": 16,
+      "k_local": 4,
+      "action_dim": 15
+    },
+    "expected_source_steps": 20,
+    "expected_scan_blocks": [
+      [
+        16,
+        false
+      ],
+      [
+        4,
+        true
+      ]
+    ],
+    "max_sessions": 1,
+    "max_evidence_steps": 256,
+    "evidence_version": "corrected_composite_current_executed_raw15_v1",
+    "evidence_format": "robocasa_composite_rgb_canonical_raw15_v1",
+    "preprocess_profile": "left_wrist_reflection_pad_v1",
+    "tokenizer_state": {
+      "class": "Wan2pt2VAEInterface",
+      "use_streaming_encode": false,
+      "keep_encoder_cache": false,
+      "keep_decoder_cache": false
+    },
+    "causal_vae_cache_before": {
+      "host_class": "WanVAE_",
+      "enc_cache_len": 26,
+      "enc_cache_all_none": true,
+      "enc_stream_shape": null,
+      "dec_cache_len": 34,
+      "dec_cache_all_none": true
+    },
+    "torch_rng": {
+      "manual_seed": 20261005,
+      "torch_initial_seed": 20261005,
+      "cuda_initial_seed": 20261005
+    },
+    "runtime_geometry_observed": {
+      "evidence_dim": 256,
+      "local_dim": 32,
+      "ttt_dim": 64,
+      "fast_hidden_dim": 256,
+      "inner_lr": 0.1,
+      "ttt_tbptt_steps": 16,
+      "k_local": 4,
+      "action_dim": 15
+    },
+    "scan_source": {
+      "bound_from": "Cosmos3VFMNetwork.scan_local_memory",
+      "is_production_method": true,
+      "qualname": "Cosmos3VFMNetwork.scan_local_memory",
+      "defined_in": "/tmp/psm_wma_v3_phase6_cx/cosmos_framework/model/generator/mot/cosmos3_vfm_network.py"
+    },
+    "adapter_info": {
+      "enabled": true,
+      "mode": "required",
+      "evidence_version": "corrected_composite_current_executed_raw15_v1",
+      "evidence_format": "robocasa_composite_rgb_canonical_raw15_v1",
+      "visual_evidence": "corrected_composite_single_frame_encode1_v1",
+      "memory_kind": "ttt_fast_weight",
+      "action_dim": 15,
+      "k_local": 4,
+      "local_dim": 32,
+      "ttt_dim": 64,
+      "tbptt_steps": 16,
+      "inner_lr": 0.1,
+      "sessions": 0,
+      "pending": 0
+    },
+    "scan_binding_after_adapter": {
+      "adapter_scan_is_counted_wrapper": true,
+      "direct_core_fallback_absent": true
+    }
+  },
+  "episode": {
+    "task_class": "CloseFridge",
+    "episode_index": 26,
+    "episode_frame_count": 274,
+    "selected_starts": [
+      0
+    ],
+    "source_steps": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "camera_keys": [
+      "observation.images.robot0_agentview_left",
+      "observation.images.robot0_eye_in_hand"
+    ]
+  },
+  "witness": {
+    "per_source_step": [
+      {
+        "source_step": 0,
+        "item_action_row": 1,
+        "item_raw15_sha256": "f076a231a553cf608be127efce9b3fbc0f05cf9621ea94ddbf2798a4aa4cc02e",
+        "canonical_raw15_sha256": "c9a0ca170d189aba6bea81802bb0a59a90d14463b4578a08b23fb10494998de5",
+        "submitted_env12_sha256": "1bdc8e07e9f863578b4ea7ffc3fe4b64d04dfd63fe15f6df033d7a6a73443003",
+        "dataset_action12_sha256": "10af87dab3b577df149ebbed49bfe1f077db95f1f7f598f6597057951bdc0b44",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 1,
+        "item_action_row": 1,
+        "item_raw15_sha256": "307605fe01e202deb99a4c3efdb7bb831e11957396d2f1e3e4afe61a44a2ce88",
+        "canonical_raw15_sha256": "9179cdf696c44e86fe3e2bc4f0c4bd3f549f65282e463a4f87c3d3b17b184334",
+        "submitted_env12_sha256": "14bbbfd90bf8ba4c49e54ad45677c6782a2426e40215328de840e27e367162e1",
+        "dataset_action12_sha256": "9b773307bddabcfd71f0f8de7471c09e7fbb34b65b12f46f2b831000b49e5204",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 2,
+        "item_action_row": 1,
+        "item_raw15_sha256": "4aa55f2b2fd2f5aa65594d47dcf2aa5f315aee402624356e366912714b36bf15",
+        "canonical_raw15_sha256": "660db9898702c0851529de3e95dbec8fc7d727c2d336056e483531d6765fe762",
+        "submitted_env12_sha256": "3490cbd02621c9b46ed0e6e2a32f17f08d600350e63ce12f5b37c3171bba381c",
+        "dataset_action12_sha256": "1f9bb7077ee4a20604cbabd64eccf2f2aadd4eddd3418e26c89be312a558d070",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 3,
+        "item_action_row": 1,
+        "item_raw15_sha256": "d3337b7ec78be0de9162ca5de2f37623b299d858aead3b4c8018d0011a112bf9",
+        "canonical_raw15_sha256": "040a2a408095e05e8ed69c12a0d2231ab7208f70721b944016bc7889fbd7fb05",
+        "submitted_env12_sha256": "fe210513362d7ec7aac8f0225b90edcd396b6ea7e2a4028e453b1f49deeb8f15",
+        "dataset_action12_sha256": "78b15fe25c002cc8acc94734e314bd5633921836effaebf6dda361ca13086767",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 4,
+        "item_action_row": 1,
+        "item_raw15_sha256": "c54b758a3d611d6f4e01daf17380873629edb08c459e422a242ac37e754c6d04",
+        "canonical_raw15_sha256": "9689c1f88ade4e3103e0407857b9436a36463ba66e142e42c50fa1afd6c3390f",
+        "submitted_env12_sha256": "4926a80b633c5b25cad4e8396de14c018f82f1e3b23fe70db88953547107c4ab",
+        "dataset_action12_sha256": "3ca866ccf2a2c013d99aa3192e159ff521d2b86a51bfc35b4980c941fa29d662",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 5,
+        "item_action_row": 1,
+        "item_raw15_sha256": "4ba85be7ddd1728de42407344efa7454cb5172d5dbdf451683c3cba45fbe30e0",
+        "canonical_raw15_sha256": "503e375babc4ec353a3a9b77daad77474db9a339bdcae655d77539c7d24824d7",
+        "submitted_env12_sha256": "a8248204bcaa1785f9b19eb2a46f719528097e2661a67e0c1d65a2aa49a4710a",
+        "dataset_action12_sha256": "fe38f1ab301835c1ec141098b7b1fb9cdab108d5074c98a36d930088f6ccb711",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 6,
+        "item_action_row": 1,
+        "item_raw15_sha256": "f64608963c7a0075fb638ffa400bb5dc5d717148fc3291fb7f9ea48e925295d2",
+        "canonical_raw15_sha256": "af2994485283cf0528f2c991d888925668781c277334a9275f2b1d4aa94cd1b4",
+        "submitted_env12_sha256": "93ac847dcb2487fe9dee55ce82aa3f54cf94f1fbb3eb2be48a21d1fbf439854e",
+        "dataset_action12_sha256": "020ecbc684e2d66afbdb7fd3926f126ade1f6eff01cd21ec72f07c77080a3081",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 7,
+        "item_action_row": 1,
+        "item_raw15_sha256": "265b0cd9a6c5f911c7f4cdb3f5b28d0bd68b7eb1becd61306a9c04d9297181b5",
+        "canonical_raw15_sha256": "b28a23622061b0064955ccfc863159661fb30c389a2fa5a1307b37d35848e1a1",
+        "submitted_env12_sha256": "86aecfd86b078900eef0695279b6d8ad757e249cb461885426d7b9442b85ffeb",
+        "dataset_action12_sha256": "7363d2829249cf1fa20736aef4e4053a5de0028fe672f05d6456f43ba6b2d68d",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 8,
+        "item_action_row": 1,
+        "item_raw15_sha256": "0068198935443a1c0e7da86b573fbb13950e6bfbbc3c3d6e9883dd200ccabfd1",
+        "canonical_raw15_sha256": "1d149c70c8f9b76956888208d318ac24c18038d4ba23572ad3f45b889e15fcb5",
+        "submitted_env12_sha256": "8061d878d4c2756cf4c81de9fce432e80a3c68b12a2866de04124db2c05a7f1b",
+        "dataset_action12_sha256": "65019740946e9488dcfdd6f07eb35b3116753844b2ae0bc367743b1d69c961d0",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 9,
+        "item_action_row": 1,
+        "item_raw15_sha256": "8914762728ca8447fe412ecaada0bbec0502c7f1473247cf277cfb29449ce70a",
+        "canonical_raw15_sha256": "f6df69f2e9f1845668e0f4298690d324d6633e555cd22b2347de5b00984370e8",
+        "submitted_env12_sha256": "971c2a5ef771b35f18bb04c9e5c75a588eddd889ca49c04643191bb3fbb1ec05",
+        "dataset_action12_sha256": "d69b1f5e2efae0f998135f0fb928363003c3d09d6f462f2cad608de57b0aceff",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 10,
+        "item_action_row": 1,
+        "item_raw15_sha256": "2671f6681bc49c3f2f9660b2444d84d50619acf5a823340111f54106cd74341f",
+        "canonical_raw15_sha256": "fd13a90e5a24336bd839cf1081660a3153dd7291e9cd387024e0627833e80301",
+        "submitted_env12_sha256": "31b79b7af94994c29b81fe01c64a38338907f66cec2b019f23c96885437755f5",
+        "dataset_action12_sha256": "7404310d67167a2c43d886b5b539582da46e8a7f19c530a1b17aac8f5a140655",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 11,
+        "item_action_row": 1,
+        "item_raw15_sha256": "35e0ea18b11002f406e3d5d8e54f703d2c6823d40dc8f0cc86ae9420a3bdcf43",
+        "canonical_raw15_sha256": "24a5fbbacf6713299f72f8d6ccbf6c905cd62045a3e19a24e1c1588a72e384f5",
+        "submitted_env12_sha256": "82f11fb56f3af26f08728aaafdb7393566b9e3b43a13d58ce83180a960abda18",
+        "dataset_action12_sha256": "bf0ab740c020110330d8dde37d25bd587d5d22d28be18cb3ff53f1a84ea572cc",
+        "canonical_redecode_max_abs": 5.552595445550008e-17,
+        "item_action_vs_dataset_env12_max_abs": 1.110074992382734e-16,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 12,
+        "item_action_row": 1,
+        "item_raw15_sha256": "045a20d0b037de3b0a8da2df0495e98dd309304ae250fb07007500f4e65656b4",
+        "canonical_raw15_sha256": "a533543cf974dadc0cd0de48e72a0345029fc23ff720bcef6945dbb847ee533a",
+        "submitted_env12_sha256": "b6cb2b84596939b207b2e57a7288966dc25e078fb51dafe48993f490435b797f",
+        "dataset_action12_sha256": "dc3310f41bca223cfcb4a7ccffce8a57796144658f5dd32a7f54626040f2a473",
+        "canonical_redecode_max_abs": 5.552595445550008e-17,
+        "item_action_vs_dataset_env12_max_abs": 1.110074992382734e-16,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 13,
+        "item_action_row": 1,
+        "item_raw15_sha256": "20ec353c5992dac9da95e3f06926f892f82f194288506f479bb3d4359a2c5e01",
+        "canonical_raw15_sha256": "108c72ba0f90ea21afd63957026e8fb2518fe0e74fd4cddf89e7e917c2e5117e",
+        "submitted_env12_sha256": "61a9ba9d151d3496c9b338f27c0456aab7aa750c2321afc63b4e463e081e5441",
+        "dataset_action12_sha256": "60f1517eef05ef057b9dcdf05f2cb826bc0b740062aea846bcae1747e5cd1aa3",
+        "canonical_redecode_max_abs": 3.725290298461914e-09,
+        "item_action_vs_dataset_env12_max_abs": 3.725290298461914e-09,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 14,
+        "item_action_row": 1,
+        "item_raw15_sha256": "9927622a30b4c19dd74678658a0e6fa3d8b2ef4dda914f971b26fe5691f73a50",
+        "canonical_raw15_sha256": "94f645391b078e8e4692659057d7001d1a70114e5f71cd7fb6b3c7544b5fa61d",
+        "submitted_env12_sha256": "0658056f864047cc176bbfbc60078e2d3d34ba0b5bd97771e24d11a02cdec03b",
+        "dataset_action12_sha256": "fd7e27cb5677a5a3569696a2a137f1f76066da0b8caa1ceca68913b7114cdb2d",
+        "canonical_redecode_max_abs": 8.271806125530277e-25,
+        "item_action_vs_dataset_env12_max_abs": 7.450580596923828e-09,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 15,
+        "item_action_row": 1,
+        "item_raw15_sha256": "d09e6b0885769cd091144a9c18a8885fd010dac3d8c08eec91dca270abe214f7",
+        "canonical_raw15_sha256": "3e395913230d612b33c71d144e4db270355a16c033d68b5ae9de26fd51bf89e6",
+        "submitted_env12_sha256": "c4185fa1712298af664b7c28dfaf920c558f1905abf00b5e91b8e849c05a3815",
+        "dataset_action12_sha256": "780b74a78d03f40be798fa5a4f3fd0387a73a5d1b37c6791091c20c8a50ee8f7",
+        "canonical_redecode_max_abs": 7.450580596923828e-09,
+        "item_action_vs_dataset_env12_max_abs": 7.450580596923828e-09,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 16,
+        "item_action_row": 1,
+        "item_raw15_sha256": "8b60a7f6f2cf255123c97cced4ec49dbe74c5b6a185c0521d77a7313252f3cfa",
+        "canonical_raw15_sha256": "66007a720ca6429b545ace5edc199576f471686fd15a368201bbc2aa1616e14c",
+        "submitted_env12_sha256": "9fe01e5c0a79dec13e3f89771452e493683c9faab986256ed02b37a4e4ca2b30",
+        "dataset_action12_sha256": "d0f070e5f5a979441adc8bc72450e21dd44600574970029a26770b8f7573632f",
+        "canonical_redecode_max_abs": 5.642708501481534e-17,
+        "item_action_vs_dataset_env12_max_abs": 1.1010693777921957e-16,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 17,
+        "item_action_row": 1,
+        "item_raw15_sha256": "6bf348d50c270fb130cca4c84d1a056da7c6c9268051e456078ed2793347b1a4",
+        "canonical_raw15_sha256": "987f1c3da593a2cdbceff09f27593ac14069a91b6430d3ab2081794870b5b136",
+        "submitted_env12_sha256": "ff068126158bdabcdd69985899d15086e542aafd035ca2761f828b798431a2b6",
+        "dataset_action12_sha256": "716905181c263bc852eecb56132df0c17d43889ecfc36407953b10bc911c3d2d",
+        "canonical_redecode_max_abs": 5.487148915484812e-17,
+        "item_action_vs_dataset_env12_max_abs": 1.0974297830969624e-16,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 18,
+        "item_action_row": 1,
+        "item_raw15_sha256": "c9e74e8e70c6d114ca9de3aecbe3e232b78e0eda5a639f76b5cc590b6a95159d",
+        "canonical_raw15_sha256": "913d286564681ca29502f7e2c0ca391fdc6c0f0dcd29e50b190fff69820f3359",
+        "submitted_env12_sha256": "803b48e844aabb563acfb28c1c17c0e12c01a769f0e0552b6b1151b1b274fe2b",
+        "dataset_action12_sha256": "c356354fb736fb1bafec269cee7720a8e93da2af104d249249b3ec9f658d8bc4",
+        "canonical_redecode_max_abs": 0.0,
+        "item_action_vs_dataset_env12_max_abs": 0.0,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      },
+      {
+        "source_step": 19,
+        "item_action_row": 1,
+        "item_raw15_sha256": "4636f5cca0863fe77de20a65d63a22c71a37f7aada3084d5e9933b6f69d07b9e",
+        "canonical_raw15_sha256": "646ca327ef768263aa0daf3b046525e3a174febbb46986a9030b9d07d3af5ab6",
+        "submitted_env12_sha256": "0c4f8e37cd2e8353da2c479c0b174b213785c35c2eae1915fc4f43b56ac27c88",
+        "dataset_action12_sha256": "989cfb79423cad232236ff142d550a19f8582230bcca2aee4e628693c1c57b9f",
+        "canonical_redecode_max_abs": 2.9802322387695312e-08,
+        "item_action_vs_dataset_env12_max_abs": 2.9802322387695312e-08,
+        "item_base_mode": -1.0,
+        "dataset_control_mode": -1.0,
+        "composite_png_roundtrip_exact": true,
+        "composite_shape": [
+          3,
+          256,
+          512
+        ],
+        "composite_dtype": "torch.uint8"
+      }
+    ],
+    "composite_png_roundtrip_exact": true,
+    "canonical_redecode_max_abs": 2.9802322387695312e-08,
+    "item_action_vs_dataset_env12_max_abs": 2.9802322387695312e-08
+  },
+  "stages": {
+    "update20": {
+      "live_before_prepare": {
+        "consumer_step": 0,
+        "fingerprint": "42477d9f29cbe2e374dbd334aac13f8418c563016d4f21ce09038a830221ad01",
+        "token_digest": null,
+        "state_digest": null,
+        "visual_frontier": 0,
+        "visual_present": true
+      },
+      "entry": {
+        "stage": "update20_steps0_19",
+        "encoded_steps": 20,
+        "replay": false,
+        "prefix_present": true,
+        "consumer_step": 20,
+        "adapted_steps": 20.0,
+        "inner_loss_mean": 0.16220849752426147,
+        "fast_state_norm": 9.92971027260607,
+        "fast_update_norm": 0.04702329635620117,
+        "token": {
+          "shape": [
+            4,
+            32
+          ],
+          "dtype": "torch.float32",
+          "device": "cuda:0",
+          "finite": true
+        },
+        "state_present": true,
+        "state_flags": [
+          {
+            "shape": [
+              1,
+              256,
+              64
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              256
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              32,
+              256
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              32
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          }
+        ],
+        "state_finite": true,
+        "encode_calls_delta": 20,
+        "scan_calls_delta": 2,
+        "telemetry_finite": true
+      },
+      "live_after_prepare_before_commit": {
+        "consumer_step": 0,
+        "fingerprint": "42477d9f29cbe2e374dbd334aac13f8418c563016d4f21ce09038a830221ad01",
+        "token_digest": null,
+        "state_digest": null,
+        "visual_frontier": 0,
+        "visual_present": true
+      },
+      "scan_calls": [
+        {
+          "index": 0,
+          "T": 16,
+          "state_in_present": false,
+          "create_graph": false,
+          "valid_all": true
+        },
+        {
+          "index": 1,
+          "T": 4,
+          "state_in_present": true,
+          "create_graph": false,
+          "valid_all": true
+        }
+      ]
+    },
+    "replay": {
+      "entry": {
+        "stage": "replay_step20_lost_response",
+        "encoded_steps": 0,
+        "replay": true,
+        "prefix_present": true,
+        "consumer_step": 20,
+        "adapted_steps": 0.0,
+        "inner_loss_mean": 0.0,
+        "fast_state_norm": 9.92971027260607,
+        "fast_update_norm": 0.0,
+        "token": {
+          "shape": [
+            4,
+            32
+          ],
+          "dtype": "torch.float32",
+          "device": "cuda:0",
+          "finite": true
+        },
+        "state_present": true,
+        "state_flags": [
+          {
+            "shape": [
+              1,
+              256,
+              64
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              256
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              32,
+              256
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              32
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          }
+        ],
+        "state_finite": true,
+        "encode_calls_delta": 0,
+        "scan_calls_delta": 0,
+        "telemetry_finite": true
+      },
+      "live_after_prepare": {
+        "consumer_step": 20,
+        "fingerprint": "67cc78d9f12c2df1e84298c98dadd0d282a82b68a7cc8aa23d6c49ca2b5a5788",
+        "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+        "state_digest": "644afe52b5648949dbc6575f8c7a61e833c62b46a11cb552d3be0e916fd3a999",
+        "visual_frontier": 20,
+        "visual_present": true
+      }
+    },
+    "rejects": [
+      {
+        "case": "executed_action",
+        "raised": "Local-TTT replay bytes/action changed after commit",
+        "encode_calls_delta": 0,
+        "scan_calls_delta": 0,
+        "state_after": {
+          "consumer_step": 20,
+          "fingerprint": "67cc78d9f12c2df1e84298c98dadd0d282a82b68a7cc8aa23d6c49ca2b5a5788",
+          "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+          "state_digest": "644afe52b5648949dbc6575f8c7a61e833c62b46a11cb552d3be0e916fd3a999",
+          "visual_frontier": 20,
+          "visual_present": true
+        },
+        "pending_clean": true
+      },
+      {
+        "case": "composite_image",
+        "raised": "Local-TTT replay bytes/action changed after commit",
+        "encode_calls_delta": 0,
+        "scan_calls_delta": 0,
+        "state_after": {
+          "consumer_step": 20,
+          "fingerprint": "67cc78d9f12c2df1e84298c98dadd0d282a82b68a7cc8aa23d6c49ca2b5a5788",
+          "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+          "state_digest": "644afe52b5648949dbc6575f8c7a61e833c62b46a11cb552d3be0e916fd3a999",
+          "visual_frontier": 20,
+          "visual_present": true
+        },
+        "pending_clean": true
+      }
+    ],
+    "cold": {
+      "payload": {
+        "consumer_step": 0,
+        "reset": true,
+        "evidence_len": 0
+      },
+      "entry": {
+        "stage": "cold_S0",
+        "encoded_steps": 0,
+        "replay": false,
+        "prefix_present": false,
+        "consumer_step": 0,
+        "adapted_steps": 0.0,
+        "inner_loss_mean": 0.0,
+        "fast_state_norm": 0.0,
+        "fast_update_norm": 0.0,
+        "token": null,
+        "state_present": false,
+        "state_flags": null,
+        "state_finite": null,
+        "encode_calls_delta": 0,
+        "scan_calls_delta": 0,
+        "telemetry_finite": true
+      },
+      "live_before": {
+        "consumer_step": null,
+        "fingerprint": null,
+        "token_digest": null,
+        "state_digest": null,
+        "visual_frontier": null,
+        "visual_present": false
+      },
+      "live_after_prepare": {
+        "consumer_step": null,
+        "fingerprint": null,
+        "token_digest": null,
+        "state_digest": null,
+        "visual_frontier": null,
+        "visual_present": false
+      },
+      "live_after_commit": {
+        "consumer_step": 0,
+        "fingerprint": "42477d9f29cbe2e374dbd334aac13f8418c563016d4f21ce09038a830221ad01",
+        "token_digest": null,
+        "state_digest": null,
+        "visual_frontier": 0,
+        "visual_present": true
+      }
+    },
+    "reset": {
+      "cleared": {
+        "records": true,
+        "pending": true,
+        "visual_records": true,
+        "visual_pending": true
+      },
+      "new_session_payload": {
+        "consumer_step": 0,
+        "reset": true,
+        "evidence_len": 0,
+        "session_changed": true
+      },
+      "entry": {
+        "stage": "post_reset_new_session_cold",
+        "encoded_steps": 0,
+        "replay": false,
+        "prefix_present": false,
+        "consumer_step": 0,
+        "adapted_steps": 0.0,
+        "inner_loss_mean": 0.0,
+        "fast_state_norm": 0.0,
+        "fast_update_norm": 0.0,
+        "token": null,
+        "state_present": false,
+        "state_flags": null,
+        "state_finite": null,
+        "encode_calls_delta": 0,
+        "scan_calls_delta": 0,
+        "telemetry_finite": true
+      },
+      "live_after_new_cold": {
+        "consumer_step": 0,
+        "fingerprint": "4f5685afb0d08b78b74b3db1dc9f3a1909c4d5bea1de0cafac6e649105e8421c",
+        "token_digest": null,
+        "state_digest": null,
+        "visual_frontier": 0,
+        "visual_present": true
+      }
+    },
+    "committed_frontier": {
+      "consumer_step": 20,
+      "fingerprint": "67cc78d9f12c2df1e84298c98dadd0d282a82b68a7cc8aa23d6c49ca2b5a5788",
+      "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+      "state_digest": "644afe52b5648949dbc6575f8c7a61e833c62b46a11cb552d3be0e916fd3a999",
+      "visual_frontier": 20,
+      "visual_present": true
+    }
+  },
+  "counts": {
+    "tokenizer_encode_calls": 20,
+    "model_owned_scan_calls": 2,
+    "scan_call_log": [
+      {
+        "index": 0,
+        "T": 16,
+        "state_in_present": false,
+        "create_graph": false,
+        "valid_all": true
+      },
+      {
+        "index": 1,
+        "T": 4,
+        "state_in_present": true,
+        "create_graph": false,
+        "valid_all": true
+      }
+    ],
+    "expected_encode_calls": 20,
+    "expected_scan_calls": 2
+  },
+  "resources": {
+    "cuda_device": "cuda:0",
+    "cuda_device_name": "NVIDIA GeForce RTX 4090",
+    "peak_allocated_bytes": 2829448704,
+    "peak_reserved_bytes": 2938109952,
+    "allocated_bytes_at_end": 1432742400,
+    "slow_local_params_sha256_before": {
+      "core.key_proj.bias": "706460de74e22013d740d93a70a54e9adb52a24906df9ecb01f06bf39d62f4f3",
+      "core.key_proj.weight": "aa179f1083b05d78894918e4cb68bed43cfdf7f38c0f95b4d266253b169e7232",
+      "core.query_proj.bias": "f9950b6834e0c3eacf9a79947fb2a26170a62675f3264eea1d0a827d31cb914f",
+      "core.query_proj.weight": "547800d099d8626bde6849066598953dd4c725a5900a84ccb8cfd5f97adbfe24",
+      "core.slot_queries": "566524a3deaf0b41e7406f94b9f0ac01f5231d58ab8c574111a055d7d9bd1bd0",
+      "core.value_proj.bias": "cc3ebfb0992bd10fc3d10a155bbe4c3f2a726f710d89e8768fcfdf04adf97af4",
+      "core.value_proj.weight": "da6fbfe573962ed70fedb3aec12bcb942c46b99c29740f6332cd425bde8fda26",
+      "core.w0_fast_in_bias": "d7b2395a33ad9c6281abf1a0197744fc0d270c4123aa25f816e72b970ac9a3eb",
+      "core.w0_fast_in_weight": "d557f2dab5eee34bcf01060b5b015e9d3af576197183002d24ad1a41ecb192de",
+      "core.w0_fast_out_bias": "b8ff99fd3b9b861811f4a631d0032c40f764622c320c05bc34252060bbc5fc85",
+      "core.w0_fast_out_weight": "e4f1c88cf73b8fdddab0b9a1730a2dcace46f409d15cc405ba38c16ef58f33e2",
+      "encoder.action_proj.bias": "4e585cc5c9c6b7bec19b919dd3029ef87a499013273248ec5e5a6bc508495b0d",
+      "encoder.action_proj.weight": "72dc7b52581f2a38361d9402d3d3ed32aa9964c2a0c5b9ad58633f044fc27ea7",
+      "encoder.norm.bias": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+      "encoder.norm.weight": "893a106828fbdb9521e1d868c985aab7ad2ae2f606edc55329265a5e7676006c",
+      "encoder.visual_proj.bias": "5ddae42ce84654af1c36a0fae45d84db28e27a5bc8257d4eb45bfe32a524fb1c",
+      "encoder.visual_proj.weight": "e8bf2cd35a08494c18072035d44a84ca9dad44e3945d386f4c160e2c2ab075d2"
+    },
+    "slow_local_params_sha256_after": {
+      "core.key_proj.bias": "706460de74e22013d740d93a70a54e9adb52a24906df9ecb01f06bf39d62f4f3",
+      "core.key_proj.weight": "aa179f1083b05d78894918e4cb68bed43cfdf7f38c0f95b4d266253b169e7232",
+      "core.query_proj.bias": "f9950b6834e0c3eacf9a79947fb2a26170a62675f3264eea1d0a827d31cb914f",
+      "core.query_proj.weight": "547800d099d8626bde6849066598953dd4c725a5900a84ccb8cfd5f97adbfe24",
+      "core.slot_queries": "566524a3deaf0b41e7406f94b9f0ac01f5231d58ab8c574111a055d7d9bd1bd0",
+      "core.value_proj.bias": "cc3ebfb0992bd10fc3d10a155bbe4c3f2a726f710d89e8768fcfdf04adf97af4",
+      "core.value_proj.weight": "da6fbfe573962ed70fedb3aec12bcb942c46b99c29740f6332cd425bde8fda26",
+      "core.w0_fast_in_bias": "d7b2395a33ad9c6281abf1a0197744fc0d270c4123aa25f816e72b970ac9a3eb",
+      "core.w0_fast_in_weight": "d557f2dab5eee34bcf01060b5b015e9d3af576197183002d24ad1a41ecb192de",
+      "core.w0_fast_out_bias": "b8ff99fd3b9b861811f4a631d0032c40f764622c320c05bc34252060bbc5fc85",
+      "core.w0_fast_out_weight": "e4f1c88cf73b8fdddab0b9a1730a2dcace46f409d15cc405ba38c16ef58f33e2",
+      "encoder.action_proj.bias": "4e585cc5c9c6b7bec19b919dd3029ef87a499013273248ec5e5a6bc508495b0d",
+      "encoder.action_proj.weight": "72dc7b52581f2a38361d9402d3d3ed32aa9964c2a0c5b9ad58633f044fc27ea7",
+      "encoder.norm.bias": "5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+      "encoder.norm.weight": "893a106828fbdb9521e1d868c985aab7ad2ae2f606edc55329265a5e7676006c",
+      "encoder.visual_proj.bias": "5ddae42ce84654af1c36a0fae45d84db28e27a5bc8257d4eb45bfe32a524fb1c",
+      "encoder.visual_proj.weight": "e8bf2cd35a08494c18072035d44a84ca9dad44e3945d386f4c160e2c2ab075d2"
+    },
+    "slow_local_params_unchanged": true,
+    "slow_local_param_count": 17,
+    "vae_cache_before": {
+      "host_class": "WanVAE_",
+      "enc_cache_len": 26,
+      "enc_cache_all_none": true,
+      "enc_stream_shape": null,
+      "dec_cache_len": 34,
+      "dec_cache_all_none": true
+    },
+    "vae_cache_after": {
+      "host_class": "WanVAE_",
+      "enc_cache_len": 26,
+      "enc_cache_all_none": true,
+      "enc_stream_shape": null,
+      "dec_cache_len": 34,
+      "dec_cache_all_none": true,
+      "streaming_encode_calls": 0,
+      "decoder_decode_calls": 0
+    },
+    "vae_cache_unchanged": true,
+    "peak_allocated_mib": 2698.4,
+    "peak_reserved_mib": 2802.0
+  },
+  "checks": [
+    {
+      "check": "W1_canonical_raw15_redecodes_submitted_env12",
+      "ok": true,
+      "detail": {
+        "max_abs": 2.9802322387695312e-08,
+        "tol": 2e-06
+      }
+    },
+    {
+      "check": "W2_item_action1_matches_dataset_env12",
+      "ok": true,
+      "detail": {
+        "max_abs": 2.9802322387695312e-08,
+        "tol": 2e-06
+      }
+    },
+    {
+      "check": "W3_composite_png_roundtrip_bit_exact",
+      "ok": true,
+      "detail": {
+        "steps": 20
+      }
+    },
+    {
+      "check": "W4_source_steps_are_0_to_19_contiguous",
+      "ok": true,
+      "detail": {
+        "steps": [
+          0,
+          1,
+          2,
+          "..."
+        ]
+      }
+    },
+    {
+      "check": "S1_cold_payload_is_reset_step0_empty",
+      "ok": true,
+      "detail": {
+        "consumer_step": 0,
+        "reset": true
+      }
+    },
+    {
+      "check": "S2_cold_S0_prefix_absent_state_lazy",
+      "ok": true,
+      "detail": {
+        "stage": "cold_S0",
+        "encoded_steps": 0,
+        "replay": false,
+        "prefix_present": false,
+        "consumer_step": 0,
+        "adapted_steps": 0.0,
+        "inner_loss_mean": 0.0,
+        "fast_state_norm": 0.0,
+        "fast_update_norm": 0.0,
+        "token": null,
+        "state_present": false,
+        "state_flags": null,
+        "state_finite": null,
+        "encode_calls_delta": 0,
+        "scan_calls_delta": 0,
+        "telemetry_finite": true
+      }
+    },
+    {
+      "check": "S3_cold_prepare_does_not_publish_before_commit",
+      "ok": true,
+      "detail": {
+        "live_before": {
+          "consumer_step": null,
+          "fingerprint": null,
+          "token_digest": null,
+          "state_digest": null,
+          "visual_frontier": null,
+          "visual_present": false
+        },
+        "live_after_prepare": {
+          "consumer_step": null,
+          "fingerprint": null,
+          "token_digest": null,
+          "state_digest": null,
+          "visual_frontier": null,
+          "visual_present": false
+        }
+      }
+    },
+    {
+      "check": "S4_cold_after_commit_live_step0_lazy_state",
+      "ok": true,
+      "detail": {
+        "consumer_step": 0,
+        "fingerprint": "42477d9f29cbe2e374dbd334aac13f8418c563016d4f21ce09038a830221ad01",
+        "token_digest": null,
+        "state_digest": null,
+        "visual_frontier": 0,
+        "visual_present": true
+      }
+    },
+    {
+      "check": "S5_update20_payload_frontier_20_with_20_rows_no_reset",
+      "ok": true,
+      "detail": {
+        "consumer_step": 20,
+        "rows": 20,
+        "reset": false,
+        "row0_source_step": 0,
+        "row19_source_step": 19
+      }
+    },
+    {
+      "check": "S6_update20_real_encode1_and_model_owned_local_update",
+      "ok": true,
+      "detail": {
+        "stage": "update20_steps0_19",
+        "encoded_steps": 20,
+        "replay": false,
+        "prefix_present": true,
+        "consumer_step": 20,
+        "adapted_steps": 20.0,
+        "inner_loss_mean": 0.16220849752426147,
+        "fast_state_norm": 9.92971027260607,
+        "fast_update_norm": 0.04702329635620117,
+        "token": {
+          "shape": [
+            4,
+            32
+          ],
+          "dtype": "torch.float32",
+          "device": "cuda:0",
+          "finite": true
+        },
+        "state_present": true,
+        "state_flags": [
+          {
+            "shape": [
+              1,
+              256,
+              64
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              256
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              32,
+              256
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              32
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          }
+        ],
+        "state_finite": true,
+        "encode_calls_delta": 20,
+        "scan_calls_delta": 2,
+        "telemetry_finite": true
+      }
+    },
+    {
+      "check": "S7_update20_prefix_finite_k4x32_and_fast_state_finite_fp32",
+      "ok": true,
+      "detail": {
+        "token": {
+          "shape": [
+            4,
+            32
+          ],
+          "dtype": "torch.float32",
+          "device": "cuda:0",
+          "finite": true
+        },
+        "state_flags": [
+          {
+            "shape": [
+              1,
+              256,
+              64
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              256
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              32,
+              256
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          {
+            "shape": [
+              1,
+              32
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          }
+        ]
+      }
+    },
+    {
+      "check": "S8_update20_chunked_scan_blocks_exactly_16_then_4",
+      "ok": true,
+      "detail": [
+        {
+          "index": 0,
+          "T": 16,
+          "state_in_present": false,
+          "create_graph": false,
+          "valid_all": true
+        },
+        {
+          "index": 1,
+          "T": 4,
+          "state_in_present": true,
+          "create_graph": false,
+          "valid_all": true
+        }
+      ]
+    },
+    {
+      "check": "S9_update20_live_frontier_still_0_before_commit",
+      "ok": true,
+      "detail": {
+        "live_before": {
+          "consumer_step": 0,
+          "fingerprint": "42477d9f29cbe2e374dbd334aac13f8418c563016d4f21ce09038a830221ad01",
+          "token_digest": null,
+          "state_digest": null,
+          "visual_frontier": 0,
+          "visual_present": true
+        },
+        "live_after_prepare": {
+          "consumer_step": 0,
+          "fingerprint": "42477d9f29cbe2e374dbd334aac13f8418c563016d4f21ce09038a830221ad01",
+          "token_digest": null,
+          "state_digest": null,
+          "visual_frontier": 0,
+          "visual_present": true
+        }
+      }
+    },
+    {
+      "check": "S10_update20_commit_advances_live_frontier_matches_candidate",
+      "ok": true,
+      "detail": {
+        "consumer_step": 20,
+        "fingerprint": "67cc78d9f12c2df1e84298c98dadd0d282a82b68a7cc8aa23d6c49ca2b5a5788",
+        "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+        "state_digest": "644afe52b5648949dbc6575f8c7a61e833c62b46a11cb552d3be0e916fd3a999",
+        "visual_frontier": 20,
+        "visual_present": true
+      }
+    },
+    {
+      "check": "S11_replay_payload_byte_identical",
+      "ok": true,
+      "detail": {
+        "identical": true
+      }
+    },
+    {
+      "check": "S12_replay_zero_encode_zero_scan_zero_adapt_same_prefix_state",
+      "ok": true,
+      "detail": {
+        "entry": {
+          "stage": "replay_step20_lost_response",
+          "encoded_steps": 0,
+          "replay": true,
+          "prefix_present": true,
+          "consumer_step": 20,
+          "adapted_steps": 0.0,
+          "inner_loss_mean": 0.0,
+          "fast_state_norm": 9.92971027260607,
+          "fast_update_norm": 0.0,
+          "token": {
+            "shape": [
+              4,
+              32
+            ],
+            "dtype": "torch.float32",
+            "device": "cuda:0",
+            "finite": true
+          },
+          "state_present": true,
+          "state_flags": [
+            {
+              "shape": [
+                1,
+                256,
+                64
+              ],
+              "dtype": "torch.float32",
+              "device": "cuda:0",
+              "finite": true
+            },
+            {
+              "shape": [
+                1,
+                256
+              ],
+              "dtype": "torch.float32",
+              "device": "cuda:0",
+              "finite": true
+            },
+            {
+              "shape": [
+                1,
+                32,
+                256
+              ],
+              "dtype": "torch.float32",
+              "device": "cuda:0",
+              "finite": true
+            },
+            {
+              "shape": [
+                1,
+                32
+              ],
+              "dtype": "torch.float32",
+              "device": "cuda:0",
+              "finite": true
+            }
+          ],
+          "state_finite": true,
+          "encode_calls_delta": 0,
+          "scan_calls_delta": 0,
+          "telemetry_finite": true
+        },
+        "encode_calls": 20,
+        "scan_calls": 2,
+        "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+        "committed_token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6"
+      }
+    },
+    {
+      "check": "S13_replay_commit_does_not_move_frontier_or_state",
+      "ok": true,
+      "detail": {
+        "before": {
+          "consumer_step": 20,
+          "fingerprint": "67cc78d9f12c2df1e84298c98dadd0d282a82b68a7cc8aa23d6c49ca2b5a5788",
+          "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+          "state_digest": "644afe52b5648949dbc6575f8c7a61e833c62b46a11cb552d3be0e916fd3a999",
+          "visual_frontier": 20,
+          "visual_present": true
+        },
+        "after": {
+          "consumer_step": 20,
+          "fingerprint": "67cc78d9f12c2df1e84298c98dadd0d282a82b68a7cc8aa23d6c49ca2b5a5788",
+          "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+          "state_digest": "644afe52b5648949dbc6575f8c7a61e833c62b46a11cb552d3be0e916fd3a999",
+          "visual_frontier": 20,
+          "visual_present": true
+        }
+      }
+    },
+    {
+      "check": "S14_changed_same_frontier_evidence_fail_closed",
+      "ok": true,
+      "detail": [
+        {
+          "case": "executed_action",
+          "raised": "Local-TTT replay bytes/action changed after commit",
+          "encode_calls_delta": 0,
+          "scan_calls_delta": 0,
+          "state_after": {
+            "consumer_step": 20,
+            "fingerprint": "67cc78d9f12c2df1e84298c98dadd0d282a82b68a7cc8aa23d6c49ca2b5a5788",
+            "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+            "state_digest": "644afe52b5648949dbc6575f8c7a61e833c62b46a11cb552d3be0e916fd3a999",
+            "visual_frontier": 20,
+            "visual_present": true
+          },
+          "pending_clean": true
+        },
+        {
+          "case": "composite_image",
+          "raised": "Local-TTT replay bytes/action changed after commit",
+          "encode_calls_delta": 0,
+          "scan_calls_delta": 0,
+          "state_after": {
+            "consumer_step": 20,
+            "fingerprint": "67cc78d9f12c2df1e84298c98dadd0d282a82b68a7cc8aa23d6c49ca2b5a5788",
+            "token_digest": "9738ca9af797a046c523961df30df5af414380202408e4a1d3ef4101d80207a6",
+            "state_digest": "644afe52b5648949dbc6575f8c7a61e833c62b46a11cb552d3be0e916fd3a999",
+            "visual_frontier": 20,
+            "visual_present": true
+          },
+          "pending_clean": true
+        }
+      ]
+    },
+    {
+      "check": "S15_changed_evidence_keeps_encode_scan_counts_at_20_2",
+      "ok": true,
+      "detail": {
+        "encode_calls": 20,
+        "scan_calls": 2
+      }
+    },
+    {
+      "check": "S16_client_acknowledges_exact_frontier_after_replay",
+      "ok": true,
+      "detail": {
+        "error": null
+      }
+    },
+    {
+      "check": "S17_reset_clears_records_state_token_replay_witness",
+      "ok": true,
+      "detail": {
+        "records": true,
+        "pending": true,
+        "visual_records": true,
+        "visual_pending": true
+      }
+    },
+    {
+      "check": "S18_post_reset_new_session_payload_is_cold",
+      "ok": true,
+      "detail": {
+        "session_changed": true,
+        "consumer_step": 0
+      }
+    },
+    {
+      "check": "S19_post_reset_new_episode_cold_prefix_absent_state_lazy",
+      "ok": true,
+      "detail": {
+        "stage": "post_reset_new_session_cold",
+        "encoded_steps": 0,
+        "replay": false,
+        "prefix_present": false,
+        "consumer_step": 0,
+        "adapted_steps": 0.0,
+        "inner_loss_mean": 0.0,
+        "fast_state_norm": 0.0,
+        "fast_update_norm": 0.0,
+        "token": null,
+        "state_present": false,
+        "state_flags": null,
+        "state_finite": null,
+        "encode_calls_delta": 0,
+        "scan_calls_delta": 0,
+        "telemetry_finite": true
+      }
+    },
+    {
+      "check": "S20_post_reset_live_session_is_fresh_lazy",
+      "ok": true,
+      "detail": {
+        "consumer_step": 0,
+        "fingerprint": "4f5685afb0d08b78b74b3db1dc9f3a1909c4d5bea1de0cafac6e649105e8421c",
+        "token_digest": null,
+        "state_digest": null,
+        "visual_frontier": 0,
+        "visual_present": true
+      }
+    },
+    {
+      "check": "S21_encode_call_count_is_20",
+      "ok": true,
+      "detail": {
+        "tokenizer_encode_calls": 20
+      }
+    },
+    {
+      "check": "S22_model_owned_scan_call_count_is_2",
+      "ok": true,
+      "detail": {
+        "model_owned_scan_calls": 2
+      }
+    },
+    {
+      "check": "S23_slow_local_params_bit_exact_unchanged",
+      "ok": true,
+      "detail": {
+        "param_count": 17
+      }
+    },
+    {
+      "check": "S24_no_retained_causal_vae_state",
+      "ok": true,
+      "detail": {
+        "host_class": "WanVAE_",
+        "enc_cache_len": 26,
+        "enc_cache_all_none": true,
+        "enc_stream_shape": null,
+        "dec_cache_len": 34,
+        "dec_cache_all_none": true,
+        "streaming_encode_calls": 0,
+        "decoder_decode_calls": 0
+      }
+    }
+  ],
+  "status": "PASS",
+  "smoke_gate_pass": true,
+  "failures": []
+}
