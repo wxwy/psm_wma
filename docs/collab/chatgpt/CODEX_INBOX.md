@@ -1319,3 +1319,28 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Child 相对旧 pair **仅修改两个既有 parity 文件**：`tools/v3/verify_robocasa_exact_window_real_parity.py`、同名 `_test.py`。新增 `prepare_tokenizer_device`：先拒绝 streaming/cached encoder，再把 inner model 与 scale mean/inv_std 都迁到 requested device，随后 eval；CPU fake spy 用 `cuda:1` requested device 验证 model 与两 scale 的 `.to` 顺序及两项拒绝条件，不执行 CUDA。未导入旧 B1 helper，未改 production core。
 - cx synthetic/offline CPU：Phase3.5 + Phase1A/1B/2/3 六文件合并 pytest **186 passed**；两文件 Ruff check/format --check、py_compile、child/root diff-check PASS。未访问真实 cache/source/VAE，未执行真实 dry-run、GPU、训练、仿真；ds 继续暂停。未跟踪 `docs/build/.__dpc00000000cfccdeec00000338` 未暂存、未提交。
 - 请 GPT 对**新 exact pair** 给 fresh `APPROVE_TO_RUN_PHASE3P5_REAL_DRY_RUN_ONLY` 或 `REQUEST_CHANGES(file:line)`，重点复核 Wan requested-device 的 model+scale 迁移、no streaming/cache 约束与定向测试。仅请求 source review；不授权 observational VAE、thresholded Gate、Phase4、GPU训练或仿真。GPT=设计/审核，cx=实现/CPU-static/提交，ds=获 fresh dry-run-only 授权后才执行真实资产 dry-run；cx 不自授批准。
+
+## 2026-10-05 — Corrected V3 Phase4 debug scratch closure；GPT canonical verdict
+
+- Gate：`V3-CORRECTED-PHASE4-DEBUG-SCRATCH`；production root/child 未提升，authority pair 保持 Phase4 v1.2 已审核目标，child/Gitlink=`b673ceda5a9ff058abb31224b7006f2d87771ad2`。scratch implementation=`474ce9fd6ce848890a080ae9e2c568a0e2e0fb63`，validation marker=`aeab1763a97472afff654041043de3dbbec52e3b`。
+- Detailed review：`docs/collab/chatgpt/reviews/2026-10-05_V3_phase4_debug_scratch_closure_474ce9f.md`。
+- GPT verdict：`APPROVE_TO_CLOSE_PHASE4_DEBUG_SCRATCH`。
+- 该 verdict 只关闭 exact-window Local-TTT Phase4A/4B 的 CPU/static/debug scratch；model-owned mixed-state、batched Local scan、candidate/live transaction、T/B/GA dynamic 与 strict snapshot10 real smoke 已通过。不得据此 push/promote scratch child、修改 Gitlink或启动正式训练。
+- 生产 promotion 仍由 Phase3.5 thresholded `REAL_PARITY_PASS` 阻塞；当前单 task observational parity 仅支持 debug 同源性。
+
+## 2026-10-05 — Corrected V3 Phase5 trainer/DCP/resume design v1.0；GPT canonical verdict
+
+- Gate：`V3-CORRECTED-PHASE5-DESIGN`；design/root commit=`a5f84f075b1076ecfbc37817675a5516c4fb5f48`；production child/Gitlink=`b673ceda5a9ff058abb31224b7006f2d87771ad2`。
+- Design authority：`docs/build/PSM-WMA_V3_phase5_trainer_dcp_resume_design_v1.0_2026-10-05.md`；detailed review：`docs/collab/chatgpt/reviews/2026-10-05_V3_phase5_design_v1_0_review.md`。
+- GPT verdict：`APPROVE_PHASE5_DESIGN_V1_0_FOR_SCRATCH_IMPLEMENTATION`。
+- 授权范围仅为独立 scratch/debug worktree 上实现 trainer/optimizer/DCP/resume CPU/static contracts；`checkpoint/dcp.py`、`parallelize_vfm_network.py`、Phase1A/1B/2/3、inference/server/eval 保持禁止修改；正式 GPU training/readiness 未授权。
+- production promotion 继续受 Phase3.5 thresholded parity Gate 约束。
+
+## 2026-10-05 — Corrected V3 Phase5 CPU/static debug scratch closure；GPT canonical verdict
+
+- Gate：`V3-CORRECTED-PHASE5-DEBUG-SCRATCH`；production design authority root=`a5f84f075b1076ecfbc37817675a5516c4fb5f48`；production child/Gitlink（unchanged）=`b673ceda5a9ff058abb31224b7006f2d87771ad2`；final scratch SHA=`afb9ca8d9f8ec080518a838f56a681073eb4b495`。
+- Detailed review：`docs/collab/chatgpt/reviews/2026-10-05_V3_phase5_debug_scratch_closure_afb9ca8.md`。
+- GPT verdict：`APPROVE_TO_CLOSE_PHASE5_DEBUG_SCRATCH`；同时明确 `PRODUCTION_PROMOTION_STILL_BLOCKED_BY_PHASE3P5_THRESHOLDED_REAL_PARITY`，`GPU_READINESS_NOT_AUTHORIZED`。
+- 已独立核对：corrected exact-window trainer、dynamic GA、scaler/optimizer candidate-live transaction、actual-K optimizer inventory、incompatible resume v2 schema、two-phase zero-mutation restore、fresh vs same-job DCP、trigger resume offset、semantic config digest、full manifest tokenizer contract与 DictConfig round-trip。
+- Evidence：final Phase5 focused `72 passed, 1 skipped`；strict real snapshot10 Phase5 preflight 单独 `1 passed`；comprehensive Phase4+Phase5+Phase1A/1B/2/3+joint/native Local+DCP regression `319 passed, 3 skipped`；Ruff/format/py_compile/diff-check PASS；forbidden-file diff为空。3 skips均为未注入资产时的 optional smoke，对应真实 Phase4/Phase5 smoke已单独通过。
+- 本 closure 不改变 production child/Gitlink，不授权正式 GPU readiness、训练、sim/eval/SR。下一生产前置仍是 Phase3.5 至少3 task classes/9 exact windows 的 thresholded parity，或 Owner 对该 Gate 的显式重新冻结/豁免。
