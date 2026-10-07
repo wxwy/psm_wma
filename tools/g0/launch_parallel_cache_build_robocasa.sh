@@ -6,6 +6,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 PYTHON_BIN="${PYTHON_BIN:-$REPO_ROOT/cosmos-framework/.venv/bin/python}"
 BUILDER="$SCRIPT_DIR/build_cosmos_robocasa_latent_dataset.py"
 MERGER="$SCRIPT_DIR/merge_robocasa_latent_shards.py"
+QUEUE_MERGER="$SCRIPT_DIR/merge_robocasa_latent_task_manifests.py"
 
 if [[ $# -eq 0 ]]; then
   echo "usage: CUDA_VISIBLE_DEVICES=0,1,... $0 <builder args>" >&2
@@ -14,6 +15,7 @@ if [[ $# -eq 0 ]]; then
 fi
 
 OUTPUT_ROOT=""
+WORK_QUEUE=0
 ARGS=("$@")
 for ((i=0; i<${#ARGS[@]}; i++)); do
   case "${ARGS[$i]}" in
@@ -27,9 +29,12 @@ for ((i=0; i<${#ARGS[@]}; i++)); do
     --output-root=*)
       OUTPUT_ROOT="${ARGS[$i]#--output-root=}"
       ;;
-    --task-shard|--num-task-shards|--task-shard=*|--num-task-shards=*)
-      echo "[error] shard arguments are owned by this launcher; do not pass ${ARGS[$i]}" >&2
+    --task-shard|--num-task-shards|--task-shard=*|--num-task-shards=*|--worker-id|--worker-id=*)
+      echo "[error] scheduling arguments are owned by this launcher; do not pass ${ARGS[$i]}" >&2
       exit 2
+      ;;
+    --work-queue)
+      WORK_QUEUE=1
       ;;
   esac
 done
@@ -60,19 +65,35 @@ export PYTHONPATH="$REPO_ROOT/cosmos-framework:${PYTHONPATH:-}"
 
 echo "[parallel] GPUs=$GPU_SPEC processes=$NUM_GPUS"
 echo "[parallel] output_root=$OUTPUT_ROOT"
+if (( WORK_QUEUE )); then
+  echo "[parallel] scheduling=work_queue"
+else
+  echo "[parallel] scheduling=static_round_robin"
+fi
 
 PIDS=()
 for ((rank=0; rank<NUM_GPUS; rank++)); do
   gpu="${GPUS[$rank]}"
-  log="$OUTPUT_ROOT/logs/robocasa_cache_shard_$(printf '%04d' "$rank")_of_$(printf '%04d' "$NUM_GPUS").log"
-  echo "[launch] shard=$rank/$NUM_GPUS gpu=$gpu log=$log"
-  (
-    CUDA_VISIBLE_DEVICES="$gpu" "$PYTHON_BIN" "$BUILDER" \
-      "${ARGS[@]}" \
-      --device cuda:0 \
-      --task-shard "$rank" \
-      --num-task-shards "$NUM_GPUS"
-  ) >"$log" 2>&1 &
+  if (( WORK_QUEUE )); then
+    log="$OUTPUT_ROOT/logs/robocasa_cache_worker_$(printf '%04d' "$rank")_of_$(printf '%04d' "$NUM_GPUS").log"
+    echo "[launch] worker=$rank/$NUM_GPUS gpu=$gpu log=$log"
+    (
+      CUDA_VISIBLE_DEVICES="$gpu" "$PYTHON_BIN" "$BUILDER" \
+        "${ARGS[@]}" \
+        --device cuda:0 \
+        --worker-id "$rank"
+    ) >"$log" 2>&1 &
+  else
+    log="$OUTPUT_ROOT/logs/robocasa_cache_shard_$(printf '%04d' "$rank")_of_$(printf '%04d' "$NUM_GPUS").log"
+    echo "[launch] shard=$rank/$NUM_GPUS gpu=$gpu log=$log"
+    (
+      CUDA_VISIBLE_DEVICES="$gpu" "$PYTHON_BIN" "$BUILDER" \
+        "${ARGS[@]}" \
+        --device cuda:0 \
+        --task-shard "$rank" \
+        --num-task-shards "$NUM_GPUS"
+    ) >"$log" 2>&1 &
+  fi
   PIDS+=("$!")
 done
 
@@ -92,8 +113,13 @@ if (( failed != 0 )); then
   exit 1
 fi
 
-"$PYTHON_BIN" "$MERGER" \
-  --output-root "$OUTPUT_ROOT" \
-  --num-task-shards "$NUM_GPUS"
+if (( WORK_QUEUE )); then
+  "$PYTHON_BIN" "$QUEUE_MERGER" \
+    --output-root "$OUTPUT_ROOT"
+else
+  "$PYTHON_BIN" "$MERGER" \
+    --output-root "$OUTPUT_ROOT" \
+    --num-task-shards "$NUM_GPUS"
+fi
 
 echo "[done] parallel RoboCasa cache build complete: $OUTPUT_ROOT"
