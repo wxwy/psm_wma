@@ -4,7 +4,7 @@ import json
 import socket
 from pathlib import Path
 
-from robocasa_work_queue import atomic_write_json, release_claim, task_manifest_path, try_claim_task
+from tools.g0.robocasa_work_queue import atomic_write_json, release_claim, task_manifest_path, try_claim_task
 
 
 def test_claim_is_exclusive_and_done_manifest_blocks_reclaim(tmp_path: Path) -> None:
