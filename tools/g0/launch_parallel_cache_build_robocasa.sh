@@ -10,7 +10,7 @@ QUEUE_MERGER="$SCRIPT_DIR/merge_robocasa_latent_task_manifests.py"
 
 if [[ $# -eq 0 ]]; then
   echo "usage: CUDA_VISIBLE_DEVICES=0,1,... $0 <builder args>" >&2
-  echo "example: $0 --source-root ... --output-root ... --vae-path ... --suite robocasa365_target_atomic --episode-limit 10" >&2
+  echo "example: $0 --source-root ... --output-root ... --vae-path ... --suite robocasa365_target_atomic --work-queue" >&2
   exit 2
 fi
 
@@ -100,10 +100,18 @@ done
 failed=0
 for ((rank=0; rank<NUM_GPUS; rank++)); do
   if wait "${PIDS[$rank]}"; then
-    echo "[done] shard=$rank/$NUM_GPUS"
+    if (( WORK_QUEUE )); then
+      echo "[done] worker=$rank/$NUM_GPUS"
+    else
+      echo "[done] shard=$rank/$NUM_GPUS"
+    fi
   else
     status=$?
-    echo "[fail] shard=$rank/$NUM_GPUS exit=$status" >&2
+    if (( WORK_QUEUE )); then
+      echo "[fail] worker=$rank/$NUM_GPUS exit=$status" >&2
+    else
+      echo "[fail] shard=$rank/$NUM_GPUS exit=$status" >&2
+    fi
     failed=1
   fi
 done
