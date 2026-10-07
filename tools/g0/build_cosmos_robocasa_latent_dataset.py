@@ -16,6 +16,7 @@ import pyarrow.parquet as pq
 import torch
 
 from exact_window_cache import VisionEncoderAdapter, encode_window, to_training_uint8, window_indices, write_atomic
+from robocasa_work_queue import atomic_write_json, release_claim, task_manifest_path, try_claim_task
 from cosmos_framework.data.generator.action.datasets.robocasa_lerobot_dataset import (
     compose_robocasa_video,
     normalize_robocasa_camera_set,
@@ -272,6 +273,75 @@ def _valid_cached_row(
     return row
 
 
+def _make_manifest(
+    *,
+    source_root: Path,
+    suite: str,
+    camera_set: str,
+    image_size: int,
+    tokenizer: Wan2pt2VAEInterface,
+    revision: str,
+    episode_limit: int | None,
+    episode_seed: int,
+    task_rows: list[dict[str, object]],
+    expected_task_count: int,
+    task_shard: int | None,
+    num_task_shards: int | None,
+) -> dict[str, object]:
+    episode_rows = [row for task in task_rows for row in task["episodes"]]
+    if not episode_rows:
+        raise RuntimeError("RoboCasa v3 cache build produced zero encoded/reused episodes")
+
+    latent_shapes = {tuple(row["latent_shape"]) for row in episode_rows}
+    composed_sizes = {tuple(row["composed_output_size"]) for row in episode_rows}
+    canvas_sizes = {tuple(row["vae_canvas_size"]) for row in episode_rows}
+    if len(latent_shapes) != 1 or len(composed_sizes) != 1 or len(canvas_sizes) != 1:
+        raise ValueError(
+            f"RoboCasa v3 cache geometry drift: latent={sorted(latent_shapes)} "
+            f"composed={sorted(composed_sizes)} canvas={sorted(canvas_sizes)}"
+        )
+
+    return {
+        "schema_version": "exact_window_v1",
+        "source_format": "lerobot_v3",
+        "suite": suite,
+        "source_dataset": str(source_root),
+        "chunk_length": 16,
+        "camera_set": camera_set,
+        "camera_mode": camera_set,
+        "camera_keys": list(robocasa_camera_keys(camera_set)),
+        "sample_stride": 1,
+        "fps": 20.0,
+        "latent_shape": list(next(iter(latent_shapes))),
+        "action_shape_source": [12],
+        "state_shape": [16],
+        "source_view_size": [image_size, image_size],
+        "composed_output_size": list(next(iter(composed_sizes))),
+        "vae_canvas_size": list(next(iter(canvas_sizes))),
+        "vae_canvas_size_policy": "VideoResize resolution=None auto-tier",
+        "vae_encode_contract": {
+            "compute_dtype": str(tokenizer.dtype),
+            "encode_exact_durations": LIBERO_EXACT_WINDOW_ENCODE_EXACT_DURATIONS,
+            "encode_chunk_frames": LIBERO_EXACT_WINDOW_ENCODE_CHUNK_FRAMES,
+        },
+        "cudnn_benchmark": False,
+        "script_revision": revision,
+        "episode_limit_per_task_class": episode_limit,
+        "episode_selection_seed": episode_seed,
+        "episode_selection_policy": (
+            "ALL episodes when limit is null; otherwise "
+            "sha256(seed:task_class:episode_index) rank, prefix-N"
+        ),
+        "task_class_count": len(task_rows),
+        "full_task_class_count": expected_task_count,
+        "task_shard": task_shard,
+        "num_task_shards": num_task_shards,
+        "episode_count": len(episode_rows),
+        "window_count": sum(int(row["window_count"]) for row in episode_rows),
+        "tasks": task_rows,
+    }
+
+
 def _build_task(
     *,
     meta: LeRobotDatasetMetadata,
@@ -472,9 +542,23 @@ def main() -> None:
         default=None,
         help="Total number of task-class shards. Must be provided with --task-shard.",
     )
+    parser.add_argument(
+        "--work-queue",
+        action="store_true",
+        help="Dynamically claim task classes from a shared output-root queue.",
+    )
+    parser.add_argument(
+        "--worker-id",
+        default=None,
+        help="Optional work-queue worker label. Launcher normally owns this.",
+    )
     args = parser.parse_args()
 
     args.camera_set = normalize_robocasa_camera_set(args.camera_set)
+    if args.work_queue and (args.task_shard is not None or args.num_task_shards is not None):
+        raise ValueError("--work-queue cannot be combined with --task-shard/--num-task-shards")
+    if not args.work_queue and args.worker_id is not None:
+        raise ValueError("--worker-id is only valid with --work-queue")
     if args.device.startswith("cuda") and not torch.cuda.is_available():
         raise RuntimeError("CUDA is required for RoboCasa latent encoding")
 
@@ -489,22 +573,33 @@ def main() -> None:
             f"found {len(class_to_episodes)}: {sorted(class_to_episodes)}"
         )
 
-    selected_task_classes = _select_task_classes(
-        list(class_to_episodes),
-        task_shard=args.task_shard,
-        num_task_shards=args.num_task_shards,
-    )
-    if not selected_task_classes:
-        raise ValueError(
-            f"Task shard {args.task_shard}/{args.num_task_shards} is empty for "
-            f"{len(class_to_episodes)} task classes"
-        )
-    if args.task_shard is not None:
+    if args.work_queue:
+        selected_task_classes = sorted(class_to_episodes)
+        slugs = [_task_slug(task_class) for task_class in selected_task_classes]
+        if len(slugs) != len(set(slugs)):
+            raise ValueError("Task slugs collide; work-queue claims would be ambiguous")
         print(
-            f"[task-shard] shard={args.task_shard}/{args.num_task_shards} "
-            f"classes={len(selected_task_classes)}/{len(class_to_episodes)}",
+            f"[work-queue] worker={args.worker_id or 'auto'} "
+            f"classes={len(selected_task_classes)}",
             flush=True,
         )
+    else:
+        selected_task_classes = _select_task_classes(
+            list(class_to_episodes),
+            task_shard=args.task_shard,
+            num_task_shards=args.num_task_shards,
+        )
+        if not selected_task_classes:
+            raise ValueError(
+                f"Task shard {args.task_shard}/{args.num_task_shards} is empty for "
+                f"{len(class_to_episodes)} task classes"
+            )
+        if args.task_shard is not None:
+            print(
+                f"[task-shard] shard={args.task_shard}/{args.num_task_shards} "
+                f"classes={len(selected_task_classes)}/{len(class_to_episodes)}",
+                flush=True,
+            )
 
     existing_manifest_path = args.output_root / "dataset_manifest.json"
     if existing_manifest_path.is_file():
@@ -532,6 +627,96 @@ def main() -> None:
     resize = VideoResize(pad_keys=["video"], keep_aspect_ratio=True)
     revision = _revision()
 
+    if args.work_queue:
+        worker_id = args.worker_id or f"pid-{__import__('os').getpid()}"
+        completed_tasks = 0
+        while True:
+            claimed_task: str | None = None
+            claim_path: Path | None = None
+            for task_class in selected_task_classes:
+                task_slug = _task_slug(task_class)
+                claim_path = try_claim_task(
+                    output_root=args.output_root,
+                    task_slug=task_slug,
+                    task_class=task_class,
+                    worker_id=worker_id,
+                )
+                if claim_path is not None:
+                    claimed_task = task_class
+                    break
+
+            if claimed_task is None or claim_path is None:
+                break
+
+            task_slug = _task_slug(claimed_task)
+            print(
+                f"[work-queue-claim] worker={worker_id} task={claimed_task}",
+                flush=True,
+            )
+            try:
+                task_row = _build_task(
+                    meta=meta,
+                    source_root=args.source_root,
+                    output_root=args.output_root,
+                    suite=args.suite,
+                    task_class=claimed_task,
+                    source_episode_ids=class_to_episodes[claimed_task],
+                    encoder=encoder,
+                    device=device,
+                    video_resize=resize,
+                    camera_set=args.camera_set,
+                    image_size=args.image_size,
+                    episode_limit=args.episode_limit,
+                    episode_seed=args.episode_seed,
+                    tolerance_s=args.tolerance_s,
+                    vae_path=args.vae_path,
+                    revision=revision,
+                )
+                task_manifest = _make_manifest(
+                    source_root=args.source_root,
+                    suite=args.suite,
+                    camera_set=args.camera_set,
+                    image_size=args.image_size,
+                    tokenizer=tokenizer,
+                    revision=revision,
+                    episode_limit=args.episode_limit,
+                    episode_seed=args.episode_seed,
+                    task_rows=[task_row],
+                    expected_task_count=expected_task_count,
+                    task_shard=None,
+                    num_task_shards=None,
+                )
+                manifest_path = task_manifest_path(args.output_root, task_slug)
+                atomic_write_json(manifest_path, task_manifest)
+                completed_tasks += 1
+                print(
+                    f"[work-queue-done] worker={worker_id} task={claimed_task} "
+                    f"episodes={task_manifest['episode_count']} "
+                    f"windows={task_manifest['window_count']} "
+                    f"manifest={manifest_path}",
+                    flush=True,
+                )
+            finally:
+                release_claim(claim_path)
+
+        print(
+            json.dumps(
+                {
+                    "suite": args.suite,
+                    "source_format": "lerobot_v3",
+                    "camera_set": args.camera_set,
+                    "work_queue": True,
+                    "worker_id": worker_id,
+                    "completed_tasks_this_worker": completed_tasks,
+                    "task_manifest_dir": str(
+                        args.output_root / ".work_queue" / "task_manifests"
+                    ),
+                },
+                ensure_ascii=False,
+            )
+        )
+        return
+
     task_rows = [
         _build_task(
             meta=meta,
@@ -554,58 +739,20 @@ def main() -> None:
         for task_class in selected_task_classes
     ]
 
-    episode_rows = [row for task in task_rows for row in task["episodes"]]
-    if not episode_rows:
-        raise RuntimeError("RoboCasa v3 cache build produced zero encoded/reused episodes")
-
-    latent_shapes = {tuple(row["latent_shape"]) for row in episode_rows}
-    composed_sizes = {tuple(row["composed_output_size"]) for row in episode_rows}
-    canvas_sizes = {tuple(row["vae_canvas_size"]) for row in episode_rows}
-    if len(latent_shapes) != 1 or len(composed_sizes) != 1 or len(canvas_sizes) != 1:
-        raise ValueError(
-            f"RoboCasa v3 cache geometry drift: latent={sorted(latent_shapes)} "
-            f"composed={sorted(composed_sizes)} canvas={sorted(canvas_sizes)}"
-        )
-
-    manifest = {
-        "schema_version": "exact_window_v1",
-        "source_format": "lerobot_v3",
-        "suite": args.suite,
-        "source_dataset": str(args.source_root),
-        "chunk_length": 16,
-        "camera_set": args.camera_set,
-        "camera_mode": args.camera_set,
-        "camera_keys": list(robocasa_camera_keys(args.camera_set)),
-        "sample_stride": 1,
-        "fps": 20.0,
-        "latent_shape": list(next(iter(latent_shapes))),
-        "action_shape_source": [12],
-        "state_shape": [16],
-        "source_view_size": [args.image_size, args.image_size],
-        "composed_output_size": list(next(iter(composed_sizes))),
-        "vae_canvas_size": list(next(iter(canvas_sizes))),
-        "vae_canvas_size_policy": "VideoResize resolution=None auto-tier",
-        "vae_encode_contract": {
-            "compute_dtype": str(tokenizer.dtype),
-            "encode_exact_durations": LIBERO_EXACT_WINDOW_ENCODE_EXACT_DURATIONS,
-            "encode_chunk_frames": LIBERO_EXACT_WINDOW_ENCODE_CHUNK_FRAMES,
-        },
-        "cudnn_benchmark": False,
-        "script_revision": revision,
-        "episode_limit_per_task_class": args.episode_limit,
-        "episode_selection_seed": args.episode_seed,
-        "episode_selection_policy": (
-            "ALL episodes when limit is null; otherwise "
-            "sha256(seed:task_class:episode_index) rank, prefix-N"
-        ),
-        "task_class_count": len(task_rows),
-        "full_task_class_count": expected_task_count,
-        "task_shard": args.task_shard,
-        "num_task_shards": args.num_task_shards,
-        "episode_count": len(episode_rows),
-        "window_count": sum(int(row["window_count"]) for row in episode_rows),
-        "tasks": task_rows,
-    }
+    manifest = _make_manifest(
+        source_root=args.source_root,
+        suite=args.suite,
+        camera_set=args.camera_set,
+        image_size=args.image_size,
+        tokenizer=tokenizer,
+        revision=revision,
+        episode_limit=args.episode_limit,
+        episode_seed=args.episode_seed,
+        task_rows=task_rows,
+        expected_task_count=expected_task_count,
+        task_shard=args.task_shard,
+        num_task_shards=args.num_task_shards,
+    )
 
     args.output_root.mkdir(parents=True, exist_ok=True)
     manifest_path = _manifest_path(
@@ -613,12 +760,7 @@ def main() -> None:
         task_shard=args.task_shard,
         num_task_shards=args.num_task_shards,
     )
-    tmp_manifest_path = manifest_path.with_suffix(manifest_path.suffix + ".tmp")
-    tmp_manifest_path.write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
-    tmp_manifest_path.replace(manifest_path)
+    atomic_write_json(manifest_path, manifest)
     print(
         json.dumps(
             {
