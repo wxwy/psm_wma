@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 from collections import defaultdict
@@ -628,7 +629,7 @@ def main() -> None:
     revision = _revision()
 
     if args.work_queue:
-        worker_id = args.worker_id or f"pid-{__import__('os').getpid()}"
+        worker_id = args.worker_id or f"pid-{os.getpid()}"
         completed_tasks = 0
         while True:
             claimed_task: str | None = None
