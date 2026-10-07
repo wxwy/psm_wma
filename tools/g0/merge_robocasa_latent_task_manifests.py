@@ -7,8 +7,12 @@ import argparse
 import json
 from pathlib import Path
 
-from merge_robocasa_latent_shards import _COMMON_KEYS, _load
-from robocasa_work_queue import atomic_write_json
+try:
+    from .merge_robocasa_latent_shards import _COMMON_KEYS, _load
+    from .robocasa_work_queue import atomic_write_json
+except ImportError:
+    from merge_robocasa_latent_shards import _COMMON_KEYS, _load
+    from robocasa_work_queue import atomic_write_json
 
 
 def main() -> None:
