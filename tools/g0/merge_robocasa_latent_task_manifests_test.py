@@ -4,7 +4,7 @@ import json
 import sys
 from pathlib import Path
 
-from merge_robocasa_latent_task_manifests import main
+from tools.g0.merge_robocasa_latent_task_manifests import main
 
 
 def _manifest(task_class: str, episode_index: int) -> dict[str, object]:
