@@ -349,3 +349,11 @@
 - Acceptance: no VAE/server dependence, no change to frozen threshold, check claim 4/9 against per-window JSON (report lists 3), receipt draft cannot authorize Gate, full/fast inventory integrity and signed approval are fail-closed.
 - CPU: 19 synthetic unittest cases authored, NOT EXECUTED on target runtime. py_compile/compileall/Ruff NOT EXECUTED; target encoding server offline. Earlier PASS claim was unverified. Owner clarified receipt is issued ONCE after offline VAE encoding, not integrated into training.
 - Next: receive genuine Round-3 JSON; after a separately reviewed tolerance Gate, generate and sign actual acceptance receipt on trusted storage. Fast Phase1B SourceReader scan shortcut requires an independent implementation Gate.
+
+## 2026-10-08 — GPT V3 Round3 audit fix / numerical gate / one-step readiness
+
+- Owner-paste DS_PRO latest report: root=3dc3c90c, child/Gitlink=8c380056, 18 tasks / 9126 episodes full-corpus strict preflight PASS, config_digest=70e9867fffb5d00568328cdc29a9c49387344a49610b8837597342fb0325df37, B3/B4/B5 already PASS, Round3 raw JSON identifies 3/9 z0 differences.
+- GPT-authorized changes only to root `tools/v3/audit_round3_parity.py`, its synthetic tests, versioned `docs/build/PSM-WMA_V3_phase3p5_numeric_compatibility_gate_v1.0_2026-10-08.md`, and root bookkeeping; child production code untouched.
+- GPU bounded authorization: full-corpus fresh iter0→1 on 8×H100 *after* new-root clean-lock `--preflight --snapshot10` PASS; T16/B8/GA2/K4; official DROID DCP; new namespace. Same-job resume, 3-step, readiness10 and formal30k remain NOT authorized.
+- P3P5: GPT-reviewed bounded numerical threshold X=0.0625 for **held-out** three new task classes x first/mid/terminal; P3P5 stays OPEN until thresholded report PASS. Old v1.1 exact and Owner 2026-10-05 refreeze unchanged. No repeated B3/B4/B5 or data hash/encode all cache.
+- Audit tests authored locally: 11 focused cases PASS via Python 3.13, compiled. Actual DS JSON not accessible to GPT and remains to be verified by DS; if mismatch fail closed/report. DS may run test scripts/read-only probes, never modify code.

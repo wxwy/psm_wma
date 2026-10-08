@@ -4,6 +4,7 @@ This repository intentionally keeps historical design, Gate and review material.
 
 ## 1. Current truth — read these first
 
+- **Phase3.5 numerical supplemental Gate (2026-10-08):** `build/PSM-WMA_V3_phase3p5_numeric_compatibility_gate_v1.0_2026-10-08.md` — bounded held-out 3-task/9-window threshold 0.0625 for pre/post/z0, OPEN until verified; current full-corpus 8×H100 fresh 1-optimizer-step authorized after snapshot10. No formal30k authorization.
 - **Corrected V3 dataset acceptance receipt (tools-only):** `build/PSM-WMA_V3_dataset_acceptance_receipt_design_v0.1_2026-10-08.md` — offline draft/approve/verify tooling and Round-3 count audit. No threshold relaxation, no Phase1B fast-path override, no formal-training authorization.
 
 - **Current Corrected V3 Phase 6 authority:** `build/PSM-WMA_V3_phase6_online_inference_eval_design_v1.1_2026-10-05.md` — Phase6A scratch, Encode1 thresholded parity, and no-policy real Online Local smoke are CLOSED on exact child `8c3800565f66cfbce2929264f1c2a7854137482e`. Production promotion is CLOSED on formal pair root `b04fc2d4f1b2685bf9fb0e2b0f6277674bd2f93c` / child `8c380056...`. GPU-readiness precheck is GREEN, but the current single 24GB RTX 4090 is not authorized for optimizer smoke. Next authorized execution is 8×H100 fresh iter0→iter1 when available.
