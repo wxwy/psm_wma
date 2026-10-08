@@ -1321,10 +1321,10 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 
 ## 2026-10-08 — V3-ACCEPTANCE-RECEIPT-TOOLS (Owner → GPT direct GitHub implementation)
 
-- Status: DONE (tools-only implementation and synthetic CPU tests); DATASET ACCEPTANCE remains BLOCKED until P3P5 threshold closure and server evidence.
+- Status: IMPLEMENTED (tools-only GitHub sources/tests); TEST EXECUTION PENDING (offline server); DATASET ACCEPTANCE BLOCKED until P3P5 closure and server evidence.
 - Owner: ChatGPT. DS_PRO: read-only independent verification and evidence handoff, no production code edits.
 - Locked parent: root 597ce73d3c3cd4ac4d4a2e34db2c18e6a3e3e446 / child 8c3800565f66cfbce2929264f1c2a7854137482e.
 - Files: tools/v3/{audit_round3_parity.py,test_audit_round3_parity.py,dataset_acceptance_receipt.py,test_dataset_acceptance_receipt.py}; docs/build/PSM-WMA_V3_dataset_acceptance_receipt_design_v0.1_2026-10-08.md.
 - Acceptance: no VAE/server dependence, no change to frozen threshold, check claim 4/9 against per-window JSON (report lists 3), receipt draft cannot authorize Gate, full/fast inventory integrity and signed approval are fail-closed.
-- CPU: python -m unittest discover -s tools/v3 -p 'test_*.py' -q → 19 tests PASS. py_compile/compileall PASS. Ruff unavailable in current isolated runtime.
+- CPU: 19 synthetic unittest cases authored, NOT EXECUTED on target runtime. py_compile/compileall/Ruff NOT EXECUTED; target encoding server offline. Earlier PASS claim was unverified. Owner clarified receipt is issued ONCE after offline VAE encoding, not integrated into training.
 - Next: receive genuine Round-3 JSON; after a separately reviewed tolerance Gate, generate and sign actual acceptance receipt on trusted storage. Fast Phase1B SourceReader scan shortcut requires an independent implementation Gate.
