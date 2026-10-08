@@ -1318,3 +1318,13 @@ run-2（pid 1216599，`/tmp/epoch_reuse_full2.log`）于 **01:46:56** 结束，`
 
 - 目的：登记 GPT 冻结的 Phase4 唯一设计权威 `docs/build/PSM-WMA_V3_phase4_local_ttt_corrected_integration_design_v1.2_2026-10-05.md`，取代未提交的 v1.0/v1.1 草稿。cx 已全文只读复核 v1.2，并对照 Corrected v3.0、Phase3 closure、Phase3.5 `BLOCKED_ASSET_PATH` review、V2 donor `e3dc9ecce0a4a7223245dc4f5b5efde7b709fd92` 与 current child `b673ceda5a9ff058abb31224b7006f2d87771ad2`；§13 的 adapter 不读 W0、all-continuation 不调用 initial_state、mixed 仅在现有 FSDP-registered `scan_local_memory` 内构造 W0 且保持现有 registration，闭合 v1.1 的设计 blocker。其余 Phase3 video_latent nesting、单一 raw authority/去重读取、per-slot provenance、dynamic T/B/GA、K1 zero-init、per-row telemetry、candidate/live transaction 均未发现设计 blocker。
 - 本步仅原样提交 v1.2、更新 `docs/INDEX.md` current Phase4 authority 与本条 design-freeze 记录；child/Gitlink/TODO/production/test 不变。只做文件与 Git 只读检查及 docs diff-check，未运行项目测试、真实资产、GPU、训练或仿真。Phase3.5 仍为 `BLOCKED_ASSET_PATH`；Phase4 implementation 必须等待 thresholded `REAL_PARITY_PASS` 及 GPT 独立授权。本条写入时 root design commit 未提交。
+
+## 2026-10-08 — V3-ACCEPTANCE-RECEIPT-TOOLS (Owner → GPT direct GitHub implementation)
+
+- Status: DONE (tools-only implementation and synthetic CPU tests); DATASET ACCEPTANCE remains BLOCKED until P3P5 threshold closure and server evidence.
+- Owner: ChatGPT. DS_PRO: read-only independent verification and evidence handoff, no production code edits.
+- Locked parent: root 597ce73d3c3cd4ac4d4a2e34db2c18e6a3e3e446 / child 8c3800565f66cfbce2929264f1c2a7854137482e.
+- Files: tools/v3/{audit_round3_parity.py,test_audit_round3_parity.py,dataset_acceptance_receipt.py,test_dataset_acceptance_receipt.py}; docs/build/PSM-WMA_V3_dataset_acceptance_receipt_design_v0.1_2026-10-08.md.
+- Acceptance: no VAE/server dependence, no change to frozen threshold, check claim 4/9 against per-window JSON (report lists 3), receipt draft cannot authorize Gate, full/fast inventory integrity and signed approval are fail-closed.
+- CPU: python -m unittest discover -s tools/v3 -p 'test_*.py' -q → 19 tests PASS. py_compile/compileall PASS. Ruff unavailable in current isolated runtime.
+- Next: receive genuine Round-3 JSON; after a separately reviewed tolerance Gate, generate and sign actual acceptance receipt on trusted storage. Fast Phase1B SourceReader scan shortcut requires an independent implementation Gate.

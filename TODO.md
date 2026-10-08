@@ -339,3 +339,13 @@
 - 权威：partial_summary/task_xxx.json；只有 terminal episode result 可复用，只有 predictions/actions 不算完成。
 - 实现：child `12ae8cfe7593002ee4294ddf3584d45cf6e670cd`；root Gitlink integration `c8265532078283f674a02671599df380c4a7dd40`。
 - 验收：定向 resume tests + shell/static check + 同一 output_dir 的真实中断续跑 smoke；未完成前不标记 runtime PASS。
+
+## 2026-10-08 — V3-ACCEPTANCE-RECEIPT-TOOLS (Owner → GPT direct GitHub implementation)
+
+- Status: DONE (tools-only implementation and synthetic CPU tests); DATASET ACCEPTANCE remains BLOCKED until P3P5 threshold closure and server evidence.
+- Owner: ChatGPT. DS_PRO: read-only independent verification and evidence handoff, no production code edits.
+- Locked parent: root 597ce73d3c3cd4ac4d4a2e34db2c18e6a3e3e446 / child 8c3800565f66cfbce2929264f1c2a7854137482e.
+- Files: tools/v3/{audit_round3_parity.py,test_audit_round3_parity.py,dataset_acceptance_receipt.py,test_dataset_acceptance_receipt.py}; docs/build/PSM-WMA_V3_dataset_acceptance_receipt_design_v0.1_2026-10-08.md.
+- Acceptance: no VAE/server dependence, no change to frozen threshold, check claim 4/9 against per-window JSON (report lists 3), receipt draft cannot authorize Gate, full/fast inventory integrity and signed approval are fail-closed.
+- CPU: python -m unittest discover -s tools/v3 -p 'test_*.py' -q → 19 tests PASS. py_compile/compileall PASS. Ruff unavailable in current isolated runtime.
+- Next: receive genuine Round-3 JSON; after a separately reviewed tolerance Gate, generate and sign actual acceptance receipt on trusted storage. Fast Phase1B SourceReader scan shortcut requires an independent implementation Gate.

@@ -4,6 +4,8 @@ This repository intentionally keeps historical design, Gate and review material.
 
 ## 1. Current truth — read these first
 
+- **Corrected V3 dataset acceptance receipt (tools-only):** `build/PSM-WMA_V3_dataset_acceptance_receipt_design_v0.1_2026-10-08.md` — offline draft/approve/verify tooling and Round-3 count audit. No threshold relaxation, no Phase1B fast-path override, no formal-training authorization.
+
 - **Current Corrected V3 Phase 6 authority:** `build/PSM-WMA_V3_phase6_online_inference_eval_design_v1.1_2026-10-05.md` — Phase6A scratch, Encode1 thresholded parity, and no-policy real Online Local smoke are CLOSED on exact child `8c3800565f66cfbce2929264f1c2a7854137482e`. Production promotion is CLOSED on formal pair root `b04fc2d4f1b2685bf9fb0e2b0f6277674bd2f93c` / child `8c380056...`. GPU-readiness precheck is GREEN, but the current single 24GB RTX 4090 is not authorized for optimizer smoke. Next authorized execution is 8×H100 fresh iter0→iter1 when available.
 - **Corrected V3 design authority:** `build/PSM-WMA_V3_Local_TTT_on_latest_Cosmos_RoboCasa_detailed_design_v3.0_2026-10-04.md` — Owner-confirmed latest Cosmos RoboCasa/raw15 host + V2 Local-TTT; cache-first shared composite latent; H_pred/R default16. Phase4/5/6 corrected implementation has been promoted to production child `8c380056...`.
 - **Current Corrected V3 Phase 5 authority:** `build/PSM-WMA_V3_phase5_trainer_dcp_resume_design_v1.0_2026-10-05.md` — trainer/optimizer/DCP/resume scratch is CLOSED and included in production child `8c380056...`. Production-pair strict snapshot10 preflight PASS. Formal training remains unauthorized pending H100 readiness sequence.
