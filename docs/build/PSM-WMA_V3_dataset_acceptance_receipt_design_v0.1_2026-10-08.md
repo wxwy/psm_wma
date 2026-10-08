@@ -9,7 +9,7 @@ Date: 2026-10-08  |  Scope: **tools-only, opt-in**  |  Owner-authorized GitHub i
 - Corrected V3 design v3.0 + Phase1A/1B/2/3/3.5 + Owner's 2026-10-05 Phase3.5 refreeze remain authoritative.
 - This change **does not** alter `RoboCasaExactWindowCacheCatalog`, `RoboCasaExactWindowSourceReader`, `Wan2pt2VAEInterface`, the trainer, checkpoints, or any existing Gate verdict.
 - Existing Phase3.5 exact threshold `0.0` remains frozen. The new receipt is not a threshold change, a parity verdict, or permission to start formal 30k training.
-- The encoding server is offline: the original Round-3 JSON and production cache files have **not** been inspected or modified by this implementation. Tests use synthetic fixtures only.
+- The training server is operational and accessible to DS_PRO. Only GPT's remote device connection is unavailable; therefore the original Round-3 JSON and production cache files have **not** been independently inspected or modified by GPT. Tests use synthetic fixtures only.
 
 ## 2. Problems addressed
 
@@ -43,7 +43,7 @@ The separate evidence-index JSON uses:
 }
 ```
 
-This is a **schema example**, not evidence from the unavailable server. Each JSON evidence must itself contain a consistent top-level `status` or `gate.status`. B5 is builder self-reproducibility **only**, never a substitute for P3P5 current-runtime parity.
+This is a **schema example**, not a substitute for the original Round-3 evidence held on the training server. Each JSON evidence must itself contain a consistent top-level `status` or `gate.status`. B5 is builder self-reproducibility **only**, never a substitute for P3P5 current-runtime parity.
 
 ### B. `approve` — separate owner/GPT review and signing
 
@@ -59,9 +59,9 @@ Checks the receipt signature, schema/status, runtime child SHA, VAE weights SHA2
 - `--mode fast --trust-immutable-storage`: compares file paths, sizes and `mtime_ns`, plus current manifest SHA; requires an **explicit declaration of trusted immutable storage**. This is efficient but cannot detect malicious rewrites that preserve file metadata. It is **not** cryptographic proof of unchanged file bytes. If dataset mutability cannot be controlled, use `full`.
 - Changes to manifest, VAE hash, runtime commit, source digest, content, file set, or signature cause nonzero fail-closed. Path relocation is allowed with `full` if bytes and semantic authority match.
 
-Preferred output location for an eventual approved receipt: `cache_root/.validation/acceptance_v1.json`. A draft should be written in a separate evidence area such as `/tmp` and reviewed before signing; this implementation does **not** write anything to the actual offline encoding server.
+Preferred output location for an eventual approved receipt: `cache_root/.validation/acceptance_v1.json`. A draft should be written in a separate evidence area such as `/tmp` and reviewed before signing; this implementation does **not** write anything to the actual training server.
 
-## 4. Actual commands (run only after assets become available)
+## 4. Actual commands (DS_PRO can execute CPU-only verification now on the available training server)
 
 ```bash
 # CPU only, read-only input; nonzero is expected while the Round-3 report is inconsistent.
@@ -107,4 +107,4 @@ Still required: DS_PRO must provide the actual raw Round-3 JSON, reconcile 4/9 a
 
 **Acceptance occurs exactly once as an offline, post-VAE-encoding, pre-dataset-release step.** Training must neither generate nor approve nor re-run acceptance receipts, execute VAE parity, or perform any receipt-based full-file hashing. The tools introduced here are stand-alone commands, not part of the V3 trainer or launcher. Production training continues to use the already-frozen Phase1A/1B identity and per-window validation contracts; a separate explicit refreeze would be required to remove any existing checks or optimize Phase1B binding scans. A receipt is the historical data-quality witness, not a new training prerequisite or alternative to the frozen runtime guards.
 
-**Verification status:** The synthetic test files were authored and committed to GitHub, but have **not been executed in this session** (encoding server/remote device is offline and no project runtime is mounted). Any earlier ledger/commit-message claim of 19 tests passing is unverified and is superseded by this correction. DS_PRO may execute read-only CPU unit tests on a reachable machine when available. The actual Round-3 JSON is not in the committed V3 tree, so its 4/9 vs 3/9 discrepancy remains awaiting evidence-level adjudication.
+**Verification status:** The synthetic test files were authored and committed to GitHub, but have **not been executed in this session** (GPT's remote connection is unavailable; the training server remains accessible to DS_PRO, and no project runtime is mounted in this chat). Any earlier ledger/commit-message claim of 19 tests passing is unverified and is superseded by this correction. DS_PRO may execute read-only CPU unit tests **now** on the available training server; keep production/training worktrees untouched. The actual Round-3 JSON is not in the committed V3 tree, so its 4/9 vs 3/9 discrepancy remains awaiting evidence-level adjudication.
