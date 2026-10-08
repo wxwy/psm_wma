@@ -1455,3 +1455,16 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Fresh Gate conditions: exact pair, H100-host preflight PASS, world_size8/T16/B8/GA2/K4, fresh namespace, exactly one optimizer iteration, finite losses/gradients, exact generation+Local optimizer inventory, one Local publish, then stop.
 - Resume/iter2+/readiness10/formal30k/server/simulator/SR remain unauthorized.
 - Detailed review: `docs/collab/chatgpt/reviews/2026-10-05_V3_gpu_readiness_precheck_b04fc2d4_8c380056.md`.
+
+
+## 2026-10-08 — Full-corpus readiness closure
+
+- Formal pair reviewed: root `347636dce5cd33ad5a538183595e6cda893354aa` / child-Gitlink `8c3800565f66cfbce2929264f1c2a7854137482e`.
+- Round3 parity audit tool revalidation PASS.
+- Phase3.5 held-out 3-task / 9-window thresholded probe PASS under frozen `max_abs<=0.0625`; verdict: `PHASE3P5_NUMERIC_COMPATIBILITY_GATE_CLOSED`.
+- Full-corpus 8xH100 fresh iter0->1 readiness CLOSED: exact generation+Local optimizer inventory, all groups step=1, nonzero optimizer moments, post-step model fully finite, exit=0.
+- Direct loss/grad telemetry was not persisted; carry as formal-training observability debt, not as a reason to repeat the one-step run.
+- The iter1 short-run checkpoint is DIAGNOSTIC ONLY: short-run digest `ef6ca297` differs from formal30k and scheduler `_last_lr` is NaN because max_iter=warmup=1. Do not resume it.
+- Formal30k remains unauthorized.
+- Next authorized Gate only: `CORRECTED-V3-FORMAL30K-CONFIG-AND-TELEMETRY-READINESS`.
+- Review: `docs/collab/chatgpt/reviews/2026-10-08_V3_full_corpus_readiness_closure_347636dc_8c380056.md`.
