@@ -1468,3 +1468,14 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Formal30k remains unauthorized.
 - Next authorized Gate only: `CORRECTED-V3-FORMAL30K-CONFIG-AND-TELEMETRY-READINESS`.
 - Review: `docs/collab/chatgpt/reviews/2026-10-08_V3_full_corpus_readiness_closure_347636dc_8c380056.md`.
+
+
+## 2026-10-09 — Formal30k configuration preflight accepted; telemetry-only implementation authorized
+
+- Exact reviewed formal pair: root `347636dce5cd33ad5a538183595e6cda893354aa` / child-Gitlink `8c3800565f66cfbce2929264f1c2a7854137482e`; later docs/bookkeeping HEAD does not alter the formal implementation pair.
+- DS_PRO full-corpus formal schedule preflight accepted as Gate §1: `max_iter=30000`, `warmup=500`, `save_iter=100`, T16/B8/GA2/K4/world_size8, config_digest `70e9867fffb5d00568328cdc29a9c49387344a49610b8837597342fb0325df37`, full 9126-episode cache and matching flat source, official DROID DCP fresh initialization. Formal config sub-Gate CLOSED.
+- Verdict: `APPROVE_FORMAL30K_CONFIG_AND_TELEMETRY_READINESS` is **authorization for telemetry-only implementation**, not full telemetry readiness closure and not training authorization.
+- cx may extend `GroupedPlanObserver` and dedicated tests in corrected Phase5 entrypoint. Keep grouped/dataloader DCP callback ownership; **do not** restore every default `config.trainer.callbacks`. Record detached weighted outer/action/vision/inner losses, correctly labeled rank-local gradient norms, LR, Local telemetry, wall-time, GPU memory and post-commit epoch/frontier on rank0 once per successful iteration.
+- Required subsequent Gates: targeted CPU/static tests + new exact root/child/Gitlink formal-pair review, then separately authorized bounded formal-schedule burn-in.
+- NO optimizer step, short-run iter1 resume, or formal30k from this authorization.
+- Detailed review: `docs/collab/chatgpt/reviews/2026-10-09_V3_formal30k_config_and_telemetry_scope_347636dc_8c380056.md`.
