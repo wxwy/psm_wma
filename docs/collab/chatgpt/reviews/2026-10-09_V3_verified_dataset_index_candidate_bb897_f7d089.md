@@ -6,8 +6,8 @@ Status: CANDIDATE_IMPLEMENTED / TARGETED_CPU_AND_REAL_COLD_WARM_PENDING
 
 ## Frozen exact implementation pair
 
-Root implementation / design: `bb89741916ff13b934c437a5213837256daa568a`
-Child / Gitlink: `f7d0897e9c801c044c52dd70f4d8a7ae4663d579`
+Root implementation / design: `7afeba0232bb50995f27ebd2b22f5741c6e79d96`
+Child / Gitlink: `bd2fa59ca5b6f1a0b846e8effa5c7c2efcbed8d8`
 
 Branches:
 - Root: `v3-persistent-dataset-index-pair-20261009`
