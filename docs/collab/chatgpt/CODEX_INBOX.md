@@ -1495,7 +1495,7 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 ## 2026-10-09 — Verified Dataset Index ahead of bounded GPU smoke
 
 - Owner priority: pause 3-step GPU smoke until Dataset cold/warm startup optimization has passed targeted CPU and real corpus warm-preflight Gates; avoid repeated long 8-rank initialization.
-- Exact new implementation pair: root `bb89741916ff13b934c437a5213837256daa568a`; child/Gitlink `f7d0897e9c801c044c52dd70f4d8a7ae4663d579`.
+- Exact new implementation pair: root `7afeba0232bb50995f27ebd2b22f5741c6e79d96`; child/Gitlink `bd2fa59ca5b6f1a0b846e8effa5c7c2efcbed8d8`.
 - Candidate branches: `v3-persistent-dataset-index-pair-20261009` / `v3-persistent-dataset-index-20261009`; production V3 remains unchanged.
 - Implemented: versioned one-time verified receipt + readonly mmap absolute-row mapping, skip full 2M-window source identity and corpus hash during warm init, remove second cold .pt pass, compress flat index to episode offsets, reuse one Catalog, log dataset-init per-phase timings, strict `--dataset-index-root` for bounded smoke.
 - Digest and Slot/DCP semantics untouched; file authenticity is source-meta SHA + large immutable file stat witnesses, NOT 451GiB cryptographic re-hash on warm.
