@@ -1490,3 +1490,15 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Review: `docs/collab/chatgpt/reviews/2026-10-09_V3_formal30k_telemetry_readiness_closure_cd9c362_bf79d4a.md`.
 - The diagnostic iter1 checkpoint remains nonresumable. **Formal30k and any GPU optimizer step are NOT authorized** by this closure. A fresh, bounded real-formal-schedule execution requires a separately defined Gate.
 - DS_PRO continues as read-only execution/evidence provider, using a single in-place repository directory and avoiding destructive cleanup or ownership of code modifications.
+
+
+## 2026-10-09 — Verified Dataset Index ahead of bounded GPU smoke
+
+- Owner priority: pause 3-step GPU smoke until Dataset cold/warm startup optimization has passed targeted CPU and real corpus warm-preflight Gates; avoid repeated long 8-rank initialization.
+- Exact new implementation pair: root `bb89741916ff13b934c437a5213837256daa568a`; child/Gitlink `f7d0897e9c801c044c52dd70f4d8a7ae4663d579`.
+- Candidate branches: `v3-persistent-dataset-index-pair-20261009` / `v3-persistent-dataset-index-20261009`; production V3 remains unchanged.
+- Implemented: versioned one-time verified receipt + readonly mmap absolute-row mapping, skip full 2M-window source identity and corpus hash during warm init, remove second cold .pt pass, compress flat index to episode offsets, reuse one Catalog, log dataset-init per-phase timings, strict `--dataset-index-root` for bounded smoke.
+- Digest and Slot/DCP semantics untouched; file authenticity is source-meta SHA + large immutable file stat witnesses, NOT 451GiB cryptographic re-hash on warm.
+- Frozen contract: `docs/build/PSM-WMA_V3_verified_dataset_index_contract_2026-10-09.md`.
+- Candidate review: `docs/collab/chatgpt/reviews/2026-10-09_V3_verified_dataset_index_candidate_bb897_f7d089.md`.
+- Status: `PENDING_VERIFICATION`. DS_PRO should test the exact pair in its single existing directory, run no GPU, return failing tests / Ruff diffs to GPT without modifying code. After CPU acceptance, DS may cold-build one index in new external dataset directory and verify warm preflight, never starting a GPU training run yet.
