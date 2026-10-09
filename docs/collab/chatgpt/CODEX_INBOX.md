@@ -1502,3 +1502,12 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Frozen contract: `docs/build/PSM-WMA_V3_verified_dataset_index_contract_2026-10-09.md`.
 - Candidate review: `docs/collab/chatgpt/reviews/2026-10-09_V3_verified_dataset_index_candidate_bb897_f7d089.md`.
 - Status: `PENDING_VERIFICATION`. DS_PRO should test the exact pair in its single existing directory, run no GPU, return failing tests / Ruff diffs to GPT without modifying code. After CPU acceptance, DS may cold-build one index in new external dataset directory and verify warm preflight, never starting a GPU training run yet.
+
+## 2026-10-09 — Verified Index CPU Round 2 handoff, current pinned child 4923e494
+
+- Confirmed remote candidate Root parent `c4086107df7175da68b457c30abbba16def92ecc`, Child `4923e494a8bb0e1e18d7943ae00bd17f71498d88`, and parent Gitlink exactly `4923e494a8bb0e1e18d7943ae00bd17f71498d88`; candidate-only, production tips unchanged. Authoritative new Root HEAD is the commit containing this ledger/review, not the parent.
+- Child already includes the corrected terminal witness error priority, import sorting, and Ruff 0.12.7 formatter-shaped layout plus cold/warm Local/digest parity regression coverage. No extra Child source edit was warranted by current textual audit.
+- DS_PRO previous rejected pair: 10 index passed, 123 source/cache/SFT passed and 1 failed, Ruff check/format failed; all later correction commits are untested on the final pair. Current verdict **CPU_RETEST_PENDING / NOT GREEN**.
+- DS_PRO: one existing worktree; export `HF_HUB_OFFLINE=1` before pytest; full targeted index/source/cache/SFT/Local/Phase5 CPU tests, Ruff 0.12.7 check/format, py_compile, exact Root/Child/Gitlink and clean Child. Failure => STOP and send evidence; no DS production code edit/reset/clean.
+- If CPU all GREEN: authorize only one external single-process CPU Cold Build and read-only Warm Load + frozen formal-digest preflight. 3-step GPU smoke still suspended; formal30k not authorized.
+- Owner Review: `docs/collab/chatgpt/reviews/2026-10-09_V3_verified_index_cpu_r2_candidate_4923e494.md`.
