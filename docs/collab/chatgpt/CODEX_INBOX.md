@@ -1548,3 +1548,11 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Root Gitlink pinned by this Review. **New code has NOT passed DS CPU or GPU gates yet.** DS_PRO: original worktree, targeted pytest + Ruff 0.12.7/compile first, then only if all GREEN one new `bounded_w0_fsdp_parity_r1` 8xH100, `--stop-after-iter 3 --audit-missing-grads`, require all 8x3 AUDIT_OK with `selected=present=314/missing=0` plus normal DCP/loss and frozen config digest.
 - Prior source/cache/Index/Local semantic gates stay closed, no extra LeRobot optimization. **Formal30k PAUSED** pending GPT's new distributed Gate conclusion. DS never modifies, commits, cleans or overwrites source/MM evidence.
 - Review: `docs/collab/chatgpt/reviews/2026-10-09_V3_w0_fast_fsdp2_gradient_parity_fix_candidate.md`.
+
+## 2026-10-09 — w0 Fast FSDP2 Gate A Ruff EOF remediation, CPU static retest pending
+
+- DS_PRO on exact Root `2405db5ad11d6dcd8a39699d70bf721981e95b7f` / Child `5f5dc38f84caf83ccf3656e812ba83970e26e8d2` reported **110 passed / 2 skipped** pytest, Ruff check 2/2 PASS, Ruff format FAIL because `local_memory_fsdp_scan_test.py` has exactly one extra newline at EOF; py_compile not executed by stop protocol, GPU Gate B not executed. Child clean; original Root MM notes/Evidence preserved.
+- GPT verified exact existing file bytes and committed a **one-byte (EOF newline) deletion only** to Child `71e03c8501c94a2ad5fed60955af657d3f945b85`; no Python code, model path, Trainer, Optimizer, DCP, dataset or test assertions changed. Root Gitlink rebound in this docs-only Review commit.
+- **Gate A not yet GREEN** on new pair. DS_PRO on existing single worktree only: fetch safe FF, root/child/gitlink lock + child clean, `ruff format --check`, `ruff check`, `python -m py_compile` on two touched files; use Ruff 0.12.7. Carry old 110-pass pytest evidence over one-byte semantic-noop diff (do not misstate it as rerun). STOP on any failure; DS never edits source/reset/clean.
+- If static GREEN, prior conditional one fresh 8xH100 `bounded_w0_fsdp_parity_r1` with `--stop-after-iter 3 --audit-missing-grads` remains authorized. Verify all 24 AUDIT_OK and 314 present/0 missing every rank/step with DCP and frozen digest. **Formal30k HOLD** until explicit GPT Gate B closure.
+- Review: `docs/collab/chatgpt/reviews/2026-10-09_V3_w0_fast_fsdp2_gateA_ruff_eof_remediation.md`.
