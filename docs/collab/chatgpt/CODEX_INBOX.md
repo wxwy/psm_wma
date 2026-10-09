@@ -1530,3 +1530,12 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - **Authorize DS_PRO only:** one brand-new 8xH100 `formal_verified_index_30k` from official DROID DCP with `--phase fresh`, 30k/500/100, T16 B8 GA2 K4, exact new Root review HEAD + Child `4923e494a8bb0e1e18d7943ae00bd17f71498d88`, existing verified index, original worktree and preserved MM/Evidence, no `--stop-after-iter`, no `--preflight`. GPT neither launches nor operates the training server.
 - DS reports iter100 checkpoint/health and iter500 warmup milestone; avoid intentional interruption. Resume after interruption requires separate review. Diagnostic DCP cannot be resumed. Production branch unchanged.
 - Review: `docs/collab/chatgpt/reviews/2026-10-09_V3_bounded_gpu_smoke_gate_closure_formal30k_ds_execution.md`.
+
+## 2026-10-09 — Missing-gradient names diagnostic submitted; formal30k launch on HOLD
+
+- Prior three-step bounded 8xH100 smoke remains PASS. Its rank0 `missing_grad_tensors_rank_local=0/4/4` counts selected **`grad is None` parameters**, not numerical zero/sparse values, and their names were unobserved.
+- User approved owner-only code diagnostics. New Child `9656efc4dc7221710f0017bad662430c83893430` adds **opt-in**, bounded-fresh-three-step-only `--audit-missing-grads`, rank0..7 post-commit per-rank JSON `[CorrectedV3][missing_grad_audit]` with missing parameter names, generation/action/local subgroup and FSDP global/local shard sizes. No optimizer/model/Local/DCP/data changes, default disabled. New tests cover all 8 mock ranks, zero != None, no synchronization and CLI fail-closed.
+- This Root review commit updates Gitlink to `9656efc4dc7221710f0017bad662430c83893430`. Next stage **CPU retest first** (`HF_HUB_OFFLINE=1` pytest telemetry+Phase5, Ruff0.12.7 check/format, py_compile, Root/Child/Gitlink/clean). No static checks on DS have yet been executed for new pair.
+- If CPU all GREEN, DS_PRO alone may run **one new 8xH100 bounded 3-step fresh audit** `--audit-missing-grads --stop-after-iter 3`, log all 24 (8 ranks x 3 iterations) audit records, distinguish shard zero-length and group-conditional missing, return raw evidence. Do not resume diagnostic DCP or run iter4.
+- **Formal30k fresh authorization from previous Review is TEMPORARILY SUSPENDED pending identification + explicit GPT Gate**. Do not start formal30k yet, do not modify production code or MM/Evidence. Dataset startup 185s remains accepted/frozen.
+- Detailed Review: `docs/collab/chatgpt/reviews/2026-10-09_V3_missing_grad_name_audit_candidate_formal_hold.md`.
