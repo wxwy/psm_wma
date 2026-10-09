@@ -1479,3 +1479,14 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - Required subsequent Gates: targeted CPU/static tests + new exact root/child/Gitlink formal-pair review, then separately authorized bounded formal-schedule burn-in.
 - NO optimizer step, short-run iter1 resume, or formal30k from this authorization.
 - Detailed review: `docs/collab/chatgpt/reviews/2026-10-09_V3_formal30k_config_and_telemetry_scope_347636dc_8c380056.md`.
+
+
+## 2026-10-09 — Formal30k telemetry targeted CPU GREEN / closure
+
+- Exact implementation review pair: root `cd9c362555e9ebf447da3a90f7cbf43a572c6153` / child-Gitlink `bf79d4a0d0db9f5c10eb3486236cdfaaf1a12c73`.
+- DS_PRO executed targeted CPU tests on this pair in its single existing project directory: **37 passed, 1 skipped, 0 failed**; Ruff format 3/3 PASS; root/child/Gitlink identity match, child clean, pre-existing MM root edits preserved. Previous unchanged lint/compile checks PASS.
+- Reviewer independently verified final remediation diff: two deterministic test-fixture initialization lines and three Ruff-prescribed formatting hunks, no production numerical change.
+- Formal verdict: `APPROVE_FORMAL30K_CONFIG_AND_TELEMETRY_READINESS`; exact Gate `CORRECTED-V3-FORMAL30K-CONFIG-AND-TELEMETRY-READINESS` is now **CLOSED at targeted CPU/static scope**.
+- Review: `docs/collab/chatgpt/reviews/2026-10-09_V3_formal30k_telemetry_readiness_closure_cd9c362_bf79d4a.md`.
+- The diagnostic iter1 checkpoint remains nonresumable. **Formal30k and any GPU optimizer step are NOT authorized** by this closure. A fresh, bounded real-formal-schedule execution requires a separately defined Gate.
+- DS_PRO continues as read-only execution/evidence provider, using a single in-place repository directory and avoiding destructive cleanup or ownership of code modifications.
