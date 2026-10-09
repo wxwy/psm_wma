@@ -1511,3 +1511,13 @@ This entry is append-only; earlier ledger history is preserved as historical evi
 - DS_PRO: one existing worktree; export `HF_HUB_OFFLINE=1` before pytest; full targeted index/source/cache/SFT/Local/Phase5 CPU tests, Ruff 0.12.7 check/format, py_compile, exact Root/Child/Gitlink and clean Child. Failure => STOP and send evidence; no DS production code edit/reset/clean.
 - If CPU all GREEN: authorize only one external single-process CPU Cold Build and read-only Warm Load + frozen formal-digest preflight. 3-step GPU smoke still suspended; formal30k not authorized.
 - Owner Review: `docs/collab/chatgpt/reviews/2026-10-09_V3_verified_index_cpu_r2_candidate_4923e494.md`.
+
+## 2026-10-09 — Verified Dataset Index CPU/real-warm accepted; bounded 3-step GPU gate authorized
+
+- DS_PRO tested exact implementation Root `c4086107df7175da68b457c30abbba16def92ecc` / Child+Gitlink `4923e494a8bb0e1e18d7943ae00bd17f71498d88`: Round3 Ruff 8/8 check+format PASS; carried prior targeted pytest PASS across test-only formatting; child clean and MM/DS-only root dirt.
+- Real 9,126-episode / 2,085,331-window / 2,231,347-absolute-row single-process CPU index cold build `INDEX_BUILT` (1213.56 s), external receipt 6,450,901 B + mmap 35,701,680 B, original three authority digests unchanged.
+- Warm verify `INDEX_VALID` (logic 1.62 s), Phase5 `--preflight` exit0 (202.10 s wall), `verified_index_hit=true`, frozen formal digest `70e9867fffb5d00568328cdc29a9c49387344a49610b8837597342fb0325df37`. Comparable SourceReader init 1206.809 -> 188.980 s (~6.39x), remaining LeRobot/HF ~184.8 s.
+- Evidence boundaries: normal log absence of `torch.load` is not instrumented real cache zero-call proof; no separate real cold/warm sample tuple was provided. Synthetic guard/parity tests plus code review and unchanged digests are accepted for **this** bounded readiness decision; no invented dynamic sample evidence.
+- **VERDICT: VERIFIED_DATASET_INDEX_CPU_AND_REAL_WARM_GATE ACCEPTED/GREEN on documented scope.** The intervening root-only Review/Inbox commits do not change the tested Child/Gitlink; use the exact final Root HEAD from this Review in DS `--expected-root`.
+- **AUTHORIZE only ONE fresh 8xH100 bounded 3-optimizer-step diagnostic** on exact new candidate pair, existing external index and 30000/500/100 config with `--stop-after-iter 3`; gather per-rank startup, 3-step loss/grad/Local/VRAM/timing, final diagnostic DCP, no iter4 or resume. Formal30k remains **NOT AUTHORIZED**, neither production branch promoted nor DS code edits allowed.
+- Review: `docs/collab/chatgpt/reviews/2026-10-09_V3_verified_index_cpu_real_warm_gate_closure_gpu_smoke_authorization.md`.
