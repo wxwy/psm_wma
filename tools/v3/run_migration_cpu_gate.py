@@ -193,24 +193,49 @@ def main(argv: list[str] | None = None) -> int:
             (
                 "runner_pytest",
                 [
-                    sys.executable, "-m", "pytest", "--noconftest", "-q", "-p", "no:cacheprovider",
-                    "-o", "addopts=", f"--junitxml={evidence / 'runner_pytest.xml'}", str(root / root_python[1]),
+                    sys.executable,
+                    "-m",
+                    "pytest",
+                    "--noconftest",
+                    "-q",
+                    "-p",
+                    "no:cacheprovider",
+                    "-o",
+                    "addopts=",
+                    f"--junitxml={evidence / 'runner_pytest.xml'}",
+                    str(root / root_python[1]),
                 ],
             ),
             (
                 "pytest",
                 [
-                    sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", "-o", "addopts=",
-                    "--tb=short", f"--junitxml={evidence / 'pytest.xml'}", *TEST_FILES,
+                    sys.executable,
+                    "-m",
+                    "pytest",
+                    "-q",
+                    "-p",
+                    "no:cacheprovider",
+                    "-o",
+                    "addopts=",
+                    "--tb=short",
+                    f"--junitxml={evidence / 'pytest.xml'}",
+                    *TEST_FILES,
                 ],
             ),
         )
-        commands = (*commands, *(
-            (f"bash_{index}", ["bash", "-n", str(root / name)])
-            for index, name in enumerate(("scripts/eval_robocasa.sh", "scripts/eval.sh", "scripts/train_local_memory_ttt.sh"))
-        ))
+        commands = (
+            *commands,
+            *(
+                (f"bash_{index}", ["bash", "-n", str(root / name)])
+                for index, name in enumerate(
+                    ("scripts/eval_robocasa.sh", "scripts/eval.sh", "scripts/train_local_memory_ttt.sh")
+                )
+            ),
+        )
         for stage, command in commands:
-            code = run_command(command, cwd=child, env=env, output=evidence / f"{stage}.log", timeout=args.timeout_seconds)
+            code = run_command(
+                command, cwd=child, env=env, output=evidence / f"{stage}.log", timeout=args.timeout_seconds
+            )
             report["stages"].append({"stage": stage, "returncode": code, "status": "PASS" if code == 0 else "FAIL"})
             if code:
                 report["status"] = "FAIL"

@@ -357,3 +357,15 @@
 - GPU bounded authorization: full-corpus fresh iter0→1 on 8×H100 *after* new-root clean-lock `--preflight --snapshot10` PASS; T16/B8/GA2/K4; official DROID DCP; new namespace. Same-job resume, 3-step, readiness10 and formal30k remain NOT authorized.
 - P3P5: GPT-reviewed bounded numerical threshold X=0.0625 for **held-out** three new task classes x first/mid/terminal; P3P5 stays OPEN until thresholded report PASS. Old v1.1 exact and Owner 2026-10-05 refreeze unchanged. No repeated B3/B4/B5 or data hash/encode all cache.
 - Audit tests authored locally: 11 focused cases PASS via Python 3.13, compiled. Actual DS JSON not accessible to GPT and remains to be verified by DS; if mismatch fail closed/report. DS may run test scripts/read-only probes, never modify code.
+
+## 2026-10-10 — V3-R2-STATIC-FOLLOWUP
+
+- ID: V3-R2-STATIC-FOLLOWUP; status: IN_PROGRESS; owner: Codex.
+- Owner authorization: integrate/check/publish the second batch directly on V3; Child first, then Root Gitlink. Existing published implementation cf0c92731197bfdd0de073a4c07ca93194f58968 / d41be4f5485dcd9321318840c8c278c1f7487924 preserved.
+- Scope: fix observed Ruff violations in r2 changed files; rerun syntax, observer keyword checks, standalone CPU regression; publish exact new pair and factual review/handoff. No GPU, fresh training, resume, DCP edits, or DS code edits.
+- Acceptance: scoped Ruff/format and executed component tests pass, source changes reviewed, Child/Root pushed and remote Gitlink verified. Full real-host Gate A-F remain separate and RESUME_HOLD remains in effect.
+
+### 2026-10-10 — V3-R2-STATIC-FOLLOWUP resumed by explicit Owner/GPT decision
+- Status: IN_PROGRESS; owner: Codex. Preserve Root 32cc72bf49385904c2e720314ea47f47f492906c and prior records; fix test fixture only plus static normalization; Child fixed e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c.
+- Acceptance: new author CPU/static evidence, fast-forward Root source/Gitlink publication, exact remote Pair readback, canonical GPT Fresh Review request. DS new acceptance of old Pair stopped; fresh Pair review and independent Gates remain outstanding. Formal30k stays stopped.
+- Author checks complete: Ruff/format/syntax/shell PASS; runner 8 passed, migration 328 passed/3 real-asset skips. Task moves to REVIEW after source publication and exact Fresh Review ledger; no formal acceptance or Resume implied.

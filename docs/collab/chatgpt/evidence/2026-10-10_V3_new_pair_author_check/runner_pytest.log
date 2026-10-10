@@ -1,0 +1,3 @@
+$ /workspace/psm_wma/cosmos-framework/.venv/bin/python -m pytest --noconftest -q -p no:cacheprovider -o addopts= --junitxml=/workspace/onboarding/v3-new-pair-author-check/runner_pytest.xml /workspace/psm_wma/tools/v3/run_migration_cpu_gate_test.py
+........                                                                 [100%]
+8 passed in 0.07s

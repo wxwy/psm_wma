@@ -1,0 +1,8 @@
+$ /workspace/psm_wma/cosmos-framework/.venv/bin/python -m pytest -q -p no:cacheprovider -o addopts= --tb=short --junitxml=/workspace/onboarding/v3-new-pair-author-check/pytest.xml ../tools/v3/remaining_optimizations_test.py cosmos_framework/model/generator/omni_mot_cached_vision_test.py cosmos_framework/simulation/robocasa/local_memory_client_test.py cosmos_framework/utils/ordered_prefetch_test.py cosmos_framework/model/generator/mot/robocasa_async_segment_prefetch_test.py cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py cosmos_framework/trainer/local_memory_grouped_test.py cosmos_framework/trainer/local_memory_grouped_resume_test.py cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py cosmos_framework/model/generator/mot/local_memory_fsdp_scan_test.py examples/psm_wma_robocasa_formal_monitor_test.py examples/psm_wma_robocasa_formal_monitor_safety_test.py examples/psm_wma_robocasa_corrected_telemetry_test.py examples/psm_wma_robocasa_corrected_phase5_test.py
+WARNING: Failed to get available GPUs: NVML Shared Library Not Found
+........................................................................ [ 21%]
+.....................................................................s.. [ 43%]
+..........s............................................................. [ 65%]
+........................................................................ [ 87%]
+....s......................................                              [100%]
+328 passed, 3 skipped in 113.81s (0:01:53)

@@ -1,0 +1,46 @@
+import ast
+import hashlib
+import importlib.util
+import json
+import pathlib
+import subprocess
+import sys
+
+root = pathlib.Path('/workspace/psm_wma')
+child = root / 'cosmos-framework'
+out = pathlib.Path('/workspace/onboarding/v3-new-pair-author-check')
+out.mkdir(exist_ok=False)
+spec = importlib.util.spec_from_file_location('gate', root / 'tools/v3/run_migration_cpu_gate.py')
+gate = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(gate)
+assert gate.git(child, 'rev-parse', 'HEAD') == 'e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c'
+assert not gate.git(child, 'status', '--porcelain=v1')
+changed = [n for n in gate.git(child, 'diff', '--name-only', gate.ACCEPTED_CHILD, 'HEAD').splitlines() if n.endswith('.py')]
+root_names = ['tools/v3/run_migration_cpu_gate.py', 'tools/v3/run_migration_cpu_gate_test.py', 'tools/v3/remaining_optimizations_test.py', 'scripts/v3_evaluation_identity.py', 'scripts/eval_robocasa_18task_queue.py']
+files = sorted(set([child / n for n in (*changed, *gate.TEST_FILES)] + [root / n for n in root_names]))
+hashes = {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+report = {'classification': 'AUTHOR_CPU_VALIDATION_NOT_DS_ACCEPTANCE', 'root_parent': gate.git(root, 'rev-parse', 'HEAD'), 'child': gate.git(child, 'rev-parse', 'HEAD'), 'source_sha256': hashes, 'syntax_files': len(files), 'stages': []}
+for p in files:
+    compile(p.read_text(), str(p), 'exec')
+ruff = str(child / '.venv/bin/ruff')
+assert subprocess.check_output([ruff, '--version'], text=True).strip() == 'ruff 0.12.7'
+lint = [str(child / n) for n in changed] + [str(root / n) for n in root_names]
+commands = [
+    ('ruff_check', [ruff, 'check', '--config', str(child / '.ruff.toml'), *lint]),
+    ('ruff_format', [ruff, 'format', '--check', '--config', str(child / '.ruff.toml'), *lint]),
+    ('runner_pytest', [sys.executable, '-m', 'pytest', '--noconftest', '-q', '-p', 'no:cacheprovider', '-o', 'addopts=', f'--junitxml={out / "runner_pytest.xml"}', str(root / root_names[1])]),
+    ('pytest', [sys.executable, '-m', 'pytest', '-q', '-p', 'no:cacheprovider', '-o', 'addopts=', '--tb=short', f'--junitxml={out / "pytest.xml"}', *gate.TEST_FILES]),
+]
+commands += [(f'bash_{i}', ['bash', '-n', str(root / n)]) for i, n in enumerate(['scripts/eval_robocasa.sh', 'scripts/eval.sh', 'scripts/train_local_memory_ttt.sh'])]
+report['status'] = 'FAIL'
+try:
+    for stage, command in commands:
+        code = gate.run_command(command, cwd=child, env=gate.cpu_environment(child), output=out / f'{stage}.log', timeout=1800)
+        report['stages'].append({'stage': stage, 'command': command, 'returncode': code})
+        print(stage, code, flush=True)
+        if code:
+            raise SystemExit(code)
+    assert hashes == {str(p.relative_to(root)): hashlib.sha256(p.read_bytes()).hexdigest() for p in files}
+    report['status'] = 'PASS'
+finally:
+    (out / 'author-check.json').write_text(json.dumps(report, indent=2) + '\n')

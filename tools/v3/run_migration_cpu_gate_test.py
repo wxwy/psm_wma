@@ -9,7 +9,9 @@ from pathlib import Path
 
 import pytest
 
-spec = importlib.util.spec_from_file_location("migration_gate_under_test", Path(__file__).with_name("run_migration_cpu_gate.py"))
+spec = importlib.util.spec_from_file_location(
+    "migration_gate_under_test", Path(__file__).with_name("run_migration_cpu_gate.py")
+)
 assert spec is not None and spec.loader is not None
 gate = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(gate)
@@ -28,7 +30,9 @@ def test_cpu_environment_cannot_inherit_torchrun_context(tmp_path: Path, monkeyp
     assert os.environ == before
 
 
-@pytest.mark.parametrize("record", [" M tools/v3/unsafe.py\0", "?? artifacts/unsafe.py\0", " D SESSION.md\0", "R  TODO.md\0old\0"])
+@pytest.mark.parametrize(
+    "record", [" M tools/v3/unsafe.py\0", "?? artifacts/unsafe.py\0", " D SESSION.md\0", "R  TODO.md\0old\0"]
+)
 def test_source_or_deleted_notes_fail_closed(record: str) -> None:
     with pytest.raises(ValueError):
         gate.allowed_root_records(record)
@@ -77,8 +81,16 @@ def test_evidence_directory_reuse_is_rejected_without_overwrite(tmp_path: Path) 
     saved = evidence / "gate.json"
     saved.write_text("preserve me")
     with pytest.raises(FileExistsError):
-        gate.main([
-            "--root-worktree", str(tmp_path / "root"), "--expected-root", "a" * 40,
-            "--expected-child", "b" * 40, "--evidence-dir", str(evidence),
-        ])
+        gate.main(
+            [
+                "--root-worktree",
+                str(tmp_path / "root"),
+                "--expected-root",
+                "a" * 40,
+                "--expected-child",
+                "b" * 40,
+                "--evidence-dir",
+                str(evidence),
+            ]
+        )
     assert saved.read_text() == "preserve me"

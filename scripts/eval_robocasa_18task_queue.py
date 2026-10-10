@@ -20,8 +20,12 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-from v3_evaluation_identity import build_evaluation_identity, claim_evaluation_run, screening_metrics, validate_task_results
-
+from v3_evaluation_identity import (
+    build_evaluation_identity,
+    claim_evaluation_run,
+    screening_metrics,
+    validate_task_results,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 CHILD = ROOT / "cosmos-framework"
@@ -81,7 +85,16 @@ def atomic_write_json(path: Path, value: Any) -> None:
     os.replace(temporary, path)
 
 
-def task_result(dataset_dir: Path, output_dir: Path, worker: int, gpu: str, elapsed_s: float, *, run_digest: str, expected_trials: int) -> dict[str, Any]:
+def task_result(
+    dataset_dir: Path,
+    output_dir: Path,
+    worker: int,
+    gpu: str,
+    elapsed_s: float,
+    *,
+    run_digest: str,
+    expected_trials: int,
+) -> dict[str, Any]:
     result_file = output_dir / "results.json"
     if not result_file.is_file():
         raise FileNotFoundError(f"task eval did not write {result_file}")
@@ -153,12 +166,26 @@ def main() -> int:
     output_root = args.output_dir.resolve()
     output_root.mkdir(parents=True, exist_ok=True)
     manifest = build_evaluation_identity(
-        root=ROOT, checkpoint=checkpoint, config_file=config_file, tasks=tasks,
-        protocol={"seed": args.seed, "R": args.action_horizon, "H_pred": 16,
-                  "num_steps": args.num_steps, "guidance": args.guidance,
-                  "trials": args.num_test_episodes, "fps": 20, "camera_set": "left_wrist",
-                  "use_state": True, "base_encoding": "raw", "local_memory_mode": "required",
-                  "image_size": 256, "cam_size": 256, "success_latch": 1},
+        root=ROOT,
+        checkpoint=checkpoint,
+        config_file=config_file,
+        tasks=tasks,
+        protocol={
+            "seed": args.seed,
+            "R": args.action_horizon,
+            "H_pred": 16,
+            "num_steps": args.num_steps,
+            "guidance": args.guidance,
+            "trials": args.num_test_episodes,
+            "fps": 20,
+            "camera_set": "left_wrist",
+            "use_state": True,
+            "base_encoding": "raw",
+            "local_memory_mode": "required",
+            "image_size": 256,
+            "cam_size": 256,
+            "success_latch": 1,
+        },
     )
     run_digest = claim_evaluation_run(output_root, manifest, resume=args.resume)
     summary_path = output_root / "screening_summary.json"
@@ -170,8 +197,9 @@ def main() -> int:
         task_out = output_root / task
         existing = task_out / "results.json"
         if args.resume and existing.is_file():
-            results[task] = task_result(dataset_dir, task_out, -1, "resume", 0.0,
-                                        run_digest=run_digest, expected_trials=args.num_test_episodes)
+            results[task] = task_result(
+                dataset_dir, task_out, -1, "resume", 0.0, run_digest=run_digest, expected_trials=args.num_test_episodes
+            )
             continue
         elif existing.exists():
             raise SystemExit(f"refusing to overwrite existing task result without --resume: {existing}")
@@ -197,7 +225,9 @@ def main() -> int:
                 "sr": successes / trials if trials else None,
                 "tasks": ordered,
             }
-            payload.update(screening_metrics(results, tasks=[task for task, _ in tasks], expected_trials=args.num_test_episodes))
+            payload.update(
+                screening_metrics(results, tasks=[task for task, _ in tasks], expected_trials=args.num_test_episodes)
+            )
             payload["evaluation_run_digest"] = run_digest
             atomic_write_json(summary_path, payload)
 
@@ -312,8 +342,13 @@ def main() -> int:
                             )
                         returncode = completed.returncode
                         row = task_result(
-                            dataset_dir, task_out, worker_id, gpu, time.monotonic() - started,
-                            run_digest=run_digest, expected_trials=args.num_test_episodes,
+                            dataset_dir,
+                            task_out,
+                            worker_id,
+                            gpu,
+                            time.monotonic() - started,
+                            run_digest=run_digest,
+                            expected_trials=args.num_test_episodes,
                         )
                         if returncode != 0:
                             error = f"closed_loop_eval exited with code {returncode}"

@@ -1,0 +1,1 @@
+$ bash -n /workspace/psm_wma/scripts/train_local_memory_ttt.sh

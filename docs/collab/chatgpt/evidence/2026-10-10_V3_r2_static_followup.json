@@ -1,0 +1,94 @@
+{
+  "scope": "migration CPU/static self-check; not independent DS acceptance",
+  "root_parent": "5e7f2d2c2db39b7fc676d6a6f846af16e610eaf1",
+  "previous_implementation_root": "cf0c92731197bfdd0de073a4c07ca93194f58968",
+  "previous_child": "d41be4f5485dcd9321318840c8c278c1f7487924",
+  "child": "e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c",
+  "python": "3.12.14",
+  "ruff": "0.12.7",
+  "torch": "2.10.0+cpu",
+  "syntax_files": 28,
+  "ruff_check": "PASS",
+  "ruff_format_check": "PASS",
+  "child_non_import_ast_equivalent_files": 19,
+  "observer_keyword_calls_checked": 4,
+  "bash_syntax_scripts": [
+    "scripts/eval.sh",
+    "scripts/eval_robocasa.sh",
+    "scripts/train_local_memory_ttt.sh"
+  ],
+  "config_digest_expected": "70e9867fffb5d00568328cdc29a9c49387344a49610b8837597342fb0325df37",
+  "config_digest_measured": null,
+  "real_training_assets_used": false,
+  "gpu_executed": false,
+  "dcp_opened_or_modified": false,
+  "resume_authorized": false,
+  "fresh_training_authorized": false,
+  "ds_independent_validation": "NOT_RUN",
+  "fresh_pair_review": "REQUIRED",
+  "tests": {
+    "migration_test_list_with_repository_conftest": {
+      "tests": 331,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 3,
+      "passed": 328,
+      "skips": [
+        {
+          "name": "test_optional_real_data_debug_smoke",
+          "reason": "real debug cache/source paths were not supplied"
+        },
+        {
+          "name": "test_optional_strict_real_data_grouped_smoke",
+          "reason": "strict real debug cache/source paths were not supplied"
+        },
+        {
+          "name": "test_optional_real_strict_snapshot10_preflight",
+          "reason": "未提供真实 exact-window cache/source/Edge/base/VAE 路径"
+        }
+      ],
+      "sha256": "f83d762be4edd3157edd940a7d27447672d1697a2f583a4683b787061716fadd",
+      "junit_path": "docs/collab/chatgpt/evidence/2026-10-10_V3_r2_static_followup_migration_test_list_with_repository_conftest.xml"
+    },
+    "standalone_component_monitor_prefetch_runner": {
+      "tests": 120,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 120,
+      "skips": [],
+      "sha256": "56ea64673cde580f7da6637932a0dbf64d52aa18ebfead53dab4e8d398cdc375",
+      "junit_path": "docs/collab/chatgpt/evidence/2026-10-10_V3_r2_static_followup_standalone_component_monitor_prefetch_runner.xml"
+    }
+  },
+  "source_sha256": {
+    "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft.py": "5c178ff144ba0cc4cff5ca709af32c5fe40e49b63ffa5a06eb82a722e58b9066",
+    "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_shared_episode_reader.py": "3d740dce4f738508b5560ae03d62535a41ba6db73fd28868e1526e0cd0bb7663",
+    "cosmos-framework/cosmos_framework/data/generator/action/utils/cached_pixel_geometry.py": "900762eb50f0cefb08dfd0b6d20d3dd4cb47426e14721d784fe3f7281e6d4375",
+    "cosmos-framework/cosmos_framework/inference/local_memory_intervention.py": "86afbb1ac09cb6bc86340d06ddba69ec1b679fe270dd105fd006b8555101ad5f",
+    "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_async_segment_prefetch.py": "923edb17d42ec3544c765cb9548506144a997d9e1bc85e610e8847c102a3fb46",
+    "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_async_segment_prefetch_test.py": "8cfd8724492e21df23401cc46e6df90f51848eb73d4e22c01bc9a8a29680c9d8",
+    "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local.py": "3ba782b1dab14cb709eadfa0496c4d3fc41053dee94e2038d17f339a624538c2",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py": "6e34a0cf9026889d9199fbdd4f89798ab4462797f4d361174e1c910efecfe637",
+    "cosmos-framework/cosmos_framework/trainer/local_memory_grouped.py": "35024fd395cd4cc30e3280df210507d2ebaba11ba046add6e0fee84788ce2bb7",
+    "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py": "b3763015136f07d46950f1e64f7725870258a29bfa4ad37dc823830a9d7dfbfb",
+    "cosmos-framework/cosmos_framework/utils/observed_exposure.py": "0c237e00915a4e47ed9b01bbdf984b0e5fdbaf414d11de375ae6999920ac4f80",
+    "cosmos-framework/cosmos_framework/utils/ordered_prefetch.py": "0f6fb0b73d497a0c60e4e66ada1c25d5f479ebd49716ab662a8b20c4781aa24c",
+    "cosmos-framework/cosmos_framework/utils/ordered_prefetch_test.py": "5e641e7be13d85e4c3240c7e6ef4a4769d108ca6fb23ab61b6f43cc012edfd76",
+    "cosmos-framework/cosmos_framework/utils/rollout_evidence.py": "3173be43e1d2ac28f53df9d18de3180c1f32d327f8bda7a4c94009cc7e413273",
+    "cosmos-framework/cosmos_framework/utils/singleflight_cache.py": "f77fba0ee0b65910ba4689d47ea3449f46815990cef4e72bb614d8ca5753acf7",
+    "cosmos-framework/cosmos_framework/utils/training_audit.py": "1a6da490afe00867096f62b07183717a7e60feb028ffc77812bce3e127e06bf1",
+    "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5.py": "108a924e007c6980efb7e025cbc2ddc7c5792299573713b4b90910667bc0dbe5",
+    "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py": "69fbdb6c28bdfdbe06681e65685693a901c74aa22b035c3bf86ed08add387a87",
+    "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry.py": "cbf48098ff89102770e307d895063557b2d688c94930d242b8f0bcb5c4a8abce",
+    "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py": "4dd7b62c88de73b50e268dedcccd1268636b0df693762c7bee1e2c42ec5bcb8c",
+    "cosmos-framework/examples/psm_wma_robocasa_formal_monitor.py": "72a90386ea872131a491aaeb77928290e259e2127332753278bc9d911da0fca9",
+    "cosmos-framework/examples/psm_wma_robocasa_formal_monitor_safety_test.py": "6a458634cec9e5baff0b26eb8b3856474b61fc001b54ab2d6ac879f10c49a620",
+    "cosmos-framework/examples/psm_wma_robocasa_formal_monitor_test.py": "00989ad4c3b5b48e7044e68a5612e879fc64fa8a0cf03c9314debd2729572239",
+    "tools/v3/run_migration_cpu_gate.py": "acd25c11008d02f18fb156525b1f540487adcc6ca33029b8edf4e3c3e8aa88d0",
+    "tools/v3/run_migration_cpu_gate_test.py": "2b335a14c6c36c4bd853a5b44036a2f0337ffe1ea02e6e8af9c20008a8895cb1",
+    "tools/v3/remaining_optimizations_test.py": "1d900a24e1ab67799b22b51c6495a3b9d5e8a7318aa2160005f11cc7abfb01b3",
+    "scripts/v3_evaluation_identity.py": "828da4edb2575e950742198a82ffcdffeedc525a9c21f6080da510646f7f0511",
+    "scripts/eval_robocasa_18task_queue.py": "21f6ddb9e370c7909246891b8b6c23f1ec5a9a11c47c62dfd20c63f7f373e555"
+  }
+}
