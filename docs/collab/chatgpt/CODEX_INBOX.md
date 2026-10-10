@@ -37,3 +37,10 @@ User-authorized promotion of baseline to Root `V3` / Child `v3-local-ttt`.
 - Pinned formal implementation Root `cf0c92731197bfdd0de073a4c07ca93194f58968` / Child+Gitlink `d41be4f5485dcd9321318840c8c278c1f7487924` remains UNCHANGED. No repeat technical review.
 - DS_PRO authorized to temporarily relocate **only** the historical untracked regular file `scripts/plot_h3f_monitor.py`, after backup/SHA256/mode/status capture, execute the unchanged CPU Gate A, and restore/verify it on all exit paths. If other unauthorized dirty changes or restoration failure occur: BLOCKED, stop.
 - Details: `docs/collab/chatgpt/reviews/2026-10-10_V3_gateA_h3f_untracked_file_scoped_disposition.md`. This is an environmental disposition only, **NOT Gate A PASS / no GPU/DCP/Resume authorization**. Original Formal30k remains stopped.
+
+## 2026-10-10 — V3 r2 NEW FORMAL PAIR / GPT Fresh Review requested
+- Formal Root Implementation: `444c232b976e80ac68cde9e7370e73b9f6410f0e`; Child/Gitlink: `e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c`. Remote publication and Gitlink re-read verified; parent `32cc72bf49385904c2e720314ea47f47f492906c` retained. This ledger commit is docs-only and must not replace the implementation SHA.
+- Owner pasted GPT authorization: complete new Pair; stop new acceptance of old cf0c9273/d41be4f.
+- Request (author record, NOT GPT verdict): `docs/collab/chatgpt/reviews/2026-10-10_V3_r2_new_pair_fresh_review_request_444c232b_e9b8a41.md`. Please issue a fresh pair-bound APPROVE/REQUEST_CHANGES and decide read-only DS Gate A and any new-Pair historical H3-F disposition.
+- Author evidence: `docs/collab/chatgpt/evidence/2026-10-10_V3_new_pair_author_check/` (Ruff0.12.7 check/format PASS; migration328 passed/3 real-asset skips; runner8 passed). NOT independent acceptance.
+- Status REVIEW / INDEPENDENT_GATE_A_OPEN / RESUME_HOLD. Formal30k remains stopped; no GPU, real DCP, Fresh or Resume.

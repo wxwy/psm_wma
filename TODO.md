@@ -369,3 +369,5 @@
 - Status: IN_PROGRESS; owner: Codex. Preserve Root 32cc72bf49385904c2e720314ea47f47f492906c and prior records; fix test fixture only plus static normalization; Child fixed e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c.
 - Acceptance: new author CPU/static evidence, fast-forward Root source/Gitlink publication, exact remote Pair readback, canonical GPT Fresh Review request. DS new acceptance of old Pair stopped; fresh Pair review and independent Gates remain outstanding. Formal30k stays stopped.
 - Author checks complete: Ruff/format/syntax/shell PASS; runner 8 passed, migration 328 passed/3 real-asset skips. Task moves to REVIEW after source publication and exact Fresh Review ledger; no formal acceptance or Resume implied.
+
+- V3-R2-STATIC-FOLLOWUP: REVIEW; formal Root 444c232b976e80ac68cde9e7370e73b9f6410f0e, Child/Gitlink e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c; published and verified. Fresh GPT request in canonical Inbox; await pair-bound verdict before DS new Gate A. Author CPU checks do not close acceptance.
