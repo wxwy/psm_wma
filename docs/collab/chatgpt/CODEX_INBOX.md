@@ -32,3 +32,8 @@ User-authorized promotion of baseline to Root `V3` / Child `v3-local-ttt`.
 - Historical local-only draft documents retain their original UNPUBLISHED wording; current publication record is `docs/collab/chatgpt/reviews/2026-10-10_V3_remaining_optimizations_r2_published_handoff.md`.
 - The 83 isolated CPU tests predate full repository integration and a Trainer callback signature fix; do not treat them as complete full-project acceptance.
 - Status: `PUBLISHED / FULL_CPU_GATE_OPEN / REAL_PARITY_OPEN / RESUME_HOLD`. No actual full-project Ruff, real DCP, GPU, simulator, training or performance evidence yet. DS only independently checks; no source edits.
+
+## 2026-10-10 — V3 Gate A historical H3-F monitor scoped disposition (a)
+- Pinned formal implementation Root `cf0c92731197bfdd0de073a4c07ca93194f58968` / Child+Gitlink `d41be4f5485dcd9321318840c8c278c1f7487924` remains UNCHANGED. No repeat technical review.
+- DS_PRO authorized to temporarily relocate **only** the historical untracked regular file `scripts/plot_h3f_monitor.py`, after backup/SHA256/mode/status capture, execute the unchanged CPU Gate A, and restore/verify it on all exit paths. If other unauthorized dirty changes or restoration failure occur: BLOCKED, stop.
+- Details: `docs/collab/chatgpt/reviews/2026-10-10_V3_gateA_h3f_untracked_file_scoped_disposition.md`. This is an environmental disposition only, **NOT Gate A PASS / no GPU/DCP/Resume authorization**. Original Formal30k remains stopped.
