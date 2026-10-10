@@ -23,7 +23,7 @@ def test_cpu_environment_cannot_inherit_torchrun_context(tmp_path: Path, monkeyp
     assert env["CUDA_VISIBLE_DEVICES"] == ""
     assert env["HF_HUB_OFFLINE"] == "1" and env["TRANSFORMERS_OFFLINE"] == "1"
     assert env["COSMOS_DEVICE"] == "cpu"
-    assert env["PYTHONPATH"] == str(tmp_path)
+    assert env["PYTHONPATH"].split(os.pathsep) == [str(tmp_path), str(tmp_path.parent / "scripts")]
     assert "RANK" not in env and "WORLD_SIZE" not in env and "MASTER_PORT" not in env
     assert os.environ == before
 

@@ -20,6 +20,8 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
+from v3_evaluation_identity import build_evaluation_identity, claim_evaluation_run, screening_metrics, validate_task_results
+
 
 ROOT = Path(__file__).resolve().parents[1]
 CHILD = ROOT / "cosmos-framework"
@@ -79,13 +81,14 @@ def atomic_write_json(path: Path, value: Any) -> None:
     os.replace(temporary, path)
 
 
-def task_result(dataset_dir: Path, output_dir: Path, worker: int, gpu: str, elapsed_s: float) -> dict[str, Any]:
+def task_result(dataset_dir: Path, output_dir: Path, worker: int, gpu: str, elapsed_s: float, *, run_digest: str, expected_trials: int) -> dict[str, Any]:
     result_file = output_dir / "results.json"
     if not result_file.is_file():
         raise FileNotFoundError(f"task eval did not write {result_file}")
     rows = json.loads(result_file.read_text(encoding="utf-8"))
     if not isinstance(rows, list) or not rows:
         raise ValueError(f"task eval wrote invalid results: {result_file}")
+    validate_task_results(rows, digest=run_digest, expected_trials=expected_trials)
     successes = sum(bool(row.get("policy")) for row in rows)
     return {
         "dataset_dir": str(dataset_dir),
@@ -98,7 +101,8 @@ def task_result(dataset_dir: Path, output_dir: Path, worker: int, gpu: str, elap
         "results_file": str(result_file),
         "rollout_mp4s": sorted(str(path) for path in output_dir.glob("rollout*.mp4")),
         "rollouts": rows,
-        "error": None,
+        "error": "; ".join(row["error"] for row in rows if row.get("error")) or None,
+        "evaluation_run_digest": run_digest,
     }
 
 
@@ -148,6 +152,15 @@ def main() -> int:
 
     output_root = args.output_dir.resolve()
     output_root.mkdir(parents=True, exist_ok=True)
+    manifest = build_evaluation_identity(
+        root=ROOT, checkpoint=checkpoint, config_file=config_file, tasks=tasks,
+        protocol={"seed": args.seed, "R": args.action_horizon, "H_pred": 16,
+                  "num_steps": args.num_steps, "guidance": args.guidance,
+                  "trials": args.num_test_episodes, "fps": 20, "camera_set": "left_wrist",
+                  "use_state": True, "base_encoding": "raw", "local_memory_mode": "required",
+                  "image_size": 256, "cam_size": 256, "success_latch": 1},
+    )
+    run_digest = claim_evaluation_run(output_root, manifest, resume=args.resume)
     summary_path = output_root / "screening_summary.json"
     work: queue.Queue[tuple[str, Path]] = queue.Queue()
     results: dict[str, dict[str, Any]] = {}
@@ -157,11 +170,9 @@ def main() -> int:
         task_out = output_root / task
         existing = task_out / "results.json"
         if args.resume and existing.is_file():
-            try:
-                results[task] = task_result(dataset_dir, task_out, -1, "resume", 0.0)
-                continue
-            except Exception:
-                pass
+            results[task] = task_result(dataset_dir, task_out, -1, "resume", 0.0,
+                                        run_digest=run_digest, expected_trials=args.num_test_episodes)
+            continue
         elif existing.exists():
             raise SystemExit(f"refusing to overwrite existing task result without --resume: {existing}")
         work.put((task, dataset_dir))
@@ -186,6 +197,8 @@ def main() -> int:
                 "sr": successes / trials if trials else None,
                 "tasks": ordered,
             }
+            payload.update(screening_metrics(results, tasks=[task for task, _ in tasks], expected_trials=args.num_test_episodes))
+            payload["evaluation_run_digest"] = run_digest
             atomic_write_json(summary_path, payload)
 
     publish()
@@ -256,6 +269,8 @@ def main() -> int:
                         f"http://127.0.0.1:{port}",
                         "--dataset-dir",
                         str(dataset_dir),
+                        "--evaluation-run-digest",
+                        run_digest,
                         "--num-test-episodes",
                         str(args.num_test_episodes),
                         "--action-horizon",
@@ -284,6 +299,7 @@ def main() -> int:
                     started = time.monotonic()
                     error: str | None = None
                     returncode = -1
+                    row = None
                     try:
                         with task_log_path.open("ab", buffering=0) as task_log:
                             completed = subprocess.run(
@@ -295,19 +311,15 @@ def main() -> int:
                                 check=False,
                             )
                         returncode = completed.returncode
+                        row = task_result(
+                            dataset_dir, task_out, worker_id, gpu, time.monotonic() - started,
+                            run_digest=run_digest, expected_trials=args.num_test_episodes,
+                        )
                         if returncode != 0:
                             error = f"closed_loop_eval exited with code {returncode}"
-                        else:
-                            row = task_result(
-                                dataset_dir,
-                                task_out,
-                                worker_id,
-                                gpu,
-                                time.monotonic() - started,
-                            )
                     except BaseException as exc:  # noqa: BLE001
                         error = f"{type(exc).__name__}: {exc}"
-                    if error is not None:
+                    if error is not None and row is None:
                         row = {
                             "dataset_dir": str(dataset_dir),
                             "worker": worker_id,
@@ -322,6 +334,9 @@ def main() -> int:
                             "returncode": returncode,
                             "error": error,
                         }
+                    if error is not None:
+                        row["error"] = error
+                        row["returncode"] = returncode
                     with result_lock:
                         results[task] = row
                     publish()

@@ -58,6 +58,11 @@ mkdir -p "$RESULT_ROOT"
 
 export PYTHONPATH="$CHILD${PYTHONPATH:+:$PYTHONPATH}"
 
+EVALUATION_RUN_DIGEST="$("$SERVER_PYTHON" "$ROOT/scripts/v3_evaluation_identity.py" \
+  --root-worktree "$ROOT" --checkpoint "$CHECKPOINT_PATH" --config-file "$CONFIG_FILE" \
+  --dataset-dir "$DATASET_DIR" --output-dir "$RESULT_ROOT" --seed "$SEED" \
+  --action-horizon "$ACTION_HORIZON" --num-trials "$NUM_TRIALS" \
+  --num-steps "$NUM_STEPS" --guidance "$GUIDANCE" --local-memory-mode "$LOCAL_MEMORY_MODE")"
 SERVER_LOG="$RESULT_ROOT/action_server.log"
 CUDA_VISIBLE_DEVICES="$EVAL_GPU" "$SERVER_PYTHON" -m cosmos_framework.scripts.action_policy_server_robocasa   --checkpoint-path "$CHECKPOINT_PATH"   --config-file "$CONFIG_FILE"   --port "$SERVER_PORT"   --raw-action-dim 15   --local-memory-mode "$LOCAL_MEMORY_MODE"   --local-memory-max-sessions 1   --num-steps "$NUM_STEPS"   --guidance "$GUIDANCE"   --fps 20   --http-400-on-error   >"$SERVER_LOG" 2>&1 &
 SERVER_PID=$!
@@ -97,6 +102,6 @@ echo ">>> Local-TTT mode: $LOCAL_MEMORY_MODE"
 echo ">>> trials/seed/action_horizon: $NUM_TRIALS / $SEED / $ACTION_HORIZON"
 echo ">>> results: $RESULT_ROOT"
 
-CUDA_VISIBLE_DEVICES="$EVAL_GPU" "$SIM_PYTHON" "$CHILD/cosmos_framework/simulation/robocasa/closed_loop_eval.py"   --server-url "http://127.0.0.1:$SERVER_PORT"   --dataset-dir "$DATASET_DIR"   --num-test-episodes "$NUM_TRIALS"   --action-horizon "$ACTION_HORIZON"   --image-size 256   --cam-size 256   --camera-set left_wrist   --use-state   --use-base-action   --base-encoding raw   --local-memory-mode "$LOCAL_MEMORY_MODE"   --success-latch 1   --seed "$SEED"   --timeout "$TIMEOUT"   --output-dir "$RESULT_ROOT"
+CUDA_VISIBLE_DEVICES="$EVAL_GPU" "$SIM_PYTHON" "$CHILD/cosmos_framework/simulation/robocasa/closed_loop_eval.py"   --server-url "http://127.0.0.1:$SERVER_PORT"   --dataset-dir "$DATASET_DIR"   --num-test-episodes "$NUM_TRIALS"   --action-horizon "$ACTION_HORIZON"   --image-size 256   --cam-size 256   --camera-set left_wrist   --use-state   --use-base-action   --base-encoding raw   --local-memory-mode "$LOCAL_MEMORY_MODE"   --success-latch 1   --seed "$SEED"   --timeout "$TIMEOUT"   --evaluation-run-digest "$EVALUATION_RUN_DIGEST"   --output-dir "$RESULT_ROOT"
 
 echo ">>> RoboCasa V3 evaluation complete: $RESULT_ROOT"

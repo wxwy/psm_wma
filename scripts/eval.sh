@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "ERROR: this retained V2/LIBERO entrypoint is not ported to V3. Use the corrected RoboCasa Phase5/eval entry; do not resume with legacy configuration." >&2
+exit 2
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CHILD="$ROOT/cosmos-framework"
 CHECKPOINT_PATH="${1:-}"

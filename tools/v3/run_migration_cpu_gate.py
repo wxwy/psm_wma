@@ -23,6 +23,9 @@ from pathlib import Path
 ACCEPTED_CHILD = "71e03c8501c94a2ad5fed60955af657d3f945b85"
 FROZEN_CONFIG_DIGEST = "70e9867fffb5d00568328cdc29a9c49387344a49610b8837597342fb0325df37"
 TEST_FILES = (
+    "../tools/v3/remaining_optimizations_test.py",
+    "cosmos_framework/model/generator/omni_mot_cached_vision_test.py",
+    "cosmos_framework/simulation/robocasa/local_memory_client_test.py",
     "cosmos_framework/utils/ordered_prefetch_test.py",
     "cosmos_framework/model/generator/mot/robocasa_async_segment_prefetch_test.py",
     "cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py",
@@ -101,7 +104,7 @@ def cpu_environment(child: Path) -> dict[str, str]:
         PYTHONDONTWRITEBYTECODE="1",
         OMP_NUM_THREADS="1",
         MKL_NUM_THREADS="1",
-        PYTHONPATH=str(child),
+        PYTHONPATH=os.pathsep.join((str(child), str(child.parent / "scripts"))),
     )
     # Prevent stale torchrun context from making CPU tests join a training process group.
     for name in ("RANK", "LOCAL_RANK", "WORLD_SIZE", "LOCAL_WORLD_SIZE", "MASTER_ADDR", "MASTER_PORT"):
@@ -161,6 +164,9 @@ def main(argv: list[str] | None = None) -> int:
         root_python = [
             "tools/v3/run_migration_cpu_gate.py",
             "tools/v3/run_migration_cpu_gate_test.py",
+            "tools/v3/remaining_optimizations_test.py",
+            "scripts/v3_evaluation_identity.py",
+            "scripts/eval_robocasa_18task_queue.py",
         ]
         report["root_source_sha256"] = source_hashes(root, root_python)
         syntax_dir = evidence / "py_compile"
@@ -199,6 +205,10 @@ def main(argv: list[str] | None = None) -> int:
                 ],
             ),
         )
+        commands = (*commands, *(
+            (f"bash_{index}", ["bash", "-n", str(root / name)])
+            for index, name in enumerate(("scripts/eval_robocasa.sh", "scripts/eval.sh", "scripts/train_local_memory_ttt.sh"))
+        ))
         for stage, command in commands:
             code = run_command(command, cwd=child, env=env, output=evidence / f"{stage}.log", timeout=args.timeout_seconds)
             report["stages"].append({"stage": stage, "returncode": code, "status": "PASS" if code == 0 else "FAIL"})
