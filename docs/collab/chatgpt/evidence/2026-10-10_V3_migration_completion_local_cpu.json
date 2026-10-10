@@ -1,0 +1,66 @@
+{
+  "gate": "V3-MIGRATION-COMPLETION-LOCAL-SELFTEST",
+  "date": "2026-10-10",
+  "scope": "standalone_cpu_transport_monitor_and_runner_only",
+  "candidate_child": "95c82d12d6780fedf8becda18cbd36d550adaadf",
+  "parent_child": "98cb4fd0cc59e71f27543d67fa33cbf4f3703657",
+  "accepted_training_child": "71e03c8501c94a2ad5fed60955af657d3f945b85",
+  "status": "PASS_WITH_EXPLICIT_LIMITED_SCOPE",
+  "formal_project_cpu_gate": "NOT_RUN",
+  "ds_independent_validation": "NOT_RUN",
+  "resume_authorized": false,
+  "gpu_executed": false,
+  "real_checkpoint_opened": false,
+  "real_dataset_opened": false,
+  "environment": {
+    "python": "3.13.5",
+    "pytest": "9.0.2",
+    "torch": "2.10.0+cpu",
+    "ruff": "not installed",
+    "lerobot": "not installed",
+    "pyarrow": "not installed"
+  },
+  "baseline_reproduction": {
+    "monitor_source_git_blob": "823c3f494bf1449c11b3cd7e37c3317100a09dd4",
+    "existing_monitor_tests_git_blob": "92883fd8981a59452d075c08d19d81195dfb7e63",
+    "source_and_test_blob_checks": "exact match",
+    "new_safety_cases_on_old_source": {"failed": 10, "passed": 2},
+    "log_sha256": "7e436920eefc09ceedeae7ad8211c475b67704adaa87f22a854c8fa0d65487aa",
+    "junit_sha256": "f9f46cbbb609091c99e3eb781c4ee242ee3d7fc17a0a0442bf6bcaa0e4eea997"
+  },
+  "after_remediation": {
+    "passed": 50,
+    "failed": 0,
+    "skipped": 0,
+    "junit_timestamp": "2026-10-10T04:30:39.970486+00:00",
+    "suite_seconds": 1.232,
+    "suite_seconds_scope": "unit tests, not training throughput",
+    "log_sha256": "766567d0547d0293dae71dc9663915af1c041d12179a2222b5c0b68f3bf0edfe",
+    "junit_sha256": "aebec9c5112b147bfad8d814a5b001646aa6c0b9908a05a7ee3be4bb7cc86887",
+    "test_files": [
+      "root/tools/v3/run_migration_cpu_gate_test.py",
+      "child/cosmos_framework/utils/ordered_prefetch_test.py",
+      "child/examples/psm_wma_robocasa_formal_monitor_test.py",
+      "child/examples/psm_wma_robocasa_formal_monitor_safety_test.py"
+    ],
+    "method": "pytest --noconftest -q -p no:cacheprovider -o addopts='' on the four explicit standalone files; not the full repository conftest/runtime",
+    "png_test": "actual Agg PNG rendering using synthetic records, not measured losses",
+    "py_compile": {"status": "PASS", "local_files": 8}
+  },
+  "published_source_blobs_matched_to_tested_bytes": {
+    "child/cosmos_framework/model/generator/mot/robocasa_async_segment_prefetch.py": "2c773baaf3831af1153216a9b86dea14b7daf465",
+    "child/cosmos_framework/utils/ordered_prefetch.py": "002fe5a651383b34493a6bc560772a3cca5fde3e",
+    "child/cosmos_framework/utils/ordered_prefetch_test.py": "6eff8f90be2bb31d3f7700054af2cf92cc4f3dbf",
+    "child/examples/psm_wma_robocasa_formal_monitor.py": "026a694a9bbc97d21cc55e558f8ca7cc03c96222",
+    "child/examples/psm_wma_robocasa_formal_monitor_safety_test.py": "17129441dad10eb3a7d0efa177336fd33d5855c4",
+    "root/tools/v3/run_migration_cpu_gate.py": "528efd193be23d6af11fc447c2f79b00efd40ac3",
+    "root/tools/v3/run_migration_cpu_gate_test.py": "72d72a3b8527b296dc5cf82b2f7ab0d1e2359a0f"
+  },
+  "remaining_gates": [
+    "Full project CPU import/pytest and Ruff 0.12.7 on DS host",
+    "Actual LeRobot/HF concurrent read and Segment/Token/Action/State/Latent parity",
+    "Actual config_digest and full DCP/Local frontier strict resume",
+    "Bounded 8-rank GPU and workers0/2/4 throughput evidence",
+    "Corrected full-policy simulator and migration phases MC-03 onward"
+  ]
+}
