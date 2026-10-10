@@ -44,3 +44,9 @@ User-authorized promotion of baseline to Root `V3` / Child `v3-local-ttt`.
 - Request (author record, NOT GPT verdict): `docs/collab/chatgpt/reviews/2026-10-10_V3_r2_new_pair_fresh_review_request_444c232b_e9b8a41.md`. Please issue a fresh pair-bound APPROVE/REQUEST_CHANGES and decide read-only DS Gate A and any new-Pair historical H3-F disposition.
 - Author evidence: `docs/collab/chatgpt/evidence/2026-10-10_V3_new_pair_author_check/` (Ruff0.12.7 check/format PASS; migration328 passed/3 real-asset skips; runner8 passed). NOT independent acceptance.
 - Status REVIEW / INDEPENDENT_GATE_A_OPEN / RESUME_HOLD. Formal30k remains stopped; no GPU, real DCP, Fresh or Resume.
+
+## 2026-10-10 — GPT V3 r2 NEW PAIR STATIC FRESH REVIEW / DS GATE A AUTHORIZATION
+- **Formal verdict `APPROVE` scoped solely to incremental Ruff/fixture remediation review and **read-only DS_PRO Gate A execution**; not `GATE_A_PASS`, MC-01 closure, GPU/DCP/Resume authorization. Detailed review: `docs/collab/chatgpt/reviews/2026-10-10_V3_r2_new_pair_static_fresh_review_444c232b_e9b8a41.md`.
+- Frozen new Formal Root: `444c232b976e80ac68cde9e7370e73b9f6410f0e`; Child/Gitlink: `e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c`. Request/bookkeeping HEAD `24423db2a11fbc30feb43e6c0283e388fffdbe31` does not replace implementation SHA. Old DS Pair `cf0c9273/d41be4f` 81-Ruff-error FAIL remains archived; stop additional old-Pair Gate A.
+- Author source-bound Ruff0.12.7 check/format and runner8 / migration328 passed+3 real-asset skips were reviewed as author logs, NOT independent Gate A. New Pair requires independent DS execution; B-F and Formal30k Resume remain HOLD.
+- New-Pair-specific operational disposition **(a)**: historical **only** `?? scripts/plot_h3f_monitor.py` may be backed up, fingerprinted, temporarily moved off-worktree and restored with exact post-checks for one Gate A run; inherited old-Pair permission alone is insufficient. All other dirty sources fail-closed.
