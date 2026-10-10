@@ -25,3 +25,10 @@ User-authorized promotion of baseline to Root `V3` / Child `v3-local-ttt`.
 - DS CPU-only entry: `tools/v3/run_migration_cpu_gate.py`. Use one new external evidence directory and existing training Python; no source changes, install, GPU, fresh train or resume. Return first failure unchanged.
 - Staged tasks MC-01..07: `docs/build/PSM-WMA_V3_migration_completion_execution_plan_r1_2026-10-10.md`.
 - Latest complete DCP and real frozen config digest remain to be measured on the training host. MM SESSION/TODO and all prior evidence remain unchanged.
+
+## 2026-10-10 — V3 remaining optimizations r2 PUBLISHED CANDIDATE
+- Exact implementation Root: `cf0c92731197bfdd0de073a4c07ca93194f58968` / Child and Gitlink: `d41be4f5485dcd9321318840c8c278c1f7487924`. Both V3 branches advanced by protected fast-forward; exact pair verified.
+- Published Child 13 paths, Root 10 files + Gitlink: compact cached placeholder, shared Episode cache, provenance/telemetry, evaluation identity and failure evidence, Local intervention helper, CPU Gate coverage.
+- Historical local-only draft documents retain their original UNPUBLISHED wording; current publication record is `docs/collab/chatgpt/reviews/2026-10-10_V3_remaining_optimizations_r2_published_handoff.md`.
+- The 83 isolated CPU tests predate full repository integration and a Trainer callback signature fix; do not treat them as complete full-project acceptance.
+- Status: `PUBLISHED / FULL_CPU_GATE_OPEN / REAL_PARITY_OPEN / RESUME_HOLD`. No actual full-project Ruff, real DCP, GPU, simulator, training or performance evidence yet. DS only independently checks; no source edits.
