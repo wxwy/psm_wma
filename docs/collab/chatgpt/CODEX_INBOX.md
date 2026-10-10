@@ -14,3 +14,14 @@ User-authorized promotion of baseline to Root `V3` / Child `v3-local-ttt`.
 - Detailed design: `docs/build/PSM-WMA_V3_formal30k_observability_async_raw_prefetch_contract_2026-10-10.md`.
 - Formal candidate review: `docs/collab/chatgpt/reviews/2026-10-10_V3_formal30k_observability_async_prefetch_candidate.md`.
 - DS_PRO only reads/tests and returns evidence, never modifies source / MM SESSION/TODO / DCP / Evidence.
+
+## 2026-10-10 — Migration Completion MC-01 hardening / CPU handoff
+
+- User authorized staged migration completion after V2/V3 capability audit; do not merge the old host or revive B1/ego20/iter500.
+- Implementation Root: `ee2de3fcb21d53b392a89fb6bc0409a57d6d4896`; Child/Gitlink: `95c82d12d6780fedf8becda18cbd36d550adaadf`.
+- Formal review and execution boundary: `docs/collab/chatgpt/reviews/2026-10-10_V3_migration_completion_mc01_hardening_review.md`.
+- The Root containing this append is a docs-only successor of the implementation Root. Owner handoff pins the exact execution Root; never auto-substitute a moving V3 tip.
+- Local standalone evidence: `docs/collab/chatgpt/evidence/2026-10-10_V3_migration_completion_local_cpu.json` (50 passes; no full project/Ruff/real DCP/GPU/Resume proof).
+- DS CPU-only entry: `tools/v3/run_migration_cpu_gate.py`. Use one new external evidence directory and existing training Python; no source changes, install, GPU, fresh train or resume. Return first failure unchanged.
+- Staged tasks MC-01..07: `docs/build/PSM-WMA_V3_migration_completion_execution_plan_r1_2026-10-10.md`.
+- Latest complete DCP and real frozen config digest remain to be measured on the training host. MM SESSION/TODO and all prior evidence remain unchanged.
