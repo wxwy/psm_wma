@@ -56,6 +56,7 @@ def compare_selected_gradient(reference: torch.Tensor | None,
                               required: bool = True) -> MetricEvidence:
     """Per-FQN pass requires *all* metrics, not aggregate-group smoothing."""
     if reference is None or target is None:
+        # No silently ignored trainable FQN gradients.
         raise ValueError("gradient missing for selected FQN" if required else "optional gradient missing: separate inventory policy required")
     if reference.shape != target.shape or reference.dtype != target.dtype:
         raise ValueError("FQN gradient shape/dtype mismatch")
