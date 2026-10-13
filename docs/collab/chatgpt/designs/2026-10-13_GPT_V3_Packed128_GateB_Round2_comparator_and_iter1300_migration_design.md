@@ -12,7 +12,7 @@
 |---|---|---|---|
 | SOURCE Index8 | b159f45906f7261d028aecc226ab7f2bb9807eb9 | 937066ffd90f2bf783ad4fbb4909e9c0b8922982 | iter1300 真正生产方、数值参考 |
 | TARGET Packed128 | c4731bca1a590663db88bd6cd74dbcf9fd513a85 | c8dabbb3f3a7fa3098a0399f4aec3b1c57d90686 | Gate A CPU 已通过、Gate B 待验证 |
-| 非本 Gate FSP | d45712a37318357ba2f57dbe3d0f1f448aabbbd9 | 8f3672d1c15b6bb8e6c1795a7e6af9c2218763b1 | C0 CPU 已关闭；不得混入验证 |
+| 非本 Gate FSP | d45712a37318357ba2f57bde3d0f1f448aabbbd9 | 8f3672d1c15b6bb8e6c1795a7e6af9c2218763b1 | C0 CPU 已关闭；不得混入验证 |
 
 必须绑定精确 Root/Child/Gitlink、解析的 Python 模块实际 __file__、真实 source checkpoint、真实 source/target config_digest 和配置/数据集指纹。旧 iter_000001300 只读，iter1400 排除；正式 Formal30k worktree、latest_checkpoint.txt、源 DCP 绝不改动。
 
@@ -35,9 +35,9 @@ Gate M：**受控一次性持久化迁移**，只能在 Gate B PASS 且 Owner �
 ### B0 合约（CPU 优先）
 
 1. 可读取原始 source .metadata/CRC/8 rank sidecar 的权威只读清单；全部源文件 sha256 快照。与旧静态验收对照；不凭文件存在推断 GPU load 成功。
-2. 使用官方 DCP 组件接口只读加载 model、optim、scheduler、trainer。DCP 4 组件不在 grouped digest 校验路径内，但目标模型与 optimizer 的实际 FSDP8 加载**尚未证明可行**；必须检查 loaded-key 覆盖、FQN、dtype/shape/shard、optimizer moment / LR / GradScaler / Trainer RNG/iteration。不可因为底层有 strict=False 默认就默许 missing/unexpected key。检查失败即 BLOCKED，无需写 checkpoint 解决。
-3. 读取 source dataloader/rank_*.pkl，在 SOURCE 对旧 config_digest、十个精确顶层键、17字段 profile（各 rank 第一字段是 rank）、frontier/committed scheduler/各活跃 record 的 provenance/四个 CPU fp32 Fast State 运行原生产 restore_grouped_local_state 严格校验；同 rank 原始值/哈希留证。
-4. TARGET 在内存中 deep-clone 经过 SOURCE 严格认证的状态，**仅**重建顶层 config_digest 及每个活跃记录的 SegmentProvenance.config_digest 为通过新 authority 独立计算的 TARGET digest；不增加 sidecar 键；调用原生产 restore_grouped_local_state 严格校验该临时 state。旧→新映射必须在审计 JSON 另记，不改源、不得写出“可 resume 的 DCP”。其他 profile、Identity、Frontier、Scheduler、fast state 张量值必须一一相同，记录值/Hash；如 source/target 的 Local 类型、ABI、实际 state-shape 有不兼容，直接 BLOCKED。
+2. **B0 仅 CPU 静态与 API/mock 合同**：审查官方 DCP 组件读取接口、metadata/schema、source shard CRC/文件权限与无写入的模拟调用；不要求在 CPU Gate 上实例化或真实加载 4B/FSDP8 Model+Optimizer。model/optim/scheduler/trainer 的 **真实8rank H100 DCP Load** 明确属于授权后的 **B1**：必须检查 loaded-key 覆盖、FQN、dtype/shape/shard、optimizer moment/LR/GradScaler/Trainer RNG/iteration，不因 ModelWrapper 可能 strict=False 就默许 missing/unexpected key。失败即 BLOCKED，不能靠创建迁移 DCP 解决。
+3. **B0 CPU** 只读检查 source dataloader/rank_*.pkl：旧 digest、十个精确顶层键、17字段 rank profile、frontier/committed scheduler、各 active record provenance 和四个 fp32 Fast State 的 schema/值/哈希；可用 lightweight CPU Window 运行生产 restore_grouped_local_state 负例，但须标注模拟 Runtime。**B1 真实8rank Model/FSDP** 才能认证生产 Local restore 与 rank-local Fast State 的真实 ABI/设备行为。
+4. TARGET 在内存中 deep-clone 经过 SOURCE 校验的状态，**仅**重建顶层 config_digest 及每个活跃记录的 SegmentProvenance.config_digest 为通过新 authority 独立计算的 TARGET digest；不增加 sidecar 键。**B0 用 CPU fixture 测试负例及原生产 restore API；B1 用真实8rank FSDP Runtime 调用生产 restore_grouped_local_state 严格验证**。旧→新映射只在审计 JSON 另记，不改源、不得写出“可 resume 的 DCP”。其他 Profile/Identity/Frontier/Scheduler/fast state 值一一相同；如 source/target Local 类型/ABI/state-shape 不兼容，直接 BLOCKED。
 5. 从恢复的每 rank Frontier **纯函数**推导连续两个预定 GA2 window 的 Consumer 清单和 candidate frontier。SOURCE/TARGET 按同一 slot、episode.uid、source_digest、binding_epoch、segment_id、cursor、absolute_step 顺序及相同 Raw/Action/State/Video Latent 内容执行；plan.member_counts/有效数一致，记录每 rank 每 member 的实际 n_g。检查是否含 terminal partial。若 SOURCE Index8 的各 rank active_indices 不同，先标记 COLLECTIVE_RHYTHM_BLOCKED，不得冒险进行8卡 FSDP；必须有安全可审的处理方法。
 6. 隔离 CPU 负面测试：错误 SHA/digest、错 rank/profile、旧 sidecar 新字段、遗漏任意嵌套 digest 翻译、Consumer 缺失或重排、额外 RNG 调用、含 NaN Fast State、Checkpoint 保存调用，都必须 fail-closed；检查源 SHA256 前后不变。
 7. 对 Harness 的模型、optimizer、scheduler、FSDP 初始化及 native DCP Load 的调用顺序做准确 Source-to-call 对照；此步完成独立代码审核后，才能申请 Owner GPU Gate B。
