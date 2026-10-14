@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import copy
-import dataclasses
 import json
-import os
 import random
 import sys
 from dataclasses import dataclass, replace
@@ -307,3 +305,62 @@ def test_cpu_report_parity_and_tampered_consumer_detection(tmp_path):
     q.write_text(json.dumps(b))
     with pytest.raises(gate.Blocked, match="consumer window plan"):
         gate.compare_cpu_reports(p, q)
+
+
+def test_tqdm_monitor_disabled_before_progress_bar_and_restored():
+    from tqdm.std import tqdm
+    before = tqdm.monitor_interval
+    try:
+        with gate.scoped_disable_tqdm_monitor():
+            assert tqdm.monitor_interval == 0
+            with tqdm(total=1, disable=True):
+                with gate.scoped_python_cfg_rng(_key()):
+                    assert 0.0 <= random.random() < 1.0
+        assert tqdm.monitor_interval == before
+    finally:
+        tqdm.monitor_interval = before
+
+
+def test_preexisting_unrecognized_background_thread_rejected():
+    import threading
+    started = threading.Event()
+    stop = threading.Event()
+
+    def background():
+        started.set()
+        stop.wait(5)
+
+    thread = threading.Thread(target=background, daemon=True)
+    thread.start()
+    assert started.wait(2)
+    try:
+        with pytest.raises(gate.Blocked, match="preflight requires one Python main thread"):
+            with gate.scoped_disable_tqdm_monitor():
+                pass
+        with pytest.raises(gate.Blocked, match="CFG global RNG scope"):
+            with gate.scoped_python_cfg_rng(_key()):
+                pass
+    finally:
+        stop.set()
+        thread.join(2)
+    assert not thread.is_alive()
+
+
+def test_tqdm_interval_restored_on_failure():
+    from tqdm.std import tqdm
+    before = tqdm.monitor_interval
+    with pytest.raises(ValueError, match="intentional"):
+        with gate.scoped_disable_tqdm_monitor():
+            raise ValueError("intentional")
+    assert tqdm.monitor_interval == before
+
+
+def test_tqdm_thread_map_does_not_leave_tmonitor_during_cfg_scope():
+    import threading
+    from tqdm.contrib.concurrent import thread_map
+
+    with gate.scoped_disable_tqdm_monitor():
+        assert thread_map(lambda number: number * 2, range(4), max_workers=2, disable=True) == [0, 2, 4, 6]
+        assert threading.active_count() == 1
+        with gate.scoped_python_cfg_rng(_key()):
+            assert 0 <= random.random() <= 1
