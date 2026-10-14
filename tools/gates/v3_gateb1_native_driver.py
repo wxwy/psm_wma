@@ -126,7 +126,6 @@ class NativeTwoWindowDriver:
         window_events: list[CompletedNativeWindow] = []
         active_calls: dict[int, int] = {}
         calls: list[tuple[int, tuple[ConsumerCoordinate, ...]]] = []
-        expected_index_by_call: dict[tuple[int, int], int] = {}
         active_capture = None
         completed: Any = None
         current_iter = 1300
@@ -146,7 +145,6 @@ class NativeTwoWindowDriver:
             if any((p is None) != (c.absolute_step == 0) for p, c in zip(prefixes, coords, strict=True)):
                 raise NativeBridgeBlocked("S0 Local prefix witness mismatch")
             active_calls[ga] = counter + 1
-            expected_index_by_call[(ga, counter)] = coords[0].local_t
             with self.noise_scope(coords, iteration):
                 output = original_step(batch, iteration, **kwargs)
             calls.append((ga, coords))

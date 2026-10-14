@@ -96,8 +96,6 @@ class NativeOmniMoTNoiseSites:
         self._scope = None
 
     def __enter__(self):
-        orig_vision = self.model._get_train_noise_level_vision
-        orig_action = self.model._get_train_noise_level_action
         orig_noiser = self.model._add_noise_to_input
         instance = self
 

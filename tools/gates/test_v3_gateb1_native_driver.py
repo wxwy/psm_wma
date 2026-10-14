@@ -169,7 +169,7 @@ def test_duplicate_and_wrong_native_index_fails():
 
 
 def test_no_provider_missing_and_wrong_frozen_world_size_rejected():
-    driver, trainer, model, _ = make_driver("index8")
+    _, trainer, model, _ = make_driver("index8")
     trainer._grouped_planner.world_size = 7
     with pytest.raises(NativeBridgeBlocked, match="frozen FSDP8"):
         make_broken = NativeTwoWindowDriver(trainer=trainer, model=model, optimizer=object(),
