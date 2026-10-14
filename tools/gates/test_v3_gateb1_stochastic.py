@@ -112,3 +112,11 @@ def test_unverified_sigma_identity_rejected():
         stochastic.sigma(key(), contract(), modality="sound")
     with pytest.raises(stochastic.StochasticBlocked):
         stochastic.sigma(key(), contract(), frame_index=-1)
+
+
+def test_text_cfg_matches_original_b0_canonical_scoped_seed():
+    from v3_packed128_gateb_compare import stable_seed
+
+    k, c = key(slot=5), contract()
+    seed = stable_seed(k.scoped("cfg_dropout", "caption"), domain="python_cfg")
+    assert stochastic.caption_cfg_drop(k, c) == (random.Random(seed).random() < c.cfg_dropout_rate)

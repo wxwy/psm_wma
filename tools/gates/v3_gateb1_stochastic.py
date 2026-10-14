@@ -110,8 +110,8 @@ def epsilon(key: ConsumerKey, shape: tuple[int, ...], *, modality: str,
 
 def caption_cfg_drop(key: ConsumerKey, contract: SamplingContract) -> bool:
     """Text-tokenizer caption dropout decision, NOT a vision/action condition mask."""
-    state = key.scoped("text_cfg_dropout", "text")
-    seed = stable_seed(state, domain="B1:python-caption-cfg")
+    state = key.scoped("cfg_dropout", "caption")
+    seed = stable_seed(state, domain="python_cfg")
     return random.Random(seed).random() < contract.cfg_dropout_rate
 
 
