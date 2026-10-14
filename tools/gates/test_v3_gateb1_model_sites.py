@@ -69,7 +69,8 @@ def inputs(*, all_conditioned=False):
                             x0_tokens_action=[torch.ones((16, 64)) for _ in range(2)],
                             x0_tokens_lidar=[], x0_tokens_radar=[], x0_tokens_sound=[])
     mask = torch.ones((16, 1)) if all_conditioned else torch.zeros((16, 1))
-    packed = SimpleNamespace(action=SimpleNamespace(condition_mask=[mask, mask]))
+    packed = SimpleNamespace(action=SimpleNamespace(condition_mask=[mask, mask]),
+                             vision=SimpleNamespace(condition_mask=[torch.zeros((2,1,1)), torch.zeros((2,1,1))]))
     return clean, packed
 
 
@@ -182,3 +183,16 @@ def test_sigma_shift_mismatch_is_fail_closed():
     with pytest.raises(SiteBlocked, match="shift"):
         with NativeOmniMoTNoiseSites(m, (Key(0), Key(1)), Contract(), sigma, epsilon):
             call(m)
+
+
+def test_model_site_outputs_canonical_value_hashes_per_consumer():
+    model = Model()
+    with NativeOmniMoTNoiseSites(model, (Key(0), Key(1)), Contract(), sigma, epsilon) as hook:
+        call(model)
+        values = hook.witness_records()
+        assert len(values) == 2
+        assert values[0]["vision_sigma_sha256"] != values[1]["vision_sigma_sha256"]
+        assert values[0]["vision_epsilon_sha256"] != values[1]["vision_epsilon_sha256"]
+        assert values[0]["action_condition_mask_sha256"] == values[1]["action_condition_mask_sha256"]
+        assert values[0]["vision_condition_mask_sha256"] == values[1]["vision_condition_mask_sha256"]
+        assert len(values[0]["action_epsilon_sha256"]) == 64

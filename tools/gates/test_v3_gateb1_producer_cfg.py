@@ -98,3 +98,26 @@ def test_bad_absolute_step_and_exception_restore_all_methods():
         with scoped_native_producer_cfg(trainer=t,producer=p,consumer_key=key,scoped_rng=rng):
             raise ValueError("forced")
     assert p.produce.__func__ is original
+
+
+def test_actual_transform_payload_sha_is_captured_with_original_consumer_key():
+    from dataclasses import dataclass
+    import hashlib
+
+    @dataclass(frozen=True)
+    class Key:
+        absolute_step: int
+
+        def as_dict(self):
+            return {"absolute_step": self.absolute_step}
+
+    t, p, r, _old_key, rng, _ = fixture()
+    record = lambda **kwargs: Key(kwargs["absolute_step"])
+    fingerprint = lambda sample: hashlib.sha256(repr(sample).encode()).hexdigest()
+    with scoped_native_producer_cfg(trainer=t, producer=p, consumer_key=record,
+                                    scoped_rng=lambda key: rng(key.absolute_step),
+                                    payload_fingerprint=fingerprint) as captured:
+        output = p.produce(r)
+        assert [w["consumer"]["absolute_step"] for w in captured] == [0, 1, 2]
+        assert [w["transformed_payload_sha256"] for w in captured] == [fingerprint(x) for x in output]
+    assert "produce" not in vars(p)

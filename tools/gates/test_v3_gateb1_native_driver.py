@@ -60,7 +60,7 @@ class FakeTrainer:
     def _plan(self):
         requests = tuple(Request(Identity(i), valid_count=16 if not self.partial or i < 3 else 8)
                          for i in range(8))
-        return SimpleNamespace(members=(requests, requests))
+        return SimpleNamespace(members=(requests, requests), n_window=2 * sum(x.valid_count for x in requests))
 
     def _observe_grouped(self, phase, **kwargs):
         self.events.append((phase, kwargs.get("index"), kwargs.get("packed_positions")))
@@ -79,7 +79,7 @@ class FakeTrainer:
             prefixes = tuple(None if c.absolute_step == 0 else object() for c in coords)
             model.training_step({}, iteration, _local_memory_prefixes=prefixes)
             self._observe_grouped("native_forward", member=grad_accum_iter,
-                                  index=coords[0].local_t if self.leg == "index8" else None,
+                                  index=None,  # frozen native trainer reports None for both layouts
                                   packed_positions=tuple((c.slot_id, c.local_t) for c in coords)
                                   if self.leg == "packed128" else None)
         if grad_accum_iter == 0:
@@ -178,3 +178,24 @@ def test_no_provider_missing_and_wrong_frozen_world_size_rejected():
                                             producer_scope=scope_noop, capture_factory=Capture,
                                             local_snapshot=lambda it: it)
         make_broken.run()
+
+
+def test_index8_original_native_forward_event_index_is_none():
+    # A regression for the real (not mock-invented) source native_loss event.
+    driver, trainer, _, _ = make_driver("index8")
+    assert [w.completed_iteration for w in driver.run()] == [1301, 1302]
+    source_events = [e for e in trainer.events if e[0] == "native_forward"]
+    assert source_events and all(index is None for _, index, _ in source_events)
+
+
+def test_weighted_native_losses_match_original_count_over_window_reduction():
+    import torch
+
+    # The fake returns fixed scalar outer loss 0.5 per forward; Index8 has
+    # 16 smaller native calls while Packed128 uses one packed call per GA.
+    for leg in ("index8", "packed128"):
+        driver, _, _, _ = make_driver(leg, partial=True)
+        results = driver.run()
+        for result in results:
+            assert "weighted_outer" in result.weighted_losses
+            torch.testing.assert_close(result.weighted_losses["weighted_outer"], torch.tensor(0.5))

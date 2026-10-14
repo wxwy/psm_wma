@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from types import MethodType
 from typing import Any, Callable, ContextManager, Iterator
 
+import torch
+
 
 class NativeBridgeBlocked(RuntimeError):
     """Missing real native event, consumer witness or optimizer boundary."""
@@ -33,6 +35,9 @@ class CompletedNativeWindow:
     native_calls: tuple[tuple[int, tuple[ConsumerCoordinate, ...]], ...]
     optimizer_snapshot: Any
     local_snapshot: Any
+    weighted_losses: dict[str, Any] | None = None
+    stochastic_witnesses: tuple[dict[str, Any], ...] = ()
+    cfg_witnesses: tuple[dict[str, Any], ...] = ()
 
 
 def member_coordinates(plan: Any, ga_member: int, leg: str, native_call: int) -> tuple[ConsumerCoordinate, ...]:
@@ -126,6 +131,10 @@ class NativeTwoWindowDriver:
         window_events: list[CompletedNativeWindow] = []
         active_calls: dict[int, int] = {}
         calls: list[tuple[int, tuple[ConsumerCoordinate, ...]]] = []
+        weighted_losses: dict[str, Any] = {}
+        site_records: list[dict[str, Any]] = []
+        cfg_start = 0
+        producer_records: Any = None
         active_capture = None
         completed: Any = None
         current_iter = 1300
@@ -145,8 +154,32 @@ class NativeTwoWindowDriver:
             if any((p is None) != (c.absolute_step == 0) for p, c in zip(prefixes, coords, strict=True)):
                 raise NativeBridgeBlocked("S0 Local prefix witness mismatch")
             active_calls[ga] = counter + 1
-            with self.noise_scope(coords, iteration):
+            with self.noise_scope(coords, iteration) as site:
                 output = original_step(batch, iteration, **kwargs)
+            if site is not None:
+                if not callable(getattr(site, "witness_records", None)):
+                    raise NativeBridgeBlocked("B1 model stochastic scope lacks value witnesses")
+                witnessed = site.witness_records()
+                if len(witnessed) != len(coords):
+                    raise NativeBridgeBlocked("model stochastic witness Consumer count mismatch")
+                site_records.extend(witnessed)
+            if not isinstance(output, tuple) or len(output) != 2 or not isinstance(output[0], dict):
+                raise NativeBridgeBlocked("native model must return (metrics_dict, loss)")
+            # The native window multiplies the mean loss for this call by
+            # count / n_window; capture *that same* weighted value here.
+            # Otherwise comparing Index8 micro-loss to Packed128 batch loss
+            # is a false objective parity test.
+            components = {"weighted_outer": output[1]}
+            components.update({k: v for k, v in output[0].items() if "loss" in k and torch.is_tensor(v) and v.ndim == 0})
+            factor = len(coords) / window.plan.n_window
+            for name, raw in components.items():
+                if not isinstance(raw, (float, int, torch.Tensor)):
+                    raise NativeBridgeBlocked(f"native scalar loss {name} invalid")
+                value = torch.as_tensor(raw).detach()
+                if value.numel() != 1 or not bool(torch.isfinite(value).all()):
+                    raise NativeBridgeBlocked(f"native scalar loss {name} nonfinite/non-scalar")
+                detached = value.to(device="cpu", dtype=torch.float64) * factor
+                weighted_losses[name] = weighted_losses.get(name, torch.zeros_like(detached)) + detached
             calls.append((ga, coords))
             return output
 
@@ -158,7 +191,13 @@ class NativeTwoWindowDriver:
                 if c < 0:
                     raise NativeBridgeBlocked("Native forward event without model call")
                 coords = member_coordinates(tr._grouped_window.plan, ga, self.leg, c)
-                if self.leg == "index8" and kw.get("index") != coords[0].local_t:
+                # Frozen source GroupedLocalMemoryTrainer.native_loss reports
+                # _observe_grouped("native_forward", index=None), even though
+                # the source window iterates each index. Index identity is
+                # proven by counter/member_coordinates at the model callsite.
+                # Some synthetic tracers additionally annotate the index;
+                # validate only when a concrete annotation is provided.
+                if self.leg == "index8" and kw.get("index") not in (None, coords[0].local_t):
                     raise NativeBridgeBlocked("Index8 Native index event mismatch")
                 if self.leg == "packed128" and tuple(kw.get("packed_positions") or ()) != tuple(
                         (x.slot_id, x.local_t) for x in coords):
@@ -173,22 +212,31 @@ class NativeTwoWindowDriver:
             return original_observe(phase, **kw)
 
         def zero_grad(_self: Any, *args: Any, **kwargs: Any) -> Any:
-            nonlocal active_capture, completed
+            nonlocal active_capture, completed, cfg_start
             if active_capture is None or completed is not None:
                 raise NativeBridgeBlocked("zero_grad without exactly one real optimizer commit")
             snapshots = active_capture.after_optimizer_step()
             local = self.local_snapshot(current_iter + 1)
-            completed = CompletedNativeWindow(current_iter + 1, self.rank, tuple(calls), snapshots, local)
+            cfg_current = tuple(producer_records[cfg_start:]) if producer_records is not None else ()
+            cfg_start = len(producer_records) if producer_records is not None else 0
+            completed = CompletedNativeWindow(
+                current_iter + 1, self.rank, tuple(calls), snapshots, local,
+                {k: v.to(torch.float32) for k, v in weighted_losses.items()},
+                tuple(site_records), cfg_current,
+            )
             active_capture = None
             return original_zero(*args, **kwargs)
 
         with (_patch_methods(model, {"training_step": model_step}),
               _patch_methods(tr, {"_observe_grouped": observe, "_zero_grad": zero_grad}),
-              self.producer_scope()):
+              self.producer_scope() as cfg_evidence):
+            producer_records = cfg_evidence
             for completed_before in (1300, 1301):
                 current_iter = completed_before
                 active_calls.clear()
                 calls.clear()
+                weighted_losses.clear()
+                site_records.clear()
                 completed = None
                 for ga in (0, 1):
                     _, _, next_ga = tr.training_step(

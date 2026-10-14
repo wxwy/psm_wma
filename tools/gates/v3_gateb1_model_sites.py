@@ -11,6 +11,8 @@ from __future__ import annotations
 from collections.abc import Mapping
 from contextlib import contextmanager
 from dataclasses import dataclass
+import hashlib
+import json
 from types import MethodType
 from typing import Any, Callable, Iterator
 
@@ -29,6 +31,14 @@ class SiteCount:
     epsilon_calls: int
     epsilon_expected: int
     noising_calls: int
+
+
+def _sha_tensor(tensor: torch.Tensor) -> str:
+    """Small cryptographic witness: dtype+shape+all bytes, independent of batch order."""
+    value = tensor.detach().to(device="cpu").contiguous()
+    meta = json.dumps({"dtype": str(value.dtype), "shape": list(value.shape)}, sort_keys=True).encode()
+    return hashlib.sha256(len(meta).to_bytes(8, "big") + meta
+                          + value.reshape(-1).view(torch.uint8).numpy().tobytes()).hexdigest()
 
 
 class _NativeRandnQueue(TorchDispatchMode):
@@ -94,6 +104,13 @@ class NativeOmniMoTNoiseSites:
         self.noising_calls = 0
         self.epsilon_seen: list[str] = []
         self._scope = None
+        self.vision_sigmas_cpu: torch.Tensor | None = None
+        self.action_sigmas_cpu: torch.Tensor | None = None
+        self.vision_eps_hashes: list[str] = []
+        self.action_eps_hashes: list[str] = []
+        self.action_mask_hashes: list[str] = []
+        self.vision_mask_hashes: list[str] = []
+        self.all_actions_conditioned = False
 
     def __enter__(self):
         orig_noiser = self.model._add_noise_to_input
@@ -129,10 +146,12 @@ class NativeOmniMoTNoiseSites:
                 if float(shift) != float(instance.contract.vision_shift):
                     raise SiteBlocked("native per-consumer RF shift differs from P1 contract")
             temporal = max(lengths) if native_dist == "diffusion_forcing" else 1
-            sigmas = torch.stack([
+            sampled = torch.stack([
                 torch.stack([instance.sigma_fn(key, instance.contract, modality="vision", frame_index=t)
                              for t in range(temporal)]) for key in instance.keys
-            ]).to(**_model.tensor_kwargs_fp32)
+            ]).to(device="cpu", dtype=torch.float32)
+            instance.vision_sigmas_cpu = sampled.clone()
+            sigmas = sampled.to(**_model.tensor_kwargs_fp32)
             flow = _model.rectified_flow_video
             instance.vision_calls += 1
             return sigmas * flow.noise_scheduler.config.num_train_timesteps, sigmas
@@ -142,9 +161,11 @@ class NativeOmniMoTNoiseSites:
                 raise SiteBlocked("unexpected independent-action schedule call")
             if kwargs.get("batch_size") != len(instance.keys):
                 raise SiteBlocked("action sigma must be sampled in original full-batch order")
-            sigmas = torch.stack([
+            sampled = torch.stack([
                 instance.sigma_fn(key, instance.contract, modality="action") for key in instance.keys
-            ]).reshape(-1, 1).to(**_model.tensor_kwargs_fp32)
+            ]).reshape(-1, 1).to(device="cpu", dtype=torch.float32)
+            instance.action_sigmas_cpu = sampled.clone()
+            sigmas = sampled.to(**_model.tensor_kwargs_fp32)
             instance.action_calls += 1
             return sigmas * _model.rectified_flow_action.noise_scheduler.config.num_train_timesteps, sigmas
 
@@ -162,6 +183,11 @@ class NativeOmniMoTNoiseSites:
                     raise SiteBlocked(f"unregistered {modality} epsilon site")
             vision_items = clean.x0_tokens_vision
             actions = clean.x0_tokens_action
+            v_pack = getattr(packed, "vision", None)
+            vision_masks = getattr(v_pack, "condition_mask", None)
+            if vision_masks is None or len(vision_masks) != len(instance.keys):
+                raise SiteBlocked("RoboCasa vision condition mask witness missing")
+            instance.vision_mask_hashes = [_sha_tensor(mask) for mask in vision_masks]
             if (len(vision_items) != len(instance.keys) or actions is None
                     or len(actions) != len(instance.keys)):
                 raise SiteBlocked("RoboCasa native vision/action item count differs from Consumers")
@@ -170,13 +196,17 @@ class NativeOmniMoTNoiseSites:
             if masks is None or len(masks) != len(actions):
                 raise SiteBlocked("action condition mask geometry unknown")
             all_cond = all(torch.all(mask == 1).item() for mask in masks)
+            instance.all_actions_conditioned = all_cond
+            instance.action_mask_hashes = [_sha_tensor(mask) for mask in masks]
             entries: list[tuple[str, torch.Tensor]] = []
             for index, (key, value) in enumerate(zip(instance.keys, vision_items, strict=True)):
                 eps = instance.epsilon_fn(key, tuple(value.shape), modality="vision")
+                instance.vision_eps_hashes.append(_sha_tensor(eps))
                 entries.append((f"vision:{index}", eps))
             if not all_cond:
                 for index, (key, value) in enumerate(zip(instance.keys, actions, strict=True)):
                     eps = instance.epsilon_fn(key, tuple(value.shape), modality="action")
+                    instance.action_eps_hashes.append(_sha_tensor(eps))
                     entries.append((f"action:{index}", eps))
             hook = _NativeRandnQueue(entries)
             expected = len(entries)
@@ -205,6 +235,28 @@ class NativeOmniMoTNoiseSites:
             assert self._scope is not None
             self._scope.__exit__(exc_type, exc, tb)
         return False
+
+    def witness_records(self) -> tuple[dict[str, Any], ...]:
+        """One recorded site-value digest for each actual Native Consumer."""
+        size = len(self.keys)
+        if (self.noising_calls != 1 or self.vision_calls != 1 or self.vision_sigmas_cpu is None
+                or len(self.vision_eps_hashes) != size or len(self.action_mask_hashes) != size
+                or len(self.vision_mask_hashes) != size
+                or (not self.all_actions_conditioned and len(self.action_eps_hashes) != size)):
+            raise SiteBlocked("incomplete B1 native per-consumer stochastic witness")
+        vision = self.vision_sigmas_cpu
+        action = self.action_sigmas_cpu if self.action_sigmas_cpu is not None else vision
+        if tuple(vision.shape)[0] != size or tuple(action.shape)[0] != size:
+            raise SiteBlocked("native sigma sample row count mismatch")
+        return tuple({
+            "consumer": key.as_dict() if hasattr(key, "as_dict") else dict(vars(key)),
+            "vision_sigma_sha256": _sha_tensor(vision[i]),
+            "action_sigma_sha256": _sha_tensor(action[i]),
+            "vision_epsilon_sha256": self.vision_eps_hashes[i],
+            "action_epsilon_sha256": "ALL_ACTION_CONDITIONING" if self.all_actions_conditioned else self.action_eps_hashes[i],
+            "action_condition_mask_sha256": self.action_mask_hashes[i],
+            "vision_condition_mask_sha256": self.vision_mask_hashes[i],
+        } for i, key in enumerate(self.keys))
 
     @property
     def counts(self) -> SiteCount:

@@ -17,7 +17,8 @@ class ProducerBlocked(RuntimeError):
 @contextmanager
 def scoped_native_producer_cfg(*, trainer: Any, producer: Any,
                                 consumer_key: Callable[..., Any],
-                                scoped_rng: Callable[[Any], ContextManager[Any]]) -> Iterator[None]:
+                                scoped_rng: Callable[[Any], ContextManager[Any]],
+                                payload_fingerprint: Callable[[Any], str] | None = None) -> Iterator[list[dict[str, Any]]]:
     """Precisely one native producer's Transform has isolated B0 CFG RNG."""
     if getattr(trainer, "_grouped_num_workers", None) != 0:
         raise ProducerBlocked("CFG Native witness requires num_workers=0 and serial transform")
@@ -30,6 +31,7 @@ def scoped_native_producer_cfg(*, trainer: Any, producer: Any,
     original_transform = sft._transform
     existing = "produce" in vars(producer)
     old_instance = vars(producer).get("produce")
+    recorded: list[dict[str, Any]] = []
 
     def wrapped_produce(_producer: Any, request: Any):
         identity = request.identity
@@ -51,7 +53,11 @@ def scoped_native_producer_cfg(*, trainer: Any, producer: Any,
                 raise ProducerBlocked("CFG transform frame outside frozen member Consumer range")
             key = consumer_key(request=request, iteration=iteration, ga_member=ga, absolute_step=absolute_step)
             with scoped_rng(key):
-                return original_transform(payload, resolution)
+                transformed_sample = original_transform(payload, resolution)
+            if payload_fingerprint is not None:
+                digest = payload_fingerprint(transformed_sample)
+                recorded.append({"consumer": key.as_dict(), "transformed_payload_sha256": digest})
+            return transformed_sample
 
         sft._transform = transformed
         try:
@@ -61,7 +67,7 @@ def scoped_native_producer_cfg(*, trainer: Any, producer: Any,
 
     producer.produce = MethodType(wrapped_produce, producer)
     try:
-        yield
+        yield recorded
     finally:
         sft._transform = original_transform
         if existing:
@@ -72,7 +78,7 @@ def scoped_native_producer_cfg(*, trainer: Any, producer: Any,
 
 def b0_consumer_cfg_scope(trainer: Any, producer: Any, *, rank: int, checkpoint_fp: str):
     """Real native B0 canonical key+text-CFG seed; no namespace substitutions."""
-    from v3_packed128_gateb_compare import ConsumerKey, scoped_python_cfg_rng
+    from v3_packed128_gateb_compare import ConsumerKey, scoped_python_cfg_rng, _stable_payload_hash
 
     if type(rank) is not int or not 0 <= rank < 8 or not checkpoint_fp:
         raise ProducerBlocked("rank/checkpoint fingerprint must match original B0 witness")
@@ -86,4 +92,5 @@ def b0_consumer_cfg_scope(trainer: Any, producer: Any, *, rank: int, checkpoint_
         )
 
     return scoped_native_producer_cfg(trainer=trainer, producer=producer,
-                                       consumer_key=make_key, scoped_rng=scoped_python_cfg_rng)
+                                       consumer_key=make_key, scoped_rng=scoped_python_cfg_rng,
+                                       payload_fingerprint=_stable_payload_hash)
