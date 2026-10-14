@@ -337,41 +337,63 @@ def _frozen_manifest_from_plans(planners: Sequence[Any], sidecars: Sequence[Any]
 
 
 def _stable_payload_hash(value: Any) -> str:
-    """Hash all transformed Native input leaves without dropping unknown modalities."""
+    """Hash complete Native inputs, including dataclass field values.
+
+    Class identity, ordered field names and all recursively supported values
+    participate in the hash; never use object repr() or skip unknown leaves.
+    Cyclic containers fail closed instead of overflowing the recursion limit.
+    """
     import torch
     h = hashlib.sha256()
+    active_containers: set[int] = set()
 
     def feed(item: Any) -> None:
-        if isinstance(item, torch.Tensor):
-            require(item.device.type == "cpu", "CPU B0 payload unexpectedly on CUDA")
-            tensor = item.detach().contiguous()
-            h.update(b"T")
-            h.update(str(tensor.dtype).encode())
-            h.update(json.dumps(list(tensor.shape)).encode())
-            h.update(tensor.reshape(-1).view(torch.uint8).numpy().tobytes())
-        elif isinstance(item, (tuple, list)):
-            h.update(b"L" if isinstance(item, list) else b"U")
-            h.update(len(item).to_bytes(8, "big"))
-            for val in item:
-                feed(val)
-        elif isinstance(item, dict):
-            require(all(type(k) is str for k in item), "non-string payload key unsupported")
-            h.update(b"D")
-            h.update(len(item).to_bytes(8, "big"))
-            for key in sorted(item):
-                feed(key)
-                feed(item[key])
-        elif item is None or type(item) in (str, bool, int, float, bytes):
-            encoded = json.dumps({"type": type(item).__name__, "value": item.hex() if isinstance(item, bytes) else item},
-                                 sort_keys=True, allow_nan=False).encode()
-            h.update(b"S" + len(encoded).to_bytes(8, "big") + encoded)
-        else:
-            # Fail closed rather than omit a model-visible input that could differ between legs.
-            raise Blocked(f"unhandled Native payload leaf type: {type(item).__module__}.{type(item).__qualname__}")
+        is_record = dataclasses.is_dataclass(item) and not isinstance(item, type)
+        is_container = isinstance(item, (tuple, list, dict)) or is_record
+        if is_container:
+            require(id(item) not in active_containers, "cyclic Native payload is unsupported")
+            active_containers.add(id(item))
+        try:
+            if isinstance(item, torch.Tensor):
+                require(item.device.type == "cpu", "CPU B0 payload unexpectedly on CUDA")
+                tensor = item.detach().contiguous()
+                h.update(b"T")
+                h.update(str(tensor.dtype).encode())
+                h.update(json.dumps(list(tensor.shape)).encode())
+                h.update(tensor.reshape(-1).view(torch.uint8).numpy().tobytes())
+            elif isinstance(item, (tuple, list)):
+                h.update(b"L" if isinstance(item, list) else b"U")
+                h.update(len(item).to_bytes(8, "big"))
+                for val in item:
+                    feed(val)
+            elif isinstance(item, dict):
+                require(all(type(k) is str for k in item), "non-string payload key unsupported")
+                h.update(b"D")
+                h.update(len(item).to_bytes(8, "big"))
+                for key in sorted(item):
+                    feed(key)
+                    feed(item[key])
+            elif is_record:
+                cls = type(item)
+                fields = dataclasses.fields(item)
+                h.update(b"C")
+                feed(f"{cls.__module__}.{cls.__qualname__}")
+                h.update(len(fields).to_bytes(8, "big"))
+                for field in fields:
+                    feed(field.name)
+                    feed(getattr(item, field.name))
+            elif item is None or type(item) in (str, bool, int, float, bytes):
+                encoded = json.dumps({"type": type(item).__name__, "value": item.hex() if isinstance(item, bytes) else item},
+                                     sort_keys=True, allow_nan=False).encode()
+                h.update(b"S" + len(encoded).to_bytes(8, "big") + encoded)
+            else:
+                raise Blocked(f"unhandled Native payload leaf type: {type(item).__module__}.{type(item).__qualname__}")
+        finally:
+            if is_container:
+                active_containers.remove(id(item))
 
     feed(value)
     return h.hexdigest()
-
 
 def _native_payload_digest(producer: Any, request: Any, *, fp: str, rank: int,
                            completed_iteration: int, ga: int) -> list[str]:

@@ -364,3 +364,91 @@ def test_tqdm_thread_map_does_not_leave_tmonitor_during_cfg_scope():
         assert threading.active_count() == 1
         with gate.scoped_python_cfg_rng(_key()):
             assert 0 <= random.random() <= 1
+
+
+def test_native_payload_hash_supports_frozen_action_record_and_mutable_sequence_plan():
+    @dataclass(frozen=True)
+    class ActionProcessingRecord:
+        raw_action_dim: int
+        action_normalizer: object | None = None
+        action_valid_mask: object | None = None
+        action_codec: object | None = None
+
+    @dataclass
+    class SequencePlan:
+        has_text: bool = True
+        text_view_ids: list[int] | None = None
+        has_vision: bool = True
+        condition_frame_indexes_vision: list[int] | None = None
+
+    def payload():
+        return {"action_processing_record": ActionProcessingRecord(15),
+                "sequence_plan": SequencePlan(condition_frame_indexes_vision=[0]),
+                "action_raw": torch.arange(15, dtype=torch.float32).reshape(1, 15),
+                "cached_latent_required": True}
+
+    fingerprint = gate._stable_payload_hash(payload())
+    assert fingerprint == gate._stable_payload_hash(payload())
+    assert len(fingerprint) == 64
+    updated = payload()
+    updated["action_processing_record"] = ActionProcessingRecord(14)
+    assert gate._stable_payload_hash(updated) != fingerprint
+    updated = payload()
+    updated["sequence_plan"].condition_frame_indexes_vision.append(1)
+    assert gate._stable_payload_hash(updated) != fingerprint
+    updated = payload()
+    updated["action_raw"][0, -1] = 999.0
+    assert gate._stable_payload_hash(updated) != fingerprint
+
+
+def test_native_payload_hash_distinguishes_dataclass_type_and_dict_order():
+    @dataclass
+    class PlanA:
+        flag: bool
+
+    @dataclass
+    class PlanB:
+        flag: bool
+
+    assert gate._stable_payload_hash(PlanA(True)) != gate._stable_payload_hash(PlanB(True))
+    assert gate._stable_payload_hash({"z": 3, "a": PlanA(True)}) == (
+        gate._stable_payload_hash({"a": PlanA(True), "z": 3})
+    )
+
+
+def test_native_payload_hash_nested_unknown_leaf_and_class_fail_closed():
+    @dataclass(frozen=True)
+    class ActionProcessingRecord:
+        raw_action_dim: int
+        action_codec: object
+
+    with pytest.raises(gate.Blocked, match="unhandled Native payload leaf type"):
+        gate._stable_payload_hash({"record": ActionProcessingRecord(15, object())})
+    with pytest.raises(gate.Blocked, match="unhandled Native payload leaf type"):
+        gate._stable_payload_hash(object())
+    with pytest.raises(gate.Blocked, match="unhandled Native payload leaf type"):
+        gate._stable_payload_hash(ActionProcessingRecord)
+
+
+def test_native_payload_hash_detects_dataclass_and_list_cycles():
+    @dataclass
+    class SequencePlan:
+        nested: object = None
+
+    record = SequencePlan()
+    record.nested = record
+    with pytest.raises(gate.Blocked, match="cyclic Native payload"):
+        gate._stable_payload_hash(record)
+    nested = []
+    nested.append(nested)
+    with pytest.raises(gate.Blocked, match="cyclic Native payload"):
+        gate._stable_payload_hash(nested)
+
+
+def test_native_payload_hash_rejects_nonfinite_dataclass_scalar():
+    @dataclass(frozen=True)
+    class SequencePlan:
+        noisy: float
+
+    with pytest.raises(ValueError, match="Out of range float values"):
+        gate._stable_payload_hash(SequencePlan(float("nan")))
