@@ -113,6 +113,28 @@ def scoped_python_cfg_rng(key: ConsumerKey) -> Iterator[None]:
         random.setstate(previous)
 
 
+
+@contextlib.contextmanager
+def scoped_disable_tqdm_monitor() -> Iterator[None]:
+    """Prevent benign progress-bar TMonitor before creating the real CPU catalog.
+
+    This isolates this diagnostic process only. The strict CFG scope continues to
+    reject *any* other live background thread rather than guessing RNG safety.
+    """
+    require(threading.current_thread() is threading.main_thread()
+            and threading.active_count() == 1,
+            "CFG preflight requires one Python main thread before tqdm initialization")
+    from tqdm.std import tqdm
+
+    old_interval = tqdm.monitor_interval
+    try:
+        # Set BEFORE metadata readers create progress bars / their TMonitor.
+        tqdm.monitor_interval = 0
+        yield
+    finally:
+        tqdm.monitor_interval = old_interval
+
+
 def deterministic_witness_cpu(key: ConsumerKey, *, profile: str, site: str, modality: str,
                               shape: tuple[int, ...], item_index: int = 0) -> Any:
     """P0 CPU fixture. P1 must use a verified production sigma sampler in B1.
@@ -453,45 +475,46 @@ def run_cpu_plan(args: argparse.Namespace) -> dict[str, Any]:
     spec = find_spec("cosmos_framework")
     require(spec is not None and spec.origin is not None and Path(spec.origin).resolve().is_relative_to(child),
             "cosmos_framework import would resolve outside frozen child")
-    before = snapshot_checkpoint(args.source_checkpoint, hash_shards=args.hash_all_shards)
-    sidecars, sidecar_evidence = _load_sidecars(args.source_checkpoint, source_digest=args.source_config_digest)
-    catalog, run_digest = _preflight_catalog(args)
-    if args.leg == "index8":
-        require(run_digest == args.source_config_digest, "source runtime digest != source sidecar digest")
-    else:
-        require(run_digest and run_digest != args.source_config_digest,
-                "Packed128 runtime digest must differ from old source digest")
-        for rank, old in enumerate(sidecars):
-            new = in_memory_target_sidecar(old, source_digest=args.source_config_digest,
-                                           target_digest=run_digest, rank=rank)
-            require(new["config_digest"] == run_digest, "in-memory target digest failed")
-    from cosmos_framework.model.generator.mot.robocasa_exact_window_local import ExactWindowRankPlanner
-    planners = [ExactWindowRankPlanner(catalog, rank=r, world_size=8, b_stream=8, active_ga=2)
-                for r in range(8)]
-    plans = _frozen_manifest_from_plans(planners, sidecars,
-                                       checkpoint_fp=before["checkpoint_fingerprint"])
-    payload_witness = (
-        materialized_consumer_hashes(catalog, sidecars, checkpoint_fp=before["checkpoint_fingerprint"],
-                                     config_digest=run_digest)
-        if args.verify_payloads else None
-    )
-    after = snapshot_checkpoint(args.source_checkpoint, hash_shards=args.hash_all_shards)
-    unchanged_checkpoint(before, after)
-    # Report only after all validations; strictly no checkpoint writes.
-    report = {"schema": REPORT_SCHEMA, "status": "CPU_PLAN_PRODUCED_NOT_GPU_VALIDATED",
-              "leg": args.leg, "pair": provenance, "checkpoint": before,
-              "source_digest": args.source_config_digest, "resolved_digest": run_digest,
-              "sidecar_static": sidecar_evidence, "plan": plans, "payload_witness": payload_witness,
-              "unverified": ["real_FSDP8_DCP_load", "production_Local_restore",
-                             *([] if args.verify_payloads else ["payload_tensors"]),
-                             "native_forward_backward", "P1_sigma_sampler", "GPU_gradient_parity"],
-              "gpu_authorized": False, "checkpoint_write_authorized": False}
-    output_dir.mkdir(parents=True, exist_ok=False)
-    target = output_dir / f"gateb0_{args.leg}.json"
-    with target.open("x", encoding="utf-8") as f:
-        json.dump(report, f, indent=2, ensure_ascii=False, sort_keys=True, allow_nan=False)
-    return {"status": report["status"], "report": str(target),
-            "plan_sha256": plans["plan_fingerprint"], "terminal_partial": plans["terminal_partial_present"]}
+    with scoped_disable_tqdm_monitor():
+        before = snapshot_checkpoint(args.source_checkpoint, hash_shards=args.hash_all_shards)
+        sidecars, sidecar_evidence = _load_sidecars(args.source_checkpoint, source_digest=args.source_config_digest)
+        catalog, run_digest = _preflight_catalog(args)
+        if args.leg == "index8":
+            require(run_digest == args.source_config_digest, "source runtime digest != source sidecar digest")
+        else:
+            require(run_digest and run_digest != args.source_config_digest,
+                    "Packed128 runtime digest must differ from old source digest")
+            for rank, old in enumerate(sidecars):
+                new = in_memory_target_sidecar(old, source_digest=args.source_config_digest,
+                                               target_digest=run_digest, rank=rank)
+                require(new["config_digest"] == run_digest, "in-memory target digest failed")
+        from cosmos_framework.model.generator.mot.robocasa_exact_window_local import ExactWindowRankPlanner
+        planners = [ExactWindowRankPlanner(catalog, rank=r, world_size=8, b_stream=8, active_ga=2)
+                    for r in range(8)]
+        plans = _frozen_manifest_from_plans(planners, sidecars,
+                                           checkpoint_fp=before["checkpoint_fingerprint"])
+        payload_witness = (
+            materialized_consumer_hashes(catalog, sidecars, checkpoint_fp=before["checkpoint_fingerprint"],
+                                         config_digest=run_digest)
+            if args.verify_payloads else None
+        )
+        after = snapshot_checkpoint(args.source_checkpoint, hash_shards=args.hash_all_shards)
+        unchanged_checkpoint(before, after)
+        # Report only after all validations; strictly no checkpoint writes.
+        report = {"schema": REPORT_SCHEMA, "status": "CPU_PLAN_PRODUCED_NOT_GPU_VALIDATED",
+                  "leg": args.leg, "pair": provenance, "checkpoint": before,
+                  "source_digest": args.source_config_digest, "resolved_digest": run_digest,
+                  "sidecar_static": sidecar_evidence, "plan": plans, "payload_witness": payload_witness,
+                  "unverified": ["real_FSDP8_DCP_load", "production_Local_restore",
+                                 *([] if args.verify_payloads else ["payload_tensors"]),
+                                 "native_forward_backward", "P1_sigma_sampler", "GPU_gradient_parity"],
+                  "gpu_authorized": False, "checkpoint_write_authorized": False}
+        output_dir.mkdir(parents=True, exist_ok=False)
+        target = output_dir / f"gateb0_{args.leg}.json"
+        with target.open("x", encoding="utf-8") as f:
+            json.dump(report, f, indent=2, ensure_ascii=False, sort_keys=True, allow_nan=False)
+        return {"status": report["status"], "report": str(target),
+                "plan_sha256": plans["plan_fingerprint"], "terminal_partial": plans["terminal_partial_present"]}
 
 
 def compare_cpu_reports(ref_path: Path, packed_path: Path) -> dict[str, Any]:
