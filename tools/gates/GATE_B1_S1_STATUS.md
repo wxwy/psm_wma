@@ -15,7 +15,7 @@
 
 ## Explicit limitations (not complete FSDP8 Comparator)
 
-- None of these modules loads real DCP or initializes 8-rank FSDP2, injects RNG at all native training call-sites, gathers gradients or runs optimizer steps. B0 paired-run remains deliberately blocked.
+- No genuine 8-rank model/DCP load has been executed. The strict DCP seam invokes the official read-only loader only when given real initialized objects after separate Owner GPU authorization or initializes 8-rank FSDP2, injects RNG at all native training call-sites, gathers gradients or runs optimizer steps. B0 paired-run remains deliberately blocked.
 - P1 numerical distribution must be confirmed from actual Corrected Phase5 resolved config, and every native stochastic site must be registered; a CPU source-equivalent formula is **not site-injection parity**.
 - The proposed FP32/BF16 gradient, Fast State and update/moment thresholds remain UNFROZEN. CPU negative tests establish the checker is non-vacuous; Owner ratification and independent review are required before GPU.
 - DS_PRO CPU test only; no 451GB dataset validation, no new offline acceptance, no GPU/torchrun, no checkpoint migration, no formal resume.
