@@ -7,7 +7,7 @@ Status: ISOLATED_IMPLEMENTATION_CANDIDATE / CPU_GATE_PENDING / B1_GPU_HOLD.
 ## Exact SHA and scope
 
 Root candidate: branch v3-trusted-dataset-startup-20261014, parent V3 9dbaabfadf3b9b8153a9ac3b7d981446f0ef69e1.
-Child candidate: wxwy/cosmos-framework branch v3-trusted-dataset-startup-20261014, SHA 99117f98578f6031fba2eaead1513040df8fda75, parent current live V3 child 8f3672d1c15b6bb8e6c1795a7e6af9c2218763b1.
+Child candidate: wxwy/cosmos-framework branch v3-trusted-dataset-startup-20261014, SHA 1d56320c08c56b0f8dd248919d152d81ae12ea7b, parent current live V3 child 8f3672d1c15b6bb8e6c1795a7e6af9c2218763b1.
 Historical B1 frozen SOURCE Index8 b159f459/937066ff and TARGET Packed128 c4731bca/c8dabbb3 are NOT modified by the candidate pair; iter1300 checkpoint/latest remains immutable. B0 ec9d162b CPU closure remains unchanged.
 
 ## Behavior

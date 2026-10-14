@@ -4,7 +4,7 @@ Date: 2026-10-14
 Scope: CPU_ONLY / EXECUTOR_VALIDATION_ONLY. Existing 451GB offline acceptance is final. Do NOT rerun it or B0, and do NOT invoke GPU, torchrun, training, migration or Formal30k.
 
 Exact candidate root branch wxwy/psm_wma:v3-trusted-dataset-startup-20261014.
-Exact candidate child branch wxwy/cosmos-framework:v3-trusted-dataset-startup-20261014 at SHA 99117f98578f6031fba2eaead1513040df8fda75. Pin root HEAD and verify its cosmos-framework Gitlink matches this SHA. Parent child is 8f3672d1c15b6bb8e6c1795a7e6af9c2218763b1. Work only in new clean isolated checkout.
+Exact candidate child branch wxwy/cosmos-framework:v3-trusted-dataset-startup-20261014 at SHA 1d56320c08c56b0f8dd248919d152d81ae12ea7b. Pin root HEAD and verify its cosmos-framework Gitlink matches this SHA. Parent child is 8f3672d1c15b6bb8e6c1795a7e6af9c2218763b1. Work only in new clean isolated checkout.
 
 ## Parallel lanes, one report
 
