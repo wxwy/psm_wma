@@ -46,7 +46,8 @@ def with_sites(data):
 
 
 def test_full_source_and_packed_canonical_consumer_identity_parity():
-    a = report(); b = report("packed128")
+    a = report()
+    b = report("packed128")
     b["consumers"].reverse()  # source index-major, packed slot-major; order irrelevant
     assert validate_pair(a, b, rank=0, iteration=1301, profile="P0_FIXED", repeat=0) == "full"
     assert canonical_consumers(a) == canonical_consumers(b)

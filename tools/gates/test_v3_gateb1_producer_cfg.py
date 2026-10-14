@@ -112,8 +112,10 @@ def test_actual_transform_payload_sha_is_captured_with_original_consumer_key():
             return {"absolute_step": self.absolute_step}
 
     t, p, r, _old_key, rng, _ = fixture()
-    record = lambda **kwargs: Key(kwargs["absolute_step"])
-    fingerprint = lambda sample: hashlib.sha256(repr(sample).encode()).hexdigest()
+    def record(**kwargs):
+        return Key(kwargs["absolute_step"])
+    def fingerprint(sample):
+        return hashlib.sha256(repr(sample).encode()).hexdigest()
     with scoped_native_producer_cfg(trainer=t, producer=p, consumer_key=record,
                                     scoped_rng=lambda key: rng(key.absolute_step),
                                     payload_fingerprint=fingerprint) as captured:

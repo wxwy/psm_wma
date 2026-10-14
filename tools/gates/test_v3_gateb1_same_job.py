@@ -75,7 +75,8 @@ def test_methods_restored_on_exception(f):
 
 def test_existing_instance_override_preserved(f):
     cp, ckpt = f
-    existing = lambda: ({"model"}, Source("/old", True))
+    def existing():
+        return {"model"}, Source("/old", True)
     cp.keys_to_resume_during_load = existing
     with exact_readonly_same_job_source(cp, ckpt):
         assert cp.keys_to_resume_during_load()[1].warm_start is False

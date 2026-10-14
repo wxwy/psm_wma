@@ -52,7 +52,9 @@ def test_identical_comparison_full_inventory_passes():
 
 
 def test_large_initial_weight_must_not_mask_wrong_tiny_update():
-    a = fp([1000.0]); b = fp([1000.0]); source_after = fp([1000.0001])
+    a = fp([1000.0])
+    b = fp([1000.0])
+    source_after = fp([1000.0001])
     result = metric.compare_increment(a, source_after, b, b, role="delta_parameter")
     assert result.passed is False and result.reason == "one-sided-near-zero"
     # A whole-weight relative check would have misleadingly passed.
@@ -64,7 +66,8 @@ def test_large_initial_weight_must_not_mask_wrong_tiny_update():
     ("delta_parameter", 1000.0, 1e-4),
 ])
 def test_one_sided_missing_optimizer_update_fails(role, before, update):
-    init = fp([before]); updated = fp([before + update])
+    init = fp([before])
+    updated = fp([before + update])
     result = metric.compare_increment(init, updated, init, init, role=role)
     assert not result.passed and result.relative_l2 > 0.99
 
@@ -122,7 +125,8 @@ def test_misnamed_role_fails_closed():
 
 
 def test_missing_action_local_and_generation_selected_fqn_fails():
-    a = inventory(); b = inventory()
+    a = inventory()
+    b = inventory()
     del b["net.action2llm.w"]
     with pytest.raises(metric.EvidenceBlocked, match="inventory"):
         metric.compare_fqn_inventory(a, b)
@@ -132,28 +136,32 @@ def test_missing_action_local_and_generation_selected_fqn_fails():
 
 
 def test_required_selected_fqn_gradient_none_not_filtered():
-    a = inventory(); b = inventory()
+    a = inventory()
+    b = inventory()
     a["net.moe_gen.w"] = replace(a["net.moe_gen.w"], gradient=None)
     with pytest.raises(metric.EvidenceBlocked, match="missing selected FQN"):
         metric.compare_fqn_inventory(a, b)
 
 
 def test_mismatched_shard_identity_fails_before_values():
-    a = inventory(); b = inventory()
+    a = inventory()
+    b = inventory()
     b["net.action2llm.w"] = replace(b["net.action2llm.w"], shard_key="rank1:dp-shard8:1/8")
     with pytest.raises(metric.EvidenceBlocked, match="shard"):
         metric.compare_fqn_inventory(a, b)
 
 
 def test_mismatched_family_fails():
-    a = inventory(); b = inventory()
+    a = inventory()
+    b = inventory()
     b["net.action2llm.w"] = replace(b["net.action2llm.w"], family="generation")
     with pytest.raises(metric.EvidenceBlocked, match="family"):
         metric.compare_fqn_inventory(a, b)
 
 
 def test_optimizer_delta_difference_must_fail_even_if_gradients_match():
-    a = inventory(); b = inventory()
+    a = inventory()
+    b = inventory()
     v = b["net.local_memory_runtime.core.w"]
     b["net.local_memory_runtime.core.w"] = replace(v, master_after=v.master_before)
     result = metric.compare_fqn_inventory(a, b)

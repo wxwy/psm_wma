@@ -40,7 +40,8 @@ class FakeFusedAdam:
 
 
 def setup():
-    m = ToyModel(); o = FakeFusedAdam(m)
+    m = ToyModel()
+    o = FakeFusedAdam(m)
     return m, o
 
 
@@ -95,11 +96,13 @@ def test_missing_gradient_fails():
 
 
 def test_one_optimizer_step_exactly_required():
-    m, o = setup(); s = cap.NativeOptimizerCapture(m, o, rank=0)
+    m, o = setup()
+    s = cap.NativeOptimizerCapture(m, o, rank=0)
     s.before_optimizer_step()
     with pytest.raises(cap.CaptureBlocked, match="missing/multiple"):
         s.after_optimizer_step()
-    o.step(); o.step()
+    o.step()
+    o.step()
     with pytest.raises(cap.CaptureBlocked, match="missing/multiple"):
         s.after_optimizer_step()
 
