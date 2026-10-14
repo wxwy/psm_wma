@@ -12,13 +12,13 @@ In a clean detached diagnostic checkout with Python 3.13, torch 2.10, Ruff and p
 
 Run, with exact exit codes logged:
 
-python -m py_compile tools/gates/v3_gateb1_metrics.py tools/gates/v3_gateb1_stochastic.py tools/gates/v3_gateb1_fsdp_capture.py tools/gates/test_v3_gateb1_metrics.py tools/gates/test_v3_gateb1_stochastic.py tools/gates/test_v3_gateb1_fsdp_capture.py
+python -m py_compile tools/gates/v3_gateb1_metrics.py tools/gates/v3_gateb1_stochastic.py tools/gates/v3_gateb1_fsdp_capture.py tools/gates/v3_gateb1_dcp_transient.py tools/gates/test_v3_gateb1_metrics.py tools/gates/test_v3_gateb1_stochastic.py tools/gates/test_v3_gateb1_fsdp_capture.py tools/gates/test_v3_gateb1_dcp_transient.py
 
-python -m pytest -q tools/gates/test_v3_gateb1_metrics.py tools/gates/test_v3_gateb1_stochastic.py tools/gates/test_v3_gateb1_fsdp_capture.py
+python -m pytest -q tools/gates/test_v3_gateb1_metrics.py tools/gates/test_v3_gateb1_stochastic.py tools/gates/test_v3_gateb1_fsdp_capture.py tools/gates/test_v3_gateb1_dcp_transient.py
 
-ruff check tools/gates/v3_gateb1_metrics.py tools/gates/v3_gateb1_stochastic.py tools/gates/v3_gateb1_fsdp_capture.py tools/gates/test_v3_gateb1_metrics.py tools/gates/test_v3_gateb1_stochastic.py tools/gates/test_v3_gateb1_fsdp_capture.py
+ruff check tools/gates/v3_gateb1_metrics.py tools/gates/v3_gateb1_stochastic.py tools/gates/v3_gateb1_fsdp_capture.py tools/gates/v3_gateb1_dcp_transient.py tools/gates/test_v3_gateb1_metrics.py tools/gates/test_v3_gateb1_stochastic.py tools/gates/test_v3_gateb1_fsdp_capture.py tools/gates/test_v3_gateb1_dcp_transient.py
 
-Expected 58 CPU synthetic tests PASS. The author's local environment passed 58 with torch CPU and py_compile, but Ruff was unavailable.
+Expected 68 CPU synthetic tests PASS. The author's local environment passed 68 with torch CPU and py_compile, but Ruff was unavailable.
 
 Verify these independently:
 - All optimizer-selected FQNs in Generation/Action/Local covered; per-FQN gradient, FP32 DeltaParameter, DeltaM1, DeltaM2 and absolute moments; missing FQN, missing/None grad, skipped step, wrong shard identity, nonfinite, bad dtype or wrong tiny update must FAIL.
@@ -29,3 +29,5 @@ Verify these independently:
 Submit ONE report DS_PRO_V3_GateB1_S1_CPU_metrics_stochastic_capture_2026-10-14.md with SHA, test counts, Ruff/compile, negative tests and first errors; return for ONE GPT incremental review. No full V3 audit.
 
 Remaining separately scoped B1 implementation: strict 4-component iter1300 native DCP load, transient Local sidecar digest translation and 2-step GA2 direct callbacks, complete sigma/epsilon/CFG site injection, real 8xH100 Full×P0/P1 and Terminal×P0/P1. Numeric criteria not ratified by Owner. B1 GPU, Gate M, Formal30k HOLD; B0 CLOSED.
+
+Additionally validate the new strict DCP transient seam using CPU fake Checkpointer only. It must require all five components (model/optim/scheduler/trainer/dataloader), same-job strict resume, exact original iter1300 path, callback exactly once, and source/target rank0 digest conversion in memory; restore callback method on failure. Do not load real DCP or initialize a model. Confirm hash snapshot mocks reject tampering and no DCP is written. CPU test count 68. This **does not constitute real DCP load PASS**.
