@@ -3,7 +3,7 @@
 Date: 2026-10-14
 Role: DS_PRO validation-only; no production changes.
 Candidate branch: wxwy/psm_wma:v3-gateb1-numeric-implementation-20261014
-Candidate EXACT CODE SHA: 738873693920f14e6f45f9f1cd2046108143e234
+Candidate EXACT CODE SHA: 5aa79a73a4c6f1a424fa0a9476e1ce52ae9e9361
 Pre-existing B1 numeric/DCP/capture branch parent: 778eb096d700cabd7be93b1ab2313382bbf2ca7c
 Frozen B1 SOURCE Index8 Root b159f45906f7261d028aecc226ab7f2bb9807eb9 / child 937066ffd90f2bf783ad4fbb4909e9c0b8922982.
 Frozen TARGET Packed128 Root c4731bca1a590663db88bd6cd74dbcf9fd513a85 / child c8dabbb3f3a7fa3098a0399f4aec3b1c57d90686.
@@ -39,3 +39,5 @@ This code is a real *instance-hook/GA2 execution seam* but **not yet a fully ass
 Terminal×P0/P1 and Full×P0/P1 all mandatory; no B1 GPU, Gate M, Formal30k authorized.
 
 Give ONE report DS_PRO_V3_GATEB1_NATIVE_GA2_MODELSITE_CFG_CPU_2026-10-14.md with actual exact HEAD, six blob hashes, 3 exit codes, test counts, and file:line first blocker if any. Do not edit any production/Harness files in DS role.
+
+Implementation cleanup after initial coding: the final code SHA above removes unused code/import-like locals from two production modules and one test; author reran 23 CPU mock tests and py_compile successfully, all six pushed Git blobs matched local git hash-object. DS verifies Ruff independently. Later docs-only commits do not change implementation SHA.
