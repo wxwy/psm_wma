@@ -311,9 +311,11 @@ def execute(args: argparse.Namespace, meta: dict[str, Any]) -> None:
             sampling_contract=sampler,
             target_digest=TARGET_DIGEST if args.leg == "packed128" else None,
         )
-    if restore["source_checkpoint_fingerprint"] != args.checkpoint_fingerprint:
-        raise RunBlocked("B0 checkpoint fingerprint differs from actual strict DCP snapshot")
-    results = runner.run()  # EXACT two native GA2 steps, no Trainer.train or checkpoint save
+        if restore["source_checkpoint_fingerprint"] != args.checkpoint_fingerprint:
+            raise RunBlocked("B0 checkpoint fingerprint differs from actual strict DCP snapshot")
+        # Keep the checkpoint save-denial method guard active throughout the
+        # entire native two-step run, not merely for the DCP loading call.
+        results = runner.run()
     reports = [_save_completed(args, r, {**meta, **auth, "restore": restore}, rank=rank) for r in results]
     if rank == 0:
         print(json.dumps({"status": "EVIDENCE_WRITTEN_NOT_B1_PASS", "files": reports}, sort_keys=True))
@@ -330,7 +332,8 @@ def parser() -> argparse.ArgumentParser:
         p.add_argument(f"--{name}", required=True, type=Path)
     p.add_argument("--checkpoint-fingerprint", required=True)
     p.add_argument("--job-name", default="b1_native_evidence")
-    p.add_argument("--vision-resolution", default="480")
+    p.add_argument("--vision-resolution", required=True,
+                   help="Exact frozen training resolution bucket; every real Native Consumer is checked")
     p.add_argument("--repeat", type=int, choices=(0, 1), default=0)
     p.add_argument("--owner-authorization-json", type=Path, default=None)
     return p

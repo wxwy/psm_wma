@@ -171,3 +171,14 @@ def test_capture_rejects_missing_actual_sigma_and_cfg_witness(cfg, tmp_path):
     with pytest.raises(run.RunBlocked, match="stochastic/CFG"):
         run._save_completed(cfg, broken, {"schema": run.RUN_SCHEMA}, rank=0)
     assert not list(cfg.output_root.rglob("*.pt"))
+
+
+def test_real_cli_requires_explicit_resolved_vision_bucket_and_save_denial_scope():
+    import inspect
+
+    parser = run.parser()
+    assert parser.get_default("vision_resolution") is None
+    source = inspect.getsource(run.execute)
+    assert "with exact_readonly_same_job_source(trainer.checkpointer, args.checkpoint):" in source
+    assert "        results = runner.run()" in source
+    assert "trainer.train(" not in source and "checkpointer.save(" not in source
