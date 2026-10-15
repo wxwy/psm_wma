@@ -1,0 +1,54 @@
+{
+  "gate": "V3_PACKED128_B1_GPU_OWNER_APPROVED",
+  "authorized": true,
+  "numeric_thresholds_frozen": true,
+  "numeric_policy_sha256": "bcb9f8d699c0ce6c79d54cf5bb213c157665798c38dae9daeb6b4a1607e63fda",
+  "implementation_sha": "a32395911c9913a5e02eb8a17e0bac11fe9ff4e0",
+  "diagnostic_child_gitlink": "8f3672d1c15b6bb8e6c1795a7e6af9c2218763b1",
+  "checkpoint_fingerprint": "2e409afe788f4faf2cc1f5db8d500638a219647dc90283f9687863212d77d999",
+  "source_root": "b159f45906f7261d028aecc226ab7f2bb9807eb9",
+  "target_root": "c4731bca1a590663db88bd6cd74dbcf9fd513a85",
+  "source_child": "937066ffd90f2bf783ad4fbb4909e9c0b8922982",
+  "target_child": "c8dabbb3f3a7fa3098a0399f4aec3b1c57d90686",
+  "approval_reference": "OWNER_CHAT_2026-10-15_B1_P0_A3239591_MIN_FREE_11GIB",
+  "owner_conversation_authorization": "我授权，按照之前的经验，单卡11G就可以了",
+  "authorization_date": "2026-10-15",
+  "approved_scope": {
+    "gate_stage": "B1_P0_FIXED_2_STEP_SMOKE_ONLY",
+    "profiles": [
+      "P0_FIXED"
+    ],
+    "repeats": [
+      0
+    ],
+    "legs_in_order": [
+      "index8",
+      "packed128"
+    ],
+    "world_size": 8,
+    "gpu_type": "NVIDIA H100 80GB",
+    "completed_iterations": [
+      1301,
+      1302
+    ],
+    "maximum_independent_torchrun_jobs": 2,
+    "require_source_success_before_target": true,
+    "require_manual_source_to_target_release": true,
+    "co_resident_with_other_users_approved": true,
+    "computation_contention_acceptable": true,
+    "isolated_output_root_under": "/tmp",
+    "min_free_gpu_memory_mib_at_launch": 11264,
+    "min_free_gpu_memory_definition": "At least 11 GiB of NVIDIA driver-reported free device memory on each of all eight GPUs, rechecked immediately before EACH job. This replaces only the prior 16384 MiB floor for this authorization.",
+    "no_kill_pause_nice_or_modify_other_user_processes": true,
+    "stop_on_OOM_or_nonfinite_or_CUDA_error_or_DCP_mutation": true,
+    "stop_on_NCCL_error_or_foreign_process_interference": true,
+    "forbid_checkpoint_save": true,
+    "forbid_latest_pointer_change": true,
+    "forbid_P1_or_repeat1": true,
+    "forbid_gate_M": true,
+    "forbid_formal30k": true,
+    "forbid_automatic_retries": true,
+    "no_reauthorization_for_approved_two_jobs": true
+  },
+  "clarification": "This is NEW, explicit Owner permission for exact B1 diagnostic a3239591. It supersedes the previous 16384 MiB co-resident free-memory launch minimum only for this approval, and it does not amend/reuse the old 46e9cc0e receipt. Executor must first close outstanding ASCII runbook, scope validation, and CPU-only prepare requirements; check actual free VRAM immediately before every permitted torchrun; SOURCE result needs independent human evidence release before TARGET. No B1 parity pass, Gate M, or Formal30k authorization is inferred. 11 GiB free is a safety admission floor, not a guarantee of zero OOM under co-resident loads."
+}
