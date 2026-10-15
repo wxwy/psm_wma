@@ -27,6 +27,10 @@ import subprocess
 import sys
 from typing import Any
 
+from v3_gateb1_authority import (
+    B0_FULL_SHARD_FINGERPRINT, FROZEN_NUMERIC_POLICY_SHA256, assert_numeric_policy_frozen,
+)
+
 
 SOURCE_ROOT = "b159f45906f7261d028aecc226ab7f2bb9807eb9"
 SOURCE_CHILD = "937066ffd90f2bf783ad4fbb4909e9c0b8922982"
@@ -80,8 +84,8 @@ def strict_metadata(args: argparse.Namespace) -> dict[str, Any]:
             raise RunBlocked("B1 output path overlaps a frozen worktree/checkpoint")
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", args.job_name):
         raise RunBlocked("job_name must be a simple isolated identifier")
-    if not re.fullmatch(r"[0-9a-f]{64}", args.checkpoint_fingerprint):
-        raise RunBlocked("original B0 full-shard checkpoint fingerprint is required")
+    if args.checkpoint_fingerprint != B0_FULL_SHARD_FINGERPRINT:
+        raise RunBlocked("original B0 full-shard checkpoint fingerprint mismatch")
     return {
         "leg": args.leg, "profile": args.profile, "repeat": args.repeat,
         "root": pinned_root, "child": pinned_child, "resolved_digest_expected": expected_digest,
@@ -103,6 +107,7 @@ def _owner_receipt(args: argparse.Namespace, metadata: dict[str, Any]) -> dict[s
         auth.get("gate") != APPROVAL_GATE
         or auth.get("authorized") is not True
         or auth.get("numeric_thresholds_frozen") is not True
+        or auth.get("numeric_policy_sha256") != FROZEN_NUMERIC_POLICY_SHA256
         or auth.get("implementation_sha") != actual
         or auth.get("checkpoint_fingerprint") != metadata["checkpoint_fingerprint"]
         or auth.get("source_root") != SOURCE_ROOT or auth.get("target_root") != TARGET_ROOT
@@ -229,6 +234,7 @@ def _sampling(config: Any, args: argparse.Namespace):
 
 def execute(args: argparse.Namespace, meta: dict[str, Any]) -> None:
     # Owner/CLI checks BEFORE touching CUDA or constructing real 4B model.
+    assert_numeric_policy_frozen()
     auth = _owner_receipt(args, meta)
     import torch
     import torch.distributed as dist

@@ -2,10 +2,10 @@
 
 Pairs all 8 ranks and both post-1300 steps for P0/P1 and repeat0/repeat1;
 compares canonical Consumers/CFG+stochastic witness fields exactly and all
-selected optimizer-FQN tensors using the PROPOSED numerical engine.
+selected optimizer-FQN tensors using Owner-frozen r2 numerical limits.
 
-Even when every candidate metric passes, the report deliberately says
-CANDIDATE_ONLY: numeric tolerances and GPU Gate require Owner signoff.
+Even when all frozen metrics pass, the GPU Gate still requires independent
+parity evidence review and separate Owner GPU authorization.
 """
 from __future__ import annotations
 
@@ -15,6 +15,8 @@ import json
 import re
 from pathlib import Path
 from typing import Any
+
+from v3_gateb1_authority import FROZEN_NUMERIC_POLICY_SHA256, assert_numeric_policy_frozen
 
 SOURCE_ROOT = "b159f45906f7261d028aecc226ab7f2bb9807eb9"
 TARGET_ROOT = "c4731bca1a590663db88bd6cd74dbcf9fd513a85"
@@ -163,6 +165,7 @@ def _load_report(folder: Path, *, leg: str, profile: str, repeat: int, rank: int
 def compare_complete_evidence(folder: Path, *, profiles=("P0_FIXED", "P1_MATCHED_STOCHASTIC"),
                               repeats=(0, 1)) -> dict[str, Any]:
     """All 4 Full/Terminal × P0/P1 cases and both reproducibility runs."""
+    assert_numeric_policy_frozen()
     detailed = {}
     repeats_audit = {}
     for profile in profiles:
@@ -200,7 +203,9 @@ def compare_complete_evidence(folder: Path, *, profiles=("P0_FIXED", "P1_MATCHED
             raise CompareBlocked(f"{profile}: actual full AND terminal-partial window coverage missing: {sorted(seen)}")
     return {
         "schema": "psm_v3_b1_complete_candidate_comparison_v1",
-        "status": "CANDIDATE_METRICS_ONLY_NUMERIC_LIMITS_NOT_OWNER_FROZEN",
+        "status": "OWNER_FROZEN_R2_NUMERIC_EVIDENCE_ONLY_GPU_GATE_NOT_APPROVED",
+        "numeric_policy_sha256": FROZEN_NUMERIC_POLICY_SHA256,
+        "numeric_thresholds_owner_frozen": True,
         "gpu_gate_approved": False,
         "profiles": list(profiles), "repeats": list(repeats),
         "pair_count": len(detailed),

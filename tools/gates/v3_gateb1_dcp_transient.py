@@ -13,6 +13,7 @@ from pathlib import Path
 from types import MethodType
 from typing import Any
 
+from v3_gateb1_authority import B0_FULL_SHARD_FINGERPRINT
 from v3_packed128_gateb_compare import (
     SOURCE_DIGEST,
     in_memory_target_sidecar,
@@ -27,6 +28,23 @@ class TransientLoadBlocked(RuntimeError):
 
 
 REQUIRED_KEYS = frozenset({"model", "optim", "scheduler", "trainer", "dataloader"})
+
+
+def _lightweight_immutability_snapshot(checkpoint_path: Path) -> dict[str, Any]:
+    """Compare B0-approved DCP paths/size/mtime and small metadata/sidecar hashes.
+
+    The returned fingerprint is deliberately NOT the full-content B0 SHA.
+    DCP shard bodies are never SHA256-read by this transient B1 path.
+    """
+    result = snapshot_checkpoint(checkpoint_path, hash_shards=False)
+    files = result.get("files")
+    if (result.get("component_count") != 4 or result.get("dcp_shards") != 32
+            or not isinstance(files, list) or len(files) != 44
+            or not isinstance(result.get("checkpoint_fingerprint"), str)):
+        raise TransientLoadBlocked("incomplete original DCP lightweight immutability witness")
+    if any("sha256" in item for item in files if item.get("path", "").endswith(".distcp")):
+        raise TransientLoadBlocked("DCP shard content hashing forbidden in B1 runtime")
+    return result
 
 
 def _validate_dcp_reader(checkpointer: Any, checkpoint_path: Path) -> None:
@@ -64,7 +82,7 @@ def strict_transient_load(*, checkpointer: Any, trainer: Any, model: Any, optimi
                           scheduler: Any, grad_scaler: Any, checkpoint_path: Path,
                           leg: str, rank: int, source_digest: str = SOURCE_DIGEST,
                           target_digest: str | None = None,
-                          hash_shards: bool = True) -> dict[str, Any]:
+                          authoritative_b0_checkpoint_fingerprint: str) -> dict[str, Any]:
     """Call the official strict full-state loader, never persisting target state.
 
     The callback conversion is private to this synchronous call. Restores the
@@ -76,6 +94,8 @@ def strict_transient_load(*, checkpointer: Any, trainer: Any, model: Any, optimi
         raise TransientLoadBlocked("unknown frozen comparison leg/rank")
     if checkpoint_path.name != "iter_000001300" or not source_digest:
         raise TransientLoadBlocked("requires original verified iter1300 source authority")
+    if authoritative_b0_checkpoint_fingerprint != B0_FULL_SHARD_FINGERPRINT:
+        raise TransientLoadBlocked("B0 original full-shard checkpoint fingerprint mismatch")
     if leg == "packed128" and (not target_digest or target_digest == source_digest):
         raise TransientLoadBlocked("target config digest must be independently resolved")
     if leg == "index8" and target_digest is not None:
@@ -83,7 +103,7 @@ def strict_transient_load(*, checkpointer: Any, trainer: Any, model: Any, optimi
     _validate_dcp_reader(checkpointer, checkpoint_path)
     native_callback = _callback(trainer)
     original = native_callback.load_state_dict
-    before = snapshot_checkpoint(checkpoint_path, hash_shards=hash_shards)
+    before = _lightweight_immutability_snapshot(checkpoint_path)
     evidence = {"called": 0}
 
     def scoped_load(self: Any, state: dict[str, Any]) -> None:
@@ -108,14 +128,17 @@ def strict_transient_load(*, checkpointer: Any, trainer: Any, model: Any, optimi
             raise TransientLoadBlocked("native dataloader callback was not invoked exactly once")
         if getattr(trainer, "_pending_grouped_resume", None) is None:
             raise TransientLoadBlocked("native trainer lacks pending committed Local state")
-        after = snapshot_checkpoint(checkpoint_path, hash_shards=hash_shards)
+        after = _lightweight_immutability_snapshot(checkpoint_path)
         unchanged_checkpoint(before, after)
         return {
             "status": "STRICT_DCP_LOADED_TRANSIENT_NO_SAVE",
             "leg": leg,
             "rank": rank,
             "iteration": loaded_iteration,
-            "source_checkpoint_fingerprint": before["checkpoint_fingerprint"],
+            "source_checkpoint_fingerprint": authoritative_b0_checkpoint_fingerprint,
+            "authoritative_b0_checkpoint_fingerprint": authoritative_b0_checkpoint_fingerprint,
+            "runtime_lightweight_immutability_witness": before["checkpoint_fingerprint"],
+            "runtime_shard_contents_rehashed": False,
             "source_digest": source_digest,
             "effective_config_digest": source_digest if leg == "index8" else target_digest,
             "dataloader_state_load_calls": evidence["called"],

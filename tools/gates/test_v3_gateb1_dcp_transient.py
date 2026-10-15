@@ -56,7 +56,17 @@ def fixture(tmp_path: Path, monkeypatch):
 
     def snapshot(*a, **kw):
         calls.append((a, kw))
-        return {"checkpoint_fingerprint": "source_fp", "files": []}
+        return {
+            "checkpoint_fingerprint": "lightweight_fingerprint", "component_count": 4,
+            "dcp_shards": 32,
+            "files": (
+                [{"path": f"model/{i}.distcp", "size": 1, "mtime_ns": 1} for i in range(32)]
+                + [{"path": f"{x}/.metadata", "size": 1, "sha256": "a" * 64}
+                   for x in ("model", "optim", "scheduler", "trainer")]
+                + [{"path": f"dataloader/rank_{i}.pkl", "size": 1, "sha256": "b" * 64}
+                   for i in range(8)]
+            ),
+        }
 
     def validate(x, *, rank, source_digest):
         assert x["config_digest"] == source_digest and rank == 0
@@ -72,11 +82,13 @@ def fixture(tmp_path: Path, monkeypatch):
     return cp, trainer, callback, checkpoint, state, calls
 
 
-def invoke(f, *, leg="index8", target_digest=None):
+def invoke(f, *, leg="index8", target_digest=None,
+           b0_fp=dcp.B0_FULL_SHARD_FINGERPRINT):
     cp, trainer, callback, ckpt, _, _ = f
     return dcp.strict_transient_load(checkpointer=cp, trainer=trainer, model=object(), optimizer=object(),
                                      scheduler=object(), grad_scaler=object(), checkpoint_path=ckpt,
-                                     leg=leg, rank=0, target_digest=target_digest)
+                                     leg=leg, rank=0, target_digest=target_digest,
+                                     authoritative_b0_checkpoint_fingerprint=b0_fp)
 
 
 def test_original_index8_native_load_no_translation(fixture):
@@ -86,6 +98,11 @@ def test_original_index8_native_load_no_translation(fixture):
     assert trainer._pending_grouped_resume is state
     assert result["iteration"] == 1300 and result["dataloader_state_load_calls"] == 1
     assert result["checkpoint_write_authorized"] is False
+    assert result["source_checkpoint_fingerprint"] == dcp.B0_FULL_SHARD_FINGERPRINT
+    assert result["authoritative_b0_checkpoint_fingerprint"] == dcp.B0_FULL_SHARD_FINGERPRINT
+    assert result["runtime_lightweight_immutability_witness"] == "lightweight_fingerprint"
+    assert result["runtime_shard_contents_rehashed"] is False
+    assert all(kw["hash_shards"] is False for _, kw in calls)
     assert cp.times == 1 and len(calls) == 2 and cb.load_state_dict == old
 
 
@@ -157,3 +174,65 @@ def test_callback_never_called_must_fail(fixture):
     fixture[0].load = lambda *args: 1300
     with pytest.raises(dcp.TransientLoadBlocked, match="not invoked exactly once"):
         invoke(fixture)
+
+
+def test_b0_full_shard_fingerprint_mismatch_fails_before_any_checkpoint_read(fixture):
+    with pytest.raises(dcp.TransientLoadBlocked, match="B0 original full-shard"):
+        invoke(fixture, b0_fp="0" * 64)
+    assert fixture[0].times == 0 and not fixture[-1]
+
+
+def test_lightweight_witness_mutation_aborts_after_native_load(fixture, monkeypatch):
+    original = dcp.snapshot_checkpoint
+    calls = [0]
+
+    def altered(path, *, hash_shards):
+        assert hash_shards is False
+        result = original(path, hash_shards=hash_shards)
+        calls[0] += 1
+        if calls[0] == 2:
+            result["files"][0]["mtime_ns"] += 1
+        return result
+
+    monkeypatch.setattr(dcp, "snapshot_checkpoint", altered)
+    cb = fixture[2]
+    callback_before = cb.load_state_dict
+    with pytest.raises(RuntimeError, match="changed"):
+        invoke(fixture)
+    assert cb.load_state_dict == callback_before
+    assert fixture[0].times == 1 and calls[0] == 2
+
+
+def test_actual_B0_snapshot_does_not_read_shard_bodies(tmp_path, monkeypatch):
+    import v3_packed128_gateb_compare as b0
+
+    checkpoint = tmp_path / "iter_000001300"
+    for component in b0.COMPONENTS:
+        folder = checkpoint / component
+        folder.mkdir(parents=True)
+        (folder / ".metadata").write_bytes(b"tiny metadata")
+        for i in range(8):
+            (folder / f"{i}.distcp").write_bytes(b"fake shard")
+    dataloader = checkpoint / "dataloader"
+    dataloader.mkdir()
+    for i in range(8):
+        (dataloader / f"rank_{i}.pkl").write_bytes(b"fake sidecar")
+
+    original_hash = b0.sha256_file
+    recorded = []
+
+    def checked_hash(path):
+        assert path.suffix != ".distcp", "full DCP shard content hash forbidden"
+        recorded.append(path)
+        return original_hash(path)
+
+    monkeypatch.setattr(b0, "sha256_file", checked_hash)
+    before = dcp._lightweight_immutability_snapshot(checkpoint)
+    after = dcp._lightweight_immutability_snapshot(checkpoint)
+    assert before == after
+    assert before["dcp_shards"] == 32
+    assert len(recorded) == 24  # 4 metadata + 8 sidecars per snapshot, twice
+    assert all(item.get("sha256") is None for item in before["files"]
+               if item["path"].endswith(".distcp"))
+    assert all("mtime_ns" in item for item in before["files"]
+               if item["path"].endswith(".distcp"))

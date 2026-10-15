@@ -32,7 +32,7 @@ def cfg(tmp_path, monkeypatch):
         cache_root=tmp_path / "cache", source_root=tmp_path / "source",
         edge=tmp_path / "edge", vae=tmp_path / "vae", base_checkpoint=tmp_path / "base",
         output_root=Path("/tmp/b1_cpu_only_fixtures_24362"),
-        checkpoint_fingerprint="a" * 64, job_name="b1_cpu_test",
+        checkpoint_fingerprint=run.B0_FULL_SHARD_FINGERPRINT, job_name="b1_cpu_test",
         vision_resolution="480", owner_authorization_json=None,
     )
 
@@ -97,7 +97,8 @@ def test_owner_receipt_requires_thresholds_frozen_and_sha(cfg, tmp_path):
     metadata = run.strict_metadata(cfg)
     cfg.owner_authorization_json = tmp_path / "owner.json"
     data = dict(gate=run.APPROVAL_GATE, authorized=True, numeric_thresholds_frozen=False,
-                implementation_sha="b" * 40, checkpoint_fingerprint="a" * 64,
+                implementation_sha="b" * 40,
+                checkpoint_fingerprint=run.B0_FULL_SHARD_FINGERPRINT,
                 source_root=run.SOURCE_ROOT, source_child=run.SOURCE_CHILD,
                 target_root=run.TARGET_ROOT, target_child=run.TARGET_CHILD,
                 approval_reference="owner-reviewed-2026-10-14")
@@ -182,3 +183,38 @@ def test_real_cli_requires_explicit_resolved_vision_bucket_and_save_denial_scope
     assert "with exact_readonly_same_job_source(trainer.checkpointer, args.checkpoint):" in source
     assert "        results = runner.run()" in source
     assert "trainer.train(" not in source and "checkpointer.save(" not in source
+
+
+def test_wrong_b0_authority_fails_even_for_existing_checkpoint(cfg):
+    cfg.checkpoint_fingerprint = "0" * 64
+    with pytest.raises(run.RunBlocked, match="B0 full-shard"):
+        run.strict_metadata(cfg)
+
+
+def test_owner_receipt_must_bind_exact_frozen_numeric_policy(cfg, tmp_path, monkeypatch):
+    metadata = run.strict_metadata(cfg)
+    authorization = tmp_path / "gpu_approval.json"
+    cfg.owner_authorization_json = authorization
+    frozen = {
+        "gate": run.APPROVAL_GATE, "authorized": True,
+        "numeric_thresholds_frozen": True, "numeric_policy_sha256": "0" * 64,
+        "implementation_sha": "b" * 40,
+        "checkpoint_fingerprint": run.B0_FULL_SHARD_FINGERPRINT,
+        "source_root": run.SOURCE_ROOT, "source_child": run.SOURCE_CHILD,
+        "target_root": run.TARGET_ROOT, "target_child": run.TARGET_CHILD,
+        "approval_reference": "CPU-SYNTHETIC-ONLY-NOT-GPU-PERMISSION",
+    }
+    real_git = run._git
+
+    def fixture_git(path, *command):
+        if command == ("rev-parse", "HEAD") and path == Path(run.__file__).resolve().parents[2]:
+            return "b" * 40
+        return real_git(path, *command)
+
+    monkeypatch.setattr(run, "_git", fixture_git)
+    authorization.write_text(json.dumps(frozen))
+    with pytest.raises(run.RunBlocked, match="Owner GPU authorization"):
+        run._owner_receipt(cfg, metadata)
+    frozen["numeric_policy_sha256"] = run.FROZEN_NUMERIC_POLICY_SHA256
+    authorization.write_text(json.dumps(frozen))
+    assert run._owner_receipt(cfg, metadata)["implementation_sha"] == "b" * 40

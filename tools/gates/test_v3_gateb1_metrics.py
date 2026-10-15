@@ -217,3 +217,20 @@ def test_complete_candidate_metrics_produce_candidate_only_status():
 def test_nonfinite_numeric_limits_are_rejected():
     with pytest.raises(ValueError, match="non-finite"):
         metric.Limits(float("nan"), 1e-4, 1e-3, 0.999, 1e-7)
+
+
+def test_owner_frozen_r2_policy_digest_and_fp32_bf16_loss_distinct():
+    from v3_gateb1_authority import (
+        FROZEN_NUMERIC_POLICY_SHA256, assert_numeric_policy_frozen, numeric_policy_sha256,
+    )
+
+    assert_numeric_policy_frozen()
+    assert numeric_policy_sha256() == FROZEN_NUMERIC_POLICY_SHA256
+    assert metric.compare_losses(
+        {"outer": torch.tensor(1.0, dtype=torch.bfloat16)},
+        {"outer": torch.tensor(1.0078125, dtype=torch.bfloat16)},
+    ) == {"outer": True}
+    assert metric.compare_losses(
+        {"outer": torch.tensor(1.0, dtype=torch.float32)},
+        {"outer": torch.tensor(1.0078125, dtype=torch.float32)},
+    ) == {"outer": False}

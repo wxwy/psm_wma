@@ -302,7 +302,8 @@ def build_loaded_native_bridge(*, config: Any, model: Any, planner: Any, produce
     evidence = strict_transient_load(checkpointer=trainer.checkpointer, trainer=trainer,
                                      model=model, optimizer=optimizer, scheduler=scheduler,
                                      grad_scaler=grad_scaler, checkpoint_path=ckpt,
-                                     leg=leg, rank=rank, target_digest=target_digest)
+                                     leg=leg, rank=rank, target_digest=target_digest,
+                                     authoritative_b0_checkpoint_fingerprint=checkpoint_fp)
     trainer.callbacks.on_train_start(model, iteration=1300)
     model.train()
     bridge = NativeTwoWindowDriver(

@@ -1,6 +1,6 @@
 """Pure CPU metric engine for V3 Packed128 Gate B1 (NOT a GPU runner).
 
-All thresholds in this module are PROPOSALS, not Owner-frozen. The engine
+Thresholds are Owner-frozen r2 on 2026-10-15, before any real GPU data. The engine
 compares already captured *real* native FSDP rank-local tensors: it does not
 perform DCP load, local scan, stochastic injection or optimizer steps.
 
@@ -15,6 +15,10 @@ import math
 from typing import Mapping
 
 import torch
+
+from v3_gateb1_authority import OWNER_FROZEN_NUMERIC_POLICY, assert_numeric_policy_frozen
+
+assert_numeric_policy_frozen()
 
 
 class EvidenceBlocked(ValueError):
@@ -38,19 +42,25 @@ class Limits:
             raise ValueError("invalid or non-finite pre-registered threshold")
 
 
-# Source: GPT Round2 §6 + 2026-10-14 prefreeze addendum r2.
-# Every number is UNFROZEN until explicitly ratified by the Owner.
+# Single Owner-frozen r2 source; historical CANDIDATE_* names remain as
+# backwards-compatible aliases and do NOT mean thresholds are still provisional.
+_FROZEN = OWNER_FROZEN_NUMERIC_POLICY
 CANDIDATE_GRADIENT: Mapping[torch.dtype, Limits] = {
-    torch.float32: Limits(1e-6, 1e-4, 2e-3, 0.9999, 1e-7),
-    torch.float64: Limits(1e-6, 1e-4, 2e-3, 0.9999, 1e-7),
-    torch.bfloat16: Limits(2e-2, 2e-2, 3e-2, 0.999, 2e-5),
+    torch.float32: Limits(**_FROZEN["gradient_fp32_and_fast_state"]),
+    torch.float64: Limits(**_FROZEN["gradient_fp32_and_fast_state"]),
+    torch.bfloat16: Limits(**_FROZEN["gradient_bf16"]),
 }
 CANDIDATE_INCREMENT: Mapping[str, Limits] = {
-    "delta_parameter": Limits(1e-9, 3e-2, 3e-2, 0.999, 1e-10),
-    "delta_m1": Limits(1e-8, 3e-2, 3e-2, 0.999, 1e-9),
-    "delta_m2": Limits(1e-12, 6e-2, 5e-2, 0.995, 1e-13),
+    "delta_parameter": Limits(**_FROZEN["delta_parameter_fp32"]),
+    "delta_m1": Limits(**_FROZEN["delta_m1_fp32"]),
+    "delta_m2": Limits(**_FROZEN["delta_m2_fp32"]),
 }
-CANDIDATE_LOSS = (1e-6, 1e-5)  # FP32 scalar, each active *weighted* component
+CANDIDATE_LOSS = (_FROZEN["loss_fp32"]["atol"], _FROZEN["loss_fp32"]["rtol"])
+FROZEN_LOSS_BY_DTYPE = {
+    torch.float32: CANDIDATE_LOSS,
+    torch.float64: CANDIDATE_LOSS,
+    torch.bfloat16: (_FROZEN["loss_bf16"]["atol"], _FROZEN["loss_bf16"]["rtol"]),
+}
 
 
 @dataclass(frozen=True)
@@ -221,7 +231,6 @@ def compare_losses(reference: Mapping[str, torch.Tensor],
     """All *active weighted* native losses must be present; no unknown aux omitted."""
     if not reference or set(reference) != set(target):
         raise EvidenceBlocked("loss components differ or none provided")
-    atol, rtol = CANDIDATE_LOSS
     out = {}
     for name in sorted(reference):
         a, b = reference[name], target[name]
@@ -231,6 +240,10 @@ def compare_losses(reference: Mapping[str, torch.Tensor],
             raise EvidenceBlocked(f"loss {name}: tensor dtype/device mismatch")
         if not torch.isfinite(a).all().item() or not torch.isfinite(b).all().item():
             raise EvidenceBlocked(f"loss {name}: nonfinite")
+        try:
+            atol, rtol = FROZEN_LOSS_BY_DTYPE[a.dtype]
+        except KeyError as exc:
+            raise EvidenceBlocked(f"loss {name}: unapproved storage dtype") from exc
         out[name] = abs(float(a) - float(b)) <= atol + rtol * abs(float(a))
     return out
 
