@@ -424,3 +424,6 @@ User-authorized promotion of baseline to Root `V3` / Child `v3-local-ttt`.
 - Owner 明确同意 r2 阈值+Checkpoint 重复哈希修复。**Numerics FROZEN，GPU 仍 NOT AUTHORIZED**。正式冻结标准：`docs/collab/chatgpt/designs/2026-10-15_V3_GateB1_r2_numeric_Owner_frozen_preGPU.md`；policy SHA256 `bcb9f8d699c0ce6c79d54cf5bb213c157665798c38dae9daeb6b4a1607e63fda`，原 B0 full DCP FP `2e409afe788f4faf2cc1f5db8d500638a219647dc90283f9687863212d77d999`。
 - GPT 已提交隔离 B1 **NEW CODE candidate** Root `46e9cc0e5dc97a1f7f813b2a332b095aa1062a4a` / Gitlink `8f3672d1c15b6bb8e6c1795a7e6af9c2218763b1`，仅 `tools/gates/` 9 文件：B0 权威 FP + 元数据/sidecar/mtime 轻量前后校验，禁重读32 shard；Owner冻结数值绑定与 CPU 负例测试。旧 `dfeace66` B1 CPU Gate CLOSED；**新 formal pair 待 DS 独立测试及 GPT fresh review，不可继承旧 PASS**。
 - 给 DS 的 CPU-only 验收：`docs/collab/chatgpt/requests/2026-10-15_DS_PRO_V3_B1_GPU_IO_01_and_r2_numeric_freeze_CPU_incremental_acceptance_46e9cc0e.md`。不准 GPU/torchrun、真实 DCP/数据重扫、Gate M、Formal30k。冻结 Source/Target 不变。
+
+## 2026-10-15 — B1 46e9 IO01+r2 CPU incremental APPROVE
+- Root `46e9cc0e5dc97a1f7f813b2a332b095aa1062a4a` / Child `8f3672d1...`: 23 compile, 23 Ruff, 144 tests PASS. IO01 CLOSED; r2 policy FROZEN; GPU NOT AUTHORIZED; M/30k HOLD. Review: `docs/collab/chatgpt/reviews/2026-10-15_V3_GateB1_IO01_r2_numeric_freeze_CPU_final_review_46e9cc0e_8f3672d1.md`.
