@@ -430,3 +430,6 @@ User-authorized promotion of baseline to Root `V3` / Child `v3-local-ttt`.
 
 ## Continued
 See `CODEX_INBOX_CONT_20261015.md`.
+
+
+Next: CODEX_INBOX_2026-10-15_CONTINUATION.md
