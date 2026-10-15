@@ -427,3 +427,6 @@ User-authorized promotion of baseline to Root `V3` / Child `v3-local-ttt`.
 
 ## 2026-10-15 — B1 46e9 IO01+r2 CPU incremental APPROVE
 - Root `46e9cc0e5dc97a1f7f813b2a332b095aa1062a4a` / Child `8f3672d1...`: 23 compile, 23 Ruff, 144 tests PASS. IO01 CLOSED; r2 policy FROZEN; GPU NOT AUTHORIZED; M/30k HOLD. Review: `docs/collab/chatgpt/reviews/2026-10-15_V3_GateB1_IO01_r2_numeric_freeze_CPU_final_review_46e9cc0e_8f3672d1.md`.
+
+## Continued
+See `CODEX_INBOX_CONT_20261015.md`.
