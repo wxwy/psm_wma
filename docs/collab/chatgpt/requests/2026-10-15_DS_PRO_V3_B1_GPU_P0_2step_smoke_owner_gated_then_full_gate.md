@@ -79,8 +79,16 @@ COMMON=(
     "$SCRIPT" --leg index8 --root-worktree "$SRC_ROOT" "${COMMON[@]}" \
     2>&1 | tee "$SMOKE_ROOT/logs/index8_P0_repeat0.log"
 
-# IMPORTANT: 此处人工停下审查 SOURCE；不要把 TARGET 接成无条件自动运行。
-# Job B (单独执行、仅在 SOURCE 完整 PASS 后):
+# HARD STOP：此处是必须人工操作的安全门，不允许 Source 结束就自动跑 Target。
+# 在确认 8 rank × 两 step 全部完成、无异常、原 Checkpoint/latest 未变，
+# 且确有 Source 的完整原始证据后，人工键入下面的完整标记。
+printf 'SOURCE evidence reviewed? Enter ALLOW_PACKED128 (otherwise STOP): '
+if ! read -r SOURCE_GATE || [ "$SOURCE_GATE" != "ALLOW_PACKED128" ]; then
+  echo "STOP: Packed128 was NOT launched; retain Source evidence."
+  exit 0
+fi
+
+# Job B: TARGET Packed128，仅在本次人工安全门通过后独立执行。
 "$DIAG_PY" -m torch.distributed.run --standalone --nproc_per_node=8 \
     "$SCRIPT" --leg packed128 --root-worktree "$TGT_ROOT" "${COMMON[@]}" \
     2>&1 | tee "$SMOKE_ROOT/logs/packed128_P0_repeat0.log"
