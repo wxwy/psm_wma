@@ -1,10 +1,10 @@
 # GPT → DS_PRO｜V3 B1 实 GPU 数值等价：P0 最小 Smoke → 独立复审 → 完整 B1
 
 **日期：** 2026-10-15  
-**Owner 指令来源：** “给ds指令”，是在要求出具操作指令；**并不代替后续明确的 GPU Owner 授权回执**。  
+**Owner 最新明确授权：** 2026-10-15 “直接让ds做B1 P0 GPU Smoke，显存够的，就是计算挤兑”。现在 **P0 repeat0 两腿共享 GPU 执行已获 Owner 授权**，机器上其他任务 100% util 不再单独构成 STOP。正式回执在 V3 `docs/collab/chatgpt/approvals/2026-10-15_V3_B1_P0_GPU_co_resident_Owner_authorization_46e9cc0e.json`（不是冻结诊断分支）。
 **执行角色：** DS_PRO 可在 /tmp 构造临时验证脚本及报告，但 **不得修改 GitHub 代码、冻结 Root/Child、生产模型、Checkpoint 或正式训练目录**。GPT 承担代码改动及 Gate 审核。  
 **当前 Gate：** `B1_GPU_P0_FIXED_TWO_STEP_SMOKE`，先跑 **SOURCE Index8 + TARGET Packed128 各一次独立 8×H100 torchrun、repeat=0、P0_FIXED**，只跑原始 iter1300 后 **1301、1302 两步（GA2）**。**不是**完整 B1 PASS，也不是 Formal30k。  
-**硬前置：** `GPU_NOT_AUTHORIZED`，没有 Owner 单独出具并可核实的 GPU Approval 文件前，**只能做阶段0的 CPU/磁盘/环境准备；绝对不得执行 torchrun/--mode execute、GPU 初始化或实际 DCP/model load**。
+**硬前置（2026-10-15 已满足 Owner 审批）：** 只能将上述 **V3 官方已授权 JSON** 原样复制到运行机器 `/tmp`，核验精确实现 SHA、B0 全量指纹、r2 数值策略、P0-only 范围和 co-resident 允许条件。**如果训练机暂未拿到并验过该文件，仍不得 torchrun。** 不得以此前 GPU 使用率100% 为单独阻塞；必须实测每卡剩余显存≥16384 MiB、GPU健康。
 
 ## 0. 固定 SHA、数据与阈值，禁止改名替换
 
@@ -41,9 +41,9 @@ export SMOKE_ROOT=/tmp/psm_v3_b1_p0_smoke_46e9_20261015
 1. 使用只读 clone/worktree 取得上述三对准确 SHA；记录三套 Root/Child 的 `git rev-parse HEAD`、`git ls-tree HEAD cosmos-framework`、`git status --porcelain`，任何不符立即 STOP。
 2. 核验真实原始 iter1300 DCP 路径、acceptance `receipt.json`、models、cache、数据存在。**不遍历/重新 hash 32 DCP shard 或451GB语料；不调用 full Phase5 preflight**。使用已关闭的 B0/Readiness receipt。
 3. 仅用轻量 `_load_config`/先前 DS CPU config receipt 检查 **真实** `rectified_flow_training_config.shift` 中的 `RESOLUTION=256` **键的实际类型**，并检查诊断 `_sampling` 的 `shift_config[args.vision_resolution]` 能在真实 config 上成功索引；若 `KeyError/TypeError`，STOP + 文件:行及证据交 GPT 修代码。**不能猜测、硬改配置、修改冻结 Child 或在 DS /tmp 代码里偷偷绕过正式执行路径。**
-4. 检查 8×H100 全部空闲、`nvidia-smi -L`、/tmp 可用磁盘空间、机器内存、可读取原 DCP 与 GPU runner 的 torch/distributed 版本；不建立真实模型、不初始化 CUDA。预计会写入按 rank 分片的模型/Gradient/Moment 张量快照，DS 应事先估算并记录磁盘容量，容量不足 BLOCKED，不要把输出改到正式训练目录。
+4. **Owner 已批准 GPU 共驻**：使用 `nvidia-smi -L` 和 `nvidia-smi --query-gpu=index,memory.free,memory.total,utilization.gpu --format=csv,noheader,nounits` 检查8张 H100 是否健康，逐卡空闲显存是否≥16384 MiB，并记录共享用户负载、/tmp 磁盘、CPU内存。即使所有卡100% util，只要显存安全且不扰动其他进程即可启动；不要 kill/pause/renice 别人的任务。资源波动/OOM/通信异常则停止**自己的** Smoke；共驻的耗时不做独占吞吐指标。
 5. 新 `46e9cc0e` 诊断 runner 的 **CPU-only `--mode prepare`**（两个 leg，各 P0 一次）在已有有效 receipt 上 exit0，且返回固定 `PREPARE_ONLY_NO_GPU_OR_DATASET_SCAN`、B0 FP、Root/Child、config digest、`checkpoint_write_authorized=false`。无需重复143/144 CPU tests 或扫描数据。
-6. 读取 `v3_gateb1_run.py` 准入条件：`APPROVAL_GATE=V3_PACKED128_B1_GPU_OWNER_APPROVED`。**只有 Owner 单独明确批准后**，才可接收并核验本 Gate 的 `--owner-authorization-json`，其中必须绑定准确执行 CODE SHA、冻结 Source/Target Root/Child、B0 FP、r2 Policy SHA、`authorized=true`、`numeric_thresholds_frozen=true` 与明确的 P0 smoke 两个作业范围/approval_reference。DS 不得自行生成、伪造、修改或扩展授权 JSON。**没有授权文件就提交 PREPARE_ONLY 等待审批。**
+6. **Owner JSON 现已正式签发到 V3**：从 `V3:docs/collab/chatgpt/approvals/2026-10-15_V3_B1_P0_GPU_co_resident_Owner_authorization_46e9cc0e.json` 读回 JSON，复制到训练机 `/tmp` 的只读文件，通过 `_owner_receipt` 及 DS 的独立作用域检查；要求 `P0_FIXED/repeat0/index8→packed128/2 steps/8 H100`，策略/Source/Target/B0 全部匹配。DS 不得自行生成、修改或扩大授权字段。若暂无法读取官方 V3 文件，报告 `AUTH_RECEIPT_NOT_MATERIALIZED`，不要代填 `authorized=true`。
 
 ## 2. 阶段1 — **仅 Owner 单独批准 P0 GPU Smoke 后**，先 SOURCE 再 TARGET
 
@@ -53,9 +53,28 @@ export SMOKE_ROOT=/tmp/psm_v3_b1_p0_smoke_46e9_20261015
 set -euo pipefail
 export HF_HUB_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
-# 由 Owner 实际签署/核实；绝不由 DS_PRO 在此脚本内自动创建：
-: "${OWNER_GPU_APPROVAL_JSON:?Owner must separately authorize 8xH100 B1 P0 smoke}"
+# 这里使用 V3 官方已签发的 Owner JSON，不允许自己构造新 JSON。
+# 先在独立的 V3 文档 checkout (不要改动冻结 diag/source/target tree) 执行示例：
+# AUTH_REL=docs/collab/chatgpt/approvals/2026-10-15_V3_B1_P0_GPU_co_resident_Owner_authorization_46e9cc0e.json
+# git -C "$V3_DOCS_ROOT" show "V3:$AUTH_REL" > /tmp/psm_v3_b1_owner_P0_46e9.json
+# chmod 0444 /tmp/psm_v3_b1_owner_P0_46e9.json
+# export OWNER_GPU_APPROVAL_JSON=/tmp/psm_v3_b1_owner_P0_46e9.json
+: "${OWNER_GPU_APPROVAL_JSON:?Obtain exact Owner-approved P0 receipt from V3}"
 test -f "$OWNER_GPU_APPROVAL_JSON"
+"$DIAG_PY" - "$OWNER_GPU_APPROVAL_JSON" <<'PY'
+import json, sys
+x = json.load(open(sys.argv[1], encoding='utf-8'))
+scope = x['approved_scope']
+assert x['gate'] == 'V3_PACKED128_B1_GPU_OWNER_APPROVED' and x['authorized'] is True
+assert x['implementation_sha'] == '46e9cc0e5dc97a1f7f813b2a332b095aa1062a4a'
+assert x['numeric_policy_sha256'] == 'bcb9f8d699c0ce6c79d54cf5bb213c157665798c38dae9daeb6b4a1607e63fda'
+assert x['checkpoint_fingerprint'] == '2e409afe788f4faf2cc1f5db8d500638a219647dc90283f9687863212d77d999'
+assert scope['profiles'] == ['P0_FIXED'] and scope['repeats'] == [0]
+assert scope['legs_in_order'] == ['index8','packed128']
+assert scope['completed_iterations'] == [1301,1302]
+assert scope['maximum_independent_torchrun_jobs'] == 2 and scope['co_resident_with_other_users_approved'] is True
+print('OWNER_P0_SCOPE_ACCEPTED')
+PY
 
 # 仅在所有阶段0检查 PASS 且 Owner 单独授权时执行。
 mkdir -p "$SMOKE_ROOT" "$SMOKE_ROOT/logs"
@@ -94,7 +113,7 @@ fi
     2>&1 | tee "$SMOKE_ROOT/logs/packed128_P0_repeat0.log"
 ```
 
-**关键：** 用户仅请求下发指令；没有 Owner GPU JSON 不执行上述任一 torchrun，也不得擅自把 `authorized=true` 写入文件。明确遵守 Shell `pipefail`；跑不完任何8卡作业就 STOP，不让 `tee` 掩盖退出码。不要在同一 job namespace 重跑并覆盖 rank evidence。
+**关键：** 2026-10-15 的 P0 co-resident Owner GPU JSON **已存在于 V3**，本次允许 DS 在按规定读回并核验后直接运行两个作业；不需要再次等 Owner 口头确认。此 JSON **不包含 P1/repeat1 授权**。严格遵守 Shell `pipefail`、Source 后人工 STOP、无自动重试和隔离证据。若其他进程已使每卡显存不足16GiB，则仍需停止，不得清退他人任务。
 
 ## 3. 每条腿的停机门槛（Source 失败不得跑 Target）
 
