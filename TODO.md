@@ -377,3 +377,5 @@
 - Scope: Root queue reliability and focused synthetic CPU tests; preserve task outcomes/identity and Child. Separate worker health, task wall deadline, stop cancellation and bounded owned-process-group cleanup.
 - Acceptance: focused positive/negative CPU matrix and Ruff; isolated branch/PR exact implementation pair; DS_PRO clean detached independent CPU evidence then GPT fresh incremental verdict. Stop before E2/T1/P1; no GPU/DCP/official evaluation/training.
 - E1 author checks complete: 26 methods +15 timeout subcases PASS; Ruff0.12.7 check/format and syntax PASS. Candidate scope Root queue/tests only, Child unchanged. Contract/evidence authored; publish isolated branch and hand off exact Pair to DS_PRO; do not merge V3 or advance E2/T1/P1.
+
+- V3-E1-EVALUATION-RELIABILITY: REVIEW / DS_GATE_PENDING; candidate Root afd615e4b2fc7610aef950b4c2ea80a494abfd5d, Child/Gitlink 1d56320c08c56b0f8dd248919d152d81ae12ea7b. Implementation and author CPU checks delivered on independent branch; DS read-only request recorded. GPT Fresh Incremental verdict pending DS Evidence; V3 not merged, no later batch authorized.
