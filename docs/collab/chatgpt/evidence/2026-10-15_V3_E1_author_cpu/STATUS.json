@@ -1,0 +1,90 @@
+{
+  "classification": "AUTHOR_E1_CPU_CHECK_NOT_DS_GATE_OR_GPT_VERDICT",
+  "implementation_branch": "v3-e1-evaluation-reliability-20261015",
+  "parent_root": "72aeb3767b6123de0358d5d148d5c2c788179d3c",
+  "production_inspection_root": "2f4dec43eb6b1e35b33a99d844d67813df5922a6",
+  "child_gitlink": "1d56320c08c56b0f8dd248919d152d81ae12ea7b",
+  "python": "3.12.14",
+  "platform": "Linux",
+  "ruff": "ruff 0.12.7",
+  "pytest": "9.0.2",
+  "statistics": {
+    "tests": 41,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 41,
+    "count_scope": "JUnit includes 26 test methods plus 15 passing unittest parameter subcases"
+  },
+  "timeout_cli_subcases_passed": 15,
+  "tests": [
+    "test_cleanup_does_not_signal_unrelated_process",
+    "test_cleanup_failure_is_bounded_and_explicit",
+    "test_deadline_kills_term_ignoring_parent_and_child_preserving_evidence",
+    "test_normal_exit_and_idempotent_cleanup",
+    "test_reaps_child_after_parent_exits_itself",
+    "test_stop_cancels_running_task_and_reaps_descendants",
+    "test_subreaper_setting_is_restored",
+    "test_atomic_publication_preserves_last_record_after_encoding_error",
+    "test_cleanup_exception_after_completed_tasks",
+    "test_coordinator_sigterm_is_cancellation_not_success",
+    "test_deadline_is_bound_into_identity",
+    "test_default_deadline_is_explicit",
+    "test_invalid_timeouts_fail_before_any_process_or_asset",
+    "test_new_execution_preserves_previous_execution_evidence",
+    "test_nonzero_exit_retains_complete_business_results",
+    "test_nonzero_partial_results_and_actions_preserved",
+    "test_original_18_task_success",
+    "test_ready_failure_after_completion",
+    "test_result_parse_exception_is_preserved",
+    "test_server_popen_failure_after_all_tasks_cannot_disappear",
+    "test_simulator_start_failure_records_assigned_task",
+    "test_task_timeout_reaps_ignoring_parent_and_child",
+    "test_worker_failure_cancels_other_workers_hung_simulator",
+    "test_worker_join_watchdog_cancels_stuck_worker",
+    "test_ready_timeout_is_bounded",
+    "test_startup_stop_does_not_wait_for_timeout"
+  ],
+  "source_sha256": {
+    "scripts/eval_robocasa_18task_queue.py": "cedf7dee11033c1eb6b5cc559f16d1918e8b1cc614c369329aa48d50e21adab7",
+    "tools/v3/eval_robocasa_queue_e1_test.py": "5fb14f84652deb598a1f571288e8e01bb546ac9368b56414ab3abddcccd8846f"
+  },
+  "ruff_config_sha256": "790ec5710cfd967f5a1e90456cd1801bd8ce751b1b1da18b572da79b166ed6b7",
+  "artifact_sha256": {
+    "ruff-format.log": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+    "author-e1.log": "214035a38d0d3e97756cdf6616ea2de87bcaed3ecdf2bc58cab13413c8057f72",
+    "syntax.log": "5358c4252414e850e1dc2e39158365443d9981aa7efaee7048ca1a8cf6712861",
+    "author-e1.xml": "aab832adf4cac2d746a254c7bc555cbe607293c5d80f5bfa67fdf649b651753f",
+    "ruff-check.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "commands": [
+    {
+      "command": "ruff check --config cosmos-framework/.ruff.toml scripts/eval_robocasa_18task_queue.py tools/v3/eval_robocasa_queue_e1_test.py",
+      "exit_code": 0
+    },
+    {
+      "command": "ruff format --check --config cosmos-framework/.ruff.toml scripts/eval_robocasa_18task_queue.py tools/v3/eval_robocasa_queue_e1_test.py",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONPYCACHEPREFIX=/tmp/psm-v3-e1-20261015/bytecode /tmp/psm-v3-e1-20261015/venv/bin/python -m py_compile scripts/eval_robocasa_18task_queue.py tools/v3/eval_robocasa_queue_e1_test.py",
+      "exit_code": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 /tmp/psm-v3-e1-20261015/venv/bin/python -m pytest --noconftest -q -o addopts='' -p no:cacheprovider tools/v3/eval_robocasa_queue_e1_test.py --junitxml=/tmp/psm-v3-e1-20261015/author-e1.xml",
+      "exit_code": 0
+    }
+  ],
+  "cwd": "/workspace/psm_wma",
+  "source_code_scope": [
+    "scripts/eval_robocasa_18task_queue.py",
+    "tools/v3/eval_robocasa_queue_e1_test.py"
+  ],
+  "gpu": false,
+  "real_dcp_or_dataset": false,
+  "training_or_official_evaluation": false,
+  "ds_independent_gate": "PENDING",
+  "gpt_fresh_review": "PENDING",
+  "status": "PASS_AUTHOR_ONLY",
+  "test_methods_passed": 26
+}

@@ -371,3 +371,9 @@
 - Author checks complete: Ruff/format/syntax/shell PASS; runner 8 passed, migration 328 passed/3 real-asset skips. Task moves to REVIEW after source publication and exact Fresh Review ledger; no formal acceptance or Resume implied.
 
 - V3-R2-STATIC-FOLLOWUP: REVIEW; formal Root 444c232b976e80ac68cde9e7370e73b9f6410f0e, Child/Gitlink e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c; published and verified. Fresh GPT request in canonical Inbox; await pair-bound verdict before DS new Gate A. Author CPU checks do not close acceptance.
+
+## V3-E1-EVALUATION-RELIABILITY — 2026-10-15
+- Status: IN_PROGRESS; owner: Codex; prerequisite: Owner/GPT E1-only implementation order, base72aeb376/1d56320c.
+- Scope: Root queue reliability and focused synthetic CPU tests; preserve task outcomes/identity and Child. Separate worker health, task wall deadline, stop cancellation and bounded owned-process-group cleanup.
+- Acceptance: focused positive/negative CPU matrix and Ruff; isolated branch/PR exact implementation pair; DS_PRO clean detached independent CPU evidence then GPT fresh incremental verdict. Stop before E2/T1/P1; no GPU/DCP/official evaluation/training.
+- E1 author checks complete: 26 methods +15 timeout subcases PASS; Ruff0.12.7 check/format and syntax PASS. Candidate scope Root queue/tests only, Child unchanged. Contract/evidence authored; publish isolated branch and hand off exact Pair to DS_PRO; do not merge V3 or advance E2/T1/P1.
