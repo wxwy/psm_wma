@@ -1352,3 +1352,13 @@ New evidence docs/collab/chatgpt/evidence/2026-10-10_V3_new_pair_author_check/ b
 
 ## 2026-10-10 — V3-R2-STATIC-FOLLOWUP / REVIEW
 Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e73b9f6410f0e, Child/Gitlink e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c. Parent32cc72bf retained; Root/Child clean before ledger creation. Fresh GPT request appended to canonical Inbox; detail docs/collab/chatgpt/reviews/2026-10-10_V3_r2_new_pair_fresh_review_request_444c232b_e9b8a41.md. No online GPT/pane delivery asserted: request is repository-based for Owner/GPT retrieval. No GPT verdict or independent DS acceptance yet. Old Pair additional acceptance stopped by Owner. Current source task REVIEW, training holds unchanged.
+
+## 2026-10-16 — Codex F0 claimed (Owner/GPT staged remediation)
+- Task V3-F0-SAFE-START: IN_PROGRESS; Codex. Base Root a1a47b36d10f1974ba0fb7cec872b1976c9c6838 / Child 1d56320c08c56b0f8dd248919d152d81ae12ea7b, isolated branches v3-f0-safe-start-20261016.
+- Scope: corrected Phase5 lifecycle/semantic identity/execution budget; necessary parent Trainer config-write and safe-stop hooks; focused CPU tests; new thin canonical launcher and review/evidence. No grouped numerical changes.
+- F1 is deferred until F0 DS/GPT review. No GPU, torchrun, model/DCP loads, data scan or training. Existing frozen Source/Target, E1 branch and all Evidence preserved. Publication pending.
+
+### 2026-10-16 — F0 author CPU complete; candidate publication
+- Child 0fb7f587f56048a8ffaa12e2fdb7891abc0fb021: Phase5 atomic Fresh claim/exclusive Resume lease, immutable canonical config + unique launch snapshots, semantic identity and formal execution budget; optional parent config writer and committed-boundary checks. No grouped numerical/DCP/RNG algorithm edits.
+- Author CPU: 26 test methods +30 subtests (pytest9), 0 failed/0 skipped; Ruff0.12.7 check/format 4 changed Python files, syntax, shell and pip-check PASS. External final logs /tmp/psm-v3-f0-20261016/final-r2/. Full model dependency regressions and real collective/storage validation NOT RUN here.
+- New contract docs/build/PSM-WMA_V3_F0_safe_start_execution_budget_contract_2026-10-16.md; thin launcher scripts/train_v3_packed128_staged.sh. Source task REVIEW after Pair publication; DS/GPT PENDING. F1 and all GPU/training remain unauthorized.

@@ -371,3 +371,9 @@
 - Author checks complete: Ruff/format/syntax/shell PASS; runner 8 passed, migration 328 passed/3 real-asset skips. Task moves to REVIEW after source publication and exact Fresh Review ledger; no formal acceptance or Resume implied.
 
 - V3-R2-STATIC-FOLLOWUP: REVIEW; formal Root 444c232b976e80ac68cde9e7370e73b9f6410f0e, Child/Gitlink e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c; published and verified. Fresh GPT request in canonical Inbox; await pair-bound verdict before DS new Gate A. Author CPU checks do not close acceptance.
+
+## 2026-10-16 — V3-F0-SAFE-START
+- Status: IN_PROGRESS; owner Codex; prerequisite: explicit Owner/GPT F0/F1 staged decision.
+- Acceptance: atomic Fresh claim, fail-closed same-job identity before config writes, preserved canonical snapshots, formal execution budget with unchanged schedule/digest, corrected thin launcher; focused CPU negatives + Ruff 0.12.7; new Child then Root candidate Pair. Stop at DS independent CPU Gate/GPT Fresh Review; F1 not started.
+
+- V3-F0-SAFE-START: REVIEW (author CPU complete, candidate publication); 26 test methods +30 subtests passed, scoped static PASS. Await exact Pair DS CPU evidence and GPT Fresh Review; never label author checks formal acceptance. F1 not started.
