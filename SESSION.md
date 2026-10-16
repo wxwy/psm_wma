@@ -1380,3 +1380,13 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 ### 2026-10-16 — F0 remediation exact Pair published / REVIEW
 - Root9e51c94a6d5dba41bd37423b9db8e634ca433789 / Child-Gitlink7cae7c3049310ccc3b7e44ce9769534e152d1f26. New isolated candidate published, old candidates/V3/reviews retained. Author logs and DS exact-Pair request recorded in active Inbox continuation.
 - New Pair DS/GPT PENDING; actual V2 full-env verification required. F1 remains blocked until APPROVE_TO_CLOSE. No GPU, model/DCP/data execution, Fresh/Resume or frozen B1 changes. Later candidate docs HEAD is not formal implementation authority.
+
+## 2026-10-16 — F1 CHECKPOINT/RNG claimed
+- Codex IN_PROGRESS; Owner explicit F1 authorization after GPT F0 APPROVE_TO_CLOSE Root9e51c94a6d5dba41bd37423b9db8e634ca433789 / Child7cae7c3049310ccc3b7e44ce9769534e152d1f26. Remote V3 e2a11445 closure/instructions merged as docs; both Inbox blocks preserved. Isolated v3-f1-checkpoint-rng-20261016 branches.
+- Scope: checkpoint/dcp.py new opt-in synchronous local safety path + strict rank RNG, necessary Trainer no-reseed flag and corrected Phase5 profile wiring, focused CPU tests. base.py only if necessary; no global easy_io changes. No Local/FSDP/loss/Index8/performance changes.
+- Author verification uses real CPU Gloo and small synthetic temporary tensors/sidecars; no GPU/torchrun, real model/DCP/data or training. New Child then Root Pair, stop for DS/GPT.
+
+### 2026-10-16 — F1 author candidate complete / source publication
+- Child c0fc4cadccedb5838d3f2e512ea96179a3c969e9, direct parent approved F0 Child7cae7c30. Exactly checkpoint/dcp.py, new dcp_local_safety_test.py, necessary parent Trainer no-reseed guard and corrected Phase5 factory/identity wiring. Base/easy_io/rand codec/Local/optimizer algorithms unchanged.
+- Author real CPU DCP/Gloo on tiny synthetic states: combined 56 test methods +53 subtests, 0 failures/0 skips, 50.77s; Ruff0.12.7 check/format six relevant files, syntax, dependency check and Child diff PASS. Real Gloo delayed/failing/dead/unresponsive rank, DCP/sidecar/marker/latest failure and strict RNG/next-draw cases covered. CUDA state is a CPU stand-in; actual FSDP8/full-model dependencies not validated here.
+- Contract docs/build/PSM-WMA_V3_F1_sync_checkpoint_strict_rng_contract_2026-10-16.md. New digest/schema psm_v3_sync_local_v1 is prospective, no old DCP modification. Author CPU does not close F1; DS/GPT PENDING. No GPU/torchrun/real assets/training.
