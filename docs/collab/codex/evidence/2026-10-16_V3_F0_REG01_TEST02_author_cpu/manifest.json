@@ -1,0 +1,33 @@
+{
+  "implementation_root": "9e51c94a6d5dba41bd37423b9db8e634ca433789",
+  "child": "7cae7c3049310ccc3b7e44ce9769534e152d1f26",
+  "gitlink": "7cae7c3049310ccc3b7e44ce9769534e152d1f26",
+  "parent_child": "0fb7f587f56048a8ffaa12e2fdb7891abc0fb021",
+  "author_status": "SCOPED_CPU_PASS",
+  "ds_full_V2_rerun": "PENDING",
+  "gpt_verdict": "PENDING",
+  "old_pair_verdict": "REQUEST_CHANGES",
+  "test_methods": 28,
+  "subtests": 32,
+  "junit_cases": 60,
+  "failures": 0,
+  "skipped": 0,
+  "existing_trainer_tests": 9,
+  "gpu_executed": false,
+  "DCP_or_data_accessed": false,
+  "evidence_sha256": {
+    "gate.json": "06b7b11b9ef8c0ff4e491dfcedb831ced8d7cec062588a15edbe422e4f63dc60",
+    "unittest.log": "e940355508cb63a60e76de29318a6538806565fe7d8038ad3efcdc52aa5890de",
+    "pytest.log": "3f51af4344b3675b89070082ee7baafbebb03c8b3ff052a8f7c903f63d93daee",
+    "pytest.xml": "0d2cc35cb10de1f643d4cddea76d71295104b3053ad772c785047150daa961c1",
+    "ruff_check.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "ruff_format.log": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de",
+    "syntax.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "diff_check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scoped_probe.py": "94c68ce7d535409b794675cd7876f8a59395c4a761555b1c2167b2f51ac6894d",
+    "scoped_probe.json": "d15ab2afc9162d85e40229e0e46a589714077d186c34d8c1b95453cef99407f6",
+    "scoped_probe.log": "a488fc498d5c35139564e765adc78f0953f6dcd69e97c8f90666e9a3054fc333",
+    "before_trainer9.log": "8da3b72c5f81206255c38bd4839c6aa7039a7702447841cd214c4be5eef27e96",
+    "after_trainer9.log": "007c45968905b5ad4186532a4bbee7cca62bfe9d6f53eec9b7adda05650ae594"
+  }
+}

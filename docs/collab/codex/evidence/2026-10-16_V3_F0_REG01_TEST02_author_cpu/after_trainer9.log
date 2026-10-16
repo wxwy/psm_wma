@@ -1,0 +1,14 @@
+test_launcher_has_sealed_formal_profile_and_no_legacy_entry (f0_probe_after.TrainerTests.test_launcher_has_sealed_formal_profile_and_no_legacy_entry) ... ok
+test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop (f0_probe_after.TrainerTests.test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop) ... ok
+test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite (f0_probe_after.TrainerTests.test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite) ... ok
+test_real_trainer_fresh100_then_resume500_schedule_unchanged (f0_probe_after.TrainerTests.test_real_trainer_fresh100_then_resume500_schedule_unchanged) ... ok
+test_real_trainer_half_ga_cannot_finish_or_save (f0_probe_after.TrainerTests.test_real_trainer_half_ga_cannot_finish_or_save) ... ok
+test_real_trainer_invalid_resume_budget_rejected_before_consumption (f0_probe_after.TrainerTests.test_real_trainer_invalid_resume_budget_rejected_before_consumption) ... ok
+test_real_trainer_missing_local_commit_cannot_finish (f0_probe_after.TrainerTests.test_real_trainer_missing_local_commit_cannot_finish) ... ok
+test_real_trainer_resume101_makes_off_cadence_checkpoint (f0_probe_after.TrainerTests.test_real_trainer_resume101_makes_off_cadence_checkpoint) ... ok
+test_real_trainer_save_or_finalize_failure_never_reports_success (f0_probe_after.TrainerTests.test_real_trainer_save_or_finalize_failure_never_reports_success) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.271s
+
+OK

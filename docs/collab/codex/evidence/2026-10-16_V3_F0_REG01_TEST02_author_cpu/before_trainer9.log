@@ -1,0 +1,203 @@
+test_launcher_has_sealed_formal_profile_and_no_legacy_entry (f0_probe_before.TrainerTests.test_launcher_has_sealed_formal_profile_and_no_legacy_entry) ... ERROR
+test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop (f0_probe_before.TrainerTests.test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop) ... ERROR
+test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite (f0_probe_before.TrainerTests.test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite) ... ERROR
+test_real_trainer_fresh100_then_resume500_schedule_unchanged (f0_probe_before.TrainerTests.test_real_trainer_fresh100_then_resume500_schedule_unchanged) ... ERROR
+test_real_trainer_half_ga_cannot_finish_or_save (f0_probe_before.TrainerTests.test_real_trainer_half_ga_cannot_finish_or_save) ... ERROR
+test_real_trainer_invalid_resume_budget_rejected_before_consumption (f0_probe_before.TrainerTests.test_real_trainer_invalid_resume_budget_rejected_before_consumption) ... ERROR
+test_real_trainer_missing_local_commit_cannot_finish (f0_probe_before.TrainerTests.test_real_trainer_missing_local_commit_cannot_finish) ... ERROR
+test_real_trainer_resume101_makes_off_cadence_checkpoint (f0_probe_before.TrainerTests.test_real_trainer_resume101_makes_off_cadence_checkpoint) ... ERROR
+test_real_trainer_save_or_finalize_failure_never_reports_success (f0_probe_before.TrainerTests.test_real_trainer_save_or_finalize_failure_never_reports_success) ... ERROR
+
+======================================================================
+ERROR: test_launcher_has_sealed_formal_profile_and_no_legacy_entry (f0_probe_before.TrainerTests.test_launcher_has_sealed_formal_profile_and_no_legacy_entry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 499, in setUp
+    + json.dumps(
+      ^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 168, in _trainer_module
+    # evaluate torch annotations while this sandbox has the synthetic torch active.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 33, in _load
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 25, in <module>
+    from megatron.core import parallel_state
+  File "/tmp/tmp3mkk4z9n/core.py", line 2, in <module>
+    annotation_dtype = torch.dtype
+                       ^^^^^^^^^^^
+AttributeError: module 'torch' has no attribute 'dtype'
+
+======================================================================
+ERROR: test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop (f0_probe_before.TrainerTests.test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 499, in setUp
+    + json.dumps(
+      ^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 168, in _trainer_module
+    # evaluate torch annotations while this sandbox has the synthetic torch active.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 33, in _load
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 25, in <module>
+    from megatron.core import parallel_state
+  File "/tmp/tmp3mkk4z9n/core.py", line 2, in <module>
+    annotation_dtype = torch.dtype
+                       ^^^^^^^^^^^
+AttributeError: module 'torch' has no attribute 'dtype'
+
+======================================================================
+ERROR: test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite (f0_probe_before.TrainerTests.test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 499, in setUp
+    + json.dumps(
+      ^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 168, in _trainer_module
+    # evaluate torch annotations while this sandbox has the synthetic torch active.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 33, in _load
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 25, in <module>
+    from megatron.core import parallel_state
+  File "/tmp/tmp3mkk4z9n/core.py", line 2, in <module>
+    annotation_dtype = torch.dtype
+                       ^^^^^^^^^^^
+AttributeError: module 'torch' has no attribute 'dtype'
+
+======================================================================
+ERROR: test_real_trainer_fresh100_then_resume500_schedule_unchanged (f0_probe_before.TrainerTests.test_real_trainer_fresh100_then_resume500_schedule_unchanged)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 499, in setUp
+    + json.dumps(
+      ^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 168, in _trainer_module
+    # evaluate torch annotations while this sandbox has the synthetic torch active.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 33, in _load
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 25, in <module>
+    from megatron.core import parallel_state
+  File "/tmp/tmp3mkk4z9n/core.py", line 2, in <module>
+    annotation_dtype = torch.dtype
+                       ^^^^^^^^^^^
+AttributeError: module 'torch' has no attribute 'dtype'
+
+======================================================================
+ERROR: test_real_trainer_half_ga_cannot_finish_or_save (f0_probe_before.TrainerTests.test_real_trainer_half_ga_cannot_finish_or_save)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 499, in setUp
+    + json.dumps(
+      ^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 168, in _trainer_module
+    # evaluate torch annotations while this sandbox has the synthetic torch active.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 33, in _load
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 25, in <module>
+    from megatron.core import parallel_state
+  File "/tmp/tmp3mkk4z9n/core.py", line 2, in <module>
+    annotation_dtype = torch.dtype
+                       ^^^^^^^^^^^
+AttributeError: module 'torch' has no attribute 'dtype'
+
+======================================================================
+ERROR: test_real_trainer_invalid_resume_budget_rejected_before_consumption (f0_probe_before.TrainerTests.test_real_trainer_invalid_resume_budget_rejected_before_consumption)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 499, in setUp
+    + json.dumps(
+      ^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 168, in _trainer_module
+    # evaluate torch annotations while this sandbox has the synthetic torch active.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 33, in _load
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 25, in <module>
+    from megatron.core import parallel_state
+  File "/tmp/tmp3mkk4z9n/core.py", line 2, in <module>
+    annotation_dtype = torch.dtype
+                       ^^^^^^^^^^^
+AttributeError: module 'torch' has no attribute 'dtype'
+
+======================================================================
+ERROR: test_real_trainer_missing_local_commit_cannot_finish (f0_probe_before.TrainerTests.test_real_trainer_missing_local_commit_cannot_finish)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 499, in setUp
+    + json.dumps(
+      ^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 168, in _trainer_module
+    # evaluate torch annotations while this sandbox has the synthetic torch active.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 33, in _load
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 25, in <module>
+    from megatron.core import parallel_state
+  File "/tmp/tmp3mkk4z9n/core.py", line 2, in <module>
+    annotation_dtype = torch.dtype
+                       ^^^^^^^^^^^
+AttributeError: module 'torch' has no attribute 'dtype'
+
+======================================================================
+ERROR: test_real_trainer_resume101_makes_off_cadence_checkpoint (f0_probe_before.TrainerTests.test_real_trainer_resume101_makes_off_cadence_checkpoint)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 499, in setUp
+    + json.dumps(
+      ^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 168, in _trainer_module
+    # evaluate torch annotations while this sandbox has the synthetic torch active.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 33, in _load
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 25, in <module>
+    from megatron.core import parallel_state
+  File "/tmp/tmp3mkk4z9n/core.py", line 2, in <module>
+    annotation_dtype = torch.dtype
+                       ^^^^^^^^^^^
+AttributeError: module 'torch' has no attribute 'dtype'
+
+======================================================================
+ERROR: test_real_trainer_save_or_finalize_failure_never_reports_success (f0_probe_before.TrainerTests.test_real_trainer_save_or_finalize_failure_never_reports_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 499, in setUp
+    + json.dumps(
+      ^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 168, in _trainer_module
+    # evaluate torch annotations while this sandbox has the synthetic torch active.
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py", line 33, in _load
+    spec.loader.exec_module(module)
+  File "<frozen importlib._bootstrap_external>", line 999, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/__init__.py", line 25, in <module>
+    from megatron.core import parallel_state
+  File "/tmp/tmp3mkk4z9n/core.py", line 2, in <module>
+    annotation_dtype = torch.dtype
+                       ^^^^^^^^^^^
+AttributeError: module 'torch' has no attribute 'dtype'
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.022s
+
+FAILED (errors=9)
