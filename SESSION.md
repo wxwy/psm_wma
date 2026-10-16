@@ -1366,3 +1366,13 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 ### 2026-10-16 — F0 exact source Pair published; stopped at independent Gate
 - Root implementation b3b64732efb225c3ee08b1d9f317a90228112b29 / Child-Gitlink 0fb7f587f56048a8ffaa12e2fdb7891abc0fb021, isolated v3-f0-safe-start-20261016 branches. Source Pair + contract and CPU source-hash Evidence submitted; DS request and GPT Fresh Review ledger in active Inbox continuation.
 - Status REVIEW, DS/GPT PENDING. F1, GPU, all training and real DCP/data execution NOT started. Candidate documentation successor is bookkeeping only.
+
+## 2026-10-16 — F0-REG-01 / F0-TEST-02 remediation claimed
+- Codex IN_PROGRESS; isolated branches v3-f0-reg01-fixture-20261016. Root candidate source b3b64732 / docs3b0c5d9c plus merged latest GPT review/request from origin/V3 ef9dd044; preserve both Inbox append blocks. Child parent 0fb7f587f56048a8ffaa12e2fdb7891abc0fb021.
+- Scope exactly Phase5 missing-index guard precedence, F0 CPU fixture dependency isolation and small focused negatives. Existing regression assertions preserved. No F1, production Trainer/DCP/RNG/Local/optimizer or frozen B1 changes.
+- Existing DS Gloo/configured-preflight/persistent-storage evidence accepted by GPT; reuse only unchanged scopes. Local full V2 runtime absent; full-env independent rerun remains DS responsibility, never infer closure from minimal-env PASS.
+
+### 2026-10-16 — REG-01/TEST-02 author checks complete
+- New Child 7cae7c3049310ccc3b7e44ce9769534e152d1f26 (direct parent 0fb7f587): exactly two changed files. Production diff only moves missing-index ValueError guard before Namespace; fixture scopes Megatron imports alongside fake torch and exercises Megatron-present Trainer initialization with complete synthetic parallel config.
+- Existing Phase5 regression file and all nine TrainerTests assertion ASTs unchanged. Local 28 test methods +32 subtests, 0 failed/skipped; four relevant files Ruff0.12.7 check/format and syntax PASS. External /tmp/psm-v3-f0-reg01-test02-20261016/ contains exact commands, logs, collision reproduction old9errors/new9pass and unchanged regression function AST evidence.
+- Full established V2 environment is unavailable locally: mandatory DS full-import regression + nine full-env cases remain PENDING, not CLOSED. Prior accepted Gloo/config/volume evidence retained only for unchanged scope. F1/GPU/DCP/training not started.

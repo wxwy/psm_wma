@@ -377,3 +377,9 @@
 - Acceptance: atomic Fresh claim, fail-closed same-job identity before config writes, preserved canonical snapshots, formal execution budget with unchanged schedule/digest, corrected thin launcher; focused CPU negatives + Ruff 0.12.7; new Child then Root candidate Pair. Stop at DS independent CPU Gate/GPT Fresh Review; F1 not started.
 
 - V3-F0-SAFE-START: REVIEW (author CPU complete, candidate publication); 26 test methods +30 subtests passed, scoped static PASS. Await exact Pair DS CPU evidence and GPT Fresh Review; never label author checks formal acceptance. F1 not started.
+
+## V3-F0-REG01-TEST02 — 2026-10-16
+- IN_PROGRESS; Codex; prerequisite Owner/GPT REQUEST_CHANGES on b3b64732/0fb7f587.
+- Acceptance: restore unchanged missing-index ValueError regression for Fresh/Resume; sandbox external Megatron/torch imports without dropping nine TrainerTests; scoped CPU/static evidence, new Child then Root Pair; stop at independent full-env DS verification and GPT Fresh Review.
+
+- V3-F0-REG01-TEST02: REVIEW after candidate publication; source and fixture fixes implemented, author minimal CPU green (28 methods/32 subtests), actual full-env DS rerun and GPT Fresh Review PENDING. Old Pair remains REQUEST_CHANGES. F1 blocked pending F0 APPROVE_TO_CLOSE.
