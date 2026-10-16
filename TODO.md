@@ -390,3 +390,5 @@
 
 - V3-F0-SAFE-START / V3-F0-REG01-TEST02: DONE per GPT formal APPROVE_TO_CLOSE on 9e51c94a/7cae7c30, review 2026-10-16_V3_F0_9e51c94a_7cae7c30_DS_CPU_Evidence_closeout.md; this does not approve F1.
 - V3-F1-CHECKPOINT-RNG: REVIEW after isolated Pair publication; author CPU/static pass, DS/GPT independent exact-Pair acceptance PENDING. Actual CUDA/FSDP8/DCP/model/long training unauthorized.
+
+- V3-F1-CHECKPOINT-RNG final handoff REVIEW: exact Root6ebf8998a7935f2ad690bb547c5db5e5a4322e6d / Child2d128ed5a07601cdd424974f99b67832eafeeb41; author57 methods+53subtests PASS, DS independent full-env/persistent-volume CPU and GPT Fresh Review PENDING. Isolated branch only, no V3 merge or training.

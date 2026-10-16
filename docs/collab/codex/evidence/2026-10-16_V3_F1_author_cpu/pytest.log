@@ -1,0 +1,15 @@
+................................... [ 62%]
+.....................                                    [100%]
+=============================== warnings summary ===============================
+::SingleRankTests::test_actual_save_load_all_components_and_rng_next_draw
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/filesystem.py:133: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+    if tensor.storage().size() != tensor.numel():
+
+::SingleRankTests::test_actual_save_load_all_components_and_rng_next_draw
+::SingleRankTests::test_deterministic_actual_trainer_resumes_without_reseed_and_fresh_still_seeds
+::SingleRankTests::test_fresh_model_only_warm_start_needs_no_rng_and_training_warm_start_is_rejected
+  /workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py:483: UserWarning: torch.distributed is disabled, unavailable or uninitialized, assuming the intent is to load in a single process.
+    return func(*args, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+56 passed, 4 warnings, 53 subtests passed in 50.77s

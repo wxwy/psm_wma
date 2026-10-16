@@ -1,0 +1,311 @@
+[
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "actual_draw": [
+          0.4586067093870614,
+          0.4076870280802861,
+          0.3678783178329468
+        ],
+        "expected_draw": [
+          0.4586067093870614,
+          0.4076870280802861,
+          0.3678783178329468
+        ],
+        "local_rank": 0,
+        "model_matches": true,
+        "optimizer_matches": true,
+        "rank": 0,
+        "success": true
+      },
+      {
+        "actual_draw": [
+          0.38102068999577143,
+          0.25092362374494015,
+          0.23644638061523438
+        ],
+        "expected_draw": [
+          0.38102068999577143,
+          0.25092362374494015,
+          0.23644638061523438
+        ],
+        "local_rank": 1,
+        "model_matches": true,
+        "optimizer_matches": true,
+        "rank": 1,
+        "success": true
+      }
+    ],
+    "scenario": "resume_success"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint publish complete checkpoint failed across ranks: ['OSError: injected marker_failure temp write failure', None]",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1348, in _checked\n    result = operation()\n             ^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1663, in <lambda>\n    self._checked(\"publish complete checkpoint\", lambda: self._publish(stage, checkpoint_file, witnesses))\n                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1682, in _publish\n    self._atomic_write(\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 396, in atomic\n    raise OSError(f\"injected {scenario} temp write failure\")\nOSError: injected marker_failure temp write failure\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1663, in save_state_dict_worker\n    self._checked(\"publish complete checkpoint\", lambda: self._publish(stage, checkpoint_file, witnesses))\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint publish complete checkpoint failed across ranks: ['OSError: injected marker_failure temp write failure', None]\n"
+      },
+      {
+        "error": "Checkpoint publish complete checkpoint failed across ranks: ['OSError: injected marker_failure temp write failure', None]",
+        "latest_unchanged": true,
+        "rank": 1,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1663, in save_state_dict_worker\n    self._checked(\"publish complete checkpoint\", lambda: self._publish(stage, checkpoint_file, witnesses))\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint publish complete checkpoint failed across ranks: ['OSError: injected marker_failure temp write failure', None]\n"
+      }
+    ],
+    "scenario": "marker_failure"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint validate strict RNG failed across ranks: [None, 'ValueError: RNG rank/world/schema binding mismatch']",
+        "latest_unchanged": true,
+        "rank": 0,
+        "rng_restored": false,
+        "rng_unchanged": true,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 328, in _worker\n    saver._load_strict_trainer(reader, objects[3], source)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1567, in _load_strict_trainer\n    state = self._checked(\"validate strict RNG\", read)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint validate strict RNG failed across ranks: [None, 'ValueError: RNG rank/world/schema binding mismatch']\n"
+      },
+      {
+        "error": "Checkpoint validate strict RNG failed across ranks: [None, 'ValueError: RNG rank/world/schema binding mismatch']",
+        "latest_unchanged": true,
+        "rank": 1,
+        "rng_restored": false,
+        "rng_unchanged": true,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1348, in _checked\n    result = operation()\n             ^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1562, in read\n    self._validate_rng_payload(rng)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1475, in _validate_rng_payload\n    raise ValueError(\"RNG rank/world/schema binding mismatch\")\nValueError: RNG rank/world/schema binding mismatch\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 328, in _worker\n    saver._load_strict_trainer(reader, objects[3], source)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1567, in _load_strict_trainer\n    state = self._checked(\"validate strict RNG\", read)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint validate strict RNG failed across ranks: [None, 'ValueError: RNG rank/world/schema binding mismatch']\n"
+      }
+    ],
+    "scenario": "rng_wrong_rank"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint save optim failed across ranks: ['CheckpointException: CheckpointException ranks:dict_keys([1])\\nTraceback (most recent call last): (RANK 1)\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\\n    local_data = map_fun()\\n                 ^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\\n    result = func(*args, **kwargs)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\\n    all_writes = storage_writer.write_data(final_local_plan, planner)\\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\\nOSError: injected rank1 DCP optimizer write failure\\n', 'CheckpointException: CheckpointException ranks:dict_keys([1])\\nTraceback (most recent call last): (RANK 1)\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\\n    local_data = map_fun()\\n                 ^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\\n    result = func(*args, **kwargs)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\\n    all_writes = storage_writer.write_data(final_local_plan, planner)\\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\\nOSError: injected rank1 DCP optimizer write failure\\n']",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1348, in _checked\n    result = operation()\n             ^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1649, in <lambda>\n    lambda key=key: dcp.save(\n                    ^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\n    result = func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 483, in inner_func\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 195, in save\n    return _save_state_dict(\n           ^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 490, in _save_state_dict\n    metadata = distW.all_reduce(\"write\", write_data, finish_checkpoint)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 263, in all_reduce\n    raise final_result\ntorch.distributed.checkpoint.api.CheckpointException: CheckpointException ranks:dict_keys([1])\nTraceback (most recent call last): (RANK 1)\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\n    local_data = map_fun()\n                 ^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\n    result = func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\n    all_writes = storage_writer.write_data(final_local_plan, planner)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\nOSError: injected rank1 DCP optimizer write failure\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1647, in save_state_dict_worker\n    self._checked(\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint save optim failed across ranks: ['CheckpointException: CheckpointException ranks:dict_keys([1])\\nTraceback (most recent call last): (RANK 1)\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\\n    local_data = map_fun()\\n                 ^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\\n    result = func(*args, **kwargs)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\\n    all_writes = storage_writer.write_data(final_local_plan, planner)\\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\\nOSError: injected rank1 DCP optimizer write failure\\n', 'CheckpointException: CheckpointException ranks:dict_keys([1])\\nTraceback (most recent call last): (RANK 1)\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\\n    local_data = map_fun()\\n                 ^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\\n    result = func(*args, **kwargs)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\\n    all_writes = storage_writer.write_data(final_local_plan, planner)\\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\\nOSError: injected rank1 DCP optimizer write failure\\n']\n"
+      },
+      {
+        "error": "Checkpoint save optim failed across ranks: ['CheckpointException: CheckpointException ranks:dict_keys([1])\\nTraceback (most recent call last): (RANK 1)\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\\n    local_data = map_fun()\\n                 ^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\\n    result = func(*args, **kwargs)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\\n    all_writes = storage_writer.write_data(final_local_plan, planner)\\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\\nOSError: injected rank1 DCP optimizer write failure\\n', 'CheckpointException: CheckpointException ranks:dict_keys([1])\\nTraceback (most recent call last): (RANK 1)\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\\n    local_data = map_fun()\\n                 ^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\\n    result = func(*args, **kwargs)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\\n    all_writes = storage_writer.write_data(final_local_plan, planner)\\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\\nOSError: injected rank1 DCP optimizer write failure\\n']",
+        "latest_unchanged": true,
+        "rank": 1,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1348, in _checked\n    result = operation()\n             ^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1649, in <lambda>\n    lambda key=key: dcp.save(\n                    ^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\n    result = func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 483, in inner_func\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 195, in save\n    return _save_state_dict(\n           ^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 490, in _save_state_dict\n    metadata = distW.all_reduce(\"write\", write_data, finish_checkpoint)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 263, in all_reduce\n    raise final_result\ntorch.distributed.checkpoint.api.CheckpointException: CheckpointException ranks:dict_keys([1])\nTraceback (most recent call last): (RANK 1)\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\n    local_data = map_fun()\n                 ^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\n    result = func(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\n    all_writes = storage_writer.write_data(final_local_plan, planner)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\nOSError: injected rank1 DCP optimizer write failure\n\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1647, in save_state_dict_worker\n    self._checked(\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint save optim failed across ranks: ['CheckpointException: CheckpointException ranks:dict_keys([1])\\nTraceback (most recent call last): (RANK 1)\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\\n    local_data = map_fun()\\n                 ^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\\n    result = func(*args, **kwargs)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\\n    all_writes = storage_writer.write_data(final_local_plan, planner)\\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\\nOSError: injected rank1 DCP optimizer write failure\\n', 'CheckpointException: CheckpointException ranks:dict_keys([1])\\nTraceback (most recent call last): (RANK 1)\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/utils.py\", line 241, in all_reduce\\n    local_data = map_fun()\\n                 ^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/logger.py\", line 90, in wrapper\\n    result = func(*args, **kwargs)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/checkpoint/state_dict_saver.py\", line 477, in write_data\\n    all_writes = storage_writer.write_data(final_local_plan, planner)\\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 352, in fail\\n    raise OSError(\"injected rank1 DCP optimizer write failure\")\\nOSError: injected rank1 DCP optimizer write failure\\n']\n"
+      }
+    ],
+    "scenario": "dcp_failure"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "rank": 0,
+        "success": true
+      },
+      {
+        "rank": 1,
+        "success": true
+      }
+    ],
+    "scenario": "delay"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1658, in save_state_dict_worker\n    witness = self._checked(\n              ^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']\n"
+      },
+      {
+        "error": "Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']",
+        "latest_unchanged": true,
+        "rank": 1,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1348, in _checked\n    result = operation()\n             ^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1659, in <lambda>\n    \"save Local sidecar\", lambda: self._save_as_pkl(state[\"dataloader\"], stage / \"dataloader\")\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 386, in sidecar\n    raise OSError(\"injected rank1 disk/permission failure\")\nOSError: injected rank1 disk/permission failure\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1658, in save_state_dict_worker\n    witness = self._checked(\n              ^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']\n"
+      }
+    ],
+    "scenario": "first_failure"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1658, in save_state_dict_worker\n    witness = self._checked(\n              ^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']\n"
+      },
+      {
+        "error": "Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']",
+        "latest_unchanged": true,
+        "rank": 1,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1348, in _checked\n    result = operation()\n             ^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1659, in <lambda>\n    \"save Local sidecar\", lambda: self._save_as_pkl(state[\"dataloader\"], stage / \"dataloader\")\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 386, in sidecar\n    raise OSError(\"injected rank1 disk/permission failure\")\nOSError: injected rank1 disk/permission failure\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1658, in save_state_dict_worker\n    witness = self._checked(\n              ^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']\n"
+      }
+    ],
+    "scenario": "sidecar_failure"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint validate strict RNG failed across ranks: [None, \"ValueError: strict rank RNG metadata missing/unknown leaves: ['rng_state_1.random_packed_len']\"]",
+        "latest_unchanged": true,
+        "rank": 0,
+        "rng_restored": false,
+        "rng_unchanged": true,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 328, in _worker\n    saver._load_strict_trainer(reader, objects[3], source)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1567, in _load_strict_trainer\n    state = self._checked(\"validate strict RNG\", read)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint validate strict RNG failed across ranks: [None, \"ValueError: strict rank RNG metadata missing/unknown leaves: ['rng_state_1.random_packed_len']\"]\n"
+      },
+      {
+        "error": "Checkpoint validate strict RNG failed across ranks: [None, \"ValueError: strict rank RNG metadata missing/unknown leaves: ['rng_state_1.random_packed_len']\"]",
+        "latest_unchanged": true,
+        "rank": 1,
+        "rng_restored": false,
+        "rng_unchanged": true,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1348, in _checked\n    result = operation()\n             ^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1556, in read\n    self._validate_rng_metadata(reader.read_metadata(), dist.get_world_size(), template)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1426, in _validate_rng_metadata\n    raise ValueError(f\"strict rank RNG metadata missing/unknown leaves: {sorted(required - actual)}\")\nValueError: strict rank RNG metadata missing/unknown leaves: ['rng_state_1.random_packed_len']\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 328, in _worker\n    saver._load_strict_trainer(reader, objects[3], source)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1567, in _load_strict_trainer\n    state = self._checked(\"validate strict RNG\", read)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint validate strict RNG failed across ranks: [None, \"ValueError: strict rank RNG metadata missing/unknown leaves: ['rng_state_1.random_packed_len']\"]\n"
+      }
+    ],
+    "scenario": "rng_failure"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1658, in save_state_dict_worker\n    witness = self._checked(\n              ^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']\n"
+      },
+      {
+        "error": "Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']",
+        "latest_unchanged": true,
+        "rank": 1,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1348, in _checked\n    result = operation()\n             ^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1659, in <lambda>\n    \"save Local sidecar\", lambda: self._save_as_pkl(state[\"dataloader\"], stage / \"dataloader\")\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 386, in sidecar\n    raise OSError(\"injected rank1 disk/permission failure\")\nOSError: injected rank1 disk/permission failure\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1658, in save_state_dict_worker\n    witness = self._checked(\n              ^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint save Local sidecar failed across ranks: [None, 'OSError: injected rank1 disk/permission failure']\n"
+      }
+    ],
+    "scenario": "partial_sidecar"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint publish complete checkpoint failed across ranks: ['OSError: injected pointer_failure temp write failure', None]",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1348, in _checked\n    result = operation()\n             ^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1663, in <lambda>\n    self._checked(\"publish complete checkpoint\", lambda: self._publish(stage, checkpoint_file, witnesses))\n                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1694, in _publish\n    self._atomic_write(pointer, lambda stream: stream.write((checkpoint_file + \"\\n\").encode()))\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 396, in atomic\n    raise OSError(f\"injected {scenario} temp write failure\")\nOSError: injected pointer_failure temp write failure\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1663, in save_state_dict_worker\n    self._checked(\"publish complete checkpoint\", lambda: self._publish(stage, checkpoint_file, witnesses))\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint publish complete checkpoint failed across ranks: ['OSError: injected pointer_failure temp write failure', None]\n"
+      },
+      {
+        "error": "Checkpoint publish complete checkpoint failed across ranks: ['OSError: injected pointer_failure temp write failure', None]",
+        "latest_unchanged": true,
+        "rank": 1,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1663, in save_state_dict_worker\n    self._checked(\"publish complete checkpoint\", lambda: self._publish(stage, checkpoint_file, witnesses))\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1357, in _checked\n    raise RuntimeError(f\"Checkpoint {phase} failed across ranks: {errors}\") from cause\nRuntimeError: Checkpoint publish complete checkpoint failed across ranks: ['OSError: injected pointer_failure temp write failure', None]\n"
+      }
+    ],
+    "scenario": "pointer_failure"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint save Local sidecar: bounded coordination failed; no success verdict",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1353, in _checked\n    dist.all_gather_object(errors, error, group=self._safety_group)\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/c10d_logger.py\", line 83, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py\", line 3251, in all_gather_object\n    all_gather(object_size_list, local_size, group=group)\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/c10d_logger.py\", line 83, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py\", line 4025, in all_gather\n    work.wait()\nRuntimeError: [/pytorch/third_party/gloo/gloo/transport/tcp/pair.cc:538] Read error [172.26.91.252]:7586: Connection reset by peer\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1658, in save_state_dict_worker\n    witness = self._checked(\n              ^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1355, in _checked\n    raise RuntimeError(f\"Checkpoint {phase}: bounded coordination failed; no success verdict\") from exc\nRuntimeError: Checkpoint save Local sidecar: bounded coordination failed; no success verdict\n"
+      }
+    ],
+    "scenario": "hard_exit"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint resume source differs across ranks: [(['dataloader', 'model', 'optim', 'scheduler', 'trainer'], ('/tmp/tmpkat9iqcd/checkpoints/iter_000000001', False, None)), ([], None)]",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 291, in _worker\n    saver.keys_to_resume_during_load()\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1547, in keys_to_resume_during_load\n    self._agree_identity(\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1364, in _agree_identity\n    raise RuntimeError(f\"Checkpoint {label} differs across ranks: {values}\")\nRuntimeError: Checkpoint resume source differs across ranks: [(['dataloader', 'model', 'optim', 'scheduler', 'trainer'], ('/tmp/tmpkat9iqcd/checkpoints/iter_000000001', False, None)), ([], None)]\n"
+      },
+      {
+        "error": "Checkpoint resume source differs across ranks: [(['dataloader', 'model', 'optim', 'scheduler', 'trainer'], ('/tmp/tmpkat9iqcd/checkpoints/iter_000000001', False, None)), ([], None)]",
+        "latest_unchanged": true,
+        "rank": 1,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 291, in _worker\n    saver.keys_to_resume_during_load()\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1547, in keys_to_resume_during_load\n    self._agree_identity(\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1364, in _agree_identity\n    raise RuntimeError(f\"Checkpoint {label} differs across ranks: {values}\")\nRuntimeError: Checkpoint resume source differs across ranks: [(['dataloader', 'model', 'optim', 'scheduler', 'trainer'], ('/tmp/tmpkat9iqcd/checkpoints/iter_000000001', False, None)), ([], None)]\n"
+      }
+    ],
+    "scenario": "source_disagreement"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint save iteration differs across ranks: ['iter_000000002', 'iter_000000003']",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1627, in save_state_dict_worker\n    self._agree_identity(\"save iteration\", checkpoint_file)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1364, in _agree_identity\n    raise RuntimeError(f\"Checkpoint {label} differs across ranks: {values}\")\nRuntimeError: Checkpoint save iteration differs across ranks: ['iter_000000002', 'iter_000000003']\n"
+      },
+      {
+        "error": "Checkpoint save iteration differs across ranks: ['iter_000000002', 'iter_000000003']",
+        "latest_unchanged": true,
+        "rank": 1,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1627, in save_state_dict_worker\n    self._agree_identity(\"save iteration\", checkpoint_file)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1364, in _agree_identity\n    raise RuntimeError(f\"Checkpoint {label} differs across ranks: {values}\")\nRuntimeError: Checkpoint save iteration differs across ranks: ['iter_000000002', 'iter_000000003']\n"
+      }
+    ],
+    "scenario": "iteration_disagreement"
+  },
+  {
+    "kind": "GLOO",
+    "ranks": [
+      {
+        "error": "Checkpoint save Local sidecar: bounded coordination failed; no success verdict",
+        "latest_unchanged": true,
+        "rank": 0,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1353, in _checked\n    dist.all_gather_object(errors, error, group=self._safety_group)\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/c10d_logger.py\", line 83, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py\", line 3251, in all_gather_object\n    all_gather(object_size_list, local_size, group=group)\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/c10d_logger.py\", line 83, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py\", line 4025, in all_gather\n    work.wait()\nRuntimeError: [/pytorch/third_party/gloo/gloo/transport/tcp/unbound_buffer.cc:129] Timed out waiting 10000ms for send operation to complete\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1658, in save_state_dict_worker\n    witness = self._checked(\n              ^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1355, in _checked\n    raise RuntimeError(f\"Checkpoint {phase}: bounded coordination failed; no success verdict\") from exc\nRuntimeError: Checkpoint save Local sidecar: bounded coordination failed; no success verdict\n"
+      },
+      {
+        "error": "Checkpoint save Local sidecar: bounded coordination failed; no success verdict",
+        "latest_unchanged": true,
+        "rank": 1,
+        "success": false,
+        "traceback": "Traceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1353, in _checked\n    dist.all_gather_object(errors, error, group=self._safety_group)\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/c10d_logger.py\", line 83, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py\", line 3251, in all_gather_object\n    all_gather(object_size_list, local_size, group=group)\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/c10d_logger.py\", line 83, in wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/.venvs/psm-wma-cpu/lib/python3.12/site-packages/torch/distributed/distributed_c10d.py\", line 4025, in all_gather\n    work.wait()\nRuntimeError: [/pytorch/third_party/gloo/gloo/transport/tcp/pair.cc:547] Connection closed by peer [172.26.91.252]:6575\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp_local_safety_test.py\", line 401, in _worker\n    saver.save(*objects, iteration=2 + rank if scenario == \"iteration_disagreement\" else 2)\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1621, in save\n    self.save_state_dict_worker(state, f\"iter_{iteration:09}\")\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1658, in save_state_dict_worker\n    witness = self._checked(\n              ^^^^^^^^^^^^^^\n  File \"/workspace/psm_wma/cosmos-framework/cosmos_framework/checkpoint/dcp.py\", line 1355, in _checked\n    raise RuntimeError(f\"Checkpoint {phase}: bounded coordination failed; no success verdict\") from exc\nRuntimeError: Checkpoint save Local sidecar: bounded coordination failed; no success verdict\n"
+      }
+    ],
+    "scenario": "stall"
+  },
+  {
+    "kind": "NEXT_DRAW",
+    "expected": [
+      0.34583182333805484,
+      0.2849059652276268,
+      0.893419086933136
+    ],
+    "observed": [
+      0.34583182333805484,
+      0.2849059652276268,
+      0.893419086933136
+    ],
+    "reseed_calls": 0
+  }
+]
