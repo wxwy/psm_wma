@@ -371,3 +371,24 @@
 - Author checks complete: Ruff/format/syntax/shell PASS; runner 8 passed, migration 328 passed/3 real-asset skips. Task moves to REVIEW after source publication and exact Fresh Review ledger; no formal acceptance or Resume implied.
 
 - V3-R2-STATIC-FOLLOWUP: REVIEW; formal Root 444c232b976e80ac68cde9e7370e73b9f6410f0e, Child/Gitlink e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c; published and verified. Fresh GPT request in canonical Inbox; await pair-bound verdict before DS new Gate A. Author CPU checks do not close acceptance.
+
+## 2026-10-16 — V3-F0-SAFE-START
+- Status: IN_PROGRESS; owner Codex; prerequisite: explicit Owner/GPT F0/F1 staged decision.
+- Acceptance: atomic Fresh claim, fail-closed same-job identity before config writes, preserved canonical snapshots, formal execution budget with unchanged schedule/digest, corrected thin launcher; focused CPU negatives + Ruff 0.12.7; new Child then Root candidate Pair. Stop at DS independent CPU Gate/GPT Fresh Review; F1 not started.
+
+- V3-F0-SAFE-START: REVIEW (author CPU complete, candidate publication); 26 test methods +30 subtests passed, scoped static PASS. Await exact Pair DS CPU evidence and GPT Fresh Review; never label author checks formal acceptance. F1 not started.
+
+## V3-F0-REG01-TEST02 — 2026-10-16
+- IN_PROGRESS; Codex; prerequisite Owner/GPT REQUEST_CHANGES on b3b64732/0fb7f587.
+- Acceptance: restore unchanged missing-index ValueError regression for Fresh/Resume; sandbox external Megatron/torch imports without dropping nine TrainerTests; scoped CPU/static evidence, new Child then Root Pair; stop at independent full-env DS verification and GPT Fresh Review.
+
+- V3-F0-REG01-TEST02: REVIEW after candidate publication; source and fixture fixes implemented, author minimal CPU green (28 methods/32 subtests), actual full-env DS rerun and GPT Fresh Review PENDING. Old Pair remains REQUEST_CHANGES. F1 blocked pending F0 APPROVE_TO_CLOSE.
+
+## V3-F1-CHECKPOINT-RNG — 2026-10-16
+- IN_PROGRESS; Codex; prerequisite F0 APPROVE_TO_CLOSE 9e51c94a/7cae7c30 + Owner F1 authorization.
+- Acceptance: atomic Local sidecars, bounded all-rank completion and complete marker/latest publication; strict complete rank RNG and no reseed; CPU Gloo timing/failure/partial/RNG/legacy regressions; new isolated Pair/Evidence then DS/GPT STOP. No GPU, real assets, Formal30k or training.
+
+- V3-F0-SAFE-START / V3-F0-REG01-TEST02: DONE per GPT formal APPROVE_TO_CLOSE on 9e51c94a/7cae7c30, review 2026-10-16_V3_F0_9e51c94a_7cae7c30_DS_CPU_Evidence_closeout.md; this does not approve F1.
+- V3-F1-CHECKPOINT-RNG: REVIEW after isolated Pair publication; author CPU/static pass, DS/GPT independent exact-Pair acceptance PENDING. Actual CUDA/FSDP8/DCP/model/long training unauthorized.
+
+- V3-F1-CHECKPOINT-RNG final handoff REVIEW: exact Root6ebf8998a7935f2ad690bb547c5db5e5a4322e6d / Child2d128ed5a07601cdd424974f99b67832eafeeb41; author57 methods+53subtests PASS, DS independent full-env/persistent-volume CPU and GPT Fresh Review PENDING. Isolated branch only, no V3 merge or training.

@@ -1,0 +1,30 @@
+{
+  "implementation_root": "b3b64732efb225c3ee08b1d9f317a90228112b29",
+  "child": "0fb7f587f56048a8ffaa12e2fdb7891abc0fb021",
+  "gitlink": "0fb7f587f56048a8ffaa12e2fdb7891abc0fb021",
+  "frozen_contract": "docs/build/PSM-WMA_V3_F0_safe_start_execution_budget_contract_2026-10-16.md",
+  "contract_sha256": "8f3e6d3c617e428e1142578266849f7da4f99390403678e732fc7470201b7fcd",
+  "author_result": "SCOPED_CPU_PASS",
+  "ds_verdict": "PENDING",
+  "gpt_verdict": "PENDING",
+  "training_authorization": false,
+  "test_methods": 26,
+  "unittest_subtests": 30,
+  "junit_cases": 56,
+  "failed": 0,
+  "skipped": 0,
+  "source_hashes_match_committed_child": true,
+  "evidence_sha256": {
+    "ruff_format.log": "177f260a5645724013185e4b140c7045cc39e56c0c97b120f5cb23599f85f0de",
+    "pytest.log": "81b9b0e17d4c54674430395808d7fb63d24807b87f5c6fa7303d97b3b44dbae7",
+    "unittest.log": "8112446eebb6ee906d4c3d072be532bb4fdebac4666cec9f2ac64ae0fd4dcf6f",
+    "child_diff_check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ruff_check.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "shell.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pip_check.log": "f7931d41ad77228ac4c473bd2ad9617d712db033f38221e7b8780acca19c80ea",
+    "syntax.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "root_diff_check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gate.json": "b621b78d09f239155cc32864f5336dafbb6d0d1580916d4956f63437846677e4",
+    "pytest.xml": "25945f8fd4e5e7121cdbdfad603bbd010fae1596a96e66970a64bb54ed5ebd51"
+  }
+}

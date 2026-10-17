@@ -1,0 +1,136 @@
+{
+  "scope": "F1_AUTHOR_CPU_SYNTHETIC_ONLY",
+  "formal_acceptance": "DS_GPT_PENDING",
+  "gpu": false,
+  "production_assets": false,
+  "environment_overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "HF_HOME": "/workspace/.cache/huggingface",
+    "MPLCONFIGDIR": "/workspace/.cache/matplotlib",
+    "PYTHONPYCACHEPREFIX": "/tmp/psm-v3-f1-20261016/pycache"
+  },
+  "versions": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]\ntorch 2.10.0+cpu CUDA build None\nnumpy 2.2.6\npytest 9.0.2\n",
+  "commands": [
+    {
+      "name": "pytest",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/tmp/psm-v3-f1-20261016/pytest.ini",
+        "-q",
+        "-p",
+        "no:cacheprovider",
+        "cosmos_framework/checkpoint/dcp_local_safety_test.py",
+        "examples/psm_wma_robocasa_phase5_f0_test.py",
+        "--junitxml=/tmp/psm-v3-f1-20261016/final-r2/pytest.xml"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_check",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "cosmos_framework/checkpoint/dcp.py",
+        "cosmos_framework/checkpoint/dcp_local_safety_test.py",
+        "cosmos_framework/trainer/__init__.py",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_corrected_phase5_test.py",
+        "examples/psm_wma_robocasa_phase5_f0_test.py"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--check",
+        "cosmos_framework/checkpoint/dcp.py",
+        "cosmos_framework/checkpoint/dcp_local_safety_test.py",
+        "cosmos_framework/trainer/__init__.py",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_corrected_phase5_test.py",
+        "examples/psm_wma_robocasa_phase5_f0_test.py"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "syntax",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "py_compile",
+        "cosmos_framework/checkpoint/dcp.py",
+        "cosmos_framework/checkpoint/dcp_local_safety_test.py",
+        "cosmos_framework/trainer/__init__.py",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_corrected_phase5_test.py",
+        "examples/psm_wma_robocasa_phase5_f0_test.py"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "child_diff_check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "pip_check",
+      "command": [
+        "uv",
+        "pip",
+        "check",
+        "--python",
+        "/workspace/.venvs/psm-wma-cpu/bin/python"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "unittest_verbose",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "cosmos_framework/checkpoint/dcp_local_safety_test.py",
+        "-v"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    }
+  ],
+  "source_sha256": {
+    "cosmos_framework/checkpoint/dcp.py": "e3bbe253876a4b1d1e73086f556f479c9edf1318ca62ea7011f984a2ab8276d9",
+    "cosmos_framework/checkpoint/dcp_local_safety_test.py": "02cd963577ec7c04874579401118435db7ef7fc0178b9ddee5d69aab75b56f95",
+    "cosmos_framework/trainer/__init__.py": "80012a0550db83e85264eb9d338ed0937f7301925ba70017c00e520a1cacb572",
+    "examples/psm_wma_robocasa_corrected_phase5.py": "bea76079ca842935fb346ce39486fd6f352507f989ebb4c1c1ebae30c85d052c",
+    "examples/psm_wma_robocasa_corrected_phase5_test.py": "6b3582d101b57c9a2057ca84bd5edea76cc54df98fd5ebe5c6abed0881b6b60b",
+    "examples/psm_wma_robocasa_phase5_f0_test.py": "1fe8b0a9f4187555df1302ad566dfd1e1437a669e18460ee6846509c01401dce"
+  },
+  "junit": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "109",
+      "time": "50.768",
+      "timestamp": "2026-10-16T12:57:45.833537+00:00",
+      "hostname": "4b527a573da1"
+    }
+  ],
+  "author_checks_passed": true
+}

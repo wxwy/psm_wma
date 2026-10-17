@@ -1,0 +1,42 @@
+{
+  "implementation_root": "6ebf8998a7935f2ad690bb547c5db5e5a4322e6d",
+  "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "gitlink": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "production_code_child": "c0fc4cadccedb5838d3f2e512ea96179a3c969e9",
+  "test_only_successor": true,
+  "approved_base_root": "9e51c94a6d5dba41bd37423b9db8e634ca433789",
+  "approved_base_child": "7cae7c3049310ccc3b7e44ce9769534e152d1f26",
+  "contract": "docs/build/PSM-WMA_V3_F1_sync_checkpoint_strict_rng_contract_2026-10-16.md",
+  "contract_sha256": "aa3f7c6db2bdf5a7c193de1398b7ff1aa81b59b08554552f6fa86fc3e2748185",
+  "author_result": "CPU_SYNTHETIC_PASS_ONLY",
+  "ds_verdict": "PENDING",
+  "gpt_verdict": "PENDING",
+  "methods": 57,
+  "F1_methods": 29,
+  "F0_regression_methods": 28,
+  "subtests": 53,
+  "junit_cases": 110,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "gpu": false,
+  "production_assets": false,
+  "limits": [
+    "CUDA RNG is a CPU byte stand-in; no CUDA/FSDP8 evidence",
+    "Cosmos config/log/S3 test-scoped stand-ins; full dependency tests pending DS",
+    "Only temporary synthetic CPU DCP; no production checkpoint/model/dataset accessed",
+    "Legacy async dispatch/AST covered; CUDA async execution not tested"
+  ],
+  "evidence_sha256": {
+    "child_diff_check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gate.json": "42911f12b80ec5bf45d500ae1c8acaeba34814fc2902e9cc4113ee4918b44994",
+    "pip_check.log": "491fbbf4f73e7323a749143696d90bc4c88f4d467fdfbe06b3f4548cceb24705",
+    "pytest.log": "add291cc3dc840b3abfaef12ded0bb9bcd6803452bedf6fa1c047922927143b4",
+    "pytest.xml": "14f5238699595a87c54f48965193790d6dfd2c5240904a917ac024be3b5c9fd9",
+    "ruff_check.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "ruff_format.log": "ef7d13d02214e98ca902b05257cdbe6a8e84f3b4714508efdc19766460b54209",
+    "syntax.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "unchanged_scope.json": "7ca01d095164bafc6fbf6e499d779b2fd5f942d215cb553e2333c645e5bf1044",
+    "witnesses.json": "3794e8adeb2a0d481934eab4c3472cf0673d229143c3420cd65c767bcc8cbd97"
+  }
+}

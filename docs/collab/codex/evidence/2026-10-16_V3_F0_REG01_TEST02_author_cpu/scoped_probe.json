@@ -1,0 +1,48 @@
+{
+  "environment": "minimal CPU + explicit annotation-evaluating Megatron stand-in; NOT real full V2",
+  "unchanged_regression_sha256": "6b3582d101b57c9a2057ca84bd5edea76cc54df98fd5ebe5c6abed0881b6b60b",
+  "production_change_is_only_preflight_guard_reordering": true,
+  "before_regression": {
+    "passed": false,
+    "exception": "FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpr75lrqfx/psm_wma_v3/corrected_phase5/edge_local_exact_window/v3_job_identity.json'"
+  },
+  "after_regression": {
+    "passed": true,
+    "scope": "unchanged function/helper AST, original pytest.raises assertions; full module imports not executed"
+  },
+  "before_trainer": {
+    "names": [
+      "test_launcher_has_sealed_formal_profile_and_no_legacy_entry",
+      "test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop",
+      "test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite",
+      "test_real_trainer_fresh100_then_resume500_schedule_unchanged",
+      "test_real_trainer_half_ga_cannot_finish_or_save",
+      "test_real_trainer_invalid_resume_budget_rejected_before_consumption",
+      "test_real_trainer_missing_local_commit_cannot_finish",
+      "test_real_trainer_resume101_makes_off_cadence_checkpoint",
+      "test_real_trainer_save_or_finalize_failure_never_reports_success"
+    ],
+    "run": 9,
+    "failures": 0,
+    "errors": 9,
+    "skipped": 0
+  },
+  "after_trainer": {
+    "names": [
+      "test_launcher_has_sealed_formal_profile_and_no_legacy_entry",
+      "test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop",
+      "test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite",
+      "test_real_trainer_fresh100_then_resume500_schedule_unchanged",
+      "test_real_trainer_half_ga_cannot_finish_or_save",
+      "test_real_trainer_invalid_resume_budget_rejected_before_consumption",
+      "test_real_trainer_missing_local_commit_cannot_finish",
+      "test_real_trainer_resume101_makes_off_cadence_checkpoint",
+      "test_real_trainer_save_or_finalize_failure_never_reports_success"
+    ],
+    "run": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "all_nine_existing_test_assertions_unchanged": true
+}

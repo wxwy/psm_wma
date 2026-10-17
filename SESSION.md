@@ -1352,3 +1352,50 @@ New evidence docs/collab/chatgpt/evidence/2026-10-10_V3_new_pair_author_check/ b
 
 ## 2026-10-10 — V3-R2-STATIC-FOLLOWUP / REVIEW
 Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e73b9f6410f0e, Child/Gitlink e9b8a412b81fa77c0fc1ee5bf04e5c7a8a90cd3c. Parent32cc72bf retained; Root/Child clean before ledger creation. Fresh GPT request appended to canonical Inbox; detail docs/collab/chatgpt/reviews/2026-10-10_V3_r2_new_pair_fresh_review_request_444c232b_e9b8a41.md. No online GPT/pane delivery asserted: request is repository-based for Owner/GPT retrieval. No GPT verdict or independent DS acceptance yet. Old Pair additional acceptance stopped by Owner. Current source task REVIEW, training holds unchanged.
+
+## 2026-10-16 — Codex F0 claimed (Owner/GPT staged remediation)
+- Task V3-F0-SAFE-START: IN_PROGRESS; Codex. Base Root a1a47b36d10f1974ba0fb7cec872b1976c9c6838 / Child 1d56320c08c56b0f8dd248919d152d81ae12ea7b, isolated branches v3-f0-safe-start-20261016.
+- Scope: corrected Phase5 lifecycle/semantic identity/execution budget; necessary parent Trainer config-write and safe-stop hooks; focused CPU tests; new thin canonical launcher and review/evidence. No grouped numerical changes.
+- F1 is deferred until F0 DS/GPT review. No GPU, torchrun, model/DCP loads, data scan or training. Existing frozen Source/Target, E1 branch and all Evidence preserved. Publication pending.
+
+### 2026-10-16 — F0 author CPU complete; candidate publication
+- Child 0fb7f587f56048a8ffaa12e2fdb7891abc0fb021: Phase5 atomic Fresh claim/exclusive Resume lease, immutable canonical config + unique launch snapshots, semantic identity and formal execution budget; optional parent config writer and committed-boundary checks. No grouped numerical/DCP/RNG algorithm edits.
+- Author CPU: 26 test methods +30 subtests (pytest9), 0 failed/0 skipped; Ruff0.12.7 check/format 4 changed Python files, syntax, shell and pip-check PASS. External final logs /tmp/psm-v3-f0-20261016/final-r2/. Full model dependency regressions and real collective/storage validation NOT RUN here.
+- New contract docs/build/PSM-WMA_V3_F0_safe_start_execution_budget_contract_2026-10-16.md; thin launcher scripts/train_v3_packed128_staged.sh. Source task REVIEW after Pair publication; DS/GPT PENDING. F1 and all GPU/training remain unauthorized.
+
+### 2026-10-16 — F0 exact source Pair published; stopped at independent Gate
+- Root implementation b3b64732efb225c3ee08b1d9f317a90228112b29 / Child-Gitlink 0fb7f587f56048a8ffaa12e2fdb7891abc0fb021, isolated v3-f0-safe-start-20261016 branches. Source Pair + contract and CPU source-hash Evidence submitted; DS request and GPT Fresh Review ledger in active Inbox continuation.
+- Status REVIEW, DS/GPT PENDING. F1, GPU, all training and real DCP/data execution NOT started. Candidate documentation successor is bookkeeping only.
+
+## 2026-10-16 — F0-REG-01 / F0-TEST-02 remediation claimed
+- Codex IN_PROGRESS; isolated branches v3-f0-reg01-fixture-20261016. Root candidate source b3b64732 / docs3b0c5d9c plus merged latest GPT review/request from origin/V3 ef9dd044; preserve both Inbox append blocks. Child parent 0fb7f587f56048a8ffaa12e2fdb7891abc0fb021.
+- Scope exactly Phase5 missing-index guard precedence, F0 CPU fixture dependency isolation and small focused negatives. Existing regression assertions preserved. No F1, production Trainer/DCP/RNG/Local/optimizer or frozen B1 changes.
+- Existing DS Gloo/configured-preflight/persistent-storage evidence accepted by GPT; reuse only unchanged scopes. Local full V2 runtime absent; full-env independent rerun remains DS responsibility, never infer closure from minimal-env PASS.
+
+### 2026-10-16 — REG-01/TEST-02 author checks complete
+- New Child 7cae7c3049310ccc3b7e44ce9769534e152d1f26 (direct parent 0fb7f587): exactly two changed files. Production diff only moves missing-index ValueError guard before Namespace; fixture scopes Megatron imports alongside fake torch and exercises Megatron-present Trainer initialization with complete synthetic parallel config.
+- Existing Phase5 regression file and all nine TrainerTests assertion ASTs unchanged. Local 28 test methods +32 subtests, 0 failed/skipped; four relevant files Ruff0.12.7 check/format and syntax PASS. External /tmp/psm-v3-f0-reg01-test02-20261016/ contains exact commands, logs, collision reproduction old9errors/new9pass and unchanged regression function AST evidence.
+- Full established V2 environment is unavailable locally: mandatory DS full-import regression + nine full-env cases remain PENDING, not CLOSED. Prior accepted Gloo/config/volume evidence retained only for unchanged scope. F1/GPU/DCP/training not started.
+
+### 2026-10-16 — F0 remediation exact Pair published / REVIEW
+- Root9e51c94a6d5dba41bd37423b9db8e634ca433789 / Child-Gitlink7cae7c3049310ccc3b7e44ce9769534e152d1f26. New isolated candidate published, old candidates/V3/reviews retained. Author logs and DS exact-Pair request recorded in active Inbox continuation.
+- New Pair DS/GPT PENDING; actual V2 full-env verification required. F1 remains blocked until APPROVE_TO_CLOSE. No GPU, model/DCP/data execution, Fresh/Resume or frozen B1 changes. Later candidate docs HEAD is not formal implementation authority.
+
+## 2026-10-16 — F1 CHECKPOINT/RNG claimed
+- Codex IN_PROGRESS; Owner explicit F1 authorization after GPT F0 APPROVE_TO_CLOSE Root9e51c94a6d5dba41bd37423b9db8e634ca433789 / Child7cae7c3049310ccc3b7e44ce9769534e152d1f26. Remote V3 e2a11445 closure/instructions merged as docs; both Inbox blocks preserved. Isolated v3-f1-checkpoint-rng-20261016 branches.
+- Scope: checkpoint/dcp.py new opt-in synchronous local safety path + strict rank RNG, necessary Trainer no-reseed flag and corrected Phase5 profile wiring, focused CPU tests. base.py only if necessary; no global easy_io changes. No Local/FSDP/loss/Index8/performance changes.
+- Author verification uses real CPU Gloo and small synthetic temporary tensors/sidecars; no GPU/torchrun, real model/DCP/data or training. New Child then Root Pair, stop for DS/GPT.
+
+### 2026-10-16 — F1 author candidate complete / source publication
+- Child c0fc4cadccedb5838d3f2e512ea96179a3c969e9, direct parent approved F0 Child7cae7c30. Exactly checkpoint/dcp.py, new dcp_local_safety_test.py, necessary parent Trainer no-reseed guard and corrected Phase5 factory/identity wiring. Base/easy_io/rand codec/Local/optimizer algorithms unchanged.
+- Author real CPU DCP/Gloo on tiny synthetic states: combined 56 test methods +53 subtests, 0 failures/0 skips, 50.77s; Ruff0.12.7 check/format six relevant files, syntax, dependency check and Child diff PASS. Real Gloo delayed/failing/dead/unresponsive rank, DCP/sidecar/marker/latest failure and strict RNG/next-draw cases covered. CUDA state is a CPU stand-in; actual FSDP8/full-model dependencies not validated here.
+- Contract docs/build/PSM-WMA_V3_F1_sync_checkpoint_strict_rng_contract_2026-10-16.md. New digest/schema psm_v3_sync_local_v1 is prospective, no old DCP modification. Author CPU does not close F1; DS/GPT PENDING. No GPU/torchrun/real assets/training.
+
+### 2026-10-16 — F1 final positive two-rank restore witness
+- Child 2d128ed5a07601cdd424974f99b67832eafeeb41 adds only positive synthetic two-rank full model/optimizer/scheduler/Local/RNG restore coverage on top of production c0fc4cadccedb5838d3f2e512ea96179a3c969e9; production code unchanged. Final combined CPU run: 57 methods (29 F1 +28 F0),53 subtests,110 JUnit bookkeeping cases,0 failures/errors/skips,51.879s; Ruff0.12.7 check/format six files,syntax,dependency/diff checks PASS. Contract bytes remain frozen aa3f7c6db2bdf5a7c193de1398b7ff1aa81b59b08554552f6fa86fc3e2748185.
+- Formal Root is this Gitlink integration commit; handoff/docs successors must not replace it. Task REVIEW, DS independent CPU then GPT Fresh Review required. Source scope unchanged; no GPU/real assets/training.
+
+### 2026-10-16 — F1 final exact Pair and independent handoff / REVIEW
+- Implementation Root6ebf8998a7935f2ad690bb547c5db5e5a4322e6d / Child-Gitlink2d128ed5a07601cdd424974f99b67832eafeeb41 published on isolated v3-f1-checkpoint-rng-20261016. Parent production c0fc4cad unchanged by final test successor; preliminary264cff2f preserved. Mainline V3 not merged; evidence/docs successor never substitutes formal Root.
+- Final author logs docs/collab/codex/evidence/2026-10-16_V3_F1_final_author_cpu/ and factual author report, exact DS CPU instruction acceptance_6ebf8998.md appended to canonical-linked Inbox continuation (live Inbox unchanged at131006 bytes). Full-env/target-volume and GPT Fresh Review PENDING. No direct external delivery asserted; no GPU/real assets/training.
+- Governance self-check: latest Owner explicitly directs isolate implementation, CPU, commit then STOP for DS/GPT. This overrides historical multi-reviewer/tmux/90-minute waiting rules. No review verdict invented; no implementation approval or training token claimed. Scope remains F1; F0 closeout preserved byte-for-byte. All Evidence retained.
