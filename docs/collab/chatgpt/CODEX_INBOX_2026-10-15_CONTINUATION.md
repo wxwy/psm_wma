@@ -225,3 +225,10 @@ These three append-only records originated on the F1 isolated branch; pre-existi
 - DATA1 持续可用空间、新Fresh C、目标卷 mkdir/flock/fsync/rename 证据仍待DS；人工 retention 在至500有界预算可接受，30k 长训需明确容量停线。报告时 8×H100由其他作业占用，今后须实时重新检查。
 - G0 24份 rank×step missing-grad 报告只可关闭其覆盖项，不能代替全部Slow数值非零/moment/Local→Action因果。8GPU `Config.validate`仍是HARD_P0。
 - Evidence addendum review: `docs/collab/chatgpt/reviews/2026-10-17_V3_S0_owner_adjudication_postmerge_evidence_addendum.md`。**S0仍CLOSED；G0_GPU_EXECUTION_RELEASE=BLOCKED**。只待 postmerge world8 CPU preflight + target FS/readiness 和 Owner 单次GPU授权；无新生产改动或实际执行。
+
+## 2026-10-19 — G0 bounded3 0d770dd0 — Evidence-only REQUEST_CHANGES
+
+- Owner转交DS_PRO GPU报告：据报 8×H100 bounded fresh3 RC0、iter1~3完成、24条审计皆AUDIT_OK/missing0/nonfinite0、iter3 8rank F1 DCP complete，diagnostic_only；均属 **DS_REPORTED**，原始日志/元数据未能从训练服务器回读。
+- DS声称G0运行Root `0d770dd03ef701d85e58751aa7f6df58dd1a8861`、Child `2d128ed5a07601cdd424974f99b67832eafeeb41`，但GitHub V3 docs HEAD `b268f1b8b0907f8717ab59f3525792daeed46133`，`0d770dd0` 在Root仓GitHub commit API 422 No commit、diff 404。来源身份不能当作 verified Pair。F0/F1 merge正式Root `dd6e040e...` 仍为目前可核验生产根实现。
+- 实际Child代码指出 Generation 294含 Action5，与selected Generation289/Action5/Local20一致。AUDIT_OK不自动证明nonzero或moment、Local→Action。无 production bug 已核实；问题是**root identity和24×raw审计及complete/latest小证据缺席**。
+- **正式G0 Evidence-only verdict：`REQUEST_CHANGES`，G1 Fresh100 GPU RELEASE `BLOCKED`**；已关闭 F0/F1/S0 不重做、不重跑 G0 GPU。详细review `docs/collab/chatgpt/reviews/2026-10-19_V3_G0_bounded3_0d770dd0_2d128ed5_GPU_evidence_intake_REQUEST_CHANGES.md`，给DS的read-only补证请求 `docs/collab/chatgpt/requests/2026-10-19_DS_PRO_V3_G0_bounded3_identity_and_raw_evidence_CPU_only.md`。新跑G1需独立Owner授权、目标FS/容量/身份再核验；G0 iter3不得Resume。
