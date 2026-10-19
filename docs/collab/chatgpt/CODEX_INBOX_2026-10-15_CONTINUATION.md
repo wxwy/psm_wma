@@ -246,3 +246,8 @@ These three append-only records originated on the F1 isolated branch; pre-existi
 - **G0 bounded3 `APPROVE_TO_CLOSE` — 证据保证级别是 `OWNER_ACCEPTED_DS_ON_HOST_ATTESTATION`，不是GPT independently raw-verified**。As-executed Root `0d770dd03ef701d85e58751aa7f6df58dd1a8861` (仅DS现场可读；相对dd6e合并生产Root为docs-only后代，按DS报告)、Child Gitlink `2d128ed5a07601cdd424974f99b67832eafeeb41`；G0 config_digest `61c69bbc...`。按DS报告8×H100 3iter RC0、24条全rank×step缺失梯度0、iter3 F1 DCP complete/latest/sidecars一致、G0 only diagnostic/no-resume，全部由Owner接受。
 - 历史 `G0-EVID-01/02/03` 按Owner现场见证证据政策 **CLOSED_BY_OWNER_ACCEPTED_DS_ATTESTATION**；保留旧REQUEST_CHANGES审查存档，不冒称GPT读取原始证据。全rank Slow非零/优化器状态更新/Local→Action因果、SR及E1不因本G0获得PASS。
 - **G1 Fresh100 `GPU_EXECUTION_RELEASE=BLOCKED`**：仍需Owner单独授权、全新Job namespace、冻结运行Root/Child/digest、实时GPU及磁盘容量；G0 iter3绝不可Resume。F0/F1/S0不重审，旧B1 numeric FAIL维持。
+
+## 2026-10-19 — V3 Index8 vs Packed128 step_wall observation (owner requested record)
+
+- Owner 要求留档旧Index8 vs 新Packed128性能观测。依2026-10-19 DS_PRO G1 Formal30k 报告：Index8 `step_wall=40–61s/iter`、`data_prepare=11.9–13.2s`；Packed128 `step_wall=18.7–22.3s/iter`、`data_prepare=4.5–4.8s`。近似代表值 50s vs21s → **~2.4×初期估算**（非严格平均值或受控公平benchmark）。Rank0 peak_reserved Index8历史9.61GiB vs Packed128约29.26–29.86GiB；存在吞吐/显存交换。
+- 详细记录：`docs/collab/chatgpt/evidence/2026-10-19_V3_Index8_vs_Packed128_step_wall_observations.md`。仅记录DS现场报告数据，不代表新代码审核、G0重审或G1/G2 GPU授权；G1据DS报告已按Owner单独授权启动为30k正式作业，后续执行与存储风险另行处理。
