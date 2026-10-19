@@ -232,3 +232,10 @@ These three append-only records originated on the F1 isolated branch; pre-existi
 - DS声称G0运行Root `0d770dd03ef701d85e58751aa7f6df58dd1a8861`、Child `2d128ed5a07601cdd424974f99b67832eafeeb41`，但GitHub V3 docs HEAD `b268f1b8b0907f8717ab59f3525792daeed46133`，`0d770dd0` 在Root仓GitHub commit API 422 No commit、diff 404。来源身份不能当作 verified Pair。F0/F1 merge正式Root `dd6e040e...` 仍为目前可核验生产根实现。
 - 实际Child代码指出 Generation 294含 Action5，与selected Generation289/Action5/Local20一致。AUDIT_OK不自动证明nonzero或moment、Local→Action。无 production bug 已核实；问题是**root identity和24×raw审计及complete/latest小证据缺席**。
 - **正式G0 Evidence-only verdict：`REQUEST_CHANGES`，G1 Fresh100 GPU RELEASE `BLOCKED`**；已关闭 F0/F1/S0 不重做、不重跑 G0 GPU。详细review `docs/collab/chatgpt/reviews/2026-10-19_V3_G0_bounded3_0d770dd0_2d128ed5_GPU_evidence_intake_REQUEST_CHANGES.md`，给DS的read-only补证请求 `docs/collab/chatgpt/requests/2026-10-19_DS_PRO_V3_G0_bounded3_identity_and_raw_evidence_CPU_only.md`。新跑G1需独立Owner授权、目标FS/容量/身份再核验；G0 iter3不得Resume。
+
+## 2026-10-19 — G0-20261019 POST-DS CPU EVIDENCE REMEDIATION
+
+- DS_PRO 已提交 G0 CPU-only 补证长报告：as-executed `0d770dd0...` 自述为已核验merge Root `dd6e040e...` 的本地 docs-only 后代、Child `2d128ed5...` 未变；24/24 rank×iter `AUDIT_OK`、selected 289+5+20、missing0；iter3 F1 DCP complete/latest +8 sidecars；target data1 free ~314.05GiB。**DS汇总解释均合理，尚未读取原始证据**。
+- GitHub V3 HEAD本轮 `904285837d39bf81b24c80e1eadee73caa908ea0`；`0d770dd0` REST仍返回422不存在；汇报所列5份 `docs/collab/chatgpt/evidence/{...}` 原始文件均未出现在GitHub V3（404）。训练机 Remote Desktop Commander 离线。117个root untracked为事后状态，需将原运行时root admission状态与其分开核对。
+- **Formal G0 Evidence-only verdict仍 `REQUEST_CHANGES`；未发现生产代码缺陷，F0/F1/S0保留 CLOSED，不需要重跑G0。** 最小待办是 Owner 授权后通过独立 `evidence/g0-bounded3-20261019` ref 或完整Git bundle公开0d Git对象+原始24条日志/JSON+scripts+complete/latest/manifest小文件，供独立回读与复算；不要修改V3或发布GPU授权。
+- Detailed review：`docs/collab/chatgpt/reviews/2026-10-19_V3_G0_bounded3_0d770dd0_post_DS_CPU_evidence_remediation_review.md`；DS最小补证发布指令：`docs/collab/chatgpt/requests/2026-10-19_DS_PRO_V3_G0_minimal_evidence_publication_and_review_handoff.md`。G1 Fresh100 `BLOCKED` 且需Owner逐门授权，G0 iter3禁止Resume。
