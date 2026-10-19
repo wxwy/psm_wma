@@ -239,3 +239,10 @@ These three append-only records originated on the F1 isolated branch; pre-existi
 - GitHub V3 HEAD本轮 `904285837d39bf81b24c80e1eadee73caa908ea0`；`0d770dd0` REST仍返回422不存在；汇报所列5份 `docs/collab/chatgpt/evidence/{...}` 原始文件均未出现在GitHub V3（404）。训练机 Remote Desktop Commander 离线。117个root untracked为事后状态，需将原运行时root admission状态与其分开核对。
 - **Formal G0 Evidence-only verdict仍 `REQUEST_CHANGES`；未发现生产代码缺陷，F0/F1/S0保留 CLOSED，不需要重跑G0。** 最小待办是 Owner 授权后通过独立 `evidence/g0-bounded3-20261019` ref 或完整Git bundle公开0d Git对象+原始24条日志/JSON+scripts+complete/latest/manifest小文件，供独立回读与复算；不要修改V3或发布GPU授权。
 - Detailed review：`docs/collab/chatgpt/reviews/2026-10-19_V3_G0_bounded3_0d770dd0_post_DS_CPU_evidence_remediation_review.md`；DS最小补证发布指令：`docs/collab/chatgpt/requests/2026-10-19_DS_PRO_V3_G0_minimal_evidence_publication_and_review_handoff.md`。G1 Fresh100 `BLOCKED` 且需Owner逐门授权，G0 iter3禁止Resume。
+
+## 2026-10-19 — G0 Owner accepts DS_PRO on-host evidence; G0 CLOSED
+
+- Owner明确指示**相信DS_PRO**，GPT/Codex无法直接访问训练服务器；停止索要G0原始Git bundle、24条日志、DCP metadata或独立evidence branch，仅因为跨服务器无法读取不再重复BLOCK G0。新 review：`docs/collab/chatgpt/reviews/2026-10-19_V3_G0_bounded3_Owner_accepted_DS_attestation_closeout.md`。
+- **G0 bounded3 `APPROVE_TO_CLOSE` — 证据保证级别是 `OWNER_ACCEPTED_DS_ON_HOST_ATTESTATION`，不是GPT independently raw-verified**。As-executed Root `0d770dd03ef701d85e58751aa7f6df58dd1a8861` (仅DS现场可读；相对dd6e合并生产Root为docs-only后代，按DS报告)、Child Gitlink `2d128ed5a07601cdd424974f99b67832eafeeb41`；G0 config_digest `61c69bbc...`。按DS报告8×H100 3iter RC0、24条全rank×step缺失梯度0、iter3 F1 DCP complete/latest/sidecars一致、G0 only diagnostic/no-resume，全部由Owner接受。
+- 历史 `G0-EVID-01/02/03` 按Owner现场见证证据政策 **CLOSED_BY_OWNER_ACCEPTED_DS_ATTESTATION**；保留旧REQUEST_CHANGES审查存档，不冒称GPT读取原始证据。全rank Slow非零/优化器状态更新/Local→Action因果、SR及E1不因本G0获得PASS。
+- **G1 Fresh100 `GPU_EXECUTION_RELEASE=BLOCKED`**：仍需Owner单独授权、全新Job namespace、冻结运行Root/Child/digest、实时GPU及磁盘容量；G0 iter3绝不可Resume。F0/F1/S0不重审，旧B1 numeric FAIL维持。
