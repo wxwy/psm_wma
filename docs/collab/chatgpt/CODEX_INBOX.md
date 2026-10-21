@@ -433,3 +433,11 @@ See `CODEX_INBOX_CONT_20261015.md`.
 
 
 Next: CODEX_INBOX_2026-10-15_CONTINUATION.md
+
+## 2026-10-21 — V3 iter4000 4-task×5 Multi-GPU Screening Static Review — REQUEST_CHANGES
+- Technical target: remote V3 root `1e00a3d978442dbbb2865b08f41535bbd26a4ce7`, child/gitlink `2d128ed5a07601cdd424974f99b67832eafeeb41`, queue blob `6833b6ab6d17b85f7a840014ca400bc1dd6424ed`.
+- Detailed review: `docs/collab/chatgpt/reviews/2026-10-21_V3_iter4000_4task_multiGPU_queue_launch_review.md`.
+- HIGH-01 `scripts/eval_robocasa_18task_queue.py:194,210-232,375-388`: Worker holds non-reentrant result_lock then calls publish which reacquires it; normal and exception branches deadlock. HIGH-02 `:64-79`: /info ready checks only mode; stale required server can contaminate iter4000 results; require occupied-port rejection and exact checkpoint/config/raw15/state identity.
+- MEDIUM: `--expected-tasks 4` checks only count, not four required task names; `--resume` only full task, cannot resume 1–4/5 partial episodes. Add read-only exact-set gate and document failure recovery with new namespace; do not weaken artifact no-overwrite.
+- Codex authorization: scoped root queue script repair + focused CPU mocked subprocess/thread/port tests, deterministic source-bound runbook; no new wrapper by default, no Child/trainer/DCP changes, no real GPU/simulator. Return new exact pair/evidence for GPT incremental review.
+- DS_PRO: read-only preparation only; do not execute while wzy occupies 8 GPUs. Owner + free-GPU allocation and renewed GPU execution release required.
