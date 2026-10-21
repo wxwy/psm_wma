@@ -10,13 +10,16 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import queue
+import socket
 import subprocess
 import threading
 import time
 import urllib.error
 import urllib.request
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +27,7 @@ from v3_evaluation_identity import (
     build_evaluation_identity,
     claim_evaluation_run,
     screening_metrics,
+    sha256_file,
     validate_task_results,
 )
 
@@ -32,7 +36,9 @@ CHILD = ROOT / "cosmos-framework"
 
 
 def _read_json(url: str, timeout: float = 5.0) -> dict[str, Any]:
-    with urllib.request.urlopen(url, timeout=timeout) as response:  # noqa: S310 - localhost only
+    # /info must come from this loopback listener, never an environment HTTP proxy.
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+    with opener.open(url, timeout=timeout) as response:  # noqa: S310 - localhost only
         return json.loads(response.read().decode("utf-8"))
 
 
@@ -61,7 +67,90 @@ def discover_task_datasets(dataset_root: Path, expected_tasks: int) -> list[tupl
     return sorted(mapping.items())
 
 
-def wait_server(proc: subprocess.Popen, port: int, timeout: float) -> dict[str, Any]:
+def require_free_ports(ports: list[int]) -> None:
+    """Check every requested IPv4 bind before claiming output or launching a model."""
+    with ExitStack() as stack:
+        for port in ports:
+            if type(port) is not int or not 1 <= port <= 65535:
+                raise ValueError(f"invalid action server port: {port}")
+            listener = stack.enter_context(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+            try:
+                listener.bind(("0.0.0.0", port))
+            except OSError as error:
+                raise RuntimeError(f"action server port {port} unavailable: {error}") from error
+
+
+def validate_server_info(info: Any, *, checkpoint: Path, config_file: Path, num_steps: int, guidance: float) -> None:
+    """Validate the effective server configuration, not just HTTP readiness."""
+    if not isinstance(info, dict):
+        raise ValueError("action server /info must be an object")
+    for name, expected in (("checkpoint", checkpoint), ("config_file", config_file)):
+        value = info.get(name)
+        if not isinstance(value, str) or not Path(value).is_absolute() or Path(value).resolve() != expected:
+            raise ValueError(f"action server {name} mismatch: expected {expected}, got {value!r}")
+    for name, expected in (
+        ("raw_action_dim", 15),
+        ("action_chunk_size", 16),
+        ("max_action_dim", 64),
+        ("num_steps", num_steps),
+        ("fps", 20),
+        ("seed", 0),  # Policy sampler default; --seed on this queue is the environment seed.
+    ):
+        if type(info.get(name)) is not int or info[name] != expected:
+            raise ValueError(f"action server {name} mismatch: expected {expected}, got {info.get(name)!r}")
+    if type(info.get("guidance")) not in (int, float) or info["guidance"] != guidance:
+        raise ValueError("action server guidance mismatch")
+    local = info.get("local_memory")
+    if (
+        info.get("requires_state") is not True
+        or not isinstance(local, dict)
+        or local.get("enabled") is not True
+        or local.get("mode") != "required"
+        or type(local.get("action_dim")) is not int
+        or local["action_dim"] != 15
+    ):
+        raise ValueError("action server state/required Local-TTT protocol mismatch")
+
+
+def require_owned_listener(proc: subprocess.Popen, port: int) -> None:
+    """Linux same-user /proc proof closes the check-free→bind stale-server race.
+
+    The existing Child serves HTTP in the Popen process itself. Never accept a
+    foreign listener even if its /info happens to have identical paths/parameters.
+    """
+    try:
+        process = Path("/proc") / str(proc.pid)
+        sockets = set()
+        for descriptor in (process / "fd").iterdir():
+            try:
+                sockets.add(os.readlink(descriptor))
+            except FileNotFoundError:  # A transient, unrelated descriptor may close.
+                continue
+        for line in (process / "net/tcp").read_text().splitlines()[1:]:
+            fields = line.split()
+            address, hex_port = fields[1].split(":")
+            if (
+                fields[3] == "0A"
+                and address in {"00000000", "0100007F"}
+                and int(hex_port, 16) == port
+                and f"socket:[{fields[9]}]" in sockets
+            ):
+                return
+    except (OSError, ValueError, IndexError) as error:
+        raise RuntimeError(f"cannot verify action server pid {proc.pid} owns port {port}: {error}") from error
+    raise RuntimeError(f"action server pid {proc.pid} does not own port {port}")
+
+
+def wait_server(
+    proc: subprocess.Popen,
+    port: int,
+    timeout: float,
+    *,
+    checkpoint: Path,
+    config_file: Path,
+    num_steps: int,
+    guidance: float,
+) -> dict[str, Any]:
     deadline = time.monotonic() + timeout
     url = f"http://127.0.0.1:{port}/info"
     last_error: BaseException | None = None
@@ -69,13 +158,18 @@ def wait_server(proc: subprocess.Popen, port: int, timeout: float) -> dict[str, 
         if proc.poll() is not None:
             raise RuntimeError(f"action server exited early with code {proc.returncode}")
         try:
-            info = _read_json(url)
-            if (info.get("local_memory") or {}).get("mode") != "required":
-                raise RuntimeError(f"server {port} did not enter required Local-TTT mode: {info.get('local_memory')}")
-            return info
+            info = _read_json(url, timeout=min(5.0, max(0.001, deadline - time.monotonic())))
         except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
             last_error = error
-            time.sleep(2)
+            time.sleep(min(2.0, max(0.0, deadline - time.monotonic())))
+            continue
+        validate_server_info(
+            info, checkpoint=checkpoint, config_file=config_file, num_steps=num_steps, guidance=guidance
+        )
+        require_owned_listener(proc, port)
+        if proc.poll() is not None:
+            raise RuntimeError(f"action server exited during identity verification with code {proc.returncode}")
+        return info
     raise RuntimeError(f"action server {port} not ready before timeout; last_error={last_error!r}")
 
 
@@ -157,10 +251,13 @@ def main() -> int:
         raise SystemExit("required Local-TTT screening requires 1 <= action_horizon <= 16")
     if args.num_test_episodes <= 0:
         raise SystemExit("--num-test-episodes must be positive")
+    if args.num_steps <= 0 or not math.isfinite(args.guidance) or not math.isfinite(args.timeout) or args.timeout <= 0:
+        raise SystemExit("--num-steps/--timeout must be positive and --guidance/--timeout finite")
 
     gpus = [item.strip() for item in args.gpus.split(",") if item.strip()]
     if not gpus or len(set(gpus)) != len(gpus):
         raise SystemExit("--gpus must contain unique GPU ids")
+    require_free_ports([args.base_port + index for index in range(len(gpus))])
     tasks = discover_task_datasets(args.dataset_root.resolve(), args.expected_tasks)
 
     output_root = args.output_dir.resolve()
@@ -174,6 +271,9 @@ def main() -> int:
             "seed": args.seed,
             "R": args.action_horizon,
             "H_pred": 16,
+            "raw_action_dim": 15,
+            "max_action_dim": 64,
+            "policy_seed": 0,
             "num_steps": args.num_steps,
             "guidance": args.guidance,
             "trials": args.num_test_episodes,
@@ -229,6 +329,11 @@ def main() -> int:
                 screening_metrics(results, tasks=[task for task, _ in tasks], expected_trials=args.num_test_episodes)
             )
             payload["evaluation_run_digest"] = run_digest
+            worker_errors = {key: row for key, row in results.items() if key.startswith("_worker_")}
+            payload["worker_errors"] = worker_errors
+            if worker_errors:
+                payload["status"] = "INCOMPLETE"
+                payload["sr"] = None
             atomic_write_json(summary_path, payload)
 
     publish()
@@ -268,17 +373,32 @@ def main() -> int:
             "--http-400-on-error",
         ]
         with server_log_path.open("ab", buffering=0) as server_log:
-            server = subprocess.Popen(
-                server_command,
-                cwd=CHILD,
-                env=server_env,
-                stdout=server_log,
-                stderr=subprocess.STDOUT,
-            )
+            server = None
             try:
-                info = wait_server(server, port, args.timeout)
+                require_free_ports([port])
+                server = subprocess.Popen(
+                    server_command,
+                    cwd=CHILD,
+                    env=server_env,
+                    stdout=server_log,
+                    stderr=subprocess.STDOUT,
+                )
+                info = wait_server(
+                    server,
+                    port,
+                    args.timeout,
+                    checkpoint=checkpoint,
+                    config_file=config_file,
+                    num_steps=args.num_steps,
+                    guidance=args.guidance,
+                )
+                if sha256_file(config_file) != manifest["identity"]["config_sha256"]:
+                    raise ValueError("action server config file changed since evaluation identity was frozen")
                 atomic_write_json(worker_dir / "server_info.json", info)
+                atomic_write_json(worker_dir / "server_process.json", {"pid": server.pid, "port": port})
                 while not stop.is_set():
+                    if server.poll() is not None:
+                        raise RuntimeError(f"action server exited during screening with code {server.returncode}")
                     try:
                         task, dataset_dir = work.get_nowait()
                     except queue.Empty:
@@ -387,12 +507,13 @@ def main() -> int:
                     }
                 publish()
             finally:
-                server.terminate()
-                try:
-                    server.wait(timeout=20)
-                except subprocess.TimeoutExpired:
-                    server.kill()
-                    server.wait()
+                if server is not None:
+                    server.terminate()
+                    try:
+                        server.wait(timeout=20)
+                    except subprocess.TimeoutExpired:
+                        server.kill()
+                        server.wait()
 
     threads = [
         threading.Thread(target=worker, args=(index, gpu), name=f"robocasa-gpu-{gpu}", daemon=False)
@@ -408,8 +529,11 @@ def main() -> int:
         task_rows = [results.get(task) for task, _ in tasks]
         missing = [task for (task, _), row in zip(tasks, task_rows, strict=True) if row is None]
         failed = [task for (task, _), row in zip(tasks, task_rows, strict=True) if row is not None and row.get("error")]
-    if missing or failed:
-        print(f"screening incomplete: missing={missing} failed={failed}; summary={summary_path}")
+        worker_errors = [key for key in results if key.startswith("_worker_")]
+    if missing or failed or worker_errors:
+        print(
+            f"screening incomplete: missing={missing} failed={failed} workers={worker_errors}; summary={summary_path}"
+        )
         return 1
     print(f"screening complete: {summary_path}")
     return 0

@@ -392,3 +392,8 @@
 - V3-F1-CHECKPOINT-RNG: REVIEW after isolated Pair publication; author CPU/static pass, DS/GPT independent exact-Pair acceptance PENDING. Actual CUDA/FSDP8/DCP/model/long training unauthorized.
 
 - V3-F1-CHECKPOINT-RNG final handoff REVIEW: exact Root6ebf8998a7935f2ad690bb547c5db5e5a4322e6d / Child2d128ed5a07601cdd424974f99b67832eafeeb41; author57 methods+53subtests PASS, DS independent full-env/persistent-volume CPU and GPT Fresh Review PENDING. Isolated branch only, no V3 merge or training.
+
+## V3-ITER4000-SERVER-IDENTITY — 2026-10-21
+- IN_PROGRESS; Codex; prerequisite Owner instruction and GPT c62fad0e erratum on implementation1e00a3d9/Child2d128ed5.
+- Scope only root queue + targeted CPU tests, documentation/evidence. HIGH-01 RETRACTED: keep locking unchanged. HIGH-02: reject occupied ports, bind Ready info to checkpoint/config/protocol and this live process. CPU synthetic normal/error/foreign-server/port tests; exact four-task read-only runbook and whole-task-only Resume. New Root SHA, unchanged Child, STOP for independent review; no GPU/simulator/DCP/training.
+- V3-ITER4000-SERVER-IDENTITY: REVIEW after new Root publication; author CPU28 methods+41subtests PASS, Child unchanged. Only HIGH-02 addressed; HIGH-01 locking preserved as retracted. Independent exact-Pair review/DS CPU and Owner idle-GPU release still required; no simulator launch.
