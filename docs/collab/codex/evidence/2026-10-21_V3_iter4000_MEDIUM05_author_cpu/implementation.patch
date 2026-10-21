@@ -1,0 +1,79 @@
+diff --git a/scripts/eval_robocasa_18task_queue.py b/scripts/eval_robocasa_18task_queue.py
+index eec2702d..e56eaafe 100644
+--- a/scripts/eval_robocasa_18task_queue.py
++++ b/scripts/eval_robocasa_18task_queue.py
+@@ -341 +341 @@ def main() -> int:
+-    def worker(worker_id: int, gpu: str) -> None:
++    def run_worker(worker_id: int, gpu: str) -> None:
+@@ -517,0 +518,16 @@ def main() -> int:
++    def worker(worker_id: int, gpu: str) -> None:
++        # The service loop has its own failure/cleanup path. This entry boundary
++        # also covers directory/log initialization and resource-context exits.
++        try:
++            run_worker(worker_id, gpu)
++        except BaseException as exc:  # noqa: BLE001
++            stop.set()
++            with result_lock:
++                results[f"_worker_{worker_id}"] = {
++                    "worker": worker_id,
++                    "gpu": gpu,
++                    "error": f"{type(exc).__name__}: {exc}",
++                    "server_log": str(output_root / f"_worker{worker_id:02d}_gpu{gpu}" / "action_server.log"),
++                }
++            publish()
++
+diff --git a/tools/v3/eval_robocasa_queue_identity_test.py b/tools/v3/eval_robocasa_queue_identity_test.py
+index 6bf82eac..f0bbafa4 100644
+--- a/tools/v3/eval_robocasa_queue_identity_test.py
++++ b/tools/v3/eval_robocasa_queue_identity_test.py
+@@ -150,0 +151,17 @@ def _scenario(case, parent, count):
++    init_faults, unhandled_thread_errors = [], []
++    original_mkdir, original_open = Path.mkdir, Path.open
++
++    def fail_initialization(operation):
++        init_faults.append(operation)
++        assert all_tasks_done.wait(8), "healthy worker did not complete before initialization fault"
++        raise OSError(f"injected worker1 {operation} failure after all tasks")
++
++    def mkdir(path, *args, **kwargs):
++        if case == "mkdir_failure" and path.name == "_worker01_gpu1":
++            fail_initialization("mkdir")
++        return original_mkdir(path, *args, **kwargs)
++
++    def open_file(path, *args, **kwargs):
++        if case == "log_open_failure" and path.name == "action_server.log" and path.parent.name == "_worker01_gpu1":
++            fail_initialization("log_open")
++        return original_open(path, *args, **kwargs)
+@@ -247 +264,8 @@ def _scenario(case, parent, count):
+-            with patch.object(sys, "argv", argv):
++            with (
++                patch.object(sys, "argv", argv),
++                patch.object(Path, "mkdir", mkdir),
++                patch.object(Path, "open", open_file),
++                patch.object(
++                    threading, "excepthook", lambda event: unhandled_thread_errors.append(str(event.exc_value))
++                ),
++            ):
+@@ -265,0 +290,2 @@ def _scenario(case, parent, count):
++        "init_faults": init_faults,
++        "unhandled_thread_errors": unhandled_thread_errors,
+@@ -416,0 +443,19 @@ class QueueIntegrationTests(unittest.TestCase):
++    def check_initialization_failure(self, case, operation):
++        report = self.scenario(case)
++        self.assertEqual(report["init_faults"], [operation])
++        self.assertEqual(report["rc"], 1)
++        self.assertEqual(report["summary"]["total_trials"], 20)
++        self.assertEqual(set(report["summary"]["tasks"]), TASKS)
++        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
++        self.assertIsNone(report["summary"]["sr"])
++        self.assertIn(f"worker1 {operation} failure", report["summary"]["worker_errors"]["_worker_1"]["error"])
++        self.assertEqual(report["server_commands"], 1)
++        self.assertEqual(report["sim_calls"], 4)
++        self.assertEqual(report["unhandled_thread_errors"], [])
++
++    def test_worker_mkdir_failure_after_healthy_worker_completes_all_tasks_is_preserved(self):
++        self.check_initialization_failure("mkdir_failure", "mkdir")
++
++    def test_worker_log_open_failure_after_healthy_worker_completes_all_tasks_is_preserved(self):
++        self.check_initialization_failure("log_open_failure", "log_open")
++

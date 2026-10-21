@@ -1,0 +1,9 @@
+# MEDIUM-05 author CPU evidence
+
+Implementation Root `6405c9dae02e81be5f267e79e27995c3df7fb988`, unchanged Child/Gitlink `2d128ed5a07601cdd424974f99b67832eafeeb41`, Queue blob `e56eaafe8276aa40cb9e2fbc1110515e8fa19c25`. Author self-test only; independent new-Pair review pending.
+
+Baseline `baseline.log` deliberately runs two new regression tests on unchanged eec2702d production code: both FAIL because real queue main returns RC0/COMPLETE despite20 completed trials and an uncaught mkdir/log-open Worker error. This is expected red evidence, not a failure of the final implementation. Final `pytest.log/xml`: **30 passed** (15 targeted methods +15 existing regression cases),41 subtests passed,55 unrelated deselected,0fail/error/skip,30.775s. JUnit71 includes subtest bookkeeping, not71 independent methods. No counts added across runs.
+
+`regression_witnesses.json` pairs before/after main outcomes for both filesystem faults; final errors are retained, status INCOMPLETE/sr=None/RC1 with all20 trials preserved. Only the healthy server starts and is cleaned; no remaining owned Worker thread/process or uncaught thread exception. `scope_proof.json` compares ASTs: original worker body is identical except name run_worker, all HIGH-02/top-level helpers unchanged, publish remains outside result_lock, identity module and Child unchanged. `implementation.patch` uses zero context to preserve an exact minimal diff without raw patch-context whitespace.
+
+`gate.json` contains exact command/cwd/env/RC/source SHA; Ruff0.12.7 check+format,syntax,diff allRC0. `manifest.json` binds exact Pair and evidence hashes. CPU stdlib HTTP/Git/temporary files and synthetic simulator rows/video placeholders only; no real Action Server model, GPU, real simulator/DCP/dataset or video decoding. Real-machine /proc/H16/four-task metadata remain prior DS readiness scope; no GPU release is implied. Prior HIGH-02 Evidence and GPT review remain preserved; no withdrawn HIGH-01 lock change.

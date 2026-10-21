@@ -1,0 +1,43 @@
+{
+  "implementation_root": "6405c9dae02e81be5f267e79e27995c3df7fb988",
+  "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "gitlink": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "base_root": "a5d743d1c2221dd4db21dfa61db814da51b286ed",
+  "prior_implementation_root": "ca936c8eecd593133b1e6c61ba5691331958c592",
+  "queue_blob": "e56eaafe8276aa40cb9e2fbc1110515e8fa19c25",
+  "author_result": "CPU_SYNTHETIC_PASS_ONLY",
+  "independent_verdict": "PENDING",
+  "baseline_expected_failures": 2,
+  "baseline_regression_behavior": "20 trials + uncaught thread error + COMPLETE + RC0",
+  "final_passed": 30,
+  "targeted_methods": 15,
+  "existing_regression_cases": 15,
+  "subtests": 41,
+  "unrelated_deselected": 55,
+  "junit_bookkeeping_cases": 71,
+  "final_failures": 0,
+  "final_errors": 0,
+  "final_skips": 0,
+  "duration_seconds": 30.775,
+  "gpu": false,
+  "real_simulator": false,
+  "production_assets": false,
+  "versions": {
+    "python": "3.12.14",
+    "pytest": "9.0.2",
+    "ruff": "0.12.7"
+  },
+  "evidence_sha256": {
+    "baseline.log": "d89249be442aae3e75871b37af848922b819a2189908d29e9b9c769effbde995",
+    "diff_check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "gate.json": "ca3bd09a2ae8ca3bf24cd7ad22971a7026db3dc9e796a803db6022d61874452b",
+    "implementation.patch": "d305a7c18113794f250c3793a2879884d194fcd198dcf30fe6230d746318dab7",
+    "pytest.log": "8aa94143735e7395327a223954c0fa36f6cbcbe67bb9caaf2e0bd882928293a9",
+    "pytest.xml": "73ce8a90d354d131faa8c3239bbd2379b7845492c9af7bc12e0ac584edaeef18",
+    "regression_witnesses.json": "9d5896611d3a548c1b24c748b231d4b85fd5b9659cbd09cfecc1085e2e967c9c",
+    "ruff_check.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "ruff_format.log": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+    "scope_proof.json": "7210e9f2598c253317a3690cff59de92c97618c35c0f0d41e1f1f1d790afdebd",
+    "syntax.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

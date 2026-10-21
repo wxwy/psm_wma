@@ -1,0 +1,20 @@
+{
+  "base_root": "a5d743d1c2221dd4db21dfa61db814da51b286ed",
+  "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "all_top_level_helpers_unchanged": [
+    "_read_json",
+    "atomic_write_json",
+    "discover_task_datasets",
+    "require_free_ports",
+    "require_owned_listener",
+    "task_result",
+    "validate_server_info",
+    "wait_server"
+  ],
+  "original_worker_body_AST_unchanged_except_name": true,
+  "all_publish_calls_remain_outside_result_lock": true,
+  "identity_module_unchanged": true,
+  "child_clean": true,
+  "scope": "only a new worker thread-entry exception boundary; original service body untouched",
+  "entire_main_AST_unchanged_after_removing_new_entry_and_renaming_old_worker": true
+}

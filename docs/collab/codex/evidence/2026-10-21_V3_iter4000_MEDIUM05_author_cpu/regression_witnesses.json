@@ -1,0 +1,1068 @@
+{
+  "before_fix": [
+    {
+      "case": "mkdir_failure",
+      "error": null,
+      "foreign_alive_before_fixture_cleanup": true,
+      "init_faults": [
+        "mkdir"
+      ],
+      "output_exists": true,
+      "rc": 0,
+      "server_commands": 1,
+      "server_exits": [
+        -15
+      ],
+      "sim_calls": 4,
+      "summary": {
+        "action_horizon": 16,
+        "checkpoint": "/tmp/tmpwokp53du/job/checkpoints/iter_000004000",
+        "completed_tasks": 4,
+        "config_file": "/tmp/tmpwokp53du/job/config.yaml",
+        "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+        "expected_tasks": 4,
+        "missing_tasks": [],
+        "partial_sr": 0.6,
+        "planned_trials": 20,
+        "seed": 0,
+        "sr": 0.6,
+        "status": "COMPLETE",
+        "task_failures": 0,
+        "tasks": {
+          "CloseFridge": {
+            "dataset_dir": "/tmp/tmpwokp53du/datasets/CloseFridge/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+            "gpu": "0",
+            "results_file": "/tmp/tmpwokp53du/evaluation/CloseFridge/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpwokp53du/evaluation/CloseFridge/rollout0.mp4",
+              "/tmp/tmpwokp53du/evaluation/CloseFridge/rollout1.mp4",
+              "/tmp/tmpwokp53du/evaluation/CloseFridge/rollout2.mp4",
+              "/tmp/tmpwokp53du/evaluation/CloseFridge/rollout3.mp4",
+              "/tmp/tmpwokp53du/evaluation/CloseFridge/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "NavigateKitchen": {
+            "dataset_dir": "/tmp/tmpwokp53du/datasets/NavigateKitchen/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+            "gpu": "0",
+            "results_file": "/tmp/tmpwokp53du/evaluation/NavigateKitchen/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpwokp53du/evaluation/NavigateKitchen/rollout0.mp4",
+              "/tmp/tmpwokp53du/evaluation/NavigateKitchen/rollout1.mp4",
+              "/tmp/tmpwokp53du/evaluation/NavigateKitchen/rollout2.mp4",
+              "/tmp/tmpwokp53du/evaluation/NavigateKitchen/rollout3.mp4",
+              "/tmp/tmpwokp53du/evaluation/NavigateKitchen/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "PickPlaceSinkToCounter": {
+            "dataset_dir": "/tmp/tmpwokp53du/datasets/PickPlaceSinkToCounter/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+            "gpu": "0",
+            "results_file": "/tmp/tmpwokp53du/evaluation/PickPlaceSinkToCounter/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpwokp53du/evaluation/PickPlaceSinkToCounter/rollout0.mp4",
+              "/tmp/tmpwokp53du/evaluation/PickPlaceSinkToCounter/rollout1.mp4",
+              "/tmp/tmpwokp53du/evaluation/PickPlaceSinkToCounter/rollout2.mp4",
+              "/tmp/tmpwokp53du/evaluation/PickPlaceSinkToCounter/rollout3.mp4",
+              "/tmp/tmpwokp53du/evaluation/PickPlaceSinkToCounter/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "TurnOnSinkFaucet": {
+            "dataset_dir": "/tmp/tmpwokp53du/datasets/TurnOnSinkFaucet/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+            "gpu": "0",
+            "results_file": "/tmp/tmpwokp53du/evaluation/TurnOnSinkFaucet/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpwokp53du/evaluation/TurnOnSinkFaucet/rollout0.mp4",
+              "/tmp/tmpwokp53du/evaluation/TurnOnSinkFaucet/rollout1.mp4",
+              "/tmp/tmpwokp53du/evaluation/TurnOnSinkFaucet/rollout2.mp4",
+              "/tmp/tmpwokp53du/evaluation/TurnOnSinkFaucet/rollout3.mp4",
+              "/tmp/tmpwokp53du/evaluation/TurnOnSinkFaucet/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "02958a6058ca83e02350c1b32c814232a307d27fb8628983717c521ebd950ef2",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          }
+        },
+        "total_successes": 12,
+        "total_trials": 20,
+        "worker_errors": {}
+      },
+      "thread_names": [],
+      "unhandled_thread_errors": [
+        "injected worker1 mkdir failure after all tasks"
+      ]
+    },
+    {
+      "case": "log_open_failure",
+      "error": null,
+      "foreign_alive_before_fixture_cleanup": true,
+      "init_faults": [
+        "log_open"
+      ],
+      "output_exists": true,
+      "rc": 0,
+      "server_commands": 1,
+      "server_exits": [
+        -15
+      ],
+      "sim_calls": 4,
+      "summary": {
+        "action_horizon": 16,
+        "checkpoint": "/tmp/tmpbt4rqx59/job/checkpoints/iter_000004000",
+        "completed_tasks": 4,
+        "config_file": "/tmp/tmpbt4rqx59/job/config.yaml",
+        "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+        "expected_tasks": 4,
+        "missing_tasks": [],
+        "partial_sr": 0.6,
+        "planned_trials": 20,
+        "seed": 0,
+        "sr": 0.6,
+        "status": "COMPLETE",
+        "task_failures": 0,
+        "tasks": {
+          "CloseFridge": {
+            "dataset_dir": "/tmp/tmpbt4rqx59/datasets/CloseFridge/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+            "gpu": "0",
+            "results_file": "/tmp/tmpbt4rqx59/evaluation/CloseFridge/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpbt4rqx59/evaluation/CloseFridge/rollout0.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/CloseFridge/rollout1.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/CloseFridge/rollout2.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/CloseFridge/rollout3.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/CloseFridge/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "NavigateKitchen": {
+            "dataset_dir": "/tmp/tmpbt4rqx59/datasets/NavigateKitchen/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+            "gpu": "0",
+            "results_file": "/tmp/tmpbt4rqx59/evaluation/NavigateKitchen/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpbt4rqx59/evaluation/NavigateKitchen/rollout0.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/NavigateKitchen/rollout1.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/NavigateKitchen/rollout2.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/NavigateKitchen/rollout3.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/NavigateKitchen/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "PickPlaceSinkToCounter": {
+            "dataset_dir": "/tmp/tmpbt4rqx59/datasets/PickPlaceSinkToCounter/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+            "gpu": "0",
+            "results_file": "/tmp/tmpbt4rqx59/evaluation/PickPlaceSinkToCounter/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpbt4rqx59/evaluation/PickPlaceSinkToCounter/rollout0.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/PickPlaceSinkToCounter/rollout1.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/PickPlaceSinkToCounter/rollout2.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/PickPlaceSinkToCounter/rollout3.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/PickPlaceSinkToCounter/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "TurnOnSinkFaucet": {
+            "dataset_dir": "/tmp/tmpbt4rqx59/datasets/TurnOnSinkFaucet/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+            "gpu": "0",
+            "results_file": "/tmp/tmpbt4rqx59/evaluation/TurnOnSinkFaucet/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpbt4rqx59/evaluation/TurnOnSinkFaucet/rollout0.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/TurnOnSinkFaucet/rollout1.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/TurnOnSinkFaucet/rollout2.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/TurnOnSinkFaucet/rollout3.mp4",
+              "/tmp/tmpbt4rqx59/evaluation/TurnOnSinkFaucet/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "544cdbcf099e4d2c0850ed56e9362596d8e2a5fe7b63fcb1f156f190854ce64d",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          }
+        },
+        "total_successes": 12,
+        "total_trials": 20,
+        "worker_errors": {}
+      },
+      "thread_names": [],
+      "unhandled_thread_errors": [
+        "injected worker1 log_open failure after all tasks"
+      ]
+    }
+  ],
+  "after_fix": [
+    {
+      "case": "log_open_failure",
+      "error": null,
+      "foreign_alive_before_fixture_cleanup": true,
+      "init_faults": [
+        "log_open"
+      ],
+      "output_exists": true,
+      "rc": 1,
+      "server_commands": 1,
+      "server_exits": [
+        -15
+      ],
+      "sim_calls": 4,
+      "summary": {
+        "action_horizon": 16,
+        "checkpoint": "/tmp/tmpne_e8wm2/job/checkpoints/iter_000004000",
+        "completed_tasks": 4,
+        "config_file": "/tmp/tmpne_e8wm2/job/config.yaml",
+        "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+        "expected_tasks": 4,
+        "missing_tasks": [],
+        "partial_sr": 0.6,
+        "planned_trials": 20,
+        "seed": 0,
+        "sr": null,
+        "status": "INCOMPLETE",
+        "task_failures": 0,
+        "tasks": {
+          "CloseFridge": {
+            "dataset_dir": "/tmp/tmpne_e8wm2/datasets/CloseFridge/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+            "gpu": "0",
+            "results_file": "/tmp/tmpne_e8wm2/evaluation/CloseFridge/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpne_e8wm2/evaluation/CloseFridge/rollout0.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/CloseFridge/rollout1.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/CloseFridge/rollout2.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/CloseFridge/rollout3.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/CloseFridge/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "NavigateKitchen": {
+            "dataset_dir": "/tmp/tmpne_e8wm2/datasets/NavigateKitchen/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+            "gpu": "0",
+            "results_file": "/tmp/tmpne_e8wm2/evaluation/NavigateKitchen/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpne_e8wm2/evaluation/NavigateKitchen/rollout0.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/NavigateKitchen/rollout1.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/NavigateKitchen/rollout2.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/NavigateKitchen/rollout3.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/NavigateKitchen/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "PickPlaceSinkToCounter": {
+            "dataset_dir": "/tmp/tmpne_e8wm2/datasets/PickPlaceSinkToCounter/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+            "gpu": "0",
+            "results_file": "/tmp/tmpne_e8wm2/evaluation/PickPlaceSinkToCounter/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpne_e8wm2/evaluation/PickPlaceSinkToCounter/rollout0.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/PickPlaceSinkToCounter/rollout1.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/PickPlaceSinkToCounter/rollout2.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/PickPlaceSinkToCounter/rollout3.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/PickPlaceSinkToCounter/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "TurnOnSinkFaucet": {
+            "dataset_dir": "/tmp/tmpne_e8wm2/datasets/TurnOnSinkFaucet/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+            "gpu": "0",
+            "results_file": "/tmp/tmpne_e8wm2/evaluation/TurnOnSinkFaucet/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpne_e8wm2/evaluation/TurnOnSinkFaucet/rollout0.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/TurnOnSinkFaucet/rollout1.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/TurnOnSinkFaucet/rollout2.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/TurnOnSinkFaucet/rollout3.mp4",
+              "/tmp/tmpne_e8wm2/evaluation/TurnOnSinkFaucet/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "a1c22817860044067ab6f42ec413ae5725906865d18c34aa2bf4a65ce4ce1564",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          }
+        },
+        "total_successes": 12,
+        "total_trials": 20,
+        "worker_errors": {
+          "_worker_1": {
+            "error": "OSError: injected worker1 log_open failure after all tasks",
+            "gpu": "1",
+            "server_log": "/tmp/tmpne_e8wm2/evaluation/_worker01_gpu1/action_server.log",
+            "worker": 1
+          }
+        }
+      },
+      "thread_names": [],
+      "unhandled_thread_errors": []
+    },
+    {
+      "case": "mkdir_failure",
+      "error": null,
+      "foreign_alive_before_fixture_cleanup": true,
+      "init_faults": [
+        "mkdir"
+      ],
+      "output_exists": true,
+      "rc": 1,
+      "server_commands": 1,
+      "server_exits": [
+        -15
+      ],
+      "sim_calls": 4,
+      "summary": {
+        "action_horizon": 16,
+        "checkpoint": "/tmp/tmpj1fmn8d5/job/checkpoints/iter_000004000",
+        "completed_tasks": 4,
+        "config_file": "/tmp/tmpj1fmn8d5/job/config.yaml",
+        "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+        "expected_tasks": 4,
+        "missing_tasks": [],
+        "partial_sr": 0.6,
+        "planned_trials": 20,
+        "seed": 0,
+        "sr": null,
+        "status": "INCOMPLETE",
+        "task_failures": 0,
+        "tasks": {
+          "CloseFridge": {
+            "dataset_dir": "/tmp/tmpj1fmn8d5/datasets/CloseFridge/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+            "gpu": "0",
+            "results_file": "/tmp/tmpj1fmn8d5/evaluation/CloseFridge/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpj1fmn8d5/evaluation/CloseFridge/rollout0.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/CloseFridge/rollout1.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/CloseFridge/rollout2.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/CloseFridge/rollout3.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/CloseFridge/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "NavigateKitchen": {
+            "dataset_dir": "/tmp/tmpj1fmn8d5/datasets/NavigateKitchen/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+            "gpu": "0",
+            "results_file": "/tmp/tmpj1fmn8d5/evaluation/NavigateKitchen/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpj1fmn8d5/evaluation/NavigateKitchen/rollout0.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/NavigateKitchen/rollout1.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/NavigateKitchen/rollout2.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/NavigateKitchen/rollout3.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/NavigateKitchen/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "PickPlaceSinkToCounter": {
+            "dataset_dir": "/tmp/tmpj1fmn8d5/datasets/PickPlaceSinkToCounter/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+            "gpu": "0",
+            "results_file": "/tmp/tmpj1fmn8d5/evaluation/PickPlaceSinkToCounter/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpj1fmn8d5/evaluation/PickPlaceSinkToCounter/rollout0.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/PickPlaceSinkToCounter/rollout1.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/PickPlaceSinkToCounter/rollout2.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/PickPlaceSinkToCounter/rollout3.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/PickPlaceSinkToCounter/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          },
+          "TurnOnSinkFaucet": {
+            "dataset_dir": "/tmp/tmpj1fmn8d5/datasets/TurnOnSinkFaucet/lerobot",
+            "elapsed_s": 0.0,
+            "error": null,
+            "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+            "gpu": "0",
+            "results_file": "/tmp/tmpj1fmn8d5/evaluation/TurnOnSinkFaucet/results.json",
+            "rollout_mp4s": [
+              "/tmp/tmpj1fmn8d5/evaluation/TurnOnSinkFaucet/rollout0.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/TurnOnSinkFaucet/rollout1.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/TurnOnSinkFaucet/rollout2.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/TurnOnSinkFaucet/rollout3.mp4",
+              "/tmp/tmpj1fmn8d5/evaluation/TurnOnSinkFaucet/rollout4.mp4"
+            ],
+            "rollouts": [
+              {
+                "ep": 0,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 1,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 2,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              },
+              {
+                "ep": 3,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "behavioral_failure",
+                "policy": false
+              },
+              {
+                "ep": 4,
+                "error": null,
+                "evaluation_run_digest": "1e12f674243db26a998a850510f4e8cb1c1e5d7148b48c2d62addc4f625dba2b",
+                "outcome": "success",
+                "policy": true
+              }
+            ],
+            "sr": 0.6,
+            "successes": 3,
+            "trials": 5,
+            "worker": 0
+          }
+        },
+        "total_successes": 12,
+        "total_trials": 20,
+        "worker_errors": {
+          "_worker_1": {
+            "error": "OSError: injected worker1 mkdir failure after all tasks",
+            "gpu": "1",
+            "server_log": "/tmp/tmpj1fmn8d5/evaluation/_worker01_gpu1/action_server.log",
+            "worker": 1
+          }
+        }
+      },
+      "thread_names": [],
+      "unhandled_thread_errors": []
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "scope": "ITER4000_MEDIUM05_AUTHOR_CPU_ONLY",
+  "base_root": "a5d743d1c2221dd4db21dfa61db814da51b286ed",
+  "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "gpu": false,
+  "real_simulator": false,
+  "production_assets": false,
+  "environment_overrides": {
+    "PYTHONPATH": "/workspace/psm_wma/cosmos-framework:/workspace/psm_wma/scripts:/workspace/psm_wma",
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HOME": "/workspace/.cache/huggingface",
+    "MPLCONFIGDIR": "/workspace/.cache/matplotlib",
+    "PYTHONPYCACHEPREFIX": "/tmp/psm-v3-medium05-20261021/pycache",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "commands": [
+    {
+      "name": "ruff_check",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "scripts/eval_robocasa_18task_queue.py",
+        "tools/v3/eval_robocasa_queue_identity_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--check",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "scripts/eval_robocasa_18task_queue.py",
+        "tools/v3/eval_robocasa_queue_identity_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "returncode": 0
+    },
+    {
+      "name": "syntax",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "py_compile",
+        "scripts/eval_robocasa_18task_queue.py",
+        "tools/v3/eval_robocasa_queue_identity_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "returncode": 0
+    },
+    {
+      "name": "pytest",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/tmp/psm-v3-medium05-20261021/pytest.ini",
+        "-q",
+        "-s",
+        "-p",
+        "no:cacheprovider",
+        "tools/v3/eval_robocasa_queue_identity_test.py",
+        "tools/v3/remaining_optimizations_test.py",
+        "-k",
+        "queue or identity or screening or evaluation or resume",
+        "--junitxml=/tmp/psm-v3-medium05-20261021/final/pytest.xml"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "returncode": 0
+    },
+    {
+      "name": "diff_check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "returncode": 0
+    }
+  ],
+  "author_checks_passed": true,
+  "source_sha256": {
+    "scripts/eval_robocasa_18task_queue.py": "5e49adbad9969caeda844d01f3c66d2d10f1a529271c6d17e78bb38d55d82c53",
+    "tools/v3/eval_robocasa_queue_identity_test.py": "341423d1d90f39a1aeaa133be4ddc2c38b54ecf9627edf64cf817a16e8e9f631"
+  },
+  "junit": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "71",
+      "time": "30.775",
+      "timestamp": "2026-10-21T02:43:32.551125+00:00",
+      "hostname": "d4ae95e8e7b1"
+    }
+  ]
+}
