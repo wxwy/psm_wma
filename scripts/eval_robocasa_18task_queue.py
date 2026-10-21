@@ -374,6 +374,7 @@ def main() -> int:
             str(args.guidance),
             "--fps",
             "20",
+            "--no-guardrails",
             "--http-400-on-error",
         ]
         with server_log_path.open("ab", buffering=0) as server_log:
