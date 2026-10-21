@@ -1,0 +1,55 @@
+# PSM-WMA V3 — DS_PRO Config-truth Independent CPU Evidence Intake（新证据 Gate）
+
+日期：2026-10-21
+Gate：V3 Config-truth mainline exact pair — **DS_PRO independent target-host CPU Evidence intake**；与原生产代码增量审核分开。
+Formal Implementation Root：`306d235046fe5d578503beb17a56f5c0eb0f5634`
+Child/Gitlink：`35b0ea1ccee9ee26653ed6589c484f0997d1c586`
+HIGH-07 Queue Blob：`4916918aca412a0abc6cb00e28f6053a351e07d8`
+截至本次 intake，最新已核对的 V3 docs HEAD：`d41e2723535e860aa21443ea288ec8c99850d545`（仅文档 SHA）。
+当前同 Pair 的**生产源代码/static source Gate** 正式 `APPROVE` 保持有效：`docs/collab/chatgpt/reviews/2026-10-21_V3_Config_truth_mainline_306d2350_35b0ea1c_incremental_review.md`。**Formal pair 未变，禁止重做代码增量审核**。本报告仅审新增 DS_PRO 执行证据和可证明的测试边界。
+
+## 1. Evidence Intake Verdict
+
+**`REQUEST_CHANGES` — EVIDENCE-ONLY（归档可复核性待补），不是新的 production bug。**
+
+- 根据 DS_PRO 2026-10-21 19:03 CST 提交给 GPT 的现场报告：独立检查 **22 PASS**，Config-truth 3 文件 **107 passed / 1 skipped / 32 subtests passed**，HIGH-07 Queue 文件 **18 passed / 50 subtests passed**，Ruff check/format RC0；Root/Child/Gitlink/Queue Blob 与已正式批准 Pair 一致，Root/Child worktree clean。
+- 本次文本报告包含针对旧 Dataset chunk32→16、YAML/PKL 序列化、Child parser CLI 优先级、冲突 fail-closed、manifest及 strict `/info` 的具体行为 witness。**测试覆盖按报告为 PASS，暂无需要 Codex 修复的生产代码 Finding。**
+- 然而 DS_PRO 原始证据存在于目标机器 `/mnt/data1/data_v2_0617/dspro_verify_iter4000_306d2350_20261021/evidence/config_truth_cpu/`。ChatGPT 的远程 Desktop Commander 连接当前设备 Offline；GPT **未读到独立22-case脚本源文件、现场完整执行日志、实际命令/退出码/报告的所有子测试细节**。GitHub V3 未提供此次新 DS CPU Evidence 的可访问归档；对这些测试只可标记 `DS-attested`，不可冒称 GPT 原始 evidence independently inspected。
+- 符合项目 Evidence Gate 的 `contract→behavior→raw evidence` 原则：新报告已构成详细线索与 DS attestation，但正式独立执行 **Evidence closure 仍需可访问原始证据**。不需要重跑，先归档已经产生的文件即可。
+- **没有授权 GPU、训练、真实 Action Server、真实 Simulator、Checkpoint 修改或任何真实评测。** Owner 已明确取消本阶段 GPU 状态核验，不运行 `nvidia-smi`；`optim/` 也不是 model-only inference 阻断条件。
+
+## 2. 正面验证与唯一 skip 定位
+
+ChatGPT 独立从 GitHub 固定 Child `35b0ea1c...` 检查相关测试源码，确认 Config-truth、Exact-Window 新 job 正向/负向测试文件存在，HIGH-07 Queue Blob 与已审版本一致；本次不重做生产代码审查。
+
+**唯一 skip 的性质已由实际源代码定位**：
+`cosmos_framework/examples/psm_wma_robocasa_corrected_phase5_test.py:324-340`（子仓路径从 `examples/` 起）：
+`test_optional_real_strict_snapshot10_preflight` 具有 `@pytest.mark.skipif`，仅在配置环境变量
+`PSM_PHASE5_CACHE_ROOT`、`PSM_PHASE5_SOURCE_ROOT`、`EDGE_POLICY_CHECKPOINT`、`BASE_CHECKPOINT_PATH`、`WAN_VAE_PATH` 全部提供时运行；缺少相关真实资产路径时以“未提供真实 exact-window cache/source/Edge/base/VAE 路径”正常跳过。此项**不属于被授权 CPU 合成 Gate 的必需检查**，不是新增 HIGH/MEDIUM 问题，不要求为消除一条 skipped 而加载生产资产/GPU。
+
+按用户提供的 DS_PRO 行为报告（**非 GPT 读取原始运行结果**）：
+- **A**：旧 canonical dataset chunk=32 `overlay_config→synchronize_legacy_chunk_length` 后两个 alias均16；producer provenance 与 H16/17frame/state15/raw15/fps20/T分离匹配；
+- **B**：保存 YAML/PKL 一致，新的 Child 解析16；旧 G1 的保存 Config32仍需 Queue `--action-chunk-size 16`；无 CLI 时旧值32、缺省 fallback32；
+- **C**：错误候选8/24、alias不同、canonical path外字段、contract错误、fps错误与 snapshot drift均拒绝；
+- **D**：Root manifest `server_action_chunk_size/H_pred/R=16`，Queue实际 CLI16；`/info`=32及缺值 fail-closed；
+- 目标现场未运行 GPU/真实模型/仿真，未写冻结 G1 资产，符合执行边界。
+
+## 3. 唯一 Evidence-only 缺口 — EVIDENCE-01
+
+- **Severity**：MEDIUM（Evidence provenance-only；**不是 production 代码缺陷**）。
+- **Artifact locus（无需生产代码 file:line）**：目标机 `/mnt/data1/data_v2_0617/dspro_verify_iter4000_306d2350_20261021/evidence/config_truth_cpu/`，尤其报告所述 `dspro_independent_config_truth_check.py` 和各测试原始输出；当前 GitHub V3 中尚无此次新 DS 文件。
+- **根因**：原始独立执行程序、日志、精确命令/环境/RC 与测试/子测试计数，尚未以 GPT 可访问的 Evidence 形式发布；当前只是 DS_PRO 用户转述的报告。
+- **违反/未达成的 frozen Evidence contract**：formal independent CPU Evidence closure 要求同 exact Pair、可检查 `contract→behavior→raw logs` 的自证材料，不能把单纯聊天测试数字当成原始机证据。
+- **验收修复条件**（仅旧文件归档，**无需新运行**）：
+  1. 将原 `dspro_independent_config_truth_check.py`、22项实际命令/输出和退出码、Config-truth `107/1skip/32subtests` 的原始日志或 JUnit、Queue `18/50subtests` 原始日志或 JUnit、Ruff 两个日志/RC，以及版本和 clean/Root/Child/Gitlink/Queue Blob provenance 整理为一个可由 GPT 读取的提交/文件附件；
+  2. 如可能添加小型 `gate.json` 显示文件 SHA256、执行命令/CWD/Python/Ruff、env主要非敏感变量、实际 positive/negative witnesses；不可伪称事后重新执行，重现信息要从已生成记录中取；
+  3. 明确一项 skipped 的 nodeID：`test_optional_real_strict_snapshot10_preflight`（无需因本 CPU Gate 额外提供所有真实资产）；隐去密码/token/私密路径中的凭据，不修改测试原始结果；
+  4. 核对归档的代码哈希与 `306d2350 /35b0ea1c /4916918a` 一致。之后 GPT **只做 Evidence closure**，不重新代码审查、不要求 CPU 整套重跑。
+
+## 4. 后续 Gate 边界
+
+- 生产代码技术 verdict `APPROVE` 不受本次 Evidence-only pending 影响；新提交或日志归档文档只改变 docs HEAD，不改变 formal pair。
+- DS 若补齐可访问 raw evidence，本 Gate 可按该 same formal pair 完成 Evidence closure，无需 Codex生产代码修改；**不批准**将已保存旧 G1 `config.yaml` 的32原位改写为16，旧 G1 推理仍必须从已审 Queue显式传CLI16。
+- Owner 自行决定何时停止训练和释放 GPU。后续真实模型加载 +`/info` canary 与 4Task×5Episode 分属独立执行许可；不能把合成 CPU 结果或本报告当真实 SR。
+
+**本 `REQUEST_CHANGES` 是为了可访问原始 DS evidence 的最小补齐，非新模型/代码 blocker，不要求重新改代码或重复测试。**
