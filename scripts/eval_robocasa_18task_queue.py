@@ -84,7 +84,8 @@ def validate_server_info(info: Any, *, checkpoint: Path, config_file: Path, num_
     """Validate the effective server configuration, not just HTTP readiness."""
     if not isinstance(info, dict):
         raise ValueError("action server /info must be an object")
-    for name, expected in (("checkpoint", checkpoint), ("config_file", config_file)):
+    # CLI/manifest retain the requested root; the Child reports its selected model DCP.
+    for name, expected in (("checkpoint", (checkpoint / "model").resolve()), ("config_file", config_file)):
         value = info.get(name)
         if not isinstance(value, str) or not Path(value).is_absolute() or Path(value).resolve() != expected:
             raise ValueError(f"action server {name} mismatch: expected {expected}, got {value!r}")

@@ -402,3 +402,8 @@
 - IN_PROGRESS; Codex; Owner/GPT REQUEST_CHANGES on ca936c8e/2d128ed5; current a5d743d1 canonical Inbox read.
 - Scope: root Worker initialization exception boundary + two CPU integration faults (mkdir/log-open while healthy Worker completes20 trials). Preserve existing HIGH-02 and withdrawn HIGH-01 locking, Child/DCP/training/ABI. New Root and CPU evidence then stop for incremental review, no GPU/simulator.
 - V3-ITER4000-MEDIUM05: REVIEW after new source Pair publication; baseline2 regression negatives reproduced, final30 passed+41subtests/Ruff/static PASS. Original HIGH-02/Worker body preserved, independent new-Pair verdict pending. No real GPU/simulator authorized.
+
+## V3-ITER4000-HIGH06 — 2026-10-21
+- IN_PROGRESS; Codex; Owner/GPT new integration finding on6405c9da/2d128ed5, current74d22d9c Inbox and optim erratum read.
+- Scope only root queue canonical model-DCP path validation and focused CPU contract/integration tests. Preserve requested root identity, config/hash, all other HIGH-02/MEDIUM-05/lock logic and Child. No optim/DCP/Local/training work or GPU/Simulator. New Root+CPU Evidence then STOP for incremental review.
+- V3-ITER4000-HIGH06: REVIEW after source publication; one expected-path expression fixed, final32+47subtests and static PASS. Original strict checks/Worker/locks/Child unchanged. New Pair independent review/DS CPU required; no GPU or model-only optim prerequisite.

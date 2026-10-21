@@ -6,10 +6,12 @@ Run directly with Python, or pytest --noconftest and an external empty config.
 
 from __future__ import annotations
 
+import ast
 import copy
 import importlib.util
 import json
 import os
+import re
 import signal
 import socket
 import subprocess
@@ -19,6 +21,7 @@ import threading
 import time
 import unittest
 from contextlib import ExitStack
+from enum import Enum
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from types import SimpleNamespace
@@ -32,10 +35,44 @@ spec.loader.exec_module(queue_module)
 TASKS = {"CloseFridge", "TurnOnSinkFaucet", "PickPlaceSinkToCounter", "NavigateKitchen"}
 
 
+def _child_checkpoint_builder():
+    """Run pinned Child method/type-detector bodies without importing GPU/Pydantic.
+
+    Only enum base and unused registry/config annotation dependencies are isolated;
+    the local-path normalization and DCP-file detection execute unchanged source.
+    """
+    source = ROOT / "cosmos-framework/cosmos_framework/inference/common/args.py"
+    tree = ast.parse(source.read_text())
+    classes = {node.name: node for node in tree.body if isinstance(node, ast.ClassDef)}
+    method = next(
+        node
+        for node in classes["CheckpointOverrides"].body
+        if isinstance(node, ast.FunctionDef) and node.name == "_build_checkpoint"
+    )
+
+    class StringEnum(str, Enum):
+        pass
+
+    namespace = {"Path": Path, "StrEnum": StringEnum, "Self": object, "CheckpointConfig": object, "re": re}
+    namespace["DEFAULT_CONFIG_FILE"] = "unused_registry_default.py"
+    module = ast.Module(body=[classes["ConfigFileType"], classes["CheckpointType"], method], type_ignores=[])
+    exec(compile(module, str(source), "exec"), namespace)
+    return namespace["_build_checkpoint"]
+
+
+CHILD_CHECKPOINT_BUILDER = _child_checkpoint_builder()
+
+
+def _child_model_path(checkpoint: Path, config: Path) -> str:
+    setup = SimpleNamespace(checkpoint_path=str(checkpoint), config_file=str(config), experiment_overrides=[])
+    CHILD_CHECKPOINT_BUILDER(setup, checkpoints={})
+    return setup.checkpoint_path
+
+
 def _info(checkpoint: Path, config: Path) -> dict:
     # Effective fields exposed by the unchanged Child get_info()/Local adapter.
     return {
-        "checkpoint": str(checkpoint),
+        "checkpoint": str(checkpoint / "model"),
         "config_file": str(config),
         "raw_action_dim": 15,
         "max_action_dim": 64,
@@ -176,8 +213,13 @@ def _scenario(case, parent, count):
             raise OSError("injected second worker launch failure after all tasks")
         port = int(command[command.index("--port") + 1])
         info = _info(checkpoint, config)
+        info["checkpoint"] = _child_model_path(checkpoint, config)
         if case == "wrong_checkpoint":
-            info["checkpoint"] = str(checkpoint.with_name("iter_000003900"))
+            info["checkpoint"] = str(checkpoint.with_name("iter_000003900") / "model")
+        if case == "wrong_job_same_iteration":
+            info["checkpoint"] = str(parent / "other_job/checkpoints/iter_000004000/model")
+        if case == "parent_checkpoint":
+            info["checkpoint"] = str(checkpoint)
         if case == "wrong_config":
             info["config_file"] = str(parent / "another.yaml")
         if case == "wrong_mode":
@@ -296,12 +338,36 @@ def _scenario(case, parent, count):
 
 
 class ServerIdentityTests(unittest.TestCase):
+    def test_real_child_checkpoint_builder_model_path_passes_exact_identity(self):
+        with tempfile.TemporaryDirectory() as directory:
+            checkpoint = Path(directory) / "iter_000004000"
+            model = checkpoint / "model"
+            model.mkdir(parents=True)
+            (model / ".metadata").write_bytes(b"synthetic")
+            (model / "__0_0.distcp").write_bytes(b"synthetic")
+            config = Path(directory) / "config.yaml"
+            self.assertEqual(_child_model_path(checkpoint, config), str(model))
+            self.assertEqual(_child_model_path(model, config), str(model))
+            info = _info(checkpoint, config)
+            info["checkpoint"] = _child_model_path(checkpoint, config)
+            queue_module.validate_server_info(
+                info, checkpoint=checkpoint, config_file=config, num_steps=30, guidance=1.0
+            )
+
     def test_effective_info_exact_fields_and_malformed_values_fail_closed(self):
         checkpoint, config = Path("/synthetic/iter_000004000"), Path("/synthetic/config.yaml")
         good = _info(checkpoint, config)
         queue_module.validate_server_info(good, checkpoint=checkpoint, config_file=config, num_steps=30, guidance=1.0)
         changes = {
-            "checkpoint": [None, "/synthetic/iter_000003900", "iter_000004000"],
+            "checkpoint": [
+                None,
+                "/synthetic/iter_000003900/model",
+                "iter_000004000/model",
+                str(checkpoint),
+                "/other_job/iter_000004000/model",
+                str(checkpoint / "model_other"),
+                str(checkpoint / "model/another_model"),
+            ],
             "config_file": [None, "/other/config.yaml"],
             "raw_action_dim": [None, 12, "15", True],
             "max_action_dim": [None, 32],
@@ -412,6 +478,15 @@ class QueueIntegrationTests(unittest.TestCase):
 
     def test_wrong_checkpoint_config_and_mode_stop_before_simulator(self):
         for case in ("wrong_checkpoint", "wrong_config", "wrong_mode"):
+            with self.subTest(case=case):
+                report = self.scenario(case)
+                self.assertEqual(report["rc"], 1)
+                self.assertEqual(report["sim_calls"], 0)
+                self.assertTrue(report["summary"]["worker_errors"])
+                self.assertIsNone(report["summary"]["sr"])
+
+    def test_same_iteration_other_job_and_unnormalized_parent_are_rejected(self):
+        for case in ("wrong_job_same_iteration", "parent_checkpoint"):
             with self.subTest(case=case):
                 report = self.scenario(case)
                 self.assertEqual(report["rc"], 1)
