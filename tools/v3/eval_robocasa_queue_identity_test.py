@@ -148,6 +148,23 @@ def _scenario(case, parent, count):
     calls, servers, foreign = [], [], []
     sim_calls = []
     all_tasks_done = threading.Event()
+    init_faults, unhandled_thread_errors = [], []
+    original_mkdir, original_open = Path.mkdir, Path.open
+
+    def fail_initialization(operation):
+        init_faults.append(operation)
+        assert all_tasks_done.wait(8), "healthy worker did not complete before initialization fault"
+        raise OSError(f"injected worker1 {operation} failure after all tasks")
+
+    def mkdir(path, *args, **kwargs):
+        if case == "mkdir_failure" and path.name == "_worker01_gpu1":
+            fail_initialization("mkdir")
+        return original_mkdir(path, *args, **kwargs)
+
+    def open_file(path, *args, **kwargs):
+        if case == "log_open_failure" and path.name == "action_server.log" and path.parent.name == "_worker01_gpu1":
+            fail_initialization("log_open")
+        return original_open(path, *args, **kwargs)
 
     def popen(command, **kwargs):
         calls.append(command)
@@ -244,7 +261,14 @@ def _scenario(case, parent, count):
             occupied.bind(("0.0.0.0", base + count - 1))
             occupied.listen()
         try:
-            with patch.object(sys, "argv", argv):
+            with (
+                patch.object(sys, "argv", argv),
+                patch.object(Path, "mkdir", mkdir),
+                patch.object(Path, "open", open_file),
+                patch.object(
+                    threading, "excepthook", lambda event: unhandled_thread_errors.append(str(event.exc_value))
+                ),
+            ):
                 rc = queue_module.main()
         except (RuntimeError, ValueError, SystemExit) as exc:
             rc, error = 1, f"{type(exc).__name__}: {exc}"
@@ -263,6 +287,8 @@ def _scenario(case, parent, count):
         "foreign_alive_before_fixture_cleanup": foreign_alive,
         "thread_names": [thread.name for thread in threading.enumerate() if thread.name.startswith("robocasa-gpu-")],
         "output_exists": output.exists(),
+        "init_faults": init_faults,
+        "unhandled_thread_errors": unhandled_thread_errors,
     }
     if (output / "screening_summary.json").exists():
         report["summary"] = json.loads((output / "screening_summary.json").read_text())
@@ -413,6 +439,25 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["summary"]["status"], "INCOMPLETE")
         self.assertIsNone(report["summary"]["sr"])
         self.assertIn("injected second worker", str(report["summary"]["worker_errors"]))
+
+    def check_initialization_failure(self, case, operation):
+        report = self.scenario(case)
+        self.assertEqual(report["init_faults"], [operation])
+        self.assertEqual(report["rc"], 1)
+        self.assertEqual(report["summary"]["total_trials"], 20)
+        self.assertEqual(set(report["summary"]["tasks"]), TASKS)
+        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+        self.assertIsNone(report["summary"]["sr"])
+        self.assertIn(f"worker1 {operation} failure", report["summary"]["worker_errors"]["_worker_1"]["error"])
+        self.assertEqual(report["server_commands"], 1)
+        self.assertEqual(report["sim_calls"], 4)
+        self.assertEqual(report["unhandled_thread_errors"], [])
+
+    def test_worker_mkdir_failure_after_healthy_worker_completes_all_tasks_is_preserved(self):
+        self.check_initialization_failure("mkdir_failure", "mkdir")
+
+    def test_worker_log_open_failure_after_healthy_worker_completes_all_tasks_is_preserved(self):
+        self.check_initialization_failure("log_open_failure", "log_open")
 
     def test_server_exit_after_completed_tasks_is_not_screening_success(self):
         report = self.scenario("server_dies_after_tasks", 1)

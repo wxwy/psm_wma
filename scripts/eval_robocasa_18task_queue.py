@@ -338,7 +338,7 @@ def main() -> int:
 
     publish()
 
-    def worker(worker_id: int, gpu: str) -> None:
+    def run_worker(worker_id: int, gpu: str) -> None:
         port = args.base_port + worker_id
         worker_dir = output_root / f"_worker{worker_id:02d}_gpu{gpu}"
         worker_dir.mkdir(parents=True, exist_ok=True)
@@ -514,6 +514,22 @@ def main() -> int:
                     except subprocess.TimeoutExpired:
                         server.kill()
                         server.wait()
+
+    def worker(worker_id: int, gpu: str) -> None:
+        # The service loop has its own failure/cleanup path. This entry boundary
+        # also covers directory/log initialization and resource-context exits.
+        try:
+            run_worker(worker_id, gpu)
+        except BaseException as exc:  # noqa: BLE001
+            stop.set()
+            with result_lock:
+                results[f"_worker_{worker_id}"] = {
+                    "worker": worker_id,
+                    "gpu": gpu,
+                    "error": f"{type(exc).__name__}: {exc}",
+                    "server_log": str(output_root / f"_worker{worker_id:02d}_gpu{gpu}" / "action_server.log"),
+                }
+            publish()
 
     threads = [
         threading.Thread(target=worker, args=(index, gpu), name=f"robocasa-gpu-{gpu}", daemon=False)

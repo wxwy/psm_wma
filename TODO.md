@@ -397,3 +397,8 @@
 - IN_PROGRESS; Codex; prerequisite Owner instruction and GPT c62fad0e erratum on implementation1e00a3d9/Child2d128ed5.
 - Scope only root queue + targeted CPU tests, documentation/evidence. HIGH-01 RETRACTED: keep locking unchanged. HIGH-02: reject occupied ports, bind Ready info to checkpoint/config/protocol and this live process. CPU synthetic normal/error/foreign-server/port tests; exact four-task read-only runbook and whole-task-only Resume. New Root SHA, unchanged Child, STOP for independent review; no GPU/simulator/DCP/training.
 - V3-ITER4000-SERVER-IDENTITY: REVIEW after new Root publication; author CPU28 methods+41subtests PASS, Child unchanged. Only HIGH-02 addressed; HIGH-01 locking preserved as retracted. Independent exact-Pair review/DS CPU and Owner idle-GPU release still required; no simulator launch.
+
+## V3-ITER4000-MEDIUM05 — 2026-10-21
+- IN_PROGRESS; Codex; Owner/GPT REQUEST_CHANGES on ca936c8e/2d128ed5; current a5d743d1 canonical Inbox read.
+- Scope: root Worker initialization exception boundary + two CPU integration faults (mkdir/log-open while healthy Worker completes20 trials). Preserve existing HIGH-02 and withdrawn HIGH-01 locking, Child/DCP/training/ABI. New Root and CPU evidence then stop for incremental review, no GPU/simulator.
+- V3-ITER4000-MEDIUM05: REVIEW after new source Pair publication; baseline2 regression negatives reproduced, final30 passed+41subtests/Ruff/static PASS. Original HIGH-02/Worker body preserved, independent new-Pair verdict pending. No real GPU/simulator authorized.
