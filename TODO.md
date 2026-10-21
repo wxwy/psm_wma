@@ -416,3 +416,5 @@
 - TODO; Codex; prerequisite HIGH07 implementation/CPU/publication first, then isolated candidate only.
 - Acceptance future effective config saved16 and truthful Exact-Window producer provenance, conflict/serialization/cache/identity CPU checks; no historical G1 changes or V3 merge. Separate Child/Root SHA + diff/Evidence, STOP for GPT/Owner review.
 - V3-ITER4000-HIGH07: REVIEW; author CPU33+50subtests/static PASS, new exact Root publication/Evidence handoff next. No independent verdict or execution release claimed.
+- V3-FUTURE-PHASE5-CONFIG-TRUTH: IN_PROGRESS on isolated Root/Child v3-phase5-config-truth-20261021 after HIGH07 author delivery. Future-job compatibility snapshot and versioned launch provenance only; no mainline merge or old-job migration. Separate implementation/Evidence/STOP.
+- V3-FUTURE-PHASE5-CONFIG-TRUTH: REVIEW; author lock-aligned CPU47+32subtests/static PASS. Child/Root isolated candidate publication and pair-bound diff/Evidence handoff; no mainline merge or independent verdict. New-job strict same-source lifecycle tested, old G1 unmodified/unsupported cross-pair migration remains rejected.
