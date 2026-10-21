@@ -47,3 +47,11 @@ Child/Gitlink：`2d128ed5a07601cdd424974f99b67832eafeeb41`（unchanged）
 **Owner**：当前不放行真实 GPU/Server/Simulator/20 episodes。未来 GPU 空闲、HIGH-06 新Pair closed、目标机 /info/proc及模型权重首次加载合格后再单独授权。
 
 当前只有 Integration Gate `REQUEST_CHANGES`，上一 CPU-static Gate `APPROVE` 不重复或改写。
+
+## 2026-10-21 ERRATUM — optim/ 不属于推理放行依赖
+
+Owner 明确指出：**RoboCasa 仅推理模型不需要 `optim/`**。此勘误优先于上文任何将 `optim/` 缺失作为 iter4000 仿真执行前必修复条件或前置 Gate 的表述。
+
+- 源码中当前模型推理从 `iter_000004000/model/` 读取 DCP 权重，不读取 optimizer 或 `optim/`。因此在必要的模型 DCP 文件和实际模型加载成功条件下，**不需要恢复、生成、检查通过完整 `optim/` 才能执行评测**。不得要求 Codex 为推理修改 optimizer，也不得据此拖延已准备好的 GPU canary/评测。
+- `complete.v1.json` 声明 `optim` 与磁盘不一致，只影响 **SafeLocal full-checkpoint 完整性/Strict Same-job Resume** 等独立训练存储合同。可作为 G1 checkpoint-integrity 事项按需另行只读调查，不计入 RoboCasa model-only inference gate，也不阻止批准将来独立的 GPU execution release。
+- 真实 Integration Gate `REQUEST_CHANGES` 仍由 **HIGH-06 Child /info checkpoint 路径归一化身份错配** 驱动；另外需要资源释放、正确 Model DCP、真实 /info/协议、任务及输出身份等条件。此勘误不改变正式 implementation pair，不重做静态代码审核，也不授权当前 GPU/仿真。
