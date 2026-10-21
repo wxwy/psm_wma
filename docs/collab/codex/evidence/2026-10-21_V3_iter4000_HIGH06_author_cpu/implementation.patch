@@ -1,0 +1,103 @@
+diff --git a/scripts/eval_robocasa_18task_queue.py b/scripts/eval_robocasa_18task_queue.py
+index e56eaafe..cb829cec 100644
+--- a/scripts/eval_robocasa_18task_queue.py
++++ b/scripts/eval_robocasa_18task_queue.py
+@@ -87 +87,2 @@ def validate_server_info(info: Any, *, checkpoint: Path, config_file: Path, num_
+-    for name, expected in (("checkpoint", checkpoint), ("config_file", config_file)):
++    # CLI/manifest retain the requested root; the Child reports its selected model DCP.
++    for name, expected in (("checkpoint", (checkpoint / "model").resolve()), ("config_file", config_file)):
+diff --git a/tools/v3/eval_robocasa_queue_identity_test.py b/tools/v3/eval_robocasa_queue_identity_test.py
+index f0bbafa4..6ecc05ec 100644
+--- a/tools/v3/eval_robocasa_queue_identity_test.py
++++ b/tools/v3/eval_robocasa_queue_identity_test.py
+@@ -8,0 +9 @@ from __future__ import annotations
++import ast
+@@ -12,0 +14 @@ import os
++import re
+@@ -21,0 +24 @@ from contextlib import ExitStack
++from enum import Enum
+@@ -34,0 +38,34 @@ TASKS = {"CloseFridge", "TurnOnSinkFaucet", "PickPlaceSinkToCounter", "NavigateK
++def _child_checkpoint_builder():
++    """Run pinned Child method/type-detector bodies without importing GPU/Pydantic.
++
++    Only enum base and unused registry/config annotation dependencies are isolated;
++    the local-path normalization and DCP-file detection execute unchanged source.
++    """
++    source = ROOT / "cosmos-framework/cosmos_framework/inference/common/args.py"
++    tree = ast.parse(source.read_text())
++    classes = {node.name: node for node in tree.body if isinstance(node, ast.ClassDef)}
++    method = next(
++        node
++        for node in classes["CheckpointOverrides"].body
++        if isinstance(node, ast.FunctionDef) and node.name == "_build_checkpoint"
++    )
++
++    class StringEnum(str, Enum):
++        pass
++
++    namespace = {"Path": Path, "StrEnum": StringEnum, "Self": object, "CheckpointConfig": object, "re": re}
++    namespace["DEFAULT_CONFIG_FILE"] = "unused_registry_default.py"
++    module = ast.Module(body=[classes["ConfigFileType"], classes["CheckpointType"], method], type_ignores=[])
++    exec(compile(module, str(source), "exec"), namespace)
++    return namespace["_build_checkpoint"]
++
++
++CHILD_CHECKPOINT_BUILDER = _child_checkpoint_builder()
++
++
++def _child_model_path(checkpoint: Path, config: Path) -> str:
++    setup = SimpleNamespace(checkpoint_path=str(checkpoint), config_file=str(config), experiment_overrides=[])
++    CHILD_CHECKPOINT_BUILDER(setup, checkpoints={})
++    return setup.checkpoint_path
++
++
+@@ -38 +75 @@ def _info(checkpoint: Path, config: Path) -> dict:
+-        "checkpoint": str(checkpoint),
++        "checkpoint": str(checkpoint / "model"),
+@@ -178,0 +216 @@ def _scenario(case, parent, count):
++        info["checkpoint"] = _child_model_path(checkpoint, config)
+@@ -180 +218,5 @@ def _scenario(case, parent, count):
+-            info["checkpoint"] = str(checkpoint.with_name("iter_000003900"))
++            info["checkpoint"] = str(checkpoint.with_name("iter_000003900") / "model")
++        if case == "wrong_job_same_iteration":
++            info["checkpoint"] = str(parent / "other_job/checkpoints/iter_000004000/model")
++        if case == "parent_checkpoint":
++            info["checkpoint"] = str(checkpoint)
+@@ -298,0 +341,16 @@ class ServerIdentityTests(unittest.TestCase):
++    def test_real_child_checkpoint_builder_model_path_passes_exact_identity(self):
++        with tempfile.TemporaryDirectory() as directory:
++            checkpoint = Path(directory) / "iter_000004000"
++            model = checkpoint / "model"
++            model.mkdir(parents=True)
++            (model / ".metadata").write_bytes(b"synthetic")
++            (model / "__0_0.distcp").write_bytes(b"synthetic")
++            config = Path(directory) / "config.yaml"
++            self.assertEqual(_child_model_path(checkpoint, config), str(model))
++            self.assertEqual(_child_model_path(model, config), str(model))
++            info = _info(checkpoint, config)
++            info["checkpoint"] = _child_model_path(checkpoint, config)
++            queue_module.validate_server_info(
++                info, checkpoint=checkpoint, config_file=config, num_steps=30, guidance=1.0
++            )
++
+@@ -304 +362,9 @@ class ServerIdentityTests(unittest.TestCase):
+-            "checkpoint": [None, "/synthetic/iter_000003900", "iter_000004000"],
++            "checkpoint": [
++                None,
++                "/synthetic/iter_000003900/model",
++                "iter_000004000/model",
++                str(checkpoint),
++                "/other_job/iter_000004000/model",
++                str(checkpoint / "model_other"),
++                str(checkpoint / "model/another_model"),
++            ],
+@@ -421,0 +488,9 @@ class QueueIntegrationTests(unittest.TestCase):
++    def test_same_iteration_other_job_and_unnormalized_parent_are_rejected(self):
++        for case in ("wrong_job_same_iteration", "parent_checkpoint"):
++            with self.subTest(case=case):
++                report = self.scenario(case)
++                self.assertEqual(report["rc"], 1)
++                self.assertEqual(report["sim_calls"], 0)
++                self.assertTrue(report["summary"]["worker_errors"])
++                self.assertIsNone(report["summary"]["sr"])
++

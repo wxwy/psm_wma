@@ -1,0 +1,47 @@
+test_real_child_checkpoint_builder_model_path_passes_exact_identity (__main__.ServerIdentityTests.test_real_child_checkpoint_builder_model_path_passes_exact_identity) ... ERROR
+test_four_tasks_five_episodes_complete_on_one_two_or_four_workers (__main__.QueueIntegrationTests.test_four_tasks_five_episodes_complete_on_one_two_or_four_workers) ... 
+  test_four_tasks_five_episodes_complete_on_one_two_or_four_workers (__main__.QueueIntegrationTests.test_four_tasks_five_episodes_complete_on_one_two_or_four_workers) (workers=1) ... FAIL
+  test_four_tasks_five_episodes_complete_on_one_two_or_four_workers (__main__.QueueIntegrationTests.test_four_tasks_five_episodes_complete_on_one_two_or_four_workers) (workers=2) ... FAIL
+  test_four_tasks_five_episodes_complete_on_one_two_or_four_workers (__main__.QueueIntegrationTests.test_four_tasks_five_episodes_complete_on_one_two_or_four_workers) (workers=4) ... FAIL
+
+======================================================================
+ERROR: test_real_child_checkpoint_builder_model_path_passes_exact_identity (__main__.ServerIdentityTests.test_real_child_checkpoint_builder_model_path_passes_exact_identity)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/tools/v3/eval_robocasa_queue_identity_test.py", line 353, in test_real_child_checkpoint_builder_model_path_passes_exact_identity
+    queue_module.validate_server_info(info, checkpoint=checkpoint, config_file=config, num_steps=30, guidance=1.0)
+  File "/workspace/psm_wma/scripts/eval_robocasa_18task_queue.py", line 90, in validate_server_info
+    raise ValueError(f"action server {name} mismatch: expected {expected}, got {value!r}")
+ValueError: action server checkpoint mismatch: expected /tmp/tmpequopucs/iter_000004000, got '/tmp/tmpequopucs/iter_000004000/model'
+
+======================================================================
+FAIL: test_four_tasks_five_episodes_complete_on_one_two_or_four_workers (__main__.QueueIntegrationTests.test_four_tasks_five_episodes_complete_on_one_two_or_four_workers) (workers=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/tools/v3/eval_robocasa_queue_identity_test.py", line 456, in test_four_tasks_five_episodes_complete_on_one_two_or_four_workers
+    self.assertEqual(report["rc"], 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_four_tasks_five_episodes_complete_on_one_two_or_four_workers (__main__.QueueIntegrationTests.test_four_tasks_five_episodes_complete_on_one_two_or_four_workers) (workers=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/tools/v3/eval_robocasa_queue_identity_test.py", line 456, in test_four_tasks_five_episodes_complete_on_one_two_or_four_workers
+    self.assertEqual(report["rc"], 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_four_tasks_five_episodes_complete_on_one_two_or_four_workers (__main__.QueueIntegrationTests.test_four_tasks_five_episodes_complete_on_one_two_or_four_workers) (workers=4)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/psm_wma/tools/v3/eval_robocasa_queue_identity_test.py", line 456, in test_four_tasks_five_episodes_complete_on_one_two_or_four_workers
+    self.assertEqual(report["rc"], 0)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 2 tests in 6.772s
+
+FAILED (failures=3, errors=1)
+QUEUE_WITNESS {"case": "normal", "error": null, "foreign_alive_before_fixture_cleanup": true, "init_faults": [], "output_exists": true, "rc": 1, "server_commands": 1, "server_exits": [-15], "sim_calls": 0, "summary": {"action_horizon": 16, "checkpoint": "/tmp/tmp5_1kicw8/job/checkpoints/iter_000004000", "completed_tasks": 0, "config_file": "/tmp/tmp5_1kicw8/job/config.yaml", "evaluation_run_digest": "9af0be227ea03f7a7dbba05ed12753c50c5ad19999d8bcc0a00e6d4546af715f", "expected_tasks": 4, "missing_tasks": ["CloseFridge", "NavigateKitchen", "PickPlaceSinkToCounter", "TurnOnSinkFaucet"], "partial_sr": null, "planned_trials": 20, "seed": 0, "sr": null, "status": "INCOMPLETE", "task_failures": 0, "tasks": {}, "total_successes": 0, "total_trials": 0, "worker_errors": {"_worker_0": {"error": "ValueError: action server checkpoint mismatch: expected /tmp/tmp5_1kicw8/job/checkpoints/iter_000004000, got '/tmp/tmp5_1kicw8/job/checkpoints/iter_000004000/model'", "gpu": "0", "server_log": "/tmp/tmp5_1kicw8/evaluation/_worker00_gpu0/action_server.log", "worker": 0}}}, "thread_names": [], "unhandled_thread_errors": []}
+QUEUE_WITNESS {"case": "normal", "error": null, "foreign_alive_before_fixture_cleanup": true, "init_faults": [], "output_exists": true, "rc": 1, "server_commands": 2, "server_exits": [-15, -15], "sim_calls": 0, "summary": {"action_horizon": 16, "checkpoint": "/tmp/tmpps3dqw0p/job/checkpoints/iter_000004000", "completed_tasks": 0, "config_file": "/tmp/tmpps3dqw0p/job/config.yaml", "evaluation_run_digest": "3c8aadcff2e7df8249b0c4302a42f7dada4300effe45a62e491884148408efaa", "expected_tasks": 4, "missing_tasks": ["CloseFridge", "NavigateKitchen", "PickPlaceSinkToCounter", "TurnOnSinkFaucet"], "partial_sr": null, "planned_trials": 20, "seed": 0, "sr": null, "status": "INCOMPLETE", "task_failures": 0, "tasks": {}, "total_successes": 0, "total_trials": 0, "worker_errors": {"_worker_0": {"error": "ValueError: action server checkpoint mismatch: expected /tmp/tmpps3dqw0p/job/checkpoints/iter_000004000, got '/tmp/tmpps3dqw0p/job/checkpoints/iter_000004000/model'", "gpu": "0", "server_log": "/tmp/tmpps3dqw0p/evaluation/_worker00_gpu0/action_server.log", "worker": 0}, "_worker_1": {"error": "ValueError: action server checkpoint mismatch: expected /tmp/tmpps3dqw0p/job/checkpoints/iter_000004000, got '/tmp/tmpps3dqw0p/job/checkpoints/iter_000004000/model'", "gpu": "1", "server_log": "/tmp/tmpps3dqw0p/evaluation/_worker01_gpu1/action_server.log", "worker": 1}}}, "thread_names": [], "unhandled_thread_errors": []}
+QUEUE_WITNESS {"case": "normal", "error": null, "foreign_alive_before_fixture_cleanup": true, "init_faults": [], "output_exists": true, "rc": 1, "server_commands": 4, "server_exits": [-15, -15, -15, -15], "sim_calls": 0, "summary": {"action_horizon": 16, "checkpoint": "/tmp/tmp_k9969hv/job/checkpoints/iter_000004000", "completed_tasks": 0, "config_file": "/tmp/tmp_k9969hv/job/config.yaml", "evaluation_run_digest": "c38ad9c7f58ee20d207a9d524fb3d80af5057c42301c89b7d2585f627cb578c3", "expected_tasks": 4, "missing_tasks": ["CloseFridge", "NavigateKitchen", "PickPlaceSinkToCounter", "TurnOnSinkFaucet"], "partial_sr": null, "planned_trials": 20, "seed": 0, "sr": null, "status": "INCOMPLETE", "task_failures": 0, "tasks": {}, "total_successes": 0, "total_trials": 0, "worker_errors": {"_worker_0": {"error": "ValueError: action server checkpoint mismatch: expected /tmp/tmp_k9969hv/job/checkpoints/iter_000004000, got '/tmp/tmp_k9969hv/job/checkpoints/iter_000004000/model'", "gpu": "0", "server_log": "/tmp/tmp_k9969hv/evaluation/_worker00_gpu0/action_server.log", "worker": 0}, "_worker_1": {"error": "ValueError: action server checkpoint mismatch: expected /tmp/tmp_k9969hv/job/checkpoints/iter_000004000, got '/tmp/tmp_k9969hv/job/checkpoints/iter_000004000/model'", "gpu": "1", "server_log": "/tmp/tmp_k9969hv/evaluation/_worker01_gpu1/action_server.log", "worker": 1}, "_worker_2": {"error": "ValueError: action server checkpoint mismatch: expected /tmp/tmp_k9969hv/job/checkpoints/iter_000004000, got '/tmp/tmp_k9969hv/job/checkpoints/iter_000004000/model'", "gpu": "2", "server_log": "/tmp/tmp_k9969hv/evaluation/_worker02_gpu2/action_server.log", "worker": 2}, "_worker_3": {"error": "ValueError: action server checkpoint mismatch: expected /tmp/tmp_k9969hv/job/checkpoints/iter_000004000, got '/tmp/tmp_k9969hv/job/checkpoints/iter_000004000/model'", "gpu": "3", "server_log": "/tmp/tmp_k9969hv/evaluation/_worker03_gpu3/action_server.log", "worker": 3}}}, "thread_names": [], "unhandled_thread_errors": []}

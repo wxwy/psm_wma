@@ -1,0 +1,12 @@
+{
+  "base_root": "74d22d9c5a538da7684144d054e917c26146c503",
+  "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "entire_queue_AST_unchanged_except_one_checkpoint_expected_value": true,
+  "config_hash_protocol_listener_lock_worker_handlers_manifest_and_commands_unchanged": true,
+  "identity_module_bytes_unchanged": true,
+  "child_clean": true,
+  "child_builder_source": "cosmos-framework/cosmos_framework/inference/common/args.py",
+  "child_builder_source_sha256": "37db7ab19a1fe2cd72f791dfb9176e224d9a4dcc5bf5be4cdc8570511b6d8550",
+  "child_builder_AST_sha256": "ee3c83e7ace6a1575d9e981b3ba2e51b42a377e76eaff4e275b908470871d18b",
+  "cpu_fixture_contract": "executes original Child ConfigFileType/CheckpointType/_build_checkpoint bodies with real temp Path/DCP-file detection; external enum-base/annotation dependencies isolated; no model/framework import"
+}

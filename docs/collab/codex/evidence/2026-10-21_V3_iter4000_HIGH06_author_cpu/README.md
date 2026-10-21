@@ -1,0 +1,11 @@
+# HIGH-06 normalized checkpoint identity author CPU Evidence
+
+Implementation Root `950b2dbc6ad112205153a18dc0f733812db30706` / unchanged Child-Gitlink `2d128ed5a07601cdd424974f99b67832eafeeb41`; Queue blob `cb829cec0e43c09e8298e9d896a473b7b8285739`. Author CPU results only, independent new-Pair review pending.
+
+Baseline `baseline.log` runs the corrected Child-contract fixture against old e56eaafe production code: correct /model causes one contract-positive error and3 normal worker-count subtest failures (1/2/4 workers,zero simulator calls). These are intended red evidence. Final: **32 passed** (17 targeted methods+15 existing cases),47 subtests passed,55 unrelated deselected,0fail/error/skip,34.879s. JUnit79 includes bookkeeping; no cross-run count addition. Ruff0.12.7 check/format,syntax,diff allRC0.
+
+Fixture compiles and executes unchanged pinned Child ConfigFileType/CheckpointType/_build_checkpoint source bodies. Real temporary Path directory and model metadata/shard-file detection run; external enum base and unused annotation/registry dependencies are isolated. No heavy framework import, real DCP decode or model load. Model-only synthetic fixtures contain no optimizer directory. HTTP/PID/Git/synthetic simulator rows and video placeholders exercise actual queue main; these are not real rollouts or playable MP4 evidence.
+
+`regression_witnesses.json` preserves before/after: correct normalized model path succeeds for 1/2/4 workers with20 synthetic rows; wrong iteration/model, same iteration other Job and unnormalized parent reject before simulator calls. All previous protocol/port/ownership/config/Worker negatives remain covered. `scope_proof.json` shows entire queue AST unchanged after restoring only the expected checkpoint expression, and records Child builder source/AST hashes. Requested root,manifest,config/hash,protocol,locks/worker handlers and shared identity module are preserved.
+
+`gate.json` contains exact commands/cwd/env/RC/source hashes, raw output/XML in pytest.log/xml, exact diff in implementation.patch; manifest binds Pair/log hashes. DS still must independently verify target Config resolved chunk16, model-DCP metadata/files, real /proc/resources and later authorized actual model /info. Do not require optim/full-checkpoint validation for model-only inference; no GPU or training interruption authorized here.
