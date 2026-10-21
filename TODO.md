@@ -416,3 +416,4 @@
 - TODO; Codex; prerequisite HIGH07 implementation/CPU/publication first, then isolated candidate only.
 - Acceptance future effective config saved16 and truthful Exact-Window producer provenance, conflict/serialization/cache/identity CPU checks; no historical G1 changes or V3 merge. Separate Child/Root SHA + diff/Evidence, STOP for GPT/Owner review.
 - V3-ITER4000-HIGH07: REVIEW; author CPU33+50subtests/static PASS, new exact Root publication/Evidence handoff next. No independent verdict or execution release claimed.
+- V3-FUTURE-PHASE5-CONFIG-TRUTH: REVIEW; isolated Rootfa6471c0e9d12c54fa72a425d06abfc80ea491cc / Child35b0ea1ccee9ee26653ed6589c484f0997d1c586, Evidencefb670c2c30305abda318ae8e927b6d8cd7ad6298. CPU47+32subtests/static PASS, no mainline merge; GPT independent incremental review pending. HIGH07 remains separate320fda57/2d128ed5, author33+50PASS, no GPU release.
