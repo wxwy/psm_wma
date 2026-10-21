@@ -1,0 +1,16 @@
+
+==================================== ERRORS ====================================
+________________________ ERROR collecting test session _________________________
+ImportError while importing test module '/workspace/psm_wma/tools/v3/remaining_optimizations_test.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tools/v3/remaining_optimizations_test.py:18: in <module>
+    from cosmos_framework.data.generator.action.utils.cached_pixel_geometry import (
+E   ModuleNotFoundError: No module named 'cosmos_framework'
+=========================== short test summary info ============================
+ERROR ../../tmp/psm-v3-iter4000-identity-20261021
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 3.65s

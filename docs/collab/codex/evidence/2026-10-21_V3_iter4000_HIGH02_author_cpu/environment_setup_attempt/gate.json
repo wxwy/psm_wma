@@ -1,0 +1,82 @@
+{
+  "scope": "ITER4000_HIGH02_AUTHOR_CPU_ONLY",
+  "base_root": "c62fad0ef6c729570ee936522ea4269021164c56",
+  "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "gpu": false,
+  "real_simulator": false,
+  "production_assets": false,
+  "environment_overrides": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HOME": "/workspace/.cache/huggingface",
+    "MPLCONFIGDIR": "/workspace/.cache/matplotlib",
+    "PYTHONPYCACHEPREFIX": "/tmp/psm-v3-iter4000-identity-20261021/pycache",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "commands": [
+    {
+      "name": "ruff_check",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "scripts/eval_robocasa_18task_queue.py",
+        "tools/v3/eval_robocasa_queue_identity_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--check",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "scripts/eval_robocasa_18task_queue.py",
+        "tools/v3/eval_robocasa_queue_identity_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "returncode": 0
+    },
+    {
+      "name": "syntax",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "py_compile",
+        "scripts/eval_robocasa_18task_queue.py",
+        "tools/v3/eval_robocasa_queue_identity_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "returncode": 0
+    },
+    {
+      "name": "pytest",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "pytest",
+        "--noconftest",
+        "-c",
+        "/tmp/psm-v3-iter4000-identity-20261021/pytest.ini",
+        "-q",
+        "-s",
+        "-p",
+        "no:cacheprovider",
+        "tools/v3/eval_robocasa_queue_identity_test.py",
+        "tools/v3/remaining_optimizations_test.py",
+        "-k",
+        "queue or identity or screening or evaluation or resume",
+        "--junitxml=/tmp/psm-v3-iter4000-identity-20261021/final/pytest.xml"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "returncode": 2
+    }
+  ],
+  "author_checks_passed": false
+}

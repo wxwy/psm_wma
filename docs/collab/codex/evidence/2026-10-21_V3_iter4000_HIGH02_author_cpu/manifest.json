@@ -1,0 +1,50 @@
+{
+  "implementation_root": "ca936c8eecd593133b1e6c61ba5691331958c592",
+  "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "gitlink": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "base_root": "c62fad0ef6c729570ee936522ea4269021164c56",
+  "prior_implementation_root": "1e00a3d978442dbbb2865b08f41535bbd26a4ce7",
+  "queue_blob": "eec2702d5382358e131928db60ce75c93c0c55d5",
+  "verdict": "AUTHOR_CPU_PASS_ONLY",
+  "independent_review": "PENDING",
+  "new_test_methods": 13,
+  "existing_regression_cases": 15,
+  "passed": 28,
+  "subtests": 41,
+  "junit_cases": 69,
+  "deselected_unrelated": 55,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "duration_seconds": 24.006,
+  "integration_scenarios": 12,
+  "versions": {
+    "python": "3.12.14",
+    "pytest": "9.0.2",
+    "ruff": "0.12.7"
+  },
+  "gpu": false,
+  "real_simulator": false,
+  "production_assets": false,
+  "limits": [
+    "Local HTTP stdlib stand-ins; no real Action Server model loaded",
+    "Simulator process boundary produces synthetic rows/video placeholders, not genuine rollouts or playable MP4",
+    "Linux same-user /proc required; target server capability/real /info protocol not measured here",
+    "Existing model identity scope remains metadata hash/shard stats, not model body hashes",
+    "No real four-task dataset/checkpoint paths available on this host; DS read-only preparation required"
+  ],
+  "evidence_sha256": {
+    "diff_check.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "environment_setup_attempt/gate.json": "559d698de8f6334cf6c2c892e736cc62a839ca8e53237b02da0210b76a1fa2eb",
+    "environment_setup_attempt/pytest.log": "a5a91450b72bc16af442f3d0afa51be5230b18353186b44b492a6a1da2d178e2",
+    "gate.json": "af51082c42f15c3afa983482e9c0099d11dc7bf29cbf67a704d12aa220061575",
+    "implementation.patch": "79019a4cca0fb3e6ce257910e45d412f41e042d518854e23f7afa4e3eb2f67b4",
+    "pytest.log": "90c9d604875c10862e606cd244243e3e55a0419bc14ee550299f16ab28734811",
+    "pytest.xml": "e01f713efc0f8aca2b33733b764d17bc0cfc87117bbcd3742b142b2291cc097a",
+    "ruff_check.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+    "ruff_format.log": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938",
+    "scope_proof.json": "7e0f97f5860701f0e247be893400bfa15c6f975bc83506491df9317151701c88",
+    "syntax.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "witnesses.json": "24bd5747fe424aaf094402a24498884e88eeb131975302afd4531fc310186aae"
+  }
+}

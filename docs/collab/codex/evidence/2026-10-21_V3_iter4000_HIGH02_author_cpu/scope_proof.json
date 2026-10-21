@@ -1,0 +1,15 @@
+{
+  "base_root": "c62fad0ef6c729570ee936522ea4269021164c56",
+  "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "protected_functions_AST_unchanged": [
+    "discover_task_datasets",
+    "atomic_write_json",
+    "task_result"
+  ],
+  "threading_Lock_assignment_unchanged": true,
+  "publish_calls_outside_result_lock_before_and_after": true,
+  "server_and_simulator_command_AST_unchanged": true,
+  "v3_evaluation_identity_sha256": "828da4edb2575e950742198a82ffcdffeedc525a9c21f6080da510646f7f0511",
+  "child_clean": true,
+  "changed_production_file_only": "scripts/eval_robocasa_18task_queue.py"
+}
