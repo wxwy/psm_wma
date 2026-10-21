@@ -407,3 +407,12 @@
 - IN_PROGRESS; Codex; Owner/GPT new integration finding on6405c9da/2d128ed5, current74d22d9c Inbox and optim erratum read.
 - Scope only root queue canonical model-DCP path validation and focused CPU contract/integration tests. Preserve requested root identity, config/hash, all other HIGH-02/MEDIUM-05/lock logic and Child. No optim/DCP/Local/training work or GPU/Simulator. New Root+CPU Evidence then STOP for incremental review.
 - V3-ITER4000-HIGH06: REVIEW after source publication; one expected-path expression fixed, final32+47subtests and static PASS. Original strict checks/Worker/locks/Child unchanged. New Pair independent review/DS CPU required; no GPU or model-only optim prerequisite.
+
+## V3-ITER4000-HIGH07 — 2026-10-21
+- IN_PROGRESS; Codex; prerequisite Owner two-batch instruction and canonical Inbox at27198498.
+- Scope root Queue explicit --action-chunk-size16 + immutable protocol audit field, targeted CPU positive/negative/1-2-4 Worker tests. Preserve strict info32 rejection/previous checks/Child/locking/G1. Publish new Root+unchanged Child and Evidence, then independent GPT review pending.
+
+## V3-FUTURE-PHASE5-CONFIG-TRUTH — 2026-10-21
+- TODO; Codex; prerequisite HIGH07 implementation/CPU/publication first, then isolated candidate only.
+- Acceptance future effective config saved16 and truthful Exact-Window producer provenance, conflict/serialization/cache/identity CPU checks; no historical G1 changes or V3 merge. Separate Child/Root SHA + diff/Evidence, STOP for GPT/Owner review.
+- V3-ITER4000-HIGH07: REVIEW; author CPU33+50subtests/static PASS, new exact Root publication/Evidence handoff next. No independent verdict or execution release claimed.
