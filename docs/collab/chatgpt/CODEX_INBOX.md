@@ -441,3 +441,7 @@ Next: CODEX_INBOX_2026-10-15_CONTINUATION.md
 - MEDIUM: `--expected-tasks 4` checks only count, not four required task names; `--resume` only full task, cannot resume 1–4/5 partial episodes. Add read-only exact-set gate and document failure recovery with new namespace; do not weaken artifact no-overwrite.
 - Codex authorization: scoped root queue script repair + focused CPU mocked subprocess/thread/port tests, deterministic source-bound runbook; no new wrapper by default, no Child/trainer/DCP changes, no real GPU/simulator. Return new exact pair/evidence for GPT incremental review.
 - DS_PRO: read-only preparation only; do not execute while wzy occupies 8 GPUs. Owner + free-GPU allocation and renewed GPU execution release required.
+## 2026-10-21 — ERRATUM to iter4000 Queue `REQUEST_CHANGES` (same formal pair)
+- **撤销原 HIGH-01**：队列 `scripts/eval_robocasa_18task_queue.py:375-377,381-388` 的 `publish()` 实际在 `with result_lock` 外部，同线程嵌套锁死锁 finding 为误报；**不得要求 Codex 改锁**。此 erratum 覆盖本 Inbox 上述 HIGH-01 / 相应 Codex 指示。
+- **保留 `REQUEST_CHANGES`**：HIGH-02 `wait_server()` Server identity/占用端口 fail-closed 未修；MEDIUM-03 精确四任务只读元数据核验及 MEDIUM-04 whole-task-only resume 说明仍有效。
+- Codex：只做 root queue HIGH-02 最小修复与 CPU-only negative/positive tests；禁止 GPU/模拟器/child/trainer/DCP 修改。验收前须报新 root implementation SHA、child/Gitlink、diff、CPU Evidence。详细更正附于原 `2026-10-21_V3_iter4000_4task_multiGPU_queue_launch_review.md` 末尾。
