@@ -530,6 +530,7 @@ class QueueIntegrationTests(unittest.TestCase):
                 self.assertEqual(report["rc"], 0)
                 self.assertEqual(report["server_commands"], count)
                 for command in report["server_command_argv"]:
+                    self.assertEqual(command.count("--no-guardrails"), 1)
                     self.assertEqual(command.count("--action-chunk-size"), 1)
                     self.assertEqual(command[command.index("--action-chunk-size") + 1], "16")
                 self.assertTrue(report["frozen_config_unchanged"])
