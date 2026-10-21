@@ -1,0 +1,19 @@
+{
+  "implementation_root": "306d235046fe5d578503beb17a56f5c0eb0f5634",
+  "child": "35b0ea1ccee9ee26653ed6589c484f0997d1c586",
+  "merge_parents": [
+    "e5e373dd5b63f66bd0c89a56125351e4c571f539",
+    "fb670c2c30305abda318ae8e927b6d8cd7ad6298"
+  ],
+  "previous_v3": "befa947bb983d475a0c2350e2845ee7f92718fe6",
+  "isolated_candidate_implementation_root": "fa6471c0e9d12c54fa72a425d06abfc80ea491cc",
+  "isolated_candidate_docs_head": "fb670c2c30305abda318ae8e927b6d8cd7ad6298",
+  "root_source_identical_to_candidate": true,
+  "queue_blob": "4916918aca412a0abc6cb00e28f6053a351e07d8",
+  "cpu_evidence_reuse": "same committed Child/source hashes; no post-merge project tests rerun",
+  "previous_author_cpu_passed": 47,
+  "subtests": 32,
+  "independent_gate_approved": false,
+  "owner_authorization": "merge candidate into V3 only",
+  "gpu_server_simulator_or_g1_operations": false
+}

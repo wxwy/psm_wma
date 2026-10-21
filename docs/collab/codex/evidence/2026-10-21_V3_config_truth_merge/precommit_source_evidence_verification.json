@@ -1,0 +1,13 @@
+{
+  "candidate_source_and_evidence_identical": true,
+  "merged_gitlink": "35b0ea1ccee9ee26653ed6589c484f0997d1c586",
+  "queue_blob": "4916918aca412a0abc6cb00e28f6053a351e07d8",
+  "candidate_delta_only_append_notes": true,
+  "cpu_source_hashes_verified": true,
+  "evidence_hashes_verified": true,
+  "review_archive_preserved": true,
+  "author_cpu_passed": 47,
+  "subtests": 32,
+  "tests_repeated": false,
+  "reason": "No implementation changes; only merge and append-only documentation resolution."
+}
