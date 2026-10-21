@@ -1,0 +1,25 @@
+ERROR: found no collectors for /workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_inherited32_overlay_saved_yaml_pickle_and_child_parser_are16
+
+
+==================================== ERRORS ====================================
+________________________ ERROR collecting test session _________________________
+ImportError while importing test module '/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+examples/psm_wma_robocasa_effective_config_test.py:27: in <module>
+    from cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cache import (
+cosmos_framework/data/generator/action/datasets/__init__.py:11: in <module>
+    from cosmos_framework.data.generator.action.datasets.agibotworld_beta_lerobot_dataset import (
+cosmos_framework/data/generator/action/datasets/agibotworld_beta_lerobot_dataset.py:15: in <module>
+    from cosmos_framework.data.generator.action.agibot_fk import (
+cosmos_framework/data/generator/action/agibot_fk.py:45: in <module>
+    from cosmos_framework.data.generator.action.utils.pose_utils import convert_rotation
+cosmos_framework/data/generator/action/utils/pose_utils.py:27: in <module>
+    from scipy.spatial.transform import Rotation as R
+E   ModuleNotFoundError: No module named 'scipy'
+=========================== short test summary info ============================
+ERROR ../../../tmp/psm-v3-high07-20261021
+1 error in 3.22s

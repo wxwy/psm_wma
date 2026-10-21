@@ -1,0 +1,604 @@
+{
+  "CONFIG_TRUTH_WITNESS": [
+    {
+      "action_shape": [
+        16,
+        15
+      ],
+      "before": 32,
+      "cache": 16,
+      "observation_frames": 17,
+      "pickle": 16,
+      "provenance": {
+        "action_horizon": 16,
+        "chunk_length": 16,
+        "fps": 20.0,
+        "legacy_chunk_fields": {
+          "dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16
+        },
+        "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer",
+        "legacy_dataset_contract": {
+          "action_normalization": null,
+          "base_encoding": "raw",
+          "camera_set": "left_wrist",
+          "fps": 20.0,
+          "max_action_dim": 64,
+          "mode": "wam",
+          "use_base_action": true,
+          "use_state": true
+        },
+        "local_ttt_tbptt_steps": 8,
+        "observation_frames": 17,
+        "producer_chain": [
+          "cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset",
+          "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer",
+          "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"
+        ],
+        "raw_action_dim": 15,
+        "schema": "corrected_phase5_effective_data_v1",
+        "state_dim": 15
+      },
+      "sequence_plan": {
+        "condition_frame_indexes_action": [
+          0
+        ],
+        "condition_frame_indexes_lidar": [],
+        "condition_frame_indexes_radar": [],
+        "condition_frame_indexes_sound": [],
+        "condition_frame_indexes_vision": [
+          0
+        ],
+        "condition_view_indexes_vision": [],
+        "has_action": true,
+        "has_lidar": false,
+        "has_local_memory": false,
+        "has_radar": false,
+        "has_sound": false,
+        "has_text": true,
+        "has_vision": true,
+        "share_vision_temporal_positions": false,
+        "text_view_ids": null,
+        "vision_temporal_position_groups": null
+      },
+      "yaml": 16
+    }
+  ],
+  "RESUME_CONFIG_WITNESS": [
+    {
+      "canonical_sha256": {
+        "config.pkl": "6c2234b550da5948bccb7b4dfe803596af562b214cbff2e9355df707866554d7",
+        "config.yaml": "d7779c1dfe0d828228a9b3562532c45dfed54d253668e8572fd97ec82f694527",
+        "v3_job_identity.json": "8b4fd77c9d616a54a91657ed0c4a8e63df7bef083e67df35c351540954e99c9e"
+      },
+      "launches": [
+        {
+          "config_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "effective_data_source": {
+            "action_horizon": 16,
+            "chunk_length": 16,
+            "fps": 20.0,
+            "legacy_chunk_fields": {
+              "dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16
+            },
+            "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer",
+            "legacy_dataset_contract": {
+              "action_normalization": null,
+              "base_encoding": "raw",
+              "camera_set": "left_wrist",
+              "fps": 20.0,
+              "max_action_dim": 64,
+              "mode": "wam",
+              "use_base_action": true,
+              "use_state": true
+            },
+            "local_ttt_tbptt_steps": 8,
+            "observation_frames": 17,
+            "producer_chain": [
+              "cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset",
+              "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer",
+              "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"
+            ],
+            "raw_action_dim": 15,
+            "schema": "corrected_phase5_effective_data_v1",
+            "state_dim": 15
+          },
+          "execution_stop_after_iter": 500,
+          "formal_execution_until": 500,
+          "phase": "resume",
+          "semantic_digest": "510ce5da4888cff80e292957dc475da0d4053ffabef1a643e05ff2da09180355"
+        },
+        {
+          "config_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+          "effective_data_source": {
+            "action_horizon": 16,
+            "chunk_length": 16,
+            "fps": 20.0,
+            "legacy_chunk_fields": {
+              "dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16
+            },
+            "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer",
+            "legacy_dataset_contract": {
+              "action_normalization": null,
+              "base_encoding": "raw",
+              "camera_set": "left_wrist",
+              "fps": 20.0,
+              "max_action_dim": 64,
+              "mode": "wam",
+              "use_base_action": true,
+              "use_state": true
+            },
+            "local_ttt_tbptt_steps": 8,
+            "observation_frames": 17,
+            "producer_chain": [
+              "cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset",
+              "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer",
+              "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"
+            ],
+            "raw_action_dim": 15,
+            "schema": "corrected_phase5_effective_data_v1",
+            "state_dim": 15
+          },
+          "execution_stop_after_iter": 100,
+          "formal_execution_until": 100,
+          "phase": "fresh",
+          "semantic_digest": "510ce5da4888cff80e292957dc475da0d4053ffabef1a643e05ff2da09180355"
+        }
+      ]
+    }
+  ],
+  "IMMUTABILITY": [
+    {
+      "after": {},
+      "before": {},
+      "case": "existing_empty"
+    },
+    {
+      "after": {
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573013675507557,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        }
+      },
+      "before": {
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573013675507557,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        }
+      },
+      "case": "checkpoints/latest_checkpoint.txt"
+    },
+    {
+      "after": {
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573013675507557,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573013740483796,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        }
+      },
+      "before": {
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573013675507557,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573013740483796,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        }
+      },
+      "case": "config.yaml"
+    },
+    {
+      "after": {
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573013675507557,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573013740483796,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "evidence/old.json": {
+          "mtime_ns": 1792573013839026071,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        }
+      },
+      "before": {
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573013675507557,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573013740483796,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "evidence/old.json": {
+          "mtime_ns": 1792573013839026071,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        }
+      },
+      "case": "evidence/old.json"
+    },
+    {
+      "after": {
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573013675507557,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573013740483796,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "evidence/old.json": {
+          "mtime_ns": 1792573013839026071,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "partial/tmp": {
+          "mtime_ns": 1792573013902587938,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        }
+      },
+      "before": {
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573013675507557,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573013740483796,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "evidence/old.json": {
+          "mtime_ns": 1792573013839026071,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        },
+        "partial/tmp": {
+          "mtime_ns": 1792573013902587938,
+          "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"
+        }
+      },
+      "case": "partial/tmp"
+    },
+    {
+      "after_existing": {
+        "checkpoints/iter_000000100/dataloader/rank_0.pkl": {
+          "mtime_ns": 1792573015115636980,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_1.pkl": {
+          "mtime_ns": 1792573015115654316,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_2.pkl": {
+          "mtime_ns": 1792573015115670331,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_3.pkl": {
+          "mtime_ns": 1792573015115684494,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_4.pkl": {
+          "mtime_ns": 1792573015115698894,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_5.pkl": {
+          "mtime_ns": 1792573015115741780,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_6.pkl": {
+          "mtime_ns": 1792573015115759010,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_7.pkl": {
+          "mtime_ns": 1792573015115773272,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/model/.metadata": {
+          "mtime_ns": 1792573015115522664,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/optim/.metadata": {
+          "mtime_ns": 1792573015115555635,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/scheduler/.metadata": {
+          "mtime_ns": 1792573015115583526,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/trainer/.metadata": {
+          "mtime_ns": 1792573015115609408,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573015115799118,
+          "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"
+        },
+        "config.pkl": {
+          "mtime_ns": 1792573015115155384,
+          "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573015115180670,
+          "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"
+        },
+        "launch.lock": {
+          "mtime_ns": 1792573015110645799,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/config.pkl": {
+          "mtime_ns": 1792573015114112413,
+          "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/config.yaml": {
+          "mtime_ns": 1792573015114170825,
+          "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/launch.json": {
+          "mtime_ns": 1792573015115109507,
+          "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"
+        },
+        "v3_job_identity.json": {
+          "mtime_ns": 1792573015115386501,
+          "sha256": "282a5a6bdbb5a04723bc0b83cbd40d2a3f89f863f2b0518d6709ed55e4008465"
+        }
+      },
+      "before": {
+        "checkpoints/iter_000000100/dataloader/rank_0.pkl": {
+          "mtime_ns": 1792573015115636980,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_1.pkl": {
+          "mtime_ns": 1792573015115654316,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_2.pkl": {
+          "mtime_ns": 1792573015115670331,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_3.pkl": {
+          "mtime_ns": 1792573015115684494,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_4.pkl": {
+          "mtime_ns": 1792573015115698894,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_5.pkl": {
+          "mtime_ns": 1792573015115741780,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_6.pkl": {
+          "mtime_ns": 1792573015115759010,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_7.pkl": {
+          "mtime_ns": 1792573015115773272,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/model/.metadata": {
+          "mtime_ns": 1792573015115522664,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/optim/.metadata": {
+          "mtime_ns": 1792573015115555635,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/scheduler/.metadata": {
+          "mtime_ns": 1792573015115583526,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/trainer/.metadata": {
+          "mtime_ns": 1792573015115609408,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573015115799118,
+          "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"
+        },
+        "config.pkl": {
+          "mtime_ns": 1792573015115155384,
+          "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573015115180670,
+          "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"
+        },
+        "launch.lock": {
+          "mtime_ns": 1792573015110645799,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/config.pkl": {
+          "mtime_ns": 1792573015114112413,
+          "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/config.yaml": {
+          "mtime_ns": 1792573015114170825,
+          "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/launch.json": {
+          "mtime_ns": 1792573015115109507,
+          "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"
+        },
+        "v3_job_identity.json": {
+          "mtime_ns": 1792573015115386501,
+          "sha256": "282a5a6bdbb5a04723bc0b83cbd40d2a3f89f863f2b0518d6709ed55e4008465"
+        }
+      }
+    }
+  ],
+  "RESUME_IMMUTABILITY": [
+    {
+      "after_existing": {
+        "checkpoints/iter_000000100/dataloader/rank_0.pkl": {
+          "mtime_ns": 1792573015115636980,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_1.pkl": {
+          "mtime_ns": 1792573015115654316,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_2.pkl": {
+          "mtime_ns": 1792573015115670331,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_3.pkl": {
+          "mtime_ns": 1792573015115684494,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_4.pkl": {
+          "mtime_ns": 1792573015115698894,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_5.pkl": {
+          "mtime_ns": 1792573015115741780,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_6.pkl": {
+          "mtime_ns": 1792573015115759010,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_7.pkl": {
+          "mtime_ns": 1792573015115773272,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/model/.metadata": {
+          "mtime_ns": 1792573015115522664,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/optim/.metadata": {
+          "mtime_ns": 1792573015115555635,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/scheduler/.metadata": {
+          "mtime_ns": 1792573015115583526,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/trainer/.metadata": {
+          "mtime_ns": 1792573015115609408,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573015115799118,
+          "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"
+        },
+        "config.pkl": {
+          "mtime_ns": 1792573015115155384,
+          "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573015115180670,
+          "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"
+        },
+        "launch.lock": {
+          "mtime_ns": 1792573015110645799,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/config.pkl": {
+          "mtime_ns": 1792573015114112413,
+          "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/config.yaml": {
+          "mtime_ns": 1792573015114170825,
+          "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/launch.json": {
+          "mtime_ns": 1792573015115109507,
+          "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"
+        },
+        "v3_job_identity.json": {
+          "mtime_ns": 1792573015115386501,
+          "sha256": "282a5a6bdbb5a04723bc0b83cbd40d2a3f89f863f2b0518d6709ed55e4008465"
+        }
+      },
+      "before": {
+        "checkpoints/iter_000000100/dataloader/rank_0.pkl": {
+          "mtime_ns": 1792573015115636980,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_1.pkl": {
+          "mtime_ns": 1792573015115654316,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_2.pkl": {
+          "mtime_ns": 1792573015115670331,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_3.pkl": {
+          "mtime_ns": 1792573015115684494,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_4.pkl": {
+          "mtime_ns": 1792573015115698894,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_5.pkl": {
+          "mtime_ns": 1792573015115741780,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_6.pkl": {
+          "mtime_ns": 1792573015115759010,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/dataloader/rank_7.pkl": {
+          "mtime_ns": 1792573015115773272,
+          "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"
+        },
+        "checkpoints/iter_000000100/model/.metadata": {
+          "mtime_ns": 1792573015115522664,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/optim/.metadata": {
+          "mtime_ns": 1792573015115555635,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/scheduler/.metadata": {
+          "mtime_ns": 1792573015115583526,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/iter_000000100/trainer/.metadata": {
+          "mtime_ns": 1792573015115609408,
+          "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"
+        },
+        "checkpoints/latest_checkpoint.txt": {
+          "mtime_ns": 1792573015115799118,
+          "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"
+        },
+        "config.pkl": {
+          "mtime_ns": 1792573015115155384,
+          "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"
+        },
+        "config.yaml": {
+          "mtime_ns": 1792573015115180670,
+          "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"
+        },
+        "launch.lock": {
+          "mtime_ns": 1792573015110645799,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/config.pkl": {
+          "mtime_ns": 1792573015114112413,
+          "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/config.yaml": {
+          "mtime_ns": 1792573015114170825,
+          "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"
+        },
+        "launches/3284f42b0b654391baafacf87578bc20/launch.json": {
+          "mtime_ns": 1792573015115109507,
+          "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"
+        },
+        "v3_job_identity.json": {
+          "mtime_ns": 1792573015115386501,
+          "sha256": "282a5a6bdbb5a04723bc0b83cbd40d2a3f89f863f2b0518d6709ed55e4008465"
+        }
+      }
+    }
+  ],
+  "DIGEST_INVARIANT": [
+    {
+      "fresh100": "d07f425f26ad19d21212c04a1afde1767f15c7a25ffaa848ac4e51f619f0589b",
+      "resume500": "d07f425f26ad19d21212c04a1afde1767f15c7a25ffaa848ac4e51f619f0589b"
+    }
+  ]
+}

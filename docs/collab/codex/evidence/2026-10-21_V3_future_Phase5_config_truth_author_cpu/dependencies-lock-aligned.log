@@ -1,0 +1,12 @@
+Using Python 3.12.14 environment at: /workspace/.venvs/psm-wma-cpu
+Resolved 8 packages in 1.03s
+   Building antlr4-python3-runtime==4.9.3
+      Built antlr4-python3-runtime==4.9.3
+Prepared 3 packages in 254ms
+Uninstalled 2 packages in 2ms
+Installed 3 packages in 3ms
+ + antlr4-python3-runtime==4.9.3
+ - attrs==26.1.0
+ + attrs==25.4.0
+ - omegaconf==2.4.0
+ + omegaconf==2.3.0

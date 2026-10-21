@@ -1,0 +1,784 @@
+CONFIG_TRUTH_WITNESS {"action_shape": [16, 15], "before": 32, "cache": 16, "observation_frames": 17, "pickle": 16, "provenance": {"action_horizon": 16, "chunk_length": 16, "fps": 20.0, "legacy_chunk_fields": {"dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16}, "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer", "legacy_dataset_contract": {"action_normalization": null, "base_encoding": "raw", "camera_set": "left_wrist", "fps": 20.0, "max_action_dim": 64, "mode": "wam", "use_base_action": true, "use_state": true}, "local_ttt_tbptt_steps": 8, "observation_frames": 17, "producer_chain": ["cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset", "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer", "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"], "raw_action_dim": 15, "schema": "corrected_phase5_effective_data_v1", "state_dim": 15}, "yaml": 16}
+..........RESUME_CONFIG_WITNESS {"canonical_sha256": {"config.pkl": "36a6cb6fbbdca25bf0ae84965429f284f75646c11d38df31519f993c5b5083e0", "config.yaml": "5959a05fc67c3fcd5e39f4005d56aaa0a89ff83dcc8784a9d919553713de8821", "v3_job_identity.json": "c207b8e09ddcc8dc1b38afcec054a09e04f2e7e9d7b6c2f6bc9e4a3e6f0f5180"}, "launches": [{"config_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "effective_data_source": {"action_horizon": 16, "chunk_length": 16, "fps": 20.0, "legacy_chunk_fields": {"dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16}, "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer", "legacy_dataset_contract": {"action_normalization": null, "base_encoding": "raw", "camera_set": "left_wrist", "fps": 20.0, "max_action_dim": 64, "mode": "wam", "use_base_action": true, "use_state": true}, "local_ttt_tbptt_steps": 8, "observation_frames": 17, "producer_chain": ["cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset", "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer", "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"], "raw_action_dim": 15, "schema": "corrected_phase5_effective_data_v1", "state_dim": 15}, "execution_stop_after_iter": 500, "formal_execution_until": 500, "phase": "resume", "semantic_digest": "510ce5da4888cff80e292957dc475da0d4053ffabef1a643e05ff2da09180355"}, {"config_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "effective_data_source": {"action_horizon": 16, "chunk_length": 16, "fps": 20.0, "legacy_chunk_fields": {"dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16}, "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer", "legacy_dataset_contract": {"action_normalization": null, "base_encoding": "raw", "camera_set": "left_wrist", "fps": 20.0, "max_action_dim": 64, "mode": "wam", "use_base_action": true, "use_state": true}, "local_ttt_tbptt_steps": 8, "observation_frames": 17, "producer_chain": ["cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset", "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer", "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"], "raw_action_dim": 15, "schema": "corrected_phase5_effective_data_v1", "state_dim": 15}, "execution_stop_after_iter": 100, "formal_execution_until": 100, "phase": "fresh", "semantic_digest": "510ce5da4888cff80e292957dc475da0d4053ffabef1a643e05ff2da09180355"}]}
+.........CLI negative: test_bounded_diagnostic_remains_nonresumable rc=1: ValueError: bounded diagnostic checkpoint must not be resumed as formal training
+..CLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmp98x0gbnw/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {}, "before": {}, "case": "existing_empty"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmp98x0gbnw/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572808604029201, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572808604029201, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "checkpoints/latest_checkpoint.txt"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmp98x0gbnw/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572808604029201, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572808682267139, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572808604029201, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572808682267139, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "config.yaml"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmp98x0gbnw/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572808604029201, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572808682267139, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572808848161354, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572808604029201, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572808682267139, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572808848161354, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "evidence/old.json"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmp98x0gbnw/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572808604029201, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572808682267139, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572808848161354, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "partial/tmp": {"mtime_ns": 1792572808912747650, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572808604029201, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572808682267139, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572808848161354, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "partial/tmp": {"mtime_ns": 1792572808912747650, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "partial/tmp"}
+u.uuuuuu.CLI negative: test_incomplete_snapshot_cannot_be_resumed rc=1: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpxsicu9at/psm_wma_v3/corrected_phase5/formal/v3_job_identity.json'
+.CLI negative: test_missing_index_precedes_namespace_read_and_runtime_for_fresh_and_resume rc=1: ValueError: 训练/Resume 必须提供已离线验收的 --dataset-index-root；禁止 cold build 与数据全量复检
+uCLI negative: test_missing_index_precedes_namespace_read_and_runtime_for_fresh_and_resume rc=1: ValueError: 训练/Resume 必须提供已离线验收的 --dataset-index-root；禁止 cold build 与数据全量复检
+u.CLI negative: test_real_cli_invalid_budgets_rejected_before_runtime rc=1: ValueError: formal execution budget requires 1..30000 and schedule 30000/500/100; no diagnostics
+uCLI negative: test_real_cli_invalid_budgets_rejected_before_runtime rc=1: ValueError: formal execution budget requires 1..30000 and schedule 30000/500/100; no diagnostics
+uCLI negative: test_real_cli_invalid_budgets_rejected_before_runtime rc=1: ValueError: formal execution budget requires 1..30000 and schedule 30000/500/100; no diagnostics
+u.CLI negative: test_real_cli_rejects_namespace_symlink rc=1: ValueError: job namespace symlink alias is forbidden
+.CLI negative: test_real_cli_rejects_path_traversal rc=1: ValueError: output-root traversal is forbidden
+CLI negative: test_real_cli_rejects_path_traversal rc=1: ValueError: job-name must be one ordinary path component
+.CLI negative: test_real_cli_rejects_symlink_output_alias rc=1: ValueError: job namespace symlink alias is forbidden
+.CLI negative: test_real_cli_resume_rejects_other_root_child_and_layout rc=1: ValueError: same-job identity Root/Child/Layout/namespace mismatch
+uCLI negative: test_real_cli_resume_rejects_other_root_child_and_layout rc=1: ValueError: same-job identity Root/Child/Layout/namespace mismatch
+uCLI negative: test_real_cli_resume_rejects_other_root_child_and_layout rc=1: ValueError: same-job identity Root/Child/Layout/namespace mismatch
+.CLI negative: test_real_cli_resume_requires_identity_and_canonical_config rc=1: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp_93z7mwy/psm_wma_v3/corrected_phase5/formal/v3_job_identity.json'
+CLI negative: test_real_cli_resume_requires_identity_and_canonical_config rc=1: ValueError: canonical config changed: config.pkl
+.RESUME_IMMUTABILITY {"after_existing": {"checkpoints/iter_000000100/dataloader/rank_0.pkl": {"mtime_ns": 1792572811060274516, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_1.pkl": {"mtime_ns": 1792572811060291800, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_2.pkl": {"mtime_ns": 1792572811060308169, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_3.pkl": {"mtime_ns": 1792572811060330353, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_4.pkl": {"mtime_ns": 1792572811060346998, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_5.pkl": {"mtime_ns": 1792572811060362283, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_6.pkl": {"mtime_ns": 1792572811060377163, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_7.pkl": {"mtime_ns": 1792572811060391937, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/model/.metadata": {"mtime_ns": 1792572811060158328, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/optim/.metadata": {"mtime_ns": 1792572811060189118, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/scheduler/.metadata": {"mtime_ns": 1792572811060216444, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/trainer/.metadata": {"mtime_ns": 1792572811060242683, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572811060417516, "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"}, "config.pkl": {"mtime_ns": 1792572811059742211, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "config.yaml": {"mtime_ns": 1792572811059911212, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launch.lock": {"mtime_ns": 1792572811058285443, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "launches/d56e86f0a3414b18937e7a09fa4f1e1c/config.pkl": {"mtime_ns": 1792572811058512386, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "launches/d56e86f0a3414b18937e7a09fa4f1e1c/config.yaml": {"mtime_ns": 1792572811058578965, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launches/d56e86f0a3414b18937e7a09fa4f1e1c/launch.json": {"mtime_ns": 1792572811059663994, "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"}, "v3_job_identity.json": {"mtime_ns": 1792572811060019882, "sha256": "1047697138092b97e37571b60efbdbe9ce6f36fe50254990b49e51c87a75b884"}}, "before": {"checkpoints/iter_000000100/dataloader/rank_0.pkl": {"mtime_ns": 1792572811060274516, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_1.pkl": {"mtime_ns": 1792572811060291800, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_2.pkl": {"mtime_ns": 1792572811060308169, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_3.pkl": {"mtime_ns": 1792572811060330353, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_4.pkl": {"mtime_ns": 1792572811060346998, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_5.pkl": {"mtime_ns": 1792572811060362283, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_6.pkl": {"mtime_ns": 1792572811060377163, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_7.pkl": {"mtime_ns": 1792572811060391937, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/model/.metadata": {"mtime_ns": 1792572811060158328, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/optim/.metadata": {"mtime_ns": 1792572811060189118, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/scheduler/.metadata": {"mtime_ns": 1792572811060216444, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/trainer/.metadata": {"mtime_ns": 1792572811060242683, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572811060417516, "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"}, "config.pkl": {"mtime_ns": 1792572811059742211, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "config.yaml": {"mtime_ns": 1792572811059911212, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launch.lock": {"mtime_ns": 1792572811058285443, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "launches/d56e86f0a3414b18937e7a09fa4f1e1c/config.pkl": {"mtime_ns": 1792572811058512386, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "launches/d56e86f0a3414b18937e7a09fa4f1e1c/config.yaml": {"mtime_ns": 1792572811058578965, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launches/d56e86f0a3414b18937e7a09fa4f1e1c/launch.json": {"mtime_ns": 1792572811059663994, "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"}, "v3_job_identity.json": {"mtime_ns": 1792572811060019882, "sha256": "1047697138092b97e37571b60efbdbe9ce6f36fe50254990b49e51c87a75b884"}}}
+Canonical bytes+mtime and prior launch witnesses unchanged across resume
+...CONFIG_TRUTH_WITNESS {"action_shape": [16, 15], "before": 32, "cache": 16, "observation_frames": 17, "pickle": 16, "provenance": {"action_horizon": 16, "chunk_length": 16, "fps": 20.0, "legacy_chunk_fields": {"dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16}, "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer", "legacy_dataset_contract": {"action_normalization": null, "base_encoding": "raw", "camera_set": "left_wrist", "fps": 20.0, "max_action_dim": 64, "mode": "wam", "use_base_action": true, "use_state": true}, "local_ttt_tbptt_steps": 8, "observation_frames": 17, "producer_chain": ["cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset", "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer", "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"], "raw_action_dim": 15, "schema": "corrected_phase5_effective_data_v1", "state_dim": 15}, "yaml": 16}
+..CONFIG_TRUTH_WITNESS {"action_shape": [16, 15], "before": 32, "cache": 16, "observation_frames": 17, "pickle": 16, "provenance": {"action_horizon": 16, "chunk_length": 16, "fps": 20.0, "legacy_chunk_fields": {"dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16}, "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer", "legacy_dataset_contract": {"action_normalization": null, "base_encoding": "raw", "camera_set": "left_wrist", "fps": 20.0, "max_action_dim": 64, "mode": "wam", "use_base_action": true, "use_state": true}, "local_ttt_tbptt_steps": 8, "observation_frames": 17, "producer_chain": ["cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset", "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer", "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"], "raw_action_dim": 15, "schema": "corrected_phase5_effective_data_v1", "state_dim": 15}, "yaml": 16}
+..................RESUME_CONFIG_WITNESS {"canonical_sha256": {"config.pkl": "a1232ae1cc6d1d576f09edbb9a87706231c1d90eecea2430f74d1dd2ce089dc6", "config.yaml": "c220b33ff66484ed9cba074b6c72aec93be1cb90798944b0a99a24383c472748", "v3_job_identity.json": "112e9a0605187afcaea0af391252646e54c02bf51c7c62a2818e8aedbb6f5ca7"}, "launches": [{"config_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "effective_data_source": {"action_horizon": 16, "chunk_length": 16, "fps": 20.0, "legacy_chunk_fields": {"dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16}, "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer", "legacy_dataset_contract": {"action_normalization": null, "base_encoding": "raw", "camera_set": "left_wrist", "fps": 20.0, "max_action_dim": 64, "mode": "wam", "use_base_action": true, "use_state": true}, "local_ttt_tbptt_steps": 8, "observation_frames": 17, "producer_chain": ["cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset", "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer", "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"], "raw_action_dim": 15, "schema": "corrected_phase5_effective_data_v1", "state_dim": 15}, "execution_stop_after_iter": 500, "formal_execution_until": 500, "phase": "resume", "semantic_digest": "510ce5da4888cff80e292957dc475da0d4053ffabef1a643e05ff2da09180355"}, {"config_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "effective_data_source": {"action_horizon": 16, "chunk_length": 16, "fps": 20.0, "legacy_chunk_fields": {"dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16}, "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer", "legacy_dataset_contract": {"action_normalization": null, "base_encoding": "raw", "camera_set": "left_wrist", "fps": 20.0, "max_action_dim": 64, "mode": "wam", "use_base_action": true, "use_state": true}, "local_ttt_tbptt_steps": 8, "observation_frames": 17, "producer_chain": ["cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset", "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer", "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"], "raw_action_dim": 15, "schema": "corrected_phase5_effective_data_v1", "state_dim": 15}, "execution_stop_after_iter": 100, "formal_execution_until": 100, "phase": "fresh", "semantic_digest": "510ce5da4888cff80e292957dc475da0d4053ffabef1a643e05ff2da09180355"}]}
+..RESUME_CONFIG_WITNESS {"canonical_sha256": {"config.pkl": "bfaebfcd22f4bf44e7796c9730df0159ba75ee25cff774c2e0460c1eff975684", "config.yaml": "555ca0368ffad56bddd5f3d48d93874afcd743db02c4dfd12f50b6c501a5d8bb", "v3_job_identity.json": "f8e05f4fbda5b8d57ef1c395f27892b5b14c4f7bf99d44d39211b08152aae6e6"}, "launches": [{"config_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "effective_data_source": {"action_horizon": 16, "chunk_length": 16, "fps": 20.0, "legacy_chunk_fields": {"dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16}, "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer", "legacy_dataset_contract": {"action_normalization": null, "base_encoding": "raw", "camera_set": "left_wrist", "fps": 20.0, "max_action_dim": 64, "mode": "wam", "use_base_action": true, "use_state": true}, "local_ttt_tbptt_steps": 8, "observation_frames": 17, "producer_chain": ["cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset", "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer", "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"], "raw_action_dim": 15, "schema": "corrected_phase5_effective_data_v1", "state_dim": 15}, "execution_stop_after_iter": 500, "formal_execution_until": 500, "phase": "resume", "semantic_digest": "510ce5da4888cff80e292957dc475da0d4053ffabef1a643e05ff2da09180355"}, {"config_digest": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd", "effective_data_source": {"action_horizon": 16, "chunk_length": 16, "fps": 20.0, "legacy_chunk_fields": {"dataloader_train.dataloader.datasets.robocasa.dataset.chunk_length": 16}, "legacy_dataloader_role": "config_and_generic_inference_compatibility_only_not_training_producer", "legacy_dataset_contract": {"action_normalization": null, "base_encoding": "raw", "camera_set": "left_wrist", "fps": 20.0, "max_action_dim": 64, "mode": "wam", "use_base_action": true, "use_state": true}, "local_ttt_tbptt_steps": 8, "observation_frames": 17, "producer_chain": ["cosmos_framework.data.generator.action.datasets.robocasa_exact_window_cached_sft.get_action_robocasa_exact_window_cached_sft_dataset", "cosmos_framework.model.generator.mot.robocasa_exact_window_local.ExactWindowSegmentProducer", "cosmos_framework.trainer.local_memory_grouped.GroupedLocalMemoryTrainer.bind_grouped_stream"], "raw_action_dim": 15, "schema": "corrected_phase5_effective_data_v1", "state_dim": 15}, "execution_stop_after_iter": 100, "formal_execution_until": 100, "phase": "fresh", "semantic_digest": "510ce5da4888cff80e292957dc475da0d4053ffabef1a643e05ff2da09180355"}]}
+................CLI negative: test_bounded_diagnostic_remains_nonresumable rc=1: ValueError: bounded diagnostic checkpoint must not be resumed as formal training
+..CLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmpnqd4jfvc/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {}, "before": {}, "case": "existing_empty"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmpnqd4jfvc/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572813625837968, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572813625837968, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "checkpoints/latest_checkpoint.txt"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmpnqd4jfvc/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572813625837968, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572813687156694, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572813625837968, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572813687156694, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "config.yaml"}
+uCLI negative: test_bounded_diagnostic_remains_nonresumable rc=1: ValueError: bounded diagnostic checkpoint must not be resumed as formal training
+..CLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmpnqd4jfvc/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572813625837968, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572813687156694, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572813760315818, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572813625837968, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572813687156694, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572813760315818, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "evidence/old.json"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmpnqd4jfvc/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572813625837968, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572813687156694, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572813760315818, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "partial/tmp": {"mtime_ns": 1792572813826565080, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572813625837968, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572813687156694, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572813760315818, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "partial/tmp": {"mtime_ns": 1792572813826565080, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "partial/tmp"}
+u.uuuuuu.CLI negative: test_incomplete_snapshot_cannot_be_resumed rc=1: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpcegkkm9y/psm_wma_v3/corrected_phase5/formal/v3_job_identity.json'
+.CLI negative: test_missing_index_precedes_namespace_read_and_runtime_for_fresh_and_resume rc=1: ValueError: 训练/Resume 必须提供已离线验收的 --dataset-index-root；禁止 cold build 与数据全量复检
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmptj3tvykb/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {}, "before": {}, "case": "existing_empty"}
+uCLI negative: test_missing_index_precedes_namespace_read_and_runtime_for_fresh_and_resume rc=1: ValueError: 训练/Resume 必须提供已离线验收的 --dataset-index-root；禁止 cold build 与数据全量复检
+u.CLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmptj3tvykb/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572814085130523, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572814085130523, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "checkpoints/latest_checkpoint.txt"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmptj3tvykb/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572814085130523, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572814149650164, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572814085130523, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572814149650164, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "config.yaml"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmptj3tvykb/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572814085130523, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572814149650164, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572814213265458, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572814085130523, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572814149650164, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572814213265458, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "evidence/old.json"}
+uCLI negative: test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change rc=1: FileExistsError: Fresh requires a previously nonexistent job namespace: /tmp/tmptj3tvykb/psm_wma_v3/corrected_phase5/formal
+IMMUTABILITY {"after": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572814085130523, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572814149650164, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572814213265458, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "partial/tmp": {"mtime_ns": 1792572814276934843, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "before": {"checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572814085130523, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "config.yaml": {"mtime_ns": 1792572814149650164, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "evidence/old.json": {"mtime_ns": 1792572814213265458, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}, "partial/tmp": {"mtime_ns": 1792572814276934843, "sha256": "37a084be87246ef17563f0337770335bf02cd3d9cccb623b02e6b70d973ef74b"}}, "case": "partial/tmp"}
+u.uuuuuu.CLI negative: test_real_cli_invalid_budgets_rejected_before_runtime rc=1: ValueError: formal execution budget requires 1..30000 and schedule 30000/500/100; no diagnostics
+uCLI negative: test_incomplete_snapshot_cannot_be_resumed rc=1: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpne5x1894/psm_wma_v3/corrected_phase5/formal/v3_job_identity.json'
+.CLI negative: test_missing_index_precedes_namespace_read_and_runtime_for_fresh_and_resume rc=1: ValueError: 训练/Resume 必须提供已离线验收的 --dataset-index-root；禁止 cold build 与数据全量复检
+uCLI negative: test_missing_index_precedes_namespace_read_and_runtime_for_fresh_and_resume rc=1: ValueError: 训练/Resume 必须提供已离线验收的 --dataset-index-root；禁止 cold build 与数据全量复检
+u.CLI negative: test_real_cli_invalid_budgets_rejected_before_runtime rc=1: ValueError: formal execution budget requires 1..30000 and schedule 30000/500/100; no diagnostics
+uCLI negative: test_real_cli_invalid_budgets_rejected_before_runtime rc=1: ValueError: formal execution budget requires 1..30000 and schedule 30000/500/100; no diagnostics
+uCLI negative: test_real_cli_invalid_budgets_rejected_before_runtime rc=1: ValueError: formal execution budget requires 1..30000 and schedule 30000/500/100; no diagnostics
+uCLI negative: test_real_cli_invalid_budgets_rejected_before_runtime rc=1: ValueError: formal execution budget requires 1..30000 and schedule 30000/500/100; no diagnostics
+u.CLI negative: test_real_cli_invalid_budgets_rejected_before_runtime rc=1: ValueError: formal execution budget requires 1..30000 and schedule 30000/500/100; no diagnostics
+u.CLI negative: test_real_cli_rejects_namespace_symlink rc=1: ValueError: job namespace symlink alias is forbidden
+.CLI negative: test_real_cli_rejects_path_traversal rc=1: ValueError: output-root traversal is forbidden
+CLI negative: test_real_cli_rejects_path_traversal rc=1: ValueError: job-name must be one ordinary path component
+.CLI negative: test_real_cli_rejects_symlink_output_alias rc=1: ValueError: job namespace symlink alias is forbidden
+.CLI negative: test_real_cli_rejects_namespace_symlink rc=1: ValueError: job namespace symlink alias is forbidden
+.CLI negative: test_real_cli_resume_rejects_other_root_child_and_layout rc=1: ValueError: same-job identity Root/Child/Layout/namespace mismatch
+uCLI negative: test_real_cli_rejects_path_traversal rc=1: ValueError: output-root traversal is forbidden
+CLI negative: test_real_cli_rejects_path_traversal rc=1: ValueError: job-name must be one ordinary path component
+.CLI negative: test_real_cli_rejects_symlink_output_alias rc=1: ValueError: job namespace symlink alias is forbidden
+.CLI negative: test_real_cli_resume_rejects_other_root_child_and_layout rc=1: ValueError: same-job identity Root/Child/Layout/namespace mismatch
+uCLI negative: test_real_cli_resume_rejects_other_root_child_and_layout rc=1: ValueError: same-job identity Root/Child/Layout/namespace mismatch
+uCLI negative: test_real_cli_resume_rejects_other_root_child_and_layout rc=1: ValueError: same-job identity Root/Child/Layout/namespace mismatch
+uCLI negative: test_real_cli_resume_rejects_other_root_child_and_layout rc=1: ValueError: same-job identity Root/Child/Layout/namespace mismatch
+.CLI negative: test_real_cli_resume_requires_identity_and_canonical_config rc=1: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmpixrt96iw/psm_wma_v3/corrected_phase5/formal/v3_job_identity.json'
+CLI negative: test_real_cli_resume_requires_identity_and_canonical_config rc=1: ValueError: canonical config changed: config.pkl
+.RESUME_IMMUTABILITY {"after_existing": {"checkpoints/iter_000000100/dataloader/rank_0.pkl": {"mtime_ns": 1792572815632058720, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_1.pkl": {"mtime_ns": 1792572815632074481, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_2.pkl": {"mtime_ns": 1792572815632089675, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_3.pkl": {"mtime_ns": 1792572815632104843, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_4.pkl": {"mtime_ns": 1792572815632120670, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_5.pkl": {"mtime_ns": 1792572815632134486, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_6.pkl": {"mtime_ns": 1792572815632148493, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_7.pkl": {"mtime_ns": 1792572815632162451, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/model/.metadata": {"mtime_ns": 1792572815631940975, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/optim/.metadata": {"mtime_ns": 1792572815631973145, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/scheduler/.metadata": {"mtime_ns": 1792572815632002312, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/trainer/.metadata": {"mtime_ns": 1792572815632029913, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572815632185167, "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"}, "config.pkl": {"mtime_ns": 1792572815631641551, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "config.yaml": {"mtime_ns": 1792572815631669364, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launch.lock": {"mtime_ns": 1792572815630374297, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "launches/bef92499c62247cb971467a24f707e9e/config.pkl": {"mtime_ns": 1792572815630476971, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "launches/bef92499c62247cb971467a24f707e9e/config.yaml": {"mtime_ns": 1792572815630533134, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launches/bef92499c62247cb971467a24f707e9e/launch.json": {"mtime_ns": 1792572815631588924, "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"}, "v3_job_identity.json": {"mtime_ns": 1792572815631805502, "sha256": "223bdd03f84f0ae799009f125920cf775819fe985081263f3e47d1251c7ca653"}}, "before": {"checkpoints/iter_000000100/dataloader/rank_0.pkl": {"mtime_ns": 1792572815632058720, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_1.pkl": {"mtime_ns": 1792572815632074481, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_2.pkl": {"mtime_ns": 1792572815632089675, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_3.pkl": {"mtime_ns": 1792572815632104843, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_4.pkl": {"mtime_ns": 1792572815632120670, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_5.pkl": {"mtime_ns": 1792572815632134486, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_6.pkl": {"mtime_ns": 1792572815632148493, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_7.pkl": {"mtime_ns": 1792572815632162451, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/model/.metadata": {"mtime_ns": 1792572815631940975, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/optim/.metadata": {"mtime_ns": 1792572815631973145, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/scheduler/.metadata": {"mtime_ns": 1792572815632002312, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/trainer/.metadata": {"mtime_ns": 1792572815632029913, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572815632185167, "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"}, "config.pkl": {"mtime_ns": 1792572815631641551, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "config.yaml": {"mtime_ns": 1792572815631669364, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launch.lock": {"mtime_ns": 1792572815630374297, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "launches/bef92499c62247cb971467a24f707e9e/config.pkl": {"mtime_ns": 1792572815630476971, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "launches/bef92499c62247cb971467a24f707e9e/config.yaml": {"mtime_ns": 1792572815630533134, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launches/bef92499c62247cb971467a24f707e9e/launch.json": {"mtime_ns": 1792572815631588924, "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"}, "v3_job_identity.json": {"mtime_ns": 1792572815631805502, "sha256": "223bdd03f84f0ae799009f125920cf775819fe985081263f3e47d1251c7ca653"}}}
+Canonical bytes+mtime and prior launch witnesses unchanged across resume
+...Fuu.DIGEST_INVARIANT {"fresh100": "e2a46802d081a4397a9895bb127dbf63d64e3b0158115e20136d44519b5d740d", "resume500": "e2a46802d081a4397a9895bb127dbf63d64e3b0158115e20136d44519b5d740d"}
+uuuuSemantic digest stable: fresh100 / resume500; mask, precision, WD skip and seed changes rejected
+.CLI negative: test_real_cli_resume_rejects_other_root_child_and_layout rc=1: ValueError: same-job identity Root/Child/Layout/namespace mismatch
+..[CorrectedV3][dataset_init] {}
+F.uu..uuuu...uu..
+=================================== FAILURES ===================================
+____ LifecycleTests.test_two_concurrent_fresh_have_exactly_one_atomic_claim ____
+
+self = <psm_wma_robocasa_phase5_f0_test.LifecycleTests testMethod=test_two_concurrent_fresh_have_exactly_one_atomic_claim>
+
+    def test_two_concurrent_fresh_have_exactly_one_atomic_claim(self):
+        ctx = multiprocessing.get_context("spawn")
+        barrier, queue = ctx.Barrier(2), ctx.Queue()
+        jobs = [ctx.Process(target=_claim_worker, args=(self.args, barrier, queue)) for _ in range(2)]
+        for job in jobs:
+>           job.start()
+
+examples/psm_wma_robocasa_phase5_f0_test.py:336: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+                  ^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/context.py:289: in _Popen
+    return Popen(process_obj)
+           ^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/spawn.py:164: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.
+    
+            To fix this issue, refer to the "Safe importing of main module"
+            section in https://docs.python.org/3/library/multiprocessing.html
+            ''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+E           
+E                   To fix this issue, refer to the "Safe importing of main module"
+E                   section in https://docs.python.org/3/library/multiprocessing.html
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/spawn.py:140: RuntimeError
+_ TrainerTests.test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop _
+
+self = <psm_wma_robocasa_phase5_f0_test.TrainerTests testMethod=test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop>
+
+    def test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args = _args(Path(directory))
+            report = _report(args)
+            report.update(
+                dataset_init={},
+                transform_rng_mode="legacy_global",
+                full_segment_prefetch=False,
+                checkpoint_load_path=str(args.base_checkpoint),
+            )
+            config = self.trainer.config
+            config.job, config.phase = _config(args).job, args.phase
+            config.model = {}
+            self.trainer.bind_grouped_stream = MagicMock()
+    
+            def construct(actual_config, *, config_writer):
+                self.assertIs(actual_config, config)
+                config_writer(config, Serializer)
+                return self.trainer
+    
+            observer = MagicMock(completed=100)
+            with (
+                patch.multiple(
+                    phase5,
+                    create=True,
+                    _load_runtime=MagicMock(),
+                    _agree_preflight=MagicMock(return_value=(report, config, None, None)),
+                    torch=NS(cuda=NS(is_available=lambda: True)),
+                    distributed=MagicMock(),
+                    GroupedLocalMemoryTrainer=construct,
+                    model_init=nullcontext,
+                    instantiate=MagicMock(return_value=self.model),
+                    install_optimizer_inventory_check=MagicMock(),
+                    ExactWindowRankPlanner=MagicMock(),
+                    ExactWindowSegmentProducer=MagicMock(),
+                    TelemetryJournal=MagicMock(),
+                    GroupedPlanObserver=MagicMock(return_value=observer),
+                ),
+                patch.object(phase5, "parser", return_value=NS(parse_args=lambda argv: args)),
+                patch.dict(os.environ, {"RANK": "0", "WORLD_SIZE": "8", "GROUPED_MM_SM_CARVEOUT": "0"}),
+            ):
+>               phase5.main([])
+
+examples/psm_wma_robocasa_phase5_f0_test.py:678: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+examples/psm_wma_robocasa_corrected_phase5.py:969: in main
+    trainer = GroupedLocalMemoryTrainer(config, config_writer=lifecycle.write_config)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+examples/psm_wma_robocasa_phase5_f0_test.py:654: in construct
+    config_writer(config, Serializer)
+examples/psm_wma_robocasa_corrected_phase5.py:297: in write_config
+    validate_effective_snapshot(config, effective_data_source)
+examples/psm_wma_robocasa_effective_config.py:106: in validate_effective_snapshot
+    dataset, fields = _legacy_fields(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+config = namespace(trainer=namespace(memory_format=None, grad_scaler_args={}, max_iter=30000, distributed_parallelism='fsdp', r...ve_iter=100), job=namespace(path_local='/tmp/tmppu8ss7k5/psm_wma_v3/corrected_phase5/formal'), phase='fresh', model={})
+
+    def _legacy_fields(config: Any) -> tuple[Mapping, list[tuple[str, Mapping, str]]]:
+        loader = (
+            config.get("dataloader_train") if isinstance(config, Mapping) else getattr(config, "dataloader_train", None)
+        )
+        dataset = loader
+        for key in _DATASET_PATH:
+            if not isinstance(dataset, Mapping) or key not in dataset:
+>               raise ValueError("Corrected Phase5 requires the canonical legacy RoboCasa dataset node")
+E               ValueError: Corrected Phase5 requires the canonical legacy RoboCasa dataset node
+
+examples/psm_wma_robocasa_effective_config.py:33: ValueError
+=============================== warnings summary ===============================
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:115
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:115: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:162
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:181
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:181: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:191
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:191: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:213
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:213: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:222
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:222: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:235
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:235: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:258
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:267
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:267: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:279
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:279: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:292
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:292: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:306
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:306: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:329
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:329: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:342
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:342: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:360
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:360: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:380
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:380: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:396
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:396: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:407
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:407: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:442
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:442: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:453
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:453: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)CLI negative: test_real_cli_resume_requires_identity_and_canonical_config rc=1: FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp1f3j7cbl/psm_wma_v3/corrected_phase5/formal/v3_job_identity.json'
+CLI negative: test_real_cli_resume_requires_identity_and_canonical_config rc=1: ValueError: canonical config changed: config.pkl
+.RESUME_IMMUTABILITY {"after_existing": {"checkpoints/iter_000000100/dataloader/rank_0.pkl": {"mtime_ns": 1792572816150979682, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_1.pkl": {"mtime_ns": 1792572816151193192, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_2.pkl": {"mtime_ns": 1792572816151232679, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_3.pkl": {"mtime_ns": 1792572816151255515, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_4.pkl": {"mtime_ns": 1792572816151276752, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_5.pkl": {"mtime_ns": 1792572816151298101, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_6.pkl": {"mtime_ns": 1792572816151320838, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_7.pkl": {"mtime_ns": 1792572816151342601, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/model/.metadata": {"mtime_ns": 1792572816150805113, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/optim/.metadata": {"mtime_ns": 1792572816150854352, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/scheduler/.metadata": {"mtime_ns": 1792572816150895165, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/trainer/.metadata": {"mtime_ns": 1792572816150934915, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572816151384397, "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"}, "config.pkl": {"mtime_ns": 1792572816150373080, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "config.yaml": {"mtime_ns": 1792572816150416645, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launch.lock": {"mtime_ns": 1792572816148383766, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "launches/4c2bb62d8f3d4d1fb7bec7d0d2ee1a36/config.pkl": {"mtime_ns": 1792572816148530817, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "launches/4c2bb62d8f3d4d1fb7bec7d0d2ee1a36/config.yaml": {"mtime_ns": 1792572816148616826, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launches/4c2bb62d8f3d4d1fb7bec7d0d2ee1a36/launch.json": {"mtime_ns": 1792572816150299210, "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"}, "v3_job_identity.json": {"mtime_ns": 1792572816150557515, "sha256": "8681a526f18c5513762f0339b18cb1831e9a9f0e60008bc0dd1e2ee62f52b607"}}, "before": {"checkpoints/iter_000000100/dataloader/rank_0.pkl": {"mtime_ns": 1792572816150979682, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_1.pkl": {"mtime_ns": 1792572816151193192, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_2.pkl": {"mtime_ns": 1792572816151232679, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_3.pkl": {"mtime_ns": 1792572816151255515, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_4.pkl": {"mtime_ns": 1792572816151276752, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_5.pkl": {"mtime_ns": 1792572816151298101, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_6.pkl": {"mtime_ns": 1792572816151320838, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/dataloader/rank_7.pkl": {"mtime_ns": 1792572816151342601, "sha256": "f6caeb79bcb0d080bebb7d2b5f6094249590405f46f90c8b6dd131f26eb7d83e"}, "checkpoints/iter_000000100/model/.metadata": {"mtime_ns": 1792572816150805113, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/optim/.metadata": {"mtime_ns": 1792572816150854352, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/scheduler/.metadata": {"mtime_ns": 1792572816150895165, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/iter_000000100/trainer/.metadata": {"mtime_ns": 1792572816150934915, "sha256": "fb3f3b2609a78524483661b196d70c1673d109bc70cfd7244d19697cf37dbd90"}, "checkpoints/latest_checkpoint.txt": {"mtime_ns": 1792572816151384397, "sha256": "aaba0ede2f1be0b54a01986c53266d817302bf35eb127cb379200047bc4ebde1"}, "config.pkl": {"mtime_ns": 1792572816150373080, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "config.yaml": {"mtime_ns": 1792572816150416645, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launch.lock": {"mtime_ns": 1792572816148383766, "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"}, "launches/4c2bb62d8f3d4d1fb7bec7d0d2ee1a36/config.pkl": {"mtime_ns": 1792572816148530817, "sha256": "2a8b9e562be4472484f5999e6548f68ca88ce1862ea6289f50c25b4223a44ee6"}, "launches/4c2bb62d8f3d4d1fb7bec7d0d2ee1a36/config.yaml": {"mtime_ns": 1792572816148616826, "sha256": "19bfe85296d9878060a277c168f6f3698ba240f7fc0b8923751f80056165bce5"}, "launches/4c2bb62d8f3d4d1fb7bec7d0d2ee1a36/launch.json": {"mtime_ns": 1792572816150299210, "sha256": "ba4c2f854382ec39be0c13c942bbdea90d664f477f4cd24f2669e143820f4400"}, "v3_job_identity.json": {"mtime_ns": 1792572816150557515, "sha256": "8681a526f18c5513762f0339b18cb1831e9a9f0e60008bc0dd1e2ee62f52b607"}}}
+Canonical bytes+mtime and prior launch witnesses unchanged across resume
+...
+
+cosmos_framework/utils/lazy_config/lazy.py:56
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/lazy.py:56: UserWarning: register_new_resolver() is deprecated and will be removed in a future release.
+  Use register_resolver() instead.
+  See https://github.com/hydra-ecosystem/omegaconf/issues/426 for migration instructions.
+  
+    OmegaConf.register_new_resolver("add", lambda *vals: sum(vals))
+
+cosmos_framework/utils/lazy_config/lazy.py:58
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/lazy.py:58: UserWarning: register_new_resolver() is deprecated and will be removed in a future release.
+  Use register_resolver() instead.
+  See https://github.com/hydra-ecosystem/omegaconf/issues/426 for migration instructions.
+  
+    OmegaConf.register_new_resolver("subtract", lambda *vals: vals[0] - sum(vals[1:]))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../tmp/psm-v3-high07-20261021::LifecycleTests::test_two_concurrent_fresh_have_exactly_one_atomic_claim
+FAILED ../../../tmp/psm-v3-high07-20261021::TrainerTests::test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop
+2 failed, 45 passed, 22 warnings, 32 subtests passed in 4.75s
+Fuu.DIGEST_INVARIANT {"fresh100": "abf4eeecadc318e898386899701a749da1ea5c79102fd078d71e7e54a5c17e5c", "resume500": "abf4eeecadc318e898386899701a749da1ea5c79102fd078d71e7e54a5c17e5c"}
+uuuuSemantic digest stable: fresh100 / resume500; mask, precision, WD skip and seed changes rejected
+..[CorrectedV3][dataset_init] {}
+F.uu..uuuu...uu..
+=================================== FAILURES ===================================
+____ LifecycleTests.test_two_concurrent_fresh_have_exactly_one_atomic_claim ____
+
+self = <psm_wma_robocasa_phase5_f0_test.LifecycleTests testMethod=test_two_concurrent_fresh_have_exactly_one_atomic_claim>
+
+    def test_two_concurrent_fresh_have_exactly_one_atomic_claim(self):
+        ctx = multiprocessing.get_context("spawn")
+        barrier, queue = ctx.Barrier(2), ctx.Queue()
+        jobs = [ctx.Process(target=_claim_worker, args=(self.args, barrier, queue)) for _ in range(2)]
+        for job in jobs:
+>           job.start()
+
+examples/psm_wma_robocasa_phase5_f0_test.py:336: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/process.py:121: in start
+    self._popen = self._Popen(self)
+                  ^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/context.py:289: in _Popen
+    return Popen(process_obj)
+           ^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/popen_spawn_posix.py:32: in __init__
+    super().__init__(process_obj)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/popen_fork.py:19: in __init__
+    self._launch(process_obj)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/popen_spawn_posix.py:42: in _launch
+    prep_data = spawn.get_preparation_data(process_obj._name)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/spawn.py:164: in get_preparation_data
+    _check_not_importing_main()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def _check_not_importing_main():
+        if getattr(process.current_process(), '_inheriting', False):
+>           raise RuntimeError('''
+            An attempt has been made to start a new process before the
+            current process has finished its bootstrapping phase.
+    
+            This probably means that you are not using fork to start your
+            child processes and you have forgotten to use the proper idiom
+            in the main module:
+    
+                if __name__ == '__main__':
+                    freeze_support()
+                    ...
+    
+            The "freeze_support()" line can be omitted if the program
+            is not going to be frozen to produce an executable.
+    
+            To fix this issue, refer to the "Safe importing of main module"
+            section in https://docs.python.org/3/library/multiprocessing.html
+            ''')
+E           RuntimeError: 
+E                   An attempt has been made to start a new process before the
+E                   current process has finished its bootstrapping phase.
+E           
+E                   This probably means that you are not using fork to start your
+E                   child processes and you have forgotten to use the proper idiom
+E                   in the main module:
+E           
+E                       if __name__ == '__main__':
+E                           freeze_support()
+E                           ...
+E           
+E                   The "freeze_support()" line can be omitted if the program
+E                   is not going to be frozen to produce an executable.
+E           
+E                   To fix this issue, refer to the "Safe importing of main module"
+E                   section in https://docs.python.org/3/library/multiprocessing.html
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/multiprocessing/spawn.py:140: RuntimeError
+_ TrainerTests.test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop _
+
+self = <psm_wma_robocasa_phase5_f0_test.TrainerTests testMethod=test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop>
+
+    def test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args = _args(Path(directory))
+            report = _report(args)
+            report.update(
+                dataset_init={},
+                transform_rng_mode="legacy_global",
+                full_segment_prefetch=False,
+                checkpoint_load_path=str(args.base_checkpoint),
+            )
+            config = self.trainer.config
+            config.job, config.phase = _config(args).job, args.phase
+            config.model = {}
+            self.trainer.bind_grouped_stream = MagicMock()
+    
+            def construct(actual_config, *, config_writer):
+                self.assertIs(actual_config, config)
+                config_writer(config, Serializer)
+                return self.trainer
+    
+            observer = MagicMock(completed=100)
+            with (
+                patch.multiple(
+                    phase5,
+                    create=True,
+                    _load_runtime=MagicMock(),
+                    _agree_preflight=MagicMock(return_value=(report, config, None, None)),
+                    torch=NS(cuda=NS(is_available=lambda: True)),
+                    distributed=MagicMock(),
+                    GroupedLocalMemoryTrainer=construct,
+                    model_init=nullcontext,
+                    instantiate=MagicMock(return_value=self.model),
+                    install_optimizer_inventory_check=MagicMock(),
+                    ExactWindowRankPlanner=MagicMock(),
+                    ExactWindowSegmentProducer=MagicMock(),
+                    TelemetryJournal=MagicMock(),
+                    GroupedPlanObserver=MagicMock(return_value=observer),
+                ),
+                patch.object(phase5, "parser", return_value=NS(parse_args=lambda argv: args)),
+                patch.dict(os.environ, {"RANK": "0", "WORLD_SIZE": "8", "GROUPED_MM_SM_CARVEOUT": "0"}),
+            ):
+>               phase5.main([])
+
+examples/psm_wma_robocasa_phase5_f0_test.py:678: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+examples/psm_wma_robocasa_corrected_phase5.py:969: in main
+    trainer = GroupedLocalMemoryTrainer(config, config_writer=lifecycle.write_config)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+examples/psm_wma_robocasa_phase5_f0_test.py:654: in construct
+    config_writer(config, Serializer)
+examples/psm_wma_robocasa_corrected_phase5.py:297: in write_config
+    validate_effective_snapshot(config, effective_data_source)
+examples/psm_wma_robocasa_effective_config.py:106: in validate_effective_snapshot
+    dataset, fields = _legacy_fields(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+config = namespace(trainer=namespace(memory_format=None, grad_scaler_args={}, max_iter=30000, distributed_parallelism='fsdp', r...ve_iter=100), job=namespace(path_local='/tmp/tmpaxav1nhr/psm_wma_v3/corrected_phase5/formal'), phase='fresh', model={})
+
+    def _legacy_fields(config: Any) -> tuple[Mapping, list[tuple[str, Mapping, str]]]:
+        loader = (
+            config.get("dataloader_train") if isinstance(config, Mapping) else getattr(config, "dataloader_train", None)
+        )
+        dataset = loader
+        for key in _DATASET_PATH:
+            if not isinstance(dataset, Mapping) or key not in dataset:
+>               raise ValueError("Corrected Phase5 requires the canonical legacy RoboCasa dataset node")
+E               ValueError: Corrected Phase5 requires the canonical legacy RoboCasa dataset node
+
+examples/psm_wma_robocasa_effective_config.py:33: ValueError
+=============================== warnings summary ===============================
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:115
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:115: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:162
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:181
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:181: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:191
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:191: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:213
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:213: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:222
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:222: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:235
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:235: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:258
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:267
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:267: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:279
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:279: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:292
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:292: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:306
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:306: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:329
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:329: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:342
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:342: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:360
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:360: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:380
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:380: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:396
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:396: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:407
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:407: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:442
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:442: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:453
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:453: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/utils/lazy_config/lazy.py:56
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/lazy.py:56: UserWarning: register_new_resolver() is deprecated and will be removed in a future release.
+  Use register_resolver() instead.
+  See https://github.com/hydra-ecosystem/omegaconf/issues/426 for migration instructions.
+  
+    OmegaConf.register_new_resolver("add", lambda *vals: sum(vals))
+
+cosmos_framework/utils/lazy_config/lazy.py:58
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/lazy.py:58: UserWarning: register_new_resolver() is deprecated and will be removed in a future release.
+  Use register_resolver() instead.
+  See https://github.com/hydra-ecosystem/omegaconf/issues/426 for migration instructions.
+  
+    OmegaConf.register_new_resolver("subtract", lambda *vals: vals[0] - sum(vals[1:]))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../tmp/psm-v3-high07-20261021::LifecycleTests::test_two_concurrent_fresh_have_exactly_one_atomic_claim
+FAILED ../../../tmp/psm-v3-high07-20261021::TrainerTests::test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop
+2 failed, 45 passed, 22 warnings, 32 subtests passed in 5.46s
+Fuu.DIGEST_INVARIANT {"fresh100": "ed38bb97ba8094bfb0a0f95f21e060e77ce691aad88fd998e94e377826f5939f", "resume500": "ed38bb97ba8094bfb0a0f95f21e060e77ce691aad88fd998e94e377826f5939f"}
+uuuuSemantic digest stable: fresh100 / resume500; mask, precision, WD skip and seed changes rejected
+..[CorrectedV3][dataset_init] {}
+F.uu..uuuu...uu..
+=================================== FAILURES ===================================
+____ LifecycleTests.test_two_concurrent_fresh_have_exactly_one_atomic_claim ____
+
+self = <psm_wma_robocasa_phase5_f0_test.LifecycleTests testMethod=test_two_concurrent_fresh_have_exactly_one_atomic_claim>
+
+    def test_two_concurrent_fresh_have_exactly_one_atomic_claim(self):
+        ctx = multiprocessing.get_context("spawn")
+        barrier, queue = ctx.Barrier(2), ctx.Queue()
+        jobs = [ctx.Process(target=_claim_worker, args=(self.args, barrier, queue)) for _ in range(2)]
+        for job in jobs:
+            job.start()
+        for job in jobs:
+            job.join(20)
+            if job.is_alive():
+                job.kill()
+                job.join()
+>           self.assertEqual(job.exitcode, 0)
+E           AssertionError: 1 != 0
+
+examples/psm_wma_robocasa_phase5_f0_test.py:342: AssertionError
+_ TrainerTests.test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop _
+
+self = <psm_wma_robocasa_phase5_f0_test.TrainerTests testMethod=test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop>
+
+    def test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop(self):
+        with tempfile.TemporaryDirectory() as directory:
+            args = _args(Path(directory))
+            report = _report(args)
+            report.update(
+                dataset_init={},
+                transform_rng_mode="legacy_global",
+                full_segment_prefetch=False,
+                checkpoint_load_path=str(args.base_checkpoint),
+            )
+            config = self.trainer.config
+            config.job, config.phase = _config(args).job, args.phase
+            config.model = {}
+            self.trainer.bind_grouped_stream = MagicMock()
+    
+            def construct(actual_config, *, config_writer):
+                self.assertIs(actual_config, config)
+                config_writer(config, Serializer)
+                return self.trainer
+    
+            observer = MagicMock(completed=100)
+            with (
+                patch.multiple(
+                    phase5,
+                    create=True,
+                    _load_runtime=MagicMock(),
+                    _agree_preflight=MagicMock(return_value=(report, config, None, None)),
+                    torch=NS(cuda=NS(is_available=lambda: True)),
+                    distributed=MagicMock(),
+                    GroupedLocalMemoryTrainer=construct,
+                    model_init=nullcontext,
+                    instantiate=MagicMock(return_value=self.model),
+                    install_optimizer_inventory_check=MagicMock(),
+                    ExactWindowRankPlanner=MagicMock(),
+                    ExactWindowSegmentProducer=MagicMock(),
+                    TelemetryJournal=MagicMock(),
+                    GroupedPlanObserver=MagicMock(return_value=observer),
+                ),
+                patch.object(phase5, "parser", return_value=NS(parse_args=lambda argv: args)),
+                patch.dict(os.environ, {"RANK": "0", "WORLD_SIZE": "8", "GROUPED_MM_SM_CARVEOUT": "0"}),
+            ):
+>               phase5.main([])
+
+examples/psm_wma_robocasa_phase5_f0_test.py:678: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+examples/psm_wma_robocasa_corrected_phase5.py:969: in main
+    trainer = GroupedLocalMemoryTrainer(config, config_writer=lifecycle.write_config)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+examples/psm_wma_robocasa_phase5_f0_test.py:654: in construct
+    config_writer(config, Serializer)
+examples/psm_wma_robocasa_corrected_phase5.py:297: in write_config
+    validate_effective_snapshot(config, effective_data_source)
+examples/psm_wma_robocasa_effective_config.py:106: in validate_effective_snapshot
+    dataset, fields = _legacy_fields(config)
+                      ^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+config = namespace(trainer=namespace(memory_format=None, grad_scaler_args={}, max_iter=30000, distributed_parallelism='fsdp', r...ve_iter=100), job=namespace(path_local='/tmp/tmpc4pdg5ay/psm_wma_v3/corrected_phase5/formal'), phase='fresh', model={})
+
+    def _legacy_fields(config: Any) -> tuple[Mapping, list[tuple[str, Mapping, str]]]:
+        loader = (
+            config.get("dataloader_train") if isinstance(config, Mapping) else getattr(config, "dataloader_train", None)
+        )
+        dataset = loader
+        for key in _DATASET_PATH:
+            if not isinstance(dataset, Mapping) or key not in dataset:
+>               raise ValueError("Corrected Phase5 requires the canonical legacy RoboCasa dataset node")
+E               ValueError: Corrected Phase5 requires the canonical legacy RoboCasa dataset node
+
+examples/psm_wma_robocasa_effective_config.py:33: ValueError
+=============================== warnings summary ===============================
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:115
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:115: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:162
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:162: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:181
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:181: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:191
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:191: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:213
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:213: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:222
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:222: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:235
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:235: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:258
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:258: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:267
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:267: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:279
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:279: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:292
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:292: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:306
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:306: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:329
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:329: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:342
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:342: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:360
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:360: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:380
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:380: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:396
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:396: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:407
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:407: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:442
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:442: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:453
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cache_test.py:453: PytestUnknownMarkWarning: Unknown pytest.mark.level - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.level(0)
+
+cosmos_framework/utils/lazy_config/lazy.py:56
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/lazy.py:56: UserWarning: register_new_resolver() is deprecated and will be removed in a future release.
+  Use register_resolver() instead.
+  See https://github.com/hydra-ecosystem/omegaconf/issues/426 for migration instructions.
+  
+    OmegaConf.register_new_resolver("add", lambda *vals: sum(vals))
+
+cosmos_framework/utils/lazy_config/lazy.py:58
+  /workspace/psm_wma/cosmos-framework/cosmos_framework/utils/lazy_config/lazy.py:58: UserWarning: register_new_resolver() is deprecated and will be removed in a future release.
+  Use register_resolver() instead.
+  See https://github.com/hydra-ecosystem/omegaconf/issues/426 for migration instructions.
+  
+    OmegaConf.register_new_resolver("subtract", lambda *vals: vals[0] - sum(vals[1:]))
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED ../../../tmp/psm-v3-high07-20261021::LifecycleTests::test_two_concurrent_fresh_have_exactly_one_atomic_claim
+FAILED ../../../tmp/psm-v3-high07-20261021::TrainerTests::test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop
+2 failed, 45 passed, 22 warnings, 32 subtests passed in 10.83s
