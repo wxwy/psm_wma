@@ -73,3 +73,12 @@
 - Request: DS_PRO owner-pasted 2026-10-21 iter4000 4-task×5 episode application.
 
 **Review provenance：只读 GitHub 源码静态审核；未访问训练服务器、未执行 CPU tests、未启动 GPU/仿真。**
+
+## 2026-10-21 ERRATUM — HIGH-01 撤销（源码缩进复核）
+
+**此勘误优先于上文 HIGH-01 和“Codex 限定任务”中要求修复 HIGH-01 的叙述。**
+在同一被审 Blob `6833b6ab6d17b85f7a840014ca400bc1dd6424ed` 上复核实际 Python 缩进：`scripts/eval_robocasa_18task_queue.py:375-377` 中 `publish()` 与 `with result_lock:` 同级，处于锁外；`:381-388` 异常路径同样在退出锁后调用 `publish()`。因此不存在旧 review 所称的嵌套获取同一 `threading.Lock()` 的死锁；**HIGH-01 = RETRACTED / FALSE POSITIVE**，禁止让 Codex 为此做生产代码变更。
+
+**当前技术 verdict 保持 `REQUEST_CHANGES`，有效 HIGH blocker 仅 HIGH-02**（`wait_server` 仅检查 required 模式、未拒绝占用端口及未核验本次 server Checkpoint / Config / raw15 / use_state / sampling identity）；MEDIUM-03/04 的只读 exact task-set 核验、whole-task-only resume 说明仍有效。正常/异常 worker 完成、无 hang 与清理的 CPU 测试仍可作为回归证据，但不对应已确认的生产死锁 Bug。
+
+Codex 仅需完成 HIGH-02 的最小 root queue 修复与定向 CPU Evidence；不得改动 child / trainer / DCP / 训练；不得启动 GPU 或真实 simulator。复审依据新的 implementation SHA，bookkeeping 文档提交本身不改变被审核 formal pair。
