@@ -1,0 +1,7 @@
+{
+  "base_root": "271984989dfd1151180905084c72817f74477e57",
+  "queue_ast_identical_after_removing_only_cli16_and_protocol_field": true,
+  "shared_identity_module_unchanged": true,
+  "child_clean": true,
+  "child_server_sha256": "203c6bec07a3d396b087ed8337c9ec848c724f8cb6dd639378235e17bc367a75"
+}

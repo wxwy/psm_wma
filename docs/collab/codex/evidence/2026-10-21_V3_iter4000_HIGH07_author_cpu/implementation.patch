@@ -1,0 +1,161 @@
+diff --git a/scripts/eval_robocasa_18task_queue.py b/scripts/eval_robocasa_18task_queue.py
+index cb829cec..4916918a 100644
+--- a/scripts/eval_robocasa_18task_queue.py
++++ b/scripts/eval_robocasa_18task_queue.py
+@@ -272,6 +272,7 @@ def main() -> int:
+             "seed": args.seed,
+             "R": args.action_horizon,
+             "H_pred": 16,
++            "server_action_chunk_size": 16,
+             "raw_action_dim": 15,
+             "max_action_dim": 64,
+             "policy_seed": 0,
+@@ -361,6 +362,8 @@ def main() -> int:
+             str(port),
+             "--raw-action-dim",
+             "15",
++            "--action-chunk-size",
++            "16",
+             "--local-memory-mode",
+             "required",
+             "--local-memory-max-sessions",
+diff --git a/tools/v3/eval_robocasa_queue_identity_test.py b/tools/v3/eval_robocasa_queue_identity_test.py
+index 6ecc05ec..9363189b 100644
+--- a/tools/v3/eval_robocasa_queue_identity_test.py
++++ b/tools/v3/eval_robocasa_queue_identity_test.py
+@@ -63,6 +63,47 @@ def _child_checkpoint_builder():
+ CHILD_CHECKPOINT_BUILDER = _child_checkpoint_builder()
+ 
+ 
++def _child_chunk_resolver():
++    """Execute the unchanged Child parser and CLI/config/fallback branch only."""
++    source = ROOT / "cosmos-framework/cosmos_framework/scripts/action_policy_server_robocasa.py"
++    tree = ast.parse(source.read_text())
++    parser = next(
++        node
++        for node in tree.body
++        if isinstance(node, ast.FunctionDef) and node.name == "_extract_chunk_length_from_config"
++    )
++    default = next(
++        node
++        for node in tree.body
++        if isinstance(node, ast.Assign)
++        and any(isinstance(target, ast.Name) and target.id == "_DEFAULT_ACTION_CHUNK_SIZE" for target in node.targets)
++    )
++    service = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == "ActionModelService")
++    init = next(node for node in service.body if isinstance(node, ast.FunctionDef) and node.name == "__init__")
++    resolution = next(
++        node
++        for node in init.body
++        if isinstance(node, ast.If) and ast.unparse(node.test) == "args.action_chunk_size is not None"
++    )
++    namespace = {"Any": object, "DictConfig": dict}
++    exec(compile(ast.Module(body=[default, parser], type_ignores=[]), str(source), "exec"), namespace)
++    branch = compile(ast.Module(body=[resolution], type_ignores=[]), str(source), "exec")
++
++    def resolve(cli_value, config):
++        local = {
++            "args": SimpleNamespace(action_chunk_size=cli_value),
++            "self": SimpleNamespace(experiment_config=config),
++            "log": SimpleNamespace(info=lambda message: None),
++        }
++        exec(branch, namespace, local)
++        return local["resolved_chunk_size"]
++
++    return resolve
++
++
++CHILD_CHUNK_RESOLVER = _child_chunk_resolver()
++
++
+ def _child_model_path(checkpoint: Path, config: Path) -> str:
+     setup = SimpleNamespace(checkpoint_path=str(checkpoint), config_file=str(config), experiment_overrides=[])
+     CHILD_CHECKPOINT_BUILDER(setup, checkpoints={})
+@@ -172,7 +213,10 @@ def _scenario(case, parent, count):
+     (checkpoint / "model/.metadata").write_bytes(b"tiny synthetic metadata, not a real DCP")
+     (checkpoint / "model/__0_0.distcp").write_bytes(b"synthetic")
+     config = checkpoint.parent.parent / "config.yaml"
+-    config.write_text("synthetic: true\n")
++    config.write_text(
++        json.dumps({"dataloader_train": {"dataloader": {"datasets": {"robocasa": {"dataset": {"chunk_length": 32}}}}}})
++    )
++    original_config_bytes = config.read_bytes()
+     dataset = parent / "datasets"
+     for task in TASKS:
+         meta = dataset / task / "lerobot/extras/dataset_meta.json"
+@@ -214,6 +258,10 @@ def _scenario(case, parent, count):
+         port = int(command[command.index("--port") + 1])
+         info = _info(checkpoint, config)
+         info["checkpoint"] = _child_model_path(checkpoint, config)
++        cli_chunk = int(command[command.index("--action-chunk-size") + 1]) if "--action-chunk-size" in command else None
++        info["action_chunk_size"] = CHILD_CHUNK_RESOLVER(cli_chunk, json.loads(config.read_text()))
++        if case == "wrong_chunk":
++            info["action_chunk_size"] = 32
+         if case == "wrong_checkpoint":
+             info["checkpoint"] = str(checkpoint.with_name("iter_000003900") / "model")
+         if case == "wrong_job_same_iteration":
+@@ -324,6 +372,8 @@ def _scenario(case, parent, count):
+         "rc": rc,
+         "error": error,
+         "server_commands": len(calls),
++        "server_command_argv": calls,
++        "frozen_config_unchanged": config.read_bytes() == original_config_bytes,
+         "sim_calls": len(sim_calls),
+         "server_exits": server_exits,
+         "foreign_alive_before_fixture_cleanup": foreign_alive,
+@@ -334,10 +384,32 @@ def _scenario(case, parent, count):
+     }
+     if (output / "screening_summary.json").exists():
+         report["summary"] = json.loads((output / "screening_summary.json").read_text())
++    if (output / "evaluation_manifest.json").exists():
++        report["protocol"] = json.loads((output / "evaluation_manifest.json").read_text())["identity"]["protocol"]
+     (parent / "report.json").write_text(json.dumps(report))
+ 
+ 
+ class ServerIdentityTests(unittest.TestCase):
++    def test_real_child_explicit_chunk16_overrides_config32_and_missing_flag_fails_strict_info(self):
++        checkpoint, config_path = Path("/synthetic/iter_000004000"), Path("/synthetic/config.yaml")
++        config = {"dataloader_train": {"dataloader": {"datasets": {"robocasa": {"dataset": {"chunk_length": 32}}}}}}
++        before = copy.deepcopy(config)
++        info = _info(checkpoint, config_path)
++        info["action_chunk_size"] = CHILD_CHUNK_RESOLVER(16, config)
++        self.assertEqual(info["action_chunk_size"], 16)
++        queue_module.validate_server_info(
++            info, checkpoint=checkpoint, config_file=config_path, num_steps=30, guidance=1.0
++        )
++        for inherited in (config, {}):
++            with self.subTest(source="config32" if inherited else "fallback"):
++                info["action_chunk_size"] = CHILD_CHUNK_RESOLVER(None, inherited)
++                self.assertEqual(info["action_chunk_size"], 32)
++                with self.assertRaisesRegex(ValueError, "action_chunk_size mismatch"):
++                    queue_module.validate_server_info(
++                        info, checkpoint=checkpoint, config_file=config_path, num_steps=30, guidance=1.0
++                    )
++        self.assertEqual(config, before)
++
+     def test_real_child_checkpoint_builder_model_path_passes_exact_identity(self):
+         with tempfile.TemporaryDirectory() as directory:
+             checkpoint = Path(directory) / "iter_000004000"
+@@ -457,6 +529,13 @@ class QueueIntegrationTests(unittest.TestCase):
+                 report = self.scenario("normal", count)
+                 self.assertEqual(report["rc"], 0)
+                 self.assertEqual(report["server_commands"], count)
++                for command in report["server_command_argv"]:
++                    self.assertEqual(command.count("--action-chunk-size"), 1)
++                    self.assertEqual(command[command.index("--action-chunk-size") + 1], "16")
++                self.assertTrue(report["frozen_config_unchanged"])
++                self.assertEqual(report["protocol"]["server_action_chunk_size"], 16)
++                self.assertEqual(report["protocol"]["H_pred"], 16)
++                self.assertEqual(report["protocol"]["R"], 16)
+                 summary = report["summary"]
+                 self.assertEqual(set(summary["tasks"]), TASKS)
+                 self.assertEqual(summary["status"], "COMPLETE")
+@@ -477,7 +556,7 @@ class QueueIntegrationTests(unittest.TestCase):
+         self.assertIn("unavailable", report["error"])
+ 
+     def test_wrong_checkpoint_config_and_mode_stop_before_simulator(self):
+-        for case in ("wrong_checkpoint", "wrong_config", "wrong_mode"):
++        for case in ("wrong_checkpoint", "wrong_config", "wrong_mode", "wrong_chunk"):
+             with self.subTest(case=case):
+                 report = self.scenario(case)
+                 self.assertEqual(report["rc"], 1)
