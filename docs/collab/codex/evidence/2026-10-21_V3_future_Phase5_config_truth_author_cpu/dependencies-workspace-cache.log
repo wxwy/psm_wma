@@ -1,0 +1,12 @@
+Using Python 3.12.14 environment at: /workspace/.venvs/psm-wma-cpu
+Resolved 7 packages in 1.38s
+   Building iopath==0.1.10
+      Built iopath==0.1.10
+Prepared 6 packages in 225ms
+Installed 6 packages in 5ms
+ + attrs==26.1.0
+ + iopath==0.1.10
+ + omegaconf==2.4.0
+ + portalocker==4.4.1
+ + pyyaml==6.0.3
+ + tqdm==4.70.1

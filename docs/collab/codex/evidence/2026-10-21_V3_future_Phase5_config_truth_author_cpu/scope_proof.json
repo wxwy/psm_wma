@@ -1,0 +1,15 @@
+{
+  "base_child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "whole_phase5_ast_restores_exactly_by_removing_only_new_imports_hooks_and_provenance_keys": true,
+  "existing_regression_assertions_identical": {
+    "examples/psm_wma_robocasa_corrected_phase5_test.py": 93,
+    "examples/psm_wma_robocasa_phase5_f0_test.py": 83
+  },
+  "root_high07_queue_unchanged": true,
+  "protected_source_sha256": {
+    "cosmos_framework/checkpoint/dcp.py": "e3bbe253876a4b1d1e73086f556f479c9edf1318ca62ea7011f984a2ab8276d9",
+    "cosmos_framework/trainer/__init__.py": "80012a0550db83e85264eb9d338ed0937f7301925ba70017c00e520a1cacb572",
+    "cosmos_framework/scripts/action_policy_server_robocasa.py": "203c6bec07a3d396b087ed8337c9ec848c724f8cb6dd639378235e17bc367a75",
+    "cosmos_framework/data/generator/action/datasets/robocasa_exact_window_policy.py": "a2236e0c96fa9cbdac372bd2ebaa92f4c1d5db98f4432942f21968a163bdde45"
+  }
+}

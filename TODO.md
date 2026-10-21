@@ -420,3 +420,6 @@
 
 ## V3-CONFIG-TRUTH-MAINLINE-MERGE — 2026-10-21
 - IN_PROGRESS; Codex; Owner explicitly authorizes merging the published Config-truth candidate into V3. Acceptance: preserve both histories, exact Child35b0ea1/source-hash equivalence and prior CPU evidence, new integration Root SHA, non-force push/readback and canonical review handoff. No production-server sync, old G1/config/checkpoint/identity changes or GPU/Server/Simulator/training.
+- V3-FUTURE-PHASE5-CONFIG-TRUTH: IN_PROGRESS on isolated Root/Child v3-phase5-config-truth-20261021 after HIGH07 author delivery. Future-job compatibility snapshot and versioned launch provenance only; no mainline merge or old-job migration. Separate implementation/Evidence/STOP.
+- V3-FUTURE-PHASE5-CONFIG-TRUTH: REVIEW; author lock-aligned CPU47+32subtests/static PASS. Child/Root isolated candidate publication and pair-bound diff/Evidence handoff; no mainline merge or independent verdict. New-job strict same-source lifecycle tested, old G1 unmodified/unsupported cross-pair migration remains rejected.
+- V3-CONFIG-TRUTH-MAINLINE-MERGE: REVIEW after source-hash verification and non-force publication. New Root integration/Child35b0ea1 requires independent review; existing author47+32CPU/static evidence retained, no execution authorization.

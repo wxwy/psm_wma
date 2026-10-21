@@ -1,0 +1,115 @@
+{
+  "scope": "FUTURE_PHASE5_CONFIG_TRUTH_AUTHOR_CPU_ONLY",
+  "base_child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+  "root_base": "ab1f277e8cec125abeb24b2850eac3e555b47522",
+  "gpu": false,
+  "real_server_or_simulator": false,
+  "production_assets": false,
+  "bootstrap": "Only bypass eager unrelated datasets/__init__.py, load original cache/serializers; original contract AST with fixed tokenizer fixture and real Torch CPU",
+  "environment_overrides": {
+    "PYTHONPATH": "/workspace/psm_wma/cosmos-framework",
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HOME": "/workspace/.cache/huggingface",
+    "MPLCONFIGDIR": "/workspace/.cache/matplotlib",
+    "PYTHONPYCACHEPREFIX": "/tmp/psm-v3-config-truth-20261021/pycache",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "commands": [
+    {
+      "name": "ruff_check",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_effective_config.py",
+        "examples/psm_wma_robocasa_effective_config_test.py",
+        "examples/psm_wma_robocasa_corrected_phase5_test.py",
+        "examples/psm_wma_robocasa_phase5_f0_test.py"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--check",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_effective_config.py",
+        "examples/psm_wma_robocasa_effective_config_test.py",
+        "examples/psm_wma_robocasa_corrected_phase5_test.py",
+        "examples/psm_wma_robocasa_phase5_f0_test.py"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "syntax",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "py_compile",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_effective_config.py",
+        "examples/psm_wma_robocasa_effective_config_test.py",
+        "examples/psm_wma_robocasa_corrected_phase5_test.py",
+        "examples/psm_wma_robocasa_phase5_f0_test.py"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "pytest",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "/tmp/psm-v3-config-truth-20261021/pytest_cpu.py",
+        "--noconftest",
+        "-c",
+        "/tmp/psm-v3-high07-20261021/pytest.ini",
+        "-q",
+        "-s",
+        "-p",
+        "no:cacheprovider",
+        "examples/psm_wma_robocasa_effective_config_test.py",
+        "examples/psm_wma_robocasa_phase5_f0_test.py",
+        "--junitxml=/tmp/psm-v3-config-truth-20261021/final-r3-lock-aligned/pytest.xml"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "diff_check",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    }
+  ],
+  "author_checks_passed": true,
+  "source_sha256": {
+    "examples/psm_wma_robocasa_corrected_phase5.py": "14723df83b8c2f3478eedebbbda3ff3ff0e8f99738f6900d3ea8c0046a1c279f",
+    "examples/psm_wma_robocasa_effective_config.py": "4b6d89a5719926295e0c4f0c854e8b563fee67eff666c0b5df1e68a86c066731",
+    "examples/psm_wma_robocasa_effective_config_test.py": "414c8af69333e148d59080f4d23fb6fda6bf2362f21686bddbe7df9f5b79bbb9",
+    "examples/psm_wma_robocasa_corrected_phase5_test.py": "cf9de3e9ace3556ff425ee73146aefee0f35465b341657f29b9a466997b4cf40",
+    "examples/psm_wma_robocasa_phase5_f0_test.py": "32f3258ef410e2c66f7b32dcdd87c0fa5f4f6a6ae25b39c5bb899a9fe9506642"
+  },
+  "junit": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "79",
+      "time": "3.691",
+      "timestamp": "2026-10-21T08:56:51.991377+00:00",
+      "hostname": "d4ae95e8e7b1"
+    }
+  ]
+}

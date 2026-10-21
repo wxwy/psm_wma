@@ -1,0 +1,30 @@
+diff --git a/SESSION.md b/SESSION.md
+index 1edd7129..09853fe4 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1461,0 +1462,11 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
++
++## 2026-10-21 — Future Phase5 config-truth isolated claim
++- HIGH07 source320fda57 + Evidence docsab1f277e published; isolated root/child branches v3-phase5-config-truth-20261021 created, root based onab1f277e and Child2d128ed5. Will push candidate refs only, no V3/v3-local-ttt merge.
++- Expected Child edits: Corrected Phase5 overlay/lifecycle and dedicated effective-config helper+focused tests, F0 fixtures only as necessary. Root Gitlink+notes/Evidence. Synchronize only retained Corrected Phase5 legacy chunk field before new effective snapshots; refuse ambiguous/conflicting/type-invalid layouts; truthful versioned launch provenance identifies actual cached SFT→ExactWindowSegmentProducer→GroupedLocalMemoryTrainer.bind_grouped_stream, not legacy dataloader. Use existing lifecycle canonical SHA/namespace checks; no old G1 schema/identity migration.
++- CPU tests will use inherited32 temporary configs, original serializers/Child resolver and synthetic contracts/cache/action windows only. No real asset writes, GPU, model/server/simulator, DCP or G1 process interactions. Stop if existing schema/new-job same-source resume cannot be preserved.
++
++### 2026-10-21 — Future config-truth author CPU complete / isolated implementation
++- Baseline old Phase5 overlay actually retained32 after tokenizer/runtime config overlay; failing32!=16 assertion preserved. Initial minimal-env collection blocked by unrelated eager SciPy dataset import; external bootstrap bypasses only that registration package. Fixture missing480 tokenizer entry and bootstrap spawn guard repaired, prior failures preserved, production assertions never relaxed.
++- Future-only Corrected overlay mirrors known unambiguous Stage-A32/16 canonical dataset aliases to16 after validating remaining contract; type/unknown/multiple conflicting fields fail before mirror mutation. Existing full geometry/cache contract remains authority. Live config and just-saved YAML are checked before canonical Config/Job Identity publication. Versioned effective_data_source in launch.json identifies cached SFT→ExactWindowSegmentProducer→GroupedLocalMemoryTrainer.bind_grouped_stream, legacy node compatibility-only, raw/state15/H16/frames17/fps20 and independent T.
++- Final lock-aligned CPU47 passed (19 new cases+28 existing F0 methods),32subtests,0fail/error/skip,3.691s; Ruff0.12.7 check/format,syntax,diff PASS. Original serializers YAML/PKL read16/Child parser16; real tiny-cache17 identity and original SequencePlan state-conditioning source bodies exercised. Same-source Fresh→Resume lifecycle retains all canonical config/identity bytes; no real DCP save/load or model/optimizer training.
++- Scope proof: remove only new helper import/hook/provenance AST and entire Phase5 equals2d128ed5; existing93 corrected-test and83 F0 assertion ASTs identical. Checkpoint/RNG/Trainer/Action Server/policy source and Root HIGH07 Queue unchanged. New Child and Root are isolated candidate refs only, no V3/v3-local-ttt merge or G1 asset/process modification. Existing identity schema/namespace/hash semantics remain; source-pair lock rejects old-job migration. New canonical config hashes change to truthful16 for new jobs, final semantic digest also changes with new exact source pair; no historical identity rebind.
+diff --git a/TODO.md b/TODO.md
+index 4631f03c..7231a95d 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -418,0 +419,2 @@
++- V3-FUTURE-PHASE5-CONFIG-TRUTH: IN_PROGRESS on isolated Root/Child v3-phase5-config-truth-20261021 after HIGH07 author delivery. Future-job compatibility snapshot and versioned launch provenance only; no mainline merge or old-job migration. Separate implementation/Evidence/STOP.
++- V3-FUTURE-PHASE5-CONFIG-TRUTH: REVIEW; author lock-aligned CPU47+32subtests/static PASS. Child/Root isolated candidate publication and pair-bound diff/Evidence handoff; no mainline merge or independent verdict. New-job strict same-source lifecycle tested, old G1 unmodified/unsupported cross-pair migration remains rejected.
+diff --git a/cosmos-framework b/cosmos-framework
+index 2d128ed5..35b0ea1c 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 2d128ed5a07601cdd424974f99b67832eafeeb41
++Subproject commit 35b0ea1ccee9ee26653ed6589c484f0997d1c586
