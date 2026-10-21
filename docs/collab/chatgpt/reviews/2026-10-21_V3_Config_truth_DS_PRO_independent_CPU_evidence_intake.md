@@ -53,3 +53,17 @@ ChatGPT 独立从 GitHub 固定 Child `35b0ea1c...` 检查相关测试源码，�
 - Owner 自行决定何时停止训练和释放 GPU。后续真实模型加载 +`/info` canary 与 4Task×5Episode 分属独立执行许可；不能把合成 CPU 结果或本报告当真实 SR。
 
 **本 `REQUEST_CHANGES` 是为了可访问原始 DS evidence 的最小补齐，非新模型/代码 blocker，不要求重新改代码或重复测试。**
+
+## 2026-10-21 Evidence handoff round 2 — textual logs received; archive still inaccessible
+
+The Owner forwarded a second DS_PRO handoff specifying the **existing** source evidence bundle path:
+`/mnt/data1/data_v2_0617/dspro_verify_iter4000_306d2350_20261021/evidence/DS_PRO_V3_config_truth_306d2350_35b0ea1c_evidence.tar.gz`, reported 10.5 KB and sha256 `aeb7389e6bb5ec136db731e6ca710db65d175d959152823c2550b46f87793aff`; source evidence directory `.../evidence/config_truth_cpu/`; DS local-only commit `2db54163` reportedly not pushed.
+
+**What GPT directly could check this round:**
+- Text copied into this conversation has exactly **22** separate `[PASS]` entries (A4+B5+C7+D6). The copied pytest summaries say Config-truth `107 passed, 1 skipped, 32 subtests passed in 42.11s`; HIGH-07 `18 passed, 50 subtests passed in 34.85s`. Reported Ruff check/format OK. The previous source review identified the optional real-assets skip, not a required gate failure.
+- GitHub V3 remote is still a docs-only head above the same implementation Root `306d235046fe5d578503beb17a56f5c0eb0f5634` and Child/Gitlink `35b0ea1ccee9ee26653ed6589c484f0997d1c586`. No formal pair change, **no repeated production code review**.
+- GitHub API lookup for commit `2db54163` yielded no commit (unpublished). Connected Remote Desktop Commander reported target device **Offline**; container `/mnt/data` did not have the named `.tar.gz`; current Project/Library file search found no named archive or standalone independent script.
+
+**Still not verifiable:** `.tar.gz` bytes/claimed SHA256, the true independent `dspro_independent_config_truth_check.py` file, `execution_record.json` with exact commands and RC, the authored manifest, raw logs/JUnit and file hashes. The pasted text is an informative *transcript supplied by DS*, **not** a readable original file archive. Do not replace source evidence with a newly synthesized tar or claim original hash verification.
+
+**Verdict unchanged: `REQUEST_CHANGES` — EVIDENCE-ONLY (EVIDENCE-01, MEDIUM provenance)**. Production CPU/static `APPROVE` remains unchanged; user-reported execution checks are consistent with PASS but do not yet meet auditable raw evidence closure. **Acceptance**: attach the **existing 10.5KB tar.gz directly to this chat** (preferred; no GitHub PAT), or place exact raw files in an accessible GitHub Evidence directory and provide URL. GPT then verify tar digest, inspect script/manifest/commands/RC/witness consistency and close this same-Pair Evidence Gate without new code review or rerun. No new GPU/Action Server/Simulator authorization; Owner chooses when to free GPU.
