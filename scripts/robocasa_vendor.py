@@ -27,7 +27,8 @@ ASSET_SUFFIXES = {".xml", ".obj", ".stl", ".mtl", ".png", ".jpg", ".jpeg", ".web
 
 
 def canonical(value) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    # Match v3_evaluation_identity._canonical for non-ASCII paths/metadata too.
+    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
 
 
 def sha256_file(path: Path) -> str:

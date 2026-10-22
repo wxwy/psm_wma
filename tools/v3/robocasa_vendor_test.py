@@ -638,3 +638,34 @@ def test_target_kitchens_and_object_split_match_pinned_official_protocol(checkou
     exec(compile(ast.Module(body=branch.body, type_ignores=[]), str(path), "exec"), observed)
     assert observed["obj_instance_split"] == "target"
     assert observed["layout_and_style_ids"] == list(zip(range(1, 11), range(1, 11)))
+
+
+def test_unicode_verified_manifest_uses_original_claim_and_strict_resume(tmp_path, monkeypatch):
+    import v3_evaluation_identity as base_identity
+
+    meta = tmp_path / "厨房/extras/dataset_meta.json"
+    meta.parent.mkdir(parents=True)
+    meta.write_text('{"robocasa_version":"0.5.1"}')
+    runtime = {"packages": {"robocasa": {"distribution_version": "1.0.1"}}, "digest": "runtime-digest"}
+    monkeypatch.setattr(
+        vendor,
+        "collect_runtime",
+        lambda **kw: {"evaluation_runtime": runtime, "runtime_probe_evidence": {"stdout": "诊断日志"}},
+    )
+    monkeypatch.setattr(
+        base_identity,
+        "build_evaluation_identity",
+        lambda **kw: {"identity": {"protocol": kw["protocol"]}, "digest": "ignored"},
+    )
+    bundle = vendor.build_verified_evaluation_identity(
+        sim_python=Path(sys.executable), tasks=[("CloseFridge", meta.parent.parent)], protocol={"note": "厨房评测"}
+    )
+    manifest = bundle["manifest"]
+    output = tmp_path / "评测输出"
+    assert base_identity.claim_evaluation_run(output, manifest, resume=False) == manifest["digest"]
+    assert base_identity.claim_evaluation_run(output, manifest, resume=True) == manifest["digest"]
+    foreign = copy.deepcopy(manifest)
+    foreign["identity"]["evaluation_runtime"]["digest"] = "foreign-runtime"
+    foreign["digest"] = hashlib.sha256(vendor.canonical(foreign["identity"])).hexdigest()
+    with pytest.raises(ValueError, match="identity changed"):
+        base_identity.claim_evaluation_run(output, foreign, resume=True)

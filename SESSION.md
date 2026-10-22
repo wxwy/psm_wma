@@ -1517,3 +1517,7 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
 
 ### Batch B exact isolated implementation committed
 - Implementation Root2b14ef1a6b13be0c0dea405231506323594d81f2 / unchanged Child-Gitlink35b0ea1ccee9ee26653ed6589c484f0997d1c586; vendor1ac174585293ed998ffc9cf73e47439798cf6f6c reconstructed by verified root patchset (not an upstream remote ref). Formal source pair independent of A/G1; all prior refs preserved. Author109 CPU PASS, exact evidence/handoff delivered, independent GPT/DS and real physics Gate not self-closed. No V3 source merge/runtime deployment; STOP after remote verification.
+
+### Batch B r2 — Unicode manifest compatibility closed before canonical handoff
+- Post-commit author recheck found new canonical JSON default escaped Unicode while existing evaluation identity uses UTF-8; non-ASCII dataset/output paths would be rejected by unchanged claim_evaluation_run. Root2b14ef1a source reproduces one exact expected RED case; its original source/evidence remains immutable.
+- Minimal fix: new canonical includes ensure_ascii=False; actual unchanged claim_evaluation_run now accepts Unicode manifest/new output and same-identity Resume, rejects a changed runtime digest. Final complete focused110 passed,0failed/skipped,15.89s; Ruff0.12.7/format/syntax/source diff PASS. Vendor1ac17458 and Child35b0ea1 unchanged. New r2 Root implementation supersedes2b14 as formal review target; r1 logs/artifacts retained and not relabeled. No A/G1/C integration or runtime execution.
