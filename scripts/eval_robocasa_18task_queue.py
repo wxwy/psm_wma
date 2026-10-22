@@ -1,10 +1,5 @@
 #!/usr/bin/env python3
-"""Run the V3 RoboCasa target-atomic screening with persistent per-GPU workers.
-
-Each worker owns one GPU, one action-policy server and one simulator subprocess at a time.
-Workers pull tasks from a shared deterministic queue; the model is loaded once per GPU, not
-once per task.  The child evaluator owns rollout semantics and Local-TTT telemetry.
-"""
+"""Run RoboCasa with one isolated Server/Simulator pair per task and GPU worker."""
 
 from __future__ import annotations
 
@@ -13,6 +8,7 @@ import json
 import math
 import os
 import queue
+import signal
 import socket
 import subprocess
 import threading
@@ -23,6 +19,13 @@ from contextlib import ExitStack
 from pathlib import Path
 from typing import Any
 
+from robocasa_processes import (
+    EpisodeProgress,
+    EvaluationInterrupted,
+    OwnedProcess,
+    positive_seconds,
+    supervise_simulator,
+)
 from v3_evaluation_identity import (
     build_evaluation_identity,
     claim_evaluation_run,
@@ -74,8 +77,12 @@ def require_free_ports(ports: list[int]) -> None:
             if type(port) is not int or not 1 <= port <= 65535:
                 raise ValueError(f"invalid action server port: {port}")
             listener = stack.enter_context(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+            # Match ThreadingHTTPServer: a stopped owned server can leave
+            # TIME_WAIT sockets. This never permits binding an active listener.
+            listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:
                 listener.bind(("0.0.0.0", port))
+                listener.listen(1)
             except OSError as error:
                 raise RuntimeError(f"action server port {port} unavailable: {error}") from error
 
@@ -151,21 +158,28 @@ def wait_server(
     config_file: Path,
     num_steps: int,
     guidance: float,
+    stop: threading.Event | None = None,
 ) -> dict[str, Any]:
     deadline = time.monotonic() + timeout
     url = f"http://127.0.0.1:{port}/info"
     last_error: BaseException | None = None
     while time.monotonic() < deadline:
+        if stop is not None and stop.is_set():
+            raise EvaluationInterrupted("evaluation cancelled during server startup")
         if proc.poll() is not None:
             raise RuntimeError(f"action server exited early with code {proc.returncode}")
         try:
             info = _read_json(url, timeout=min(5.0, max(0.001, deadline - time.monotonic())))
         except (OSError, urllib.error.URLError, json.JSONDecodeError) as error:
             last_error = error
-            time.sleep(min(2.0, max(0.0, deadline - time.monotonic())))
+            time.sleep(min(0.1, max(0.0, deadline - time.monotonic())))
             continue
         validate_server_info(
-            info, checkpoint=checkpoint, config_file=config_file, num_steps=num_steps, guidance=guidance
+            info,
+            checkpoint=checkpoint,
+            config_file=config_file,
+            num_steps=num_steps,
+            guidance=guidance,
         )
         require_owned_listener(proc, port)
         if proc.poll() is not None:
@@ -231,9 +245,34 @@ def main() -> int:
     parser.add_argument("--num-steps", type=int, default=30)
     parser.add_argument("--guidance", type=float, default=1.0)
     parser.add_argument("--timeout", type=float, default=600.0)
+    parser.add_argument("--server-start-timeout-s", type=float, default=None)
+    parser.add_argument("--predict-request-timeout-s", type=float, default=None)
+    parser.add_argument("--episode-wall-timeout-s", type=float, default=1800)
+    parser.add_argument("--task-wall-timeout-s", type=float, default=10800)
+    parser.add_argument("--terminate-grace-s", type=float, default=20)
+    parser.add_argument("--server-lifecycle", choices=("per_task",), default="per_task")
+    parser.add_argument(
+        "--on-infrastructure-error",
+        choices=("stop", "continue_with_new_server"),
+        default="stop",
+    )
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
 
+    args.server_start_timeout_s = (
+        args.server_start_timeout_s if args.server_start_timeout_s is not None else args.timeout
+    )
+    args.predict_request_timeout_s = (
+        args.predict_request_timeout_s if args.predict_request_timeout_s is not None else args.timeout
+    )
+    for seconds in (
+        args.server_start_timeout_s,
+        args.predict_request_timeout_s,
+        args.episode_wall_timeout_s,
+        args.task_wall_timeout_s,
+        args.terminate_grace_s,
+    ):
+        positive_seconds(seconds)
     checkpoint = args.checkpoint_path.resolve()
     if not (checkpoint / "model").is_dir():
         raise SystemExit(f"checkpoint DCP model/ missing: {checkpoint}")
@@ -287,6 +326,15 @@ def main() -> int:
             "image_size": 256,
             "cam_size": 256,
             "success_latch": 1,
+            "server_lifecycle": args.server_lifecycle,
+            "on_infrastructure_error": args.on_infrastructure_error,
+            "timeouts": {
+                "server_start_s": args.server_start_timeout_s,
+                "predict_request_s": args.predict_request_timeout_s,
+                "episode_wall_s": args.episode_wall_timeout_s,
+                "task_wall_s": args.task_wall_timeout_s,
+                "terminate_grace_s": args.terminate_grace_s,
+            },
         },
     )
     run_digest = claim_evaluation_run(output_root, manifest, resume=args.resume)
@@ -300,7 +348,13 @@ def main() -> int:
         existing = task_out / "results.json"
         if args.resume and existing.is_file():
             results[task] = task_result(
-                dataset_dir, task_out, -1, "resume", 0.0, run_digest=run_digest, expected_trials=args.num_test_episodes
+                dataset_dir,
+                task_out,
+                -1,
+                "resume",
+                0.0,
+                run_digest=run_digest,
+                expected_trials=args.num_test_episodes,
             )
             continue
         elif existing.exists():
@@ -328,12 +382,16 @@ def main() -> int:
                 "tasks": ordered,
             }
             payload.update(
-                screening_metrics(results, tasks=[task for task, _ in tasks], expected_trials=args.num_test_episodes)
+                screening_metrics(
+                    results,
+                    tasks=[task for task, _ in tasks],
+                    expected_trials=args.num_test_episodes,
+                )
             )
             payload["evaluation_run_digest"] = run_digest
             worker_errors = {key: row for key, row in results.items() if key.startswith("_worker_")}
             payload["worker_errors"] = worker_errors
-            if worker_errors:
+            if worker_errors or any(row.get("error") for row in ordered.values()):
                 payload["status"] = "INCOMPLETE"
                 payload["sr"] = None
             atomic_write_json(summary_path, payload)
@@ -377,46 +435,55 @@ def main() -> int:
             "--no-guardrails",
             "--http-400-on-error",
         ]
+        # Open the worker log before claiming a task, so even initialization
+        # errors are preserved by the outer worker boundary.
         with server_log_path.open("ab", buffering=0) as server_log:
-            server = None
-            try:
-                require_free_ports([port])
-                server = subprocess.Popen(
-                    server_command,
-                    cwd=CHILD,
-                    env=server_env,
-                    stdout=server_log,
-                    stderr=subprocess.STDOUT,
-                )
-                info = wait_server(
-                    server,
-                    port,
-                    args.timeout,
-                    checkpoint=checkpoint,
-                    config_file=config_file,
-                    num_steps=args.num_steps,
-                    guidance=args.guidance,
-                )
-                if sha256_file(config_file) != manifest["identity"]["config_sha256"]:
-                    raise ValueError("action server config file changed since evaluation identity was frozen")
-                atomic_write_json(worker_dir / "server_info.json", info)
-                atomic_write_json(worker_dir / "server_process.json", {"pid": server.pid, "port": port})
-                while not stop.is_set():
-                    if server.poll() is not None:
-                        raise RuntimeError(f"action server exited during screening with code {server.returncode}")
-                    try:
-                        task, dataset_dir = work.get_nowait()
-                    except queue.Empty:
-                        break
-                    task_out = output_root / task
+            while not stop.is_set():
+                try:
+                    task, dataset_dir = work.get_nowait()
+                except queue.Empty:
+                    break
+                task_out = output_root / task
+                started = time.monotonic()
+                task_deadline = started + args.task_wall_timeout_s
+                server_owned = sim_owned = None
+                row, error, returncode = None, None, -1
+                cleanup = {}
+                stage = "server_start"
+                try:
                     task_out.mkdir(parents=True, exist_ok=True)
-                    task_log_path = task_out / "eval.log"
-                    sim_env = os.environ.copy()
-                    sim_env["CUDA_VISIBLE_DEVICES"] = gpu
-                    sim_env["MUJOCO_GL"] = sim_env.get("MUJOCO_GL", "egl")
-                    sim_env["PYTHONPATH"] = str(CHILD) + (
-                        os.pathsep + sim_env["PYTHONPATH"] if sim_env.get("PYTHONPATH") else ""
+                    require_free_ports([port])
+                    server_owned = OwnedProcess(
+                        server_command,
+                        grace_s=args.terminate_grace_s,
+                        cwd=CHILD,
+                        env=server_env,
+                        stdout=server_log,
+                        stderr=subprocess.STDOUT,
                     )
+                    server = server_owned.proc
+                    info = wait_server(
+                        server,
+                        port,
+                        min(
+                            args.server_start_timeout_s,
+                            max(0.001, task_deadline - time.monotonic()),
+                        ),
+                        checkpoint=checkpoint,
+                        config_file=config_file,
+                        num_steps=args.num_steps,
+                        guidance=args.guidance,
+                        stop=stop,
+                    )
+                    if sha256_file(config_file) != manifest["identity"]["config_sha256"]:
+                        raise ValueError("action server config file changed since evaluation identity was frozen")
+                    atomic_write_json(task_out / "server_info.json", info)
+                    atomic_write_json(
+                        task_out / "server_process.json",
+                        {"pid": server.pid, "pgid": server_owned.pgid, "port": port},
+                    )
+                    sim_env = server_env.copy()
+                    sim_env["MUJOCO_GL"] = sim_env.get("MUJOCO_GL", "egl")
                     command = [
                         str(args.sim_python),
                         str(CHILD / "cosmos_framework/simulation/robocasa/closed_loop_eval.py"),
@@ -447,39 +514,81 @@ def main() -> int:
                         "--seed",
                         str(args.seed),
                         "--timeout",
-                        str(args.timeout),
+                        str(args.predict_request_timeout_s),
                         "--output-dir",
                         str(task_out),
+                        "--progress-file",
+                        str(task_out / "episode_progress.jsonl"),
                     ]
-                    started = time.monotonic()
-                    error: str | None = None
-                    returncode = -1
-                    row = None
-                    try:
-                        with task_log_path.open("ab", buffering=0) as task_log:
-                            completed = subprocess.run(
-                                command,
-                                cwd=CHILD,
-                                env=sim_env,
-                                stdout=task_log,
-                                stderr=subprocess.STDOUT,
-                                check=False,
-                            )
-                        returncode = completed.returncode
-                        row = task_result(
-                            dataset_dir,
-                            task_out,
-                            worker_id,
-                            gpu,
-                            time.monotonic() - started,
-                            run_digest=run_digest,
-                            expected_trials=args.num_test_episodes,
+                    atomic_write_json(
+                        task_out / "commands.json",
+                        {"server": server_command, "simulator": command},
+                    )
+                    stage = "simulator"
+                    with (task_out / "eval.log").open("ab", buffering=0) as task_log:
+                        sim_owned = OwnedProcess(
+                            command,
+                            grace_s=args.terminate_grace_s,
+                            cwd=CHILD,
+                            env=sim_env,
+                            stdout=task_log,
+                            stderr=subprocess.STDOUT,
                         )
-                        if returncode != 0:
-                            error = f"closed_loop_eval exited with code {returncode}"
-                    except BaseException as exc:  # noqa: BLE001
-                        error = f"{type(exc).__name__}: {exc}"
-                    if error is not None and row is None:
+                        progress = EpisodeProgress(
+                            task_out / "episode_progress.jsonl",
+                            digest=run_digest,
+                            episodes=args.num_test_episodes,
+                        )
+                        returncode = supervise_simulator(
+                            sim_owned,
+                            server=server,
+                            task_deadline=task_deadline,
+                            episode_wall_s=args.episode_wall_timeout_s,
+                            progress=progress,
+                            stop=stop,
+                        )
+                    if returncode != 0:
+                        raise EvaluationInterrupted(f"closed_loop_eval exited with code {returncode}")
+                    row = task_result(
+                        dataset_dir,
+                        task_out,
+                        worker_id,
+                        gpu,
+                        time.monotonic() - started,
+                        run_digest=run_digest,
+                        expected_trials=args.num_test_episodes,
+                    )
+                    if row.get("error"):
+                        raise EvaluationInterrupted(row["error"])
+                except BaseException as exc:  # noqa: BLE001
+                    error = f"{type(exc).__name__}: {exc}"
+                    if row is None and (task_out / "results.json").is_file():
+                        try:
+                            row = task_result(
+                                dataset_dir,
+                                task_out,
+                                worker_id,
+                                gpu,
+                                time.monotonic() - started,
+                                run_digest=run_digest,
+                                expected_trials=args.num_test_episodes,
+                            )
+                        except Exception:
+                            pass  # Raw partial files remain; never treat them as complete trials.
+                finally:
+                    # Both groups, including descendants of an already-dead leader,
+                    # are reclaimed before another task can acquire this worker.
+                    for name, owned in (
+                        ("simulator", sim_owned),
+                        ("server", server_owned),
+                    ):
+                        if owned is not None:
+                            try:
+                                cleanup[name] = owned.close()
+                            except BaseException as exc:  # noqa: BLE001
+                                cleanup[name] = owned.cleanup
+                                error = error or f"cleanup {name}: {type(exc).__name__}: {exc}"
+                    if row is None:
                         row = {
                             "dataset_dir": str(dataset_dir),
                             "worker": worker_id,
@@ -491,34 +600,30 @@ def main() -> int:
                             "results_file": str(task_out / "results.json"),
                             "rollout_mp4s": sorted(str(path) for path in task_out.glob("rollout*.mp4")),
                             "rollouts": [],
-                            "returncode": returncode,
-                            "error": error,
                         }
-                    if error is not None:
-                        row["error"] = error
-                        row["returncode"] = returncode
+                    row.update(error=error, returncode=returncode, cleanup=cleanup)
+                    # Cleanup failure is an independent error, never replacement of
+                    # the primary failure. Evidence survives even after cancellation.
+                    if task_out.is_dir():
+                        atomic_write_json(task_out / "process_cleanup.json", cleanup)
                     with result_lock:
                         results[task] = row
+                        if error:
+                            results[f"_worker_{worker_id}_{task}"] = {
+                                "worker": worker_id,
+                                "gpu": gpu,
+                                "task": task,
+                                "stage": stage,
+                                "error": error,
+                                "cleanup": cleanup,
+                                "server_log": str(server_log_path),
+                            }
+                    if (error and args.on_infrastructure_error == "stop") or any(
+                        item.get("error") for item in cleanup.values()
+                    ):
+                        stop.set()
                     publish()
                     work.task_done()
-            except BaseException as exc:  # noqa: BLE001
-                stop.set()
-                with result_lock:
-                    results[f"_worker_{worker_id}"] = {
-                        "worker": worker_id,
-                        "gpu": gpu,
-                        "error": f"{type(exc).__name__}: {exc}",
-                        "server_log": str(server_log_path),
-                    }
-                publish()
-            finally:
-                if server is not None:
-                    server.terminate()
-                    try:
-                        server.wait(timeout=20)
-                    except subprocess.TimeoutExpired:
-                        server.kill()
-                        server.wait()
 
     def worker(worker_id: int, gpu: str) -> None:
         # The service loop has its own failure/cleanup path. This entry boundary
@@ -540,10 +645,24 @@ def main() -> int:
         threading.Thread(target=worker, args=(index, gpu), name=f"robocasa-gpu-{gpu}", daemon=False)
         for index, gpu in enumerate(gpus)
     ]
-    for thread in threads:
-        thread.start()
-    for thread in threads:
-        thread.join()
+
+    def cancel(signum, _frame):
+        with result_lock:
+            results["_worker_cancel"] = {"error": f"Owner signal {signum}"}
+        stop.set()
+
+    previous_handlers = {}
+    if threading.current_thread() is threading.main_thread():
+        for sig in (signal.SIGTERM, signal.SIGINT):
+            previous_handlers[sig] = signal.signal(sig, cancel)
+    try:
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+    finally:
+        for sig, handler in previous_handlers.items():
+            signal.signal(sig, handler)
 
     publish()
     with result_lock:
