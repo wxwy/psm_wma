@@ -1,0 +1,65 @@
+{
+  "reference_repository": "https://github.com/ARISE-Initiative/robosuite",
+  "reference_commit": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
+  "base_commit": "824ac14cefcfb7ec125fe5eb2e0bad7364466154",
+  "exact_backports": [
+    {
+      "file": "robosuite/controllers/parts/mobile_base/joint_vel.py",
+      "class": "LegacyMobileBaseJointVelocityController",
+      "method": null,
+      "upstream_git_blob": "83e7a6e581445de4823441e451f888924de22794",
+      "ast_sha256": "2d4049fcf0dfbfa8c7335a293a7fb81cde241ebb62d2afdf200005acf551d34f",
+      "upstream_AST_exact_match": true
+    },
+    {
+      "file": "robosuite/environments/base.py",
+      "class": "MujocoEnv",
+      "method": "__init__",
+      "upstream_git_blob": "09d6c299cd0f0ce2abe0079661b12b38d24d8cfe",
+      "ast_sha256": "8b8f37ca70ec0b4fda99d7ba97ea9a68400aab354e2b6972e4e8918262a32162",
+      "upstream_AST_exact_match": true
+    },
+    {
+      "file": "robosuite/environments/base.py",
+      "class": "MujocoEnv",
+      "method": "reset",
+      "upstream_git_blob": "09d6c299cd0f0ce2abe0079661b12b38d24d8cfe",
+      "ast_sha256": "edd5be13f2c4661e7f4806780cb438aa60f6f0062e7b6ae937e562fbf5349877",
+      "upstream_AST_exact_match": true
+    },
+    {
+      "file": "robosuite/environments/robot_env.py",
+      "class": "RobotEnv",
+      "method": "__init__",
+      "upstream_git_blob": "6ea761f688ada69b4e8132ca8712afc544fc7be5",
+      "ast_sha256": "79000a2cd90a2ff823e9ac69cb8b6515cbb86a306fe5214ed6a58cba22ea4272",
+      "upstream_AST_exact_match": true
+    },
+    {
+      "file": "robosuite/environments/manipulation/manipulation_env.py",
+      "class": "ManipulationEnv",
+      "method": "__init__",
+      "upstream_git_blob": "1514032705d5bbf83a87a4f7b5bc3cdf724f2e68",
+      "ast_sha256": "ede818e682e71816be88ebaaa6a6a0770210d798c9ad4e214a7061ec641bf1c1",
+      "upstream_AST_exact_match": true
+    },
+    {
+      "file": "robosuite/models/tasks/task.py",
+      "class": "Task",
+      "method": "__init__",
+      "upstream_git_blob": "61ca748fe2ec5fb08ccf7f90058c112b6b9d8e87",
+      "ast_sha256": "e2edc3e6e56cdb418712cc5b03e4c477adac384415a9b1bc8645dfb5e5fad0e1",
+      "upstream_AST_exact_match": true
+    }
+  ],
+  "intentional_differences": [
+    "Idempotent _destroy_sim uses getattr before initial Sim construction.",
+    "MuJoCo3.3.1-specific World options update the existing option/flag; sleeping=True rejects unsupported capability; no unsupported sleep MJCF attribute."
+  ],
+  "DS_stopgap_diff": {
+    "bytes_available": false,
+    "attested_bytes": 2096,
+    "attested_sha256": "dbe9a0d9ccdcc1052b9bddbcfe5235205461292b762cc2fac2f92a706365e74c",
+    "exact_content_verified": false
+  }
+}
