@@ -164,8 +164,9 @@ export PYTHONPATH="$ROOT_WORKTREE/cosmos-framework:$ROOT_WORKTREE/scripts"
 
 Author used `/workspace/psm_wma` and `/workspace/.venvs/psm-wma-cpu/bin/python`;
 external raw logs were `/tmp/psm-v3-eval-a-20261022/`. See `versions.json` for fixed
-packages. Baseline red command runs the versioned `baseline_red_test.py` beside its
-original source snapshot and must yield exactly2 failures/exit1; this is separate from
+packages. Baseline red command runs the versioned `baseline_red_probe.py` beside its
+original source snapshot and must yield exactly2 failures/exit1. The archived probe is deliberately
+not named `*_test.py`, so normal repository discovery cannot collect an expected-red artifact; this is separate from
 the green implementation suite. A failure, surviving owned PID or lost infrastructure
 error is FAIL and stops validation; missing dependencies are BLOCKED, not a skip.
 
