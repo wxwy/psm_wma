@@ -1,0 +1,17 @@
+{
+  "syntax": "PASS",
+  "bash_syntax": "PASS",
+  "ruff_version": "0.12.7",
+  "files": {
+    "scripts/eval_robocasa_18task_queue.py": "10f7a600389b3a26c798b9e5ee32a9269baeea6b582726161530413c75043515",
+    "scripts/robocasa_eval_config.py": "a71e753dd214e83da610b3f1db9bddb0304ab95de4c1f388b62ec9563499e2ca",
+    "scripts/robocasa_eval_results.py": "d1389ae404cb6bb66371730ec42e959f5b26a30e4e2245174578a85da88b6269",
+    "tools/v3/eval_robocasa_queue_identity_test.py": "c71e157b6edbca8723687164eb8f1fffdd8fbcec625da8301318cdf1d715d453",
+    "tools/v3/robocasa_eval_config_test.py": "5d1af4f45df611bad1cb746a65b9d56dac29f17941b08d18a1329780ab318957",
+    "tools/v3/robocasa_eval_results_test.py": "e34287f500749d7dd71374ecbff0bbb2a73f07fe289dac88183a4dc0bebe11ed",
+    "tools/v3/robocasa_eval_cache_test.py": "02c2b0ed365196a81e9dba11a0f0625371efde7323f9a48e490477c68f1a84e9",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py": "76973c3ca422011ddb515d7acfd4e3ca33717ceeeea8daa74306515258810fcf",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_manual_test.py": "d845dfe4c736c405cf5625b7fc846a7a08403beab2b14c39bdb569ff016eefec",
+    "cosmos-framework/cosmos_framework/utils/rollout_evidence.py": "158c00a629b6468b3ed6ddd619fd37fbc6065bc60071eea0c072249199a77f44"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema": "psm_robocasa_batch_c_author_cpu_v1",
+  "status": "AUTHOR_CPU_PASS_PENDING_GPT_AND_DS",
+  "implementation_root": "a2f3a6a367395b2f2a6006cfc4e7c9effa606713",
+  "child_gitlink": "c9f21040f462a114d597fc83773cb9b6a9e96214",
+  "base_root": "24a726734bbab5411160e3c11a8b46135fceb570",
+  "base_child": "30db22a3586c0270611753dc2ca0deb10ec27833",
+  "vendor": "1ac174585293ed998ffc9cf73e47439798cf6f6c",
+  "suites": {
+    "helpers": {
+      "junit_declared_tests": 148,
+      "testcase_elements": 148,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "child": {
+      "junit_declared_tests": 58,
+      "testcase_elements": 58,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "queue": {
+      "junit_declared_tests": 94,
+      "testcase_elements": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "regressions": {
+      "junit_declared_tests": 20,
+      "testcase_elements": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "pytest_counts": {
+    "helpers": 148,
+    "child": 58,
+    "queue_methods": 29,
+    "queue_subtests": 65,
+    "old_evidence_regressions": 20,
+    "regressions_deselected": 50
+  },
+  "ruff": "0.12.7 check and format PASS",
+  "syntax": "10 Python AST + bash -n PASS",
+  "source_diff": "PASS",
+  "author_environment": "Python3.12.14 CPU-only, NumBa proof separate pinned CPU interpreter",
+  "excluded": [
+    "GPU",
+    "Cosmos model/Action Server",
+    "real Kitchen/simulator",
+    "real DCP",
+    "live G1 worktree",
+    "formal DS independent acceptance",
+    "GPT verdict",
+    "real installed Batch B environment acceptance"
+  ],
+  "intermediate_failures": "Retained separately: missing NumBa interpreter selector, missing scripts/Child PYTHONPATH, and decoder timeout exception assertion updated for explicit deadline contract. None counted as final passes. Queue development runs while interfaces were changing remain in external /tmp logs, not final evidence."
+}

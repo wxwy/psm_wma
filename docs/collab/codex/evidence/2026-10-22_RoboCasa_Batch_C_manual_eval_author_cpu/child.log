@@ -1,0 +1,22 @@
+........................[eval] official protocol: rollouts=2 seed=None
+[eval] CloseFridge: official horizon 3
+[train-scene] server ready at http://127.0.0.1:8912 local_memory=off
+[eval] rollout 00 outcome=behavioral_failure steps=3 error=None
+[eval] rollout 01 outcome=behavioral_failure steps=3 error=None
+
+CloseFridge: 0/2 successful rollouts
+.[eval] official protocol: rollouts=2 seed=None
+[eval] CloseFridge: official horizon 3
+[train-scene] server ready at http://127.0.0.1:8912 local_memory=off
+[eval] rollout 00 outcome=behavioral_failure steps=3 error=None
+[eval] rollout 01 outcome=behavioral_failure steps=3 error=None
+
+CloseFridge: 0/2 successful rollouts
+.[eval] Local-TTT cleanup failure: RuntimeError: reset failed
+.[eval] Local-TTT cleanup failure: RuntimeError: reset failed
+..[eval] partial-video failure: RuntimeError: encoder failed
+.[eval] Local-TTT cleanup failure: RuntimeError: reset failed
+.[eval] partial-video failure: RuntimeError: encoder failed
+[eval] Local-TTT cleanup failure: RuntimeError: reset failed
+...........................
+58 passed in 1.40s

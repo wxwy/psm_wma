@@ -1,0 +1,38 @@
+...........................................F............                 [100%]
+=================================== FAILURES ===================================
+____________________ test_media_decoder_deadline_is_bounded ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-34/test_media_decoder_deadline_is0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fbf51a046e0>
+
+    def test_media_decoder_deadline_is_bounded(tmp_path, monkeypatch):
+        import robocasa_eval_results as module
+    
+        path = tmp_path / "video.mp4"
+        path.write_bytes(b"not read by the injected CPU sleeper")
+        monkeypatch.setattr(module, "_MEDIA_PROBE", "import time; time.sleep(60)")
+        started = time.monotonic()
+        with pytest.raises(module.subprocess.TimeoutExpired):
+>           validate_media(path, sim_python=Path(sys.executable), kind="mp4", deadline=started + 0.15)
+
+tools/v3/robocasa_eval_results_test.py:368: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/robocasa_eval_results.py:208: in validate_media
+    stdout, stderr = process.communicate(timeout=min(0.1, _remaining(until, stop=stop)))
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+deadline = 371630.33144295006, maximum = 110.0, stop = None
+
+    def _remaining(deadline: float | None, maximum: float = 110.0, stop=None) -> float:
+        if stop is not None and stop.is_set():
+            raise InterruptedError("evaluation cancelled while validating evidence")
+        remaining = maximum if deadline is None else min(maximum, deadline - time.monotonic())
+        if remaining <= 0:
+>           raise TimeoutError("task wall deadline expired while validating evidence")
+E           TimeoutError: task wall deadline expired while validating evidence
+
+scripts/robocasa_eval_results.py:184: TimeoutError
+=========================== short test summary info ============================
+FAILED ../../dev::test_media_decoder_deadline_is_bounded - TimeoutError: task...
+1 failed, 55 passed in 3.71s

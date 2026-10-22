@@ -1,0 +1,2747 @@
+diff --git a/SESSION.md b/SESSION.md
+index a17a2368..e0c7702b 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1508,3 +1508,10 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
+ - Exact candidate Root891801bf44736e1eaf44b91377f98c5c5035edd0 / Child-Gitlink35b0ea1ccee9ee26653ed6589c484f0997d1c586 / deterministic patchset vendor1ac174585293ed998ffc9cf73e47439798cf6f6c. Isolated ref v3-robocasa-vendor-b-20261022, docs05ff4283bc70354c5e3bbdddf1af56998b49b68b.1.0.1@6f90063, native/PythonMuJoCo3.3.1/NumPy2.2.5 fixed;8-file semantic backport with clean offline rebuild. Native no-sleep capability explicitly handled, no ignored True/ISLAND substitution.
+ - Final110 author CPU PASS, no skip; Ruff0.12.7/format/syntax/source checks PASS. Root2b14 r1 superseded by canonical UTF8 fix with actual unchanged-claim Unicode Resume regression; original source/artifacts preserved at e5084. Real runtime probe still incomplete-environment BLOCKED here and Kitchen physics not executed, not folded into CPU approval. Full report/evidence at candidate refs via Inbox.
+ - Source unchanged for existing Queue/identity/training/Local/DCP/RNG and Child; no G1/DS dirty editable or real assets touched. No C launcher or A/G1 combination. Request new exact r2 B-only GPT review + DS independent CPU, STOP after publication/readback; actual runtime/Kitchen/physics Gate stays OPEN and separate Owner authorization required.
++# V3 RoboCasa Batch C — 2026-10-22
++
++- Owner-authorized implementation IN_PROGRESS on `v3-robocasa-manual-c-20261022`, based on verified V3 `24a726734bbab5411160e3c11a8b46135fceb570`, integrated implementation `9ae01344ffe82a3b403732aa61cce3dd7fb5055a`, Child `30db22a3586c0270611753dc2ca0deb10ec27833`. Existing G1/A/B source is inherited; running G1 worktree is not accessed or synchronized.
++- Expected scope: Root Queue, new strict eval config/results helpers, shell launcher, example YAML, focused CPU tests, manual runbook; Child closed-loop eval media/runtime binding and focused tests. No training/DCP/Local-TTT algorithm/vendor physics edits. Config, Child, attempt validation and Queue fixture work delegated on disjoint files; parent owns integration and submission.
++- Contract: `docs/collab/chatgpt/requests/2026-10-22_V3_RoboCasa_Owner_Manual_Eval_Framework_Frozen_Contract.md`. Implement GPU-to-single-slot selection, task subsets, media modes, bounded cleanup, exact runtime identity and complete-task-only resume with preserved attempt namespaces. Author CPU is not DS acceptance. Source not committed yet; stop after new Pair and review handoff; no GPU/Action Server/Kitchen or real DCP execution.
++
++- Batch C author implementation completed: strict schema/YAML/CLI precedence and metadata task selection; CPU-only list/preview; required Batch B runtime preflight and in-process recheck; controlled media none/first/all; Task/Attempt-bound JSONL and complete-task-only resume; bounded owned decoder cleanup and external Numba/MPL/XDG caches. CPU final helpers148, Child58, Queue29+65subtests, existing evidence regressions20 all PASS; Ruff0.12.7 check/format, syntax/diff checks PASS. Source Child `c9f21040f462a114d597fc83773cb9b6a9e96214` pushed to `v3-robocasa-manual-c-20261022`; Root formal commit is this source commit, exact SHA to follow in separate evidence handoff. Gate state REVIEW (author CPU only, no GPT/DS acceptance). No GPU/model/Kitchen/real DCP or G1 worktree operation.
+diff --git a/TODO.md b/TODO.md
+index 43bcfca1..a9450b17 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -429,3 +429,4 @@
+ 
+ ## V3-G1-ITER8900-CROSS-PAIR-RESUME — 2026-10-22
+ - REVIEW; Codex author isolated implementation Rootb910304dbf493eb5babe26cf1b055edc8477b386 / Child-Gitlink61bfa94766d33d95a7fa9771857d0f2fb3f0b405; Evidence5fe6a513baa870c06f3186903b99e9bba80bb084.115passed+32subtests/static PASS. Need GPT new-Pair review/DS real-file read-only CPU; no mainline code merge or training execution. Owner design APPROVE remains distinct from implementation/Resume permission.
++- [ ] **V3-ROBOCASA-BATCH-C** — REVIEW; owner Codex; prerequisite current V3 G1/A/B integrated `24a72673/30db22a3`. Deliver manual YAML/CLI launcher, strict dependency identity, task subsets, video controls, isolated task attempts/resume, CPU evidence and new exact Pair. GPT reviews, DS independent CPU validates, Owner alone authorizes real simulation. No live G1 or frozen assets changed.
+diff --git a/configs/eval/robocasa_g1_iter8900.example.yaml b/configs/eval/robocasa_g1_iter8900.example.yaml
+new file mode 100644
+index 00000000..58963c95
+--- /dev/null
++++ b/configs/eval/robocasa_g1_iter8900.example.yaml
+@@ -0,0 +1,36 @@
++# Edit paths and run_name for your isolated evaluation host; never edit the training job config.
++schema: psm_wma_robocasa_eval_v1
++checkpoint: /mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/checkpoints/iter_000008900
++config_file: /mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/config.yaml
++dataset_root: /mnt/data1/data_v2_0617/robocasa365_official/v1.0/target/atomic
++tasks: [CloseFridge, TurnOnSinkFaucet]
++episodes_per_task: 5
++gpu_ids: [2, 3]
++slots_per_gpu: 1
++base_port: 8900
++server_python: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/cosmos-framework/.venv/bin/python
++sim_python: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/cosmos-framework/.venv/bin/python
++output_root: /mnt/data1/data_v2_0617/robocasa_eval_runs
++run_name: iter8900_example
++# Vendor lock defaults to the versioned third_party/robosuite_patches/vendor.lock.json.
++# Optional asset_manifest must inventory every installed untracked vendor asset, with SHA256.
++seed: 0
++prediction_steps: 30
++guidance: 1.0
++fps: 20
++action_horizon: 16
++local_memory_mode: required
++server_lifecycle: per_task
++on_infrastructure_error: stop
++save_rollout_mp4: true
++save_generated_video: first
++save_init_png: true
++save_action_jsonl: true
++save_prediction_jsonl: true
++timeouts:
++  server_start_s: 900
++  predict_request_s: 600
++  episode_wall_s: 1800
++  task_wall_s: 10800
++  terminate_grace_s: 20
++resume: false
+diff --git a/cosmos-framework b/cosmos-framework
+index 30db22a3..c9f21040 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 30db22a3586c0270611753dc2ca0deb10ec27833
++Subproject commit c9f21040f462a114d597fc83773cb9b6a9e96214
+diff --git a/docs/eval/robocasa_manual_runbook.md b/docs/eval/robocasa_manual_runbook.md
+new file mode 100644
+index 00000000..3aa15a54
+--- /dev/null
++++ b/docs/eval/robocasa_manual_runbook.md
+@@ -0,0 +1,105 @@
++# V3 RoboCasa Owner manual evaluation
++
++Batch C implements the manual entry; author CPU results do **not** authorize a GPU run or close the combined A/B/C physical-environment gate. GPT reviews the new formal pair, DS_PRO independently validates it, and Owner alone releases GPUs and runs the commands below. The running G1 training worktree and its Config, Job Identity and checkpoints must remain untouched.
++
++## Freeze a separate evaluation checkout
++
++Use a clean, independent Root/Child checkout at the exact reviewed implementation pair. Preserve it unchanged through task resume; updating even the Root SHA changes evaluation identity. The source includes G1 Resume, Batch A process isolation and Batch B locked dependencies. Do not synchronize the running G1 checkout to this branch.
++
++The launcher Python needs PyYAML (author CPU: 6.0.3). The selected simulator Python must contain the locked Batch B runtime, Pillow, imageio and imageio-ffmpeg (author media tests: 11.3.0, 2.37.0, 0.6.0). Server and simulator can use the same compatible venv; their executable paths retain venv symlinks. Nothing installs or patches dependencies during evaluation. See `third_party/robosuite_patches/README.md` for the offline vendor builder and pins. Provisioning the real server environment remains a separately approved operation.
++
++Copy `configs/eval/robocasa_g1_iter8900.example.yaml` outside the source checkout and edit paths, GPU IDs, task names, episode count, timeouts and output namespace. YAML relative paths resolve against the YAML directory; CLI paths resolve against the current directory. CLI values override YAML, then schema-v1 defaults. `--config` is evaluation YAML; `--config-file` is the frozen model configuration. YAML never rewrites the model configuration.
++
++If installed dependencies contain downloaded, untracked assets, provide `asset_manifest` / `--asset-manifest` pointing to the separately approved Batch B per-package, repo-relative SHA256 inventory. An unknown file, backup, dirty tracked source or different dependency SHA rejects startup. Do not use an invented empty inventory to bypass that check.
++
++## Read-only preparation
++
++List task classes from `extras/dataset_meta.json` without starting any process or requiring checkpoint/runtime validation:
++
++```bash
++bash scripts/run_robocasa_eval.sh \
++  --config /path/to/eval.yaml --list-tasks
++```
++
++Preview the fully resolved configuration, model/config and dependency identity, output destination, GPU/slot/port mapping and command templates:
++
++```bash
++bash scripts/run_robocasa_eval.sh \
++  --config /path/to/eval.yaml --gpus 2,3 \
++  --tasks CloseFridge,TurnOnSinkFaucet --episodes 5 \
++  --run-name iter8900_demo --save-generated-video first --dry-run
++```
++
++Dry-run uses CPU subprocesses in the **selected simulator interpreter** to audit its real imports, source, versions, native library and registry. It does not load a policy, construct a Kitchen, bind server ports or create the output namespace. Missing full runtime dependencies correctly produce a nonzero result; cloud unit-test doubles do not constitute a real-runtime pass. Probe and execution Numba/Matplotlib/XDG caches use external temporary directories, removed when the launcher exits. An explicit external `HF_HOME` is preserved for reusable weights; otherwise HF caching is also external and temporary. Stdout/stderr of a failed preflight should be captured externally by the operator.
++
++`tasks: all` requires exactly 18 underlying task classes. A selected subset can contain any valid classes; paraphrases are not additional tasks, and multiple dataset directories for the same class reject the run. GPU IDs must be unique nonnegative CUDA IDs. Each GPU has one Worker, a fresh Action Server per task, and one serial Simulator/Local-TTT session at slot 0. `slots_per_gpu` must equal 1; training B8 does not imply eight inference sessions.
++
++## Owner-authorized execution
++
++Only after the combined gate and separate execution authorization, use the **same command without `--dry-run`**. Start with an explicitly authorized 1-task/1-episode canary, then 4×5 and 18×5. For the latter, use `--tasks all --episodes 5` and a new run name. GPU availability, memory, disk, ports and real Kitchen behavior are independently checked by DS_PRO/Owner; dry-run does not reserve or attest GPU resources.
++
++```bash
++bash scripts/run_robocasa_eval.sh \
++  --config /path/to/eval.yaml --gpus 2,3 \
++  --tasks CloseFridge,TurnOnSinkFaucet --episodes 5 \
++  --run-name iter8900_demo --save-generated-video first
++```
++
++Optional `PYTHON=/absolute/path/to/python` selects the lightweight launcher interpreter; `server_python` and `sim_python` in YAML select the actual execution environments. The launcher does not change the caller's working directory or CUDA environment.
++
++Frozen ABI: Local-TTT required, raw15/state15, left+wrist cameras, raw base encoding, chunk/H_pred16, 20 Hz, target objects and ten paired target layout/styles, first-success latch. `action_horizon` is the number of predicted actions executed before replanning, from 1 to 16. The policy sampling seed is 0; the environment seed is configurable and fixed by identity. Official RoboCasa 1.0.1 registry horizons already incorporate its horizon update; no second 1.5× multiplier or fallback horizon is used by the unified entry.
++
++Environment videos follow `save_rollout_mp4` / `--[no-]save-rollout-mp4`; initial PNGs follow `save_init_png`. Generated video modes are `none`, `first` (first prediction **per episode**) and `all` (separate file per replan). Actions and prediction JSONL are mandatory even if videos are off. In `all` mode every generated file records replan, source step and frame count. Enabled media are checked for nonempty, actual decoding; matching filenames alone cannot complete a task.
++
++## Evidence and bounded failure
++
++An exclusive manifest claim and nonblocking namespace lease prevent concurrent writers. Output is structured as:
++
++```text
++<output_root>/<run_name>/
++  evaluation_manifest.json
++  .run.lock
++  _invocations/<timestamp>_<pid>/
++    resolved-config.json
++    runtime_probe.json
++    previous_screening_summary.json  # present on subsequent invocations
++  _workerNN_gpuN/action_server.log
++  <Task>/attempt_0001/
++    attempt.json                     # RUNNING / FAILED / COMPLETE
++    commands.json, server_info.json, server_process.json
++    runtime_attestation.json         # in-process recheck before Kitchen creation
++    eval.log, episode_progress.jsonl, process_cleanup.json
++    results.json
++    rollout00_episode.json, rollout00_cleanup.json
++    rollout00_actions.jsonl, rollout00_predictions.jsonl
++    rollout00_init.png, rollout00.mp4 # only when enabled
++    rollout00_generated.mp4          # first mode
++    rollout00_generated_manifest.json
++    # all mode: rollout00_generated_replan0000.mp4, ...
++  screening_summary.json
++```
++
++Manifest identity binds Root, Child/Gitlink, checkpoint model metadata+shard stat witnesses (not full payload hashes), frozen model Config hash, selected task metadata, dependency source/native identity, interpreter/import context, seeds, horizons, video settings, timeouts and GPU mapping. Inference requires model DCP files, not `optim/`; it never reads training optimizer state. The actual simulator reruns the vendor probe and must reproduce the expected digest before creating an environment. Its witness is required for task completion/resume.
++
++Recorded data-generator versions/unknown Git commits and actual evaluation runtime are separate manifest fields. RoboCasa1.0.1 is the chosen evaluation runtime; equivalence with the recorded 0.5.1 generator is **not proven**. Historical diagnostic SRs remain diagnostic.
++
++Server startup, request, episode wall, task wall and terminate-grace deadlines have distinct meanings. Task timing includes server startup, rollout and final evidence/media validation. Cancellation or failure reclaims only owned process groups, TERM then KILL/reap if necessary; it does not kill foreign listeners or training processes. Some cleanup can extend beyond task wall by bounded terminate grace. Each task gets a new server, including after a previous failure. The default infrastructure-error policy is `stop`; explicit `continue_with_new_server` can collect screening evidence, while the entire run still reports INCOMPLETE and nonzero exit. Original errors and cleanup errors remain visible.
++
++A COMPLETE summary requires every selected task, every expected episode, successful infrastructure cleanup, typed outcomes and required valid evidence. Behavioral failure counts in the denominator. Runtime errors never silently disappear from SR: formal `sr` is null for incomplete runs, and `partial_sr` is labeled separately. Keep all partial actions, JSON, videos and logs for review.
++
++## Resume whole tasks only
++
++Use the exact frozen source/runtime/config/parameters and original run name, adding `--resume`. The execution flag itself is excluded from immutable protocol identity. Do not pull code or change GPU mapping, task selection, timeouts or video policy between attempts.
++
++```bash
++bash scripts/run_robocasa_eval.sh \
++  --config /path/to/eval.yaml --gpus 2,3 \
++  --tasks CloseFridge,TurnOnSinkFaucet --episodes 5 \
++  --run-name iter8900_demo --save-generated-video first --resume
++```
++
++Only an entire COMPLETE task with matching identity, valid in-process runtime/cleanup witness and media/audits is skipped. A RUNNING/FAILED task receives a new exclusive `attempt_0002` directory and restarts from episode 0 with the original seed and sequential reset protocol. Earlier episodes are never stitched across attempts. Result, action, prediction and generated-video records bind the `Task/Attempt` ID, so copied episodes from another attempt reject validation. Corrupted COMPLETE evidence or ambiguous multiple complete attempts fail closed for investigation; they are not overwritten. Unknown legacy task output is not imported. Old cross-source runs require new namespaces and cannot be presented as same-identity resume.
++
++## Review boundary
++
++Author CPU cases use real Git/process/socket/media primitives with synthetic policy/simulation boundaries. They cannot prove policy loading, 8×H100 inference, real PandaOmron physics, vendor installation on DS_PRO's host, Local-TTT effectiveness or benchmark SR. DS_PRO independently verifies the exact new pair read-only; GPT issues the verdict. Owner manually starts the separately authorized real run. No command in this runbook is automatic execution authorization.
+diff --git a/scripts/eval_robocasa_18task_queue.py b/scripts/eval_robocasa_18task_queue.py
+index d0635590..60aaf574 100644
+--- a/scripts/eval_robocasa_18task_queue.py
++++ b/scripts/eval_robocasa_18task_queue.py
+@@ -3,14 +3,16 @@
+ 
+ from __future__ import annotations
+ 
+-import argparse
++import fcntl
+ import json
+-import math
+ import os
+ import queue
+ import signal
+ import socket
++import stat
+ import subprocess
++import sys
++import tempfile
+ import threading
+ import time
+ import urllib.error
+@@ -19,15 +21,16 @@ from contextlib import ExitStack
+ from pathlib import Path
+ from typing import Any
+ 
++from robocasa_eval_config import resolve
++from robocasa_eval_results import fail_attempt, find_completed_attempt, finish_attempt, start_attempt
+ from robocasa_processes import (
+     EpisodeProgress,
+     EvaluationInterrupted,
+     OwnedProcess,
+-    positive_seconds,
+     supervise_simulator,
+ )
++from robocasa_vendor import build_verified_evaluation_identity
+ from v3_evaluation_identity import (
+-    build_evaluation_identity,
+     claim_evaluation_run,
+     screening_metrics,
+     sha256_file,
+@@ -45,13 +48,15 @@ def _read_json(url: str, timeout: float = 5.0) -> dict[str, Any]:
+         return json.loads(response.read().decode("utf-8"))
+ 
+ 
+-def discover_task_datasets(dataset_root: Path, expected_tasks: int) -> list[tuple[str, Path]]:
++def discover_task_datasets(dataset_root: Path, expected_tasks: int | None = None) -> list[tuple[str, Path]]:
+     """Discover one eval LeRobot dir per underlying RoboCasa task via dataset_meta env_name."""
+     mapping: dict[str, Path] = {}
+     for meta in sorted(dataset_root.glob("**/extras/dataset_meta.json")):
+         try:
+             payload = json.loads(meta.read_text(encoding="utf-8"))
+-            env_name = str(payload["env_args"]["env_name"])
++            env_name = payload["env_args"]["env_name"]
++            if not isinstance(env_name, str) or not env_name.isidentifier() or env_name == "all":
++                raise ValueError("invalid underlying task class")
+         except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
+             raise ValueError(f"invalid RoboCasa dataset metadata: {meta}: {error}") from error
+         lerobot = meta.parent.parent.resolve()
+@@ -62,7 +67,7 @@ def discover_task_datasets(dataset_root: Path, expected_tasks: int) -> list[tupl
+                 "provide a dataset root with exactly one canonical eval source per task"
+             )
+         mapping[env_name] = lerobot
+-    if len(mapping) != expected_tasks:
++    if not mapping or (expected_tasks is not None and len(mapping) != expected_tasks):
+         raise ValueError(
+             f"expected exactly {expected_tasks} underlying RoboCasa eval tasks, found {len(mapping)} "
+             f"under {dataset_root}: {sorted(mapping)}"
+@@ -228,81 +233,166 @@ def task_result(
+     }
+ 
+ 
+-def main() -> int:
+-    parser = argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument("--checkpoint-path", type=Path, required=True)
+-    parser.add_argument("--dataset-root", type=Path, required=True)
+-    parser.add_argument("--output-dir", type=Path, required=True)
+-    parser.add_argument("--config-file", type=Path)
+-    parser.add_argument("--server-python", type=Path, default=CHILD / ".venv/bin/python")
+-    parser.add_argument("--sim-python", type=Path, required=True)
+-    parser.add_argument("--gpus", default="0,1,2,3,4,5,6,7")
+-    parser.add_argument("--base-port", type=int, default=8912)
+-    parser.add_argument("--expected-tasks", type=int, default=18)
+-    parser.add_argument("--num-test-episodes", type=int, default=1)
+-    parser.add_argument("--action-horizon", type=int, default=16)
+-    parser.add_argument("--seed", type=int, default=0)
+-    parser.add_argument("--num-steps", type=int, default=30)
+-    parser.add_argument("--guidance", type=float, default=1.0)
+-    parser.add_argument("--timeout", type=float, default=600.0)
+-    parser.add_argument("--server-start-timeout-s", type=float, default=None)
+-    parser.add_argument("--predict-request-timeout-s", type=float, default=None)
+-    parser.add_argument("--episode-wall-timeout-s", type=float, default=1800)
+-    parser.add_argument("--task-wall-timeout-s", type=float, default=10800)
+-    parser.add_argument("--terminate-grace-s", type=float, default=20)
+-    parser.add_argument("--server-lifecycle", choices=("per_task",), default="per_task")
+-    parser.add_argument(
+-        "--on-infrastructure-error",
+-        choices=("stop", "continue_with_new_server"),
+-        default="stop",
+-    )
+-    parser.add_argument("--resume", action="store_true")
+-    args = parser.parse_args()
++def launch_environment(cache: Path) -> dict[str, str]:
++    env = os.environ.copy()
++    env["PYTHONPATH"] = str(CHILD) + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
++    env["PYTHONDONTWRITEBYTECODE"] = "1"
++    env["MUJOCO_GL"] = env.get("MUJOCO_GL", "egl")
++    # Native JIT/controller imports must never write caches into locked vendors.
++    env["NUMBA_CACHE_DIR"] = str(cache / "numba")
++    env["MPLCONFIGDIR"] = str(cache / "matplotlib")
++    env["XDG_CACHE_HOME"] = str(cache / "xdg")
++    env["HF_HOME"] = env.get("HF_HOME") or str(cache / "huggingface")
++    return env
++
++
++def check_destination(output: Path, manifest: dict, *, resume: bool) -> None:
++    """Read-only preview and run share namespace checks; never follow output symlinks."""
++    if any(path.is_symlink() for path in (output, *output.parents)):
++        raise ValueError("evaluation output path must not contain symlinks")
++    if not output.exists():
++        return
++    if not output.is_dir():
++        raise ValueError("evaluation output is not a directory")
++    identity = output / "evaluation_manifest.json"
++    if identity.is_symlink():
++        raise ValueError("evaluation manifest must not be a symlink")
++    if identity.exists():
++        if not resume:
++            raise FileExistsError("evaluation already exists; explicit same-identity resume required")
++        if json.loads(identity.read_text()) != manifest:
++            raise ValueError("evaluation identity changed: checkpoint/source/config/protocol/task/seed/R")
++    elif any(output.iterdir()):
++        raise ValueError("nonempty evaluation namespace has no identity")
++
++
++def server_argv(args, checkpoint: Path, config_file: Path, port: int) -> list[str]:
++    return [
++        str(args.server_python),
++        "-m",
++        "cosmos_framework.scripts.action_policy_server_robocasa",
++        "--checkpoint-path",
++        str(checkpoint),
++        "--config-file",
++        str(config_file),
++        "--port",
++        str(port),
++        "--raw-action-dim",
++        "15",
++        "--action-chunk-size",
++        "16",
++        "--local-memory-mode",
++        "required",
++        "--local-memory-max-sessions",
++        "1",
++        "--num-steps",
++        str(args.num_steps),
++        "--guidance",
++        str(args.guidance),
++        "--fps",
++        "20",
++        "--no-guardrails",
++        "--http-400-on-error",
++    ]
+ 
+-    args.server_start_timeout_s = (
+-        args.server_start_timeout_s if args.server_start_timeout_s is not None else args.timeout
+-    )
+-    args.predict_request_timeout_s = (
+-        args.predict_request_timeout_s if args.predict_request_timeout_s is not None else args.timeout
+-    )
+-    for seconds in (
+-        args.server_start_timeout_s,
+-        args.predict_request_timeout_s,
+-        args.episode_wall_timeout_s,
+-        args.task_wall_timeout_s,
+-        args.terminate_grace_s,
+-    ):
+-        positive_seconds(seconds)
++
++def simulator_argv(
++    args, dataset_dir: Path, task_out: Path, port: int, run_digest: str, runtime_digest: str, task_names: list[str]
++) -> list[str]:
++    command = [
++        str(args.sim_python),
++        str(CHILD / "cosmos_framework/simulation/robocasa/closed_loop_eval.py"),
++        "--server-url",
++        f"http://127.0.0.1:{port}",
++        "--dataset-dir",
++        str(dataset_dir),
++        "--evaluation-run-digest",
++        run_digest,
++        "--num-test-episodes",
++        str(args.num_test_episodes),
++        "--evaluation-attempt-id",
++        f"{task_out.parent.name}/{task_out.name}",
++        "--action-horizon",
++        str(args.action_horizon),
++        "--image-size",
++        "256",
++        "--cam-size",
++        "256",
++        "--camera-set",
++        "left_wrist",
++        "--use-state",
++        "--use-base-action",
++        "--base-encoding",
++        "raw",
++        "--local-memory-mode",
++        "required",
++        "--success-latch",
++        "1",
++        "--seed",
++        str(args.seed),
++        "--timeout",
++        str(args.predict_request_timeout_s),
++        "--output-dir",
++        str(task_out),
++        "--progress-file",
++        str(task_out / "episode_progress.jsonl"),
++        "--save-generated-video",
++        args.save_generated_video,
++        "--runtime-probe-script",
++        str(ROOT / "scripts/robocasa_vendor.py"),
++        "--runtime-lock-file",
++        str(args.vendor_lock),
++        "--expected-runtime-digest",
++        runtime_digest,
++        "--runtime-tasks",
++        ",".join(task_names),
++    ]
++    if args.asset_manifest is not None:
++        command += ["--runtime-asset-manifest", str(args.asset_manifest)]
++    if not args.save_rollout_mp4:
++        command.append("--no-save-rollout-mp4")
++    if not args.save_init_png:
++        command.append("--no-save-init-png")
++    return command
++
++
++def main() -> int:
++    with tempfile.TemporaryDirectory(prefix="psm-robocasa-eval-cache-") as cache:
++        return prepare(Path(cache))
++
++
++def prepare(cache: Path) -> int:
++    args = resolve(root=ROOT)
++    discovered = discover_task_datasets(args.dataset_root.resolve(), None)
++    mapping = dict(discovered)
++    if args.list_tasks:
++        print(json.dumps({"tasks": sorted(mapping)}, ensure_ascii=False, indent=2))
++        return 0
++    if args.tasks == "all":
++        tasks = discover_task_datasets(args.dataset_root.resolve(), args.expected_tasks)
++    else:
++        missing = sorted(set(args.tasks) - mapping.keys())
++        if missing:
++            raise ValueError(f"unknown underlying RoboCasa tasks: {missing}")
++        tasks = [(name, mapping[name]) for name in sorted(args.tasks)]
+     checkpoint = args.checkpoint_path.resolve()
+     if not (checkpoint / "model").is_dir():
+-        raise SystemExit(f"checkpoint DCP model/ missing: {checkpoint}")
++        raise ValueError(f"checkpoint DCP model/ missing: {checkpoint}")
+     config_file = (
+         args.config_file.resolve()
+         if args.config_file is not None
+         else (checkpoint.parent.parent / "config.yaml").resolve()
+     )
+     if not config_file.is_file():
+-        raise SystemExit(f"config file missing: {config_file}")
+-    if not args.server_python.is_file() or not os.access(args.server_python, os.X_OK):
+-        raise SystemExit(f"server python not executable: {args.server_python}")
+-    if not args.sim_python.is_file() or not os.access(args.sim_python, os.X_OK):
+-        raise SystemExit(f"sim python not executable: {args.sim_python}")
+-    if not 1 <= args.action_horizon <= 16:
+-        raise SystemExit("required Local-TTT screening requires 1 <= action_horizon <= 16")
+-    if args.num_test_episodes <= 0:
+-        raise SystemExit("--num-test-episodes must be positive")
+-    if args.num_steps <= 0 or not math.isfinite(args.guidance) or not math.isfinite(args.timeout) or args.timeout <= 0:
+-        raise SystemExit("--num-steps/--timeout must be positive and --guidance/--timeout finite")
+-
+-    gpus = [item.strip() for item in args.gpus.split(",") if item.strip()]
+-    if not gpus or len(set(gpus)) != len(gpus):
+-        raise SystemExit("--gpus must contain unique GPU ids")
+-    require_free_ports([args.base_port + index for index in range(len(gpus))])
+-    tasks = discover_task_datasets(args.dataset_root.resolve(), args.expected_tasks)
+-
+-    output_root = args.output_dir.resolve()
+-    output_root.mkdir(parents=True, exist_ok=True)
+-    manifest = build_evaluation_identity(
++        raise ValueError(f"config file missing: {config_file}")
++    gpus = args.gpus.split(",")
++    output_root = args.output_dir.absolute()
++    simulation_env = launch_environment(cache)
++    bundle = build_verified_evaluation_identity(
++        sim_python=args.sim_python,
++        lock_path=args.vendor_lock,
++        asset_manifest=args.asset_manifest,
++        simulation_env=simulation_env,
+         root=ROOT,
+         checkpoint=checkpoint,
+         config_file=config_file,
+@@ -326,6 +416,16 @@ def main() -> int:
+             "image_size": 256,
+             "cam_size": 256,
+             "success_latch": 1,
++            "manual_schema": "psm_wma_robocasa_eval_v1",
++            "gpu_ids": gpus,
++            "slots_per_gpu": 1,
++            "base_port": args.base_port,
++            "server_python": str(args.server_python),
++            "save_rollout_mp4": args.save_rollout_mp4,
++            "save_generated_video": args.save_generated_video,
++            "save_init_png": args.save_init_png,
++            "save_action_jsonl": True,
++            "save_prediction_jsonl": True,
+             "server_lifecycle": args.server_lifecycle,
+             "on_infrastructure_error": args.on_infrastructure_error,
+             "timeouts": {
+@@ -337,7 +437,82 @@ def main() -> int:
+             },
+         },
+     )
++    manifest = bundle["manifest"]
++    check_destination(output_root, manifest, resume=args.resume)
++    if args.dry_run:
++        preview = {
++            "mode": "CPU_READ_ONLY_PREVIEW",
++            "resolved_config": args.resolved_config,
++            "output_dir": str(output_root),
++            "manifest": manifest,
++            "gpu_slots": [{"gpu": gpu, "slot": 0, "port": args.base_port + i} for i, gpu in enumerate(gpus)],
++            "commands": [
++                {
++                    "gpu": gpu,
++                    "slot": 0,
++                    "env": {
++                        "CUDA_VISIBLE_DEVICES": gpu,
++                        "PYTHONPATH": simulation_env["PYTHONPATH"],
++                        "MUJOCO_GL": simulation_env["MUJOCO_GL"],
++                    },
++                    "server": server_argv(args, checkpoint, config_file, args.base_port + index),
++                    "tasks": [
++                        {
++                            "task": name,
++                            "simulator": simulator_argv(
++                                args,
++                                directory,
++                                output_root / name / "attempt_<next>",
++                                args.base_port + index,
++                                manifest["digest"],
++                                manifest["identity"]["evaluation_runtime"]["digest"],
++                                [n for n, _ in tasks],
++                            ),
++                        }
++                        for name, directory in tasks
++                    ],
++                }
++                for index, gpu in enumerate(gpus)
++            ],
++        }
++        print(json.dumps(preview, ensure_ascii=False, indent=2))
++        return 0
++    require_free_ports([args.base_port + index for index in range(len(gpus))])
+     run_digest = claim_evaluation_run(output_root, manifest, resume=args.resume)
++    # A persistent lock file is harmless evidence; flock releases even on process death.
++    fd = os.open(output_root / ".run.lock", os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
++    with os.fdopen(fd, "a") as lease:
++        if not stat.S_ISREG(os.fstat(lease.fileno()).st_mode):
++            raise ValueError("evaluation lease must be a regular file")
++        try:
++            fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
++        except BlockingIOError as error:
++            raise RuntimeError("another process owns this evaluation namespace") from error
++        return execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_env, bundle, run_digest)
++
++
++def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_env, bundle, run_digest) -> int:
++    manifest = bundle["manifest"]
++    runtime_digest = manifest["identity"]["evaluation_runtime"]["digest"]
++    # Every invocation keeps its own raw probe and resolved parameters; previous attempts survive.
++    invocations = output_root / "_invocations"
++    invocations.mkdir(exist_ok=True)
++    invocation = invocations / f"{time.time_ns()}_{os.getpid()}"
++    invocation.mkdir()
++    prior_summary = output_root / "screening_summary.json"
++    if prior_summary.is_file():
++        (invocation / "previous_screening_summary.json").write_bytes(prior_summary.read_bytes())
++    atomic_write_json(invocation / "runtime_probe.json", bundle["runtime_probe_evidence"])
++    atomic_write_json(invocation / "resolved-config.json", args.resolved_config)
++    validation = dict(
++        digest=run_digest,
++        runtime_digest=runtime_digest,
++        expected_trials=args.num_test_episodes,
++        video_mode=args.save_generated_video,
++        rollout_enabled=args.save_rollout_mp4,
++        init_png_enabled=args.save_init_png,
++        sim_python=args.sim_python,
++    )
+     summary_path = output_root / "screening_summary.json"
+     work: queue.Queue[tuple[str, Path]] = queue.Queue()
+     results: dict[str, dict[str, Any]] = {}
+@@ -345,21 +520,13 @@ def main() -> int:
+ 
+     for task, dataset_dir in tasks:
+         task_out = output_root / task
+-        existing = task_out / "results.json"
+-        if args.resume and existing.is_file():
++        completed = find_completed_attempt(task_out, **validation) if args.resume else None
++        if completed is not None:
+             results[task] = task_result(
+-                dataset_dir,
+-                task_out,
+-                -1,
+-                "resume",
+-                0.0,
+-                run_digest=run_digest,
+-                expected_trials=args.num_test_episodes,
++                dataset_dir, completed, -1, "resume", 0.0, run_digest=run_digest, expected_trials=args.num_test_episodes
+             )
+-            continue
+-        elif existing.exists():
+-            raise SystemExit(f"refusing to overwrite existing task result without --resume: {existing}")
+-        work.put((task, dataset_dir))
++        else:
++            work.put((task, dataset_dir))
+ 
+     stop = threading.Event()
+ 
+@@ -373,7 +540,7 @@ def main() -> int:
+                 "config_file": str(config_file),
+                 "action_horizon": args.action_horizon,
+                 "seed": args.seed,
+-                "expected_tasks": args.expected_tasks,
++                "expected_tasks": len(tasks),
+                 "completed_tasks": len(ordered),
+                 "task_failures": sum(row.get("error") is not None for row in ordered.values()),
+                 "total_trials": trials,
+@@ -389,6 +556,7 @@ def main() -> int:
+                 )
+             )
+             payload["evaluation_run_digest"] = run_digest
++            payload["invocation_dir"] = str(invocation)
+             worker_errors = {key: row for key, row in results.items() if key.startswith("_worker_")}
+             payload["worker_errors"] = worker_errors
+             if worker_errors or any(row.get("error") for row in ordered.values()):
+@@ -403,38 +571,9 @@ def main() -> int:
+         worker_dir = output_root / f"_worker{worker_id:02d}_gpu{gpu}"
+         worker_dir.mkdir(parents=True, exist_ok=True)
+         server_log_path = worker_dir / "action_server.log"
+-        server_env = os.environ.copy()
++        server_env = simulation_env.copy()
+         server_env["CUDA_VISIBLE_DEVICES"] = gpu
+-        server_env["PYTHONPATH"] = str(CHILD) + (
+-            os.pathsep + server_env["PYTHONPATH"] if server_env.get("PYTHONPATH") else ""
+-        )
+-        server_command = [
+-            str(args.server_python),
+-            "-m",
+-            "cosmos_framework.scripts.action_policy_server_robocasa",
+-            "--checkpoint-path",
+-            str(checkpoint),
+-            "--config-file",
+-            str(config_file),
+-            "--port",
+-            str(port),
+-            "--raw-action-dim",
+-            "15",
+-            "--action-chunk-size",
+-            "16",
+-            "--local-memory-mode",
+-            "required",
+-            "--local-memory-max-sessions",
+-            "1",
+-            "--num-steps",
+-            str(args.num_steps),
+-            "--guidance",
+-            str(args.guidance),
+-            "--fps",
+-            "20",
+-            "--no-guardrails",
+-            "--http-400-on-error",
+-        ]
++        server_command = server_argv(args, checkpoint, config_file, port)
+         # Open the worker log before claiming a task, so even initialization
+         # errors are preserved by the outer worker boundary.
+         with server_log_path.open("ab", buffering=0) as server_log:
+@@ -443,7 +582,8 @@ def main() -> int:
+                     task, dataset_dir = work.get_nowait()
+                 except queue.Empty:
+                     break
+-                task_out = output_root / task
++                task_root = output_root / task
++                task_out = task_root
+                 started = time.monotonic()
+                 task_deadline = started + args.task_wall_timeout_s
+                 server_owned = sim_owned = None
+@@ -451,7 +591,7 @@ def main() -> int:
+                 cleanup = {}
+                 stage = "server_start"
+                 try:
+-                    task_out.mkdir(parents=True, exist_ok=True)
++                    task_out = start_attempt(task_root, digest=run_digest, resume=args.resume)
+                     require_free_ports([port])
+                     server_owned = OwnedProcess(
+                         server_command,
+@@ -484,42 +624,9 @@ def main() -> int:
+                     )
+                     sim_env = server_env.copy()
+                     sim_env["MUJOCO_GL"] = sim_env.get("MUJOCO_GL", "egl")
+-                    command = [
+-                        str(args.sim_python),
+-                        str(CHILD / "cosmos_framework/simulation/robocasa/closed_loop_eval.py"),
+-                        "--server-url",
+-                        f"http://127.0.0.1:{port}",
+-                        "--dataset-dir",
+-                        str(dataset_dir),
+-                        "--evaluation-run-digest",
+-                        run_digest,
+-                        "--num-test-episodes",
+-                        str(args.num_test_episodes),
+-                        "--action-horizon",
+-                        str(args.action_horizon),
+-                        "--image-size",
+-                        "256",
+-                        "--cam-size",
+-                        "256",
+-                        "--camera-set",
+-                        "left_wrist",
+-                        "--use-state",
+-                        "--use-base-action",
+-                        "--base-encoding",
+-                        "raw",
+-                        "--local-memory-mode",
+-                        "required",
+-                        "--success-latch",
+-                        "1",
+-                        "--seed",
+-                        str(args.seed),
+-                        "--timeout",
+-                        str(args.predict_request_timeout_s),
+-                        "--output-dir",
+-                        str(task_out),
+-                        "--progress-file",
+-                        str(task_out / "episode_progress.jsonl"),
+-                    ]
++                    command = simulator_argv(
++                        args, dataset_dir, task_out, port, run_digest, runtime_digest, [name for name, _ in tasks]
++                    )
+                     atomic_write_json(
+                         task_out / "commands.json",
+                         {"server": server_command, "simulator": command},
+@@ -588,6 +695,18 @@ def main() -> int:
+                             except BaseException as exc:  # noqa: BLE001
+                                 cleanup[name] = owned.cleanup
+                                 error = error or f"cleanup {name}: {type(exc).__name__}: {exc}"
++                    if task_out != task_root:
++                        try:
++                            # Publish all process evidence before committing COMPLETE.
++                            atomic_write_json(task_out / "process_cleanup.json", cleanup)
++                            if error:
++                                fail_attempt(task_out, error)
++                            else:
++                                stage = "evidence_validation"
++                                finish_attempt(task_out, deadline=task_deadline, stop=stop, **validation)
++                        except BaseException as exc:  # noqa: BLE001
++                            error = error or f"evidence validation: {type(exc).__name__}: {exc}"
++                            fail_attempt(task_out, error)
+                     if row is None:
+                         row = {
+                             "dataset_dir": str(dataset_dir),
+@@ -601,11 +720,14 @@ def main() -> int:
+                             "rollout_mp4s": sorted(str(path) for path in task_out.glob("rollout*.mp4")),
+                             "rollouts": [],
+                         }
+-                    row.update(error=error, returncode=returncode, cleanup=cleanup)
++                    row.update(
++                        error=error,
++                        returncode=returncode,
++                        cleanup=cleanup,
++                        elapsed_s=round(time.monotonic() - started, 3),
++                    )
+                     # Cleanup failure is an independent error, never replacement of
+                     # the primary failure. Evidence survives even after cancellation.
+-                    if task_out.is_dir():
+-                        atomic_write_json(task_out / "process_cleanup.json", cleanup)
+                     with result_lock:
+                         results[task] = row
+                         if error:
+@@ -680,4 +802,12 @@ def main() -> int:
+ 
+ 
+ if __name__ == "__main__":
+-    raise SystemExit(main())
++    try:
++        raise SystemExit(main())
++    except subprocess.CalledProcessError as error:
++        # Failed interpreter/import probes retain their real diagnostic output.
++        print(f"preflight failed: {error}", file=sys.stderr)
++        for stream in (error.stdout, error.stderr):
++            if stream:
++                print(stream, file=sys.stderr)
++        raise SystemExit(1) from error
+diff --git a/scripts/robocasa_eval_config.py b/scripts/robocasa_eval_config.py
+new file mode 100644
+index 00000000..78186164
+--- /dev/null
++++ b/scripts/robocasa_eval_config.py
+@@ -0,0 +1,301 @@
++#!/usr/bin/env python3
++"""Versioned, strict Owner configuration for the RoboCasa manual evaluation queue."""
++
++from __future__ import annotations
++
++import argparse
++import math
++import os
++import re
++from pathlib import Path
++
++SCHEMA = "psm_wma_robocasa_eval_v1"
++ROOT = Path(__file__).resolve().parents[1]
++DEFAULTS = {
++    "schema": SCHEMA,
++    "tasks": "all",
++    "episodes_per_task": 1,
++    "gpu_ids": [0],
++    "slots_per_gpu": 1,
++    "base_port": 8912,
++    "expected_tasks": 18,
++    "seed": 0,
++    "prediction_steps": 30,
++    "guidance": 1.0,
++    "fps": 20,
++    "action_horizon": 16,
++    "local_memory_mode": "required",
++    "server_lifecycle": "per_task",
++    "on_infrastructure_error": "stop",
++    "save_rollout_mp4": True,
++    "save_generated_video": "first",
++    "save_init_png": True,
++    "save_action_jsonl": True,
++    "save_prediction_jsonl": True,
++    "resume": False,
++}
++TIMEOUT_DEFAULTS = {
++    "server_start_s": 900.0,
++    "predict_request_s": 600.0,
++    "episode_wall_s": 1800.0,
++    "task_wall_s": 10800.0,
++    "terminate_grace_s": 20.0,
++}
++PATH_FIELDS = {
++    "checkpoint",
++    "config_file",
++    "dataset_root",
++    "server_python",
++    "sim_python",
++    "output_root",
++    "output_dir",
++    "vendor_lock",
++    "asset_manifest",
++}
++KNOWN_FIELDS = set(DEFAULTS) | PATH_FIELDS | {"run_name", "timeouts"}
++
++
++def _yaml(path: Path) -> dict:
++    try:
++        import yaml
++    except ImportError as error:
++        raise ValueError("YAML configuration requires PyYAML in the launcher Python") from error
++
++    class UniqueLoader(yaml.SafeLoader):
++        pass
++
++    def mapping(loader, node, deep=False):
++        values = {}
++        for key_node, value_node in node.value:
++            key = loader.construct_object(key_node, deep=deep)
++            if not isinstance(key, str) or key in values:
++                raise ValueError(f"duplicate/non-string YAML key: {key!r}")
++            values[key] = loader.construct_object(value_node, deep=deep)
++        return values
++
++    UniqueLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, mapping)
++    try:
++        with path.open(encoding="utf-8") as handle:
++            data = yaml.load(handle, Loader=UniqueLoader)
++    except yaml.YAMLError as error:
++        raise ValueError(f"invalid evaluation YAML: {error}") from error
++    if not isinstance(data, dict):
++        raise ValueError("evaluation YAML must be a mapping")
++    unknown = set(data) - KNOWN_FIELDS
++    if unknown:
++        raise ValueError(f"unknown evaluation config fields: {sorted(unknown)}")
++    if data.get("schema") != SCHEMA:
++        raise ValueError(f"evaluation YAML requires schema: {SCHEMA}")
++    return data
++
++
++def parser() -> argparse.ArgumentParser:
++    result = argparse.ArgumentParser(description=__doc__, argument_default=argparse.SUPPRESS)
++    result.add_argument("--config", type=Path, help="evaluation YAML; --config-file is the model config")
++    result.add_argument("--list-tasks", action="store_true")
++    result.add_argument("--dry-run", action="store_true")
++    result.add_argument("--checkpoint", "--checkpoint-path", dest="checkpoint")
++    for field in (
++        "dataset-root",
++        "config-file",
++        "server-python",
++        "sim-python",
++        "output-root",
++        "output-dir",
++        "run-name",
++        "vendor-lock",
++        "asset-manifest",
++    ):
++        result.add_argument("--" + field)
++    result.add_argument("--tasks", help="comma-separated underlying task classes, or all")
++    result.add_argument("--gpus", dest="gpu_ids", help="comma-separated CUDA GPU IDs; one task slot per GPU")
++    for flag, name in (
++        ("episodes", "episodes_per_task"),
++        ("slots-per-gpu", "slots_per_gpu"),
++        ("base-port", "base_port"),
++        ("expected-tasks", "expected_tasks"),
++        ("seed", "seed"),
++        ("prediction-steps", "prediction_steps"),
++        ("action-horizon", "action_horizon"),
++        ("fps", "fps"),
++    ):
++        aliases = {"episodes": ["--num-test-episodes"], "prediction-steps": ["--num-steps"]}.get(flag, [])
++        result.add_argument("--" + flag, *aliases, dest=name, type=int)
++    result.add_argument("--guidance", type=float)
++    result.add_argument("--timeout", type=float, help="legacy alias setting both server and prediction timeouts")
++    for flag in (
++        "server-start-timeout-s",
++        "predict-request-timeout-s",
++        "episode-wall-timeout-s",
++        "task-wall-timeout-s",
++        "terminate-grace-s",
++    ):
++        result.add_argument("--" + flag, type=float)
++    for flag in ("local-memory-mode", "server-lifecycle", "on-infrastructure-error", "save-generated-video"):
++        result.add_argument("--" + flag)
++    for flag in ("resume", "save-rollout-mp4", "save-init-png", "save-action-jsonl", "save-prediction-jsonl"):
++        result.add_argument("--" + flag, action=argparse.BooleanOptionalAction)
++    return result
++
++
++def _names(value, *, field: str, all_allowed=False) -> list[str] | str:
++    if all_allowed and value == "all":
++        return "all"
++    if isinstance(value, str):
++        value = [item.strip() for item in value.split(",")]
++    if not isinstance(value, list) or not value or any(not isinstance(item, str) or not item for item in value):
++        raise ValueError(f"{field} must be a nonempty list without empty entries")
++    if len(value) != len(set(value)):
++        raise ValueError(f"{field} contains duplicates")
++    if any(re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", item) is None or item == "all" for item in value):
++        raise ValueError(f"invalid {field} name")
++    return list(value)
++
++
++def resolve(argv=None, *, root: Path = ROOT) -> argparse.Namespace:
++    """Resolve CLI > YAML > v1 defaults without writing files or importing simulators.
++
++    YAML relative paths resolve against its directory. CLI paths resolve against cwd.
++    Python executable paths retain symlinks so a venv does not turn into system Python.
++    Actual task discovery, DCP checks and runtime attestation belong to the queue.
++    """
++    cli = vars(parser().parse_args(argv))
++    config = cli.pop("config", None)
++    data = _yaml(config) if config is not None else {}
++    yaml_base = config.absolute().parent if config is not None else Path.cwd()
++    for field in PATH_FIELDS & data.keys():
++        if not isinstance(data[field], str) or not data[field]:
++            raise ValueError(f"{field} must be a nonempty path string")
++        path = Path(data[field]).expanduser()
++        data[field] = str(path if path.is_absolute() else yaml_base / path)
++    timeouts = data.pop("timeouts", {})
++    if not isinstance(timeouts, dict) or set(timeouts) - set(TIMEOUT_DEFAULTS):
++        raise ValueError("invalid/unknown timeouts fields")
++    timeouts = TIMEOUT_DEFAULTS | timeouts
++    for key in ("list_tasks", "dry_run"):
++        cli.setdefault(key, False)
++    resolved = (
++        DEFAULTS
++        | {
++            "server_python": str(root / "cosmos-framework/.venv/bin/python"),
++            "vendor_lock": str(root / "third_party/robosuite_patches/vendor.lock.json"),
++        }
++        | data
++    )
++    if "timeout" in cli:
++        value = cli.pop("timeout")
++        timeouts["server_start_s"] = value
++        timeouts["predict_request_s"] = value
++    timeout_aliases = {
++        "server_start_timeout_s": "server_start_s",
++        "predict_request_timeout_s": "predict_request_s",
++        "episode_wall_timeout_s": "episode_wall_s",
++        "task_wall_timeout_s": "task_wall_s",
++        "terminate_grace_s": "terminate_grace_s",
++    }
++    for key, field in timeout_aliases.items():
++        if key in cli:
++            timeouts[field] = cli.pop(key)
++    # An explicit CLI output-dir replaces YAML output_root/run_name, and vice versa.
++    if "output_dir" in cli:
++        if "output_root" in cli or "run_name" in cli:
++            raise ValueError("--output-dir is exclusive with --output-root/--run-name")
++        resolved.pop("output_root", None)
++        resolved.pop("run_name", None)
++    elif "output_root" in cli or "run_name" in cli:
++        resolved.pop("output_dir", None)
++    resolved.update(cli)
++    for field in PATH_FIELDS & resolved.keys():
++        value = resolved[field]
++        if not isinstance(value, str) or not value:
++            raise ValueError(f"{field} must be a nonempty path string")
++        resolved[field] = str(Path(value).expanduser().absolute())
++    resolved["tasks"] = _names(resolved["tasks"], field="tasks", all_allowed=True)
++    gpu_ids = resolved["gpu_ids"]
++    if isinstance(gpu_ids, str):
++        gpu_ids = [item.strip() for item in gpu_ids.split(",")]
++    if not isinstance(gpu_ids, list) or not gpu_ids:
++        raise ValueError("gpu_ids must be a nonempty list")
++    if any(type(item) is not int and (not isinstance(item, str) or not item.isdecimal()) for item in gpu_ids):
++        raise ValueError("gpu_ids must contain nonnegative integer CUDA IDs")
++    gpu_ids = [int(item) for item in gpu_ids]
++    if any(item < 0 for item in gpu_ids) or len(gpu_ids) != len(set(gpu_ids)):
++        raise ValueError("gpu_ids must be unique nonnegative CUDA IDs")
++    resolved["gpu_ids"] = gpu_ids
++    for field in (
++        "episodes_per_task",
++        "slots_per_gpu",
++        "base_port",
++        "expected_tasks",
++        "prediction_steps",
++        "fps",
++        "action_horizon",
++    ):
++        if type(resolved[field]) is not int or resolved[field] <= 0:
++            raise ValueError(f"{field} must be a positive integer")
++    if type(resolved["seed"]) is not int or resolved["seed"] < 0:
++        raise ValueError("seed must be a nonnegative integer")
++    if resolved["base_port"] + len(gpu_ids) - 1 > 65535:
++        raise ValueError("base_port plus GPU workers exceeds port range")
++    if resolved["tasks"] == "all" and resolved["expected_tasks"] != 18:
++        raise ValueError("tasks=all requires exactly 18 underlying task classes; select a subset explicitly")
++    for field, expected in (
++        ("slots_per_gpu", 1),
++        ("fps", 20),
++        ("local_memory_mode", "required"),
++        ("server_lifecycle", "per_task"),
++    ):
++        if resolved[field] != expected:
++            raise ValueError(f"frozen protocol requires {field}={expected}")
++    if resolved["action_horizon"] > 16:
++        raise ValueError("action_horizon must be in 1..16")
++    if resolved["save_generated_video"] not in ("none", "first", "all"):
++        raise ValueError("save_generated_video must be none, first or all")
++    if resolved["on_infrastructure_error"] not in ("stop", "continue_with_new_server"):
++        raise ValueError("invalid on_infrastructure_error")
++    for field in ("resume", "save_rollout_mp4", "save_init_png", "save_action_jsonl", "save_prediction_jsonl"):
++        if type(resolved[field]) is not bool:
++            raise ValueError(f"{field} must be a boolean")
++    for field in ("save_action_jsonl", "save_prediction_jsonl"):
++        if not resolved[field]:
++            raise ValueError(f"audit evidence requires {field}=true")
++    if type(resolved["guidance"]) not in (int, float) or not math.isfinite(resolved["guidance"]):
++        raise ValueError("guidance must be finite")
++    for field, value in timeouts.items():
++        if type(value) not in (int, float) or not math.isfinite(value) or value <= 0:
++            raise ValueError(f"timeouts.{field} must be finite and positive")
++    resolved["timeouts"] = timeouts
++    if "dataset_root" not in resolved:
++        raise ValueError("dataset_root is required")
++    if not resolved["list_tasks"]:
++        for field in ("checkpoint", "sim_python"):
++            if field not in resolved:
++                raise ValueError(f"{field} is required")
++        if "output_dir" in resolved and ("output_root" in resolved or "run_name" in resolved):
++            raise ValueError("output_dir is exclusive with output_root/run_name")
++        if "output_dir" not in resolved:
++            if "output_root" not in resolved or "run_name" not in resolved:
++                raise ValueError("output_root + run_name (or output_dir) required")
++            name = resolved["run_name"]
++            if not isinstance(name, str) or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", name) is None:
++                raise ValueError("run_name must be one safe namespace component")
++            resolved["output_dir"] = str(Path(resolved["output_root"]) / name)
++        if "config_file" not in resolved:
++            resolved["config_file"] = str(Path(resolved["checkpoint"]).parent.parent / "config.yaml")
++        for field in ("server_python", "sim_python"):
++            path = Path(resolved[field])
++            if not path.is_file() or not os.access(path, os.X_OK):
++                raise ValueError(f"{field} is not executable: {path}")
++    result = argparse.Namespace(**resolved)
++    result.config = config
++    result.resolved_config = {key: value for key, value in resolved.items() if key not in ("list_tasks", "dry_run")}
++    for field in PATH_FIELDS:
++        setattr(result, field, Path(resolved[field]) if field in resolved else None)
++    result.checkpoint_path = result.checkpoint
++    result.gpus = ",".join(map(str, gpu_ids))
++    result.num_test_episodes = result.episodes_per_task
++    result.num_steps = result.prediction_steps
++    result.timeout = timeouts["predict_request_s"]
++    for key, field in timeout_aliases.items():
++        setattr(result, key, timeouts[field])
++    return result
+diff --git a/scripts/robocasa_eval_results.py b/scripts/robocasa_eval_results.py
+new file mode 100644
+index 00000000..7cf661aa
+--- /dev/null
++++ b/scripts/robocasa_eval_results.py
+@@ -0,0 +1,418 @@
++"""Task-boundary attempts and complete, decodable RoboCasa evidence validation."""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import math
++import os
++import re
++import subprocess
++import tempfile
++import time
++from pathlib import Path
++
++from robocasa_processes import OwnedProcess
++from v3_evaluation_identity import validate_task_results
++
++SCHEMA = "psm_robocasa_task_attempt_v1"
++_ATTEMPT = re.compile(r"attempt_(\d{4,})\Z")
++_DIGEST = re.compile(r"[0-9a-f]{64}\Z")
++
++
++def _safe(path: Path) -> Path:
++    path = Path(path).absolute()
++    if any(part.is_symlink() for part in (path, *path.parents)):
++        raise ValueError(f"evidence path must not contain symlinks: {path}")
++    return path
++
++
++def _json(path: Path):
++    path = _safe(path)
++    if not path.is_file():
++        raise ValueError(f"missing evidence file: {path}")
++    return json.loads(path.read_text(encoding="utf-8"), parse_constant=lambda x: _invalid(f"nonfinite JSON: {x}"))
++
++
++def _invalid(message: str):
++    raise ValueError(message)
++
++
++def _atomic(path: Path, payload: dict) -> None:
++    _safe(path)
++    with tempfile.NamedTemporaryFile(
++        mode="w", encoding="utf-8", dir=path.parent, prefix=".attempt_", delete=False
++    ) as f:
++        pending = Path(f.name)
++        try:
++            json.dump(payload, f, ensure_ascii=False, allow_nan=False, indent=2)
++            f.write("\n")
++            f.flush()
++            os.fsync(f.fileno())
++        except BaseException:
++            pending.unlink(missing_ok=True)
++            raise
++    try:
++        os.replace(pending, path)
++    finally:
++        pending.unlink(missing_ok=True)
++
++
++def _check_digest(digest: str) -> None:
++    if not isinstance(digest, str) or not _DIGEST.fullmatch(digest):
++        raise ValueError("evaluation digest must be a SHA256 hex string")
++
++
++def _marker(directory: Path, digest: str | None = None) -> dict:
++    directory = _safe(directory)
++    row = _json(directory / "attempt.json")
++    if (
++        not isinstance(row, dict)
++        or row.get("schema") != SCHEMA
++        or row.get("attempt_id") != directory.name
++        or not _ATTEMPT.fullmatch(directory.name)
++        or row.get("status") not in {"RUNNING", "FAILED", "COMPLETE"}
++    ):
++        raise ValueError("invalid task attempt marker")
++    _check_digest(row.get("evaluation_run_digest"))
++    if digest is not None and row["evaluation_run_digest"] != digest:
++        raise ValueError("foreign task attempt digest")
++    return row
++
++
++def _attempts(task_root: Path, digest: str) -> list[Path]:
++    _check_digest(digest)
++    task_root = _safe(task_root)
++    if not task_root.exists():
++        return []
++    if not task_root.is_dir():
++        raise ValueError("task output must be a directory")
++    directories = []
++    for directory in sorted(task_root.iterdir()):
++        _safe(directory)
++        if not directory.is_dir() or not _ATTEMPT.fullmatch(directory.name):
++            raise ValueError("unrecognized/legacy task output; never import or overwrite it")
++        marker = directory / "attempt.json"
++        _safe(marker)
++        # An interruption between mkdir and marker publication is a partial
++        # attempt too. It can never count as complete or be reused.
++        if marker.exists():
++            _marker(directory, digest)
++        directories.append(directory)
++    return directories
++
++
++def start_attempt(task_root: Path, *, digest: str, resume: bool) -> Path:
++    """Reserve a fresh namespace; the simulator always starts at episode zero."""
++    directories = _attempts(task_root, digest)
++    if directories and not resume:
++        raise FileExistsError("task output already exists; explicit same-identity resume required")
++    task_root = _safe(task_root)
++    task_root.mkdir(parents=True, exist_ok=True)
++    index = max((int(path.name.split("_")[1]) for path in directories), default=0) + 1
++    directory = task_root / f"attempt_{index:04d}"
++    directory.mkdir()  # Exclusive reservation, never merge concurrent attempts.
++    _atomic(
++        directory / "attempt.json",
++        {"schema": SCHEMA, "attempt_id": directory.name, "evaluation_run_digest": digest, "status": "RUNNING"},
++    )
++    return directory
++
++
++def _jsonl(path: Path, *, digest: str, episode: int, attempt_id: str) -> list[dict]:
++    path = _safe(path)
++    if not path.is_file() or path.stat().st_size == 0:
++        raise ValueError(f"missing/empty audit JSONL: {path}")
++    rows = []
++    with path.open(encoding="utf-8") as handle:
++        for line in handle:
++            if not line.endswith("\n") or len(line) > 16 * 1024 * 1024:
++                raise ValueError("truncated/oversized audit JSONL record")
++            row = json.loads(line, parse_constant=lambda x: _invalid(f"nonfinite audit JSON: {x}"))
++            if (
++                not isinstance(row, dict)
++                or row.get("evaluation_run_digest") != digest
++                or type(row.get("episode")) is not int
++                or row["episode"] != episode
++                or row.get("evaluation_attempt_id") != attempt_id
++            ):
++                raise ValueError("foreign episode/attempt audit record")
++            rows.append(row)
++    return rows
++
++
++def _vector(value, width: int) -> bool:
++    return (
++        isinstance(value, list)
++        and len(value) == width
++        and all(type(x) in {int, float} and math.isfinite(x) for x in value)
++    )
++
++
++_MEDIA_PROBE = r"""
++import json, subprocess, sys
++from pathlib import Path
++import imageio_ffmpeg
++path, kind = sys.argv[1:]
++if kind == 'png':
++    from PIL import Image
++    with Image.open(path) as image:
++        if image.format != 'PNG' or min(image.size) <= 0:
++            raise ValueError('invalid PNG')
++        image.verify()
++    print(json.dumps({'kind': 'png', 'decoded': True}))
++else:
++    result = subprocess.run([
++        imageio_ffmpeg.get_ffmpeg_exe(), '-nostdin', '-v', 'error',
++        '-xerror', '-err_detect', 'explode', '-threads', '1', '-filter_threads', '1', '-i', str(Path(path)),
++        '-map', '0:v:0', '-an', '-progress', 'pipe:1', '-nostats', '-f', 'null', '-'
++    ], capture_output=True, text=True, timeout=90)
++    if result.returncode:
++        raise RuntimeError('video decode failed: ' + result.stderr[-2000:])
++    counts = [int(line.split('=', 1)[1]) for line in result.stdout.splitlines() if line.startswith('frame=')]
++    if not counts or max(counts) <= 0:
++        raise ValueError('video contains no decodable frames')
++    print(json.dumps({'kind': 'mp4', 'decoded': True, 'frames': max(counts)}))
++"""
++
++
++def _remaining(deadline: float | None, maximum: float = 110.0, stop=None) -> float:
++    if stop is not None and stop.is_set():
++        raise InterruptedError("evaluation cancelled while validating evidence")
++    remaining = maximum if deadline is None else min(maximum, deadline - time.monotonic())
++    if remaining <= 0:
++        raise TimeoutError("task wall deadline expired while validating evidence")
++    return remaining
++
++
++def validate_media(path: Path, *, sim_python: Path, kind: str, deadline: float | None = None, stop=None) -> dict:
++    """Decode in the selected simulator interpreter without importing a simulator."""
++    path = _safe(path)
++    if kind not in {"png", "mp4"} or not path.is_file() or path.stat().st_size == 0:
++        raise ValueError(f"missing/empty required media: {path}")
++    before = path.stat()
++    timeout = _remaining(deadline, stop=stop)
++    env = dict(os.environ, CUDA_VISIBLE_DEVICES="", PYTHONDONTWRITEBYTECODE="1")
++    owned = OwnedProcess(
++        [str(sim_python), "-B", "-c", _MEDIA_PROBE, str(path), kind],
++        env=env,
++        stdout=subprocess.PIPE,
++        stderr=subprocess.PIPE,
++        text=True,
++        grace_s=0.2,
++    )
++    process = owned.proc
++    try:
++        until = time.monotonic() + timeout
++        while True:
++            try:
++                stdout, stderr = process.communicate(timeout=min(0.1, _remaining(until, stop=stop)))
++                break
++            except subprocess.TimeoutExpired:
++                continue
++    except BaseException as error:
++        try:
++            owned.close()  # Also reap adopted FFmpeg grandchildren, never foreign groups.
++        except BaseException as cleanup_error:
++            error.add_note(f"decoder cleanup failed: {cleanup_error!r}")
++        raise
++    else:
++        owned.close()
++    finally:
++        process.stdout.close()
++        process.stderr.close()
++    if process.returncode:
++        raise ValueError(f"required media not decodable: {path}: {stderr[-2000:]}")
++    observed = json.loads(stdout)
++    after = _safe(path).stat()
++    if (
++        before.st_ino != after.st_ino
++        or before.st_size != after.st_size
++        or before.st_mtime_ns != after.st_mtime_ns
++        or before.st_ctime_ns != after.st_ctime_ns
++        or observed.get("kind") != kind
++        or observed.get("decoded") is not True
++    ):
++        raise ValueError("media changed during decode or invalid decoder result")
++    return observed
++
++
++def validate_attempt(
++    attempt_dir: Path,
++    *,
++    digest: str,
++    expected_trials: int,
++    video_mode: str,
++    rollout_enabled: bool,
++    init_png_enabled: bool,
++    sim_python: Path,
++    deadline: float | None = None,
++    runtime_digest: str | None = None,
++    stop=None,
++) -> list[dict]:
++    """Reject partial, foreign, mixed or media-incomplete task evidence."""
++    attempt_dir = _safe(attempt_dir)
++    _remaining(deadline, stop=stop)
++    _marker(attempt_dir, digest)
++    for artifact in attempt_dir.rglob("*"):
++        _safe(artifact)
++    cleanup = _json(attempt_dir / "process_cleanup.json")
++    if not isinstance(cleanup, dict) or set(cleanup) != {"server", "simulator"}:
++        raise ValueError("complete task requires both owned process cleanup witnesses")
++    for witness in cleanup.values():
++        if (
++            not isinstance(witness, dict)
++            or "error" in witness
++            or type(witness.get("pid")) is not int
++            or witness["pid"] <= 0
++            or type(witness.get("pgid")) is not int
++            or witness["pgid"] <= 0
++            or witness.get("live_group") is not False
++            or witness.get("remaining_pids") != []
++        ):
++            raise ValueError("task process cleanup is incomplete or failed")
++    if runtime_digest is not None:
++        _check_digest(runtime_digest)
++        runtime = _json(attempt_dir / "runtime_attestation.json")
++        if not isinstance(runtime, dict) or runtime.get("digest") != runtime_digest:
++            raise ValueError("missing or foreign in-process runtime attestation")
++        body = {key: value for key, value in runtime.items() if key != "digest"}
++        canonical = json.dumps(
++            body, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False
++        ).encode()
++        if hashlib.sha256(canonical).hexdigest() != runtime_digest:
++            raise ValueError("in-process runtime attestation digest is corrupt")
++    if video_mode not in {"none", "first", "all"}:
++        raise ValueError("invalid generated video mode")
++    attempt_identity = f"{attempt_dir.parent.name}/{attempt_dir.name}"
++    rows = _json(attempt_dir / "results.json")
++    validate_task_results(rows, digest=digest, expected_trials=expected_trials)
++    for episode, row in enumerate(rows):
++        _remaining(deadline, stop=stop)
++        if row["error"] is not None:
++            raise ValueError("runtime errors cannot complete a task attempt")
++        if row.get("evaluation_attempt_id") != attempt_identity:
++            raise ValueError("foreign task attempt episode result")
++        prefix = f"rollout{episode:02d}"
++        if _json(attempt_dir / f"{prefix}_episode.json") != row:
++            raise ValueError("episode record differs from task result")
++        for key, suffix in (("actions_file", "actions"), ("predictions_file", "predictions")):
++            if row.get(key) != f"{prefix}_{suffix}.jsonl":
++                raise ValueError("audit file is not the current episode's canonical artifact")
++        actions = _jsonl(attempt_dir / row["actions_file"], digest=digest, episode=episode, attempt_id=attempt_identity)
++        predictions = _jsonl(
++            attempt_dir / row["predictions_file"], digest=digest, episode=episode, attempt_id=attempt_identity
++        )
++        if (
++            type(row.get("completed_action_records")) is not int
++            or row["completed_action_records"] != len(actions)
++            or type(row.get("steps")) is not int
++            or row["steps"] != len(actions)
++            or type(row.get("replans")) is not int
++            or row["replans"] != len(predictions)
++        ):
++            raise ValueError("audit counts do not match the episode result")
++        for index, action in enumerate(actions):
++            if (
++                type(action.get("source_step")) is not int
++                or action["source_step"] != index
++                or action.get("evidence_completed") is not True
++                or not _vector(action.get("predicted_raw15"), 15)
++                or not _vector(action.get("canonical_executed_raw15"), 15)
++                or not _vector(action.get("submitted_env12"), 12)
++            ):
++                raise ValueError("invalid/incomplete raw15-to-env12 action evidence")
++        previous = -1
++        for prediction in predictions:
++            step = prediction.get("step_before_query")
++            if type(step) is not int or not previous < step < len(actions) or (previous == -1 and step != 0):
++                raise ValueError("invalid prediction/action frontier")
++            previous = step
++        if rollout_enabled:
++            validate_media(
++                attempt_dir / f"{prefix}.mp4", sim_python=sim_python, kind="mp4", deadline=deadline, stop=stop
++            )
++        if init_png_enabled:
++            validate_media(
++                attempt_dir / f"{prefix}_init.png", sim_python=sim_python, kind="png", deadline=deadline, stop=stop
++            )
++        generated = row.get("generated_videos")
++        names = (
++            []
++            if video_mode == "none"
++            else [f"{prefix}_generated.mp4"]
++            if video_mode == "first"
++            else [f"{prefix}_generated_replan{index:04d}.mp4" for index in range(len(predictions))]
++        )
++        if generated != names:
++            raise ValueError("generated video evidence does not match the selected mode")
++        if sorted(path.name for path in attempt_dir.glob(f"{prefix}_generated*.mp4")) != sorted(names):
++            raise ValueError("unexpected generated video artifact")
++        if video_mode != "none":
++            manifest = _json(attempt_dir / f"{prefix}_generated_manifest.json")
++            if (
++                not isinstance(manifest, dict)
++                or manifest.get("schema") != "psm_generated_video_v1"
++                or manifest.get("status") != "COMPLETE"
++                or manifest.get("evaluation_run_digest") != digest
++                or manifest.get("evaluation_attempt_id") != attempt_identity
++                or manifest.get("mode") != video_mode
++                or not isinstance(manifest.get("videos"), list)
++                or len(manifest["videos"]) != len(names)
++            ):
++                raise ValueError("invalid generated video manifest")
++            for index, (record, name) in enumerate(zip(manifest["videos"], names, strict=True)):
++                if (
++                    not isinstance(record, dict)
++                    or record.get("replan") != index
++                    or type(record.get("replan")) is not int
++                    or record.get("source_step") != predictions[index]["step_before_query"]
++                    or record.get("file") != name
++                    or type(record.get("frames")) is not int
++                    or record["frames"] <= 0
++                ):
++                    raise ValueError("generated video manifest lost replan/source correspondence")
++                decoded = validate_media(
++                    attempt_dir / name, sim_python=sim_python, kind="mp4", deadline=deadline, stop=stop
++                )
++                if decoded["frames"] != record["frames"]:
++                    raise ValueError("generated video frame count differs from manifest")
++    return rows
++
++
++def finish_attempt(attempt_dir: Path, **kwargs) -> list[dict]:
++    rows = validate_attempt(attempt_dir, **kwargs)
++    marker = _marker(attempt_dir, kwargs["digest"])
++    if marker["status"] != "RUNNING":
++        raise ValueError("only a running attempt can be committed complete")
++    _atomic(attempt_dir / "attempt.json", dict(marker, status="COMPLETE"))
++    return rows
++
++
++def fail_attempt(attempt_dir: Path, error: str) -> None:
++    if not isinstance(error, str) or not error:
++        raise ValueError("failed attempt requires an error witness")
++    marker = _marker(attempt_dir)
++    if marker["status"] == "COMPLETE":
++        raise ValueError("cannot change a completed attempt")
++    if marker["status"] == "FAILED":
++        errors = list(marker.get("additional_errors", []))
++        if error != marker.get("error") and error not in errors:
++            errors.append(error)
++        _atomic(attempt_dir / "attempt.json", dict(marker, additional_errors=errors))
++    else:
++        _atomic(attempt_dir / "attempt.json", dict(marker, status="FAILED", error=error))
++
++
++def find_completed_attempt(task_root: Path, **kwargs) -> Path | None:
++    complete = []
++    for directory in _attempts(task_root, kwargs["digest"]):
++        if not (directory / "attempt.json").exists():
++            continue
++        marker = _marker(directory, kwargs["digest"])
++        if marker["status"] == "COMPLETE":
++            validate_attempt(directory, **kwargs)
++            complete.append(directory)
++    if len(complete) > 1:
++        raise ValueError("multiple completed attempts for one task; ambiguous results")
++    return complete[0] if complete else None
+diff --git a/scripts/run_robocasa_eval.sh b/scripts/run_robocasa_eval.sh
+new file mode 100755
+index 00000000..6a1aba3e
+--- /dev/null
++++ b/scripts/run_robocasa_eval.sh
+@@ -0,0 +1,5 @@
++#!/usr/bin/env bash
++# Owner manually invokes this entry only after the exact implementation Gate is approved.
++set -euo pipefail
++script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
++exec "${PYTHON:-python}" "${script_dir}/eval_robocasa_18task_queue.py" "$@"
+diff --git a/tools/v3/eval_robocasa_queue_identity_test.py b/tools/v3/eval_robocasa_queue_identity_test.py
+index 615bfe42..f37fb961 100644
+--- a/tools/v3/eval_robocasa_queue_identity_test.py
++++ b/tools/v3/eval_robocasa_queue_identity_test.py
+@@ -8,6 +8,7 @@ from __future__ import annotations
+ 
+ import ast
+ import copy
++import hashlib
+ import importlib.util
+ import json
+ import os
+@@ -35,6 +36,57 @@ spec.loader.exec_module(queue_module)
+ TASKS = {"CloseFridge", "TurnOnSinkFaucet", "PickPlaceSinkToCounter", "NavigateKitchen"}
+ 
+ 
++def _canonical(value):
++    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
++
++
++def _episode_fixture(directory, *, episode, digest, video):
++    """Write real audit schemas/media; only model and simulator are synthetic."""
++    stem = f"rollout{episode:02d}"
++    attempt_id = f"{directory.parent.name}/{directory.name}"
++    action = {
++        "episode": episode,
++        "evaluation_run_digest": digest,
++        "evaluation_attempt_id": attempt_id,
++        "source_step": 0,
++        "evidence_completed": True,
++        "predicted_raw15": [0.0] * 15,
++        "canonical_executed_raw15": [0.0] * 15,
++        "submitted_env12": [0.0] * 12,
++    }
++    prediction = {
++        "episode": episode,
++        "evaluation_run_digest": digest,
++        "evaluation_attempt_id": attempt_id,
++        "latency_ms": 1.0,
++        "step_before_query": 0,
++        "action_chunk": [[0.0] * 15] * 16,
++        "local_memory": {"prefix_present": True},
++    }
++    row = {
++        "ep": episode,
++        "policy": episode % 2 == 0,
++        "outcome": "success" if episode % 2 == 0 else "behavioral_failure",
++        "error": None,
++        "steps": 1,
++        "replans": 1,
++        "completed_action_records": 1,
++        "actions_file": f"{stem}_actions.jsonl",
++        "predictions_file": f"{stem}_predictions.jsonl",
++        "evaluation_run_digest": digest,
++        "evaluation_attempt_id": attempt_id,
++        "generated_videos": [],
++    }
++    for suffix, record in (("actions", action), ("predictions", prediction)):
++        (directory / f"{stem}_{suffix}.jsonl").write_text(json.dumps(record) + "\n")
++    (directory / f"{stem}_episode.json").write_text(json.dumps(row))
++    (directory / f"{stem}.mp4").write_bytes(video)
++    from PIL import Image
++
++    Image.new("RGB", (16, 16), (15, 30, 45)).save(directory / f"{stem}_init.png")
++    return row
++
++
+ def _child_checkpoint_builder():
+     """Run pinned Child method/type-detector bodies without importing GPU/Pydantic.
+ 
+@@ -255,6 +307,38 @@ def _scenario(case, parent, count):
+     base = _free_base(count)
+     calls, servers, foreign = [], [], []
+     sim_calls = []
++    runtime_calls = []
++    runtime_witness = {}
++    from v3_evaluation_identity import build_evaluation_identity
++
++    def verified_identity(*, sim_python, lock_path, asset_manifest=None, simulation_env=None, **kwargs):
++        runtime_calls.append(
++            {
++                "python": str(sim_python),
++                "tasks": [name for name, _ in kwargs["tasks"]],
++                "pythonpath": (simulation_env or {}).get("PYTHONPATH"),
++            }
++        )
++        if case == "runtime_failure":
++            raise ValueError("injected dirty vendor runtime rejection")
++        manifest = build_evaluation_identity(**kwargs)
++        runtime = {"schema": "cpu_fixture_runtime_v1", "tasks": sorted(name for name, _ in kwargs["tasks"])}
++        runtime["digest"] = hashlib.sha256(_canonical(runtime)).hexdigest()
++        runtime_witness.clear()
++        runtime_witness.update(runtime)
++        manifest["identity"]["evaluation_runtime"] = runtime
++        manifest["digest"] = hashlib.sha256(_canonical(manifest["identity"])).hexdigest()
++        return {
++            "manifest": manifest,
++            "runtime_probe_evidence": {"argv": [str(sim_python), "CPU_FIXTURE_PROBE"], "returncode": 0},
++        }
++
++    import imageio.v2 as imageio
++    import numpy as np
++
++    tiny_video = parent / "fixture.mp4"
++    imageio.mimwrite(tiny_video, [np.zeros((16, 16, 3), dtype=np.uint8)] * 2, fps=20, macro_block_size=None)
++    video_bytes = tiny_video.read_bytes()
+     all_tasks_done = threading.Event()
+     init_faults, unhandled_thread_errors = [], []
+     original_mkdir, original_open = Path.mkdir, Path.open
+@@ -287,6 +371,10 @@ def _scenario(case, parent, count):
+         return original_open(path, *args, **kwargs)
+ 
+     def popen(command, **kwargs):
++        if command[1:3] == ["-B", "-c"]:
++            # The real CPU media verifier owns its decoder/FFmpeg process group.
++            # Keep that boundary real, rather than misclassifying it as a model server.
++            return subprocess.Popen(command, **kwargs)
+         if len(command) > 1 and str(command[1]).endswith("closed_loop_eval.py"):
+             return sim_popen(command, **kwargs)
+         calls.append(command)
+@@ -331,8 +419,20 @@ def _scenario(case, parent, count):
+     def sim_popen(command, **kwargs):
+         assert command[1].endswith("closed_loop_eval.py")
+         sim_calls.append(command)
++        assert kwargs["env"].get("PYTHONPATH") == runtime_calls[-1]["pythonpath"]
+         directory = Path(command[command.index("--output-dir") + 1])
+         digest = command[command.index("--evaluation-run-digest") + 1]
++        assert command[command.index("--evaluation-attempt-id") + 1] == f"{directory.parent.name}/{directory.name}"
++        (directory / "runtime_attestation.json").write_text(json.dumps(runtime_witness))
++        assert command[command.index("--expected-runtime-digest") + 1]
++        assert set(command[command.index("--runtime-tasks") + 1].split(",")) == (
++            {"CloseFridge", "TurnOnSinkFaucet"} if case == "task_subset" else TASKS
++        )
++        assert command[command.index("--save-generated-video") + 1] == "none"
++        if case == "partial_resume" and len(sim_calls) == 1:
++            row = _episode_fixture(directory, episode=0, digest=digest, video=video_bytes)
++            (directory / "results.json").write_text(json.dumps([row]))
++            return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
+         if case in ("sim_failure", "primary_and_cleanup") and len(sim_calls) == 1:
+             return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
+         if case == "session_leak":
+@@ -386,19 +486,8 @@ def _scenario(case, parent, count):
+             else:
+                 script = f"raise RuntimeError({case!r})"
+             return subprocess.Popen([sys.executable, "-c", script], **kwargs)
+-        rows = [
+-            {
+-                "ep": index,
+-                "policy": index % 2 == 0,
+-                "outcome": "success" if index % 2 == 0 else "behavioral_failure",
+-                "error": None,
+-                "evaluation_run_digest": digest,
+-            }
+-            for index in range(5)
+-        ]
++        rows = [_episode_fixture(directory, episode=index, digest=digest, video=video_bytes) for index in range(5)]
+         (directory / "results.json").write_text(json.dumps(rows))
+-        for index in range(5):
+-            (directory / f"rollout{index}.mp4").write_bytes(b"synthetic video witness, not an MP4 encoding")
+         progress = Path(command[command.index("--progress-file") + 1])
+         progress.write_text(
+             "".join(
+@@ -445,6 +534,8 @@ def _scenario(case, parent, count):
+         str(base),
+         "--expected-tasks",
+         "4",
++        "--tasks",
++        ",".join(sorted(TASKS)),
+         "--num-test-episodes",
+         "5",
+         "--num-steps",
+@@ -455,6 +546,15 @@ def _scenario(case, parent, count):
+         "5",
+     ]
+     argv += ["--terminate-grace-s", "0.15"]
++    argv += ["--save-generated-video", "none"]
++    if case == "task_subset":
++        argv += ["--tasks", "CloseFridge,TurnOnSinkFaucet"]
++    if case == "task_unknown":
++        argv += ["--tasks", "DoesNotExist"]
++    if case == "dry_run":
++        argv += ["--dry-run"]
++    if case == "list_tasks":
++        argv += ["--list-tasks"]
+     if case in (
+         "task_timeout",
+         "episode_timeout",
+@@ -468,10 +568,14 @@ def _scenario(case, parent, count):
+         "cancel",
+         "cleanup_failure",
+         "primary_and_cleanup",
++        "partial_resume",
+     ):
+         argv += ["--on-infrastructure-error", "continue_with_new_server"]
+     if case == "task_timeout":
+-        argv += ["--task-wall-timeout-s", "1"]
++        # The task budget also includes decoding all required audit media.
++        # Healthy tasks have room for this real CPU work; the injected hung
++        # simulator still exceeds this bound and requires SIGKILL.
++        argv += ["--task-wall-timeout-s", "5"]
+     if case == "episode_timeout":
+         argv += ["--episode-wall-timeout-s", "0.2"]
+     real_close = queue_module.OwnedProcess.close
+@@ -501,6 +605,7 @@ def _scenario(case, parent, count):
+                 patch.object(Path, "mkdir", mkdir),
+                 patch.object(Path, "open", open_file),
+                 patch.object(queue_module.OwnedProcess, "close", close_with_fault),
++                patch.object(queue_module, "build_verified_evaluation_identity", side_effect=verified_identity),
+                 patch.object(
+                     threading,
+                     "excepthook",
+@@ -508,6 +613,19 @@ def _scenario(case, parent, count):
+                 ),
+             ):
+                 rc = queue_module.main()
++                first_rc = rc
++                first_summary = (
++                    json.loads((output / "screening_summary.json").read_text())
++                    if (output / "screening_summary.json").is_file()
++                    else None
++                )
++                if case in ("partial_resume", "resume_complete", "resume_wrong_video", "resume_wrong_timeout"):
++                    argv += ["--resume"]
++                    if case == "resume_wrong_video":
++                        argv += ["--save-generated-video", "first"]
++                    if case == "resume_wrong_timeout":
++                        argv += ["--task-wall-timeout-s", "10801"]
++                    rc = queue_module.main()
+         except (RuntimeError, ValueError, SystemExit) as exc:
+             rc, error = 1, f"{type(exc).__name__}: {exc}"
+         finally:
+@@ -523,6 +641,8 @@ def _scenario(case, parent, count):
+         "server_command_argv": calls,
+         "frozen_config_unchanged": config.read_bytes() == original_config_bytes,
+         "sim_calls": len(sim_calls),
++        "sim_command_argv": sim_calls,
++        "runtime_calls": runtime_calls,
+         "server_exits": server_exits,
+         "foreign_alive_before_fixture_cleanup": foreign_alive,
+         "thread_names": [thread.name for thread in threading.enumerate() if thread.name.startswith("robocasa-gpu-")],
+@@ -530,6 +650,27 @@ def _scenario(case, parent, count):
+         "init_faults": init_faults,
+         "unhandled_thread_errors": unhandled_thread_errors,
+     }
++    if "first_rc" in locals() and case in (
++        "partial_resume",
++        "resume_complete",
++        "resume_wrong_video",
++        "resume_wrong_timeout",
++    ):
++        report.update(first_rc=first_rc, first_summary=first_summary)
++    report["attempts"] = {
++        task: [
++            {
++                "path": str(path),
++                "marker": json.loads((path / "attempt.json").read_text()),
++                "episode_indices": [row["ep"] for row in json.loads((path / "results.json").read_text())]
++                if (path / "results.json").is_file()
++                else [],
++            }
++            for path in sorted((output / task).glob("attempt_*"))
++            if (path / "attempt.json").is_file()
++        ]
++        for task in TASKS
++    }
+     if (output / "screening_summary.json").exists():
+         report["summary"] = json.loads((output / "screening_summary.json").read_text())
+     if (output / "evaluation_manifest.json").exists():
+@@ -666,7 +807,7 @@ class QueueIntegrationTests(unittest.TestCase):
+                     start_new_session=True,
+                 )
+                 try:
+-                    rc = process.wait(timeout=40)
++                    rc = process.wait(timeout=90)
+                 except subprocess.TimeoutExpired:
+                     os.killpg(process.pid, signal.SIGKILL)
+                     process.wait()
+@@ -846,6 +987,85 @@ class QueueIntegrationTests(unittest.TestCase):
+         self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+         self.assertIsNone(report["summary"]["sr"])
+ 
++    def test_selected_tasks_share_exact_runtime_identity_and_only_run_requested_subset(self):
++        report = self.scenario("task_subset", 2)
++        self.assertEqual(report["rc"], 0, report)
++        self.assertEqual(report["server_commands"], 2)
++        self.assertEqual(report["sim_calls"], 2)
++        self.assertEqual(set(report["summary"]["tasks"]), {"CloseFridge", "TurnOnSinkFaucet"})
++        self.assertEqual(report["summary"]["planned_trials"], 10)
++        self.assertEqual(report["summary"]["total_trials"], 10)
++        self.assertEqual(len(report["runtime_calls"]), 1)
++        self.assertEqual(set(report["runtime_calls"][0]["tasks"]), {"CloseFridge", "TurnOnSinkFaucet"})
++        for command in report["sim_command_argv"]:
++            self.assertEqual(command[command.index("--save-generated-video") + 1], "none")
++            self.assertIn("--runtime-probe-script", command)
++            self.assertIn("--runtime-lock-file", command)
++            self.assertIn("--expected-runtime-digest", command)
++
++    def test_unknown_task_rejected_before_runtime_probe_or_namespace_claim(self):
++        report = self.scenario("task_unknown", 1)
++        self.assertEqual(report["rc"], 1)
++        self.assertEqual(report["runtime_calls"], [])
++        self.assertEqual(report["server_commands"], 0)
++        self.assertFalse(report["output_exists"])
++
++    def test_dirty_vendor_rejected_before_server_or_namespace_claim(self):
++        report = self.scenario("runtime_failure", 1)
++        self.assertEqual(report["rc"], 1)
++        self.assertEqual(len(report["runtime_calls"]), 1)
++        self.assertEqual(report["server_commands"], 0)
++        self.assertEqual(report["sim_calls"], 0)
++        self.assertFalse(report["output_exists"])
++        self.assertIn("dirty vendor runtime", report["error"])
++
++    def test_list_tasks_and_dry_run_are_read_only_and_never_launch_workers(self):
++        for case in ("list_tasks", "dry_run"):
++            with self.subTest(mode=case):
++                report = self.scenario(case, 2)
++                self.assertEqual(report["rc"], 0, report)
++                self.assertEqual(report["server_commands"], 0)
++                self.assertEqual(report["sim_calls"], 0)
++                self.assertFalse(report["output_exists"])
++                self.assertEqual(len(report["runtime_calls"]), int(case == "dry_run"))
++
++    def test_same_identity_resume_skips_only_whole_valid_tasks(self):
++        report = self.scenario("resume_complete", 1)
++        self.assertEqual(report["first_rc"], 0)
++        self.assertEqual(report["rc"], 0, report)
++        self.assertEqual(report["server_commands"], 4)
++        self.assertEqual(report["sim_calls"], 4)
++        self.assertEqual(report["summary"]["total_trials"], 20)
++        self.assertTrue(all(len(attempts) == 1 for attempts in report["attempts"].values()))
++        self.assertTrue(all(attempts[0]["marker"]["status"] == "COMPLETE" for attempts in report["attempts"].values()))
++
++    def test_partial_task_resume_keeps_old_evidence_and_restarts_entire_task_from_zero(self):
++        report = self.scenario("partial_resume", 1)
++        self.assertEqual(report["first_rc"], 1)
++        self.assertEqual(report["first_summary"]["total_trials"], 15)
++        self.assertEqual(report["rc"], 0, report)
++        self.assertEqual(report["server_commands"], 5)
++        self.assertEqual(report["sim_calls"], 5)
++        self.assertEqual(report["summary"]["total_trials"], 20)
++        restarted = [attempts for attempts in report["attempts"].values() if len(attempts) == 2]
++        self.assertEqual(len(restarted), 1)
++        self.assertEqual(restarted[0][0]["marker"]["status"], "FAILED")
++        self.assertEqual(restarted[0][1]["marker"]["status"], "COMPLETE")
++        self.assertTrue(restarted[0][0]["path"].endswith("attempt_0001"))
++        self.assertTrue(restarted[0][1]["path"].endswith("attempt_0002"))
++        self.assertEqual(restarted[0][0]["episode_indices"], [0])
++        self.assertEqual(restarted[0][1]["episode_indices"], [0, 1, 2, 3, 4])
++
++    def test_resume_refuses_video_or_timeout_protocol_change_without_launching_more_servers(self):
++        for case in ("resume_wrong_video", "resume_wrong_timeout"):
++            with self.subTest(change=case):
++                report = self.scenario(case, 1)
++                self.assertEqual(report["first_rc"], 0)
++                self.assertEqual(report["rc"], 1)
++                self.assertEqual(report["server_commands"], 4)
++                self.assertEqual(report["sim_calls"], 4)
++                self.assertIn("identity changed", report["error"])
++
+ 
+ if __name__ == "__main__":
+     if len(sys.argv) > 1 and sys.argv[1] == "--serve":
+diff --git a/tools/v3/robocasa_eval_cache_test.py b/tools/v3/robocasa_eval_cache_test.py
+new file mode 100644
+index 00000000..0e3c2d8b
+--- /dev/null
++++ b/tools/v3/robocasa_eval_cache_test.py
+@@ -0,0 +1,96 @@
++"""Actual Numba cache writes stay outside the immutable simulator vendor source."""
++
++from __future__ import annotations
++
++import importlib.util
++import json
++import os
++import subprocess
++import sys
++from pathlib import Path
++
++import pytest
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path.insert(0, str(ROOT / "scripts"))
++SPEC = importlib.util.spec_from_file_location(
++    "robocasa_queue_cache_contract", ROOT / "scripts/eval_robocasa_18task_queue.py"
++)
++queue = importlib.util.module_from_spec(SPEC)
++SPEC.loader.exec_module(queue)
++
++
++@pytest.mark.parametrize("explicit_hf", [False, True])
++def test_launch_env_redirects_cache_writes_without_replacing_explicit_hf_home(tmp_path, monkeypatch, explicit_hf):
++    monkeypatch.setenv("NUMBA_CACHE_DIR", str(tmp_path / "unsafe-vendor-cache"))
++    monkeypatch.setenv("MPLCONFIGDIR", str(tmp_path / "unsafe-matplotlib-cache"))
++    monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "unsafe-xdg-cache"))
++    if explicit_hf:
++        monkeypatch.setenv("HF_HOME", str(tmp_path / "owner-huggingface"))
++    else:
++        monkeypatch.delenv("HF_HOME", raising=False)
++    cache = tmp_path / "external-cache"
++    env = queue.launch_environment(cache)
++    for name in ("NUMBA_CACHE_DIR", "MPLCONFIGDIR", "XDG_CACHE_HOME"):
++        assert Path(env[name]).is_relative_to(cache)
++    assert env["PYTHONDONTWRITEBYTECODE"] == "1"
++    assert env["PYTHONPATH"].split(os.pathsep)[0] == str(queue.CHILD)
++    if explicit_hf:
++        assert env["HF_HOME"] == str(tmp_path / "owner-huggingface")
++    else:
++        assert Path(env["HF_HOME"]).is_relative_to(cache)
++    assert os.environ["NUMBA_CACHE_DIR"] == str(tmp_path / "unsafe-vendor-cache")
++    assert not cache.exists()  # Environment preparation itself is read-only.
++
++
++def test_actual_numba_jit_cache_leaves_tracked_source_tree_clean(tmp_path, monkeypatch):
++    source = tmp_path / "tracked-vendor"
++    source.mkdir()
++    module = source / "jit_module.py"
++    module.write_text(
++        "from numba import njit\n@njit(cache=True)\ndef square_plus_one(value):\n    return value * value + 1\n"
++    )
++    git = ["git", "-C", str(source)]
++    subprocess.run([*git, "init", "-q"], check=True, capture_output=True)
++    subprocess.run([*git, "add", "jit_module.py"], check=True, capture_output=True)
++    subprocess.run(
++        [
++            *git,
++            "-c",
++            "user.name=CPU Fixture",
++            "-c",
++            "user.email=cpu-fixture@example.invalid",
++            "commit",
++            "-qm",
++            "fixture",
++        ],
++        check=True,
++        capture_output=True,
++    )
++    original = module.read_bytes()
++    cache = tmp_path / "external-cache"
++    env = queue.launch_environment(cache)
++    env["CUDA_VISIBLE_DEVICES"] = ""
++    env["MUJOCO_GL"] = "disable"
++    # This is an explicit CPU dependency, not a skipped proof if Numba is absent.
++    executable = os.environ.get("PSM_NUMBA_PYTHON", sys.executable)
++    run = subprocess.run(
++        [
++            executable,
++            "-B",
++            "-c",
++            "import json, jit_module; print(json.dumps({'result': jit_module.square_plus_one(7)}))",
++        ],
++        env=env,
++        cwd=source,
++        check=True,
++        capture_output=True,
++        text=True,
++        timeout=60,
++    )
++    assert json.loads(run.stdout)["result"] == 50
++    assert list(Path(env["NUMBA_CACHE_DIR"]).rglob("*.nbi"))
++    assert list(Path(env["NUMBA_CACHE_DIR"]).rglob("*.nbc"))
++    assert not list(source.rglob("__pycache__"))
++    assert module.read_bytes() == original
++    assert subprocess.check_output([*git, "status", "--porcelain=v1", "--untracked-files=all"], text=True) == ""
+diff --git a/tools/v3/robocasa_eval_config_test.py b/tools/v3/robocasa_eval_config_test.py
+new file mode 100644
+index 00000000..cf90c415
+--- /dev/null
++++ b/tools/v3/robocasa_eval_config_test.py
+@@ -0,0 +1,254 @@
++"""CPU-only configuration contract: parsing never starts a model or claims output."""
++
++import importlib.util
++import json
++import sys
++from pathlib import Path
++
++import pytest
++
++ROOT = Path(__file__).resolve().parents[2]
++SPEC = importlib.util.spec_from_file_location("robocasa_eval_config", ROOT / "scripts/robocasa_eval_config.py")
++config = importlib.util.module_from_spec(SPEC)
++SPEC.loader.exec_module(config)
++
++
++@pytest.fixture
++def base(tmp_path):
++    return {
++        "schema": config.SCHEMA,
++        "checkpoint": str(tmp_path / "job/checkpoints/iter_000008900"),
++        "dataset_root": str(tmp_path / "data"),
++        "output_root": str(tmp_path / "evaluations"),
++        "run_name": "case01",
++        "server_python": sys.executable,
++        "sim_python": sys.executable,
++        "tasks": ["CloseFridge", "TurnOnSinkFaucet"],
++        "episodes_per_task": 5,
++        "gpu_ids": [2, 3],
++    }
++
++
++def write(tmp_path, data):
++    # JSON is valid safe YAML; no test-specific parser replacement.
++    path = tmp_path / "eval.yaml"
++    path.write_text(json.dumps(data))
++    return path
++
++
++def test_cli_yaml_defaults_precedence_and_no_output_writes(tmp_path, base):
++    base["timeouts"] = {"server_start_s": 120, "predict_request_s": 90}
++    args = config.resolve(
++        [
++            "--config",
++            str(write(tmp_path, base)),
++            "--gpus",
++            "4,5",
++            "--episodes",
++            "7",
++            "--tasks",
++            "TurnOnSinkFaucet",
++            "--run-name",
++            "override",
++            "--save-generated-video",
++            "all",
++            "--no-save-rollout-mp4",
++            "--task-wall-timeout-s",
++            "240",
++        ]
++    )
++    assert args.gpus == "4,5" and args.gpu_ids == [4, 5]
++    assert args.tasks == ["TurnOnSinkFaucet"] and args.num_test_episodes == 7
++    assert args.save_generated_video == "all" and args.save_rollout_mp4 is False
++    assert args.output_dir == tmp_path / "evaluations/override"
++    assert args.server_start_timeout_s == 120 and args.predict_request_timeout_s == 90
++    assert args.task_wall_timeout_s == 240 and args.episode_wall_timeout_s == 1800
++    assert args.action_horizon == 16 and args.num_steps == 30 and args.local_memory_mode == "required"
++    assert args.config_file == tmp_path / "job/config.yaml"
++    assert not args.output_dir.exists()
++    json.dumps(args.resolved_config, allow_nan=False)
++
++
++def test_legacy_cli_remains_explicit_and_aliases_override(tmp_path, base):
++    args = config.resolve(
++        [
++            "--checkpoint-path",
++            base["checkpoint"],
++            "--dataset-root",
++            base["dataset_root"],
++            "--output-dir",
++            str(tmp_path / "legacy"),
++            "--server-python",
++            sys.executable,
++            "--sim-python",
++            sys.executable,
++            "--gpus",
++            "0,1",
++            "--expected-tasks",
++            "4",
++            "--tasks",
++            "CloseFridge",
++            "--num-test-episodes",
++            "5",
++            "--num-steps",
++            "11",
++            "--timeout",
++            "12",
++            "--predict-request-timeout-s",
++            "14",
++            "--resume",
++        ]
++    )
++    assert args.checkpoint_path == Path(base["checkpoint"])
++    assert args.expected_tasks == 4 and args.num_test_episodes == 5 and args.num_steps == 11
++    assert args.server_start_timeout_s == 12 and args.predict_request_timeout_s == 14
++    assert args.resume is True and args.tasks == ["CloseFridge"]
++
++
++def test_list_tasks_needs_only_dataset(tmp_path):
++    args = config.resolve(["--dataset-root", str(tmp_path), "--list-tasks"])
++    assert args.list_tasks and args.checkpoint is None and args.output_dir is None
++    assert not (tmp_path / "evaluation_manifest.json").exists()
++
++
++def test_all_tasks_cannot_redefine_the_18_class_protocol(tmp_path, base):
++    with pytest.raises(ValueError, match="exactly 18"):
++        config.resolve(["--config", str(write(tmp_path, base)), "--tasks", "all", "--expected-tasks", "4"])
++
++
++def test_yaml_paths_are_relative_to_yaml_and_python_venv_symlink_retained(tmp_path, base):
++    executable = tmp_path / "python"
++    executable.symlink_to(sys.executable)
++    base.update(
++        checkpoint="job/checkpoints/iter_000008900",
++        dataset_root="data",
++        output_root="results",
++        server_python="python",
++        sim_python="python",
++    )
++    args = config.resolve(["--config", str(write(tmp_path, base)), "--dry-run"])
++    assert args.checkpoint_path == tmp_path / "job/checkpoints/iter_000008900"
++    assert args.server_python == executable and args.sim_python == executable
++    assert args.output_dir == tmp_path / "results/case01" and args.dry_run
++
++
++def test_cli_output_dir_replaces_yaml_namespace(tmp_path, base):
++    args = config.resolve(["--config", str(write(tmp_path, base)), "--output-dir", str(tmp_path / "other")])
++    assert args.output_dir == tmp_path / "other"
++    assert "output_root" not in args.resolved_config and "run_name" not in args.resolved_config
++
++
++def test_cli_namespace_replaces_yaml_output_dir(tmp_path, base):
++    base.pop("output_root")
++    base.pop("run_name")
++    base["output_dir"] = str(tmp_path / "old")
++    args = config.resolve(["--config", str(write(tmp_path, base)), "--output-root", str(tmp_path), "--run-name", "new"])
++    assert args.output_dir == tmp_path / "new"
++
++
++@pytest.mark.parametrize(
++    ("field", "value"),
++    [
++        ("schema", "v2"),
++        ("unexpected", True),
++        ("tasks", []),
++        ("tasks", ""),
++        ("tasks", ["CloseFridge", "CloseFridge"]),
++        ("tasks", ["../escape"]),
++        ("tasks", ["CloseFridge", "all"]),
++        ("gpu_ids", []),
++        ("gpu_ids", [1, 1]),
++        ("gpu_ids", [True]),
++        ("gpu_ids", [-1]),
++        ("gpu_ids", [1.0]),
++        ("gpu_ids", "1,,2"),
++        ("gpu_ids", [1, "01"]),
++        ("gpu_ids", ""),
++        ("episodes_per_task", 0),
++        ("episodes_per_task", True),
++        ("slots_per_gpu", 2),
++        ("base_port", 65535),
++        ("base_port", -1),
++        ("prediction_steps", 0),
++        ("action_horizon", 17),
++        ("action_horizon", 0),
++        ("seed", True),
++        ("seed", -1),
++        ("guidance", float("nan")),
++        ("guidance", float("inf")),
++        ("guidance", True),
++        ("fps", 30),
++        ("local_memory_mode", "off"),
++        ("server_lifecycle", "reuse"),
++        ("on_infrastructure_error", "ignore"),
++        ("save_generated_video", "yes"),
++        ("save_rollout_mp4", "false"),
++        ("save_init_png", 1),
++        ("save_action_jsonl", False),
++        ("save_prediction_jsonl", False),
++        ("resume", "true"),
++        ("run_name", "../old"),
++        ("run_name", "."),
++        ("run_name", ""),
++        ("dataset_root", ""),
++        ("sim_python", "/not/executable"),
++        ("server_python", "/not/executable"),
++        ("timeouts", {"unknown": 1}),
++        ("timeouts", []),
++        ("timeouts", {"server_start_s": 0}),
++        ("timeouts", {"predict_request_s": float("inf")}),
++        ("timeouts", {"terminate_grace_s": True}),
++    ],
++)
++def test_invalid_config_fails_closed(tmp_path, base, field, value):
++    base[field] = value
++    with pytest.raises(ValueError):
++        config.resolve(["--config", str(write(tmp_path, base))])
++    assert not (tmp_path / "evaluations").exists()
++
++
++@pytest.mark.parametrize(
++    "text",
++    [
++        "schema: psm_wma_robocasa_eval_v1\nschema: psm_wma_robocasa_eval_v1\n",
++        "schema: psm_wma_robocasa_eval_v1\ntimeouts:\n  server_start_s: 1\n  server_start_s: 2\n",
++        "[one, two]\n",
++        "schema: [\n",
++        "!!python/object:os.system {}",
++    ],
++)
++def test_malformed_or_duplicate_yaml_rejected(tmp_path, text):
++    path = tmp_path / "bad.yaml"
++    path.write_text(text)
++    with pytest.raises(ValueError):
++        config.resolve(["--config", str(path)])
++
++
++@pytest.mark.parametrize(
++    "args",
++    [
++        ["--gpus", "1,1"],
++        ["--gpus", "1,,2"],
++        ["--tasks", "CloseFridge,"],
++        ["--timeout", "nan"],
++        ["--terminate-grace-s", "0"],
++        ["--slots-per-gpu", "2"],
++        ["--output-dir", "out", "--run-name", "run"],
++    ],
++)
++def test_invalid_cli_overrides_rejected(tmp_path, base, args):
++    with pytest.raises(ValueError):
++        config.resolve(["--config", str(write(tmp_path, base)), *args])
++
++
++def test_unknown_cli_not_silently_ignored(tmp_path):
++    with pytest.raises(SystemExit) as caught:
++        config.resolve(["--dataset-root", str(tmp_path), "--list-tasks", "--ignore-errors"])
++    assert caught.value.code == 2
++
++
++def test_example_schema_is_parsed_by_actual_safe_yaml_loader():
++    example = config._yaml(ROOT / "configs/eval/robocasa_g1_iter8900.example.yaml")
++    assert example["schema"] == config.SCHEMA
++    assert example["tasks"] == ["CloseFridge", "TurnOnSinkFaucet"]
++    assert example["gpu_ids"] == [2, 3] and example["save_generated_video"] == "first"
+diff --git a/tools/v3/robocasa_eval_results_test.py b/tools/v3/robocasa_eval_results_test.py
+new file mode 100644
+index 00000000..4ffd22bd
+--- /dev/null
++++ b/tools/v3/robocasa_eval_results_test.py
+@@ -0,0 +1,487 @@
++"""CPU evidence gates: task-only resume, immutable attempts and real media decode."""
++
++import hashlib
++import json
++import shutil
++import sys
++import time
++from pathlib import Path
++
++import imageio.v2 as imageio
++import numpy as np
++import pytest
++from PIL import Image
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
++from robocasa_eval_results import (  # noqa: E402
++    fail_attempt,
++    find_completed_attempt,
++    finish_attempt,
++    start_attempt,
++    validate_attempt,
++    validate_media,
++)
++
++DIGEST = "a" * 64
++
++
++def write_json(path, value):
++    path.write_text(json.dumps(value) + "\n")
++
++
++def write_jsonl(path, values):
++    path.write_text("".join(json.dumps(value) + "\n" for value in values))
++
++
++@pytest.fixture(scope="module")
++def media(tmp_path_factory):
++    directory = tmp_path_factory.mktemp("actual-media")
++    frames = [np.full((16, 16, 3), value, dtype=np.uint8) for value in (30, 190)]
++    imageio.mimwrite(directory / "tiny.mp4", frames, fps=20, macro_block_size=None)
++    Image.fromarray(frames[0]).save(directory / "tiny.png")
++    return directory
++
++
++def options(mode="none", rollout=False, png=False):
++    return dict(
++        digest=DIGEST,
++        expected_trials=2,
++        video_mode=mode,
++        rollout_enabled=rollout,
++        init_png_enabled=png,
++        sim_python=Path(sys.executable),
++    )
++
++
++def populate(directory, media, *, mode="none", rollout=False, png=False):
++    write_json(
++        directory / "process_cleanup.json",
++        {role: dict(pid=1234, pgid=1234, live_group=False, remaining_pids=[]) for role in ("server", "simulator")},
++    )
++    results = []
++    for episode in range(2):
++        prefix = f"rollout{episode:02d}"
++        common = dict(
++            evaluation_run_digest=DIGEST,
++            episode=episode,
++            evaluation_attempt_id=f"{directory.parent.name}/{directory.name}",
++        )
++        actions = [
++            dict(
++                common,
++                source_step=step,
++                predicted_raw15=[0.0] * 15,
++                canonical_executed_raw15=[0.0] * 15,
++                submitted_env12=[0.0] * 12,
++                evidence_completed=True,
++            )
++            for step in range(2)
++        ]
++        predictions = [dict(common, step_before_query=step) for step in range(2)]
++        videos = (
++            []
++            if mode == "none"
++            else [f"{prefix}_generated.mp4"]
++            if mode == "first"
++            else [f"{prefix}_generated_replan{step:04d}.mp4" for step in range(2)]
++        )
++        row = dict(
++            ep=episode,
++            policy=episode == 0,
++            steps=2,
++            replans=2,
++            completed_action_records=2,
++            error=None,
++            outcome="success" if episode == 0 else "behavioral_failure",
++            evaluation_run_digest=DIGEST,
++            evaluation_attempt_id=f"{directory.parent.name}/{directory.name}",
++            actions_file=f"{prefix}_actions.jsonl",
++            predictions_file=f"{prefix}_predictions.jsonl",
++            generated_videos=videos,
++        )
++        write_jsonl(directory / row["actions_file"], actions)
++        write_jsonl(directory / row["predictions_file"], predictions)
++        if rollout:
++            shutil.copyfile(media / "tiny.mp4", directory / f"{prefix}.mp4")
++        if png:
++            shutil.copyfile(media / "tiny.png", directory / f"{prefix}_init.png")
++        if mode != "none":
++            records = []
++            for index, name in enumerate(videos):
++                shutil.copyfile(media / "tiny.mp4", directory / name)
++                records.append(dict(replan=index, source_step=index, file=name, frames=2))
++            write_json(
++                directory / f"{prefix}_generated_manifest.json",
++                dict(
++                    evaluation_run_digest=DIGEST,
++                    evaluation_attempt_id=f"{directory.parent.name}/{directory.name}",
++                    mode=mode,
++                    schema="psm_generated_video_v1",
++                    status="COMPLETE",
++                    videos=records,
++                ),
++            )
++        results.append(row)
++        write_json(directory / f"{prefix}_episode.json", row)
++    write_json(directory / "results.json", results)
++    return results
++
++
++@pytest.mark.parametrize("mode", ["none", "first", "all"])
++def test_complete_task_only_resume_requires_actual_decodable_artifacts(tmp_path, media, mode):
++    task = tmp_path / "CloseFridge"
++    attempt = start_attempt(task, digest=DIGEST, resume=False)
++    opts = options(mode, rollout=True, png=True)
++    expected = populate(attempt, media, mode=mode, rollout=True, png=True)
++    assert find_completed_attempt(task, **opts) is None  # Full rows alone are not a committed task.
++    assert finish_attempt(attempt, **opts) == expected
++    assert find_completed_attempt(task, **opts) == attempt
++    assert json.loads((attempt / "attempt.json").read_text())["status"] == "COMPLETE"
++
++
++def test_interrupted_task_preserved_new_attempt_always_starts_from_zero(tmp_path, media):
++    task = tmp_path / "CloseFridge"
++    first = start_attempt(task, digest=DIGEST, resume=False)
++    populate(first, media)
++    partial = json.loads((first / "results.json").read_text())[:1]
++    write_json(first / "results.json", partial)
++    before = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in first.iterdir()}
++    assert find_completed_attempt(task, **options()) is None
++    second = start_attempt(task, digest=DIGEST, resume=True)
++    assert second.name == "attempt_0002"
++    assert sorted(path.name for path in second.iterdir()) == ["attempt.json"]
++    assert before == {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in first.iterdir()}
++    rows = populate(second, media)
++    assert rows[0]["ep"] == 0
++    finish_attempt(second, **options())
++    assert find_completed_attempt(task, **options()) == second
++
++
++def test_failed_attempt_records_original_error_and_is_not_reused(tmp_path):
++    task = tmp_path / "CloseFridge"
++    first = start_attempt(task, digest=DIGEST, resume=False)
++    fail_attempt(first, "TimeoutError: simulator blocked; cleanup successful")
++    marker = json.loads((first / "attempt.json").read_text())
++    assert marker["status"] == "FAILED" and "simulator blocked" in marker["error"]
++    fail_attempt(first, "OSError: secondary evidence publication failed")
++    marker = json.loads((first / "attempt.json").read_text())
++    assert "simulator blocked" in marker["error"]
++    assert marker["additional_errors"] == ["OSError: secondary evidence publication failed"]
++    assert find_completed_attempt(task, **options()) is None
++    assert start_attempt(task, digest=DIGEST, resume=True).name == "attempt_0002"
++
++
++def test_missing_marker_cannot_be_imported_but_crash_namespace_is_preserved(tmp_path):
++    task = tmp_path / "CloseFridge"
++    partial = task / "attempt_0001"
++    partial.mkdir(parents=True)
++    (partial / "actions.jsonl").write_text("partial history")
++    assert find_completed_attempt(task, **options()) is None
++    assert start_attempt(task, digest=DIGEST, resume=True).name == "attempt_0002"
++    assert (partial / "actions.jsonl").read_text() == "partial history"
++
++
++@pytest.mark.parametrize("digest", ["b" * 64, "bad", None])
++def test_foreign_or_invalid_digest_never_creates_new_attempt(tmp_path, digest):
++    task = tmp_path / "CloseFridge"
++    start_attempt(task, digest=DIGEST, resume=False)
++    with pytest.raises(ValueError):
++        start_attempt(task, digest=digest, resume=True)
++    assert len(list(task.iterdir())) == 1
++
++
++def test_existing_namespace_without_explicit_resume_refuses(tmp_path):
++    task = tmp_path / "CloseFridge"
++    start_attempt(task, digest=DIGEST, resume=False)
++    with pytest.raises(FileExistsError):
++        start_attempt(task, digest=DIGEST, resume=False)
++
++
++def test_legacy_results_are_never_imported(tmp_path):
++    task = tmp_path / "CloseFridge"
++    task.mkdir()
++    write_json(task / "results.json", [{"ep": 0}])
++    with pytest.raises(ValueError, match="legacy"):
++        find_completed_attempt(task, **options())
++
++
++@pytest.mark.parametrize("kind", ["task", "attempt", "marker", "artifact"])
++def test_symlink_evidence_rejects_without_following(tmp_path, media, kind):
++    task = tmp_path / "CloseFridge"
++    attempt = start_attempt(task, digest=DIGEST, resume=False)
++    populate(attempt, media)
++    if kind == "task":
++        task.rename(tmp_path / "foreign")
++        task.symlink_to(tmp_path / "foreign", target_is_directory=True)
++    elif kind == "attempt":
++        attempt.rename(tmp_path / "foreign")
++        attempt.symlink_to(tmp_path / "foreign", target_is_directory=True)
++    else:
++        path = attempt / ("attempt.json" if kind == "marker" else "rollout00_actions.jsonl")
++        path.rename(tmp_path / "foreign")
++        path.symlink_to(tmp_path / "foreign")
++    with pytest.raises(ValueError, match="symlink"):
++        if kind in {"task", "attempt", "marker"}:
++            find_completed_attempt(task, **options())
++        else:
++            validate_attempt(attempt, **options())
++
++
++@pytest.mark.parametrize(
++    "failure",
++    [
++        "partial",
++        "duplicate_ep",
++        "wrong_digest",
++        "wrong_attempt",
++        "wrong_episode_record",
++        "missing_actions",
++        "truncated_actions",
++        "mixed_actions",
++        "wrong_action_order",
++        "bad_action_abi",
++        "mixed_predictions",
++        "bad_frontier",
++        "bad_count",
++        "runtime_error",
++        "foreign_audit_path",
++        "unexpected_generated",
++    ],
++)
++def test_cpu_negative_evidence_cannot_be_committed(tmp_path, media, failure):
++    attempt = start_attempt(tmp_path / "CloseFridge", digest=DIGEST, resume=False)
++    rows = populate(attempt, media)
++    actions_path = attempt / "rollout00_actions.jsonl"
++    predictions_path = attempt / "rollout00_predictions.jsonl"
++    actions = [json.loads(line) for line in actions_path.read_text().splitlines()]
++    predictions = [json.loads(line) for line in predictions_path.read_text().splitlines()]
++    if failure == "partial":
++        rows.pop()
++    elif failure == "duplicate_ep":
++        rows[1]["ep"] = 0
++    elif failure == "wrong_digest":
++        rows[0]["evaluation_run_digest"] = "b" * 64
++    elif failure == "wrong_attempt":
++        rows[0]["evaluation_attempt_id"] = "attempt_9999"
++    elif failure == "wrong_episode_record":
++        rows[0]["steps"] = 99
++    elif failure == "missing_actions":
++        actions_path.unlink()
++    elif failure == "truncated_actions":
++        actions_path.write_text(actions_path.read_text().rstrip("\n"))
++    elif failure == "mixed_actions":
++        actions[1]["evaluation_attempt_id"] = "attempt_9999"
++        write_jsonl(actions_path, actions)
++    elif failure == "wrong_action_order":
++        actions[1]["source_step"] = 0
++        write_jsonl(actions_path, actions)
++    elif failure == "bad_action_abi":
++        actions[0]["submitted_env12"] = [0] * 15
++        write_jsonl(actions_path, actions)
++    elif failure == "mixed_predictions":
++        predictions[0]["episode"] = 1
++        write_jsonl(predictions_path, predictions)
++    elif failure == "bad_frontier":
++        predictions[1]["step_before_query"] = 0
++        write_jsonl(predictions_path, predictions)
++    elif failure == "bad_count":
++        rows[0]["replans"] = 3
++    elif failure == "runtime_error":
++        rows[0].update(policy=False, outcome="runtime_error", error="TimeoutError: server stopped")
++    elif failure == "foreign_audit_path":
++        rows[0]["actions_file"] = "../foreign.jsonl"
++    elif failure == "unexpected_generated":
++        shutil.copyfile(media / "tiny.mp4", attempt / "rollout00_generated.mp4")
++    write_json(attempt / "results.json", rows)
++    if failure != "wrong_episode_record":
++        for row in rows:
++            write_json(attempt / f"rollout{row['ep']:02d}_episode.json", row)
++    with pytest.raises(ValueError):
++        finish_attempt(attempt, **options())
++    assert json.loads((attempt / "attempt.json").read_text())["status"] == "RUNNING"
++
++
++@pytest.mark.parametrize("failure", ["missing", "empty", "truncated", "garbage", "png"])
++def test_required_media_is_really_decoded_not_just_checked_for_existence(tmp_path, media, failure):
++    path = tmp_path / ("sample.png" if failure == "png" else "sample.mp4")
++    if failure == "empty":
++        path.touch()
++    elif failure == "garbage":
++        path.write_bytes(b"a nonempty file is not a video")
++    elif failure == "truncated":
++        path.write_bytes((media / "tiny.mp4").read_bytes()[:150])
++    elif failure == "png":
++        path.write_bytes(b"not an image")
++    with pytest.raises(ValueError):
++        validate_media(path, sim_python=Path(sys.executable), kind="png" if failure == "png" else "mp4")
++
++
++@pytest.mark.parametrize("failure", ["wrong_digest", "wrong_attempt", "bad_source_step", "wrong_frames", "missing"])
++def test_generated_video_manifest_binds_replan_and_real_frame_count(tmp_path, media, failure):
++    attempt = start_attempt(tmp_path / "CloseFridge", digest=DIGEST, resume=False)
++    populate(attempt, media, mode="all")
++    path = attempt / "rollout00_generated_manifest.json"
++    manifest = json.loads(path.read_text())
++    if failure == "wrong_digest":
++        manifest["evaluation_run_digest"] = "b" * 64
++    elif failure == "wrong_attempt":
++        manifest["evaluation_attempt_id"] = "attempt_9999"
++    elif failure == "bad_source_step":
++        manifest["videos"][1]["source_step"] = 0
++    elif failure == "wrong_frames":
++        manifest["videos"][0]["frames"] = 999
++    elif failure == "missing":
++        (attempt / manifest["videos"][0]["file"]).unlink()
++    write_json(path, manifest)
++    with pytest.raises(ValueError):
++        finish_attempt(attempt, **options("all"))
++
++
++def test_corrupt_completed_task_cannot_be_silently_skipped(tmp_path, media):
++    task = tmp_path / "CloseFridge"
++    attempt = start_attempt(task, digest=DIGEST, resume=False)
++    populate(attempt, media)
++    finish_attempt(attempt, **options())
++    (attempt / "rollout00_predictions.jsonl").unlink()
++    with pytest.raises(ValueError, match="audit JSONL"):
++        find_completed_attempt(task, **options())
++    with pytest.raises(ValueError, match="completed"):
++        fail_attempt(attempt, "must not overwrite committed evidence")
++
++
++def test_deadline_prevents_task_commit_even_when_all_rows_exist(tmp_path, media):
++    attempt = start_attempt(tmp_path / "CloseFridge", digest=DIGEST, resume=False)
++    populate(attempt, media)
++    with pytest.raises(TimeoutError, match="wall deadline"):
++        finish_attempt(attempt, **options(), deadline=time.monotonic() - 1)
++    assert json.loads((attempt / "attempt.json").read_text())["status"] == "RUNNING"
++
++
++def test_media_decoder_deadline_is_bounded(tmp_path, monkeypatch):
++    import robocasa_eval_results as module
++
++    path = tmp_path / "video.mp4"
++    path.write_bytes(b"not read by the injected CPU sleeper")
++    monkeypatch.setattr(module, "_MEDIA_PROBE", "import time; time.sleep(60)")
++    started = time.monotonic()
++    with pytest.raises(TimeoutError, match="wall deadline"):
++        validate_media(path, sim_python=Path(sys.executable), kind="mp4", deadline=started + 0.15)
++    assert time.monotonic() - started < 3
++
++
++@pytest.mark.parametrize("failure", ["missing", "missing_role", "live", "remaining", "error", "bad_pid"])
++def test_cleanup_witness_required_before_task_can_be_skipped(tmp_path, media, failure):
++    attempt = start_attempt(tmp_path / "CloseFridge", digest=DIGEST, resume=False)
++    populate(attempt, media)
++    path = attempt / "process_cleanup.json"
++    payload = json.loads(path.read_text())
++    if failure == "missing":
++        path.unlink()
++    else:
++        if failure == "missing_role":
++            payload.pop("server")
++        elif failure == "live":
++            payload["server"]["live_group"] = True
++        elif failure == "remaining":
++            payload["simulator"]["remaining_pids"] = [1234]
++        elif failure == "error":
++            payload["server"]["error"] = "kill failed"
++        elif failure == "bad_pid":
++            payload["server"]["pid"] = 0
++        write_json(path, payload)
++    with pytest.raises(ValueError):
++        finish_attempt(attempt, **options())
++
++
++@pytest.mark.parametrize("failure", [None, "missing", "foreign", "modified"])
++def test_resume_rechecks_canonical_runtime_attestation(tmp_path, media, failure):
++    task = tmp_path / "CloseFridge"
++    attempt = start_attempt(task, digest=DIGEST, resume=False)
++    populate(attempt, media)
++    runtime = {"schema": "runtime_probe_fixture", "path": "/只读/依赖"}
++    encoded = json.dumps(runtime, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
++    expected = hashlib.sha256(encoded).hexdigest()
++    runtime["digest"] = "b" * 64 if failure == "foreign" else expected
++    if failure == "modified":
++        runtime["path"] = "/tampered"
++    if failure != "missing":
++        write_json(attempt / "runtime_attestation.json", runtime)
++    if failure is None:
++        finish_attempt(attempt, **options(), runtime_digest=expected)
++        assert find_completed_attempt(task, **options(), runtime_digest=expected) == attempt
++    else:
++        with pytest.raises(ValueError):
++            finish_attempt(attempt, **options(), runtime_digest=expected)
++
++
++def test_cross_task_copy_with_same_attempt_number_cannot_complete(tmp_path, media):
++    first = start_attempt(tmp_path / "CloseFridge", digest=DIGEST, resume=False)
++    second = start_attempt(tmp_path / "NavigateKitchen", digest=DIGEST, resume=False)
++    populate(first, media)
++    populate(second, media)
++    assert first.name == second.name
++    for source in first.glob("rollout*"):
++        shutil.copyfile(source, second / source.name)
++    shutil.copyfile(first / "results.json", second / "results.json")
++    with pytest.raises(ValueError, match="foreign task attempt"):
++        finish_attempt(second, **options())
++
++
++def test_cancellation_prevents_task_commit(tmp_path, media):
++    import threading
++
++    attempt = start_attempt(tmp_path / "CloseFridge", digest=DIGEST, resume=False)
++    populate(attempt, media)
++    stop = threading.Event()
++    stop.set()
++    with pytest.raises(InterruptedError, match="cancelled"):
++        finish_attempt(attempt, **options(), stop=stop)
++    assert json.loads((attempt / "attempt.json").read_text())["status"] == "RUNNING"
++
++
++def test_cancel_stalled_decoder_reaps_its_process(tmp_path, monkeypatch):
++    import threading
++
++    import robocasa_eval_results as module
++
++    processes = []
++    original = module.subprocess.Popen
++
++    def launch(*args, **kwargs):
++        process = original(*args, **kwargs)
++        processes.append(process)
++        return process
++
++    path = tmp_path / "video.mp4"
++    path.write_bytes(b"CPU sleeper boundary")
++    marker = tmp_path / "decoder_child.pid"
++    monkeypatch.setattr(
++        module,
++        "_MEDIA_PROBE",
++        "import signal,subprocess,sys,time; from pathlib import Path; "
++        "signal.signal(signal.SIGTERM,signal.SIG_IGN); "
++        "child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)']); "
++        "Path(sys.argv[1]).with_name('decoder_child.pid').write_text(str(child.pid)); time.sleep(60)",
++    )
++    monkeypatch.setattr(module.subprocess, "Popen", launch)
++    stop = threading.Event()
++
++    def cancel_after_fork():
++        until = time.monotonic() + 2
++        while not marker.exists() and time.monotonic() < until:
++            stop.wait(0.01)
++        stop.set()
++
++    timer = threading.Thread(target=cancel_after_fork)
++    timer.start()
++    started = time.monotonic()
++    try:
++        with pytest.raises(InterruptedError, match="cancelled"):
++            validate_media(path, sim_python=Path(sys.executable), kind="mp4", stop=stop)
++    finally:
++        timer.join()
++    assert time.monotonic() - started < 3
++    assert len(processes) == 1 and processes[0].poll() is not None
++    assert marker.is_file()
++    assert not module.OwnedProcess.__init__.__globals__["group_members"](processes[0].pid)
++    assert not Path("/proc", marker.read_text()).exists()
