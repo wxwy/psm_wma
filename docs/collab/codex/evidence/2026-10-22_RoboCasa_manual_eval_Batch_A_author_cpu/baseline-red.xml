@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="2" time="0.278" timestamp="2026-10-22T03:01:56.775084+00:00" hostname="d4ae95e8e7b1"><testcase classname="" name="test_reset_error_still_cleans_episode" time="0.005"><failure message="AssertionError: Expected 'end' to be called once. Called 0 times.">def test_reset_error_still_cleans_episode():
+        run,env,client,kwargs = old_runner(env_error=RuntimeError('env reset failed'))
+        with pytest.raises(RuntimeError,match='env reset failed'):
+            run(env,**kwargs)
+&gt;       client.end.assert_called_once_with(0)
+
+/tmp/psm-v3-eval-a-20261022/baseline_red_test.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;Mock name='mock.end' id='139887480051792'&gt;, args = (0,), kwargs = {}
+msg = "Expected 'end' to be called once. Called 0 times."
+
+    def assert_called_once_with(self, /, *args, **kwargs):
+        """assert that the mock was called exactly once and that that call was
+        with the specified arguments."""
+        if not self.call_count == 1:
+            msg = ("Expected '%s' to be called once. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+&gt;           raise AssertionError(msg)
+E           AssertionError: Expected 'end' to be called once. Called 0 times.
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py:960: AssertionError</failure></testcase><testcase classname="" name="test_encoder_primary_error_is_not_replaced_by_reset_error" time="0.004"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'encoder failed'&#10;  Actual message: 'reset failed'">def test_encoder_primary_error_is_not_replaced_by_reset_error():
+        run,env,client,kwargs = old_runner(media_error=RuntimeError('encoder failed'))
+        with pytest.raises(RuntimeError,match='encoder failed'):
+&gt;           run(env,**kwargs)
+
+/tmp/psm-v3-eval-a-20261022/baseline_red_test.py:36: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/psm-v3-eval-a-20261022/baseline_closed_loop_eval.py:348: in run_policy
+    reset_local_memory(server_url, session_id, timeout)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py:1139: in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py:1143: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;Mock id='139887227642528'&gt;
+args = ('synthetic', 'synthetic-session', 0.1), kwargs = {}
+effect = RuntimeError('reset failed')
+
+    def _execute_mock_call(self, /, *args, **kwargs):
+        # separate from _increment_mock_call so that awaited functions are
+        # executed separately from their call, also AsyncMock overrides this method
+    
+        effect = self.side_effect
+        if effect is not None:
+            if _is_exception(effect):
+&gt;               raise effect
+E               RuntimeError: reset failed
+
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py:1198: RuntimeError
+
+During handling of the above exception, another exception occurred:
+
+    def test_encoder_primary_error_is_not_replaced_by_reset_error():
+        run,env,client,kwargs = old_runner(media_error=RuntimeError('encoder failed'))
+&gt;       with pytest.raises(RuntimeError,match='encoder failed'):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'encoder failed'
+E         Actual message: 'reset failed'
+
+/tmp/psm-v3-eval-a-20261022/baseline_red_test.py:35: AssertionError</failure></testcase></testsuite></testsuites>

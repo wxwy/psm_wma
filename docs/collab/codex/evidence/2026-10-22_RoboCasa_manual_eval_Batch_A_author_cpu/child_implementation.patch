@@ -1,0 +1,258 @@
+diff --git a/cosmos_framework/simulation/robocasa/closed_loop_eval.py b/cosmos_framework/simulation/robocasa/closed_loop_eval.py
+index e16aef3..e099c39 100644
+--- a/cosmos_framework/simulation/robocasa/closed_loop_eval.py
++++ b/cosmos_framework/simulation/robocasa/closed_loop_eval.py
+@@ -237,0 +238 @@ def run_policy(
++    on_cleanup: Callable[[dict], None] | None = None,
+@@ -239,3 +239,0 @@ def run_policy(
+-    obs = env.reset()
+-    if local_memory_client is not None:
+-        local_memory_client.begin(0, image_size=image_size)
+@@ -244,0 +243,3 @@ def run_policy(
++        obs = env.reset()
++        if local_memory_client is not None:
++            local_memory_client.begin(0, image_size=image_size)
+@@ -344,4 +345,6 @@ def run_policy(
+-        if local_memory_client is not None:
+-            session_id = local_memory_client.end(0)
+-            if session_id is not None:
+-                try:
++        cleanup_error = None
++        session_id = None
++        try:
++            if local_memory_client is not None:
++                session_id = local_memory_client.end(0)
++                if session_id is not None:
+@@ -349,9 +352,20 @@ def run_policy(
+-                except Exception as cleanup_error:
+-                    if rollout_error is None:
+-                        raise
+-                    print(
+-                        f"[eval] WARNING: Local-TTT cleanup failed after rollout error: {cleanup_error}",
+-                        flush=True,
+-                    )
+-        if media_error is not None and rollout_error is None:
+-            raise media_error
++        except Exception as error:
++            cleanup_error = error
++            print(f"[eval] Local-TTT cleanup failure: {type(error).__name__}: {error}", flush=True)
++        witness = {
++            "session_id": session_id,
++            "reset_ok": cleanup_error is None,
++            "rollout_error": repr(rollout_error) if rollout_error is not None else None,
++            "media_error": repr(media_error) if media_error is not None else None,
++            "cleanup_error": repr(cleanup_error) if cleanup_error is not None else None,
++        }
++        try:
++            if on_cleanup is not None:
++                on_cleanup(witness)
++        except Exception as error:
++            cleanup_error = cleanup_error or error
++        if rollout_error is None:
++            if media_error is not None:
++                raise media_error
++            if cleanup_error is not None:
++                raise cleanup_error
+@@ -424,0 +439 @@ def main() -> None:
++    ap.add_argument("--progress-file", type=Path, default=None)
+@@ -484,25 +499,50 @@ def main() -> None:
+-        for t in range(args.num_test_episodes):
+-            result = run_recorded_episode(
+-                run_policy,
+-                env,
+-                output_dir=out,
+-                episode=t,
+-                run_digest=args.evaluation_run_digest,
+-                server_url=args.server_url,
+-                image_size=args.image_size,
+-                action_horizon=args.action_horizon,
+-                max_steps=eff_max_steps,
+-                latch=args.success_latch,
+-                timeout=args.timeout,
+-                use_state=args.use_state,
+-                local_memory_client=local_memory_client,
+-                save_png=str(out / f"rollout{t:02d}_init.png"),
+-                save_video=str(out / f"rollout{t:02d}.mp4"),
+-                gen_video_path=str(out / f"rollout{t:02d}_generated.mp4") if args.save_gen_video else None,
+-            )
+-            results.append(result)
+-            atomic_json(out / "results.json", results)
+-            print(
+-                f"[eval] rollout {t:02d} outcome={result['outcome']} steps={result['steps']} error={result['error']}",
+-                flush=True,
+-            )
++        with (args.progress_file or out / "episode_progress.jsonl").open(
++            "x", encoding="utf-8", buffering=1
++        ) as progress:
++
++            def emit(event, episode):
++                progress.write(
++                    json.dumps(
++                        {
++                            "schema": "psm_episode_progress_v1",
++                            "event": event,
++                            "episode": episode,
++                            "evaluation_run_digest": args.evaluation_run_digest,
++                        }
++                    )
++                    + "\n"
++                )
++                progress.flush()
++
++            for t in range(args.num_test_episodes):
++                emit("start", t)
++                result = run_recorded_episode(
++                    run_policy,
++                    env,
++                    output_dir=out,
++                    episode=t,
++                    run_digest=args.evaluation_run_digest,
++                    server_url=args.server_url,
++                    image_size=args.image_size,
++                    action_horizon=args.action_horizon,
++                    max_steps=eff_max_steps,
++                    latch=args.success_latch,
++                    timeout=args.timeout,
++                    use_state=args.use_state,
++                    local_memory_client=local_memory_client,
++                    on_cleanup=lambda witness, episode=t: atomic_json(
++                        out / f"rollout{episode:02d}_cleanup.json", witness
++                    ),
++                    save_png=str(out / f"rollout{t:02d}_init.png"),
++                    save_video=str(out / f"rollout{t:02d}.mp4"),
++                    gen_video_path=str(out / f"rollout{t:02d}_generated.mp4") if args.save_gen_video else None,
++                )
++                results.append(result)
++                atomic_json(out / "results.json", results)
++                print(
++                    f"[eval] rollout {t:02d} outcome={result['outcome']} steps={result['steps']} error={result['error']}",
++                    flush=True,
++                )
++                emit("end", t)
++                if result["error"] is not None:
++                    break  # Do not register another episode after a failed cleanup/rollout.
+diff --git a/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py b/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py
+new file mode 100644
+index 0000000..3a44d38
+--- /dev/null
++++ b/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py
+@@ -0,0 +1,119 @@
++"""Run the original rollout body with CPU boundary doubles, without simulator imports."""
++
++from __future__ import annotations
++
++import ast
++import time
++from pathlib import Path
++from unittest.mock import Mock
++
++import numpy as np
++import pytest
++
++
++def runner(*, failure=None, reset_failure=None, media_failure=None, env_failure=None):
++    path = Path(__file__).with_name("closed_loop_eval.py")
++    node = next(
++        n for n in ast.parse(path.read_text()).body if isinstance(n, ast.FunctionDef) and n.name == "run_policy"
++    )
++    node.returns = None
++    for arg in node.args.args + node.args.kwonlyargs:
++        arg.annotation = None
++    client = Mock()
++    client.end.return_value = "abandoned-session"
++    cleanup = Mock(side_effect=reset_failure)
++    video = Mock(side_effect=media_failure)
++    env = Mock()
++    env.reset.side_effect = env_failure
++    env.reset.return_value = {}
++    predict = Mock(side_effect=failure)
++    predict.return_value = {"action": [[0.0] * 15], "local_memory": {}}
++    scope = {
++        "np": np,
++        "time": time,
++        "compose": lambda _: np.zeros((2, 4, 3), np.uint8),
++        "build_state_token": lambda _: [0] * 15,
++        "predict": predict,
++        "save_partial_video": video,
++        "reset_local_memory": cleanup,
++        "USE_BASE_ACTION": True,
++        "BASE_ENCODING": "raw",
++        "_ACTION_DIM_BY_ENCODING": {"raw": 15},
++    }
++    exec(compile(ast.Module(body=[node], type_ignores=[]), str(path), "exec"), scope)
++    return scope["run_policy"], env, client, cleanup, video
++
++
++@pytest.mark.parametrize("failure", [RuntimeError("HTTP 400"), TimeoutError("request timeout")])
++def test_rollout_failure_remains_primary_when_reset_also_fails(failure):
++    run, env, client, reset, _ = runner(failure=failure, reset_failure=RuntimeError("reset failed"))
++    witnesses = []
++    with pytest.raises(type(failure), match=str(failure)):
++        run(
++            env,
++            server_url="synthetic",
++            image_size=256,
++            action_horizon=16,
++            max_steps=1,
++            latch=1,
++            timeout=0.1,
++            local_memory_client=client,
++            on_cleanup=witnesses.append,
++        )
++    client.end.assert_called_once_with(0)
++    reset.assert_called_once()
++    assert "reset failed" in witnesses[0]["cleanup_error"]
++    assert str(failure) in witnesses[0]["rollout_error"]
++
++
++@pytest.mark.parametrize("kind", ["normal", "media", "reset", "both", "env_reset"])
++def test_cleanup_all_boundaries_and_independent_witness(kind):
++    run, env, client, reset, video = runner(
++        reset_failure=RuntimeError("reset failed") if kind in ("reset", "both") else None,
++        media_failure=RuntimeError("encoder failed") if kind in ("media", "both") else None,
++        env_failure=RuntimeError("env reset failed") if kind == "env_reset" else None,
++    )
++    witnesses = []
++    kwargs = dict(
++        server_url="synthetic",
++        image_size=256,
++        action_horizon=16,
++        max_steps=0,
++        latch=1,
++        timeout=0.1,
++        local_memory_client=client,
++        on_cleanup=witnesses.append,
++    )
++    if kind == "normal":
++        assert run(env, **kwargs)[0] is False
++    else:
++        primary = {
++            "media": "encoder failed",
++            "reset": "reset failed",
++            "both": "encoder failed",
++            "env_reset": "env reset failed",
++        }[kind]
++        with pytest.raises(RuntimeError, match=primary):
++            run(env, **kwargs)
++    reset.assert_called_once()
++    client.end.assert_called_once_with(0)
++    assert len(witnesses) == 1
++    assert witnesses[0]["reset_ok"] == (kind not in ("reset", "both"))
++    if kind == "both":
++        assert witnesses[0]["media_error"] and witnesses[0]["cleanup_error"]
++
++
++def test_cleanup_witness_callback_cannot_override_original_error():
++    run, env, client, _, _ = runner(failure=RuntimeError("original"))
++    with pytest.raises(RuntimeError, match="original"):
++        run(
++            env,
++            server_url="synthetic",
++            image_size=256,
++            action_horizon=16,
++            max_steps=1,
++            latch=1,
++            timeout=0.1,
++            local_memory_client=client,
++            on_cleanup=Mock(side_effect=OSError("disk full")),
++        )

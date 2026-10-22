@@ -1,0 +1,1 @@
+screening incomplete: missing=['PickPlaceSinkToCounter', 'TurnOnSinkFaucet'] failed=['NavigateKitchen'] workers=['_worker_0_NavigateKitchen']; summary=/tmp/psm-v3-eval-a-20261022/debug-normal-2/evaluation/screening_summary.json

@@ -1,0 +1,55 @@
+{
+  "schema": "psm_wma_robocasa_batch_a_author_cpu_v1",
+  "status": "AUTHOR_CPU_PASS",
+  "independent_gate": "PENDING_GPT_AND_DS",
+  "root_implementation": "7646d41488a55d5a44ab193520a42c48cf5acc90",
+  "child_gitlink": "e42a2468672d3ef8fcba708fc19e70daec7c790e",
+  "root_branch": "v3-robocasa-manual-eval-20261022",
+  "child_branch": "v3-robocasa-eval-lifecycle-20261022",
+  "baseline_root": "c6d6dab11c97f87e94b8b8bd3601bab02dce33f8",
+  "baseline_child": "35b0ea1ccee9ee26653ed6589c484f0997d1c586",
+  "final_focused": {
+    "methods_passed": 72,
+    "subtests_passed": 61,
+    "junit_records": 133,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "seconds": 36.44,
+    "log": "final2.log",
+    "junit": "final2.xml"
+  },
+  "existing_identity_episode_media": {
+    "passed": 20,
+    "deselected": 50,
+    "failures": 0,
+    "skips": 0,
+    "seconds": 2.73,
+    "log": "identity-regression.log"
+  },
+  "baseline_red": {
+    "expected_exit": 1,
+    "real_contract_failures": 2,
+    "reason": "reset before finally; media error replaced by reset error"
+  },
+  "static": {
+    "ruff": "0.12.7",
+    "explicit_config": "cosmos-framework/.ruff.toml",
+    "check": "PASS",
+    "format": "PASS",
+    "py_compile": "PASS",
+    "diff_check": "PASS"
+  },
+  "queue_synthetic_scenarios": 30,
+  "gpu_used": false,
+  "real_cosmos_server_or_simulator_started": false,
+  "actual_checkpoint_or_job_assets_accessed": false,
+  "training_or_local_algorithm_modified": false,
+  "vendor_pinned_or_semantics_validated": false,
+  "future_batches": {
+    "B": "BLOCKED_TARGET_DEPENDENCY_IDENTITY",
+    "C": "QUEUED_AFTER_A_B"
+  },
+  "scope_note": "A isolated candidate only; same source model/Local/optimizer/G1 assets untouched; no V3 source merge or real benchmark authorization",
+  "diff_check_scope": "Source/tests/docs; raw pytest logs and JUnit XML retained byte-for-byte and exempt from whitespace normalization"
+}

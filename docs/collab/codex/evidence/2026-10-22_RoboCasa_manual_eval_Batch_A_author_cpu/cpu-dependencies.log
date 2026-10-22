@@ -1,0 +1,19 @@
+Using Python 3.12.14 environment at: /workspace/.venvs/psm-wma-cpu
+Resolved 10 packages in 647ms
+Downloading imageio-ffmpeg (28.1MiB)
+Downloading scipy (35.6MiB)
+Downloading pillow (6.3MiB)
+ Downloaded pillow
+ Downloaded imageio-ffmpeg
+ Downloaded scipy
+Prepared 9 packages in 1.28s
+Installed 9 packages in 21ms
+ + certifi==2026.10.19
+ + charset-normalizer==3.5.2
+ + idna==3.20
+ + imageio==2.37.0
+ + imageio-ffmpeg==0.6.0
+ + pillow==11.3.0
+ + requests==2.32.5
+ + scipy==1.15.3
+ + urllib3==2.8.0

@@ -1,0 +1,19 @@
+{
+  "baseline_root": "c6d6dab11c97f87e94b8b8bd3601bab02dce33f8",
+  "baseline_child": "35b0ea1ccee9ee26653ed6589c484f0997d1c586",
+  "queue_exact_AST_unchanged": [
+    "_read_json",
+    "discover_task_datasets",
+    "validate_server_info",
+    "require_owned_listener",
+    "atomic_write_json",
+    "task_result"
+  ],
+  "run_policy_action_loop_AST_unchanged": true,
+  "child_tracked_changes": [
+    "cosmos_framework/simulation/robocasa/closed_loop_eval.py"
+  ],
+  "new_child_test": "cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py",
+  "no_training_or_algorithm_source_change": true,
+  "g1_candidate_unmerged_and_preserved": "5fe6a513baa870c06f3186903b99e9bba80bb084"
+}

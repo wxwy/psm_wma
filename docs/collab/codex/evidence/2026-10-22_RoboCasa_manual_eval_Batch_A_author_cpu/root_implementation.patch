@@ -1,0 +1,989 @@
+diff --git a/scripts/eval_robocasa_18task_queue.py b/scripts/eval_robocasa_18task_queue.py
+index 72ad7e2b..d0635590 100644
+--- a/scripts/eval_robocasa_18task_queue.py
++++ b/scripts/eval_robocasa_18task_queue.py
+@@ -2,6 +2 @@
+-"""Run the V3 RoboCasa target-atomic screening with persistent per-GPU workers.
+-
+-Each worker owns one GPU, one action-policy server and one simulator subprocess at a time.
+-Workers pull tasks from a shared deterministic queue; the model is loaded once per GPU, not
+-once per task.  The child evaluator owns rollout semantics and Local-TTT telemetry.
+-"""
++"""Run RoboCasa with one isolated Server/Simulator pair per task and GPU worker."""
+@@ -15,0 +11 @@ import queue
++import signal
+@@ -25,0 +22,7 @@ from typing import Any
++from robocasa_processes import (
++    EpisodeProgress,
++    EvaluationInterrupted,
++    OwnedProcess,
++    positive_seconds,
++    supervise_simulator,
++)
+@@ -76,0 +80,3 @@ def require_free_ports(ports: list[int]) -> None:
++            # Match ThreadingHTTPServer: a stopped owned server can leave
++            # TIME_WAIT sockets. This never permits binding an active listener.
++            listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+@@ -78,0 +85 @@ def require_free_ports(ports: list[int]) -> None:
++                listener.listen(1)
+@@ -153,0 +161 @@ def wait_server(
++    stop: threading.Event | None = None,
+@@ -158,0 +167,2 @@ def wait_server(
++        if stop is not None and stop.is_set():
++            raise EvaluationInterrupted("evaluation cancelled during server startup")
+@@ -165 +175 @@ def wait_server(
+-            time.sleep(min(2.0, max(0.0, deadline - time.monotonic())))
++            time.sleep(min(0.1, max(0.0, deadline - time.monotonic())))
+@@ -168 +178,5 @@ def wait_server(
+-            info, checkpoint=checkpoint, config_file=config_file, num_steps=num_steps, guidance=guidance
++            info,
++            checkpoint=checkpoint,
++            config_file=config_file,
++            num_steps=num_steps,
++            guidance=guidance,
+@@ -233,0 +248,11 @@ def main() -> int:
++    parser.add_argument("--server-start-timeout-s", type=float, default=None)
++    parser.add_argument("--predict-request-timeout-s", type=float, default=None)
++    parser.add_argument("--episode-wall-timeout-s", type=float, default=1800)
++    parser.add_argument("--task-wall-timeout-s", type=float, default=10800)
++    parser.add_argument("--terminate-grace-s", type=float, default=20)
++    parser.add_argument("--server-lifecycle", choices=("per_task",), default="per_task")
++    parser.add_argument(
++        "--on-infrastructure-error",
++        choices=("stop", "continue_with_new_server"),
++        default="stop",
++    )
+@@ -236,0 +262,14 @@ def main() -> int:
++    args.server_start_timeout_s = (
++        args.server_start_timeout_s if args.server_start_timeout_s is not None else args.timeout
++    )
++    args.predict_request_timeout_s = (
++        args.predict_request_timeout_s if args.predict_request_timeout_s is not None else args.timeout
++    )
++    for seconds in (
++        args.server_start_timeout_s,
++        args.predict_request_timeout_s,
++        args.episode_wall_timeout_s,
++        args.task_wall_timeout_s,
++        args.terminate_grace_s,
++    ):
++        positive_seconds(seconds)
+@@ -289,0 +329,9 @@ def main() -> int:
++            "server_lifecycle": args.server_lifecycle,
++            "on_infrastructure_error": args.on_infrastructure_error,
++            "timeouts": {
++                "server_start_s": args.server_start_timeout_s,
++                "predict_request_s": args.predict_request_timeout_s,
++                "episode_wall_s": args.episode_wall_timeout_s,
++                "task_wall_s": args.task_wall_timeout_s,
++                "terminate_grace_s": args.terminate_grace_s,
++            },
+@@ -303 +351,7 @@ def main() -> int:
+-                dataset_dir, task_out, -1, "resume", 0.0, run_digest=run_digest, expected_trials=args.num_test_episodes
++                dataset_dir,
++                task_out,
++                -1,
++                "resume",
++                0.0,
++                run_digest=run_digest,
++                expected_trials=args.num_test_episodes,
+@@ -331 +385,5 @@ def main() -> int:
+-                screening_metrics(results, tasks=[task for task, _ in tasks], expected_trials=args.num_test_episodes)
++                screening_metrics(
++                    results,
++                    tasks=[task for task, _ in tasks],
++                    expected_trials=args.num_test_episodes,
++                )
+@@ -336 +394 @@ def main() -> int:
+-            if worker_errors:
++            if worker_errors or any(row.get("error") for row in ordered.values()):
+@@ -379,0 +438,2 @@ def main() -> int:
++        # Open the worker log before claiming a task, so even initialization
++        # errors are preserved by the outer worker boundary.
+@@ -381,31 +441,13 @@ def main() -> int:
+-            server = None
+-            try:
+-                require_free_ports([port])
+-                server = subprocess.Popen(
+-                    server_command,
+-                    cwd=CHILD,
+-                    env=server_env,
+-                    stdout=server_log,
+-                    stderr=subprocess.STDOUT,
+-                )
+-                info = wait_server(
+-                    server,
+-                    port,
+-                    args.timeout,
+-                    checkpoint=checkpoint,
+-                    config_file=config_file,
+-                    num_steps=args.num_steps,
+-                    guidance=args.guidance,
+-                )
+-                if sha256_file(config_file) != manifest["identity"]["config_sha256"]:
+-                    raise ValueError("action server config file changed since evaluation identity was frozen")
+-                atomic_write_json(worker_dir / "server_info.json", info)
+-                atomic_write_json(worker_dir / "server_process.json", {"pid": server.pid, "port": port})
+-                while not stop.is_set():
+-                    if server.poll() is not None:
+-                        raise RuntimeError(f"action server exited during screening with code {server.returncode}")
+-                    try:
+-                        task, dataset_dir = work.get_nowait()
+-                    except queue.Empty:
+-                        break
+-                    task_out = output_root / task
++            while not stop.is_set():
++                try:
++                    task, dataset_dir = work.get_nowait()
++                except queue.Empty:
++                    break
++                task_out = output_root / task
++                started = time.monotonic()
++                task_deadline = started + args.task_wall_timeout_s
++                server_owned = sim_owned = None
++                row, error, returncode = None, None, -1
++                cleanup = {}
++                stage = "server_start"
++                try:
+@@ -413,6 +455,22 @@ def main() -> int:
+-                    task_log_path = task_out / "eval.log"
+-                    sim_env = os.environ.copy()
+-                    sim_env["CUDA_VISIBLE_DEVICES"] = gpu
+-                    sim_env["MUJOCO_GL"] = sim_env.get("MUJOCO_GL", "egl")
+-                    sim_env["PYTHONPATH"] = str(CHILD) + (
+-                        os.pathsep + sim_env["PYTHONPATH"] if sim_env.get("PYTHONPATH") else ""
++                    require_free_ports([port])
++                    server_owned = OwnedProcess(
++                        server_command,
++                        grace_s=args.terminate_grace_s,
++                        cwd=CHILD,
++                        env=server_env,
++                        stdout=server_log,
++                        stderr=subprocess.STDOUT,
++                    )
++                    server = server_owned.proc
++                    info = wait_server(
++                        server,
++                        port,
++                        min(
++                            args.server_start_timeout_s,
++                            max(0.001, task_deadline - time.monotonic()),
++                        ),
++                        checkpoint=checkpoint,
++                        config_file=config_file,
++                        num_steps=args.num_steps,
++                        guidance=args.guidance,
++                        stop=stop,
+@@ -419,0 +478,9 @@ def main() -> int:
++                    if sha256_file(config_file) != manifest["identity"]["config_sha256"]:
++                        raise ValueError("action server config file changed since evaluation identity was frozen")
++                    atomic_write_json(task_out / "server_info.json", info)
++                    atomic_write_json(
++                        task_out / "server_process.json",
++                        {"pid": server.pid, "pgid": server_owned.pgid, "port": port},
++                    )
++                    sim_env = server_env.copy()
++                    sim_env["MUJOCO_GL"] = sim_env.get("MUJOCO_GL", "egl")
+@@ -450 +517 @@ def main() -> int:
+-                        str(args.timeout),
++                        str(args.predict_request_timeout_s),
+@@ -452,0 +520,2 @@ def main() -> int:
++                        "--progress-file",
++                        str(task_out / "episode_progress.jsonl"),
+@@ -454,23 +523,26 @@ def main() -> int:
+-                    started = time.monotonic()
+-                    error: str | None = None
+-                    returncode = -1
+-                    row = None
+-                    try:
+-                        with task_log_path.open("ab", buffering=0) as task_log:
+-                            completed = subprocess.run(
+-                                command,
+-                                cwd=CHILD,
+-                                env=sim_env,
+-                                stdout=task_log,
+-                                stderr=subprocess.STDOUT,
+-                                check=False,
+-                            )
+-                        returncode = completed.returncode
+-                        row = task_result(
+-                            dataset_dir,
+-                            task_out,
+-                            worker_id,
+-                            gpu,
+-                            time.monotonic() - started,
+-                            run_digest=run_digest,
+-                            expected_trials=args.num_test_episodes,
++                    atomic_write_json(
++                        task_out / "commands.json",
++                        {"server": server_command, "simulator": command},
++                    )
++                    stage = "simulator"
++                    with (task_out / "eval.log").open("ab", buffering=0) as task_log:
++                        sim_owned = OwnedProcess(
++                            command,
++                            grace_s=args.terminate_grace_s,
++                            cwd=CHILD,
++                            env=sim_env,
++                            stdout=task_log,
++                            stderr=subprocess.STDOUT,
++                        )
++                        progress = EpisodeProgress(
++                            task_out / "episode_progress.jsonl",
++                            digest=run_digest,
++                            episodes=args.num_test_episodes,
++                        )
++                        returncode = supervise_simulator(
++                            sim_owned,
++                            server=server,
++                            task_deadline=task_deadline,
++                            episode_wall_s=args.episode_wall_timeout_s,
++                            progress=progress,
++                            stop=stop,
+@@ -478,5 +550,42 @@ def main() -> int:
+-                        if returncode != 0:
+-                            error = f"closed_loop_eval exited with code {returncode}"
+-                    except BaseException as exc:  # noqa: BLE001
+-                        error = f"{type(exc).__name__}: {exc}"
+-                    if error is not None and row is None:
++                    if returncode != 0:
++                        raise EvaluationInterrupted(f"closed_loop_eval exited with code {returncode}")
++                    row = task_result(
++                        dataset_dir,
++                        task_out,
++                        worker_id,
++                        gpu,
++                        time.monotonic() - started,
++                        run_digest=run_digest,
++                        expected_trials=args.num_test_episodes,
++                    )
++                    if row.get("error"):
++                        raise EvaluationInterrupted(row["error"])
++                except BaseException as exc:  # noqa: BLE001
++                    error = f"{type(exc).__name__}: {exc}"
++                    if row is None and (task_out / "results.json").is_file():
++                        try:
++                            row = task_result(
++                                dataset_dir,
++                                task_out,
++                                worker_id,
++                                gpu,
++                                time.monotonic() - started,
++                                run_digest=run_digest,
++                                expected_trials=args.num_test_episodes,
++                            )
++                        except Exception:
++                            pass  # Raw partial files remain; never treat them as complete trials.
++                finally:
++                    # Both groups, including descendants of an already-dead leader,
++                    # are reclaimed before another task can acquire this worker.
++                    for name, owned in (
++                        ("simulator", sim_owned),
++                        ("server", server_owned),
++                    ):
++                        if owned is not None:
++                            try:
++                                cleanup[name] = owned.close()
++                            except BaseException as exc:  # noqa: BLE001
++                                cleanup[name] = owned.cleanup
++                                error = error or f"cleanup {name}: {type(exc).__name__}: {exc}"
++                    if row is None:
+@@ -494,2 +602,0 @@ def main() -> int:
+-                            "returncode": returncode,
+-                            "error": error,
+@@ -497,3 +604,5 @@ def main() -> int:
+-                    if error is not None:
+-                        row["error"] = error
+-                        row["returncode"] = returncode
++                    row.update(error=error, returncode=returncode, cleanup=cleanup)
++                    # Cleanup failure is an independent error, never replacement of
++                    # the primary failure. Evidence survives even after cancellation.
++                    if task_out.is_dir():
++                        atomic_write_json(task_out / "process_cleanup.json", cleanup)
+@@ -501,0 +611,14 @@ def main() -> int:
++                        if error:
++                            results[f"_worker_{worker_id}_{task}"] = {
++                                "worker": worker_id,
++                                "gpu": gpu,
++                                "task": task,
++                                "stage": stage,
++                                "error": error,
++                                "cleanup": cleanup,
++                                "server_log": str(server_log_path),
++                            }
++                    if (error and args.on_infrastructure_error == "stop") or any(
++                        item.get("error") for item in cleanup.values()
++                    ):
++                        stop.set()
+@@ -504,18 +626,0 @@ def main() -> int:
+-            except BaseException as exc:  # noqa: BLE001
+-                stop.set()
+-                with result_lock:
+-                    results[f"_worker_{worker_id}"] = {
+-                        "worker": worker_id,
+-                        "gpu": gpu,
+-                        "error": f"{type(exc).__name__}: {exc}",
+-                        "server_log": str(server_log_path),
+-                    }
+-                publish()
+-            finally:
+-                if server is not None:
+-                    server.terminate()
+-                    try:
+-                        server.wait(timeout=20)
+-                    except subprocess.TimeoutExpired:
+-                        server.kill()
+-                        server.wait()
+@@ -543,4 +648,18 @@ def main() -> int:
+-    for thread in threads:
+-        thread.start()
+-    for thread in threads:
+-        thread.join()
++
++    def cancel(signum, _frame):
++        with result_lock:
++            results["_worker_cancel"] = {"error": f"Owner signal {signum}"}
++        stop.set()
++
++    previous_handlers = {}
++    if threading.current_thread() is threading.main_thread():
++        for sig in (signal.SIGTERM, signal.SIGINT):
++            previous_handlers[sig] = signal.signal(sig, cancel)
++    try:
++        for thread in threads:
++            thread.start()
++        for thread in threads:
++            thread.join()
++    finally:
++        for sig, handler in previous_handlers.items():
++            signal.signal(sig, handler)
+diff --git a/scripts/robocasa_processes.py b/scripts/robocasa_processes.py
+new file mode 100644
+index 00000000..0a4297a2
+--- /dev/null
++++ b/scripts/robocasa_processes.py
+@@ -0,0 +1,179 @@
++"""Bounded supervision of only the process groups created by this evaluation.
++
++No model, simulator or GPU imports. Episode progress is an append-only protocol:
++the evaluator writes start before reset and end after media and session cleanup.
++"""
++
++from __future__ import annotations
++
++import ctypes
++import json
++import math
++import os
++import signal
++import subprocess
++import time
++from pathlib import Path
++from threading import Event
++
++
++class EvaluationInterrupted(RuntimeError):
++    """A wall budget, cancellation or infrastructure boundary was violated."""
++
++
++def positive_seconds(value: float) -> float:
++    if not math.isfinite(value) or value <= 0:
++        raise ValueError("wall/request/grace timeouts must be finite and positive")
++    return value
++
++
++def group_members(pgid: int) -> dict[int, str]:
++    members = {}
++    for entry in Path("/proc").iterdir():
++        if not entry.name.isdigit():
++            continue
++        try:
++            fields = (entry / "stat").read_text().rsplit(")", 1)[1].split()
++            if int(fields[2]) == pgid:
++                members[int(entry.name)] = fields[0]
++        except (FileNotFoundError, ProcessLookupError):
++            continue
++    return members
++
++
++def group_alive(pgid: int) -> bool:
++    return any(state != "Z" for state in group_members(pgid).values())
++
++
++class OwnedProcess:
++    """Create a new session and retain its group even if the leader exits first."""
++
++    def __init__(self, command, *, grace_s: float, **kwargs):
++        self.grace_s = positive_seconds(grace_s)
++        # Adopt orphaned grandchildren so a killed leader does not leave zombies
++        # to a container PID1 which may never reap. Reap only this owned PGID.
++        libc = ctypes.CDLL(None, use_errno=True)
++        if libc.prctl(36, 1, 0, 0, 0) != 0:  # Linux PR_SET_CHILD_SUBREAPER
++            raise OSError(ctypes.get_errno(), "cannot enable evaluation child subreaper")
++        self.proc = subprocess.Popen(command, start_new_session=True, **kwargs)
++        self.pgid = self.proc.pid
++        self.cleanup: dict = {"pid": self.proc.pid, "pgid": self.pgid, "signals": []}
++        self._closed = False
++
++    def close(self) -> dict:
++        if self._closed:
++            return self.cleanup
++        try:
++            if group_alive(self.pgid):
++                self._signal(signal.SIGTERM)
++                until = time.monotonic() + self.grace_s
++                while group_alive(self.pgid) and time.monotonic() < until:
++                    self.proc.poll()  # Reap the leader while waiting for descendants.
++                    time.sleep(min(0.02, max(0, until - time.monotonic())))
++                if group_alive(self.pgid):
++                    self._signal(signal.SIGKILL)
++            self.proc.wait(timeout=self.grace_s)
++            until = time.monotonic() + self.grace_s
++            while group_members(self.pgid) and time.monotonic() < until:
++                try:
++                    while os.waitpid(-self.pgid, os.WNOHANG)[0] > 0:
++                        pass
++                except ChildProcessError:
++                    pass
++                time.sleep(0.02)
++            if group_members(self.pgid):
++                raise EvaluationInterrupted(f"owned process group {self.pgid} survived cleanup or was not reaped")
++            self.cleanup.update(returncode=self.proc.returncode, live_group=False, remaining_pids=[])
++            self._closed = True
++        except BaseException as error:
++            self.cleanup["error"] = f"{type(error).__name__}: {error}"
++            raise
++        return self.cleanup
++
++    def _signal(self, sig: signal.Signals) -> None:
++        try:
++            os.killpg(self.pgid, sig)
++            self.cleanup["signals"].append(sig.name)
++        except ProcessLookupError:
++            pass
++
++
++class EpisodeProgress:
++    def __init__(self, path: Path, *, digest: str, episodes: int):
++        self.path, self.digest, self.episodes = path, digest, episodes
++        self.offset, self.next_episode, self.active = 0, 0, None
++        self.started_at = time.monotonic()
++
++    def poll(self) -> None:
++        if not self.path.exists():
++            return
++        with self.path.open("rb") as handle:
++            if self.path.stat().st_size < self.offset:
++                raise EvaluationInterrupted("episode progress was truncated")
++            handle.seek(self.offset)
++            while True:
++                line = handle.readline(4097)
++                if not line:
++                    return
++                if len(line) > 4096:
++                    raise EvaluationInterrupted("oversized episode progress event")
++                if not line.endswith(b"\n"):
++                    return  # Concurrent append: consume only a complete event.
++                self.offset += len(line)
++                row = json.loads(line)
++                expected = self.next_episode
++                if (
++                    row.get("schema") != "psm_episode_progress_v1"
++                    or row.get("evaluation_run_digest") != self.digest
++                    or type(row.get("episode")) is not int
++                    or row["episode"] != expected
++                    or expected >= self.episodes
++                ):
++                    raise EvaluationInterrupted("episode progress identity/order mismatch")
++                if row.get("event") == "start" and self.active is None:
++                    self.active = expected
++                    # Observation time, never a child-controlled timestamp extending a budget.
++                    self.started_at = time.monotonic()
++                elif row.get("event") == "end" and self.active == expected:
++                    self.active = None
++                    self.next_episode += 1
++                    self.started_at = time.monotonic()
++                else:
++                    raise EvaluationInterrupted("invalid episode start/end transition")
++
++    @property
++    def complete(self) -> bool:
++        return self.active is None and self.next_episode == self.episodes
++
++
++def supervise_simulator(
++    owned: OwnedProcess,
++    *,
++    server: subprocess.Popen,
++    task_deadline: float,
++    episode_wall_s: float,
++    progress: EpisodeProgress,
++    stop: Event,
++) -> int:
++    while True:
++        progress.poll()
++        if stop.is_set():
++            raise EvaluationInterrupted("evaluation cancelled")
++        if server.poll() is not None:
++            raise EvaluationInterrupted(f"action server exited during screening with code {server.returncode}")
++        now = time.monotonic()
++        if now >= task_deadline:
++            raise EvaluationInterrupted("task wall timeout")
++        # Also bounds environment construction before the first start event and
++        # any stall after the last event, including env.close()/process teardown.
++        if now - progress.started_at >= episode_wall_s:
++            raise EvaluationInterrupted(
++                f"episode wall timeout (next={progress.next_episode}, active={progress.active})"
++            )
++        code = owned.proc.poll()
++        if code is not None:
++            progress.poll()
++            if code == 0 and not progress.complete:
++                raise EvaluationInterrupted("simulator exited without complete episode progress")
++            return code
++        time.sleep(0.02)
+diff --git a/tools/v3/eval_robocasa_queue_identity_test.py b/tools/v3/eval_robocasa_queue_identity_test.py
+index d6a52d35..615bfe42 100644
+--- a/tools/v3/eval_robocasa_queue_identity_test.py
++++ b/tools/v3/eval_robocasa_queue_identity_test.py
+@@ -131,0 +132,2 @@ def _serve(port: int, info: dict) -> None:
++        occupied = False
++
+@@ -132,0 +135,10 @@ def _serve(port: int, info: dict) -> None:
++            if self.path == "/error":
++                self.send_error(400, "injected HTTP failure")
++                return
++            if self.path == "/stall":
++                time.sleep(5)
++            if self.path == "/claim":
++                if Handler.occupied:
++                    self.send_error(400, "session limit reached")
++                    return
++                Handler.occupied = True
+@@ -208,2 +220,17 @@ def _scenario(case, parent, count):
+-    _git(root, "update-index", "--add", "--cacheinfo", f"160000,{_git(child, 'rev-parse', 'HEAD')},cosmos-framework")
+-    _git(root, "-c", "user.name=CPU Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "gitlink")
++    _git(
++        root,
++        "update-index",
++        "--add",
++        "--cacheinfo",
++        f"160000,{_git(child, 'rev-parse', 'HEAD')},cosmos-framework",
++    )
++    _git(
++        root,
++        "-c",
++        "user.name=CPU Fixture",
++        "-c",
++        "user.email=fixture@example.invalid",
++        "commit",
++        "-qm",
++        "gitlink",
++    )
+@@ -234,0 +262,12 @@ def _scenario(case, parent, count):
++    def wait_completed(trials=20):
++        until = time.monotonic() + 12
++        while time.monotonic() < until:
++            try:
++                if json.loads((output / "screening_summary.json").read_text())["total_trials"] == trials:
++                    all_tasks_done.set()
++                    return True
++            except (OSError, ValueError):
++                pass
++            time.sleep(0.01)
++        return False
++
+@@ -237 +276 @@ def _scenario(case, parent, count):
+-        assert all_tasks_done.wait(8), "healthy worker did not complete before initialization fault"
++        assert wait_completed(), "healthy worker did not complete before initialization fault"
+@@ -250,0 +290,2 @@ def _scenario(case, parent, count):
++        if len(command) > 1 and str(command[1]).endswith("closed_loop_eval.py"):
++            return sim_popen(command, **kwargs)
+@@ -253 +294,4 @@ def _scenario(case, parent, count):
+-        assert command[1:3] == ["-m", "cosmos_framework.scripts.action_policy_server_robocasa"]
++        assert command[1:3] == [
++            "-m",
++            "cosmos_framework.scripts.action_policy_server_robocasa",
++        ]
+@@ -256 +300 @@ def _scenario(case, parent, count):
+-            assert all_tasks_done.wait(8), "healthy worker did not complete"
++            assert wait_completed(15), "healthy worker did not complete the three unclaimed tasks"
+@@ -281 +325 @@ def _scenario(case, parent, count):
+-            proc = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(30)"])
++            proc = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(30)"], **kwargs)
+@@ -283 +327 @@ def _scenario(case, parent, count):
+-            proc = _start_http(port, info, stdout=kwargs["stdout"], stderr=subprocess.STDOUT)
++            proc = _start_http(port, info, **kwargs)
+@@ -287 +331 @@ def _scenario(case, parent, count):
+-    def run(command, **kwargs):
++    def sim_popen(command, **kwargs):
+@@ -292,2 +336,53 @@ def _scenario(case, parent, count):
+-        if case == "sim_failure" and len(sim_calls) == 1:
+-            return SimpleNamespace(returncode=7)
++        if case in ("sim_failure", "primary_and_cleanup") and len(sim_calls) == 1:
++            return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
++        if case == "session_leak":
++            queue_module._read_json(command[command.index("--server-url") + 1] + "/claim")
++        fault = (
++            case
++            in (
++                "task_timeout",
++                "episode_timeout",
++                "sigkill",
++                "sigterm",
++                "request_timeout",
++                "reset_failure",
++                "video_failure",
++                "missing_results",
++                "http400",
++                "cancel",
++                "cleanup_failure",
++                "primary_and_cleanup",
++            )
++            and len(sim_calls) == 1
++        )
++        if fault and case != "cleanup_failure":
++            if case == "cancel":
++                threading.Timer(0.1, lambda: os.kill(os.getpid(), signal.SIGTERM)).start()
++                return subprocess.Popen([sys.executable, "-c", "import time;time.sleep(60)"], **kwargs)
++            elif case in ("http400", "request_timeout"):
++                url = command[command.index("--server-url") + 1] + ("/error" if case == "http400" else "/stall")
++                return subprocess.Popen(
++                    [sys.executable, "-c", f"import urllib.request;urllib.request.urlopen({url!r},timeout=0.05)"],
++                    **kwargs,
++                )
++            if case == "episode_timeout":
++                Path(command[command.index("--progress-file") + 1]).write_text(
++                    json.dumps(
++                        {
++                            "schema": "psm_episode_progress_v1",
++                            "event": "start",
++                            "episode": 0,
++                            "evaluation_run_digest": digest,
++                        }
++                    )
++                    + "\n"
++                )
++            if case in ("task_timeout", "episode_timeout"):
++                # A descendant ignores SIGTERM; both processes must be reclaimed.
++                script = "import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'-c','import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(60)']);time.sleep(60)"
++            elif case in ("sigterm", "sigkill"):
++                sig = "SIGTERM" if case == "sigterm" else "SIGKILL"
++                script = f"import os,signal;os.kill(os.getpid(),signal.{sig})"
++            else:
++                script = f"raise RuntimeError({case!r})"
++            return subprocess.Popen([sys.executable, "-c", script], **kwargs)
+@@ -307,5 +402,19 @@ def _scenario(case, parent, count):
+-        if len(sim_calls) == 4:
+-            all_tasks_done.set()
+-            if case == "server_dies_after_tasks":
+-                _stop(servers[0])
+-        return SimpleNamespace(returncode=0)
++        progress = Path(command[command.index("--progress-file") + 1])
++        progress.write_text(
++            "".join(
++                json.dumps(
++                    {
++                        "schema": "psm_episode_progress_v1",
++                        "episode": index,
++                        "event": event,
++                        "evaluation_run_digest": digest,
++                    }
++                )
++                + "\n"
++                for index in range(5)
++                for event in ("start", "end")
++            )
++        )
++        if len(sim_calls) == 4 and case == "server_dies_after_tasks":
++            _stop(servers[-1])
++        return subprocess.Popen([sys.executable, "-c", "pass"], **kwargs)
+@@ -316 +425 @@ def _scenario(case, parent, count):
+-        Popen=popen, run=run, STDOUT=subprocess.STDOUT, TimeoutExpired=subprocess.TimeoutExpired
++        Popen=popen, STDOUT=subprocess.STDOUT, TimeoutExpired=subprocess.TimeoutExpired
+@@ -317,0 +427 @@ def _scenario(case, parent, count):
++    queue_module.OwnedProcess.__init__.__globals__["subprocess"] = queue_module.subprocess
+@@ -346,0 +457,35 @@ def _scenario(case, parent, count):
++    argv += ["--terminate-grace-s", "0.15"]
++    if case in (
++        "task_timeout",
++        "episode_timeout",
++        "sigkill",
++        "sigterm",
++        "request_timeout",
++        "reset_failure",
++        "video_failure",
++        "missing_results",
++        "http400",
++        "cancel",
++        "cleanup_failure",
++        "primary_and_cleanup",
++    ):
++        argv += ["--on-infrastructure-error", "continue_with_new_server"]
++    if case == "task_timeout":
++        argv += ["--task-wall-timeout-s", "1"]
++    if case == "episode_timeout":
++        argv += ["--episode-wall-timeout-s", "0.2"]
++    real_close = queue_module.OwnedProcess.close
++    injected_cleanup = []
++
++    def close_with_fault(owned):
++        witness = real_close(owned)
++        if (
++            case in ("cleanup_failure", "primary_and_cleanup")
++            and owned.proc.pid not in {p.pid for p in servers}
++            and not injected_cleanup
++        ):
++            injected_cleanup.append(owned.proc.pid)
++            owned.cleanup["error"] = "injected cleanup error after real group reap"
++            raise OSError(owned.cleanup["error"])
++        return witness
++
+@@ -357,0 +503 @@ def _scenario(case, parent, count):
++                patch.object(queue_module.OwnedProcess, "close", close_with_fault),
+@@ -359 +505,3 @@ def _scenario(case, parent, count):
+-                    threading, "excepthook", lambda event: unhandled_thread_errors.append(str(event.exc_value))
++                    threading,
++                    "excepthook",
++                    lambda event: unhandled_thread_errors.append(str(event.exc_value)),
+@@ -508 +656,8 @@ class QueueIntegrationTests(unittest.TestCase):
+-                    [sys.executable, str(Path(__file__).resolve()), "--scenario", case, directory, str(count)],
++                    [
++                        sys.executable,
++                        str(Path(__file__).resolve()),
++                        "--scenario",
++                        case,
++                        directory,
++                        str(count),
++                    ],
+@@ -514 +669 @@ class QueueIntegrationTests(unittest.TestCase):
+-                    rc = process.wait(timeout=20)
++                    rc = process.wait(timeout=40)
+@@ -527 +682 @@ class QueueIntegrationTests(unittest.TestCase):
+-        for count in (1, 2, 4):
++        for count in (1, 2, 8):
+@@ -531 +686 @@ class QueueIntegrationTests(unittest.TestCase):
+-                self.assertEqual(report["server_commands"], count)
++                self.assertEqual(report["server_commands"], 4)
+@@ -590 +745 @@ class QueueIntegrationTests(unittest.TestCase):
+-    def test_launch_error_after_all_tasks_does_not_disappear_from_summary_or_exit(self):
++    def test_server_launch_error_after_other_tasks_does_not_disappear(self):
+@@ -593 +748,4 @@ class QueueIntegrationTests(unittest.TestCase):
+-        self.assertEqual(report["summary"]["total_trials"], 20)
++        # Per-task creation claims the failing task before Popen; only the
++        # other three tasks can complete. Initialization failures below still
++        # prove a late worker error cannot hide behind all twenty results.
++        self.assertEqual(report["summary"]["total_trials"], 15)
+@@ -606,2 +764,5 @@ class QueueIntegrationTests(unittest.TestCase):
+-        self.assertIn(f"worker1 {operation} failure", report["summary"]["worker_errors"]["_worker_1"]["error"])
+-        self.assertEqual(report["server_commands"], 1)
++        self.assertIn(
++            f"worker1 {operation} failure",
++            report["summary"]["worker_errors"]["_worker_1"]["error"],
++        )
++        self.assertEqual(report["server_commands"], 4)
+@@ -611 +772,3 @@ class QueueIntegrationTests(unittest.TestCase):
+-    def test_worker_mkdir_failure_after_healthy_worker_completes_all_tasks_is_preserved(self):
++    def test_worker_mkdir_failure_after_healthy_worker_completes_all_tasks_is_preserved(
++        self,
++    ):
+@@ -614 +777,3 @@ class QueueIntegrationTests(unittest.TestCase):
+-    def test_worker_log_open_failure_after_healthy_worker_completes_all_tasks_is_preserved(self):
++    def test_worker_log_open_failure_after_healthy_worker_completes_all_tasks_is_preserved(
++        self,
++    ):
+@@ -623,0 +789,53 @@ class QueueIntegrationTests(unittest.TestCase):
++    def test_persistent_abandoned_session_cannot_contaminate_next_task(self):
++        report = self.scenario("session_leak", 1)
++        self.assertEqual(report["rc"], 0)
++        self.assertEqual(report["server_commands"], 4)
++        self.assertEqual(report["summary"]["status"], "COMPLETE")
++
++    def test_kill_timeout_reset_media_and_missing_results_use_fresh_server(self):
++        for case in (
++            "task_timeout",
++            "episode_timeout",
++            "sigkill",
++            "sigterm",
++            "request_timeout",
++            "reset_failure",
++            "video_failure",
++            "missing_results",
++            "http400",
++        ):
++            with self.subTest(fault=case):
++                report = self.scenario(case, 1)
++                self.assertEqual(report["rc"], 1)
++                self.assertEqual(report["server_commands"], 4)
++                self.assertEqual(report["sim_calls"], 4)
++                self.assertEqual(report["summary"]["status"], "INCOMPLETE")
++                self.assertIsNone(report["summary"]["sr"])
++                self.assertEqual(report["summary"]["task_failures"], 1)
++                self.assertEqual(report["summary"]["total_trials"], 15)
++                cleanup = next(row["cleanup"] for row in report["summary"]["tasks"].values() if row["error"])
++                self.assertFalse(cleanup["server"]["live_group"])
++                self.assertFalse(cleanup["simulator"]["live_group"])
++                if "timeout" in case and case != "request_timeout":
++                    self.assertIn("SIGKILL", cleanup["simulator"]["signals"])
++
++    def test_owner_cancel_stops_queue_and_reaps_both_groups(self):
++        report = self.scenario("cancel", 1)
++        self.assertEqual(report["rc"], 1)
++        self.assertEqual(report["server_commands"], 1)
++        self.assertIn("Owner signal", str(report["summary"]["worker_errors"]))
++        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
++
++    def test_cleanup_error_always_stops_and_retains_primary_error(self):
++        for case in ("cleanup_failure", "primary_and_cleanup"):
++            with self.subTest(fault=case):
++                report = self.scenario(case, 1)
++                self.assertEqual(report["rc"], 1)
++                self.assertEqual(report["server_commands"], 1)
++                row = next(iter(report["summary"]["tasks"].values()))
++                self.assertIn("injected cleanup", row["cleanup"]["simulator"]["error"])
++                self.assertIsNone(report["summary"]["sr"])
++                if case == "primary_and_cleanup":
++                    self.assertIn("exited with code 7", row["error"])
++                    self.assertNotIn("injected cleanup", row["error"])
++
+diff --git a/tools/v3/robocasa_processes_test.py b/tools/v3/robocasa_processes_test.py
+new file mode 100644
+index 00000000..d066dc28
+--- /dev/null
++++ b/tools/v3/robocasa_processes_test.py
+@@ -0,0 +1,135 @@
++"""CPU process-group deadlines, cancellation and untrusted progress negative cases."""
++
++import json
++import subprocess
++import sys
++import threading
++import time
++from pathlib import Path
++from types import SimpleNamespace
++
++import pytest
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
++from robocasa_processes import (  # noqa: E402
++    EpisodeProgress,
++    EvaluationInterrupted,
++    OwnedProcess,
++    group_alive,
++    group_members,
++    positive_seconds,
++    supervise_simulator,
++)
++
++
++@pytest.mark.parametrize("value", [0, -1, float("nan"), float("inf")])
++def test_nonpositive_or_nonfinite_timeouts_reject(value):
++    with pytest.raises(ValueError):
++        positive_seconds(value)
++
++
++def test_dead_leader_descendant_is_killed_but_foreign_process_survives(tmp_path):
++    foreign = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True)
++    ready = tmp_path / "ready"
++    script = (
++        "import subprocess,sys;subprocess.Popen([sys.executable,'-c',"
++        + repr(
++            f"import signal,time;from pathlib import Path;signal.signal(signal.SIGTERM,signal.SIG_IGN);Path({str(ready)!r}).touch();time.sleep(60)"
++        )
++        + "])"
++    )
++    owned = OwnedProcess([sys.executable, "-c", script], grace_s=0.2)
++    try:
++        owned.proc.wait(timeout=3)
++        until = time.monotonic() + 3
++        while not ready.exists() and time.monotonic() < until:
++            time.sleep(0.01)
++        assert ready.exists()
++        witness = owned.close()
++        assert witness["signals"] == ["SIGTERM", "SIGKILL"]
++        assert group_members(owned.pgid) == {}
++        assert foreign.poll() is None
++    finally:
++        owned.close()
++        foreign.terminate()
++        foreign.wait(timeout=3)
++
++
++@pytest.mark.parametrize("failure", ["cancel", "task", "episode", "missing_progress", "server_exit"])
++def test_supervisor_cancellation_and_both_wall_clocks(failure, tmp_path):
++    stop = threading.Event()
++    progress = EpisodeProgress(tmp_path / "progress", digest="identity", episodes=1)
++    server = SimpleNamespace(poll=lambda: 17 if failure == "server_exit" else None, returncode=17)
++    owned = OwnedProcess(
++        [
++            sys.executable,
++            "-c",
++            "pass" if failure == "missing_progress" else "import time;time.sleep(60)",
++        ],
++        grace_s=0.2,
++    )
++    if failure == "cancel":
++        stop.set()
++    try:
++        with pytest.raises(EvaluationInterrupted):
++            supervise_simulator(
++                owned,
++                server=server,
++                task_deadline=time.monotonic() + (0.1 if failure == "task" else 5),
++                episode_wall_s=0.1 if failure == "episode" else 5,
++                progress=progress,
++                stop=stop,
++            )
++    finally:
++        owned.close()
++    assert not group_alive(owned.pgid)
++
++
++@pytest.mark.parametrize(
++    "bad",
++    [
++        "wrong_digest",
++        "duplicate_start",
++        "end_first",
++        "wrong_episode",
++        "too_many",
++        "truncate",
++        "oversized",
++    ],
++)
++def test_progress_order_identity_and_bounds(bad, tmp_path):
++    path = tmp_path / "progress"
++    progress = EpisodeProgress(path, digest="identity", episodes=1)
++    start = {
++        "schema": "psm_episode_progress_v1",
++        "evaluation_run_digest": "identity",
++        "episode": 0,
++        "event": "start",
++    }
++    rows = [dict(start)]
++    if bad == "wrong_digest":
++        rows[0]["evaluation_run_digest"] = "foreign"
++    elif bad == "wrong_episode":
++        rows[0]["episode"] = 1
++    elif bad == "end_first":
++        rows[0]["event"] = "end"
++    elif bad == "duplicate_start":
++        rows.append(dict(start))
++    elif bad == "too_many":
++        rows.extend([dict(start, event="end"), dict(start, episode=1)])
++    path.write_text("".join(json.dumps(row) + "\n" for row in rows))
++    if bad == "oversized":
++        path.write_text("x" * 5000)
++    elif bad == "truncate":
++        progress.poll()
++        path.write_text("")
++    with pytest.raises((EvaluationInterrupted, ValueError)):
++        progress.poll()
++
++
++def test_partial_append_cannot_fake_completed_episode(tmp_path):
++    path = tmp_path / "progress"
++    progress = EpisodeProgress(path, digest="identity", episodes=1)
++    path.write_text('{"schema":')
++    progress.poll()
++    assert progress.offset == 0 and not progress.complete

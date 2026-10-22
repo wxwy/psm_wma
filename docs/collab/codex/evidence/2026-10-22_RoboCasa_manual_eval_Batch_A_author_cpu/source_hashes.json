@@ -1,0 +1,8 @@
+{
+  "scripts/eval_robocasa_18task_queue.py": "93237dc1bce2f60313ee438d4d0552c5730f8b1d1915444ae93548a9541d1ad0",
+  "scripts/robocasa_processes.py": "9075f3eff535110d0b8b522451c93133fc128320fc7a9988443535bc5494f167",
+  "tools/v3/eval_robocasa_queue_identity_test.py": "231ecfc08b16e68220f0d1b8418f4482e701b11946ee2e4bf6f77d5c5cd47183",
+  "tools/v3/robocasa_processes_test.py": "30dd8e4a34b57b92208a5c85014011e6ed4bb808155ff047fa63a27634e53d51",
+  "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py": "bbf3a37d41f2f9231988a324a2bb0ba0831760a53cc29188a529dc2ba8b4c0a7",
+  "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py": "7e22bf595d81d3c479c3d4d532a41eb00b535310ed9af785ae1d4d7f65fc024d"
+}
