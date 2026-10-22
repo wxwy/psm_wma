@@ -99,8 +99,13 @@ class OwnedProcess:
 
 
 class EpisodeProgress:
-    def __init__(self, path: Path, *, digest: str, episodes: int):
+    def __init__(self, path: Path, *, digest: str, episodes: int, attempt_id: str | None = None):
+        # Older process-only callers may omit it; the formal queue always binds
+        # this monitor to the same Task/Attempt as all other episode evidence.
+        if attempt_id is not None and (not isinstance(attempt_id, str) or not attempt_id):
+            raise ValueError("expected progress attempt identity must be a nonempty string")
         self.path, self.digest, self.episodes = path, digest, episodes
+        self.attempt_id = attempt_id
         self.offset, self.next_episode, self.active = 0, 0, None
         self.started_at = time.monotonic()
 
@@ -123,8 +128,10 @@ class EpisodeProgress:
                 row = json.loads(line)
                 expected = self.next_episode
                 if (
-                    row.get("schema") != "psm_episode_progress_v1"
+                    not isinstance(row, dict)
+                    or row.get("schema") != "psm_episode_progress_v1"
                     or row.get("evaluation_run_digest") != self.digest
+                    or (self.attempt_id is not None and row.get("evaluation_attempt_id") != self.attempt_id)
                     or type(row.get("episode")) is not int
                     or row["episode"] != expected
                     or expected >= self.episodes

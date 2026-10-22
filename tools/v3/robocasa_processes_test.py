@@ -133,3 +133,37 @@ def test_partial_append_cannot_fake_completed_episode(tmp_path):
     path.write_text('{"schema":')
     progress.poll()
     assert progress.offset == 0 and not progress.complete
+
+
+@pytest.mark.parametrize("attempt", [None, "", "CloseFridge/attempt_0002", "NavigateKitchen/attempt_0001"])
+def test_progress_requires_the_exact_configured_task_attempt(attempt, tmp_path):
+    path = tmp_path / "progress"
+    progress = EpisodeProgress(path, digest="identity", episodes=1, attempt_id="CloseFridge/attempt_0001")
+    base = {
+        "schema": "psm_episode_progress_v1",
+        "evaluation_run_digest": "identity",
+        "evaluation_attempt_id": attempt,
+        "episode": 0,
+    }
+    path.write_text("".join(json.dumps(dict(base, event=event)) + "\n" for event in ("start", "end")))
+    with pytest.raises(EvaluationInterrupted, match="identity/order"):
+        progress.poll()
+    assert not progress.complete
+
+
+def test_bound_progress_accepts_exact_attempt_across_incremental_appends(tmp_path):
+    path = tmp_path / "progress"
+    progress = EpisodeProgress(path, digest="identity", episodes=2, attempt_id="CloseFridge/attempt_0001")
+    base = {
+        "schema": "psm_episode_progress_v1",
+        "evaluation_run_digest": "identity",
+        "evaluation_attempt_id": "CloseFridge/attempt_0001",
+    }
+    with path.open("w") as stream:
+        for episode in range(2):
+            for event in ("start", "end"):
+                stream.write(json.dumps(dict(base, episode=episode, event=event)) + "\n")
+                stream.flush()
+                progress.poll()
+                assert progress.complete is (episode == 1 and event == "end")
+    assert progress.complete

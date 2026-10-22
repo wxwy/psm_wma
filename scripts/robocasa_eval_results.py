@@ -27,11 +27,24 @@ def _safe(path: Path) -> Path:
     return path
 
 
-def _json(path: Path):
+def _unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate evidence JSON key: {key}")
+        result[key] = value
+    return result
+
+
+def _json(path: Path, *, unique_keys: bool = False):
     path = _safe(path)
     if not path.is_file():
         raise ValueError(f"missing evidence file: {path}")
-    return json.loads(path.read_text(encoding="utf-8"), parse_constant=lambda x: _invalid(f"nonfinite JSON: {x}"))
+    return json.loads(
+        path.read_text(encoding="utf-8"),
+        parse_constant=lambda x: _invalid(f"nonfinite JSON: {x}"),
+        object_pairs_hook=_unique_object if unique_keys else dict,
+    )
 
 
 def _invalid(message: str):
@@ -147,6 +160,52 @@ def _vector(value, width: int) -> bool:
         and len(value) == width
         and all(type(x) in {int, float} and math.isfinite(x) for x in value)
     )
+
+
+def _validate_episode_progress(path: Path, *, digest: str, attempt_id: str, episodes: int) -> None:
+    path = _safe(path)
+    if not path.is_file():
+        raise ValueError("missing episode progress evidence")
+    count = 0
+    with path.open("rb") as handle:
+        while line := handle.readline(4097):
+            if len(line) > 4096 or not line.endswith(b"\n"):
+                raise ValueError("truncated/oversized episode progress record")
+            row = json.loads(
+                line,
+                parse_constant=lambda value: _invalid(f"nonfinite progress JSON: {value}"),
+                object_pairs_hook=_unique_object,
+            )
+            if (
+                count >= 2 * episodes
+                or not isinstance(row, dict)
+                or row.get("schema") != "psm_episode_progress_v1"
+                or row.get("evaluation_run_digest") != digest
+                or row.get("evaluation_attempt_id") != attempt_id
+                or type(row.get("episode")) is not int
+                or row["episode"] != count // 2
+                or row.get("event") != ("start", "end")[count % 2]
+            ):
+                raise ValueError("episode progress identity/order mismatch")
+            count += 1
+    if count != 2 * episodes:
+        raise ValueError("incomplete episode progress evidence")
+
+
+def _validate_local_cleanup(path: Path) -> None:
+    witness = _json(path, unique_keys=True)
+    required = {"session_id", "reset_ok", "cleanup_error", "rollout_error", "media_error"}
+    # RoboCasaLocalMemoryClient.begin creates client_uuid:slot:episode_uuid;
+    # required-mode evaluation uses slot0 and end() must return that real ID.
+    if (
+        not isinstance(witness, dict)
+        or not required <= witness.keys()
+        or witness["reset_ok"] is not True
+        or any(witness[name] is not None for name in ("cleanup_error", "rollout_error", "media_error"))
+        or not isinstance(witness["session_id"], str)
+        or re.fullmatch(r"[0-9a-f]{32}:0:[0-9a-f]{32}", witness["session_id"]) is None
+    ):
+        raise ValueError("episode Local-TTT cleanup is incomplete or failed")
 
 
 _MEDIA_PROBE = r"""
@@ -287,6 +346,9 @@ def validate_attempt(
     attempt_identity = f"{attempt_dir.parent.name}/{attempt_dir.name}"
     rows = _json(attempt_dir / "results.json")
     validate_task_results(rows, digest=digest, expected_trials=expected_trials)
+    _validate_episode_progress(
+        attempt_dir / "episode_progress.jsonl", digest=digest, attempt_id=attempt_identity, episodes=expected_trials
+    )
     for episode, row in enumerate(rows):
         _remaining(deadline, stop=stop)
         if row["error"] is not None:
@@ -294,6 +356,7 @@ def validate_attempt(
         if row.get("evaluation_attempt_id") != attempt_identity:
             raise ValueError("foreign task attempt episode result")
         prefix = f"rollout{episode:02d}"
+        _validate_local_cleanup(attempt_dir / f"{prefix}_cleanup.json")
         if _json(attempt_dir / f"{prefix}_episode.json") != row:
             raise ValueError("episode record differs from task result")
         for key, suffix in (("actions_file", "actions"), ("predictions_file", "predictions")):

@@ -7,6 +7,7 @@ import fcntl
 import json
 import os
 import queue
+import re
 import signal
 import socket
 import stat
@@ -199,6 +200,17 @@ def atomic_write_json(path: Path, value: Any) -> None:
     os.replace(temporary, path)
 
 
+def task_video_files(output_dir: Path) -> dict[str, list[str]]:
+    """Classify actual artifacts, including partial videos without complete results."""
+    files = [path for path in output_dir.glob("rollout*.mp4") if path.is_file()]
+    return {
+        "rollout_mp4s": sorted(str(path) for path in files if re.fullmatch(r"rollout\d+\.mp4", path.name)),
+        "generated_mp4s": sorted(
+            str(path) for path in files if re.fullmatch(r"rollout\d+_generated(?:_replan\d+)?\.mp4", path.name)
+        ),
+    }
+
+
 def task_result(
     dataset_dir: Path,
     output_dir: Path,
@@ -226,7 +238,7 @@ def task_result(
         "sr": successes / len(rows),
         "elapsed_s": round(elapsed_s, 3),
         "results_file": str(result_file),
-        "rollout_mp4s": sorted(str(path) for path in output_dir.glob("rollout*.mp4")),
+        **task_video_files(output_dir),
         "rollouts": rows,
         "error": "; ".join(row["error"] for row in rows if row.get("error")) or None,
         "evaluation_run_digest": run_digest,
@@ -555,6 +567,8 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
                     expected_trials=args.num_test_episodes,
                 )
             )
+            for kind in ("rollout_mp4s", "generated_mp4s"):
+                payload[kind] = sorted(path for row in ordered.values() for path in row.get(kind, []))
             payload["evaluation_run_digest"] = run_digest
             payload["invocation_dir"] = str(invocation)
             worker_errors = {key: row for key, row in results.items() if key.startswith("_worker_")}
@@ -644,6 +658,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
                         progress = EpisodeProgress(
                             task_out / "episode_progress.jsonl",
                             digest=run_digest,
+                            attempt_id=f"{task_out.parent.name}/{task_out.name}",
                             episodes=args.num_test_episodes,
                         )
                         returncode = supervise_simulator(
@@ -717,7 +732,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
                             "sr": None,
                             "elapsed_s": round(time.monotonic() - started, 3),
                             "results_file": str(task_out / "results.json"),
-                            "rollout_mp4s": sorted(str(path) for path in task_out.glob("rollout*.mp4")),
+                            **task_video_files(task_out),
                             "rollouts": [],
                         }
                     row.update(

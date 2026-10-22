@@ -21,6 +21,7 @@ import tempfile
 import threading
 import time
 import unittest
+import uuid
 from contextlib import ExitStack
 from enum import Enum
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -40,7 +41,7 @@ def _canonical(value):
     return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
 
 
-def _episode_fixture(directory, *, episode, digest, video):
+def _episode_fixture(directory, *, episode, digest, video, generated_mode="none", rollout=True):
     """Write real audit schemas/media; only model and simulator are synthetic."""
     stem = f"rollout{episode:02d}"
     attempt_id = f"{directory.parent.name}/{directory.name}"
@@ -63,6 +64,13 @@ def _episode_fixture(directory, *, episode, digest, video):
         "action_chunk": [[0.0] * 15] * 16,
         "local_memory": {"prefix_present": True},
     }
+    generated_videos = (
+        []
+        if generated_mode == "none"
+        else [f"{stem}_generated.mp4"]
+        if generated_mode == "first"
+        else [f"{stem}_generated_replan0000.mp4"]
+    )
     row = {
         "ep": episode,
         "policy": episode % 2 == 0,
@@ -75,12 +83,39 @@ def _episode_fixture(directory, *, episode, digest, video):
         "predictions_file": f"{stem}_predictions.jsonl",
         "evaluation_run_digest": digest,
         "evaluation_attempt_id": attempt_id,
-        "generated_videos": [],
+        "generated_videos": generated_videos,
     }
     for suffix, record in (("actions", action), ("predictions", prediction)):
         (directory / f"{stem}_{suffix}.jsonl").write_text(json.dumps(record) + "\n")
     (directory / f"{stem}_episode.json").write_text(json.dumps(row))
-    (directory / f"{stem}.mp4").write_bytes(video)
+    if rollout:
+        (directory / f"{stem}.mp4").write_bytes(video)
+    (directory / f"{stem}_cleanup.json").write_text(
+        json.dumps(
+            {
+                "session_id": f"{uuid.uuid4().hex}:0:{uuid.uuid4().hex}",
+                "reset_ok": True,
+                "cleanup_error": None,
+                "rollout_error": None,
+                "media_error": None,
+            }
+        )
+    )
+    if generated_videos:
+        for name in generated_videos:
+            (directory / name).write_bytes(video)
+        (directory / f"{stem}_generated_manifest.json").write_text(
+            json.dumps(
+                {
+                    "schema": "psm_generated_video_v1",
+                    "status": "COMPLETE",
+                    "mode": generated_mode,
+                    "evaluation_run_digest": digest,
+                    "evaluation_attempt_id": attempt_id,
+                    "videos": [{"replan": 0, "source_step": 0, "file": generated_videos[0], "frames": 2}],
+                }
+            )
+        )
     from PIL import Image
 
     Image.new("RGB", (16, 16), (15, 30, 45)).save(directory / f"{stem}_init.png")
@@ -428,7 +463,24 @@ def _scenario(case, parent, count):
         assert set(command[command.index("--runtime-tasks") + 1].split(",")) == (
             {"CloseFridge", "TurnOnSinkFaucet"} if case == "task_subset" else TASKS
         )
-        assert command[command.index("--save-generated-video") + 1] == "none"
+        video_mode = command[command.index("--save-generated-video") + 1]
+        rollout_enabled = "--no-save-rollout-mp4" not in command
+        expected_mode = (
+            ("all" if case == "generated_all" else "first")
+            if case.startswith(("generated_", "partial_video_"))
+            else "none"
+        )
+        assert video_mode == expected_mode
+        if case == "partial_video_first":
+            _episode_fixture(
+                directory,
+                episode=0,
+                digest=digest,
+                video=video_bytes,
+                generated_mode=video_mode,
+                rollout=rollout_enabled,
+            )
+            return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
         if case == "partial_resume" and len(sim_calls) == 1:
             row = _episode_fixture(directory, episode=0, digest=digest, video=video_bytes)
             (directory / "results.json").write_text(json.dumps([row]))
@@ -473,6 +525,7 @@ def _scenario(case, parent, count):
                             "event": "start",
                             "episode": 0,
                             "evaluation_run_digest": digest,
+                            "evaluation_attempt_id": f"{directory.parent.name}/{directory.name}",
                         }
                     )
                     + "\n"
@@ -486,7 +539,17 @@ def _scenario(case, parent, count):
             else:
                 script = f"raise RuntimeError({case!r})"
             return subprocess.Popen([sys.executable, "-c", script], **kwargs)
-        rows = [_episode_fixture(directory, episode=index, digest=digest, video=video_bytes) for index in range(5)]
+        rows = [
+            _episode_fixture(
+                directory,
+                episode=index,
+                digest=digest,
+                video=video_bytes,
+                generated_mode=video_mode,
+                rollout=rollout_enabled,
+            )
+            for index in range(5)
+        ]
         (directory / "results.json").write_text(json.dumps(rows))
         progress = Path(command[command.index("--progress-file") + 1])
         progress.write_text(
@@ -497,6 +560,7 @@ def _scenario(case, parent, count):
                         "episode": index,
                         "event": event,
                         "evaluation_run_digest": digest,
+                        "evaluation_attempt_id": f"{directory.parent.name}/{directory.name}",
                     }
                 )
                 + "\n"
@@ -504,6 +568,10 @@ def _scenario(case, parent, count):
                 for event in ("start", "end")
             )
         )
+        if case == "wrong_attempt_progress":
+            events = [json.loads(line) for line in progress.read_text().splitlines()]
+            events[0]["evaluation_attempt_id"] = "CloseFridge/attempt_9999"
+            progress.write_text("".join(json.dumps(event) + "\n" for event in events))
         if len(sim_calls) == 4 and case == "server_dies_after_tasks":
             _stop(servers[-1])
         return subprocess.Popen([sys.executable, "-c", "pass"], **kwargs)
@@ -547,6 +615,8 @@ def _scenario(case, parent, count):
     ]
     argv += ["--terminate-grace-s", "0.15"]
     argv += ["--save-generated-video", "none"]
+    if case in ("generated_first", "generated_all", "partial_video_first"):
+        argv += ["--no-save-rollout-mp4", "--save-generated-video", "all" if case == "generated_all" else "first"]
     if case == "task_subset":
         argv += ["--tasks", "CloseFridge,TurnOnSinkFaucet"]
     if case == "task_unknown":
@@ -619,7 +689,31 @@ def _scenario(case, parent, count):
                     if (output / "screening_summary.json").is_file()
                     else None
                 )
-                if case in ("partial_resume", "resume_complete", "resume_wrong_video", "resume_wrong_timeout"):
+                if case in (
+                    "partial_resume",
+                    "resume_complete",
+                    "resume_wrong_video",
+                    "resume_wrong_timeout",
+                    "resume_missing_progress",
+                    "resume_wrong_attempt",
+                    "resume_failed_cleanup",
+                ):
+                    if case in ("resume_missing_progress", "resume_wrong_attempt", "resume_failed_cleanup"):
+                        victim = output / "CloseFridge/attempt_0001"
+                        corrupt_path = victim / (
+                            "rollout00_cleanup.json" if case == "resume_failed_cleanup" else "episode_progress.jsonl"
+                        )
+                        if case == "resume_missing_progress":
+                            corrupt_path.unlink()
+                        elif case == "resume_wrong_attempt":
+                            events = [json.loads(line) for line in corrupt_path.read_text().splitlines()]
+                            events[0]["evaluation_attempt_id"] = "CloseFridge/attempt_9999"
+                            corrupt_path.write_text("".join(json.dumps(event) + "\n" for event in events))
+                        else:
+                            cleanup = json.loads(corrupt_path.read_text())
+                            cleanup["reset_ok"] = False
+                            corrupt_path.write_text(json.dumps(cleanup))
+                        corrupt_bytes = corrupt_path.read_bytes() if corrupt_path.exists() else None
                     argv += ["--resume"]
                     if case == "resume_wrong_video":
                         argv += ["--save-generated-video", "first"]
@@ -655,8 +749,15 @@ def _scenario(case, parent, count):
         "resume_complete",
         "resume_wrong_video",
         "resume_wrong_timeout",
+        "resume_missing_progress",
+        "resume_wrong_attempt",
+        "resume_failed_cleanup",
     ):
         report.update(first_rc=first_rc, first_summary=first_summary)
+    if "corrupt_path" in locals():
+        report["corrupt_artifact_preserved"] = corrupt_bytes == (
+            corrupt_path.read_bytes() if corrupt_path.exists() else None
+        )
     report["attempts"] = {
         task: [
             {
@@ -676,6 +777,41 @@ def _scenario(case, parent, count):
     if (output / "evaluation_manifest.json").exists():
         report["protocol"] = json.loads((output / "evaluation_manifest.json").read_text())["identity"]["protocol"]
     (parent / "report.json").write_text(json.dumps(report))
+
+
+class MediaClassificationTests(unittest.TestCase):
+    def test_prediction_video_cannot_be_reported_as_environment_video(self):
+        for mode in ("first", "all"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory) / "CloseFridge/attempt_0001"
+                output.mkdir(parents=True)
+                row = _episode_fixture(
+                    output,
+                    episode=0,
+                    digest="fixture",
+                    video=b"classification fixture",
+                    generated_mode=mode,
+                    rollout=False,
+                )
+                (output / "results.json").write_text(json.dumps([row]))
+                result = queue_module.task_result(
+                    Path("/fixture"), output, 0, "0", 0, run_digest="fixture", expected_trials=1
+                )
+                self.assertEqual(result["rollout_mp4s"], [])
+                self.assertEqual(result["generated_mp4s"], [str(output / row["generated_videos"][0])])
+
+    def test_environment_video_and_none_mode_have_separate_lists(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "CloseFridge/attempt_0001"
+            output.mkdir(parents=True)
+            row = _episode_fixture(output, episode=0, digest="fixture", video=b"classification fixture")
+            (output / "results.json").write_text(json.dumps([row]))
+            (output / "rollout00_not_video.mp4").write_bytes(b"unrelated artifact")
+            result = queue_module.task_result(
+                Path("/fixture"), output, 0, "0", 0, run_digest="fixture", expected_trials=1
+            )
+            self.assertEqual(result["rollout_mp4s"], [str(output / "rollout00.mp4")])
+            self.assertEqual(result["generated_mp4s"], [])
 
 
 class ServerIdentityTests(unittest.TestCase):
@@ -843,6 +979,41 @@ class QueueIntegrationTests(unittest.TestCase):
                 for row in summary["tasks"].values():
                     self.assertEqual(row["trials"], 5)
                     self.assertEqual(len(row["rollout_mp4s"]), 5)
+
+    def test_generated_video_summary_keeps_environment_videos_disabled(self):
+        for case in ("generated_first", "generated_all"):
+            with self.subTest(mode=case):
+                report = self.scenario(case, 1)
+                self.assertEqual(report["rc"], 0, report)
+                summary = report["summary"]
+                self.assertEqual(summary["status"], "COMPLETE")
+                self.assertEqual(summary["rollout_mp4s"], [])
+                self.assertEqual(len(summary["generated_mp4s"]), 20)
+                for row in summary["tasks"].values():
+                    self.assertEqual(row["rollout_mp4s"], [])
+                    self.assertEqual(len(row["generated_mp4s"]), 5)
+                    self.assertEqual(
+                        sorted(row["generated_mp4s"]),
+                        sorted(
+                            str(Path(row["results_file"]).parent / name)
+                            for episode in row["rollouts"]
+                            for name in episode["generated_videos"]
+                        ),
+                    )
+
+    def test_failed_partial_attempt_preserves_prediction_video_without_environment_video(self):
+        report = self.scenario("partial_video_first", 1)
+        self.assertEqual(report["rc"], 1)
+        summary = report["summary"]
+        self.assertEqual(summary["status"], "INCOMPLETE")
+        self.assertEqual(summary["rollout_mp4s"], [])
+        self.assertEqual(len(summary["generated_mp4s"]), 1)
+        row = next(iter(summary["tasks"].values()))
+        self.assertEqual(row["rollout_mp4s"], [])
+        self.assertEqual(row["generated_mp4s"], summary["generated_mp4s"])
+        self.assertEqual(row["rollouts"], [])
+        self.assertIn("generated", row["generated_mp4s"][0])
+        self.assertEqual(report["attempts"][next(iter(summary["tasks"]))][0]["marker"]["status"], "FAILED")
 
     def test_occupied_nonfirst_port_refuses_all_workers_before_output_claim(self):
         report = self.scenario("occupied_port")
@@ -1038,6 +1209,36 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["summary"]["total_trials"], 20)
         self.assertTrue(all(len(attempts) == 1 for attempts in report["attempts"].values()))
         self.assertTrue(all(attempts[0]["marker"]["status"] == "COMPLETE" for attempts in report["attempts"].values()))
+
+    def test_queue_online_progress_rejects_foreign_attempt_before_completion(self):
+        report = self.scenario("wrong_attempt_progress", 1)
+        self.assertEqual(report["rc"], 1)
+        self.assertEqual(report["server_commands"], 1)
+        self.assertEqual(report["sim_calls"], 1)
+        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+        self.assertIn("progress identity/order mismatch", str(report["summary"]["worker_errors"]))
+        self.assertTrue(
+            all(
+                attempt["marker"]["status"] == "FAILED"
+                for attempts in report["attempts"].values()
+                for attempt in attempts
+            )
+        )
+
+    def test_resume_cannot_skip_complete_marker_with_missing_or_foreign_episode_evidence(self):
+        for case in ("resume_missing_progress", "resume_wrong_attempt", "resume_failed_cleanup"):
+            with self.subTest(corruption=case):
+                report = self.scenario(case, 1)
+                self.assertEqual(report["first_rc"], 0)
+                self.assertEqual(report["rc"], 1)
+                self.assertEqual(report["server_commands"], 4)
+                self.assertEqual(report["sim_calls"], 4)
+                self.assertIn("ValueError:", report["error"])
+                self.assertTrue(report["corrupt_artifact_preserved"])
+                self.assertTrue(all(len(attempts) == 1 for attempts in report["attempts"].values()))
+                self.assertTrue(
+                    all(attempts[0]["marker"]["status"] == "COMPLETE" for attempts in report["attempts"].values())
+                )
 
     def test_partial_task_resume_keeps_old_evidence_and_restarts_entire_task_from_zero(self):
         report = self.scenario("partial_resume", 1)

@@ -99,6 +99,16 @@ def populate(directory, media, *, mode="none", rollout=False, png=False):
             predictions_file=f"{prefix}_predictions.jsonl",
             generated_videos=videos,
         )
+        write_json(
+            directory / f"{prefix}_cleanup.json",
+            dict(
+                session_id=f"{'a' * 32}:0:{episode + 1:032x}",
+                reset_ok=True,
+                cleanup_error=None,
+                rollout_error=None,
+                media_error=None,
+            ),
+        )
         write_jsonl(directory / row["actions_file"], actions)
         write_jsonl(directory / row["predictions_file"], predictions)
         if rollout:
@@ -124,6 +134,20 @@ def populate(directory, media, *, mode="none", rollout=False, png=False):
         results.append(row)
         write_json(directory / f"{prefix}_episode.json", row)
     write_json(directory / "results.json", results)
+    write_jsonl(
+        directory / "episode_progress.jsonl",
+        [
+            dict(
+                schema="psm_episode_progress_v1",
+                evaluation_run_digest=DIGEST,
+                evaluation_attempt_id=f"{directory.parent.name}/{directory.name}",
+                episode=episode,
+                event=event,
+            )
+            for episode in range(2)
+            for event in ("start", "end")
+        ],
+    )
     return results
 
 
@@ -485,3 +509,144 @@ def test_cancel_stalled_decoder_reaps_its_process(tmp_path, monkeypatch):
     assert marker.is_file()
     assert not module.OwnedProcess.__init__.__globals__["group_members"](processes[0].pid)
     assert not Path("/proc", marker.read_text()).exists()
+
+
+@pytest.mark.parametrize("validation_stage", ["finish", "resume"])
+@pytest.mark.parametrize(
+    "failure",
+    [
+        "missing_progress",
+        "empty_progress",
+        "malformed_progress",
+        "truncated_progress",
+        "duplicate_start",
+        "duplicate_end",
+        "wrong_progress_order",
+        "missing_end",
+        "extra_progress",
+        "wrong_progress_attempt",
+        "wrong_progress_task",
+        "wrong_progress_digest",
+        "wrong_progress_schema",
+        "boolean_progress_episode",
+        "unknown_progress_event",
+        "nonobject_progress",
+        "blank_progress_line",
+        "missing_cleanup",
+        "malformed_cleanup",
+        "nonobject_cleanup",
+        "reset_ok_false",
+        "reset_ok_string",
+        "missing_reset_ok",
+        "cleanup_error",
+        "rollout_error",
+        "media_error",
+        "missing_error_field",
+        "missing_session",
+        "null_session",
+        "none_string_session",
+        "empty_session",
+        "nonstring_session",
+        "malformed_session",
+        "wrong_slot_session",
+    ],
+)
+def test_progress_and_local_cleanup_required_for_commit_and_resume(tmp_path, media, validation_stage, failure):
+    task = tmp_path / "CloseFridge"
+    attempt = start_attempt(task, digest=DIGEST, resume=False)
+    populate(attempt, media)
+    if validation_stage == "resume":
+        finish_attempt(attempt, **options())
+    progress_path = attempt / "episode_progress.jsonl"
+    progress = [json.loads(line) for line in progress_path.read_text().splitlines()]
+    cleanup_path = attempt / "rollout00_cleanup.json"
+    cleanup = json.loads(cleanup_path.read_text())
+    if failure == "missing_progress":
+        progress_path.unlink()
+    elif failure == "empty_progress":
+        progress_path.write_bytes(b"")
+    elif failure == "malformed_progress":
+        progress_path.write_text("{broken}\n")
+    elif failure == "truncated_progress":
+        progress_path.write_text(progress_path.read_text().rstrip("\n"))
+    elif failure == "blank_progress_line":
+        progress_path.write_text(progress_path.read_text() + "\n")
+    elif failure == "missing_cleanup":
+        cleanup_path.unlink()
+    elif failure == "malformed_cleanup":
+        cleanup_path.write_text("{broken}\n")
+    elif failure == "nonobject_cleanup":
+        write_json(cleanup_path, [])
+    elif failure in {
+        "reset_ok_false",
+        "reset_ok_string",
+        "missing_reset_ok",
+        "cleanup_error",
+        "rollout_error",
+        "media_error",
+        "missing_error_field",
+        "missing_session",
+        "null_session",
+        "none_string_session",
+        "empty_session",
+        "nonstring_session",
+        "malformed_session",
+        "wrong_slot_session",
+    }:
+        if failure == "reset_ok_false":
+            cleanup["reset_ok"] = False
+        elif failure == "reset_ok_string":
+            cleanup["reset_ok"] = "true"
+        elif failure == "missing_reset_ok":
+            cleanup.pop("reset_ok")
+        elif failure in {"cleanup_error", "rollout_error", "media_error"}:
+            cleanup[failure] = "injected failure"
+        elif failure == "missing_error_field":
+            cleanup.pop("media_error")
+        elif failure == "missing_session":
+            cleanup.pop("session_id")
+        else:
+            cleanup["session_id"] = {
+                "null_session": None,
+                "none_string_session": "None",
+                "empty_session": "",
+                "nonstring_session": True,
+                "malformed_session": "unverified-id",
+                "wrong_slot_session": f"{'a' * 32}:1:{'b' * 32}",
+            }[failure]
+        write_json(cleanup_path, cleanup)
+    else:
+        if failure == "duplicate_start":
+            progress.insert(1, dict(progress[0]))
+        elif failure == "duplicate_end":
+            progress.insert(2, dict(progress[1]))
+        elif failure == "wrong_progress_order":
+            progress[0], progress[1] = progress[1], progress[0]
+        elif failure == "missing_end":
+            progress.pop()
+        elif failure == "extra_progress":
+            progress += [dict(progress[0], episode=2), dict(progress[1], episode=2)]
+        elif failure == "wrong_progress_attempt":
+            progress[1]["evaluation_attempt_id"] = "CloseFridge/attempt_9999"
+        elif failure == "wrong_progress_task":
+            progress[1]["evaluation_attempt_id"] = "NavigateKitchen/attempt_0001"
+        elif failure == "wrong_progress_digest":
+            progress[1]["evaluation_run_digest"] = "b" * 64
+        elif failure == "wrong_progress_schema":
+            progress[1]["schema"] = "foreign_v0"
+        elif failure == "boolean_progress_episode":
+            progress[0]["episode"] = False
+        elif failure == "unknown_progress_event":
+            progress[1]["event"] = "complete"
+        elif failure == "nonobject_progress":
+            progress[0] = []
+        write_jsonl(progress_path, progress)
+    original = {path.name: path.read_bytes() for path in attempt.iterdir()}
+    with pytest.raises(ValueError):
+        if validation_stage == "finish":
+            finish_attempt(attempt, **options())
+        else:
+            find_completed_attempt(task, **options())
+    assert {path.name: path.read_bytes() for path in attempt.iterdir()} == original
+    marker = json.loads((attempt / "attempt.json").read_text())
+    assert marker["status"] == ("RUNNING" if validation_stage == "finish" else "COMPLETE")

@@ -79,13 +79,15 @@ An exclusive manifest claim and nonblocking namespace lease prevent concurrent w
   screening_summary.json
 ```
 
+Task rows and the overall summary report environment recordings in `rollout_mp4s` and model-prediction recordings in `generated_mp4s`. Turning off environment recording leaves the former empty even when generated videos are enabled; failed/partial attempts retain the same classification.
+
 Manifest identity binds Root, Child/Gitlink, checkpoint model metadata+shard stat witnesses (not full payload hashes), frozen model Config hash, selected task metadata, dependency source/native identity, interpreter/import context, seeds, horizons, video settings, timeouts and GPU mapping. Inference requires model DCP files, not `optim/`; it never reads training optimizer state. The actual simulator reruns the vendor probe and must reproduce the expected digest before creating an environment. Its witness is required for task completion/resume.
 
 Recorded data-generator versions/unknown Git commits and actual evaluation runtime are separate manifest fields. RoboCasa1.0.1 is the chosen evaluation runtime; equivalence with the recorded 0.5.1 generator is **not proven**. Historical diagnostic SRs remain diagnostic.
 
 Server startup, request, episode wall, task wall and terminate-grace deadlines have distinct meanings. Task timing includes server startup, rollout and final evidence/media validation. Cancellation or failure reclaims only owned process groups, TERM then KILL/reap if necessary; it does not kill foreign listeners or training processes. Some cleanup can extend beyond task wall by bounded terminate grace. Each task gets a new server, including after a previous failure. The default infrastructure-error policy is `stop`; explicit `continue_with_new_server` can collect screening evidence, while the entire run still reports INCOMPLETE and nonzero exit. Original errors and cleanup errors remain visible.
 
-A COMPLETE summary requires every selected task, every expected episode, successful infrastructure cleanup, typed outcomes and required valid evidence. Behavioral failure counts in the denominator. Runtime errors never silently disappear from SR: formal `sr` is null for incomplete runs, and `partial_sr` is labeled separately. Keep all partial actions, JSON, videos and logs for review.
+A COMPLETE summary requires every selected task, every expected episode, successful infrastructure cleanup, typed outcomes and required valid evidence. Episode progress must contain exactly the ordered start/end pairs with the same Run and Task/Attempt identity. Each episode must also have a Local-TTT cleanup witness with a valid slot0 session ID, successful reset and no rollout/media/cleanup error; process termination alone does not substitute for that witness. Behavioral failure counts in the denominator. Runtime errors never silently disappear from SR: formal `sr` is null for incomplete runs, and `partial_sr` is labeled separately. Keep all partial actions, JSON, videos and logs for review.
 
 ## Resume whole tasks only
 
@@ -98,7 +100,7 @@ bash scripts/run_robocasa_eval.sh \
   --run-name iter8900_demo --save-generated-video first --resume
 ```
 
-Only an entire COMPLETE task with matching identity, valid in-process runtime/cleanup witness and media/audits is skipped. A RUNNING/FAILED task receives a new exclusive `attempt_0002` directory and restarts from episode 0 with the original seed and sequential reset protocol. Earlier episodes are never stitched across attempts. Result, action, prediction and generated-video records bind the `Task/Attempt` ID, so copied episodes from another attempt reject validation. Corrupted COMPLETE evidence or ambiguous multiple complete attempts fail closed for investigation; they are not overwritten. Unknown legacy task output is not imported. Old cross-source runs require new namespaces and cannot be presented as same-identity resume.
+Only an entire COMPLETE task with matching identity, valid in-process runtime, per-Episode Local cleanup, complete progress and media/audits is skipped. The same strict checks apply again during resume; missing or damaged progress/cleanup evidence rejects the skip. A RUNNING/FAILED task receives a new exclusive `attempt_0002` directory and restarts from episode 0 with the original seed and sequential reset protocol. Earlier episodes are never stitched across attempts. Result, action, prediction and generated-video records bind the `Task/Attempt` ID, so copied episodes from another attempt reject validation. Corrupted COMPLETE evidence or ambiguous multiple complete attempts fail closed for investigation; they are not overwritten. Unknown legacy task output is not imported. Old cross-source runs require new namespaces and cannot be presented as same-identity resume.
 
 ## Review boundary
 
