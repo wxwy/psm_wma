@@ -423,3 +423,6 @@
 - V3-FUTURE-PHASE5-CONFIG-TRUTH: IN_PROGRESS on isolated Root/Child v3-phase5-config-truth-20261021 after HIGH07 author delivery. Future-job compatibility snapshot and versioned launch provenance only; no mainline merge or old-job migration. Separate implementation/Evidence/STOP.
 - V3-FUTURE-PHASE5-CONFIG-TRUTH: REVIEW; author lock-aligned CPU47+32subtests/static PASS. Child/Root isolated candidate publication and pair-bound diff/Evidence handoff; no mainline merge or independent verdict. New-job strict same-source lifecycle tested, old G1 unmodified/unsupported cross-pair migration remains rejected.
 - V3-CONFIG-TRUTH-MAINLINE-MERGE: REVIEW after source-hash verification and non-force publication. New Root integration/Child35b0ea1 requires independent review; existing author47+32CPU/static evidence retained, no execution authorization.
+
+## V3-G1-ITER8900-CROSS-PAIR-RESUME — 2026-10-22
+- REVIEW; Codex author isolated implementation Rootb910304dbf493eb5babe26cf1b055edc8477b386 / Child-Gitlink61bfa94766d33d95a7fa9771857d0f2fb3f0b405; Evidence5fe6a513baa870c06f3186903b99e9bba80bb084.115passed+32subtests/static PASS. Need GPT new-Pair review/DS real-file read-only CPU; no mainline code merge or training execution. Owner design APPROVE remains distinct from implementation/Resume permission.
