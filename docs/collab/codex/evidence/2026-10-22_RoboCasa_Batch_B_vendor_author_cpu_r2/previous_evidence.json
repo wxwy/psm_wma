@@ -1,0 +1,8 @@
+{
+  "source_root": "2b14ef1a6b13be0c0dea405231506323594d81f2",
+  "docs_head": "e5084fc5e1422a39c6d8f73fe32de4c633811320",
+  "path": "docs/collab/codex/evidence/2026-10-22_RoboCasa_Batch_B_vendor_author_cpu",
+  "artifact_manifest_sha256": "7a300f0ec4085edea9bb214a71b94527b6929814b41f77a7ab0489f54a1d98b0",
+  "immutable_r1_evidence_retained": true,
+  "same_vendor_commit_patch_base_and_native_behavior": true
+}

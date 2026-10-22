@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.027" timestamp="2026-10-22T04:25:28.346995+00:00" hostname="d4ae95e8e7b1"><testcase classname="" name="test_unicode_bytes_must_match_existing_identity_contract" time="0.005"><failure message="assert b'{&quot;path&quot;:&quot;\\...8f93\\u51fa&quot;}' == b'{&quot;path&quot;:&quot;\x...xe5\x87\xba&quot;}'&#10;  &#10;  At index 9 diff: b'\\' != b'\xe5'&#10;  Use -v to get more diff">def test_unicode_bytes_must_match_existing_identity_contract():
+        spec=importlib.util.spec_from_file_location('vendor_r1',Path(__file__).with_name('vendor_source_r1.py'))
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        value={'path':'厨房/评测输出'}
+        expected=json.dumps(value,sort_keys=True,ensure_ascii=False,separators=(',',':'),allow_nan=False).encode()
+&gt;       assert module.canonical(value)==expected
+E       assert b'{"path":"\\...8f93\\u51fa"}' == b'{"path":"\x...xe5\x87\xba"}'
+E         
+E         At index 9 diff: b'\\' != b'\xe5'
+E         Use -v to get more diff
+
+/tmp/psm-v3-vendor-b-20261022/unicode_baseline_probe.py:11: AssertionError</failure></testcase></testsuite></testsuites>

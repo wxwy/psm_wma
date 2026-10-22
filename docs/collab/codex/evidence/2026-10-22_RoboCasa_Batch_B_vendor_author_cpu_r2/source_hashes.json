@@ -1,0 +1,12 @@
+{
+  "scripts/robocasa_vendor.py": "bb221444bfa14fe4dfac86d066c2bc3cca38c1997451d96613f334260aea2b51",
+  "tools/v3/build_robocasa_vendor.py": "37bf9c2072cd0dea85fe1a84badabc076c2659d0c9e606278853d3898dfefd57",
+  "tools/v3/robocasa_vendor_test.py": "d53bcdf8e05f1659c262b79ab1a845ed805c49a77bf0a6740c2084bff671e070",
+  "third_party/robosuite_patches/README.md": "0d93e1b869a638d09e12c6abf15d589d0ca85e80f460eefc52c784387fc118c8",
+  "third_party/robosuite_patches/vendor.lock.json": "5f0111957a7da980918f4f6a745883632766dd249744bb94485e156591a00a0e",
+  "third_party/robosuite_patches/UPSTREAM_LICENSE": "177978cbece0a4c454c2aaec5b3f145b39270814874c43109da9e829c39d9cba",
+  "third_party/robosuite_patches/0001-robocasa-1.0.1-compatibility.patch": "36184d6a5ddaa7371be89ba332f72bc89a18e8d0a7a0e36119e7215f9a465d30",
+  "third_party/robosuite_patches/cpu-test-requirements.txt": "0423b15c0b32e0437224b68629c5cf6b4145c80676df55142411664df46cae06",
+  "third_party/robosuite_patches/source_provenance.json": "b2f554189df7287607546b8b74b444b47bbdb82c3980f3f38ea0c305500fd430",
+  "third_party/robosuite_patches/runtime-requirements.txt": "45ab18614d8c8e734a35be25fa412d2d1a68153262b96e1dacdd4eeb5393e054"
+}

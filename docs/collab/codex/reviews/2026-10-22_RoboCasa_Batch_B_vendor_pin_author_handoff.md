@@ -8,7 +8,7 @@ MjData, reset/step, renderer, GPU, Action Server, model or training was started.
 
 | Item | Exact value |
 |---|---|
-| Root Implementation | `2b14ef1a6b13be0c0dea405231506323594d81f2` |
+| Root Implementation (r2) | `891801bf44736e1eaf44b91377f98c5c5035edd0` |
 | Child / Gitlink, unchanged | `35b0ea1ccee9ee26653ed6589c484f0997d1c586` |
 | Root candidate ref | `v3-robocasa-vendor-b-20261022` |
 | Root baseline | `d6b2484fa9f4ff5775ea1f13f3fcaf973ce499e8` |
@@ -95,13 +95,14 @@ the full real launch. The old manual launcher command is still not implemented h
 
 ## Author CPU results and limitations
 
-[Evidence directory](../evidence/2026-10-22_RoboCasa_Batch_B_vendor_author_cpu/) contains
+[Final r2 evidence](../evidence/2026-10-22_RoboCasa_Batch_B_vendor_author_cpu_r2/) and
+[immutable r1 evidence](../evidence/2026-10-22_RoboCasa_Batch_B_vendor_author_cpu/) contain
 gate.json, exact Root patch, vendor build/behavior witnesses, raw logs/JUnit, package and
 source hashes, source-protection proof and expected-red baseline probe.
 
 | Check | Result |
 |---|---|
-| Final focused cases | **109 passed**, 0 failures/errors/skips,16.24s |
+| Final focused cases | **110 passed**, 0 failures/errors/skips,15.89s |
 | Original v1.5.2 baseline | Expected RED:4 failures, exit1 |
 | Two independent local builds | Same clean vendor commit/tree |
 | Ruff0.12.7 check/format | PASS for all3 new project Python files |
@@ -121,7 +122,7 @@ Failure history: the first offline build requested unnecessary historical blobs 
 partial cache; local shallow fetch fixes that without network or edits to caches. Initial
 two XML tests lacked the original `models.assets_root` package constant in the registration
 fixture; restoring that constant fixed the fixture. Intermediate77/92/107-case runs are
-superseded by109, not added to the total. No skip/xfail or weakened physics assertion.
+superseded by110, not added to the total. No skip/xfail or weakened physics assertion.
 Canonical unified-patch context whitespace and verbatim upstream license bytes are exempt
 from Root plain-text whitespace normalization; actual vendor/source diffs pass separately.
 
@@ -173,3 +174,21 @@ camera/state/seed/target/reset witnesses remain a separate Owner-authorized Gate
 data-generation0.5.1 commit and equivalence remain unknown; historical5% SR stays diagnostic.
 Stop after publication; no deployment, A/G1/C merge, GPU/simulation or training authorization
 is inferred from this handoff.
+
+## r2 author correction / precise review target
+
+The current Formal Root is **891801bf44736e1eaf44b91377f98c5c5035edd0**, superseding the
+first2b14ef1a implementation. After r1 publication the author found a real new-API bug:
+JSON canonical bytes escaped non-ASCII characters, while the unchanged existing claim/
+Resume helper hashes UTF-8 directly. The original2b14 source reproduces exactly1 RED case.
+New canonical bytes match the existing contract; a new test uses the actual unchanged
+claim_evaluation_run to claim Unicode paths, resume the same identity, and reject a
+changed runtime. Complete final110 cases pass. The correction touches only new helper
+and focused test plus ledgers; no vendor/Child/old source change.
+
+All r1 evidence remains byte-for-byte retained at its previous docs SHA e5084fc5; its
+109-case result is historical and not the current review target. r2 supplies full current
+source hashes/diff, the tiny r1→r2 source diff, final logs/XML/static results, and the
+expected-red original-source snapshot/probe. All original vendor builds/native/model/
+source-provenance evidence remains applicable because vendor1ac17458 and its patch bytes
+are unchanged. Do not substitute r1's source hash for r2's new project helper/test hash.

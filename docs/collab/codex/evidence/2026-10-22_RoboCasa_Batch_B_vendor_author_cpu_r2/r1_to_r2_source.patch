@@ -1,0 +1,44 @@
+diff --git a/scripts/robocasa_vendor.py b/scripts/robocasa_vendor.py
+index b88d2e96..cea8e84a 100644
+--- a/scripts/robocasa_vendor.py
++++ b/scripts/robocasa_vendor.py
+@@ -30 +30,2 @@ def canonical(value) -> bytes:
+-    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++    # Match v3_evaluation_identity._canonical for non-ASCII paths/metadata too.
++    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
+diff --git a/tools/v3/robocasa_vendor_test.py b/tools/v3/robocasa_vendor_test.py
+index 6220fb50..0d738aa0 100644
+--- a/tools/v3/robocasa_vendor_test.py
++++ b/tools/v3/robocasa_vendor_test.py
+@@ -640,0 +641,31 @@ def test_target_kitchens_and_object_split_match_pinned_official_protocol(checkou
++
++
++def test_unicode_verified_manifest_uses_original_claim_and_strict_resume(tmp_path, monkeypatch):
++    import v3_evaluation_identity as base_identity
++
++    meta = tmp_path / "厨房/extras/dataset_meta.json"
++    meta.parent.mkdir(parents=True)
++    meta.write_text('{"robocasa_version":"0.5.1"}')
++    runtime = {"packages": {"robocasa": {"distribution_version": "1.0.1"}}, "digest": "runtime-digest"}
++    monkeypatch.setattr(
++        vendor,
++        "collect_runtime",
++        lambda **kw: {"evaluation_runtime": runtime, "runtime_probe_evidence": {"stdout": "诊断日志"}},
++    )
++    monkeypatch.setattr(
++        base_identity,
++        "build_evaluation_identity",
++        lambda **kw: {"identity": {"protocol": kw["protocol"]}, "digest": "ignored"},
++    )
++    bundle = vendor.build_verified_evaluation_identity(
++        sim_python=Path(sys.executable), tasks=[("CloseFridge", meta.parent.parent)], protocol={"note": "厨房评测"}
++    )
++    manifest = bundle["manifest"]
++    output = tmp_path / "评测输出"
++    assert base_identity.claim_evaluation_run(output, manifest, resume=False) == manifest["digest"]
++    assert base_identity.claim_evaluation_run(output, manifest, resume=True) == manifest["digest"]
++    foreign = copy.deepcopy(manifest)
++    foreign["identity"]["evaluation_runtime"]["digest"] = "foreign-runtime"
++    foreign["digest"] = hashlib.sha256(vendor.canonical(foreign["identity"])).hexdigest()
++    with pytest.raises(ValueError, match="identity changed"):
++        base_identity.claim_evaluation_run(output, foreign, resume=True)

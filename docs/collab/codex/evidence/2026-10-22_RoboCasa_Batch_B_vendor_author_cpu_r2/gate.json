@@ -1,0 +1,84 @@
+{
+  "schema": "psm_robocasa_batch_b_author_cpu_v1",
+  "status": "AUTHOR_SOURCE_CPU_PASS",
+  "independent_review": "PENDING",
+  "physical_compatibility_gate": "OPEN_NO_REAL_ENV_AUTHORIZATION",
+  "root_implementation": "891801bf44736e1eaf44b91377f98c5c5035edd0",
+  "child_gitlink_unchanged": "35b0ea1ccee9ee26653ed6589c484f0997d1c586",
+  "source_baseline": "d6b2484fa9f4ff5775ea1f13f3fcaf973ce499e8",
+  "candidate_ref": "v3-robocasa-vendor-b-20261022",
+  "robocasa": {
+    "url": "https://github.com/robocasa/robocasa.git",
+    "commit": "6f90063c0ec2b9916bbd977368b54c98d9c2d908",
+    "package_version": "1.0.1"
+  },
+  "robosuite_vendor_commit": "1ac174585293ed998ffc9cf73e47439798cf6f6c",
+  "robosuite_patch_base": "824ac14cefcfb7ec125fe5eb2e0bad7364466154",
+  "robosuite_vendor_tree": "195e30cfd5d37289d227a89234bd8bb069792905",
+  "patch_sha256": "36184d6a5ddaa7371be89ba332f72bc89a18e8d0a7a0e36119e7215f9a465d30",
+  "vendor_delivery": "root-hosted verified patchset + deterministic commit reconstruction, not an ARISE remote branch",
+  "CPU": {
+    "passed": 110,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 15.89,
+    "log": "final-r2.log",
+    "junit": "final-r2.xml",
+    "real_native_xml_compile": true,
+    "real_controller_source_synthetic_sim": true,
+    "lifecycle_original_bodies_synthetic_boundaries": true,
+    "runtime_positive_import_metadata_doubles": true
+  },
+  "baseline_red": {
+    "reference": "824ac14cefcfb7ec125fe5eb2e0bad7364466154",
+    "failures_expected": 4,
+    "exit_expected": 1
+  },
+  "full_runtime_CLI": {
+    "status": "EXPECTED_BLOCKED_IN_AUTHOR_CPU_VENV",
+    "reason": "full robosuite/RoboCasa distributions and full simulator environment not installed; no false positive based on source checkout",
+    "log": "runtime-cli-r2-expected-blocked.log"
+  },
+  "static": {
+    "ruff": "0.12.7",
+    "root_changed_python_files": 3,
+    "check": "PASS",
+    "format": "PASS",
+    "syntax": "PASS",
+    "vendor_patched_files_syntax": 8,
+    "source_diff_check": "PASS",
+    "whitespace_exemptions": [
+      "canonical unified patch context lines",
+      "verbatim UPSTREAM_LICENSE",
+      "raw logs/XML"
+    ]
+  },
+  "native_runtime": {
+    "mujoco": "3.3.1",
+    "numpy": "2.2.5",
+    "world_multiccd_false_flags": 0,
+    "world_multiccd_true_flags": 16,
+    "sleeping_islands": false,
+    "sleep_true_supported": false
+  },
+  "official_horizons": {
+    "CloseFridge": 900,
+    "NavigateKitchen": 450
+  },
+  "real_kitchen_env_created": false,
+  "MjData_or_step_or_renderer_created": false,
+  "GPU_or_model_or_training_started": false,
+  "G1_or_target_DS_paths_accessed": false,
+  "DS_original_diff_bytes_verified": false,
+  "generation_git_commit": "UNKNOWN",
+  "generation_runtime_equivalence": "NOT_PROVEN",
+  "queue_A_G1_or_C_source_integrated": false,
+  "revision": "r2_supersedes_2b14ef1a_for_source_review",
+  "unicode_baseline_red": {
+    "source_root": "2b14ef1a6b13be0c0dea405231506323594d81f2",
+    "expected_failures": 1,
+    "log": "unicode-red.log"
+  },
+  "previous_immutable_evidence": "docs/collab/codex/evidence/2026-10-22_RoboCasa_Batch_B_vendor_author_cpu"
+}
