@@ -1,0 +1,248 @@
+{
+  "G1_COMPATIBILITY_WITNESS": [
+    {
+      "canonical_config_sha256": {
+        "config.pkl": "d280bc5f221f9308938fc7bf89a7524778f0f1829d048f41394682040d116746",
+        "config.yaml": "1ed32269f362fd4a667dd44dd5408667b0bc024e792a3784100cb8ee49789f84"
+      },
+      "checkpoint": "/tmp/pytest-of-agent/pytest-13/test_historical_digest_matches0/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/checkpoints/iter_000008900",
+      "config_digest": "0c9d717d18b82beada44ac7cf57c5c9cb0b267b8eda2508b8fad3f95df11367d",
+      "frozen_launch": {
+        "path": "/tmp/pytest-of-agent/pytest-13/test_historical_digest_matches0/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/launches/frozen_fresh/launch.json",
+        "sha256": "84f0f7649d43498ab4ae92b28d6f4b23114e66540b779185e782e0144b72ca2f"
+      },
+      "frozen_semantic_digest": "833b7a3081f5feb314f6f7f18ac8e8210ef9c7d73efba37abfa1f47888e97959",
+      "frozen_source": {
+        "child": "2d128ed5a07601cdd424974f99b67832eafeeb41",
+        "root": "e0121d34592d10323ede480eb3409468a07371ba"
+      },
+      "iteration": 8900,
+      "owner_flag": "--owner-authorized-g1-cross-pair-resume",
+      "owner_override": true,
+      "phase5_digest": "5330563b6345f4905a5da4b960a2f3a204c085e5356663da0c2f5068035b51b5",
+      "rank_sidecars": {
+        "0": {
+          "bytes": 12882,
+          "sha256": "bc2b672141cf3507da0002d69aa78c77cfe44dfb807aa86631d707c063d6af66"
+        },
+        "1": {
+          "bytes": 12882,
+          "sha256": "5911f584e4a13a4ee3d078275c33fe0f55d9c44f826d16229c0c2037c8b40e7b"
+        },
+        "2": {
+          "bytes": 12882,
+          "sha256": "5a24d7c56a7057177a1d9313957ca343dddad7f00116adfc008ed8d87ee21b42"
+        },
+        "3": {
+          "bytes": 12881,
+          "sha256": "35184957d5929d44c941bbd11bc4e661ce148fc474d7102d736197a038a91b80"
+        },
+        "4": {
+          "bytes": 12881,
+          "sha256": "6aba77dcd9f60ecdcf0f2fe141cc3caa552716c9aa98117e7a5d1af08f54591a"
+        },
+        "5": {
+          "bytes": 12881,
+          "sha256": "bf70172e18539d2d5c5be4a5a78e9a36890a81c641330f857d4d01c748dd4c13"
+        },
+        "6": {
+          "bytes": 12884,
+          "sha256": "51227551c83eba64af0a6713a5df12db52163b4393642fe714f4e0ea0292543b"
+        },
+        "7": {
+          "bytes": 12881,
+          "sha256": "7f0714b270814c6c52592da7bc228ac08411d62725431107547e5490483c94d2"
+        }
+      },
+      "runtime_semantic_digest": "cfbceab6d7f296edbc8b9cb972f3b3736503a0aa2ef13766b2ae15316962326d",
+      "runtime_source": {
+        "allowed_root_noncode_changes": 0,
+        "child": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "gitlink": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "root": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "schema": "g1_iter8900_owner_cross_pair_resume_v1",
+      "validation": {
+        "all_rank_digest_iteration_source_provenance": "PASS",
+        "full_component_presence": "PASS",
+        "non_source_semantics": "PASS",
+        "optimizer_scheduler_rng_cursor_fast_state_restoration": "PENDING_UNCHANGED_STRICT_RUNTIME_LOAD"
+      }
+    }
+  ],
+  "G1_ASSET_IMMUTABILITY": [
+    {
+      "after_original": {
+        "checkpoints/iter_000008900/dataloader/rank_0.pkl": [
+          "62aa90f8c5ef13405b1120b550d17712deb9a179c95ec6d603d749238f9158c2",
+          1792635074472025048
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_1.pkl": [
+          "4a1c5cabc0a15bc68f5c2f0a079d06ee86d4c405d7d0d6b6e4729f1fc239df5c",
+          1792635074475390157
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_2.pkl": [
+          "d4fd6ea64c349b86757c168e7f00112d3cff794cac53d865b7c86e49faa36df5",
+          1792635074478981826
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_3.pkl": [
+          "82f24fc775f43f1673146ff161f9fbe5a5be5762b496ba047e72b3a0df7108f1",
+          1792635074479397945
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_4.pkl": [
+          "bff6d8deef16d3816a0c3f65c57a23cfcc47c430a3f122683279d6ff2e150e92",
+          1792635074483397921
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_5.pkl": [
+          "d7e6dd1c46271086dd762a4a424971568afa0a1c0e60b824f3eeb6af20a181a3",
+          1792635074488813351
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_6.pkl": [
+          "dc6a9e2513679701d080114f24cad399456d197fb03ee39e54dfeb5d41dbebe2",
+          1792635074492107976
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_7.pkl": [
+          "b68a91d915a601c3f85184a4a494c16e6d359fde8c3c434d1a94314c706fc1b5",
+          1792635074495378086
+        ],
+        "checkpoints/iter_000008900/model/.metadata": [
+          "2b8eb7b526d5be20fadc675b2276ac8f8f2339cdb027f9d4277f21842cf9501b",
+          1792635074468627085
+        ],
+        "checkpoints/iter_000008900/optim/.metadata": [
+          "2b8eb7b526d5be20fadc675b2276ac8f8f2339cdb027f9d4277f21842cf9501b",
+          1792635074468653453
+        ],
+        "checkpoints/iter_000008900/scheduler/.metadata": [
+          "2b8eb7b526d5be20fadc675b2276ac8f8f2339cdb027f9d4277f21842cf9501b",
+          1792635074468678753
+        ],
+        "checkpoints/iter_000008900/trainer/.metadata": [
+          "2b8eb7b526d5be20fadc675b2276ac8f8f2339cdb027f9d4277f21842cf9501b",
+          1792635074468702377
+        ],
+        "checkpoints/latest_checkpoint.txt": [
+          "9a871eb54ef4d807f10db2164d2bc48cdc5ff75f40cf43b3e237181131c400ce",
+          1792635074495484324
+        ],
+        "config.pkl": [
+          "d280bc5f221f9308938fc7bf89a7524778f0f1829d048f41394682040d116746",
+          1792635074468260085
+        ],
+        "config.yaml": [
+          "1ed32269f362fd4a667dd44dd5408667b0bc024e792a3784100cb8ee49789f84",
+          1792635074468213167
+        ],
+        "launch.lock": [
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          1792635074495484324
+        ],
+        "launches/frozen_fresh/config.pkl": [
+          "d280bc5f221f9308938fc7bf89a7524778f0f1829d048f41394682040d116746",
+          1792635074468541875
+        ],
+        "launches/frozen_fresh/config.yaml": [
+          "1ed32269f362fd4a667dd44dd5408667b0bc024e792a3784100cb8ee49789f84",
+          1792635074468515023
+        ],
+        "launches/frozen_fresh/launch.json": [
+          "99bee5c4c704ce146b6b251b7447d5c11b6c40ef592e4e87dd474938e801f142",
+          1792635074468564655
+        ],
+        "v3_job_identity.json": [
+          "98516d88d697bb4ffb7ff19046f18795eb45913d80910224fb24180951f796d2",
+          1792635074468428902
+        ]
+      },
+      "before": {
+        "checkpoints/iter_000008900/dataloader/rank_0.pkl": [
+          "62aa90f8c5ef13405b1120b550d17712deb9a179c95ec6d603d749238f9158c2",
+          1792635074472025048
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_1.pkl": [
+          "4a1c5cabc0a15bc68f5c2f0a079d06ee86d4c405d7d0d6b6e4729f1fc239df5c",
+          1792635074475390157
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_2.pkl": [
+          "d4fd6ea64c349b86757c168e7f00112d3cff794cac53d865b7c86e49faa36df5",
+          1792635074478981826
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_3.pkl": [
+          "82f24fc775f43f1673146ff161f9fbe5a5be5762b496ba047e72b3a0df7108f1",
+          1792635074479397945
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_4.pkl": [
+          "bff6d8deef16d3816a0c3f65c57a23cfcc47c430a3f122683279d6ff2e150e92",
+          1792635074483397921
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_5.pkl": [
+          "d7e6dd1c46271086dd762a4a424971568afa0a1c0e60b824f3eeb6af20a181a3",
+          1792635074488813351
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_6.pkl": [
+          "dc6a9e2513679701d080114f24cad399456d197fb03ee39e54dfeb5d41dbebe2",
+          1792635074492107976
+        ],
+        "checkpoints/iter_000008900/dataloader/rank_7.pkl": [
+          "b68a91d915a601c3f85184a4a494c16e6d359fde8c3c434d1a94314c706fc1b5",
+          1792635074495378086
+        ],
+        "checkpoints/iter_000008900/model/.metadata": [
+          "2b8eb7b526d5be20fadc675b2276ac8f8f2339cdb027f9d4277f21842cf9501b",
+          1792635074468627085
+        ],
+        "checkpoints/iter_000008900/optim/.metadata": [
+          "2b8eb7b526d5be20fadc675b2276ac8f8f2339cdb027f9d4277f21842cf9501b",
+          1792635074468653453
+        ],
+        "checkpoints/iter_000008900/scheduler/.metadata": [
+          "2b8eb7b526d5be20fadc675b2276ac8f8f2339cdb027f9d4277f21842cf9501b",
+          1792635074468678753
+        ],
+        "checkpoints/iter_000008900/trainer/.metadata": [
+          "2b8eb7b526d5be20fadc675b2276ac8f8f2339cdb027f9d4277f21842cf9501b",
+          1792635074468702377
+        ],
+        "checkpoints/latest_checkpoint.txt": [
+          "9a871eb54ef4d807f10db2164d2bc48cdc5ff75f40cf43b3e237181131c400ce",
+          1792635074495484324
+        ],
+        "config.pkl": [
+          "d280bc5f221f9308938fc7bf89a7524778f0f1829d048f41394682040d116746",
+          1792635074468260085
+        ],
+        "config.yaml": [
+          "1ed32269f362fd4a667dd44dd5408667b0bc024e792a3784100cb8ee49789f84",
+          1792635074468213167
+        ],
+        "launch.lock": [
+          "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          1792635074495484324
+        ],
+        "launches/frozen_fresh/config.pkl": [
+          "d280bc5f221f9308938fc7bf89a7524778f0f1829d048f41394682040d116746",
+          1792635074468541875
+        ],
+        "launches/frozen_fresh/config.yaml": [
+          "1ed32269f362fd4a667dd44dd5408667b0bc024e792a3784100cb8ee49789f84",
+          1792635074468515023
+        ],
+        "launches/frozen_fresh/launch.json": [
+          "99bee5c4c704ce146b6b251b7447d5c11b6c40ef592e4e87dd474938e801f142",
+          1792635074468564655
+        ],
+        "v3_job_identity.json": [
+          "98516d88d697bb4ffb7ff19046f18795eb45913d80910224fb24180951f796d2",
+          1792635074468428902
+        ]
+      },
+      "new_launch": "fd974a9f3aa04c21ae9814ad93a7b223"
+    }
+  ],
+  "DIGEST_INVARIANT": [
+    {
+      "fresh100": "e00a1e655a32afaf724fdfadf639cf6efa0d624d1b068ff4ceed10a8e1ecb9a1",
+      "resume500": "e00a1e655a32afaf724fdfadf639cf6efa0d624d1b068ff4ceed10a8e1ecb9a1"
+    }
+  ]
+}

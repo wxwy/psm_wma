@@ -1,0 +1,32 @@
+{
+  "base_child": "35b0ea1ccee9ee26653ed6589c484f0997d1c586",
+  "unchanged_whole_function_or_class_ast": [
+    "_load_runtime",
+    "training_identity",
+    "config_digest",
+    "_identity_value",
+    "overlay_config",
+    "_execution_stop_iteration",
+    "main",
+    "job_namespace",
+    "_audit_root_noncode_changes"
+  ],
+  "unchanged_protected_child_sha256": {
+    "cosmos_framework/checkpoint/dcp.py": "e3bbe253876a4b1d1e73086f556f479c9edf1318ca62ea7011f984a2ab8276d9",
+    "cosmos_framework/trainer/__init__.py": "80012a0550db83e85264eb9d338ed0937f7301925ba70017c00e520a1cacb572",
+    "cosmos_framework/trainer/local_memory_grouped.py": "18be72fe6d37e1487c8553e19a0c0f70e1e3f8b895d880b718a7f8f38a6cacb1",
+    "cosmos_framework/trainer/local_memory_grouped_resume.py": "40101a2d8785f8bc841ec1b3728cd70c530e35d6f91bec2e54ef828c61dfca23",
+    "cosmos_framework/model/generator/mot/robocasa_exact_window_local.py": "fe4dcc1832c8ada2c2db935472bc10ac6097d870036e5e13162b8babe8e899aa",
+    "cosmos_framework/model/generator/mot/local_memory_grouped_window.py": "42cdca2fe1ded88d3cfdeb06c3d3063a1134a69bf3f1c5853a10717974ff1e42",
+    "cosmos_framework/model/generator/mot/local_evidence.py": "38eeee4ca2f99691387d93fa21896ae4179d059cd440bc1c99711db194920c5a",
+    "examples/psm_wma_robocasa_effective_config.py": "4b6d89a5719926295e0c4f0c854e8b563fee67eff666c0b5df1e68a86c066731",
+    "examples/psm_wma_robocasa_phase5_f0_test.py": "32f3258ef410e2c66f7b32dcdd87c0fa5f4f6a6ae25b39c5bb899a9fe9506642",
+    "examples/psm_wma_robocasa_corrected_phase5_test.py": "cf9de3e9ace3556ff425ee73146aefee0f35465b341657f29b9a466997b4cf40",
+    "examples/psm_wma_robocasa_effective_config_test.py": "414c8af69333e148d59080f4d23fb6fda6bf2362f21686bddbe7df9f5b79bbb9"
+  },
+  "evaluation_queue_and_tests_unchanged": true,
+  "existing_regression_tests_bytes_unchanged": true,
+  "scope": "Phase5 explicit G1 identity/digest/audit readiness + targeted new CPU tests and Root launcher optional flag only",
+  "production_assets": false,
+  "gpu_or_torchrun": false
+}

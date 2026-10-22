@@ -1,0 +1,129 @@
+{
+  "scope": "G1_ITER8900_OWNER_CROSS_PAIR_RESUME_AUTHOR_CPU_ONLY",
+  "base_root": "1fc28effe9e33a2e6522f6ffe60c55c68f8b367c",
+  "base_child": "35b0ea1ccee9ee26653ed6589c484f0997d1c586",
+  "gpu": false,
+  "production_assets": false,
+  "real_dcp": false,
+  "bootstrap": "Only isolate eager unrelated Dataset registry. Original CPU Local restore/planner/state class bodies, small core dimensions, real Torch; no model/CUDA import factory.",
+  "environment_overrides": {
+    "PYTHONPATH": "/workspace/psm_wma/cosmos-framework",
+    "CUDA_VISIBLE_DEVICES": "",
+    "HF_HOME": "/workspace/.cache/huggingface",
+    "MPLCONFIGDIR": "/workspace/.cache/matplotlib",
+    "PYTHONPYCACHEPREFIX": "/tmp/psm-v3-g1-cross-pair-20261022/pycache",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "commands": [
+    {
+      "name": "ruff_check",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "ruff_format",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--check",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "syntax",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "-m",
+        "py_compile",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "shell",
+      "command": [
+        "bash",
+        "-n",
+        "/workspace/psm_wma/scripts/train_v3_packed128_staged.sh"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "pytest",
+      "command": [
+        "/workspace/.venvs/psm-wma-cpu/bin/python",
+        "/tmp/psm-v3-g1-cross-pair-20261022/pytest_cpu.py",
+        "--noconftest",
+        "-c",
+        "/tmp/psm-v3-g1-cross-pair-20261022/pytest.ini",
+        "-q",
+        "-s",
+        "-p",
+        "no:cacheprovider",
+        "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py",
+        "examples/psm_wma_robocasa_phase5_f0_test.py",
+        "examples/psm_wma_robocasa_effective_config_test.py",
+        "--junitxml=/tmp/psm-v3-g1-cross-pair-20261022/final-r1/pytest.xml"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "child_diff",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    },
+    {
+      "name": "root_diff",
+      "command": [
+        "git",
+        "-C",
+        "/workspace/psm_wma",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "returncode": 0
+    }
+  ],
+  "author_checks_passed": true,
+  "child_source_sha256": {
+    "examples/psm_wma_robocasa_corrected_phase5.py": "9afed5dda52d78382752a000c4413380b8a1511176bb3566ab475ff5adb80920",
+    "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py": "1ba3761f9798b4f623008e0260d0dbd5b1b5bdb27cd9e10e950662545f6eecec"
+  },
+  "root_source_sha256": {
+    "scripts/train_v3_packed128_staged.sh": "98bb24710d46dd7525d222179f82676c59bcc8f42622b467bbeeb1ba786e7af9"
+  },
+  "junit": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "147",
+      "time": "6.275",
+      "timestamp": "2026-10-22T02:11:11.238490+00:00",
+      "hostname": "d4ae95e8e7b1"
+    }
+  ]
+}

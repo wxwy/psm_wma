@@ -1,0 +1,56 @@
+diff --git a/SESSION.md b/SESSION.md
+index 14221e35..e11b2de6 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1493,0 +1494,13 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
++
++## 2026-10-22 — G1 iter8900 Owner-authorized cross-pair Resume claim
++- Current fetch/advertised V3 1fc28effe9e33a2e6522f6ffe60c55c68f8b367c fast-forward from e80a9309; consumed full new commits and canonical Inbox. Design APPROVE review 2026-10-22_G1_iter8900_Owner_override_cross_pair_resume_design_APPROVE.md and corresponding compatibility request read. Owner supersedes earlier old-checkout refusal; explicit code/CPU/commit authorization only, STOP before execution. Prior strict review/history preserved; no independent implementation verdict claimed and no legacy tmux/Multi-reviewer workflow applies against Owner scope.
++- Isolated Root/Child branches v3-g1-cross-pair-resume-20261022, base Root1fc28eff/Child35b0ea1. Allowed edits only Child examples/psm_wma_robocasa_corrected_phase5.py, focused CPU tests, minimal Root staged-launcher optional flag/wiring, notes/Evidence. Do not change generic Trainer/DCP/RNG/Optimizer/model/Local algorithm/Producer/sampling or any real G1 asset. No GPU, torchrun/model/server/sim, actual G1 DCP read/write, server sync or other process operations.
++- New code necessarily creates a Child SHA beyond design baseline35b0ea1. Keep actual Root/Child exact --expected-* pin, Gitlink and clean checks, and require Child ancestry from35b0ea1; do not hardcode runtime to a pre-change SHA or guess local8610ad88 prefix. New Pair must be independently reviewed before execution. Old G1 e0121d34/2d128ed5 + canonical YAML f87e2e49 fixed, semantic/digests read full values from trusted records.
++- Implementation intent: G1-only explicit flag, source-only semantic normalization, reconstructed historical config digest matched to original frozen-config launch and all8 rank sidecars/provenance before runtime, append-only runtime origin/validation audit. Preserve full checkpoint components, original loader/cursor/Fast/RNG checks, no historical file rewrite. Tests use only tiny synthetic fixtures and real CPU state restore where possible; no production assets.
++
++### 2026-10-22 — G1 cross-pair Resume red/green CPU complete
++- Red baseline35b0 Phase5 with same synthetic fixed Owner constants rejected explicit G1/newPair at original source equality check; one expected source-pair identity refusal preserved. No old e012 Git object or real G1 files available/used; no actual frozen digest guessed.
++- New explicit G1-only flag accepts only resume/G1/T16B8GA2K4world8/30k500100, old e012/2d128 identity+YAML authority; excludes only top root/child in deep semantic comparison and reports exact drift paths. Rebuilds old digest from unchanged raw Phase5 hash+frozen semantic, matches original canonical-config fresh launch and every rank sidecar/provenance. Runtime Root/Child remain exact expected-pinned/clean/Gitlink matched, descendant of35b0 reviewed baseline. All-rank agreement includes audited runtime source despite preserved historical digest.
++- New launch revalidates frozen authorities under original lease and records old/new origin+full digests/Config SHA/iter8900 and pending actual optimizer/scheduler/RNG/Fast restore status before runtime checkpoint writes. No canonical file rewrite; checkpoint must exactly8900 with all4 component metadata+8rank sidecars. Generic checkpointer/trainer/producer/Local math unchanged. Snapshot-only producer receives old digest in override path as well.
++- Final CPU115 passed=68 new cases+28 F0 methods+19 existing Config-truth cases;32subtests,0fail/error/skip,6.275s. Ruff0.12.7 check/format/syntax/bash-n/diff PASS. Unchanged original snapshot/restore/planner/core on real Torch CPU (tiny dimensions) restore8 ranks' fast tensors/frontier/cursor and next plan, reject new-source digest and damaged states. All old synthetic asset sha/mtime unchanged, only new launch path appended. Actual preflight with model/data-loading external boundaries replaced wires historical digest; eight-rank collective mocked, not Gloo/NCCL. Original reg tests unmodified bytes; actual optimizer/RNG/CUDA/DCP restore not executed or claimed.
++- Candidate implementation will publish isolated Root/Child refs and source-bound evidence, then STOP for GPT/DS acceptance and Owner separate training authorization. No training-server sync/GPU/real G1 asset read/write/process changes.
+diff --git a/TODO.md b/TODO.md
+index 2ac0c811..9b48e172 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -425,0 +426,5 @@
++
++## V3-G1-ITER8900-CROSS-PAIR-RESUME — 2026-10-22
++- IN_PROGRESS; Codex; prerequisite explicit Owner Override design APPROVE at1fc28eff.
++- Scope: isolated Child Phase5 only-G1 resume flag/identity/readiness/historical digest continuity and audit, minimal Root launcher passthrough, CPU red/green/negatives and state-restore evidence. Keep old canonical assets/source records/DCP immutable and generic full-state restore checks intact. New implementation Pair+Diff+CPU Evidence then STOP for GPT/DS independent review; no GPU/training or server sync.
++- V3-G1-ITER8900-CROSS-PAIR-RESUME: REVIEW after isolated source publication; author115+32subtests/static PASS, all original generic restore code/tests preserved. Needs new exact Pair GPT review and DS real-file read-only continuity/CPU acceptance; actual G1 Resume remains unauthorized.
+diff --git a/cosmos-framework b/cosmos-framework
+index 35b0ea1c..61bfa947 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit 35b0ea1ccee9ee26653ed6589c484f0997d1c586
++Subproject commit 61bfa94766d33d95a7fa9771857d0f2fb3f0b405
+diff --git a/scripts/train_v3_packed128_staged.sh b/scripts/train_v3_packed128_staged.sh
+index 391405c2..0514c1ba 100755
+--- a/scripts/train_v3_packed128_staged.sh
++++ b/scripts/train_v3_packed128_staged.sh
+@@ -4,2 +4,2 @@ set -euo pipefail
+-if [[ $# != 2 || ( $1 != fresh && $1 != resume ) ]]; then
+-    echo "Usage: $0 {fresh|resume} EXECUTION_UNTIL" >&2
++if [[ $# -lt 2 || $# -gt 3 || ( $1 != fresh && $1 != resume ) ]]; then
++    echo "Usage: $0 {fresh|resume} EXECUTION_UNTIL [--owner-authorized-g1-cross-pair-resume]" >&2
+@@ -9,0 +10,8 @@ execution_until=$2
++owner_args=()
++if [[ $# == 3 ]]; then
++    if [[ $phase != resume || $3 != --owner-authorized-g1-cross-pair-resume || ${JOB_NAME:-} != packed128_droid_fresh_g1_20261019 ]]; then
++        echo "Owner cross-pair flag is only valid for the named G1 Resume" >&2
++        exit 2
++    fi
++    owner_args=("$3")
++fi
+@@ -29 +37 @@ exec "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=
+-    --max-iter 30000 --warmup 500 --save-iter 100
++    --max-iter 30000 --warmup 500 --save-iter 100 "${owner_args[@]}"

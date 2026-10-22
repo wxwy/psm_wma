@@ -1,0 +1,45 @@
+F
+=================================== FAILURES ===================================
+__________ test_explicit_g1_namespace_allows_only_source_pair_change ___________
+
+job = namespace(args=Namespace(phase='resume', owner_authorized_g1_cross_pair_resume=True, preflight=False, snapshot10=False.../test_explicit_g1_namespace_all0/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/launches/frozen_fresh'))
+
+    def test_explicit_g1_namespace_allows_only_source_pair_change(job):
+        before = _witness(job.path)
+>       assert phase5.check_job_namespace(job.args, job.report["training_identity"]) == job.record
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+examples/psm_wma_robocasa_g1_cross_pair_resume_test.py:262: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = Namespace(phase='resume', owner_authorized_g1_cross_pair_resume=True, preflight=False, snapshot10=False, output_root=P...8, ga=2, k=4, world_size=8, max_iter=30000, save_iter=100, warmup=500, stop_after_iter=None, audit_missing_grads=False)
+semantic = {'authority': {'cache': 'manifest', 'corpus': 'corpus', 'source': 'binding'}, 'checkpoint': {'save_iter': 100, 'strict...e}, 'child': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'contract': {'b': 8, 'ga': 2, 'h_pred': 16, 'k': 4, ...}, ...}
+
+    def check_job_namespace(args: argparse.Namespace, semantic: dict[str, Any] | None = None) -> dict[str, Any] | None:
+        """Read-only checks; a new Fresh claim is still required after distributed agreement."""
+        path = job_namespace(args)
+        if args.phase == "fresh":
+            if path.exists():
+                raise FileExistsError(f"Fresh requires a previously nonexistent job namespace: {path}")
+            return None
+        if args.job_name.startswith("bounded_"):
+            raise ValueError("bounded diagnostic checkpoint must not be resumed as formal training")
+        if (path / JOB_IDENTITY).is_symlink():
+            raise ValueError("job identity symlink is forbidden")
+        record = json.loads((path / JOB_IDENTITY).read_text())
+        if (
+            record.get("schema") != "corrected_phase5_f0_v1"
+            or record.get("namespace") != str(path)
+            or record.get("root") != args.expected_root
+            or record.get("child") != args.expected_child
+            or record.get("native_batch_layout") != NATIVE_BATCH_LAYOUT
+            or record.get("diagnostic_only_do_not_resume") is not False
+            or record.get("semantic_digest") != _json_digest(record.get("semantic"))
+        ):
+>           raise ValueError("same-job identity Root/Child/Layout/namespace mismatch")
+E           ValueError: same-job identity Root/Child/Layout/namespace mismatch
+
+/tmp/psm-v3-g1-cross-pair-20261022/phase5_before.py:182: ValueError
+=========================== short test summary info ============================
+FAILED ../../../tmp/psm-v3-high07-20261021::test_explicit_g1_namespace_allows_only_source_pair_change
+1 failed in 3.35s
