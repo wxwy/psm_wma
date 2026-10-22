@@ -1,0 +1,76 @@
+{
+  "schema": "psm_robocasa_vendor_lock_v1",
+  "robosuite": {
+    "url": "https://github.com/ARISE-Initiative/robosuite.git",
+    "base_commit": "824ac14cefcfb7ec125fe5eb2e0bad7364466154",
+    "package_version": "1.5.2",
+    "patch": "0001-robocasa-1.0.1-compatibility.patch",
+    "patch_sha256": "36184d6a5ddaa7371be89ba332f72bc89a18e8d0a7a0e36119e7215f9a465d30",
+    "patched_tree": "195e30cfd5d37289d227a89234bd8bb069792905",
+    "patched_commit": "1ac174585293ed998ffc9cf73e47439798cf6f6c",
+    "commit_metadata": {
+      "name": "PSM-WMA Vendor",
+      "email": "vendor@psm-wma.invalid",
+      "date": "2026-10-22T00:00:00+00:00",
+      "message": "PSM-WMA RoboCasa 1.0.1 compatibility on robosuite v1.5.2\n"
+    },
+    "upstream_backport_source": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c"
+  },
+  "robocasa": {
+    "url": "https://github.com/robocasa/robocasa.git",
+    "commit": "6f90063c0ec2b9916bbd977368b54c98d9c2d908",
+    "package_version": "1.0.1"
+  },
+  "runtime_versions": {
+    "mujoco": "3.3.1",
+    "numpy": "2.2.5"
+  },
+  "physics": {
+    "multiccd": true,
+    "sleeping_islands": false,
+    "sleeping_true": "rejected: unsupported by MuJoCo3.3.1"
+  },
+  "dataset_generation": {
+    "recorded_versions": {
+      "robocasa": "0.5.1",
+      "robosuite": "1.5.2",
+      "mujoco": "3.3.1"
+    },
+    "capture_time_git_commit": "UNKNOWN",
+    "equivalent_to_evaluation_runtime": "NOT_PROVEN"
+  },
+  "source_hashes": {
+    "robosuite/controllers/parts/controller_factory.py": {
+      "base_sha256": "db74f3a52666d5755bfb12c63e8c84abfc0dce8f3e70d23b17c87a53ee4a4fdd",
+      "patched_sha256": "5f5dcdbc9c40fef1202751b13391f8d8a792cc3391fbb7770ce81d4b137850af"
+    },
+    "robosuite/controllers/parts/mobile_base/__init__.py": {
+      "base_sha256": "ee437a0ef26c536d6f1b2e5bd78f242a8452804e419a04b11e399cb568258853",
+      "patched_sha256": "d167cf7014bf65eb300561e38cb2df213dca35c407a9198fd63c110182884ae7"
+    },
+    "robosuite/controllers/parts/mobile_base/joint_vel.py": {
+      "base_sha256": "1760095cec61e7cc81cb83eb3f705ab11a0e816ca6fe021ae3d413f8f08ebe26",
+      "patched_sha256": "cc64ca5683bb023cec731d0fa7a61bdfd1db2e97d3423f576d5bbba9f3e6e660"
+    },
+    "robosuite/environments/base.py": {
+      "base_sha256": "ba6e6bc0252be8ae17972df48b26f8425a12af55339979a1ea1757b1f54c3345",
+      "patched_sha256": "da6a543615c667dbdbd972e0e1af9ab944f7209053bc6cadba5138ce3f878ad6"
+    },
+    "robosuite/environments/manipulation/manipulation_env.py": {
+      "base_sha256": "9b92f191de5b4ced2f82dc9c666d28a1d0a70c54f4a24dd1e878399125f4b86a",
+      "patched_sha256": "9d3f36ac71a3c948bd238a60eda591d6d6ab176fe09dd0b38d4d8fb6b94013a5"
+    },
+    "robosuite/environments/robot_env.py": {
+      "base_sha256": "75640d1b801fa2ed277fc0d7ee41ea97d617b5a1d6b589d1059a05dc2cff51fa",
+      "patched_sha256": "d0ea6403d2ba499189a07ca5646ed0002a3e13b4a40bb75923958b7d467dd0d9"
+    },
+    "robosuite/models/tasks/task.py": {
+      "base_sha256": "a89be36ac1b19143453a405fa1191b3b35c9b7431a18307a83c2b5cb665a72bb",
+      "patched_sha256": "e383f8ee7644ee25ba52e0abf284701c595bb8bd34fe7188ff87876a6e9f4b93"
+    },
+    "robosuite/models/world.py": {
+      "base_sha256": "c18e123c7d405c0f20ff94139841f1cf2803b979dc12cd52cb7182b56b436dc7",
+      "patched_sha256": "205271d34cc987b623624e11efdd7d25c63a0b11819da32cc975477377e78e3f"
+    }
+  }
+}

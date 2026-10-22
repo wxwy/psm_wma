@@ -129,7 +129,19 @@ def _info(checkpoint: Path, config: Path) -> dict:
 
 def _serve(port: int, info: dict) -> None:
     class Handler(BaseHTTPRequestHandler):
+        occupied = False
+
         def do_GET(self):
+            if self.path == "/error":
+                self.send_error(400, "injected HTTP failure")
+                return
+            if self.path == "/stall":
+                time.sleep(5)
+            if self.path == "/claim":
+                if Handler.occupied:
+                    self.send_error(400, "session limit reached")
+                    return
+                Handler.occupied = True
             body = json.dumps(info).encode()
             self.send_response(200)
             self.send_header("Content-Length", str(len(body)))
@@ -205,8 +217,23 @@ def _scenario(case, parent, count):
     _repo(root)
     child = root / "cosmos-framework"
     _repo(child)
-    _git(root, "update-index", "--add", "--cacheinfo", f"160000,{_git(child, 'rev-parse', 'HEAD')},cosmos-framework")
-    _git(root, "-c", "user.name=CPU Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "gitlink")
+    _git(
+        root,
+        "update-index",
+        "--add",
+        "--cacheinfo",
+        f"160000,{_git(child, 'rev-parse', 'HEAD')},cosmos-framework",
+    )
+    _git(
+        root,
+        "-c",
+        "user.name=CPU Fixture",
+        "-c",
+        "user.email=fixture@example.invalid",
+        "commit",
+        "-qm",
+        "gitlink",
+    )
     queue_module.ROOT, queue_module.CHILD = root, child
     checkpoint = parent / "job/checkpoints/iter_000004000"
     (checkpoint / "model").mkdir(parents=True)
@@ -232,9 +259,21 @@ def _scenario(case, parent, count):
     init_faults, unhandled_thread_errors = [], []
     original_mkdir, original_open = Path.mkdir, Path.open
 
+    def wait_completed(trials=20):
+        until = time.monotonic() + 12
+        while time.monotonic() < until:
+            try:
+                if json.loads((output / "screening_summary.json").read_text())["total_trials"] == trials:
+                    all_tasks_done.set()
+                    return True
+            except (OSError, ValueError):
+                pass
+            time.sleep(0.01)
+        return False
+
     def fail_initialization(operation):
         init_faults.append(operation)
-        assert all_tasks_done.wait(8), "healthy worker did not complete before initialization fault"
+        assert wait_completed(), "healthy worker did not complete before initialization fault"
         raise OSError(f"injected worker1 {operation} failure after all tasks")
 
     def mkdir(path, *args, **kwargs):
@@ -248,12 +287,17 @@ def _scenario(case, parent, count):
         return original_open(path, *args, **kwargs)
 
     def popen(command, **kwargs):
+        if len(command) > 1 and str(command[1]).endswith("closed_loop_eval.py"):
+            return sim_popen(command, **kwargs)
         calls.append(command)
         gpu = kwargs["env"]["CUDA_VISIBLE_DEVICES"]
-        assert command[1:3] == ["-m", "cosmos_framework.scripts.action_policy_server_robocasa"]
+        assert command[1:3] == [
+            "-m",
+            "cosmos_framework.scripts.action_policy_server_robocasa",
+        ]
         assert command[command.index("--local-memory-max-sessions") + 1] == "1"
         if case == "late_launch_failure" and gpu == "1":
-            assert all_tasks_done.wait(8), "healthy worker did not complete"
+            assert wait_completed(15), "healthy worker did not complete the three unclaimed tasks"
             raise OSError("injected second worker launch failure after all tasks")
         port = int(command[command.index("--port") + 1])
         info = _info(checkpoint, config)
@@ -278,19 +322,70 @@ def _scenario(case, parent, count):
             old = _start_http(port, info, stdout=kwargs["stdout"], stderr=subprocess.STDOUT)
             foreign.append(old)
             _ready(old, port)
-            proc = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(30)"])
+            proc = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(30)"], **kwargs)
         else:
-            proc = _start_http(port, info, stdout=kwargs["stdout"], stderr=subprocess.STDOUT)
+            proc = _start_http(port, info, **kwargs)
         servers.append(proc)
         return proc
 
-    def run(command, **kwargs):
+    def sim_popen(command, **kwargs):
         assert command[1].endswith("closed_loop_eval.py")
         sim_calls.append(command)
         directory = Path(command[command.index("--output-dir") + 1])
         digest = command[command.index("--evaluation-run-digest") + 1]
-        if case == "sim_failure" and len(sim_calls) == 1:
-            return SimpleNamespace(returncode=7)
+        if case in ("sim_failure", "primary_and_cleanup") and len(sim_calls) == 1:
+            return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
+        if case == "session_leak":
+            queue_module._read_json(command[command.index("--server-url") + 1] + "/claim")
+        fault = (
+            case
+            in (
+                "task_timeout",
+                "episode_timeout",
+                "sigkill",
+                "sigterm",
+                "request_timeout",
+                "reset_failure",
+                "video_failure",
+                "missing_results",
+                "http400",
+                "cancel",
+                "cleanup_failure",
+                "primary_and_cleanup",
+            )
+            and len(sim_calls) == 1
+        )
+        if fault and case != "cleanup_failure":
+            if case == "cancel":
+                threading.Timer(0.1, lambda: os.kill(os.getpid(), signal.SIGTERM)).start()
+                return subprocess.Popen([sys.executable, "-c", "import time;time.sleep(60)"], **kwargs)
+            elif case in ("http400", "request_timeout"):
+                url = command[command.index("--server-url") + 1] + ("/error" if case == "http400" else "/stall")
+                return subprocess.Popen(
+                    [sys.executable, "-c", f"import urllib.request;urllib.request.urlopen({url!r},timeout=0.05)"],
+                    **kwargs,
+                )
+            if case == "episode_timeout":
+                Path(command[command.index("--progress-file") + 1]).write_text(
+                    json.dumps(
+                        {
+                            "schema": "psm_episode_progress_v1",
+                            "event": "start",
+                            "episode": 0,
+                            "evaluation_run_digest": digest,
+                        }
+                    )
+                    + "\n"
+                )
+            if case in ("task_timeout", "episode_timeout"):
+                # A descendant ignores SIGTERM; both processes must be reclaimed.
+                script = "import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'-c','import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(60)']);time.sleep(60)"
+            elif case in ("sigterm", "sigkill"):
+                sig = "SIGTERM" if case == "sigterm" else "SIGKILL"
+                script = f"import os,signal;os.kill(os.getpid(),signal.{sig})"
+            else:
+                script = f"raise RuntimeError({case!r})"
+            return subprocess.Popen([sys.executable, "-c", script], **kwargs)
         rows = [
             {
                 "ep": index,
@@ -304,17 +399,32 @@ def _scenario(case, parent, count):
         (directory / "results.json").write_text(json.dumps(rows))
         for index in range(5):
             (directory / f"rollout{index}.mp4").write_bytes(b"synthetic video witness, not an MP4 encoding")
-        if len(sim_calls) == 4:
-            all_tasks_done.set()
-            if case == "server_dies_after_tasks":
-                _stop(servers[0])
-        return SimpleNamespace(returncode=0)
+        progress = Path(command[command.index("--progress-file") + 1])
+        progress.write_text(
+            "".join(
+                json.dumps(
+                    {
+                        "schema": "psm_episode_progress_v1",
+                        "episode": index,
+                        "event": event,
+                        "evaluation_run_digest": digest,
+                    }
+                )
+                + "\n"
+                for index in range(5)
+                for event in ("start", "end")
+            )
+        )
+        if len(sim_calls) == 4 and case == "server_dies_after_tasks":
+            _stop(servers[-1])
+        return subprocess.Popen([sys.executable, "-c", "pass"], **kwargs)
 
     # Proxy only the queue module's external process boundaries. Real immutable
     # identity still invokes real Git; the rest of the host subprocess module is intact.
     queue_module.subprocess = SimpleNamespace(
-        Popen=popen, run=run, STDOUT=subprocess.STDOUT, TimeoutExpired=subprocess.TimeoutExpired
+        Popen=popen, STDOUT=subprocess.STDOUT, TimeoutExpired=subprocess.TimeoutExpired
     )
+    queue_module.OwnedProcess.__init__.__globals__["subprocess"] = queue_module.subprocess
     argv = [
         "queue",
         "--checkpoint-path",
@@ -344,6 +454,41 @@ def _scenario(case, parent, count):
         "--timeout",
         "5",
     ]
+    argv += ["--terminate-grace-s", "0.15"]
+    if case in (
+        "task_timeout",
+        "episode_timeout",
+        "sigkill",
+        "sigterm",
+        "request_timeout",
+        "reset_failure",
+        "video_failure",
+        "missing_results",
+        "http400",
+        "cancel",
+        "cleanup_failure",
+        "primary_and_cleanup",
+    ):
+        argv += ["--on-infrastructure-error", "continue_with_new_server"]
+    if case == "task_timeout":
+        argv += ["--task-wall-timeout-s", "1"]
+    if case == "episode_timeout":
+        argv += ["--episode-wall-timeout-s", "0.2"]
+    real_close = queue_module.OwnedProcess.close
+    injected_cleanup = []
+
+    def close_with_fault(owned):
+        witness = real_close(owned)
+        if (
+            case in ("cleanup_failure", "primary_and_cleanup")
+            and owned.proc.pid not in {p.pid for p in servers}
+            and not injected_cleanup
+        ):
+            injected_cleanup.append(owned.proc.pid)
+            owned.cleanup["error"] = "injected cleanup error after real group reap"
+            raise OSError(owned.cleanup["error"])
+        return witness
+
     error = None
     with ExitStack() as stack:
         if case == "occupied_port":
@@ -355,8 +500,11 @@ def _scenario(case, parent, count):
                 patch.object(sys, "argv", argv),
                 patch.object(Path, "mkdir", mkdir),
                 patch.object(Path, "open", open_file),
+                patch.object(queue_module.OwnedProcess, "close", close_with_fault),
                 patch.object(
-                    threading, "excepthook", lambda event: unhandled_thread_errors.append(str(event.exc_value))
+                    threading,
+                    "excepthook",
+                    lambda event: unhandled_thread_errors.append(str(event.exc_value)),
                 ),
             ):
                 rc = queue_module.main()
@@ -505,13 +653,20 @@ class QueueIntegrationTests(unittest.TestCase):
             parent = Path(directory)
             with (parent / "console.log").open("w") as log:
                 process = subprocess.Popen(
-                    [sys.executable, str(Path(__file__).resolve()), "--scenario", case, directory, str(count)],
+                    [
+                        sys.executable,
+                        str(Path(__file__).resolve()),
+                        "--scenario",
+                        case,
+                        directory,
+                        str(count),
+                    ],
                     stdout=log,
                     stderr=subprocess.STDOUT,
                     start_new_session=True,
                 )
                 try:
-                    rc = process.wait(timeout=20)
+                    rc = process.wait(timeout=40)
                 except subprocess.TimeoutExpired:
                     os.killpg(process.pid, signal.SIGKILL)
                     process.wait()
@@ -524,11 +679,11 @@ class QueueIntegrationTests(unittest.TestCase):
             return report
 
     def test_four_tasks_five_episodes_complete_on_one_two_or_four_workers(self):
-        for count in (1, 2, 4):
+        for count in (1, 2, 8):
             with self.subTest(workers=count):
                 report = self.scenario("normal", count)
                 self.assertEqual(report["rc"], 0)
-                self.assertEqual(report["server_commands"], count)
+                self.assertEqual(report["server_commands"], 4)
                 for command in report["server_command_argv"]:
                     self.assertEqual(command.count("--no-guardrails"), 1)
                     self.assertEqual(command.count("--action-chunk-size"), 1)
@@ -587,10 +742,13 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["sim_calls"], 0)
         self.assertIn("changed since evaluation identity", str(report["summary"]["worker_errors"]))
 
-    def test_launch_error_after_all_tasks_does_not_disappear_from_summary_or_exit(self):
+    def test_server_launch_error_after_other_tasks_does_not_disappear(self):
         report = self.scenario("late_launch_failure")
         self.assertEqual(report["rc"], 1)
-        self.assertEqual(report["summary"]["total_trials"], 20)
+        # Per-task creation claims the failing task before Popen; only the
+        # other three tasks can complete. Initialization failures below still
+        # prove a late worker error cannot hide behind all twenty results.
+        self.assertEqual(report["summary"]["total_trials"], 15)
         self.assertEqual(report["summary"]["status"], "INCOMPLETE")
         self.assertIsNone(report["summary"]["sr"])
         self.assertIn("injected second worker", str(report["summary"]["worker_errors"]))
@@ -603,15 +761,22 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(set(report["summary"]["tasks"]), TASKS)
         self.assertEqual(report["summary"]["status"], "INCOMPLETE")
         self.assertIsNone(report["summary"]["sr"])
-        self.assertIn(f"worker1 {operation} failure", report["summary"]["worker_errors"]["_worker_1"]["error"])
-        self.assertEqual(report["server_commands"], 1)
+        self.assertIn(
+            f"worker1 {operation} failure",
+            report["summary"]["worker_errors"]["_worker_1"]["error"],
+        )
+        self.assertEqual(report["server_commands"], 4)
         self.assertEqual(report["sim_calls"], 4)
         self.assertEqual(report["unhandled_thread_errors"], [])
 
-    def test_worker_mkdir_failure_after_healthy_worker_completes_all_tasks_is_preserved(self):
+    def test_worker_mkdir_failure_after_healthy_worker_completes_all_tasks_is_preserved(
+        self,
+    ):
         self.check_initialization_failure("mkdir_failure", "mkdir")
 
-    def test_worker_log_open_failure_after_healthy_worker_completes_all_tasks_is_preserved(self):
+    def test_worker_log_open_failure_after_healthy_worker_completes_all_tasks_is_preserved(
+        self,
+    ):
         self.check_initialization_failure("log_open_failure", "log_open")
 
     def test_server_exit_after_completed_tasks_is_not_screening_success(self):
@@ -620,6 +785,59 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["summary"]["total_trials"], 20)
         self.assertIn("exited during screening", str(report["summary"]["worker_errors"]))
         self.assertIsNone(report["summary"]["sr"])
+
+    def test_persistent_abandoned_session_cannot_contaminate_next_task(self):
+        report = self.scenario("session_leak", 1)
+        self.assertEqual(report["rc"], 0)
+        self.assertEqual(report["server_commands"], 4)
+        self.assertEqual(report["summary"]["status"], "COMPLETE")
+
+    def test_kill_timeout_reset_media_and_missing_results_use_fresh_server(self):
+        for case in (
+            "task_timeout",
+            "episode_timeout",
+            "sigkill",
+            "sigterm",
+            "request_timeout",
+            "reset_failure",
+            "video_failure",
+            "missing_results",
+            "http400",
+        ):
+            with self.subTest(fault=case):
+                report = self.scenario(case, 1)
+                self.assertEqual(report["rc"], 1)
+                self.assertEqual(report["server_commands"], 4)
+                self.assertEqual(report["sim_calls"], 4)
+                self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+                self.assertIsNone(report["summary"]["sr"])
+                self.assertEqual(report["summary"]["task_failures"], 1)
+                self.assertEqual(report["summary"]["total_trials"], 15)
+                cleanup = next(row["cleanup"] for row in report["summary"]["tasks"].values() if row["error"])
+                self.assertFalse(cleanup["server"]["live_group"])
+                self.assertFalse(cleanup["simulator"]["live_group"])
+                if "timeout" in case and case != "request_timeout":
+                    self.assertIn("SIGKILL", cleanup["simulator"]["signals"])
+
+    def test_owner_cancel_stops_queue_and_reaps_both_groups(self):
+        report = self.scenario("cancel", 1)
+        self.assertEqual(report["rc"], 1)
+        self.assertEqual(report["server_commands"], 1)
+        self.assertIn("Owner signal", str(report["summary"]["worker_errors"]))
+        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+
+    def test_cleanup_error_always_stops_and_retains_primary_error(self):
+        for case in ("cleanup_failure", "primary_and_cleanup"):
+            with self.subTest(fault=case):
+                report = self.scenario(case, 1)
+                self.assertEqual(report["rc"], 1)
+                self.assertEqual(report["server_commands"], 1)
+                row = next(iter(report["summary"]["tasks"].values()))
+                self.assertIn("injected cleanup", row["cleanup"]["simulator"]["error"])
+                self.assertIsNone(report["summary"]["sr"])
+                if case == "primary_and_cleanup":
+                    self.assertIn("exited with code 7", row["error"])
+                    self.assertNotIn("injected cleanup", row["error"])
 
     def test_simulator_failure_keeps_error_and_nonzero_exit(self):
         report = self.scenario("sim_failure", 1)
