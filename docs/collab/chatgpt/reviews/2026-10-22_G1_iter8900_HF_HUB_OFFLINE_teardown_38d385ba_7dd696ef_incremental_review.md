@@ -32,11 +32,11 @@ def test_real_preflight_wires_historical_digest_to_report_and_snapshot_producer(
 1. DS_PRO 在隔离 clean Root `38d385ba73ba991eddbfb99a74111fece744a7d3` / Child `7dd696efb4807e7338a5e420db2a1ede6cec67d0`，`CUDA_VISIBLE_DEVICES=''`，外置pycache/pytest log下执行**原生pytest fixture**中的目标测试，不能使用`--noconftest`也不能手动禁用`detect_env_modifications`：
 ```bash
 # cwd=<new exact Root>/cosmos-framework; VENV_PYTHON为已验证CPU测试解释器
-HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 CUDA_VISIBLE_DEVICES='' \
+env -u HF_HUB_OFFLINE TRANSFORMERS_OFFLINE=1 CUDA_VISIBLE_DEVICES='' \
 "$VENV_PYTHON" -m pytest -q \
   examples/psm_wma_robocasa_g1_cross_pair_resume_test.py::test_real_preflight_wires_historical_digest_to_report_and_snapshot_producer
 ```
-   证据要求：真正完整pytest returncode=0、`1 passed`、**0 teardown errors**，留下准确Pair/Gitlink/版本、stdout/stderr；不能只检查测试body的断言。
+   检查必须刻意让进程入口 **未预置 HF_HUB_OFFLINE**，以捕获真正的 teardown 环境泄漏；预置=1会遮蔽原问题，不作为闭合证据。证据要求：真正完整pytest returncode=0、`1 passed`、**0 teardown errors**，留下准确Pair/Gitlink/版本、stdout/stderr；不能只检查测试body的断言。
 2. G1真实read-only验收绑定新的执行Pair；若此前37项G1 immutable资产SHA见证仍可复用，需只读核对旧Asset Identity没有漂移，并在新Pair上单独完成真实`--preflight`，才允许进入8×H100 Resume；不可直接把一行fixture修复看作真实Restore已经成功。
 3. 真正Resume仍由Owner本人手动执行、使用新Pair及 `--owner-authorized-g1-cross-pair-resume`。ChatGPT不得自动启动GPU/训练或影响运行中的任何Job；未来再次从9000/10000中断不在本次Owner8900例外内。
 
