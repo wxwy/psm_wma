@@ -1,0 +1,25 @@
+{
+  "syntax": "PASS",
+  "bash_syntax": "PASS",
+  "ruff_version": "ruff 0.12.7",
+  "source_sha256": {
+    "scripts/eval_robocasa_18task_queue.py": "b3e1872dafbe3a4ad6a1df640a90bb853545961b7b332e4e8896cc7dd955500a",
+    "scripts/robocasa_eval_config.py": "a71e753dd214e83da610b3f1db9bddb0304ab95de4c1f388b62ec9563499e2ca",
+    "scripts/robocasa_eval_results.py": "7b88b56d245cb43952abf3ef93c10f740af785a6816d6595a7bb8c1b9f32d523",
+    "scripts/robocasa_processes.py": "c698d6117458a3864303ac3e31cdd29f967621ea7d1b5bc2f726b67c6278e101",
+    "tools/v3/eval_robocasa_queue_identity_test.py": "ecf54ae072018f5c515e63b9cda917f6c52783ee75bbc362201efaf99811a39c",
+    "tools/v3/robocasa_eval_config_test.py": "5d1af4f45df611bad1cb746a65b9d56dac29f17941b08d18a1329780ab318957",
+    "tools/v3/robocasa_eval_results_test.py": "bd561c83b527b5ff9554678d7ee7942fd2b719f431dbc0f52b7eeecfdea0d07a",
+    "tools/v3/robocasa_eval_cache_test.py": "02c2b0ed365196a81e9dba11a0f0625371efde7323f9a48e490477c68f1a84e9",
+    "tools/v3/robocasa_processes_test.py": "8c14951f34ee7fadcbb167001ae302ff0120ec9094ff4e43ec89efc1edf10395",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py": "76973c3ca422011ddb515d7acfd4e3ca33717ceeeea8daa74306515258810fcf",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval_manual_test.py": "d845dfe4c736c405cf5625b7fc846a7a08403beab2b14c39bdb569ff016eefec",
+    "cosmos-framework/cosmos_framework/utils/rollout_evidence.py": "158c00a629b6468b3ed6ddd619fd37fbc6065bc60071eea0c072249199a77f44"
+  },
+  "baseline_source_sha256": {
+    "scripts/eval_robocasa_18task_queue.py": "10f7a600389b3a26c798b9e5ee32a9269baeea6b582726161530413c75043515",
+    "scripts/robocasa_eval_config.py": "a71e753dd214e83da610b3f1db9bddb0304ab95de4c1f388b62ec9563499e2ca",
+    "scripts/robocasa_eval_results.py": "d1389ae404cb6bb66371730ec42e959f5b26a30e4e2245174578a85da88b6269",
+    "scripts/robocasa_processes.py": "9075f3eff535110d0b8b522451c93133fc128320fc7a9988443535bc5494f167"
+  }
+}

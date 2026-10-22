@@ -1,0 +1,65 @@
+{
+  "schema": "psm_robocasa_batch_c_r2_author_cpu_v1",
+  "status": "AUTHOR_CPU_PASS_PENDING_GPT_AND_DS",
+  "scope": [
+    "HIGH-C01",
+    "MEDIUM-C02"
+  ],
+  "implementation_root": "a4b22b929175e462b6a8db57ad2abee7e220dd37",
+  "child_gitlink": "c9f21040f462a114d597fc83773cb9b6a9e96214",
+  "child_modified": false,
+  "baseline_root": "c2d8359f918e6880a2c67847b817884a726fe4f9",
+  "previous_implementation_root": "a2f3a6a367395b2f2a6006cfc4e7c9effa606713",
+  "vendor": "1ac174585293ed998ffc9cf73e47439798cf6f6c",
+  "vendor_modified": false,
+  "suites": {
+    "helpers": {
+      "declared_tests": 221,
+      "testcase_elements": 221,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "child": {
+      "declared_tests": 58,
+      "testcase_elements": 58,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "queue": {
+      "declared_tests": 107,
+      "testcase_elements": 35,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "regressions": {
+      "declared_tests": 20,
+      "testcase_elements": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  },
+  "top_level_passed": 334,
+  "subtests_passed": 72,
+  "regressions_deselected": 50,
+  "baseline_red": {
+    "offline_new_negatives": 68,
+    "online_new_api_binding": 5,
+    "direct_foreign_attempt_acceptance": true,
+    "media_assertions": 3,
+    "note": "Expected baseline failures are isolated from final green; media red includes two failed subtests and one framework pass."
+  },
+  "static": "Ruff0.12.7 check/format,12 Python AST + shell syntax + source diff PASS",
+  "excluded": [
+    "GPU",
+    "real Action Server/model",
+    "real Kitchen/simulator",
+    "real DCP",
+    "G1 worktree or assets",
+    "training/Local algorithm/Vendor edits",
+    "official GPT/DS acceptance"
+  ]
+}

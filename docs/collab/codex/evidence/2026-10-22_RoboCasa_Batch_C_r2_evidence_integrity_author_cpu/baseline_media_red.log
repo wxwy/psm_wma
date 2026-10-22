@@ -1,0 +1,86 @@
+F.                                                                     [100%]
+=================================== FAILURES ===================================
+_ MediaClassificationTests.test_environment_video_and_none_mode_have_separate_lists _
+
+self = <eval_robocasa_queue_identity_test.MediaClassificationTests testMethod=test_environment_video_and_none_mode_have_separate_lists>
+
+    def test_environment_video_and_none_mode_have_separate_lists(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "CloseFridge/attempt_0001"
+            output.mkdir(parents=True)
+            row = _episode_fixture(output, episode=0, digest="fixture", video=b"classification fixture")
+            (output / "results.json").write_text(json.dumps([row]))
+            (output / "rollout00_not_video.mp4").write_bytes(b"unrelated artifact")
+            result = queue_module.task_result(Path("/fixture"), output, 0, "0", 0,
+                                             run_digest="fixture", expected_trials=1)
+>           self.assertEqual(result["rollout_mp4s"], [str(output / "rollout00.mp4")])
+E           AssertionError: Lists differ: ['/tm[48 chars].mp4', '/tmp/tmptzs9iaey/CloseFridge/attempt_0[24 chars]mp4'] != ['/tm[48 chars].mp4']
+E           
+E           First list contains 1 additional elements.
+E           First extra element 1:
+E           '/tmp/tmptzs9iaey/CloseFridge/attempt_0001/rollout00_not_video.mp4'
+E           
+E           - ['/tmp/tmptzs9iaey/CloseFridge/attempt_0001/rollout00.mp4',
+E           ?                                                           ^
+E           
+E           + ['/tmp/tmptzs9iaey/CloseFridge/attempt_0001/rollout00.mp4']
+E           ?                                                           ^
+E           
+E           -  '/tmp/tmptzs9iaey/CloseFridge/attempt_0001/rollout00_not_video.mp4']
+
+tools/v3/eval_robocasa_queue_identity_test.py:723: AssertionError
+_ MediaClassificationTests.test_prediction_video_cannot_be_reported_as_environment_video (mode='first') _
+
+self = <eval_robocasa_queue_identity_test.MediaClassificationTests testMethod=test_prediction_video_cannot_be_reported_as_environment_video>
+
+    def test_prediction_video_cannot_be_reported_as_environment_video(self):
+        for mode in ("first", "all"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory) / "CloseFridge/attempt_0001"
+                output.mkdir(parents=True)
+                row = _episode_fixture(output, episode=0, digest="fixture", video=b"classification fixture",
+                                       generated_mode=mode, rollout=False)
+                (output / "results.json").write_text(json.dumps([row]))
+                result = queue_module.task_result(Path("/fixture"), output, 0, "0", 0,
+                                                 run_digest="fixture", expected_trials=1)
+>               self.assertEqual(result["rollout_mp4s"], [])
+E               AssertionError: Lists differ: ['/tmp/tmpf10jwl8g/CloseFridge/attempt_0001/rollout00_generated.mp4'] != []
+E               
+E               First list contains 1 additional elements.
+E               First extra element 0:
+E               '/tmp/tmpf10jwl8g/CloseFridge/attempt_0001/rollout00_generated.mp4'
+E               
+E               - ['/tmp/tmpf10jwl8g/CloseFridge/attempt_0001/rollout00_generated.mp4']
+E               + []
+
+tools/v3/eval_robocasa_queue_identity_test.py:711: AssertionError
+_ MediaClassificationTests.test_prediction_video_cannot_be_reported_as_environment_video (mode='all') _
+
+self = <eval_robocasa_queue_identity_test.MediaClassificationTests testMethod=test_prediction_video_cannot_be_reported_as_environment_video>
+
+    def test_prediction_video_cannot_be_reported_as_environment_video(self):
+        for mode in ("first", "all"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
+                output = Path(directory) / "CloseFridge/attempt_0001"
+                output.mkdir(parents=True)
+                row = _episode_fixture(output, episode=0, digest="fixture", video=b"classification fixture",
+                                       generated_mode=mode, rollout=False)
+                (output / "results.json").write_text(json.dumps([row]))
+                result = queue_module.task_result(Path("/fixture"), output, 0, "0", 0,
+                                                 run_digest="fixture", expected_trials=1)
+>               self.assertEqual(result["rollout_mp4s"], [])
+E               AssertionError: Lists differ: ['/tmp/tmp66ue_0se/CloseFridge/attempt_0001/rollout00_generated_replan0000.mp4'] != []
+E               
+E               First list contains 1 additional elements.
+E               First extra element 0:
+E               '/tmp/tmp66ue_0se/CloseFridge/attempt_0001/rollout00_generated_replan0000.mp4'
+E               
+E               - ['/tmp/tmp66ue_0se/CloseFridge/attempt_0001/rollout00_generated_replan0000.mp4']
+E               + []
+
+tools/v3/eval_robocasa_queue_identity_test.py:711: AssertionError
+=========================== short test summary info ============================
+FAILED ../../dev::MediaClassificationTests::test_environment_video_and_none_mode_have_separate_lists
+SUBFAILED(mode='first') ../../dev::MediaClassificationTests::test_prediction_video_cannot_be_reported_as_environment_video
+SUBFAILED(mode='all') ../../dev::MediaClassificationTests::test_prediction_video_cannot_be_reported_as_environment_video
+3 failed, 1 passed, 29 deselected in 0.30s

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="5" time="0.051" timestamp="2026-10-22T08:56:47.072240+00:00" hostname="d4ae95e8e7b1"><testcase classname="" name="test_progress_requires_the_exact_configured_task_attempt[None]" time="0.002"><failure message="TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'">attempt = None
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-41/test_progress_requires_the_exa0')
+
+    @pytest.mark.parametrize("attempt", [None, "", "CloseFridge/attempt_0002", "NavigateKitchen/attempt_0001"])
+    def test_progress_requires_the_exact_configured_task_attempt(attempt, tmp_path):
+        path = tmp_path / "progress"
+&gt;       progress = EpisodeProgress(path, digest="identity", episodes=1, attempt_id="CloseFridge/attempt_0001")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'
+
+tools/v3/robocasa_processes_test.py:141: TypeError</failure></testcase><testcase classname="" name="test_progress_requires_the_exact_configured_task_attempt[]" time="0.001"><failure message="TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'">attempt = ''
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-41/test_progress_requires_the_exa1')
+
+    @pytest.mark.parametrize("attempt", [None, "", "CloseFridge/attempt_0002", "NavigateKitchen/attempt_0001"])
+    def test_progress_requires_the_exact_configured_task_attempt(attempt, tmp_path):
+        path = tmp_path / "progress"
+&gt;       progress = EpisodeProgress(path, digest="identity", episodes=1, attempt_id="CloseFridge/attempt_0001")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'
+
+tools/v3/robocasa_processes_test.py:141: TypeError</failure></testcase><testcase classname="" name="test_progress_requires_the_exact_configured_task_attempt[CloseFridge/attempt_0002]" time="0.001"><failure message="TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'">attempt = 'CloseFridge/attempt_0002'
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-41/test_progress_requires_the_exa2')
+
+    @pytest.mark.parametrize("attempt", [None, "", "CloseFridge/attempt_0002", "NavigateKitchen/attempt_0001"])
+    def test_progress_requires_the_exact_configured_task_attempt(attempt, tmp_path):
+        path = tmp_path / "progress"
+&gt;       progress = EpisodeProgress(path, digest="identity", episodes=1, attempt_id="CloseFridge/attempt_0001")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'
+
+tools/v3/robocasa_processes_test.py:141: TypeError</failure></testcase><testcase classname="" name="test_progress_requires_the_exact_configured_task_attempt[NavigateKitchen/attempt_0001]" time="0.001"><failure message="TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'">attempt = 'NavigateKitchen/attempt_0001'
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-41/test_progress_requires_the_exa3')
+
+    @pytest.mark.parametrize("attempt", [None, "", "CloseFridge/attempt_0002", "NavigateKitchen/attempt_0001"])
+    def test_progress_requires_the_exact_configured_task_attempt(attempt, tmp_path):
+        path = tmp_path / "progress"
+&gt;       progress = EpisodeProgress(path, digest="identity", episodes=1, attempt_id="CloseFridge/attempt_0001")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'
+
+tools/v3/robocasa_processes_test.py:141: TypeError</failure></testcase><testcase classname="" name="test_bound_progress_accepts_exact_attempt_across_incremental_appends" time="0.001"><failure message="TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'">tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-41/test_bound_progress_accepts_ex0')
+
+    def test_bound_progress_accepts_exact_attempt_across_incremental_appends(tmp_path):
+        path = tmp_path / "progress"
+&gt;       progress = EpisodeProgress(path, digest="identity", episodes=2, attempt_id="CloseFridge/attempt_0001")
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: EpisodeProgress.__init__() got an unexpected keyword argument 'attempt_id'
+
+tools/v3/robocasa_processes_test.py:156: TypeError</failure></testcase></testsuite></testsuites>

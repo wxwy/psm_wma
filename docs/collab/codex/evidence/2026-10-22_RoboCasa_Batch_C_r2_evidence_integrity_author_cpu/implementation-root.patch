@@ -1,0 +1,808 @@
+diff --git a/SESSION.md b/SESSION.md
+index ccc9cf70..29c44b61 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1517,3 +1517,9 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
+ - Batch C author implementation completed: strict schema/YAML/CLI precedence and metadata task selection; CPU-only list/preview; required Batch B runtime preflight and in-process recheck; controlled media none/first/all; Task/Attempt-bound JSONL and complete-task-only resume; bounded owned decoder cleanup and external Numba/MPL/XDG caches. CPU final helpers148, Child58, Queue29+65subtests, existing evidence regressions20 all PASS; Ruff0.12.7 check/format, syntax/diff checks PASS. Source Child `c9f21040f462a114d597fc83773cb9b6a9e96214` pushed to `v3-robocasa-manual-c-20261022`; Root formal commit is this source commit, exact SHA to follow in separate evidence handoff. Gate state REVIEW (author CPU only, no GPT/DS acceptance). No GPU/model/Kitchen/real DCP or G1 worktree operation.
+ 
+ - Remote source readback: Root V3 `a2f3a6a367395b2f2a6006cfc4e7c9effa606713`; Child ref/Gitlink `c9f21040f462a114d597fc83773cb9b6a9e96214`. Full Batch C handoff/evidence and canonical Inbox request are delivered in a following docs-only commit. GPT incremental review → DS independent CPU → Owner manual execution; author stops at REVIEW. Vendor1ac174 and inherited G1/A/B preserved.
++# V3 RoboCasa Batch C r2 — C01/C02 remediation (2026-10-22)
++
++- Synced clean checkout ff-only to verified V3 `c2d8359f918e6880a2c67847b817884a726fe4f9`; exact reviewed implementation remains Root `a2f3a6a367395b2f2a6006cfc4e7c9effa606713` / Child `c9f21040f462a114d597fc83773cb9b6a9e96214`, Vendor1ac174 unchanged. GPT exact-pair review REQUEST_CHANGES read with canonical Inbox and narrow r2 request.
++- IN_PROGRESS: C01 require complete strict Episode progress and per-Episode Local cleanup in initial finish and resumed skip; online monitor binds Task/Attempt. C02 classify environment and generated MP4 separately, including partial/failure rows. Expected Root-only paths: results/process/Queue modules and three focused test files, runbook clarification and source/evidence handoff. Child, G1, training, Local math and Vendor untouched. Baseline red then CPU green; no GPU/model/Kitchen/real DCP. Stop after new Root/unchanged Child Pair submission for GPT review/DS CPU.
++
++- C01/C02 r2 author final CPU: helpers221 (Attempt125 + Config70 + Process23 + Numba3), unchanged Child58, existing evidence regressions20, Queue35+72subtests all PASS. Baseline reds: offline68, bound-monitor5 plus direct foreign-attempt acceptance probe, media3 assertions incl2subtests. Strict completion+resumed skip now require exact Episode progress and successful per-Episode Local cleanup; Queue online binds Task/Attempt. Environment/generated files separated in normal, partial and aggregate summaries. Ruff0.12.7/check+format, Python12/shell syntax and source diff PASS. Child/Gitlink remains c9f21040f462a114d597fc83773cb9b6a9e96214; Vendor unchanged; source commit is this Root commit, exact SHA in subsequent evidence handoff. REVIEW pending GPT/DS, no execution authorization.
+diff --git a/TODO.md b/TODO.md
+index a9450b17..946643fb 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -430,3 +430,4 @@
+ ## V3-G1-ITER8900-CROSS-PAIR-RESUME — 2026-10-22
+ - REVIEW; Codex author isolated implementation Rootb910304dbf493eb5babe26cf1b055edc8477b386 / Child-Gitlink61bfa94766d33d95a7fa9771857d0f2fb3f0b405; Evidence5fe6a513baa870c06f3186903b99e9bba80bb084.115passed+32subtests/static PASS. Need GPT new-Pair review/DS real-file read-only CPU; no mainline code merge or training execution. Owner design APPROVE remains distinct from implementation/Resume permission.
+ - [ ] **V3-ROBOCASA-BATCH-C** — REVIEW; owner Codex; prerequisite current V3 G1/A/B integrated `24a72673/30db22a3`. Deliver manual YAML/CLI launcher, strict dependency identity, task subsets, video controls, isolated task attempts/resume, CPU evidence and new exact Pair. GPT reviews, DS independent CPU validates, Owner alone authorizes real simulation. No live G1 or frozen assets changed.
++- [ ] **V3-ROBOCASA-BATCH-C-R2** — REVIEW; owner Codex; prerequisite exact GPT REQUEST_CHANGES for `a2f3a6a3/c9f21040`. Close only HIGH-C01 progress/Local cleanup witness + MEDIUM-C02 media classification with baseline red/final green CPU, new Root/Child Pair and review handoff. No GPU/G1/Local algorithm/Vendor changes.
+diff --git a/docs/eval/robocasa_manual_runbook.md b/docs/eval/robocasa_manual_runbook.md
+index 3aa15a54..71a0c717 100644
+--- a/docs/eval/robocasa_manual_runbook.md
++++ b/docs/eval/robocasa_manual_runbook.md
+@@ -79,13 +79,15 @@ An exclusive manifest claim and nonblocking namespace lease prevent concurrent w
+   screening_summary.json
+ ```
+ 
++Task rows and the overall summary report environment recordings in `rollout_mp4s` and model-prediction recordings in `generated_mp4s`. Turning off environment recording leaves the former empty even when generated videos are enabled; failed/partial attempts retain the same classification.
++
+ Manifest identity binds Root, Child/Gitlink, checkpoint model metadata+shard stat witnesses (not full payload hashes), frozen model Config hash, selected task metadata, dependency source/native identity, interpreter/import context, seeds, horizons, video settings, timeouts and GPU mapping. Inference requires model DCP files, not `optim/`; it never reads training optimizer state. The actual simulator reruns the vendor probe and must reproduce the expected digest before creating an environment. Its witness is required for task completion/resume.
+ 
+ Recorded data-generator versions/unknown Git commits and actual evaluation runtime are separate manifest fields. RoboCasa1.0.1 is the chosen evaluation runtime; equivalence with the recorded 0.5.1 generator is **not proven**. Historical diagnostic SRs remain diagnostic.
+ 
+ Server startup, request, episode wall, task wall and terminate-grace deadlines have distinct meanings. Task timing includes server startup, rollout and final evidence/media validation. Cancellation or failure reclaims only owned process groups, TERM then KILL/reap if necessary; it does not kill foreign listeners or training processes. Some cleanup can extend beyond task wall by bounded terminate grace. Each task gets a new server, including after a previous failure. The default infrastructure-error policy is `stop`; explicit `continue_with_new_server` can collect screening evidence, while the entire run still reports INCOMPLETE and nonzero exit. Original errors and cleanup errors remain visible.
+ 
+-A COMPLETE summary requires every selected task, every expected episode, successful infrastructure cleanup, typed outcomes and required valid evidence. Behavioral failure counts in the denominator. Runtime errors never silently disappear from SR: formal `sr` is null for incomplete runs, and `partial_sr` is labeled separately. Keep all partial actions, JSON, videos and logs for review.
++A COMPLETE summary requires every selected task, every expected episode, successful infrastructure cleanup, typed outcomes and required valid evidence. Episode progress must contain exactly the ordered start/end pairs with the same Run and Task/Attempt identity. Each episode must also have a Local-TTT cleanup witness with a valid slot0 session ID, successful reset and no rollout/media/cleanup error; process termination alone does not substitute for that witness. Behavioral failure counts in the denominator. Runtime errors never silently disappear from SR: formal `sr` is null for incomplete runs, and `partial_sr` is labeled separately. Keep all partial actions, JSON, videos and logs for review.
+ 
+ ## Resume whole tasks only
+ 
+@@ -98,7 +100,7 @@ bash scripts/run_robocasa_eval.sh \
+   --run-name iter8900_demo --save-generated-video first --resume
+ ```
+ 
+-Only an entire COMPLETE task with matching identity, valid in-process runtime/cleanup witness and media/audits is skipped. A RUNNING/FAILED task receives a new exclusive `attempt_0002` directory and restarts from episode 0 with the original seed and sequential reset protocol. Earlier episodes are never stitched across attempts. Result, action, prediction and generated-video records bind the `Task/Attempt` ID, so copied episodes from another attempt reject validation. Corrupted COMPLETE evidence or ambiguous multiple complete attempts fail closed for investigation; they are not overwritten. Unknown legacy task output is not imported. Old cross-source runs require new namespaces and cannot be presented as same-identity resume.
++Only an entire COMPLETE task with matching identity, valid in-process runtime, per-Episode Local cleanup, complete progress and media/audits is skipped. The same strict checks apply again during resume; missing or damaged progress/cleanup evidence rejects the skip. A RUNNING/FAILED task receives a new exclusive `attempt_0002` directory and restarts from episode 0 with the original seed and sequential reset protocol. Earlier episodes are never stitched across attempts. Result, action, prediction and generated-video records bind the `Task/Attempt` ID, so copied episodes from another attempt reject validation. Corrupted COMPLETE evidence or ambiguous multiple complete attempts fail closed for investigation; they are not overwritten. Unknown legacy task output is not imported. Old cross-source runs require new namespaces and cannot be presented as same-identity resume.
+ 
+ ## Review boundary
+ 
+diff --git a/scripts/eval_robocasa_18task_queue.py b/scripts/eval_robocasa_18task_queue.py
+index 60aaf574..6340381c 100644
+--- a/scripts/eval_robocasa_18task_queue.py
++++ b/scripts/eval_robocasa_18task_queue.py
+@@ -7,6 +7,7 @@ import fcntl
+ import json
+ import os
+ import queue
++import re
+ import signal
+ import socket
+ import stat
+@@ -199,6 +200,17 @@ def atomic_write_json(path: Path, value: Any) -> None:
+     os.replace(temporary, path)
+ 
+ 
++def task_video_files(output_dir: Path) -> dict[str, list[str]]:
++    """Classify actual artifacts, including partial videos without complete results."""
++    files = [path for path in output_dir.glob("rollout*.mp4") if path.is_file()]
++    return {
++        "rollout_mp4s": sorted(str(path) for path in files if re.fullmatch(r"rollout\d+\.mp4", path.name)),
++        "generated_mp4s": sorted(
++            str(path) for path in files if re.fullmatch(r"rollout\d+_generated(?:_replan\d+)?\.mp4", path.name)
++        ),
++    }
++
++
+ def task_result(
+     dataset_dir: Path,
+     output_dir: Path,
+@@ -226,7 +238,7 @@ def task_result(
+         "sr": successes / len(rows),
+         "elapsed_s": round(elapsed_s, 3),
+         "results_file": str(result_file),
+-        "rollout_mp4s": sorted(str(path) for path in output_dir.glob("rollout*.mp4")),
++        **task_video_files(output_dir),
+         "rollouts": rows,
+         "error": "; ".join(row["error"] for row in rows if row.get("error")) or None,
+         "evaluation_run_digest": run_digest,
+@@ -555,6 +567,8 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
+                     expected_trials=args.num_test_episodes,
+                 )
+             )
++            for kind in ("rollout_mp4s", "generated_mp4s"):
++                payload[kind] = sorted(path for row in ordered.values() for path in row.get(kind, []))
+             payload["evaluation_run_digest"] = run_digest
+             payload["invocation_dir"] = str(invocation)
+             worker_errors = {key: row for key, row in results.items() if key.startswith("_worker_")}
+@@ -644,6 +658,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
+                         progress = EpisodeProgress(
+                             task_out / "episode_progress.jsonl",
+                             digest=run_digest,
++                            attempt_id=f"{task_out.parent.name}/{task_out.name}",
+                             episodes=args.num_test_episodes,
+                         )
+                         returncode = supervise_simulator(
+@@ -717,7 +732,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
+                             "sr": None,
+                             "elapsed_s": round(time.monotonic() - started, 3),
+                             "results_file": str(task_out / "results.json"),
+-                            "rollout_mp4s": sorted(str(path) for path in task_out.glob("rollout*.mp4")),
++                            **task_video_files(task_out),
+                             "rollouts": [],
+                         }
+                     row.update(
+diff --git a/scripts/robocasa_eval_results.py b/scripts/robocasa_eval_results.py
+index 7cf661aa..6f08d329 100644
+--- a/scripts/robocasa_eval_results.py
++++ b/scripts/robocasa_eval_results.py
+@@ -27,11 +27,24 @@ def _safe(path: Path) -> Path:
+     return path
+ 
+ 
+-def _json(path: Path):
++def _unique_object(pairs):
++    result = {}
++    for key, value in pairs:
++        if key in result:
++            raise ValueError(f"duplicate evidence JSON key: {key}")
++        result[key] = value
++    return result
++
++
++def _json(path: Path, *, unique_keys: bool = False):
+     path = _safe(path)
+     if not path.is_file():
+         raise ValueError(f"missing evidence file: {path}")
+-    return json.loads(path.read_text(encoding="utf-8"), parse_constant=lambda x: _invalid(f"nonfinite JSON: {x}"))
++    return json.loads(
++        path.read_text(encoding="utf-8"),
++        parse_constant=lambda x: _invalid(f"nonfinite JSON: {x}"),
++        object_pairs_hook=_unique_object if unique_keys else dict,
++    )
+ 
+ 
+ def _invalid(message: str):
+@@ -149,6 +162,52 @@ def _vector(value, width: int) -> bool:
+     )
+ 
+ 
++def _validate_episode_progress(path: Path, *, digest: str, attempt_id: str, episodes: int) -> None:
++    path = _safe(path)
++    if not path.is_file():
++        raise ValueError("missing episode progress evidence")
++    count = 0
++    with path.open("rb") as handle:
++        while line := handle.readline(4097):
++            if len(line) > 4096 or not line.endswith(b"\n"):
++                raise ValueError("truncated/oversized episode progress record")
++            row = json.loads(
++                line,
++                parse_constant=lambda value: _invalid(f"nonfinite progress JSON: {value}"),
++                object_pairs_hook=_unique_object,
++            )
++            if (
++                count >= 2 * episodes
++                or not isinstance(row, dict)
++                or row.get("schema") != "psm_episode_progress_v1"
++                or row.get("evaluation_run_digest") != digest
++                or row.get("evaluation_attempt_id") != attempt_id
++                or type(row.get("episode")) is not int
++                or row["episode"] != count // 2
++                or row.get("event") != ("start", "end")[count % 2]
++            ):
++                raise ValueError("episode progress identity/order mismatch")
++            count += 1
++    if count != 2 * episodes:
++        raise ValueError("incomplete episode progress evidence")
++
++
++def _validate_local_cleanup(path: Path) -> None:
++    witness = _json(path, unique_keys=True)
++    required = {"session_id", "reset_ok", "cleanup_error", "rollout_error", "media_error"}
++    # RoboCasaLocalMemoryClient.begin creates client_uuid:slot:episode_uuid;
++    # required-mode evaluation uses slot0 and end() must return that real ID.
++    if (
++        not isinstance(witness, dict)
++        or not required <= witness.keys()
++        or witness["reset_ok"] is not True
++        or any(witness[name] is not None for name in ("cleanup_error", "rollout_error", "media_error"))
++        or not isinstance(witness["session_id"], str)
++        or re.fullmatch(r"[0-9a-f]{32}:0:[0-9a-f]{32}", witness["session_id"]) is None
++    ):
++        raise ValueError("episode Local-TTT cleanup is incomplete or failed")
++
++
+ _MEDIA_PROBE = r"""
+ import json, subprocess, sys
+ from pathlib import Path
+@@ -287,6 +346,9 @@ def validate_attempt(
+     attempt_identity = f"{attempt_dir.parent.name}/{attempt_dir.name}"
+     rows = _json(attempt_dir / "results.json")
+     validate_task_results(rows, digest=digest, expected_trials=expected_trials)
++    _validate_episode_progress(
++        attempt_dir / "episode_progress.jsonl", digest=digest, attempt_id=attempt_identity, episodes=expected_trials
++    )
+     for episode, row in enumerate(rows):
+         _remaining(deadline, stop=stop)
+         if row["error"] is not None:
+@@ -294,6 +356,7 @@ def validate_attempt(
+         if row.get("evaluation_attempt_id") != attempt_identity:
+             raise ValueError("foreign task attempt episode result")
+         prefix = f"rollout{episode:02d}"
++        _validate_local_cleanup(attempt_dir / f"{prefix}_cleanup.json")
+         if _json(attempt_dir / f"{prefix}_episode.json") != row:
+             raise ValueError("episode record differs from task result")
+         for key, suffix in (("actions_file", "actions"), ("predictions_file", "predictions")):
+diff --git a/scripts/robocasa_processes.py b/scripts/robocasa_processes.py
+index 0a4297a2..e3b633bc 100644
+--- a/scripts/robocasa_processes.py
++++ b/scripts/robocasa_processes.py
+@@ -99,8 +99,13 @@ class OwnedProcess:
+ 
+ 
+ class EpisodeProgress:
+-    def __init__(self, path: Path, *, digest: str, episodes: int):
++    def __init__(self, path: Path, *, digest: str, episodes: int, attempt_id: str | None = None):
++        # Older process-only callers may omit it; the formal queue always binds
++        # this monitor to the same Task/Attempt as all other episode evidence.
++        if attempt_id is not None and (not isinstance(attempt_id, str) or not attempt_id):
++            raise ValueError("expected progress attempt identity must be a nonempty string")
+         self.path, self.digest, self.episodes = path, digest, episodes
++        self.attempt_id = attempt_id
+         self.offset, self.next_episode, self.active = 0, 0, None
+         self.started_at = time.monotonic()
+ 
+@@ -123,8 +128,10 @@ class EpisodeProgress:
+                 row = json.loads(line)
+                 expected = self.next_episode
+                 if (
+-                    row.get("schema") != "psm_episode_progress_v1"
++                    not isinstance(row, dict)
++                    or row.get("schema") != "psm_episode_progress_v1"
+                     or row.get("evaluation_run_digest") != self.digest
++                    or (self.attempt_id is not None and row.get("evaluation_attempt_id") != self.attempt_id)
+                     or type(row.get("episode")) is not int
+                     or row["episode"] != expected
+                     or expected >= self.episodes
+diff --git a/tools/v3/eval_robocasa_queue_identity_test.py b/tools/v3/eval_robocasa_queue_identity_test.py
+index f37fb961..b38b238a 100644
+--- a/tools/v3/eval_robocasa_queue_identity_test.py
++++ b/tools/v3/eval_robocasa_queue_identity_test.py
+@@ -21,6 +21,7 @@ import tempfile
+ import threading
+ import time
+ import unittest
++import uuid
+ from contextlib import ExitStack
+ from enum import Enum
+ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+@@ -40,7 +41,7 @@ def _canonical(value):
+     return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
+ 
+ 
+-def _episode_fixture(directory, *, episode, digest, video):
++def _episode_fixture(directory, *, episode, digest, video, generated_mode="none", rollout=True):
+     """Write real audit schemas/media; only model and simulator are synthetic."""
+     stem = f"rollout{episode:02d}"
+     attempt_id = f"{directory.parent.name}/{directory.name}"
+@@ -63,6 +64,13 @@ def _episode_fixture(directory, *, episode, digest, video):
+         "action_chunk": [[0.0] * 15] * 16,
+         "local_memory": {"prefix_present": True},
+     }
++    generated_videos = (
++        []
++        if generated_mode == "none"
++        else [f"{stem}_generated.mp4"]
++        if generated_mode == "first"
++        else [f"{stem}_generated_replan0000.mp4"]
++    )
+     row = {
+         "ep": episode,
+         "policy": episode % 2 == 0,
+@@ -75,12 +83,39 @@ def _episode_fixture(directory, *, episode, digest, video):
+         "predictions_file": f"{stem}_predictions.jsonl",
+         "evaluation_run_digest": digest,
+         "evaluation_attempt_id": attempt_id,
+-        "generated_videos": [],
++        "generated_videos": generated_videos,
+     }
+     for suffix, record in (("actions", action), ("predictions", prediction)):
+         (directory / f"{stem}_{suffix}.jsonl").write_text(json.dumps(record) + "\n")
+     (directory / f"{stem}_episode.json").write_text(json.dumps(row))
+-    (directory / f"{stem}.mp4").write_bytes(video)
++    if rollout:
++        (directory / f"{stem}.mp4").write_bytes(video)
++    (directory / f"{stem}_cleanup.json").write_text(
++        json.dumps(
++            {
++                "session_id": f"{uuid.uuid4().hex}:0:{uuid.uuid4().hex}",
++                "reset_ok": True,
++                "cleanup_error": None,
++                "rollout_error": None,
++                "media_error": None,
++            }
++        )
++    )
++    if generated_videos:
++        for name in generated_videos:
++            (directory / name).write_bytes(video)
++        (directory / f"{stem}_generated_manifest.json").write_text(
++            json.dumps(
++                {
++                    "schema": "psm_generated_video_v1",
++                    "status": "COMPLETE",
++                    "mode": generated_mode,
++                    "evaluation_run_digest": digest,
++                    "evaluation_attempt_id": attempt_id,
++                    "videos": [{"replan": 0, "source_step": 0, "file": generated_videos[0], "frames": 2}],
++                }
++            )
++        )
+     from PIL import Image
+ 
+     Image.new("RGB", (16, 16), (15, 30, 45)).save(directory / f"{stem}_init.png")
+@@ -428,7 +463,24 @@ def _scenario(case, parent, count):
+         assert set(command[command.index("--runtime-tasks") + 1].split(",")) == (
+             {"CloseFridge", "TurnOnSinkFaucet"} if case == "task_subset" else TASKS
+         )
+-        assert command[command.index("--save-generated-video") + 1] == "none"
++        video_mode = command[command.index("--save-generated-video") + 1]
++        rollout_enabled = "--no-save-rollout-mp4" not in command
++        expected_mode = (
++            ("all" if case == "generated_all" else "first")
++            if case.startswith(("generated_", "partial_video_"))
++            else "none"
++        )
++        assert video_mode == expected_mode
++        if case == "partial_video_first":
++            _episode_fixture(
++                directory,
++                episode=0,
++                digest=digest,
++                video=video_bytes,
++                generated_mode=video_mode,
++                rollout=rollout_enabled,
++            )
++            return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
+         if case == "partial_resume" and len(sim_calls) == 1:
+             row = _episode_fixture(directory, episode=0, digest=digest, video=video_bytes)
+             (directory / "results.json").write_text(json.dumps([row]))
+@@ -473,6 +525,7 @@ def _scenario(case, parent, count):
+                             "event": "start",
+                             "episode": 0,
+                             "evaluation_run_digest": digest,
++                            "evaluation_attempt_id": f"{directory.parent.name}/{directory.name}",
+                         }
+                     )
+                     + "\n"
+@@ -486,7 +539,17 @@ def _scenario(case, parent, count):
+             else:
+                 script = f"raise RuntimeError({case!r})"
+             return subprocess.Popen([sys.executable, "-c", script], **kwargs)
+-        rows = [_episode_fixture(directory, episode=index, digest=digest, video=video_bytes) for index in range(5)]
++        rows = [
++            _episode_fixture(
++                directory,
++                episode=index,
++                digest=digest,
++                video=video_bytes,
++                generated_mode=video_mode,
++                rollout=rollout_enabled,
++            )
++            for index in range(5)
++        ]
+         (directory / "results.json").write_text(json.dumps(rows))
+         progress = Path(command[command.index("--progress-file") + 1])
+         progress.write_text(
+@@ -497,6 +560,7 @@ def _scenario(case, parent, count):
+                         "episode": index,
+                         "event": event,
+                         "evaluation_run_digest": digest,
++                        "evaluation_attempt_id": f"{directory.parent.name}/{directory.name}",
+                     }
+                 )
+                 + "\n"
+@@ -504,6 +568,10 @@ def _scenario(case, parent, count):
+                 for event in ("start", "end")
+             )
+         )
++        if case == "wrong_attempt_progress":
++            events = [json.loads(line) for line in progress.read_text().splitlines()]
++            events[0]["evaluation_attempt_id"] = "CloseFridge/attempt_9999"
++            progress.write_text("".join(json.dumps(event) + "\n" for event in events))
+         if len(sim_calls) == 4 and case == "server_dies_after_tasks":
+             _stop(servers[-1])
+         return subprocess.Popen([sys.executable, "-c", "pass"], **kwargs)
+@@ -547,6 +615,8 @@ def _scenario(case, parent, count):
+     ]
+     argv += ["--terminate-grace-s", "0.15"]
+     argv += ["--save-generated-video", "none"]
++    if case in ("generated_first", "generated_all", "partial_video_first"):
++        argv += ["--no-save-rollout-mp4", "--save-generated-video", "all" if case == "generated_all" else "first"]
+     if case == "task_subset":
+         argv += ["--tasks", "CloseFridge,TurnOnSinkFaucet"]
+     if case == "task_unknown":
+@@ -619,7 +689,31 @@ def _scenario(case, parent, count):
+                     if (output / "screening_summary.json").is_file()
+                     else None
+                 )
+-                if case in ("partial_resume", "resume_complete", "resume_wrong_video", "resume_wrong_timeout"):
++                if case in (
++                    "partial_resume",
++                    "resume_complete",
++                    "resume_wrong_video",
++                    "resume_wrong_timeout",
++                    "resume_missing_progress",
++                    "resume_wrong_attempt",
++                    "resume_failed_cleanup",
++                ):
++                    if case in ("resume_missing_progress", "resume_wrong_attempt", "resume_failed_cleanup"):
++                        victim = output / "CloseFridge/attempt_0001"
++                        corrupt_path = victim / (
++                            "rollout00_cleanup.json" if case == "resume_failed_cleanup" else "episode_progress.jsonl"
++                        )
++                        if case == "resume_missing_progress":
++                            corrupt_path.unlink()
++                        elif case == "resume_wrong_attempt":
++                            events = [json.loads(line) for line in corrupt_path.read_text().splitlines()]
++                            events[0]["evaluation_attempt_id"] = "CloseFridge/attempt_9999"
++                            corrupt_path.write_text("".join(json.dumps(event) + "\n" for event in events))
++                        else:
++                            cleanup = json.loads(corrupt_path.read_text())
++                            cleanup["reset_ok"] = False
++                            corrupt_path.write_text(json.dumps(cleanup))
++                        corrupt_bytes = corrupt_path.read_bytes() if corrupt_path.exists() else None
+                     argv += ["--resume"]
+                     if case == "resume_wrong_video":
+                         argv += ["--save-generated-video", "first"]
+@@ -655,8 +749,15 @@ def _scenario(case, parent, count):
+         "resume_complete",
+         "resume_wrong_video",
+         "resume_wrong_timeout",
++        "resume_missing_progress",
++        "resume_wrong_attempt",
++        "resume_failed_cleanup",
+     ):
+         report.update(first_rc=first_rc, first_summary=first_summary)
++    if "corrupt_path" in locals():
++        report["corrupt_artifact_preserved"] = corrupt_bytes == (
++            corrupt_path.read_bytes() if corrupt_path.exists() else None
++        )
+     report["attempts"] = {
+         task: [
+             {
+@@ -678,6 +779,41 @@ def _scenario(case, parent, count):
+     (parent / "report.json").write_text(json.dumps(report))
+ 
+ 
++class MediaClassificationTests(unittest.TestCase):
++    def test_prediction_video_cannot_be_reported_as_environment_video(self):
++        for mode in ("first", "all"):
++            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as directory:
++                output = Path(directory) / "CloseFridge/attempt_0001"
++                output.mkdir(parents=True)
++                row = _episode_fixture(
++                    output,
++                    episode=0,
++                    digest="fixture",
++                    video=b"classification fixture",
++                    generated_mode=mode,
++                    rollout=False,
++                )
++                (output / "results.json").write_text(json.dumps([row]))
++                result = queue_module.task_result(
++                    Path("/fixture"), output, 0, "0", 0, run_digest="fixture", expected_trials=1
++                )
++                self.assertEqual(result["rollout_mp4s"], [])
++                self.assertEqual(result["generated_mp4s"], [str(output / row["generated_videos"][0])])
++
++    def test_environment_video_and_none_mode_have_separate_lists(self):
++        with tempfile.TemporaryDirectory() as directory:
++            output = Path(directory) / "CloseFridge/attempt_0001"
++            output.mkdir(parents=True)
++            row = _episode_fixture(output, episode=0, digest="fixture", video=b"classification fixture")
++            (output / "results.json").write_text(json.dumps([row]))
++            (output / "rollout00_not_video.mp4").write_bytes(b"unrelated artifact")
++            result = queue_module.task_result(
++                Path("/fixture"), output, 0, "0", 0, run_digest="fixture", expected_trials=1
++            )
++            self.assertEqual(result["rollout_mp4s"], [str(output / "rollout00.mp4")])
++            self.assertEqual(result["generated_mp4s"], [])
++
++
+ class ServerIdentityTests(unittest.TestCase):
+     def test_real_child_explicit_chunk16_overrides_config32_and_missing_flag_fails_strict_info(self):
+         checkpoint, config_path = Path("/synthetic/iter_000004000"), Path("/synthetic/config.yaml")
+@@ -844,6 +980,41 @@ class QueueIntegrationTests(unittest.TestCase):
+                     self.assertEqual(row["trials"], 5)
+                     self.assertEqual(len(row["rollout_mp4s"]), 5)
+ 
++    def test_generated_video_summary_keeps_environment_videos_disabled(self):
++        for case in ("generated_first", "generated_all"):
++            with self.subTest(mode=case):
++                report = self.scenario(case, 1)
++                self.assertEqual(report["rc"], 0, report)
++                summary = report["summary"]
++                self.assertEqual(summary["status"], "COMPLETE")
++                self.assertEqual(summary["rollout_mp4s"], [])
++                self.assertEqual(len(summary["generated_mp4s"]), 20)
++                for row in summary["tasks"].values():
++                    self.assertEqual(row["rollout_mp4s"], [])
++                    self.assertEqual(len(row["generated_mp4s"]), 5)
++                    self.assertEqual(
++                        sorted(row["generated_mp4s"]),
++                        sorted(
++                            str(Path(row["results_file"]).parent / name)
++                            for episode in row["rollouts"]
++                            for name in episode["generated_videos"]
++                        ),
++                    )
++
++    def test_failed_partial_attempt_preserves_prediction_video_without_environment_video(self):
++        report = self.scenario("partial_video_first", 1)
++        self.assertEqual(report["rc"], 1)
++        summary = report["summary"]
++        self.assertEqual(summary["status"], "INCOMPLETE")
++        self.assertEqual(summary["rollout_mp4s"], [])
++        self.assertEqual(len(summary["generated_mp4s"]), 1)
++        row = next(iter(summary["tasks"].values()))
++        self.assertEqual(row["rollout_mp4s"], [])
++        self.assertEqual(row["generated_mp4s"], summary["generated_mp4s"])
++        self.assertEqual(row["rollouts"], [])
++        self.assertIn("generated", row["generated_mp4s"][0])
++        self.assertEqual(report["attempts"][next(iter(summary["tasks"]))][0]["marker"]["status"], "FAILED")
++
+     def test_occupied_nonfirst_port_refuses_all_workers_before_output_claim(self):
+         report = self.scenario("occupied_port")
+         self.assertEqual(report["rc"], 1)
+@@ -1039,6 +1210,36 @@ class QueueIntegrationTests(unittest.TestCase):
+         self.assertTrue(all(len(attempts) == 1 for attempts in report["attempts"].values()))
+         self.assertTrue(all(attempts[0]["marker"]["status"] == "COMPLETE" for attempts in report["attempts"].values()))
+ 
++    def test_queue_online_progress_rejects_foreign_attempt_before_completion(self):
++        report = self.scenario("wrong_attempt_progress", 1)
++        self.assertEqual(report["rc"], 1)
++        self.assertEqual(report["server_commands"], 1)
++        self.assertEqual(report["sim_calls"], 1)
++        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
++        self.assertIn("progress identity/order mismatch", str(report["summary"]["worker_errors"]))
++        self.assertTrue(
++            all(
++                attempt["marker"]["status"] == "FAILED"
++                for attempts in report["attempts"].values()
++                for attempt in attempts
++            )
++        )
++
++    def test_resume_cannot_skip_complete_marker_with_missing_or_foreign_episode_evidence(self):
++        for case in ("resume_missing_progress", "resume_wrong_attempt", "resume_failed_cleanup"):
++            with self.subTest(corruption=case):
++                report = self.scenario(case, 1)
++                self.assertEqual(report["first_rc"], 0)
++                self.assertEqual(report["rc"], 1)
++                self.assertEqual(report["server_commands"], 4)
++                self.assertEqual(report["sim_calls"], 4)
++                self.assertIn("ValueError:", report["error"])
++                self.assertTrue(report["corrupt_artifact_preserved"])
++                self.assertTrue(all(len(attempts) == 1 for attempts in report["attempts"].values()))
++                self.assertTrue(
++                    all(attempts[0]["marker"]["status"] == "COMPLETE" for attempts in report["attempts"].values())
++                )
++
+     def test_partial_task_resume_keeps_old_evidence_and_restarts_entire_task_from_zero(self):
+         report = self.scenario("partial_resume", 1)
+         self.assertEqual(report["first_rc"], 1)
+diff --git a/tools/v3/robocasa_eval_results_test.py b/tools/v3/robocasa_eval_results_test.py
+index 4ffd22bd..cbf848a7 100644
+--- a/tools/v3/robocasa_eval_results_test.py
++++ b/tools/v3/robocasa_eval_results_test.py
+@@ -99,6 +99,16 @@ def populate(directory, media, *, mode="none", rollout=False, png=False):
+             predictions_file=f"{prefix}_predictions.jsonl",
+             generated_videos=videos,
+         )
++        write_json(
++            directory / f"{prefix}_cleanup.json",
++            dict(
++                session_id=f"{'a' * 32}:0:{episode + 1:032x}",
++                reset_ok=True,
++                cleanup_error=None,
++                rollout_error=None,
++                media_error=None,
++            ),
++        )
+         write_jsonl(directory / row["actions_file"], actions)
+         write_jsonl(directory / row["predictions_file"], predictions)
+         if rollout:
+@@ -124,6 +134,20 @@ def populate(directory, media, *, mode="none", rollout=False, png=False):
+         results.append(row)
+         write_json(directory / f"{prefix}_episode.json", row)
+     write_json(directory / "results.json", results)
++    write_jsonl(
++        directory / "episode_progress.jsonl",
++        [
++            dict(
++                schema="psm_episode_progress_v1",
++                evaluation_run_digest=DIGEST,
++                evaluation_attempt_id=f"{directory.parent.name}/{directory.name}",
++                episode=episode,
++                event=event,
++            )
++            for episode in range(2)
++            for event in ("start", "end")
++        ],
++    )
+     return results
+ 
+ 
+@@ -485,3 +509,144 @@ def test_cancel_stalled_decoder_reaps_its_process(tmp_path, monkeypatch):
+     assert marker.is_file()
+     assert not module.OwnedProcess.__init__.__globals__["group_members"](processes[0].pid)
+     assert not Path("/proc", marker.read_text()).exists()
++
++
++@pytest.mark.parametrize("validation_stage", ["finish", "resume"])
++@pytest.mark.parametrize(
++    "failure",
++    [
++        "missing_progress",
++        "empty_progress",
++        "malformed_progress",
++        "truncated_progress",
++        "duplicate_start",
++        "duplicate_end",
++        "wrong_progress_order",
++        "missing_end",
++        "extra_progress",
++        "wrong_progress_attempt",
++        "wrong_progress_task",
++        "wrong_progress_digest",
++        "wrong_progress_schema",
++        "boolean_progress_episode",
++        "unknown_progress_event",
++        "nonobject_progress",
++        "blank_progress_line",
++        "missing_cleanup",
++        "malformed_cleanup",
++        "nonobject_cleanup",
++        "reset_ok_false",
++        "reset_ok_string",
++        "missing_reset_ok",
++        "cleanup_error",
++        "rollout_error",
++        "media_error",
++        "missing_error_field",
++        "missing_session",
++        "null_session",
++        "none_string_session",
++        "empty_session",
++        "nonstring_session",
++        "malformed_session",
++        "wrong_slot_session",
++    ],
++)
++def test_progress_and_local_cleanup_required_for_commit_and_resume(tmp_path, media, validation_stage, failure):
++    task = tmp_path / "CloseFridge"
++    attempt = start_attempt(task, digest=DIGEST, resume=False)
++    populate(attempt, media)
++    if validation_stage == "resume":
++        finish_attempt(attempt, **options())
++    progress_path = attempt / "episode_progress.jsonl"
++    progress = [json.loads(line) for line in progress_path.read_text().splitlines()]
++    cleanup_path = attempt / "rollout00_cleanup.json"
++    cleanup = json.loads(cleanup_path.read_text())
++    if failure == "missing_progress":
++        progress_path.unlink()
++    elif failure == "empty_progress":
++        progress_path.write_bytes(b"")
++    elif failure == "malformed_progress":
++        progress_path.write_text("{broken}\n")
++    elif failure == "truncated_progress":
++        progress_path.write_text(progress_path.read_text().rstrip("\n"))
++    elif failure == "blank_progress_line":
++        progress_path.write_text(progress_path.read_text() + "\n")
++    elif failure == "missing_cleanup":
++        cleanup_path.unlink()
++    elif failure == "malformed_cleanup":
++        cleanup_path.write_text("{broken}\n")
++    elif failure == "nonobject_cleanup":
++        write_json(cleanup_path, [])
++    elif failure in {
++        "reset_ok_false",
++        "reset_ok_string",
++        "missing_reset_ok",
++        "cleanup_error",
++        "rollout_error",
++        "media_error",
++        "missing_error_field",
++        "missing_session",
++        "null_session",
++        "none_string_session",
++        "empty_session",
++        "nonstring_session",
++        "malformed_session",
++        "wrong_slot_session",
++    }:
++        if failure == "reset_ok_false":
++            cleanup["reset_ok"] = False
++        elif failure == "reset_ok_string":
++            cleanup["reset_ok"] = "true"
++        elif failure == "missing_reset_ok":
++            cleanup.pop("reset_ok")
++        elif failure in {"cleanup_error", "rollout_error", "media_error"}:
++            cleanup[failure] = "injected failure"
++        elif failure == "missing_error_field":
++            cleanup.pop("media_error")
++        elif failure == "missing_session":
++            cleanup.pop("session_id")
++        else:
++            cleanup["session_id"] = {
++                "null_session": None,
++                "none_string_session": "None",
++                "empty_session": "",
++                "nonstring_session": True,
++                "malformed_session": "unverified-id",
++                "wrong_slot_session": f"{'a' * 32}:1:{'b' * 32}",
++            }[failure]
++        write_json(cleanup_path, cleanup)
++    else:
++        if failure == "duplicate_start":
++            progress.insert(1, dict(progress[0]))
++        elif failure == "duplicate_end":
++            progress.insert(2, dict(progress[1]))
++        elif failure == "wrong_progress_order":
++            progress[0], progress[1] = progress[1], progress[0]
++        elif failure == "missing_end":
++            progress.pop()
++        elif failure == "extra_progress":
++            progress += [dict(progress[0], episode=2), dict(progress[1], episode=2)]
++        elif failure == "wrong_progress_attempt":
++            progress[1]["evaluation_attempt_id"] = "CloseFridge/attempt_9999"
++        elif failure == "wrong_progress_task":
++            progress[1]["evaluation_attempt_id"] = "NavigateKitchen/attempt_0001"
++        elif failure == "wrong_progress_digest":
++            progress[1]["evaluation_run_digest"] = "b" * 64
++        elif failure == "wrong_progress_schema":
++            progress[1]["schema"] = "foreign_v0"
++        elif failure == "boolean_progress_episode":
++            progress[0]["episode"] = False
++        elif failure == "unknown_progress_event":
++            progress[1]["event"] = "complete"
++        elif failure == "nonobject_progress":
++            progress[0] = []
++        write_jsonl(progress_path, progress)
++    original = {path.name: path.read_bytes() for path in attempt.iterdir()}
++    with pytest.raises(ValueError):
++        if validation_stage == "finish":
++            finish_attempt(attempt, **options())
++        else:
++            find_completed_attempt(task, **options())
++    assert {path.name: path.read_bytes() for path in attempt.iterdir()} == original
++    marker = json.loads((attempt / "attempt.json").read_text())
++    assert marker["status"] == ("RUNNING" if validation_stage == "finish" else "COMPLETE")
+diff --git a/tools/v3/robocasa_processes_test.py b/tools/v3/robocasa_processes_test.py
+index d066dc28..590d6d3c 100644
+--- a/tools/v3/robocasa_processes_test.py
++++ b/tools/v3/robocasa_processes_test.py
+@@ -133,3 +133,37 @@ def test_partial_append_cannot_fake_completed_episode(tmp_path):
+     path.write_text('{"schema":')
+     progress.poll()
+     assert progress.offset == 0 and not progress.complete
++
++
++@pytest.mark.parametrize("attempt", [None, "", "CloseFridge/attempt_0002", "NavigateKitchen/attempt_0001"])
++def test_progress_requires_the_exact_configured_task_attempt(attempt, tmp_path):
++    path = tmp_path / "progress"
++    progress = EpisodeProgress(path, digest="identity", episodes=1, attempt_id="CloseFridge/attempt_0001")
++    base = {
++        "schema": "psm_episode_progress_v1",
++        "evaluation_run_digest": "identity",
++        "evaluation_attempt_id": attempt,
++        "episode": 0,
++    }
++    path.write_text("".join(json.dumps(dict(base, event=event)) + "\n" for event in ("start", "end")))
++    with pytest.raises(EvaluationInterrupted, match="identity/order"):
++        progress.poll()
++    assert not progress.complete
++
++
++def test_bound_progress_accepts_exact_attempt_across_incremental_appends(tmp_path):
++    path = tmp_path / "progress"
++    progress = EpisodeProgress(path, digest="identity", episodes=2, attempt_id="CloseFridge/attempt_0001")
++    base = {
++        "schema": "psm_episode_progress_v1",
++        "evaluation_run_digest": "identity",
++        "evaluation_attempt_id": "CloseFridge/attempt_0001",
++    }
++    with path.open("w") as stream:
++        for episode in range(2):
++            for event in ("start", "end"):
++                stream.write(json.dumps(dict(base, episode=episode, event=event)) + "\n")
++                stream.flush()
++                progress.poll()
++                assert progress.complete is (episode == 1 and event == "end")
++    assert progress.complete
