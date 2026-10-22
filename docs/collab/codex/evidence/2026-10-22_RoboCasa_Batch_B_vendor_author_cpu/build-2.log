@@ -1,0 +1,15 @@
+{
+  "schema": "psm_vendor_build_v1",
+  "lock_sha256": "5f0111957a7da980918f4f6a745883632766dd249744bb94485e156591a00a0e",
+  "robosuite": {
+    "path": "/tmp/psm-v3-vendor-b-20261022/locked-build-2/robosuite",
+    "commit": "1ac174585293ed998ffc9cf73e47439798cf6f6c",
+    "tree": "195e30cfd5d37289d227a89234bd8bb069792905"
+  },
+  "robocasa": {
+    "path": "/tmp/psm-v3-vendor-b-20261022/locked-build-2/robocasa",
+    "commit": "6f90063c0ec2b9916bbd977368b54c98d9c2d908"
+  },
+  "package_install_performed": false,
+  "simulation_performed": false
+}

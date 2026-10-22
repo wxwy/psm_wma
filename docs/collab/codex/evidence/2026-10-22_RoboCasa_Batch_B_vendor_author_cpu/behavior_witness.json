@@ -1,0 +1,395 @@
+{
+  "scope": "real source/controller/XML, synthetic Sim boundary, no Kitchen/MjData/step/GPU",
+  "mujoco_native": "3.3.1",
+  "mujoco_python": "3.3.1",
+  "numpy": "2.2.5",
+  "world_model_flags": {
+    "False": {
+      "xml": "<mujoco model=\"base\">\n  <compiler angle=\"radian\" meshdir=\"meshes/\" inertiagrouprange=\"0 0\" autolimits=\"true\" />\n  <option impratio=\"20\" cone=\"elliptic\" density=\"1.2\" viscosity=\"0.00002\" timestep=\"0.002\"><flag multiccd=\"disable\" /></option>\n  <size nconmax=\"5000\" njmax=\"5000\" />\n\n  <asset>\n  </asset>\n\n  <visual>\n    <map znear=\"0.001\" />\n  </visual>\n\n  <actuator>\n  </actuator>\n\n  <worldbody>\n  </worldbody>\n\n  <equality>\n  </equality>\n<sensor /><tendon /><contact /></mujoco>",
+      "compiled_enableflags": 0,
+      "compiled_disableflags": 0
+    },
+    "True": {
+      "xml": "<mujoco model=\"base\">\n  <compiler angle=\"radian\" meshdir=\"meshes/\" inertiagrouprange=\"0 0\" autolimits=\"true\" />\n  <option impratio=\"20\" cone=\"elliptic\" density=\"1.2\" viscosity=\"0.00002\" timestep=\"0.002\"><flag multiccd=\"enable\" /></option>\n  <size nconmax=\"5000\" njmax=\"5000\" />\n\n  <asset>\n  </asset>\n\n  <visual>\n    <map znear=\"0.001\" />\n  </visual>\n\n  <actuator>\n  </actuator>\n\n  <worldbody>\n  </worldbody>\n\n  <equality>\n  </equality>\n<sensor /><tendon /><contact /></mujoco>",
+      "compiled_enableflags": 16,
+      "compiled_disableflags": 0
+    }
+  },
+  "controller_cases": [
+    {
+      "axis": "x",
+      "heading": 0,
+      "input": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "goal_qvel": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": 0,
+      "input": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "goal_qvel": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": 0,
+      "input": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "goal_qvel": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": 0,
+      "input": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "goal_qvel": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": 1.5707963267948966,
+      "input": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "goal_qvel": [
+        -4.371138828673793e-08,
+        1.0,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": 1.5707963267948966,
+      "input": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "goal_qvel": [
+        -1.0,
+        -4.371138828673793e-08,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": 1.5707963267948966,
+      "input": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "goal_qvel": [
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": 1.5707963267948966,
+      "input": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "goal_qvel": [
+        -0.0,
+        0.0,
+        -1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": -1.5707963267948966,
+      "input": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "goal_qvel": [
+        -4.371138828673793e-08,
+        -1.0,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": -1.5707963267948966,
+      "input": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "goal_qvel": [
+        1.0,
+        -4.371138828673793e-08,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": -1.5707963267948966,
+      "input": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "goal_qvel": [
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "x",
+      "heading": -1.5707963267948966,
+      "input": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "goal_qvel": [
+        0.0,
+        -0.0,
+        -1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": 0,
+      "input": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "goal_qvel": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": 0,
+      "input": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "goal_qvel": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": 0,
+      "input": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "goal_qvel": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": 0,
+      "input": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "goal_qvel": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": 1.5707963267948966,
+      "input": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "goal_qvel": [
+        1.0,
+        -4.371138828673793e-08,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": 1.5707963267948966,
+      "input": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "goal_qvel": [
+        -4.371138828673793e-08,
+        -1.0,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": 1.5707963267948966,
+      "input": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "goal_qvel": [
+        0.0,
+        -0.0,
+        1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": 1.5707963267948966,
+      "input": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "goal_qvel": [
+        0.0,
+        -0.0,
+        -1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": -1.5707963267948966,
+      "input": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "goal_qvel": [
+        -1.0,
+        -4.371138828673793e-08,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": -1.5707963267948966,
+      "input": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "goal_qvel": [
+        -4.371138828673793e-08,
+        1.0,
+        0.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": -1.5707963267948966,
+      "input": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "goal_qvel": [
+        -0.0,
+        0.0,
+        1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    },
+    {
+      "axis": "y",
+      "heading": -1.5707963267948966,
+      "input": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "goal_qvel": [
+        -0.0,
+        0.0,
+        -1.0
+      ],
+      "class": "LegacyMobileBaseJointVelocityController"
+    }
+  ],
+  "sleep_flag_unavailable_error": "XML Error: Schema violation: unrecognized attribute: 'sleep'\nElement 'flag', line 1\n",
+  "native_enable_bit_names": [
+    "mjENBL_OVERRIDE",
+    "mjENBL_ENERGY",
+    "mjENBL_FWDINV",
+    "mjENBL_INVDISCRETE",
+    "mjENBL_MULTICCD",
+    "mjENBL_ISLAND",
+    "mjNENABLE"
+  ],
+  "official_task_horizons": {
+    "CloseFridge": 900,
+    "NavigateKitchen": 450
+  },
+  "robosuite_git_status": ""
+}

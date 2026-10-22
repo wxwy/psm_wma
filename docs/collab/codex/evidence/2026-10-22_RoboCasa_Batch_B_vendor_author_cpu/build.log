@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/workspace/psm_wma/tools/v3/build_robocasa_vendor.py", line 133, in <module>
+    main()
+  File "/workspace/psm_wma/tools/v3/build_robocasa_vendor.py", line 121, in main
+    build(
+  File "/workspace/psm_wma/tools/v3/build_robocasa_vendor.py", line 83, in build
+    build_checkout(robosuite_cache, rs, spec["base_commit"])
+  File "/workspace/psm_wma/tools/v3/build_robocasa_vendor.py", line 67, in build_checkout
+    git(destination, "fetch", "--no-tags", str(cache), commit)
+  File "/workspace/psm_wma/tools/v3/build_robocasa_vendor.py", line 39, in git
+    return subprocess.check_output(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-c', 'core.hooksPath=/dev/null', '-c', 'commit.gpgsign=false', '-c', 'core.autocrlf=false', '-C', '/tmp/psm-v3-vendor-b-20261022/locked-build/robosuite', 'fetch', '--no-tags', '/tmp/psm-v3-vendor-b-20261022/robosuite-upstream', '824ac14cefcfb7ec125fe5eb2e0bad7364466154']' returned non-zero exit status 128.

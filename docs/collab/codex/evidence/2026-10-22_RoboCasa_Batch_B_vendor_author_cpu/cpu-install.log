@@ -1,0 +1,39 @@
+Using Python 3.12.14 environment at: /workspace/.venvs/psm-robocasa-vendor-cpu
+Resolved 25 packages in 645ms
+Downloading mujoco (6.4MiB)
+Downloading llvmlite (40.4MiB)
+Downloading numba (3.7MiB)
+Downloading pyopengl (3.0MiB)
+Downloading numpy (15.4MiB)
+ Downloaded pyopengl
+ Downloaded numba
+ Downloaded mujoco
+ Downloaded numpy
+ Downloaded llvmlite
+Prepared 12 packages in 988ms
+Installed 25 packages in 51ms
+ + absl-py==2.5.1
+ + certifi==2026.10.19
+ + charset-normalizer==3.5.2
+ + etils==1.14.0
+ + fsspec==2026.9.0
+ + glfw==2.11.0
+ + idna==3.20
+ + iniconfig==2.3.1
+ + llvmlite==0.44.0
+ + mujoco==3.3.1
+ + numba==0.61.2
+ + numpy==2.2.5
+ + packaging==26.3
+ + pillow==11.3.0
+ + pluggy==1.7.0
+ + pygments==2.21.0
+ + pyopengl==3.1.10
+ + pytest==9.0.2
+ + requests==2.32.5
+ + ruff==0.12.7
+ + scipy==1.15.3
+ + termcolor==3.1.0
+ + typing-extensions==4.16.0
+ + urllib3==2.8.0
+ + zipp==4.1.2

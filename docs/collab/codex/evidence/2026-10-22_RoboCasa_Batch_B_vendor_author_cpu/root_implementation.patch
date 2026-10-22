@@ -1,0 +1,1912 @@
+diff --git a/scripts/robocasa_vendor.py b/scripts/robocasa_vendor.py
+new file mode 100644
+index 00000000..b88d2e96
+--- /dev/null
++++ b/scripts/robocasa_vendor.py
+@@ -0,0 +1,384 @@
++"""Read-only runtime provenance for the pinned RoboCasa evaluation environment.
++
++Executed by the SIMULATOR interpreter, with its import environment and -B, before model or env creation.
++Source identity and physics compatibility are different gates: this attests the
++former and never claims to reproduce the unknown data-generation environment.
++"""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import importlib
++import importlib.metadata
++import importlib.util
++import json
++import marshal
++import os
++import subprocess
++import sys
++import tempfile
++import types
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[1]
++DEFAULT_LOCK = ROOT / "third_party/robosuite_patches/vendor.lock.json"
++ASSET_SUFFIXES = {".xml", ".obj", ".stl", ".mtl", ".png", ".jpg", ".jpeg", ".webp", ".json", ".txt", ".yaml", ".yml"}
++
++
++def canonical(value) -> bytes:
++    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++
++
++def sha256_file(path: Path) -> str:
++    digest = hashlib.sha256()
++    with path.open("rb") as handle:
++        for block in iter(lambda: handle.read(1024 * 1024), b""):
++            digest.update(block)
++    return digest.hexdigest()
++
++
++def git_raw(repo: Path, *args) -> str:
++    env = os.environ.copy()
++    for name in (
++        "GIT_DIR",
++        "GIT_WORK_TREE",
++        "GIT_INDEX_FILE",
++        "GIT_OBJECT_DIRECTORY",
++        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
++    ):
++        env.pop(name, None)
++    env.update(GIT_NO_LAZY_FETCH="1", GIT_ALLOW_PROTOCOL="file", GIT_NO_REPLACE_OBJECTS="1")
++    return subprocess.check_output(
++        ["git", "--no-optional-locks", "-C", str(repo), *args], text=True, stderr=subprocess.PIPE, env=env
++    )
++
++
++def git(repo: Path, *args) -> str:
++    return git_raw(repo, *args).strip()
++
++
++def audit_source(module_origin: Path, *, package: str, expected_commit: str, assets: dict) -> dict:
++    origin = module_origin.resolve(strict=True)
++    repo = Path(git(origin.parent, "rev-parse", "--show-toplevel")).resolve()
++    if origin != repo / package / "__init__.py":
++        raise ValueError(f"{package}: import origin is not its tracked package root")
++    if git(repo, "rev-parse", "HEAD") != expected_commit:
++        raise ValueError(f"{package}: source commit mismatch")
++    # Check index AND working tree. Ignored files are audited too: ignored .py,
++    # .so or backups must not evade the clean-source requirement.
++    if git(repo, "diff", "--name-only", "HEAD", "--"):
++        raise ValueError(f"{package}: tracked source is dirty")
++    names = set(
++        filter(
++            None,
++            git_raw(repo, "ls-files", "--others", "-z").split("\0"),
++        )
++    )
++    observed = {}
++    expected_assets = assets.get(package, {})
++    if not isinstance(expected_assets, dict):
++        raise ValueError("asset manifest must map relative paths to SHA256")
++    for name in sorted(names):
++        path = repo / name
++        relative = Path(name)
++        if path.is_symlink() or not path.resolve().is_relative_to(repo):
++            raise ValueError(f"{package}: untrusted source/asset symlink: {name}")
++        if "__pycache__" in relative.parts and relative.suffix == ".pyc":
++            # Read-only probe disables bytecode writes. Existing bytecode must
++            # correspond to a tracked Python source; arbitrary sourceless code rejects.
++            try:
++                source = Path(importlib.util.source_from_cache(str(path)))
++            except ValueError as error:
++                raise ValueError("unrecognized bytecode path") from error
++            if git(repo, "ls-files", "--error-unmatch", str(source.relative_to(repo))) and source.is_file():
++                data = path.read_bytes()
++                if data[:4] != importlib.util.MAGIC_NUMBER or len(data) > 10 * 1024 * 1024:
++                    raise ValueError("foreign or oversized bytecode")
++                code = marshal.loads(data[16:])
++                if (
++                    not isinstance(code, types.CodeType)
++                    or Path(code.co_filename).resolve() != source.resolve()
++                    or code
++                    != compile(
++                        source.read_bytes(), code.co_filename, "exec", dont_inherit=True, optimize=sys.flags.optimize
++                    )
++                ):
++                    raise ValueError("cached bytecode differs from pinned Python source")
++                continue
++        if (
++            not name.startswith(f"{package}/models/assets/")
++            or relative.suffix.lower() not in ASSET_SUFFIXES
++            or path.is_symlink()
++            or not path.resolve().is_relative_to(repo)
++            or not path.is_file()
++        ):
++            raise ValueError(f"{package}: untrusted untracked/ignored source: {name}")
++        actual = sha256_file(path)
++        if expected_assets.get(name) != actual:
++            raise ValueError(f"{package}: asset missing from approved inventory or SHA mismatch: {name}")
++        observed[name] = actual
++    if set(observed) != set(expected_assets):
++        raise ValueError(f"{package}: approved asset inventory differs from installed untracked assets")
++    return {
++        "commit": expected_commit,
++        "git_tree": git(repo, "rev-parse", "HEAD^{tree}"),
++        "source_root": str(repo),
++        "origin": str(origin),
++        "tracked_clean": True,
++        "untracked_asset_sha256": observed,
++        "untracked_source_clean": True,
++    }
++
++
++def probe_runtime(*, lock_path=DEFAULT_LOCK, asset_manifest=None, tasks=("CloseFridge", "NavigateKitchen")) -> dict:
++    lock_path = Path(lock_path).resolve(strict=True)
++    lock = json.loads(lock_path.read_text())
++    if lock["schema"] != "psm_robocasa_vendor_lock_v1":
++        raise ValueError("unknown vendor lock schema")
++    patch = lock_path.parent / lock["robosuite"]["patch"]
++    if sha256_file(patch) != lock["robosuite"]["patch_sha256"]:
++        raise ValueError("vendor patch checksum mismatch")
++    assets = json.loads(Path(asset_manifest).read_text()) if asset_manifest else {}
++    if not isinstance(assets, dict) or set(assets) - {"robosuite", "robocasa"}:
++        raise ValueError("unknown asset-manifest packages")
++    packages = {}
++    expected_versions = dict(
++        lock["runtime_versions"],
++        robosuite=lock["robosuite"]["package_version"],
++        robocasa=lock["robocasa"]["package_version"],
++    )
++    for name, expected in expected_versions.items():
++        version = importlib.metadata.version(name)
++        spec = importlib.util.find_spec(name)
++        if version != expected or spec is None or not spec.origin:
++            raise ValueError(f"{name}: installed version/origin mismatch")
++        item = {"distribution_version": version, "origin": str(Path(spec.origin).resolve(strict=True))}
++        if name in ("robosuite", "robocasa"):
++            expected_commit = lock[name]["patched_commit" if name == "robosuite" else "commit"]
++            item.update(audit_source(Path(spec.origin), package=name, expected_commit=expected_commit, assets=assets))
++        item["module_sha256"] = sha256_file(Path(item["origin"]))
++        packages[name] = item
++    # Import only AFTER source/version validation; never accept a path-only claim
++    # from a configuration file or execute a known dirty vendor's __init__.
++    for name, expected in expected_versions.items():
++        module = importlib.import_module(name)
++        if (
++            str(Path(module.__file__).resolve(strict=True)) != packages[name]["origin"]
++            or module.__version__ != expected
++        ):
++            raise ValueError(f"{name}: actual imported module differs from its metadata/spec")
++    mujoco = importlib.import_module("mujoco")
++    if mujoco.mj_versionString() != "3.3.1" or mujoco.mj_version() != 331:
++        raise ValueError("MuJoCo native library version mismatch")
++    packages["mujoco"]["native_version"] = mujoco.mj_versionString()
++    packages["mujoco"]["native_version_number"] = mujoco.mj_version()
++    packages["mujoco"]["native_library_sha256"] = {
++        p.name: sha256_file(p) for p in sorted(Path(mujoco.__file__).parent.glob("libmujoco.so*"))
++    }
++    if not packages["mujoco"]["native_library_sha256"]:
++        raise ValueError("cannot identify native MuJoCo shared library")
++    # Tiny XML compile only; no Kitchen, MjData, reset, step, rendering or GPU.
++    flags = {}
++    for enabled in (False, True):
++        model = mujoco.MjModel.from_xml_string(
++            '<mujoco><option><flag multiccd="' + ("enable" if enabled else "disable") + '"/></option></mujoco>'
++        )
++        effective = bool(model.opt.enableflags & int(mujoco.mjtEnableBit.mjENBL_MULTICCD))
++        if effective != enabled:
++            raise ValueError("MuJoCo multiccd compile witness mismatch")
++        flags[str(enabled)] = int(model.opt.enableflags)
++    if "mjENBL_SLEEP" in mujoco.mjtEnableBit.__members__:
++        raise ValueError("unexpected sleeping capability in pinned MuJoCo")
++    registry = importlib.import_module("robocasa.utils.dataset_registry_utils")
++    horizons = {task: registry.get_task_horizon(task) for task in tasks}
++    if not horizons or any(type(v) is not int or v <= 0 for v in horizons.values()):
++        raise ValueError("official task horizons must be positive integers")
++    # Re-audit after imports so imported modules cannot silently dirty their checkout.
++    for name in ("robosuite", "robocasa"):
++        audit_source(
++            Path(packages[name]["origin"]), package=name, expected_commit=packages[name]["commit"], assets=assets
++        )
++    result = {
++        "schema": "psm_robocasa_runtime_v1",
++        "lock_sha256": sha256_file(lock_path),
++        "probe_sha256": sha256_file(Path(__file__)),
++        "interpreter": {
++            "executable": os.path.abspath(sys.executable),
++            "prefix": sys.prefix,
++            "pythonpath_env": os.environ.get("PYTHONPATH", ""),
++            "base_prefix": sys.base_prefix,
++            "binary_sha256": sha256_file(Path(sys.executable).resolve()),
++        },
++        "packages": packages,
++        "protocol": {
++            "official_horizons": horizons,
++            "horizon_multiplier_applied": False,
++            "environment_instantiated": False,
++            "split_evidence_scope": "required evaluation protocol, not an observed Kitchen state",
++            "horizon_authority": "pinned robocasa registry (already includes 1.0.1 update)",
++            "object_split": "target",
++            "layout_split": "target",
++        },
++        "physics_capabilities": {
++            "multiccd_compile_flags": flags,
++            "sleeping_islands": False,
++            "sleeping_true_supported": False,
++            "real_kitchen_behavior_validated": False,
++        },
++    }
++    return dict(result, digest=hashlib.sha256(canonical(result)).hexdigest())
++
++
++def collect_runtime(
++    *,
++    sim_python: Path,
++    lock_path=DEFAULT_LOCK,
++    asset_manifest=None,
++    tasks=("CloseFridge", "NavigateKitchen"),
++    timeout_s=120,
++    simulation_env=None,
++) -> dict:
++    """Ask the actual selected interpreter; never take runtime identity from YAML."""
++    sim_python = Path(os.path.abspath(sim_python))
++    lock_path = Path(lock_path).resolve(strict=True)
++    executable_hash = sha256_file(sim_python.resolve(strict=True))
++    command = [
++        str(sim_python),
++        "-B",
++        str(Path(__file__).resolve()),
++        "--lock",
++        str(lock_path),
++        "--tasks",
++        ",".join(tasks),
++    ]
++    if asset_manifest:
++        command += ["--asset-manifest", str(Path(asset_manifest).resolve(strict=True))]
++    env = os.environ.copy() if simulation_env is None else dict(simulation_env)
++    env.update(CUDA_VISIBLE_DEVICES="", MUJOCO_GL="disable", PYTHONDONTWRITEBYTECODE="1")
++    completed = subprocess.run(command, env=env, capture_output=True, text=True, timeout=timeout_s, check=True)
++    # Vendor imports may print warnings to stdout; the final machine record has a
++    # dedicated prefix, exactly once. Keep raw stdout/stderr as diagnostic evidence.
++    records = [line[len("PSM_RUNTIME ") :] for line in completed.stdout.splitlines() if line.startswith("PSM_RUNTIME ")]
++    if len(records) != 1:
++        raise ValueError("runtime interpreter did not return exactly one attestation")
++    result = json.loads(records[0])
++    digest = result.pop("digest", None)
++    if (
++        result.get("schema") != "psm_robocasa_runtime_v1"
++        or digest != hashlib.sha256(canonical(result)).hexdigest()
++        or result.get("lock_sha256") != sha256_file(lock_path)
++        or result.get("probe_sha256") != sha256_file(Path(__file__))
++        or result.get("interpreter", {}).get("executable") != str(sim_python)
++        or result["interpreter"].get("pythonpath_env", "") != env.get("PYTHONPATH", "")
++        or result["interpreter"].get("binary_sha256") != executable_hash
++        or sha256_file(sim_python.resolve()) != executable_hash
++    ):
++        raise ValueError("runtime attestation/interpreter binding mismatch")
++    return {
++        "evaluation_runtime": dict(result, digest=digest),
++        "runtime_probe_evidence": {
++            "argv": command,
++            "stdout": completed.stdout,
++            "stderr": completed.stderr,
++            "returncode": completed.returncode,
++        },
++    }
++
++
++def dataset_provenance(metadata_file: Path) -> dict:
++    metadata_file = Path(metadata_file).resolve(strict=True)
++    payload = json.loads(metadata_file.read_text())
++    found = {name: {} for name in ("robocasa", "robosuite", "mujoco")}
++    version_fields = {}
++
++    def walk(value, path=""):
++        if isinstance(value, dict):
++            for key, child in value.items():
++                pointer = path + "/" + key.replace("~", "~0").replace("/", "~1")
++                if "version" in key.lower():
++                    version_fields[pointer] = child
++                for name in found:
++                    if key == name + "_version" and isinstance(child, str):
++                        found[name][pointer] = child
++                    elif key == name and isinstance(child, dict) and isinstance(child.get("version"), str):
++                        found[name][pointer + "/version"] = child["version"]
++                walk(child, pointer)
++        elif isinstance(value, list):
++            for index, child in enumerate(value):
++                walk(child, path + "/" + str(index))
++
++    walk(payload)
++    recorded = {}
++    for name, matches in found.items():
++        values = set(matches.values())
++        if len(values) > 1:
++            raise ValueError(f"ambiguous recorded generation version: {name}")
++        recorded[name] = next(iter(values)) if values else "NOT_RECORDED"
++    return {
++        "metadata_file": str(metadata_file),
++        "metadata_sha256": sha256_file(metadata_file),
++        "metadata_recorded_versions": version_fields,
++        "recorded_generation_versions": recorded,
++        "version_field_evidence": found,
++        "generation_git_commit": "UNKNOWN",
++        "capture_time_commit": "UNKNOWN",
++        "equivalent_to_evaluation_runtime": "NOT_PROVEN",
++        "recorded_version_is_not_capture_time_tag_proof": True,
++    }
++
++
++def build_verified_evaluation_identity(
++    *, sim_python, lock_path=DEFAULT_LOCK, asset_manifest=None, simulation_env=None, **identity_args
++) -> dict:
++    """Batch C integration API; does not change the pre-B legacy Queue entry."""
++    from v3_evaluation_identity import build_evaluation_identity
++
++    tasks = list(identity_args["tasks"])
++    identity_args["tasks"] = tasks
++    attestation = collect_runtime(
++        sim_python=sim_python,
++        lock_path=lock_path,
++        asset_manifest=asset_manifest,
++        tasks=[name for name, _ in tasks],
++        simulation_env=simulation_env,
++    )
++    base = build_evaluation_identity(**identity_args)
++    identity = dict(
++        base["identity"],
++        schema="psm_v3_eval_identity_vendor_v1",
++        evaluation_runtime=attestation["evaluation_runtime"],
++        dataset={
++            "sources": [dataset_provenance(Path(directory) / "extras/dataset_meta.json") for _, directory in tasks]
++        },
++    )
++    # Raw import warnings/tracebacks belong in evidence, never in the immutable
++    # manifest equality used by same-task resume.
++    return {
++        "manifest": {"identity": identity, "digest": hashlib.sha256(canonical(identity)).hexdigest()},
++        "runtime_probe_evidence": attestation["runtime_probe_evidence"],
++    }
++
++
++if __name__ == "__main__":
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--lock", type=Path, default=DEFAULT_LOCK)
++    parser.add_argument("--asset-manifest", type=Path)
++    parser.add_argument("--tasks", default="CloseFridge,NavigateKitchen")
++    args = parser.parse_args()
++    os.environ["CUDA_VISIBLE_DEVICES"] = ""
++    os.environ["MUJOCO_GL"] = "disable"
++    with tempfile.TemporaryDirectory(prefix="psm-vendor-probe-") as cache:
++        # Compiler/import caches are ephemeral and outside source/training paths.
++        os.environ["NUMBA_CACHE_DIR"] = str(Path(cache) / "numba")
++        os.environ["MPLCONFIGDIR"] = str(Path(cache) / "matplotlib")
++        os.environ["HF_HOME"] = str(Path(cache) / "huggingface")
++        os.environ["HF_HUB_OFFLINE"] = "1"
++        os.environ["TRANSFORMERS_OFFLINE"] = "1"
++        print(
++            "PSM_RUNTIME "
++            + json.dumps(
++                probe_runtime(lock_path=args.lock, asset_manifest=args.asset_manifest, tasks=args.tasks.split(",")),
++                sort_keys=True,
++            )
++        )
+diff --git a/third_party/robosuite_patches/0001-robocasa-1.0.1-compatibility.patch b/third_party/robosuite_patches/0001-robocasa-1.0.1-compatibility.patch
+new file mode 100644
+index 00000000..e05fe67a
+--- /dev/null
++++ b/third_party/robosuite_patches/0001-robocasa-1.0.1-compatibility.patch
+@@ -0,0 +1,368 @@
++diff --git a/robosuite/controllers/parts/controller_factory.py b/robosuite/controllers/parts/controller_factory.py
++index 8c780f8..947ef28 100644
++--- a/robosuite/controllers/parts/controller_factory.py
+++++ b/robosuite/controllers/parts/controller_factory.py
++@@ -172,6 +172,8 @@ def mobile_base_controller_factory(name, params):
++     interpolator = None
++     if name == "JOINT_VELOCITY":
++         return mobile_base_controllers.MobileBaseJointVelocityController(interpolator=interpolator, **params)
+++    elif name == "JOINT_VELOCITY_LEGACY":
+++        return mobile_base_controllers.LegacyMobileBaseJointVelocityController(interpolator=interpolator, **params)
++     elif name == "JOINT_POSITION":
++         raise NotImplementedError
++     raise ValueError("Unknown controller name: {}".format(name))
++diff --git a/robosuite/controllers/parts/mobile_base/__init__.py b/robosuite/controllers/parts/mobile_base/__init__.py
++index 530053c..4d2d8c6 100644
++--- a/robosuite/controllers/parts/mobile_base/__init__.py
+++++ b/robosuite/controllers/parts/mobile_base/__init__.py
++@@ -1 +1 @@
++-from .joint_vel import MobileBaseJointVelocityController
+++from .joint_vel import MobileBaseJointVelocityController, LegacyMobileBaseJointVelocityController
++diff --git a/robosuite/controllers/parts/mobile_base/joint_vel.py b/robosuite/controllers/parts/mobile_base/joint_vel.py
++index b966076..83e7a6e 100644
++--- a/robosuite/controllers/parts/mobile_base/joint_vel.py
+++++ b/robosuite/controllers/parts/mobile_base/joint_vel.py
++@@ -299,3 +299,85 @@ class MobileBaseJointVelocityController(MobileBaseController):
++     @property
++     def name(self):
++         return "JOINT_VELOCITY"
+++
+++
+++class LegacyMobileBaseJointVelocityController(MobileBaseJointVelocityController):
+++    """
+++    Legacy version of MobileBaseJointVelocityController, created to address
+++    the recent change in the axis of the forward joint in the mobile base xml.
+++    This controller is identical to the original MobileBaseJointVelocityController,
+++    except that it dynamically checks the axis of the forward joint and reorders
+++    the input action accordingly if the forward axis is the y axis instead of the x axis.
+++    This allows for backwards compatibility with previously collected datasets
+++    that were generated using older versions of the mobile base xml.
+++    """
+++
+++    def __init__(self, *args, **kwargs):
+++        super().__init__(*args, **kwargs)
+++
+++    def _check_forward_joint_reversed(self):
+++        # Detect the axis for the forward joint and dynamically reorder action accordingly.
+++        # This is needed because previous versions of the mobile base xml had different forward
+++        # axis definitions. In order to maintain backwards compatibility with previous datasets
+++        # we dynamically detect the forward joint axis.
+++        forward_jnt = None
+++        forward_jnt_axis = None
+++        for jnt in self.joint_names:
+++            if "joint_mobile_forward" in jnt:
+++                forward_jnt = jnt
+++                forward_jnt_axis = self.sim.model.jnt_axis[self.sim.model.joint_name2id(jnt)]
+++                break
+++        return forward_jnt is not None and (forward_jnt_axis == np.array([0, 1, 0])).all()
+++
+++    def set_goal(self, action, set_qpos=None):
+++        # Update state
+++        self.update()
+++
+++        # Parse action based on the impedance mode, and update kp / kd as necessary
+++        jnt_dim = len(self.qpos_index)
+++        if self.impedance_mode == "variable":
+++            damping_ratio, kp, delta = action[:jnt_dim], action[jnt_dim : 2 * jnt_dim], action[2 * jnt_dim :]
+++            self.kp = np.clip(kp, self.kp_min, self.kp_max)
+++            self.kd = 2 * np.sqrt(self.kp) * np.clip(damping_ratio, self.damping_ratio_min, self.damping_ratio_max)
+++        elif self.impedance_mode == "variable_kp":
+++            kp, delta = action[:jnt_dim], action[jnt_dim:]
+++            self.kp = np.clip(kp, self.kp_min, self.kp_max)
+++            self.kd = 2 * np.sqrt(self.kp)  # critically damped
+++        else:  # This is case "fixed"
+++            delta = action
+++
+++        # Check to make sure delta is size self.joint_dim
+++        assert len(delta) == jnt_dim, "Delta qpos must be equal to the robot's joint dimension space!"
+++
+++        if delta is not None:
+++            scaled_delta = self.scale_action(delta)
+++        else:
+++            scaled_delta = None
+++
+++        curr_pos, curr_ori = self.get_base_pose()
+++
+++        # transform the action relative to initial base orientation
+++        init_theta = T.mat2euler(self.init_ori)[2]  # np.arctan2(self.init_pos[1], self.init_pos[0])
+++        curr_theta = T.mat2euler(curr_ori)[2]  # np.arctan2(curr_pos[1], curr_pos[0])
+++        theta = curr_theta - init_theta
+++
+++        # reorder action if forward axis is y axis
+++        if self._check_forward_joint_reversed():
+++            action = np.copy([action[i] for i in [1, 0, 2]])
+++
+++            x, y = action[0:2]
+++            # do the reverse of theta rotation
+++            action[0] = x * np.cos(theta) + y * np.sin(theta)
+++            action[1] = -x * np.sin(theta) + y * np.cos(theta)
+++        else:
+++            # input raw base action is delta relative to current pose of base
+++            # controller expects deltas relative to initial pose of base at start of episode
+++            # transform deltas from current base pose coordinates to initial base pose coordinates
+++            action = action.copy()
+++            x, y = action[0:2]
+++            action[0] = x * np.cos(theta) - y * np.sin(theta)
+++            action[1] = x * np.sin(theta) + y * np.cos(theta)
+++
+++        self.goal_qvel = action
+++        if self.interpolator is not None:
+++            self.interpolator.set_goal(self.goal_qvel)
++diff --git a/robosuite/environments/base.py b/robosuite/environments/base.py
++index c0e77b2..da6c270 100644
++--- a/robosuite/environments/base.py
+++++ b/robosuite/environments/base.py
++@@ -82,6 +82,8 @@ class MujocoEnv(metaclass=EnvMeta):
++         ignore_done (bool): True if never terminating the environment (ignore @horizon).
++         hard_reset (bool): If True, re-loads model, sim, and render object upon a reset call, else,
++             only calls sim.reset and resets all robosuite-internal variables
+++        load_model_on_init (bool): If True, load and initialize the model and renderer in __init__ constructor,
+++            else, initialize these components in the first call to reset()
++         renderer (str): string for the renderer to use
++         renderer_config (dict): dictionary for the renderer configurations
++         seed (int): environment seed. Default is None, where environment is unseeded, ie. random
++@@ -102,6 +104,7 @@ class MujocoEnv(metaclass=EnvMeta):
++         horizon=1000,
++         ignore_done=False,
++         hard_reset=True,
+++        load_model_on_init=True,
++         renderer="mjviewer",
++         renderer_config=None,
++         seed=None,
++@@ -143,31 +146,44 @@ class MujocoEnv(metaclass=EnvMeta):
++ 
++         self._ep_meta = {}
++ 
++-        # Load the model
++-        self._load_model()
+++        self.load_model_on_init = load_model_on_init
++ 
++-        # Initialize the simulation
++-        self._initialize_sim()
+++        # variable to keep track of whether the env has been fully initialized
+++        self._env_is_initialized = False
++ 
++-        # initializes the rendering
++-        self.initialize_renderer()
+++        if self.load_model_on_init:
+++            # Load the model
+++            self._load_model()
++ 
++-        # the variables will be set later.
++-        # need to set to None, in case these variables are referenced before being set
++-        self.viewer = None
++-        self.viewer_get_obs = None
+++            # Initialize the simulation
+++            self._initialize_sim()
++ 
++-        # Run all further internal (re-)initialization required
++-        self._reset_internal()
+++            # initializes the rendering
+++            self.initialize_renderer()
++ 
++-        # Load observables
++-        if hasattr(self.viewer, "_setup_observables"):
++-            self._observables = self.viewer._setup_observables()
++-        else:
++-            self._observables = self._setup_observables()
+++            # the variables will be set later.
+++            # need to set to None, in case these variables are referenced before being set
+++            self.viewer = None
+++            self.viewer_get_obs = None
++ 
++-        # check if viewer has get observations method and set a flag for future use.
++-        self.viewer_get_obs = hasattr(self.viewer, "_get_observations")
+++            # Run all further internal (re-)initialization required
+++            self._reset_internal()
+++
+++            # Load observables
+++            if hasattr(self.viewer, "_setup_observables"):
+++                self._observables = self.viewer._setup_observables()
+++            else:
+++                self._observables = self._setup_observables()
+++
+++            # check if viewer has get observations method and set a flag for future use.
+++            self.viewer_get_obs = hasattr(self.viewer, "_get_observations")
+++            self._env_is_initialized = True
+++        else:
+++            # the variables will be set later.
+++            # need to set to None, in case these variables are referenced before being set
+++            self.sim = None
+++            self.viewer = None
+++            self.viewer_get_obs = None
++ 
++     def initialize_renderer(self):
++         self.renderer = self.renderer.lower()
++@@ -271,7 +287,7 @@ class MujocoEnv(metaclass=EnvMeta):
++         if self.renderer == "mjviewer":
++             self._destroy_viewer()
++ 
++-        if self.hard_reset and not self.deterministic_reset:
+++        if (self.sim is None) or (self.hard_reset and not self.deterministic_reset):
++             if self.renderer == "mujoco":
++                 self._destroy_viewer()
++                 self._destroy_sim()
++@@ -281,9 +297,33 @@ class MujocoEnv(metaclass=EnvMeta):
++         else:
++             self.sim.reset()
++ 
++-        # Reset necessary robosuite-centric variables
++-        self._reset_internal()
++-        self.sim.forward()
+++        if self._env_is_initialized is True:
+++            # Reset necessary robosuite-centric variables
+++            self._reset_internal()
+++            self.sim.forward()
+++        else:
+++            # initializes the rendering
+++            self.initialize_renderer()
+++
+++            # the variables will be set later.
+++            # need to set to None, in case these variables are referenced before being set
+++            self.viewer = None
+++            self.viewer_get_obs = None
+++
+++            # Run all further internal (re-)initialization required
+++            self._reset_internal()
+++            self.sim.forward()
+++
+++            # Load observables
+++            if hasattr(self.viewer, "_setup_observables"):
+++                self._observables = self.viewer._setup_observables()
+++            else:
+++                self._observables = self._setup_observables()
+++
+++            # check if viewer has get observations method and set a flag for future use.
+++            self.viewer_get_obs = hasattr(self.viewer, "_get_observations")
+++            self._env_is_initialized = True
+++
++         # Setup observables, reloading if
++         self._obs_cache = {}
++         self._reset_observables()
++@@ -737,8 +777,9 @@ class MujocoEnv(metaclass=EnvMeta):
++         """
++         Destroys the current MjSim instance if it exists
++         """
++-        if self.sim is not None:
++-            self.sim.free()
+++        sim = getattr(self, "sim", None)
+++        if sim is not None:
+++            sim.free()
++             self.sim = None
++ 
++     def close(self):
++diff --git a/robosuite/environments/manipulation/manipulation_env.py b/robosuite/environments/manipulation/manipulation_env.py
++index 4f566f0..1514032 100644
++--- a/robosuite/environments/manipulation/manipulation_env.py
+++++ b/robosuite/environments/manipulation/manipulation_env.py
++@@ -84,6 +84,9 @@ class ManipulationEnv(RobotEnv):
++         hard_reset (bool): If True, re-loads model, sim, and render object upon a reset call, else,
++             only calls sim.reset and resets all robosuite-internal variables
++ 
+++        load_model_on_init (bool): If True, load and initialize the model and renderer in __init__ constructor,
+++            else, initialize these components in the first call to reset()
+++
++         camera_names (str or list of str): name of camera to be rendered. Should either be single str if
++             same name is to be used for all cameras' rendering or else it should be a list of cameras to render.
++ 
++@@ -144,6 +147,7 @@ class ManipulationEnv(RobotEnv):
++         horizon=1000,
++         ignore_done=False,
++         hard_reset=True,
+++        load_model_on_init=True,
++         camera_names="agentview",
++         camera_heights=256,
++         camera_widths=256,
++@@ -187,6 +191,7 @@ class ManipulationEnv(RobotEnv):
++             horizon=horizon,
++             ignore_done=ignore_done,
++             hard_reset=hard_reset,
+++            load_model_on_init=load_model_on_init,
++             camera_names=camera_names,
++             camera_heights=camera_heights,
++             camera_widths=camera_widths,
++diff --git a/robosuite/environments/robot_env.py b/robosuite/environments/robot_env.py
++index a52ee31..6ea761f 100644
++--- a/robosuite/environments/robot_env.py
+++++ b/robosuite/environments/robot_env.py
++@@ -78,6 +78,9 @@ class RobotEnv(MujocoEnv):
++         hard_reset (bool): If True, re-loads model, sim, and render object upon a reset call, else,
++             only calls sim.reset and resets all robosuite-internal variables
++ 
+++        load_model_on_init (bool): If True, load and initialize the model and renderer in __init__ constructor,
+++            else, initialize these components in the first call to reset()
+++
++         camera_names (str or list of str): name of camera to be rendered. Should either be single str if
++             same name is to be used for all cameras' rendering or else it should be a list of cameras to render.
++ 
++@@ -139,6 +142,7 @@ class RobotEnv(MujocoEnv):
++         horizon=1000,
++         ignore_done=False,
++         hard_reset=True,
+++        load_model_on_init=True,
++         camera_names="agentview",
++         camera_heights=256,
++         camera_widths=256,
++@@ -230,6 +234,7 @@ class RobotEnv(MujocoEnv):
++             horizon=horizon,
++             ignore_done=ignore_done,
++             hard_reset=hard_reset,
+++            load_model_on_init=load_model_on_init,
++             renderer=renderer,
++             renderer_config=renderer_config,
++             seed=seed,
++diff --git a/robosuite/models/tasks/task.py b/robosuite/models/tasks/task.py
++index 6ccc00a..61ca748 100644
++--- a/robosuite/models/tasks/task.py
+++++ b/robosuite/models/tasks/task.py
++@@ -51,6 +51,8 @@ class Task(MujocoWorldBase):
++ 
++         mujoco_objects (None or MujocoObject or list of MujocoObject): a list of MJCF models of physical objects
++ 
+++        enable_multiccd (bool) whether to set the multiccd flag in MuJoCo. False by default
+++
++     Raises:
++         AssertionError: [Invalid input object type]
++     """
++@@ -60,8 +62,10 @@ class Task(MujocoWorldBase):
++         mujoco_arena,
++         mujoco_robots,
++         mujoco_objects=None,
+++        enable_multiccd=False,
+++        enable_sleeping_islands=False,
++     ):
++-        super().__init__()
+++        super().__init__(enable_multiccd=enable_multiccd, enable_sleeping_islands=enable_sleeping_islands)
++ 
++         # Store references to all models
++         self.mujoco_arena = mujoco_arena
++diff --git a/robosuite/models/world.py b/robosuite/models/world.py
++index ee2f265..991e0c0 100644
++--- a/robosuite/models/world.py
+++++ b/robosuite/models/world.py
++@@ -6,8 +6,24 @@ from robosuite.utils.mjcf_utils import convert_to_string, find_elements, xml_pat
++ class MujocoWorldBase(MujocoXML):
++     """Base class to inherit all mujoco worlds from."""
++ 
++-    def __init__(self):
+++    def __init__(self, enable_multiccd=False, enable_sleeping_islands=False):
+++        if type(enable_multiccd) is not bool or type(enable_sleeping_islands) is not bool:
+++            raise TypeError("MuJoCo physics options must be bool")
+++        # The pinned MuJoCo 3.3.1 has no sleeping-islands capability or MJCF
+++        # sleep flag. False is its actual behavior; True must not be ignored.
+++        if enable_sleeping_islands:
+++            raise ValueError("MuJoCo 3.3.1 does not support sleeping islands; use False")
+++        self.enable_multiccd = enable_multiccd
+++        self.enable_sleeping_islands = enable_sleeping_islands
++         super().__init__(xml_path_completion("base.xml"))
++         # Modify the simulation timestep to be the requested value
++         options = find_elements(root=self.root, tags="option", attribs=None, return_first=True)
++         options.set("timestep", convert_to_string(macros.SIMULATION_TIMESTEP))
+++        # Update the existing option, rather than introducing a second option
+++        # element whose defaults could obscure the chosen model settings.
+++        flag = options.find("flag")
+++        if flag is None:
+++            import xml.etree.ElementTree as ET
+++
+++            flag = ET.SubElement(options, "flag")
+++        flag.set("multiccd", "enable" if enable_multiccd else "disable")
+diff --git a/third_party/robosuite_patches/README.md b/third_party/robosuite_patches/README.md
+new file mode 100644
+index 00000000..36d3cefc
+--- /dev/null
++++ b/third_party/robosuite_patches/README.md
+@@ -0,0 +1,142 @@
++# RoboCasa 1.0.1 evaluation vendor
++
++This is a reproducible patchset, not an upstream release or a patch for an existing
++editable installation. `vendor.lock.json` is the version authority. The deterministic
++patched robosuite commit is **`1ac174585293ed998ffc9cf73e47439798cf6f6c`**, parent
++**`824ac14cefcfb7ec125fe5eb2e0bad7364466154`** (official v1.5.2). It is reconstructed
++locally from this patch and fixed commit metadata; do not try to fetch that new SHA
++from the official ARISE repository. `UPSTREAM_LICENSE` retains the upstream license.
++
++RoboCasa is pinned at **`6f90063c0ec2b9916bbd977368b54c98d9c2d908`**, version1.0.1;
++MuJoCo package/native library3.3.1 and NumPy2.2.5. No latest/master install is used.
++The fixed reference `5ce6643f3092639d08f7b0f90ed1c6a84f50552c` is a **source reference
++for selected backports**, not the installed runtime dependency.
++
++## Changes from v1.5.2
++
++Eight source files implement four contracts:
++
++- Real `LegacyMobileBaseJointVelocityController`, factory dispatch and package export.
++  The class is an exact AST backport of the fixed official reference. X-forward uses
++  its +heading planar transform; historical Y-forward swaps the planar inputs and uses
++  -heading. Yaw sign is preserved. The ordinary controller alias gives a different
++  planar direction at nonzero heading and is not used.
++- `ManipulationEnv → RobotEnv → MujocoEnv` passes `load_model_on_init` all the way down.
++  Base constructor/reset are exact official-reference backports. False defers model,
++  Sim, renderer and initial observable setup to first reset, including the first
++  model/scene RNG draw. Default True retains eager initialization.
++- `_destroy_sim` safely handles a missing Sim attribute and repeated destruction.
++- `Task → MujocoWorldBase` forwards both physical options. The world changes the
++  existing `<option><flag multiccd=...>` and actual compiled native enable bit.
++  **MuJoCo3.3.1 does not support sleeping islands or the MJCF `sleep` attribute.**
++  The target `enable_sleeping_islands=False` represents the actual unavailable/disabled
++  capability; True raises instead of being silently ignored or triggering a version
++  upgrade. The unrelated `mjENBL_ISLAND` bit is not a sleeping-islands control.
++
++`source_provenance.json` gives the official reference blobs and exact class/method AST
++hashes. DS's2096-byte stopgap diff was reported with a hash but its original bytes were
++not available here. This is an independent full repair, not a claim to have verified or
++approved those four temporary hunks.
++
++## Offline construction
++
++Use existing local Git caches that contain the exact base commits and all their tree
++objects. These commands are **preparation templates**, not permission to deploy or run
++the real simulator. Choose a NEW output directory; failed output is retained.
++
++```bash
++python tools/v3/build_robocasa_vendor.py \
++  --robosuite-cache /path/to/local/robosuite-cache \
++  --robocasa-cache /path/to/local/robocasa-cache \
++  --output /path/to/NEW/vendor-build
++```
++
++Only committed Git objects are read from the caches; dirty cache working-tree bytes
++are never copied. The script does not alter either cache. Fetch is local-file-only,
++lazy network fetching and hooks are disabled, and a shallow destination avoids needing
++unrelated historical blobs from a partial cache. The script verifies the patch SHA256,
++resulting tree and deterministic commit. It creates clean independent robosuite and
++RoboCasa checkouts plus `build.json`. It never installs Python packages, resets/cleans
++an existing tree, edits a training path, downloads assets, or creates a Kitchen.
++
++For later authorized deployment, install the built checkouts in a **new independent
++simulator environment**, with `runtime-requirements.txt` pins, using the environment's
++normal reviewed setup. Do not run pip against an active G1 environment or patch DS's
++dirty editable tree. This file does not freeze every optional Python dependency; the
++target host must still supply RoboCasa's complete compatible dependencies/assets.
++
++## Runtime identity and assets
++
++`scripts/robocasa_vendor.py` imports through the selected Simulator interpreter only
++after checking package metadata, import origin and clean locked source. It validates
++actual module versions/files, MuJoCo native version331/3.3.1 and native library hash,
++compiles tiny XML to witness multiccd, and reads task horizons from the pinned official
++registry **without another1.5× multiplication**. No environment, MjData, step or renderer
++is created. Direct CLI invocations force CUDA off/MuJoCo rendering disabled and use
++temporary external compiler/import caches; no source or training files are written.
++
++```bash
++CUDA_VISIBLE_DEVICES='' MUJOCO_GL=disable /path/to/sim/python -B \
++  scripts/robocasa_vendor.py --tasks CloseFridge,NavigateKitchen \
++  --asset-manifest /path/to/REVIEWED/asset-inventory.json
++```
++
++An inventory is optional only when there are no untracked assets. Its format is:
++
++```json
++{"robocasa": {"robocasa/models/assets/fixtures/example.xml": "<actual SHA256>"}}
++```
++
++Every untracked/ignored asset must be an explicitly listed regular file below the
++package's `models/assets/`, with one of the versioned non-code suffixes and exact
++SHA256. Extra/missing/changed inventory entries fail. Unknown scripts, native modules,
++backups and symlinks reject even if gitignored. Existing `.pyc` is permitted only when
++its magic, source location and compiled code match a tracked source under this Python;
++poisoned/sourceless bytecode rejects. Numba caches belong outside the source checkout.
++Do not delete or move DS files to force a clean result; build a new checkout instead.
++An approved asset inventory binds bytes, **not proof of original dataset physics**.
++
++`collect_runtime(sim_python=..., simulation_env=...)` runs the probe through that exact
++interpreter with the intended Simulator environment, including PYTHONPATH. It deliberately
++does not use `-I`, which would hide import overrides from the real launch. It validates
++the interpreter binary/path, import environment, lock, probe and returned digest and keeps
++raw stdout/stderr evidence. Probe failures are fatal; no user-supplied runtime JSON is
++accepted as authority.
++
++Batch C must call `build_verified_evaluation_identity` with the same frozen Simulator
++environment used for Popen and repeat `probe_runtime` in the Simulator before env creation,
++comparing the runtime digest. The returned bundle has a stable `manifest` and separate
++`runtime_probe_evidence`; persist the latter as evidence, not as resume equality data.
++The existing legacy Queue is deliberately **not** rewired in this isolated Batch B.
++
++The new manifest separates `evaluation_runtime` from each dataset's recorded version
++fields/JSON pointers/hash. Generation Git commit and capture-time commit remain UNKNOWN;
++the dataset's0.5.1 string is never filled with evaluator1.0.1 or inferred as a tag SHA.
++Runtime source verification does **not** close the physical compatibility Gate.
++
++## CPU and deferred target-host acceptance
++
++Build the exact checkouts first. Use a CPU Python with NumPy2.2.5, MuJoCo3.3.1, SciPy,
++Numba, Pillow, requests, termcolor, pytest and Ruff0.12.7. Author exact versions/logs are
++in the Batch B evidence directory. Tests never install into or modify the source trees.
++
++```bash
++CUDA_VISIBLE_DEVICES='' MUJOCO_GL=disable PYTHONDONTWRITEBYTECODE=1 \
++NUMBA_CACHE_DIR=/path/to/NEW/external-numba-cache \
++PSM_VENDOR_BUILD=/path/to/NEW/vendor-build \
++python -m pytest --noconftest -c /dev/null -p no:cacheprovider -q \
++  tools/v3/robocasa_vendor_test.py --junitxml=/path/to/NEW/evidence/vendor.xml
++```
++
++Controller/XML code and the native compiler are real. Lifecycle tests execute original
++constructor/reset bodies through all three layers with counting simulation boundaries.
++Runtime positive unit tests use explicit registration/import/metadata doubles around real
++source Git checks, original registry data and actual MuJoCo. They do not claim a successful
++complete RoboCasa import or real PandaOmron rollout on this cloud host.
++
++Still required after independent code/CPU review and separate Owner execution authorization:
++actual installed import/asset audit; real PandaOmron CloseFridge and NavigateKitchen
++create/reset/step, forward/lateral/yaw against body axes and raw15/state15/camera ABI;
++observed compiled Kitchen options, official target10 kitchens/object split, horizon/seed
++and reset-scene evidence. Real0.5.1 generation physics remains unproven. Historical5% SR
++is diagnostic only. A/B/C integration requires a new formal Root/Child/vendor Pair.
+diff --git a/third_party/robosuite_patches/UPSTREAM_LICENSE b/third_party/robosuite_patches/UPSTREAM_LICENSE
+new file mode 100644
+index 00000000..e2018962
+--- /dev/null
++++ b/third_party/robosuite_patches/UPSTREAM_LICENSE
+@@ -0,0 +1,28 @@
++MIT License
++
++Copyright (c) 2022 Stanford Vision and Learning Lab and UT Robot Perception and Learning Lab
++
++Permission is hereby granted, free of charge, to any person obtaining a copy
++of this software and associated documentation files (the "Software"), to deal
++in the Software without restriction, including without limitation the rights
++to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++copies of the Software, and to permit persons to whom the Software is
++furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.
++
++This software includes the partial implementation of Deepmind Mujoco https://github.com/deepmind/mujoco. 
++Deepmind Mujoco is licensed under the Apache License, Version 2.0 (the "License");
++you may not use the files except in compliance with the License. 
++
++You may obtain a copy of the License at
++    http://www.apache.org/licenses/LICENSE-2.0
+diff --git a/third_party/robosuite_patches/cpu-test-requirements.txt b/third_party/robosuite_patches/cpu-test-requirements.txt
+new file mode 100644
+index 00000000..b65c57e7
+--- /dev/null
++++ b/third_party/robosuite_patches/cpu-test-requirements.txt
+@@ -0,0 +1,8 @@
++-r runtime-requirements.txt
++pytest==9.0.2
++ruff==0.12.7
++scipy==1.15.3
++numba==0.61.2
++pillow==11.3.0
++requests==2.32.5
++termcolor==3.1.0
+diff --git a/third_party/robosuite_patches/runtime-requirements.txt b/third_party/robosuite_patches/runtime-requirements.txt
+new file mode 100644
+index 00000000..2dd46ae1
+--- /dev/null
++++ b/third_party/robosuite_patches/runtime-requirements.txt
+@@ -0,0 +1,3 @@
++# Source packages must be installed from the independently constructed locked checkouts.
++mujoco==3.3.1
++numpy==2.2.5
+diff --git a/third_party/robosuite_patches/source_provenance.json b/third_party/robosuite_patches/source_provenance.json
+new file mode 100644
+index 00000000..22002e15
+--- /dev/null
++++ b/third_party/robosuite_patches/source_provenance.json
+@@ -0,0 +1,65 @@
++{
++  "reference_repository": "https://github.com/ARISE-Initiative/robosuite",
++  "reference_commit": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c",
++  "base_commit": "824ac14cefcfb7ec125fe5eb2e0bad7364466154",
++  "exact_backports": [
++    {
++      "file": "robosuite/controllers/parts/mobile_base/joint_vel.py",
++      "class": "LegacyMobileBaseJointVelocityController",
++      "method": null,
++      "upstream_git_blob": "83e7a6e581445de4823441e451f888924de22794",
++      "ast_sha256": "2d4049fcf0dfbfa8c7335a293a7fb81cde241ebb62d2afdf200005acf551d34f",
++      "upstream_AST_exact_match": true
++    },
++    {
++      "file": "robosuite/environments/base.py",
++      "class": "MujocoEnv",
++      "method": "__init__",
++      "upstream_git_blob": "09d6c299cd0f0ce2abe0079661b12b38d24d8cfe",
++      "ast_sha256": "8b8f37ca70ec0b4fda99d7ba97ea9a68400aab354e2b6972e4e8918262a32162",
++      "upstream_AST_exact_match": true
++    },
++    {
++      "file": "robosuite/environments/base.py",
++      "class": "MujocoEnv",
++      "method": "reset",
++      "upstream_git_blob": "09d6c299cd0f0ce2abe0079661b12b38d24d8cfe",
++      "ast_sha256": "edd5be13f2c4661e7f4806780cb438aa60f6f0062e7b6ae937e562fbf5349877",
++      "upstream_AST_exact_match": true
++    },
++    {
++      "file": "robosuite/environments/robot_env.py",
++      "class": "RobotEnv",
++      "method": "__init__",
++      "upstream_git_blob": "6ea761f688ada69b4e8132ca8712afc544fc7be5",
++      "ast_sha256": "79000a2cd90a2ff823e9ac69cb8b6515cbb86a306fe5214ed6a58cba22ea4272",
++      "upstream_AST_exact_match": true
++    },
++    {
++      "file": "robosuite/environments/manipulation/manipulation_env.py",
++      "class": "ManipulationEnv",
++      "method": "__init__",
++      "upstream_git_blob": "1514032705d5bbf83a87a4f7b5bc3cdf724f2e68",
++      "ast_sha256": "ede818e682e71816be88ebaaa6a6a0770210d798c9ad4e214a7061ec641bf1c1",
++      "upstream_AST_exact_match": true
++    },
++    {
++      "file": "robosuite/models/tasks/task.py",
++      "class": "Task",
++      "method": "__init__",
++      "upstream_git_blob": "61ca748fe2ec5fb08ccf7f90058c112b6b9d8e87",
++      "ast_sha256": "e2edc3e6e56cdb418712cc5b03e4c477adac384415a9b1bc8645dfb5e5fad0e1",
++      "upstream_AST_exact_match": true
++    }
++  ],
++  "intentional_differences": [
++    "Idempotent _destroy_sim uses getattr before initial Sim construction.",
++    "MuJoCo3.3.1-specific World options update the existing option/flag; sleeping=True rejects unsupported capability; no unsupported sleep MJCF attribute."
++  ],
++  "DS_stopgap_diff": {
++    "bytes_available": false,
++    "attested_bytes": 2096,
++    "attested_sha256": "dbe9a0d9ccdcc1052b9bddbcfe5235205461292b762cc2fac2f92a706365e74c",
++    "exact_content_verified": false
++  }
++}
+diff --git a/third_party/robosuite_patches/vendor.lock.json b/third_party/robosuite_patches/vendor.lock.json
+new file mode 100644
+index 00000000..9ca6ea6a
+--- /dev/null
++++ b/third_party/robosuite_patches/vendor.lock.json
+@@ -0,0 +1,76 @@
++{
++  "schema": "psm_robocasa_vendor_lock_v1",
++  "robosuite": {
++    "url": "https://github.com/ARISE-Initiative/robosuite.git",
++    "base_commit": "824ac14cefcfb7ec125fe5eb2e0bad7364466154",
++    "package_version": "1.5.2",
++    "patch": "0001-robocasa-1.0.1-compatibility.patch",
++    "patch_sha256": "36184d6a5ddaa7371be89ba332f72bc89a18e8d0a7a0e36119e7215f9a465d30",
++    "patched_tree": "195e30cfd5d37289d227a89234bd8bb069792905",
++    "patched_commit": "1ac174585293ed998ffc9cf73e47439798cf6f6c",
++    "commit_metadata": {
++      "name": "PSM-WMA Vendor",
++      "email": "vendor@psm-wma.invalid",
++      "date": "2026-10-22T00:00:00+00:00",
++      "message": "PSM-WMA RoboCasa 1.0.1 compatibility on robosuite v1.5.2\n"
++    },
++    "upstream_backport_source": "5ce6643f3092639d08f7b0f90ed1c6a84f50552c"
++  },
++  "robocasa": {
++    "url": "https://github.com/robocasa/robocasa.git",
++    "commit": "6f90063c0ec2b9916bbd977368b54c98d9c2d908",
++    "package_version": "1.0.1"
++  },
++  "runtime_versions": {
++    "mujoco": "3.3.1",
++    "numpy": "2.2.5"
++  },
++  "physics": {
++    "multiccd": true,
++    "sleeping_islands": false,
++    "sleeping_true": "rejected: unsupported by MuJoCo3.3.1"
++  },
++  "dataset_generation": {
++    "recorded_versions": {
++      "robocasa": "0.5.1",
++      "robosuite": "1.5.2",
++      "mujoco": "3.3.1"
++    },
++    "capture_time_git_commit": "UNKNOWN",
++    "equivalent_to_evaluation_runtime": "NOT_PROVEN"
++  },
++  "source_hashes": {
++    "robosuite/controllers/parts/controller_factory.py": {
++      "base_sha256": "db74f3a52666d5755bfb12c63e8c84abfc0dce8f3e70d23b17c87a53ee4a4fdd",
++      "patched_sha256": "5f5dcdbc9c40fef1202751b13391f8d8a792cc3391fbb7770ce81d4b137850af"
++    },
++    "robosuite/controllers/parts/mobile_base/__init__.py": {
++      "base_sha256": "ee437a0ef26c536d6f1b2e5bd78f242a8452804e419a04b11e399cb568258853",
++      "patched_sha256": "d167cf7014bf65eb300561e38cb2df213dca35c407a9198fd63c110182884ae7"
++    },
++    "robosuite/controllers/parts/mobile_base/joint_vel.py": {
++      "base_sha256": "1760095cec61e7cc81cb83eb3f705ab11a0e816ca6fe021ae3d413f8f08ebe26",
++      "patched_sha256": "cc64ca5683bb023cec731d0fa7a61bdfd1db2e97d3423f576d5bbba9f3e6e660"
++    },
++    "robosuite/environments/base.py": {
++      "base_sha256": "ba6e6bc0252be8ae17972df48b26f8425a12af55339979a1ea1757b1f54c3345",
++      "patched_sha256": "da6a543615c667dbdbd972e0e1af9ab944f7209053bc6cadba5138ce3f878ad6"
++    },
++    "robosuite/environments/manipulation/manipulation_env.py": {
++      "base_sha256": "9b92f191de5b4ced2f82dc9c666d28a1d0a70c54f4a24dd1e878399125f4b86a",
++      "patched_sha256": "9d3f36ac71a3c948bd238a60eda591d6d6ab176fe09dd0b38d4d8fb6b94013a5"
++    },
++    "robosuite/environments/robot_env.py": {
++      "base_sha256": "75640d1b801fa2ed277fc0d7ee41ea97d617b5a1d6b589d1059a05dc2cff51fa",
++      "patched_sha256": "d0ea6403d2ba499189a07ca5646ed0002a3e13b4a40bb75923958b7d467dd0d9"
++    },
++    "robosuite/models/tasks/task.py": {
++      "base_sha256": "a89be36ac1b19143453a405fa1191b3b35c9b7431a18307a83c2b5cb665a72bb",
++      "patched_sha256": "e383f8ee7644ee25ba52e0abf284701c595bb8bd34fe7188ff87876a6e9f4b93"
++    },
++    "robosuite/models/world.py": {
++      "base_sha256": "c18e123c7d405c0f20ff94139841f1cf2803b979dc12cd52cb7182b56b436dc7",
++      "patched_sha256": "205271d34cc987b623624e11efdd7d25c63a0b11819da32cc975477377e78e3f"
++    }
++  }
++}
+diff --git a/tools/v3/build_robocasa_vendor.py b/tools/v3/build_robocasa_vendor.py
+new file mode 100644
+index 00000000..289f1097
+--- /dev/null
++++ b/tools/v3/build_robocasa_vendor.py
+@@ -0,0 +1,138 @@
++#!/usr/bin/env python3
++"""Build locked vendor checkouts from local Git objects into a NEW directory.
++
++No pip, network, simulation or edits to either source cache. A failed build is
++preserved for inspection. Commit metadata, tree and patch bytes are verified.
++"""
++
++from __future__ import annotations
++
++import argparse
++import hashlib
++import json
++import os
++import subprocess
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[2]
++DEFAULT_LOCK = ROOT / "third_party/robosuite_patches/vendor.lock.json"
++
++
++def git(repo: Path, *args, env=None, input=None) -> str:
++    clean_env = os.environ.copy() if env is None else env.copy()
++    for name in (
++        "GIT_DIR",
++        "GIT_WORK_TREE",
++        "GIT_INDEX_FILE",
++        "GIT_OBJECT_DIRECTORY",
++        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
++    ):
++        clean_env.pop(name, None)
++    clean_env.update(
++        GIT_NO_LAZY_FETCH="1",
++        GIT_ALLOW_PROTOCOL="file",
++        GIT_TERMINAL_PROMPT="0",
++        GIT_CONFIG_GLOBAL="/dev/null",
++        GIT_CONFIG_NOSYSTEM="1",
++        GIT_NO_REPLACE_OBJECTS="1",
++    )
++    try:
++        return subprocess.check_output(
++            [
++                "git",
++                "-c",
++                "core.hooksPath=/dev/null",
++                "-c",
++                "commit.gpgsign=false",
++                "-c",
++                "core.autocrlf=false",
++                "-C",
++                str(repo),
++                *args,
++            ],
++            env=clean_env,
++            input=input,
++            text=True,
++            stderr=subprocess.PIPE,
++        ).strip()
++    except subprocess.CalledProcessError as error:
++        print(error.stderr or "Git command failed without stderr", file=sys.stderr)
++        raise
++
++
++def build_checkout(cache: Path, destination: Path, commit: str) -> None:
++    cache = cache.resolve(strict=True)
++    if git(cache, "rev-parse", "--is-shallow-repository") not in {"true", "false"}:
++        raise ValueError("not a Git source cache")
++    if git(cache, "rev-parse", commit + "^{commit}") != commit:
++        raise ValueError("cache does not contain the exact commit")
++    destination.mkdir()  # Exclusive: never reuse, reset, clean or patch an existing tree.
++    git(destination, "init", "-q")
++    git(destination, "fetch", "--depth=1", "--no-tags", str(cache), commit)
++    git(destination, "-c", "core.autocrlf=false", "checkout", "--detach", commit)
++
++
++def build(*, robosuite_cache: Path, robocasa_cache: Path, output: Path, lock_path=DEFAULT_LOCK) -> dict:
++    lock_path = Path(lock_path).resolve(strict=True)
++    lock = json.loads(lock_path.read_text())
++    if lock["schema"] != "psm_robocasa_vendor_lock_v1":
++        raise ValueError("unknown vendor lock schema")
++    spec = lock["robosuite"]
++    patch = lock_path.parent / spec["patch"]
++    if hashlib.sha256(patch.read_bytes()).hexdigest() != spec["patch_sha256"]:
++        raise ValueError("vendor patch SHA256 mismatch")
++    output = output.absolute()
++    output.mkdir()  # Includes output manifest; do not accept an already-existing namespace.
++    rs, rc = output / "robosuite", output / "robocasa"
++    build_checkout(robosuite_cache, rs, spec["base_commit"])
++    git(rs, "apply", "--check", "--index", str(patch))
++    git(rs, "apply", "--index", str(patch))
++    tree = git(rs, "write-tree")
++    if tree != spec["patched_tree"]:
++        raise ValueError("patched vendor tree mismatch")
++    env = os.environ.copy()
++    for who in ("AUTHOR", "COMMITTER"):
++        for key in ("NAME", "EMAIL", "DATE"):
++            env[f"GIT_{who}_{key}"] = spec["commit_metadata"][key.lower()]
++    commit = git(rs, "commit-tree", tree, "-p", spec["base_commit"], env=env, input=spec["commit_metadata"]["message"])
++    if commit != spec["patched_commit"]:
++        raise ValueError("deterministic vendor commit mismatch")
++    git(rs, "update-ref", "HEAD", commit)
++    if git(rs, "status", "--porcelain", "--untracked-files=all"):
++        raise ValueError("constructed vendor tree is not clean")
++    build_checkout(robocasa_cache, rc, lock["robocasa"]["commit"])
++    result = {
++        "schema": "psm_vendor_build_v1",
++        "lock_sha256": hashlib.sha256(lock_path.read_bytes()).hexdigest(),
++        "robosuite": {"path": str(rs), "commit": commit, "tree": tree},
++        "robocasa": {"path": str(rc), "commit": lock["robocasa"]["commit"]},
++        "package_install_performed": False,
++        "simulation_performed": False,
++    }
++    (output / "build.json").write_text(json.dumps(result, indent=2) + "\n")
++    return result
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--robosuite-cache", type=Path, required=True)
++    parser.add_argument("--robocasa-cache", type=Path, required=True)
++    parser.add_argument("--output", type=Path, required=True)
++    parser.add_argument("--lock", type=Path, default=DEFAULT_LOCK)
++    args = parser.parse_args()
++    print(
++        json.dumps(
++            build(
++                robosuite_cache=args.robosuite_cache,
++                robocasa_cache=args.robocasa_cache,
++                output=args.output,
++                lock_path=args.lock,
++            ),
++            indent=2,
++        )
++    )
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/tools/v3/robocasa_vendor_test.py b/tools/v3/robocasa_vendor_test.py
+new file mode 100644
+index 00000000..6220fb50
+--- /dev/null
++++ b/tools/v3/robocasa_vendor_test.py
+@@ -0,0 +1,640 @@
++"""CPU contracts against an independently built vendor, never Kitchen/reset/step.
++
++Set PSM_VENDOR_BUILD to build_robocasa_vendor.py's new output directory. Real
++controller/XML code executes; environment lifecycle uses original source bodies
++with a counting Sim boundary double. Runtime-probe import doubles are explicit.
++"""
++
++from __future__ import annotations
++
++import ast
++import copy
++import hashlib
++import importlib
++import importlib.util
++import json
++import os
++import py_compile
++import subprocess
++import sys
++import xml.etree.ElementTree as ET
++from collections import OrderedDict
++from pathlib import Path
++from types import ModuleType, SimpleNamespace
++from unittest.mock import Mock
++
++import mujoco
++import numpy as np
++import pytest
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path.insert(0, str(ROOT / "scripts"))
++sys.path.insert(0, str(ROOT / "tools/v3"))
++import robocasa_vendor as vendor
++from build_robocasa_vendor import DEFAULT_LOCK, build, git
++
++
++@pytest.fixture(scope="session")
++def checkout():
++    path = Path(os.environ["PSM_VENDOR_BUILD"]).resolve()
++    lock = json.loads(DEFAULT_LOCK.read_text())
++    assert git(path / "robosuite", "rev-parse", "HEAD") == lock["robosuite"]["patched_commit"]
++    assert git(path / "robocasa", "rev-parse", "HEAD") == lock["robocasa"]["commit"]
++    return path
++
++
++@pytest.fixture
++def modules(checkout, monkeypatch):
++    # Bypass only eager registration imports. Real helpers/controllers/XML classes
++    # resolve from the actual built source, not copied method implementations.
++    for name in ("robosuite", "robosuite.models", "robosuite.controllers", "robosuite.controllers.parts"):
++        package = ModuleType(name)
++        package.__file__ = str(checkout / "robosuite" / name.replace(".", "/") / "__init__.py")
++        package.__path__ = [str(Path(package.__file__).parent)]
++        monkeypatch.setitem(sys.modules, name, package)
++        if "." in name:
++            parent, child_name = name.rsplit(".", 1)
++            setattr(sys.modules[parent], child_name, package)
++    sys.modules["robosuite.models"].assets_root = str(checkout / "robosuite/robosuite/models/assets")
++    # Avoid cached modules from another test retaining an older package namespace.
++    for name in list(sys.modules):
++        if name.startswith("robosuite.") and name not in {
++            "robosuite.models",
++            "robosuite.controllers",
++            "robosuite.controllers.parts",
++        }:
++            monkeypatch.delitem(sys.modules, name)
++    return SimpleNamespace(
++        joint=importlib.import_module("robosuite.controllers.parts.mobile_base.joint_vel"),
++        world=importlib.import_module("robosuite.models.world"),
++    )
++
++
++def test_rebuild_same_patch_has_same_commit_and_does_not_edit_cache(checkout, tmp_path):
++    before = {
++        name: git(checkout / name, "status", "--porcelain", "--untracked-files=all")
++        for name in ("robosuite", "robocasa")
++    }
++    built = build(robosuite_cache=checkout / "robosuite", robocasa_cache=checkout / "robocasa", output=tmp_path / "new")
++    lock = json.loads(DEFAULT_LOCK.read_text())
++    assert built["robosuite"]["commit"] == lock["robosuite"]["patched_commit"]
++    assert built["robosuite"]["tree"] == lock["robosuite"]["patched_tree"]
++    assert not built["package_install_performed"]
++    assert before == {name: git(checkout / name, "status", "--porcelain", "--untracked-files=all") for name in before}
++
++
++def test_existing_output_never_overwritten(checkout, tmp_path):
++    output = tmp_path / "existing"
++    output.mkdir()
++    (output / "keep").write_bytes(b"history")
++    with pytest.raises(FileExistsError):
++        build(robosuite_cache=checkout / "robosuite", robocasa_cache=checkout / "robocasa", output=output)
++    assert (output / "keep").read_bytes() == b"history"
++
++
++def test_patch_checksum_failure_precedes_output_claim(checkout, tmp_path):
++    lock = json.loads(DEFAULT_LOCK.read_text())
++    lock_path = tmp_path / "vendor.lock.json"
++    lock_path.write_text(json.dumps(lock))
++    (tmp_path / lock["robosuite"]["patch"]).write_text("not the frozen patch")
++    with pytest.raises(ValueError, match="SHA256"):
++        build(
++            robosuite_cache=checkout / "robosuite",
++            robocasa_cache=checkout / "robocasa",
++            output=tmp_path / "no",
++            lock_path=lock_path,
++        )
++    assert not (tmp_path / "no").exists()
++
++
++@pytest.mark.parametrize("axis", ["x", "y"])
++@pytest.mark.parametrize("angle", [0.0, np.pi / 2, -np.pi / 2, np.pi])
++@pytest.mark.parametrize(
++    "command", [[1.0, 0.0, 0.0], [-1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, -1.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, -1.0]]
++)
++def test_legacy_forward_lateral_yaw_in_both_axis_definitions(modules, axis, angle, command):
++    cls = modules.joint.LegacyMobileBaseJointVelocityController
++    controller = cls.__new__(cls)
++    controller.joint_names = ["robot0_joint_mobile_forward", "robot0_joint_mobile_side", "robot0_joint_mobile_yaw"]
++    controller.sim = SimpleNamespace(
++        model=SimpleNamespace(jnt_axis=np.array([[1, 0, 0] if axis == "x" else [0, 1, 0]]), joint_name2id=lambda _: 0)
++    )
++    controller.qpos_index = [0, 1, 2]
++    controller.impedance_mode = "fixed"
++    controller.update = lambda: None
++    controller.scale_action = lambda a: a
++    controller.init_ori = np.eye(3)
++    orientation = np.array([[np.cos(angle), -np.sin(angle), 0], [np.sin(angle), np.cos(angle), 0], [0, 0, 1]])
++    controller.get_base_pose = lambda: (np.zeros(3), orientation)
++    controller.interpolator = Mock()
++    action = np.array(command)
++    before = action.copy()
++    controller.set_goal(action)
++    # Independent explicit golden convention from the upstream Legacy contract:
++    # X-forward uses +theta. Historical Y-forward swaps the planar inputs and
++    # uses -theta. Yaw sign is unchanged in both, including nonzero base heading.
++    x, y, yaw = command if axis == "x" else [command[1], command[0], command[2]]
++    theta = angle if axis == "x" else -angle
++    expected = [x * np.cos(theta) - y * np.sin(theta), x * np.sin(theta) + y * np.cos(theta), yaw]
++    np.testing.assert_allclose(controller.goal_qvel, expected, atol=1e-7)
++    np.testing.assert_array_equal(action, before)
++    controller.interpolator.set_goal.assert_called_once()
++
++
++def test_normal_alias_is_not_equivalent_at_nonzero_heading(modules):
++    # Exercise the original ordinary-controller source body too, showing why
++    # merely selecting its class cannot close the legacy direction contract.
++    normal = modules.joint.MobileBaseJointVelocityController.__new__(modules.joint.MobileBaseJointVelocityController)
++    normal.qpos_index = [0, 1, 2]
++    normal.impedance_mode = "fixed"
++    normal.update = lambda: None
++    normal.scale_action = lambda a: a
++    normal.init_ori = np.eye(3)
++    normal.get_base_pose = lambda: (np.zeros(3), np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]]))
++    normal.interpolator = None
++    normal.set_goal(np.array([1.0, 0.0, 0.0]))
++    np.testing.assert_allclose(normal.goal_qvel, [0, -1, 0], atol=1e-7)
++    assert not np.allclose(normal.goal_qvel, [0, 1, 0])
++
++
++def test_factory_exports_real_legacy_class_not_alias(checkout, modules):
++    package = importlib.import_module("robosuite.controllers.parts.mobile_base")
++    assert package.LegacyMobileBaseJointVelocityController is modules.joint.LegacyMobileBaseJointVelocityController
++    file = checkout / "robosuite/robosuite/controllers/parts/controller_factory.py"
++    node = next(
++        n
++        for n in ast.parse(file.read_text()).body
++        if isinstance(n, ast.FunctionDef) and n.name == "mobile_base_controller_factory"
++    )
++    scope = {
++        "mobile_base_controllers": SimpleNamespace(
++            LegacyMobileBaseJointVelocityController=Mock(return_value="legacy"),
++            MobileBaseJointVelocityController=Mock(return_value="ordinary"),
++        )
++    }
++    exec(compile(ast.Module(body=[node], type_ignores=[]), str(file), "exec"), scope)
++    assert scope["mobile_base_controller_factory"]("JOINT_VELOCITY_LEGACY", {}) == "legacy"
++    scope["mobile_base_controllers"].MobileBaseJointVelocityController.assert_not_called()
++    with pytest.raises(ValueError):
++        scope["mobile_base_controller_factory"]("unknown", {})
++
++
++@pytest.mark.parametrize("ccd", [False, True])
++def test_task_world_options_reach_actual_mujoco_model(checkout, modules, ccd):
++    # Execute original Task.__init__ through a real MujocoWorldBase. Stub only
++    # arena/robot merges; no environment, MjData or simulation is created.
++    path = checkout / "robosuite/robosuite/models/tasks/task.py"
++    node = next(n for n in ast.parse(path.read_text()).body if isinstance(n, ast.ClassDef) and n.name == "Task")
++    init = next(n for n in node.body if isinstance(n, ast.FunctionDef) and n.name == "__init__")
++    cls = ast.ClassDef(
++        name="Task", bases=[ast.Name(id="World", ctx=ast.Load())], keywords=[], body=[init], decorator_list=[]
++    )
++    scope = {
++        "World": modules.world.MujocoWorldBase,
++        "RobotModel": type("RobotModel", (), {}),
++        "MujocoObject": type("MujocoObject", (), {}),
++    }
++    exec(compile(ast.fix_missing_locations(ast.Module(body=[cls], type_ignores=[])), str(path), "exec"), scope)
++    Task = scope["Task"]
++    Task.merge_arena = lambda *a: None
++    Task.merge_robot = lambda *a: None
++    Task.merge_objects = lambda *a: None
++    task = Task(mujoco_arena=None, mujoco_robots=[], enable_multiccd=ccd, enable_sleeping_islands=False)
++    model = mujoco.MjModel.from_xml_string(task.get_xml())
++    assert bool(model.opt.enableflags & int(mujoco.mjtEnableBit.mjENBL_MULTICCD)) is ccd
++    assert task.enable_sleeping_islands is False
++    assert len(task.root.findall("option")) == 1
++
++
++@pytest.mark.parametrize(
++    "kwargs", [{"enable_multiccd": 1}, {"enable_sleeping_islands": None}, {"enable_sleeping_islands": True}]
++)
++def test_physics_options_do_not_accept_ignored_or_unsupported_values(modules, kwargs):
++    with pytest.raises((TypeError, ValueError)):
++        modules.world.MujocoWorldBase(**kwargs)
++
++
++def lifecycle_classes(checkout):
++    # Original full base class and original chain constructors with zero-arg
++    # super preserved. External renderer/model/sim operations are overrides.
++    scope = {
++        "np": np,
++        "OrderedDict": OrderedDict,
++        "deepcopy": copy.deepcopy,
++        "EnvMeta": type,
++        "macros": SimpleNamespace(SIMULATION_TIMESTEP=0.002),
++    }
++    base = ast.parse((checkout / "robosuite/robosuite/environments/base.py").read_text())
++    node = next(n for n in base.body if isinstance(n, ast.ClassDef) and n.name == "MujocoEnv")
++    exec(compile(ast.Module(body=[node], type_ignores=[]), "vendor/base.py", "exec"), scope)
++    for name, parent, file in [
++        ("RobotEnv", "MujocoEnv", "robot_env.py"),
++        ("ManipulationEnv", "RobotEnv", "manipulation/manipulation_env.py"),
++    ]:
++        tree = ast.parse((checkout / "robosuite/robosuite/environments" / file).read_text())
++        node = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == name)
++        node.body = [n for n in node.body if isinstance(n, ast.FunctionDef) and n.name in {"__init__", "_input2list"}]
++        exec(compile(ast.Module(body=[node], type_ignores=[]), "vendor/" + file, "exec"), scope)
++    return scope
++
++
++@pytest.mark.parametrize("defer", [False, True])
++@pytest.mark.parametrize("hard_reset", [False, True])
++def test_full_inheritance_chain_defers_model_and_rng_to_first_reset(checkout, defer, hard_reset):
++    chain = lifecycle_classes(checkout)
++
++    class Harness(chain["ManipulationEnv"]):
++        def _check_robot_configuration(self, *a):
++            pass
++
++        def _load_model(self):
++            self.events.append(("load", int(self.rng.integers(100000))))
++
++        def _initialize_sim(self):
++            self.sim = SimpleNamespace(
++                reset=lambda: self.events.append(("sim-reset", None)),
++                forward=lambda: None,
++                free=lambda: self.events.append(("free", None)),
++            )
++
++        def initialize_renderer(self):
++            self.events.append(("renderer", None))
++
++        def _reset_internal(self):
++            pass
++
++        def _setup_observables(self):
++            return {}
++
++        def _reset_observables(self):
++            pass
++
++        def visualize(self, *a, **kw):
++            pass
++
++        def update_state(self):
++            pass
++
++        def _get_observations(self, **kw):
++            return {"cpu": True}
++
++        @property
++        def _visualizations(self):
++            return {}
++
++    env = Harness.__new__(Harness)
++    env.events = []
++    env.__init__(robots="PandaOmron", renderer="mujoco", load_model_on_init=not defer, hard_reset=hard_reset, seed=7)
++    assert len([e for e in env.events if e[0] == "load"]) == (0 if defer else 1)
++    env.reset()
++    loads = [e for e in env.events if e[0] == "load"]
++    assert len(loads) == (1 if defer or not hard_reset else 2)
++    assert loads[0][1] == int(np.random.default_rng(7).integers(100000))
++    assert env._env_is_initialized is True
++    before = len(loads)
++    env.reset()
++    assert len([e for e in env.events if e[0] == "load"]) == before + int(hard_reset)
++
++
++@pytest.mark.parametrize("state", ["absent", "none", "live"])
++def test_destroy_sim_idempotent_before_and_after_creation(checkout, state):
++    cls = lifecycle_classes(checkout)["MujocoEnv"]
++    obj = cls.__new__(cls)
++    free = Mock()
++    if state != "absent":
++        obj.sim = None if state == "none" else SimpleNamespace(free=free)
++    obj._destroy_sim()
++    obj._destroy_sim()
++    assert free.call_count == int(state == "live")
++
++
++def tiny_source(tmp_path):
++    (tmp_path / "robocasa").mkdir()
++    (tmp_path / "robocasa/__init__.py").write_text("__version__='1.0.1'\n")
++    git(tmp_path, "init", "-q")
++    git(tmp_path, "add", ".")
++    git(tmp_path, "-c", "user.name=CPU", "-c", "user.email=cpu@example.invalid", "commit", "-qm", "CPU")
++    return tmp_path / "robocasa/__init__.py", git(tmp_path, "rev-parse", "HEAD")
++
++
++@pytest.mark.parametrize(
++    "kind",
++    ["tracked", "staged", "untracked", "ignored", "backup", "symlink", "wrong_commit", "wrong_origin", "poison_pyc"],
++)
++def test_runtime_source_audit_rejects_dirty_or_ambiguous_imports(tmp_path, kind):
++    origin, sha = tiny_source(tmp_path)
++    if kind in ("tracked", "staged"):
++        origin.write_text("__version__='evil'\n")
++    if kind == "staged":
++        git(tmp_path, "add", ".")
++    if kind in ("untracked", "ignored", "backup"):
++        path = tmp_path / ("robocasa/injected.py" if kind != "backup" else "robocasa/old.py.bak")
++        path.write_text("bad")
++        if kind == "ignored":
++            (tmp_path / ".git/info/exclude").write_text("*.py\n")
++    if kind == "symlink":
++        (tmp_path / "robocasa/external").symlink_to("/tmp")
++    if kind == "poison_pyc":
++        py_compile.compile(str(origin), doraise=True)
++        cached = Path(importlib.util.cache_from_source(str(origin)))
++        original = origin.read_text()
++        origin.write_text("raise RuntimeError('poison')\n")
++        py_compile.compile(str(origin), doraise=True)
++        origin.write_text(original)
++        assert cached.exists()
++    if kind == "wrong_commit":
++        sha = "0" * 40
++    if kind == "wrong_origin":
++        origin = tmp_path / "shadow/__init__.py"
++        origin.parent.mkdir()
++        origin.write_text("")
++    with pytest.raises((ValueError, subprocess.CalledProcessError)):
++        vendor.audit_source(origin, package="robocasa", expected_commit=sha, assets={})
++
++
++def test_clean_source_bytecode_and_explicit_asset_inventory(tmp_path):
++    origin, sha = tiny_source(tmp_path)
++    py_compile.compile(str(origin), doraise=True)
++    assert vendor.audit_source(origin, package="robocasa", expected_commit=sha, assets={})["tracked_clean"]
++    asset = tmp_path / "robocasa/models/assets/fixtures/example.xml"
++    asset.parent.mkdir(parents=True)
++    asset.write_text("<mujoco/>")
++    with pytest.raises(ValueError, match="inventory"):
++        vendor.audit_source(origin, package="robocasa", expected_commit=sha, assets={})
++    approved = {"robocasa": {str(asset.relative_to(tmp_path)): vendor.sha256_file(asset)}}
++    assert vendor.audit_source(origin, package="robocasa", expected_commit=sha, assets=approved)[
++        "untracked_asset_sha256"
++    ]
++    asset.write_text("changed")
++    with pytest.raises(ValueError, match="SHA mismatch"):
++        vendor.audit_source(origin, package="robocasa", expected_commit=sha, assets=approved)
++
++
++def test_dataset_metadata_is_separate_from_runtime_and_capture_time(tmp_path):
++    meta = tmp_path / "dataset_meta.json"
++    meta.write_text(
++        json.dumps(
++            {
++                "robocasa_version": "0.5.1",
++                "robosuite_version": "1.5.2",
++                "mujoco_version": "3.3.1",
++                "env_args": {"env_name": "CloseFridge"},
++            }
++        )
++    )
++    record = vendor.dataset_provenance(meta)
++    assert record["recorded_generation_versions"]["robocasa"] == "0.5.1"
++    assert record["capture_time_commit"] == record["generation_git_commit"] == "UNKNOWN"
++    assert record["equivalent_to_evaluation_runtime"] == "NOT_PROVEN"
++    meta.write_text(json.dumps({"robocasa_version": "0.5.1", "nested": {"robocasa_version": "1.0.1"}}))
++    with pytest.raises(ValueError, match="ambiguous"):
++        vendor.dataset_provenance(meta)
++
++
++def test_absent_metadata_versions_are_not_filled_with_evaluator_version(tmp_path):
++    meta = tmp_path / "dataset_meta.json"
++    meta.write_text('{"env_version":"0.5.1"}')
++    record = vendor.dataset_provenance(meta)
++    assert record["recorded_generation_versions"]["robocasa"] == "NOT_RECORDED"
++    assert record["metadata_recorded_versions"] == {"/env_version": "0.5.1"}
++
++
++def official_registry(checkout):
++    file = checkout / "robocasa/robocasa/utils/dataset_registry.py"
++    nodes = [
++        n
++        for n in ast.parse(file.read_text()).body
++        if isinstance(n, ast.Assign)
++        and any(
++            isinstance(t, ast.Name) and t.id in {"ATOMIC_TASK_DATASETS", "COMPOSITE_TASK_DATASETS"} for t in n.targets
++        )
++    ]
++    scope = {"OrderedDict": OrderedDict}
++    exec(compile(ast.Module(body=nodes, type_ignores=[]), str(file), "exec"), scope)
++    # The original getter contains only one local registry import; substitute
++    # those globals with the actual registry dictionaries parsed above.
++    getter = checkout / "robocasa/robocasa/utils/dataset_registry_utils.py"
++    node = next(
++        n for n in ast.parse(getter.read_text()).body if isinstance(n, ast.FunctionDef) and n.name == "get_task_horizon"
++    )
++    node.body = [n for n in node.body if not isinstance(n, ast.ImportFrom)]
++    exec(compile(ast.Module(body=[node], type_ignores=[]), str(getter), "exec"), scope)
++    return scope["get_task_horizon"]
++
++
++def runtime_doubles(checkout, monkeypatch):
++    lock = json.loads(DEFAULT_LOCK.read_text())
++    expected = dict(lock["runtime_versions"], robosuite="1.5.2", robocasa="1.0.1")
++    real_modules = {"numpy": np, "mujoco": mujoco}
++    for name in ("robocasa", "robosuite"):
++        real_modules[name] = SimpleNamespace(
++            __file__=str(checkout / name / name / "__init__.py"), __version__=expected[name]
++        )
++    getter = official_registry(checkout)
++    real_modules["robocasa.utils.dataset_registry_utils"] = SimpleNamespace(get_task_horizon=getter)
++    monkeypatch.setattr(vendor.importlib.metadata, "version", lambda name: expected[name])
++    monkeypatch.setattr(
++        vendor.importlib.util, "find_spec", lambda name: SimpleNamespace(origin=real_modules[name].__file__)
++    )
++    monkeypatch.setattr(vendor.importlib, "import_module", lambda name: real_modules[name])
++    return real_modules
++
++
++def test_probe_actual_git_native_versions_and_original_official_horizons(checkout, monkeypatch):
++    runtime_doubles(checkout, monkeypatch)
++    result = vendor.probe_runtime()
++    assert result["packages"]["mujoco"]["native_version"] == "3.3.1"
++    assert result["packages"]["numpy"]["distribution_version"] == "2.2.5"
++    assert result["packages"]["robocasa"]["commit"] == "6f90063c0ec2b9916bbd977368b54c98d9c2d908"
++    getter = official_registry(checkout)
++    assert result["protocol"]["official_horizons"] == {
++        name: getter(name) for name in ("CloseFridge", "NavigateKitchen")
++    }
++    assert result["protocol"]["horizon_multiplier_applied"] is False
++    assert result["physics_capabilities"]["real_kitchen_behavior_validated"] is False
++    digest = result.pop("digest")
++    assert digest == hashlib.sha256(vendor.canonical(result)).hexdigest()
++
++
++@pytest.mark.parametrize(
++    "wrong", ["metadata_version", "module_version", "module_origin", "native_version", "missing_horizon"]
++)
++def test_probe_rejects_false_runtime_claims(checkout, monkeypatch, wrong):
++    modules = runtime_doubles(checkout, monkeypatch)
++    if wrong == "metadata_version":
++        monkeypatch.setattr(vendor.importlib.metadata, "version", lambda _: "wrong")
++    elif wrong == "module_version":
++        modules["robocasa"].__version__ = "0.5.1"
++    elif wrong == "module_origin":
++        # spec points at the correct package; actual imported object points elsewhere.
++        origins = {name: module.__file__ for name, module in modules.items() if hasattr(module, "__file__")}
++        monkeypatch.setattr(vendor.importlib.util, "find_spec", lambda name: SimpleNamespace(origin=origins[name]))
++        modules["robocasa"].__file__ = str(checkout / "robosuite/robosuite/__init__.py")
++    elif wrong == "native_version":
++        monkeypatch.setattr(mujoco, "mj_versionString", lambda: "3.3.2")
++    else:
++        modules["robocasa.utils.dataset_registry_utils"].get_task_horizon = lambda _: -1
++    with pytest.raises(ValueError):
++        vendor.probe_runtime()
++
++
++@pytest.mark.parametrize(
++    "wrong", [None, "digest", "interpreter", "pythonpath", "lock", "probe", "duplicate", "missing", "nonzero"]
++)
++def test_collector_binds_actual_interpreter_command_and_payload(checkout, monkeypatch, wrong):
++    runtime_doubles(checkout, monkeypatch)
++    result = vendor.probe_runtime()
++    if wrong in ("digest", "interpreter", "pythonpath", "lock", "probe"):
++        result.pop("digest")
++        if wrong == "digest":
++            result["digest"] = "0" * 64
++        elif wrong == "interpreter":
++            result["interpreter"]["executable"] = "/wrong/python"
++        elif wrong == "pythonpath":
++            result["interpreter"]["pythonpath_env"] = "/wrong/import/context"
++        elif wrong == "lock":
++            result["lock_sha256"] = "0" * 64
++        else:
++            result["probe_sha256"] = "0" * 64
++        if wrong != "digest":
++            result["digest"] = hashlib.sha256(vendor.canonical(result)).hexdigest()
++
++    def run(argv, **kwargs):
++        assert argv[1] == "-B" and "-I" not in argv
++        assert kwargs["env"]["CUDA_VISIBLE_DEVICES"] == ""
++        assert kwargs["env"]["MUJOCO_GL"] == "disable"
++        assert kwargs["check"] is True and kwargs["timeout"] == 120
++        if wrong == "nonzero":
++            raise subprocess.CalledProcessError(1, argv, stderr="import failed")
++        record = "PSM_RUNTIME " + json.dumps(result) + "\n"
++        return SimpleNamespace(
++            stdout="vendor warnings\n" + (record * 2 if wrong == "duplicate" else "" if wrong == "missing" else record),
++            stderr="",
++            returncode=0,
++        )
++
++    monkeypatch.setattr(vendor.subprocess, "run", run)
++    if wrong is None:
++        answer = vendor.collect_runtime(sim_python=Path(sys.executable))
++        assert answer["evaluation_runtime"]["digest"] == result["digest"]
++        assert "vendor warnings" in answer["runtime_probe_evidence"]["stdout"]
++    else:
++        with pytest.raises((ValueError, subprocess.CalledProcessError)):
++            vendor.collect_runtime(sim_python=Path(sys.executable))
++
++
++def test_verified_manifest_keeps_dataset_runtime_and_transient_logs_separate(tmp_path, monkeypatch):
++    import v3_evaluation_identity as base_identity
++
++    meta = tmp_path / "lerobot/extras/dataset_meta.json"
++    meta.parent.mkdir(parents=True)
++    meta.write_text('{"robocasa_version":"0.5.1"}')
++    runtime = {"packages": {"robocasa": {"distribution_version": "1.0.1"}}, "digest": "runtime-digest"}
++    monkeypatch.setattr(
++        vendor,
++        "collect_runtime",
++        lambda **kw: {"evaluation_runtime": runtime, "runtime_probe_evidence": {"stdout": "volatile warnings"}},
++    )
++    monkeypatch.setattr(
++        base_identity,
++        "build_evaluation_identity",
++        lambda **kw: {"identity": {"protocol": kw["protocol"]}, "digest": "ignored"},
++    )
++    bundle = vendor.build_verified_evaluation_identity(
++        sim_python=Path(sys.executable),
++        tasks=[("CloseFridge", meta.parent.parent)],
++        protocol={"local_memory_mode": "required"},
++    )
++    identity = bundle["manifest"]["identity"]
++    assert identity["dataset"]["sources"][0]["recorded_generation_versions"]["robocasa"] == "0.5.1"
++    assert identity["evaluation_runtime"]["packages"]["robocasa"]["distribution_version"] == "1.0.1"
++    assert "volatile" not in json.dumps(bundle["manifest"])
++    assert bundle["manifest"]["digest"] == hashlib.sha256(vendor.canonical(identity)).hexdigest()
++
++
++def test_collector_uses_the_same_explicit_simulator_import_environment(checkout, monkeypatch):
++    runtime_doubles(checkout, monkeypatch)
++    monkeypatch.setenv("PYTHONPATH", "/synthetic/pinned/simulator/imports")
++    result = vendor.probe_runtime()
++
++    def run(argv, **kwargs):
++        assert kwargs["env"]["PYTHONPATH"] == "/synthetic/pinned/simulator/imports"
++        assert kwargs["env"]["PSM_TEST_ENV"] == "same-child-environment"
++        return SimpleNamespace(stdout="PSM_RUNTIME " + json.dumps(result) + "\n", stderr="", returncode=0)
++
++    monkeypatch.setattr(vendor.subprocess, "run", run)
++    env = dict(os.environ, PSM_TEST_ENV="same-child-environment")
++    answer = vendor.collect_runtime(sim_python=Path(sys.executable), simulation_env=env)
++    assert answer["evaluation_runtime"]["interpreter"]["pythonpath_env"] == env["PYTHONPATH"]
++
++
++def test_pinned_omron_xml_and_kitchen_request_the_reviewed_contract(checkout):
++    xml = ET.parse(checkout / "robosuite/robosuite/models/assets/bases/omron_mobile_base.xml")
++    axes = {j.attrib["name"]: j.attrib.get("axis") for j in xml.iter("joint") if "name" in j.attrib}
++    assert axes["joint_mobile_forward"] == "1 0 0"
++    assert axes["joint_mobile_side"] == "0 1 0"
++    assert axes["joint_mobile_yaw"] == "0 0 1"
++    tree = ast.parse((checkout / "robocasa/robocasa/environments/kitchen/kitchen.py").read_text())
++    calls = [n for n in ast.walk(tree) if isinstance(n, ast.Call)]
++    assert any(
++        k.arg == "load_model_on_init" and isinstance(k.value, ast.Constant) and k.value.value is False
++        for c in calls
++        for k in c.keywords
++    )
++    task = next(c for c in calls if isinstance(c.func, ast.Name) and c.func.id == "ManipulationTask")
++    keys = {k.arg: k.value.value for k in task.keywords if isinstance(k.value, ast.Constant)}
++    assert keys["enable_multiccd"] is True and keys["enable_sleeping_islands"] is False
++    assert any(isinstance(n, ast.Constant) and n.value == "JOINT_VELOCITY_LEGACY" for n in ast.walk(tree))
++
++
++@pytest.mark.parametrize("command", [[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]])
++@pytest.mark.parametrize("base_mode", [False, True])
++def test_original_raw15_decoder_preserves_native_base_axes(command, base_mode):
++    from scipy.spatial.transform import Rotation
++
++    file = ROOT / "cosmos-framework/cosmos_framework/simulation/robocasa/eval_utils.py"
++    nodes = [
++        n
++        for n in ast.parse(file.read_text()).body
++        if isinstance(n, ast.FunctionDef)
++        and n.name in {"rot6d_to_matrix", "decode_10d_to_env12", "decode_15d_to_env12"}
++    ]
++    scope = {"np": np, "R": Rotation}
++    exec(compile(ast.Module(body=nodes, type_ignores=[]), str(file), "exec"), scope)
++    raw = np.zeros(15)
++    raw[:3] = command
++    raw[4] = 1 if base_mode else -1
++    raw[8:14] = [1, 0, 0, 0, 1, 0]
++    result = scope["decode_15d_to_env12"](raw, False)
++    np.testing.assert_array_equal(result[7:10], command if base_mode else [0, 0, 0])
++    assert result[11] == (1 if base_mode else -1)
++
++
++def test_backport_body_matches_frozen_official_reference_AST(checkout):
++    provenance = json.loads((DEFAULT_LOCK.parent / "source_provenance.json").read_text())
++    for item in provenance["exact_backports"]:
++        tree = ast.parse((checkout / "robosuite" / item["file"]).read_text())
++        node = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == item["class"])
++        if item["method"]:
++            node = next(n for n in node.body if isinstance(n, ast.FunctionDef) and n.name == item["method"])
++        assert hashlib.sha256(ast.dump(node, include_attributes=False).encode()).hexdigest() == item["ast_sha256"]
++
++
++def test_target_kitchens_and_object_split_match_pinned_official_protocol(checkout):
++    path = checkout / "robocasa/robocasa/utils/env_utils.py"
++    node = next(
++        n for n in ast.parse(path.read_text()).body if isinstance(n, ast.FunctionDef) and n.name == "create_env"
++    )
++    branch = next(
++        n
++        for n in ast.walk(node)
++        if isinstance(n, ast.If)
++        and isinstance(n.test, ast.Compare)
++        and isinstance(n.test.left, ast.Name)
++        and n.test.left.id == "split"
++        and any(isinstance(c, ast.Constant) and c.value == "target" for c in n.test.comparators)
++    )
++    observed = {}
++    exec(compile(ast.Module(body=branch.body, type_ignores=[]), str(path), "exec"), observed)
++    assert observed["obj_instance_split"] == "target"
++    assert observed["layout_and_style_ids"] == list(zip(range(1, 11), range(1, 11)))

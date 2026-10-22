@@ -1,0 +1,4 @@
+ruff 0.12.7
+All checks passed!
+3 files already formatted
+Vendor8-file source diff --check PASS. Root source/docs diff --check PASS; canonical unified-patch context whitespace and verbatim upstream LICENSE exempt, bytes/SHA preserved.

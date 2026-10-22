@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="77" time="13.480" timestamp="2026-10-22T04:00:58.109474+00:00" hostname="d4ae95e8e7b1"><testcase classname="" name="test_rebuild_same_patch_has_same_commit_and_does_not_edit_cache" time="10.953" /><testcase classname="" name="test_existing_output_never_overwritten" time="0.001" /><testcase classname="" name="test_patch_checksum_failure_precedes_output_claim" time="0.001" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command0-0.0-x]" time="0.737" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command0-0.0-y]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command0-1.5707963267948966-x]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command0-1.5707963267948966-y]" time="0.018" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command0--1.5707963267948966-x]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command0--1.5707963267948966-y]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command0-3.141592653589793-x]" time="0.019" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command0-3.141592653589793-y]" time="0.019" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command1-0.0-x]" time="0.018" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command1-0.0-y]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command1-1.5707963267948966-x]" time="0.022" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command1-1.5707963267948966-y]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command1--1.5707963267948966-x]" time="0.019" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command1--1.5707963267948966-y]" time="0.019" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command1-3.141592653589793-x]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command1-3.141592653589793-y]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command2-0.0-x]" time="0.019" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command2-0.0-y]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command2-1.5707963267948966-x]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command2-1.5707963267948966-y]" time="0.019" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command2--1.5707963267948966-x]" time="0.022" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command2--1.5707963267948966-y]" time="0.019" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command2-3.141592653589793-x]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command2-3.141592653589793-y]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command3-0.0-x]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command3-0.0-y]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command3-1.5707963267948966-x]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command3-1.5707963267948966-y]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command3--1.5707963267948966-x]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command3--1.5707963267948966-y]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command3-3.141592653589793-x]" time="0.023" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command3-3.141592653589793-y]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command4-0.0-x]" time="0.019" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command4-0.0-y]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command4-1.5707963267948966-x]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command4-1.5707963267948966-y]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command4--1.5707963267948966-x]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command4--1.5707963267948966-y]" time="0.023" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command4-3.141592653589793-x]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command4-3.141592653589793-y]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command5-0.0-x]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command5-0.0-y]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command5-1.5707963267948966-x]" time="0.020" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command5-1.5707963267948966-y]" time="0.019" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command5--1.5707963267948966-x]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command5--1.5707963267948966-y]" time="0.022" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command5-3.141592653589793-x]" time="0.021" /><testcase classname="" name="test_legacy_forward_lateral_yaw_in_both_axis_definitions[command5-3.141592653589793-y]" time="0.020" /><testcase classname="" name="test_normal_alias_is_not_equivalent_at_nonzero_heading" time="0.021" /><testcase classname="" name="test_factory_exports_real_legacy_class_not_alias" time="0.022" /><testcase classname="" name="test_task_world_options_reach_actual_mujoco_model[False]" time="0.022"><failure message="AttributeError: module 'robosuite' has no attribute 'models'">checkout = PosixPath('/tmp/psm-v3-vendor-b-20261022/locked-build-2')
+modules = namespace(joint=&lt;module 'robosuite.controllers.parts.mobile_base.joint_vel' from '/tmp/psm-v3-vendor-b-20261022/locked...dule 'robosuite.models.world' from '/tmp/psm-v3-vendor-b-20261022/locked-build-2/robosuite/robosuite/models/world.py'&gt;)
+ccd = False
+
+    @pytest.mark.parametrize("ccd",[False,True])
+    def test_task_world_options_reach_actual_mujoco_model(checkout,modules,ccd):
+        # Execute original Task.__init__ through a real MujocoWorldBase. Stub only
+        # arena/robot merges; no environment, MjData or simulation is created.
+        path=checkout/"robosuite/robosuite/models/tasks/task.py"
+        node=next(n for n in ast.parse(path.read_text()).body if isinstance(n,ast.ClassDef) and n.name=="Task")
+        init=next(n for n in node.body if isinstance(n,ast.FunctionDef) and n.name=="__init__")
+        cls=ast.ClassDef(name="Task",bases=[ast.Name(id="World",ctx=ast.Load())],keywords=[],body=[init],decorator_list=[])
+        scope={"World":modules.world.MujocoWorldBase,"RobotModel":type("RobotModel",(),{}),"MujocoObject":type("MujocoObject",(),{})}
+        exec(compile(ast.fix_missing_locations(ast.Module(body=[cls],type_ignores=[])),str(path),"exec"),scope)
+        Task=scope["Task"]
+        Task.merge_arena=lambda *a:None
+        Task.merge_robot=lambda *a:None
+        Task.merge_objects=lambda *a:None
+&gt;       task=Task(mujoco_arena=None,mujoco_robots=[],enable_multiccd=ccd,enable_sleeping_islands=False)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/robocasa_vendor_test.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/psm-v3-vendor-b-20261022/locked-build-2/robosuite/robosuite/models/tasks/task.py:68: in __init__
+    super().__init__(enable_multiccd=enable_multiccd, enable_sleeping_islands=enable_sleeping_islands)
+/tmp/psm-v3-vendor-b-20261022/locked-build-2/robosuite/robosuite/models/world.py:18: in __init__
+    super().__init__(xml_path_completion("base.xml"))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+xml_path = 'base.xml', root = None
+
+    def xml_path_completion(xml_path, root=None):
+        """
+        Takes in a local xml path and returns a full path.
+            if @xml_path is absolute, do nothing
+            if @xml_path is not absolute, load xml that is shipped by the package
+    
+        Args:
+            xml_path (str): local xml path
+            root (str): root folder for xml path. If not specified defaults to robosuite.models.assets_root
+    
+        Returns:
+            str: Full (absolute) xml path
+        """
+        if xml_path.startswith("/"):
+            full_path = xml_path
+        else:
+            if root is None:
+&gt;               root = robosuite.models.assets_root
+                       ^^^^^^^^^^^^^^^^
+E               AttributeError: module 'robosuite' has no attribute 'models'
+
+/tmp/psm-v3-vendor-b-20261022/locked-build-2/robosuite/robosuite/utils/mjcf_utils.py:253: AttributeError</failure></testcase><testcase classname="" name="test_task_world_options_reach_actual_mujoco_model[True]" time="0.023"><failure message="AttributeError: module 'robosuite' has no attribute 'models'">checkout = PosixPath('/tmp/psm-v3-vendor-b-20261022/locked-build-2')
+modules = namespace(joint=&lt;module 'robosuite.controllers.parts.mobile_base.joint_vel' from '/tmp/psm-v3-vendor-b-20261022/locked...dule 'robosuite.models.world' from '/tmp/psm-v3-vendor-b-20261022/locked-build-2/robosuite/robosuite/models/world.py'&gt;)
+ccd = True
+
+    @pytest.mark.parametrize("ccd",[False,True])
+    def test_task_world_options_reach_actual_mujoco_model(checkout,modules,ccd):
+        # Execute original Task.__init__ through a real MujocoWorldBase. Stub only
+        # arena/robot merges; no environment, MjData or simulation is created.
+        path=checkout/"robosuite/robosuite/models/tasks/task.py"
+        node=next(n for n in ast.parse(path.read_text()).body if isinstance(n,ast.ClassDef) and n.name=="Task")
+        init=next(n for n in node.body if isinstance(n,ast.FunctionDef) and n.name=="__init__")
+        cls=ast.ClassDef(name="Task",bases=[ast.Name(id="World",ctx=ast.Load())],keywords=[],body=[init],decorator_list=[])
+        scope={"World":modules.world.MujocoWorldBase,"RobotModel":type("RobotModel",(),{}),"MujocoObject":type("MujocoObject",(),{})}
+        exec(compile(ast.fix_missing_locations(ast.Module(body=[cls],type_ignores=[])),str(path),"exec"),scope)
+        Task=scope["Task"]
+        Task.merge_arena=lambda *a:None
+        Task.merge_robot=lambda *a:None
+        Task.merge_objects=lambda *a:None
+&gt;       task=Task(mujoco_arena=None,mujoco_robots=[],enable_multiccd=ccd,enable_sleeping_islands=False)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools/v3/robocasa_vendor_test.py:167: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tmp/psm-v3-vendor-b-20261022/locked-build-2/robosuite/robosuite/models/tasks/task.py:68: in __init__
+    super().__init__(enable_multiccd=enable_multiccd, enable_sleeping_islands=enable_sleeping_islands)
+/tmp/psm-v3-vendor-b-20261022/locked-build-2/robosuite/robosuite/models/world.py:18: in __init__
+    super().__init__(xml_path_completion("base.xml"))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+xml_path = 'base.xml', root = None
+
+    def xml_path_completion(xml_path, root=None):
+        """
+        Takes in a local xml path and returns a full path.
+            if @xml_path is absolute, do nothing
+            if @xml_path is not absolute, load xml that is shipped by the package
+    
+        Args:
+            xml_path (str): local xml path
+            root (str): root folder for xml path. If not specified defaults to robosuite.models.assets_root
+    
+        Returns:
+            str: Full (absolute) xml path
+        """
+        if xml_path.startswith("/"):
+            full_path = xml_path
+        else:
+            if root is None:
+&gt;               root = robosuite.models.assets_root
+                       ^^^^^^^^^^^^^^^^
+E               AttributeError: module 'robosuite' has no attribute 'models'
+
+/tmp/psm-v3-vendor-b-20261022/locked-build-2/robosuite/robosuite/utils/mjcf_utils.py:253: AttributeError</failure></testcase><testcase classname="" name="test_physics_options_do_not_accept_ignored_or_unsupported_values[kwargs0]" time="0.018" /><testcase classname="" name="test_physics_options_do_not_accept_ignored_or_unsupported_values[kwargs1]" time="0.019" /><testcase classname="" name="test_physics_options_do_not_accept_ignored_or_unsupported_values[kwargs2]" time="0.020" /><testcase classname="" name="test_full_inheritance_chain_defers_model_and_rng_to_first_reset[False-False]" time="0.012" /><testcase classname="" name="test_full_inheritance_chain_defers_model_and_rng_to_first_reset[False-True]" time="0.043" /><testcase classname="" name="test_full_inheritance_chain_defers_model_and_rng_to_first_reset[True-False]" time="0.010" /><testcase classname="" name="test_full_inheritance_chain_defers_model_and_rng_to_first_reset[True-True]" time="0.010" /><testcase classname="" name="test_destroy_sim_idempotent_before_and_after_creation[absent]" time="0.010" /><testcase classname="" name="test_destroy_sim_idempotent_before_and_after_creation[none]" time="0.011" /><testcase classname="" name="test_destroy_sim_idempotent_before_and_after_creation[live]" time="0.010" /><testcase classname="" name="test_runtime_source_audit_rejects_dirty_or_ambiguous_imports[tracked]" time="0.024" /><testcase classname="" name="test_runtime_source_audit_rejects_dirty_or_ambiguous_imports[staged]" time="0.025" /><testcase classname="" name="test_runtime_source_audit_rejects_dirty_or_ambiguous_imports[untracked]" time="0.026" /><testcase classname="" name="test_runtime_source_audit_rejects_dirty_or_ambiguous_imports[ignored]" time="0.023" /><testcase classname="" name="test_runtime_source_audit_rejects_dirty_or_ambiguous_imports[backup]" time="0.024" /><testcase classname="" name="test_runtime_source_audit_rejects_dirty_or_ambiguous_imports[symlink]" time="0.025" /><testcase classname="" name="test_runtime_source_audit_rejects_dirty_or_ambiguous_imports[wrong_commit]" time="0.019" /><testcase classname="" name="test_runtime_source_audit_rejects_dirty_or_ambiguous_imports[wrong_origin]" time="0.018" /><testcase classname="" name="test_runtime_source_audit_rejects_dirty_or_ambiguous_imports[poison_pyc]" time="0.027" /><testcase classname="" name="test_clean_source_bytecode_and_explicit_asset_inventory" time="0.069" /><testcase classname="" name="test_dataset_metadata_is_separate_from_runtime_and_capture_time" time="0.001" /><testcase classname="" name="test_absent_metadata_versions_are_not_filled_with_evaluator_version" time="0.001" /></testsuite></testsuites>

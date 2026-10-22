@@ -1,0 +1,15 @@
+{
+  "root_base": "d6b2484fa9f4ff5775ea1f13f3fcaf973ce499e8",
+  "child_unchanged": "35b0ea1ccee9ee26653ed6589c484f0997d1c586",
+  "preexisting_root_tracked_changes": [
+    "SESSION.md",
+    "TODO.md"
+  ],
+  "existing_queue_identity_training_source_unchanged": true,
+  "vendor_actual_head": "1ac174585293ed998ffc9cf73e47439798cf6f6c",
+  "vendor_sources_sha_syntax_checks": 8,
+  "vendor_source_clean": true,
+  "child_source_clean": true,
+  "g1_candidate_ref_preserved": "5fe6a513baa870c06f3186903b99e9bba80bb084",
+  "batch_a_candidate_ref_preserved": "e4f6c8a62993d83dc27c285ce9e223eeefee7f65"
+}

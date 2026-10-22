@@ -1,0 +1,66 @@
+FFFF                                                                     [100%]
+=================================== FAILURES ===================================
+_______________ test_legacy_factory_should_construct_controller ________________
+
+    def test_legacy_factory_should_construct_controller():
+        node=next(n for n in ast.parse(source('robosuite/controllers/parts/controller_factory.py')).body if isinstance(n,ast.FunctionDef) and n.name=='mobile_base_controller_factory')
+        scope={'mobile_base_controllers':SimpleNamespace(MobileBaseJointVelocityController=Mock(),LegacyMobileBaseJointVelocityController=Mock())}
+        exec(compile(ast.Module(body=[node],type_ignores=[]),'upstream-factory','exec'),scope)
+>       assert scope['mobile_base_controller_factory']('JOINT_VELOCITY_LEGACY',{}) is not None
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tmp/psm-v3-vendor-b-20261022/vendor_baseline_probe.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = 'JOINT_VELOCITY_LEGACY', params = {}
+
+>   ???
+E   ValueError: Unknown controller name: JOINT_VELOCITY_LEGACY
+
+upstream-factory:177: ValueError
+___________ test_deferred_constructor_should_reach_all_parent_layers ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-21/test_deferred_constructor_shou0')
+
+    def test_deferred_constructor_should_reach_all_parent_layers(tmp_path):
+        cls=chain(tmp_path)['ManipulationEnv'];obj=cls.__new__(cls)
+>       obj.__init__(robots='PandaOmron',load_model_on_init=False)
+E       TypeError: ManipulationEnv.__init__() got an unexpected keyword argument 'load_model_on_init'
+
+/tmp/psm-v3-vendor-b-20261022/vendor_baseline_probe.py:34: TypeError
+_______________ test_destroy_before_sim_creation_should_be_safe ________________
+
+tmp_path = PosixPath('/tmp/pytest-of-agent/pytest-21/test_destroy_before_sim_creati0')
+
+    def test_destroy_before_sim_creation_should_be_safe(tmp_path):
+        cls=chain(tmp_path)['MujocoEnv'];obj=cls.__new__(cls)
+>       obj._destroy_sim()
+
+/tmp/psm-v3-vendor-b-20261022/vendor_baseline_probe.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <MujocoEnv object at 0x7f047e9163c0>
+
+>   ???
+E   AttributeError: 'MujocoEnv' object has no attribute 'sim'
+
+vendor/base.py:740: AttributeError
+______________ test_task_should_accept_and_forward_physics_flags _______________
+
+    def test_task_should_accept_and_forward_physics_flags():
+        tree=ast.parse(source('robosuite/models/tasks/task.py'))
+        cls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='Task')
+        init=next(n for n in cls.body if isinstance(n,ast.FunctionDef) and n.name=='__init__')
+        wrapper=ast.ClassDef(name='Task',bases=[ast.Name(id='World',ctx=ast.Load())],keywords=[],body=[init],decorator_list=[])
+        scope={'World':type('World',(),{})}
+        exec(compile(ast.fix_missing_locations(ast.Module(body=[wrapper],type_ignores=[])),'upstream-task','exec'),scope)
+>       scope['Task'](mujoco_arena=None,mujoco_robots=[],enable_multiccd=True,enable_sleeping_islands=False)
+E       TypeError: Task.__init__() got an unexpected keyword argument 'enable_multiccd'
+
+/tmp/psm-v3-vendor-b-20261022/vendor_baseline_probe.py:47: TypeError
+=========================== short test summary info ============================
+FAILED ../../dev::test_legacy_factory_should_construct_controller - ValueErro...
+FAILED ../../dev::test_deferred_constructor_should_reach_all_parent_layers - ...
+FAILED ../../dev::test_destroy_before_sim_creation_should_be_safe - Attribute...
+FAILED ../../dev::test_task_should_accept_and_forward_physics_flags - TypeErr...
+4 failed in 0.31s
