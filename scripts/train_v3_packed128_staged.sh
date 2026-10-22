@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 # Canonical corrected Phase5 formal profile. Execution still requires Owner authorization.
 set -euo pipefail
-if [[ $# != 2 || ( $1 != fresh && $1 != resume ) ]]; then
-    echo "Usage: $0 {fresh|resume} EXECUTION_UNTIL" >&2
+if [[ $# -lt 2 || $# -gt 3 || ( $1 != fresh && $1 != resume ) ]]; then
+    echo "Usage: $0 {fresh|resume} EXECUTION_UNTIL [--owner-authorized-g1-cross-pair-resume]" >&2
     exit 2
 fi
 phase=$1
 execution_until=$2
+owner_args=()
+if [[ $# == 3 ]]; then
+    if [[ $phase != resume || $3 != --owner-authorized-g1-cross-pair-resume || ${JOB_NAME:-} != packed128_droid_fresh_g1_20261019 ]]; then
+        echo "Owner cross-pair flag is only valid for the named G1 Resume" >&2
+        exit 2
+    fi
+    owner_args=("$3")
+fi
 for required in OUTPUT_ROOT SOURCE_ROOT CACHE_ROOT DATASET_INDEX_ROOT EDGE_POLICY_CHECKPOINT \
     WAN_VAE_PATH BASE_CHECKPOINT_PATH JOB_NAME EXPECTED_ROOT EXPECTED_CHILD; do
     if [[ -z ${!required:-} ]]; then
@@ -26,4 +34,4 @@ exec "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=
     --source-root "$SOURCE_ROOT" --cache-root "$CACHE_ROOT" --dataset-index-root "$DATASET_INDEX_ROOT" \
     --edge "$EDGE_POLICY_CHECKPOINT" --vae "$WAN_VAE_PATH" --base-checkpoint "$BASE_CHECKPOINT_PATH" \
     --num-workers 0 --world-size 8 --t 16 --b 8 --ga 2 --k 4 \
-    --max-iter 30000 --warmup 500 --save-iter 100
+    --max-iter 30000 --warmup 500 --save-iter 100 "${owner_args[@]}"

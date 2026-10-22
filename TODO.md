@@ -423,3 +423,8 @@
 - V3-FUTURE-PHASE5-CONFIG-TRUTH: IN_PROGRESS on isolated Root/Child v3-phase5-config-truth-20261021 after HIGH07 author delivery. Future-job compatibility snapshot and versioned launch provenance only; no mainline merge or old-job migration. Separate implementation/Evidence/STOP.
 - V3-FUTURE-PHASE5-CONFIG-TRUTH: REVIEW; author lock-aligned CPU47+32subtests/static PASS. Child/Root isolated candidate publication and pair-bound diff/Evidence handoff; no mainline merge or independent verdict. New-job strict same-source lifecycle tested, old G1 unmodified/unsupported cross-pair migration remains rejected.
 - V3-CONFIG-TRUTH-MAINLINE-MERGE: REVIEW after source-hash verification and non-force publication. New Root integration/Child35b0ea1 requires independent review; existing author47+32CPU/static evidence retained, no execution authorization.
+
+## V3-G1-ITER8900-CROSS-PAIR-RESUME — 2026-10-22
+- IN_PROGRESS; Codex; prerequisite explicit Owner Override design APPROVE at1fc28eff.
+- Scope: isolated Child Phase5 only-G1 resume flag/identity/readiness/historical digest continuity and audit, minimal Root launcher passthrough, CPU red/green/negatives and state-restore evidence. Keep old canonical assets/source records/DCP immutable and generic full-state restore checks intact. New implementation Pair+Diff+CPU Evidence then STOP for GPT/DS independent review; no GPU/training or server sync.
+- V3-G1-ITER8900-CROSS-PAIR-RESUME: REVIEW after isolated source publication; author115+32subtests/static PASS, all original generic restore code/tests preserved. Needs new exact Pair GPT review and DS real-file read-only continuity/CPU acceptance; actual G1 Resume remains unauthorized.
