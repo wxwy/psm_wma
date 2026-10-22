@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import ast
 import copy
+import hashlib
 import importlib.util
 import json
 import os
@@ -33,6 +34,57 @@ spec = importlib.util.spec_from_file_location("screening_queue", ROOT / "scripts
 queue_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(queue_module)
 TASKS = {"CloseFridge", "TurnOnSinkFaucet", "PickPlaceSinkToCounter", "NavigateKitchen"}
+
+
+def _canonical(value):
+    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
+
+
+def _episode_fixture(directory, *, episode, digest, video):
+    """Write real audit schemas/media; only model and simulator are synthetic."""
+    stem = f"rollout{episode:02d}"
+    attempt_id = f"{directory.parent.name}/{directory.name}"
+    action = {
+        "episode": episode,
+        "evaluation_run_digest": digest,
+        "evaluation_attempt_id": attempt_id,
+        "source_step": 0,
+        "evidence_completed": True,
+        "predicted_raw15": [0.0] * 15,
+        "canonical_executed_raw15": [0.0] * 15,
+        "submitted_env12": [0.0] * 12,
+    }
+    prediction = {
+        "episode": episode,
+        "evaluation_run_digest": digest,
+        "evaluation_attempt_id": attempt_id,
+        "latency_ms": 1.0,
+        "step_before_query": 0,
+        "action_chunk": [[0.0] * 15] * 16,
+        "local_memory": {"prefix_present": True},
+    }
+    row = {
+        "ep": episode,
+        "policy": episode % 2 == 0,
+        "outcome": "success" if episode % 2 == 0 else "behavioral_failure",
+        "error": None,
+        "steps": 1,
+        "replans": 1,
+        "completed_action_records": 1,
+        "actions_file": f"{stem}_actions.jsonl",
+        "predictions_file": f"{stem}_predictions.jsonl",
+        "evaluation_run_digest": digest,
+        "evaluation_attempt_id": attempt_id,
+        "generated_videos": [],
+    }
+    for suffix, record in (("actions", action), ("predictions", prediction)):
+        (directory / f"{stem}_{suffix}.jsonl").write_text(json.dumps(record) + "\n")
+    (directory / f"{stem}_episode.json").write_text(json.dumps(row))
+    (directory / f"{stem}.mp4").write_bytes(video)
+    from PIL import Image
+
+    Image.new("RGB", (16, 16), (15, 30, 45)).save(directory / f"{stem}_init.png")
+    return row
 
 
 def _child_checkpoint_builder():
@@ -255,6 +307,38 @@ def _scenario(case, parent, count):
     base = _free_base(count)
     calls, servers, foreign = [], [], []
     sim_calls = []
+    runtime_calls = []
+    runtime_witness = {}
+    from v3_evaluation_identity import build_evaluation_identity
+
+    def verified_identity(*, sim_python, lock_path, asset_manifest=None, simulation_env=None, **kwargs):
+        runtime_calls.append(
+            {
+                "python": str(sim_python),
+                "tasks": [name for name, _ in kwargs["tasks"]],
+                "pythonpath": (simulation_env or {}).get("PYTHONPATH"),
+            }
+        )
+        if case == "runtime_failure":
+            raise ValueError("injected dirty vendor runtime rejection")
+        manifest = build_evaluation_identity(**kwargs)
+        runtime = {"schema": "cpu_fixture_runtime_v1", "tasks": sorted(name for name, _ in kwargs["tasks"])}
+        runtime["digest"] = hashlib.sha256(_canonical(runtime)).hexdigest()
+        runtime_witness.clear()
+        runtime_witness.update(runtime)
+        manifest["identity"]["evaluation_runtime"] = runtime
+        manifest["digest"] = hashlib.sha256(_canonical(manifest["identity"])).hexdigest()
+        return {
+            "manifest": manifest,
+            "runtime_probe_evidence": {"argv": [str(sim_python), "CPU_FIXTURE_PROBE"], "returncode": 0},
+        }
+
+    import imageio.v2 as imageio
+    import numpy as np
+
+    tiny_video = parent / "fixture.mp4"
+    imageio.mimwrite(tiny_video, [np.zeros((16, 16, 3), dtype=np.uint8)] * 2, fps=20, macro_block_size=None)
+    video_bytes = tiny_video.read_bytes()
     all_tasks_done = threading.Event()
     init_faults, unhandled_thread_errors = [], []
     original_mkdir, original_open = Path.mkdir, Path.open
@@ -287,6 +371,10 @@ def _scenario(case, parent, count):
         return original_open(path, *args, **kwargs)
 
     def popen(command, **kwargs):
+        if command[1:3] == ["-B", "-c"]:
+            # The real CPU media verifier owns its decoder/FFmpeg process group.
+            # Keep that boundary real, rather than misclassifying it as a model server.
+            return subprocess.Popen(command, **kwargs)
         if len(command) > 1 and str(command[1]).endswith("closed_loop_eval.py"):
             return sim_popen(command, **kwargs)
         calls.append(command)
@@ -331,8 +419,20 @@ def _scenario(case, parent, count):
     def sim_popen(command, **kwargs):
         assert command[1].endswith("closed_loop_eval.py")
         sim_calls.append(command)
+        assert kwargs["env"].get("PYTHONPATH") == runtime_calls[-1]["pythonpath"]
         directory = Path(command[command.index("--output-dir") + 1])
         digest = command[command.index("--evaluation-run-digest") + 1]
+        assert command[command.index("--evaluation-attempt-id") + 1] == f"{directory.parent.name}/{directory.name}"
+        (directory / "runtime_attestation.json").write_text(json.dumps(runtime_witness))
+        assert command[command.index("--expected-runtime-digest") + 1]
+        assert set(command[command.index("--runtime-tasks") + 1].split(",")) == (
+            {"CloseFridge", "TurnOnSinkFaucet"} if case == "task_subset" else TASKS
+        )
+        assert command[command.index("--save-generated-video") + 1] == "none"
+        if case == "partial_resume" and len(sim_calls) == 1:
+            row = _episode_fixture(directory, episode=0, digest=digest, video=video_bytes)
+            (directory / "results.json").write_text(json.dumps([row]))
+            return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
         if case in ("sim_failure", "primary_and_cleanup") and len(sim_calls) == 1:
             return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
         if case == "session_leak":
@@ -386,19 +486,8 @@ def _scenario(case, parent, count):
             else:
                 script = f"raise RuntimeError({case!r})"
             return subprocess.Popen([sys.executable, "-c", script], **kwargs)
-        rows = [
-            {
-                "ep": index,
-                "policy": index % 2 == 0,
-                "outcome": "success" if index % 2 == 0 else "behavioral_failure",
-                "error": None,
-                "evaluation_run_digest": digest,
-            }
-            for index in range(5)
-        ]
+        rows = [_episode_fixture(directory, episode=index, digest=digest, video=video_bytes) for index in range(5)]
         (directory / "results.json").write_text(json.dumps(rows))
-        for index in range(5):
-            (directory / f"rollout{index}.mp4").write_bytes(b"synthetic video witness, not an MP4 encoding")
         progress = Path(command[command.index("--progress-file") + 1])
         progress.write_text(
             "".join(
@@ -445,6 +534,8 @@ def _scenario(case, parent, count):
         str(base),
         "--expected-tasks",
         "4",
+        "--tasks",
+        ",".join(sorted(TASKS)),
         "--num-test-episodes",
         "5",
         "--num-steps",
@@ -455,6 +546,15 @@ def _scenario(case, parent, count):
         "5",
     ]
     argv += ["--terminate-grace-s", "0.15"]
+    argv += ["--save-generated-video", "none"]
+    if case == "task_subset":
+        argv += ["--tasks", "CloseFridge,TurnOnSinkFaucet"]
+    if case == "task_unknown":
+        argv += ["--tasks", "DoesNotExist"]
+    if case == "dry_run":
+        argv += ["--dry-run"]
+    if case == "list_tasks":
+        argv += ["--list-tasks"]
     if case in (
         "task_timeout",
         "episode_timeout",
@@ -468,10 +568,14 @@ def _scenario(case, parent, count):
         "cancel",
         "cleanup_failure",
         "primary_and_cleanup",
+        "partial_resume",
     ):
         argv += ["--on-infrastructure-error", "continue_with_new_server"]
     if case == "task_timeout":
-        argv += ["--task-wall-timeout-s", "1"]
+        # The task budget also includes decoding all required audit media.
+        # Healthy tasks have room for this real CPU work; the injected hung
+        # simulator still exceeds this bound and requires SIGKILL.
+        argv += ["--task-wall-timeout-s", "5"]
     if case == "episode_timeout":
         argv += ["--episode-wall-timeout-s", "0.2"]
     real_close = queue_module.OwnedProcess.close
@@ -501,6 +605,7 @@ def _scenario(case, parent, count):
                 patch.object(Path, "mkdir", mkdir),
                 patch.object(Path, "open", open_file),
                 patch.object(queue_module.OwnedProcess, "close", close_with_fault),
+                patch.object(queue_module, "build_verified_evaluation_identity", side_effect=verified_identity),
                 patch.object(
                     threading,
                     "excepthook",
@@ -508,6 +613,19 @@ def _scenario(case, parent, count):
                 ),
             ):
                 rc = queue_module.main()
+                first_rc = rc
+                first_summary = (
+                    json.loads((output / "screening_summary.json").read_text())
+                    if (output / "screening_summary.json").is_file()
+                    else None
+                )
+                if case in ("partial_resume", "resume_complete", "resume_wrong_video", "resume_wrong_timeout"):
+                    argv += ["--resume"]
+                    if case == "resume_wrong_video":
+                        argv += ["--save-generated-video", "first"]
+                    if case == "resume_wrong_timeout":
+                        argv += ["--task-wall-timeout-s", "10801"]
+                    rc = queue_module.main()
         except (RuntimeError, ValueError, SystemExit) as exc:
             rc, error = 1, f"{type(exc).__name__}: {exc}"
         finally:
@@ -523,12 +641,35 @@ def _scenario(case, parent, count):
         "server_command_argv": calls,
         "frozen_config_unchanged": config.read_bytes() == original_config_bytes,
         "sim_calls": len(sim_calls),
+        "sim_command_argv": sim_calls,
+        "runtime_calls": runtime_calls,
         "server_exits": server_exits,
         "foreign_alive_before_fixture_cleanup": foreign_alive,
         "thread_names": [thread.name for thread in threading.enumerate() if thread.name.startswith("robocasa-gpu-")],
         "output_exists": output.exists(),
         "init_faults": init_faults,
         "unhandled_thread_errors": unhandled_thread_errors,
+    }
+    if "first_rc" in locals() and case in (
+        "partial_resume",
+        "resume_complete",
+        "resume_wrong_video",
+        "resume_wrong_timeout",
+    ):
+        report.update(first_rc=first_rc, first_summary=first_summary)
+    report["attempts"] = {
+        task: [
+            {
+                "path": str(path),
+                "marker": json.loads((path / "attempt.json").read_text()),
+                "episode_indices": [row["ep"] for row in json.loads((path / "results.json").read_text())]
+                if (path / "results.json").is_file()
+                else [],
+            }
+            for path in sorted((output / task).glob("attempt_*"))
+            if (path / "attempt.json").is_file()
+        ]
+        for task in TASKS
     }
     if (output / "screening_summary.json").exists():
         report["summary"] = json.loads((output / "screening_summary.json").read_text())
@@ -666,7 +807,7 @@ class QueueIntegrationTests(unittest.TestCase):
                     start_new_session=True,
                 )
                 try:
-                    rc = process.wait(timeout=40)
+                    rc = process.wait(timeout=90)
                 except subprocess.TimeoutExpired:
                     os.killpg(process.pid, signal.SIGKILL)
                     process.wait()
@@ -845,6 +986,85 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["summary"]["task_failures"], 1)
         self.assertEqual(report["summary"]["status"], "INCOMPLETE")
         self.assertIsNone(report["summary"]["sr"])
+
+    def test_selected_tasks_share_exact_runtime_identity_and_only_run_requested_subset(self):
+        report = self.scenario("task_subset", 2)
+        self.assertEqual(report["rc"], 0, report)
+        self.assertEqual(report["server_commands"], 2)
+        self.assertEqual(report["sim_calls"], 2)
+        self.assertEqual(set(report["summary"]["tasks"]), {"CloseFridge", "TurnOnSinkFaucet"})
+        self.assertEqual(report["summary"]["planned_trials"], 10)
+        self.assertEqual(report["summary"]["total_trials"], 10)
+        self.assertEqual(len(report["runtime_calls"]), 1)
+        self.assertEqual(set(report["runtime_calls"][0]["tasks"]), {"CloseFridge", "TurnOnSinkFaucet"})
+        for command in report["sim_command_argv"]:
+            self.assertEqual(command[command.index("--save-generated-video") + 1], "none")
+            self.assertIn("--runtime-probe-script", command)
+            self.assertIn("--runtime-lock-file", command)
+            self.assertIn("--expected-runtime-digest", command)
+
+    def test_unknown_task_rejected_before_runtime_probe_or_namespace_claim(self):
+        report = self.scenario("task_unknown", 1)
+        self.assertEqual(report["rc"], 1)
+        self.assertEqual(report["runtime_calls"], [])
+        self.assertEqual(report["server_commands"], 0)
+        self.assertFalse(report["output_exists"])
+
+    def test_dirty_vendor_rejected_before_server_or_namespace_claim(self):
+        report = self.scenario("runtime_failure", 1)
+        self.assertEqual(report["rc"], 1)
+        self.assertEqual(len(report["runtime_calls"]), 1)
+        self.assertEqual(report["server_commands"], 0)
+        self.assertEqual(report["sim_calls"], 0)
+        self.assertFalse(report["output_exists"])
+        self.assertIn("dirty vendor runtime", report["error"])
+
+    def test_list_tasks_and_dry_run_are_read_only_and_never_launch_workers(self):
+        for case in ("list_tasks", "dry_run"):
+            with self.subTest(mode=case):
+                report = self.scenario(case, 2)
+                self.assertEqual(report["rc"], 0, report)
+                self.assertEqual(report["server_commands"], 0)
+                self.assertEqual(report["sim_calls"], 0)
+                self.assertFalse(report["output_exists"])
+                self.assertEqual(len(report["runtime_calls"]), int(case == "dry_run"))
+
+    def test_same_identity_resume_skips_only_whole_valid_tasks(self):
+        report = self.scenario("resume_complete", 1)
+        self.assertEqual(report["first_rc"], 0)
+        self.assertEqual(report["rc"], 0, report)
+        self.assertEqual(report["server_commands"], 4)
+        self.assertEqual(report["sim_calls"], 4)
+        self.assertEqual(report["summary"]["total_trials"], 20)
+        self.assertTrue(all(len(attempts) == 1 for attempts in report["attempts"].values()))
+        self.assertTrue(all(attempts[0]["marker"]["status"] == "COMPLETE" for attempts in report["attempts"].values()))
+
+    def test_partial_task_resume_keeps_old_evidence_and_restarts_entire_task_from_zero(self):
+        report = self.scenario("partial_resume", 1)
+        self.assertEqual(report["first_rc"], 1)
+        self.assertEqual(report["first_summary"]["total_trials"], 15)
+        self.assertEqual(report["rc"], 0, report)
+        self.assertEqual(report["server_commands"], 5)
+        self.assertEqual(report["sim_calls"], 5)
+        self.assertEqual(report["summary"]["total_trials"], 20)
+        restarted = [attempts for attempts in report["attempts"].values() if len(attempts) == 2]
+        self.assertEqual(len(restarted), 1)
+        self.assertEqual(restarted[0][0]["marker"]["status"], "FAILED")
+        self.assertEqual(restarted[0][1]["marker"]["status"], "COMPLETE")
+        self.assertTrue(restarted[0][0]["path"].endswith("attempt_0001"))
+        self.assertTrue(restarted[0][1]["path"].endswith("attempt_0002"))
+        self.assertEqual(restarted[0][0]["episode_indices"], [0])
+        self.assertEqual(restarted[0][1]["episode_indices"], [0, 1, 2, 3, 4])
+
+    def test_resume_refuses_video_or_timeout_protocol_change_without_launching_more_servers(self):
+        for case in ("resume_wrong_video", "resume_wrong_timeout"):
+            with self.subTest(change=case):
+                report = self.scenario(case, 1)
+                self.assertEqual(report["first_rc"], 0)
+                self.assertEqual(report["rc"], 1)
+                self.assertEqual(report["server_commands"], 4)
+                self.assertEqual(report["sim_calls"], 4)
+                self.assertIn("identity changed", report["error"])
 
 
 if __name__ == "__main__":

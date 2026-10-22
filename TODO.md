@@ -429,3 +429,4 @@
 
 ## V3-G1-ITER8900-CROSS-PAIR-RESUME — 2026-10-22
 - REVIEW; Codex author isolated implementation Rootb910304dbf493eb5babe26cf1b055edc8477b386 / Child-Gitlink61bfa94766d33d95a7fa9771857d0f2fb3f0b405; Evidence5fe6a513baa870c06f3186903b99e9bba80bb084.115passed+32subtests/static PASS. Need GPT new-Pair review/DS real-file read-only CPU; no mainline code merge or training execution. Owner design APPROVE remains distinct from implementation/Resume permission.
+- [ ] **V3-ROBOCASA-BATCH-C** — REVIEW; owner Codex; prerequisite current V3 G1/A/B integrated `24a72673/30db22a3`. Deliver manual YAML/CLI launcher, strict dependency identity, task subsets, video controls, isolated task attempts/resume, CPU evidence and new exact Pair. GPT reviews, DS independent CPU validates, Owner alone authorizes real simulation. No live G1 or frozen assets changed.

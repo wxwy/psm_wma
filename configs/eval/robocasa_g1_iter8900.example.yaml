@@ -1,0 +1,36 @@
+# Edit paths and run_name for your isolated evaluation host; never edit the training job config.
+schema: psm_wma_robocasa_eval_v1
+checkpoint: /mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/checkpoints/iter_000008900
+config_file: /mnt/data1/data_v2_0617/psm_wma_v3_packed128_runs_fresh_g1_20261019/psm_wma_v3/corrected_phase5/packed128_droid_fresh_g1_20261019/config.yaml
+dataset_root: /mnt/data1/data_v2_0617/robocasa365_official/v1.0/target/atomic
+tasks: [CloseFridge, TurnOnSinkFaucet]
+episodes_per_task: 5
+gpu_ids: [2, 3]
+slots_per_gpu: 1
+base_port: 8900
+server_python: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/cosmos-framework/.venv/bin/python
+sim_python: /mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma/cosmos-framework/.venv/bin/python
+output_root: /mnt/data1/data_v2_0617/robocasa_eval_runs
+run_name: iter8900_example
+# Vendor lock defaults to the versioned third_party/robosuite_patches/vendor.lock.json.
+# Optional asset_manifest must inventory every installed untracked vendor asset, with SHA256.
+seed: 0
+prediction_steps: 30
+guidance: 1.0
+fps: 20
+action_horizon: 16
+local_memory_mode: required
+server_lifecycle: per_task
+on_infrastructure_error: stop
+save_rollout_mp4: true
+save_generated_video: first
+save_init_png: true
+save_action_jsonl: true
+save_prediction_jsonl: true
+timeouts:
+  server_start_s: 900
+  predict_request_s: 600
+  episode_wall_s: 1800
+  task_wall_s: 10800
+  terminate_grace_s: 20
+resume: false

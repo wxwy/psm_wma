@@ -3,14 +3,16 @@
 
 from __future__ import annotations
 
-import argparse
+import fcntl
 import json
-import math
 import os
 import queue
 import signal
 import socket
+import stat
 import subprocess
+import sys
+import tempfile
 import threading
 import time
 import urllib.error
@@ -19,15 +21,16 @@ from contextlib import ExitStack
 from pathlib import Path
 from typing import Any
 
+from robocasa_eval_config import resolve
+from robocasa_eval_results import fail_attempt, find_completed_attempt, finish_attempt, start_attempt
 from robocasa_processes import (
     EpisodeProgress,
     EvaluationInterrupted,
     OwnedProcess,
-    positive_seconds,
     supervise_simulator,
 )
+from robocasa_vendor import build_verified_evaluation_identity
 from v3_evaluation_identity import (
-    build_evaluation_identity,
     claim_evaluation_run,
     screening_metrics,
     sha256_file,
@@ -45,13 +48,15 @@ def _read_json(url: str, timeout: float = 5.0) -> dict[str, Any]:
         return json.loads(response.read().decode("utf-8"))
 
 
-def discover_task_datasets(dataset_root: Path, expected_tasks: int) -> list[tuple[str, Path]]:
+def discover_task_datasets(dataset_root: Path, expected_tasks: int | None = None) -> list[tuple[str, Path]]:
     """Discover one eval LeRobot dir per underlying RoboCasa task via dataset_meta env_name."""
     mapping: dict[str, Path] = {}
     for meta in sorted(dataset_root.glob("**/extras/dataset_meta.json")):
         try:
             payload = json.loads(meta.read_text(encoding="utf-8"))
-            env_name = str(payload["env_args"]["env_name"])
+            env_name = payload["env_args"]["env_name"]
+            if not isinstance(env_name, str) or not env_name.isidentifier() or env_name == "all":
+                raise ValueError("invalid underlying task class")
         except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
             raise ValueError(f"invalid RoboCasa dataset metadata: {meta}: {error}") from error
         lerobot = meta.parent.parent.resolve()
@@ -62,7 +67,7 @@ def discover_task_datasets(dataset_root: Path, expected_tasks: int) -> list[tupl
                 "provide a dataset root with exactly one canonical eval source per task"
             )
         mapping[env_name] = lerobot
-    if len(mapping) != expected_tasks:
+    if not mapping or (expected_tasks is not None and len(mapping) != expected_tasks):
         raise ValueError(
             f"expected exactly {expected_tasks} underlying RoboCasa eval tasks, found {len(mapping)} "
             f"under {dataset_root}: {sorted(mapping)}"
@@ -228,81 +233,166 @@ def task_result(
     }
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--checkpoint-path", type=Path, required=True)
-    parser.add_argument("--dataset-root", type=Path, required=True)
-    parser.add_argument("--output-dir", type=Path, required=True)
-    parser.add_argument("--config-file", type=Path)
-    parser.add_argument("--server-python", type=Path, default=CHILD / ".venv/bin/python")
-    parser.add_argument("--sim-python", type=Path, required=True)
-    parser.add_argument("--gpus", default="0,1,2,3,4,5,6,7")
-    parser.add_argument("--base-port", type=int, default=8912)
-    parser.add_argument("--expected-tasks", type=int, default=18)
-    parser.add_argument("--num-test-episodes", type=int, default=1)
-    parser.add_argument("--action-horizon", type=int, default=16)
-    parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--num-steps", type=int, default=30)
-    parser.add_argument("--guidance", type=float, default=1.0)
-    parser.add_argument("--timeout", type=float, default=600.0)
-    parser.add_argument("--server-start-timeout-s", type=float, default=None)
-    parser.add_argument("--predict-request-timeout-s", type=float, default=None)
-    parser.add_argument("--episode-wall-timeout-s", type=float, default=1800)
-    parser.add_argument("--task-wall-timeout-s", type=float, default=10800)
-    parser.add_argument("--terminate-grace-s", type=float, default=20)
-    parser.add_argument("--server-lifecycle", choices=("per_task",), default="per_task")
-    parser.add_argument(
-        "--on-infrastructure-error",
-        choices=("stop", "continue_with_new_server"),
-        default="stop",
-    )
-    parser.add_argument("--resume", action="store_true")
-    args = parser.parse_args()
+def launch_environment(cache: Path) -> dict[str, str]:
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(CHILD) + (os.pathsep + env["PYTHONPATH"] if env.get("PYTHONPATH") else "")
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    env["MUJOCO_GL"] = env.get("MUJOCO_GL", "egl")
+    # Native JIT/controller imports must never write caches into locked vendors.
+    env["NUMBA_CACHE_DIR"] = str(cache / "numba")
+    env["MPLCONFIGDIR"] = str(cache / "matplotlib")
+    env["XDG_CACHE_HOME"] = str(cache / "xdg")
+    env["HF_HOME"] = env.get("HF_HOME") or str(cache / "huggingface")
+    return env
 
-    args.server_start_timeout_s = (
-        args.server_start_timeout_s if args.server_start_timeout_s is not None else args.timeout
-    )
-    args.predict_request_timeout_s = (
-        args.predict_request_timeout_s if args.predict_request_timeout_s is not None else args.timeout
-    )
-    for seconds in (
-        args.server_start_timeout_s,
-        args.predict_request_timeout_s,
-        args.episode_wall_timeout_s,
-        args.task_wall_timeout_s,
-        args.terminate_grace_s,
-    ):
-        positive_seconds(seconds)
+
+def check_destination(output: Path, manifest: dict, *, resume: bool) -> None:
+    """Read-only preview and run share namespace checks; never follow output symlinks."""
+    if any(path.is_symlink() for path in (output, *output.parents)):
+        raise ValueError("evaluation output path must not contain symlinks")
+    if not output.exists():
+        return
+    if not output.is_dir():
+        raise ValueError("evaluation output is not a directory")
+    identity = output / "evaluation_manifest.json"
+    if identity.is_symlink():
+        raise ValueError("evaluation manifest must not be a symlink")
+    if identity.exists():
+        if not resume:
+            raise FileExistsError("evaluation already exists; explicit same-identity resume required")
+        if json.loads(identity.read_text()) != manifest:
+            raise ValueError("evaluation identity changed: checkpoint/source/config/protocol/task/seed/R")
+    elif any(output.iterdir()):
+        raise ValueError("nonempty evaluation namespace has no identity")
+
+
+def server_argv(args, checkpoint: Path, config_file: Path, port: int) -> list[str]:
+    return [
+        str(args.server_python),
+        "-m",
+        "cosmos_framework.scripts.action_policy_server_robocasa",
+        "--checkpoint-path",
+        str(checkpoint),
+        "--config-file",
+        str(config_file),
+        "--port",
+        str(port),
+        "--raw-action-dim",
+        "15",
+        "--action-chunk-size",
+        "16",
+        "--local-memory-mode",
+        "required",
+        "--local-memory-max-sessions",
+        "1",
+        "--num-steps",
+        str(args.num_steps),
+        "--guidance",
+        str(args.guidance),
+        "--fps",
+        "20",
+        "--no-guardrails",
+        "--http-400-on-error",
+    ]
+
+
+def simulator_argv(
+    args, dataset_dir: Path, task_out: Path, port: int, run_digest: str, runtime_digest: str, task_names: list[str]
+) -> list[str]:
+    command = [
+        str(args.sim_python),
+        str(CHILD / "cosmos_framework/simulation/robocasa/closed_loop_eval.py"),
+        "--server-url",
+        f"http://127.0.0.1:{port}",
+        "--dataset-dir",
+        str(dataset_dir),
+        "--evaluation-run-digest",
+        run_digest,
+        "--num-test-episodes",
+        str(args.num_test_episodes),
+        "--evaluation-attempt-id",
+        f"{task_out.parent.name}/{task_out.name}",
+        "--action-horizon",
+        str(args.action_horizon),
+        "--image-size",
+        "256",
+        "--cam-size",
+        "256",
+        "--camera-set",
+        "left_wrist",
+        "--use-state",
+        "--use-base-action",
+        "--base-encoding",
+        "raw",
+        "--local-memory-mode",
+        "required",
+        "--success-latch",
+        "1",
+        "--seed",
+        str(args.seed),
+        "--timeout",
+        str(args.predict_request_timeout_s),
+        "--output-dir",
+        str(task_out),
+        "--progress-file",
+        str(task_out / "episode_progress.jsonl"),
+        "--save-generated-video",
+        args.save_generated_video,
+        "--runtime-probe-script",
+        str(ROOT / "scripts/robocasa_vendor.py"),
+        "--runtime-lock-file",
+        str(args.vendor_lock),
+        "--expected-runtime-digest",
+        runtime_digest,
+        "--runtime-tasks",
+        ",".join(task_names),
+    ]
+    if args.asset_manifest is not None:
+        command += ["--runtime-asset-manifest", str(args.asset_manifest)]
+    if not args.save_rollout_mp4:
+        command.append("--no-save-rollout-mp4")
+    if not args.save_init_png:
+        command.append("--no-save-init-png")
+    return command
+
+
+def main() -> int:
+    with tempfile.TemporaryDirectory(prefix="psm-robocasa-eval-cache-") as cache:
+        return prepare(Path(cache))
+
+
+def prepare(cache: Path) -> int:
+    args = resolve(root=ROOT)
+    discovered = discover_task_datasets(args.dataset_root.resolve(), None)
+    mapping = dict(discovered)
+    if args.list_tasks:
+        print(json.dumps({"tasks": sorted(mapping)}, ensure_ascii=False, indent=2))
+        return 0
+    if args.tasks == "all":
+        tasks = discover_task_datasets(args.dataset_root.resolve(), args.expected_tasks)
+    else:
+        missing = sorted(set(args.tasks) - mapping.keys())
+        if missing:
+            raise ValueError(f"unknown underlying RoboCasa tasks: {missing}")
+        tasks = [(name, mapping[name]) for name in sorted(args.tasks)]
     checkpoint = args.checkpoint_path.resolve()
     if not (checkpoint / "model").is_dir():
-        raise SystemExit(f"checkpoint DCP model/ missing: {checkpoint}")
+        raise ValueError(f"checkpoint DCP model/ missing: {checkpoint}")
     config_file = (
         args.config_file.resolve()
         if args.config_file is not None
         else (checkpoint.parent.parent / "config.yaml").resolve()
     )
     if not config_file.is_file():
-        raise SystemExit(f"config file missing: {config_file}")
-    if not args.server_python.is_file() or not os.access(args.server_python, os.X_OK):
-        raise SystemExit(f"server python not executable: {args.server_python}")
-    if not args.sim_python.is_file() or not os.access(args.sim_python, os.X_OK):
-        raise SystemExit(f"sim python not executable: {args.sim_python}")
-    if not 1 <= args.action_horizon <= 16:
-        raise SystemExit("required Local-TTT screening requires 1 <= action_horizon <= 16")
-    if args.num_test_episodes <= 0:
-        raise SystemExit("--num-test-episodes must be positive")
-    if args.num_steps <= 0 or not math.isfinite(args.guidance) or not math.isfinite(args.timeout) or args.timeout <= 0:
-        raise SystemExit("--num-steps/--timeout must be positive and --guidance/--timeout finite")
-
-    gpus = [item.strip() for item in args.gpus.split(",") if item.strip()]
-    if not gpus or len(set(gpus)) != len(gpus):
-        raise SystemExit("--gpus must contain unique GPU ids")
-    require_free_ports([args.base_port + index for index in range(len(gpus))])
-    tasks = discover_task_datasets(args.dataset_root.resolve(), args.expected_tasks)
-
-    output_root = args.output_dir.resolve()
-    output_root.mkdir(parents=True, exist_ok=True)
-    manifest = build_evaluation_identity(
+        raise ValueError(f"config file missing: {config_file}")
+    gpus = args.gpus.split(",")
+    output_root = args.output_dir.absolute()
+    simulation_env = launch_environment(cache)
+    bundle = build_verified_evaluation_identity(
+        sim_python=args.sim_python,
+        lock_path=args.vendor_lock,
+        asset_manifest=args.asset_manifest,
+        simulation_env=simulation_env,
         root=ROOT,
         checkpoint=checkpoint,
         config_file=config_file,
@@ -326,6 +416,16 @@ def main() -> int:
             "image_size": 256,
             "cam_size": 256,
             "success_latch": 1,
+            "manual_schema": "psm_wma_robocasa_eval_v1",
+            "gpu_ids": gpus,
+            "slots_per_gpu": 1,
+            "base_port": args.base_port,
+            "server_python": str(args.server_python),
+            "save_rollout_mp4": args.save_rollout_mp4,
+            "save_generated_video": args.save_generated_video,
+            "save_init_png": args.save_init_png,
+            "save_action_jsonl": True,
+            "save_prediction_jsonl": True,
             "server_lifecycle": args.server_lifecycle,
             "on_infrastructure_error": args.on_infrastructure_error,
             "timeouts": {
@@ -337,7 +437,82 @@ def main() -> int:
             },
         },
     )
+    manifest = bundle["manifest"]
+    check_destination(output_root, manifest, resume=args.resume)
+    if args.dry_run:
+        preview = {
+            "mode": "CPU_READ_ONLY_PREVIEW",
+            "resolved_config": args.resolved_config,
+            "output_dir": str(output_root),
+            "manifest": manifest,
+            "gpu_slots": [{"gpu": gpu, "slot": 0, "port": args.base_port + i} for i, gpu in enumerate(gpus)],
+            "commands": [
+                {
+                    "gpu": gpu,
+                    "slot": 0,
+                    "env": {
+                        "CUDA_VISIBLE_DEVICES": gpu,
+                        "PYTHONPATH": simulation_env["PYTHONPATH"],
+                        "MUJOCO_GL": simulation_env["MUJOCO_GL"],
+                    },
+                    "server": server_argv(args, checkpoint, config_file, args.base_port + index),
+                    "tasks": [
+                        {
+                            "task": name,
+                            "simulator": simulator_argv(
+                                args,
+                                directory,
+                                output_root / name / "attempt_<next>",
+                                args.base_port + index,
+                                manifest["digest"],
+                                manifest["identity"]["evaluation_runtime"]["digest"],
+                                [n for n, _ in tasks],
+                            ),
+                        }
+                        for name, directory in tasks
+                    ],
+                }
+                for index, gpu in enumerate(gpus)
+            ],
+        }
+        print(json.dumps(preview, ensure_ascii=False, indent=2))
+        return 0
+    require_free_ports([args.base_port + index for index in range(len(gpus))])
     run_digest = claim_evaluation_run(output_root, manifest, resume=args.resume)
+    # A persistent lock file is harmless evidence; flock releases even on process death.
+    fd = os.open(output_root / ".run.lock", os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(fd, "a") as lease:
+        if not stat.S_ISREG(os.fstat(lease.fileno()).st_mode):
+            raise ValueError("evaluation lease must be a regular file")
+        try:
+            fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise RuntimeError("another process owns this evaluation namespace") from error
+        return execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_env, bundle, run_digest)
+
+
+def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_env, bundle, run_digest) -> int:
+    manifest = bundle["manifest"]
+    runtime_digest = manifest["identity"]["evaluation_runtime"]["digest"]
+    # Every invocation keeps its own raw probe and resolved parameters; previous attempts survive.
+    invocations = output_root / "_invocations"
+    invocations.mkdir(exist_ok=True)
+    invocation = invocations / f"{time.time_ns()}_{os.getpid()}"
+    invocation.mkdir()
+    prior_summary = output_root / "screening_summary.json"
+    if prior_summary.is_file():
+        (invocation / "previous_screening_summary.json").write_bytes(prior_summary.read_bytes())
+    atomic_write_json(invocation / "runtime_probe.json", bundle["runtime_probe_evidence"])
+    atomic_write_json(invocation / "resolved-config.json", args.resolved_config)
+    validation = dict(
+        digest=run_digest,
+        runtime_digest=runtime_digest,
+        expected_trials=args.num_test_episodes,
+        video_mode=args.save_generated_video,
+        rollout_enabled=args.save_rollout_mp4,
+        init_png_enabled=args.save_init_png,
+        sim_python=args.sim_python,
+    )
     summary_path = output_root / "screening_summary.json"
     work: queue.Queue[tuple[str, Path]] = queue.Queue()
     results: dict[str, dict[str, Any]] = {}
@@ -345,21 +520,13 @@ def main() -> int:
 
     for task, dataset_dir in tasks:
         task_out = output_root / task
-        existing = task_out / "results.json"
-        if args.resume and existing.is_file():
+        completed = find_completed_attempt(task_out, **validation) if args.resume else None
+        if completed is not None:
             results[task] = task_result(
-                dataset_dir,
-                task_out,
-                -1,
-                "resume",
-                0.0,
-                run_digest=run_digest,
-                expected_trials=args.num_test_episodes,
+                dataset_dir, completed, -1, "resume", 0.0, run_digest=run_digest, expected_trials=args.num_test_episodes
             )
-            continue
-        elif existing.exists():
-            raise SystemExit(f"refusing to overwrite existing task result without --resume: {existing}")
-        work.put((task, dataset_dir))
+        else:
+            work.put((task, dataset_dir))
 
     stop = threading.Event()
 
@@ -373,7 +540,7 @@ def main() -> int:
                 "config_file": str(config_file),
                 "action_horizon": args.action_horizon,
                 "seed": args.seed,
-                "expected_tasks": args.expected_tasks,
+                "expected_tasks": len(tasks),
                 "completed_tasks": len(ordered),
                 "task_failures": sum(row.get("error") is not None for row in ordered.values()),
                 "total_trials": trials,
@@ -389,6 +556,7 @@ def main() -> int:
                 )
             )
             payload["evaluation_run_digest"] = run_digest
+            payload["invocation_dir"] = str(invocation)
             worker_errors = {key: row for key, row in results.items() if key.startswith("_worker_")}
             payload["worker_errors"] = worker_errors
             if worker_errors or any(row.get("error") for row in ordered.values()):
@@ -403,38 +571,9 @@ def main() -> int:
         worker_dir = output_root / f"_worker{worker_id:02d}_gpu{gpu}"
         worker_dir.mkdir(parents=True, exist_ok=True)
         server_log_path = worker_dir / "action_server.log"
-        server_env = os.environ.copy()
+        server_env = simulation_env.copy()
         server_env["CUDA_VISIBLE_DEVICES"] = gpu
-        server_env["PYTHONPATH"] = str(CHILD) + (
-            os.pathsep + server_env["PYTHONPATH"] if server_env.get("PYTHONPATH") else ""
-        )
-        server_command = [
-            str(args.server_python),
-            "-m",
-            "cosmos_framework.scripts.action_policy_server_robocasa",
-            "--checkpoint-path",
-            str(checkpoint),
-            "--config-file",
-            str(config_file),
-            "--port",
-            str(port),
-            "--raw-action-dim",
-            "15",
-            "--action-chunk-size",
-            "16",
-            "--local-memory-mode",
-            "required",
-            "--local-memory-max-sessions",
-            "1",
-            "--num-steps",
-            str(args.num_steps),
-            "--guidance",
-            str(args.guidance),
-            "--fps",
-            "20",
-            "--no-guardrails",
-            "--http-400-on-error",
-        ]
+        server_command = server_argv(args, checkpoint, config_file, port)
         # Open the worker log before claiming a task, so even initialization
         # errors are preserved by the outer worker boundary.
         with server_log_path.open("ab", buffering=0) as server_log:
@@ -443,7 +582,8 @@ def main() -> int:
                     task, dataset_dir = work.get_nowait()
                 except queue.Empty:
                     break
-                task_out = output_root / task
+                task_root = output_root / task
+                task_out = task_root
                 started = time.monotonic()
                 task_deadline = started + args.task_wall_timeout_s
                 server_owned = sim_owned = None
@@ -451,7 +591,7 @@ def main() -> int:
                 cleanup = {}
                 stage = "server_start"
                 try:
-                    task_out.mkdir(parents=True, exist_ok=True)
+                    task_out = start_attempt(task_root, digest=run_digest, resume=args.resume)
                     require_free_ports([port])
                     server_owned = OwnedProcess(
                         server_command,
@@ -484,42 +624,9 @@ def main() -> int:
                     )
                     sim_env = server_env.copy()
                     sim_env["MUJOCO_GL"] = sim_env.get("MUJOCO_GL", "egl")
-                    command = [
-                        str(args.sim_python),
-                        str(CHILD / "cosmos_framework/simulation/robocasa/closed_loop_eval.py"),
-                        "--server-url",
-                        f"http://127.0.0.1:{port}",
-                        "--dataset-dir",
-                        str(dataset_dir),
-                        "--evaluation-run-digest",
-                        run_digest,
-                        "--num-test-episodes",
-                        str(args.num_test_episodes),
-                        "--action-horizon",
-                        str(args.action_horizon),
-                        "--image-size",
-                        "256",
-                        "--cam-size",
-                        "256",
-                        "--camera-set",
-                        "left_wrist",
-                        "--use-state",
-                        "--use-base-action",
-                        "--base-encoding",
-                        "raw",
-                        "--local-memory-mode",
-                        "required",
-                        "--success-latch",
-                        "1",
-                        "--seed",
-                        str(args.seed),
-                        "--timeout",
-                        str(args.predict_request_timeout_s),
-                        "--output-dir",
-                        str(task_out),
-                        "--progress-file",
-                        str(task_out / "episode_progress.jsonl"),
-                    ]
+                    command = simulator_argv(
+                        args, dataset_dir, task_out, port, run_digest, runtime_digest, [name for name, _ in tasks]
+                    )
                     atomic_write_json(
                         task_out / "commands.json",
                         {"server": server_command, "simulator": command},
@@ -588,6 +695,18 @@ def main() -> int:
                             except BaseException as exc:  # noqa: BLE001
                                 cleanup[name] = owned.cleanup
                                 error = error or f"cleanup {name}: {type(exc).__name__}: {exc}"
+                    if task_out != task_root:
+                        try:
+                            # Publish all process evidence before committing COMPLETE.
+                            atomic_write_json(task_out / "process_cleanup.json", cleanup)
+                            if error:
+                                fail_attempt(task_out, error)
+                            else:
+                                stage = "evidence_validation"
+                                finish_attempt(task_out, deadline=task_deadline, stop=stop, **validation)
+                        except BaseException as exc:  # noqa: BLE001
+                            error = error or f"evidence validation: {type(exc).__name__}: {exc}"
+                            fail_attempt(task_out, error)
                     if row is None:
                         row = {
                             "dataset_dir": str(dataset_dir),
@@ -601,11 +720,14 @@ def main() -> int:
                             "rollout_mp4s": sorted(str(path) for path in task_out.glob("rollout*.mp4")),
                             "rollouts": [],
                         }
-                    row.update(error=error, returncode=returncode, cleanup=cleanup)
+                    row.update(
+                        error=error,
+                        returncode=returncode,
+                        cleanup=cleanup,
+                        elapsed_s=round(time.monotonic() - started, 3),
+                    )
                     # Cleanup failure is an independent error, never replacement of
                     # the primary failure. Evidence survives even after cancellation.
-                    if task_out.is_dir():
-                        atomic_write_json(task_out / "process_cleanup.json", cleanup)
                     with result_lock:
                         results[task] = row
                         if error:
@@ -680,4 +802,12 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except subprocess.CalledProcessError as error:
+        # Failed interpreter/import probes retain their real diagnostic output.
+        print(f"preflight failed: {error}", file=sys.stderr)
+        for stream in (error.stdout, error.stderr):
+            if stream:
+                print(stream, file=sys.stderr)
+        raise SystemExit(1) from error
