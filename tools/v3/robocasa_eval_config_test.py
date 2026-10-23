@@ -69,6 +69,40 @@ def test_cli_yaml_defaults_precedence_and_no_output_writes(tmp_path, base):
     json.dumps(args.resolved_config, allow_nan=False)
 
 
+def test_progress_defaults_are_enabled_and_available_in_resolved_dry_run(tmp_path, base):
+    args = config.resolve(["--config", str(write(tmp_path, base)), "--dry-run"])
+    assert args.progress is True and args.progress_interval_s == 5.0
+    assert args.resolved_config["progress"] is True
+    assert args.resolved_config["progress_interval_s"] == 5.0
+    assert not args.output_dir.exists()
+
+
+@pytest.mark.parametrize("enabled,interval", [(False, 1), (True, 2.5)])
+def test_yaml_progress_is_strictly_resolved(tmp_path, base, enabled, interval):
+    base.update(progress=enabled, progress_interval_s=interval)
+    args = config.resolve(["--config", str(write(tmp_path, base))])
+    assert args.progress is enabled and args.progress_interval_s == interval
+
+
+@pytest.mark.parametrize("yaml_progress,flag,expected", [(False, "--progress", True), (True, "--no-progress", False)])
+def test_progress_cli_overrides_yaml_and_leaves_execution_controls_unchanged(
+    tmp_path, base, yaml_progress, flag, expected
+):
+    base.update(progress=yaml_progress, progress_interval_s=2.5, resume=True)
+    base["timeouts"] = {"server_start_s": 47, "predict_request_s": 23, "task_wall_s": 100}
+    path = write(tmp_path, base)
+    before = config.resolve(["--config", str(path)])
+    after = config.resolve(["--config", str(path), flag, "--progress-interval-s", "0.25"])
+    assert after.progress is expected and after.progress_interval_s == 0.25
+    presentation = {"progress", "progress_interval_s"}
+    assert {key: value for key, value in before.resolved_config.items() if key not in presentation} == {
+        key: value for key, value in after.resolved_config.items() if key not in presentation
+    }
+    assert after.resume is before.resume is True
+    assert after.task_wall_timeout_s == before.task_wall_timeout_s == 100
+    assert after.predict_request_timeout_s == before.predict_request_timeout_s == 23
+
+
 def test_legacy_cli_remains_explicit_and_aliases_override(tmp_path, base):
     args = config.resolve(
         [
@@ -187,6 +221,19 @@ def test_cli_namespace_replaces_yaml_output_dir(tmp_path, base):
         ("save_action_jsonl", False),
         ("save_prediction_jsonl", False),
         ("resume", "true"),
+        ("progress", 1),
+        ("progress", 0),
+        ("progress", "false"),
+        ("progress", None),
+        ("progress_interval_s", True),
+        ("progress_interval_s", False),
+        ("progress_interval_s", 0),
+        ("progress_interval_s", -1),
+        ("progress_interval_s", float("nan")),
+        ("progress_interval_s", float("inf")),
+        ("progress_interval_s", -float("inf")),
+        ("progress_interval_s", "5"),
+        ("progress_interval_s", None),
         ("run_name", "../old"),
         ("run_name", "."),
         ("run_name", ""),
@@ -233,6 +280,10 @@ def test_malformed_or_duplicate_yaml_rejected(tmp_path, text):
         ["--timeout", "nan"],
         ["--terminate-grace-s", "0"],
         ["--slots-per-gpu", "2"],
+        ["--progress-interval-s", "nan"],
+        ["--progress-interval-s", "inf"],
+        ["--progress-interval-s", "0"],
+        ["--progress-interval-s", "-1"],
         ["--output-dir", "out", "--run-name", "run"],
     ],
 )

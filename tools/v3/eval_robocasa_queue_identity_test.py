@@ -697,6 +697,34 @@ def _scenario(case, parent, count):
                 for event in ("start", "end")
             )
         )
+        if case == "live_progress":
+            live_path = Path(command[command.index("--live-progress-file") + 1])
+            live_path.write_text(
+                "".join(
+                    json.dumps(
+                        {
+                            "schema": "psm_eval_live_progress_v1",
+                            "evaluation_run_digest": digest,
+                            "evaluation_attempt_id": f"{directory.parent.name}/{directory.name}",
+                            "task": directory.parent.name,
+                            "event": event,
+                            "stage": "executing",
+                            "episode": index,
+                            "episodes": 5,
+                            "steps": 1,
+                            "max_steps": 900,
+                            "predictions": 1,
+                            "last_prediction_ms": 1.0,
+                            "outcome": rows[index]["outcome"] if event == "episode_end" else None,
+                            "error": None,
+                            "instruction": "close the fridge",
+                        }
+                    )
+                    + "\n"
+                    for index in range(5)
+                    for event in ("episode_start", "episode_end")
+                )
+            )
         if case == "wrong_attempt_progress":
             events = [json.loads(line) for line in progress.read_text().splitlines()]
             events[0]["evaluation_attempt_id"] = "CloseFridge/attempt_9999"
@@ -754,6 +782,8 @@ def _scenario(case, parent, count):
         argv += ["--dry-run"]
     if case == "list_tasks":
         argv += ["--list-tasks"]
+    if case == "progress_disabled":
+        argv += ["--no-progress"]
     if case in (
         "task_timeout",
         "episode_timeout",
@@ -794,6 +824,20 @@ def _scenario(case, parent, count):
 
     error = None
     with ExitStack() as stack:
+        if case == "export_notification_failure":
+            original_print = print
+
+            def closed_notification(*args, **kwargs):
+                if args and str(args[0]).startswith("video browsing"):
+                    raise ValueError("closed progress terminal")
+                return original_print(*args, **kwargs)
+
+            stack.enter_context(patch("builtins.print", side_effect=closed_notification))
+        if case == "observer_failure":
+            for name in ("start", "update", "close"):
+                stack.enter_context(patch.object(queue_module.EvaluationProgress, name, side_effect=OSError(name)))
+        if case == "export_failure":
+            stack.enter_context(patch.object(queue_module, "export_videos", side_effect=OSError("export unavailable")))
         if case == "occupied_port":
             occupied = stack.enter_context(socket.socket())
             occupied.bind(("0.0.0.0", base + count - 1))
@@ -826,6 +870,7 @@ def _scenario(case, parent, count):
                     "resume_missing_progress",
                     "resume_wrong_attempt",
                     "resume_failed_cleanup",
+                    "progress_resume",
                 ):
                     if case in ("resume_missing_progress", "resume_wrong_attempt", "resume_failed_cleanup"):
                         victim = output / "CloseFridge/attempt_0001"
@@ -844,6 +889,8 @@ def _scenario(case, parent, count):
                             corrupt_path.write_text(json.dumps(cleanup))
                         corrupt_bytes = corrupt_path.read_bytes() if corrupt_path.exists() else None
                     argv += ["--resume"]
+                    if case == "progress_resume":
+                        argv += ["--no-progress", "--progress-interval-s", "10"]
                     if case == "resume_wrong_video":
                         argv += ["--save-generated-video", "first"]
                     if case == "resume_wrong_timeout":
@@ -884,6 +931,7 @@ def _scenario(case, parent, count):
         "resume_missing_progress",
         "resume_wrong_attempt",
         "resume_failed_cleanup",
+        "progress_resume",
     ):
         report.update(first_rc=first_rc, first_summary=first_summary)
     if "corrupt_path" in locals():
@@ -1082,10 +1130,54 @@ class QueueIntegrationTests(unittest.TestCase):
                     self.fail("CPU queue fixture hung; owned process group killed")
             self.assertEqual(rc, 0, (parent / "console.log").read_text())
             report = json.loads((parent / "report.json").read_text())
+            report["console"] = (parent / "console.log").read_text()
             self.assertEqual(report["thread_names"], [], report)
             self.assertTrue(all(code is not None for code in report["server_exits"]), report)
             print("QUEUE_WITNESS " + json.dumps(report, sort_keys=True))
             return report
+
+    def test_live_progress_reports_episode_boundaries_without_changing_results(self):
+        report = self.scenario("live_progress", 2)
+        self.assertEqual(report["rc"], 0)
+        self.assertEqual(report["summary"]["status"], "COMPLETE")
+        self.assertEqual(report["summary"]["total_trials"], 20)
+        self.assertEqual(report["summary"]["total_successes"], 12)
+        self.assertIn("episode_end", report["console"])
+        for command in report["sim_command_argv"]:
+            self.assertEqual(command.count("--live-progress-file"), 1)
+        self.assertNotIn("progress", report["protocol"])
+        self.assertNotIn("progress_interval_s", report["protocol"])
+
+    def test_terminal_progress_can_be_disabled_without_changing_results(self):
+        report = self.scenario("progress_disabled", 1)
+        self.assertEqual(report["rc"], 0)
+        self.assertEqual(report["summary"]["total_trials"], 20)
+        self.assertNotIn("episode_end", report["console"])
+
+    def test_progress_options_can_change_on_same_identity_task_resume(self):
+        report = self.scenario("progress_resume", 1)
+        self.assertEqual((report["first_rc"], report["rc"]), (0, 0))
+        self.assertEqual(report["server_commands"], 4)
+        self.assertEqual(report["sim_calls"], 4)
+        self.assertTrue(all(len(attempts) == 1 for attempts in report["attempts"].values()))
+
+    def test_observer_failure_cannot_change_queue_completion_or_cleanup(self):
+        report = self.scenario("observer_failure", 2)
+        self.assertEqual(report["rc"], 0)
+        self.assertEqual(report["summary"]["status"], "COMPLETE")
+        self.assertEqual(report["summary"]["worker_errors"], {})
+
+    def test_browsing_export_failure_cannot_change_queue_completion(self):
+        report = self.scenario("export_failure", 1)
+        self.assertEqual(report["rc"], 0)
+        self.assertEqual(report["summary"]["status"], "COMPLETE")
+        self.assertIn("export unavailable", report["console"])
+
+    def test_browsing_notification_failure_cannot_replace_completed_exit_code(self):
+        report = self.scenario("export_notification_failure", 1)
+        self.assertEqual(report["rc"], 0)
+        self.assertEqual(report["summary"]["status"], "COMPLETE")
+        self.assertIsNone(report["error"])
 
     def test_four_tasks_five_episodes_complete_on_one_two_or_four_workers(self):
         for count in (1, 2, 8):

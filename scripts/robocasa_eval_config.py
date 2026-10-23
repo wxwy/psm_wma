@@ -33,6 +33,8 @@ DEFAULTS = {
     "save_action_jsonl": True,
     "save_prediction_jsonl": True,
     "resume": False,
+    "progress": True,
+    "progress_interval_s": 5.0,
 }
 TIMEOUT_DEFAULTS = {
     "server_start_s": 900.0,
@@ -122,6 +124,7 @@ def parser() -> argparse.ArgumentParser:
         aliases = {"episodes": ["--num-test-episodes"], "prediction-steps": ["--num-steps"]}.get(flag, [])
         result.add_argument("--" + flag, *aliases, dest=name, type=int)
     result.add_argument("--guidance", type=float)
+    result.add_argument("--progress-interval-s", type=float)
     result.add_argument("--timeout", type=float, help="legacy alias setting both server and prediction timeouts")
     for flag in (
         "server-start-timeout-s",
@@ -133,7 +136,14 @@ def parser() -> argparse.ArgumentParser:
         result.add_argument("--" + flag, type=float)
     for flag in ("local-memory-mode", "server-lifecycle", "on-infrastructure-error", "save-generated-video"):
         result.add_argument("--" + flag)
-    for flag in ("resume", "save-rollout-mp4", "save-init-png", "save-action-jsonl", "save-prediction-jsonl"):
+    for flag in (
+        "resume",
+        "save-rollout-mp4",
+        "save-init-png",
+        "save-action-jsonl",
+        "save-prediction-jsonl",
+        "progress",
+    ):
         result.add_argument("--" + flag, action=argparse.BooleanOptionalAction)
     return result
 
@@ -253,7 +263,14 @@ def resolve(argv=None, *, root: Path = ROOT) -> argparse.Namespace:
         raise ValueError("save_generated_video must be none, first or all")
     if resolved["on_infrastructure_error"] not in ("stop", "continue_with_new_server"):
         raise ValueError("invalid on_infrastructure_error")
-    for field in ("resume", "save_rollout_mp4", "save_init_png", "save_action_jsonl", "save_prediction_jsonl"):
+    for field in (
+        "resume",
+        "save_rollout_mp4",
+        "save_init_png",
+        "save_action_jsonl",
+        "save_prediction_jsonl",
+        "progress",
+    ):
         if type(resolved[field]) is not bool:
             raise ValueError(f"{field} must be a boolean")
     for field in ("save_action_jsonl", "save_prediction_jsonl"):
@@ -261,6 +278,9 @@ def resolve(argv=None, *, root: Path = ROOT) -> argparse.Namespace:
             raise ValueError(f"audit evidence requires {field}=true")
     if type(resolved["guidance"]) not in (int, float) or not math.isfinite(resolved["guidance"]):
         raise ValueError("guidance must be finite")
+    interval = resolved["progress_interval_s"]
+    if type(interval) not in (int, float) or not math.isfinite(interval) or interval <= 0:
+        raise ValueError("progress_interval_s must be finite and positive")
     for field, value in timeouts.items():
         if type(value) not in (int, float) or not math.isfinite(value) or value <= 0:
             raise ValueError(f"timeouts.{field} must be finite and positive")

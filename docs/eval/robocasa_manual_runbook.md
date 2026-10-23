@@ -51,6 +51,31 @@ Frozen ABI: Local-TTT required, raw15/state15, left+wrist cameras, raw base enco
 
 Environment videos follow `save_rollout_mp4` / `--[no-]save-rollout-mp4`; initial PNGs follow `save_init_png`. Generated video modes are `none`, `first` (first prediction **per episode**) and `all` (separate file per replan). Actions and prediction JSONL are mandatory even if videos are off. In `all` mode every generated file records replan, source step and frame count. Enabled media are checked for nonempty, actual decoding; matching filenames alone cannot complete a task.
 
+## Terminal progress and browsing videos
+
+Terminal progress is enabled by default. Every5s it shows each Worker's GPU, task, Episode/total, executed steps/official limit, returned prediction count, latest prediction latency in milliseconds and current stage. Episode boundaries, task completion and errors print immediately through a single output thread. Stages distinguish model loading, environment initialization, prediction/execution, video saving, process cleanup and result validation. Unknown fields display `?`; a quiet interval does not establish that a task is stuck. Server and simulator logs are still retained at their original paths.
+
+Use `--progress-interval-s 10` for a10s summary, or `--no-progress` to silence these terminal lines. YAML has `progress` and `progress_interval_s`; both are display settings excluded from protocol identity and may change during same-source task Resume. `--no-progress` still allows the independent `live_progress.jsonl` to record lightweight stage metadata and the exact model instruction for browsing exports. It does not change the authoritative `episode_progress.jsonl`, its exact ordered2N records, deadlines, results or evidence validation. The observer is best-effort and does not decide success or failure. List/preview commands keep their JSON-only output.
+
+After all Workers finish or are cancelled, the launcher exports separate copies under `videos_view/<Task>/<attempt>/`. Original MP4s, manifests and filenames remain unchanged. Browsing names use the Episode's actual model instruction, for example:
+
+```text
+rollout00_success_close_the_fridge.mp4
+rollout00_success_close_the_fridge_generated_replan0000.mp4
+```
+
+The four labels are `success`, `fail` (normal behavioral failure), `error` (runtime error) and `incomplete` (no final outcome). A generated video's label describes its Episode's final outcome; it does not establish the accuracy of that prediction. Unsafe filename characters are filtered, spaces become underscores, and long names carry a short digest. The index retains the full instruction and original-file mapping. Missing historical instructions are explicitly marked `unknown_instruction`, never replaced with task class names. Repeated exports preserve prior copies and isolate different Attempts; changed source/status/instruction produces a distinct revision. Browsing copies require additional disk space; an export failure does not change the completed evaluation's exit code or SR.
+
+To export an already saved run without loading a policy or starting a simulator, use a separate checkout at the reviewed source version:
+
+```bash
+python scripts/robocasa_eval_video_view.py \
+  --run-dir /absolute/path/to/saved_run \
+  --view-dir /absolute/path/to/separate_browsing_directory
+```
+
+The command reads the saved run and writes only the browsing destination. For a currently active run, keep its source worktree unchanged and use a separate destination; any unfinished Episode is labeled `incomplete`. Re-export after it finishes to add final labels. Do not rename the raw files while the evaluator is writing them.
+
 ## Evidence and bounded failure
 
 An exclusive manifest claim and nonblocking namespace lease prevent concurrent writers. Output is structured as:
@@ -69,6 +94,7 @@ An exclusive manifest claim and nonblocking namespace lease prevent concurrent w
     commands.json, server_info.json, server_process.json
     runtime_attestation.json         # in-process recheck before Kitchen creation
     eval.log, episode_progress.jsonl, process_cleanup.json
+    live_progress.jsonl              # optional observations; never completion/Resume evidence
     results.json
     rollout00_episode.json, rollout00_cleanup.json
     rollout00_actions.jsonl, rollout00_predictions.jsonl

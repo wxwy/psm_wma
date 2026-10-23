@@ -27,6 +27,9 @@ save_generated_video: first
 save_init_png: true
 save_action_jsonl: true
 save_prediction_jsonl: true
+# Terminal observations only; neither field changes evaluation identity or Resume.
+progress: true
+progress_interval_s: 5.0
 timeouts:
   server_start_s: 900
   predict_request_s: 600

@@ -23,7 +23,9 @@ from pathlib import Path
 from typing import Any
 
 from robocasa_eval_config import resolve
+from robocasa_eval_progress import EvaluationProgress
 from robocasa_eval_results import fail_attempt, find_completed_attempt, finish_attempt, start_attempt
+from robocasa_eval_video_view import export_videos
 from robocasa_processes import (
     EpisodeProgress,
     EvaluationInterrupted,
@@ -348,6 +350,8 @@ def simulator_argv(
         str(task_out),
         "--progress-file",
         str(task_out / "episode_progress.jsonl"),
+        "--live-progress-file",
+        str(task_out / "live_progress.jsonl"),
         "--save-generated-video",
         args.save_generated_video,
         "--runtime-probe-script",
@@ -500,7 +504,22 @@ def prepare(cache: Path) -> int:
             fcntl.flock(lease, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError as error:
             raise RuntimeError("another process owns this evaluation namespace") from error
-        return execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_env, bundle, run_digest)
+        result = execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_env, bundle, run_digest)
+        # Browsing copies are postprocessing, outside every task's deadline and
+        # completion/Resume contract. Export failures cannot alter the result.
+        try:
+            view = export_videos(output_root)
+            print(
+                f"video browsing export: status={view['status']} exported={view['exported_count']} "
+                f"reused={view['reused_count']} warnings={len(view['warnings'])}; index={view['index_file']}",
+                flush=True,
+            )
+        except Exception as error:
+            try:
+                print(f"video browsing export unavailable: {type(error).__name__}: {error}", flush=True)
+            except Exception:
+                pass
+        return result
 
 
 def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_env, bundle, run_digest) -> int:
@@ -541,6 +560,14 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
             work.put((task, dataset_dir))
 
     stop = threading.Event()
+    terminal_progress = EvaluationProgress(enabled=args.progress, interval_s=args.progress_interval_s)
+
+    def report_progress(worker_id: int, **fields) -> None:
+        # This independent observer never decides task outcomes or deadlines.
+        try:
+            terminal_progress.update(worker_id, **fields)
+        except Exception:
+            pass
 
     def publish() -> None:
         with result_lock:
@@ -581,6 +608,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
     publish()
 
     def run_worker(worker_id: int, gpu: str) -> None:
+        report_progress(worker_id, gpu=gpu, episodes=args.num_test_episodes, stage="worker_initialization")
         port = args.base_port + worker_id
         worker_dir = output_root / f"_worker{worker_id:02d}_gpu{gpu}"
         worker_dir.mkdir(parents=True, exist_ok=True)
@@ -606,6 +634,14 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
                 stage = "server_start"
                 try:
                     task_out = start_attempt(task_root, digest=run_digest, resume=args.resume)
+                    report_progress(
+                        worker_id,
+                        task=task,
+                        attempt_dir=task_out,
+                        attempt_id=f"{task_out.parent.name}/{task_out.name}",
+                        run_digest=run_digest,
+                        stage="model_loading",
+                    )
                     require_free_ports([port])
                     server_owned = OwnedProcess(
                         server_command,
@@ -646,6 +682,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
                         {"server": server_command, "simulator": command},
                     )
                     stage = "simulator"
+                    report_progress(worker_id, stage="environment_initialization")
                     with (task_out / "eval.log").open("ab", buffering=0) as task_log:
                         sim_owned = OwnedProcess(
                             command,
@@ -684,6 +721,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
                         raise EvaluationInterrupted(row["error"])
                 except BaseException as exc:  # noqa: BLE001
                     error = f"{type(exc).__name__}: {exc}"
+                    report_progress(worker_id, event="error", error=error, stage="failed")
                     if row is None and (task_out / "results.json").is_file():
                         try:
                             row = task_result(
@@ -698,6 +736,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
                         except Exception:
                             pass  # Raw partial files remain; never treat them as complete trials.
                 finally:
+                    report_progress(worker_id, stage="process_cleanup")
                     # Both groups, including descendants of an already-dead leader,
                     # are reclaimed before another task can acquire this worker.
                     for name, owned in (
@@ -718,6 +757,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
                                 fail_attempt(task_out, error)
                             else:
                                 stage = "evidence_validation"
+                                report_progress(worker_id, stage="result_validation")
                                 finish_attempt(task_out, deadline=task_deadline, stop=stop, **validation)
                         except BaseException as exc:  # noqa: BLE001
                             error = error or f"evidence validation: {type(exc).__name__}: {exc}"
@@ -760,6 +800,12 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
                     ):
                         stop.set()
                     publish()
+                    report_progress(
+                        worker_id,
+                        event="task_error" if error else "task_complete",
+                        stage="failed" if error else "complete",
+                        error=error,
+                    )
                     work.task_done()
 
     def worker(worker_id: int, gpu: str) -> None:
@@ -769,6 +815,7 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
             run_worker(worker_id, gpu)
         except BaseException as exc:  # noqa: BLE001
             stop.set()
+            report_progress(worker_id, event="error", error=f"{type(exc).__name__}: {exc}", stage="failed")
             with result_lock:
                 results[f"_worker_{worker_id}"] = {
                     "worker": worker_id,
@@ -793,11 +840,19 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
         for sig in (signal.SIGTERM, signal.SIGINT):
             previous_handlers[sig] = signal.signal(sig, cancel)
     try:
+        try:
+            terminal_progress.start()
+        except Exception:
+            pass
         for thread in threads:
             thread.start()
         for thread in threads:
             thread.join()
     finally:
+        try:
+            terminal_progress.close()
+        except Exception:
+            pass
         for sig, handler in previous_handlers.items():
             signal.signal(sig, handler)
 
