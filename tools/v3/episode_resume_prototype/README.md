@@ -1,7 +1,9 @@
 # Flexible Episode Resume: design-only CPU prototype
 
 Contract: `docs/collab/chatgpt/requests/2026-10-23_Codex_V3_RoboCasa_flexible_episode_resume_contract.md`.
-Design: `docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r1.md`.
+Current design: `docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r2.md`.
+The r1 design/evidence remain historical. R2 addresses only fresh sampling,
+contradictory COMPLETE claims and durable pending-slot recovery.
 
 No production launcher imports these modules. They never schedule a policy or a
 simulator, migrate a real run, or write historical results. The input examples are

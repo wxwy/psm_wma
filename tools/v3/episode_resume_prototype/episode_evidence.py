@@ -24,6 +24,7 @@ from robocasa_eval_results import (  # noqa: E402
     _unique_object,
     _validate_local_cleanup,
     _vector,
+    validate_attempt,
     validate_media,
 )
 from v3_evaluation_identity import sha256_file  # noqa: E402
@@ -244,8 +245,8 @@ def _media(attempt_dir, row, *, policy, requested, sim_python, digest, attempt_i
     }, hashes
 
 
-def verify_legacy_episode(attempt_dir, episode, *, manifest, sim_python, requested_media=None):
-    """Validate one original Episode, independently of Task status/episode budget."""
+def _verify_legacy_episode_core(attempt_dir, episode, *, manifest, sim_python, requested_media=None):
+    """Validate Episode evidence after the source-level completion claim guard."""
     attempt_dir = _safe(Path(attempt_dir))
     identity, protocol = _manifest(manifest)
     digest, task = manifest["digest"], attempt_dir.parent.name
@@ -373,6 +374,8 @@ def verify_legacy_episode(attempt_dir, episode, *, manifest, sim_python, request
         hashes[name] = sha256_file(_safe(attempt_dir / name))
     if aggregate.exists():
         hashes["results.json"] = sha256_file(aggregate)
+    if marker["status"] == "COMPLETE":
+        hashes["process_cleanup.json"] = sha256_file(_safe(attempt_dir / "process_cleanup.json"))
     seed = protocol.get("seed")
     semantic = {
         "outcome": row["outcome"],
@@ -415,6 +418,57 @@ def verify_legacy_episode(attempt_dir, episode, *, manifest, sim_python, request
         "semantic_digest": hashlib.sha256(_canonical(semantic)).hexdigest(),
         "original_task_status": marker["status"],
     }
+
+
+def _validated_complete_source(attempt_dir, *, manifest, sim_python, requested_media):
+    """A v1 COMPLETE claim must pass its original whole-Task contract, never salvage."""
+    identity, protocol = _manifest(manifest)
+    marker = _marker(attempt_dir, manifest["digest"])
+    if marker["status"] != "COMPLETE":
+        return None
+    if requested_media is not None:
+        _policy(requested_media)
+    policy = _policy(protocol)
+    try:
+        validate_attempt(
+            attempt_dir,
+            digest=manifest["digest"],
+            expected_trials=protocol.get("trials"),
+            runtime_digest=identity["evaluation_runtime"]["digest"],
+            video_mode=policy["save_generated_video"],
+            rollout_enabled=policy["save_rollout_mp4"],
+            init_png_enabled=policy["save_init_png"],
+            sim_python=sim_python,
+        )
+        # Buffer every Episode before publishing any from this COMPLETE source.
+        # The core also checks horizon/Local acknowledgement consistency; failure
+        # of a later Episode must not leave earlier ones silently salvaged.
+        return [
+            _verify_legacy_episode_core(
+                attempt_dir, episode, manifest=manifest, sim_python=sim_python, requested_media=requested_media
+            )
+            for episode in range(protocol["trials"])
+        ]
+    except (OSError, ValueError, TypeError, KeyError, IndexError) as error:
+        raise EpisodeEvidenceError(
+            "CORRUPT_LEGACY_COMPLETE_MARKER",
+            f"original COMPLETE claim is inconsistent with its own {protocol.get('trials')!r}-episode contract: {error}",
+        ) from error
+
+
+def verify_legacy_episode(attempt_dir, episode, *, manifest, sim_python, requested_media=None):
+    """Read one Episode; a COMPLETE Task first requires full original validation."""
+    attempt_dir = _safe(Path(attempt_dir))
+    complete = _validated_complete_source(
+        attempt_dir, manifest=manifest, sim_python=sim_python, requested_media=requested_media
+    )
+    if complete is not None:
+        if type(episode) is not int or not 0 <= episode < len(complete):
+            _fail("INVALID_EPISODE", "source episode index is outside the original complete task")
+        return complete[episode]
+    return _verify_legacy_episode_core(
+        attempt_dir, episode, manifest=manifest, sim_python=sim_python, requested_media=requested_media
+    )
 
 
 def scan_legacy_run(run_dir, *, sim_python, tasks=None, requested_media=None):
@@ -477,7 +531,9 @@ def scan_legacy_run(run_dir, *, sim_python, tasks=None, requested_media=None):
                 )
                 continue
             try:
-                _marker(attempt, manifest["digest"])
+                complete_records = _validated_complete_source(
+                    attempt, manifest=manifest, sim_python=sim_python, requested_media=requested_media
+                )
                 completed, unfinished = _completed_progress(
                     attempt, digest=manifest["digest"], attempt_id=f"{task}/{attempt.name}"
                 )
@@ -492,9 +548,12 @@ def scan_legacy_run(run_dir, *, sim_python, tasks=None, requested_media=None):
                     )
                 )
                 continue
-            candidates = {
-                int(match[1]) for path in attempt.iterdir() if (match := _ARTIFACT.fullmatch(path.name))
-            } | completed
+            candidates = (
+                set(range(len(complete_records)))
+                if complete_records is not None
+                else {int(match[1]) for path in attempt.iterdir() if (match := _ARTIFACT.fullmatch(path.name))}
+                | completed
+            )
             if unfinished:
                 candidates.add(len(completed))
                 diagnostics.append(
@@ -509,8 +568,12 @@ def scan_legacy_run(run_dir, *, sim_python, tasks=None, requested_media=None):
             for episode in sorted(candidates):
                 path = attempt / f"rollout{episode:02d}_episode.json"
                 try:
-                    record = verify_legacy_episode(
-                        attempt, episode, manifest=manifest, sim_python=sim_python, requested_media=requested_media
+                    record = (
+                        complete_records[episode]
+                        if complete_records is not None
+                        else _verify_legacy_episode_core(
+                            attempt, episode, manifest=manifest, sim_python=sim_python, requested_media=requested_media
+                        )
                     )
                 except (OSError, ValueError, TypeError, KeyError, IndexError) as error:
                     diagnostics.append(

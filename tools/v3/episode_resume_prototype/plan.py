@@ -12,6 +12,10 @@ import stat
 from pathlib import Path
 
 from tools.v3.episode_resume_prototype.model_identity import compare_model_identity
+from tools.v3.episode_resume_prototype.reservation_recovery import (
+    read_recovery_document,
+    recover_pending_slots,
+)
 from tools.v3.episode_resume_prototype.scene_sampling import plan_scene_sampling
 
 
@@ -27,7 +31,7 @@ def source_key(record):
 
 
 def _core_snapshot(record):
-    mutable = {"attempt.json", "episode_progress.jsonl", "results.json"}
+    mutable = {"attempt.json", "episode_progress.jsonl", "results.json", "process_cleanup.json"}
     return {key: value for key, value in record["source_ref"]["hashes"].items() if key not in mutable}
 
 
@@ -137,6 +141,7 @@ def build_plan(
     current_provenance,
     invocation_id,
     pending_slots=None,
+    recovery_documents=(),
     scan_diagnostics=(),
 ):
     if (
@@ -150,6 +155,9 @@ def build_plan(
     ):
         raise ValueError("invalid current invocation plan")
     original = copy.deepcopy(records)
+    recovered_documents = [read_recovery_document(path) for path in recovery_documents]
+    reservations = [row for document in recovered_documents for row in document.get("reservations", [])]
+    progress = [row for document in recovered_documents for row in document.get("progress_diagnostics", [])]
     rows, observed, logical_slots, diagnostics = [], {}, {}, list(copy.deepcopy(scan_diagnostics))
     original.sort(key=_priority)
     for record in original:
@@ -203,22 +211,36 @@ def build_plan(
         selected = history[:requested_episodes]
         # Catalog IDs are never reassigned to another completed source. The
         # requested view's dense ordinal is separate from original physical ep.
-        pending = (pending_slots or {}).get(task, [])
-        if any(type(slot) is not int or slot < 0 for slot in pending):
+        recovery = recover_pending_slots(
+            task=task,
+            completed_slots=history,
+            reservations=reservations,
+            progress_diagnostics=progress,
+            requested_episodes=requested_episodes,
+        )
+        # Optional old API hints cannot invent a slot without durable authority.
+        hints = (pending_slots or {}).get(task, [])
+        if any(type(slot) is not int or slot < 0 for slot in hints):
             raise ValueError("invalid pending logical slot")
-        pending = sorted(set(pending))
-        used_slots = {row.get("logical_episode_index", row["source_episode"]) for row in history}
-        pending = [slot for slot in pending if slot not in used_slots]
-        next_slot = max((row.get("logical_episode_index", row["source_episode"]) for row in history), default=-1) + 1
-        next_slot = max([next_slot, *(slot + 1 for slot in pending)])
+        if not set(hints).issubset(recovery["pending_slots"]):
+            raise ValueError("UNPERSISTED_PENDING_HINT: pending slots require persistent recovery authority")
+        pending = recovery["pending_slots"]
+        next_slot = recovery["next_slot_floor"]
         new_count = requested_episodes - len(selected)
-        new_slots = pending[:new_count]
-        new_slots.extend(range(next_slot, next_slot + new_count - len(new_slots)))
+        sampling_mode = "resume_gap_independent" if history else "fresh_task_stream"
+        if history:
+            new_slots = pending[:new_count]
+            new_slots.extend(range(next_slot, next_slot + new_count - len(new_slots)))
+        else:
+            # With no valid completed prefix the whole Task starts at its
+            # original literal seed, including failed/quarantined old sources.
+            new_slots = list(range(new_count))
         scene = plan_scene_sampling(
             task=task,
             requested_seed=requested_seed,
             new_logical_indices=new_slots,
             attempt_nonce=invocation_id,
+            sampling_mode=sampling_mode,
             legacy_sources=selected,
         )
         planned_new = scene["new_episodes"]
@@ -234,6 +256,9 @@ def build_plan(
             "reused_sources": selected,
             "excluded_sources": history[requested_episodes:],
             "new_episodes": planned_new,
+            "sampling_mode": sampling_mode,
+            "execution_batches": scene["execution_batches"],
+            "pending_recovery": recovery,
         }
         if new_count:
             plan["warnings"].extend(scene["warnings"])
@@ -302,6 +327,8 @@ def build_report(plan, executed, *, invocation_errors=()):
             "completed": len(completed),
             "partial_sr": successes / len(completed) if completed else None,
             "episode_sources": completed,
+            "sampling_mode": value["sampling_mode"],
+            "pending_recovery": copy.deepcopy(value["pending_recovery"]),
         }
         all_completed.extend(completed)
     requested = sum(row["requested"] for row in tasks.values())
@@ -341,7 +368,8 @@ def render_plan(plan):
     for task, row in plan["tasks"].items():
         lines.append(
             f"{task} requested={row['requested']} previous_completed={row['previous_completed']} "
-            f"reused={row['reused']} new={row['new']} excluded={row['excluded']}"
+            f"reused={row['reused']} new={row['new']} excluded={row['excluded']} "
+            f"sampling_mode={row['sampling_mode']} pending={row['pending_recovery']['pending_slots']}"
         )
     lines.append(json.dumps({"conditions": plan["planned_conditions"], "warnings": plan["warnings"]}, sort_keys=True))
     return "\n".join(lines)

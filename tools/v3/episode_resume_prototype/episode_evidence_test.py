@@ -13,6 +13,7 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from episode_evidence import EpisodeEvidenceError, scan_legacy_run, verify_legacy_episode  # noqa: E402
+from robocasa_processes import OwnedProcess  # noqa: E402
 
 
 def canonical(value):
@@ -25,6 +26,22 @@ def write_json(path, value):
 
 def write_lines(path, values):
     path.write_text("".join(json.dumps(value) + "\n" for value in values))
+
+
+def _real_cpu_cleanup_witness():
+    """Same cleanup producer as v1, with only two tiny stdlib CPU children."""
+    processes, witness = [], {}
+    try:
+        for role, script in (("server", "import time; time.sleep(30)"), ("simulator", "pass")):
+            owned = OwnedProcess([sys.executable, "-B", "-c", script], grace_s=0.5)
+            processes.append(owned)
+            if role == "simulator":
+                owned.proc.wait(timeout=5)
+            witness[role] = owned.close()
+        return witness
+    finally:
+        for owned in processes:
+            owned.close()
 
 
 def build_legacy_run(
@@ -219,6 +236,8 @@ def append_attempt(run_dir, *, attempt=2, completed=2, status="FAILED", outcomes
         )
     write_lines(directory / "episode_progress.jsonl", progress)
     write_json(directory / "results.json", rows)
+    if status == "COMPLETE":
+        write_json(directory / "process_cleanup.json", _real_cpu_cleanup_witness())
     return directory
 
 
@@ -234,7 +253,7 @@ def snapshot(run):
     }
 
 
-@pytest.mark.parametrize("status", ["RUNNING", "FAILED", "COMPLETE"])
+@pytest.mark.parametrize("status", ["RUNNING", "FAILED"])
 def test_complete_episodes_reusable_without_task_complete_or_total_trial_count(tmp_path, status):
     run = build_legacy_run(tmp_path, completed=2, trials=5, status=status)
     before = snapshot(run)
@@ -244,6 +263,107 @@ def test_complete_episodes_reusable_without_task_complete_or_total_trial_count(t
     assert all(row["original_task_status"] == status for row in result["records"])
     assert result["records"][0]["source_ref"]["original_digest"] == result["original_manifest"]["digest"]
     assert before == snapshot(run)
+
+
+def test_complete_marker_with_two_of_five_episodes_quarantines_entire_source(tmp_path):
+    run = build_legacy_run(tmp_path, completed=2, trials=5, status="COMPLETE")
+    before = snapshot(run)
+    result = scan(run)
+    assert result["records"] == []
+    assert [value["code"] for value in result["diagnostics"]] == ["CORRUPT_LEGACY_COMPLETE_MARKER"]
+    manifest = json.loads((run / "evaluation_manifest.json").read_text())
+    with pytest.raises(EpisodeEvidenceError) as error:
+        verify_legacy_episode(run / "CloseFridge/attempt_0001", 0, manifest=manifest, sim_python=Path(sys.executable))
+    assert error.value.code == "CORRUPT_LEGACY_COMPLETE_MARKER"
+    assert before == snapshot(run)
+
+
+@pytest.mark.parametrize("failure", ["missing", "live_group", "remaining", "missing_role", "error"])
+def test_complete_marker_requires_original_whole_task_process_cleanup(tmp_path, failure):
+    run = build_legacy_run(tmp_path, completed=5, trials=5, status="COMPLETE")
+    path = run / "CloseFridge/attempt_0001/process_cleanup.json"
+    cleanup = json.loads(path.read_text())
+    if failure == "missing":
+        path.unlink()
+    else:
+        if failure == "live_group":
+            cleanup["server"]["live_group"] = True
+        elif failure == "remaining":
+            cleanup["simulator"]["remaining_pids"] = [123]
+        elif failure == "missing_role":
+            cleanup.pop("server")
+        else:
+            cleanup["server"]["error"] = "failed cleanup must not be salvaged"
+        write_json(path, cleanup)
+    before = snapshot(run)
+    result = scan(run)
+    assert result["records"] == []
+    assert [value["code"] for value in result["diagnostics"]] == ["CORRUPT_LEGACY_COMPLETE_MARKER"]
+    assert before == snapshot(run)
+
+
+def test_legal_complete_five_of_five_uses_unchanged_original_validator(tmp_path, monkeypatch):
+    import episode_evidence
+
+    run = build_legacy_run(tmp_path, completed=5, trials=5, status="COMPLETE")
+    cleanup = json.loads((run / "CloseFridge/attempt_0001/process_cleanup.json").read_text())
+    for role in ("server", "simulator"):
+        assert set(cleanup[role]) == {"pid", "pgid", "signals", "returncode", "live_group", "remaining_pids"}
+        assert cleanup[role]["pid"] == cleanup[role]["pgid"] > 0
+        assert cleanup[role]["live_group"] is False and cleanup[role]["remaining_pids"] == []
+    assert cleanup["simulator"]["returncode"] == 0
+    original, calls = episode_evidence.validate_attempt, []
+
+    def observe_original(*args, **kwargs):
+        calls.append(kwargs)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(episode_evidence, "validate_attempt", observe_original)
+    before = snapshot(run)
+    requested = dict(save_generated_video="all", save_rollout_mp4=True, save_init_png=True)
+    result = scan(run, requested_media=requested)
+    assert len(result["records"]) == 5 and result["diagnostics"] == []
+    assert len(calls) == 1 and original.__module__ == "robocasa_eval_results"
+    assert calls[0]["expected_trials"] == 5
+    assert calls[0]["digest"] == result["original_manifest"]["digest"]
+    assert calls[0]["runtime_digest"] == result["original_manifest"]["identity"]["evaluation_runtime"]["digest"]
+    assert (
+        calls[0]["video_mode"] == "none"
+        and calls[0]["rollout_enabled"] is False
+        and calls[0]["init_png_enabled"] is False
+    )
+    assert all(value["media_coverage"]["missing_requested_media"] for value in result["records"])
+    direct = verify_legacy_episode(
+        run / "CloseFridge/attempt_0001",
+        4,
+        manifest=result["original_manifest"],
+        sim_python=Path(sys.executable),
+        requested_media=requested,
+    )
+    assert direct["source_episode"] == 4 and direct["original_task_status"] == "COMPLETE"
+    assert before == snapshot(run)
+
+
+def test_complete_later_episode_core_error_cannot_salvage_earlier_episodes(tmp_path):
+    run = build_legacy_run(tmp_path, completed=5, trials=5, status="COMPLETE")
+    path = run / "CloseFridge/attempt_0001/rollout04_predictions.jsonl"
+    predictions = [json.loads(line) for line in path.read_text().splitlines()]
+    predictions[0]["local_memory"]["session_id"] = f"{'b' * 32}:0:{'c' * 32}"
+    write_lines(path, predictions)
+    before = snapshot(run)
+    result = scan(run)
+    assert result["records"] == []
+    assert [value["code"] for value in result["diagnostics"]] == ["CORRUPT_LEGACY_COMPLETE_MARKER"]
+    assert before == snapshot(run)
+
+
+def test_bad_complete_source_does_not_hide_independent_failed_source_prefix(tmp_path):
+    run = build_legacy_run(tmp_path, completed=2, trials=5, status="COMPLETE")
+    append_attempt(run, attempt=2, completed=2, status="FAILED")
+    result = scan(run)
+    assert len(result["records"]) == 2
+    assert all(value["source_ref"]["attempt"] == "attempt_0002" for value in result["records"])
+    assert any(value["code"] == "CORRUPT_LEGACY_COMPLETE_MARKER" for value in result["diagnostics"])
 
 
 def test_actual_partial_third_episode_excluded_with_first_two_unchanged(tmp_path):

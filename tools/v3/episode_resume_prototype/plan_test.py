@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import copy
 import fcntl
+import json
 import pickle
 import subprocess
 import sys
@@ -83,10 +84,13 @@ def completed_new(value):
             "outcome": "success",
             "error": None,
             "source_ref": {
-                "path": f"/synthetic/{task}/attempt_new_{row['logical_episode_index']}/rollout00_episode.json",
+                "path": (
+                    f"/synthetic/{task}/attempt_new_{row['execution_batch']}/"
+                    f"rollout{row['source_episode']:02d}_episode.json"
+                ),
                 "original_digest": "1" * 64,
-                "attempt": f"attempt_new_{row['logical_episode_index']}",
-                "source_episode": 0,
+                "attempt": f"attempt_new_{row['execution_batch']}",
+                "source_episode": row["source_episode"],
                 "hashes": {"core": str(row["logical_episode_index"])},
             },
             "media_coverage": {
@@ -224,6 +228,15 @@ def test_shared_task_snapshot_change_does_not_create_a_second_episode():
     assert value["diagnostics"][0]["code"] == "REPEATED_SOURCE_REFERENCE_EXCLUDED"
 
 
+def test_task_level_cleanup_added_on_complete_does_not_change_episode_identity():
+    earlier = history(1)[0]
+    completed = copy.deepcopy(earlier)
+    completed["source_ref"]["hashes"]["process_cleanup.json"] = "now-closed-task-processes"
+    value = plan([earlier, completed], episodes=1)
+    assert value["tasks"]["CloseFridge"]["reused"] == 1
+    assert value["tasks"]["CloseFridge"]["new"] == 0
+
+
 def test_same_locator_with_changed_core_is_rejected_instead_of_double_counted():
     old = history(1)[0]
     changed = copy.deepcopy(old)
@@ -284,12 +297,126 @@ def test_scanner_diagnostics_are_retained_in_start_plan_and_end_report():
 
 
 def test_one_derived_seed_family_is_distinguished_from_multiple_environment_seeds():
-    value = plan([], episodes=2, seed=9)
+    value = plan(history(1, seed=9), episodes=3, seed=9)
     report = build_report(value, completed_new(value))
     actual = report["actual_conditions"]
-    assert actual["requested_seed_families"] == [9] and len(actual["effective_seeds"]) == 2
+    assert actual["requested_seed_families"] == [9] and len(actual["effective_seeds"]) == 3
     assert "MIXED_SEED" not in actual["flags"]
     assert "MULTIPLE_EFFECTIVE_ENV_SEEDS" in actual["flags"]
+
+
+def test_fresh_task_retains_literal_seed_single_environment_and_physical_episode_order():
+    value = plan([], episodes=5, seed=9)
+    task = value["tasks"]["CloseFridge"]
+    assert task["sampling_mode"] == "fresh_task_stream"
+    assert [row["effective_seed"] for row in task["new_episodes"]] == [9] * 5
+    assert [row["source_episode"] for row in task["new_episodes"]] == list(range(5))
+    assert [row["logical_episode_index"] for row in task["new_episodes"]] == list(range(5))
+    assert len(task["execution_batches"]) == 1
+    assert task["execution_batches"][0]["environment_constructions"] == 1
+    assert task["execution_batches"][0]["public_reset_calls"] == 5
+    assert not value["warnings"]
+    report = build_report(value, completed_new(value))
+    assert report["status"] == "COMPLETE" and report["actual_conditions"]["effective_seeds"] == [9]
+    assert "MIXED_SAMPLING_PROTOCOL" not in report["actual_conditions"]["flags"]
+
+
+def test_expanding_four_to_eighteen_tasks_uses_fresh_protocol_only_for_new_tasks():
+    old_tasks = ["CloseFridge", "TaskOne", "TaskTwo", "TaskThree"]
+    new_tasks = [f"NewTask{index}" for index in range(14)]
+    records = [row for task in old_tasks for row in history(3, task=task)]
+    value = plan(records, tasks=old_tasks + new_tasks, episodes=5, seed=0)
+    for task in old_tasks:
+        item = value["tasks"][task]
+        assert item["reused"] == 3 and item["sampling_mode"] == "resume_gap_independent"
+        assert [row["logical_episode_index"] for row in item["new_episodes"]] == [3, 4]
+        assert [row["source_episode"] for row in item["new_episodes"]] == [0, 0]
+        assert len(item["execution_batches"]) == 2
+    for task in new_tasks:
+        item = value["tasks"][task]
+        assert item["reused"] == 0 and item["sampling_mode"] == "fresh_task_stream"
+        assert [row["effective_seed"] for row in item["new_episodes"]] == [0] * 5
+        assert [row["source_episode"] for row in item["new_episodes"]] == list(range(5))
+        assert len(item["execution_batches"]) == 1
+    assert "MIXED_SAMPLING_PROTOCOL" in value["planned_conditions"]["flags"]
+
+
+def test_sparse_completed_catalog_recovers_failed_slot_after_disk_roundtrip_without_pending_hint(tmp_path):
+    records = history(5)
+    records.pop(2)
+    catalog = tmp_path / "verified-synthetic-catalog.json"
+    catalog.write_text(json.dumps(records))
+    before = catalog.read_bytes()
+    restarted = plan(json.loads(catalog.read_text()), episodes=5)
+    item = restarted["tasks"]["CloseFridge"]
+    assert [row["logical_episode_index"] for row in item["new_episodes"]] == [2]
+    assert item["pending_recovery"]["pending_slots"] == [2]
+    assert any(
+        row["code"] == "INFERRED_FROM_PERSISTENT_COMPLETED_SLOT_GAP" for row in item["pending_recovery"]["diagnostics"]
+    )
+    report = build_report(restarted, completed_new(restarted))
+    assert report["status"] == "COMPLETE" and report["completed"] == 5
+    assert catalog.read_bytes() == before
+
+
+def test_shrink_then_expand_preserves_unfinished_slot_and_excluded_sources():
+    records = history(5)
+    records.pop(2)
+    smaller = plan(records, episodes=2)
+    assert smaller["tasks"]["CloseFridge"]["new"] == 0
+    assert smaller["tasks"]["CloseFridge"]["pending_recovery"]["pending_slots"] == [2]
+    larger = plan(records, episodes=5)
+    assert [row["logical_episode_index"] for row in larger["tasks"]["CloseFridge"]["new_episodes"]] == [2]
+    assert larger["tasks"]["CloseFridge"]["pending_recovery"]["pending_slots"] == [2]
+
+
+def test_unpersisted_optional_pending_hint_cannot_invent_a_new_slot():
+    with pytest.raises(ValueError, match="UNPERSISTED_PENDING_HINT"):
+        plan(history(3), episodes=5, pending_slots={"CloseFridge": [8]})
+
+
+def test_restarted_plan_reads_persisted_tail_reservation_and_progress_without_memory_state(tmp_path):
+    document = {
+        "task": "CloseFridge",
+        "reservations": [
+            {
+                "logical_episode_index": 2,
+                "reservation_id": "CloseFridge:slot:2",
+                "attempt": "attempt_0002",
+                "source_episode": 0,
+            }
+        ],
+        "progress_diagnostics": [
+            {
+                "logical_episode_index": 2,
+                "reservation_id": "CloseFridge:slot:2",
+                "attempt": "attempt_0002",
+                "source_episode": 0,
+                "event": "start",
+            }
+        ],
+    }
+    path = tmp_path / "logical_slots.json"
+    path.write_text(json.dumps(document))
+    before = path.read_bytes()
+    value = plan(history(2), episodes=3, recovery_documents=[path])
+    item = value["tasks"]["CloseFridge"]
+    assert [row["logical_episode_index"] for row in item["new_episodes"]] == [2]
+    assert item["pending_recovery"]["pending_slots"] == [2]
+    # A process restart reparses bytes; no optional in-memory pending list is supplied.
+    again = plan(history(2), episodes=3, recovery_documents=[path], invocation_id="restarted-again")
+    assert (
+        again["tasks"]["CloseFridge"]["new_episodes"][0]["effective_seed"] == item["new_episodes"][0]["effective_seed"]
+    )
+    assert path.read_bytes() == before
+
+
+def test_quarantined_history_diagnostic_survives_whole_task_fresh_restart():
+    diagnostics = [{"code": "CORRUPT_LEGACY_COMPLETE_MARKER", "task": "CloseFridge", "attempt": "attempt_0001"}]
+    value = plan([], scan_diagnostics=diagnostics)
+    assert value["tasks"]["CloseFridge"]["sampling_mode"] == "fresh_task_stream"
+    report = build_report(value, completed_new(value))
+    assert value["diagnostics"] == report["diagnostics"] == diagnostics
 
 
 def test_config_or_same_task_metadata_changes_are_warnings_not_a_fifth_model_parameter():
