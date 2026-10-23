@@ -1,0 +1,10 @@
+{
+  "checked_at_cst": "2026-10-23T17:52:42.841642+08:00",
+  "root_branch": "V3",
+  "root_advertised": "e6a970caba4bdc77f7d9b56a6a8fbcdafe57f1e0",
+  "child_branch": "v3-robocasa-live-progress-20261023",
+  "child_advertised": "813a550dab5d6b5b5e3be90d38bb97527956b4dc",
+  "gitlink": "813a550dab5d6b5b5e3be90d38bb97527956b4dc",
+  "remote_commit_source_sha256_match": true,
+  "scope": "Source publication readback before subsequent docs-only evidence/inbox commit."
+}

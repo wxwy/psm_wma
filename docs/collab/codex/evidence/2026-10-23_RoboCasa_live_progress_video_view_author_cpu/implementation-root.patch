@@ -1,0 +1,1941 @@
+diff --git a/SESSION.md b/SESSION.md
+index 98176afd..fbadc7ea 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1554,0 +1555,10 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
++
++## 2026-10-23 — RoboCasa default live terminal progress
++
++- IN_PROGRESS on isolated Root/Child `v3-robocasa-live-progress-20261023`, based on V3 `07cd858ee7dd4edabfa1a7b694745c80e4c86bad` / Child `c9f21040f462a114d597fc83773cb9b6a9e96214`. Owner requests live terminal observability; current real eval and G1 worktrees are not accessed or updated. No GPU/model/real simulator/DCP.
++- Expected files: Root Queue integration, new `scripts/robocasa_eval_progress.py`, strict config defaults/options, focused progress/config/Queue CPU tests and manual usage; Child `closed_loop_eval.py`, new optional best-effort `utils/rollout_progress.py` and focused tests. Root owns Queue/docs; delegated config/progress/Child files do not overlap. Preserve action, timeout, scheduling, C01 exact2N progress, cleanup, result completeness and Resume identity. No separate action-snapshot or audit remediations.
++- Default5s summaries with serialized Worker GPU/task/Episode/steps/predictions/latency/phase; boundaries/errors immediate, flush. Independent observer failure must not affect task outcome. Source/evidence not yet committed; new exact Pair and CPU self-test then STOP for GPT/DS.
++
++- Owner additionally authorized independent video browsing exports in the same observability batch. Preserve all raw media/manifests; postprocessing after all owned Worker processes finish, plus standalone CPU-only export CLI. Exact actual model instruction from Episode/result or bound live metadata; unknown historical text explicitly marked. Four labels success/fail/error/incomplete; generated clips inherit Episode outcome, never prediction-accuracy claims. Independent copies, canonical in-run destination/external custom destination, indexed source hashes and non-overwriting revisions.
++- Final author CPU: Config92 + progress31 + video export44 + Child76 + Queue13 =256 top-level tests PASS,0failure/error/skip; Queue also16subtests PASS. Queue13 comprises5 new integrations,7 existing lifecycle regressions and1 closed-output notification negative. Ruff0.12.7 check/format across11Python files, syntax and14 static boundary checks PASS. Internal review findings fixed: future-Task output-directory collision, stale-audit latency override, and failed export notification overriding exit. Full repo/DS independent/GPU/model/Kitchen/runtime performance not claimed. Current real eval/G1 untouched.
++- Child source `813a550dab5d6b5b5e3be90d38bb97527956b4dc` committed/pushed non-force on isolated `v3-robocasa-live-progress-20261023`; Root source plus Gitlink is this implementation commit, exact Root SHA follows in evidence handoff. New source requires GPT fresh incremental review and DS CPU delta; no running-worktree update or restart. Separate action-snapshot task remains unimplemented. Stop after publication/readback.
+diff --git a/TODO.md b/TODO.md
+index 56874d4e..68e992da 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -441,0 +442,3 @@
++
++- [ ] **V3-ROBOCASA-LIVE-PROGRESS-20261023** — IN_PROGRESS; owner Codex; prerequisite Owner request at V3 `07cd858ee7dd4edabfa1a7b694745c80e4c86bad` / Child `c9f21040f462a114d597fc83773cb9b6a9e96214`. Default terminal progress every5s, per-Worker phases/counters and immediate completion/errors; optional independent best-effort Child events. Only observability, no action/TTT/deadline/scheduling/integrity/Resume changes. Focused CPU evidence, new exact Root/Child then GPT review; do not update/restart active eval/G1 or run GPU/model/simulator. Separate action-snapshot request remains queued.
++- **V3-ROBOCASA-LIVE-PROGRESS-20261023** — REVIEW; source complete with Owner-added independent video browsing copies. Author focusedCPU256 +16subtests PASS, Ruff0.12.7/format/syntax/14contractchecks PASS; Child813a550d published, Root exact implementation follows. New Pair GPT review/DS delta pending; no whole-repository/GPU/runtime acceptance or current-run update. Separate action-snapshot request remains queued, no unrelated fixes.
+diff --git a/configs/eval/robocasa_g1_iter8900.example.yaml b/configs/eval/robocasa_g1_iter8900.example.yaml
+index 58963c95..39069a37 100644
+--- a/configs/eval/robocasa_g1_iter8900.example.yaml
++++ b/configs/eval/robocasa_g1_iter8900.example.yaml
+@@ -29,0 +30,3 @@ save_prediction_jsonl: true
++# Terminal observations only; neither field changes evaluation identity or Resume.
++progress: true
++progress_interval_s: 5.0
+diff --git a/cosmos-framework b/cosmos-framework
+index c9f21040..813a550d 160000
+--- a/cosmos-framework
++++ b/cosmos-framework
+@@ -1 +1 @@
+-Subproject commit c9f21040f462a114d597fc83773cb9b6a9e96214
++Subproject commit 813a550dab5d6b5b5e3be90d38bb97527956b4dc
+diff --git a/docs/eval/robocasa_manual_runbook.md b/docs/eval/robocasa_manual_runbook.md
+index 71a0c717..18e1938f 100644
+--- a/docs/eval/robocasa_manual_runbook.md
++++ b/docs/eval/robocasa_manual_runbook.md
+@@ -53,0 +54,25 @@ Environment videos follow `save_rollout_mp4` / `--[no-]save-rollout-mp4`; initia
++## Terminal progress and browsing videos
++
++Terminal progress is enabled by default. Every5s it shows each Worker's GPU, task, Episode/total, executed steps/official limit, returned prediction count, latest prediction latency in milliseconds and current stage. Episode boundaries, task completion and errors print immediately through a single output thread. Stages distinguish model loading, environment initialization, prediction/execution, video saving, process cleanup and result validation. Unknown fields display `?`; a quiet interval does not establish that a task is stuck. Server and simulator logs are still retained at their original paths.
++
++Use `--progress-interval-s 10` for a10s summary, or `--no-progress` to silence these terminal lines. YAML has `progress` and `progress_interval_s`; both are display settings excluded from protocol identity and may change during same-source task Resume. `--no-progress` still allows the independent `live_progress.jsonl` to record lightweight stage metadata and the exact model instruction for browsing exports. It does not change the authoritative `episode_progress.jsonl`, its exact ordered2N records, deadlines, results or evidence validation. The observer is best-effort and does not decide success or failure. List/preview commands keep their JSON-only output.
++
++After all Workers finish or are cancelled, the launcher exports separate copies under `videos_view/<Task>/<attempt>/`. Original MP4s, manifests and filenames remain unchanged. Browsing names use the Episode's actual model instruction, for example:
++
++```text
++rollout00_success_close_the_fridge.mp4
++rollout00_success_close_the_fridge_generated_replan0000.mp4
++```
++
++The four labels are `success`, `fail` (normal behavioral failure), `error` (runtime error) and `incomplete` (no final outcome). A generated video's label describes its Episode's final outcome; it does not establish the accuracy of that prediction. Unsafe filename characters are filtered, spaces become underscores, and long names carry a short digest. The index retains the full instruction and original-file mapping. Missing historical instructions are explicitly marked `unknown_instruction`, never replaced with task class names. Repeated exports preserve prior copies and isolate different Attempts; changed source/status/instruction produces a distinct revision. Browsing copies require additional disk space; an export failure does not change the completed evaluation's exit code or SR.
++
++To export an already saved run without loading a policy or starting a simulator, use a separate checkout at the reviewed source version:
++
++```bash
++python scripts/robocasa_eval_video_view.py \
++  --run-dir /absolute/path/to/saved_run \
++  --view-dir /absolute/path/to/separate_browsing_directory
++```
++
++The command reads the saved run and writes only the browsing destination. For a currently active run, keep its source worktree unchanged and use a separate destination; any unfinished Episode is labeled `incomplete`. Re-export after it finishes to add final labels. Do not rename the raw files while the evaluator is writing them.
++
+@@ -71,0 +97 @@ An exclusive manifest claim and nonblocking namespace lease prevent concurrent w
++    live_progress.jsonl              # optional observations; never completion/Resume evidence
+diff --git a/scripts/eval_robocasa_18task_queue.py b/scripts/eval_robocasa_18task_queue.py
+index 6340381c..a283bc7c 100644
+--- a/scripts/eval_robocasa_18task_queue.py
++++ b/scripts/eval_robocasa_18task_queue.py
+@@ -25,0 +26 @@ from robocasa_eval_config import resolve
++from robocasa_eval_progress import EvaluationProgress
+@@ -26,0 +28 @@ from robocasa_eval_results import fail_attempt, find_completed_attempt, finish_a
++from robocasa_eval_video_view import export_videos
+@@ -350,0 +353,2 @@ def simulator_argv(
++        "--live-progress-file",
++        str(task_out / "live_progress.jsonl"),
+@@ -503 +507,16 @@ def prepare(cache: Path) -> int:
+-        return execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_env, bundle, run_digest)
++        result = execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_env, bundle, run_digest)
++        # Browsing copies are postprocessing, outside every task's deadline and
++        # completion/Resume contract. Export failures cannot alter the result.
++        try:
++            view = export_videos(output_root)
++            print(
++                f"video browsing export: status={view['status']} exported={view['exported_count']} "
++                f"reused={view['reused_count']} warnings={len(view['warnings'])}; index={view['index_file']}",
++                flush=True,
++            )
++        except Exception as error:
++            try:
++                print(f"video browsing export unavailable: {type(error).__name__}: {error}", flush=True)
++            except Exception:
++                pass
++        return result
+@@ -543,0 +563,8 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++    terminal_progress = EvaluationProgress(enabled=args.progress, interval_s=args.progress_interval_s)
++
++    def report_progress(worker_id: int, **fields) -> None:
++        # This independent observer never decides task outcomes or deadlines.
++        try:
++            terminal_progress.update(worker_id, **fields)
++        except Exception:
++            pass
+@@ -583,0 +611 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++        report_progress(worker_id, gpu=gpu, episodes=args.num_test_episodes, stage="worker_initialization")
+@@ -608,0 +637,8 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++                    report_progress(
++                        worker_id,
++                        task=task,
++                        attempt_dir=task_out,
++                        attempt_id=f"{task_out.parent.name}/{task_out.name}",
++                        run_digest=run_digest,
++                        stage="model_loading",
++                    )
+@@ -648,0 +685 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++                    report_progress(worker_id, stage="environment_initialization")
+@@ -686,0 +724 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++                    report_progress(worker_id, event="error", error=error, stage="failed")
+@@ -700,0 +739 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++                    report_progress(worker_id, stage="process_cleanup")
+@@ -720,0 +760 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++                                report_progress(worker_id, stage="result_validation")
+@@ -762,0 +803,6 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++                    report_progress(
++                        worker_id,
++                        event="task_error" if error else "task_complete",
++                        stage="failed" if error else "complete",
++                        error=error,
++                    )
+@@ -771,0 +818 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++            report_progress(worker_id, event="error", error=f"{type(exc).__name__}: {exc}", stage="failed")
+@@ -795,0 +843,4 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++        try:
++            terminal_progress.start()
++        except Exception:
++            pass
+@@ -800,0 +852,4 @@ def execute(args, checkpoint, config_file, tasks, gpus, output_root, simulation_
++        try:
++            terminal_progress.close()
++        except Exception:
++            pass
+diff --git a/scripts/robocasa_eval_config.py b/scripts/robocasa_eval_config.py
+index 78186164..18575c8a 100644
+--- a/scripts/robocasa_eval_config.py
++++ b/scripts/robocasa_eval_config.py
+@@ -35,0 +36,2 @@ DEFAULTS = {
++    "progress": True,
++    "progress_interval_s": 5.0,
+@@ -124,0 +127 @@ def parser() -> argparse.ArgumentParser:
++    result.add_argument("--progress-interval-s", type=float)
+@@ -136 +139,8 @@ def parser() -> argparse.ArgumentParser:
+-    for flag in ("resume", "save-rollout-mp4", "save-init-png", "save-action-jsonl", "save-prediction-jsonl"):
++    for flag in (
++        "resume",
++        "save-rollout-mp4",
++        "save-init-png",
++        "save-action-jsonl",
++        "save-prediction-jsonl",
++        "progress",
++    ):
+@@ -256 +266,8 @@ def resolve(argv=None, *, root: Path = ROOT) -> argparse.Namespace:
+-    for field in ("resume", "save_rollout_mp4", "save_init_png", "save_action_jsonl", "save_prediction_jsonl"):
++    for field in (
++        "resume",
++        "save_rollout_mp4",
++        "save_init_png",
++        "save_action_jsonl",
++        "save_prediction_jsonl",
++        "progress",
++    ):
+@@ -263,0 +281,3 @@ def resolve(argv=None, *, root: Path = ROOT) -> argparse.Namespace:
++    interval = resolved["progress_interval_s"]
++    if type(interval) not in (int, float) or not math.isfinite(interval) or interval <= 0:
++        raise ValueError("progress_interval_s must be finite and positive")
+diff --git a/scripts/robocasa_eval_progress.py b/scripts/robocasa_eval_progress.py
+new file mode 100644
+index 00000000..080764c2
+--- /dev/null
++++ b/scripts/robocasa_eval_progress.py
+@@ -0,0 +1,398 @@
++"""Best-effort terminal observations; never an evaluation acceptance or Resume input."""
++
++from __future__ import annotations
++
++import json
++import math
++import re
++import sys
++import threading
++import time
++from collections import deque
++from pathlib import Path
++
++_UNSET = object()
++_LIVE_STAGES = {
++    "environment_initialization",
++    "executing",
++    "predicting",
++    "video_saving",
++    "local_cleanup",
++    "result_writing",
++    "environment_close",
++}
++_ROOT_STAGES = {"result_validation", "evidence_validation", "process_cleanup", "complete", "failed"}
++_IMMEDIATE = {"episode_start", "episode_end", "error", "task_complete", "task_error"}
++_AUDIT_NAME = re.compile(r"rollout(\d+)_(?:actions|predictions)\.jsonl\Z")
++
++
++def _number(value, *, positive=False):
++    return type(value) in {int, float} and math.isfinite(value) and value >= (1 if positive else 0)
++
++
++def _integer(value, *, positive=False):
++    return type(value) is int and value >= (1 if positive else 0)
++
++
++def _text(value, limit=100):
++    if value is None:
++        return "?"
++    return "".join(c if c.isprintable() else " " for c in str(value))[:limit]
++
++
++def _reject_constant(value):
++    raise ValueError(f"nonfinite observation: {value}")
++
++
++class _Tail:
++    """Read bounded complete JSONL records; never consume an incomplete tail."""
++
++    def __init__(self, path):
++        self.path, self.offset, self.signature = Path(path), 0, None
++        self.discarding, self.reset = False, False
++
++    def read(self):
++        self.reset = False
++        if self.path.is_symlink():
++            return [], False
++        stat = self.path.stat()
++        signature = (stat.st_dev, stat.st_ino)
++        if signature != self.signature or stat.st_size < self.offset:
++            self.signature, self.offset, self.discarding, self.reset = signature, 0, False, True
++        rows, consumed = [], 0
++        with self.path.open("rb") as stream:
++            stream.seek(self.offset)
++            while consumed < 256 * 1024 and len(rows) < 512:
++                start = stream.tell()
++                line = stream.readline(65537)
++                if not line:
++                    return rows, False
++                consumed += len(line)
++                if self.discarding or len(line) > 65536:
++                    self.discarding = not line.endswith(b"\n")
++                    self.offset = stream.tell()
++                    continue
++                if not line.endswith(b"\n"):
++                    self.offset = start
++                    return rows, False
++                self.offset = stream.tell()
++                try:
++                    row = json.loads(line, parse_constant=_reject_constant)
++                    if isinstance(row, dict):
++                        rows.append(row)
++                except (ValueError, UnicodeError):
++                    pass
++        return rows, True
++
++
++class _Observation:
++    def __init__(self):
++        self.live = None
++        self.audit = {}
++        self.values = dict.fromkeys(
++            ("episode", "steps", "predictions", "last_prediction_ms", "max_steps", "stage", "outcome")
++        )
++
++
++class EvaluationProgress:
++    """One optional daemon owns file reads and output; producers only enqueue state."""
++
++    def __init__(self, enabled=True, interval_s=5.0, sink=None, clock=time.monotonic):
++        self.enabled = bool(enabled)
++        try:
++            self.interval_s = float(interval_s)
++            self.enabled = self.enabled and math.isfinite(self.interval_s) and self.interval_s > 0
++        except Exception:
++            self.enabled, self.interval_s = False, 5.0
++        self._sink, self._clock = sink, clock
++        self._condition = threading.Condition()
++        self._commands = deque(maxlen=4096)
++        self._states, self._observations = {}, {}
++        self._thread, self._closed, self._stopping = None, False, False
++        self._last_periodic = None
++
++    def start(self):
++        if not self.enabled or self._closed or self._thread is not None:
++            return self
++        try:
++            self._thread = threading.Thread(target=self._run, name="robocasa-eval-progress", daemon=True)
++            self._thread.start()
++        except Exception:
++            self.enabled = False
++        return self
++
++    def update(
++        self,
++        worker_id,
++        *,
++        gpu=_UNSET,
++        task=_UNSET,
++        attempt_dir=_UNSET,
++        attempt_id=_UNSET,
++        run_digest=_UNSET,
++        episodes=_UNSET,
++        max_steps=_UNSET,
++        stage=_UNSET,
++        error=_UNSET,
++        event=None,
++    ):
++        if not self.enabled or self._closed:
++            return
++        try:
++            fields = {
++                "gpu": gpu,
++                "task": task,
++                "attempt_dir": attempt_dir,
++                "attempt_id": attempt_id,
++                "run_digest": run_digest,
++                "episodes": episodes,
++                "max_steps": max_steps,
++                "stage": stage,
++                "error": error,
++            }
++            with self._condition:
++                self._commands.append(
++                    (worker_id, {key: value for key, value in fields.items() if value is not _UNSET}, event)
++                )
++                self._condition.notify()
++        except Exception:
++            pass
++
++    def close(self):
++        try:
++            with self._condition:
++                self._closed, self._stopping = True, True
++                self._condition.notify_all()
++            thread = self._thread
++            if thread is not None and thread is not threading.current_thread() and thread.is_alive():
++                thread.join(timeout=1.0)
++        except Exception:
++            pass
++
++    def _run(self):
++        try:
++            while self.enabled:
++                self._cycle()
++                with self._condition:
++                    if self._stopping:
++                        if self._commands:
++                            continue
++                        return
++                    self._condition.wait(timeout=0.1)
++        except Exception:
++            self.enabled = False
++
++    @staticmethod
++    def _binding(state):
++        return tuple(state.get(key) for key in ("task", "attempt_dir", "attempt_id", "run_digest"))
++
++    def _cycle(self):
++        if not self.enabled:
++            return
++        with self._condition:
++            commands = list(self._commands)
++            self._commands.clear()
++        for worker, fields, event in commands:
++            state = self._states.setdefault(worker, {"worker": worker})
++            updated = dict(state, **fields)
++            if any(key in fields and fields[key] != state.get(key) for key in ("task", "attempt_dir", "attempt_id")):
++                for key in ("attempt_dir", "attempt_id"):
++                    if key not in fields:
++                        updated[key] = None
++            changed = self._binding(state) != self._binding(updated)
++            if changed:
++                self._poll(state, drain=True)
++                self._observations[worker] = _Observation()
++                state.clear()
++                state.update(worker=worker, gpu=updated.get("gpu"))
++                state.update(
++                    {
++                        key: value
++                        for key, value in updated.items()
++                        if key in {"task", "attempt_dir", "attempt_id", "run_digest", "episodes"}
++                    }
++                )
++            if event in {"task_complete", "task_error", "error"}:
++                self._poll(state, drain=True)
++            old_stage = state.get("stage")
++            state.update(fields)
++            if event:
++                self._emit(state, event)
++            elif fields.get("stage") != old_stage and "stage" in fields:
++                self._emit(state, "stage")
++        for state in list(self._states.values()):
++            self._poll(state)
++        now = self._clock()
++        if self._last_periodic is None:
++            self._last_periodic = now
++        elif now - self._last_periodic >= self.interval_s:
++            for state in self._states.values():
++                self._emit(state, "heartbeat")
++            self._last_periodic = now
++
++    @staticmethod
++    def _matches(row, state, *, live=False):
++        return (
++            isinstance(state.get("run_digest"), str)
++            and bool(state["run_digest"])
++            and isinstance(state.get("attempt_id"), str)
++            and bool(state["attempt_id"])
++            and row.get("evaluation_run_digest") == state["run_digest"]
++            and row.get("evaluation_attempt_id") == state["attempt_id"]
++            and (
++                not live
++                or (
++                    row.get("schema") == "psm_eval_live_progress_v1"
++                    and row.get("task") == state.get("task")
++                    and _integer(row.get("episodes"), positive=True)
++                    and (state.get("episodes") is None or row["episodes"] == state["episodes"])
++                )
++            )
++        )
++
++    def _audit(self, state, observation, episode):
++        if not _integer(episode):
++            return
++        directory = Path(state["attempt_dir"])
++        record = observation.audit.setdefault(episode, {})
++        for kind in ("actions", "predictions"):
++            key = kind + "_tail"
++            tail = record.setdefault(key, _Tail(directory / f"rollout{episode:02d}_{kind}.jsonl"))
++            try:
++                rows, _ = tail.read()
++                if tail.reset:
++                    record[kind] = None
++                    if kind == "predictions":
++                        record["latency_ms"] = None
++                for row in rows:
++                    if (
++                        not self._matches(row, state)
++                        or type(row.get("episode")) is not int
++                        or row["episode"] != episode
++                    ):
++                        continue
++                    if kind == "actions":
++                        if not _integer(row.get("source_step")):
++                            continue
++                    elif not _number(row.get("latency_ms")):
++                        continue
++                    record[kind] = (record.get(kind) or 0) + 1
++                    if kind == "predictions":
++                        record["latency_ms"] = row["latency_ms"]
++            except Exception:
++                pass
++        values = observation.values
++        if values["episode"] != episode:
++            return record
++        for kind, field in (("actions", "steps"), ("predictions", "predictions")):
++            if record.get(kind) is not None:
++                values[field] = max(values.get(field) or 0, record[kind])
++        # The child publishes live progress before its prediction audit callback.
++        # An audit file one prediction behind must not replace the newer latency.
++        if record.get("latency_ms") is not None and record.get("predictions", 0) >= (values.get("predictions") or 0):
++            values["last_prediction_ms"] = record["latency_ms"]
++        return record
++
++    def _poll(self, state, *, drain=False):
++        if not self.enabled or not state.get("attempt_dir") or state.get("stage") in {"complete", "failed"}:
++            return
++        observation = self._observations.setdefault(state["worker"], _Observation())
++        if observation.live is None:
++            observation.live = _Tail(Path(state["attempt_dir"]) / "live_progress.jsonl")
++        try:
++            for _ in range(16 if drain else 1):
++                rows, more = observation.live.read()
++                for row in rows:
++                    if not self._matches(row, state, live=True):
++                        continue
++                    event, episode = row.get("event"), row.get("episode")
++                    if event not in {"stage", "episode_start", "episode_end", "error"}:
++                        continue
++                    if episode is not None and (
++                        not _integer(episode)
++                        or (_integer(state.get("episodes"), positive=True) and episode >= state["episodes"])
++                    ):
++                        continue
++                    if event in {"episode_start", "episode_end"} and episode is None:
++                        continue
++                    values = observation.values
++                    if episode is not None and episode != values["episode"]:
++                        if values["episode"] is not None and episode < values["episode"]:
++                            continue
++                        values.update(
++                            episode=episode, steps=None, predictions=None, last_prediction_ms=None, outcome=None
++                        )
++                    for field in ("steps", "predictions", "max_steps"):
++                        if _integer(row.get(field), positive=field == "max_steps"):
++                            values[field] = row[field]
++                    if _number(row.get("last_prediction_ms")):
++                        values["last_prediction_ms"] = row["last_prediction_ms"]
++                    if row.get("stage") in _LIVE_STAGES:
++                        values["stage"] = row["stage"]
++                    if row.get("outcome") in {"success", "behavioral_failure", "runtime_error"}:
++                        values["outcome"] = row["outcome"]
++                    if isinstance(row.get("error"), str) and row["error"]:
++                        state["error"] = row["error"]
++                    self._audit(state, observation, values["episode"])
++                    if event in _IMMEDIATE:
++                        self._emit(state, event)
++                if not more:
++                    break
++        except Exception:
++            pass
++        values = observation.values
++        try:
++            episodes = sorted(
++                {
++                    int(match[1])
++                    for path in Path(state["attempt_dir"]).iterdir()
++                    if (match := _AUDIT_NAME.fullmatch(path.name))
++                },
++                reverse=True,
++            )
++            for episode in episodes[:32]:
++                if _integer(state.get("episodes"), positive=True) and episode >= state["episodes"]:
++                    continue
++                if values["episode"] is not None and episode <= values["episode"]:
++                    break
++                record = self._audit(state, observation, episode)
++                if any(record.get(kind) for kind in ("actions", "predictions")):
++                    values.update(
++                        episode=episode, steps=None, predictions=None, last_prediction_ms=None, stage=None, outcome=None
++                    )
++                    break
++        except Exception:
++            pass
++        if values["episode"] is not None:
++            self._audit(state, observation, values["episode"])
++
++    def _emit(self, state, event):
++        if not self.enabled:
++            return
++        observation = self._observations.get(state["worker"])
++        values = observation.values if observation else {}
++        episode = values.get("episode")
++        stage = state.get("stage")
++        if stage not in _ROOT_STAGES:
++            stage = values.get("stage") or stage
++        latency = values.get("last_prediction_ms")
++        latency_text = f"{latency:.1f}" if _number(latency) else "?"
++        line = (
++            f"[eval-progress] worker={_text(state['worker'])} gpu={_text(state.get('gpu'))} "
++            f"task={_text(state.get('task'))} episode={episode + 1 if _integer(episode) else '?'}/{_text(state.get('episodes'))} "
++            f"steps={_text(values.get('steps'))}/{_text(values.get('max_steps') or state.get('max_steps'))} "
++            f"predictions={_text(values.get('predictions'))} latest_prediction_ms={latency_text} "
++        )
++        line += f"stage={_text(stage)} event={_text(event)}"
++        if values.get("outcome") is not None:
++            line += " episode_outcome=" + _text(values["outcome"])
++        if state.get("error"):
++            line += " error=" + _text(state["error"], 180)
++        try:
++            if self._sink is None:
++                sys.stdout.write(line + "\n")
++                sys.stdout.flush()
++            else:
++                self._sink(line + "\n")
++        except Exception:
++            self.enabled = False
+diff --git a/scripts/robocasa_eval_video_view.py b/scripts/robocasa_eval_video_view.py
+new file mode 100644
+index 00000000..5afc23b7
+--- /dev/null
++++ b/scripts/robocasa_eval_video_view.py
+@@ -0,0 +1,402 @@
++#!/usr/bin/env python3
++"""Export independent, descriptive video copies without altering evaluation evidence."""
++
++from __future__ import annotations
++
++import argparse
++import fcntl
++import hashlib
++import json
++import os
++import re
++import shutil
++import stat
++import tempfile
++import unicodedata
++from pathlib import Path
++
++SCHEMA = "psm_robocasa_video_view_v1"
++_ATTEMPT = re.compile(r"attempt_[0-9]{4,}\Z")
++_VIDEO = re.compile(r"rollout([0-9]+)(_generated(?:_replan([0-9]+))?)?\.mp4\Z")
++
++
++def _safe(path: Path) -> Path:
++    path = Path(os.path.abspath(path))
++    if any(part.is_symlink() for part in (path, *path.parents)):
++        raise ValueError(f"symlink paths are not supported: {path}")
++    return path
++
++
++def _canonical(value) -> bytes:
++    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
++
++
++def _sha(path: Path) -> str:
++    path = _safe(path)
++    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
++    with os.fdopen(fd, "rb") as handle:
++        before = os.fstat(handle.fileno())
++        if not stat.S_ISREG(before.st_mode):
++            raise ValueError(f"not a regular file: {path}")
++        digest = hashlib.sha256()
++        for block in iter(lambda: handle.read(1024 * 1024), b""):
++            digest.update(block)
++        after = os.fstat(handle.fileno())
++    if _witness(before) != _witness(after) or _witness(_safe(path).stat()) != _witness(before):
++        raise ValueError(f"file changed while hashing: {path}")
++    return digest.hexdigest()
++
++
++def _witness(value):
++    return value.st_ino, value.st_dev, value.st_size, value.st_mtime_ns, value.st_ctime_ns
++
++
++def _load(path: Path, warnings: list[str], default=None):
++    if not path.exists():
++        return default
++    try:
++        _safe(path)
++        with path.open(encoding="utf-8") as handle:
++            return json.load(handle)
++    except (OSError, ValueError) as error:
++        warnings.append(f"cannot read {path}: {type(error).__name__}: {error}")
++        return default
++
++
++def _slug(instruction: str | None, maximum: int = 96) -> str:
++    if instruction is None:
++        return "unknown_instruction"
++    value = unicodedata.normalize("NFKC", instruction).casefold()
++    value = "".join(character if character.isalnum() else "_" for character in value)
++    value = re.sub(r"_+", "_", value).strip("_")
++    if not value:
++        return "empty_instruction_" + hashlib.sha256(instruction.encode()).hexdigest()[:10]
++    # Byte limits, rather than character limits, keep UTF-8 names below NAME_MAX.
++    if len(value.encode()) > maximum:
++        suffix = "_" + hashlib.sha256(instruction.encode()).hexdigest()[:10]
++        value = value.encode()[: maximum - len(suffix)].decode("utf-8", errors="ignore").rstrip("_") + suffix
++    return value
++
++
++def _bound(row: dict, *, digest, attempt_id, episode: int) -> bool:
++    if type(row.get("ep", row.get("episode"))) is not int or row.get("ep", row.get("episode")) != episode:
++        return False
++    if "evaluation_attempt_id" in row and row["evaluation_attempt_id"] != attempt_id:
++        return False
++    return digest is None or "evaluation_run_digest" not in row or row["evaluation_run_digest"] == digest
++
++
++def _episode_metadata(directory: Path, episode: int, digest, warnings):
++    attempt_id = f"{directory.parent.name}/{directory.name}"
++    candidates = []
++    individual = _load(directory / f"rollout{episode:02d}_episode.json", warnings)
++    if individual is not None:
++        candidates.append(("episode.prompt", individual))
++    results = _load(directory / "results.json", warnings, [])
++    if isinstance(results, list):
++        matching = [
++            row for row in results if isinstance(row, dict) and type(row.get("ep")) is int and row["ep"] == episode
++        ]
++        if len(matching) > 1:
++            warnings.append(f"duplicate episode metadata: {directory} episode {episode}")
++            return "incomplete", None, None
++        if matching:
++            candidates.append(("results.prompt", matching[0]))
++    valid = []
++    for origin, row in candidates:
++        if not isinstance(row, dict) or not _bound(row, digest=digest, attempt_id=attempt_id, episode=episode):
++            warnings.append(f"foreign or invalid episode metadata: {directory} episode {episode}")
++            return "incomplete", None, None
++        valid.append((origin, row))
++    outcomes = {_outcome(row) for _, row in valid}
++    status = outcomes.pop() if len(outcomes) == 1 else "incomplete"
++    prompts = [(origin, row["prompt"]) for origin, row in valid if isinstance(row.get("prompt"), str)]
++    if len({prompt for _, prompt in prompts}) > 1:
++        warnings.append(f"conflicting actual instructions: {directory} episode {episode}")
++        return status, None, None
++    if prompts:
++        return status, prompts[0][1], prompts[0][0]
++    live = directory / "live_progress.jsonl"
++    instructions = set()
++    if live.exists():
++        try:
++            _safe(live)
++            with live.open("rb") as handle:
++                while line := handle.readline(65537):
++                    if len(line) > 65536 or not line.endswith(b"\n"):
++                        warnings.append(f"incomplete/oversized live instruction record: {live}")
++                        break
++                    row = json.loads(line)
++                    if (
++                        isinstance(row, dict)
++                        and row.get("schema") == "psm_eval_live_progress_v1"
++                        and row.get("evaluation_attempt_id") == attempt_id
++                        and row.get("task") == directory.parent.name
++                        and digest is not None
++                        and row.get("evaluation_run_digest") == digest
++                        and type(row.get("episode")) is int
++                        and row["episode"] == episode
++                        and isinstance(row.get("instruction"), str)
++                    ):
++                        instructions.add(row["instruction"])
++        except (OSError, ValueError) as error:
++            warnings.append(f"cannot read live instruction {live}: {error}")
++    if len(instructions) == 1:
++        return status, instructions.pop(), "live_progress.instruction"
++    if len(instructions) > 1:
++        warnings.append(f"conflicting live instructions: {directory} episode {episode}")
++    return status, None, None
++
++
++def _outcome(row: dict) -> str:
++    if isinstance(row.get("error"), str) and (
++        row["error"] == "KeyboardInterrupt" or row["error"].startswith("KeyboardInterrupt:")
++    ):
++        return "incomplete"
++    if row.get("outcome") == "runtime_error" or row.get("error") is not None:
++        return "error"
++    if row.get("outcome") == "success" and row.get("policy") is True:
++        return "success"
++    if row.get("outcome") == "behavioral_failure" and row.get("policy") is False:
++        return "fail"
++    return "incomplete"
++
++
++def _publish_json(path: Path, value) -> None:
++    _safe(path)
++    with tempfile.NamedTemporaryFile(dir=path.parent, prefix=".video_view_", delete=False) as handle:
++        temporary = Path(handle.name)
++        try:
++            handle.write(_canonical(value) + b"\n")
++            handle.flush()
++            os.fsync(handle.fileno())
++        except BaseException:
++            temporary.unlink(missing_ok=True)
++            raise
++    try:
++        os.replace(temporary, path)
++    finally:
++        temporary.unlink(missing_ok=True)
++
++
++def _copy(source: Path, destination: Path, digest: str) -> None:
++    """Copy bytes into a new inode and atomically publish without replacing any file."""
++    _safe(source)
++    _safe(destination)
++    fd = os.open(source, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
++    temporary = None
++    try:
++        with os.fdopen(fd, "rb") as reader:
++            before = os.fstat(reader.fileno())
++            if not stat.S_ISREG(before.st_mode):
++                raise ValueError("video source is not a regular file")
++            with tempfile.NamedTemporaryFile(dir=destination.parent, prefix=".video_view_", delete=False) as writer:
++                temporary = Path(writer.name)
++                shutil.copyfileobj(reader, writer, length=1024 * 1024)
++                writer.flush()
++                os.fsync(writer.fileno())
++            if _witness(before) != _witness(os.fstat(reader.fileno())):
++                raise ValueError("video changed while copying")
++        if _witness(before) != _witness(_safe(source).stat()) or _sha(temporary) != digest:
++            raise ValueError("video changed since its identity was computed")
++        os.chmod(temporary, stat.S_IMODE(before.st_mode))
++        os.utime(temporary, ns=(before.st_atime_ns, before.st_mtime_ns))
++        os.link(temporary, destination)  # Link only our independent temporary copy, never the source.
++    finally:
++        if temporary is not None:
++            temporary.unlink(missing_ok=True)
++
++
++def export_videos(run_dir: Path, *, view_dir: Path | None = None) -> dict:
++    """Best-effort browsing export; this never writes task evidence or changes eval status."""
++    result = {
++        "schema": SCHEMA,
++        "status": "OK",
++        "run_dir": str(Path(run_dir).absolute()),
++        "view_dir": str(Path(view_dir).absolute()) if view_dir is not None else None,
++        "index_file": None,
++        "exported_count": 0,
++        "reused_count": 0,
++        "conflict_count": 0,
++        "error_count": 0,
++        "records": [],
++        "warnings": [],
++    }
++    warnings = result["warnings"]
++    try:
++        run_dir = _safe(run_dir)
++        if not run_dir.is_dir():
++            raise ValueError("run directory does not exist")
++        view_dir = _safe(view_dir if view_dir is not None else run_dir / "videos_view")
++        result.update(run_dir=str(run_dir), view_dir=str(view_dir), index_file=str(view_dir / "index.json"))
++        if view_dir.is_relative_to(run_dir) and view_dir != run_dir / "videos_view":
++            raise ValueError("inside a run only the canonical videos_view directory is allowed")
++        tasks = []
++        for task in sorted(run_dir.iterdir()):
++            if task == run_dir / "videos_view":
++                continue
++            if task.name.startswith("_") or not task.name.isidentifier():
++                continue
++            if task.is_symlink():
++                warnings.append(f"skipping symlink task: {task}")
++                continue
++            if task.is_dir() and any(_ATTEMPT.fullmatch(child.name) for child in task.iterdir()):
++                tasks.append(task)
++        if view_dir == run_dir or any(view_dir.is_relative_to(task) for task in tasks):
++            raise ValueError("video view must be separate from original task/evidence directories")
++        manifest = _load(run_dir / "evaluation_manifest.json", warnings, {})
++        digest = manifest.get("digest") if isinstance(manifest, dict) else None
++        marker = {"schema": SCHEMA, "run_dir": str(run_dir), "evaluation_run_digest": digest}
++        view_dir.mkdir(parents=True, exist_ok=True)
++        marker_path = view_dir / ".video_view.json"
++        if marker_path.exists():
++            if _load(marker_path, warnings) != marker:
++                raise ValueError("video view belongs to another run or identity")
++        elif any(view_dir.iterdir()):
++            raise ValueError("existing nonempty video view has no ownership marker")
++        else:
++            fd = os.open(marker_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
++            with os.fdopen(fd, "wb") as handle:
++                handle.write(_canonical(marker) + b"\n")
++        lock_fd = os.open(view_dir / ".export.lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
++        with os.fdopen(lock_fd, "a") as lock:
++            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
++            index_path = view_dir / "index.json"
++            index = (
++                _load(index_path, warnings)
++                if index_path.exists()
++                else {"schema": SCHEMA, "run_dir": str(run_dir), "records": []}
++            )
++            if (
++                not isinstance(index, dict)
++                or index.get("schema") != SCHEMA
++                or index.get("run_dir") != str(run_dir)
++                or not isinstance(index.get("records"), list)
++                or any(not isinstance(row, dict) for row in index["records"])
++            ):
++                raise ValueError("invalid existing video view index")
++            for task in tasks:
++                for directory in sorted(task.iterdir()):
++                    if not _ATTEMPT.fullmatch(directory.name):
++                        continue
++                    try:
++                        _safe(directory)
++                        _export_attempt(directory, view_dir, digest, index, result)
++                    except (OSError, ValueError) as error:
++                        result["error_count"] += 1
++                        warnings.append(f"cannot export attempt {directory}: {type(error).__name__}: {error}")
++            if result["error_count"] or result["conflict_count"]:
++                result["status"] = "PARTIAL"
++            index["last_export"] = {
++                key: result[key]
++                for key in ("status", "exported_count", "reused_count", "conflict_count", "error_count", "warnings")
++            }
++            _publish_json(index_path, index)
++    except (OSError, ValueError) as error:
++        result["status"] = "ERROR"
++        warnings.append(f"video view export failed: {type(error).__name__}: {error}")
++    return result
++
++
++def _export_attempt(directory, view_dir, run_digest, index, result):
++    warnings = result["warnings"]
++    marker_path = directory / "attempt.json"
++    marker = _load(marker_path, warnings) if marker_path.exists() else {}
++    if not isinstance(marker, dict):
++        raise ValueError("invalid attempt marker")
++    digest = marker.get("evaluation_run_digest", run_digest)
++    if run_digest is not None and digest != run_digest:
++        raise ValueError("foreign attempt run digest")
++    if "attempt_id" in marker and marker["attempt_id"] != directory.name:
++        raise ValueError("foreign attempt namespace")
++    files = []
++    logical = {}
++    for source in sorted(directory.glob("*.mp4")):
++        match = _VIDEO.fullmatch(source.name)
++        if match is None:
++            continue
++        _safe(source)
++        episode = int(match[1])
++        kind = "generated_prediction" if match[2] else "environment"
++        replan = int(match[3]) if match[3] is not None else (0 if match[2] else None)
++        key = (episode, kind, replan)
++        logical[key] = logical.get(key, 0) + 1
++        files.append((source, episode, kind, replan, match[3]))
++    metadata = {}
++    for source, episode, kind, replan, replan_text in files:
++        if logical[(episode, kind, replan)] != 1:
++            result["conflict_count"] += 1
++            warnings.append(f"ambiguous duplicate Episode/video identity: {source}")
++            continue
++        try:
++            if episode not in metadata:
++                metadata[episode] = _episode_metadata(directory, episode, digest, warnings)
++            status, instruction, instruction_source = metadata[episode]
++            if instruction is None:
++                warnings.append(f"actual instruction missing: {source}")
++            digest_source = _sha(source)
++            row = {
++                "task": directory.parent.name,
++                "attempt": directory.name,
++                "evaluation_attempt_id": f"{directory.parent.name}/{directory.name}",
++                "evaluation_run_digest": digest,
++                "episode": episode,
++                "status": status,
++                "attempt_status": marker.get("status", "UNKNOWN"),
++                "instruction": instruction,
++                "instruction_missing": instruction is None,
++                "instruction_source": instruction_source,
++                "original_path": str(source),
++                "original_sha256": digest_source,
++                "video_kind": kind,
++                "prediction_replan": replan,
++                "prediction_role": None if kind == "environment" else "replan" if replan_text else "first_prediction",
++            }
++            identity = hashlib.sha256(_canonical(row)).hexdigest()
++            row["export_id"] = identity
++            existing = next((item for item in index["records"] if item.get("export_id") == identity), None)
++            if existing is not None:
++                destination = _safe(Path(existing["output_path"]))
++                same_inode = (destination.stat().st_dev, destination.stat().st_ino) == (
++                    source.stat().st_dev,
++                    source.stat().st_ino,
++                )
++                if same_inode or not destination.is_relative_to(view_dir) or _sha(destination) != digest_source:
++                    raise ValueError("existing export changed or no longer belongs to the view")
++                result["reused_count"] += 1
++                result["records"].append(existing)
++                continue
++            previous = [item for item in index["records"] if item.get("original_path") == str(source)]
++            revision = max((item.get("revision", 0) for item in previous), default=0) + 1
++            suffix = "" if kind == "environment" else f"_generated_replan{replan:04d}"
++            name = f"rollout{episode:02d}_{status}_{_slug(instruction)}{suffix}"
++            if revision > 1:
++                name += f"__rev_{revision:02d}_{identity[:10]}"
++            destination = _safe(view_dir / directory.parent.name / directory.name / (name + ".mp4"))
++            destination.parent.mkdir(parents=True, exist_ok=True)
++            if destination.exists():
++                result["conflict_count"] += 1
++                warnings.append(f"existing unindexed export retained without overwrite: {destination}")
++                continue
++            _copy(source, destination, digest_source)
++            row.update(output_path=str(destination), revision=revision)
++            index["records"].append(row)
++            result["records"].append(row)
++            result["exported_count"] += 1
++        except (OSError, ValueError, KeyError, TypeError) as error:
++            result["error_count"] += 1
++            warnings.append(f"cannot export video {source}: {type(error).__name__}: {error}")
++
++
++def main() -> int:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--run-dir", required=True, type=Path)
++    parser.add_argument("--view-dir", type=Path)
++    args = parser.parse_args()
++    result = export_videos(args.run_dir, view_dir=args.view_dir)
++    print(json.dumps(result, ensure_ascii=False, indent=2))
++    return 1 if result["status"] in {"ERROR", "PARTIAL"} else 0
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/tools/v3/eval_robocasa_queue_identity_test.py b/tools/v3/eval_robocasa_queue_identity_test.py
+index a29513aa..b714a635 100644
+--- a/tools/v3/eval_robocasa_queue_identity_test.py
++++ b/tools/v3/eval_robocasa_queue_identity_test.py
+@@ -699,0 +700,28 @@ def _scenario(case, parent, count):
++        if case == "live_progress":
++            live_path = Path(command[command.index("--live-progress-file") + 1])
++            live_path.write_text(
++                "".join(
++                    json.dumps(
++                        {
++                            "schema": "psm_eval_live_progress_v1",
++                            "evaluation_run_digest": digest,
++                            "evaluation_attempt_id": f"{directory.parent.name}/{directory.name}",
++                            "task": directory.parent.name,
++                            "event": event,
++                            "stage": "executing",
++                            "episode": index,
++                            "episodes": 5,
++                            "steps": 1,
++                            "max_steps": 900,
++                            "predictions": 1,
++                            "last_prediction_ms": 1.0,
++                            "outcome": rows[index]["outcome"] if event == "episode_end" else None,
++                            "error": None,
++                            "instruction": "close the fridge",
++                        }
++                    )
++                    + "\n"
++                    for index in range(5)
++                    for event in ("episode_start", "episode_end")
++                )
++            )
+@@ -756,0 +785,2 @@ def _scenario(case, parent, count):
++    if case == "progress_disabled":
++        argv += ["--no-progress"]
+@@ -796,0 +827,14 @@ def _scenario(case, parent, count):
++        if case == "export_notification_failure":
++            original_print = print
++
++            def closed_notification(*args, **kwargs):
++                if args and str(args[0]).startswith("video browsing"):
++                    raise ValueError("closed progress terminal")
++                return original_print(*args, **kwargs)
++
++            stack.enter_context(patch("builtins.print", side_effect=closed_notification))
++        if case == "observer_failure":
++            for name in ("start", "update", "close"):
++                stack.enter_context(patch.object(queue_module.EvaluationProgress, name, side_effect=OSError(name)))
++        if case == "export_failure":
++            stack.enter_context(patch.object(queue_module, "export_videos", side_effect=OSError("export unavailable")))
+@@ -828,0 +873 @@ def _scenario(case, parent, count):
++                    "progress_resume",
+@@ -846,0 +892,2 @@ def _scenario(case, parent, count):
++                    if case == "progress_resume":
++                        argv += ["--no-progress", "--progress-interval-s", "10"]
+@@ -886,0 +934 @@ def _scenario(case, parent, count):
++        "progress_resume",
+@@ -1084,0 +1133 @@ class QueueIntegrationTests(unittest.TestCase):
++            report["console"] = (parent / "console.log").read_text()
+@@ -1089,0 +1139,43 @@ class QueueIntegrationTests(unittest.TestCase):
++    def test_live_progress_reports_episode_boundaries_without_changing_results(self):
++        report = self.scenario("live_progress", 2)
++        self.assertEqual(report["rc"], 0)
++        self.assertEqual(report["summary"]["status"], "COMPLETE")
++        self.assertEqual(report["summary"]["total_trials"], 20)
++        self.assertEqual(report["summary"]["total_successes"], 12)
++        self.assertIn("episode_end", report["console"])
++        for command in report["sim_command_argv"]:
++            self.assertEqual(command.count("--live-progress-file"), 1)
++        self.assertNotIn("progress", report["protocol"])
++        self.assertNotIn("progress_interval_s", report["protocol"])
++
++    def test_terminal_progress_can_be_disabled_without_changing_results(self):
++        report = self.scenario("progress_disabled", 1)
++        self.assertEqual(report["rc"], 0)
++        self.assertEqual(report["summary"]["total_trials"], 20)
++        self.assertNotIn("episode_end", report["console"])
++
++    def test_progress_options_can_change_on_same_identity_task_resume(self):
++        report = self.scenario("progress_resume", 1)
++        self.assertEqual((report["first_rc"], report["rc"]), (0, 0))
++        self.assertEqual(report["server_commands"], 4)
++        self.assertEqual(report["sim_calls"], 4)
++        self.assertTrue(all(len(attempts) == 1 for attempts in report["attempts"].values()))
++
++    def test_observer_failure_cannot_change_queue_completion_or_cleanup(self):
++        report = self.scenario("observer_failure", 2)
++        self.assertEqual(report["rc"], 0)
++        self.assertEqual(report["summary"]["status"], "COMPLETE")
++        self.assertEqual(report["summary"]["worker_errors"], {})
++
++    def test_browsing_export_failure_cannot_change_queue_completion(self):
++        report = self.scenario("export_failure", 1)
++        self.assertEqual(report["rc"], 0)
++        self.assertEqual(report["summary"]["status"], "COMPLETE")
++        self.assertIn("export unavailable", report["console"])
++
++    def test_browsing_notification_failure_cannot_replace_completed_exit_code(self):
++        report = self.scenario("export_notification_failure", 1)
++        self.assertEqual(report["rc"], 0)
++        self.assertEqual(report["summary"]["status"], "COMPLETE")
++        self.assertIsNone(report["error"])
++
+diff --git a/tools/v3/robocasa_eval_config_test.py b/tools/v3/robocasa_eval_config_test.py
+index cf90c415..22a825a9 100644
+--- a/tools/v3/robocasa_eval_config_test.py
++++ b/tools/v3/robocasa_eval_config_test.py
+@@ -71,0 +72,34 @@ def test_cli_yaml_defaults_precedence_and_no_output_writes(tmp_path, base):
++def test_progress_defaults_are_enabled_and_available_in_resolved_dry_run(tmp_path, base):
++    args = config.resolve(["--config", str(write(tmp_path, base)), "--dry-run"])
++    assert args.progress is True and args.progress_interval_s == 5.0
++    assert args.resolved_config["progress"] is True
++    assert args.resolved_config["progress_interval_s"] == 5.0
++    assert not args.output_dir.exists()
++
++
++@pytest.mark.parametrize("enabled,interval", [(False, 1), (True, 2.5)])
++def test_yaml_progress_is_strictly_resolved(tmp_path, base, enabled, interval):
++    base.update(progress=enabled, progress_interval_s=interval)
++    args = config.resolve(["--config", str(write(tmp_path, base))])
++    assert args.progress is enabled and args.progress_interval_s == interval
++
++
++@pytest.mark.parametrize("yaml_progress,flag,expected", [(False, "--progress", True), (True, "--no-progress", False)])
++def test_progress_cli_overrides_yaml_and_leaves_execution_controls_unchanged(
++    tmp_path, base, yaml_progress, flag, expected
++):
++    base.update(progress=yaml_progress, progress_interval_s=2.5, resume=True)
++    base["timeouts"] = {"server_start_s": 47, "predict_request_s": 23, "task_wall_s": 100}
++    path = write(tmp_path, base)
++    before = config.resolve(["--config", str(path)])
++    after = config.resolve(["--config", str(path), flag, "--progress-interval-s", "0.25"])
++    assert after.progress is expected and after.progress_interval_s == 0.25
++    presentation = {"progress", "progress_interval_s"}
++    assert {key: value for key, value in before.resolved_config.items() if key not in presentation} == {
++        key: value for key, value in after.resolved_config.items() if key not in presentation
++    }
++    assert after.resume is before.resume is True
++    assert after.task_wall_timeout_s == before.task_wall_timeout_s == 100
++    assert after.predict_request_timeout_s == before.predict_request_timeout_s == 23
++
++
+@@ -189,0 +224,13 @@ def test_cli_namespace_replaces_yaml_output_dir(tmp_path, base):
++        ("progress", 1),
++        ("progress", 0),
++        ("progress", "false"),
++        ("progress", None),
++        ("progress_interval_s", True),
++        ("progress_interval_s", False),
++        ("progress_interval_s", 0),
++        ("progress_interval_s", -1),
++        ("progress_interval_s", float("nan")),
++        ("progress_interval_s", float("inf")),
++        ("progress_interval_s", -float("inf")),
++        ("progress_interval_s", "5"),
++        ("progress_interval_s", None),
+@@ -235,0 +283,4 @@ def test_malformed_or_duplicate_yaml_rejected(tmp_path, text):
++        ["--progress-interval-s", "nan"],
++        ["--progress-interval-s", "inf"],
++        ["--progress-interval-s", "0"],
++        ["--progress-interval-s", "-1"],
+diff --git a/tools/v3/robocasa_eval_progress_test.py b/tools/v3/robocasa_eval_progress_test.py
+new file mode 100644
+index 00000000..bc3b3cc0
+--- /dev/null
++++ b/tools/v3/robocasa_eval_progress_test.py
+@@ -0,0 +1,377 @@
++"""Terminal observation remains bounded, identity-scoped and outside acceptance."""
++
++import json
++import sys
++import threading
++from pathlib import Path
++
++import pytest
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
++from robocasa_eval_progress import EvaluationProgress  # noqa: E402
++
++DIGEST = "a" * 64
++
++
++class Clock:
++    value = 0.0
++
++    def __call__(self):
++        return self.value
++
++
++def append(path, records):
++    with path.open("a") as handle:
++        for record in records:
++            handle.write(json.dumps(record) + "\n")
++
++
++def live(*, event="stage", episode=0, task="CloseFridge", attempt="CloseFridge/attempt_0001", **fields):
++    return dict(
++        schema="psm_eval_live_progress_v1",
++        evaluation_run_digest=DIGEST,
++        evaluation_attempt_id=attempt,
++        task=task,
++        episodes=5,
++        event=event,
++        episode=episode,
++        stage="executing",
++        **fields,
++    )
++
++
++def setup(tmp_path, *, clock=None):
++    messages = []
++    reporter = EvaluationProgress(sink=messages.append, clock=clock or Clock())
++    reporter.update(
++        0,
++        gpu="2",
++        task="CloseFridge",
++        attempt_dir=tmp_path,
++        attempt_id="CloseFridge/attempt_0001",
++        run_digest=DIGEST,
++        episodes=5,
++        stage="executing",
++    )
++    reporter._cycle()
++    messages.clear()
++    return reporter, messages
++
++
++def audit(*, episode=0, attempt="CloseFridge/attempt_0001", **fields):
++    return dict(evaluation_run_digest=DIGEST, evaluation_attempt_id=attempt, episode=episode, **fields)
++
++
++def test_cadence_uses_monotonic_clock_without_timing_performance_assertion(tmp_path):
++    clock = Clock()
++    reporter, messages = setup(tmp_path, clock=clock)
++    clock.value = 4.99
++    reporter._cycle()
++    assert messages == []
++    clock.value = 5
++    reporter._cycle()
++    assert len(messages) == 1 and "event=heartbeat" in messages[0]
++    assert "episode=?/5" in messages[0] and "steps=?/?" in messages[0]
++    reporter._cycle()
++    assert len(messages) == 1
++    clock.value = 10
++    reporter._cycle()
++    assert len(messages) == 2
++
++
++def test_episode_events_immediate_before_heartbeat_and_actual_latency_field(tmp_path):
++    reporter, messages = setup(tmp_path)
++    append(tmp_path / "live_progress.jsonl", [live(event="episode_start", steps=0, predictions=0, max_steps=900)])
++    append(tmp_path / "rollout00_actions.jsonl", [audit(source_step=0), audit(source_step=1)])
++    append(tmp_path / "rollout00_predictions.jsonl", [audit(latency_ms=1234.56, step_before_query=0)])
++    reporter._cycle()
++    assert len(messages) == 1
++    assert "event=episode_start" in messages[0]
++    assert "episode=1/5" in messages[0] and "steps=2/900" in messages[0]
++    assert "predictions=1" in messages[0] and "latest_prediction_ms=1234.6" in messages[0]
++    append(
++        tmp_path / "live_progress.jsonl",
++        [live(event="episode_end", steps=2, predictions=1, outcome="behavioral_failure")],
++    )
++    reporter._cycle()
++    assert "event=episode_end" in messages[-1]
++    assert "episode_outcome=behavioral_failure" in messages[-1]
++
++
++def test_read_complete_newline_incrementally_without_counting_twice(tmp_path):
++    reporter, messages = setup(tmp_path)
++    path = tmp_path / "rollout00_actions.jsonl"
++    first = json.dumps(audit(source_step=0))
++    path.write_text(first[:20])
++    reporter._cycle()
++    assert reporter._observations[0].values["episode"] is None
++    with path.open("a") as handle:
++        handle.write(first[20:] + "\n")
++    reporter._cycle()
++    values = reporter._observations[0].values
++    assert values["episode"] == 0 and values["steps"] == 1
++    reporter._cycle()
++    assert values["steps"] == 1
++    append(path, [audit(source_step=1)])
++    reporter._cycle()
++    assert values["steps"] == 2
++
++
++def test_prediction_latency_uses_the_newest_prediction_frontier(tmp_path):
++    clock = Clock()
++    reporter, messages = setup(tmp_path, clock=clock)
++    append(tmp_path / "live_progress.jsonl", [live(predictions=2, last_prediction_ms=250)])
++    path = tmp_path / "rollout00_predictions.jsonl"
++    append(path, [audit(latency_ms=10, step_before_query=0)])
++    reporter._cycle()
++    values = reporter._observations[0].values
++    # Legal child ordering: live prediction 2 exists before audit prediction 2.
++    assert values["predictions"] == 2 and values["last_prediction_ms"] == 250
++    clock.value = 5
++    reporter._cycle()
++    assert "predictions=2 latest_prediction_ms=250.0" in messages[-1]
++    append(path, [audit(latency_ms=250, step_before_query=16)])
++    reporter._cycle()
++    assert values["predictions"] == 2 and values["last_prediction_ms"] == 250
++    # A complete newer audit record may lead the latest live observation.
++    append(path, [audit(latency_ms=360, step_before_query=32)])
++    reporter._cycle()
++    assert values["predictions"] == 3 and values["last_prediction_ms"] == 360
++    clock.value = 10
++    reporter._cycle()
++    assert "predictions=3 latest_prediction_ms=360.0" in messages[-1]
++
++
++@pytest.mark.parametrize(
++    "field,value",
++    [
++        ("evaluation_run_digest", "b" * 64),
++        ("evaluation_attempt_id", "CloseFridge/attempt_9999"),
++        ("task", "NavigateKitchen"),
++        ("schema", "foreign_v1"),
++        ("episodes", 4),
++        ("episode", True),
++    ],
++)
++def test_wrong_live_identity_or_typed_episode_is_ignored(tmp_path, field, value):
++    reporter, messages = setup(tmp_path)
++    record = live(event="episode_start", steps=999)
++    record[field] = value
++    append(tmp_path / "live_progress.jsonl", [record])
++    reporter._cycle()
++    assert messages == []
++    assert reporter._observations[0].values["episode"] is None
++
++
++def test_malformed_nonfinite_oversized_and_truncated_records_fail_open(tmp_path):
++    reporter, messages = setup(tmp_path)
++    path = tmp_path / "live_progress.jsonl"
++    path.write_bytes(
++        b'not JSON\n{"x": NaN}\n' + b"x" * 70000 + b"\n" + json.dumps(live(event="episode_start")).encode()
++    )
++    reporter._cycle()
++    assert messages == []
++    with path.open("ab") as handle:
++        handle.write(b"\n")
++    reporter._cycle()
++    assert len(messages) == 1 and "episode_start" in messages[0]
++
++
++def test_wrong_audit_identity_and_latency_are_not_shown(tmp_path):
++    reporter, messages = setup(tmp_path)
++    append(tmp_path / "rollout00_actions.jsonl", [audit(attempt="Other/attempt_0001", source_step=0)])
++    append(tmp_path / "rollout00_predictions.jsonl", [audit(latency_ms=float("nan")), audit(latency_ms=True)])
++    reporter._cycle()
++    assert reporter._observations[0].values["episode"] is None
++    assert reporter._observations[0].values["last_prediction_ms"] is None
++
++
++def test_audit_fallback_advances_episode_and_resets_old_counts(tmp_path):
++    reporter, messages = setup(tmp_path)
++    append(tmp_path / "rollout00_actions.jsonl", [audit(source_step=0), audit(source_step=1)])
++    reporter._cycle()
++    assert reporter._observations[0].values["steps"] == 2
++    append(tmp_path / "rollout01_actions.jsonl", [audit(episode=1, source_step=0)])
++    reporter._cycle()
++    assert reporter._observations[0].values["episode"] == 1
++    assert reporter._observations[0].values["steps"] == 1
++
++
++def test_task_switch_drains_old_episode_before_final_and_never_mixes_new_binding(tmp_path):
++    first, second = tmp_path / "one", tmp_path / "two"
++    first.mkdir()
++    second.mkdir()
++    reporter, messages = setup(first)
++    append(first / "live_progress.jsonl", [live(event="episode_end", episode=4, steps=45)])
++    reporter.update(0, stage="complete", event="task_complete")
++    reporter.update(
++        0,
++        task="NavigateKitchen",
++        attempt_dir=second,
++        attempt_id="NavigateKitchen/attempt_0001",
++        stage="model_loading",
++    )
++    reporter._cycle()
++    assert "event=episode_end" in messages[0] and "task=CloseFridge" in messages[0]
++    assert "event=task_complete" in messages[1] and "steps=45/?" in messages[1]
++    assert "task=NavigateKitchen" in messages[2] and "episode=?/5" in messages[2]
++    assert reporter._observations[0].values["steps"] is None
++
++
++def test_task_only_update_clears_previous_attempt_binding(tmp_path):
++    reporter, messages = setup(tmp_path)
++    append(tmp_path / "rollout00_actions.jsonl", [audit(source_step=0)])
++    reporter.update(0, task="NavigateKitchen", stage="model_loading")
++    reporter._cycle()
++    assert reporter._states[0]["attempt_dir"] is None
++    assert reporter._observations[0].values["steps"] is None
++
++
++def test_late_child_stage_cannot_replace_root_final_validation(tmp_path):
++    reporter, messages = setup(tmp_path)
++    append(tmp_path / "live_progress.jsonl", [dict(live(event="episode_end"), stage="environment_close")])
++    reporter.update(0, stage="result_validation")
++    reporter._cycle()
++    assert "stage=result_validation" in messages[-1]
++    reporter.update(0, stage="failed", error="encoder\nfailed\x1b", event="error")
++    reporter._cycle()
++    assert "stage=failed" in messages[-1]
++    assert "encoder failed " in messages[-1] and messages[-1].count("\n") == 1
++
++
++@pytest.mark.parametrize("failure", [BrokenPipeError, OSError, ValueError])
++def test_sink_failure_disables_only_observer(tmp_path, failure):
++    calls = []
++
++    def broken(line):
++        calls.append(line)
++        raise failure("injected UI sink failure")
++
++    reporter = EvaluationProgress(sink=broken)
++    reporter.update(0, stage="model_loading")
++    reporter._cycle()
++    assert not reporter.enabled and len(calls) == 1
++    reporter.update(0, event="error", error="business failure")
++    reporter.close()
++
++
++def test_disabled_never_reads_or_starts_thread(monkeypatch, tmp_path):
++    def forbidden(*args, **kwargs):
++        raise AssertionError("disabled observation touched a resource")
++
++    monkeypatch.setattr(Path, "open", forbidden)
++    monkeypatch.setattr(threading.Thread, "start", forbidden)
++    reporter = EvaluationProgress(enabled=False)
++    reporter.update(0, attempt_dir=tmp_path, stage="model_loading", event="error")
++    reporter.start()
++    reporter._cycle()
++    reporter.close()
++    assert reporter._thread is None
++
++
++def test_reader_failure_is_ignored_without_touching_business_state(tmp_path, monkeypatch):
++    reporter, messages = setup(tmp_path)
++    original = Path.open
++
++    def denied(path, *args, **kwargs):
++        if path.name == "live_progress.jsonl":
++            raise PermissionError("observational log unavailable")
++        return original(path, *args, **kwargs)
++
++    (tmp_path / "live_progress.jsonl").touch()
++    monkeypatch.setattr(Path, "open", denied)
++    reporter._cycle()
++    reporter.update(0, stage="failed", error="real error", event="error")
++    reporter._cycle()
++    assert reporter.enabled and "real error" in messages[-1]
++
++
++def test_default_sink_flushes_every_line(tmp_path, monkeypatch):
++    class Stdout:
++        def __init__(self):
++            self.lines, self.flushes = [], 0
++
++        def write(self, value):
++            self.lines.append(value)
++
++        def flush(self):
++            self.flushes += 1
++
++    stdout = Stdout()
++    monkeypatch.setattr(sys, "stdout", stdout)
++    reporter = EvaluationProgress()
++    reporter.update(0, stage="model_loading")
++    reporter._cycle()
++    assert stdout.flushes == 1 and len(stdout.lines) == 1
++
++
++def test_single_daemon_serializes_multiple_workers_and_close_drains_updates(tmp_path):
++    calls = []
++    reporter = EvaluationProgress(sink=lambda line: calls.append((threading.current_thread().name, line)))
++    reporter.start()
++    for worker in range(4):
++        reporter.update(worker, gpu=str(worker), task=f"Task{worker}", stage="model_loading")
++        reporter.update(worker, stage="complete", event="task_complete")
++    reporter.close()
++    assert not reporter._thread.is_alive()
++    assert reporter._thread.daemon
++    assert len(calls) == 8
++    assert {name for name, _ in calls} == {"robocasa-eval-progress"}
++    for worker in range(4):
++        assert any(f"worker={worker}" in line and "event=task_complete" in line for _, line in calls)
++
++
++def test_producer_update_never_calls_blocked_sink_or_reads_files(tmp_path):
++    entered, release = threading.Event(), threading.Event()
++
++    def sink(line):
++        entered.set()
++        release.wait(3)
++
++    reporter = EvaluationProgress(sink=sink).start()
++    try:
++        reporter.update(0, stage="model_loading")
++        assert entered.wait(2)
++        # The UI is blocked in its sink; worker updates still only append memory.
++        done = threading.Event()
++        producer = threading.Thread(target=lambda: (reporter.update(0, event="task_complete"), done.set()))
++        producer.start()
++        assert done.wait(1)
++        producer.join()
++    finally:
++        release.set()
++        reporter.close()
++    assert not reporter._thread.is_alive()
++
++
++def test_thread_start_failure_is_observational_only_and_close_is_idempotent(monkeypatch):
++    def failure(thread):
++        raise RuntimeError("cannot start optional UI thread")
++
++    monkeypatch.setattr(threading.Thread, "start", failure)
++    reporter = EvaluationProgress(sink=lambda line: None)
++    reporter.start()
++    assert not reporter.enabled
++    reporter.update(0, stage="model_loading")
++    reporter.close()
++    reporter.close()
++
++
++def test_progress_reads_never_create_or_modify_business_artifacts(tmp_path):
++    reporter, messages = setup(tmp_path)
++    append(tmp_path / "live_progress.jsonl", [live(event="episode_end", steps=1)])
++    append(tmp_path / "rollout00_actions.jsonl", [audit(source_step=0)])
++    before = {path.name: (path.read_bytes(), path.stat().st_mtime_ns) for path in tmp_path.iterdir()}
++    reporter._cycle()
++    reporter.close()
++    after = {path.name: (path.read_bytes(), path.stat().st_mtime_ns) for path in tmp_path.iterdir()}
++    assert before == after
++
++
++@pytest.mark.parametrize("interval", [0, -1, float("inf"), float("nan"), "invalid"])
++def test_invalid_optional_interval_disables_observer(interval):
++    reporter = EvaluationProgress(interval_s=interval)
++    reporter.start()
++    reporter.update(0, event="task_complete")
++    reporter.close()
++    assert not reporter.enabled and reporter._thread is None
+diff --git a/tools/v3/robocasa_eval_video_view_test.py b/tools/v3/robocasa_eval_video_view_test.py
+new file mode 100644
+index 00000000..1386df00
+--- /dev/null
++++ b/tools/v3/robocasa_eval_video_view_test.py
+@@ -0,0 +1,399 @@
++"""Independent browsing copies: CPU binary/JSON fixtures, no codec or simulator."""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import os
++import subprocess
++import sys
++from pathlib import Path
++
++import pytest
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
++import robocasa_eval_video_view as video_view  # noqa: E402
++
++DIGEST = "a" * 64
++
++
++def write_json(path, payload):
++    path.write_text(json.dumps(payload, ensure_ascii=False) + "\n")
++
++
++def make_run(
++    tmp_path, *, prompt="close the fridge", status="success", episode=0, task="CloseFridge", attempt="attempt_0001"
++):
++    run = tmp_path / "run"
++    run.mkdir(exist_ok=True)
++    write_json(run / "evaluation_manifest.json", {"digest": DIGEST})
++    directory = run / task / attempt
++    directory.mkdir(parents=True)
++    write_json(
++        directory / "attempt.json", {"attempt_id": attempt, "evaluation_run_digest": DIGEST, "status": "COMPLETE"}
++    )
++    row = {
++        "ep": episode,
++        "outcome": status,
++        "policy": status == "success",
++        "error": "RuntimeError: test" if status == "runtime_error" else None,
++        "prompt": prompt,
++        "evaluation_attempt_id": f"{task}/{attempt}",
++        "evaluation_run_digest": DIGEST,
++    }
++    write_json(directory / f"rollout{episode:02d}_episode.json", row)
++    write_json(directory / "results.json", [row])
++    video = directory / f"rollout{episode:02d}.mp4"
++    video.write_bytes(b"tiny binary fixture, deliberately not a decoded movie\x00" + bytes([episode]))
++    return run, directory, row, video
++
++
++def snapshot(run):
++    return {
++        str(path.relative_to(run)): (path.read_bytes(), path.stat().st_mtime_ns, path.stat().st_ino)
++        for path in run.rglob("*")
++        if path.is_file() and "videos_view" not in path.relative_to(run).parts
++    }
++
++
++def test_environment_generated_names_full_instruction_and_independent_inodes(tmp_path):
++    run, directory, _, original = make_run(tmp_path)
++    first = directory / "rollout00_generated.mp4"
++    first.write_bytes(b"generated first")
++    # Separate Episode avoids an ambiguous first-vs-replan0 logical identity.
++    second, second_dir, _, _ = make_run(tmp_path, episode=1, attempt="attempt_0002", prompt="turn on the faucet")
++    assert second == run
++    (second_dir / "rollout01_generated_replan0000.mp4").write_bytes(b"predicted replan")
++    before = snapshot(run)
++    result = video_view.export_videos(run)
++    assert result["status"] == "OK" and result["exported_count"] == 4
++    assert snapshot(run) == before
++    by_name = {Path(row["output_path"]).name: row for row in result["records"]}
++    assert "rollout00_success_close_the_fridge.mp4" in by_name
++    first_prediction = by_name["rollout00_success_close_the_fridge_generated_replan0000.mp4"]
++    assert first_prediction["prediction_replan"] == 0
++    assert first_prediction["prediction_role"] == "first_prediction"
++    predicted = by_name["rollout01_success_turn_on_the_faucet_generated_replan0000.mp4"]
++    assert predicted["video_kind"] == "generated_prediction" and predicted["prediction_replan"] == 0
++    assert predicted["prediction_role"] == "replan"
++    row = by_name["rollout00_success_close_the_fridge.mp4"]
++    destination = Path(row["output_path"])
++    assert row["instruction"] == "close the fridge" and row["instruction_missing"] is False
++    assert row["original_path"] == str(original)
++    assert row["original_sha256"] == hashlib.sha256(original.read_bytes()).hexdigest()
++    assert destination.stat().st_ino != original.stat().st_ino
++    destination.write_bytes(b"browser edit")
++    assert original.read_bytes() == before[str(original.relative_to(run))][0]
++
++
++@pytest.mark.parametrize(
++    "outcome,error,policy,expected",
++    [
++        ("success", None, True, "success"),
++        ("behavioral_failure", None, False, "fail"),
++        ("runtime_error", "ValueError: infrastructure", False, "error"),
++        ("runtime_error", "KeyboardInterrupt: stopped", False, "incomplete"),
++        ("runtime_error", "SystemExit: 7", False, "error"),
++        (None, None, False, "incomplete"),
++        ("success", "RuntimeError: conflicting", True, "error"),
++    ],
++)
++def test_typed_episode_status_never_turns_runtime_errors_into_behavioral_failures(
++    tmp_path, outcome, error, policy, expected
++):
++    run, directory, row, _ = make_run(tmp_path)
++    row.update(outcome=outcome, error=error, policy=policy)
++    write_json(directory / "rollout00_episode.json", row)
++    write_json(directory / "results.json", [row])
++    result = video_view.export_videos(run)
++    assert result["records"][0]["status"] == expected
++    assert f"_{expected}_" in Path(result["records"][0]["output_path"]).name
++
++
++@pytest.mark.parametrize(
++    "instruction", ["Close the Fridge!", "关闭 冰箱/冷藏室", "../a\\b\n\x00c?*", "", "   ", "very long " * 80]
++)
++def test_slug_safe_unicode_empty_and_long_names_preserve_full_actual_text(tmp_path, instruction):
++    run, _, _, _ = make_run(tmp_path, prompt=instruction)
++    result = video_view.export_videos(run)
++    record = result["records"][0]
++    name = Path(record["output_path"]).name
++    assert record["instruction"] == instruction and record["instruction_missing"] is False
++    assert len(name.encode()) < 255 and ".." not in name and "\\" not in name and "\n" not in name
++    assert Path(record["output_path"]).is_relative_to(run / "videos_view")
++    if instruction.startswith("very long"):
++        assert hashlib.sha256(instruction.encode()).hexdigest()[:10] in name
++    if instruction == "Close the Fridge!":
++        assert name == "rollout00_success_close_the_fridge.mp4"
++
++
++def test_missing_instruction_is_unknown_not_task_name(tmp_path):
++    run, _, _, _ = make_run(tmp_path, prompt=None)
++    result = video_view.export_videos(run)
++    row = result["records"][0]
++    assert row["instruction"] is None and row["instruction_missing"]
++    assert "unknown_instruction" in row["output_path"]
++    index = json.loads(Path(result["index_file"]).read_text())
++    assert any("instruction missing" in warning for warning in index["last_export"]["warnings"])
++
++
++def test_bound_live_instruction_fallback_for_runtime_error(tmp_path):
++    run, directory, _, _ = make_run(tmp_path, prompt=None, status="runtime_error")
++    record = {
++        "schema": "psm_eval_live_progress_v1",
++        "task": directory.parent.name,
++        "episode": 0,
++        "evaluation_run_digest": DIGEST,
++        "evaluation_attempt_id": "CloseFridge/attempt_0001",
++        "instruction": "the actual prompt before runtime failure",
++        "event": "stage",
++    }
++    (directory / "live_progress.jsonl").write_text(json.dumps(record) + "\n")
++    result = video_view.export_videos(run)
++    row = result["records"][0]
++    assert row["status"] == "error" and row["instruction"] == record["instruction"]
++    assert row["instruction_source"] == "live_progress.instruction"
++
++
++@pytest.mark.parametrize(
++    "field,value",
++    [
++        ("task", "OtherTask"),
++        ("episode", True),
++        ("evaluation_run_digest", "b" * 64),
++        ("evaluation_attempt_id", "CloseFridge/attempt_9999"),
++    ],
++)
++def test_foreign_live_instruction_never_used(tmp_path, field, value):
++    run, directory, _, _ = make_run(tmp_path, prompt=None)
++    record = {
++        "schema": "psm_eval_live_progress_v1",
++        "task": "CloseFridge",
++        "episode": 0,
++        "evaluation_run_digest": DIGEST,
++        "evaluation_attempt_id": "CloseFridge/attempt_0001",
++        "instruction": "do not trust",
++    }
++    record[field] = value
++    (directory / "live_progress.jsonl").write_text(json.dumps(record) + "\n")
++    result = video_view.export_videos(run)
++    assert result["records"][0]["instruction_missing"]
++
++
++def test_episode_prompt_precedes_live_observation_and_results_fallback(tmp_path):
++    run, directory, _, _ = make_run(tmp_path)
++    (directory / "rollout00_episode.json").unlink()
++    live = dict(
++        schema="psm_eval_live_progress_v1",
++        task="CloseFridge",
++        episode=0,
++        evaluation_run_digest=DIGEST,
++        evaluation_attempt_id="CloseFridge/attempt_0001",
++        instruction="stale",
++    )
++    (directory / "live_progress.jsonl").write_text(json.dumps(live) + "\n")
++    result = video_view.export_videos(run)
++    assert result["records"][0]["instruction"] == "close the fridge"
++    assert result["records"][0]["instruction_source"] == "results.prompt"
++
++
++def test_conflicting_duplicate_or_foreign_episode_metadata_not_trusted(tmp_path):
++    run, directory, row, _ = make_run(tmp_path)
++    write_json(directory / "results.json", [row, dict(row)])
++    result = video_view.export_videos(run)
++    assert result["records"][0]["status"] == "incomplete"
++    assert result["records"][0]["instruction_missing"]
++    assert any("duplicate episode" in warning for warning in result["warnings"])
++
++
++def test_reexport_idempotent_and_does_not_scan_its_own_copies(tmp_path):
++    run, _, _, _ = make_run(tmp_path)
++    first = video_view.export_videos(run)
++    target = Path(first["records"][0]["output_path"])
++    before = (target.read_bytes(), target.stat().st_ino, target.stat().st_mtime_ns)
++    second = video_view.export_videos(run)
++    assert second["exported_count"] == 0 and second["reused_count"] == 1
++    assert (target.read_bytes(), target.stat().st_ino, target.stat().st_mtime_ns) == before
++    assert len(json.loads(Path(second["index_file"]).read_text())["records"]) == 1
++
++
++def test_external_view_never_scans_canonical_browsing_directory(tmp_path):
++    run, _, _, _ = make_run(tmp_path)
++    old_view = run / "videos_view" / "attempt_0001"
++    old_view.mkdir(parents=True)
++    (old_view / "rollout00.mp4").write_bytes(b"prior browser copy")
++    before = (old_view / "rollout00.mp4").read_bytes()
++    result = video_view.export_videos(run, view_dir=tmp_path / "outside_view")
++    assert result["status"] == "OK" and result["exported_count"] == 1
++    assert {row["task"] for row in result["records"]} == {"CloseFridge"}
++    assert (old_view / "rollout00.mp4").read_bytes() == before
++
++
++@pytest.mark.parametrize("change", ["video", "status", "instruction"])
++def test_changed_source_or_metadata_keeps_old_export_and_adds_revision(tmp_path, change):
++    run, directory, row, original = make_run(tmp_path)
++    first = video_view.export_videos(run)
++    old = Path(first["records"][0]["output_path"])
++    original_copy = old.read_bytes()
++    if change == "video":
++        original.write_bytes(b"new source video")
++    elif change == "status":
++        row.update(outcome="behavioral_failure", policy=False)
++    else:
++        row["prompt"] = "a new actual instruction"
++    if change != "video":
++        write_json(directory / "rollout00_episode.json", row)
++        write_json(directory / "results.json", [row])
++    result = video_view.export_videos(run)
++    assert result["exported_count"] == 1 and result["records"][0]["revision"] == 2
++    assert "__rev_02_" in result["records"][0]["output_path"]
++    assert old.read_bytes() == original_copy
++    assert len(json.loads(Path(result["index_file"]).read_text())["records"]) == 2
++
++
++def test_new_attempt_never_collides_with_previous_attempt_episode(tmp_path):
++    run, _, _, _ = make_run(tmp_path)
++    make_run(tmp_path, attempt="attempt_0002")
++    result = video_view.export_videos(run)
++    assert result["exported_count"] == 2
++    assert len({row["output_path"] for row in result["records"]}) == 2
++    assert {row["attempt"] for row in result["records"]} == {"attempt_0001", "attempt_0002"}
++
++
++def test_unindexed_export_conflict_and_corrupted_index_never_overwritten(tmp_path):
++    run, _, _, _ = make_run(tmp_path)
++    first = video_view.export_videos(run)
++    target = Path(first["records"][0]["output_path"])
++    index = Path(first["index_file"])
++    body = json.loads(index.read_text())
++    body["records"] = []
++    write_json(index, body)
++    before = target.read_bytes()
++    second = video_view.export_videos(run)
++    assert second["status"] == "PARTIAL" and second["conflict_count"] == 1
++    assert target.read_bytes() == before
++    index.write_text("corrupt index, do not replace")
++    result = video_view.export_videos(run)
++    assert result["status"] == "ERROR" and index.read_text() == "corrupt index, do not replace"
++
++
++def test_browser_edit_is_detected_without_touching_original(tmp_path):
++    run, _, _, original = make_run(tmp_path)
++    result = video_view.export_videos(run)
++    copy = Path(result["records"][0]["output_path"])
++    copy.write_bytes(b"browser edit")
++    before = original.read_bytes()
++    repeated = video_view.export_videos(run)
++    assert repeated["status"] == "PARTIAL" and repeated["error_count"] == 1
++    assert original.read_bytes() == before and copy.read_bytes() == b"browser edit"
++
++
++def test_source_hardlink_replacement_of_browser_copy_is_rejected(tmp_path):
++    run, _, _, original = make_run(tmp_path)
++    first = video_view.export_videos(run)
++    copy = Path(first["records"][0]["output_path"])
++    copy.unlink()
++    os.link(original, copy)
++    result = video_view.export_videos(run)
++    assert result["status"] == "PARTIAL" and result["reused_count"] == 0
++
++
++@pytest.mark.parametrize(
++    "location", ["CloseFridge", "FutureTask", "FutureTask/attempt_0001", "videos_view/nested", "."]
++)
++def test_custom_view_inside_run_cannot_pollute_current_or_future_task(tmp_path, location):
++    run, _, _, _ = make_run(tmp_path)
++    target = run / location
++    before = snapshot(run)
++    result = video_view.export_videos(run, view_dir=target)
++    assert result["status"] == "ERROR"
++    assert snapshot(run) == before
++    if location == "FutureTask":
++        assert not target.exists()
++
++
++def test_custom_external_view_and_unknown_namespace_protection(tmp_path):
++    run, _, _, _ = make_run(tmp_path)
++    view = tmp_path / "external-view"
++    result = video_view.export_videos(run, view_dir=view)
++    assert result["status"] == "OK" and Path(result["records"][0]["output_path"]).is_relative_to(view)
++    unknown = tmp_path / "unknown"
++    unknown.mkdir()
++    (unknown / "existing.txt").write_text("keep")
++    rejected = video_view.export_videos(run, view_dir=unknown)
++    assert rejected["status"] == "ERROR" and (unknown / "existing.txt").read_text() == "keep"
++
++
++def test_duplicate_logical_episode_files_and_nested_partial_files_not_exported(tmp_path):
++    run, directory, _, _ = make_run(tmp_path)
++    (directory / "rollout0.mp4").write_bytes(b"duplicate logical episode")
++    (directory / "rollout00_partial.mp4").write_bytes(b"not canonical")
++    nested = directory / "nested"
++    nested.mkdir()
++    (nested / "rollout01.mp4").write_bytes(b"do not recurse")
++    result = video_view.export_videos(run)
++    assert result["status"] == "PARTIAL" and result["exported_count"] == 0 and result["conflict_count"] == 2
++
++
++@pytest.mark.parametrize("target", ["source", "view", "task"])
++def test_symlinks_never_copy_outside_source_or_write_outside_view(tmp_path, target):
++    run, directory, _, original = make_run(tmp_path)
++    outside = tmp_path / "outside"
++    outside.mkdir()
++    (outside / "video.mp4").write_bytes(b"foreign")
++    view = None
++    if target == "source":
++        original.unlink()
++        original.symlink_to(outside / "video.mp4")
++    elif target == "task":
++        (run / "OtherTask").symlink_to(outside, target_is_directory=True)
++    else:
++        (run / "videos_view").symlink_to(outside, target_is_directory=True)
++    result = video_view.export_videos(run, view_dir=view)
++    assert (outside / "video.mp4").read_bytes() == b"foreign"
++    assert len(list(outside.iterdir())) == 1
++    if target != "task":
++        assert result["status"] in {"ERROR", "PARTIAL"}
++
++
++def test_copy_error_persists_warning_but_does_not_mutate_resume_or_results(tmp_path, monkeypatch):
++    run, _, _, _ = make_run(tmp_path)
++    before = snapshot(run)
++
++    def fail(*args):
++        raise OSError("injected disk error")
++
++    monkeypatch.setattr(video_view, "_copy", fail)
++    result = video_view.export_videos(run)
++    assert result["status"] == "PARTIAL" and result["error_count"] == 1
++    assert snapshot(run) == before
++    index = json.loads(Path(result["index_file"]).read_text())
++    assert index["last_export"]["status"] == "PARTIAL"
++    assert any("injected disk error" in warning for warning in index["last_export"]["warnings"])
++
++
++def test_source_replaced_during_copy_never_published(tmp_path, monkeypatch):
++    run, _, _, original = make_run(tmp_path)
++    copier = video_view.shutil.copyfileobj
++
++    def mutate(reader, writer, **kwargs):
++        copier(reader, writer, **kwargs)
++        original.write_bytes(b"source changed concurrently")
++
++    monkeypatch.setattr(video_view.shutil, "copyfileobj", mutate)
++    result = video_view.export_videos(run)
++    assert result["status"] == "PARTIAL" and result["exported_count"] == 0
++    assert not list((run / "videos_view").rglob("*.mp4"))
++
++
++def test_cli_runs_with_stdlib_only_and_returns_index(tmp_path):
++    run, _, _, _ = make_run(tmp_path)
++    completed = subprocess.run(
++        [sys.executable, str(Path(video_view.__file__)), "--run-dir", str(run)],
++        capture_output=True,
++        text=True,
++        timeout=10,
++    )
++    assert completed.returncode == 0
++    result = json.loads(completed.stdout)
++    assert result["exported_count"] == 1 and Path(result["index_file"]).is_file()

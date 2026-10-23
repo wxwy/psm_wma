@@ -1,0 +1,10 @@
+cwd: /workspace/psm_wma
+
+/workspace/.venvs/psm-wma-cpu/bin/python -m ruff format --config cosmos-framework/.ruff.toml scripts/robocasa_eval_config.py tools/v3/robocasa_eval_config_test.py > /tmp/psm-v3-live-progress-20261023/config/ruff-format.log 2>&1
+/workspace/.venvs/psm-wma-cpu/bin/python -m ruff check --config cosmos-framework/.ruff.toml scripts/robocasa_eval_config.py tools/v3/robocasa_eval_config_test.py > /tmp/psm-v3-live-progress-20261023/config/ruff-check.log 2>&1
+/workspace/.venvs/psm-wma-cpu/bin/python -m ruff format --check --config cosmos-framework/.ruff.toml scripts/robocasa_eval_config.py tools/v3/robocasa_eval_config_test.py > /tmp/psm-v3-live-progress-20261023/config/ruff-format-check.log 2>&1
+
+env CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1 XDG_CACHE_HOME=/tmp/psm-v3-live-progress-20261023/cache HF_HOME=/tmp/psm-v3-live-progress-20261023/cache/huggingface MPLCONFIGDIR=/tmp/psm-v3-live-progress-20261023/cache/matplotlib /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -q tools/v3/robocasa_eval_config_test.py --junitxml=/tmp/psm-v3-live-progress-20261023/config/junit.xml > /tmp/psm-v3-live-progress-20261023/config/pytest.log 2>&1
+
+env PYTHONPYCACHEPREFIX=/tmp/psm-v3-live-progress-20261023/config/pycache /workspace/.venvs/psm-wma-cpu/bin/python -m py_compile scripts/robocasa_eval_config.py tools/v3/robocasa_eval_config_test.py
+git diff --check -- scripts/robocasa_eval_config.py tools/v3/robocasa_eval_config_test.py

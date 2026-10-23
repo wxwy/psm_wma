@@ -1,0 +1,4 @@
+cwd=/workspace/psm_wma
+/workspace/.venvs/psm-wma-cpu/bin/ruff check --config cosmos-framework/.ruff.toml scripts/robocasa_eval_video_view.py tools/v3/robocasa_eval_video_view_test.py > /tmp/psm-v3-live-progress-20261023/video_view/ruff.log 2>&1
+/workspace/.venvs/psm-wma-cpu/bin/ruff format --check --config cosmos-framework/.ruff.toml scripts/robocasa_eval_video_view.py tools/v3/robocasa_eval_video_view_test.py > /tmp/psm-v3-live-progress-20261023/video_view/ruff_format.log 2>&1
+CUDA_VISIBLE_DEVICES='' PYTHONPYCACHEPREFIX=/tmp/psm-v3-live-progress-20261023/video_view/pycache /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -q tools/v3/robocasa_eval_video_view_test.py --junitxml=/tmp/psm-v3-live-progress-20261023/video_view/junit.xml > /tmp/psm-v3-live-progress-20261023/video_view/pytest.log 2>&1

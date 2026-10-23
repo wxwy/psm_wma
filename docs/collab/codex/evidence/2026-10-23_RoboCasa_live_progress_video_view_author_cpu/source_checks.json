@@ -1,0 +1,34 @@
+{
+  "baseline_root": "07cd858ee7dd4edabfa1a7b694745c80e4c86bad",
+  "baseline_child": "c9f21040f462a114d597fc83773cb9b6a9e96214",
+  "checks": {
+    "server_argv_unchanged": true,
+    "validate_server_info_unchanged": true,
+    "wait_server_unchanged": true,
+    "task_result_unchanged": true,
+    "task_video_files_unchanged": true,
+    "protocol_AST_unchanged": true,
+    "scripts/robocasa_processes.py_unchanged": true,
+    "scripts/robocasa_eval_results.py_unchanged": true,
+    "scripts/v3_evaluation_identity.py_unchanged": true,
+    "scripts/robocasa_vendor.py_unchanged": true,
+    "third_party/robosuite_patches/vendor.lock.json_unchanged": true,
+    "cosmos_framework/utils/rollout_evidence.py_unchanged": true,
+    "cosmos_framework/simulation/robocasa/local_memory_client.py_unchanged": true,
+    "authoritative_episode_emit_AST_unchanged": true
+  },
+  "source_sha256": {
+    "scripts/eval_robocasa_18task_queue.py": "1800da390f637e519c34cefe9bef7142f7d79251f7482c3483863ca5edc3a7e6",
+    "scripts/robocasa_eval_config.py": "a98d203901febdb3acd2d017d4ce2e83ed84d5b92ee856202f6c84fba18671d8",
+    "scripts/robocasa_eval_progress.py": "9554eadd91a1bf1e77ebd4fbe5c2738bfd218d48092702db1f5a304e5cc6ec93",
+    "scripts/robocasa_eval_video_view.py": "a929e1eb86511cce1b9888bf70206d5baa019ac16d65ff4e4ebfd6b75bdbcd0c",
+    "tools/v3/eval_robocasa_queue_identity_test.py": "16a09535b4ce42d5714042b6dcdac44c5da5fba7fdea4c719f1bfd3bd0ea0633",
+    "tools/v3/robocasa_eval_config_test.py": "ce1d13a9a32a55d44bc2bc658b3bdecb6404348278bb058c8255cdb7fe5cce42",
+    "tools/v3/robocasa_eval_progress_test.py": "a6c437806e568ec7d2686a037b52d3c0f6f98348a7c7178c923f2f91cf0214cd",
+    "tools/v3/robocasa_eval_video_view_test.py": "73176b8e4647dd9af4d597244aa460a91c6e49f35f05c46bf8b819aad773cfa9",
+    "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py": "a9c5cd1045c67ac158706c5d8c7990c0c55e8dd86f9b074c0c63e96876833d40",
+    "cosmos-framework/cosmos_framework/utils/rollout_progress.py": "caa386d47eb6c4c82ae92228b8d652d5143986b5b11b6d00c8c12aa50d131039",
+    "cosmos-framework/cosmos_framework/utils/rollout_progress_test.py": "af017abf2d904bf4cad498f2003f35bdce49fb1f58beabccbf770c60abcf437a"
+  },
+  "limitations": "Static boundary checks plus focused CPU evidence; not whole-repository, GPU, policy-load, simulator or DS acceptance."
+}

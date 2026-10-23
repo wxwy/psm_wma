@@ -1,0 +1,90 @@
+{
+  "status": "AUTHOR_FOCUSED_CPU_PASS",
+  "independent_acceptance": "PENDING_GPT_AND_DS",
+  "root_implementation": "e6a970caba4bdc77f7d9b56a6a8fbcdafe57f1e0",
+  "child": "813a550dab5d6b5b5e3be90d38bb97527956b4dc",
+  "gitlink": "813a550dab5d6b5b5e3be90d38bb97527956b4dc",
+  "vendor": "1ac174585293ed998ffc9cf73e47439798cf6f6c",
+  "baseline_root": "07cd858ee7dd4edabfa1a7b694745c80e4c86bad",
+  "baseline_child": "c9f21040f462a114d597fc83773cb9b6a9e96214",
+  "top_level_tests": 256,
+  "subtests": 16,
+  "errors": 0,
+  "failures": 0,
+  "skipped": 0,
+  "groups": [
+    {
+      "group": "config",
+      "top_level_tests": 92,
+      "subtests": 0,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "junit": "config/junit.xml"
+    },
+    {
+      "group": "progress",
+      "top_level_tests": 31,
+      "subtests": 0,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "junit": "progress/module.xml"
+    },
+    {
+      "group": "video_view",
+      "top_level_tests": 44,
+      "subtests": 0,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "junit": "video_view/junit.xml"
+    },
+    {
+      "group": "child",
+      "top_level_tests": 76,
+      "subtests": 0,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "junit": "child/pytest.xml"
+    },
+    {
+      "group": "queue_new",
+      "top_level_tests": 5,
+      "subtests": 0,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "junit": "queue/new-integration.xml"
+    },
+    {
+      "group": "queue_existing",
+      "top_level_tests": 7,
+      "subtests": 16,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "junit": "queue/existing-regressions.xml"
+    },
+    {
+      "group": "queue_notification",
+      "top_level_tests": 1,
+      "subtests": 0,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "junit": "queue/notification.xml"
+    }
+  ],
+  "ruff": "0.12.7 check + format --check PASS for 11 Python files",
+  "syntax": "py_compile PASS",
+  "static_contract_checks": 14,
+  "limits": [
+    "Not whole-repository CPU Gate",
+    "No GPU/model/server/Kitchen/simulator/real DCP or training execution",
+    "Current evaluation and G1 worktrees untouched",
+    "No new-source cross-version evaluation Resume authorization",
+    "Separate action-snapshot task not implemented"
+  ]
+}

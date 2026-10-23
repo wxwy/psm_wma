@@ -1,0 +1,176 @@
+[
+  {
+    "group": "queue_new",
+    "cwd": "/workspace/psm_wma",
+    "env": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "XDG_CACHE_HOME": "/tmp/psm-v3-live-progress-20261023/cache",
+      "HF_HOME": "/tmp/psm-v3-live-progress-20261023/cache/huggingface",
+      "MPLCONFIGDIR": "/tmp/psm-v3-live-progress-20261023/cache/matplotlib",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    },
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "tools/v3/eval_robocasa_queue_identity_test.py",
+      "-k",
+      "live_progress_reports or terminal_progress_can or progress_options_can or observer_failure_cannot or browsing_export_failure",
+      "--junitxml=/tmp/psm-v3-live-progress-20261023/queue/new-integration.xml"
+    ],
+    "stdout": "/tmp/psm-v3-live-progress-20261023/queue/new-integration.log",
+    "exit_code": 0
+  },
+  {
+    "group": "queue_existing",
+    "cwd": "/workspace/psm_wma",
+    "env": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "XDG_CACHE_HOME": "/tmp/psm-v3-live-progress-20261023/cache",
+      "HF_HOME": "/tmp/psm-v3-live-progress-20261023/cache/huggingface",
+      "MPLCONFIGDIR": "/tmp/psm-v3-live-progress-20261023/cache/matplotlib",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    },
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "tools/v3/eval_robocasa_queue_identity_test.py",
+      "-k",
+      "four_tasks_five_episodes_complete or owner_cancel_stops or kill_timeout_reset_media or same_identity_resume_skips or partial_task_resume_keeps or list_tasks_and_dry_run or generated_video_summary_keeps",
+      "--junitxml=/tmp/psm-v3-live-progress-20261023/queue/existing-regressions.xml"
+    ],
+    "stdout": "/tmp/psm-v3-live-progress-20261023/queue/existing-regressions.log",
+    "exit_code": 0
+  },
+  {
+    "group": "queue_notification",
+    "cwd": "/workspace/psm_wma",
+    "env": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "XDG_CACHE_HOME": "/tmp/psm-v3-live-progress-20261023/cache",
+      "HF_HOME": "/tmp/psm-v3-live-progress-20261023/cache/huggingface",
+      "MPLCONFIGDIR": "/tmp/psm-v3-live-progress-20261023/cache/matplotlib",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    },
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "tools/v3/eval_robocasa_queue_identity_test.py",
+      "-k",
+      "browsing_notification_failure",
+      "--junitxml=/tmp/psm-v3-live-progress-20261023/queue/notification.xml"
+    ],
+    "stdout": "/tmp/psm-v3-live-progress-20261023/queue/notification.log",
+    "exit_code": 0
+  },
+  {
+    "group": "child",
+    "cwd": "/workspace/psm_wma/cosmos-framework",
+    "env": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "XDG_CACHE_HOME": "/tmp/psm-v3-live-progress-20261023/cache/xdg",
+      "HF_HOME": "/tmp/psm-v3-live-progress-20261023/cache/huggingface",
+      "MPLCONFIGDIR": "/tmp/psm-v3-live-progress-20261023/cache/matplotlib",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1",
+      "PYTHONPATH": ".",
+      "PYTHONPYCACHEPREFIX": "/tmp/psm-v3-live-progress-20261023/pycache"
+    },
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "-s",
+      "cosmos_framework/utils/rollout_progress_test.py",
+      "cosmos_framework/simulation/robocasa/closed_loop_eval_manual_test.py",
+      "cosmos_framework/simulation/robocasa/closed_loop_eval_lifecycle_test.py",
+      "cosmos_framework/simulation/robocasa/closed_loop_eval_contract_test.py",
+      "cosmos_framework/simulation/robocasa/closed_loop_eval_phase6_test.py",
+      "cosmos_framework/simulation/robocasa/local_memory_client_test.py",
+      "cosmos_framework/simulation/robocasa/eval_utils_test.py",
+      "--junitxml=/tmp/psm-v3-live-progress-20261023/child/pytest.xml"
+    ],
+    "stdout": "/tmp/psm-v3-live-progress-20261023/child/pytest.log",
+    "exit_code": 0
+  },
+  {
+    "group": "progress",
+    "cwd": "/workspace/psm_wma",
+    "env": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "PYTHONDONTWRITEBYTECODE": "1"
+    },
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "-s",
+      "tools/v3/robocasa_eval_progress_test.py",
+      "--junitxml=/tmp/psm-v3-live-progress-20261023/progress/module.xml"
+    ],
+    "stdout": "/tmp/psm-v3-live-progress-20261023/progress/module.log",
+    "exit_code": 0
+  },
+  {
+    "group": "config_and_video",
+    "commands_files": [
+      "config/commands.txt",
+      "video_view/commands.txt"
+    ]
+  },
+  {
+    "group": "static",
+    "cwd": "/workspace/psm_wma",
+    "argv": [
+      "bash",
+      "/tmp/psm-v3-live-progress-20261023/check_sources.sh"
+    ],
+    "exit_code": 0
+  }
+]

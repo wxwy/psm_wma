@@ -1,0 +1,30 @@
+# Live terminal progress and video browsing: internal source inspection
+
+Date: 2026-10-23. Candidate based on Root `07cd858ee7dd4edabfa1a7b694745c80e4c86bad`; final Root implementation SHA is pending parent submission. Child HEAD was independently read back as `813a550dab5d6b5b5e3be90d38bb97527956b4dc`. This is internal author-team inspection, not GPT or DS Gate acceptance.
+
+## Scope and method
+
+Read the actual Queue production diff, Child `closed_loop_eval.py` diff, `rollout_progress.py`, terminal observer, config changes, video exporter and focused test sources. No production changes or project executions were made for this inspection. The separate configuration implementation test run is recorded in `pytest.log` / `junit.xml` (92 passed); no other suite count is claimed as independently rerun by this reviewer.
+
+## Concrete issues found and verified fixed
+
+1. Export-notification printing could raise after `execute()` had determined its return code, then raise again from the failure notification. **CLOSED by final source readback:** Queue line520 now catches `Exception`, matching the outer optional-observer boundary and isolating a closed stdout's `ValueError` as well as OSError. A real-Queue `export_notification_failure` fixture injects ValueError only for post-export notification printing; the focused test requires the completed run to retain RC0/COMPLETE and no business error. This reviewer inspected the fixture/test source and did not rerun it.
+2. A custom `--view-dir` could originally target a selected task with no attempt directory yet, polluting the future task root and blocking Resume. Exporter now rejects all noncanonical destinations inside the run before creating directories; custom external views remain supported. A focused current/future-task negative is present.
+3. The Child emits the latest prediction's live observation before its mandatory prediction JSONL callback. Root observer originally overwrote that newer latency with an older audit row's latency, while showing the newer prediction count. `_audit()` now adopts audit latency only when its prediction frontier catches up with the displayed frontier. A focused legal ordering case covers newer live + lagging audit, then audit catch-up and later audit advance.
+
+## Final reviewed behavior
+
+- Reporting parameters follow CLI > YAML > defaults, with default enabled/5s, strict booleans and finite positive intervals. They are visible in resolved config and absent from immutable protocol identity. Source SHAs still change with the implementation itself; progress options may change only within a fixed-source same-identity Resume as tested by the parent Queue cases.
+- `--no-progress` disables the terminal observer; the Child retains independent lightweight live metadata so interrupted episodes can preserve their actual instruction. This is intentional, not an implicit change to authoritative progress evidence.
+- Queue worker calls only enqueue observer state. File reads and terminal writes occur in one optional daemon, with bounded close. Reader/sink exceptions disable or skip observations; they do not select tasks, alter deadlines, modify SR or update acceptance/Resume records.
+- Child progress counters/stages are separate from actions, raw15 decoding, Local payload/acknowledgement/completed-action updates and Local cleanup. Callback failures are swallowed. Existing authoritative `start`/`end` calls remain in their original lifecycle positions and retain exact2N semantics; live observations use a separate schema/file.
+- Existing primary exception paths are preserved through `observe_errors()` and progress callback guards. No new optimizer, Local-TTT algorithm, inference ABI, task timeout or scheduling decision is introduced.
+- Root observer binds Run/Task/Attempt/episode, resets counters on task and episode changes, drains pending events before final task reports, uses actual JSONL counts/latency with unknowns shown as `?`, and gives Root validation/cleanup stages precedence over late Child stages.
+- Video browsing happens after `execute()` and owned-task cleanup, outside task acceptance/deadline logic. It reads original metadata/video bytes and writes an independent temporary-copy inode before publishing browsing files. It never hardlinks original evidence into the editable view. Replaced browsing files and hardlink substitutions are detected; differing metadata/source produces a new revision rather than overwriting old exports.
+- Naming distinguishes per-episode `success`, behavioral `fail`, runtime `error`, and interrupted/missing/inconsistent `incomplete`. A raw KeyboardInterrupt is classified incomplete for browsing. Generated prediction videos have a distinct suffix and replan identity.
+- Full actual prompt is preserved in the index; only the filename uses a bounded safe slug. Missing instruction is labeled unknown. Episode/results prompt has priority; fallback live instruction must bind the actual Run, Task/Attempt and episode. No task-name or generic dataset-description instruction is invented.
+- The exporter checks in-run output separation before mkdir, owns a marked view namespace, preserves original files, retains old indexed exports, and reports per-file errors/conflicts without changing authoritative summary or the Queue return code.
+
+## Assessment
+
+No additional confirmed blocking issue found after the listed fixes. The final secondary-print exception item is now closed by actual source inspection. Latest exporter source also uses `_generated_replan0000` for the first generated prediction and excludes its canonical browsing tree from source-task scanning. This conclusion is limited to the inspected source and test design. Config92 was executed by this reviewer; progress31/video44/Child76 and Queue results were reported by the parent/implementation agents, not independently rerun here. Final focused CPU results, exact committed Root/Child readback, GPT review and DS independent acceptance remain the parent's delivery responsibilities. No GPU, Action Server, Kitchen, training or real checkpoint execution is authorized by this note.
