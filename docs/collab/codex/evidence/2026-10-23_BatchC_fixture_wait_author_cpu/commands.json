@@ -1,0 +1,12 @@
+{
+  "cwd": "/workspace/psm_wma",
+  "implementation_root": "ee53cbe1c25ff174f0d92a92e51e901ec6436c18",
+  "child_gitlink": "c9f21040f462a114d597fc83773cb9b6a9e96214",
+  "delta_cpu": "CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1 HF_HOME=/tmp/psm-v3-batch-c-fixture-wait-20261023/cache/huggingface MPLCONFIGDIR=/tmp/psm-v3-batch-c-fixture-wait-20261023/cache/matplotlib XDG_CACHE_HOME=/tmp/psm-v3-batch-c-fixture-wait-20261023/cache OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -q -s tools/v3/eval_robocasa_queue_identity_test.py -k 'worker_mkdir_failure or worker_log_open_failure or server_launch_error_after_other_tasks or slow_healthy_worker or completion_wait_timeout' --junitxml=/tmp/psm-v3-batch-c-fixture-wait-20261023/verified.xml > /tmp/psm-v3-batch-c-fixture-wait-20261023/verified.log 2>&1",
+  "static": {
+    "ruff_check": "/workspace/.venvs/psm-wma-cpu/bin/ruff check --config cosmos-framework/.ruff.toml tools/v3/eval_robocasa_queue_identity_test.py",
+    "ruff_format": "/workspace/.venvs/psm-wma-cpu/bin/ruff format --config cosmos-framework/.ruff.toml --check tools/v3/eval_robocasa_queue_identity_test.py",
+    "syntax": "ast.parse(actual final test source); see source_checks.json",
+    "source_scope": "git diff-tree --no-commit-id --name-only -r ee53cbe1c25ff174f0d92a92e51e901ec6436c18"
+  }
+}

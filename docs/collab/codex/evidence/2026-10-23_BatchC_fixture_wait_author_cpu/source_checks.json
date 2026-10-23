@@ -1,0 +1,13 @@
+{
+  "implementation_root": "ee53cbe1c25ff174f0d92a92e51e901ec6436c18",
+  "baseline_root": "4a1ab5faf54adfff8be460f850f132c86a3a46d7",
+  "baseline_test_blob": "b38b238a6f15f7f70df039ecade54490165b77b9",
+  "new_test_blob": "a29513aa10ccfac01a3dab2283f1d3afbc910cf7",
+  "test_sha256": "1cbe51e37b0174f4303a0685b6a7a142183787d96ad262b0c4c080105a8236b3",
+  "syntax": "PASS",
+  "ruff": "0.12.7 with cosmos-framework/.ruff.toml",
+  "production_paths_diff": [],
+  "child_gitlink": "c9f21040f462a114d597fc83773cb9b6a9e96214",
+  "child_worktree_status": "",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]"
+}

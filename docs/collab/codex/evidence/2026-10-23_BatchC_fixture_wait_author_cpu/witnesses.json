@@ -1,0 +1,262 @@
+[
+  {
+    "case": "completion_never_finished",
+    "completion_waits": [
+      {
+        "deadline": 438911.944185417,
+        "finished_at": 438911.944258692,
+        "started_at": 438911.794185417,
+        "status": "TIMED_OUT",
+        "target_trials": 20
+      }
+    ],
+    "injected_exceptions": [],
+    "init_faults": [],
+    "healthy_delay": null,
+    "error": "FixtureCompletionTimeout: fixture prerequisite timed out before 20 healthy trials; fault not injected",
+    "thread_names": [],
+    "server_exits": [],
+    "no_fixture_worker_threads": true,
+    "all_recorded_servers_exited": true,
+    "summary_exists": false
+  },
+  {
+    "case": "late_launch_failure",
+    "completion_waits": [
+      {
+        "completed_at": 438920.012718609,
+        "deadline": 439032.554187843,
+        "observed_status": "INCOMPLETE",
+        "observed_tasks": [
+          "CloseFridge",
+          "PickPlaceSinkToCounter",
+          "TurnOnSinkFaucet"
+        ],
+        "observed_trials": 15,
+        "started_at": 438912.554187843,
+        "status": "COMPLETED",
+        "target_trials": 15
+      }
+    ],
+    "injected_exceptions": [
+      {
+        "injected_at": 438920.012730626,
+        "message": "injected second worker launch failure after all tasks",
+        "type": "OSError",
+        "wait_index": 0
+      }
+    ],
+    "init_faults": [],
+    "healthy_delay": {},
+    "error": null,
+    "thread_names": [],
+    "server_exits": [
+      -15,
+      -15,
+      -15
+    ],
+    "no_fixture_worker_threads": true,
+    "all_recorded_servers_exited": true,
+    "actual_queue": {
+      "status": "INCOMPLETE",
+      "total_trials": 15,
+      "sr": null,
+      "worker_errors": {
+        "_worker_1_NavigateKitchen": {
+          "cleanup": {},
+          "error": "OSError: injected second worker launch failure after all tasks",
+          "gpu": "1",
+          "server_log": "/tmp/tmppix9mcbf/evaluation/_worker01_gpu1/action_server.log",
+          "stage": "server_start",
+          "task": "NavigateKitchen",
+          "worker": 1
+        }
+      }
+    },
+    "server_commands": 4,
+    "sim_calls": 3,
+    "completion_precedes_actual_oserror": true,
+    "wait_elapsed_s": 7.458530766016338
+  },
+  {
+    "case": "slow_mkdir_failure",
+    "completion_waits": [
+      {
+        "completed_at": 438943.490569043,
+        "deadline": 439040.673614583,
+        "observed_status": "COMPLETE",
+        "observed_tasks": [
+          "CloseFridge",
+          "NavigateKitchen",
+          "PickPlaceSinkToCounter",
+          "TurnOnSinkFaucet"
+        ],
+        "observed_trials": 20,
+        "started_at": 438920.673614583,
+        "status": "COMPLETED",
+        "target_trials": 20
+      }
+    ],
+    "injected_exceptions": [
+      {
+        "injected_at": 438943.490580934,
+        "message": "injected worker1 mkdir failure after all tasks",
+        "type": "OSError",
+        "wait_index": 0
+      }
+    ],
+    "init_faults": [
+      "mkdir"
+    ],
+    "healthy_delay": {
+      "finished_at": 438933.920632143,
+      "started_at": 438920.920539449
+    },
+    "error": null,
+    "thread_names": [],
+    "server_exits": [
+      -15,
+      -15,
+      -15,
+      -15
+    ],
+    "no_fixture_worker_threads": true,
+    "all_recorded_servers_exited": true,
+    "actual_queue": {
+      "status": "INCOMPLETE",
+      "total_trials": 20,
+      "sr": null,
+      "worker_errors": {
+        "_worker_1": {
+          "error": "OSError: injected worker1 mkdir failure after all tasks",
+          "gpu": "1",
+          "server_log": "/tmp/tmpjgvogewo/evaluation/_worker01_gpu1/action_server.log",
+          "worker": 1
+        }
+      }
+    },
+    "server_commands": 4,
+    "sim_calls": 4,
+    "completion_precedes_actual_oserror": true,
+    "wait_elapsed_s": 22.81695445999503,
+    "healthy_delay_elapsed_s": 13.000092693953775
+  },
+  {
+    "case": "log_open_failure",
+    "completion_waits": [
+      {
+        "completed_at": 438954.488184784,
+        "deadline": 439064.097250088,
+        "observed_status": "COMPLETE",
+        "observed_tasks": [
+          "CloseFridge",
+          "NavigateKitchen",
+          "PickPlaceSinkToCounter",
+          "TurnOnSinkFaucet"
+        ],
+        "observed_trials": 20,
+        "started_at": 438944.097250088,
+        "status": "COMPLETED",
+        "target_trials": 20
+      }
+    ],
+    "injected_exceptions": [
+      {
+        "injected_at": 438954.488195892,
+        "message": "injected worker1 log_open failure after all tasks",
+        "type": "OSError",
+        "wait_index": 0
+      }
+    ],
+    "init_faults": [
+      "log_open"
+    ],
+    "healthy_delay": {},
+    "error": null,
+    "thread_names": [],
+    "server_exits": [
+      -15,
+      -15,
+      -15,
+      -15
+    ],
+    "no_fixture_worker_threads": true,
+    "all_recorded_servers_exited": true,
+    "actual_queue": {
+      "status": "INCOMPLETE",
+      "total_trials": 20,
+      "sr": null,
+      "worker_errors": {
+        "_worker_1": {
+          "error": "OSError: injected worker1 log_open failure after all tasks",
+          "gpu": "1",
+          "server_log": "/tmp/tmpbfydr91b/evaluation/_worker01_gpu1/action_server.log",
+          "worker": 1
+        }
+      }
+    },
+    "server_commands": 4,
+    "sim_calls": 4,
+    "completion_precedes_actual_oserror": true,
+    "wait_elapsed_s": 10.390934696013574
+  },
+  {
+    "case": "mkdir_failure",
+    "completion_waits": [
+      {
+        "completed_at": 438965.405972026,
+        "deadline": 439075.088756691,
+        "observed_status": "COMPLETE",
+        "observed_tasks": [
+          "CloseFridge",
+          "NavigateKitchen",
+          "PickPlaceSinkToCounter",
+          "TurnOnSinkFaucet"
+        ],
+        "observed_trials": 20,
+        "started_at": 438955.088756691,
+        "status": "COMPLETED",
+        "target_trials": 20
+      }
+    ],
+    "injected_exceptions": [
+      {
+        "injected_at": 438965.405982952,
+        "message": "injected worker1 mkdir failure after all tasks",
+        "type": "OSError",
+        "wait_index": 0
+      }
+    ],
+    "init_faults": [
+      "mkdir"
+    ],
+    "healthy_delay": {},
+    "error": null,
+    "thread_names": [],
+    "server_exits": [
+      -15,
+      -15,
+      -15,
+      -15
+    ],
+    "no_fixture_worker_threads": true,
+    "all_recorded_servers_exited": true,
+    "actual_queue": {
+      "status": "INCOMPLETE",
+      "total_trials": 20,
+      "sr": null,
+      "worker_errors": {
+        "_worker_1": {
+          "error": "OSError: injected worker1 mkdir failure after all tasks",
+          "gpu": "1",
+          "server_log": "/tmp/tmpvtnvk65u/evaluation/_worker01_gpu1/action_server.log",
+          "worker": 1
+        }
+      }
+    },
+    "server_commands": 4,
+    "sim_calls": 4,
+    "completion_precedes_actual_oserror": true,
+    "wait_elapsed_s": 10.317215334973298
+  }
+]
