@@ -52,6 +52,8 @@
 
 完整最终日志/JUnit、实际命令、旧新 Blob/源 SHA256、test-only patch 和精简时序 witness：[Evidence](../evidence/2026-10-23_BatchC_fixture_wait_author_cpu/)。`source_checks.json` 对新提交的测试字节进行绑定；`gate.json` 明确仅 AUTHOR_DELTA_PASS。
 
+归档 `test_only.patch` 使用零上下文格式，已用 `git apply --check --reverse --unidiff-zero` 核验与当前测试字节匹配；这是审核产物，不要求 DS 应用补丁。原始带上下文版本保留在历史文档提交 `56dc42f5`，本次只调整补丁展示及其校验和，不改变测试实现或运行结果。
+
 ## 4. 请求的复核和 DS 最小复验
 
 请 GPT 只审核新 Root/原 Child 的上述 fixture diff 和证据，不重新审核不变的生产 C01/C02。通过后 DS 在新 clean detached worktree 自行拉取精确新 Root/Child，只运行上述5项与该测试文件 Ruff/格式/语法，不重新安装 Vendor或重复旧通过套件。
