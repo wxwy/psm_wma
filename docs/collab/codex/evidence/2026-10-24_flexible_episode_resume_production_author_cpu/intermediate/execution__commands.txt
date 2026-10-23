@@ -1,0 +1,19 @@
+Working directory: /workspace/psm_wma
+
+# CPU-only tiny HTTP and simulator subprocess fixtures. No real model, RoboCasa, GPU, or DCP.
+env CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1 XDG_CACHE_HOME=/tmp/psm-v3-episode-resume-production-20261024/cache HF_HOME=/tmp/psm-v3-episode-resume-production-20261024/cache/huggingface MPLCONFIGDIR=/tmp/psm-v3-episode-resume-production-20261024/cache/matplotlib /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -q tools/v3/robocasa_resume_execution_test.py --junitxml=/tmp/psm-v3-episode-resume-production-20261024/execution/junit.xml > /tmp/psm-v3-episode-resume-production-20261024/execution/pytest.log 2>&1
+# Result: 18 passed in 2.60s, 0 failed/skipped.
+
+RUFF_CACHE_DIR=/tmp/psm-v3-episode-resume-production-20261024/cache/ruff /workspace/.venvs/psm-wma-cpu/bin/ruff format --config cosmos-framework/.ruff.toml scripts/robocasa_resume_execution.py tools/v3/robocasa_resume_execution_test.py
+RUFF_CACHE_DIR=/tmp/psm-v3-episode-resume-production-20261024/cache/ruff /workspace/.venvs/psm-wma-cpu/bin/ruff check --config cosmos-framework/.ruff.toml scripts/robocasa_resume_execution.py tools/v3/robocasa_resume_execution_test.py
+RUFF_CACHE_DIR=/tmp/psm-v3-episode-resume-production-20261024/cache/ruff /workspace/.venvs/psm-wma-cpu/bin/ruff format --check --config cosmos-framework/.ruff.toml scripts/robocasa_resume_execution.py tools/v3/robocasa_resume_execution_test.py
+env PYTHONPYCACHEPREFIX=/tmp/psm-v3-episode-resume-production-20261024/cache/pycache /workspace/.venvs/psm-wma-cpu/bin/python -m py_compile scripts/robocasa_resume_execution.py tools/v3/robocasa_resume_execution_test.py
+git diff --check
+
+# Initial Ruff only: I001 test import sorting; fixed with Ruff --select I, then final check PASS.
+
+# Narrow r2 after internal review: handler lock reentry and canonical containment.
+# The same full pytest command above was repeated only after these production/test changes.
+# Final result: 21 passed in 3.28s, 0 failed/skipped.
+# Preserve previous run as pytest-r1.log / junit-r1.xml (18 passed).
+# Final Ruff check/format-check and py_compile re-run with the same external-cache commands above: PASS.

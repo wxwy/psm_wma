@@ -1,0 +1,2837 @@
+[
+  {
+    "case": "export_failure",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "export_notification_failure",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "cleanup_failure",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 1,
+    "sim_calls": 1,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 5,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmppf70r1rl/evaluation/_invocations/1792774286928105992_111188_14a67ab6/sources/CloseFridge/batch_514685fffbc64e04aba487ada70815d1/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 111256,
+            "pid": 111256,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "error": "injected cleanup error after real group reap",
+            "live_group": false,
+            "pgid": 111258,
+            "pid": 111258,
+            "remaining_pids": [],
+            "returncode": 0,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.5,
+        "error": "cleanup simulator: OSError: injected cleanup error after real group reap",
+        "gpu": "0",
+        "returncode": 0,
+        "secondary_errors": [
+          "cleanup simulator: OSError: injected cleanup error after real group reap"
+        ],
+        "server_log": "/tmp/tmppf70r1rl/evaluation/_invocations/1792774286928105992_111188_14a67ab6/_worker00_gpu0/action_server.log",
+        "source_digest": "26090659e8337be117c40c41677026e7e478319be3342a9f80cbc5e01c890e39",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmppf70r1rl/evaluation/_invocations/1792774286928105992_111188_14a67ab6/sources/NavigateKitchen/batch_d10cba305c6643a98962a4ee0ca24228/NavigateKitchen/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "NavigateKitchen"
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmppf70r1rl/evaluation/_invocations/1792774286928105992_111188_14a67ab6/sources/PickPlaceSinkToCounter/batch_d7edf903f4ef422da24efc401f5ee893/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmppf70r1rl/evaluation/_invocations/1792774286928105992_111188_14a67ab6/sources/TurnOnSinkFaucet/batch_6421c0c956864740a0fe1e81c68fe0ac/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "primary_and_cleanup",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 1,
+    "sim_calls": 1,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpzehq69jf/evaluation/_invocations/1792774289901282059_111304_f673914d/sources/CloseFridge/batch_dcece5b80c3143bc8d29aac9f1d15bc9/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 111372,
+            "pid": 111372,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "error": "injected cleanup error after real group reap",
+            "live_group": false,
+            "pgid": 111374,
+            "pid": 111374,
+            "remaining_pids": [],
+            "returncode": 7,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.333,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code 7",
+        "gpu": "0",
+        "returncode": 7,
+        "secondary_errors": [
+          "cleanup simulator: OSError: injected cleanup error after real group reap"
+        ],
+        "server_log": "/tmp/tmpzehq69jf/evaluation/_invocations/1792774289901282059_111304_f673914d/_worker00_gpu0/action_server.log",
+        "source_digest": "6f26183eef18b32f2dcc1329a9b299f7a236ab6da40eccf2f11d13bd6d263733",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmpzehq69jf/evaluation/_invocations/1792774289901282059_111304_f673914d/sources/NavigateKitchen/batch_4a99a6cd29e74d82a1fc9d377ece991a/NavigateKitchen/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "NavigateKitchen"
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmpzehq69jf/evaluation/_invocations/1792774289901282059_111304_f673914d/sources/PickPlaceSinkToCounter/batch_2dd276b365aa4af9a3539486ac044c67/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmpzehq69jf/evaluation/_invocations/1792774289901282059_111304_f673914d/sources/TurnOnSinkFaucet/batch_d56774b42ac7408b955986df09900f93/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "completion_never_finished",
+    "rc": null,
+    "first_rc": null,
+    "server_commands": null,
+    "sim_calls": null,
+    "error": "FixtureCompletionTimeout: fixture prerequisite timed out before 20 healthy trials; fault not injected",
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": null,
+    "foreign_alive_before_fixture_cleanup": null,
+    "thread_names": [],
+    "completion_waits": [
+      {
+        "deadline": 16642.791228194,
+        "finished_at": 16642.791301863,
+        "started_at": 16642.641228194,
+        "status": "TIMED_OUT",
+        "target_trials": 20
+      }
+    ],
+    "injected_exceptions": [],
+    "status": null,
+    "completed": null,
+    "reused": null,
+    "worker_errors": null,
+    "actual_conditions": null
+  },
+  {
+    "case": "changed_config",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 1,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": false,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp21v9gi4f/evaluation/_invocations/1792774291455290108_111376_1fbdd908/sources/CloseFridge/batch_ec126fbd5c284226a2483f3c7805cd85/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 111444,
+            "pid": 111444,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.322,
+        "error": "ValueError: action server config file changed during post_model_load",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp21v9gi4f/evaluation/_invocations/1792774291455290108_111376_1fbdd908/_worker00_gpu0/action_server.log",
+        "source_digest": "7fe5cdbf78cc77516e331ec05f3409fed6feccf7ff6dd6a2ca5315589f5e509b",
+        "stage": "server_start",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmp21v9gi4f/evaluation/_invocations/1792774291455290108_111376_1fbdd908/sources/NavigateKitchen/batch_03cb94798b924d5486194ee430876560/NavigateKitchen/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "NavigateKitchen"
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmp21v9gi4f/evaluation/_invocations/1792774291455290108_111376_1fbdd908/sources/PickPlaceSinkToCounter/batch_af94dff358a24c13b794f21431634d28/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmp21v9gi4f/evaluation/_invocations/1792774291455290108_111376_1fbdd908/sources/TurnOnSinkFaucet/batch_6e08dd6a3c1b48c88573b7e8a2c180d6/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "runtime_failure",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 0,
+    "sim_calls": 0,
+    "error": "ValueError: injected dirty vendor runtime rejection",
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": null,
+    "completed": null,
+    "reused": null,
+    "worker_errors": null,
+    "actual_conditions": null
+  },
+  {
+    "case": "partial_video_first",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 1,
+    "sim_calls": 1,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpt8ih_vno/evaluation/_invocations/1792774293040942087_111506_5e988f8b/sources/CloseFridge/batch_b8acd59319af4aea849c08ddd427bcbb/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 111574,
+            "pid": 111574,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 111576,
+            "pid": 111576,
+            "remaining_pids": [],
+            "returncode": 7,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.428,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code 7",
+        "gpu": "0",
+        "returncode": 7,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpt8ih_vno/evaluation/_invocations/1792774293040942087_111506_5e988f8b/_worker00_gpu0/action_server.log",
+        "source_digest": "d0fcfc274fab3a2ff2290cd7c9a9f1e5394e3a5a42468dfe675d7e82624bb0b4",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmpt8ih_vno/evaluation/_invocations/1792774293040942087_111506_5e988f8b/sources/NavigateKitchen/batch_d88ee99f989b43d88d3e910c6aaed4ba/NavigateKitchen/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "NavigateKitchen"
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmpt8ih_vno/evaluation/_invocations/1792774293040942087_111506_5e988f8b/sources/PickPlaceSinkToCounter/batch_71c1bd1ea00f4e56a342527cc7a1b46e/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmpt8ih_vno/evaluation/_invocations/1792774293040942087_111506_5e988f8b/sources/TurnOnSinkFaucet/batch_b73122f573f04041a023a236f6f6c202/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "foreign_race",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 1,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp3g4l9kmn/evaluation/_invocations/1792774294155298804_111577_a1e6613b/sources/CloseFridge/batch_844ac05e994a4281a9f2d1f09717e57c/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 111647,
+            "pid": 111647,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.275,
+        "error": "RuntimeError: action server pid 111647 does not own port 50965",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp3g4l9kmn/evaluation/_invocations/1792774294155298804_111577_a1e6613b/_worker00_gpu0/action_server.log",
+        "source_digest": "a2dac7f32fa9fcb755c81b7f4b31dee5a0f35de4f864cb3c14069b9f010ca6e0",
+        "stage": "server_start",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmp3g4l9kmn/evaluation/_invocations/1792774294155298804_111577_a1e6613b/sources/NavigateKitchen/batch_02b057058914485f99a040a71a4612b3/NavigateKitchen/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "NavigateKitchen"
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmp3g4l9kmn/evaluation/_invocations/1792774294155298804_111577_a1e6613b/sources/PickPlaceSinkToCounter/batch_cd9414585ae743eba455a1e4b7eb3829/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmp3g4l9kmn/evaluation/_invocations/1792774294155298804_111577_a1e6613b/sources/TurnOnSinkFaucet/batch_dbe3096d3bc94819ae45a156f2f7456b/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "normal",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "normal",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "normal",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "generated_first",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "generated_all",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "task_timeout",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpy8qzussf/evaluation/_invocations/1792774421659805762_116826_d3900a5e/sources/CloseFridge/batch_3591ec50781641639b64cd0cfad03056/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 116894,
+            "pid": 116894,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 116896,
+            "pid": 116896,
+            "remaining_pids": [],
+            "returncode": -9,
+            "signals": [
+              "SIGTERM",
+              "SIGKILL"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 5.275,
+        "error": "EvaluationInterrupted: task wall timeout",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpy8qzussf/evaluation/_invocations/1792774421659805762_116826_d3900a5e/_worker00_gpu0/action_server.log",
+        "source_digest": "fdd45a4273dbc9fa8d2e73a2f4fa3758670a94915bc12b60a445287299c38d67",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "episode_timeout",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpd787qai3/evaluation/_invocations/1792774447260309506_117614_a5ce4a24/sources/CloseFridge/batch_63ec968cc5e840e394f54193028bfcc5/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 117682,
+            "pid": 117682,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 117684,
+            "pid": 117684,
+            "remaining_pids": [],
+            "returncode": -9,
+            "signals": [
+              "SIGTERM",
+              "SIGKILL"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.702,
+        "error": "EvaluationInterrupted: episode wall timeout (next=0, active=0)",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpd787qai3/evaluation/_invocations/1792774447260309506_117614_a5ce4a24/_worker00_gpu0/action_server.log",
+        "source_digest": "b64c0850db60b6f2925f9f0d7380461babd584a7b5102ee64d7f6fd3bbc6f064",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "sigkill",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpbxr9f4v7/evaluation/_invocations/1792774468499826986_118407_ee2967bc/sources/CloseFridge/batch_38c4a7eb9bb24bf29a60089392f98e5a/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 118475,
+            "pid": 118475,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 118477,
+            "pid": 118477,
+            "remaining_pids": [],
+            "returncode": -9,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.326,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code -9",
+        "gpu": "0",
+        "returncode": -9,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpbxr9f4v7/evaluation/_invocations/1792774468499826986_118407_ee2967bc/_worker00_gpu0/action_server.log",
+        "source_digest": "357bc08cadda72e7858b7070dfeb4c416f82f5a6acc358bd644049c07c5b0569",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "sigterm",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp0juokk6s/evaluation/_invocations/1792774488951911828_119217_77b6c65e/sources/CloseFridge/batch_6ad1b29412e1419a8e4a148cb1ef51fd/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 119285,
+            "pid": 119285,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 119287,
+            "pid": 119287,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.332,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code -15",
+        "gpu": "0",
+        "returncode": -15,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp0juokk6s/evaluation/_invocations/1792774488951911828_119217_77b6c65e/_worker00_gpu0/action_server.log",
+        "source_digest": "25a07be15ec102633c95ad9fe13cf794359a05e5aacaf72dc5ab4caf13afbcf2",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "request_timeout",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp8e5vrz13/evaluation/_invocations/1792774509484035382_119980_a7de4247/sources/CloseFridge/batch_6a6ff06a5db640558895de2a36e9c9f7/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 120050,
+            "pid": 120050,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 120066,
+            "pid": 120066,
+            "remaining_pids": [],
+            "returncode": 1,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.437,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code 1",
+        "gpu": "0",
+        "returncode": 1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp8e5vrz13/evaluation/_invocations/1792774509484035382_119980_a7de4247/_worker00_gpu0/action_server.log",
+        "source_digest": "9ff4fd915d45cace84c0759660de5274d37b341296abed480d79c762eff54217",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "reset_failure",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp6t2fc8zs/evaluation/_invocations/1792774529958565998_120920_09243d9e/sources/CloseFridge/batch_999b779018364260b8669d412e0ab023/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 120988,
+            "pid": 120988,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 120990,
+            "pid": 120990,
+            "remaining_pids": [],
+            "returncode": 1,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.325,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code 1",
+        "gpu": "0",
+        "returncode": 1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp6t2fc8zs/evaluation/_invocations/1792774529958565998_120920_09243d9e/_worker00_gpu0/action_server.log",
+        "source_digest": "654e8c20a938b5160e33179eefa299cbf9f51a67bfa8d452d29a06ad1d7b8940",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "video_failure",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpvqzz2e2h/evaluation/_invocations/1792774550583540380_121682_00a75e56/sources/CloseFridge/batch_b04c9e1fa9cf415e8436b0b98f85f27a/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 121750,
+            "pid": 121750,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 121752,
+            "pid": 121752,
+            "remaining_pids": [],
+            "returncode": 1,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.332,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code 1",
+        "gpu": "0",
+        "returncode": 1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpvqzz2e2h/evaluation/_invocations/1792774550583540380_121682_00a75e56/_worker00_gpu0/action_server.log",
+        "source_digest": "59b7272da7e58698f2f6adf387acf8169b4e31bb08745a6b582f28abfbd277e6",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "missing_results",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpqci2j0ac/evaluation/_invocations/1792774571211088107_122437_434e15f4/sources/CloseFridge/batch_c38d2f2192694397ad1f31446045f46a/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 122505,
+            "pid": 122505,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 122507,
+            "pid": 122507,
+            "remaining_pids": [],
+            "returncode": 1,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.326,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code 1",
+        "gpu": "0",
+        "returncode": 1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpqci2j0ac/evaluation/_invocations/1792774571211088107_122437_434e15f4/_worker00_gpu0/action_server.log",
+        "source_digest": "77e56db4bc76604290b4f8b23c64bc1491f7796af7a27503ef2bb47757df0771",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "http400",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp4s0t9ieb/evaluation/_invocations/1792774591618030820_123192_b1f3535a/sources/CloseFridge/batch_c900cc644e4c4fe9925f855dad5af86c/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 123260,
+            "pid": 123260,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 123262,
+            "pid": 123262,
+            "remaining_pids": [],
+            "returncode": 1,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.368,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code 1",
+        "gpu": "0",
+        "returncode": 1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp4s0t9ieb/evaluation/_invocations/1792774591618030820_123192_b1f3535a/_worker00_gpu0/action_server.log",
+        "source_digest": "9a21e0f82226b3d3f171443b914f6e8da89763fc450318aa0028bc4799c72686",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "list_tasks",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 0,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": null,
+    "completed": null,
+    "reused": null,
+    "worker_errors": null,
+    "actual_conditions": null
+  },
+  {
+    "case": "dry_run",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 0,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": null,
+    "completed": null,
+    "reused": null,
+    "worker_errors": null,
+    "actual_conditions": null
+  },
+  {
+    "case": "live_progress",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "observer_failure",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "occupied_port",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 0,
+    "sim_calls": 0,
+    "error": "RuntimeError: action server port 57806 unavailable: [Errno 98] Address already in use",
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": null,
+    "completed": null,
+    "reused": null,
+    "worker_errors": null,
+    "actual_conditions": null
+  },
+  {
+    "case": "cancel",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 1,
+    "sim_calls": 1,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmponkdf1kl/evaluation/_invocations/1792774655373299628_126115_de5acf0b/sources/CloseFridge/batch_d74e8763793b40fa90d4de85a5c7f0f9/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 126183,
+            "pid": 126183,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 126186,
+            "pid": 126186,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.434,
+        "error": "EvaluationInterrupted: evaluation cancelled",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmponkdf1kl/evaluation/_invocations/1792774655373299628_126115_de5acf0b/_worker00_gpu0/action_server.log",
+        "source_digest": "9b20afb99e1557eb111f5ec4f04bb7b8e6583c12607b58dedc0c57d700887e7d",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_1": {
+        "error": "Owner signal 15",
+        "stage": "owner_cancel"
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmponkdf1kl/evaluation/_invocations/1792774655373299628_126115_de5acf0b/sources/NavigateKitchen/batch_631c5c2a30c94918a1938e725019af13/NavigateKitchen/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "NavigateKitchen"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmponkdf1kl/evaluation/_invocations/1792774655373299628_126115_de5acf0b/sources/PickPlaceSinkToCounter/batch_0c04c18b87e04828b5fb7a443b5d42a2/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_4": {
+        "attempt_dir": "/tmp/tmponkdf1kl/evaluation/_invocations/1792774655373299628_126115_de5acf0b/sources/TurnOnSinkFaucet/batch_67a24f9652fa4e6f864027203387a3f2/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "partial_resume",
+    "rc": 0,
+    "first_rc": 1,
+    "server_commands": 8,
+    "sim_calls": 8,
+    "error": null,
+    "first_summary_preserved": true,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 16,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "CONVENIENCE_AGGREGATE_NOT_SINGLE_CONDITION_BENCHMARK",
+      "effective_seeds": [
+        0,
+        952951416,
+        1983714704,
+        2749652984,
+        3050247872
+      ],
+      "flags": [
+        "MULTIPLE_EFFECTIVE_ENV_SEEDS",
+        "MIXED_SAMPLING_PROTOCOL"
+      ],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "session_leak",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "progress_resume",
+    "rc": 0,
+    "first_rc": 0,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": true,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 20,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "wrong_attempt_progress",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 1,
+    "sim_calls": 1,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp137vmflh/evaluation/_invocations/1792774781218938557_130436_01992c85/sources/CloseFridge/batch_8bdcd743fa204a6685f7131739e9a9d7/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 130504,
+            "pid": 130504,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 130506,
+            "pid": 130506,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.403,
+        "error": "EvaluationInterrupted: episode progress identity/order mismatch",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp137vmflh/evaluation/_invocations/1792774781218938557_130436_01992c85/_worker00_gpu0/action_server.log",
+        "source_digest": "845116c50153e20bf430445e16b253235d3249aacc96ecb55a8af5d51a64e86f",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmp137vmflh/evaluation/_invocations/1792774781218938557_130436_01992c85/sources/NavigateKitchen/batch_3783daf6df2041248916737fad2a3e50/NavigateKitchen/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "NavigateKitchen"
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmp137vmflh/evaluation/_invocations/1792774781218938557_130436_01992c85/sources/PickPlaceSinkToCounter/batch_27d2d85d3f44492a9e20d4301ed41456/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmp137vmflh/evaluation/_invocations/1792774781218938557_130436_01992c85/sources/TurnOnSinkFaucet/batch_7a97ac5d87ab4cfab55cbcd0b83c1074/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "resume_wrong_video",
+    "rc": 0,
+    "first_rc": 0,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": true,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 20,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "resume_wrong_timeout",
+    "rc": 0,
+    "first_rc": 0,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": true,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 20,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "resume_missing_progress",
+    "rc": 0,
+    "first_rc": 0,
+    "server_commands": 5,
+    "sim_calls": 5,
+    "error": null,
+    "first_summary_preserved": true,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 15,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "resume_wrong_attempt",
+    "rc": 0,
+    "first_rc": 0,
+    "server_commands": 5,
+    "sim_calls": 5,
+    "error": null,
+    "first_summary_preserved": true,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 15,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "resume_failed_cleanup",
+    "rc": 0,
+    "first_rc": 0,
+    "server_commands": 5,
+    "sim_calls": 5,
+    "error": null,
+    "first_summary_preserved": true,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 15,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "wrong_job_same_iteration",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 2,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp704rxbr5/evaluation/_invocations/1792775022290045994_139431_496caa38/sources/CloseFridge/batch_e000ad15dbbf4d3494eb4bbc2826397d/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 139500,
+            "pid": 139500,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.438,
+        "error": "ValueError: action server checkpoint mismatch: expected /tmp/tmp704rxbr5/job/checkpoints/iter_000004000/model, got '/tmp/tmp704rxbr5/other_job/checkpoints/iter_000004000/model'",
+        "gpu": "1",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp704rxbr5/evaluation/_invocations/1792775022290045994_139431_496caa38/_worker01_gpu1/action_server.log",
+        "source_digest": "b726f630595de37b70e36a4fd210136de0a828534840529f773b7f03a14223c0",
+        "stage": "server_start",
+        "task": "CloseFridge",
+        "worker": 1
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmp704rxbr5/evaluation/_invocations/1792775022290045994_139431_496caa38/sources/NavigateKitchen/batch_22ff3bc631694498b20ef217db2b9b64/NavigateKitchen/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 139501,
+            "pid": 139501,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.452,
+        "error": "ValueError: action server checkpoint mismatch: expected /tmp/tmp704rxbr5/job/checkpoints/iter_000004000/model, got '/tmp/tmp704rxbr5/other_job/checkpoints/iter_000004000/model'",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp704rxbr5/evaluation/_invocations/1792775022290045994_139431_496caa38/_worker00_gpu0/action_server.log",
+        "source_digest": "63f215122c39882a8adb0fc46eac883aaeec4ff1a43432c93a1f470e18999b75",
+        "stage": "server_start",
+        "task": "NavigateKitchen",
+        "worker": 0
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmp704rxbr5/evaluation/_invocations/1792775022290045994_139431_496caa38/sources/PickPlaceSinkToCounter/batch_f74036e71159466a945e8fc200ee7277/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmp704rxbr5/evaluation/_invocations/1792775022290045994_139431_496caa38/sources/TurnOnSinkFaucet/batch_064333d1ecea4400bf0d245aa7eb302c/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "parent_checkpoint",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 2,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpj089mk2x/evaluation/_invocations/1792775023374413388_139504_351852f9/sources/NavigateKitchen/batch_cd0c1c10084146ceaeb53d569077d7c4/NavigateKitchen/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 139574,
+            "pid": 139574,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.45,
+        "error": "ValueError: action server checkpoint mismatch: expected /tmp/tmpj089mk2x/job/checkpoints/iter_000004000/model, got '/tmp/tmpj089mk2x/job/checkpoints/iter_000004000'",
+        "gpu": "1",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpj089mk2x/evaluation/_invocations/1792775023374413388_139504_351852f9/_worker01_gpu1/action_server.log",
+        "source_digest": "af4ce43de50ef4fa7d459a1052771d2ff90cd158215b4740a5ff1c3c4e0e84bb",
+        "stage": "server_start",
+        "task": "NavigateKitchen",
+        "worker": 1
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmpj089mk2x/evaluation/_invocations/1792775023374413388_139504_351852f9/sources/CloseFridge/batch_4def3e10324c4e2598a4577bf242c1d3/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 139573,
+            "pid": 139573,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.459,
+        "error": "ValueError: action server checkpoint mismatch: expected /tmp/tmpj089mk2x/job/checkpoints/iter_000004000/model, got '/tmp/tmpj089mk2x/job/checkpoints/iter_000004000'",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpj089mk2x/evaluation/_invocations/1792775023374413388_139504_351852f9/_worker00_gpu0/action_server.log",
+        "source_digest": "0e476657fdf67af1fe694ce35a418ceb71c7db7ea7806e08fb3f6a45277f5324",
+        "stage": "server_start",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmpj089mk2x/evaluation/_invocations/1792775023374413388_139504_351852f9/sources/PickPlaceSinkToCounter/batch_72b0bf7c742b4cc299d1ec59ea9728bc/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmpj089mk2x/evaluation/_invocations/1792775023374413388_139504_351852f9/sources/TurnOnSinkFaucet/batch_cb7c18d789a54d759f9e2cf4dc7dafb2/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "resume_complete",
+    "rc": 0,
+    "first_rc": 0,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": true,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 20,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "task_subset",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 2,
+    "sim_calls": 2,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 10,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "515c68c5d17d679b9f0726735258237848cc404ac7e97222c864c1caa3289125"
+      ]
+    }
+  },
+  {
+    "case": "server_dies_after_tasks",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp4uz0s_bo/evaluation/_invocations/1792775086921406105_141820_7c9656f7/sources/TurnOnSinkFaucet/batch_a971c164b89c4b5599c0efd2b0aaa1fa/TurnOnSinkFaucet/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 142302,
+            "pid": 142302,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": []
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 142304,
+            "pid": 142304,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.312,
+        "error": "EvaluationInterrupted: action server exited during screening with code -15",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp4uz0s_bo/evaluation/_invocations/1792775086921406105_141820_7c9656f7/_worker00_gpu0/action_server.log",
+        "source_digest": "70cd0b9be209f10b7e894430e96898af977665b42351010e82ffeb11d70cb931",
+        "stage": "simulator",
+        "task": "TurnOnSinkFaucet",
+        "worker": 0
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "late_launch_failure",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 3,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [
+      {
+        "completed_at": 17475.663885762,
+        "deadline": 17581.738325107,
+        "observed_status": "RUNNING",
+        "observed_tasks": [
+          "NavigateKitchen",
+          "PickPlaceSinkToCounter",
+          "TurnOnSinkFaucet"
+        ],
+        "observed_trials": 15,
+        "started_at": 17461.738325107,
+        "status": "COMPLETED",
+        "target_trials": 15
+      }
+    ],
+    "injected_exceptions": [
+      {
+        "injected_at": 17475.663896186,
+        "message": "injected second worker launch failure after all tasks",
+        "type": "OSError",
+        "wait_index": 0
+      }
+    ],
+    "status": "PARTIAL",
+    "completed": 15,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp3ubz35u4/evaluation/_invocations/1792775109640332180_142620_1658e0d0/sources/CloseFridge/batch_65a9c5a840f644318b36859d4210d0a7/CloseFridge/attempt_0001",
+        "cleanup": {},
+        "committed": false,
+        "elapsed_s": 13.927,
+        "error": "OSError: injected second worker launch failure after all tasks",
+        "gpu": "1",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp3ubz35u4/evaluation/_invocations/1792775109640332180_142620_1658e0d0/_worker01_gpu1/action_server.log",
+        "source_digest": "ae7e471934bb791f48d7cb4c926b0451c97b542811be805d06bbd1054f7b745d",
+        "stage": "server_start",
+        "task": "CloseFridge",
+        "worker": 1
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "sim_failure",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 1,
+    "sim_calls": 1,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmphf4tyy8y/evaluation/_invocations/1792775131846194869_143449_0fc5eeca/sources/CloseFridge/batch_427816dbe0c041ca8650d660ee6de060/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 143517,
+            "pid": 143517,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          },
+          "simulator": {
+            "live_group": false,
+            "pgid": 143519,
+            "pid": 143519,
+            "remaining_pids": [],
+            "returncode": 7,
+            "signals": []
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.344,
+        "error": "EvaluationInterrupted: closed_loop_eval exited with code 7",
+        "gpu": "0",
+        "returncode": 7,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmphf4tyy8y/evaluation/_invocations/1792775131846194869_143449_0fc5eeca/_worker00_gpu0/action_server.log",
+        "source_digest": "43dd5b3188e30ed33aed3ddc25d0cf1b0e4bd0192b51cadbcf0133c33473c0a5",
+        "stage": "simulator",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmphf4tyy8y/evaluation/_invocations/1792775131846194869_143449_0fc5eeca/sources/NavigateKitchen/batch_f67a2c92f3d54e2b84950105df195342/NavigateKitchen/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "NavigateKitchen"
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmphf4tyy8y/evaluation/_invocations/1792775131846194869_143449_0fc5eeca/sources/PickPlaceSinkToCounter/batch_a7fd974db6994a07a6ae07136c6f9c79/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmphf4tyy8y/evaluation/_invocations/1792775131846194869_143449_0fc5eeca/sources/TurnOnSinkFaucet/batch_3f9441d3793d4e088395195661fb2a47/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "slow_mkdir_failure",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [
+      {
+        "completed_at": 17514.992268296,
+        "deadline": 17604.972099526,
+        "observed_status": "RUNNING",
+        "observed_tasks": [
+          "CloseFridge",
+          "NavigateKitchen",
+          "PickPlaceSinkToCounter",
+          "TurnOnSinkFaucet"
+        ],
+        "observed_trials": 20,
+        "started_at": 17484.972099526,
+        "status": "COMPLETED",
+        "target_trials": 20
+      }
+    ],
+    "injected_exceptions": [
+      {
+        "injected_at": 17514.992277903,
+        "message": "injected worker1 mkdir failure after all tasks",
+        "type": "OSError",
+        "wait_index": 0
+      }
+    ],
+    "status": "PARTIAL",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "error": "OSError: injected worker1 mkdir failure after all tasks",
+        "gpu": "1",
+        "stage": "worker_initialization_or_loop",
+        "worker": 1
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "progress_disabled",
+    "rc": 0,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "COMPLETE",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {},
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "task_unknown",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 0,
+    "sim_calls": 0,
+    "error": "ValueError: unknown underlying RoboCasa tasks: ['DoesNotExist']",
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": null,
+    "completed": null,
+    "reused": null,
+    "worker_errors": null,
+    "actual_conditions": null
+  },
+  {
+    "case": "log_open_failure",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [
+      {
+        "completed_at": 17573.027827103,
+        "deadline": 17675.869655324,
+        "observed_status": "RUNNING",
+        "observed_tasks": [
+          "CloseFridge",
+          "NavigateKitchen",
+          "PickPlaceSinkToCounter",
+          "TurnOnSinkFaucet"
+        ],
+        "observed_trials": 20,
+        "started_at": 17555.869655324,
+        "status": "COMPLETED",
+        "target_trials": 20
+      }
+    ],
+    "injected_exceptions": [
+      {
+        "injected_at": 17573.027836975,
+        "message": "injected worker1 log_open failure after all tasks",
+        "type": "OSError",
+        "wait_index": 0
+      }
+    ],
+    "status": "PARTIAL",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "error": "OSError: injected worker1 log_open failure after all tasks",
+        "gpu": "1",
+        "stage": "worker_initialization_or_loop",
+        "worker": 1
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "mkdir_failure",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 4,
+    "sim_calls": 4,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [
+      {
+        "completed_at": 17601.343007763,
+        "deadline": 17704.078018749,
+        "observed_status": "RUNNING",
+        "observed_tasks": [
+          "CloseFridge",
+          "NavigateKitchen",
+          "PickPlaceSinkToCounter",
+          "TurnOnSinkFaucet"
+        ],
+        "observed_trials": 20,
+        "started_at": 17584.078018749,
+        "status": "COMPLETED",
+        "target_trials": 20
+      }
+    ],
+    "injected_exceptions": [
+      {
+        "injected_at": 17601.343017412,
+        "message": "injected worker1 mkdir failure after all tasks",
+        "type": "OSError",
+        "wait_index": 0
+      }
+    ],
+    "status": "PARTIAL",
+    "completed": 20,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "error": "OSError: injected worker1 mkdir failure after all tasks",
+        "gpu": "1",
+        "stage": "worker_initialization_or_loop",
+        "worker": 1
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [
+        0
+      ],
+      "flags": [],
+      "requested_seed_families": [
+        0
+      ],
+      "runtime_digests": [
+        "770aa254adb603ff8b55d45662b7eb428425c1aac38d34f67c612a509d353b46"
+      ]
+    }
+  },
+  {
+    "case": "wrong_checkpoint",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 2,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpo92vgyhm/evaluation/_invocations/1792775260438166636_147665_3e34c1ac/sources/CloseFridge/batch_6bceb795a7ec44e7a7ec474803a92ec4/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 147734,
+            "pid": 147734,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.438,
+        "error": "ValueError: action server checkpoint mismatch: expected /tmp/tmpo92vgyhm/job/checkpoints/iter_000004000/model, got '/tmp/tmpo92vgyhm/job/checkpoints/iter_000003900/model'",
+        "gpu": "1",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpo92vgyhm/evaluation/_invocations/1792775260438166636_147665_3e34c1ac/_worker01_gpu1/action_server.log",
+        "source_digest": "ad620802664903d9b33480e0e8955a430dcc187c942c747d60b6f8c3600405e5",
+        "stage": "server_start",
+        "task": "CloseFridge",
+        "worker": 1
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmpo92vgyhm/evaluation/_invocations/1792775260438166636_147665_3e34c1ac/sources/NavigateKitchen/batch_a55df341b074429281a3f29364dd21a7/NavigateKitchen/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 147735,
+            "pid": 147735,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.448,
+        "error": "ValueError: action server checkpoint mismatch: expected /tmp/tmpo92vgyhm/job/checkpoints/iter_000004000/model, got '/tmp/tmpo92vgyhm/job/checkpoints/iter_000003900/model'",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpo92vgyhm/evaluation/_invocations/1792775260438166636_147665_3e34c1ac/_worker00_gpu0/action_server.log",
+        "source_digest": "d4bb8af8019b599e7928c7faddc6b909e7c68745221f987fcd73f2510cc6e027",
+        "stage": "server_start",
+        "task": "NavigateKitchen",
+        "worker": 0
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmpo92vgyhm/evaluation/_invocations/1792775260438166636_147665_3e34c1ac/sources/PickPlaceSinkToCounter/batch_8ad1ac09974749c6a53ee6d5c82304fb/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmpo92vgyhm/evaluation/_invocations/1792775260438166636_147665_3e34c1ac/sources/TurnOnSinkFaucet/batch_3f5ba838c1bf49f1b8173bf028562ae8/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "wrong_config",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 2,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp6risa0im/evaluation/_invocations/1792775261460105239_147738_8987402e/sources/CloseFridge/batch_a84554aa9b2943388d2afc81453a8c61/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 147807,
+            "pid": 147807,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.434,
+        "error": "ValueError: action server config_file mismatch: expected /tmp/tmp6risa0im/job/config.yaml, got '/tmp/tmp6risa0im/another.yaml'",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp6risa0im/evaluation/_invocations/1792775261460105239_147738_8987402e/_worker00_gpu0/action_server.log",
+        "source_digest": "bc6ef0642298156b57ede4cf0505a63505096d72b19eac1743dd80da844622d2",
+        "stage": "server_start",
+        "task": "CloseFridge",
+        "worker": 0
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmp6risa0im/evaluation/_invocations/1792775261460105239_147738_8987402e/sources/NavigateKitchen/batch_f61409e7d32345b2ab51700d3fe0e46c/NavigateKitchen/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 147808,
+            "pid": 147808,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.453,
+        "error": "ValueError: action server config_file mismatch: expected /tmp/tmp6risa0im/job/config.yaml, got '/tmp/tmp6risa0im/another.yaml'",
+        "gpu": "1",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp6risa0im/evaluation/_invocations/1792775261460105239_147738_8987402e/_worker01_gpu1/action_server.log",
+        "source_digest": "d792bdf9e64a294285f68b4f1942ed1acc68342b51fb0c700627d048390ee507",
+        "stage": "server_start",
+        "task": "NavigateKitchen",
+        "worker": 1
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmp6risa0im/evaluation/_invocations/1792775261460105239_147738_8987402e/sources/PickPlaceSinkToCounter/batch_02155bb7647b4b3c9da0f27b93e739c5/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmp6risa0im/evaluation/_invocations/1792775261460105239_147738_8987402e/sources/TurnOnSinkFaucet/batch_27ef85e1ee4345a9a9644c89a0d7ff9b/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "wrong_mode",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 2,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmpoe29unte/evaluation/_invocations/1792775262525445531_147811_e6d4628a/sources/CloseFridge/batch_3ceda648bf2f48519ab8046280fff272/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 147880,
+            "pid": 147880,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.461,
+        "error": "ValueError: action server state/required Local-TTT protocol mismatch",
+        "gpu": "1",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpoe29unte/evaluation/_invocations/1792775262525445531_147811_e6d4628a/_worker01_gpu1/action_server.log",
+        "source_digest": "7a52a798fbaabdc9fc9c91f27f84d2ce15e0925ebaeba5a183d6eda3585e153c",
+        "stage": "server_start",
+        "task": "CloseFridge",
+        "worker": 1
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmpoe29unte/evaluation/_invocations/1792775262525445531_147811_e6d4628a/sources/NavigateKitchen/batch_55309cd37cdf406380b1b65a411ce19e/NavigateKitchen/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 147881,
+            "pid": 147881,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.469,
+        "error": "ValueError: action server state/required Local-TTT protocol mismatch",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmpoe29unte/evaluation/_invocations/1792775262525445531_147811_e6d4628a/_worker00_gpu0/action_server.log",
+        "source_digest": "c29310c1b3b2cc12bd623559c3c516357409d9cfe5ccb38a7feb443683f63e5d",
+        "stage": "server_start",
+        "task": "NavigateKitchen",
+        "worker": 0
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmpoe29unte/evaluation/_invocations/1792775262525445531_147811_e6d4628a/sources/PickPlaceSinkToCounter/batch_c029fdc32713427da93904ba37a05c81/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmpoe29unte/evaluation/_invocations/1792775262525445531_147811_e6d4628a/sources/TurnOnSinkFaucet/batch_31c77ef21a2b48a1bfff7dd2e9b41094/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  },
+  {
+    "case": "wrong_chunk",
+    "rc": 1,
+    "first_rc": null,
+    "server_commands": 2,
+    "sim_calls": 0,
+    "error": null,
+    "first_summary_preserved": null,
+    "frozen_config_unchanged": true,
+    "foreign_alive_before_fixture_cleanup": true,
+    "thread_names": [],
+    "completion_waits": [],
+    "injected_exceptions": [],
+    "status": "PARTIAL",
+    "completed": 0,
+    "reused": 0,
+    "worker_errors": {
+      "_worker_0": {
+        "attempt_dir": "/tmp/tmp7a0xjuuf/evaluation/_invocations/1792775263697701005_147884_06b52e3f/sources/CloseFridge/batch_770de993da0a457ca75086f3fdef4dc5/CloseFridge/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 147953,
+            "pid": 147953,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.737,
+        "error": "ValueError: action server action_chunk_size mismatch: expected 16, got 32",
+        "gpu": "1",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp7a0xjuuf/evaluation/_invocations/1792775263697701005_147884_06b52e3f/_worker01_gpu1/action_server.log",
+        "source_digest": "10974e92f93400c50cbf0b73492aa94a4754dc3ff168bd65eeab9858d46f7d18",
+        "stage": "server_start",
+        "task": "CloseFridge",
+        "worker": 1
+      },
+      "_worker_1": {
+        "attempt_dir": "/tmp/tmp7a0xjuuf/evaluation/_invocations/1792775263697701005_147884_06b52e3f/sources/NavigateKitchen/batch_ca71c9bdc652431cbd52c418f6806c26/NavigateKitchen/attempt_0001",
+        "cleanup": {
+          "server": {
+            "live_group": false,
+            "pgid": 147954,
+            "pid": 147954,
+            "remaining_pids": [],
+            "returncode": -15,
+            "signals": [
+              "SIGTERM"
+            ]
+          }
+        },
+        "committed": false,
+        "elapsed_s": 0.749,
+        "error": "ValueError: action server action_chunk_size mismatch: expected 16, got 32",
+        "gpu": "0",
+        "returncode": -1,
+        "secondary_errors": [],
+        "server_log": "/tmp/tmp7a0xjuuf/evaluation/_invocations/1792775263697701005_147884_06b52e3f/_worker00_gpu0/action_server.log",
+        "source_digest": "1a63432c42e05c698b33af127876775655f7e1f58c29ff9a22323d45016389be",
+        "stage": "server_start",
+        "task": "NavigateKitchen",
+        "worker": 0
+      },
+      "_worker_2": {
+        "attempt_dir": "/tmp/tmp7a0xjuuf/evaluation/_invocations/1792775263697701005_147884_06b52e3f/sources/PickPlaceSinkToCounter/batch_eea571498f40436f803e2972a9b0affd/PickPlaceSinkToCounter/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "PickPlaceSinkToCounter"
+      },
+      "_worker_3": {
+        "attempt_dir": "/tmp/tmp7a0xjuuf/evaluation/_invocations/1792775263697701005_147884_06b52e3f/sources/TurnOnSinkFaucet/batch_e9f567a518044b7cbcad037ae29f5651/TurnOnSinkFaucet/attempt_0001",
+        "error": "reserved source did not execute after worker failure or cancellation",
+        "stage": "not_executed",
+        "task": "TurnOnSinkFaucet"
+      }
+    },
+    "actual_conditions": {
+      "benchmark_qualification": "SOURCE_CONDITIONS_RECORDED",
+      "effective_seeds": [],
+      "flags": [],
+      "requested_seed_families": [],
+      "runtime_digests": []
+    }
+  }
+]

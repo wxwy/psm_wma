@@ -1,0 +1,18 @@
+{
+  "observed_utc": "2026-10-23T17:10:00.325123+00:00",
+  "formal_implementation_root": "252d823cf7f0e65228aa60408d50778c5a13a307",
+  "root_advertised_refs": [
+    "252d823cf7f0e65228aa60408d50778c5a13a307\trefs/heads/V3",
+    "252d823cf7f0e65228aa60408d50778c5a13a307\trefs/heads/v3-flexible-episode-resume-production-20261024"
+  ],
+  "fetched_root": "252d823cf7f0e65228aa60408d50778c5a13a307",
+  "child_advertised_ref": "813a550dab5d6b5b5e3be90d38bb97527956b4dc\trefs/heads/v3-robocasa-live-progress-20261023",
+  "child_head": "813a550dab5d6b5b5e3be90d38bb97527956b4dc",
+  "gitlink": "813a550dab5d6b5b5e3be90d38bb97527956b4dc",
+  "child_clean": true,
+  "source_files": 15,
+  "all_remote_blobs_match_final_frozen_hashes": true,
+  "canonical_inbox_append_only": true,
+  "inbox_bytes": 115357,
+  "note": "Observed source publication before subsequent evidence/docs commit; docs HEAD does not replace implementation root."
+}

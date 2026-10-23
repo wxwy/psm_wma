@@ -1,0 +1,23 @@
+cwd=/workspace/psm_wma
+
+# Initial fixture iteration used the 20261023 external directory. Its first
+# missing-legacy-lease failure log was overwritten before directory coordination;
+# that failure remains in the tool transcript and is recorded in iteration_notes.md.
+# The next retained run is copied to run01/ without changing its contents.
+
+# run02: corrected legacy lease and exact RUN_LOCKED exception type; exposed the
+# production authoritative-progress event mismatch in unfinished statistics.
+CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/tmp/psm-v3-episode-resume-production-20261024/integration/pycache /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -x -q tools/v3/robocasa_episode_resume_integration_test.py --junitxml=/tmp/psm-v3-episode-resume-production-20261024/integration/run02.xml > /tmp/psm-v3-episode-resume-production-20261024/integration/run02.log 2>&1
+
+# run03: focused regression after Parent repaired the production event/schema check.
+CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/tmp/psm-v3-episode-resume-production-20261024/integration/pycache /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -x -q tools/v3/robocasa_episode_resume_integration_test.py -k 'runtime_error_episode or media_upgrade' --junitxml=/tmp/psm-v3-episode-resume-production-20261024/integration/run03.xml > /tmp/psm-v3-episode-resume-production-20261024/integration/run03.log 2>&1
+
+# run04: full file including actual Child reset-HTTP-failure recovery regression.
+CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/tmp/psm-v3-episode-resume-production-20261024/integration/pycache /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -x -q tools/v3/robocasa_episode_resume_integration_test.py --junitxml=/tmp/psm-v3-episode-resume-production-20261024/integration/run04.xml > /tmp/psm-v3-episode-resume-production-20261024/integration/run04.log 2>&1
+
+/workspace/.venvs/psm-wma-cpu/bin/ruff check --config cosmos-framework/.ruff.toml tools/v3/robocasa_episode_resume_integration_test.py
+/workspace/.venvs/psm-wma-cpu/bin/ruff format --check --config cosmos-framework/.ruff.toml tools/v3/robocasa_episode_resume_integration_test.py
+
+# run05: new final-rescan failure/report persistence negative; earlier run04's
+# 13-case pass is preserved and the Parent combined gate will execute all14.
+CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 PYTHONPYCACHEPREFIX=/tmp/psm-v3-episode-resume-production-20261024/integration/pycache /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -x -q tools/v3/robocasa_episode_resume_integration_test.py -k final_source_rescan_failure --junitxml=/tmp/psm-v3-episode-resume-production-20261024/integration/run05.xml > /tmp/psm-v3-episode-resume-production-20261024/integration/run05.log 2>&1
