@@ -177,3 +177,10 @@
 4. **远端新提交的强制消费**：`origin/V2` advertised SHA 与 `before_head` 不同时，必须先逐条读取 `before_head..origin/V2` 的提交主题，并在可快进时完成并核验 `merge --ff-only`；在此之前禁止扫描 review 后作任何否定性或完整性结论。用户提示的 SHA/文件名只作为本轮精确检索输入，不能替代此同步步骤。
 5. **发送回执不可省略**：tmux 申请的“已送达”必须来自同一次 `send-keys -l`、至少一秒后独立 Enter、随后独立且未截断 capture 的三联回执；少任一项即是发送失败，不能进入轮询名册，更不能称已送达。ChatGPT 则必须先确认 Inbox append 的字节数、内容和提交已存在于当前 `HEAD`。
 6. **无凭证不得继续**：在当前 Gate 没有最新完整观察凭证或推进令牌时，Agent 不得为了“持续工作”而猜测审核状态、提交状态更新、修改既有审核对象或启动后续 Gate；只可重做缺失检查、修复送达链路，或执行不依赖该 Gate 的只读检查。持续目标不构成绕过此闭锁的理由。
+
+## DS目标机环境索引（2026-10-23，docs-only）
+
+- 基础路径与来源地图：`docs/collab/chatgpt/context/2026-10-22_DS_runtime_environment_map.md`。
+- 最新状态补充：`docs/collab/chatgpt/context/2026-10-23_DS_runtime_environment_map_update.md`。两页按日期区分历史与当前事实；2026-10-23补充中的源码已同步状态取代旧页的源码缺失/离线交付要求。
+- DS服务器自行拉取`origin/V3`并在独立clean验收worktree检出指定Formal Root及其Child/Gitlink；不需要Owner转运bundle。源码/依赖状态以实际SHA、import origin和现场证据为准，不把训练输出目录当Git仓、不把旧editable当新Vendor。
+- 不在活动G1工作树执行pull/checkout/reset/submodule update，不修改冻结Config/JobIdentity/DCP。环境索引不是训练、GPU、Kitchen或正式仿真的执行授权。
