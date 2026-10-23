@@ -35,6 +35,92 @@ spec = importlib.util.spec_from_file_location("screening_queue", ROOT / "scripts
 queue_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(queue_module)
 TASKS = {"CloseFridge", "TurnOnSinkFaucet", "PickPlaceSinkToCounter", "NavigateKitchen"}
+COMPLETION_WAIT_S = 120.0
+LATE_SCENARIO_WATCHDOG_S = COMPLETION_WAIT_S + 60.0
+SCENARIO_CLEANUP_RESERVE_S = 30.0
+SLOW_HEALTHY_DELAY_S = 13.0
+LATE_COMPLETION_CASES = {
+    "mkdir_failure",
+    "log_open_failure",
+    "late_launch_failure",
+    "slow_mkdir_failure",
+}
+
+
+class FixtureCompletionTimeout(AssertionError):
+    """The prerequisite did not complete; the intended fault was NOT injected."""
+
+
+def _scenario_watchdog(case):
+    if case == "completion_never_finished":
+        return 30.0
+    return LATE_SCENARIO_WATCHDOG_S if case in LATE_COMPLETION_CASES else 90.0
+
+
+def _raise_after_completed(
+    summary_path,
+    trials,
+    message,
+    *,
+    waits,
+    injected,
+    init_faults,
+    operation=None,
+    timeout_s=COMPLETION_WAIT_S,
+    deadline=None,
+    started_event=None,
+):
+    """Wait for real healthy task results; record a caught OSError only AFTER completion."""
+    started = time.monotonic()
+    until = min(started + timeout_s, deadline) if deadline is not None else started + timeout_s
+    witness = {
+        "target_trials": trials,
+        "started_at": started,
+        "deadline": until,
+        "status": "WAITING",
+    }
+    waits.append(witness)
+    if started_event is not None:
+        started_event.set()
+    while time.monotonic() < until:
+        try:
+            summary = json.loads(summary_path.read_text())
+            tasks = summary.get("tasks", {})
+            healthy = (
+                summary.get("total_trials") == trials
+                and len(tasks) == trials // 5
+                and all(row.get("trials") == 5 and row.get("error") is None for row in tasks.values())
+                and not summary.get("worker_errors")
+                and summary.get("status") == ("COMPLETE" if trials == 20 else "INCOMPLETE")
+            )
+        except (OSError, ValueError):
+            healthy = False
+        observed_at = time.monotonic()
+        if healthy and observed_at < until:
+            witness.update(
+                status="COMPLETED",
+                completed_at=observed_at,
+                observed_trials=summary["total_trials"],
+                observed_tasks=sorted(tasks),
+                observed_status=summary["status"],
+            )
+            try:
+                raise OSError(message)
+            except OSError as error:
+                injected.append(
+                    {
+                        "wait_index": len(waits) - 1,
+                        "type": type(error).__name__,
+                        "message": str(error),
+                        "injected_at": time.monotonic(),
+                    }
+                )
+                if operation is not None:
+                    init_faults.append(operation)
+                raise
+        time.sleep(min(0.01, max(0, until - time.monotonic())))
+    witness.update(status="TIMED_OUT", finished_at=time.monotonic())
+    raise FixtureCompletionTimeout(f"fixture prerequisite timed out before {trials} healthy trials; fault not injected")
 
 
 def _canonical(value):
@@ -300,6 +386,37 @@ def _repo(root):
 
 def _scenario(case, parent, count):
     """Invoke the actual queue main/identity with only server/simulator boundaries replaced."""
+    scenario_started = time.monotonic()
+    completion_deadline = scenario_started + _scenario_watchdog(case) - SCENARIO_CLEANUP_RESERVE_S
+    if case == "completion_never_finished":
+        waits, injected, init_faults = [], [], []
+        try:
+            _raise_after_completed(
+                parent / "never_created_summary.json",
+                20,
+                "must never inject this OSError",
+                waits=waits,
+                injected=injected,
+                init_faults=init_faults,
+                operation="mkdir",
+                timeout_s=0.15,
+            )
+        except FixtureCompletionTimeout as error:
+            report = {
+                "case": case,
+                "error": f"{type(error).__name__}: {error}",
+                "completion_waits": waits,
+                "injected_exceptions": injected,
+                "init_faults": init_faults,
+                "thread_names": [
+                    thread.name for thread in threading.enumerate() if thread.name.startswith("robocasa-gpu-")
+                ],
+                "server_exits": [],
+                "summary_exists": (parent / "never_created_summary.json").exists(),
+            }
+            (parent / "report.json").write_text(json.dumps(report))
+            return
+        raise AssertionError("never-completed fixture unexpectedly injected a fault or returned")
     root = parent / "source"
     _repo(root)
     child = root / "cosmos-framework"
@@ -374,29 +491,27 @@ def _scenario(case, parent, count):
     tiny_video = parent / "fixture.mp4"
     imageio.mimwrite(tiny_video, [np.zeros((16, 16, 3), dtype=np.uint8)] * 2, fps=20, macro_block_size=None)
     video_bytes = tiny_video.read_bytes()
-    all_tasks_done = threading.Event()
+    completion_wait_started = threading.Event()
+    completion_waits, injected_exceptions = [], []
+    healthy_delay = {}
     init_faults, unhandled_thread_errors = [], []
     original_mkdir, original_open = Path.mkdir, Path.open
 
-    def wait_completed(trials=20):
-        until = time.monotonic() + 12
-        while time.monotonic() < until:
-            try:
-                if json.loads((output / "screening_summary.json").read_text())["total_trials"] == trials:
-                    all_tasks_done.set()
-                    return True
-            except (OSError, ValueError):
-                pass
-            time.sleep(0.01)
-        return False
-
     def fail_initialization(operation):
-        init_faults.append(operation)
-        assert wait_completed(), "healthy worker did not complete before initialization fault"
-        raise OSError(f"injected worker1 {operation} failure after all tasks")
+        _raise_after_completed(
+            output / "screening_summary.json",
+            20,
+            f"injected worker1 {operation} failure after all tasks",
+            waits=completion_waits,
+            injected=injected_exceptions,
+            init_faults=init_faults,
+            operation=operation,
+            deadline=completion_deadline,
+            started_event=completion_wait_started,
+        )
 
     def mkdir(path, *args, **kwargs):
-        if case == "mkdir_failure" and path.name == "_worker01_gpu1":
+        if case in ("mkdir_failure", "slow_mkdir_failure") and path.name == "_worker01_gpu1":
             fail_initialization("mkdir")
         return original_mkdir(path, *args, **kwargs)
 
@@ -420,8 +535,15 @@ def _scenario(case, parent, count):
         ]
         assert command[command.index("--local-memory-max-sessions") + 1] == "1"
         if case == "late_launch_failure" and gpu == "1":
-            assert wait_completed(15), "healthy worker did not complete the three unclaimed tasks"
-            raise OSError("injected second worker launch failure after all tasks")
+            _raise_after_completed(
+                output / "screening_summary.json",
+                15,
+                "injected second worker launch failure after all tasks",
+                waits=completion_waits,
+                injected=injected_exceptions,
+                init_faults=init_faults,
+                deadline=completion_deadline,
+            )
         port = int(command[command.index("--port") + 1])
         info = _info(checkpoint, config)
         info["checkpoint"] = _child_model_path(checkpoint, config)
@@ -454,6 +576,13 @@ def _scenario(case, parent, count):
     def sim_popen(command, **kwargs):
         assert command[1].endswith("closed_loop_eval.py")
         sim_calls.append(command)
+        if case == "slow_mkdir_failure" and len(sim_calls) == 1:
+            assert completion_wait_started.wait(COMPLETION_WAIT_S), "fault worker never entered completion wait"
+            # Deliberately slow the healthy producer, not the completion check:
+            # its real Summary still controls when the OSError may be injected.
+            healthy_delay["started_at"] = time.monotonic()
+            time.sleep(SLOW_HEALTHY_DELAY_S)
+            healthy_delay["finished_at"] = time.monotonic()
         assert kwargs["env"].get("PYTHONPATH") == runtime_calls[-1]["pythonpath"]
         directory = Path(command[command.index("--output-dir") + 1])
         digest = command[command.index("--evaluation-run-digest") + 1]
@@ -742,6 +871,9 @@ def _scenario(case, parent, count):
         "thread_names": [thread.name for thread in threading.enumerate() if thread.name.startswith("robocasa-gpu-")],
         "output_exists": output.exists(),
         "init_faults": init_faults,
+        "completion_waits": completion_waits,
+        "injected_exceptions": injected_exceptions,
+        "healthy_delay": healthy_delay,
         "unhandled_thread_errors": unhandled_thread_errors,
     }
     if "first_rc" in locals() and case in (
@@ -943,7 +1075,7 @@ class QueueIntegrationTests(unittest.TestCase):
                     start_new_session=True,
                 )
                 try:
-                    rc = process.wait(timeout=90)
+                    rc = process.wait(timeout=_scenario_watchdog(case))
                 except subprocess.TimeoutExpired:
                     os.killpg(process.pid, signal.SIGKILL)
                     process.wait()
@@ -1064,6 +1196,22 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["summary"]["status"], "INCOMPLETE")
         self.assertIsNone(report["summary"]["sr"])
         self.assertIn("injected second worker", str(report["summary"]["worker_errors"]))
+        self.check_completion_before_fault(report, 15, "injected second worker launch failure after all tasks")
+
+    def check_completion_before_fault(self, report, trials, message):
+        self.assertEqual(len(report["completion_waits"]), 1)
+        self.assertEqual(len(report["injected_exceptions"]), 1)
+        wait, error = report["completion_waits"][0], report["injected_exceptions"][0]
+        self.assertEqual(wait["status"], "COMPLETED")
+        self.assertEqual(wait["target_trials"], trials)
+        self.assertEqual(wait["observed_trials"], trials)
+        self.assertEqual(len(wait["observed_tasks"]), trials // 5)
+        self.assertEqual(error["wait_index"], 0)
+        self.assertEqual(error["type"], "OSError")
+        self.assertEqual(error["message"], message)
+        self.assertLessEqual(wait["started_at"], wait["completed_at"])
+        self.assertLess(wait["completed_at"], wait["deadline"])
+        self.assertLessEqual(wait["completed_at"], error["injected_at"])
 
     def check_initialization_failure(self, case, operation):
         report = self.scenario(case)
@@ -1080,6 +1228,11 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["server_commands"], 4)
         self.assertEqual(report["sim_calls"], 4)
         self.assertEqual(report["unhandled_thread_errors"], [])
+        self.check_completion_before_fault(report, 20, f"injected worker1 {operation} failure after all tasks")
+        self.assertTrue(
+            report["summary"]["worker_errors"]["_worker_1"]["error"].startswith("OSError: injected worker1")
+        )
+        return report
 
     def test_worker_mkdir_failure_after_healthy_worker_completes_all_tasks_is_preserved(
         self,
@@ -1090,6 +1243,30 @@ class QueueIntegrationTests(unittest.TestCase):
         self,
     ):
         self.check_initialization_failure("log_open_failure", "log_open")
+
+    def test_slow_healthy_worker_exceeds_old_wait_before_real_initialization_fault(
+        self,
+    ):
+        report = self.check_initialization_failure("slow_mkdir_failure", "mkdir")
+        wait = report["completion_waits"][0]
+        delay = report["healthy_delay"]
+        self.assertGreaterEqual(delay["finished_at"] - delay["started_at"], SLOW_HEALTHY_DELAY_S)
+        self.assertGreater(wait["completed_at"] - wait["started_at"], 12)
+        self.assertLessEqual(delay["finished_at"], wait["completed_at"])
+
+    def test_completion_wait_timeout_cannot_inject_or_fake_completion(self):
+        report = self.scenario("completion_never_finished")
+        self.assertIn("FixtureCompletionTimeout:", report["error"])
+        self.assertIn("fault not injected", report["error"])
+        self.assertEqual(report["init_faults"], [])
+        self.assertEqual(report["injected_exceptions"], [])
+        self.assertFalse(report["summary_exists"])
+        self.assertEqual(len(report["completion_waits"]), 1)
+        wait = report["completion_waits"][0]
+        self.assertEqual(wait["status"], "TIMED_OUT")
+        self.assertGreaterEqual(wait["finished_at"], wait["deadline"])
+        self.assertNotIn("completed_at", wait)
+        self.assertLess(COMPLETION_WAIT_S + SCENARIO_CLEANUP_RESERVE_S, LATE_SCENARIO_WATCHDOG_S)
 
     def test_server_exit_after_completed_tasks_is_not_screening_success(self):
         report = self.scenario("server_dies_after_tasks", 1)
