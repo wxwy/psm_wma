@@ -1,0 +1,24 @@
+{
+  "checked_at_cst": "2026-10-23T23:03:43.220772+08:00",
+  "design_prototype_root": "44f0953ac75591d7e60394df6337a6ed133f3f08",
+  "baseline": "cc7820bee1a73bd2bb2078cb7f00239944f66d37",
+  "child_gitlink": "813a550dab5d6b5b5e3be90d38bb97527956b4dc",
+  "production_prefixes_unchanged": [
+    "scripts",
+    "cosmos-framework",
+    "configs",
+    "third_party"
+  ],
+  "source_sha256": {
+    "tools/v3/episode_resume_prototype/__init__.py": "9134e90b851c6227b98cf05393a2755ec11e42273d1494660fb36071f5961926",
+    "tools/v3/episode_resume_prototype/episode_evidence.py": "e8d4f715d58c41dcd5250607f7fcf029a198e31008b1ae3a8f64fe9e756cd938",
+    "tools/v3/episode_resume_prototype/episode_evidence_test.py": "16437022f5687011193ee3318d03f3aaf6c7fb36b69622e9070f4b1b78c8ac58",
+    "tools/v3/episode_resume_prototype/model_identity.py": "14fbf710bca35cfde35ab3a0c7d1f225fcfcacde469388f0517a6d4af40eb4d5",
+    "tools/v3/episode_resume_prototype/model_identity_test.py": "46656628a433c65b0840158f597a3cc4e7922263b661555124c5007a051483a6",
+    "tools/v3/episode_resume_prototype/plan.py": "298c1f02530254d7762c68d19451caa0841a9e7e67a59952e79605bd56348733",
+    "tools/v3/episode_resume_prototype/plan_test.py": "8e93cc70b703824b996e17b2e99ebf972e0f269a05b3444bd2eedaecb1ade85c",
+    "tools/v3/episode_resume_prototype/scene_sampling.py": "2c702b2351c20dc43a5f45a63d1bb5f499a299aada42ee907ee1159b9ee08cf0",
+    "tools/v3/episode_resume_prototype/scene_sampling_test.py": "5ff197e1cbdd68ae0b8d0003d190d12aebc7f075d38a38b9a5eb18f9b6ceec72"
+  },
+  "production_wiring_search": "Production scripts unchanged; no new imports or launch path installed by this stage."
+}

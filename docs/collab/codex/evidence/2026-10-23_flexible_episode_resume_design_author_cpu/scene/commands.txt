@@ -1,0 +1,11 @@
+Working directory: /workspace/psm_wma
+
+/workspace/.venvs/psm-wma-cpu/bin/ruff format --config cosmos-framework/.ruff.toml tools/v3/episode_resume_prototype/scene_sampling.py tools/v3/episode_resume_prototype/scene_sampling_test.py
+
+/workspace/.venvs/psm-wma-cpu/bin/ruff check --config cosmos-framework/.ruff.toml tools/v3/episode_resume_prototype/scene_sampling.py tools/v3/episode_resume_prototype/scene_sampling_test.py > /tmp/psm-v3-episode-resume-design-20261023/scene/ruff_check.log 2>&1
+
+/workspace/.venvs/psm-wma-cpu/bin/ruff format --check --config cosmos-framework/.ruff.toml tools/v3/episode_resume_prototype/scene_sampling.py tools/v3/episode_resume_prototype/scene_sampling_test.py > /tmp/psm-v3-episode-resume-design-20261023/scene/ruff_format.log 2>&1
+
+CUDA_VISIBLE_DEVICES='' PYTHONPATH=. PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -q -s tools/v3/episode_resume_prototype/scene_sampling_test.py --junitxml=/tmp/psm-v3-episode-resume-design-20261023/scene/pytest.xml > /tmp/psm-v3-episode-resume-design-20261023/scene/pytest.log 2>&1
+
+Result: 34 passed in 0.04s; no skips, failures or errors. Pure standard-library fake environments; no project production imports, NumPy/vendor, GPU or real simulator.

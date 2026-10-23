@@ -1,0 +1,71 @@
+[
+  {
+    "cwd": "/workspace/psm_wma",
+    "env": {
+      "CUDA_VISIBLE_DEVICES": "",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "XDG_CACHE_HOME": "/tmp/psm-v3-episode-resume-design-20261023/cache",
+      "HF_HOME": "/tmp/psm-v3-episode-resume-design-20261023/cache/huggingface",
+      "MPLCONFIGDIR": "/tmp/psm-v3-episode-resume-design-20261023/cache/matplotlib",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    },
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "pytest",
+      "--noconftest",
+      "-c",
+      "/dev/null",
+      "-p",
+      "no:cacheprovider",
+      "-q",
+      "tools/v3/episode_resume_prototype",
+      "--junitxml=/tmp/psm-v3-episode-resume-design-20261023/prototype.xml"
+    ],
+    "stdout": "/tmp/psm-v3-episode-resume-design-20261023/prototype.log",
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm_wma",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+      "check",
+      "--config",
+      "cosmos-framework/.ruff.toml",
+      "tools/v3/episode_resume_prototype"
+    ],
+    "stdout": "/tmp/psm-v3-episode-resume-design-20261023/ruff_check.log",
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm_wma",
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+      "format",
+      "--check",
+      "--config",
+      "cosmos-framework/.ruff.toml",
+      "tools/v3/episode_resume_prototype"
+    ],
+    "stdout": "/tmp/psm-v3-episode-resume-design-20261023/ruff_format.log",
+    "exit_code": 0
+  },
+  {
+    "cwd": "/workspace/psm_wma",
+    "env": {
+      "PYTHONPYCACHEPREFIX": "/tmp/psm-v3-episode-resume-design-20261023/pycache"
+    },
+    "argv": [
+      "/workspace/.venvs/psm-wma-cpu/bin/python",
+      "-m",
+      "compileall",
+      "-q",
+      "tools/v3/episode_resume_prototype"
+    ],
+    "stdout": "/tmp/psm-v3-episode-resume-design-20261023/syntax.log",
+    "exit_code": 0
+  }
+]

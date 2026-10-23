@@ -1,0 +1,3281 @@
+diff --git a/SESSION.md b/SESSION.md
+index 56d2b6c0..57b4f8f4 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1566,0 +1567,8 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
++
++## 2026-10-23 — Flexible Episode Resume first-stage design and isolated CPU Gate
++
++- Clean ff-only sync to GitHub V3 `cc7820bee1a73bd2bb2078cb7f00239944f66d37`, Child/Gitlink `813a550dab5d6b5b5e3be90d38bb97527956b4dc`; only new commit is Owner contract. Isolated Root branch `v3-flexible-episode-resume-design-20261023`. Formal production remains `e6a970caba4bdc77f7d9b56a6a8fbcdafe57f1e0` / Child813a550d; previous progress/video review not self-approved.
++- Owner contract suggests two deliveries; current scope first freezes design/migration and CPU fake-data witnesses, not production wiring. Planned new tools/v3/episode_resume_prototype files: model identity (config delegate), per-Episode legacy evidence scan (attempt delegate), scene sampling (Child delegate), plan/summary and integration fake Gate (Root). No existing production/test files modified. Read actual validators/reset/identity before designing; preserve all historical bytes and active worktrees. No GPU, server, real simulator/DCP or training.
++
++- First-stage candidate completed: design `docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r1.md`, isolated prototype4modules+tests under tools/v3/episode_resume_prototype. Final full fake-data CPU Gate161PASS (identity45, episode45, scene34, plan37),0fail/error/skip; Ruff0.12.7check+format9Python andcompile PASS. Root actual legacy helpers/decoder/owned-process primitives used with synthetic files, no real model/simulator/DCP. Independent author-team read-only inspection found source-snapshot/logical-slot double counting and stale media-view issues; fixed with negatives and retained scanner diagnostics. Mixed seed family is distinct from actual effective seed list; legacy hashing/RNG limitations explicit.
++- Production scripts/Child/configs/vendor diff against cc7820be is empty; only tools/prototype, design, SESSION/TODO changed. This source commit freezes DESIGN+PROTOTYPE, not a new production Resume implementation. Legacy ingestion and lock/identity/plan components have CPU witnesses, complete protected production pipeline remains unimplemented. Publish exact design Root/unchanged Child, Evidence and canonical GPT design-review request, then STOP; implementation follows only after review, no active eval/G1 changes or GPU permission inferred.
+diff --git a/TODO.md b/TODO.md
+index 68e992da..9e26469d 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -444,0 +445,3 @@
++
++- [ ] **V3-FLEXIBLE-EPISODE-RESUME-DESIGN-20261023** — IN_PROGRESS; owner Codex; prerequisite Owner contract `cc7820bee1a73bd2bb2078cb7f00239944f66d37`. First delivery: exact design/non-destructive legacy ingestion + isolated fake-data CPU Gate; no production Queue/Child/Resume changes until independent review. Model four-parameter identity, current-plan Episode reuse, seed/runtime/media provenance, deterministic selection, honest scene sampling and summaries. New prototype modules/tests under tools/v3/episode_resume_prototype plus docs/Evidence. Preserve active18task/G1/current assets; noGPU/model/simulator/realDCP.
++- **V3-FLEXIBLE-EPISODE-RESUME-DESIGN-20261023** — REVIEW; candidate design/migration and isolated prototype done, finalCPU161/0skip +Ruff/format/syntax PASS. No production/Child/Gitlink changes; source snapshot/logical-slot duplicate and stale media coverage negatives closed. Submit exact design Root and CPU Evidence to GPT; production scheduling/CLI migration remains subsequent implementation Gate, not delivered or authorized to execute here.
+diff --git a/docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r1.md b/docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r1.md
+new file mode 100644
+index 00000000..545c9212
+--- /dev/null
++++ b/docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r1.md
+@@ -0,0 +1,151 @@
++# V3 RoboCasa Flexible Episode Resume — 设计与非破坏性迁移 r1
++
++日期：2026-10-23（Asia/Shanghai）。**技术方案候选，提交 GPT 审核；不是生产实现或执行许可。**
++
++Owner 契约：`docs/collab/chatgpt/requests/2026-10-23_Codex_V3_RoboCasa_flexible_episode_resume_contract.md`，提交 `cc7820bee1a73bd2bb2078cb7f00239944f66d37`。该契约替代旧的全 Manifest/整 Task Resume 等价要求。
++
++本轮按契约建议的两步交付完成第一步：设计、legacy 迁移方案及隔离 fake-data CPU Gate。基线 Root `cc7820bee1a73bd2bb2078cb7f00239944f66d37`；生产实现仍为 `e6a970caba4bdc77f7d9b56a6a8fbcdafe57f1e0` / Child-Gitlink `813a550dab5d6b5b5e3be90d38bb97527956b4dc`，Vendor `1ac174585293ed998ffc9cf73e47439798cf6f6c`。本轮不修改生产 Resume、不更新运行中的18任务评测或 G1。
++
++## 1. 身份、计划和引用分层
++
++三个不同对象不能共用一个会被重新计算的 digest：
++
++| 对象 | 内容 | 可变性 / 核验 |
++| --- | --- | --- |
++| `model_identity` | checkpoint、num_steps、action_horizon、guidance | 仅这四项硬相等；不同立即 old/new 报错 |
++| `invocation_plan` | 当前 tasks、episodes、requested seed、媒体、GPU/端口/timeout/进度、当前 source/runtime/config | 每次 invocation 独立只增记录，不能用于额外硬相等比较 |
++| `EpisodeRef` | 原始 digest、Task/Attempt/物理 ep、核心证据哈希、原 Seed/reset/runtime/source/media | 按其原身份重验；当前统计引用，不重新贴当前 digest |
++
++`checkpoint` 是一个复合硬参数，绑定实际 canonical iteration 路径、model/.metadata SHA256 和完整有序模型 shard 内容身份；不读取 optim/、训练状态或其他 DCP。`guidance` 规范化有限浮点值；num_steps/action_horizon 严格类型并保留当前 H_pred16 / R1–16 合法范围。
++
++Root/Child、config、任务数据来源及 runtime 变更不构成第五项旧新相等条件。记录变更/未知来源，给出 `MIXED_SOURCE_PROVENANCE`、`MIXED_CONFIG`、`MIXED_TASK_METADATA`、`MIXED_RUNTIME` 或 UNKNOWN 警告。Task metadata 在**同一 Task 内**比较，不能因为选择了不同任务就虚报元数据冲突。SHA 变化不自动证明行为变化，SHA 不变也不是物理行为等价证明；混合/未知条件不冒充单条件 benchmark。
++
++当前执行的路径、模型可读取性、原始证据完整性、raw15/state15/required/H16 ABI、进程所有权、互斥与超时仍需有效。它们是安全前提，不能包装成大量额外旧新参数等价要求。纯复用且无新增 Episode 时不加载模型、不占 GPU、不启动 server/simulator；不为当前机器未执行的 runtime 冒写来源。
++
++## 2. Checkpoint 身份与 legacy 证据强度
++
++候选新模型身份为 `psm_eval_model_identity_v1`，digest 只覆盖 schema 与四个 parameters。checkpoint 子对象含 canonical path、metadata_sha256、排序的 `{name,bytes,sha256}` shards。全量模型字节流式计算哈希，不执行 pickle、不加载 Tensor；前后检查 device/inode/size/mtime/ctime 和 shard inventory 稳定。
++
++完整哈希是新观测的强基线。结构性 pickle/ZIP 头检查仅用于拒绝明显无效输入，**不证明真实 DCP 完整或模型可加载**。实际 DCP load 仍属于后续单独授权的真实环境 Gate。完整字节 I/O 随模型体积增长；本轮只读微型假 DCP，未对真实模型测量容量、耗时或读取权重。
++
++旧 manifest 只有 metadata SHA 和 shard `(name,size,mtime_ns,ctime_ns)`，没有历史 payload SHA：
++
++1. 保留并校验旧 manifest 原 canonical digest；提取旧四参，不能覆盖旧文件或重算旧证据的 digest。
++2. 使用当前新鲜观测核对旧 checkpoint 路径、metadata SHA、完整 shard stat inventory 和另外三参。任何不符立即拒绝，报告 old/new。不能用“目前全哈希一样”绕开发生变化的历史 stat。
++3. 若吻合，记录 `LEGACY_STAT_BRIDGE_MATCH` 和 `historical_payload_sha256: null`，明确旧证明强度仍是旧 stat + metadata；当前全哈希只建立未来新基线。
++4. 新控制记录保存原 manifest 引用与桥接决定；不补造历史权重哈希，不反写旧 DCP/Config/Job Identity。
++
++原型支持旧 `psm_v3_eval_identity_v1` / `psm_v3_eval_identity_vendor_v1` 的模型桥接；Episode 重用还需要后者提供的 runtime、required ABI、Local cleanup 等证据。缺少这些不能仅凭模型桥接判为可复用。序列化保存的旧“当前观测”不能代替本次新鲜读取。
++
++完整哈希是时点观测，不是持续存储租约。生产接线须在锁内形成稳定观测，并在实际 Action Server 加载前后重核输入/来源；若外部正在替换模型则 fail closed。Checkpoint 不能在完成检查后被悄悄替换而继续推理。
++
++## 3. 控制目录与迁移顺序
++
++候选布局（本轮尚未创建生产控制目录）：
++
++```text
++<run>/evaluation_manifest.json                 # 原 v1，永不覆盖
++<run>/.run.lock                               # 继续共用，不能另起不互斥的新锁
++<run>/<Task>/attempt_NNNN/                     # 旧证据原位；新 attempt 独占分配
++<run>/_resume_v2/model_identity.json            # 新模型基线，只创建一次
++<run>/_resume_v2/migrations/<id>.json           # 旧 manifest / 桥接 / 选择诊断
++<run>/_resume_v2/catalog/<ref_id>.json          # 已验 EpisodeRef，追加而非覆盖
++<run>/_invocations/<id>/
++  invocation_manifest.json                    # 当前计划与 source/runtime/config
++  resume_plan.json                            # 启动计划
++  source_manifests/<Task>/<logical_id>.json    # 每个新增物理执行的原始身份
++  logical_slots.json                          # logical id -> source attempt / physical ep
++  episode_events.jsonl                        # reused/executed/failed，逐集来源
++  resume_report.json, screening_summary.json   # 当前视图
++```
++
++新 summary 是 versioned view；不覆盖旧 v1 summary/manifest 来伪造同 digest。Task 外的新控制目录避免污染旧 `_attempts()`；自定义媒体浏览目录也不得占用任何未来 Task 根。
++
++生产 admission 顺序：
++
++1. 只读解析当前计划；同名已有 run 无显式 `--resume` 时拒绝。只读核对四参/legacy 桥接前提，错误不得创建 invocation/attempt、加载模型或认领新实验。
++2. 取得同一个 `.run.lock` 的独占非阻塞锁；被占用时不写迁移或计划。现有 v1 手动运行目录已含该锁；无有效租约或不支持的旧格式明确 BLOCKED，不盲目导入。
++3. 锁内重新读取并核对四参/原 manifest，形成稳定模型观测，重验所有要用的 Episode 核心与原媒体；此时才只增写 migration/catalog/invocation。
++4. 终端和 resume_plan.json 同步公布当前任务、requested seed/episodes、每任务 old/reused/new/excluded、实际历史 Seed、覆盖缺口与资源映射。
++5. 仅给 new Episode 调度模型和仿真。结束或异常均保留引用/事件/报告；当前 Worker 或清理错误不因结果覆盖已满而消失。
++
++prototype 的 `locked_snapshot()` 已实测先比较、拿现有锁、锁内再比较、只读扫描及异常释放锁；**尚不是实际 Launcher 的完整受保护 admission 管线**。legacy_ingest、实际 Episode 扫描、计划与锁已有分组件/部分组合 CPU 证据；生产集成后仍必须测试完整链条与无 `--resume` 行为。
++
++## 4. Episode 核心验证与确定性去重
++
++从整 Task validator 中分离单 Episode 验证，不删掉旧整 Task 校验来求通过。RUNNING/FAILED Task 中较早完成的 Episode 可重用，Task 最后关闭失败与早先 Episode 核心完成分别记账。
++
++每条来源需要：原 manifest/Attempt identity/runtime 合法；本集 typed success 或正常 horizon behavioral_failure；正数 steps 与原官方 horizon 相容；单集 JSON 与存在的聚合行一致；对应有序闭合 C01 start/end；有效 Local cleanup/reset；原 run/attempt/episode 的 actions/predictions、raw15/env12 向量、计数与 frontier 一致。required Local 的预测 session/episode/consumer frontier 必须和实际 cleanup/已完成动作相符，不能拿任意 UUID 清理记录充数。
++
++第三集只有 start 或末尾未完成 JSONL 写入时，前两集闭合证据仍有效；未闭合集不复用。重复/foreign/错序等完整损坏记录明确诊断，不冒称普通中断。原策略要求的媒体还需实际解码；缺失/腐败为 `CORRUPT_ORIGINAL_MEDIA`，不同于本次策略升级而历史未录制。
++
++稳定 locator 为 `(original_digest,Task,Attempt,physical_episode)`，文件哈希是快照证明，不是另一个 Episode ID。attempt.json、results.json、全 progress 流等共享可变观测不能因状态/追加变化使一集被计为两集；核心文件同 locator 不同 hash 则 `SOURCE_EVIDENCE_CHANGED`，不能作为新结果收进来。每次重用仍要以原 identity 重新验证，不能信任外部 JSON 中的 `verified: true`。
++
++legacy 同一 manifest 中不同 attempt 从0重跑的重复索引，按 numeric attempt 最早有效来源选择；后者无论成功与否都排除并保存 chosen/excluded/冲突原因，不能按 success 择优。来源本身歧义、同 attempt 聚合/单集矛盾或非法重复目录明确拒绝该候选。只增 catalog 中同一 logical slot 也只能选一个来源；旧物理 ep0 与新 logical3/physical0不能按 physical0全局去重。
++
++legacy 初次摄入将物理 reset ordinal 映射到逻辑槽位，并保留原编号。以后新执行用独立 source attempt 的 physical ep0，引用映射到 logical slot3等；原 C01/Local 的本地0..N协议不改。未完成 reservation 可在新 attempt 重试，不复用半集；同 requested seed/slot 得到相同派生 Seed。任务数量/顺序/GPU变化不改变已分配槽位；视图 dense ordinal 与不可重分配的 catalog slot 分开记录。
++
++## 5. 当前计划选择与统计
++
++每个当前 Task：`reused=min(requested, verified_completed)`，`new=requested-reused`，`excluded=verified_completed-reused`。当前未选 Task 不进入统计。按照确定的 catalog/逻辑顺序选前N个，旧多余文件与引用原位保留；后续扩大计划可再次使用。存在待重跑槽位时优先重试该 reservation，再追加新编号，避免因新进程都 physical0 而重复计数。
++
++| 情况 | 当前视图 / 调度 |
++| --- | --- |
++| old3 / request5 | 重用3，仅执行逻辑3、4；source physical均0但映射明确 |
++| old8 / request5 | 重用前5、执行0、excluded3；分子分母只取前5 |
++| Task4扩到18 | 旧Task逐集重用，仅补新增任务和缺集 |
++| 缩小 Task集合 | 只统计本次选择，其他历史不改 |
++| 两集完成、第三集 runtime_error | 只重用两集，未完成槽位在新 attempt执行 |
++
++启动/结束/逐集事件均包含 requested/reused/executed/excluded/failed/remaining、原路径/原 digest/Task/Attempt/source ep、当前 logical slot 与 effective seed。`executed` 另分 executed_completed；runtime_error不计行为失败或成功。缺集时 `sr=null`，另报 `partial_sr` 和剩余数。当前 invocation 的 Worker/清理错误即使覆盖已满也保持非零退出与非 COMPLETE；历史失败不永久污染以后已补齐、无当前错误的 invocation。
++
++Seed/runtime/config/task-source 混合与 UNKNOWN 警告出现在启动、结束和 JSON，而不只留作者日志。Scanner 的所有排除/冲突诊断必须进入 plan/report，不能只传 records 丢掉 diagnostics。
++
++## 6. Seed 与场景采样选择
++
++现有 Child 为每 Task 创建一次环境，再逐集 reset，未保存可恢复的环境 RNG；重启后跳过几个编号或只 burn resets 都不能证明恢复了原 action-dependent RNG 流。
++
++本候选明确选择 **独立逐 Episode 采样**：
++
++```text
++effective_seed = uint32(SHA256(canonical{
++  sampler_version: psm_robocasa_independent_episode_seed_v1,
++  requested_seed, Task, logical_episode_index
++})[0:4])
++```
++
++Attempt nonce、GPU、任务调度和 invocation 次序不进入 Seed material；重试保持可重放。新物理 Episode 用这个实际 Seed 创建 fresh environment，再执行一次 public reset，记录 constructor Seed、public reset ordinal0、logical->physical映射、版本与 Seed material SHA。策略 action/Local-TTT 仍走原路径。可以用一集一个 simulator 子进程实现，避免改 Local 算法：Task 的 Action Server仍单 slot，成功 episode 的 Local end/reset 后运行下一集；失败时中止该Task、回收Server，按当前基础设施策略停止或切换下一Task，禁止带泄漏 session继续。
++
++该策略不承诺原 RNG 连续性、数学零碰撞或物理场景绝不重复；有限场景本来可能重复。明确写 `NOT_HISTORICAL_RNG_STREAM_CONTINUATION`。同 requested family 下混用旧顺序reset与新逐集协议标 `MIXED_SAMPLING_PROTOCOL`，不能称同一不间断流的第N集。
++
++Seed字段语义：`requested_seed`/`seed_family` 是请求的基 Seed；`effective_seed` 是真正传给环境的数值。`MIXED_SEED` 表示请求 family混合（例如旧0、新1）；`MULTIPLE_EFFECTIVE_ENV_SEEDS` 列出逐集实际不同 Seed。一个新 derived-family 的多集不会被误报为用户改过 `--seed`，但也不将派生值冒充 literal base seed。旧未知 Seed保持 UNKNOWN；policy seed仍固定0。
++
++old seed0已有8集，本次 request seed1/5集：执行0，实际历史 family/Seed均0；醒目 `NO_NEW_EPISODES_AT_REQUESTED_SEED`，不宣称完成seed1新评测。old0已有5集、本次seed1/8集：引用旧5与新3，逐集 Seed可见，MIXED_SEED/采样混合统计仅为便利汇总。真实场景指纹若可采集则记录实际 env metadata；无法追溯的旧场景不能补造。
++
++## 7. 媒体覆盖与浏览
++
++先按每个来源**原保存策略**验证应该存在的媒体，再以当前策略计算覆盖视图。none/first→all不迫使旧集重跑或补造录像；all→none不应沿用上次 missing列表。覆盖必须从本次 requested policy + 已验证 availability + 实际 prediction_count重新计算。
++
++逐集保留 available_rollout、available_init_png、available_generated、prediction_count、expected_generated_per_original_policy、original_policy、requested_policy、missing_requested_media；汇总缺失项与覆盖率，不虚报全覆盖。未知预测总数明确 unknown，不当all已覆盖。
++
++`videos_view` 的旧 Root digest单值限制需在生产第二步适配为 SourceRef resolver，按每集原 manifest/digest验证后只导出存在的媒体；原始名称、JSONL、清单与哈希不改。展示副本与 current-plan统计分开，不能因浏览文件存在就认定可复用，也不能改旧 digest迎合浏览器。
++
++## 8. 第二步最小生产接线与验收边界
++
++审核本设计/原型后再实施，不直接把 prototype 复制到入口当作已验收实现：
++
++1. 增加 model identity / invocation / catalog模块与新 admission；保留原 validator 及 legacy只读解析。
++2. Queue 改为逐集 refs/remaining调度；新 SourceManifest与 logical/physical映射，不覆盖原 run manifest。任务结束/错误传播及 owned process回收保持独立硬门。
++3. 单 Episode核心 validator与 SourceRef重新核验；媒体按原策略；统计按当前选集。明确错误级别，模型/manifest损坏或来源歧义不能靠自动新实验掩盖。
++4. 新 Episode采样最小接线；优先复用原单集 simulator和required Local生命周期，必要Child只增 Seed/场景 provenance，不改策略/动作。
++5. 进度显示 logical slot/reused/executed；浏览模块按来源解析不同digest；发布 plan/report/事件只增记录。
++
++生产第二步必须在精确新 Pair 做实际 CLI/Queue fake-server全链 CPU Gate：四参各变更在任何写/加载前失败，显式 --resume、3→5/8→5、tasks增减、partial前缀与重复来源、Seed变化与全复用告警、媒体策略与坏原媒体、GPU/端口/timeout变化、并发锁、当前Worker错误不被覆盖数吞掉、迁移无历史改写和逻辑/物理进度不串线。随后 GPT fresh review / DS clean detached独立CPU。GPU、真实RoboCasa/模型与现有评测更新由 Owner 另行授权。
++
++## 9. 本轮 CPU Gate 与限制
++
++新文件只在 `tools/v3/episode_resume_prototype/`；生产 Launcher不导入。最终 **161 passed，0 failure/error/skip**：identity45、legacy Episode45、scene34、plan/report/admission原型37。实际使用了未改的 legacy identity helper、Local/审计/media validators及 owned-process回收器；输入是 tiny Git/DCP/JSONL/MP4/PNG与 fake env。Ruff0.12.7、格式、语法及生产文件未改检查另有完整 Evidence。
++
++已覆盖：四参错误、payload替换、legacy stat桥/原digest保留，2/5闭合前缀与Local/媒体负例、旧attempt去重、当前计划扩缩/多余排除、逐集Seed/reset可控轨迹、媒体当前视图重算、稳定locator/核心冲突/同logical去重、Seed family与实际Seed区分、当前Worker错误、锁前/锁内复查及外部进程不被清理。扫描2个真实schema假Episode→计划补3→假完成汇总已组合验证，但新增3个是**validated-record替身**，不是生产 Queue执行；模型桥/锁/当前计划尚未接成正式入口，不把组件通过说成实际 Resume实现通过。
++
++未执行真实 DCP读取/保存/恢复、Action Server模型加载、GPU、RoboCasa构建/reset/step、生产工作树同步或训练。作者 Gate只支持本设计候选审核，不是独立CPU、真实场景分布或生产执行通过。
+diff --git a/tools/v3/episode_resume_prototype/README.md b/tools/v3/episode_resume_prototype/README.md
+new file mode 100644
+index 00000000..13bd11ef
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/README.md
+@@ -0,0 +1,22 @@
++# Flexible Episode Resume: design-only CPU prototype
++
++Contract: `docs/collab/chatgpt/requests/2026-10-23_Codex_V3_RoboCasa_flexible_episode_resume_contract.md`.
++Design: `docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r1.md`.
++
++No production launcher imports these modules. They never schedule a policy or a
++simulator, migrate a real run, or write historical results. The input examples are
++synthetic files and verified-record doubles; `verified=True` is an internal test
++boundary, not an assertion to trust in an external catalog. Production must
++revalidate source evidence under its original identity.
++
++Run the isolated CPU Gate, with external evidence/cache directories:
++
++```bash
++CUDA_VISIBLE_DEVICES='' PYTHONDONTWRITEBYTECODE=1 \
++python -m pytest --noconftest -c /dev/null -p no:cacheprovider -q \
++  tools/v3/episode_resume_prototype
++```
++
++Use the official manual evaluation launcher only after its separately reviewed
++production implementation. These modules do not change today's whole-task
++Resume behavior. Current evaluations and G1 worktrees must remain unchanged.
+diff --git a/tools/v3/episode_resume_prototype/__init__.py b/tools/v3/episode_resume_prototype/__init__.py
+new file mode 100644
+index 00000000..b6eb632b
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/__init__.py
+@@ -0,0 +1 @@
++"""Design-only CPU prototypes. Never imported by a production launcher."""
+diff --git a/tools/v3/episode_resume_prototype/episode_evidence.py b/tools/v3/episode_resume_prototype/episode_evidence.py
+new file mode 100644
+index 00000000..50d3b26c
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/episode_evidence.py
+@@ -0,0 +1,553 @@
++"""Design-only legacy Episode ingest; no production launcher imports this module.
++
++The caller owns the evaluation lease and model-identity comparison. This scanner
++only reads original evidence, using its original digest and original media policy.
++It never upgrades an old Task marker, rewrites a result or claims scene continuity
++for a future restarted simulator.
++"""
++
++from __future__ import annotations
++
++import hashlib
++import json
++import re
++import sys
++from pathlib import Path
++
++ROOT = Path(__file__).resolve().parents[3]
++sys.path.insert(0, str(ROOT / "scripts"))
++from robocasa_eval_results import (  # noqa: E402
++    _json,
++    _jsonl,
++    _marker,
++    _safe,
++    _unique_object,
++    _validate_local_cleanup,
++    _vector,
++    validate_media,
++)
++from v3_evaluation_identity import sha256_file  # noqa: E402
++
++_ATTEMPT = re.compile(r"attempt_(\d{4,})\Z")
++_ARTIFACT = re.compile(r"rollout(\d+)_(?:episode\.json|actions\.jsonl|predictions\.jsonl|cleanup\.json)\Z")
++
++
++class EpisodeEvidenceError(ValueError):
++    def __init__(self, code, message):
++        super().__init__(message)
++        self.code = code
++
++
++def _fail(code, message):
++    raise EpisodeEvidenceError(code, message)
++
++
++def _canonical(value):
++    return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
++
++
++def _policy(protocol):
++    result = {
++        "save_rollout_mp4": protocol.get("save_rollout_mp4"),
++        "save_generated_video": protocol.get("save_generated_video"),
++        "save_init_png": protocol.get("save_init_png"),
++    }
++    if (
++        type(result["save_rollout_mp4"]) is not bool
++        or type(result["save_init_png"]) is not bool
++        or result["save_generated_video"] not in {"none", "first", "all"}
++    ):
++        _fail("UNKNOWN_ORIGINAL_MEDIA_POLICY", "original manifest must explicitly record its media policy")
++    return result
++
++
++def _manifest(manifest):
++    if not isinstance(manifest, dict) or not isinstance(manifest.get("identity"), dict):
++        _fail("INVALID_MANIFEST", "legacy manifest is not a digest-bound identity object")
++    identity = manifest["identity"]
++    if manifest.get("digest") != hashlib.sha256(_canonical(identity)).hexdigest():
++        _fail("INVALID_MANIFEST_DIGEST", "legacy manifest canonical digest does not match")
++    if identity.get("schema") != "psm_v3_eval_identity_vendor_v1":
++        _fail("UNSUPPORTED_LEGACY_SCHEMA", "legacy runtime/ABI provenance is unavailable in this schema")
++    protocol = identity.get("protocol")
++    if not isinstance(protocol, dict):
++        _fail("INVALID_PROTOCOL", "legacy protocol is missing")
++    for key, expected in {
++        "H_pred": 16,
++        "server_action_chunk_size": 16,
++        "raw_action_dim": 15,
++        "max_action_dim": 64,
++        "policy_seed": 0,
++        "fps": 20,
++        "camera_set": "left_wrist",
++        "use_state": True,
++        "base_encoding": "raw",
++        "local_memory_mode": "required",
++    }.items():
++        if type(protocol.get(key)) is not type(expected) or protocol[key] != expected:
++            _fail("INCOMPATIBLE_LEGACY_ABI", f"original protocol {key} is incompatible with required raw15/state15")
++    if type(protocol.get("R")) is not int or not 1 <= protocol["R"] <= 16:
++        _fail("INCOMPATIBLE_LEGACY_ABI", "original action horizon is invalid")
++    for field in ("root_sha", "child_sha"):
++        if not isinstance(identity.get(field), str) or not re.fullmatch(r"[0-9a-f]{40}", identity[field]):
++            _fail("INVALID_SOURCE_PROVENANCE", f"missing original {field}")
++    runtime = identity.get("evaluation_runtime")
++    if not isinstance(runtime, dict) or runtime.get("schema") != "psm_robocasa_runtime_v1":
++        _fail("INVALID_RUNTIME", "original runtime attestation missing")
++    body = {key: value for key, value in runtime.items() if key != "digest"}
++    if runtime.get("digest") != hashlib.sha256(_canonical(body)).hexdigest():
++        _fail("INVALID_RUNTIME_DIGEST", "original runtime canonical digest is corrupt")
++    task_rows = identity.get("tasks")
++    if not isinstance(task_rows, list) or not task_rows:
++        _fail("INVALID_LEGACY_TASKS", "original manifest has no task provenance")
++    names = []
++    for row in task_rows:
++        if (
++            not isinstance(row, dict)
++            or not isinstance(row.get("task"), str)
++            or not row["task"].isidentifier()
++            or row["task"] == "all"
++        ):
++            _fail("INVALID_LEGACY_TASKS", "unsafe or missing original task name")
++        names.append(row["task"])
++    if len(names) != len(set(names)):
++        _fail("INVALID_LEGACY_TASKS", "ambiguous duplicate original task source")
++    if "seed" in protocol and protocol["seed"] is not None and type(protocol["seed"]) is not int:
++        _fail("INVALID_LEGACY_SEED", "original seed provenance is not an integer or explicit unspecified value")
++    _policy(protocol)
++    return identity, protocol
++
++
++def _completed_progress(attempt_dir, *, digest, attempt_id):
++    """An unfinished final write/start preserves earlier complete ordered pairs."""
++    path = _safe(attempt_dir / "episode_progress.jsonl")
++    completed, expected, active, tail = set(), 0, False, False
++    with path.open("rb") as handle:
++        while line := handle.readline(4097):
++            if len(line) > 4096:
++                _fail("CORRUPT_PROGRESS", "oversized original progress record")
++            if not line.endswith(b"\n"):
++                tail = True
++                break
++            try:
++                row = json.loads(
++                    line,
++                    object_pairs_hook=_unique_object,
++                    parse_constant=lambda x: _fail("CORRUPT_PROGRESS", f"nonfinite progress {x}"),
++                )
++            except (ValueError, UnicodeError) as error:
++                _fail("CORRUPT_PROGRESS", str(error))
++            if (
++                not isinstance(row, dict)
++                or row.get("schema") != "psm_episode_progress_v1"
++                or row.get("evaluation_run_digest") != digest
++                or row.get("evaluation_attempt_id") != attempt_id
++                or type(row.get("episode")) is not int
++                or row["episode"] != expected
++                or row.get("event") != ("end" if active else "start")
++            ):
++                _fail("CORRUPT_PROGRESS", "original episode progress is duplicate, foreign or out of order")
++            if active:
++                completed.add(expected)
++                expected += 1
++            active = not active
++    return completed, tail or active
++
++
++def _runtime(attempt_dir, identity):
++    runtime = _json(attempt_dir / "runtime_attestation.json", unique_keys=True)
++    if runtime != identity["evaluation_runtime"]:
++        _fail("FOREIGN_RUNTIME", "attempt runtime differs from its original manifest")
++    return runtime
++
++
++def _media(attempt_dir, row, *, policy, requested, sim_python, digest, attempt_id):
++    episode, predictions = row["ep"], row["replans"]
++    prefix = f"rollout{episode:02d}"
++    hashes, videos = {}, {"rollout": [], "generated": [], "init_png": []}
++
++    def check(name, kind, category):
++        path = _safe(attempt_dir / name)
++        observed = validate_media(path, sim_python=sim_python, kind=kind)
++        hashes[name] = sha256_file(path)
++        videos[category].append(str(path))
++        return observed
++
++    if policy["save_rollout_mp4"]:
++        check(f"{prefix}.mp4", "mp4", "rollout")
++    if policy["save_init_png"]:
++        check(f"{prefix}_init.png", "png", "init_png")
++    mode = policy["save_generated_video"]
++    names = (
++        []
++        if mode == "none"
++        else [f"{prefix}_generated.mp4"]
++        if mode == "first"
++        else [f"{prefix}_generated_replan{index:04d}.mp4" for index in range(predictions)]
++    )
++    if row.get("generated_videos") != names or sorted(
++        path.name for path in attempt_dir.glob(f"{prefix}_generated*.mp4")
++    ) != sorted(names):
++        _fail("CORRUPT_MEDIA", "original generated artifacts do not match their original policy")
++    if names:
++        path = attempt_dir / f"{prefix}_generated_manifest.json"
++        generated = _json(path, unique_keys=True)
++        if (
++            not isinstance(generated, dict)
++            or generated.get("schema") != "psm_generated_video_v1"
++            or generated.get("status") != "COMPLETE"
++            or generated.get("evaluation_run_digest") != digest
++            or generated.get("evaluation_attempt_id") != attempt_id
++            or generated.get("mode") != mode
++            or not isinstance(generated.get("videos"), list)
++            or len(generated["videos"]) != len(names)
++        ):
++            _fail("CORRUPT_MEDIA", "original generated manifest is foreign or incomplete")
++        hashes[path.name] = sha256_file(path)
++        audit = _jsonl(attempt_dir / row["predictions_file"], digest=digest, episode=episode, attempt_id=attempt_id)
++        for index, (record, name) in enumerate(zip(generated["videos"], names, strict=True)):
++            if (
++                not isinstance(record, dict)
++                or type(record.get("replan")) is not int
++                or record["replan"] != index
++                or record.get("file") != name
++                or record.get("source_step") != audit[index]["step_before_query"]
++                or type(record.get("frames")) is not int
++                or record["frames"] <= 0
++            ):
++                _fail("CORRUPT_MEDIA", "original generated video lost its prediction correspondence")
++            if check(name, "mp4", "generated")["frames"] != record["frames"]:
++                _fail("CORRUPT_MEDIA", "original generated frame count is inconsistent")
++    expected_requested = (
++        0
++        if requested["save_generated_video"] == "none"
++        else 1
++        if requested["save_generated_video"] == "first"
++        else predictions
++    )
++    missing = []
++    if requested["save_rollout_mp4"] and not videos["rollout"]:
++        missing.append("rollout_mp4")
++    if requested["save_init_png"] and not videos["init_png"]:
++        missing.append("init_png")
++    missing.extend(f"generated_prediction_{index}" for index in range(len(names), expected_requested))
++    return {
++        "available_rollout": bool(videos["rollout"]),
++        "available_generated": len(names),
++        "prediction_count": predictions,
++        "available_init_png": bool(videos["init_png"]),
++        "expected_generated_per_original_policy": len(names),
++        "original_policy": policy,
++        "requested_policy": requested,
++        "missing_requested_media": missing,
++        "videos_view": videos,
++    }, hashes
++
++
++def verify_legacy_episode(attempt_dir, episode, *, manifest, sim_python, requested_media=None):
++    """Validate one original Episode, independently of Task status/episode budget."""
++    attempt_dir = _safe(Path(attempt_dir))
++    identity, protocol = _manifest(manifest)
++    digest, task = manifest["digest"], attempt_dir.parent.name
++    marker = _marker(attempt_dir, digest)
++    attempt_id = f"{task}/{attempt_dir.name}"
++    if task not in {value.get("task") for value in identity.get("tasks", []) if isinstance(value, dict)}:
++        _fail("FOREIGN_TASK", "attempt task is not in the original manifest")
++    if type(episode) is not int or episode < 0:
++        _fail("INVALID_EPISODE", "source episode index must be a nonnegative integer")
++    completed, _ = _completed_progress(attempt_dir, digest=digest, attempt_id=attempt_id)
++    if episode not in completed:
++        _fail("INCOMPLETE_EPISODE", "episode has no complete ordered original start/end pair")
++    runtime = _runtime(attempt_dir, identity)
++    path = attempt_dir / f"rollout{episode:02d}_episode.json"
++    row = _json(path, unique_keys=True)
++    if (
++        not isinstance(row, dict)
++        or type(row.get("ep")) is not int
++        or row["ep"] != episode
++        or row.get("evaluation_run_digest") != digest
++        or row.get("evaluation_attempt_id") != attempt_id
++    ):
++        _fail("FOREIGN_EPISODE", "episode result identity differs from its original attempt")
++    if row.get("outcome") not in {"success", "behavioral_failure"}:
++        _fail("NON_COMPLETED_OUTCOME", "runtime_error/interrupted episodes are not reusable")
++    if (
++        type(row.get("policy")) is not bool
++        or row.get("error") is not None
++        or row["policy"] != (row["outcome"] == "success")
++    ):
++        _fail("CORRUPT_OUTCOME", "episode typed outcome is inconsistent")
++    aggregate = attempt_dir / "results.json"
++    if aggregate.exists():
++        values = _json(aggregate, unique_keys=True)
++        if not isinstance(values, list):
++            _fail("AMBIGUOUS_AGGREGATE", "original task result is not a list")
++        matches = [
++            value
++            for value in values
++            if isinstance(value, dict) and type(value.get("ep")) is int and value["ep"] == episode
++        ]
++        if len(matches) != 1 or matches[0] != row:
++            _fail("AMBIGUOUS_AGGREGATE", "task and episode records conflict or duplicate the source index")
++    horizon = runtime.get("protocol", {}).get("official_horizons", {}).get(task)
++    if type(horizon) is not int or horizon <= 0:
++        _fail("UNKNOWN_ORIGINAL_HORIZON", "cannot prove normal horizon termination without original registry witness")
++    if type(row.get("steps")) is not int or not 0 < row["steps"] <= horizon:
++        _fail("CORRUPT_EPISODE_LENGTH", "completed episode steps lie outside its original official horizon")
++    if row["outcome"] == "behavioral_failure" and row["steps"] != horizon:
++        _fail("EARLY_BEHAVIORAL_FAILURE", "behavioral failure did not reach its original horizon")
++    prefix = f"rollout{episode:02d}"
++    _validate_local_cleanup(attempt_dir / f"{prefix}_cleanup.json")
++    cleanup = _json(attempt_dir / f"{prefix}_cleanup.json", unique_keys=True)
++    if (
++        row.get("actions_file") != f"{prefix}_actions.jsonl"
++        or row.get("predictions_file") != f"{prefix}_predictions.jsonl"
++    ):
++        _fail("FOREIGN_AUDIT_PATH", "audit files are not the source episode's canonical paths")
++    actions = _jsonl(attempt_dir / row["actions_file"], digest=digest, episode=episode, attempt_id=attempt_id)
++    predictions = _jsonl(attempt_dir / row["predictions_file"], digest=digest, episode=episode, attempt_id=attempt_id)
++    if (
++        type(row.get("completed_action_records")) is not int
++        or row["completed_action_records"] != len(actions)
++        or row["steps"] != len(actions)
++        or type(row.get("replans")) is not int
++        or row["replans"] != len(predictions)
++    ):
++        _fail("CORRUPT_AUDIT_COUNTS", "episode and original audit counts differ")
++    for index, action in enumerate(actions):
++        if (
++            type(action.get("source_step")) is not int
++            or action["source_step"] != index
++            or action.get("evidence_completed") is not True
++            or not _vector(action.get("predicted_raw15"), 15)
++            or not _vector(action.get("canonical_executed_raw15"), 15)
++            or not _vector(action.get("submitted_env12"), 12)
++        ):
++            _fail("CORRUPT_ACTION", "raw15/state15 action evidence is incomplete or out of order")
++    previous, local_episode = -1, None
++    for prediction in predictions:
++        frontier = prediction.get("step_before_query")
++        if type(frontier) is not int or not previous < frontier < len(actions) or (previous == -1 and frontier != 0):
++            _fail("CORRUPT_PREDICTION_FRONTIER", "prediction no longer corresponds to executed action frontier")
++        local = prediction.get("local_memory")
++        if (
++            not isinstance(local, dict)
++            or local.get("session_id") != cleanup["session_id"]
++            or type(local.get("consumer_step")) is not int
++            or local["consumer_step"] != frontier
++            or not isinstance(local.get("episode_id"), str)
++            or re.fullmatch(r"[0-9a-f]{32}", local["episode_id"]) is None
++            or (local_episode is not None and local["episode_id"] != local_episode)
++        ):
++            _fail(
++                "CORRUPT_LOCAL_ACKNOWLEDGEMENT",
++                "Local-TTT prediction/cleanup session or completed-evidence acknowledgement differs",
++            )
++        local_episode = local["episode_id"]
++        previous = frontier
++    policy = _policy(protocol)
++    requested = _policy(requested_media) if requested_media is not None else policy
++    try:
++        coverage, hashes = _media(
++            attempt_dir,
++            row,
++            policy=policy,
++            requested=requested,
++            sim_python=sim_python,
++            digest=digest,
++            attempt_id=attempt_id,
++        )
++    except EpisodeEvidenceError:
++        raise
++    except (OSError, ValueError) as error:
++        raise EpisodeEvidenceError("CORRUPT_ORIGINAL_MEDIA", str(error)) from error
++    for name in (
++        "attempt.json",
++        "runtime_attestation.json",
++        "episode_progress.jsonl",
++        path.name,
++        f"{prefix}_cleanup.json",
++        row["actions_file"],
++        row["predictions_file"],
++    ):
++        hashes[name] = sha256_file(_safe(attempt_dir / name))
++    if aggregate.exists():
++        hashes["results.json"] = sha256_file(aggregate)
++    seed = protocol.get("seed")
++    semantic = {
++        "outcome": row["outcome"],
++        "policy": row["policy"],
++        "steps": row["steps"],
++        "replans": row["replans"],
++        "actions": [
++            {
++                key: value
++                for key, value in action.items()
++                if key not in {"evaluation_run_digest", "evaluation_attempt_id", "episode"}
++            }
++            for action in actions
++        ],
++        "predictions": [prediction.get("action_chunk") for prediction in predictions],
++    }
++    return {
++        "task": task,
++        "outcome": row["outcome"],
++        "policy": row["policy"],
++        "effective_seed": seed,
++        "seed_source": "original_manifest.protocol.seed" if "seed" in protocol else "UNKNOWN",
++        "sampling_protocol": "legacy_task_stream",
++        "source_root": identity["root_sha"],
++        "source_child": identity["child_sha"],
++        "runtime_digest": runtime["digest"],
++        "source_episode": episode,
++        "source_index": episode,
++        "sort_key": [int(_ATTEMPT.fullmatch(attempt_dir.name)[1]), episode],
++        "source_ref": {
++            "path": str(path),
++            "run_dir": str(attempt_dir.parent.parent),
++            "original_digest": digest,
++            "attempt": attempt_dir.name,
++            "attempt_id": attempt_id,
++            "source_episode": episode,
++            "hashes": hashes,
++        },
++        "media_coverage": coverage,
++        "semantic_digest": hashlib.sha256(_canonical(semantic)).hexdigest(),
++        "original_task_status": marker["status"],
++    }
++
++
++def scan_legacy_run(run_dir, *, sim_python, tasks=None, requested_media=None):
++    """Return verified records plus explicit exclusions, without changing a byte."""
++    run_dir = _safe(Path(run_dir))
++    manifest = _json(run_dir / "evaluation_manifest.json", unique_keys=True)
++    identity, _ = _manifest(manifest)
++    known = {
++        value["task"]
++        for value in identity.get("tasks", [])
++        if isinstance(value, dict) and isinstance(value.get("task"), str)
++    }
++    if isinstance(tasks, str):
++        _fail("INVALID_TASK_FILTER", "task filter must be a collection, not a task-name string")
++    requested_tasks = known if tasks is None else set(tasks)
++    if any(not isinstance(task, str) or not task.isidentifier() or task == "all" for task in requested_tasks):
++        _fail("INVALID_TASK_FILTER", "unsafe task filter")
++    selected = sorted(requested_tasks & known)
++    records, diagnostics, chosen = (
++        [],
++        [
++            dict(
++                code="NO_LEGACY_TASK_SOURCE",
++                task=task,
++                message="current task has no source in this original manifest; schedule it as new",
++            )
++            for task in sorted(requested_tasks - known)
++        ],
++        {},
++    )
++    for task in selected:
++        task_dir = _safe(run_dir / task)
++        if not task_dir.exists():
++            continue
++        attempts = []
++        for path in task_dir.iterdir():
++            _safe(path)
++            match = _ATTEMPT.fullmatch(path.name)
++            if not path.is_dir() or match is None:
++                diagnostics.append(
++                    dict(
++                        code="UNKNOWN_ATTEMPT_ENTRY",
++                        task=task,
++                        path=str(path),
++                        message="unrecognized entry not imported",
++                    )
++                )
++                continue
++            attempts.append((int(match[1]), path))
++        ranks = [rank for rank, _ in attempts]
++        for rank, attempt in sorted(attempts):
++            if ranks.count(rank) != 1:
++                diagnostics.append(
++                    dict(
++                        code="AMBIGUOUS_ATTEMPT_INDEX",
++                        task=task,
++                        path=str(attempt),
++                        message="multiple original directories claim the same numeric attempt index; neither source is imported",
++                    )
++                )
++                continue
++            try:
++                _marker(attempt, manifest["digest"])
++                completed, unfinished = _completed_progress(
++                    attempt, digest=manifest["digest"], attempt_id=f"{task}/{attempt.name}"
++                )
++            except (OSError, ValueError, TypeError) as error:
++                diagnostics.append(
++                    dict(
++                        code=getattr(error, "code", "CORRUPT_ATTEMPT_EVIDENCE"),
++                        task=task,
++                        attempt=attempt.name,
++                        path=str(attempt),
++                        message=str(error),
++                    )
++                )
++                continue
++            candidates = {
++                int(match[1]) for path in attempt.iterdir() if (match := _ARTIFACT.fullmatch(path.name))
++            } | completed
++            if unfinished:
++                candidates.add(len(completed))
++                diagnostics.append(
++                    dict(
++                        code="PARTIAL_PROGRESS_TAIL",
++                        task=task,
++                        attempt=attempt.name,
++                        path=str(attempt / "episode_progress.jsonl"),
++                        message="unfinished final progress event excluded; earlier complete ordered pairs remain candidates",
++                    )
++                )
++            for episode in sorted(candidates):
++                path = attempt / f"rollout{episode:02d}_episode.json"
++                try:
++                    record = verify_legacy_episode(
++                        attempt, episode, manifest=manifest, sim_python=sim_python, requested_media=requested_media
++                    )
++                except (OSError, ValueError, TypeError, KeyError, IndexError) as error:
++                    diagnostics.append(
++                        dict(
++                            code=getattr(error, "code", "CORRUPT_EPISODE_EVIDENCE"),
++                            task=task,
++                            attempt=attempt.name,
++                            episode=episode,
++                            path=str(path),
++                            message=str(error),
++                        )
++                    )
++                    continue
++                key = (task, record["effective_seed"], episode)
++                if key in chosen:
++                    original = chosen[key]
++                    code = (
++                        "DUPLICATE_EXCLUDED"
++                        if original["semantic_digest"] == record["semantic_digest"]
++                        else "DUPLICATE_CONFLICT_EXCLUDED"
++                    )
++                    diagnostics.append(
++                        dict(
++                            code=code,
++                            task=task,
++                            episode=episode,
++                            chosen=original["source_ref"],
++                            excluded=record["source_ref"],
++                            message="oldest numeric valid attempt wins; outcomes never determine priority",
++                        )
++                    )
++                    continue
++                chosen[key] = record
++                records.append(record)
++    return {
++        "schema": "psm_episode_legacy_scan_prototype_v1",
++        "records": records,
++        "diagnostics": diagnostics,
++        "original_manifest": manifest,
++    }
+diff --git a/tools/v3/episode_resume_prototype/episode_evidence_test.py b/tools/v3/episode_resume_prototype/episode_evidence_test.py
+new file mode 100644
+index 00000000..d9ba7cd6
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/episode_evidence_test.py
+@@ -0,0 +1,523 @@
++"""Design gate using real legacy schemas, native tiny MP4 decode and fake Episodes."""
++
++import hashlib
++import json
++import shutil
++import sys
++from pathlib import Path
++
++import imageio.v2 as imageio
++import numpy as np
++import pytest
++from PIL import Image
++
++sys.path.insert(0, str(Path(__file__).resolve().parent))
++from episode_evidence import EpisodeEvidenceError, scan_legacy_run, verify_legacy_episode  # noqa: E402
++
++
++def canonical(value):
++    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++
++
++def write_json(path, value):
++    path.write_text(json.dumps(value, ensure_ascii=False) + "\n")
++
++
++def write_lines(path, values):
++    path.write_text("".join(json.dumps(value) + "\n" for value in values))
++
++
++def build_legacy_run(
++    tmp_path, *, completed=2, trials=5, status="FAILED", mode="none", rollout=False, png=False, seed=0
++):
++    """Public fake-data helper for the parent's scanner -> planner integration test."""
++    run = tmp_path / "legacy"
++    run.mkdir()
++    checkpoint = tmp_path / "job/checkpoints/iter_000004000"
++    (checkpoint / "model").mkdir(parents=True)
++    metadata = checkpoint / "model/.metadata"
++    shard = checkpoint / "model/__0_0.distcp"
++    metadata.write_bytes(b"synthetic metadata; not a real DCP")
++    shard.write_bytes(b"synthetic model shard; never deserialized")
++    config = checkpoint.parent.parent / "config.yaml"
++    config.write_text("synthetic_cpu_only: true\n")
++    dataset = tmp_path / "dataset/CloseFridge/lerobot"
++    (dataset / "extras").mkdir(parents=True)
++    (dataset / "extras/dataset_meta.json").write_text('{"env_args":{"env_name":"CloseFridge"}}\n')
++    runtime = {
++        "schema": "psm_robocasa_runtime_v1",
++        "fixture_scope": "synthetic metadata only; no simulator/physics/import acceptance",
++        "protocol": {"official_horizons": {"CloseFridge": 17}},
++    }
++    runtime["digest"] = hashlib.sha256(canonical(runtime)).hexdigest()
++    stat = shard.stat()
++    identity = {
++        "schema": "psm_v3_eval_identity_vendor_v1",
++        "root_sha": "1" * 40,
++        "child_sha": "2" * 40,
++        "checkpoint": str(checkpoint),
++        "model_metadata_sha256": hashlib.sha256(metadata.read_bytes()).hexdigest(),
++        "model_shard_stat_witnesses": [[shard.name, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns]],
++        "checkpoint_identity_scope": "metadata_hash_and_shard_stats_not_full_payload_hash",
++        "config_sha256": hashlib.sha256(config.read_bytes()).hexdigest(),
++        "tasks": [
++            {
++                "task": "CloseFridge",
++                "dataset_dir": str(dataset),
++                "env_metadata_sha256": hashlib.sha256((dataset / "extras/dataset_meta.json").read_bytes()).hexdigest(),
++            }
++        ],
++        "evaluation_runtime": runtime,
++        "protocol": {
++            "seed": seed,
++            "R": 16,
++            "H_pred": 16,
++            "server_action_chunk_size": 16,
++            "raw_action_dim": 15,
++            "max_action_dim": 64,
++            "policy_seed": 0,
++            "num_steps": 30,
++            "guidance": 1.0,
++            "trials": trials,
++            "fps": 20,
++            "camera_set": "left_wrist",
++            "use_state": True,
++            "base_encoding": "raw",
++            "local_memory_mode": "required",
++            "save_rollout_mp4": rollout,
++            "save_generated_video": mode,
++            "save_init_png": png,
++            "save_action_jsonl": True,
++            "save_prediction_jsonl": True,
++        },
++    }
++    write_json(
++        run / "evaluation_manifest.json",
++        {"identity": identity, "digest": hashlib.sha256(canonical(identity)).hexdigest()},
++    )
++    if rollout or png or mode != "none":
++        frames = [np.full((16, 16, 3), value, dtype=np.uint8) for value in (30, 190)]
++        imageio.mimwrite(tmp_path / "tiny.mp4", frames, fps=20, macro_block_size=None)
++        Image.fromarray(frames[0]).save(tmp_path / "tiny.png")
++    append_attempt(run, attempt=1, completed=completed, status=status)
++    return run
++
++
++def append_attempt(run_dir, *, attempt=2, completed=2, status="FAILED", outcomes=None):
++    manifest = json.loads((run_dir / "evaluation_manifest.json").read_text())
++    identity, digest = manifest["identity"], manifest["digest"]
++    policy = identity["protocol"]
++    directory = run_dir / "CloseFridge" / f"attempt_{attempt:04d}"
++    directory.mkdir(parents=True)
++    attempt_id = f"CloseFridge/{directory.name}"
++    write_json(
++        directory / "attempt.json",
++        dict(
++            schema="psm_robocasa_task_attempt_v1",
++            attempt_id=directory.name,
++            evaluation_run_digest=digest,
++            status=status,
++        ),
++    )
++    write_json(directory / "runtime_attestation.json", identity["evaluation_runtime"])
++    rows, progress = [], []
++    for episode in range(completed):
++        prefix = f"rollout{episode:02d}"
++        outcome = outcomes[episode] if outcomes is not None else "success" if episode % 2 == 0 else "behavioral_failure"
++        common = dict(evaluation_run_digest=digest, evaluation_attempt_id=attempt_id, episode=episode)
++        actions = [
++            dict(
++                common,
++                source_step=step,
++                predicted_raw15=[0.0] * 15,
++                canonical_executed_raw15=[0.0] * 15,
++                submitted_env12=[0.0] * 12,
++                evidence_completed=True,
++            )
++            for step in range(17)
++        ]
++        predictions = [
++            dict(
++                common,
++                step_before_query=step,
++                latency_ms=1.25,
++                action_chunk=[[0.0] * 15] * 16,
++                local_memory={
++                    "session_id": f"{'a' * 32}:0:{episode + 1:032x}",
++                    "episode_id": f"{episode + 1:032x}",
++                    "consumer_step": step,
++                    "prefix_present": step > 0,
++                },
++            )
++            for step in (0, 16)
++        ]
++        names = (
++            []
++            if policy["save_generated_video"] == "none"
++            else [f"{prefix}_generated.mp4"]
++            if policy["save_generated_video"] == "first"
++            else [f"{prefix}_generated_replan{index:04d}.mp4" for index in range(2)]
++        )
++        row = {
++            "ep": episode,
++            "policy": outcome == "success",
++            "outcome": outcome,
++            "error": "RuntimeError: injected partial episode" if outcome == "runtime_error" else None,
++            "evaluation_run_digest": digest,
++            "evaluation_attempt_id": attempt_id,
++            "steps": 17,
++            "completed_action_records": 17,
++            "replans": 2,
++            "actions_file": f"{prefix}_actions.jsonl",
++            "predictions_file": f"{prefix}_predictions.jsonl",
++            "generated_videos": names,
++        }
++        write_json(directory / f"{prefix}_episode.json", row)
++        write_lines(directory / row["actions_file"], actions)
++        write_lines(directory / row["predictions_file"], predictions)
++        write_json(
++            directory / f"{prefix}_cleanup.json",
++            dict(
++                session_id=f"{'a' * 32}:0:{episode + 1:032x}",
++                reset_ok=True,
++                cleanup_error=None,
++                rollout_error=None,
++                media_error=None,
++            ),
++        )
++        if policy["save_rollout_mp4"]:
++            shutil.copyfile(run_dir.parent / "tiny.mp4", directory / f"{prefix}.mp4")
++        if policy["save_init_png"]:
++            shutil.copyfile(run_dir.parent / "tiny.png", directory / f"{prefix}_init.png")
++        if names:
++            videos = []
++            for index, name in enumerate(names):
++                shutil.copyfile(run_dir.parent / "tiny.mp4", directory / name)
++                videos.append(dict(replan=index, source_step=(0, 16)[index], file=name, frames=2))
++            write_json(
++                directory / f"{prefix}_generated_manifest.json",
++                dict(
++                    schema="psm_generated_video_v1",
++                    status="COMPLETE",
++                    evaluation_run_digest=digest,
++                    evaluation_attempt_id=attempt_id,
++                    mode=policy["save_generated_video"],
++                    videos=videos,
++                ),
++            )
++        progress.extend(dict(common, schema="psm_episode_progress_v1", event=event) for event in ("start", "end"))
++        rows.append(row)
++    if completed < policy["trials"]:
++        progress.append(
++            dict(
++                schema="psm_episode_progress_v1",
++                evaluation_run_digest=digest,
++                evaluation_attempt_id=attempt_id,
++                episode=completed,
++                event="start",
++            )
++        )
++    write_lines(directory / "episode_progress.jsonl", progress)
++    write_json(directory / "results.json", rows)
++    return directory
++
++
++def scan(run, **kwargs):
++    return scan_legacy_run(run, sim_python=Path(sys.executable), **kwargs)
++
++
++def snapshot(run):
++    return {
++        str(path.relative_to(run)): (path.read_bytes(), path.stat().st_mtime_ns)
++        for path in run.rglob("*")
++        if path.is_file()
++    }
++
++
++@pytest.mark.parametrize("status", ["RUNNING", "FAILED", "COMPLETE"])
++def test_complete_episodes_reusable_without_task_complete_or_total_trial_count(tmp_path, status):
++    run = build_legacy_run(tmp_path, completed=2, trials=5, status=status)
++    before = snapshot(run)
++    result = scan(run)
++    assert [row["source_episode"] for row in result["records"]] == [0, 1]
++    assert [row["outcome"] for row in result["records"]] == ["success", "behavioral_failure"]
++    assert all(row["original_task_status"] == status for row in result["records"])
++    assert result["records"][0]["source_ref"]["original_digest"] == result["original_manifest"]["digest"]
++    assert before == snapshot(run)
++
++
++def test_actual_partial_third_episode_excluded_with_first_two_unchanged(tmp_path):
++    run = build_legacy_run(tmp_path)
++    attempt = run / "CloseFridge/attempt_0001"
++    (attempt / "rollout02_actions.jsonl").write_text('{"incomplete":')
++    before = snapshot(run)
++    result = scan(run)
++    assert len(result["records"]) == 2
++    assert any(row["code"] == "INCOMPLETE_EPISODE" and row.get("episode") == 2 for row in result["diagnostics"])
++    assert before == snapshot(run)
++
++
++def test_truncated_progress_tail_does_not_destroy_completed_prefix(tmp_path):
++    run = build_legacy_run(tmp_path)
++    path = run / "CloseFridge/attempt_0001/episode_progress.jsonl"
++    with path.open("ab") as handle:
++        handle.write(b'{"event":')
++    result = scan(run)
++    assert len(result["records"]) == 2
++    assert any(row["code"] == "PARTIAL_PROGRESS_TAIL" for row in result["diagnostics"])
++
++
++def test_numeric_oldest_valid_attempt_wins_never_highest_success(tmp_path):
++    run = build_legacy_run(tmp_path, completed=0)
++    append_attempt(run, attempt=10, completed=2, outcomes=["success", "success"])
++    append_attempt(run, attempt=3, completed=2, outcomes=["behavioral_failure", "behavioral_failure"])
++    result = scan(run)
++    assert len(result["records"]) == 2 and not any(row["policy"] for row in result["records"])
++    assert all(row["source_ref"]["attempt"] == "attempt_0003" for row in result["records"])
++    conflicts = [row for row in result["diagnostics"] if row["code"] == "DUPLICATE_CONFLICT_EXCLUDED"]
++    assert len(conflicts) == 2
++    assert all("attempt_0010" in row["excluded"]["path"] for row in conflicts)
++
++
++def test_identical_duplicate_not_double_counted_and_provenance_is_explicit(tmp_path):
++    run = build_legacy_run(tmp_path)
++    append_attempt(run, attempt=3, completed=2)
++    result = scan(run)
++    assert len(result["records"]) == 2
++    assert sum(row["code"] == "DUPLICATE_EXCLUDED" for row in result["diagnostics"]) == 2
++
++
++@pytest.mark.parametrize(
++    "original,requested,expected_missing", [("none", "all", 2), ("first", "all", 1), ("all", "none", 0)]
++)
++def test_media_upgrade_does_not_rerun_or_fabricate_historical_media(tmp_path, original, requested, expected_missing):
++    run = build_legacy_run(tmp_path, completed=1, mode=original)
++    before = snapshot(run)
++    result = scan(
++        run, requested_media=dict(save_generated_video=requested, save_rollout_mp4=False, save_init_png=False)
++    )
++    coverage = result["records"][0]["media_coverage"]
++    assert len(coverage["missing_requested_media"]) == expected_missing
++    assert coverage["available_generated"] == {"none": 0, "first": 1, "all": 2}[original]
++    assert before == snapshot(run)
++
++
++def test_original_environment_video_and_png_are_really_decoded(tmp_path):
++    run = build_legacy_run(tmp_path, completed=1, mode="all", rollout=True, png=True)
++    result = scan(run)
++    coverage = result["records"][0]["media_coverage"]
++    assert coverage["available_rollout"] and coverage["available_init_png"]
++    assert coverage["available_generated"] == 2 and coverage["missing_requested_media"] == []
++    assert len(coverage["videos_view"]["rollout"]) == 1
++
++
++def test_none_video_policy_still_preserves_verified_prediction_count(tmp_path):
++    run = build_legacy_run(tmp_path, completed=1, mode="none")
++    result = scan(run)
++    record = result["records"][0]
++    row = json.loads(Path(record["source_ref"]["path"]).read_text())
++    predictions = Path(record["source_ref"]["path"]).parent / row["predictions_file"]
++    assert record["media_coverage"]["prediction_count"] == row["replans"] == len(predictions.read_text().splitlines())
++    assert record["media_coverage"]["available_generated"] == 0
++
++
++@pytest.mark.parametrize(
++    "failure",
++    [
++        "missing_actions",
++        "truncated_actions",
++        "foreign_action_attempt",
++        "bad_action_abi",
++        "bad_prediction_frontier",
++        "missing_cleanup",
++        "cleanup_failed",
++        "foreign_digest",
++        "duplicate_aggregate",
++        "aggregate_conflict",
++        "runtime_error",
++        "early_behavioral_failure",
++        "bad_runtime",
++        "symlink_action",
++        "audit_traversal",
++        "missing_local_status",
++        "wrong_local_session",
++        "wrong_local_frontier",
++        "mixed_local_episode",
++    ],
++)
++def test_invalid_individual_episode_excluded_with_explicit_diagnostics(tmp_path, failure):
++    run = build_legacy_run(tmp_path, completed=1)
++    directory = run / "CloseFridge/attempt_0001"
++    row_path = directory / "rollout00_episode.json"
++    row = json.loads(row_path.read_text())
++    actions = directory / row["actions_file"]
++    predictions = directory / row["predictions_file"]
++    if failure == "missing_actions":
++        actions.unlink()
++    elif failure == "truncated_actions":
++        actions.write_text(actions.read_text().rstrip("\n"))
++    elif failure in {"foreign_action_attempt", "bad_action_abi"}:
++        values = [json.loads(line) for line in actions.read_text().splitlines()]
++        if failure == "foreign_action_attempt":
++            values[0]["evaluation_attempt_id"] = "CloseFridge/attempt_9999"
++        else:
++            values[0]["submitted_env12"] = [0] * 15
++        write_lines(actions, values)
++    elif failure == "bad_prediction_frontier":
++        values = [json.loads(line) for line in predictions.read_text().splitlines()]
++        values[1]["step_before_query"] = 0
++        write_lines(predictions, values)
++    elif failure in {"missing_local_status", "wrong_local_session", "wrong_local_frontier", "mixed_local_episode"}:
++        values = [json.loads(line) for line in predictions.read_text().splitlines()]
++        if failure == "missing_local_status":
++            values[0].pop("local_memory")
++        elif failure == "wrong_local_session":
++            values[0]["local_memory"]["session_id"] = f"{'b' * 32}:0:{'c' * 32}"
++        elif failure == "wrong_local_frontier":
++            values[1]["local_memory"]["consumer_step"] = 0
++        else:
++            values[1]["local_memory"]["episode_id"] = "b" * 32
++        write_lines(predictions, values)
++    elif failure == "missing_cleanup":
++        (directory / "rollout00_cleanup.json").unlink()
++    elif failure == "cleanup_failed":
++        path = directory / "rollout00_cleanup.json"
++        value = json.loads(path.read_text())
++        value["reset_ok"] = False
++        write_json(path, value)
++    elif failure == "foreign_digest":
++        row["evaluation_run_digest"] = "b" * 64
++    elif failure == "duplicate_aggregate":
++        write_json(directory / "results.json", [row, row])
++    elif failure == "aggregate_conflict":
++        write_json(directory / "results.json", [dict(row, policy=False, outcome="behavioral_failure")])
++    elif failure == "runtime_error":
++        row.update(policy=False, outcome="runtime_error", error="TimeoutError: partial episode")
++    elif failure == "early_behavioral_failure":
++        row.update(policy=False, outcome="behavioral_failure", steps=1)
++    elif failure == "bad_runtime":
++        path = directory / "runtime_attestation.json"
++        value = json.loads(path.read_text())
++        value["protocol"]["official_horizons"]["CloseFridge"] = 18
++        write_json(path, value)
++    elif failure == "symlink_action":
++        actions.rename(tmp_path / "outside.jsonl")
++        actions.symlink_to(tmp_path / "outside.jsonl")
++    elif failure == "audit_traversal":
++        row["actions_file"] = "../../not-readable.jsonl"
++    if failure in {"foreign_digest", "runtime_error", "early_behavioral_failure", "audit_traversal"}:
++        write_json(row_path, row)
++        write_json(directory / "results.json", [row])
++    result = scan(run)
++    assert result["records"] == []
++    assert result["diagnostics"]
++
++
++@pytest.mark.parametrize("failure", ["duplicate", "foreign_attempt", "wrong_order", "duplicate_json_key"])
++def test_corrupt_progress_is_not_a_valid_completed_episode(tmp_path, failure):
++    run = build_legacy_run(tmp_path, completed=1)
++    path = run / "CloseFridge/attempt_0001/episode_progress.jsonl"
++    values = [json.loads(line) for line in path.read_text().splitlines()]
++    if failure == "duplicate":
++        values.insert(2, values[1])
++    elif failure == "foreign_attempt":
++        values[0]["evaluation_attempt_id"] = "CloseFridge/attempt_9999"
++    elif failure == "wrong_order":
++        values[0], values[1] = values[1], values[0]
++    if failure == "duplicate_json_key":
++        path.write_text('{"event":"start","event":"end"}\n')
++    else:
++        write_lines(path, values)
++    result = scan(run)
++    assert result["records"] == []
++    assert any(row["code"] == "CORRUPT_PROGRESS" for row in result["diagnostics"])
++
++
++@pytest.mark.parametrize("media", ["rollout", "generated", "png"])
++def test_corrupt_media_required_by_original_policy_is_not_an_upgrade_gap(tmp_path, media):
++    run = build_legacy_run(tmp_path, completed=1, mode="first", rollout=True, png=True)
++    directory = run / "CloseFridge/attempt_0001"
++    name = {"rollout": "rollout00.mp4", "generated": "rollout00_generated.mp4", "png": "rollout00_init.png"}[media]
++    (directory / name).write_bytes(b"nonempty garbage must never pass")
++    result = scan(run, requested_media=dict(save_rollout_mp4=False, save_generated_video="none", save_init_png=False))
++    assert result["records"] == []
++    assert any(row.get("episode") == 0 for row in result["diagnostics"])
++
++
++def test_changed_requested_seed_never_rewrites_original_episode_provenance(tmp_path):
++    run = build_legacy_run(tmp_path, seed=0)
++    result = scan(run)
++    assert {row["effective_seed"] for row in result["records"]} == {0}
++    assert all(row["sampling_protocol"] == "legacy_task_stream" for row in result["records"])
++    assert all(row["seed_source"] == "original_manifest.protocol.seed" for row in result["records"])
++
++
++def test_manifest_tamper_stops_before_ingesting_any_episode(tmp_path):
++    run = build_legacy_run(tmp_path)
++    path = run / "evaluation_manifest.json"
++    value = json.loads(path.read_text())
++    value["identity"]["protocol"]["seed"] = 1
++    write_json(path, value)
++    with pytest.raises(EpisodeEvidenceError, match="canonical digest"):
++        scan(run)
++
++
++def test_current_task_expansion_or_reduction_does_not_reject_original_manifest(tmp_path):
++    run = build_legacy_run(tmp_path)
++    expanded = scan(run, tasks=["CloseFridge", "NavigateKitchen"])
++    assert len(expanded["records"]) == 2
++    assert any(
++        value["code"] == "NO_LEGACY_TASK_SOURCE" and value["task"] == "NavigateKitchen"
++        for value in expanded["diagnostics"]
++    )
++    reduced = scan(run, tasks=["NavigateKitchen"])
++    assert reduced["records"] == []
++    assert len(scan(run)["records"]) == 2  # No source was erased by the selected view.
++
++
++def test_numeric_attempt_alias_is_ambiguous_and_never_chosen_lexicographically(tmp_path):
++    run = build_legacy_run(tmp_path)
++    source = run / "CloseFridge/attempt_0001"
++    alias = run / "CloseFridge/attempt_00001"
++    shutil.copytree(source, alias)
++    marker = json.loads((alias / "attempt.json").read_text())
++    marker["attempt_id"] = alias.name
++    write_json(alias / "attempt.json", marker)
++    result = scan(run)
++    assert result["records"] == []
++    assert sum(value["code"] == "AMBIGUOUS_ATTEMPT_INDEX" for value in result["diagnostics"]) == 2
++
++
++def test_bad_oldest_candidate_does_not_hide_a_later_complete_candidate(tmp_path):
++    run = build_legacy_run(tmp_path)
++    (run / "CloseFridge/attempt_0001/rollout00_cleanup.json").unlink()
++    append_attempt(run, attempt=2, completed=2)
++    result = scan(run)
++    first = next(value for value in result["records"] if value["source_episode"] == 0)
++    second = next(value for value in result["records"] if value["source_episode"] == 1)
++    assert first["source_ref"]["attempt"] == "attempt_0002"
++    assert second["source_ref"]["attempt"] == "attempt_0001"
++    assert len(result["records"]) == 2
++
++
++def test_unavailable_original_media_policy_is_diagnosed_not_invented(tmp_path):
++    run = build_legacy_run(tmp_path)
++    path = run / "evaluation_manifest.json"
++    manifest = json.loads(path.read_text())
++    manifest["identity"]["protocol"].pop("save_generated_video")
++    manifest["digest"] = hashlib.sha256(canonical(manifest["identity"])).hexdigest()
++    write_json(path, manifest)
++    with pytest.raises(EpisodeEvidenceError, match="media policy"):
++        scan(run)
++
++
++def test_core_uses_actual_production_helpers_without_importing_whole_task_gate(tmp_path, monkeypatch):
++    import episode_evidence
++
++    assert episode_evidence._jsonl.__module__ == "robocasa_eval_results"
++    assert episode_evidence._validate_local_cleanup.__module__ == "robocasa_eval_results"
++    run = build_legacy_run(tmp_path)
++    attempt = run / "CloseFridge/attempt_0001"
++    manifest = json.loads((run / "evaluation_manifest.json").read_text())
++    row = verify_legacy_episode(attempt, 1, manifest=manifest, sim_python=Path(sys.executable))
++    assert row["outcome"] == "behavioral_failure" and row["source_episode"] == 1
+diff --git a/tools/v3/episode_resume_prototype/model_identity.py b/tools/v3/episode_resume_prototype/model_identity.py
+new file mode 100644
+index 00000000..eb9d2f2a
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/model_identity.py
+@@ -0,0 +1,382 @@
++"""READ-ONLY CPU design prototype; not wired into production evaluation.
++
++Only checkpoint, num_steps, action_horizon and guidance are reuse invariants.
++Source/runtime/config/plan observations are provenance, never a fifth equality.
++No pickle is executed, no tensor/model is loaded and no manifest is written.
++"""
++
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++import math
++import os
++import pickletools
++import re
++import stat
++import struct
++from pathlib import Path
++
++SCHEMA = "psm_eval_model_identity_v1"
++LEGACY_SCHEMAS = {"psm_v3_eval_identity_v1", "psm_v3_eval_identity_vendor_v1"}
++PARAMETERS = {"checkpoint", "num_steps", "action_horizon", "guidance"}
++_SHA = re.compile(r"[0-9a-f]{64}\Z")
++
++
++class IdentityInputError(ValueError):
++    """Unreadable/corrupt input, distinct from a valid old/new parameter mismatch."""
++
++    def __init__(self, code: str, message: str):
++        super().__init__(message)
++        self.code = code
++
++
++def _canonical(value) -> bytes:
++    try:
++        return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
++    except (TypeError, ValueError) as error:
++        raise IdentityInputError("INVALID_JSON_VALUE", str(error)) from error
++
++
++def _digest(value) -> str:
++    return hashlib.sha256(_canonical(value)).hexdigest()
++
++
++def _scalar_parameters(num_steps, action_horizon, guidance) -> dict:
++    for name, value in (("num_steps", num_steps), ("action_horizon", action_horizon)):
++        if type(value) is not int or value <= 0:
++            raise IdentityInputError("INVALID_MODEL_PARAMETER", f"{name} must be a positive integer; got {value!r}")
++    if type(guidance) not in (int, float) or not math.isfinite(guidance):
++        raise IdentityInputError("INVALID_MODEL_PARAMETER", f"guidance must be finite; got {guidance!r}")
++    return {
++        "num_steps": num_steps,
++        "action_horizon": action_horizon,
++        "guidance": 0.0 if guidance == 0 else float(guidance),
++    }
++
++
++def _stat_witness(value):
++    return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns
++
++
++def _snapshot(model: Path) -> dict:
++    paths = [model / ".metadata", *sorted(model.glob("*.distcp"))]
++    if len(paths) < 2:
++        raise IdentityInputError("CHECKPOINT_INPUT_INVALID", "checkpoint model has no shard")
++    snapshot = {}
++    for path in paths:
++        if path.is_symlink():
++            raise IdentityInputError("CHECKPOINT_INPUT_INVALID", f"symlink model file: {path}")
++        observed = path.stat()
++        if not stat.S_ISREG(observed.st_mode) or observed.st_size <= 0:
++            raise IdentityInputError("CHECKPOINT_INPUT_INVALID", f"missing/empty/nonregular model file: {path}")
++        snapshot[path.name] = observed
++    return snapshot
++
++
++def _metadata_header(data: bytes) -> None:
++    # Parse opcodes only. GLOBAL/REDUCE are never imported, instantiated or run.
++    if len(data) < 3 or data[0] != 0x80 or not 2 <= data[1] <= 5:
++        raise IdentityInputError("CHECKPOINT_HEADER_INVALID", "model .metadata lacks a supported pickle header")
++    try:
++        last = None
++        for operation, _, position in pickletools.genops(data):
++            last = operation.name, position
++        if last != ("STOP", len(data) - 1):
++            raise ValueError("metadata has trailing bytes or no STOP")
++    except (ValueError, UnicodeError, IndexError) as error:
++        raise IdentityInputError(
++            "CHECKPOINT_HEADER_INVALID", f"malformed metadata pickle structure: {error}"
++        ) from error
++
++
++def _shard_header(header: bytes, size: int) -> None:
++    # torch.save-based DCP shard containers start with a ZIP local-file header.
++    # This is deliberately NOT a tensor/metadata-offset/CRC load validation.
++    if len(header) < 30 or header[:4] != b"PK\x03\x04":
++        raise IdentityInputError("CHECKPOINT_HEADER_INVALID", "model shard lacks a torch ZIP local-file header")
++    fields = struct.unpack("<4s5H3I2H", header[:30])
++    name_size, extra_size = fields[-2:]
++    if name_size <= 0 or 30 + name_size + extra_size > size:
++        raise IdentityInputError("CHECKPOINT_HEADER_INVALID", "model shard ZIP header exceeds file bounds")
++
++
++def _read_hash(path: Path, expected, *, metadata: bool) -> str:
++    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
++    with os.fdopen(fd, "rb") as stream:
++        before = os.fstat(stream.fileno())
++        if _stat_witness(before) != _stat_witness(expected):
++            raise IdentityInputError("CHECKPOINT_CHANGED_DURING_READ", f"model changed before read: {path}")
++        digest, payload, header = hashlib.sha256(), [], b""
++        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
++            digest.update(chunk)
++            if not header:
++                header = chunk[:30]
++            if metadata:
++                payload.append(chunk)
++        after = os.fstat(stream.fileno())
++    if path.is_symlink() or _stat_witness(after) != _stat_witness(before):
++        raise IdentityInputError("CHECKPOINT_CHANGED_DURING_READ", f"model changed during read: {path}")
++    if metadata:
++        _metadata_header(b"".join(payload))
++    else:
++        _shard_header(header, before.st_size)
++    return digest.hexdigest()
++
++
++def build_model_identity(*, checkpoint: Path, num_steps: int, action_horizon: int, guidance: float) -> dict:
++    """Read all model bytes to establish a new strong baseline, without tensor loads.
++
++    `observed_checkpoint_stats` is a fresh legacy-bridge observation outside the
++    hard digest. New full-hash identities are stable under metadata timestamp
++    changes when all model bytes and the actual checkpoint path are unchanged.
++    Header checks do not prove a real DCP is semantically loadable or complete.
++    """
++    scalar = _scalar_parameters(num_steps, action_horizon, guidance)
++    try:
++        checkpoint = Path(checkpoint).resolve(strict=True)
++        model = checkpoint / "model"
++        if not model.is_dir() or model.is_symlink():
++            raise IdentityInputError("CHECKPOINT_INPUT_INVALID", "checkpoint must contain an ordinary model/ directory")
++        before = _snapshot(model)
++        metadata_hash = _read_hash(model / ".metadata", before[".metadata"], metadata=True)
++        shards = [
++            {
++                "name": name,
++                "bytes": info.st_size,
++                "sha256": _read_hash(model / name, info, metadata=False),
++            }
++            for name, info in before.items()
++            if name != ".metadata"
++        ]
++        after = _snapshot(model)
++        if {name: _stat_witness(value) for name, value in before.items()} != {
++            name: _stat_witness(value) for name, value in after.items()
++        }:
++            raise IdentityInputError("CHECKPOINT_CHANGED_DURING_READ", "model file inventory changed during hashing")
++    except OSError as error:
++        raise IdentityInputError("CHECKPOINT_INPUT_INVALID", f"checkpoint input unavailable: {error}") from error
++    parameters = {
++        "checkpoint": {
++            "path": str(checkpoint),
++            "scope": "full_model_sha256_v1",
++            "metadata_sha256": metadata_hash,
++            "shards": shards,
++        },
++        **scalar,
++    }
++    body = {"schema": SCHEMA, "parameters": parameters}
++    return {
++        **body,
++        "digest": _digest(body),
++        "observed_checkpoint_stats": [
++            [name, value.st_size, value.st_mtime_ns, value.st_ctime_ns]
++            for name, value in after.items()
++            if name != ".metadata"
++        ],
++        "validation_scope": "full_byte_hash_plus_nonexecuting_headers_not_tensor_load_or_DCP_completeness",
++    }
++
++
++def _checked(identity: dict) -> dict:
++    if not isinstance(identity, dict) or identity.get("schema") != SCHEMA:
++        raise IdentityInputError("MODEL_IDENTITY_INVALID", "unknown model identity schema")
++    parameters = identity.get("parameters")
++    if not isinstance(parameters, dict) or set(parameters) != PARAMETERS:
++        raise IdentityInputError("MODEL_IDENTITY_INVALID", "model identity requires exactly the four parameters")
++    scalar = _scalar_parameters(parameters["num_steps"], parameters["action_horizon"], parameters["guidance"])
++    if scalar != {key: parameters[key] for key in scalar}:
++        raise IdentityInputError("MODEL_IDENTITY_INVALID", "noncanonical scalar parameters")
++    checkpoint = parameters["checkpoint"]
++    if (
++        not isinstance(checkpoint, dict)
++        or set(checkpoint) != {"path", "scope", "metadata_sha256", "shards"}
++        or not isinstance(checkpoint["path"], str)
++        or not Path(checkpoint["path"]).is_absolute()
++        or checkpoint["scope"] != "full_model_sha256_v1"
++        or not isinstance(checkpoint["metadata_sha256"], str)
++        or not _SHA.fullmatch(checkpoint["metadata_sha256"])
++        or not isinstance(checkpoint["shards"], list)
++        or not checkpoint["shards"]
++    ):
++        raise IdentityInputError("MODEL_IDENTITY_INVALID", "invalid checkpoint content identity")
++    names = []
++    for row in checkpoint["shards"]:
++        if (
++            not isinstance(row, dict)
++            or set(row) != {"name", "bytes", "sha256"}
++            or not isinstance(row["name"], str)
++            or Path(row["name"]).name != row["name"]
++            or not row["name"].endswith(".distcp")
++            or type(row["bytes"]) is not int
++            or row["bytes"] <= 0
++            or not isinstance(row["sha256"], str)
++            or not _SHA.fullmatch(row["sha256"])
++        ):
++            raise IdentityInputError("MODEL_IDENTITY_INVALID", "invalid model shard content identity")
++        names.append(row["name"])
++    if names != sorted(set(names)):
++        raise IdentityInputError("MODEL_IDENTITY_INVALID", "duplicate/noncanonical shard inventory")
++    if identity.get("digest") != _digest({"schema": SCHEMA, "parameters": parameters}):
++        raise IdentityInputError("MODEL_IDENTITY_INVALID", "model identity digest mismatch")
++    return parameters
++
++
++def _mismatch(parameter: str, old, new, reason: str) -> dict:
++    return {"parameter": parameter, "reason": reason, "old": copy.deepcopy(old), "new": copy.deepcopy(new)}
++
++
++def compare_model_identity(old: dict, new: dict) -> dict:
++    """Return explicit old/new errors; source, runtime and invocation are not compared."""
++    old_parameters, new_parameters = _checked(old), _checked(new)
++    errors = [
++        _mismatch(name, old_parameters[name], new_parameters[name], "hard model parameter changed")
++        for name in ("checkpoint", "num_steps", "action_horizon", "guidance")
++        if old_parameters[name] != new_parameters[name]
++    ]
++    return {"status": "MODEL_MISMATCH" if errors else "MATCH", "errors": errors, "warnings": []}
++
++
++def _legacy_projection(identity: dict) -> dict:
++    protocol = identity.get("protocol")
++    if not isinstance(protocol, dict):
++        raise IdentityInputError("LEGACY_MANIFEST_INVALID", "legacy protocol missing")
++    try:
++        scalar = _scalar_parameters(protocol["num_steps"], protocol["R"], protocol["guidance"])
++        checkpoint = identity["checkpoint"]
++        metadata_hash = identity["model_metadata_sha256"]
++        shards = identity["model_shard_stat_witnesses"]
++    except KeyError as error:
++        raise IdentityInputError(
++            "LEGACY_MANIFEST_INVALID", f"legacy four-parameter authority missing: {error}"
++        ) from error
++    if (
++        not isinstance(checkpoint, str)
++        or not Path(checkpoint).is_absolute()
++        or not isinstance(metadata_hash, str)
++        or not _SHA.fullmatch(metadata_hash)
++        or not isinstance(shards, list)
++        or not shards
++    ):
++        raise IdentityInputError("LEGACY_MANIFEST_INVALID", "legacy checkpoint authority missing")
++    names = []
++    for row in shards:
++        if (
++            not isinstance(row, list)
++            or len(row) != 4
++            or not isinstance(row[0], str)
++            or Path(row[0]).name != row[0]
++            or not row[0].endswith(".distcp")
++            or any(type(value) is not int for value in row[1:])
++            or row[1] <= 0
++        ):
++            raise IdentityInputError("LEGACY_MANIFEST_INVALID", "invalid legacy shard stat witness")
++        names.append(row[0])
++    if names != sorted(set(names)):
++        raise IdentityInputError("LEGACY_MANIFEST_INVALID", "duplicate/noncanonical legacy shard inventory")
++    return {
++        "checkpoint": {
++            "path": checkpoint,
++            "metadata_sha256": metadata_hash,
++            "model_shard_stat_witnesses": copy.deepcopy(shards),
++            "scope": "legacy_metadata_sha256_and_shard_stats_not_payload_hash",
++        },
++        **scalar,
++    }
++
++
++def _provenance_warnings(old: dict, new: dict | None) -> list[dict]:
++    new = new or {}
++    warnings = []
++    for keys, label in (
++        (("root_sha", "child_sha"), "SOURCE"),
++        (("evaluation_runtime",), "RUNTIME"),
++        (("config_sha256",), "CONFIG"),
++    ):
++        old_values = {key: old.get(key) for key in keys}
++        new_values = {key: new.get(key) for key in keys}
++        unknown = any(value is None for value in (*old_values.values(), *new_values.values()))
++        if unknown or old_values != new_values:
++            warnings.append(
++                {
++                    "code": f"{label}_PROVENANCE_UNKNOWN" if unknown else f"{label}_PROVENANCE_CHANGED",
++                    "old": copy.deepcopy(old_values),
++                    "new": copy.deepcopy(new_values),
++                    "reuse_blocked": False,
++                    "comparability": "UNASSESSED_CONVENIENCE_AGGREGATE_NOT_SAME_CONDITION_BENCHMARK",
++                }
++            )
++    return warnings
++
++
++def legacy_ingest(manifest: dict, current_identity: dict, *, current_provenance: dict | None = None) -> dict:
++    """Verify an old manifest without rewriting its digest or historical evidence.
++
++    `current_identity` must be a freshly read build_model_identity() observation.
++    A legacy stat bridge cannot retrospectively attest historical payload bytes;
++    it never invents an old payload hash from current files. Individual episodes
++    still require validation against original_identity/original_manifest_digest.
++    """
++    current = _checked(current_identity)
++    if not isinstance(manifest, dict) or not isinstance(manifest.get("identity"), dict):
++        raise IdentityInputError("LEGACY_MANIFEST_INVALID", "legacy manifest must contain identity")
++    original = manifest["identity"]
++    if original.get("schema") not in LEGACY_SCHEMAS or manifest.get("digest") != _digest(original):
++        raise IdentityInputError("LEGACY_MANIFEST_INVALID", "unknown or corrupt legacy manifest identity")
++    old = _legacy_projection(original)
++    observed = current_identity.get("observed_checkpoint_stats")
++    if (
++        not isinstance(observed, list)
++        or any(
++            not isinstance(row, list)
++            or len(row) != 4
++            or not isinstance(row[0], str)
++            or any(type(value) is not int for value in row[1:])
++            for row in observed
++        )
++        or [row[0] for row in observed] != [row["name"] for row in current["checkpoint"]["shards"]]
++        or [row[1] for row in observed] != [row["bytes"] for row in current["checkpoint"]["shards"]]
++    ):
++        raise IdentityInputError("CURRENT_OBSERVATION_INVALID", "fresh legacy-bridge stat observation missing")
++    current_bridge = {
++        "path": current["checkpoint"]["path"],
++        "metadata_sha256": current["checkpoint"]["metadata_sha256"],
++        "model_shard_stat_witnesses": observed,
++        "scope": old["checkpoint"]["scope"],
++    }
++    errors = []
++    if old["checkpoint"] != current_bridge:
++        errors.append(_mismatch("checkpoint", old["checkpoint"], current_bridge, "legacy checkpoint witness changed"))
++    for name in ("num_steps", "action_horizon", "guidance"):
++        if old[name] != current[name]:
++            errors.append(_mismatch(name, old[name], current[name], "hard model parameter changed"))
++    warnings = [
++        {
++            "code": "LEGACY_PAYLOAD_HASH_NOT_RETROSPECTIVELY_AVAILABLE",
++            "reuse_blocked": False,
++            "scope": old["checkpoint"]["scope"],
++            "message": "Only historical metadata SHA and shard size/mtime/ctime match; current full hashes are a NEW baseline.",
++        },
++        *_provenance_warnings(original, current_provenance),
++    ]
++    return {
++        "schema": "psm_legacy_episode_ingest_decision_v1",
++        "status": "MODEL_MISMATCH" if errors else "LEGACY_STAT_BRIDGE_MATCH",
++        "errors": errors,
++        "warnings": warnings,
++        "original_manifest_digest": manifest["digest"],
++        "original_identity": copy.deepcopy(original),
++        "legacy_model_parameters": old,
++        "current_model_identity_ref": current_identity["digest"],
++        "checkpoint_binding_scope": old["checkpoint"]["scope"],
++        "historical_payload_sha256": None,
++        "original_provenance": {
++            "root_sha": original.get("root_sha"),
++            "child_sha": original.get("child_sha"),
++            "config_sha256": original.get("config_sha256"),
++            "evaluation_runtime": copy.deepcopy(original.get("evaluation_runtime")),
++        },
++        "original_invocation_plan": copy.deepcopy(original.get("protocol")),
++        "episode_validation": "REQUIRED_USING_ORIGINAL_MANIFEST_NOT_RELABELED_WITH_CURRENT_DIGEST",
++    }
+diff --git a/tools/v3/episode_resume_prototype/model_identity_test.py b/tools/v3/episode_resume_prototype/model_identity_test.py
+new file mode 100644
+index 00000000..0039093d
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/model_identity_test.py
+@@ -0,0 +1,425 @@
++"""Synthetic read-only identity gate; no real checkpoint, GPU or model load."""
++
++from __future__ import annotations
++
++import copy
++import hashlib
++import importlib.util
++import json
++import os
++import pickle
++import shutil
++import subprocess
++import zipfile
++from pathlib import Path
++
++import pytest
++
++SPEC = importlib.util.spec_from_file_location(
++    "episode_resume_model_identity", Path(__file__).with_name("model_identity.py")
++)
++identity = importlib.util.module_from_spec(SPEC)
++SPEC.loader.exec_module(identity)
++ROOT = Path(__file__).resolve().parents[3]
++
++
++def _json_digest(value):
++    encoded = json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
++    return hashlib.sha256(encoded).hexdigest()
++
++
++def _write_shard(path, payload=b"tiny fake tensor bytes"):
++    # Legal torch-style ZIP local headers; deliberately not represented as a
++    # semantically loadable model or real torch.distributed.checkpoint.Metadata.
++    with zipfile.ZipFile(path, "w") as archive:
++        for name, data in (
++            ("archive/data.pkl", pickle.dumps({"prototype_fixture": True}, protocol=4)),
++            ("archive/version", b"3\n"),
++            ("archive/byteorder", b"little"),
++            ("archive/data/0", payload),
++        ):
++            archive.writestr(zipfile.ZipInfo(name, date_time=(2020, 1, 1, 0, 0, 0)), data)
++
++
++@pytest.fixture
++def checkpoint(tmp_path):
++    path = tmp_path / "只读模型/checkpoints/iter_000004000"
++    model = path / "model"
++    model.mkdir(parents=True)
++    (model / ".metadata").write_bytes(pickle.dumps({"prototype_fixture": True, "ranks": [0, 1]}, protocol=4))
++    _write_shard(model / "__0_0.distcp")
++    _write_shard(model / "__1_0.distcp", b"second tiny fake tensor bytes")
++    return path
++
++
++def build(checkpoint, **changes):
++    arguments = dict(checkpoint=checkpoint, num_steps=30, action_horizon=16, guidance=1.0)
++    return identity.build_model_identity(**(arguments | changes))
++
++
++def legacy(current, *, runtime=True):
++    parameters = current["parameters"]
++    body = {
++        "schema": "psm_v3_eval_identity_vendor_v1" if runtime else "psm_v3_eval_identity_v1",
++        "root_sha": "a" * 40,
++        "child_sha": "b" * 40,
++        "checkpoint": parameters["checkpoint"]["path"],
++        "model_metadata_sha256": parameters["checkpoint"]["metadata_sha256"],
++        "model_shard_stat_witnesses": copy.deepcopy(current["observed_checkpoint_stats"]),
++        "checkpoint_identity_scope": "metadata_hash_and_shard_stats_not_full_payload_hash",
++        "config_sha256": "c" * 64,
++        "tasks": [{"task": "CloseFridge", "dataset_dir": "/原数据", "env_metadata_sha256": "e" * 64}],
++        "protocol": {
++            "num_steps": parameters["num_steps"],
++            "R": parameters["action_horizon"],
++            "guidance": parameters["guidance"],
++            "seed": 0,
++            "trials": 5,
++            "gpu_ids": [0],
++            "save_generated_video": "none",
++        },
++    }
++    if runtime:
++        body["evaluation_runtime"] = {"schema": "synthetic_runtime", "digest": "d" * 64}
++    return {"identity": body, "digest": _json_digest(body)}
++
++
++def _witness(path):
++    info = path.stat()
++    return path.read_bytes(), info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns
++
++
++def test_exactly_four_parameters_full_hashes_and_no_file_writes(checkpoint):
++    before = {path.name: _witness(path) for path in (checkpoint / "model").iterdir()}
++    current = build(checkpoint)
++    assert set(current["parameters"]) == {"checkpoint", "num_steps", "action_horizon", "guidance"}
++    model = current["parameters"]["checkpoint"]
++    assert model["scope"] == "full_model_sha256_v1"
++    assert model["path"] == str(checkpoint.resolve())
++    assert model["metadata_sha256"] == hashlib.sha256(before[".metadata"][0]).hexdigest()
++    assert [row["name"] for row in model["shards"]] == ["__0_0.distcp", "__1_0.distcp"]
++    for row in model["shards"]:
++        assert row["sha256"] == hashlib.sha256(before[row["name"]][0]).hexdigest()
++    assert identity.compare_model_identity(current, build(checkpoint)) == {
++        "status": "MATCH",
++        "errors": [],
++        "warnings": [],
++    }
++    assert before == {path.name: _witness(path) for path in (checkpoint / "model").iterdir()}
++    assert list(checkpoint.iterdir()) == [checkpoint / "model"]
++
++
++@pytest.mark.parametrize("parameter,value", [("num_steps", 31), ("action_horizon", 8), ("guidance", 1.5)])
++def test_each_scalar_parameter_mismatch_has_exact_old_new_values(checkpoint, parameter, value):
++    old, new = build(checkpoint), build(checkpoint, **{parameter: value})
++    report = identity.compare_model_identity(old, new)
++    assert report["status"] == "MODEL_MISMATCH"
++    assert len(report["errors"]) == 1
++    assert report["errors"][0]["parameter"] == parameter
++    assert report["errors"][0]["old"] == old["parameters"][parameter]
++    assert report["errors"][0]["new"] == value
++
++
++def test_different_actual_checkpoint_path_is_hard_mismatch(checkpoint, tmp_path):
++    alternate = tmp_path / "another/checkpoint"
++    shutil.copytree(checkpoint, alternate)
++    old, new = build(checkpoint), build(alternate)
++    report = identity.compare_model_identity(old, new)
++    assert report["status"] == "MODEL_MISMATCH"
++    assert report["errors"][0]["parameter"] == "checkpoint"
++    assert report["errors"][0]["old"]["path"] == str(checkpoint.resolve())
++    assert report["errors"][0]["new"]["path"] == str(alternate.resolve())
++
++
++def test_same_path_equal_size_replaced_weights_are_detected_with_mtime_restored(checkpoint):
++    shard = checkpoint / "model/__0_0.distcp"
++    _write_shard(shard, b"AAAA")
++    old = build(checkpoint)
++    info = shard.stat()
++    _write_shard(shard, b"BBBB")
++    os.utime(shard, ns=(info.st_atime_ns, info.st_mtime_ns))
++    new = build(checkpoint)
++    assert shard.stat().st_size == info.st_size and shard.stat().st_mtime_ns == info.st_mtime_ns
++    assert old["parameters"]["checkpoint"]["metadata_sha256"] == new["parameters"]["checkpoint"]["metadata_sha256"]
++    report = identity.compare_model_identity(old, new)
++    assert report["status"] == "MODEL_MISMATCH" and report["errors"][0]["parameter"] == "checkpoint"
++    assert (
++        old["parameters"]["checkpoint"]["shards"][0]["sha256"] != new["parameters"]["checkpoint"]["shards"][0]["sha256"]
++    )
++
++
++def test_same_bytes_changed_timestamp_matches_new_identity_but_never_bypasses_legacy(checkpoint):
++    old = build(checkpoint)
++    manifest = legacy(old)
++    shard = checkpoint / "model/__0_0.distcp"
++    info = shard.stat()
++    os.utime(shard, ns=(info.st_atime_ns, info.st_mtime_ns + 10_000_000))
++    new = build(checkpoint)
++    assert old["digest"] == new["digest"]
++    assert identity.compare_model_identity(old, new)["status"] == "MATCH"
++    bridged = identity.legacy_ingest(manifest, new)
++    assert bridged["status"] == "MODEL_MISMATCH"
++    assert bridged["errors"][0]["parameter"] == "checkpoint"
++    assert (
++        bridged["errors"][0]["old"]["model_shard_stat_witnesses"]
++        != bridged["errors"][0]["new"]["model_shard_stat_witnesses"]
++    )
++
++
++def test_changed_metadata_is_checkpoint_mismatch(checkpoint):
++    old = build(checkpoint)
++    (checkpoint / "model/.metadata").write_bytes(pickle.dumps({"different": "valid metadata structure"}, protocol=4))
++    new = build(checkpoint)
++    assert identity.compare_model_identity(old, new)["errors"][0]["parameter"] == "checkpoint"
++
++
++@pytest.mark.parametrize(
++    "failure",
++    [
++        "metadata_missing",
++        "metadata_empty",
++        "metadata_bad",
++        "metadata_trailing",
++        "shards_missing",
++        "shard_empty",
++        "shard_bad",
++        "shard_truncated",
++        "shard_symlink",
++    ],
++)
++def test_bad_or_missing_checkpoint_inputs_fail_without_a_new_identity(checkpoint, failure):
++    model = checkpoint / "model"
++    metadata, shard = model / ".metadata", model / "__0_0.distcp"
++    if failure == "metadata_missing":
++        metadata.unlink()
++    elif failure == "metadata_empty":
++        metadata.write_bytes(b"")
++    elif failure == "metadata_bad":
++        metadata.write_bytes(b"not pickle metadata")
++    elif failure == "metadata_trailing":
++        metadata.write_bytes(metadata.read_bytes() + b"trailing")
++    elif failure == "shards_missing":
++        for path in model.glob("*.distcp"):
++            path.unlink()
++    elif failure == "shard_empty":
++        shard.write_bytes(b"")
++    elif failure == "shard_bad":
++        shard.write_bytes(b"not a tensor container")
++    elif failure == "shard_truncated":
++        shard.write_bytes(b"PK\x03\x04")
++    else:
++        shard.unlink()
++        shard.symlink_to(model / "__1_0.distcp")
++    with pytest.raises(identity.IdentityInputError) as error:
++        build(checkpoint)
++    assert error.value.code in {"CHECKPOINT_INPUT_INVALID", "CHECKPOINT_HEADER_INVALID"}
++
++
++def _forbidden_unpickle():
++    raise AssertionError("a metadata pickle was executed")
++
++
++class _Reduce:
++    def __reduce__(self):
++        return _forbidden_unpickle, ()
++
++
++def test_metadata_pickle_opcodes_are_never_executed(checkpoint, monkeypatch):
++    (checkpoint / "model/.metadata").write_bytes(pickle.dumps(_Reduce(), protocol=4))
++    monkeypatch.setattr(pickle, "load", _forbidden_unpickle)
++    monkeypatch.setattr(pickle, "loads", _forbidden_unpickle)
++    assert build(checkpoint)["parameters"]["checkpoint"]["metadata_sha256"]
++
++
++def test_changed_inventory_during_hashing_fails_closed(checkpoint, monkeypatch):
++    original = identity._read_hash
++
++    def read(path, expected, *, metadata):
++        value = original(path, expected, metadata=metadata)
++        if not metadata:
++            path.touch()
++        return value
++
++    monkeypatch.setattr(identity, "_read_hash", read)
++    with pytest.raises(identity.IdentityInputError) as error:
++        build(checkpoint)
++    assert error.value.code == "CHECKPOINT_CHANGED_DURING_READ"
++
++
++@pytest.mark.parametrize(
++    "changes",
++    [
++        {"num_steps": True},
++        {"num_steps": 0},
++        {"action_horizon": False},
++        {"action_horizon": -1},
++        {"guidance": True},
++        {"guidance": float("nan")},
++        {"guidance": float("inf")},
++    ],
++)
++def test_invalid_scalar_input_is_not_reported_as_a_compatible_identity(checkpoint, changes):
++    with pytest.raises(identity.IdentityInputError) as error:
++        build(checkpoint, **changes)
++    assert error.value.code == "INVALID_MODEL_PARAMETER"
++
++
++def test_guidance_numeric_representation_is_canonical(checkpoint):
++    assert build(checkpoint, guidance=1)["digest"] == build(checkpoint, guidance=1.0)["digest"]
++    assert build(checkpoint, guidance=-0.0)["digest"] == build(checkpoint, guidance=0.0)["digest"]
++
++
++def test_identity_digest_or_fifth_hard_field_cannot_be_forged(checkpoint):
++    current = build(checkpoint)
++    for changes in ({"digest": "a" * 64}, {"parameters": current["parameters"] | {"root_sha": "a" * 40}}):
++        with pytest.raises(identity.IdentityInputError):
++            identity.compare_model_identity(current, current | changes)
++
++
++def test_legacy_bridge_preserves_original_identity_and_never_invents_historical_payload_hash(checkpoint):
++    current = build(checkpoint)
++    manifest = legacy(current)
++    before = copy.deepcopy(manifest)
++    provenance = {
++        key: manifest["identity"][key] for key in ("root_sha", "child_sha", "config_sha256", "evaluation_runtime")
++    }
++    result = identity.legacy_ingest(manifest, current, current_provenance=provenance)
++    assert result["status"] == "LEGACY_STAT_BRIDGE_MATCH" and result["errors"] == []
++    assert result["original_manifest_digest"] == manifest["digest"]
++    assert result["original_identity"] == manifest["identity"] == before["identity"]
++    assert result["current_model_identity_ref"] == current["digest"]
++    assert result["historical_payload_sha256"] is None
++    assert result["warnings"][0]["code"] == "LEGACY_PAYLOAD_HASH_NOT_RETROSPECTIVELY_AVAILABLE"
++    assert "ORIGINAL_MANIFEST" in result["episode_validation"]
++    result["original_identity"]["protocol"]["seed"] = 99
++    assert manifest == before
++
++
++@pytest.mark.parametrize(
++    "key,value,code",
++    [
++        ("root_sha", "e" * 40, "SOURCE_PROVENANCE_CHANGED"),
++        ("child_sha", "f" * 40, "SOURCE_PROVENANCE_CHANGED"),
++        ("config_sha256", "f" * 64, "CONFIG_PROVENANCE_CHANGED"),
++        ("evaluation_runtime", {"changed": "physical environment"}, "RUNTIME_PROVENANCE_CHANGED"),
++    ],
++)
++def test_source_config_or_runtime_changes_warn_without_a_fifth_hard_equality(checkpoint, key, value, code):
++    current = build(checkpoint)
++    manifest = legacy(current)
++    provenance = {
++        name: manifest["identity"][name] for name in ("root_sha", "child_sha", "config_sha256", "evaluation_runtime")
++    }
++    provenance[key] = value
++    result = identity.legacy_ingest(manifest, current, current_provenance=provenance)
++    assert result["status"] == "LEGACY_STAT_BRIDGE_MATCH" and result["errors"] == []
++    warning = next(row for row in result["warnings"] if row["code"] == code)
++    assert warning["reuse_blocked"] is False and "NOT_SAME_CONDITION_BENCHMARK" in warning["comparability"]
++
++
++def test_tasks_seed_media_and_resource_changes_are_original_plan_provenance_only(checkpoint):
++    current = build(checkpoint)
++    manifest = legacy(current)
++    manifest["identity"]["protocol"].update(
++        seed=42, trials=8, gpu_ids=[7, 6], save_generated_video="all", timeouts={"task_wall_s": 999}, base_port=9999
++    )
++    manifest["identity"]["tasks"].append({"task": "NavigateKitchen", "dataset_dir": "/other"})
++    manifest["digest"] = _json_digest(manifest["identity"])
++    result = identity.legacy_ingest(manifest, current)
++    assert result["status"] == "LEGACY_STAT_BRIDGE_MATCH"
++    assert result["original_invocation_plan"]["seed"] == 42
++    assert "tasks" not in result["legacy_model_parameters"]
++
++
++def test_unknown_legacy_runtime_warns_and_is_not_fabricated(checkpoint):
++    current = build(checkpoint)
++    result = identity.legacy_ingest(
++        legacy(current, runtime=False), current, current_provenance={"root_sha": "a" * 40, "child_sha": "b" * 40}
++    )
++    assert result["status"] == "LEGACY_STAT_BRIDGE_MATCH"
++    assert result["original_provenance"]["evaluation_runtime"] is None
++    assert "RUNTIME_PROVENANCE_UNKNOWN" in {row["code"] for row in result["warnings"]}
++
++
++@pytest.mark.parametrize("name,value", [("num_steps", 31), ("R", 8), ("guidance", 2.0)])
++def test_legacy_four_parameter_changes_still_fail_with_old_new_values(checkpoint, name, value):
++    current = build(checkpoint)
++    manifest = legacy(current)
++    manifest["identity"]["protocol"][name] = value
++    manifest["digest"] = _json_digest(manifest["identity"])
++    result = identity.legacy_ingest(manifest, current)
++    assert result["status"] == "MODEL_MISMATCH"
++    assert len(result["errors"]) == 1
++    assert result["errors"][0]["old"] == value
++    assert result["errors"][0]["new"] == current["parameters"]["action_horizon" if name == "R" else name]
++
++
++@pytest.mark.parametrize(
++    "failure",
++    ["digest", "unknown_schema", "stats_missing", "stats_duplicate", "metadata_hash_missing", "boolean_stats"],
++)
++def test_unverifiable_legacy_manifest_cannot_be_ingested(checkpoint, failure):
++    current = build(checkpoint)
++    manifest = legacy(current)
++    original = manifest["identity"]
++    if failure == "digest":
++        manifest["digest"] = "0" * 64
++    else:
++        if failure == "unknown_schema":
++            original["schema"] = "unknown"
++        elif failure == "stats_missing":
++            original.pop("model_shard_stat_witnesses")
++        elif failure == "stats_duplicate":
++            original["model_shard_stat_witnesses"].append(original["model_shard_stat_witnesses"][0])
++        elif failure == "boolean_stats":
++            original["model_shard_stat_witnesses"][0][1] = True
++        else:
++            original.pop("model_metadata_sha256")
++        manifest["digest"] = _json_digest(original)
++    with pytest.raises(identity.IdentityInputError) as error:
++        identity.legacy_ingest(manifest, current)
++    assert error.value.code == "LEGACY_MANIFEST_INVALID"
++
++
++def test_actual_unchanged_production_legacy_manifest_can_be_read_without_claim_or_rewrite(checkpoint, tmp_path):
++    spec = importlib.util.spec_from_file_location("unchanged_v3_identity", ROOT / "scripts/v3_evaluation_identity.py")
++    production = importlib.util.module_from_spec(spec)
++    spec.loader.exec_module(production)
++    root, child = tmp_path / "source", tmp_path / "source/cosmos-framework"
++
++    def git(repo, *arguments):
++        return subprocess.check_output(
++            ["git", "-c", "core.hooksPath=/dev/null", "-c", "commit.gpgsign=false", "-C", str(repo), *arguments],
++            stderr=subprocess.STDOUT,
++            text=True,
++        ).strip()
++
++    for repo in (root, child):
++        repo.mkdir(parents=True)
++        git(repo, "init", "-q")
++        (repo / "fixture.txt").write_text("CPU source fixture\n")
++        git(repo, "add", "fixture.txt")
++        git(repo, "-c", "user.name=CPU Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "fixture")
++    git(root, "update-index", "--add", "--cacheinfo", f"160000,{git(child, 'rev-parse', 'HEAD')},cosmos-framework")
++    git(root, "-c", "user.name=CPU Fixture", "-c", "user.email=fixture@example.invalid", "commit", "-qm", "gitlink")
++    config = tmp_path / "config.yaml"
++    config.write_text("synthetic: true\n")
++    dataset = tmp_path / "dataset/extras"
++    dataset.mkdir(parents=True)
++    (dataset / "dataset_meta.json").write_text(json.dumps({"env_args": {"env_name": "CloseFridge"}}))
++    manifest = production.build_evaluation_identity(
++        root=root,
++        checkpoint=checkpoint,
++        config_file=config,
++        tasks=[("CloseFridge", dataset.parent)],
++        protocol={"num_steps": 30, "R": 16, "guidance": 1.0, "seed": 0, "trials": 5},
++    )
++    output = tmp_path / "historical/evaluation_manifest.json"
++    output.parent.mkdir()
++    output.write_text(json.dumps(manifest, ensure_ascii=False))
++    before = _witness(output)
++    result = identity.legacy_ingest(json.loads(output.read_text()), build(checkpoint))
++    assert result["status"] == "LEGACY_STAT_BRIDGE_MATCH"
++    assert result["original_manifest_digest"] == manifest["digest"]
++    assert _witness(output) == before
++    assert sorted(path.name for path in output.parent.iterdir()) == ["evaluation_manifest.json"]
+diff --git a/tools/v3/episode_resume_prototype/plan.py b/tools/v3/episode_resume_prototype/plan.py
+new file mode 100644
+index 00000000..66c04c95
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/plan.py
+@@ -0,0 +1,370 @@
++"""Pure current-plan/episode-view prototype; no production scheduling or evidence writes."""
++
++from __future__ import annotations
++
++import copy
++import fcntl
++import hashlib
++import json
++import os
++import re
++import stat
++from pathlib import Path
++
++from tools.v3.episode_resume_prototype.model_identity import compare_model_identity
++from tools.v3.episode_resume_prototype.scene_sampling import plan_scene_sampling
++
++
++def source_key(record):
++    reference = record["source_ref"]
++    locator = {
++        "task": record["task"],
++        "original_digest": reference["original_digest"],
++        "attempt": reference["attempt"],
++        "source_episode": reference["source_episode"],
++    }
++    return hashlib.sha256(json.dumps(locator, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest()
++
++
++def _core_snapshot(record):
++    mutable = {"attempt.json", "episode_progress.jsonl", "results.json"}
++    return {key: value for key, value in record["source_ref"]["hashes"].items() if key not in mutable}
++
++
++def _priority(record):
++    attempt = record["source_ref"]["attempt"]
++    numeric = re.fullmatch(r"attempt_(\d+)", attempt)
++    return record["task"], int(numeric[1]) if numeric else 2**63, str(attempt), record["source_episode"]
++
++
++def _coverage(record, requested):
++    coverage = copy.deepcopy(record.get("media_coverage", {}))
++    mode = requested["save_generated_video"]
++    if mode not in {"none", "first", "all"}:
++        raise ValueError("invalid current generated media policy")
++    required_generated = 0 if mode == "none" else 1 if mode == "first" else coverage.get("prediction_count")
++    missing = []
++    if requested["save_rollout_mp4"] and coverage.get("available_rollout") is not True:
++        missing.append("rollout_mp4")
++    if requested["save_init_png"] and coverage.get("available_init_png") is not True:
++        missing.append("init_png")
++    if required_generated is None:
++        missing.append("generated_coverage_unknown")
++    elif coverage.get("available_generated", 0) < required_generated:
++        missing.append("generated_mp4")
++    coverage.update(requested_policy=copy.deepcopy(requested), missing_requested_media=missing)
++    return coverage
++
++
++def _complete(record):
++    return (
++        record.get("verified") is True
++        and record.get("outcome") in {"success", "behavioral_failure"}
++        and type(record.get("policy")) is bool
++        and (record["outcome"] == "success") == record["policy"]
++        and record.get("error") is None
++    )
++
++
++def verified_scan_records(scan):
++    """Trust-boundary adapter: only the scanner may produce input history records."""
++    identity = scan.get("original_manifest", {}).get("identity", {})
++    metadata = {row["task"]: row.get("env_metadata_sha256") for row in identity.get("tasks", [])}
++    return [
++        dict(
++            copy.deepcopy(record),
++            verified=True,
++            logical_episode_index=record["source_episode"],
++            config_sha256=identity.get("config_sha256"),
++            task_metadata_sha256=metadata.get(record["task"]),
++        )
++        for record in scan["records"]
++    ]
++
++
++def _conditions(records):
++    flags = []
++    seeds = {record.get("effective_seed") for record in records}
++    families = {record.get("requested_seed", record.get("effective_seed")) for record in records}
++    runtimes = {record.get("runtime_digest") for record in records}
++    sampling = {record.get("sampling_protocol") for record in records}
++    sources = {(record.get("source_root"), record.get("source_child")) for record in records}
++    configs = {record.get("config_sha256") for record in records}
++    task_metadata = {}
++    for record in records:
++        task_metadata.setdefault(record["task"], set()).add(record.get("task_metadata_sha256"))
++    if len(families - {None}) > 1:
++        flags.append("MIXED_SEED")
++    if len(seeds - {None}) > 1:
++        flags.append("MULTIPLE_EFFECTIVE_ENV_SEEDS")
++    if None in seeds or None in families:
++        flags.append("UNKNOWN_SEED")
++    if len(runtimes - {None}) > 1:
++        flags.append("MIXED_RUNTIME")
++    if None in runtimes:
++        flags.append("UNKNOWN_RUNTIME")
++    if len(sampling) > 1:
++        flags.append("MIXED_SAMPLING_PROTOCOL")
++    if len(sources) > 1:
++        flags.append("MIXED_SOURCE_PROVENANCE")
++    if len(configs - {None}) > 1:
++        flags.append("MIXED_CONFIG")
++    if None in configs:
++        flags.append("UNKNOWN_CONFIG")
++    if any(len(values - {None}) > 1 for values in task_metadata.values()):
++        flags.append("MIXED_TASK_METADATA")
++    if any(None in values for values in task_metadata.values()):
++        flags.append("UNKNOWN_TASK_METADATA")
++    return {
++        "effective_seeds": sorted(seeds - {None}),
++        "requested_seed_families": sorted(families - {None}),
++        "runtime_digests": sorted(runtimes - {None}),
++        "flags": flags,
++        "benchmark_qualification": (
++            "CONVENIENCE_AGGREGATE_NOT_SINGLE_CONDITION_BENCHMARK" if flags else "SOURCE_CONDITIONS_RECORDED"
++        ),
++    }
++
++
++def build_plan(
++    records,
++    *,
++    tasks,
++    requested_episodes,
++    requested_seed,
++    requested_media,
++    execution,
++    current_provenance,
++    invocation_id,
++    pending_slots=None,
++    scan_diagnostics=(),
++):
++    if (
++        not tasks
++        or len(tasks) != len(set(tasks))
++        or any(not isinstance(task, str) or not task.isidentifier() for task in tasks)
++        or type(requested_episodes) is not int
++        or requested_episodes <= 0
++        or type(requested_seed) is not int
++        or requested_seed < 0
++    ):
++        raise ValueError("invalid current invocation plan")
++    original = copy.deepcopy(records)
++    rows, observed, logical_slots, diagnostics = [], {}, {}, list(copy.deepcopy(scan_diagnostics))
++    original.sort(key=_priority)
++    for record in original:
++        if record["task"] not in tasks:
++            continue
++        if not _complete(record):
++            diagnostics.append({"code": "UNVERIFIED_OR_UNFINISHED_EXCLUDED", "task": record["task"]})
++            continue
++        key = source_key(record)
++        if key in observed:
++            if _core_snapshot(record) != _core_snapshot(observed[key]):
++                raise ValueError(f"SOURCE_EVIDENCE_CHANGED: {key}")
++            diagnostics.append({"code": "REPEATED_SOURCE_REFERENCE_EXCLUDED", "source_key": key})
++            continue
++        observed[key] = record
++        if record.get("sampling_protocol") == "legacy_task_stream":
++            record.setdefault("logical_episode_index", record["source_episode"])
++        if "logical_episode_index" in record:
++            slot = (record["task"], record["logical_episode_index"])
++            if slot in logical_slots:
++                diagnostics.append(
++                    {"code": "LOGICAL_SLOT_DUPLICATE_EXCLUDED", "chosen": logical_slots[slot], "excluded": key}
++                )
++                continue
++            logical_slots[slot] = key
++        record["media_coverage"] = _coverage(record, requested_media)
++        rows.append(record)
++    plan = {
++        "schema": "psm_episode_resume_plan_design_v1",
++        "invocation_id": invocation_id,
++        "requested_seed": requested_seed,
++        "requested_episodes_per_task": requested_episodes,
++        "selected_tasks": sorted(tasks),
++        "requested_media": copy.deepcopy(requested_media),
++        "execution": copy.deepcopy(execution),
++        "tasks": {},
++        "diagnostics": diagnostics,
++        "warnings": [],
++        "production_wired": False,
++    }
++    planned_sources = []
++    for task in sorted(tasks):
++        history = sorted(
++            (row for row in rows if row["task"] == task),
++            key=lambda row: (
++                row.get("logical_episode_index", row["source_episode"]),
++                str(row["source_ref"]["original_digest"]),
++                str(row["source_ref"]["attempt"]),
++            ),
++        )
++        selected = history[:requested_episodes]
++        # Catalog IDs are never reassigned to another completed source. The
++        # requested view's dense ordinal is separate from original physical ep.
++        pending = (pending_slots or {}).get(task, [])
++        if any(type(slot) is not int or slot < 0 for slot in pending):
++            raise ValueError("invalid pending logical slot")
++        pending = sorted(set(pending))
++        used_slots = {row.get("logical_episode_index", row["source_episode"]) for row in history}
++        pending = [slot for slot in pending if slot not in used_slots]
++        next_slot = max((row.get("logical_episode_index", row["source_episode"]) for row in history), default=-1) + 1
++        next_slot = max([next_slot, *(slot + 1 for slot in pending)])
++        new_count = requested_episodes - len(selected)
++        new_slots = pending[:new_count]
++        new_slots.extend(range(next_slot, next_slot + new_count - len(new_slots)))
++        scene = plan_scene_sampling(
++            task=task,
++            requested_seed=requested_seed,
++            new_logical_indices=new_slots,
++            attempt_nonce=invocation_id,
++            legacy_sources=selected,
++        )
++        planned_new = scene["new_episodes"]
++        for row in planned_new:
++            row.update(copy.deepcopy(current_provenance), task=task, sampling_protocol=scene["sampler_version"])
++            row["task_metadata_sha256"] = current_provenance.get("task_metadata_by_task", {}).get(task)
++        plan["tasks"][task] = {
++            "requested": requested_episodes,
++            "previous_completed": len(history),
++            "reused": len(selected),
++            "new": new_count,
++            "excluded": len(history) - len(selected),
++            "reused_sources": selected,
++            "excluded_sources": history[requested_episodes:],
++            "new_episodes": planned_new,
++        }
++        if new_count:
++            plan["warnings"].extend(scene["warnings"])
++        planned_sources.extend(selected + planned_new)
++    plan["planned_conditions"] = _conditions(planned_sources)
++    plan["historical_missing_requested_media"] = sum(
++        len(row.get("media_coverage", {}).get("missing_requested_media", []))
++        for value in plan["tasks"].values()
++        for row in value["reused_sources"]
++    )
++    if not any(row["new"] for row in plan["tasks"].values()):
++        plan["warnings"].append(
++            {
++                "code": "NO_NEW_EPISODES_AT_REQUESTED_SEED",
++                "requested_seed": requested_seed,
++                "actual_historical_seeds": plan["planned_conditions"]["effective_seeds"],
++            }
++        )
++    return plan
++
++
++def build_report(plan, executed, *, invocation_errors=()):
++    """Aggregate only the selected, validated source references; never count an error as fail."""
++    tasks, all_completed, errors = {}, [], list(copy.deepcopy(invocation_errors))
++    planned = {
++        (task, row["logical_episode_index"]): row
++        for task, value in plan["tasks"].items()
++        for row in value["new_episodes"]
++    }
++    by_slot, failed = {}, {}
++    selected_keys = {source_key(row) for value in plan["tasks"].values() for row in value["reused_sources"]}
++    for row in copy.deepcopy(executed):
++        key = (row["task"], row["logical_episode_index"])
++        if key not in planned or key in by_slot or key in failed:
++            errors.append({"code": "UNPLANNED_OR_DUPLICATE_EXECUTION", "slot": list(key)})
++            continue
++        if row.get("effective_seed") != planned[key]["effective_seed"]:
++            errors.append({"code": "EXECUTED_SEED_MISMATCH", "slot": list(key)})
++            failed[key] = row
++        elif _complete(row) and source_key(row) not in selected_keys:
++            by_slot[key] = row
++            selected_keys.add(source_key(row))
++        else:
++            failed[key] = row
++            errors.append({"code": "EXECUTION_NOT_COMPLETE", "slot": list(key), "error": row.get("error")})
++    for task, value in plan["tasks"].items():
++        new = [row for (name, _), row in sorted(by_slot.items()) if name == task]
++        ordered = sorted(
++            value["reused_sources"] + new,
++            key=lambda row: row.get("logical_episode_index", row["source_episode"]),
++        )
++        completed = [dict(copy.deepcopy(row), view_ordinal=index) for index, row in enumerate(ordered)]
++        for row in completed:
++            row["media_coverage"] = _coverage(row, plan["requested_media"])
++        successes = sum(row["policy"] for row in completed)
++        tasks[task] = {
++            "requested": value["requested"],
++            "previous_completed": value["previous_completed"],
++            "reused": value["reused"],
++            "executed": sum(name == task for name, _ in by_slot) + sum(name == task for name, _ in failed),
++            "executed_completed": len(new),
++            "excluded": value["excluded"],
++            "failed": sum(name == task for name, _ in failed),
++            "remaining": value["requested"] - len(completed),
++            "successes": successes,
++            "completed": len(completed),
++            "partial_sr": successes / len(completed) if completed else None,
++            "episode_sources": completed,
++        }
++        all_completed.extend(completed)
++    requested = sum(row["requested"] for row in tasks.values())
++    complete = len(all_completed) == requested and not errors
++    for row in tasks.values():
++        row["sr"] = row["successes"] / row["requested"] if complete else None
++    media_missing = [row.get("media_coverage", {}).get("missing_requested_media", []) for row in all_completed]
++    return {
++        "schema": "psm_episode_resume_report_design_v1",
++        "status": "COMPLETE" if complete else "PARTIAL",
++        "requested_seed": plan["requested_seed"],
++        "tasks": tasks,
++        "requested": requested,
++        "completed": len(all_completed),
++        "reused": sum(row["reused"] for row in tasks.values()),
++        "executed": sum(row["executed"] for row in tasks.values()),
++        "excluded": sum(row["excluded"] for row in tasks.values()),
++        "remaining": requested - len(all_completed),
++        "failed": sum(row["failed"] for row in tasks.values()),
++        "sr": sum(row["policy"] for row in all_completed) / requested if complete else None,
++        "partial_sr": sum(row["policy"] for row in all_completed) / len(all_completed) if all_completed else None,
++        "actual_conditions": _conditions(all_completed),
++        "missing_requested_media": sum(len(missing) for missing in media_missing),
++        "episodes_with_requested_media": sum(not missing for missing in media_missing),
++        "requested_media_coverage": (
++            sum(not missing for missing in media_missing) / len(all_completed) if all_completed else None
++        ),
++        "warnings": copy.deepcopy(plan["warnings"]),
++        "diagnostics": copy.deepcopy(plan["diagnostics"]),
++        "invocation_errors": errors,
++        "exit_code": 0 if complete else 1,
++    }
++
++
++def render_plan(plan):
++    lines = [f"RESUME PLAN requested_seed={plan['requested_seed']} tasks={plan['selected_tasks']}"]
++    for task, row in plan["tasks"].items():
++        lines.append(
++            f"{task} requested={row['requested']} previous_completed={row['previous_completed']} "
++            f"reused={row['reused']} new={row['new']} excluded={row['excluded']}"
++        )
++    lines.append(json.dumps({"conditions": plan["planned_conditions"], "warnings": plan["warnings"]}, sort_keys=True))
++    return "\n".join(lines)
++
++
++def locked_snapshot(run_dir: Path, *, expected_identity, current_identity_reader, snapshot_reader):
++    """Read-only design witness: no writes/model launch before both identity checks and lock."""
++
++    def check():
++        result = compare_model_identity(expected_identity, current_identity_reader())
++        if result["status"] != "MATCH":
++            raise ValueError(json.dumps(result, sort_keys=True))
++
++    check()
++    lock_path = Path(run_dir) / ".run.lock"
++    # Historical current-schema runs already own this persistent file. Creating
++    # a lock for older runs is a future migration step, not this read-only proof.
++    if any(path.is_symlink() for path in (lock_path, *lock_path.parents)):
++        raise ValueError("unsafe run lock path")
++    fd = os.open(lock_path, os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK)
++    with os.fdopen(fd, "a") as handle:
++        if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
++            raise ValueError("run lock must be a regular file")
++        fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
++        check()
++        return snapshot_reader()
+diff --git a/tools/v3/episode_resume_prototype/plan_test.py b/tools/v3/episode_resume_prototype/plan_test.py
+new file mode 100644
+index 00000000..2deec604
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/plan_test.py
+@@ -0,0 +1,460 @@
++"""CPU current-plan witnesses; fixtures are validated references, never real rollouts."""
++
++from __future__ import annotations
++
++import copy
++import fcntl
++import pickle
++import subprocess
++import sys
++import zipfile
++from pathlib import Path
++
++import pytest
++
++from tools.v3.episode_resume_prototype.model_identity import build_model_identity
++from tools.v3.episode_resume_prototype.plan import (
++    build_plan,
++    build_report,
++    locked_snapshot,
++    render_plan,
++    verified_scan_records,
++)
++
++MEDIA = {"save_rollout_mp4": True, "save_generated_video": "all", "save_init_png": True}
++CURRENT = {"source_root": "b" * 40, "source_child": "c" * 40, "runtime_digest": "d" * 64}
++
++
++def history(count, task="CloseFridge", *, seed=0, mode="none"):
++    return [
++        {
++            "verified": True,
++            "task": task,
++            "source_episode": episode,
++            "sampling_protocol": "legacy_task_stream",
++            "effective_seed": seed,
++            "seed_source": "inferred_from_original_manifest_not_rng_snapshot",
++            "source_root": "a" * 40,
++            "source_child": "a" * 40,
++            "runtime_digest": "e" * 64,
++            "outcome": "success" if episode % 2 == 0 else "behavioral_failure",
++            "policy": episode % 2 == 0,
++            "error": None,
++            "source_ref": {
++                "path": f"/synthetic/{task}/attempt_0001/rollout{episode:02d}_episode.json",
++                "original_digest": "f" * 64,
++                "attempt": "attempt_0001",
++                "source_episode": episode,
++                "hashes": {"core": f"{episode:064x}"},
++            },
++            "media_coverage": {
++                "available_rollout": mode == "all",
++                "available_init_png": mode == "all",
++                "available_generated": 0 if mode == "none" else 1 if mode == "first" else 3,
++                "prediction_count": 3,
++                "original_policy": {"save_rollout_mp4": False, "save_generated_video": mode},
++                "missing_requested_media": [] if mode == "all" else ["rollout", "generated"],
++            },
++        }
++        for episode in range(count)
++    ]
++
++
++def plan(records, *, tasks=None, episodes=5, seed=0, **changes):
++    options = {
++        "tasks": tasks or ["CloseFridge"],
++        "requested_episodes": episodes,
++        "requested_seed": seed,
++        "requested_media": MEDIA,
++        "execution": {"gpus": [2, 3], "base_port": 8900, "task_wall_timeout_s": 1000},
++        "current_provenance": CURRENT,
++        "invocation_id": "fake-invocation-2",
++    }
++    options.update(changes)
++    return build_plan(records, **options)
++
++
++def completed_new(value):
++    return [
++        {
++            **copy.deepcopy(row),
++            "verified": True,
++            "policy": True,
++            "outcome": "success",
++            "error": None,
++            "source_ref": {
++                "path": f"/synthetic/{task}/attempt_new_{row['logical_episode_index']}/rollout00_episode.json",
++                "original_digest": "1" * 64,
++                "attempt": f"attempt_new_{row['logical_episode_index']}",
++                "source_episode": 0,
++                "hashes": {"core": str(row["logical_episode_index"])},
++            },
++            "media_coverage": {
++                "available_rollout": True,
++                "available_init_png": True,
++                "available_generated": 3,
++                "prediction_count": 3,
++                "missing_requested_media": [],
++            },
++        }
++        for task, info in value["tasks"].items()
++        for row in info["new_episodes"]
++    ]
++
++
++@pytest.mark.parametrize("old,requested,reused,new,excluded", [(3, 5, 3, 2, 0), (8, 5, 5, 0, 3), (5, 5, 5, 0, 0)])
++def test_resize_only_counts_current_plan(old, requested, reused, new, excluded):
++    sources = history(old)
++    before = copy.deepcopy(sources)
++    value = plan(sources, episodes=requested)
++    row = value["tasks"]["CloseFridge"]
++    assert (row["reused"], row["new"], row["excluded"]) == (reused, new, excluded)
++    report = build_report(value, completed_new(value))
++    assert report["status"] == "COMPLETE" and report["completed"] == requested
++    assert sources == before and len(row["excluded_sources"]) == excluded
++    if old == 8:
++        assert report["sr"] == 3 / 5
++    if old == 3:
++        assert [item["logical_episode_index"] for item in row["new_episodes"]] == [3, 4]
++        assert [item["source_episode"] for item in row["new_episodes"]] == [0, 0]
++
++
++def test_expand_and_shrink_tasks_do_not_rewrite_or_count_other_tasks():
++    sources = history(5) + history(5, "NavigateKitchen")
++    expanded = plan(sources, tasks=["TurnOnSinkFaucet", "NavigateKitchen", "CloseFridge"])
++    assert expanded["tasks"]["TurnOnSinkFaucet"]["new"] == 5
++    assert expanded["tasks"]["NavigateKitchen"]["reused"] == 5
++    shrunk = plan(sources)
++    report = build_report(shrunk, [])
++    assert report["requested"] == report["completed"] == 5
++    assert set(report["tasks"]) == {"CloseFridge"} and len(sources) == 10
++
++
++def test_seed_change_preserves_history_and_reports_actual_mixture():
++    old = history(5)
++    value = plan(old, episodes=8, seed=1)
++    new = completed_new(value)
++    assert all(row["effective_seed"] == 0 for row in old)
++    assert all(row["requested_seed"] == 1 for row in new)
++    report = build_report(value, new)
++    assert "MIXED_SEED" in report["actual_conditions"]["flags"]
++    assert "MIXED_RUNTIME" in report["actual_conditions"]["flags"]
++    assert "MIXED_SAMPLING_PROTOCOL" in report["actual_conditions"]["flags"]
++    assert report["actual_conditions"]["benchmark_qualification"].startswith("CONVENIENCE_AGGREGATE")
++    assert report["actual_conditions"]["effective_seeds"] == sorted({0, *(row["effective_seed"] for row in new)})
++
++
++def test_full_reuse_does_not_claim_requested_seed_or_current_runtime_was_used():
++    value = plan(history(8), seed=1)
++    report = build_report(value, [])
++    assert report["executed"] == 0 and report["actual_conditions"]["effective_seeds"] == [0]
++    assert report["actual_conditions"]["runtime_digests"] == ["e" * 64]
++    assert "MIXED_RUNTIME" not in report["actual_conditions"]["flags"]
++    assert any(row.get("code") == "NO_NEW_EPISODES_AT_REQUESTED_SEED" for row in report["warnings"])
++    assert "previous_completed=8 reused=5 new=0 excluded=3" in render_plan(value)
++
++
++@pytest.mark.parametrize("mode", ["none", "first", "all"])
++def test_media_request_changes_do_not_schedule_already_verified_episodes(mode):
++    value = plan(history(5, mode=mode))
++    assert value["tasks"]["CloseFridge"]["new"] == 0
++    report = build_report(value, [])
++    assert report["status"] == "COMPLETE" and report["executed"] == 0
++    assert report["missing_requested_media"] == (0 if mode == "all" else 15)
++    assert value["requested_media"] == MEDIA
++
++
++def test_execution_changes_and_task_reordering_do_not_change_reused_sources_or_new_seeds():
++    records = history(3) + history(2, "NavigateKitchen")
++    first = plan(records, tasks=["NavigateKitchen", "CloseFridge"])
++    second = plan(
++        records,
++        tasks=["CloseFridge", "NavigateKitchen"],
++        invocation_id="another-invocation",
++        execution={"gpus": [7], "base_port": 9010, "task_wall_timeout_s": 4, "progress": False},
++    )
++    for task in first["selected_tasks"]:
++        assert first["tasks"][task]["reused_sources"] == second["tasks"][task]["reused_sources"]
++        assert [row["effective_seed"] for row in first["tasks"][task]["new_episodes"]] == [
++            row["effective_seed"] for row in second["tasks"][task]["new_episodes"]
++        ]
++
++
++def test_partial_runtime_error_is_not_behavioral_failure_or_a_completed_episode():
++    value = plan(history(3))
++    executed = completed_new(value)
++    executed[-1].update(verified=False, outcome="runtime_error", policy=False, error="RuntimeError: reset failed")
++    report = build_report(value, executed)
++    assert report["status"] == "PARTIAL" and report["exit_code"] == 1
++    assert (report["completed"], report["failed"], report["remaining"]) == (4, 1, 1)
++    assert report["sr"] is None and report["partial_sr"] == 3 / 4
++
++
++def test_current_worker_error_remains_failure_even_with_all_requested_results():
++    report = build_report(plan(history(5)), [], invocation_errors=[{"code": "WORKER_INITIALIZATION_ERROR"}])
++    assert report["completed"] == 5 and report["remaining"] == 0
++    assert report["status"] == "PARTIAL" and report["exit_code"] == 1 and report["sr"] is None
++
++
++def test_historical_runtime_error_does_not_permanently_poison_completed_new_invocation():
++    records = history(3)
++    broken = copy.deepcopy(records[-1])
++    broken.update(verified=False, outcome="runtime_error", error="prior interruption")
++    value = plan(records + [broken])
++    assert value["tasks"]["CloseFridge"]["previous_completed"] == 3
++    assert build_report(value, completed_new(value))["status"] == "COMPLETE"
++
++
++def test_duplicate_refs_and_duplicate_executions_cannot_double_count():
++    records = history(3)
++    value = plan(records + [records[0]])
++    assert value["tasks"]["CloseFridge"]["reused"] == 3
++    executed = completed_new(value)
++    report = build_report(value, executed + [executed[0]])
++    assert report["completed"] == 5 and report["status"] == "PARTIAL" and report["exit_code"] == 1
++
++
++def test_shared_task_snapshot_change_does_not_create_a_second_episode():
++    old = history(1)[0]
++    old["source_ref"]["hashes"]["results.json"] = "old-aggregate"
++    newer = copy.deepcopy(old)
++    newer["source_ref"]["hashes"]["results.json"] = "aggregate-with-later-episode"
++    value = plan([old, newer], episodes=2)
++    assert value["tasks"]["CloseFridge"]["reused"] == 1
++    assert value["diagnostics"][0]["code"] == "REPEATED_SOURCE_REFERENCE_EXCLUDED"
++
++
++def test_same_locator_with_changed_core_is_rejected_instead_of_double_counted():
++    old = history(1)[0]
++    changed = copy.deepcopy(old)
++    changed["source_ref"]["hashes"]["core"] = "tampered-action-record"
++    with pytest.raises(ValueError, match="SOURCE_EVIDENCE_CHANGED"):
++        plan([old, changed], episodes=2)
++
++
++def test_two_attempts_for_same_logical_slot_never_count_twice_or_prefer_success():
++    older = history(1)[0]
++    older.update(logical_episode_index=0, outcome="behavioral_failure", policy=False)
++    newer = copy.deepcopy(older)
++    newer.update(outcome="success", policy=True)
++    newer["source_ref"].update(
++        attempt="attempt_0002", path="/synthetic/CloseFridge/attempt_0002/rollout00_episode.json"
++    )
++    value = plan([newer, older], episodes=2)
++    assert value["tasks"]["CloseFridge"]["reused"] == 1
++    assert value["tasks"]["CloseFridge"]["reused_sources"][0]["policy"] is False
++    assert any(row["code"] == "LOGICAL_SLOT_DUPLICATE_EXCLUDED" for row in value["diagnostics"])
++    assert build_report(value, completed_new(value))["sr"] == 1 / 2
++
++
++def test_legacy_physical_index_and_new_explicit_logical_slot_cannot_double_count():
++    older = history(1)[0]
++    newer = copy.deepcopy(older)
++    newer.update(logical_episode_index=0, sampling_protocol="independent_episode_v1")
++    newer["source_ref"].update(attempt="attempt_0002")
++    value = plan([newer, older], episodes=2)
++    assert value["tasks"]["CloseFridge"]["reused"] == 1
++    assert value["tasks"]["CloseFridge"]["new"] == 1
++
++
++@pytest.mark.parametrize("original_mode", ["none", "first", "all"])
++def test_turning_off_all_requested_media_never_rewrites_history_or_requires_rerun(original_mode):
++    records = history(5, mode=original_mode)
++    disabled = {"save_rollout_mp4": False, "save_generated_video": "none", "save_init_png": False}
++    value = plan(records, requested_media=disabled)
++    report = build_report(value, [])
++    assert report["completed"] == 5 and report["executed"] == 0 and report["missing_requested_media"] == 0
++
++
++def test_current_media_policy_recomputes_stale_catalog_coverage_without_source_changes():
++    records = history(5)
++    before = copy.deepcopy(records)
++    disabled = {"save_rollout_mp4": False, "save_generated_video": "none", "save_init_png": False}
++    value = plan(records, requested_media=disabled)
++    report = build_report(value, [])
++    assert report["missing_requested_media"] == 0 and report["requested_media_coverage"] == 1.0
++    assert records == before and report["executed"] == 0
++
++
++def test_scanner_diagnostics_are_retained_in_start_plan_and_end_report():
++    diagnostics = [{"code": "DUPLICATE_CONFLICT_EXCLUDED", "task": "CloseFridge", "reason": "old attempt kept"}]
++    value = plan(history(5), scan_diagnostics=diagnostics)
++    report = build_report(value, [])
++    assert value["diagnostics"] == report["diagnostics"] == diagnostics
++
++
++def test_one_derived_seed_family_is_distinguished_from_multiple_environment_seeds():
++    value = plan([], episodes=2, seed=9)
++    report = build_report(value, completed_new(value))
++    actual = report["actual_conditions"]
++    assert actual["requested_seed_families"] == [9] and len(actual["effective_seeds"]) == 2
++    assert "MIXED_SEED" not in actual["flags"]
++    assert "MULTIPLE_EFFECTIVE_ENV_SEEDS" in actual["flags"]
++
++
++def test_config_or_same_task_metadata_changes_are_warnings_not_a_fifth_model_parameter():
++    records = history(2)
++    for row in records:
++        row.update(config_sha256="1" * 64, task_metadata_sha256="2" * 64)
++    records[1].update(config_sha256="3" * 64, task_metadata_sha256="4" * 64)
++    report = build_report(plan(records, episodes=2), [])
++    assert report["status"] == "COMPLETE"
++    assert "MIXED_CONFIG" in report["actual_conditions"]["flags"]
++    assert "MIXED_TASK_METADATA" in report["actual_conditions"]["flags"]
++    assert report["actual_conditions"]["benchmark_qualification"].startswith("CONVENIENCE_AGGREGATE")
++
++
++def test_wrong_actual_seed_is_rejected_before_it_can_be_counted():
++    value = plan(history(4))
++    executed = completed_new(value)
++    executed[0]["effective_seed"] += 1
++    report = build_report(value, executed)
++    assert report["completed"] == 4 and report["failed"] == 1 and report["sr"] is None
++    assert report["invocation_errors"][0]["code"] == "EXECUTED_SEED_MISMATCH"
++
++
++def test_unfinished_slot_retries_with_new_attempt_without_reusing_partial_source():
++    records = history(3)
++    records.pop(1)
++    value = plan(records, episodes=3, pending_slots={"CloseFridge": [1]})
++    assert [row["logical_episode_index"] for row in value["tasks"]["CloseFridge"]["new_episodes"]] == [1]
++    report = build_report(value, completed_new(value))
++    assert report["status"] == "COMPLETE"
++    assert [
++        row.get("logical_episode_index", row["source_episode"])
++        for row in report["tasks"]["CloseFridge"]["episode_sources"]
++    ] == [0, 1, 2]
++
++
++def test_unknown_historical_seed_is_not_filled_from_requested_seed():
++    value = plan(history(5, seed=None), seed=8)
++    report = build_report(value, [])
++    assert "UNKNOWN_SEED" in report["actual_conditions"]["flags"]
++    assert report["actual_conditions"]["effective_seeds"] == []
++
++
++def make_model(tmp_path, **overrides):
++    path = tmp_path / "checkpoint"
++    model = path / "model"
++    model.mkdir(parents=True, exist_ok=True)
++    (model / ".metadata").write_bytes(pickle.dumps({"fake_metadata": True}, protocol=4))
++    with zipfile.ZipFile(model / "__0_0.distcp", "w") as archive:
++        archive.writestr("archive/data.pkl", b"fake, not actual tensor data")
++    return build_model_identity(checkpoint=path, num_steps=30, action_horizon=16, guidance=1.0, **overrides)
++
++
++@pytest.mark.parametrize("field,value", [("num_steps", 20), ("action_horizon", 8), ("guidance", 2.0)])
++def test_model_parameter_mismatch_precedes_lock_read_callback_and_any_new_attempt(tmp_path, field, value):
++    expected = make_model(tmp_path)
++    parameters = {"checkpoint": tmp_path / "checkpoint", "num_steps": 30, "action_horizon": 16, "guidance": 1.0}
++    parameters[field] = value
++    current = build_model_identity(**parameters)
++    called = []
++    with pytest.raises(ValueError, match=field):
++        locked_snapshot(
++            tmp_path / "nonexistent-run",
++            expected_identity=expected,
++            current_identity_reader=lambda: current,
++            snapshot_reader=lambda: called.append("launch"),
++        )
++    assert not called and not (tmp_path / "nonexistent-run").exists()
++
++
++def test_checkpoint_payload_mismatch_precedes_lock_or_launch(tmp_path):
++    expected = make_model(tmp_path)
++    with zipfile.ZipFile(tmp_path / "checkpoint/model/__0_0.distcp", "a") as archive:
++        archive.writestr("archive/changed", b"replacement")
++    current = build_model_identity(checkpoint=tmp_path / "checkpoint", num_steps=30, action_horizon=16, guidance=1.0)
++    with pytest.raises(ValueError, match="checkpoint"):
++        locked_snapshot(
++            tmp_path / "no-run",
++            expected_identity=expected,
++            current_identity_reader=lambda: current,
++            snapshot_reader=lambda: pytest.fail("must not schedule"),
++        )
++    assert not (tmp_path / "no-run").exists()
++
++
++def test_busy_lease_never_writes_migration_or_invocation(tmp_path):
++    identity = make_model(tmp_path)
++    lock = tmp_path / ".run.lock"
++    lock.touch()
++    before = {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()}
++    with lock.open("a") as held:
++        fcntl.flock(held, fcntl.LOCK_EX | fcntl.LOCK_NB)
++        with pytest.raises(BlockingIOError):
++            locked_snapshot(
++                tmp_path,
++                expected_identity=identity,
++                current_identity_reader=lambda: identity,
++                snapshot_reader=lambda: pytest.fail("must not read or write invocation"),
++            )
++    assert {p: p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
++
++
++def test_rechecks_identity_after_lease_and_releases_lease_on_error(tmp_path):
++    identity = make_model(tmp_path)
++    changed = build_model_identity(checkpoint=tmp_path / "checkpoint", num_steps=10, action_horizon=16, guidance=1)
++    (tmp_path / ".run.lock").touch()
++    reads = iter([identity, changed])
++    with pytest.raises(ValueError, match="num_steps"):
++        locked_snapshot(
++            tmp_path,
++            expected_identity=identity,
++            current_identity_reader=lambda: next(reads),
++            snapshot_reader=lambda: pytest.fail("must not schedule"),
++        )
++    assert (
++        locked_snapshot(
++            tmp_path,
++            expected_identity=identity,
++            current_identity_reader=lambda: identity,
++            snapshot_reader=lambda: "unmodified snapshot",
++        )
++        == "unmodified snapshot"
++    )
++
++
++def test_unsafe_lock_path_is_not_followed(tmp_path):
++    identity = make_model(tmp_path)
++    elsewhere = tmp_path / "elsewhere"
++    elsewhere.touch()
++    (tmp_path / ".run.lock").symlink_to(elsewhere)
++    with pytest.raises(ValueError, match="unsafe"):
++        locked_snapshot(
++            tmp_path,
++            expected_identity=identity,
++            current_identity_reader=lambda: identity,
++            snapshot_reader=lambda: pytest.fail("unsafe namespace"),
++        )
++
++
++def test_actual_owned_process_cleanup_does_not_kill_a_foreign_process():
++    from scripts.robocasa_processes import OwnedProcess
++
++    foreign = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"], start_new_session=True)
++    owned = None
++    try:
++        owned = OwnedProcess([sys.executable, "-c", "import time; time.sleep(30)"], grace_s=0.2)
++        result = owned.close()
++        assert result["live_group"] is False and foreign.poll() is None
++    finally:
++        if owned is not None:
++            owned.close()
++        foreign.terminate()
++        foreign.wait(timeout=5)
++
++
++def test_actual_partial_legacy_evidence_scan_to_current_plan_and_report(tmp_path):
++    from tools.v3.episode_resume_prototype.episode_evidence import scan_legacy_run
++    from tools.v3.episode_resume_prototype.episode_evidence_test import build_legacy_run
++
++    directory = build_legacy_run(tmp_path, completed=2, trials=5, status="FAILED", seed=0)
++    before = {str(p.relative_to(directory)): p.read_bytes() for p in directory.rglob("*") if p.is_file()}
++    scan = scan_legacy_run(directory, sim_python=Path(sys.executable), requested_media=MEDIA)
++    value = plan(verified_scan_records(scan), seed=1, scan_diagnostics=scan["diagnostics"])
++    assert (value["tasks"]["CloseFridge"]["reused"], value["tasks"]["CloseFridge"]["new"]) == (2, 3)
++    report = build_report(value, completed_new(value))
++    assert report["status"] == "COMPLETE" and report["reused"] == 2 and report["executed"] == 3
++    assert "MIXED_SEED" in report["actual_conditions"]["flags"]
++    assert {str(p.relative_to(directory)): p.read_bytes() for p in directory.rglob("*") if p.is_file()} == before
+diff --git a/tools/v3/episode_resume_prototype/scene_sampling.py b/tools/v3/episode_resume_prototype/scene_sampling.py
+new file mode 100644
+index 00000000..b70378f5
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/scene_sampling.py
+@@ -0,0 +1,118 @@
++"""Non-production scene-seed plan. Never imports or launches a simulator.
++
++New logical episodes use independently seeded, freshly constructed environments.
++This is not restoration of the legacy environment's sequential RNG stream.
++"""
++
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++
++SAMPLER_VERSION = "psm_robocasa_independent_episode_seed_v1"
++
++
++def _integer(value, field):
++    if type(value) is not int or value < 0:
++        raise ValueError(f"{field} must be a nonnegative integer")
++    return value
++
++
++def derive_episode_seed(*, requested_seed, task, logical_episode_index):
++    """Stable uint32 environment seed; nonce, execution order and GPU are absent."""
++    _integer(requested_seed, "requested_seed")
++    _integer(logical_episode_index, "logical_episode_index")
++    if (
++        not isinstance(task, str)
++        or not task.strip()
++        or task != task.strip()
++        or task in {".", ".."}
++        or any(value in task for value in ("/", "\\", "\0"))
++    ):
++        raise ValueError("task must be one unambiguous underlying task name")
++    material = {
++        "sampler_version": SAMPLER_VERSION,
++        "requested_seed": requested_seed,
++        "task": task,
++        "logical_episode_index": logical_episode_index,
++    }
++    encoded = json.dumps(material, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
++    digest = hashlib.sha256(encoded).hexdigest()
++    return {
++        "requested_seed": requested_seed,
++        "seed_family": {"requested_seed": requested_seed, "sampler_version": SAMPLER_VERSION},
++        "effective_seed": int(digest[:8], 16),
++        "seed_material_sha256": digest,
++        "task": task,
++        "logical_episode_index": logical_episode_index,
++    }
++
++
++def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_nonce, legacy_sources=()):
++    """Return a JSON plan only. Legacy sources are opaque, immutable references.
++
++    ``source_episode=0`` is the future one-episode physical attempt's local index;
++    it never rewrites the original attempt-local Episode/C01 identity.
++    ``attempt_nonce`` records the new attempt but does not alter a slot's seed.
++    """
++    if not isinstance(attempt_nonce, str) or not attempt_nonce.strip() or len(attempt_nonce) > 256:
++        raise ValueError("attempt_nonce must be a nonempty bounded provenance string")
++    indices = list(new_logical_indices)
++    for index in indices:
++        _integer(index, "logical_episode_index")
++    if len(indices) != len(set(indices)):
++        raise ValueError("duplicate new logical Episode indices")
++    # Validate seed/task even when no new episodes are needed. Do not change old
++    # UNKNOWN/None seeds to the newly requested seed or a guessed derived value.
++    derive_episode_seed(requested_seed=requested_seed, task=task, logical_episode_index=0)
++    preserved = copy.deepcopy(list(legacy_sources))
++    if not all(isinstance(source, dict) for source in preserved):
++        raise ValueError("legacy_sources must contain explicit source records")
++    json.dumps(preserved, ensure_ascii=False, allow_nan=False)
++    episodes = []
++    for index in sorted(indices):
++        episodes.append(
++            {
++                **derive_episode_seed(requested_seed=requested_seed, task=task, logical_episode_index=index),
++                "attempt_nonce": attempt_nonce,
++                "source_episode": 0,
++                "reset_plan": {
++                    "environment_lifecycle": "fresh_environment_per_new_episode",
++                    "constructor_seed_argument": "effective_seed",
++                    "public_reset_calls": 1,
++                    "source_episode": 0,
++                    "constructor_rng_draws": "UNOBSERVED",
++                    "local_memory": "fresh_episode_session_begin_end",
++                    "historical_rng_state_restored": False,
++                },
++            }
++        )
++    warnings = [
++        "DERIVED_ENVIRONMENT_SEED_IS_NOT_THE_REQUESTED_BASE_SEED",
++        "NOT_HISTORICAL_RNG_STREAM_CONTINUATION",
++        "DISTINCT_PHYSICAL_SCENES_NOT_GUARANTEED",
++    ]
++    seen = {}
++    for episode in episodes:
++        previous = seen.setdefault(episode["effective_seed"], episode["logical_episode_index"])
++        if previous != episode["logical_episode_index"]:
++            warnings.append("UINT32_DERIVED_SEED_COLLISION")
++    known_legacy_seeds = {
++        source["effective_seed"]
++        for source in preserved
++        if type(source.get("effective_seed")) is int and source["effective_seed"] >= 0
++    }
++    if known_legacy_seeds & set(seen):
++        warnings.append("DERIVED_SEED_MATCHES_A_KNOWN_LEGACY_ENVIRONMENT_SEED")
++    return {
++        "schema": "psm_episode_resume_scene_plan_prototype_v1",
++        "prototype_only": True,
++        "sampler_version": SAMPLER_VERSION,
++        "task": task,
++        "requested_seed": requested_seed,
++        "legacy_sources": preserved,
++        "new_episodes": episodes,
++        "warnings": list(dict.fromkeys(warnings)),
++        "benchmark_qualification": "Independent-scene convenience plan; not a continuous legacy/base-seed benchmark",
++    }
+diff --git a/tools/v3/episode_resume_prototype/scene_sampling_test.py b/tools/v3/episode_resume_prototype/scene_sampling_test.py
+new file mode 100644
+index 00000000..47e07f94
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/scene_sampling_test.py
+@@ -0,0 +1,189 @@
++"""Fake-environment CPU proofs, not RoboCasa physical sampling acceptance."""
++
++from __future__ import annotations
++
++import copy
++import json
++import random
++
++import pytest
++
++from tools.v3.episode_resume_prototype.scene_sampling import SAMPLER_VERSION, derive_episode_seed, plan_scene_sampling
++
++
++def plan(*, seed=0, task="CloseFridge", indices=(3, 4), nonce="invocationA/attempt1", legacy=()):
++    return plan_scene_sampling(
++        task=task, requested_seed=seed, new_logical_indices=indices, attempt_nonce=nonce, legacy_sources=legacy
++    )
++
++
++def test_same_logical_slot_replays_across_attempts_and_execution_order():
++    original = plan(indices=(4, 3))
++    retry = plan(indices=(3, 4), nonce="invocationB/attempt2")
++    assert [row["logical_episode_index"] for row in original["new_episodes"]] == [3, 4]
++    for old, new in zip(original["new_episodes"], retry["new_episodes"], strict=True):
++        assert old["attempt_nonce"] != new["attempt_nonce"]
++        for key in ("effective_seed", "seed_material_sha256", "seed_family"):
++            assert old[key] == new[key]
++        assert old["source_episode"] == new["source_episode"] == 0
++    independent = plan(indices=(4,), nonce="worker_gpu7_invocationC")
++    assert independent["new_episodes"][0]["effective_seed"] == retry["new_episodes"][1]["effective_seed"]
++
++
++def test_task_logical_index_and_requested_seed_have_separate_hash_material():
++    rows = [
++        derive_episode_seed(requested_seed=seed, task=task, logical_episode_index=index)
++        for seed in (0, 1)
++        for task in ("CloseFridge", "NavigateKitchen")
++        for index in (0, 1, 3, 4)
++    ]
++    assert len({row["seed_material_sha256"] for row in rows}) == len(rows)
++    # Concrete fixture is collision-free; the plan makes no universal uint32 or
++    # physical-scenario uniqueness claim from this finite sample.
++    assert len({row["effective_seed"] for row in rows}) == len(rows)
++    assert all(type(row["effective_seed"]) is int and 0 <= row["effective_seed"] < 2**32 for row in rows)
++    assert all(row["seed_family"]["sampler_version"] == SAMPLER_VERSION for row in rows)
++
++
++def test_legacy_seed_zero_unknown_and_source_indices_are_never_rewritten():
++    legacy = [
++        {
++            "logical_episode_index": 0,
++            "source_episode": 0,
++            "effective_seed": 0,
++            "sampling_strategy": "legacy_sequential_resets",
++            "reset_ordinal": 0,
++            "source": "old/CloseFridge/attempt_0001/rollout00_episode.json",
++        },
++        {
++            "logical_episode_index": 1,
++            "source_episode": 1,
++            "effective_seed": None,
++            "generation_rng_state": "UNKNOWN",
++            "reset_ordinal": 1,
++        },
++        {"logical_episode_index": 2, "source_episode": 0, "effective_seed": "UNKNOWN", "old_attempt": "attempt_0002"},
++    ]
++    before = copy.deepcopy(legacy)
++    result = plan(seed=1, legacy=legacy)
++    assert result["legacy_sources"] == legacy == before
++    assert [row["effective_seed"] for row in result["legacy_sources"]] == [0, None, "UNKNOWN"]
++    assert [row["requested_seed"] for row in result["new_episodes"]] == [1, 1]
++    result["legacy_sources"][0]["effective_seed"] = 999
++    assert legacy == before
++
++
++def test_all_reused_plan_has_no_new_scene_or_synthetic_seed_assignment():
++    legacy = [{"source_episode": 0, "effective_seed": 0}]
++    result = plan(seed=1, indices=(), legacy=legacy)
++    assert result["requested_seed"] == 1
++    assert result["new_episodes"] == []
++    assert result["legacy_sources"] == legacy
++
++
++def test_known_legacy_seed_collision_is_reported_without_changing_stable_slot_seed():
++    expected = derive_episode_seed(requested_seed=0, task="CloseFridge", logical_episode_index=3)
++    legacy = [{"source_episode": 0, "effective_seed": expected["effective_seed"]}]
++    result = plan(indices=(3,), legacy=legacy)
++    assert result["new_episodes"][0]["effective_seed"] == expected["effective_seed"]
++    assert "DERIVED_SEED_MATCHES_A_KNOWN_LEGACY_ENVIRONMENT_SEED" in result["warnings"]
++    assert result["legacy_sources"] == legacy
++
++
++class FakeEnvironment:
++    """Constructor/reset/action may all consume RNG, as a real env is free to do."""
++
++    def __init__(self, seed):
++        self.seed = seed
++        self.rng = random.Random(seed)
++        self.rng.random()  # Constructor draw: not a promised public reset.
++        self.resets = 0
++
++    def reset(self):
++        self.resets += 1
++        return self.rng.getrandbits(128)
++
++    def action(self):
++        self.rng.random()
++
++
++def execute_fake_plan(result):
++    observed = []
++    for episode in result["new_episodes"]:
++        env = FakeEnvironment(episode["effective_seed"])
++        scene = env.reset()
++        observed.append(
++            {
++                "logical_episode_index": episode["logical_episode_index"],
++                "source_episode": 0,
++                "actual_constructor_seed": env.seed,
++                "actual_public_resets": env.resets,
++                "fake_scene": scene,
++            }
++        )
++    return observed
++
++
++def test_new_episodes_use_fresh_derived_seed_and_one_public_reset_without_replaying_legacy_prefix():
++    first = execute_fake_plan(plan(seed=0))
++    retry = execute_fake_plan(plan(seed=0, nonce="new attempt"))
++    assert first == retry
++    assert [row["logical_episode_index"] for row in first] == [3, 4]
++    assert all(row["source_episode"] == 0 and row["actual_public_resets"] == 1 for row in first)
++    restarted_legacy = FakeEnvironment(0).reset()
++    assert all(row["fake_scene"] != restarted_legacy for row in first)
++
++
++def test_burning_only_resets_is_not_a_proof_of_the_historical_rng_stream():
++    historical = FakeEnvironment(0)
++    historical.reset()
++    historical.action()  # Missing action consumption makes reset-only replay different.
++    historical.action()
++    original_second_scene = historical.reset()
++    replay = FakeEnvironment(0)
++    replay.reset()
++    incorrectly_claimed_second_scene = replay.reset()
++    assert incorrectly_claimed_second_scene != original_second_scene
++    assert "NOT_HISTORICAL_RNG_STREAM_CONTINUATION" in plan()["warnings"]
++
++
++def test_distinct_seeds_do_not_prove_distinct_physical_scenes():
++    # Deliberately finite scene catalog; a valid sampler can revisit one scene.
++    result = plan(indices=range(10))
++    finite_scenes = [FakeEnvironment(row["effective_seed"]).reset() % 2 for row in result["new_episodes"]]
++    assert len(set(finite_scenes)) < len(finite_scenes)
++    assert "DISTINCT_PHYSICAL_SCENES_NOT_GUARANTEED" in result["warnings"]
++    assert result["prototype_only"] is True
++    assert "not a continuous" in result["benchmark_qualification"]
++
++
++@pytest.mark.parametrize("seed", [0, 1, 2**32 - 1, 2**64, 2**128])
++def test_current_nonnegative_seed_family_is_preserved_without_an_invented_upper_bound(seed):
++    result = plan(seed=seed)
++    assert result["requested_seed"] == seed
++    assert all(row["requested_seed"] == seed and 0 <= row["effective_seed"] < 2**32 for row in result["new_episodes"])
++    assert json.loads(json.dumps(result, allow_nan=False)) == result
++
++
++@pytest.mark.parametrize("seed", [-1, True, False, None, 1.0, "0"])
++def test_invalid_requested_seed_rejected(seed):
++    with pytest.raises(ValueError, match="requested_seed"):
++        plan(seed=seed)
++
++
++@pytest.mark.parametrize("indices", [[-1], [True], [1.0], ["1"], [3, 3]])
++def test_ambiguous_or_duplicate_logical_slots_rejected(indices):
++    with pytest.raises(ValueError):
++        plan(indices=indices)
++
++
++@pytest.mark.parametrize("task", ["", " ", "../task", "task/other", " CloseFridge", "."])
++def test_invalid_task_identity_rejected(task):
++    with pytest.raises(ValueError, match="task"):
++        plan(task=task)
++
++
++@pytest.mark.parametrize("nonce", [None, "", "  ", "x" * 257])
++def test_attempt_nonce_is_required_provenance_not_a_silent_seed_source(nonce):
++    with pytest.raises(ValueError, match="attempt_nonce"):
++        plan(nonce=nonce)

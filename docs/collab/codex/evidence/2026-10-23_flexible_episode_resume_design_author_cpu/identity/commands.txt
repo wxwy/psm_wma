@@ -1,0 +1,14 @@
+cwd: /workspace/psm_wma
+Scope: only new read-only CPU design prototype; no production wiring or real DCP.
+
+/workspace/.venvs/psm-wma-cpu/bin/python -m ruff format --config cosmos-framework/.ruff.toml tools/v3/episode_resume_prototype/model_identity.py tools/v3/episode_resume_prototype/model_identity_test.py > /tmp/psm-v3-episode-resume-design-20261023/identity/ruff-format.log 2>&1
+/workspace/.venvs/psm-wma-cpu/bin/python -m ruff check --config cosmos-framework/.ruff.toml tools/v3/episode_resume_prototype/model_identity.py tools/v3/episode_resume_prototype/model_identity_test.py > /tmp/psm-v3-episode-resume-design-20261023/identity/ruff-check.log 2>&1
+/workspace/.venvs/psm-wma-cpu/bin/python -m ruff format --check --config cosmos-framework/.ruff.toml tools/v3/episode_resume_prototype/model_identity.py tools/v3/episode_resume_prototype/model_identity_test.py > /tmp/psm-v3-episode-resume-design-20261023/identity/ruff-format-check.log 2>&1
+
+env CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1 XDG_CACHE_HOME=/tmp/psm-v3-episode-resume-design-20261023/cache HF_HOME=/tmp/psm-v3-episode-resume-design-20261023/cache/huggingface MPLCONFIGDIR=/tmp/psm-v3-episode-resume-design-20261023/cache/matplotlib /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -q tools/v3/episode_resume_prototype/model_identity_test.py --junitxml=/tmp/psm-v3-episode-resume-design-20261023/identity/junit.xml > /tmp/psm-v3-episode-resume-design-20261023/identity/pytest.log 2>&1
+
+env PYTHONPYCACHEPREFIX=/tmp/psm-v3-episode-resume-design-20261023/identity/pycache /workspace/.venvs/psm-wma-cpu/bin/python -m py_compile tools/v3/episode_resume_prototype/model_identity.py tools/v3/episode_resume_prototype/model_identity_test.py
+git diff --check
+
+Initial Ruff check found one unused sys import in the new test; fixed before pytest.
+Initial output preserved as ruff-check-initial.log. No test cases failed or skipped in the final focused run.

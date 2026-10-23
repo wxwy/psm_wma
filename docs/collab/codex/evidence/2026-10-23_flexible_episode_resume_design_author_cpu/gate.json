@@ -1,0 +1,37 @@
+{
+  "status": "DESIGN_PROTOTYPE_AUTHOR_CPU_PASS",
+  "design_prototype_root": "44f0953ac75591d7e60394df6337a6ed133f3f08",
+  "child_gitlink": "813a550dab5d6b5b5e3be90d38bb97527956b4dc",
+  "production_root_unchanged": "e6a970caba4bdc77f7d9b56a6a8fbcdafe57f1e0",
+  "baseline": "cc7820bee1a73bd2bb2078cb7f00239944f66d37",
+  "production_wired": false,
+  "production_resume_behavior": "UNCHANGED_WHOLE_TASK_STRICT_MANIFEST",
+  "top_level_tests": 161,
+  "subtests": 0,
+  "errors": 0,
+  "failures": 0,
+  "skipped": 0,
+  "groups": {
+    "episode_evidence_test": 45,
+    "model_identity_test": 45,
+    "plan_test": 37,
+    "scene_sampling_test": 34
+  },
+  "ruff_version": "0.12.7",
+  "ruff_check": "PASS",
+  "ruff_format_check": "PASS (9 Python files)",
+  "syntax": "PASS",
+  "production_diff": "EMPTY",
+  "pending": [
+    "GPT design review",
+    "Production protected admission/legacy ingest/Queue/Child-seed and view integration",
+    "Independent DS CPU Gate for future implementation",
+    "Owner-authorized real model/runtime/GPU verification"
+  ],
+  "limits": [
+    "Only fake files/environments and verified-record doubles; no production pipeline claimed",
+    "Legacy checkpoint lacks historical full payload SHA",
+    "Independent Episode sampling is not continuation of historical RNG",
+    "No active evaluation/G1/model/real checkpoint/server/simulator operations"
+  ]
+}
