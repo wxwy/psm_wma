@@ -1,0 +1,75 @@
+{
+  "oracle_exception": {
+    "reproduced": true,
+    "outcome": "behavioral_failure",
+    "error": null,
+    "prompt_sent": [
+      "close fridge",
+      "close fridge"
+    ],
+    "action_count": 2,
+    "oracle_calls": 4,
+    "cleanup": {
+      "session_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:0:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "reset_ok": true,
+      "rollout_error": null,
+      "media_error": null,
+      "cleanup_error": null
+    },
+    "actual_attempt_validator_status": "COMPLETE",
+    "actual_resume_validator_skips": true
+  },
+  "metadata_exception": {
+    "reproduced": true,
+    "outcome": "behavioral_failure",
+    "error": null,
+    "prompt_sent": [
+      "",
+      ""
+    ],
+    "action_count": 2,
+    "oracle_calls": 4,
+    "cleanup": {
+      "session_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:0:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "reset_ok": true,
+      "rollout_error": null,
+      "media_error": null,
+      "cleanup_error": null
+    },
+    "actual_attempt_validator_status": "COMPLETE",
+    "actual_resume_validator_skips": true
+  },
+  "missing_instruction": {
+    "reproduced": true,
+    "outcome": "behavioral_failure",
+    "error": null,
+    "prompt_sent": [
+      "",
+      ""
+    ],
+    "action_count": 2,
+    "oracle_calls": 4,
+    "cleanup": {
+      "session_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:0:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "reset_ok": true,
+      "rollout_error": null,
+      "media_error": null,
+      "cleanup_error": null
+    },
+    "actual_attempt_validator_status": "COMPLETE",
+    "actual_resume_validator_skips": true
+  },
+  "partial_thread_start": {
+    "reproduced": true,
+    "startup_error": "can't start new thread (injected)",
+    "already_started_worker_alive": true,
+    "stop_set_by_queue": false,
+    "source_block_first_line": 795
+  },
+  "scope": "actual rollout/attempt/resume functions with synthetic env/client/runtime/process boundaries; AST-selected actual thread-launch block",
+  "source_sha256": {
+    "cosmos-framework/cosmos_framework/simulation/robocasa/closed_loop_eval.py": "76973c3ca422011ddb515d7acfd4e3ca33717ceeeea8daa74306515258810fcf",
+    "cosmos-framework/cosmos_framework/utils/rollout_evidence.py": "158c00a629b6468b3ed6ddd619fd37fbc6065bc60071eea0c072249199a77f44",
+    "scripts/eval_robocasa_18task_queue.py": "b3e1872dafbe3a4ad6a1df640a90bb853545961b7b332e4e8896cc7dd955500a"
+  }
+}

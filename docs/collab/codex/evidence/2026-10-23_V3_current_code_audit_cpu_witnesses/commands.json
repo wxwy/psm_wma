@@ -1,0 +1,8 @@
+{
+  "cwd": "/workspace/psm_wma",
+  "scope": "CPU fault witnesses; exit0 means reproduction assertions held, NOT production PASS; no native FSDP/policy/simulator",
+  "commands": {
+    "behavior": "CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1 HF_HOME=/tmp/v3-audit-20261023/cache/huggingface MPLCONFIGDIR=/tmp/v3-audit-20261023/cache/matplotlib XDG_CACHE_HOME=/tmp/v3-audit-20261023/cache OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=/workspace/psm_wma/cosmos-framework:/workspace/psm_wma/scripts PSM_AUDIT_ROOT=/workspace/psm_wma PSM_AUDIT_OUTPUT=/tmp/v3-audit-20261023/final /workspace/.venvs/psm-wma-cpu/bin/python /tmp/v3-audit-20261023/behavior_probe.py > /tmp/v3-audit-20261023/final/behavior.log 2>&1",
+    "gradient": "CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1 HF_HOME=/tmp/v3-audit-20261023/cache/huggingface MPLCONFIGDIR=/tmp/v3-audit-20261023/cache/matplotlib XDG_CACHE_HOME=/tmp/v3-audit-20261023/cache OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PYTHONPATH=/workspace/psm_wma/cosmos-framework:/workspace/psm_wma/scripts PSM_AUDIT_ROOT=/workspace/psm_wma PSM_AUDIT_OUTPUT=/tmp/v3-audit-20261023/final /workspace/.venvs/psm-wma-cpu/bin/python /tmp/v3-audit-20261023/gradient_probe.py > /tmp/v3-audit-20261023/final/gradient.log 2>&1"
+  }
+}

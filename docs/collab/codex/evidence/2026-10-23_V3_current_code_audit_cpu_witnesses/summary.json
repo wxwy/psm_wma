@@ -1,0 +1,21 @@
+{
+  "status": "FAULTS_REPRODUCED_NOT_PRODUCTION_PASS",
+  "audit_root_head": "81055c909d6547ed4eb607fd0cc746af4bee7c0a",
+  "implementation_root": "a4b22b929175e462b6a8db57ad2abee7e220dd37",
+  "child_gitlink": "c9f21040f462a114d597fc83773cb9b6a9e96214",
+  "behavior_command_exit_code": 0,
+  "gradient_command_exit_code": 0,
+  "behavior_reproductions": [
+    "outer_success_oracle_error_silenced",
+    "metadata_error_becomes_empty_prompt",
+    "missing_language_becomes_empty_prompt",
+    "partial_worker_start_does_not_cancel_started_worker"
+  ],
+  "gradient_scenarios_per_rank": 6,
+  "gradient_ranks": 2,
+  "actual_fsdptensor_native_training_executed": false,
+  "actual_model_server_or_kitchen_executed": false,
+  "real_data_or_dcp_accessed": false,
+  "production_modified": false,
+  "full_repository_lint_or_tests_executed": false
+}

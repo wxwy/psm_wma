@@ -1,0 +1,159 @@
+{
+  "reproduced_missing_rank_guard_gap": true,
+  "scope": "AST-selected exact guard, CPU SGD + actual two-rank Gloo; no FSDP/native training",
+  "source_sha256": "18be72fe6d37e1487c8553e19a0c0f70e1e3f8b895d880b718a7f8f38a6cacb1",
+  "rows": [
+    {
+      "case": "nonempty_rank_missing_all_grads",
+      "rank": 0,
+      "local_numel": 1,
+      "guard_error": null,
+      "grad_present": true,
+      "before": [
+        1.0
+      ],
+      "after": [
+        0.8999999761581421
+      ]
+    },
+    {
+      "case": "callback_clears_rank1_after_first_guard",
+      "rank": 0,
+      "local_numel": 1,
+      "guard_error": null,
+      "grad_present": true,
+      "before": [
+        1.0
+      ],
+      "after": [
+        0.8999999761581421
+      ]
+    },
+    {
+      "case": "some_selected_grads_none_each_rank_active",
+      "rank": 0,
+      "local_numel": 1,
+      "guard_error": null,
+      "grad_present": true,
+      "before": [
+        1.0
+      ],
+      "after": [
+        0.8999999761581421
+      ]
+    },
+    {
+      "case": "legitimate_empty_rank",
+      "rank": 0,
+      "local_numel": 1,
+      "guard_error": null,
+      "grad_present": true,
+      "before": [
+        1.0
+      ],
+      "after": [
+        0.8999999761581421
+      ]
+    },
+    {
+      "case": "all_ranks_missing",
+      "rank": 0,
+      "local_numel": 1,
+      "guard_error": "FloatingPointError: H3-C \u9009\u4e2d\u53c2\u6570\u68af\u5ea6\u7f3a\u5931\u6216\u975e\u6709\u9650\uff1boptimizer/fast state \u5747\u4e0d\u53d1\u5e03",
+      "grad_present": false,
+      "before": [
+        1.0
+      ],
+      "after": [
+        1.0
+      ]
+    },
+    {
+      "case": "rank1_inf",
+      "rank": 0,
+      "local_numel": 1,
+      "guard_error": "FloatingPointError: H3-C \u9009\u4e2d\u53c2\u6570\u68af\u5ea6\u7f3a\u5931\u6216\u975e\u6709\u9650\uff1boptimizer/fast state \u5747\u4e0d\u53d1\u5e03",
+      "grad_present": true,
+      "before": [
+        1.0
+      ],
+      "after": [
+        1.0
+      ]
+    },
+    {
+      "case": "nonempty_rank_missing_all_grads",
+      "rank": 1,
+      "local_numel": 1,
+      "guard_error": null,
+      "grad_present": false,
+      "before": [
+        1.0
+      ],
+      "after": [
+        1.0
+      ]
+    },
+    {
+      "case": "callback_clears_rank1_after_first_guard",
+      "rank": 1,
+      "local_numel": 1,
+      "guard_error": null,
+      "grad_present": false,
+      "before": [
+        1.0
+      ],
+      "after": [
+        1.0
+      ]
+    },
+    {
+      "case": "some_selected_grads_none_each_rank_active",
+      "rank": 1,
+      "local_numel": 1,
+      "guard_error": null,
+      "grad_present": true,
+      "before": [
+        1.0
+      ],
+      "after": [
+        0.8999999761581421
+      ]
+    },
+    {
+      "case": "legitimate_empty_rank",
+      "rank": 1,
+      "local_numel": 0,
+      "guard_error": null,
+      "grad_present": false,
+      "before": [],
+      "after": []
+    },
+    {
+      "case": "all_ranks_missing",
+      "rank": 1,
+      "local_numel": 1,
+      "guard_error": "FloatingPointError: H3-C \u9009\u4e2d\u53c2\u6570\u68af\u5ea6\u7f3a\u5931\u6216\u975e\u6709\u9650\uff1boptimizer/fast state \u5747\u4e0d\u53d1\u5e03",
+      "grad_present": false,
+      "before": [
+        1.0
+      ],
+      "after": [
+        1.0
+      ]
+    },
+    {
+      "case": "rank1_inf",
+      "rank": 1,
+      "local_numel": 1,
+      "guard_error": "FloatingPointError: H3-C \u9009\u4e2d\u53c2\u6570\u68af\u5ea6\u7f3a\u5931\u6216\u975e\u6709\u9650\uff1boptimizer/fast state \u5747\u4e0d\u53d1\u5e03",
+      "grad_present": true,
+      "before": [
+        1.0
+      ],
+      "after": [
+        1.0
+      ]
+    }
+  ]
+}

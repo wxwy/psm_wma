@@ -1,0 +1,1 @@
+{"reproduced_cases": ["oracle_exception", "metadata_exception", "missing_instruction", "partial_thread_start"], "synthetic_worker_reaped": true}
