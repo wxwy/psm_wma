@@ -1,0 +1,14 @@
+{
+  "status": "DESIGN_PROTOTYPE_AUTHOR_CPU_PASS",
+  "counts": {
+    "scene_sampling_test.py": 53,
+    "episode_evidence_test.py": 53,
+    "reservation_recovery_test.py": 34,
+    "plan_test.py": 45
+  },
+  "tests": 185,
+  "syntax_files": 11,
+  "ruff": "ruff 0.12.7",
+  "production_diff_empty": true,
+  "child_clean": true
+}

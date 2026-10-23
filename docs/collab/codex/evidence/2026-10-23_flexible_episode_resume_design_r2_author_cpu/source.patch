@@ -1,0 +1,1454 @@
+diff --git a/SESSION.md b/SESSION.md
+index 4acda5e7..c9282ef7 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1576,0 +1577,9 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
++
++## 2026-10-23 — Flexible Episode Resume Design r2 narrow remediation
++
++- Synced verified V3 `50ed1fdc87d1380be6b95219ea12b9d379f7edc7`; exact review for DesignRoot44f0953ac75591d7e60394df6337a6ed133f3f08 / Child813a550dab5d6b5b5e3be90d38bb97527956b4dc is REQUEST_CHANGES. Read detailed review plus canonical verdict, no duplicate whole technical audit or legacy MM/Kimi gating. Isolated branch `v3-flexible-episode-resume-design-r2-20261023`.
++- IN_PROGRESS scope only HIGH01 preserve literal-seed task-level fresh/newTask sampling, use derived only true gap; MEDIUM02 fail-closed quarantine inconsistent COMPLETE while keeping RUNNING/FAILED prefixes; MEDIUM03 derive pending from persistent authority/gaps with stable logical IDs. Disjoint owners: scene2files Child agent, evidence2files attempts agent, new reservation2files config agent; Parent owns plan/tests, r2 design/docs/Evidence. All production/Child/config/vendor unchanged, r1 artifacts retained. No active eval/G1 worktree, real DCP/model/server/simulator/GPU access. Stop after new design SHA/CPU/readback and GPT handoff.
++
++- R2 candidate complete, status REVIEW: per-Task fresh/gap choice with explicit execution batches; whole-source quarantine for contradictory COMPLETE in scanner and direct API; durable source/reservation/progress recovery with pending hints forbidden from inventing slots. New r2 design preserves r1. Parent integration covers4old+14newTasks, disk restart {0,1,3,4}->2, tail start, shrink-expand and shared Task cleanup snapshot identity.
++- Changed-module author CPU185 PASS,0failure/error/skip (scene53, Episode53, recovery34, plan45); unchanged identity45 not rerun/recounted. Ruff0.12.7check+format11Python, compile11 and production/Child/config/vendor/r1-artifact diff-empty checks PASS. Raw output external `/tmp/psm-v3-episode-resume-design-r2-20261023/`; checked-in new Evidence follows exact source commit. Separate read-only author-team delta inspection found no new blocker; not GPT verdict/DS independent acceptance. No real model/server/simulator/DCP/GPU execution.
++- Pre-publication fetch/ls-remote readback: localHEAD=origin/V3=advertised50ed1fdc87d1380be6b95219ea12b9d379f7edc7, no intervening commits; preserve all history via non-force pushes. New Design SHA then docs/Evidence/canonical request; STOP for GPT incremental design review, no production Resume wiring.
+diff --git a/TODO.md b/TODO.md
+index 9e26469d..01bd14fb 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -447,0 +448,3 @@
++
++- [ ] **V3-FLEXIBLE-EPISODE-RESUME-DESIGN-R2-20261023** — IN_PROGRESS; owner Codex; prerequisite exact GPT REQUEST_CHANGES Root44f0953a/Child813a550d, review+canonical handoff read at50ed1fdc. Only HIGH01 fresh sampling preservation, MEDIUM02 corrupt COMPLETE quarantine, MEDIUM03 persisted pending recovery, narrow CPU and new r2 design SHA. Expected prototype scene/evidence files, new reservation helper, Parentplan/tests, new r2 design/author Evidence; no existing production/Child/Gitlink/config/vendor edits or real execution. Preserve r1 design/evidence; stop for GPT incremental review after publication.
++- **V3-FLEXIBLE-EPISODE-RESUME-DESIGN-R2-20261023** — REVIEW; three requested design/prototype deltas complete. Targeted CPU185 PASS (53scene/53Episode/34recovery/45plan),0fail/error/skip; Ruff0.12.7/format/compile11 and protected-path checks PASS. Identity45 unchanged and not rerun; no new-version whole-suite claim. New r2 design/CPU Evidence and exact Design SHA to GPT, then STOP; production admission/Queue integration remains a separate unapproved Gate.
+diff --git a/docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r2.md b/docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r2.md
+new file mode 100644
+index 00000000..ffd8e18b
+--- /dev/null
++++ b/docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r2.md
+@@ -0,0 +1,122 @@
++# V3 Flexible Episode Resume — 三项设计整改 r2
++
++日期：2026-10-23。状态：**提交 GPT 增量设计审核；尚未授权生产接线。**
++
++Owner 冻结契约：`cc7820bee1a73bd2bb2078cb7f00239944f66d37`。
++本次基线：V3 `50ed1fdc87d1380be6b95219ea12b9d379f7edc7`；Child/Gitlink
++`813a550dab5d6b5b5e3be90d38bb97527956b4dc`，Vendor `1ac174585293ed998ffc9cf73e47439798cf6f6c`。
++整改依据为 GPT 对 r1 Design `44f0953ac75591d7e60394df6337a6ed133f3f08` / 同 Child 的正式
++`REQUEST_CHANGES`：
++`docs/collab/chatgpt/reviews/2026-10-23_V3_flexible_episode_resume_design_r1_44f0953_813a550d_review.md`。
++
++本文件取代 r1 第4、6节中的冲突设计，并补全第5节恢复权威。r1 文件、审核及作者161项 Evidence 原样保留。
++本次只变更 `tools/v3/episode_resume_prototype/` 的隔离原型、测试及设计/交接文档。
++生产源码仍为 Root `e6a970caba4bdc77f7d9b56a6a8fbcdafe57f1e0`；不修改 scripts、Child、配置、Vendor、真实结果或活动工作树。
++
++## 1. 保留的契约
++
++模型旧新相等仍只比较 Checkpoint、num_steps、action_horizon、guidance 四项；任一不同在认领新执行前拒绝。
++当前 Task 集合、Episode 数、Seed、媒体和资源参数属于 invocation plan。
++原始 EpisodeRef 的 digest、物理编号、来源和证据不可改写。
++当前视图只统计当前 Task、前N个有效完成来源；多余历史保留。正常 success 和 horizon behavioral_failure 可以复用，runtime_error/中断不能算完成。
++新执行实际 Seed、旧来源 Seed、混合协议/版本/未知信息在计划与报告中保留，不能冒充单 Seed 正式 benchmark。
++
++原 r1 的模型完整哈希与 legacy metadata/stat 桥接、稳定 locator 去重、原媒体核验、只读锁见证等未变。
++其中 legacy 没有历史 payload SHA 的证据限制依然存在；当前完整哈希不能补造过去的权重证明。
++
++## 2. HIGH-01：按 Task 分流采样
++
++Root `build_plan()` 根据**该 Task 重新验证后可用的完成历史**选择模式，不按整次运行是否带 `--resume` 推断。
++`plan_scene_sampling()` 必须显式接收 `sampling_mode`，不提供隐式派生种子的默认值。
++
++| 该 Task 状态 | 模式 | Seed、环境和 Reset |
++| --- | --- | --- |
++| 无可用完成历史，包括4→18新增14项 Task | `fresh_task_stream` | 原始 literal requested Seed；每 Task 一个环境，按原流程连续 reset N次 |
++| 有完成历史，需要补缺集且历史 RNG 不可恢复 | `resume_gap_independent` | 每个待执行逻辑槽独立派生 Seed、独立环境、physical Episode0 |
++| 已有足够完成历史 | 不调度新执行 | 原来源与实际 Seed 不变；不为当前 requested Seed 虚报新执行 |
++
++Fresh 模式保持 `sampling_protocol=legacy_task_stream`。`new_episodes` 的 logical/source_episode 均为0..N-1，
++共同指向同一个 `execution_batch`；该 batch 明确 `environment_constructions=1`、`public_reset_calls=N`。
++不能把该计划拆成N个“同 Seed 但每集新建环境”的子任务；那会重复初始随机流，并不等价于原采样协议。
++Fresh 模式拒绝携带旧完成来源、非连续编号；不出现“派生 Seed”警告。
++如果旧来源均隔离/不完整而没有可复用 Episode，本 Task 从0完整重跑原协议，隔离/失败诊断仍进入计划和报告。
++
++Gap 模式只允许非空的已验证历史来源。派生函数保持 r1 的稳定版本与 SHA256 输入：requested Seed、Task、logical slot，
++不含 invocation nonce、GPU、任务顺序或 attempt编号。每个新来源 physical0 映射回原 logical slot，不能改变 C01 的本地编号。
++重试可新建物理 Attempt，但 logical identity 不变。当前 Seed 修改时，新执行遵从当前 Seed，旧来源实际 Seed 不变。
++明确标记 `NOT_HISTORICAL_RNG_STREAM_CONTINUATION`；混合 legacy/independent 协议不能冒充原连续随机流 benchmark。
++独立 Seed 不保证物理场景互不重复，也不证明与旧随机流等价。
++
++隔离 fake-env 验证包括：原协议与 fresh5 的完整场景 trace、构造/Reset 次数相同；4→18新增14Task继续原协议；
++同一计划同时包含旧 Task 补集和新增 Task；partial3→5 在 Seed不变/改变时来源、逻辑编号和种子映射正确。
++这些是 CPU 协议见证，不代表真实 Kitchen RNG/物理等价验证。
++
++## 3. MEDIUM-02：矛盾 COMPLETE 整项隔离
++
++`_validated_complete_source()` 在产生任何可复用 Episode 前读取原 Attempt 状态。
++若为 `COMPLETE`，以**原 manifest 的 trials、runtime、媒体策略、digest**调用未修改的生产 `validate_attempt()`，
++并预先验证该 source 所有 Episode 的原型核心证据；只在全部成功后一次性返回来源列表。
++单集公共 API `verify_legacy_episode()` 也必须走同一 guard，不能绕过 scanner 取出前两集。
++
++发生矛盾时明确返回 `CORRUPT_LEGACY_COMPLETE_MARKER`，该 Attempt 不贡献任何可复用结果，包含后面才发现错误时的前缀。
++不删除、不修补原状态和文件，不把 COMPLETE2/5 当正常完成2集。来源路径、Task、错误原因保留在 scanner diagnostics，
++由 Parent 计划/结束报告继承。其他独立合法 Attempt 仍可按原去重规则选择。
++
++原状态为 RUNNING/FAILED 时继续逐集验证闭合前缀；不会把 Task 最后的清理失败倒推为早先合法 Episode 无效。
++原媒体未录制但当前计划想要录像，只报本次覆盖缺口；与原策略要求的媒体已丢失/损坏分开处理。
++Task级 `process_cleanup.json` 的新增/变化属于共享观测，不形成新的 Episode locator；每次重用 COMPLETE 仍重新验证它，
++不能因此放宽 Local cleanup、原始动作、预测或核心文件哈希检查。
++
++CPU 正反例：COMPLETE2/5、5/5缺失/损坏进程清理、末集 Local acknowledgement 错误均整项隔离；
++合法 COMPLETE5/5 全量接收且文件字节不变；RUNNING/FAILED 的2/5前缀仍可重用；新媒体升级不改原 COMPLETE 验收口径。
++
++## 4. MEDIUM-03：重建持久槽位，不依赖内存 pending
++
++新增只读 `reservation_recovery.py`，恢复权威有两类：
++
++1. 重新验证的 EpisodeRef/catalog。冻结规则为 logical slot 从0连续分配、不重号，因此其最高已知编号以内的空洞可恢复为待重试槽。
++   例如有来源 `{0,1,3,4}`，即使原 reservation 文件丢失，也能从这些来源及连续编号规则推导 slot2。
++2. 持久 reservation/logical mapping 和旧 progress 的投影。它们可证明尾部已分配但未完成的槽位、Attempt/physical映射和原 reservation ID。
++   原 progress 没有 logical ID 时必须有可核对的物理映射；不能凭 Episode0 猜成下一个逻辑编号。
++
++`read_recovery_document(path)` 从普通 JSON 文件只读获取上述投影，记录实际文件路径、内容 SHA256和稳定读取见证。
++重复 JSON key、符号链接或不稳定读取拒绝。旧 `completed_slots` 投影仅可证明“已分配”，绝不凭外部 `verified:true` 就复用 Episode。
++真正完成来源仍要经原 Episode verifier 核验。本阶段投影读取尚不是生产旧 JSONL/目录发现器。
++
++`build_plan(..., recovery_documents=...)` 自动读取输入的持久文档并调用恢复器；完成来源直接来自重新验证的 history。
++恢复器以全部历史、未选来源和 reservation 为权威，独立于当前 requested 数量计算：
++
++```text
++known = completed logical slots ∪ persistent reserved/mapped slots
++pending = [0..max(known)] - completed
++new_slots = ascending pending 的前 new_count 个
++不足部分从 max(known)+1 追加
++```
++
++每个推导空洞记录 `INFERRED_FROM_PERSISTENT_COMPLETED_SLOT_GAP` 和 source_refs；显式 reservation/progress 也保留其权威来源。
++同一物理来源映射到两个逻辑编号、同一 reservation ID 跨槽或同槽身份冲突均 fail closed；不能跳过冲突而分配 slot5。
++纯整数仅用于算法测试，不能在没有持久权威时补造缺口。
++
++`pending_slots` 旧 API 只作为兼容提示：只能引用已由上述权威推导的 pending，不能新建未持久化槽位。
++恢复结果中的 pending、stable identity、完整 source_refs、next_slot_floor 保存在每 Task 的 plan/report；终端计划包含待重试编号。
++requested5→2 时不执行缺口，但仍保留 pending2；以后扩大为5，仍先执行2。
++相同 requested Seed 的多次失败重试复用 logical ID 和派生 Seed，物理 Attempt独立。
++没有完成来源的整个 Task 则走第2节完整 fresh 协议，不能借零散未完成标记改变新 Task 的场景协议。
++
++CPU 覆盖：磁盘 JSON roundtrip 后不传 pending 的 `{0,1,3,4}`→执行2；尾部 start/reservation 的自动重建；
++shrink→expand、同槽多次失败/新 Attempt、映射冲突、无权威拒绝、重读不改文件；完成结果与分配投影严格分离。
++
++## 5. 验收与停止条件
++
++作者侧只运行本次变更的 scene、Episode evidence、reservation recovery、plan 四组隔离 CPU 测试，
++使用外部日志/cache目录和 Ruff0.12.7。实际数量以本次 JUnit/Evidence 为准；不把旧161项或未重跑的 identity45项记作新版本全量通过。
++任一失败、跳过、生产文件差异或 Child/Gitlink 变化均不能报本阶段作者 PASS。
++内部只读复核仅检查本次三项闭环，不替代 GPT verdict 或 DS 独立执行。
++
++提交顺序：新 r2 Design/Prototype commit → 绑定该 SHA 的作者 CPU Evidence/交接 commit → 非 force发布 V3并回读 → 停止。
++申请 GPT 对新的 Root/Child Pair 增量设计审核，**不自行进入生产接线**。
++
++设计通过后的独立实现 Gate 仍须覆盖真实 CLI→同一 run lock→四参/legacy重验→持久分配→Worker/Local清理→当前统计的完整 CPU fake管线，
++旧 progress/catalog 自动发现与投影、只增原子预分配、崩溃恢复和最新 invocation discovery。
++模型全量哈希的实际 I/O成本、latest-summary入口与完整管线均保留在后续范围，不在本次扩大整改。
++不启动 GPU、Action Server、模型或仿真，不读取真实 DCP，不更新正在运行的评测或 G1，不重跑已完成20集。
+diff --git a/tools/v3/episode_resume_prototype/README.md b/tools/v3/episode_resume_prototype/README.md
+index 13bd11ef..6fb6afb1 100644
+--- a/tools/v3/episode_resume_prototype/README.md
++++ b/tools/v3/episode_resume_prototype/README.md
+@@ -4 +4,3 @@ Contract: `docs/collab/chatgpt/requests/2026-10-23_Codex_V3_RoboCasa_flexible_ep
+-Design: `docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r1.md`.
++Current design: `docs/collab/codex/designs/2026-10-23_V3_RoboCasa_flexible_episode_resume_design_r2.md`.
++The r1 design/evidence remain historical. R2 addresses only fresh sampling,
++contradictory COMPLETE claims and durable pending-slot recovery.
+diff --git a/tools/v3/episode_resume_prototype/episode_evidence.py b/tools/v3/episode_resume_prototype/episode_evidence.py
+index 50d3b26c..23a91e17 100644
+--- a/tools/v3/episode_resume_prototype/episode_evidence.py
++++ b/tools/v3/episode_resume_prototype/episode_evidence.py
+@@ -26,0 +27 @@ from robocasa_eval_results import (  # noqa: E402
++    validate_attempt,
+@@ -247,2 +248,2 @@ def _media(attempt_dir, row, *, policy, requested, sim_python, digest, attempt_i
+-def verify_legacy_episode(attempt_dir, episode, *, manifest, sim_python, requested_media=None):
+-    """Validate one original Episode, independently of Task status/episode budget."""
++def _verify_legacy_episode_core(attempt_dir, episode, *, manifest, sim_python, requested_media=None):
++    """Validate Episode evidence after the source-level completion claim guard."""
+@@ -375,0 +377,2 @@ def verify_legacy_episode(attempt_dir, episode, *, manifest, sim_python, request
++    if marker["status"] == "COMPLETE":
++        hashes["process_cleanup.json"] = sha256_file(_safe(attempt_dir / "process_cleanup.json"))
+@@ -419,0 +423,51 @@ def verify_legacy_episode(attempt_dir, episode, *, manifest, sim_python, request
++def _validated_complete_source(attempt_dir, *, manifest, sim_python, requested_media):
++    """A v1 COMPLETE claim must pass its original whole-Task contract, never salvage."""
++    identity, protocol = _manifest(manifest)
++    marker = _marker(attempt_dir, manifest["digest"])
++    if marker["status"] != "COMPLETE":
++        return None
++    if requested_media is not None:
++        _policy(requested_media)
++    policy = _policy(protocol)
++    try:
++        validate_attempt(
++            attempt_dir,
++            digest=manifest["digest"],
++            expected_trials=protocol.get("trials"),
++            runtime_digest=identity["evaluation_runtime"]["digest"],
++            video_mode=policy["save_generated_video"],
++            rollout_enabled=policy["save_rollout_mp4"],
++            init_png_enabled=policy["save_init_png"],
++            sim_python=sim_python,
++        )
++        # Buffer every Episode before publishing any from this COMPLETE source.
++        # The core also checks horizon/Local acknowledgement consistency; failure
++        # of a later Episode must not leave earlier ones silently salvaged.
++        return [
++            _verify_legacy_episode_core(
++                attempt_dir, episode, manifest=manifest, sim_python=sim_python, requested_media=requested_media
++            )
++            for episode in range(protocol["trials"])
++        ]
++    except (OSError, ValueError, TypeError, KeyError, IndexError) as error:
++        raise EpisodeEvidenceError(
++            "CORRUPT_LEGACY_COMPLETE_MARKER",
++            f"original COMPLETE claim is inconsistent with its own {protocol.get('trials')!r}-episode contract: {error}",
++        ) from error
++
++
++def verify_legacy_episode(attempt_dir, episode, *, manifest, sim_python, requested_media=None):
++    """Read one Episode; a COMPLETE Task first requires full original validation."""
++    attempt_dir = _safe(Path(attempt_dir))
++    complete = _validated_complete_source(
++        attempt_dir, manifest=manifest, sim_python=sim_python, requested_media=requested_media
++    )
++    if complete is not None:
++        if type(episode) is not int or not 0 <= episode < len(complete):
++            _fail("INVALID_EPISODE", "source episode index is outside the original complete task")
++        return complete[episode]
++    return _verify_legacy_episode_core(
++        attempt_dir, episode, manifest=manifest, sim_python=sim_python, requested_media=requested_media
++    )
++
++
+@@ -480 +534,3 @@ def scan_legacy_run(run_dir, *, sim_python, tasks=None, requested_media=None):
+-                _marker(attempt, manifest["digest"])
++                complete_records = _validated_complete_source(
++                    attempt, manifest=manifest, sim_python=sim_python, requested_media=requested_media
++                )
+@@ -495,3 +551,6 @@ def scan_legacy_run(run_dir, *, sim_python, tasks=None, requested_media=None):
+-            candidates = {
+-                int(match[1]) for path in attempt.iterdir() if (match := _ARTIFACT.fullmatch(path.name))
+-            } | completed
++            candidates = (
++                set(range(len(complete_records)))
++                if complete_records is not None
++                else {int(match[1]) for path in attempt.iterdir() if (match := _ARTIFACT.fullmatch(path.name))}
++                | completed
++            )
+@@ -512,2 +571,6 @@ def scan_legacy_run(run_dir, *, sim_python, tasks=None, requested_media=None):
+-                    record = verify_legacy_episode(
+-                        attempt, episode, manifest=manifest, sim_python=sim_python, requested_media=requested_media
++                    record = (
++                        complete_records[episode]
++                        if complete_records is not None
++                        else _verify_legacy_episode_core(
++                            attempt, episode, manifest=manifest, sim_python=sim_python, requested_media=requested_media
++                        )
+diff --git a/tools/v3/episode_resume_prototype/episode_evidence_test.py b/tools/v3/episode_resume_prototype/episode_evidence_test.py
+index d9ba7cd6..e47a2ef5 100644
+--- a/tools/v3/episode_resume_prototype/episode_evidence_test.py
++++ b/tools/v3/episode_resume_prototype/episode_evidence_test.py
+@@ -15,0 +16 @@ from episode_evidence import EpisodeEvidenceError, scan_legacy_run, verify_legac
++from robocasa_processes import OwnedProcess  # noqa: E402
+@@ -29,0 +31,16 @@ def write_lines(path, values):
++def _real_cpu_cleanup_witness():
++    """Same cleanup producer as v1, with only two tiny stdlib CPU children."""
++    processes, witness = [], {}
++    try:
++        for role, script in (("server", "import time; time.sleep(30)"), ("simulator", "pass")):
++            owned = OwnedProcess([sys.executable, "-B", "-c", script], grace_s=0.5)
++            processes.append(owned)
++            if role == "simulator":
++                owned.proc.wait(timeout=5)
++            witness[role] = owned.close()
++        return witness
++    finally:
++        for owned in processes:
++            owned.close()
++
++
+@@ -221,0 +239,2 @@ def append_attempt(run_dir, *, attempt=2, completed=2, status="FAILED", outcomes
++    if status == "COMPLETE":
++        write_json(directory / "process_cleanup.json", _real_cpu_cleanup_witness())
+@@ -237 +256 @@ def snapshot(run):
+-@pytest.mark.parametrize("status", ["RUNNING", "FAILED", "COMPLETE"])
++@pytest.mark.parametrize("status", ["RUNNING", "FAILED"])
+@@ -248,0 +268,101 @@ def test_complete_episodes_reusable_without_task_complete_or_total_trial_count(t
++def test_complete_marker_with_two_of_five_episodes_quarantines_entire_source(tmp_path):
++    run = build_legacy_run(tmp_path, completed=2, trials=5, status="COMPLETE")
++    before = snapshot(run)
++    result = scan(run)
++    assert result["records"] == []
++    assert [value["code"] for value in result["diagnostics"]] == ["CORRUPT_LEGACY_COMPLETE_MARKER"]
++    manifest = json.loads((run / "evaluation_manifest.json").read_text())
++    with pytest.raises(EpisodeEvidenceError) as error:
++        verify_legacy_episode(run / "CloseFridge/attempt_0001", 0, manifest=manifest, sim_python=Path(sys.executable))
++    assert error.value.code == "CORRUPT_LEGACY_COMPLETE_MARKER"
++    assert before == snapshot(run)
++
++
++@pytest.mark.parametrize("failure", ["missing", "live_group", "remaining", "missing_role", "error"])
++def test_complete_marker_requires_original_whole_task_process_cleanup(tmp_path, failure):
++    run = build_legacy_run(tmp_path, completed=5, trials=5, status="COMPLETE")
++    path = run / "CloseFridge/attempt_0001/process_cleanup.json"
++    cleanup = json.loads(path.read_text())
++    if failure == "missing":
++        path.unlink()
++    else:
++        if failure == "live_group":
++            cleanup["server"]["live_group"] = True
++        elif failure == "remaining":
++            cleanup["simulator"]["remaining_pids"] = [123]
++        elif failure == "missing_role":
++            cleanup.pop("server")
++        else:
++            cleanup["server"]["error"] = "failed cleanup must not be salvaged"
++        write_json(path, cleanup)
++    before = snapshot(run)
++    result = scan(run)
++    assert result["records"] == []
++    assert [value["code"] for value in result["diagnostics"]] == ["CORRUPT_LEGACY_COMPLETE_MARKER"]
++    assert before == snapshot(run)
++
++
++def test_legal_complete_five_of_five_uses_unchanged_original_validator(tmp_path, monkeypatch):
++    import episode_evidence
++
++    run = build_legacy_run(tmp_path, completed=5, trials=5, status="COMPLETE")
++    cleanup = json.loads((run / "CloseFridge/attempt_0001/process_cleanup.json").read_text())
++    for role in ("server", "simulator"):
++        assert set(cleanup[role]) == {"pid", "pgid", "signals", "returncode", "live_group", "remaining_pids"}
++        assert cleanup[role]["pid"] == cleanup[role]["pgid"] > 0
++        assert cleanup[role]["live_group"] is False and cleanup[role]["remaining_pids"] == []
++    assert cleanup["simulator"]["returncode"] == 0
++    original, calls = episode_evidence.validate_attempt, []
++
++    def observe_original(*args, **kwargs):
++        calls.append(kwargs)
++        return original(*args, **kwargs)
++
++    monkeypatch.setattr(episode_evidence, "validate_attempt", observe_original)
++    before = snapshot(run)
++    requested = dict(save_generated_video="all", save_rollout_mp4=True, save_init_png=True)
++    result = scan(run, requested_media=requested)
++    assert len(result["records"]) == 5 and result["diagnostics"] == []
++    assert len(calls) == 1 and original.__module__ == "robocasa_eval_results"
++    assert calls[0]["expected_trials"] == 5
++    assert calls[0]["digest"] == result["original_manifest"]["digest"]
++    assert calls[0]["runtime_digest"] == result["original_manifest"]["identity"]["evaluation_runtime"]["digest"]
++    assert (
++        calls[0]["video_mode"] == "none"
++        and calls[0]["rollout_enabled"] is False
++        and calls[0]["init_png_enabled"] is False
++    )
++    assert all(value["media_coverage"]["missing_requested_media"] for value in result["records"])
++    direct = verify_legacy_episode(
++        run / "CloseFridge/attempt_0001",
++        4,
++        manifest=result["original_manifest"],
++        sim_python=Path(sys.executable),
++        requested_media=requested,
++    )
++    assert direct["source_episode"] == 4 and direct["original_task_status"] == "COMPLETE"
++    assert before == snapshot(run)
++
++
++def test_complete_later_episode_core_error_cannot_salvage_earlier_episodes(tmp_path):
++    run = build_legacy_run(tmp_path, completed=5, trials=5, status="COMPLETE")
++    path = run / "CloseFridge/attempt_0001/rollout04_predictions.jsonl"
++    predictions = [json.loads(line) for line in path.read_text().splitlines()]
++    predictions[0]["local_memory"]["session_id"] = f"{'b' * 32}:0:{'c' * 32}"
++    write_lines(path, predictions)
++    before = snapshot(run)
++    result = scan(run)
++    assert result["records"] == []
++    assert [value["code"] for value in result["diagnostics"]] == ["CORRUPT_LEGACY_COMPLETE_MARKER"]
++    assert before == snapshot(run)
++
++
++def test_bad_complete_source_does_not_hide_independent_failed_source_prefix(tmp_path):
++    run = build_legacy_run(tmp_path, completed=2, trials=5, status="COMPLETE")
++    append_attempt(run, attempt=2, completed=2, status="FAILED")
++    result = scan(run)
++    assert len(result["records"]) == 2
++    assert all(value["source_ref"]["attempt"] == "attempt_0002" for value in result["records"])
++    assert any(value["code"] == "CORRUPT_LEGACY_COMPLETE_MARKER" for value in result["diagnostics"])
++
++
+diff --git a/tools/v3/episode_resume_prototype/plan.py b/tools/v3/episode_resume_prototype/plan.py
+index 66c04c95..06af9171 100644
+--- a/tools/v3/episode_resume_prototype/plan.py
++++ b/tools/v3/episode_resume_prototype/plan.py
+@@ -14,0 +15,4 @@ from tools.v3.episode_resume_prototype.model_identity import compare_model_ident
++from tools.v3.episode_resume_prototype.reservation_recovery import (
++    read_recovery_document,
++    recover_pending_slots,
++)
+@@ -30 +34 @@ def _core_snapshot(record):
+-    mutable = {"attempt.json", "episode_progress.jsonl", "results.json"}
++    mutable = {"attempt.json", "episode_progress.jsonl", "results.json", "process_cleanup.json"}
+@@ -139,0 +144 @@ def build_plan(
++    recovery_documents=(),
+@@ -152,0 +158,3 @@ def build_plan(
++    recovered_documents = [read_recovery_document(path) for path in recovery_documents]
++    reservations = [row for document in recovered_documents for row in document.get("reservations", [])]
++    progress = [row for document in recovered_documents for row in document.get("progress_diagnostics", [])]
+@@ -206,2 +214,10 @@ def build_plan(
+-        pending = (pending_slots or {}).get(task, [])
+-        if any(type(slot) is not int or slot < 0 for slot in pending):
++        recovery = recover_pending_slots(
++            task=task,
++            completed_slots=history,
++            reservations=reservations,
++            progress_diagnostics=progress,
++            requested_episodes=requested_episodes,
++        )
++        # Optional old API hints cannot invent a slot without durable authority.
++        hints = (pending_slots or {}).get(task, [])
++        if any(type(slot) is not int or slot < 0 for slot in hints):
+@@ -209,5 +225,4 @@ def build_plan(
+-        pending = sorted(set(pending))
+-        used_slots = {row.get("logical_episode_index", row["source_episode"]) for row in history}
+-        pending = [slot for slot in pending if slot not in used_slots]
+-        next_slot = max((row.get("logical_episode_index", row["source_episode"]) for row in history), default=-1) + 1
+-        next_slot = max([next_slot, *(slot + 1 for slot in pending)])
++        if not set(hints).issubset(recovery["pending_slots"]):
++            raise ValueError("UNPERSISTED_PENDING_HINT: pending slots require persistent recovery authority")
++        pending = recovery["pending_slots"]
++        next_slot = recovery["next_slot_floor"]
+@@ -215,2 +230,8 @@ def build_plan(
+-        new_slots = pending[:new_count]
+-        new_slots.extend(range(next_slot, next_slot + new_count - len(new_slots)))
++        sampling_mode = "resume_gap_independent" if history else "fresh_task_stream"
++        if history:
++            new_slots = pending[:new_count]
++            new_slots.extend(range(next_slot, next_slot + new_count - len(new_slots)))
++        else:
++            # With no valid completed prefix the whole Task starts at its
++            # original literal seed, including failed/quarantined old sources.
++            new_slots = list(range(new_count))
+@@ -221,0 +243 @@ def build_plan(
++            sampling_mode=sampling_mode,
+@@ -236,0 +259,3 @@ def build_plan(
++            "sampling_mode": sampling_mode,
++            "execution_batches": scene["execution_batches"],
++            "pending_recovery": recovery,
+@@ -304,0 +330,2 @@ def build_report(plan, executed, *, invocation_errors=()):
++            "sampling_mode": value["sampling_mode"],
++            "pending_recovery": copy.deepcopy(value["pending_recovery"]),
+@@ -344 +371,2 @@ def render_plan(plan):
+-            f"reused={row['reused']} new={row['new']} excluded={row['excluded']}"
++            f"reused={row['reused']} new={row['new']} excluded={row['excluded']} "
++            f"sampling_mode={row['sampling_mode']} pending={row['pending_recovery']['pending_slots']}"
+diff --git a/tools/v3/episode_resume_prototype/plan_test.py b/tools/v3/episode_resume_prototype/plan_test.py
+index 2deec604..1b53951e 100644
+--- a/tools/v3/episode_resume_prototype/plan_test.py
++++ b/tools/v3/episode_resume_prototype/plan_test.py
+@@ -6,0 +7 @@ import fcntl
++import json
+@@ -86 +87,4 @@ def completed_new(value):
+-                "path": f"/synthetic/{task}/attempt_new_{row['logical_episode_index']}/rollout00_episode.json",
++                "path": (
++                    f"/synthetic/{task}/attempt_new_{row['execution_batch']}/"
++                    f"rollout{row['source_episode']:02d}_episode.json"
++                ),
+@@ -88,2 +92,2 @@ def completed_new(value):
+-                "attempt": f"attempt_new_{row['logical_episode_index']}",
+-                "source_episode": 0,
++                "attempt": f"attempt_new_{row['execution_batch']}",
++                "source_episode": row["source_episode"],
+@@ -226,0 +231,9 @@ def test_shared_task_snapshot_change_does_not_create_a_second_episode():
++def test_task_level_cleanup_added_on_complete_does_not_change_episode_identity():
++    earlier = history(1)[0]
++    completed = copy.deepcopy(earlier)
++    completed["source_ref"]["hashes"]["process_cleanup.json"] = "now-closed-task-processes"
++    value = plan([earlier, completed], episodes=1)
++    assert value["tasks"]["CloseFridge"]["reused"] == 1
++    assert value["tasks"]["CloseFridge"]["new"] == 0
++
++
+@@ -287 +300 @@ def test_one_derived_seed_family_is_distinguished_from_multiple_environment_seed
+-    value = plan([], episodes=2, seed=9)
++    value = plan(history(1, seed=9), episodes=3, seed=9)
+@@ -290 +303 @@ def test_one_derived_seed_family_is_distinguished_from_multiple_environment_seed
+-    assert actual["requested_seed_families"] == [9] and len(actual["effective_seeds"]) == 2
++    assert actual["requested_seed_families"] == [9] and len(actual["effective_seeds"]) == 3
+@@ -294,0 +308,114 @@ def test_one_derived_seed_family_is_distinguished_from_multiple_environment_seed
++def test_fresh_task_retains_literal_seed_single_environment_and_physical_episode_order():
++    value = plan([], episodes=5, seed=9)
++    task = value["tasks"]["CloseFridge"]
++    assert task["sampling_mode"] == "fresh_task_stream"
++    assert [row["effective_seed"] for row in task["new_episodes"]] == [9] * 5
++    assert [row["source_episode"] for row in task["new_episodes"]] == list(range(5))
++    assert [row["logical_episode_index"] for row in task["new_episodes"]] == list(range(5))
++    assert len(task["execution_batches"]) == 1
++    assert task["execution_batches"][0]["environment_constructions"] == 1
++    assert task["execution_batches"][0]["public_reset_calls"] == 5
++    assert not value["warnings"]
++    report = build_report(value, completed_new(value))
++    assert report["status"] == "COMPLETE" and report["actual_conditions"]["effective_seeds"] == [9]
++    assert "MIXED_SAMPLING_PROTOCOL" not in report["actual_conditions"]["flags"]
++
++
++def test_expanding_four_to_eighteen_tasks_uses_fresh_protocol_only_for_new_tasks():
++    old_tasks = ["CloseFridge", "TaskOne", "TaskTwo", "TaskThree"]
++    new_tasks = [f"NewTask{index}" for index in range(14)]
++    records = [row for task in old_tasks for row in history(3, task=task)]
++    value = plan(records, tasks=old_tasks + new_tasks, episodes=5, seed=0)
++    for task in old_tasks:
++        item = value["tasks"][task]
++        assert item["reused"] == 3 and item["sampling_mode"] == "resume_gap_independent"
++        assert [row["logical_episode_index"] for row in item["new_episodes"]] == [3, 4]
++        assert [row["source_episode"] for row in item["new_episodes"]] == [0, 0]
++        assert len(item["execution_batches"]) == 2
++    for task in new_tasks:
++        item = value["tasks"][task]
++        assert item["reused"] == 0 and item["sampling_mode"] == "fresh_task_stream"
++        assert [row["effective_seed"] for row in item["new_episodes"]] == [0] * 5
++        assert [row["source_episode"] for row in item["new_episodes"]] == list(range(5))
++        assert len(item["execution_batches"]) == 1
++    assert "MIXED_SAMPLING_PROTOCOL" in value["planned_conditions"]["flags"]
++
++
++def test_sparse_completed_catalog_recovers_failed_slot_after_disk_roundtrip_without_pending_hint(tmp_path):
++    records = history(5)
++    records.pop(2)
++    catalog = tmp_path / "verified-synthetic-catalog.json"
++    catalog.write_text(json.dumps(records))
++    before = catalog.read_bytes()
++    restarted = plan(json.loads(catalog.read_text()), episodes=5)
++    item = restarted["tasks"]["CloseFridge"]
++    assert [row["logical_episode_index"] for row in item["new_episodes"]] == [2]
++    assert item["pending_recovery"]["pending_slots"] == [2]
++    assert any(
++        row["code"] == "INFERRED_FROM_PERSISTENT_COMPLETED_SLOT_GAP" for row in item["pending_recovery"]["diagnostics"]
++    )
++    report = build_report(restarted, completed_new(restarted))
++    assert report["status"] == "COMPLETE" and report["completed"] == 5
++    assert catalog.read_bytes() == before
++
++
++def test_shrink_then_expand_preserves_unfinished_slot_and_excluded_sources():
++    records = history(5)
++    records.pop(2)
++    smaller = plan(records, episodes=2)
++    assert smaller["tasks"]["CloseFridge"]["new"] == 0
++    assert smaller["tasks"]["CloseFridge"]["pending_recovery"]["pending_slots"] == [2]
++    larger = plan(records, episodes=5)
++    assert [row["logical_episode_index"] for row in larger["tasks"]["CloseFridge"]["new_episodes"]] == [2]
++    assert larger["tasks"]["CloseFridge"]["pending_recovery"]["pending_slots"] == [2]
++
++
++def test_unpersisted_optional_pending_hint_cannot_invent_a_new_slot():
++    with pytest.raises(ValueError, match="UNPERSISTED_PENDING_HINT"):
++        plan(history(3), episodes=5, pending_slots={"CloseFridge": [8]})
++
++
++def test_restarted_plan_reads_persisted_tail_reservation_and_progress_without_memory_state(tmp_path):
++    document = {
++        "task": "CloseFridge",
++        "reservations": [
++            {
++                "logical_episode_index": 2,
++                "reservation_id": "CloseFridge:slot:2",
++                "attempt": "attempt_0002",
++                "source_episode": 0,
++            }
++        ],
++        "progress_diagnostics": [
++            {
++                "logical_episode_index": 2,
++                "reservation_id": "CloseFridge:slot:2",
++                "attempt": "attempt_0002",
++                "source_episode": 0,
++                "event": "start",
++            }
++        ],
++    }
++    path = tmp_path / "logical_slots.json"
++    path.write_text(json.dumps(document))
++    before = path.read_bytes()
++    value = plan(history(2), episodes=3, recovery_documents=[path])
++    item = value["tasks"]["CloseFridge"]
++    assert [row["logical_episode_index"] for row in item["new_episodes"]] == [2]
++    assert item["pending_recovery"]["pending_slots"] == [2]
++    # A process restart reparses bytes; no optional in-memory pending list is supplied.
++    again = plan(history(2), episodes=3, recovery_documents=[path], invocation_id="restarted-again")
++    assert (
++        again["tasks"]["CloseFridge"]["new_episodes"][0]["effective_seed"] == item["new_episodes"][0]["effective_seed"]
++    )
++    assert path.read_bytes() == before
++
++
++def test_quarantined_history_diagnostic_survives_whole_task_fresh_restart():
++    diagnostics = [{"code": "CORRUPT_LEGACY_COMPLETE_MARKER", "task": "CloseFridge", "attempt": "attempt_0001"}]
++    value = plan([], scan_diagnostics=diagnostics)
++    assert value["tasks"]["CloseFridge"]["sampling_mode"] == "fresh_task_stream"
++    report = build_report(value, completed_new(value))
++    assert value["diagnostics"] == report["diagnostics"] == diagnostics
++
++
+diff --git a/tools/v3/episode_resume_prototype/reservation_recovery.py b/tools/v3/episode_resume_prototype/reservation_recovery.py
+new file mode 100644
+index 00000000..4735d68b
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/reservation_recovery.py
+@@ -0,0 +1,253 @@
++"""Read-only recovery of logical reservations; not production scheduling or writes."""
++
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++import os
++import re
++import stat
++from pathlib import Path
++
++_SHA = re.compile(r"[0-9a-f]{64}\Z")
++
++
++class ReservationRecoveryError(ValueError):
++    """Ambiguous/untrusted recovery input must not become a new higher slot."""
++
++    def __init__(self, code, message):
++        super().__init__(f"{code}: {message}")
++        self.code = code
++
++
++def _fail(code, message):
++    raise ReservationRecoveryError(code, message)
++
++
++def _slot(value):
++    if type(value) is not int or value < 0:
++        _fail("INVALID_LOGICAL_SLOT", f"expected a nonnegative integer, got {value!r}")
++    return value
++
++
++def _source(reference):
++    if not isinstance(reference, dict) or not isinstance(reference.get("path"), str):
++        _fail("RECOVERY_SOURCE_MISSING", "persistent input needs a source_ref with a path and hash/digest")
++    if not Path(reference["path"]).is_absolute():
++        _fail("RECOVERY_SOURCE_INVALID", "persistent source path must be absolute")
++    hashes = [reference[name] for name in ("sha256", "original_digest") if name in reference]
++    if not hashes or any(not isinstance(value, str) or not _SHA.fullmatch(value) for value in hashes):
++        _fail("RECOVERY_SOURCE_INVALID", "persistent source needs a valid SHA256 or original identity digest")
++    return copy.deepcopy(reference)
++
++
++def _references(row):
++    references = [_source(row.get("source_ref"))]
++    if "recovery_document_source_ref" in row:
++        references.append(_source(row["recovery_document_source_ref"]))
++    return references
++
++
++def _unique(references):
++    by_json = {json.dumps(row, sort_keys=True, ensure_ascii=False, allow_nan=False): row for row in references}
++    return [copy.deepcopy(by_json[key]) for key in sorted(by_json)]
++
++
++def _pairs(pairs):
++    result = {}
++    for key, value in pairs:
++        if key in result:
++            _fail("RECOVERY_DOCUMENT_INVALID", f"duplicate JSON key: {key}")
++        result[key] = value
++    return result
++
++
++def _witness(value):
++    return value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns, value.st_ctime_ns
++
++
++def read_recovery_document(path):
++    """Read a persisted catalog/progress projection and attach its byte witness.
++
++    The JSON object may contain completed_slots, reservations and/or
++    progress_diagnostics; no new schema/version discriminator is required.
++    Existing Episode source references are preserved, not relabeled as this
++    catalog. Persisted completed_slots ALSO become reservation observations,
++    never proof of completed Episode outcomes. This reader is not a substitute
++    for the original Episode validator.
++    """
++    path = Path(path).absolute()
++    try:
++        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
++        with os.fdopen(fd, "rb") as stream:
++            before = os.fstat(stream.fileno())
++            if not stat.S_ISREG(before.st_mode):
++                _fail("RECOVERY_DOCUMENT_INVALID", "persistent recovery input must be an ordinary file")
++            raw = stream.read()
++            after = os.fstat(stream.fileno())
++        if _witness(before) != _witness(after) or _witness(after) != _witness(path.stat(follow_symlinks=False)):
++            _fail("RECOVERY_DOCUMENT_CHANGED", str(path))
++        document = json.loads(raw, object_pairs_hook=_pairs)
++    except (OSError, UnicodeError, json.JSONDecodeError) as error:
++        raise ReservationRecoveryError("RECOVERY_DOCUMENT_INVALID", str(error)) from error
++    if not isinstance(document, dict):
++        _fail("RECOVERY_DOCUMENT_INVALID", "recovery document must be a JSON object")
++    reference = {"path": str(path), "sha256": hashlib.sha256(raw).hexdigest()}
++    result = {"source_ref": reference}
++    for kind in ("completed_slots", "reservations", "progress_diagnostics"):
++        rows = document.get(kind, [])
++        if not isinstance(rows, list):
++            _fail("RECOVERY_DOCUMENT_INVALID", f"{kind} must be a list")
++        output = []
++        for row in rows:
++            if kind == "completed_slots" and type(row) is int:
++                row = {"logical_episode_index": row}
++            if not isinstance(row, dict):
++                _fail("RECOVERY_DOCUMENT_INVALID", f"{kind} row must be an object")
++            row = copy.deepcopy(row)
++            if "task" not in row and "task" in document:
++                row["task"] = document["task"]
++            row.setdefault("source_ref", copy.deepcopy(reference))
++            row["recovery_document_source_ref"] = copy.deepcopy(reference)
++            output.append(row)
++        result[kind] = output
++    result["reservations"] = result["completed_slots"] + result["reservations"]
++    return result
++
++
++def _mapping(row):
++    reference = row.get("source_ref", {})
++    attempt = row.get("attempt", reference.get("attempt"))
++    episode = row.get("source_episode", reference.get("source_episode"))
++    if episode is None and "episode" in row:
++        episode = row["episode"]
++    if attempt is None and episode is None:
++        return None
++    if not isinstance(attempt, str) or not attempt or episode is None:
++        _fail("RECOVERY_LOGICAL_MAPPING_MISSING", "physical Episode mapping needs attempt and source_episode")
++    episode = _slot(episode)
++    origin = row.get("original_digest", reference.get("original_digest", reference.get("run_dir", "")))
++    return str(origin), attempt, episode
++
++
++def recover_pending_slots(*, task, completed_slots, reservations=(), progress_diagnostics=(), requested_episodes=None):
++    """Rebuild pending IDs from durable observations, independently of demand.
++
++    Completed records must come from the upstream Episode verifier. Their
++    source-bearing catalog observations are durable authority under the frozen
++    continuous logical-ID protocol, so a lost reservation file does not hide a
++    gap. Bare ints support pure algorithm tests only: no durable gap proof is
++    invented from them. Provenance remains evidence, not model identity.
++    """
++    if not isinstance(task, str) or not task.isidentifier() or task == "all":
++        _fail("INVALID_RECOVERY_TASK", repr(task))
++    if requested_episodes is not None and (type(requested_episodes) is not int or requested_episodes <= 0):
++        _fail("INVALID_RECOVERY_REQUEST", "requested_episodes must be a positive integer")
++    completed, evidence, physical, explicit_ids, id_slots, sources = set(), {}, {}, {}, {}, []
++    diagnostics = []
++    bare_completed = []
++
++    def observe(row, slot, kind):
++        references = _references(row)
++        sources.extend(references)
++        evidence.setdefault(slot, []).extend(references)
++        mapping = _mapping(row)
++        if mapping is not None:
++            if mapping in physical and physical[mapping] != slot:
++                _fail("RECOVERY_MAPPING_CONFLICT", f"{mapping!r} maps to both {physical[mapping]} and {slot}")
++            physical[mapping] = slot
++        reservation_id = row.get("reservation_id")
++        if reservation_id is not None:
++            if not isinstance(reservation_id, str) or not reservation_id:
++                _fail("RECOVERY_RESERVATION_CONFLICT", "reservation_id must be a nonempty string when present")
++            if slot in explicit_ids and explicit_ids[slot] != reservation_id:
++                _fail("RECOVERY_RESERVATION_CONFLICT", f"logical slot {slot} has conflicting reservation IDs")
++            if reservation_id in id_slots and id_slots[reservation_id] != slot:
++                _fail("RECOVERY_RESERVATION_CONFLICT", f"reservation {reservation_id!r} maps to multiple slots")
++            explicit_ids[slot], id_slots[reservation_id] = reservation_id, slot
++        if kind == "completed":
++            completed.add(slot)
++
++    for row in completed_slots:
++        if type(row) is int:
++            completed.add(_slot(row))
++            bare_completed.append(row)
++            continue
++        if not isinstance(row, dict):
++            _fail("INVALID_COMPLETED_SLOT", "completed inputs must be verified history records or test integers")
++        if row.get("task", task) != task:
++            continue
++        value = row.get("logical_episode_index")
++        if value is None and row.get("sampling_protocol") == "legacy_task_stream":
++            value = row.get("source_episode")
++        observe(row, _slot(value), "completed")
++
++    for row in reservations:
++        if not isinstance(row, dict):
++            _fail("INVALID_RESERVATION", "reservation must be a source-bearing object")
++        if row.get("task", task) == task:
++            observe(row, _slot(row.get("logical_episode_index")), "reservation")
++
++    for row in progress_diagnostics:
++        if not isinstance(row, dict):
++            _fail("INVALID_PROGRESS_DIAGNOSTIC", "progress observation must be a source-bearing object")
++        if row.get("task", task) != task:
++            continue
++        value = row.get("logical_episode_index")
++        if value is None:
++            mapping = _mapping(row)
++            if mapping not in physical:
++                _fail("RECOVERY_LOGICAL_MAPPING_MISSING", f"no persistent logical mapping for progress {mapping!r}")
++            value = physical[mapping]
++        observe(row, _slot(value), "progress")
++
++    known = completed | set(evidence)
++    maximum = max(known, default=-1)
++    # Large sparse inputs fail before materializing a range unless a persistent
++    # observation actually attests the continuous logical-ID namespace.
++    durable_maximum = max(evidence, default=-1)
++    if maximum > durable_maximum:
++        expected = 0
++        for value in sorted(known):
++            if value != expected and value > durable_maximum:
++                _fail("RECOVERY_AUTHORITY_MISSING", f"logical gap {expected} has no persistent authority")
++            expected = value + 1
++    pending = sorted(set(range(maximum + 1)) - completed)
++    references = _unique(sources)
++    for slot in pending:
++        if slot in evidence:
++            code = "RECOVERED_PENDING_FROM_PERSISTENT_RESERVATION_OR_PROGRESS"
++            slot_sources = _unique(evidence[slot])
++        elif evidence:
++            code = "INFERRED_FROM_PERSISTENT_COMPLETED_SLOT_GAP"
++            slot_sources = references
++        else:
++            _fail("RECOVERY_AUTHORITY_MISSING", f"logical gap {slot} has no persistent authority")
++        diagnostics.append({"code": code, "task": task, "logical_episode_index": slot, "source_refs": slot_sources})
++    if bare_completed:
++        diagnostics.append(
++            {"code": "BARE_COMPLETED_INTS_ARE_ALGORITHM_INPUT_NOT_PERSISTENT_PROOF", "slots": sorted(bare_completed)}
++        )
++    return {
++        "pending_slots": pending,
++        "next_slot_floor": maximum + 1,
++        "diagnostics": diagnostics,
++        "reservation_identities": {
++            str(slot): {
++                "stable_identity": {"task": task, "logical_episode_index": slot},
++                "reservation_id": explicit_ids.get(slot),
++                "pending": slot not in completed,
++            }
++            for slot in sorted(known | set(pending))
++        },
++        "authority": {
++            "protocol": "CONTINUOUS_LOGICAL_IDS_FROM_ZERO",
++            "source_refs": references,
++            "completed_slots": sorted(completed),
++            "observed_slots": sorted(known),
++            "requested_episodes": requested_episodes,
++            "pending_is_not_filtered_by_current_demand": True,
++            "observation_scope": "UPSTREAM_VERIFIED_EPISODES_AND_READONLY_PERSISTENT_MAPPING_OR_PROGRESS",
++        },
++    }
+diff --git a/tools/v3/episode_resume_prototype/reservation_recovery_test.py b/tools/v3/episode_resume_prototype/reservation_recovery_test.py
+new file mode 100644
+index 00000000..871d0382
+--- /dev/null
++++ b/tools/v3/episode_resume_prototype/reservation_recovery_test.py
+@@ -0,0 +1,284 @@
++"""Synthetic persistent-file recovery; no real rollout/DCP or production writes."""
++
++from __future__ import annotations
++
++import copy
++import hashlib
++import json
++import os
++import subprocess
++import sys
++
++import pytest
++
++from tools.v3.episode_resume_prototype.reservation_recovery import (
++    ReservationRecoveryError,
++    read_recovery_document,
++    recover_pending_slots,
++)
++
++TASK = "CloseFridge"
++
++
++def completed(slots):
++    """Already-verified scanner outputs at this helper's upstream trust boundary."""
++    return [
++        {
++            "task": TASK,
++            "logical_episode_index": slot,
++            "source_episode": slot,
++            "source_ref": {
++                "path": f"/synthetic/{TASK}/attempt_0001/rollout{slot:02d}_episode.json",
++                "original_digest": "a" * 64,
++                "attempt": "attempt_0001",
++                "source_episode": slot,
++                "hashes": {"core": f"{slot:064x}"},
++            },
++        }
++        for slot in slots
++    ]
++
++
++def recover(history, **changes):
++    return recover_pending_slots(task=TASK, completed_slots=history, requested_episodes=5, **changes)
++
++
++def persist(tmp_path, document, name="logical_slots.json"):
++    path = tmp_path / name
++    path.write_text(json.dumps(document, sort_keys=True), encoding="utf-8")
++    return path, read_recovery_document(path)
++
++
++def row(slot=2, *, attempt="attempt_0002", reservation="CloseFridge:slot:2", **extra):
++    return {
++        "task": TASK,
++        "logical_episode_index": slot,
++        "attempt": attempt,
++        "source_episode": 0,
++        "reservation_id": reservation,
++        **extra,
++    }
++
++
++def test_missing_reservation_file_sparse_completed_catalog_automatically_recovers_gap():
++    history = completed([0, 1, 3, 4])
++    before = copy.deepcopy(history)
++    result = recover(history)
++    assert result["pending_slots"] == [2]
++    assert result["next_slot_floor"] == 5
++    assert result["diagnostics"][0]["code"] == "INFERRED_FROM_PERSISTENT_COMPLETED_SLOT_GAP"
++    assert result["diagnostics"][0]["source_refs"]
++    assert result["reservation_identities"]["2"]["stable_identity"] == {"task": TASK, "logical_episode_index": 2}
++    assert history == before
++
++
++def test_multiple_catalog_holes_are_pending_in_logical_order():
++    result = recover(completed([1, 3, 6]))
++    assert result["pending_slots"] == [0, 2, 4, 5]
++    assert result["next_slot_floor"] == 7
++
++
++def test_contiguous_completed_prefix_needs_no_reservation_to_append_safely():
++    assert recover(completed([0, 1, 2]))["next_slot_floor"] == 3
++    assert recover(completed([0, 1, 2]))["pending_slots"] == []
++    assert recover([])["next_slot_floor"] == 0
++
++
++def test_explicit_reservation_and_original_progress_tail_recover_from_disk(tmp_path):
++    path, document = persist(
++        tmp_path,
++        {"task": TASK, "reservations": [row()], "progress_diagnostics": [row(event="start")]},
++    )
++    before_bytes, before_stat = path.read_bytes(), path.stat()
++    result = recover(
++        completed([0, 1, 3, 4]),
++        reservations=document["reservations"],
++        progress_diagnostics=document["progress_diagnostics"],
++    )
++    assert result["pending_slots"] == [2]
++    assert result["reservation_identities"]["2"]["reservation_id"] == "CloseFridge:slot:2"
++    assert result["diagnostics"][0]["code"] == "RECOVERED_PENDING_FROM_PERSISTENT_RESERVATION_OR_PROGRESS"
++    assert document["source_ref"] == {"path": str(path), "sha256": hashlib.sha256(before_bytes).hexdigest()}
++    assert path.read_bytes() == before_bytes
++    after_stat = path.stat()
++    assert (before_stat.st_ino, before_stat.st_mtime_ns, before_stat.st_ctime_ns) == (
++        after_stat.st_ino,
++        after_stat.st_mtime_ns,
++        after_stat.st_ctime_ns,
++    )
++
++
++def test_persisted_completed_claim_only_reserves_a_slot_and_cannot_prove_outcome(tmp_path):
++    _, document = persist(tmp_path, {"task": TASK, "completed_slots": list(range(5))})
++    result = recover(completed([0, 1, 3, 4]), reservations=document["reservations"])
++    assert result["authority"]["completed_slots"] == [0, 1, 3, 4]
++    assert result["pending_slots"] == [2]
++    assert document["reservations"] == document["completed_slots"]
++
++
++def test_crash_rebuild_reopens_files_without_an_in_memory_pending_argument(tmp_path):
++    catalog, _ = persist(
++        tmp_path,
++        {"task": TASK, "completed_slots": list(range(5)), "progress_diagnostics": [row(event="start")]},
++    )
++    history = tmp_path / "upstream_verified_history_fixture.json"
++    history.write_text(json.dumps(completed([0, 1, 3, 4])), encoding="utf-8")
++    program = """
++import json, sys
++from pathlib import Path
++from tools.v3.episode_resume_prototype.reservation_recovery import read_recovery_document, recover_pending_slots
++catalog = read_recovery_document(Path(sys.argv[1]))
++history = json.loads(Path(sys.argv[2]).read_text())
++result = recover_pending_slots(task='CloseFridge', completed_slots=history,
++    reservations=catalog['reservations'], progress_diagnostics=catalog['progress_diagnostics'], requested_episodes=5)
++print(json.dumps(result, sort_keys=True))
++"""
++    command = [sys.executable, "-c", program, str(catalog), str(history)]
++    # Independent OS interpreters cannot inherit the first process's local lists.
++    processes = [subprocess.run(command, check=True, capture_output=True, text=True, timeout=10) for _ in range(2)]
++    first, rebuilt = [json.loads(process.stdout) for process in processes]
++    assert first == rebuilt
++    assert rebuilt["pending_slots"] == [2]
++    assert rebuilt["next_slot_floor"] == 5
++    assert rebuilt["authority"]["source_refs"]
++    assert "pending_slots" not in json.loads(catalog.read_text())
++
++
++def test_shrink_then_expand_preserves_unfinished_identity_and_allocation_floor(tmp_path):
++    _, document = persist(tmp_path, {"task": TASK, "reservations": [row()]})
++    outputs = [
++        recover_pending_slots(
++            task=TASK,
++            completed_slots=completed([0, 1, 3, 4]),
++            reservations=document["reservations"],
++            requested_episodes=requested,
++        )
++        for requested in (3, 5, 8)
++    ]
++    assert [output["pending_slots"] for output in outputs] == [[2], [2], [2]]
++    assert [output["next_slot_floor"] for output in outputs] == [5, 5, 5]
++    assert len({json.dumps(output["reservation_identities"]["2"], sort_keys=True) for output in outputs}) == 1
++
++
++def test_retry_new_attempt_keeps_same_slot_and_reservation_identity(tmp_path):
++    _, document = persist(
++        tmp_path,
++        {"task": TASK, "reservations": [row(), row(attempt="attempt_0003")], "progress_diagnostics": []},
++    )
++    result = recover(completed([0, 1]), reservations=document["reservations"])
++    assert result["pending_slots"] == [2]
++    assert result["next_slot_floor"] == 3
++    assert result["reservation_identities"]["2"]["reservation_id"] == "CloseFridge:slot:2"
++
++
++def test_progress_without_slot_uses_persistent_attempt_physical_mapping(tmp_path):
++    progress = row(event="start")
++    del progress["logical_episode_index"]
++    _, document = persist(tmp_path, {"reservations": [row()], "progress_diagnostics": [progress]})
++    result = recover(
++        completed([0, 1]),
++        reservations=document["reservations"],
++        progress_diagnostics=document["progress_diagnostics"],
++    )
++    assert result["pending_slots"] == [2]
++
++
++def test_progress_only_with_explicit_logical_slot_is_persistent_authority(tmp_path):
++    _, document = persist(tmp_path, {"progress_diagnostics": [row(event="start")]})
++    result = recover(completed([0, 1]), progress_diagnostics=document["progress_diagnostics"])
++    assert result["pending_slots"] == [2]
++
++
++def test_unmapped_progress_is_an_explicit_error_instead_of_appending_slot5(tmp_path):
++    progress = row(event="start")
++    del progress["logical_episode_index"]
++    _, document = persist(tmp_path, {"progress_diagnostics": [progress]})
++    with pytest.raises(ReservationRecoveryError, match="RECOVERY_LOGICAL_MAPPING_MISSING"):
++        recover(completed([0, 1, 3, 4]), progress_diagnostics=document["progress_diagnostics"])
++
++
++@pytest.mark.parametrize(
++    "rows,code",
++    [
++        ([row(), row(3)], "RECOVERY_MAPPING_CONFLICT"),
++        ([row(), row(attempt="attempt_0003", reservation="different")], "RECOVERY_RESERVATION_CONFLICT"),
++        ([row(), row(3, attempt="attempt_0003")], "RECOVERY_RESERVATION_CONFLICT"),
++    ],
++)
++def test_conflicting_mapping_or_reservation_is_never_silently_renumbered(tmp_path, rows, code):
++    _, document = persist(tmp_path, {"reservations": rows})
++    with pytest.raises(ReservationRecoveryError, match=code):
++        recover(completed([0, 1]), reservations=document["reservations"])
++
++
++def test_same_attempt_name_in_distinct_original_manifests_is_not_a_mapping_collision(tmp_path):
++    rows = [row(original_digest="a" * 64), row(3, reservation="slot3", original_digest="b" * 64)]
++    _, document = persist(tmp_path, {"reservations": rows})
++    assert recover(completed([0, 1]), reservations=document["reservations"])["pending_slots"] == [2, 3]
++
++
++def test_bare_test_integers_do_not_fabricate_durable_gap_evidence():
++    with pytest.raises(ReservationRecoveryError, match="RECOVERY_AUTHORITY_MISSING"):
++        recover([0, 1, 3, 4])
++    result = recover([0, 1, 2])
++    assert result["authority"]["source_refs"] == []
++    assert result["diagnostics"][0]["code"] == "BARE_COMPLETED_INTS_ARE_ALGORITHM_INPUT_NOT_PERSISTENT_PROOF"
++
++
++@pytest.mark.parametrize("value", [True, False, -1, 1.5, "2", None])
++def test_invalid_logical_slot_rejected(value):
++    history = completed([0])
++    history[0]["logical_episode_index"] = value
++    with pytest.raises(ReservationRecoveryError, match="INVALID_LOGICAL_SLOT"):
++        recover(history)
++
++
++@pytest.mark.parametrize("source", [None, {}, {"path": "relative", "sha256": "a" * 64}, {"path": "/abs"}])
++def test_missing_or_untrusted_source_is_not_recovery_authority(source):
++    reservation = row(source_ref=source)
++    with pytest.raises(ReservationRecoveryError, match="RECOVERY_SOURCE_"):
++        recover(completed([0, 1]), reservations=[reservation])
++
++
++def test_other_task_pending_does_not_leak_into_current_task(tmp_path):
++    _, document = persist(tmp_path, {"reservations": [row(8, task="NavigateKitchen")]})
++    result = recover(completed([0, 1]), reservations=document["reservations"])
++    assert result["pending_slots"] == []
++    assert result["next_slot_floor"] == 2
++
++
++def test_read_preserves_original_episode_reference_and_attaches_catalog_witness(tmp_path):
++    original = completed([2])[0]
++    _, document = persist(tmp_path, {"completed_slots": [original]})
++    observed = document["reservations"][0]
++    assert observed["source_ref"] == original["source_ref"]
++    assert observed["recovery_document_source_ref"] == document["source_ref"]
++    result = recover(completed([0, 1]), reservations=document["reservations"])
++    assert result["pending_slots"] == [2]
++    assert original["source_ref"] in result["authority"]["source_refs"]
++    assert document["source_ref"] in result["authority"]["source_refs"]
++
++
++@pytest.mark.parametrize(
++    "content", ["not JSON", "[]", '{"reservations":{},"task":"CloseFridge"}', '{"task":1,"task":2}']
++)
++def test_corrupt_document_rejected(tmp_path, content):
++    path = tmp_path / "broken.json"
++    path.write_text(content)
++    with pytest.raises(ReservationRecoveryError, match="RECOVERY_DOCUMENT_INVALID"):
++        read_recovery_document(path)
++
++
++def test_symlink_document_is_not_read(tmp_path):
++    path, _ = persist(tmp_path, {})
++    link = tmp_path / "linked.json"
++    link.symlink_to(path)
++    with pytest.raises(ReservationRecoveryError, match="RECOVERY_DOCUMENT_INVALID"):
++        read_recovery_document(link)
++
++
++def test_read_does_not_create_missing_files(tmp_path):
++    before = sorted(os.listdir(tmp_path))
++    with pytest.raises(ReservationRecoveryError, match="RECOVERY_DOCUMENT_INVALID"):
++        read_recovery_document(tmp_path / "missing.json")
++    assert sorted(os.listdir(tmp_path)) == before
+diff --git a/tools/v3/episode_resume_prototype/scene_sampling.py b/tools/v3/episode_resume_prototype/scene_sampling.py
+index b70378f5..273c9837 100644
+--- a/tools/v3/episode_resume_prototype/scene_sampling.py
++++ b/tools/v3/episode_resume_prototype/scene_sampling.py
+@@ -3,2 +3,2 @@
+-New logical episodes use independently seeded, freshly constructed environments.
+-This is not restoration of the legacy environment's sequential RNG stream.
++Fresh tasks retain the literal task seed and one environment's consecutive resets.
++Only true resume gaps use independent seeds when the historical RNG is unavailable.
+@@ -13,0 +14 @@ SAMPLER_VERSION = "psm_robocasa_independent_episode_seed_v1"
++FRESH_SAMPLER_VERSION = "legacy_task_stream"
+@@ -22,4 +23 @@ def _integer(value, field):
+-def derive_episode_seed(*, requested_seed, task, logical_episode_index):
+-    """Stable uint32 environment seed; nonce, execution order and GPU are absent."""
+-    _integer(requested_seed, "requested_seed")
+-    _integer(logical_episode_index, "logical_episode_index")
++def _task(task):
+@@ -33,0 +32,7 @@ def derive_episode_seed(*, requested_seed, task, logical_episode_index):
++
++
++def derive_episode_seed(*, requested_seed, task, logical_episode_index):
++    """Stable gap seed; nonce, execution order and GPU are absent."""
++    _integer(requested_seed, "requested_seed")
++    _integer(logical_episode_index, "logical_episode_index")
++    _task(task)
+@@ -52 +57 @@ def derive_episode_seed(*, requested_seed, task, logical_episode_index):
+-def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_nonce, legacy_sources=()):
++def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_nonce, sampling_mode, legacy_sources=()):
+@@ -55,2 +60,4 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
+-    ``source_episode=0`` is the future one-episode physical attempt's local index;
+-    it never rewrites the original attempt-local Episode/C01 identity.
++    Caller supplies already-verified completed historical sources. Fresh mode
++    never derives a seed: one batch owns the literal seed and N public resets.
++    Gap mode maps each logical slot to a separate physical Episode0 attempt.
++    Neither path rewrites the original attempt-local Episode/C01 identity.
+@@ -68 +75,2 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
+-    derive_episode_seed(requested_seed=requested_seed, task=task, logical_episode_index=0)
++    _integer(requested_seed, "requested_seed")
++    _task(task)
+@@ -73,3 +81,11 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
+-    episodes = []
+-    for index in sorted(indices):
+-        episodes.append(
++    if sampling_mode not in {"fresh_task_stream", "resume_gap_independent"}:
++        raise ValueError("sampling_mode must explicitly select fresh_task_stream or resume_gap_independent")
++    fresh = sampling_mode == "fresh_task_stream"
++    if fresh and (preserved or sorted(indices) != list(range(len(indices)))):
++        raise ValueError("fresh task requires no completed historical sources and consecutive logical slots from zero")
++    if not fresh and not preserved:
++        raise ValueError("resume gap requires verified completed historical sources; use fresh mode for a new task")
++    episodes, batches = [], []
++    sampler = FRESH_SAMPLER_VERSION if fresh else SAMPLER_VERSION
++    for physical, index in enumerate(sorted(indices)):
++        identity = (
+@@ -77,12 +93,6 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
+-                **derive_episode_seed(requested_seed=requested_seed, task=task, logical_episode_index=index),
+-                "attempt_nonce": attempt_nonce,
+-                "source_episode": 0,
+-                "reset_plan": {
+-                    "environment_lifecycle": "fresh_environment_per_new_episode",
+-                    "constructor_seed_argument": "effective_seed",
+-                    "public_reset_calls": 1,
+-                    "source_episode": 0,
+-                    "constructor_rng_draws": "UNOBSERVED",
+-                    "local_memory": "fresh_episode_session_begin_end",
+-                    "historical_rng_state_restored": False,
+-                },
++                "requested_seed": requested_seed,
++                "seed_family": {"requested_seed": requested_seed, "sampler_version": sampler},
++                "effective_seed": requested_seed,
++                "seed_material_sha256": None,
++                "task": task,
++                "logical_episode_index": index,
+@@ -89,0 +100,2 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
++            if fresh
++            else derive_episode_seed(requested_seed=requested_seed, task=task, logical_episode_index=index)
+@@ -91,5 +103,44 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
+-    warnings = [
+-        "DERIVED_ENVIRONMENT_SEED_IS_NOT_THE_REQUESTED_BASE_SEED",
+-        "NOT_HISTORICAL_RNG_STREAM_CONTINUATION",
+-        "DISTINCT_PHYSICAL_SCENES_NOT_GUARANTEED",
+-    ]
++        source_episode = physical if fresh else 0
++        batch_index = 0 if fresh else physical
++        episode = {
++            **identity,
++            "attempt_nonce": attempt_nonce,
++            "sampling_mode": sampling_mode,
++            "source_episode": source_episode,
++            "execution_batch": batch_index,
++            "reset_plan": {
++                "environment_lifecycle": "shared_task_environment_continuous_resets"
++                if fresh
++                else "fresh_environment_per_new_episode",
++                "constructor_seed_argument": "effective_seed",
++                "public_reset_calls": 1,
++                "public_reset_ordinal": source_episode,
++                "source_episode": source_episode,
++                "constructor_rng_draws": "UNOBSERVED",
++                "local_memory": "fresh_episode_session_begin_end",
++                "historical_rng_state_restored": False,
++            },
++        }
++        episodes.append(episode)
++        if not fresh or not batches:
++            batches.append(
++                {
++                    "batch_index": batch_index,
++                    "sampling_mode": sampling_mode,
++                    "effective_seed": episode["effective_seed"],
++                    "environment_constructions": 1,
++                    "public_reset_calls": 0,
++                    "episodes": [],
++                }
++            )
++        batches[batch_index]["episodes"].append({"logical_episode_index": index, "source_episode": source_episode})
++        batches[batch_index]["public_reset_calls"] += 1
++    warnings = (
++        []
++        if fresh
++        else [
++            "DERIVED_ENVIRONMENT_SEED_IS_NOT_THE_REQUESTED_BASE_SEED",
++            "NOT_HISTORICAL_RNG_STREAM_CONTINUATION",
++            "DISTINCT_PHYSICAL_SCENES_NOT_GUARANTEED",
++        ]
++    )
+@@ -97 +148 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
+-    for episode in episodes:
++    for episode in () if fresh else episodes:
+@@ -111 +162,2 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
+-        "sampler_version": SAMPLER_VERSION,
++        "sampler_version": sampler,
++        "sampling_mode": sampling_mode,
+@@ -115,0 +168 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
++        "execution_batches": batches,
+@@ -117 +170,3 @@ def plan_scene_sampling(*, task, requested_seed, new_logical_indices, attempt_no
+-        "benchmark_qualification": "Independent-scene convenience plan; not a continuous legacy/base-seed benchmark",
++        "benchmark_qualification": "UNCHANGED_TASK_LITERAL_SEED_SEQUENTIAL_RESET_PROTOCOL"
++        if fresh
++        else "Independent-scene convenience plan; not a continuous legacy/base-seed benchmark",
+diff --git a/tools/v3/episode_resume_prototype/scene_sampling_test.py b/tools/v3/episode_resume_prototype/scene_sampling_test.py
+index 47e07f94..2ca725f7 100644
+--- a/tools/v3/episode_resume_prototype/scene_sampling_test.py
++++ b/tools/v3/episode_resume_prototype/scene_sampling_test.py
+@@ -11 +11,6 @@ import pytest
+-from tools.v3.episode_resume_prototype.scene_sampling import SAMPLER_VERSION, derive_episode_seed, plan_scene_sampling
++from tools.v3.episode_resume_prototype.scene_sampling import (
++    FRESH_SAMPLER_VERSION,
++    SAMPLER_VERSION,
++    derive_episode_seed,
++    plan_scene_sampling,
++)
+@@ -14 +19,15 @@ from tools.v3.episode_resume_prototype.scene_sampling import SAMPLER_VERSION, de
+-def plan(*, seed=0, task="CloseFridge", indices=(3, 4), nonce="invocationA/attempt1", legacy=()):
++def plan(
++    *,
++    seed=0,
++    task="CloseFridge",
++    indices=(3, 4),
++    nonce="invocationA/attempt1",
++    legacy=None,
++    mode="resume_gap_independent",
++):
++    if legacy is None:
++        legacy = (
++            []
++            if mode == "fresh_task_stream"
++            else [{"logical_episode_index": index, "source_episode": index, "effective_seed": 0} for index in range(3)]
++        )
+@@ -16 +35,6 @@ def plan(*, seed=0, task="CloseFridge", indices=(3, 4), nonce="invocationA/attem
+-        task=task, requested_seed=seed, new_logical_indices=indices, attempt_nonce=nonce, legacy_sources=legacy
++        task=task,
++        requested_seed=seed,
++        new_logical_indices=indices,
++        attempt_nonce=nonce,
++        legacy_sources=legacy,
++        sampling_mode=mode,
+@@ -112,2 +136,23 @@ def execute_fake_plan(result):
+-    for episode in result["new_episodes"]:
+-        env = FakeEnvironment(episode["effective_seed"])
++    for batch in result["execution_batches"]:
++        env = FakeEnvironment(batch["effective_seed"])
++        for episode in batch["episodes"]:
++            scene = env.reset()
++            observed.append(
++                {
++                    "logical_episode_index": episode["logical_episode_index"],
++                    "source_episode": episode["source_episode"],
++                    "actual_constructor_seed": env.seed,
++                    "actual_public_resets": env.resets,
++                    "environment_index": batch["batch_index"],
++                    "fake_scene": scene,
++                }
++            )
++            for _ in range(episode["logical_episode_index"] % 3 + 1):
++                env.action()
++    return observed
++
++
++def legacy_task_trace(seed, episodes):
++    env = FakeEnvironment(seed)
++    observed = []
++    for episode in range(episodes):
+@@ -117,3 +162,3 @@ def execute_fake_plan(result):
+-                "logical_episode_index": episode["logical_episode_index"],
+-                "source_episode": 0,
+-                "actual_constructor_seed": env.seed,
++                "logical_episode_index": episode,
++                "source_episode": episode,
++                "actual_constructor_seed": seed,
+@@ -120,0 +166 @@ def execute_fake_plan(result):
++                "environment_index": 0,
+@@ -123,0 +170,2 @@ def execute_fake_plan(result):
++        for _ in range(episode % 3 + 1):
++            env.action()
+@@ -126,0 +175,93 @@ def execute_fake_plan(result):
++@pytest.mark.parametrize("seed", [0, 1, 2**64])
++def test_fresh_five_episode_task_exactly_preserves_literal_seed_one_env_and_old_reset_stream(seed):
++    result = plan(seed=seed, indices=range(5), mode="fresh_task_stream")
++    assert execute_fake_plan(result) == legacy_task_trace(seed, 5)
++    assert result["sampler_version"] == FRESH_SAMPLER_VERSION == "legacy_task_stream"
++    assert result["sampling_mode"] == "fresh_task_stream"
++    assert result["warnings"] == []
++    assert len(result["execution_batches"]) == 1
++    batch = result["execution_batches"][0]
++    assert batch["environment_constructions"] == 1 and batch["public_reset_calls"] == 5
++    assert batch["effective_seed"] == seed
++    assert [row["source_episode"] for row in result["new_episodes"]] == list(range(5))
++    assert all(row["effective_seed"] == seed and row["seed_material_sha256"] is None for row in result["new_episodes"])
++
++
++def test_four_to_eighteen_new_tasks_keep_fourteen_standard_fresh_task_streams():
++    old_sources = {f"Task{task}": legacy_task_trace(0, 5) for task in range(4)}
++    before = copy.deepcopy(old_sources)
++    created, resets = 0, 0
++    for task in range(4, 18):
++        result = plan(task=f"Task{task}", indices=range(5), mode="fresh_task_stream")
++        assert execute_fake_plan(result) == legacy_task_trace(0, 5)
++        created += sum(batch["environment_constructions"] for batch in result["execution_batches"])
++        resets += sum(batch["public_reset_calls"] for batch in result["execution_batches"])
++        assert result["warnings"] == []
++    assert created == 14 and resets == 70
++    assert old_sources == before
++
++
++@pytest.mark.parametrize("seed", [0, 1])
++def test_partial_three_to_five_uses_derived_one_episode_gap_batches_only(seed):
++    history = [{"logical_episode_index": index, "source_episode": index, "effective_seed": 0} for index in range(3)]
++    before = copy.deepcopy(history)
++    result = plan(seed=seed, legacy=history)
++    assert result["legacy_sources"] == before == history
++    assert result["sampling_mode"] == "resume_gap_independent"
++    assert result["sampler_version"] == SAMPLER_VERSION
++    assert len(result["execution_batches"]) == 2
++    assert sum(batch["environment_constructions"] for batch in result["execution_batches"]) == 2
++    assert all(batch["public_reset_calls"] == 1 for batch in result["execution_batches"])
++    assert [row["logical_episode_index"] for row in result["new_episodes"]] == [3, 4]
++    assert all(row["source_episode"] == 0 and row["requested_seed"] == seed for row in result["new_episodes"])
++    assert "NOT_HISTORICAL_RNG_STREAM_CONTINUATION" in result["warnings"]
++    assert execute_fake_plan(result) == execute_fake_plan(plan(seed=seed, legacy=history, nonce="retry"))
++    if seed == 1:
++        prior_seed_gap = plan(seed=0, legacy=history)
++        assert [row["effective_seed"] for row in result["new_episodes"]] != [
++            row["effective_seed"] for row in prior_seed_gap["new_episodes"]
++        ]
++
++
++@pytest.mark.parametrize(
++    "indices,legacy",
++    [
++        ((3, 4), []),
++        ((0, 2), []),
++        ((1,), []),
++        (range(5), [{"logical_episode_index": 0, "effective_seed": 0}]),
++        ((), [{"source_episode": 0, "effective_seed": None}]),
++    ],
++)
++def test_fresh_mode_refuses_resume_gaps_or_completed_history(indices, legacy):
++    with pytest.raises(ValueError, match="fresh task requires"):
++        plan(indices=indices, legacy=legacy, mode="fresh_task_stream")
++
++
++def test_fresh_task_without_completed_episodes_restarts_full_literal_stream():
++    first = plan(indices=range(5), mode="fresh_task_stream", nonce="failed-before-any-complete-episode")
++    retry = plan(indices=range(5), mode="fresh_task_stream", nonce="fresh-task-retry")
++    assert execute_fake_plan(first) == execute_fake_plan(retry) == legacy_task_trace(0, 5)
++
++
++def test_fresh_zero_work_has_no_batch_or_derived_seed_warning():
++    result = plan(indices=(), mode="fresh_task_stream")
++    assert result["new_episodes"] == result["execution_batches"] == result["warnings"] == []
++
++
++def test_independent_gap_requires_completed_history_instead_of_silently_changing_a_new_task():
++    with pytest.raises(ValueError, match="resume gap requires"):
++        plan(indices=range(5), legacy=[])
++
++
++@pytest.mark.parametrize("mode", [None, "", "auto", "derived_for_every_episode"])
++def test_sampling_mode_must_be_explicit(mode):
++    with pytest.raises(ValueError, match="sampling_mode"):
++        plan(mode=mode)
++
++
++def test_omitting_sampling_mode_is_not_an_implicit_derived_seed_default():
++    with pytest.raises(TypeError, match="sampling_mode"):
++        plan_scene_sampling(task="CloseFridge", requested_seed=0, new_logical_indices=range(5), attempt_nonce="attempt")
++
++
+@@ -152 +293 @@ def test_distinct_seeds_do_not_prove_distinct_physical_scenes():
+-    result = plan(indices=range(10))
++    result = plan(indices=range(3, 13))

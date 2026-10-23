@@ -1,0 +1,13 @@
+cwd=/workspace/psm_wma
+# Tests use synthetic files, tiny media and standard-library subprocesses only.
+env CUDA_VISIBLE_DEVICES='' HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 XDG_CACHE_HOME=/tmp/psm-v3-episode-resume-design-r2-20261023/cache HF_HOME=/tmp/psm-v3-episode-resume-design-r2-20261023/cache/huggingface MPLCONFIGDIR=/tmp/psm-v3-episode-resume-design-r2-20261023/cache/matplotlib /workspace/.venvs/psm-wma-cpu/bin/python -m pytest --noconftest -c /dev/null -p no:cacheprovider -q tools/v3/episode_resume_prototype/scene_sampling_test.py tools/v3/episode_resume_prototype/episode_evidence_test.py tools/v3/episode_resume_prototype/reservation_recovery_test.py tools/v3/episode_resume_prototype/plan_test.py --junitxml=/tmp/psm-v3-episode-resume-design-r2-20261023/junit.xml > /tmp/psm-v3-episode-resume-design-r2-20261023/pytest.log 2>&1
+# pytest RC0, 185 passed in2.93s. Unchanged identity45 not rerun.
+/workspace/.venvs/psm-wma-cpu/bin/ruff check --config cosmos-framework/.ruff.toml tools/v3/episode_resume_prototype > /tmp/psm-v3-episode-resume-design-r2-20261023/ruff-check.log 2>&1
+/workspace/.venvs/psm-wma-cpu/bin/ruff format --check --config cosmos-framework/.ruff.toml tools/v3/episode_resume_prototype > /tmp/psm-v3-episode-resume-design-r2-20261023/ruff-format.log 2>&1
+env PYTHONDONTWRITEBYTECODE=1 /workspace/.venvs/psm-wma-cpu/bin/python /tmp/psm-v3-episode-resume-design-r2-20261023/collect_checks.py > /tmp/psm-v3-episode-resume-design-r2-20261023/checks.log 2>&1
+# collect_checks.py archived beside this file; syntax compilation writes no pycache.
+git diff --check
+git push origin HEAD:refs/heads/v3-flexible-episode-resume-design-r2-20261023 HEAD:refs/heads/V3
+git ls-remote origin refs/heads/V3 refs/heads/v3-flexible-episode-resume-design-r2-20261023
+git fetch origin refs/heads/V3:refs/remotes/origin/V3
+git ls-tree origin/V3 cosmos-framework
