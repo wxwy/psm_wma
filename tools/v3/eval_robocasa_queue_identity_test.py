@@ -12,6 +12,7 @@ import hashlib
 import importlib.util
 import json
 import os
+import pickle
 import re
 import signal
 import socket
@@ -22,6 +23,7 @@ import threading
 import time
 import unittest
 import uuid
+import zipfile
 from contextlib import ExitStack
 from enum import Enum
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -84,14 +86,18 @@ def _raise_after_completed(
         started_event.set()
     while time.monotonic() < until:
         try:
-            summary = json.loads(summary_path.read_text())
+            actual_summary = _current_summary_path(summary_path.parent)
+            summary = json.loads(actual_summary.read_text())
             tasks = summary.get("tasks", {})
+            completed_tasks = {name: row for name, row in tasks.items() if row.get("trials") == 5}
             healthy = (
                 summary.get("total_trials") == trials
-                and len(tasks) == trials // 5
-                and all(row.get("trials") == 5 and row.get("error") is None for row in tasks.values())
+                and len(completed_tasks) == trials // 5
+                and all(row.get("error") is None for row in completed_tasks.values())
                 and not summary.get("worker_errors")
-                and summary.get("status") == ("COMPLETE" if trials == 20 else "INCOMPLETE")
+                # The current view remains RUNNING until every worker exits;
+                # a complete Episode prefix is not an infrastructure PASS.
+                and summary.get("status") == "RUNNING"
             )
         except (OSError, ValueError):
             healthy = False
@@ -101,7 +107,7 @@ def _raise_after_completed(
                 status="COMPLETED",
                 completed_at=observed_at,
                 observed_trials=summary["total_trials"],
-                observed_tasks=sorted(tasks),
+                observed_tasks=sorted(completed_tasks),
                 observed_status=summary["status"],
             )
             try:
@@ -127,10 +133,26 @@ def _canonical(value):
     return json.dumps(value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False).encode()
 
 
+def _current_summary_path(output):
+    """Read the versioned current view; historical root summaries stay immutable."""
+    pointer_path = output / "latest_invocation.json"
+    if pointer_path.is_file():
+        pointer = json.loads(pointer_path.read_text())
+        # The production store owns this explicit discovery contract.
+        return Path(pointer["summary_path"])
+    return output / "screening_summary.json"
+
+
+def _attempt_directories(output, task):
+    return sorted(path for path in output.rglob("attempt_*") if path.is_dir() and path.parent.name == task)
+
+
 def _episode_fixture(directory, *, episode, digest, video, generated_mode="none", rollout=True):
     """Write real audit schemas/media; only model and simulator are synthetic."""
     stem = f"rollout{episode:02d}"
     attempt_id = f"{directory.parent.name}/{directory.name}"
+    local_episode = uuid.uuid4().hex
+    session = f"{uuid.uuid4().hex}:0:{local_episode}"
     action = {
         "episode": episode,
         "evaluation_run_digest": digest,
@@ -148,7 +170,12 @@ def _episode_fixture(directory, *, episode, digest, video, generated_mode="none"
         "latency_ms": 1.0,
         "step_before_query": 0,
         "action_chunk": [[0.0] * 15] * 16,
-        "local_memory": {"prefix_present": True},
+        "local_memory": {
+            "prefix_present": False,
+            "session_id": session,
+            "episode_id": local_episode,
+            "consumer_step": 0,
+        },
     }
     generated_videos = (
         []
@@ -179,7 +206,7 @@ def _episode_fixture(directory, *, episode, digest, video, generated_mode="none"
     (directory / f"{stem}_cleanup.json").write_text(
         json.dumps(
             {
-                "session_id": f"{uuid.uuid4().hex}:0:{uuid.uuid4().hex}",
+                "session_id": session,
                 "reset_ok": True,
                 "cleanup_error": None,
                 "rollout_error": None,
@@ -441,8 +468,9 @@ def _scenario(case, parent, count):
     queue_module.ROOT, queue_module.CHILD = root, child
     checkpoint = parent / "job/checkpoints/iter_000004000"
     (checkpoint / "model").mkdir(parents=True)
-    (checkpoint / "model/.metadata").write_bytes(b"tiny synthetic metadata, not a real DCP")
-    (checkpoint / "model/__0_0.distcp").write_bytes(b"synthetic")
+    (checkpoint / "model/.metadata").write_bytes(pickle.dumps({"synthetic_only": True}, protocol=4))
+    with zipfile.ZipFile(checkpoint / "model/__0_0.distcp", "w") as archive:
+        archive.writestr("archive/data.pkl", b"synthetic bytes; never deserialize tensors")
     config = checkpoint.parent.parent / "config.yaml"
     config.write_text(
         json.dumps({"dataloader_train": {"dataloader": {"datasets": {"robocasa": {"dataset": {"chunk_length": 32}}}}}})
@@ -474,10 +502,16 @@ def _scenario(case, parent, count):
         if case == "runtime_failure":
             raise ValueError("injected dirty vendor runtime rejection")
         manifest = build_evaluation_identity(**kwargs)
-        runtime = {"schema": "cpu_fixture_runtime_v1", "tasks": sorted(name for name, _ in kwargs["tasks"])}
+        runtime = {
+            "schema": "psm_robocasa_runtime_v1",
+            "fixture_scope": "synthetic CPU identity only; not physics acceptance",
+            "tasks": sorted(name for name, _ in kwargs["tasks"]),
+            "protocol": {"official_horizons": {name: 1 for name, _ in kwargs["tasks"]}},
+        }
         runtime["digest"] = hashlib.sha256(_canonical(runtime)).hexdigest()
         runtime_witness.clear()
         runtime_witness.update(runtime)
+        manifest["identity"]["schema"] = "psm_v3_eval_identity_vendor_v1"
         manifest["identity"]["evaluation_runtime"] = runtime
         manifest["digest"] = hashlib.sha256(_canonical(manifest["identity"])).hexdigest()
         return {
@@ -613,6 +647,21 @@ def _scenario(case, parent, count):
         if case == "partial_resume" and len(sim_calls) == 1:
             row = _episode_fixture(directory, episode=0, digest=digest, video=video_bytes)
             (directory / "results.json").write_text(json.dumps([row]))
+            (directory / "episode_progress.jsonl").write_text(
+                "".join(
+                    json.dumps(
+                        {
+                            "schema": "psm_episode_progress_v1",
+                            "event": event,
+                            "episode": index,
+                            "evaluation_run_digest": digest,
+                            "evaluation_attempt_id": f"{directory.parent.name}/{directory.name}",
+                        }
+                    )
+                    + "\n"
+                    for index, event in ((0, "start"), (0, "end"), (1, "start"))
+                )
+            )
             return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
         if case in ("sim_failure", "primary_and_cleanup") and len(sim_calls) == 1:
             return subprocess.Popen([sys.executable, "-c", "raise SystemExit(7)"], **kwargs)
@@ -668,6 +717,7 @@ def _scenario(case, parent, count):
             else:
                 script = f"raise RuntimeError({case!r})"
             return subprocess.Popen([sys.executable, "-c", script], **kwargs)
+        trials = int(command[command.index("--num-test-episodes") + 1])
         rows = [
             _episode_fixture(
                 directory,
@@ -677,7 +727,7 @@ def _scenario(case, parent, count):
                 generated_mode=video_mode,
                 rollout=rollout_enabled,
             )
-            for index in range(5)
+            for index in range(trials)
         ]
         (directory / "results.json").write_text(json.dumps(rows))
         progress = Path(command[command.index("--progress-file") + 1])
@@ -693,7 +743,7 @@ def _scenario(case, parent, count):
                     }
                 )
                 + "\n"
-                for index in range(5)
+                for index in range(trials)
                 for event in ("start", "end")
             )
         )
@@ -710,7 +760,7 @@ def _scenario(case, parent, count):
                             "event": event,
                             "stage": "executing",
                             "episode": index,
-                            "episodes": 5,
+                            "episodes": trials,
                             "steps": 1,
                             "max_steps": 900,
                             "predictions": 1,
@@ -721,7 +771,7 @@ def _scenario(case, parent, count):
                         }
                     )
                     + "\n"
-                    for index in range(5)
+                    for index in range(trials)
                     for event in ("episode_start", "episode_end")
                 )
             )
@@ -857,11 +907,9 @@ def _scenario(case, parent, count):
             ):
                 rc = queue_module.main()
                 first_rc = rc
-                first_summary = (
-                    json.loads((output / "screening_summary.json").read_text())
-                    if (output / "screening_summary.json").is_file()
-                    else None
-                )
+                first_summary_path = _current_summary_path(output)
+                first_summary_bytes = first_summary_path.read_bytes() if first_summary_path.is_file() else None
+                first_summary = json.loads(first_summary_bytes) if first_summary_bytes is not None else None
                 if case in (
                     "partial_resume",
                     "resume_complete",
@@ -873,7 +921,7 @@ def _scenario(case, parent, count):
                     "progress_resume",
                 ):
                     if case in ("resume_missing_progress", "resume_wrong_attempt", "resume_failed_cleanup"):
-                        victim = output / "CloseFridge/attempt_0001"
+                        victim = _attempt_directories(output, "CloseFridge")[0]
                         corrupt_path = victim / (
                             "rollout00_cleanup.json" if case == "resume_failed_cleanup" else "episode_progress.jsonl"
                         )
@@ -917,6 +965,7 @@ def _scenario(case, parent, count):
         "foreign_alive_before_fixture_cleanup": foreign_alive,
         "thread_names": [thread.name for thread in threading.enumerate() if thread.name.startswith("robocasa-gpu-")],
         "output_exists": output.exists(),
+        "output_files": sorted(str(path.relative_to(output)) for path in output.rglob("*") if path.is_file()),
         "init_faults": init_faults,
         "completion_waits": completion_waits,
         "injected_exceptions": injected_exceptions,
@@ -933,7 +982,11 @@ def _scenario(case, parent, count):
         "resume_failed_cleanup",
         "progress_resume",
     ):
-        report.update(first_rc=first_rc, first_summary=first_summary)
+        report.update(
+            first_rc=first_rc,
+            first_summary=first_summary,
+            first_summary_preserved=first_summary_bytes == first_summary_path.read_bytes(),
+        )
     if "corrupt_path" in locals():
         report["corrupt_artifact_preserved"] = corrupt_bytes == (
             corrupt_path.read_bytes() if corrupt_path.exists() else None
@@ -947,15 +1000,16 @@ def _scenario(case, parent, count):
                 if (path / "results.json").is_file()
                 else [],
             }
-            for path in sorted((output / task).glob("attempt_*"))
+            for path in _attempt_directories(output, task)
             if (path / "attempt.json").is_file()
         ]
         for task in TASKS
     }
-    if (output / "screening_summary.json").exists():
-        report["summary"] = json.loads((output / "screening_summary.json").read_text())
-    if (output / "evaluation_manifest.json").exists():
-        report["protocol"] = json.loads((output / "evaluation_manifest.json").read_text())["identity"]["protocol"]
+    if _current_summary_path(output).exists():
+        report["summary"] = json.loads(_current_summary_path(output).read_text())
+    source_manifests = sorted(output.rglob("evaluation_manifest.json"))
+    if source_manifests:
+        report["protocol"] = json.loads(source_manifests[0].read_text())["identity"]["protocol"]
     (parent / "report.json").write_text(json.dumps(report))
 
 
@@ -1133,6 +1187,8 @@ class QueueIntegrationTests(unittest.TestCase):
             report["console"] = (parent / "console.log").read_text()
             self.assertEqual(report["thread_names"], [], report)
             self.assertTrue(all(code is not None for code in report["server_exits"]), report)
+            if "first_summary_preserved" in report:
+                self.assertTrue(report["first_summary_preserved"], report)
             print("QUEUE_WITNESS " + json.dumps(report, sort_keys=True))
             return report
 
@@ -1219,9 +1275,9 @@ class QueueIntegrationTests(unittest.TestCase):
                     self.assertEqual(
                         sorted(row["generated_mp4s"]),
                         sorted(
-                            str(Path(row["results_file"]).parent / name)
-                            for episode in row["rollouts"]
-                            for name in episode["generated_videos"]
+                            path
+                            for episode in row["episode_sources"]
+                            for path in episode["media_coverage"]["videos_view"]["generated"]
                         ),
                     )
 
@@ -1229,22 +1285,21 @@ class QueueIntegrationTests(unittest.TestCase):
         report = self.scenario("partial_video_first", 1)
         self.assertEqual(report["rc"], 1)
         summary = report["summary"]
-        self.assertEqual(summary["status"], "INCOMPLETE")
+        self.assertEqual(summary["status"], "PARTIAL")
         self.assertEqual(summary["rollout_mp4s"], [])
-        self.assertEqual(len(summary["generated_mp4s"]), 1)
-        row = next(iter(summary["tasks"].values()))
-        self.assertEqual(row["rollout_mp4s"], [])
-        self.assertEqual(row["generated_mp4s"], summary["generated_mp4s"])
-        self.assertEqual(row["rollouts"], [])
-        self.assertIn("generated", row["generated_mp4s"][0])
-        self.assertEqual(report["attempts"][next(iter(summary["tasks"]))][0]["marker"]["status"], "FAILED")
+        self.assertEqual(summary["generated_mp4s"], [])
+        self.assertEqual(len(summary["diagnostic_generated_mp4s"]), 1)
+        failed_task = summary["job_results"][0]["task"]
+        self.assertEqual(summary["tasks"][failed_task]["episode_sources"], [])
+        self.assertIn("generated", summary["diagnostic_generated_mp4s"][0])
+        self.assertEqual(report["attempts"][failed_task][0]["marker"]["status"], "FAILED")
 
-    def test_occupied_nonfirst_port_refuses_all_workers_before_output_claim(self):
+    def test_occupied_nonfirst_port_refuses_all_workers_before_experiment_claim(self):
         report = self.scenario("occupied_port")
         self.assertEqual(report["rc"], 1)
         self.assertEqual(report["server_commands"], 0)
         self.assertEqual(report["sim_calls"], 0)
-        self.assertFalse(report["output_exists"])
+        self.assertEqual(report["output_files"], [".run.lock"])
         self.assertIn("unavailable", report["error"])
 
     def test_wrong_checkpoint_config_and_mode_stop_before_simulator(self):
@@ -1276,7 +1331,7 @@ class QueueIntegrationTests(unittest.TestCase):
         report = self.scenario("changed_config", 1)
         self.assertEqual(report["rc"], 1)
         self.assertEqual(report["sim_calls"], 0)
-        self.assertIn("changed since evaluation identity", str(report["summary"]["worker_errors"]))
+        self.assertIn("config file changed during", str(report["summary"]["worker_errors"]))
 
     def test_server_launch_error_after_other_tasks_does_not_disappear(self):
         report = self.scenario("late_launch_failure")
@@ -1285,7 +1340,7 @@ class QueueIntegrationTests(unittest.TestCase):
         # other three tasks can complete. Initialization failures below still
         # prove a late worker error cannot hide behind all twenty results.
         self.assertEqual(report["summary"]["total_trials"], 15)
-        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+        self.assertEqual(report["summary"]["status"], "PARTIAL")
         self.assertIsNone(report["summary"]["sr"])
         self.assertIn("injected second worker", str(report["summary"]["worker_errors"]))
         self.check_completion_before_fault(report, 15, "injected second worker launch failure after all tasks")
@@ -1311,19 +1366,15 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["rc"], 1)
         self.assertEqual(report["summary"]["total_trials"], 20)
         self.assertEqual(set(report["summary"]["tasks"]), TASKS)
-        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+        self.assertEqual(report["summary"]["status"], "PARTIAL")
         self.assertIsNone(report["summary"]["sr"])
-        self.assertIn(
-            f"worker1 {operation} failure",
-            report["summary"]["worker_errors"]["_worker_1"]["error"],
-        )
+        worker_error = next(row for row in report["summary"]["worker_errors"].values() if row.get("worker") == 1)
+        self.assertIn(f"worker1 {operation} failure", worker_error["error"])
         self.assertEqual(report["server_commands"], 4)
         self.assertEqual(report["sim_calls"], 4)
         self.assertEqual(report["unhandled_thread_errors"], [])
         self.check_completion_before_fault(report, 20, f"injected worker1 {operation} failure after all tasks")
-        self.assertTrue(
-            report["summary"]["worker_errors"]["_worker_1"]["error"].startswith("OSError: injected worker1")
-        )
+        self.assertTrue(worker_error["error"].startswith("OSError: injected worker1"))
         return report
 
     def test_worker_mkdir_failure_after_healthy_worker_completes_all_tasks_is_preserved(
@@ -1364,7 +1415,23 @@ class QueueIntegrationTests(unittest.TestCase):
         report = self.scenario("server_dies_after_tasks", 1)
         self.assertEqual(report["rc"], 1)
         self.assertEqual(report["summary"]["total_trials"], 20)
-        self.assertIn("exited during screening", str(report["summary"]["worker_errors"]))
+        errors = list(report["summary"]["worker_errors"].values())
+        self.assertEqual(len(errors), 1)
+        error = errors[0]
+        # Either the live supervisor or the immediate post-wait check can win
+        # the process-poll race; both must retain this exact server-exit cause.
+        self.assertIn(
+            error["error"],
+            {
+                "EvaluationInterrupted: action server exited during screening with code -15",
+                "EvaluationInterrupted: action server exited before batch validation",
+            },
+        )
+        self.assertEqual(error["task"], "TurnOnSinkFaucet")
+        self.assertEqual(error["stage"], "simulator")
+        self.assertEqual(error["cleanup"]["server"]["returncode"], -15)
+        self.assertFalse(error["cleanup"]["server"]["live_group"])
+        self.assertFalse(error["cleanup"]["simulator"]["live_group"])
         self.assertIsNone(report["summary"]["sr"])
 
     def test_persistent_abandoned_session_cannot_contaminate_next_task(self):
@@ -1390,11 +1457,11 @@ class QueueIntegrationTests(unittest.TestCase):
                 self.assertEqual(report["rc"], 1)
                 self.assertEqual(report["server_commands"], 4)
                 self.assertEqual(report["sim_calls"], 4)
-                self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+                self.assertEqual(report["summary"]["status"], "PARTIAL")
                 self.assertIsNone(report["summary"]["sr"])
                 self.assertEqual(report["summary"]["task_failures"], 1)
                 self.assertEqual(report["summary"]["total_trials"], 15)
-                cleanup = next(row["cleanup"] for row in report["summary"]["tasks"].values() if row["error"])
+                cleanup = next(row["cleanup"] for row in report["summary"]["job_results"] if row["error"])
                 self.assertFalse(cleanup["server"]["live_group"])
                 self.assertFalse(cleanup["simulator"]["live_group"])
                 if "timeout" in case and case != "request_timeout":
@@ -1405,7 +1472,7 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["rc"], 1)
         self.assertEqual(report["server_commands"], 1)
         self.assertIn("Owner signal", str(report["summary"]["worker_errors"]))
-        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+        self.assertEqual(report["summary"]["status"], "PARTIAL")
 
     def test_cleanup_error_always_stops_and_retains_primary_error(self):
         for case in ("cleanup_failure", "primary_and_cleanup"):
@@ -1413,7 +1480,7 @@ class QueueIntegrationTests(unittest.TestCase):
                 report = self.scenario(case, 1)
                 self.assertEqual(report["rc"], 1)
                 self.assertEqual(report["server_commands"], 1)
-                row = next(iter(report["summary"]["tasks"].values()))
+                row = next(row for row in report["summary"]["job_results"] if row["error"])
                 self.assertIn("injected cleanup", row["cleanup"]["simulator"]["error"])
                 self.assertIsNone(report["summary"]["sr"])
                 if case == "primary_and_cleanup":
@@ -1423,9 +1490,32 @@ class QueueIntegrationTests(unittest.TestCase):
     def test_simulator_failure_keeps_error_and_nonzero_exit(self):
         report = self.scenario("sim_failure", 1)
         self.assertEqual(report["rc"], 1)
-        self.assertEqual(report["summary"]["task_failures"], 1)
-        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
-        self.assertIsNone(report["summary"]["sr"])
+        summary = report["summary"]
+        self.assertEqual(summary["task_failures"], 1)
+        self.assertEqual(summary["status"], "PARTIAL")
+        self.assertIsNone(summary["sr"])
+        self.assertEqual(report["server_commands"], 1)
+        self.assertEqual(report["sim_calls"], 1)
+        self.assertEqual(summary["total_trials"], 0)
+        self.assertEqual(len(summary["job_results"]), 1)
+        failed = summary["job_results"][0]
+        self.assertEqual(failed["task"], "CloseFridge")
+        self.assertEqual(failed["returncode"], 7)
+        self.assertIn("closed_loop_eval exited with code 7", failed["error"])
+        self.assertFalse(failed["cleanup"]["server"]["live_group"])
+        self.assertFalse(failed["cleanup"]["simulator"]["live_group"])
+        self.assertEqual(failed["cleanup"]["simulator"]["returncode"], 7)
+        errors = list(summary["worker_errors"].values())
+        actual = [row for row in errors if row["stage"] != "not_executed"]
+        pending = [row for row in errors if row["stage"] == "not_executed"]
+        self.assertEqual(len(actual), 1)
+        self.assertEqual(actual[0]["attempt_dir"], failed["attempt_dir"])
+        self.assertEqual(len(pending), 3)
+        self.assertEqual({row["task"] for row in pending}, TASKS - {failed["task"]})
+        self.assertTrue(all(row["error"] for row in pending))
+        for task, attempts in report["attempts"].items():
+            self.assertEqual(len(attempts), 1)
+            self.assertEqual(attempts[0]["marker"]["status"], "FAILED" if task == failed["task"] else "RUNNING")
 
     def test_selected_tasks_share_exact_runtime_identity_and_only_run_requested_subset(self):
         report = self.scenario("task_subset", 2)
@@ -1433,7 +1523,7 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["server_commands"], 2)
         self.assertEqual(report["sim_calls"], 2)
         self.assertEqual(set(report["summary"]["tasks"]), {"CloseFridge", "TurnOnSinkFaucet"})
-        self.assertEqual(report["summary"]["planned_trials"], 10)
+        self.assertEqual(report["summary"]["requested"], 10)
         self.assertEqual(report["summary"]["total_trials"], 10)
         self.assertEqual(len(report["runtime_calls"]), 1)
         self.assertEqual(set(report["runtime_calls"][0]["tasks"]), {"CloseFridge", "TurnOnSinkFaucet"})
@@ -1450,13 +1540,13 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["server_commands"], 0)
         self.assertFalse(report["output_exists"])
 
-    def test_dirty_vendor_rejected_before_server_or_namespace_claim(self):
+    def test_dirty_vendor_rejected_before_server_or_experiment_claim(self):
         report = self.scenario("runtime_failure", 1)
         self.assertEqual(report["rc"], 1)
         self.assertEqual(len(report["runtime_calls"]), 1)
         self.assertEqual(report["server_commands"], 0)
         self.assertEqual(report["sim_calls"], 0)
-        self.assertFalse(report["output_exists"])
+        self.assertEqual(report["output_files"], [".run.lock"])
         self.assertIn("dirty vendor runtime", report["error"])
 
     def test_list_tasks_and_dry_run_are_read_only_and_never_launch_workers(self):
@@ -1469,7 +1559,7 @@ class QueueIntegrationTests(unittest.TestCase):
                 self.assertFalse(report["output_exists"])
                 self.assertEqual(len(report["runtime_calls"]), int(case == "dry_run"))
 
-    def test_same_identity_resume_skips_only_whole_valid_tasks(self):
+    def test_same_model_resume_reuses_all_valid_episodes_without_launch(self):
         report = self.scenario("resume_complete", 1)
         self.assertEqual(report["first_rc"], 0)
         self.assertEqual(report["rc"], 0, report)
@@ -1484,57 +1574,80 @@ class QueueIntegrationTests(unittest.TestCase):
         self.assertEqual(report["rc"], 1)
         self.assertEqual(report["server_commands"], 1)
         self.assertEqual(report["sim_calls"], 1)
-        self.assertEqual(report["summary"]["status"], "INCOMPLETE")
+        self.assertEqual(report["summary"]["status"], "PARTIAL")
         self.assertIn("progress identity/order mismatch", str(report["summary"]["worker_errors"]))
+        executed = {row["attempt_dir"] for row in report["summary"]["job_results"]}
+        self.assertEqual(len(executed), 1)
         self.assertTrue(
             all(
                 attempt["marker"]["status"] == "FAILED"
                 for attempts in report["attempts"].values()
                 for attempt in attempts
+                if attempt["path"] in executed
             )
         )
 
-    def test_resume_cannot_skip_complete_marker_with_missing_or_foreign_episode_evidence(self):
+    def test_resume_quarantines_corrupt_complete_source_and_executes_a_fresh_replacement(self):
         for case in ("resume_missing_progress", "resume_wrong_attempt", "resume_failed_cleanup"):
             with self.subTest(corruption=case):
                 report = self.scenario(case, 1)
                 self.assertEqual(report["first_rc"], 0)
-                self.assertEqual(report["rc"], 1)
-                self.assertEqual(report["server_commands"], 4)
-                self.assertEqual(report["sim_calls"], 4)
-                self.assertIn("ValueError:", report["error"])
+                self.assertEqual(report["rc"], 0)
+                self.assertEqual(report["server_commands"], 5)
+                self.assertEqual(report["sim_calls"], 5)
+                self.assertIsNone(report["error"])
                 self.assertTrue(report["corrupt_artifact_preserved"])
-                self.assertTrue(all(len(attempts) == 1 for attempts in report["attempts"].values()))
+                self.assertEqual(len(report["attempts"]["CloseFridge"]), 2)
                 self.assertTrue(
-                    all(attempts[0]["marker"]["status"] == "COMPLETE" for attempts in report["attempts"].values())
+                    all(len(rows) == 1 for task, rows in report["attempts"].items() if task != "CloseFridge")
+                )
+                self.assertIn("CORRUPT_LEGACY_COMPLETE_MARKER", str(report["summary"]["diagnostics"]))
+                self.assertEqual(report["summary"]["total_trials"], 20)
+                self.assertEqual(report["summary"]["reused"], 15)
+                self.assertTrue(
+                    all(
+                        attempt["marker"]["status"] == "COMPLETE"
+                        for rows in report["attempts"].values()
+                        for attempt in rows
+                    )
                 )
 
-    def test_partial_task_resume_keeps_old_evidence_and_restarts_entire_task_from_zero(self):
+    def test_partial_task_resume_keeps_closed_episode_and_only_executes_missing_logical_slots(self):
         report = self.scenario("partial_resume", 1)
         self.assertEqual(report["first_rc"], 1)
-        self.assertEqual(report["first_summary"]["total_trials"], 15)
+        self.assertEqual(report["first_summary"]["total_trials"], 16)
         self.assertEqual(report["rc"], 0, report)
-        self.assertEqual(report["server_commands"], 5)
-        self.assertEqual(report["sim_calls"], 5)
+        self.assertEqual(report["server_commands"], 8)
+        self.assertEqual(report["sim_calls"], 8)
         self.assertEqual(report["summary"]["total_trials"], 20)
-        restarted = [attempts for attempts in report["attempts"].values() if len(attempts) == 2]
+        restarted = [attempts for attempts in report["attempts"].values() if len(attempts) == 5]
         self.assertEqual(len(restarted), 1)
         self.assertEqual(restarted[0][0]["marker"]["status"], "FAILED")
-        self.assertEqual(restarted[0][1]["marker"]["status"], "COMPLETE")
-        self.assertTrue(restarted[0][0]["path"].endswith("attempt_0001"))
-        self.assertTrue(restarted[0][1]["path"].endswith("attempt_0002"))
+        self.assertTrue(all(attempt["marker"]["status"] == "COMPLETE" for attempt in restarted[0][1:]))
         self.assertEqual(restarted[0][0]["episode_indices"], [0])
-        self.assertEqual(restarted[0][1]["episode_indices"], [0, 1, 2, 3, 4])
+        self.assertTrue(all(attempt["episode_indices"] == [0] for attempt in restarted[0][1:]))
+        self.assertEqual(report["summary"]["reused"], 16)
+        self.assertEqual(sum(row["executed_completed"] for row in report["summary"]["tasks"].values()), 4)
+        slots = [
+            episode["logical_episode_index"]
+            for row in report["summary"]["tasks"].values()
+            if row["executed_completed"]
+            for episode in row["episode_sources"]
+        ]
+        self.assertEqual(slots, [0, 1, 2, 3, 4])
 
-    def test_resume_refuses_video_or_timeout_protocol_change_without_launching_more_servers(self):
+    def test_resume_allows_video_or_timeout_plan_change_without_launching_more_servers(self):
         for case in ("resume_wrong_video", "resume_wrong_timeout"):
             with self.subTest(change=case):
                 report = self.scenario(case, 1)
                 self.assertEqual(report["first_rc"], 0)
-                self.assertEqual(report["rc"], 1)
+                self.assertEqual(report["rc"], 0)
                 self.assertEqual(report["server_commands"], 4)
                 self.assertEqual(report["sim_calls"], 4)
-                self.assertIn("identity changed", report["error"])
+                self.assertIsNone(report["error"])
+                self.assertEqual(report["summary"]["total_trials"], 20)
+                if case == "resume_wrong_video":
+                    self.assertGreaterEqual(report["summary"]["missing_requested_media"], 20)
 
 
 if __name__ == "__main__":

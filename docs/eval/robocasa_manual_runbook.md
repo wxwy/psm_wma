@@ -1,10 +1,10 @@
 # V3 RoboCasa Owner manual evaluation
 
-Batch C implements the manual entry; author CPU results do **not** authorize a GPU run or close the combined A/B/C physical-environment gate. GPT reviews the new formal pair, DS_PRO independently validates it, and Owner alone releases GPUs and runs the commands below. The running G1 training worktree and its Config, Job Identity and checkpoints must remain untouched.
+The manual entry now implements the Owner's flexible Episode Resume contract (`cc7820bee1a7`), following the approved r2 design. Its new production Implementation Gate requires GPT review and DS_PRO independent CPU acceptance. Author CPU results do **not** authorize a GPU run or close the physical-environment gate. Owner alone releases GPUs and runs the commands below. The running G1 training worktree and its Config, Job Identity and checkpoints remain untouched.
 
 ## Freeze a separate evaluation checkout
 
-Use a clean, independent Root/Child checkout at the exact reviewed implementation pair. Preserve it unchanged through task resume; updating even the Root SHA changes evaluation identity. The source includes G1 Resume, Batch A process isolation and Batch B locked dependencies. Do not synchronize the running G1 checkout to this branch.
+Use a clean, independent Root/Child checkout at the reviewed implementation pair. Keep an active evaluation checkout unchanged until its invocation exits. Future Resume may use a newer separately reviewed version: Root/Child/runtime/config provenance is recorded per source instead of imposing whole-run equality. Only Checkpoint, prediction steps, action horizon and guidance are hard reuse invariants. Do not synchronize the running G1 checkout to this branch.
 
 The launcher Python needs PyYAML (author CPU: 6.0.3). The selected simulator Python must contain the locked Batch B runtime, Pillow, imageio and imageio-ffmpeg (author media tests: 11.3.0, 2.37.0, 0.6.0). Server and simulator can use the same compatible venv; their executable paths retain venv symlinks. Nothing installs or patches dependencies during evaluation. See `third_party/robosuite_patches/README.md` for the offline vendor builder and pins. Provisioning the real server environment remains a separately approved operation.
 
@@ -30,7 +30,9 @@ bash scripts/run_robocasa_eval.sh \
   --run-name iter8900_demo --save-generated-video first --dry-run
 ```
 
-Dry-run uses CPU subprocesses in the **selected simulator interpreter** to audit its real imports, source, versions, native library and registry. It does not load a policy, construct a Kitchen, bind server ports or create the output namespace. Missing full runtime dependencies correctly produce a nonzero result; cloud unit-test doubles do not constitute a real-runtime pass. Probe and execution Numba/Matplotlib/XDG caches use external temporary directories, removed when the launcher exits. An explicit external `HF_HOME` is preserved for reusable weights; otherwise HF caching is also external and temporary. Stdout/stderr of a failed preflight should be captured externally by the operator.
+Dry-run reads model identity and revalidates historical Episode evidence, then prints the current reuse plan and JSON command templates. If any Episode needs execution, CPU subprocesses in the **selected simulator interpreter** audit its imports, source, versions, native library and registry. Pure reuse does not probe the current simulator runtime, occupy ports or start model/simulation processes. Dry-run never creates the output namespace. It does not attest GPU availability or actual model loading. Missing required runtime dependencies for new execution produce a nonzero result; cloud doubles are not real-runtime evidence. Cache directories remain external; an explicit external `HF_HOME` is preserved.
+
+Model identity hashes `.metadata` and every model shard without executing pickle or loading tensors. Preview reads once; real admission reads before and after acquiring the same `.run.lock`. Console and invocation evidence report actual bytes/files/time. This costs roughly two model-sized reads per real invocation; later batch guards check file inventory/inode/size/mtime/ctime without rehashing each Episode. No `optim/` or training state is read. A successful header/hash check is not proof that a real DCP can load.
 
 `tasks: all` requires exactly 18 underlying task classes. A selected subset can contain any valid classes; paraphrases are not additional tasks, and multiple dataset directories for the same class reject the run. GPU IDs must be unique nonnegative CUDA IDs. Each GPU has one Worker, a fresh Action Server per task, and one serial Simulator/Local-TTT session at slot 0. `slots_per_gpu` must equal 1; training B8 does not imply eight inference sessions.
 
@@ -47,7 +49,7 @@ bash scripts/run_robocasa_eval.sh \
 
 Optional `PYTHON=/absolute/path/to/python` selects the lightweight launcher interpreter; `server_python` and `sim_python` in YAML select the actual execution environments. The launcher does not change the caller's working directory or CUDA environment.
 
-Frozen ABI: Local-TTT required, raw15/state15, left+wrist cameras, raw base encoding, chunk/H_pred16, 20 Hz, target objects and ten paired target layout/styles, first-success latch. `action_horizon` is the number of predicted actions executed before replanning, from 1 to 16. The policy sampling seed is 0; the environment seed is configurable and fixed by identity. Official RoboCasa 1.0.1 registry horizons already incorporate its horizon update; no second 1.5× multiplier or fallback horizon is used by the unified entry.
+Frozen ABI: Local-TTT required, raw15/state15, left+wrist cameras, raw base encoding, chunk/H_pred16, 20 Hz, target objects and ten paired target layout/styles, first-success latch. `action_horizon` is the number of actions executed before replanning, from 1 to 16. The policy sampling seed is 0. New Task environment sampling retains the literal requested Seed, one environment and sequential resets. Partial-resume gaps use separately recorded derived seeds because historical environment RNG cannot be reconstructed. Official RoboCasa 1.0.1 registry horizons already incorporate its update; no second 1.5× multiplier is applied.
 
 Environment videos follow `save_rollout_mp4` / `--[no-]save-rollout-mp4`; initial PNGs follow `save_init_png`. Generated video modes are `none`, `first` (first prediction **per episode**) and `all` (separate file per replan). Actions and prediction JSONL are mandatory even if videos are off. In `all` mode every generated file records replan, source step and frame count. Enabled media are checked for nonempty, actual decoding; matching filenames alone cannot complete a task.
 
@@ -55,9 +57,9 @@ Environment videos follow `save_rollout_mp4` / `--[no-]save-rollout-mp4`; initia
 
 Terminal progress is enabled by default. Every5s it shows each Worker's GPU, task, Episode/total, executed steps/official limit, returned prediction count, latest prediction latency in milliseconds and current stage. Episode boundaries, task completion and errors print immediately through a single output thread. Stages distinguish model loading, environment initialization, prediction/execution, video saving, process cleanup and result validation. Unknown fields display `?`; a quiet interval does not establish that a task is stuck. Server and simulator logs are still retained at their original paths.
 
-Use `--progress-interval-s 10` for a10s summary, or `--no-progress` to silence these terminal lines. YAML has `progress` and `progress_interval_s`; both are display settings excluded from protocol identity and may change during same-source task Resume. `--no-progress` still allows the independent `live_progress.jsonl` to record lightweight stage metadata and the exact model instruction for browsing exports. It does not change the authoritative `episode_progress.jsonl`, its exact ordered2N records, deadlines, results or evidence validation. The observer is best-effort and does not decide success or failure. List/preview commands keep their JSON-only output.
+Use `--progress-interval-s 10` or `--no-progress` to control terminal observation. These options do not affect Episode reuse. The independent `live_progress.jsonl` records stage metadata and the actual model instruction. It does not replace authoritative `episode_progress.jsonl`, Local cleanup or core validation. List output is JSON; preview additionally prints identity-read telemetry and the reuse plan.
 
-After all Workers finish or are cancelled, the launcher exports separate copies under `videos_view/<Task>/<attempt>/`. Original MP4s, manifests and filenames remain unchanged. Browsing names use the Episode's actual model instruction, for example:
+After Workers finish or are cancelled, browsing copies for legacy root evidence remain under `videos_view/<Task>/<attempt>/`; new batch sources use `videos_view/sources/<source-id>/<Task>/<attempt>/` and their own indexes. Each exporter reads the corresponding original source Manifest. Raw filenames and evidence remain unchanged. Browsing names use the actual instruction, for example:
 
 ```text
 rollout00_success_close_the_fridge.mp4
@@ -78,46 +80,52 @@ The command reads the saved run and writes only the browsing destination. For a 
 
 ## Evidence and bounded failure
 
-An exclusive manifest claim and nonblocking namespace lease prevent concurrent writers. Output is structured as:
+A nonblocking lease on the same `.run.lock` protects admission and all scheduling. Four-parameter mismatches or a missing explicit `--resume` reject before control writes or launch. Existing legacy runs require their original regular lock. A failed fresh preflight may leave only its newly created directory/lock; it has not claimed an experiment. Source allocations are atomic, fsynced and durable before any Worker launch. Layout:
 
 ```text
 <output_root>/<run_name>/
-  evaluation_manifest.json
+  evaluation_manifest.json          # original root manifest; never replaced
   .run.lock
-  _invocations/<timestamp>_<pid>/
-    resolved-config.json
-    runtime_probe.json
-    previous_screening_summary.json  # present on subsequent invocations
-  _workerNN_gpuN/action_server.log
-  <Task>/attempt_0001/
-    attempt.json                     # RUNNING / FAILED / COMPLETE
-    commands.json, server_info.json, server_process.json
-    runtime_attestation.json         # in-process recheck before Kitchen creation
-    eval.log, episode_progress.jsonl, process_cleanup.json
-    live_progress.jsonl              # optional observations; never completion/Resume evidence
-    results.json
-    rollout00_episode.json, rollout00_cleanup.json
-    rollout00_actions.jsonl, rollout00_predictions.jsonl
-    rollout00_init.png, rollout00.mp4 # only when enabled
-    rollout00_generated.mp4          # first mode
-    rollout00_generated_manifest.json
-    # all mode: rollout00_generated_replan0000.mp4, ...
-  screening_summary.json
+  latest_invocation.json            # points to current view and immutable snapshot
+  _resume_v2/model_identity.json
+  _resume_v2/legacy_migration.json   # when importing a legacy manifest
+  _resume_v2/catalog/*.json          # references, never trusted outcome shortcuts
+  _invocations/<id>/
+    invocation_manifest.json, resolved_config.json, resume_plan.json
+    runtime_probe.json              # only when new execution requires a probe
+    current_summary.json            # mutable UI view for this invocation only
+    snapshots/000000.json, ...       # immutable progress/final snapshots
+    reservations/<batch-id>.json     # physical/logical map and sampling provenance
+    _workerNN_gpuN/action_server.log
+    sources/<Task>/<batch-id>/
+      evaluation_manifest.json      # actual batch seed/trials/media/runtime/model
+      <Task>/attempt_0001/
+        attempt.json                # RUNNING / FAILED / COMPLETE
+        commands.json, server_info.json, server_process.json
+        runtime_attestation.json, process_cleanup.json
+        eval.log, episode_progress.jsonl, live_progress.jsonl
+        results.json, rollout00_episode.json, rollout00_cleanup.json
+        rollout00_actions.jsonl, rollout00_predictions.jsonl
+        rollout00_init.png, rollout00.mp4
+        rollout00_generated.mp4, rollout00_generated_manifest.json
+        # all: rollout00_generated_replan0000.mp4, ...
+  <Task>/attempt_NNNN/               # any legacy raw evidence remains unchanged
+  screening_summary.json            # historical summary if present; not latest view
 ```
 
-Task rows and the overall summary report environment recordings in `rollout_mp4s` and model-prediction recordings in `generated_mp4s`. Turning off environment recording leaves the former empty even when generated videos are enabled; failed/partial attempts retain the same classification.
+Open `latest_invocation.json` and follow `summary_path` for live/final results; `report_path` identifies an immutable snapshot. Episode/Task source references in the report locate their raw files. A current RUNNING view can have full result coverage while cleanup/other Worker initialization remains outstanding; only the final joined invocation can be COMPLETE. Failed-attempt raw video paths are separate `diagnostic_rollout_mp4s` / `diagnostic_generated_mp4s`; they do not count as completed-media coverage.
 
-Manifest identity binds Root, Child/Gitlink, checkpoint model metadata+shard stat witnesses (not full payload hashes), frozen model Config hash, selected task metadata, dependency source/native identity, interpreter/import context, seeds, horizons, video settings, timeouts and GPU mapping. Inference requires model DCP files, not `optim/`; it never reads training optimizer state. The actual simulator reruns the vendor probe and must reproduce the expected digest before creating an environment. Its witness is required for task completion/resume.
+Model identity binds the full model SHA baseline and the other three hard parameters. Original source Manifests separately retain source/config/Task/runtime/Seed/media/timeout/resource evidence; they are never rewritten to the new plan's digest. Legacy metadata/stat bridging cannot invent a missing historical payload SHA. Every reused Episode is revalidated against its own source, ABI, progress, Local cleanup and original media policy. The actual simulator reruns the vendor probe before environment creation for each new batch.
 
 Recorded data-generator versions/unknown Git commits and actual evaluation runtime are separate manifest fields. RoboCasa1.0.1 is the chosen evaluation runtime; equivalence with the recorded 0.5.1 generator is **not proven**. Historical diagnostic SRs remain diagnostic.
 
-Server startup, request, episode wall, task wall and terminate-grace deadlines have distinct meanings. Task timing includes server startup, rollout and final evidence/media validation. Cancellation or failure reclaims only owned process groups, TERM then KILL/reap if necessary; it does not kill foreign listeners or training processes. Some cleanup can extend beyond task wall by bounded terminate grace. Each task gets a new server, including after a previous failure. The default infrastructure-error policy is `stop`; explicit `continue_with_new_server` can collect screening evidence, while the entire run still reports INCOMPLETE and nonzero exit. Original errors and cleanup errors remain visible.
+Server startup, request, Episode wall, batch wall and terminate-grace deadlines have distinct meanings. The Task/batch wall budget includes loading, rollout and validation; each gap batch is a separate one-Episode Task invocation. Cancellation reclaims only owned groups, with TERM then KILL/reap as necessary. Every batch gets a fresh server; failed sessions are never handed to the next batch. Default infrastructure policy is `stop`; `continue_with_new_server` collects more evidence but preserves PARTIAL/nonzero status and original/secondary cleanup errors.
 
 A COMPLETE summary requires every selected task, every expected episode, successful infrastructure cleanup, typed outcomes and required valid evidence. Episode progress must contain exactly the ordered start/end pairs with the same Run and Task/Attempt identity. Each episode must also have a Local-TTT cleanup witness with a valid slot0 session ID, successful reset and no rollout/media/cleanup error; process termination alone does not substitute for that witness. Behavioral failure counts in the denominator. Runtime errors never silently disappear from SR: formal `sr` is null for incomplete runs, and `partial_sr` is labeled separately. Keep all partial actions, JSON, videos and logs for review.
 
-## Resume whole tasks only
+## Resume by Episode and current plan
 
-Use the exact frozen source/runtime/config/parameters and original run name, adding `--resume`. The execution flag itself is excluded from immutable protocol identity. Do not pull code or change GPU mapping, task selection, timeouts or video policy between attempts.
+Keep the original output namespace and add `--resume`. Use a separately reviewed clean source version; never update a still-running checkout.
 
 ```bash
 bash scripts/run_robocasa_eval.sh \
@@ -126,7 +134,21 @@ bash scripts/run_robocasa_eval.sh \
   --run-name iter8900_demo --save-generated-video first --resume
 ```
 
-Only an entire COMPLETE task with matching identity, valid in-process runtime, per-Episode Local cleanup, complete progress and media/audits is skipped. The same strict checks apply again during resume; missing or damaged progress/cleanup evidence rejects the skip. A RUNNING/FAILED task receives a new exclusive `attempt_0002` directory and restarts from episode 0 with the original seed and sequential reset protocol. Earlier episodes are never stitched across attempts. Result, action, prediction and generated-video records bind the `Task/Attempt` ID, so copied episodes from another attempt reject validation. Corrupted COMPLETE evidence or ambiguous multiple complete attempts fail closed for investigation; they are not overwritten. Unknown legacy task output is not imported. Old cross-source runs require new namespaces and cannot be presented as same-identity resume.
+| Change | Behavior |
+| --- | --- |
+| Checkpoint / prediction steps / action horizon / guidance | Reject with old/new mismatch |
+| More/fewer Tasks | Reuse eligible Episodes; execute missing selected Tasks; count only current selection |
+| Completed3, requested5 | Reuse3 and execute2 |
+| Completed8, requested5 | Reuse/count first5; retain/exclude3 |
+| Seed change | Retain old actual Seeds; new executions use current Seed family; report mixed conditions |
+| Media change | Reuse valid history without rerunning for missing newly requested recordings |
+| GPU, timeouts, display, source/config/runtime provenance | Current invocation settings; new execution still passes safety/ABI/runtime checks |
+
+RUNNING/FAILED sources can contribute independently verified closed Episodes. A contradictory COMPLETE source is wholly quarantined with diagnostics. No policy-success preference is used when deduplicating. Raw source digest, Attempt and physical Episode identities remain unchanged.
+
+New Task batches retain literal Seed and one environment with N sequential resets. Partial-resume gaps cannot restore the historical RNG stream: each logical slot gets a stable derived seed and its own physical Episode0/source sandbox. Persistent reservations, real legacy progress and catalog gap evidence recover pending slots before appending IDs. `{0,1,3,4}` requests5 retry slot2; shrinking the view does not erase pending slots. Same-slot retries keep logical identity while using new Attempts. Mixed/unknown Seed, runtime, config, source and sampling protocols are explicit convenience aggregates, not a single-condition benchmark.
+
+Resource limits reject more than100000 records/Episodes or logical IDs outside0..99999 before range allocation, and bound JSON control documents to64MiB. Inputs containing symlinks, ambiguous identities or unsafe mappings fail closed. These limits do not delete historical evidence.
 
 ## Review boundary
 
