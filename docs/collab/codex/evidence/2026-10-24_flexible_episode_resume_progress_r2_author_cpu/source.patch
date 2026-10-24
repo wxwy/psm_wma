@@ -1,0 +1,215 @@
+diff --git a/SESSION.md b/SESSION.md
+index 69c82280..52d6b0a6 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1598,0 +1599,5 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
++
++## 2026-10-24 — Flexible Resume production HIGH-01
++- Synced ff-only493e9708->6e10c8d461ecc5f49e05da932a2d925e9ad62ef3; advertised V3 matches. Read exact GPT REQUEST_CHANGES252d823c/813a550d. Isolated v3-flexible-resume-progress-r2-20261024; scope only final progress bounded/strict C01 parsing and explicit final error persistence plus integration negatives. Parent edits scripts/robocasa_resume_cli.py and integration test, new evidence/handoff. Preserve all five groups; no Child/G1/real DCP/GPU/Kitchen/old artifacts. New pair then STOP.
++
++- HIGH-01 r2 author frozen five-group CPU164PASS+72subtests PASS,0failure/error/skip,1155.140s. Red baseline8failed/1passed;green10passed. Ruff0.12.7check+format/compile15/frozenhash/protectedpaths PASS. Only CLI terminal reader/caller and10new integration cases changed;64MiB/4096B/2N/episode bounds, strict encoding/JSON/newline/identity/order, stat stability and per-source explicit diagnostic; original raw/Job errors preserved and finalPARTIAL durable. No Child/G1/real execution. New source commit then bound Evidence/canonical request andSTOP for GPT delta review/DS independent CPU.
+diff --git a/TODO.md b/TODO.md
+index 05a23209..884f80a8 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -454,0 +455,4 @@
++
++- **V3-FLEXIBLE-RESUME-PROGRESS-R2-20261024** — IN_PROGRESS; Codex; exact GPT HIGH-01 at6e10c8d4. Bounded strict terminal C01 reader, per-source diagnostic/PARTIAL finalization, UTF8/size/truncation/identity/order negatives + valid start, five CPU groups retained. New Root/unchanged Child then GPT incremental review; no real execution.
++
++- **V3-FLEXIBLE-RESUME-PROGRESS-R2-20261024** — REVIEW; bounded terminal C01/final diagnostic fix complete; red8FAIL+1PASS,green10PASS,fullfive164PASS+72subtests/0fail/error/skip,Ruff0.12.7/static15PASS. New Root/unchanged Child813a550d publication and GPT incremental HIGH-01 review/DS independent CPU;no real execution,STOP after delivery.
+diff --git a/scripts/robocasa_resume_cli.py b/scripts/robocasa_resume_cli.py
+index 867a3f69..ac3fb0cc 100644
+--- a/scripts/robocasa_resume_cli.py
++++ b/scripts/robocasa_resume_cli.py
+@@ -15,0 +16 @@ from pathlib import Path
++from robocasa_episode_resume import MAX_RECOVERY_BYTES, bounded_episode_count, bounded_episode_index
+@@ -17,0 +19 @@ from robocasa_episode_resume.plan import build_plan, build_report, render_plan,
++from robocasa_eval_results import _unique_object
+@@ -142,2 +144,59 @@ def _summary(
+-def _unfinished_executions(jobs, completed):
+-    """Count durable Episode starts, rather than every preallocated logical slot."""
++def _progress_starts(job):
++    """Read terminal C01 authority atomically, bounded by bytes/rows/episodes.
++
++    A corrupt source contributes no speculative starts, even if an earlier row
++    was valid. Original evidence remains available to the source verifier.
++    """
++    path = job["attempt_dir"] / "episode_progress.jsonl"
++    if any(part.is_symlink() for part in (path, *path.parents)):
++        raise ValueError("CORRUPT_PROGRESS: symlink")
++    try:
++        before = path.stat()
++    except FileNotFoundError:
++        return []  # A worker can fail before the simulator creates progress.
++    if not stat.S_ISREG(before.st_mode) or before.st_size > MAX_RECOVERY_BYTES:
++        raise ValueError("CORRUPT_PROGRESS: nonregular or oversized file")
++    count = bounded_episode_count(len(job["episodes"]), "reserved episodes")
++    physical = [row["source_episode"] for row in job["episodes"]]
++    for row in job["episodes"]:
++        bounded_episode_index(row["logical_episode_index"], "reserved logical episode")
++    if physical != list(range(count)):
++        raise ValueError("CORRUPT_PROGRESS: invalid reserved physical mapping")
++    started, rows, size = [], 0, 0
++
++    def invalid(value):
++        raise ValueError(f"CORRUPT_PROGRESS: nonfinite JSON {value}")
++
++    with path.open("rb") as stream:
++        while line := stream.readline(4097):
++            size += len(line)
++            if size > MAX_RECOVERY_BYTES or rows >= 2 * count:
++                raise ValueError("CORRUPT_PROGRESS: byte/row limit exceeded")
++            if len(line) > 4096 or not line.endswith(b"\n"):
++                raise ValueError("CORRUPT_PROGRESS: oversized/truncated event")
++            event = json.loads(line.decode("utf-8"), object_pairs_hook=_unique_object, parse_constant=invalid)
++            if (
++                not isinstance(event, dict)
++                or event.get("schema") != "psm_episode_progress_v1"
++                or event.get("evaluation_run_digest") != job["source_manifest"]["digest"]
++                or event.get("evaluation_attempt_id") != f"{job['task']}/{job['attempt_dir'].name}"
++                or type(event.get("episode")) is not int
++                or event["episode"] != rows // 2
++                or event.get("event") != ("end" if rows % 2 else "start")
++            ):
++                raise ValueError("CORRUPT_PROGRESS: identity/order mismatch")
++            if rows % 2 == 0:
++                started.append(rows // 2)
++            rows += 1
++        after = os.fstat(stream.fileno())
++
++    def witness(item):
++        return (item.st_dev, item.st_ino, item.st_size, item.st_mtime_ns, item.st_ctime_ns)
++
++    if witness(before) != witness(after) or witness(after) != witness(path.stat()):
++        raise ValueError("CORRUPT_PROGRESS: source changed during terminal read")
++    return started
++
++
++def _unfinished_executions(jobs, completed, *, errors):
++    """Count only committed, ordered starts; persist per-source read failures."""
+@@ -147,6 +206,11 @@ def _unfinished_executions(jobs, completed):
+-        path = job["attempt_dir"] / "episode_progress.jsonl"
+-        if any(part.is_symlink() for part in (path, *path.parents)):
+-            continue  # The authoritative source scanner reports this as corrupt.
+-        if not path.is_file():
+-            continue
+-        if not stat.S_ISREG(path.stat().st_mode):
++        try:
++            started = _progress_starts(job)
++        except (OSError, ValueError, RecursionError) as error:
++            errors.append(
++                {
++                    "stage": "final_progress_read",
++                    "task": job["task"],
++                    "path": str(job["attempt_dir"] / "episode_progress.jsonl"),
++                    "error": f"{type(error).__name__}: {error}",
++                }
++            )
+@@ -155,17 +219 @@ def _unfinished_executions(jobs, completed):
+-        started = set()
+-        for line in path.read_text().splitlines():
+-            try:
+-                event = json.loads(line)
+-            except ValueError:
+-                break
+-            if (
+-                isinstance(event, dict)
+-                and event.get("schema") == "psm_episode_progress_v1"
+-                and event.get("event") == "start"
+-                and event.get("evaluation_run_digest") == job["source_manifest"]["digest"]
+-                and event.get("evaluation_attempt_id") == f"{job['task']}/{job['attempt_dir'].name}"
+-                and type(event.get("episode")) is int
+-                and event["episode"] in physical
+-            ):
+-                started.add(event["episode"])
+-        for index in sorted(started):
++        for index in started:
+@@ -442,5 +490 @@ def prepare_resume(args, cache, *, queue_api):
+-        try:
+-            unfinished = _unfinished_executions(jobs, new_sources)
+-        except OSError as error:
+-            unfinished = []
+-            final_errors.append({"stage": "final_progress_read", "error": f"{type(error).__name__}: {error}"})
++        unfinished = _unfinished_executions(jobs, new_sources, errors=final_errors)
+diff --git a/tools/v3/robocasa_episode_resume_integration_test.py b/tools/v3/robocasa_episode_resume_integration_test.py
+index 41c26366..e46eaf33 100644
+--- a/tools/v3/robocasa_episode_resume_integration_test.py
++++ b/tools/v3/robocasa_episode_resume_integration_test.py
+@@ -631,0 +632,77 @@ def test_final_source_rescan_failure_publishes_partial_and_preserves_executor_er
++@pytest.mark.parametrize(
++    "fault",
++    ["utf8", "truncated", "file_limit", "line_limit", "duplicate", "identity", "order", "nonfinite", "valid_start"],
++)
++def test_final_progress_fault_is_durable_partial_without_invented_starts(harness, monkeypatch, fault):
++    original_discover = RunStore.discover_history
++    calls, injected = [], []
++
++    def inject_final_progress(store, *args, **kwargs):
++        calls.append(store.root)
++        if len(calls) == 2:
++            path = next(store.root.glob("_invocations/*/sources/**/episode_progress.jsonl"))
++            first = path.read_bytes().splitlines(keepends=True)[0]
++            row = json.loads(first)
++            payload = first
++            if fault == "utf8":
++                payload = b"\xff\n"
++            elif fault == "truncated":
++                payload = first.rstrip(b"\n")
++            elif fault == "line_limit":
++                payload = b" " * 4096 + b"\n"
++            elif fault == "duplicate":
++                payload = first.rstrip()[:-1] + b',"episode":0}\n'
++            elif fault == "identity":
++                row["evaluation_attempt_id"] = "wrong/attempt_0001"
++                payload = canonical(row) + b"\n"
++            elif fault == "order":
++                payload = first + first
++            elif fault == "nonfinite":
++                payload = first.rstrip()[:-1] + b',"extra":NaN}\n'
++            path.write_bytes(payload)
++            if fault == "file_limit":
++                with path.open("r+b") as stream:
++                    stream.truncate(64 * 1024 * 1024 + 1)
++            injected.append((path, path.stat().st_size, hashlib.sha256(path.read_bytes()).hexdigest()))
++        return original_discover(store, *args, **kwargs)
++
++    monkeypatch.setattr(RunStore, "discover_history", inject_final_progress)
++    harness.fault = "third_episode_error"
++    assert harness.invoke(monkeypatch, episodes=5) != 0
++    report = harness.report()
++    summary = read(read(harness.output / "latest_invocation.json")["summary_path"])
++    assert report["status"] == summary["status"] == "PARTIAL"
++    assert report["exit_code"] == 1 and report["sr"] is None
++    assert report["completed"] == 0 and report["remaining"] == 5
++    progress_errors = [row for row in report["invocation_errors"] if row.get("stage") == "final_progress_read"]
++    if fault == "valid_start":
++        assert not progress_errors
++        assert (report["executed"], report["failed"]) == (1, 1)
++    else:
++        assert len(progress_errors) == 1
++        assert progress_errors[0]["task"] == "CloseFridge"
++        assert progress_errors[0]["path"] == str(injected[0][0])
++        assert progress_errors[0]["error"]
++        assert (report["executed"], report["failed"]) == (0, 0)
++    assert any("closed_loop_eval exited" in row.get("error", "") for row in report["invocation_errors"])
++    job = report["job_results"][0]
++    assert job["error"] and all(not witness["live_group"] for witness in job["cleanup"].values())
++    path, size, digest = injected[0]
++    assert path.stat().st_size == size and hashlib.sha256(path.read_bytes()).hexdigest() == digest
++
++
++def test_terminal_progress_file_limit_rejects_before_open(tmp_path, monkeypatch):
++    from robocasa_resume_cli import _progress_starts
++
++    path = tmp_path / "episode_progress.jsonl"
++    with path.open("wb") as stream:
++        stream.truncate(64 * 1024 * 1024 + 1)
++
++    def forbidden_open(*args, **kwargs):
++        pytest.fail("oversized progress must be rejected by stat before any read")
++
++    monkeypatch.setattr(Path, "open", forbidden_open)
++    with pytest.raises(ValueError, match="oversized file"):
++        _progress_starts({"attempt_dir": tmp_path})
++
++
