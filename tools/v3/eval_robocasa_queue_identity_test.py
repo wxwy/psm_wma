@@ -31,14 +31,16 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+from queue_fixture_watchdog import FixtureWatchdogTimeout, watch
+
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 spec = importlib.util.spec_from_file_location("screening_queue", ROOT / "scripts/eval_robocasa_18task_queue.py")
 queue_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(queue_module)
 TASKS = {"CloseFridge", "TurnOnSinkFaucet", "PickPlaceSinkToCounter", "NavigateKitchen"}
-COMPLETION_WAIT_S = 120.0
-LATE_SCENARIO_WATCHDOG_S = COMPLETION_WAIT_S + 60.0
+COMPLETION_WAIT_S = 300.0
+LATE_SCENARIO_WATCHDOG_S = 600.0
 SCENARIO_CLEANUP_RESERVE_S = 30.0
 SLOW_HEALTHY_DELAY_S = 13.0
 LATE_COMPLETION_CASES = {
@@ -56,7 +58,7 @@ class FixtureCompletionTimeout(AssertionError):
 def _scenario_watchdog(case):
     if case == "completion_never_finished":
         return 30.0
-    return LATE_SCENARIO_WATCHDOG_S if case in LATE_COMPLETION_CASES else 90.0
+    return 900.0 if case == "task_timeout" else 600.0
 
 
 def _raise_after_completed(
@@ -710,7 +712,8 @@ def _scenario(case, parent, count):
                 )
             if case in ("task_timeout", "episode_timeout"):
                 # A descendant ignores SIGTERM; both processes must be reclaimed.
-                script = "import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'-c','import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(60)']);time.sleep(60)"
+                duration = 3600 if case == "task_timeout" else 60
+                script = f"import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'-c','import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep({duration})']);time.sleep({duration})"
             elif case in ("sigterm", "sigkill"):
                 sig = "SIGTERM" if case == "sigterm" else "SIGKILL"
                 script = f"import os,signal;os.kill(os.getpid(),signal.{sig})"
@@ -854,7 +857,7 @@ def _scenario(case, parent, count):
         # The task budget also includes decoding all required audit media.
         # Healthy tasks have room for this real CPU work; the injected hung
         # simulator still exceeds this bound and requires SIGKILL.
-        argv += ["--task-wall-timeout-s", "5"]
+        argv += ["--task-wall-timeout-s", "120"]
     if case == "episode_timeout":
         argv += ["--episode-wall-timeout-s", "0.2"]
     real_close = queue_module.OwnedProcess.close
@@ -1158,6 +1161,138 @@ class ServerIdentityTests(unittest.TestCase):
             )
 
 
+class FixtureWatchdogTests(unittest.TestCase):
+    def evidence_root(self):
+        base = Path(os.environ.get("PSM_WMA_FIXTURE_EVIDENCE_DIR", "/tmp/psm-wma-queue-fixture-evidence"))
+        base.mkdir(parents=True, exist_ok=True)
+        return Path(tempfile.mkdtemp(prefix="watchdog_control_", dir=base))
+
+    def run_child(self, script, *, hard, stall, root):
+        source = root / "source"
+        source.mkdir(exist_ok=True)
+        with (source / "console.log").open("w") as log:
+            process = subprocess.Popen(
+                [sys.executable, "-u", "-c", script],
+                cwd=source,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                start_new_session=True,
+            )
+
+            def reap():
+                if process.poll() is None:
+                    process.kill()
+                process.wait()
+
+            self.addCleanup(reap)
+            return process, source
+
+    def test_real_progress_exceeds_old_budget_but_completes(self):
+        external_evidence = self.evidence_root()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            process, source = self.run_child(
+                "import time; [(print(i,flush=True),time.sleep(.05)) for i in range(12)]", hard=2, stall=0.3, root=root
+            )
+            # A finite old-style outer budget expires despite genuine forward progress.
+            with self.assertRaises(subprocess.TimeoutExpired):
+                process.wait(timeout=0.1)
+            code, saved = watch(
+                process,
+                source,
+                case="progress_positive",
+                hard_s=10,
+                stall_s=3.0,
+                poll_s=0.02,
+                evidence_root=external_evidence,
+            )
+            self.assertEqual(code, 0)
+            self.assertIn("11", (saved / "source/console.log").read_text())
+            witness = {
+                "old_wait_s": 0.1,
+                "old_wait_result": "TimeoutExpired",
+                "new_result": code,
+                "scope": "controlled progressing producer, not DS90s reproduction",
+            }
+            (saved / "budget_red_green.json").write_text(json.dumps(witness) + "\n")
+            print("FIXTURE_BUDGET_WITNESS " + json.dumps(witness), flush=True)
+        self.assertTrue((saved / "source/console.log").is_file())
+
+    def test_stall_retains_evidence_before_kill_and_leaves_foreign_process_alive(self):
+        external_evidence = self.evidence_root()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            foreign = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True)
+            try:
+                process, source = self.run_child(
+                    "import time;print('last stage: stall',flush=True);time.sleep(60)", hard=3, stall=0.2, root=root
+                )
+                with self.assertRaisesRegex(FixtureWatchdogTimeout, "no_cpu_or_file_progress"):
+                    watch(
+                        process,
+                        source,
+                        case="stall_negative",
+                        hard_s=10,
+                        stall_s=3.0,
+                        poll_s=0.02,
+                        evidence_root=external_evidence,
+                    )
+                saved = next(external_evidence.iterdir())
+                witness = json.loads((saved / "watchdog.json").read_text())
+                self.assertIsNone(witness["returncode_before_cleanup"])
+                self.assertEqual(process.returncode, -signal.SIGKILL)
+                self.assertIn("last stage: stall", (saved / "source/console.log").read_text())
+                self.assertNotIn(foreign.pid, witness["killed_owned_pids"])
+                self.assertIsNone(foreign.poll())
+            finally:
+                foreign.kill()
+                foreign.wait()
+
+    def test_cpu_activity_cannot_extend_hard_limit(self):
+        external_evidence = self.evidence_root()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            process, source = self.run_child("while True: pass", hard=0.4, stall=0.3, root=root)
+            with self.assertRaisesRegex(FixtureWatchdogTimeout, "hard_limit"):
+                watch(
+                    process,
+                    source,
+                    case="busy_negative",
+                    hard_s=1.0,
+                    stall_s=3.0,
+                    poll_s=0.02,
+                    evidence_root=external_evidence,
+                )
+            self.assertEqual(process.returncode, -signal.SIGKILL)
+
+    def test_heartbeat_is_not_media_progress(self):
+        external_evidence = self.evidence_root()
+        with tempfile.TemporaryDirectory() as directory:
+            process, source = self.run_child(
+                "import time; [(print('heartbeat',flush=True),time.sleep(.02)) for _ in range(300)]",
+                hard=3,
+                stall=0.3,
+                root=Path(directory),
+            )
+            until = time.monotonic() + 5
+            while "heartbeat" not in (source / "console.log").read_text():
+                self.assertLess(time.monotonic(), until, "heartbeat producer did not start")
+                time.sleep(0.02)
+            with self.assertRaisesRegex(FixtureWatchdogTimeout, "no_cpu_or_file_progress"):
+                watch(
+                    process,
+                    source,
+                    case="heartbeat_negative",
+                    hard_s=5,
+                    stall_s=1.0,
+                    poll_s=0.02,
+                    media_only=True,
+                    evidence_root=external_evidence,
+                )
+        saved = next(external_evidence.iterdir())
+        self.assertTrue((saved / "source/console.log").exists())
+
+
 class QueueIntegrationTests(unittest.TestCase):
     def scenario(self, case, count=2):
         with tempfile.TemporaryDirectory() as directory:
@@ -1176,12 +1311,9 @@ class QueueIntegrationTests(unittest.TestCase):
                     stderr=subprocess.STDOUT,
                     start_new_session=True,
                 )
-                try:
-                    rc = process.wait(timeout=_scenario_watchdog(case))
-                except subprocess.TimeoutExpired:
-                    os.killpg(process.pid, signal.SIGKILL)
-                    process.wait()
-                    self.fail("CPU queue fixture hung; owned process group killed")
+                rc, evidence_dir = watch(process, parent, case=case, hard_s=_scenario_watchdog(case), media_only=True)
+            # Preserve source and log paths even if a subsequent assertion fails.
+            print(f"FIXTURE_EVIDENCE {case} {evidence_dir}", flush=True)
             self.assertEqual(rc, 0, (parent / "console.log").read_text())
             report = json.loads((parent / "report.json").read_text())
             report["console"] = (parent / "console.log").read_text()
@@ -1461,6 +1593,12 @@ class QueueIntegrationTests(unittest.TestCase):
                 self.assertIsNone(report["summary"]["sr"])
                 self.assertEqual(report["summary"]["task_failures"], 1)
                 self.assertEqual(report["summary"]["total_trials"], 15)
+                if case == "task_timeout":
+                    failures = [row for row in report["summary"]["job_results"] if row["error"]]
+                    self.assertEqual(len(failures), 1)
+                    self.assertIn("task wall timeout", failures[0]["error"])
+                    self.assertGreaterEqual(failures[0]["elapsed_s"], 119.5)
+                    self.assertEqual(report["summary"]["completed_tasks"], 3)
                 cleanup = next(row["cleanup"] for row in report["summary"]["job_results"] if row["error"])
                 self.assertFalse(cleanup["server"]["live_group"])
                 self.assertFalse(cleanup["simulator"]["live_group"])

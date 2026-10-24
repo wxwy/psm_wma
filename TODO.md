@@ -456,3 +456,7 @@
 - **V3-FLEXIBLE-RESUME-PROGRESS-R2-20261024** — IN_PROGRESS; Codex; exact GPT HIGH-01 at6e10c8d4. Bounded strict terminal C01 reader, per-source diagnostic/PARTIAL finalization, UTF8/size/truncation/identity/order negatives + valid start, five CPU groups retained. New Root/unchanged Child then GPT incremental review; no real execution.
 
 - **V3-FLEXIBLE-RESUME-PROGRESS-R2-20261024** — REVIEW; bounded terminal C01/final diagnostic fix complete; red8FAIL+1PASS,green10PASS,fullfive164PASS+72subtests/0fail/error/skip,Ruff0.12.7/static15PASS. New Root/unchanged Child813a550d publication and GPT incremental HIGH-01 review/DS independent CPU;no real execution,STOP after delivery.
+
+- **V3-RESUME-FIXTURE-R3-20261024** — IN_PROGRESS; Codex; retry1Evidence-only REQUEST_CHANGES. Bounded media-aware watchdog+stall/hard cap, owned-process prekill evidence, Task deadline fault isolation with strict assertions and realFFmpeg. New test-only SHA, red/green +five CPU, STOP.
+
+- **V3-RESUME-FIXTURE-R3-20261024** — REVIEW; bounded watchdog/heartbeat exclusion/external prekill capture and real task deadline isolation complete. Author fullfive168PASS+72subtests/0skip;focused7+15,controls4,controlledRED1FAIL separated;Ruff0.12.7/static16PASS. New exactfixtureRoot/unchangedChild thenGPTincremental review andDSindependentCPU;DSGate remainsRED until closure, no production/G1/GPU changes.
