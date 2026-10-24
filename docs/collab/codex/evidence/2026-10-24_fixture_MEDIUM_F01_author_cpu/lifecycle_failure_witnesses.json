@@ -1,0 +1,195 @@
+[
+  {
+    "kind": "FIXTURE_CLEANUP_WITNESS",
+    "state": {
+      "case": "late_child_negative",
+      "root_pid": 297616,
+      "hard_s": 0.3,
+      "stall_s": 5,
+      "reason": "hard_limit",
+      "progress_policy": "file/owned CPU advances",
+      "elapsed_s": 0.35338611699989997,
+      "returncode_before_cleanup": null,
+      "samples": [
+        {
+          "elapsed_s": 0.11813946100301109,
+          "processes": [
+            {
+              "pid": 297616,
+              "ppid": 296226,
+              "pgid": 297616,
+              "state": "S",
+              "ticks": 2,
+              "start": "7860284",
+              "command": "/workspace/.venvs/psm-wma-cpu/bin/python -u -c import pathlib,subprocess,sys,time; pathlib.Path('ready').touch(); exec(\"while not pathlib.Path('spawn').exists(): time.sleep(.01)\"); child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True); pathlib.Path('child_pid').write_text(str(child.pid)); time.sleep(60) "
+            }
+          ]
+        }
+      ],
+      "owned_at_snapshot": [
+        {
+          "pid": 297616,
+          "ppid": 296226,
+          "pgid": 297616,
+          "state": "S",
+          "ticks": 2,
+          "start": "7860284",
+          "command": "/workspace/.venvs/psm-wma-cpu/bin/python -u -c import pathlib,subprocess,sys,time; pathlib.Path('ready').touch(); exec(\"while not pathlib.Path('spawn').exists(): time.sleep(.01)\"); child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True); pathlib.Path('child_pid').write_text(str(child.pid)); time.sleep(60) "
+        }
+      ],
+      "files_at_snapshot": {
+        "ready": [
+          0,
+          1792836250796631725
+        ],
+        "console.log": [
+          0,
+          1792836250772631860
+        ]
+      },
+      "frozen_before_snapshot": [
+        {
+          "pid": 297616,
+          "ppid": 296226,
+          "pgid": 297616,
+          "state": "T",
+          "ticks": 2,
+          "start": "7860284",
+          "command": "/workspace/.venvs/psm-wma-cpu/bin/python -u -c import pathlib,subprocess,sys,time; pathlib.Path('ready').touch(); exec(\"while not pathlib.Path('spawn').exists(): time.sleep(.01)\"); child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True); pathlib.Path('child_pid').write_text(str(child.pid)); time.sleep(60) "
+        }
+      ],
+      "snapshot_skipped": [],
+      "snapshot_scope": "bounded prefix at observed file size; concurrent later appends excluded",
+      "cleanup_subreaper_original": 1,
+      "killed_owned_pids": [
+        297617,
+        297616
+      ],
+      "cleanup_errors": [],
+      "cleanup_budget_s": 10,
+      "cleanup_final_processes": [],
+      "cleanup_remaining_live": [],
+      "returncode_after_cleanup": -9,
+      "foreign_control_pid": 297615,
+      "foreign_control_alive": true,
+      "late_child_pids": [
+        297617
+      ]
+    }
+  },
+  {
+    "kind": "WATCHDOG_FAILURE",
+    "state": {
+      "case": "allocation_negative",
+      "root_pid": 297623,
+      "reason": "WATCHDOG_INTERNAL_FAILED",
+      "snapshot_error": "EVIDENCE_SNAPSHOT_FAILED: OSError: evidence volume unavailable",
+      "cleanup_subreaper_original": 1,
+      "killed_owned_pids": [
+        297623
+      ],
+      "cleanup_errors": [],
+      "cleanup_budget_s": 10,
+      "cleanup_final_processes": [],
+      "cleanup_remaining_live": [],
+      "returncode_after_cleanup": -9
+    }
+  },
+  {
+    "kind": "WATCHDOG_FAILURE",
+    "state": {
+      "case": "interrupt_negative",
+      "root_pid": 297628,
+      "reason": "WATCHDOG_INTERNAL_FAILED",
+      "snapshot_error": "EVIDENCE_SNAPSHOT_FAILED: KeyboardInterrupt: ",
+      "cleanup_subreaper_original": 1,
+      "killed_owned_pids": [
+        297628
+      ],
+      "cleanup_errors": [],
+      "cleanup_budget_s": 10,
+      "cleanup_final_processes": [],
+      "cleanup_remaining_live": [],
+      "returncode_after_cleanup": -9
+    }
+  },
+  {
+    "kind": "FIXTURE_CLEANUP_WITNESS",
+    "state": {
+      "case": "snapshot_io_negative",
+      "root_pid": 297632,
+      "hard_s": 0.3,
+      "stall_s": 5,
+      "reason": "hard_limit",
+      "progress_policy": "file/owned CPU advances",
+      "elapsed_s": 0.39893755699449684,
+      "returncode_before_cleanup": null,
+      "samples": [
+        {
+          "elapsed_s": 0.13446816299983766,
+          "processes": [
+            {
+              "pid": 297632,
+              "ppid": 296226,
+              "pgid": 297632,
+              "state": "S",
+              "ticks": 2,
+              "start": "7861226",
+              "command": "/workspace/.venvs/psm-wma-cpu/bin/python -u -c import pathlib,subprocess,sys,time; pathlib.Path('ready').touch(); exec(\"while not pathlib.Path('spawn').exists(): time.sleep(.01)\"); child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True); pathlib.Path('child_pid').write_text(str(child.pid)); time.sleep(60) "
+            }
+          ]
+        }
+      ],
+      "owned_at_snapshot": [
+        {
+          "pid": 297632,
+          "ppid": 296226,
+          "pgid": 297632,
+          "state": "S",
+          "ticks": 2,
+          "start": "7861226",
+          "command": "/workspace/.venvs/psm-wma-cpu/bin/python -u -c import pathlib,subprocess,sys,time; pathlib.Path('ready').touch(); exec(\"while not pathlib.Path('spawn').exists(): time.sleep(.01)\"); child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True); pathlib.Path('child_pid').write_text(str(child.pid)); time.sleep(60) "
+        }
+      ],
+      "files_at_snapshot": {
+        "ready": [
+          0,
+          1792836260216575965
+        ],
+        "console.log": [
+          0,
+          1792836260192576110
+        ]
+      },
+      "frozen_before_snapshot": [
+        {
+          "pid": 297632,
+          "ppid": 296226,
+          "pgid": 297632,
+          "state": "T",
+          "ticks": 2,
+          "start": "7861226",
+          "command": "/workspace/.venvs/psm-wma-cpu/bin/python -u -c import pathlib,subprocess,sys,time; pathlib.Path('ready').touch(); exec(\"while not pathlib.Path('spawn').exists(): time.sleep(.01)\"); child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True); pathlib.Path('child_pid').write_text(str(child.pid)); time.sleep(60) "
+        }
+      ],
+      "snapshot_skipped": [],
+      "snapshot_scope": "bounded prefix at observed file size; concurrent later appends excluded",
+      "snapshot_error": "EVIDENCE_SNAPSHOT_FAILED: OSError: injected EVIDENCE_SNAPSHOT_FAILED disk write",
+      "cleanup_subreaper_original": 1,
+      "killed_owned_pids": [
+        297632
+      ],
+      "cleanup_errors": [],
+      "cleanup_budget_s": 10,
+      "cleanup_final_processes": [],
+      "cleanup_remaining_live": [],
+      "returncode_after_cleanup": -9,
+      "diagnostic_write_errors": [
+        "watchdog.json: OSError: injected EVIDENCE_SNAPSHOT_FAILED disk write"
+      ],
+      "foreign_control_pid": 297631,
+      "foreign_control_alive": true,
+      "late_child_pids": []
+    }
+  }
+]

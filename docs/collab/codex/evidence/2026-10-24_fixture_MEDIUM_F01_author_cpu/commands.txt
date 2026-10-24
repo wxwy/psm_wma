@@ -1,0 +1,29 @@
+cwd=/workspace/psm_wma
+ENV CUDA_VISIBLE_DEVICES=empty HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 PYTHONPATH=.:scripts:tools/v3 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 XDG_CACHE_HOME=/tmp/psm-v3-watchdog-f01-20261024/cache HF_HOME=/tmp/psm-v3-watchdog-f01-20261024/hf MPLCONFIGDIR=/tmp/psm-v3-watchdog-f01-20261024/mpl PSM_WMA_FIXTURE_EVIDENCE_DIR=/tmp/psm-v3-watchdog-f01-20261024/frozen_final_scenarios
+COMMAND JSON (five unique paths):
+[
+  "/workspace/.venvs/psm-wma-cpu/bin/python",
+  "-m",
+  "pytest",
+  "--noconftest",
+  "-c",
+  "/dev/null",
+  "--rootdir=/workspace/psm_wma",
+  "-p",
+  "no:cacheprovider",
+  "-q",
+  "-s",
+  "tools/v3/robocasa_resume_components_test.py",
+  "tools/v3/robocasa_resume_store_test.py",
+  "tools/v3/robocasa_resume_execution_test.py",
+  "tools/v3/robocasa_episode_resume_integration_test.py",
+  "tools/v3/eval_robocasa_queue_identity_test.py",
+  "--junitxml=/tmp/psm-v3-watchdog-f01-20261024/final/junit.xml"
+]
+Final runner run_final.py asserts exactly5unique files before starting pytest; copied with evidence.
+RED: same Python/no conftest/config/cache; Queue file -k "snapshot_write_failure or child_created_during_snapshot",baseline watchdog, new tests, junit=red.xml/log=red.log.
+GREEN: Queue file -k FixtureWatchdogTests; green_final.xml/log, explicitCPU/PYTHONPATH/no-bytecode env and green_final_scenarios. No red/green count addition to final full run.
+
+/workspace/.venvs/psm-wma-cpu/bin/ruff check --config cosmos-framework/.ruff.toml scripts/robocasa_episode_resume/__init__.py scripts/robocasa_episode_resume/episode_evidence.py scripts/robocasa_episode_resume/model_identity.py scripts/robocasa_episode_resume/plan.py scripts/robocasa_episode_resume/reservation_recovery.py scripts/robocasa_episode_resume/scene_sampling.py scripts/robocasa_resume_cli.py scripts/robocasa_resume_store.py scripts/robocasa_resume_execution.py scripts/eval_robocasa_18task_queue.py tools/v3/robocasa_resume_components_test.py tools/v3/robocasa_resume_store_test.py tools/v3/robocasa_resume_execution_test.py tools/v3/robocasa_episode_resume_integration_test.py tools/v3/eval_robocasa_queue_identity_test.py tools/v3/queue_fixture_watchdog.py
+/workspace/.venvs/psm-wma-cpu/bin/ruff format --check --config cosmos-framework/.ruff.toml scripts/robocasa_episode_resume/__init__.py scripts/robocasa_episode_resume/episode_evidence.py scripts/robocasa_episode_resume/model_identity.py scripts/robocasa_episode_resume/plan.py scripts/robocasa_episode_resume/reservation_recovery.py scripts/robocasa_episode_resume/scene_sampling.py scripts/robocasa_resume_cli.py scripts/robocasa_resume_store.py scripts/robocasa_resume_execution.py scripts/eval_robocasa_18task_queue.py tools/v3/robocasa_resume_components_test.py tools/v3/robocasa_resume_store_test.py tools/v3/robocasa_resume_execution_test.py tools/v3/robocasa_episode_resume_integration_test.py tools/v3/eval_robocasa_queue_identity_test.py tools/v3/queue_fixture_watchdog.py
+env PYTHONDONTWRITEBYTECODE=1 /workspace/.venvs/psm-wma-cpu/bin/python /tmp/psm-v3-watchdog-f01-20261024/final/static_checks.py

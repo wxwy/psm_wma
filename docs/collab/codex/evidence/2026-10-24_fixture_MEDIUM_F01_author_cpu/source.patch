@@ -1,0 +1,335 @@
+diff --git a/SESSION.md b/SESSION.md
+index a18f7d34..e3a0d99d 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1612,0 +1613,5 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
++
++## 2026-10-24 — Fixture MEDIUM-F01
++- Synced72b66438->976f77e7529a11dffef48ea0388ed6454a0b1209;advertised verified. Read exact GPT REQUEST_CHANGES dfb8a121/813a550d. Isolated v3-fixture-watchdog-f01-20261024; only watchdog+controls. Freeze owned writers before fallible snapshot, unconditional bounded rediscovery/kill/reap with start identity, retain snapshot failure diagnosis. Deterministic red/green snapshot I/O and born-during-retain child/foreign controls, oldfour+fullfive preserved. No production/Child/G1/GPU/history edits;newSHA/Evidence thenSTOP.
++
++- MEDIUM-F01 final author frozen fullfive172PASS+72subtests PASS,0failure/error/skip,1661.249s. Baseline two deterministic tests RED2FAIL; final controls8PASS inclold4+snapshotwrite/latechild/allocfailure/interrupt. Newlate PID/PGID absent, root+children reaped,foreign alive,subreaper restored;RootSnapshotFailure fallbackcleanup.json/exceptionstate retainsprimarydeadline. Lifecycle try/finally and guardedsetup cover I/O; userinterrupt cleans thenpropagates. Ruff0.12.7check/format/compile16/frozenhash/protectedtrees PASS. Intermediate aborted/duplicate/cancel-guard attempts preserved NOTPASS. Onlywatchdog+controls, production trees identical6151;newRoot thenboundEvidence/mandatoryInboxrollover andSTOP forfreshGPTF01review/DSCPU;noGPU/model/DCP/G1/history.
+diff --git a/TODO.md b/TODO.md
+index b49935e4..444b3323 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -462,0 +463,4 @@
++
++- **V3-FIXTURE-MEDIUM-F01-20261024** — IN_PROGRESS;Codex;exact dfb8/813 GPT review at976f77e7. Only testwatchdog cleanup safety+deterministic negatives; snapshot error must not bypass owned cleanup, late different-session child reclaimed, foreign survives. NewRoot+CPU evidence thenfreshreview,DSstillRED.
++
++- **V3-FIXTURE-MEDIUM-F01-20261024** — REVIEW; unconditional bounded cleanup/latechild rediscovery/reap+snapshoterror diagnostics complete. DeterministicRED2FAIL,finalcontrols8PASS,fullfive172PASS+72subtests/0fail/error/skip;Ruff/static16PASS. NewexactRoot/unchanged813Child,rawEvidence thenGPTincremental andDSindependent CPU;DSstillRED,STOP afterdelivery,no realexecution.
+diff --git a/tools/v3/eval_robocasa_queue_identity_test.py b/tools/v3/eval_robocasa_queue_identity_test.py
+index 547f112a..b4a82a4b 100644
+--- a/tools/v3/eval_robocasa_queue_identity_test.py
++++ b/tools/v3/eval_robocasa_queue_identity_test.py
+@@ -33,0 +34 @@ from unittest.mock import patch
++import queue_fixture_watchdog as watchdog_module
+@@ -1294,0 +1296,112 @@ class FixtureWatchdogTests(unittest.TestCase):
++    def _cleanup_fault(self, *, snapshot_error):
++        external = self.evidence_root()
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            foreign = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True)
++            child_pid = []
++            process, source = self.run_child(
++                "import pathlib,subprocess,sys,time; pathlib.Path('ready').touch(); "
++                "exec(\"while not pathlib.Path('spawn').exists(): time.sleep(.01)\"); "
++                "child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True); "
++                "pathlib.Path('child_pid').write_text(str(child.pid)); time.sleep(60)",
++                hard=1,
++                stall=5,
++                root=root,
++            )
++            original = watchdog_module._retain
++            original_write = Path.write_text
++
++            def live(pid):
++                row = watchdog_module._processes().get(pid)
++                return row is not None and row["state"] != "Z"
++
++            def retain(destination, source_path, state):
++                if not snapshot_error:
++                    # Explicitly resume the frozen producer to deterministically
++                    # exercise the post-snapshot rediscovery safety net.
++                    os.kill(process.pid, signal.SIGCONT)
++                    (source_path / "spawn").touch()
++                    until = time.monotonic() + 5
++                    while not (source_path / "child_pid").exists():
++                        self.assertLess(time.monotonic(), until, "late child not spawned")
++                        time.sleep(0.01)
++                    child_pid.append(int((source_path / "child_pid").read_text()))
++                    self.assertTrue(live(child_pid[0]))
++                    self.assertNotEqual(os.getpgid(child_pid[0]), os.getpgid(process.pid))
++                original(destination, source_path, state)
++
++            def fail_json(path, *args, **kwargs):
++                if snapshot_error and path.name == "watchdog.json":
++                    raise OSError("injected EVIDENCE_SNAPSHOT_FAILED disk write")
++                return original_write(path, *args, **kwargs)
++
++            try:
++                until = time.monotonic() + 5
++                while not (source / "ready").exists():
++                    self.assertLess(time.monotonic(), until, "producer did not start")
++                    time.sleep(0.01)
++                with (
++                    patch.object(watchdog_module, "_retain", side_effect=retain),
++                    patch.object(Path, "write_text", fail_json),
++                ):
++                    with self.assertRaisesRegex(FixtureWatchdogTimeout, "hard_limit") as caught:
++                        watch(
++                            process,
++                            source,
++                            case="snapshot_io_negative" if snapshot_error else "late_child_negative",
++                            hard_s=0.3,
++                            stall_s=5,
++                            poll_s=0.02,
++                            evidence_root=external,
++                        )
++                self.assertEqual(process.returncode, -signal.SIGKILL)
++                self.assertIsNone(foreign.poll())
++                for pid in child_pid:
++                    self.assertFalse(live(pid), "late distinct-session child leaked")
++                    self.assertNotIn(pid, watchdog_module._processes(), "late child was not reaped")
++                    self.assertFalse(any(row["pgid"] == pid for row in watchdog_module._processes().values()))
++                state = caught.exception.state
++                self.assertEqual(state["cleanup_remaining_live"], [])
++                self.assertNotIn(foreign.pid, state["killed_owned_pids"])
++                if snapshot_error:
++                    self.assertIn("EVIDENCE_SNAPSHOT_FAILED", state["snapshot_error"])
++                    self.assertTrue(list(external.rglob("cleanup.json")), "fallback diagnostics missing")
++                else:
++                    self.assertIn(child_pid[0], state["killed_owned_pids"])
++                state["foreign_control_pid"] = foreign.pid
++                state["foreign_control_alive"] = foreign.poll() is None
++                state["late_child_pids"] = child_pid
++                print("FIXTURE_CLEANUP_WITNESS " + json.dumps(state), flush=True)
++            finally:
++                if process.poll() is None:
++                    process.kill()
++                    process.wait()
++                for pid in child_pid:
++                    if live(pid):
++                        os.kill(pid, signal.SIGKILL)
++                foreign.kill()
++                foreign.wait()
++
++    def test_snapshot_write_failure_still_reaps_owned_process(self):
++        self._cleanup_fault(snapshot_error=True)
++
++    def test_child_created_during_snapshot_is_reaped_without_foreign_kill(self):
++        self._cleanup_fault(snapshot_error=False)
++
++    def test_evidence_directory_failure_still_cleans_root(self):
++        with tempfile.TemporaryDirectory() as directory:
++            process, source = self.run_child("import time;time.sleep(60)", hard=1, stall=5, root=Path(directory))
++            with patch.object(watchdog_module.tempfile, "mkdtemp", side_effect=OSError("evidence volume unavailable")):
++                with self.assertRaisesRegex(FixtureWatchdogTimeout, "EVIDENCE_SNAPSHOT_FAILED") as caught:
++                    watch(process, source, case="allocation_negative", hard_s=1)
++            self.assertEqual(process.returncode, -signal.SIGKILL)
++            self.assertEqual(caught.exception.state["cleanup_remaining_live"], [])
++
++    def test_interruption_during_evidence_setup_cleans_then_propagates(self):
++        with tempfile.TemporaryDirectory() as directory:
++            process, source = self.run_child("import time;time.sleep(60)", hard=1, stall=5, root=Path(directory))
++            with patch.object(watchdog_module.tempfile, "mkdtemp", side_effect=KeyboardInterrupt):
++                with self.assertRaises(KeyboardInterrupt):
++                    watch(process, source, case="interrupt_negative", hard_s=1)
++            self.assertEqual(process.returncode, -signal.SIGKILL)
++
+diff --git a/tools/v3/queue_fixture_watchdog.py b/tools/v3/queue_fixture_watchdog.py
+index 6d58da51..97703ecf 100644
+--- a/tools/v3/queue_fixture_watchdog.py
++++ b/tools/v3/queue_fixture_watchdog.py
+@@ -4,0 +5 @@ from __future__ import annotations
++import ctypes
+@@ -7,0 +9 @@ import signal
++import sys
+@@ -14 +16,3 @@ class FixtureWatchdogTimeout(AssertionError):
+-    pass
++    def __init__(self, message, state=None):
++        super().__init__(message)
++        self.state = state
+@@ -40 +44 @@ def _owned(rows, root_pid, known):
+-    if root_pid in rows:
++    if root_pid in rows and (root_pid not in known or rows[root_pid]["start"] == known[root_pid]):
+@@ -95 +99,101 @@ def _retain(destination, source, state):
+-def watch(process, source, *, case, hard_s, stall_s=180.0, poll_s=0.5, evidence_root=None, media_only=False):
++def _freeze(process, known, until):
++    """Stop writers first, then close over descendants (including new sessions)."""
++    rows = []
++    while time.monotonic() < until:
++        rows = _owned(_processes(), process.pid, known)
++        moving = [r for r in rows if r["state"] not in {"T", "t", "Z"}]
++        if not moving:
++            return rows
++        for row in moving:  # Root first prevents its threads spawning more work.
++            fresh = _processes().get(row["pid"])
++            if fresh is not None and fresh["start"] == row["start"]:
++                try:
++                    os.kill(row["pid"], signal.SIGSTOP)
++                except ProcessLookupError:
++                    pass
++        time.sleep(0.01)
++    raise RuntimeError("owned processes could not be frozen within cleanup budget")
++
++
++def _cleanup_owned(process, known, state):
++    until = time.monotonic() + 10
++    state.update(killed_owned_pids=[], cleanup_errors=[], cleanup_budget_s=10)
++    try:
++        _freeze(process, known, min(until, time.monotonic() + 2))
++    except Exception as error:
++        state["cleanup_errors"].append(f"freeze: {type(error).__name__}: {error}")
++    while time.monotonic() < until:
++        rows = _owned(_processes(), process.pid, known)
++        live = [row for row in rows if row["state"] != "Z"]
++        if not live:
++            break
++        for row in reversed(live):
++            fresh = _processes().get(row["pid"])
++            if fresh is not None and fresh["start"] == row["start"]:
++                try:
++                    os.kill(row["pid"], signal.SIGKILL)
++                    if row["pid"] not in state["killed_owned_pids"]:
++                        state["killed_owned_pids"].append(row["pid"])
++                except OSError as error:
++                    state["cleanup_errors"].append(f"kill {row['pid']}: {error}")
++        time.sleep(0.01)
++    # Popen owns/reaps the root; only reap identified adopted children, never a
++    # global waitpid(-1) which could steal another fixture's process status.
++    if process.poll() is None:
++        process.kill()
++    try:
++        process.wait(timeout=max(0.01, until - time.monotonic()))
++    except Exception as error:
++        state["cleanup_errors"].append(f"root reap: {error}")
++    while time.monotonic() < until:
++        children = [r for r in _owned(_processes(), process.pid, known) if r["pid"] != process.pid]
++        if not children:
++            break
++        for row in children:
++            try:
++                os.waitpid(row["pid"], os.WNOHANG)
++            except ChildProcessError:
++                pass
++        time.sleep(0.01)
++    rows = _owned(_processes(), process.pid, known)
++    state["cleanup_final_processes"] = rows
++    state["cleanup_remaining_live"] = [r["pid"] for r in rows if r["state"] != "Z"]
++    state["returncode_after_cleanup"] = process.returncode
++
++
++def _cleanup(process, known, state):
++    # Linux /proc is already a fixture prerequisite. Temporarily adopt orphaned
++    # descendants so killed separate-session children can be reaped, not merely
++    # left as zombies under PID1. Never waitpid(-1) or touch foreign controls.
++    libc = ctypes.CDLL(None, use_errno=True)
++    previous = ctypes.c_int()
++    changed = False
++    try:
++        if libc.prctl(37, ctypes.byref(previous), 0, 0, 0) != 0:
++            raise OSError(ctypes.get_errno(), "GET_CHILD_SUBREAPER")
++        if previous.value == 0:
++            if libc.prctl(36, 1, 0, 0, 0) != 0:
++                raise OSError(ctypes.get_errno(), "SET_CHILD_SUBREAPER")
++            changed = True
++        state["cleanup_subreaper_original"] = previous.value
++    except OSError as error:
++        state["cleanup_subreaper_error"] = str(error)
++    try:
++        _cleanup_owned(process, known, state)
++    finally:
++        if changed:
++            state["cleanup_subreaper_restored"] = libc.prctl(36, previous.value, 0, 0, 0) == 0
++
++
++def _failure_report(destination, state):
++    for name in ("watchdog.json", "cleanup.json"):
++        try:
++            (destination / name).write_text(json.dumps(state, indent=2) + "\n")
++            return
++        except Exception as error:
++            state.setdefault("diagnostic_write_errors", []).append(f"{name}: {type(error).__name__}: {error}")
++    # A full evidence volume must not erase the exception's readable diagnosis.
++    print("WATCHDOG_FAILURE " + json.dumps(state, ensure_ascii=True), file=sys.stderr, flush=True)
++
++
++def _watch(process, source, *, case, hard_s, stall_s, poll_s, evidence_root, media_only, known):
+@@ -109 +213 @@ def watch(process, source, *, case, hard_s, stall_s=180.0, poll_s=0.5, evidence_
+-    known, previous, samples = {}, None, []
++    previous, samples = None, []
+@@ -152 +256,15 @@ def watch(process, source, *, case, hard_s, stall_s=180.0, poll_s=0.5, evidence_
+-    _retain(destination, source, state)  # Must precede SIGKILL/temp-dir cleanup.
++    snapshot_error = None
++    try:
++        if reason:
++            state["frozen_before_snapshot"] = _freeze(process, known, time.monotonic() + 2)
++        _retain(destination, source, state)
++    except BaseException as error:
++        snapshot_error = error
++        state["snapshot_error"] = f"EVIDENCE_SNAPSHOT_FAILED: {type(error).__name__}: {error}"
++        reason = reason or "EVIDENCE_SNAPSHOT_FAILED"
++        state["reason"] = reason
++    finally:
++        if reason:
++            # This path is independent of fallible snapshot/report I/O. Refresh
++            # ownership after retention, even if a hook resumed/spawned a child.
++            _cleanup(process, known, state)
+@@ -154,14 +272,6 @@ def watch(process, source, *, case, hard_s, stall_s=180.0, poll_s=0.5, evidence_
+-        killed = []
+-        for row in reversed(rows):
+-            fresh = _processes().get(row["pid"])
+-            if fresh is not None and fresh["start"] == row["start"]:
+-                try:
+-                    os.kill(row["pid"], signal.SIGKILL)
+-                    killed.append(row["pid"])
+-                except ProcessLookupError:
+-                    pass
+-        process.wait(timeout=10)
+-        state["killed_owned_pids"] = killed
+-        state["returncode_after_cleanup"] = process.returncode
+-        (destination / "watchdog.json").write_text(json.dumps(state, indent=2) + "\n")
+-        raise FixtureWatchdogTimeout(f"{case}: {reason}; evidence={destination}")
++        _failure_report(destination, state)
++        if isinstance(snapshot_error, (KeyboardInterrupt, SystemExit)):
++            raise snapshot_error
++        raise FixtureWatchdogTimeout(
++            f"{case}: {reason}; {state.get('snapshot_error', '')}; evidence={destination}", state
++        ) from snapshot_error
+@@ -168,0 +279,36 @@ def watch(process, source, *, case, hard_s, stall_s=180.0, poll_s=0.5, evidence_
++
++
++def watch(process, source, *, case, hard_s, stall_s=180.0, poll_s=0.5, evidence_root=None, media_only=False):
++    """Guard the entire lifecycle, including evidence allocation/observation I/O."""
++    known = {}
++    try:
++        return _watch(
++            process,
++            source,
++            case=case,
++            hard_s=hard_s,
++            stall_s=stall_s,
++            poll_s=poll_s,
++            evidence_root=evidence_root,
++            media_only=media_only,
++            known=known,
++        )
++    except FixtureWatchdogTimeout:
++        raise  # Terminal snapshot path already performed unconditional cleanup.
++    except BaseException as error:
++        state = {
++            "case": case,
++            "root_pid": process.pid,
++            "reason": "WATCHDOG_INTERNAL_FAILED",
++            "snapshot_error": f"EVIDENCE_SNAPSHOT_FAILED: {type(error).__name__}: {error}",
++        }
++        try:
++            _cleanup(process, known, state)
++        finally:
++            try:
++                print("WATCHDOG_FAILURE " + json.dumps(state, ensure_ascii=True), file=sys.stderr, flush=True)
++            except OSError:
++                pass  # The raised exception still carries readable diagnostics.
++        if isinstance(error, (KeyboardInterrupt, SystemExit)):
++            raise
++        raise FixtureWatchdogTimeout(f"{case}: {state['snapshot_error']}", state) from error

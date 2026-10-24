@@ -1,0 +1,19 @@
+[
+  "/workspace/.venvs/psm-wma-cpu/bin/python",
+  "-m",
+  "pytest",
+  "--noconftest",
+  "-c",
+  "/dev/null",
+  "--rootdir=/workspace/psm_wma",
+  "-p",
+  "no:cacheprovider",
+  "-q",
+  "-s",
+  "tools/v3/robocasa_resume_components_test.py",
+  "tools/v3/robocasa_resume_store_test.py",
+  "tools/v3/robocasa_resume_execution_test.py",
+  "tools/v3/robocasa_episode_resume_integration_test.py",
+  "tools/v3/eval_robocasa_queue_identity_test.py",
+  "--junitxml=/tmp/psm-v3-watchdog-f01-20261024/final/junit.xml"
+]
