@@ -1,0 +1,365 @@
+diff --git a/SESSION.md b/SESSION.md
+index 9e025c94..caccda3b 100644
+--- a/SESSION.md
++++ b/SESSION.md
+@@ -1605,0 +1606,5 @@ Source published and remotely re-read: Formal Root 444c232b976e80ac68cde9e7370e7
++
++## 2026-10-24 — DS Retry1 fixture-only stability remediation
++- ff-only236c8a18->22b0abcb advertised verified. Read exact GPT Code APPROVE6151e071/813a550d and retry Evidence REQUEST_CHANGES. Scope only Queue test +test-only helper, external red/green/fullCPU evidence. No production/Child/Vendor/G1/old results changes. Isolated v3-flexible-resume-fixture-r3-20261024, Parent owns files; fullfive CPU and new Root thenGPT/DS,STOP.
++
++- Fixture-only r3 frozen fullfive author CPU168PASS+72subtests PASS,0fail/error/skip,1399.805s. Focused7PASS+15subtests, finalcontrols4PASS; controlled wait-only RED1FAIL explicitly not DS90 reproduction. RealFFmpeg kept; task_timeout witness120.336s,SIGTERM/SIGKILL,1failure/3healthyTasks/15closedEpisodes; original assertions preserved and strengthened. Ruff0.12.7check/format/compile16/frozen hashes/production-protected diff PASS. Only Queuefixture+newstdlibwatchdog changed;600/900hard,180media/core inactivity,120task,300latewait; prekill durable bounded snapshot excludesheartbeat and retains ownership/source/media. Production scripts/config/vendor/Child match6151. NewtestRoot thenEvidence+Inboxrollover(byte-identical),GPTfreshfixture review/DSCPU,STOP.
+diff --git a/TODO.md b/TODO.md
+index 884f80a8..b49935e4 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -458,0 +459,4 @@
++
++- **V3-RESUME-FIXTURE-R3-20261024** — IN_PROGRESS; Codex; retry1Evidence-only REQUEST_CHANGES. Bounded media-aware watchdog+stall/hard cap, owned-process prekill evidence, Task deadline fault isolation with strict assertions and realFFmpeg. New test-only SHA, red/green +five CPU, STOP.
++
++- **V3-RESUME-FIXTURE-R3-20261024** — REVIEW; bounded watchdog/heartbeat exclusion/external prekill capture and real task deadline isolation complete. Author fullfive168PASS+72subtests/0skip;focused7+15,controls4,controlledRED1FAIL separated;Ruff0.12.7/static16PASS. New exactfixtureRoot/unchangedChild thenGPTincremental review andDSindependentCPU;DSGate remainsRED until closure, no production/G1/GPU changes.
+diff --git a/tools/v3/eval_robocasa_queue_identity_test.py b/tools/v3/eval_robocasa_queue_identity_test.py
+index 37c3ffee..547f112a 100644
+--- a/tools/v3/eval_robocasa_queue_identity_test.py
++++ b/tools/v3/eval_robocasa_queue_identity_test.py
+@@ -33,0 +34,2 @@ from unittest.mock import patch
++from queue_fixture_watchdog import FixtureWatchdogTimeout, watch
++
+@@ -40,2 +42,2 @@ TASKS = {"CloseFridge", "TurnOnSinkFaucet", "PickPlaceSinkToCounter", "NavigateK
+-COMPLETION_WAIT_S = 120.0
+-LATE_SCENARIO_WATCHDOG_S = COMPLETION_WAIT_S + 60.0
++COMPLETION_WAIT_S = 300.0
++LATE_SCENARIO_WATCHDOG_S = 600.0
+@@ -59 +61 @@ def _scenario_watchdog(case):
+-    return LATE_SCENARIO_WATCHDOG_S if case in LATE_COMPLETION_CASES else 90.0
++    return 900.0 if case == "task_timeout" else 600.0
+@@ -713 +715,2 @@ def _scenario(case, parent, count):
+-                script = "import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'-c','import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep(60)']);time.sleep(60)"
++                duration = 3600 if case == "task_timeout" else 60
++                script = f"import subprocess,sys,time,signal; signal.signal(signal.SIGTERM,signal.SIG_IGN); subprocess.Popen([sys.executable,'-c','import signal,time;signal.signal(signal.SIGTERM,signal.SIG_IGN);time.sleep({duration})']);time.sleep({duration})"
+@@ -857 +860 @@ def _scenario(case, parent, count):
+-        argv += ["--task-wall-timeout-s", "5"]
++        argv += ["--task-wall-timeout-s", "120"]
+@@ -1160,0 +1164,132 @@ class ServerIdentityTests(unittest.TestCase):
++class FixtureWatchdogTests(unittest.TestCase):
++    def evidence_root(self):
++        base = Path(os.environ.get("PSM_WMA_FIXTURE_EVIDENCE_DIR", "/tmp/psm-wma-queue-fixture-evidence"))
++        base.mkdir(parents=True, exist_ok=True)
++        return Path(tempfile.mkdtemp(prefix="watchdog_control_", dir=base))
++
++    def run_child(self, script, *, hard, stall, root):
++        source = root / "source"
++        source.mkdir(exist_ok=True)
++        with (source / "console.log").open("w") as log:
++            process = subprocess.Popen(
++                [sys.executable, "-u", "-c", script],
++                cwd=source,
++                stdout=log,
++                stderr=subprocess.STDOUT,
++                start_new_session=True,
++            )
++
++            def reap():
++                if process.poll() is None:
++                    process.kill()
++                process.wait()
++
++            self.addCleanup(reap)
++            return process, source
++
++    def test_real_progress_exceeds_old_budget_but_completes(self):
++        external_evidence = self.evidence_root()
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            process, source = self.run_child(
++                "import time; [(print(i,flush=True),time.sleep(.05)) for i in range(12)]", hard=2, stall=0.3, root=root
++            )
++            # A finite old-style outer budget expires despite genuine forward progress.
++            with self.assertRaises(subprocess.TimeoutExpired):
++                process.wait(timeout=0.1)
++            code, saved = watch(
++                process,
++                source,
++                case="progress_positive",
++                hard_s=10,
++                stall_s=3.0,
++                poll_s=0.02,
++                evidence_root=external_evidence,
++            )
++            self.assertEqual(code, 0)
++            self.assertIn("11", (saved / "source/console.log").read_text())
++            witness = {
++                "old_wait_s": 0.1,
++                "old_wait_result": "TimeoutExpired",
++                "new_result": code,
++                "scope": "controlled progressing producer, not DS90s reproduction",
++            }
++            (saved / "budget_red_green.json").write_text(json.dumps(witness) + "\n")
++            print("FIXTURE_BUDGET_WITNESS " + json.dumps(witness), flush=True)
++        self.assertTrue((saved / "source/console.log").is_file())
++
++    def test_stall_retains_evidence_before_kill_and_leaves_foreign_process_alive(self):
++        external_evidence = self.evidence_root()
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            foreign = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True)
++            try:
++                process, source = self.run_child(
++                    "import time;print('last stage: stall',flush=True);time.sleep(60)", hard=3, stall=0.2, root=root
++                )
++                with self.assertRaisesRegex(FixtureWatchdogTimeout, "no_cpu_or_file_progress"):
++                    watch(
++                        process,
++                        source,
++                        case="stall_negative",
++                        hard_s=10,
++                        stall_s=3.0,
++                        poll_s=0.02,
++                        evidence_root=external_evidence,
++                    )
++                saved = next(external_evidence.iterdir())
++                witness = json.loads((saved / "watchdog.json").read_text())
++                self.assertIsNone(witness["returncode_before_cleanup"])
++                self.assertEqual(process.returncode, -signal.SIGKILL)
++                self.assertIn("last stage: stall", (saved / "source/console.log").read_text())
++                self.assertNotIn(foreign.pid, witness["killed_owned_pids"])
++                self.assertIsNone(foreign.poll())
++            finally:
++                foreign.kill()
++                foreign.wait()
++
++    def test_cpu_activity_cannot_extend_hard_limit(self):
++        external_evidence = self.evidence_root()
++        with tempfile.TemporaryDirectory() as directory:
++            root = Path(directory)
++            process, source = self.run_child("while True: pass", hard=0.4, stall=0.3, root=root)
++            with self.assertRaisesRegex(FixtureWatchdogTimeout, "hard_limit"):
++                watch(
++                    process,
++                    source,
++                    case="busy_negative",
++                    hard_s=1.0,
++                    stall_s=3.0,
++                    poll_s=0.02,
++                    evidence_root=external_evidence,
++                )
++            self.assertEqual(process.returncode, -signal.SIGKILL)
++
++    def test_heartbeat_is_not_media_progress(self):
++        external_evidence = self.evidence_root()
++        with tempfile.TemporaryDirectory() as directory:
++            process, source = self.run_child(
++                "import time; [(print('heartbeat',flush=True),time.sleep(.02)) for _ in range(300)]",
++                hard=3,
++                stall=0.3,
++                root=Path(directory),
++            )
++            until = time.monotonic() + 5
++            while "heartbeat" not in (source / "console.log").read_text():
++                self.assertLess(time.monotonic(), until, "heartbeat producer did not start")
++                time.sleep(0.02)
++            with self.assertRaisesRegex(FixtureWatchdogTimeout, "no_cpu_or_file_progress"):
++                watch(
++                    process,
++                    source,
++                    case="heartbeat_negative",
++                    hard_s=5,
++                    stall_s=1.0,
++                    poll_s=0.02,
++                    media_only=True,
++                    evidence_root=external_evidence,
++                )
++        saved = next(external_evidence.iterdir())
++        self.assertTrue((saved / "source/console.log").exists())
++
++
+@@ -1179,6 +1314,3 @@ class QueueIntegrationTests(unittest.TestCase):
+-                try:
+-                    rc = process.wait(timeout=_scenario_watchdog(case))
+-                except subprocess.TimeoutExpired:
+-                    os.killpg(process.pid, signal.SIGKILL)
+-                    process.wait()
+-                    self.fail("CPU queue fixture hung; owned process group killed")
++                rc, evidence_dir = watch(process, parent, case=case, hard_s=_scenario_watchdog(case), media_only=True)
++            # Preserve source and log paths even if a subsequent assertion fails.
++            print(f"FIXTURE_EVIDENCE {case} {evidence_dir}", flush=True)
+@@ -1463,0 +1596,6 @@ class QueueIntegrationTests(unittest.TestCase):
++                if case == "task_timeout":
++                    failures = [row for row in report["summary"]["job_results"] if row["error"]]
++                    self.assertEqual(len(failures), 1)
++                    self.assertIn("task wall timeout", failures[0]["error"])
++                    self.assertGreaterEqual(failures[0]["elapsed_s"], 119.5)
++                    self.assertEqual(report["summary"]["completed_tasks"], 3)
+diff --git a/tools/v3/queue_fixture_watchdog.py b/tools/v3/queue_fixture_watchdog.py
+new file mode 100644
+index 00000000..6d58da51
+--- /dev/null
++++ b/tools/v3/queue_fixture_watchdog.py
+@@ -0,0 +1,168 @@
++"""CPU test-only watchdog; real media and production deadlines remain intact."""
++
++from __future__ import annotations
++
++import json
++import os
++import signal
++import tempfile
++import time
++from pathlib import Path
++
++
++class FixtureWatchdogTimeout(AssertionError):
++    pass
++
++
++def _processes():
++    rows = {}
++    for path in Path("/proc").glob("[0-9]*/stat"):
++        try:
++            raw = path.read_text()
++            fields = raw[raw.rfind(")") + 2 :].split()
++            pid = int(path.parent.name)
++            rows[pid] = {
++                "pid": pid,
++                "ppid": int(fields[1]),
++                "pgid": int(fields[2]),
++                "state": fields[0],
++                "ticks": int(fields[11]) + int(fields[12]),
++                "start": fields[19],
++                "command": (path.parent / "cmdline").read_bytes().replace(b"\0", b" ").decode(errors="replace"),
++            }
++        except (OSError, ValueError, IndexError):
++            continue
++    return rows
++
++
++def _owned(rows, root_pid, known):
++    owned = {pid for pid, start in known.items() if pid in rows and rows[pid]["start"] == start}
++    if root_pid in rows:
++        owned.add(root_pid)
++    while True:
++        added = {pid for pid, row in rows.items() if row["ppid"] in owned}
++        if added <= owned:
++            break
++        owned |= added
++    for pid in owned:
++        known[pid] = rows[pid]["start"]
++    return [rows[pid] for pid in sorted(owned)]
++
++
++def _files(source):
++    result = {}
++    for path in source.rglob("*"):
++        if path.is_symlink() or not path.is_file():
++            continue
++        try:
++            stat = path.stat()
++            result[str(path.relative_to(source))] = (stat.st_size, stat.st_mtime_ns)
++        except OSError:
++            continue
++    return result
++
++
++def _retain(destination, source, state):
++    # Bounded snapshots preserve raw tiny fixture media, manifests, console and
++    # partial JSONL before termination. Skips are explicit, never silent truncation.
++    skipped, used = [], 0
++    for name, (size, _) in _files(source).items():
++        path = source / name
++        if size > 32 * 1024 * 1024 or used + size > 128 * 1024 * 1024:
++            skipped.append(name)
++            continue
++        target = destination / "source" / name
++        target.parent.mkdir(parents=True, exist_ok=True)
++        try:
++            with path.open("rb") as reader, target.open("wb") as writer:
++                remaining = size
++                while remaining:
++                    chunk = reader.read(min(65536, remaining))
++                    if not chunk:
++                        break
++                    writer.write(chunk)
++                    remaining -= len(chunk)
++            used += size - remaining
++            if remaining:
++                skipped.append(f"{name}: changed/shortened during snapshot")
++        except OSError as error:
++            skipped.append(f"{name}: {error}")
++    state["snapshot_skipped"] = skipped
++    state["snapshot_scope"] = "bounded prefix at observed file size; concurrent later appends excluded"
++    (destination / "watchdog.json").write_text(json.dumps(state, indent=2) + "\n")
++
++
++def watch(process, source, *, case, hard_s, stall_s=180.0, poll_s=0.5, evidence_root=None, media_only=False):
++    """CPU-tick/file advances reset idle, never the independent hard deadline.
++
++    Merely being runnable is not progress. Process identity includes start ticks;
++    cleanup targets only observed descendants, including their separate sessions.
++    """
++    if min(hard_s, stall_s, poll_s) <= 0:
++        raise ValueError("watchdog budgets must be positive")
++    evidence_root = Path(
++        evidence_root or os.environ.get("PSM_WMA_FIXTURE_EVIDENCE_DIR", "/tmp/psm-wma-queue-fixture-evidence")
++    )
++    evidence_root.mkdir(parents=True, exist_ok=True)
++    destination = Path(tempfile.mkdtemp(prefix=f"{case}_", dir=evidence_root))
++    started = last_progress = time.monotonic()
++    known, previous, samples = {}, None, []
++    reason = None
++    while True:
++        rows = _owned(_processes(), process.pid, known)
++        files = _files(source)
++        if media_only:
++            # UI/server/eval logs can heartbeat while the real action is stuck.
++            files = {
++                name: value for name, value in files.items() if Path(name).suffix in {".json", ".jsonl", ".mp4", ".png"}
++            }
++        active = [r for r in rows if not media_only or "ffmpeg" in r["command"] or " -B -c " in r["command"]]
++        fingerprint = (files, tuple((r["pid"], r["start"], r["ticks"]) for r in active))
++        now = time.monotonic()
++        if fingerprint != previous:
++            last_progress = now
++            previous = fingerprint
++        if not samples or now - started - samples[-1]["elapsed_s"] >= 1:
++            samples.append({"elapsed_s": now - started, "processes": rows})
++        code = process.poll()
++        if code is not None:
++            break
++        if now - started >= hard_s:
++            reason = "hard_limit"
++            break
++        if now - last_progress >= stall_s:
++            reason = "no_cpu_or_file_progress"
++            break
++        time.sleep(poll_s)
++    if code is not None and code != 0:
++        reason = f"scenario_exit_{code}"
++    state = {
++        "case": case,
++        "root_pid": process.pid,
++        "hard_s": hard_s,
++        "stall_s": stall_s,
++        "reason": reason,
++        "progress_policy": "core artifacts/media CPU; heartbeat excluded" if media_only else "file/owned CPU advances",
++        "elapsed_s": time.monotonic() - started,
++        "returncode_before_cleanup": process.poll(),
++        "samples": samples,
++        "owned_at_snapshot": rows,
++        "files_at_snapshot": _files(source),
++    }
++    _retain(destination, source, state)  # Must precede SIGKILL/temp-dir cleanup.
++    if reason:
++        killed = []
++        for row in reversed(rows):
++            fresh = _processes().get(row["pid"])
++            if fresh is not None and fresh["start"] == row["start"]:
++                try:
++                    os.kill(row["pid"], signal.SIGKILL)
++                    killed.append(row["pid"])
++                except ProcessLookupError:
++                    pass
++        process.wait(timeout=10)
++        state["killed_owned_pids"] = killed
++        state["returncode_after_cleanup"] = process.returncode
++        (destination / "watchdog.json").write_text(json.dumps(state, indent=2) + "\n")
++        raise FixtureWatchdogTimeout(f"{case}: {reason}; evidence={destination}")
++    return code, destination

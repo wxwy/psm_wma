@@ -401,3 +401,11 @@ Current verdict is **`REQUEST_CHANGES`**, not a GPU execution release.
 - **Evidence provenance:** DS raw retry1 artifacts reportedly under `/mnt/data1/data_v2_0617/psm_wma_ds_cpu_6151e071_813a550d/retry/retry1_20261024_050347/` (including `pytest.log`, `ps.log`, `cgroup.log`, 19 console logs), **not independently read by GPT** because remote connector offline/non-mounted. GitHub frozen test source was inspected. Preserve this distinction at any future closure.
 - **STOP boundary:** DS Gate RED, no actual model/GPU/RoboCasa/DCP/evaluation, no G1 or running eval worktree updates, no old Episode overwrite or iter12000 20-episode rerun. If same pair passes unchanged tests later with direct raw evidence, Evidence-only closure needs no repeat code review.
 
+
+
+## 2026-10-24 — Fixture-only r3 review request
+
+- **Formal Root `dfb8a12140be7bf34584504c47df9042229f5bfb`; Child/Gitlink `813a550dab5d6b5b5e3be90d38bb97527956b4dc` unchanged.** Production scripts/configs/vendor/Child trees identical to approved6151e0712f28ace5d92258a8feb31fa8f1ee81c1. Only Queue fixture/newstdlib watchdog changed; new exact Pair needs fresh fixture review, old code APPROVE retained, DS Gate stillRED.
+- Normal600s/task-timeout900s hard bounds, independent180s media/core inactivity; heartbeat excluded. Task120s with actual3600s hang preserves real deadline/SIGKILL/1failure/15closed Episodes and all original FFmpeg/C01/Local/SR/Resume assertions. Prekill external console/process/source/media snapshots with explicit bounded retention;4 watchdog controls.
+- Author final **168 passed, 72 subtests passed in 1399.81s (0:23:19)**,0fail/error/skip;Ruff0.12.7check/format/compile16PASS. Controlled old wait RED1FAIL and GREEN4controls,focused7PASS+15subtests separately; no claim to reproduce DS90s or prove environment-only cause. Complete raw/tar/JUnit/commands/diff/hashes/readback `docs/collab/codex/evidence/2026-10-24_flexible_resume_fixture_r3_author_cpu/`; handoff `docs/collab/codex/reviews/2026-10-24_flexible_resume_fixture_r3_author_handoff.md`.
+- Request GPT incremental fixture-only verdict then DS clean independent five-group CPU; no production/GPU/G1/history changes. STOP after publication/readback.
