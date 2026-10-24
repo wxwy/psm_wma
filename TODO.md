@@ -460,3 +460,7 @@
 - **V3-RESUME-FIXTURE-R3-20261024** — IN_PROGRESS; Codex; retry1Evidence-only REQUEST_CHANGES. Bounded media-aware watchdog+stall/hard cap, owned-process prekill evidence, Task deadline fault isolation with strict assertions and realFFmpeg. New test-only SHA, red/green +five CPU, STOP.
 
 - **V3-RESUME-FIXTURE-R3-20261024** — REVIEW; bounded watchdog/heartbeat exclusion/external prekill capture and real task deadline isolation complete. Author fullfive168PASS+72subtests/0skip;focused7+15,controls4,controlledRED1FAIL separated;Ruff0.12.7/static16PASS. New exactfixtureRoot/unchangedChild thenGPTincremental review andDSindependentCPU;DSGate remainsRED until closure, no production/G1/GPU changes.
+
+- **V3-FIXTURE-MEDIUM-F01-20261024** — IN_PROGRESS;Codex;exact dfb8/813 GPT review at976f77e7. Only testwatchdog cleanup safety+deterministic negatives; snapshot error must not bypass owned cleanup, late different-session child reclaimed, foreign survives. NewRoot+CPU evidence thenfreshreview,DSstillRED.
+
+- **V3-FIXTURE-MEDIUM-F01-20261024** — REVIEW; unconditional bounded cleanup/latechild rediscovery/reap+snapshoterror diagnostics complete. DeterministicRED2FAIL,finalcontrols8PASS,fullfive172PASS+72subtests/0fail/error/skip;Ruff/static16PASS. NewexactRoot/unchanged813Child,rawEvidence thenGPTincremental andDSindependent CPU;DSstillRED,STOP afterdelivery,no realexecution.

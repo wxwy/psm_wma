@@ -31,6 +31,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
+import queue_fixture_watchdog as watchdog_module
 from queue_fixture_watchdog import FixtureWatchdogTimeout, watch
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -1291,6 +1292,118 @@ class FixtureWatchdogTests(unittest.TestCase):
                 )
         saved = next(external_evidence.iterdir())
         self.assertTrue((saved / "source/console.log").exists())
+
+    def _cleanup_fault(self, *, snapshot_error):
+        external = self.evidence_root()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            foreign = subprocess.Popen([sys.executable, "-c", "import time;time.sleep(60)"], start_new_session=True)
+            child_pid = []
+            process, source = self.run_child(
+                "import pathlib,subprocess,sys,time; pathlib.Path('ready').touch(); "
+                "exec(\"while not pathlib.Path('spawn').exists(): time.sleep(.01)\"); "
+                "child=subprocess.Popen([sys.executable,'-c','import time;time.sleep(60)'],start_new_session=True); "
+                "pathlib.Path('child_pid').write_text(str(child.pid)); time.sleep(60)",
+                hard=1,
+                stall=5,
+                root=root,
+            )
+            original = watchdog_module._retain
+            original_write = Path.write_text
+
+            def live(pid):
+                row = watchdog_module._processes().get(pid)
+                return row is not None and row["state"] != "Z"
+
+            def retain(destination, source_path, state):
+                if not snapshot_error:
+                    # Explicitly resume the frozen producer to deterministically
+                    # exercise the post-snapshot rediscovery safety net.
+                    os.kill(process.pid, signal.SIGCONT)
+                    (source_path / "spawn").touch()
+                    until = time.monotonic() + 5
+                    while not (source_path / "child_pid").exists():
+                        self.assertLess(time.monotonic(), until, "late child not spawned")
+                        time.sleep(0.01)
+                    child_pid.append(int((source_path / "child_pid").read_text()))
+                    self.assertTrue(live(child_pid[0]))
+                    self.assertNotEqual(os.getpgid(child_pid[0]), os.getpgid(process.pid))
+                original(destination, source_path, state)
+
+            def fail_json(path, *args, **kwargs):
+                if snapshot_error and path.name == "watchdog.json":
+                    raise OSError("injected EVIDENCE_SNAPSHOT_FAILED disk write")
+                return original_write(path, *args, **kwargs)
+
+            try:
+                until = time.monotonic() + 5
+                while not (source / "ready").exists():
+                    self.assertLess(time.monotonic(), until, "producer did not start")
+                    time.sleep(0.01)
+                with (
+                    patch.object(watchdog_module, "_retain", side_effect=retain),
+                    patch.object(Path, "write_text", fail_json),
+                ):
+                    with self.assertRaisesRegex(FixtureWatchdogTimeout, "hard_limit") as caught:
+                        watch(
+                            process,
+                            source,
+                            case="snapshot_io_negative" if snapshot_error else "late_child_negative",
+                            hard_s=0.3,
+                            stall_s=5,
+                            poll_s=0.02,
+                            evidence_root=external,
+                        )
+                self.assertEqual(process.returncode, -signal.SIGKILL)
+                self.assertIsNone(foreign.poll())
+                for pid in child_pid:
+                    self.assertFalse(live(pid), "late distinct-session child leaked")
+                    self.assertNotIn(pid, watchdog_module._processes(), "late child was not reaped")
+                    self.assertFalse(any(row["pgid"] == pid for row in watchdog_module._processes().values()))
+                state = caught.exception.state
+                self.assertEqual(state["cleanup_remaining_live"], [])
+                self.assertNotIn(foreign.pid, state["killed_owned_pids"])
+                if snapshot_error:
+                    self.assertIn("EVIDENCE_SNAPSHOT_FAILED", state["snapshot_error"])
+                    self.assertTrue(list(external.rglob("cleanup.json")), "fallback diagnostics missing")
+                else:
+                    self.assertIn(child_pid[0], state["killed_owned_pids"])
+                state["foreign_control_pid"] = foreign.pid
+                state["foreign_control_alive"] = foreign.poll() is None
+                state["late_child_pids"] = child_pid
+                print("FIXTURE_CLEANUP_WITNESS " + json.dumps(state), flush=True)
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.wait()
+                for pid in child_pid:
+                    if live(pid):
+                        os.kill(pid, signal.SIGKILL)
+                foreign.kill()
+                foreign.wait()
+
+    def test_snapshot_write_failure_still_reaps_owned_process(self):
+        self._cleanup_fault(snapshot_error=True)
+
+    def test_child_created_during_snapshot_is_reaped_without_foreign_kill(self):
+        self._cleanup_fault(snapshot_error=False)
+
+    def test_evidence_directory_failure_still_cleans_root(self):
+        with tempfile.TemporaryDirectory() as directory:
+            process, source = self.run_child("import time;time.sleep(60)", hard=1, stall=5, root=Path(directory))
+            with patch.object(watchdog_module.tempfile, "mkdtemp", side_effect=OSError("evidence volume unavailable")):
+                with self.assertRaisesRegex(FixtureWatchdogTimeout, "EVIDENCE_SNAPSHOT_FAILED") as caught:
+                    watch(process, source, case="allocation_negative", hard_s=1)
+            self.assertEqual(process.returncode, -signal.SIGKILL)
+            self.assertEqual(caught.exception.state["cleanup_remaining_live"], [])
+
+    def test_interruption_during_evidence_setup_cleans_then_propagates(self):
+        with tempfile.TemporaryDirectory() as directory:
+            process, source = self.run_child("import time;time.sleep(60)", hard=1, stall=5, root=Path(directory))
+            with patch.object(watchdog_module.tempfile, "mkdtemp", side_effect=KeyboardInterrupt):
+                with self.assertRaises(KeyboardInterrupt):
+                    watch(process, source, case="interrupt_negative", hard_s=1)
+            self.assertEqual(process.returncode, -signal.SIGKILL)
 
 
 class QueueIntegrationTests(unittest.TestCase):
