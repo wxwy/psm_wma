@@ -13,8 +13,10 @@ import time
 import uuid
 from pathlib import Path
 
+from robocasa_episode_resume import MAX_RECOVERY_BYTES, bounded_episode_count, bounded_episode_index
 from robocasa_episode_resume.model_identity import build_model_identity, verify_model_observation
 from robocasa_episode_resume.plan import build_plan, build_report, render_plan, source_key
+from robocasa_eval_results import _unique_object
 from robocasa_resume_execution import execute_planned_batches
 from robocasa_resume_store import RunStore
 
@@ -139,36 +141,82 @@ def _summary(
     return report
 
 
-def _unfinished_executions(jobs, completed):
-    """Count durable Episode starts, rather than every preallocated logical slot."""
+def _progress_starts(job):
+    """Read terminal C01 authority atomically, bounded by bytes/rows/episodes.
+
+    A corrupt source contributes no speculative starts, even if an earlier row
+    was valid. Original evidence remains available to the source verifier.
+    """
+    path = job["attempt_dir"] / "episode_progress.jsonl"
+    if any(part.is_symlink() for part in (path, *path.parents)):
+        raise ValueError("CORRUPT_PROGRESS: symlink")
+    try:
+        before = path.stat()
+    except FileNotFoundError:
+        return []  # A worker can fail before the simulator creates progress.
+    if not stat.S_ISREG(before.st_mode) or before.st_size > MAX_RECOVERY_BYTES:
+        raise ValueError("CORRUPT_PROGRESS: nonregular or oversized file")
+    count = bounded_episode_count(len(job["episodes"]), "reserved episodes")
+    physical = [row["source_episode"] for row in job["episodes"]]
+    for row in job["episodes"]:
+        bounded_episode_index(row["logical_episode_index"], "reserved logical episode")
+    if physical != list(range(count)):
+        raise ValueError("CORRUPT_PROGRESS: invalid reserved physical mapping")
+    started, rows, size = [], 0, 0
+
+    def invalid(value):
+        raise ValueError(f"CORRUPT_PROGRESS: nonfinite JSON {value}")
+
+    with path.open("rb") as stream:
+        while line := stream.readline(4097):
+            size += len(line)
+            if size > MAX_RECOVERY_BYTES or rows >= 2 * count:
+                raise ValueError("CORRUPT_PROGRESS: byte/row limit exceeded")
+            if len(line) > 4096 or not line.endswith(b"\n"):
+                raise ValueError("CORRUPT_PROGRESS: oversized/truncated event")
+            event = json.loads(line.decode("utf-8"), object_pairs_hook=_unique_object, parse_constant=invalid)
+            if (
+                not isinstance(event, dict)
+                or event.get("schema") != "psm_episode_progress_v1"
+                or event.get("evaluation_run_digest") != job["source_manifest"]["digest"]
+                or event.get("evaluation_attempt_id") != f"{job['task']}/{job['attempt_dir'].name}"
+                or type(event.get("episode")) is not int
+                or event["episode"] != rows // 2
+                or event.get("event") != ("end" if rows % 2 else "start")
+            ):
+                raise ValueError("CORRUPT_PROGRESS: identity/order mismatch")
+            if rows % 2 == 0:
+                started.append(rows // 2)
+            rows += 1
+        after = os.fstat(stream.fileno())
+
+    def witness(item):
+        return (item.st_dev, item.st_ino, item.st_size, item.st_mtime_ns, item.st_ctime_ns)
+
+    if witness(before) != witness(after) or witness(after) != witness(path.stat()):
+        raise ValueError("CORRUPT_PROGRESS: source changed during terminal read")
+    return started
+
+
+def _unfinished_executions(jobs, completed, *, errors):
+    """Count only committed, ordered starts; persist per-source read failures."""
     closed = {(row["task"], row["logical_episode_index"]) for row in completed}
     failed = []
     for job in jobs:
-        path = job["attempt_dir"] / "episode_progress.jsonl"
-        if any(part.is_symlink() for part in (path, *path.parents)):
-            continue  # The authoritative source scanner reports this as corrupt.
-        if not path.is_file():
-            continue
-        if not stat.S_ISREG(path.stat().st_mode):
+        try:
+            started = _progress_starts(job)
+        except (OSError, ValueError, RecursionError) as error:
+            errors.append(
+                {
+                    "stage": "final_progress_read",
+                    "task": job["task"],
+                    "path": str(job["attempt_dir"] / "episode_progress.jsonl"),
+                    "error": f"{type(error).__name__}: {error}",
+                }
+            )
             continue
         physical = {row["source_episode"]: row for row in job["episodes"]}
-        started = set()
-        for line in path.read_text().splitlines():
-            try:
-                event = json.loads(line)
-            except ValueError:
-                break
-            if (
-                isinstance(event, dict)
-                and event.get("schema") == "psm_episode_progress_v1"
-                and event.get("event") == "start"
-                and event.get("evaluation_run_digest") == job["source_manifest"]["digest"]
-                and event.get("evaluation_attempt_id") == f"{job['task']}/{job['attempt_dir'].name}"
-                and type(event.get("episode")) is int
-                and event["episode"] in physical
-            ):
-                started.add(event["episode"])
-        for index in sorted(started):
+        for index in started:
             slot = physical[index]["logical_episode_index"]
             if (job["task"], slot) not in closed:
                 failed.append(
@@ -439,11 +487,7 @@ def prepare_resume(args, cache, *, queue_api):
         except Exception as error:
             final_errors.append({"stage": "final_input_verification", "error": f"{type(error).__name__}: {error}"})
         final_plan = _revalidate_selected_sources(plan, final_history["records"], final_errors)
-        try:
-            unfinished = _unfinished_executions(jobs, new_sources)
-        except OSError as error:
-            unfinished = []
-            final_errors.append({"stage": "final_progress_read", "error": f"{type(error).__name__}: {error}"})
+        unfinished = _unfinished_executions(jobs, new_sources, errors=final_errors)
         report = _summary(
             final_plan,
             new_sources + unfinished,

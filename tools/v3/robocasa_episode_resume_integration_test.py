@@ -629,6 +629,83 @@ def test_final_source_rescan_failure_publishes_partial_and_preserves_executor_er
     assert list(harness.output.glob("_invocations/*/sources/**/rollout00_episode.json"))
 
 
+@pytest.mark.parametrize(
+    "fault",
+    ["utf8", "truncated", "file_limit", "line_limit", "duplicate", "identity", "order", "nonfinite", "valid_start"],
+)
+def test_final_progress_fault_is_durable_partial_without_invented_starts(harness, monkeypatch, fault):
+    original_discover = RunStore.discover_history
+    calls, injected = [], []
+
+    def inject_final_progress(store, *args, **kwargs):
+        calls.append(store.root)
+        if len(calls) == 2:
+            path = next(store.root.glob("_invocations/*/sources/**/episode_progress.jsonl"))
+            first = path.read_bytes().splitlines(keepends=True)[0]
+            row = json.loads(first)
+            payload = first
+            if fault == "utf8":
+                payload = b"\xff\n"
+            elif fault == "truncated":
+                payload = first.rstrip(b"\n")
+            elif fault == "line_limit":
+                payload = b" " * 4096 + b"\n"
+            elif fault == "duplicate":
+                payload = first.rstrip()[:-1] + b',"episode":0}\n'
+            elif fault == "identity":
+                row["evaluation_attempt_id"] = "wrong/attempt_0001"
+                payload = canonical(row) + b"\n"
+            elif fault == "order":
+                payload = first + first
+            elif fault == "nonfinite":
+                payload = first.rstrip()[:-1] + b',"extra":NaN}\n'
+            path.write_bytes(payload)
+            if fault == "file_limit":
+                with path.open("r+b") as stream:
+                    stream.truncate(64 * 1024 * 1024 + 1)
+            injected.append((path, path.stat().st_size, hashlib.sha256(path.read_bytes()).hexdigest()))
+        return original_discover(store, *args, **kwargs)
+
+    monkeypatch.setattr(RunStore, "discover_history", inject_final_progress)
+    harness.fault = "third_episode_error"
+    assert harness.invoke(monkeypatch, episodes=5) != 0
+    report = harness.report()
+    summary = read(read(harness.output / "latest_invocation.json")["summary_path"])
+    assert report["status"] == summary["status"] == "PARTIAL"
+    assert report["exit_code"] == 1 and report["sr"] is None
+    assert report["completed"] == 0 and report["remaining"] == 5
+    progress_errors = [row for row in report["invocation_errors"] if row.get("stage") == "final_progress_read"]
+    if fault == "valid_start":
+        assert not progress_errors
+        assert (report["executed"], report["failed"]) == (1, 1)
+    else:
+        assert len(progress_errors) == 1
+        assert progress_errors[0]["task"] == "CloseFridge"
+        assert progress_errors[0]["path"] == str(injected[0][0])
+        assert progress_errors[0]["error"]
+        assert (report["executed"], report["failed"]) == (0, 0)
+    assert any("closed_loop_eval exited" in row.get("error", "") for row in report["invocation_errors"])
+    job = report["job_results"][0]
+    assert job["error"] and all(not witness["live_group"] for witness in job["cleanup"].values())
+    path, size, digest = injected[0]
+    assert path.stat().st_size == size and hashlib.sha256(path.read_bytes()).hexdigest() == digest
+
+
+def test_terminal_progress_file_limit_rejects_before_open(tmp_path, monkeypatch):
+    from robocasa_resume_cli import _progress_starts
+
+    path = tmp_path / "episode_progress.jsonl"
+    with path.open("wb") as stream:
+        stream.truncate(64 * 1024 * 1024 + 1)
+
+    def forbidden_open(*args, **kwargs):
+        pytest.fail("oversized progress must be rejected by stat before any read")
+
+    monkeypatch.setattr(Path, "open", forbidden_open)
+    with pytest.raises(ValueError, match="oversized file"):
+        _progress_starts({"attempt_dir": tmp_path})
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--fixture-server":
         _serve(int(sys.argv[2]), json.loads(sys.argv[3]), sys.argv[4], sys.argv[5])
