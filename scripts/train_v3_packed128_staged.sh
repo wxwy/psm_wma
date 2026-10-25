@@ -7,6 +7,12 @@ if [[ $# -lt 2 || $# -gt 3 || ( $1 != fresh && $1 != resume ) ]]; then
 fi
 phase=$1
 execution_until=$2
+# The named G1 same-job Resume never requires or validates a Root HEAD pin.
+# Its actual runtime Root HEAD is recorded by the Child for provenance only.
+# All other jobs retain the strict EXPECTED_ROOT requirement.
+if [[ "$phase" == resume && "${JOB_NAME:-}" == packed128_droid_fresh_g1_20261019 ]]; then
+    export EXPECTED_ROOT="${EXPECTED_ROOT:-G1_ROOT_HEAD_NOT_PINNED}"
+fi
 owner_args=()
 if [[ $# == 3 ]]; then
     if [[ $phase != resume || $3 != --owner-authorized-g1-cross-pair-resume || ${JOB_NAME:-} != packed128_droid_fresh_g1_20261019 ]]; then
