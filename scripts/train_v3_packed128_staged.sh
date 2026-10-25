@@ -7,11 +7,12 @@ if [[ $# -lt 2 || $# -gt 3 || ( $1 != fresh && $1 != resume ) ]]; then
 fi
 phase=$1
 execution_until=$2
-# The named G1 same-job Resume never requires or validates a Root HEAD pin.
-# Its actual runtime Root HEAD is recorded by the Child for provenance only.
-# All other jobs retain the strict EXPECTED_ROOT requirement.
+# The named G1 Resume automatically records observed source SHAs.
+# It must not depend on caller-provided EXPECTED_ROOT/EXPECTED_CHILD values.
+# Other jobs still require both exact source pins.
+g1_resume=0
 if [[ "$phase" == resume && "${JOB_NAME:-}" == packed128_droid_fresh_g1_20261019 ]]; then
-    export EXPECTED_ROOT="${EXPECTED_ROOT:-G1_ROOT_HEAD_NOT_PINNED}"
+    g1_resume=1
 fi
 owner_args=()
 if [[ $# == 3 ]]; then
@@ -22,12 +23,22 @@ if [[ $# == 3 ]]; then
     owner_args=("$3")
 fi
 for required in OUTPUT_ROOT SOURCE_ROOT CACHE_ROOT DATASET_INDEX_ROOT EDGE_POLICY_CHECKPOINT \
-    WAN_VAE_PATH BASE_CHECKPOINT_PATH JOB_NAME EXPECTED_ROOT EXPECTED_CHILD; do
+    WAN_VAE_PATH BASE_CHECKPOINT_PATH JOB_NAME; do
     if [[ -z ${!required:-} ]]; then
         echo "Missing required environment variable: $required" >&2
         exit 2
     fi
 done
+expected_args=()
+if [[ "$g1_resume" == 0 ]]; then
+    for required in EXPECTED_ROOT EXPECTED_CHILD; do
+        if [[ -z ${!required:-} ]]; then
+            echo "Missing required environment variable: $required" >&2
+            exit 2
+        fi
+    done
+    expected_args=(--expected-root "$EXPECTED_ROOT" --expected-child "$EXPECTED_CHILD")
+fi
 root_worktree=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 export HF_HUB_OFFLINE=1
 export PYTHONPATH="$root_worktree/cosmos-framework${PYTHONPATH:+:$PYTHONPATH}"
@@ -35,7 +46,7 @@ cd -- "$root_worktree/cosmos-framework"
 exec "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=8 \
     examples/psm_wma_robocasa_corrected_phase5.py \
     --phase "$phase" --formal-execution-until "$execution_until" \
-    --root-worktree "$root_worktree" --expected-root "$EXPECTED_ROOT" --expected-child "$EXPECTED_CHILD" \
+    --root-worktree "$root_worktree" "${expected_args[@]}" \
     --output-root "$OUTPUT_ROOT" --job-name "$JOB_NAME" \
     --source-root "$SOURCE_ROOT" --cache-root "$CACHE_ROOT" --dataset-index-root "$DATASET_INDEX_ROOT" \
     --edge "$EDGE_POLICY_CHECKPOINT" --vae "$WAN_VAE_PATH" --base-checkpoint "$BASE_CHECKPOINT_PATH" \
