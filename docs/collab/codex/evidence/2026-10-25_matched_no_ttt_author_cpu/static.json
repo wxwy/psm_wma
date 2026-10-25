@@ -1,0 +1,86 @@
+{
+  "results": [
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "--version"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py",
+        "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt.py",
+        "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5.py",
+        "cosmos-framework/examples/psm_wma_robocasa_effective_config.py",
+        "cosmos-framework/cosmos_framework/utils/training_audit.py",
+        "scripts/serve_v3_matched_no_ttt.py",
+        "tools/v3/matched_no_ttt_entry_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--check",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py",
+        "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt.py",
+        "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5.py",
+        "cosmos-framework/examples/psm_wma_robocasa_effective_config.py",
+        "cosmos-framework/cosmos_framework/utils/training_audit.py",
+        "scripts/serve_v3_matched_no_ttt.py",
+        "tools/v3/matched_no_ttt_entry_test.py"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "bash",
+        "-n",
+        "scripts/train_v3_matched_no_ttt.sh"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "git",
+        "-C",
+        "cosmos-framework",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "syntax_files": [
+    "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+    "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py",
+    "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt.py",
+    "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py",
+    "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5.py",
+    "cosmos-framework/examples/psm_wma_robocasa_effective_config.py",
+    "cosmos-framework/cosmos_framework/utils/training_audit.py",
+    "scripts/serve_v3_matched_no_ttt.py",
+    "tools/v3/matched_no_ttt_entry_test.py"
+  ],
+  "source_freeze": "PASS"
+}

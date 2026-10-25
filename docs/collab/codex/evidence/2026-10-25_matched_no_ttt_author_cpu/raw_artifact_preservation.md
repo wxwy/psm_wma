@@ -1,0 +1,1 @@
+Raw Git patches contain space-prefixed context lines and failed pytest XML contains traceback whitespace. These originals are stored as lossless .gz, not stripped or rewritten. Final passing junit.xml remains plain XML. This is evidence packaging only; tested source and formal implementation pair unchanged.

@@ -1,0 +1,2197 @@
+[
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_full_and_terminal_partial_match_g1_order_weights_and_boundary[33-expected0]",
+    "name": "test_full_and_terminal_partial_match_g1_order_weights_and_boundary[33-expected0]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_full_and_terminal_partial_match_g1_order_weights_and_boundary[17-expected1]",
+    "name": "test_full_and_terminal_partial_match_g1_order_weights_and_boundary[17-expected1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_full_and_terminal_partial_match_g1_order_weights_and_boundary[1-expected2]",
+    "name": "test_full_and_terminal_partial_match_g1_order_weights_and_boundary[1-expected2]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_snapshot_roundtrip_next_source_loss_optimizer_and_scheduler",
+    "name": "test_snapshot_roundtrip_next_source_loss_optimizer_and_scheduler",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_corrupt_or_local_checkpoint_rejected_before_native_forward[format]",
+    "name": "test_corrupt_or_local_checkpoint_rejected_before_native_forward[format]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_corrupt_or_local_checkpoint_rejected_before_native_forward[iteration]",
+    "name": "test_corrupt_or_local_checkpoint_rejected_before_native_forward[iteration]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_corrupt_or_local_checkpoint_rejected_before_native_forward[config_digest]",
+    "name": "test_corrupt_or_local_checkpoint_rejected_before_native_forward[config_digest]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_corrupt_or_local_checkpoint_rejected_before_native_forward[profile]",
+    "name": "test_corrupt_or_local_checkpoint_rejected_before_native_forward[profile]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_corrupt_or_local_checkpoint_rejected_before_native_forward[cache_manifest_sha256]",
+    "name": "test_corrupt_or_local_checkpoint_rejected_before_native_forward[cache_manifest_sha256]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_corrupt_or_local_checkpoint_rejected_before_native_forward[cache_corpus_digest]",
+    "name": "test_corrupt_or_local_checkpoint_rejected_before_native_forward[cache_corpus_digest]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_corrupt_or_local_checkpoint_rejected_before_native_forward[source_binding_digest]",
+    "name": "test_corrupt_or_local_checkpoint_rejected_before_native_forward[source_binding_digest]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_corrupt_or_local_checkpoint_rejected_before_native_forward[sidecar]",
+    "name": "test_corrupt_or_local_checkpoint_rejected_before_native_forward[sidecar]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_corrupt_or_local_checkpoint_rejected_before_native_forward[frontier_counter]",
+    "name": "test_corrupt_or_local_checkpoint_rejected_before_native_forward[frontier_counter]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_missing_frontier_never_silently_restarts[True-0]",
+    "name": "test_missing_frontier_never_silently_restarts[True-0]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_missing_frontier_never_silently_restarts[True-1]",
+    "name": "test_missing_frontier_never_silently_restarts[True-1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_missing_frontier_never_silently_restarts[False-1]",
+    "name": "test_missing_frontier_never_silently_restarts[False-1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_failure_does_not_publish_frontier_or_allow_checkpoint[nan_loss]",
+    "name": "test_failure_does_not_publish_frontier_or_allow_checkpoint[nan_loss]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_failure_does_not_publish_frontier_or_allow_checkpoint[nan_gradient]",
+    "name": "test_failure_does_not_publish_frontier_or_allow_checkpoint[nan_gradient]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_failure_does_not_publish_frontier_or_allow_checkpoint[hook_inf]",
+    "name": "test_failure_does_not_publish_frontier_or_allow_checkpoint[hook_inf]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_failure_does_not_publish_frontier_or_allow_checkpoint[step_skip]",
+    "name": "test_failure_does_not_publish_frontier_or_allow_checkpoint[step_skip]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_failure_does_not_publish_frontier_or_allow_checkpoint[native_error]",
+    "name": "test_failure_does_not_publish_frontier_or_allow_checkpoint[native_error]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_local_module_forbidden[enabled]",
+    "name": "test_local_module_forbidden[enabled]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_local_module_forbidden[runtime]",
+    "name": "test_local_module_forbidden[runtime]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_local_module_forbidden[parameter]",
+    "name": "test_local_module_forbidden[parameter]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_no_ttt_is_independent_native_trainer_and_refuses_background_data",
+    "name": "test_no_ttt_is_independent_native_trainer_and_refuses_background_data",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_native_network_constructor_does_not_instantiate_local",
+    "name": "test_native_network_constructor_does_not_instantiate_local",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_producer_transform_rng_and_order_are_unchanged",
+    "name": "test_producer_transform_rng_and_order_are_unchanged",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py::test_no_ttt_passive_telemetry_records_consumer_source_without_fake_fast_state",
+    "name": "test_no_ttt_passive_telemetry_records_consumer_source_without_fake_fast_state",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_overlay_only_removes_local_and_keeps_data_loss_optimizer_schedule",
+    "name": "test_overlay_only_removes_local_and_keeps_data_loss_optimizer_schedule",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_digest_separates_no_ttt_but_preserves_legacy_identity_when_absent",
+    "name": "test_digest_separates_no_ttt_but_preserves_legacy_identity_when_absent",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_no_ttt_namespace_resume_rejects_mode_switch_without_touching_assets",
+    "name": "test_no_ttt_namespace_resume_rejects_mode_switch_without_touching_assets",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_cannot_point_no_ttt_at_g1_or_arbitrary_namespace[packed128_droid_fresh_g1_20261019]",
+    "name": "test_cannot_point_no_ttt_at_g1_or_arbitrary_namespace[packed128_droid_fresh_g1_20261019]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_cannot_point_no_ttt_at_g1_or_arbitrary_namespace[formal]",
+    "name": "test_cannot_point_no_ttt_at_g1_or_arbitrary_namespace[formal]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_cannot_point_no_ttt_at_g1_or_arbitrary_namespace[../no_ttt_bad]",
+    "name": "test_cannot_point_no_ttt_at_g1_or_arbitrary_namespace[../no_ttt_bad]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_g1_owner_override_cannot_enable_no_ttt",
+    "name": "test_g1_owner_override_cannot_enable_no_ttt",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_mismatched_no_ttt_geometry_rejected_before_runtime[b-128]",
+    "name": "test_mismatched_no_ttt_geometry_rejected_before_runtime[b-128]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_mismatched_no_ttt_geometry_rejected_before_runtime[ga-1]",
+    "name": "test_mismatched_no_ttt_geometry_rejected_before_runtime[ga-1]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_mismatched_no_ttt_geometry_rejected_before_runtime[world_size-1]",
+    "name": "test_mismatched_no_ttt_geometry_rejected_before_runtime[world_size-1]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_mismatched_no_ttt_geometry_rejected_before_runtime[t-8]",
+    "name": "test_mismatched_no_ttt_geometry_rejected_before_runtime[t-8]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_mismatched_no_ttt_geometry_rejected_before_runtime[num_workers-1]",
+    "name": "test_mismatched_no_ttt_geometry_rejected_before_runtime[num_workers-1]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_mismatched_no_ttt_geometry_rejected_before_runtime[full_segment_prefetch-True]",
+    "name": "test_mismatched_no_ttt_geometry_rejected_before_runtime[full_segment_prefetch-True]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_mismatched_no_ttt_geometry_rejected_before_runtime[transform_rng_mode-consumer_keyed_v1]",
+    "name": "test_mismatched_no_ttt_geometry_rejected_before_runtime[transform_rng_mode-consumer_keyed_v1]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_missing_index_retains_original_value_error",
+    "name": "test_missing_index_retains_original_value_error",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_optimizer_inventory_generation_only_and_frozen_understanding",
+    "name": "test_optimizer_inventory_generation_only_and_frozen_understanding",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_no_ttt_metadata_describes_real_producer_and_no_fast_state",
+    "name": "test_no_ttt_metadata_describes_real_producer_and_no_fast_state",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_real_composed_no_ttt_config_yaml_pickle_and_semantic_identity",
+    "name": "test_real_composed_no_ttt_config_yaml_pickle_and_semantic_identity",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py::test_no_ttt_preflight_keeps_official_droid_gate_before_any_data_or_model",
+    "name": "test_no_ttt_preflight_keeps_official_droid_gate_before_any_data_or_model",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_server_dry_run_binds_off_raw15_state_config_and_chunk16",
+    "name": "test_server_dry_run_binds_off_raw15_state_config_and_chunk16",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_wrong_inference_profile[local_memory_mode-required]",
+    "name": "test_reject_wrong_inference_profile[local_memory_mode-required]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_wrong_inference_profile[local_memory_mode-False]",
+    "name": "test_reject_wrong_inference_profile[local_memory_mode-False]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_wrong_inference_profile[action_chunk_size-32]",
+    "name": "test_reject_wrong_inference_profile[action_chunk_size-32]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_wrong_inference_profile[raw_action_dim-12]",
+    "name": "test_reject_wrong_inference_profile[raw_action_dim-12]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_wrong_inference_profile[fps-15]",
+    "name": "test_reject_wrong_inference_profile[fps-15]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_wrong_inference_profile[max_action_dim-15]",
+    "name": "test_reject_wrong_inference_profile[max_action_dim-15]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_wrong_inference_profile[num_steps-0]",
+    "name": "test_reject_wrong_inference_profile[num_steps-0]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_wrong_inference_profile[port-65536]",
+    "name": "test_reject_wrong_inference_profile[port-65536]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_wrong_inference_profile[guidance-nan]",
+    "name": "test_reject_wrong_inference_profile[guidance-nan]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_g1_or_wrong_checkpoint_config_identity[g1_identity]",
+    "name": "test_reject_g1_or_wrong_checkpoint_config_identity[g1_identity]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_g1_or_wrong_checkpoint_config_identity[enabled_local]",
+    "name": "test_reject_g1_or_wrong_checkpoint_config_identity[enabled_local]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_g1_or_wrong_checkpoint_config_identity[wrong_optimizer]",
+    "name": "test_reject_g1_or_wrong_checkpoint_config_identity[wrong_optimizer]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_g1_or_wrong_checkpoint_config_identity[config_changed]",
+    "name": "test_reject_g1_or_wrong_checkpoint_config_identity[config_changed]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_g1_or_wrong_checkpoint_config_identity[foreign_checkpoint]",
+    "name": "test_reject_g1_or_wrong_checkpoint_config_identity[foreign_checkpoint]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_g1_or_wrong_checkpoint_config_identity[missing_metadata]",
+    "name": "test_reject_g1_or_wrong_checkpoint_config_identity[missing_metadata]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_g1_or_wrong_checkpoint_config_identity[missing_shards]",
+    "name": "test_reject_g1_or_wrong_checkpoint_config_identity[missing_shards]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_g1_or_wrong_checkpoint_config_identity[diagnostic]",
+    "name": "test_reject_g1_or_wrong_checkpoint_config_identity[diagnostic]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_reject_g1_or_wrong_checkpoint_config_identity[semantic_digest]",
+    "name": "test_reject_g1_or_wrong_checkpoint_config_identity[semantic_digest]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_launcher_exact_world8_matched_contract_without_torchrun[fresh-30000]",
+    "name": "test_launcher_exact_world8_matched_contract_without_torchrun[fresh-30000]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_launcher_exact_world8_matched_contract_without_torchrun[fresh-100]",
+    "name": "test_launcher_exact_world8_matched_contract_without_torchrun[fresh-100]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_launcher_exact_world8_matched_contract_without_torchrun[resume-500]",
+    "name": "test_launcher_exact_world8_matched_contract_without_torchrun[resume-500]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_launcher_rejects_g1_job_before_any_python",
+    "name": "test_launcher_rejects_g1_job_before_any_python",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_rehashed_canonical_config_still_must_match_dataset_contract[chunk_length-32]",
+    "name": "test_rehashed_canonical_config_still_must_match_dataset_contract[chunk_length-32]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_rehashed_canonical_config_still_must_match_dataset_contract[use_state-False]",
+    "name": "test_rehashed_canonical_config_still_must_match_dataset_contract[use_state-False]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_rehashed_canonical_config_still_must_match_dataset_contract[camera_set-left]",
+    "name": "test_rehashed_canonical_config_still_must_match_dataset_contract[camera_set-left]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_rehashed_canonical_config_still_must_match_dataset_contract[use_base_action-False]",
+    "name": "test_rehashed_canonical_config_still_must_match_dataset_contract[use_base_action-False]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_rehashed_canonical_config_still_must_match_dataset_contract[base_encoding-ego]",
+    "name": "test_rehashed_canonical_config_still_must_match_dataset_contract[base_encoding-ego]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_rehashed_canonical_config_still_must_match_dataset_contract[action_normalization-minmax]",
+    "name": "test_rehashed_canonical_config_still_must_match_dataset_contract[action_normalization-minmax]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_rehashed_canonical_config_still_must_match_dataset_contract[fps-15]",
+    "name": "test_rehashed_canonical_config_still_must_match_dataset_contract[fps-15]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_resigned_semantic_identity_still_must_be_matched_profile[state_dim-16]",
+    "name": "test_resigned_semantic_identity_still_must_be_matched_profile[state_dim-16]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_resigned_semantic_identity_still_must_be_matched_profile[h_pred-32]",
+    "name": "test_resigned_semantic_identity_still_must_be_matched_profile[h_pred-32]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_resigned_semantic_identity_still_must_be_matched_profile[b-128]",
+    "name": "test_resigned_semantic_identity_still_must_be_matched_profile[b-128]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_resigned_semantic_identity_still_must_be_matched_profile[ga-1]",
+    "name": "test_resigned_semantic_identity_still_must_be_matched_profile[ga-1]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/matched_no_ttt_entry_test.py::test_resigned_semantic_identity_still_must_be_matched_profile[world_size-1]",
+    "name": "test_resigned_semantic_identity_still_must_be_matched_profile[world_size-1]",
+    "file": "/workspace/psm_wma/tools/v3/matched_no_ttt_entry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_trigger_length_and_resume_offset[1]",
+    "name": "test_trigger_length_and_resume_offset[1]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_trigger_length_and_resume_offset[2]",
+    "name": "test_trigger_length_and_resume_offset[2]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_trigger_length_and_resume_offset[3]",
+    "name": "test_trigger_length_and_resume_offset[3]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_observer_uses_actual_plan_prefix_lengths",
+    "name": "test_observer_uses_actual_plan_prefix_lengths",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_digest_path_invariance_and_semantic_sensitivity",
+    "name": "test_digest_path_invariance_and_semantic_sensitivity",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_native_packed_batch_layout_is_part_of_strict_resume_digest",
+    "name": "test_native_packed_batch_layout_is_part_of_strict_resume_digest",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_overlay_installs_full_manifest_tokenizer_contract",
+    "name": "test_overlay_installs_full_manifest_tokenizer_contract",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_overlay_validates_actual_dictconfig_tokenizer",
+    "name": "test_overlay_validates_actual_dictconfig_tokenizer",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_fresh_overlay_uses_official_base_only",
+    "name": "test_fresh_overlay_uses_official_base_only",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_requires_complete_same_job_dcp",
+    "name": "test_resume_requires_complete_same_job_dcp",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_each_missing_component[model]",
+    "name": "test_resume_rejects_each_missing_component[model]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_each_missing_component[optim]",
+    "name": "test_resume_rejects_each_missing_component[optim]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_each_missing_component[scheduler]",
+    "name": "test_resume_rejects_each_missing_component[scheduler]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_each_missing_component[trainer]",
+    "name": "test_resume_rejects_each_missing_component[trainer]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_each_missing_component[rank_0.pkl]",
+    "name": "test_resume_rejects_each_missing_component[rank_0.pkl]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_each_missing_component[rank_1.pkl]",
+    "name": "test_resume_rejects_each_missing_component[rank_1.pkl]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_invalid_latest_iteration[invalid]",
+    "name": "test_resume_rejects_invalid_latest_iteration[invalid]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_invalid_latest_iteration[iter_0]",
+    "name": "test_resume_rejects_invalid_latest_iteration[iter_0]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_invalid_latest_iteration[iter_000000010]",
+    "name": "test_resume_rejects_invalid_latest_iteration[iter_000000010]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_resume_rejects_invalid_latest_iteration[iter_-1]",
+    "name": "test_resume_rejects_invalid_latest_iteration[iter_-1]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_optional_real_strict_snapshot10_preflight",
+    "name": "test_optional_real_strict_snapshot10_preflight",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_exact_actual_k_inventory_and_missing_extra_fail[1]",
+    "name": "test_exact_actual_k_inventory_and_missing_extra_fail[1]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_exact_actual_k_inventory_and_missing_extra_fail[4]",
+    "name": "test_exact_actual_k_inventory_and_missing_extra_fail[4]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_exact_actual_k_inventory_and_missing_extra_fail[8]",
+    "name": "test_exact_actual_k_inventory_and_missing_extra_fail[8]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_trigger_telemetry_start_keeps_exact_yield_and_resume",
+    "name": "test_trigger_telemetry_start_keeps_exact_yield_and_resume",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_telemetry_groups_are_strict_subsets_of_optimizer_allowlist",
+    "name": "test_telemetry_groups_are_strict_subsets_of_optimizer_allowlist",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_checkpoint_wrapper_observes_only_successful_saves",
+    "name": "test_checkpoint_wrapper_observes_only_successful_saves",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_corrected_phase5_keeps_default_callbacks_disabled",
+    "name": "test_corrected_phase5_keeps_default_callbacks_disabled",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_grouped_latency_instrumentation_uses_real_producer_and_model_scopes",
+    "name": "test_grouped_latency_instrumentation_uses_real_producer_and_model_scopes",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_execution_preserves_formal_schedule_without_mutation",
+    "name": "test_bounded_execution_preserves_formal_schedule_without_mutation",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_unsafe_configuration[overrides0-fresh-only]",
+    "name": "test_bounded_smoke_rejects_unsafe_configuration[overrides0-fresh-only]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_unsafe_configuration[overrides1-fresh-only]",
+    "name": "test_bounded_smoke_rejects_unsafe_configuration[overrides1-fresh-only]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_unsafe_configuration[overrides2-fresh-only]",
+    "name": "test_bounded_smoke_rejects_unsafe_configuration[overrides2-fresh-only]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_unsafe_configuration[overrides3-fresh-only]",
+    "name": "test_bounded_smoke_rejects_unsafe_configuration[overrides3-fresh-only]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_unsafe_configuration[overrides4-fresh-only]",
+    "name": "test_bounded_smoke_rejects_unsafe_configuration[overrides4-fresh-only]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_unsafe_configuration[overrides5-30000/500/100]",
+    "name": "test_bounded_smoke_rejects_unsafe_configuration[overrides5-30000/500/100]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_unsafe_configuration[overrides6-30000/500/100]",
+    "name": "test_bounded_smoke_rejects_unsafe_configuration[overrides6-30000/500/100]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_unsafe_configuration[overrides7-30000/500/100]",
+    "name": "test_bounded_smoke_rejects_unsafe_configuration[overrides7-30000/500/100]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_unsafe_configuration[overrides8-bounded_]",
+    "name": "test_bounded_smoke_rejects_unsafe_configuration[overrides8-bounded_]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_rejects_namespace_reuse_and_resume",
+    "name": "test_bounded_smoke_rejects_namespace_reuse_and_resume",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_trainer_checks_completed_optimizer_iteration_not_dataloader_length",
+    "name": "test_bounded_trainer_checks_completed_optimizer_iteration_not_dataloader_length",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_noncode_dirty_allowlist_preserves_MM_and_DS_evidence",
+    "name": "test_root_noncode_dirty_allowlist_preserves_MM_and_DS_evidence",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ M examples/psm_wma_robocasa_corrected_phase5.py\\x00]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ M examples/psm_wma_robocasa_corrected_phase5.py\\x00]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ M docs/build/contract.md\\x00]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ M docs/build/contract.md\\x00]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ D SESSION.md\\x00]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ D SESSION.md\\x00]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[?? artifacts/g0/unsafe.py\\x00]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[?? artifacts/g0/unsafe.py\\x00]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[?? docs/collab/chatgpt/DS_PRO_unsafe.py\\x00]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[?? docs/collab/chatgpt/DS_PRO_unsafe.py\\x00]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[?? tools/v3/unsafe.py\\x00]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[?? tools/v3/unsafe.py\\x00]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[?? scripts/plot_h3f_monitor_v2.py\\x00]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[?? scripts/plot_h3f_monitor_v2.py\\x00]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ M scripts/plot_h3f_monitor.py\\x00]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ M scripts/plot_h3f_monitor.py\\x00]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[R  SESSION.md\\x00renamed.md\\x00]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[R  SESSION.md\\x00renamed.md\\x00]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ M TODO.md]",
+    "name": "test_root_dirty_allowlist_fails_closed_on_unknown_or_source_changes[ M TODO.md]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_diagnostic_final_step_samples_gpu_and_parameter_norms",
+    "name": "test_bounded_diagnostic_final_step_samples_gpu_and_parameter_norms",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_bounded_smoke_requires_prebuilt_dataset_index_even_before_model_preflight",
+    "name": "test_bounded_smoke_requires_prebuilt_dataset_index_even_before_model_preflight",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_missing_grad_audit_requires_exact_three_step_bounded_fresh",
+    "name": "test_missing_grad_audit_requires_exact_three_step_bounded_fresh",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_formal_cli_accepts_bounded_raw_prefetch_without_changing_config_digest[0]",
+    "name": "test_formal_cli_accepts_bounded_raw_prefetch_without_changing_config_digest[0]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_formal_cli_accepts_bounded_raw_prefetch_without_changing_config_digest[2]",
+    "name": "test_formal_cli_accepts_bounded_raw_prefetch_without_changing_config_digest[2]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_formal_cli_accepts_bounded_raw_prefetch_without_changing_config_digest[16]",
+    "name": "test_formal_cli_accepts_bounded_raw_prefetch_without_changing_config_digest[16]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_formal_cli_defaults_to_frozen_sync_when_num_workers_omitted",
+    "name": "test_formal_cli_defaults_to_frozen_sync_when_num_workers_omitted",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_full_segment_prefetch_cli_is_explicit_and_new_rng_has_distinct_digest",
+    "name": "test_full_segment_prefetch_cli_is_explicit_and_new_rng_has_distinct_digest",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py::test_formal_and_resume_require_accepted_index_before_data_open",
+    "name": "test_formal_and_resume_require_accepted_index_before_data_open",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_bounded_diagnostic_remains_nonresumable",
+    "name": "test_bounded_diagnostic_remains_nonresumable",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_concurrent_resume_is_exclusive_and_latest_drift_is_rejected",
+    "name": "test_concurrent_resume_is_exclusive_and_latest_drift_is_rejected",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change",
+    "name": "test_existing_namespaces_rejected_by_real_cli_without_any_old_file_change",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_formal_and_diagnostic_options_cannot_mix",
+    "name": "test_formal_and_diagnostic_options_cannot_mix",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_incomplete_snapshot_cannot_be_resumed",
+    "name": "test_incomplete_snapshot_cannot_be_resumed",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_missing_index_precedes_namespace_read_and_runtime_for_fresh_and_resume",
+    "name": "test_missing_index_precedes_namespace_read_and_runtime_for_fresh_and_resume",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_real_cli_invalid_budgets_rejected_before_runtime",
+    "name": "test_real_cli_invalid_budgets_rejected_before_runtime",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_real_cli_rejects_namespace_symlink",
+    "name": "test_real_cli_rejects_namespace_symlink",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_real_cli_rejects_path_traversal",
+    "name": "test_real_cli_rejects_path_traversal",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_real_cli_rejects_symlink_output_alias",
+    "name": "test_real_cli_rejects_symlink_output_alias",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_real_cli_resume_rejects_other_root_child_and_layout",
+    "name": "test_real_cli_resume_rejects_other_root_child_and_layout",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_real_cli_resume_requires_identity_and_canonical_config",
+    "name": "test_real_cli_resume_requires_identity_and_canonical_config",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_resume_keeps_canonical_bytes_mtime_and_adds_new_snapshot",
+    "name": "test_resume_keeps_canonical_bytes_mtime_and_adds_new_snapshot",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_resume_rejects_checkpoint_symlinks_and_missing_rank_sidecars",
+    "name": "test_resume_rejects_checkpoint_symlinks_and_missing_rank_sidecars",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_semantic_mismatch_is_rejected_before_write",
+    "name": "test_semantic_mismatch_is_rejected_before_write",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::LifecycleTests::test_two_concurrent_fresh_have_exactly_one_atomic_claim",
+    "name": "test_two_concurrent_fresh_have_exactly_one_atomic_claim",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::IdentityTests::test_all_rank_preflight_errors_and_identity_disagreement_block_writes",
+    "name": "test_all_rank_preflight_errors_and_identity_disagreement_block_writes",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::IdentityTests::test_budget_phase_load_path_do_not_change_semantic_digest",
+    "name": "test_budget_phase_load_path_do_not_change_semantic_digest",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::TrainerTests::test_launcher_has_sealed_formal_profile_and_no_legacy_entry",
+    "name": "test_launcher_has_sealed_formal_profile_and_no_legacy_entry",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::TrainerTests::test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop",
+    "name": "test_phase5_main_wires_lifecycle_budget_and_actual_trainer_loop",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::TrainerTests::test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite",
+    "name": "test_real_constructor_propagates_writer_failure_before_legacy_config_overwrite",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::TrainerTests::test_real_trainer_fresh100_then_resume500_schedule_unchanged",
+    "name": "test_real_trainer_fresh100_then_resume500_schedule_unchanged",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::TrainerTests::test_real_trainer_half_ga_cannot_finish_or_save",
+    "name": "test_real_trainer_half_ga_cannot_finish_or_save",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::TrainerTests::test_real_trainer_invalid_resume_budget_rejected_before_consumption",
+    "name": "test_real_trainer_invalid_resume_budget_rejected_before_consumption",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::TrainerTests::test_real_trainer_missing_local_commit_cannot_finish",
+    "name": "test_real_trainer_missing_local_commit_cannot_finish",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::TrainerTests::test_real_trainer_resume101_makes_off_cadence_checkpoint",
+    "name": "test_real_trainer_resume101_makes_off_cadence_checkpoint",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::TrainerTests::test_real_trainer_save_or_finalize_failure_never_reports_success",
+    "name": "test_real_trainer_save_or_finalize_failure_never_reports_success",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py::FixtureIsolationTests::test_host_megatron_cannot_import_against_fake_torch_and_modules_are_restored",
+    "name": "test_host_megatron_cannot_import_against_fake_torch_and_modules_are_restored",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_inherited32_overlay_saved_yaml_pickle_and_child_parser_are16",
+    "name": "test_inherited32_overlay_saved_yaml_pickle_and_child_parser_are16",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_bad_or_ambiguous_fields_fail_before_mutation[alias_conflict]",
+    "name": "test_bad_or_ambiguous_fields_fail_before_mutation[alias_conflict]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_bad_or_ambiguous_fields_fail_before_mutation[other_dataset]",
+    "name": "test_bad_or_ambiguous_fields_fail_before_mutation[other_dataset]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_bad_or_ambiguous_fields_fail_before_mutation[list_conflict]",
+    "name": "test_bad_or_ambiguous_fields_fail_before_mutation[list_conflict]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_bad_or_ambiguous_fields_fail_before_mutation[string]",
+    "name": "test_bad_or_ambiguous_fields_fail_before_mutation[string]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_bad_or_ambiguous_fields_fail_before_mutation[bool]",
+    "name": "test_bad_or_ambiguous_fields_fail_before_mutation[bool]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_bad_or_ambiguous_fields_fail_before_mutation[zero]",
+    "name": "test_bad_or_ambiguous_fields_fail_before_mutation[zero]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_bad_or_ambiguous_fields_fail_before_mutation[unsupported]",
+    "name": "test_bad_or_ambiguous_fields_fail_before_mutation[unsupported]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_bad_or_ambiguous_fields_fail_before_mutation[missing]",
+    "name": "test_bad_or_ambiguous_fields_fail_before_mutation[missing]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_matching_aliases_are_mirrored_and_drift_before_snapshot_is_rejected",
+    "name": "test_matching_aliases_are_mirrored_and_drift_before_snapshot_is_rejected",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_lifecycle_persists_provenance_and_same_job_resume_preserves_canonical",
+    "name": "test_lifecycle_persists_provenance_and_same_job_resume_preserves_canonical",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_snapshot_drift_blocks_canonical_publication[live_drift]",
+    "name": "test_snapshot_drift_blocks_canonical_publication[live_drift]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_snapshot_drift_blocks_canonical_publication[yaml_drift]",
+    "name": "test_snapshot_drift_blocks_canonical_publication[yaml_drift]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_snapshot_drift_blocks_canonical_publication[yaml_conflict]",
+    "name": "test_snapshot_drift_blocks_canonical_publication[yaml_conflict]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_snapshot_drift_blocks_canonical_publication[missing_provenance]",
+    "name": "test_snapshot_drift_blocks_canonical_publication[missing_provenance]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_legacy_job_assets_and_other_recipe_remain_unchanged",
+    "name": "test_legacy_job_assets_and_other_recipe_remain_unchanged",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_actual_cache_contract_rejects_wrong_geometry[chunk_length-32]",
+    "name": "test_actual_cache_contract_rejects_wrong_geometry[chunk_length-32]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_actual_cache_contract_rejects_wrong_geometry[fps-19.0]",
+    "name": "test_actual_cache_contract_rejects_wrong_geometry[fps-19.0]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py::test_producer_provenance_names_match_actual_preflight_and_main_wiring",
+    "name": "test_producer_provenance_names_match_actual_preflight_and_main_wiring",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_collate_uses_native_joint_dataloader_multi_sample_abi[1]",
+    "name": "test_collate_uses_native_joint_dataloader_multi_sample_abi[1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_collate_uses_native_joint_dataloader_multi_sample_abi[3]",
+    "name": "test_collate_uses_native_joint_dataloader_multi_sample_abi[3]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_collate_uses_native_joint_dataloader_multi_sample_abi[8]",
+    "name": "test_collate_uses_native_joint_dataloader_multi_sample_abi[8]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_collate_uses_native_joint_dataloader_multi_sample_abi[128]",
+    "name": "test_collate_uses_native_joint_dataloader_multi_sample_abi[128]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_collate_rejects_empty_or_non_dict_payloads",
+    "name": "test_collate_rejects_empty_or_non_dict_payloads",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_exact_binding_rejects_catalog_ga_digest_and_duplicate",
+    "name": "test_exact_binding_rejects_catalog_ga_digest_and_duplicate",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_trainer_has_no_historical_grouped_import_or_materializer",
+    "name": "test_trainer_has_no_historical_grouped_import_or_materializer",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_trainer_dynamic_ga_runs_one_optimizer_then_publishes_and_zeros_grad[1]",
+    "name": "test_trainer_dynamic_ga_runs_one_optimizer_then_publishes_and_zeros_grad[1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_trainer_dynamic_ga_runs_one_optimizer_then_publishes_and_zeros_grad[2]",
+    "name": "test_trainer_dynamic_ga_runs_one_optimizer_then_publishes_and_zeros_grad[2]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_trainer_dynamic_ga_runs_one_optimizer_then_publishes_and_zeros_grad[3]",
+    "name": "test_trainer_dynamic_ga_runs_one_optimizer_then_publishes_and_zeros_grad[3]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_scaler_skip_does_not_advance_scheduler",
+    "name": "test_scaler_skip_does_not_advance_scheduler",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_bind_rejects_catalog_mismatch_and_existing_dataloader_authority",
+    "name": "test_bind_rejects_catalog_mismatch_and_existing_dataloader_authority",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_exact_producer_materializes_planned_requests",
+    "name": "test_exact_producer_materializes_planned_requests",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_ga_and_context_parallel_must_match_planner",
+    "name": "test_ga_and_context_parallel_must_match_planner",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_optimizer_parameters_supports_container_and_plain_optimizer",
+    "name": "test_optimizer_parameters_supports_container_and_plain_optimizer",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_optimizer_parameters_container_is_fail_closed",
+    "name": "test_optimizer_parameters_container_is_fail_closed",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_finite_gradient_check_unwraps_optimizer_container",
+    "name": "test_finite_gradient_check_unwraps_optimizer_container",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_nonfinite_selected_gradient_fails_before_optimizer",
+    "name": "test_nonfinite_selected_gradient_fails_before_optimizer",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_absent_w0_gradient_is_legal_when_another_selected_gradient_is_present",
+    "name": "test_absent_w0_gradient_is_legal_when_another_selected_gradient_is_present",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_trainer_scaler_skip_aborts_pending_window_without_publish",
+    "name": "test_trainer_scaler_skip_aborts_pending_window_without_publish",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_async_raw_prefetch_keeps_optimizer_and_committed_frontier_parity[0]",
+    "name": "test_async_raw_prefetch_keeps_optimizer_and_committed_frontier_parity[0]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_async_raw_prefetch_keeps_optimizer_and_committed_frontier_parity[1]",
+    "name": "test_async_raw_prefetch_keeps_optimizer_and_committed_frontier_parity[1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_async_raw_prefetch_keeps_optimizer_and_committed_frontier_parity[2]",
+    "name": "test_async_raw_prefetch_keeps_optimizer_and_committed_frontier_parity[2]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_async_raw_failure_aborts_candidate_without_optimizer_or_frontier_commit",
+    "name": "test_async_raw_failure_aborts_candidate_without_optimizer_or_frontier_commit",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_full_segment_prefetch_requires_exact_keyed_rng_and_single_cpu_worker",
+    "name": "test_full_segment_prefetch_requires_exact_keyed_rng_and_single_cpu_worker",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_full_segment_prefetch_matches_keyed_sync_2_windows_and_optimizer_state",
+    "name": "test_full_segment_prefetch_matches_keyed_sync_2_windows_and_optimizer_state",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py::test_full_segment_prefetch_failure_never_commits_pending_window",
+    "name": "test_full_segment_prefetch_failure_never_commits_pending_window",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_restore_next_identity_and_all_fast_values",
+    "name": "test_restore_next_identity_and_all_fast_values",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_interrupted_and_uninterrupted_next_loss_and_gradient_match",
+    "name": "test_interrupted_and_uninterrupted_next_loss_and_gradient_match",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[iteration]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[iteration]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[manifest]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[manifest]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[corpus]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[corpus]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[source]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[source]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[config]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[config]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[profile]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[profile]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[uid]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[uid]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[scheduler]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[scheduler]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[missing_fast]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[missing_fast]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[fp16]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[fp16]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[nan]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[nan]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[parameter]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[parameter]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[grad_fn]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[grad_fn]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[requires_grad]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[requires_grad]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_or_mismatched_state_fails_without_live_mutation[v1]",
+    "name": "test_corrupt_or_mismatched_state_fails_without_live_mutation[v1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_terminal_restoration_requires_exact_last_segment_source",
+    "name": "test_terminal_restoration_requires_exact_last_segment_source",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrected_format_and_dynamic_profile",
+    "name": "test_corrected_format_and_dynamic_profile",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_dynamic_slots_and_profile[1-1-2]",
+    "name": "test_dynamic_slots_and_profile[1-1-2]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_dynamic_slots_and_profile[3-2-3]",
+    "name": "test_dynamic_slots_and_profile[3-2-3]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_dynamic_slots_and_profile[8-3-4]",
+    "name": "test_dynamic_slots_and_profile[8-3-4]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_rank_offset_slots_and_k_profile",
+    "name": "test_rank_offset_slots_and_k_profile",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_public_frontier_validator_is_non_mutating",
+    "name": "test_public_frontier_validator_is_non_mutating",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_zero_step_snapshot_and_restore_rejected",
+    "name": "test_zero_step_snapshot_and_restore_rejected",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_dcp_dataloader_wrapper_selects_grouped_callback_and_stages_restore",
+    "name": "test_dcp_dataloader_wrapper_selects_grouped_callback_and_stages_restore",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_resume_restores_completed_iteration_before_first_window",
+    "name": "test_resume_restores_completed_iteration_before_first_window",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_missing_callback_state_blocks_first_resumed_training_step",
+    "name": "test_missing_callback_state_blocks_first_resumed_training_step",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_corrupt_pending_resume_is_terminal_for_trainer_instance",
+    "name": "test_corrupt_pending_resume_is_terminal_for_trainer_instance",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_callback_refuses_checkpoint_before_first_successful_window",
+    "name": "test_callback_refuses_checkpoint_before_first_successful_window",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py::test_same_job_requires_this_rank_component_and_warmstart_does_not",
+    "name": "test_same_job_requires_this_rank_component_and_warmstart_does_not",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_ga2_full_window_uses_exact_256_consumer_weight_and_publishes_after_step",
+    "name": "test_ga2_full_window_uses_exact_256_consumer_weight_and_publishes_after_step",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_packed128_fp32_loss_and_slow_gradients_match_index_weighted_reference",
+    "name": "test_packed128_fp32_loss_and_slow_gradients_match_index_weighted_reference",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_joint_outer_gradient_reaches_host_and_model_owned_local_slow_params",
+    "name": "test_joint_outer_gradient_reaches_host_and_model_owned_local_slow_params",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_terminal_remainder_uses_actual_window_count_without_ga_rescale",
+    "name": "test_terminal_remainder_uses_actual_window_count_without_ga_rescale",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_terminal_rebind_in_second_member_has_new_s0_without_local_prefix",
+    "name": "test_terminal_rebind_in_second_member_has_new_s0_without_local_prefix",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_malformed_member_aborts_pending_window_without_live_change",
+    "name": "test_malformed_member_aborts_pending_window_without_live_change",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_member_failure_leaves_live_state_unchanged[native]",
+    "name": "test_member_failure_leaves_live_state_unchanged[native]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_member_failure_leaves_live_state_unchanged[nonfinite]",
+    "name": "test_member_failure_leaves_live_state_unchanged[nonfinite]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_member_failure_leaves_live_state_unchanged[backward]",
+    "name": "test_member_failure_leaves_live_state_unchanged[backward]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_member_failure_leaves_live_state_unchanged[second_member]",
+    "name": "test_member_failure_leaves_live_state_unchanged[second_member]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_optimizer_skip_or_exception_never_publishes_candidate[skip]",
+    "name": "test_optimizer_skip_or_exception_never_publishes_candidate[skip]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_optimizer_skip_or_exception_never_publishes_candidate[exception]",
+    "name": "test_optimizer_skip_or_exception_never_publishes_candidate[exception]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_t32_b3_ga3_uses_one_scan_and_one_packed_native_per_member",
+    "name": "test_t32_b3_ga3_uses_one_scan_and_one_packed_native_per_member",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py::test_optional_strict_real_data_grouped_smoke",
+    "name": "test_optional_strict_real_data_grouped_smoke",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_visual96_exact_v2_formula_and_gradient",
+    "name": "test_visual96_exact_v2_formula_and_gradient",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_visual96_rejects_wrong_channel_dtype_or_nonfinite[bad0]",
+    "name": "test_visual96_rejects_wrong_channel_dtype_or_nonfinite[bad0]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_visual96_rejects_wrong_channel_dtype_or_nonfinite[bad1]",
+    "name": "test_visual96_rejects_wrong_channel_dtype_or_nonfinite[bad1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_visual96_rejects_wrong_channel_dtype_or_nonfinite[bad2]",
+    "name": "test_visual96_rejects_wrong_channel_dtype_or_nonfinite[bad2]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_catalog_requires_phase3_raw_capability_and_path_independent_digest",
+    "name": "test_catalog_requires_phase3_raw_capability_and_path_independent_digest",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_geometry_s0_previous_action_and_terminal_pad[16-33-3]",
+    "name": "test_geometry_s0_previous_action_and_terminal_pad[16-33-3]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_geometry_s0_previous_action_and_terminal_pad[32-33-2]",
+    "name": "test_geometry_s0_previous_action_and_terminal_pad[32-33-2]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_geometry_s0_previous_action_and_terminal_pad[16-2-1]",
+    "name": "test_geometry_s0_previous_action_and_terminal_pad[16-2-1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_produce_deduplicates_previous_and_current_raw_reads",
+    "name": "test_produce_deduplicates_previous_and_current_raw_reads",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_producer_rejects_identity_and_digest_drift",
+    "name": "test_producer_rejects_identity_and_digest_drift",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_planner_dynamic_b_ga_stable_slots_and_candidate_only",
+    "name": "test_planner_dynamic_b_ga_stable_slots_and_candidate_only",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_rank_partition_deterministic_and_capacity_fail_closed",
+    "name": "test_rank_partition_deterministic_and_capacity_fail_closed",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_planner_terminal_rebind_within_one_window_never_reuses_episode",
+    "name": "test_planner_terminal_rebind_within_one_window_never_reuses_episode",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_same_index_gather_respects_pad_and_slot_order",
+    "name": "test_same_index_gather_respects_pad_and_slot_order",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_corrected_module_has_no_historical_b1_imports",
+    "name": "test_corrected_module_has_no_historical_b1_imports",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py::test_optional_real_data_debug_smoke",
+    "name": "test_optional_real_data_debug_smoke",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_successful_weighted_losses_gradient_norms_and_local_stats",
+    "name": "test_successful_weighted_losses_gradient_norms_and_local_stats",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_missing_metric_is_unavailable_not_fabricated_zero",
+    "name": "test_missing_metric_is_unavailable_not_fabricated_zero",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_nonrank0_has_no_output_and_bad_counts_fail_before_optimizer",
+    "name": "test_nonrank0_has_no_output_and_bad_counts_fail_before_optimizer",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_completed_optimizer_is_not_rolled_back_by_broken_logger",
+    "name": "test_completed_optimizer_is_not_rolled_back_by_broken_logger",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_stage_timing_is_distinct_from_unavailable_async_data_wait",
+    "name": "test_stage_timing_is_distinct_from_unavailable_async_data_wait",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_parameter_norms_sample_only_on_interval_100",
+    "name": "test_parameter_norms_sample_only_on_interval_100",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_log_uses_model_frozen_loss_coefficients_not_double_weighting",
+    "name": "test_log_uses_model_frozen_loss_coefficients_not_double_weighting",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_observer_resets_after_abort_without_successful_log",
+    "name": "test_observer_resets_after_abort_without_successful_log",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_hot_path_does_not_call_tensor_item",
+    "name": "test_hot_path_does_not_call_tensor_item",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_cuda_event_timing_samples_only_every_100_steps",
+    "name": "test_cuda_event_timing_samples_only_every_100_steps",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_gpu_data_stall_estimates_training_stream_cpu_stage_gaps_without_synchronize",
+    "name": "test_gpu_data_stall_estimates_training_stream_cpu_stage_gaps_without_synchronize",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_gpu_data_stall_pending_event_is_not_falsely_reported_as_zero",
+    "name": "test_gpu_data_stall_pending_event_is_not_falsely_reported_as_zero",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_gpu_data_stall_does_not_measure_when_disabled_or_unavailable",
+    "name": "test_gpu_data_stall_does_not_measure_when_disabled_or_unavailable",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[0]",
+    "name": "test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[0]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[1]",
+    "name": "test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[1]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[2]",
+    "name": "test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[2]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[3]",
+    "name": "test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[3]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[4]",
+    "name": "test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[4]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[5]",
+    "name": "test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[5]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[6]",
+    "name": "test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[6]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[7]",
+    "name": "test_opt_in_missing_gradient_audit_reports_exact_names_on_each_rank_without_mutation[7]",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_missing_gradient_audit_is_disabled_by_default_and_does_not_emit_before_commit",
+    "name": "test_missing_gradient_audit_is_disabled_by_default_and_does_not_emit_before_commit",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_human_progress_is_optional_and_original_train_json_remains_machine_readable",
+    "name": "test_human_progress_is_optional_and_original_train_json_remains_machine_readable",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_member_packed_audit_keeps_original_index_major_consumer_identity_hash",
+    "name": "test_member_packed_audit_keeps_original_index_major_consumer_identity_hash",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_packed_metric_weight_uses_exact_member_counts_and_rejects_missing_rows",
+    "name": "test_packed_metric_weight_uses_exact_member_counts_and_rejects_missing_rows",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_nvtx_stage_markers_are_opt_in_and_balanced",
+    "name": "test_nvtx_stage_markers_are_opt_in_and_balanced",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py::test_nvtx_unexpected_environment_value_fails_closed",
+    "name": "test_nvtx_unexpected_environment_value_fails_closed",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_compact_shape_and_storage_not_logical_megabytes",
+    "name": "test_compact_shape_and_storage_not_logical_megabytes",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_sample_storage_never_aliases_another_sample",
+    "name": "test_sample_storage_never_aliases_another_sample",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_proxy_geometry_rejected[shape0]",
+    "name": "test_invalid_proxy_geometry_rejected[shape0]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_proxy_geometry_rejected[shape1]",
+    "name": "test_invalid_proxy_geometry_rejected[shape1]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_proxy_geometry_rejected[shape2]",
+    "name": "test_invalid_proxy_geometry_rejected[shape2]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_proxy_geometry_rejected[shape3]",
+    "name": "test_invalid_proxy_geometry_rejected[shape3]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_proxy_geometry_rejected[shape4]",
+    "name": "test_invalid_proxy_geometry_rejected[shape4]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_compact_switch[0-False]",
+    "name": "test_compact_switch[0-False]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_compact_switch[1-True]",
+    "name": "test_compact_switch[1-True]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_compact_switch[true]",
+    "name": "test_invalid_compact_switch[true]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_compact_switch[-1]",
+    "name": "test_invalid_compact_switch[-1]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_compact_switch[2]",
+    "name": "test_invalid_compact_switch[2]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_compact_switch[]",
+    "name": "test_invalid_compact_switch[]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_geometry_stage_has_no_pixel_resize_and_preserves_latent_action_rng",
+    "name": "test_geometry_stage_has_no_pixel_resize_and_preserves_latent_action_rng",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_compact_stage_fail_closed[missing_latent]",
+    "name": "test_compact_stage_fail_closed[missing_latent]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_compact_stage_fail_closed[false_marker]",
+    "name": "test_compact_stage_fail_closed[false_marker]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_compact_stage_fail_closed[wrong_resolution]",
+    "name": "test_compact_stage_fail_closed[wrong_resolution]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_compact_stage_fail_closed[poisoned]",
+    "name": "test_compact_stage_fail_closed[poisoned]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_noncache_dense_calls_original_once",
+    "name": "test_noncache_dense_calls_original_once",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_compact_video_is_excluded_from_recursive_device_transfer",
+    "name": "test_compact_video_is_excluded_from_recursive_device_transfer",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_bad_compact_batch_rejected_before_transfer[marker]",
+    "name": "test_bad_compact_batch_rejected_before_transfer[marker]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_bad_compact_batch_rejected_before_transfer[count]",
+    "name": "test_bad_compact_batch_rejected_before_transfer[count]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_bad_compact_batch_rejected_before_transfer[latent]",
+    "name": "test_bad_compact_batch_rejected_before_transfer[latent]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_bad_compact_batch_rejected_before_transfer[size]",
+    "name": "test_bad_compact_batch_rejected_before_transfer[size]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_bad_compact_batch_rejected_before_transfer[fractional_size]",
+    "name": "test_bad_compact_batch_rejected_before_transfer[fractional_size]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_bad_compact_batch_rejected_before_transfer[mixed]",
+    "name": "test_bad_compact_batch_rejected_before_transfer[mixed]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_legacy_dense_transfer_unchanged",
+    "name": "test_legacy_dense_transfer_unchanged",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_singleflight_one_load_for_four_readers",
+    "name": "test_singleflight_one_load_for_four_readers",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_different_keys_load_in_parallel",
+    "name": "test_different_keys_load_in_parallel",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_cache_enforces_entry_and_byte_budgets_and_oversize",
+    "name": "test_cache_enforces_entry_and_byte_budgets_and_oversize",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_failed_load_not_cached_or_swallowed",
+    "name": "test_failed_load_not_cached_or_swallowed",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_cache_limits[-1-2]",
+    "name": "test_invalid_cache_limits[-1-2]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_cache_limits[True-2]",
+    "name": "test_invalid_cache_limits[True-2]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_cache_limits[1-0]",
+    "name": "test_invalid_cache_limits[1-0]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_invalid_cache_limits[1-False]",
+    "name": "test_invalid_cache_limits[1-False]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_fast_fingerprint_reproducible_sensitive_readonly",
+    "name": "test_fast_fingerprint_reproducible_sensitive_readonly",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_memory_inventory_uses_storage_without_inventing_activation_bytes",
+    "name": "test_memory_inventory_uses_storage_without_inventing_activation_bytes",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_consumer_audit_counts_only_observed_trace",
+    "name": "test_consumer_audit_counts_only_observed_trace",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_evaluation_manifest_requires_same_exact_identity",
+    "name": "test_evaluation_manifest_requires_same_exact_identity",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_legacy_results_are_not_silently_adopted",
+    "name": "test_legacy_results_are_not_silently_adopted",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_result_validation_accepts_typed_runtime_failures",
+    "name": "test_result_validation_accepts_typed_runtime_failures",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_foreign_incomplete_or_duplicate_results_rejected[rows0]",
+    "name": "test_foreign_incomplete_or_duplicate_results_rejected[rows0]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_foreign_incomplete_or_duplicate_results_rejected[rows1]",
+    "name": "test_foreign_incomplete_or_duplicate_results_rejected[rows1]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_foreign_incomplete_or_duplicate_results_rejected[rows2]",
+    "name": "test_foreign_incomplete_or_duplicate_results_rejected[rows2]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_foreign_incomplete_or_duplicate_results_rejected[rows3]",
+    "name": "test_foreign_incomplete_or_duplicate_results_rejected[rows3]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_partial_screening_never_reports_a_complete_sr",
+    "name": "test_partial_screening_never_reports_a_complete_sr",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_runtime_error_preserves_completed_actions_and_prediction",
+    "name": "test_runtime_error_preserves_completed_actions_and_prediction",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_episode_interruption_records_then_propagates",
+    "name": "test_episode_interruption_records_then_propagates",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_episode_artifacts_cannot_be_overwritten",
+    "name": "test_episode_artifacts_cannot_be_overwritten",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_partial_video_actual_serialization",
+    "name": "test_partial_video_actual_serialization",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_atomic_episode_json_does_not_leave_temp_files",
+    "name": "test_atomic_episode_json_does_not_leave_temp_files",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_matched_local_intervention_restores_rng_and_changes_only_prefix",
+    "name": "test_matched_local_intervention_restores_rng_and_changes_only_prefix",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_matched_local_intervention_rejects_train_mode",
+    "name": "test_matched_local_intervention_rejects_train_mode",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_observed_exposure_does_not_count_uninstrumented_history",
+    "name": "test_observed_exposure_does_not_count_uninstrumented_history",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_task_count_mismatch_does_not_update_exposure",
+    "name": "test_task_count_mismatch_does_not_update_exposure",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_identity_changes_with_model_config_and_dataset_bytes",
+    "name": "test_identity_changes_with_model_config_and_dataset_bytes",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_identity_rejects_mismatched_root_child",
+    "name": "test_identity_rejects_mismatched_root_child",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_screening_rejects_invalid_counts[row0]",
+    "name": "test_screening_rejects_invalid_counts[row0]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_screening_rejects_invalid_counts[row1]",
+    "name": "test_screening_rejects_invalid_counts[row1]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_screening_rejects_invalid_counts[row2]",
+    "name": "test_screening_rejects_invalid_counts[row2]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_memory_inventory_reads_official_container_without_state_dict",
+    "name": "test_memory_inventory_reads_official_container_without_state_dict",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_unknown_optimizer_memory_is_unavailable_not_zero",
+    "name": "test_unknown_optimizer_memory_is_unavailable_not_zero",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_eval_identity_rejects_dirty_root_code[ M scripts/eval.py\\x00]",
+    "name": "test_eval_identity_rejects_dirty_root_code[ M scripts/eval.py\\x00]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_eval_identity_rejects_dirty_root_code[?? scripts/new.py\\x00]",
+    "name": "test_eval_identity_rejects_dirty_root_code[?? scripts/new.py\\x00]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_eval_identity_rejects_dirty_root_code[ M cosmos-framework\\x00]",
+    "name": "test_eval_identity_rejects_dirty_root_code[ M cosmos-framework\\x00]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_eval_identity_rejects_dirty_root_code[ D SESSION.md\\x00]",
+    "name": "test_eval_identity_rejects_dirty_root_code[ D SESSION.md\\x00]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_eval_identity_preserves_mm_notes_and_external_evidence",
+    "name": "test_eval_identity_preserves_mm_notes_and_external_evidence",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_evaluation_identity_rejects_boolean_episode_or_invalid_trial_count[False-1]",
+    "name": "test_evaluation_identity_rejects_boolean_episode_or_invalid_trial_count[False-1]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_evaluation_identity_rejects_boolean_episode_or_invalid_trial_count[0-True]",
+    "name": "test_evaluation_identity_rejects_boolean_episode_or_invalid_trial_count[0-True]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "tools/v3/remaining_optimizations_test.py::test_evaluation_identity_rejects_boolean_episode_or_invalid_trial_count[0-0]",
+    "name": "test_evaluation_identity_rejects_boolean_episode_or_invalid_trial_count[0-0]",
+    "file": "/workspace/psm_wma/tools/v3/remaining_optimizations_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_ambiguous_task_date_is_rejected",
+    "name": "test_ambiguous_task_date_is_rejected",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_base_policy_metadata_is_required",
+    "name": "test_base_policy_metadata_is_required",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_config_never_uses_torchrun",
+    "name": "test_config_never_uses_torchrun",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_current_dcp_planner_keeps_droid_heads",
+    "name": "test_current_dcp_planner_keeps_droid_heads",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_eval_missing_extras_or_wrong_task_is_rejected",
+    "name": "test_eval_missing_extras_or_wrong_task_is_rejected",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_eval_uses_separate_interpreter_and_one_episode",
+    "name": "test_eval_uses_separate_interpreter_and_one_episode",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_existing_checkpoint_prevents_accidental_resume",
+    "name": "test_existing_checkpoint_prevents_accidental_resume",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_export_does_not_implicitly_launch_gpu_verify",
+    "name": "test_export_does_not_implicitly_launch_gpu_verify",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_hf_directory_is_not_accepted_as_dcp",
+    "name": "test_hf_directory_is_not_accepted_as_dcp",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_missing_empty_or_remote_tokenizer_is_rejected",
+    "name": "test_missing_empty_or_remote_tokenizer_is_rejected",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_missing_metadata_is_rejected",
+    "name": "test_missing_metadata_is_rejected",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_nano_and_incomplete_heads_are_rejected",
+    "name": "test_nano_and_incomplete_heads_are_rejected",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_print_command_does_not_execute",
+    "name": "test_print_command_does_not_execute",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_raw15_and_ego20_use_existing_dataset_width",
+    "name": "test_raw15_and_ego20_use_existing_dataset_width",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_raw15_loss_masks_tail_and_inference_unpads",
+    "name": "test_raw15_loss_masks_tail_and_inference_unpads",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_real_composed_edge_contract_and_upstream_not_mutated",
+    "name": "test_real_composed_edge_contract_and_upstream_not_mutated",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_schema_and_official_contract",
+    "name": "test_schema_and_official_contract",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_server_guardrails_default_is_preserved",
+    "name": "test_server_guardrails_default_is_preserved",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_server_rejects_ego_config_in_raw_entrypoint",
+    "name": "test_server_rejects_ego_config_in_raw_entrypoint",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_server_uses_training_checkpoint_without_fake_ema_directory",
+    "name": "test_server_uses_training_checkpoint_without_fake_ema_directory",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_server_wrapper_cli_disables_guardrails_in_setup",
+    "name": "test_server_wrapper_cli_disables_guardrails_in_setup",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_subprocess_failure_is_propagated",
+    "name": "test_subprocess_failure_is_propagated",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_train_is_one_rank_and_keeps_contract",
+    "name": "test_train_is_one_rank_and_keeps_contract",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::NativeGlueTest::test_v21_is_rejected",
+    "name": "test_v21_is_rejected",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::LocalEdgeAssetsTest::test_local_hf_and_dcp_metadata_contract",
+    "name": "test_local_hf_and_dcp_metadata_contract",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/examples/psm_wma_robocasa_native_test.py::LocalEdgeAssetsTest::test_local_processor_without_hub_fallback",
+    "name": "test_local_processor_without_hub_fallback",
+    "file": "/workspace/psm_wma/cosmos-framework/examples/psm_wma_robocasa_native_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py::test_composite_only_and_reject_historical_b1_wire",
+    "name": "test_composite_only_and_reject_historical_b1_wire",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py::test_session_preprocess_identity_and_episode_reset",
+    "name": "test_session_preprocess_identity_and_episode_reset",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py::test_lost_response_replay_is_exact_and_does_not_encode",
+    "name": "test_lost_response_replay_is_exact_and_does_not_encode",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py::test_abort_and_reset_isolation",
+    "name": "test_abort_and_reset_isolation",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py::test_required_needs_model_owned_scan_and_status_has_no_b1_fields",
+    "name": "test_required_needs_model_owned_scan_and_status_has_no_b1_fields",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py::test_off_mode_rejects_evidence_without_encoding",
+    "name": "test_off_mode_rejects_evidence_without_encoding",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py::test_corrected_active_modules_do_not_import_historical_b1",
+    "name": "test_corrected_active_modules_do_not_import_historical_b1",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_cache_modes_default_to_dense_and_unshared",
+    "name": "test_cache_modes_default_to_dense_and_unshared",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_both_cache_optimizations_remain_explicit_opt_in",
+    "name": "test_both_cache_optimizations_remain_explicit_opt_in",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_constructor_rejects_wrong_cache_canvas_geometry",
+    "name": "test_constructor_rejects_wrong_cache_canvas_geometry",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_shuffle_blocks_follow_two_cache_episodes",
+    "name": "test_shuffle_blocks_follow_two_cache_episodes",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_cache_membership_identity_and_official_idle",
+    "name": "test_cache_membership_identity_and_official_idle",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_identity_mismatch_fails_closed[key]",
+    "name": "test_identity_mismatch_fails_closed[key]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_identity_mismatch_fails_closed[start_frame]",
+    "name": "test_identity_mismatch_fails_closed[start_frame]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_identity_mismatch_fails_closed[global_row_indices]",
+    "name": "test_identity_mismatch_fails_closed[global_row_indices]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_identity_mismatch_fails_closed[source_binding_digest]",
+    "name": "test_identity_mismatch_fails_closed[source_binding_digest]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_transform_geometry_action_latent_and_summary",
+    "name": "test_transform_geometry_action_latent_and_summary",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py::test_actual_collate_and_packing_keep_distinct_abis_and_order",
+    "name": "test_actual_collate_and_packing_keep_distinct_abis_and_order",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_valid_cache_hit_preserves_native_crop_temporal_and_action_alignment",
+    "name": "test_valid_cache_hit_preserves_native_crop_temporal_and_action_alignment",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_two_cached_samples_keep_order_and_single_vision_item",
+    "name": "test_two_cached_samples_keep_order_and_single_vision_item",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_no_cache_native_off_mode_unchanged_even_in_eval",
+    "name": "test_no_cache_native_off_mode_unchanged_even_in_eval",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-missing]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-missing]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-marker0]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-marker0]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-marker1]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-marker1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-marker2]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-marker2]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-one tensor]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-one tensor]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-finite fp32_0]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-finite fp32_0]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-finite fp32_1]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-finite fp32_1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-finite fp32_2]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-finite fp32_2]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-finite fp32_3]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-finite fp32_3]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-finite fp32_4]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-finite fp32_4]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-image_size]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-image_size]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-marker3]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-marker3]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-multi-vision]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-multi-vision]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-single-view]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-single-view]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-canvas0]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-canvas0]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_bad_cache_never_falls_back[<lambda>-canvas1]",
+    "name": "test_bad_cache_never_falls_back[<lambda>-canvas1]",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  },
+  {
+    "nodeid": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py::test_eval_cache_hit_and_inference_indexes_fail_before_encode",
+    "name": "test_eval_cache_hit_and_inference_indexes_fail_before_encode",
+    "file": "/workspace/psm_wma/cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py"
+  }
+]

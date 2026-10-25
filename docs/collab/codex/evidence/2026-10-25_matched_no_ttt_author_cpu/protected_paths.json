@@ -1,0 +1,24 @@
+{
+  "child": {
+    "paths": [
+      "cosmos_framework/model",
+      "cosmos_framework/checkpoint",
+      "cosmos_framework/data",
+      "cosmos_framework/inference",
+      "cosmos_framework/simulation",
+      "cosmos_framework/trainer/__init__.py"
+    ],
+    "diff": ""
+  },
+  "root": {
+    "paths": [
+      "third_party",
+      "scripts/eval_robocasa_18task_queue.py",
+      "scripts/robocasa_resume_cli.py",
+      "scripts/robocasa_eval_results.py",
+      "scripts/train_v3_packed128_staged.sh",
+      "configs/eval/robocasa_g1_iter8900.example.yaml"
+    ],
+    "diff": ""
+  }
+}

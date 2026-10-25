@@ -1,0 +1,82 @@
+{
+  "task": "V3-MATCHED-NO-TTT-20261025",
+  "scope": "author CPU synthetic/config only; no GPU/real assets/serving/simulation/training",
+  "implementation_root": "7c083215e9f39ed4b5b3ff64010e415ad62dfdf4",
+  "child_gitlink": "20b5fa639c405a515933da109529e3e2c04de88d",
+  "root_parent": "48d1eb7f21f26be459bf78259d9678a8118e27c1",
+  "child_parent": "813a550dab5d6b5b5e3be90d38bb97527956b4dc",
+  "author_cpu": "PASS_WITH_EXISTING_OPTIONAL_REAL_ASSET_SKIPS",
+  "passed": 434,
+  "skipped": 5,
+  "failures": 0,
+  "errors": 0,
+  "successful_subtests": 42,
+  "top_level_testcase_elements": 439,
+  "new_profile_case_count": 82,
+  "new_profile_skips": 0,
+  "suite": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "5",
+    "tests": "481",
+    "time": "23.653",
+    "timestamp": "2026-10-25T08:32:08.725588+00:00",
+    "hostname": "c85861caf591"
+  },
+  "module_case_counts": {
+    "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py": 28,
+    "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py": 19,
+    "tools/v3/matched_no_ttt_entry_test.py": 35,
+    "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py": 61,
+    "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py": 28,
+    "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py": 19,
+    "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py": 27,
+    "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py": 31,
+    "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py": 14,
+    "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py": 16,
+    "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py": 27,
+    "tools/v3/remaining_optimizations_test.py": 70,
+    "cosmos-framework/examples/psm_wma_robocasa_native_test.py": 26,
+    "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py": 7,
+    "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py": 11,
+    "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py": 20
+  },
+  "skip_details": [
+    {
+      "classname": "",
+      "name": "test_optional_real_strict_snapshot10_preflight",
+      "reason": "\u672a\u63d0\u4f9b\u771f\u5b9e exact-window cache/source/Edge/base/VAE \u8def\u5f84"
+    },
+    {
+      "classname": "",
+      "name": "test_optional_strict_real_data_grouped_smoke",
+      "reason": "strict real debug cache/source paths were not supplied"
+    },
+    {
+      "classname": "",
+      "name": "test_optional_real_data_debug_smoke",
+      "reason": "real debug cache/source paths were not supplied"
+    },
+    {
+      "classname": ".LocalEdgeAssetsTest",
+      "name": "test_local_hf_and_dcp_metadata_contract",
+      "reason": "\u672c\u5730\u8d44\u4ea7\u6838\u9a8c\u9700\u663e\u5f0f\u63d0\u4f9b EDGE_POLICY_CHECKPOINT / BASE_CHECKPOINT_PATH"
+    },
+    {
+      "classname": ".LocalEdgeAssetsTest",
+      "name": "test_local_processor_without_hub_fallback",
+      "reason": "\u672c\u5730\u8d44\u4ea7\u6838\u9a8c\u9700\u663e\u5f0f\u63d0\u4f9b EDGE_POLICY_CHECKPOINT / BASE_CHECKPOINT_PATH"
+    }
+  ],
+  "ruff": "0.12.7 check+format9 PASS",
+  "syntax": "9 Python +1 bash PASS",
+  "frozen_source_hashes": "PASS",
+  "gpt_incremental_review": "PENDING",
+  "ds_independent_cpu": "NOT_RUN_NEW_PAIR",
+  "gpu_config_validate": "NOT_RUN",
+  "real_same_data_match_to_G1": "DS_S0_REQUIRED",
+  "real_save_resume": "NOT_RUN",
+  "gpu_launch_authorized": false,
+  "source_submission": "Root and Child published/read back; evidence commit follows"
+}

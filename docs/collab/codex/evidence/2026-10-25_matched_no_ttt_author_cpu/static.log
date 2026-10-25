@@ -1,0 +1,10 @@
+$ /workspace/.venvs/psm-wma-cpu/bin/ruff --version
+ruff 0.12.7
+$ /workspace/.venvs/psm-wma-cpu/bin/ruff check --config cosmos-framework/.ruff.toml cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt.py cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py cosmos-framework/examples/psm_wma_robocasa_corrected_phase5.py cosmos-framework/examples/psm_wma_robocasa_effective_config.py cosmos-framework/cosmos_framework/utils/training_audit.py scripts/serve_v3_matched_no_ttt.py tools/v3/matched_no_ttt_entry_test.py
+All checks passed!
+$ /workspace/.venvs/psm-wma-cpu/bin/ruff format --check --config cosmos-framework/.ruff.toml cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt.py cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py cosmos-framework/examples/psm_wma_robocasa_corrected_phase5.py cosmos-framework/examples/psm_wma_robocasa_effective_config.py cosmos-framework/cosmos_framework/utils/training_audit.py scripts/serve_v3_matched_no_ttt.py tools/v3/matched_no_ttt_entry_test.py
+9 files already formatted
+$ bash -n scripts/train_v3_matched_no_ttt.sh
+$ git diff --check
+$ git -C cosmos-framework diff --check
+syntax 9 PASS; source hash freeze PASS

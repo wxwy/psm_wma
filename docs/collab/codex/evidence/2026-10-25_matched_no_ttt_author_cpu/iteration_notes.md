@@ -1,0 +1,9 @@
+# Author CPU iterations (not independent acceptance)
+
+Initial collection errors exposed missing CPU dependencies (loguru, pynvml, MSC, pinned LeRobot fork dependencies, wandb, Triton import definitions, Qwen utilities, webdataset). They are preserved as failed collection attempts, not PASS. Initial uv default cache was read-only; all subsequent caches are external. An unpinned timm resolver began downloading CUDA packages; it was interrupted before installation, removed from the requested dependency set, and torch/torchvision were pinned to CPU. Triton3.6 is imported for existing decorated definitions, never launched. No CUDA driver/model training occurred.
+
+candidate_full01:7failed/425passed/5existing-skips/+42subtests. Three shared compatibility failures (old main Trainer factory mock + two absent-model audit stubs), one new prefixed-JSON test parser error and three missing dependencies. Fixed without changing old assertions/tests; all raw failures retained. candidate_full02:432passed/+42subtests/5existing-skips. Added complete real Edge-recipe YAML/pickle/identity coverage + DROID-gate ordering test because those paths had only lightweight config witnesses.
+
+final and final_after_c0: same frozen source;434passed/+42subtests/5existing-skips. Only final_after_c0 is the delivered final run (23.66s); counts are never accumulated. The C0 baseline recheck established remote8f3672d was already an ancestor of813a550d, so no merge/change occurred. Final static9 Ruff0.12.7/check/format/compile, bash syntax and Git exact-blob/hash binding PASS.
+
+The five pre-existing optional tests require external real cache/source/checkpoint assets or CUDA and are enumerated in STATUS. No new No-TTT case was skipped. Test-only markers/shard files are synthetic; no real DCP was read or saved. Native Cosmos tiny constructor/config serialization and CPU toy optimizer/frontier roundtrip are not world8 FSDP/CUDA model/real DCP acceptance.
