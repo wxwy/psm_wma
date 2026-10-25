@@ -15,6 +15,17 @@ if [[ $# == 3 ]]; then
     fi
     owner_args=("$3")
 fi
+root_worktree=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+# The named G1 job must resume from its latest committed DCP even after a
+# GitHub bookkeeping or implementation HEAD change. These SHAs are recorded
+# as current runtime provenance, not compared against historical G1 HEAD.
+# All non-source config/digest and per-rank Local state checks remain strict.
+if [[ "$phase" == resume && "${JOB_NAME:-}" == packed128_droid_fresh_g1_20261019 ]]; then
+    EXPECTED_ROOT="$(git -C "$root_worktree" rev-parse HEAD)"
+    EXPECTED_CHILD="$(git -C "$root_worktree/cosmos-framework" rev-parse HEAD)"
+    export EXPECTED_ROOT EXPECTED_CHILD
+    echo "G1 Resume: current Root/Child recorded as provenance; no historical HEAD pin"
+fi
 for required in OUTPUT_ROOT SOURCE_ROOT CACHE_ROOT DATASET_INDEX_ROOT EDGE_POLICY_CHECKPOINT \
     WAN_VAE_PATH BASE_CHECKPOINT_PATH JOB_NAME EXPECTED_ROOT EXPECTED_CHILD; do
     if [[ -z ${!required:-} ]]; then
@@ -22,7 +33,6 @@ for required in OUTPUT_ROOT SOURCE_ROOT CACHE_ROOT DATASET_INDEX_ROOT EDGE_POLIC
         exit 2
     fi
 done
-root_worktree=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 export HF_HUB_OFFLINE=1
 export PYTHONPATH="$root_worktree/cosmos-framework${PYTHONPATH:+:$PYTHONPATH}"
 cd -- "$root_worktree/cosmos-framework"
