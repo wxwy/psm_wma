@@ -1,0 +1,13 @@
+# This is the standalone No-TTT Action Server profile, not the required-TTT Queue schema.
+# Use the canonical config.yaml produced by the new baseline, never a rewritten G1 config.
+schema: psm_wma_matched_no_ttt_inference_v1
+checkpoint: /path/to/no_ttt_job/checkpoints/iter_000000100
+config_file: /path/to/no_ttt_job/config.yaml
+local_memory_mode: "off"
+raw_action_dim: 15
+max_action_dim: 64
+action_chunk_size: 16
+fps: 20
+num_steps: 30
+guidance: 1.0
+port: 8900
