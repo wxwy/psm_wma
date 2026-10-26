@@ -28,14 +28,16 @@ fi
 export CUDA_VISIBLE_DEVICES=4,5,6,7
 root_worktree=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 child_worktree="$root_worktree/cosmos-framework"
-# Capture the observed source SHA pair. No manually maintained EXPECTED_* vars;
-# same-job Resume still checks the immutable saved source/config identity.
-actual_root=$(git -C "$root_worktree" rev-parse HEAD)
-actual_child=$(git -C "$child_worktree" rev-parse HEAD)
-gitlink=$(git -C "$root_worktree" ls-tree HEAD cosmos-framework | awk '{print $3}')
-if [[ "$actual_child" != "$gitlink" || ${#actual_root} -ne 40 || ${#actual_child} -ne 40 ]]; then
-    echo "Root Gitlink and Child checkout are inconsistent; refusing 4GPU launch" >&2
+if [[ ! -f "$child_worktree/examples/psm_wma_robocasa_corrected_phase5.py" ]]; then
+    echo "Missing expected V3 training source under $child_worktree" >&2
     exit 2
+fi
+# Owner-authorized 4GPU No-TTT: do NOT check or require Root/Child HEAD,
+# Root Gitlink, Root dirty/untracked files or EXPECTED_ROOT/EXPECTED_CHILD.
+# Only the named no_ttt_*_world4_ga4 profile gets this exception in Python.
+# Use the project's training venv by default, not base conda torch.
+if [[ -z ${PYTHON:-} && -x "$child_worktree/.venv/bin/python" ]]; then
+    PYTHON="$child_worktree/.venv/bin/python"
 fi
 export HF_HUB_OFFLINE=1
 export TRANSFORMERS_OFFLINE=1
@@ -44,7 +46,7 @@ cd -- "$child_worktree"
 exec "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=4 \
     examples/psm_wma_robocasa_corrected_phase5.py --no-ttt \
     --phase "$phase" --formal-execution-until "$execution_until" \
-    --root-worktree "$root_worktree" --expected-root "$actual_root" --expected-child "$actual_child" \
+    --root-worktree "$root_worktree" \
     --output-root "$OUTPUT_ROOT" --job-name "$JOB_NAME" \
     --source-root "$SOURCE_ROOT" --cache-root "$CACHE_ROOT" --dataset-index-root "$DATASET_INDEX_ROOT" \
     --edge "$EDGE_POLICY_CHECKPOINT" --vae "$WAN_VAE_PATH" --base-checkpoint "$BASE_CHECKPOINT_PATH" \
