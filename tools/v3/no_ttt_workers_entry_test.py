@@ -63,7 +63,7 @@ def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(tmp_path
     assert argv[argv.index("--num-workers") + 1] == "0"
     if workers:
         assert argv[argv.index("--no-ttt-loader-workers") + 1] == str(workers)
-        assert argv[argv.index("--job-name") + 1].endswith(f"_mpw{workers}_world4_ga4")
+        assert argv[argv.index("--job-name") + 1] == "no_ttt_packed128_droid_fresh_30k_world4_ga4"
         parsed = phase5.parser().parse_args(argv[argv.index("--no-ttt") :])
         assert profile_from_args(parsed).persistent_workers is True
     else:
@@ -83,15 +83,15 @@ def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(tmp_path
     "change",
     [
         {"NOTTT_LOADER_WORKERS": "3"},
-        {"NOTTT_LOADER_WORKERS": "4", "JOB_NAME": "no_ttt_running_world4_ga4"},
-        {"NOTTT_LOADER_WORKERS": "8", "JOB_NAME": "no_ttt_packed128_droid_fresh_30k_world4_ga4"},
+        {"NOTTT_LOADER_WORKERS": "4", "JOB_NAME": "no_ttt_wrong_world8_ga2"},
+        {"NOTTT_LOADER_WORKERS": "8", "JOB_NAME": "packed128_droid_fresh_g1_20261019"},
         {"NOTTT_PREFETCH_FACTOR": "1"},
         {"NOTTT_PERSISTENT_WORKERS": "1"},
         {"NOTTT_LOADER_TIMEOUT_S": "1"},
         {"NOTTT_LOADER_WORKERS": "1", "NOTTT_PERSISTENT_WORKERS": "bad"},
     ],
 )
-def test_invalid_or_existing_job_options_rejected_before_python(tmp_path, change):
+def test_invalid_loader_or_non_nott_job_options_rejected_before_python(tmp_path, change):
     script, env = setup(tmp_path)
     env.update(change)
     env["PYTHON"] = "/must/not/run"
@@ -99,7 +99,10 @@ def test_invalid_or_existing_job_options_rejected_before_python(tmp_path, change
     assert result.returncode == 2
 
 
-def test_canonical_profile_change_is_rejected_before_runtime_and_preserves_files(tmp_path, monkeypatch):
+@pytest.mark.parametrize("original_workers", [0, 2, 8])
+def test_same_job_identity_ignores_loader_runtime_changes_but_still_checks_semantics(
+    tmp_path, original_workers
+):
     args = _args(
         tmp_path,
         "--no-ttt",
@@ -108,27 +111,65 @@ def test_canonical_profile_change_is_rejected_before_runtime_and_preserves_files
         "--ga",
         "4",
         "--job-name",
-        "no_ttt_new_mpw1_world4_ga4",
-        "--no-ttt-loader-workers",
-        "1",
+        "no_ttt_packed128_droid_fresh_30k_world4_ga4",
     )
-    profile = profile_from_args(args)
-    semantic = {"training_profile": "matched_no_ttt_v1", "no_ttt_cpu_loader": profile.identity()}
+    semantic = {"training_profile": "matched_no_ttt_v1", "contract": {"world_size": 4, "ga": 4}}
+    args.no_ttt_loader_workers = original_workers
+    args.no_ttt_prefetch_factor = 1 if original_workers else None
+    args.no_ttt_persistent_workers = True if original_workers else None
+    args.no_ttt_loader_timeout_s = 120 if original_workers else None
     lifecycle = phase5.JobLifecycle(args, _report(args, semantic))
     lifecycle.write_config(_config(args), Serializer)
     lifecycle.close()
     path = phase5.job_namespace(args)
     before = {str(p): p.read_bytes() for p in path.rglob("*") if p.is_file()}
     args.phase = "resume"
-    phase5.check_job_namespace(args, semantic)
-    for workers, factor in ((0, None), (1, 2)):
+
+    for workers, factor, persistent, timeout in (
+        (0, None, None, None),
+        (1, 1, True, 120),
+        (2, 2, False, 90),
+        (4, 1, True, 30),
+        (8, 2, True, 180),
+    ):
         args.no_ttt_loader_workers = workers
         args.no_ttt_prefetch_factor = factor
-        with pytest.raises(ValueError, match="identity"):
-            phase5.check_job_namespace(args)
+        args.no_ttt_persistent_workers = persistent
+        args.no_ttt_loader_timeout_s = timeout
+        assert profile_from_args(args).workers == workers
+        assert phase5.check_job_namespace(args, semantic)["semantic"] == semantic
+
     assert {str(p): p.read_bytes() for p in path.rglob("*") if p.is_file()} == before
     assert phase5._expected_source_identity(args) == ("nottt_world4_ga4_source_head_not_verified",) * 2
+    wrong = {"training_profile": "matched_no_ttt_v1", "contract": {"world_size": 8, "ga": 4}}
+    with pytest.raises(ValueError, match="semantic"):
+        phase5.check_job_namespace(args, wrong)
 
+
+@pytest.mark.parametrize("from_workers,to_workers", [(0, 8), (8, 0), (2, 4), (8, 1)])
+def test_launcher_resume_same_job_with_different_worker_count(tmp_path, from_workers, to_workers):
+    script, env = setup(tmp_path)
+
+    def invoke(workers, phase):
+        settings = dict(env, NOTTT_LOADER_WORKERS=str(workers))
+        for key in ("NOTTT_PREFETCH_FACTOR", "NOTTT_PERSISTENT_WORKERS", "NOTTT_LOADER_TIMEOUT_S"):
+            settings.pop(key, None)
+        result = subprocess.run(
+            ["bash", str(script), phase, "500"],
+            env=settings,
+            text=True,
+            capture_output=True,
+            check=True,
+            timeout=10,
+        )
+        argv = json.loads(result.stdout)["argv"]
+        return argv, argv[argv.index("--job-name") + 1]
+
+    fresh, original_job = invoke(from_workers, "fresh")
+    resumed, resumed_job = invoke(to_workers, "resume")
+    assert original_job == resumed_job == "no_ttt_packed128_droid_fresh_30k_world4_ga4"
+    assert fresh[fresh.index("--num-workers") + 1] == resumed[resumed.index("--num-workers") + 1] == "0"
+    assert "--no-ttt-loader-workers" in resumed if to_workers else "--no-ttt-loader-workers" not in resumed
 
 def test_explicit_prefetch_and_nonpersistent_cli_are_real_profile_options(tmp_path):
     script, env = setup(tmp_path)
