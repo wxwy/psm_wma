@@ -21,6 +21,13 @@ SPEC = importlib.util.spec_from_file_location(
 identity = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(identity)
 ROOT = Path(__file__).resolve().parents[3]
+# New relocation tests must exercise the *production* module. Existing
+# prototype cases keep testing their local frozen prototype implementation.
+LIVE_SPEC = importlib.util.spec_from_file_location(
+    "eval_model_identity_production_relocation", ROOT / "scripts/robocasa_episode_resume/model_identity.py"
+)
+live_identity = importlib.util.module_from_spec(LIVE_SPEC)
+LIVE_SPEC.loader.exec_module(live_identity)
 
 
 def _json_digest(value):
@@ -169,18 +176,18 @@ def test_same_bytes_changed_timestamp_matches_new_identity_but_never_bypasses_le
 def test_owner_optin_manual_legacy_checkpoint_relocation_keeps_historical_manifest_immutable(
     checkpoint, tmp_path
 ):
-    original = build(checkpoint)
+    original = live_identity.build_model_identity(checkpoint=checkpoint, num_steps=30, action_horizon=16, guidance=1.0)
     manifest = legacy(original)
     original_manifest = copy.deepcopy(manifest)
     original_files = {p.name: _witness(p) for p in (checkpoint / "model").iterdir()}
     relocated = tmp_path / "new-volume" / checkpoint.name
     shutil.copytree(checkpoint, relocated, copy_function=shutil.copy2)
-    current = build(relocated)
+    current = live_identity.build_model_identity(checkpoint=relocated, num_steps=30, action_horizon=16, guidance=1.0)
     assert current["parameters"]["checkpoint"]["path"] != original["parameters"]["checkpoint"]["path"]
     # No relocation permission, no old-schema migration.
-    assert identity.legacy_ingest(manifest, current)["status"] == "MODEL_MISMATCH"
+    assert live_identity.legacy_ingest(manifest, current)["status"] == "MODEL_MISMATCH"
     # Only an explicit Owner acknowledgement accepts the moved, unchanged DCP.
-    decision = identity.legacy_ingest(manifest, current, allow_relocated_checkpoint=True)
+    decision = live_identity.legacy_ingest(manifest, current, allow_relocated_checkpoint=True)
     assert decision["status"] == "LEGACY_STAT_BRIDGE_MATCH" and decision["errors"] == []
     assert decision["owner_accepted_relocated_legacy_checkpoint"] is True
     assert decision["historical_payload_sha256"] is None
@@ -191,14 +198,14 @@ def test_owner_optin_manual_legacy_checkpoint_relocation_keeps_historical_manife
     assert manifest == original_manifest
     assert original_files == {p.name: _witness(p) for p in (checkpoint / "model").iterdir()}
     # A strong new-run identity still checks full path unless separately designed.
-    assert identity.compare_model_identity(original, current)["status"] == "MODEL_MISMATCH"
+    assert live_identity.compare_model_identity(original, current)["status"] == "MODEL_MISMATCH"
 
 
 @pytest.mark.parametrize("tamper", ["metadata", "shard_size", "shard_mtime", "checkpoint_iteration", "num_steps"])
 def test_owner_optin_legacy_relocation_does_not_waive_other_identity_witnesses(
     checkpoint, tmp_path, tamper
 ):
-    manifest = legacy(build(checkpoint))
+    manifest = legacy(live_identity.build_model_identity(checkpoint=checkpoint, num_steps=30, action_horizon=16, guidance=1.0))
     moved_name = "iter_000004001" if tamper == "checkpoint_iteration" else checkpoint.name
     relocated = tmp_path / "new-volume" / moved_name
     shutil.copytree(checkpoint, relocated, copy_function=shutil.copy2)
@@ -211,16 +218,16 @@ def test_owner_optin_legacy_relocation_does_not_waive_other_identity_witnesses(
     elif tamper == "shard_mtime":
         info = shard.stat()
         os.utime(shard, ns=(info.st_atime_ns, info.st_mtime_ns + 1_000_000_000))
-    current = build(relocated, **({"num_steps": 31} if tamper == "num_steps" else {}))
-    result = identity.legacy_ingest(manifest, current, allow_relocated_checkpoint=True)
+    current = live_identity.build_model_identity(checkpoint=relocated, num_steps=31 if tamper == "num_steps" else 30, action_horizon=16, guidance=1.0)
+    result = live_identity.legacy_ingest(manifest, current, allow_relocated_checkpoint=True)
     assert result["status"] == "MODEL_MISMATCH"
     assert result["errors"]
 
 
 def test_owner_legacy_relocation_flag_rejects_non_boolean(checkpoint):
-    manifest = legacy(build(checkpoint))
-    with pytest.raises(identity.IdentityInputError, match="RELOCATION_FLAG_INVALID"):
-        identity.legacy_ingest(manifest, build(checkpoint), allow_relocated_checkpoint="yes")
+    manifest = legacy(live_identity.build_model_identity(checkpoint=checkpoint, num_steps=30, action_horizon=16, guidance=1.0))
+    with pytest.raises(live_identity.IdentityInputError, match="RELOCATION_FLAG_INVALID"):
+        live_identity.legacy_ingest(manifest, build(checkpoint), allow_relocated_checkpoint="yes")
 
 
 def test_changed_metadata_is_checkpoint_mismatch(checkpoint):
