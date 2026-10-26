@@ -218,6 +218,66 @@ def test_checkpoint_path_is_a_hard_model_parameter_even_with_same_payload(tmp_pa
     assert snapshot(root) == before
 
 
+def test_explicit_owner_legacy_relocation_resumes_without_rewriting_original_episodes(tmp_path):
+    root, checkpoint = legacy_run(tmp_path, completed=2)
+    original = snapshot(root)
+    relocated = tmp_path / "relocated" / checkpoint.name
+    shutil.copytree(checkpoint, relocated, copy_function=shutil.copy2)
+    store = RunStore(
+        root,
+        current_identity_reader=reader(relocated),
+        resume=True,
+        allow_relocated_legacy_checkpoint=True,
+    )
+    assert store.preview()["status"] == "MATCH"
+    assert snapshot(root) == original
+    with store.locked() as admitted:
+        decision = admitted._legacy_decision
+        assert decision["status"] == "LEGACY_STAT_BRIDGE_MATCH"
+        assert decision["owner_accepted_relocated_legacy_checkpoint"] is True
+        history = scan(admitted)
+        assert len(history["records"]) == 2
+        admitted.begin_invocation(plan(history["records"]), {})
+    migrated = read(root / "_resume_v2/legacy_migration.json")
+    assert migrated["decision"]["owner_accepted_relocated_legacy_checkpoint"] is True
+    assert migrated["decision"]["historical_payload_sha256"] is None
+    assert read(root / "_resume_v2/model_identity.json")["parameters"]["checkpoint"]["path"] == str(
+        relocated.resolve()
+    )
+    for old_path, old_witness in original.items():
+        assert (old_path.read_bytes(), old_path.stat().st_mtime_ns) == old_witness
+    # New strong anchor must function without repeatedly needing relocation override.
+    with RunStore(root, current_identity_reader=reader(relocated), resume=True).locked():
+        pass
+
+
+def test_legacy_relocation_optin_must_not_bypass_strong_new_run_checkpoint_path(tmp_path, checkpoint):
+    root = tmp_path / "strong-run"
+    with RunStore(root, current_identity_reader=reader(checkpoint)).locked() as store:
+        store.begin_invocation(plan([]), {})
+    relocated = tmp_path / "moved" / checkpoint.name
+    shutil.copytree(checkpoint, relocated, copy_function=shutil.copy2)
+    before = snapshot(root)
+    with pytest.raises(ResumeStoreError, match="MODEL_MISMATCH"):
+        with RunStore(
+            root,
+            current_identity_reader=reader(relocated),
+            resume=True,
+            allow_relocated_legacy_checkpoint=True,
+        ).locked():
+            pytest.fail("strong new-run identity must not use legacy relocation bypass")
+    assert snapshot(root) == before
+
+
+def test_legacy_relocation_optin_without_resume_rejected_before_model_read(tmp_path):
+    with pytest.raises(ValueError, match="requires explicit --resume"):
+        RunStore(
+            tmp_path / "run",
+            current_identity_reader=lambda: pytest.fail("no model read allowed"),
+            allow_relocated_legacy_checkpoint=True,
+        )
+
+
 def test_second_hash_catches_change_after_preview_before_writes(tmp_path):
     root, checkpoint = legacy_run(tmp_path)
     store = RunStore(root, current_identity_reader=reader(checkpoint), resume=True)
