@@ -77,6 +77,30 @@ def test_progress_defaults_are_enabled_and_available_in_resolved_dry_run(tmp_pat
     assert not args.output_dir.exists()
 
 
+def test_owner_legacy_relocation_cli_optin_requires_resume_and_does_not_change_defaults(tmp_path, base):
+    path = write(tmp_path, base)
+    default = config.resolve(["--config", str(path)])
+    assert default.allow_relocated_legacy_checkpoint is False
+    assert default.resolved_config["allow_relocated_legacy_checkpoint"] is False
+    with pytest.raises(ValueError, match="requires --resume"):
+        config.resolve(["--config", str(path), "--allow-relocated-legacy-checkpoint"])
+    approved = config.resolve([
+        "--config", str(path), "--resume", "--allow-relocated-legacy-checkpoint", "--dry-run",
+    ])
+    assert approved.resume is True and approved.dry_run is True
+    assert approved.allow_relocated_legacy_checkpoint is True
+    assert approved.resolved_config["allow_relocated_legacy_checkpoint"] is True
+    disallowed = config.resolve(["--config", str(path), "--resume", "--no-allow-relocated-legacy-checkpoint"])
+    assert disallowed.allow_relocated_legacy_checkpoint is False
+
+
+@pytest.mark.parametrize("bad", [1, "true", None, {}, []])
+def test_legacy_relocation_yaml_requires_exact_bool(tmp_path, base, bad):
+    base.update(allow_relocated_legacy_checkpoint=bad, resume=True)
+    with pytest.raises(ValueError, match="allow_relocated_legacy_checkpoint"):
+        config.resolve(["--config", str(write(tmp_path, base))])
+
+
 @pytest.mark.parametrize("enabled,interval", [(False, 1), (True, 2.5)])
 def test_yaml_progress_is_strictly_resolved(tmp_path, base, enabled, interval):
     base.update(progress=enabled, progress_interval_s=interval)
