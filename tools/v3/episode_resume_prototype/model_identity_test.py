@@ -226,8 +226,9 @@ def test_owner_optin_legacy_relocation_does_not_waive_other_identity_witnesses(
 
 def test_owner_legacy_relocation_flag_rejects_non_boolean(checkpoint):
     manifest = legacy(live_identity.build_model_identity(checkpoint=checkpoint, num_steps=30, action_horizon=16, guidance=1.0))
-    with pytest.raises(live_identity.IdentityInputError, match="RELOCATION_FLAG_INVALID"):
+    with pytest.raises(live_identity.IdentityInputError, match="explicit boolean") as caught:
         live_identity.legacy_ingest(manifest, build(checkpoint), allow_relocated_checkpoint="yes")
+    assert caught.value.code == "RELOCATION_FLAG_INVALID"
 
 
 def test_changed_metadata_is_checkpoint_mismatch(checkpoint):
