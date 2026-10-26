@@ -169,7 +169,10 @@ def test_launcher_resume_same_job_with_different_worker_count(tmp_path, from_wor
     resumed, resumed_job = invoke(to_workers, "resume")
     assert original_job == resumed_job == "no_ttt_packed128_droid_fresh_30k_world4_ga4"
     assert fresh[fresh.index("--num-workers") + 1] == resumed[resumed.index("--num-workers") + 1] == "0"
-    assert "--no-ttt-loader-workers" in resumed if to_workers else "--no-ttt-loader-workers" not in resumed
+    if to_workers:
+        assert resumed[resumed.index("--no-ttt-loader-workers") + 1] == str(to_workers)
+    else:
+        assert "--no-ttt-loader-workers" not in resumed
 
 def test_explicit_prefetch_and_nonpersistent_cli_are_real_profile_options(tmp_path):
     script, env = setup(tmp_path)
