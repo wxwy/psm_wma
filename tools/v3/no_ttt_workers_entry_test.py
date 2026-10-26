@@ -49,7 +49,7 @@ def setup(tmp_path):
     return script, env
 
 
-@pytest.mark.parametrize("workers", [0, 1, 2, 4])
+@pytest.mark.parametrize("workers", [0, 1, 2, 4, 8])
 def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(tmp_path, workers):
     script, env = setup(tmp_path)
     env["NOTTT_LOADER_WORKERS"] = str(workers)
@@ -84,6 +84,7 @@ def test_true_worker_flags_in_nongit_source_and_unchanged_zero_launcher(tmp_path
     [
         {"NOTTT_LOADER_WORKERS": "3"},
         {"NOTTT_LOADER_WORKERS": "4", "JOB_NAME": "no_ttt_running_world4_ga4"},
+        {"NOTTT_LOADER_WORKERS": "8", "JOB_NAME": "no_ttt_packed128_droid_fresh_30k_world4_ga4"},
         {"NOTTT_PREFETCH_FACTOR": "1"},
         {"NOTTT_PERSISTENT_WORKERS": "1"},
         {"NOTTT_LOADER_TIMEOUT_S": "1"},
