@@ -178,6 +178,9 @@ def test_owner_optin_manual_legacy_checkpoint_relocation_keeps_historical_manife
 ):
     original = live_identity.build_model_identity(checkpoint=checkpoint, num_steps=30, action_horizon=16, guidance=1.0)
     manifest = legacy(original)
+    # The frozen prototype helper uses ASCII-escaped JSON; production manifests
+    # use ensure_ascii=False. Recompute just this synthetic manifest's digest.
+    manifest["digest"] = live_identity._digest(manifest["identity"])
     original_manifest = copy.deepcopy(manifest)
     original_files = {p.name: _witness(p) for p in (checkpoint / "model").iterdir()}
     relocated = tmp_path / "new-volume" / checkpoint.name
@@ -206,6 +209,7 @@ def test_owner_optin_legacy_relocation_does_not_waive_other_identity_witnesses(
     checkpoint, tmp_path, tamper
 ):
     manifest = legacy(live_identity.build_model_identity(checkpoint=checkpoint, num_steps=30, action_horizon=16, guidance=1.0))
+    manifest["digest"] = live_identity._digest(manifest["identity"])
     moved_name = "iter_000004001" if tamper == "checkpoint_iteration" else checkpoint.name
     relocated = tmp_path / "new-volume" / moved_name
     shutil.copytree(checkpoint, relocated, copy_function=shutil.copy2)
@@ -226,6 +230,7 @@ def test_owner_optin_legacy_relocation_does_not_waive_other_identity_witnesses(
 
 def test_owner_legacy_relocation_flag_rejects_non_boolean(checkpoint):
     manifest = legacy(live_identity.build_model_identity(checkpoint=checkpoint, num_steps=30, action_horizon=16, guidance=1.0))
+    manifest["digest"] = live_identity._digest(manifest["identity"])
     with pytest.raises(live_identity.IdentityInputError, match="explicit boolean") as caught:
         live_identity.legacy_ingest(manifest, build(checkpoint), allow_relocated_checkpoint="yes")
     assert caught.value.code == "RELOCATION_FLAG_INVALID"
