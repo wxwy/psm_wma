@@ -393,7 +393,13 @@ def _provenance_warnings(old: dict, new: dict | None) -> list[dict]:
     return warnings
 
 
-def legacy_ingest(manifest: dict, current_identity: dict, *, current_provenance: dict | None = None) -> dict:
+def legacy_ingest(
+    manifest: dict,
+    current_identity: dict,
+    *,
+    current_provenance: dict | None = None,
+    allow_relocated_checkpoint: bool = False,
+) -> dict:
     """Verify an old manifest without rewriting its digest or historical evidence.
 
     `current_identity` must be a freshly read build_model_identity() observation.
@@ -401,6 +407,8 @@ def legacy_ingest(manifest: dict, current_identity: dict, *, current_provenance:
     it never invents an old payload hash from current files. Individual episodes
     still require validation against original_identity/original_manifest_digest.
     """
+    if type(allow_relocated_checkpoint) is not bool:
+        raise IdentityInputError("RELOCATION_FLAG_INVALID", "legacy relocation opt-in must be an explicit boolean")
     current = _checked(current_identity)
     if not isinstance(manifest, dict) or not isinstance(manifest.get("identity"), dict):
         raise IdentityInputError("LEGACY_MANIFEST_INVALID", "legacy manifest must contain identity")
@@ -429,17 +437,63 @@ def legacy_ingest(manifest: dict, current_identity: dict, *, current_provenance:
         "scope": old["checkpoint"]["scope"],
     }
     errors = []
-    if old["checkpoint"] != current_bridge:
+    legacy_checkpoint_changed = old["checkpoint"] != current_bridge
+    # Owner explicitly acknowledged moving an *old-schema* DCP. Path and
+    # ctime are filesystem location/change-time witnesses, not model payload.
+    # The original run has NO historical shard content hashes: accepting
+    # relocation cannot retroactively establish the old shard bytes.
+    # Preserve strict default; only relax these two fields upon explicit
+    # invocation opt-in, while retaining basename (iteration), metadata SHA,
+    # exact sorted shard names/sizes/mtime, and the independent current full
+    # content-hash/read stability checks performed by build_model_identity().
+    relocated_legacy_match = (
+        allow_relocated_checkpoint
+        and legacy_checkpoint_changed
+        and Path(old["checkpoint"]["path"]).name == Path(current_bridge["path"]).name
+        and old["checkpoint"]["metadata_sha256"] == current_bridge["metadata_sha256"]
+        and [(row[0], row[1], row[2]) for row in old["checkpoint"]["model_shard_stat_witnesses"]]
+        == [(row[0], row[1], row[2]) for row in current_bridge["model_shard_stat_witnesses"]]
+    )
+    if legacy_checkpoint_changed and not relocated_legacy_match:
         errors.append(_mismatch("checkpoint", old["checkpoint"], current_bridge, "legacy checkpoint witness changed"))
     for name in ("num_steps", "action_horizon", "guidance"):
         if old[name] != current[name]:
             errors.append(_mismatch(name, old[name], current[name], "hard model parameter changed"))
     warnings = [
+        *(
+            [
+                {
+                    "code": "OWNER_ACCEPTED_LEGACY_CHECKPOINT_RELOCATION",
+                    "old_checkpoint_path": old["checkpoint"]["path"],
+                    "current_checkpoint_path": current_bridge["path"],
+                    "not_required_equal": ["checkpoint.path", "model_shard_stat_witnesses[*].ctime_ns"],
+                    "still_required_equal": [
+                        "checkpoint_iteration_basename",
+                        "metadata_sha256",
+                        "shard_name_size_mtime_ns",
+                        "num_steps",
+                        "action_horizon",
+                        "guidance",
+                    ],
+                    "historical_shard_content_hashes": None,
+                    "new_shard_content_hashes": "recorded in current full_model_sha256_v1 identity only",
+                    "reuse_blocked": False,
+                    "comparability": "LEGACY_CONTENT_EQUIVALENCE_NOT_CRYPTOGRAPHICALLY_PROVEN",
+                }
+            ]
+            if relocated_legacy_match
+            else []
+        ),
         {
             "code": "LEGACY_PAYLOAD_HASH_NOT_RETROSPECTIVELY_AVAILABLE",
             "reuse_blocked": False,
             "scope": old["checkpoint"]["scope"],
-            "message": "Only historical metadata SHA and shard size/mtime/ctime match; current full hashes are a NEW baseline.",
+            "message": (
+                "Legacy shard content hashes never existed; current full hashes are a NEW baseline. "
+                "Relocation opt-in matches metadata SHA and shard name/size/mtime, not path/ctime."
+                if relocated_legacy_match
+                else "Only historical metadata SHA and shard size/mtime/ctime match; current full hashes are a NEW baseline."
+            ),
         },
         *_provenance_warnings(original, current_provenance),
     ]
@@ -453,6 +507,7 @@ def legacy_ingest(manifest: dict, current_identity: dict, *, current_provenance:
         "legacy_model_parameters": old,
         "current_model_identity_ref": current_identity["digest"],
         "checkpoint_binding_scope": old["checkpoint"]["scope"],
+        "owner_accepted_relocated_legacy_checkpoint": bool(relocated_legacy_match),
         "historical_payload_sha256": None,
         "original_provenance": {
             "root_sha": original.get("root_sha"),
