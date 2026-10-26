@@ -387,16 +387,16 @@ def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses
     scripts.mkdir(parents=True)
     (child / "examples").mkdir(parents=True)
     (root / "docs/eval").mkdir(parents=True)
-    (root / "docs/eval/robocasa_realrun_preflight_report_20261024.md").write_text("DS report\\n")
-    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text("placeholder\\n")
+    (root / "docs/eval/robocasa_realrun_preflight_report_20261024.md").write_text("DS report\n")
+    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text("placeholder\n")
     launcher = scripts / "train_v3_matched_no_ttt_4gpu.sh"
     launcher.write_text((ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh").read_text())
     fake = child / ".venv/bin/python"
     fake.parent.mkdir(parents=True)
     fake.write_text(
-        f'#!{sys.executable}\\nimport json,os,sys\\n'
+        f'#!{sys.executable}\nimport json,os,sys\n'
         'print(json.dumps({"argv":sys.argv[1:],"exe":sys.argv[0],'
-        '"visible":os.environ["CUDA_VISIBLE_DEVICES"]}))\\n'
+        '"visible":os.environ["CUDA_VISIBLE_DEVICES"]}))\n'
     )
     fake.chmod(0o755)
     env = dict(os.environ, JOB_NAME="no_ttt_simulated_world4_ga4", CUDA_VISIBLE_DEVICES="4,5,6,7")
