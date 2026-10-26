@@ -165,17 +165,10 @@ When the Owner manually **moved or copied** the G1 `iter_000012000` DCP, an old 
 - Do not use this flag to change model weights, iteration, dimensions, inference parameters or another job's strongly pinned checkpoint. If source shards of the old run are still available, an independent content-hash comparison is stronger evidence. A claimed matched-seed benchmark based on mixed historical/current provenance must still be marked as such.
 - The requested `--episodes 50 --tasks all` means **18×50 = 900** total planned Episodes, not 18×5; at most20 of the original four-task/five-episode run can be reused if each passes evidence rescan. Confirm disk headroom and GPU4–7 ownership before dropping `--dry-run`.
 
-Example (all original required asset/runtime/output arguments must also be supplied):
+For the existing Owner invocation, **preserve all supplied arguments** (`--checkpoint`, `--dataset-root`, the Python environments, vendor assets, GPU, Output Root, Run Name, seed, numerical protocol, media) and replace the trailing `--resume` with:
 
-```bash
-bash scripts/run_robocasa_eval.sh \
-  --checkpoint /path/to/relocated/iter_000012000 \
-  --dataset-root /path/to/robocasa365_official/v1.0/target/atomic \
-  --output-root /path/to/robocasa_eval_runs \
-  --run-name g1_iter12000_4task5ep_genall_20261023_085955 \
-  --tasks all --episodes 5 --resume \
-  --allow-relocated-legacy-checkpoint --dry-run \
-  # plus server/simulator Python, vendor assets, GPU, protocol and media options
+```text
+--resume --allow-relocated-legacy-checkpoint --dry-run
 ```
 
-The example is illustrative and incomplete; do **not** paste as a whole launcher command with the trailing Bash comment line. Use the same full command as the prior invocation, adding `--allow-relocated-legacy-checkpoint` and `--dry-run`. The override does not grant permission to run GPU evaluation.
+Review the complete printed reuse plan; to actually run new Episodes after resource checks and Owner authorization, remove only `--dry-run`. The override by itself does not grant GPU execution authorization.
