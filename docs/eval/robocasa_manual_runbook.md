@@ -153,3 +153,29 @@ Resource limits reject more than100000 records/Episodes or logical IDs outside0.
 ## Review boundary
 
 Author CPU cases use real Git/process/socket/media primitives with synthetic policy/simulation boundaries. They cannot prove policy loading, 8×H100 inference, real PandaOmron physics, vendor installation on DS_PRO's host, Local-TTT effectiveness or benchmark SR. DS_PRO independently verifies the exact new pair read-only; GPT issues the verdict. Owner manually starts the separately authorized real run. No command in this runbook is automatic execution authorization.
+
+
+## Owner-acknowledged manual relocation of a legacy checkpoint (2026-10-26)
+
+When the Owner manually **moved or copied** the G1 `iter_000012000` DCP, an old `evaluation_manifest.json` may store the original absolute checkpoint directory and shard `ctime_ns`. Merely changing filesystem location or copying a DCP can change these values without modifying tensor contents. The original legacy manifest did **not** record full shard SHA256 hashes, however: current full hashing does **not** prove historical shard bytes were identical.
+
+- **Default behavior stays strict:** `--resume` alone continues to reject any change in old checkpoint path/ctime. **Explicit per-invocation opt-in only:** add `--allow-relocated-legacy-checkpoint` together with `--resume`, optionally `--dry-run` first. This option is **only applied to old manifests** without a strong `model_identity`; it does not relax modern full-hash checkpoint comparisons.
+- The candidate checkpoint must retain exactly the same `iter_NNNNNNNNN` basename, `.metadata` SHA256 and complete sorted shard names, sizes and `mtime_ns`. `num_steps`, `action_horizon`, `guidance` still match. Raw `path` and shard `ctime_ns` are not required equal **only in this explicit old-schema legacy bridge**. The current model `.metadata` and every shard are still SHA256-hashed with unchanged-file stat-witness checks and nonexecuting ZIP/pickle header checks.
+- On acceptance, the new `_resume_v2/legacy_migration.json` records the original identity and path, actual current path/full-hash digest, `OWNER_ACCEPTED_LEGACY_CHECKPOINT_RELOCATION` warning, which comparisons were waived, and the fact that **historical shard payload hashes remain unavailable**. The original legacy `evaluation_manifest.json`, prior Episode evidence and original Manifest digest are **never overwritten**. The new strong `_resume_v2/model_identity.json` binds the current physical checkpoint so future Resume uses strict full SHA hashes again.
+- Do not use this flag to change model weights, iteration, dimensions, inference parameters or another job's strongly pinned checkpoint. If source shards of the old run are still available, an independent content-hash comparison is stronger evidence. A claimed matched-seed benchmark based on mixed historical/current provenance must still be marked as such.
+- The requested `--episodes 50 --tasks all` means **18×50 = 900** total planned Episodes, not 18×5; at most20 of the original four-task/five-episode run can be reused if each passes evidence rescan. Confirm disk headroom and GPU4–7 ownership before dropping `--dry-run`.
+
+Example (all original required asset/runtime/output arguments must also be supplied):
+
+```bash
+bash scripts/run_robocasa_eval.sh \
+  --checkpoint /path/to/relocated/iter_000012000 \
+  --dataset-root /path/to/robocasa365_official/v1.0/target/atomic \
+  --output-root /path/to/robocasa_eval_runs \
+  --run-name g1_iter12000_4task5ep_genall_20261023_085955 \
+  --tasks all --episodes 5 --resume \
+  --allow-relocated-legacy-checkpoint --dry-run \
+  # plus server/simulator Python, vendor assets, GPU, protocol and media options
+```
+
+The example is illustrative and incomplete; do **not** paste as a whole launcher command with the trailing Bash comment line. Use the same full command as the prior invocation, adding `--allow-relocated-legacy-checkpoint` and `--dry-run`. The override does not grant permission to run GPU evaluation.
