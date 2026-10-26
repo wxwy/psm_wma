@@ -1,0 +1,12 @@
+{
+  "original_production_root": "76d1cc70622d3b456a3c388ad98917b7d532890b",
+  "new_test_only_root": "35d85f81ba6925e718a87d721b80686745791c60",
+  "unchanged_child_gitlink": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+  "root_paths_zero_diff": [
+    "scripts",
+    "configs",
+    "third_party",
+    "cosmos-framework"
+  ],
+  "entire_child_worktree_clean": true
+}

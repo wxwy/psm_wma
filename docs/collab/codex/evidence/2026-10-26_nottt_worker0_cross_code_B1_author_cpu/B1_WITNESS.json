@@ -1,0 +1,788 @@
+[
+  {
+    "scenario": "full",
+    "old_writer_pid": 468296,
+    "new_reader_pid": 468304,
+    "rank_records": [
+      {
+        "exact_next_payload_loss_gradient_state_rng": true,
+        "final_frontier": {
+          "assigned_in_epoch": [
+            "Pick_Mug/episode_000000",
+            "Pick_Mug/episode_000001",
+            "Pick_Mug/episode_000002",
+            "Pick_Mug/episode_000004",
+            "Pick_Mug/episode_000021",
+            "Pick_Mug/episode_000045",
+            "Pick_Mug/episode_000047",
+            "Pick_Mug/episode_000048",
+            "Pick_Mug/episode_000052",
+            "Pick_Mug/episode_000066",
+            "Pick_Mug/episode_000078",
+            "Pick_Mug/episode_000084",
+            "Pick_Mug/episode_000088",
+            "Pick_Mug/episode_000107",
+            "Pick_Mug/episode_000114",
+            "Pick_Mug/episode_000122",
+            "Pick_Mug/episode_000139",
+            "Pick_Mug/episode_000148",
+            "Pick_Mug/episode_000154",
+            "Pick_Mug/episode_000156",
+            "Pick_Mug/episode_000161",
+            "Pick_Mug/episode_000163",
+            "Pick_Mug/episode_000176",
+            "Pick_Mug/episode_000180",
+            "Pick_Mug/episode_000188",
+            "Pick_Mug/episode_000192",
+            "Pick_Mug/episode_000193",
+            "Pick_Mug/episode_000197",
+            "Pick_Mug/episode_000204",
+            "Pick_Mug/episode_000208",
+            "Pick_Mug/episode_000225",
+            "Pick_Mug/episode_000251"
+          ],
+          "epoch": 0,
+          "slots": [
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            }
+          ]
+        },
+        "matched_iterations": [
+          3,
+          4
+        ],
+        "rank": 0,
+        "restored_iteration": 2
+      },
+      {
+        "exact_next_payload_loss_gradient_state_rng": true,
+        "final_frontier": {
+          "assigned_in_epoch": [
+            "Pick_Mug/episode_000005",
+            "Pick_Mug/episode_000008",
+            "Pick_Mug/episode_000012",
+            "Pick_Mug/episode_000014",
+            "Pick_Mug/episode_000016",
+            "Pick_Mug/episode_000017",
+            "Pick_Mug/episode_000018",
+            "Pick_Mug/episode_000031",
+            "Pick_Mug/episode_000043",
+            "Pick_Mug/episode_000056",
+            "Pick_Mug/episode_000058",
+            "Pick_Mug/episode_000063",
+            "Pick_Mug/episode_000069",
+            "Pick_Mug/episode_000083",
+            "Pick_Mug/episode_000096",
+            "Pick_Mug/episode_000105",
+            "Pick_Mug/episode_000136",
+            "Pick_Mug/episode_000138",
+            "Pick_Mug/episode_000158",
+            "Pick_Mug/episode_000173",
+            "Pick_Mug/episode_000177",
+            "Pick_Mug/episode_000185",
+            "Pick_Mug/episode_000195",
+            "Pick_Mug/episode_000209",
+            "Pick_Mug/episode_000220",
+            "Pick_Mug/episode_000221",
+            "Pick_Mug/episode_000228",
+            "Pick_Mug/episode_000230",
+            "Pick_Mug/episode_000233",
+            "Pick_Mug/episode_000240",
+            "Pick_Mug/episode_000252",
+            "Pick_Mug/episode_000253"
+          ],
+          "epoch": 0,
+          "slots": [
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            }
+          ]
+        },
+        "matched_iterations": [
+          3,
+          4
+        ],
+        "rank": 1,
+        "restored_iteration": 2
+      },
+      {
+        "exact_next_payload_loss_gradient_state_rng": true,
+        "final_frontier": {
+          "assigned_in_epoch": [
+            "Pick_Mug/episode_000013",
+            "Pick_Mug/episode_000019",
+            "Pick_Mug/episode_000034",
+            "Pick_Mug/episode_000035",
+            "Pick_Mug/episode_000042",
+            "Pick_Mug/episode_000046",
+            "Pick_Mug/episode_000059",
+            "Pick_Mug/episode_000068",
+            "Pick_Mug/episode_000079",
+            "Pick_Mug/episode_000102",
+            "Pick_Mug/episode_000108",
+            "Pick_Mug/episode_000117",
+            "Pick_Mug/episode_000120",
+            "Pick_Mug/episode_000123",
+            "Pick_Mug/episode_000125",
+            "Pick_Mug/episode_000134",
+            "Pick_Mug/episode_000140",
+            "Pick_Mug/episode_000144",
+            "Pick_Mug/episode_000145",
+            "Pick_Mug/episode_000172",
+            "Pick_Mug/episode_000174",
+            "Pick_Mug/episode_000202",
+            "Pick_Mug/episode_000203",
+            "Pick_Mug/episode_000207",
+            "Pick_Mug/episode_000215",
+            "Pick_Mug/episode_000227",
+            "Pick_Mug/episode_000234",
+            "Pick_Mug/episode_000238",
+            "Pick_Mug/episode_000241",
+            "Pick_Mug/episode_000247",
+            "Pick_Mug/episode_000250",
+            "Pick_Mug/episode_000254"
+          ],
+          "epoch": 0,
+          "slots": [
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            }
+          ]
+        },
+        "matched_iterations": [
+          3,
+          4
+        ],
+        "rank": 2,
+        "restored_iteration": 2
+      },
+      {
+        "exact_next_payload_loss_gradient_state_rng": true,
+        "final_frontier": {
+          "assigned_in_epoch": [
+            "Pick_Mug/episode_000009",
+            "Pick_Mug/episode_000010",
+            "Pick_Mug/episode_000015",
+            "Pick_Mug/episode_000020",
+            "Pick_Mug/episode_000022",
+            "Pick_Mug/episode_000023",
+            "Pick_Mug/episode_000053",
+            "Pick_Mug/episode_000054",
+            "Pick_Mug/episode_000055",
+            "Pick_Mug/episode_000062",
+            "Pick_Mug/episode_000065",
+            "Pick_Mug/episode_000085",
+            "Pick_Mug/episode_000104",
+            "Pick_Mug/episode_000112",
+            "Pick_Mug/episode_000121",
+            "Pick_Mug/episode_000126",
+            "Pick_Mug/episode_000127",
+            "Pick_Mug/episode_000129",
+            "Pick_Mug/episode_000141",
+            "Pick_Mug/episode_000146",
+            "Pick_Mug/episode_000155",
+            "Pick_Mug/episode_000165",
+            "Pick_Mug/episode_000166",
+            "Pick_Mug/episode_000175",
+            "Pick_Mug/episode_000181",
+            "Pick_Mug/episode_000198",
+            "Pick_Mug/episode_000216",
+            "Pick_Mug/episode_000222",
+            "Pick_Mug/episode_000231",
+            "Pick_Mug/episode_000243",
+            "Pick_Mug/episode_000249",
+            "Pick_Mug/episode_000255"
+          ],
+          "epoch": 0,
+          "slots": [
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            }
+          ]
+        },
+        "matched_iterations": [
+          3,
+          4
+        ],
+        "rank": 3,
+        "restored_iteration": 2
+      }
+    ],
+    "member_counts": [
+      [
+        128,
+        128,
+        128,
+        128
+      ],
+      [
+        128,
+        128,
+        128,
+        128
+      ],
+      [
+        128,
+        128,
+        128,
+        128
+      ],
+      [
+        128,
+        128,
+        128,
+        128
+      ]
+    ],
+    "same_original_synthetic_job_namespace": "/tmp/psm-v3-nottt-b1-20261026/run03/fixtures/full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4",
+    "config_digest": "950b5c65c3c1d46289241787b4b61638356852832e673fa3908b2de66d99f1c8",
+    "identities_equal": true,
+    "original_readonly_files_unchanged": 11
+  },
+  {
+    "scenario": "terminal",
+    "old_writer_pid": 468300,
+    "new_reader_pid": 468337,
+    "rank_records": [
+      {
+        "exact_next_payload_loss_gradient_state_rng": true,
+        "final_frontier": {
+          "assigned_in_epoch": [
+            "Pick_Mug/episode_000000",
+            "Pick_Mug/episode_000001",
+            "Pick_Mug/episode_000002",
+            "Pick_Mug/episode_000004",
+            "Pick_Mug/episode_000021",
+            "Pick_Mug/episode_000045",
+            "Pick_Mug/episode_000047",
+            "Pick_Mug/episode_000048",
+            "Pick_Mug/episode_000052",
+            "Pick_Mug/episode_000066",
+            "Pick_Mug/episode_000067",
+            "Pick_Mug/episode_000075",
+            "Pick_Mug/episode_000076",
+            "Pick_Mug/episode_000077",
+            "Pick_Mug/episode_000078",
+            "Pick_Mug/episode_000084",
+            "Pick_Mug/episode_000087",
+            "Pick_Mug/episode_000088",
+            "Pick_Mug/episode_000090",
+            "Pick_Mug/episode_000092",
+            "Pick_Mug/episode_000094",
+            "Pick_Mug/episode_000095",
+            "Pick_Mug/episode_000097",
+            "Pick_Mug/episode_000107",
+            "Pick_Mug/episode_000113",
+            "Pick_Mug/episode_000114",
+            "Pick_Mug/episode_000115",
+            "Pick_Mug/episode_000118",
+            "Pick_Mug/episode_000122",
+            "Pick_Mug/episode_000131",
+            "Pick_Mug/episode_000137",
+            "Pick_Mug/episode_000139",
+            "Pick_Mug/episode_000143",
+            "Pick_Mug/episode_000148",
+            "Pick_Mug/episode_000151",
+            "Pick_Mug/episode_000152",
+            "Pick_Mug/episode_000154",
+            "Pick_Mug/episode_000156",
+            "Pick_Mug/episode_000159",
+            "Pick_Mug/episode_000160",
+            "Pick_Mug/episode_000161",
+            "Pick_Mug/episode_000162",
+            "Pick_Mug/episode_000163",
+            "Pick_Mug/episode_000164",
+            "Pick_Mug/episode_000171",
+            "Pick_Mug/episode_000176",
+            "Pick_Mug/episode_000180",
+            "Pick_Mug/episode_000187",
+            "Pick_Mug/episode_000188",
+            "Pick_Mug/episode_000192",
+            "Pick_Mug/episode_000193",
+            "Pick_Mug/episode_000196",
+            "Pick_Mug/episode_000197",
+            "Pick_Mug/episode_000200",
+            "Pick_Mug/episode_000204",
+            "Pick_Mug/episode_000208",
+            "Pick_Mug/episode_000213",
+            "Pick_Mug/episode_000217",
+            "Pick_Mug/episode_000225",
+            "Pick_Mug/episode_000232",
+            "Pick_Mug/episode_000235",
+            "Pick_Mug/episode_000245",
+            "Pick_Mug/episode_000248",
+            "Pick_Mug/episode_000251"
+          ],
+          "epoch": 0,
+          "slots": [
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            }
+          ]
+        },
+        "matched_iterations": [
+          3,
+          4
+        ],
+        "rank": 0,
+        "restored_iteration": 2
+      },
+      {
+        "exact_next_payload_loss_gradient_state_rng": true,
+        "final_frontier": {
+          "assigned_in_epoch": [
+            "Pick_Mug/episode_000007",
+            "Pick_Mug/episode_000008",
+            "Pick_Mug/episode_000063",
+            "Pick_Mug/episode_000096"
+          ],
+          "epoch": 1,
+          "slots": [
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            }
+          ]
+        },
+        "matched_iterations": [
+          3,
+          4
+        ],
+        "rank": 1,
+        "restored_iteration": 2
+      },
+      {
+        "exact_next_payload_loss_gradient_state_rng": true,
+        "final_frontier": {
+          "assigned_in_epoch": [
+            "Pick_Mug/episode_000172",
+            "Pick_Mug/episode_000183"
+          ],
+          "epoch": 1,
+          "slots": [
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            }
+          ]
+        },
+        "matched_iterations": [
+          3,
+          4
+        ],
+        "rank": 2,
+        "restored_iteration": 2
+      },
+      {
+        "exact_next_payload_loss_gradient_state_rng": true,
+        "final_frontier": {
+          "assigned_in_epoch": [
+            "Pick_Mug/episode_000053",
+            "Pick_Mug/episode_000231"
+          ],
+          "epoch": 1,
+          "slots": [
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            },
+            {
+              "binding_epoch": null,
+              "cursor": 0,
+              "next_segment_id": 16,
+              "uid": null
+            }
+          ]
+        },
+        "matched_iterations": [
+          3,
+          4
+        ],
+        "rank": 3,
+        "restored_iteration": 2
+      }
+    ],
+    "member_counts": [
+      [
+        128,
+        8,
+        128,
+        8
+      ],
+      [
+        128,
+        8,
+        128,
+        8
+      ],
+      [
+        128,
+        8,
+        128,
+        8
+      ],
+      [
+        128,
+        8,
+        128,
+        8
+      ]
+    ],
+    "same_original_synthetic_job_namespace": "/tmp/psm-v3-nottt-b1-20261026/run03/fixtures/terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4",
+    "config_digest": "f36b505da6e5952a2db55351ea82e9d278bd59a2116d8060ce6d63b3c077eaa3",
+    "identities_equal": true,
+    "original_readonly_files_unchanged": 11
+  }
+]

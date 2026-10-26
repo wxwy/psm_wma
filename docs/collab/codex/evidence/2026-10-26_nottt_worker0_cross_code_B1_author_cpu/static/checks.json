@@ -1,0 +1,50 @@
+{
+  "checks": [
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "--version"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "exit_code": 0,
+      "log": "check_0.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "tools/v3/no_ttt_legacy_worker0_resume_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "exit_code": 0,
+      "log": "check_1.log"
+    },
+    {
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--config",
+        "cosmos-framework/.ruff.toml",
+        "--check",
+        "tools/v3/no_ttt_legacy_worker0_resume_test.py"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "exit_code": 0,
+      "log": "check_2.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "cwd": "/workspace/psm_wma",
+      "exit_code": 0,
+      "log": "check_3.log"
+    }
+  ],
+  "syntax": "PASS",
+  "frozen_test_hash_unchanged": true
+}

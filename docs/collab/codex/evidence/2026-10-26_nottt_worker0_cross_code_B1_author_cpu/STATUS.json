@@ -1,0 +1,39 @@
+{
+  "gate": "AUTHOR_B1_SYNTHETIC_CPU_ONLY",
+  "original_production_root": "76d1cc70622d3b456a3c388ad98917b7d532890b",
+  "test_only_formal_root": "35d85f81ba6925e718a87d721b80686745791c60",
+  "child_gitlink": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+  "baseline_root": "e6ae2084305a8c24d763d82b517984660cc73c30",
+  "baseline_child": "923d9c3fd392e6bafbdb1771a292c7b313e6b3dc",
+  "passed": 8,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": 68.54,
+  "source_versions_executed_in_independent_processes": true,
+  "scope": "same synthetic original job/identity/worker0, four logical CPU ranks sequential, B8/T16/GA4 full and terminal; old save iter2 -> candidate resume iter3/4 vs old uninterrupted",
+  "immutable_saved_state_ranks": 8,
+  "negative_cases": [
+    "config semantic",
+    "seed semantic",
+    "rank profile",
+    "frontier counters",
+    "config digest",
+    "iteration"
+  ],
+  "new_worker_count_admission_unchanged": true,
+  "source_admission_waiver_unchanged": true,
+  "prior_601_suite": "retained prior evidence at 76d1cc70/3e5bf90b; not rerun, not aggregated",
+  "NOT_VALIDATED": [
+    "real DCP filesystem save/load",
+    "actual active job/checkpoint/config identity",
+    "physical concurrent Gloo/NCCL/FSDP ranks",
+    "official Cosmos model/Adam state/native loss numeric GPU behavior",
+    "CUDA RNG",
+    "GPU performance",
+    "DS independent execution",
+    "worker0 to worker>0 migration"
+  ],
+  "production_changes": false,
+  "artifact_note": "tar contains byte-preserved original old state/config/identity, uninterrupted references and new replay commands/logs/results. Git baseline archive source is not bundled; recreate from exact SHAs. Historical inactive asset symlinks were omitted without following, listed in tar old_tree_sources.json."
+}

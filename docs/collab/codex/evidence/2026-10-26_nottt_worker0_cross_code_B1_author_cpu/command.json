@@ -1,0 +1,36 @@
+{
+  "cwd": "/workspace/psm_wma",
+  "argv": [
+    "/workspace/.venvs/psm-wma-cpu/bin/python",
+    "-m",
+    "pytest",
+    "--noconftest",
+    "-c",
+    "/dev/null",
+    "--rootdir=/workspace/psm_wma",
+    "-p",
+    "no:cacheprovider",
+    "-q",
+    "-s",
+    "-x",
+    "/workspace/psm_wma/tools/v3/no_ttt_legacy_worker0_resume_test.py",
+    "--junitxml=/tmp/psm-v3-nottt-b1-20261026/run03/junit.xml"
+  ],
+  "environment": {
+    "NOTTT_B1_EVIDENCE_ROOT": "/tmp/psm-v3-nottt-b1-20261026/run03/fixtures",
+    "CUDA_VISIBLE_DEVICES": "",
+    "COSMOS_DEVICE": "cpu",
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "HF_HOME": "/tmp/psm-v3-nottt-b1-20261026/cache/hf",
+    "MPLCONFIGDIR": "/tmp/psm-v3-nottt-b1-20261026/cache/mpl",
+    "XDG_CACHE_HOME": "/tmp/psm-v3-nottt-b1-20261026/cache",
+    "TRITON_CACHE_DIR": "/tmp/psm-v3-nottt-b1-20261026/cache/triton",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "WANDB_MODE": "disabled"
+  },
+  "test_sha256": "c1826d1214763580cacfa589a3646f32c1f756ce266b47536fe3f13bcb65be05"
+}

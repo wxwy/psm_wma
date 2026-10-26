@@ -1,0 +1,262 @@
+{
+  "full/immutable_job_files.json": {
+    "sha256": "99ca037e6caa9741eaca0134ba31457dcfb534cd54c169c2bff5a6dea7903316",
+    "bytes": 2002
+  },
+  "full/outputs/dataset-index-root/receipt.json": {
+    "sha256": "a4c7db6beaf99f330f35a1d98283312caefdfa68e89ab78c1f98aca1f501461f",
+    "bytes": 24
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/config.pkl": {
+    "sha256": "7550de43fda9d287d146da1a1ee409558d81b12ef5eb0f38cf12fd121b23b7b4",
+    "bytes": 5255
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/config.yaml": {
+    "sha256": "5695a3aac2a252df5f82b4c0017031cc4d3d4947518107cb4db32a15efa18b1b",
+    "bytes": 1279
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/launch.lock": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/launches/7f9ba15897bb4fb6844f74b761423f2b/config.pkl": {
+    "sha256": "7550de43fda9d287d146da1a1ee409558d81b12ef5eb0f38cf12fd121b23b7b4",
+    "bytes": 5255
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/launches/7f9ba15897bb4fb6844f74b761423f2b/config.yaml": {
+    "sha256": "5695a3aac2a252df5f82b4c0017031cc4d3d4947518107cb4db32a15efa18b1b",
+    "bytes": 1279
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/launches/7f9ba15897bb4fb6844f74b761423f2b/launch.json": {
+    "sha256": "5386bacdc84be90c4ee782d587c66dfc3eefba1cf6f725e3311b520141c15273",
+    "bytes": 1438
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/synthetic_cpu_state_iter2/rank0.pkl": {
+    "sha256": "7f883603d1a583b5413b9651567b820624e9c4fe2b9778ddfb5a899958bafecc",
+    "bytes": 14070
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/synthetic_cpu_state_iter2/rank1.pkl": {
+    "sha256": "6df426cf438d683bcdf8361f9043e72b21e008201a18ee760ac8040bf972c61f",
+    "bytes": 14092
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/synthetic_cpu_state_iter2/rank2.pkl": {
+    "sha256": "0f08ffa237bfe3512874e7d46c5ce468edf784a21b2240218d9ec8ead35f82f4",
+    "bytes": 14050
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/synthetic_cpu_state_iter2/rank3.pkl": {
+    "sha256": "589461d7b6c7087fe7cdf3c5051b54a585d197b721844e9d1d0a564812a9d51f",
+    "bytes": 14020
+  },
+  "full/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/v3_job_identity.json": {
+    "sha256": "f849f5368dc4a910d14283474cc2446f18954fe7ec662162adde51283c38cd75",
+    "bytes": 3522
+  },
+  "full/reference_rank0.json": {
+    "sha256": "909fc9aabc7de8a45c375f03ec53f4a92842b183efd5330731f6e6bb74f0003b",
+    "bytes": 3105010
+  },
+  "full/reference_rank1.json": {
+    "sha256": "a66e4fe09bf14b677404805f2ce6a61da3732a496156f22ff5e7b6d3e9d2df61",
+    "bytes": 3105787
+  },
+  "full/reference_rank2.json": {
+    "sha256": "ef0f2c87b378f5bff91a9b71baa21da4ffec7ae04df5cd622b4632102ae78b18",
+    "bytes": 3106792
+  },
+  "full/reference_rank3.json": {
+    "sha256": "bd64f9ba35eeaccc89224307e7ba766987d6903b87d21e659e422a2dfbce62be",
+    "bytes": 3105774
+  },
+  "full/resume_new_none.log": {
+    "sha256": "9e803b73164e385f57b09053fac8e865027d9fc1f573fa123b2b6e863ef9362e",
+    "bytes": 9575
+  },
+  "full/resume_new_none_command.json": {
+    "sha256": "92fdd035c4823097e24af6de56e557e8b4e8f0a614ff367f86b0c000aa6e0dd3",
+    "bytes": 514
+  },
+  "full/resume_new_none_result.json": {
+    "sha256": "912fba4fef86bcb84ccaf9d2581512a91cc33135de914ae8ea643015f332c9e7",
+    "bytes": 14900
+  },
+  "full/save_old_none.log": {
+    "sha256": "cac56a53702ea71da53dd8fa640dabdcd3f8e0cabae10863899e148c5f07a359",
+    "bytes": 3431
+  },
+  "full/save_old_none_command.json": {
+    "sha256": "7400d591d9fbae947fa8de2f65205583b7ec19901b18d4f7b199b0fc0b9bcbf9",
+    "bytes": 635
+  },
+  "full/save_old_none_result.json": {
+    "sha256": "057da8f8a67b409640ce228d19963bd9ee41f973bbde1c6ce425d30a30b5598a",
+    "bytes": 4508
+  },
+  "old_tree_sources.json": {
+    "sha256": "54a592d2b2a67ea193122806f4d524bc0221597159195f08fa1b68c878af62a5",
+    "bytes": 1356
+  },
+  "terminal/immutable_job_files.json": {
+    "sha256": "cb23b68ebab4014afd45ad29d57f2e19e17eaba9794cc621270790c13d237685",
+    "bytes": 2002
+  },
+  "terminal/outputs/dataset-index-root/receipt.json": {
+    "sha256": "a4c7db6beaf99f330f35a1d98283312caefdfa68e89ab78c1f98aca1f501461f",
+    "bytes": 24
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/config.pkl": {
+    "sha256": "9abd3fffe065bb88ff1984769cc9d52c1c9eeaeb393d5e76b7a3cc953e016054",
+    "bytes": 5259
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/config.yaml": {
+    "sha256": "87b6a130e2fb22c430b1a9045c256dd4d9aa9baeb402b2a15afe50b2283c35ca",
+    "bytes": 1283
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/launch.lock": {
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "bytes": 0
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/launches/040343fdb3a94d7983ebec5c2ad1a220/config.pkl": {
+    "sha256": "9abd3fffe065bb88ff1984769cc9d52c1c9eeaeb393d5e76b7a3cc953e016054",
+    "bytes": 5259
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/launches/040343fdb3a94d7983ebec5c2ad1a220/config.yaml": {
+    "sha256": "87b6a130e2fb22c430b1a9045c256dd4d9aa9baeb402b2a15afe50b2283c35ca",
+    "bytes": 1283
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/launches/040343fdb3a94d7983ebec5c2ad1a220/launch.json": {
+    "sha256": "c8009421339ab25d939fc239214503cba716749412be8dab714c6926bf375358",
+    "bytes": 1438
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/synthetic_cpu_state_iter2/rank0.pkl": {
+    "sha256": "678bc54d5c9c7c81f43fe2aebcc6256faafb74957f4280f3c7ab393caf201566",
+    "bytes": 14498
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/synthetic_cpu_state_iter2/rank1.pkl": {
+    "sha256": "c66e49862e064d2593a3f2811d42cc20896503841cd0bfc1d90130396845e8bb",
+    "bytes": 14482
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/synthetic_cpu_state_iter2/rank2.pkl": {
+    "sha256": "18139d8502919da9d8769a5a6271c0aebe03e7237cc3ee424e3213b41fcdb4e4",
+    "bytes": 14468
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/synthetic_cpu_state_iter2/rank3.pkl": {
+    "sha256": "3b25112b0f3c5615d590c58b2e2ddaa926ece59fc0ea8564aef82bc698700201",
+    "bytes": 14438
+  },
+  "terminal/outputs/psm_wma_v3/corrected_phase5/no_ttt_packed128_droid_fresh_30k_world4_ga4/v3_job_identity.json": {
+    "sha256": "b459805b7c36022b255098a0a80f84ad03d8c50ff25f3e3c32a906da930afab0",
+    "bytes": 3550
+  },
+  "terminal/reference_rank0.json": {
+    "sha256": "391396e9281867b38e06ed8059ea66ae16833383c1f4c62aede95d41b2ef4fa3",
+    "bytes": 1662729
+  },
+  "terminal/reference_rank1.json": {
+    "sha256": "3b33b2939694bb85cada883d427dad93a0ebb91cd414b2940b328ae05b9bbb63",
+    "bytes": 1660655
+  },
+  "terminal/reference_rank2.json": {
+    "sha256": "e9a2c634e603544f0da5282dcca3ff398f847d52d962ebb4ba5d2f6eea8c8265",
+    "bytes": 1661543
+  },
+  "terminal/reference_rank3.json": {
+    "sha256": "4f5551bc2b74c160d8ed24b9a704266a585bc524baed165132a2b6b803e83d2a",
+    "bytes": 1661341
+  },
+  "terminal/resume_new_config.log": {
+    "sha256": "a0cf380026f4fd191b195dcb1dcb5056a9c730d9b3b367cb1d684ef1705b34eb",
+    "bytes": 717
+  },
+  "terminal/resume_new_config_command.json": {
+    "sha256": "d3dc91fdf03996076ee57d1aa87645b31417d1b84db08cf8b58ba0c28a3e5fd1",
+    "bytes": 520
+  },
+  "terminal/resume_new_config_result.json": {
+    "sha256": "c36a91b03331751f6c10bf67975e83fd8c2f13f80a4c78386c16d6a30c6e9988",
+    "bytes": 406
+  },
+  "terminal/resume_new_digest.log": {
+    "sha256": "be5d5748fa9fd1f8834bef81cd3dc4f05ffc5c106cb7d3a95a35bfa7841a941e",
+    "bytes": 3295
+  },
+  "terminal/resume_new_digest_command.json": {
+    "sha256": "4a4d923abb8cb7a5bb807bba8fa77b8617c97d0cff976f2b0846b936f7307547",
+    "bytes": 520
+  },
+  "terminal/resume_new_digest_result.json": {
+    "sha256": "327a633155bd2650d2299f6fafe81e7ef933df2dc3f3fad21af5f7bddf7c273e",
+    "bytes": 4020
+  },
+  "terminal/resume_new_frontier.log": {
+    "sha256": "c669e03d767b203dc528dd39df1bdead6fcc24ff789f38aeed6fbd13b670b512",
+    "bytes": 3303
+  },
+  "terminal/resume_new_frontier_command.json": {
+    "sha256": "2218096b9c87631f37e40d5ff1c31780085a941115aef93b8b2cae6ea20df399",
+    "bytes": 522
+  },
+  "terminal/resume_new_frontier_result.json": {
+    "sha256": "007ef6924804dbbd7a5a313e8fbc3cd6a571492315fe3416d17b43af47d68c69",
+    "bytes": 4028
+  },
+  "terminal/resume_new_iteration.log": {
+    "sha256": "a2985c00ad8c26ab16ac956907857c6e0ef2ee9f661268f8976f0f458d5975e4",
+    "bytes": 3307
+  },
+  "terminal/resume_new_iteration_command.json": {
+    "sha256": "39d6084eec689581eea69945d1992b37acc0be10822c69f66173b36b0e503eb4",
+    "bytes": 523
+  },
+  "terminal/resume_new_iteration_result.json": {
+    "sha256": "31fafd31ca05426ef6770f78c28d3e51331c83145c941b2d33995474fadeeef5",
+    "bytes": 4032
+  },
+  "terminal/resume_new_none.log": {
+    "sha256": "fda291ffe067265056106cd2a1f8e84b376a33a4b45fe8e8e944e313baef7589",
+    "bytes": 8091
+  },
+  "terminal/resume_new_none_command.json": {
+    "sha256": "33996ff6820bbe2e411d7f7c1a25a8fbcce53694300c7806c139f80eb984e1d6",
+    "bytes": 518
+  },
+  "terminal/resume_new_none_result.json": {
+    "sha256": "e18b7604649c9ef8c813e8381601262c42d24aa02c194952af2346eb86d3e0ea",
+    "bytes": 12744
+  },
+  "terminal/resume_new_rank.log": {
+    "sha256": "00311b28759bfeda0c9ef4bee79e954912c8f83f406302c1b531bbc99fde74a5",
+    "bytes": 3287
+  },
+  "terminal/resume_new_rank_command.json": {
+    "sha256": "573af170d5f7c0558b3358f976c393f00fef5f8283d8abe23a1b749dbc509e48",
+    "bytes": 518
+  },
+  "terminal/resume_new_rank_result.json": {
+    "sha256": "2b134bcdc47e7fcfa60393768c7243b3d3d428a61ecb5a9aad4097b31bfc92d7",
+    "bytes": 4012
+  },
+  "terminal/resume_new_seed.log": {
+    "sha256": "81a0d63f32f74549d017bab79a425a41b6c57d5f477a7da817f104eba35d37ad",
+    "bytes": 715
+  },
+  "terminal/resume_new_seed_command.json": {
+    "sha256": "4d73fb8aa19c67c91f78f34e9fe7104e37531ce34c862080694fa6abe9ca4a7a",
+    "bytes": 518
+  },
+  "terminal/resume_new_seed_result.json": {
+    "sha256": "155850a091ae7d56c20c11e49ef40e0d7fab8c280746cfd83afd779f8f40e52a",
+    "bytes": 404
+  },
+  "terminal/save_old_none.log": {
+    "sha256": "3989b8083105b967cf39ed925965aa2e563f03f450d98bf2f75195ff0ee87a82",
+    "bytes": 3443
+  },
+  "terminal/save_old_none_command.json": {
+    "sha256": "c5bfa8cc2994795e9b51a93d3d335f5a8156af9f597e9b9773c542235a3d8038",
+    "bytes": 639
+  },
+  "terminal/save_old_none_result.json": {
+    "sha256": "33341d70ad4792e2e81bbb9e5dcb53e71790816498e40f051bff8f239c600251",
+    "bytes": 4520
+  }
+}
