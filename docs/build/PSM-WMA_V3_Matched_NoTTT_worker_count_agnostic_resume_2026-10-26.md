@@ -40,3 +40,14 @@ bash scripts/train_v3_matched_no_ttt_4gpu.sh resume 30000
 3. **目标环境真实 DCP/CUDA Gate:** 在**隔离保护**的真实 Checkpoint/输出目录上加载 old nw0 DCP 用 nw8 恢复一小段，核对 optimizer/scheduler/CUDA RNG/rank Frontier、resume iteration与精确下个 batch；不碰原 Job。只有此 Gate 通过，才能启动生产级 Resume。
 
 早前 Issue #5“必须迁移 Checkpoint”表述被用户新决定**否决**。这里不实现 Checkpoint converter，不重写旧 identity，不放宽模型/数据/优化器/Frontier 硬校验。旧候选 `_mpwN` 专用 Job/格式如果已生成 checkpoint，须单独审查兼容性；当前活动正式 Job 是 workers0。
+
+
+## 2026-10-27：正式 No-TTT Job 的旧 SHA / sentinel 身份门禁取消
+
+已有训练 `no_ttt_packed128_droid_fresh_30k_world4_ga4` 的 `v3_job_identity.json` 创建于 No-TTT world4 Root/Child SHA 豁免生效之前，故记录真实 SHA（Root `215305ecb9ab9631af44cbb3469bc4179dd4aeab`、Child `a4bc0c728b57ee8aaf49f951f6aed1a17b986573`），而当前新代码写入 sentinel。这不是训练状态差异，不得阻止该 Job 的 `resume`。
+
+Owner 授权 **仅这个现有的正式 No-TTT world4/GA4 Job**：Resume 读取旧 `v3_job_identity.json` 的 `semantic` 字典以复现原 `config_digest`，不再将该 Job 的 Root/Child SHA、sentinel、Job schema、canonical config、semantic digest 与运行时代码作身份校验，也不重写旧 Job identity 或 iter600 Checkpoint。其他 Job（包括 G1、Local 和另一个 No-TTT Job）的身份门禁不受影响。
+
+这不是删除训练状态安全检查：仍要求 `latest_checkpoint.txt` 对应完整 DCP model/optim/scheduler/trainer、4个rank dataloader sidecar，实际 `config_digest` / source binding / rank-world-seed / GA / Frontier / iteration 一致并由原生 Resume 恢复状态。加载失败应保留原 iter600 文件，禁止自动 Fresh。
+
+DS_PRO 前一轮发现的两个测试问题同时修复：worker profile 旧错误文案断言；测试时由上游 HF helper 在父进程设置 `HF_HUB_OFFLINE` 导致的环境变量污染。聚焦 CPU 测试应只重跑变更对应测试和实际 Resume 入口，不再额外要求完整601组历史测试。
