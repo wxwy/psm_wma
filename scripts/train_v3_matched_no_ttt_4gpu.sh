@@ -16,7 +16,29 @@ for required in OUTPUT_ROOT SOURCE_ROOT CACHE_ROOT DATASET_INDEX_ROOT EDGE_POLIC
         exit 2
     fi
 done
-export JOB_NAME=${JOB_NAME:-no_ttt_packed128_droid_fresh_30k_world4_ga4}
+loader_workers=${NOTTT_LOADER_WORKERS:-0}
+loader_args=()
+# Same Job identity for all worker counts; the loader is transport, not training state.
+default_job=no_ttt_packed128_droid_fresh_30k_world4_ga4
+case "$loader_workers" in
+    0)
+        if [[ -n ${NOTTT_PREFETCH_FACTOR:-} || -n ${NOTTT_PERSISTENT_WORKERS:-} || -n ${NOTTT_LOADER_TIMEOUT_S:-} ]]; then
+            echo "workers=0 disables prefetch/persistent/timeout options" >&2
+            exit 2
+        fi
+        ;;
+    1|2|4|8)
+        loader_args=(--no-ttt-loader-workers "$loader_workers" --no-ttt-prefetch-factor "${NOTTT_PREFETCH_FACTOR:-1}"
+            --no-ttt-loader-timeout-s "${NOTTT_LOADER_TIMEOUT_S:-120}")
+        case "${NOTTT_PERSISTENT_WORKERS:-1}" in
+            1) loader_args+=(--no-ttt-persistent-workers) ;;
+            0) loader_args+=(--no-ttt-nonpersistent-workers) ;;
+            *) echo "NOTTT_PERSISTENT_WORKERS must be 0/1" >&2; exit 2 ;;
+        esac
+        ;;
+    *) echo "NOTTT_LOADER_WORKERS must be 0/1/2/4/8" >&2; exit 2 ;;
+esac
+export JOB_NAME=${JOB_NAME:-$default_job}
 if [[ $JOB_NAME != no_ttt_*_world4_ga4 ]]; then
     echo "4GPU profile requires a distinct no_ttt_*_world4_ga4 job, never G1/8GPU" >&2
     exit 2
@@ -51,4 +73,4 @@ exec "${PYTHON:-python}" -m torch.distributed.run --standalone --nproc_per_node=
     --source-root "$SOURCE_ROOT" --cache-root "$CACHE_ROOT" --dataset-index-root "$DATASET_INDEX_ROOT" \
     --edge "$EDGE_POLICY_CHECKPOINT" --vae "$WAN_VAE_PATH" --base-checkpoint "$BASE_CHECKPOINT_PATH" \
     --num-workers 0 --world-size 4 --t 16 --b 8 --ga 4 --k 4 \
-    --max-iter 30000 --warmup 500 --save-iter 100
+    --max-iter 30000 --warmup 500 --save-iter 100 "${loader_args[@]}"
