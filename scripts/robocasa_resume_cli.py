@@ -310,7 +310,12 @@ def prepare_resume(args, cache, *, queue_api):
         print(f"model identity read {len(model_reads)}: {json.dumps(telemetry, sort_keys=True)}", flush=True)
         return identity
 
-    store = RunStore(output_root, current_identity_reader=read_model, resume=args.resume)
+    store = RunStore(
+        output_root,
+        current_identity_reader=read_model,
+        resume=args.resume,
+        allow_relocated_legacy_checkpoint=args.allow_relocated_legacy_checkpoint,
+    )
     output_root = store.root
     simulation_env = queue_api.launch_environment(cache)
     invocation_id = f"{time.time_ns()}_{os.getpid()}_{uuid.uuid4().hex[:8]}"
