@@ -328,7 +328,7 @@ def test_resigned_semantic_identity_still_must_be_matched_profile(tmp_path, key,
         server_command(path)
 
 @pytest.mark.parametrize("phase,until", [("fresh", "100"), ("resume", "500"), ("fresh", "30000")])
-def test_world4_ga4_launcher_uses_only_cuda_4567_and_actual_checkout_sources(tmp_path, phase, until):
+def test_world4_ga4_launcher_uses_only_cuda_4567_and_does_not_request_git_sources(tmp_path, phase, until):
     fake = tmp_path / "capture_python4"
     fake.write_text(
         f'#!{sys.executable}\nimport json,os,sys\n'
@@ -374,17 +374,48 @@ def test_world4_ga4_launcher_uses_only_cuda_4567_and_actual_checkout_sources(tmp
         "--job-name": "no_ttt_contract_world4_ga4",
     }.items():
         assert argv[argv.index(key) + 1] == value
-    root_sha = subprocess.run(
-        ["git", "-C", str(ROOT), "rev-parse", "HEAD"],
-        capture_output=True, text=True, check=True,
-    ).stdout.strip()
-    child_sha = subprocess.run(
-        ["git", "-C", str(ROOT / "cosmos-framework"), "rev-parse", "HEAD"],
-        capture_output=True, text=True, check=True,
-    ).stdout.strip()
-    assert argv[argv.index("--expected-root") + 1] == root_sha
-    assert argv[argv.index("--expected-child") + 1] == child_sha
-    assert root_sha != "outdated" and child_sha != "outdated"
+    assert "--expected-root" not in argv and "--expected-child" not in argv
+    assert argv[argv.index("--root-worktree") + 1] == str(ROOT)
+
+
+def test_world4_launcher_runs_from_nongit_root_with_untracked_eval_docs_and_uses_project_venv(tmp_path):
+    # Reproduce the DS_PRO blocker without touching the actual repository:
+    # no .git at all, plus dirty-style untracked docs/eval/ reports.
+    root = tmp_path / "psm_wma_v3"
+    scripts = root / "scripts"
+    child = root / "cosmos-framework"
+    scripts.mkdir(parents=True)
+    (child / "examples").mkdir(parents=True)
+    (root / "docs/eval").mkdir(parents=True)
+    (root / "docs/eval/robocasa_realrun_preflight_report_20261024.md").write_text("DS report\\n")
+    (child / "examples/psm_wma_robocasa_corrected_phase5.py").write_text("placeholder\\n")
+    launcher = scripts / "train_v3_matched_no_ttt_4gpu.sh"
+    launcher.write_text((ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh").read_text())
+    fake = child / ".venv/bin/python"
+    fake.parent.mkdir(parents=True)
+    fake.write_text(
+        f'#!{sys.executable}\\nimport json,os,sys\\n'
+        'print(json.dumps({"argv":sys.argv[1:],"exe":sys.argv[0],'
+        '"visible":os.environ["CUDA_VISIBLE_DEVICES"]}))\\n'
+    )
+    fake.chmod(0o755)
+    env = dict(os.environ, JOB_NAME="no_ttt_simulated_world4_ga4", CUDA_VISIBLE_DEVICES="4,5,6,7")
+    env.pop("PYTHON", None)
+    for key in (
+        "OUTPUT_ROOT", "SOURCE_ROOT", "CACHE_ROOT", "DATASET_INDEX_ROOT",
+        "EDGE_POLICY_CHECKPOINT", "WAN_VAE_PATH", "BASE_CHECKPOINT_PATH",
+    ):
+        env[key] = str(tmp_path / key)
+    call = subprocess.run(
+        ["bash", str(launcher), "fresh", "100"],
+        capture_output=True, text=True, check=True, env=env, timeout=10,
+    )
+    payload = json.loads(call.stdout)
+    assert payload["visible"] == "4,5,6,7"
+    assert payload["exe"] == str(fake)
+    assert payload["argv"][payload["argv"].index("--root-worktree") + 1] == str(root)
+    assert "--expected-root" not in payload["argv"]
+    assert "--expected-child" not in payload["argv"]
 
 
 @pytest.mark.parametrize(
