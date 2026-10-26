@@ -1,6 +1,6 @@
 # V3 Matched No-TTT — optional nw=8 and Resume boundaries (candidate only)
 
-2026-10-26. Root implementation `fb50e482f1bac60fe1b9f16b836e2f4fe374a05d`; Child/Gitlink `c94a3fe8153dbbed442ee21d01eca2cf744ada80`. This candidate is NOT merged to V3, NOT DS accepted and NOT authorized for GPU / real DCP. Production `workers=0` job is immutable.
+2026-10-26. Root implementation `960c0aafc79e7dc248748c914ec2a220aafe7713`; Child/Gitlink `e96584e39d2f64e3d7783bd1cb98f5cfa77eb8d4`. This candidate is NOT merged to V3, NOT DS accepted and NOT authorized for GPU / real DCP. Production `workers=0` job is immutable.
 
 ## Change scope
 
