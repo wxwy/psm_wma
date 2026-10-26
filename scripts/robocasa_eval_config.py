@@ -33,6 +33,9 @@ DEFAULTS = {
     "save_action_jsonl": True,
     "save_prediction_jsonl": True,
     "resume": False,
+    # Explicit Owner acknowledgement for old-schema evals whose checkpoint
+    # DCP was manually relocated; never silently relax model identity.
+    "allow_relocated_legacy_checkpoint": False,
     "progress": True,
     "progress_interval_s": 5.0,
 }
@@ -138,6 +141,7 @@ def parser() -> argparse.ArgumentParser:
         result.add_argument("--" + flag)
     for flag in (
         "resume",
+        "allow-relocated-legacy-checkpoint",
         "save-rollout-mp4",
         "save-init-png",
         "save-action-jsonl",
@@ -265,6 +269,7 @@ def resolve(argv=None, *, root: Path = ROOT) -> argparse.Namespace:
         raise ValueError("invalid on_infrastructure_error")
     for field in (
         "resume",
+        "allow_relocated_legacy_checkpoint",
         "save_rollout_mp4",
         "save_init_png",
         "save_action_jsonl",
@@ -273,6 +278,8 @@ def resolve(argv=None, *, root: Path = ROOT) -> argparse.Namespace:
     ):
         if type(resolved[field]) is not bool:
             raise ValueError(f"{field} must be a boolean")
+    if resolved["allow_relocated_legacy_checkpoint"] and not resolved["resume"]:
+        raise ValueError("allow-relocated-legacy-checkpoint requires --resume")
     for field in ("save_action_jsonl", "save_prediction_jsonl"):
         if not resolved[field]:
             raise ValueError(f"audit evidence requires {field}=true")
