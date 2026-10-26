@@ -176,14 +176,27 @@ def _core(record):
 class RunStore:
     """One evaluation namespace with the same advisory lease as legacy Queue."""
 
-    def __init__(self, output_root, *, current_identity_reader, resume=False, current_provenance=None):
+    def __init__(
+        self,
+        output_root,
+        *,
+        current_identity_reader,
+        resume=False,
+        current_provenance=None,
+        allow_relocated_legacy_checkpoint=False,
+    ):
         if not callable(current_identity_reader):
             raise TypeError("current_identity_reader is required")
+        if type(allow_relocated_legacy_checkpoint) is not bool:
+            raise TypeError("allow_relocated_legacy_checkpoint requires a boolean")
+        if allow_relocated_legacy_checkpoint and resume is not True:
+            raise ValueError("legacy checkpoint relocation requires explicit --resume")
         self.root = _safe(output_root)
         self.control = self.root / "_resume_v2"
         self.current_identity_reader = current_identity_reader
         self.resume = resume
         self.current_provenance = current_provenance
+        self.allow_relocated_legacy_checkpoint = allow_relocated_legacy_checkpoint
         self.current_identity = None
         self._preview_identity = None
         self._held = False
@@ -236,7 +249,12 @@ class RunStore:
             if nested is not None:
                 self._match(nested)
             else:
-                decision = legacy_ingest(old, self.current_identity, current_provenance=self.current_provenance)
+                decision = legacy_ingest(
+                    old,
+                    self.current_identity,
+                    current_provenance=self.current_provenance,
+                    allow_relocated_checkpoint=self.allow_relocated_legacy_checkpoint,
+                )
                 if decision["status"] == "MODEL_MISMATCH":
                     _fail("MODEL_MISMATCH", json.dumps(decision["errors"], ensure_ascii=False, sort_keys=True))
                 self._legacy_decision, self._legacy_manifest_hash = decision, observed
