@@ -26,7 +26,7 @@ case "$loader_workers" in
         fi
         default_job=no_ttt_packed128_droid_fresh_30k_world4_ga4
         ;;
-    1|2|4)
+    1|2|4|8)
         default_job="no_ttt_packed128_droid_fresh_30k_mpw${loader_workers}_world4_ga4"
         loader_args=(--no-ttt-loader-workers "$loader_workers" --no-ttt-prefetch-factor "${NOTTT_PREFETCH_FACTOR:-1}"
             --no-ttt-loader-timeout-s "${NOTTT_LOADER_TIMEOUT_S:-120}")
@@ -36,7 +36,7 @@ case "$loader_workers" in
             *) echo "NOTTT_PERSISTENT_WORKERS must be 0/1" >&2; exit 2 ;;
         esac
         ;;
-    *) echo "NOTTT_LOADER_WORKERS must be 0/1/2/4" >&2; exit 2 ;;
+    *) echo "NOTTT_LOADER_WORKERS must be 0/1/2/4/8" >&2; exit 2 ;;
 esac
 export JOB_NAME=${JOB_NAME:-$default_job}
 if [[ $loader_workers != 0 && $JOB_NAME != no_ttt_*_mpw${loader_workers}_world4_ga4 ]]; then
