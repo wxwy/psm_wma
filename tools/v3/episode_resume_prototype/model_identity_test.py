@@ -166,6 +166,63 @@ def test_same_bytes_changed_timestamp_matches_new_identity_but_never_bypasses_le
     )
 
 
+def test_owner_optin_manual_legacy_checkpoint_relocation_keeps_historical_manifest_immutable(
+    checkpoint, tmp_path
+):
+    original = build(checkpoint)
+    manifest = legacy(original)
+    original_manifest = copy.deepcopy(manifest)
+    original_files = {p.name: _witness(p) for p in (checkpoint / "model").iterdir()}
+    relocated = tmp_path / "new-volume" / checkpoint.name
+    shutil.copytree(checkpoint, relocated, copy_function=shutil.copy2)
+    current = build(relocated)
+    assert current["parameters"]["checkpoint"]["path"] != original["parameters"]["checkpoint"]["path"]
+    # No relocation permission, no old-schema migration.
+    assert identity.legacy_ingest(manifest, current)["status"] == "MODEL_MISMATCH"
+    # Only an explicit Owner acknowledgement accepts the moved, unchanged DCP.
+    decision = identity.legacy_ingest(manifest, current, allow_relocated_checkpoint=True)
+    assert decision["status"] == "LEGACY_STAT_BRIDGE_MATCH" and decision["errors"] == []
+    assert decision["owner_accepted_relocated_legacy_checkpoint"] is True
+    assert decision["historical_payload_sha256"] is None
+    notice = next(x for x in decision["warnings"] if x["code"] == "OWNER_ACCEPTED_LEGACY_CHECKPOINT_RELOCATION")
+    assert notice["old_checkpoint_path"] == str(checkpoint.resolve())
+    assert notice["current_checkpoint_path"] == str(relocated.resolve())
+    assert notice["reuse_blocked"] is False
+    assert manifest == original_manifest
+    assert original_files == {p.name: _witness(p) for p in (checkpoint / "model").iterdir()}
+    # A strong new-run identity still checks full path unless separately designed.
+    assert identity.compare_model_identity(original, current)["status"] == "MODEL_MISMATCH"
+
+
+@pytest.mark.parametrize("tamper", ["metadata", "shard_size", "shard_mtime", "checkpoint_iteration", "num_steps"])
+def test_owner_optin_legacy_relocation_does_not_waive_other_identity_witnesses(
+    checkpoint, tmp_path, tamper
+):
+    manifest = legacy(build(checkpoint))
+    moved_name = "iter_000004001" if tamper == "checkpoint_iteration" else checkpoint.name
+    relocated = tmp_path / "new-volume" / moved_name
+    shutil.copytree(checkpoint, relocated, copy_function=shutil.copy2)
+    shard = relocated / "model/__0_0.distcp"
+    if tamper == "metadata":
+        (relocated / "model/.metadata").write_bytes(pickle.dumps({"changed": True}, protocol=4))
+    elif tamper == "shard_size":
+        with zipfile.ZipFile(shard, "a") as archive:
+            archive.writestr("additional_payload", b"tampered content")
+    elif tamper == "shard_mtime":
+        info = shard.stat()
+        os.utime(shard, ns=(info.st_atime_ns, info.st_mtime_ns + 1_000_000_000))
+    current = build(relocated, **({"num_steps": 31} if tamper == "num_steps" else {}))
+    result = identity.legacy_ingest(manifest, current, allow_relocated_checkpoint=True)
+    assert result["status"] == "MODEL_MISMATCH"
+    assert result["errors"]
+
+
+def test_owner_legacy_relocation_flag_rejects_non_boolean(checkpoint):
+    manifest = legacy(build(checkpoint))
+    with pytest.raises(identity.IdentityInputError, match="RELOCATION_FLAG_INVALID"):
+        identity.legacy_ingest(manifest, build(checkpoint), allow_relocated_checkpoint="yes")
+
+
 def test_changed_metadata_is_checkpoint_mismatch(checkpoint):
     old = build(checkpoint)
     (checkpoint / "model/.metadata").write_bytes(pickle.dumps({"different": "valid metadata structure"}, protocol=4))
