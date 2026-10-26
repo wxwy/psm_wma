@@ -18,16 +18,16 @@ for required in OUTPUT_ROOT SOURCE_ROOT CACHE_ROOT DATASET_INDEX_ROOT EDGE_POLIC
 done
 loader_workers=${NOTTT_LOADER_WORKERS:-0}
 loader_args=()
+# Same Job identity for all worker counts; the loader is transport, not training state.
+default_job=no_ttt_packed128_droid_fresh_30k_world4_ga4
 case "$loader_workers" in
     0)
         if [[ -n ${NOTTT_PREFETCH_FACTOR:-} || -n ${NOTTT_PERSISTENT_WORKERS:-} || -n ${NOTTT_LOADER_TIMEOUT_S:-} ]]; then
             echo "workers=0 disables prefetch/persistent/timeout options" >&2
             exit 2
         fi
-        default_job=no_ttt_packed128_droid_fresh_30k_world4_ga4
         ;;
     1|2|4|8)
-        default_job="no_ttt_packed128_droid_fresh_30k_mpw${loader_workers}_world4_ga4"
         loader_args=(--no-ttt-loader-workers "$loader_workers" --no-ttt-prefetch-factor "${NOTTT_PREFETCH_FACTOR:-1}"
             --no-ttt-loader-timeout-s "${NOTTT_LOADER_TIMEOUT_S:-120}")
         case "${NOTTT_PERSISTENT_WORKERS:-1}" in
@@ -39,10 +39,6 @@ case "$loader_workers" in
     *) echo "NOTTT_LOADER_WORKERS must be 0/1/2/4/8" >&2; exit 2 ;;
 esac
 export JOB_NAME=${JOB_NAME:-$default_job}
-if [[ $loader_workers != 0 && $JOB_NAME != no_ttt_*_mpw${loader_workers}_world4_ga4 ]]; then
-    echo "Workers require a NEW no_ttt_*_mpwN_world4_ga4 namespace" >&2
-    exit 2
-fi
 if [[ $JOB_NAME != no_ttt_*_world4_ga4 ]]; then
     echo "4GPU profile requires a distinct no_ttt_*_world4_ga4 job, never G1/8GPU" >&2
     exit 2
