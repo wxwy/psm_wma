@@ -29,14 +29,14 @@ The script exports `CUDA_VISIBLE_DEVICES=4,5,6,7`, starts 4 local processes, fix
 
 A distinct `JOB_NAME` is required to end in `_world4_ga4` and begin with `no_ttt_`; default `no_ttt_packed128_droid_fresh_30k_world4_ga4`. Never use the G1 or world8 No-TTT job namespace. `OUTPUT_ROOT` must be an independent location with sufficient capacity.
 
-For this **new 4GPU launcher only**, users do not need to export `EXPECTED_ROOT` or `EXPECTED_CHILD`: the launcher reads actual checked-out Git SHAs and passes them as the Trainer's expected values; the Trainer checks Root/Child/Gitlink and clean Child, and same-job No-TTT Resume still requires the **identical frozen source pair and config**. A later V3 HEAD change is *not* automatically compatible with a saved No-TTT job. Use a dedicated clean, fixed-commit checkout for Fresh and subsequent Resumes; do not update the active G1 checkout. Stale exported EXPECTED_* environment values are ignored for this launcher.
+**2026-10-26 Owner exception, scoped only to No-TTT 4GPU jobs matching `no_ttt_*_world4_ga4`:** neither the launcher nor the Child Preflight executes Git Root status/Root HEAD/Child HEAD/Gitlink checks; `EXPECTED_ROOT` and `EXPECTED_CHILD` are not required or passed. Existing untracked `docs/eval/*.md` (e.g. DS_PRO read-only reports) may remain in the main Root worktree; the launcher uses the same `psm_wma_v3/cosmos-framework` source directory directly, not a `data1/dspro_*` temporary checkout. The per-job recorded `root`/`child` semantic fields explicitly contain `nottt_world4_ga4_source_head_not_verified`, and the diagnostic `source_validation=owner_disabled_for_nottt_world4_ga4` is not a claim that the current source SHAs matched. Source changes after Fresh are **not detected by HEAD comparison** for this profile; keep the training code stable by operating convention. Other jobs (G1, world8 No-TTT, non-No-TTT) retain their existing source lock behavior. This exception does **not** waive the unchanged No-TTT job namespace, canonical Config hashes, model/data authority, DROID initialization, rank count, full DCP components or Frontier/optimizer/scheduler/RNG Resume checks.
 
-Required env: `OUTPUT_ROOT`, `SOURCE_ROOT`, `CACHE_ROOT`, `DATASET_INDEX_ROOT`, `EDGE_POLICY_CHECKPOINT`, `WAN_VAE_PATH`, `BASE_CHECKPOINT_PATH`. `PYTHON` optionally selects the actual training venv.
+Required env: `OUTPUT_ROOT`, `SOURCE_ROOT`, `CACHE_ROOT`, `DATASET_INDEX_ROOT`, `EDGE_POLICY_CHECKPOINT`, `WAN_VAE_PATH`, `BASE_CHECKPOINT_PATH`. If `PYTHON` is unset, the 4GPU launcher prefers `cosmos-framework/.venv/bin/python` if present and executable; explicit `PYTHON` still takes precedence. Never use the base Anaconda torch2.0.1 environment for the current DCP loading path.
 
 Example with those pre-exported environment paths:
 
 ```bash
-cd /absolute/path/to/independent_clean_no_ttt_4gpu_checkout
+cd /mnt/data/shenzhen/szrobot/logs/.tmp_backup/psm_wma_v3
 export JOB_NAME=no_ttt_packed128_droid_fresh_30k_world4_ga4
 
 # The stage budgets do not change max_iter30000/warmup500/save100.
@@ -47,12 +47,12 @@ bash scripts/train_v3_matched_no_ttt_4gpu.sh resume 500
 bash scripts/train_v3_matched_no_ttt_4gpu.sh resume 30000
 ```
 
-Do not execute the second command until the preceding stage successfully wrote its complete checkpoint. The command with `resume 30000` means total iteration 30000, not +30000. For the first real launch, check current GPU occupancy, root/child workspace lock, dataset/Verified Index receipts, disk and DROID initialization; no training has been run by this code change.
+Do not execute the second command until the preceding stage successfully wrote its complete checkpoint. The command with `resume 30000` means total iteration 30000, not +30000. For the first real launch, check GPU4–7 occupancy, the local entrypoint and Python interpreter, dataset/Verified Index receipts, disk and DROID initialization. Git source lock is intentionally **not** a gating check for this profile; no training has been run by this code change.
 
 ## Inference and Resume
 
 - `scripts/serve_v3_matched_no_ttt.py` now explicitly accepts exactly `(world_size,ga)=(8,2)` or `(4,4)` from the saved No-TTT semantic identity; for either, its saved YAML must agree on FSDP shard degree, replicate degree1 and GA, in addition to raw15/state15/H16/left_wrist/Local off/Generation-only. The CLI remains the same as the standalone off-mode example.
-- The No-TTT Frontier uses actual `world_size`, `GA` and `iteration`; 4GPU resumes require all four rank dataloader files and the same source and config digests. Cross-world-size Resume is forbidden; never restore G1 or 8GPU No-TTT checkpoints into a 4GPU job.
+- The No-TTT Frontier uses actual `world_size`, `GA` and `iteration`; 4GPU resumes require all four rank dataloader files and the same **data/model/config** authorities and digests. Git HEAD source SHA is deliberately excluded only for this job, as requested by Owner; do not describe an unverified Git SHA as a validated source digest. Cross-world-size Resume is forbidden; never restore G1 or 8GPU No-TTT checkpoints into a 4GPU job.
 - A 4GPU training identity does not imply the existing required-TTT Unified RoboCasa Queue can run it. Off-mode server/client and matched task protocol still require a separate evaluation Gate.
 
 ## Required follow-up evidence
