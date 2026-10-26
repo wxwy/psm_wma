@@ -82,3 +82,16 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 - NVIDIA native RoboCasa Action SFT uses PyTorch `RankPartitionedDataLoader`/worker processes, but matched No-TTT currently uses `GroupedTriggerLoader` plus synchronous `ExactWindowSegmentProducer.produce` in `MatchedNoTTTTrainer`. Codex must add **true CPU multi-process workers**, not just loosen guard/rename old raw ThreadPool; 0-worker production path unchanged; preserve frozen ExactWindow/Packed128/GA4/rank Consumer/RNG/Frontier, native outer losses/DROID initialization.
 - Allowed: isolated root/child candidate implementation+synthetic CPU test/evidence only, opt-in workers=1/2/4 with new job/profile identity, bounded worker lifecycle, actual PID evidence, deterministic sample/transform order, failure/Resume controls and perf instrumentation. **Forbidden:** G1/old No-TTT live job/checkpoints/source/cache edits, changing current run worker count, GPU/model/DCP real IO, training, RoboCasa, source SHA/Root-dirty gate reversal for 4GPU NoTTT, or merge to V3 before GPT incremental Gate.
 - Next: Codex independently implements in separate candidate branch and reports exact formal Root/Child/Gitlink, regression parity/JUnit, then requests GPT fresh code audit → DS_PRO independent CPU → separate Owner GPU/throughput authorization. **This ledger does not mean Codex automatically began working**.
+
+
+## 2026-10-26 — Issue4 Matched No-TTT process Worker candidate — REVIEW
+
+Owner task96b453c4 / Issue4. Formal implementation Root **76d1cc70622d3b456a3c388ad98917b7d532890b**; Child/Gitlink **3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b**. Both branches **v3-nottt-process-workers-20261026**, candidate only; NOT merged to V3/v3-local-ttt. Following docs HEAD is not implementation authority.
+
+Real PyTorch spawn workers1/2/4, default0 exact old path, parent Source/Transform/RNG/Planner/Frontier/native loss, bounded mmap/packet/prefetch/owned cleanup. New-only world4/GA4 namespace/options identity; Owner Git admission exemption preserved. No G1/model/generalTrainer/DCP/Queue/vendor change. Three baseline fixture repairs separately evidenced.
+
+Author frozen20CPU: 601PASS +42successful subtests;5old real-asset skips,0failure/error;new62PASS/0skip. Ruff0.12.7 check/format/syntax11Python+Bash/source/protected paths PASS. 30 actual PID rank/config rows, all witnessed child PIDs gone. Synthetic100→101/500 toy CPU state, logical ranks sequential; NOT real DCP/CUDA/concurrent world4 or speedup evidence.
+
+Detailed handoff: docs/collab/codex/reviews/2026-10-26_V3_No_TTT_multiprocess_workers_author_handoff.md. Design/runbook: docs/collab/codex/designs/2026-10-26_V3_No_TTT_process_workers_candidate.md. Evidence: docs/collab/codex/evidence/2026-10-26_nottt_multiprocess_workers_author_cpu/ (original JUnit/log/commands/hash/patch/PIDs/iterations).
+
+**Request GPT fresh incremental APPROVE / REQUEST_CHANGES / BLOCKED for this exact candidate pair**, then DS independent CPU. Owner task mandates STOP after candidate delivery. Do NOT merge V3 or start GPU/model/DCP/real Source/Cache/performance/training/server/RoboCasa. Target Torch lifecycle, real-assets memory, CUDA/FSDP/world4/native gradients/full DCP/RNG and perf remain later independent Gates; no MM/Kimi session implied under current Owner/GPT/DS roles.

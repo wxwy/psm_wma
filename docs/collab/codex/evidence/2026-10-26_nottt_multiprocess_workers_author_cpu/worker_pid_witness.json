@@ -1,0 +1,568 @@
+{
+  "rows": [
+    {
+      "rank": 0,
+      "world": 1,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        463772
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 1,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        463778,
+        463779
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 1,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        463811,
+        463812,
+        463813,
+        463814
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 1,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        463872
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 1,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        463914,
+        463915
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 1,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        463924,
+        463925,
+        463926,
+        463927
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 4,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        463944
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 1,
+      "world": 4,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        463987
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 2,
+      "world": 4,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        463993
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 3,
+      "world": 4,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464000
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 4,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464030,
+        464031
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 1,
+      "world": 4,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464042,
+        464043
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 2,
+      "world": 4,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464079,
+        464080
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 3,
+      "world": 4,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464089,
+        464090
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 4,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464102,
+        464103,
+        464104,
+        464105
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 1,
+      "world": 4,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464133,
+        464134,
+        464135,
+        464136
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 2,
+      "world": 4,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464152,
+        464153,
+        464154,
+        464155
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 3,
+      "world": 4,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464175,
+        464176,
+        464177,
+        464178
+      ],
+      "counts": [
+        128,
+        8,
+        128,
+        8
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 4,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464219
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 1,
+      "world": 4,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464240
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 2,
+      "world": 4,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464269
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 3,
+      "world": 4,
+      "workers": 1,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464275
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 4,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464284,
+        464285
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 1,
+      "world": 4,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464295,
+        464296
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 2,
+      "world": 4,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464308,
+        464309
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 3,
+      "world": 4,
+      "workers": 2,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464324,
+        464325
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 0,
+      "world": 4,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464336,
+        464337,
+        464338,
+        464339
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 1,
+      "world": 4,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464378,
+        464379,
+        464380,
+        464381
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 2,
+      "world": 4,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464399,
+        464400,
+        464401,
+        464402
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    },
+    {
+      "rank": 3,
+      "world": 4,
+      "workers": 4,
+      "trainer_pid": 463439,
+      "worker_pids": [
+        464443,
+        464444,
+        464445,
+        464446
+      ],
+      "counts": [
+        128,
+        128,
+        128,
+        128
+      ]
+    }
+  ],
+  "unique_pids": [
+    463772,
+    463778,
+    463779,
+    463811,
+    463812,
+    463813,
+    463814,
+    463872,
+    463914,
+    463915,
+    463924,
+    463925,
+    463926,
+    463927,
+    463944,
+    463987,
+    463993,
+    464000,
+    464030,
+    464031,
+    464042,
+    464043,
+    464079,
+    464080,
+    464089,
+    464090,
+    464102,
+    464103,
+    464104,
+    464105,
+    464133,
+    464134,
+    464135,
+    464136,
+    464152,
+    464153,
+    464154,
+    464155,
+    464175,
+    464176,
+    464177,
+    464178,
+    464219,
+    464240,
+    464269,
+    464275,
+    464284,
+    464285,
+    464295,
+    464296,
+    464308,
+    464309,
+    464324,
+    464325,
+    464336,
+    464337,
+    464338,
+    464339,
+    464378,
+    464379,
+    464380,
+    464381,
+    464399,
+    464400,
+    464401,
+    464402,
+    464443,
+    464444,
+    464445,
+    464446
+  ],
+  "after_run_no_witness_pids_alive": true,
+  "ranks": "Four logical ranks sequential on CPU, not collective/GPU evidence"
+}

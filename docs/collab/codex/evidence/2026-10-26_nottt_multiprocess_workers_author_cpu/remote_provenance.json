@@ -1,0 +1,11 @@
+{
+  "canonical_V3_latest_observed": "97753e9dd7fc885b3bdeade903e61b6f55c7d746",
+  "canonical_child_latest_observed": "923d9c3fd392e6bafbdb1771a292c7b313e6b3dc",
+  "candidate_implementation": "76d1cc70622d3b456a3c388ad98917b7d532890b",
+  "candidate_child": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+  "task_base_docs": "0beaeacd7d00b0b5826b3eac12b86676eb8b7db3",
+  "canonical_remote_updates_preserved": true,
+  "V3_updates_not_merged_into_candidate": "Other work modified four evaluation-only files after task baseline; no overlapping Worker task/source/Child changes. Scope is candidate implementation from requested baseline, no rebase/merge or canonical write.",
+  "commits": "97753e9d fix(eval): propagate explicit legacy checkpoint relocation flag to ResumeStore\nf876e36f feat(eval): explicit --allow-relocated-legacy-checkpoint option requires --resume\nda5cfdb2 fix(eval): expose opt-in legacy checkpoint relocation only in resume store legacy admission\ne5027de1 fix(eval): opt-in old-schema DCP relocation with metadata/shard controls, audit provenance\n",
+  "files": "scripts/robocasa_episode_resume/model_identity.py\nscripts/robocasa_eval_config.py\nscripts/robocasa_resume_cli.py\nscripts/robocasa_resume_store.py\n"
+}

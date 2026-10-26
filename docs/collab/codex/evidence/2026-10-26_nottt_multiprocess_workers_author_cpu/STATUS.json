@@ -1,0 +1,144 @@
+{
+  "gate": "AUTHOR_SYNTHETIC_CPU_ONLY",
+  "root_implementation": "76d1cc70622d3b456a3c388ad98917b7d532890b",
+  "child_gitlink": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+  "branch": "v3-nottt-process-workers-20261026",
+  "base_root": "e6ae2084305a8c24d763d82b517984660cc73c30",
+  "base_child": "923d9c3fd392e6bafbdb1771a292c7b313e6b3dc",
+  "junit_testcase_elements": 606,
+  "passed": 601,
+  "failure": 0,
+  "error": 0,
+  "skipped": 5,
+  "new_tests_passed": 62,
+  "existing_skips": [
+    {
+      "classname": "cosmos-framework.examples.psm_wma_robocasa_corrected_phase5_test",
+      "name": "test_optional_real_strict_snapshot10_preflight",
+      "reason": "\u672a\u63d0\u4f9b\u771f\u5b9e exact-window cache/source/Edge/base/VAE \u8def\u5f84"
+    },
+    {
+      "classname": "cosmos-framework.cosmos_framework.model.generator.mot.local_memory_grouped_window_test",
+      "name": "test_optional_strict_real_data_grouped_smoke",
+      "reason": "strict real debug cache/source paths were not supplied"
+    },
+    {
+      "classname": "cosmos-framework.cosmos_framework.model.generator.mot.robocasa_exact_window_local_test",
+      "name": "test_optional_real_data_debug_smoke",
+      "reason": "real debug cache/source paths were not supplied"
+    },
+    {
+      "classname": "cosmos-framework.examples.psm_wma_robocasa_native_test.LocalEdgeAssetsTest",
+      "name": "test_local_hf_and_dcp_metadata_contract",
+      "reason": "\u672c\u5730\u8d44\u4ea7\u6838\u9a8c\u9700\u663e\u5f0f\u63d0\u4f9b EDGE_POLICY_CHECKPOINT / BASE_CHECKPOINT_PATH"
+    },
+    {
+      "classname": "cosmos-framework.examples.psm_wma_robocasa_native_test.LocalEdgeAssetsTest",
+      "name": "test_local_processor_without_hub_fallback",
+      "reason": "\u672c\u5730\u8d44\u4ea7\u6838\u9a8c\u9700\u663e\u5f0f\u63d0\u4f9b EDGE_POLICY_CHECKPOINT / BASE_CHECKPOINT_PATH"
+    }
+  ],
+  "subtests_success": 42,
+  "source_hashes_verified": true,
+  "worker_pid_rows": 30,
+  "worker_pids_count": 70,
+  "static": {
+    "python_files": [
+      "cosmos_framework/trainer/matched_no_ttt.py",
+      "cosmos_framework/trainer/matched_no_ttt_test.py",
+      "examples/psm_wma_robocasa_corrected_phase5.py",
+      "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py",
+      "examples/psm_wma_robocasa_matched_no_ttt_test.py",
+      "cosmos_framework/trainer/no_ttt_cpu_loader.py",
+      "cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+      "cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+      "cosmos_framework/trainer/no_ttt_loader_test_support.py",
+      "cosmos_framework/utils/no_ttt_loader_profile.py",
+      "../tools/v3/no_ttt_workers_entry_test.py"
+    ],
+    "syntax": "PASS",
+    "checks": [
+      {
+        "cwd": "/workspace/psm_wma/cosmos-framework",
+        "argv": [
+          "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+          "--version"
+        ],
+        "exit_code": 0,
+        "log": "check_0.log"
+      },
+      {
+        "cwd": "/workspace/psm_wma/cosmos-framework",
+        "argv": [
+          "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+          "check",
+          "cosmos_framework/trainer/matched_no_ttt.py",
+          "cosmos_framework/trainer/matched_no_ttt_test.py",
+          "examples/psm_wma_robocasa_corrected_phase5.py",
+          "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py",
+          "examples/psm_wma_robocasa_matched_no_ttt_test.py",
+          "cosmos_framework/trainer/no_ttt_cpu_loader.py",
+          "cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+          "cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+          "cosmos_framework/trainer/no_ttt_loader_test_support.py",
+          "cosmos_framework/utils/no_ttt_loader_profile.py",
+          "../tools/v3/no_ttt_workers_entry_test.py"
+        ],
+        "exit_code": 0,
+        "log": "check_1.log"
+      },
+      {
+        "cwd": "/workspace/psm_wma/cosmos-framework",
+        "argv": [
+          "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+          "format",
+          "--check",
+          "cosmos_framework/trainer/matched_no_ttt.py",
+          "cosmos_framework/trainer/matched_no_ttt_test.py",
+          "examples/psm_wma_robocasa_corrected_phase5.py",
+          "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py",
+          "examples/psm_wma_robocasa_matched_no_ttt_test.py",
+          "cosmos_framework/trainer/no_ttt_cpu_loader.py",
+          "cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+          "cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+          "cosmos_framework/trainer/no_ttt_loader_test_support.py",
+          "cosmos_framework/utils/no_ttt_loader_profile.py",
+          "../tools/v3/no_ttt_workers_entry_test.py"
+        ],
+        "exit_code": 0,
+        "log": "check_2.log"
+      },
+      {
+        "cwd": "/workspace/psm_wma/cosmos-framework",
+        "argv": [
+          "bash",
+          "-n",
+          "../scripts/train_v3_matched_no_ttt_4gpu.sh"
+        ],
+        "exit_code": 0,
+        "log": "check_3.log"
+      },
+      {
+        "cwd": "/workspace/psm_wma/cosmos-framework",
+        "argv": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "log": "check_4.log"
+      }
+    ]
+  },
+  "production_paths_unchanged": true,
+  "NOT_VALIDATED": [
+    "DS independent CPU",
+    "actual PyTorch/CUDA lifecycle",
+    "real source/cache RAM/IO",
+    "concurrent world4 Gloo/NCCL/FSDP",
+    "real CUDA gradients/native outer loss",
+    "real DCP/CUDA RNG Save/Resume",
+    "H100 performance or speedup"
+  ],
+  "note": "Full B8/T16/GA4 geometry parity separately; 100\u2192101/500 roundtrip uses reduced T1/B1/GA4 CPU toy model and actual trainer/frontier callback. Prior failures retained, not counted as PASS."
+}

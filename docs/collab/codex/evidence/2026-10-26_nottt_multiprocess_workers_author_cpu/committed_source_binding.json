@@ -1,0 +1,161 @@
+{
+  "all26_committed_blobs_match_frozen_final_sources": true,
+  "files": [
+    {
+      "path": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "90d24efc8967e4c8f43e943dd7fff4d38b8155e96f8bfc7fce43834d3678be5f",
+      "git_blob": "d8f7d31fb77136e211b0440d416db1397337d802"
+    },
+    {
+      "path": "cosmos-framework/examples/psm_wma_robocasa_matched_no_ttt_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "02fe5aee933d89c2b7053879b7c20538e3f8533fd36dc8f0df8ffd90f251610e",
+      "git_blob": "78b9e22d069135ee1ec4a12c73ac775a0e7f2d69"
+    },
+    {
+      "path": "tools/v3/matched_no_ttt_entry_test.py",
+      "commit": "76d1cc70622d3b456a3c388ad98917b7d532890b",
+      "sha256": "a42cd0e481ca9dff2cb037c4fa331c851943bf4c3f8e9c69e301ee489165a900",
+      "git_blob": "f1d9f9d134ed56bbb9808ed0d72534d4bda279a9"
+    },
+    {
+      "path": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "cf9de3e9ace3556ff425ee73146aefee0f35465b341657f29b9a466997b4cf40",
+      "git_blob": "9c2daf3542fa303c9c977a551f61b5b6c569dd2c"
+    },
+    {
+      "path": "cosmos-framework/examples/psm_wma_robocasa_phase5_f0_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "32f3258ef410e2c66f7b32dcdd87c0fa5f4f6a6ae25b39c5bb899a9fe9506642",
+      "git_blob": "ce82fba4928800d667c5096e94536ae72c62e0c1"
+    },
+    {
+      "path": "cosmos-framework/examples/psm_wma_robocasa_effective_config_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "414c8af69333e148d59080f4d23fb6fda6bf2362f21686bddbe7df9f5b79bbb9",
+      "git_blob": "be3a455006a4c8bd185ab1eeaf377a8be5c62417"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "b4461743025b5f975059cacd7340a7a7cdc8bfa5b55071f40d1d8260b3c18282",
+      "git_blob": "734ded0769b226462df3e304b9c60c00216d9ce9"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/trainer/local_memory_grouped_resume_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "43d8462c27e2b644d15af33650a8d8e809dd8f7ee73c0724c968b2a4d055548f",
+      "git_blob": "627ab040ed7d7c878f6ee68f8a0a7e9e0492e75e"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/model/generator/mot/local_memory_grouped_window_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "c98dfa99c956bb4af3b7dc21e4bc825685a5bf86c4cb5ad8ac464c8c216f0f8b",
+      "git_blob": "b3ac31c115ffa8e1c111761da82550c11ac3b8f6"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/model/generator/mot/robocasa_exact_window_local_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "7bfb364e115d02b8632d7e35673c3b1da71a8aa14d76fa4e373a7a67ce7cf680",
+      "git_blob": "9c38f562d2ed3a68ad54446f7a8e9d09401bf5f4"
+    },
+    {
+      "path": "cosmos-framework/examples/psm_wma_robocasa_corrected_telemetry_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "889b058fe3d32d410e734dc4f25427cb0789d2b103ad000665a2447c8ccd4571",
+      "git_blob": "10a9e26e823252c687417facf4d3d5af29a93a84"
+    },
+    {
+      "path": "tools/v3/remaining_optimizations_test.py",
+      "commit": "76d1cc70622d3b456a3c388ad98917b7d532890b",
+      "sha256": "1d900a24e1ab67799b22b51c6495a3b9d5e8a7318aa2160005f11cc7abfb01b3",
+      "git_blob": "2e972d37682c6921a58dfbea4be3b93aa6df834a"
+    },
+    {
+      "path": "cosmos-framework/examples/psm_wma_robocasa_native_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "480cee9c422d654161171dfb7d4ba5faeb1ac8dceffbb9069ed7643de327df26",
+      "git_blob": "58025b2b53755b81ed04e4aa2fd508f77fa2c67c"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/inference/robocasa_local_memory_policy_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "28d38aaa7f787cadb339eb55f45a803da826ec10f23ada642e7bacbd2a988486",
+      "git_blob": "90e394563e35b9d7bdda92b4cd4ad22016ff2d94"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/data/generator/action/datasets/robocasa_exact_window_cached_sft_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "11524ff5f79f5fb9ab77a8b2c1cf087c9b1a2680240d339fc429bf40eaa982df",
+      "git_blob": "7a023395066399433e6019e953e0abc44e0085f6"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/model/generator/omni_mot_cached_vision_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "43dffc61d3ff350e0aa9963d69054ba7b0a30a254f0b71f6638eb25c14f96594",
+      "git_blob": "62ad18e62e66985fac83fd1c1300a5671b814c3d"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "0123c9714f5a6c6e0005e80144f3dd4336363848f436b360cf642391589adc3b",
+      "git_blob": "471be5558b489f7dd31de7e051c937f146ab3926"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "0cab11b0a0d5cd175609571e63dd97db553c8ce5b678ab5b9c65191357a91bec",
+      "git_blob": "105ae79f3a335840307e7f22b7eb4755e7ccc34f"
+    },
+    {
+      "path": "cosmos-framework/examples/psm_wma_robocasa_g1_cross_pair_resume_test.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "0953792226a8d1048c0061792363458a0a8badbeb5aebf59b721695c01f7c482",
+      "git_blob": "40c54ead681632929ed50840465131cbae678a25"
+    },
+    {
+      "path": "tools/v3/no_ttt_workers_entry_test.py",
+      "commit": "76d1cc70622d3b456a3c388ad98917b7d532890b",
+      "sha256": "677082d2036bdf9b9439eb013c650e800350aba7dcd33934b3471a7a6a683599",
+      "git_blob": "84186e5f393aa7829acdf7b06532c5bdb946ef10"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/trainer/no_ttt_cpu_loader.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "e250623b9d9d71c3a1b89e96c7f7ae2e9c9dacf617fed6750e2e760b99f88e6a",
+      "git_blob": "2d608415e5f669d9005fc0ad903f0e9e799588c9"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/trainer/no_ttt_loader_test_support.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "5e9cc7729333a66c52f06f470e18488207df4550078d829340c89f403cba0326",
+      "git_blob": "98743473f795214ffba7d27e8da27a9fd8bf5c93"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/utils/no_ttt_loader_profile.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "96acf81f73c6cf12a3d33b2c604bb125fb870f9bac83e4ca1c624a9379320eb2",
+      "git_blob": "3734950a1ed29913d7ab8469ac21f9814333b49a"
+    },
+    {
+      "path": "cosmos-framework/cosmos_framework/trainer/matched_no_ttt.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "a3f50115e768ed67de087a7767ead8ba8e67821312076ee72182f4f5d3f843e5",
+      "git_blob": "b13c303280dbb4fe67cef1ecf841540ee6f1ede4"
+    },
+    {
+      "path": "cosmos-framework/examples/psm_wma_robocasa_corrected_phase5.py",
+      "commit": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+      "sha256": "039d7f72f5b10f93121d683bf76758717fab4087707ce95bd42b180b70e6db3a",
+      "git_blob": "0f0bf70d7cb29b22ed5f6dd79acde22bfcbdd6a3"
+    },
+    {
+      "path": "scripts/train_v3_matched_no_ttt_4gpu.sh",
+      "commit": "76d1cc70622d3b456a3c388ad98917b7d532890b",
+      "sha256": "1acb6e75a42cb338e3c5c41b1ce198d481251129c34a189c0157f7f7660a31d8",
+      "git_blob": "930916cb28493b9861025b886f9459e4c13fb4c3"
+    }
+  ]
+}

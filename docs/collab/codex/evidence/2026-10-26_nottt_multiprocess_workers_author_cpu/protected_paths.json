@@ -1,0 +1,28 @@
+{
+  "child": {
+    "paths": [
+      "cosmos_framework/checkpoint",
+      "cosmos_framework/model",
+      "cosmos_framework/data",
+      "cosmos_framework/trainer/__init__.py",
+      "cosmos_framework/trainer/local_memory_grouped.py",
+      "cosmos_framework/trainer/local_memory_grouped_window.py",
+      "cosmos_framework/trainer/local_memory_grouped_resume.py"
+    ],
+    "baseline": "923d9c3fd392e6bafbdb1771a292c7b313e6b3dc",
+    "formal": "3e5bf90b4eb5fa5cbad9fa7ab62e86bf44c6b07b",
+    "diff_empty": true
+  },
+  "root": {
+    "paths": [
+      "configs",
+      "third_party",
+      "scripts/train_v3_packed128_staged.sh",
+      "scripts/train_v3_matched_no_ttt.sh",
+      "scripts/eval_robocasa_18task_queue.py"
+    ],
+    "baseline": "e6ae2084305a8c24d763d82b517984660cc73c30",
+    "formal": "76d1cc70622d3b456a3c388ad98917b7d532890b",
+    "diff_empty": true
+  }
+}

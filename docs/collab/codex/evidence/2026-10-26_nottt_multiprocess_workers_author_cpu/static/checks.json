@@ -1,0 +1,88 @@
+{
+  "python_files": [
+    "cosmos_framework/trainer/matched_no_ttt.py",
+    "cosmos_framework/trainer/matched_no_ttt_test.py",
+    "examples/psm_wma_robocasa_corrected_phase5.py",
+    "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py",
+    "examples/psm_wma_robocasa_matched_no_ttt_test.py",
+    "cosmos_framework/trainer/no_ttt_cpu_loader.py",
+    "cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+    "cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+    "cosmos_framework/trainer/no_ttt_loader_test_support.py",
+    "cosmos_framework/utils/no_ttt_loader_profile.py",
+    "../tools/v3/no_ttt_workers_entry_test.py"
+  ],
+  "syntax": "PASS",
+  "checks": [
+    {
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "check_0.log"
+    },
+    {
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "check",
+        "cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos_framework/trainer/matched_no_ttt_test.py",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py",
+        "examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "cosmos_framework/trainer/no_ttt_cpu_loader.py",
+        "cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+        "cosmos_framework/trainer/no_ttt_loader_test_support.py",
+        "cosmos_framework/utils/no_ttt_loader_profile.py",
+        "../tools/v3/no_ttt_workers_entry_test.py"
+      ],
+      "exit_code": 0,
+      "log": "check_1.log"
+    },
+    {
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "argv": [
+        "/workspace/.venvs/psm-wma-cpu/bin/ruff",
+        "format",
+        "--check",
+        "cosmos_framework/trainer/matched_no_ttt.py",
+        "cosmos_framework/trainer/matched_no_ttt_test.py",
+        "examples/psm_wma_robocasa_corrected_phase5.py",
+        "examples/psm_wma_robocasa_g1_cross_pair_resume_test.py",
+        "examples/psm_wma_robocasa_matched_no_ttt_test.py",
+        "cosmos_framework/trainer/no_ttt_cpu_loader.py",
+        "cosmos_framework/trainer/no_ttt_cpu_loader_resume_test.py",
+        "cosmos_framework/trainer/no_ttt_cpu_loader_test.py",
+        "cosmos_framework/trainer/no_ttt_loader_test_support.py",
+        "cosmos_framework/utils/no_ttt_loader_profile.py",
+        "../tools/v3/no_ttt_workers_entry_test.py"
+      ],
+      "exit_code": 0,
+      "log": "check_2.log"
+    },
+    {
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "argv": [
+        "bash",
+        "-n",
+        "../scripts/train_v3_matched_no_ttt_4gpu.sh"
+      ],
+      "exit_code": 0,
+      "log": "check_3.log"
+    },
+    {
+      "cwd": "/workspace/psm_wma/cosmos-framework",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "check_4.log"
+    }
+  ]
+}
