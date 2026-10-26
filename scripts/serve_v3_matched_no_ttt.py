@@ -89,12 +89,30 @@ def server_command(profile_path: Path, *, python: str = sys.executable) -> list[
         "consumer_frames": 17,
         "t": 16,
         "b": 8,
-        "ga": 2,
-        "world_size": 8,
     }
     contract = identity["semantic"].get("contract", {})
     if any(type(contract.get(key)) is not int or contract[key] != value for key, value in geometry.items()):
         raise ValueError("No-TTT training identity raw15/state15/H16/Packed128 mismatch")
+    # The same global nominal consumer budget (2048) has two explicitly
+    # supported FSDP/GA geometries. Mixed pairs must not pass by accident.
+    world_size, ga = contract.get("world_size"), contract.get("ga")
+    if (
+        type(world_size) is not int
+        or type(ga) is not int
+        or (world_size, ga) not in {(8, 2), (4, 4)}
+    ):
+        raise ValueError("No-TTT training identity world8/GA2 or world4/GA4 required for Packed128")
+    parallelism = config["model"]["config"].get("parallelism", {})
+    trainer = config.get("trainer", {})
+    if (
+        type(parallelism.get("data_parallel_shard_degree")) is not int
+        or parallelism["data_parallel_shard_degree"] != world_size
+        or type(parallelism.get("data_parallel_replicate_degree")) is not int
+        or parallelism["data_parallel_replicate_degree"] != 1
+        or type(trainer.get("grad_accum_iter")) is not int
+        or trainer["grad_accum_iter"] != ga
+    ):
+        raise ValueError("No-TTT saved config FSDP shard/GA mismatches its frozen training identity")
     datasets = config.get("dataloader_train", {}).get("dataloader", {}).get("datasets", {})
     dataset = datasets.get("robocasa", {}).get("dataset", {})
     if (
