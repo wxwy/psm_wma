@@ -17,13 +17,25 @@ from serve_v3_matched_no_ttt import GENERATION_KEYS, main, server_command
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def profile(tmp_path):
+def profile(tmp_path, *, world_size=8, ga=2):
     job = tmp_path / "no_ttt_job"
     model = job / "checkpoints/iter_000000100/model"
     model.mkdir(parents=True)
     (model / ".metadata").write_bytes(b"synthetic metadata marker, no real DCP")
     (model / "__0_0.distcp").write_bytes(b"synthetic shard marker, not model weights")
-    config = {"model": {"config": {"local_memory_enabled": False}}, "optimizer": {"keys_to_select": GENERATION_KEYS}}
+    config = {
+        "model": {
+            "config": {
+                "local_memory_enabled": False,
+                "parallelism": {
+                    "data_parallel_shard_degree": world_size,
+                    "data_parallel_replicate_degree": 1,
+                },
+            },
+        },
+        "optimizer": {"keys_to_select": GENERATION_KEYS},
+        "trainer": {"grad_accum_iter": ga},
+    }
     config["dataloader_train"] = {
         "dataloader": {
             "datasets": {
@@ -54,8 +66,8 @@ def profile(tmp_path):
             "consumer_frames": 17,
             "t": 16,
             "b": 8,
-            "ga": 2,
-            "world_size": 8,
+            "ga": ga,
+            "world_size": world_size,
         },
     }
     identity = {
@@ -93,6 +105,50 @@ def test_server_dry_run_binds_off_raw15_state_config_and_chunk16(tmp_path, capsy
     assert args[args.index("--config-file") + 1] == str(job / "config.yaml")
     assert result["model_loaded"] is False
     assert {str(p): p.read_bytes() for p in tmp_path.rglob("*") if p.is_file()} == before
+
+
+@pytest.mark.parametrize(("world_size", "ga"), [(8, 2), (4, 4)])
+def test_off_inference_accepts_both_approved_batch_matched_profiles(tmp_path, world_size, ga):
+    path, _values, _job, _config, _identity = profile(tmp_path, world_size=world_size, ga=ga)
+    command = server_command(path)
+    assert "--local-memory-mode" in command
+    assert command[command.index("--local-memory-mode") + 1] == "off"
+    assert command[command.index("--action-chunk-size") + 1] == "16"
+
+
+@pytest.mark.parametrize(
+    "damage",
+    [
+        "world_only",
+        "ga_only",
+        "fsdp_shard_only",
+        "grad_accum_only",
+        "replicate_degree",
+    ],
+)
+def test_world4_off_inference_rejects_cross_profile_or_saved_config_drift(tmp_path, damage):
+    path, _values, job, config, identity = profile(tmp_path, world_size=4, ga=4)
+    if damage == "world_only":
+        identity["semantic"]["contract"]["world_size"] = 8
+    elif damage == "ga_only":
+        identity["semantic"]["contract"]["ga"] = 2
+    elif damage == "fsdp_shard_only":
+        config["model"]["config"]["parallelism"]["data_parallel_shard_degree"] = 8
+    elif damage == "grad_accum_only":
+        config["trainer"]["grad_accum_iter"] = 2
+    else:
+        config["model"]["config"]["parallelism"]["data_parallel_replicate_degree"] = 2
+    if damage.endswith("_only") and damage in {"world_only", "ga_only"}:
+        identity["semantic_digest"] = hashlib.sha256(
+            json.dumps(identity["semantic"], sort_keys=True, separators=(",", ":")).encode()
+        ).hexdigest()
+    else:
+        config_file = job / "config.yaml"
+        config_file.write_text(yaml.safe_dump(config))
+        identity["canonical_config_sha256"]["config.yaml"] = hashlib.sha256(config_file.read_bytes()).hexdigest()
+    (job / "v3_job_identity.json").write_text(json.dumps(identity))
+    with pytest.raises(ValueError, match="No-TTT"):
+        server_command(path)
 
 
 @pytest.mark.parametrize(
@@ -270,3 +326,92 @@ def test_resigned_semantic_identity_still_must_be_matched_profile(tmp_path, key,
     (job / "v3_job_identity.json").write_text(json.dumps(identity))
     with pytest.raises(ValueError, match="Packed128"):
         server_command(path)
+
+@pytest.mark.parametrize("phase,until", [("fresh", "100"), ("resume", "500"), ("fresh", "30000")])
+def test_world4_ga4_launcher_uses_only_cuda_4567_and_actual_checkout_sources(tmp_path, phase, until):
+    fake = tmp_path / "capture_python4"
+    fake.write_text(
+        f'#!{sys.executable}\nimport json,os,sys\n'
+        'print(json.dumps({"argv":sys.argv[1:],'
+        '"cwd":os.getcwd(),"devices":os.environ["CUDA_VISIBLE_DEVICES"],'
+        '"offline":os.environ["HF_HUB_OFFLINE"]}))\n'
+    )
+    fake.chmod(0o755)
+    env = dict(os.environ, PYTHON=str(fake), JOB_NAME="no_ttt_contract_world4_ga4")
+    for key in (
+        "OUTPUT_ROOT",
+        "SOURCE_ROOT",
+        "CACHE_ROOT",
+        "DATASET_INDEX_ROOT",
+        "EDGE_POLICY_CHECKPOINT",
+        "WAN_VAE_PATH",
+        "BASE_CHECKPOINT_PATH",
+    ):
+        env[key] = str(tmp_path / (key + " with spaces"))
+    # Obsolete pins must NOT control this standalone four-GPU launch.
+    env.update(EXPECTED_ROOT="outdated", EXPECTED_CHILD="outdated", CUDA_VISIBLE_DEVICES="4,5,6,7")
+    run = subprocess.run(
+        ["bash", str(ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh"), phase, until],
+        capture_output=True, text=True, env=env, check=True, timeout=15,
+    )
+    payload = json.loads(run.stdout)
+    argv = payload["argv"]
+    assert payload["devices"] == "4,5,6,7" and payload["offline"] == "1"
+    assert payload["cwd"] == str(ROOT / "cosmos-framework")
+    assert "--no-ttt" in argv and "--nproc_per_node=4" in argv
+    for key, value in {
+        "--world-size": "4",
+        "--ga": "4",
+        "--b": "8",
+        "--t": "16",
+        "--k": "4",
+        "--num-workers": "0",
+        "--max-iter": "30000",
+        "--warmup": "500",
+        "--save-iter": "100",
+        "--formal-execution-until": until,
+        "--phase": phase,
+        "--job-name": "no_ttt_contract_world4_ga4",
+    }.items():
+        assert argv[argv.index(key) + 1] == value
+    root_sha = subprocess.run(
+        ["git", "-C", str(ROOT), "rev-parse", "HEAD"],
+        capture_output=True, text=True, check=True,
+    ).stdout.strip()
+    child_sha = subprocess.run(
+        ["git", "-C", str(ROOT / "cosmos-framework"), "rev-parse", "HEAD"],
+        capture_output=True, text=True, check=True,
+    ).stdout.strip()
+    assert argv[argv.index("--expected-root") + 1] == root_sha
+    assert argv[argv.index("--expected-child") + 1] == child_sha
+    assert root_sha != "outdated" and child_sha != "outdated"
+
+
+@pytest.mark.parametrize(
+    ("job", "devices"),
+    [
+        ("packed128_droid_fresh_g1_20261019", "4,5,6,7"),
+        ("no_ttt_packed128_droid_fresh_30k", "4,5,6,7"),
+        ("no_ttt_contract_world4_ga4", "0,1,2,3"),
+    ],
+)
+def test_world4_launcher_rejects_g1_world8_or_wrong_gpus_before_python(tmp_path, job, devices):
+    env = dict(
+        os.environ, PYTHON="/must/not/run", JOB_NAME=job, CUDA_VISIBLE_DEVICES=devices,
+    )
+    for key in (
+        "OUTPUT_ROOT",
+        "SOURCE_ROOT",
+        "CACHE_ROOT",
+        "DATASET_INDEX_ROOT",
+        "EDGE_POLICY_CHECKPOINT",
+        "WAN_VAE_PATH",
+        "BASE_CHECKPOINT_PATH",
+    ):
+        env[key] = str(tmp_path / key)
+    run = subprocess.run(
+        ["bash", str(ROOT / "scripts/train_v3_matched_no_ttt_4gpu.sh"), "fresh", "30000"],
+        capture_output=True, text=True, env=env, timeout=10,
+    )
+    assert run.returncode == 2
+    assert "4GPU profile" in run.stderr
