@@ -147,3 +147,12 @@ Current unresolved Gate: MEDIUM-F01 fixture REQUEST_CHANGES ondfb8a12140be7bf345
 ## 2026-10-27 — Owner Issue #6 受控合并授权（V3）
 
 - Owner 明确批准将已通过 GPT Code Gate + DS_PRO independent synthetic CPU Gate 的候选实现合入 V3。实际本次 Git merge 的第一父节点为 `fa7481a325819645bb31eb3f1ab1a7908dff1652`，第二父节点为 `bef955c2001b32e4bdd437c9bb6103ece6b8f59c`；两侧历史和 Code/DS reviews 均保留。Formal implementation Source SHA `9cb8b60dccf4ac2520f8d862b723d7bc94fe3813` / Child Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5`，本次无新的生产语义变更，仅受控集成。合并不自动授权真实 DCP 冷/热、GPU/RoboCasa/900 episode、训练或修改历史22集；下一 Gate 仍须单独放行。
+
+
+## 2026-10-27 — No-TTT nw0/nw8 + G1 CPU关键路径归因（报告/审核已归档）
+
+- **记录性质：Evidence / Performance Attribution，NOT implementation Gate。** 当前 Child/Gitlink `746c5cf2f2324104a62fb71510343aa40d3976c5`；No-TTT性能比较仍对应源实现 `49df7f3c2e0ba8ef5871f9dd490e41fbc3dc5da9`。当前 Root文档/其它评测变更不视为 No-TTT性能 Gate 更新。无新 APPROVE、无代码更改或训练授权。
+- **原始 DS_PRO 独立审计**：`docs/collab/chatgpt/DS_PRO_2026-10-27_G1_NoTTT_CPU_Data_Path_Audit.md`（2026-10-27，已逐字保留 DS 证据；其声称 CPU-only微基准实测，虽前指令未授权额外基准，故标明执行边界偏离）。前序 DS「No-TTT nw0 vs nw8」实测稳定段：Wall 33.1→32.2s；data_prepare 22.9→17.5s；other_host 0.2→5.0s；nw8 增加 Loader Begin hidden读约4.8s，仅1.03×端到端加速。
+- **GPT独立证据审核/下一步**：`docs/collab/chatgpt/reviews/2026-10-27_V3_G1_NoTTT_CPU_Performance_Evidence_Review.md`。后续 DS 实测：No-TTT source_read=4.78s、parent Transform=16.72s、raw_wait≈0.26s；G1历史 data_prepare 4.57s/≈250，No-TTT 17.6s/≈497。共同热点为 Dense全零视频占位的 CPU Reflect Padding；G1历史Torch线程数96尚无实际Rank证据；绝不引用“6–7s 完整 Step”做承诺。
+- **已有可用优化**：`PSM_V3_COMPACT_CACHED_VIDEO=1` 的 shape proxy + CachedGeometryResize + move_cached_native_batch 已在 Child 源码实现（默认0）。禁止直接改变原始视频 shape/ABI，或盲增 nw。下一步**仅**在隔离CPU环境完成 Compact0/1 同 Consumer/Token/Action/Latent/SequencePlan/RNG/Frontier等价与Transform计时；GPU Forward/Loss/Gradient parity及正式 Job 的受控Checkpoint边界切换须后续单独授权。
+- **当前状态**：REPORTS_PERSISTED / NO_TTT_PERF_CAUSE_SUPPORTED / COMPACT_PARITY_PENDING / NO_PRODUCTION_CHANGE。原 No-TTT Job/Checkpoint、G1及真实训练服务器均未被本次归档操作更改。
